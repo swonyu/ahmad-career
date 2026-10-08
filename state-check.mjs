@@ -10,8 +10,8 @@ const scripts = ['core.js', 'data.js', 'app.js'].map(name => ({
   source: readFileSync(new URL(`./web/${name}`, import.meta.url), 'utf8'),
 }));
 
-function createApp(initialStorage = new Map()) {
-  const storage = new Map(initialStorage);
+function createApp(initialStorage = new Map(), options = {}) {
+  const storage = options.shared ? initialStorage : new Map(initialStorage);
   const listeners = new Map();
   const elements = new Map();
   const toasts = [];
@@ -57,7 +57,7 @@ function createApp(initialStorage = new Map()) {
   const context = vm.createContext({
     console, URL: TestURL, Blob, Intl, Date,
     setTimeout: () => 1, clearTimeout() {},
-    scrollTo() {}, navigator: {}, location: { protocol: 'https:' },
+    scrollTo() {}, navigator: {locks: options.locks}, location: { protocol: 'https:' },
     fetch() { throw new Error('Unexpected network request in state regression checks'); },
     document: {
       body: element('body'),
@@ -70,7 +70,7 @@ function createApp(initialStorage = new Map()) {
       },
     },
     localStorage: {
-      getItem: key => storage.get(key) ?? null,
+      getItem: key => { const value=storage.get(key) ?? null; options.afterRead?.(key); return value; },
       setItem(key, value) {
         if (writesFail || failKeys.has(key)) throw new Error('Simulated storage quota failure');
         storage.set(key, String(value));
@@ -82,6 +82,7 @@ function createApp(initialStorage = new Map()) {
   const evaluate = source => vm.runInContext(source, context);
   return {
     storage, toasts, downloads, failKeys, evaluate,
+    async dispatch(type, target) { for (const fn of listeners.get(type) || []) await fn({target, preventDefault(){}}); },
     failAllWrites() { writesFail = true; },
     json(source) { return JSON.parse(evaluate(`JSON.stringify(${source})`)); },
     receive(payload) { context.receiveNativeJobs(payload); },
@@ -90,7 +91,7 @@ function createApp(initialStorage = new Map()) {
         callback({ target: { id: '', dataset: { status: id }, value } });
       }
     },
-    toggleSaved(id) { evaluate(`toggleSaved(${JSON.stringify(id)})`); },
+    toggleSaved(id) { return evaluate(`toggleSaved(${JSON.stringify(id)})`); },
     async exportNotes() {
       evaluate('exportNotes()');
       assert.ok(downloads.length, 'Export must create a downloadable notes blob');
@@ -103,7 +104,7 @@ const role = {
   id: 'state-regression-healthcare-role',
   title: 'Healthcare Supply Chain Manager — regression fixture',
   company: 'Alcon', location: 'Riyadh, Saudi Arabia',
-  url: 'https://careers.alcon.com/regression-fixture',
+  url: 'https://alcon.wd5.myworkdayjobs.com/careers_alcon/job/Riyadh/regression-fixture',
   kind: 'live', summary: 'Synthetic fixture for local state checks only.',
   fit: 'Needs review', healthcare: true, leadership: true,
   posted: '2026-10-08', closes: null,
@@ -123,9 +124,8 @@ function assertTracked(app, label) {
 
 const cases = [];
 async function check(name, run) {
-  await run();
-  cases.push(name);
-  console.log(`PASS ${name}`);
+  try { await run(); cases.push(name); console.log(`PASS ${name}`); }
+  catch (error) { process.exitCode = 1; console.error(`FAIL ${name}: ${error.stack}`); }
 }
 
 await check('Full source outage preserves previous results, timestamp and persisted cache', () => {
@@ -142,7 +142,7 @@ await check('Full source outage preserves previous results, timestamp and persis
   assert.equal(app.storage.get('ahmad-live'), storedBefore);
   assert.match(app.evaluate('livePage()'), /Previous successful search/);
   assert.match(app.evaluate('livePage()'), /Simulated outage/);
-  assert.match(app.toasts.at(-1), /unavailable/i);
+  assert.match(app.toasts.at(-1), /unavailable|could not finish/i);
 });
 
 await check('Empty source response also preserves the previous successful search', () => {
@@ -204,7 +204,7 @@ await check('Failed saves and status writes never announce saved-on-device succe
 });
 
 await check('A failed workspace mutation leaves the entire prior durable snapshot intact', () => {
-  const otherRole = { ...role, id: 'state-regression-second-role', title: 'Second regression fixture' };
+  const otherRole = { ...role, id: 'state-regression-second-role', title: 'Supply Chain Manager — second regression fixture' };
   const actions = [
     ['save another role', app => app.toggleSaved(otherRole.id)],
     ['track another role', app => app.changeStatus(otherRole.id, 'Applied')],
@@ -254,4 +254,91 @@ await check('Legacy tracking imports correctly and a successful write migrates i
   assert.match(notes, /Status: Interviewing/);
 });
 
-console.log(`\n${cases.length} application-state regression groups passed.`);
+
+
+await check('Unreadable workspace is preserved and cannot be silently overwritten', () => {
+  const broken = '{unreadable workspace';
+  const app = createApp(new Map([['ahmad-workspace', broken]]));
+  app.receive(success([role])); app.toggleSaved(role.id);
+  assert.equal(app.storage.get('ahmad-workspace'), broken);
+  assert.match(app.evaluate("document.querySelector('.footer').textContent"), /unreadable|could not be read|preserved/i);
+});
+await check('Malformed cached rows cannot crash navigation or overwrite the original workspace', () => {
+  const broken = JSON.stringify({saved:['bad'], states:{bad:'Applied'}, savedDetails:{bad:null}});
+  const app = createApp(new Map([['ahmad-workspace',broken], ['ahmad-live',JSON.stringify({checkedAt:oldTime,jobs:[null],sources:[null]})]]));
+  app.evaluate('go("saved"); go("plan"); go("live")');
+  assert.equal(app.storage.get('ahmad-workspace'), broken);
+});
+await check('New employer fields update a researched record without replacing its editorial evidence', () => {
+  const app=createApp(); const original=app.json('D.jobs[0]');
+  app.receive(success([{...original,kind:'live',rank:undefined,fit:'Needs review',summary:'Generic lead',closes:'2099-10-21'}]));
+  const job=app.json(`jobById(${JSON.stringify(original.id)})`);
+  assert.equal(job.closes,'2099-10-21'); assert.equal(job.rank,original.rank); assert.equal(job.fit,original.fit);
+});
+await check('Malformed live sources preserve the cache and do not throw',()=>{
+  const app=createApp(); app.receive(success([role]));
+  app.receive({checkedAt:newTime,jobs:[],sources:[null]});
+  assert.equal(app.json('live.checkedAt'),oldTime); assert.ok(app.evaluate('liveError'));
+});
+await check('Cached facts are not overwritten by an older successful response',()=>{
+  const app=createApp(); app.receive(success([role],newTime)); app.receive(success([],oldTime));
+  assert.equal(app.json('live.checkedAt'),newTime); assert.equal(app.json('live.jobs.length'),1);
+});
+await check('Partially successful sources retain validated new jobs with a visible incomplete warning',()=>{
+  const app=createApp(); app.receive({checkedAt:newTime,jobs:[role],sources:[{name:'Alcon',ok:false,count:1,error:'One detail failed'}]});
+  assert.equal(app.json('live.jobs.length'),1); assert.match(app.evaluate('livePage()'),/incomplete/i);
+});
+await check('Unsaved profile input survives completion of a background search',async()=>{
+  const app=createApp(); app.evaluate('go("profile")');
+  await app.dispatch('input',{name:'achievements',value:'Unsaved achievement',closest:selector=>selector==='#profile-form'?{}:null});
+  app.receive(success([role]));
+  assert.ok(app.evaluate('profilePage()').includes('Unsaved achievement'));
+});
+await check('Filter and sort controls keep the active selection after a saved-state render',()=>{
+  const app=createApp(); app.evaluate('filter="leadership";sort="deadline"');
+  app.toggleSaved(app.json('D.jobs[0].id'));
+  const toolbar=app.evaluate('toolbar()');
+  assert.match(toolbar, /value="leadership" selected/);assert.match(toolbar,/value="deadline" selected/);
+});
+await check("Another tab’s saved roles are preserved when this tab next saves",()=>{
+  const first=createApp(),second=createApp();
+  const a=first.json('D.jobs[0].id'),b=second.json('D.jobs[1].id'); first.toggleSaved(a);
+  second.storage.set('ahmad-workspace',first.storage.get('ahmad-workspace'));
+  second.toggleSaved(b);
+  const durable=JSON.parse(second.storage.get('ahmad-workspace'));
+  assert.ok(durable.saved.includes(a)&&durable.saved.includes(b));
+});
+await check('Fresh tracked facts survive later disappearance from the bounded feed',()=>{
+  const app=createApp(),original=app.json('D.jobs[0]');
+  app.toggleSaved(original.id);
+  app.receive(success([{...original,kind:'live',closes:'2099-10-21'}]));
+  app.receive(success([],newTime));
+  const restored=createApp(app.storage);
+  assert.equal(restored.json(`jobById(${JSON.stringify(original.id)}).closes`),'2099-10-21');
+});
+await check('A nominal success containing only malformed jobs cannot erase prior valid results',()=>{
+  const app=createApp(); app.receive(success([role])); app.receive(success([null],newTime));
+  assert.equal(app.json('live.jobs.length'),1);assert.equal(app.json('live.checkedAt'),oldTime);
+});
+await check('Interleaved tabs serialize workspace mutations when Web Locks are available',async()=>{
+  let queue=Promise.resolve();const locks={request(name,run){const next=queue.then(run);queue=next.catch(()=>{});return next}};
+  let enabled=false,pending;const shared=new Map();
+  const second=createApp(shared,{shared:true,locks}),b=second.json('D.jobs[1].id');
+  const first=createApp(shared,{shared:true,locks,afterRead(key){if(enabled&&key==='ahmad-workspace'){enabled=false;pending=second.toggleSaved(b)}}});
+  const a=first.json('D.jobs[0].id');enabled=true;
+  await first.toggleSaved(a);await pending;
+  const durable=JSON.parse(shared.get('ahmad-workspace'));
+  assert.ok(durable.saved.includes(a)&&durable.saved.includes(b));
+});
+
+
+await check('Riyadh midnight display and sequential live positions', () => {
+  const app = createApp();
+  assert.match(app.evaluate("date('2026-10-08T21:23:00Z')"), /Oct 9, 2026/);
+  app.evaluate("view='live'");
+  assert.match(app.evaluate("row({...D.jobs[0],rank:8},2)"), /class="rank">03</);
+  app.evaluate("view='shortlist'");
+  assert.match(app.evaluate("row({...D.jobs[0],rank:8},2)"), /class="rank">08</);
+});
+
+if (!process.exitCode) console.log(`\n${cases.length} application-state regression groups passed.`);
