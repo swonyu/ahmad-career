@@ -1,28 +1,26 @@
 AHMAD CAREER — TESTFLIGHT PREPARATION
 9 October 2026
 
-CURRENT STATUS
-Native iOS/iPadOS source prepared as version 1.1, build 4.
-The local development-signed archive and iOS Simulator build passed.
-The archive encryption flag, build number and signature were verified.
-The privacy/support screen was opened and inspected in the simulator.
-No App Store Connect build has been uploaded and no TestFlight invitation exists.
-Apple rejected the App Store distribution export with:
-“Unable to process request - PLA Update available.”
-It requires the account holder to accept the latest Program License Agreement.
-The related App Store provisioning profile could not be created.
+CURRENT STATUS — 9 October 2026 (Asia/Riyadh)
+Native iOS/iPadOS version 1.1, build 4 was successfully exported with App Store
+distribution signing and uploaded to App Store Connect. Apple processed the build.
+The external beta was submitted and its verified status is WAITING FOR REVIEW.
+The Program License Agreement blocker was resolved by the account holder.
+The archive and simulator checks passed earlier; this turn changed listing metadata only.
 
-OWNER ACTION
-1. Sign in at https://developer.apple.com/account/.
-2. Personally review the updated Program License Agreement and accept if you agree.
-3. Sign in at https://appstoreconnect.apple.com/apps with the same developer account.
-4. Supply genuine review-contact name, email and phone, and a monitored feedback email.
-Do not send passwords or verification codes in chat.
+INVITATION LINK — NOT YET OPEN FOR INSTALLATION
+https://testflight.apple.com/join/S5bDCNbd
+External group: Ahmad Beta. Public-link capacity: 1 tester.
+App Store Connect states: Testers cannot join until this group has an approved build.
+No tester has joined, and installation has not been verified on Ahmad's phone.
+Automatic tester notification was not enabled during submission.
+After approval, verify the build is available for testing and the invitation can be accepted.
 
-PREPARED APP RECORD
-App name: Ahmad Career (subject to availability in App Store Connect)
+APP RECORD
+App Store Connect app ID: 6820749119
+App name: Ahmad Career
 Platform: iOS (iPhone and iPad)
-Primary language: English
+Primary language: English (U.S.)
 Bundle identifier: com.ahmadalayed.career
 SKU: ahmad-career-ios
 Version: 1.1
@@ -31,6 +29,8 @@ Sign-in required: No
 Payments, subscriptions, advertising: None
 Export declaration: ITSAppUsesNonExemptEncryption = false.
 The app uses only Apple's HTTPS/TLS implementation; no custom encryption library.
+Review-contact name, email, phone and tester feedback email were supplied with the
+owner's explicit confirmation. Those private contact details are not copied here.
 
 BETA DESCRIPTION
 Ahmad Career is a career workspace focused on healthcare supply chain and
@@ -69,25 +69,24 @@ planned public App Store release unless the owner confirms that intention.
 Apple's guideline2.2 says TestFlight apps should be intended for public distribution;
 Apple decides whether the submitted beta meets its requirements.
 
-REMAINING LISTING FIELDS
-• Genuine review contact: full name, email, phone.
-• Monitored beta feedback email.
-• Accessible privacy/support webpage and final contact information.
-The app now includes offline privacy information and TestFlight feedback instructions.
-The companion website remains owner-private; it is not an accessible public policy URL.
-Do not make the app website or GitHub repository public to work around this.
+PRIVACY AND SUPPORT
+The app includes offline privacy information and TestFlight feedback instructions.
+The Privacy Policy URL field is optional in the beta interface and was left blank.
+Ahmad-Career-Privacy.html remains an unpublished draft; it needs final developer
+contact and feedback-handling declarations before any future public publication.
+The companion website and source repository remain private.
 
-AFTER ACCOUNT ACCESS IS RESTORED
-Create/confirm the app record, export with App Store Connect distribution signing,
-upload the matching build, wait for processing, complete metadata/export questions,
-submit the first external beta for review, then create a limited TestFlight
-invitation link after approval. An upload alone does not establish approval.
+AFTER APPLE REVIEW
+If approved, confirm the build is available for testing (start testing if Apple
+presents that action), then verify the public invitation and provide the instructions
+below. If rejected, inspect Apple's actual reason and address it before resubmission.
+An upload, submission or generated public link alone does not establish approval.
 
-MESSAGE TO PREPARE AFTER THE LINK EXISTS
-Ahmad, I made a career app for you. Install Apple's free TestFlight app from the
-App Store, then open the invitation link I send and tap Accept / Install. Open
-Ahmad Career and start with Top 10. No Mac or coding is needed.
-Do not replace this with a fabricated or unapproved invitation link.
+MESSAGE TO SEND AFTER INSTALLATION OPENS
+Ahmad, I made a career app for you. Install Apple's free TestFlight app on your
+iPhone: https://apps.apple.com/app/testflight/id899247664
+Then open https://testflight.apple.com/join/S5bDCNbd and tap Accept, then Install.
+Open Ahmad Career and start with Top 10. No Mac or coding is needed.
 
 REFERENCES
 https://developer.apple.com/help/app-store-connect/test-a-beta-version/provide-test-information/

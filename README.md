@@ -20,7 +20,7 @@ Open `apple/AhmadCareer.xcodeproj` in Xcode and select the **AhmadCareer** schem
 
 For a physical iPhone, select your Apple team in **Signing & Capabilities**, keep automatic signing enabled, connect and unlock the phone, choose it as the destination, then Run. Change the bundle identifier if Xcode reports that it is unavailable. No development team is fixed in the source.
 
-Ahmad only has an iPhone. A developer can build on a Mac and install onto his registered phone, or distribute through TestFlight using an eligible paid Apple Developer team. This repository itself is not an iPhone installation link. No TestFlight or App Store build has been published.
+Ahmad only has an iPhone. A developer can build on a Mac and install onto his registered phone, or distribute through TestFlight using an eligible paid Apple Developer team. This repository itself is not an iPhone installation link. Version 1.1 (4) has been uploaded to TestFlight and submitted for external beta review. It is not yet approved for testers.
 
 See [Apple setup and checks](apple/README.md).
 
@@ -73,4 +73,4 @@ The review report records passing website state/feed/server checks, native feed/
 
 ### TestFlight preparation
 
-Source build 1.1 (4) adds in-app privacy/support information and the exempt-encryption declaration. Its local archive and simulator checks passed. App Store distribution signing is blocked by Apple's updated Program License Agreement awaiting the account holder's acceptance. No invitation link is available yet. See [the preparation record](docs/TestFlight-Preparation.txt) for drafted review details and remaining listing fields.
+Source build 1.1 (4) adds in-app privacy/support information and the exempt-encryption declaration. Its local archive and simulator checks passed. The account holder resolved the Apple agreement requirement. App Store distribution export and upload succeeded; Apple processed the build and its external beta status is **Waiting for Review**. A one-tester public invitation has been created but cannot accept testers before an approved build is available. See [the preparation record](docs/TestFlight-Preparation.txt) for review details and release status.
