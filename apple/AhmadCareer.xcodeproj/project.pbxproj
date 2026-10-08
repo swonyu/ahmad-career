@@ -101,6 +101,7 @@
                 ENABLE_HARDENED_RUNTIME = YES;
                 GENERATE_INFOPLIST_FILE = YES;
                 INFOPLIST_KEY_CFBundleDisplayName = "Ahmad Career";
+                INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
                 INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
                 INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
                 INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -111,7 +112,7 @@
                 LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../Frameworks";
                 MACOSX_DEPLOYMENT_TARGET = 13.0;
                 MARKETING_VERSION = 1.1;
-                CURRENT_PROJECT_VERSION = 3;
+                CURRENT_PROJECT_VERSION = 4;
                 PRODUCT_BUNDLE_IDENTIFIER = com.ahmadalayed.career;
                 PRODUCT_NAME = "$(TARGET_NAME)";
                 SDKROOT = auto;
@@ -132,6 +133,7 @@
                 ENABLE_HARDENED_RUNTIME = YES;
                 GENERATE_INFOPLIST_FILE = YES;
                 INFOPLIST_KEY_CFBundleDisplayName = "Ahmad Career";
+                INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
                 INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
                 INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
                 INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -142,7 +144,7 @@
                 LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../Frameworks";
                 MACOSX_DEPLOYMENT_TARGET = 13.0;
                 MARKETING_VERSION = 1.1;
-                CURRENT_PROJECT_VERSION = 3;
+                CURRENT_PROJECT_VERSION = 4;
                 PRODUCT_BUNDLE_IDENTIFIER = com.ahmadalayed.career;
                 PRODUCT_NAME = "$(TARGET_NAME)";
                 SDKROOT = auto;

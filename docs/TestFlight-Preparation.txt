@@ -1,0 +1,96 @@
+AHMAD CAREER — TESTFLIGHT PREPARATION
+9 October 2026
+
+CURRENT STATUS
+Native iOS/iPadOS source prepared as version 1.1, build 4.
+The local development-signed archive and iOS Simulator build passed.
+The archive encryption flag, build number and signature were verified.
+The privacy/support screen was opened and inspected in the simulator.
+No App Store Connect build has been uploaded and no TestFlight invitation exists.
+Apple rejected the App Store distribution export with:
+“Unable to process request - PLA Update available.”
+It requires the account holder to accept the latest Program License Agreement.
+The related App Store provisioning profile could not be created.
+
+OWNER ACTION
+1. Sign in at https://developer.apple.com/account/.
+2. Personally review the updated Program License Agreement and accept if you agree.
+3. Sign in at https://appstoreconnect.apple.com/apps with the same developer account.
+4. Supply genuine review-contact name, email and phone, and a monitored feedback email.
+Do not send passwords or verification codes in chat.
+
+PREPARED APP RECORD
+App name: Ahmad Career (subject to availability in App Store Connect)
+Platform: iOS (iPhone and iPad)
+Primary language: English
+Bundle identifier: com.ahmadalayed.career
+SKU: ahmad-career-ios
+Version: 1.1
+Build: 4
+Sign-in required: No
+Payments, subscriptions, advertising: None
+Export declaration: ITSAppUsesNonExemptEncryption = false.
+The app uses only Apple's HTTPS/TLS implementation; no custom encryption library.
+
+BETA DESCRIPTION
+Ahmad Career is a career workspace focused on healthcare supply chain and
+performance leadership opportunities in Saudi Arabia. Review a dated researched
+shortlist, discover new leads from selected employer boards, save opportunities,
+track application progress and prepare notes using your own career evidence.
+
+Fit judgments are provisional. The app does not promise employment, verify user
+credentials, submit applications or guarantee pay. Live search uses bounded
+employer queries; it does not claim to cover all Saudi vacancies.
+
+WHAT TO TEST
+• Browse the Top 10 and open employer sources and application steps.
+• Search employer boards and inspect source coverage or failure messages.
+• Save jobs, change application status, relaunch, and confirm records remain.
+• Edit profile details and confirm unsaved changes are protected.
+• Export preparation notes after reviewing their content.
+• Compare a hypothetical salary package, including grouped and Arabic digits.
+• Check accessibility, dark appearance and portrait/landscape layouts.
+• Open Profile → Privacy & beta support.
+
+BETA REVIEW NOTES
+No username, password, payment or subscription is required.
+The Top 10 and saved records are available offline. Employer search requires
+internet access and external boards may change or be unavailable. Previously
+saved results remain available when an entire refresh fails.
+
+The native iOS app is independent of the private companion website and GitHub
+repository: reviewers do not need access to either. The bundled research uses
+publicly available professional and employer information and identifies gaps.
+User-entered profile records remain local until the user explicitly shares notes.
+External employer links open in the browser. Users submit applications themselves.
+
+The initial requested audience is Ahmad and a small beta group. Do not claim a
+planned public App Store release unless the owner confirms that intention.
+Apple's guideline2.2 says TestFlight apps should be intended for public distribution;
+Apple decides whether the submitted beta meets its requirements.
+
+REMAINING LISTING FIELDS
+• Genuine review contact: full name, email, phone.
+• Monitored beta feedback email.
+• Accessible privacy/support webpage and final contact information.
+The app now includes offline privacy information and TestFlight feedback instructions.
+The companion website remains owner-private; it is not an accessible public policy URL.
+Do not make the app website or GitHub repository public to work around this.
+
+AFTER ACCOUNT ACCESS IS RESTORED
+Create/confirm the app record, export with App Store Connect distribution signing,
+upload the matching build, wait for processing, complete metadata/export questions,
+submit the first external beta for review, then create a limited TestFlight
+invitation link after approval. An upload alone does not establish approval.
+
+MESSAGE TO PREPARE AFTER THE LINK EXISTS
+Ahmad, I made a career app for you. Install Apple's free TestFlight app from the
+App Store, then open the invitation link I send and tap Accept / Install. Open
+Ahmad Career and start with Top 10. No Mac or coding is needed.
+Do not replace this with a fabricated or unapproved invitation link.
+
+REFERENCES
+https://developer.apple.com/help/app-store-connect/test-a-beta-version/provide-test-information/
+https://developer.apple.com/help/app-store-connect/test-a-beta-version/invite-external-testers/
+https://developer.apple.com/app-store/review/guidelines/#beta-testing
+https://developer.apple.com/documentation/security/complying-with-encryption-export-regulations

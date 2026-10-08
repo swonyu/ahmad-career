@@ -78,3 +78,9 @@ BuildLogs/check-web-runtime "$PWD/AhmadCareer/Web"
 ```
 
 If cloud-backed Documents storage adds Finder metadata and code signing reports “resource fork, Finder information, or similar detritus,” choose a local temporary DerivedData/archive location outside that synced folder. Do not weaken signing verification.
+
+## TestFlight preparation — 9 October 2026
+
+Current source is version 1.1, build 4. It adds Profile → Privacy & beta support and declares use of exempt operating-system encryption. The iOS archive and simulator build passed. The separately delivered development IPA remains build 3.
+
+Apple blocked App Store distribution signing with “PLA Update available.” The account holder must personally accept the updated Program License Agreement at developer.apple.com/account before distribution provisioning can continue. No TestFlight build or invitation link has been published. Genuine reviewer/feedback contact details and accessible public privacy/support information are still required for the listing.

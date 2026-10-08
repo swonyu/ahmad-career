@@ -70,3 +70,7 @@ The existing website at https://ahmad-career.jolly-lynx-4861.chatgpt.site/ is ow
 ## Review and release status
 
 The review report records passing website state/feed/server checks, native feed/store checks, simulator and Mac builds, actual Mac WebKit workflows, and a development-signed iOS archive. The updated private website was published. Physical iPhone installation remains unverified after a device connection reset. Signed binaries and provisioning profiles are excluded from this source repository.
+
+### TestFlight preparation
+
+Source build 1.1 (4) adds in-app privacy/support information and the exempt-encryption declaration. Its local archive and simulator checks passed. App Store distribution signing is blocked by Apple's updated Program License Agreement awaiting the account holder's acceptance. No invitation link is available yet. See [the preparation record](docs/TestFlight-Preparation.txt) for drafted review details and remaining listing fields.

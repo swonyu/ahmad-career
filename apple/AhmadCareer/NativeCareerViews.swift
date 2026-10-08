@@ -368,10 +368,40 @@ private struct NativeProfileScreen: View {
             } header: { Text("Your own details") } footer: { Text("Saved on this device. These details are not verified qualifications and are not sent to employers.") }
             Section {
                 NavigationLink { NativeSalaryScreen() } label: { Label("Salary & negotiation", systemImage: "chart.bar.doc.horizontal") }
+                NavigationLink { NativePrivacyScreen() } label: { Label("Privacy & beta support", systemImage: "hand.raised") }
             }
         }.nativeList().navigationTitle("Your profile")
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $editing) { NativeProfileEditor(profile: store.workspace.profile) }
+    }
+}
+
+private struct NativePrivacyScreen: View {
+    var body: some View {
+        List {
+            Section("Your information") {
+                Text("Profile details, saved jobs, application status, completed steps and search results are stored in this app on your device. There is no app account or cloud sync service.")
+                Text("The developer does not receive your profile or application records automatically. The app includes a dated research snapshot drawn from public professional and employer information.")
+            }
+            Section("Employer searches and links") {
+                Text("When you run a search, the app sends fixed job queries directly to selected employers and their recruitment providers using HTTPS. Those providers receive normal connection information, including your IP address. Your saved profile and application notes are not included.")
+                Text("Opening an employer, LinkedIn or salary-source link takes you to an external website governed by its own privacy policy. Any application or account you create there is managed by that provider.")
+            }
+            Section("Sharing and beta feedback") {
+                Text("Exported notes include your entered profile and tracked roles. They leave the app only when you choose a destination in the system share sheet. Review the content before sharing.")
+                Text("The app has no advertising, tracking SDKs or developer analytics service. Apple may process TestFlight testing, crash and feedback information under its own privacy practices.")
+                Link("Apple privacy policy", destination: URL(string: "https://www.apple.com/legal/privacy/")!)
+            }
+            Section("Retention and removal") {
+                Text("You can edit or clear profile fields, remove saved roles and reset individual tracking statuses in the app. Saved or tracked job details may remain locally after a job disappears from a search.")
+                Text("Deleting the app from iPhone Settings removes its local records; offloading the app keeps documents and data. Device backups may retain copies according to your Apple backup settings. Shared exports are separate copies that you manage at their destination.")
+            }
+            Section("Beta support") {
+                Text("Open TestFlight, select Ahmad Career and choose Send Beta Feedback to contact the developer. Include the screen and steps that caused the problem. Review screenshots and diagnostics before sending.")
+                Text("Policy updated 9 October 2026.").font(.footnote).foregroundStyle(.secondary)
+            }
+        }.nativeList().navigationTitle("Privacy & beta support")
+            .navigationBarTitleDisplayMode(.inline)
     }
 }
 
