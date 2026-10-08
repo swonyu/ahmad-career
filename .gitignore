@@ -1,0 +1,25 @@
+# Local build products and editor state
+.DS_Store
+DerivedData/
+BuildLogs/
+build/
+dist/
+node_modules/
+xcuserdata/
+*.xcuserstate
+*.xcarchive
+*.app
+*.ipa
+*.dSYM/
+
+# Local configuration and signing material
+.env
+.env.*
+!.env.example
+*.p8
+*.p12
+*.pfx
+*.mobileprovision
+*.provisionprofile
+*.key
+*.pem

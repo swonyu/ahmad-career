@@ -1,0 +1,281 @@
+import Foundation
+
+struct WorkdaySource {
+    let name: String
+    let host: String
+    let tenant: String
+    let board: String
+
+    var baseURL: URL { URL(string: "https://\(host)/wday/cxs/\(tenant)/\(board)")! }
+}
+
+enum CareerFeed {
+    static let sourceBudgetNanoseconds: UInt64 = 45_000_000_000
+    static let sources = [
+        WorkdaySource(name: "Alcon", host: "alcon.wd5.myworkdayjobs.com", tenant: "alcon", board: "careers_alcon"),
+        WorkdaySource(name: "Novartis", host: "novartis.wd3.myworkdayjobs.com", tenant: "novartis", board: "Novartis_Careers"),
+        WorkdaySource(name: "Johnson & Johnson", host: "jj.wd5.myworkdayjobs.com", tenant: "jj", board: "JJ"),
+        WorkdaySource(name: "GSK", host: "gsk.wd5.myworkdayjobs.com", tenant: "gsk", board: "GSKCareers"),
+        WorkdaySource(name: "BD", host: "bdx.wd1.myworkdayjobs.com", tenant: "bdx", board: "EXTERNAL_CAREER_SITE_SAUDI_ARABIA"),
+        WorkdaySource(name: "Roche", host: "roche.wd3.myworkdayjobs.com", tenant: "roche", board: "roche-ext")
+    ]
+
+    static func detailURL(_ path: String, source: WorkdaySource) -> URL? {
+        guard path.hasPrefix("/job/"), let decoded = path.removingPercentEncoding,
+              !decoded.contains("?"), !decoded.contains("#"), !decoded.contains("\\"),
+              !decoded.contains("%"), !decoded.split(separator: "/").contains(where: { $0 == ".." || $0 == "." }) else { return nil }
+        return URL(string: source.baseURL.absoluteString + path)
+    }
+
+    static func relevant(_ title: String) -> Bool {
+        let excluded = "\\bintern(ship)?\\b|trainee|graduate|early[ -]in[ -]career|early[ -]career|sales|account[ -]+manager|clinical|chemist|scientist|engineer|financial[ -]+analyst|regulatory|qa[ /-]*ra"
+        guard title.range(of: excluded, options: [.regularExpression, .caseInsensitive]) == nil else { return false }
+        let included = "supply[ -]?chain|procurement|purchas|tender|logistic|warehous|demand[ -]?plan|supply[ -]?plan|inventory|supplier|performance|operational[ -]+excellence|continuous[ -]+improvement|transformation|operations[ -]+manager|business[ -]value[ -]partner"
+        return title.range(of: included, options: [.regularExpression, .caseInsensitive]) != nil
+    }
+
+    static func qiddiyaJob(_ listing: [String: Any], now: Date = Date()) -> [String: Any]? {
+        guard listing["state"] as? String == "published", listing["isInternal"] as? Bool == false,
+              let code = listing["shortcode"] as? String, !code.isEmpty,
+              code.range(of: "^[A-Za-z0-9]+$", options: .regularExpression) != nil,
+              let title = listing["title"] as? String,
+              relevant(title),
+              let location = listing["location"] as? [String: Any], location["countryCode"] as? String == "SA",
+              let published = listing["published"] as? String,
+              let date = isoDate(published), date <= now else { return nil }
+        let city = location["city"] as? String ?? "Saudi Arabia"
+        return [
+            "id": "qiddiya-\(code)", "title": title, "company": "Qiddiya", "location": city == "Saudi Arabia" ? city : city + ", Saudi Arabia",
+            "url": "https://apply.workable.com/qiddiya-investment-company-1/j/\(code)/",
+            "posted": published, "closes": NSNull(), "status": "live", "salary": NSNull(),
+            "kind": "live", "fit": "Needs review",
+            "summary": "New employer listing. Review full requirements before applying."
+        ]
+    }
+
+    private static func isoDate(_ value: String) -> Date? {
+        let format = ISO8601DateFormatter()
+        format.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return format.date(from: value) ?? ISO8601DateFormatter().date(from: value)
+    }
+
+    private static func dateIsEligible(_ value: String, now: Date, closing: Bool) -> Bool {
+        if value.isEmpty { return true }
+        if value.count == 10 {
+            let format = DateFormatter()
+            format.locale = Locale(identifier: "en_US_POSIX")
+            format.timeZone = TimeZone(identifier: "Asia/Riyadh")
+            format.dateFormat = "yyyy-MM-dd"
+            format.isLenient = false
+            guard let date = format.date(from: value), format.string(from: date) == value else { return false }
+            let today = format.string(from: now)
+            return closing ? value >= today : value <= today
+        }
+        guard let parsed = isoDate(value) else { return false }
+        return closing ? parsed >= now : parsed <= now
+    }
+
+    static func job(_ detail: [String: Any], externalPath: String, source: WorkdaySource, now: Date = Date()) -> [String: Any]? {
+        guard detailURL(externalPath, source: source) != nil,
+              detail["canApply"] as? Bool == true,
+              detail["posted"] as? Bool != false,
+              let title = detail["title"] as? String, relevant(title),
+              let identifier = detail["jobReqId"] as? String, !identifier.isEmpty else { return nil }
+        let location = detail["location"] as? String ?? ""
+        let country = (detail["country"] as? [String: Any])?["descriptor"] as? String ?? ""
+        // Country is authoritative; a title slug mentioning Saudi is not geography.
+        if !country.isEmpty {
+            guard country.localizedCaseInsensitiveContains("Saudi") else { return nil }
+        } else {
+            guard location.range(of: "Saudi|Riyadh|Jeddah|Dammam|Khobar|\\bSAU\\b", options: [.regularExpression, .caseInsensitive]) != nil else { return nil }
+        }
+        let deadline = detail["endDate"] as? String
+        if let deadline, !dateIsEligible(deadline, now: now, closing: true) { return nil }
+        let startDate = detail["startDate"] as? String ?? ""
+        guard dateIsEligible(startDate, now: now, closing: false) else { return nil }
+        var displayLocation = location.isEmpty ? country : location
+        if country.localizedCaseInsensitiveContains("Saudi"),
+           displayLocation.range(of: "Saudi|Riyadh|Jeddah|Dammam|Khobar|\\bSAU\\b", options: [.regularExpression, .caseInsensitive]) == nil {
+            displayLocation += ", Saudi Arabia"
+        }
+        let fallback = "https://\(source.host)/en-US/\(source.board)\(externalPath)"
+        let candidate = (detail["externalUrl"] as? String).flatMap(URL.init(string:))
+        let url = candidate?.scheme == "https" && candidate?.host == source.host ? candidate!.absoluteString : fallback
+        return [
+            "id": "\(source.tenant)-\(identifier)", "title": title, "company": source.name,
+            "location": displayLocation, "url": url,
+            "posted": startDate, "closes": deadline.flatMap { $0.isEmpty ? nil : $0 } as Any? ?? NSNull(),
+            "status": "live", "salary": NSNull(), "kind": "live", "fit": "Needs review",
+            "summary": "New employer listing. Review full requirements before applying."
+        ]
+    }
+
+    static func refresh() async -> [String: Any] {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.timeoutIntervalForRequest = 20
+        configuration.timeoutIntervalForResource = 45
+        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        configuration.httpShouldSetCookies = false
+        let session = URLSession(configuration: configuration, delegate: NoRedirects(), delegateQueue: nil)
+        defer { session.invalidateAndCancel() }
+        let results = await withTaskGroup(of: SourceResult.self, returning: [SourceResult].self) { group in
+            for source in sources {
+                group.addTask {
+                    await boundedSource(name: source.name) { await fetch(source, session: session) }
+                }
+            }
+            group.addTask {
+                await boundedSource(name: "Qiddiya") { await fetchQiddiya(session: session) }
+            }
+            var results: [SourceResult] = []
+            for await result in group { results.append(result) }
+            return results.sorted { $0.name < $1.name }
+        }
+        return [
+            "checkedAt": ISO8601DateFormatter().string(from: Date()),
+            "jobs": results.flatMap(\.jobs), "sources": results.map(\.status)
+        ]
+    }
+
+    struct SourceResult {
+        let name: String
+        let jobs: [[String: Any]]
+        let status: [String: Any]
+    }
+
+    private enum SourceEvent {
+        case finished(SourceResult), deadline, cancelled
+    }
+
+    static func boundedSource(name: String, budgetNanoseconds: UInt64 = sourceBudgetNanoseconds,
+                              operation: @escaping @Sendable () async -> SourceResult) async -> SourceResult {
+        await withTaskGroup(of: SourceEvent.self) { group in
+            group.addTask { .finished(await operation()) }
+            group.addTask {
+                do { try await Task.sleep(nanoseconds: budgetNanoseconds); return .deadline }
+                catch { return .cancelled }
+            }
+            var completed: SourceResult?
+            var timedOut = false
+            while completed == nil, let event = await group.next() {
+                switch event {
+                case .finished(let result): completed = result; group.cancelAll()
+                case .deadline: timedOut = true; group.cancelAll()
+                case .cancelled: break
+                }
+            }
+            guard let result = completed else {
+                return SourceResult(name: name, jobs: [], status: ["name": name, "ok": false, "count": 0, "error": "Employer search was cancelled."])
+            }
+            guard timedOut else { return result }
+            var status = result.status
+            status["timedOut"] = true
+            status["incomplete"] = true
+            status["limited"] = true
+            status["error"] = "Employer search reached its time limit; results may be incomplete."
+            return SourceResult(name: result.name, jobs: result.jobs, status: status)
+        }
+    }
+
+    static func fetchQiddiya(session: URLSession) async -> SourceResult {
+        let endpoint = URL(string: "https://apply.workable.com/api/v3/accounts/qiddiya-investment-company-1/jobs")!
+        var jobs: [String: [String: Any]] = [:]
+        var scanned = 0
+        var limited = false
+        var failures = 0
+        var successfulQueries = 0
+        for query in ["healthcare", "procurement", "performance"] {
+            var token: String?
+            var receivedPage = false
+            do {
+                for _ in 0..<2 {
+                    guard !Task.isCancelled else { throw CancellationError() }
+                    var request = URLRequest(url: endpoint)
+                    request.httpMethod = "POST"
+                    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                    request.setValue("application/json", forHTTPHeaderField: "Accept")
+                    var body: [String: Any] = ["query": query, "location": [], "department": [], "worktype": [], "remote": []]
+                    if let token { body["token"] = token }
+                    request.httpBody = try JSONSerialization.data(withJSONObject: body)
+                    let page = try await json(request, session: session)
+                    guard let rows = page["results"] as? [[String: Any]] else { throw FeedError.invalidResponse }
+                    receivedPage = true
+                    scanned += rows.count
+                    for row in rows {
+                        if let match = qiddiyaJob(row), let id = match["id"] as? String { jobs[id] = match }
+                    }
+                    token = (page["nextPage"] as? String).flatMap { $0.isEmpty ? nil : $0 }
+                    if token == nil { break }
+                }
+                limited = limited || token != nil
+            } catch { failures += 1 }
+            if receivedPage { successfulQueries += 1 }
+        }
+        var status: [String: Any] = ["name": "Qiddiya", "ok": successfulQueries > 0, "count": jobs.count, "scanned": scanned, "limited": limited, "queryErrors": failures, "incomplete": limited || failures > 0]
+        if failures > 0 { status["error"] = "\(failures) Qiddiya searches failed; results may be incomplete." }
+        return SourceResult(name: "Qiddiya", jobs: jobs.keys.sorted().compactMap { jobs[$0] }, status: status)
+    }
+
+    static func fetch(_ source: WorkdaySource, session: URLSession) async -> SourceResult {
+        do {
+            var request = URLRequest(url: source.baseURL.appendingPathComponent("jobs"))
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.setValue("application/json", forHTTPHeaderField: "Accept")
+            let facets: [String: [String]] = source.tenant == "novartis" ? ["locationCountry": ["50423b5190ad49bb89e94cd58dfaad69"]] : [:]
+            request.httpBody = try JSONSerialization.data(withJSONObject: ["appliedFacets": facets, "limit": 20, "offset": 0, "searchText": source.tenant == "novartis" ? "" : "Saudi"])
+            let listing = try await json(request, session: session)
+            guard let postings = listing["jobPostings"] as? [[String: Any]], let total = listing["total"] as? Int else { throw FeedError.invalidResponse }
+            let candidates = postings.prefix(20).filter { posting in
+                (posting["title"] as? String).map(relevant) ?? false
+            }
+            var jobs: [[String: Any]] = []
+            var failures = 0
+            var successfulDetails = 0
+            for (index, posting) in candidates.enumerated() {
+                guard !Task.isCancelled else { failures += candidates.count - index; break }
+                guard let path = posting["externalPath"] as? String,
+                      let url = detailURL(path, source: source) else { failures += 1; continue }
+                do {
+                    let response = try await json(URLRequest(url: url), session: session)
+                    guard let detail = response["jobPostingInfo"] as? [String: Any] else { throw FeedError.invalidResponse }
+                    successfulDetails += 1
+                    if let match = job(detail, externalPath: path, source: source) { jobs.append(match) }
+                } catch {
+                    failures += 1
+                    if Task.isCancelled { failures += candidates.count - index - 1; break }
+                }
+            }
+            var status: [String: Any] = ["name": source.name, "ok": candidates.isEmpty || successfulDetails > 0, "count": jobs.count, "scanned": min(postings.count, 20), "total": total, "limited": total > 20, "detailErrors": failures, "incomplete": total > 20 || failures > 0]
+            if failures > 0 { status["error"] = "\(failures) listing detail checks failed; results may be incomplete." }
+            return SourceResult(name: source.name, jobs: jobs, status: status)
+        } catch {
+            return SourceResult(name: source.name, jobs: [], status: ["name": source.name, "ok": false, "count": 0, "scanned": 0, "limited": false, "error": error.localizedDescription])
+        }
+    }
+
+    private static func json(_ request: URLRequest, session: URLSession) async throws -> [String: Any] {
+        let (data, response) = try await session.data(for: request)
+        guard let http = response as? HTTPURLResponse else { throw FeedError.invalidResponse }
+        guard (200..<300).contains(http.statusCode) else { throw FeedError.http(http.statusCode) }
+        guard data.count <= 8_000_000, let value = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { throw FeedError.invalidResponse }
+        return value
+    }
+
+    private enum FeedError: LocalizedError {
+        case invalidResponse, http(Int)
+        var errorDescription: String? {
+            switch self {
+            case .invalidResponse: return "The employer returned an unreadable response."
+            case .http(let status): return "Employer request failed (HTTP \(status))."
+            }
+        }
+    }
+
+    private final class NoRedirects: NSObject, URLSessionTaskDelegate {
+        func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse,
+                        newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+            completionHandler(nil)
+        }
+    }
+}
