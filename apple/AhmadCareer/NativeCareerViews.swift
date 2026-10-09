@@ -22,6 +22,9 @@ struct NativeCareerRoot: View {
         }
         .environmentObject(store)
         .tint(.careerAccent)
+        .onReceive(store.$storageError.compactMap { $0 }) { error in
+            UIAccessibility.post(notification: .announcement, argument: error)
+        }
         .safeAreaInset(edge: .top, spacing: 0) {
             if let error = store.storageError {
                 Label(error, systemImage: "exclamationmark.triangle")

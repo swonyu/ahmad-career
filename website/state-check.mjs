@@ -40,6 +40,8 @@ function createApp(initialStorage = new Map(), options = {}) {
         text = String(value);
         if (selector === '#toast') toasts.push(text);
       },
+      setAttribute(name,value) { this[name]=String(value); },
+      getAttribute(name) { return this[name]??null; },
       addEventListener() {},
       showModal() { this.open = true; },
       close() { this.open = false; },
@@ -80,7 +82,10 @@ function createApp(initialStorage = new Map(), options = {}) {
     },
   });
   context.window = context;
-  for (const { name, source } of scripts) vm.runInContext(source, context, { filename: name });
+  for (const { name, source } of scripts) {
+    vm.runInContext(source, context, { filename: name });
+    if(name==='data.js'&&options.bundle)vm.runInContext('globalThis.CAREER_DATA='+JSON.stringify(options.bundle),context);
+  }
   const evaluate = source => vm.runInContext(source, context);
   return {
     storage, toasts, downloads, failKeys, evaluate,
@@ -597,6 +602,66 @@ await check('Navigation and both refresh transports retain local criteria withou
   await app.evaluate('refresh()');assert.deepEqual(app.json('nativeRequests'),[{action:'refresh'}]);
   assert.equal(app.storage.get('ahmad-profile'),durable);
   const restored=createApp(app.storage);assert.deepEqual(restored.json('({...profile,unknownSalary:profile.unknownSalary??"show"})'),criteriaProfile);
+});
+
+await check('Partial search warning and original check time survive reload',()=>{
+  const app=createApp(),payload=success([role]);
+  payload.sources[0].detailErrors=1;payload.sources[0].error='One detail unavailable';
+  app.receive(payload);
+  const restored=createApp(app.storage);restored.evaluate('go("live")');
+  assert.match(restored.evaluate('livePage()'),/Search coverage is incomplete/);
+  assert.match(restored.json('coverageWarning'),/One detail unavailable/);
+  assert.equal(restored.json('live.checkedAt'),payload.checkedAt);
+});
+
+await check('Corrected research remains durable after archival and a stale tab status edit',async()=>{
+  const base=createApp().json('D'),a=structuredClone(base),b=structuredClone(base),c=structuredClone(base),id=base.jobs[0].id;
+  a.jobs[0]={...a.jobs[0],title:'Superseded title',summary:'Superseded evidence',researchCheckedAt:'2020-01-01',closes:'2099-12-31'};
+  b.jobs[0]={...b.jobs[0],title:'Corrected title',summary:'Corrected evidence',researchCheckedAt:'2026-10-09',closes:'2099-10-10'};
+  c.jobs=c.jobs.filter(j=>j.id!==id);
+  const shared=new Map(),old=createApp(shared,{shared:true,bundle:a});old.toggleSaved(id);old.changeStatus(id,'Applied');
+  createApp(shared,{shared:true,bundle:b});
+  assert.equal(JSON.parse(shared.get('ahmad-workspace')).savedDetails[id].title,'Corrected title','Bundle B must persist retained corrections without another user action');
+  old.changeStatus(id,'Interviewing');
+  const archived=createApp(shared,{shared:true,bundle:c}),job=archived.json(`jobById(${JSON.stringify(id)})`);
+  assert.equal(job.title,'Corrected title');assert.equal(job.summary,'Corrected evidence');assert.equal(job.closes,'2099-10-10');assert.equal(job.kind,'archived');
+  assert.equal(archived.json(`states[${JSON.stringify(id)}]`),'Interviewing');
+  const notes=await archived.exportNotes();
+  assert.match(notes,/Archived research/);assert.match(notes,/Research checked: 2026-10-09/);assert.match(notes,/Listed deadline: 2099-10-10/);
+});
+await check('Unsaving a removed live lead keeps an open detail actionable',async()=>{
+  const app=createApp();app.receive(success([role]));app.toggleSaved(role.id);app.receive(success([],newTime));
+  app.evaluate(`openJob(${JSON.stringify(role.id)})`);app.toggleSaved(role.id);
+  assert.ok(app.evaluate(`Boolean(jobById(${JSON.stringify(role.id)}))`),'Open role snapshot must survive unsaving');
+  app.changeStatus(role.id,'Applied');assertTracked(app,'After removing saved flag');
+  assert.match(app.evaluate(`draft(jobById(${JSON.stringify(role.id)}))`),/Application preparation/);
+  assert.ok((await app.exportNotes()).includes(role.title));
+});
+
+await check('Rejected-listing warning survives repeated reloads without inflation',()=>{
+  const app=createApp();app.receive(success([role,{}]));assert.equal(app.json('live.invalidJobs'),1);
+  const next=createApp(app.storage),again=createApp(next.storage);
+  for(const instance of [next,again]){assert.equal(instance.json('live.invalidJobs'),1);assert.match(instance.evaluate('coverageWarning'),/1 malformed/);assert.equal(instance.json('live.checkedAt'),oldTime)}
+});
+await check('Saved theme exposes its current state and toggles accessibly',async()=>{
+  for(const dark of [true,false]){
+    const app=createApp(new Map([['ahmad-dark',JSON.stringify(dark)]]));
+    assert.equal(app.evaluate(`$('[data-action="theme"]').getAttribute('aria-pressed')`),String(dark));
+    await app.dispatch('click',{closest:()=>({dataset:{action:'theme'}})});
+    assert.equal(app.evaluate(`$('[data-action="theme"]').getAttribute('aria-pressed')`),String(!dark));
+    assert.match(app.evaluate('planPage()'),/id="check-profile"/);
+  }
+});
+await check('A role opened during refresh remains actionable after the new batch omits it',async()=>{
+  let resolve;const app=createApp(undefined,{fetch:()=>new Promise(r=>{resolve=r})});app.receive(success([role]));
+  const pending=app.evaluate('refresh()');app.evaluate(`openJob(${JSON.stringify(role.id)})`);
+  resolve({ok:true,json:async()=>success([],newTime)});await pending;
+  assert.equal(app.evaluate(`jobById(${JSON.stringify(role.id)})?.title`),role.title);
+  await app.dispatch('click',{closest:()=>({dataset:{draft:role.id}})});
+  app.changeStatus(role.id,'Applied');assertTracked(app,'Opened during refresh');assert.ok((await app.exportNotes()).includes(role.title));
+});
+await check('Unknown status events cannot create orphan application records',()=>{
+  const app=createApp();app.changeStatus('missing-role','Applied');assert.equal(app.evaluate('states["missing-role"]'),undefined);
 });
 
 if (!process.exitCode) console.log(`\n${cases.length} application-state regression groups passed.`);

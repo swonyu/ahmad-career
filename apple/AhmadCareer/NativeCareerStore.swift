@@ -27,7 +27,7 @@ struct CareerJob: Codable, Identifiable, Hashable {
 
     var initials: String { company == "Johnson & Johnson" ? "J&J" : String(company.prefix(1)) }
     var isSaudi: Bool { location.range(of: "Saudi|Riyadh|Jeddah|Dammam|Khobar|\\bSAU\\b|الرياض|جدة|السعودية", options: [.regularExpression,.caseInsensitive]) != nil }
-    var hasRiyadhEvidence:Bool { location.range(of:"(?:^|[^\\p{L}])(?:riyadh|الرياض)(?=$|[^\\p{L}])",options:[.regularExpression,.caseInsensitive]) != nil }
+    var hasRiyadhEvidence:Bool { location.replacingOccurrences(of:"\\briyadh\\s+(?:region|province)\\b|(?:منطقة|إقليم)\\s+الرياض",with:"",options:[.regularExpression,.caseInsensitive]).range(of:"(?:^|[^\\p{L}])(?:riyadh|الرياض)(?=$|[^\\p{L}])",options:[.regularExpression,.caseInsensitive]) != nil }
     // ponytail: location-text heuristic; replace with explicit worksite data when feeds supply it.
     var requiresRiyadhConfirmation:Bool {
         hasRiyadhEvidence && location.range(of:"\\b(?:jeddah|dammam|khobar|dhahran|makkah|mecca|madinah|medina|taif|tabuk|abha|jubail|yanbu|qassim|buraidah|hail|jazan|najran|hofuf|ahsa)\\b|جدة|الدمام|الخبر|الظهران|مكة|المدينة|الطائف|تبوك|أبها|الجبيل|ينبع|القصيم|بريدة|حائل|جازان|نجران|الهفوف|الأحساء|[/;؛]|\\b(?:or|and|multiple|locations)\\b|(?:^|\\s)(?:أو|و)(?:\\s|$)|مواقع متعددة|موقعين",options:[.regularExpression,.caseInsensitive]) != nil
@@ -130,17 +130,23 @@ struct NativeWorkspace: Codable {
             do { workspace=try JSONDecoder().decode(NativeWorkspace.self,from:Data(contentsOf:self.storageURL)) }
             catch {canWrite=false;storageError="Saved records could not be read. They have been preserved; no new changes will overwrite that file."}
         }
+        if canWrite {
+            let next=retainingKnownJobs(workspace)
+            if next.snapshots != workspace.snapshots {commit(next)}
+        }
     }
     func isCurrentResearch(_ job:CareerJob)->Bool { research.jobs.contains { $0.id == job.id } }
     private func healthcareLead(_ job:CareerJob)->Bool {
         CareerFeed.sources.contains { $0.name == job.company } && CareerFeed.relevant(job.title)
     }
-    var liveJobs:[CareerJob] {
-        guard let live=workspace.live else {return []}
-        return live.jobs.filter { healthcareLead($0) && $0.isSaudi && !$0.isExpired }.map { job in
+    private var cachedEmployerJobs:[CareerJob] {cachedEmployerJobs(in:workspace)}
+    private func cachedEmployerJobs(in value:NativeWorkspace)->[CareerJob] {
+        guard let live=value.live else {return []}
+        return live.jobs.filter { healthcareLead($0) && $0.isSaudi }.map { job in
             var stamped=job;stamped.lastCheckedAt=job.lastCheckedAt ?? live.checkedAt;return stamped
         }
     }
+    var liveJobs:[CareerJob] {cachedEmployerJobs.filter {!$0.isExpired}}
     private func factsDate(_ job:CareerJob)->Date? { (job.lastCheckedAt ?? job.researchCheckedAt).flatMap(CareerFeed.parsedDate) }
     private func mergeFacts(_ facts:CareerJob, editorial:CareerJob)->CareerJob {
         var current=facts
@@ -151,9 +157,10 @@ struct NativeWorkspace: Codable {
         current.researchCheckedAt=editorial.researchCheckedAt;current.kind=editorial.kind
         return current
     }
-    var shortlistJobs:[CareerJob] {research.jobs.map { editorial in
+    var shortlistJobs:[CareerJob] {shortlistJobs(in:workspace)}
+    private func shortlistJobs(in value:NativeWorkspace)->[CareerJob] {research.jobs.map { editorial in
         var current=editorial
-        for candidate in [workspace.snapshots[editorial.id], liveJobs.first(where:{$0.id==editorial.id})].compactMap({$0}) {
+        for candidate in [value.snapshots[editorial.id], cachedEmployerJobs(in:value).first(where:{$0.id==editorial.id})].compactMap({$0}) {
             if let checked=factsDate(candidate),checked > (factsDate(current) ?? .distantPast) {
                 current=mergeFacts(candidate,editorial:editorial)
             }
@@ -162,7 +169,7 @@ struct NativeWorkspace: Codable {
     }}
     private var allJobs:[CareerJob] {
         var jobs=workspace.snapshots
-        for job in liveJobs {
+        for job in cachedEmployerJobs {
             if let prior=jobs[job.id] {
                 if (factsDate(prior) ?? .distantPast) > (factsDate(job) ?? .distantPast) {continue}
                 jobs[job.id]=(prior.rank != nil || prior.kind == "archived" || prior.kind == "researched") ? mergeFacts(job,editorial:prior) : job
@@ -208,8 +215,17 @@ struct NativeWorkspace: Codable {
         if done {next.completed.insert(id)} else {next.completed.remove(id)}
         commit(next)
     }
-    private func commit(_ next:NativeWorkspace) {
-        guard canWrite else {return}
+    private func retainingKnownJobs(_ value:NativeWorkspace)->NativeWorkspace {
+        var next=value
+        let observed=Set(cachedEmployerJobs(in:value).map(\.id))
+        for job in shortlistJobs(in:value) where next.snapshots[job.id] != nil || next.saved.contains(job.id) || next.statuses[job.id] != nil || observed.contains(job.id) {
+            next.snapshots[job.id]=job
+        }
+        return next
+    }
+    private func commit(_ value:NativeWorkspace) {
+        guard canWrite else {storageError="Saved records could not be read. They have been preserved; no new changes will overwrite that file.";return}
+        let next=retainingKnownJobs(value)
         do {
             let data=try JSONEncoder().encode(next)
             try FileManager.default.createDirectory(at:storageURL.deletingLastPathComponent(),withIntermediateDirectories:true)
@@ -255,7 +271,7 @@ struct NativeWorkspace: Codable {
             var seen=Set<String>()
             let jobs=valid.filter { healthcareLead($0) && CareerFeed.dateIsEligible($0.posted,now:now,closing:false) && CareerFeed.dateIsEligible($0.closes ?? "",now:now,closing:true) && seen.insert($0.id).inserted }.sorted { ($0.posted,$0.title) > ($1.posted,$1.title) }
             var next=workspace;next.live=LiveSnapshot(checkedAt:checkedAt,jobs:jobs,sources:sources)
-            for job in jobs where next.snapshots[job.id] != nil || next.saved.contains(job.id) || next.statuses[job.id] != nil {
+            for job in jobs where next.snapshots[job.id] != nil || next.saved.contains(job.id) || next.statuses[job.id] != nil || isCurrentResearch(job) {
                 let prior=next.snapshots[job.id]
                 let editorial=research.jobs.first(where:{$0.id==job.id}) ?? prior.flatMap { $0.rank != nil || $0.kind == "archived" || $0.kind == "researched" ? $0 : nil }
                 next.snapshots[job.id]=editorial.map {mergeFacts(job,editorial:$0)} ?? job

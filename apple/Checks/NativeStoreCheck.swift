@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 @main struct NativeStoreCheck {
  @MainActor static func main() throws {
@@ -118,6 +119,49 @@ import Foundation
   let newStore=NativeCareerStore(researchURL:researchURL,storageURL:migrationURL)
   assert(newStore.current(first).title==first.title && newStore.current(first).closes==first.closes, "New research must replace old saved facts")
   assert(newStore.status(for:first)=="Applied" && newStore.isSaved(first) && newStore.workspace.profile==profile && newStore.workspace.completed.contains("cv"))
+  // A corrected bundle must remain durable when a subsequent bundle archives the role.
+  var removedResearch=store.research;removedResearch.jobs.removeAll {$0.id==first.id}
+  let removedResearchURL=root.appendingPathComponent("removed-research.json")
+  try JSONEncoder().encode(removedResearch).write(to:removedResearchURL)
+  let removedStore=NativeCareerStore(researchURL:removedResearchURL,storageURL:migrationURL)
+  assert(removedStore.current(first).title==first.title && removedStore.current(first).closes==first.closes, "Bundle corrections must survive later archival without re-saving a role")
+  assert(removedStore.status(for:first)=="Applied" && removedStore.isSaved(first) && removedStore.workspace.profile==profile && removedStore.workspace.completed.contains("cv"))
+  // A temporary failed reconciliation must catch up on the next successful save.
+  let recoveryDir=root.appendingPathComponent("recovery"),recoveryURL=recoveryDir.appendingPathComponent("state.json")
+  let recoveryA=NativeCareerStore(researchURL:oldResearchURL,storageURL:recoveryURL)
+  recoveryA.toggleSaved(recoveryA.shortlistJobs[0]);recoveryA.setStatus("Applied",for:recoveryA.shortlistJobs[0])
+  try FileManager.default.setAttributes([.posixPermissions:0o500],ofItemAtPath:recoveryDir.path)
+  defer {try? FileManager.default.setAttributes([.posixPermissions:0o700],ofItemAtPath:recoveryDir.path)}
+  let recoveryB=NativeCareerStore(researchURL:researchURL,storageURL:recoveryURL)
+  assert(recoveryB.storageError != nil && recoveryB.current(first).title==first.title)
+  try FileManager.default.setAttributes([.posixPermissions:0o700],ofItemAtPath:recoveryDir.path)
+  recoveryB.setChecklist("cv",done:true)
+  let recoveryC=NativeCareerStore(researchURL:removedResearchURL,storageURL:recoveryURL)
+  assert(recoveryB.storageError==nil && recoveryC.current(first).title==first.title,"An unrelated recovery save must preserve newly corrected facts")
+  assert(recoveryC.isSaved(first) && recoveryC.status(for:first)=="Applied" && recoveryC.workspace.completed.contains("cv"))
+  let corruptURL=root.appendingPathComponent("corrupt.json"),corrupt=Data("unreadable workspace".utf8)
+  try corrupt.write(to:corruptURL)
+  let blocked=NativeCareerStore(researchURL:researchURL,storageURL:corruptURL)
+  var notices=0
+  let subscription=blocked.$storageError.dropFirst().compactMap{$0}.sink{_ in notices+=1}
+  blocked.toggleSaved(first);blocked.setChecklist("cv",done:true)
+  let preserved=try Data(contentsOf:corruptURL)
+  assert(notices==2 && preserved==corrupt && blocked.savedJobs.isEmpty,"Each refused action publishes an error without overwriting unreadable data")
+  withExtendedLifetime(subscription) {}
+  // Expired cached evidence must never reopen an older researched deadline.
+  var expiryResearch=store.research;expiryResearch.jobs[0].closes="2099-12-31"
+  let expiryResearchURL=root.appendingPathComponent("expiry-research.json"),expiryStateURL=root.appendingPathComponent("expiry-state.json")
+  try JSONEncoder().encode(expiryResearch).write(to:expiryResearchURL)
+  var expiredJob=first;expiredJob.closes="2000-01-01";expiredJob.lastCheckedAt=nil
+  var expiryWorkspace=NativeWorkspace()
+  expiryWorkspace.live=LiveSnapshot(checkedAt:ISO8601DateFormatter().string(from:Date()),jobs:[expiredJob],sources:[EmployerStatus(name:first.company,ok:true,count:1)])
+  try JSONEncoder().encode(expiryWorkspace).write(to:expiryStateURL)
+  let expiryStore=NativeCareerStore(researchURL:expiryResearchURL,storageURL:expiryStateURL)
+  assert(expiryStore.liveJobs.isEmpty && expiryStore.current(first).isExpired, "Expired employer evidence stays authoritative but absent from live discovery")
+  expiryStore.toggleSaved(first);expiryStore.setStatus("Applied",for:first)
+  expiryStore.acceptLive(["checkedAt":ISO8601DateFormatter().string(from:Date()),"jobs":[],"sources":[["name":first.company,"ok":true,"count":0]]])
+  let expiryRestart=NativeCareerStore(researchURL:expiryResearchURL,storageURL:expiryStateURL)
+  assert(expiryRestart.current(first).closes=="2000-01-01" && expiryRestart.isSaved(first) && expiryRestart.status(for:first)=="Applied", "Newer expired facts survive an empty refresh and restart")
   var sameDayResearch=store.research
   sameDayResearch.jobs[0].title="Superseded same-day title";sameDayResearch.jobs[0].location="Jeddah, Saudi Arabia"
   let sameDayResearchURL=root.appendingPathComponent("same-day-research.json"),sameDayStateURL=root.appendingPathComponent("same-day-state.json")
@@ -178,7 +222,7 @@ import Foundation
   assert(NativeProfile().preferredCity==nil && NativeProfile().minimumMonthlySAR==nil && NativeProfile().unknownSalary==nil, "Shipped criteria defaults remain neutral")
 
   var criteria=NativeProfile()
-  let cityCases:[(String,Bool,Bool)]=[("Riyadh, Saudi Arabia",true,false),("الرياض، السعودية",true,false),("Riyadh / Jeddah",true,true),("الرياض أو جدة",true,true),("Riyadh; 2 locations",true,true),("Riyadh and multiple locations",true,true),("Jeddah, Saudi Arabia",false,false),("Saudi Arabia",false,false),("2 locations",false,false),("",false,false),("NotRiyadh",false,false),("الرياضيات",false,false)]
+  let cityCases:[(String,Bool,Bool)]=[("Riyadh Region, Saudi Arabia",false,false),("Riyadh Province",false,false),("منطقة الرياض، السعودية",false,false),("Al Kharj, Riyadh Region",false,false),("Riyadh, Riyadh Region, Saudi Arabia",true,false),("الرياض، منطقة الرياض",true,false),("Riyadh, Saudi Arabia",true,false),("الرياض، السعودية",true,false),("Riyadh / Jeddah",true,true),("الرياض أو جدة",true,true),("Riyadh; 2 locations",true,true),("Riyadh and multiple locations",true,true),("Jeddah, Saudi Arabia",false,false),("Saudi Arabia",false,false),("2 locations",false,false),("",false,false),("NotRiyadh",false,false),("الرياضيات",false,false)]
   for (location,includesCity,conditional) in cityCases {
    var job=first;job.location=location
    assert(criteria.includesInDiscovery(job), "Neutral preferences retain the existing Saudi discovery set")

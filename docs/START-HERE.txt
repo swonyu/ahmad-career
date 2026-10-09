@@ -1,103 +1,84 @@
 AHMAD CAREER — RELEASE HANDOFF
-9 October 2026 • Asia/Riyadh
-Saudi healthcare supply chain and performance opportunities
+9 October 2026 • Asia/Riyadh • Version 7 receipt
 
-PUBLIC WEBSITE — VERSION 6
+PUBLIC WEBSITE — LIVE
 https://ahmad-career.jolly-lynx-4861.chatgpt.site/
-Public version 6 deployed at 05:31:58 Riyadh (02:31:58 UTC), from source
-20aa61b6b15817c3ea98865ebfe8105e38654ce2. At 05:32–05:33, the live Profile,
-application plan and Roche preparation note showed the corrected manager title.
-The earlier 04:35 search receipt remains six of six employers responding with
-three leads from Johnson & Johnson, Roche and Alcon. Search was not replayed for
-this profile-only release; those counts describe the earlier run.
+Version 7 deployed at 07:49:53 Riyadh (04:49:53 UTC), from source
+96c182097356609a1ccc19fdd7ee6fe769de0811. At 07:59, the live website completed a new
+search: all six configured employers responded and three leads were displayed
+(Johnson & Johnson, Roche and Alcon). These are bounded results, not all Saudi
+vacancies. Existing saved/applied records remained visible after the release.
 
-IPHONE / IPAD — BUILD 6 PROCESSED; READY TO SUBMIT
-Current source is 1.1 (6). Its universal Mac Release, iOS archive and App Store
-export succeeded; strict signature verification passed for the iOS export.
-Build-6 upload succeeded at 05:34:11 Riyadh with exit code 0. At 05:38, Apple showed
-build 6 processed and Ready to Submit, build 5 Ready to Submit and build 4
-Waiting for Review. Build-6 submission has not been attempted. Preserve build 4's
-review; submit the latest build 6 when Apple permits it. Build 5 is superseded. Build 6 is not approved
-or verified available for installation.
+IPHONE / IPAD — 1.1 (7), READY TO SUBMIT
+The build-7 iOS archive and App Store export succeeded, with strict signature
+verification for both. Upload succeeded at 07:53:58 Riyadh, exit code 0. Apple
+showed build 7 Ready to Submit at 07:56; build 4 remained Waiting for Review.
+Apple explicitly allows only one build from version 1.1 in beta review at a time.
+Build 4's review was preserved; build 7 has not been submitted or approved.
+Build-7 testing notes were saved and the Saved state verified at 07:59.
+Builds 5 and 6 are superseded. Submit 7 when Apple permits it, then verify approval
+and actual availability separately.
 
 Invitation: https://testflight.apple.com/join/S5bDCNbd
-The link has capacity for one tester. At the last invitation check, no approved
-build was available and testers could not join. An upload does not open testing.
-Ahmad's physical-phone installation has not been verified.
-See TestFlight-Preparation.txt for the separate upload/review/install checkpoints.
+The group has capacity for one tester. At the last invitation availability check,
+no approved build was available. This is not yet a verified installation route.
+Ahmad's physical-phone installation and launch remain unverified.
 
-CURRENT SOURCE AND PACKAGES
-The working Xcode source and refreshed Apple/Mac ZIPs are 1.1 (6), with the
-corrected public profile. The website source ZIP includes the deployed version-6
-profile correction. The Mac app is universal, unsigned and not notarized. Updated
-checksums are in SHA256SUMS.txt. Source archives exclude private photos, CVs,
-messages, preferences, runtime records and build logs.
+SOURCE AND PACKAGES
+The refreshed Apple source ZIP and universal Mac ZIP contain 1.1 (7). The website
+source ZIP contains the deployed version-7 source and checks. The Mac app supports
+Intel and Apple Silicon; it is unsigned and not notarized. SHA256SUMS.txt lists
+nine artifact/document checksums. Private CVs, chat, photographs, pay preferences,
+runtime records, signing material and build logs are excluded from source packages.
 
 OLDER DEVELOPMENT IPA — BUILD 3
-Ahmad-Career-iOS.ipa remains development-signed version 1.1 (3). It is not the
-current build 6. It works only on registered devices in its provisioning profile,
-including Saleh's paired iPhone. The profile expires 28 July 2027 unless revoked
-sooner. Physical installation was not confirmed after Xcode's connection reset.
+Ahmad-Career-iOS.ipa is unchanged development-signed 1.1 (3), not the build-7
+App Store export. It supports only devices registered in its provisioning profile,
+including Saleh's paired iPhone. Its profile expires 28 July 2027 unless revoked
+sooner. It cannot install on an arbitrary iPhone. Physical installation was not
+confirmed after the earlier Xcode device connection reset.
 
-REVIEWED BEHAVIOR
-Twenty review assignments are complete. Web checks passed, including 38 state
-regression groups, Worker cache-denial handling and employer-redirect boundaries.
-After the final profile wording, the full web suite including 38 state groups and
-native offline checks with nine jobs passed. Build-6 Mac Release and iOS archive/
-export passed, with source parity checked in Mac, archive and exported IPA.
-Earlier build-5 simulator and Mac WebKit checks remain dated evidence: the Mac
-run rendered three leads from six source results and
-passed saving, tracking, cache preservation and note export. Targeted native UI
-checks covered criteria, saved notes and the share sheet; neutral defaults were
-restored. Actual notes downloads in the Codex in-app browser and Chrome were
-verified at 05:17 Riyadh: both saved 564-byte files with correct timestamps,
-research date, four Not provided placeholders and six unchecked checklist items.
-Their contents matched except for the export timestamp and excluded criteria.
-The automation event wait timed out despite successful downloads; no code fix was
-needed. Chrome showed no unexpected notes dialog or console errors. Full VoiceOver
-and installation on Ahmad's physical iPhone remain unverified.
-Read Review-2026-10-09.html for evidence and limits. App-Review.html is historical.
+WHAT WAS IMPROVED AND CHECKED
+Employer responses are validated before being counted as successful. Invalid-row
+and partial-coverage warnings survive reload. Riyadh province alone does not
+establish a Riyadh-city match. Saved and tracked job facts remain durable across
+new research, removed listings, old tabs and recovered storage errors. An open
+job remains usable if a search finishes and removes that lead from discovery.
+Exports keep each role's evidence dates. Keyboard focus, theme state and native
+save-error announcements were improved.
 
-PUBLIC PROFILE CORRECTION
-Regulatory KPI Department Manager at the Supply Chain Command Center; KPI coverage
-across 20 health clusters and Ministry branches; prior QC leadership of more than
-10 staff and NUPCO coordination; Power BI, SQL and Excel. These are self-reported
-professional facts, not independently verified credentials. Dates, the nine jobs
-and specialist gates are unchanged; no private preferences, CV or photos were added.
+The final web suite passed core checks, 12 feed groups, 45 application-state
+groups and server cache/cooldown/coalescing/failure checks. Native offline checks,
+Mac Debug, iOS simulator, universal Mac Release, iOS archive and App Store export
+passed. Independent reviewers exercised the corrected cases and verified the
+seven web resources and research parity across source and build-7 bundles.
+Local browser focus/theme checks passed before deployment. Live version-7 search
+passed at 07:59. Earlier native simulator/share-sheet and browser-download checks
+remain dated evidence; see Review-2026-10-09.html. Complete VoiceOver behavior and
+installation on Ahmad's physical iPhone remain unverified.
 
 USING THE WORKSPACE
-The dated 9 October research contains nine healthcare leads, without adding
-unsuitable roles to reach ten. All nine have undisclosed salary. Live search
-queries six healthcare employers: Alcon, Novartis, Johnson & Johnson, GSK, BD and
-Roche. Qiddiya is not queried. Coverage is bounded; missing jobs do not prove closure.
+The 9 October research has nine healthcare leads, all with undisclosed salaries.
+Live search covers Alcon, Novartis, Johnson & Johnson, GSK, BD and Roche. Qiddiya is
+not an active source. Missing roles or source failures do not establish closure.
+Review conditional fit, city assignment, actual grade, qualifications and pay with
+each employer. Unknown salary never counts as meeting a chosen minimum.
 
-1. Review each role's conditional fit, requirements and employer source.
-2. Add qualifications and achievements you can substantiate in Profile.
-3. Optionally set local discovery criteria: Riyadh, minimum monthly SAR and whether
-   to show unverified pay. Defaults are any Saudi city, no pay floor and unknown
-   pay shown. Unknown pay never counts as meeting a minimum. Hiding unverified pay
-   with an active floor may empty discovery; saved/tracked roles remain available.
-4. Save or track leads. Recheck location, grade, availability and pay with employers.
-5. Review notes before sharing and submit applications personally.
+Optional discovery criteria affect Shortlist and Live search only. Neutral defaults
+are any Saudi city, no pay floor and unknown pay shown. Saved roles and history
+remain available under tighter criteria. A local Applied status does not send an
+employer application. Actual submissions and employer receipts are separate.
+There is no guarantee of qualification, seniority, salary, an interview or an offer.
 
-There is no guarantee of qualification, director-level seniority or salary.
-Historical salary guides are context, not vacancy-specific offers. No new employer
-applications or employer messages were sent during this review.
-
-PRIVACY AND EXISTING DATA
-Public research uses public professional and employer information. Private CVs,
-messages, photos and pay preferences are excluded from public source/packages.
-Profile details, criteria, saved roles and tracking stay in each browser/app on
-its device, without account sync. Criteria are excluded from search requests and
-exported notes; notes may include professional details the user enters. Existing
-saved data remains supported when optional criteria fields are absent. Clearing
-browser data or removing an app can erase it. Exports are readable notes, not an
-importable backup.
+PRIVACY AND STORAGE
+Profile, criteria and application records remain in each browser/app on its device;
+there is no account sync. Searches omit personal profile, criteria and notes.
+Exports omit discovery criteria but may contain professional details entered by
+the user. Review before sharing. Clearing storage or removing an app can erase
+records. Exported notes are readable copies, not an importable backup.
 
 BUILD FROM SOURCE
-Open ../apple/AhmadCareer.xcodeproj in Xcode. Select the AhmadCareer
-scheme and My Mac or an iPhone/iPad Simulator, then Run. For a physical device,
-select an authorized development team under Signing & Capabilities, connect and
-unlock it, and enable Developer Mode if prompted. The shared source includes no
-signing credentials or team selection. Setup and repeatable checks are in
-../apple/README.md.
+Open AhmadCareerApple/AhmadCareer.xcodeproj in Xcode. Select AhmadCareer and My Mac
+or an iPhone/iPad Simulator, then Run. A physical device needs an authorized team,
+provisioning and Developer Mode. The shared project contains no selected team or
+signing credentials. Instructions are in AhmadCareerApple/README.md.

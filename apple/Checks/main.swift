@@ -145,6 +145,14 @@ detail["location"]="Riyadh";detail["country"]=["descriptor":"United Arab Emirate
 precondition(CareerFeed.job(detail,externalPath:path,source:source,now:now)==nil)
 print("PASS: strict native dates, Saudi country descriptors and healthcare bridge metadata")
 
+detail["country"]=["descriptor":""];detail["endDate"]="2026-10-09"
+for location in ["الرياض","الرياض، السعودية","جدة"] {
+    detail["location"]=location
+    precondition(CareerFeed.job(detail,externalPath:path,source:source,now:now) != nil,"Arabic Saudi location must work without a structured country")
+}
+detail["country"]=["descriptor":"United Arab Emirates"]
+precondition(CareerFeed.job(detail,externalPath:path,source:source,now:now)==nil)
+
 // Real URLSession parsing and cancellation, with local responses instead of employer traffic.
 final class EmployerFixture: URLProtocol {
     static var scenario = "partial"
@@ -178,6 +186,11 @@ final class EmployerFixture: URLProtocol {
             }
         } else if path.hasSuffix("/jobs") {
             body = ["total": 2, "jobPostings": [["title": "Procurement Manager", "externalPath": "/job/Riyadh/Procurement_R1"], ["title": "Procurement Manager", "externalPath": "/job/Riyadh/Procurement_R2"]]]
+            if scenario == "badListing" {body=["total":1,"jobPostings":[[:]]]}
+            if scenario == "mixedListing" {body=["total":2,"jobPostings":[["title":"Procurement Manager","externalPath":"/job/Riyadh/Procurement_R1"],[:]]]}
+            if scenario == "emptyListing" {body=["total":0,"jobPostings":[]]}
+            if scenario == "negativeTotal" {body=["total":-1,"jobPostings":[]]}
+            if scenario == "boolTotal" {body=["total":true,"jobPostings":[]]}
         } else if scenario == "allFailed" || (scenario == "partial" && path.hasSuffix("R2")) {
             status = 503; body = [:]
         } else {
@@ -206,6 +219,12 @@ let fixtureConfiguration = URLSessionConfiguration.ephemeral
 fixtureConfiguration.protocolClasses = [EmployerFixture.self]
 let fixtureSession = URLSession(configuration: fixtureConfiguration)
 let employer = CareerFeed.sources[0]
+for scenario in ["badListing","mixedListing","emptyListing","negativeTotal","boolTotal"] {
+    EmployerFixture.scenario=scenario
+    let result=await CareerFeed.fetch(employer,session:fixtureSession)
+    precondition(result.status["ok"] as? Bool == ["mixedListing","emptyListing"].contains(scenario),"Listing failure must not be reported as successful empty coverage")
+    if scenario == "mixedListing" {precondition(result.jobs.count==1 && result.status["detailErrors"] as? Int==1)}
+}
 EmployerFixture.scenario = "partial"
 let partial = await CareerFeed.fetch(employer, session: fixtureSession)
 precondition(partial.jobs.count == 1 && partial.status["ok"] as? Bool == true, "One failed detail must not discard a verified employer lead")

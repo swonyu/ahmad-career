@@ -135,7 +135,7 @@ enum CareerFeed {
         if !country.isEmpty {
             guard saudiCountry else { return nil }
         } else {
-            guard location.range(of: "Saudi|Riyadh|Jeddah|Dammam|Khobar|\\bSAU\\b", options: [.regularExpression, .caseInsensitive]) != nil else { return nil }
+            guard location.range(of: "Saudi|Riyadh|Jeddah|Dammam|Khobar|\\bSAU\\b|الرياض|جدة|السعودية", options: [.regularExpression, .caseInsensitive]) != nil else { return nil }
         }
         let deadline = detail["endDate"] as? String
         if let deadline, !dateIsEligible(deadline, now: now, closing: true) { return nil }
@@ -143,7 +143,7 @@ enum CareerFeed {
         guard dateIsEligible(startDate, now: now, closing: false) else { return nil }
         var displayLocation = location.isEmpty ? country : location
         if saudiCountry,
-           displayLocation.range(of: "Saudi|Riyadh|Jeddah|Dammam|Khobar|\\bSAU\\b", options: [.regularExpression, .caseInsensitive]) == nil {
+           displayLocation.range(of: "Saudi|Riyadh|Jeddah|Dammam|Khobar|\\bSAU\\b|الرياض|جدة|السعودية", options: [.regularExpression, .caseInsensitive]) == nil {
             displayLocation += ", Saudi Arabia"
         }
         let fallback = "https://\(source.host)/en-US/\(source.board)\(externalPath)"
@@ -271,12 +271,16 @@ enum CareerFeed {
             let facets: [String: [String]] = source.tenant == "novartis" ? ["locationCountry": ["50423b5190ad49bb89e94cd58dfaad69"]] : [:]
             request.httpBody = try JSONSerialization.data(withJSONObject: ["appliedFacets": facets, "limit": 20, "offset": 0, "searchText": source.tenant == "novartis" ? "" : "Saudi"])
             let listing = try await json(request, session: session)
-            guard let postings = listing["jobPostings"] as? [[String: Any]], let total = listing["total"] as? Int else { throw FeedError.invalidResponse }
-            let candidates = postings.prefix(20).filter { posting in
-                (posting["title"] as? String).map(relevant) ?? false
+            guard let postings = listing["jobPostings"] as? [Any], let total = listing["total"] as? Int, total >= 0, strictBool(listing["total"]) == nil else { throw FeedError.invalidResponse }
+            let sampled = postings.prefix(20)
+            let valid = sampled.compactMap { row -> [String:Any]? in
+                guard let posting=row as? [String:Any],let title=posting["title"] as? String,!title.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,
+                      let path=posting["externalPath"] as? String,detailURL(path,source:source) != nil else {return nil}
+                return posting
             }
+            let candidates = valid.filter { relevant($0["title"] as! String) }
             var jobs: [[String: Any]] = []
-            var failures = 0
+            var failures = sampled.count-valid.count
             var successfulDetails = 0
             for (index, posting) in candidates.enumerated() {
                 guard !Task.isCancelled else { failures += candidates.count - index; break }
@@ -292,8 +296,8 @@ enum CareerFeed {
                     if Task.isCancelled { failures += candidates.count - index - 1; break }
                 }
             }
-            var status: [String: Any] = ["name": source.name, "ok": candidates.isEmpty || successfulDetails > 0, "count": jobs.count, "scanned": min(postings.count, 20), "total": total, "limited": total > 20, "detailErrors": failures, "incomplete": total > 20 || failures > 0]
-            if failures > 0 { status["error"] = "\(failures) listing detail checks failed; results may be incomplete." }
+            var status: [String: Any] = ["name": source.name, "ok": successfulDetails > 0 || candidates.isEmpty && (!valid.isEmpty || sampled.isEmpty), "count": jobs.count, "scanned": min(postings.count, 20), "total": total, "limited": total > 20 || postings.count > 20, "detailErrors": failures, "incomplete": total > 20 || postings.count > 20 || failures > 0]
+            if failures > 0 { status["error"] = "\(failures) listing checks failed; results may be incomplete." }
             return SourceResult(name: source.name, jobs: jobs, status: status)
         } catch {
             return SourceResult(name: source.name, jobs: [], status: ["name": source.name, "ok": false, "count": 0, "scanned": 0, "limited": false, "error": error.localizedDescription])

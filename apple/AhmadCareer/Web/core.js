@@ -10,7 +10,8 @@
   }
   function riyadhCity(location){
     // ponytail: location text is a bounded heuristic; use structured worksites when available.
-    if(!/(?:^|[^\p{L}])(?:riyadh|الرياض)(?=$|[^\p{L}])/iu.test(location||''))return 'outside';
+    const cityText=(location||'').replace(/\briyadh\s+(?:region|province)\b|(?:منطقة|إقليم)\s+الرياض/giu,'');
+    if(!/(?:^|[^\p{L}])(?:riyadh|الرياض)(?=$|[^\p{L}])/iu.test(cityText))return 'outside';
     const multiple=/\b(?:jeddah|dammam|khobar|dhahran|makkah|mecca|madinah|medina|taif|tabuk|abha|jubail|yanbu|qassim|buraidah|hail|jazan|najran|hofuf|ahsa)\b|جدة|الدمام|الخبر|الظهران|مكة|المدينة|الطائف|تبوك|أبها|الجبيل|ينبع|القصيم|بريدة|حائل|جازان|نجران|الهفوف|الأحساء|[\/;؛]|\b(?:or|and|multiple|locations)\b|(?:^|\s)(?:أو|و)(?:\s|$)|مواقع متعددة|موقعين/iu;
     return multiple.test(location)?'conditional':'confirmed';
   }
@@ -53,18 +54,21 @@
   function normalizeLive(payload){
     if(!payload||typeof payload!=='object'||!parsedDate(payload.checkedAt)||isFuture(payload.checkedAt,new Date(Date.now()+60000))||!Array.isArray(payload.jobs)||payload.jobs.length>1000||!Array.isArray(payload.sources)||payload.sources.length>20)return null;
     if(payload.sources.some(s=>!s||typeof s.name!=='string'||typeof s.ok!=='boolean'||['count','scanned','detailErrors'].some(k=>s[k]!=null&&(!Number.isInteger(s[k])||s[k]<0))))return null;
-    const jobs=payload.jobs.map(normalizeJob).filter(Boolean),invalidJobs=payload.jobs.length-jobs.length;
-    if(invalidJobs&&!jobs.length)return null;
+    const jobs=payload.jobs.map(normalizeJob).filter(Boolean),rejected=payload.jobs.length-jobs.length;
+    if(rejected&&!jobs.length)return null;
+    const invalidJobs=Math.max(rejected,Number.isInteger(payload.invalidJobs)&&payload.invalidJobs>=0&&payload.invalidJobs<=1000?payload.invalidJobs:0);
     return{checkedAt:payload.checkedAt,jobs:dedupe(jobs).filter(j=>j.company!=='Qiddiya'&&j.healthcare!==false).map(j=>({...j,lastCheckedAt:payload.checkedAt})),invalidJobs,sources:payload.sources.map(s=>({...s,error:typeof s.error==='string'?s.error:''}))};
   }
+  const factsTime=job=>Math.max(parsedDate(job?.lastCheckedAt)?.time??-Infinity,parsedDate(job?.researchCheckedAt)?.time??-Infinity);
   function mergeJobs(researched,snapshots,live){
     const research=new Map(researched.map(j=>[j.id,j])),jobs=new Map(research);
     for(const current of [...snapshots,...live]){
       const prior=jobs.get(current.id),editorial=research.get(current.id);
-      const checked=parsedDate(current.lastCheckedAt)?.time,priorChecked=parsedDate(prior?.lastCheckedAt)?.time;
-      if(editorial&&(checked==null&&snapshots.includes(current)||checked!=null&&checked<=(parsedDate(editorial.researchCheckedAt)?.time??-Infinity)))continue;
+      const checked=factsTime(current),priorChecked=factsTime(prior);
+      if(editorial&&(checked??-Infinity)<=(parsedDate(editorial.researchCheckedAt)?.time??-Infinity))continue;
       const combined=priorChecked!=null&&(checked==null||priorChecked>checked)?{...current,...prior}:{...prior,...current};
-      const evidence=editorial||[prior,current].find(j=>j&&(j.rank||j.kind==='researched'||j.kind==='archived'));
+      let evidence=editorial;
+      for(const candidate of [prior,current])if(candidate&&(candidate.rank||candidate.kind==='researched'||candidate.kind==='archived')&&(!evidence||(parsedDate(candidate.researchCheckedAt)?.time??-Infinity)>(parsedDate(evidence.researchCheckedAt)?.time??-Infinity)))evidence=candidate;
       if(evidence){for(const k of ['rank','fit','summary','gaps','steps','minYears','healthcare','leadership','subtitle','researchCheckedAt'])if(evidence[k]!=null)combined[k]=evidence[k];combined.kind=editorial?'researched':'archived';if(!editorial)delete combined.rank}
       jobs.set(current.id,combined);
     }

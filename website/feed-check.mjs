@@ -59,6 +59,20 @@ await test('Final Workday detail must have an ID and a relevant title',async()=>
     assert.equal(result.jobs.length,0);
   }
 });
+await test('Malformed Workday detail fields report incomplete coverage, not zero matches',async()=>{
+  for(const patch of [{canApply:undefined},{canApply:1},{title:''},{title:'  '},{posted:'false'},{startDate:'2026-02-30'},{endDate:42},{location:[]},{country:'Saudi Arabia'},{country:{descriptor:42}}]){
+    const result=await workdaySource(source,workday({...detail,...patch}));
+    assert.equal(result.source.ok,false,JSON.stringify(patch));assert.equal(result.source.detailErrors,1);assert.equal(result.jobs.length,0);
+  }
+  for(const patch of [{canApply:false},{posted:false},{title:'Sales Manager'},{endDate:'2000-01-01'},{startDate:'2099-01-01'}]){
+    const result=await workdaySource(source,workday({...detail,...patch}));
+    assert.equal(result.source.ok,true);assert.equal(result.source.detailErrors,0);assert.equal(result.jobs.length,0);
+  }
+  for(const value of [undefined,null,'']){
+    const result=await workdaySource(source,workday({...detail,startDate:value,endDate:value,posted:null}));
+    assert.equal(result.source.ok,true);assert.equal(result.jobs.length,1);
+  }
+});
 await test('Conflicting structured country cannot be overridden by a Saudi label',async()=>{
   const result=await workdaySource(source,workday({...detail,location:'Riyadh',country:{descriptor:'United Arab Emirates'}},{...listing,locationsText:'Riyadh'}));
   assert.equal(result.jobs.length,0);
@@ -82,6 +96,18 @@ await test('Future Qiddiya publication and malformed codes are rejected',async()
     {state:'published',isInternal:false,shortcode:'FUTURE1',title:'Procurement Manager',location:{countryCode:'SA',city:'Riyadh'},published:new Date(now.getTime()+60000).toISOString()},
     {state:'published',isInternal:false,shortcode:'../other',title:'Procurement Manager',location:{countryCode:'SA',city:'Riyadh'},published:new Date(now-60000).toISOString()}
   ]}));assert.equal(result.jobs.length,0);
+});
+await test('Malformed listing rows are failures while genuine empty boards succeed',async()=>{
+  for(const bad of [{},null,{title:7},{title:'  '},{title:'Procurement Manager',externalPath:'/evil'}]){
+    const result=await workdaySource(source,async url=>url.endsWith('/jobs')?response({jobPostings:[bad],total:1}):response({jobPostingInfo:detail}));
+    assert.equal(result.source.ok,false);assert.equal(result.source.detailErrors,1);
+  }
+  for(const rows of [[],[{...listing,title:'Sales Manager'}]]){
+    const result=await workdaySource(source,async()=>response({jobPostings:rows,total:rows.length}));assert.equal(result.source.ok,true);assert.equal(result.source.detailErrors,0);
+  }
+  const mixed=await workdaySource(source,async url=>url.endsWith('/jobs')?response({jobPostings:[listing,{}],total:2}):response({jobPostingInfo:detail}));
+  assert.equal(mixed.source.ok,true);assert.equal(mixed.jobs.length,1);assert.equal(mixed.source.detailErrors,1);
+  for(const total of [-1,'many',true,1.5])await assert.rejects(workdaySource(source,async()=>response({jobPostings:[],total})),/Unexpected employer response/);
 });
 if(failures)process.exitCode=1;
 else console.log('All feed-boundary regression groups passed.');
