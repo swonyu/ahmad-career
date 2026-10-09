@@ -4,8 +4,9 @@ AHMAD CAREER — TESTFLIGHT RELEASE RECORD
 BUILD 7 — PROCESSED; READY TO SUBMIT
 Latest uploaded iOS distribution build: 1.1 (7).
 Current source 10 includes records, attention, refresh/provenance and feedback fixes.
-Local iOS Simulator Debug 1.1 (10) compiled, but no iOS 10 distribution archive,
-upload, beta submission, installation or native UI verification was performed.
+Local iOS Simulator Debug 1.1 (10) compiled. Device build 10 was later archived
+and exported locally; its separate receipt is below. No build-10 upload, beta
+submission, installation or native UI verification was performed.
 The earlier release 8 changed web/Mac only; no iOS 8 archive/upload occurred.
 Archive and App Store export succeeded; strict codesign verification passed on
 both archive and exported IPA. Upload succeeded at 07:53:58 Riyadh, exit code 0.
@@ -14,6 +15,19 @@ Build identifier: f7e1acb7-081a-482e-a1e5-a21c86d6b0d5.
 Exported IPA SHA256:
 85cd8e08c6467e0c5e243b286bd7431519eea40573d7f28055bec8b4f61b6dc2
 Build-7 What to Test notes saved; Saved state verified at 07:59.
+
+BUILD 10 — LOCAL DEVICE ARCHIVE AND APP STORE EXPORT; NOT UPLOADED
+Device archive succeeded 17:17:57 Riyadh, followed by a successful local App Store
+export. At 17:20:41 Riyadh, checks confirmed version 1.1 (10), iPhoneOS arm64,
+minimum iOS 16, iPhone/iPad families, valid strict archive/export signatures,
+expected distribution signing and app binding, and get-task-allow=false.
+Seven web assets and research match reviewed source; archive/export binary UUIDs
+match. No account refresh or provisioning-update flag was used.
+File: Ahmad-Career-iOS-AppStore-Build10.ipa
+SHA256: 6a1a39f153e347b5b4fee7c37217093c6aa83f15acb4b5aa44e22d98f70053c7
+This is an App Store upload artifact, not a direct-install file. Existing IPA3 and
+archive/export/upload7 remain unchanged. No upload, processing, submission,
+approval, tester availability or installation is established for build10.
 
 REVIEW QUEUE — PRESERVED
 Build 4 remained Waiting for Review at 07:56. The build-7 page explicitly said
@@ -31,8 +45,10 @@ polling or enter credentials; secure owner sign-in is needed first.
    build 4's queue. No submission or group change follows from a cached row.
 2. Select and validate the intended next distribution build deliberately: uploaded
    build 7 does not contain the new native record functionality in source 10.
-3. If distributing newer source, archive, export and upload that intended build;
-   verify its processing before continuing. A local simulator build is not an upload.
+3. If choosing prepared build10, verify the local artifact identity above, upload
+   only after authenticated access returns, and verify processing for that same
+   build. A local archive/export is not an upload. For newer code, first produce
+   and validate a new archive/export with its own build number.
 4. When Apple permits, explicitly submit the intended build for beta review.
    Selecting a build or approval of build 4 does not submit build 7 or a newer build.
    Verify the submitted status of that same build.
