@@ -9,7 +9,7 @@ export const SOURCES=[
  {name:'BD',host:'bdx.wd1.myworkdayjobs.com',tenant:'bdx',board:'EXTERNAL_CAREER_SITE_SAUDI_ARABIA'}
 ];
 async function jsonFetch(url,body,fetcher=fetch){
- const r=await fetcher(url,{method:body?'POST':'GET',redirect:'error',headers:{'Content-Type':'application/json','Accept':'application/json'},...(body?{body:JSON.stringify(body)}:{}),signal:AbortSignal.timeout(14000)});
+ const r=await fetcher(url,{method:body?'POST':'GET',redirect:'manual',headers:{'Content-Type':'application/json','Accept':'application/json'},...(body?{body:JSON.stringify(body)}:{}),signal:AbortSignal.timeout(14000)});
  if(!r.ok)throw new Error('Employer returned '+r.status);
  const text=await r.text();if(text.length>8000000)throw Error('Employer response was too large');return JSON.parse(text);
 }

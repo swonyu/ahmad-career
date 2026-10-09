@@ -20,7 +20,8 @@ assert.ok(workerSource);
 
 function worker(mode,cacheFailure){
   const puts=[],pending=[];let calls=0;
-  const fetcher=async(url)=>{
+  const fetcher=async(url,options)=>{
+    if(!['follow','manual'].includes(options?.redirect))throw new TypeError('Invalid redirect value, must be one of "follow" or "manual"');
     calls++;
     if(url.includes('apply.workable.com'))return Response.json({results:[]});
     if(url.endsWith('/jobs'))return Response.json({total:mode==='partial'?2:mode==='offline'?1:0,jobPostings:mode==='complete'?[]:[

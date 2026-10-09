@@ -25,6 +25,28 @@ await test('Saudi country retains a city outside the short city list',async()=>{
   const result=await workdaySource(source,workday());
   assert.equal(result.jobs.length,1);assert.match(result.jobs[0].location,/Saudi Arabia/);
 });
+await test('Employer requests use the edge-supported manual redirect mode',async()=>{
+  const requests=[],fetcher=async(url,options)=>{
+    if(!['follow','manual'].includes(options.redirect))throw new TypeError('Invalid redirect value, must be one of "follow" or "manual"');
+    requests.push(options);return workday()(url,options);
+  };
+  const result=await workdaySource(source,fetcher);
+  assert.equal(result.jobs.length,1);assert.deepEqual(requests.map(r=>[r.method,r.redirect]),[['POST','manual'],['GET','manual']]);
+});
+await test('Employer redirects fail closed at listing and detail boundaries',async()=>{
+  for(const status of [301,302,303,307,308])for(const boundary of ['listing','detail']){
+    const requests=[];let bodyReads=0;
+    const fetcher=async(url,options)=>{
+      requests.push({url,options});assert.equal(options.redirect,'manual');
+      if(boundary==='detail'&&url.endsWith('/jobs'))return response({jobPostings:[listing],total:1});
+      return {ok:false,status,headers:new Headers({Location:'https://redirect.invalid/job'}),text:async()=>{bodyReads++;return '{}'}};
+    };
+    if(boundary==='listing')await assert.rejects(workdaySource(source,fetcher),new RegExp('Employer returned '+status));
+    else{const result=await workdaySource(source,fetcher);assert.equal(result.jobs.length,0);assert.equal(result.source.ok,false);assert.equal(result.source.detailErrors,1)}
+    assert.equal(requests.length,boundary==='listing'?1:2);assert.equal(bodyReads,0);
+    assert.ok(requests.every(r=>new URL(r.url).hostname===source.host));
+  }
+});
 await test('All failed or malformed Workday details are an incomplete source',async()=>{
   for(const info of [new Error('Offline'),null]){
     const result=await workdaySource(source,workday(info,{...listing,locationsText:'Riyadh'}));
