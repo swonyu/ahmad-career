@@ -3,8 +3,10 @@ AHMAD CAREER — TESTFLIGHT RELEASE RECORD
 
 BUILD 7 — PROCESSED; READY TO SUBMIT
 Latest uploaded iOS distribution build: 1.1 (7).
-Web/Mac note freshness was corrected separately in release 8; native iPhone
-SwiftUI is unchanged. No iOS build 8 archive or upload was performed.
+Release 9 adds application records and Needs attention to current native source.
+Local iOS Simulator Debug 1.1 (9) compiled, but no iOS 9 distribution archive,
+upload, beta submission, installation or native UI verification was performed.
+The earlier release 8 changed web/Mac only; no iOS 8 archive/upload occurred.
 Archive and App Store export succeeded; strict codesign verification passed on
 both archive and exported IPA. Upload succeeded at 07:53:58 Riyadh, exit code 0.
 App Store Connect showed build 7 Ready to Submit at 07:56.
@@ -20,11 +22,16 @@ approved. No build-7 beta submission was attempted. Earlier build-5 submission
 had been blocked by the same review queue. Builds 5 and 6 are superseded by 7.
 Upload and processing are not beta-review submission, approval or availability.
 
-NEXT CHECKPOINTS
-1. Preserve build 4's pending review; check for an actual review-state change.
-2. Submit processed build 7 when Apple permits it, recording the result.
-3. After approval, verify the intended build is available to the external group
-   and the invitation accepts the intended tester.
+AUTHENTICATION CHECKPOINT AND NEXT STEPS
+Last fresh server-backed rows at 08:59 Riyadh: 7 Ready to Submit and 4 Waiting
+for Review. Around 10:00 Riyadh refresh redirected to Apple sign-in with
+ authResult=FAILED. Cached rows are not a new status receipt. Do not repeat login
+polling or enter credentials; secure owner sign-in is needed first.
+1. After authenticated access returns, check actual build/review state and preserve
+   build 4's queue. No submission or group change follows from a cached row.
+2. Select and validate the intended next distribution build deliberately: uploaded
+   build 7 does not contain the new native record functionality in source 9.
+3. After actual approval, verify intended-build availability and tester invitation.
 4. Verify installation and launch on Ahmad's iPhone separately.
 
 INVITATION
@@ -59,17 +66,20 @@ match source, archive, exported IPA and Mac resources. Web suite: 12 feed groups
 not claimed. Prior build-5 targeted UI/share-sheet checks remain historical.
 
 DISTRIBUTION FILES
-Current source includes corrected web/Mac assets; the shared build-number default
-remains 7. The universal Mac package is 1.1 (8), built with a build-number override.
-These new web assets are not identical to the earlier uploaded iOS 7 bundle. The separate
+Current source includes native record functionality and matching web/Mac assets;
+the shared build-number default remains 7. Universal Mac Release and local iOS
+Simulator Debug were built as 1.1 (9) with CURRENT_PROJECT_VERSION=9.
+Current source/assets differ from the earlier uploaded iOS 7 bundle. The separate
 Ahmad-Career-iOS.ipa remains development 1.1 (3), restricted to registered devices;
 it is not the uploaded build-7 App Store export or an arbitrary-phone installer.
 
 WEBSITE AND PRIVACY
 https://ahmad-career.jolly-lynx-4861.chatgpt.site/
-Website 7 deployed at 07:49:53; real search at 07:59 returned six responding employers and three leads.
+Website 9 deployed at 13:38:21 Riyadh (10:38:21 UTC). Last real website search
+remains version 7 at 07:59 Riyadh: six responding employers and three leads.
 Website availability does not establish native approval or installation. Profile
-and criteria remain local; exported notes omit criteria but may contain user-entered
-professional details. Public source/packages exclude private CVs, chat, photos,
+and criteria remain local. Full tracking exports include user-entered receipt notes
+and labeled unsaved record drafts; per-role preparation notes exclude receipts.
+Exports omit discovery criteria. Review text before sharing. Public source/packages exclude private CVs, chat, photos,
 pay preferences and runtime records. Review/support metadata must be checked when
 preparing external testing; build upload does not claim all metadata was changed.

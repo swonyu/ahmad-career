@@ -33,7 +33,7 @@
   const safeJobURL=value=>{const safe=safeURL(value);if(safe==='#')return '#';const u=new URL(safe);if(u.hostname.endsWith('.oraclecloud.com')&&!/^\/hcmUI\/CandidateExperience\/en\/sites\/CX_1\/job\/\d+\/?$/.test(u.pathname))return '#';if(u.hostname.endsWith('linkedin.com')&&!/^\/jobs\/view\/(?:[a-z0-9-]+-)?\d+\/?$/i.test(u.pathname))return '#';if(u.hostname==='careers.al-dawaa.com'&&!u.pathname.startsWith('/en/saudi-arabia/jobs/'))return '#';return jobHosts.has(u.hostname)&&(u.hostname!=='apply.workable.com'||u.pathname.startsWith('/qiddiya-investment-company-1/j/'))?safe:'#'};
   const saudiDay=now=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Riyadh',year:'numeric',month:'2-digit',day:'2-digit'}).format(now);
   function parsedDate(value){
-    if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2}))?$/.test(value))return null;
+    if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}(?:T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d))?$/.test(value))return null;
     const day=value.slice(0,10),midnight=Date.parse(day+'T00:00:00Z');
     if(!Number.isFinite(midnight)||new Date(midnight).toISOString().slice(0,10)!==day)return null;
     const time=Date.parse(value.length===10?value+'T00:00:00+03:00':value);
@@ -74,5 +74,28 @@
     }
     return [...jobs.values()];
   }
-  root.CareerCore={isSaudi,canonicalMinimumSAR,riyadhCity,criteriaFor,relevance,safeURL,safeJobURL,saudiDay,parsedDate,isExpired,isFuture,dedupe,normalizeJob,normalizeLive,mergeJobs};
+  function validApplicationRecord(value,id,now=new Date()){
+    if(!value||typeof value!=='object'||Array.isArray(value)||value.schema!==1||value.jobId!==id||typeof id!=='string'||!id.trim()||id.length>256||['__proto__','constructor','prototype'].includes(id))return false;
+    if(Object.keys(value).some(k=>!['schema','jobId','appliedAt','receiptNote','updatedAt'].includes(k)))return false;
+    if(typeof value.appliedAt!=='string'||typeof value.receiptNote!=='string'||[...value.receiptNote].length>2000)return false;
+    if(value.appliedAt&&(value.appliedAt.length!==10||!parsedDate(value.appliedAt)||isFuture(value.appliedAt,now)))return false;
+    const edited=parsedDate(value.updatedAt);
+    return Boolean(edited&&!edited.dateOnly&&new Date(edited.time).toISOString()===value.updatedAt);
+  }
+  function attentionFor(jobs,states={},records={},now=new Date()){
+    const tasks=[],today=saudiDay(now),last=new Date(Date.parse(today+'T00:00:00Z')+7*86400000).toISOString().slice(0,10);
+    for(const job of dedupe(jobs)){
+      const status=states[job.id]??'Not started',record=records[job.id];
+      if(['Applied','Interviewing','Offer received'].includes(status)){
+        if(!validApplicationRecord(record,job.id,now)||!record.appliedAt)tasks.push({jobId:job.id,kind:'applied-date',order:2});
+      }else if(['Not started','Preparing'].includes(status)){
+        const closing=parsedDate(job.closes),past=Boolean(closing&&isExpired(job.closes,now));
+        const day=closing&&(closing.dateOnly?closing.day:saudiDay(new Date(closing.time)));
+        if(closing&&(past||day>=today&&day<=last))tasks.push({jobId:job.id,kind:'deadline',past,order:past?0:1,time:closing.dateOnly?Date.parse(closing.day+'T23:59:59.999+03:00'):closing.time});
+        if(!past)tasks.push({jobId:job.id,kind:'requirements',order:3});
+      }
+    }
+    return tasks.sort((a,b)=>a.order-b.order||(a.order===1?a.time-b.time:0)||a.jobId.localeCompare(b.jobId));
+  }
+  root.CareerCore={isSaudi,canonicalMinimumSAR,riyadhCity,criteriaFor,relevance,safeURL,safeJobURL,saudiDay,parsedDate,isExpired,isFuture,dedupe,normalizeJob,normalizeLive,mergeJobs,validApplicationRecord,attentionFor};
 })(globalThis);

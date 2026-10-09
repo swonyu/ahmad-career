@@ -316,6 +316,7 @@ private struct NativeJobDetail: View {
                 Picker("Status", selection: Binding(get: { store.status(for: job) }, set: { store.setStatus($0, for: job) })) {
                     ForEach(NativeCareerStore.statuses, id: \.self) { Text($0).tag($0) }
                 }
+                NavigationLink { NativeApplicationRecordEditor(job:job) } label: { Label("Application date and receipt note",systemImage:"calendar.badge.clock") }
                 Button { store.toggleSaved(job) } label: {
                     Label(store.isSaved(job) ? "Remove from saved" : "Save opportunity", systemImage: store.isSaved(job) ? "heart.fill" : "heart")
                 }
@@ -335,6 +336,45 @@ private struct NativeJobDetail: View {
     }
 }
 
+private struct NativeApplicationRecordEditor: View {
+    @EnvironmentObject private var store:NativeCareerStore
+    @Environment(\.scenePhase) private var scenePhase
+    let job:CareerJob
+    @State private var discard=false
+    @State private var savedMessage=""
+    private var draft:ApplicationRecordDraft {store.recordDrafts[job.id] ?? ApplicationRecordDraft()}
+    var body:some View {
+        Form {
+            Section {
+                Text(job.title).font(.headline)
+                Text("Optional, self-entered tracking details. Leave the date blank if unknown. Saving does not change status or contact anyone.").font(.footnote)
+                TextField("YYYY-MM-DD, or leave blank",text:Binding(get:{draft.appliedAt},set:{store.editApplicationRecord(job,appliedAt:$0,receiptNote:draft.receiptNote);savedMessage=""}))
+                    .textInputAutocapitalization(.never).autocorrectionDisabled().accessibilityLabel("Application date, if known, YYYY-MM-DD")
+            } header:{Text("Application date, if known")}
+            Section {
+                TextEditor(text:Binding(get:{draft.receiptNote},set:{store.editApplicationRecord(job,appliedAt:draft.appliedAt,receiptNote:$0);savedMessage=""}))
+                    .frame(minHeight:140).accessibilityLabel("Receipt or record note")
+            } header:{Text("Receipt / record note")} footer:{Text("Up to 2,000 characters. Plain text only. Included in reviewed tracking exports, never in preparation drafts. Avoid passwords, codes and confidential employer data.")}
+            Section {
+                if draft.dirty {Text("Unsaved draft. Kept for this session; export your notes before closing the app.").foregroundStyle(.secondary)}
+                if let base=draft.base {Text("Record last edited: \(base.updatedAt) (not the application time).").font(.footnote)}
+                if let error=store.recordErrors[job.id] {Text(error).foregroundStyle(.red).accessibilityAddTraits(.updatesFrequently)}
+                if !savedMessage.isEmpty {Text(savedMessage).foregroundStyle(Color.careerAccent).accessibilityAddTraits(.updatesFrequently)}
+                Button("Save application record") {savedMessage=store.saveApplicationRecord(job) ? "Application date and note saved on this device. Status is unchanged." : ""}
+                Button("Reload saved record") {if draft.dirty {discard=true} else {store.beginApplicationRecord(job,discardDraft:true);savedMessage=""}}
+            }
+        }.navigationTitle("Application record").navigationBarTitleDisplayMode(.inline)
+            .onAppear{store.beginApplicationRecord(job)}
+            .onChange(of:scenePhase){phase in if phase == .active {store.beginApplicationRecord(job)}}
+            .onChange(of:store.recordErrors[job.id]){message in if let message {UIAccessibility.post(notification:.announcement,argument:message)}}
+            .onChange(of:savedMessage){message in if !message.isEmpty {UIAccessibility.post(notification:.announcement,argument:message)}}
+            .confirmationDialog("Discard this unsaved draft and load the saved record?",isPresented:$discard,titleVisibility:.visible){
+                Button("Discard draft and reload",role:.destructive){store.beginApplicationRecord(job,discardDraft:true);savedMessage=""}
+                Button("Keep draft",role:.cancel){}
+            }
+    }
+}
+
 private let nativePlanItems: [(id: String, title: String, detail: String)] = [
     ("profile", "Confirm your professional record", "Exact degree, work dates, responsibilities, relevant years and certifications."),
     ("evidence", "Prepare three achievement stories", "Availability, supplier performance and operational improvement. Use accurate, shareable results."),
@@ -346,6 +386,7 @@ private let nativePlanItems: [(id: String, title: String, detail: String)] = [
 
 private struct NativePlanScreen: View {
     @EnvironmentObject private var store: NativeCareerStore
+    @Environment(\.scenePhase) private var scenePhase
     var body: some View {
         List {
             Section {
@@ -354,6 +395,22 @@ private struct NativePlanScreen: View {
                     Text("\(nativePlanItems.filter { store.workspace.completed.contains($0.id) }.count) of \(nativePlanItems.count) preparation steps complete").font(.footnote)
                 }.padding(.vertical, 5)
             }.listRowBackground(Color.clear).listRowSeparator(.hidden)
+            Section {
+                let prompts=store.attention()
+                if prompts.isEmpty {Text("No attention prompts from your saved records.")}
+                ForEach(prompts) { prompt in
+                    NavigationLink {NativeJobDetail(job:prompt.job)} label:{
+                        VStack(alignment:.leading,spacing:6){
+                            Text(prompt.title).font(.headline)
+                            Text(prompt.job.title+" · "+prompt.job.company).font(.subheadline)
+                            if prompt.kind=="requirements" {Text(prompt.job.requirements.joined(separator:"\n")).font(.caption)}
+                            if prompt.kind=="deadline" {Text("Listed deadline: "+nativeDate(prompt.job.closes ?? "",includeTime:(prompt.job.closes?.count ?? 0)>10)).font(.caption)}
+                            if prompt.kind=="applied-date" {Text("Optional record detail; an unknown date is allowed.").font(.caption)}
+                            Text("Research checked: \(prompt.job.researchCheckedAt ?? "Not researched") · Employer checked: \(prompt.job.lastCheckedAt ?? "Not recorded")").font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            } header:{Text("Needs attention")} footer:{Text("Prompts from your saved records. Past checks do not establish current availability. Recheck employer information; these are not eligibility decisions or automatic applications.")}
             Section("Your preparation checklist") {
                 ForEach(nativePlanItems, id: \.id) { item in
                     Toggle(isOn: Binding(get: { store.workspace.completed.contains(item.id) }, set: { store.setChecklist(item.id, done: $0) })) {
@@ -364,16 +421,18 @@ private struct NativePlanScreen: View {
                     }
                 }
             }
-            Section("Applications in progress") {
-                if store.trackedJobs.isEmpty {
+            Section("Application records") {
+                if store.recordJobs.isEmpty {
                     NativeEmpty(title: "No applications marked yet.", message: "Open a role and update its status after you complete a step.", icon: "checkmark.bubble")
-                } else { ForEach(store.trackedJobs) { NativeJobLink(job: $0) } }
+                } else { ForEach(store.recordJobs) { NativeJobLink(job: $0) } }
             }
             Section {
                 NavigationLink { NativeNotesPreview(text: store.exportText(), includesProfile: true) } label: { Label("Review my application notes", systemImage: "doc.text") }
-            } footer: { Text("Notes include your self-entered profile and tracked roles. Review them before choosing a destination in the share sheet.") }
+            } footer: { Text("Notes include your self-entered profile, application records, receipt notes and any unsaved record drafts. Review them before choosing a destination in the share sheet.") }
         }.nativeList().navigationTitle("Application plan")
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear{store.reloadApplicationRecords()}
+            .onChange(of:scenePhase){phase in if phase == .active {store.reloadApplicationRecords()}}
     }
 }
 
@@ -422,7 +481,7 @@ private struct NativeNotesPreview: View {
     var body: some View {
         Form {
             Section {
-                Text(includesProfile ? "These notes include your self-entered profile and tracked applications. Remove anything you do not want to share." : "This role note excludes your profile fields. Review the requirements and your local application status before sharing.")
+                Text(includesProfile ? "These notes include your self-entered profile, application records, receipt notes and any unsaved record drafts. Remove anything you do not want to share." : "This role note excludes your profile fields. Review the requirements and your local application status before sharing.")
                     .font(.footnote)
                 TextEditor(text: $text).frame(minHeight: 350).accessibilityLabel("Application notes to review")
             }

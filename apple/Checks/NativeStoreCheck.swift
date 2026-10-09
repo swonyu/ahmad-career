@@ -264,6 +264,38 @@ import Combine
   assert(strictReload.workspace.profile==strict && strictReload.savedJobs.map(\.id)==savedIDs)
   unwritable.updateProfile(strict)
   assert(unwritable.workspace.profile==NativeProfile() && unwritable.storageError != nil, "A failed criteria save never announces durable success")
+  let recordURL=root.appendingPathComponent("record-workspace.json")
+  let records=NativeCareerStore(researchURL:researchURL,storageURL:recordURL)
+  records.beginApplicationRecord(first)
+  records.editApplicationRecord(first,appliedAt:"",receiptNote:"Private receipt 🌷")
+  assert(records.saveApplicationRecord(first))
+  assert(records.status(for:first)=="Not started" && !records.isSaved(first))
+  assert(!records.note(for:first).contains("Private receipt"))
+  assert(records.exportText().contains("Private receipt"))
+  let recordsReload=NativeCareerStore(researchURL:researchURL,storageURL:recordURL)
+  assert(recordsReload.recordJobs.contains{$0.id==first.id})
+  recordsReload.beginApplicationRecord(first)
+  recordsReload.editApplicationRecord(first,appliedAt:"",receiptNote:"Conflicting draft")
+  records.editApplicationRecord(first,appliedAt:"2026-10-08",receiptNote:"New saved value")
+  assert(records.saveApplicationRecord(first))
+  assert(!recordsReload.saveApplicationRecord(first))
+  assert(recordsReload.exportText().contains("UNSAVED application record draft"))
+  assert(recordsReload.exportText().contains("Conflicting draft"))
+  records.setStatus("Applied",for:first)
+  assert(records.applicationRecords[first.id]?.appliedAt=="2026-10-08")
+  let dateNow=CareerFeed.isoDate("2026-10-09T21:00:00Z")!
+  var record=ApplicationRecord(jobId:first.id,appliedAt:"2026-10-10",receiptNote:String(repeating:"🌷",count:2000),updatedAt:ApplicationRecord.timestamp(dateNow))
+  assert(record.valid(for:first.id,now:dateNow))
+  for date in ["2026-02-29","2026-10-11","2026-10-10T00:00:00Z"] {record.appliedAt=date;assert(!record.valid(for:first.id,now:dateNow))}
+  record.appliedAt="2024-02-29";assert(record.valid(for:first.id,now:dateNow))
+  record.receiptNote += "a";assert(!record.valid(for:first.id,now:dateNow))
+  var past=first;past.id="a";past.closes="2026-10-09"
+  var near=first;near.id="b";near.closes="2026-10-17"
+  var invalid=first;invalid.id="c";invalid.closes="2026-02-29"
+  let prompts=NativeCareerStore.attentionFor([past,near,invalid],statuses:[:],records:[:],now:dateNow)
+  assert(prompts.map(\.id)==["a:deadline","b:deadline","b:requirements","c:requirements"])
+  assert(NativeCareerStore.attentionFor([past],statuses:["a":"unknown"],records:[:],now:dateNow).isEmpty)
+  print("Application record checks passed: legacy preservation, metadata-only history, conflicts, export privacy, strict date/scalar limits and derived attention.")
   print("Native store checks passed: \(store.research.jobs.count) researched jobs, atomic saves, pre-criteria migration, city/pay criteria, unfiltered history, export privacy, strict URLs/dates, stale response rejection and input validation.")
  }
 }

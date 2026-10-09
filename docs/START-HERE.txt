@@ -1,55 +1,68 @@
 AHMAD CAREER — CURRENT RELEASE HANDOFF
 9 October 2026 • Asia/Riyadh
 
-WEBSITE 8 — LIVE
+WEBSITE 9 — LIVE
 https://ahmad-career.jolly-lynx-4861.chatgpt.site/
-Deployed 08:43:59 Riyadh (05:43:59 UTC), source 01050a01a9b3a421f1aea222eb02bcc2c6d4bbc2.
-Application notes now capture newer profile/checklist saves from another tab while
-preserving unsent drafts and failed-save recovery data. After deployment, this
-browser retained all three saved/applied records. No fresh employer search was
-needed for this change: the last real search was version 7 at 07:59 Riyadh,
-with six responding employers and three leads. Coverage is bounded.
+Deployed 13:38:21 Riyadh (10:38:21 UTC), source 943dcfe1ddcff0710eb51e926b7acb3e5b5c3df0.
+Each role can now retain an optional application date and plain-text receipt note.
+An unknown date stays blank; editing a record does not infer an application date,
+change its tracking status or submit an employer application. Needs attention
+shows saved/tracked roles with dated deadlines, listed requirements, or an optional
+missing-date prompt. Existing checklist items and tracking statuses are preserved.
+After deployment, this browser retained all three saved/applied roles.
 
-MAC 1.1 (8) — UNIVERSAL, UNSIGNED
-Ahmad-Career-macOS-Unsigned.zip contains the updated embedded web workspace.
+MAC 1.1 (9) — UNIVERSAL, UNSIGNED
+Ahmad-Career-macOS-Unsigned.zip contains the matching embedded web workspace.
 Release build and source/resource parity passed for Intel and Apple Silicon.
 The app is unsigned and not notarized. Another Mac may need a signed build.
+The previously opened Mac 8 window was left running; opening an older app does
+not update its code or transfer records from the website.
 
-IPHONE/IPAD 1.1 (7) — LAST VERIFIED READY TO SUBMIT
-This web/Mac correction does not change the native iPhone SwiftUI implementation.
-No new iOS build was uploaded. Build 7 uploaded at 07:53:58 Riyadh; Apple showed
-Ready to Submit at 07:56. Build 4 remained Waiting for Review and its queue was
-preserved. Apple blocks another 1.1 beta submission until that build is approved.
-Build 7 is not verified submitted, approved or installable. Complete VoiceOver
-and installation on Ahmad's physical iPhone remain unverified.
+IPHONE/IPAD — LOCAL SOURCE 9; LATEST UPLOADED BUILD 7
+Native SwiftUI source now includes application records and Needs attention.
+The iOS Simulator Debug 1.1 (9) build compiled. No iOS 9 distribution archive,
+upload, submission, installation or native UI test has been performed.
+Latest uploaded iOS distribution build remains 1.1 (7), uploaded 07:53:58 Riyadh.
+Last server-backed Apple status at 08:59 Riyadh: 7 Ready to Submit; 4 Waiting for
+Review. At about 10:00 Riyadh, refresh returned Apple sign-in (authResult=FAILED).
+No fresh build status is available; secure owner sign-in is needed before another
+status check. Build 4's queue is preserved. Build 7 is not verified submitted,
+approved or installable. Physical-iPhone installation and full VoiceOver are unverified.
 Invitation: https://testflight.apple.com/join/S5bDCNbd
-This invitation is not yet a verified installation route. See TestFlight-Preparation.txt.
+This invitation is not a verified installation route. See TestFlight-Preparation.txt.
 
 FILES AND VERIFICATION
-The website source ZIP contains version-8 source/checks. Apple source includes
-the corrected Mac web assets; its shared Xcode build-number default remains 7.
-The Mac 8 release was built with CURRENT_PROJECT_VERSION=8. No byte-parity claim
-is made between the new web assets and the earlier uploaded iOS 7 bundle.
-Core checks and all 47 application-state groups passed. Independent review tested
-five freshness/recovery cases and two recovery transitions. A two-tab browser
-check verified the newly saved achievement in the older tab's application note.
-The unchanged feed/server/native checks retain their dated version-7 receipts.
-SHA256SUMS.txt covers nine packages/documents. See Review-2026-10-09.html.
+Website source ZIP contains version-9 source/checks. Apple source includes native
+record changes and matching web assets; shared Xcode build-number default remains 7.
+Local Mac Release and iOS Simulator builds used CURRENT_PROJECT_VERSION=9.
+Core, application-record checks, 52 application-state groups, 12 feed-boundary groups
+and the extended native-store check passed. Independent native storage review
+passed 74 assertions in seven groups before a final whitespace-only identity guard;
+root's extended check passed against that final source. Narrow web parser, storage,
+refresh and native-view reviews closed their demonstrated findings.
+Isolated two-tab browser checks exercised save, conflict refusal, retained drafts,
+plain-text notes and Needs attention. Production readback retained the three existing
+records. Browser screenshots failed; no visual-pixel or native-screen-reader pass
+is claimed. Package allowlists/resource parity and nine checksums were verified.
+See Review-2026-10-09.html and SHA256SUMS.txt.
 
-Ahmad-Career-iOS.ipa is the unchanged development-signed 1.1 (3), restricted to
-registered devices. It is not the uploaded App Store export or an arbitrary-phone
-installer. Source packages exclude CVs, chat, photos, pay preferences and credentials.
+Ahmad-Career-iOS.ipa remains development-signed 1.1 (3), registered devices only;
+it is not the uploaded App Store export or an arbitrary-phone installer. Current
+source/resources differ from uploaded iOS 7. Private CVs, chat, photos, pay
+preferences, credentials and runtime application records are excluded from packages.
 
 USE AND PRIVACY
 Nine researched healthcare leads dated 9 October remain available; salaries are
-undisclosed. Confirm role-specific city, qualifications, grade and pay. A local
-Applied status does not submit an employer application. Actual receipts are separate.
+undisclosed. Confirm role-specific city, qualifications, grade and pay. Last real
+website search remains version 7 at 07:59 Riyadh: six responding employers and
+three leads. This is bounded coverage, not a fresh search for this release.
 Profile and application records remain in each browser/app on its device, without
-account sync. Notes may contain user-entered professional details; review before
-sharing. They omit discovery criteria and are readable copies, not importable backups.
-Clearing storage/removing an app can erase local records.
+account sync. Full tracking exports include user-entered receipt notes and clearly
+labeled unsaved record drafts. Per-role preparation notes exclude receipt notes.
+Review exported text before sharing. Notes omit discovery criteria and are readable
+copies, not importable backups. Clearing storage/removing an app can erase records.
 
 BUILD
 Open AhmadCareerApple/AhmadCareer.xcodeproj in Xcode and select the AhmadCareer
-scheme and My Mac or an iPhone/iPad Simulator. Physical devices require authorized
-signing/provisioning. No team or credentials are included. See the source README.
+scheme and My Mac or an installed iPhone/iPad Simulator. Physical devices require
+authorized signing/provisioning. No team or credentials are included. See source README.

@@ -130,6 +130,7 @@ function assertTracked(app, label) {
 }
 
 const cases = [];
+const recordLocks={request:async(_key,fn)=>fn()};
 async function check(name, run) {
   try { await run(); cases.push(name); console.log(`PASS ${name}`); }
   catch (error) { process.exitCode = 1; console.error(`FAIL ${name}: ${error.stack}`); }
@@ -704,4 +705,67 @@ await check('Notes preserve failed saves and valid session data when newer stora
   }
 });
 
-if (!process.exitCode) console.log(`\n${cases.length} application-state regression groups passed.`);
+
+await check('Application metadata survives legacy workspace writes, status transitions and reload; preparation excludes receipts', async()=>{
+ const shared=new Map(), app=createApp(shared,{shared:true,locks:recordLocks});
+ const id=app.json('D.jobs[0].id'), literal=JSON.stringify(id);
+ app.evaluate(`editApplicationRecord(${literal}); recordDrafts[${literal}].receiptNote='<img src=x> private receipt';`);
+ assert.equal(await app.evaluate(`saveApplicationRecord(${literal})`),true);
+ const legacy=createApp(shared,{shared:true}); await legacy.toggleSaved(id); legacy.changeStatus(id,'Applied');
+ const reloaded=createApp(shared,{shared:true,locks:recordLocks});
+ assert.equal(reloaded.json(`readApplicationRecord(${literal}).receiptNote`),'<img src=x> private receipt');
+ assert.equal(reloaded.json(`readApplicationRecord(${literal}).appliedAt`),'');
+ assert(!(reloaded.evaluate(`draft(jobById(${literal}))`)).includes('private receipt'));
+ assert((await reloaded.exportNotes()).includes('private receipt'));
+ reloaded.evaluate(`openJob(${literal})`);
+ assert(reloaded.evaluate("$('#job-dialog').innerHTML").includes('&lt;img src=x&gt;'));
+});
+await check('Same-record conflicts and failed writes preserve drafts; metadata-only archived rows export',async()=>{
+ const shared=new Map(),a=createApp(shared,{shared:true,locks:recordLocks});
+ a.receive(success([role])); const id=JSON.stringify(role.id);
+ a.evaluate(`editApplicationRecord(${id}); recordDrafts[${id}].receiptNote='first';`);
+ const b=createApp(shared,{shared:true,locks:recordLocks});
+ b.evaluate(`editApplicationRecord(${id}); recordDrafts[${id}].receiptNote='second';`);
+ assert.equal(await a.evaluate(`saveApplicationRecord(${id})`),true);
+ const before=shared.get('ahmad-application-record-v1:'+encodeURIComponent(role.id));
+ assert.equal(await b.evaluate(`saveApplicationRecord(${id})`),false);
+ assert.equal(shared.get('ahmad-application-record-v1:'+encodeURIComponent(role.id)),before);
+ assert((await b.exportNotes()).includes('UNSAVED application record draft'));
+ assert((await b.exportNotes()).includes('second'));
+ a.receive(success([],newTime)); const reload=createApp(shared,{shared:true,locks:recordLocks});
+ assert(reload.evaluate('planPage()').includes(role.title));
+ assert((await reload.exportNotes()).includes('first'));
+ const c=createApp(new Map(),{locks:recordLocks}),key=c.json('D.jobs[0].id'),j=JSON.stringify(key);
+ c.evaluate(`editApplicationRecord(${j}); recordDrafts[${j}].receiptNote='quota draft';`);
+ c.failKeys.add('ahmad-application-record-v1:'+encodeURIComponent(key));
+ assert.equal(await c.evaluate(`saveApplicationRecord(${j})`),false);
+ assert((await c.exportNotes()).includes('quota draft'));
+});
+await check('Unsupported metadata and no-lock environments never overwrite; status and checklist stay separate',async()=>{
+ const app=createApp(new Map(),{locks:recordLocks}),id=app.json('D.jobs[0].id'),j=JSON.stringify(id),key='ahmad-application-record-v1:'+encodeURIComponent(id);
+ app.storage.set(key,'{"schema":99}');app.evaluate(`editApplicationRecord(${j}); recordDrafts[${j}].receiptNote='preserved draft';`);
+ assert.equal(await app.evaluate(`saveApplicationRecord(${j})`),false); assert.equal(app.storage.get(key),'{"schema":99}');
+ app.changeStatus(id,'Applied');assert.equal(app.json(`states[${j}]`),'Applied');
+ const unlocked=createApp();unlocked.evaluate(`editApplicationRecord(${j}); recordDrafts[${j}].receiptNote='unsupported save draft';`);
+ assert.equal(await unlocked.evaluate(`saveApplicationRecord(${j})`),false);assert.equal(unlocked.storage.get(key),undefined);
+ assert((await unlocked.exportNotes()).includes('unsupported save draft'));
+});
+await check('Old-tab receipt save retains newer employer facts resolved inside the workspace lock',async()=>{
+ let queue=Promise.resolve();const locks={request(name,fn){if(name.endsWith('workspace')){const next=queue.then(fn);queue=next.catch(()=>{});return next}return Promise.resolve().then(fn)}};
+ const shared=new Map(),a=createApp(shared,{shared:true,locks});await queue;
+ await a.receive(success([role]));await queue;await a.toggleSaved(role.id);
+ const id=JSON.stringify(role.id);a.evaluate(`editApplicationRecord(${id});recordDrafts[${id}].receiptNote='synthetic receipt'`);
+ const b=createApp(shared,{shared:true,locks});await queue;
+ await b.receive(success([{...role,title:'Updated Healthcare Supply Chain Manager',closes:'2026-10-10'}],newTime));await queue;
+ const before=JSON.parse(shared.get('ahmad-workspace')).savedDetails[role.id];
+ assert.equal(await a.evaluate(`saveApplicationRecord(${id})`),true);
+ assert.deepEqual(JSON.parse(shared.get('ahmad-workspace')).savedDetails[role.id],before);
+});
+
+await check('A completed employer refresh redraws attention on an already open Plan',()=>{
+ const app=createApp();app.receive(success([role]));app.toggleSaved(role.id);app.evaluate("go('plan')");
+ app.receive(success([{...role,title:'Freshly updated Supply Chain Manager'}],newTime));
+ assert(app.evaluate("$('#main').innerHTML").includes('Freshly updated Supply Chain Manager'));
+});
+
+if (!process.exitCode) console.log(`${cases.length} application-state regression groups passed.`);
