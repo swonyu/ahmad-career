@@ -2,7 +2,7 @@ AHMAD CAREER — TESTFLIGHT RELEASE RECORD
 9 October 2026 • Asia/Riyadh
 
 CURRENT BUILD 10 — APPROVED; INVITATION VERIFIED AT 21:24 RIYADH
-iOS 1.1 (10) uploaded successfully once at 21:14:46 Riyadh (18:14:46.646 UTC), Xcode exit 0. Apple processing completed and the reviewed testing notes were saved. One beta-review submission at about 21:21 Riyadh was followed by an observed Approved status for build 10. It was released to the existing Ahmad Beta group; at 21:24 Riyadh the public invitation displayed Ahmad Career and View in TestFlight. This verifies the invitation landing page, not installation or launch on a physical iPhone. The group limit remains one tester; the last group check showed zero testers. Approved build 4 was preserved. Builds 5, 6 and 7 remain historical, superseded uploads. No App Store production release is claimed.
+iOS 1.1 (10) uploaded successfully once at 21:14:46 Riyadh (18:14:46.646 UTC), Xcode exit 0. Apple processing completed and the reviewed testing notes were saved. One beta-review submission at about 21:21 Riyadh was followed by an observed Approved status for build 10. It was released to the existing Ahmad Beta group; at 21:24 Riyadh the public invitation displayed Ahmad Career and View in TestFlight. That observation verifies the invitation landing page only. At about 21:45 Riyadh, the full one-tester limit was raised once to two; the saved group showed one of two testers and no full banner. One anonymous tester was shown as Installed 1.1 (10); identity and launch were unknown. A later owner report confirmed installation and opening after retry, without an independent device-version or UI check. Ahmad's installation remains unconfirmed. Approved build 4 was preserved. Builds 5, 6 and 7 remain historical, superseded uploads. No App Store production release is claimed.
 The retained App Store IPA is a local export, not a direct installer. Its SHA256 identifies that local file; the archive/export upload receipt does not establish byte-for-byte remote payload equality.
 
 BUILD 7 — HISTORICAL UPLOAD; SUPERSEDED BY BUILD 10
@@ -10,7 +10,8 @@ Historical iOS distribution build: 1.1 (7).
 Current source 10 includes records, attention, refresh/provenance and feedback fixes.
 Local iOS Simulator Debug 1.1 (10) compiled. Device build 10 was later archived
 and exported locally; its separate local receipt is below. The later upload and
-beta availability are recorded above; installation and native UI remain unverified.
+beta availability and owner-reported installation/opening are recorded above;
+independent device UI checks remain unverified.
 The earlier release 8 changed web/Mac only; no iOS 8 archive/upload occurred.
 Archive and App Store export succeeded; strict codesign verification passed on
 both archive and exported IPA. Upload succeeded at 07:53:58 Riyadh, exit code 0.
@@ -33,7 +34,7 @@ This is an App Store upload artifact, not a direct-install file. Existing IPA3 a
 archive/export/upload7 remain unchanged. This SHA256 identifies the retained local
 export, not independently verified remote uploaded bytes. Later upload, processing,
 submission, approval and invitation observations are recorded in the current status.
-Installation and native UI remain unverified.
+Ahmad's installation and independent device UI checks remain unverified.
 
 REVIEW AND AUTHENTICATION HISTORY
 At 08:59 Riyadh, build 7 was Ready to Submit and build 4 was Waiting for Review.
@@ -51,12 +52,19 @@ not expired or altered. No new group, tester address, contract or account was ad
 INVITATION AND REMAINING DEVICE CHECK
 https://testflight.apple.com/join/S5bDCNbd
 At 21:24 Riyadh the public page displayed Join the Ahmad Career beta and View in
-TestFlight, replacing the earlier not-accepting-testers message. The existing public
-link remains enabled with a one-tester limit and no additional criteria; settings
-were inspected without changing them. Last group observation: zero testers, two
-builds (10 and 4). The landing page does not establish which build a particular
-device installs. Verify version 1.1 (10), installation and launch on Ahmad's iPhone
-separately. Physical-iPhone use and complete VoiceOver remain unverified.
+TestFlight, replacing the earlier not-accepting-testers message. At that checkpoint,
+the enabled public link had a one-tester limit, no additional criteria, zero testers
+and two builds (10 and 4); settings were inspected without changing them.
+At about 21:45 Riyadh, after Public Link is Full appeared, the limit was saved once
+as two. The resulting group showed one of two testers and no full banner. Existing
+testers, criteria and builds were preserved; build 10 showed Testing and 4 Approved.
+One anonymous tester showed Installed 1.1 (10); identity and launch were unknown.
+At about 21:47 the public invitation again displayed View in TestFlight.
+The owner subsequently reported installation and opening after retry. This is
+owner-reported, without an independent device-version or UI check, and does not
+identify the anonymous tester. Ahmad's installation and complete VoiceOver remain
+unverified. On iPhone use the public link, View in TestFlight, Accept, then Install;
+no invitation code is needed for this route.
 Do not upload or submit build 10 again based on older preparation instructions.
 
 APP RECORD

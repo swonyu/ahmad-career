@@ -18,12 +18,12 @@ The owner's earlier Mac 8 app was left untouched; its running state was not rech
 Opening an older app does not update it or transfer records from the website.
 
 IPHONE/IPAD — BUILD 10 APPROVED; TESTFLIGHT INVITATION VERIFIED
-iOS 1.1 (10) uploaded successfully once at 21:14:46 Riyadh (18:14:46.646 UTC), Xcode exit 0. Apple processing completed and the reviewed testing notes were saved. One beta-review submission at about 21:21 Riyadh was followed by an observed Approved status for build 10. It was released to the existing Ahmad Beta group; at 21:24 Riyadh the public invitation displayed Ahmad Career and View in TestFlight. This verifies the invitation landing page, not installation or launch on a physical iPhone. The group limit remains one tester; the last group check showed zero testers. Approved build 4 was preserved. Builds 5, 6 and 7 remain historical, superseded uploads. No App Store production release is claimed.
+iOS 1.1 (10) uploaded successfully once at 21:14:46 Riyadh (18:14:46.646 UTC), Xcode exit 0. Apple processing completed and the reviewed testing notes were saved. One beta-review submission at about 21:21 Riyadh was followed by an observed Approved status for build 10. It was released to the existing Ahmad Beta group; at 21:24 Riyadh the public invitation displayed Ahmad Career and View in TestFlight. That observation verifies the invitation landing page only. At about 21:45 Riyadh, the full one-tester limit was raised once to two; the saved group showed one of two testers and no full banner. One anonymous tester was shown as Installed 1.1 (10); identity and launch were unknown. A later owner report confirmed installation and opening after retry, without an independent device-version or UI check. Ahmad's installation remains unconfirmed. Approved build 4 was preserved. Builds 5, 6 and 7 remain historical, superseded uploads. No App Store production release is claimed.
 Native SwiftUI source includes application records and Needs attention.
 The iOS Simulator Debug build and device archive/local App Store export
 1.1 (10) passed the previously recorded compile, signature and resource checks.
 The retained App Store IPA is a local export, not a direct installer. Its SHA256 identifies that local file; the archive/export upload receipt does not establish byte-for-byte remote payload equality.
-Physical-iPhone installation, native UI and complete VoiceOver remain unverified.
+Ahmad's installation, independent physical-device UI checks and complete VoiceOver remain unverified.
 Invitation: https://testflight.apple.com/join/S5bDCNbd
 Open on the intended iPhone with TestFlight. See TestFlight-Preparation.txt.
 
@@ -32,7 +32,7 @@ Website source ZIP contains version-10 source/checks. Apple source includes nati
 record changes and matching web assets; shared Xcode build-number default remains 7.
 Local Mac Release, iOS Simulator and device archive builds used CURRENT_PROJECT_VERSION=10.
 Core, record, feed-boundary and server checks passed; all 63 application-state groups passed. The actual native-store checks passed on final source, including persisted employer observation chronology. Independent targeted reviews covered asynchronous saves, exact exclusions, partial refreshes, dates and native storage. Synthetic fixtures did not contact employers.
-An isolated Mac app exercised record confirmation Cancel/Continue and toolbar Keep working/Discard and reload, preserving the expected saved receipt and timestamp. One 1240×850 Mac screenshot showed readable layout. Physical iPhone, two pending Simulator UI scenarios and full VoiceOver remain unverified; announcement-dispatch probes do not prove actual speech.
+An isolated Mac app exercised record confirmation Cancel/Continue and toolbar Keep working/Discard and reload, preserving the expected saved receipt and timestamp. One 1240×850 Mac screenshot showed readable layout. Independent physical-iPhone UI checks, two pending Simulator UI scenarios and full VoiceOver remain unverified; announcement-dispatch probes do not prove actual speech.
 Source/package allowlists, all ZIP members, resource parity and ten checksums
 are recorded in Review-2026-10-09.html and SHA256SUMS.txt.
 
