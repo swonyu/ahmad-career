@@ -1,5 +1,5 @@
 import './web/core.js';
-const {isSaudi,relevance,safeJobURL,isExpired,isFuture,parsedDate,dedupe}=globalThis.CareerCore;
+const {isSaudi,relevance,safeJobURL,isExpired,isFuture,parsedDate,dateSortTime,dedupe}=globalThis.CareerCore;
 export const SOURCES=[
  {name:'Alcon',host:'alcon.wd5.myworkdayjobs.com',tenant:'alcon',board:'careers_alcon'},
  {name:'Johnson & Johnson',host:'jj.wd5.myworkdayjobs.com',tenant:'jj',board:'JJ'},
@@ -26,26 +26,27 @@ function validDetail(p){
 export async function workdaySource(s,fetcher=fetch){
  const base=`https://${s.host}/wday/cxs/${s.tenant}/${s.board}`;
  const d=await jsonFetch(base+'/jobs',{appliedFacets:s.tenant==='novartis'?{locationCountry:['50423b5190ad49bb89e94cd58dfaad69']}:{},limit:20,offset:0,searchText:s.tenant==='novartis'?'':'Saudi'},fetcher);
- if(!Array.isArray(d.jobPostings)||d.total!=null&&(!Number.isInteger(d.total)||d.total<0))throw Error('Unexpected employer response');
+ if(!Array.isArray(d.jobPostings)||d.total!=null&&(!Number.isInteger(d.total)||d.total<d.jobPostings.length||d.total>0&&!d.jobPostings.length))throw Error('Unexpected employer response');
  const sampled=d.jobPostings.slice(0,20),valid=sampled.filter(j=>j&&typeof j.title==='string'&&j.title.trim()&&detailPath(j.externalPath));
  const rows=valid.filter(j=>relevance(j.title)>0);
- let detailErrors=sampled.length-valid.length,checkedDetails=0;
+ let detailErrors=sampled.length-valid.length,checkedDetails=0;const excludedIds=[];
  const jobs=(await Promise.all(rows.map(async j=>{try{
   if(!detailPath(j.externalPath))throw Error('Invalid employer detail path');
   const {jobPostingInfo:p}=await jsonFetch(base+j.externalPath,null,fetcher);
   if(!validDetail(p))throw Error('Invalid employer detail fields');
+  const id=s.tenant+'-'+p.jobReqId;if(id.length>256)throw Error('Invalid employer job identifier');
   checkedDetails++;
-  if(p.canApply!==true||p.posted===false||!relevance(p.title)||isExpired(p.endDate)||isFuture(p.startDate))return null;
+  if(p.canApply!==true||p.posted===false||!relevance(p.title)||isExpired(p.endDate)||isFuture(p.startDate)){excludedIds.push(id);return null;}
   const country=p.country?.descriptor?.trim()||'',location=typeof p.location==='string'?p.location:'';
   const saCountry=/^(?:Saudi Arabia|Kingdom of Saudi Arabia|SA|SAU|السعودية|المملكة العربية السعودية)$/i.test(country);
   const locationSegment=decodeURIComponent(j.externalPath.split('/')[2]||'');
-  if(country?!saCountry:!isSaudi(location||locationSegment))return null;
+  if(country?!saCountry:!isSaudi(location||locationSegment)){excludedIds.push(id);return null;}
   const displayLocation=isSaudi(location)?location:(location||locationSegment||'Saudi Arabia')+', Saudi Arabia';
   const url=safeJobURL(`https://${s.host}/${s.board}${j.externalPath}`);
   if(url==='#')throw Error('Invalid employer application URL');
-  return{id:s.tenant+'-'+p.jobReqId,title:p.title,company:s.name,location:displayLocation,url,posted:p.startDate||'',closes:p.endDate||null,status:'live',salary:null,kind:'live',fit:'Needs review',healthcare:true,leadership:/\b(manager|director|head|lead)\b/i.test(p.title),summary:'New employer listing. Review its requirements and seniority before applying.',relevance:relevance(p.title)};
+  return{id,title:p.title,company:s.name,location:displayLocation,url,posted:p.startDate||'',closes:p.endDate||null,status:'live',salary:null,kind:'live',fit:'Needs review',healthcare:true,leadership:/\b(manager|director|head|lead)\b/i.test(p.title),summary:'New employer listing. Review its requirements and seniority before applying.',relevance:relevance(p.title)};
  }catch{detailErrors++;return null}}))).filter(Boolean);
- return{jobs,source:{name:s.name,ok:checkedDetails>0||rows.length===0&&(valid.length>0||sampled.length===0),count:jobs.length,scanned:Math.min(d.jobPostings.length,20),total:d.total,limited:d.total>20||d.jobPostings.length>20,detailErrors,...(detailErrors?{error:`${detailErrors} listing checks failed; results may be incomplete.`}:{})}};
+ return{jobs,source:{name:s.name,ok:checkedDetails>0||rows.length===0&&(valid.length>0||sampled.length===0),count:jobs.length,scanned:Math.min(d.jobPostings.length,20),total:d.total,limited:d.total>20||d.jobPostings.length>20,detailErrors,excludedIds,...(detailErrors?{error:`${detailErrors} listing checks failed; results may be incomplete.`}:{})}};
 }
 export async function workableSource(fetcher=fetch){
  const base='https://apply.workable.com/api/v3/accounts/qiddiya-investment-company-1/jobs';let scanned=0,limited=false,failures=0,successfulQueries=0;
@@ -65,5 +66,5 @@ export async function workableSource(fetcher=fetch){
 export async function getLiveJobs(fetcher=fetch){
  const tasks=[...SOURCES.map(s=>({name:s.name,run:()=>workdaySource(s,fetcher)}))];
  const results=await Promise.all(tasks.map(async s=>{try{return await s.run()}catch(e){return{jobs:[],source:{name:s.name,ok:false,count:0,error:String(e.message||'Unable to reach employer').slice(0,140)}}}}));
- return{checkedAt:new Date().toISOString(),jobs:dedupe(results.flatMap(r=>r.jobs)).sort((a,b)=>b.relevance-a.relevance||String(b.posted).localeCompare(String(a.posted))),sources:results.map(r=>r.source)};
+ return{checkedAt:new Date().toISOString(),jobs:dedupe(results.flatMap(r=>r.jobs)).sort((a,b)=>b.relevance-a.relevance||(dateSortTime(b.posted)??-Infinity)-(dateSortTime(a.posted)??-Infinity)),sources:results.map(r=>r.source)};
 }

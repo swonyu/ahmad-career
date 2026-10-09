@@ -76,3 +76,24 @@ for(let i=0;i<3;i++){
  assert.equal(repeated[0].researchCheckedAt,correctedSnapshot.researchCheckedAt);assert.equal(repeated[0].lastCheckedAt,oldEmployer.lastCheckedAt);
 }
 console.log('Archived merging is idempotent across mixed evidence dates.');
+
+// research facts and employer observations have separate clocks.
+for(const [researchCheck,savedCheck,expected] of [
+ [undefined,undefined,'2026-10-09T00:10:00Z'],
+ ['2026-10-09T00:05:00Z',undefined,'2026-10-09T00:10:00Z'],
+ ['2026-10-09T00:15:00Z',undefined,'2026-10-09T00:15:00Z'],
+ [undefined,'2026-10-09T00:20:00Z','2026-10-09T00:20:00Z'],
+]){
+ const research=Object.freeze({...preciseResearch,lastCheckedAt:researchCheck});
+ const observed=Object.freeze({id:research.id,title:'Older employer facts',kind:'live',lastCheckedAt:'2026-10-09T00:10:00Z'});
+ const snapshots=savedCheck?[Object.freeze({...observed,lastCheckedAt:savedCheck})]:[];
+ const merged=core.mergeJobs([research],snapshots,[observed])[0];
+ assert.equal(merged.title,research.title);assert.equal(merged.lastCheckedAt,expected);
+ assert.equal(core.mergeJobs([research],[merged],[])[0].lastCheckedAt,expected,'Observation survives healthy-zero cache turnover');
+}
+const oldObservation=Object.freeze({...preciseResearch,lastCheckedAt:'2026-10-09T00:20:00Z'});
+const laterResearch=Object.freeze({...preciseResearch,title:'Later research',researchCheckedAt:'2026-10-09T01:00:00Z',lastCheckedAt:'2026-10-09T00:10:00Z'});
+const archivedObservation=core.mergeJobs([],[oldObservation,laterResearch],[])[0];
+assert.equal(archivedObservation.title,laterResearch.title);assert.equal(archivedObservation.lastCheckedAt,oldObservation.lastCheckedAt);
+
+console.log('Employer observations survive editorial precedence and retained-cache turnover.');

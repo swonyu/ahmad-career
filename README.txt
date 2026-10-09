@@ -15,13 +15,17 @@ Live search queries six selected healthcare employer boards. Bounded title and
 location searches can miss suitable roles. Errors and source coverage are shown.
 The research snapshot is not automatically rewritten by live search. Incomplete
 searches share a short 30-second retry cooldown; their original timestamps and
-errors remain visible. Complete snapshots may be reused for five minutes.
+errors remain visible. Complete snapshots may be reused for five minutes. Missing
+results from incomplete sources retain their original employer-check dates. Exact
+validated exclusions stay out of discovery without deleting saved history.
 
 Professional history and qualifications come from Ahmad's self-reported LinkedIn
 profile, not independent credential verification. Overlapping jobs are not added
 as separate years. No achievements, specialist experience or salary are invented.
 Salary guides are historical context; no researched vacancy disclosed salary.
 
+New workspaces start with Riyadh discovery selected and no private pay default.
+Existing saved city choices and application history remain intact.
 Entered profile details, saved jobs and application tracking remain device-local.
 Website, iPhone and Mac do not sync. Export notes before clearing browser/app data.
 A storage conflict preserves existing records and asks you to export pending notes

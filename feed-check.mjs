@@ -109,5 +109,12 @@ await test('Malformed listing rows are failures while genuine empty boards succe
   assert.equal(mixed.source.ok,true);assert.equal(mixed.jobs.length,1);assert.equal(mixed.source.detailErrors,1);
   for(const total of [-1,'many',true,1.5])await assert.rejects(workdaySource(source,async()=>response({jobPostings:[],total})),/Unexpected employer response/);
 });
+await test('Contradictory first-page totals fail while genuine empty and unknown totals remain valid',async()=>{
+ for(const [rows,total] of [[[],10],[[listing],0]])await assert.rejects(workdaySource(source,async()=>response({jobPostings:rows,total})),/Unexpected employer response/);
+ for(const total of [0,null,undefined]){
+  const result=await workdaySource(source,async()=>response({jobPostings:[],total}));
+  assert.equal(result.source.ok,true);assert.equal(result.jobs.length,0);
+ }
+});
 if(failures)process.exitCode=1;
 else console.log('All feed-boundary regression groups passed.');

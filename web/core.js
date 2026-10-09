@@ -39,6 +39,7 @@
     const time=Date.parse(value.length===10?value+'T00:00:00+03:00':value);
     return Number.isFinite(time)?{day,time,dateOnly:value.length===10}:null;
   }
+  const dateSortTime=(value,closing=false)=>{const d=parsedDate(value);return d?d.time+(closing&&d.dateOnly?86400000-1:0):null};
   const isExpired=(value,now=new Date())=>{if(value==null||value==='')return false;const d=parsedDate(value);return !d||(d.dateOnly?d.day<saudiDay(now):d.time<now.getTime())};
   const isFuture=(value,now=new Date())=>{if(value==null||value==='')return false;const d=parsedDate(value);return !d||(d.dateOnly?d.day>saudiDay(now):d.time>now.getTime())};
   const dedupe=rows=>[...new Map(rows.map(j=>[j.id,j])).values()];
@@ -51,13 +52,14 @@
     if(job.rank!=null&&(!Number.isInteger(job.rank)||job.rank<1))delete job.rank;
     return job;
   }
+  const sourceIncomplete=s=>!s.ok||Boolean(s.error)||Boolean(s.detailErrors)||Boolean(s.queryErrors);
   function normalizeLive(payload){
     if(!payload||typeof payload!=='object'||!parsedDate(payload.checkedAt)||isFuture(payload.checkedAt,new Date(Date.now()+60000))||!Array.isArray(payload.jobs)||payload.jobs.length>1000||!Array.isArray(payload.sources)||payload.sources.length>20)return null;
-    if(payload.sources.some(s=>!s||typeof s.name!=='string'||typeof s.ok!=='boolean'||['count','scanned','detailErrors'].some(k=>s[k]!=null&&(!Number.isInteger(s[k])||s[k]<0))))return null;
+    if(payload.sources.some(s=>!s||typeof s.name!=='string'||typeof s.ok!=='boolean'||s.excludedIds!=null&&(!Array.isArray(s.excludedIds)||s.excludedIds.length>20||s.excludedIds.some(id=>typeof id!=='string'||!id.trim()||id.length>256))||['count','scanned','detailErrors'].some(k=>s[k]!=null&&(!Number.isInteger(s[k])||s[k]<0))))return null;
     const jobs=payload.jobs.map(normalizeJob).filter(Boolean),rejected=payload.jobs.length-jobs.length;
     if(rejected&&!jobs.length)return null;
     const invalidJobs=Math.max(rejected,Number.isInteger(payload.invalidJobs)&&payload.invalidJobs>=0&&payload.invalidJobs<=1000?payload.invalidJobs:0);
-    return{checkedAt:payload.checkedAt,jobs:dedupe(jobs).filter(j=>j.company!=='Qiddiya'&&j.healthcare!==false).map(j=>({...j,lastCheckedAt:payload.checkedAt})),invalidJobs,sources:payload.sources.map(s=>({...s,error:typeof s.error==='string'?s.error:''}))};
+    return{checkedAt:payload.checkedAt,jobs:dedupe(jobs).filter(j=>j.company!=='Qiddiya'&&j.healthcare!==false).map(j=>{const failed=payload.sources.some(s=>s.name===j.company&&sourceIncomplete(s)),prior=parsedDate(j.lastCheckedAt);if(failed&&j.lastCheckedAt!=null&&(!prior||prior.time>parsedDate(payload.checkedAt).time))return null;return {...j,lastCheckedAt:failed&&prior?j.lastCheckedAt:payload.checkedAt}}).filter(Boolean),invalidJobs,sources:payload.sources.map(s=>({...s,error:typeof s.error==='string'?s.error:''}))};
   }
   const factsTime=job=>Math.max(parsedDate(job?.lastCheckedAt)?.time??-Infinity,parsedDate(job?.researchCheckedAt)?.time??-Infinity);
   function mergeJobs(researched,snapshots,live){
@@ -65,8 +67,10 @@
     for(const current of [...snapshots,...live]){
       const prior=jobs.get(current.id),editorial=research.get(current.id);
       const checked=factsTime(current),priorChecked=factsTime(prior);
-      if(editorial&&(checked??-Infinity)<=(parsedDate(editorial.researchCheckedAt)?.time??-Infinity))continue;
+      const employer=[prior,current].reduce((latest,j)=>(parsedDate(j?.lastCheckedAt)?.time??-Infinity)>(parsedDate(latest?.lastCheckedAt)?.time??-Infinity)?j:latest,null);
+      if(editorial&&(checked??-Infinity)<=(parsedDate(editorial.researchCheckedAt)?.time??-Infinity)){if(employer)jobs.set(current.id,{...prior,lastCheckedAt:employer.lastCheckedAt});continue;}
       const combined=priorChecked!=null&&(checked==null||priorChecked>checked)?{...current,...prior}:{...prior,...current};
+      if(employer)combined.lastCheckedAt=employer.lastCheckedAt;
       let evidence=editorial;
       for(const candidate of [prior,current])if(candidate&&(candidate.rank||candidate.kind==='researched'||candidate.kind==='archived')&&(!evidence||(parsedDate(candidate.researchCheckedAt)?.time??-Infinity)>(parsedDate(evidence.researchCheckedAt)?.time??-Infinity)))evidence=candidate;
       if(evidence){for(const k of ['rank','fit','summary','gaps','steps','minYears','healthcare','leadership','subtitle','researchCheckedAt'])if(evidence[k]!=null)combined[k]=evidence[k];combined.kind=editorial?'researched':'archived';if(!editorial)delete combined.rank}
@@ -91,11 +95,11 @@
       }else if(['Not started','Preparing'].includes(status)){
         const closing=parsedDate(job.closes),past=Boolean(closing&&isExpired(job.closes,now));
         const day=closing&&(closing.dateOnly?closing.day:saudiDay(new Date(closing.time)));
-        if(closing&&(past||day>=today&&day<=last))tasks.push({jobId:job.id,kind:'deadline',past,order:past?0:1,time:closing.dateOnly?Date.parse(closing.day+'T23:59:59.999+03:00'):closing.time});
+        if(closing&&(past||day>=today&&day<=last))tasks.push({jobId:job.id,kind:'deadline',past,order:past?0:1,time:dateSortTime(job.closes,true)});
         if(!past)tasks.push({jobId:job.id,kind:'requirements',order:3});
       }
     }
     return tasks.sort((a,b)=>a.order-b.order||(a.order===1?a.time-b.time:0)||a.jobId.localeCompare(b.jobId));
   }
-  root.CareerCore={isSaudi,canonicalMinimumSAR,riyadhCity,criteriaFor,relevance,safeURL,safeJobURL,saudiDay,parsedDate,isExpired,isFuture,dedupe,normalizeJob,normalizeLive,mergeJobs,validApplicationRecord,attentionFor};
+  root.CareerCore={isSaudi,canonicalMinimumSAR,riyadhCity,criteriaFor,relevance,safeURL,safeJobURL,saudiDay,parsedDate,dateSortTime,isExpired,isFuture,dedupe,normalizeJob,sourceIncomplete,normalizeLive,mergeJobs,validApplicationRecord,attentionFor};
 })(globalThis);
