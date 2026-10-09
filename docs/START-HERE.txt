@@ -17,22 +17,15 @@ The app is unsigned and not notarized. Another Mac may need a signed build.
 The owner's earlier Mac 8 app was left untouched; its running state was not rechecked.
 Opening an older app does not update it or transfer records from the website.
 
-IPHONE/IPAD — LOCAL DISTRIBUTION 10; LATEST UPLOADED BUILD 7
-Native SwiftUI source now includes application records and Needs attention.
-The iOS Simulator Debug 1.1 (10) build compiled. A device archive and local App
-Store export 1.1 (10) also succeeded using existing signing. The exported device
-arm64 package passed strict signature, identity and resource checks.
-Ahmad-Career-iOS-AppStore-Build10.ipa is prepared locally for later authorized
-upload; it is not a direct iPhone installer. No build-10 upload, submission,
-installation or native UI test has been performed.
-Latest uploaded iOS distribution build remains 1.1 (7), uploaded 07:53:58 Riyadh.
-Last server-backed Apple status at 08:59 Riyadh: 7 Ready to Submit; 4 Waiting for
-Review. At about 10:00 Riyadh, refresh returned Apple sign-in (authResult=FAILED).
-No fresh build status is available; secure owner sign-in is needed before another
-status check. Build 4's queue is preserved. Build 7 is not verified submitted,
-approved or installable. Physical-iPhone installation and full VoiceOver are unverified.
+IPHONE/IPAD — BUILD 10 APPROVED; TESTFLIGHT INVITATION VERIFIED
+iOS 1.1 (10) uploaded successfully once at 21:14:46 Riyadh (18:14:46.646 UTC), Xcode exit 0. Apple processing completed and the reviewed testing notes were saved. One beta-review submission at about 21:21 Riyadh was followed by an observed Approved status for build 10. It was released to the existing Ahmad Beta group; at 21:24 Riyadh the public invitation displayed Ahmad Career and View in TestFlight. This verifies the invitation landing page, not installation or launch on a physical iPhone. The group limit remains one tester; the last group check showed zero testers. Approved build 4 was preserved. Builds 5, 6 and 7 remain historical, superseded uploads. No App Store production release is claimed.
+Native SwiftUI source includes application records and Needs attention.
+The iOS Simulator Debug build and device archive/local App Store export
+1.1 (10) passed the previously recorded compile, signature and resource checks.
+The retained App Store IPA is a local export, not a direct installer. Its SHA256 identifies that local file; the archive/export upload receipt does not establish byte-for-byte remote payload equality.
+Physical-iPhone installation, native UI and complete VoiceOver remain unverified.
 Invitation: https://testflight.apple.com/join/S5bDCNbd
-This invitation is not a verified installation route. See TestFlight-Preparation.txt.
+Open on the intended iPhone with TestFlight. See TestFlight-Preparation.txt.
 
 FILES AND VERIFICATION
 Website source ZIP contains version-10 source/checks. Apple source includes native

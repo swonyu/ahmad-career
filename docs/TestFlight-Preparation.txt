@@ -1,12 +1,16 @@
 AHMAD CAREER — TESTFLIGHT RELEASE RECORD
 9 October 2026 • Asia/Riyadh
 
-BUILD 7 — PROCESSED; READY TO SUBMIT
-Latest uploaded iOS distribution build: 1.1 (7).
+CURRENT BUILD 10 — APPROVED; INVITATION VERIFIED AT 21:24 RIYADH
+iOS 1.1 (10) uploaded successfully once at 21:14:46 Riyadh (18:14:46.646 UTC), Xcode exit 0. Apple processing completed and the reviewed testing notes were saved. One beta-review submission at about 21:21 Riyadh was followed by an observed Approved status for build 10. It was released to the existing Ahmad Beta group; at 21:24 Riyadh the public invitation displayed Ahmad Career and View in TestFlight. This verifies the invitation landing page, not installation or launch on a physical iPhone. The group limit remains one tester; the last group check showed zero testers. Approved build 4 was preserved. Builds 5, 6 and 7 remain historical, superseded uploads. No App Store production release is claimed.
+The retained App Store IPA is a local export, not a direct installer. Its SHA256 identifies that local file; the archive/export upload receipt does not establish byte-for-byte remote payload equality.
+
+BUILD 7 — HISTORICAL UPLOAD; SUPERSEDED BY BUILD 10
+Historical iOS distribution build: 1.1 (7).
 Current source 10 includes records, attention, refresh/provenance and feedback fixes.
 Local iOS Simulator Debug 1.1 (10) compiled. Device build 10 was later archived
-and exported locally; its separate receipt is below. No build-10 upload, beta
-submission, installation or native UI verification was performed.
+and exported locally; its separate local receipt is below. The later upload and
+beta availability are recorded above; installation and native UI remain unverified.
 The earlier release 8 changed web/Mac only; no iOS 8 archive/upload occurred.
 Archive and App Store export succeeded; strict codesign verification passed on
 both archive and exported IPA. Upload succeeded at 07:53:58 Riyadh, exit code 0.
@@ -16,7 +20,7 @@ Exported IPA SHA256:
 85cd8e08c6467e0c5e243b286bd7431519eea40573d7f28055bec8b4f61b6dc2
 Build-7 What to Test notes saved; Saved state verified at 07:59.
 
-BUILD 10 — LOCAL DEVICE ARCHIVE AND APP STORE EXPORT; NOT UPLOADED
+BUILD 10 — RETAINED LOCAL DEVICE ARCHIVE AND APP STORE EXPORT
 Device archive succeeded 17:17:57 Riyadh, followed by a successful local App Store
 export. At 17:20:41 Riyadh, checks confirmed version 1.1 (10), iPhoneOS arm64,
 minimum iOS 16, iPhone/iPad families, valid strict archive/export signatures,
@@ -26,40 +30,34 @@ match. No account refresh or provisioning-update flag was used.
 File: Ahmad-Career-iOS-AppStore-Build10.ipa
 SHA256: 6a1a39f153e347b5b4fee7c37217093c6aa83f15acb4b5aa44e22d98f70053c7
 This is an App Store upload artifact, not a direct-install file. Existing IPA3 and
-archive/export/upload7 remain unchanged. No upload, processing, submission,
-approval, tester availability or installation is established for build10.
+archive/export/upload7 remain unchanged. This SHA256 identifies the retained local
+export, not independently verified remote uploaded bytes. Later upload, processing,
+submission, approval and invitation observations are recorded in the current status.
+Installation and native UI remain unverified.
 
-REVIEW QUEUE — PRESERVED
-Build 4 remained Waiting for Review at 07:56. The build-7 page explicitly said
-only one build from version 1.1 may be submitted until the existing build is
-approved. No build-7 beta submission was attempted. Earlier build-5 submission
-had been blocked by the same review queue. Builds 5 and 6 are superseded by 7.
-Upload and processing are not beta-review submission, approval or availability.
+REVIEW AND AUTHENTICATION HISTORY
+At 08:59 Riyadh, build 7 was Ready to Submit and build 4 was Waiting for Review.
+The earlier build-7 submission route was blocked while build 4 awaited approval.
+At about 10:00 Riyadh, Apple redirected to sign-in; cached rows were not fresh proof.
+The owner securely signed in around 21:14 Riyadh. Fresh rows showed build 4 Approved.
+After build 10 processing, its reviewed What to Test text was saved and read back.
+The existing Ahmad Beta group was selected and automatic notification was unchecked.
+Submit for Review was clicked once around 21:21; the next fresh list showed build 10
+Approved. This does not establish whether a human manually reviewed it.
+Notify Testers was clicked once on build 10 around 21:22 to release that build to
+the existing group, which had zero testers. The control disappeared. Build 4 was
+not expired or altered. No new group, tester address, contract or account was added.
 
-AUTHENTICATION CHECKPOINT AND NEXT STEPS
-Last fresh server-backed rows at 08:59 Riyadh: 7 Ready to Submit and 4 Waiting
-for Review. Around 10:00 Riyadh refresh redirected to Apple sign-in with
- authResult=FAILED. Cached rows are not a new status receipt. Do not repeat login
-polling or enter credentials; secure owner sign-in is needed first.
-1. After authenticated access returns, check actual build/review state and preserve
-   build 4's queue. No submission or group change follows from a cached row.
-2. Select and validate the intended next distribution build deliberately: uploaded
-   build 7 does not contain the new native record functionality in source 10.
-3. If choosing prepared build10, verify the local artifact identity above, upload
-   only after authenticated access returns, and verify processing for that same
-   build. A local archive/export is not an upload. For newer code, first produce
-   and validate a new archive/export with its own build number.
-4. When Apple permits, explicitly submit the intended build for beta review.
-   Selecting a build or approval of build 4 does not submit build 7 or a newer build.
-   Verify the submitted status of that same build.
-5. After that build is approved, verify its availability and tester invitation.
-6. Verify installation and launch of that build on Ahmad's iPhone separately.
-
-INVITATION
+INVITATION AND REMAINING DEVICE CHECK
 https://testflight.apple.com/join/S5bDCNbd
-External group Ahmad Beta; capacity one tester. At the last invitation check no
-approved build was available. The link is not a verified current installation
-route. Physical installation and complete VoiceOver remain unverified.
+At 21:24 Riyadh the public page displayed Join the Ahmad Career beta and View in
+TestFlight, replacing the earlier not-accepting-testers message. The existing public
+link remains enabled with a one-tester limit and no additional criteria; settings
+were inspected without changing them. Last group observation: zero testers, two
+builds (10 and 4). The landing page does not establish which build a particular
+device installs. Verify version 1.1 (10), installation and launch on Ahmad's iPhone
+separately. Physical-iPhone use and complete VoiceOver remain unverified.
+Do not upload or submit build 10 again based on older preparation instructions.
 
 APP RECORD
 App Store Connect app ID: 6820749119
