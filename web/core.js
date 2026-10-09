@@ -1,21 +1,41 @@
 (function(root){
   const isSaudi=text=>/saudi|\briyadh\b|\bjeddah\b|\bdammam\b|\bkhobar\b|\bSAU\b|الرياض|جدة|السعودية/i.test(text||'');
+  function canonicalMinimumSAR(text){
+    if(typeof text!=='string')return null;
+    const value=text.trim().replace(/[٠-٩۰-۹]/g,c=>String(c.charCodeAt(0)-(c<='٩'?0x660:0x6f0))).replace(/٬/g,',').replace(/٫/g,'.');
+    if(!value)return '';
+    if(!/^(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)(?:\.[0-9]{1,2})?$/.test(value))return null;
+    const amount=Number(value.replace(/,/g,''));
+    return Number.isSafeInteger(amount)&&amount<=1000000?String(amount):null;
+  }
+  function riyadhCity(location){
+    // ponytail: location text is a bounded heuristic; use structured worksites when available.
+    if(!/(?:^|[^\p{L}])(?:riyadh|الرياض)(?=$|[^\p{L}])/iu.test(location||''))return 'outside';
+    const multiple=/\b(?:jeddah|dammam|khobar|dhahran|makkah|mecca|madinah|medina|taif|tabuk|abha|jubail|yanbu|qassim|buraidah|hail|jazan|najran|hofuf|ahsa)\b|جدة|الدمام|الخبر|الظهران|مكة|المدينة|الطائف|تبوك|أبها|الجبيل|ينبع|القصيم|بريدة|حائل|جازان|نجران|الهفوف|الأحساء|[\/;؛]|\b(?:or|and|multiple|locations)\b|(?:^|\s)(?:أو|و)(?:\s|$)|مواقع متعددة|موقعين/iu;
+    return multiple.test(location)?'conditional':'confirmed';
+  }
+  function criteriaFor(job,profile={}){
+    const city=profile.preferredCity==='riyadh'?riyadhCity(job.location):'any';
+    // Current feeds have no comparable, verified monthly pay evidence.
+    const salary=Number(profile.minimumMonthlySAR)>0?'unverified':'inactive';
+    return {included:city!=='outside'&&!(salary==='unverified'&&profile.unknownSalary==='hide'),city,salary};
+  }
   function relevance(title){
-    if(/\bintern(ship)?\b|trainee|graduate|early[ -](?:in[ -])?career|sales|account manager|clinical|chemist|scientist|engineer|financial analyst|regulatory|QA\/RA/i.test(title||''))return 0;
+    if(/\bintern(ship)?\b|trainee|graduate|early[ -](?:in[ -])?career|sales|account manager|clinical|chemist|scientist|engineer|financial analyst|QA\/RA/i.test(title||''))return 0;
     if(/supply.?chain|procurement|purchas|tender|logistics|warehouse|demand.?plan|supply.?plan|inventory|supplier/i.test(title||''))return /manager|director|head|lead/i.test(title)?90:65;
-    if(/performance|operational excellence|continuous improvement|transformation|operations manager/i.test(title||''))return 80;
+    if(/performance|operational excellence|continuous improvement|transformation|operations? manager/i.test(title||''))return 80;
     if(/business[ -]value[ -]partner/i.test(title||''))return 65;
     return 0;
   }
   const safeURL=value=>{try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&(!u.port||u.port==='443')?u.href:'#'}catch{return '#'}};
-  const jobHosts=new Set(['apply.workable.com','alcon.wd5.myworkdayjobs.com','jj.wd5.myworkdayjobs.com','roche.wd3.myworkdayjobs.com','novartis.wd3.myworkdayjobs.com','gsk.wd5.myworkdayjobs.com','bdx.wd1.myworkdayjobs.com','www.careers.jnj.com']);
-  const safeJobURL=value=>{const safe=safeURL(value);if(safe==='#')return '#';const u=new URL(safe);return jobHosts.has(u.hostname)&&(u.hostname!=='apply.workable.com'||u.pathname.startsWith('/qiddiya-investment-company-1/j/'))?safe:'#'};
+  const jobHosts=new Set(['apply.workable.com','alcon.wd5.myworkdayjobs.com','jj.wd5.myworkdayjobs.com','roche.wd3.myworkdayjobs.com','novartis.wd3.myworkdayjobs.com','gsk.wd5.myworkdayjobs.com','bdx.wd1.myworkdayjobs.com','www.careers.jnj.com','eenp.fa.em3.oraclecloud.com','efan.fa.em3.oraclecloud.com','careers.al-dawaa.com','sa.linkedin.com','www.linkedin.com']);
+  const safeJobURL=value=>{const safe=safeURL(value);if(safe==='#')return '#';const u=new URL(safe);if(u.hostname.endsWith('.oraclecloud.com')&&!/^\/hcmUI\/CandidateExperience\/en\/sites\/CX_1\/job\/\d+\/?$/.test(u.pathname))return '#';if(u.hostname.endsWith('linkedin.com')&&!/^\/jobs\/view\/(?:[a-z0-9-]+-)?\d+\/?$/i.test(u.pathname))return '#';if(u.hostname==='careers.al-dawaa.com'&&!u.pathname.startsWith('/en/saudi-arabia/jobs/'))return '#';return jobHosts.has(u.hostname)&&(u.hostname!=='apply.workable.com'||u.pathname.startsWith('/qiddiya-investment-company-1/j/'))?safe:'#'};
   const saudiDay=now=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Riyadh',year:'numeric',month:'2-digit',day:'2-digit'}).format(now);
   function parsedDate(value){
     if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2}))?$/.test(value))return null;
     const day=value.slice(0,10),midnight=Date.parse(day+'T00:00:00Z');
     if(!Number.isFinite(midnight)||new Date(midnight).toISOString().slice(0,10)!==day)return null;
-    const time=Date.parse(value.length===10?value+'T00:00:00Z':value);
+    const time=Date.parse(value.length===10?value+'T00:00:00+03:00':value);
     return Number.isFinite(time)?{day,time,dateOnly:value.length===10}:null;
   }
   const isExpired=(value,now=new Date())=>{if(value==null||value==='')return false;const d=parsedDate(value);return !d||(d.dateOnly?d.day<saudiDay(now):d.time<now.getTime())};
@@ -35,12 +55,20 @@
     if(payload.sources.some(s=>!s||typeof s.name!=='string'||typeof s.ok!=='boolean'||['count','scanned','detailErrors'].some(k=>s[k]!=null&&(!Number.isInteger(s[k])||s[k]<0))))return null;
     const jobs=payload.jobs.map(normalizeJob).filter(Boolean),invalidJobs=payload.jobs.length-jobs.length;
     if(invalidJobs&&!jobs.length)return null;
-    return{checkedAt:payload.checkedAt,jobs:dedupe(jobs),invalidJobs,sources:payload.sources.map(s=>({...s,error:typeof s.error==='string'?s.error:''}))};
+    return{checkedAt:payload.checkedAt,jobs:dedupe(jobs).filter(j=>j.company!=='Qiddiya'&&j.healthcare!==false).map(j=>({...j,lastCheckedAt:payload.checkedAt})),invalidJobs,sources:payload.sources.map(s=>({...s,error:typeof s.error==='string'?s.error:''}))};
   }
   function mergeJobs(researched,snapshots,live){
     const research=new Map(researched.map(j=>[j.id,j])),jobs=new Map(research);
-    for(const current of [...snapshots,...live]){const prior=jobs.get(current.id),editorial=research.get(current.id);if(editorial&&!current.lastCheckedAt&&snapshots.includes(current))continue;const combined={...prior,...current};if(editorial){for(const k of ['rank','fit','summary','gaps','steps','minYears','healthcare','leadership','subtitle'])if(editorial[k]!=null)combined[k]=editorial[k];combined.kind='researched'}jobs.set(current.id,combined)}
+    for(const current of [...snapshots,...live]){
+      const prior=jobs.get(current.id),editorial=research.get(current.id);
+      const checked=parsedDate(current.lastCheckedAt)?.time,priorChecked=parsedDate(prior?.lastCheckedAt)?.time;
+      if(editorial&&(checked==null&&snapshots.includes(current)||checked!=null&&checked<=(parsedDate(editorial.researchCheckedAt)?.time??-Infinity)))continue;
+      const combined=priorChecked!=null&&(checked==null||priorChecked>checked)?{...current,...prior}:{...prior,...current};
+      const evidence=editorial||[prior,current].find(j=>j&&(j.rank||j.kind==='researched'||j.kind==='archived'));
+      if(evidence){for(const k of ['rank','fit','summary','gaps','steps','minYears','healthcare','leadership','subtitle','researchCheckedAt'])if(evidence[k]!=null)combined[k]=evidence[k];combined.kind=editorial?'researched':'archived';if(!editorial)delete combined.rank}
+      jobs.set(current.id,combined);
+    }
     return [...jobs.values()];
   }
-  root.CareerCore={isSaudi,relevance,safeURL,safeJobURL,saudiDay,parsedDate,isExpired,isFuture,dedupe,normalizeJob,normalizeLive,mergeJobs};
+  root.CareerCore={isSaudi,canonicalMinimumSAR,riyadhCity,criteriaFor,relevance,safeURL,safeJobURL,saudiDay,parsedDate,isExpired,isFuture,dedupe,normalizeJob,normalizeLive,mergeJobs};
 })(globalThis);

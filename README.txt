@@ -1,36 +1,34 @@
 AHMAD CAREER — SAUDI HEALTHCARE SUPPLY CHAIN & PERFORMANCE
 
-Start locally (Node.js 22 or newer):
-  npm start
-  Open http://127.0.0.1:8778
-
-Checks: node check.mjs && node state-check.mjs
+Start locally: npm start (Node.js 22 or newer), then http://127.0.0.1:8778
+Checks: npm test
 Build: npm run build
-The build emits a dependency-free Cloudflare-compatible Worker in dist/server/index.js.
-The website and the native Apple app share the static files in web/.
+The build emits a dependency-free Cloudflare-compatible Worker.
+The Mac app bundles the web interface; the iPhone app uses native SwiftUI.
 
-The shortlist was researched on 8 October 2026. It contains ten employer listings,
-with provisional fit, mandatory gaps, primary sources and application steps.
-Seven listings are at Qiddiya: this is a concentrated research shortlist, not a
-claim of exhaustive Saudi market coverage. Some alternatives may be lateral or
-below Ahmad's current level. Confirm grade and responsibility before applying.
+Research checked 9 October 2026. Nine healthcare leads are labeled conditional,
+stretch or reserve, with requirements, source links and application steps. This
+is a bounded research snapshot, not an exhaustive Saudi ranking or salary promise.
+Current employer pages remain authoritative. Older postings need reconfirmation.
 
-Live search reads seven selected public employer boards on demand. It uses
-bounded employer API queries and title/location filters, not AI assessment.
-Individual sources can fail or change; coverage and errors are shown in the app.
-No paid API key is required. The top ten are a dated research snapshot and are
-not automatically rewritten by live search. Employer pages are authoritative.
+Live search queries six selected healthcare employer boards. Bounded title and
+location searches can miss suitable roles. Errors and source coverage are shown.
+The research snapshot is not automatically rewritten by live search. Incomplete
+searches share a short 30-second retry cooldown; their original timestamps and
+errors remain visible. Complete snapshots may be reused for five minutes.
 
-Ahmad's full LinkedIn history was not publicly accessible. The app separates
-verified public profile facts from missing CV details. No degree, achievement,
-certification, tenure or salary is invented. Posted salaries were undisclosed.
-Salary guide figures are historical context, not offers or live salary estimates.
+Professional history and qualifications come from Ahmad's self-reported LinkedIn
+profile, not independent credential verification. Overlapping jobs are not added
+as separate years. No achievements, specialist experience or salary are invented.
+Salary guides are historical context; no researched vacancy disclosed salary.
 
-Profile details, saved roles and tracking stay in the current browser/device.
-They do not sync between web, iPhone and Mac. Browser data deletion can erase
-local records; export notes to keep a readable copy. Search sends only fixed
-job queries; profile data and CVs are not sent. Applications are opened on the
-employer's website for Ahmad to review and submit himself.
+Entered profile details, saved jobs and application tracking remain device-local.
+Website, iPhone and Mac do not sync. Export notes before clearing browser/app data.
+A storage conflict preserves existing records and asks you to export pending notes
+before reloading. Exported notes are readable copies, not an importable backup.
+Search sends fixed employer queries, not your CV or entered profile. Application
+links open the employer's own site; local status changes do not submit anything.
 
-The published Site is private to its owner. Giving another person its URL alone
-does not grant access. The source and native Xcode project can be shared directly.
+The published website is PUBLIC. Anyone with its link can view bundled research.
+The GitHub repository is private; repository privacy does not restrict the site.
+No private messages, CVs, credentials or personal application statuses are bundled.

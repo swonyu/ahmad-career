@@ -39,9 +39,21 @@ for(const mode of ['complete','partial','offline']){
   const app=worker(mode),response=await app.run(new Request('https://career.example/api/live'));
   const payload=await response.json();await Promise.all(app.pending);
   assert.equal(response.status,200);
-  assert.equal(app.puts.length,mode==='complete'?1:0,`${mode}: only a complete response can enter the five-minute cache`);
+  assert.equal(app.puts.length,1);assert.equal(app.puts[0].headers.get('Cache-Control'),mode==='complete'?'public, max-age=300':'public, max-age=30');
   if(mode==='partial'){assert.ok(payload.jobs.length);assert.ok(payload.sources.some(s=>s.ok&&s.detailErrors>0))}
   if(mode==='offline')assert.ok(payload.sources.filter(s=>s.name!=='Qiddiya').every(s=>!s.ok));
+}
+for(const mode of ['complete','partial','offline']){
+  const app=worker(mode);
+  const responses=await Promise.all(Array.from({length:3},()=>app.run(new Request('https://career.example/api/live'))));
+  const payloads=await Promise.all(responses.map(r=>r.json()));
+  const calls=app.calls();assert.ok(calls<=21,`${mode}: concurrent requests must share one employer batch`);
+  await app.run(new Request('https://career.example/api/live'));
+  assert.equal(app.calls(),calls,`${mode}: immediate retries use the original snapshot`);
+  assert.ok(payloads.every(p=>p.checkedAt===payloads[0].checkedAt));
+  vm.runInContext('searchSnapshot.expires=0',app.context);
+  await app.run(new Request('https://career.example/api/live'));
+  assert.ok(app.calls()>calls,`${mode}: retry after cooldown expiry`);
 }
 const app=worker('complete');
 const head=await app.run(new Request('https://career.example/api/live',{method:'HEAD'}));
