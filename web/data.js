@@ -2,23 +2,24 @@ globalThis.CAREER_DATA={
   "checkedAt": "2026-10-09",
   "profile": {
     "name": "Ahmad Alayed",
-    "role": "Medical Supply KPI Supervisor",
-    "organization": "Supply Chain Operations Center · MOH / NHCC",
+    "role": "Regulatory KPI Department Manager",
+    "organization": "Supply Chain Command Center · MOH / NHCC",
     "location": "Riyadh, Saudi Arabia",
     "url": "https://sa.linkedin.com/in/ahmad-alayed-b91185b3",
     "facts": [
-      "LinkedIn self-report: Medical Supply KPI Supervisor, MOH / NHCC, December 2021–present; medical-supply reporting, leadership insights and cross-functional improvement.",
-      "Quality Control Department Manager, July 2020–December 2021; describes contracts from demand forecasting through purchasing, tender oversight and contract execution.",
+      "LinkedIn self-report: Regulatory KPI Department Manager, December 2021–present; healthcare supply-chain KPI monitoring across 20 health clusters and Ministry of Health branches, with reports for Ministry leadership.",
+      "Quality Control Department Manager, July 2020–December 2021; led more than 10 staff, managed medical-supply contracts across forecasting, purchasing, tendering and execution, and coordinated contract and supply matters with NUPCO.",
+      "Lists Power BI, SQL and Excel for data analysis, KPI dashboards and management reporting. The depth and outcomes of this work still need role-specific examples.",
       "Assistant Quality Control Manager, September 2019–July 2020. Medical-supply Pharmacist, May 2018–December 2021; these positions overlap and are not added together.",
       "Pharmacist at Qassim Health Cluster, March 2010–April 2018. Career dates are self-reported; total pharmacy experience does not establish years in each specialist function.",
       "Bachelor’s degree in Pharmacy, King Saud University (2004–2010); Bachelor’s degree in Law, Saudi Electronic University (2018–2022). Listed qualifications are not independently credential-verified."
     ],
     "unknowns": [
       "Exact years owning bids/tenders, statistical demand planning and commercial operations",
-      "Team size, budgets, decision authority and measurable achievements",
+      "Current team size, budgets, decision authority and measurable achievements",
       "Hands-on ERP, SAP, forecasting, customs and logistics systems",
       "Preferred Saudi cities, acceptable seniority and notice period",
-      "Current CV and evidence supporting each vacancy’s mandatory requirements"
+      "Role-specific CV evidence supporting each vacancy’s mandatory requirements"
     ]
   },
   "jobs": [
@@ -230,7 +231,7 @@ globalThis.CAREER_DATA={
       "summary": "Pharmacy education supports the stated qualification route. Clinic KPIs and operational improvement align, but sales, clinic P&L and customer-service management are separate requirements.",
       "gaps": [
         "Qualified medical doctor or pharmacist; verify credentials.",
-        "5–8 years in sales and operations management; fluent Arabic/English and MS Office. KPI supervision alone does not establish this experience.",
+        "5–8 years in sales and operations management; fluent Arabic/English and MS Office. KPI management alone does not establish this experience.",
         "Clinic budgets, revenue/cash flow and team performance. Six working days, eight duty hours plus one-hour break; confirm schedule and worksite."
       ],
       "minYears": 5,
