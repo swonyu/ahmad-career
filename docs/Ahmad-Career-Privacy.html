@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Draft privacy and beta support information for the native Ahmad Career iPhone and iPad app.">
+  <title>Ahmad Career — Privacy &amp; beta support draft</title>
+  <style>
+    :root { color-scheme: light; --ink:#182522; --muted:#53635d; --line:#dce6e1; --mint:#e9f6ef; --accent:#17694d; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:#f7f9f8; color:var(--ink); font:17px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    main { max-width:850px; margin:auto; padding:48px 26px 64px; }
+    header { padding-bottom:28px; border-bottom:1px solid var(--line); }
+    .brand { display:flex; align-items:center; gap:12px; margin-bottom:26px; font-weight:650; letter-spacing:-.02em; }
+    .mark { display:inline-flex; width:40px; height:40px; align-items:center; justify-content:center; border-radius:12px; background:var(--ink); color:white; font-size:29px; font-weight:700; line-height:1; }
+    .mark span { color:#8edab3; font-size:20px; align-self:flex-end; padding-bottom:5px; }
+    h1 { font-size:clamp(32px,6vw,46px); line-height:1.1; letter-spacing:-.045em; margin:0 0 14px; }
+    h2 { font-size:23px; line-height:1.25; letter-spacing:-.025em; margin:0 0 14px; }
+    h3 { font-size:17px; margin:20px 0 6px; }
+    p { margin:0 0 15px; }
+    p:last-child { margin-bottom:0; }
+    section { padding-top:31px; }
+    a { color:var(--accent); text-decoration-thickness:1px; text-underline-offset:3px; overflow-wrap:anywhere; }
+    a:focus-visible { outline:3px solid var(--accent); outline-offset:4px; border-radius:2px; }
+    .meta,.muted { color:var(--muted); }
+    .meta { font-size:14px; margin:0 0 20px; }
+    .draft { padding:18px 20px; background:#fff7e5; border:1px solid #e8d6ad; border-radius:14px; font-size:15px; }
+    .draft strong { display:block; margin-bottom:5px; }
+    .summary { padding:22px; background:var(--mint); border-radius:16px; margin-top:26px; }
+    ul,ol { padding-left:23px; margin:10px 0 16px; }
+    li { margin:8px 0; }
+    .data-list { margin:0; }
+    .data-list div { padding:14px 0; border-bottom:1px solid var(--line); }
+    dt { font-weight:650; margin-bottom:3px; }
+    dd { margin:0; }
+    footer { margin-top:36px; padding-top:22px; border-top:1px solid var(--line); font-size:14px; color:var(--muted); }
+    @media (max-width:520px) { main { padding:28px 20px 44px; } body { font-size:16px; } .summary { padding:18px; } }
+    @media print { body { background:white; font-size:11pt; } main { max-width:none; padding:0; } a { color:inherit; } section { break-inside:avoid; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="brand"><span class="mark" aria-hidden="true">a<span>•</span></span> Ahmad Career</div>
+    <h1>Privacy &amp; beta support</h1>
+    <p class="meta">Native iPhone and iPad app · Version 1.1, build 4 · Draft prepared 9 October 2026</p>
+    <aside class="draft" aria-label="Draft status">
+      <strong>Draft — not yet published as the developer’s policy</strong>
+      A monitored developer contact address and a public hosting location still need to be supplied. The developer must also confirm how beta feedback and diagnostics will be used and retained before this page is published. No publisher legal identity or contact details are asserted here.
+    </aside>
+  </header>
+
+  <div class="summary">
+    <p>Ahmad Career helps you review Saudi job opportunities, prepare applications and track your own progress. Profile and application records are saved on your device. Running a live search contacts employer recruitment services. Sharing a preparation note sends a copy only to a destination you choose.</p>
+    <p>This page describes the native iPhone and iPad app. It does not describe the separate website or Mac app.</p>
+  </div>
+
+  <section aria-labelledby="local">
+    <h2 id="local">What stays in the app</h2>
+    <dl class="data-list">
+      <div><dt>Details you enter</dt><dd>Relevant years of experience, qualifications, tools and responsibilities, and achievements are saved locally when you save your profile. They help you prepare notes; they are not sent with employer searches.</dd></div>
+      <div><dt>Your job workspace</dt><dd>Saved roles, application statuses, completed checklist steps, retained vacancy details, and the latest accepted search results and source-check information are stored locally. These records let you continue after closing the app.</dd></div>
+      <div><dt>Salary comparisons and list filters</dt><dd>Salary figures are calculated on the device. Salary inputs and text used to filter the displayed job lists are not sent to employer services or written to the app’s saved workspace.</dd></div>
+      <div><dt>Public research included with the app</dt><dd>The app contains a dated professional research snapshot about Ahmad and publicly available employer listings. This bundled content is separate from your entered profile and application records. It is not a live connection to your LinkedIn account, and it does not establish that unverified qualifications are true.</dd></div>
+    </dl>
+    <p style="margin-top:18px">There is no app account, developer-operated cloud sync, advertising SDK, tracking SDK or developer analytics service in this version. The app does not automatically upload your saved profile or application records to the developer. Apple’s TestFlight diagnostics are a separate data flow, explained below.</p>
+  </section>
+
+  <section aria-labelledby="network">
+    <h2 id="network">Employer searches and external websites</h2>
+    <p>When you choose <strong>Find new openings</strong> or refresh the employer results, the app sends fixed job-search requests directly over HTTPS to Alcon, Novartis, Johnson &amp; Johnson, GSK, BD and Roche through their Workday recruitment services, and to Qiddiya through Workable. It also retrieves details for selected vacancies.</p>
+    <p>Those requests contain predefined job queries, location filters, pagination information or vacancy identifiers. They do not contain your entered profile, saved-job selections, application statuses or preparation notes. The recruitment services receive ordinary connection information, including your IP address, request timing and HTTP request information. Their own practices govern any server logs they retain.</p>
+    <p>Opening an application, LinkedIn or salary-source link opens an external website. The website and browser may process information under their own privacy settings and policies. Any account, CV upload or application you submit there is managed by that provider. Ahmad Career does not submit job applications for you.</p>
+  </section>
+
+  <section aria-labelledby="sharing">
+    <h2 id="sharing">Notes you choose to share</h2>
+    <p>A single-role preparation note includes the role, preparation guidance, application status and your entered profile. The application-notes export includes your profile, checklist, and saved or tracked roles. The system share sheet lets you choose an app, person or storage destination.</p>
+    <p>Review the note before sending it. Once shared, the copy is handled by the destination you select. Later changes or deletion in Ahmad Career do not recall that copy. Avoid entering confidential employer information or details you do not want included in an export.</p>
+  </section>
+
+  <section aria-labelledby="retention">
+    <h2 id="retention">Keeping and removing local records</h2>
+    <p>Your saved workspace has no automatic expiry. A successful refresh can replace the displayed live results, while saved or tracked vacancy snapshots may remain so that your application record survives a listing disappearing. If every employer check fails, previous accepted results are preserved. A partially successful refresh can replace the live results.</p>
+    <ul>
+      <li>You can edit or clear profile fields, remove a role from Saved, change its application status to <strong>Not started</strong>, and uncheck completed steps.</li>
+      <li>Removing a saved role or resetting its status does not necessarily erase every locally retained vacancy snapshot.</li>
+      <li>To remove the app’s local workspace, use <strong>Delete App</strong> in iPhone or iPad Settings. <strong>Offload App</strong> keeps its documents and data.</li>
+      <li>Device or computer backups may retain copies according to your backup settings. Restoring a backup can restore app records. Manage those backups separately.</li>
+      <li>Exports and feedback already sent elsewhere must be managed at their destination. Deleting the app does not remove them.</li>
+    </ul>
+    <p>The public research snapshot is part of the app itself. Clearing your personal entries does not edit that snapshot, and reinstalling the app provides the bundled research again.</p>
+  </section>
+
+  <section aria-labelledby="testflight">
+    <h2 id="testflight">Apple TestFlight is separate</h2>
+    <p>If you install this beta through TestFlight, Apple automatically collects crash logs and usage information and shares them with the application provider. This can include device, app-version and testing information. Feedback you send can include your comments, screenshots and diagnostics. Identity information visible to the provider depends on how you were invited and what you submit.</p>
+    <p>These TestFlight processes are separate from the app’s local storage and employer searches. Review <a href="https://www.apple.com/legal/privacy/data/en/test-flight/">Apple’s TestFlight &amp; Privacy notice</a> for the information involved, Apple’s retention practices and available privacy controls.</p>
+    <aside class="draft" aria-label="Pending beta data handling details">
+      <strong>Developer confirmation needed before publication</strong>
+      State how the developer will use beta feedback and diagnostic information, how long any downloaded or separately stored copies will be retained, and where a tester can request access or deletion. No unconfirmed retention period or deletion promise is made in this draft.
+    </aside>
+  </section>
+
+  <section aria-labelledby="support">
+    <h2 id="support">Beta support and corrections</h2>
+    <p>If you installed the app through TestFlight, open <strong>TestFlight → Ahmad Career → Send Beta Feedback</strong>. Describe the screen, the steps you took and what happened. Check screenshots and attachments before sending them; they may show profile or application information.</p>
+    <p>You can also use beta feedback to flag inaccurate public research. Do not include a CV or sensitive personal documents unless you intentionally choose to share them.</p>
+    <p><strong>Direct developer contact:</strong> pending a monitored address. This page is not ready to serve as a public support destination until that address is supplied and the draft notes are resolved.</p>
+  </section>
+
+  <footer>
+    <p>This draft describes the native app’s implemented behavior as reviewed for version 1.1, build 4. Update the page when its data flows, support arrangements or service providers change.</p>
+  </footer>
+</main>
+</body>
+</html>

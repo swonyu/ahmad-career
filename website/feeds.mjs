@@ -9,7 +9,7 @@ export const SOURCES=[
  {name:'BD',host:'bdx.wd1.myworkdayjobs.com',tenant:'bdx',board:'EXTERNAL_CAREER_SITE_SAUDI_ARABIA'}
 ];
 async function jsonFetch(url,body,fetcher=fetch){
- const r=await fetcher(url,{method:body?'POST':'GET',redirect:'error',headers:{'Content-Type':'application/json','Accept':'application/json'},...(body?{body:JSON.stringify(body)}:{}),signal:AbortSignal.timeout(14000)});
+ const r=await fetcher(url,{method:body?'POST':'GET',redirect:'manual',headers:{'Content-Type':'application/json','Accept':'application/json'},...(body?{body:JSON.stringify(body)}:{}),signal:AbortSignal.timeout(14000)});
  if(!r.ok)throw new Error('Employer returned '+r.status);
  const text=await r.text();if(text.length>8000000)throw Error('Employer response was too large');return JSON.parse(text);
 }
@@ -56,7 +56,7 @@ export async function workableSource(fetcher=fetch){
  return{jobs,source:{name:'Qiddiya',ok:successfulQueries>0,count:jobs.length,scanned,limited,queryErrors:failures,...(failures?{error:`${failures} searches failed; results may be incomplete.`}:{})}};
 }
 export async function getLiveJobs(fetcher=fetch){
- const tasks=[...SOURCES.map(s=>({name:s.name,run:()=>workdaySource(s,fetcher)})),{name:'Qiddiya',run:()=>workableSource(fetcher)}];
+ const tasks=[...SOURCES.map(s=>({name:s.name,run:()=>workdaySource(s,fetcher)}))];
  const results=await Promise.all(tasks.map(async s=>{try{return await s.run()}catch(e){return{jobs:[],source:{name:s.name,ok:false,count:0,error:String(e.message||'Unable to reach employer').slice(0,140)}}}}));
  return{checkedAt:new Date().toISOString(),jobs:dedupe(results.flatMap(r=>r.jobs)).sort((a,b)=>b.relevance-a.relevance||String(b.posted).localeCompare(String(a.posted))),sources:results.map(r=>r.source)};
 }

@@ -1,0 +1,86 @@
+AHMAD CAREER — RELEASE HANDOFF
+9 October 2026 • Asia/Riyadh
+Saudi healthcare supply chain and performance opportunities
+
+PUBLIC WEBSITE
+https://ahmad-career.jolly-lynx-4861.chatgpt.site/
+The website is public. Final version 5 deployed at 04:35:14 Riyadh (01:35:14 UTC),
+from source 794d68ee65742c1627ddc5491e8cceb0532b626a. A real Find new openings
+check at 04:35 showed all six employers responding and three current leads from
+Johnson & Johnson, Roche and Alcon. Cache-permission and employer-redirect fixes
+are included. These counts describe that run, not future availability.
+
+IPHONE / IPAD — BUILD 5 PROCESSED, REVIEW SUBMISSION BLOCKED
+Version 1.1 (5) was archived, App Store distribution-signed, exported and uploaded
+successfully at 04:26 Riyadh. At 04:41, Apple showed build 5 as READY TO SUBMIT
+and build 4 as WAITING FOR REVIEW. Apple blocked the attempt to submit build 5
+because another build is already in review. Build 4's review was preserved;
+resubmit build 5 after that review completes. Build 5 is not yet beta-approved
+or verified available to testers.
+
+Invitation: https://testflight.apple.com/join/S5bDCNbd
+The link has capacity for one tester. At the last invitation check, no approved
+build was available and testers could not join. An upload does not open testing.
+Ahmad's physical-phone installation has not been verified.
+See TestFlight-Preparation.txt for the separate upload/review/install checkpoints.
+
+CURRENT SOURCE AND MAC PACKAGE
+Ahmad-Career-Apple-Source.zip contains the reviewed 1.1 (5) Xcode project.
+Ahmad-Career-Website-Source.zip contains the reviewed website source and checks.
+Ahmad-Career-macOS-Unsigned.zip contains the universal Intel/Apple Silicon
+1.1 (5) Release app. It is unsigned and not notarized; another Mac may require an
+appropriately signed build. SHA256SUMS.txt records the deliverable checksums.
+The archives exclude private photos, CVs, messages, runtime state and build logs.
+
+OLDER DEVELOPMENT IPA — BUILD 3
+Ahmad-Career-iOS.ipa remains development-signed version 1.1 (3). It is not the
+uploaded build 5. It works only on registered devices in its provisioning profile,
+including Saleh's paired iPhone. The profile expires 28 July 2027 unless revoked
+sooner. Physical installation was not confirmed after Xcode's connection reset.
+
+REVIEWED BEHAVIOR
+Twenty review assignments are complete. Web checks passed, including 38 state
+regression groups, Worker cache-denial handling and employer-redirect boundaries.
+Native checks, the universal Mac Release, iOS simulator and build-5 archive/export
+passed. A real Mac WebKit run rendered three leads from six source results and
+passed saving, tracking, cache preservation and note export. Targeted native UI
+checks covered criteria, saved notes and the share sheet; neutral defaults were
+restored. Browser download receipt, full VoiceOver and Ahmad's phone remain unverified.
+Read Review-2026-10-09.html for evidence and limits. App-Review.html is historical.
+
+USING THE WORKSPACE
+The dated 9 October research contains nine healthcare leads, without adding
+unsuitable roles to reach ten. All nine have undisclosed salary. Live search
+queries six healthcare employers: Alcon, Novartis, Johnson & Johnson, GSK, BD and
+Roche. Qiddiya is not queried. Coverage is bounded; missing jobs do not prove closure.
+
+1. Review each role's conditional fit, requirements and employer source.
+2. Add qualifications and achievements you can substantiate in Profile.
+3. Optionally set local discovery criteria: Riyadh, minimum monthly SAR and whether
+   to show unverified pay. Defaults are any Saudi city, no pay floor and unknown
+   pay shown. Unknown pay never counts as meeting a minimum. Hiding unverified pay
+   with an active floor may empty discovery; saved/tracked roles remain available.
+4. Save or track leads. Recheck location, grade, availability and pay with employers.
+5. Review notes before sharing and submit applications personally.
+
+There is no guarantee of qualification, director-level seniority or salary.
+Historical salary guides are context, not vacancy-specific offers. No new employer
+applications or employer messages were sent during this review.
+
+PRIVACY AND EXISTING DATA
+Public research uses public professional and employer information. Private CVs,
+messages, photos and pay preferences are excluded from public source/packages.
+Profile details, criteria, saved roles and tracking stay in each browser/app on
+its device, without account sync. Criteria are excluded from search requests and
+exported notes; notes may include professional details the user enters. Existing
+saved data remains supported when optional criteria fields are absent. Clearing
+browser data or removing an app can erase it. Exports are readable notes, not an
+importable backup.
+
+BUILD FROM SOURCE
+Open ../apple/AhmadCareer.xcodeproj in Xcode. Select the AhmadCareer
+scheme and My Mac or an iPhone/iPad Simulator, then Run. For a physical device,
+select an authorized development team under Signing & Capabilities, connect and
+unlock it, and enable Developer Mode if prompted. The shared source includes no
+signing credentials or team selection. Setup and repeatable checks are in
+../apple/README.md.

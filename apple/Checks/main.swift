@@ -76,13 +76,15 @@ print("PASS: Qiddiya public Saudi listing boundaries and future-date exclusion")
 for title in ["Supplier Manager", "Purchasing Lead", "Demand Planner", "Supply Planning Manager", "Inventory Manager", "Continuous Improvement Lead", "Transformation Director", "Operations Manager"] {
     precondition(CareerFeed.relevant(title), "Relevant title must be included: \(title)")
 }
-for title in ["Supply Chain Intern", "Procurement Internship", "Procurement Trainee", "Supply Chain Graduate", "Sales Operations Manager", "Account Manager, Procurement", "Clinical Supply Chain Manager", "Procurement Chemist", "Supply Chain Scientist", "Procurement Engineer", "Financial Analyst - Supply Chain", "Regulatory Operations Manager", "QA-RA Operations Manager", "Healthcare Director"] {
+for title in ["Supply Chain Intern", "Procurement Internship", "Procurement Trainee", "Supply Chain Graduate", "Sales Operations Manager", "Account Manager, Procurement", "Clinical Supply Chain Manager", "Procurement Chemist", "Supply Chain Scientist", "Procurement Engineer", "Financial Analyst - Supply Chain", "QA-RA Operations Manager", "Healthcare Director"] {
     precondition(!CareerFeed.relevant(title), "Mismatched title must be excluded: \(title)")
 }
 qiddiya["shortcode"] = "ABC123"
 qiddiya["title"] = "Healthcare Director"
 precondition(CareerFeed.qiddiyaJob(qiddiya, now: now) == nil, "Healthcare alone must not qualify a Qiddiya role")
 print("PASS: web-aligned title relevance and clinical/qualification mismatch exclusions")
+precondition(CareerFeed.relevant("Regulatory Operations Manager") && CareerFeed.relevant("Operation Manager"))
+
 
 precondition(!CareerFeed.relevant("Early-in-Career Supply Chain Programme"))
 precondition(!CareerFeed.relevant("Early Career Procurement Programme"))
@@ -111,6 +113,37 @@ qiddiya["title"]="Procurement Manager"
 qiddiya["location"]=["city":"Tabuk","countryCode":"SA"]
 precondition((CareerFeed.qiddiyaJob(qiddiya,now:now)?["location"] as? String)?.contains("Saudi Arabia")==true)
 print("PASS: authoritative Saudi country evidence, foreign title-slug rejection and Tabuk retention")
+
+// Malformed detail data must not masquerade as valid zero-result employer coverage.
+detail["location"]="Remote";detail["country"]=["descriptor":"Saudi Arabia"]
+for (country, expected) in [("Saudi Arabia",true),(" SAU ",true),("SA",true),("Kingdom of Saudi Arabia",true),("السعودية",true),("المملكة العربية السعودية",true),("Not Saudi Arabia",false),("United Arab Emirates",false)] {
+    detail["country"]=["descriptor":country]
+    precondition((CareerFeed.job(detail,externalPath:path,source:source,now:now) != nil)==expected, "Country must be an exact supported Saudi descriptor")
+}
+detail["country"]=["descriptor":"Saudi Arabia"]
+for field in ["startDate","endDate"] {
+    for invalid: Any in ["2026-02-30T00:00:00Z", "2026-10-01T00:00:00Zgarbage", 42] {
+        detail[field]=invalid
+        precondition(CareerFeed.job(detail,externalPath:path,source:source,now:now)==nil,"Reject malformed date fields")
+    }
+    detail.removeValue(forKey:field)
+}
+detail["startDate"]="2024-02-29T00:00:00.123+03:00"
+precondition(CareerFeed.job(detail,externalPath:path,source:source,now:now) != nil)
+detail["canApply"]=1
+precondition(CareerFeed.job(detail,externalPath:path,source:source,now:now)==nil,"A JSON number is not application permission")
+detail["canApply"]=true
+detail["title"]="Business Value Partner"
+let healthcare=CareerFeed.job(detail,externalPath:path,source:CareerFeed.sources[0],now:now)
+precondition(healthcare?["healthcare"] as? Bool == true && healthcare?["leadership"] as? Bool == false)
+precondition(CareerFeed.isoDate("2026-10-01T00:00:00Z\n") == nil)
+precondition(CareerFeed.isoDate("2026-10-01T25:00:00Z") == nil)
+let saudiMidnight=ISO8601DateFormatter().date(from:"2026-10-08T21:00:00Z")!
+precondition(CareerFeed.dateIsEligible("2026-10-08",now:saudiMidnight.addingTimeInterval(-1),closing:true))
+precondition(!CareerFeed.dateIsEligible("2026-10-08",now:saudiMidnight,closing:true))
+detail["location"]="Riyadh";detail["country"]=["descriptor":"United Arab Emirates"]
+precondition(CareerFeed.job(detail,externalPath:path,source:source,now:now)==nil)
+print("PASS: strict native dates, Saudi country descriptors and healthcare bridge metadata")
 
 // Real URLSession parsing and cancellation, with local responses instead of employer traffic.
 final class EmployerFixture: URLProtocol {
@@ -149,6 +182,8 @@ final class EmployerFixture: URLProtocol {
             status = 503; body = [:]
         } else {
             body = ["jobPostingInfo": ["title": "Procurement Manager", "location": "Riyadh", "country": ["descriptor": "Saudi Arabia"], "canApply": scenario != "closed", "jobReqId": path.hasSuffix("R1") ? "R1" : "R2", "startDate": "2020-01-01"]]
+            if scenario == "malformed" || (scenario == "mixedMalformed" && path.hasSuffix("R2")) { body = ["jobPostingInfo": [:]] }
+            if scenario == "missingID" { body = ["jobPostingInfo": ["title":"Procurement Manager","canApply":true,"location":"Riyadh"]] }
         }
         let response = HTTPURLResponse(url: request.url!, statusCode: status, httpVersion: "HTTP/1.1", headerFields: ["Content-Type": "application/json"])!
         let bytes = try! JSONSerialization.data(withJSONObject: body)
@@ -178,6 +213,15 @@ precondition(partial.status["detailErrors"] as? Int == 1 && partial.status["erro
 EmployerFixture.scenario = "allFailed"
 let failed = await CareerFeed.fetch(employer, session: fixtureSession)
 precondition(failed.status["ok"] as? Bool == false && failed.status["detailErrors"] as? Int == 2)
+EmployerFixture.scenario = "malformed"
+let malformed = await CareerFeed.fetch(employer, session: fixtureSession)
+precondition(malformed.status["ok"] as? Bool == false && malformed.status["detailErrors"] as? Int == 2)
+EmployerFixture.scenario = "missingID"
+let missingID = await CareerFeed.fetch(employer, session: fixtureSession)
+precondition(missingID.status["ok"] as? Bool == false && missingID.status["detailErrors"] as? Int == 2)
+EmployerFixture.scenario = "mixedMalformed"
+let mixedMalformed = await CareerFeed.fetch(employer, session: fixtureSession)
+precondition(mixedMalformed.jobs.count == 1 && mixedMalformed.status["detailErrors"] as? Int == 1)
 EmployerFixture.scenario = "closed"
 let closed = await CareerFeed.fetch(employer, session: fixtureSession)
 precondition(closed.status["ok"] as? Bool == true && closed.jobs.isEmpty, "Fetched but ineligible details are a successful zero-result search")

@@ -9,7 +9,7 @@ struct NativeCareerRoot: View {
     var body: some View {
         TabView {
             NavigationStack { NativeShortlistScreen() }
-                .tabItem { Label("Top 10", systemImage: "square.stack") }
+                .tabItem { Label("Shortlist", systemImage: "square.stack") }
             NavigationStack { NativeSearchScreen() }
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
             NavigationStack { NativeSavedScreen() }
@@ -36,7 +36,7 @@ struct NativeCareerRoot: View {
 private struct NativeShortlistScreen: View {
     @EnvironmentObject private var store: NativeCareerStore
     @State private var query = ""
-    private var jobs: [CareerJob] { store.shortlistJobs.filter { nativeMatches($0, query: query) } }
+    private var jobs: [CareerJob] { store.shortlistJobs.filter { store.workspace.profile.includesInDiscovery($0) && nativeMatches($0, query: query) } }
 
     var body: some View {
         List {
@@ -44,25 +44,30 @@ private struct NativeShortlistScreen: View {
             Section {
                 NativeIntro(eyebrow: "A CONSIDERED NEXT STEP", title: "Your next chapter, Ahmad.",
                             message: "Opportunities that build on your healthcare experience. More responsibility. Better prospects.")
-                NativeNotice(title: "Start with the two clearest matches.", message: "Healthcare procurement and procurement performance connect best to your public profile. All matches need your full CV; salary is undisclosed.")
+                NativeNotice(title: "Check role-specific requirements first.", message: "Contract, tender and KPI experience support conditional leads. Review the specialist requirements and grade before applying. Salary is undisclosed.")
             }.listRowBackground(Color.clear).listRowSeparator(.hidden)
             }
+            NativeCriteriaSection()
             Section {
                 if jobs.isEmpty {
-                    NativeEmpty(title: "No matching opportunities.", message: "Try another role, employer or skill.", icon: "magnifyingglass")
+                    if store.workspace.profile.hidesUnverifiedSalary && !store.shortlistJobs.isEmpty {
+                        NativeEmpty(title: "No salary-verified opportunities.", message: "Current roles have no verified salary evidence. Your criteria hide unverified pay; this does not mean there are no vacancies. Edit criteria to review these leads.", icon: "magnifyingglass")
+                    } else {
+                        NativeEmpty(title: "No matching opportunities.", message: "Try another role, employer or skill, or edit your criteria.", icon: "magnifyingglass")
+                    }
                     if !query.isEmpty { Button("Clear search") { query = "" } }
                 } else {
                     ForEach(jobs) { NativeJobLink(job: $0) }
                 }
             } header: {
-                Text("Your priority opportunities")
+                Text("\(jobs.count) priority opportunities to review")
             } footer: {
                 Text("Saudi Arabia only · Research checked \(nativeDate(store.research.checkedAt)). Recheck each employer before applying.")
             }
             Section {
                 DisclosureGroup("How this shortlist was ranked") {
                     Text("Priority considers healthcare relevance, KPI and supply-chain overlap, responsibility, current opening evidence, and qualification gaps. It is a research judgment, not an interview probability.")
-                    Text("Seven roles are with Qiddiya. This is a concentrated shortlist, not an exhaustive Saudi market ranking. Salary is undisclosed for every role.")
+                    Text("Only healthcare employers and healthcare assignments are included. Conditional, stretch and reserve labels identify unconfirmed requirements. We do not add unsuitable jobs to reach ten; salary is undisclosed.")
                 }.font(.subheadline)
             }
         }
@@ -70,6 +75,20 @@ private struct NativeShortlistScreen: View {
         .navigationTitle("Ahmad Career")
         .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $query, prompt: "Role, employer or skill")
+    }
+}
+
+private struct NativeCriteriaSection: View {
+    @EnvironmentObject private var store: NativeCareerStore
+    @State private var editing = false
+    var body: some View {
+        Section {
+            Text(store.workspace.profile.criteriaSummary).font(.subheadline)
+            Button("Edit criteria") { editing = true }
+        } header: { Text("Discovery criteria") } footer: {
+            Text("Saved on this device. Refines Shortlist and Live search; saved applications stay available. Salary and pay basis still need confirmation.")
+        }
+        .sheet(isPresented: $editing) { NativeProfileEditor(profile: store.workspace.profile) }
     }
 }
 
@@ -81,7 +100,7 @@ private enum NativeJobFilter: String, CaseIterable, Identifiable {
         case .all: return true
         case .healthcare: return job.healthcare == true || ["Alcon", "Roche", "Johnson & Johnson", "GSK", "Novartis", "BD"].contains(job.company) || job.title.range(of: "healthcare|medical|pharma", options: [.regularExpression, .caseInsensitive]) != nil
         case .leadership: return job.leadership == true || job.title.range(of: "manager|director|head|lead", options: [.regularExpression, .caseInsensitive]) != nil
-        case .riyadh: return job.location.localizedCaseInsensitiveContains("Riyadh") || job.location.contains("الرياض")
+        case .riyadh: return job.hasRiyadhEvidence
         }
     }
 }
@@ -90,13 +109,14 @@ private struct NativeSearchScreen: View {
     @EnvironmentObject private var store: NativeCareerStore
     @State private var query = ""
     @State private var filter = NativeJobFilter.all
-    private var jobs: [CareerJob] { store.liveJobs.filter { nativeMatches($0, query: query) && filter.includes($0) } }
+    private var jobs: [CareerJob] { store.liveJobs.filter { store.workspace.profile.includesInDiscovery($0) && nativeMatches($0, query: query) && filter.includes($0) } }
 
     var body: some View {
         List {
-            if query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             Section {
-                NativeIntro(eyebrow: "LIVE EMPLOYER SEARCH", title: "Find the next opportunity.", message: "Search selected Saudi employer boards. New leads need a closer look; they do not replace your researched top 10.")
+                if query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                NativeIntro(eyebrow: "LIVE EMPLOYER SEARCH", title: "Find the next opportunity.", message: "Search selected Saudi employer boards. New leads need a closer look; they do not replace your researched shortlist.")
+                }
                 Button {
                     Task { await store.refresh() }
                 } label: {
@@ -107,13 +127,13 @@ private struct NativeSearchScreen: View {
                 }
                 .buttonStyle(.borderedProminent).disabled(store.isSearching)
                 .tint(Color(red: 0.08, green: 0.43, blue: 0.34))
-                Text("Alcon · J&J · Roche · Novartis · GSK · BD · Qiddiya\nNo sign-in or CV is sent to search.")
+                Text("Alcon · J&J · Roche · Novartis · GSK · BD\nNo sign-in or CV is sent to search.")
                     .font(.footnote).foregroundStyle(.secondary)
                 if let error = store.searchError {
                     NativeNotice(title: "Review search coverage", message: error, warning: true)
                 }
             }.listRowBackground(Color.clear).listRowSeparator(.hidden)
-            }
+            NativeCriteriaSection()
             if let snapshot = store.workspace.live {
                 Section {
                     DisclosureGroup("\(snapshot.sources.filter(\.ok).count) of \(snapshot.sources.count) employers responded") {
@@ -141,12 +161,19 @@ private struct NativeSearchScreen: View {
             }
             Section {
                 if jobs.isEmpty {
-                    NativeEmpty(title: store.isSearching ? "Checking employer boards…" : "No matching leads yet.",
-                                message: store.isSearching ? "Results will appear here when the search finishes." : "Try a broader filter or search the employers. A successful search can return zero suitable roles.", icon: "magnifyingglass")
+                    if !store.isSearching && store.workspace.profile.hidesUnverifiedSalary && !store.liveJobs.isEmpty {
+                        NativeEmpty(title: "No salary-verified leads.", message: "Current leads have no verified salary evidence. Your criteria hide unverified pay; this does not mean there are no vacancies. Edit criteria to review these leads.", icon: "magnifyingglass")
+                    } else {
+                        NativeEmpty(title: store.isSearching ? "Checking employer boards…" : "No matching leads yet.",
+                                    message: store.isSearching ? "Results will appear here when the search finishes." : "Try a broader filter, edit your criteria or search the employers. A successful search can return zero suitable roles.", icon: "magnifyingglass")
+                    }
                 } else {
                     ForEach(jobs) { NativeJobLink(job: $0) }
                 }
             } header: { Text("\(jobs.count) new leads to review") }
+        }
+        .onChange(of: store.searchError) { error in
+            if let error { UIAccessibility.post(notification: .announcement, argument: error) }
         }
         .nativeList().navigationTitle("Live search")
         .navigationBarTitleDisplayMode(.inline)
@@ -201,10 +228,13 @@ private struct NativeJobLink: View {
                     .frame(width: 40, height: 40).background(Color.careerMint, in: RoundedRectangle(cornerRadius: 12))
                     .foregroundStyle(Color.careerAccent).accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 7) {
-                    if let rank = job.rank { Text("PRIORITY \(String(format: "%02d", rank))").font(.caption2.weight(.semibold)).foregroundStyle(.secondary) }
+                    if store.isCurrentResearch(job), let rank = job.rank { Text("PRIORITY \(String(format: "%02d", rank))").font(.caption2.weight(.semibold)).foregroundStyle(.secondary) }
                     Text(job.title).font(.headline).fixedSize(horizontal: false, vertical: true)
                     Text("\(job.company) · \(job.location)").font(.subheadline).foregroundStyle(.secondary)
                     Text(job.fit).font(.caption.weight(.medium)).foregroundStyle(job.isExpired ? Color.primary : Color.careerAccent)
+                    ForEach(store.workspace.profile.criteriaMessages(for: job), id: \.self) { message in
+                        Label(message, systemImage: "questionmark.circle").font(.caption).foregroundStyle(.secondary)
+                    }
                     if job.isExpired { Label("Past listed deadline", systemImage: "clock").font(.caption) }
                     if store.status(for: job) != "Not started" { Text(store.status(for: job)).font(.caption).foregroundStyle(.secondary) }
                     if store.isSaved(job) { Label("Saved", systemImage: "heart.fill").font(.caption).foregroundStyle(Color.careerAccent) }
@@ -237,14 +267,20 @@ private struct NativeJobDetail: View {
             }.listRowBackground(Color.clear).listRowSeparator(.hidden)
             Section("The essentials") {
                 LabeledContent("Posted", value: nativeDate(job.posted))
-                LabeledContent("Closing date", value: job.closes.map { nativeDate($0) } ?? "Not published")
+                LabeledContent("Closing date", value: job.closes.map { nativeDate($0, includeTime: $0.count > 10) } ?? "Not published")
                 LabeledContent("Salary", value: job.rank == nil ? "Not checked for this lead" : "Not disclosed in research")
+                ForEach(store.workspace.profile.criteriaMessages(for: job), id: \.self) { message in
+                    Label(message, systemImage: "questionmark.circle").font(.footnote)
+                }
                 if let mode = job.mode, mode != "Not stated" { LabeledContent("Work arrangement", value: mode) }
             }
             Section("Evidence and freshness") {
-                if job.rank != nil {
+                if store.isCurrentResearch(job) {
                     LabeledContent("Research checked", value: nativeDate(store.research.checkedAt))
                     Text("The fit assessment and requirement summary reflect that research date.").font(.footnote).foregroundStyle(.secondary)
+                } else if job.kind == "archived" || job.researchCheckedAt != nil {
+                    LabeledContent("Archived research", value: job.researchCheckedAt.map { nativeDate($0) } ?? "Original date unavailable")
+                    Text("Preserved from your earlier records; outside the current shortlist. Recheck the employer and requirements.").font(.footnote).foregroundStyle(.secondary)
                 }
                 if let snapshot = store.workspace.live, snapshot.jobs.contains(where: { $0.id == job.id }) {
                     LabeledContent("Employer search", value: nativeDate(snapshot.checkedAt, includeTime: true))
@@ -285,9 +321,9 @@ private struct NativeJobDetail: View {
             }
             Section {
                 if let url = job.applicationURL {
-                    Link(destination: url) { Label(job.isExpired ? "Check employer status" : "Open official application", systemImage: "arrow.up.right.square") }
+                    Link(destination: url) { Label(job.isExpired ? "Check employer status" : store.status(for: job) == "Not started" ? "Open official application" : "View employer / existing application", systemImage: "arrow.up.right.square") }
                 }
-                ShareLink(item: store.note(for: job)) { Label("Share a preparation note", systemImage: "square.and.arrow.up") }
+                NavigationLink { NativeNotesPreview(text: store.note(for: job, includeProfile: false), includesProfile: false) } label: { Label("Review preparation note", systemImage: "doc.text") }
                 if let url = job.sourceURL { Link("Source and full requirements", destination: url) }
             } footer: {
                 Text("Review and rewrite every draft before using it. Recheck salary, deadlines and qualifications directly with the employer.")
@@ -300,7 +336,7 @@ private let nativePlanItems: [(id: String, title: String, detail: String)] = [
     ("profile", "Confirm your professional record", "Exact degree, work dates, responsibilities, relevant years and certifications."),
     ("evidence", "Prepare three achievement stories", "Availability, supplier performance and operational improvement. Use accurate, shareable results."),
     ("cv", "Build two focused CV versions", "Healthcare procurement and performance improvement. Tie each to the target requirements."),
-    ("priority", "Review the first two Qiddiya roles", "Check experience gates before tailoring your application."),
+    ("priority", "Review healthcare roles that meet your requirements", "Check experience gates before tailoring your application."),
     ("deadline", "Recheck the time-sensitive roles", "Check the current Roche, Alcon and J&J deadlines directly with each employer."),
     ("review", "Review each application yourself", "Verify every field, attachment and claim. Nothing is automatically submitted.")
 ]
@@ -331,7 +367,7 @@ private struct NativePlanScreen: View {
                 } else { ForEach(store.trackedJobs) { NativeJobLink(job: $0) } }
             }
             Section {
-                ShareLink(item: store.exportText()) { Label("Share my application notes", systemImage: "square.and.arrow.up") }
+                NavigationLink { NativeNotesPreview(text: store.exportText(), includesProfile: true) } label: { Label("Review my application notes", systemImage: "doc.text") }
             } footer: { Text("Notes include your self-entered profile and tracked roles. Review them before choosing a destination in the share sheet.") }
         }.nativeList().navigationTitle("Application plan")
             .navigationBarTitleDisplayMode(.inline)
@@ -358,7 +394,7 @@ private struct NativeProfileScreen: View {
             }
             Section("Still to confirm") {
                 ForEach(store.research.profile.unknowns, id: \.self) { Text($0).font(.subheadline) }
-                Text("Publicly indexed evidence is incomplete. No full CV was supplied; attendance at university does not establish work experience.")
+                Text("LinkedIn lists a dated, self-reported career history. This public snapshot excludes private CV documents and messages. Credentials, specialist experience and measurable outcomes still need confirmation; overlapping jobs are not counted twice.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
             Section {
@@ -366,6 +402,7 @@ private struct NativeProfileScreen: View {
                 if !store.workspace.profile.degree.isEmpty { Text(store.workspace.profile.degree).font(.subheadline) }
                 Button("Edit your profile") { editing = true }
             } header: { Text("Your own details") } footer: { Text("Saved on this device. These details are not verified qualifications and are not sent to employers.") }
+            NativeCriteriaSection()
             Section {
                 NavigationLink { NativeSalaryScreen() } label: { Label("Salary & negotiation", systemImage: "chart.bar.doc.horizontal") }
                 NavigationLink { NativePrivacyScreen() } label: { Label("Privacy & beta support", systemImage: "hand.raised") }
@@ -376,19 +413,36 @@ private struct NativeProfileScreen: View {
     }
 }
 
+private struct NativeNotesPreview: View {
+    @State var text: String
+    let includesProfile: Bool
+    var body: some View {
+        Form {
+            Section {
+                Text(includesProfile ? "These notes include your self-entered profile and tracked applications. Remove anything you do not want to share." : "This role note excludes your profile fields. Review the requirements and your local application status before sharing.")
+                    .font(.footnote)
+                TextEditor(text: $text).frame(minHeight: 350).accessibilityLabel("Application notes to review")
+            }
+            Section {
+                ShareLink(item: text) { Label("Share reviewed notes", systemImage: "square.and.arrow.up") }
+            } footer: { Text("Nothing is sent until you choose a destination and finish sharing. Edits here change only this export.") }
+        }.navigationTitle("Review notes").navigationBarTitleDisplayMode(.inline)
+    }
+}
+
 private struct NativePrivacyScreen: View {
     var body: some View {
         List {
             Section("Your information") {
-                Text("Profile details, saved jobs, application status, completed steps and search results are stored in this app on your device. There is no app account or cloud sync service.")
+                Text("Profile details, discovery criteria, saved jobs, application status, completed steps and search results are stored in this app on your device. There is no app account or cloud sync service.")
                 Text("The developer does not receive your profile or application records automatically. The app includes a dated research snapshot drawn from public professional and employer information.")
             }
             Section("Employer searches and links") {
-                Text("When you run a search, the app sends fixed job queries directly to selected employers and their recruitment providers using HTTPS. Those providers receive normal connection information, including your IP address. Your saved profile and application notes are not included.")
+                Text("When you run a search, the app sends fixed job queries directly to selected employers and their recruitment providers using HTTPS. Those providers receive normal connection information, including your IP address. Your saved profile, discovery criteria and application notes are not included.")
                 Text("Opening an employer, LinkedIn or salary-source link takes you to an external website governed by its own privacy policy. Any application or account you create there is managed by that provider.")
             }
             Section("Sharing and beta feedback") {
-                Text("Exported notes include your entered profile and tracked roles. They leave the app only when you choose a destination in the system share sheet. Review the content before sharing.")
+                Text("Exported notes include your entered professional details and tracked roles, and exclude discovery criteria. They leave the app only when you choose a destination in the system share sheet. Review the content before sharing.")
                 Text("The app has no advertising, tracking SDKs or developer analytics service. Apple may process TestFlight testing, crash and feedback information under its own privacy practices.")
                 Link("Apple privacy policy", destination: URL(string: "https://www.apple.com/legal/privacy/")!)
             }
@@ -429,8 +483,28 @@ private struct NativeProfileEditor: View {
                         NativeNotice(title: "Your profile changed in another window", message: "Keep a copy of any draft text you need, then cancel and reopen this editor to use the latest profile. Your draft has not been saved.", warning: true)
                     }
                 }
+                Section {
+                    Picker("Preferred city", selection: Binding(get: { draft.preferredCity ?? "" }, set: { draft.preferredCity = $0 })) {
+                        Text("Any Saudi city").tag("")
+                        Text("Riyadh").tag("riyadh")
+                    }
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Minimum monthly pay, SAR").font(.caption).foregroundStyle(.secondary)
+                        TextField("Blank means no minimum", text: Binding(get: { draft.minimumMonthlySAR ?? "" }, set: { draft.minimumMonthlySAR = $0 }))
+                            .keyboardType(.numberPad).focused($focused).accessibilityLabel("Minimum monthly pay in SAR")
+                    }
+                    if draft.hasPayFloor {
+                        Picker("Unverified salaries", selection: Binding(get: { draft.unknownSalary ?? "show" }, set: { draft.unknownSalary = $0 })) {
+                            Text("Show for review").tag("show")
+                            Text("Hide from discovery").tag("hide")
+                        }
+                    }
+                    if let error = draft.criteriaError { Label(error, systemImage: "exclamationmark.circle").font(.caption) }
+                } header: { Text("Local discovery criteria") } footer: {
+                    Text("Use whole SAR; blank or zero means no minimum. Confirm whether your minimum means basic salary or includes guaranteed allowances. Current roles have no verified salary evidence. Criteria stay on this device and are excluded from notes.")
+                }
                 Section("Experience and qualifications") {
-                    TextField("Relevant years of experience", text: $draft.years).keyboardType(.decimalPad).focused($focused)
+                    VStack(alignment: .leading, spacing: 8) { Text("Relevant years of experience").font(.caption).foregroundStyle(.secondary); TextField("Relevant years of experience", text: $draft.years).keyboardType(.decimalPad).focused($focused) }
                     if !validYears { Label("Enter a number from 0 to 60, or leave blank.", systemImage: "exclamationmark.circle").font(.caption) }
                     TextField("Degree and certifications", text: $draft.degree, axis: .vertical).lineLimit(2...5).focused($focused)
                     if draft.degree.count > 300 { Label("Qualifications exceed 300 characters. Shorten this field before saving.", systemImage: "exclamationmark.circle").font(.caption) }
@@ -459,7 +533,7 @@ private struct NativeProfileEditor: View {
                         draft.years = draft.years.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: ",", with: ".")
                         store.updateProfile(draft)
                         if store.storageError == nil { dismiss() }
-                    }.disabled(!validYears || !validLengths || hasConflict)
+                    }.disabled(!validYears || !validLengths || draft.criteriaError != nil || hasConflict)
                 }
                 ToolbarItemGroup(placement: .keyboard) { Spacer(); Button("Done") { focused = false } }
             }
@@ -484,7 +558,7 @@ private struct NativeSalaryScreen: View {
     var body: some View {
         Form {
             Section {
-                NativeNotice(title: "Salary potential is not an offer.", message: "None of the ten roles has a published salary in this research. These historical market benchmarks are not job-specific estimates or guaranteed pay.")
+                NativeNotice(title: "Salary potential is not an offer.", message: "None of the researched roles has a published salary in this research. These historical market benchmarks are not job-specific estimates or guaranteed pay.")
             }.listRowBackground(Color.clear)
             Section("Historical 2025 · Hays") {
                 LabeledContent("Supply Chain Manager", value: "SAR 30,000–45,000")
@@ -502,11 +576,11 @@ private struct NativeSalaryScreen: View {
                 }
             }
             Section {
-                TextField("Monthly basic salary · SAR", text: $basic).keyboardType(.decimalPad).focused($focused)
+                VStack(alignment: .leading, spacing: 8) { Text("Monthly basic salary · SAR").font(.caption).foregroundStyle(.secondary); TextField("Monthly basic salary · SAR", text: $basic).keyboardType(.decimalPad).focused($focused) }
                 if basicAmount == nil { Label("Enter basic pay from 0 to SAR 1,000,000, for example 30,000 or 30000.50.", systemImage: "exclamationmark.circle").font(.caption) }
-                TextField("Monthly fixed allowances · SAR", text: $allowances).keyboardType(.decimalPad).focused($focused)
+                VStack(alignment: .leading, spacing: 8) { Text("Monthly fixed allowances · SAR").font(.caption).foregroundStyle(.secondary); TextField("Monthly fixed allowances · SAR", text: $allowances).keyboardType(.decimalPad).focused($focused) }
                 if allowanceAmount == nil { Label("Enter allowances from 0 to SAR 1,000,000, using a dot for decimals.", systemImage: "exclamationmark.circle").font(.caption) }
-                TextField("Target annual bonus · SAR", text: $bonus).keyboardType(.decimalPad).focused($focused)
+                VStack(alignment: .leading, spacing: 8) { Text("Target annual bonus · SAR").font(.caption).foregroundStyle(.secondary); TextField("Target annual bonus · SAR", text: $bonus).keyboardType(.decimalPad).focused($focused) }
                 if bonusAmount == nil { Label("Enter annual bonus from 0 to SAR 10,000,000, using a dot for decimals.", systemImage: "exclamationmark.circle").font(.caption) }
                 if let basicAmount, let allowanceAmount, let bonusAmount {
                     LabeledContent("Fixed monthly", value: sar(basicAmount + allowanceAmount))
@@ -591,11 +665,14 @@ private func nativeMatches(_ job: CareerJob, query: String) -> Bool {
 }
 
 private func nativeDate(_ value: String, includeTime: Bool = false) -> String {
-    if value.isEmpty { return "Not stated" }
-    let formatter = ISO8601DateFormatter()
-    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-    let parsed = formatter.date(from: value) ?? ISO8601DateFormatter().date(from: value.count == 10 ? value + "T12:00:00Z" : value)
-    return parsed?.formatted(date: .abbreviated, time: includeTime ? .shortened : .omitted) ?? "Not stated"
+    guard let parsed = CareerFeed.parsedDate(value) else { return "Not stated" }
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "en_SA")
+    formatter.calendar = Calendar(identifier: .gregorian)
+    formatter.timeZone = TimeZone(identifier: "Asia/Riyadh")
+    formatter.dateStyle = .medium
+    formatter.timeStyle = includeTime ? .short : .none
+    return formatter.string(from: parsed)
 }
 
 private func nativeHTTPS(_ value: String) -> URL? {

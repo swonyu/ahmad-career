@@ -1,76 +1,70 @@
 # Ahmad Career
 
-A private career workspace for Ahmad Alayed, focused on healthcare supply-chain and performance leadership opportunities in Saudi Arabia.
+Saudi healthcare supply-chain and performance career workspace with a native SwiftUI iPhone/iPad app, a Mac WKWebView interface and a dependency-free website.
 
-- **iPhone and iPad:** native SwiftUI interface with researched opportunities, live employer search, saved roles, application tracking, profile editing and salary comparison.
-- **Mac:** bundled web interface in WKWebView, with native employer requests.
-- **Website:** dependency-free JavaScript interface and a Worker backend.
+The [website is public](https://ahmad-career.jolly-lynx-4861.chatgpt.site/). This private source repository does not restrict website access, and a GitHub push does not deploy the site.
 
-## Repository layout
+## Current release — 9 October 2026
 
-| Folder | Contents |
+- Public website version 5 deployed at **04:35:14 Asia/Riyadh (01:35:14 UTC)** from source `794d68ee65742c1627ddc5491e8cceb0532b626a`. A real **Find new openings** check at 04:35 showed **six of six employers responding and three current leads**, from Johnson & Johnson, Roche and Alcon. These counts describe that run, not future availability.
+- Apple source is **1.1 (5)**. The iOS archive, App Store distribution export and upload succeeded; upload completed at 04:26 Riyadh. At **04:41 Riyadh**, Apple showed build 5 processed and **Ready to Submit** while build 4 remained **Waiting for Review**. Apple blocked build-5 submission because another build was already in review. Build 4's review was preserved; resubmit build 5 after that review completes.
+- The [one-tester TestFlight invitation](https://testflight.apple.com/join/S5bDCNbd) has no verified approved build available. Confirm tester availability before treating it as an installation route. Installation on Ahmad's physical iPhone remains unverified.
+
+See the [release review](docs/Review-2026-10-09.html), [handoff](docs/START-HERE.txt) and [TestFlight record](docs/TestFlight-Preparation.txt). Package downloads and their checksums are supplied separately and are not stored in this repository. The separately delivered development IPA remains 1.1 (3); the reviewed Mac 1.1 (5) package is unsigned and not notarized.
+
+## Source and documentation
+
+| Path | Contents |
 | --- | --- |
-| `apple/` | Shared Xcode project, Swift source, app icons, bundled Mac interface and native checks |
-| `website/` | Website source, employer adapters, local server, Worker build and regression checks |
-| `docs/App-Review.html` | Full review, 24 grouped findings, fixes and verification evidence |
+| [apple/](apple/) | Xcode project, Swift source, bundled Mac web assets and native checks |
+| [website/](website/) | Web interface, employer adapters, local server, Worker build and checks |
+| [Current review](docs/Review-2026-10-09.html) | Completed review evidence, release status and limits |
+| [Historical review](docs/App-Review.html) | Earlier findings; its old counts and release claims are superseded |
+| [Privacy draft](docs/Ahmad-Career-Privacy.html) | Historical build-4 draft, not the current published developer policy |
 
-## Run the Apple app
+## Run and check
 
-Open `apple/AhmadCareer.xcodeproj` in Xcode and select the **AhmadCareer** scheme. Choose an iPhone/iPad Simulator or **My Mac**, then Run. The project targets iOS/iPadOS 16+ and macOS 13+; the delivered builds were verified with Xcode 27.
-
-For a physical iPhone, select your Apple team in **Signing & Capabilities**, keep automatic signing enabled, connect and unlock the phone, choose it as the destination, then Run. Change the bundle identifier if Xcode reports that it is unavailable. No development team is fixed in the source.
-
-Ahmad only has an iPhone. A developer can build on a Mac and install onto his registered phone, or distribute through TestFlight using an eligible paid Apple Developer team. This repository itself is not an iPhone installation link. Version 1.1 (4) has been uploaded to TestFlight and submitted for external beta review. It is not yet approved for testers.
-
-See [Apple setup and checks](apple/README.md).
-
-## Run the website
-
-With Node.js 22 or newer:
-
-```sh
-cd website
-npm start
-```
-
-Open http://127.0.0.1:8778. No dependency installation or paid API key is required.
-
-```sh
-npm test
-npm run build
-```
-
-The build produces `dist/server/index.js`. The existing hosted site uses Sites; its project binding is retained in `website/.openai/hosting.json`. GitHub pushes do not automatically publish changes to that site.
-
-## Native checks
-
-On a Mac with Xcode selected:
+Open `apple/AhmadCareer.xcodeproj` in Xcode and select the **AhmadCareer** scheme. Choose **My Mac** or an iPhone/iPad Simulator, then Run. Minimum versions are iOS/iPadOS 16 and macOS 13. For a physical device, select an authorized development team, connect and unlock the device, and enable Developer Mode if prompted. The shared source includes no development team selection or signing credentials.
 
 ```sh
 cd apple
 bash Checks/check.sh
 ```
 
-Optional live employer and Mac WebKit checks are documented in `apple/README.md`.
+Optional live-feed and actual Mac WebKit checks are in the [Apple README](apple/README.md).
 
-## Keeping the interfaces aligned
+For the website, use Node.js 22 or newer. No dependency installation or paid API key is required:
 
-The Mac app bundles the files from `website/web/` in `apple/AhmadCareer/Web/`. Copy updated web files there before rebuilding the Mac app. Native iOS uses `NativeCareerViews.swift`, `NativeCareerStore.swift` and `CareerResearch.json`; changes to researched content must also update that JSON snapshot. Web and Swift employer adapters have separate regression checks.
+```sh
+cd website
+npm start
+```
 
-## Research and privacy
+Open [the local website](http://127.0.0.1:8778). From the same website directory:
 
-The top ten are a research snapshot from **8 October 2026**, with conditional fit and documented qualification gaps. Seven roles are at Qiddiya. Live search checks bounded samples from seven employer boards; it is not exhaustive Saudi market coverage or an automatic replacement ranking. Missing results do not establish closure.
+```sh
+npm test
+npm run build
+```
 
-Ahmad's complete CV was unavailable. The researched vacancies did not disclose salary; live lead salaries were not checked. Historical salary benchmarks are context, not offers or guarantees.
+The build emits `dist/server/index.js`. The existing Sites hosting binding is retained in `website/.openai/hosting.json`; deployment is separate from source control.
 
-Profile entries, saved jobs and application status stay on each browser/device. There is no account or device sync. Applications are reviewed and submitted personally on employer websites. This repository contains the public research snapshot and source, not local user records or signing credentials.
+## Research and local criteria
 
-The existing website at https://ahmad-career.jolly-lynx-4861.chatgpt.site/ is owner-private. GitHub repository access does not grant access to the hosted website. Invite collaborators explicitly when needed.
+The dated **9 October 2026** snapshot contains **nine curated healthcare roles**, without padding the list to ten. All nine have unknown salary. Live search covers bounded samples from **six employers**: Alcon, Novartis, Johnson & Johnson, GSK, BD and Roche. Qiddiya is not active. A missing role does not establish closure, and a live lead does not automatically become a researched recommendation.
 
-## Review and release status
+Fit is conditional on substantiated qualifications, relevant experience, role scope and current employer requirements. Historical salary guides do not establish a vacancy's pay or guarantee a director-level role.
 
-The review report records passing website state/feed/server checks, native feed/store checks, simulator and Mac builds, actual Mac WebKit workflows, and a development-signed iOS archive. The updated private website was published. Physical iPhone installation remains unverified after a device connection reset. Signed binaries and provisioning profiles are excluded from this source repository.
+Optional discovery criteria are stored locally: city, a minimum monthly SAR amount and whether to show unverified pay. Defaults are any Saudi city, no pay floor and unknown pay shown. Unknown salary never counts as meeting a minimum. Hiding unknown pay with an active floor can empty discovery; saved roles and application history remain available. Confirm a multiple-city assignment and the salary/allowance basis directly with the employer.
 
-### TestFlight preparation
+Profile and application records stay in the browser/app on each device, without account sync. Criteria are omitted from employer requests and exported notes; notes may include professional details the user enters. Existing saved data without the new fields remains supported. Exports are readable notes, not an importable backup. Ahmad reviews and submits applications personally; this review sent no new employer applications or messages.
 
-Source build 1.1 (4) adds in-app privacy/support information and the exempt-encryption declaration. Its local archive and simulator checks passed. The account holder resolved the Apple agreement requirement. App Store distribution export and upload succeeded; Apple processed the build and its external beta status is **Waiting for Review**. A one-tester public invitation has been created but cannot accept testers before an approved build is available. See [the preparation record](docs/TestFlight-Preparation.txt) for review details and release status.
+This repository contains public professional/employer research and source. It excludes private CVs, private messages, photographs, personal pay preferences, runtime records, credentials, signing material and packaged binaries. App-icon assets are included.
+
+## Verification and limits
+
+Twenty review assignments completed. The recorded web suite passed core/feed checks, **38 application-state groups**, Worker cache-denial handling and employer-redirect regressions. Native checks, the iOS simulator build, universal Intel/Apple Silicon Mac Release and build-5 archive/export passed. A real Mac WebKit run rendered three leads from six source results and passed saving, tracking, cache preservation and note export. Targeted native UI checks covered Arabic-digit criteria entry, hidden unknown pay, saved notes and the share sheet; neutral criteria were restored.
+
+Browser download receipt, full VoiceOver behavior and installation on Ahmad's physical iPhone remain unverified. Passing tests and upload success do not establish Apple beta approval or future employer availability.
+
+The Mac interface's seven files in `apple/AhmadCareer/Web/` match `website/web/`. Keep them aligned when changing the website. Native iOS screens and storage live in `NativeCareerViews.swift` and `NativeCareerStore.swift`; the dated research is in `CareerResearch.json`. Web and Swift employer adapters retain separate regression checks.

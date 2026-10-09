@@ -1,4 +1,5 @@
 import Foundation
+import CoreFoundation
 
 struct WorkdaySource {
     let name: String
@@ -23,15 +24,20 @@ enum CareerFeed {
     static func detailURL(_ path: String, source: WorkdaySource) -> URL? {
         guard path.hasPrefix("/job/"), let decoded = path.removingPercentEncoding,
               !decoded.contains("?"), !decoded.contains("#"), !decoded.contains("\\"),
-              !decoded.contains("%"), !decoded.split(separator: "/").contains(where: { $0 == ".." || $0 == "." }) else { return nil }
+              !decoded.contains("%"), !decoded.unicodeScalars.contains(where: { $0.value < 32 || $0.value == 127 }), !decoded.split(separator: "/").contains(where: { $0 == ".." || $0 == "." }) else { return nil }
         return URL(string: source.baseURL.absoluteString + path)
     }
 
-    static func relevant(_ title: String) -> Bool {
-        let excluded = "\\bintern(ship)?\\b|trainee|graduate|early[ -]in[ -]career|early[ -]career|sales|account[ -]+manager|clinical|chemist|scientist|engineer|financial[ -]+analyst|regulatory|qa[ /-]*ra"
-        guard title.range(of: excluded, options: [.regularExpression, .caseInsensitive]) == nil else { return false }
-        let included = "supply[ -]?chain|procurement|purchas|tender|logistic|warehous|demand[ -]?plan|supply[ -]?plan|inventory|supplier|performance|operational[ -]+excellence|continuous[ -]+improvement|transformation|operations[ -]+manager|business[ -]value[ -]partner"
-        return title.range(of: included, options: [.regularExpression, .caseInsensitive]) != nil
+    static func relevant(_ title: String) -> Bool { relevance(title) > 0 }
+
+    static func relevance(_ title: String) -> Int {
+        let excluded = "\\bintern(ship)?\\b|trainee|graduate|early[ -]in[ -]career|early[ -]career|sales|account[ -]+manager|clinical|chemist|scientist|engineer|financial[ -]+analyst|qa[ /-]*ra"
+        guard title.range(of: excluded, options: [.regularExpression, .caseInsensitive]) == nil else { return 0 }
+        if title.range(of: "supply[ -]?chain|procurement|purchas|tender|logistic|warehous|demand[ -]?plan|supply[ -]?plan|inventory|supplier", options: [.regularExpression, .caseInsensitive]) != nil {
+            return title.range(of: "manager|director|head|lead", options: [.regularExpression, .caseInsensitive]) != nil ? 90 : 65
+        }
+        if title.range(of: "performance|operational[ -]+excellence|continuous[ -]+improvement|transformation|operations?[ -]+manager", options: [.regularExpression, .caseInsensitive]) != nil { return 80 }
+        return title.range(of: "business[ -]value[ -]partner", options: [.regularExpression, .caseInsensitive]) != nil ? 65 : 0
     }
 
     static func qiddiyaJob(_ listing: [String: Any], now: Date = Date()) -> [String: Any]? {
@@ -53,39 +59,81 @@ enum CareerFeed {
         ]
     }
 
-    private static func isoDate(_ value: String) -> Date? {
+    static func saudiDay(_ date: Date) -> String {
+        let format = dayFormatter()
+        return format.string(from: date)
+    }
+
+    private static func dayFormatter() -> DateFormatter {
+        let format = DateFormatter()
+        format.locale = Locale(identifier: "en_US_POSIX")
+        format.calendar = Calendar(identifier: .gregorian)
+        format.timeZone = TimeZone(identifier: "Asia/Riyadh")
+        format.dateFormat = "yyyy-MM-dd"
+        format.isLenient = false
+        return format
+    }
+
+    static func parsedDate(_ value: String) -> Date? {
+        if value.count != 10 { return isoDate(value) }
+        let format = dayFormatter()
+        guard let date = format.date(from: value), format.string(from: date) == value else { return nil }
+        return date
+    }
+
+    static func isoDate(_ value: String) -> Date? {
+        let grammar = "^[0-9]{4}-[0-9]{2}-[0-9]{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.[0-9]+)?(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])\\z"
+        guard value.count <= 80, value.range(of: grammar, options: .regularExpression) != nil,
+              parsedDate(String(value.prefix(10))) != nil else { return nil }
         let format = ISO8601DateFormatter()
         format.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         return format.date(from: value) ?? ISO8601DateFormatter().date(from: value)
     }
 
-    private static func dateIsEligible(_ value: String, now: Date, closing: Bool) -> Bool {
+    static func dateIsEligible(_ value: String, now: Date, closing: Bool) -> Bool {
         if value.isEmpty { return true }
-        if value.count == 10 {
-            let format = DateFormatter()
-            format.locale = Locale(identifier: "en_US_POSIX")
-            format.timeZone = TimeZone(identifier: "Asia/Riyadh")
-            format.dateFormat = "yyyy-MM-dd"
-            format.isLenient = false
-            guard let date = format.date(from: value), format.string(from: date) == value else { return false }
-            let today = format.string(from: now)
-            return closing ? value >= today : value <= today
-        }
-        guard let parsed = isoDate(value) else { return false }
+        guard let parsed = parsedDate(value) else { return false }
+        if value.count == 10 { return closing ? value >= saudiDay(now) : value <= saudiDay(now) }
         return closing ? parsed >= now : parsed <= now
     }
 
+    private static func strictBool(_ value: Any?) -> Bool? {
+        guard let number = value as? NSNumber, CFGetTypeID(number) == CFBooleanGetTypeID() else { return nil }
+        return number.boolValue
+    }
+
+    private static func validOptionalDate(_ value: Any?) -> Bool {
+        guard let value, !(value is NSNull) else { return true }
+        guard let text = value as? String else { return false }
+        return text.isEmpty || parsedDate(text) != nil
+    }
+
+    private static func validDetail(_ detail: [String: Any]) -> Bool {
+        guard let title = detail["title"] as? String, !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              let id = detail["jobReqId"] as? String, !id.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              strictBool(detail["canApply"]) != nil,
+              validOptionalDate(detail["startDate"]), validOptionalDate(detail["endDate"]) else { return false }
+        if let posted = detail["posted"], !(posted is NSNull), strictBool(posted) == nil { return false }
+        if let location = detail["location"], !(location is NSNull), !(location is String) { return false }
+        if let country = detail["country"], !(country is NSNull) {
+            guard let fields = country as? [String: Any] else { return false }
+            if let descriptor = fields["descriptor"], !(descriptor is NSNull), !(descriptor is String) { return false }
+        }
+        return true
+    }
+
     static func job(_ detail: [String: Any], externalPath: String, source: WorkdaySource, now: Date = Date()) -> [String: Any]? {
-        guard detailURL(externalPath, source: source) != nil,
-              detail["canApply"] as? Bool == true,
+        guard validDetail(detail), detailURL(externalPath, source: source) != nil,
+              strictBool(detail["canApply"]) == true,
               detail["posted"] as? Bool != false,
               let title = detail["title"] as? String, relevant(title),
               let identifier = detail["jobReqId"] as? String, !identifier.isEmpty else { return nil }
         let location = detail["location"] as? String ?? ""
-        let country = (detail["country"] as? [String: Any])?["descriptor"] as? String ?? ""
+        let country = ((detail["country"] as? [String: Any])?["descriptor"] as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let saudiCountry = ["saudi arabia", "kingdom of saudi arabia", "sa", "sau", "السعودية", "المملكة العربية السعودية"].contains(country.lowercased())
         // Country is authoritative; a title slug mentioning Saudi is not geography.
         if !country.isEmpty {
-            guard country.localizedCaseInsensitiveContains("Saudi") else { return nil }
+            guard saudiCountry else { return nil }
         } else {
             guard location.range(of: "Saudi|Riyadh|Jeddah|Dammam|Khobar|\\bSAU\\b", options: [.regularExpression, .caseInsensitive]) != nil else { return nil }
         }
@@ -94,7 +142,7 @@ enum CareerFeed {
         let startDate = detail["startDate"] as? String ?? ""
         guard dateIsEligible(startDate, now: now, closing: false) else { return nil }
         var displayLocation = location.isEmpty ? country : location
-        if country.localizedCaseInsensitiveContains("Saudi"),
+        if saudiCountry,
            displayLocation.range(of: "Saudi|Riyadh|Jeddah|Dammam|Khobar|\\bSAU\\b", options: [.regularExpression, .caseInsensitive]) == nil {
             displayLocation += ", Saudi Arabia"
         }
@@ -106,6 +154,7 @@ enum CareerFeed {
             "location": displayLocation, "url": url,
             "posted": startDate, "closes": deadline.flatMap { $0.isEmpty ? nil : $0 } as Any? ?? NSNull(),
             "status": "live", "salary": NSNull(), "kind": "live", "fit": "Needs review",
+            "healthcare": true, "leadership": title.range(of: "\\b(manager|director|head|lead)\\b", options: [.regularExpression, .caseInsensitive]) != nil, "relevance": relevance(title),
             "summary": "New employer listing. Review full requirements before applying."
         ]
     }
@@ -123,9 +172,6 @@ enum CareerFeed {
                 group.addTask {
                     await boundedSource(name: source.name) { await fetch(source, session: session) }
                 }
-            }
-            group.addTask {
-                await boundedSource(name: "Qiddiya") { await fetchQiddiya(session: session) }
             }
             var results: [SourceResult] = []
             for await result in group { results.append(result) }
@@ -238,7 +284,7 @@ enum CareerFeed {
                       let url = detailURL(path, source: source) else { failures += 1; continue }
                 do {
                     let response = try await json(URLRequest(url: url), session: session)
-                    guard let detail = response["jobPostingInfo"] as? [String: Any] else { throw FeedError.invalidResponse }
+                    guard let detail = response["jobPostingInfo"] as? [String: Any], validDetail(detail) else { throw FeedError.invalidResponse }
                     successfulDetails += 1
                     if let match = job(detail, externalPath: path, source: source) { jobs.append(match) }
                 } catch {

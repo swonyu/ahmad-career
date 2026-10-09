@@ -5,7 +5,7 @@ enum LiveFeedCheck {
     static func main() async throws {
         let payload = await CareerFeed.refresh()
         guard let sources = payload["sources"] as? [[String: Any]],
-              let jobs = payload["jobs"] as? [[String: Any]], sources.count == 7 else {
+              let jobs = payload["jobs"] as? [[String: Any]], sources.count == CareerFeed.sources.count else {
             fatalError("Invalid native refresh payload")
         }
         let data = try JSONSerialization.data(withJSONObject: payload, options: [.prettyPrinted, .sortedKeys])

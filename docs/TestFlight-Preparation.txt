@@ -1,95 +1,74 @@
-AHMAD CAREER — TESTFLIGHT PREPARATION
-9 October 2026
+AHMAD CAREER — TESTFLIGHT RELEASE RECORD
+9 October 2026 • Asia/Riyadh
 
-CURRENT STATUS — 9 October 2026 (Asia/Riyadh)
-Native iOS/iPadOS version 1.1, build 4 was successfully exported with App Store
-distribution signing and uploaded to App Store Connect. Apple processed the build.
-The external beta was submitted and its verified status is WAITING FOR REVIEW.
-The Program License Agreement blocker was resolved by the account holder.
-The archive and simulator checks passed earlier; this turn changed listing metadata only.
+BUILD 5 — PROCESSED, READY TO SUBMIT; SUBMISSION BLOCKED BY BUILD 4
+Version 1.1 (5) was archived and exported with App Store distribution signing.
+The upload command completed successfully at 04:26 Riyadh. A fresh App Store
+Connect UI check at 04:41 Riyadh showed build 5 processed and READY TO SUBMIT.
+Build 4 remained WAITING FOR REVIEW.
 
-INVITATION LINK — NOT YET OPEN FOR INSTALLATION
+The attempted build-5 external-beta submission returned this Apple message:
+“You can’t submit a build for testing if another build is already in review.
+Wait until your other build has been reviewed, and resubmit this build.”
+
+Build 4's existing review was preserved and the blocked submission dialog was
+canceled. Build 5 is not submitted/approved for external testing. It must be
+resubmitted after build 4's review completes; tester availability is not verified.
+
+INVITATION — CHECK AVAILABILITY BEFORE SHARING INSTALL INSTRUCTIONS
 https://testflight.apple.com/join/S5bDCNbd
-External group: Ahmad Beta. Public-link capacity: 1 tester.
-App Store Connect states: Testers cannot join until this group has an approved build.
-No tester has joined, and installation has not been verified on Ahmad's phone.
-Automatic tester notification was not enabled during submission.
-After approval, verify the build is available for testing and the invitation can be accepted.
+External group: Ahmad Beta. Public-link capacity: one tester.
+At the last invitation check the group had no approved available build and testers
+could not join. Ahmad's physical iPhone installation remains unverified.
+The website is public, but website access does not grant TestFlight approval.
+
+NEXT APPLE CHECKPOINTS
+1. Wait for build 4's existing review to complete; inspect the actual outcome.
+2. Resubmit build 5 for external beta review and verify the new submission state.
+3. After approval, confirm that the intended build is available and the invitation
+   accepts testers. If Apple rejects it, address the actual stated reason.
+4. Verify installation and launch on Ahmad's phone before calling delivery complete.
 
 APP RECORD
 App Store Connect app ID: 6820749119
 App name: Ahmad Career
-Platform: iOS (iPhone and iPad)
-Primary language: English (U.S.)
+Platform: iOS, iPhone and iPad
 Bundle identifier: com.ahmadalayed.career
 SKU: ahmad-career-ios
-Version: 1.1
-Build: 4
-Sign-in required: No
-Payments, subscriptions, advertising: None
-Export declaration: ITSAppUsesNonExemptEncryption = false.
-The app uses only Apple's HTTPS/TLS implementation; no custom encryption library.
-Review-contact name, email, phone and tester feedback email were supplied with the
-owner's explicit confirmation. Those private contact details are not copied here.
+Uploaded version/build: 1.1 (5)
+Sign-in, payments, subscriptions and advertising: none
+Export declaration: ITSAppUsesNonExemptEncryption = false
+HTTPS/TLS uses Apple's operating-system implementation.
+Private review-contact and feedback details are intentionally not reproduced here.
 
-BETA DESCRIPTION
-Ahmad Career is a career workspace focused on healthcare supply chain and
-performance leadership opportunities in Saudi Arabia. Review a dated researched
-shortlist, discover new leads from selected employer boards, save opportunities,
-track application progress and prepare notes using your own career evidence.
+BUILD-5 CONTENT
+Nine researched healthcare leads dated 9 October 2026, all with undisclosed pay;
+six active healthcare employer sources; optional device-local city/pay criteria;
+retained saved/tracked history and migration fixes; export and search privacy.
+Neutral criteria are any Saudi city, no pay floor and unverified pay shown.
+Unknown salary is never treated as meeting a minimum. Fit remains conditional.
+No job application is submitted by changing a local tracking status.
 
-Fit judgments are provisional. The app does not promise employment, verify user
-credentials, submit applications or guarantee pay. Live search uses bounded
-employer queries; it does not claim to cover all Saudi vacancies.
+VALIDATION AND LIMITS
+Twenty review assignments completed. Native checks, iOS simulator build,
+App Store archive/export and targeted native criteria/notes/share-sheet checks
+passed. Arabic-digit amount entry, hiding unknown salary and preserved saved
+records were exercised; neutral profile criteria were restored afterward.
+Full VoiceOver and physical-phone installation are not verified. Browser download
+receipt is also unverified. Upload and archive receipts are not an accessibility
+or employer-data certification. See Review-2026-10-09.html for wider web/Mac evidence.
 
-WHAT TO TEST
-• Browse the Top 10 and open employer sources and application steps.
-• Search employer boards and inspect source coverage or failure messages.
-• Save jobs, change application status, relaunch, and confirm records remain.
-• Edit profile details and confirm unsaved changes are protected.
-• Export preparation notes after reviewing their content.
-• Compare a hypothetical salary package, including grouped and Arabic digits.
-• Check accessibility, dark appearance and portrait/landscape layouts.
-• Open Profile → Privacy & beta support.
+DISTRIBUTION FILES
+The App Store distribution export was used for upload; it is not a direct-install
+IPA for arbitrary phones. The separate delivered Ahmad-Career-iOS.ipa is still the
+older development-signed 1.1 (3), restricted to its registered devices.
 
-BETA REVIEW NOTES
-No username, password, payment or subscription is required.
-The Top 10 and saved records are available offline. Employer search requires
-internet access and external boards may change or be unavailable. Previously
-saved results remain available when an entire refresh fails.
-
-The native iOS app is independent of the private companion website and GitHub
-repository: reviewers do not need access to either. The bundled research uses
-publicly available professional and employer information and identifies gaps.
-User-entered profile records remain local until the user explicitly shares notes.
-External employer links open in the browser. Users submit applications themselves.
-
-The initial requested audience is Ahmad and a small beta group. Do not claim a
-planned public App Store release unless the owner confirms that intention.
-Apple's guideline2.2 says TestFlight apps should be intended for public distribution;
-Apple decides whether the submitted beta meets its requirements.
-
-PRIVACY AND SUPPORT
-The app includes offline privacy information and TestFlight feedback instructions.
-The Privacy Policy URL field is optional in the beta interface and was left blank.
-Ahmad-Career-Privacy.html remains an unpublished draft; it needs final developer
-contact and feedback-handling declarations before any future public publication.
-The companion website and source repository remain private.
-
-AFTER APPLE REVIEW
-If approved, confirm the build is available for testing (start testing if Apple
-presents that action), then verify the public invitation and provide the instructions
-below. If rejected, inspect Apple's actual reason and address it before resubmission.
-An upload, submission or generated public link alone does not establish approval.
-
-MESSAGE TO SEND AFTER INSTALLATION OPENS
-Ahmad, I made a career app for you. Install Apple's free TestFlight app on your
-iPhone: https://apps.apple.com/app/testflight/id899247664
-Then open https://testflight.apple.com/join/S5bDCNbd and tap Accept, then Install.
-Open Ahmad Career and start with Top 10. No Mac or coding is needed.
-
-REFERENCES
-https://developer.apple.com/help/app-store-connect/test-a-beta-version/provide-test-information/
-https://developer.apple.com/help/app-store-connect/test-a-beta-version/invite-external-testers/
-https://developer.apple.com/app-store/review/guidelines/#beta-testing
-https://developer.apple.com/documentation/security/complying-with-encryption-export-regulations
+PRIVACY
+Profile and discovery criteria remain local; fixed employer searches omit them.
+Criteria are excluded from exported notes. User-entered professional details may
+appear in notes, which the user reviews before sharing. Public source and packages
+exclude private CVs, messages, photos and pay preferences. The companion website
+is public at https://ahmad-career.jolly-lynx-4861.chatgpt.site/.
+Review/privacy/support metadata must be checked in App Store Connect when build 5
+is prepared for external testing; this document does not claim those fields were
+changed during upload. The native app includes local privacy/support information.
