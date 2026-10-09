@@ -32,3 +32,14 @@ links open the employer's own site; local status changes do not submit anything.
 The published website is PUBLIC. Anyone with its link can view bundled research.
 The GitHub repository is private; repository privacy does not restrict the site.
 No private messages, CVs, credentials or personal application statuses are bundled.
+
+Optional application dates and plain-text receipt notes are saved separately from
+status. Unknown dates stay blank; metadata edit time is not submission time.
+Needs attention derives deadline/requirement/date prompts from saved, tracked or
+meaningful recorded roles. It never certifies eligibility or contacts employers.
+Receipt notes appear only in full tracking exports, not preparation drafts.
+Unsaved record drafts survive navigation for the current session and are labelled
+in exports; export before closing. Conflicting or unreadable records are preserved.
+Safe browser metadata saving requires Web Locks; unsupported browsers can export
+drafts. Native app record files use atomic writes and stale-base detection within
+its local storage; no cross-process transaction or cross-device sync is promised.

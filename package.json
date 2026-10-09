@@ -1,1 +1,1 @@
-{"name":"ahmad-career","private":true,"type":"module","scripts":{"build":"node build.mjs","start":"node dev.mjs","test":"node check.mjs && node feed-check.mjs && node state-check.mjs && node server-check.mjs"}}
+{"name":"ahmad-career","private":true,"type":"module","scripts":{"build":"node build.mjs","start":"node dev.mjs","test":"node check.mjs && node record-check.mjs && node feed-check.mjs && node state-check.mjs && node server-check.mjs"}}
