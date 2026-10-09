@@ -17,16 +17,23 @@ function detailPath(path){
  if(typeof path!=='string'||!path.startsWith('/job/'))return false;
  try{const decoded=decodeURIComponent(path);return !/[?#\\%\x00-\x1f]/.test(decoded)&&!decoded.split('/').some(s=>s==='.'||s==='..')}catch{return false}
 }
+function validDetail(p){
+ if(!p||typeof p.title!=='string'||!p.title.trim()||typeof p.jobReqId!=='string'||!p.jobReqId.trim()||typeof p.canApply!=='boolean')return false;
+ if(p.posted!=null&&typeof p.posted!=='boolean'||p.location!=null&&typeof p.location!=='string')return false;
+ if(p.country!=null&&(typeof p.country!=='object'||Array.isArray(p.country)||p.country.descriptor!=null&&typeof p.country.descriptor!=='string'))return false;
+ return [p.startDate,p.endDate].every(value=>value==null||value===''||typeof value==='string'&&parsedDate(value));
+}
 export async function workdaySource(s,fetcher=fetch){
  const base=`https://${s.host}/wday/cxs/${s.tenant}/${s.board}`;
  const d=await jsonFetch(base+'/jobs',{appliedFacets:s.tenant==='novartis'?{locationCountry:['50423b5190ad49bb89e94cd58dfaad69']}:{},limit:20,offset:0,searchText:s.tenant==='novartis'?'':'Saudi'},fetcher);
- if(!Array.isArray(d.jobPostings))throw Error('Unexpected employer response');
- const rows=d.jobPostings.slice(0,20).filter(j=>j&&relevance(j.title)>0);
- let detailErrors=0,checkedDetails=0;
+ if(!Array.isArray(d.jobPostings)||d.total!=null&&(!Number.isInteger(d.total)||d.total<0))throw Error('Unexpected employer response');
+ const sampled=d.jobPostings.slice(0,20),valid=sampled.filter(j=>j&&typeof j.title==='string'&&j.title.trim()&&detailPath(j.externalPath));
+ const rows=valid.filter(j=>relevance(j.title)>0);
+ let detailErrors=sampled.length-valid.length,checkedDetails=0;
  const jobs=(await Promise.all(rows.map(async j=>{try{
   if(!detailPath(j.externalPath))throw Error('Invalid employer detail path');
   const {jobPostingInfo:p}=await jsonFetch(base+j.externalPath,null,fetcher);
-  if(!p||typeof p.title!=='string'||typeof p.jobReqId!=='string'||!p.jobReqId.trim())throw Error('Missing employer detail fields');
+  if(!validDetail(p))throw Error('Invalid employer detail fields');
   checkedDetails++;
   if(p.canApply!==true||p.posted===false||!relevance(p.title)||isExpired(p.endDate)||isFuture(p.startDate))return null;
   const country=p.country?.descriptor?.trim()||'',location=typeof p.location==='string'?p.location:'';
@@ -38,7 +45,7 @@ export async function workdaySource(s,fetcher=fetch){
   if(url==='#')throw Error('Invalid employer application URL');
   return{id:s.tenant+'-'+p.jobReqId,title:p.title,company:s.name,location:displayLocation,url,posted:p.startDate||'',closes:p.endDate||null,status:'live',salary:null,kind:'live',fit:'Needs review',healthcare:true,leadership:/\b(manager|director|head|lead)\b/i.test(p.title),summary:'New employer listing. Review its requirements and seniority before applying.',relevance:relevance(p.title)};
  }catch{detailErrors++;return null}}))).filter(Boolean);
- return{jobs,source:{name:s.name,ok:rows.length===0||checkedDetails>0,count:jobs.length,scanned:Math.min(d.jobPostings.length,20),total:d.total,limited:d.total>20||d.jobPostings.length>20,detailErrors,...(detailErrors?{error:`${detailErrors} detail checks failed; results may be incomplete.`}:{})}};
+ return{jobs,source:{name:s.name,ok:checkedDetails>0||rows.length===0&&(valid.length>0||sampled.length===0),count:jobs.length,scanned:Math.min(d.jobPostings.length,20),total:d.total,limited:d.total>20||d.jobPostings.length>20,detailErrors,...(detailErrors?{error:`${detailErrors} listing checks failed; results may be incomplete.`}:{})}};
 }
 export async function workableSource(fetcher=fetch){
  const base='https://apply.workable.com/api/v3/accounts/qiddiya-investment-company-1/jobs';let scanned=0,limited=false,failures=0,successfulQueries=0;

@@ -63,3 +63,16 @@ const archivedDate={...datedResearch,kind:'archived',lastCheckedAt:'2026-10-09'}
 const laterSameSaudiDay={...datedResearch,title:'Later archived employer facts',kind:'live',lastCheckedAt:'2026-10-08T23:00:00Z'};
 assert.equal(core.mergeJobs([],[archivedDate],[laterSameSaudiDay])[0].title,laterSameSaudiDay.title,'Archived snapshot merging must use the same Saudi date boundary');
 console.log('Evidence chronology passed: Saudi midnight, equivalent offsets, exact ties and archived snapshots.');
+
+for(const location of ['Riyadh Region, Saudi Arabia','Riyadh Province','منطقة الرياض، السعودية','Al Kharj, Riyadh Region','إقليم الرياض'])assert.equal(core.riyadhCity(location),'outside',location);
+for(const location of ['Riyadh, Riyadh Region, Saudi Arabia','الرياض، منطقة الرياض'])assert.equal(core.riyadhCity(location),'confirmed',location);
+console.log('Region names alone do not establish Riyadh city.');
+
+const correctedSnapshot={...datedResearch,title:'Corrected durable facts',researchCheckedAt:'2026-10-08',closes:'2099-02-01'};
+const oldEmployer={...correctedSnapshot,title:'Obsolete employer facts',kind:'live',rank:undefined,researchCheckedAt:undefined,lastCheckedAt:'2026-10-07T00:00:00Z',closes:'2099-01-01'};
+const archivedMixed=core.mergeJobs([],[correctedSnapshot],[oldEmployer]);
+for(let i=0;i<3;i++){
+ const repeated=core.mergeJobs([],archivedMixed,[oldEmployer]);assert.equal(repeated[0].title,correctedSnapshot.title);assert.equal(repeated[0].closes,correctedSnapshot.closes);
+ assert.equal(repeated[0].researchCheckedAt,correctedSnapshot.researchCheckedAt);assert.equal(repeated[0].lastCheckedAt,oldEmployer.lastCheckedAt);
+}
+console.log('Archived merging is idempotent across mixed evidence dates.');
