@@ -45,7 +45,13 @@ Native checks, the universal Mac Release, iOS simulator and build-5 archive/expo
 passed. A real Mac WebKit run rendered three leads from six source results and
 passed saving, tracking, cache preservation and note export. Targeted native UI
 checks covered criteria, saved notes and the share sheet; neutral defaults were
-restored. Browser download receipt, full VoiceOver and Ahmad's phone remain unverified.
+restored. Actual notes downloads in the Codex in-app browser and Chrome were
+verified at 05:17 Riyadh: both saved 564-byte files with correct timestamps,
+research date, four Not provided placeholders and six unchecked checklist items.
+Their contents matched except for the export timestamp and excluded criteria.
+The automation event wait timed out despite successful downloads; no code fix was
+needed. Chrome showed no unexpected notes dialog or console errors. Full VoiceOver
+and installation on Ahmad's physical iPhone remain unverified.
 Read Review-2026-10-09.html for evidence and limits. App-Review.html is historical.
 
 USING THE WORKSPACE

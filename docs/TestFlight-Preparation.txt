@@ -54,8 +54,13 @@ Twenty review assignments completed. Native checks, iOS simulator build,
 App Store archive/export and targeted native criteria/notes/share-sheet checks
 passed. Arabic-digit amount entry, hiding unknown salary and preserved saved
 records were exercised; neutral profile criteria were restored afterward.
-Full VoiceOver and physical-phone installation are not verified. Browser download
-receipt is also unverified. Upload and archive receipts are not an accessibility
+Full VoiceOver and physical-phone installation are not verified. Browser notes
+downloads were verified in the Codex in-app browser and Chrome at 05:17 Riyadh.
+Each saved a 564-byte file with correct export/research dates, four Not provided
+placeholders and six unchecked checklist items. Contents matched except for the
+export timestamp; discovery criteria were absent. The automation event wait timed
+out even though the files saved; no code fix was needed. Chrome had no unexpected
+notes dialog or console errors. Upload and archive receipts are not an accessibility
 or employer-data certification. See Review-2026-10-09.html for wider web/Mac evidence.
 
 DISTRIBUTION FILES

@@ -65,6 +65,8 @@ This repository contains public professional/employer research and source. It ex
 
 Twenty review assignments completed. The recorded web suite passed core/feed checks, **38 application-state groups**, Worker cache-denial handling and employer-redirect regressions. Native checks, the iOS simulator build, universal Intel/Apple Silicon Mac Release and build-5 archive/export passed. A real Mac WebKit run rendered three leads from six source results and passed saving, tracking, cache preservation and note export. Targeted native UI checks covered Arabic-digit criteria entry, hidden unknown pay, saved notes and the share sheet; neutral criteria were restored.
 
-Browser download receipt, full VoiceOver behavior and installation on Ahmad's physical iPhone remain unverified. Passing tests and upload success do not establish Apple beta approval or future employer availability.
+Actual notes downloads in the Codex in-app browser and Chrome were verified at **05:17 Riyadh**. Each saved a 564-byte file with the correct export timestamp, research date, four “Not provided” placeholders and six unchecked checklist items. The files matched except for the timestamp and contained no discovery criteria. The automation download-event wait timed out despite successful saves; no code fix was needed. Chrome showed no unexpected notes dialog or console errors.
+
+Full VoiceOver behavior and installation on Ahmad's physical iPhone remain unverified. Passing tests and upload success do not establish Apple beta approval or future employer availability.
 
 The Mac interface's seven files in `apple/AhmadCareer/Web/` match `website/web/`. Keep them aligned when changing the website. Native iOS screens and storage live in `NativeCareerViews.swift` and `NativeCareerStore.swift`; the dated research is in `CareerResearch.json`. Web and Swift employer adapters retain separate regression checks.
