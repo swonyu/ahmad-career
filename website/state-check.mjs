@@ -664,4 +664,44 @@ await check('Unknown status events cannot create orphan application records',()=
   const app=createApp();app.changeStatus('missing-role','Applied');assert.equal(app.evaluate('states["missing-role"]'),undefined);
 });
 
+await check('Notes capture current saved profile and checklist without requiring a storage event',async()=>{
+  const shared=new Map(),a=createApp(shared,{shared:true}),b=createApp(shared,{shared:true});
+  const before=a.json('({profile,profileDraft,profileBase,checklist,checklistPending})');
+  await b.dispatch('submit',{id:'profile-form',values:{years:'12',degree:'Synthetic current degree',skills:'Synthetic current skills',achievements:'Synthetic current achievement'}});
+  await b.dispatch('change',{id:'',dataset:{check:'profile'},checked:true});
+  const durable=[...shared];
+  const notes=await a.exportNotes();
+  for(const text of ['Synthetic current degree','Synthetic current skills','Synthetic current achievement','[x] Confirm your professional record'])assert.ok(notes.includes(text),text);
+  assert.match(a.evaluate('draft(D.jobs[0])'),/Synthetic current achievement/);
+  assert.deepEqual(a.json('({profile,profileDraft,profileBase,checklist,checklistPending})'),before,'Note capture must not mutate the editing session');
+  assert.deepEqual([...shared],durable,'Note capture must not write storage');
+  await a.dispatch('input',{name:'degree',value:'Synthetic unsent draft',closest:selector=>selector==='#profile-form'?{}:null});
+  assert.ok((await a.exportNotes()).includes('Synthetic current degree'));
+  assert.ok(!(await a.exportNotes()).includes('Synthetic unsent draft'));
+  assert.equal(a.json('profileDraft.degree'),'Synthetic unsent draft');
+});
+await check('Notes preserve failed saves and valid session data when newer storage is invalid or unreadable',async()=>{
+  for(const failure of ['pending','malformed','invalid','unreadable']){
+    const seed={years:8,degree:'Synthetic retained degree',skills:'Synthetic retained skills',achievements:'Synthetic retained achievement'};
+    const a=createApp(new Map([['ahmad-profile',JSON.stringify(seed)],['ahmad-checklist',JSON.stringify({profile:true})]]));
+    if(failure==='pending'){
+      a.failKeys.add('ahmad-profile');a.failKeys.add('ahmad-checklist');
+      await a.dispatch('submit',{id:'profile-form',values:{...seed,degree:'Synthetic failed degree',achievements:'Synthetic failed achievement'}});
+      await a.dispatch('change',{id:'',dataset:{check:'cv'},checked:true});
+      a.storage.set('ahmad-profile',JSON.stringify({...seed,degree:'Other tab degree',achievements:'Other tab achievement'}));
+      a.storage.set('ahmad-checklist',JSON.stringify({profile:false,cv:false}));
+    }else if(failure==='unreadable')a.evaluate('localStorage.getItem=()=>{throw Error("Synthetic read failure")}');
+    else{a.storage.set('ahmad-profile',failure==='malformed'?'{':JSON.stringify({degree:3}));a.storage.set('ahmad-checklist',failure==='malformed'?'{':JSON.stringify({profile:'yes'}))}
+    const before=a.json('({profile,profileDraft,profileBase,checklist,checklistPending})'),durable=[...a.storage];
+    const notes=await a.exportNotes(),roleDraft=a.evaluate('draft(D.jobs[0])');
+    assert.ok(notes.includes(failure==='pending'?'Synthetic failed degree':seed.degree),failure);
+    assert.ok(roleDraft.includes(failure==='pending'?'Synthetic failed achievement':seed.achievements),failure);
+    assert.ok(notes.includes('[x] Confirm your professional record'),failure);
+    if(failure==='pending')assert.ok(notes.includes('[x] Build two CV versions'));
+    else assert.equal(a.evaluate("blockedKeys.has('profile')&&blockedKeys.has('checklist')"),true);
+    assert.deepEqual(a.json('({profile,profileDraft,profileBase,checklist,checklistPending})'),before);
+    assert.deepEqual([...a.storage],durable);
+  }
+});
+
 if (!process.exitCode) console.log(`\n${cases.length} application-state regression groups passed.`);

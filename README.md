@@ -6,11 +6,12 @@ The [website is public](https://ahmad-career.jolly-lynx-4861.chatgpt.site/). Thi
 
 ## Current release — 9 October 2026
 
-- Public website **version 7** deployed at **07:49:53 Riyadh (04:49:53 UTC)** from source `96c182097356609a1ccc19fdd7ee6fe769de0811`. A new live search at **07:59 Riyadh** completed with six responding employers and three leads. Existing saved/applied records remained visible after reload.
-- Apple source is **1.1 (7)**. Mac Debug, iOS simulator, universal Mac Release, iOS archive and App Store export passed. Strict signature verification passed for the archive and exported IPA. Upload succeeded at **07:53:58 Riyadh**, exit code 0; Apple showed **Ready to Submit at 07:56**. Build 4 remained **Waiting for Review**. Apple explicitly blocks a second version 1.1 beta submission until the existing build is approved; its review is preserved. Build 7 has not been submitted or approved. Testing notes were saved at 07:59. Builds 5 and 6 are superseded.
-- The [one-tester TestFlight invitation](https://testflight.apple.com/join/S5bDCNbd) has no verified approved build available. Actual installation on Ahmad's iPhone and complete VoiceOver remain unverified.
+- Public website **version 8** deployed at **08:43:59 Riyadh (05:43:59 UTC)** from source `01050a01a9b3a421f1aea222eb02bcc2c6d4bbc2`. Application notes capture newer saved profile/checklist values while preserving unsent drafts and failed-save recovery data. Three saved/applied records remained visible after reload.
+- Universal **Mac 1.1 (8)** release compiled for Intel and Apple Silicon with the same corrected web assets. It is unsigned and not notarized. The shared Xcode build-number default remains 7; the Mac release used `CURRENT_PROJECT_VERSION=8`.
+- Native iPhone SwiftUI is unchanged. **iOS 1.1 (7)** remains the latest upload, successful at **07:53:58 Riyadh** and last shown **Ready to Submit at 07:56**. Build 4 remained **Waiting for Review**. Its queue was preserved; Apple blocks another version 1.1 beta submission until it is approved. Build 7 is not verified submitted, approved or installable. No iOS build 8 was uploaded.
+- The [TestFlight invitation](https://testflight.apple.com/join/S5bDCNbd) has no verified approved build available. Physical-iPhone installation and complete VoiceOver remain unverified.
 
-See the [release review](docs/Review-2026-10-09.html), [handoff](docs/START-HERE.txt) and [TestFlight record](docs/TestFlight-Preparation.txt). Refreshed source/Mac packages and checksums are supplied separately, outside Git. The universal Mac 1.1 (7) package is unsigned and not notarized. The separate development IPA remains 1.1 (3), restricted to registered devices; it is not the uploaded App Store export.
+See the [release review](docs/Review-2026-10-09.html), [handoff](docs/START-HERE.txt) and [TestFlight record](docs/TestFlight-Preparation.txt). Packages and checksums are supplied separately. The development IPA remains 1.1 (3), restricted to registered devices, not the uploaded App Store export. New web/Mac assets are not claimed identical to the earlier uploaded iOS 7 bundle.
 
 ## Source and documentation
 
@@ -65,8 +66,9 @@ This repository contains public professional/employer research and source. It ex
 
 ## Verification and limits
 
-The final web suite passed core checks, **12 feed groups**, **45 application-state groups**, and server cache/failure/cooldown/coalescing cases. Native offline checks passed. Independent regressions verified the corrected chronology, saved-record preservation, storage recovery and modal-refresh cases, with expected failures against earlier implementations. Mac Debug, iOS simulator, universal Mac Release, iOS archive, App Store export and strict archive/export signature verification passed for 1.1 (7). Seven shared web resources and native research match source and built artifacts. Local browser checks exercised checkbox focus across a second-tab save and theme state through reload. Live version-7 search is recorded above.
+The note-freshness correction passed core checks, **47 application-state groups**, an independent five-case preservation/freshness probe, two recovery transitions and an actual two-tab browser note check. The universal Mac 1.1 (8) build passed, and its seven web assets match canonical source. The latest production UI reload retained all three existing saved/applied records.
 
+Earlier version-7 checks passed 12 feed groups, server checks, native offline checks, Mac Debug, iOS simulator, Mac Release, iOS archive/export and strict archive/exported signatures. Those unchanged components were not rebuilt/retested for this web/Mac correction. The last real employer search was version 7 at **07:59 Riyadh**, six responding employers and three leads. No new live search was needed.
 Earlier build-5 simulator and Mac WebKit checks remain historical evidence: native criteria, notes and share sheet; Mac search, saving, tracking, cache preservation and note export. Those earlier results are not fresh physical-device checks.
 Actual notes downloads in the Codex in-app browser and Chrome were verified at **05:17 Riyadh**. Each saved a 564-byte file with the correct export timestamp, research date, four “Not provided” placeholders and six unchecked checklist items. The files matched except for the timestamp and contained no discovery criteria. The automation download-event wait timed out despite successful saves; no code fix was needed. Chrome showed no unexpected notes dialog or console errors.
 
