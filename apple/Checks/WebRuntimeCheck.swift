@@ -27,7 +27,7 @@ enum WebRuntimeCheck {
                     localStorage.setItem('__nativeSmoke', 'ok');
                     if (localStorage.getItem('__nativeSmoke') !== 'ok') throw new Error('Local storage failed');
                     localStorage.removeItem('__nativeSmoke');
-                    if (document.querySelectorAll('#job-list .job-row').length !== globalThis.CAREER_DATA.jobs.length) throw new Error('Bundled shortlist did not render');
+                    if (document.querySelectorAll('#job-list .job-row').length !== globalThis.CAREER_DATA.jobs.filter(j=>CareerCore.criteriaFor(j,{preferredCity:'riyadh'}).included).length) throw new Error('Bundled shortlist did not render');
                     const button = document.querySelector('#sidebar .new-search');
                     button.click();
                     if (!button.disabled || !button.textContent.includes('Searching')) throw new Error('Real button did not enter searching state');
@@ -40,14 +40,15 @@ enum WebRuntimeCheck {
                     const payload = JSON.parse(localStorage.getItem('ahmad-live'));
                     if (!payload || payload.sources.length !== \(CareerFeed.sources.count)) throw new Error('Real app callback did not persist native payload');
                     const rows = document.querySelectorAll('#job-list .job-row').length;
-                    if (!rows || rows !== payload.jobs.length) throw new Error('New lead rows did not render');
+                    const visibleJobs=payload.jobs.filter(j=>CareerCore.criteriaFor(j,{preferredCity:'riyadh'}).included);
+                    if (!rows || rows !== visibleJobs.length) throw new Error('New lead rows did not render');
                     if (document.querySelectorAll('.source-row').length !== \(CareerFeed.sources.count)) throw new Error('Source coverage did not render');
                     if (document.querySelector('#view-name').textContent !== 'Live search') throw new Error('Wrong current view');
                     const firstTitle = document.querySelector('#job-list .job-title').textContent;
                     const cached = localStorage.getItem('ahmad-live');
                     await window.receiveNativeJobs({checkedAt:new Date().toISOString(),jobs:[],sources:payload.sources.map(s=>({name:s.name,ok:false,error:'Integration-check failure'}))});
                     if (localStorage.getItem('ahmad-live') !== cached || document.querySelectorAll('#job-list .job-row').length !== rows) throw new Error('All-source failure lost cached results');
-                    const liveOnly = payload.jobs.find(j => !globalThis.CAREER_DATA.jobs.some(c => c.id === j.id)) || payload.jobs[0];
+                    const liveOnly = visibleJobs.find(j => !globalThis.CAREER_DATA.jobs.some(c => c.id === j.id)) || visibleJobs[0];
                     if (!liveOnly) throw new Error('No live lead available for the live integration persistence check');
                     Array.from(document.querySelectorAll('[data-save]')).find(b => b.dataset.save === liveOnly.id).click();
                     await new Promise(resolve => setTimeout(resolve, 150));

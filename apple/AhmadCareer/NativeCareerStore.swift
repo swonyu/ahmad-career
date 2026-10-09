@@ -92,13 +92,13 @@ struct NativeProfile: Codable, Equatable {
         return city+" · Minimum SAR \(Int(amount).formatted())/month · "+(hidesUnverifiedSalary ? "Unverified salaries hidden" : "Unverified salaries shown")
     }
 }
-struct EmployerStatus: Codable { var name:String;var ok:Bool;var count:Int;var scanned:Int?;var limited:Bool?;var error:String?;var detailErrors:Int? }
+struct EmployerStatus: Codable { var name:String;var ok:Bool;var count:Int;var scanned:Int?;var limited:Bool?;var error:String?;var detailErrors:Int?;var excludedIds:[String]?;var incomplete:Bool {!ok || (detailErrors ?? 0)>0 || !(error ?? "").isEmpty} }
 struct LiveSnapshot: Codable { var checkedAt:String;var jobs:[CareerJob];var sources:[EmployerStatus] }
 struct NativeWorkspace: Codable {
     var saved=Set<String>()
     var statuses=[String:String]()
     var snapshots=[String:CareerJob]()
-    var profile=NativeProfile()
+    var profile=NativeProfile(preferredCity:"riyadh")
     var completed=Set<String>()
     var live:LiveSnapshot?
 }
@@ -258,8 +258,23 @@ struct ApplicationAttention: Identifiable {
             var stamped=job;stamped.lastCheckedAt=job.lastCheckedAt ?? live.checkedAt;return stamped
         }
     }
+    func employerObservation(_ job:CareerJob)->CareerJob {
+        [job,workspace.snapshots[job.id],cachedEmployerJobs.first(where:{$0.id==job.id})].compactMap{$0}.reduce(job) { latest,observation in
+            (observation.lastCheckedAt.flatMap(CareerFeed.parsedDate) ?? .distantPast) > (latest.lastCheckedAt.flatMap(CareerFeed.parsedDate) ?? .distantPast) ? observation : latest
+        }
+    }
+    func isUnrefreshed(_ job:CareerJob)->Bool {
+        guard let snapshot=workspace.live, snapshot.sources.contains(where:{$0.name==job.company && $0.incomplete}),
+              let observed=employerObservation(job).lastCheckedAt.flatMap(CareerFeed.parsedDate),let attempted=CareerFeed.parsedDate(snapshot.checkedAt) else {return false}
+        return observed<attempted
+    }
     var liveJobs:[CareerJob] {cachedEmployerJobs.filter {!$0.isExpired}}
-    private func factsDate(_ job:CareerJob)->Date? { (job.lastCheckedAt ?? job.researchCheckedAt).flatMap(CareerFeed.parsedDate) }
+    private func factsDate(_ job:CareerJob)->Date? { [job.lastCheckedAt,job.researchCheckedAt].compactMap{$0.flatMap(CareerFeed.parsedDate)}.max() }
+    private func retainingEmployerObservation(_ facts:CareerJob,from observations:[CareerJob])->CareerJob {
+        var result=facts
+        for observation in observations where (observation.lastCheckedAt.flatMap(CareerFeed.parsedDate) ?? .distantPast) > (result.lastCheckedAt.flatMap(CareerFeed.parsedDate) ?? .distantPast) {result.lastCheckedAt=observation.lastCheckedAt}
+        return result
+    }
     private func mergeFacts(_ facts:CareerJob, editorial:CareerJob)->CareerJob {
         var current=facts
         current.rank=editorial.rank;current.fit=editorial.fit;current.summary=editorial.summary
@@ -272,19 +287,20 @@ struct ApplicationAttention: Identifiable {
     var shortlistJobs:[CareerJob] {shortlistJobs(in:workspace)}
     private func shortlistJobs(in value:NativeWorkspace)->[CareerJob] {research.jobs.map { editorial in
         var current=editorial
-        for candidate in [value.snapshots[editorial.id], cachedEmployerJobs(in:value).first(where:{$0.id==editorial.id})].compactMap({$0}) {
+        let candidates=[value.snapshots[editorial.id], cachedEmployerJobs(in:value).first(where:{$0.id==editorial.id})].compactMap({$0})
+        for candidate in candidates {
             if let checked=factsDate(candidate),checked > (factsDate(current) ?? .distantPast) {
                 current=mergeFacts(candidate,editorial:editorial)
             }
         }
-        return current
+        return retainingEmployerObservation(current,from:candidates+[editorial])
     }}
     private var allJobs:[CareerJob] {
         var jobs=workspace.snapshots
         for job in cachedEmployerJobs {
             if let prior=jobs[job.id] {
-                if (factsDate(prior) ?? .distantPast) > (factsDate(job) ?? .distantPast) {continue}
-                jobs[job.id]=(prior.rank != nil || prior.kind == "archived" || prior.kind == "researched") ? mergeFacts(job,editorial:prior) : job
+                let facts=(factsDate(prior) ?? .distantPast) > (factsDate(job) ?? .distantPast) ? prior : ((prior.rank != nil || prior.kind == "archived" || prior.kind == "researched") ? mergeFacts(job,editorial:prior) : job)
+                jobs[job.id]=retainingEmployerObservation(facts,from:[prior,job])
             } else {jobs[job.id]=job}
         }
         for job in shortlistJobs {jobs[job.id]=job}
@@ -357,7 +373,7 @@ struct ApplicationAttention: Identifiable {
                   let sourceRows=payload["sources"] as? [[String:Any]],sourceRows.count<=20 else {throw CocoaError(.coderInvalidValue)}
             let sources=try sourceRows.map { row -> EmployerStatus in
                 let source=try JSONDecoder().decode(EmployerStatus.self,from:JSONSerialization.data(withJSONObject:row))
-                guard !source.name.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,source.count>=0,(source.scanned ?? 0)>=0,(source.detailErrors ?? 0)>=0 else {throw CocoaError(.coderInvalidValue)}
+                guard !source.name.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,source.count>=0,(source.scanned ?? 0)>=0,(source.detailErrors ?? 0)>=0,(source.excludedIds?.count ?? 0)<=20,source.excludedIds?.allSatisfy({!$0.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty && $0.count<=256}) ?? true else {throw CocoaError(.coderInvalidValue)}
                 return source
             }
             if let previous=workspace.live.flatMap({CareerFeed.isoDate($0.checkedAt)}),checked<previous {
@@ -381,15 +397,19 @@ struct ApplicationAttention: Identifiable {
             if !rows.isEmpty && valid.isEmpty {searchError="The employer response contained no valid Saudi listings. Previous results are preserved.";return}
             let rejected=rows.count-valid.count
             var seen=Set<String>()
-            let jobs=valid.filter { healthcareLead($0) && CareerFeed.dateIsEligible($0.posted,now:now,closing:false) && CareerFeed.dateIsEligible($0.closes ?? "",now:now,closing:true) && seen.insert($0.id).inserted }.sorted { ($0.posted,$0.title) > ($1.posted,$1.title) }
+            var jobs=valid.filter { healthcareLead($0) && CareerFeed.dateIsEligible($0.posted,now:now,closing:false) && CareerFeed.dateIsEligible($0.closes ?? "",now:now,closing:true) && seen.insert($0.id).inserted }
+            let failedNames=Set(sources.filter{$0.incomplete}.map(\.name))
+            jobs += cachedEmployerJobs.filter { job in !seen.contains(job.id) && failedNames.contains(job.company) && !sources.contains(where:{$0.name==job.company && ($0.excludedIds ?? []).contains(job.id)}) && CareerFeed.dateIsEligible(job.posted,now:now,closing:false) && CareerFeed.dateIsEligible(job.closes ?? "",now:now,closing:true) }
+            jobs=jobs.map{($0,CareerFeed.parsedDate($0.posted) ?? .distantPast)}.sorted {a,b in a.1 != b.1 ? a.1>b.1 : (a.0.title,a.0.id)<(b.0.title,b.0.id)}.map{ $0.0 }
             var next=workspace;next.live=LiveSnapshot(checkedAt:checkedAt,jobs:jobs,sources:sources)
             for job in jobs where next.snapshots[job.id] != nil || next.saved.contains(job.id) || next.statuses[job.id] != nil || isCurrentResearch(job) {
                 let prior=next.snapshots[job.id]
                 let editorial=research.jobs.first(where:{$0.id==job.id}) ?? prior.flatMap { $0.rank != nil || $0.kind == "archived" || $0.kind == "researched" ? $0 : nil }
-                next.snapshots[job.id]=editorial.map {mergeFacts(job,editorial:$0)} ?? job
+                if (factsDate(prior ?? job) ?? .distantPast) <= (factsDate(job) ?? .distantPast) {next.snapshots[job.id]=editorial.map {mergeFacts(job,editorial:$0)} ?? job}
+                if let facts=next.snapshots[job.id] {next.snapshots[job.id]=retainingEmployerObservation(facts,from:[prior,job].compactMap{$0})}
             }
             commit(next)
-            let failed=sources.filter{!$0.ok || ($0.detailErrors ?? 0)>0 || $0.error != nil}
+            let failed=sources.filter{$0.incomplete}
             var issues=[String]()
             if !failed.isEmpty {issues.append("Some employer checks were incomplete: "+failed.map(\.name).joined(separator:", ")+". Coverage may be incomplete.")}
             if rejected>0 {issues.append("\(rejected) invalid listings were excluded.")}
@@ -404,7 +424,7 @@ struct ApplicationAttention: Identifiable {
         let archived=job.kind == "archived" || (!isCurrentResearch(job) && job.rank != nil)
         let salary=researchDate.map { "Salary was not disclosed in the research checked \($0)." } ?? (archived ? "Original research check date is unavailable. Recheck salary." : "Salary was not checked for this live lead.")
         let history=archived ? "\nArchived saved research; this role is not in the current shortlist.\n" : ""
-        return "APPLICATION PREPARATION — \(job.title)\n\(job.company) · \(job.location)\n\(job.applicationURL?.absoluteString ?? job.url)\(history)\n\nFit: \(job.fit)\n\(job.summary)\n\nConfirm first:\n"+job.requirements.map{"• "+$0}.joined(separator:"\n")+"\n\nSteps:\n"+job.applicationSteps.enumerated().map{"\($0.offset+1). \($0.element[0]): \($0.element[1])"}.joined(separator:"\n\n")+(includeProfile ? "\n\n"+profileText : "")+"\n\nStatus: \(status(for:job))\n"+salary+" Review and submit personally on the employer website."
+        return "APPLICATION PREPARATION — \(job.title)\n\(job.company) · \(job.location)\n\(job.applicationURL?.absoluteString ?? job.url)\(history)\n\nEmployer checked: \(employerObservation(job).lastCheckedAt ?? "Not recorded")\nListed deadline: \(job.closes?.isEmpty==false ? job.closes! : "Not published")\nDate-only deadlines use Riyadh calendar days. Past checks and listed deadlines do not establish current availability; recheck with the employer.\n\nFit: \(job.fit)\n\(job.summary)\n\nConfirm first:\n"+job.requirements.map{"• "+$0}.joined(separator:"\n")+"\n\nSteps:\n"+job.applicationSteps.enumerated().map{"\($0.offset+1). \($0.element[0]): \($0.element[1])"}.joined(separator:"\n\n")+(includeProfile ? "\n\n"+profileText : "")+"\n\nStatus: \(status(for:job))\n"+salary+" Review and submit personally on the employer website."
     }
     private func applicationRecordText(_ id:String)->String {
         let record=applicationRecords[id],draft=recordDrafts[id]
@@ -420,7 +440,7 @@ struct ApplicationAttention: Identifiable {
         let jobs=(currentJobs+draftJobs).filter{workspace.saved.contains($0.id)||status(for:$0) != "Not started"||applicationRecords[$0.id]?.meaningful==true||recordDrafts[$0.id]?.dirty==true}
         let labels=["profile":"Professional record", "evidence":"Achievement stories", "cv":"Two focused CVs", "priority":"Priority roles reviewed", "deadline":"Deadlines rechecked", "review":"Applications reviewed"]
         let checklist=labels.keys.sorted().map{(workspace.completed.contains($0) ? "[x] " : "[ ] ")+(labels[$0] ?? $0)}.joined(separator:"\n")
-        return "AHMAD CAREER — Saudi Arabia\nResearch snapshot: \(research.checkedAt)\n\n"+profileText+"\n\nPREPARATION CHECKLIST\n"+checklist+"\n\nSAVED AND TRACKED APPLICATIONS\n\n"+jobs.map{note(for:$0,includeProfile:false)+applicationRecordText($0.id)}.joined(separator:"\n\n——————————\n\n")
+        return "AHMAD CAREER — Saudi Arabia\nCurrent shortlist research snapshot: \(research.checkedAt)\n\n"+profileText+"\n\nPREPARATION CHECKLIST\n"+checklist+"\n\nSAVED AND TRACKED APPLICATIONS\n\n"+jobs.map{note(for:$0,includeProfile:false)+applicationRecordText($0.id)}.joined(separator:"\n\n——————————\n\n")
     }
 }
 

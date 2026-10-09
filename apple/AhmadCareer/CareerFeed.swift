@@ -271,7 +271,7 @@ enum CareerFeed {
             let facets: [String: [String]] = source.tenant == "novartis" ? ["locationCountry": ["50423b5190ad49bb89e94cd58dfaad69"]] : [:]
             request.httpBody = try JSONSerialization.data(withJSONObject: ["appliedFacets": facets, "limit": 20, "offset": 0, "searchText": source.tenant == "novartis" ? "" : "Saudi"])
             let listing = try await json(request, session: session)
-            guard let postings = listing["jobPostings"] as? [Any], let total = listing["total"] as? Int, total >= 0, strictBool(listing["total"]) == nil else { throw FeedError.invalidResponse }
+            guard let postings = listing["jobPostings"] as? [Any], let total = listing["total"] as? Int, total >= postings.count, (total == 0 || !postings.isEmpty), strictBool(listing["total"]) == nil else { throw FeedError.invalidResponse }
             let sampled = postings.prefix(20)
             let valid = sampled.compactMap { row -> [String:Any]? in
                 guard let posting=row as? [String:Any],let title=posting["title"] as? String,!title.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,
@@ -282,6 +282,7 @@ enum CareerFeed {
             var jobs: [[String: Any]] = []
             var failures = sampled.count-valid.count
             var successfulDetails = 0
+            var excludedIds = [String]()
             for (index, posting) in candidates.enumerated() {
                 guard !Task.isCancelled else { failures += candidates.count - index; break }
                 guard let path = posting["externalPath"] as? String,
@@ -289,14 +290,16 @@ enum CareerFeed {
                 do {
                     let response = try await json(URLRequest(url: url), session: session)
                     guard let detail = response["jobPostingInfo"] as? [String: Any], validDetail(detail) else { throw FeedError.invalidResponse }
+                    let id=source.tenant+"-"+(detail["jobReqId"] as! String)
+                    guard id.count<=256 else {throw FeedError.invalidResponse}
                     successfulDetails += 1
-                    if let match = job(detail, externalPath: path, source: source) { jobs.append(match) }
+                    if let match = job(detail, externalPath: path, source: source) { jobs.append(match) } else {excludedIds.append(id)}
                 } catch {
                     failures += 1
                     if Task.isCancelled { failures += candidates.count - index - 1; break }
                 }
             }
-            var status: [String: Any] = ["name": source.name, "ok": successfulDetails > 0 || candidates.isEmpty && (!valid.isEmpty || sampled.isEmpty), "count": jobs.count, "scanned": min(postings.count, 20), "total": total, "limited": total > 20 || postings.count > 20, "detailErrors": failures, "incomplete": total > 20 || postings.count > 20 || failures > 0]
+            var status: [String: Any] = ["name": source.name, "ok": successfulDetails > 0 || candidates.isEmpty && (!valid.isEmpty || sampled.isEmpty), "count": jobs.count, "scanned": min(postings.count, 20), "total": total, "limited": total > 20 || postings.count > 20, "detailErrors": failures, "excludedIds": excludedIds, "incomplete": total > 20 || postings.count > 20 || failures > 0]
             if failures > 0 { status["error"] = "\(failures) listing checks failed; results may be incomplete." }
             return SourceResult(name: source.name, jobs: jobs, status: status)
         } catch {

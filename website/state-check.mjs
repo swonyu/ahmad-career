@@ -534,8 +534,8 @@ await check('Unsaved criteria survive renders and disabled salary policy preserv
   assert.equal(app.json('profile.unknownSalary'),'hide','Disabled control must retain its dormant policy');
 });
 
-await check('Independent criteria and professional profile edits merge across tabs using neutral defaults',async()=>{
-  const shared=new Map(),a=createApp(shared,{shared:true}),b=createApp(shared,{shared:true});
+await check('Independent criteria and professional profile edits merge across tabs using legacy neutral defaults',async()=>{
+  const shared=new Map([['ahmad-profile','{}']]),a=createApp(shared,{shared:true}),b=createApp(shared,{shared:true});
   await submitProfile(a,{preferredCity:'riyadh',unknownSalary:'hide'});
   await submitProfile(b,{minimumMonthlySAR:'10000',skills:'Verified scope'});
   const stored=JSON.parse(shared.get('ahmad-profile'));
@@ -766,6 +766,121 @@ await check('A completed employer refresh redraws attention on an already open P
  const app=createApp();app.receive(success([role]));app.toggleSaved(role.id);app.evaluate("go('plan')");
  app.receive(success([{...role,title:'Freshly updated Supply Chain Manager'}],newTime));
  assert(app.evaluate("$('#main').innerHTML").includes('Freshly updated Supply Chain Manager'));
+});
+
+await check('Profile saves preserve typing entered while waiting for the profile lock',async()=>{
+ let release;const gate=new Promise(resolve=>release=resolve);
+ const locks={request:(name,run)=>name==='ahmad-career-profile'?gate.then(run):Promise.resolve(run())};
+ const app=createApp(new Map(),{locks});
+ const pending=submitProfile(app,{achievements:'Submitted snapshot'});
+ await app.dispatch('input',{name:'achievements',value:'Later unsaved typing',closest:s=>s==='#profile-form'?{}:null});
+ release();await pending;
+ assert.equal(JSON.parse(app.storage.get('ahmad-profile')).achievements,'Submitted snapshot');
+ assert.equal(app.json('profileDraft.achievements'),'Later unsaved typing');
+ assert.equal(app.json('profileBase.achievements'),'Submitted snapshot');
+});
+
+await check('Queued live retention keeps corrected facts even when a later batch omits the role',async()=>{
+ let held=false,release;const gate=new Promise(resolve=>release=resolve);let queue=Promise.resolve();
+ const locks={request(name,run){if(name==='ahmad-career-workspace'){const next=queue.then(()=>held?gate.then(run):run());queue=next.catch(()=>{});return next}return Promise.resolve(run())}};
+ const app=createApp(new Map(),{locks});await queue;
+ await app.receive(success([role]));await queue;await app.toggleSaved(role.id);
+ held=true;const corrected={...role,title:'Corrected Supply Chain Manager',closes:'2099-10-10'};
+ await app.receive(success([corrected],newTime));
+ await app.receive(success([],'2026-10-09T00:30:00Z'));
+ release();await queue;
+ const reload=createApp(app.storage);
+ assert.equal(reload.json(`jobById(${JSON.stringify(role.id)}).title`),corrected.title);
+ assert.equal(reload.json(`jobById(${JSON.stringify(role.id)}).closes`),corrected.closes);
+});
+await check('Tracking export sees another tab workspace save before the storage event arrives',async()=>{
+ const shared=new Map(),a=createApp(shared,{shared:true}),b=createApp(shared,{shared:true});
+ const id=b.json('D.jobs[0].id');await b.toggleSaved(id);b.changeStatus(id,'Applied');
+ const durable=[...shared],notes=await a.exportNotes();
+ assert(notes.includes(b.json('D.jobs[0].title')));assert(notes.includes('Status: Applied'));
+ assert.deepEqual([...shared],durable,'Export must not write storage');
+});
+await check('Accepted employer corrections redraw an open Saved or Shortlist view',()=>{
+ for(const view of ['saved','shortlist']){
+  const app=createApp();const job=view==='saved'?role:app.json('D.jobs[0]');
+  app.receive(success([job]));app.toggleSaved(job.id);app.evaluate(`go('${view}')`);
+  app.receive(success([{...job,title:'Corrected Healthcare Supply Chain Manager'}],new Date().toISOString()));
+  assert.equal(app.json(`jobById(${JSON.stringify(job.id)}).title`),'Corrected Healthcare Supply Chain Manager','Refresh must be accepted before testing redraw');
+  assert(app.evaluate("$('#job-list').innerHTML").includes('Corrected Healthcare Supply Chain Manager'),view);
+ }
+});
+
+await check('Date sorts use instants and Saudi day boundaries with unknown dates last',()=>{
+ const scenarios=[
+  ['deadline','closes','2026-10-10T00:30:00+03:00','2026-10-09T23:00:00Z'],
+  ['deadline','closes','2026-10-09T09:00:00+03:00','2026-10-09'],
+  ['recent','posted','2026-10-09T21:00:00Z','2026-10-09T23:30:00+03:00'],
+  ['recent','posted','2026-10-08T23:30:00Z','2026-10-09']
+ ];
+ for(const [sort,key,first,last] of scenarios){
+  const app=createApp();const jobs=[{...role,id:'date-last',title:'Last Supply Chain Manager',[key]:last},{...role,id:'date-first',title:'First Supply Chain Manager',[key]:first},{...role,id:'date-unknown',title:'Unknown Supply Chain Manager',posted:'',closes:null}];
+  app.evaluate(`D.jobs=${JSON.stringify(jobs)};go('shortlist');sort=${JSON.stringify(sort)};renderList()`);
+  const html=app.evaluate("$('#job-list').innerHTML");
+  assert(html.indexOf('First Supply Chain Manager')<html.indexOf('Last Supply Chain Manager'),key+first);
+  assert(html.indexOf('Last Supply Chain Manager')<html.indexOf('Unknown Supply Chain Manager'),'unknown last');
+ }
+});
+await check('Editorial action prose cannot contradict an accepted amended deadline',()=>{
+ const app=createApp();const id='alcon-R-2026-49887',job=app.json(`jobById('${id}')`);
+ app.receive(success([{...job,closes:'2099-10-10'}],new Date().toISOString()));
+ app.evaluate(`openJob('${id}')`);
+ const detail=app.evaluate("$('#job-dialog').innerHTML"),plan=app.evaluate('planPage()');
+ assert(!detail.includes('The published deadline is 15 October 2026'));
+ assert(!plan.includes('Roche: 12 Oct; Alcon: 15 Oct'));
+ assert(!detail.includes('A current healthcare logistics opening'));
+});
+
+await check('Legacy date-only live checks compare at Saudi midnight for updates and durable-cache adoption',()=>{
+ for(const fromStorage of [false,true]){
+  const app=createApp();app.receive(success([role],'2026-10-09'));
+  const newer=success([{...role,title:'Later Supply Chain Manager'}],'2026-10-08T23:00:00Z');
+  if(fromStorage){app.storage.set('ahmad-live',JSON.stringify(newer));app.receive({error:'Synthetic outage'})}else app.receive(newer);
+  assert.equal(app.json('live.checkedAt'),newer.checkedAt,String(fromStorage));
+  assert.equal(app.json('live.jobs[0].title'),'Later Supply Chain Manager');
+ }
+});
+
+await check('Fresh Riyadh discovery default survives unrelated saves while explicit and legacy city choices remain',()=>{
+ const fresh=createApp();assert.equal(fresh.json('profile.preferredCity'),'riyadh');
+ fresh.evaluate("saveProfile({...profileDraft,achievements:'Synthetic evidence'})");
+ assert.equal(fresh.json('profile.preferredCity'),'riyadh');
+ assert.equal(createApp(fresh.storage).json('profile.preferredCity'),'riyadh');
+ for(const stored of [{preferredCity:''},{}]){const app=createApp(new Map([['ahmad-profile',JSON.stringify(stored)]]));assert.equal(app.json('profile.preferredCity??null'),stored.preferredCity??null)}
+});
+await check('Partial employer failure retains old eligible discovery evidence without refreshing it',()=>{
+ const app=createApp(),old='2026-10-09T00:10:00Z',newer='2026-10-09T00:20:00Z';
+ const alcon={...role,id:'partial-alcon',company:'Alcon'},roche={...role,id:'partial-roche',company:'Roche'};
+ app.receive({checkedAt:old,jobs:[alcon,roche],sources:[{name:'Alcon',ok:true,count:1},{name:'Roche',ok:true,count:1}]});
+ const partial={checkedAt:newer,jobs:[],sources:[{name:'Alcon',ok:false,count:0,error:'Synthetic outage'},{name:'Roche',ok:true,count:0}]};app.receive(partial);
+ assert.deepEqual(app.json('live.jobs.map(j=>j.id)'),['partial-alcon']);assert.equal(app.json('live.jobs[0].lastCheckedAt'),old);
+ assert(app.evaluate("row(live.jobs[0],0)").includes('Not refreshed'));
+ const reload=createApp(app.storage);assert.equal(reload.json('live.jobs[0].lastCheckedAt'),old);
+ reload.receive({...partial,checkedAt:'2026-10-09T00:30:00Z'});assert.equal(reload.json('live.jobs[0].lastCheckedAt'),old);
+ reload.receive({checkedAt:'2026-10-09T00:40:00Z',jobs:[alcon],sources:[{name:'Alcon',ok:true,count:1}]});
+ assert.equal(reload.json('live.jobs[0].lastCheckedAt'),'2026-10-09T00:40:00Z');assert(!reload.evaluate("row(live.jobs[0],0)").includes('Not refreshed'));
+ reload.receive({checkedAt:'2026-10-09T00:50:00Z',jobs:[],sources:[{name:'Alcon',ok:true,count:0}]});assert.equal(reload.json('live.jobs.length'),0);
+});
+
+await check('Incomplete successful detail checks retain earlier jobs and observation dates',()=>{
+ const app=createApp();app.receive(success([role],oldTime));
+ app.receive({checkedAt:newTime,jobs:[],sources:[{name:'Alcon',ok:true,count:0,detailErrors:1,error:'One detail unavailable'}]});
+ assert.equal(app.json('live.jobs[0].lastCheckedAt'),oldTime);assert(app.evaluate('unrefreshed(live.jobs[0])'));
+ assert.equal(createApp(app.storage).json('live.jobs[0].lastCheckedAt'),oldTime);
+});
+
+await check('Exact successful employer exclusions survive partial failure without deleting tracked history',()=>{
+ const app=createApp(),gone={...role,id:'excluded-role'},unknown={...role,id:'unknown-role'};
+ app.receive(success([gone,unknown],oldTime));app.changeStatus('excluded-role','Applied');
+ app.receive({checkedAt:newTime,jobs:[],sources:[{name:'Alcon',ok:true,count:0,detailErrors:1,excludedIds:[gone.id]}]});
+ assert.deepEqual(app.json('live.jobs.map(j=>j.id)'),[unknown.id]);assert.equal(app.json('live.jobs[0].lastCheckedAt'),oldTime);
+ assert.equal(app.json("states['excluded-role']"),'Applied');assert(app.json('retainedJobs().map(j=>j.id)').includes(gone.id));
+ const reload=createApp(app.storage);assert.deepEqual(reload.json('live.jobs.map(j=>j.id)'),[unknown.id]);
+ for(const excludedIds of [[''],[1],Array(21).fill('x'),['x'.repeat(257)],'bad'])assert.equal(app.evaluate(`C.normalizeLive(${JSON.stringify({checkedAt:newTime,jobs:[],sources:[{name:'Alcon',ok:true,count:0,excludedIds}]})})`),null);
 });
 
 if (!process.exitCode) console.log(`${cases.length} application-state regression groups passed.`);

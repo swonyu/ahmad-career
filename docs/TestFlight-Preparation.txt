@@ -3,8 +3,8 @@ AHMAD CAREER — TESTFLIGHT RELEASE RECORD
 
 BUILD 7 — PROCESSED; READY TO SUBMIT
 Latest uploaded iOS distribution build: 1.1 (7).
-Release 9 adds application records and Needs attention to current native source.
-Local iOS Simulator Debug 1.1 (9) compiled, but no iOS 9 distribution archive,
+Current source 10 includes records, attention, refresh/provenance and feedback fixes.
+Local iOS Simulator Debug 1.1 (10) compiled, but no iOS 10 distribution archive,
 upload, beta submission, installation or native UI verification was performed.
 The earlier release 8 changed web/Mac only; no iOS 8 archive/upload occurred.
 Archive and App Store export succeeded; strict codesign verification passed on
@@ -30,9 +30,14 @@ polling or enter credentials; secure owner sign-in is needed first.
 1. After authenticated access returns, check actual build/review state and preserve
    build 4's queue. No submission or group change follows from a cached row.
 2. Select and validate the intended next distribution build deliberately: uploaded
-   build 7 does not contain the new native record functionality in source 9.
-3. After actual approval, verify intended-build availability and tester invitation.
-4. Verify installation and launch on Ahmad's iPhone separately.
+   build 7 does not contain the new native record functionality in source 10.
+3. If distributing newer source, archive, export and upload that intended build;
+   verify its processing before continuing. A local simulator build is not an upload.
+4. When Apple permits, explicitly submit the intended build for beta review.
+   Selecting a build or approval of build 4 does not submit build 7 or a newer build.
+   Verify the submitted status of that same build.
+5. After that build is approved, verify its availability and tester invitation.
+6. Verify installation and launch of that build on Ahmad's iPhone separately.
 
 INVITATION
 https://testflight.apple.com/join/S5bDCNbd
@@ -68,14 +73,14 @@ not claimed. Prior build-5 targeted UI/share-sheet checks remain historical.
 DISTRIBUTION FILES
 Current source includes native record functionality and matching web/Mac assets;
 the shared build-number default remains 7. Universal Mac Release and local iOS
-Simulator Debug were built as 1.1 (9) with CURRENT_PROJECT_VERSION=9.
+Simulator Debug were built as 1.1 (10) with CURRENT_PROJECT_VERSION=10.
 Current source/assets differ from the earlier uploaded iOS 7 bundle. The separate
 Ahmad-Career-iOS.ipa remains development 1.1 (3), restricted to registered devices;
 it is not the uploaded build-7 App Store export or an arbitrary-phone installer.
 
 WEBSITE AND PRIVACY
 https://ahmad-career.jolly-lynx-4861.chatgpt.site/
-Website 9 deployed at 13:38:21 Riyadh (10:38:21 UTC). Last real website search
+Website 10 deployed at 16:41:32 Riyadh (13:41:32 UTC). Last real website search
 remains version 7 at 07:59 Riyadh: six responding employers and three leads.
 Website availability does not establish native approval or installation. Profile
 and criteria remain local. Full tracking exports include user-entered receipt notes

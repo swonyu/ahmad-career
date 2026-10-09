@@ -167,7 +167,7 @@ globalThis.CAREER_DATA={
       "kind": "researched",
       "mode": "On site",
       "researchCheckedAt": "2026-10-09",
-      "subtitle": "4470848873 · Current employer LinkedIn posting",
+      "subtitle": "4470848873 · Employer LinkedIn posting",
       "rank": 3
     },
     {
@@ -427,7 +427,7 @@ globalThis.CAREER_DATA={
       "status": "verified",
       "fit": "Operational fallback",
       "salary": null,
-      "summary": "A current healthcare logistics opening involving NUPCO shipments. More operational than leadership; assess the grade and package carefully.",
+      "summary": "A healthcare logistics opening found in the dated research, involving NUPCO shipments. More operational than leadership; assess the grade and package carefully.",
       "gaps": [
         "Related bachelor’s and logistics/customs experience.",
         "Arabic/English, FASAH/ZATCA, shipment documentation and freight-provider coordination."
@@ -457,7 +457,7 @@ globalThis.CAREER_DATA={
         ],
         [
           "Save the receipt",
-          "Retain the confirmation and track progress locally. The published deadline is 15 October 2026."
+          "Retain the confirmation and track progress locally. Recheck the current listed deadline with the employer."
         ]
       ],
       "kind": "researched",

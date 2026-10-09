@@ -219,7 +219,7 @@ import Combine
   let oldProfile=preCriteriaStore.workspace.profile
   assert(oldProfile.years=="8" && oldProfile.degree=="Legacy degree" && oldProfile.skills=="Legacy skills" && oldProfile.achievements=="Legacy achievement")
   assert(oldProfile.preferredCity==nil && oldProfile.minimumMonthlySAR==nil && oldProfile.unknownSalary==nil && !oldProfile.hidesUnverifiedSalary)
-  assert(NativeProfile().preferredCity==nil && NativeProfile().minimumMonthlySAR==nil && NativeProfile().unknownSalary==nil, "Shipped criteria defaults remain neutral")
+  assert(NativeProfile().preferredCity==nil && NativeProfile().minimumMonthlySAR==nil && NativeProfile().unknownSalary==nil, "Decoded empty or legacy profiles remain neutral")
 
   var criteria=NativeProfile()
   let cityCases:[(String,Bool,Bool)]=[("Riyadh Region, Saudi Arabia",false,false),("Riyadh Province",false,false),("منطقة الرياض، السعودية",false,false),("Al Kharj, Riyadh Region",false,false),("Riyadh, Riyadh Region, Saudi Arabia",true,false),("الرياض، منطقة الرياض",true,false),("Riyadh, Saudi Arabia",true,false),("الرياض، السعودية",true,false),("Riyadh / Jeddah",true,true),("الرياض أو جدة",true,true),("Riyadh; 2 locations",true,true),("Riyadh and multiple locations",true,true),("Jeddah, Saudi Arabia",false,false),("Saudi Arabia",false,false),("2 locations",false,false),("",false,false),("NotRiyadh",false,false),("الرياضيات",false,false)]
@@ -263,7 +263,7 @@ import Combine
   let strictReload=NativeCareerStore(researchURL:researchURL,storageURL:migrationURL)
   assert(strictReload.workspace.profile==strict && strictReload.savedJobs.map(\.id)==savedIDs)
   unwritable.updateProfile(strict)
-  assert(unwritable.workspace.profile==NativeProfile() && unwritable.storageError != nil, "A failed criteria save never announces durable success")
+  assert(unwritable.workspace.profile==NativeProfile(preferredCity:"riyadh") && unwritable.storageError != nil, "A failed criteria save never announces durable success")
   let recordURL=root.appendingPathComponent("record-workspace.json")
   let records=NativeCareerStore(researchURL:researchURL,storageURL:recordURL)
   records.beginApplicationRecord(first)
@@ -295,6 +295,45 @@ import Combine
   let prompts=NativeCareerStore.attentionFor([past,near,invalid],statuses:[:],records:[:],now:dateNow)
   assert(prompts.map(\.id)==["a:deadline","b:deadline","b:requirements","c:requirements"])
   assert(NativeCareerStore.attentionFor([past],statuses:["a":"unknown"],records:[:],now:dateNow).isEmpty)
+  let recovery=NativeCareerStore(researchURL:researchURL,storageURL:root.appendingPathComponent("partial.json"))
+  assert(recovery.workspace.profile.preferredCity=="riyadh" && recovery.workspace.profile.minimumMonthlySAR==nil)
+  var unknown=lead;unknown.id="unknown";unknown.closes="2099-12-31";unknown.posted="2020-01-01"
+  var excluded=unknown;excluded.id="excluded"
+  let oldStamp="2026-10-09T00:30:00Z",attemptStamp="2026-10-09T00:40:00Z"
+  let recoveryRows=try [unknown,excluded].map {try JSONSerialization.jsonObject(with:JSONEncoder().encode($0))}
+  recovery.acceptLive(["checkedAt":oldStamp,"jobs":recoveryRows,"sources":[["name":lead.company,"ok":true,"count":2]]])
+  recovery.setStatus("Applied",for:excluded)
+  recovery.acceptLive(["checkedAt":attemptStamp,"jobs":[],"sources":[["name":lead.company,"ok":true,"count":0,"detailErrors":1,"excludedIds":[excluded.id]]]])
+  assert(recovery.liveJobs.map(\.id)==[unknown.id] && recovery.liveJobs[0].lastCheckedAt==oldStamp)
+  assert(recovery.trackedJobs.contains{$0.id==excluded.id} && recovery.status(for:excluded)=="Applied")
+  assert(recovery.isUnrefreshed(unknown) && recovery.employerObservation(unknown).lastCheckedAt==oldStamp)
+  var newer=unknown;newer.lastCheckedAt=attemptStamp
+  assert(!recovery.isUnrefreshed(newer) && recovery.employerObservation(newer).lastCheckedAt==attemptStamp)
+  let recoveryReload=NativeCareerStore(researchURL:researchURL,storageURL:root.appendingPathComponent("partial.json"))
+  assert(recoveryReload.isUnrefreshed(unknown) && recoveryReload.liveJobs[0].lastCheckedAt==oldStamp)
+  let evidenceNote=recovery.note(for:unknown)
+  assert(evidenceNote.contains(oldStamp) && evidenceNote.contains("2099-12-31"))
+  for invalidExclusions:[Any] in [[""], [String(repeating:"x",count:257)], Array(repeating:"x",count:21), [1]] {
+   recovery.acceptLive(["checkedAt":"2026-10-09T00:50:00Z","jobs":[],"sources":[["name":lead.company,"ok":true,"count":0,"excludedIds":invalidExclusions]]])
+   assert(recovery.workspace.live?.checkedAt==attemptStamp && recovery.searchError != nil)
+  }
+  // New editorial facts and the latest actual employer observation survive reconciliation independently.
+  var editorial=first;editorial.title="Synthetic editorial correction";editorial.lastCheckedAt=nil;editorial.researchCheckedAt="2026-10-09"
+  let observationResearch=root.appendingPathComponent("observation-research.json"),observationState=root.appendingPathComponent("observation-state.json")
+  try JSONEncoder().encode(CareerResearch(checkedAt:"2026-10-09",jobs:[editorial],profile:store.research.profile)).write(to:observationResearch)
+  var observed=first;observed.title="Synthetic older employer title";observed.researchCheckedAt=nil;observed.lastCheckedAt="2026-10-08T12:00:00Z"
+  var cached=observed;cached.lastCheckedAt="2026-10-07T12:00:00Z"
+  var observationWorkspace=NativeWorkspace();observationWorkspace.saved.insert(first.id);observationWorkspace.statuses[first.id]="Applied";observationWorkspace.snapshots[first.id]=observed
+  observationWorkspace.live=LiveSnapshot(checkedAt:"2026-10-09T12:00:00Z",jobs:[cached],sources:[EmployerStatus(name:first.company,ok:true,count:1)])
+  try JSONEncoder().encode(observationWorkspace).write(to:observationState)
+  for _ in 0..<2 {
+   let observationStore=NativeCareerStore(researchURL:observationResearch,storageURL:observationState),current=observationStore.current(first)
+   assert(current.title==editorial.title && current.researchCheckedAt==editorial.researchCheckedAt && current.lastCheckedAt==observed.lastCheckedAt)
+   assert(observationStore.note(for:current).contains("Employer checked: 2026-10-08T12:00:00Z") && observationStore.exportText().contains(editorial.title))
+   observationStore.setStatus("Applied",for:current)
+   assert(observationStore.workspace.snapshots[first.id]?.lastCheckedAt==observed.lastCheckedAt)
+  }
+  print("Full review regression checks passed: fresh Riyadh default, partial evidence age, exact exclusions, saved history, persisted observation chronology and dated exports.")
   print("Application record checks passed: legacy preservation, metadata-only history, conflicts, export privacy, strict date/scalar limits and derived attention.")
   print("Native store checks passed: \(store.research.jobs.count) researched jobs, atomic saves, pre-criteria migration, city/pay criteria, unfiltered history, export privacy, strict URLs/dates, stale response rejection and input validation.")
  }

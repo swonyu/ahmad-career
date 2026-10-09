@@ -189,6 +189,8 @@ final class EmployerFixture: URLProtocol {
             if scenario == "badListing" {body=["total":1,"jobPostings":[[:]]]}
             if scenario == "mixedListing" {body=["total":2,"jobPostings":[["title":"Procurement Manager","externalPath":"/job/Riyadh/Procurement_R1"],[:]]]}
             if scenario == "emptyListing" {body=["total":0,"jobPostings":[]]}
+            if scenario == "positiveEmpty" {body=["total":2,"jobPostings":[]]}
+            if scenario == "understatedTotal" {body["total"]=1}
             if scenario == "negativeTotal" {body=["total":-1,"jobPostings":[]]}
             if scenario == "boolTotal" {body=["total":true,"jobPostings":[]]}
         } else if scenario == "allFailed" || (scenario == "partial" && path.hasSuffix("R2")) {
@@ -219,7 +221,7 @@ let fixtureConfiguration = URLSessionConfiguration.ephemeral
 fixtureConfiguration.protocolClasses = [EmployerFixture.self]
 let fixtureSession = URLSession(configuration: fixtureConfiguration)
 let employer = CareerFeed.sources[0]
-for scenario in ["badListing","mixedListing","emptyListing","negativeTotal","boolTotal"] {
+for scenario in ["badListing","mixedListing","emptyListing","negativeTotal","boolTotal","positiveEmpty","understatedTotal"] {
     EmployerFixture.scenario=scenario
     let result=await CareerFeed.fetch(employer,session:fixtureSession)
     precondition(result.status["ok"] as? Bool == ["mixedListing","emptyListing"].contains(scenario),"Listing failure must not be reported as successful empty coverage")
@@ -244,6 +246,7 @@ precondition(mixedMalformed.jobs.count == 1 && mixedMalformed.status["detailErro
 EmployerFixture.scenario = "closed"
 let closed = await CareerFeed.fetch(employer, session: fixtureSession)
 precondition(closed.status["ok"] as? Bool == true && closed.jobs.isEmpty, "Fetched but ineligible details are a successful zero-result search")
+precondition(Set(closed.status["excludedIds"] as? [String] ?? []) == Set([employer.tenant+"-R1",employer.tenant+"-R2"]), "Successful exclusions retain exact IDs")
 EmployerFixture.scenario = "qiddiyaPartial"
 let workable = await CareerFeed.fetchQiddiya(session: fixtureSession)
 precondition(workable.status["ok"] as? Bool == true && workable.jobs.count == 1 && workable.status["queryErrors"] as? Int == 1)

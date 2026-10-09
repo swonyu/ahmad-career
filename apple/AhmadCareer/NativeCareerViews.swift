@@ -157,7 +157,7 @@ private struct NativeSearchScreen: View {
                                 }
                             }.padding(.vertical, 3)
                         }
-                        Text("A bounded sample of selected boards. Filtering can miss suitable jobs. A source failure does not mean that employer has no openings.")
+                        Text("A bounded sample of selected boards. Filtering can miss suitable jobs. A source failure does not mean that employer has no openings. Earlier results from unavailable employers are retained and marked Not refreshed.")
                             .font(.footnote).foregroundStyle(.secondary)
                     }
                 } header: { Text("Checked \(nativeDate(snapshot.checkedAt, includeTime: true))") }
@@ -173,7 +173,7 @@ private struct NativeSearchScreen: View {
                 } else {
                     ForEach(jobs) { NativeJobLink(job: $0) }
                 }
-            } header: { Text("\(jobs.count) new leads to review") }
+            } header: { Text("\(jobs.count) leads to review") }
         }
         .onChange(of: store.searchError) { error in
             if let error { UIAccessibility.post(notification: .announcement, argument: error) }
@@ -238,6 +238,7 @@ private struct NativeJobLink: View {
                     ForEach(store.workspace.profile.criteriaMessages(for: job), id: \.self) { message in
                         Label(message, systemImage: "questionmark.circle").font(.caption).foregroundStyle(.secondary)
                     }
+                    if store.isUnrefreshed(job) { Label("Not refreshed — previous result",systemImage:"clock.arrow.circlepath").font(.caption).foregroundStyle(.secondary) }
                     if job.isExpired { Label("Past listed deadline", systemImage: "clock").font(.caption) }
                     if store.status(for: job) != "Not started" { Text(store.status(for: job)).font(.caption).foregroundStyle(.secondary) }
                     if store.isSaved(job) { Label("Saved", systemImage: "heart.fill").font(.caption).foregroundStyle(Color.careerAccent) }
@@ -286,8 +287,9 @@ private struct NativeJobDetail: View {
                     Text("Preserved from your earlier records; outside the current shortlist. Recheck the employer and requirements.").font(.footnote).foregroundStyle(.secondary)
                 }
                 if let snapshot = store.workspace.live, snapshot.jobs.contains(where: { $0.id == job.id }) {
-                    LabeledContent("Employer search", value: nativeDate(snapshot.checkedAt, includeTime: true))
-                    Text("This role appeared in that search. Recheck the official page for changes before applying.").font(.footnote).foregroundStyle(.secondary)
+                    let employerObservation=store.employerObservation(job)
+                    LabeledContent("Employer checked", value: nativeDate(employerObservation.lastCheckedAt ?? snapshot.checkedAt, includeTime: true))
+                    Text(store.isUnrefreshed(employerObservation) ? "Not refreshed in the latest attempt. This previous result is retained because its employer search was unavailable." : "This role appeared in that search. Recheck the official page for changes before applying.").font(.footnote).foregroundStyle(.secondary)
                 } else if job.rank == nil {
                     Text("Saved employer lead. Its current availability is not established by the latest search. Recheck the official page before applying.").font(.footnote)
                 }
@@ -360,14 +362,15 @@ private struct NativeApplicationRecordEditor: View {
                 if let base=draft.base {Text("Record last edited: \(base.updatedAt) (not the application time).").font(.footnote)}
                 if let error=store.recordErrors[job.id] {Text(error).foregroundStyle(.red).accessibilityAddTraits(.updatesFrequently)}
                 if !savedMessage.isEmpty {Text(savedMessage).foregroundStyle(Color.careerAccent).accessibilityAddTraits(.updatesFrequently)}
-                Button("Save application record") {savedMessage=store.saveApplicationRecord(job) ? "Application date and note saved on this device. Status is unchanged." : ""}
+                Button("Save application record") {
+                    savedMessage=store.saveApplicationRecord(job) ? "Application date and note saved on this device. Status is unchanged." : ""
+                    UIAccessibility.post(notification:.announcement,argument:store.recordErrors[job.id] ?? savedMessage)
+                }
                 Button("Reload saved record") {if draft.dirty {discard=true} else {store.beginApplicationRecord(job,discardDraft:true);savedMessage=""}}
             }
         }.navigationTitle("Application record").navigationBarTitleDisplayMode(.inline)
             .onAppear{store.beginApplicationRecord(job)}
             .onChange(of:scenePhase){phase in if phase == .active {store.beginApplicationRecord(job)}}
-            .onChange(of:store.recordErrors[job.id]){message in if let message {UIAccessibility.post(notification:.announcement,argument:message)}}
-            .onChange(of:savedMessage){message in if !message.isEmpty {UIAccessibility.post(notification:.announcement,argument:message)}}
             .confirmationDialog("Discard this unsaved draft and load the saved record?",isPresented:$discard,titleVisibility:.visible){
                 Button("Discard draft and reload",role:.destructive){store.beginApplicationRecord(job,discardDraft:true);savedMessage=""}
                 Button("Keep draft",role:.cancel){}

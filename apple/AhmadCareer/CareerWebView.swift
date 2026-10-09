@@ -54,11 +54,31 @@ struct CareerWebView: CareerWebViewRepresentable {
         var webRoot: URL?
         var reloadID: Int
         private var refreshTask: Task<Void, Never>?
+        #if os(macOS)
+        private var confirmation: (alert:NSAlert, reply:(Bool)->Void)?
+        private func finishConfirmation(_ accepted:Bool) {
+            let pending=confirmation;confirmation=nil
+            if let alert=pending?.alert,let parent=alert.window.sheetParent {parent.endSheet(alert.window)}
+            pending?.reply(accepted)
+        }
+        func webView(_ webView:WKWebView,runJavaScriptConfirmPanelWithMessage message:String,initiatedByFrame frame:WKFrameInfo,completionHandler:@escaping(Bool)->Void) {
+            guard frame.isMainFrame,let root=webRoot,let url=frame.request.url,
+                  CareerPolicy.navigation(url,webRoot:root,userInitiated:false) == .bundled,
+                  let window=webView.window,confirmation==nil else {completionHandler(false);return}
+            let alert=NSAlert();alert.messageText="Confirm workspace action";alert.informativeText=message
+            alert.addButton(withTitle:"Continue");alert.addButton(withTitle:"Cancel")
+            confirmation=(alert,completionHandler)
+            alert.beginSheetModal(for:window) { [weak self] response in self?.finishConfirmation(response == .alertFirstButtonReturn) }
+        }
+        #endif
 
         init(reloadID: Int) { self.reloadID = reloadID }
 
         func stop(_ webView: WKWebView) {
             refreshTask?.cancel()
+            #if os(macOS)
+            finishConfirmation(false)
+            #endif
             webView.configuration.userContentController.removeScriptMessageHandler(forName: "careerSearch")
             webView.stopLoading()
         }
