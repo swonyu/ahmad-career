@@ -5,17 +5,15 @@ let feeds=await fs.readFile('feeds.mjs','utf8');feeds=feeds.replace("import './w
 const server=`const ASSETS=${JSON.stringify(assets)};
 ${feeds}
 let searchPending=null,searchSnapshot=null;
-async function sharedSearch(key,cache,ctx){
+// ponytail: coalescing and cooldown are per Worker instance; shared storage is only needed for a measured cross-instance load problem.
+async function sharedSearch(){
  if(searchSnapshot&&searchSnapshot.expires>Date.now())return searchSnapshot.data;
  if(searchPending)return searchPending;
  searchPending=(async()=>{
-  const partialKey=new Request(key.url+'?incomplete');
-  if(cache){const cached=await cache.match(key)||await cache.match(partialKey);if(cached)return cached.json()}
   const data=await getLiveJobs();
   const complete=data.sources.length>0&&data.sources.every(s=>s.ok&&!s.error&&!s.detailErrors&&!s.queryErrors);
   const ttl=complete?300:30;
   searchSnapshot={data,expires:Date.now()+ttl*1000};
-  if(cache&&ctx)ctx.waitUntil(cache.put(complete?key:partialKey,Response.json(data,{headers:{'Cache-Control':'public, max-age='+ttl}})));
   return data;
  })();
  try{return await searchPending}finally{searchPending=null}
@@ -25,7 +23,7 @@ export default {async fetch(request,env,ctx){
  if(request.method!=='GET'&&request.method!=='HEAD')return new Response('Method not allowed',{status:405,headers:{Allow:'GET, HEAD'}});
  if(url.pathname==='/api/live'){
   if(request.method==='HEAD')return new Response(null,{status:200});
-  const data=await sharedSearch(new Request(url.origin+'/api/live'),globalThis.caches?.default,ctx);
+  const data=await sharedSearch();
   return Response.json(data,{headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
  }
  const asset=ASSETS[url.pathname==='/'?'/index.html':url.pathname];
