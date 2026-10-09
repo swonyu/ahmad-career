@@ -6,11 +6,11 @@ The [website is public](https://ahmad-career.jolly-lynx-4861.chatgpt.site/). Thi
 
 ## Current release — 9 October 2026
 
-- Public website version 5 deployed at **04:35:14 Asia/Riyadh (01:35:14 UTC)** from source `794d68ee65742c1627ddc5491e8cceb0532b626a`. A real **Find new openings** check at 04:35 showed **six of six employers responding and three current leads**, from Johnson & Johnson, Roche and Alcon. These counts describe that run, not future availability.
-- Apple source is **1.1 (5)**. The iOS archive, App Store distribution export and upload succeeded; upload completed at 04:26 Riyadh. At **04:41 Riyadh**, Apple showed build 5 processed and **Ready to Submit** while build 4 remained **Waiting for Review**. Apple blocked build-5 submission because another build was already in review. Build 4's review was preserved; resubmit build 5 after that review completes.
+- Public website **version 6** deployed at **05:31:58 Asia/Riyadh (02:31:58 UTC)** from source `20aa61b6b15817c3ea98865ebfe8105e38654ce2`. The live Profile, application plan and Roche preparation note displayed the corrected manager title at 05:32–05:33. The earlier 04:35 search showed six of six employers responding with three leads from Johnson & Johnson, Roche and Alcon; it was not replayed for this profile-only release.
+- Apple source is **1.1 (6)**. The universal Mac Release, iOS archive and App Store export passed, with strict iOS signature verification and source parity. Upload succeeded at **05:34:11 Riyadh**, exit code 0. At **05:38**, Apple showed build 6 processed and **Ready to Submit**, build 5 Ready to Submit and build 4 Waiting for Review. Build-6 submission has not been attempted. The prior build-5 submission was blocked by build 4's review, which remains intact. Build 5 is superseded: submit the processed latest build 6 when Apple permits it, preserving build 4's existing review. Build 6 is not externally approved or available for testing.
 - The [one-tester TestFlight invitation](https://testflight.apple.com/join/S5bDCNbd) has no verified approved build available. Confirm tester availability before treating it as an installation route. Installation on Ahmad's physical iPhone remains unverified.
 
-See the [release review](docs/Review-2026-10-09.html), [handoff](docs/START-HERE.txt) and [TestFlight record](docs/TestFlight-Preparation.txt). Package downloads and their checksums are supplied separately and are not stored in this repository. The separately delivered development IPA remains 1.1 (3); the reviewed Mac 1.1 (5) package is unsigned and not notarized.
+See the [release review](docs/Review-2026-10-09.html), [handoff](docs/START-HERE.txt) and [TestFlight record](docs/TestFlight-Preparation.txt). Package downloads and their checksums are supplied separately and are not stored in this repository. The separately delivered development IPA remains 1.1 (3); the reviewed Mac 1.1 (6) package is unsigned and not notarized.
 
 ## Source and documentation
 
@@ -53,6 +53,8 @@ The build emits `dist/server/index.js`. The existing Sites hosting binding is re
 
 The dated **9 October 2026** snapshot contains **nine curated healthcare roles**, without padding the list to ten. All nine have unknown salary. Live search covers bounded samples from **six employers**: Alcon, Novartis, Johnson & Johnson, GSK, BD and Roche. Qiddiya is not active. A missing role does not establish closure, and a live lead does not automatically become a researched recommendation.
 
+The corrected public profile states Regulatory KPI Department Manager at the Supply Chain Command Center, KPI coverage across 20 health clusters and Ministry branches, prior Quality Control leadership of more than 10 staff and NUPCO coordination, and Power BI, SQL and Excel. These are self-reported facts, not independent credential verification. Employment dates and specialist experience gates are unchanged. No private preferences, CV or photos were added.
+
 Fit is conditional on substantiated qualifications, relevant experience, role scope and current employer requirements. Historical salary guides do not establish a vacancy's pay or guarantee a director-level role.
 
 Optional discovery criteria are stored locally: city, a minimum monthly SAR amount and whether to show unverified pay. Defaults are any Saudi city, no pay floor and unknown pay shown. Unknown salary never counts as meeting a minimum. Hiding unknown pay with an active floor can empty discovery; saved roles and application history remain available. Confirm a multiple-city assignment and the salary/allowance basis directly with the employer.
@@ -63,7 +65,7 @@ This repository contains public professional/employer research and source. It ex
 
 ## Verification and limits
 
-Twenty review assignments completed. The recorded web suite passed core/feed checks, **38 application-state groups**, Worker cache-denial handling and employer-redirect regressions. Native checks, the iOS simulator build, universal Intel/Apple Silicon Mac Release and build-5 archive/export passed. A real Mac WebKit run rendered three leads from six source results and passed saving, tracking, cache preservation and note export. Targeted native UI checks covered Arabic-digit criteria entry, hidden unknown pay, saved notes and the share sheet; neutral criteria were restored.
+Twenty review assignments completed. After the final profile copy, the full web suite passed core/feed checks, **38 application-state groups**, Worker cache-denial handling and employer-redirect regressions. Native offline checks passed with nine jobs. The universal Mac 1.1 (6) Release, iOS build-6 archive/export, strict signature verification and source parity passed. Earlier build-5 simulator and targeted UI checks remain dated evidence: the Mac WebKit run rendered three leads from six source results and passed saving, tracking, cache preservation and note export; native criteria, saved notes and share-sheet checks passed, with neutral defaults restored.
 
 Actual notes downloads in the Codex in-app browser and Chrome were verified at **05:17 Riyadh**. Each saved a 564-byte file with the correct export timestamp, research date, four “Not provided” placeholders and six unchecked checklist items. The files matched except for the timestamp and contained no discovery criteria. The automation download-event wait timed out despite successful saves; no code fix was needed. Chrome showed no unexpected notes dialog or console errors.
 

@@ -1,19 +1,24 @@
 AHMAD CAREER — TESTFLIGHT RELEASE RECORD
 9 October 2026 • Asia/Riyadh
 
-BUILD 5 — PROCESSED, READY TO SUBMIT; SUBMISSION BLOCKED BY BUILD 4
-Version 1.1 (5) was archived and exported with App Store distribution signing.
-The upload command completed successfully at 04:26 Riyadh. A fresh App Store
-Connect UI check at 04:41 Riyadh showed build 5 processed and READY TO SUBMIT.
-Build 4 remained WAITING FOR REVIEW.
+BUILD 6 — PROCESSED; READY TO SUBMIT AT 05:38 RIYADH
+Current version 1.1 (6) contains the corrected public professional profile.
+The iOS archive and App Store distribution export succeeded; strict signature
+verification passed. Source parity was verified in the archive and exported IPA.
+Build-6 upload succeeded at 05:34:11 Riyadh; the process exited 0. At 05:38 Riyadh,
+App Store Connect showed version 1.1, build 6 processed and Ready to Submit.
+Build-6 submission has not been attempted; external approval is not verified.
+Upload identifier: 1b053de2-0a3a-447b-b396-e18c8585e966.
 
-The attempted build-5 external-beta submission returned this Apple message:
+PRIOR REVIEW STATE — NOT A BUILD-6 RECEIPT
+Build 5 uploaded at 04:26 Riyadh. At the fresh 05:38 check it remained Ready to
+Submit and build 4 remained Waiting for Review. The earlier attempted build-5
+external-beta submission returned:
 “You can’t submit a build for testing if another build is already in review.
 Wait until your other build has been reviewed, and resubmit this build.”
-
-Build 4's existing review was preserved and the blocked submission dialog was
-canceled. Build 5 is not submitted/approved for external testing. It must be
-resubmitted after build 4's review completes; tester availability is not verified.
+Build 4's review was preserved and the blocked dialog canceled. Build 5 is now
+superseded by build 6. Submit that processed latest build when Apple's current
+review state permits it, preserving build 4; do not resubmit the older build 5.
 
 INVITATION — CHECK AVAILABILITY BEFORE SHARING INSTALL INSTRUCTIONS
 https://testflight.apple.com/join/S5bDCNbd
@@ -23,10 +28,11 @@ could not join. Ahmad's physical iPhone installation remains unverified.
 The website is public, but website access does not grant TestFlight approval.
 
 NEXT APPLE CHECKPOINTS
-1. Wait for build 4's existing review to complete; inspect the actual outcome.
-2. Resubmit build 5 for external beta review and verify the new submission state.
-3. After approval, confirm that the intended build is available and the invitation
-   accepts testers. If Apple rejects it, address the actual stated reason.
+1. Check build 4's existing review outcome; preserve that review while it is pending.
+2. Submit the processed latest build 6 when Apple permits it. No build-6 submission
+   has yet been attempted. Verify its actual state; do not resubmit older build 5.
+3. After approval, verify the intended build is available and the invitation accepts
+   testers. Address Apple's actual reason if it rejects a submission.
 4. Verify installation and launch on Ahmad's phone before calling delivery complete.
 
 APP RECORD
@@ -35,13 +41,15 @@ App name: Ahmad Career
 Platform: iOS, iPhone and iPad
 Bundle identifier: com.ahmadalayed.career
 SKU: ahmad-career-ios
-Uploaded version/build: 1.1 (5)
+Latest uploaded version/build: 1.1 (6)
+Apple state at 05:38 Riyadh: Ready to Submit (processing complete)
 Sign-in, payments, subscriptions and advertising: none
 Export declaration: ITSAppUsesNonExemptEncryption = false
 HTTPS/TLS uses Apple's operating-system implementation.
 Private review-contact and feedback details are intentionally not reproduced here.
 
-BUILD-5 CONTENT
+BUILD-6 CONTENT
+The public professional profile now states Regulatory KPI Department Manager at the Supply Chain Command Center, KPI coverage across 20 health clusters and Ministry of Health branches, prior Quality Control leadership of more than 10 staff, NUPCO coordination, and Power BI, SQL and Excel. These are self-reported professional facts, not independently verified credentials. Employment dates, nine researched jobs and specialist qualification gates are unchanged.
 Nine researched healthcare leads dated 9 October 2026, all with undisclosed pay;
 six active healthcare employer sources; optional device-local city/pay criteria;
 retained saved/tracked history and migration fixes; export and search privacy.
@@ -50,9 +58,10 @@ Unknown salary is never treated as meeting a minimum. Fit remains conditional.
 No job application is submitted by changing a local tracking status.
 
 VALIDATION AND LIMITS
-Twenty review assignments completed. Native checks, iOS simulator build,
-App Store archive/export and targeted native criteria/notes/share-sheet checks
-passed. Arabic-digit amount entry, hiding unknown salary and preserved saved
+Twenty review assignments completed. After the profile correction, native offline
+checks passed with nine jobs; build-6 archive/export and strict signature checks
+passed. Earlier build-5 simulator and targeted criteria/notes/share-sheet checks
+remain dated evidence. Arabic-digit amount entry, hiding unknown salary and preserved saved
 records were exercised; neutral profile criteria were restored afterward.
 Full VoiceOver and physical-phone installation are not verified. Browser notes
 downloads were verified in the Codex in-app browser and Chrome at 05:17 Riyadh.
@@ -64,7 +73,7 @@ notes dialog or console errors. Upload and archive receipts are not an accessibi
 or employer-data certification. See Review-2026-10-09.html for wider web/Mac evidence.
 
 DISTRIBUTION FILES
-The App Store distribution export was used for upload; it is not a direct-install
+The App Store distribution export was uploaded; it is not a direct-install
 IPA for arbitrary phones. The separate delivered Ahmad-Career-iOS.ipa is still the
 older development-signed 1.1 (3), restricted to its registered devices.
 
@@ -74,6 +83,6 @@ Criteria are excluded from exported notes. User-entered professional details may
 appear in notes, which the user reviews before sharing. Public source and packages
 exclude private CVs, messages, photos and pay preferences. The companion website
 is public at https://ahmad-career.jolly-lynx-4861.chatgpt.site/.
-Review/privacy/support metadata must be checked in App Store Connect when build 5
+Review/privacy/support metadata must be checked in App Store Connect when build 6
 is prepared for external testing; this document does not claim those fields were
 changed during upload. The native app includes local privacy/support information.
