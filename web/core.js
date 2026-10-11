@@ -52,7 +52,7 @@
     if(job.rank!=null&&(!Number.isInteger(job.rank)||job.rank<1))delete job.rank;
     return job;
   }
-  const sourceIncomplete=s=>!s.ok||Boolean(s.error)||Boolean(s.detailErrors)||Boolean(s.queryErrors);
+  const sourceIncomplete=s=>!s.ok||Boolean(s.error)||Boolean(s.detailErrors)||Boolean(s.queryErrors)||s.limited===true;
   function normalizeLive(payload){
     if(!payload||typeof payload!=='object'||!parsedDate(payload.checkedAt)||isFuture(payload.checkedAt,new Date(Date.now()+60000))||!Array.isArray(payload.jobs)||payload.jobs.length>1000||!Array.isArray(payload.sources)||payload.sources.length>20)return null;
     if(payload.sources.some(s=>!s||typeof s.name!=='string'||typeof s.ok!=='boolean'||s.excludedIds!=null&&(!Array.isArray(s.excludedIds)||s.excludedIds.length>20||s.excludedIds.some(id=>typeof id!=='string'||!id.trim()||id.length>256))||['count','scanned','detailErrors'].some(k=>s[k]!=null&&(!Number.isInteger(s[k])||s[k]<0))))return null;
