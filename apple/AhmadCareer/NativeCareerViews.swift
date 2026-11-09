@@ -15,8 +15,9 @@ struct NativeCareerRoot: View {
             NavigationStack { NativeSavedScreen() }
                 .tabItem { Label("Saved", systemImage: "heart") }
                 .badge(store.savedJobs.count)
-            NavigationStack { NativePlanScreen() }
-                .tabItem { Label("Plan", systemImage: "checklist") }
+            NavigationStack { NativeApplicationsScreen() }
+                .tabItem { Label("Applications", systemImage: "checklist") }
+                .badge(store.recordJobs.count)
             NavigationStack { NativeProfileScreen() }
                 .tabItem { Label("Profile", systemImage: "person.crop.circle") }
         }
@@ -39,21 +40,31 @@ struct NativeCareerRoot: View {
 private struct NativeShortlistScreen: View {
     @EnvironmentObject private var store: NativeCareerStore
     @State private var query = ""
-    private var jobs: [CareerJob] { store.shortlistJobs.filter { store.workspace.profile.includesInDiscovery($0) && nativeMatches($0, query: query) } }
+    @State private var discovery = NativeDiscoveryOptions()
+    private var discoveryJobs: [CareerJob] {store.research.jobs.isEmpty ? store.liveJobs : store.shortlistJobs}
+    private var jobs: [CareerJob] { discoveryJobs.filter { store.workspace.profile.includesInDiscovery($0) && nativeMatches($0, query: query) && discovery.includes($0, tracked: store.hasApplicationRecord($0)) } }
 
     var body: some View {
         List {
             if query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             Section {
-                NativeIntro(eyebrow: "A CONSIDERED NEXT STEP", title: "Your next chapter, Ahmad.",
-                            message: "Opportunities that build on your healthcare experience. More responsibility. Better prospects.")
-                NativeNotice(title: "Check role-specific requirements first.", message: "Contract, tender and KPI experience support conditional leads. Review the specialist requirements and grade before applying. Salary is undisclosed.")
+                NativeIntro(eyebrow: "A CONSIDERED NEXT STEP", title: "Your next chapter.",
+                            message: "Discover paid software, Python and AI opportunities. Add your own background and preferences in Profile.")
+                NativeNotice(title: "Check role-specific requirements first.", message: "Check degree and professional-experience requirements. Personal projects are not formal employment. Confirm paid status and salary with the employer.")
             }.listRowBackground(Color.clear).listRowSeparator(.hidden)
             }
             NativeCriteriaSection()
+            NativeDiscoveryFilters(options: $discovery, jobs: discoveryJobs)
+            if store.research.jobs.isEmpty {
+                Section {
+                    Button(store.isSearching ? "Searching employers…" : "Find new openings") {Task {await store.refresh()}}
+                        .disabled(store.isSearching)
+                    if let error=store.searchError {Text(error).font(.footnote).foregroundStyle(.secondary)}
+                }
+            }
             Section {
                 if jobs.isEmpty {
-                    if store.workspace.profile.hidesUnverifiedSalary && !store.shortlistJobs.isEmpty {
+                    if store.workspace.profile.hidesUnverifiedSalary && !discoveryJobs.isEmpty {
                         NativeEmpty(title: "No salary-verified opportunities.", message: "Current roles have no verified salary evidence. Your criteria hide unverified pay; this does not mean there are no vacancies. Edit criteria to review these leads.", icon: "magnifyingglass")
                     } else {
                         NativeEmpty(title: "No matching opportunities.", message: "Try another role, employer or skill, or edit your criteria.", icon: "magnifyingglass")
@@ -65,17 +76,17 @@ private struct NativeShortlistScreen: View {
             } header: {
                 Text("\(jobs.count) priority opportunities to review")
             } footer: {
-                Text("Saudi Arabia only · Research checked \(nativeDate(store.research.checkedAt)). Recheck each employer before applying.")
+                Text(store.research.jobs.isEmpty ? "Discovered employer listings, not verified qualification matches. Open Search for source coverage. Recheck each employer before applying." : "Saudi Arabia only · Research checked \(nativeDate(store.research.checkedAt)). Recheck each employer before applying.")
             }
             Section {
                 DisclosureGroup("How this shortlist was ranked") {
-                    Text("Priority considers healthcare relevance, KPI and supply-chain overlap, responsibility, current opening evidence, and qualification gaps. It is a research judgment, not an interview probability.")
-                    Text("Only healthcare employers and healthcare assignments are included. Conditional, stretch and reserve labels identify unconfirmed requirements. We do not add unsuitable jobs to reach ten; salary is undisclosed.")
+                    Text("Search screens software and AI titles, prioritizing early-career wording and excluding explicitly senior titles. It is not an eligibility assessment.")
+                    Text("Coverage is limited to seven public technology-company boards: Mozn, Lucidya, Foodics, Salla, Lean Technologies, Tamara and Unifonic. No vacancies are prefilled; a zero result is not a market-wide finding.")
                 }.font(.subheadline)
             }
         }
         .nativeList()
-        .navigationTitle("Ahmad Career")
+        .navigationTitle("Saleh Career Finder")
         .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $query, prompt: "Role, employer or skill")
     }
@@ -95,14 +106,45 @@ private struct NativeCriteriaSection: View {
     }
 }
 
+private struct NativeDiscoveryFilters: View {
+    @Binding var options: NativeDiscoveryOptions
+    let jobs: [CareerJob]
+    private var companies: [String] { Array(Set(jobs.map(\.company) + (options.company.isEmpty ? [] : [options.company]))).sorted() }
+    private var employmentTypes: [String] { Array(Set(jobs.compactMap { $0.employmentType }.filter { !$0.isEmpty } + (options.employmentType.isEmpty ? [] : [options.employmentType]))).sorted() }
+    var body: some View {
+        Section {
+            DisclosureGroup(options.isActive ? "Result filters · active" : "Result filters") {
+                Picker("Employer", selection: $options.company) {
+                    Text("All employers").tag("")
+                    ForEach(companies, id: \.self) { Text($0).tag($0) }
+                }
+                Picker("Employer publication date", selection: $options.days) {
+                    Text("Any date").tag(0)
+                    Text("Last 7 days").tag(7)
+                    Text("Last 30 days").tag(30)
+                    Text("Last 90 days").tag(90)
+                }
+                Picker("Employment type", selection: $options.employmentType) {
+                    Text("All types").tag("")
+                    ForEach(employmentTypes, id: \.self) { Text($0).tag($0) }
+                }
+                Toggle("Hide roles with application records", isOn: $options.hideTracked)
+                Text("Date filters use Riyadh calendar days and the employer's publication or last-publication date, not when you found the role. Undated roles appear only with Any date.").font(.footnote).foregroundStyle(.secondary)
+                Text("Filters affect discovery only. Saved roles and application records stay available.").font(.footnote).foregroundStyle(.secondary)
+                if options.isActive { Button("Reset result filters") { options = NativeDiscoveryOptions() } }
+            }
+        }
+    }
+}
+
 private enum NativeJobFilter: String, CaseIterable, Identifiable {
-    case all = "All opportunities", healthcare = "Healthcare", leadership = "Leadership", riyadh = "Riyadh"
+    case all = "All opportunities", healthcare = "Software & AI", leadership = "Early career", riyadh = "Riyadh"
     var id: String { rawValue }
     func includes(_ job: CareerJob) -> Bool {
         switch self {
         case .all: return true
-        case .healthcare: return job.healthcare == true || ["Alcon", "Roche", "Johnson & Johnson", "GSK", "Novartis", "BD"].contains(job.company) || job.title.range(of: "healthcare|medical|pharma", options: [.regularExpression, .caseInsensitive]) != nil
-        case .leadership: return job.leadership == true || job.title.range(of: "manager|director|head|lead", options: [.regularExpression, .caseInsensitive]) != nil
+        case .healthcare: return CareerFeed.relevant(job.title)
+        case .leadership: return (job.relevance ?? CareerFeed.relevance(job.title))>=95
         case .riyadh: return job.hasRiyadhEvidence
         }
     }
@@ -112,7 +154,9 @@ private struct NativeSearchScreen: View {
     @EnvironmentObject private var store: NativeCareerStore
     @State private var query = ""
     @State private var filter = NativeJobFilter.all
-    private var jobs: [CareerJob] { store.liveJobs.filter { store.workspace.profile.includesInDiscovery($0) && nativeMatches($0, query: query) && filter.includes($0) } }
+    @State private var discovery = NativeDiscoveryOptions()
+    @State private var onlyAdded = false
+    private var jobs: [CareerJob] { store.liveJobs.filter { (!onlyAdded || store.isAddedToLatestResults($0)) && store.workspace.profile.includesInDiscovery($0) && nativeMatches($0, query: query) && filter.includes($0) && discovery.includes($0, tracked: store.hasApplicationRecord($0)) } }
 
     var body: some View {
         List {
@@ -130,13 +174,28 @@ private struct NativeSearchScreen: View {
                 }
                 .buttonStyle(.borderedProminent).disabled(store.isSearching)
                 .tint(Color(red: 0.08, green: 0.43, blue: 0.34))
-                Text("Alcon · J&J · Roche · Novartis · GSK · BD\nNo sign-in or CV is sent to search.")
+                Text("Mozn · Lucidya · Foodics · Salla · Lean Technologies · Tamara · Unifonic\nNo sign-in or CV is sent to search.")
                     .font(.footnote).foregroundStyle(.secondary)
                 if let error = store.searchError {
                     NativeNotice(title: "Review search coverage", message: error, warning: true)
                 }
+                if let notice=store.searchNotice {Text(notice).font(.footnote).foregroundStyle(.secondary)}
             }.listRowBackground(Color.clear).listRowSeparator(.hidden)
             NativeCriteriaSection()
+            NativeDiscoveryFilters(options: $discovery, jobs: store.liveJobs)
+            Section {
+                if let comparison=store.searchComparison,let previous=comparison.previousCheckedAt {
+                    Text("\(comparison.addedIds.count) added to the latest result list").font(.headline)
+                    Text("Comparing \(nativeDate(previous, includeTime: true)) with \(nativeDate(comparison.checkedAt, includeTime: true)).").font(.footnote)
+                } else {
+                    Text(store.searchChangeSummary).font(.subheadline)
+                }
+                Text("Added means absent from the previous result list, including returning listings. Rechecked or republished roles with the same ID are not added. This does not establish when a vacancy opened, eligibility, or whether a missing role closed.").font(.footnote).foregroundStyle(.secondary)
+                if store.searchComparison?.previousCheckedAt != nil || onlyAdded {
+                    Toggle("Only roles added to latest results", isOn: $onlyAdded)
+                    Text("Applies alongside your other filters. Counts above describe the whole result list, before filters.").font(.footnote).foregroundStyle(.secondary)
+                }
+            } header: {Text("Search changes") }
             if let snapshot = store.workspace.live {
                 Section {
                     DisclosureGroup("\(snapshot.sources.filter(\.ok).count) of \(snapshot.sources.count) employers responded") {
@@ -157,7 +216,7 @@ private struct NativeSearchScreen: View {
                                 }
                             }.padding(.vertical, 3)
                         }
-                        Text("A bounded sample of selected boards. Filtering can miss suitable jobs. A source failure does not mean that employer has no openings. Earlier results from unavailable employers are retained and marked Not refreshed.")
+                        Text("A bounded sample of selected boards. Filtering can miss suitable jobs. A source failure does not mean that employer has no openings. Earlier results from incomplete or bounded employer checks are retained and marked Not refreshed.")
                             .font(.footnote).foregroundStyle(.secondary)
                     }
                 } header: { Text("Checked \(nativeDate(snapshot.checkedAt, includeTime: true))") }
@@ -221,6 +280,50 @@ private struct NativeSavedScreen: View {
     }
 }
 
+private struct NativeApplicationsScreen: View {
+    @EnvironmentObject private var store: NativeCareerStore
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var query = ""
+    private var groups: [NativeApplicationGroup] {
+        store.applicationGroups.map { NativeApplicationGroup(status: $0.status, jobs: $0.jobs.filter { nativeMatches($0, query: query) }) }.filter { !$0.jobs.isEmpty }
+    }
+    var body: some View {
+        List {
+            Section {
+                NativeIntro(eyebrow: "YOUR APPLICATION RECORDS", title: "Know where every role stands.", message: "\(store.recordJobs.count) roles tracked on this device. Stages are entered by you and do not confirm an employer received an application.")
+                NavigationLink { NativePlanScreen() } label: { Label("Preparation plan and attention prompts", systemImage: "list.bullet.clipboard") }
+            }
+            if store.recordJobs.isEmpty {
+                Section { NativeEmpty(title: "No applications tracked yet.", message: "Open a role to set a stage, save an application record, or plan a next action. Nothing is submitted automatically.", icon: "checkmark.bubble") }
+            } else if groups.isEmpty {
+                Section {
+                    NativeEmpty(title: "No application records match.", message: "Try another search. Your existing records have not changed.", icon: "magnifyingglass")
+                    Button("Clear search") { query = "" }
+                }
+            }
+            Section {
+                NavigationLink { NativeNextActionsScreen() } label: { Label("My next actions", systemImage:"calendar.badge.clock") }
+            } footer: {Text("Your local plans, including completed actions and unfinished actions for closed roles. No reminders or messages are sent.")}
+            ForEach(groups) { group in
+                Section {
+                    if group.status == "Submission uncertain" {
+                        NativeNotice(title: "Verify before retrying", message: "Check the employer account or receipt before submitting again. This stage does not mean the application succeeded or failed.", warning: true)
+                    }
+                    ForEach(group.jobs) { NativeJobLink(job: $0) }
+                } header: { Text("\(group.status == "Not started" ? "Record only" : group.status) · \(group.jobs.count)") }
+            }
+            Section {
+                NavigationLink { NativeNotesPreview(text: store.exportText(), includesProfile: true) } label: { Label("Review application notes", systemImage: "doc.text") }
+            } footer: { Text("Application dates, receipt notes, next actions and unsaved drafts are included in this reviewed export. Website, iPhone and Mac records do not sync.") }
+        }
+        .nativeList().navigationTitle("Applications")
+        .navigationBarTitleDisplayMode(.inline)
+        .searchable(text: $query, prompt: "Search tracked roles or employers")
+        .onAppear { store.reloadApplicationRecords() }
+        .onChange(of: scenePhase) { phase in if phase == .active { store.reloadApplicationRecords() } }
+    }
+}
+
 private struct NativeJobLink: View {
     @EnvironmentObject private var store: NativeCareerStore
     let job: CareerJob
@@ -234,10 +337,15 @@ private struct NativeJobLink: View {
                     if store.isCurrentResearch(job), let rank = job.rank { Text("PRIORITY \(String(format: "%02d", rank))").font(.caption2.weight(.semibold)).foregroundStyle(.secondary) }
                     Text(job.title).font(.headline).fixedSize(horizontal: false, vertical: true)
                     Text("\(job.company) · \(job.location)").font(.subheadline).foregroundStyle(.secondary)
+                    Text("\(job.publicationLabel): \(nativeDate(job.posted))").font(.caption).foregroundStyle(.secondary)
+                    if let employmentType = job.employmentType, !employmentType.isEmpty, employmentType != "Not stated" {
+                        Text(employmentType).font(.caption).foregroundStyle(.secondary)
+                    }
                     Text(job.fit).font(.caption.weight(.medium)).foregroundStyle(job.isExpired ? Color.primary : Color.careerAccent)
                     ForEach(store.workspace.profile.criteriaMessages(for: job), id: \.self) { message in
                         Label(message, systemImage: "questionmark.circle").font(.caption).foregroundStyle(.secondary)
                     }
+                    if store.isAddedToLatestResults(job) { Label("Added to latest result list", systemImage:"plus.circle").font(.caption).foregroundStyle(Color.careerAccent) }
                     if store.isUnrefreshed(job) { Label("Not refreshed — previous result",systemImage:"clock.arrow.circlepath").font(.caption).foregroundStyle(.secondary) }
                     if job.isExpired { Label("Past listed deadline", systemImage: "clock").font(.caption) }
                     if store.status(for: job) != "Not started" { Text(store.status(for: job)).font(.caption).foregroundStyle(.secondary) }
@@ -270,13 +378,18 @@ private struct NativeJobDetail: View {
                 if job.isExpired { NativeNotice(title: "Past listed deadline", message: "Check the employer's current status before spending time on this application.", warning: true) }
             }.listRowBackground(Color.clear).listRowSeparator(.hidden)
             Section("The essentials") {
-                LabeledContent("Posted", value: nativeDate(job.posted))
+                LabeledContent(job.publicationLabel, value: nativeDate(job.posted))
                 LabeledContent("Closing date", value: job.closes.map { nativeDate($0, includeTime: $0.count > 10) } ?? "Not published")
                 LabeledContent("Salary", value: job.rank == nil ? "Not checked for this lead" : "Not disclosed in research")
                 ForEach(store.workspace.profile.criteriaMessages(for: job), id: \.self) { message in
                     Label(message, systemImage: "questionmark.circle").font(.footnote)
                 }
-                if let mode = job.mode, mode != "Not stated" { LabeledContent("Work arrangement", value: mode) }
+                LabeledContent("Work arrangement", value: job.mode.flatMap { $0.isEmpty ? nil : $0 } ?? "Not stated")
+                LabeledContent("Employment type", value: job.employmentType.flatMap { $0.isEmpty ? nil : $0 } ?? "Not stated")
+                LabeledContent("Experience level", value: job.experienceLevel.flatMap { $0.isEmpty ? nil : $0 } ?? "Not stated")
+                if job.postedKind == "last-published" {
+                    Text("Last published is the employer's latest publication timestamp. It is not necessarily the original posting date.").font(.footnote).foregroundStyle(.secondary)
+                }
             }
             Section("Evidence and freshness") {
                 if store.isCurrentResearch(job) {
@@ -292,6 +405,22 @@ private struct NativeJobDetail: View {
                     Text(store.isUnrefreshed(employerObservation) ? "Not refreshed in the latest attempt. This previous result is retained because its employer search was unavailable." : "This role appeared in that search. Recheck the official page for changes before applying.").font(.footnote).foregroundStyle(.secondary)
                 } else if job.rank == nil {
                     Text("Saved employer lead. Its current availability is not established by the latest search. Recheck the official page before applying.").font(.footnote)
+                }
+            }
+            Section {
+                if let notes = job.requirementNotes, !notes.isEmpty {
+                    ForEach(Array(notes.enumerated()), id: \.offset) { _, note in Text(note).font(.subheadline) }
+                } else {
+                    Text("Requirement excerpts unavailable. Read the full employer description.").font(.subheadline).foregroundStyle(.secondary)
+                }
+            } header: { Text("Employer requirement excerpts") } footer: {
+                Text("Bounded excerpts from available employer descriptions are clues, not proof of eligibility or paid status. Read the full description, including mandatory requirements and exceptions.")
+            }
+            if !store.applicationWarnings(for: job).isEmpty {
+                Section("Local tracking advisories") {
+                    ForEach(store.applicationWarnings(for: job), id: \.self) { message in
+                        Label(message, systemImage: "exclamationmark.circle").font(.subheadline)
+                    }
                 }
             }
             Section("Fit to establish") {
@@ -318,12 +447,13 @@ private struct NativeJobDetail: View {
                 Picker("Status", selection: Binding(get: { store.status(for: job) }, set: { store.setStatus($0, for: job) })) {
                     ForEach(NativeCareerStore.statuses, id: \.self) { Text($0).tag($0) }
                 }
+                NavigationLink { NativeNextActionEditor(job:job) } label: { Label("Plan my next action",systemImage:"calendar.badge.clock") }
                 NavigationLink { NativeApplicationRecordEditor(job:job) } label: { Label("Application date and receipt note",systemImage:"calendar.badge.clock") }
                 Button { store.toggleSaved(job) } label: {
                     Label(store.isSaved(job) ? "Remove from saved" : "Save opportunity", systemImage: store.isSaved(job) ? "heart.fill" : "heart")
                 }
             } header: { Text("Your progress") } footer: {
-                Text("This is your own record. Changing status does not submit an application or contact anyone.")
+                Text("This is your own record. Changing status does not submit an application or contact anyone. Use Submission uncertain if you cannot verify receipt, then check the employer account before retrying.")
             }
             Section {
                 if let url = job.applicationURL {
@@ -335,6 +465,95 @@ private struct NativeJobDetail: View {
                 Text("Review and rewrite every draft before using it. Recheck salary, deadlines and qualifications directly with the employer.")
             }
         }.nativeList().navigationTitle("Opportunity").navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+private struct NativeNextActionsScreen: View {
+    @EnvironmentObject private var store:NativeCareerStore
+    @Environment(\.scenePhase) private var scenePhase
+    var body:some View {
+        // Re-evaluate calendar-day sections while this screen stays open across Riyadh midnight.
+        TimelineView(.periodic(from:.now,by:60)) { context in
+            List {
+                Section {Text("One private next action per role. Dates use Riyadh calendar days. These are your plans, not employer deadlines or scheduled reminders.").font(.footnote)}
+                if store.nextActionGroups(at:context.date).isEmpty && store.nextActionErrors.isEmpty {Text("No next actions yet. Open any role to make a plan.")}
+                if !store.nextActionErrors.isEmpty {
+                    Section("Next actions needing review") {
+                        ForEach(store.recordJobs.filter{store.nextActionErrors[$0.id] != nil}) {job in
+                            NavigationLink {NativeNextActionEditor(job:job)} label: {
+                                VStack(alignment:.leading) {
+                                    Text(job.title).font(.headline)
+                                    Text(store.nextActionErrors[job.id] ?? "").font(.footnote).foregroundStyle(.red)
+                                }
+                            }
+                        }
+                    }
+                }
+                ForEach(store.nextActionGroups(at:context.date)) { group in
+                    Section(group.title) {
+                        ForEach(group.jobs) { job in
+                            NavigationLink { NativeNextActionEditor(job:job) } label: {
+                                VStack(alignment:.leading,spacing:6) {
+                                    Text(job.title).font(.headline)
+                                    Text(job.company).font(.subheadline)
+                                    Text(store.nextActions[job.id]?.actionNote ?? "")
+                                    Text("Due: \(store.nextActions[job.id]?.dueOn.isEmpty==false ? store.nextActions[job.id]!.dueOn : "Not set") · \(store.status(for:job))").font(.caption).foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
+                }
+            }.nativeList()
+        }.navigationTitle("My next actions")
+        .onAppear {store.reloadNextActions()}
+        .onChange(of:scenePhase) { phase in if phase == .active {store.reloadNextActions()} }
+    }
+}
+
+private struct NativeNextActionEditor: View {
+    @EnvironmentObject private var store:NativeCareerStore
+    @Environment(\.scenePhase) private var scenePhase
+    let job:CareerJob
+    @State private var discard=false
+    @State private var savedMessage=""
+    private var draft:NextActionDraft {store.nextActionDrafts[job.id] ?? NextActionDraft()}
+    private func edit(dueOn:String?=nil,actionNote:String?=nil,completed:Bool?=nil) {
+        store.editNextAction(job,dueOn:dueOn ?? draft.dueOn,actionNote:actionNote ?? draft.actionNote,completed:completed ?? draft.completed)
+        savedMessage=""
+    }
+    var body:some View {
+        Form {
+            Section {
+                Text(job.title).font(.headline)
+                Text("\(job.company) · \(store.status(for:job))")
+                Text("Your private local plan. Saving does not change application status, send a message, or schedule a notification.").font(.footnote)
+                NavigationLink { NativeJobDetail(job:job) } label: {Text("Review role details")}
+            }
+            Section("Next action") {
+                TextEditor(text:Binding(get:{draft.actionNote},set:{edit(actionNote:$0)})).frame(minHeight:100)
+                Text("\(draft.actionNote.unicodeScalars.count) / 500 Unicode characters").font(.caption)
+                TextField("Due date: YYYY-MM-DD, or leave blank",text:Binding(get:{draft.dueOn},set:{edit(dueOn:$0)}))
+                    .textInputAutocapitalization(.never).autocorrectionDisabled()
+                Toggle("Completed",isOn:Binding(get:{draft.completed},set:{edit(completed:$0)}))
+                Text("Past and future dates are allowed, using Riyadh days. A due date or completed action requires a note.").font(.footnote)
+            }
+            Section {
+                if draft.dirty {Text("Unsaved draft, kept for this session. Export before closing the app.").foregroundStyle(.secondary)}
+                if let base=draft.base {Text("Last edited: \(base.updatedAt)").font(.footnote)}
+                if let error=store.nextActionErrors[job.id] {Text(error).foregroundStyle(.red)}
+                if !savedMessage.isEmpty {Text(savedMessage).foregroundStyle(.secondary)}
+                Button("Save next action") {savedMessage=store.saveNextAction(job) ? "Next action saved on this device." : ""}
+                Button("Clear fields") {edit(dueOn:"",actionNote:"",completed:false)}
+                Text("Clear fields, then save to clear the plan. Existing files are retained. Private next actions appear in reviewed tracking exports, never in preparation notes.").font(.footnote)
+                Button("Reload saved next action") {if draft.dirty {discard=true} else {store.beginNextAction(job,discardDraft:true);savedMessage=""}}
+            }
+        }.navigationTitle("Next action")
+        .onAppear {store.beginNextAction(job)}
+        .onChange(of:scenePhase) { phase in if phase == .active {store.beginNextAction(job)} }
+        .confirmationDialog("Discard this unsaved draft and load the saved next action?",isPresented:$discard,titleVisibility:.visible) {
+            Button("Discard draft and reload",role:.destructive) {store.beginNextAction(job,discardDraft:true);savedMessage=""}
+            Button("Keep draft",role:.cancel) {}
+        }
     }
 }
 
@@ -380,10 +599,10 @@ private struct NativeApplicationRecordEditor: View {
 
 private let nativePlanItems: [(id: String, title: String, detail: String)] = [
     ("profile", "Confirm your professional record", "Exact degree, work dates, responsibilities, relevant years and certifications."),
-    ("evidence", "Prepare three achievement stories", "Availability, supplier performance and operational improvement. Use accurate, shareable results."),
-    ("cv", "Build two focused CV versions", "Healthcare procurement and performance improvement. Tie each to the target requirements."),
-    ("priority", "Review healthcare roles that meet your requirements", "Check experience gates before tailoring your application."),
-    ("deadline", "Recheck the time-sensitive roles", "Check the current Roche, Alcon and J&J deadlines directly with each employer."),
+    ("evidence", "Prepare three achievement stories", "Personal projects, your contribution, tests and lessons learned. Do not invent employment or client results."),
+    ("cv", "Build two focused CV versions", "Choose relevant work or project examples and describe your own contribution accurately."),
+    ("priority", "Review paid software and AI opportunities", "Check experience gates before tailoring your application."),
+    ("deadline", "Recheck the time-sensitive roles", "Check the current listing and existing application records to avoid duplicates."),
     ("review", "Review each application yourself", "Verify every field, attachment and claim. Nothing is automatically submitted.")
 ]
 
@@ -408,6 +627,7 @@ private struct NativePlanScreen: View {
                             Text(prompt.job.title+" · "+prompt.job.company).font(.subheadline)
                             if prompt.kind=="requirements" {Text(prompt.job.requirements.joined(separator:"\n")).font(.caption)}
                             if prompt.kind=="deadline" {Text("Listed deadline: "+nativeDate(prompt.job.closes ?? "",includeTime:(prompt.job.closes?.count ?? 0)>10)).font(.caption)}
+                            if prompt.kind=="uncertain" {Text("No submission success is assumed. Verify the employer account or acknowledgement first.").font(.caption)}
                             if prompt.kind=="applied-date" {Text("Optional record detail; an unknown date is allowed.").font(.caption)}
                             Text("Research checked: \(prompt.job.researchCheckedAt ?? "Not researched") · Employer checked: \(prompt.job.lastCheckedAt ?? "Not recorded")").font(.caption).foregroundStyle(.secondary)
                         }
@@ -427,11 +647,15 @@ private struct NativePlanScreen: View {
             Section("Application records") {
                 if store.recordJobs.isEmpty {
                     NativeEmpty(title: "No applications marked yet.", message: "Open a role and update its status after you complete a step.", icon: "checkmark.bubble")
-                } else { ForEach(store.recordJobs) { NativeJobLink(job: $0) } }
+                } else {
+                    ForEach(store.applicationGroups) { group in
+                        DisclosureGroup("\(group.status) · \(group.jobs.count)") { ForEach(group.jobs) { NativeJobLink(job: $0) } }
+                    }
+                }
             }
             Section {
                 NavigationLink { NativeNotesPreview(text: store.exportText(), includesProfile: true) } label: { Label("Review my application notes", systemImage: "doc.text") }
-            } footer: { Text("Notes include your self-entered profile, application records, receipt notes and any unsaved record drafts. Review them before choosing a destination in the share sheet.") }
+            } footer: { Text("Notes include your self-entered profile, application records, receipt notes, next actions and any unsaved drafts. Review them before choosing a destination in the share sheet.") }
         }.nativeList().navigationTitle("Application plan")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear{store.reloadApplicationRecords()}
@@ -455,11 +679,11 @@ private struct NativeProfileScreen: View {
                     Text(store.research.profile.location).font(.subheadline).foregroundStyle(.secondary)
                 }.padding(.vertical, 5)
                 ForEach(store.research.profile.facts, id: \.self) { Text($0).font(.subheadline) }
-                if let url = nativeHTTPS(store.research.profile.url) { Link("View LinkedIn profile", destination: url) }
+                if let url = nativeHTTPS(store.research.profile.url) { Link("View GitHub portfolio", destination: url) }
             }
             Section("Still to confirm") {
                 ForEach(store.research.profile.unknowns, id: \.self) { Text($0).font(.subheadline) }
-                Text("LinkedIn lists a dated, self-reported career history. This public snapshot excludes private CV documents and messages. Credentials, specialist experience and measurable outcomes still need confirmation; overlapping jobs are not counted twice.")
+                Text("Add your own background and requirements. Skills are self-reported, not independently credential-verified.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
             Section {
@@ -470,7 +694,7 @@ private struct NativeProfileScreen: View {
             NativeCriteriaSection()
             Section {
                 NavigationLink { NativeSalaryScreen() } label: { Label("Salary & negotiation", systemImage: "chart.bar.doc.horizontal") }
-                NavigationLink { NativePrivacyScreen() } label: { Label("Privacy & beta support", systemImage: "hand.raised") }
+                NavigationLink { NativePrivacyScreen() } label: { Label("Privacy & support", systemImage: "hand.raised") }
             }
         }.nativeList().navigationTitle("Your profile")
             .navigationBarTitleDisplayMode(.inline)
@@ -484,7 +708,7 @@ private struct NativeNotesPreview: View {
     var body: some View {
         Form {
             Section {
-                Text(includesProfile ? "These notes include your self-entered profile, application records, receipt notes and any unsaved record drafts. Remove anything you do not want to share." : "This role note excludes your profile fields. Review the requirements and your local application status before sharing.")
+                Text(includesProfile ? "These notes include your self-entered profile, application records, receipt notes, next actions and any unsaved drafts. Remove anything you do not want to share." : "This role note excludes your profile fields. Review the requirements and your local application status before sharing.")
                     .font(.footnote)
                 TextEditor(text: $text).frame(minHeight: 350).accessibilityLabel("Application notes to review")
             }
@@ -503,23 +727,23 @@ private struct NativePrivacyScreen: View {
                 Text("The developer does not receive your profile or application records automatically. The app includes a dated research snapshot drawn from public professional and employer information.")
             }
             Section("Employer searches and links") {
-                Text("When you run a search, the app sends fixed job queries directly to selected employers and their recruitment providers using HTTPS. Those providers receive normal connection information, including your IP address. Your saved profile, discovery criteria and application notes are not included.")
-                Text("Opening an employer, LinkedIn or salary-source link takes you to an external website governed by its own privacy policy. Any application or account you create there is managed by that provider.")
+                Text("When you run a search, the app requests public job boards directly to selected employers and their recruitment providers using HTTPS. Those providers receive normal connection information, including your IP address. Your saved profile, discovery criteria and application notes are not included.")
+                Text("Opening an employer or portfolio link takes you to an external website governed by its own privacy policy. Any application or account you create there is managed by that provider.")
             }
-            Section("Sharing and beta feedback") {
+            Section("Sharing") {
                 Text("Exported notes include your entered professional details and tracked roles, and exclude discovery criteria. They leave the app only when you choose a destination in the system share sheet. Review the content before sharing.")
-                Text("The app has no advertising, tracking SDKs or developer analytics service. Apple may process TestFlight testing, crash and feedback information under its own privacy practices.")
+                Text("The app has no advertising, tracking SDKs or developer analytics service. This local build does not use TestFlight feedback.")
                 Link("Apple privacy policy", destination: URL(string: "https://www.apple.com/legal/privacy/")!)
             }
             Section("Retention and removal") {
                 Text("You can edit or clear profile fields, remove saved roles and reset individual tracking statuses in the app. Saved or tracked job details may remain locally after a job disappears from a search.")
                 Text("Deleting the app from iPhone Settings removes its local records; offloading the app keeps documents and data. Device backups may retain copies according to your Apple backup settings. Shared exports are separate copies that you manage at their destination.")
             }
-            Section("Beta support") {
-                Text("Open TestFlight, select Ahmad Career and choose Send Beta Feedback to contact the developer. Include the screen and steps that caused the problem. Review screenshots and diagnostics before sending.")
-                Text("Policy updated 9 October 2026.").font(.footnote).foregroundStyle(.secondary)
+            Section("Support") {
+                Text("Report the screen and steps that caused the problem in the conversation where this app was provided. Review screenshots and diagnostics for personal details before sending.")
+                Text("Policy updated 9 November 2026.").font(.footnote).foregroundStyle(.secondary)
             }
-        }.nativeList().navigationTitle("Privacy & beta support")
+        }.nativeList().navigationTitle("Privacy & support")
             .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -569,7 +793,7 @@ private struct NativeProfileEditor: View {
                     Text("Use whole SAR; blank or zero means no minimum. Confirm whether your minimum means basic salary or includes guaranteed allowances. Current roles have no verified salary evidence. Criteria stay on this device and are excluded from notes.")
                 }
                 Section("Experience and qualifications") {
-                    VStack(alignment: .leading, spacing: 8) { Text("Relevant years of experience").font(.caption).foregroundStyle(.secondary); TextField("Relevant years of experience", text: $draft.years).keyboardType(.decimalPad).focused($focused) }
+                    VStack(alignment: .leading, spacing: 8) { Text("Years of formal relevant employment").font(.caption).foregroundStyle(.secondary); TextField("Years of formal relevant employment", text: $draft.years).keyboardType(.decimalPad).focused($focused) }
                     if !validYears { Label("Enter a number from 0 to 60, or leave blank.", systemImage: "exclamationmark.circle").font(.caption) }
                     TextField("Degree and certifications", text: $draft.degree, axis: .vertical).lineLimit(2...5).focused($focused)
                     if draft.degree.count > 300 { Label("Qualifications exceed 300 characters. Shorten this field before saving.", systemImage: "exclamationmark.circle").font(.caption) }
@@ -623,22 +847,11 @@ private struct NativeSalaryScreen: View {
     var body: some View {
         Form {
             Section {
-                NativeNotice(title: "Salary potential is not an offer.", message: "None of the researched roles has a published salary in this research. These historical market benchmarks are not job-specific estimates or guaranteed pay.")
+                NativeNotice(title: "Salary potential is not an offer.", message: "None of the researched roles has a published salary in this research. No salary target has been invented for this workspace.")
             }.listRowBackground(Color.clear)
-            Section("Historical 2025 · Hays") {
-                LabeledContent("Supply Chain Manager", value: "SAR 30,000–45,000")
-                LabeledContent("Procurement Manager", value: "SAR 30,000–50,000")
-                Text("Total fixed monthly package, including fixed allowances. Data as of Q4 2024; broad Saudi market, not healthcare-specific. These are not basic-salary ranges.")
-                    .font(.footnote).foregroundStyle(.secondary)
-                Link("Hays 2025 guide · page 38", destination: URL(string: "https://www.hays.ae/documents/d/hays-salary-guide-ae/hays-saudi-arabia-salary-guide-2025")!)
-                Link("Hays 2026 guide", destination: URL(string: "https://www.hays.ae/salary-guide/saudi-arabia-salary-guide")!)
-                Text("The 2026 guide exists; its detailed tables were unavailable without a contact form in this research.").font(.footnote).foregroundStyle(.secondary)
-            }
-            Section {
-                DisclosureGroup("Cross-check with another guide") {
-                    Text("The Professionals 2025 reports Supply & Demand Manager at SAR 30,220 / 42,866 / 53,710 monthly for the 25th percentile / median / 75th percentile (p.49). Methodology (p.15): basic salary, housing and transportation. Different definitions and samples make this context, not an interchangeable quote.").font(.subheadline)
-                    Link("The Professionals 2025 guide", destination: URL(string: "https://theprofessionals.sa/wp-content/uploads/2026/02/Salary-Guide-2025-The-Professionals.pdf")!)
-                }
+            Section("Your offer, not a guessed benchmark") {
+                Text("No verified software or AI salary benchmark is bundled. Confirm paid status, location, working hours and the approved salary range directly with the employer.")
+                Text("Describe experience and education accurately and confirm role-specific requirements.")
             }
             Section {
                 VStack(alignment: .leading, spacing: 8) { Text("Monthly basic salary · SAR").font(.caption).foregroundStyle(.secondary); TextField("Monthly basic salary · SAR", text: $basic).keyboardType(.decimalPad).focused($focused) }
@@ -659,7 +872,7 @@ private struct NativeSalaryScreen: View {
             }
             Section("The conversation to have") {
                 Text("Ask for the approved grade and fixed monthly range early.")
-                Text("Clarify direct reports, spend authority, KPI ownership and delivery expectations.")
+                Text("Clarify the work, mentorship, professional-experience requirements and whether personal projects are accepted.")
                 Text("Get basic pay, allowances, bonus terms, medical coverage, leave and relocation support in writing.")
                 Text("Use verified achievements when negotiating. Compare commute, hours, probation and progression before committing.")
             }
@@ -726,7 +939,7 @@ private extension Color {
 
 private func nativeMatches(_ job: CareerJob, query: String) -> Bool {
     let text = query.trimmingCharacters(in: .whitespacesAndNewlines)
-    return text.isEmpty || ([job.title, job.company, job.location, job.summary, job.subtitle ?? ""] + job.requirements).joined(separator: " ").localizedCaseInsensitiveContains(text)
+    return text.isEmpty || ([job.title, job.company, job.location, job.summary, job.subtitle ?? "", job.employmentType ?? "", job.experienceLevel ?? ""] + job.requirements + (job.requirementNotes ?? [])).joined(separator: " ").localizedCaseInsensitiveContains(text)
 }
 
 private func nativeDate(_ value: String, includeTime: Bool = false) -> String {

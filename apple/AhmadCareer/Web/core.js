@@ -22,15 +22,62 @@
     return {included:city!=='outside'&&!(salary==='unverified'&&profile.unknownSalary==='hide'),city,salary};
   }
   function relevance(title){
-    if(/\bintern(ship)?\b|trainee|graduate|early[ -](?:in[ -])?career|sales|account manager|clinical|chemist|scientist|engineer|financial analyst|QA\/RA/i.test(title||''))return 0;
-    if(/supply.?chain|procurement|purchas|tender|logistics|warehouse|demand.?plan|supply.?plan|inventory|supplier/i.test(title||''))return /manager|director|head|lead/i.test(title)?90:65;
-    if(/performance|operational excellence|continuous improvement|transformation|operations? manager/i.test(title||''))return 80;
-    if(/business[ -]value[ -]partner/i.test(title||''))return 65;
+    const t=title||'';
+    if(/\b(senior|sr\.?|lead|principal|staff|manager|director|head|chief|vp|vice[ -]president|sales|pre[ -]?sales|clinical)\b/i.test(t))return 0;
+    if(/software|developer|python|machine[ -]learning|artificial[ -]intelligence|\bAI\b|full[ -]?stack|front[ -]?end|back[ -]?end|\bios\b|\bswift\b|automation|devops|site[ -]reliability|cloud[ -](platform|native|engineer)|database[ -]administrator|techops|data[ -](analyst|engineer|scientist)|builders[ -]program.*data|quality[ -]assurance|\bQA\b|مطور|برمجيات|ذكاء اصطناعي|محلل بيانات/i.test(t))return /junior|entry[ -]level|graduate|intern|trainee|associate|himmah|tamheer|builders[ -]program/i.test(t)?95:80;
     return 0;
   }
+  function plainEmployerText(value){
+    if(typeof value!=='string'||value.length>120000)return '';
+    const entities={amp:'&',lt:'<',gt:'>',quot:'"',apos:"'",nbsp:' '};
+    const decoded=value.replace(/&(#x[0-9a-f]+|#[0-9]+|amp|lt|gt|quot|apos|nbsp);/gi,(_,v)=>{if(v[0]!=='#')return entities[v.toLowerCase()]||' ';const n=v[1].toLowerCase()==='x'?parseInt(v.slice(2),16):Number(v.slice(1));return Number.isInteger(n)&&n>=32&&n<=0x10ffff&&!(n>=0xd800&&n<=0xdfff)?String.fromCodePoint(n):' '});
+    return decoded.replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi,' ').replace(/<\/?(?:p|li|div|br|h[1-6]|ul|ol)[^>]*>/gi,'\n').replace(/<[^>]*>/g,' ').replace(/[\t \r]+/g,' ').replace(/\n\s*/g,'\n').trim();
+  }
+  function requirementNotes(value){
+    const text=plainEmployerText(value);if(!text)return [];
+    const relevant=/bachelor|master.?s|degree|\bph\.?d\b|university|student|graduat|\d+\+?\s*(?:-\s*\d+\s*)?years?|\bpaid\b|unpaid|work authori[sz]ation|saudi nationals?|citizenship|تخرج|بكالوريوس|سنوات|طالب/i;
+    return [...new Set(text.split(/\n+|(?<=[.!?])\s+/).map(x=>x.trim()).filter(x=>x.length>12&&relevant.test(x)&&!(/\bpaid\s+(?:leave|holidays?|time off|vacation)\b/i.test(x)&&!/(?:degree|experience|internship|salary)/i.test(x))&&!(/\b(?:we serve|our company|founded in|we have served)\b/i.test(x)&&!/\b(?:required|minimum|must|candidate|you have)\b/i.test(x))))].slice(0,4).map(x=>x.length>260?x.slice(0,257)+'…':x);
+  }
+  function employerMode(type,row){
+    if(type==='recruitee'){const modes=[['on_site','On-site'],['hybrid','Hybrid'],['remote','Remote']].filter(([key])=>row[key]===true).map(([,label])=>label);return modes.length?modes.join(' / '):'Not stated';}
+    if(type==='ashby'){const modes={Remote:'Remote',Hybrid:'Hybrid',OnSite:'On-site'};return (typeof row.workplaceType==='string'&&Object.hasOwn(modes,row.workplaceType)?modes[row.workplaceType]:null)||(row.isRemote===true?'Remote or hybrid':'Not stated');}
+    return row.telecommuting===true?'Remote arrangement: confirm details':'Not stated';
+  }
+  function employmentLabel(value){const labels={fulltime:'Full time',parttime:'Part time',internship:'Internship',contract:'Contract',temporary:'Temporary'};const key=typeof value==='string'?value.toLowerCase().replace(/[\s_-]/g,''):'';return Object.hasOwn(labels,key)?labels[key]:value;}
+  const publicationLabel=j=>j.postedKind==='last-published'?'Last published':'Published';
+  function ageInSaudiDays(value,now=new Date()){
+    const parsed=parsedDate(value);if(!parsed)return null;
+    const day=parsed.dateOnly?parsed.day:saudiDay(new Date(parsed.time));
+    return Math.floor((Date.parse(saudiDay(now)+'T00:00:00Z')-Date.parse(day+'T00:00:00Z'))/86400000);
+  }
+  function discoveryMatches(job,options={},now=new Date()){
+    if(options.company&&job.company!==options.company)return false;
+    if(options.days){const age=ageInSaudiDays(job.posted,now);if(age===null||age<0||age>=options.days)return false;}
+    if(options.employmentType&&job.employmentType!==options.employmentType)return false;
+    return true;
+  }
+  function applicationWarnings(job,jobs,states={},recordIDs=[]){
+    const tracked=j=>states[j.id]&&states[j.id]!=='Not started'||recordIDs.includes(j.id);
+    const messages=[];
+    if(tracked(job))messages.push(states[job.id]==='Submission uncertain'?'Submission is uncertain. Check the employer account or receipt before trying again.':'This role already has a local application record. Review it before applying again.');
+    const others=dedupe(jobs).filter(j=>j.id!==job.id&&j.company.toLowerCase()===job.company.toLowerCase()&&tracked(j));
+    if(others.length)messages.push('You are tracking '+others.length+' other role'+(others.length===1?'':'s')+' at '+job.company+'. Check any company or program application rules. Different roles are not automatically duplicates.');
+    return messages;
+  }
   const safeURL=value=>{try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&(!u.port||u.port==='443')?u.href:'#'}catch{return '#'}};
-  const jobHosts=new Set(['apply.workable.com','alcon.wd5.myworkdayjobs.com','jj.wd5.myworkdayjobs.com','roche.wd3.myworkdayjobs.com','novartis.wd3.myworkdayjobs.com','gsk.wd5.myworkdayjobs.com','bdx.wd1.myworkdayjobs.com','www.careers.jnj.com','eenp.fa.em3.oraclecloud.com','efan.fa.em3.oraclecloud.com','careers.al-dawaa.com','sa.linkedin.com','www.linkedin.com']);
-  const safeJobURL=value=>{const safe=safeURL(value);if(safe==='#')return '#';const u=new URL(safe);if(u.hostname.endsWith('.oraclecloud.com')&&!/^\/hcmUI\/CandidateExperience\/en\/sites\/CX_1\/job\/\d+\/?$/.test(u.pathname))return '#';if(u.hostname.endsWith('linkedin.com')&&!/^\/jobs\/view\/(?:[a-z0-9-]+-)?\d+\/?$/i.test(u.pathname))return '#';if(u.hostname==='careers.al-dawaa.com'&&!u.pathname.startsWith('/en/saudi-arabia/jobs/'))return '#';return jobHosts.has(u.hostname)&&(u.hostname!=='apply.workable.com'||u.pathname.startsWith('/qiddiya-investment-company-1/j/'))?safe:'#'};
+  const jobHosts=new Set(['apply.workable.com','alcon.wd5.myworkdayjobs.com','jj.wd5.myworkdayjobs.com','roche.wd3.myworkdayjobs.com','novartis.wd3.myworkdayjobs.com','gsk.wd5.myworkdayjobs.com','bdx.wd1.myworkdayjobs.com','www.careers.jnj.com','eenp.fa.em3.oraclecloud.com','efan.fa.em3.oraclecloud.com','careers.al-dawaa.com','sa.linkedin.com','www.linkedin.com','jobs.ashbyhq.com','job-boards.eu.greenhouse.io','jobs.unifonic.com']);
+  const safeJobURL=value=>{
+    const safe=safeURL(value);if(safe==='#')return '#';const u=new URL(safe);
+    if(!jobHosts.has(u.hostname))return '#';
+    if(u.hostname==='apply.workable.com'&&!/^\/(qiddiya-investment-company-1|mozn-ai|lucidya|foodics|salla)\/j\/[A-Za-z0-9]{1,64}(?:\/apply)?\/?$/.test(u.pathname))return '#';
+    if(u.hostname==='jobs.ashbyhq.com'&&!/^\/LeanTech\/[a-f0-9-]{36}(?:\/application)?\/?$/i.test(u.pathname))return '#';
+    if(u.hostname==='jobs.unifonic.com'&&!/^\/o\/[a-z0-9][a-z0-9-]{0,199}\/?$/i.test(u.pathname))return '#';
+    if(u.hostname==='job-boards.eu.greenhouse.io'&&!/^\/tamara\/jobs\/\d{1,20}\/?$/.test(u.pathname))return '#';
+    if(u.hostname.endsWith('.oraclecloud.com')&&!/^\/hcmUI\/CandidateExperience\/en\/sites\/CX_1\/job\/\d+\/?$/.test(u.pathname))return '#';
+    if(u.hostname.endsWith('linkedin.com')&&!/^\/jobs\/view\/(?:[a-z0-9-]+-)?\d+\/?$/i.test(u.pathname))return '#';
+    if(u.hostname==='careers.al-dawaa.com'&&!u.pathname.startsWith('/en/saudi-arabia/jobs/'))return '#';
+    return safe;
+  };
   const saudiDay=now=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Riyadh',year:'numeric',month:'2-digit',day:'2-digit'}).format(now);
   function parsedDate(value){
     if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}(?:T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d))?$/.test(value))return null;
@@ -47,19 +94,37 @@
     if(!j||typeof j!=='object'||Array.isArray(j)||!['id','title','company','location','url'].every(k=>typeof j[k]==='string'&&j[k].trim()&&j[k].length<=2000)||j.id.length>256||['__proto__','constructor','prototype'].includes(j.id)||safeJobURL(j.url)==='#'||!isSaudi(j.location))return null;
     if(j.closes!=null&&j.closes!==''&&!parsedDate(j.closes)||j.posted!=null&&j.posted!==''&&!parsedDate(j.posted))return null;
     if(j.gaps!=null&&(!Array.isArray(j.gaps)||j.gaps.some(x=>typeof x!=='string'))||j.steps!=null&&(!Array.isArray(j.steps)||j.steps.some(x=>!Array.isArray(x)||x.length<2||x.some(s=>typeof s!=='string'))))return null;
+    if(j.requirementNotes!=null&&(!Array.isArray(j.requirementNotes)||j.requirementNotes.length>6||j.requirementNotes.some(x=>typeof x!=='string'||x.length>300)))return null;
+    for(const k of ['experienceLevel','employmentType'])if(j[k]!=null&&(typeof j[k]!=='string'||j[k].length>100))return null;
+    if(j.postedKind!=null&&!['published','last-published'].includes(j.postedKind))return null;
     const job={...j,url:safeJobURL(j.url),posted:j.posted||'',fit:typeof j.fit==='string'?j.fit:'Needs review',summary:typeof j.summary==='string'?j.summary:'Review the employer requirements.'};
     for(const key of ['applyUrl','sourceUrl'])if(job[key]&&safeJobURL(job[key])==='#')delete job[key];
     if(job.rank!=null&&(!Number.isInteger(job.rank)||job.rank<1))delete job.rank;
     return job;
   }
-  const sourceIncomplete=s=>!s.ok||Boolean(s.error)||Boolean(s.detailErrors)||Boolean(s.queryErrors);
+  const sourceIncomplete=s=>!s.ok||s.limited===true||Boolean(s.error)||Boolean(s.detailErrors)||Boolean(s.queryErrors);
   function normalizeLive(payload){
     if(!payload||typeof payload!=='object'||!parsedDate(payload.checkedAt)||isFuture(payload.checkedAt,new Date(Date.now()+60000))||!Array.isArray(payload.jobs)||payload.jobs.length>1000||!Array.isArray(payload.sources)||payload.sources.length>20)return null;
-    if(payload.sources.some(s=>!s||typeof s.name!=='string'||typeof s.ok!=='boolean'||s.excludedIds!=null&&(!Array.isArray(s.excludedIds)||s.excludedIds.length>20||s.excludedIds.some(id=>typeof id!=='string'||!id.trim()||id.length>256))||['count','scanned','detailErrors'].some(k=>s[k]!=null&&(!Number.isInteger(s[k])||s[k]<0))))return null;
+    if(payload.sources.some(s=>!s||typeof s.name!=='string'||typeof s.ok!=='boolean'||s.limited!=null&&typeof s.limited!=='boolean'||s.excludedIds!=null&&(!Array.isArray(s.excludedIds)||s.excludedIds.length>500||s.excludedIds.some(id=>typeof id!=='string'||!id.trim()||id.length>256))||['count','scanned','detailErrors'].some(k=>s[k]!=null&&(!Number.isInteger(s[k])||s[k]<0))))return null;
     const jobs=payload.jobs.map(normalizeJob).filter(Boolean),rejected=payload.jobs.length-jobs.length;
     if(rejected&&!jobs.length)return null;
     const invalidJobs=Math.max(rejected,Number.isInteger(payload.invalidJobs)&&payload.invalidJobs>=0&&payload.invalidJobs<=1000?payload.invalidJobs:0);
-    return{checkedAt:payload.checkedAt,jobs:dedupe(jobs).filter(j=>j.company!=='Qiddiya'&&j.healthcare!==false).map(j=>{const failed=payload.sources.some(s=>s.name===j.company&&sourceIncomplete(s)),prior=parsedDate(j.lastCheckedAt);if(failed&&j.lastCheckedAt!=null&&(!prior||prior.time>parsedDate(payload.checkedAt).time))return null;return {...j,lastCheckedAt:failed&&prior?j.lastCheckedAt:payload.checkedAt}}).filter(Boolean),invalidJobs,sources:payload.sources.map(s=>({...s,error:typeof s.error==='string'?s.error:''}))};
+    const normalized={checkedAt:payload.checkedAt,jobs:dedupe(jobs).filter(j=>j.company!=='Qiddiya'&&relevance(j.title)>0).map(j=>{const failed=payload.sources.some(s=>s.name===j.company&&sourceIncomplete(s)),prior=parsedDate(j.lastCheckedAt);if(failed&&j.lastCheckedAt!=null&&(!prior||prior.time>parsedDate(payload.checkedAt).time))return null;return {...j,lastCheckedAt:failed&&prior?j.lastCheckedAt:payload.checkedAt}}).filter(Boolean),invalidJobs,sources:payload.sources.map(s=>({...s,error:typeof s.error==='string'?s.error:''}))};
+    const comparison=normalizeSearchComparison(payload.searchComparison,normalized);
+    if(comparison)normalized.searchComparison=comparison;
+    return normalized;
+  }
+  function normalizeSearchComparison(value,snapshot){
+    if(!value||typeof value!=='object'||Array.isArray(value)||value.schema!==1)return null;
+    const checked=parsedDate(value.checkedAt),previous=parsedDate(value.previousCheckedAt);
+    if(!checked||checked.time!==parsedDate(snapshot.checkedAt)?.time||value.previousCheckedAt!==null&&(!previous||previous.time>=checked.time))return null;
+    const ids=value.addedIds,current=new Set(snapshot.jobs.map(j=>j.id));
+    if(!Array.isArray(ids)||ids.length>1000||new Set(ids).size!==ids.length||ids.some(id=>typeof id!=='string'||!id.trim()||id.length>256||!current.has(id))||value.previousCheckedAt===null&&ids.length)return null;
+    return {schema:1,previousCheckedAt:value.previousCheckedAt,checkedAt:value.checkedAt,addedIds:[...ids]};
+  }
+  function compareSearches(previous,current){
+    const ids=new Set((previous?.jobs||[]).map(j=>j.id));
+    return {schema:1,previousCheckedAt:previous?.checkedAt??null,checkedAt:current.checkedAt,addedIds:previous?current.jobs.filter(j=>!ids.has(j.id)).map(j=>j.id):[]};
   }
   const factsTime=job=>Math.max(parsedDate(job?.lastCheckedAt)?.time??-Infinity,parsedDate(job?.researchCheckedAt)?.time??-Infinity);
   function mergeJobs(researched,snapshots,live){
@@ -86,11 +151,27 @@
     const edited=parsedDate(value.updatedAt);
     return Boolean(edited&&!edited.dateOnly&&new Date(edited.time).toISOString()===value.updatedAt);
   }
+  function validNextAction(value,id){
+    if(!value||typeof value!=='object'||Array.isArray(value)||value.schema!==1||value.jobId!==id||typeof id!=='string'||!id.trim()||id.length>256||['__proto__','constructor','prototype'].includes(id))return false;
+    if(Object.keys(value).some(k=>!['schema','jobId','dueOn','actionNote','completed','updatedAt'].includes(k)))return false;
+    if(typeof value.dueOn!=='string'||typeof value.actionNote!=='string'||typeof value.completed!=='boolean'||[...value.actionNote].length>500||/[\uD800-\uDFFF]/u.test(value.actionNote))return false;
+    if(value.dueOn&&(value.dueOn.length!==10||!parsedDate(value.dueOn)))return false;
+    if(!value.actionNote.trim()&&(value.dueOn||value.completed))return false;
+    const edited=parsedDate(value.updatedAt);
+    return Boolean(edited&&!edited.dateOnly&&new Date(edited.time).toISOString()===value.updatedAt);
+  }
+  function nextActionBucket(value,now=new Date()){
+    if(value.completed)return 'completed';
+    if(!value.dueOn)return 'undated';
+    const days=(Date.parse(value.dueOn+'T00:00:00Z')-Date.parse(saudiDay(now)+'T00:00:00Z'))/86400000;
+    return days<0?'overdue':days===0?'today':days<=7?'next7days':'upcoming';
+  }
   function attentionFor(jobs,states={},records={},now=new Date()){
     const tasks=[],today=saudiDay(now),last=new Date(Date.parse(today+'T00:00:00Z')+7*86400000).toISOString().slice(0,10);
     for(const job of dedupe(jobs)){
       const status=states[job.id]??'Not started',record=records[job.id];
-      if(['Applied','Interviewing','Offer received'].includes(status)){
+      if(status==='Submission uncertain'){tasks.push({jobId:job.id,kind:'confirm-submission',order:0});}
+      else if(['Applied','Interviewing','Offer received'].includes(status)){
         if(!validApplicationRecord(record,job.id,now)||!record.appliedAt)tasks.push({jobId:job.id,kind:'applied-date',order:2});
       }else if(['Not started','Preparing'].includes(status)){
         const closing=parsedDate(job.closes),past=Boolean(closing&&isExpired(job.closes,now));
@@ -101,5 +182,5 @@
     }
     return tasks.sort((a,b)=>a.order-b.order||(a.order===1?a.time-b.time:0)||a.jobId.localeCompare(b.jobId));
   }
-  root.CareerCore={isSaudi,canonicalMinimumSAR,riyadhCity,criteriaFor,relevance,safeURL,safeJobURL,saudiDay,parsedDate,dateSortTime,isExpired,isFuture,dedupe,normalizeJob,sourceIncomplete,normalizeLive,mergeJobs,validApplicationRecord,attentionFor};
+  root.CareerCore={employmentLabel,plainEmployerText,requirementNotes,employerMode,publicationLabel,ageInSaudiDays,discoveryMatches,applicationWarnings,isSaudi,canonicalMinimumSAR,riyadhCity,criteriaFor,relevance,safeURL,safeJobURL,saudiDay,parsedDate,dateSortTime,isExpired,isFuture,dedupe,normalizeJob,sourceIncomplete,normalizeLive,normalizeSearchComparison,compareSearches,mergeJobs,validApplicationRecord,validNextAction,nextActionBucket,attentionFor};
 })(globalThis);

@@ -3,8 +3,8 @@ import './web/core.js';
 const core=globalThis.CareerCore;
 assert.equal(typeof core.isSaudi, 'function', 'Saudi filtering must exist');
 assert(core.isSaudi('Riyadh, Saudi Arabia')); assert(core.isSaudi('Jeddah')); assert(!core.isSaudi('Dubai')); assert(!core.isSaudi('2 Locations'));
-assert.equal(core.relevance('Supply Chain Manager'), 90); assert.equal(core.relevance('Sales Manager'), 0); assert.equal(core.relevance('Supply Chain Intern'), 0);
-assert.equal(core.relevance('Early in Career - Supply Chain'),0);assert.equal(core.relevance('Business Value Partner'),65);assert.equal(core.relevance('Strategic Supplier Relationship Manager'),90);
+assert.equal(core.relevance('Software Developer'), 80); assert.equal(core.relevance('Sales Manager'), 0); assert.equal(core.relevance('Supply Chain Intern'), 0);
+assert.equal(core.relevance('Early in Career - Supply Chain'),0);assert.equal(core.relevance('Software Developer'),80);assert.equal(core.relevance('Software Developer'),80);
 assert.equal(core.safeURL('javascript:alert(1)'), '#'); assert.equal(core.safeURL('https://example.com/'), 'https://example.com/');
 const now=new Date('2026-10-08T12:00:00Z');
 assert(core.isExpired('2026-07-31',now)); assert(!core.isExpired('2026-10-08',now)); assert(!core.isExpired(null,now));
@@ -15,7 +15,7 @@ assert.equal(core.safeJobURL('https://example.com/phishing'), '#');
 assert.equal(core.safeJobURL('https://apply.workable.com/another-employer/j/ABC/'), '#');
 assert.equal(core.safeURL('https://user:secret@example.com/'), '#');
 assert.equal(core.safeJobURL('https://jj.wd5.myworkdayjobs.com/JJ/job/Riyadh/Test'), 'https://jj.wd5.myworkdayjobs.com/JJ/job/Riyadh/Test');
-assert.equal(core.normalizeJob({id:'x',title:'Supply Chain Manager',company:'Alcon',location:'Riyadh',url:'https://example.com/phishing'}),null);
+assert.equal(core.normalizeJob({id:'x',title:'Software Developer',company:'Alcon',location:'Riyadh',url:'https://example.com/phishing'}),null);
 
 for(const [input,expected] of [['',''],['  ',''],['0','0'],['10,000','10000'],['١٠٬٠٠٠','10000'],['۱۰٬۰۰۰٫۰۰','10000'],['1000000','1000000'],['0010.00','10'],['1,00',null],['1000001',null],['-1',null],['1.50',null],['1e4',null],['Infinity',null],['10 000',null]]){
   assert.equal(core.canonicalMinimumSAR(input),expected,`Minimum pay input: ${input}`);

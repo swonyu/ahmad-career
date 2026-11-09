@@ -11,7 +11,7 @@ async function sharedSearch(){
  if(searchPending)return searchPending;
  searchPending=(async()=>{
   const data=await getLiveJobs();
-  const complete=data.sources.length>0&&data.sources.every(s=>s.ok&&!s.error&&!s.detailErrors&&!s.queryErrors);
+  const complete=data.sources.length>0&&data.sources.every(s=>s.ok&&!s.limited&&!s.error&&!s.detailErrors&&!s.queryErrors);
   const ttl=complete?300:30;
   searchSnapshot={data,expires:Date.now()+ttl*1000};
   return data;
@@ -30,4 +30,4 @@ export default {async fetch(request,env,ctx){
  if(!asset)return new Response('Not found',{status:404});
  return new Response(request.method==='HEAD'?null:asset.body,{headers:{'Content-Type':asset.type,'Cache-Control':'no-cache','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'"}})
 }};\n`;
-await fs.mkdir('dist/server',{recursive:true});await fs.mkdir('dist/.openai',{recursive:true});await fs.writeFile('dist/server/index.js',server);await fs.copyFile('.openai/hosting.json','dist/.openai/hosting.json');console.log('Built dependency-free Worker and '+Object.keys(assets).length+' bundled assets.');
+await fs.mkdir('dist/server',{recursive:true});await fs.mkdir('dist/.openai',{recursive:true});await fs.writeFile('dist/server/index.js',server);console.log('Built dependency-free Worker and '+Object.keys(assets).length+' bundled assets.');

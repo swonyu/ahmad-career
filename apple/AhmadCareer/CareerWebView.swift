@@ -54,6 +54,7 @@ struct CareerWebView: CareerWebViewRepresentable {
         var webRoot: URL?
         var reloadID: Int
         private var refreshTask: Task<Void, Never>?
+        private let refreshProvider: @MainActor () async -> [String:Any]
         #if os(macOS)
         private var confirmation: (alert:NSAlert, reply:(Bool)->Void)?
         private func finishConfirmation(_ accepted:Bool) {
@@ -72,7 +73,7 @@ struct CareerWebView: CareerWebViewRepresentable {
         }
         #endif
 
-        init(reloadID: Int) { self.reloadID = reloadID }
+        init(reloadID: Int, refreshProvider: @escaping @MainActor () async -> [String:Any] = { await CareerFeed.refresh() }) { self.reloadID = reloadID; self.refreshProvider = refreshProvider }
 
         func stop(_ webView: WKWebView) {
             refreshTask?.cancel()
@@ -90,10 +91,11 @@ struct CareerWebView: CareerWebViewRepresentable {
                   CareerPolicy.acceptsRefresh(message.body) else { return }
             guard refreshTask == nil else { return }
             refreshTask = Task { [weak self] in
-                let payload = await CareerFeed.refresh()
+                guard let self else {return}
+                let payload = await self.refreshProvider()
                 guard !Task.isCancelled else { return }
-                self?.deliver(payload)
-                self?.refreshTask = nil
+                self.deliver(payload)
+                self.refreshTask = nil
             }
         }
 

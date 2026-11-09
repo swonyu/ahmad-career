@@ -108,7 +108,7 @@ import Combine
   var oldResearch=store.research;oldResearch.checkedAt="2020-01-01"
   oldResearch.jobs=oldResearch.jobs.map { var job=$0;job.researchCheckedAt="2020-01-01";return job }
   oldResearch.jobs[0].title="Old procurement title";oldResearch.jobs[0].closes="2098-01-01"
-  var archived=first;archived.id="qiddiya-HISTORY";archived.company="Qiddiya";archived.title="Old Procurement Manager";archived.url="https://apply.workable.com/qiddiya-investment-company-1/j/HISTORY/";archived.applyUrl=nil;archived.rank=1;archived.researchCheckedAt="2020-01-01"
+  var archived=first;archived.id="qiddiya-HISTORY";archived.company="Qiddiya";archived.title="Old Software Developer";archived.url="https://apply.workable.com/qiddiya-investment-company-1/j/HISTORY/";archived.applyUrl=nil;archived.rank=1;archived.researchCheckedAt="2020-01-01"
   oldResearch.jobs.append(archived)
   let oldResearchURL=root.appendingPathComponent("old-research.json")
   try JSONEncoder().encode(oldResearch).write(to:oldResearchURL)
@@ -211,7 +211,7 @@ import Combine
   assert(!laterStore.note(for:laterArchived).contains("checked 2026-10-10"))
 
   // A literal pre-criteria workspace keeps its profile and application records writable.
-  let preCriteriaJSON=Data(#"{"saved":["legacy-criteria"],"statuses":{"legacy-criteria":"Applied"},"snapshots":{"legacy-criteria":{"id":"legacy-criteria","title":"Procurement Manager","company":"Johnson & Johnson","location":"Saudi Arabia","url":"https://www.careers.jnj.com/job","posted":"","fit":"Needs review","summary":"Retained application"}},"profile":{"years":"8","degree":"Legacy degree","skills":"Legacy skills","achievements":"Legacy achievement"},"completed":["cv"]}"#.utf8)
+  let preCriteriaJSON=Data(#"{"saved":["legacy-criteria"],"statuses":{"legacy-criteria":"Applied"},"snapshots":{"legacy-criteria":{"id":"legacy-criteria","title":"Software Developer","company":"Johnson & Johnson","location":"Saudi Arabia","url":"https://www.careers.jnj.com/job","posted":"","fit":"Needs review","summary":"Retained application"}},"profile":{"years":"8","degree":"Legacy degree","skills":"Legacy skills","achievements":"Legacy achievement"},"completed":["cv"]}"#.utf8)
   let preCriteriaURL=root.appendingPathComponent("pre-criteria.json")
   try preCriteriaJSON.write(to:preCriteriaURL)
   let preCriteriaStore=NativeCareerStore(researchURL:researchURL,storageURL:preCriteriaURL)
@@ -313,7 +313,7 @@ import Combine
   assert(recoveryReload.isUnrefreshed(unknown) && recoveryReload.liveJobs[0].lastCheckedAt==oldStamp)
   let evidenceNote=recovery.note(for:unknown)
   assert(evidenceNote.contains(oldStamp) && evidenceNote.contains("2099-12-31"))
-  for invalidExclusions:[Any] in [[""], [String(repeating:"x",count:257)], Array(repeating:"x",count:21), [1]] {
+  for invalidExclusions:[Any] in [[""], [String(repeating:"x",count:257)], Array(repeating:"x",count:501), [1]] {
    recovery.acceptLive(["checkedAt":"2026-10-09T00:50:00Z","jobs":[],"sources":[["name":lead.company,"ok":true,"count":0,"excludedIds":invalidExclusions]]])
    assert(recovery.workspace.live?.checkedAt==attemptStamp && recovery.searchError != nil)
   }

@@ -6,7 +6,7 @@ struct AhmadCareerApp: App {
     @StateObject private var nativeStore = NativeCareerStore()
     #endif
     var body: some Scene {
-        WindowGroup("Ahmad Career") {
+        WindowGroup("Saleh Career Finder") {
             #if os(iOS)
             NativeCareerRoot().environmentObject(nativeStore)
             #else
@@ -26,7 +26,7 @@ private struct CareerWorkspace: View {
     var body: some View {
         NavigationStack {
             CareerWebView(reloadID: reloadID)
-                .navigationTitle("Ahmad Career")
+                .navigationTitle("Saleh Career Finder")
                 #if os(iOS)
                 .navigationBarTitleDisplayMode(.inline)
                 #endif

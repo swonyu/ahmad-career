@@ -16,6 +16,9 @@ precondition(route("file:///Applications/Ahmad%20Career.app/Contents/Resources/W
 precondition(route("file://remote.example/Applications/Ahmad%20Career.app/Contents/Resources/Web/index.html") == .blocked)
 precondition(route("https://careers.example.com/job/1") == .external)
 precondition(route("http://careers.example.com/job/1") == .external)
+precondition(route("https://careers.example.com/job/1", tapped: false) == .blocked)
+precondition(route("http://careers.example.com/job/1", tapped: false) == .blocked)
+precondition(route("https://user:password@careers.example.com/job/1") == .blocked)
 precondition(route("mailto:hello@example.com") == .external)
 precondition(route("mailto:hello@example.com", tapped: false) == .blocked)
 precondition(route("javascript:alert(1)") == .blocked)
@@ -27,7 +30,7 @@ let source = WorkdaySource(name: "Employer", host: "example.myworkdayjobs.com", 
 let path = "/job/Saudi-Arabia/Procurement-Lead_R123"
 let now = ISO8601DateFormatter().date(from: "2026-10-08T10:00:00Z")!
 var detail: [String: Any] = [
-    "title": "Procurement Lead", "location": "Riyadh, Saudi Arabia",
+    "title": "Software Developer", "location": "Riyadh, Saudi Arabia",
     "country": ["descriptor": "Saudi Arabia"], "canApply": true,
     "jobReqId": "R123", "startDate": "2026-10-01", "endDate": "2026-10-09",
     "externalUrl": "https://example.myworkdayjobs.com/en-US/careers/job/Saudi-Arabia/Procurement-Lead_R123"
@@ -58,7 +61,7 @@ detail["title"] = "Clinical Scientist"
 precondition(CareerFeed.job(detail, externalPath: path, source: source, now: now) == nil)
 print("PASS: fixed employer URLs, live-job eligibility, expiry, and unknown-salary handling")
 
-var qiddiya: [String: Any] = ["shortcode": "ABC123", "title": "Healthcare Performance Manager", "location": ["city": "Riyadh", "country": "Saudi Arabia", "countryCode": "SA"], "state": "published", "isInternal": false, "published": "2026-10-01T09:00:00Z"]
+var qiddiya: [String: Any] = ["shortcode": "ABC123", "title": "Software Developer", "location": ["city": "Riyadh", "country": "Saudi Arabia", "countryCode": "SA"], "state": "published", "isInternal": false, "published": "2026-10-01T09:00:00Z"]
 precondition(CareerFeed.qiddiyaJob(qiddiya, now: now)?["id"] as? String == "qiddiya-ABC123")
 qiddiya["published"] = "2027-01-01T09:00:00Z"
 precondition(CareerFeed.qiddiyaJob(qiddiya, now: now) == nil)
@@ -73,23 +76,23 @@ qiddiya["shortcode"] = "../other"
 precondition(CareerFeed.qiddiyaJob(qiddiya, now: now) == nil)
 print("PASS: Qiddiya public Saudi listing boundaries and future-date exclusion")
 
-for title in ["Supplier Manager", "Purchasing Lead", "Demand Planner", "Supply Planning Manager", "Inventory Manager", "Continuous Improvement Lead", "Transformation Director", "Operations Manager"] {
+for title in ["Software Developer", "Junior Python Developer", "Graduate Software Engineer", "AI Intern", "Data Analyst", "QA Engineer", "Automation Engineer", "Machine Learning Engineer"] {
     precondition(CareerFeed.relevant(title), "Relevant title must be included: \(title)")
 }
-for title in ["Supply Chain Intern", "Procurement Internship", "Procurement Trainee", "Supply Chain Graduate", "Sales Operations Manager", "Account Manager, Procurement", "Clinical Supply Chain Manager", "Procurement Chemist", "Supply Chain Scientist", "Procurement Engineer", "Financial Analyst - Supply Chain", "QA-RA Operations Manager", "Healthcare Director"] {
+for title in ["Supply Chain Manager", "Senior Software Engineer", "Software Engineering Manager", "Lead Developer", "Clinical Scientist", "Sales Engineer", "Financial Analyst"] {
     precondition(!CareerFeed.relevant(title), "Mismatched title must be excluded: \(title)")
 }
 qiddiya["shortcode"] = "ABC123"
 qiddiya["title"] = "Healthcare Director"
 precondition(CareerFeed.qiddiyaJob(qiddiya, now: now) == nil, "Healthcare alone must not qualify a Qiddiya role")
 print("PASS: web-aligned title relevance and clinical/qualification mismatch exclusions")
-precondition(CareerFeed.relevant("Regulatory Operations Manager") && CareerFeed.relevant("Operation Manager"))
+precondition(CareerFeed.relevant("Junior Software Developer") && CareerFeed.relevant("Graduate Data Analyst"))
 
 
 precondition(!CareerFeed.relevant("Early-in-Career Supply Chain Programme"))
 precondition(!CareerFeed.relevant("Early Career Procurement Programme"))
-precondition(CareerFeed.relevant("Business Value Partner"))
-detail["title"] = "Business Value Partner"
+precondition(CareerFeed.relevant("Software Developer"))
+detail["title"] = "Software Developer"
 detail["location"] = "2 Locations"
 detail["startDate"] = "2026-10-01"
 detail["posted"] = true
@@ -104,12 +107,12 @@ precondition(CareerFeed.job(detail, externalPath: path, source: source, now: now
 print("PASS: cross-platform IDs, early-career exclusion, posted/start-date gates, and explicit Saudi geography")
 
 // Country must outweigh job-title text in a URL slug.
-detail["title"]="Supply Chain Manager"
+detail["title"]="Software Developer"
 detail["location"]="Dubai"
 detail["country"]=["descriptor":"United Arab Emirates"]
 detail["startDate"]="2026-10-01"
 precondition(CareerFeed.job(detail, externalPath:"/job/Dubai/Supply-Chain-Manager-Saudi-Market_R123", source:source, now:now)==nil)
-qiddiya["title"]="Procurement Manager"
+qiddiya["title"]="Software Developer"
 qiddiya["location"]=["city":"Tabuk","countryCode":"SA"]
 precondition((CareerFeed.qiddiyaJob(qiddiya,now:now)?["location"] as? String)?.contains("Saudi Arabia")==true)
 print("PASS: authoritative Saudi country evidence, foreign title-slug rejection and Tabuk retention")
@@ -133,7 +136,7 @@ precondition(CareerFeed.job(detail,externalPath:path,source:source,now:now) != n
 detail["canApply"]=1
 precondition(CareerFeed.job(detail,externalPath:path,source:source,now:now)==nil,"A JSON number is not application permission")
 detail["canApply"]=true
-detail["title"]="Business Value Partner"
+detail["title"]="Software Developer"
 let healthcare=CareerFeed.job(detail,externalPath:path,source:CareerFeed.sources[0],now:now)
 precondition(healthcare?["healthcare"] as? Bool == true && healthcare?["leadership"] as? Bool == false)
 precondition(CareerFeed.isoDate("2026-10-01T00:00:00Z\n") == nil)
@@ -181,13 +184,13 @@ final class EmployerFixture: URLProtocol {
             if scenario == "qiddiyaAllFailed" || query == "procurement" {
                 status = 503; body = [:]
             } else {
-                let rows: [[String: Any]] = query == "healthcare" ? [["shortcode": "TEST123", "title": "Procurement Manager", "location": ["city": "Riyadh", "countryCode": "SA"], "state": "published", "isInternal": false, "published": "2020-01-01T00:00:00Z"]] : []
+                let rows: [[String: Any]] = query == "healthcare" ? [["shortcode": "TEST123", "title": "Software Developer", "location": ["city": "Riyadh", "countryCode": "SA"], "state": "published", "isInternal": false, "published": "2020-01-01T00:00:00Z"]] : []
                 body = ["results": rows]
             }
         } else if path.hasSuffix("/jobs") {
-            body = ["total": 2, "jobPostings": [["title": "Procurement Manager", "externalPath": "/job/Riyadh/Procurement_R1"], ["title": "Procurement Manager", "externalPath": "/job/Riyadh/Procurement_R2"]]]
+            body = ["total": 2, "jobPostings": [["title": "Software Developer", "externalPath": "/job/Riyadh/Procurement_R1"], ["title": "Software Developer", "externalPath": "/job/Riyadh/Procurement_R2"]]]
             if scenario == "badListing" {body=["total":1,"jobPostings":[[:]]]}
-            if scenario == "mixedListing" {body=["total":2,"jobPostings":[["title":"Procurement Manager","externalPath":"/job/Riyadh/Procurement_R1"],[:]]]}
+            if scenario == "mixedListing" {body=["total":2,"jobPostings":[["title":"Software Developer","externalPath":"/job/Riyadh/Procurement_R1"],[:]]]}
             if scenario == "emptyListing" {body=["total":0,"jobPostings":[]]}
             if scenario == "positiveEmpty" {body=["total":2,"jobPostings":[]]}
             if scenario == "understatedTotal" {body["total"]=1}
@@ -196,9 +199,9 @@ final class EmployerFixture: URLProtocol {
         } else if scenario == "allFailed" || (scenario == "partial" && path.hasSuffix("R2")) {
             status = 503; body = [:]
         } else {
-            body = ["jobPostingInfo": ["title": "Procurement Manager", "location": "Riyadh", "country": ["descriptor": "Saudi Arabia"], "canApply": scenario != "closed", "jobReqId": path.hasSuffix("R1") ? "R1" : "R2", "startDate": "2020-01-01"]]
+            body = ["jobPostingInfo": ["title": "Software Developer", "location": "Riyadh", "country": ["descriptor": "Saudi Arabia"], "canApply": scenario != "closed", "jobReqId": path.hasSuffix("R1") ? "R1" : "R2", "startDate": "2020-01-01"]]
             if scenario == "malformed" || (scenario == "mixedMalformed" && path.hasSuffix("R2")) { body = ["jobPostingInfo": [:]] }
-            if scenario == "missingID" { body = ["jobPostingInfo": ["title":"Procurement Manager","canApply":true,"location":"Riyadh"]] }
+            if scenario == "missingID" { body = ["jobPostingInfo": ["title":"Software Developer","canApply":true,"location":"Riyadh"]] }
         }
         let response = HTTPURLResponse(url: request.url!, statusCode: status, httpVersion: "HTTP/1.1", headerFields: ["Content-Type": "application/json"])!
         let bytes = try! JSONSerialization.data(withJSONObject: body)

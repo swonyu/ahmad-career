@@ -5,8 +5,8 @@ const C=globalThis.CareerCore;
 const source=SOURCES[0];
 const now=new Date();
 const yesterday=new Date(now-86400000).toISOString().slice(0,10);
-const listing={title:'Supply Chain Manager',externalPath:'/job/Tabuk/Supply-Chain-Manager_REQ',locationsText:'Tabuk'};
-const detail={title:'Supply Chain Manager',jobReqId:'REQ',canApply:true,posted:true,country:{descriptor:'Saudi Arabia'},location:'Tabuk',startDate:yesterday};
+const listing={title:'Software Developer',externalPath:'/job/Tabuk/Supply-Chain-Manager_REQ',locationsText:'Tabuk'};
+const detail={title:'Software Developer',jobReqId:'REQ',canApply:true,posted:true,country:{descriptor:'Saudi Arabia'},location:'Tabuk',startDate:yesterday};
 const response=value=>({ok:true,status:200,text:async()=>JSON.stringify(value),json:async()=>value});
 const workday=(info=detail,posting=listing)=>async(url,options)=>{
   if(url.endsWith('/jobs'))return response({jobPostings:[posting],total:1});
@@ -87,18 +87,18 @@ await test('An expired timestamp is removed and today\'s published timestamp is 
 await test('One failed Qiddiya query retains validated results from the other queries',async()=>{
   const result=await workableSource(async(url,options)=>{
     const {query}=JSON.parse(options.body);if(query==='performance')throw Error('Offline');
-    return response({results:[{state:'published',isInternal:false,shortcode:'GOOD1',title:'Procurement Manager',location:{countryCode:'SA',city:'Tabuk'},published:new Date(now-3600000).toISOString()}]});
+    return response({results:[{state:'published',isInternal:false,shortcode:'GOOD1',title:'Software Developer',location:{countryCode:'SA',city:'Tabuk'},published:new Date(now-3600000).toISOString()}]});
   });
   assert.equal(result.jobs.length,1);assert.equal(result.source.ok,true);assert.equal(result.source.queryErrors,1);assert.match(result.source.error,/incomplete|failed/i);
 });
 await test('Future Qiddiya publication and malformed codes are rejected',async()=>{
   const result=await workableSource(async()=>response({results:[
-    {state:'published',isInternal:false,shortcode:'FUTURE1',title:'Procurement Manager',location:{countryCode:'SA',city:'Riyadh'},published:new Date(now.getTime()+60000).toISOString()},
-    {state:'published',isInternal:false,shortcode:'../other',title:'Procurement Manager',location:{countryCode:'SA',city:'Riyadh'},published:new Date(now-60000).toISOString()}
+    {state:'published',isInternal:false,shortcode:'FUTURE1',title:'Software Developer',location:{countryCode:'SA',city:'Riyadh'},published:new Date(now.getTime()+60000).toISOString()},
+    {state:'published',isInternal:false,shortcode:'../other',title:'Software Developer',location:{countryCode:'SA',city:'Riyadh'},published:new Date(now-60000).toISOString()}
   ]}));assert.equal(result.jobs.length,0);
 });
 await test('Malformed listing rows are failures while genuine empty boards succeed',async()=>{
-  for(const bad of [{},null,{title:7},{title:'  '},{title:'Procurement Manager',externalPath:'/evil'}]){
+  for(const bad of [{},null,{title:7},{title:'  '},{title:'Software Developer',externalPath:'/evil'}]){
     const result=await workdaySource(source,async url=>url.endsWith('/jobs')?response({jobPostings:[bad],total:1}):response({jobPostingInfo:detail}));
     assert.equal(result.source.ok,false);assert.equal(result.source.detailErrors,1);
   }

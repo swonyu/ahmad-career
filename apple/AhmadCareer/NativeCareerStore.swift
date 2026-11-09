@@ -12,8 +12,13 @@ struct CareerJob: Codable, Identifiable, Hashable {
     var fit: String
     var summary: String
     var rank: Int?
+    var relevance: Int?
     var subtitle: String?
     var mode: String?
+    var postedKind: String?
+    var experienceLevel: String?
+    var employmentType: String?
+    var requirementNotes: [String]?
     var closes: String?
     var applyUrl: String?
     var sourceUrl: String?
@@ -26,6 +31,12 @@ struct CareerJob: Codable, Identifiable, Hashable {
     var lastCheckedAt: String?
     var researchCheckedAt: String?
 
+    var publicationLabel:String {postedKind=="last-published" ? "Last published" : "Published"}
+    var validEmployerMetadata:Bool {
+        (postedKind==nil || ["published","last-published"].contains(postedKind!)) &&
+        (experienceLevel?.utf16.count ?? 0)<=100 && (employmentType?.utf16.count ?? 0)<=100 &&
+        (requirementNotes?.count ?? 0)<=6 && (requirementNotes?.allSatisfy{$0.utf16.count<=300} ?? true)
+    }
     var initials: String { company == "Johnson & Johnson" ? "J&J" : String(company.prefix(1)) }
     var isSaudi: Bool { location.range(of: "Saudi|Riyadh|Jeddah|Dammam|Khobar|\\bSAU\\b|الرياض|جدة|السعودية", options: [.regularExpression,.caseInsensitive]) != nil }
     var hasRiyadhEvidence:Bool { location.replacingOccurrences(of:"\\briyadh\\s+(?:region|province)\\b|(?:منطقة|إقليم)\\s+الرياض",with:"",options:[.regularExpression,.caseInsensitive]).range(of:"(?:^|[^\\p{L}])(?:riyadh|الرياض)(?=$|[^\\p{L}])",options:[.regularExpression,.caseInsensitive]) != nil }
@@ -39,9 +50,12 @@ struct CareerJob: Codable, Identifiable, Hashable {
     var requirements: [String] { gaps ?? ["Confirm the complete degree, experience, location and seniority requirements on the employer website.","This lead was found by title and location. It has not had the full review of the researched shortlist."] }
     var applicationSteps: [[String]] { (steps ?? [["Read the official description","Check that the position is open and compare all mandatory requirements."],["Tailor your evidence","Use two actual achievements relevant to the responsibilities."],["Apply personally","Open the employer application, review your answers and attachments, then submit when ready."],["Keep the confirmation","Save the acknowledgement and update your application status."]]).filter { $0.count >= 2 } }
     static func safeURL(_ value: String) -> URL? {
-        let hosts: Set<String> = ["apply.workable.com","alcon.wd5.myworkdayjobs.com","jj.wd5.myworkdayjobs.com","roche.wd3.myworkdayjobs.com","novartis.wd3.myworkdayjobs.com","gsk.wd5.myworkdayjobs.com","bdx.wd1.myworkdayjobs.com","www.careers.jnj.com","eenp.fa.em3.oraclecloud.com","efan.fa.em3.oraclecloud.com","careers.al-dawaa.com","www.linkedin.com","sa.linkedin.com"]
+        let hosts: Set<String> = ["apply.workable.com","alcon.wd5.myworkdayjobs.com","jj.wd5.myworkdayjobs.com","roche.wd3.myworkdayjobs.com","novartis.wd3.myworkdayjobs.com","gsk.wd5.myworkdayjobs.com","bdx.wd1.myworkdayjobs.com","www.careers.jnj.com","eenp.fa.em3.oraclecloud.com","efan.fa.em3.oraclecloud.com","careers.al-dawaa.com","www.linkedin.com","sa.linkedin.com","jobs.ashbyhq.com","job-boards.eu.greenhouse.io","jobs.unifonic.com"]
         guard let u=URL(string:value), u.scheme == "https", let host=u.host?.lowercased(), hosts.contains(host), u.user == nil, u.password == nil, u.port == nil || u.port == 443 else { return nil }
-        if host == "apply.workable.com", u.path.range(of:"^/qiddiya-investment-company-1/j/[A-Za-z0-9]+(?:/apply)?/?$",options:.regularExpression)==nil {return nil}
+        if host == "apply.workable.com", u.path.range(of:"^/(qiddiya-investment-company-1|mozn-ai|lucidya|foodics|salla)/j/[A-Za-z0-9]{1,64}(?:/apply)?/?$",options:.regularExpression)==nil {return nil}
+        if host == "jobs.ashbyhq.com", u.path.range(of:#"^/LeanTech/[a-f0-9-]{36}(?:/application)?/?$"#,options:[.regularExpression,.caseInsensitive])==nil {return nil}
+        if host == "job-boards.eu.greenhouse.io", u.path.range(of:#"^/tamara/jobs/[0-9]{1,20}/?$"#,options:.regularExpression)==nil {return nil}
+        if host == "jobs.unifonic.com", u.path.range(of:#"^/o/[a-z0-9][a-z0-9-]{0,199}/?$"#,options:[.regularExpression,.caseInsensitive])==nil {return nil}
         if host.hasSuffix(".oraclecloud.com"), u.path.range(of:"^/hcmUI/CandidateExperience/en/sites/CX_1/job/[0-9]+/?$",options:.regularExpression)==nil {return nil}
         if host == "careers.al-dawaa.com", !u.path.hasPrefix("/en/saudi-arabia/jobs/") {return nil}
         if host == "www.linkedin.com" || host == "sa.linkedin.com", u.path.range(of:"^/jobs/view/(?:[A-Za-z0-9-]+-)?[0-9]+/?$",options:.regularExpression)==nil {return nil}
@@ -53,6 +67,31 @@ struct CareerJob: Codable, Identifiable, Hashable {
         if value.count == 10 { return value < (today ?? CareerFeed.saudiDay(Date())) }
         return instant < Date()
     }
+}
+struct NativeDiscoveryOptions: Equatable {
+    var company=""
+    var days=0
+    var employmentType=""
+    var hideTracked=false
+    var isActive:Bool {!company.isEmpty || days != 0 || !employmentType.isEmpty || hideTracked}
+    func includes(_ job:CareerJob,tracked:Bool=false,now:Date=Date())->Bool {
+        guard company.isEmpty || job.company==company,employmentType.isEmpty || job.employmentType==employmentType,!hideTracked || !tracked else{return false}
+        if days>0 {
+            guard let age=Self.ageInSaudiDays(job.posted,now:now),age>=0,age<days else{return false}
+        }
+        return true
+    }
+    static func ageInSaudiDays(_ value:String,now:Date=Date())->Int? {
+        guard let parsed=CareerFeed.parsedDate(value) else{return nil}
+        var calendar=Calendar(identifier:.gregorian)
+        calendar.timeZone=TimeZone(identifier:"Asia/Riyadh")!
+        return calendar.dateComponents([.day],from:calendar.startOfDay(for:parsed),to:calendar.startOfDay(for:now)).day
+    }
+}
+struct NativeApplicationGroup:Identifiable {
+    var status:String
+    var jobs:[CareerJob]
+    var id:String {status}
 }
 struct PublicProfile: Codable { var name,role,organization,location,url:String; var facts,unknowns:[String] }
 struct CareerResearch: Codable { var checkedAt:String;var jobs:[CareerJob];var profile:PublicProfile }
@@ -92,8 +131,61 @@ struct NativeProfile: Codable, Equatable {
         return city+" · Minimum SAR \(Int(amount).formatted())/month · "+(hidesUnverifiedSalary ? "Unverified salaries hidden" : "Unverified salaries shown")
     }
 }
-struct EmployerStatus: Codable { var name:String;var ok:Bool;var count:Int;var scanned:Int?;var limited:Bool?;var error:String?;var detailErrors:Int?;var excludedIds:[String]?;var incomplete:Bool {!ok || (detailErrors ?? 0)>0 || !(error ?? "").isEmpty} }
-struct LiveSnapshot: Codable { var checkedAt:String;var jobs:[CareerJob];var sources:[EmployerStatus] }
+struct EmployerStatus: Codable { var name:String;var ok:Bool;var count:Int;var scanned:Int?;var limited:Bool?;var error:String?;var detailErrors:Int?;var excludedIds:[String]?;var incomplete:Bool {!ok || limited == true || (detailErrors ?? 0)>0 || !(error ?? "").isEmpty} }
+// Local comparison of consecutive result lists, never a claim about a vacancy's creation date.
+struct SearchComparison: Codable, Equatable {
+    var schema=1
+    var previousCheckedAt:String?
+    var checkedAt:String
+    var addedIds:[String]
+    private enum CodingKeys:String,CodingKey {case schema,previousCheckedAt,checkedAt,addedIds}
+    init(previousCheckedAt:String?,checkedAt:String,addedIds:[String]) {
+        self.previousCheckedAt=previousCheckedAt;self.checkedAt=checkedAt;self.addedIds=addedIds
+    }
+    init(from decoder:Decoder)throws {
+        let values=try decoder.container(keyedBy:CodingKeys.self)
+        schema=try values.decode(Int.self,forKey:.schema)
+        guard values.contains(.previousCheckedAt) else {throw CocoaError(.coderInvalidValue)}
+        previousCheckedAt=try values.decodeIfPresent(String.self,forKey:.previousCheckedAt)
+        checkedAt=try values.decode(String.self,forKey:.checkedAt)
+        addedIds=try values.decode([String].self,forKey:.addedIds)
+    }
+    func encode(to encoder:Encoder)throws {
+        var values=encoder.container(keyedBy:CodingKeys.self)
+        try values.encode(schema,forKey:.schema)
+        try values.encode(previousCheckedAt,forKey:.previousCheckedAt)
+        try values.encode(checkedAt,forKey:.checkedAt)
+        try values.encode(addedIds,forKey:.addedIds)
+    }
+    func valid(checkedAt:String,jobs:[CareerJob])->Bool {
+        guard schema==1,let fetched=CareerFeed.isoDate(self.checkedAt),let checked=CareerFeed.isoDate(checkedAt),fetched==checked,
+              addedIds.count<=1000,Set(addedIds).count==addedIds.count,
+              addedIds.allSatisfy({!$0.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty && $0.utf16.count<=256}),
+              Set(addedIds).isSubset(of:Set(jobs.map(\.id))) else {return false}
+        if let previousCheckedAt {guard let previous=CareerFeed.isoDate(previousCheckedAt),previous<fetched else {return false}}
+        else if !addedIds.isEmpty {return false}
+        return true
+    }
+}
+struct LiveSnapshot: Codable {
+    var checkedAt:String
+    var jobs:[CareerJob]
+    var sources:[EmployerStatus]
+    var searchComparison:SearchComparison?
+    init(checkedAt:String,jobs:[CareerJob],sources:[EmployerStatus],searchComparison:SearchComparison?=nil) {
+        self.checkedAt=checkedAt;self.jobs=jobs;self.sources=sources;self.searchComparison=searchComparison
+    }
+    private enum CodingKeys:String,CodingKey {case checkedAt,jobs,sources,searchComparison}
+    init(from decoder:Decoder)throws {
+        let values=try decoder.container(keyedBy:CodingKeys.self)
+        checkedAt=try values.decode(String.self,forKey:.checkedAt)
+        jobs=try values.decode([CareerJob].self,forKey:.jobs)
+        sources=try values.decode([EmployerStatus].self,forKey:.sources)
+        // Optional view metadata cannot make saved jobs or application history unreadable.
+        let candidate=try? values.decode(SearchComparison.self,forKey:.searchComparison)
+        searchComparison=candidate?.valid(checkedAt:checkedAt,jobs:jobs)==true ? candidate : nil
+    }
+}
 struct NativeWorkspace: Codable {
     var saved=Set<String>()
     var statuses=[String:String]()
@@ -127,6 +219,46 @@ struct ApplicationRecordDraft {
     var receiptNote=""
     var dirty:Bool {appliedAt != (base?.appliedAt ?? "") || receiptNote != (base?.receiptNote ?? "")}
 }
+// Private, user-entered planning is separate from application evidence and its schema.
+struct NextActionRecord: Codable, Equatable {
+    var schema=1
+    var jobId:String
+    var dueOn=""
+    var actionNote=""
+    var completed=false
+    var updatedAt:String
+    var meaningful:Bool {!actionNote.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty}
+    func valid(for id:String)->Bool {
+        guard schema==1,jobId==id,!id.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,
+              id.utf16.count<=256,!["__proto__","constructor","prototype"].contains(id),
+              actionNote.unicodeScalars.count<=500,
+              let edited=CareerFeed.isoDate(updatedAt),ApplicationRecord.timestamp(edited)==updatedAt,
+              dueOn.isEmpty || dueOn.range(of:"^[0-9]{4}-[0-9]{2}-[0-9]{2}$",options:.regularExpression) != nil && dueOn.count==10 && CareerFeed.parsedDate(dueOn) != nil else {return false}
+        return meaningful || dueOn.isEmpty && !completed
+    }
+    func group(at now:Date)->String {
+        if completed {return "Completed"}
+        if dueOn.isEmpty {return "No due date"}
+        let today=CareerFeed.saudiDay(now)
+        var calendar=Calendar(identifier:.gregorian);calendar.timeZone=TimeZone(identifier:"Asia/Riyadh")!
+        let last=CareerFeed.saudiDay(calendar.date(byAdding:.day,value:7,to:now)!)
+        return dueOn<today ? "Overdue" : dueOn==today ? "Today" : dueOn<=last ? "Next 7 days" : "Upcoming"
+    }
+}
+struct NextActionDraft {
+    var job:CareerJob?
+    var base:NextActionRecord?
+    var dueOn=""
+    var actionNote=""
+    var completed=false
+    var dirty:Bool {dueOn != (base?.dueOn ?? "") || actionNote != (base?.actionNote ?? "") || completed != (base?.completed ?? false)}
+}
+struct NextActionGroup:Identifiable {
+    var title:String
+    var jobs:[CareerJob]
+    var id:String {title}
+}
+
 struct ApplicationAttention: Identifiable {
     var job:CareerJob
     var kind:String
@@ -134,25 +266,34 @@ struct ApplicationAttention: Identifiable {
     var deadline:Date?
     var id:String {job.id+":"+kind}
     var title:String {
-        kind=="requirements" ? "Review the role requirements" : kind=="applied-date" ? "Application date not recorded — add it if known" : order==0 ? "Past listed deadline — verify employer status" : "Recheck listed deadline"
+        kind=="uncertain" ? "Verify the employer account or receipt before retrying" : kind=="requirements" ? "Review the role requirements" : kind=="applied-date" ? "Application date not recorded — add it if known" : order==0 ? "Past listed deadline — verify employer status" : "Recheck listed deadline"
     }
 }
 
 @MainActor final class NativeCareerStore: ObservableObject {
-    static let statuses=["Not started","Preparing","Applied","Interviewing","Offer received","Closed / not pursuing"]
+    static let statuses=["Not started","Preparing","Submission uncertain","Applied","Interviewing","Offer received","Closed / not pursuing"]
+    #if CAREER_PREVIEW
+    static let storageDirectoryName="CareerFinderPreview"
+    #else
+    static let storageDirectoryName="AhmadCareer"
+    #endif
     let research:CareerResearch
     @Published private(set) var workspace=NativeWorkspace()
     @Published var isSearching=false
     @Published var searchError:String?
+    @Published var searchNotice:String?
     @Published var storageError:String?
     @Published private(set) var applicationRecords=[String:ApplicationRecord]()
     @Published private(set) var recordDrafts=[String:ApplicationRecordDraft]()
     @Published private(set) var recordErrors=[String:String]()
+    @Published private(set) var nextActions=[String:NextActionRecord]()
+    @Published private(set) var nextActionDrafts=[String:NextActionDraft]()
+    @Published private(set) var nextActionErrors=[String:String]()
     private let storageURL:URL
     private var canWrite=true
 
     init(researchURL:URL? = Bundle.main.url(forResource:"CareerResearch",withExtension:"json"), storageURL:URL? = nil) {
-        self.storageURL=storageURL ?? FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask)[0].appendingPathComponent("AhmadCareer/native-workspace.json")
+        self.storageURL=storageURL ?? FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask)[0].appendingPathComponent(Self.storageDirectoryName).appendingPathComponent("native-workspace.json")
         do {
             guard let researchURL else { throw CocoaError(.fileNoSuchFile) }
             var loaded=try JSONDecoder().decode(CareerResearch.self,from:Data(contentsOf:researchURL))
@@ -162,7 +303,7 @@ struct ApplicationAttention: Identifiable {
             }
             research=loaded
         } catch {
-            research=CareerResearch(checkedAt:"Unavailable",jobs:[],profile:PublicProfile(name:"Ahmad Alayed",role:"Healthcare supply chain",organization:"",location:"Saudi Arabia",url:"https://www.linkedin.com/in/ahmad-alayed-b91185b3",facts:[],unknowns:["The bundled research could not be loaded. Rebuild the app with CareerResearch.json."]))
+            research=CareerResearch(checkedAt:"Unavailable",jobs:[],profile:PublicProfile(name:"Your name",role:"Your professional focus",organization:"",location:"",url:"",facts:[],unknowns:["The bundled research could not be loaded. Rebuild the app with CareerResearch.json."]))
             storageError="The research bundle is missing or unreadable."
         }
         if FileManager.default.fileExists(atPath:self.storageURL.path) {
@@ -189,6 +330,7 @@ struct ApplicationAttention: Identifiable {
         return value
     }
     func reloadApplicationRecords() {
+        reloadNextActions()
         for job in allJobs {
             do {applicationRecords[job.id]=try readApplicationRecord(job.id);recordErrors[job.id]=nil}
             catch {recordErrors[job.id]="Stored application metadata could not be read. Original data is preserved; record saving is blocked."}
@@ -224,14 +366,90 @@ struct ApplicationAttention: Identifiable {
             return true
         } catch {recordErrors[id]="The record could not be read or saved. Original data and your session draft are preserved.";return false}
     }
-    var recordJobs:[CareerJob] {allJobs.filter{status(for:$0) != "Not started" || applicationRecords[$0.id]?.meaningful==true}}
+    private func nextActionURL(_ id:String)->URL {
+        let filename=SHA256.hash(data:Data(id.utf8)).map{String(format:"%02x",$0)}.joined()
+        return storageURL.appendingPathExtension("next-action-v1").appendingPathComponent(filename+".json")
+    }
+    private func readNextAction(_ id:String)throws->NextActionRecord? {
+        let url=nextActionURL(id)
+        guard FileManager.default.fileExists(atPath:url.path) else {return nil}
+        let data=try Data(contentsOf:url)
+        guard let object=try JSONSerialization.jsonObject(with:data) as? [String:Any],
+              Set(object.keys)==Set(["schema","jobId","dueOn","actionNote","completed","updatedAt"]) else {throw CocoaError(.coderInvalidValue)}
+        let value=try JSONDecoder().decode(NextActionRecord.self,from:data)
+        guard value.valid(for:id) else {throw CocoaError(.coderInvalidValue)}
+        return value
+    }
+    func reloadNextActions() {
+        for job in allJobs {
+            do {nextActions[job.id]=try readNextAction(job.id);nextActionErrors[job.id]=nil}
+            catch {nextActionErrors[job.id]="Stored next action could not be read. Original data is preserved; saving is blocked."}
+        }
+    }
+    func beginNextAction(_ job:CareerJob,discardDraft:Bool=false) {
+        let id=job.id
+        if nextActionDrafts[id]?.dirty==true && !discardDraft {return}
+        do {nextActions[id]=try readNextAction(id);nextActionErrors[id]=nil}
+        catch {nextActionErrors[id]="Stored next action could not be read. Original data is preserved; saving is blocked."}
+        let base=nextActions[id]
+        nextActionDrafts[id]=NextActionDraft(job:current(job),base:base,dueOn:base?.dueOn ?? "",actionNote:base?.actionNote ?? "",completed:base?.completed ?? false)
+    }
+    func editNextAction(_ job:CareerJob,dueOn:String,actionNote:String,completed:Bool) {
+        if nextActionDrafts[job.id]==nil {beginNextAction(job)}
+        nextActionDrafts[job.id]?.dueOn=dueOn;nextActionDrafts[job.id]?.actionNote=actionNote;nextActionDrafts[job.id]?.completed=completed
+    }
+    @discardableResult func saveNextAction(_ job:CareerJob)->Bool {
+        let id=job.id
+        guard let draft=nextActionDrafts[id] else {return false}
+        let value=NextActionRecord(jobId:id,dueOn:draft.dueOn,actionNote:draft.actionNote,completed:draft.completed,updatedAt:ApplicationRecord.timestamp(Date()))
+        guard value.valid(for:id) else {nextActionErrors[id]="Use a real YYYY-MM-DD due date or leave it blank, and a note up to 500 Unicode characters. A due date or completed action needs a nonblank note.";return false}
+        do {
+            // MainActor serializes app edits; optimistic comparison detects prior external writes, not cross-process locking.
+            guard try readNextAction(id)==draft.base else {nextActionErrors[id]="This next action changed. Your draft is preserved. Export it before reloading the saved version.";return false}
+            var next=workspace;next.snapshots[id]=current(job)
+            guard commit(next) else {nextActionErrors[id]="The opportunity could not be saved. Your next-action draft is preserved.";return false}
+            let url=nextActionURL(id)
+            try FileManager.default.createDirectory(at:url.deletingLastPathComponent(),withIntermediateDirectories:true)
+            try JSONEncoder().encode(value).write(to:url,options:.atomic)
+            nextActions[id]=value;nextActionDrafts[id]?.base=value;nextActionErrors[id]=nil
+            return true
+        } catch {nextActionErrors[id]="The next action could not be read or saved. Original data and your session draft are preserved.";return false}
+    }
+    func nextActionGroups(at now:Date=Date())->[NextActionGroup] {
+        ["Overdue","Today","Next 7 days","Upcoming","No due date","Completed"].map { title in
+            NextActionGroup(title:title,jobs:allJobs.filter {nextActions[$0.id]?.meaningful==true && nextActions[$0.id]?.group(at:now)==title}.sorted {
+                let a=nextActions[$0.id]?.dueOn ?? "",b=nextActions[$1.id]?.dueOn ?? ""
+                return a==b ? $0.id<$1.id : a<b
+            })
+        }.filter{!$0.jobs.isEmpty}
+    }
+    var recordJobs:[CareerJob] {allJobs.filter{hasApplicationRecord($0) || nextActions[$0.id]?.meaningful==true || nextActionErrors[$0.id] != nil}}
+    func hasApplicationRecord(_ job:CareerJob)->Bool {
+        status(for:job) != "Not started" || applicationRecords[job.id]?.meaningful==true
+    }
+    var applicationGroups:[NativeApplicationGroup] {
+        let order=["Submission uncertain","Preparing","Applied","Interviewing","Offer received","Closed / not pursuing","Not started"]
+        let other=Set(recordJobs.map{status(for:$0)}).subtracting(order).sorted()
+        return (order+other).map{status in NativeApplicationGroup(status:status,jobs:recordJobs.filter{self.status(for:$0)==status})}.filter{!$0.jobs.isEmpty}
+    }
+    func applicationWarnings(for job:CareerJob)->[String] {
+        var messages=[String]()
+        if hasApplicationRecord(job) {
+            messages.append(status(for:job)=="Submission uncertain" ? "Submission is uncertain. Check the employer account or receipt before trying again." : "This role already has a local application record. Review it before applying again.")
+        }
+        let others=allJobs.filter{$0.id != job.id && $0.company.lowercased()==job.company.lowercased() && hasApplicationRecord($0)}
+        if !others.isEmpty {messages.append("You are tracking \(others.count) other role\(others.count==1 ? "" : "s") at \(job.company). Check any company or program application rules. Different roles are not automatically duplicates.")}
+        return messages
+    }
     func attention(at now:Date=Date())->[ApplicationAttention] {Self.attentionFor(allJobs.filter{isSaved($0)||status(for:$0) != "Not started"||applicationRecords[$0.id]?.meaningful==true},statuses:workspace.statuses,records:applicationRecords,now:now)}
     static func attentionFor(_ jobs:[CareerJob],statuses:[String:String],records:[String:ApplicationRecord],now:Date=Date())->[ApplicationAttention] {
         let today=CareerFeed.saudiDay(now),last=CareerFeed.saudiDay(now.addingTimeInterval(7*86400))
         var prompts=[ApplicationAttention]()
         for job in jobs {
             let status=statuses[job.id] ?? "Not started"
-            if ["Applied","Interviewing","Offer received"].contains(status) {
+            if status=="Submission uncertain" {
+                prompts.append(ApplicationAttention(job:job,kind:"uncertain",order:-1))
+            } else if ["Applied","Interviewing","Offer received"].contains(status) {
                 if records[job.id]?.valid(for:job.id,now:now) != true || records[job.id]?.appliedAt.isEmpty != false {prompts.append(ApplicationAttention(job:job,kind:"applied-date",order:2))}
             } else if ["Not started","Preparing"].contains(status) {
                 let closing=job.closes.flatMap(CareerFeed.parsedDate),day=closing.map(CareerFeed.saudiDay)
@@ -248,13 +466,13 @@ struct ApplicationAttention: Identifiable {
         }
     }
     func isCurrentResearch(_ job:CareerJob)->Bool { research.jobs.contains { $0.id == job.id } }
-    private func healthcareLead(_ job:CareerJob)->Bool {
-        CareerFeed.sources.contains { $0.name == job.company } && CareerFeed.relevant(job.title)
+    private func technologyLead(_ job:CareerJob)->Bool {
+        (CareerFeed.sources.contains { $0.name == job.company } || CareerFeed.activeSourceNames.contains(job.company)) && CareerFeed.relevant(job.title)
     }
     private var cachedEmployerJobs:[CareerJob] {cachedEmployerJobs(in:workspace)}
     private func cachedEmployerJobs(in value:NativeWorkspace)->[CareerJob] {
         guard let live=value.live else {return []}
-        return live.jobs.filter { healthcareLead($0) && $0.isSaudi }.map { job in
+        return live.jobs.filter { technologyLead($0) && $0.isSaudi }.map { job in
             var stamped=job;stamped.lastCheckedAt=job.lastCheckedAt ?? live.checkedAt;return stamped
         }
     }
@@ -269,6 +487,13 @@ struct ApplicationAttention: Identifiable {
         return observed<attempted
     }
     var liveJobs:[CareerJob] {cachedEmployerJobs.filter {!$0.isExpired}}
+    var searchComparison:SearchComparison? {workspace.live?.searchComparison}
+    func isAddedToLatestResults(_ job:CareerJob)->Bool {searchComparison?.addedIds.contains(job.id)==true && liveJobs.contains{$0.id==job.id}}
+    var searchChangeSummary:String {
+        guard let comparison=searchComparison else {return workspace.live == nil ? "Run a search to establish a result-list baseline." : "No comparison is recorded for this saved search. Run another search to compare result lists."}
+        guard let previous=comparison.previousCheckedAt else {return "First successful search: baseline saved. No earlier result list is available to compare."}
+        return "\(comparison.addedIds.count) added to the result list since \(previous). Compared with the successful search at \(comparison.checkedAt)."
+    }
     private func factsDate(_ job:CareerJob)->Date? { [job.lastCheckedAt,job.researchCheckedAt].compactMap{$0.flatMap(CareerFeed.parsedDate)}.max() }
     private func retainingEmployerObservation(_ facts:CareerJob,from observations:[CareerJob])->CareerJob {
         var result=facts
@@ -367,28 +592,33 @@ struct ApplicationAttention: Identifiable {
         acceptLive(await CareerFeed.refresh())
     }
     func acceptLive(_ payload:[String:Any],now:Date=Date()) {
+        searchNotice=nil
         do {
             guard let checkedAt=payload["checkedAt"] as? String,let checked=CareerFeed.isoDate(checkedAt),checked<=now.addingTimeInterval(60),
                   let rows=payload["jobs"] as? [Any],rows.count<=1000,
                   let sourceRows=payload["sources"] as? [[String:Any]],sourceRows.count<=20 else {throw CocoaError(.coderInvalidValue)}
             let sources=try sourceRows.map { row -> EmployerStatus in
                 let source=try JSONDecoder().decode(EmployerStatus.self,from:JSONSerialization.data(withJSONObject:row))
-                guard !source.name.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,source.count>=0,(source.scanned ?? 0)>=0,(source.detailErrors ?? 0)>=0,(source.excludedIds?.count ?? 0)<=20,source.excludedIds?.allSatisfy({!$0.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty && $0.count<=256}) ?? true else {throw CocoaError(.coderInvalidValue)}
+                guard !source.name.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,source.count>=0,(source.scanned ?? 0)>=0,(source.detailErrors ?? 0)>=0,(source.excludedIds?.count ?? 0)<=500,source.excludedIds?.allSatisfy({!$0.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty && $0.utf16.count<=256}) ?? true else {throw CocoaError(.coderInvalidValue)}
                 return source
-            }
-            if let previous=workspace.live.flatMap({CareerFeed.isoDate($0.checkedAt)}),checked<previous {
-                searchError="An older employer response was ignored. Previous results are preserved.";return
             }
             guard sources.contains(where:{$0.ok}) else {
                 let failures=sources.map{"\($0.name): \($0.error ?? "unavailable")"}.joined(separator:"\n")
                 searchError="Employer search is unavailable. Previous results are preserved.\n"+failures;return
             }
+            if let previous=workspace.live.flatMap({CareerFeed.isoDate($0.checkedAt)}),checked<=previous {
+                if checked==previous {
+                    searchNotice="No newer search snapshot is available. Results and their original comparison are unchanged."
+                    searchError=workspace.live?.sources.contains(where:{$0.incomplete})==true ? "Some employer checks in the saved search were incomplete. Review source coverage below." : nil
+                } else {searchError="An older employer response was ignored. Previous results are preserved."}
+                return
+            }
             let valid=rows.compactMap { row -> CareerJob? in
                 guard JSONSerialization.isValidJSONObject(row),let data=try? JSONSerialization.data(withJSONObject:row),
                       var job=try? JSONDecoder().decode(CareerJob.self,from:data),
-                      !job.id.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,job.id.count<=256,
+                      !job.id.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,job.id.utf16.count<=256,
                       !job.title.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,
-                      job.applicationURL != nil,job.isSaudi,
+                      job.applicationURL != nil,job.isSaudi,job.validEmployerMetadata,
                       job.posted.isEmpty || CareerFeed.parsedDate(job.posted) != nil,
                       job.closes == nil || job.closes == "" || CareerFeed.parsedDate(job.closes!) != nil else {return nil}
                 job.lastCheckedAt=checkedAt;job.researchCheckedAt=nil;job.rank=nil;job.kind="live"
@@ -397,11 +627,14 @@ struct ApplicationAttention: Identifiable {
             if !rows.isEmpty && valid.isEmpty {searchError="The employer response contained no valid Saudi listings. Previous results are preserved.";return}
             let rejected=rows.count-valid.count
             var seen=Set<String>()
-            var jobs=valid.filter { healthcareLead($0) && CareerFeed.dateIsEligible($0.posted,now:now,closing:false) && CareerFeed.dateIsEligible($0.closes ?? "",now:now,closing:true) && seen.insert($0.id).inserted }
+            var jobs=valid.filter { technologyLead($0) && CareerFeed.dateIsEligible($0.posted,now:now,closing:false) && CareerFeed.dateIsEligible($0.closes ?? "",now:now,closing:true) && seen.insert($0.id).inserted }
             let failedNames=Set(sources.filter{$0.incomplete}.map(\.name))
-            jobs += cachedEmployerJobs.filter { job in !seen.contains(job.id) && failedNames.contains(job.company) && !sources.contains(where:{$0.name==job.company && ($0.excludedIds ?? []).contains(job.id)}) && CareerFeed.dateIsEligible(job.posted,now:now,closing:false) && CareerFeed.dateIsEligible(job.closes ?? "",now:now,closing:true) }
-            jobs=jobs.map{($0,CareerFeed.parsedDate($0.posted) ?? .distantPast)}.sorted {a,b in a.1 != b.1 ? a.1>b.1 : (a.0.title,a.0.id)<(b.0.title,b.0.id)}.map{ $0.0 }
-            var next=workspace;next.live=LiveSnapshot(checkedAt:checkedAt,jobs:jobs,sources:sources)
+            jobs += cachedEmployerJobs.filter { job in !seen.contains(job.id) && failedNames.contains(job.company) && !sources.contains(where:{$0.name==job.company && ($0.excludedIds ?? []).contains(job.id)}) && CareerFeed.dateIsEligible(job.posted,now:now,closing:false) && CareerFeed.dateIsEligible(job.closes ?? "",now:now,closing:true) && seen.insert(job.id).inserted }
+            jobs=jobs.map{($0,CareerFeed.parsedDate($0.posted) ?? .distantPast)}.sorted {a,b in (a.0.relevance ?? CareerFeed.relevance(a.0.title)) != (b.0.relevance ?? CareerFeed.relevance(b.0.title)) ? (a.0.relevance ?? CareerFeed.relevance(a.0.title)) > (b.0.relevance ?? CareerFeed.relevance(b.0.title)) : a.1 != b.1 ? a.1>b.1 : (a.0.title,a.0.id)<(b.0.title,b.0.id)}.map{ $0.0 }
+            guard jobs.count<=1000 else {searchError="The combined result list exceeded the local capacity. Previous results and comparison are preserved.";return}
+            let previousIDs=Set(cachedEmployerJobs.map(\.id))
+            let comparison=SearchComparison(previousCheckedAt:workspace.live?.checkedAt,checkedAt:checkedAt,addedIds:workspace.live == nil ? [] : jobs.filter{!previousIDs.contains($0.id)}.map(\.id))
+            var next=workspace;next.live=LiveSnapshot(checkedAt:checkedAt,jobs:jobs,sources:sources,searchComparison:comparison)
             for job in jobs where next.snapshots[job.id] != nil || next.saved.contains(job.id) || next.statuses[job.id] != nil || isCurrentResearch(job) {
                 let prior=next.snapshots[job.id]
                 let editorial=research.jobs.first(where:{$0.id==job.id}) ?? prior.flatMap { $0.rank != nil || $0.kind == "archived" || $0.kind == "researched" ? $0 : nil }
@@ -424,7 +657,9 @@ struct ApplicationAttention: Identifiable {
         let archived=job.kind == "archived" || (!isCurrentResearch(job) && job.rank != nil)
         let salary=researchDate.map { "Salary was not disclosed in the research checked \($0)." } ?? (archived ? "Original research check date is unavailable. Recheck salary." : "Salary was not checked for this live lead.")
         let history=archived ? "\nArchived saved research; this role is not in the current shortlist.\n" : ""
-        return "APPLICATION PREPARATION — \(job.title)\n\(job.company) · \(job.location)\n\(job.applicationURL?.absoluteString ?? job.url)\(history)\n\nEmployer checked: \(employerObservation(job).lastCheckedAt ?? "Not recorded")\nListed deadline: \(job.closes?.isEmpty==false ? job.closes! : "Not published")\nDate-only deadlines use Riyadh calendar days. Past checks and listed deadlines do not establish current availability; recheck with the employer.\n\nFit: \(job.fit)\n\(job.summary)\n\nConfirm first:\n"+job.requirements.map{"• "+$0}.joined(separator:"\n")+"\n\nSteps:\n"+job.applicationSteps.enumerated().map{"\($0.offset+1). \($0.element[0]): \($0.element[1])"}.joined(separator:"\n\n")+(includeProfile ? "\n\n"+profileText : "")+"\n\nStatus: \(status(for:job))\n"+salary+" Review and submit personally on the employer website."
+        let employerEvidence="\n\nEmployer-listed clues (not proof of eligibility):\nExperience level: \(job.experienceLevel.flatMap{$0.isEmpty ? nil:$0} ?? "Not stated")\nEmployment type: \(job.employmentType ?? "Not stated")\nWork arrangement: \(job.mode ?? "Not stated")\n\(job.publicationLabel): \(job.posted.isEmpty ? "Not stated" : job.posted)\n"+((job.requirementNotes ?? []).isEmpty ? "Requirement excerpts unavailable. Read the full employer description." : (job.requirementNotes ?? []).map{"• "+$0}.joined(separator:"\n"))
+        let warnings=applicationWarnings(for:job).joined(separator:"\n")
+        return "APPLICATION PREPARATION — \(job.title)\n\(job.company) · \(job.location)\n\(job.applicationURL?.absoluteString ?? job.url)\(history)\n\nEmployer checked: \(employerObservation(job).lastCheckedAt ?? "Not recorded")\nListed deadline: \(job.closes?.isEmpty==false ? job.closes! : "Not published")\nDate-only deadlines use Riyadh calendar days. Past checks and listed deadlines do not establish current availability; recheck with the employer.\n\nFit: \(job.fit)\n\(job.summary)\n\nConfirm first:\n"+job.requirements.map{"• "+$0}.joined(separator:"\n")+"\n\nSteps:\n"+job.applicationSteps.enumerated().map{"\($0.offset+1). \($0.element[0]): \($0.element[1])"}.joined(separator:"\n\n")+(includeProfile ? "\n\n"+profileText : "")+"\n\nStatus: \(status(for:job))\n"+salary+" Review and submit personally on the employer website."+employerEvidence+(warnings.isEmpty ? "" : "\n\nLocal tracking advisories:\n"+warnings)
     }
     private func applicationRecordText(_ id:String)->String {
         let record=applicationRecords[id],draft=recordDrafts[id]
@@ -434,13 +669,26 @@ struct ApplicationAttention: Identifiable {
         if let draft,draft.dirty {text += "\nUNSAVED application record draft\nApplication date: \(draft.appliedAt.isEmpty ? "Not recorded" : draft.appliedAt)\nReceipt / record note: \(draft.receiptNote)"}
         return text
     }
+    private func nextActionText(_ id:String)->String {
+        var text=""
+        if let record=nextActions[id] {
+            text += "\nNext action (self-entered local plan): \(record.actionNote)\nDue date (Riyadh): \(record.dueOn.isEmpty ? "Not set" : record.dueOn)\nCompleted: \(record.completed ? "Yes" : "No")\nNext action last edited: \(record.updatedAt)"
+        }
+        if let error=nextActionErrors[id] {text += "\nNext-action notice: \(error)"}
+        if let draft=nextActionDrafts[id],draft.dirty {
+            text += "\nUNSAVED next-action draft\nNext action: \(draft.actionNote)\nDue date (Riyadh): \(draft.dueOn.isEmpty ? "Not set" : draft.dueOn)\nCompleted: \(draft.completed ? "Yes" : "No")"
+        }
+        return text
+    }
     func exportText()->String {
         let currentJobs=allJobs
-        let draftJobs=recordDrafts.values.filter{$0.dirty}.compactMap(\.job).filter{j in !currentJobs.contains{$0.id==j.id}}
-        let jobs=(currentJobs+draftJobs).filter{workspace.saved.contains($0.id)||status(for:$0) != "Not started"||applicationRecords[$0.id]?.meaningful==true||recordDrafts[$0.id]?.dirty==true}
+        let draftCandidates=recordDrafts.values.filter{$0.dirty}.compactMap(\.job)+nextActionDrafts.values.filter{$0.dirty}.compactMap(\.job)
+        var seen=Set(currentJobs.map(\.id))
+        let draftJobs=draftCandidates.filter{seen.insert($0.id).inserted}
+        let jobs=(currentJobs+draftJobs).filter{workspace.saved.contains($0.id)||status(for:$0) != "Not started"||applicationRecords[$0.id]?.meaningful==true||recordDrafts[$0.id]?.dirty==true||nextActions[$0.id]?.meaningful==true||nextActionDrafts[$0.id]?.dirty==true||nextActionErrors[$0.id] != nil}
         let labels=["profile":"Professional record", "evidence":"Achievement stories", "cv":"Two focused CVs", "priority":"Priority roles reviewed", "deadline":"Deadlines rechecked", "review":"Applications reviewed"]
         let checklist=labels.keys.sorted().map{(workspace.completed.contains($0) ? "[x] " : "[ ] ")+(labels[$0] ?? $0)}.joined(separator:"\n")
-        return "AHMAD CAREER — Saudi Arabia\nCurrent shortlist research snapshot: \(research.checkedAt)\n\n"+profileText+"\n\nPREPARATION CHECKLIST\n"+checklist+"\n\nSAVED AND TRACKED APPLICATIONS\n\n"+jobs.map{note(for:$0,includeProfile:false)+applicationRecordText($0.id)}.joined(separator:"\n\n——————————\n\n")
+        return "SALEH CAREER FINDER — Saudi Arabia\nCurrent shortlist research snapshot: \(research.checkedAt)\n\n"+profileText+"\n\nPREPARATION CHECKLIST\n"+checklist+"\n\nSAVED AND TRACKED APPLICATIONS\n\n"+jobs.map{note(for:$0,includeProfile:false)+applicationRecordText($0.id)+nextActionText($0.id)}.joined(separator:"\n\n——————————\n\n")
     }
 }
 

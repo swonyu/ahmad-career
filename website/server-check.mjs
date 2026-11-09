@@ -23,15 +23,17 @@ function worker(mode,cacheFailure){
   const fetcher=async(url,options)=>{
     if(!['follow','manual'].includes(options?.redirect))throw new TypeError('Invalid redirect value, must be one of "follow" or "manual"');
     calls++;
-    if(url.includes('apply.workable.com'))return Response.json({results:[]});
-    if(url.endsWith('/jobs'))return Response.json({total:mode==='partial'?2:mode==='offline'?1:0,jobPostings:mode==='complete'?[]:[
-      {title:'Supply Chain Manager',externalPath:'/job/Riyadh/Good_REQ',locationsText:'Riyadh'},
-      ...(mode==='partial'?[{title:'Supply Chain Manager',externalPath:'/job/Riyadh/Bad_REQ',locationsText:'Riyadh'}]:[])
-    ]});
-    if(mode==='offline'||url.includes('/Bad_'))return new Response('{}',{status:503});
-    return Response.json({jobPostingInfo:{title:'Supply Chain Manager',jobReqId:'REQ',canApply:true,posted:true,location:'Riyadh',country:{descriptor:'Saudi Arabia'},startDate:'2026-10-01'}});
+    if(mode==='offline')return new Response('{}',{status:503});
+    if(mode==='limited')return Response.json(url.includes('recruitee')?{offers:[]}:{jobs:Array(501).fill({title:'Software Developer',shortcode:'TEST1',country:'Saudi Arabia',city:'Riyadh',published_on:'2026-10-01'})});
+    if(mode==='complete')return Response.json(url.includes('recruitee')?{offers:[]}:{jobs:[]});
+    if(url.includes('recruitee'))return Response.json({offers:[{id:12345,title:'Software Developer',slug:'software-developer',status:'published',careers_url:'https://jobs.unifonic.com/o/software-developer',locations:[{country_code:'SA',city:'Riyadh'}]},{}]});
+    const id='11111111-1111-4111-8111-111111111111';
+    const row=url.includes('apply.workable.com')?{title:'Software Developer',shortcode:'TEST1',country:'Saudi Arabia',city:'Riyadh',published_on:'2026-10-01'}:
+      url.includes('ashbyhq.com')?{title:'Software Developer',id,isListed:true,location:'Riyadh',jobUrl:'https://jobs.ashbyhq.com/LeanTech/'+id,publishedAt:'2026-10-01T00:00:00Z'}:
+      {title:'Software Developer',id:123,location:{name:'Riyadh'},absolute_url:'https://job-boards.eu.greenhouse.io/tamara/jobs/123'};
+    return Response.json({jobs:[row,{title:'Malformed'}]});
   };
-  const context=vm.createContext({URL,Request,Response,Headers,AbortSignal,Date,Intl,fetch:fetcher,caches:{get default(){if(cacheFailure==='access')throw Error('This Worker is not permitted to access the default cache.');return {match:async()=>{if(cacheFailure==='match')throw Error('This Worker is not permitted to access the default cache.');return null},put:async(k,v)=>{puts.push(v)}}}}});
+  const context=vm.createContext({URL,Request,Response,Headers,TextDecoder,TextEncoder,AbortSignal,Date,Intl,fetch:fetcher,caches:{get default(){if(cacheFailure==='access')throw Error('This Worker is not permitted to access the default cache.');return {match:async()=>{if(cacheFailure==='match')throw Error('This Worker is not permitted to access the default cache.');return null},put:async(k,v)=>{puts.push(v)}}}}});
   vm.runInContext(workerSource.replace('export default {','globalThis.worker = {'),context);
   return {context,puts,pending,calls:()=>calls,run:request=>context.worker.fetch(request,{}, {waitUntil:p=>pending.push(p)})};
 }
@@ -39,23 +41,24 @@ function worker(mode,cacheFailure){
 for(const failure of ['access','match']){
   const app=worker('partial',failure),response=await app.run(new Request('https://career.example/api/live'));
   const payload=await response.json();
-  assert.equal(response.status,200);assert.ok(payload.jobs.length);assert.equal(payload.sources.length,6);
+  assert.equal(response.status,200);assert.ok(payload.jobs.length);assert.equal(payload.sources.length,7);
 }
-for(const mode of ['complete','partial','offline']){
+for(const mode of ['complete','partial','offline','limited']){
   const app=worker(mode),response=await app.run(new Request('https://career.example/api/live'));
   const payload=await response.json();await Promise.all(app.pending);
   assert.equal(response.status,200);
   assert.equal(app.puts.length,0);
   const remaining=vm.runInContext('searchSnapshot.expires-Date.now()',app.context),ttl=mode==='complete'?300000:30000;
   assert.ok(remaining<=ttl&&remaining>ttl-5000,'Snapshot retains its bounded cooldown');
+  if(mode==='limited')assert.ok(payload.sources.some(s=>s.ok&&s.limited));
   if(mode==='partial'){assert.ok(payload.jobs.length);assert.ok(payload.sources.some(s=>s.ok&&s.detailErrors>0))}
   if(mode==='offline')assert.ok(payload.sources.filter(s=>s.name!=='Qiddiya').every(s=>!s.ok));
 }
-for(const mode of ['complete','partial','offline']){
+for(const mode of ['complete','partial','offline','limited']){
   const app=worker(mode);
   const responses=await Promise.all(Array.from({length:3},()=>app.run(new Request('https://career.example/api/live'))));
   const payloads=await Promise.all(responses.map(r=>r.json()));
-  const calls=app.calls();assert.ok(calls<=21,`${mode}: concurrent requests must share one employer batch`);
+  const calls=app.calls();assert.ok(calls===7,`${mode}: concurrent requests must share one employer batch`);
   await app.run(new Request('https://career.example/api/live'));
   assert.equal(app.calls(),calls,`${mode}: immediate retries use the original snapshot`);
   assert.ok(payloads.every(p=>p.checkedAt===payloads[0].checkedAt));
@@ -70,5 +73,5 @@ const post=await app.run(new Request('https://career.example/api/live',{method:'
 assert.equal(post.status,405);assert.equal(app.calls(),0);
 const page=await app.run(new Request('https://career.example/'));
 assert.match(page.headers.get('Content-Security-Policy'),/script-src 'self'/);
-assert.match(await page.text(),/Ahmad Career/);
+assert.match(await page.text(),/Saleh Career Finder/);
 console.log('Server checks passed: denied cache API resilience, bounded in-memory cooldown, request coalescing, partial/outage coverage, read-only methods and static CSP.');

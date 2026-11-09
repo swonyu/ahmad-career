@@ -4,13 +4,14 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
+import {PUBLIC_SOURCES,parsePublicBoard} from './feeds.mjs';
 
 const scripts = ['core.js', 'data.js', 'app.js'].map(name => ({
   name,
-  source: readFileSync(new URL(`./web/${name}`, import.meta.url), 'utf8'),
+  source: readFileSync(new URL(name==='data.js'?'./fixtures/research.js':`./web/${name}`, import.meta.url), 'utf8'),
 }));
 
-function createApp(initialStorage = new Map(), options = {}) {
+export function createApp(initialStorage = new Map(), options = {}) {
   const storage = options.shared ? initialStorage : new Map(initialStorage);
   const listeners = new Map();
   const elements = new Map();
@@ -57,10 +58,10 @@ function createApp(initialStorage = new Map(), options = {}) {
   }
 
   const context = vm.createContext({
-    console, URL: TestURL, Blob, Intl, Date, AbortSignal,
+    console, URL: TestURL, Blob, Intl, Date: options.Date || Date, AbortSignal,
     FormData: class { constructor(form) { this.values=form.values; } get(key) { return this.values[key]??null; } },
     confirm: () => false,
-    setTimeout: () => 1, clearTimeout() {},
+    setTimeout: options.setTimeout || (() => 1), clearTimeout: options.clearTimeout || (() => {}),
     scrollTo() {}, navigator: {locks: options.locks}, location: { protocol: 'https:' },
     fetch: options.fetch || (() => { throw new Error('Unexpected network request in state regression checks'); }),
     document: {
@@ -82,6 +83,7 @@ function createApp(initialStorage = new Map(), options = {}) {
     },
   });
   context.window = context;
+  context.addEventListener=(type,callback)=>{const key='window:'+type;if(!listeners.has(key))listeners.set(key,[]);listeners.get(key).push(callback)};
   for (const { name, source } of scripts) {
     vm.runInContext(source, context, { filename: name });
     if(name==='data.js'&&options.bundle)vm.runInContext('globalThis.CAREER_DATA='+JSON.stringify(options.bundle),context);
@@ -89,6 +91,7 @@ function createApp(initialStorage = new Map(), options = {}) {
   const evaluate = source => vm.runInContext(source, context);
   return {
     storage, toasts, downloads, failKeys, evaluate,
+    async windowEvent(type,event){for(const fn of listeners.get('window:'+type)||[])await fn(event)},
     async dispatch(type, target) { for (const fn of listeners.get(type) || []) await fn({target, preventDefault(){}}); },
     failAllWrites() { writesFail = true; },
     json(source) { return JSON.parse(evaluate(`JSON.stringify(${source})`)); },
@@ -109,7 +112,7 @@ function createApp(initialStorage = new Map(), options = {}) {
 
 const role = {
   id: 'state-regression-healthcare-role',
-  title: 'Healthcare Supply Chain Manager — regression fixture',
+  title: 'Healthcare Software Developer — regression fixture',
   company: 'Alcon', location: 'Riyadh, Saudi Arabia',
   url: 'https://alcon.wd5.myworkdayjobs.com/careers_alcon/job/Riyadh/regression-fixture',
   kind: 'live', summary: 'Synthetic fixture for local state checks only.',
@@ -212,7 +215,7 @@ await check('Failed saves and status writes never announce saved-on-device succe
 });
 
 await check('A failed workspace mutation leaves the entire prior durable snapshot intact', () => {
-  const otherRole = { ...role, id: 'state-regression-second-role', title: 'Supply Chain Manager — second regression fixture' };
+  const otherRole = { ...role, id: 'state-regression-second-role', title: 'Software Developer — second regression fixture' };
   const actions = [
     ['save another role', app => app.toggleSaved(otherRole.id)],
     ['track another role', app => app.changeStatus(otherRole.id, 'Applied')],
@@ -293,7 +296,7 @@ await check('Cached facts are not overwritten by an older successful response',(
   assert.equal(app.json('live.checkedAt'),newTime); assert.equal(app.json('live.jobs.length'),1);
 });
 await check('Partially successful sources retain validated new jobs with a visible incomplete warning',()=>{
-  const app=createApp(); app.receive({checkedAt:newTime,jobs:[role],sources:[{name:'Alcon',ok:false,count:1,error:'One detail failed'}]});
+  const app=createApp(); app.receive({checkedAt:newTime,jobs:[role],sources:[{name:'Alcon',ok:true,count:1,detailErrors:1,error:'One detail failed'}]});
   assert.equal(app.json('live.jobs.length'),1); assert.match(app.evaluate('livePage()'),/incomplete/i);
 });
 await check('Unsaved profile input survives completion of a background search',async()=>{
@@ -303,10 +306,10 @@ await check('Unsaved profile input survives completion of a background search',a
   assert.ok(app.evaluate('profilePage()').includes('Unsaved achievement'));
 });
 await check('Filter and sort controls keep the active selection after a saved-state render',()=>{
-  const app=createApp(); app.evaluate('filter="leadership";sort="deadline"');
+  const app=createApp(); app.evaluate('filter="early";sort="deadline"');
   app.toggleSaved(app.json('D.jobs[0].id'));
   const toolbar=app.evaluate('toolbar()');
-  assert.match(toolbar, /value="leadership" selected/);assert.match(toolbar,/value="deadline" selected/);
+  assert.match(toolbar, /value="early" selected/);assert.match(toolbar,/value="deadline" selected/);
 });
 await check("Another tab’s saved roles are preserved when this tab next saves",()=>{
   const first=createApp(),second=createApp();
@@ -380,7 +383,7 @@ await check('Failed workspace recovery cannot overwrite another tab and keeps pe
     assert.equal(shared.get('ahmad-workspace'),durable,action+': preserve newer durable state');
     assert.deepEqual(a.json('({saved,states,savedDetails})'),pending,action+': preserve unsaved session');
     assert.match(a.toasts.at(-1),/another tab.*export.*reload/i);
-    assert.ok((await a.exportNotes()).includes('AHMAD CAREER'));
+    assert.ok((await a.exportNotes()).includes('SALEH CAREER FINDER'));
   }
 });
 
@@ -406,8 +409,8 @@ await check('Failed checklist recovery preserves a newer explicit choice in anot
 
 await check('Legacy live caches use their envelope date when merging a corrected research bundle',()=>{
   const original=createApp().json('D.jobs[0]');
-  for(const [checkedAt,expectedTitle] of [['2026-10-08T00:00:00Z',original.title],[newTime,'Employer title from cache']]){
-    const cached={...original,title:'Employer title from cache',closes:'2099-12-31',kind:'live'};
+  for(const [checkedAt,expectedTitle] of [['2026-10-08T00:00:00Z',original.title],[newTime,'Software Developer from cache']]){
+    const cached={...original,title:'Software Developer from cache',closes:'2099-12-31',kind:'live'};
     delete cached.lastCheckedAt;delete cached.researchCheckedAt;
     const app=createApp(new Map([
       ['ahmad-live',JSON.stringify(success([cached],checkedAt))],
@@ -433,9 +436,9 @@ await check('Corrected bundled facts win date-only ties while later live facts s
     const app=createApp(initial),current=app.json(`jobById(${JSON.stringify(original.id)})`);
     for(const key of ['title','location','closes'])assert.equal(current[key],original[key],`${key}: bundled facts win a date-only tie`);
     assert.equal(app.json(`C.criteriaFor(jobById(${JSON.stringify(original.id)}),profile).included`),true);
-    await app.receive(success([{...stale,title:'Later Supply Chain Manager'}],newTime));
+    await app.receive(success([{...stale,title:'Later Software Developer'}],newTime));
     const restored=createApp(app.storage),updated=restored.json(`jobById(${JSON.stringify(original.id)})`);
-    assert.equal(updated.title,'Later Supply Chain Manager');assert.equal(updated.location,stale.location);assert.equal(updated.closes,stale.closes);
+    assert.equal(updated.title,'Later Software Developer');assert.equal(updated.location,stale.location);assert.equal(updated.closes,stale.closes);
     assert.equal(restored.json(`states[${JSON.stringify(original.id)}]`),'Applied');
     assert.ok(restored.json('saved').includes(original.id));
   }
@@ -444,7 +447,7 @@ await check('Corrected bundled facts win date-only ties while later live facts s
 await check('A refreshed archived role preserves dated editorial evidence and tracking',async()=>{
   const archived={...createApp().json('D.jobs[0]'),id:'jj-archived-regression',kind:'researched',rank:1,fit:'Archived fit assessment',summary:'Archived evidence summary',researchCheckedAt:'2026-10-01',lastCheckedAt:'2026-10-02T00:00:00Z'};
   const app=createApp(new Map([['ahmad-workspace',JSON.stringify({saved:[archived.id],states:{[archived.id]:'Applied'},savedDetails:{[archived.id]:archived}})]]));
-  const fresh={...archived,title:'Updated Supply Chain Manager',closes:'2099-12-31',kind:'live',fit:'Needs review',summary:'Generic employer lead'};
+  const fresh={...archived,title:'Updated Software Developer',closes:'2099-12-31',kind:'live',fit:'Needs review',summary:'Generic employer lead'};
   for(const key of ['rank','gaps','steps','researchCheckedAt','lastCheckedAt'])delete fresh[key];
   await app.receive(success([fresh],newTime));
   const reloaded=createApp(app.storage),current=reloaded.json(`jobById(${JSON.stringify(archived.id)})`);
@@ -459,8 +462,8 @@ await check('A refreshed archived role preserves dated editorial evidence and tr
 
 await check('A newer old-tab cache cannot reintroduce excluded employers after a search failure',async()=>{
   const app=createApp();await app.receive(success([role],oldTime));
-  const excluded={...role,id:'qiddiya-REGRESSION',company:'Qiddiya',title:'Healthcare Procurement Manager',healthcare:true,url:'https://apply.workable.com/qiddiya-investment-company-1/j/REGRESSION/'};
-  const nonHealthcare={...role,id:'non-healthcare-regression',healthcare:false};
+  const excluded={...role,id:'qiddiya-REGRESSION',company:'Qiddiya',title:'Healthcare Software Developer',healthcare:true,url:'https://apply.workable.com/qiddiya-investment-company-1/j/REGRESSION/'};
+  const nonHealthcare={...role,id:'non-software-regression',title:'Sales Manager',healthcare:false};
   app.storage.set('ahmad-live',JSON.stringify(success([role,excluded,nonHealthcare],newTime)));
   await app.receive({error:'Synthetic outage'});
   assert.deepEqual(app.json('live.jobs.map(j=>j.id)'),[role.id]);
@@ -585,8 +588,8 @@ await check('Unknown salary produces honest discovery labels and an explicit evi
   await submitProfile(app,{...criteriaProfile,unknownSalary:'hide'});app.evaluate('go("shortlist")');
   assert.match(app.evaluate('document.querySelector("#job-list").innerHTML'),/pay.*not verified|salary.*not verified/i);
   assert.match(app.evaluate('document.querySelector("#job-list").innerHTML'),/does not mean.*no vacancies/i);
-  app.evaluate('filter="leadership";sort="deadline";render()');
-  assert.match(app.evaluate('toolbar()'),/value="leadership" selected/);
+  app.evaluate('filter="early";sort="deadline";render()');
+  assert.match(app.evaluate('toolbar()'),/value="early" selected/);
   assert.match(app.evaluate('toolbar()'),/value="deadline" selected/);
 });
 
@@ -672,7 +675,7 @@ await check('Notes capture current saved profile and checklist without requiring
   await b.dispatch('change',{id:'',dataset:{check:'profile'},checked:true});
   const durable=[...shared];
   const notes=await a.exportNotes();
-  for(const text of ['Synthetic current degree','Synthetic current skills','Synthetic current achievement','[x] Confirm your professional record'])assert.ok(notes.includes(text),text);
+  for(const text of ['Synthetic current degree','Synthetic current skills','Synthetic current achievement','[x] Confirm your factual profile'])assert.ok(notes.includes(text),text);
   assert.match(a.evaluate('draft(D.jobs[0])'),/Synthetic current achievement/);
   assert.deepEqual(a.json('({profile,profileDraft,profileBase,checklist,checklistPending})'),before,'Note capture must not mutate the editing session');
   assert.deepEqual([...shared],durable,'Note capture must not write storage');
@@ -697,8 +700,8 @@ await check('Notes preserve failed saves and valid session data when newer stora
     const notes=await a.exportNotes(),roleDraft=a.evaluate('draft(D.jobs[0])');
     assert.ok(notes.includes(failure==='pending'?'Synthetic failed degree':seed.degree),failure);
     assert.ok(roleDraft.includes(failure==='pending'?'Synthetic failed achievement':seed.achievements),failure);
-    assert.ok(notes.includes('[x] Confirm your professional record'),failure);
-    if(failure==='pending')assert.ok(notes.includes('[x] Build two CV versions'));
+    assert.ok(notes.includes('[x] Confirm your factual profile'),failure);
+    if(failure==='pending')assert.ok(notes.includes('[x] Tailor your software and AI CV'));
     else assert.equal(a.evaluate("blockedKeys.has('profile')&&blockedKeys.has('checklist')"),true);
     assert.deepEqual(a.json('({profile,profileDraft,profileBase,checklist,checklistPending})'),before);
     assert.deepEqual([...a.storage],durable);
@@ -756,7 +759,7 @@ await check('Old-tab receipt save retains newer employer facts resolved inside t
  await a.receive(success([role]));await queue;await a.toggleSaved(role.id);
  const id=JSON.stringify(role.id);a.evaluate(`editApplicationRecord(${id});recordDrafts[${id}].receiptNote='synthetic receipt'`);
  const b=createApp(shared,{shared:true,locks});await queue;
- await b.receive(success([{...role,title:'Updated Healthcare Supply Chain Manager',closes:'2026-10-10'}],newTime));await queue;
+ await b.receive(success([{...role,title:'Updated Healthcare Software Developer',closes:'2026-10-10'}],newTime));await queue;
  const before=JSON.parse(shared.get('ahmad-workspace')).savedDetails[role.id];
  assert.equal(await a.evaluate(`saveApplicationRecord(${id})`),true);
  assert.deepEqual(JSON.parse(shared.get('ahmad-workspace')).savedDetails[role.id],before);
@@ -764,8 +767,8 @@ await check('Old-tab receipt save retains newer employer facts resolved inside t
 
 await check('A completed employer refresh redraws attention on an already open Plan',()=>{
  const app=createApp();app.receive(success([role]));app.toggleSaved(role.id);app.evaluate("go('plan')");
- app.receive(success([{...role,title:'Freshly updated Supply Chain Manager'}],newTime));
- assert(app.evaluate("$('#main').innerHTML").includes('Freshly updated Supply Chain Manager'));
+ app.receive(success([{...role,title:'Freshly updated Software Developer'}],newTime));
+ assert(app.evaluate("$('#main').innerHTML").includes('Freshly updated Software Developer'));
 });
 
 await check('Profile saves preserve typing entered while waiting for the profile lock',async()=>{
@@ -785,7 +788,7 @@ await check('Queued live retention keeps corrected facts even when a later batch
  const locks={request(name,run){if(name==='ahmad-career-workspace'){const next=queue.then(()=>held?gate.then(run):run());queue=next.catch(()=>{});return next}return Promise.resolve(run())}};
  const app=createApp(new Map(),{locks});await queue;
  await app.receive(success([role]));await queue;await app.toggleSaved(role.id);
- held=true;const corrected={...role,title:'Corrected Supply Chain Manager',closes:'2099-10-10'};
+ held=true;const corrected={...role,title:'Corrected Software Developer',closes:'2099-10-10'};
  await app.receive(success([corrected],newTime));
  await app.receive(success([],'2026-10-09T00:30:00Z'));
  release();await queue;
@@ -804,9 +807,9 @@ await check('Accepted employer corrections redraw an open Saved or Shortlist vie
  for(const view of ['saved','shortlist']){
   const app=createApp();const job=view==='saved'?role:app.json('D.jobs[0]');
   app.receive(success([job]));app.toggleSaved(job.id);app.evaluate(`go('${view}')`);
-  app.receive(success([{...job,title:'Corrected Healthcare Supply Chain Manager'}],new Date().toISOString()));
-  assert.equal(app.json(`jobById(${JSON.stringify(job.id)}).title`),'Corrected Healthcare Supply Chain Manager','Refresh must be accepted before testing redraw');
-  assert(app.evaluate("$('#job-list').innerHTML").includes('Corrected Healthcare Supply Chain Manager'),view);
+  app.receive(success([{...job,title:'Corrected Healthcare Software Developer'}],new Date().toISOString()));
+  assert.equal(app.json(`jobById(${JSON.stringify(job.id)}).title`),'Corrected Healthcare Software Developer','Refresh must be accepted before testing redraw');
+  assert(app.evaluate("$('#job-list').innerHTML").includes('Corrected Healthcare Software Developer'),view);
  }
 });
 
@@ -818,11 +821,11 @@ await check('Date sorts use instants and Saudi day boundaries with unknown dates
   ['recent','posted','2026-10-08T23:30:00Z','2026-10-09']
  ];
  for(const [sort,key,first,last] of scenarios){
-  const app=createApp();const jobs=[{...role,id:'date-last',title:'Last Supply Chain Manager',[key]:last},{...role,id:'date-first',title:'First Supply Chain Manager',[key]:first},{...role,id:'date-unknown',title:'Unknown Supply Chain Manager',posted:'',closes:null}];
+  const app=createApp();const jobs=[{...role,id:'date-last',title:'Last Software Developer',[key]:last},{...role,id:'date-first',title:'First Software Developer',[key]:first},{...role,id:'date-unknown',title:'Unknown Software Developer',posted:'',closes:null}];
   app.evaluate(`D.jobs=${JSON.stringify(jobs)};go('shortlist');sort=${JSON.stringify(sort)};renderList()`);
   const html=app.evaluate("$('#job-list').innerHTML");
-  assert(html.indexOf('First Supply Chain Manager')<html.indexOf('Last Supply Chain Manager'),key+first);
-  assert(html.indexOf('Last Supply Chain Manager')<html.indexOf('Unknown Supply Chain Manager'),'unknown last');
+  assert(html.indexOf('First Software Developer')<html.indexOf('Last Software Developer'),key+first);
+  assert(html.indexOf('Last Software Developer')<html.indexOf('Unknown Software Developer'),'unknown last');
  }
 });
 await check('Editorial action prose cannot contradict an accepted amended deadline',()=>{
@@ -838,10 +841,10 @@ await check('Editorial action prose cannot contradict an accepted amended deadli
 await check('Legacy date-only live checks compare at Saudi midnight for updates and durable-cache adoption',()=>{
  for(const fromStorage of [false,true]){
   const app=createApp();app.receive(success([role],'2026-10-09'));
-  const newer=success([{...role,title:'Later Supply Chain Manager'}],'2026-10-08T23:00:00Z');
+  const newer=success([{...role,title:'Later Software Developer'}],'2026-10-08T23:00:00Z');
   if(fromStorage){app.storage.set('ahmad-live',JSON.stringify(newer));app.receive({error:'Synthetic outage'})}else app.receive(newer);
   assert.equal(app.json('live.checkedAt'),newer.checkedAt,String(fromStorage));
-  assert.equal(app.json('live.jobs[0].title'),'Later Supply Chain Manager');
+  assert.equal(app.json('live.jobs[0].title'),'Later Software Developer');
  }
 });
 
@@ -880,7 +883,176 @@ await check('Exact successful employer exclusions survive partial failure withou
  assert.deepEqual(app.json('live.jobs.map(j=>j.id)'),[unknown.id]);assert.equal(app.json('live.jobs[0].lastCheckedAt'),oldTime);
  assert.equal(app.json("states['excluded-role']"),'Applied');assert(app.json('retainedJobs().map(j=>j.id)').includes(gone.id));
  const reload=createApp(app.storage);assert.deepEqual(reload.json('live.jobs.map(j=>j.id)'),[unknown.id]);
- for(const excludedIds of [[''],[1],Array(21).fill('x'),['x'.repeat(257)],'bad'])assert.equal(app.evaluate(`C.normalizeLive(${JSON.stringify({checkedAt:newTime,jobs:[],sources:[{name:'Alcon',ok:true,count:0,excludedIds}]})})`),null);
+ for(const excludedIds of [[''],[1],Array(501).fill('x'),['x'.repeat(257)],'bad'])assert.equal(app.evaluate(`C.normalizeLive(${JSON.stringify({checkedAt:newTime,jobs:[],sources:[{name:'Alcon',ok:true,count:0,excludedIds}]})})`),null);
+});
+
+await check('Public parser exact exclusions beat partial retention while unknown jobs and tracking survive',()=>{
+ const f=JSON.parse(readFileSync(new URL('./fixtures/public-boards.json',import.meta.url)))[4],source=PUBLIC_SOURCES[4],row=f.data.jobs[0];
+ for(const change of [{isListed:false},{title:'Senior Software Engineer'},{location:'Riyadh',address:{postalAddress:{addressCountry:'US'}}},{publishedAt:'2099-01-01T00:00:00Z'}]){
+  const app=createApp(),first=parsePublicBoard(source,f.data),id=first.jobs[0].id;
+  const unknown={...first.jobs[0],id:'leantech-22222222-2222-4222-8222-222222222222',url:'https://jobs.ashbyhq.com/LeanTech/22222222-2222-4222-8222-222222222222'};
+  app.receive({checkedAt:oldTime,jobs:[...first.jobs,unknown],sources:[first.source]});app.changeStatus(id,'Applied');
+  const next=parsePublicBoard(source,{jobs:[{...row,...change},{}]});assert.deepEqual(next.source.excludedIds,[id]);
+  app.receive({checkedAt:newTime,jobs:next.jobs,sources:[next.source]});assert.deepEqual(app.json('live.jobs.map(j=>j.id)'),[unknown.id]);assert.equal(app.json('live.jobs[0].lastCheckedAt'),oldTime);assert.equal(app.json(`states[${JSON.stringify(id)}]`),'Applied');assert(app.json('retainedJobs().map(j=>j.id)').includes(id));
+  assert.deepEqual(createApp(app.storage).json('live.jobs.map(j=>j.id)'),[unknown.id]);
+  const mixed=parsePublicBoard(source,{jobs:[{...row,...change},row,{}]});assert.deepEqual(mixed.source.excludedIds,[]);assert.equal(mixed.jobs.length,1);
+ }
+ const many=parsePublicBoard(source,{jobs:Array.from({length:40},(_,i)=>({...row,id:`00000000-0000-4000-8000-${String(i).padStart(12,'0')}`,isListed:false}))});
+ const app=createApp();app.receive({checkedAt:newTime,jobs:many.jobs,sources:[many.source]});assert.equal(app.json('live.sources[0].excludedIds.length'),40);
+});
+
+await check('Structured Saudi country survives parser→app for cities outside the heuristic',()=>{
+ const f=JSON.parse(readFileSync(new URL('./fixtures/public-boards.json',import.meta.url)))[4],source=PUBLIC_SOURCES[4],row={...f.data.jobs[0],location:'Tabuk'};
+ const parsed=parsePublicBoard(source,{jobs:[row]}),app=createApp();assert.equal(parsed.jobs[0].location,'Tabuk, Saudi Arabia');
+ app.receive({checkedAt:newTime,jobs:parsed.jobs,sources:[parsed.source]});assert.equal(app.json('live.jobs.length'),1);
+ assert.equal(app.evaluate('C.criteriaFor(live.jobs[0],{preferredCity:"riyadh"}).included'),false);
+ assert.equal(app.evaluate('C.criteriaFor(live.jobs[0],{preferredCity:""}).included'),true);
+});
+await check('Production empty shortlist shows cached discovery with correct count and salary exclusion',()=>{
+ const production=vm.createContext({});vm.runInContext(readFileSync(new URL('./web/data.js',import.meta.url),'utf8'),production);
+ const app=createApp(new Map(),{bundle:production.CAREER_DATA});assert.equal(app.json('D.jobs.length'),0);
+ const f=JSON.parse(readFileSync(new URL('./fixtures/public-boards.json',import.meta.url)))[4],parsed=parsePublicBoard(PUBLIC_SOURCES[4],f.data);
+ app.receive({checkedAt:newTime,jobs:parsed.jobs,sources:[parsed.source]});app.evaluate('renderList()');
+ assert.match(app.evaluate("$('#job-list').innerHTML"),/Software Engineering Intern/);assert.equal(app.evaluate("$('#top-count').textContent"),'1');
+ app.evaluate('profile={preferredCity:"riyadh",minimumMonthlySAR:"10000",unknownSalary:"hide"};renderList()');
+ assert.match(app.evaluate("$('#job-list').innerHTML"),/Monthly pay is not verified/);assert(!app.evaluate("$('#job-list').innerHTML").includes('data-job='));
+});
+await check('Package calculator rejects invalid values without silent clamping',async()=>{
+ const app=createApp(),target={id:'',name:'base',dataset:{},closest:selector=>selector==='#package-form'?{}:null};
+ for(const bad of ['-1','1000001','1.5','abc','', 'Infinity']){
+  app.evaluate(`$('#package-form').values=${JSON.stringify({base:bad,allowances:'0',bonus:'0'})}`);await app.dispatch('input',target);assert.match(app.evaluate("$('#package-result').textContent"),/Enter whole SAR amounts/);
+ }
+ app.evaluate("$('#package-form').values={base:'10000',allowances:'2000',bonus:'6000'}");await app.dispatch('input',target);assert.match(app.evaluate("$('#package-result').innerHTML"),/SAR 12,000/);assert.match(app.evaluate("$('#package-result').innerHTML"),/SAR 150,000/);
+});
+
+await check('Uncertain submission persists separately, prompts confirmation and warns before retry',()=>{
+ const app=createApp();app.receive(success([role],oldTime));app.changeStatus(role.id,'Submission uncertain');
+ assert.equal(app.json(`states[${JSON.stringify(role.id)}]`),'Submission uncertain');
+ assert(app.evaluate('applicationsPage()').includes('Need confirmation'));assert(app.evaluate('applicationsPage()').includes('Submission uncertain'));
+ assert(app.evaluate('attentionSection()').includes('Confirm the previous submission before retrying'));
+ assert(app.evaluate(`applicationAdvisory(jobById(${JSON.stringify(role.id)}))`).includes('Check the employer account or receipt'));
+ const reload=createApp(app.storage);assert.equal(reload.json(`states[${JSON.stringify(role.id)}]`),'Submission uncertain');
+ assert(!reload.json('C.attentionFor(retainedJobs(),states,{})').some(x=>x.kind==='applied-date'));
+});
+await check('Application board filters preserve all records and distinguish same-company roles',()=>{
+ const app=createApp(),second={...role,id:'same-employer-second',title:'Different Software Developer'};
+ app.receive(success([role,second],oldTime));app.changeStatus(role.id,'Applied');app.changeStatus(second.id,'Preparing');
+ assert(app.evaluate(`applicationAdvisory(jobById(${JSON.stringify(role.id)}))`).includes('Different roles are not automatically duplicates'));
+ app.evaluate("applicationFilter='Preparing'");const board=app.evaluate('applicationsPage()');assert(board.includes('Different Software Developer'));assert(!board.includes('data-job="'+role.id+'"'));
+ assert.equal(app.json('applicationJobs().length'),2);assert.equal(app.json('states["'+role.id+'"]'),'Applied');
+ app.evaluate("applicationFilter='all';query='no matches'");assert(app.evaluate('applicationsPage()').includes('No application records match'));assert.equal(app.json('applicationJobs().length'),2);
+});
+await check('New discovery filters compose and reset without changing local application records',async()=>{
+ const app=createApp(),a={...role,posted:new Date().toISOString(),employmentType:'Internship'},b={...role,id:'second-source',company:'Roche',posted:'2020-01-01',employmentType:'Full time'};
+ app.receive({checkedAt:new Date().toISOString(),jobs:[a,b],sources:[{name:'Alcon',ok:true,count:1},{name:'Roche',ok:true,count:1}]});app.evaluate("view='live';companyFilter='Alcon';ageWindow=7;employmentFilter='Internship';renderList()");
+ assert(app.evaluate("$('#job-list').innerHTML").includes('data-job="'+a.id+'"'));assert(!app.evaluate("$('#job-list').innerHTML").includes('data-job="'+b.id+'"'));
+ app.changeStatus(a.id,'Applied');app.evaluate('hideTracked=true;renderList()');assert(!app.evaluate("$('#job-list').innerHTML").includes('data-job='));
+ await app.dispatch('click',{closest:()=>({dataset:{action:'reset-discovery'}})});assert.equal(app.json('hideTracked'),false);assert.equal(app.json('ageWindow'),0);assert.equal(app.json('companyFilter'),'');assert.equal(app.json('states["'+a.id+'"]'),'Applied');
+});
+await check('Evidence drawer escapes source content and distinguishes last publication from checks',()=>{
+ const app=createApp(),job={...role,postedKind:'last-published',mode:'Hybrid',experienceLevel:'Entry level',employmentType:'Internship',requirementNotes:['Bachelor’s degree preferred or equivalent experience.','<img src=x onerror=alert(1)>']};app.receive(success([job]));
+ app.evaluate(`openJob(${JSON.stringify(job.id)})`);const detail=app.evaluate("$('#job-dialog').innerHTML");
+ assert(detail.includes('Last published'));assert(detail.includes('Hybrid'));assert(detail.includes('preferred or equivalent'));assert(detail.includes('&lt;img'));assert(!detail.includes('<img src=x'));
+ const unavailable=app.evaluate(`evidenceSection(${JSON.stringify(role)})`);assert(unavailable.includes('Detailed requirements were not captured'));
+});
+
+
+await check('Open dialog warnings and link refresh without replacing unsaved receipt input',async()=>{
+ const app=createApp();app.receive(success([role]));app.evaluate(`openJob(${JSON.stringify(role.id)})`);
+ app.evaluate(`recordDrafts[${JSON.stringify(role.id)}].receiptNote='unsaved note';$('#application-receipt').value='unsaved note'`);
+ await app.dispatch('change',{id:'',dataset:{status:role.id},value:'Submission uncertain'});
+ assert(app.evaluate("$('#application-advisory').innerHTML").includes('Check the employer account or receipt'));
+ assert.equal(app.evaluate("$('#application-open-link').textContent"),'View employer / existing application');
+ assert.equal(app.evaluate("$('#application-receipt').value"),'unsaved note');
+ assert.equal(app.json(`recordDrafts[${JSON.stringify(role.id)}].receiptNote`),'unsaved note');
+});
+await check('Unavailable discovery filter selections remain explicit after refresh',()=>{
+ const app=createApp();app.evaluate('D.jobs=[]');const a={...role,employmentType:'Internship'},b={...role,id:'other-company',company:'Roche',employmentType:'Full time'};
+ app.receive(success([a]));app.evaluate("view='live';companyFilter='Alcon';employmentFilter='Internship'");
+ app.receive({checkedAt:new Date().toISOString(),jobs:[b],sources:[{name:'Alcon',ok:true,count:0},{name:'Roche',ok:true,count:1}]});
+ const html=app.evaluate('toolbar()');assert(html.includes('Alcon (not in current results)'));assert(html.includes('Internship (not in current results)'));
+ assert(html.includes('value="Alcon" selected'));assert(html.includes('value="Internship" selected'));
+});
+
+
+await check('Search comparison establishes a baseline, detects additions and ignores republication and duplicates',()=>{
+ const app=createApp(),second={...role,id:'added-second'},third={...role,id:'added-third'};
+ app.receive(success([role],oldTime));
+ assert.deepEqual(app.json('live.searchComparison'),{schema:1,previousCheckedAt:null,checkedAt:oldTime,addedIds:[]});
+ assert.match(app.evaluate('searchChanges()'),/baseline established/);
+ app.receive(success([{...role,posted:newTime,postedKind:'last-published'},second,second],newTime));
+ assert.deepEqual(app.json('live.searchComparison.addedIds'),[second.id]);
+ assert.equal(app.json('live.searchComparison.previousCheckedAt'),oldTime);
+ assert.match(app.evaluate('searchChanges()'),/1 listing added to results/);
+ assert.match(app.evaluate('searchChanges()'),/returning listings/);
+ assert.match(app.evaluate('row(live.jobs[1],1)'),/Added in this comparison/);
+ assert(!app.evaluate('row(live.jobs[0],0)').includes('Added in this comparison'));
+ assert.deepEqual(createApp(app.storage).json('live.searchComparison'),app.json('live.searchComparison'));
+ app.receive(success([role,third],'2026-10-09T01:00:00Z'));
+ app.receive(success([role,second],'2026-10-09T02:00:00Z'));
+ assert.deepEqual(app.json('live.searchComparison.addedIds'),[second.id]);
+});
+await check('Equal snapshots are cached responses while older and failed searches preserve comparison and records',()=>{
+ const app=createApp(),second={...role,id:'added-second'};
+ app.receive(success([role],oldTime));app.changeStatus(role.id,'Applied');
+ app.receive(success([role,second],newTime));const before=app.json('live'),workspace=app.storage.get('ahmad-workspace');
+ app.receive(success([],newTime));assert.deepEqual(app.json('live'),before);assert.equal(app.json('liveError'),'');assert.match(app.json('searchNotice'),/No newer search snapshot/);
+ app.receive(success([],oldTime));assert.deepEqual(app.json('live'),before);assert.match(app.json('liveError'),/older/);
+ app.receive({checkedAt:'2026-10-09T01:00:00Z',jobs:[role],sources:[{name:'Alcon',ok:false,error:'outage'}]});assert.deepEqual(app.json('live'),before);assert.match(app.json('liveError'),/All selected/);
+ assert.equal(app.storage.get('ahmad-workspace'),workspace);
+ app.receive({error:'offline'});assert.deepEqual(app.json('live'),before);
+});
+await check('Cache adoption preserves its actual comparison rather than recomputing against current memory',()=>{
+ const shared=new Map(),a=createApp(shared,{shared:true}),b=createApp(shared,{shared:true});
+ a.receive(success([role],oldTime));b.receive(success([role,{...role,id:'other-tab-new'}],newTime));
+ const expected=b.json('live');a.receive({error:'offline'});assert.deepEqual(a.json('live'),expected);
+ assert.match(a.evaluate('searchChanges()'),/Compared with:/);assert(a.evaluate('searchChanges()').includes('Riyadh'));
+});
+await check('Malformed optional comparison does not discard valid cached listings',()=>{
+ const app=createApp(),valid={schema:1,previousCheckedAt:oldTime,checkedAt:newTime,addedIds:[role.id]};
+ for(const searchComparison of [true,[],{...valid,schema:2},{...valid,previousCheckedAt:newTime},{...valid,previousCheckedAt:'bad'},{...valid,checkedAt:oldTime},{...valid,addedIds:['missing']},{...valid,addedIds:[role.id,role.id]},{...valid,addedIds:Array(1001).fill(role.id)},{...valid,previousCheckedAt:null}]){
+  const snapshot={...success([role],newTime),searchComparison};const normalized=app.json(`C.normalizeLive(${JSON.stringify(snapshot)})`);
+  assert.equal(normalized.jobs.length,1);assert.equal(normalized.searchComparison,undefined);
+  const reload=createApp(new Map([['ahmad-live',JSON.stringify(snapshot)]]));assert.equal(reload.json('live.jobs.length'),1);assert.match(reload.evaluate('searchChanges()'),/unavailable/);
+ }
+ const legacy=createApp(new Map([['ahmad-live',JSON.stringify(success([role],oldTime))]]));
+ legacy.receive(success([role,{...role,id:'after-legacy'}],newTime));assert.deepEqual(legacy.json('live.searchComparison.addedIds'),['after-legacy']);
+});
+await check('Limited successful samples retain absent prior evidence, exact exclusions win and complete zero clears discovery only',()=>{
+ const app=createApp(),second={...role,id:'bounded-new'},excluded={...role,id:'excluded'};
+ app.receive(success([role,excluded],oldTime));app.changeStatus(role.id,'Applied');
+ app.receive({checkedAt:newTime,jobs:[second],sources:[{name:'Alcon',ok:true,limited:true,count:1,excludedIds:[excluded.id]}]});
+ assert.deepEqual(app.json('live.jobs.map(j=>j.id)'),[second.id,role.id]);assert.equal(app.json('live.jobs[1].lastCheckedAt'),oldTime);
+ assert.deepEqual(app.json('live.searchComparison.addedIds'),[second.id]);assert.match(app.json('coverageWarning'),/Bounded sample/);assert.match(app.json('coverageWarning'),/incompletely checked/);
+ const reload=createApp(app.storage);assert.equal(reload.json('live.jobs[1].lastCheckedAt'),oldTime);
+ reload.receive(success([],'2026-10-09T01:00:00Z'));assert.equal(reload.json('live.jobs.length'),0);assert.equal(reload.json(`states[${JSON.stringify(role.id)}]`),'Applied');
+ for(const limited of ['true',1,{},[]])assert.equal(app.json(`C.normalizeLive(${JSON.stringify({checkedAt:newTime,jobs:[],sources:[{name:'Alcon',ok:true,limited}]})})`),null);
+});
+await check('Partial failure comparison counts only additions and retains original observation dates',()=>{
+ const app=createApp(),other={...role,id:'other-employer',company:'Roche'},newRole={...other,id:'partial-added'};
+ app.receive({checkedAt:oldTime,jobs:[role,other],sources:[{name:'Alcon',ok:true},{name:'Roche',ok:true}]});
+ app.receive({checkedAt:newTime,jobs:[newRole],sources:[{name:'Alcon',ok:false,error:'outage'},{name:'Roche',ok:true}]});
+ assert.deepEqual(app.json('live.searchComparison.addedIds'),[newRole.id]);assert.deepEqual(app.json('live.jobs.map(j=>j.id)'),[newRole.id,role.id]);assert.equal(app.json('live.jobs[1].lastCheckedAt'),oldTime);
+});
+await check('Repeated incomplete retention cannot create an unreadable oversized cache',()=>{
+ const app=createApp(),jobs=Array.from({length:1000},(_,i)=>({...role,id:'bounded-'+i}));
+ app.receive(success(jobs,oldTime));const before=app.storage.get('ahmad-live');
+ app.receive({checkedAt:newTime,jobs:[{...role,id:'one-too-many'}],sources:[{name:'Alcon',ok:true,limited:true}]});
+ assert.match(app.json('liveError'),/1,000-listing cache limit/);assert.equal(app.storage.get('ahmad-live'),before);assert.equal(createApp(app.storage).json('live.jobs.length'),1000);
+});
+await check('Added comparison filter composes, resets and never deletes saved application history',async()=>{
+ const app=createApp(),second={...role,id:'added-filter'};app.receive(success([role],oldTime));app.receive(success([role,second],newTime));app.changeStatus(role.id,'Applied');
+ app.evaluate("view='live';addedOnly=true;renderList()");assert(app.evaluate("$('#job-list').innerHTML").includes('data-job="'+second.id+'"'));assert(!app.evaluate("$('#job-list').innerHTML").includes('data-job="'+role.id+'"'));
+ app.evaluate("companyFilter='missing';renderList()");assert.match(app.evaluate("$('#job-list').innerHTML"),/No added listings match/);
+ await app.dispatch('click',{closest:()=>({dataset:{action:'reset-discovery'}})});assert.equal(app.json('addedOnly'),false);assert.equal(app.json(`states[${JSON.stringify(role.id)}]`),'Applied');
+});
+
+
+await check('Added-only wording stays in discovery and bounded retention is not called unavailable',()=>{
+ const app=createApp();app.receive(success([role],oldTime));app.evaluate("view='saved';addedOnly=true;renderList()");
+ const empty=app.evaluate("$('#job-list').innerHTML");assert.match(empty,/Make a shortlist of your own/);assert(!empty.includes('No added listings'));assert(!empty.includes('Turn off this filter'));
+ app.receive({checkedAt:newTime,jobs:[],sources:[{name:'Alcon',ok:true,limited:true,count:0}]});app.evaluate(`openJob(${JSON.stringify(role.id)})`);
+ const detail=app.evaluate("$('#job-dialog').innerHTML");assert(detail.includes('latest employer check was incomplete or bounded'));assert(!detail.includes('employer search was unavailable'));
 });
 
 if (!process.exitCode) console.log(`${cases.length} application-state regression groups passed.`);

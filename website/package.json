@@ -1,1 +1,10 @@
-{"name":"ahmad-career","private":true,"type":"module","scripts":{"build":"node build.mjs","start":"node dev.mjs","test":"node check.mjs && node record-check.mjs && node feed-check.mjs && node state-check.mjs && node server-check.mjs"}}
+{
+  "name": "saleh-career-finder",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "node dev.mjs",
+    "test": "node check.mjs && node record-check.mjs && node feed-check.mjs && node transport-check.mjs && node public-provider-check.mjs && node upgrade-check.mjs && node followup-check.mjs && node server-check.mjs && node personalization-check.mjs"
+  }
+}

@@ -31,13 +31,11 @@ enum CareerFeed {
     static func relevant(_ title: String) -> Bool { relevance(title) > 0 }
 
     static func relevance(_ title: String) -> Int {
-        let excluded = "\\bintern(ship)?\\b|trainee|graduate|early[ -]in[ -]career|early[ -]career|sales|account[ -]+manager|clinical|chemist|scientist|engineer|financial[ -]+analyst|qa[ /-]*ra"
+        let excluded = #"\b(senior|sr\.?|lead|principal|staff|manager|director|head|chief|vp|vice[ -]president|sales|pre[ -]?sales|clinical)\b"#
         guard title.range(of: excluded, options: [.regularExpression, .caseInsensitive]) == nil else { return 0 }
-        if title.range(of: "supply[ -]?chain|procurement|purchas|tender|logistic|warehous|demand[ -]?plan|supply[ -]?plan|inventory|supplier", options: [.regularExpression, .caseInsensitive]) != nil {
-            return title.range(of: "manager|director|head|lead", options: [.regularExpression, .caseInsensitive]) != nil ? 90 : 65
-        }
-        if title.range(of: "performance|operational[ -]+excellence|continuous[ -]+improvement|transformation|operations?[ -]+manager", options: [.regularExpression, .caseInsensitive]) != nil { return 80 }
-        return title.range(of: "business[ -]value[ -]partner", options: [.regularExpression, .caseInsensitive]) != nil ? 65 : 0
+        let relevant = #"software|developer|python|machine[ -]learning|artificial[ -]intelligence|\bAI\b|full[ -]?stack|front[ -]?end|back[ -]?end|\bios\b|\bswift\b|automation|devops|site[ -]reliability|cloud[ -](platform|native|engineer)|database[ -]administrator|techops|data[ -](analyst|engineer|scientist)|builders[ -]program.*data|quality[ -]assurance|\bQA\b|مطور|برمجيات|ذكاء اصطناعي|محلل بيانات"#
+        guard title.range(of: relevant, options: [.regularExpression, .caseInsensitive]) != nil else { return 0 }
+        return title.range(of: #"junior|entry[ -]level|graduate|intern|trainee|associate|himmah|tamheer|builders[ -]program"#, options: [.regularExpression, .caseInsensitive]) != nil ? 95 : 80
     }
 
     static func qiddiyaJob(_ listing: [String: Any], now: Date = Date()) -> [String: Any]? {
@@ -53,7 +51,7 @@ enum CareerFeed {
         return [
             "id": "qiddiya-\(code)", "title": title, "company": "Qiddiya", "location": city == "Saudi Arabia" ? city : city + ", Saudi Arabia",
             "url": "https://apply.workable.com/qiddiya-investment-company-1/j/\(code)/",
-            "posted": published, "closes": NSNull(), "status": "live", "salary": NSNull(),
+            "posted": published, "postedKind": "published", "closes": NSNull(), "status": "live", "salary": NSNull(),
             "kind": "live", "fit": "Needs review",
             "summary": "New employer listing. Review full requirements before applying."
         ]
@@ -152,11 +150,241 @@ enum CareerFeed {
         return [
             "id": "\(source.tenant)-\(identifier)", "title": title, "company": source.name,
             "location": displayLocation, "url": url,
-            "posted": startDate, "closes": deadline.flatMap { $0.isEmpty ? nil : $0 } as Any? ?? NSNull(),
+            "posted": startDate, "postedKind": "published", "closes": deadline.flatMap { $0.isEmpty ? nil : $0 } as Any? ?? NSNull(),
             "status": "live", "salary": NSNull(), "kind": "live", "fit": "Needs review",
             "healthcare": true, "leadership": title.range(of: "\\b(manager|director|head|lead)\\b", options: [.regularExpression, .caseInsensitive]) != nil, "relevance": relevance(title),
             "summary": "New employer listing. Review full requirements before applying."
         ]
+    }
+
+    struct PublicSource {
+        let name:String
+        let kind:String
+        let board:String
+        var url:URL {
+            let value=kind=="recruitee" ? "https://unifonic.recruitee.com/api/offers/" : kind=="workable" ? "https://apply.workable.com/api/v1/widget/accounts/\(board)" : kind=="ashby" ? "https://api.ashbyhq.com/posting-api/job-board/\(board)" : "https://boards-api.greenhouse.io/v1/boards/\(board)/jobs?content=true"
+            return URL(string:value)!
+        }
+    }
+    static let publicSources=[
+        PublicSource(name:"Mozn",kind:"workable",board:"mozn-ai"),
+        PublicSource(name:"Lucidya",kind:"workable",board:"lucidya"),
+        PublicSource(name:"Foodics",kind:"workable",board:"foodics"),
+        PublicSource(name:"Salla",kind:"workable",board:"salla"),
+        PublicSource(name:"Lean Technologies",kind:"ashby",board:"LeanTech"),
+        PublicSource(name:"Tamara",kind:"greenhouse",board:"tamara"),
+        PublicSource(name:"Unifonic",kind:"recruitee",board:"unifonic")
+    ]
+    static var activeSourceNames:[String] {publicSources.map(\.name)}
+    private static func publicText(_ value:Any?,limit:Int=2000)->String? {
+        guard let value=value as? String,value.utf16.count<=limit else{return nil}
+        let clean=value.trimmingCharacters(in:.whitespacesAndNewlines)
+        return clean.isEmpty ? nil : clean
+    }
+    // Extract bounded clues from description fields already present in a public board response.
+    // This is not an eligibility parser and does not fetch application/detail endpoints.
+    static func plainEmployerText(_ value:Any?)->String {
+        guard var text=value as? String,text.utf16.count<=120_000 else{return ""}
+        let entities=["amp":"&","lt":"<","gt":">","quot":"\"","apos":"'","nbsp":" "]
+        if let regex=try? NSRegularExpression(pattern:#"&(#x[0-9a-f]+|#[0-9]+|amp|lt|gt|quot|apos|nbsp);"#,options:.caseInsensitive) {
+            for match in regex.matches(in:text,range:NSRange(text.startIndex...,in:text)).reversed() {
+                guard let range=Range(match.range,in:text),let nameRange=Range(match.range(at:1),in:text) else{continue}
+                let name=String(text[nameRange]).lowercased()
+                let replacement:String
+                if name.hasPrefix("#") {
+                    let hex=name.hasPrefix("#x")
+                    let number=UInt32(name.dropFirst(hex ? 2:1),radix:hex ? 16:10)
+                    if let number,number>=32,number<=0x10ffff,!(0xd800...0xdfff).contains(number),let scalar=UnicodeScalar(number) {replacement=String(scalar)} else {replacement=" "}
+                } else {replacement=entities[name] ?? " "}
+                text.replaceSubrange(range,with:replacement)
+            }
+        }
+        text=text.replacingOccurrences(of:#"<(script|style)\b[^>]*>[\s\S]*?</\1\s*>"#,with:" ",options:[.regularExpression,.caseInsensitive])
+            .replacingOccurrences(of:#"</?(?:p|li|div|br|h[1-6]|ul|ol)[^>]*>"#,with:"\n",options:[.regularExpression,.caseInsensitive])
+            .replacingOccurrences(of:#"<[^>]*>"#,with:" ",options:.regularExpression)
+        return text.replacingOccurrences(of:#"[\t \r]+"#,with:" ",options:.regularExpression)
+            .replacingOccurrences(of:#"\n\s*"#,with:"\n",options:.regularExpression).trimmingCharacters(in:.whitespacesAndNewlines)
+    }
+    static func requirementNotes(_ value:Any?)->[String] {
+        let text=plainEmployerText(value)
+        let relevant=#"bachelor|master.?s|degree|\bph\.?d\b|university|student|graduat|\d+\+?\s*(?:-\s*\d+\s*)?years?|\bpaid\b|unpaid|work authori[sz]ation|saudi nationals?|citizenship|تخرج|بكالوريوس|سنوات|طالب"#
+        let lines=text.replacingOccurrences(of:#"\n+|(?<=[.!?])\s+"#,with:"\n",options:.regularExpression).components(separatedBy:"\n")
+        var seen=Set<String>(),notes=[String]()
+        for line in lines {
+            let clean=line.trimmingCharacters(in:.whitespacesAndNewlines)
+            guard clean.utf16.count>12,clean.range(of:relevant,options:[.regularExpression,.caseInsensitive]) != nil else{continue}
+            let benefits=clean.range(of:#"\bpaid\s+(?:leave|holidays?|time off|vacation)\b"#,options:[.regularExpression,.caseInsensitive]) != nil
+            let roleContext=clean.range(of:#"degree|experience|internship|salary"#,options:[.regularExpression,.caseInsensitive]) != nil
+            let companyBoilerplate=clean.range(of:#"\b(?:we serve|our company|founded in|we have served)\b"#,options:[.regularExpression,.caseInsensitive]) != nil
+            let applicantContext=clean.range(of:#"\b(?:required|minimum|must|candidate|you have)\b"#,options:[.regularExpression,.caseInsensitive]) != nil
+            guard !(benefits && !roleContext),!(companyBoilerplate && !applicantContext),seen.insert(clean).inserted else{continue}
+            notes.append(clean.utf16.count>260 ? String(decoding:clean.utf16.prefix(257),as:UTF16.self)+"…" : clean)
+            if notes.count==4 {break}
+        }
+        return notes
+    }
+    static func employerMode(_ kind:String,row:[String:Any])->String {
+        if kind=="recruitee" {
+            let modes=[("on_site","On-site"),("hybrid","Hybrid"),("remote","Remote")].filter{strictBool(row[$0.0])==true}.map(\.1)
+            return modes.isEmpty ? "Not stated" : modes.joined(separator:" / ")
+        }
+        if kind=="ashby" {
+            if let type=row["workplaceType"] as? String,let label=["Remote":"Remote","Hybrid":"Hybrid","OnSite":"On-site"][type] {return label}
+            return strictBool(row["isRemote"])==true ? "Remote or hybrid" : "Not stated"
+        }
+        return strictBool(row["telecommuting"])==true ? "Remote arrangement: confirm details" : "Not stated"
+    }
+    static func employmentLabel(_ value:String)->String {
+        let key=value.lowercased().replacingOccurrences(of:#"[\s_-]"#,with:"",options:.regularExpression)
+        return ["fulltime":"Full time","parttime":"Part time","internship":"Internship","contract":"Contract","temporary":"Temporary"][key] ?? value
+    }
+    private static func publicSaudi(_ value:Any?)->Bool {
+        guard let value=publicText(value) else{return false}
+        return value.range(of:#"^(Saudi Arabia|Kingdom of Saudi Arabia|SA|SAU|السعودية|المملكة العربية السعودية)$"#,options:[.regularExpression,.caseInsensitive]) != nil
+    }
+    private static func publicLocations(_ row:[String:Any],source:PublicSource)->[String] {
+        if source.kind=="recruitee" {
+            return (row["locations"] as? [[String:Any]] ?? []).filter { location in
+                let code=location["country_code"]
+                return publicSaudi(code == nil || code is NSNull ? location["country"] : code)
+            }.map{publicText($0["city"]) ?? "Saudi Arabia"}
+        }
+        if source.kind=="workable" {
+            let given=row["locations"] as? [[String:Any]]
+            let locations=(given?.isEmpty==false ? given! : [["country":row["country"] ?? "","city":row["city"] ?? ""]])
+            return locations.filter {strictBool($0["hidden"]) != true && publicSaudi($0["countryCode"] ?? $0["country"])}.map{publicText($0["city"]) ?? "Saudi Arabia"}
+        }
+        if source.kind=="ashby" {
+            let locations=[["location":row["location"] ?? "","address":row["address"] ?? [:]]] + (row["secondaryLocations"] as? [[String:Any]] ?? [])
+            return locations.filter { item in
+                if let address=item["address"] as? [String:Any] {
+                    let postal=address["postalAddress"] as? [String:Any]
+                    let country=(postal?["addressCountry"] as? String) ?? (address["addressCountry"] as? String)
+                    if let country,!country.isEmpty {return publicSaudi(country)}
+                }
+                return publicText(item["location"])?.range(of:#"saudi|\briyadh\b|\bjeddah\b|\bdammam\b|\bkhobar\b|\bSAU\b|الرياض|جدة|السعودية"#,options:[.regularExpression,.caseInsensitive]) != nil
+            }.compactMap{publicText($0["location"])}
+        }
+        guard let location=row["location"] as? [String:Any],let name=publicText(location["name"]),name.range(of:#"saudi|\briyadh\b|\bjeddah\b|\bdammam\b|\bkhobar\b|\bSAU\b|الرياض|جدة|السعودية"#,options:[.regularExpression,.caseInsensitive]) != nil else{return []}
+        return [name]
+    }
+    private static func recruiteeDate(_ value:Any?)->String? {
+        guard let value,!(value is NSNull) else{return ""}
+        guard let text=value as? String else{return nil}
+        if text.isEmpty {return ""}
+        guard text.range(of:#"^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2} UTC\z"#,options:.regularExpression) != nil else{return nil}
+        let iso=String(text.prefix(10))+"T"+String(text.dropFirst(11).prefix(8))+"Z"
+        return isoDate(iso)==nil ? nil : iso
+    }
+    private static func publicJob(_ row:[String:Any],source:PublicSource)->[String:Any]? {
+        guard let title=publicText(row["title"]) else{return nil}
+        let rawID=source.kind=="workable" ? row["shortcode"] as? String : source.kind=="ashby" ? row["id"] as? String : (row["id"] as? NSNumber).map{$0.stringValue}
+        guard let id=rawID else{return nil}
+        let pattern=source.kind=="workable" ? #"^[A-Za-z0-9]{1,64}$"# : source.kind=="ashby" ? #"^[a-f0-9-]{36}$"# : #"^[0-9]{1,20}$"#
+        guard id.range(of:pattern,options:[.regularExpression,.caseInsensitive]) != nil else{return nil}
+        if source.kind=="ashby",strictBool(row["isListed"])==nil{return nil}
+        if source.kind=="workable" {
+            if let raw=row["locations"],!(raw is NSNull),!(raw is [[String:Any]]){return nil}
+            for location in row["locations"] as? [[String:Any]] ?? [] {
+                for key in ["country","countryCode","city"] {if let value=location[key],!(value is NSNull),!(value is String){return nil}}
+                if let hidden=location["hidden"],!(hidden is NSNull),strictBool(hidden)==nil{return nil}
+            }
+            for key in ["country","city"] {if let value=row[key],!(value is NSNull),!(value is String){return nil}}
+            if (row["locations"] as? [[String:Any]] ?? []).isEmpty && publicText(row["country"])==nil{return nil}
+        }
+        if source.kind=="ashby" {
+            guard row["location"] is String else{return nil}
+            if let secondary=row["secondaryLocations"],!(secondary is NSNull),!(secondary is [[String:Any]]){return nil}
+            let locations=[["location":row["location"] ?? "","address":row["address"] ?? NSNull()]] + (row["secondaryLocations"] as? [[String:Any]] ?? [])
+            for location in locations {
+                guard location["location"] is String else{return nil}
+                if let address=location["address"],!(address is NSNull) {
+                    guard let address=address as? [String:Any] else{return nil}
+                    if let country=address["addressCountry"],!(country is NSNull),!(country is String){return nil}
+                    if let postal=address["postalAddress"],!(postal is NSNull) {
+                        guard let postal=postal as? [String:Any] else{return nil}
+                        if let country=postal["addressCountry"],!(country is NSNull),!(country is String){return nil}
+                    }
+                }
+            }
+        }
+        if source.kind=="recruitee" {
+            guard row["status"] is String,let slug=row["slug"] as? String,slug.range(of:#"^[a-z0-9][a-z0-9-]{0,199}\z"#,options:[.regularExpression,.caseInsensitive]) != nil,
+                  let locations=row["locations"] as? [[String:Any]] else{return nil}
+            for location in locations {
+                for key in ["country_code","country","city"] {if let value=location[key],!(value is NSNull),!(value is String){return nil}}
+            }
+            for key in ["remote","on_site","hybrid"] {if let value=row[key],!(value is NSNull),strictBool(value)==nil{return nil}}
+        }
+        if ["greenhouse","recruitee"].contains(source.kind) {guard let id=row["id"] as? NSNumber,strictBool(row["id"])==nil,id.doubleValue>=0,id.doubleValue<=9007199254740991,id.doubleValue.rounded()==id.doubleValue else{return nil}}
+        if source.kind=="greenhouse",(row["location"] as? [String:Any])?["name"] as? String == nil{return nil}
+        let posted:String,closes:String
+        if source.kind=="recruitee" {
+            guard let publication=recruiteeDate(row["published_at"]),let closing=recruiteeDate(row["close_at"]) else{return nil}
+            posted=publication;closes=closing
+        } else {
+            let postedValue=source.kind=="workable" ? row["published_on"] : source.kind=="ashby" ? row["publishedAt"] : row["first_published"]
+            if let postedValue,!(postedValue is NSNull),!(postedValue is String){return nil}
+            posted=postedValue as? String ?? "";closes=""
+        }
+        if !posted.isEmpty && parsedDate(posted)==nil{return nil}
+        let locations=publicLocations(row,source:source),level=publicText(row["experience"]) ?? ""
+        // An exact excluded ID is authoritative even when unrelated rows are malformed.
+        guard relevant(title),!locations.isEmpty,dateIsEligible(posted,now:Date(),closing:false),!(source.kind=="ashby" && strictBool(row["isListed"]) != true),!(source.kind=="recruitee" && row["status"] as? String != "published"),dateIsEligible(closes,now:Date(),closing:true),level.range(of:#"^(director|executive)$"#,options:[.regularExpression,.caseInsensitive])==nil else{return ["_excludedId":"\(source.board.lowercased())-\(id)"]}
+        let value=source.kind=="workable" ? "https://apply.workable.com/\(source.board)/j/\(id)/" : source.kind=="ashby" ? row["jobUrl"] as? String : source.kind=="recruitee" ? row["careers_url"] as? String : row["absolute_url"] as? String
+        guard let value,let url=URL(string:value),url.scheme=="https",url.user==nil,url.password==nil,url.port==nil || url.port==443 else{return nil}
+        let host=source.kind=="workable" ? "apply.workable.com" : source.kind=="ashby" ? "jobs.ashbyhq.com" : source.kind=="recruitee" ? "jobs.unifonic.com" : "job-boards.eu.greenhouse.io"
+        let path=source.kind=="workable" ? "/\(source.board)/j/\(id)" : source.kind=="ashby" ? "/\(source.board)/\(id)" : source.kind=="recruitee" ? "/o/\(row["slug"] as! String)" : "/\(source.board)/jobs/\(id)"
+        guard url.host?.lowercased()==host,url.path.trimmingCharacters(in:CharacterSet(charactersIn:"/")).lowercased()==path.trimmingCharacters(in:CharacterSet(charactersIn:"/")).lowercased() else{return nil}
+        let unique=locations.reduce(into:[String]()){if !$0.contains($1){$0.append($1)}}
+        let early=(title+" "+level).range(of:#"junior|entry[ -]level|graduate|intern|trainee|associate|himmah|tamheer|builders[ -]program"#,options:[.regularExpression,.caseInsensitive]) != nil
+        var gaps=[String]()
+        if !level.isEmpty{gaps.append("Employer-listed experience level: \(level). Check the full requirements.")}
+        gaps += ["Personal projects are not formal employment. Confirm any degree, student-status or minimum professional-experience requirement.","Salary and paid status are not verified. Review the current official job description."]
+        let employmentNames=["FullTime":"Full time","PartTime":"Part time","Intern":"Internship","Contract":"Contract","Temporary":"Temporary"]
+        let employmentCodes=["fulltime_permanent":"Full time (permanent)","fulltime_fixed_term":"Full time (fixed term)","parttime_permanent":"Part time (permanent)","parttime_fixed_term":"Part time (fixed term)","internship":"Internship"]
+        let code=publicText(row["employment_type_code"],limit:100)
+        let fallback=source.kind=="recruitee" ? code.map{"Employer code: "+String(decoding:$0.utf16.prefix(80),as:UTF16.self)} : nil
+        let employment=employmentNames[row["employmentType"] as? String ?? ""] ?? publicText(row["employment_type"],limit:100) ?? employmentCodes[code ?? ""] ?? fallback ?? "Not stated"
+        let description:Any?
+        switch source.kind {
+        case "ashby": description=(row["descriptionPlain"] as? String).flatMap{$0.isEmpty ? nil:$0} as Any? ?? row["descriptionHtml"]
+        case "greenhouse": description=row["content"]
+        case "recruitee": description=[row["requirements"],row["description"]].compactMap{$0 as? String}.joined(separator:"\n")
+        default: description=nil
+        }
+        let location=unique.map{source.kind != "greenhouse" && $0.range(of:#"saudi|\briyadh\b|\bjeddah\b|\bdammam\b|\bkhobar\b|\bSAU\b|الرياض|جدة|السعودية"#,options:[.regularExpression,.caseInsensitive])==nil ? $0+", Saudi Arabia" : $0}.joined(separator:" / ")
+        return ["id":"\(source.board.lowercased())-\(id)","title":title,"company":source.name,"location":location,
+                "url":value,"posted":posted,"closes":closes.isEmpty ? NSNull() : closes as Any,"status":"live","salary":NSNull(),"kind":"live","fit":"Needs review",
+                "healthcare":false,"leadership":false,"relevance":early ? 95 : relevance(title),"mode":employerMode(source.kind,row:row),
+                "postedKind":["ashby","recruitee"].contains(source.kind) ? "last-published" : "published",
+                "experienceLevel":String(decoding:level.utf16.prefix(100),as:UTF16.self),"employmentType":employmentLabel(employment),"requirementNotes":requirementNotes(description),
+                "summary":"Currently listed on the employer board. Confirm paid status, degree, professional experience and work location before applying.","gaps":gaps]
+    }
+    static func parsePublicBoard(_ data:[String:Any],source:PublicSource)throws->SourceResult {
+        guard let rows=data[source.kind=="recruitee" ? "offers" : "jobs"] as? [Any],rows.count<=5000 else{throw FeedError.invalidResponse}
+        var jobs=[String:[String:Any]](),failures=0,valid=0
+        var excluded=Set<String>()
+        for raw in rows.prefix(500) {
+            guard let row=raw as? [String:Any],let job=publicJob(row,source:source) else{failures+=1;continue}
+            valid+=1
+            if let id=job["_excludedId"] as? String {excluded.insert(id);continue}
+            guard let id=job["id"] as? String else{continue}
+            if var prior=jobs[id],let before=prior["location"] as? String,let after=job["location"] as? String {
+                prior["location"]=(before.components(separatedBy:" / ")+after.components(separatedBy:" / ")).reduce(into:[String]()){if !$0.contains($1){$0.append($1)}}.joined(separator:" / ")
+                prior["relevance"]=max(prior["relevance"] as? Int ?? 0,job["relevance"] as? Int ?? 0);jobs[id]=prior
+            }else{jobs[id]=job}
+        }
+        var status:[String:Any] = ["name":source.name,"ok":valid>0 || rows.isEmpty,"count":jobs.count,"scanned":min(rows.count,500),"total":rows.count,"limited":rows.count>500,"detailErrors":failures,"excludedIds":excluded.filter{jobs[$0]==nil}.sorted()]
+        if failures>0{status["error"]="\(failures) malformed listings were skipped; results may be incomplete."}
+        return SourceResult(name:source.name,jobs:jobs.keys.sorted().compactMap{jobs[$0]},status:status)
+    }
+    static func fetchPublic(_ source:PublicSource,session:URLSession)async->SourceResult {
+        do {
+            var request=URLRequest(url:source.url);request.setValue("application/json",forHTTPHeaderField:"Accept")
+            let data=try await json(request,session:session)
+            return try parsePublicBoard(data,source:source)
+        }catch{return SourceResult(name:source.name,jobs:[],status:["name":source.name,"ok":false,"count":0,"scanned":0,"error":error.localizedDescription])}
     }
 
     static func refresh() async -> [String: Any] {
@@ -168,9 +396,9 @@ enum CareerFeed {
         let session = URLSession(configuration: configuration, delegate: NoRedirects(), delegateQueue: nil)
         defer { session.invalidateAndCancel() }
         let results = await withTaskGroup(of: SourceResult.self, returning: [SourceResult].self) { group in
-            for source in sources {
+            for source in publicSources {
                 group.addTask {
-                    await boundedSource(name: source.name) { await fetch(source, session: session) }
+                    await boundedSource(name: source.name) { await fetchPublic(source, session: session) }
                 }
             }
             var results: [SourceResult] = []
@@ -308,18 +536,30 @@ enum CareerFeed {
     }
 
     private static func json(_ request: URLRequest, session: URLSession) async throws -> [String: Any] {
-        let (data, response) = try await session.data(for: request)
+        let (bytes, response) = try await session.bytes(for: request)
+        // Cancel rejected/oversized streams rather than buffering the entire response first.
+        defer { bytes.task.cancel() }
         guard let http = response as? HTTPURLResponse else { throw FeedError.invalidResponse }
         guard (200..<300).contains(http.statusCode) else { throw FeedError.http(http.statusCode) }
-        guard data.count <= 8_000_000, let value = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { throw FeedError.invalidResponse }
+        let limit=8_000_000
+        guard response.expectedContentLength<=limit else {throw FeedError.tooLarge}
+        var data=Data()
+        data.reserveCapacity(min(max(Int(response.expectedContentLength),0),limit))
+        for try await byte in bytes {
+            guard data.count<limit else {throw FeedError.tooLarge}
+            data.append(byte)
+        }
+        try Task.checkCancellation()
+        guard let value = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { throw FeedError.invalidResponse }
         return value
     }
 
     private enum FeedError: LocalizedError {
-        case invalidResponse, http(Int)
+        case invalidResponse, tooLarge, http(Int)
         var errorDescription: String? {
             switch self {
             case .invalidResponse: return "The employer returned an unreadable response."
+            case .tooLarge: return "The employer response exceeded the safe size limit."
             case .http(let status): return "Employer request failed (HTTP \(status))."
             }
         }
