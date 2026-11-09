@@ -21,3 +21,11 @@ Adds portable private JSON export and preview-first additive restore of saved jo
 Strict schema, safe-link, reference and date validation applies, with a 4 MiB portable envelope and 1,000 retained-role limit. Preview and commit reject stale revisions, unreadable/orphaned records, excessive combined data and failed recovery writes. Restored receipt/task maps commit atomically with the workspace. Both web and native tests cover cross-format imports and stale-window protection.
 
 Close older app versions before restoring. Do not downgrade after importing receipts/tasks: older versions do not understand their fallback maps. Save a portable backup first. Restore does not confirm a submission or current vacancy, and never sends messages or applications. The original Ahmad storage namespace and bundle identifier remain unchanged. TestFlight upload is not part of this update.
+
+## Discovery and role review 1.5
+
+Version 1.5/build 16 adds Devoteam and Delivery Hero, bringing selected official sources to nine. SmartRecruiters parsing checks public active Saudi listings, exact source identity and URLs, and bounded list/detail requests. Incomplete checks preserve dated prior evidence; known exclusions remove discovery while retaining saved history. Web sources have a 40-second deadline/14-second requests; native retains 45-second source, 20-second request and 45-second resource budgets.
+
+Role-family filters, broader requirement-text search, and literal technology overlap with self-entered skills help review opportunities. Education, student, program/GPA, experience, work-authorization and unpaid wording remains quoted with qualifiers. No score or eligibility verdict is produced; excerpts are always partial or missing. The Mac/web interface also compares up to three roles temporarily without changing saved roles or local stages. Native iPhone includes review and filtering, not side-by-side comparison in this release.
+
+Existing bundle identity, storage namespaces, backups and self-entered profiles remain intact. No personal profile, CV, private application ledger, local installation receipt or credentials are included. No application, message, notification or TestFlight upload is performed by this update. Physical-device QA remains separate from compilation and isolated checks.

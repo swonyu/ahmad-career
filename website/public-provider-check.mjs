@@ -36,8 +36,8 @@ for(const [i,f] of fixtures.slice(0,6).entries()){
 }
 for(const title of ['iOS Engineer','Swift Developer','Software Engineering Intern','Tamara Builders Program - Data'])assert(C.relevance(title)>0,title);
 const requests=[];
-const payload=await getLiveJobs(async(url,options)=>{requests.push({url,options});assert.equal(options.method,'GET');assert.equal(options.body,undefined);assert.equal(options.redirect,'manual');const f=fixtures[requests.length-1];return new Response(JSON.stringify(f.data),{status:200})});
-assert.equal(requests.length,7);assert.equal(payload.jobs.length,7);assert(C.normalizeLive(payload));
+const payload=await getLiveJobs(async(url,options)=>{requests.push({url,options});assert.equal(options.method,'GET');assert.equal(options.body,undefined);assert.equal(options.redirect,'manual');const f=fixtures[requests.length-1];return new Response(JSON.stringify(url.includes('api.smartrecruiters.com')?{offset:0,limit:100,totalFound:0,content:[]}:f.data),{status:200})});
+assert.equal(requests.length,9);assert.equal(payload.jobs.length,7);assert(C.normalizeLive(payload));
 await assert.rejects(publicBoardSource({name:'Unknown',type:'workable',board:'malicious'}));
 for(const source of PUBLIC_SOURCES)await assert.rejects(publicBoardSource(source,async()=>new Response('{}',{status:302})));
 assert.equal(parsePublicBoard(PUBLIC_SOURCES[6],fixtures[6].data).jobs.length,1);

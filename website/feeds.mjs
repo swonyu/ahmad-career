@@ -8,8 +8,9 @@ export const SOURCES=[
  {name:'GSK',host:'gsk.wd5.myworkdayjobs.com',tenant:'gsk',board:'GSKCareers'},
  {name:'BD',host:'bdx.wd1.myworkdayjobs.com',tenant:'bdx',board:'EXTERNAL_CAREER_SITE_SAUDI_ARABIA'}
 ];
-async function jsonFetch(url,body,fetcher=fetch){
- const r=await fetcher(url,{method:body?'POST':'GET',redirect:'manual',headers:{'Content-Type':'application/json','Accept':'application/json'},...(body?{body:JSON.stringify(body)}:{}),signal:AbortSignal.timeout(14000)});
+async function jsonFetch(url,body,fetcher=fetch,signal){
+ signal?.throwIfAborted();
+ const r=await fetcher(url,{method:body?'POST':'GET',redirect:'manual',headers:{'Content-Type':'application/json','Accept':'application/json'},...(body?{body:JSON.stringify(body)}:{}),signal:signal?AbortSignal.any([signal,AbortSignal.timeout(14000)]):AbortSignal.timeout(14000)});
  if(!r.ok){await r.body?.cancel?.().catch(()=>{});throw new Error('Employer returned '+r.status);}
  const limit=8_000_000,declared=r.headers?.get?.('content-length');
  const oversized=()=>Error('Employer response was too large');
@@ -166,7 +167,47 @@ export async function publicBoardSource(s,fetcher=fetch){
   if(!PUBLIC_SOURCES.some(x=>x.name===s.name&&x.type===s.type&&x.board===s.board))throw Error('Unknown employer board');
   return parsePublicBoard(s,await jsonFetch(sourceURL(s),null,fetcher));
 }
+export const SMART_SOURCES=[{name:'Devoteam',type:'smartrecruiters',board:'Devoteam'},{name:'Delivery Hero',type:'smartrecruiters',board:'DeliveryHero'}];
+function smartSourceKnown(s){if(!SMART_SOURCES.some(x=>x.name===s.name&&x.type===s.type&&x.board===s.board))throw Error('Unknown employer board');}
+function smartIdentity(s,row){
+ if(!row||typeof row!=='object'||Array.isArray(row)||typeof row.id!=='string'||!/^\d{1,20}$/.test(row.id)||!textValue(row.name)||row.company?.identifier!==s.board||!textValue(row.location?.country,100)||row.location.city!=null&&(typeof row.location.city!=='string'||row.location.city.length>2000)||!textValue(row.visibility,40)||typeof row.releasedDate!=='string'||!parsedDate(row.releasedDate))throw Error('Malformed employer listing');
+ const id=s.board.toLowerCase()+'-'+row.id,excluded=row.visibility!=='PUBLIC'||!saCountry(row.location.country)||!relevance(row.name)||isFuture(row.releasedDate);
+ return {id,excluded};
+}
+export function smartCandidates(s,data){
+ smartSourceKnown(s);
+ if(!data||!Array.isArray(data.content)||data.content.length>5000||data.offset!==0||!Number.isInteger(data.limit)||data.limit<1||data.limit>100||!Number.isInteger(data.totalFound)||data.totalFound<data.content.length||data.totalFound>0&&!data.content.length)throw Error('Unexpected employer response');
+ const candidates=new Map(),excluded=new Set();let valid=0,failures=0;
+ for(const row of data.content.slice(0,100)){try{const item=smartIdentity(s,row);valid++;if(item.excluded)excluded.add(item.id);else candidates.set(row.id,row);}catch{failures++}}
+ return {rows:[...candidates.values()].slice(0,20),excludedIds:[...excluded].filter(id=>![...candidates.keys()].some(key=>s.board.toLowerCase()+'-'+key===id)),scanned:Math.min(100,data.content.length),total:data.totalFound,limited:data.totalFound>data.content.length||data.content.length>100||candidates.size>20,valid,failures};
+}
+export function parseSmartDetail(s,listing,detail){
+ smartSourceKnown(s);const identity=smartIdentity(s,detail);
+ if(detail.id!==listing.id||typeof detail.active!=='boolean')throw Error('Mismatched employer detail');
+ if(identity.excluded||!detail.active)return {_excludedId:identity.id};
+ for(const key of ['remote','hybrid'])if(detail.location[key]!=null&&typeof detail.location[key]!=='boolean')throw Error('Malformed work arrangement');
+ const url=safeJobURL(detail.postingUrl);if(url==='#')throw Error('Unsafe employer URL');
+ const u=new URL(url),expected=new RegExp('^/'+s.board+'/'+listing.id+'-[a-z0-9-]{1,240}/?$');
+ if(u.hostname!=='jobs.smartrecruiters.com'||!expected.test(u.pathname)||u.search||u.hash)throw Error('Mismatched employer URL');
+ const label=(obj)=>{if(obj==null)return '';if(typeof obj!=='object'||Array.isArray(obj)||obj.label!=null&&(typeof obj.label!=='string'||obj.label.length>100))throw Error('Malformed employer metadata');return obj.label||''};
+ const level=label(detail.experienceLevel),type=label(detail.typeOfEmployment),sections=detail.jobAd?.sections;
+ if(detail.jobAd!=null&&(typeof detail.jobAd!=='object'||Array.isArray(detail.jobAd))||sections!=null&&(typeof sections!=='object'||Array.isArray(sections)))throw Error('Malformed employer requirements');
+ const descriptions=['qualifications','jobDescription','additionalInformation'].map(key=>{const section=sections?.[key];if(section==null)return '';if(typeof section!=='object'||Array.isArray(section)||section.text!=null&&(typeof section.text!=='string'||section.text.length>120000))throw Error('Malformed employer requirements');return section.text||''});
+ // Each section is bounded, and total input is bounded before text normalization.
+ if(descriptions.reduce((sum,x)=>sum+x.length,0)>120000)throw Error('Oversized employer requirements');
+ const title=detail.name.trim(),early=/junior|entry[ -]level|graduate|intern|trainee|associate|tamheer/i.test(title+' '+level);
+ return {id:identity.id,title,company:s.name,location:(textValue(detail.location.city)||'Saudi Arabia')+(textValue(detail.location.city)?', Saudi Arabia':''),url,posted:detail.releasedDate,postedKind:'last-published',closes:null,status:'live',salary:null,kind:'live',fit:'Needs review',healthcare:false,leadership:false,relevance:early?95:relevance(title),mode:detail.location.remote===true?(detail.location.hybrid===true?'Remote / Hybrid':'Remote'):detail.location.hybrid===true?'Hybrid':detail.location.remote===false&&detail.location.hybrid===false?'On-site':'Not stated',experienceLevel:level,employmentType:type==='Intern'?'Internship':employmentLabel(type||'Not stated'),requirementNotes:requirementNotes(descriptions.join('\n')),summary:'Currently listed on the employer board. Confirm eligibility, paid status, professional experience and work location.',gaps:['Confirm mandatory qualifications and any program eligibility directly with the employer.','Personal projects are not formal employment. Salary and paid status are not verified.']};
+}
+export async function smartBoardSource(s,fetcher=fetch){
+ smartSourceKnown(s);const deadline=AbortSignal.timeout(40000),base='https://api.smartrecruiters.com/v1/companies/'+s.board+'/postings';
+ const data=await jsonFetch(base+'?country=sa&limit=100&offset=0',null,fetcher,deadline),sample=smartCandidates(s,data),excluded=new Set(sample.excludedIds),byID=new Map();let failures=sample.failures,details=0;
+ // At most four detail requests in flight per board; all URLs are constructed from validated numeric IDs.
+ for(let offset=0;offset<sample.rows.length;offset+=4){await Promise.all(sample.rows.slice(offset,offset+4).map(async row=>{try{const j=parseSmartDetail(s,row,await jsonFetch(base+'/'+row.id,null,fetcher,deadline));details++;if(j._excludedId)excluded.add(j._excludedId);else byID.set(j.id,j)}catch{failures++}}))}
+ const jobs=[...byID.values()];
+ return {jobs,source:{name:s.name,ok:details>0||sample.excludedIds.length>0||sample.rows.length===0&&(sample.valid>0||sample.scanned===0),count:jobs.length,scanned:sample.scanned,total:sample.total,limited:sample.limited,detailErrors:failures,excludedIds:[...excluded].filter(id=>!byID.has(id)),...(failures?{error:`${failures} listing checks failed; results may be incomplete.`}:{})}};
+}
+
 export async function getLiveJobs(fetcher=fetch){
-  const results=await Promise.all(PUBLIC_SOURCES.map(async s=>{try{return await publicBoardSource(s,fetcher)}catch(e){return{jobs:[],source:{name:s.name,ok:false,count:0,scanned:0,error:String(e.message||'Unable to reach employer').slice(0,140)}}}}));
+  const results=await Promise.all([...PUBLIC_SOURCES,...SMART_SOURCES].map(async s=>{try{return await (s.type==='smartrecruiters'?smartBoardSource(s,fetcher):publicBoardSource(s,fetcher))}catch(e){return{jobs:[],source:{name:s.name,ok:false,count:0,scanned:0,error:String(e.message||'Unable to reach employer').slice(0,140)}}}}));
   return {checkedAt:new Date().toISOString(),jobs:dedupe(results.flatMap(r=>r.jobs)).sort((a,b)=>b.relevance-a.relevance||(dateSortTime(b.posted)??-Infinity)-(dateSortTime(a.posted)??-Infinity)),sources:results.map(r=>r.source)};
 }

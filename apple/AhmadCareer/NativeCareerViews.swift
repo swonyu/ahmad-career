@@ -82,7 +82,7 @@ private struct NativeShortlistScreen: View {
             Section {
                 DisclosureGroup("How this shortlist was ranked") {
                     Text("Search screens software and AI titles, prioritizing early-career wording and excluding explicitly senior titles. It is not an eligibility assessment.")
-                    Text("Coverage is limited to seven public technology-company boards: Mozn, Lucidya, Foodics, Salla, Lean Technologies, Tamara and Unifonic. No vacancies are prefilled; a zero result is not a market-wide finding.")
+                    Text("Coverage is limited to nine public employer boards: Mozn, Lucidya, Foodics, Salla, Lean Technologies, Tamara, Unifonic, Devoteam and Delivery Hero. No vacancies are prefilled; a zero result is not a market-wide finding.")
                 }.font(.subheadline)
             }
         }
@@ -115,6 +115,11 @@ private struct NativeDiscoveryFilters: View {
     var body: some View {
         Section {
             DisclosureGroup(options.isActive ? "Result filters · active" : "Result filters") {
+                Picker("Role focus", selection: $options.roleFocus) {
+                    Text("All role focuses").tag("")
+                    ForEach(RoleReview.roleFocuses, id: \.id) { focus in Text(focus.label).tag(focus.id) }
+                }
+                Text("Role focus uses title wording only. Categories may overlap; uncategorized roles appear with All role focuses.").font(.footnote).foregroundStyle(.secondary)
                 Picker("Employer", selection: $options.company) {
                     Text("All employers").tag("")
                     ForEach(companies, id: \.self) { Text($0).tag($0) }
@@ -175,7 +180,7 @@ private struct NativeSearchScreen: View {
                 }
                 .buttonStyle(.borderedProminent).disabled(store.isSearching)
                 .tint(Color(red: 0.08, green: 0.43, blue: 0.34))
-                Text("Mozn · Lucidya · Foodics · Salla · Lean Technologies · Tamara · Unifonic\nNo sign-in or CV is sent to search.")
+                Text("Mozn · Lucidya · Foodics · Salla · Lean Technologies · Tamara · Unifonic · Devoteam · Delivery Hero\nNo sign-in or CV is sent to search.")
                     .font(.footnote).foregroundStyle(.secondary)
                 if let error = store.searchError {
                     NativeNotice(title: "Review search coverage", message: error, warning: true)
@@ -328,6 +333,7 @@ private struct NativeApplicationsScreen: View {
 private struct NativeJobLink: View {
     @EnvironmentObject private var store: NativeCareerStore
     let job: CareerJob
+    private var review: RoleReview { RoleReview(job: job, profile: store.workspace.profile) }
     var body: some View {
         NavigationLink { NativeJobDetail(job: job) } label: {
             HStack(alignment: .top, spacing: 13) {
@@ -343,6 +349,16 @@ private struct NativeJobLink: View {
                         Text(employmentType).font(.caption).foregroundStyle(.secondary)
                     }
                     Text(job.fit).font(.caption.weight(.medium)).foregroundStyle(job.isExpired ? Color.primary : Color.careerAccent)
+                    if !review.categoryLabels.isEmpty {
+                        Text(review.categoryLabels.joined(separator: " · ")).font(.caption).foregroundStyle(.secondary)
+                    }
+                    if !review.overlap.isEmpty {
+                        Text(RoleReview.overlapLabel + ": " + review.overlap.joined(separator: ", ")).font(.caption).foregroundStyle(.secondary)
+                    }
+                    if !review.topics.isEmpty {
+                        Text("Topics to review: " + review.topics.map(\.label).joined(separator: "; ")).font(.caption).foregroundStyle(.secondary)
+                    }
+                    Text(review.requirementCoverage + " · Review full listing").font(.caption).foregroundStyle(.secondary)
                     ForEach(store.workspace.profile.criteriaMessages(for: job), id: \.self) { message in
                         Label(message, systemImage: "questionmark.circle").font(.caption).foregroundStyle(.secondary)
                     }
@@ -366,6 +382,7 @@ private struct NativeJobDetail: View {
         guard let required = job.minYears, let entered = Double(store.workspace.profile.years.replacingOccurrences(of: ",", with: ".")) else { return false }
         return entered < Double(required)
     }
+    private var review: RoleReview { RoleReview(job: job, profile: store.workspace.profile) }
 
     var body: some View {
         List {
@@ -406,6 +423,43 @@ private struct NativeJobDetail: View {
                     Text(store.isUnrefreshed(employerObservation) ? "Not refreshed in the latest attempt. This previous result is retained because its employer search was unavailable." : "This role appeared in that search. Recheck the official page for changes before applying.").font(.footnote).foregroundStyle(.secondary)
                 } else if job.rank == nil {
                     Text("Saved employer lead. Its current availability is not established by the latest search. Recheck the official page before applying.").font(.footnote)
+                }
+            }
+            Section("Review before applying") {
+                if !review.categoryLabels.isEmpty {
+                    LabeledContent("Title-based focus", value: review.categoryLabels.joined(separator: " · "))
+                }
+                NativeNotice(title: review.requirementCoverage, message: review.coverageMessage)
+                Text(RoleReview.disclaimer).font(.footnote).foregroundStyle(.secondary)
+                if !review.skills.isEmpty {
+                    Text("Skill wording in available employer text: " + review.skills.joined(separator: ", ")).font(.subheadline)
+                } else {
+                    Text("No recognized skill wording in the available title and excerpts. This does not mean the role has no skill requirements.").font(.subheadline)
+                }
+                if !review.overlap.isEmpty {
+                    Text(RoleReview.overlapLabel).font(.subheadline.weight(.semibold))
+                    Text(review.overlap.joined(separator: ", ")).font(.subheadline)
+                } else {
+                    Text("No skill overlap established from your profile and available employer text. You can review your self-entered skills in Profile.").font(.subheadline).foregroundStyle(.secondary)
+                }
+                ForEach(review.topics) { topic in
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(topic.label + " · review the context").font(.subheadline.weight(.semibold))
+                        ForEach(Array(topic.excerpts.enumerated()), id: \.offset) { _, excerpt in
+                            Text(excerpt).font(.subheadline).textSelection(.enabled)
+                        }
+                    }.padding(.vertical, 3)
+                }
+                if review.topics.isEmpty {
+                    Text("No listed review topics were detected. Education, experience, student status and work authorization remain unverified.").font(.footnote).foregroundStyle(.secondary)
+                }
+            }
+            Section("Your review checklist") {
+                ForEach(Array(review.checklist.enumerated()), id: \.offset) { index, item in
+                    HStack(alignment: .top, spacing: 10) {
+                        Text("\(index + 1).").font(.subheadline.weight(.semibold))
+                        Text(item).font(.subheadline)
+                    }
                 }
             }
             Section {
@@ -1010,8 +1064,7 @@ private extension Color {
 }
 
 private func nativeMatches(_ job: CareerJob, query: String) -> Bool {
-    let text = query.trimmingCharacters(in: .whitespacesAndNewlines)
-    return text.isEmpty || ([job.title, job.company, job.location, job.summary, job.subtitle ?? "", job.employmentType ?? "", job.experienceLevel ?? ""] + job.requirements + (job.requirementNotes ?? [])).joined(separator: " ").localizedCaseInsensitiveContains(text)
+    RoleReview.matches(job, query: query)
 }
 
 private func nativeDate(_ value: String, includeTime: Bool = false) -> String {

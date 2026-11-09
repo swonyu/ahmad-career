@@ -37,3 +37,9 @@ BuildLogs/check-transport
 
 swiftc AhmadCareer/CareerFeed.swift AhmadCareer/NativeCareerStore.swift Checks/NativeBackupCheck.swift -o BuildLogs/check-backup
 BuildLogs/check-backup Checks/ResearchFixture.json BuildLogs/native-backup-export.json ../website/fixtures/web-backup.json
+
+swiftc AhmadCareer/CareerFeed.swift AhmadCareer/NativeCareerStore.swift Checks/RoleReviewCheck.swift -o BuildLogs/check-role-review
+BuildLogs/check-role-review Checks/ResearchFixture.json
+
+swiftc AhmadCareer/CareerFeed.swift AhmadCareer/NativeCareerStore.swift Checks/SmartRecruitersCheck.swift -o BuildLogs/check-smartrecruiters
+BuildLogs/check-smartrecruiters ../website/fixtures/smartrecruiters.json Checks/ResearchFixture.json

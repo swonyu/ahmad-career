@@ -1,0 +1,32 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {SMART_SOURCES,smartCandidates,parseSmartDetail,smartBoardSource} from './feeds.mjs';
+import {createApp} from './state-check.mjs';
+const F=JSON.parse(fs.readFileSync(new URL('./fixtures/smartrecruiters.json',import.meta.url))),C=globalThis.CareerCore,copy=structuredClone;
+const response=x=>new Response(JSON.stringify(x),{status:200});
+for(const source of SMART_SOURCES){
+ const fixture=F.boards[source.board],listing=fixture.list.content[0],detail=fixture.details[listing.id],calls=[];
+ const result=await smartBoardSource(source,async(url,options)=>{calls.push(url);assert.equal(options.method,'GET');assert.equal(options.redirect,'manual');assert.equal(options.body,undefined);return response(url.includes('?')?fixture.list:fixture.details[url.split('/').at(-1)])});
+ assert.equal(result.jobs.length,1);assert(result.source.ok);assert.equal(result.source.detailErrors,0);assert.equal(calls.length,2);assert(C.normalizeJob(result.jobs[0]));assert.equal(result.jobs[0].postedKind,'last-published');assert(result.jobs[0].requirementNotes.includes('Eligible for Tamheer.'));
+ for(const data of [{...fixture.list,offset:1},{...fixture.list,limit:101},{...fixture.list,totalFound:0},{...fixture.list,totalFound:1,content:[]},{...fixture.list,totalFound:true}])assert.throws(()=>smartCandidates(source,data));
+ const zero=await smartBoardSource(source,async()=>response({offset:0,limit:100,totalFound:0,content:[]}));assert(zero.source.ok);assert.equal(zero.jobs.length,0);
+ for(const change of [{id:'../1'},{name:''},{company:{identifier:'Other'}},{location:{country:'sa',city:22}},{visibility:null},{releasedDate:'2026-02-30'}])assert.equal(smartCandidates(source,{...fixture.list,content:[{...listing,...change}]}).failures,1);
+ for(const change of [{name:'Senior Software Engineer'},{visibility:'PRIVATE'},{releasedDate:'2099-01-01'},{location:{country:'ae',city:'Riyadh'}}])assert.deepEqual(smartCandidates(source,{...fixture.list,content:[{...listing,...change}]}).excludedIds,[source.board.toLowerCase()+'-'+listing.id]);
+ for(const change of [{active:'true'},{id:'123'},{company:{identifier:'Other'}},{location:{country:'sa',city:'Riyadh',remote:'true'}},{typeOfEmployment:{label:123}},{experienceLevel:{label:'x'.repeat(101)}},{jobAd:{sections:{qualifications:{text:123}}}}])assert.throws(()=>parseSmartDetail(source,listing,{...detail,...change}));
+ for(const url of ['https://evil.example/'+listing.id,'https://jobs.smartrecruiters.com/Other/'+listing.id+'-job',detail.postingUrl.replace(listing.id,'123'),detail.postingUrl+'?redirect=x',detail.postingUrl+'#x',detail.postingUrl.replace('https:','http:'),detail.postingUrl.replace(source.board,source.board.toLowerCase()),detail.postingUrl.replace('-synthetic','-%73ynthetic')])assert.throws(()=>parseSmartDetail(source,listing,{...detail,postingUrl:url}),url);
+ assert.equal(parseSmartDetail(source,listing,{...detail,active:false})._excludedId,source.board.toLowerCase()+'-'+listing.id);
+ assert.equal(parseSmartDetail(source,listing,{...detail,location:{country:'sa',city:'Tabuk'}}).location,'Tabuk, Saudi Arabia');
+ const old=result.jobs[0],app=createApp();app.evaluate('live='+JSON.stringify({checkedAt:'2026-01-01T01:00:00Z',jobs:[old],sources:[result.source]})+';view="live";');await app.toggleSaved(old.id);app.changeStatus(old.id,'Applied');
+ const mixed=await smartBoardSource(source,async url=>response(url.includes('?')?{...fixture.list,content:[listing,{}],totalFound:2}:{...detail,active:false}));assert(mixed.source.ok);assert.equal(mixed.source.detailErrors,1);
+ await app.receive({checkedAt:'2026-01-01T02:00:00Z',jobs:mixed.jobs,sources:[mixed.source]});assert.equal(app.evaluate('live.jobs.length'),0);assert(app.json('saved').includes(old.id));assert.equal(app.evaluate('states['+JSON.stringify(old.id)+']'),'Applied');
+ const closedAndFailed=await smartBoardSource(source,async url=>url.includes('?')?response({...fixture.list,totalFound:3,content:[{...listing,visibility:'PRIVATE'},{...listing,id:'9999'},{}]}):new Response('{}',{status:503}));assert(closedAndFailed.source.ok);assert.equal(closedAndFailed.source.detailErrors,2);assert(closedAndFailed.source.excludedIds.includes(old.id));
+ app.evaluate('live='+JSON.stringify({checkedAt:'2026-01-01T03:00:00Z',jobs:[old],sources:[result.source]})+';');await app.receive({checkedAt:'2026-01-01T04:00:00Z',jobs:[],sources:[closedAndFailed.source,{name:'Other',ok:false,count:0}]});assert.equal(app.evaluate('live.jobs.length'),0,'Known private role removed even when all other boards fail');assert(app.json('saved').includes(old.id));
+ const failure=await smartBoardSource(source,async url=>url.includes('?')?response(fixture.list):new Response('{}',{status:503}));assert(!failure.source.ok);assert.equal(failure.source.detailErrors,1);
+ const duplicate=smartCandidates(source,{...fixture.list,totalFound:2,content:[{...listing,visibility:'PRIVATE'},listing]});assert.equal(duplicate.rows.length,1);assert.deepEqual(duplicate.excludedIds,[]);
+ const many=Array.from({length:101},(_,i)=>({...listing,id:String(10000+i)}));const capped=smartCandidates(source,{offset:0,limit:100,totalFound:101,content:many});assert.equal(capped.scanned,100);assert.equal(capped.rows.length,20);assert(capped.limited);
+ const concurrent=new Set();let maximum=0,total=0;
+ const bounded=await smartBoardSource(source,async url=>{if(url.includes('?'))return response({offset:0,limit:100,totalFound:many.length,content:many});const id=url.split('/').at(-1);total++;concurrent.add(id);maximum=Math.max(maximum,concurrent.size);await new Promise(r=>setTimeout(r,1));concurrent.delete(id);return response({...detail,id,postingUrl:'https://jobs.smartrecruiters.com/'+source.board+'/'+id+'-fixture'})});assert.equal(total,20);assert(maximum<=4);assert.equal(bounded.jobs.length,20);assert(bounded.source.limited);
+}
+await assert.rejects(smartBoardSource({name:'Unsafe',type:'smartrecruiters',board:'Other'}));
+assert(C.requirementNotes('Strong SQL skills are required. Python development is useful.').some(x=>x.includes('SQL')));
+console.log('SmartRecruiters checks passed: exact identities/URLs, published active Saudi evidence, program excerpts, unknown vs exact exclusions, preserved saved history, 100-row/20-detail/four-concurrent bounds.');

@@ -1,0 +1,134 @@
+{
+  "sources": [
+    {
+      "name": "Devoteam",
+      "type": "smartrecruiters",
+      "board": "Devoteam"
+    },
+    {
+      "name": "Delivery Hero",
+      "type": "smartrecruiters",
+      "board": "DeliveryHero"
+    }
+  ],
+  "boards": {
+    "Devoteam": {
+      "list": {
+        "offset": 0,
+        "limit": 100,
+        "totalFound": 1,
+        "content": [
+          {
+            "id": "1000",
+            "name": "AI Engineer - Tamheer",
+            "company": {
+              "identifier": "Devoteam"
+            },
+            "releasedDate": "2026-01-01T00:00:00Z",
+            "location": {
+              "country": "sa",
+              "city": "Riyadh",
+              "remote": false,
+              "hybrid": false
+            },
+            "visibility": "PUBLIC"
+          }
+        ]
+      },
+      "details": {
+        "1000": {
+          "id": "1000",
+          "name": "AI Engineer - Tamheer",
+          "company": {
+            "identifier": "Devoteam"
+          },
+          "releasedDate": "2026-01-01T00:00:00Z",
+          "location": {
+            "country": "sa",
+            "city": "Riyadh",
+            "remote": false,
+            "hybrid": false
+          },
+          "visibility": "PUBLIC",
+          "active": true,
+          "postingUrl": "https://jobs.smartrecruiters.com/Devoteam/1000-synthetic-role",
+          "experienceLevel": {
+            "label": "Internship"
+          },
+          "typeOfEmployment": {
+            "label": "Intern"
+          },
+          "jobAd": {
+            "sections": {
+              "qualifications": {
+                "text": "<p>Bachelor degree preferred, or equivalent experience.</p><p>Eligible for Tamheer.</p><p>Python experience required.</p>"
+              },
+              "jobDescription": {
+                "text": "<p>Build helpful products.</p>"
+              }
+            }
+          }
+        }
+      }
+    },
+    "DeliveryHero": {
+      "list": {
+        "offset": 0,
+        "limit": 100,
+        "totalFound": 1,
+        "content": [
+          {
+            "id": "1001",
+            "name": "Software Engineer",
+            "company": {
+              "identifier": "DeliveryHero"
+            },
+            "releasedDate": "2026-01-01T00:00:00Z",
+            "location": {
+              "country": "sa",
+              "city": "Riyadh",
+              "remote": false,
+              "hybrid": false
+            },
+            "visibility": "PUBLIC"
+          }
+        ]
+      },
+      "details": {
+        "1001": {
+          "id": "1001",
+          "name": "Software Engineer",
+          "company": {
+            "identifier": "DeliveryHero"
+          },
+          "releasedDate": "2026-01-01T00:00:00Z",
+          "location": {
+            "country": "sa",
+            "city": "Riyadh",
+            "remote": false,
+            "hybrid": false
+          },
+          "visibility": "PUBLIC",
+          "active": true,
+          "postingUrl": "https://jobs.smartrecruiters.com/DeliveryHero/1001-synthetic-role",
+          "experienceLevel": {
+            "label": "Associate"
+          },
+          "typeOfEmployment": {
+            "label": "Full-time"
+          },
+          "jobAd": {
+            "sections": {
+              "qualifications": {
+                "text": "<p>Bachelor degree preferred, or equivalent experience.</p><p>Eligible for Tamheer.</p><p>Python experience required.</p>"
+              },
+              "jobDescription": {
+                "text": "<p>Build helpful products.</p>"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

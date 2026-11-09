@@ -33,7 +33,7 @@ enum CareerFeed {
     static func relevance(_ title: String) -> Int {
         let excluded = #"\b(senior|sr\.?|lead|principal|staff|manager|director|head|chief|vp|vice[ -]president|sales|pre[ -]?sales|clinical)\b"#
         guard title.range(of: excluded, options: [.regularExpression, .caseInsensitive]) == nil else { return 0 }
-        let relevant = #"software|developer|python|machine[ -]learning|artificial[ -]intelligence|\bAI\b|full[ -]?stack|front[ -]?end|back[ -]?end|\bios\b|\bswift\b|automation|devops|site[ -]reliability|cloud[ -](platform|native|engineer)|database[ -]administrator|techops|data[ -](analyst|engineer|scientist)|builders[ -]program.*data|quality[ -]assurance|\bQA\b|مطور|برمجيات|ذكاء اصطناعي|محلل بيانات"#
+        let relevant = #"software|developer|python|machine[ -]learning|artificial[ -]intelligence|\bAI\b|full[ -]?stack|front[ -]?end|back[ -]?end|\bios\b|\bswift\b|\bswiftui\b|\bandroid\b|\bmobile[ -](engineer|developer)\b|automation|devops|site[ -]reliability|cloud[ -](platform|native|engineer)|database[ -]administrator|techops|data[ -](analyst|engineer|scientist)|builders[ -]program.*data|quality[ -]assurance|\bQA\b|مطور|برمجيات|ذكاء اصطناعي|محلل بيانات"#
         guard title.range(of: relevant, options: [.regularExpression, .caseInsensitive]) != nil else { return 0 }
         return title.range(of: #"junior|entry[ -]level|graduate|intern|trainee|associate|himmah|tamheer|builders[ -]program"#, options: [.regularExpression, .caseInsensitive]) != nil ? 95 : 80
     }
@@ -162,6 +162,7 @@ enum CareerFeed {
         let kind:String
         let board:String
         var url:URL {
+            if kind == "smartrecruiters" { return URL(string: "https://api.smartrecruiters.com/v1/companies/\(board)/postings?country=sa&limit=100&offset=0")! }
             let value=kind=="recruitee" ? "https://unifonic.recruitee.com/api/offers/" : kind=="workable" ? "https://apply.workable.com/api/v1/widget/accounts/\(board)" : kind=="ashby" ? "https://api.ashbyhq.com/posting-api/job-board/\(board)" : "https://boards-api.greenhouse.io/v1/boards/\(board)/jobs?content=true"
             return URL(string:value)!
         }
@@ -175,14 +176,18 @@ enum CareerFeed {
         PublicSource(name:"Tamara",kind:"greenhouse",board:"tamara"),
         PublicSource(name:"Unifonic",kind:"recruitee",board:"unifonic")
     ]
-    static var activeSourceNames:[String] {publicSources.map(\.name)}
+    static let smartSources = [
+        PublicSource(name: "Devoteam", kind: "smartrecruiters", board: "Devoteam"),
+        PublicSource(name: "Delivery Hero", kind: "smartrecruiters", board: "DeliveryHero")
+    ]
+    static var activeSourceNames:[String] {(publicSources + smartSources).map(\.name)}
     private static func publicText(_ value:Any?,limit:Int=2000)->String? {
         guard let value=value as? String,value.utf16.count<=limit else{return nil}
         let clean=value.trimmingCharacters(in:.whitespacesAndNewlines)
         return clean.isEmpty ? nil : clean
     }
     // Extract bounded clues from description fields already present in a public board response.
-    // This is not an eligibility parser and does not fetch application/detail endpoints.
+    // This is not an eligibility parser; only explicitly supported public feeds supply its input.
     static func plainEmployerText(_ value:Any?)->String {
         guard var text=value as? String,text.utf16.count<=120_000 else{return ""}
         let entities=["amp":"&","lt":"<","gt":">","quot":"\"","apos":"'","nbsp":" "]
@@ -207,21 +212,24 @@ enum CareerFeed {
     }
     static func requirementNotes(_ value:Any?)->[String] {
         let text=plainEmployerText(value)
-        let relevant=#"bachelor|master.?s|degree|\bph\.?d\b|university|student|graduat|\d+\+?\s*(?:-\s*\d+\s*)?years?|\bpaid\b|unpaid|work authori[sz]ation|saudi nationals?|citizenship|تخرج|بكالوريوس|سنوات|طالب"#
+        let relevant=#"bachelor|master.?s|degree|\bph\.?d\b|university|student|graduat|\d+\+?\s*(?:-\s*\d+\s*)?years?|\bpaid\b|unpaid|work authori[sz]ation|\bsaudi nationals?\b|\b(?:tamheer|eligible|eligibility|GPA)\b|تمهير|citizenship|تخرج|بكالوريوس|سنوات|طالب"#
+        let technology=#"(?<![\p{L}\p{N}_])(?:python|javascript|typescript|swift(?:ui)?|sql|react(?:\.js|js)?|node(?:\.js|js)|docker|kubernetes|k8s|aws|amazon web services|azure|git|machine[ -]learning|ML)(?![\p{L}\p{N}_])"#
         let lines=text.replacingOccurrences(of:#"\n+|(?<=[.!?])\s+"#,with:"\n",options:.regularExpression).components(separatedBy:"\n")
-        var seen=Set<String>(),notes=[String]()
+        var seen=Set<String>(),primary=[String](),skills=[String]()
         for line in lines {
             let clean=line.trimmingCharacters(in:.whitespacesAndNewlines)
-            guard clean.utf16.count>12,clean.range(of:relevant,options:[.regularExpression,.caseInsensitive]) != nil else{continue}
+            guard clean.utf16.count>12 else{continue}
             let benefits=clean.range(of:#"\bpaid\s+(?:leave|holidays?|time off|vacation)\b"#,options:[.regularExpression,.caseInsensitive]) != nil
             let roleContext=clean.range(of:#"degree|experience|internship|salary"#,options:[.regularExpression,.caseInsensitive]) != nil
             let companyBoilerplate=clean.range(of:#"\b(?:we serve|our company|founded in|we have served)\b"#,options:[.regularExpression,.caseInsensitive]) != nil
             let applicantContext=clean.range(of:#"\b(?:required|minimum|must|candidate|you have)\b"#,options:[.regularExpression,.caseInsensitive]) != nil
             guard !(benefits && !roleContext),!(companyBoilerplate && !applicantContext),seen.insert(clean).inserted else{continue}
-            notes.append(clean.utf16.count>260 ? String(decoding:clean.utf16.prefix(257),as:UTF16.self)+"…" : clean)
-            if notes.count==4 {break}
+            if clean.range(of:relevant,options:[.regularExpression,.caseInsensitive]) != nil {primary.append(clean)}
+            if clean.range(of:technology,options:[.regularExpression,.caseInsensitive]) != nil {skills.append(clean)}
         }
-        return notes
+        let prioritized=Array(primary.prefix(4))
+        let selected=prioritized+skills.filter{!prioritized.contains($0)}.prefix(2)
+        return selected.map{$0.utf16.count>260 ? String(decoding:$0.utf16.prefix(257),as:UTF16.self)+"…" : $0}
     }
     static func employerMode(_ kind:String,row:[String:Any])->String {
         if kind=="recruitee" {
@@ -387,6 +395,168 @@ enum CareerFeed {
         }catch{return SourceResult(name:source.name,jobs:[],status:["name":source.name,"ok":false,"count":0,"scanned":0,"error":error.localizedDescription])}
     }
 
+    private struct SmartList {
+        let candidates: [[String: Any]]
+        let excluded: Set<String>
+        let failures: Int
+        let valid: Int
+        let scanned: Int
+        let total: Int
+        let limited: Bool
+    }
+    private static func smartInteger(_ value: Any?) -> Int? {
+        guard let number = value as? NSNumber, strictBool(value) == nil,
+              number.doubleValue.isFinite, number.doubleValue >= 0,
+              number.doubleValue <= 9_007_199_254_740_991,
+              number.doubleValue.rounded() == number.doubleValue else { return nil }
+        return number.intValue
+    }
+    static func smartDetailURL(_ id: String, source: PublicSource) -> URL? {
+        guard smartSources.contains(where: { $0.name == source.name && $0.board == source.board && $0.kind == source.kind }),
+              id.range(of: #"^[0-9]{1,20}\z"#, options: .regularExpression) != nil else { return nil }
+        return URL(string: "https://api.smartrecruiters.com/v1/companies/\(source.board)/postings/\(id)")
+    }
+    static func smartPostingURL(_ value: String, source: PublicSource, id: String) -> URL? {
+        guard smartDetailURL(id, source: source) != nil,
+              let url = URL(string: value), url.scheme?.lowercased() == "https", url.host?.lowercased() == "jobs.smartrecruiters.com",
+              url.user == nil, url.password == nil, url.query == nil, url.fragment == nil, url.port == nil || url.port == 443,
+              var components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              components.percentEncodedPath.range(of: "^/" + source.board + "/" + id + #"-[a-z0-9-]{1,240}/?\z"#, options: .regularExpression) != nil else { return nil }
+        components.scheme = "https"; components.host = "jobs.smartrecruiters.com"; components.port = nil
+        return components.url
+    }
+
+    // Identity and geography are validated before any exact exclusion is authoritative.
+    private static func smartBase(_ row: [String: Any], source: PublicSource, now: Date) -> [String: Any]? {
+        guard let id = row["id"] as? String, smartDetailURL(id, source: source) != nil,
+              let title = publicText(row["name"]),
+              (row["company"] as? [String: Any])?["identifier"] as? String == source.board,
+              let location = row["location"] as? [String: Any], let country = publicText(location["country"], limit: 100),
+              let visibility = publicText(row["visibility"], limit: 40),
+              let released = row["releasedDate"] as? String, !released.isEmpty, parsedDate(released) != nil else { return nil }
+        if let city = location["city"], !(city is NSNull) {
+            guard let city = city as? String, city.utf16.count <= 2_000 else { return nil }
+        }
+        let key = source.board.lowercased() + "-" + id
+        guard visibility == "PUBLIC", row["visibility"] as? String == "PUBLIC", publicSaudi(country), relevant(title), dateIsEligible(released, now: now, closing: false) else { return ["_excludedId": key, "_rawID": id] }
+        let city = publicText(location["city"]) ?? ""
+        let remote = strictBool(location["remote"]), hybrid = strictBool(location["hybrid"])
+        let mode = hybrid == true && remote == true ? "Remote / Hybrid" : hybrid == true ? "Hybrid" : remote == true ? "Remote" : remote == false && hybrid == false ? "On-site" : "Not stated"
+        let level = publicText((row["experienceLevel"] as? [String: Any])?["label"], limit: 100) ?? ""
+        let rawEmployment = publicText((row["typeOfEmployment"] as? [String: Any])?["label"], limit: 100) ?? "Not stated"
+        let employment = rawEmployment == "Intern" ? "Internship" : employmentLabel(rawEmployment)
+        let early = (title + " " + level).range(of: #"junior|entry[ -]level|graduate|intern|trainee|associate|tamheer"#, options: [.regularExpression, .caseInsensitive]) != nil
+        return ["id": key, "_rawID": id, "title": title, "company": source.name,
+                "location": city.isEmpty ? "Saudi Arabia" : city + ", Saudi Arabia", "posted": released,
+                "postedKind": "last-published", "closes": NSNull(), "status": "live", "salary": NSNull(),
+                "kind": "live", "fit": "Needs review", "healthcare": false, "leadership": false,
+                "relevance": early ? 95 : relevance(title), "mode": mode, "experienceLevel": level, "employmentType": employment,
+                "summary": "Currently listed on the employer board. Confirm eligibility, paid status, professional experience and work location.",
+                "gaps": ["Confirm mandatory qualifications and any program eligibility directly with the employer.",
+                         "Personal projects are not formal employment. Salary and paid status are not verified."]]
+    }
+    private static func smartList(_ data: [String: Any], source: PublicSource, now: Date) throws -> SmartList {
+        guard smartSources.contains(where: { $0.board == source.board && $0.name == source.name && $0.kind == source.kind }),
+              let rows = data["content"] as? [Any], rows.count <= 5_000,
+              smartInteger(data["offset"]) == 0, let limit = smartInteger(data["limit"]), limit > 0, limit <= 100,
+              let total = smartInteger(data["totalFound"]), total >= rows.count,
+              !rows.isEmpty || total == 0 else { throw FeedError.invalidResponse }
+        var candidates = [[String: Any]](), seen = Set<String>(), excluded = Set<String>(), failures = 0, valid = 0
+        for value in rows.prefix(100) {
+            guard let row = value as? [String: Any], let base = smartBase(row, source: source, now: now) else { failures += 1; continue }
+            valid += 1
+            if let id = base["_excludedId"] as? String { excluded.insert(id); continue }
+            let id = base["_rawID"] as! String
+            if seen.insert(id).inserted { candidates.append(row) }
+        }
+        return SmartList(candidates: Array(candidates.prefix(20)), excluded: excluded.filter { !seen.contains(String($0.dropFirst(source.board.count + 1))) }, failures: failures, valid: valid,
+                         scanned: min(rows.count, 100), total: total, limited: total > rows.count || rows.count > 100 || candidates.count > 20)
+    }
+    static func smartDetailJob(_ row: [String: Any], id: String, source: PublicSource, now: Date = Date()) -> [String: Any]? {
+        guard row["id"] as? String == id, var job = smartBase(row, source: source, now: now), let active = strictBool(row["active"]) else { return nil }
+        if !active || job["_excludedId"] != nil { return ["_excludedId": source.board.lowercased() + "-" + id] }
+        guard let value = row["postingUrl"] as? String, let postingURL = smartPostingURL(value, source: source, id: id) else { return nil }
+        let location = row["location"] as! [String: Any]
+        for flag in ["remote", "hybrid"] {
+            if let value = location[flag], !(value is NSNull), strictBool(value) == nil { return nil }
+        }
+        for field in ["typeOfEmployment", "experienceLevel"] {
+            if let raw = row[field], !(raw is NSNull) {
+                guard let object = raw as? [String: Any] else { return nil }
+                if let label = object["label"], !(label is NSNull) {
+                    guard let text = label as? String, text.utf16.count <= 100 else { return nil }
+                }
+            }
+        }
+        var texts = [String]()
+        if let raw = row["jobAd"], !(raw is NSNull) {
+            guard let ad = raw as? [String: Any] else { return nil }
+            if let rawSections = ad["sections"], !(rawSections is NSNull) {
+                guard let sections = rawSections as? [String: Any] else { return nil }
+                for key in ["qualifications", "jobDescription", "additionalInformation"] {
+                    if let rawSection = sections[key], !(rawSection is NSNull) {
+                        guard let section = rawSection as? [String: Any] else { return nil }
+                        if let value = section["text"], !(value is NSNull) {
+                            guard let text = value as? String, text.utf16.count <= 120_000 else { return nil }
+                            texts.append(text)
+                        }
+                    }
+                }
+            }
+        }
+        guard texts.reduce(0, { $0 + $1.utf16.count }) <= 120_000 else { return nil }
+        // Never collect company-description years as candidate-experience evidence.
+        job["requirementNotes"] = requirementNotes(texts.joined(separator: "\n"))
+        job["url"] = postingURL.absoluteString
+        job.removeValue(forKey: "_rawID")
+        return job
+    }
+    static func parseSmartRecruiters(_ data: [String: Any], source: PublicSource, details: [String: Any], now: Date = Date()) throws -> SourceResult {
+        let list = try smartList(data, source: source, now: now)
+        var jobs = [String: [String: Any]](), excluded = list.excluded, failures = list.failures, checked = 0
+        for row in list.candidates {
+            let id = row["id"] as! String
+            guard let detail = details[id] as? [String: Any], let job = smartDetailJob(detail, id: id, source: source, now: now) else { failures += 1; continue }
+            checked += 1
+            if let id = job["_excludedId"] as? String { excluded.insert(id); continue }
+            jobs[job["id"] as! String] = job
+        }
+        var status: [String: Any] = ["name": source.name, "ok": checked > 0 || !list.excluded.isEmpty || list.candidates.isEmpty && (list.valid > 0 || list.scanned == 0), "count": jobs.count,
+                                     "scanned": list.scanned, "total": list.total, "limited": list.limited,
+                                     "detailErrors": failures, "excludedIds": excluded.filter { jobs[$0] == nil }.sorted()]
+        if failures > 0 { status["error"] = "\(failures) listings or detail checks were unavailable; results may be incomplete." }
+        return SourceResult(name: source.name, jobs: jobs.keys.sorted().compactMap { jobs[$0] }, status: status)
+    }
+    static func fetchSmartRecruiters(_ source: PublicSource, session: URLSession) async -> SourceResult {
+        do {
+            guard smartDetailURL("0", source: source) != nil else { throw FeedError.invalidResponse }
+            var request = URLRequest(url: source.url); request.setValue("application/json", forHTTPHeaderField: "Accept")
+            let data = try await json(request, session: session), now = Date()
+            let list = try smartList(data, source: source, now: now)
+            var details = [String: Any]()
+            for start in stride(from: 0, to: list.candidates.count, by: 4) {
+                guard !Task.isCancelled else { break }
+                let batch = await withTaskGroup(of: (String, [String: Any]?).self, returning: [String: Any].self) { group in
+                    for row in list.candidates[start..<min(start + 4, list.candidates.count)] {
+                        let id = row["id"] as! String
+                        group.addTask {
+                            guard !Task.isCancelled, let url = smartDetailURL(id, source: source) else { return (id, nil) }
+                            var request = URLRequest(url: url); request.setValue("application/json", forHTTPHeaderField: "Accept")
+                            return (id, try? await json(request, session: session))
+                        }
+                    }
+                    var values = [String: Any]()
+                    for await (id, detail) in group { if let detail { values[id] = detail } }
+                    return values
+                }
+                details.merge(batch) { _, new in new }
+            }
+            return try parseSmartRecruiters(data, source: source, details: details, now: now)
+        } catch {
+            return SourceResult(name: source.name, jobs: [], status: ["name": source.name, "ok": false, "count": 0, "scanned": 0, "error": error.localizedDescription])
+        }
+    }
+
     static func refresh() async -> [String: Any] {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.timeoutIntervalForRequest = 20
@@ -399,6 +569,11 @@ enum CareerFeed {
             for source in publicSources {
                 group.addTask {
                     await boundedSource(name: source.name) { await fetchPublic(source, session: session) }
+                }
+            }
+            for source in smartSources {
+                group.addTask {
+                    await boundedSource(name: source.name) { await fetchSmartRecruiters(source, session: session) }
                 }
             }
             var results: [SourceResult] = []

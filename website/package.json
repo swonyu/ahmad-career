@@ -5,6 +5,6 @@
   "scripts": {
     "build": "node build.mjs",
     "start": "node dev.mjs",
-    "test": "node check.mjs && node record-check.mjs && node feed-check.mjs && node transport-check.mjs && node public-provider-check.mjs && node upgrade-check.mjs && node followup-check.mjs && node backup-check.mjs && node server-check.mjs && node personalization-check.mjs"
+    "test": "node check.mjs && node record-check.mjs && node feed-check.mjs && node transport-check.mjs && node public-provider-check.mjs && node upgrade-check.mjs && node followup-check.mjs && node backup-check.mjs && node role-review-check.mjs && node smartrecruiters-check.mjs && node server-check.mjs && node personalization-check.mjs"
   }
 }

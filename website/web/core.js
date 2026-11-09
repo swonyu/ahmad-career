@@ -24,7 +24,7 @@
   function relevance(title){
     const t=title||'';
     if(/\b(senior|sr\.?|lead|principal|staff|manager|director|head|chief|vp|vice[ -]president|sales|pre[ -]?sales|clinical)\b/i.test(t))return 0;
-    if(/software|developer|python|machine[ -]learning|artificial[ -]intelligence|\bAI\b|full[ -]?stack|front[ -]?end|back[ -]?end|\bios\b|\bswift\b|automation|devops|site[ -]reliability|cloud[ -](platform|native|engineer)|database[ -]administrator|techops|data[ -](analyst|engineer|scientist)|builders[ -]program.*data|quality[ -]assurance|\bQA\b|مطور|برمجيات|ذكاء اصطناعي|محلل بيانات/i.test(t))return /junior|entry[ -]level|graduate|intern|trainee|associate|himmah|tamheer|builders[ -]program/i.test(t)?95:80;
+    if(/software|developer|python|machine[ -]learning|artificial[ -]intelligence|\bAI\b|full[ -]?stack|front[ -]?end|back[ -]?end|\bios\b|\bswift(?:ui)?\b|\bandroid\b|\bmobile[ -](engineer|developer)\b|automation|devops|site[ -]reliability|cloud[ -](platform|native|engineer)|database[ -]administrator|techops|data[ -](analyst|engineer|scientist)|builders[ -]program.*data|quality[ -]assurance|\bQA\b|مطور|برمجيات|ذكاء اصطناعي|محلل بيانات/i.test(t))return /junior|entry[ -]level|graduate|intern|trainee|associate|himmah|tamheer|builders[ -]program/i.test(t)?95:80;
     return 0;
   }
   function plainEmployerText(value){
@@ -35,8 +35,10 @@
   }
   function requirementNotes(value){
     const text=plainEmployerText(value);if(!text)return [];
-    const relevant=/bachelor|master.?s|degree|\bph\.?d\b|university|student|graduat|\d+\+?\s*(?:-\s*\d+\s*)?years?|\bpaid\b|unpaid|work authori[sz]ation|saudi nationals?|citizenship|تخرج|بكالوريوس|سنوات|طالب/i;
-    return [...new Set(text.split(/\n+|(?<=[.!?])\s+/).map(x=>x.trim()).filter(x=>x.length>12&&relevant.test(x)&&!(/\bpaid\s+(?:leave|holidays?|time off|vacation)\b/i.test(x)&&!/(?:degree|experience|internship|salary)/i.test(x))&&!(/\b(?:we serve|our company|founded in|we have served)\b/i.test(x)&&!/\b(?:required|minimum|must|candidate|you have)\b/i.test(x))))].slice(0,4).map(x=>x.length>260?x.slice(0,257)+'…':x);
+    const relevant=/bachelor|master.?s|degree|\bph\.?d\b|university|student|graduat|\d+\+?\s*(?:-\s*\d+\s*)?years?|\bpaid\b|unpaid|work authori[sz]ation|saudi nationals?|citizenship|\b(?:tamheer|eligible|eligibility|GPA)\b|تخرج|بكالوريوس|سنوات|طالب|تمهير/i;
+    const lines=[...new Set(text.split(/\n+|(?<=[.!?])\s+/).map(x=>x.trim()).filter(x=>x.length>12&&!(/\bpaid\s+(?:leave|holidays?|time off|vacation)\b/i.test(x)&&!/(?:degree|experience|internship|salary)/i.test(x))&&!(/\b(?:we serve|our company|founded in|we have served)\b/i.test(x)&&!/\b(?:required|minimum|must|candidate|you have)\b/i.test(x))))];
+    const primary=lines.filter(x=>relevant.test(x)).slice(0,4),technology=lines.filter(x=>!primary.includes(x)&&skillPatterns.some(([,pattern])=>pattern.test(x))).slice(0,2);
+    return [...primary,...technology].map(x=>x.length>260?x.slice(0,257)+'…':x);
   }
   function employerMode(type,row){
     if(type==='recruitee'){const modes=[['on_site','On-site'],['hybrid','Hybrid'],['remote','Remote']].filter(([key])=>row[key]===true).map(([,label])=>label);return modes.length?modes.join(' / '):'Not stated';}
@@ -65,12 +67,13 @@
     return messages;
   }
   const safeURL=value=>{try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&(!u.port||u.port==='443')?u.href:'#'}catch{return '#'}};
-  const jobHosts=new Set(['apply.workable.com','alcon.wd5.myworkdayjobs.com','jj.wd5.myworkdayjobs.com','roche.wd3.myworkdayjobs.com','novartis.wd3.myworkdayjobs.com','gsk.wd5.myworkdayjobs.com','bdx.wd1.myworkdayjobs.com','www.careers.jnj.com','eenp.fa.em3.oraclecloud.com','efan.fa.em3.oraclecloud.com','careers.al-dawaa.com','sa.linkedin.com','www.linkedin.com','jobs.ashbyhq.com','job-boards.eu.greenhouse.io','jobs.unifonic.com']);
+  const jobHosts=new Set(['apply.workable.com','alcon.wd5.myworkdayjobs.com','jj.wd5.myworkdayjobs.com','roche.wd3.myworkdayjobs.com','novartis.wd3.myworkdayjobs.com','gsk.wd5.myworkdayjobs.com','bdx.wd1.myworkdayjobs.com','www.careers.jnj.com','eenp.fa.em3.oraclecloud.com','efan.fa.em3.oraclecloud.com','careers.al-dawaa.com','sa.linkedin.com','www.linkedin.com','jobs.ashbyhq.com','job-boards.eu.greenhouse.io','jobs.unifonic.com','jobs.smartrecruiters.com']);
   const safeJobURL=value=>{
     const safe=safeURL(value);if(safe==='#')return '#';const u=new URL(safe);
     if(!jobHosts.has(u.hostname))return '#';
     if(u.hostname==='apply.workable.com'&&!/^\/(qiddiya-investment-company-1|mozn-ai|lucidya|foodics|salla)\/j\/[A-Za-z0-9]{1,64}(?:\/apply)?\/?$/.test(u.pathname))return '#';
     if(u.hostname==='jobs.ashbyhq.com'&&!/^\/LeanTech\/[a-f0-9-]{36}(?:\/application)?\/?$/i.test(u.pathname))return '#';
+    if(u.hostname==='jobs.smartrecruiters.com'&&(!/^\/(Devoteam|DeliveryHero)\/\d{1,20}-[a-z0-9-]{1,240}\/?$/.test(u.pathname)||safe.includes('?')||safe.includes('#')))return '#';
     if(u.hostname==='jobs.unifonic.com'&&!/^\/o\/[a-z0-9][a-z0-9-]{0,199}\/?$/i.test(u.pathname))return '#';
     if(u.hostname==='job-boards.eu.greenhouse.io'&&!/^\/tamara\/jobs\/\d{1,20}\/?$/.test(u.pathname))return '#';
     if(u.hostname.endsWith('.oraclecloud.com')&&!/^\/hcmUI\/CandidateExperience\/en\/sites\/CX_1\/job\/\d+\/?$/.test(u.pathname))return '#';
@@ -182,5 +185,25 @@
     }
     return tasks.sort((a,b)=>a.order-b.order||(a.order===1?a.time-b.time:0)||a.jobId.localeCompare(b.jobId));
   }
-  root.CareerCore={employmentLabel,plainEmployerText,requirementNotes,employerMode,publicationLabel,ageInSaudiDays,discoveryMatches,applicationWarnings,isSaudi,canonicalMinimumSAR,riyadhCity,criteriaFor,relevance,safeURL,safeJobURL,saudiDay,parsedDate,dateSortTime,isExpired,isFuture,dedupe,normalizeJob,sourceIncomplete,normalizeLive,normalizeSearchComparison,compareSearches,mergeJobs,validApplicationRecord,validNextAction,nextActionBucket,attentionFor};
+  // Review aids use bounded available text, never eligibility inference or a match percentage.
+  const roleFocuses=[['software','Software & web'],['data-ai','Data & AI'],['platform','Cloud & platform'],['mobile','Mobile'],['quality','Quality & testing']];
+  const boundedPattern=body=>new RegExp('(?<![\\p{L}\\p{N}_])(?:'+body+')(?![\\p{L}\\p{N}_])','iu');
+  const rolePatterns=[
+    ['software',boundedPattern('software|developers?|front[ -]?end|back[ -]?end|full[ -]?stack|web|مطور|برمجيات')],
+    ['data-ai',boundedPattern('AI|machine[ -]learning|artificial[ -]intelligence|data|analytics|NLP|ذكاء اصطناعي|بيانات')],
+    ['platform',boundedPattern('cloud|devops|site[ -]reliability|techops|databases?')],
+    ['mobile',boundedPattern('ios|swift(?:ui)?|android|mobile')],
+    ['quality',boundedPattern('QA|quality[ -]assurance|test[ -]automation')]
+  ];
+  const skillPatterns=[['Python','python'],['JavaScript','javascript'],['TypeScript','typescript'],['Swift','swift(?:ui)?'],['SQL','sql'],['React','react(?:\\.js|js)?'],['Node.js','node(?:\\.js|js)'],['Docker','docker'],['Kubernetes','kubernetes|k8s'],['AWS','aws|amazon web services'],['Azure','azure'],['Git','git'],['Machine learning','machine[ -]learning|ML']].map(([label,body])=>[label,boundedPattern(body)]);
+  const reviewPatterns=[['degree','Education wording','degree|bachelor|master.?s|ph\\.?d|بكالوريوس'],['student','Student / graduation wording','students?|university|graduat[\\p{L}]*|enroll[\\p{L}]*|تخرج|طالب'],['program','Program eligibility wording','tamheer|eligible|eligibility|GPA|تمهير'],['experience','Experience wording','experience|years?|سنوات'],['authorization','Work authorization / nationality wording','work authori[sz]ation|visa|citizen(?:ship|s)?|nationality|nationals?'],['unpaid','Unpaid wording','unpaid']].map(([id,label,body])=>[id,label,boundedPattern(body)]);
+  function boundedReviewText(value,max=2000){return typeof value==='string'&&value.length<=max&&!/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]|<\/?[A-Za-z][^>]*>/iu.test(value)?value:'';}
+  function roleReview(job={},profile={}){
+    const title=boundedReviewText(job?.title),notes=Array.isArray(job?.requirementNotes)?job.requirementNotes.slice(0,6).map(x=>boundedReviewText(x,300)).filter(x=>x.trim()):[];
+    const available=[title,...notes].join('\n'),skills=skillPatterns.filter(([,pattern])=>pattern.test(available)).map(([label])=>label),profileText=boundedReviewText(profile?.skills,3000);
+    const own=new Set(skillPatterns.filter(([,pattern])=>pattern.test(profileText)).map(([label])=>label));
+    return {categories:rolePatterns.filter(([,pattern])=>pattern.test(title)).map(([id])=>id),skills,overlap:skills.filter(label=>own.has(label)),topics:reviewPatterns.map(([id,label,pattern])=>({id,label,excerpts:notes.filter(note=>pattern.test(note))})).filter(topic=>topic.excerpts.length),hasExcerpts:notes.length>0};
+  }
+  function searchableText(job={}){return [job.title,job.company,job.location,job.summary,job.mode,job.employmentType,job.experienceLevel,...(Array.isArray(job.requirementNotes)?job.requirementNotes:[]),...(Array.isArray(job.gaps)?job.gaps:[])].filter(x=>typeof x==='string').map(x=>x.slice(0,4000)).join(' ').toLowerCase();}
+  root.CareerCore={roleFocuses,roleReview,searchableText,employmentLabel,plainEmployerText,requirementNotes,employerMode,publicationLabel,ageInSaudiDays,discoveryMatches,applicationWarnings,isSaudi,canonicalMinimumSAR,riyadhCity,criteriaFor,relevance,safeURL,safeJobURL,saudiDay,parsedDate,dateSortTime,isExpired,isFuture,dedupe,normalizeJob,sourceIncomplete,normalizeLive,normalizeSearchComparison,compareSearches,mergeJobs,validApplicationRecord,validNextAction,nextActionBucket,attentionFor};
 })(globalThis);

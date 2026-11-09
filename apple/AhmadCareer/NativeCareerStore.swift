@@ -50,12 +50,19 @@ struct CareerJob: Codable, Identifiable, Hashable {
     var requirements: [String] { gaps ?? ["Confirm the complete degree, experience, location and seniority requirements on the employer website.","This lead was found by title and location. It has not had the full review of the researched shortlist."] }
     var applicationSteps: [[String]] { (steps ?? [["Read the official description","Check that the position is open and compare all mandatory requirements."],["Tailor your evidence","Use two actual achievements relevant to the responsibilities."],["Apply personally","Open the employer application, review your answers and attachments, then submit when ready."],["Keep the confirmation","Save the acknowledgement and update your application status."]]).filter { $0.count >= 2 } }
     static func safeURL(_ value: String) -> URL? {
-        let hosts: Set<String> = ["apply.workable.com","alcon.wd5.myworkdayjobs.com","jj.wd5.myworkdayjobs.com","roche.wd3.myworkdayjobs.com","novartis.wd3.myworkdayjobs.com","gsk.wd5.myworkdayjobs.com","bdx.wd1.myworkdayjobs.com","www.careers.jnj.com","eenp.fa.em3.oraclecloud.com","efan.fa.em3.oraclecloud.com","careers.al-dawaa.com","www.linkedin.com","sa.linkedin.com","jobs.ashbyhq.com","job-boards.eu.greenhouse.io","jobs.unifonic.com"]
-        guard let u=URL(string:value), u.scheme == "https", let host=u.host?.lowercased(), hosts.contains(host), u.user == nil, u.password == nil, u.port == nil || u.port == 443 else { return nil }
+        let hosts: Set<String> = ["apply.workable.com","alcon.wd5.myworkdayjobs.com","jj.wd5.myworkdayjobs.com","roche.wd3.myworkdayjobs.com","novartis.wd3.myworkdayjobs.com","gsk.wd5.myworkdayjobs.com","bdx.wd1.myworkdayjobs.com","www.careers.jnj.com","eenp.fa.em3.oraclecloud.com","efan.fa.em3.oraclecloud.com","careers.al-dawaa.com","www.linkedin.com","sa.linkedin.com","jobs.ashbyhq.com","job-boards.eu.greenhouse.io","jobs.unifonic.com","jobs.smartrecruiters.com"]
+        guard let u=URL(string:value), u.scheme?.lowercased() == "https", let host=u.host?.lowercased(), hosts.contains(host), u.user == nil, u.password == nil, u.port == nil || u.port == 443 else { return nil }
         if host == "apply.workable.com", u.path.range(of:"^/(qiddiya-investment-company-1|mozn-ai|lucidya|foodics|salla)/j/[A-Za-z0-9]{1,64}(?:/apply)?/?$",options:.regularExpression)==nil {return nil}
         if host == "jobs.ashbyhq.com", u.path.range(of:#"^/LeanTech/[a-f0-9-]{36}(?:/application)?/?$"#,options:[.regularExpression,.caseInsensitive])==nil {return nil}
         if host == "job-boards.eu.greenhouse.io", u.path.range(of:#"^/tamara/jobs/[0-9]{1,20}/?$"#,options:.regularExpression)==nil {return nil}
         if host == "jobs.unifonic.com", u.path.range(of:#"^/o/[a-z0-9][a-z0-9-]{0,199}/?$"#,options:[.regularExpression,.caseInsensitive])==nil {return nil}
+        if host == "jobs.smartrecruiters.com" {
+            guard u.query == nil, u.fragment == nil,
+                  var components = URLComponents(url: u, resolvingAgainstBaseURL: false),
+                  components.percentEncodedPath.range(of: #"^/(?:Devoteam|DeliveryHero)/[0-9]{1,20}-[a-z0-9-]{1,240}/?\z"#, options: .regularExpression) != nil else {return nil}
+            components.scheme = "https"; components.host = host; components.port = nil
+            return components.url
+        }
         if host.hasSuffix(".oraclecloud.com"), u.path.range(of:"^/hcmUI/CandidateExperience/en/sites/CX_1/job/[0-9]+/?$",options:.regularExpression)==nil {return nil}
         if host == "careers.al-dawaa.com", !u.path.hasPrefix("/en/saudi-arabia/jobs/") {return nil}
         if host == "www.linkedin.com" || host == "sa.linkedin.com", u.path.range(of:"^/jobs/view/(?:[A-Za-z0-9-]+-)?[0-9]+/?$",options:.regularExpression)==nil {return nil}
@@ -68,14 +75,119 @@ struct CareerJob: Codable, Identifiable, Hashable {
         return instant < Date()
     }
 }
+// A deterministic reading aid. It never edits records or decides whether someone qualifies.
+struct RoleReview: Equatable {
+    struct Topic: Equatable, Identifiable {
+        let id: String
+        let label: String
+        let excerpts: [String]
+    }
+    static let roleFocuses: [(id: String, label: String)] = [
+        ("software", "Software & web"), ("data-ai", "Data & AI"),
+        ("platform", "Cloud & platform"), ("mobile", "Mobile"), ("quality", "Quality & testing")
+    ]
+    static let overlapLabel = "Mentioned in your profile and available employer text"
+    static let disclaimer = "A reading aid, not an eligibility assessment. Your profile is self-entered; overlapping words do not prove capability or professional experience."
+    private struct Pattern {
+        let id: String
+        let label: String
+        let expression: NSRegularExpression
+        init(_ id: String, _ label: String, _ pattern: String) {
+            self.id = id; self.label = label
+            // Unicode-aware boundaries avoid Bioscience, Swiftly, GitHub and NoSQL matches.
+            expression = try! NSRegularExpression(pattern: #"(?<![\p{L}\p{N}_])(?:"# + pattern + #")(?![\p{L}\p{N}_])"#, options: .caseInsensitive)
+        }
+        func matches(_ text: String) -> Bool {
+            expression.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)) != nil
+        }
+    }
+    private static let rolePatterns: [Pattern] = [
+        Pattern("software", "Software & web", #"software|developers?|front[ -]?end|back[ -]?end|full[ -]?stack|web|مطور|برمجيات"#),
+        Pattern("data-ai", "Data & AI", #"AI|machine[ -]learning|artificial[ -]intelligence|data|analytics|NLP|ذكاء اصطناعي|بيانات"#),
+        Pattern("platform", "Cloud & platform", #"cloud|devops|site[ -]reliability|techops|databases?"#),
+        Pattern("mobile", "Mobile", #"ios|swift(?:ui)?|android|mobile"#),
+        Pattern("quality", "Quality & testing", #"QA|quality[ -]assurance|test[ -]automation"#)
+    ]
+    private static let skillPatterns: [Pattern] = [
+        Pattern("python", "Python", "python"), Pattern("javascript", "JavaScript", "javascript"),
+        Pattern("typescript", "TypeScript", "typescript"), Pattern("swift", "Swift", #"swift(?:ui)?"#),
+        Pattern("sql", "SQL", "sql"), Pattern("react", "React", #"react(?:\.js|js)?"#),
+        Pattern("node", "Node.js", #"node(?:\.js|js)"#), Pattern("docker", "Docker", "docker"),
+        Pattern("kubernetes", "Kubernetes", "kubernetes|k8s"), Pattern("aws", "AWS", "aws|amazon web services"),
+        Pattern("azure", "Azure", "azure"), Pattern("git", "Git", "git"),
+        Pattern("ml", "Machine learning", #"machine[ -]learning|ML"#)
+    ]
+    private static let topicPatterns: [Pattern] = [
+        Pattern("degree", "Education wording", #"degree|bachelor|master.?s|ph\.?d|بكالوريوس"#),
+        Pattern("student", "Student / graduation wording", #"students?|university|graduat[\p{L}]*|enroll[\p{L}]*|تخرج|طالب"#),
+        Pattern("program", "Program eligibility wording", "tamheer|eligible|eligibility|GPA|تمهير"),
+        Pattern("experience", "Experience wording", #"experience|years?|سنوات"#),
+        Pattern("authorization", "Work authorization / nationality wording", #"work authori[sz]ation|visa|citizen(?:ship|s)?|nationality|nationals?"#),
+        Pattern("unpaid", "Unpaid wording", "unpaid")
+    ]
+    let categories: [String]
+    let skills: [String]
+    let overlap: [String]
+    let topics: [Topic]
+    let hasExcerpts: Bool
+    var categoryLabels: [String] { Self.roleFocuses.filter { categories.contains($0.id) }.map(\.label) }
+    var requirementCoverage: String { hasExcerpts ? "Partial employer requirements" : "Employer requirements unavailable" }
+    var coverageMessage: String {
+        hasExcerpts ? "Only bounded excerpts are available. Missing wording, exceptions or conditions may change what the employer asks for. Read the full current description."
+                    : "No usable requirement excerpts are available. Title wording alone cannot establish requirements. Read the full current employer description."
+    }
+    var checklist: [String] {
+        var items = ["Open the official listing and read every requirement, including mandatory, preferred and equivalent routes."]
+        if !topics.isEmpty { items.append("Check the exact wording for: " + topics.map(\.label).joined(separator: "; ") + ". Do not treat a topic flag as a requirement verdict.") }
+        items.append(overlap.isEmpty ? "Choose relevant work or personal-project examples only after reading the full requirements. No skill overlap is established by the available text."
+                     : "For " + overlap.joined(separator: ", ") + ", prepare examples you can substantiate. Label personal projects accurately; they are not formal employment.")
+        items.append(topics.contains { $0.id == "unpaid" } ? "Read the unpaid wording in context and confirm paid status and compensation before proceeding."
+                     : "Confirm paid status, salary, work location and any study or work-authorization conditions with the employer.")
+        items.append("Review your existing application record, then verify your answers and attachments before submitting personally.")
+        return items
+    }
+    init(job: CareerJob, profile: NativeProfile = NativeProfile()) {
+        let title = Self.boundedText(job.title, maximum: 2_000)
+        // Keep complete original excerpts: truncating here could drop preferred/equivalent qualifiers.
+        let notes = Array((job.requirementNotes ?? []).prefix(6)).map { Self.boundedText($0, maximum: 300) }.filter { !$0.isEmpty }
+        let available = ([title] + notes).joined(separator: "\n")
+        let profileText = Self.boundedText(profile.skills, maximum: 3_000)
+        categories = Self.rolePatterns.filter { $0.matches(title) }.map(\.id)
+        skills = Self.skillPatterns.filter { $0.matches(available) }.map(\.label)
+        let own = Set(Self.skillPatterns.filter { $0.matches(profileText) }.map(\.label))
+        overlap = skills.filter { own.contains($0) }
+        topics = Self.topicPatterns.compactMap { pattern in
+            let excerpts = notes.filter { pattern.matches($0) }
+            return excerpts.isEmpty ? nil : Topic(id: pattern.id, label: pattern.label, excerpts: excerpts)
+        }
+        hasExcerpts = !notes.isEmpty
+    }
+    static func categories(for title: String) -> [String] {
+        let text = boundedText(title, maximum: 2_000)
+        return rolePatterns.filter { $0.matches(text) }.map(\.id)
+    }
+    private static func boundedText(_ text: String, maximum: Int) -> String {
+        guard text.utf16.count <= maximum, !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              text.range(of: #"[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]|</?[A-Za-z][^>]*>"#, options: [.regularExpression, .caseInsensitive]) == nil else { return "" }
+        return text
+    }
+    static func matches(_ job: CareerJob, query: String) -> Bool {
+        let text = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        let fields = [job.title, job.company, job.location, job.summary, job.subtitle ?? "", job.mode ?? "", job.employmentType ?? "", job.experienceLevel ?? ""] + job.requirements + (job.requirementNotes ?? [])
+        return text.isEmpty || fields.joined(separator: " ").localizedCaseInsensitiveContains(text)
+    }
+}
+
 struct NativeDiscoveryOptions: Equatable {
     var company=""
     var days=0
     var employmentType=""
     var hideTracked=false
-    var isActive:Bool {!company.isEmpty || days != 0 || !employmentType.isEmpty || hideTracked}
+    var roleFocus=""
+    var isActive:Bool {!company.isEmpty || days != 0 || !employmentType.isEmpty || hideTracked || !roleFocus.isEmpty}
     func includes(_ job:CareerJob,tracked:Bool=false,now:Date=Date())->Bool {
         guard company.isEmpty || job.company==company,employmentType.isEmpty || job.employmentType==employmentType,!hideTracked || !tracked else{return false}
+        guard roleFocus.isEmpty || RoleReview.categories(for: job.title).contains(roleFocus) else {return false}
         if days>0 {
             guard let age=Self.ageInSaudiDays(job.posted,now:now),age>=0,age<days else{return false}
         }

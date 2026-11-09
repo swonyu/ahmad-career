@@ -24,6 +24,7 @@ function worker(mode,cacheFailure){
     if(!['follow','manual'].includes(options?.redirect))throw new TypeError('Invalid redirect value, must be one of "follow" or "manual"');
     calls++;
     if(mode==='offline')return new Response('{}',{status:503});
+    if(url.includes('api.smartrecruiters.com'))return Response.json({offset:0,limit:100,totalFound:0,content:[]});
     if(mode==='limited')return Response.json(url.includes('recruitee')?{offers:[]}:{jobs:Array(501).fill({title:'Software Developer',shortcode:'TEST1',country:'Saudi Arabia',city:'Riyadh',published_on:'2026-10-01'})});
     if(mode==='complete')return Response.json(url.includes('recruitee')?{offers:[]}:{jobs:[]});
     if(url.includes('recruitee'))return Response.json({offers:[{id:12345,title:'Software Developer',slug:'software-developer',status:'published',careers_url:'https://jobs.unifonic.com/o/software-developer',locations:[{country_code:'SA',city:'Riyadh'}]},{}]});
@@ -41,7 +42,7 @@ function worker(mode,cacheFailure){
 for(const failure of ['access','match']){
   const app=worker('partial',failure),response=await app.run(new Request('https://career.example/api/live'));
   const payload=await response.json();
-  assert.equal(response.status,200);assert.ok(payload.jobs.length);assert.equal(payload.sources.length,7);
+  assert.equal(response.status,200);assert.ok(payload.jobs.length);assert.equal(payload.sources.length,9);
 }
 for(const mode of ['complete','partial','offline','limited']){
   const app=worker(mode),response=await app.run(new Request('https://career.example/api/live'));
@@ -58,7 +59,7 @@ for(const mode of ['complete','partial','offline','limited']){
   const app=worker(mode);
   const responses=await Promise.all(Array.from({length:3},()=>app.run(new Request('https://career.example/api/live'))));
   const payloads=await Promise.all(responses.map(r=>r.json()));
-  const calls=app.calls();assert.ok(calls===7,`${mode}: concurrent requests must share one employer batch`);
+  const calls=app.calls();assert.ok(calls===9,`${mode}: concurrent requests must share one employer batch`);
   await app.run(new Request('https://career.example/api/live'));
   assert.equal(app.calls(),calls,`${mode}: immediate retries use the original snapshot`);
   assert.ok(payloads.every(p=>p.checkedAt===payloads[0].checkedAt));
