@@ -193,6 +193,8 @@ struct NativeWorkspace: Codable {
     var profile=NativeProfile(preferredCity:"riyadh")
     var completed=Set<String>()
     var live:LiveSnapshot?
+    var importedApplicationRecords:[String:ApplicationRecord]?
+    var importedNextActions:[String:NextActionRecord]?
 }
 
 struct ApplicationRecord: Codable, Equatable {
@@ -291,6 +293,7 @@ struct ApplicationAttention: Identifiable {
     @Published private(set) var nextActionErrors=[String:String]()
     private let storageURL:URL
     private var canWrite=true
+    private var diskWorkspace:Data?
 
     init(researchURL:URL? = Bundle.main.url(forResource:"CareerResearch",withExtension:"json"), storageURL:URL? = nil) {
         self.storageURL=storageURL ?? FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask)[0].appendingPathComponent(Self.storageDirectoryName).appendingPathComponent("native-workspace.json")
@@ -307,7 +310,7 @@ struct ApplicationAttention: Identifiable {
             storageError="The research bundle is missing or unreadable."
         }
         if FileManager.default.fileExists(atPath:self.storageURL.path) {
-            do { workspace=try JSONDecoder().decode(NativeWorkspace.self,from:Data(contentsOf:self.storageURL)) }
+            do {let data=try Data(contentsOf:self.storageURL);workspace=try JSONDecoder().decode(NativeWorkspace.self,from:data);diskWorkspace=data}
             catch {canWrite=false;storageError="Saved records could not be read. They have been preserved; no new changes will overwrite that file."}
         }
         if canWrite {
@@ -322,7 +325,7 @@ struct ApplicationAttention: Identifiable {
     }
     private func readApplicationRecord(_ id:String)throws->ApplicationRecord? {
         let url=recordURL(id)
-        guard FileManager.default.fileExists(atPath:url.path) else {return nil}
+        guard FileManager.default.fileExists(atPath:url.path) else {return workspace.importedApplicationRecords?[id]}
         let data=try Data(contentsOf:url)
         guard let object=try JSONSerialization.jsonObject(with:data) as? [String:Any],Set(object.keys)==Set(["schema","jobId","appliedAt","receiptNote","updatedAt"]) else {throw CocoaError(.coderInvalidValue)}
         let value=try JSONDecoder().decode(ApplicationRecord.self,from:data)
@@ -336,9 +339,17 @@ struct ApplicationAttention: Identifiable {
             catch {recordErrors[job.id]="Stored application metadata could not be read. Original data is preserved; record saving is blocked."}
         }
     }
+    private func reloadWorkspaceForRecord()throws {
+        guard canWrite else {throw NativeBackupError.unreadable}
+        if try workspaceMatchesDisk() {return}
+        let data=try Data(contentsOf:storageURL)
+        let latest=try JSONDecoder().decode(NativeWorkspace.self,from:data)
+        workspace=latest;diskWorkspace=data;storageError=nil
+    }
     func beginApplicationRecord(_ job:CareerJob,discardDraft:Bool=false) {
         let id=job.id
         if recordDrafts[id]?.dirty==true && !discardDraft {return}
+        if discardDraft {do {try reloadWorkspaceForRecord()} catch {recordErrors[id]="The latest workspace could not be loaded. Your draft is preserved.";return}}
         do {applicationRecords[id]=try readApplicationRecord(id);recordErrors[id]=nil}
         catch {recordErrors[id]="Stored application metadata could not be read. Original data is preserved; record saving is blocked."}
         let base=applicationRecords[id]
@@ -372,7 +383,7 @@ struct ApplicationAttention: Identifiable {
     }
     private func readNextAction(_ id:String)throws->NextActionRecord? {
         let url=nextActionURL(id)
-        guard FileManager.default.fileExists(atPath:url.path) else {return nil}
+        guard FileManager.default.fileExists(atPath:url.path) else {return workspace.importedNextActions?[id]}
         let data=try Data(contentsOf:url)
         guard let object=try JSONSerialization.jsonObject(with:data) as? [String:Any],
               Set(object.keys)==Set(["schema","jobId","dueOn","actionNote","completed","updatedAt"]) else {throw CocoaError(.coderInvalidValue)}
@@ -389,6 +400,7 @@ struct ApplicationAttention: Identifiable {
     func beginNextAction(_ job:CareerJob,discardDraft:Bool=false) {
         let id=job.id
         if nextActionDrafts[id]?.dirty==true && !discardDraft {return}
+        if discardDraft {do {try reloadWorkspaceForRecord()} catch {nextActionErrors[id]="The latest workspace could not be loaded. Your draft is preserved.";return}}
         do {nextActions[id]=try readNextAction(id);nextActionErrors[id]=nil}
         catch {nextActionErrors[id]="Stored next action could not be read. Original data is preserved; saving is blocked."}
         let base=nextActions[id]
@@ -576,14 +588,28 @@ struct ApplicationAttention: Identifiable {
         }
         return next
     }
+    private func workspaceMatchesDisk()throws->Bool {
+        let current=FileManager.default.fileExists(atPath:storageURL.path) ? try Data(contentsOf:storageURL) : nil
+        if current==diskWorkspace {return true}
+        // Re-encoding an identical workspace may change dictionary/set ordering.
+        // Compare raw JSON fields so unknown future fields cannot be discarded.
+        func canonical(_ data:Data)throws->Data {
+            guard var object=try JSONSerialization.jsonObject(with:data) as? [String:Any] else {throw NativeBackupError.unreadable}
+            for key in ["saved","completed"] {if let values=object[key] as? [String] {object[key]=values.sorted()}}
+            return try JSONSerialization.data(withJSONObject:object,options:[.sortedKeys])
+        }
+        guard let current,let prior=diskWorkspace,try canonical(current)==canonical(prior) else {return false}
+        diskWorkspace=current;return true
+    }
     @discardableResult private func commit(_ value:NativeWorkspace)->Bool {
         guard canWrite else {storageError="Saved records could not be read. They have been preserved; no new changes will overwrite that file.";return false}
         let next=retainingKnownJobs(value)
         do {
+            guard try workspaceMatchesDisk() else {storageError="Another app instance changed saved records. Export your unsaved drafts, then reopen this app before saving. Existing disk records were preserved.";return false}
             let data=try JSONEncoder().encode(next)
             try FileManager.default.createDirectory(at:storageURL.deletingLastPathComponent(),withIntermediateDirectories:true)
             try data.write(to:storageURL,options:.atomic)
-            workspace=next;storageError=nil;return true
+            workspace=next;diskWorkspace=data;storageError=nil;return true
         } catch {storageError="This change could not be saved. Your previous records are intact. Check device storage and try again.";return false}
     }
     func refresh() async {
@@ -706,5 +732,164 @@ enum NativeMoney {
         guard normalized.range(of:"^(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)(?:\\.[0-9]{1,2})?$",options:.regularExpression) != nil,
               let value=Double(normalized.replacingOccurrences(of:",",with:"")),value.isFinite,value>=0,value<=limit else {return nil}
         return value
+    }
+}
+
+struct NativeBackupEnvelope:Codable {
+    struct Workspace:Codable {var saved:[String];var states:[String:String];var savedDetails:[String:CareerJob]}
+    var format="saleh-career-workspace"
+    var schema=1
+    var exportedAt:String
+    var platform="native"
+    var workspace:Workspace
+    var profile:[String:String]
+    var checklist:[String:Bool]
+    var applicationRecords:[ApplicationRecord]
+    var nextActions:[NextActionRecord]
+}
+struct NativeRestorePreview {
+    fileprivate var envelope:NativeBackupEnvelope
+    fileprivate var fingerprint:Data
+    let additions:Int
+    let conflicts:Int
+    let skipped:Int
+    var summary:String {"\(additions) additions; \(conflicts) existing values preserved; \(skipped) profile/checklist fields skipped. Existing profile, checklist, receipts and plans will not be overwritten."}
+}
+enum NativeBackupError:LocalizedError {
+    case invalid,changed,unreadable
+    var errorDescription:String? {
+        switch self {
+        case .invalid:return "This is not a supported private workspace backup, or it exceeds the limits. Nothing was changed."
+        case .changed:return "Saved data changed after the preview. Create a new preview before restoring."
+        case .unreadable:return "Saved data could not be read or written safely. Nothing was restored."
+        }
+    }
+}
+extension NativeCareerStore {
+    static let backupLimit=4*1024*1024
+    private static func backupID(_ id:String)->Bool { !id.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty && id.utf16.count<=256 && !["__proto__","prototype","constructor"].contains(id) }
+    static func decodeBackup(_ data:Data,now:Date=Date())throws->NativeBackupEnvelope {
+        guard data.count<=backupLimit,String(data:data,encoding:.utf8) != nil,
+              let raw=try JSONSerialization.jsonObject(with:data) as? [String:Any],
+              Set(raw.keys)==Set(["format","schema","exportedAt","platform","workspace","profile","checklist","applicationRecords","nextActions"]),
+              let w=raw["workspace"] as? [String:Any],Set(w.keys)==Set(["saved","states","savedDetails"]),
+              let profile=raw["profile"] as? [String:String],Set(profile.keys).isSubset(of:Set(["years","degree","skills","achievements","preferredCity","minimumMonthlySAR","unknownSalary"])) else {throw NativeBackupError.invalid}
+        let value=try JSONDecoder().decode(NativeBackupEnvelope.self,from:data)
+        guard value.format=="saleh-career-workspace",value.schema==1,["native","web"].contains(value.platform),
+              let exported=CareerFeed.isoDate(value.exportedAt),exported<=now,
+              value.workspace.saved.count<=1000,Set(value.workspace.saved).count==value.workspace.saved.count,
+              value.workspace.saved.allSatisfy(backupID),value.workspace.states.count<=1000,
+              value.workspace.states.allSatisfy({backupID($0.key) && statuses.contains($0.value)}),
+              value.workspace.savedDetails.count<=1000,value.applicationRecords.count<=1000,value.nextActions.count<=1000,
+              value.checklist.count<=100,value.checklist.keys.allSatisfy({backupID($0) && $0.count<80}) else {throw NativeBackupError.invalid}
+        let jobKeys=Set("id title company location url posted fit summary rank relevance subtitle mode postedKind experienceLevel employmentType requirementNotes closes applyUrl sourceUrl gaps steps minYears healthcare leadership kind lastCheckedAt researchCheckedAt".split(separator:" ").map(String.init))
+        guard let jobRows=w["savedDetails"] as? [String:[String:Any]],jobRows.values.allSatisfy({Set($0.keys).isSubset(of:jobKeys)}) else {throw NativeBackupError.invalid}
+        for (id,job) in value.workspace.savedDetails {
+            guard backupID(id),id==job.id,!job.title.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,
+                  CareerJob.safeURL(job.url) != nil,job.applyUrl.map({CareerJob.safeURL($0) != nil}) ?? true,job.sourceUrl.map({CareerJob.safeURL($0) != nil}) ?? true,
+                  job.validEmployerMetadata,job.isSaudi,job.posted.isEmpty || CareerFeed.parsedDate(job.posted) != nil,
+                  job.closes == nil || job.closes == "" || CareerFeed.parsedDate(job.closes!) != nil else {throw NativeBackupError.invalid}
+        }
+        for (key,fields) in [("applicationRecords",Set(["schema","jobId","appliedAt","receiptNote","updatedAt"])),("nextActions",Set(["schema","jobId","dueOn","actionNote","completed","updatedAt"]))] {
+            guard let rows=raw[key] as? [[String:Any]],rows.allSatisfy({Set($0.keys)==fields}) else {throw NativeBackupError.invalid}
+        }
+        guard Set(value.applicationRecords.map(\.jobId)).count==value.applicationRecords.count,
+              Set(value.nextActions.map(\.jobId)).count==value.nextActions.count,
+              value.applicationRecords.allSatisfy({$0.valid(for:$0.jobId,now:now) && (CareerFeed.isoDate($0.updatedAt) ?? .distantFuture)<=now}),
+              value.nextActions.allSatisfy({$0.valid(for:$0.jobId) && (CareerFeed.isoDate($0.updatedAt) ?? .distantFuture)<=now}) else {throw NativeBackupError.invalid}
+        let references=Set(value.workspace.saved).union(value.workspace.states.keys).union(value.applicationRecords.map(\.jobId)).union(value.nextActions.map(\.jobId))
+        guard references.isSubset(of:Set(value.workspace.savedDetails.keys)) else {throw NativeBackupError.invalid}
+        return value
+    }
+    private func backupFingerprint()throws->Data {
+        guard canWrite else {throw NativeBackupError.unreadable}
+        guard try workspaceMatchesDisk() else {throw NativeBackupError.changed}
+        let encoder=JSONEncoder();encoder.outputFormatting=[.sortedKeys]
+        func canonical(_ value:NativeWorkspace)throws->Data {
+            var object=try JSONSerialization.jsonObject(with:encoder.encode(value)) as! [String:Any]
+            object["saved"]=value.saved.sorted();object["completed"]=value.completed.sorted()
+            return try JSONSerialization.data(withJSONObject:object,options:[.sortedKeys])
+        }
+        var data=try canonical(workspace)
+        if FileManager.default.fileExists(atPath:storageURL.path) {
+            let disk=try JSONDecoder().decode(NativeWorkspace.self,from:Data(contentsOf:storageURL))
+            guard try canonical(disk)==data else {throw NativeBackupError.changed}
+        }
+        // Include every sidecar, including unreadable/orphaned files, to detect external changes.
+        for url in [storageURL,storageURL.appendingPathExtension("application-records-v1"),storageURL.appendingPathExtension("next-action-v1")] {
+            if FileManager.default.fileExists(atPath:url.path) {
+                var directory:ObjCBool=false;FileManager.default.fileExists(atPath:url.path,isDirectory:&directory)
+                let files=directory.boolValue ? try FileManager.default.contentsOfDirectory(at:url,includingPropertiesForKeys:nil).sorted{$0.path<$1.path} : [url]
+                for file in files {data.append(Data(file.lastPathComponent.utf8));data.append(try Data(contentsOf:file))}
+            } else {data.append(Data("missing:\(url.lastPathComponent)".utf8))}
+        }
+        return Data(SHA256.hash(data:data))
+    }
+    func privateBackupData(now:Date=Date())throws->Data {
+        _=try backupFingerprint()
+        let ids=Set(workspace.snapshots.keys).union(workspace.saved).union(workspace.statuses.keys)
+        for (directory,known) in [(storageURL.appendingPathExtension("application-records-v1"),Set(ids.map{recordURL($0).lastPathComponent})),(storageURL.appendingPathExtension("next-action-v1"),Set(ids.map{nextActionURL($0).lastPathComponent}))] {
+            if FileManager.default.fileExists(atPath:directory.path) {
+                let files=try FileManager.default.contentsOfDirectory(atPath:directory.path)
+                guard Set(files).isSubset(of:known) else {throw NativeBackupError.unreadable}
+            }
+        }
+        return try portableBackupData(for:workspace,now:now)
+    }
+    private func portableBackupData(for candidate:NativeWorkspace,now:Date=Date())throws->Data {
+        let ids=Set(candidate.snapshots.keys).union(candidate.saved).union(candidate.statuses.keys)
+        var records=[ApplicationRecord](),actions=[NextActionRecord](),details=[String:CareerJob]()
+        for id in ids.sorted() {
+            guard let job=candidate.snapshots[id] ?? allJobs.first(where:{$0.id==id}) else {throw NativeBackupError.unreadable}
+            details[id]=job
+            if let record=try readApplicationRecord(id) ?? candidate.importedApplicationRecords?[id] {records.append(record)}
+            if let action=try readNextAction(id) ?? candidate.importedNextActions?[id] {actions.append(action)}
+        }
+        var profile=try JSONDecoder().decode([String:String].self,from:JSONEncoder().encode(candidate.profile))
+        if let years=profile["years"],!years.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,let number=NativeMoney.parse(years,limit:60) {profile["years"]=String(number)}
+        if let raw=profile["minimumMonthlySAR"],!raw.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,let amount=candidate.profile.minimumMonthlyAmount {profile["minimumMonthlySAR"]=String(Int(amount))}
+        let envelope=NativeBackupEnvelope(exportedAt:ApplicationRecord.timestamp(now.addingTimeInterval(-0.001)),workspace:.init(saved:candidate.saved.sorted(),states:candidate.statuses,savedDetails:details),profile:profile,checklist:Dictionary(uniqueKeysWithValues:candidate.completed.map{($0,true)}),applicationRecords:records,nextActions:actions)
+        let encoder=JSONEncoder();encoder.outputFormatting=[.prettyPrinted,.sortedKeys]
+        let data=try encoder.encode(envelope);_=try Self.decodeBackup(data,now:now);return data
+    }
+    private func restoringWorkspace(_ envelope:NativeBackupEnvelope)throws->NativeWorkspace {
+        var next=workspace
+        for (id,job) in envelope.workspace.savedDetails where next.snapshots[id]==nil {next.snapshots[id]=job}
+        next.saved.formUnion(envelope.workspace.saved)
+        for (id,status) in envelope.workspace.states where next.statuses[id]==nil {next.statuses[id]=status}
+        for r in envelope.applicationRecords where try readApplicationRecord(r.jobId)==nil {if next.importedApplicationRecords==nil {next.importedApplicationRecords=[:]};next.importedApplicationRecords?[r.jobId]=r}
+        for r in envelope.nextActions where try readNextAction(r.jobId)==nil {if next.importedNextActions==nil {next.importedNextActions=[:]};next.importedNextActions?[r.jobId]=r}
+        return next
+    }
+    func previewBackup(_ data:Data)throws->NativeRestorePreview {
+        let envelope=try Self.decodeBackup(data)
+        let fingerprint=try backupFingerprint()
+        _=try privateBackupData()
+        _=try portableBackupData(for:restoringWorkspace(envelope))
+        var additions=0,conflicts=0
+        for id in envelope.workspace.savedDetails.keys {if workspace.snapshots[id]==nil {additions+=1} else {conflicts+=1}}
+        for id in envelope.workspace.saved {if !workspace.saved.contains(id) {additions+=1} else {conflicts+=1}}
+        for id in envelope.workspace.states.keys {if workspace.statuses[id]==nil {additions+=1} else {conflicts+=1}}
+        for r in envelope.applicationRecords {if try readApplicationRecord(r.jobId)==nil {additions+=1} else {conflicts+=1}}
+        for r in envelope.nextActions {if try readNextAction(r.jobId)==nil {additions+=1} else {conflicts+=1}}
+        return NativeRestorePreview(envelope:envelope,fingerprint:fingerprint,additions:additions,conflicts:conflicts,skipped:envelope.profile.count+envelope.checklist.count)
+    }
+    func applyBackup(_ preview:NativeRestorePreview)throws {
+        guard try backupFingerprint()==preview.fingerprint else {throw NativeBackupError.changed}
+        _=try Self.decodeBackup(JSONEncoder().encode(preview.envelope))
+        let next=try restoringWorkspace(preview.envelope)
+        _=try portableBackupData(for:next)
+        let original=try privateBackupData()
+        let encoder=JSONEncoder()
+        let data=try encoder.encode(next)
+        guard next.snapshots.count<=1000,next.saved.count<=1000,next.statuses.count<=1000,
+              (next.importedApplicationRecords?.count ?? 0)<=1000,(next.importedNextActions?.count ?? 0)<=1000,
+              data.count<=Self.backupLimit else {throw NativeBackupError.invalid}
+        try FileManager.default.createDirectory(at:storageURL.deletingLastPathComponent(),withIntermediateDirectories:true)
+        // Immutable recovery copy first. Imported records live in the same atomic workspace transaction.
+        try original.write(to:storageURL.appendingPathExtension("before-restore-"+UUID().uuidString+".json"),options:.atomic)
+        guard try backupFingerprint()==preview.fingerprint else {throw NativeBackupError.changed}
+        try data.write(to:storageURL,options:.atomic)
+        workspace=next;diskWorkspace=data;reloadApplicationRecords();storageError=nil
     }
 }

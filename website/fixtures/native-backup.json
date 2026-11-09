@@ -1,0 +1,90 @@
+{
+  "applicationRecords" : [
+    {
+      "appliedAt" : "",
+      "jobId" : "backup-test",
+      "receiptNote" : "Saved receipt",
+      "schema" : 1,
+      "updatedAt" : "2026-11-09T09:00:14.396Z"
+    }
+  ],
+  "checklist" : {
+    "profile" : true
+  },
+  "exportedAt" : "2026-11-09T09:00:14.398Z",
+  "format" : "saleh-career-workspace",
+  "nextActions" : [
+    {
+      "actionNote" : "Saved action",
+      "completed" : false,
+      "dueOn" : "",
+      "jobId" : "backup-test",
+      "schema" : 1,
+      "updatedAt" : "2026-11-09T09:00:14.398Z"
+    }
+  ],
+  "platform" : "native",
+  "profile" : {
+    "achievements" : "Synthetic sample",
+    "degree" : "Synthetic test coursework",
+    "preferredCity" : "riyadh",
+    "skills" : "Synthetic Swift",
+    "years" : "2"
+  },
+  "schema" : 1,
+  "workspace" : {
+    "saved" : [
+      "backup-test"
+    ],
+    "savedDetails" : {
+      "backup-test" : {
+        "closes" : "2099-12-31",
+        "company" : "Johnson & Johnson",
+        "fit" : "Conditional tender match",
+        "gaps" : [
+          "Bachelor’s degree; 4+ years bids, tendering, pricing or commercial operations.",
+          "Arabic and English; advanced Excel\/PowerPoint. SAP is an advantage."
+        ],
+        "healthcare" : false,
+        "id" : "backup-test",
+        "kind" : "archived",
+        "leadership" : false,
+        "location" : "Riyadh \/ Jeddah",
+        "minYears" : 4,
+        "mode" : "Hybrid",
+        "posted" : "2026-10-07",
+        "researchCheckedAt" : "2026-10-09",
+        "sourceUrl" : "https:\/\/www.careers.jnj.com\/en\/jobs\/r-103214\/bids-and-tender-senior-specialist-ep-mea-johnson-johnson-medtech-ksa\/",
+        "steps" : [
+          [
+            "Check existing applications first",
+            "Check your employer application history for R-103214. Track an existing submission rather than sending a duplicate; otherwise confirm four relevant years before applying."
+          ],
+          [
+            "Tailor your CV",
+            "Show bid compliance, tender turnaround, reporting and cycle-time improvements you personally delivered."
+          ],
+          [
+            "Check scope and package",
+            "Ask about grade, decision authority, fixed pay and bonus. Do not assume this is a management promotion."
+          ],
+          [
+            "Apply through Workday",
+            "Open the official role, select Apply and complete your own account\/application. Review the parsed CV and every answer before submission."
+          ],
+          [
+            "Save the receipt",
+            "Keep the acknowledgement and mark the application locally. Check the closing date on the employer page."
+          ]
+        ],
+        "subtitle" : "R-103214 · EP MEA · MedTech",
+        "summary" : "Medical-supply contract and tender oversight strengthens the functional match. Confirm four relevant years and commercial tools; the P5 experienced-analyst grade may be lateral.",
+        "title" : "Software Developer",
+        "url" : "https:\/\/jj.wd5.myworkdayjobs.com\/JJ\/job\/Riyadh-Saudi-Arabia\/Bids-and-Tender-Senior-Specialist--EP-MEA---Johnson---Johnson-MedTech---KSA_R-103214"
+      }
+    },
+    "states" : {
+      "backup-test" : "Preparing"
+    }
+  }
+}

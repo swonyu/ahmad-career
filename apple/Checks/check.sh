@@ -34,3 +34,6 @@ BuildLogs/check-next-action Checks/ResearchFixture.json
 
 swiftc AhmadCareer/CareerFeed.swift Checks/TransportCheck.swift -o BuildLogs/check-transport
 BuildLogs/check-transport
+
+swiftc AhmadCareer/CareerFeed.swift AhmadCareer/NativeCareerStore.swift Checks/NativeBackupCheck.swift -o BuildLogs/check-backup
+BuildLogs/check-backup Checks/ResearchFixture.json BuildLogs/native-backup-export.json ../website/fixtures/web-backup.json

@@ -1,5 +1,6 @@
 import SwiftUI
 import WebKit
+import UniformTypeIdentifiers
 
 #if os(macOS)
 typealias CareerWebViewRepresentable = NSViewRepresentable
@@ -26,6 +27,7 @@ struct CareerWebView: CareerWebViewRepresentable {
         let configuration = WKWebViewConfiguration()
         configuration.websiteDataStore = .default()
         configuration.userContentController.add(context.coordinator, name: "careerSearch")
+        configuration.userContentController.add(context.coordinator, name: "careerBackup")
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator
         webView.uiDelegate = context.coordinator
@@ -57,10 +59,24 @@ struct CareerWebView: CareerWebViewRepresentable {
         private let refreshProvider: @MainActor () async -> [String:Any]
         #if os(macOS)
         private var confirmation: (alert:NSAlert, reply:(Bool)->Void)?
+        private var backupPanel:NSSavePanel?
+        private var backupOpen:(panel:NSOpenPanel,reply:([URL]?)->Void)?
         private func finishConfirmation(_ accepted:Bool) {
             let pending=confirmation;confirmation=nil
             if let alert=pending?.alert,let parent=alert.window.sheetParent {parent.endSheet(alert.window)}
             pending?.reply(accepted)
+        }
+        func webView(_ webView:WKWebView,runOpenPanelWith parameters:WKOpenPanelParameters,initiatedByFrame frame:WKFrameInfo,completionHandler:@escaping([URL]?)->Void) {
+            guard frame.isMainFrame,let root=webRoot,let url=frame.request.url,
+                  CareerPolicy.navigation(url,webRoot:root,userInitiated:false) == .bundled,
+                  let window=webView.window,backupOpen==nil else {completionHandler(nil);return}
+            let panel=NSOpenPanel();panel.allowedContentTypes=[.json];panel.allowsMultipleSelection=false
+            panel.canChooseDirectories=false;panel.canChooseFiles=true;panel.message="Choose a private workspace backup. You will review it before restoring anything."
+            backupOpen=(panel,completionHandler)
+            panel.beginSheetModal(for:window) { [weak self] response in
+                let pending=self?.backupOpen;self?.backupOpen=nil
+                pending?.reply(response == .OK ? pending?.panel.urls : nil)
+            }
         }
         func webView(_ webView:WKWebView,runJavaScriptConfirmPanelWithMessage message:String,initiatedByFrame frame:WKFrameInfo,completionHandler:@escaping(Bool)->Void) {
             guard frame.isMainFrame,let root=webRoot,let url=frame.request.url,
@@ -79,16 +95,20 @@ struct CareerWebView: CareerWebViewRepresentable {
             refreshTask?.cancel()
             #if os(macOS)
             finishConfirmation(false)
+            backupPanel?.cancel(nil); backupPanel=nil
+            let pending=backupOpen;backupOpen=nil;pending?.panel.cancel(nil);pending?.reply(nil)
             #endif
             webView.configuration.userContentController.removeScriptMessageHandler(forName: "careerSearch")
+            webView.configuration.userContentController.removeScriptMessageHandler(forName: "careerBackup")
             webView.stopLoading()
         }
 
         func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-            guard message.name == "careerSearch", message.frameInfo.isMainFrame,
+            guard ["careerSearch","careerBackup"].contains(message.name), message.frameInfo.isMainFrame,
                   let root = webRoot, let url = message.frameInfo.request.url,
-                  CareerPolicy.navigation(url, webRoot: root, userInitiated: false) == .bundled,
-                  CareerPolicy.acceptsRefresh(message.body) else { return }
+                  CareerPolicy.navigation(url, webRoot: root, userInitiated: false) == .bundled else { return }
+            if message.name == "careerBackup" { saveBackup(message.body); return }
+            guard CareerPolicy.acceptsRefresh(message.body) else {return}
             guard refreshTask == nil else { return }
             refreshTask = Task { [weak self] in
                 guard let self else {return}
@@ -97,6 +117,28 @@ struct CareerWebView: CareerWebViewRepresentable {
                 self.deliver(payload)
                 self.refreshTask = nil
             }
+        }
+
+        private func backupReply(_ payload:[String:Any]) {
+            webView?.callAsyncJavaScript("if (typeof window.receiveBackupSave === 'function') window.receiveBackupSave(payload);", arguments:["payload":payload],in:nil,in:.page,completionHandler:nil)
+        }
+        private func saveBackup(_ body:Any) {
+            guard let value=body as? [String:Any],Set(value.keys)==Set(["action","text"]),value["action"] as? String=="save",let text=value["text"] as? String,text.utf8.count<=4*1024*1024,
+                  let data=text.data(using:.utf8),let envelope=(try? JSONSerialization.jsonObject(with:data)) as? [String:Any],envelope["format"] as? String=="saleh-career-workspace",envelope["schema"] as? Int==1 else {backupReply(["ok":false]);return}
+            #if os(macOS)
+            guard let window=webView?.window,backupPanel==nil else {backupReply(["ok":false]);return}
+            let panel=NSSavePanel();panel.allowedContentTypes=[.json];panel.nameFieldStringValue="Saleh-Career-Finder-backup.json"
+            panel.message="This backup includes private saved records. Choose a location you trust."
+            backupPanel=panel
+            panel.beginSheetModal(for:window) { [weak self] response in
+                guard let self else {return};self.backupPanel=nil
+                guard response == .OK,let url=panel.url else {self.backupReply(["cancelled":true]);return}
+                do {try data.write(to:url,options:.atomic);self.backupReply(["ok":true])}
+                catch {self.backupReply(["ok":false])}
+            }
+            #else
+            backupReply(["ok":false])
+            #endif
         }
 
         private func deliver(_ payload: [String: Any]) {

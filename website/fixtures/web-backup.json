@@ -1,0 +1,84 @@
+{
+  "format": "saleh-career-workspace",
+  "schema": 1,
+  "exportedAt": "2026-11-09T09:06:58.434Z",
+  "platform": "web",
+  "workspace": {
+    "saved": [
+      "backup-web-test"
+    ],
+    "states": {
+      "backup-web-test": "Submission uncertain"
+    },
+    "savedDetails": {
+      "backup-web-test": {
+        "id": "backup-web-test",
+        "company": "Johnson & Johnson",
+        "title": "Software Developer",
+        "subtitle": "R-103214 · EP MEA · MedTech",
+        "location": "Riyadh / Jeddah",
+        "url": "https://jj.wd5.myworkdayjobs.com/JJ/job/Riyadh-Saudi-Arabia/Bids-and-Tender-Senior-Specialist--EP-MEA---Johnson---Johnson-MedTech---KSA_R-103214",
+        "sourceUrl": "https://www.careers.jnj.com/en/jobs/r-103214/bids-and-tender-senior-specialist-ep-mea-johnson-johnson-medtech-ksa/",
+        "fit": "Conditional tender match",
+        "summary": "Medical-supply contract and tender oversight strengthens the functional match. Confirm four relevant years and commercial tools; the P5 experienced-analyst grade may be lateral.",
+        "gaps": [
+          "Bachelor’s degree; 4+ years bids, tendering, pricing or commercial operations.",
+          "Arabic and English; advanced Excel/PowerPoint. SAP is an advantage."
+        ],
+        "posted": "2026-10-07",
+        "closes": "2099-12-31",
+        "mode": "Hybrid",
+        "minYears": 4,
+        "leadership": false,
+        "healthcare": false,
+        "steps": [
+          [
+            "Check existing applications first",
+            "Check your employer application history for R-103214. Track an existing submission rather than sending a duplicate; otherwise confirm four relevant years before applying."
+          ],
+          [
+            "Tailor your CV",
+            "Show bid compliance, tender turnaround, reporting and cycle-time improvements you personally delivered."
+          ],
+          [
+            "Check scope and package",
+            "Ask about grade, decision authority, fixed pay and bonus. Do not assume this is a management promotion."
+          ],
+          [
+            "Apply through Workday",
+            "Open the official role, select Apply and complete your own account/application. Review the parsed CV and every answer before submission."
+          ],
+          [
+            "Save the receipt",
+            "Keep the acknowledgement and mark the application locally. Check the closing date on the employer page."
+          ]
+        ],
+        "kind": "archived",
+        "researchCheckedAt": "2026-10-09"
+      }
+    }
+  },
+  "profile": {
+    "preferredCity": "riyadh"
+  },
+  "checklist": {},
+  "applicationRecords": [
+    {
+      "schema": 1,
+      "jobId": "backup-web-test",
+      "appliedAt": "",
+      "receiptNote": "Changed after import",
+      "updatedAt": "2026-11-09T09:06:58.429Z"
+    }
+  ],
+  "nextActions": [
+    {
+      "schema": 1,
+      "jobId": "backup-web-test",
+      "dueOn": "",
+      "actionNote": "",
+      "completed": false,
+      "updatedAt": "2026-11-09T09:06:58.432Z"
+    }
+  ]
+}

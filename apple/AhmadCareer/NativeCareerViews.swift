@@ -1,6 +1,7 @@
 #if os(iOS)
 import SwiftUI
 import UIKit
+import UniformTypeIdentifiers
 
 @MainActor
 struct NativeCareerRoot: View {
@@ -694,11 +695,82 @@ private struct NativeProfileScreen: View {
             NativeCriteriaSection()
             Section {
                 NavigationLink { NativeSalaryScreen() } label: { Label("Salary & negotiation", systemImage: "chart.bar.doc.horizontal") }
+                NavigationLink { NativeBackupScreen() } label: { Label("Private workspace backup", systemImage: "externaldrive") }
                 NavigationLink { NativePrivacyScreen() } label: { Label("Privacy & support", systemImage: "hand.raised") }
             }
         }.nativeList().navigationTitle("Your profile")
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $editing) { NativeProfileEditor(profile: store.workspace.profile) }
+    }
+}
+
+private struct NativeBackupDocument: FileDocument {
+    static var readableContentTypes:[UTType] { [.json] }
+    var data:Data
+    init(data:Data) {self.data=data}
+    init(configuration:ReadConfiguration)throws {data=configuration.file.regularFileContents ?? Data()}
+    func fileWrapper(configuration:WriteConfiguration)throws->FileWrapper {FileWrapper(regularFileWithContents:data)}
+}
+private struct NativeBackupScreen:View {
+    @EnvironmentObject private var store:NativeCareerStore
+    @State private var input=""
+    @State private var preview:NativeRestorePreview?
+    @State private var document=NativeBackupDocument(data:Data())
+    @State private var exporting=false
+    @State private var importing=false
+    @State private var confirming=false
+    @State private var notice=""
+    var body:some View {
+        Form {
+            Section("Private saved data only") {
+                Text("Includes retained jobs, saved statuses, saved profile/checklist, receipts and next actions. Excludes search results, theme and unsaved drafts. No sync, submission or sending. Keep this unencrypted file private.")
+                Button("Save private JSON backup") {
+                    do {document=NativeBackupDocument(data:try store.privateBackupData());exporting=true;notice=""}
+                    catch {notice=error.localizedDescription}
+                }
+            }
+            Section("Add from backup") {
+                Button("Choose JSON backup") {importing=true}
+                Text("Or paste backup JSON (maximum 4 MiB):")
+                TextEditor(text:$input).frame(minHeight:120).font(.caption.monospaced())
+                    .onChange(of:input) { _ in preview=nil }
+                Button("Preview additions") {
+                    preview=nil
+                    do {preview=try store.previewBackup(Data(input.utf8));notice=""}
+                    catch {notice=error.localizedDescription}
+                }.disabled(input.isEmpty)
+                if let preview {
+                    Text(preview.summary)
+                    Button("Confirm additive restore") {confirming=true}.disabled(preview.additions==0)
+                    Button("Cancel preview",role:.cancel) {self.preview=nil;notice="Preview canceled. Nothing was restored."}
+                }
+                Text("Close older app versions before restoring. Do not downgrade afterward: older builds do not understand imported receipts or tasks. All existing values stay unchanged. Profile and checklist imports are skipped. A local recovery copy is saved before restoring. Cancel or leave this screen to discard the preview.")
+            }
+            if !notice.isEmpty {Section {Text(notice)}}
+        }.navigationTitle("Private backup")
+        .fileExporter(isPresented:$exporting,document:document,contentType:.json,defaultFilename:"saleh-private-workspace") {result in
+            if case .failure(let error)=result {notice=error.localizedDescription}
+        }
+        .fileImporter(isPresented:$importing,allowedContentTypes:[.json]) {result in
+            preview=nil
+            do {
+                let url=try result.get();let access=url.startAccessingSecurityScopedResource()
+                defer {if access {url.stopAccessingSecurityScopedResource()}}
+                let handle=try FileHandle(forReadingFrom:url);defer {try? handle.close()}
+                let data=try handle.read(upToCount:NativeCareerStore.backupLimit+1) ?? Data()
+                guard data.count<=NativeCareerStore.backupLimit,let text=String(data:data,encoding:.utf8) else {throw NativeBackupError.invalid}
+                input=text;notice="File loaded. Preview it before confirming restore."
+            } catch {notice=error.localizedDescription}
+        }
+        .confirmationDialog("Add missing saved data? Existing values will be preserved.",isPresented:$confirming,titleVisibility:.visible) {
+            Button("Restore additions") {
+                guard let candidate=preview else {return}
+                do {try store.applyBackup(candidate);notice="Additions restored locally. Nothing was sent.";input=""}
+                catch {notice=error.localizedDescription}
+                preview=nil
+            }
+            Button("Cancel",role:.cancel) {preview=nil}
+        }
     }
 }
 

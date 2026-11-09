@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 import {PUBLIC_SOURCES,parsePublicBoard} from './feeds.mjs';
 
-const scripts = ['core.js', 'data.js', 'app.js'].map(name => ({
+const scripts = ['core.js', 'data.js', 'backup.js', 'app.js'].map(name => ({
   name,
   source: readFileSync(new URL(name==='data.js'?'./fixtures/research.js':`./web/${name}`, import.meta.url), 'utf8'),
 }));
@@ -75,6 +75,7 @@ export function createApp(initialStorage = new Map(), options = {}) {
       },
     },
     localStorage: {
+      get length(){return storage.size;}, key:index=>[...storage.keys()][index]??null,
       getItem: key => { const value=storage.get(key) ?? null; options.afterRead?.(key); return value; },
       setItem(key, value) {
         if (writesFail || failKeys.has(key)) throw new Error('Simulated storage quota failure');

@@ -1,8 +1,8 @@
-# Saleh Career Finder 1.3
+# Saleh Career Finder 1.4
 
 A career workspace with public employer discovery, saved opportunities, application tracking, search-result comparisons, and private next-action planning. The current discovery adapters focus on paid software, Python and AI opportunities in Saudi Arabia. Users enter their own experience, education, skills and preferences.
 
-This generic publication is based on source snapshot `96e46dd7d97ec1b56df82e56914ae3446b399f8e`. No personal profile, CV, application ledger, local notes, credentials, or installation receipts are bundled. Existing repository history is preserved; this branch does not change the remote main branch.
+This is the generic distribution variant. No personal profile, CV, application ledger, local notes, credentials, or installation receipts are bundled. Existing repository history is preserved; this branch does not change the remote main branch.
 
 ## Run and check
 
@@ -13,3 +13,11 @@ Apple: open `apple/AhmadCareer.xcodeproj`. Internal target names and the existin
 Records stay on each device; web, iPhone and Mac do not sync. Existing Ahmad app storage identifiers are preserved for update compatibility. The separate personalized Saleh installation is not modified by this source publication.
 
 Discovery is limited to configured public employer sources. Listing responses do not establish eligibility, salary, application success, or newly opened vacancies. No automatic application, external message, or notification is sent. A source publication or build check does not establish App Store/TestFlight distribution or device installation.
+
+## Private backup update 1.4
+
+Adds portable private JSON export and preview-first additive restore of saved jobs, stages, receipt notes and next actions. Existing values are preserved. Profile and checklist are exported for reference only and never restored. No cache, comparison history, theme or unsaved drafts are included. Files are unencrypted and must be kept private.
+
+Strict schema, safe-link, reference and date validation applies, with a 4 MiB portable envelope and 1,000 retained-role limit. Preview and commit reject stale revisions, unreadable/orphaned records, excessive combined data and failed recovery writes. Restored receipt/task maps commit atomically with the workspace. Both web and native tests cover cross-format imports and stale-window protection.
+
+Close older app versions before restoring. Do not downgrade after importing receipts/tasks: older versions do not understand their fallback maps. Save a portable backup first. Restore does not confirm a submission or current vacancy, and never sends messages or applications. The original Ahmad storage namespace and bundle identifier remain unchanged. TestFlight upload is not part of this update.

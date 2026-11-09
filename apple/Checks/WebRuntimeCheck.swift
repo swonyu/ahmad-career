@@ -145,7 +145,23 @@ enum WebRuntimeCheck {
                     document.querySelector('[data-action="reset-discovery"]').click();
                     if(document.querySelector('#added-only').checked||!rowIDs().includes(synthetic.id))throw new Error('Comparison filter reset failed');
                     localStorage.setItem('__nativeComparisonExpected',JSON.stringify({comparison,jobId:synthetic.id,savedId:liveOnly.id}));
-                    return {title:document.title, renderedLeads:rows, firstTitle, sources:payload.sources.length, searching:false, actualCallback:'unchanged', cachedResultsPreserved:true, atomicSavedTracking:'ok', applicationGroups:'ok', uncertainAdvisory:'ok', companyAgeFilters:'ok', filterReset:'ok', employerEvidence:'ok', savedLeadSurvivesRefresh:true, nativeNotes:'ok', nextActions:'ok', privateDraftFocus:'ok', localStorage:'ok'};
+                    document.querySelector('#sidebar [data-view="backups"]').click();
+                    if(!document.querySelector('#main').textContent.includes('Restore missing records'))throw new Error('Backup page missing');
+                    await prepareBackup();
+                    if(!backupExport||!document.querySelector('#backup-export-text').value.includes('saleh-career-workspace'))throw new Error('Backup export UI failed');
+                    const backup=Backup.parse(backupExport);
+                    const backupSynthetic={...backup.workspace.savedDetails[liveOnly.id],id:'backup-runtime-only'};
+                    backup.workspace.saved.push(backupSynthetic.id);backup.workspace.savedDetails[backupSynthetic.id]=backupSynthetic;
+                    backup.workspace.states[backupSynthetic.id]='Preparing';
+                    const backupField=document.querySelector('#backup-input');backupField.value=JSON.stringify(backup);backupField.dispatchEvent(new Event('input',{bubbles:true}));
+                    document.querySelector('[data-action="backup-preview"]').click();
+                    if(!backupPreview||backupPreview.count.jobs!==1||saved.includes(backupSynthetic.id))throw new Error('Backup preview mutated or lost additions');
+                    if(!await applyBackup()||!saved.includes(backupSynthetic.id))throw new Error('Backup restore failed');
+                    if(!localStorage.getItem('ahmad-pre-restore-v1'))throw new Error('Backup recovery copy missing');
+                    previewBackup();if(backupPreview?.changed)throw new Error('Backup repeated import was not idempotent');
+                    document.querySelector('[data-action="backup-cancel"]').click();
+                    if(backupPreview!==null)throw new Error('Backup cancel failed');
+                    return {title:document.title, renderedLeads:rows, firstTitle, sources:payload.sources.length, searching:false, actualCallback:'unchanged', cachedResultsPreserved:true, atomicSavedTracking:'ok', applicationGroups:'ok', uncertainAdvisory:'ok', companyAgeFilters:'ok', filterReset:'ok', employerEvidence:'ok', savedLeadSurvivesRefresh:true, nativeNotes:'ok', backupRestore:'ok', nextActions:'ok', privateDraftFocus:'ok', localStorage:'ok'};
                     """, arguments: [:], in: nil, in: .page) { continuation.resume(with: $0) }
                     }
                     print("PASS: actual WKWebView file load, storage, native message, and callback: \(String(describing: result))")
