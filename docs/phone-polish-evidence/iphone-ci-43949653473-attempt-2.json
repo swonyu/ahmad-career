@@ -1,0 +1,291 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-16T21:03:34.596034+00:00",
+  "runId": 43949653473,
+  "runAttempt": 2,
+  "commit": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+  "tree": "53d3d9f36d6d897e6b9897549e8e2c0cb2d5253c",
+  "parent": "7f5bf578c57e28b3688808f0da418df9ec3f4a3b",
+  "run": {
+    "id": 43949653473,
+    "head_sha": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+    "head_branch": "career-finder-phones-verified-apply-20261116",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "run_attempt": 2,
+    "created_at": "2026-11-16T20:25:38Z",
+    "run_started_at": "2026-11-16T20:45:00Z",
+    "updated_at": "2026-11-16T20:59:05Z",
+    "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43949653473"
+  },
+  "jobs": [
+    {
+      "id": 133600068930,
+      "name": "iPhone native interface acceptance",
+      "head_sha": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-16T20:45:06Z",
+      "completed_at": "2026-11-16T20:59:05Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43949653473/job/133600068930",
+      "executionAttempt": 2,
+      "retainedFromPriorAttempt": false,
+      "originalExecutionJobId": 133600068930
+    },
+    {
+      "id": 133600071037,
+      "name": "Android compile and lint",
+      "head_sha": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-16T20:25:42Z",
+      "completed_at": "2026-11-16T20:27:36Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43949653473/job/133600071037",
+      "executionAttempt": 1,
+      "retainedFromPriorAttempt": true,
+      "originalExecutionJobId": 133588433163
+    },
+    {
+      "id": 133600072123,
+      "name": "iPhone logic and unsigned build",
+      "head_sha": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-16T20:25:42Z",
+      "completed_at": "2026-11-16T20:27:19Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43949653473/job/133600072123",
+      "executionAttempt": 1,
+      "retainedFromPriorAttempt": true,
+      "originalExecutionJobId": 133588432963
+    },
+    {
+      "id": 133600072688,
+      "name": "Service and synthetic HTTPS",
+      "head_sha": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-16T20:25:42Z",
+      "completed_at": "2026-11-16T20:26:07Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43949653473/job/133600072688",
+      "executionAttempt": 1,
+      "retainedFromPriorAttempt": true,
+      "originalExecutionJobId": 133588432567
+    },
+    {
+      "id": 133600164897,
+      "name": "Hosted HTTPS service and durable storage",
+      "head_sha": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-16T20:25:42Z",
+      "completed_at": "2026-11-16T20:26:31Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43949653473/job/133600164897",
+      "executionAttempt": 1,
+      "retainedFromPriorAttempt": true,
+      "originalExecutionJobId": 133588433045
+    }
+  ],
+  "executionScope": "Only the previously failed native UI job was rerun. The four successful non-UI results in the latest attempt retain their original attempt 1 execution times and are identified explicitly.",
+  "executedTests": 7,
+  "passedTests": 7,
+  "failedTests": 0,
+  "unexpectedFailures": 0,
+  "testDurationSeconds": 487.824,
+  "tests": [
+    {
+      "name": "testAccessibilityTextKeepsCoreControlsReachable",
+      "result": "passed",
+      "seconds": 78.976
+    },
+    {
+      "name": "testApplicationDraftSurvivesCancelAndRelaunch",
+      "result": "passed",
+      "seconds": 49.456
+    },
+    {
+      "name": "testDiscoverySaveFlowsIntoSavedAndApply",
+      "result": "passed",
+      "seconds": 90.793
+    },
+    {
+      "name": "testFreshStartAndFiveTabs",
+      "result": "passed",
+      "seconds": 102.828
+    },
+    {
+      "name": "testOpportunityDiscardRequiresExplicitChoice",
+      "result": "passed",
+      "seconds": 33.739
+    },
+    {
+      "name": "testOpportunityDraftKeepSaveAndRestore",
+      "result": "passed",
+      "seconds": 57.253
+    },
+    {
+      "name": "testSearchEmptyAndFailurePreservesPreviousResults",
+      "result": "passed",
+      "seconds": 74.779
+    }
+  ],
+  "allExpectedTestsPresentExactlyOnce": true,
+  "actualArtifactLogMatchesTerminalSummary": true,
+  "device": "iPhone Air",
+  "runtime": "iOS 26.5 Simulator",
+  "sourceFiles": [
+    {
+      "path": "apple/AhmadCareer/NativeApplicationsViews.swift",
+      "bytes": 61569,
+      "sha256": "1b54f9ea4ab60fd6c56ad2e40798a52a0aa8af70e07336ca06f53214b8e27c21",
+      "gitBlobSHA": "5cde89dfa03f4608a0cfd052cb660350ee5774d8"
+    },
+    {
+      "path": "apple/UITests/CareerFinderUITests.swift",
+      "bytes": 14516,
+      "sha256": "32eb49da3895194c9cc71512b973cb3c1673dc2e54f92f89d7ed859d3d6e481a",
+      "gitBlobSHA": "4bfd96d930dbc89c9d10f59f4d6b5b45f7e8c291"
+    }
+  ],
+  "currentCloudSourceFingerprintsMatchPublishedPatch": true,
+  "patch": {
+    "bytes": 4725,
+    "sha256": "72844f35404f8674813b19fab40d76769ec13d8c64eec3a146fd86a2ebe8858d"
+  },
+  "uiLog": {
+    "jobId": 133600068930,
+    "bytes": 355820,
+    "sha256": "f430e778e61a38d1ec26a207da6ec79047e475e719d5179465a6771e10d998b0"
+  },
+  "artifactUILog": {
+    "path": "run-43949653473-attempt-2/career-iphone-ui.log",
+    "bytes": 272084,
+    "sha256": "a77eb7e09ebf876f6b59796103a345ba56e5e9e263b46575370874a182c443e9"
+  },
+  "retainedPolicyLog": {
+    "jobId": 133588432963,
+    "name": "iPhone logic and unsigned build",
+    "bytes": 110958,
+    "sha256": "84a533aeee6456a245913c084287c58bf5bee8c545ebcaf5662a0181d4d61be5",
+    "executionAttempt": 1,
+    "latestJobRecordId": 133600072123,
+    "retainedFromPriorAttempt": true
+  },
+  "retainedIPhonePolicyAndReleaseResults": {
+    "executionAttempt": 1,
+    "originalExecutionJobId": 133588432963,
+    "boundaryChecksPassed": 61,
+    "lifecycleAssertionsPassed": 129,
+    "lifecycleScenarios": 27,
+    "discoveryAssertionsPassed": 33,
+    "discoveryScenarios": 10,
+    "unsignedReleaseBuild": "success",
+    "productIdentityAssertions": "passed"
+  },
+  "artifact": {
+    "id": 14271191650,
+    "name": "iphone-ui-acceptance-43949653473",
+    "createdAt": "2026-11-16T20:58:55Z",
+    "bytes": 91673805,
+    "sha256": "b2de66d7a5018bc852ce401cc36ab3c9fd8763af5563d2ee532524ee3ad80609",
+    "expectedBytesAndDigestMatched": true,
+    "archiveMemberCount": 1543,
+    "archiveRetainedOutsideSource": true
+  },
+  "namedScreenshotCount": 15,
+  "screenshots12And13Present": true,
+  "selectedScreenshots": [
+    {
+      "name": "12-application-workspace-accessibility-text.png",
+      "bytes": 812479,
+      "sha256": "9f6dca77d231f2b10ae5411300d7c5680e70afa8f72dbbf8b145ba70f967faa4",
+      "width": 1260,
+      "height": 2736,
+      "artifactMember": "career-ui-screenshots/22141C53-7A16-4C7B-9FFA-C7E3C4D0386A.png",
+      "originalHumanReadableName": "12-application-workspace-accessibility-text_0_7A943C77-6901-4601-BA7C-82B5A0E46ABF.png",
+      "testIdentifier": "CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable()",
+      "timestamp": 1794862263.754,
+      "evidencePath": "run-43949653473-attempt-2/selected-screenshots/12-application-workspace-accessibility-text.png",
+      "rootVisualAccepted": true,
+      "rootObservation": "The complete Set up Auto Apply label wraps across two lines without truncation. The pre-existing synthetic acceptance banner still overlaps the top title; it is test-only, not part of this correction.",
+      "repoPath": "docs/phone-polish-evidence/iphone-application-action-accessibility-fixed.png"
+    },
+    {
+      "name": "13-application-connection-accessibility-text.png",
+      "bytes": 238240,
+      "sha256": "596888ffadff12f3f321ad645b0390dcd4bdbf2b0e43228cf7a2754155066bf7",
+      "width": 1260,
+      "height": 2736,
+      "artifactMember": "career-ui-screenshots/359087E6-78E4-49C3-AA27-D46F4A4F46CE.png",
+      "originalHumanReadableName": "13-application-connection-accessibility-text_0_D7EEB4CB-78CB-4EE5-910B-A3AB4D41D8A5.png",
+      "testIdentifier": "CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable()",
+      "timestamp": 1794862267.481,
+      "evidencePath": "run-43949653473-attempt-2/selected-screenshots/13-application-connection-accessibility-text.png",
+      "rootVisualAccepted": true,
+      "rootObservation": "Application connection title and Done control are fully visible. Large body text continues in the ordinary scroll view. The passed case separately verifies opening and dismissing this sheet.",
+      "repoPath": "docs/phone-polish-evidence/iphone-application-connection-accessibility.png"
+    }
+  ],
+  "rootVisualAcceptance": {
+    "record": "iphone-application-action-visual-review.json",
+    "bytes": 2000,
+    "sha256": "ce3a9af7366e7576b08da7c34d91bc55e991acf7c2935ff26629d6ce0eff69a2",
+    "reviewedAt": "2026-11-16T21:02:38.839356+00:00",
+    "status": "accepted for the narrow CTA and connection-flow correction",
+    "storeScreenshots": false,
+    "pixelEdits": false
+  },
+  "subagentVisualObservation": {
+    "observed": "Opened both unchanged PNGs: screenshot 12 has the complete Set up Auto Apply label on two lines; screenshot 13 has a visible Application connection title and Done control. The test-only banner overlaps the top of screenshot 12.",
+    "scope": "Narrow CTA and connection-sheet QA only; test-only banner is not store artwork."
+  },
+  "authorizedRetry": {
+    "requestedAt": "2026-11-16T20:44:58.937980+00:00",
+    "runId": 43949653473,
+    "failedJobId": 133588433137,
+    "commit": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+    "authorizedCount": 1,
+    "reason": "Resolve a first-launch timeout of unproved cause on unchanged source. The first attempt executed seven tests with six passing; the large-text case failed at app.launch before CTA assertions.",
+    "sourceChanged": false,
+    "testChanged": false,
+    "timeoutChanged": false,
+    "workflowChanged": false,
+    "successfulJobsRequestedToRerun": false,
+    "command": [
+      "gh",
+      "run",
+      "rerun",
+      "43949653473",
+      "--failed",
+      "--repo",
+      "swonyu/ahmad-career"
+    ],
+    "state": "request completed",
+    "exitCode": 0,
+    "completedAt": "2026-11-16T20:45:00.539386+00:00",
+    "stderrPresent": false
+  },
+  "previousAttempt": {
+    "record": "iphone-ci-43949653473-attempt-1.json",
+    "bytes": 7098,
+    "sha256": "954634959739d430362f20337a52d2e31eb5bb93911a3927e89d4ca8400b76e2",
+    "attempt": 1,
+    "jobId": 133588433137,
+    "executed": 7,
+    "passed": 6,
+    "failed": 1,
+    "durationSeconds": 495.589,
+    "failure": "First case timed out at app.launch() before the CTA assertions. The underlying cause remains unproved.",
+    "screenshots12And13Present": false,
+    "artifactId": 14266338703,
+    "artifactSHA256": "31128961cf546e4314d9fbe7f2ceacccaf5ec7624f64209b8a06bfe8927c7e9a"
+  },
+  "limitations": [
+    "Hosted simulator with isolated synthetic data; no physical-device, screen-reader, signing, or App Store validation.",
+    "The pre-existing test-only banner overlaps the top title in the large-text QA image.",
+    "The case exercises disconnected Set up Auto Apply, not the connected multi-selection title or busy state.",
+    "No source, tests, timeouts, workflow, or gates changed between attempts."
+  ],
+  "publicationState": "Verification record prepared for integration of source0a56340 and documentation/assets. The dated0.4.0 Android preview tag/APK and hosted deployment remain unchanged. This record is not a store publication receipt.",
+  "sourceSummarySHA256": "99977a2f659dabefcff7c9de9c214ec9d520f9ae37aa96c696195c5366396c20"
+}

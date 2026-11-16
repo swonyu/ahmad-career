@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-16T20:24:46.576987+00:00",
+  "title": "Career Finder production workspace creation and empty account export",
+  "hosted": {
+    "origin": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
+    "versionNumber": 2,
+    "sourceCommit": "a2c82c51a37e570cedb6fd6b8459d208228fc578",
+    "deploymentId": "appgdep_6afb2627e0f081918d7e98839bd2d5c1",
+    "identityBasis": "Previously recorded deployment identity; the browser does not independently expose the source commit."
+  },
+  "priorSignInEvidence": "hosted-account-verification-2026-11-16.json",
+  "method": "Use the retained authenticated browser session and ordinary site controls; inspect the account page and downloaded JSON. No authentication bypass or direct browser-cookie extraction.",
+  "observations": [
+    {
+      "action": "Open the account page in a fresh tab",
+      "result": "Authenticated session retained; no cloud workspace initially existed.",
+      "status": "passed"
+    },
+    {
+      "action": "Use Create connection code on the signed-in connection page",
+      "result": "One-time-code panel and replace control appeared after the pending state, without a reported UI error. The credential value is omitted from this evidence.",
+      "status": "passed"
+    },
+    {
+      "action": "Open Account after workspace creation",
+      "result": "Workspace controls loaded; zero connected phones, CVs, opportunities, reviews and application records were shown.",
+      "status": "passed"
+    },
+    {
+      "action": "Download account records through the visible account link",
+      "result": "Download completed and parsed as schema-version-1 JSON with a nonempty workspace identifier and account email. Identifier and email values are omitted from this evidence.",
+      "status": "passed"
+    }
+  ],
+  "exportValidation": {
+    "serverExportedAt": "2026-11-16T20:20:34.043Z",
+    "schemaVersion": 1,
+    "ok": true,
+    "blankApplicantIdentityAndContactFields": true,
+    "emptySkillsRolesCountriesAndWorkModes": true,
+    "resumeIsNull": true,
+    "counts": {
+      "jobs": 0,
+      "plans": 0,
+      "attempts": 0,
+      "documents": 0
+    },
+    "includesPDFBytes": false,
+    "credentialFieldScanPassed": true,
+    "scope": "Blank/default profile export. Export of populated profiles, CV metadata, review snapshots and application records is not established by this check."
+  },
+  "acceptance": {
+    "browserSessionRetained": true,
+    "workspaceCreated": true,
+    "connectionCodeCreationVerified": true,
+    "accountDashboardVerified": true,
+    "emptyAccountExportVerified": true,
+    "connectionCodeConsumedInThisCheck": false,
+    "nativePhonePaired": false,
+    "profileOrCVSaved": false,
+    "accountRecoveryOnAnotherPhoneVerified": false,
+    "deviceRevocationVerified": false,
+    "interruptedUploadRecoveryVerified": false,
+    "accountDeletionVerified": false,
+    "employerSubmissionPerformed": false,
+    "physicalPhoneAcceptanceVerified": false
+  },
+  "remainingChecks": [
+    "Native phone pairing and same-account recovery on another phone",
+    "Deliberate matching-email profile and PDF save",
+    "Populated account export, device revocation, interrupted-upload recovery and deletion",
+    "Physical-phone and screen-reader acceptance",
+    "Publisher signing, store disclosures and distribution",
+    "Employer-authorized connector before live application submission"
+  ],
+  "dataHandling": "This public record omits account identifiers, names, email values, connection codes, session credentials, screenshots and the private export. The workspace and its data were retained; no destructive test was performed.",
+  "releaseImpact": "Production workspace creation and inbound account export only. Hosted source/deployment, app builds, store records and employer systems were not changed by these browser checks."
+}

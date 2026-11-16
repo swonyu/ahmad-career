@@ -16,7 +16,9 @@ Public job search requires no account. Sign in with ChatGPT and generate a
 one-use code to connect a private phone workspace. The account page offers
 recovery, PDF download, export, phone revocation and cloud deletion.
 Hosted version 2 deployed successfully and passed 13 public production checks;
-signed-in phone acceptance remains separate. Live Auto Apply remains disabled.
+browser sign-in, first workspace creation, the account dashboard and a blank
+account export have also been verified. Signed-in native phone acceptance and
+the populated account lifecycle remain separate. Live Auto Apply remains disabled.
 
 READ FIRST
 ../README.md — current features, setup and limits
@@ -25,18 +27,28 @@ HOSTED-RELEASE-HANDOFF.md — deployed source, CI and remaining release gates
 Verified-Applications-Contract.md — exact submission and receipt rules
 ../android/README.md — Android preview, build and native checks
 ../apple/README.md — iPhone source, checks and outstanding native acceptance
+store-assets/README.md — store artwork, screenshot provenance and capture status
+hosted-workspace-verification-2026-11-16.json — sanitized workspace/export evidence
 
 SOURCE
 Repository: https://github.com/swonyu/ahmad-career
 Branch: career-finder-phones-verified-apply-20261116
 Development continues in an isolated checkout. Source publication does not
 update a store build, deploy the service or submit an employer application.
-Tested code: caa5ace14fe7b430db845d935a89803700cc7665
-CI: https://github.com/swonyu/ahmad-career/actions/runs/43923335555
+Published preview code: caa5ace14fe7b430db845d935a89803700cc7665
+Preview CI: https://github.com/swonyu/ahmad-career/actions/runs/43923335555
 Final CI: all five gates passed. Four non-UI successes from attempt 1 were
 retained; the iPhone UI retry passed all seven synthetic tests in attempt 2.
 Exact source, CI attempts and public-download evidence are recorded in
 phone-preview-release-verification.json. No main-branch update is implied.
+
+Later iPhone accessibility correction: 0a56340fee907ffab0e4e5f25ac252de76a23c9c
+CI: https://github.com/swonyu/ahmad-career/actions/runs/43949653473
+All five gates passed; native attempt 2 passed 7/7 in 487.824 seconds after
+one unchanged retry of the failed first-launch case. The setup action now
+wraps fully at the largest text size, and actual action/connection screenshots
+were inspected. See phone-polish-evidence/iphone-ci-43949653473-attempt-2.json.
+This later source correction does not move the preview tag or replace its APK.
 
 AUTO APPLY
 A configured HTTPS service and supported, employer-authorized connector are
@@ -61,8 +73,7 @@ files describe earlier builds. Preserve existing identities/publisher records.
 
 REMAINING RELEASE WORK
 Execute a signed-in production phone/account flow and lifecycle acceptance;
-complete
-physical-phone accessibility/device QA, operator/contact and store disclosures,
+complete physical-phone accessibility/device QA, operator/contact and store disclosures,
 publisher signing and platform review. Real automatic submissions also need
 employer-authorized configuration and applicant approval. The shared local
 Apple build/simulator slot acknowledgment still applies. Hosted tests do not

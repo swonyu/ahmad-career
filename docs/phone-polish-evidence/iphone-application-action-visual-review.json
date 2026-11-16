@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-11-16T21:02:38.839356+00:00",
+  "reviewer": "release coordinator",
+  "sourceCommit": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+  "run": 43949653473,
+  "attempt": 2,
+  "uiJob": 133600068930,
+  "artifactId": 14271191650,
+  "artifactBytes": 91673805,
+  "artifactSHA256": "b2de66d7a5018bc852ce401cc36ab3c9fd8763af5563d2ee532524ee3ad80609",
+  "images": [
+    {
+      "originalCapture": "12-application-workspace-accessibility-text.png",
+      "path": "docs/phone-polish-evidence/iphone-application-action-accessibility-fixed.png",
+      "bytes": 812479,
+      "sha256": "9f6dca77d231f2b10ae5411300d7c5680e70afa8f72dbbf8b145ba70f967faa4",
+      "visualAccepted": true,
+      "observation": "The complete Set up Auto Apply label wraps across two lines without truncation. The pre-existing synthetic acceptance banner still overlaps the top title; it is test-only, not part of this correction."
+    },
+    {
+      "originalCapture": "13-application-connection-accessibility-text.png",
+      "path": "docs/phone-polish-evidence/iphone-application-connection-accessibility.png",
+      "bytes": 238240,
+      "sha256": "596888ffadff12f3f321ad645b0390dcd4bdbf2b0e43228cf7a2754155066bf7",
+      "visualAccepted": true,
+      "observation": "Application connection title and Done control are fully visible. Large body text continues in the ordinary scroll view. The passed case separately verifies opening and dismissing this sheet."
+    }
+  ],
+  "method": "Opened and visually inspected both actual unchanged PNGs from the successful large-text case",
+  "status": "accepted for the narrow CTA and connection-flow correction",
+  "limitations": [
+    "Synthetic offline UI workspace; no physical-device or screen-reader acceptance",
+    "The earlier banner/title overlap belongs to the test-only overlay and remains visible",
+    "This case does not execute the connected multi-selection title or busy state"
+  ],
+  "storeScreenshots": false,
+  "pixelEdits": false
+}

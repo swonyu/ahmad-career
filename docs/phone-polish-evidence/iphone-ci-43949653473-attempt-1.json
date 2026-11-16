@@ -1,0 +1,204 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-16T20:57:52.308791+00:00",
+  "runId": 43949653473,
+  "runAttempt": 1,
+  "commit": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+  "tree": "53d3d9f36d6d897e6b9897549e8e2c0cb2d5253c",
+  "run": {
+    "id": 43949653473,
+    "head_sha": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+    "head_branch": "career-finder-phones-verified-apply-20261116",
+    "status": "completed",
+    "conclusion": "failure",
+    "run_attempt": 1,
+    "created_at": "2026-11-16T20:25:38Z",
+    "run_started_at": "2026-11-16T20:25:38Z",
+    "updated_at": "2026-11-16T20:40:06Z",
+    "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43949653473"
+  },
+  "jobs": [
+    {
+      "id": 133588432567,
+      "name": "Service and synthetic HTTPS",
+      "head_sha": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-16T20:25:42Z",
+      "completed_at": "2026-11-16T20:26:07Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43949653473/job/133588432567"
+    },
+    {
+      "id": 133588432963,
+      "name": "iPhone logic and unsigned build",
+      "head_sha": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-16T20:25:42Z",
+      "completed_at": "2026-11-16T20:27:19Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43949653473/job/133588432963"
+    },
+    {
+      "id": 133588433045,
+      "name": "Hosted HTTPS service and durable storage",
+      "head_sha": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-16T20:25:42Z",
+      "completed_at": "2026-11-16T20:26:31Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43949653473/job/133588433045"
+    },
+    {
+      "id": 133588433137,
+      "name": "iPhone native interface acceptance",
+      "head_sha": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-16T20:25:42Z",
+      "completed_at": "2026-11-16T20:40:05Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43949653473/job/133588433137"
+    },
+    {
+      "id": 133588433163,
+      "name": "Android compile and lint",
+      "head_sha": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-16T20:25:42Z",
+      "completed_at": "2026-11-16T20:27:36Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43949653473/job/133588433163"
+    }
+  ],
+  "executedTests": 7,
+  "passedTests": 6,
+  "failedTests": 1,
+  "unexpectedFailures": 0,
+  "testDurationSeconds": 495.589,
+  "tests": [
+    {
+      "name": "testAccessibilityTextKeepsCoreControlsReachable",
+      "result": "failed",
+      "seconds": 64.778
+    },
+    {
+      "name": "testApplicationDraftSurvivesCancelAndRelaunch",
+      "result": "passed",
+      "seconds": 56.655
+    },
+    {
+      "name": "testDiscoverySaveFlowsIntoSavedAndApply",
+      "result": "passed",
+      "seconds": 29.558
+    },
+    {
+      "name": "testFreshStartAndFiveTabs",
+      "result": "passed",
+      "seconds": 27.868
+    },
+    {
+      "name": "testOpportunityDiscardRequiresExplicitChoice",
+      "result": "passed",
+      "seconds": 23.921
+    },
+    {
+      "name": "testOpportunityDraftKeepSaveAndRestore",
+      "result": "passed",
+      "seconds": 208.145
+    },
+    {
+      "name": "testSearchEmptyAndFailurePreservesPreviousResults",
+      "result": "passed",
+      "seconds": 84.663
+    }
+  ],
+  "allExpectedTestsPresentExactlyOnce": true,
+  "device": "iPhone Air",
+  "runtime": "iOS 26.5 Simulator",
+  "sourceFiles": [
+    {
+      "path": "apple/AhmadCareer/NativeApplicationsViews.swift",
+      "bytes": 61569,
+      "sha256": "1b54f9ea4ab60fd6c56ad2e40798a52a0aa8af70e07336ca06f53214b8e27c21",
+      "gitBlobSHA": "5cde89dfa03f4608a0cfd052cb660350ee5774d8"
+    },
+    {
+      "path": "apple/UITests/CareerFinderUITests.swift",
+      "bytes": 14516,
+      "sha256": "32eb49da3895194c9cc71512b973cb3c1673dc2e54f92f89d7ed859d3d6e481a",
+      "gitBlobSHA": "4bfd96d930dbc89c9d10f59f4d6b5b45f7e8c291"
+    }
+  ],
+  "uiLog": {
+    "jobId": 133588433137,
+    "name": "iPhone native interface acceptance",
+    "bytes": 348876,
+    "sha256": "d087505f262b2f4b1a408a7164394dbc97cec7b4653a4795bc3ea28636346593"
+  },
+  "policyLog": {
+    "jobId": 133588432963,
+    "name": "iPhone logic and unsigned build",
+    "bytes": 110958,
+    "sha256": "84a533aeee6456a245913c084287c58bf5bee8c545ebcaf5662a0181d4d61be5"
+  },
+  "artifact": {
+    "id": 14266338703,
+    "bytes": 81008753,
+    "sha256": "31128961cf546e4314d9fbe7f2ceacccaf5ec7624f64209b8a06bfe8927c7e9a",
+    "archiveMemberCount": 1557
+  },
+  "namedScreenshotCount": 10,
+  "screenshots12And13Present": false,
+  "missingScreenshots": [
+    "12-application-workspace-accessibility-text",
+    "13-application-connection-accessibility-text"
+  ],
+  "failure": {
+    "test": "testAccessibilityTextKeepsCoreControlsReachable",
+    "source": "apple/UITests/CareerFinderUITests.swift",
+    "line": 12,
+    "statement": "app.launch()",
+    "message": "Failed to launch via Xcode: Timed out while launching application via Xcode.",
+    "testSeconds": 64.778,
+    "ctaAssertionsReached": false,
+    "appLaunchLogTimeSeconds": 1.25,
+    "tearDownLogTimeSeconds": 62.17,
+    "underlyingCause": "unproved"
+  },
+  "diagnostics": {
+    "debuggerMessages": [
+      "DebuggerLLDB.DebuggerVersionStore.StoreError error 0",
+      "no debugger version"
+    ],
+    "accessibilityWarning": "Duplicate UIAccessibilityLoaderWebShared class in WebCore and WebKit accessibility bundles.",
+    "explicitAppCrashOrTerminationInFirstCaseLogWindow": false,
+    "standaloneCrashOrIPSMembers": [],
+    "opaqueXcresultFullyDecoded": false,
+    "interpretation": "Warnings and a launch timeout do not establish an app crash or an infrastructure cause."
+  },
+  "firstCaseRecording": {
+    "member": "career-ui-screenshots/4AD9C279-271E-4980-92AB-86BB20215A22.mp4",
+    "bytes": 171938,
+    "sha256": "9030bba9f66fd870d79ebb574214fd6aa676d0105ee7b7843b20a967b6f87c67",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "width": 1260,
+          "height": 2736
+        }
+      ],
+      "format": {
+        "duration": "61.095000"
+      }
+    }
+  },
+  "coordinatorVideoObservation": {
+    "reportedFrameSeconds": 30,
+    "observed": "iOS SpringBoard home screen with the UI-test runner icon; Career Finder UI was not shown.",
+    "source": "Root coordinator reported viewing the extracted frame.",
+    "sixtySecondFrameProduced": false
+  },
+  "retry": "Exactly one unchanged failed-job retry was separately authorized and accepted. No source, test, timeout, workflow, or gate change was made.",
+  "publication": "Main and preview release remain gated/unchanged; this failed attempt does not establish CTA or large-text acceptance."
+}

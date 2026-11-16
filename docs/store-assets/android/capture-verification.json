@@ -1,0 +1,399 @@
+{
+  "schemaVersion": 1,
+  "productName": "Career Finder",
+  "kind": "ordinary_android_preview_screenshot_capture",
+  "capturedOn": "2026-11-16",
+  "startedAtUtc": "2026-11-16T20:33:51.577117+00:00",
+  "status": "four_candidates_visually_accepted_for_publisher_review",
+  "apk": {
+    "sha256": "3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62",
+    "installedBaseApkSha256": "3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62",
+    "bytes": 12071908,
+    "package": "com.saleh.careerfinder.preview",
+    "versionName": "0.4.0",
+    "versionCode": 4,
+    "identity": "Existing published debug preview APK; no rebuild for this capture.",
+    "sourceRecord": "android/checks/verification.json",
+    "installedHashVerifiedOnEmulator": true,
+    "storeSignedReleaseClaimed": false
+  },
+  "nativeDisplayEvidence": {
+    "environment": "Task-owned isolated Android emulator",
+    "coldStart": true,
+    "headless": true,
+    "snapshotLoadEnabled": false,
+    "snapshotSaveEnabled": false,
+    "wmSizeObserved": "Physical size: 1080x1920",
+    "wmDensityObserved": "Physical density: 420",
+    "displaySizeOverrideUsed": false,
+    "framebufferPreflight": {
+      "width": 1080,
+      "height": 1920,
+      "bitsPerChannel": 8,
+      "pngColorType": 6,
+      "bytes": 1206587,
+      "sha256": "81f047de538f3ec3ba99def4ba48bebc189f157543085aac194c81945d689066"
+    },
+    "selectedRawCapturesEachMatchNativeDimensions": true,
+    "originalAvdDisplay": {
+      "width": 1080,
+      "height": 2400,
+      "densityDpi": 420
+    },
+    "temporaryAvdDisplay": {
+      "width": 1080,
+      "height": 1920,
+      "densityDpi": 420
+    },
+    "onlyAvdConfigFieldChanged": "hw.lcd.height",
+    "originalConfigSha256": "f9a9e577923d851a895ff689666baf8291ee95d65374d88d13453bcf1b7c8d79",
+    "temporaryConfigSha256": "c02eae32646bf77bb6d317145b27284285776e4cecfaaee8974db9d5490134ec"
+  },
+  "captureState": {
+    "fontScale": 1.0,
+    "theme": "light",
+    "appLocaleOverrides": [],
+    "visibleLanguage": "English",
+    "initialState": "cleared, blank and unpaired",
+    "onlyPackageCleared": "com.saleh.careerfinder.preview",
+    "ordinaryAppUi": true,
+    "syntheticAcceptanceMode": false,
+    "navigation": "Normal tabs, scrolling and local save, grounded in captured UI hierarchy and images."
+  },
+  "operationScope": {
+    "publicDiscoveryGetsOnly": true,
+    "publicSearch": {
+      "invokedAtUtc": "2026-11-16T20:42:10.359489+00:00",
+      "input": {
+        "query": "",
+        "location": "",
+        "selectedSources": "ordinary defaults",
+        "remoteOnly": false
+      },
+      "observed": {
+        "displayedJobs": 50,
+        "totalMatches": 854,
+        "countIsTimeSpecific": true,
+        "firstRole": "Accountant",
+        "firstEmployer": "Canonical"
+      },
+      "availabilityCountsAndTimesAreCaptureSpecific": true
+    },
+    "localSave": {
+      "role": "Accountant",
+      "employer": "Canonical",
+      "savedCount": 1,
+      "message": "Opportunity saved on this phone.",
+      "unpaired": true
+    },
+    "pairingPerformed": false,
+    "personalProfileDataEntered": false,
+    "cvSelectedOrUploaded": false,
+    "externalEmployerLinkOpened": false,
+    "employerPostOrApplicationSubmissionPerformed": false,
+    "applicationReceiptFabricated": false,
+    "adsOrAccountActions": false,
+    "buildOrAcceptanceSuiteRerun": false,
+    "physicalPhoneUsed": false,
+    "appleToolingChanged": false
+  },
+  "captureAttemptHistory": {
+    "coldBootAttempts": 2,
+    "initialAttempt": "Capture-helper path validation omitted tilde characters in normal Android install paths. It stopped before ordinary UI interaction or public discovery and performed cleanup.",
+    "recovery": "Only that helper validation was corrected. The unchanged APK was reinstalled and its installed hash verified; no app source or APK bytes changed.",
+    "firstAttemptCleanupPassed": true,
+    "restorationTarget": "Actual settings read during the first boot, retained across recovery: 180% font, dark theme and Arabic app locale."
+  },
+  "formatExport": {
+    "method": "Lossless PNG decode/re-encode: remove only an entirely opaque alpha channel; preserve RGB values and dimensions. Standard-library PNG parser verifies CRCs, filters and roundtrip RGB bytes.",
+    "exporterLibraries": [
+      "struct",
+      "zlib",
+      "hashlib"
+    ],
+    "exporterSha256": "7b7d687105c594d683719c9afe9e2c70d8a39b34e43f69d5a66ca4c42980d96e",
+    "independentValidator": "Pillow 13.0.0",
+    "rawAlphaEntirelyOpaque": true,
+    "allRgbPixelValuesIdentical": true,
+    "resized": false,
+    "cropped": false,
+    "redrawn": false,
+    "retouched": false,
+    "originalsRetainedUnchangedInRepository": true
+  },
+  "screenshots": [
+    {
+      "id": "android-ordinary-01-discovery-results",
+      "label": "Discover jobs",
+      "capturedAtUtc": "2026-11-16T20:43:57.338482+00:00",
+      "original": {
+        "repoPath": "docs/store-assets/android/originals/01-discovery-results.png",
+        "bytes": 164138,
+        "sha256": "4bba245e2850a315021ecaa1fea6d7fee8bfbf49b039da0b2b6caa05087ded8b",
+        "format": "PNG",
+        "width": 1080,
+        "height": 1920,
+        "channels": "RGBA",
+        "bitsPerChannel": 8,
+        "pngColorType": 6,
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "disposition": "unaltered technical original; not the Play upload copy"
+      },
+      "uploadCandidate": {
+        "repoPath": "docs/store-assets/android/01-discovery-results.png",
+        "bytes": 113176,
+        "sha256": "41ca87d0f750028e907278832bf904acc2fb5fd0b44937c8f771c476b62ee659",
+        "format": "PNG",
+        "width": 1080,
+        "height": 1920,
+        "channels": "RGB",
+        "bitsPerChannel": 8,
+        "pngColorType": 2,
+        "alphaChannelPresent": false,
+        "technicalPlayScreenshotChecksPassed": true,
+        "status": "visually_accepted_for_publisher_review"
+      },
+      "rgbPixelSha256": "f9141e4350170b14e7faf17b8e8c46595cc50ab997af08f557daa10dd91aa288",
+      "identicalRgbPixels": true,
+      "sourceUiHierarchySha256": "d415c6406e91007c350007e113bddb00099ede0612a4b31dae090fbe3dbe2d55",
+      "visualAccepted": true,
+      "visualAssessment": "Career Finder branding, actual Canonical Accountant result, home-based EMEA location, source/check time, location caution, Save opportunity action and saving disclosure are readable.",
+      "altText": "Career Finder shows a public Canonical role with location, source, check time and save controls.",
+      "altTextCharacterCount": 96,
+      "syntheticFixtureContentVisible": false,
+      "realApplicantDataVisible": false,
+      "pairingCredentialsVisible": false,
+      "staleProductNameVisible": false,
+      "storeSubmissionOrApproval": false
+    },
+    {
+      "id": "android-ordinary-02-saved-opportunities",
+      "label": "Keep a shortlist",
+      "capturedAtUtc": "2026-11-16T20:45:51.947914+00:00",
+      "original": {
+        "repoPath": "docs/store-assets/android/originals/02-saved-opportunities.png",
+        "bytes": 165907,
+        "sha256": "81c2ae2db48f2ac43f449dfe7a3056b241d8ed13073a20aad53e96b9322d40ee",
+        "format": "PNG",
+        "width": 1080,
+        "height": 1920,
+        "channels": "RGBA",
+        "bitsPerChannel": 8,
+        "pngColorType": 6,
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "disposition": "unaltered technical original; not the Play upload copy"
+      },
+      "uploadCandidate": {
+        "repoPath": "docs/store-assets/android/02-saved-opportunities.png",
+        "bytes": 113570,
+        "sha256": "86bc9711467be79423dcd62a681dce3559bb48afeda23938b07a7d35f7d2e6aa",
+        "format": "PNG",
+        "width": 1080,
+        "height": 1920,
+        "channels": "RGB",
+        "bitsPerChannel": 8,
+        "pngColorType": 2,
+        "alphaChannelPresent": false,
+        "technicalPlayScreenshotChecksPassed": true,
+        "status": "visually_accepted_for_publisher_review"
+      },
+      "rgbPixelSha256": "667ac7d7b727b8885f68c3fbdb12def851e9162033f4911926a05a3dd4577b90",
+      "identicalRgbPixels": true,
+      "sourceUiHierarchySha256": "3d2c12a2b41c0ffd8bdff660362bca1a157558461ac397479edd9cf9c9db8e76",
+      "visualAccepted": true,
+      "visualAssessment": "Saved (1), matching real role and Saved on this phone state are visible. Self-reported employer application remains unchecked. Bottom text continues through normal scrolling.",
+      "altText": "A job saved on this phone in Career Finder, with an employer link and an unchecked application record.",
+      "altTextCharacterCount": 102,
+      "syntheticFixtureContentVisible": false,
+      "realApplicantDataVisible": false,
+      "pairingCredentialsVisible": false,
+      "staleProductNameVisible": false,
+      "storeSubmissionOrApproval": false
+    },
+    {
+      "id": "android-ordinary-03-blank-profile",
+      "label": "Prepare your profile",
+      "capturedAtUtc": "2026-11-16T20:45:54.839653+00:00",
+      "original": {
+        "repoPath": "docs/store-assets/android/originals/03-blank-profile.png",
+        "bytes": 171757,
+        "sha256": "ddaad19bc13e95060a7f77c20eeddc3b74ad4fc55004c15070fc08b24997b780",
+        "format": "PNG",
+        "width": 1080,
+        "height": 1920,
+        "channels": "RGBA",
+        "bitsPerChannel": 8,
+        "pngColorType": 6,
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "disposition": "unaltered technical original; not the Play upload copy"
+      },
+      "uploadCandidate": {
+        "repoPath": "docs/store-assets/android/03-blank-profile.png",
+        "bytes": 117683,
+        "sha256": "93f1de501c1a04dc14c9f226f2e75554ae64e4924eb11e2cfd8ce26e560dce62",
+        "format": "PNG",
+        "width": 1080,
+        "height": 1920,
+        "channels": "RGB",
+        "bitsPerChannel": 8,
+        "pngColorType": 2,
+        "alphaChannelPresent": false,
+        "technicalPlayScreenshotChecksPassed": true,
+        "status": "visually_accepted_for_publisher_review"
+      },
+      "rgbPixelSha256": "7c01c26f058c7fe8904f7b53da2309b3d1f17ae18d4eb3504f5b589d6857ff9b",
+      "identicalRgbPixels": true,
+      "sourceUiHierarchySha256": "79f2015b1fba0b28e30fc5a0b3a75165f2a8536fff63c56442b929d2c15aa941",
+      "visualAccepted": true,
+      "visualAssessment": "Blank profile with 0 of 3 essentials ready, first or single name and optional surname; no applicant identity is entered. Lower fields continue through normal scrolling.",
+      "altText": "A blank Career Finder profile shows the name, email and resume needed to prepare an application.",
+      "altTextCharacterCount": 96,
+      "syntheticFixtureContentVisible": false,
+      "realApplicantDataVisible": false,
+      "pairingCredentialsVisible": false,
+      "staleProductNameVisible": false,
+      "storeSubmissionOrApproval": false
+    },
+    {
+      "id": "android-ordinary-04-application-preparation",
+      "label": "Review application options",
+      "capturedAtUtc": "2026-11-16T20:45:57.708292+00:00",
+      "original": {
+        "repoPath": "docs/store-assets/android/originals/04-application-preparation.png",
+        "bytes": 186099,
+        "sha256": "70d2a89fc1593c15b07a6aa49a2cb0681ab8e25c0c4e170d25059e87c25fcf4a",
+        "format": "PNG",
+        "width": 1080,
+        "height": 1920,
+        "channels": "RGBA",
+        "bitsPerChannel": 8,
+        "pngColorType": 6,
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "disposition": "unaltered technical original; not the Play upload copy"
+      },
+      "uploadCandidate": {
+        "repoPath": "docs/store-assets/android/04-application-preparation.png",
+        "bytes": 126865,
+        "sha256": "fd5c8e772d9f4f7e08208fa48971124f6a9c89a8a91c859f9e3bb3e701809df2",
+        "format": "PNG",
+        "width": 1080,
+        "height": 1920,
+        "channels": "RGB",
+        "bitsPerChannel": 8,
+        "pngColorType": 2,
+        "alphaChannelPresent": false,
+        "technicalPlayScreenshotChecksPassed": true,
+        "status": "visually_accepted_for_publisher_review"
+      },
+      "rgbPixelSha256": "48707c98ff6d2c5423850327a9113eea9d349d720cf057a8017d357ff4d12294",
+      "identicalRgbPixels": true,
+      "sourceUiHierarchySha256": "36d090fe9e35358f36b5303d75e347133654ce655070d357450a58232eab1831",
+      "visualAccepted": true,
+      "visualAssessment": "Unpaired Auto Apply preparation with Connect when you are ready and Connect service; no submitted application or verified receipt is displayed.",
+      "altText": "Career Finder asks to connect a service before reviewing and submitting supported applications.",
+      "altTextCharacterCount": 95,
+      "syntheticFixtureContentVisible": false,
+      "realApplicantDataVisible": false,
+      "pairingCredentialsVisible": false,
+      "staleProductNameVisible": false,
+      "storeSubmissionOrApproval": false
+    }
+  ],
+  "rootVisualAcceptance": {
+    "schemaVersion": 1,
+    "reviewedAt": "2026-11-16T20:58:11.513596+00:00",
+    "reviewer": "release coordinator",
+    "method": "Opened and visually inspected all four actual RGB PNGs; reviewed format/pixel-equality and cleanup receipts",
+    "apkSHA256": "3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62",
+    "images": [
+      {
+        "bytes": 113176,
+        "sha256": "41ca87d0f750028e907278832bf904acc2fb5fd0b44937c8f771c476b62ee659",
+        "width": 1080,
+        "height": 1920,
+        "visualAccepted": true,
+        "observation": "Career Finder branding, actual Canonical Accountant result, home-based EMEA location, source/check time, location caution, Save opportunity action and saving disclosure are readable.",
+        "repoPath": "docs/store-assets/android/01-discovery-results.png"
+      },
+      {
+        "bytes": 113570,
+        "sha256": "86bc9711467be79423dcd62a681dce3559bb48afeda23938b07a7d35f7d2e6aa",
+        "width": 1080,
+        "height": 1920,
+        "visualAccepted": true,
+        "observation": "Saved (1), matching real role and Saved on this phone state are visible. Self-reported employer application remains unchecked. Bottom text continues through normal scrolling.",
+        "repoPath": "docs/store-assets/android/02-saved-opportunities.png"
+      },
+      {
+        "bytes": 117683,
+        "sha256": "93f1de501c1a04dc14c9f226f2e75554ae64e4924eb11e2cfd8ce26e560dce62",
+        "width": 1080,
+        "height": 1920,
+        "visualAccepted": true,
+        "observation": "Blank profile with 0 of 3 essentials ready, first or single name and optional surname; no applicant identity is entered. Lower fields continue through normal scrolling.",
+        "repoPath": "docs/store-assets/android/03-blank-profile.png"
+      },
+      {
+        "bytes": 126865,
+        "sha256": "fd5c8e772d9f4f7e08208fa48971124f6a9c89a8a91c859f9e3bb3e701809df2",
+        "width": 1080,
+        "height": 1920,
+        "visualAccepted": true,
+        "observation": "Unpaired Auto Apply preparation with Connect when you are ready and Connect service; no submitted application or verified receipt is displayed.",
+        "repoPath": "docs/store-assets/android/04-application-preparation.png"
+      }
+    ],
+    "realApplicantDataVisible": false,
+    "pairingCredentialsVisible": false,
+    "syntheticFixtureContentVisible": false,
+    "staleProductNameVisible": false,
+    "onlyConversion": "Entirely opaque alpha removed; RGB pixels and native dimensions unchanged",
+    "storeSubmissionOrApproval": false,
+    "physicalPhoneAcceptance": false
+  },
+  "cleanup": {
+    "atUtc": "2026-11-16T20:55:52.888079+00:00",
+    "settingsRestoredAndReadBackBeforeShutdown": true,
+    "restoredObservedSettings": {
+      "fontScale": 1.8,
+      "nightMode": "yes",
+      "appLocales": [
+        "ar"
+      ],
+      "forceRtl": null,
+      "showImeWithHardware": "1",
+      "densityDpi": 420
+    },
+    "exactOriginalAvdConfigRestored": true,
+    "restoredConfigSha256": "f9a9e577923d851a895ff689666baf8291ee95d65374d88d13453bcf1b7c8d79",
+    "ownedEmulatorStopped": true,
+    "ownedAdbStopped": true,
+    "ownedPortsClosed": true,
+    "sharedAdbPreserved": true,
+    "helperUiDumpRemovedFromOwnedEmulator": true
+  },
+  "retainedEvidenceDigests": {
+    "captureHelperSha256": "c8c88e1923f7cfbe7579aac5d4a8f3951a153adcef74588b4b1ed7c79025d71a",
+    "commandLogSha256": "82ee94a863e2b4245efdcb3d480daef8849a61ffb25e3832bf3c5a0a40982e22",
+    "captureLogSha256": "fb45c31da3fcba383aa09f66b0d3ab1697e76ccc0b78f8990bcbaf2290d9201d",
+    "exporterSha256": "7b7d687105c594d683719c9afe9e2c70d8a39b34e43f69d5a66ca4c42980d96e"
+  },
+  "limits": [
+    "Technical image-format checks and visual acceptance do not establish store approval.",
+    "The screenshots come from the published Android preview APK, not a store-signed release or a physical-phone acceptance run.",
+    "The application-preparation screen is unpaired and does not demonstrate enabled live submissions or an employer-issued receipt.",
+    "Public job availability, counts and check times are specific to the capture."
+  ]
+}

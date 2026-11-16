@@ -26,5 +26,25 @@
     "runAttempt": 2,
     "commit": "caa5ace14fe7b430db845d935a89803700cc7665",
     "artifactId": 14256834676
+  },
+  {
+    "path": "iphone-application-action-accessibility-fixed.png",
+    "bytes": 812479,
+    "sha256": "9f6dca77d231f2b10ae5411300d7c5680e70afa8f72dbbf8b145ba70f967faa4",
+    "source": "cta-accessibility-ci/run-43949653473-attempt-2/selected-screenshots/12-application-workspace-accessibility-text.png",
+    "sourceCommit": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+    "run": 43949653473,
+    "attempt": 2,
+    "classification": "synthetic QA evidence, not a store screenshot"
+  },
+  {
+    "path": "iphone-application-connection-accessibility.png",
+    "bytes": 238240,
+    "sha256": "596888ffadff12f3f321ad645b0390dcd4bdbf2b0e43228cf7a2754155066bf7",
+    "source": "cta-accessibility-ci/run-43949653473-attempt-2/selected-screenshots/13-application-connection-accessibility-text.png",
+    "sourceCommit": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+    "run": 43949653473,
+    "attempt": 2,
+    "classification": "synthetic QA evidence, not a store screenshot"
   }
 ]

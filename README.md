@@ -4,6 +4,8 @@ Native career and application workspace for **iPhone and Android phones**. Find 
 
 **Status: published on GitHub — Android preview 0.4.0 and a published HTTPS service, 16 November 2026.** Version 0.4 adds public job discovery and phone usability improvements. The [current polish review](docs/Phone-Polish-Review-2026-11-16.md) records the tested code, release evidence and remaining signed-in/physical-phone acceptance. iPhone source and an unsigned build are separate from App Store or TestFlight distribution. The [earlier reliability review](docs/Phone-Quality-Review-2026-11-16.md) and [initial phone update](docs/Phone-Update-2026-11-16.md) retain their original evidence. No real employer applications were sent during development.
 
+The later iPhone accessibility correction, source `0a56340fee907ffab0e4e5f25ac252de76a23c9c`, keeps **Set up Auto Apply** fully readable at the largest text size. [Fresh CI and inspected screenshots](docs/phone-polish-evidence/iphone-ci-43949653473-attempt-2.json) verify all five gates, including seven of seven synthetic iPhone interface tests after one unchanged failed-job retry. The existing Android download and dated preview source ZIP remain unchanged. [Store artwork and ordinary phone captures](docs/store-assets/README.md) are documented separately for publisher review.
+
 ## Hosted phone connection
 
 The Android **0.4.0 preview** targets Android 8 or newer. It is a debug-signed preview with package `com.saleh.careerfinder.preview`, separate from Google Play distribution. The iPhone source targets iOS 16 or newer and preserves its existing app identity for the authorized publisher.
@@ -23,6 +25,8 @@ Public discovery does not require sign-in. To save a private hosted workspace, s
 The hosted service passed 25 discovery regression groups and 29 application/storage groups, plus eight discovery and eight application requests through the actual workerd runtime. These use local D1/R2 and synthetic dependencies. [Version 2 production observations](docs/hosted-production-polish-verification.json) separately record real public search, pagination, filtering, pages, storage readiness and access boundaries. The [earlier version 1 observations](docs/hosted-production-http-verification.json) remain preserved. Neither public check set establishes a signed-in phone flow; see the [release handoff](docs/HOSTED-RELEASE-HANDOFF.md).
 
 The preview currently permits 250 workspaces, five PDFs/25 MiB per workspace and bounded application records. No employer credentials are configured, so live Auto Apply remains disabled until an authorized integration is connected. Hosting and provider quotas do not imply unlimited or perpetual free service.
+
+Production browser acceptance now includes retained sign-in, creation of a private workspace and one-use connection code, the account dashboard, and a valid blank/default account export. The [workspace record](docs/hosted-workspace-verification-2026-11-16.json) omits personal identifiers and credentials. Native pairing and the populated account lifecycle remain pending; no real employer application was sent.
 
 ## What the phone apps do
 

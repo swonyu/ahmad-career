@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500" role="img" aria-labelledby="title description">
+  <title id="title">Career Finder — Your next chapter.</title>
+  <desc id="description">Career Finder: discover jobs, save opportunities and prepare your next step.</desc>
+  <!-- Brand geometry and palette: ../../apple/Branding/career-finder.svg.
+       Promotional artwork only. This is not a phone screenshot or a depiction of application UI. -->
+  <rect width="1024" height="500" fill="#173E2D"/>
+  <g fill="none" stroke="#2C5B43">
+    <circle cx="1096" cy="496" r="304" stroke-width="92" opacity=".45"/>
+    <circle cx="1096" cy="496" r="450" stroke-width="1.5" opacity=".75"/>
+    <circle cx="1096" cy="496" r="198" stroke-width="1.5" opacity=".7"/>
+  </g>
+  <g transform="translate(90 71) scale(.5)">
+    <path fill="#173E2D" d="M0,0h108v108h-108z"/>
+    <path fill="#D5ECD9" d="M28,31h52v46h-52z"/>
+    <path fill="#173E2D" d="M36,39h36v6h-36zM36,50h25v6h-25zM36,61h17v6h-17z"/>
+    <path fill="#A7CA87" d="M67,62l7,7l13,-17l6,5l-18,24l-14,-13z"/>
+  </g>
+  <text x="158" y="109" fill="#D5ECD9" font-family="Noto Sans, sans-serif" font-size="29" font-weight="700">Career Finder</text>
+  <path d="M866 106 C866 118 862 122 850 122 C862 122 866 126 866 138 C866 126 870 122 882 122 C870 122 866 118 866 106Z" fill="#A7CA87"/>
+  <text x="96" y="229" fill="#F6F6E9" font-family="Noto Serif Display, Georgia, serif" font-size="69">Your next chapter.</text>
+  <text x="99" y="289" fill="#D5ECD9" font-family="Noto Sans, sans-serif" font-size="26">Discover jobs. Keep opportunities close.</text>
+  <path d="M100 345 H897" fill="none" stroke="#4A7259" stroke-width="1"/>
+  <g fill="none" stroke="#A7CA87" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="110" cy="383" r="8"/><path d="M116 389l6 6"/>
+    <path d="M366 373h16v23l-8-5-8 5z"/>
+    <path d="M625 373h18v23h-18zM630 379h8M630 384h5M635 390l3 3 7-8"/>
+  </g>
+  <g fill="#D5ECD9" font-family="Noto Sans, sans-serif" font-size="21" font-weight="400">
+    <text x="138" y="392">Explore</text>
+    <text x="399" y="392">Save</text>
+    <text x="659" y="392">Prepare</text>
+  </g>
+</svg>
