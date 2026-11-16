@@ -1,0 +1,208 @@
+{
+  "schemaVersion": 1,
+  "runId": 43921041281,
+  "runAttempt": 1,
+  "commit": "5879fd9f1d696d159eeb4d5e6fba2edfebfec468",
+  "runUrl": "https://github.com/swonyu/ahmad-career/actions/runs/43921041281",
+  "run": {
+    "id": 43921041281,
+    "head_sha": "5879fd9f1d696d159eeb4d5e6fba2edfebfec468",
+    "run_attempt": 1,
+    "status": "completed",
+    "conclusion": "failure",
+    "run_started_at": "2026-11-16T17:41:38Z",
+    "updated_at": "2026-11-16T17:51:01Z",
+    "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43921041281"
+  },
+  "jobs": [
+    {
+      "id": 133488072857,
+      "name": "Service and synthetic HTTPS",
+      "conclusion": "success",
+      "started_at": "2026-11-16T17:41:41Z",
+      "completed_at": "2026-11-16T17:41:53Z",
+      "head_sha": "5879fd9f1d696d159eeb4d5e6fba2edfebfec468",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43921041281/job/133488072857"
+    },
+    {
+      "id": 133488073378,
+      "name": "Android compile and lint",
+      "conclusion": "success",
+      "started_at": "2026-11-16T17:41:42Z",
+      "completed_at": "2026-11-16T17:43:36Z",
+      "head_sha": "5879fd9f1d696d159eeb4d5e6fba2edfebfec468",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43921041281/job/133488073378"
+    },
+    {
+      "id": 133488073421,
+      "name": "iPhone logic and unsigned build",
+      "conclusion": "success",
+      "started_at": "2026-11-16T17:41:42Z",
+      "completed_at": "2026-11-16T17:45:10Z",
+      "head_sha": "5879fd9f1d696d159eeb4d5e6fba2edfebfec468",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43921041281/job/133488073421"
+    },
+    {
+      "id": 133488073469,
+      "name": "iPhone native interface acceptance",
+      "conclusion": "failure",
+      "started_at": "2026-11-16T17:41:41Z",
+      "completed_at": "2026-11-16T17:51:00Z",
+      "head_sha": "5879fd9f1d696d159eeb4d5e6fba2edfebfec468",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43921041281/job/133488073469"
+    },
+    {
+      "id": 133488073555,
+      "name": "Hosted HTTPS service and durable storage",
+      "conclusion": "success",
+      "started_at": "2026-11-16T17:41:41Z",
+      "completed_at": "2026-11-16T17:42:44Z",
+      "head_sha": "5879fd9f1d696d159eeb4d5e6fba2edfebfec468",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43921041281/job/133488073555"
+    }
+  ],
+  "policyAndRelease": {
+    "jobId": 133488073421,
+    "conclusion": "success",
+    "boundaryChecks": 61,
+    "lifecycleAssertions": 129,
+    "lifecycleScenarios": 27,
+    "discoveryAssertions": 33,
+    "discoveryScenarios": 10,
+    "unsignedReleaseBuild": "PASS",
+    "productIdentityAssertions": "PASS",
+    "jobLogSHA256": "5f7dd8624f7a2e8b1f76494af5b5e2675475f21d623aa05f868fb79be7c06303"
+  },
+  "nativeUI": {
+    "jobId": 133488073469,
+    "conclusion": "failure",
+    "device": "iPhone Air",
+    "runtime": "iOS 26.5 Simulator",
+    "executedTests": 7,
+    "passedTests": 6,
+    "failedTests": 1,
+    "unexpectedFailures": 0,
+    "testDurationSeconds": 327.096,
+    "tests": [
+      {
+        "name": "testAccessibilityTextKeepsCoreControlsReachable",
+        "result": "passed",
+        "seconds": 61.187
+      },
+      {
+        "name": "testApplicationDraftSurvivesCancelAndRelaunch",
+        "result": "passed",
+        "seconds": 32.359
+      },
+      {
+        "name": "testDiscoverySaveFlowsIntoSavedAndApply",
+        "result": "passed",
+        "seconds": 112.191
+      },
+      {
+        "name": "testFreshStartAndFiveTabs",
+        "result": "passed",
+        "seconds": 30.606
+      },
+      {
+        "name": "testOpportunityDiscardRequiresExplicitChoice",
+        "result": "passed",
+        "seconds": 19.065
+      },
+      {
+        "name": "testOpportunityDraftKeepSaveAndRestore",
+        "result": "passed",
+        "seconds": 46.877
+      },
+      {
+        "name": "testSearchEmptyAndFailurePreservesPreviousResults",
+        "result": "failed",
+        "seconds": 24.811
+      }
+    ],
+    "jobLogSHA256": "2e997bb08fa721632ad842b63f8d57dc4059df5482ca81fba0f11dc2b5f722c9",
+    "xcodeLogSHA256": "e04e12692f3a89314a62b4de011c3d2fd78e14b31423bc1532a8a12e8c60fd3e",
+    "artifact": {
+      "id": 14254976228,
+      "bytes": 101996258,
+      "sha256": "225bf8ff644a06dd4db623524a45075c993f87c50814597f093ec765bf097619"
+    },
+    "namedScreenshots": 12,
+    "hierarchySHA256": "868e16bb1665b528de9791183e0f77124c8d506fac8b48a3fad4aa2f2c7af7b3",
+    "failure": {
+      "test": "testSearchEmptyAndFailurePreservesPreviousResults",
+      "sourceLine": 79,
+      "assertion": "Submitting a search must dismiss the visible keyboard and its toolbar",
+      "action": "First keyboard-toolbar Search, with the positive real q key and toolbar reachability preconditions passing.",
+      "lookupTimingsSeconds": {
+        "missingQKey": [
+          19.45,
+          20.6,
+          21.75
+        ],
+        "missingToolbarAction": [
+          21.92,
+          22.97,
+          23.65
+        ],
+        "hierarchySnapshot": 24.01
+      },
+      "observed": "The five-second predicate resolves retained elements that have disappeared. Each missing-element lookup performs internal retries; together these consume the entire bound. The captured hierarchy has no Keyboard or discovery.keyboardSearch element and includes the completed No roles match this search message.",
+      "interpretation": "The observed failure is delayed missing-element query resolution. The hierarchy supports successful toolbar submission and keyboard dismissal, not a persistent keyboard or failed search.",
+      "correction": "Test-only: enumerate fresh key and keyboard-toolbar query collections on each predicate evaluation, and inspect only elements returned by those collections. Preserve positive keyboard/key/toolbar checks, the five-second dismissal bound, empty Return and all subsequent result/error/retained-role assertions."
+    }
+  },
+  "sourceFingerprints": {
+    "commit": "5879fd9f1d696d159eeb4d5e6fba2edfebfec468",
+    "matchesFrozenSource": true,
+    "files": {
+      "apple/AhmadCareer/NativeDiscoveryViews.swift": {
+        "sha256": "bf6f2dfd285ef4522de58f7f4b52c4e0a86628ff0875ec9b290cc2ec4979de36",
+        "gitBlobSHA": "084a9da9185b97497d00532b95270385a7240233",
+        "bytes": 16586
+      },
+      "apple/UITests/CareerFinderUITests.swift": {
+        "sha256": "e78192b5eba3c89dd78c7fd7ae04e072cc68dfa35221fad8cedf3888945206d0",
+        "gitBlobSHA": "13186d034e57e8b3d11b9b0a6327893085512db7",
+        "bytes": 13412
+      }
+    }
+  },
+  "revisedTestStaticCheck": {
+    "checkedAt": "2026-11-16T17:53:16.268160+00:00",
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": "",
+    "command": [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-typecheck",
+      "-swift-version",
+      "5",
+      "-target",
+      "arm64-apple-ios16.0-simulator",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib",
+      "-module-cache-path",
+      "<isolated-check-root>/module-cache",
+      "<isolated-check-root>/CareerFinderUITests.swift"
+    ],
+    "testSourceSHA256": "3b42aef15fbc8d31350ddcc19856d6ffb524bf0cd8c6f4cfaa37eb7dd521dd1d",
+    "sourceUnchanged": true
+  },
+  "primaryDocumentation": [
+    "https://developer.apple.com/documentation/xcuiautomation/xcuielement/exists",
+    "https://developer.apple.com/documentation/xcuiautomation/xcuielement/ishittable"
+  ],
+  "scopeLimits": [
+    "No production source changed for this correction.",
+    "No test, expected content or user action was removed; no timeout was expanded.",
+    "No unchanged-source retry was performed.",
+    "The revised XCTest source has static evidence only; subsequent runtime results belong to docs/Phone-Polish-Review-2026-11-16.md.",
+    "Raw logs, hierarchy and large artifacts remain outside the source repository.",
+    "No local Xcode project build, simulator, signing, physical device or employer request was used."
+  ]
+}

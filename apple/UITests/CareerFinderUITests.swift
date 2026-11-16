@@ -57,7 +57,7 @@ final class CareerFinderUITests: XCTestCase {
         let keyReadiness = XCTWaiter.wait(for: [keyReady], timeout: 5)
         if keyReadiness != .completed { print(app.debugDescription) }
         XCTAssertEqual(keyReadiness, .completed, "A real keyboard key must be visible before submitting")
-        guard let visibleKey = keyboard.keys.allElementsBoundByIndex.first(where: { $0.exists && $0.isHittable }) else {
+        guard keyboard.keys.allElementsBoundByIndex.contains(where: { $0.exists && $0.isHittable }) else {
             print(app.debugDescription)
             XCTFail("No reachable keyboard key was presented"); return
         }
@@ -69,10 +69,12 @@ final class CareerFinderUITests: XCTestCase {
         } else {
             search.tap()
         }
-        // A dismissed system keyboard can remain in the accessibility tree offscreen.
-        // Check the real key and toolbar that were reachable immediately before submission.
+        // Query the current collections: resolving a retained, vanished element retries
+        // internally and can consume the wait before the absence has been reported.
         let dismissed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-            !visibleKey.isHittable && !search.isHittable
+            let keys = app.keyboards.keys.allElementsBoundByIndex
+            let toolbarActions = app.buttons.matching(identifier: "discovery.keyboardSearch").allElementsBoundByIndex
+            return !keys.contains(where: { $0.isHittable }) && !toolbarActions.contains(where: { $0.isHittable })
         }, object: nil)
         let dismissal = XCTWaiter.wait(for: [dismissed], timeout: 5)
         if dismissal != .completed { print(app.debugDescription) }

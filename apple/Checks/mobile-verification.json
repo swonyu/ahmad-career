@@ -1,6 +1,6 @@
 {
   "schemaVersion": 6,
-  "checkedAt": "2026-11-16T17:40:25.671659+00:00",
+  "checkedAt": "2026-11-16T17:53:16.268160+00:00",
   "evidenceMode": "local",
   "baselineCommit": "06f5e8a069c7debe94becf04ce73d997f9cde747",
   "verificationScope": "General public employer-board discovery and native phone flows, with targeted interaction and accessibility corrections supported by dated hosted UI evidence.",
@@ -122,7 +122,7 @@
   },
   "uiTestSourceTypecheck": {
     "result": "PASS",
-    "checkedAt": "2026-11-16T17:40:25.671659+00:00",
+    "checkedAt": "2026-11-16T17:53:16.268160+00:00",
     "exitCode": 0,
     "diagnostics": "",
     "target": "arm64-apple-ios16.0-simulator",
@@ -141,8 +141,8 @@
       "-I",
       "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib",
       "-module-cache-path",
-      "<isolated-check-root>/module-cache-ui",
-      "<isolated-check-root>/apple/UITests/CareerFinderUITests.swift"
+      "<isolated-check-root>/module-cache",
+      "<isolated-check-root>/CareerFinderUITests.swift"
     ],
     "execution": false,
     "testTarget": "CareerFinderUITests",
@@ -186,7 +186,7 @@
     "apple/Checks/DiscoveryCheck.swift": "80a6d82da5880a449acd762afc313dc6be7ad74432c3fc6fe600b987b47ce083",
     "apple/Checks/check-mobile.sh": "6f1387653eb33dcbabb011d02060021a12c30a8f713baf399d8fb2f434bac793",
     "apple/Checks/Fixtures/discovery-search-v1.json": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7",
-    "apple/UITests/CareerFinderUITests.swift": "e78192b5eba3c89dd78c7fd7ae04e072cc68dfa35221fad8cedf3888945206d0",
+    "apple/UITests/CareerFinderUITests.swift": "3b42aef15fbc8d31350ddcc19856d6ffb524bf0cd8c6f4cfaa37eb7dd521dd1d",
     "apple/AhmadCareer.xcodeproj/project.pbxproj": "508514d75ed8cea5f19c755680e423395efe6fe92a2736a837b4dd71dbed502b",
     "apple/AhmadCareer.xcodeproj/xcshareddata/xcschemes/AhmadCareer.xcscheme": "f9b67f757ea53e6ed0ac8d54c5c2f2ac2609dc5c9a9fb3e4d0434b4a8f7cf395",
     "apple/AhmadCareer.xcodeproj/xcshareddata/xcschemes/CareerFinderAcceptance.xcscheme": "37b0f04c230f409a57419429d44b09543157ffb568cdce8a24fc64bd3736ddba"
@@ -239,19 +239,20 @@
   },
   "limitations": [
     "No local Xcode project build, simulator launch, physical-device run, signing, installation or distribution was performed.",
-    "Dated hosted UI attempts and their distinct failures are preserved in hostedEvidence, including both attempts of 43913861800 with six of seven tests passing. Subsequent exact-commit runtime results belong to the dated root review.",
+    "Dated hosted UI runs and their distinct failures are preserved in hostedEvidence. Run 43921041281 passed six of seven tests; the recorded query-timing correction has static evidence only at this timestamp. Subsequent exact-commit runtime results belong to the dated root review.",
     "Standalone typechecking does not validate linked app/resource packaging, rendered UI, VoiceOver behavior, keyboard/PDF-picker presentation or device file protection.",
     "The lifecycle/discovery executables use production stores with synthetic dependencies and real temporary files, not live browser sign-in, hosted pairing or employer APIs.",
     "No real employer application was submitted; live verification still requires provider acceptance with an application ID.",
     "The current public discovery service and production native pairing flow require their own deployed-service acceptance evidence.",
     "Shared-Mac build-slot acknowledgment remains required before any local Xcode/simulator work; the separate hosted UI job does not grant that local slot."
   ],
-  "lastPublishedCandidate": "8ca0b34a8fb324d983c9bee63cd582a368fe4d59",
+  "lastPublishedCandidate": "5879fd9f1d696d159eeb4d5e6fba2edfebfec468",
   "hostedEvidence": {
     "attempts": [
       "apple/Checks/hosted-ui-attempt-43904422104.json",
       "apple/Checks/hosted-ui-attempt-43909112336.json",
-      "apple/Checks/hosted-ui-attempt-43913861800.json"
+      "apple/Checks/hosted-ui-attempt-43913861800.json",
+      "apple/Checks/hosted-ui-attempt-43921041281.json"
     ],
     "scope": "Dated prior published candidates only; no later runtime outcome is inferred from these static checks.",
     "policyAndStoreSourceHashesUnchanged": true,
