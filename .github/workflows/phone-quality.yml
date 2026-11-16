@@ -1,233 +1,113 @@
-name: Phone quality
+# Auxiliary branch only. Never merge this override into the production branch.
+# This artifact job is separate from, and cannot satisfy, the five-job quality gate.
+name: Ordinary iPhone screenshots (artifact capture only)
 
-on:
-  push:
-    branches:
-      - main
-      - 'career-finder-phones-verified-apply-*'
-    paths:
-      - '.github/workflows/phone-quality.yml'
-      - 'website/**'
-      - 'hosted/**'
-      - 'postman/**'
-      - 'android/**'
-      - 'apple/**'
-  pull_request:
-    paths:
-      - '.github/workflows/phone-quality.yml'
-      - 'website/**'
-      - 'hosted/**'
-      - 'postman/**'
-      - 'android/**'
-      - 'apple/**'
+"on":
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: phone-quality-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: career-store-capture-${{ github.run_id }}
+  cancel-in-progress: false
 
 jobs:
-  service:
-    name: Service and synthetic HTTPS
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
-        with:
-          node-version: '24'
-          package-manager-cache: false
-      - name: Existing record and discovery regressions
-        working-directory: website
-        run: npm test
-      - name: Verified-submission state and HTTP regressions
-        working-directory: website
-        run: npm run test:applications
-      - name: Synthetic TLS, consent, receipts and recovery
-        run: node website/applications/fixtures/tls-check.mjs
-
-  hosted:
-    name: Hosted HTTPS service and durable storage
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
-        with:
-          node-version: '24'
-          package-manager-cache: false
-      - name: Install the pinned hosted service dependencies
-        working-directory: hosted
-        run: npm ci
-      - name: Check account screens and worker types
-        working-directory: hosted
-        run: |
-          npm run typecheck
-          npx eslint app worker --max-warnings 0
-      - name: Exercise the production handler with real local D1 and R2
-        working-directory: hosted
-        run: |
-          npm test
-          node tests/hosted-worker.mjs
-          node --experimental-strip-types tests/browser-api.mjs
-      - name: Build the deployable Worker and phone setup pages
-        working-directory: hosted
-        run: npm run build
-      - name: Keep the hosted regression evidence
-        if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
-        with:
-          name: hosted-storage-checks-${{ github.run_id }}
-          path: |
-            hosted/tests/hosted-verification.json
-            hosted/tests/hosted-worker-verification.json
-            hosted/tests/hosted-discovery-verification.json
-          if-no-files-found: ignore
-          retention-days: 7
-
-  android:
-    name: Android compile and lint
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: gradle
-          cache-dependency-path: |
-            android/**/*.gradle.kts
-            android/gradle/wrapper/gradle-wrapper.properties
-          overwrite-settings: false
-      - name: Require the pinned Android SDK
-        shell: bash
-        run: |
-          test -d "$ANDROID_HOME/platforms/android-36"
-          test -d "$ANDROID_HOME/build-tools/35.0.0"
-      - name: Phone URL, PDF and receipt policies
-        run: bash android/checks/run-policy-checks.sh
-      - name: Compile the ordinary preview and its instrumentation
-        working-directory: android
-        run: ./gradlew --no-daemon --max-workers=2 :app:assembleDebug :app:assembleDebugAndroidTest :app:lintDebug
-      - name: Keep the lint report
-        if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
-        with:
-          name: android-lint-${{ github.run_id }}
-          path: android/app/build/reports/lint-results-debug.*
-          if-no-files-found: ignore
-          retention-days: 7
-
-  iphone-policy:
-    name: iPhone logic and unsigned build
+  capture:
+    name: Four ordinary Release iPhone screens
+    if: github.event_name == 'workflow_dispatch' && startsWith(github.ref, 'refs/heads/career-finder-store-capture-')
     runs-on: macos-26
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          fetch-depth: 0
           persist-credentials: false
-      - name: Execute the production client and store checks
-        run: bash apple/Checks/check-mobile.sh
-      - name: Build the production iPhone configuration on this isolated runner
+      - name: Set disposable evidence paths
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/career-store-capture"
+          printf 'CAPTURE_OUTPUT=%s/career-store-capture\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'CAPTURE_DERIVED=%s/career-store-derived\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - name: Verify exact 0a56340 production inputs and precise test-only project delta
+        shell: bash
+        run: |
+          python3 apple/StoreCapture/capture-evidence.py verify-source \
+            --repo "$GITHUB_WORKSPACE" --output "$CAPTURE_OUTPUT"
+      - name: Create one isolated medium iPhone simulator
+        shell: bash
+        run: |
+          python3 apple/StoreCapture/capture-evidence.py create-simulator --output "$CAPTURE_OUTPUT"
+      - name: Build the ordinary unsigned Release app and UI-test runner
         shell: bash
         run: |
           set -o pipefail
-          xcodebuild -project apple/AhmadCareer.xcodeproj -scheme AhmadCareer \
-            -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' \
-            -derivedDataPath "$RUNNER_TEMP/career-iphone-derived-data" \
-            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
-            build 2>&1 | tee "$RUNNER_TEMP/career-iphone-build.log"
-      - name: Verify the built product targets iPhone
-        shell: python
-        run: |
-          import os, pathlib, plistlib
-          product = pathlib.Path(os.environ['RUNNER_TEMP']) / 'career-iphone-derived-data/Build/Products/Release-iphoneos/Career Finder.app'
-          with (product / 'Info.plist').open('rb') as source:
-              info = plistlib.load(source)
-          assert info['UIDeviceFamily'] == [1], info.get('UIDeviceFamily')
-          assert info['CFBundleIdentifier'] == 'com.ahmadalayed.career', info.get('CFBundleIdentifier')
-          assert info['CFBundleDisplayName'] == 'Career Finder', info.get('CFBundleDisplayName')
-          assert info['CFBundleName'] == 'Career Finder', info.get('CFBundleName')
-          assert info['CFBundleSupportedPlatforms'] == ['iPhoneOS'], info.get('CFBundleSupportedPlatforms')
-          assert (product / info['CFBundleExecutable']).is_file()
-          print('Built an unsigned iPhone-only product with the preserved app identity.')
-      - name: Keep the unsigned build log
-        if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
-        with:
-          name: iphone-build-log-${{ github.run_id }}
-          path: ${{ runner.temp }}/career-iphone-build.log
-          if-no-files-found: ignore
-          retention-days: 7
-
-  iphone-ui:
-    name: iPhone native interface acceptance
-    runs-on: macos-26
-    timeout-minutes: 25
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-      - name: Select an iPhone on this disposable hosted runner
-        shell: python
-        run: |
-          import json, os, re, subprocess
-          inventory = json.loads(subprocess.check_output(['xcrun', 'simctl', 'list', 'devices', 'available', '--json']))
-          candidates = []
-          for runtime, devices in inventory['devices'].items():
-              if '.iOS-' not in runtime:
-                  continue
-              version = tuple(map(int, re.findall(r'\d+', runtime.split('.iOS-', 1)[1])))
-              if not version or version[0] < 16:
-                  continue
-              for device in devices:
-                  if device.get('isAvailable') and device['name'].startswith('iPhone'):
-                      compact = not any(word in device['name'] for word in ['Max', 'Plus'])
-                      candidates.append((version, compact, device['name'], device['udid']))
-          assert candidates, 'This runner has no available iPhone Simulator with iOS 16 or later.'
-          version, compact, name, identifier = sorted(candidates, reverse=True)[0]
-          assert re.fullmatch(r'[A-Fa-f0-9-]{36}', identifier)
-          with open(os.environ['GITHUB_ENV'], 'a') as output:
-              output.write('CAREER_UI_DEVICE=' + identifier + '\n')
-          print('Selected', name, 'on iOS', '.'.join(map(str, version)))
-      - name: Exercise native phone flows with isolated synthetic data
-        shell: bash
-        run: |
-          set -o pipefail
+          xcodebuild -version > "$CAPTURE_OUTPUT/xcode-version.txt"
           xcodebuild -project apple/AhmadCareer.xcodeproj -scheme CareerFinderAcceptance \
-            -configuration Debug -destination "platform=iOS Simulator,id=$CAREER_UI_DEVICE" \
-            -derivedDataPath "$RUNNER_TEMP/career-ui-derived" \
-            -resultBundlePath "$RUNNER_TEMP/CareerFinderUI.xcresult" \
+            -configuration Release -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,id=$CAPTURE_DEVICE" \
+            -derivedDataPath "$CAPTURE_DERIVED" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            -showBuildSettings -json > "$CAPTURE_OUTPUT/build-settings.json" \
+            2> "$CAPTURE_OUTPUT/build-settings.log"
+          xcodebuild -project apple/AhmadCareer.xcodeproj -scheme CareerFinderAcceptance \
+            -configuration Release -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,id=$CAPTURE_DEVICE" \
+            -derivedDataPath "$CAPTURE_DERIVED" -jobs 2 \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            build-for-testing 2>&1 | tee "$CAPTURE_OUTPUT/build.log"
+      - name: Verify Release product identity before launch
+        shell: bash
+        run: |
+          python3 apple/StoreCapture/capture-evidence.py verify-product \
+            --output "$CAPTURE_OUTPUT" --derived "$CAPTURE_DERIVED" \
+            --settings "$CAPTURE_OUTPUT/build-settings.json"
+      - name: Capture ordinary UI using public discovery and local save only
+        id: capture
+        shell: bash
+        run: |
+          set -o pipefail
+          set +e
+          xcodebuild -project apple/AhmadCareer.xcodeproj -scheme CareerFinderAcceptance \
+            -configuration Release -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,id=$CAPTURE_DEVICE" \
+            -derivedDataPath "$CAPTURE_DERIVED" \
+            -resultBundlePath "$CAPTURE_OUTPUT/CareerFinderStoreCapture.xcresult" \
+            -only-testing:CareerFinderUITests/CareerFinderStoreCaptureTests/testCaptureOrdinaryScreens \
             -parallel-testing-enabled NO -maximum-concurrent-test-simulator-destinations 1 \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
-            test 2>&1 | tee "$RUNNER_TEMP/career-iphone-ui.log"
-      - name: Export native interface evidence
+            test-without-building 2>&1 | tee "$CAPTURE_OUTPUT/capture.log"
+          capture_status=${PIPESTATUS[0]}
+          printf '%s\n' "$capture_status" > "$CAPTURE_OUTPUT/test-exit-code.txt"
+          exit "$capture_status"
+      - name: Export original attachments even after a capture failure
+        id: export
         if: always()
         shell: bash
         run: |
-          if [ -d "$RUNNER_TEMP/CareerFinderUI.xcresult" ]; then
+          if [ -d "$RUNNER_TEMP/career-store-capture/CareerFinderStoreCapture.xcresult" ]; then
             xcrun xcresulttool export attachments \
-              --path "$RUNNER_TEMP/CareerFinderUI.xcresult" \
-              --output-path "$RUNNER_TEMP/career-ui-screenshots"
+              --path "$RUNNER_TEMP/career-store-capture/CareerFinderStoreCapture.xcresult" \
+              --output-path "$RUNNER_TEMP/career-store-capture/attachments"
           fi
-      - name: Keep the native UI results and screenshots
+      - name: Validate four unchanged RGB screenshots and retain their provenance
+        if: steps.capture.outcome == 'success' && steps.export.outcome == 'success'
+        shell: bash
+        run: |
+          python3 apple/StoreCapture/capture-evidence.py collect-screenshots --output "$CAPTURE_OUTPUT"
+      - name: Keep raw result bundle, logs, images and verification evidence
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
-          name: iphone-ui-acceptance-${{ github.run_id }}
-          path: |
-            ${{ runner.temp }}/career-iphone-ui.log
-            ${{ runner.temp }}/CareerFinderUI.xcresult
-            ${{ runner.temp }}/career-ui-screenshots
-          if-no-files-found: ignore
+          name: ordinary-iphone-capture-${{ github.run_id }}-attempt-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/career-store-capture
+          if-no-files-found: warn
           retention-days: 7
+      - name: Remove only this run's disposable simulator
+        if: always()
+        shell: bash
+        run: |
+          if [[ "${CAPTURE_DEVICE:-}" =~ ^[A-Fa-f0-9-]{36}$ ]]; then
+            xcrun simctl shutdown "$CAPTURE_DEVICE" || true
+            xcrun simctl delete "$CAPTURE_DEVICE" || true
+          fi
