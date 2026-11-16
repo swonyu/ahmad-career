@@ -1,0 +1,59 @@
+{
+  "runId": 43965985771,
+  "attempt": 1,
+  "headSha": "015b3fd3496dcef7090c3706eac7b6109ce79965",
+  "uiJobId": 133645435472,
+  "uiConclusion": "failure",
+  "tests": [
+    {
+      "test": "testAccessibilityTextKeepsCoreControlsReachable",
+      "outcome": "passed",
+      "durationSeconds": 100.961
+    },
+    {
+      "test": "testApplicationDraftSurvivesCancelAndRelaunch",
+      "outcome": "passed",
+      "durationSeconds": 95.344
+    },
+    {
+      "test": "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+      "outcome": "failed",
+      "durationSeconds": 18.159
+    },
+    {
+      "test": "testDiscoverySaveFlowsIntoSavedAndApply",
+      "outcome": "passed",
+      "durationSeconds": 43.696
+    },
+    {
+      "test": "testFreshStartAndFiveTabs",
+      "outcome": "passed",
+      "durationSeconds": 40.719
+    },
+    {
+      "test": "testOpportunityDiscardRequiresExplicitChoice",
+      "outcome": "passed",
+      "durationSeconds": 19.09
+    },
+    {
+      "test": "testOpportunityDraftKeepSaveAndRestore",
+      "outcome": "passed",
+      "durationSeconds": 48.202
+    },
+    {
+      "test": "testSearchEmptyAndFailurePreservesPreviousResults",
+      "outcome": "passed",
+      "durationSeconds": 70.203
+    }
+  ],
+  "executedCountLines": [
+    "2026-11-16T22:12:42.7282930Z \t Executed 8 tests, with 1 failure (0 unexpected) in 436.372 (436.388) seconds",
+    "2026-11-16T22:12:42.8341410Z \t Executed 8 tests, with 1 failure (0 unexpected) in 436.372 (436.390) seconds",
+    "2026-11-16T22:12:42.8345260Z \t Executed 8 tests, with 1 failure (0 unexpected) in 436.372 (436.393) seconds"
+  ],
+  "simulator": {
+    "name": "iPhone Air",
+    "runtime": "iOS 26.5"
+  },
+  "observedAt": "2026-11-16T22:14:44.849737+00:00"
+}

@@ -126,6 +126,32 @@ final class CareerFinderUITests: XCTestCase {
     }
 
     @MainActor
+    func testLinkedInProfileDraftAndExternalSearchChoice() {
+        let id = UUID().uuidString
+        var app = launch(id: id)
+        let open = app.buttons["home.applicationProfile"]; reveal(open, in: app); open.tap()
+        let field = app.textFields["application.linkedin"]
+        reveal(field, in: app)
+        XCTAssertTrue(["", "LinkedIn profile (optional)"].contains(field.value as? String ?? ""), "A new user has no seeded LinkedIn identity")
+        replace(field, with: "https://sa.linkedin.com/in/example-profile/?tracking=discard#about")
+        app.buttons["Done typing"].tap()
+        XCTAssertTrue(app.buttons["application.openLinkedIn"].exists || app.links["application.openLinkedIn"].exists,
+                      "A valid saved profile offers an explicit external open action")
+        app.navigationBars.buttons["Save"].tap()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 5))
+        app.terminate(); app = launch(id: id)
+        let reopened = app.buttons["home.applicationProfile"]; reveal(reopened, in: app); reopened.tap()
+        let restored = element("application.linkedin", app: app); reveal(restored, in: app)
+        XCTAssertEqual(restored.value as? String, "https://www.linkedin.com/in/example-profile", "A saved LinkedIn link is canonical and survives relaunch")
+        capture("16-linkedin-profile-link", app: app)
+        app.navigationBars.buttons["Cancel"].tap()
+        tab("Search", in: app)
+        let search = element("discovery.linkedin", app: app); reveal(search, in: app)
+        XCTAssertTrue(search.isHittable, "LinkedIn search must be a deliberate external action")
+        capture("17-linkedin-search-choice", app: app)
+    }
+
+    @MainActor
     func testOpportunityDraftKeepSaveAndRestore() {
         let id = UUID().uuidString
         var app = launch(id: id)
@@ -264,13 +290,28 @@ final class CareerFinderUITests: XCTestCase {
             XCTAssertTrue(review.waitForExistence(timeout: 5))
             XCTAssertEqual(review.label, "Select opportunities to check", "Connection alone must not promise live submission")
             XCTAssertFalse(review.isEnabled, "An empty workspace cannot start an application review")
-            let explanation = app.staticTexts[heading]
-            reveal(explanation, in: app)
+            let explanation = element("applications.availability.heading", app: app)
+            let content = app.scrollViews.firstMatch
+            XCTAssertTrue(content.waitForExistence(timeout: 5))
+            XCTAssertLessThan(review.frame.height, app.frame.height * 0.4,
+                              "The largest text setting must leave most of the phone available for scrolling content")
+            XCTAssertGreaterThan(review.frame.minY - app.navigationBars.firstMatch.frame.maxY, app.frame.height * 0.45,
+                                 "The fixed application action must leave a usable scrolling viewport above it")
+            for _ in 0..<15 {
+                if explanation.exists && explanation.isHittable { break }
+                content.swipeUp()
+            }
+            XCTAssertTrue(explanation.exists && explanation.isHittable, "Availability must be reachable inside the application workspace")
+            XCTAssertEqual(explanation.label, heading)
             capture("14-\(availability)-submission-explained", app: app)
-            let refresh = app.buttons["Refresh availability"]
-            reveal(refresh, in: app)
+            let refresh = app.buttons["applications.availability.refresh"]
+            for _ in 0..<15 {
+                if refresh.exists && refresh.isHittable { break }
+                content.swipeUp()
+            }
+            XCTAssertTrue(refresh.exists && refresh.isHittable, "Availability refresh must remain reachable at the largest text setting")
             refresh.tap()
-            XCTAssertTrue(app.staticTexts[heading].exists, "Refreshing an offline service must preserve its explicit availability state")
+            XCTAssertTrue(explanation.exists, "Refreshing an offline service must preserve its explicit availability state")
             capture("15-\(availability)-refresh-reachable", app: app)
             app.terminate()
         }

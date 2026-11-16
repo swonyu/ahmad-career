@@ -1,0 +1,199 @@
+{
+  "reviewedAt": "2026-11-16T22:21:35.884762+00:00",
+  "scope": "Read-only product/navigation review of current in-progress LinkedIn sources. No phone/source mutations performed. Source may continue changing in native owners; fingerprints capture this review snapshot.",
+  "priorityOrder": [
+    "NAV-1",
+    "NAV-2",
+    "NAV-3",
+    "NAV-4",
+    "NAV-5"
+  ],
+  "findings": [
+    {
+      "id": "NAV-1",
+      "severity": "P2",
+      "title": "iPhone removal of a saved local opportunity has no confirmation or undo",
+      "files": [
+        "apple/AhmadCareer/NativeApplicationsViews.swift: NativeApplicationsScreen.opportunities",
+        "apple/AhmadCareer/NativeApplicationsStore.swift: removeLocalJob(_:)"
+      ],
+      "evidence": "The Remove saved link button invokes model.removeLocalJob(id) directly. removeLocalJob persists deletion and removes selected/answers entries. The Android equivalent already presents an explicit two-choice confirmation.",
+      "implementation": "Capture the current local job ID/title/company in confirmation state. Show Remove saved link and Keep opportunity, and re-check that the same record is still local and removable when confirmed. Keep remote records, reviews, receipts and unrelated drafts intact. Prefer exposing the action in Saved detail as well so users do not have to enter Apply to manage a saved link.",
+      "acceptance": [
+        "Cancel leaves the record and answers unchanged.",
+        "Confirm removes only the captured local record.",
+        "Switching workspace or syncing the record before confirmation prevents stale removal.",
+        "Long role/employer text and AccessibilityXXXL keep both choices reachable."
+      ]
+    },
+    {
+      "id": "NAV-2",
+      "severity": "P2",
+      "title": "Modern saved jobs need a useful external-application record",
+      "files": [
+        "apple/AhmadCareer/NativeCareerViews.swift: NativeSavedApplicationDetail, NativePlanScreen",
+        "apple/AhmadCareer/NativeApplicationsViews.swift: appliedURLs, opportunities",
+        "apple/AhmadCareer/NativeApplicationsStore.swift: prepare(manualAppliedURLs:)",
+        "apple/AhmadCareer/MobileApplicationState.swift: persisted local workspace model",
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt: SavedJobsScreen, ReceiptsScreen",
+        "android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt: markAppliedElsewhere, syncOpportunity",
+        "android/app/src/main/java/com/saleh/careerfinder/Models.kt: CareerUiState"
+      ],
+      "evidence": "iPhone NativeSavedApplicationDetail for modern discovery/manual-link jobs only opens/shares the employer URL or opens Apply. The self-reported Applied/Interviewing/Offer states and appliedURLs input come from legacy NativeCareerStore snapshots. Android has manualApplied checkbox persistence but no applied date, follow-up date or note for these jobs. A user applying through LinkedIn or an employer site needs a record even while live Auto Apply is disabled.",
+      "implementation": "Add a small local Application record section to saved-job details: stage (Saved, Applied, Interview, Offer, Closed), optional applied date, optional follow-up date, and a short private note. Clearly label it Your record and keep it separate from verified provider receipts/counts. Derive the manual-applied duplicate-prevention input for Applied/Interview/Offer from this same record. Preserve it when local IDs become service IDs. Surface upcoming follow-ups in Saved with a filter; do not add another top-level tab or notification permission.",
+      "boundedFirstSlice": "If time is tight, first give iPhone the existing Android I applied on the employer site toggle and make it participate in prepare. Then add optional dates/notes in a collapsible detail form on both phones.",
+      "acceptance": [
+        "Fresh profiles contain no seeded application history.",
+        "Legacy files decode without losing data; unknown future schema stays preserved.",
+        "Marking applied never creates a verified receipt.",
+        "The prepare payload excludes self-reported applications on both platforms.",
+        "Records survive relaunch and local-to-service import, remain scoped to the correct workspace, and a canceled editor makes no changes.",
+        "Follow-up civil dates retain the date the user selected across time-zone changes."
+      ]
+    },
+    {
+      "id": "NAV-3",
+      "severity": "P2",
+      "title": "Android loses the entire discovery session after process restart",
+      "files": [
+        "android/app/src/main/java/com/saleh/careerfinder/Discovery.kt: DiscoveryController, mutable DiscoveryUiState",
+        "android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt: discovery construction",
+        "android/app/src/main/java/com/saleh/careerfinder/SecureVault.kt: PrivateStore implementation",
+        "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt: DiscoveryScreen"
+      ],
+      "evidence": "DiscoveryController starts MutableStateFlow(DiscoveryUiState()) and owns in-memory jobs/filter results without storage restoration. iPhone CareerDiscoveryStore already persists query, lastQuery, page and jobs, marks restoredResults and disables old-cursor pagination until a fresh search.",
+      "implementation": "Persist a bounded encrypted last-search snapshot using the existing private store. Restore keywords, location, board selection and previously checked results with an explicit Previous results label and Search again action. Do not silently refetch at launch. Do not reuse an old cursor after restart. Optional saved-search history can wait; one last session fixes the main discontinuity.",
+      "acceptance": [
+        "A process-restart fixture restores the exact last displayed filters/results and their original check times.",
+        "Restored pagination is unavailable until a new search.",
+        "Invalid or future-version search files are preserved and the user gets a recoverable message.",
+        "A failed refresh keeps earlier results.",
+        "The snapshot contains no account token, resume or application profile fields."
+      ]
+    },
+    {
+      "id": "NAV-4",
+      "severity": "P2",
+      "title": "Default phone connection exposes infrastructure details before the user needs them",
+      "files": [
+        "apple/AhmadCareer/NativeApplicationsViews.swift: NativeApplicationConnection",
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt: ConnectionDialog",
+        "career-finder-service/app/connect/ConnectionPanel.tsx",
+        "career-finder-service/app/connect/page.tsx"
+      ],
+      "evidence": "Both native forms expose a full editable HTTPS service address in the primary setup flow. Android asks users to Open secure connection setup, obtain a pairing code and Pair this phone while also showing a long privacy explanation. Hosted Connect always presents its origin/copy-address field despite the current apps already filling it. The secure code/account binding itself is already implemented and should be kept.",
+      "implementation": "Use two short steps: 1 Sign in and get a code; 2 Paste the code and Connect this phone. Show Career Finder as the default destination with a compact verified-origin detail. Put custom service address and operator instructions under an Advanced / Use another service disclosure. Preserve an existing custom origin exactly. Keep the Google-through-ChatGPT explanation adjacent to the sign-in action. Collapse detailed privacy/storage text behind a clearly named link; keep the upload boundary in the short primary flow.",
+      "acceptance": [
+        "Default setup needs no address editing/copying.",
+        "Existing custom service setups remain supported and are never reset silently.",
+        "Code/account-change/expiry protections are unchanged.",
+        "No automatic clipboard reads; any paste action is initiated by the user.",
+        "Browser guidance uses the actual native labels and accurately distinguishes Google through ChatGPT from a separate Career Finder OAuth integration."
+      ]
+    },
+    {
+      "id": "NAV-5",
+      "severity": "P2",
+      "title": "iPhone lacks the simple application-readiness guidance Android already has",
+      "files": [
+        "apple/AhmadCareer/NativeCareerViews.swift: NativeShortlistScreen, NativeProfileScreen",
+        "apple/AhmadCareer/NativeApplicationsViews.swift: profileCard, NativeApplicationProfileEditor",
+        "apple/AhmadCareer/MobileApplicationClient.swift: PhoneApplicationProfile and validation helpers"
+      ],
+      "evidence": "iPhone Start offers several next-step buttons, Profile has Application profile plus Local planning notes/criteria, and the Apply profile card uses name/CV filename only. Android already has ProfileEssentials with Name, Email address and PDF resume readiness and reuses it on onboarding/profile/apply. iPhone users can miss a missing or invalid email until a review fails.",
+      "implementation": "Add one reusable three-essential readiness component on iPhone, using the same validation rules as real save/prepare. Place it with the primary application profile action on Start/Profile and show a single context-appropriate next step such as Add email or Choose PDF. Keep optional experience/preferences and preserved legacy planning tools below a disclosure. Do not add a blocking onboarding wizard or make account connection compulsory for search.",
+      "acceptance": [
+        "Missing name, invalid email and missing PDF are each explained next to an actionable profile edit button.",
+        "Selecting a PDF alone does not imply the profile or user identity is verified.",
+        "Unfinished local drafts remain saveable.",
+        "All existing planning notes remain accessible and unchanged.",
+        "Large text and VoiceOver retain useful order and clear needed/ready labels."
+      ]
+    }
+  ],
+  "existingCapabilitiesToKeep": [
+    "Search and saved opportunities without an account.",
+    "Blank identity/profile defaults for every new user.",
+    "Encrypted phone drafts and explicit profile upload choice after pairing.",
+    "Profile conflict recovery and draft persistence.",
+    "Explicit source coverage, timestamps, partial outages and stale-result labels.",
+    "Exact application review and separate real/test/uncertain provider receipt handling.",
+    "Android saved-job search, confirmation for local removal, three-essential profile checklist and receipt filters.",
+    "iPhone restored discovery sessions, legacy record preservation, five-tab navigation and preparation checklist.",
+    "Hosted one-time pairing, Google through ChatGPT sign-in guidance, data export, session revocation and deletion.",
+    "The in-progress LinkedIn saved profile link and explicit external job-search handoff; no duplicate OAuth UI should be added without actual official integration."
+  ],
+  "alreadyAssignedDefect": "015 UI large-text footer/identifier failure is separately with iPhone owner; do not count this as a newly unassigned recommendation.",
+  "sourceFingerprints": [
+    {
+      "path": "career-finder/apple/AhmadCareer/NativeCareerViews.swift",
+      "bytes": 60421,
+      "sha256": "973d518c0e17611abb37d9f7c1cf3b96d230dce671a1dd7c742da139b5c24198"
+    },
+    {
+      "path": "career-finder/apple/AhmadCareer/NativeApplicationsViews.swift",
+      "bytes": 65191,
+      "sha256": "aaed3010eaf19d4bc21e13885d0dabe8b263eb12f4d579a89375aaecf3329f9a"
+    },
+    {
+      "path": "career-finder/apple/AhmadCareer/NativeApplicationsStore.swift",
+      "bytes": 39826,
+      "sha256": "c8ab269dce3014c66d3fc2fdadbe14c495c3ef3fed1d47847c4ce1d28e049a65"
+    },
+    {
+      "path": "career-finder/apple/AhmadCareer/MobileApplicationState.swift",
+      "bytes": 15386,
+      "sha256": "53488d8a25d4292d196748a33c34b34267eb8bd994f402618428e97ae87b64b0"
+    },
+    {
+      "path": "career-finder/apple/AhmadCareer/CareerDiscovery.swift",
+      "bytes": 17577,
+      "sha256": "7bbe9321917dc051e8911f7556653e807d4f25d3baa934829d21e1c4cebe09cc"
+    },
+    {
+      "path": "career-finder/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+      "bytes": 74750,
+      "sha256": "3ead546076743183f87b3a5531a4b310890cd798d4c066415acff412ebb346c4"
+    },
+    {
+      "path": "career-finder/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+      "bytes": 18394,
+      "sha256": "4fd8a57349330908280455dbc185c08595e3244b5b48b8bbc268674c944a721a"
+    },
+    {
+      "path": "career-finder/android/app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+      "bytes": 16426,
+      "sha256": "c1a2383b9be52541ab7e137dd4b9d9dfecdfafbf76b6e88d098cf026f27d35b5"
+    },
+    {
+      "path": "career-finder/android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt",
+      "bytes": 44280,
+      "sha256": "4f011065c00b7a5645189c26a21554e9b761eb91e8b4e257e36db03102872727"
+    },
+    {
+      "path": "career-finder/android/app/src/main/java/com/saleh/careerfinder/Models.kt",
+      "bytes": 16438,
+      "sha256": "bedb60ebc6a40f3db1de2ec335119b9dced55571a5a2ab26e505078159d2fe3d"
+    },
+    {
+      "path": "career-finder/android/app/src/main/java/com/saleh/careerfinder/SecureVault.kt",
+      "bytes": 5661,
+      "sha256": "c892be2f75738457c810cd6e3e317ebc5b717ddd6a90da162e6e53b2825f6999"
+    },
+    {
+      "path": "career-finder-service/app/connect/ConnectionPanel.tsx",
+      "bytes": 6208,
+      "sha256": "c2b56e8a7d9109eda3e595a0bea7a41ccf6069a6ad939378e71524c3aa9f1327"
+    },
+    {
+      "path": "career-finder-service/app/connect/page.tsx",
+      "bytes": 3058,
+      "sha256": "c38b14af33cf357984e6f6cee5889be535e532cfb45362968692c293def1f4c6"
+    },
+    {
+      "path": "career-finder-service/app/support/page.tsx",
+      "bytes": 8486,
+      "sha256": "b9746c6af2124dddabbd8803c1a94c181cce7e5ae0b87d7f576bfc8ec8f2963d"
+    }
+  ]
+}

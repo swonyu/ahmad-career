@@ -8,6 +8,8 @@ Native Kotlin / Jetpack Compose phone app for public job discovery, private care
 - See source attribution, freshness, partial availability and search limits. Unknown country/remote values remain unknown; search coverage and a remote label do not establish work eligibility.
 - Save a discovered role into the existing private opportunity flow. Search and save never approve or submit an application. A failed, cancelled or stale search preserves earlier results; changed pagination requires a deliberate fresh search.
 - Create a private phone profile, including a single-name profile with no surname, and pick the exact PDF résumé through Android's document picker.
+- Add a separate optional LinkedIn personal profile link. HTTPS links from LinkedIn's public or country hosts are canonicalized, tracking parameters removed, and Unicode names preserved. This is a saved public URL, not LinkedIn OAuth or verification of account ownership.
+- Open LinkedIn job search explicitly using only the current keyword and location fields. The LinkedIn website handles its own sign-in and applications; the handoff never creates a Career Finder receipt.
 - See first/single name, email and PDF essentials before optional experience and preferences. Select target countries with search and explicit confirmation; dismissing the selector preserves the earlier choice.
 - Keep edits, selected opportunities and explicit consent choices in an encrypted phone draft. After pairing, review and deliberately copy a saved phone profile and opportunities into the connected workspace draft; copying does not upload them.
 - Save employer links from any country or profession, with searchable role/company/location details.
@@ -33,6 +35,14 @@ Changing review inputs invalidates the earlier local review. **Stop earlier revi
 For a service advertising `capabilities.dispatchContinuation: "client"`, the foreground app reads fresh workspace eligibility and sends at most one authenticated `POST /api/apply/advance` per polling cycle. The server decides which already approved plans remain eligible. Cycles are sequential with a four-second delay after completion; the 25-second client timeout is unchanged. The app never calls `submit` from polling, and a cooldown still needs a new visible approval. A stop request creates an encrypted local continuation hold before contacting the service, so an ambiguous stop cannot resume automatically from this phone after restart. A new explicit approval can supersede that hold.
 
 Leaving the foreground pauses subsequent continuation requests; an in-flight application can still finish. Returning reads authoritative state before another request. Connection changes, cancellation, expired sessions, unavailable private storage and stop holds prevent stale continuation. Services without this capability retain their existing server-driven dispatch behavior.
+
+### LinkedIn profile compatibility
+
+The optional `profile.linkedin` string is persisted in the existing encrypted schema-1 workspace. Older profiles decode with an empty link. Incomplete or invalid edits remain private drafts even after a failed save; a valid save canonicalizes the link without changing the separate website/portfolio field.
+
+Connected writes require `capabilities.linkedinProfile: true` before sending a nonempty link or clearing an existing link. With an older service, an empty link is omitted from profile writes and unsupported edits stay on the phone. This capability is refreshed from the service and is never restored from a cached value. Malformed optional URLs or capability values reject the response without replacing the draft.
+
+Both `prepare` and `submit` send `reviewSchema: 3` when the exact saved profile or reviewed application contains a LinkedIn link. The approval screen displays the exact `payloadSummary.linkedin` value. An older phone cannot approve an undisplayed new profile field through the updated service. The service includes this link only in the explicitly approved employer payload; it does not access LinkedIn accounts or perform LinkedIn applications.
 
 ## Build
 

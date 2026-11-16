@@ -1,0 +1,50 @@
+{
+  "source": {
+    "project_id": "appgprj_6afb13851fb4819193358d5db54e73b7",
+    "checkout_path": "/workspace/scratch/ddc36eadea1f/career-finder-service",
+    "commit_sha": "0bff0a2885c9b0e51d4270b7f0e9c32d83d8ae2d",
+    "archive": "/workspace/scratch/ddc36eadea1f/strict-review-20261117/career-finder-hosted-linkedin.tar.gz"
+  },
+  "savedVersion": {
+    "id": "appgprj_6afb13851fb4819193358d5db54e73b7~appgver_15f9fc5255dc8191ad6e23cbe3062b2a",
+    "project_id": "appgprj_6afb13851fb4819193358d5db54e73b7",
+    "version_number": 4,
+    "source": {
+      "commit_sha": "0bff0a2885c9b0e51d4270b7f0e9c32d83d8ae2d"
+    },
+    "archive_storage": {
+      "archive_format": "tar",
+      "sediment_file_id": "file_0000000008f08211ba4fa41c897fd8f0",
+      "content_hash": "sha256:c41a32afe1752baea3e3581256a7e3be0191e9956b2c6616d958ff184b3d984c",
+      "size_bytes": 1638400,
+      "file_count": 79
+    },
+    "screenshot_url": null,
+    "deployment_id": null
+  },
+  "deployment": {
+    "id": "appgdep_6afb82c7891c8191a11516c1f5de9595",
+    "project_id": "appgprj_6afb13851fb4819193358d5db54e73b7",
+    "title": "Career Finder",
+    "version_id": "appgprj_6afb13851fb4819193358d5db54e73b7~appgver_15f9fc5255dc8191ad6e23cbe3062b2a",
+    "type": "publish",
+    "status": "succeeded",
+    "url": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
+    "has_mcp": false,
+    "screenshot_asset_pointer": null,
+    "provider_deployment_id": "release---6afb19c7dcb081918f1c6b1c2785c3c0",
+    "failure_message": null,
+    "env_set_revision": 0,
+    "updated_at": "2026-11-16T22:25:38.020242+00:00"
+  },
+  "verification": {
+    "typecheck": "passed",
+    "appAndWorkerLint": "passed",
+    "profileURLPolicy": "9canonical examples;42rejected inputs;migration/provider checks passed",
+    "hostedApplicationGroups": 42,
+    "actualWorkerdRequests": 17,
+    "standaloneApplicationGroups": 101,
+    "realEmployerRequests": 0,
+    "browserPreview": "Navigation blocked by browser URL policy; no workaround attempted; visual check not claimed"
+  }
+}

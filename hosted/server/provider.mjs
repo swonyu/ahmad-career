@@ -34,7 +34,7 @@ export function connectorFor(config,target,env,now=Date.now()) {
   return {supported:true,connector:c,requirements:r};
 }
 export function requirementsError(profile,answer,requirements) {
-  const values={name:applicantName(profile),email:profile.email,resume:profile.resume,phone:profile.phone,urls:profile.website,comments:answer.comments,consentStore:answer.consentStore===true,consentMarketing:typeof answer.consentMarketing==='boolean'};
+  const values={name:applicantName(profile),email:profile.email,resume:profile.resume,phone:profile.phone,urls:profile.website||profile.linkedin,comments:answer.comments,consentStore:answer.consentStore===true,consentMarketing:typeof answer.consentMarketing==='boolean'};
   const missing=requirements.requiredFields.filter(k=>!values[k]);
   return missing.length?`This employer requires: ${missing.join(', ')}. Review those fields before submitting.`:'';
 }
@@ -61,7 +61,7 @@ export function makeAdapter(env,{fetchImpl=fetch}={}) {
     const p=snapshot.profile,a=snapshot.answers,form=new FormData();
     form.set('name',applicantName(p));form.set('email',p.email);
     form.set('resume',new Blob([pdfBytes],{type:'application/pdf'}),p.resume.name);
-    if(p.phone)form.set('phone',p.phone);if(p.website)form.set('urls[Portfolio]',p.website);if(a.comments)form.set('comments',a.comments);
+    if(p.phone)form.set('phone',p.phone);if(p.website)form.set('urls[Portfolio]',p.website);if(p.linkedin)form.set('urls[LinkedIn]',p.linkedin);if(a.comments)form.set('comments',a.comments);
     if(a.consentStore!==undefined)form.set('consent[store]',String(a.consentStore));if(a.consentMarketing!==undefined)form.set('consent[marketing]',String(a.consentMarketing));
     form.set('silent','false');form.set('source','Career Finder');
     const url=new URL(endpoint(target));url.searchParams.set('key',env[connector.apiKeyEnv]);

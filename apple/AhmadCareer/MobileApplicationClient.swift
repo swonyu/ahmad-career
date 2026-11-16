@@ -41,6 +41,48 @@ enum MobileApplicationPolicy {
               !host.contains(":"), host.range(of: #"^\d+\.\d+\.\d+\.\d+$"#, options: .regularExpression) == nil else { return nil }
         return parts.url
     }
+    /// This is a user-supplied public profile link, not a LinkedIn session or ownership check.
+    static func linkedInProfileURL(_ text: String) -> URL? {
+        func isControl(_ scalar: Unicode.Scalar) -> Bool {
+            scalar.value <= 0x1f || (0x7f...0x9f).contains(scalar.value) || scalar.properties.generalCategory == .format
+        }
+        guard !text.isEmpty, text.utf16.count <= 2_048,
+              !text.unicodeScalars.contains(where: { $0.value <= 0x20 || $0.value == 0x7f }),
+              !text.contains("\\"), let decoded = text.removingPercentEncoding,
+              !decoded.unicodeScalars.contains(where: isControl),
+              let separator = text.range(of: "://"),
+              !text[separator.upperBound...].prefix(while: { $0 != "/" && $0 != "?" && $0 != "#" }).contains("%"),
+              let parts = URLComponents(string: text), parts.scheme?.lowercased() == "https",
+              let host = parts.host?.lowercased(),
+              parts.percentEncodedHost?.contains("%") != true,
+              host == "linkedin.com" || host == "www.linkedin.com"
+                || host.range(of: #"^[a-z]{2,3}\.linkedin\.com$"#, options: .regularExpression) != nil,
+              parts.user == nil, parts.password == nil, parts.port == nil || parts.port == 443,
+              parts.percentEncodedPath.hasPrefix("/in/") else { return nil }
+        var encodedSlug = String(parts.percentEncodedPath.dropFirst(4))
+        if encodedSlug.hasSuffix("/") { encodedSlug.removeLast() }
+        guard let slug = encodedSlug.removingPercentEncoding, !slug.isEmpty,
+              slug != ".", slug != "..", !slug.contains("/"), !slug.contains("\\"), !slug.contains("%"),
+              !slug.unicodeScalars.contains(where: { isControl($0) || CharacterSet.whitespacesAndNewlines.contains($0) }) else { return nil }
+        let unreserved = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~")
+        guard let canonicalSlug = slug.addingPercentEncoding(withAllowedCharacters: unreserved) else { return nil }
+        let canonical = "https://www.linkedin.com/in/" + canonicalSlug
+        guard canonical.utf8.count <= 2_048 else { return nil }
+        return URL(string: canonical)
+    }
+    /// Only the search words the user entered are included in this external handoff.
+    static func linkedInJobSearchURL(keywords: String, location: String) -> URL? {
+        let words = keywords.trimmingCharacters(in: .whitespacesAndNewlines)
+        let place = location.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard words.utf16.count <= 120, place.utf16.count <= 100 else { return nil }
+        var parts = URLComponents(string: "https://www.linkedin.com/jobs/search/")!
+        let unreserved = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~")
+        var query: [String] = []
+        if !words.isEmpty { query.append("keywords=" + (words.addingPercentEncoding(withAllowedCharacters: unreserved) ?? "")) }
+        if !place.isEmpty { query.append("location=" + (place.addingPercentEncoding(withAllowedCharacters: unreserved) ?? "")) }
+        if !query.isEmpty { parts.percentEncodedQuery = query.joined(separator: "&") }
+        return parts.url
+    }
     static func resumeError(_ data: Data, filename: String) -> String? {
         if data.count > maximumResumeBytes { return "Choose a PDF no larger than 5 MB." }
         if data.count < 8 || !data.starts(with: Data("%PDF-".utf8)) { return "This file is not a readable PDF. Choose your CV as a PDF." }
@@ -246,7 +288,7 @@ final class MobileApplicationClient: MobileApplicationServing {
 
 struct PhoneApplicationProfile: Codable, Equatable {
     var firstName = "", lastName = "", email = "", phone = "", city = "", country = ""
-    var headline = "", skills = "", targetRoles = "", targetCountries = "", website = ""
+    var headline = "", skills = "", targetRoles = "", targetCountries = "", website = "", linkedin = ""
     var experienceLevel = "any"
     var remote = true, hybrid = true, onsite = true
     var resumeName = ""
@@ -255,8 +297,28 @@ struct PhoneApplicationProfile: Codable, Equatable {
     var resumeRemoved = false
     var resumeSize: Int?
     var resumeSHA256: String?
+    init() {}
+    private enum CodingKeys: String, CodingKey {
+        case firstName, lastName, email, phone, city, country, headline, skills, targetRoles, targetCountries, website, linkedin
+        case experienceLevel, remote, hybrid, onsite, resumeName, resumeData, resumeChanged, resumeRemoved, resumeSize, resumeSHA256
+    }
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        firstName = try c.decode(String.self, forKey: .firstName); lastName = try c.decode(String.self, forKey: .lastName)
+        email = try c.decode(String.self, forKey: .email); phone = try c.decode(String.self, forKey: .phone)
+        city = try c.decode(String.self, forKey: .city); country = try c.decode(String.self, forKey: .country)
+        headline = try c.decode(String.self, forKey: .headline); skills = try c.decode(String.self, forKey: .skills)
+        targetRoles = try c.decode(String.self, forKey: .targetRoles); targetCountries = try c.decode(String.self, forKey: .targetCountries)
+        website = try c.decode(String.self, forKey: .website)
+        if c.contains(.linkedin) { linkedin = try c.decode(String.self, forKey: .linkedin) }
+        experienceLevel = try c.decode(String.self, forKey: .experienceLevel)
+        remote = try c.decode(Bool.self, forKey: .remote); hybrid = try c.decode(Bool.self, forKey: .hybrid); onsite = try c.decode(Bool.self, forKey: .onsite)
+        resumeName = try c.decode(String.self, forKey: .resumeName); resumeData = try c.decodeIfPresent(Data.self, forKey: .resumeData)
+        resumeChanged = try c.decode(Bool.self, forKey: .resumeChanged); resumeRemoved = try c.decode(Bool.self, forKey: .resumeRemoved)
+        resumeSize = try c.decodeIfPresent(Int.self, forKey: .resumeSize); resumeSHA256 = try c.decodeIfPresent(String.self, forKey: .resumeSHA256)
+    }
     var hasContent: Bool {
-        [firstName, lastName, email, phone, city, country, headline, skills, targetRoles, targetCountries, website]
+        [firstName, lastName, email, phone, city, country, headline, skills, targetRoles, targetCountries, website, linkedin]
             .contains { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
             || resumeData != nil || !resumeName.isEmpty || resumeRemoved
     }
@@ -277,7 +339,7 @@ struct PhoneApplicationProfile: Codable, Equatable {
     private func words(_ text: String) -> [ApplicationValue] {
         text.split(separator: ",").map { .string($0.trimmingCharacters(in: .whitespacesAndNewlines)) }.filter { !($0.string ?? "").isEmpty }
     }
-    func payload() -> [String: ApplicationValue] {
+    func payload(includeLinkedIn: Bool = false) -> [String: ApplicationValue] {
         var fields: [String: ApplicationValue] = [
             "firstName": .string(firstName.trimmingCharacters(in: .whitespacesAndNewlines)),
             "lastName": .string(lastName.trimmingCharacters(in: .whitespacesAndNewlines)),
@@ -290,6 +352,7 @@ struct PhoneApplicationProfile: Codable, Equatable {
             "workModes": .array([(onsite ? "on-site" : nil), (hybrid ? "hybrid" : nil), (remote ? "remote" : nil)].compactMap { $0 }.map(ApplicationValue.string)),
             "experienceLevel": .string(experienceLevel), "website": .string(website)
         ]
+        if includeLinkedIn { fields["linkedin"] = .string(linkedin) }
         if resumeRemoved { fields["resume"] = .null }
         else if resumeChanged, let resumeData {
             fields["resume"] = .object(["name": .string(resumeName), "mime": .string("application/pdf"), "dataBase64": .string(resumeData.base64EncodedString())])
@@ -301,6 +364,7 @@ struct PhoneApplicationProfile: Codable, Equatable {
         email = object["email"]?.string ?? ""; phone = object["phone"]?.string ?? ""
         city = object["city"]?.string ?? ""; country = object["country"]?.string ?? ""
         headline = object["headline"]?.string ?? ""; website = object["website"]?.string ?? ""
+        linkedin = object["linkedin"]?.string.flatMap { $0.isEmpty ? "" : MobileApplicationPolicy.linkedInProfileURL($0)?.absoluteString } ?? ""
         skills = object["skills"]?.array.compactMap(\.string).joined(separator: ", ") ?? ""
         targetRoles = object["targetRoles"]?.array.compactMap(\.string).joined(separator: ", ") ?? ""
         targetCountries = object["targetCountries"]?.array.compactMap(\.string).joined(separator: ", ") ?? ""

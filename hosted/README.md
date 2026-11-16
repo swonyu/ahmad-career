@@ -119,3 +119,11 @@ The hosting manifest selects the dedicated phone-service Site. Preserve its proj
 No custom domain purchase, separate paid cloud account or employer integration is required to publish the connection service through the available hosting. Hosting availability and service quotas remain subject to the existing provider account and plan. Keep secrets in the service environment; never ship a Sites owner-bypass token to a phone app.
 
 Public support is available through `https://github.com/swonyu/ahmad-career/issues`. Remove private information before reporting a problem. Store signing, physical-device acceptance and app-store review remain separate release steps.
+
+## LinkedIn profile links
+
+The phone apps can save an optional personal LinkedIn profile URL, open that profile, and hand a job search to LinkedIn. This is a saved link and external navigation, not an OAuth connection, verified account, profile import, or LinkedIn application integration. No LinkedIn password or access token is collected. Search sends only the explicitly entered public keyword/location query to LinkedIn.
+
+The profile API accepts optional `linkedin` independently of `website`. Only canonical personal `/in/` links on LinkedIn HTTPS hosts are accepted; tracking query/fragment components are removed and ambiguous paths, credentials, custom ports, malformed UTF-8, controls and Unicode format characters are refused. Omitting the field preserves a previous value for older clients; an explicit empty string clears it. `capabilities.linkedinProfile: true` advertises support. New clients with a nonblank link require that capability before syncing.
+
+A profile containing a LinkedIn URL requires `reviewSchema: 3` to prepare an eligible review. Approving or reapproving any review containing a LinkedIn URL also requires `reviewSchema: 3`, so an older phone cannot approve an undisplayed field in a recovered plan. The exact URL appears in `payloadSummary.linkedin`, the immutable snapshot and the authorized provider’s `urls[LinkedIn]` field. Portfolio links continue to use `urls[Portfolio]`. Profile edits invalidate earlier reviews. LinkedIn job URLs remain manual links.

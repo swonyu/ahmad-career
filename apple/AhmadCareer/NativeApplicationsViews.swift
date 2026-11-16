@@ -164,8 +164,10 @@ struct NativeApplicationsScreen: View {
                     .accessibilityLabel(reviewActionTitle)
                     .disabled(model.busy || model.connected && model.selected.isEmpty)
                     .opacity(model.busy || model.connected && model.selected.isEmpty ? 0.65 : 1)
-                    Text("Your details. Your choice. A receipt for every confirmed submission.")
-                        .font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
+                    if !dynamicTypeSize.isAccessibilitySize {
+                        Text("Your details. Your choice. A receipt for every confirmed submission.")
+                            .font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
+                    }
                 }.padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 10).background(.regularMaterial)
             }
         }
@@ -316,6 +318,10 @@ struct NativeApplicationsScreen: View {
             Label("A workspace for every career", systemImage: "globe").font(.subheadline.weight(.semibold))
             Text("Save opportunities from any country or profession. Auto Apply works with connected employers whose application requirements are supported. Other jobs open on the employer's website.")
                 .font(.caption).foregroundStyle(.secondary).lineSpacing(3)
+            if dynamicTypeSize.isAccessibilitySize {
+                Text("Your details. Your choice. A receipt for every confirmed submission.")
+                    .font(.caption2).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            }
             if !model.connected {
                 Text("Automatic submission needs an activated application service. Your phone workspace remains available while it is disconnected.")
                     .font(.caption).foregroundStyle(.secondary).lineSpacing(3)
@@ -327,15 +333,16 @@ struct NativeApplicationsScreen: View {
             Label(model.liveSubmissionEnabled == false ? "Auto Apply is not activated" : "Submission availability is unverified",
                   systemImage: "info.circle").font(.subheadline.weight(.semibold))
                 .fixedSize(horizontal: false, vertical: true)
+                .accessibilityIdentifier("applications.availability.heading")
             Text(model.liveSubmissionEnabled == false
                  ? "Your workspace is connected. Keep saving opportunities and preparing your profile. Automatic submission needs an activated employer integration; you can apply through employer links."
                  : "Your workspace is connected, but the service has not confirmed that live submission is available. Keep preparing your profile and checking employer links.")
                 .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             Button("Refresh availability") { Task { await model.refresh() } }
                 .font(.subheadline).disabled(model.busy)
+                .accessibilityIdentifier("applications.availability.refresh")
         }.padding(16).frame(maxWidth: .infinity, alignment: .leading)
             .background(ApplyDesign.card, in: RoundedRectangle(cornerRadius: 16))
-            .accessibilityIdentifier("applications.availability")
     }
     private func empty(icon: String, title: String, detail: String) -> some View {
         VStack(spacing: 15) {
@@ -452,6 +459,17 @@ struct NativeApplicationProfileEditor: View {
                     }
                 }
                 Section {
+                    TextField("LinkedIn profile (optional)", text: $draft.linkedin)
+                        .keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
+                        .focused($focusedField, equals: "linkedin").accessibilityIdentifier("application.linkedin")
+                    if let url = MobileApplicationPolicy.linkedInProfileURL(draft.linkedin) {
+                        Link(destination: url) { Label("Open LinkedIn profile", systemImage: "arrow.up.right.square") }
+                            .accessibilityIdentifier("application.openLinkedIn")
+                    }
+                } header: { Text("LinkedIn") } footer: {
+                    Text("Save your public profile link and review it before sharing it with an employer. This does not connect or verify your LinkedIn account. Opening LinkedIn uses its website or app.")
+                }
+                Section {
                     TextField("Target roles, separated by commas", text: $draft.targetRoles, axis: .vertical)
                         .focused($focusedField, equals: "roles")
                     TextField("Target country codes (optional)", text: $draft.targetCountries)
@@ -554,7 +572,8 @@ struct NativeApplicationProfileEditor: View {
             profileField("Email", profile.email); profileField("Phone", profile.phone)
             profileField("Location", [profile.city, profile.country].filter { !$0.isEmpty }.joined(separator: ", "))
             profileField("Headline", profile.headline); profileField("Skills", profile.skills)
-            profileField("Portfolio", profile.website); profileField("Career stage", profile.experienceLevel)
+            profileField("Portfolio", profile.website); profileField("LinkedIn profile", profile.linkedin)
+            profileField("Career stage", profile.experienceLevel)
             profileField("Target roles", profile.targetRoles); profileField("Target countries", profile.targetCountries)
             profileField("Work preferences", [profile.remote ? "Remote" : nil, profile.hybrid ? "Hybrid" : nil, profile.onsite ? "On site" : nil].compactMap { $0 }.joined(separator: ", "))
             profileField("CV", profile.resumeName)
@@ -763,7 +782,7 @@ private struct NativeApplicationReview: View {
         ApplicationReviewPolicy.eligible(item)
     }
     private var ready: Int { items.filter(eligible).count }
-    private let fieldLabels = ["name": "Name", "email": "Email", "phone": "Phone", "website": "Portfolio", "comments": "Message",
+    private let fieldLabels = ["name": "Name", "email": "Email", "phone": "Phone", "website": "Portfolio", "linkedin": "LinkedIn profile", "comments": "Message",
                                "consentStore": "Application data permission", "consentMarketing": "Future opportunities"]
     var body: some View {
         NavigationStack {

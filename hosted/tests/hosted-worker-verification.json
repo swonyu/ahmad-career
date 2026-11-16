@@ -1,13 +1,13 @@
 {
-  "observedAt": "2026-11-16T21:48:39.660Z",
+  "observedAt": "2026-11-16T22:24:13.604Z",
   "status": "passed",
-  "checks": 14,
+  "checks": 17,
   "scope": "Actual bundled application handler executing inside workerd with nodejs_compat, D1 and R2; local synthetic identity headers only.",
   "realEmployerRequests": 0,
   "sourceHashes": {
-    "server/applications.mjs": "b3b961c838bfb7c19a973043b463e87874cb27b0535a795e1356b1731dfbc052",
-    "server/provider.mjs": "4f17a0915f7111d33ff9a42eb1c764ebfce698d51aaf57fb6c8faf67507bf844",
-    "server/validation.mjs": "132624398e14fefe1cd36cab63a0cce45c3a35023ff85b0d069db6ebad8eb4b4",
-    "tests/hosted-worker.mjs": "00f9a1173e6099d2edc7b7cc53cc399000ecd2bd19621d60073139cbb22b10ba"
+    "server/applications.mjs": "4f349a17702c142a3a44ff5af4ca94ca63f9409684a7e6c88f34de9039aa7461",
+    "server/provider.mjs": "77dde77dd668fc77612f9aa97d70c23088ddd904597aadfd58f273d6ba610240",
+    "server/validation.mjs": "d415421ca818a7cb4674224c5af1150c6989e2cc9223deb7ec1ed361208ac2ee",
+    "tests/hosted-worker.mjs": "5a89e1b2d168c3589ba810f0c9516585dc667f2d94f6a8ba98f622ba5aacfb2f"
   }
 }

@@ -267,17 +267,24 @@ class CareerViewModel internal constructor(application: Application, private val
     fun saveProfile() = action {
         draftSave?.cancel()
         val captured = state.value.profile
+        // Keep even invalid or unsupported edits before validation or a service request.
+        persist()
         if (captured.country.isNotBlank()) require(captured.country.trim().matches(Regex("[A-Za-z]{2}"))) { "Use a two-letter country code, such as SA or GB." }
         if (captured.website.isNotBlank()) BoundaryPolicy.opportunityURL(captured.website.trim())
+        val linkedin = if (captured.linkedin.isEmpty()) "" else BoundaryPolicy.linkedinProfileURL(captured.linkedin)
         val connection = state.value.connection
         if (connection == null) {
-            mutable.update { it.copy(profileDirty = false) }
-            try { persist() } catch (error: Exception) { mutable.update { it.copy(profileDirty = true) }; throw error }
+            mutable.update { it.copy(profile = it.profile.copy(linkedin = linkedin), profileDirty = false) }
+            try { persist() } catch (error: Exception) { mutable.update { it.copy(profile = captured, profileDirty = true) }; throw error }
             mutable.update { it.copy(notice = "Profile saved privately on this phone.") }
         } else {
-            persist()
+            val supportsLinkedIn = state.value.linkedinProfile
+            require(supportsLinkedIn || (linkedin.isEmpty() && state.value.serverProfile?.linkedin.isNullOrEmpty())) {
+                "This service has not confirmed support for LinkedIn profile links. Your edits are kept on this phone. Refresh the connection or ask its operator to update the service."
+            }
             val response = try {
-                service.request(connection, "PUT", "profile", JSONObject().put("expectedRevision", captured.revision).put("profile", captured.apiJson()))
+                service.request(connection, "PUT", "profile", JSONObject().put("expectedRevision", captured.revision)
+                    .put("profile", captured.apiJson(includeLinkedIn = supportsLinkedIn)))
             } catch (error: ApiFailure) {
                 if (error.status == 409 && error.code == "stale_profile") {
                     refreshInternal()
@@ -455,6 +462,9 @@ class CareerViewModel internal constructor(application: Application, private val
         it.copy(answers = it.answers + (id to change(it.answers[id] ?: JobAnswers())))
     }
     fun invalidatePlan() = editReview { it }
+    private fun linkedReviewMatchesProfile(plan: ReviewPlan, profile: ProfileDraft): Boolean = profile.linkedin.isEmpty() ||
+        plan.items.filter { it.state in setOf("ready", "rate_limited") }.all { it.payload.safeString("linkedin") == profile.linkedin }
+    private val mismatchedLinkedInReview = "The review does not show your saved LinkedIn profile correctly. Refresh and prepare a new review before approving."
     fun reviewRecovered(plan: ReviewPlan) {
         if (state.value.busy || state.value.storageBlocked || state.value.requiresPairing) return
         if (plan.unapproved && plan.id in state.value.obsoleteReviews) {
@@ -463,6 +473,9 @@ class CareerViewModel internal constructor(application: Application, private val
         if (state.value.profileDirty) { mutable.update { it.copy(error = "Save or reload your profile before opening this saved review.") }; return }
         if (plan.expired() || plan.profileRevision != state.value.profile.revision) {
             mutable.update { it.copy(error = "This review is out of date. Refresh the workspace before continuing.") }; return
+        }
+        if (!linkedReviewMatchesProfile(plan, state.value.profile)) {
+            mutable.update { it.copy(plan = null, error = mismatchedLinkedInReview) }; return
         }
         mutable.update { it.copy(plan = plan, reviewingRecoveredPlan = true,
             notice = "Review the original details before approving any remaining application. Nothing was resumed automatically.") }
@@ -478,6 +491,7 @@ class CareerViewModel internal constructor(application: Application, private val
         val current = state.value
         val connection = current.connection ?: throw IllegalArgumentException("Pair this phone with your service to prepare an application.")
         require(!current.profileDirty) { "Save your profile first, so the review shows the exact saved details and PDF." }
+        require(current.profile.linkedin.isEmpty() || current.linkedinProfile) { "Refresh the service connection before preparing an application with a LinkedIn profile link." }
         val ids = current.jobs.filter { !it.localOnly && it.id in current.selected }.map(Opportunity::id)
         require(ids.isNotEmpty()) { "Select at least one synced opportunity." }
         require(ids.size <= 20) { "Review up to 20 opportunities in one batch." }
@@ -503,7 +517,10 @@ class CareerViewModel internal constructor(application: Application, private val
             mutable.update { it.copy(obsoleteReviews = it.obsoleteReviews - id) }
         }
         persist()
-        val response = service.request(connection, "POST", "prepare", JSONObject().put("jobIds", JSONArray(ids)).put("answers", answers).put("manualAppliedJobIds", JSONArray(current.manualApplied.filter { it in ids })))
+        val request = JSONObject().put("jobIds", JSONArray(ids)).put("answers", answers)
+            .put("manualAppliedJobIds", JSONArray(current.manualApplied.filter { it in ids }))
+            .apply { if (current.profile.linkedin.isNotEmpty()) put("reviewSchema", 3) }
+        val response = service.request(connection, "POST", "prepare", request)
         val prepared = ReviewPlan.fromJson(response.getJSONObject("plan"))
         val latest = state.value
         if (latest.connection != connection || latest.reviewGeneration != current.reviewGeneration ||
@@ -515,6 +532,7 @@ class CareerViewModel internal constructor(application: Application, private val
             }
             return@action
         }
+        require(linkedReviewMatchesProfile(prepared, current.profile)) { mismatchedLinkedInReview }
         mutable.update { it.copy(plan = prepared, reviewingRecoveredPlan = false,
             recoverablePlans = it.recoverablePlans.filterNot { previous -> previous.id in obsolete },
             notice = "Review prepared. Nothing has been submitted.") }
@@ -525,6 +543,7 @@ class CareerViewModel internal constructor(application: Application, private val
         require(current.liveEnabled || current.testService) { "Automatic employer sending is not enabled for this service. You can still apply directly on the employer’s site." }
         require(current.plan?.id == plan.id && current.plan.digest == plan.digest) { "Prepare a fresh review before applying." }
         require(!plan.expired() && !current.profileDirty && current.profile.revision == plan.profileRevision) { "This review has expired or your profile changed. Prepare it again." }
+        require(linkedReviewMatchesProfile(plan, current.profile)) { mismatchedLinkedInReview }
         require(plan.items.any(ReviewItem::canSubmitNow)) { "There are no applications ready to send. A rate-limited application must finish its cooldown first." }
         val connection = current.connection ?: throw IllegalArgumentException("Reconnect before applying.")
         // Only a new visible approval can supersede this phone's earlier stop intent.
@@ -532,7 +551,8 @@ class CareerViewModel internal constructor(application: Application, private val
         mutable.update { it.copy(continuationHolds = it.continuationHolds - plan.id) }
         persist()
         val incoming = try {
-            service.request(connection, "POST", "submit", JSONObject().put("planId", plan.id).put("digest", plan.digest).put("approved", true))
+            service.request(connection, "POST", "submit", JSONObject().put("planId", plan.id).put("digest", plan.digest).put("approved", true)
+                .apply { if (plan.items.any { it.payload.safeString("linkedin").isNotEmpty() }) put("reviewSchema", 3) })
                 .requiredObjects("attempts").map(ApplicationReceipt::fromServer)
         } catch (error: Exception) {
             mutable.update { it.copy(plan = null, activePlans = (it.activePlans + plan.id).distinct()) }
@@ -593,6 +613,7 @@ class CareerViewModel internal constructor(application: Application, private val
             receipts.map(ApplicationReceipt::id).distinct().size == receipts.size)
         val capabilities = response.optJSONObject("capabilities")
         serviceData(capabilities?.opt("liveEnabled") is Boolean && response.opt("mode") in setOf("test", "local"))
+        serviceData(!capabilities!!.has("linkedinProfile") || capabilities.opt("linkedinProfile") is Boolean)
         acceptedRefresh = sequence
         mutable.update { it.copy(
             profile = if (it.profileDirty && !forceProfile) it.profile else serverProfile,
@@ -604,6 +625,7 @@ class CareerViewModel internal constructor(application: Application, private val
             recoverablePlans = recovered,
             liveEnabled = capabilities!!.getBoolean("liveEnabled"),
             clientContinuation = capabilities.opt("dispatchContinuation") == "client",
+            linkedinProfile = capabilities.opt("linkedinProfile") == true,
             testService = response.safeString("mode") == "test",
             requiresPairing = false,
             notice = if (activePlans.isEmpty() && it.notice == "The service is processing your approved applications. Receipts show each actual outcome.")

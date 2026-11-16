@@ -57,9 +57,10 @@ private final class LifecycleSuite {
         }
         throw MobileApplicationError(message: "Timed out waiting for a deterministic fixture")
     }
-    func server(_ revision: Int, name: String = "Example", resume: ApplicationValue = .null) -> [String: ApplicationValue] {
+    func server(_ revision: Int, name: String = "Example", resume: ApplicationValue = .null, linkedin: String? = nil) -> [String: ApplicationValue] {
         var value = PhoneApplicationProfile(); value.firstName = name; value.email = "example@example.invalid"
         var object = value.payload(); object["revision"] = .number(Double(revision)); object["resume"] = resume
+        if let linkedin { object["linkedin"] = .string(linkedin) }
         return object
     }
     func metadata(_ profile: PhoneApplicationProfile) -> ApplicationValue {
@@ -76,13 +77,14 @@ private final class LifecycleSuite {
                    attempts: [[String: ApplicationValue]] = [], plans: [[String: ApplicationValue]] = [],
                    workspace: String = "workspace-a", resume: ApplicationValue = .null,
                    active: [String] = [], continuation: ApplicationValue? = nil,
-                   liveEnabled: ApplicationValue? = nil) -> [String: ApplicationValue] {
-        var value: [String: ApplicationValue] = ["ok": .bool(true), "workspaceId": .string(workspace), "profile": .object(server(revision, name: name, resume: resume)),
+                   liveEnabled: ApplicationValue? = nil, linkedInSupport: ApplicationValue? = nil, linkedin: String? = nil) -> [String: ApplicationValue] {
+        var value: [String: ApplicationValue] = ["ok": .bool(true), "workspaceId": .string(workspace), "profile": .object(server(revision, name: name, resume: resume, linkedin: linkedin)),
          "jobs": .array(jobs.map(ApplicationValue.object)), "attempts": .array(attempts.map(ApplicationValue.object)),
          "recoverablePlans": .array(plans.map(ApplicationValue.object)), "activePlanIds": .array(active.map(ApplicationValue.string)), "mode": .string("test")]
         var capabilities: [String: ApplicationValue] = [:]
         if let continuation { capabilities["dispatchContinuation"] = continuation }
         if let liveEnabled { capabilities["liveEnabled"] = liveEnabled }
+        if let linkedInSupport { capabilities["linkedinProfile"] = linkedInSupport }
         if !capabilities.isEmpty { value["capabilities"] = .object(capabilities) }
         return value
     }
@@ -93,6 +95,13 @@ private final class LifecycleSuite {
          "items": .array([.object(["jobId": .string("job-1"), "state": .string(itemState),
                                   "job": .object(["title": .string("Synthetic role"), "company": .string("Fixture")]),
                                   "payloadSummary": .object(["consentMarketing": .bool(false)])])])]
+    }
+    func linkedInReview(_ value: ApplicationValue?, state: String = "ready") -> [String: ApplicationValue] {
+        var plan = review("linkedin-review", itemState: state)
+        var item = plan["items"]!.array[0].object, summary = item["payloadSummary"]!.object
+        if let value { summary["linkedin"] = value }
+        item["payloadSummary"] = .object(summary); plan["items"] = .array([.object(item)])
+        return plan
     }
     func fixture(_ state: PhoneApplicationState, service: TestService, tokens: TestTokens? = nil,
                  factory: NativeApplicationsStore.ClientFactory? = nil,
@@ -107,6 +116,149 @@ private final class LifecycleSuite {
     func cleanup() { for folder in folders { try? FileManager.default.removeItem(at: folder) } }
 
     func run() async throws {
+        // Older stored drafts gain an empty LinkedIn field without changing their existing data.
+        do {
+            var state = try initial(); var draft = state.profile
+            draft.firstName = "Legacy person"; try draft.selectResume(pdf, filename: "Legacy.pdf")
+            state.retainDraft(draft, basedOn: 3)
+            let service = TestService(); let (_, folder, tokens) = try fixture(state, service: service)
+            var json = try JSONSerialization.jsonObject(with: JSONEncoder().encode(state)) as! [String: Any]
+            for key in ["profile", "latestServerProfile"] {
+                if var old = json[key] as? [String: Any] { old.removeValue(forKey: "linkedin"); json[key] = old }
+            }
+            try JSONSerialization.data(withJSONObject: json).write(to: folder.appendingPathComponent("phone-draft.json"))
+            let restored = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+            try check(restored.profile == draft && restored.profile.linkedin.isEmpty && restored.profileNeedsSync,
+                      "Profiles from before LinkedIn migrate with exact pending PDF bytes and original fields")
+            try check(restored.latestServerProfile?.linkedin == "" && restored.linkedInProfileSupported == nil,
+                      "Historical server profiles migrate without manufacturing current service capability")
+            scenarios += 1
+        }
+        // Unknown or explicitly unsupported services cannot silently drop a new link or a removal.
+        let unsupportedLinkedInServices: [ApplicationValue?] = [nil, .bool(false)]
+        for capability in unsupportedLinkedInServices {
+            let service = TestService()
+            service.handle = { _ in self.workspace(3, linkedInSupport: capability) }
+            let (store, folder, tokens) = try fixture(initial(), service: service)
+            await store.refresh()
+            var draft = store.profile; draft.linkedin = "https://sa.linkedin.com/in/Jos%C3%A9-42/?trk=discard"; draft.firstName = "Kept draft"
+            try draft.selectResume(pdf, filename: "LinkedIn.pdf")
+            let accepted = await store.saveProfile(draft, context: store.editContext)
+            try check(!accepted && !service.calls.contains(where: { $0.route == "profile" }), "An unsupported service receives no profile PUT containing a new link")
+            try check(store.profile.linkedin == "https://www.linkedin.com/in/Jos%C3%A9-42" && store.profile.resumeData == pdf && store.profileNeedsSync,
+                      "A refused LinkedIn sync keeps the canonical link, profile changes and exact CV bytes locally")
+            let restored = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+            try check(restored.profile == store.profile && restored.profileNeedsSync, "Unsupported-service drafts survive relaunch")
+            scenarios += 1
+        }
+        do {
+            let link = "https://www.linkedin.com/in/example-profile"
+            var state = try initial(); state.acknowledge(try ApplicationServerProfile(server(3, linkedin: link)))
+            let service = TestService(); service.handle = { _ in self.workspace(3, linkedin: link) }
+            let (store, _, _) = try fixture(state, service: service)
+            await store.refresh(); var draft = store.profile; draft.linkedin = ""
+            let accepted = await store.saveProfile(draft, context: store.editContext)
+            try check(!accepted && store.profile.linkedin.isEmpty && store.profileNeedsSync && !service.calls.contains(where: { $0.route == "profile" }),
+                      "Removing a known link on an unverified service remains an explicit preserved draft")
+            scenarios += 1
+        }
+        // Supported updates send exactly one canonical value and require that value in the acknowledgement.
+        for omitAcknowledgement in [false, true] {
+            let link = "https://www.linkedin.com/in/Jos%C3%A9-42"
+            let service = TestService()
+            service.handle = { call in
+                if call.route == "profile" { return ["ok": .bool(true), "profile": .object(self.server(4, linkedin: omitAcknowledgement ? nil : link))] }
+                return self.workspace(3, linkedInSupport: .bool(true))
+            }
+            let (store, _, _) = try fixture(initial(), service: service)
+            await store.refresh(); var draft = store.profile; draft.linkedin = "https://SA.linkedin.com:443/in/Jos%C3%A9-42/?tracking=discard#about"
+            let accepted = await store.saveProfile(draft, context: store.editContext)
+            let updates = service.calls.filter { $0.route == "profile" }
+            try check(updates.count == 1 && updates[0].body?["profile"]?.object["linkedin"] == .string(link),
+                      "A supported service receives exactly the canonical profile URL, without tracking or credentials")
+            try check(accepted == !omitAcknowledgement && store.profile.linkedin == link && store.profileNeedsSync == omitAcknowledgement,
+                      "A missing LinkedIn acknowledgement cannot erase the locally retained new link")
+            scenarios += 1
+        }
+        do {
+            let link = "https://www.linkedin.com/in/example-profile"
+            let service = TestService()
+            service.handle = { call in
+                if call.route == "profile" { return ["ok": .bool(true), "profile": .object(self.server(4, linkedin: ""))] }
+                return self.workspace(3, linkedInSupport: .bool(true), linkedin: link)
+            }
+            let (store, _, _) = try fixture(initial(), service: service)
+            await store.refresh(); var draft = store.profile; draft.linkedin = ""
+            let accepted = await store.saveProfile(draft, context: store.editContext)
+            try check(accepted && store.profile.linkedin.isEmpty && !store.profileNeedsSync,
+                      "A confirmed service supports explicit LinkedIn link removal")
+            try check(service.calls.last?.body?["profile"]?.object["linkedin"] == .string(""), "Removal sends an explicit empty profile field")
+            scenarios += 1
+        }
+        // A malformed new field or capability rejects the entire response and preserves previous evidence.
+        do {
+            let link = "https://www.linkedin.com/in/example-profile"
+            let service = TestService(); var response = workspace(3, linkedInSupport: .bool(true), linkedin: link)
+            service.handle = { _ in response }
+            let (store, folder, tokens) = try fixture(initial(), service: service)
+            await store.refresh()
+            let before = try Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))
+            for invalid in [ApplicationValue.null, .number(1), .string("true"), .array([]), .object([:])] {
+                response = workspace(4, name: "Must not replace", linkedInSupport: invalid, linkedin: link)
+                let accepted = await store.refresh()
+                try check(!accepted && store.linkedInProfileSupported == true && store.profile.firstName == "Example" && store.revision == 3,
+                          "Malformed LinkedIn capability cannot partially install a newer workspace")
+            }
+            for invalid in [ApplicationValue.null, .bool(false), .number(1), .string("https://linkedin.com.evil.example/in/person"), .string("https://www.linkedin.com/in/a%2Fb")] {
+                response = workspace(4, linkedInSupport: .bool(true))
+                var profile = response["profile"]!.object; profile["linkedin"] = invalid; response["profile"] = .object(profile)
+                let accepted = await store.refresh()
+                try check(!accepted && store.profile.linkedin == link && store.revision == 3,
+                          "Invalid server LinkedIn profile values are rejected without discarding the previous profile")
+            }
+            let after = try Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))
+            try check(after == before,
+                      "Rejected LinkedIn snapshots do not overwrite the saved phone workspace")
+            let restored = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+            try check(restored.profile.linkedin == link && restored.linkedInProfileSupported == nil,
+                      "Relaunch retains the profile link but requires fresh capability confirmation")
+            response = workspace(3, linkedin: link); await store.refresh()
+            try check(store.linkedInProfileSupported == nil, "Missing capability clears previously verified support")
+            response = workspace(3, linkedInSupport: .bool(true), linkedin: link); await store.refresh(); await store.disconnect()
+            try check(store.linkedInProfileSupported == nil && store.profile.linkedin == link, "Disconnect clears LinkedIn service capability while keeping the person's draft")
+            scenarios += 1
+        }
+        // Reviews must display the exact link and both prepare and approval negotiate schema three.
+        do {
+            let link = "https://www.linkedin.com/in/example-profile", ready = linkedInReview(.string("https://www.linkedin.com/in/example-profile"))
+            let job: [String: ApplicationValue] = ["id": .string("job-1"), "url": .string("https://jobs.example/role"), "title": .string("Role"), "company": .string("Fixture")]
+            let service = TestService(); var prepared = false, approved = false
+            service.handle = { call in
+                if call.route == "prepare" { prepared = true; return ["ok": .bool(true), "plan": .object(ready)] }
+                if call.route == "submit" { approved = true; return ["ok": .bool(true)] }
+                return self.workspace(3, jobs: [job], plans: prepared && !approved ? [ready] : [], linkedInSupport: .bool(true), linkedin: link)
+            }
+            let (store, _, _) = try fixture(initial(), service: service)
+            await store.refresh(); store.selected = ["job-1"]; await store.prepare()
+            try check(store.plan == ready && service.calls.first(where: { $0.route == "prepare" })?.body?["reviewSchema"] == .number(3),
+                      "Preparing with LinkedIn advertises the review field and retains the exact visible plan")
+            let submitted = await store.submitReviewed()
+            try check(submitted && service.calls.first(where: { $0.route == "submit" })?.body?["reviewSchema"] == .number(3),
+                      "Approval explicitly supports the LinkedIn field in the exact reviewed payload")
+            try check(service.calls.filter { $0.route == "submit" }.count == 1, "LinkedIn approval never creates an extra submission")
+            scenarios += 1
+        }
+        let unsafeLinkedInReviews: [ApplicationValue?] = [nil, .string(""), .string("https://www.linkedin.com/in/different-person"), .null, .bool(true), .string("https://evil.example/in/person")]
+        for candidate in unsafeLinkedInReviews {
+            let link = "https://www.linkedin.com/in/example-profile", plan = linkedInReview(candidate)
+            let service = TestService(); service.handle = { _ in self.workspace(3, plans: [plan], linkedInSupport: .bool(true), linkedin: link) }
+            let (store, _, _) = try fixture(initial(), service: service)
+            await store.refresh()
+            try check(!store.resumeReview(plan), "An omitted, different or malformed LinkedIn summary cannot be reopened for approval")
+            let submitted = await store.submitReviewed()
+            try check(!submitted && !service.calls.contains(where: { $0.route == "submit" }), "Unsafe LinkedIn review data produces no application approval")
+            scenarios += 1
+        }
         // A dirty revision must survive disk reload; a later GET cannot silently rebase it.
         do {
             var state = try initial(7); var draft = state.profile; draft.firstName = "Phone draft"

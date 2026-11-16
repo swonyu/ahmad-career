@@ -1,7 +1,7 @@
 {
-  "observedAt": "2026-11-16T21:48:55.203Z",
+  "observedAt": "2026-11-16T22:24:08.800Z",
   "status": "passed",
-  "checks": 38,
+  "checks": 42,
   "groups": [
     "Unconfigured production service exposes no live connector or fixture switch",
     "Identity, origin and unauthenticated boundaries; account GET is read-only",
@@ -40,18 +40,22 @@
     "PDF reservation quota remains atomic before concurrent R2 writes",
     "Account GET reports a changed platform email without rebasing data, revision, or prior approval",
     "Explicit pairing refreshes changed platform email and invalidates old approval until the profile is corrected",
+    "LinkedIn profile URLs are canonical, optional, separate from portfolio and preserved by older phone saves; invalid updates preserve data",
+    "Older clients cannot create or approve a recovered review containing an undisplayed LinkedIn URL; preparation sends nothing",
+    "An explicitly approved LinkedIn profile URL is included exactly in the immutable snapshot and provider multipart payload",
+    "Clearing a link invalidates prior approval; saved LinkedIn job URLs remain manual and never produce automatic-submission receipts",
     "Global free-service account cap is atomic rather than count-then-create"
   ],
-  "providerPosts": 8,
+  "providerPosts": 9,
   "realEmployerRequests": 0,
   "mode": "Actual Miniflare D1 and R2 bindings; production handler and provider mapping with injected synthetic HTTP dependency.",
   "fiveMiBPDF": true,
   "sourceHashes": {
-    "server/applications.mjs": "b3b961c838bfb7c19a973043b463e87874cb27b0535a795e1356b1731dfbc052",
-    "server/provider.mjs": "4f17a0915f7111d33ff9a42eb1c764ebfce698d51aaf57fb6c8faf67507bf844",
-    "server/validation.mjs": "132624398e14fefe1cd36cab63a0cce45c3a35023ff85b0d069db6ebad8eb4b4",
+    "server/applications.mjs": "4f349a17702c142a3a44ff5af4ca94ca63f9409684a7e6c88f34de9039aa7461",
+    "server/provider.mjs": "77dde77dd668fc77612f9aa97d70c23088ddd904597aadfd58f273d6ba610240",
+    "server/validation.mjs": "d415421ca818a7cb4674224c5af1150c6989e2cc9223deb7ec1ed361208ac2ee",
     "db/schema.ts": "b98d7529cf13e5c5958a6d1d9780e5648c2f6906025fd9d3936c9dc63eb8c07a",
-    "tests/hosted-applications.mjs": "de60fe73a22dc91c1198e977117ab674869e78472ac89fb307f13ba5f0d143bd",
+    "tests/hosted-applications.mjs": "4cc2f39e86d2559763de03072373d2aaf775af5f339404de3f84e467440f7159",
     "drizzle/0000_busy_plazm.sql": "5b1e4c5a7ddb05c71a53c112a57daaf9b4a15f58fa38e4b12df8d551bd9e7118",
     "drizzle/0001_smiling_maelstrom.sql": "d0e1b4cbea14b7dca1c1078911fa94c39db7960778bea637341d7bbee4ef9ef6",
     "drizzle/0002_concerned_inhumans.sql": "78823cf83e72da525ffd44e8ec76c524a813ff6eb278cbf6465e8a63fbc05fed"

@@ -1,0 +1,136 @@
+{
+  "reviewDate": "2026-11-16",
+  "status": "Implemented; scoped native regression verification passed; root publication pending",
+  "changes": [
+    "Persist incomplete add-opportunity drafts in the existing encrypted workspace, including explicit Keep draft / Discard / Keep editing choices.",
+    "Remove only local saved links after confirmation; clean their local selection, answers and self-reported status while preserving remote records and receipts.",
+    "Show Google through the hosted ChatGPT sign-in screen only for the default hosted service; custom-service guidance unchanged.",
+    "Make new confirmation text scrollable at large text sizes and retain visible actions."
+  ],
+  "finalArtifact": {
+    "bytes": 11694624,
+    "sha256": "a3effe4d6e8561f800e5dccc24e5fce0967aa3b5e2098a288387f9d3fff38c4d",
+    "package": "com.saleh.careerfinder.preview",
+    "versionCode": 5,
+    "versionName": "0.4.1",
+    "certificateSha256": "8790e9582889118f556fa287e8f031ee3d2f5221d25008ec5f399c8444c1de17",
+    "matchesImmutable04Signer": true,
+    "immutable04ApkSha256": "3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62",
+    "originalDebugKeystoreUnchanged": true,
+    "normalSystemTrustOnly": true,
+    "fixtureCaEntries": [],
+    "fileName": "Career-Finder-Android-0.4.1-preview.apk"
+  },
+  "testApkSha256": "4cb009381c3839107f5f94e943e986cb3bd08962cb312c818658cd6b406f1603",
+  "finalSourceManifest": "android-runtime-source-manifest.json",
+  "finalSourceManifestSha256": "b6c5d2f7d82c5191c81a388c45d5b561699fd12c945f3f252448d9389cdf5eac",
+  "sourceFileCount": 34,
+  "currentCloudSourceMatchesFinalManifest": true,
+  "verification": {
+    "compile": {
+      "normalAppAndInstrumentationKotlin": "passed",
+      "seconds": 20.688,
+      "firstAttempt": "Existing Gradle script lacked executable permission; preserved failure, then invoked it through bash without permission changes."
+    },
+    "javaBoundaryPolicy": {
+      "passed": 36,
+      "networkRequests": false,
+      "deviceUsed": false
+    },
+    "fullWorkspaceAndFocusedUi": {
+      "date": "2026-11-16T21:52:47.613251+00:00",
+      "tests": 19,
+      "passed": 18,
+      "failed": 1,
+      "workspaceTestsPassed": 17,
+      "appSha256": "293acd14a45fb77a2f8fdbb836e58f283292d3ce9269be8a5765876d56cf1a4d",
+      "testApkSha256": "f4059bc088569b12e0807eb6e15a87cb1df7be446cefc25bae1d544d3189125c",
+      "failure": "Draft UI test needed explicit scrolling to a virtualized saved-list item after its status banner changed the viewport. Failure log preserved.",
+      "sourceManifestSha256": "a77bb872c795a19206a5aee85a8680402c4b538f78b86b495860fdde6c49f015"
+    },
+    "finalFocusedUi": {
+      "date": "2026-11-16T21:57:48.774938+00:00",
+      "tests": 2,
+      "passed": 2,
+      "finalArtifactInstalledSha256": "a3effe4d6e8561f800e5dccc24e5fce0967aa3b5e2098a288387f9d3fff38c4d",
+      "buildSeconds": 26.187,
+      "testCases": [
+        {
+          "class": "com.saleh.careerfinder.PhonePolishAcceptanceTest",
+          "test": "unfinishedOpportunity_closeChoicesKeepAndDiscardOnlyTheDraft",
+          "code": 0
+        },
+        {
+          "class": "com.saleh.careerfinder.PhonePolishAcceptanceTest",
+          "test": "localOpportunityRemoval_requiresConfirmation_andPreservesOtherSavedRoles",
+          "code": 0
+        }
+      ]
+    },
+    "changesBetweenRuntimeManifests": [
+      "app/build.gradle.kts",
+      "app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt",
+      "app/src/main/java/com/saleh/careerfinder/MainActivity.kt"
+    ],
+    "unchangedWorkspaceLogicEvidence": "CareerViewModel.kt, Models.kt and WorkspaceRegressionTest.kt match the full passing 17-case run exactly. Final build changed only the version config, confirmation UI and its focused UI test helpers.",
+    "runtimeConfiguration": {
+      "nativePixels": [
+        1080,
+        1920
+      ],
+      "densityDpi": 480,
+      "widthDp": 360,
+      "fontScale": 1.8,
+      "darkMode": true,
+      "arabicAppLocale": true,
+      "forcedRtl": true,
+      "disposableAvd": true
+    },
+    "sourceInputsUnchangedAfterExecution": true
+  },
+  "visuals": {
+    "classification": "Synthetic regression screenshots; QA evidence only, not store screenshots",
+    "attempt1": "Initial screenshots retained; window-fade capture and clipped long confirmation bodies led to capture waiting and scrollable-body corrections.",
+    "attempt2": {
+      "unfinished-opportunity-choices": {
+        "width": 1080,
+        "height": 1920,
+        "bitDepth": 8,
+        "colorType": 2,
+        "bytes": 102154,
+        "sha256": "cd370502c0a3ebdaf3320a2237a62d31ac035284ae6f269f17e89c2340f5e301"
+      },
+      "remove-local-opportunity-confirmation": {
+        "width": 1080,
+        "height": 1920,
+        "bitDepth": 8,
+        "colorType": 2,
+        "bytes": 128234,
+        "sha256": "7583f7c337c48d55bc24edd970c763774c5cd2c5da623bb08b9b4eb4c4131bdf"
+      }
+    },
+    "removalCapture": "Intentionally scrolled to the complete preserved-records consequence statement; opportunity context remains available by scrolling up."
+  },
+  "cleanup": {
+    "bothOwnedEmulatorsStopped": true,
+    "bothOwnedAdbServersStopped": true,
+    "bothDisposableAvdDiskDirectoriesRemoved": true,
+    "ownedPortsClosed": [
+      5051,
+      5574,
+      5575
+    ],
+    "previousAvdConfigUnchanged": true,
+    "sharedAdb5037Unchanged": true,
+    "appleToolingUsed": false
+  },
+  "limits": [
+    "Synthetic isolated regression data only; no production account or employer request.",
+    "No physical-device, app-store signing, store upload, TalkBack session or new live employer submission verified.",
+    "Final preview retains Android Debug signing for compatibility; it is not a Play Store production-signed bundle."
+  ],
+  "publicationOwnership": "Root agent handles repository and preview release publication; this agent performed neither.",
+  "clientReviewDate": "2026-11-17",
+  "sourceCommit": "015b3fd3496dcef7090c3706eac7b6109ce79965",
+  "rootVisualReview": "Both final PNG originals inspected; draft choices fully visible and removal consequences scroll with both actions accessible."
+}

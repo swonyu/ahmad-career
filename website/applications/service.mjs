@@ -9,7 +9,7 @@ import {pairingSchema,issuePairingCode,normalizePairingCode} from './pairing.mjs
 
 const API='/api/apply/';
 const MAX_BODY=7*1024*1024+32768;
-const blankProfile={firstName:'',lastName:'',email:'',phone:'',city:'',country:'',headline:'',skills:[],targetRoles:[],targetCountries:[],workModes:[],experienceLevel:'any',website:'',resume:null};
+const blankProfile={firstName:'',lastName:'',email:'',phone:'',city:'',country:'',headline:'',skills:[],targetRoles:[],targetCountries:[],workModes:[],experienceLevel:'any',website:'',linkedin:'',resume:null};
 const json=value=>JSON.stringify(value);
 function equals(a,b){return typeof a==='string'&&typeof b==='string'&&a.length===b.length&&timingSafeEqual(Buffer.from(a),Buffer.from(b))}
 function jsonBody(req) {
@@ -114,7 +114,7 @@ export function createApplicationService({dataDir,configPath=process.env.CAREER_
   function readJob(id,workspace){const row=db.prepare('SELECT * FROM jobs WHERE id=? AND workspace_id=?').get(id,workspace);if(!row)fail('job_not_found','This opportunity is not in your workspace.',404);return {...JSON.parse(row.data_json),id:row.id};}
   function support(job,conf=config()) {return job.provider==='lever'?connectorFor(conf,job,env,now()):{supported:false,reason:'This employer uses a manual application form. Open the employer site to apply.'}}
   function jobView(job,conf=config()){const s=support(job,conf);return {...job,submissionSupported:s.supported,reason:s.reason??'',provider:job.provider??'manual'};}
-  function capabilities(){const conf=config();return {mode:adapter.mode,liveEnabled:adapter.mode==='local'&&conf.connectors.some(c=>env[c.apiKeyEnv]&&Object.entries(c.postings).some(([postingId])=>connectorFor(conf,{...c,postingId},env,now()).supported)),providers:conf.connectors.map(c=>({provider:'lever',region:c.region,site:c.site,connected:Boolean(env[c.apiKeyEnv]),reviewedPostingCount:Object.entries(c.postings).filter(([postingId])=>connectorFor(conf,{...c,postingId},env,now()).supported).length})),coverage:'Only employer-authorized integrations with current reviewed posting requirements can submit automatically.',storage:'Private local browser workspace',maxResumeBytes:5*1024*1024};}
+  function capabilities(){const conf=config();return {mode:adapter.mode,liveEnabled:adapter.mode==='local'&&conf.connectors.some(c=>env[c.apiKeyEnv]&&Object.entries(c.postings).some(([postingId])=>connectorFor(conf,{...c,postingId},env,now()).supported)),providers:conf.connectors.map(c=>({provider:'lever',region:c.region,site:c.site,connected:Boolean(env[c.apiKeyEnv]),reviewedPostingCount:Object.entries(c.postings).filter(([postingId])=>connectorFor(conf,{...c,postingId},env,now()).supported).length})),coverage:'Only employer-authorized integrations with current reviewed posting requirements can submit automatically.',storage:'Private local browser workspace',linkedinProfile:true,maxResumeBytes:5*1024*1024};}
   function attemptView(row){const s=JSON.parse(row.snapshot_json);return {id:row.id,attemptId:row.id,planId:row.plan_id,jobId:row.job_id,provider:s.job.provider,region:s.job.region,employerSite:s.job.site,site:s.job.site,postingId:s.job.postingId,company:s.job.company,title:s.job.title,url:s.job.url,state:row.state,createdAt:row.created_at,dispatchedAt:row.dispatched_at,confirmedAt:row.confirmed_at,...(row.state==='confirmed'?{applicationId:row.application_id}:{}),profileRevision:s.profileRevision,resumeSHA256:s.profile.resume?.sha256??null,payloadSHA256:s.payloadSHA256,requirementsRevision:s.requirements?.revision??null,responseSHA256:row.response_hash,mode:row.mode,evidenceMode:row.mode==='test'?'test':'live',...(row.retry_at?{retryAt:row.retry_at}:{}),dispatchCount:row.dispatch_count,error:row.error_code?{code:row.error_code,message:row.error_message}:null};}
   function attemptsFor(workspace,planId){const rows=planId?db.prepare('SELECT * FROM attempts WHERE workspace_id=? AND plan_id=? ORDER BY created_at,id').all(workspace,planId):db.prepare('SELECT * FROM attempts WHERE workspace_id=? ORDER BY created_at DESC,id').all(workspace);return rows.map(attemptView);}
   function planView(row){const attempts=new Map(db.prepare('SELECT * FROM attempts WHERE plan_id=?').all(row.id).map(r=>[r.id,r]));return {id:row.id,digest:row.digest,profileRevision:row.profile_revision,createdAt:row.created_at,expiresAt:row.expires_at,stopped:Boolean(row.stopped),approvedAt:row.approved_at,items:JSON.parse(row.items_json).map(item=>{const a=attempts.get(item.attemptId);return a?{...item,state:a.state,reason:a.error_message??item.reason,applicationId:a.state==='confirmed'?a.application_id:undefined,retryAt:a.retry_at}:item})};}
@@ -231,9 +231,10 @@ export function createApplicationService({dataDir,configPath=process.env.CAREER_
         send(res,existing?200:201,{ok:true,job:jobView({...job,id})});return true;
       }
       if(route==='prepare'&&req.method==='POST') {
-        const body=object(await jsonBody(req),['jobIds','answers','manualAppliedJobIds']);
+        const body=object(await jsonBody(req),['jobIds','answers','manualAppliedJobIds','reviewSchema']);
         if(!Array.isArray(body.jobIds)||!body.jobIds.length||body.jobIds.length>20||new Set(body.jobIds).size!==body.jobIds.length)fail('invalid_selection','Select between one and twenty distinct opportunities.');
         for(const id of body.jobIds)assertID(id,'Job identifier');
+        if(body.reviewSchema!==undefined&&body.reviewSchema!==3)fail('invalid_review_schema','Use the current application review format.');
         const answerMap=body.answers??{};object(answerMap,body.jobIds,'Answer map');
         const manualIds=body.manualAppliedJobIds??[];if(!Array.isArray(manualIds)||manualIds.some(id=>!body.jobIds.includes(id)))fail('invalid_selection','Manual application references must belong to the selected opportunities.');
         const p=JSON.parse(ws.profile_json),planId=randomUUID(),createdAt=iso(),expiresAt=new Date(now()+30*60000).toISOString(),conf=config(),items=[],attemptRows=[];
@@ -241,8 +242,8 @@ export function createApplicationService({dataDir,configPath=process.env.CAREER_
           const job=readJob(id,ws.id),answer=validateAnswers(answerMap[id]??{}),matched=support(job,conf),applicantHash=identity(p.email);
           retireExpiredRateLimits(ws.id,job.key);
           const prior=duplicate(ws.id,job.key);
-          let reason=manualIds.includes(id)?'Your tracker already records this application. Reconcile it before applying again.':prior?reasonForDuplicate(prior):requiredProfile(p)||(!matched.supported?matched.reason:requirementsError(p,answer,matched.requirements));
-          const payloadSummary={name:applicantName(p),email:p.email,phone:p.phone,website:p.website,comments:answer.comments,...(answer.consentStore===undefined?{}:{consentStore:answer.consentStore}),...(answer.consentMarketing===undefined?{}:{consentMarketing:answer.consentMarketing})};
+          let reason=manualIds.includes(id)?'Your tracker already records this application. Reconcile it before applying again.':prior?reasonForDuplicate(prior):requiredProfile(p)||(p.linkedin&&body.reviewSchema!==3?'Update Career Finder to review the LinkedIn profile link before approving this application.':null)||(!matched.supported?matched.reason:requirementsError(p,answer,matched.requirements));
+          const payloadSummary={name:applicantName(p),email:p.email,phone:p.phone,website:p.website,...(p.linkedin?{linkedin:p.linkedin}:{}),comments:answer.comments,...(answer.consentStore===undefined?{}:{consentStore:answer.consentStore}),...(answer.consentMarketing===undefined?{}:{consentMarketing:answer.consentMarketing})};
           const item={jobId:id,job:{id,title:job.title,company:job.company,url:job.url,location:job.location,country:job.country},title:job.title,company:job.company,state:reason?'blocked':'ready',reason:reason??'',payloadSummary,resume:safeProfile(p,ws.revision).resume,privacyPolicyUrl:matched.requirements?.privacyPolicyUrl??null,requirementsRevision:matched.requirements?.revision??null};
           if(!reason){const attemptId=randomUUID(),snapshot={job,profile:p,profileRevision:ws.revision,answers:answer,requirements:matched.requirements,mode:adapter.mode};snapshot.payloadSHA256=sha256(canonical({jobKey:job.key,profile:p,answers:answer,requirements:matched.requirements}));item.attemptId=attemptId;attemptRows.push({id:attemptId,job,applicantHash,snapshot})}
           items.push(item);
@@ -252,8 +253,10 @@ export function createApplicationService({dataDir,configPath=process.env.CAREER_
         send(res,201,{ok:true,plan:planView(db.prepare('SELECT * FROM plans WHERE id=?').get(planId))});return true;
       }
       if(route==='submit'&&req.method==='POST') {
-        const body=object(await jsonBody(req),['planId','digest','approved']);assertID(body.planId,'Plan identifier');
+        const body=object(await jsonBody(req),['planId','digest','approved','reviewSchema']);assertID(body.planId,'Plan identifier');
         const plan=db.prepare('SELECT * FROM plans WHERE id=? AND workspace_id=?').get(body.planId,ws.id);if(!plan)fail('plan_not_found','This review is not in your workspace.',404);
+        if(body.reviewSchema!==undefined&&body.reviewSchema!==3)fail('invalid_review_schema','Use the current application review format.');
+        if(JSON.parse(plan.items_json).some(item=>item.payloadSummary?.linkedin)&&body.reviewSchema!==3)fail('review_update_required','Update Career Finder to review the exact LinkedIn profile link before approving this application.',409);
         if(body.approved!==true||!equals(body.digest,plan.digest))fail('approval_required','Approve the exact current application review before submitting.',409);
         if(plan.stopped||Date.parse(plan.expires_at)<=now()||ws.revision!==plan.profile_revision)fail('stale_review','This review has expired, stopped, or changed. Prepare a new review.',409);
         const pending=db.prepare("SELECT * FROM attempts WHERE plan_id=? AND state IN ('ready','rate_limited')").all(plan.id);

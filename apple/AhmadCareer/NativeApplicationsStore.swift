@@ -58,6 +58,7 @@ final class NativeApplicationsStore: ObservableObject {
     @Published var message: String?
     @Published private(set) var mode = "local"
     @Published private(set) var liveSubmissionEnabled: Bool?
+    @Published private(set) var linkedInProfileSupported: Bool?
     @Published private(set) var requiresClientContinuation = false
     @Published private(set) var advancingApprovedApplication = false
     @Published var selected = Set<String>()
@@ -157,6 +158,7 @@ final class NativeApplicationsStore: ObservableObject {
         activePlanIDs = []; recoverablePlans = []; selected = []; answers = [:]; mode = "local"
         requiresClientContinuation = false
         liveSubmissionEnabled = nil
+        linkedInProfileSupported = nil
     }
     private func rotateConnection() {
         sessionGeneration = UUID(); contentGeneration = UUID(); refreshTicket = nil
@@ -171,7 +173,7 @@ final class NativeApplicationsStore: ObservableObject {
             message = error.localizedDescription
         } else if !(error is CancellationError) {
             if (error as? MobileApplicationError)?.code == "account_deleting" {
-                activePlanIDs = []; recoverablePlans = []; plan = nil; requiresClientContinuation = false; liveSubmissionEnabled = nil
+                activePlanIDs = []; recoverablePlans = []; plan = nil; requiresClientContinuation = false; liveSubmissionEnabled = nil; linkedInProfileSupported = nil
             }
             message = error.localizedDescription
         }
@@ -280,10 +282,12 @@ final class NativeApplicationsStore: ObservableObject {
             activePlanIDs = snapshot.activePlanIDs; recoverablePlans = snapshot.recoverablePlans; mode = snapshot.mode
             requiresClientContinuation = snapshot.requiresClientContinuation
             liveSubmissionEnabled = snapshot.liveSubmissionEnabled
+            linkedInProfileSupported = snapshot.linkedInProfileSupported
             mergeJobs()
             if let id = plan?["id"]?.string {
                 if !profileNeedsSync, let current = recoverablePlans.first(where: { $0["id"]?.string == id }),
-                   ApplicationReviewPolicy.current(current, revision: revision) { plan = current }
+                   ApplicationReviewPolicy.current(current, revision: revision),
+                   ApplicationReviewPolicy.linkedInMatchesProfile(current, link: profile.linkedin) { plan = current }
                 else { plan = nil }
             }
             return true
@@ -365,6 +369,13 @@ final class NativeApplicationsStore: ObservableObject {
         defer { finishOperation(operation) }
         let generation = sessionGeneration
         do {
+            var draft = draft
+            if !draft.linkedin.isEmpty {
+                guard let link = MobileApplicationPolicy.linkedInProfileURL(draft.linkedin) else {
+                    throw MobileApplicationError(message: "Use an HTTPS LinkedIn personal profile link, such as https://www.linkedin.com/in/your-name. Your edits are kept in this editor.")
+                }
+                draft.linkedin = link.absoluteString
+            }
             if draft.resumeChanged, !draft.resumeRemoved {
                 guard let data = draft.resumeData else { throw MobileApplicationError(message: "Choose your PDF again before saving this draft.") }
                 if let error = MobileApplicationPolicy.resumeError(data, filename: draft.resumeName) { throw MobileApplicationError(message: error) }
@@ -372,15 +383,21 @@ final class NativeApplicationsStore: ObservableObject {
             var next = state; next.retainDraft(draft, basedOn: context.revision)
             try persist(next); plan = nil
             guard let client else { message = "Your application draft is saved on this phone."; return true }
+            guard linkedInProfileSupported == true || (draft.linkedin.isEmpty && (state.latestServerProfile?.linkedin.isEmpty ?? true)) else {
+                throw MobileApplicationError(message: "This service has not confirmed support for LinkedIn profile links. Your edits are kept on this phone. Refresh the connection or ask its operator to update the service.")
+            }
             guard let expected = context.revision, !hasConflict(for: context) else {
                 throw MobileApplicationError(message: "Your phone draft is kept. Compare the latest service profile and choose which version to keep.")
             }
             let saved = try await client.request("profile", method: "PUT",
-                body: ["expectedRevision": .number(Double(expected)), "profile": .object(draft.payload())])
+                body: ["expectedRevision": .number(Double(expected)), "profile": .object(draft.payload(includeLinkedIn: linkedInProfileSupported == true))])
             guard generation == sessionGeneration else { return false }
             let server = try ApplicationServerProfile(saved["profile"]?.object ?? [:])
             guard server.revision == expected + 1 else {
                 throw MobileApplicationError(message: "The service did not confirm the expected profile version. Your phone draft is kept.")
+            }
+            guard linkedInProfileSupported != true || server.profile.linkedin == draft.linkedin else {
+                throw MobileApplicationError(message: "The service did not confirm your LinkedIn profile change. Your phone draft is kept; refresh before applying.")
             }
             var acknowledged = state; acknowledged.acknowledge(server)
             do { try persist(acknowledged) }
@@ -472,6 +489,9 @@ final class NativeApplicationsStore: ObservableObject {
     func prepare(manualAppliedURLs: Set<String> = [], replacingUnapprovedReview: Bool = false) async {
         guard let client else { message = "Connect your application service to review automatic submissions."; return }
         guard !profileNeedsSync, !profileEditing else { message = "Save or close your profile draft before preparing applications."; return }
+        guard profile.linkedin.isEmpty || linkedInProfileSupported == true else {
+            message = "Refresh the service connection before preparing an application with a LinkedIn profile link."; return
+        }
         guard !selected.isEmpty, let operation = beginOperation() else { message = "Select the opportunities you want to review."; return }
         defer { finishOperation(operation) }
         let generation = sessionGeneration
@@ -516,10 +536,12 @@ final class NativeApplicationsStore: ObservableObject {
             guard inputsAreCurrent() else {
                 throw MobileApplicationError(message: "Your choices changed while this review was being prepared. Review the current selection again.")
             }
-            let value = try await client.request("prepare", method: "POST", body: [
+            var body: [String: ApplicationValue] = [
                 "jobIds": .array(ids.map(ApplicationValue.string)), "answers": .object(mappedAnswers),
                 "manualAppliedJobIds": .array(manualIDs.map(ApplicationValue.string))
-            ])
+            ]
+            if !chosenProfile.linkedin.isEmpty { body["reviewSchema"] = .number(3) }
+            let value = try await client.request("prepare", method: "POST", body: body)
             guard generation == sessionGeneration else { return }
             guard inputsAreCurrent() else {
                 if let obsoleteID = value["plan"]?.object["id"]?.string {
@@ -531,7 +553,8 @@ final class NativeApplicationsStore: ObservableObject {
                 return
             }
             guard let prepared = value["plan"]?.object, prepared["id"]?.string != nil, prepared["digest"]?.string != nil,
-                  ApplicationReviewPolicy.current(prepared, revision: revision) else {
+                  ApplicationReviewPolicy.current(prepared, revision: revision),
+                  ApplicationReviewPolicy.linkedInMatchesProfile(prepared, link: chosenProfile.linkedin) else {
                 throw MobileApplicationError(message: "The application review could not be prepared with your current profile.")
             }
             plan = prepared; selected = Set(ids)
@@ -550,13 +573,16 @@ final class NativeApplicationsStore: ObservableObject {
         }
         guard !profileNeedsSync, !profileEditing else { message = "Save your current application details before approving a submission."; return false }
         guard let client, let plan, ApplicationReviewPolicy.current(plan, revision: revision),
+              ApplicationReviewPolicy.linkedInMatchesProfile(plan, link: profile.linkedin),
               let id = plan["id"]?.string, let digest = plan["digest"]?.string,
               plan["items"]?.array.contains(where: { ApplicationReviewPolicy.eligible($0.object) }) == true,
               let operation = beginOperation() else { message = "Refresh this review before approving it."; return false }
         defer { finishOperation(operation) }
         let generation = sessionGeneration
         do {
-            _ = try await client.request("submit", method: "POST", body: ["planId": .string(id), "digest": .string(digest), "approved": .bool(true)])
+            var body: [String: ApplicationValue] = ["planId": .string(id), "digest": .string(digest), "approved": .bool(true)]
+            if ApplicationReviewPolicy.includesLinkedIn(plan) { body["reviewSchema"] = .number(3) }
+            _ = try await client.request("submit", method: "POST", body: body)
             guard generation == sessionGeneration else { return false }
             self.plan = nil
             message = "Your approved applications are processing. Confirmed receipts will appear here."
@@ -587,7 +613,8 @@ final class NativeApplicationsStore: ObservableObject {
         guard !busy, !profileNeedsSync, !profileEditing else { message = "Save or close your profile draft before continuing a review."; return false }
         guard let id = review["id"]?.string,
               let current = recoverablePlans.first(where: { $0["id"]?.string == id && $0["digest"] == review["digest"] }),
-              ApplicationReviewPolicy.current(current, revision: revision) else {
+              ApplicationReviewPolicy.current(current, revision: revision),
+              ApplicationReviewPolicy.linkedInMatchesProfile(current, link: profile.linkedin) else {
             message = "This review is no longer current. Refresh your applications."; return false
         }
         plan = current

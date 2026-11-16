@@ -5,6 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -31,6 +35,81 @@ public final class BoundaryPolicy {
         URI uri = httpsURI(input);
         String normalized = uri.toASCIIString();
         return uri.getRawFragment() == null ? normalized : normalized.substring(0, normalized.indexOf('#'));
+    }
+
+    /** A saved public profile link is not an OAuth session or proof of account ownership. */
+    public static String linkedinProfileURL(String input) {
+        if (input == null || input.codePoints().anyMatch(c -> Character.isWhitespace(c) || Character.isSpaceChar(c) || Character.isISOControl(c) || Character.getType(c) == Character.FORMAT))
+            throw new IllegalArgumentException("Enter a LinkedIn profile link without spaces or control characters.");
+        URI uri = httpsURI(input);
+        String host = uri.getHost().toLowerCase(Locale.ROOT);
+        if (!(host.equals("linkedin.com") || host.equals("www.linkedin.com") ||
+              host.matches("[a-z]{2,3}\\.linkedin\\.com")) ||
+            (uri.getPort() != -1 && uri.getPort() != 443)) {
+            throw new IllegalArgumentException("Use an HTTPS LinkedIn personal profile link, such as https://www.linkedin.com/in/your-name.");
+        }
+        String ascii = uri.toASCIIString();
+        if (decodeURLPart(ascii).codePoints().anyMatch(c -> Character.isISOControl(c) || Character.getType(c) == Character.FORMAT))
+            throw new IllegalArgumentException("The LinkedIn link must not contain control characters.");
+        String path = URI.create(ascii).getRawPath();
+        if (path == null || !path.startsWith("/in/"))
+            throw new IllegalArgumentException("Use a LinkedIn personal profile link beginning with /in/.");
+        String slug = path.substring(4);
+        if (slug.endsWith("/")) slug = slug.substring(0, slug.length() - 1);
+        slug = decodeURLPart(slug);
+        if (slug.isEmpty() || slug.equals(".") || slug.equals("..") || slug.indexOf('/') >= 0 ||
+            slug.indexOf('\\') >= 0 || slug.indexOf('%') >= 0 ||
+            slug.codePoints().anyMatch(c -> Character.isWhitespace(c) || Character.isSpaceChar(c) || Character.isISOControl(c))) {
+            throw new IllegalArgumentException("Use one LinkedIn profile name after /in/, without spaces or extra path segments.");
+        }
+        String canonical = "https://www.linkedin.com/in/" + encodeProfileSlug(slug);
+        if (canonical.length() > 2048) throw new IllegalArgumentException("Use a shorter LinkedIn personal profile link.");
+        return canonical;
+    }
+
+    private static String encodeProfileSlug(String value) {
+        final char[] hex = "0123456789ABCDEF".toCharArray();
+        StringBuilder encoded = new StringBuilder();
+        for (byte octet : value.getBytes(StandardCharsets.UTF_8)) {
+            int c = octet & 0xff;
+            if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9' || c == '-' || c == '.' || c == '_' || c == '~')
+                encoded.append((char)c);
+            else encoded.append('%').append(hex[c >> 4]).append(hex[c & 15]);
+        }
+        return encoded.toString();
+    }
+
+    private static String decodeURLPart(String value) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            if (c == '%') {
+                if (i + 2 >= value.length()) throw new IllegalArgumentException("The LinkedIn link has invalid encoding.");
+                int high = Character.digit(value.charAt(++i), 16), low = Character.digit(value.charAt(++i), 16);
+                if (high < 0 || low < 0) throw new IllegalArgumentException("The LinkedIn link has invalid encoding.");
+                bytes.write(high * 16 + low);
+            } else {
+                if (c > 127) throw new IllegalArgumentException("The LinkedIn link has invalid encoding.");
+                bytes.write(c);
+            }
+        }
+        try {
+            return StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT)
+                .onUnmappableCharacter(CodingErrorAction.REPORT).decode(ByteBuffer.wrap(bytes.toByteArray())).toString();
+        } catch (CharacterCodingException error) { throw new IllegalArgumentException("The LinkedIn link has invalid encoding."); }
+    }
+
+    /** Encodes only the public search terms supplied by the user; no profile or account fields. */
+    public static String linkedinJobSearchURL(String keywords, String location) {
+        String terms = keywords == null ? "" : keywords.trim();
+        String place = location == null ? "" : location.trim();
+        if (terms.length() > 120 || place.length() > 100)
+            throw new IllegalArgumentException("Shorten the job-search terms or location.");
+        try {
+            String query = terms.isEmpty() ? "" : "keywords=" + URLEncoder.encode(terms, "UTF-8");
+            if (!place.isEmpty()) query += (query.isEmpty() ? "" : "&") + "location=" + URLEncoder.encode(place, "UTF-8");
+            return "https://www.linkedin.com/jobs/search/" + (query.isEmpty() ? "" : "?" + query);
+        } catch (java.io.UnsupportedEncodingException impossible) { throw new IllegalStateException(impossible); }
     }
 
     private static URI httpsURI(String input) {

@@ -52,7 +52,9 @@ struct NativeCareerRoot: View {
         }
         .safeAreaInset(edge: .top, spacing: 0) {
             if CareerAppEnvironment.isUIAcceptance {
-                Text("Offline UI acceptance · synthetic data").font(.caption2).padding(4).frame(maxWidth: .infinity)
+                // Test-only provenance must not obscure or resize the production accessibility layout.
+                Text("Offline UI acceptance · synthetic data").font(.system(size: 11, weight: .medium))
+                    .lineLimit(1).padding(4).frame(maxWidth: .infinity)
                     .background(Color.yellow.opacity(0.2)).accessibilityIdentifier("acceptance.offline")
             }
             if let error = store.storageError {
@@ -515,6 +517,7 @@ private struct NativePrivacyScreen: View {
             Section("Information on this phone") {
                 Text("Planning notes, earlier self-entered tracking records and preparation steps stay on this device. Search keeps your board choices, search fields and public results locally. Saved shows both your application opportunities and any earlier local records.")
                 Text("Your application workspace keeps a phone draft and your selected PDF. The same application profile is reachable from Start, Profile and Apply. Connecting does not upload that draft. Saving to a connected service sends the applicant fields and selected CV; adding opportunities and preparing reviews sends the links and choices you provide. The phone connection token is stored in Keychain.")
+                Text("A LinkedIn profile link is optional. It is saved with your application profile and appears in the details you review before sharing with an employer. Saving a link does not connect or verify a LinkedIn account, import its content or grant account access.")
             }
             Section("Connected application workspace") {
                 if MobileApplicationPolicy.isHostedService(applications.serviceAddress) {
@@ -529,6 +532,7 @@ private struct NativePrivacyScreen: View {
             Section("Employer searches and links") {
                 Text("Search uses the public Career Finder discovery service to retrieve postings from your selected Greenhouse and Lever employer boards. It receives the role words, location text and board choices you enter, along with normal connection information. No application token, account cookie, email, applicant profile or CV is sent. Public board metadata is cached by the service; search words are not forwarded to employers but may appear in ordinary hosting request logs.")
                 Text("Opening an employer, LinkedIn or salary-source link takes you to an external website governed by its own privacy policy. Any application or account you create there is managed by that provider.")
+                Text("Search LinkedIn opens its public job search with only the keyword and location text you entered. No application profile, CV or Career Finder connection token is included in that link. Applications completed on LinkedIn remain manual records in Career Finder unless a supported employer provider independently returns a receipt.")
             }
             Section("Sharing and beta feedback") {
                 Text("Exported notes include your entered professional details and tracked roles, and exclude country/city/role, planning and display preferences. They leave the app only when you choose a destination in the system share sheet. Review the content before sharing.")

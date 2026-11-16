@@ -38,6 +38,29 @@ export function publicURL(value) {
   u.hash = '';
   return u.href;
 }
+/** A user-supplied profile URL is neither an OAuth connection nor proof of ownership. */
+export function linkedinProfileURL(value) {
+  const invalid = () => fail('invalid_linkedin', 'Use an HTTPS LinkedIn personal profile link, such as https://www.linkedin.com/in/your-name.');
+  if (typeof value !== 'string' || value.length > 2048 || /[\x00-\x20\x7f\\]/.test(value)) invalid();
+  // Inspect the original path: URL parsing would otherwise silently remove dot segments.
+  const parts = value.match(/^https:\/\/((?:www\.|[a-z]{2,3}\.)?linkedin\.com(?::443)?)([^?#]*)(?:\?[^#]*)?(?:#.*)?$/i);
+  if (!parts) invalid();
+  let decoded, slug;
+  try {
+    decoded = decodeURIComponent(value);
+    const path = parts[2].match(/^\/in\/([^/]+)\/?$/);
+    if (!path) invalid();
+    slug = decodeURIComponent(path[1]);
+  } catch { invalid(); }
+  if (/[\x00-\x1f\x7f-\x9f]|\p{Cf}/u.test(decoded) || !slug || slug === '.' || slug === '..' || /[/\\%\s\x00-\x1f\x7f-\x9f]/u.test(slug)) invalid();
+  // RFC 3986 unreserved bytes only, matching the native phone review contract.
+  let encoded;
+  try { encoded = encodeURIComponent(slug).replace(/[!'()*]/g, c => `%${c.charCodeAt(0).toString(16).toUpperCase()}`); }
+  catch { invalid(); }
+  const result = `https://www.linkedin.com/in/${encoded}`;
+  if (result.length > 2048) invalid();
+  return result;
+}
 export function leverTarget(value) {
   const url = new URL(publicURL(value));
   const region = url.hostname === 'jobs.lever.co' ? 'global' : url.hostname === 'jobs.eu.lever.co' ? 'eu' : null;
@@ -51,12 +74,12 @@ export function resume(value) {
   object(value, ['name','mime','dataBase64'], 'Résumé');
   const name = text(value.name, 'Résumé filename', 180, false);
   if (!/\.pdf$/i.test(name) || /[/\\:]/.test(name) || name.startsWith('.')) fail('invalid_resume', 'Choose a PDF résumé with a plain filename.');
-  if (value.mime !== 'application/pdf' || typeof value.dataBase64 !== 'string' || value.dataBase64.length > Math.ceil(5*1024*1024/3)*4 || !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(value.dataBase64)) fail('invalid_resume', 'Choose a PDF résumé no larger than 5 MiB.');
+  if (value.mime !== 'application/pdf' || typeof value.dataBase64 !== 'string' || value.dataBase64.length > Math.ceil(5*1024*1024/3)*4) fail('invalid_resume', 'Choose a PDF résumé no larger than 5 MiB.');
   const bytes = Buffer.from(value.dataBase64,'base64');
   if (bytes.length < 8 || bytes.length > 5*1024*1024 || bytes.subarray(0,5).toString('ascii') !== '%PDF-' || bytes.toString('base64') !== value.dataBase64) fail('invalid_resume', 'The uploaded résumé is not a valid PDF byte stream.');
   return {name,mime:'application/pdf',dataBase64:value.dataBase64,size:bytes.length,sha256:sha256(bytes)};
 }
-export const profileFields = ['firstName','lastName','email','phone','city','country','headline','skills','targetRoles','targetCountries','workModes','experienceLevel','website','resume'];
+export const profileFields = ['firstName','lastName','email','phone','city','country','headline','skills','targetRoles','targetCountries','workModes','experienceLevel','website','linkedin','resume'];
 export function profile(input, previous = {}) {
   object(input, profileFields, 'Profile');
   const p = {};
@@ -71,11 +94,13 @@ export function profile(input, previous = {}) {
   p.experienceLevel = input.experienceLevel ?? 'any';
   if (!['entry','mid','senior','any'].includes(p.experienceLevel)) fail('invalid_field','Choose an experience level from the list.');
   p.website = input.website ? publicURL(input.website) : '';
+  // Older clients omit the new field; an explicit empty string is the only clear operation.
+  p.linkedin = input.linkedin === undefined ? previous.linkedin ?? '' : input.linkedin === '' ? '' : linkedinProfileURL(input.linkedin);
   p.resume = input.resume === undefined ? previous.resume ?? null : input.resume === null ? null : resume(input.resume);
   return p;
 }
 export function safeProfile(p, revision) {
-  const copy = {...p,revision};
+  const copy = {...p,linkedin:p.linkedin??'',revision};
   if (copy.resume) { const {dataBase64,...metadata} = copy.resume; copy.resume=metadata; }
   return copy;
 }

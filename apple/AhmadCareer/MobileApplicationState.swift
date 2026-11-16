@@ -12,6 +12,11 @@ struct ApplicationServerProfile {
               }), value["resume"] != nil else {
             throw MobileApplicationError(message: "The service returned an incomplete profile. Your phone draft is preserved.")
         }
+        if let linkedin = value["linkedin"] {
+            guard let text = linkedin.string, text.isEmpty || MobileApplicationPolicy.linkedInProfileURL(text) != nil else {
+                throw MobileApplicationError(message: "The service returned an invalid LinkedIn profile link. Your phone draft is preserved.")
+            }
+        }
         if value["resume"] != .null {
             guard case .object(let resume)? = value["resume"], let name = resume["name"]?.string,
                   !name.isEmpty, name.lowercased().hasSuffix(".pdf"), resume["mime"]?.string == "application/pdf",
@@ -33,6 +38,7 @@ struct ApplicationWorkspaceSnapshot {
     let activePlanIDs: [String]
     let mode: String
     let liveSubmissionEnabled: Bool?
+    let linkedInProfileSupported: Bool?
     let requiresClientContinuation: Bool
     init(_ value: [String: ApplicationValue], workspaceID: String) throws {
         func invalid() -> MobileApplicationError {
@@ -50,11 +56,16 @@ struct ApplicationWorkspaceSnapshot {
               active.allSatisfy({ !($0.string?.isEmpty ?? true) }), let mode = value["mode"]?.string, !mode.isEmpty else { throw invalid() }
         var continuation: String?
         var liveEnabled: Bool?
+        var linkedInSupported: Bool?
         if let capabilities = value["capabilities"] {
             guard case .object(let fields) = capabilities else { throw invalid() }
             if let declared = fields["liveEnabled"] {
                 guard case .bool(let enabled) = declared else { throw invalid() }
                 liveEnabled = enabled
+            }
+            if let declared = fields["linkedinProfile"] {
+                guard case .bool(let supported) = declared else { throw invalid() }
+                linkedInSupported = supported
             }
             if let declared = fields["dispatchContinuation"] {
                 guard let name = declared.string else { throw invalid() }
@@ -74,6 +85,7 @@ struct ApplicationWorkspaceSnapshot {
         self.profile = try ApplicationServerProfile(profile); self.jobs = jobs; self.attempts = attempts
         recoverablePlans = plans; activePlanIDs = active.compactMap(\.string); self.mode = mode
         liveSubmissionEnabled = liveEnabled
+        linkedInProfileSupported = linkedInSupported
         requiresClientContinuation = continuation == "client"
     }
 }
@@ -208,7 +220,8 @@ struct ApplicationReviewSummary: Identifiable {
     let value: [String: ApplicationValue]
     let id: String
     init?(_ value: [String: ApplicationValue]) {
-        guard let id = value["id"]?.string, !id.isEmpty, value["digest"]?.string != nil else { return nil }
+        guard let id = value["id"]?.string, !id.isEmpty, value["digest"]?.string != nil,
+              ApplicationReviewPolicy.validLinkedInDetails(value) else { return nil }
         self.value = value; self.id = id
     }
     var items: [[String: ApplicationValue]] { value["items"]?.array.map(\.object) ?? [] }
@@ -216,6 +229,28 @@ struct ApplicationReviewSummary: Identifiable {
 }
 
 enum ApplicationReviewPolicy {
+    static func validLinkedInDetails(_ plan: [String: ApplicationValue]) -> Bool {
+        guard case .array(let items)? = plan["items"] else { return false }
+        return items.allSatisfy { item in
+            guard case .object(let fields) = item else { return false }
+            guard let summary = fields["payloadSummary"] else { return true }
+            guard case .object(let details) = summary else { return false }
+            guard let linkedin = details["linkedin"] else { return true }
+            guard let text = linkedin.string else { return false }
+            return text.isEmpty || MobileApplicationPolicy.linkedInProfileURL(text) != nil
+        }
+    }
+    static func includesLinkedIn(_ plan: [String: ApplicationValue]) -> Bool {
+        plan["items"]?.array.contains { !($0.object["payloadSummary"]?.object["linkedin"]?.string ?? "").isEmpty } == true
+    }
+    static func linkedInMatchesProfile(_ plan: [String: ApplicationValue], link: String) -> Bool {
+        guard validLinkedInDetails(plan) else { return false }
+        return plan["items"]?.array.allSatisfy { value in
+            let item = value.object
+            guard ["ready", "rate_limited"].contains(item["state"]?.string ?? "") else { return true }
+            return (item["payloadSummary"]?.object["linkedin"]?.string ?? "") == link
+        } == true
+    }
     static func date(_ value: String?) -> Date? {
         guard let value else { return nil }
         let formatter = ISO8601DateFormatter()

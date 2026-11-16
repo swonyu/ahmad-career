@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-11-16T22:24:23.397475+00:00",
+  "scope": "Independent read-only review of LinkedIn backend changes and regression source. No code edits, external requests, real employer applications, or publication performed.",
+  "conclusion": "No concrete material defect found in the reviewed backend changes.",
+  "materialFindings": [],
+  "verifiedByInspection": [
+    "Old-client omitted profile.linkedin preserves the previous stored link; explicit blank clears it; nonstring updates reject.",
+    "A linked profile requires reviewSchema3 in preparation, and a plan containing that link requires reviewSchema3 on every submit/reapproval path.",
+    "Updating or clearing the profile increments its revision, invalidating older reviews before dispatch.",
+    "Provider payload uses snapshot.profile.linkedin, not the subsequently editable current profile. Portfolio remains a distinct field.",
+    "LinkedIn links are included in payload summaries, immutable snapshots and digest input.",
+    "Existing records without the new field can still be read with a blank public-profile field; no write migration occurs on GET.",
+    "Manual LinkedIn job URLs bypass provider fetching and cannot create automatic-submission attempts.",
+    "Workspace authorization and duplicate-prevention identity remain unchanged by the profile URL addition."
+  ],
+  "independentRuntimeChecks": {
+    "result": "PASS",
+    "scope": "Pure exported validation functions, both hosted and companion; no service state writes.",
+    "unicodeFormatScalarsRejected": 170,
+    "canonicalLength2048": "accepted",
+    "canonicalLength2049": "rejected",
+    "canonicalIdempotence": [
+      "decomposed Unicode Jose%CC%81",
+      "supplementary Unicode scalar",
+      "encoded question mark in slug",
+      "removed query and fragment"
+    ],
+    "migration": [
+      "omitted link preserves",
+      "blank clears",
+      "null/false/number/list/object reject"
+    ]
+  },
+  "limitations": [
+    "The full service suites were inspected but not rerun here because root already owns the current regression run and generated evidence.",
+    "This review does not establish actual LinkedIn OAuth access or live employer integration authorization.",
+    "In-progress source fingerprints below bind this review snapshot; later source changes require reassessment."
+  ],
+  "sourceFingerprints": [
+    {
+      "path": "career-finder-service/server/validation.mjs",
+      "bytes": 9054,
+      "sha256": "d415421ca818a7cb4674224c5af1150c6989e2cc9223deb7ec1ed361208ac2ee"
+    },
+    {
+      "path": "career-finder-service/server/applications.mjs",
+      "bytes": 48094,
+      "sha256": "4f349a17702c142a3a44ff5af4ca94ca63f9409684a7e6c88f34de9039aa7461"
+    },
+    {
+      "path": "career-finder-service/server/provider.mjs",
+      "bytes": 8984,
+      "sha256": "77dde77dd668fc77612f9aa97d70c23088ddd904597aadfd58f273d6ba610240"
+    },
+    {
+      "path": "career-finder-service/tests/linkedin-profile.mjs",
+      "bytes": 3615,
+      "sha256": "8696add7c7a85e97f6a535fd86f304c1dd4182dc0deaedec2940704d32a2a087"
+    },
+    {
+      "path": "career-finder-service/tests/hosted-applications.mjs",
+      "bytes": 46239,
+      "sha256": "4cc2f39e86d2559763de03072373d2aaf775af5f339404de3f84e467440f7159"
+    },
+    {
+      "path": "career-finder-service/tests/hosted-worker.mjs",
+      "bytes": 6771,
+      "sha256": "5a89e1b2d168c3589ba810f0c9516585dc667f2d94f6a8ba98f622ba5aacfb2f"
+    },
+    {
+      "path": "career-finder/website/applications/validation.mjs",
+      "bytes": 9054,
+      "sha256": "d415421ca818a7cb4674224c5af1150c6989e2cc9223deb7ec1ed361208ac2ee"
+    },
+    {
+      "path": "career-finder/website/applications/service.mjs",
+      "bytes": 36826,
+      "sha256": "b1ee08ca211a9615bfba47cc271a3340e51ec05f8827b614c2e40b0cdc3ecfa1"
+    },
+    {
+      "path": "career-finder/website/applications/lever.mjs",
+      "bytes": 10350,
+      "sha256": "c5f31e60f921e9ba6029340e558abf3eee9f7bf5c55ea209f866b8339a190ccf"
+    },
+    {
+      "path": "career-finder/website/applications-check.mjs",
+      "bytes": 37966,
+      "sha256": "52c9d4a795677d6946356f2b319dd92257eddeeee9efd5eee69bc8d37d630642"
+    }
+  ]
+}

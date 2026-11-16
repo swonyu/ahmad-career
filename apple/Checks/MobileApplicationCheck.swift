@@ -31,6 +31,43 @@ struct MobileApplicationCheck {
             check(MobileApplicationPolicy.jobURL(value) == nil, "Unsafe job link rejected")
         }
         check(MobileApplicationPolicy.jobURL("https://jobs.example.com/opportunities/1") != nil, "Public HTTPS opportunity accepted")
+        let linkedInVectors = [
+            ("HTTPS://SA.LINKEDIN.COM:443/in/Jos%C3%A9-42/?trk=x#about", "https://www.linkedin.com/in/Jos%C3%A9-42"),
+            ("https://linkedin.com/in/سلام", "https://www.linkedin.com/in/%D8%B3%D9%84%D8%A7%D9%85"),
+            ("https://www.linkedin.com/in/a+b", "https://www.linkedin.com/in/a%2Bb"),
+            ("https://www.linkedin.com/in/a%3Fb", "https://www.linkedin.com/in/a%3Fb"),
+            ("https://linkedin.com/in/alice%2Dsmith", "https://www.linkedin.com/in/alice-smith"),
+            ("https://www.linkedin.com/in/a%23b/", "https://www.linkedin.com/in/a%23b"),
+            ("https://abc.linkedin.com/in/profile-42/?tracking=discarded", "https://www.linkedin.com/in/profile-42")
+        ]
+        for (input, expected) in linkedInVectors {
+            check(MobileApplicationPolicy.linkedInProfileURL(input)?.absoluteString == expected, "LinkedIn links share a canonical HTTPS profile URL")
+            check(MobileApplicationPolicy.linkedInProfileURL(expected)?.absoluteString == expected, "Canonical LinkedIn links are stable")
+        }
+        check(MobileApplicationPolicy.linkedInProfileURL("https://www.linkedin.com/in/" + String(repeating: "س", count: 400)) == nil,
+              "A short Unicode input cannot expand beyond the supported canonical URL length")
+        let boundedUnicode = MobileApplicationPolicy.linkedInProfileURL("https://www.linkedin.com/in/" + String(repeating: "س", count: 300))!
+        check(MobileApplicationPolicy.linkedInProfileURL(boundedUnicode.absoluteString) == boundedUnicode,
+              "An accepted long Unicode URL remains valid on service readback")
+        for suffix in ["a%2Fb", "a%5Cb", "a%252Fb", "a%20b", "a%C2%A0b", "%2E", "..", "a%FF", "a%", "a%0Ab", "a%7Fb", "a%C2%85b", "a/b", "a//", "", "a b", "a\u{00a0}b", "a%E2%80%AEb", "a\u{200b}b", "a\u{200d}b"] {
+            check(MobileApplicationPolicy.linkedInProfileURL("https://www.linkedin.com/in/" + suffix) == nil,
+                  "LinkedIn slugs reject ambiguous, malformed or invisible path data")
+        }
+        for input in ["http://www.linkedin.com/in/person", "https://user@linkedin.com/in/person", "https://linkedin.com:444/in/person",
+                      "https://www.linkedin.com.evil.example/in/person", "https://linkedin.com/company/person", "https://abcd.linkedin.com/in/person",
+                      "https://www.linkedin.com/in/person?x=%0A", "https://www.linkedin.com/in/person#%FF", " https://www.linkedin.com/in/person",
+                      "https://www.linkedin.com/in/person\\other", "https://%6cinkedin.com/in/person", "https://www.linkedin.com/in/person?tracking=\u{202e}"] {
+            check(MobileApplicationPolicy.linkedInProfileURL(input) == nil, "LinkedIn profile boundary rejects unsafe hosts, paths and encoded controls")
+        }
+        let linkedInSearch = MobileApplicationPolicy.linkedInJobSearchURL(keywords: "C++ & design", location: "الرياض, SA")!
+        let searchParts = URLComponents(url: linkedInSearch, resolvingAgainstBaseURL: false)!
+        check(searchParts.host == "www.linkedin.com" && searchParts.path == "/jobs/search/", "LinkedIn search uses a fixed public destination")
+        check(searchParts.queryItems == [URLQueryItem(name: "keywords", value: "C++ & design"), URLQueryItem(name: "location", value: "الرياض, SA")],
+              "LinkedIn handoff carries only exact user-entered keyword and location values")
+        check(MobileApplicationPolicy.linkedInJobSearchURL(keywords: "", location: "")?.absoluteString == "https://www.linkedin.com/jobs/search/",
+              "Empty LinkedIn search does not add profile or tracking fields")
+        check(MobileApplicationPolicy.linkedInJobSearchURL(keywords: String(repeating: "x", count: 121), location: "") == nil,
+              "External search keeps the same bounded keyword field")
         let pdf = Data("%PDF-1.4\nsynthetic policy fixture\n%%EOF".utf8)
         check(MobileApplicationPolicy.resumeError(pdf, filename: "Resume.pdf") == nil, "PDF accepted")
         check(MobileApplicationPolicy.resumeError(Data("not a PDF".utf8), filename: "Resume.pdf") != nil, "Mismatched bytes rejected")
@@ -58,7 +95,7 @@ struct MobileApplicationCheck {
               "Application URL variants preserve duplicate identity")
         var profile = PhoneApplicationProfile()
         check([profile.firstName, profile.lastName, profile.email, profile.phone, profile.city, profile.country,
-               profile.headline, profile.skills, profile.targetRoles, profile.targetCountries, profile.website, profile.resumeName].allSatisfy(\.isEmpty)
+               profile.headline, profile.skills, profile.targetRoles, profile.targetCountries, profile.website, profile.linkedin, profile.resumeName].allSatisfy(\.isEmpty)
                 && profile.resumeData == nil && profile.resumeSize == nil && profile.resumeSHA256 == nil,
               "New applicants have no personal name, contact, location, profession, link or CV defaults")
         check(profile.experienceLevel == "any" && profile.remote && profile.hybrid && profile.onsite,
@@ -75,6 +112,22 @@ struct MobileApplicationCheck {
         check(profile.payload()["resume"] == .null, "Explicit removal is distinct from omission")
         let roundtrip = try JSONDecoder().decode(PhoneApplicationProfile.self, from: JSONEncoder().encode(profile))
         check(roundtrip == profile, "Private draft preserves its fields")
+        profile.linkedin = "https://www.linkedin.com/in/example-profile"
+        let linkedInRoundtrip = try JSONDecoder().decode(PhoneApplicationProfile.self, from: JSONEncoder().encode(profile))
+        check(linkedInRoundtrip == profile, "A LinkedIn link persists with existing draft and CV fields")
+        check(profile.payload()["linkedin"] == nil, "Unknown older services do not receive the new profile key")
+        check(profile.payload(includeLinkedIn: true)["linkedin"]?.string == profile.linkedin, "Confirmed support includes the exact LinkedIn profile field")
+        profile.linkedin = ""
+        check(profile.payload(includeLinkedIn: true)["linkedin"] == .string(""), "An explicit empty field can clear a previously saved profile link")
+        var oldProfile = try JSONSerialization.jsonObject(with: JSONEncoder().encode(profile)) as! [String: Any]
+        oldProfile.removeValue(forKey: "linkedin")
+        let migrated = try JSONDecoder().decode(PhoneApplicationProfile.self, from: JSONSerialization.data(withJSONObject: oldProfile))
+        check(migrated == profile, "Older stored profiles migrate without losing identity, preferences or CV data")
+        oldProfile["linkedin"] = NSNull()
+        var malformedLinkRejected = false
+        do { _ = try JSONDecoder().decode(PhoneApplicationProfile.self, from: JSONSerialization.data(withJSONObject: oldProfile)) }
+        catch { malformedLinkRejected = true }
+        check(malformedLinkRejected, "A corrupt present LinkedIn draft is preserved rather than silently erased")
         let encoded = try JSONEncoder().encode(good)
         let decoded = try JSONDecoder().decode([String: ApplicationValue].self, from: encoded)
         check(decoded == good, "Receipt codec roundtrip")

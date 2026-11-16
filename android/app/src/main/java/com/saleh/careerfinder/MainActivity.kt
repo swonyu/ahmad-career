@@ -235,7 +235,7 @@ private fun ProfileSummary(profile: ProfileDraft) {
         "Name" to listOf(profile.firstName, profile.lastName).filter(String::isNotBlank).joinToString(" "),
         "Email" to profile.email, "Phone" to profile.phone,
         "Location" to listOf(profile.city, profile.country).filter(String::isNotBlank).joinToString(" · "),
-        "Headline" to profile.headline, "Website" to profile.website, "Skills" to profile.skills,
+        "Headline" to profile.headline, "Website" to profile.website, "LinkedIn profile" to profile.linkedin, "Skills" to profile.skills,
         "Target roles" to profile.targetRoles, "Target countries" to profile.targetCountries,
         "Work preferences" to profile.workModes.sorted().joinToString(", "), "Experience" to profile.experienceLevel
     ).forEach { (label, value) ->
@@ -528,14 +528,14 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
 }
 
 @Composable
-private fun ReviewCard(item: ReviewItem) {
+internal fun ReviewCard(item: ReviewItem) {
     var fingerprint by remember(item.jobId) { mutableStateOf(false) }
     val context = LocalContext.current
     Panel {
         StatusPill(if (item.canSubmitNow()) "Ready for your approval" else "Not ready to send", !item.canSubmitNow())
         Text(item.title, style = MaterialTheme.typography.titleLarge)
         Text(item.company, color = MaterialTheme.colorScheme.primary)
-        listOf("name" to "Name", "email" to "Email", "phone" to "Phone", "website" to "Website", "comments" to "Message").forEach { (key, label) ->
+        listOf("name" to "Name", "email" to "Email", "phone" to "Phone", "website" to "Website", "linkedin" to "LinkedIn profile", "comments" to "Message").forEach { (key, label) ->
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(item.payload.safeString(key).ifBlank { "Not shared" })
@@ -687,6 +687,17 @@ private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePD
             item { CountryChooser("Your country (optional)", profile.country, !state.busy) { model.editProfile { p -> p.copy(country = it) } } }
             item { Field("City (optional)", profile.city, { model.editProfile { p -> p.copy(city = it) } }, enabled = !state.busy) }
             item { Field("Website or portfolio (optional)", profile.website, { model.editProfile { p -> p.copy(website = it) } }, KeyboardType.Uri, enabled = !state.busy) }
+            item {
+                val context = LocalContext.current
+                val link = profile.linkedin.takeIf(String::isNotEmpty)?.let { runCatching { BoundaryPolicy.linkedinProfileURL(it) }.getOrNull() }
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Field("LinkedIn profile (optional)", profile.linkedin, { model.editProfile { p -> p.copy(linkedin = it) } }, KeyboardType.Uri,
+                        enabled = !state.busy, error = if (profile.linkedin.isNotEmpty() && link == null) "Use your HTTPS LinkedIn personal profile link, beginning with /in/." else null)
+                    Text("A saved profile link, not a verified LinkedIn account connection. It is shared with an employer only when it appears in a review you approve.",
+                        style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    if (link != null) TextButton(onClick = { openLink(context, link) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Open LinkedIn profile") }
+                }
+            }
             item { Field("Skills (separate with commas)", profile.skills, { model.editProfile { p -> p.copy(skills = it) } }, singleLine = false, enabled = !state.busy) }
             item { Field("Roles you want (separate with commas)", profile.targetRoles, { model.editProfile { p -> p.copy(targetRoles = it) } }, singleLine = false, enabled = !state.busy) }
             item { TargetCountryChooser(profile.targetCountries.parts().toSet(), !state.busy) { values ->

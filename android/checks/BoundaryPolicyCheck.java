@@ -31,6 +31,30 @@ public final class BoundaryPolicyCheck {
         rejects(() -> BoundaryPolicy.opportunityURL("javascript:alert(1)"), "script links refused");
         rejects(() -> BoundaryPolicy.opportunityURL("file:///private/profile"), "file links refused");
         check(BoundaryPolicy.opportunityURL("https://jobs.example.org/a%2Fb?ref=a%20b#apply").equals("https://jobs.example.org/a%2Fb?ref=a%20b"), "fragment cleanup preserves encoded path/query");
+        check(BoundaryPolicy.linkedinProfileURL("HTTPS://SA.LINKEDIN.COM:443/in/Jos%C3%A9-42/?trk=x#about").equals("https://www.linkedin.com/in/Jos%C3%A9-42"), "LinkedIn region, port, tracking and UTF8 canonicalized");
+        check(BoundaryPolicy.linkedinProfileURL("https://linkedin.com/in/سلام").equals("https://www.linkedin.com/in/%D8%B3%D9%84%D8%A7%D9%85"), "LinkedIn Arabic profile preserved");
+        check(BoundaryPolicy.linkedinProfileURL("https://www.linkedin.com/in/a+b").equals("https://www.linkedin.com/in/a%2Bb"), "LinkedIn plus uses exact unreserved-only encoding");
+        check(BoundaryPolicy.linkedinProfileURL("https://www.linkedin.com/in/a%3Fb").equals("https://www.linkedin.com/in/a%3Fb"), "LinkedIn encoded slug punctuation stays in the path");
+        check(BoundaryPolicy.linkedinProfileURL("https://www.linkedin.com/in/alice%2Dsmith").equals("https://www.linkedin.com/in/alice-smith"), "LinkedIn unreserved encoding normalized");
+        check(BoundaryPolicy.linkedinProfileURL("https://abc.linkedin.com/in/a~._-0").equals("https://www.linkedin.com/in/a~._-0"), "LinkedIn three-letter region and unreserved slug allowed");
+        String internationalLink = BoundaryPolicy.linkedinProfileURL("https://linkedin.com/in/" + "م".repeat(300));
+        check(BoundaryPolicy.linkedinProfileURL(internationalLink).equals(internationalLink), "LinkedIn canonical UTF8 profile can be read back exactly");
+        rejects(() -> BoundaryPolicy.linkedinProfileURL("https://linkedin.com/in/" + "م".repeat(400)), "LinkedIn encoded output remains within the response length limit");
+        for (String url : new String[] {
+            "http://www.linkedin.com/in/a", "https://user@www.linkedin.com/in/a", "https://www.linkedin.com:444/in/a",
+            "https://www.linkedin.com.evil.example/in/a", "https://evil-linkedin.com/in/a", "https://abcd.linkedin.com/in/a",
+            "https://www.linkedin.com/company/a", "https://www.linkedin.com/in/", "https://www.linkedin.com/in/a/b",
+            "https://www.linkedin.com/in/a%2Fb", "https://www.linkedin.com/in/a%5Cb", "https://www.linkedin.com/in/a%252Fb",
+            "https://www.linkedin.com/in/a%20b", "https://www.linkedin.com/in/a%C2%A0b", "https://www.linkedin.com/in/%2E",
+            "https://www.linkedin.com/in/..", "https://www.linkedin.com/in/a%FF", "https://www.linkedin.com/in/a?x=%0A",
+            "https://www.linkedin.com/in/a?x=%C2%85", "https://www.linkedin.com/in/a b", "https://www.linkedin.com/in/a\u00a0b",
+            "https://www.linkedin.com/in/a?x=\u00a0", "https://www.linkedin.com/in/a\\b", " https://www.linkedin.com/in/a",
+            "https://www.linkedin.com/in/a\u202eb", "https://www.linkedin.com/in/a?x=\u200b", "https://www.linkedin.com/in/a#\u200d",
+            "https://www.linkedin.com/in/a%E2%80%AEb", "https://www.linkedin.com/in/a%E2%80%8Bb", "https://www.linkedin.com/in/a?x=%E2%80%8D"
+        }) rejects(() -> BoundaryPolicy.linkedinProfileURL(url), "unsafe LinkedIn profile refused: " + url);
+        check(BoundaryPolicy.linkedinJobSearchURL("Data & science", "Riyadh, SA").equals("https://www.linkedin.com/jobs/search/?keywords=Data+%26+science&location=Riyadh%2C+SA"), "LinkedIn search encodes only public terms");
+        check(BoundaryPolicy.linkedinJobSearchURL("", "").equals("https://www.linkedin.com/jobs/search/"), "empty LinkedIn search opens the public jobs page");
+        rejects(() -> BoundaryPolicy.linkedinJobSearchURL("x".repeat(121), ""), "LinkedIn search terms stay bounded");
         check(!BoundaryPolicy.workspaceKey("https://apply.example.org", "one").equals(BoundaryPolicy.workspaceKey("https://apply.example.org", "two")), "workspace identities isolated");
         check(!BoundaryPolicy.workspaceKey("https://apply.example.org", "one").equals(BoundaryPolicy.workspaceKey("https://other.example.org", "one")), "different services isolated");
         check(BoundaryPolicy.workspaceKey("https://apply.example.org/", "one").equals(BoundaryPolicy.workspaceKey("https://apply.example.org", "one")), "same service normalized");

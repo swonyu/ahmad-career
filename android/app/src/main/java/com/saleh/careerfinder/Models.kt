@@ -10,6 +10,15 @@ fun JSONArray?.strings(): List<String> = if (this == null) emptyList() else (0 u
 fun String.parts(): List<String> = split(',').map(String::trim).filter(String::isNotBlank).distinct()
 private const val INVALID_SERVICE_DATA = "The service returned incomplete or invalid data. Your phone draft was kept. Refresh before trying again."
 fun serviceData(check: Boolean) { require(check) { INVALID_SERVICE_DATA } }
+private fun JSONObject.serviceLinkedIn(): String {
+    if (!has("linkedin")) return ""
+    val value = opt("linkedin")
+    serviceData(value is String)
+    if (value == "") return ""
+    val canonical = runCatching { BoundaryPolicy.linkedinProfileURL(value as String) }.getOrNull()
+    serviceData(canonical != null)
+    return canonical!!
+}
 fun JSONObject.requiredObjects(key: String): List<JSONObject> {
     val array = opt(key)
     serviceData(array is JSONArray)
@@ -38,30 +47,33 @@ data class ProfileDraft(
     val city: String = "", val country: String = "", val headline: String = "", val skills: String = "",
     val targetRoles: String = "", val targetCountries: String = "", val workModes: Set<String> = emptySet(),
     val experienceLevel: String = "any", val website: String = "", val resume: Resume? = null,
-    val removeResume: Boolean = false, val revision: Int = 0
+    val removeResume: Boolean = false, val revision: Int = 0, val linkedin: String = ""
 ) {
     val hasApplicationName: Boolean get() = firstName.trim().isNotBlank()
     val hasApplicationEmail: Boolean get() = email.trim().matches(Regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"))
     val hasApplicationPDF: Boolean get() = resume?.let { it.size in 8..BoundaryPolicy.MAX_PDF_BYTES && it.sha256.matches(Regex("[a-f0-9]{64}")) } == true
     val essentialsComplete: Boolean get() = hasApplicationName && hasApplicationEmail && hasApplicationPDF
     val essentialCount: Int get() = listOf(hasApplicationName, hasApplicationEmail, hasApplicationPDF).count { it }
-    fun apiJson(): JSONObject = JSONObject().put("firstName", firstName.trim()).put("lastName", lastName.trim())
+    fun apiJson(includeLinkedIn: Boolean = false): JSONObject = JSONObject().put("firstName", firstName.trim()).put("lastName", lastName.trim())
         .put("email", email.trim()).put("phone", phone.trim()).put("city", city.trim()).put("country", country.trim().uppercase())
         .put("headline", headline.trim()).put("skills", JSONArray(skills.parts())).put("targetRoles", JSONArray(targetRoles.parts()))
         .put("targetCountries", JSONArray(targetCountries.parts().map(String::uppercase)))
         .put("workModes", JSONArray(workModes.toList().sorted())).put("experienceLevel", experienceLevel).put("website", website.trim())
         .apply {
+            if (includeLinkedIn) put("linkedin", if (linkedin.isEmpty()) "" else BoundaryPolicy.linkedinProfileURL(linkedin))
             if (removeResume) put("resume", JSONObject.NULL)
             else resume?.dataBase64?.let { put("resume", JSONObject().put("name", resume.name).put("mime", "application/pdf").put("dataBase64", it)) }
         }
-    fun privateJson() = apiJson().apply { remove("resume") }.put("revision", revision).put("draftResume", resume?.privateJson() ?: JSONObject.NULL).put("removeResume", removeResume)
+    fun privateJson() = apiJson().apply { remove("resume") }.put("revision", revision).put("draftResume", resume?.privateJson() ?: JSONObject.NULL)
+        .put("removeResume", removeResume).put("linkedin", linkedin)
     companion object {
         fun fromJson(value: JSONObject): ProfileDraft = ProfileDraft(
             value.safeString("firstName"), value.safeString("lastName"), value.safeString("email"), value.safeString("phone"),
             value.safeString("city"), value.safeString("country"), value.safeString("headline"), value.optJSONArray("skills").strings().joinToString(", "),
             value.optJSONArray("targetRoles").strings().joinToString(", "), value.optJSONArray("targetCountries").strings().joinToString(", "),
             value.optJSONArray("workModes").strings().toSet(), value.safeString("experienceLevel", "any"), value.safeString("website"),
-            Resume.fromJson(value.optJSONObject("draftResume") ?: value.optJSONObject("resume")), value.optBoolean("removeResume"), value.optInt("revision")
+            Resume.fromJson(value.optJSONObject("draftResume") ?: value.optJSONObject("resume")), value.optBoolean("removeResume"), value.optInt("revision"),
+            if (value.has("linkedin")) { require(value.opt("linkedin") is String) { "The saved LinkedIn draft could not be read." }; value.getString("linkedin") } else ""
         )
         fun fromServer(value: JSONObject): ProfileDraft {
             listOf("firstName", "lastName", "email", "phone", "city", "country", "headline", "experienceLevel", "website")
@@ -82,7 +94,7 @@ data class ProfileDraft(
                 serviceData(hash is String && hash.matches(Regex("[a-f0-9]{64}")))
                 Resume(name as String, (size as Number).toLong(), hash as String)
             }
-            return fromJson(value).copy(resume = resume, removeResume = false, revision = (revision as Number).toInt())
+            return fromJson(value).copy(resume = resume, removeResume = false, revision = (revision as Number).toInt(), linkedin = value.serviceLinkedIn())
         }
     }
 }
@@ -128,6 +140,7 @@ data class ReviewItem(val jobId: String, val state: String, val reason: String, 
             val payload = value.optJSONObject("payloadSummary")
             serviceData(payload != null)
             listOf("name", "email", "phone", "website", "comments").forEach { serviceData(payload!!.opt(it) is String) }
+            payload!!.serviceLinkedIn()
             listOf("consentStore", "consentMarketing").forEach { serviceData(!payload!!.has(it) || payload.opt(it) is Boolean) }
             val resume = Resume.fromJson(value.optJSONObject("resume"))
             if (value.opt("state") == "ready") serviceData(resume != null && resume.size in 8..BoundaryPolicy.MAX_PDF_BYTES &&
@@ -214,7 +227,7 @@ data class CareerUiState(
     val phoneImport: PhoneImport? = null, val reviewingRecoveredPlan: Boolean = false,
     val obsoleteReviews: Set<String> = emptySet(),
     val clientContinuation: Boolean = false, val continuationHolds: Set<String> = emptySet(),
-    val opportunityDraft: OpportunityDraft = OpportunityDraft()
+    val opportunityDraft: OpportunityDraft = OpportunityDraft(), val linkedinProfile: Boolean = false
 ) {
     val profileConflict: ProfileDraft? get() = serverProfile?.takeIf { profileDirty && it.revision != profile.revision }
 }

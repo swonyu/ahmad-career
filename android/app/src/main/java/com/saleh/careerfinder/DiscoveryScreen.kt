@@ -75,6 +75,9 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
             }
             Text("Only your search terms and filters are sent. Your profile and PDF are not used for discovery.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
+        item {
+            LinkedInSearchAction(state.filters.query, state.filters.location) { openLink(context, it) }
+        }
         if (state.error != null) item {
             Panel {
                 Text(state.error.orEmpty(), color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
@@ -112,6 +115,18 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
         }
     }
     if (chooseSources) DiscoverySourcesDialog(state, controller) { chooseSources = false }
+}
+
+@Composable
+internal fun LinkedInSearchAction(keywords: String, location: String, open: (String) -> Unit) {
+    val destination = runCatching { BoundaryPolicy.linkedinJobSearchURL(keywords, location) }.getOrNull()
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        OutlinedButton(onClick = { destination?.let(open) }, enabled = destination != null,
+            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Search LinkedIn") }
+        Text("Opens LinkedIn with your keywords and location. LinkedIn manages its own sign-in and applications; opening a search does not submit an application.",
+            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        if (destination == null) Text("Shorten the keywords or location to open LinkedIn search.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+    }
 }
 
 @Composable

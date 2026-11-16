@@ -35,6 +35,17 @@ struct NativeDiscoveryScreen: View {
             } footer: {
                 Text("Search sends only these words and board choices to the public discovery service. No account, application profile or CV is sent. Remote wording does not establish where you can legally work.")
             }
+            Section {
+                if let url = MobileApplicationPolicy.linkedInJobSearchURL(keywords: discovery.query.keywords, location: discovery.query.location) {
+                    Link(destination: url) { Label("Search LinkedIn", systemImage: "arrow.up.right.square") }
+                        .accessibilityIdentifier("discovery.linkedin")
+                } else {
+                    Text("Shorten your search to 120 characters and location to 100 characters to open LinkedIn.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }
+            } footer: {
+                Text("Opens LinkedIn with only your keyword and location text. LinkedIn manages its own sign-in and applications. Career Finder does not read your LinkedIn account or verify applications submitted there.")
+            }
             if let error = discovery.error {
                 Section {
                     Label(error, systemImage: "exclamationmark.circle")
