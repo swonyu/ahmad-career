@@ -4,7 +4,8 @@ import SwiftUI
 struct NativeDiscoveryScreen: View {
     @EnvironmentObject private var discovery: CareerDiscoveryStore
     @State private var choosingBoards = false
-    @FocusState private var focused: Bool
+    private enum SearchField: Hashable { case keywords, location }
+    @FocusState private var focusedField: SearchField?
     var body: some View {
         List {
             Section {
@@ -12,14 +13,14 @@ struct NativeDiscoveryScreen: View {
                 Text("Search selected public employer boards across locations and professions. You choose which boards and search words to use.")
                     .font(.subheadline).foregroundStyle(.secondary)
                 TextField("Role, skill or keyword", text: $discovery.query.keywords)
-                    .focused($focused).submitLabel(.search).onSubmit { beginSearch() }
+                    .focused($focusedField, equals: .keywords).submitLabel(.search).onSubmit { beginSearch() }
                     .accessibilityIdentifier("discovery.keywords")
                 TextField("Location text (optional)", text: $discovery.query.location)
-                    .focused($focused).submitLabel(.search).onSubmit { beginSearch() }
+                    .focused($focusedField, equals: .location).submitLabel(.search).onSubmit { beginSearch() }
                     .accessibilityIdentifier("discovery.location")
                 Toggle("Remote roles only", isOn: $discovery.query.remoteOnly)
                     .accessibilityIdentifier("discovery.remote")
-                Button { focused = false; choosingBoards = true } label: {
+                Button { focusedField = nil; choosingBoards = true } label: {
                     Label(boardLabel, systemImage: "building.2")
                 }.accessibilityIdentifier("discovery.chooseBoards")
                 if discovery.isSearching {
@@ -102,7 +103,7 @@ struct NativeDiscoveryScreen: View {
                 Button("Search jobs", action: beginSearch)
                     .disabled(discovery.isSearching).accessibilityIdentifier("discovery.keyboardSearch")
                 Spacer()
-                Button("Done typing") { focused = false }
+                Button("Done typing") { focusedField = nil }
             }
         }
         .onChange(of: discovery.error) { issue in
@@ -112,7 +113,7 @@ struct NativeDiscoveryScreen: View {
     private var boardLabel: String {
         discovery.query.sources.isEmpty ? "Employer boards · suggested selection" : "Employer boards · \(discovery.query.sources.count) selected"
     }
-    private func beginSearch() { focused = false; Task { await discovery.search() } }
+    private func beginSearch() { focusedField = nil; Task { await discovery.search() } }
     private func sourceStatus(_ source: DiscoverySourceStatus) -> String {
         let availability: String
         switch source.status {

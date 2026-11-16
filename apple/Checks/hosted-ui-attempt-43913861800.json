@@ -1,0 +1,256 @@
+{
+  "schemaVersion": 1,
+  "runId": 43913861800,
+  "commit": "8ca0b34a8fb324d983c9bee63cd582a368fe4d59",
+  "runUrl": "https://github.com/swonyu/ahmad-career/actions/runs/43913861800",
+  "latestRun": {
+    "id": 43913861800,
+    "run_attempt": 2,
+    "head_sha": "8ca0b34a8fb324d983c9bee63cd582a368fe4d59",
+    "status": "completed",
+    "conclusion": "failure",
+    "run_started_at": "2026-11-16T17:17:34Z",
+    "updated_at": "2026-11-16T17:33:21Z",
+    "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43913861800"
+  },
+  "latestJobs": [
+    {
+      "id": 133473131180,
+      "name": "iPhone native interface acceptance",
+      "conclusion": "failure",
+      "started_at": "2026-11-16T17:17:40Z",
+      "completed_at": "2026-11-16T17:33:20Z",
+      "head_sha": "8ca0b34a8fb324d983c9bee63cd582a368fe4d59",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43913861800/job/133473131180"
+    },
+    {
+      "id": 133473135122,
+      "name": "iPhone logic and unsigned build",
+      "conclusion": "success",
+      "started_at": "2026-11-16T17:01:21Z",
+      "completed_at": "2026-11-16T17:03:31Z",
+      "head_sha": "8ca0b34a8fb324d983c9bee63cd582a368fe4d59",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43913861800/job/133473135122"
+    },
+    {
+      "id": 133473136577,
+      "name": "Hosted HTTPS service and durable storage",
+      "conclusion": "success",
+      "started_at": "2026-11-16T17:01:19Z",
+      "completed_at": "2026-11-16T17:02:09Z",
+      "head_sha": "8ca0b34a8fb324d983c9bee63cd582a368fe4d59",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43913861800/job/133473136577"
+    },
+    {
+      "id": 133473200492,
+      "name": "Android compile and lint",
+      "conclusion": "success",
+      "started_at": "2026-11-16T17:01:20Z",
+      "completed_at": "2026-11-16T17:03:11Z",
+      "head_sha": "8ca0b34a8fb324d983c9bee63cd582a368fe4d59",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43913861800/job/133473200492"
+    },
+    {
+      "id": 133473238548,
+      "name": "Service and synthetic HTTPS",
+      "conclusion": "success",
+      "started_at": "2026-11-16T17:01:21Z",
+      "completed_at": "2026-11-16T17:01:52Z",
+      "head_sha": "8ca0b34a8fb324d983c9bee63cd582a368fe4d59",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43913861800/job/133473238548"
+    }
+  ],
+  "policyAndRelease": {
+    "executedJobId": 133462644195,
+    "latestMirroredJobId": 133473135122,
+    "conclusion": "success",
+    "completedAt": "2026-11-16T17:03:31Z",
+    "boundaryChecks": 61,
+    "lifecycleAssertions": 129,
+    "lifecycleScenarios": 27,
+    "discoveryAssertions": 33,
+    "discoveryScenarios": 10,
+    "unsignedReleaseBuild": "PASS",
+    "productIdentityAssertions": "PASS",
+    "jobLogSHA256": "b360e2d3b30cc5cb339a399c293c95683bb1d861f619ae3cfe7488dd768d2a20",
+    "note": "The latest API success record retains the original job times; no second policy/build execution is claimed."
+  },
+  "testSourceSHA256": "92d5679bee3118f103b5ee0dbe9d7cf403765ad49e0df47abf1fdba75332143f",
+  "attempts": [
+    {
+      "schemaVersion": 1,
+      "runId": 43913861800,
+      "runAttempt": 1,
+      "commit": "8ca0b34a8fb324d983c9bee63cd582a368fe4d59",
+      "uiJobId": 133462644156,
+      "conclusion": "failure",
+      "completedAt": "2026-11-16T17:16:20Z",
+      "executedTests": 7,
+      "passedTests": 6,
+      "failedTests": 1,
+      "tests": [
+        {
+          "name": "testAccessibilityTextKeepsCoreControlsReachable",
+          "result": "failed",
+          "seconds": 113.888
+        },
+        {
+          "name": "testApplicationDraftSurvivesCancelAndRelaunch",
+          "result": "passed",
+          "seconds": 120.775
+        },
+        {
+          "name": "testDiscoverySaveFlowsIntoSavedAndApply",
+          "result": "passed",
+          "seconds": 48.673
+        },
+        {
+          "name": "testFreshStartAndFiveTabs",
+          "result": "passed",
+          "seconds": 35.521
+        },
+        {
+          "name": "testOpportunityDiscardRequiresExplicitChoice",
+          "result": "passed",
+          "seconds": 26.908
+        },
+        {
+          "name": "testOpportunityDraftKeepSaveAndRestore",
+          "result": "passed",
+          "seconds": 87.636
+        },
+        {
+          "name": "testSearchEmptyAndFailurePreservesPreviousResults",
+          "result": "passed",
+          "seconds": 113.229
+        }
+      ],
+      "failure": {
+        "test": "testAccessibilityTextKeepsCoreControlsReachable",
+        "operation": "Second early Start-screen swipe while revealing the applicant-profile action at large text size.",
+        "diagnostic": "Failed to get list of active applications: Accessibility error kAXErrorIPCTimeout from AXUIElementCopyMultipleAttributeValues for 1102",
+        "observed": "The accessibility query stalled for about 80 seconds and did not return an application hierarchy. Both corrected draft and search flows subsequently passed.",
+        "interpretation": "Observed XCTest/accessibility IPC failure; the exact underlying process cause is not established by this log. No app source edit was made for this failure."
+      },
+      "artifact": {
+        "id": 14250765832,
+        "bytes": 103742386,
+        "sha256": "f0babbd6c61a6e98f4c75e5b362c4869b3d2bbcfbe24666db56a28393e7b56c0"
+      },
+      "xcodeLogSHA256": "dc9dba7466059df1fed1e92f9bb95a4b31ec2cc3ae188359aa333350657067ad",
+      "namedScreenshots": 11,
+      "screenshotManifest": "retained-screenshots.json",
+      "retry": {
+        "runAttempt": 2,
+        "uiJobId": 133473131180,
+        "sourceChanges": false,
+        "authorization": "Root requested one bounded failed-job rerun of the unchanged commit.",
+        "outcome": "Recorded separately after completion."
+      },
+      "scope": "Hosted iPhone Air / iOS 26.5 Simulator with isolated offline synthetic data. No local Xcode/simulator/signing or real employer submission."
+    },
+    {
+      "runAttempt": 2,
+      "uiJobId": 133473131180,
+      "conclusion": "failure",
+      "startedAt": "2026-11-16T17:17:40Z",
+      "completedAt": "2026-11-16T17:33:20Z",
+      "device": "iPhone Air",
+      "runtime": "iOS 26.5 Simulator",
+      "executedTests": 7,
+      "passedTests": 6,
+      "failedTests": 1,
+      "unexpectedFailures": 0,
+      "testDurationSeconds": 470.687,
+      "tests": [
+        {
+          "name": "testAccessibilityTextKeepsCoreControlsReachable",
+          "result": "passed",
+          "seconds": 166.815
+        },
+        {
+          "name": "testApplicationDraftSurvivesCancelAndRelaunch",
+          "result": "passed",
+          "seconds": 47.504
+        },
+        {
+          "name": "testDiscoverySaveFlowsIntoSavedAndApply",
+          "result": "passed",
+          "seconds": 53.334
+        },
+        {
+          "name": "testFreshStartAndFiveTabs",
+          "result": "passed",
+          "seconds": 54.499
+        },
+        {
+          "name": "testOpportunityDiscardRequiresExplicitChoice",
+          "result": "passed",
+          "seconds": 25.192
+        },
+        {
+          "name": "testOpportunityDraftKeepSaveAndRestore",
+          "result": "passed",
+          "seconds": 73.624
+        },
+        {
+          "name": "testSearchEmptyAndFailurePreservesPreviousResults",
+          "result": "failed",
+          "seconds": 49.718
+        }
+      ],
+      "failure": {
+        "test": "testSearchEmptyAndFailurePreservesPreviousResults",
+        "assertion": "Five-second exists == false wait for the keyboard container timed out after the second, empty-query Return submission.",
+        "observed": "The first toolbar search, keyboard dismissal and completed no-results assertion passed. Before the second Return, the recording shows the empty keyword field and a blue Search key. At recording time 42.0s and 45.963s the keyboard is visibly absent and two All roles results are displayed; the log begins its keyboard-existence check at test time 42.73s and fails at 47s.",
+        "interpretation": "Return did execute the empty search and visually dismiss the keyboard. The accessibility container existence check disagreed with visible keyboard state; no repeated AX IPC timeout occurred in this attempt. The exported UI snapshot had only an application root with children [], so it does not establish keyboard accessibility properties.",
+        "correction": "Bind each search field to a distinct optional focus enum and clear it with nil. Before submission require a real keyboard key and its Search toolbar action to be hittable; afterward retain the five-second bound and require both controls to be absent or unhittable. Preserve empty Return input and all no-results, actual error and retained-role assertions."
+      },
+      "artifact": {
+        "id": 14253060995,
+        "name": "iphone-ui-acceptance-43913861800",
+        "createdAt": "2026-11-16T17:33:08Z",
+        "bytes": 114013515,
+        "sha256": "f64a8b0558881517f46a37032d7fdcb1093b9dccebfc9a8a9f902d480d7d276b"
+      },
+      "jobLogSHA256": "3762fbbc86cb33d780e1db3705f47756bdbb32f6bbb511abae0dfef164ac8351",
+      "xcodeLogSHA256": "9d62330cb61682575df62cc5b223dff1dfc17755b57e0daf33055013a0689723",
+      "namedScreenshots": 13,
+      "recordingFile": "E9916AB0-C454-4D0F-89AC-9817EDB95AEC.mp4",
+      "recordingSHA256": "865499d0fa5d22062ed2bf314db3baac0c34ae0816f08f869d4cb94bcdc2c06f",
+      "frameSHA256": {
+        "search-return-39s.png": "181844a521e98e51dd9609a3b978238dd2f6dbe57fc0d4a0d9a1bcf4c30b224f",
+        "search-return-42s.png": "c30b66f77fdf1bc6fad1ac8fff83ae33ed0448bfeed14b3eef9c31d60d01cd85",
+        "search-return-final.png": "481a3d2b78dd5f9490b00125656223ddb0fc4c39e6b529ebb9b8e5391dd6eee4"
+      }
+    }
+  ],
+  "primaryDocumentation": [
+    "https://developer.apple.com/documentation/swiftui/focusstate/",
+    "https://developer.apple.com/documentation/swiftui/view/focused(_:equals:)",
+    "https://developer.apple.com/documentation/xcuiautomation/xcuielement/exists",
+    "https://developer.apple.com/documentation/xcuiautomation/xcuielement/ishittable"
+  ],
+  "revisedSourceStaticCheck": {
+    "checkedAt": "2026-11-16T17:40:25.671659+00:00",
+    "release": "PASS",
+    "debug": "PASS",
+    "uiTestSource": "PASS",
+    "sourceCount": 13,
+    "diagnostics": 0,
+    "hashMismatches": 0,
+    "changedFiles": {
+      "apple/AhmadCareer/NativeDiscoveryViews.swift": "bf6f2dfd285ef4522de58f7f4b52c4e0a86628ff0875ec9b290cc2ec4979de36",
+      "apple/UITests/CareerFinderUITests.swift": "e78192b5eba3c89dd78c7fd7ae04e072cc68dfa35221fad8cedf3888945206d0"
+    },
+    "productionSourcesCheckedAt": "2026-11-16T17:38:46.174116+00:00",
+    "uiTestSourceCheckedAt": "2026-11-16T17:40:25.671659+00:00"
+  },
+  "scopeLimits": [
+    "Both failed attempts remain distinct; no test or behavioral assertion was disabled.",
+    "No further unchanged-source retry was performed after attempt 2.",
+    "The revised source has only static evidence at this timestamp; no subsequent runtime outcome is inferred.",
+    "Full artifacts, recordings, hierarchy and selected frames remain outside the source repository.",
+    "No local Xcode project build, local simulator, signing, physical device or employer submission was used."
+  ]
+}

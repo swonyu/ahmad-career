@@ -49,17 +49,34 @@ final class CareerFinderUITests: XCTestCase {
     private func top(_ app: XCUIApplication) { for _ in 0..<4 { app.swipeDown() } }
     @MainActor
     private func searchFromKeyboard(in app: XCUIApplication, usingReturnKey: Bool = false) {
-        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5))
+        let keyboard = app.keyboards.firstMatch
+        XCTAssertTrue(keyboard.waitForExistence(timeout: 5))
+        let keyReady = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            keyboard.keys.allElementsBoundByIndex.contains { $0.exists && $0.isHittable }
+        }, object: nil)
+        let keyReadiness = XCTWaiter.wait(for: [keyReady], timeout: 5)
+        if keyReadiness != .completed { print(app.debugDescription) }
+        XCTAssertEqual(keyReadiness, .completed, "A real keyboard key must be visible before submitting")
+        guard let visibleKey = keyboard.keys.allElementsBoundByIndex.first(where: { $0.exists && $0.isHittable }) else {
+            print(app.debugDescription)
+            XCTFail("No reachable keyboard key was presented"); return
+        }
+        let search = app.buttons["discovery.keyboardSearch"]
+        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        XCTAssertTrue(search.isHittable, "Search must be reachable while the keyboard is open")
         if usingReturnKey {
             app.textFields["discovery.keywords"].typeText("\n")
         } else {
-            let search = app.buttons["discovery.keyboardSearch"]
-            XCTAssertTrue(search.waitForExistence(timeout: 5))
-            XCTAssertTrue(search.isHittable, "Search must be reachable while the keyboard is open")
             search.tap()
         }
-        let dismissed = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: app.keyboards.firstMatch)
-        XCTAssertEqual(XCTWaiter.wait(for: [dismissed], timeout: 5), .completed, "Submitting a search must dismiss the keyboard")
+        // A dismissed system keyboard can remain in the accessibility tree offscreen.
+        // Check the real key and toolbar that were reachable immediately before submission.
+        let dismissed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            !visibleKey.isHittable && !search.isHittable
+        }, object: nil)
+        let dismissal = XCTWaiter.wait(for: [dismissed], timeout: 5)
+        if dismissal != .completed { print(app.debugDescription) }
+        XCTAssertEqual(dismissal, .completed, "Submitting a search must dismiss the visible keyboard and its toolbar")
     }
 
     @MainActor
