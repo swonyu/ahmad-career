@@ -76,7 +76,7 @@ jobs:
         run: |
           npm test
           node tests/hosted-worker.mjs
-          node --experimental-strip-types tests/browser-api.mjs
+          node --test tests/browser-api.mjs tests/browser-pairing.mjs
       - name: Build the deployable Worker and phone setup pages
         working-directory: hosted
         run: npm run build

@@ -32,6 +32,7 @@ struct ApplicationWorkspaceSnapshot {
     let recoverablePlans: [[String: ApplicationValue]]
     let activePlanIDs: [String]
     let mode: String
+    let liveSubmissionEnabled: Bool?
     let requiresClientContinuation: Bool
     init(_ value: [String: ApplicationValue], workspaceID: String) throws {
         func invalid() -> MobileApplicationError {
@@ -48,8 +49,13 @@ struct ApplicationWorkspaceSnapshot {
               case .object(let profile)? = value["profile"], case .array(let active)? = value["activePlanIds"],
               active.allSatisfy({ !($0.string?.isEmpty ?? true) }), let mode = value["mode"]?.string, !mode.isEmpty else { throw invalid() }
         var continuation: String?
+        var liveEnabled: Bool?
         if let capabilities = value["capabilities"] {
             guard case .object(let fields) = capabilities else { throw invalid() }
+            if let declared = fields["liveEnabled"] {
+                guard case .bool(let enabled) = declared else { throw invalid() }
+                liveEnabled = enabled
+            }
             if let declared = fields["dispatchContinuation"] {
                 guard let name = declared.string else { throw invalid() }
                 continuation = name
@@ -67,6 +73,7 @@ struct ApplicationWorkspaceSnapshot {
               }) else { throw invalid() }
         self.profile = try ApplicationServerProfile(profile); self.jobs = jobs; self.attempts = attempts
         recoverablePlans = plans; activePlanIDs = active.compactMap(\.string); self.mode = mode
+        liveSubmissionEnabled = liveEnabled
         requiresClientContinuation = continuation == "client"
     }
 }

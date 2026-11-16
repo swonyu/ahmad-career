@@ -35,7 +35,11 @@ struct NativeApplicationsScreen: View {
     @State private var exportSheet = false
 
     private var reviewActionTitle: String {
-        model.connected ? (model.selected.isEmpty ? "Select opportunities to apply" : "Review \(model.selected.count) application\(model.selected.count == 1 ? "" : "s")") : "Set up Auto Apply"
+        guard model.connected else { return "Set up Auto Apply" }
+        if model.mode != "test" && model.liveSubmissionEnabled != true {
+            return model.selected.isEmpty ? "Select opportunities to check" : "Check application options"
+        }
+        return model.selected.isEmpty ? "Select opportunities to apply" : "Review \(model.selected.count) application\(model.selected.count == 1 ? "" : "s")"
     }
     private var confirmed: Int {
         model.attempts.filter { MobileApplicationPolicy.isVerified($0) && $0["evidenceMode"]?.string == "live" }.count
@@ -63,6 +67,9 @@ struct NativeApplicationsScreen: View {
                     .accessibilityElement(children: .contain)
                 }
                 profileCard
+                if model.connected && model.mode != "test" && model.liveSubmissionEnabled != true {
+                    submissionAvailability
+                }
                 if dynamicTypeSize.isAccessibilitySize {
                     VStack(spacing: 10) { metrics }
                 } else { HStack(spacing: 10) { metrics } }
@@ -314,6 +321,21 @@ struct NativeApplicationsScreen: View {
                     .font(.caption).foregroundStyle(.secondary).lineSpacing(3)
             }
         }.padding(.vertical, 6)
+    }
+    private var submissionAvailability: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Label(model.liveSubmissionEnabled == false ? "Auto Apply is not activated" : "Submission availability is unverified",
+                  systemImage: "info.circle").font(.subheadline.weight(.semibold))
+                .fixedSize(horizontal: false, vertical: true)
+            Text(model.liveSubmissionEnabled == false
+                 ? "Your workspace is connected. Keep saving opportunities and preparing your profile. Automatic submission needs an activated employer integration; you can apply through employer links."
+                 : "Your workspace is connected, but the service has not confirmed that live submission is available. Keep preparing your profile and checking employer links.")
+                .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            Button("Refresh availability") { Task { await model.refresh() } }
+                .font(.subheadline).disabled(model.busy)
+        }.padding(16).frame(maxWidth: .infinity, alignment: .leading)
+            .background(ApplyDesign.card, in: RoundedRectangle(cornerRadius: 16))
+            .accessibilityIdentifier("applications.availability")
     }
     private func empty(icon: String, title: String, detail: String) -> some View {
         VStack(spacing: 15) {
@@ -667,7 +689,7 @@ private struct NativeApplicationConnection: View {
                        let setup = MobileApplicationPolicy.servicePageURL(.connect, address: address) {
                         Section("1. Get your one-time code") {
                             Link(destination: setup) { Label("Open secure connection setup", systemImage: "safari") }
-                            Text("Sign in with ChatGPT in your browser, create a one-time code, then return here. Use the same account to recover your workspace or connect another phone.")
+                            Text("On the secure ChatGPT sign-in screen, choose Continue with Google, or use your existing sign-in method. Create a one-time code, then return here. Use the same account to recover your workspace or connect another phone.")
                                 .font(.footnote).foregroundStyle(.secondary)
                         }
                     }
@@ -826,8 +848,13 @@ private struct NativeApplicationReview: View {
                     }
                 }
                 Section {
+                    if !model.submissionAvailable {
+                        Text("Automatic submission is unavailable for this connection. Return to the application workspace to refresh availability, or use the employer's website.")
+                            .font(.subheadline).foregroundStyle(.secondary)
+                    }
                     Toggle("I approve sending these details and my selected CV to the listed eligible employers.", isOn: $approved)
                         .font(.subheadline)
+                        .disabled(!model.submissionAvailable)
                     if model.profileNeedsSync {
                         Text("Save your current application details before approving this review.")
                             .font(.caption).foregroundStyle(.orange)
@@ -846,7 +873,7 @@ private struct NativeApplicationReview: View {
                         Label("Auto Apply to \(ready) job\(ready == 1 ? "" : "s")", systemImage: "paperplane.fill")
                             .font(.headline).frame(maxWidth: .infinity).padding(.vertical, 10)
                     }.buttonStyle(.borderedProminent).tint(ApplyDesign.green)
-                        .disabled(!approved || changed || ready == 0 || model.busy || model.profileNeedsSync)
+                        .disabled(!approved || changed || ready == 0 || model.busy || model.profileNeedsSync || !model.submissionAvailable)
                 }
                 if let id = model.plan?["id"]?.string {
                     Section {

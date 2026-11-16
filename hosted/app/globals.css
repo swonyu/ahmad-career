@@ -14,3 +14,5 @@
 @media(max-width:760px){.install-card{align-items:flex-start;flex-direction:column;gap:20px;padding:24px}.install-card>.button{width:100%}.input-with-action input{font-size:1rem}.page{padding-bottom:max(48px,env(safe-area-inset-bottom))}}
 
 .brand-icon{background:#173e2d}
+
+.sign-in-options{margin-top:22px}.sign-in-choice{padding:18px;border:1px solid var(--line);border-radius:15px;background:var(--soft);margin-bottom:16px}.sign-in-choice p{margin-top:8px;color:var(--muted);font-size:.9rem;line-height:1.7}.sign-in-options>.small{margin-top:14px}.inline-confirm{width:100%;padding:16px;background:var(--bg);border:1px solid var(--line);border-radius:14px}.inline-confirm .action-row{margin-bottom:0}.session-list .disconnecting{align-items:stretch;flex-wrap:wrap}

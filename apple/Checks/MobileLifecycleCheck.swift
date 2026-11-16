@@ -75,11 +75,15 @@ private final class LifecycleSuite {
     func workspace(_ revision: Int, name: String = "Example", jobs: [[String: ApplicationValue]] = [],
                    attempts: [[String: ApplicationValue]] = [], plans: [[String: ApplicationValue]] = [],
                    workspace: String = "workspace-a", resume: ApplicationValue = .null,
-                   active: [String] = [], continuation: ApplicationValue? = nil) -> [String: ApplicationValue] {
+                   active: [String] = [], continuation: ApplicationValue? = nil,
+                   liveEnabled: ApplicationValue? = nil) -> [String: ApplicationValue] {
         var value: [String: ApplicationValue] = ["ok": .bool(true), "workspaceId": .string(workspace), "profile": .object(server(revision, name: name, resume: resume)),
          "jobs": .array(jobs.map(ApplicationValue.object)), "attempts": .array(attempts.map(ApplicationValue.object)),
          "recoverablePlans": .array(plans.map(ApplicationValue.object)), "activePlanIds": .array(active.map(ApplicationValue.string)), "mode": .string("test")]
-        if let continuation { value["capabilities"] = .object(["dispatchContinuation": continuation]) }
+        var capabilities: [String: ApplicationValue] = [:]
+        if let continuation { capabilities["dispatchContinuation"] = continuation }
+        if let liveEnabled { capabilities["liveEnabled"] = liveEnabled }
+        if !capabilities.isEmpty { value["capabilities"] = .object(capabilities) }
         return value
     }
     func review(_ id: String, revision: Int = 3, approved: Bool = false, itemState: String = "ready") -> [String: ApplicationValue] {
@@ -353,7 +357,202 @@ private final class LifecycleSuite {
             try check(store.connected && store.profile.firstName == "Kept while locked", "Foreground refresh can restore unlocked credentials without losing the draft")
             scenarios += 1
         }
+        try await runLiveSubmissionCapability()
         try await runHostedContinuation()
+    }
+
+    func runLiveSubmissionCapability() async throws {
+        // Only a typed workspace declaration determines availability; it is never restored as cached authority.
+        do {
+            let service = TestService()
+            let (store, folder, tokens) = try fixture(initial(), service: service)
+            try check(store.connected && store.liveSubmissionEnabled == nil, "Restored credentials do not imply verified live submission availability")
+            let declarations: [(ApplicationValue?, Bool?)] = [(.bool(true), true), (.bool(false), false), (.bool(true), true), (nil, nil)]
+            for (declared, expected) in declarations {
+                var response = workspace(3, continuation: .string("client"), liveEnabled: declared)
+                response["mode"] = .string("live")
+                let snapshot = try ApplicationWorkspaceSnapshot(response, workspaceID: "workspace-a")
+                try check(snapshot.liveSubmissionEnabled == expected && snapshot.requiresClientContinuation,
+                          "Boolean or missing live availability remains independent of client continuation and mode")
+                service.handle = { _ in response }
+                let refreshed = await store.refresh()
+                try check(refreshed && store.liveSubmissionEnabled == expected && store.requiresClientContinuation,
+                          "Each valid refresh replaces the prior live availability, including true-to-false and true-to-unknown")
+            }
+            let absentCapabilities: [ApplicationValue?] = [nil, .object([:])]
+            for absent in absentCapabilities {
+                service.handle = { _ in self.workspace(3, liveEnabled: .bool(true)) }
+                let enabled = await store.refresh()
+                try check(enabled && store.liveSubmissionEnabled == true, "A confirmed enabled value precedes the missing-capabilities check")
+                var response = workspace(3)
+                if let absent { response["capabilities"] = absent }
+                let snapshot = try ApplicationWorkspaceSnapshot(response, workspaceID: "workspace-a")
+                try check(snapshot.liveSubmissionEnabled == nil && !snapshot.requiresClientContinuation,
+                          "Absent and empty capability envelopes remain unknown without inventing continuation authority")
+                service.handle = { _ in response }
+                let refreshed = await store.refresh()
+                try check(refreshed && store.liveSubmissionEnabled == nil, "A valid missing capability clears a previously enabled value")
+            }
+            service.handle = { _ in self.workspace(3, liveEnabled: .bool(true)) }
+            let refreshed = await store.refresh()
+            try check(refreshed && store.liveSubmissionEnabled == true, "Live availability can be confirmed again by this workspace")
+            let saved = try JSONSerialization.jsonObject(with: Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))) as! [String: Any]
+            try check(saved["capabilities"] == nil && saved["liveSubmissionEnabled"] == nil, "Live capability is not persisted as authority in the phone draft")
+            let restored = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+            try check(restored.connected && restored.liveSubmissionEnabled == nil, "Relaunch requires a fresh capability read despite a previously enabled session")
+            try check(service.calls.allSatisfy { $0.route == "workspace" && $0.method == "GET" }, "Capability checks perform workspace reads only")
+            scenarios += 1
+        }
+        // A current ready plan is insufficient when live submission is false or unknown outside explicit test mode.
+        let submissionCases: [(String, ApplicationValue?, Bool)] = [
+            ("local", .bool(false), false), ("local", nil, false),
+            ("live", .bool(false), false), ("live", nil, false),
+            ("local", .bool(true), true), ("live", .bool(true), true),
+            ("test", nil, true), ("test", .bool(false), true), ("test", .bool(true), true)
+        ]
+        for (mode, capability, permitted) in submissionCases {
+            let ready = review("capability-review")
+            let service = TestService(); var submitted = false
+            service.handle = { call in
+                if call.route == "submit" { submitted = true; return ["ok": .bool(true)] }
+                var response = self.workspace(3, plans: submitted ? [] : [ready], liveEnabled: capability)
+                response["mode"] = .string(mode); return response
+            }
+            let (store, folder, _) = try fixture(initial(), service: service)
+            let refreshed = await store.refresh()
+            try check(refreshed && store.submissionAvailable == permitted && store.resumeReview(ready),
+                      "The capability gate is exercised with a valid current ready review and synchronized profile")
+            let before = try Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))
+            let approved = await store.submitReviewed()
+            try check(approved == permitted && !store.busy, "Review approval obeys verified live capability or explicit test mode")
+            let posts = service.calls.filter { $0.method == "POST" }
+            if permitted {
+                try check(posts.count == 1 && posts[0].route == "submit"
+                          && posts[0].body == ["planId": .string("capability-review"), "digest": ready["digest"]!, "approved": .bool(true)],
+                          "Permitted approval sends exactly the reviewed plan, digest, and explicit approval once")
+                try check(store.plan == nil && service.calls.map(\.route) == ["workspace", "submit", "workspace"],
+                          "Permitted approval retains the existing result reconciliation behavior")
+            } else {
+                try check(!submitted && posts.isEmpty && store.plan == ready && service.calls.count == 1,
+                          "Unavailable approval keeps the exact ready review and performs no POST or other request")
+                let after = try Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))
+                try check(after == before, "Unavailable approval does not change the persisted draft")
+            }
+            scenarios += 1
+        }
+        // Malformed truthy values must reject the entire snapshot before any draft, evidence, or known capability changes.
+        for known in [false, true] {
+            var state = try initial(); var draft = state.profile; draft.firstName = "Kept capability draft"
+            try draft.selectResume(pdf, filename: "Capability.pdf"); state.retainDraft(draft, basedOn: 3)
+            let job: [String: ApplicationValue] = ["id": .string("job-1"), "url": .string("https://jobs.example/one"), "title": .string("Role"), "company": .string("Fixture")]
+            let receipt: [String: ApplicationValue] = ["id": .string("kept-receipt"), "state": .string("confirmed")]
+            var good = workspace(3, jobs: [job], attempts: [receipt], plans: [review("kept-review")],
+                                 continuation: .string("client"), liveEnabled: .bool(known))
+            good["mode"] = .string("local")
+            let service = TestService(); service.handle = { _ in good }
+            let (store, folder, _) = try fixture(state, service: service)
+            let refreshed = await store.refresh()
+            try check(refreshed && store.liveSubmissionEnabled == known, "A valid workspace establishes the capability that malformed data must preserve")
+            let before = try Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))
+            let invalidValues: [ApplicationValue] = [.string("true"), .string("false"), .number(1), .number(0), .null,
+                                                      .array([.bool(true)]), .object(["enabled": .bool(true)])]
+            var cases: [[String: ApplicationValue]] = invalidValues.map { invalid in
+                self.workspace(8, name: "Untrusted reply", continuation: .string("client"), liveEnabled: invalid)
+            }
+            let invalidEnvelopes: [ApplicationValue] = [.bool(true), .null, .string("enabled"), .array([.bool(true)])]
+            for invalid in invalidEnvelopes {
+                var response = workspace(8, name: "Untrusted reply"); response["capabilities"] = invalid; cases.append(response)
+            }
+            for response in cases {
+                var rejected = false
+                do { _ = try ApplicationWorkspaceSnapshot(response, workspaceID: "workspace-a") }
+                catch { rejected = true }
+                try check(rejected, "A non-Boolean liveEnabled or non-object capabilities envelope is not an accepted workspace")
+                service.handle = { _ in response }
+                let accepted = await store.refresh()
+                try check(!accepted && store.connected && store.mode == "local" && store.liveSubmissionEnabled == known && store.requiresClientContinuation,
+                          "Malformed availability cannot establish new authority or replace the last verified capability")
+                try check(store.profile.firstName == "Kept capability draft" && store.profile.resumeData == pdf
+                          && store.profileNeedsSync && store.revision == 3 && store.latestServerRevision == 3,
+                          "Malformed capability preserves unsaved profile fields, exact CV bytes, and the acknowledged revision")
+                try check(store.jobs == [job] && store.attempts == [receipt] && store.availableReviews.count == 1,
+                          "Malformed capability cannot erase existing application evidence")
+                let after = try Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))
+                try check(after == before, "Rejected capability leaves the persisted phone draft byte-for-byte unchanged")
+            }
+            scenarios += 1
+        }
+        // A connection change clears true before the new workspace reply; a delayed old reply cannot restore it.
+        do {
+            var state = try initial(); var draft = state.profile; try draft.selectResume(pdf, filename: "Account-switch.pdf")
+            state.retainDraft(draft, basedOn: 3)
+            let old = TestService(); let newer = TestService("https://second.example")
+            let oldGate = DelayedResponse(), newGate = DelayedResponse(); var delayOld = false
+            old.handle = { call in
+                if call.route == "session/revoke" { return ["ok": .bool(true)] }
+                if delayOld { return try await oldGate.wait() }
+                var response = self.workspace(3, liveEnabled: .bool(true)); response["mode"] = .string("local"); return response
+            }
+            newer.handle = { call in
+                if call.route == "session" {
+                    return ["ok": .bool(true), "sessionToken": .string("new-capability-token"), "workspaceId": .string("workspace-b"),
+                            "profile": .object(self.server(0)), "capabilities": .object(["liveEnabled": .bool(true)])]
+                }
+                return try await newGate.wait()
+            }
+            let (store, folder, tokens) = try fixture(state, service: old, factory: { url, token in
+                let service = url.host == "second.example" ? newer : old; service.token = token; return service
+            })
+            let enabled = await store.refresh()
+            try check(enabled && store.liveSubmissionEnabled == true, "The original account has confirmed live availability")
+            delayOld = true
+            let oldRefresh = Task { await store.refresh() }; try await waitUntil { oldGate.started }
+            let changing = Task { await store.connect(address: "https://second.example", code: "SYNTHETIC") }
+            try await waitUntil { newGate.started }
+            try check(store.connected && store.serviceAddress == "https://second.example" && store.liveSubmissionEnabled == nil && !store.submissionAvailable,
+                      "New connection has unknown availability until its workspace is validated, even if its session response advertises true")
+            oldGate.finish(workspace(99, name: "Old account reply", liveEnabled: .bool(true)))
+            let oldAccepted = await oldRefresh.value
+            try check(!oldAccepted && store.connected && store.liveSubmissionEnabled == nil && !store.submissionAvailable,
+                      "Delayed enabled capability from the old account cannot repopulate the new account")
+            var unknown = workspace(0, workspace: "workspace-b"); unknown["mode"] = .string("local")
+            newGate.finish(unknown)
+            let changed = await changing.value
+            try check(changed && store.liveSubmissionEnabled == nil && !store.submissionAvailable && store.profile.resumeData == pdf,
+                      "A new workspace without live capability stays unknown and preserves the explicitly kept CV draft")
+            newer.handle = { call in
+                if call.route == "session/revoke" { return ["ok": .bool(true)] }
+                var response = self.workspace(0, workspace: "workspace-b", liveEnabled: .bool(true)); response["mode"] = .string("local"); return response
+            }
+            let newEnabled = await store.refresh()
+            try check(newEnabled && store.liveSubmissionEnabled == true && store.submissionAvailable, "Only the new workspace can establish its own enabled capability")
+            await store.disconnect()
+            try check(!store.connected && store.liveSubmissionEnabled == nil && !store.submissionAvailable && store.profile.resumeData == pdf,
+                      "Disconnect immediately clears verified capability while keeping the phone draft")
+            let restored = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in newer })
+            try check(!restored.connected && restored.liveSubmissionEnabled == nil && !restored.submissionAvailable && restored.profile.resumeData == pdf,
+                      "A disconnected relaunch cannot resurrect another account's enabled capability")
+            scenarios += 1
+        }
+        // Revocation and the account-deletion barrier reset availability without destroying a local draft.
+        for (status, code) in [(401, "revoked"), (409, "account_deleting")] {
+            var state = try initial(); var draft = state.profile; try draft.selectResume(pdf, filename: "Reset.pdf")
+            state.retainDraft(draft, basedOn: 3)
+            let service = TestService(); service.handle = { _ in
+                var response = self.workspace(3, liveEnabled: .bool(true)); response["mode"] = .string("local"); return response
+            }
+            let (store, folder, _) = try fixture(state, service: service)
+            let enabled = await store.refresh()
+            try check(enabled && store.liveSubmissionEnabled == true, "Reset regression begins with confirmed live availability")
+            service.handle = { _ in throw MobileApplicationError(message: "Synthetic workspace reset", statusCode: status, code: code) }
+            let refreshed = await store.refresh()
+            try check(!refreshed && store.liveSubmissionEnabled == nil && !store.submissionAvailable && store.connected == (status != 401),
+                      "Revocation or account deletion clears stale enabled availability under the existing connection rules")
+            let saved = try JSONDecoder().decode(PhoneApplicationState.self, from: Data(contentsOf: folder.appendingPathComponent("phone-draft.json")))
+            try check(saved.profile.resumeData == pdf && saved.profileNeedsSync && saved.profileRevision == 3,
+                      "Availability reset preserves the persisted CV draft and its revision")
+            scenarios += 1
+        }
     }
 
     func runHostedContinuation() async throws {

@@ -29,14 +29,20 @@ Discovery never approves or sends an application. Saving a discovered job uses t
 
 ## Connect and recover
 
-1. Open `/connect` and sign in with the ChatGPT account you want to use for recovery.
+1. Open `/connect` and continue to the secure ChatGPT sign-in screen. Choose **Continue with Google** there to use Google, or use the same method as your existing account. The hosted preview uses ChatGPT identity; it is not an independent Career Finder Google OAuth client.
 2. Generate a connection code. This explicitly creates or reuses a workspace.
 3. Enter the service address and code in the phone app. Codes expire after five minutes and can be redeemed once.
 4. Review the phone draft before saving it. Connecting does not automatically upload an existing draft.
 
 Phone sessions expire after 30 days. `/account` lists active sessions, revokes a lost phone, exports account records, downloads retained CV files, recovers interrupted uploads and deletes the cloud workspace. Account GET is read-only and does not create a workspace.
 
+Browser actions are bound to the account the person reviewed. Pairing requires `expectedAccountId`; deletion, session revocation and upload recovery require `expectedWorkspaceId`. Export and PDF links include exactly one `expectedWorkspaceId` query parameter. A stale or missing target returns `409 account_changed` or `409 workspace_changed` before modifying business records or reading a private PDF. The browser clears stale confirmation intent and asks the person to reload. Disconnecting a phone has its own confirmation step.
+
+Pairing returns `serverTime` and `expiresAt`. The browser derives a conservative lifetime from their difference, subtracts the elapsed request time and counts down with a monotonic clock. A wrong device date cannot extend the displayed lifetime, and redemption still checks the authoritative server expiry.
+
 Automatic submission requires the email address supplied by the signed-in account. This is an account association, not verification of legal identity, qualifications or the contents of a CV.
+
+Account GET reports `confirmedEmail` and `emailUpdateRequired` when the platform email has changed since the last explicit pairing. It does not silently alter a profile, approval or revision. Creating a fresh connection code updates the confirmed address and advances the workspace revision; the phone must then review and correct its application profile before submission.
 
 ## Submission guarantees and limits
 
@@ -46,7 +52,7 @@ Each continuation request attempts at most one provider submission. It checks th
 
 Confirmed means the supported provider returned its documented acceptance response and an application ID. It does not mean a recruiter reviewed, selected or hired the applicant. Network interruption, an undocumented response, expired dispatch lease or failure to persist the result remains uncertain and is blocked from automatic resend. A rate-limited attempt requires explicit approval after its cooldown. Stop prevents work that has not passed its durable dispatch claim; it cannot recall a request already sent.
 
-Per-posting duplicate checks use workspace identity and a keyed applicant-email fingerprint across accounts. Changing a phone, starting another review or restarting a Worker does not bypass the ledger. Account erasure removes its application records, so users must retain their export and reconcile prior employer submissions before starting over.
+Per-posting duplicate checks always use workspace identity, including after profile-email changes. A keyed email fingerprint can be checked across workspaces only when the applicant email matches the confirmed account email. An unverified editable email never reveals another person's application status. The operator-managed companion has no verified-email ownership and therefore confines duplicate protection and cooldowns to one workspace. Account erasure removes its application records, so users must retain their export and reconcile prior employer submissions before starting over.
 
 ## Employer configuration
 

@@ -21,6 +21,20 @@ enum CareerAppEnvironment {
     static func makeApplicationsStore() -> NativeApplicationsStore {
         #if DEBUG
         if let root = acceptanceRoot {
+            if let availability = ProcessInfo.processInfo.environment["CAREER_UI_APPLICATION_AVAILABILITY"],
+               ["disabled", "unverified"].contains(availability) {
+                let folder = root.appendingPathComponent("applications", isDirectory: true)
+                let service = AcceptanceApplicationAvailability(liveEnabled: availability == "disabled" ? false : nil)
+                do {
+                    try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+                    var state = PhoneApplicationState()
+                    state.connect(address: service.origin.absoluteString, workspace: service.workspaceID,
+                                  account: "offline-acceptance", server: try ApplicationServerProfile(service.profile))
+                    try JSONEncoder().encode(state).write(to: folder.appendingPathComponent("phone-draft.json"), options: .atomic)
+                } catch { preconditionFailure("The isolated availability fixture could not be prepared.") }
+                return NativeApplicationsStore(folder: folder, credentials: AcceptanceCredentials(connected: true),
+                    clientFactory: { _, _ in service })
+            }
             return NativeApplicationsStore(folder: root.appendingPathComponent("applications", isDirectory: true),
                 credentials: AcceptanceCredentials(), clientFactory: { _, _ in
                     throw MobileApplicationError(message: "UI acceptance is offline. No application connection was made.")
@@ -42,9 +56,37 @@ enum CareerAppEnvironment {
 #if DEBUG
 @MainActor
 private final class AcceptanceCredentials: ApplicationTokenStore {
-    func load(account: String) throws -> String? { nil }
+    private let connected: Bool
+    init(connected: Bool = false) { self.connected = connected }
+    func load(account: String) throws -> String? { connected ? "offline-synthetic-token" : nil }
     func save(_ token: String, account: String) throws { throw MobileApplicationError(message: "UI acceptance does not save credentials.") }
     func remove(account: String) throws {}
+}
+
+/// Offline visibility checks only. No request can leave this DEBUG-only fixture.
+@MainActor
+private final class AcceptanceApplicationAvailability: MobileApplicationServing {
+    let origin = URL(string: "https://career-ui.example")!
+    let workspaceID = "offline-availability-workspace"
+    var token: String?
+    let liveEnabled: Bool?
+    init(liveEnabled: Bool?) { self.liveEnabled = liveEnabled }
+    var profile: [String: ApplicationValue] {
+        var value = PhoneApplicationProfile().payload()
+        value["revision"] = .number(0); value["resume"] = .null
+        return value
+    }
+    func request(_ route: String, method: String, body: [String: ApplicationValue]?) async throws -> [String: ApplicationValue] {
+        guard route == "workspace", method == "GET", body == nil else {
+            throw MobileApplicationError(message: "UI acceptance is offline. No application was sent.")
+        }
+        var value: [String: ApplicationValue] = ["ok": .bool(true), "workspaceId": .string(workspaceID),
+            "profile": .object(profile), "jobs": .array([]), "attempts": .array([]),
+            "recoverablePlans": .array([]), "activePlanIds": .array([]), "mode": .string("local")]
+        if let liveEnabled { value["capabilities"] = .object(["liveEnabled": .bool(liveEnabled)]) }
+        return value
+    }
+    func invalidate() {}
 }
 
 @MainActor

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "reviewDate": "2026-11-17",
+  "sourceCommit": "318b5109b46c9aa409c5c686adf9f5faa5fcf78f",
+  "hostedVersion": 3,
+  "origin": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
+  "scope": "Retained authenticated browser account plus anonymous local preview; no production mutations",
+  "observations": [
+    {
+      "check": "Anonymous connect/account sign-in guidance",
+      "result": "passed",
+      "detail": "Both pages explain Google on the ChatGPT screen, preserve same-account recovery, and use a normal top-level sign-in link."
+    },
+    {
+      "check": "Production account after deployment",
+      "result": "passed",
+      "detail": "Existing workspace loaded with unchanged empty records and zero active phone sessions; private identity omitted."
+    },
+    {
+      "check": "Deletion cancellation",
+      "result": "passed",
+      "detail": "Opening focuses confirmation; empty confirmation disables permanent action; cancelling restores trigger focus; reopening clears typed DELETE. No delete request sent."
+    },
+    {
+      "check": "Workspace-bound production export",
+      "result": "passed",
+      "detail": "Browser completed a valid schema1 export using its displayed workspace target; zero jobs, reviews, attempts and documents; PDF bytes excluded. Private export not copied into this evidence."
+    },
+    {
+      "check": "Production public support",
+      "result": "passed",
+      "detail": "Published Google-through-ChatGPT guidance and preview limitations visually inspected."
+    }
+  ],
+  "mutatedProductionData": false,
+  "realEmployerRequests": 0,
+  "limitations": [
+    "No populated native production pairing/upload/recovery/deletion flow was performed.",
+    "Account-switch adversarial cases were verified only with isolated synthetic identities.",
+    "The cloud browser viewport was1348px; native compact/large-text checks are recorded separately."
+  ],
+  "publicScreenshot": {
+    "path": "google-sign-in-help.jpg",
+    "sha256": "f9a1d54dc673a683fb429f0ad76097883a455d801518401b82ee96ed3e8a43c6",
+    "containsPrivateAccountData": false
+  }
+}

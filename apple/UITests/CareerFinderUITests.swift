@@ -4,10 +4,11 @@ final class CareerFinderUITests: XCTestCase {
     override func setUpWithError() throws { continueAfterFailure = false }
 
     @MainActor
-    private func launch(id: String = UUID().uuidString, largeText: Bool = false) -> XCUIApplication {
+    private func launch(id: String = UUID().uuidString, largeText: Bool = false, availability: String? = nil) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = ["-career-ui-acceptance", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         app.launchEnvironment["CAREER_UI_TEST_ID"] = id
+        if let availability { app.launchEnvironment["CAREER_UI_APPLICATION_AVAILABILITY"] = availability }
         if largeText { app.launchArguments += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"] }
         app.launch()
         XCTAssertTrue(app.staticTexts["acceptance.offline"].waitForExistence(timeout: 10), "Acceptance must use an isolated offline workspace")
@@ -252,5 +253,26 @@ final class CareerFinderUITests: XCTestCase {
         }, object: nil)
         XCTAssertEqual(XCTWaiter.wait(for: [dismissed], timeout: 5), .completed,
                        "Dismissing connection setup must return to the application CTA")
+    }
+
+    @MainActor
+    func testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText() {
+        for (availability, heading) in [("disabled", "Auto Apply is not activated"), ("unverified", "Submission availability is unverified")] {
+            let app = launch(largeText: true, availability: availability)
+            tab("Apply", in: app)
+            let review = app.buttons["applications.review"]
+            XCTAssertTrue(review.waitForExistence(timeout: 5))
+            XCTAssertEqual(review.label, "Select opportunities to check", "Connection alone must not promise live submission")
+            XCTAssertFalse(review.isEnabled, "An empty workspace cannot start an application review")
+            let explanation = app.staticTexts[heading]
+            reveal(explanation, in: app)
+            capture("14-\(availability)-submission-explained", app: app)
+            let refresh = app.buttons["Refresh availability"]
+            reveal(refresh, in: app)
+            refresh.tap()
+            XCTAssertTrue(app.staticTexts[heading].exists, "Refreshing an offline service must preserve its explicit availability state")
+            capture("15-\(availability)-refresh-reachable", app: app)
+            app.terminate()
+        }
     }
 }

@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-11-16T21:50:32.224951+00:00",
+  "status": "passed",
+  "nodeVersion": "v24.22.1",
+  "sourceFiles": [
+    {
+      "authoritativePath": "career-finder-service/server/applications.mjs",
+      "repositoryPath": "hosted/server/applications.mjs",
+      "bytes": 47297,
+      "sha256": "b3b961c838bfb7c19a973043b463e87874cb27b0535a795e1356b1731dfbc052"
+    },
+    {
+      "authoritativePath": "career-finder-service/tests/hosted-applications.mjs",
+      "repositoryPath": "hosted/tests/hosted-applications.mjs",
+      "bytes": 40858,
+      "sha256": "de60fe73a22dc91c1198e977117ab674869e78472ac89fb307f13ba5f0d143bd"
+    },
+    {
+      "authoritativePath": "career-finder-service/tests/hosted-worker.mjs",
+      "repositoryPath": "hosted/tests/hosted-worker.mjs",
+      "bytes": 5628,
+      "sha256": "00f9a1173e6099d2edc7b7cc53cc399000ecd2bd19621d60073139cbb22b10ba"
+    },
+    {
+      "authoritativePath": "career-finder-service/tests/hosted-verification.json",
+      "repositoryPath": "hosted/tests/hosted-verification.json",
+      "bytes": 4682,
+      "sha256": "1f927cf30bcd475b87372b4a4577bcf89b83dd0046dfe0de6947c3ee2b0d5b62"
+    },
+    {
+      "authoritativePath": "career-finder-service/tests/hosted-worker-verification.json",
+      "repositoryPath": "hosted/tests/hosted-worker-verification.json",
+      "bytes": 672,
+      "sha256": "1440b90ac9283eeb46fe7691a5a3113b533bd659eb1cb364b801178c8d9494a0"
+    },
+    {
+      "authoritativePath": "career-finder/website/applications/service.mjs",
+      "repositoryPath": "website/applications/service.mjs",
+      "bytes": 36066,
+      "sha256": "1dda67c799a6b5919cc75e699557a77ddd5d840f199526f0ba18e05a02bf206c"
+    },
+    {
+      "authoritativePath": "career-finder/website/applications-check.mjs",
+      "repositoryPath": "website/applications-check.mjs",
+      "bytes": 34466,
+      "sha256": "97984424ec7df5e28f151a87c30e31c3cb37a821de8cb7568373e50c1e368880"
+    }
+  ],
+  "checks": [
+    {
+      "name": "Hosted application handler",
+      "command": [
+        "node",
+        "tests/hosted-applications.mjs"
+      ],
+      "workingDirectory": "career-finder-service",
+      "exitCode": 0,
+      "groups": 38,
+      "syntheticProviderPosts": 8,
+      "realEmployerRequests": 0,
+      "observedAt": "2026-11-16T21:48:55.203Z",
+      "log": "hosted-security-download-check.log",
+      "bytes": 3370,
+      "sha256": "4fe722b0083cb32120ab4ee9822d4a5cbb400ce06b7deeabd345f6a429121711"
+    },
+    {
+      "name": "Actual workerd handler",
+      "command": [
+        "node",
+        "tests/hosted-worker.mjs"
+      ],
+      "workingDirectory": "career-finder-service",
+      "exitCode": 0,
+      "requests": 14,
+      "realEmployerRequests": 0,
+      "observedAt": "2026-11-16T21:48:39.660Z",
+      "log": "hosted-security-worker-download-check.log",
+      "bytes": 70,
+      "sha256": "be64e7972f978efd30fa4b30817ca6dabfb15468e2a9aa5dd4ff1c8a6a07a3ac"
+    },
+    {
+      "name": "Standalone companion HTTP",
+      "command": [
+        "node",
+        "website/applications-check.mjs"
+      ],
+      "workingDirectory": "career-finder",
+      "exitCode": 0,
+      "groups": 92,
+      "realEmployerRequests": 0,
+      "log": "standalone-security-check.log",
+      "bytes": 5227,
+      "sha256": "1c796e7437ff2fdf820852256ad6b92dc33652283dd3040be3dcda67aef85c1a"
+    }
+  ],
+  "resolvedFindings": [
+    {
+      "issue": "Unverified profile email disclosed another hosted workspace application status",
+      "change": "Cross-workspace duplicate lookup is allowed only for the confirmed account email; arbitrary email edits use workspace-only history.",
+      "regression": "Two accounts have identical public review results before and after a foreign confirmed receipt. Authorized cross-workspace and same-workspace dedup remain covered."
+    },
+    {
+      "issue": "Stale browser page could retarget account actions after a sign-in change",
+      "change": "Pairing requires expectedAccountId. Delete, revoke and recovery require expectedWorkspaceId and validate it before business-state changes.",
+      "regression": "Two-account snapshots preserve profiles, revisions, pairing codes, sessions, uploads, plans, attempts, expired dispatch state and private file bytes under stale/missing preconditions."
+    },
+    {
+      "issue": "Stale browser page could download the currently signed-in account export or PDF instead of its displayed workspace",
+      "change": "Export and PDF GET require one matching expectedWorkspaceId query; generated document paths include that binding.",
+      "regression": "Stale, missing and duplicate targets return conflict before any R2 read; matching-owner exports and PDF downloads succeed."
+    },
+    {
+      "issue": "Displayed account email could differ silently from the email last confirmed for applications",
+      "change": "Read-only account GET returns confirmedEmail and emailUpdateRequired; explicit bound pairing remains the operation that refreshes email and invalidates the old profile revision.",
+      "regression": "Mismatch GET leaves all workspace data and approvals unchanged; a valid pairing refresh clears the flag and invalidates old approval."
+    },
+    {
+      "issue": "Browser pairing countdown relied only on a client wall-clock deadline",
+      "change": "Pairing response now includes serverTime for the UI to measure a server-relative TTL.",
+      "regression": "Application and workerd pairing checks assert a positive server-relative TTL no greater than five minutes; UI clock logic is separately owned."
+    },
+    {
+      "issue": "Standalone unverified email could disclose or retire another workspace application history",
+      "change": "Prepare, cooldown retirement and dispatch dedup are workspace-scoped; the legacy global email unique index is removed on service startup while records remain intact.",
+      "regression": "Separate unverified workspaces cannot infer a private receipt or mutate its cooldown/activity; same-workspace duplicate dispatch still blocks, and a legacy-index migration preserves existing records."
+    }
+  ],
+  "contracts": {
+    "browserPairingBody": [
+      "expectedAccountId"
+    ],
+    "browserPairingResponseAdded": [
+      "serverTime"
+    ],
+    "browserWorkspaceMutationRequired": "expectedWorkspaceId",
+    "browserDownloadQueryRequired": "expectedWorkspaceId",
+    "accountResponseAdded": [
+      "confirmedEmail",
+      "emailUpdateRequired"
+    ],
+    "nativePairingProtocolChanged": false,
+    "workspaceOwnership": "Stable Sites subject; no email-based workspace merge"
+  },
+  "authScope": "Sites owns hosted sign-in. Google through the ChatGPT sign-in screen remains SIWC; no direct Google OAuth, external-provider credential, or separate browser session stack was added.",
+  "standaloneTrustBoundary": "Operator pairing binds a workspace, not verified applicant email ownership. Operators must pair phones to the same workspace to share duplicate and cooldown protection.",
+  "limitations": [
+    "Tests use isolated synthetic identities, local storage and synthetic employer responses; no production account, database, CV, provider submission, or hosted deployment was accessed or changed by these checks.",
+    "Hosted trusted Sites header injection and live browser UI require separate platform/deployment verification.",
+    "The coordinated browser UI must send the new preconditions and implement the countdown/email notices. Old browser pages fail closed until reloaded.",
+    "The standalone migration was exercised only in a temporary synthetic ledger; no existing production database was opened."
+  ],
+  "scope": "Only the seven listed backend/test/evidence files were edited in this lane; no native app, mirrored hosted checkout, publication, signing, store or account configuration action."
+}

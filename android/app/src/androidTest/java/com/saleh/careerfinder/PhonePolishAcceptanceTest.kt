@@ -2,8 +2,8 @@ package com.saleh.careerfinder
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
@@ -58,6 +58,22 @@ class PhonePolishAcceptanceTest {
         compose.waitForIdle()
     }
 
+    private fun captureConfirmation(name: String) {
+        compose.waitForIdle()
+        runCatching {
+            val instrumentation = InstrumentationRegistry.getInstrumentation()
+            val directory = java.io.File(instrumentation.targetContext.cacheDir, "strict-review-evidence").apply { mkdirs() }
+            // Compose idleness does not wait for Android's dialog-window fade.
+            instrumentation.uiAutomation.waitForIdle(500, 3_000)
+            val screenshot = checkNotNull(instrumentation.uiAutomation.takeScreenshot())
+            try {
+                java.io.File(directory, "$name.png").outputStream().use {
+                    check(screenshot.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it))
+                }
+            } finally { screenshot.recycle() }
+        }.onFailure { android.util.Log.w("CareerPhoneAcceptance", "Optional confirmation capture unavailable: $name", it) }
+    }
+
     @Before fun showPhone() {
         val text = InstrumentationRegistry.getInstrumentation().context.assets.open("discovery-search-v1.json").bufferedReader().use { it.readText() }
         discovery = DiscoveryCodec.page(JSONObject(text))
@@ -68,7 +84,7 @@ class PhonePolishAcceptanceTest {
         compose.activityRule.scenario.onActivity { activity ->
             model = CareerViewModel(activity.application, store, service, discoveryService = publicService)
             owner.put("isolated-phone-polish", model)
-            activity.setContent { MaterialTheme { CareerApp(model) } }
+            activity.setContent { CareerTheme { CareerApp(model) } }
         }
         compose.waitUntil(5_000) { model.state.value.loaded && !model.state.value.busy }
     }
@@ -137,5 +153,63 @@ class PhonePolishAcceptanceTest {
         assertTrue(model.state.value.receipts.isEmpty())
         assertEquals(0, service.requests)
         assertTrue(store.read("workspace-unpaired")!!.getJSONArray("manualApplied").strings().contains(saved.id))
+    }
+
+    @Test fun unfinishedOpportunity_closeChoicesKeepAndDiscardOnlyTheDraft() {
+        compose.onNodeWithTag("jobs-saved-tab").performClick()
+        compose.onNodeWithText("Add opportunity").performClick()
+        compose.onNodeWithTag("opportunity-editor").performScrollToNode(hasText("Employer job link") and hasSetTextAction())
+        compose.onNode(hasText("Employer job link") and hasSetTextAction()).performTextInput("https://example.invalid/later")
+        closeSoftKeyboard()
+        compose.onNodeWithTag("opportunity-editor").performScrollToNode(hasText("Role title") and hasSetTextAction())
+        compose.onNode(hasText("Role title") and hasSetTextAction()).performTextInput("Unfinished role")
+        closeSoftKeyboard()
+        compose.onNodeWithContentDescription("Close Add opportunity").performClick()
+        captureConfirmation("unfinished-opportunity-choices")
+        compose.onNodeWithText("Keep editing").performClick()
+        compose.onNodeWithTag("opportunity-editor").performScrollToNode(hasText("Role title") and hasSetTextAction())
+        compose.onNode(hasText("Role title") and hasSetTextAction()).assertTextContains("Unfinished role")
+
+        compose.onNodeWithContentDescription("Close Add opportunity").performClick()
+        compose.onNodeWithText("Keep draft").performClick()
+        compose.waitUntil(5_000) { !model.state.value.busy && store.read("workspace-unpaired")?.has("opportunityDraft") == true }
+        compose.onNodeWithTag("jobs-list").performScrollToNode(hasText("Continue job draft"))
+        compose.onNodeWithText("Continue job draft").performClick()
+        compose.onNodeWithTag("opportunity-editor").performScrollToNode(hasText("Role title") and hasSetTextAction())
+        compose.onNode(hasText("Role title") and hasSetTextAction()).assertTextContains("Unfinished role")
+        compose.onNodeWithContentDescription("Close Add opportunity").performClick()
+        compose.onNodeWithText("Discard").performClick()
+        compose.waitUntil(5_000) { !model.state.value.busy && !model.state.value.opportunityDraft.hasContent }
+        compose.onNodeWithTag("jobs-list").performScrollToNode(hasText("Add opportunity"))
+        compose.onNodeWithText("Add opportunity").assertIsDisplayed()
+        assertTrue(model.state.value.jobs.isEmpty())
+        assertFalse(OpportunityDraft.fromJson(store.read("workspace-unpaired")!!.getJSONObject("opportunityDraft")).hasContent)
+        assertEquals(0, service.requests)
+    }
+
+    @Test fun localOpportunityRemoval_requiresConfirmation_andPreservesOtherSavedRoles() {
+        compose.runOnIdle { model.addOpportunity("https://example.invalid/remove", "Remove fixture", "Employer", "", "") {} }
+        compose.waitUntil(5_000) { !model.state.value.busy && model.state.value.jobs.size == 1 }
+        val removable = model.state.value.jobs.single()
+        compose.runOnIdle { model.addOpportunity("https://example.invalid/keep", "Keep fixture", "Employer", "", "") {} }
+        compose.waitUntil(5_000) { !model.state.value.busy && model.state.value.jobs.size == 2 }
+        compose.runOnIdle { model.markAppliedElsewhere(removable.id, true) }
+        compose.waitUntil(5_000) { !model.state.value.busy && removable.id in model.state.value.manualApplied }
+        compose.onNodeWithTag("jobs-saved-tab").performClick()
+        val remove = "Remove saved link for ${removable.title} at ${removable.company}"
+        compose.onNodeWithTag("jobs-list").performScrollToNode(hasContentDescription(remove))
+        compose.onNodeWithContentDescription(remove).performClick()
+        compose.onNodeWithText("Connected records and receipts stay saved.").performScrollTo().assertIsDisplayed()
+        captureConfirmation("remove-local-opportunity-confirmation")
+        compose.onNodeWithText("Keep opportunity").performClick()
+        assertEquals(2, model.state.value.jobs.size)
+        assertTrue(removable.id in model.state.value.manualApplied)
+        compose.onNodeWithContentDescription(remove).performClick()
+        compose.onNodeWithTag("confirm-remove-opportunity").performClick()
+        compose.waitUntil(5_000) { !model.state.value.busy && model.state.value.jobs.size == 1 }
+        assertEquals("https://example.invalid/keep", model.state.value.jobs.single().url)
+        assertFalse(removable.id in model.state.value.manualApplied)
+        assertTrue(model.state.value.receipts.isEmpty())
+        assertEquals(0, service.requests)
     }
 }

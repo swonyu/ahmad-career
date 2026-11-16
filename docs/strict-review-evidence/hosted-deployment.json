@@ -1,0 +1,37 @@
+{
+  "saved": {
+    "id": "appgprj_6afb13851fb4819193358d5db54e73b7~appgver_ccc923bd76f88191b4d4a2d001707bda",
+    "project_id": "appgprj_6afb13851fb4819193358d5db54e73b7",
+    "version_number": 3,
+    "source": {
+      "commit_sha": "318b5109b46c9aa409c5c686adf9f5faa5fcf78f"
+    },
+    "archive_storage": {
+      "archive_format": "tar",
+      "sediment_file_id": "file_00000000d31c8211ba7107dafe4713ba",
+      "content_hash": "sha256:f9ff0e5541a6b35d14e3d97810b6a1060e6849ba5ba171e54fa40fd3a3269ac4",
+      "size_bytes": 1628160,
+      "file_count": 79
+    },
+    "screenshot_url": null,
+    "deployment_id": null
+  },
+  "deployed": {
+    "id": "appgdep_6afb7b9b79b481918f7179607505f6a5",
+    "project_id": "appgprj_6afb13851fb4819193358d5db54e73b7",
+    "title": "Career Finder",
+    "version_id": "appgprj_6afb13851fb4819193358d5db54e73b7~appgver_ccc923bd76f88191b4d4a2d001707bda",
+    "type": "publish",
+    "status": "succeeded",
+    "url": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
+    "has_mcp": false,
+    "screenshot_asset_pointer": null,
+    "provider_deployment_id": "release---6afb19c7dcb081918f1c6b1c2785c3c0",
+    "failure_message": null,
+    "env_set_revision": 0,
+    "updated_at": "2026-11-16T21:55:01.305318+00:00"
+  },
+  "sourceCommit": "318b5109b46c9aa409c5c686adf9f5faa5fcf78f",
+  "audience": "public",
+  "privateDataModified": false
+}

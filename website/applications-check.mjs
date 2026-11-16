@@ -97,9 +97,26 @@ try {
   r=await submit(c,p);check('repeated completed plan returns existing evidence without resending',()=>{assert.equal(r.status,200);assert.equal(counts.get(1),1)});
   r=await c.request('GET','receipts');check('receipt export excludes keys, tokens and PDF bytes',()=>{const s=JSON.stringify(r.data);assert.ok(!s.includes('fixture-key-never-real'));assert.ok(!s.includes(cv.dataBase64));assert.ok(!s.includes(c.csrf));assert.ok(s.includes('test-application-1'))});
   const dup=await plan(c,[j.id]);check('confirmed same-applicant posting is blocked in a new plan',()=>assert.equal(dup.items[0].state,'blocked'));
-  const c2=await f.browser();await save(c2);const j2=await job(c2,1);const copy=await plan(c2,[j2.id]);check('copied profile email cannot bypass duplicate protection',()=>assert.equal(copy.items[0].state,'blocked'));
-  r=await c2.request('GET','workspace');check('workspaces do not expose another applicant’s receipts',()=>assert.equal(r.data.attempts.length,0));
+  const c2=await f.browser();await save(c2);const j2=await job(c2,1);const copy=await plan(c2,[j2.id]);check('an unverified matching email cannot reveal another workspace application status',()=>{assert.equal(copy.items[0].state,'ready');assert.equal(copy.items[0].reason,'')});
+  r=await c2.request('GET','workspace');check('workspaces expose only their own review and receipt records',()=>{assert.equal(r.data.attempts.length,1);assert.equal(r.data.attempts[0].planId,copy.id);assert.equal(r.data.attempts[0].state,'ready');assert.equal(r.data.attempts[0].applicationId,undefined)});
   await save(c,{...candidate,email:'changed@example.com'},1);const changed=await plan(c,[j.id]);check('changing email cannot erase same-workspace application history',()=>assert.equal(changed.items[0].state,'blocked'));
+  let privacyTime=Date.now();const privacy=await fixture('workspace-privacy',{clock:()=>privacyTime}),privateOwner=await privacy.native(),privateProbe=await privacy.native();
+  const unverifiedProfile={...candidate,email:'unverified-shared@example.com'};await save(privateOwner,unverifiedProfile);await save(privateProbe,unverifiedProfile);
+  const privateJob=await job(privateOwner,25),probeJob=await job(privateProbe,25),beforePrivateReceipt=await plan(privateProbe,[probeJob.id]);
+  const ownerReview=await plan(privateOwner,[privateJob.id]);await submit(privateOwner,ownerReview);const ownerBeforeProbe=await settled(privateOwner,ownerReview.id);
+  const afterPrivateReceipt=await plan(privateProbe,[probeJob.id]);
+  const withoutAttemptId=items=>items.map(({attemptId,...item})=>item);
+  check('separate unverified workspaces return the same review before and after a private confirmed receipt',()=>{assert.deepEqual(withoutAttemptId(afterPrivateReceipt.items),withoutAttemptId(beforePrivateReceipt.items));assert.equal(afterPrivateReceipt.items[0].state,'ready');assert.equal(counts.get(25),1)});
+  await submit(privateProbe,afterPrivateReceipt);const probeDispatched=await settled(privateProbe,afterPrivateReceipt.id),ownerAfterProbe=(await privateOwner.request('GET','workspace')).data;
+  check('independently approved workspaces dispatch without a cross-workspace index or status dependency',()=>{assert.equal(probeDispatched.attempts.find(a=>a.planId===afterPrivateReceipt.id).state,'confirmed');assert.equal(counts.get(25),2);assert.deepEqual(ownerAfterProbe,ownerBeforeProbe)});
+  await submit(privateProbe,beforePrivateReceipt);const duplicateProbe=await settled(privateProbe,beforePrivateReceipt.id);
+  check('an earlier ready plan still cannot bypass same-workspace dispatch deduplication',()=>{assert.equal(duplicateProbe.attempts.find(a=>a.planId===beforePrivateReceipt.id).state,'blocked');assert.equal(counts.get(25),2)});
+  scenarios.set(26,'rate-limit');const privateRateJob=await job(privateOwner,26),privateRatePlan=await plan(privateOwner,[privateRateJob.id]);await submit(privateOwner,privateRatePlan);await settled(privateOwner,privateRatePlan.id);
+  privacyTime+=31*60000;const privateCooldownBefore=(await privateOwner.request('GET','workspace')).data,probeRateJob=await job(privateProbe,26),probeRatePlan=await plan(privateProbe,[probeRateJob.id]);
+  const privateCooldownAfter=(await privateOwner.request('GET','workspace')).data;
+  check('another workspace cannot cancel an expired rate-limited review by copying its email',()=>{assert.equal(probeRatePlan.items[0].state,'ready');assert.deepEqual(privateCooldownAfter,privateCooldownBefore);assert.equal(privateCooldownAfter.attempts.find(a=>a.planId===privateRatePlan.id).state,'rate_limited');assert.equal(counts.get(26),1)});
+  const ownRateReplacement=await plan(privateOwner,[privateRateJob.id]),ownRateState=(await privateOwner.request('GET','workspace')).data;
+  check('only the owning workspace retires its obsolete cooldown review',()=>{assert.equal(ownRateReplacement.items[0].state,'ready');assert.equal(ownRateState.attempts.find(a=>a.planId===privateRatePlan.id).state,'cancelled');assert.equal(counts.get(26),1)});
   for(const [n,scenario] of [[2,'no-receipt'],[3,'server-error'],[4,'timeout'],[6,'rejected'],[7,'redirect'],[8,'html'],[9,'false-ok']]) {
     scenarios.set(n,scenario);const jj=await job(c,n),pp=await plan(c,[jj.id]);await submit(c,pp);const state=(await settled(c,pp.id)).attempts.find(a=>a.planId===pp.id);
     check(`${scenario} response has honest outcome`,()=>{assert.equal(state.state,scenario==='rejected'?'rejected':'uncertain');assert.equal(state.applicationId,undefined);assert.ok(!JSON.stringify(state).includes('fixture-key-never-real'))});
@@ -165,8 +182,12 @@ try {
   check('all supported test storage is private',()=>{assert.equal(fs.statSync(f.dir).mode&0o777,0o700);assert.equal(fs.statSync(path.join(f.dir,'applications.sqlite')).mode&0o777,0o600)});
   // Crash recovery: only manipulate this isolated synthetic ledger after closing its owner.
   const recovery=await fixture('recovery'),recoveryClient=await recovery.browser();await save(recoveryClient,{...candidate,email:'recovery@example.com'});const recoveryJob=await job(recoveryClient,19),recoveryPlan=await plan(recoveryClient,[recoveryJob.id]);await recovery.service.close();
-  const rd=new DatabaseSync(path.join(recovery.dir,'applications.sqlite'));rd.prepare("UPDATE attempts SET state='dispatching',dispatched_at=? WHERE plan_id=?").run(new Date().toISOString(),recoveryPlan.id);rd.close();
-  const restarted=createApplicationService(recovery.options);const verifyDB=new DatabaseSync(path.join(recovery.dir,'applications.sqlite'));const recovered=verifyDB.prepare('SELECT state,error_code FROM attempts WHERE plan_id=?').get(recoveryPlan.id);verifyDB.close();check('restart converts interrupted dispatch to uncertainty without POST',()=>{assert.equal(recovered.state,'uncertain');assert.equal(recovered.error_code,'service_restarted');assert.equal(counts.get(19),undefined)});await restarted.close();
+  const rd=new DatabaseSync(path.join(recovery.dir,'applications.sqlite'));rd.prepare("UPDATE attempts SET state='dispatching',dispatched_at=? WHERE plan_id=?").run(new Date().toISOString(),recoveryPlan.id);
+  rd.exec("CREATE UNIQUE INDEX active_applicant_job ON attempts(applicant_hash,job_key) WHERE state IN ('dispatching','confirmed','uncertain')");
+  const legacyRecord=rd.prepare('SELECT id,workspace_id,applicant_hash,job_key,snapshot_json FROM attempts WHERE plan_id=?').get(recoveryPlan.id);rd.close();
+  const restarted=createApplicationService(recovery.options);const verifyDB=new DatabaseSync(path.join(recovery.dir,'applications.sqlite'));const recovered=verifyDB.prepare('SELECT state,error_code FROM attempts WHERE plan_id=?').get(recoveryPlan.id);
+  check('legacy global email index is removed without deleting application records',()=>{assert.equal(verifyDB.prepare("SELECT name FROM sqlite_master WHERE type='index' AND name='active_applicant_job'").get(),undefined);assert.deepEqual(verifyDB.prepare('SELECT id,workspace_id,applicant_hash,job_key,snapshot_json FROM attempts WHERE plan_id=?').get(recoveryPlan.id),legacyRecord)});
+  verifyDB.close();check('restart converts interrupted dispatch to uncertainty without POST',()=>{assert.equal(recovered.state,'uncertain');assert.equal(recovered.error_code,'service_restarted');assert.equal(counts.get(19),undefined)});await restarted.close();
   serviceInstances.splice(serviceInstances.indexOf(recovery),1);recovery.server.closeAllConnections();recovery.server.close();await once(recovery.server,'close');
   console.log(`PASS: ${checks} verified-application regression groups (real HTTP against synthetic local Lever only).`);
 } finally {

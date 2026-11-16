@@ -73,6 +73,7 @@ class CareerViewModel internal constructor(application: Application, private val
         return try { CareerUiState(loaded = true, connection = connection,
             profile = saved.optJSONObject("profile")?.let(ProfileDraft::fromJson) ?: ProfileDraft(),
             profileDirty = saved.optBoolean("profileDirty"),
+            opportunityDraft = if (saved.has("opportunityDraft")) OpportunityDraft.fromJson(saved.getJSONObject("opportunityDraft")) else OpportunityDraft(),
             jobs = saved.optJSONArray("jobs").objects().map { job -> Opportunity.fromJson(job) },
             receipts = saved.optJSONArray("receipts").objects().map(ApplicationReceipt::fromJson),
             activePlans = saved.optJSONArray("activePlans").strings(),
@@ -101,6 +102,7 @@ class CareerViewModel internal constructor(application: Application, private val
         check(allowBlocked || !state.value.storageBlocked) { "Private storage is unavailable; the original files are preserved." }
         val snapshot = state.value
         val envelope = JSONObject().put("schema", 1).put("profile", snapshot.profile.privateJson()).put("profileDirty", snapshot.profileDirty)
+            .put("opportunityDraft", snapshot.opportunityDraft.privateJson())
             .put("jobs", JSONArray(snapshot.jobs.map(Opportunity::privateJson)))
             .put("activePlans", JSONArray(snapshot.activePlans))
             .put("manualApplied", JSONArray(snapshot.manualApplied.toList()))
@@ -146,10 +148,10 @@ class CareerViewModel internal constructor(application: Application, private val
             requiresPairing = it.requiresPairing || error is ApiFailure && error.status == 401) }
     }
 
-    private fun queuePrivateSave() {
+    private fun queuePrivateSave(immediate: Boolean = false) {
         draftSave?.cancel()
         draftSave = viewModelScope.launch {
-            delay(350)
+            if (!immediate) delay(350)
             try { persist() }
             catch (cancel: CancellationException) { throw cancel }
             catch (error: Exception) { report(error) }
@@ -346,21 +348,89 @@ class CareerViewModel internal constructor(application: Application, private val
         mutable.update { it.copy(notice = "Copied into a private workspace draft. Save the profile and sync each opportunity when ready. Nothing was sent to employers.") }
     }
 
+    fun editOpportunityDraft(change: (OpportunityDraft) -> OpportunityDraft) {
+        if (!state.value.loaded || state.value.storageBlocked || state.value.busy) return
+        mutable.update { it.copy(opportunityDraft = change(it.opportunityDraft)) }
+        queuePrivateSave()
+    }
+
+    fun keepOpportunityDraft(done: () -> Unit) = action {
+        draftSave?.cancel()
+        persist()
+        mutable.update { it.copy(notice = "Unfinished opportunity kept on this phone.") }
+        done()
+    }
+
+    fun discardOpportunityDraft(done: () -> Unit) = action {
+        draftSave?.cancel()
+        val previous = state.value.opportunityDraft
+        mutable.update { it.copy(opportunityDraft = OpportunityDraft()) }
+        try { persist() }
+        catch (error: Exception) {
+            mutable.update { it.copy(opportunityDraft = previous) }
+            throw error
+        }
+        mutable.update { it.copy(notice = "Unfinished opportunity discarded. Saved opportunities are unchanged.") }
+        done()
+    }
+
+    fun saveOpportunityDraft(done: () -> Unit) = action {
+        val draft = state.value.opportunityDraft
+        addOpportunityInternal(draft.url, draft.title, draft.company, draft.location, draft.country, draft, done)
+    }
+
     fun addOpportunity(url: String, title: String, company: String, location: String, country: String, done: () -> Unit) = action {
+        addOpportunityInternal(url, title, company, location, country, null, done)
+    }
+
+    private suspend fun addOpportunityInternal(url: String, title: String, company: String, location: String, country: String,
+        completingDraft: OpportunityDraft?, done: () -> Unit) {
         val normalized = BoundaryPolicy.opportunityURL(url.trim())
         require(title.trim().isNotBlank() && company.trim().isNotBlank()) { "Add the role title and employer so the saved opportunity is clear." }
         require(country.isBlank() || country.trim().matches(Regex("[A-Za-z]{2}"))) { "Use a two-letter country code or leave it blank." }
         if (state.value.jobs.any { it.url == normalized }) {
-            mutable.update { it.copy(notice = "This opportunity is already in your saved list.") }
+            mutable.update { it.copy(notice = if (completingDraft == null) "This opportunity is already in your saved list."
+                else "This link is already saved. Your unfinished draft is kept so you can review its details or change the link.") }
+            if (completingDraft != null) { draftSave?.cancel(); persist() }
             done()
-            return@action
+            return
         }
         val job = Opportunity("local-" + UUID.randomUUID(), normalized, title.trim().take(200), company.trim().take(200), location.trim().take(200), country.trim().uppercase(), true)
-        mutable.update { it.copy(jobs = listOf(job) + it.jobs) }
-        try { persist() } catch (error: Exception) { mutable.update { it.copy(jobs = it.jobs.filterNot { pending -> pending.id == job.id }) }; throw error }
+        draftSave?.cancel()
+        val previousDraft = state.value.opportunityDraft
+        // Only completing this editor may consume its draft. Saving a discovery result or
+        // a failed remote sync must not overwrite an unrelated unfinished opportunity.
+        mutable.update { it.copy(jobs = listOf(job) + it.jobs,
+            opportunityDraft = if (completingDraft != null && it.opportunityDraft == completingDraft) OpportunityDraft() else it.opportunityDraft) }
+        try { persist() }
+        catch (error: Exception) {
+            mutable.update { it.copy(jobs = it.jobs.filterNot { pending -> pending.id == job.id }, opportunityDraft = previousDraft) }
+            throw error
+        }
         mutable.update { it.copy(notice = "Opportunity saved on this phone.") }
         done()
         if (state.value.connection != null) syncInternal(job)
+    }
+
+    fun removeLocalOpportunity(id: String, done: () -> Unit = {}) = action {
+        val previous = state.value
+        require(previous.jobs.firstOrNull { it.id == id }?.localOnly == true) {
+            "Only a link saved on this phone can be removed here. Connected records are preserved."
+        }
+        require((previous.recoverablePlans + listOfNotNull(previous.plan)).none { plan -> plan.items.any { it.jobId == id } }) {
+            "This opportunity is linked to an application review. Its saved record and application activity are preserved."
+        }
+        draftSave?.cancel()
+        mutable.update { it.copy(jobs = it.jobs.filterNot { job -> job.id == id }, selected = it.selected - id,
+            answers = it.answers - id, manualApplied = it.manualApplied - id, reviewGeneration = it.reviewGeneration + 1) }
+        try { persist() }
+        catch (error: Exception) {
+            mutable.update { it.copy(jobs = previous.jobs, selected = previous.selected, answers = previous.answers,
+                manualApplied = previous.manualApplied, reviewGeneration = previous.reviewGeneration) }
+            throw error
+        }
+        mutable.update { it.copy(notice = "Saved link removed from this phone. Connected records and application receipts are preserved.") }
+        done()
     }
 
     fun syncOpportunity(job: Opportunity) = action { syncInternal(job) }
@@ -549,7 +619,11 @@ class CareerViewModel internal constructor(application: Application, private val
     fun setForeground(active: Boolean) {
         if (foreground != active) foregroundGeneration++
         foreground = active
-        if (!active) { polling?.cancel(); polling = null } else startPolling()
+        if (!active) {
+            polling?.cancel(); polling = null
+            if (state.value.loaded && !state.value.busy && !state.value.storageBlocked && draftSave?.isActive == true)
+                queuePrivateSave(immediate = true)
+        } else startPolling()
     }
 
     private fun canPoll(connection: Connection?, generation: Long): Boolean = foreground &&

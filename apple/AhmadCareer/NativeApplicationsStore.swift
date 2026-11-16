@@ -57,6 +57,7 @@ final class NativeApplicationsStore: ObservableObject {
     @Published private(set) var busy = false
     @Published var message: String?
     @Published private(set) var mode = "local"
+    @Published private(set) var liveSubmissionEnabled: Bool?
     @Published private(set) var requiresClientContinuation = false
     @Published private(set) var advancingApprovedApplication = false
     @Published var selected = Set<String>()
@@ -85,6 +86,7 @@ final class NativeApplicationsStore: ObservableObject {
     var profileHasConflict: Bool { state.hasProfileConflict }
     var serviceAddress: String { state.serviceAddress }
     var connectionSetupAddress: String { MobileApplicationPolicy.connectionSetupAddress(state.serviceAddress) }
+    var submissionAvailable: Bool { connected && (mode == "test" || liveSubmissionEnabled == true) }
     var availableReviews: [ApplicationReviewSummary] {
         recoverablePlans.compactMap(ApplicationReviewSummary.init).filter { !activePlanIDs.contains($0.id) }
     }
@@ -154,6 +156,7 @@ final class NativeApplicationsStore: ObservableObject {
         remoteJobs = []; jobs = state.jobs; attempts = []; plan = nil
         activePlanIDs = []; recoverablePlans = []; selected = []; answers = [:]; mode = "local"
         requiresClientContinuation = false
+        liveSubmissionEnabled = nil
     }
     private func rotateConnection() {
         sessionGeneration = UUID(); contentGeneration = UUID(); refreshTicket = nil
@@ -168,7 +171,7 @@ final class NativeApplicationsStore: ObservableObject {
             message = error.localizedDescription
         } else if !(error is CancellationError) {
             if (error as? MobileApplicationError)?.code == "account_deleting" {
-                activePlanIDs = []; recoverablePlans = []; plan = nil; requiresClientContinuation = false
+                activePlanIDs = []; recoverablePlans = []; plan = nil; requiresClientContinuation = false; liveSubmissionEnabled = nil
             }
             message = error.localizedDescription
         }
@@ -276,6 +279,7 @@ final class NativeApplicationsStore: ObservableObject {
             remoteJobs = snapshot.jobs; attempts = snapshot.attempts
             activePlanIDs = snapshot.activePlanIDs; recoverablePlans = snapshot.recoverablePlans; mode = snapshot.mode
             requiresClientContinuation = snapshot.requiresClientContinuation
+            liveSubmissionEnabled = snapshot.liveSubmissionEnabled
             mergeJobs()
             if let id = plan?["id"]?.string {
                 if !profileNeedsSync, let current = recoverablePlans.first(where: { $0["id"]?.string == id }),
@@ -540,6 +544,10 @@ final class NativeApplicationsStore: ObservableObject {
     }
     @discardableResult
     func submitReviewed() async -> Bool {
+        guard submissionAvailable else {
+            message = "Automatic submission is unavailable for this connection. Refresh availability or apply on the employer's website."
+            return false
+        }
         guard !profileNeedsSync, !profileEditing else { message = "Save your current application details before approving a submission."; return false }
         guard let client, let plan, ApplicationReviewPolicy.current(plan, revision: revision),
               let id = plan["id"]?.string, let digest = plan["digest"]?.string,

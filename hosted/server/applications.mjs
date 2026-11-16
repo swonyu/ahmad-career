@@ -64,7 +64,7 @@ export function createHostedApplicationHandler({clock=Date.now,adapterFactory=ma
         return{ok:true,mode,workspaceId:ws.id,profile:publicProfile(JSON.parse(ws.profile_json),ws.revision),jobs:(await all('SELECT * FROM jobs WHERE workspace_id=? ORDER BY created_at DESC,id LIMIT 200',ws.id)).map(r=>jobView({...JSON.parse(r.data_json),id:r.id})),attempts:attemptRows.map(attemptView),capabilities:capabilities(),recoverablePlans:await Promise.all(plans.map(p=>planView(p,attemptRows))),activePlanIds:await activeIDs(ws.id)};
       }
       async function nativeSession(){const match=(request.headers.get('authorization')??'').match(/^Bearer ([a-f0-9]{64})$/),row=match?await first('SELECT w.* FROM native_sessions s JOIN workspaces w ON w.id=s.workspace_id WHERE s.token_hash=? AND s.expires_at>?',sha256(match[1]),iso()):null;if(!row)fail('session_required','Your phone session expired or is invalid. Pair this phone again.',401);if(row.deleting_at)fail('account_deleting','This account is being deleted. No new applications can be started.',409);return row}
-      async function documents(ws){return(await all("SELECT hash,name,bytes,created_at,state FROM resumes WHERE workspace_id=? ORDER BY created_at DESC LIMIT 5",ws.id)).map(r=>({sha256:r.hash,name:r.name,size:r.bytes,createdAt:r.created_at,state:r.state,downloadPath:`/api/account/resumes/${r.hash}`}))}
+      async function documents(ws){return(await all("SELECT hash,name,bytes,created_at,state FROM resumes WHERE workspace_id=? ORDER BY created_at DESC LIMIT 5",ws.id)).map(r=>({sha256:r.hash,name:r.name,size:r.bytes,createdAt:r.created_at,state:r.state,downloadPath:`/api/account/resumes/${r.hash}?expectedWorkspaceId=${encodeURIComponent(ws.id)}`}))}
       async function usage(ws){const r=await first('SELECT COUNT(*) AS files,COALESCE(SUM(bytes),0) AS bytes FROM resumes WHERE workspace_id=?',ws.id);return{storedResumes:r.files,storedResumeBytes:r.bytes,jobs:(await first('SELECT COUNT(*) AS n FROM jobs WHERE workspace_id=?',ws.id)).n,plans:(await first('SELECT COUNT(*) AS n FROM plans WHERE workspace_id=?',ws.id)).n,attempts:(await first('SELECT COUNT(*) AS n FROM attempts WHERE workspace_id=?',ws.id)).n}}
       // A permanent, opaque empty object fences conditional late writers. No account ID, hash, filename or PDF metadata is retained in these markers.
       async function tombstone(key){await env.BUCKET.put(key,new Uint8Array(0),{httpMetadata:{contentType:'application/octet-stream'},customMetadata:{purpose:'retired-upload'}});const head=await env.BUCKET.head(key);if(!head||head.size!==0||head.customMetadata?.purpose!=='retired-upload')fail('deletion_pending','Private file erasure is not confirmed. Try again.',503)}
@@ -88,11 +88,13 @@ export function createHostedApplicationHandler({clock=Date.now,adapterFactory=ma
       }
 
       if(url.pathname.startsWith('/api/account')) {
-        const who=owner(),mutation=!['GET','HEAD'].includes(request.method);if(mutation){requireBrowserWrite();await throttle('account:'+sha256(who.id),30)}
+        const who=owner(),mutation=!['GET','HEAD'].includes(request.method);if(mutation)requireBrowserWrite();
         let ws=await first('SELECT * FROM workspaces WHERE owner_id=?',who.id);
-        if(url.pathname==='/api/account'&&request.method==='GET')return response(200,{ok:true,workspaceId:ws?.id??null,email:who.email,createdAt:ws?.created_at??null,deleting:Boolean(ws?.deleting_at),profile:publicProfile(ws?JSON.parse(ws.profile_json):BLANK,ws?.revision??0),sessions:ws?await all('SELECT id,created_at AS createdAt,expires_at AS expiresAt FROM native_sessions WHERE workspace_id=? AND expires_at>? ORDER BY created_at DESC LIMIT 10',ws.id,iso()):[],documents:ws?await documents(ws):[],limits:LIMITS,usage:ws?await usage(ws):{storedResumes:0,storedResumeBytes:0,jobs:0,plans:0,attempts:0}});
+        if(url.pathname==='/api/account'&&request.method==='GET')return response(200,{ok:true,workspaceId:ws?.id??null,email:who.email,confirmedEmail:ws?.owner_email??who.email,emailUpdateRequired:Boolean(ws&&ws.owner_email!==who.email),createdAt:ws?.created_at??null,deleting:Boolean(ws?.deleting_at),profile:publicProfile(ws?JSON.parse(ws.profile_json):BLANK,ws?.revision??0),sessions:ws?await all('SELECT id,created_at AS createdAt,expires_at AS expiresAt FROM native_sessions WHERE workspace_id=? AND expires_at>? ORDER BY created_at DESC LIMIT 10',ws.id,iso()):[],documents:ws?await documents(ws):[],limits:LIMITS,usage:ws?await usage(ws):{storedResumes:0,storedResumeBytes:0,jobs:0,plans:0,attempts:0}});
         if(url.pathname==='/api/account/pairing'&&request.method==='POST'){
-          object(await bodyJSON(request),[]);
+          const body=object(await bodyJSON(request),['expectedAccountId']);
+          if(body.expectedAccountId!==who.id)fail('account_changed','The signed-in account changed. Reload this page before creating a connection code.',409);
+          await throttle('account:'+sha256(who.id),30);
           if(ws?.deleting_at)fail('account_deleting','Finish deleting this account before creating another connection.',409);
           if(!ws){const id=randomUUID();await run('INSERT OR IGNORE INTO workspaces(id,owner_id,owner_email,created_at,profile_json) SELECT ?,?,?,?,? WHERE (SELECT COUNT(*) FROM workspaces)<?',id,who.id,who.email,iso(),stringify(BLANK),LIMITS.maxAccounts);ws=await first('SELECT * FROM workspaces WHERE owner_id=?',who.id);if(!ws)fail('capacity_reached','The free service has reached its current account capacity. No paid service was enabled.',503)}
           if(ws.owner_email!==who.email){await run('UPDATE workspaces SET owner_email=?,revision=revision+1 WHERE id=? AND owner_email<>? AND deleting_at IS NULL',who.email,ws.id,who.email);ws=await first('SELECT * FROM workspaces WHERE owner_id=?',who.id);if(!ws||ws.deleting_at)fail('account_deleting','This account is being deleted.',409)}
@@ -102,12 +104,26 @@ export function createHostedApplicationHandler({clock=Date.now,adapterFactory=ma
           const raw=[...randomBytes(16)].map(b=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[b&31]).join(''),expiresAt=new Date(now()+300000).toISOString();
           const savedCode=await db.batch([stmt('DELETE FROM pairing_codes WHERE workspace_id=?',ws.id),stmt('INSERT INTO pairing_codes(code_hash,workspace_id,created_at,expires_at) SELECT ?,?,?,? FROM workspaces WHERE id=? AND deleting_at IS NULL',sha256(raw),ws.id,iso(),expiresAt,ws.id)]);
           if(savedCode[1].meta.changes!==1)fail('account_deleting','This account was deleted or locked before a pairing code could be issued.',409);
-          return response(201,{ok:true,pairingCode:raw.match(/.{4}/g).join('-'),expiresAt,workspaceId:ws.id,origin:SERVICE_ORIGIN});
+          return response(201,{ok:true,pairingCode:raw.match(/.{4}/g).join('-'),expiresAt,serverTime:iso(),workspaceId:ws.id,origin:SERVICE_ORIGIN});
+        }
+        const mutationFields=url.pathname==='/api/account'&&request.method==='DELETE'?['confirmation']:url.pathname==='/api/account/sessions/revoke'&&request.method==='POST'?['sessionId']:url.pathname==='/api/account/uploads/recover'&&request.method==='POST'?[]:null;
+        let accountBody;
+        if(mutationFields!==null){
+          accountBody=object(await bodyJSON(request),['expectedWorkspaceId',...mutationFields]);
+          // Bind the user's displayed target to this request's current Sites identity.
+          // Check before changing codes, sessions, documents, or deletion state.
+          if(!ws||typeof accountBody.expectedWorkspaceId!=='string'||accountBody.expectedWorkspaceId!==ws.id)fail('workspace_changed','The signed-in workspace changed. Reload this page before making changes.',409);
+          await throttle('account:'+sha256(who.id),30);
+        }
+        const file=url.pathname.match(/^\/api\/account\/resumes\/([a-f0-9]{64})$/);
+        if(request.method==='GET'&&(url.pathname==='/api/account/export'||file)){
+          const targets=url.searchParams.getAll('expectedWorkspaceId');
+          if(!ws||targets.length!==1||targets[0]!==ws.id)fail('workspace_changed','The signed-in workspace changed. Reload this page before downloading records.',409);
         }
         if(!ws)fail('workspace_missing','Create a phone connection to start your hosted workspace.',404);
-        if(url.pathname==='/api/account/sessions/revoke'&&request.method==='POST'){const body=object(await bodyJSON(request),['sessionId']);idCheck(body.sessionId);await run('DELETE FROM native_sessions WHERE id=? AND workspace_id=?',body.sessionId,ws.id);return response(200,{ok:true})}
+        if(url.pathname==='/api/account/sessions/revoke'&&request.method==='POST'){idCheck(accountBody.sessionId);await run('DELETE FROM native_sessions WHERE id=? AND workspace_id=?',accountBody.sessionId,ws.id);return response(200,{ok:true})}
         if(url.pathname==='/api/account/uploads/recover'&&request.method==='POST'){
-          object(await bodyJSON(request),[]);if(ws.deleting_at)fail('account_deleting','Finish the pending deletion instead of recovering files.',409);
+          if(ws.deleting_at)fail('account_deleting','Finish the pending deletion instead of recovering files.',409);
           const rows=await all("SELECT * FROM resumes WHERE workspace_id=? AND (state='failed' OR (state='uploading' AND lease_expires_at<=?)) LIMIT 5",ws.id,iso());let recovered=0,retryRequired=0;
           for(const row of rows){
             const stored=await env.BUCKET.get(row.object_key);let bytes=stored&&stored.size===row.bytes?new Uint8Array(await stored.arrayBuffer()):null;
@@ -120,10 +136,9 @@ export function createHostedApplicationHandler({clock=Date.now,adapterFactory=ma
           const planRows=await all('SELECT * FROM plans WHERE workspace_id=? ORDER BY created_at,id LIMIT 100',ws.id),attemptRows=await all('SELECT * FROM attempts WHERE workspace_id=? ORDER BY created_at,id LIMIT 500',ws.id);
           return response(200,{ok:true,schemaVersion:1,exportedAt:iso(),workspaceId:ws.id,email:who.email,profile:publicProfile(JSON.parse(ws.profile_json),ws.revision),jobs:(await all('SELECT * FROM jobs WHERE workspace_id=? ORDER BY created_at,id LIMIT 200',ws.id)).map(r=>({...JSON.parse(r.data_json),id:r.id})),plans:await Promise.all(planRows.map(p=>planView(p,attemptRows))),attempts:attemptRows.map(r=>{const s=JSON.parse(r.snapshot_json);return{...attemptView(r),submittedProfile:publicProfile(s.profile,s.profileRevision),answers:s.answers,requirements:s.requirements}}),documents:await documents(ws),includesPDFBytes:false,pdfInstructions:'Download the private PDFs using each document downloadPath while signed in. This JSON export contains records and PDF fingerprints.'},{'Content-Disposition':'attachment; filename="career-finder-records.json"'});
         }
-        const file=url.pathname.match(/^\/api\/account\/resumes\/([a-f0-9]{64})$/);
         if(file&&request.method==='GET'){if(ws.deleting_at)fail('account_deleting','This account is being erased. Its PDFs are no longer available for download.',409);const row=await first("SELECT * FROM resumes WHERE workspace_id=? AND hash=? AND state='ready'",ws.id,file[1]);if(!row)fail('file_not_found','This PDF is not in your account.',404);const stored=await env.BUCKET.get(row.object_key);if(!stored||stored.size!==row.bytes)fail('file_unavailable','The exact stored PDF is temporarily unavailable.',503);return new Response(stored.body,{headers:{'Content-Type':'application/pdf','Content-Disposition':`attachment; filename*=UTF-8''${encodeURIComponent(row.name)}`,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'}})}
         if(url.pathname==='/api/account'&&request.method==='DELETE'){
-          const body=object(await bodyJSON(request),['confirmation']);if(body.confirmation!=='DELETE')fail('deletion_confirmation_required','Type DELETE to permanently remove the hosted workspace.',409);
+          if(accountBody.confirmation!=='DELETE')fail('deletion_confirmation_required','Type DELETE to permanently remove the hosted workspace.',409);
           await run("UPDATE attempts SET state='uncertain',error_code='worker_interrupted',error_message='The dispatch lease expired without a durable provider result. No automatic resend occurred.' WHERE workspace_id=? AND state='dispatching' AND lease_expires_at<=?",ws.id,iso());
           // R2 tombstones fence late conditional uploads; an actual provider dispatch must finish or become durably uncertain first.
           const lock=await run("UPDATE workspaces SET deleting_at=COALESCE(deleting_at,?) WHERE id=? AND NOT EXISTS(SELECT 1 FROM attempts WHERE workspace_id=? AND state='dispatching')",iso(),ws.id,ws.id);
@@ -183,15 +198,19 @@ export function createHostedApplicationHandler({clock=Date.now,adapterFactory=ma
       if(route==='prepare'&&request.method==='POST'){
         const body=object(await bodyJSON(request),['jobIds','answers','manualAppliedJobIds']);if(!Array.isArray(body.jobIds)||!body.jobIds.length||body.jobIds.length>20||new Set(body.jobIds).size!==body.jobIds.length)fail('invalid_selection','Select between one and twenty distinct opportunities.');body.jobIds.forEach(idCheck);
         const answerMap=body.answers??{};object(answerMap,body.jobIds,'Answer map');const manual=body.manualAppliedJobIds??[];if(!Array.isArray(manual)||manual.some(id=>!body.jobIds.includes(id)))fail('invalid_selection','Manual application references must be selected jobs.');
-        const p=JSON.parse(ws.profile_json),planId=randomUUID(),createdAt=iso(),expiresAt=new Date(now()+30*60000).toISOString(),items=[],rows=[],identity=createHmac('sha256',await salt()).update(p.email.trim().toLowerCase()).digest('hex');
+        const p=JSON.parse(ws.profile_json),planId=randomUUID(),createdAt=iso(),expiresAt=new Date(now()+30*60000).toISOString(),items=[],rows=[],emailAuthorized=p.email===ws.owner_email;
+        // An editable profile address is not evidence of account ownership. Only
+        // the verified account email may access the cross-workspace duplicate ledger.
+        const identity=emailAuthorized?createHmac('sha256',await salt()).update(p.email.trim().toLowerCase()).digest('hex'):null;
         const selectedRows=await all(`SELECT * FROM jobs WHERE workspace_id=? AND id IN (${body.jobIds.map(()=>'?').join(',')})`,ws.id,...body.jobIds),selectedMap=new Map(selectedRows.map(r=>[r.id,r]));
         if(selectedRows.length!==body.jobIds.length)fail('job_not_found','A selected opportunity is not in your workspace.',404);
         await run("UPDATE attempts SET state='cancelled',error_code='review_replaced_after_cooldown',error_message='The rejected request cooldown ended and an obsolete review was retired. No automatic resend occurred.' WHERE workspace_id=? AND state='rate_limited' AND retry_at<=? AND EXISTS(SELECT 1 FROM plans p WHERE p.id=attempts.plan_id AND (p.stopped=1 OR p.expires_at<=? OR p.profile_revision<>?))",ws.id,iso(),iso(),ws.revision);
-        const keys=selectedRows.map(r=>r.job_key),priorRows=await all(`SELECT id,job_key,state,retry_at FROM attempts WHERE (workspace_id=? OR applicant_hash=?) AND job_key IN (${keys.map(()=>'?').join(',')}) AND (state IN ('dispatching','confirmed','uncertain','rate_limited') OR retry_at>?) LIMIT 500`,ws.id,identity,...keys,iso()),priorMap=new Map(priorRows.map(r=>[r.job_key,r]));
+        const keys=selectedRows.map(r=>r.job_key),scope=emailAuthorized?'(workspace_id=? OR applicant_hash=?)':'workspace_id=?',scopeArgs=emailAuthorized?[ws.id,identity]:[ws.id];
+        const priorRows=await all(`SELECT id,job_key,state,retry_at FROM attempts WHERE ${scope} AND job_key IN (${keys.map(()=>'?').join(',')}) AND (state IN ('dispatching','confirmed','uncertain','rate_limited') OR retry_at>?) LIMIT 500`,...scopeArgs,...keys,iso()),priorMap=new Map(priorRows.map(r=>[r.job_key,r]));
         for(const id of body.jobIds){
           const saved=selectedMap.get(id);
           const job={...JSON.parse(saved.data_json),id},answer=validateAnswers(answerMap[id]??{}),matched=support(job);
-          const prior=priorMap.get(job.key),reason=manual.includes(id)?'Your tracker already records this application. Reconcile it before applying again.':prior?duplicateReason(prior):requiredProfile(p)||(p.email!==ws.owner_email?'Automatic submission requires the email verified by your signed-in account.':null)||(!matched.supported?matched.reason:requirementsError(p,answer,matched.requirements));
+          const prior=priorMap.get(job.key),reason=manual.includes(id)?'Your tracker already records this application. Reconcile it before applying again.':prior?duplicateReason(prior):requiredProfile(p)||(!emailAuthorized?'Automatic submission requires the email verified by your signed-in account.':null)||(!matched.supported?matched.reason:requirementsError(p,answer,matched.requirements));
           const item={jobId:id,job:{id,title:job.title,company:job.company,url:job.url,location:job.location,country:job.country},title:job.title,company:job.company,state:reason?'blocked':'ready',reason:reason??'',payloadSummary:{name:applicantName(p),email:p.email,phone:p.phone,website:p.website,comments:answer.comments,...(answer.consentStore===undefined?{}:{consentStore:answer.consentStore}),...(answer.consentMarketing===undefined?{}:{consentMarketing:answer.consentMarketing})},resume:safeResume(p.resume),privacyPolicyUrl:matched.requirements?.privacyPolicyUrl??null,requirementsRevision:matched.requirements?.revision??null};
           if(!reason){const id=randomUUID(),snapshot={job,profile:p,profileRevision:ws.revision,answers:answer,requirements:matched.requirements,mode};snapshot.payloadSHA256=sha256(canonical({schema:2,jobKey:job.key,profile:publicProfile(p,ws.revision),answers:answer,requirements:matched.requirements}));item.attemptId=id;rows.push({id,job,identity,snapshot})}items.push(item);
         }

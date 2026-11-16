@@ -49,6 +49,7 @@ class WorkspaceRegressionTest {
         @Volatile var deferredReadReturned = false
         var malformedProfileReply = false
         var malformedWorkspace = false
+        var rejectJobSave = false
         var rejectGuardedStop = false
         var prepareCount = 0
         private fun profileData() = profile.apiJson().put("revision", profile.revision)
@@ -83,6 +84,7 @@ class WorkspaceRegressionTest {
                     JSONObject().put("ok", true).put("profile", if (malformedProfileReply) JSONObject() else profileData())
                 }
                 "jobs" -> {
+                    if (rejectJobSave) throw ApiFailure(503, "fixture_unavailable", "Fixture save unavailable")
                     val saved = Opportunity.fromJson(body!!.put("id", "synced-job"))
                     jobs = listOf(saved) + jobs.filterNot { it.id == saved.id }
                     JSONObject().put("ok", true).put("job", saved.privateJson())
@@ -328,5 +330,134 @@ class WorkspaceRegressionTest {
         assertTrue(model.state.value.error.orEmpty().contains("not enabled"))
         assertTrue(model.state.value.activePlans.isEmpty())
         assertFalse(service.writes.any { it.first in setOf("submit", "advance") })
+    }
+
+    @Test fun unfinishedOpportunity_survivesRestart_andDiscardFailureKeepsTheOriginal() {
+        val store = MemoryStore().apply { records["workspace-unpaired"] = JSONObject().put("schema", 1).toString() }
+        val service = Service(connection); val model = model(store, service)
+        assertFalse(model.state.value.opportunityDraft.hasContent)
+        val draft = OpportunityDraft("https://", "京都の仕事", "", "Kyoto", "JP")
+        var kept = false
+        main { model.editOpportunityDraft { draft }; model.keepOpportunityDraft { kept = true } }
+        await { kept && !model.state.value.busy }
+        val restored = model(store, service)
+        assertEquals(draft, restored.state.value.opportunityDraft)
+        assertTrue(restored.state.value.jobs.isEmpty())
+
+        store.failWrites = true
+        var discarded = false
+        main { restored.discardOpportunityDraft { discarded = true } }
+        await { restored.state.value.storageBlocked && !restored.state.value.busy }
+        assertFalse(discarded)
+        assertEquals(draft, restored.state.value.opportunityDraft)
+        assertEquals(draft, OpportunityDraft.fromJson(store.read("workspace-unpaired")!!.getJSONObject("opportunityDraft")))
+        store.failWrites = false
+        main { restored.retryStorage() }
+        await { !restored.state.value.storageBlocked && !restored.state.value.busy }
+        main { restored.discardOpportunityDraft { discarded = true } }
+        await { discarded && !restored.state.value.busy }
+        assertFalse(model(store, service).state.value.opportunityDraft.hasContent)
+        assertTrue(service.writes.isEmpty())
+    }
+
+    @Test fun failedRemoteOpportunitySync_keepsAnUnrelatedDraft_andTheSavedLocalRole() {
+        val store = connectedStore(); val service = Service(connection).apply { rejectJobSave = true }
+        val model = model(store, service)
+        val draft = OpportunityDraft("https://example.invalid/later", "Unfinished", "", "", "")
+        main { model.editOpportunityDraft { draft }; model.keepOpportunityDraft {} }
+        await { !model.state.value.busy }
+        var closed = false
+        main { model.addOpportunity("https://example.invalid/discovered", "Discovered role", "Employer", "Remote", "") { closed = true } }
+        await { closed && !model.state.value.busy && model.state.value.error != null }
+        assertEquals(draft, model.state.value.opportunityDraft)
+        assertTrue(model.state.value.jobs.any { it.url == "https://example.invalid/discovered" && it.localOnly })
+        val restored = model(store, service)
+        assertEquals(draft, restored.state.value.opportunityDraft)
+        assertTrue(restored.state.value.jobs.any { it.url == "https://example.invalid/discovered" && it.localOnly })
+        assertEquals(listOf("jobs"), service.writes.map { it.first })
+    }
+
+    @Test fun completingOpportunityDraft_persistsItsRoleBeforeClearing_evenIfRemoteSyncFails() {
+        val store = connectedStore(); val service = Service(connection).apply { rejectJobSave = true }
+        val model = model(store, service)
+        val draft = OpportunityDraft("https://example.invalid/complete", "Role", "Employer", "Tokyo", "JP")
+        var closed = false
+        main { model.editOpportunityDraft { draft }; model.saveOpportunityDraft { closed = true } }
+        await { closed && !model.state.value.busy && model.state.value.error != null }
+        assertFalse(model.state.value.opportunityDraft.hasContent)
+        val restored = model(store, service)
+        assertFalse(restored.state.value.opportunityDraft.hasContent)
+        val saved = restored.state.value.jobs.single { it.url == draft.url }
+        assertTrue(saved.localOnly)
+        assertEquals(draft.title, saved.title)
+        assertEquals(draft.company, saved.company)
+        assertEquals(draft.location, saved.location)
+        assertEquals(draft.country, saved.country)
+        assertEquals(listOf("jobs"), service.writes.map { it.first })
+    }
+
+    @Test fun removingLocalOpportunity_cleansOnlyItsPrivateFlags_andPreservesRemoteActivity() {
+        val local = Opportunity("local-remove", "https://example.invalid/local", "Local", "Employer", "", "", true)
+        val remote = Opportunity("remote-keep", "https://example.invalid/remote", "Remote", "Employer", "", "")
+        val draft = OpportunityDraft(title = "Unfinished unrelated role")
+        val receipt = JSONObject().put("attemptId", "receipt-kept").put("state", "confirmed").put("provider", "lever")
+            .put("evidenceMode", "live").put("applicationId", "provider-confirmation").put("createdAt", Instant.now().toString())
+        val store = MemoryStore().apply {
+            records["workspace-unpaired"] = JSONObject().put("schema", 1)
+                .put("opportunityDraft", draft.privateJson()).put("jobs", JSONArray(listOf(local.privateJson(), remote.privateJson())))
+                .put("selected", JSONArray(listOf(local.id, remote.id))).put("manualApplied", JSONArray(listOf(local.id, remote.id)))
+                .put("answers", JSONObject().put(local.id, JobAnswers("Local answer", true, false).json())
+                    .put(remote.id, JobAnswers("Remote answer", true, false).json()))
+                .put("receipts", JSONArray(listOf(receipt))).put("activePlans", JSONArray(listOf("approved-plan-kept")))
+                .put("continuationHolds", JSONArray(listOf("paused-plan-kept"))).toString()
+        }
+        val service = Service(connection); val model = model(store, service)
+        val originalReceipts = model.state.value.receipts
+        main { model.removeLocalOpportunity(local.id) }
+        await { !model.state.value.busy && model.state.value.jobs.size == 1 }
+        assertEquals(listOf(remote), model.state.value.jobs)
+        assertEquals(setOf(remote.id), model.state.value.selected)
+        assertEquals(setOf(remote.id), model.state.value.manualApplied)
+        assertEquals(setOf(remote.id), model.state.value.answers.keys)
+        assertEquals(originalReceipts, model.state.value.receipts)
+        assertEquals(listOf("approved-plan-kept"), model.state.value.activePlans)
+        assertEquals(setOf("paused-plan-kept"), model.state.value.continuationHolds)
+        assertEquals(draft, model.state.value.opportunityDraft)
+        val restored = model(store, service)
+        assertEquals(model.state.value.jobs, restored.state.value.jobs)
+        assertEquals(originalReceipts, restored.state.value.receipts)
+        assertEquals(model.state.value.activePlans, restored.state.value.activePlans)
+        val before = store.records["workspace-unpaired"]
+        main { restored.removeLocalOpportunity(remote.id) }
+        await { !restored.state.value.busy && restored.state.value.error != null }
+        assertEquals(before, store.records["workspace-unpaired"])
+        assertEquals(listOf(remote), restored.state.value.jobs)
+        assertTrue(service.writes.isEmpty())
+    }
+
+    @Test fun failedLocalRemoval_restoresTheLinkAndItsFlags_beforeStorageRecovery() {
+        val local = Opportunity("local-kept", "https://example.invalid/kept", "Kept", "Employer", "", "", true)
+        val store = MemoryStore().apply {
+            records["workspace-unpaired"] = JSONObject().put("schema", 1).put("jobs", JSONArray(listOf(local.privateJson())))
+                .put("selected", JSONArray(listOf(local.id))).put("manualApplied", JSONArray(listOf(local.id)))
+                .put("answers", JSONObject().put(local.id, JobAnswers("Keep my answer").json())).toString()
+        }
+        val service = Service(connection); val model = model(store, service)
+        val before = store.records["workspace-unpaired"]
+        store.failWrites = true
+        var removed = false
+        main { model.removeLocalOpportunity(local.id) { removed = true } }
+        await { !model.state.value.busy && model.state.value.storageBlocked }
+        assertFalse(removed)
+        assertEquals(listOf(local), model.state.value.jobs)
+        assertEquals(setOf(local.id), model.state.value.selected)
+        assertEquals(setOf(local.id), model.state.value.manualApplied)
+        assertEquals("Keep my answer", model.state.value.answers[local.id]?.comments)
+        assertEquals(before, store.records["workspace-unpaired"])
+        store.failWrites = false
+        main { model.retryStorage() }
+        await { !model.state.value.busy && !model.state.value.storageBlocked }
+        assertEquals(listOf(local), model(store, service).state.value.jobs)
+        assertTrue(service.writes.isEmpty())
     }
 }

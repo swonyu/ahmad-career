@@ -87,6 +87,23 @@ data class ProfileDraft(
     }
 }
 
+/** An unfinished link stays private and may be incomplete or invalid while it is edited. */
+data class OpportunityDraft(val url: String = "", val title: String = "", val company: String = "",
+    val location: String = "", val country: String = "") {
+    val hasContent: Boolean get() = listOf(url, title, company, location, country).any(String::isNotBlank)
+    fun privateJson() = JSONObject().put("url", url).put("title", title).put("company", company)
+        .put("location", location).put("country", country)
+    companion object {
+        fun fromJson(value: JSONObject): OpportunityDraft {
+            listOf("url", "title", "company", "location", "country").forEach {
+                require(value.opt(it) is String) { "The saved opportunity draft could not be read." }
+            }
+            return OpportunityDraft(value.getString("url"), value.getString("title"), value.getString("company"),
+                value.getString("location"), value.getString("country"))
+        }
+    }
+}
+
 data class Opportunity(val id: String, val url: String, val title: String, val company: String, val location: String, val country: String, val localOnly: Boolean = false) {
     fun inputJson() = JSONObject().put("url", url).put("title", title).put("company", company).put("location", location).put("country", country)
     fun privateJson() = inputJson().put("id", id).put("localOnly", localOnly)
@@ -196,7 +213,8 @@ data class CareerUiState(
     val serverProfile: ProfileDraft? = null, val storageProblem: StorageProblem? = null,
     val phoneImport: PhoneImport? = null, val reviewingRecoveredPlan: Boolean = false,
     val obsoleteReviews: Set<String> = emptySet(),
-    val clientContinuation: Boolean = false, val continuationHolds: Set<String> = emptySet()
+    val clientContinuation: Boolean = false, val continuationHolds: Set<String> = emptySet(),
+    val opportunityDraft: OpportunityDraft = OpportunityDraft()
 ) {
     val profileConflict: ProfileDraft? get() = serverProfile?.takeIf { profileDirty && it.revision != profile.revision }
 }

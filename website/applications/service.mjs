@@ -69,7 +69,9 @@ export function createApplicationService({dataDir,configPath=process.env.CAREER_
       CREATE TABLE IF NOT EXISTS plans (id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id), digest TEXT NOT NULL, profile_revision INTEGER NOT NULL, created_at TEXT NOT NULL, expires_at TEXT NOT NULL, stopped INTEGER NOT NULL DEFAULT 0, approved_at TEXT, items_json TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS attempts (id TEXT PRIMARY KEY, plan_id TEXT NOT NULL REFERENCES plans(id), workspace_id TEXT NOT NULL REFERENCES workspaces(id), applicant_hash TEXT NOT NULL, job_key TEXT NOT NULL, job_id TEXT NOT NULL, state TEXT NOT NULL, snapshot_json TEXT NOT NULL, created_at TEXT NOT NULL, dispatched_at TEXT, confirmed_at TEXT, application_id TEXT, response_hash TEXT, error_code TEXT, error_message TEXT, retry_at TEXT, dispatch_count INTEGER NOT NULL DEFAULT 0, mode TEXT NOT NULL);
       CREATE INDEX IF NOT EXISTS attempt_plan ON attempts(plan_id);
-      CREATE UNIQUE INDEX IF NOT EXISTS active_applicant_job ON attempts(applicant_hash,job_key) WHERE state IN ('dispatching','confirmed','uncertain');
+      -- Applicant email is editable and unverified in this operator-managed companion.
+      -- Remove the legacy cross-workspace constraint without removing any records.
+      DROP INDEX IF EXISTS active_applicant_job;
       CREATE UNIQUE INDEX IF NOT EXISTS active_workspace_job ON attempts(workspace_id,job_key) WHERE state IN ('dispatching','confirmed','uncertain');`);
     db.exec(pairingSchema);
     const oldMode=db.prepare('SELECT value FROM meta WHERE key=?').get('mode')?.value;
@@ -117,9 +119,9 @@ export function createApplicationService({dataDir,configPath=process.env.CAREER_
   function attemptsFor(workspace,planId){const rows=planId?db.prepare('SELECT * FROM attempts WHERE workspace_id=? AND plan_id=? ORDER BY created_at,id').all(workspace,planId):db.prepare('SELECT * FROM attempts WHERE workspace_id=? ORDER BY created_at DESC,id').all(workspace);return rows.map(attemptView);}
   function planView(row){const attempts=new Map(db.prepare('SELECT * FROM attempts WHERE plan_id=?').all(row.id).map(r=>[r.id,r]));return {id:row.id,digest:row.digest,profileRevision:row.profile_revision,createdAt:row.created_at,expiresAt:row.expires_at,stopped:Boolean(row.stopped),approvedAt:row.approved_at,items:JSON.parse(row.items_json).map(item=>{const a=attempts.get(item.attemptId);return a?{...item,state:a.state,reason:a.error_message??item.reason,applicationId:a.state==='confirmed'?a.application_id:undefined,retryAt:a.retry_at}:item})};}
   function workspaceView(ws){const conf=config();return {ok:true,mode:adapter.mode,workspaceId:ws.id,profile:safeProfile(JSON.parse(ws.profile_json),ws.revision),jobs:db.prepare('SELECT * FROM jobs WHERE workspace_id=? ORDER BY rowid DESC').all(ws.id).map(r=>jobView({...JSON.parse(r.data_json),id:r.id},conf)),attempts:attemptsFor(ws.id),capabilities:capabilities(),recoverablePlans:db.prepare("SELECT p.* FROM plans p WHERE p.workspace_id=? AND p.stopped=0 AND p.expires_at>? AND p.profile_revision=? AND EXISTS(SELECT 1 FROM attempts a WHERE a.plan_id=p.id AND a.state IN ('ready','rate_limited')) ORDER BY p.rowid DESC LIMIT 20").all(ws.id,iso(),ws.revision).map(planView),activePlanIds:[...active.keys()].filter(id=>db.prepare('SELECT workspace_id FROM plans WHERE id=?').get(id)?.workspace_id===ws.id)};}
-  function duplicate(workspaceId,applicantHash,jobKey,except='') {return db.prepare("SELECT id,state,retry_at FROM attempts WHERE job_key=? AND (workspace_id=? OR applicant_hash=?) AND id<>? AND (state IN ('dispatching','confirmed','uncertain','rate_limited') OR retry_at>?) LIMIT 1").get(jobKey,workspaceId,applicantHash,except,iso())}
-  function retireExpiredRateLimits(workspaceId,applicantHash,jobKey) {
-    const rows=db.prepare("SELECT a.id,a.retry_at,p.expires_at,p.stopped,p.profile_revision,w.revision FROM attempts a JOIN plans p ON p.id=a.plan_id JOIN workspaces w ON w.id=a.workspace_id WHERE a.job_key=? AND (a.workspace_id=? OR a.applicant_hash=?) AND a.state='rate_limited'").all(jobKey,workspaceId,applicantHash);
+  function duplicate(workspaceId,jobKey,except='') {return db.prepare("SELECT id,state,retry_at FROM attempts WHERE job_key=? AND workspace_id=? AND id<>? AND (state IN ('dispatching','confirmed','uncertain','rate_limited') OR retry_at>?) LIMIT 1").get(jobKey,workspaceId,except,iso())}
+  function retireExpiredRateLimits(workspaceId,jobKey) {
+    const rows=db.prepare("SELECT a.id,a.retry_at,p.expires_at,p.stopped,p.profile_revision,w.revision FROM attempts a JOIN plans p ON p.id=a.plan_id JOIN workspaces w ON w.id=a.workspace_id WHERE a.job_key=? AND a.workspace_id=? AND a.state='rate_limited'").all(jobKey,workspaceId);
     for(const row of rows)if(Date.parse(row.retry_at)<=now()&&(Date.parse(row.expires_at)<=now()||row.stopped||row.profile_revision!==row.revision))db.prepare("UPDATE attempts SET state='cancelled',error_code='review_replaced_after_cooldown',error_message='The provider had rejected this attempt for rate limiting. Its cooldown ended and an expired or changed review was replaced. No automatic resend occurred.' WHERE id=? AND state='rate_limited'").run(row.id);
   }
   function reasonForDuplicate(d){return d.state==='confirmed'?'This applicant already has a confirmed application for this posting.':d.state==='rate_limited'?'An earlier approved attempt is waiting for the provider cooldown. Continue that review instead of preparing a duplicate.':d.retry_at&&Date.parse(d.retry_at)>now()?`The provider cooldown remains active until ${d.retry_at}, even though its queued retry was stopped. Wait until then before preparing another application.`:'An earlier attempt for this applicant and posting is active or unconfirmed. Reconcile it before applying again.'}
@@ -152,7 +154,7 @@ export function createApplicationService({dataDir,configPath=process.env.CAREER_
           const currentSupport=support(snapshot.job);
           if(!currentSupport.supported||canonical(currentSupport.requirements)!==canonical(snapshot.requirements)){setOutcome(id,{state:'blocked',error:{code:'requirements_changed',message:currentSupport.reason??'The employer requirements changed. Prepare a new review.'}});return false}
           matched=currentSupport;
-          const prior=duplicate(row.workspace_id,row.applicant_hash,row.job_key,id);
+          const prior=duplicate(row.workspace_id,row.job_key,id);
           if(prior){setOutcome(id,{state:'blocked',error:{code:'duplicate_application',message:reasonForDuplicate(prior)}});return false}
           hooks.beforeDispatchCommit?.({attemptId:id});
           db.prepare("UPDATE attempts SET state='dispatching',dispatched_at=?,dispatch_count=dispatch_count+1,error_code=NULL,error_message=NULL,retry_at=NULL WHERE id=?").run(iso(),id);
@@ -237,8 +239,8 @@ export function createApplicationService({dataDir,configPath=process.env.CAREER_
         const p=JSON.parse(ws.profile_json),planId=randomUUID(),createdAt=iso(),expiresAt=new Date(now()+30*60000).toISOString(),conf=config(),items=[],attemptRows=[];
         for(const id of body.jobIds) {
           const job=readJob(id,ws.id),answer=validateAnswers(answerMap[id]??{}),matched=support(job,conf),applicantHash=identity(p.email);
-          retireExpiredRateLimits(ws.id,applicantHash,job.key);
-          const prior=duplicate(ws.id,applicantHash,job.key);
+          retireExpiredRateLimits(ws.id,job.key);
+          const prior=duplicate(ws.id,job.key);
           let reason=manualIds.includes(id)?'Your tracker already records this application. Reconcile it before applying again.':prior?reasonForDuplicate(prior):requiredProfile(p)||(!matched.supported?matched.reason:requirementsError(p,answer,matched.requirements));
           const payloadSummary={name:applicantName(p),email:p.email,phone:p.phone,website:p.website,comments:answer.comments,...(answer.consentStore===undefined?{}:{consentStore:answer.consentStore}),...(answer.consentMarketing===undefined?{}:{consentMarketing:answer.consentMarketing})};
           const item={jobId:id,job:{id,title:job.title,company:job.company,url:job.url,location:job.location,country:job.country},title:job.title,company:job.company,state:reason?'blocked':'ready',reason:reason??'',payloadSummary,resume:safeProfile(p,ws.revision).resume,privacyPolicyUrl:matched.requirements?.privacyPolicyUrl??null,requirementsRevision:matched.requirements?.revision??null};

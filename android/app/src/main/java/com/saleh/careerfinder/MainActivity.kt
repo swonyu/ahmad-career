@@ -75,7 +75,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun CareerTheme(content: @Composable () -> Unit) {
+internal fun CareerTheme(content: @Composable () -> Unit) {
     val dark = isSystemInDarkTheme()
     val colors = if (dark) darkColorScheme(
         primary = Color(0xFFABD7B5), onPrimary = Color(0xFF113625), primaryContainer = Color(0xFF244A35),
@@ -367,13 +367,17 @@ internal fun EmptyState(title: String, body: String, icon: ImageVector = Icons.D
 @Composable
 internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: () -> Unit, review: () -> Unit, discover: () -> Unit) {
     var query by rememberSaveable { mutableStateOf("") }
+    var removingID by rememberSaveable { mutableStateOf<String?>(null) }
     val filtered = state.jobs.filter { (it.title + " " + it.company + " " + it.location + " " + it.country).contains(query, ignoreCase = true) }
     val context = LocalContext.current
     LazyColumn(Modifier.fillMaxSize().testTag("jobs-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         item { Heading("Your shortlist.", "Keep the roles you want to come back to, and track the applications you complete yourself.") }
         item {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
-                OutlinedButton(onClick = add, modifier = Modifier.weight(1f).heightIn(min = 52.dp)) { Icon(Icons.Default.Add, null); Spacer(Modifier.width(8.dp)); Text("Add opportunity") }
+                OutlinedButton(onClick = add, modifier = Modifier.weight(1f).heightIn(min = 52.dp)) {
+                    Icon(Icons.Default.Add, null); Spacer(Modifier.width(8.dp))
+                    Text(if (state.opportunityDraft.hasContent) "Continue job draft" else "Add opportunity")
+                }
                 if (state.connection != null) IconButton(onClick = model::refresh, enabled = !state.busy) { Icon(Icons.Default.Refresh, "Refresh saved opportunities") }
             }
         }
@@ -394,6 +398,9 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
                     accessibilityLabel = "I applied on the employer’s site for ${job.title} at ${job.company}")
                 if (job.id in state.manualApplied) Text("Your own record. This does not create a verified application receipt.", style = MaterialTheme.typography.bodySmall)
                 if (job.localOnly && state.connection != null) TextButton(onClick = { model.syncOpportunity(job) }, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Sync this opportunity") }
+                if (job.localOnly) TextButton(onClick = { removingID = job.id }, enabled = !state.busy,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
+                        .semantics { contentDescription = "Remove saved link for ${job.title} at ${job.company}" }) { Text("Remove saved link") }
                 if (!job.localOnly) {
                     CheckLine("Select for Auto Apply review", job.id in state.selected, { model.toggleJob(job.id) }, !state.busy,
                         accessibilityLabel = "Select ${job.title} at ${job.company} for Auto Apply review")
@@ -402,6 +409,23 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
             }
         }
         item { Text("Saving a link does not verify its availability or submit an application. Automatic applications depend on a supported employer integration.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+    }
+    state.jobs.firstOrNull { it.id == removingID && it.localOnly }?.let { job ->
+        AlertDialog(onDismissRequest = { if (!state.busy) removingID = null },
+            title = { Text("Remove saved link?") },
+            text = {
+                Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text("${job.title} at ${job.company}")
+                    Text("This removes the phone’s link, answers and self-reported application status.")
+                    Text("Connected records and receipts stay saved.")
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { model.removeLocalOpportunity(job.id) { removingID = null } }, enabled = !state.busy,
+                    modifier = Modifier.heightIn(min = 48.dp).testTag("confirm-remove-opportunity")) { Text("Remove saved link") }
+            },
+            dismissButton = { TextButton(onClick = { removingID = null }, enabled = !state.busy,
+                modifier = Modifier.heightIn(min = 48.dp)) { Text("Keep opportunity") } })
     }
 }
 
@@ -856,7 +880,7 @@ private fun ConnectionDialog(state: CareerUiState, model: CareerViewModel, close
                     enabled = validOrigin != null && !state.busy,
                     modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text("Open secure connection setup") }
                 Text(if (validOrigin == ServicePages.DEFAULT_ORIGIN)
-                    "The hosted setup page uses ChatGPT sign-in in your browser. Create a fresh code, then paste it below."
+                    "On the secure ChatGPT sign-in screen, choose Continue with Google. Return here with your one-time code. Use the same account to recover your workspace."
                     else "Use this service’s setup page, or request a one-time code from its operator. Check the address before pairing.",
                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
@@ -896,24 +920,40 @@ private fun ConnectionDialog(state: CareerUiState, model: CareerViewModel, close
 
 @Composable
 private fun AddOpportunityDialog(state: CareerUiState, model: CareerViewModel, close: () -> Unit) {
-    var url by rememberSaveable { mutableStateOf("") }
-    var title by rememberSaveable { mutableStateOf("") }
-    var company by rememberSaveable { mutableStateOf("") }
-    var location by rememberSaveable { mutableStateOf("") }
-    var country by rememberSaveable { mutableStateOf("") }
-    FullScreenForm("Add opportunity", close) {
-        LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    val draft = state.opportunityDraft
+    var confirmClose by rememberSaveable { mutableStateOf(false) }
+    val requestClose = {
+        if (!state.busy) {
+            if (draft.hasContent) confirmClose = true else close()
+        }
+    }
+    FullScreenForm("Add opportunity", requestClose) {
+        LazyColumn(Modifier.fillMaxSize().testTag("opportunity-editor"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item { Heading("Keep the possibilities close.", "Save a role from any country or profession. Use the employer’s HTTPS page.") }
-            item { Field("Employer job link", url, { url = it }, KeyboardType.Uri, enabled = !state.busy) }
-            item { Field("Role title", title, { title = it }, enabled = !state.busy) }
-            item { Field("Employer", company, { company = it }, enabled = !state.busy) }
-            item { Field("City or location (optional)", location, { location = it }, enabled = !state.busy) }
-            item { CountryChooser("Country (optional)", country, !state.busy) { country = it } }
-            item { Action("Save opportunity", !state.busy && url.isNotBlank() && title.isNotBlank() && company.isNotBlank()) { model.addOpportunity(url, title, company, location, country, close) } }
+            item { Field("Employer job link", draft.url, { value -> model.editOpportunityDraft { it.copy(url = value) } }, KeyboardType.Uri, enabled = !state.busy) }
+            item { Field("Role title", draft.title, { value -> model.editOpportunityDraft { it.copy(title = value.take(200)) } }, enabled = !state.busy) }
+            item { Field("Employer", draft.company, { value -> model.editOpportunityDraft { it.copy(company = value.take(200)) } }, enabled = !state.busy) }
+            item { Field("City or location (optional)", draft.location, { value -> model.editOpportunityDraft { it.copy(location = value.take(200)) } }, enabled = !state.busy) }
+            item { CountryChooser("Country (optional)", draft.country, !state.busy) { value -> model.editOpportunityDraft { it.copy(country = value) } } }
+            item { Action("Save opportunity", !state.busy && draft.url.isNotBlank() && draft.title.isNotBlank() && draft.company.isNotBlank()) { model.saveOpportunityDraft(close) } }
             if (state.error != null) item { Text(state.error, color = MaterialTheme.colorScheme.error) }
+            item { Text("You can close this form and keep an unfinished draft on this phone, even if some fields are blank.", style = MaterialTheme.typography.bodySmall) }
             item { Text("Saving keeps a private record. It does not verify the vacancy or send an application. Unsupported employers remain available for manual application.", style = MaterialTheme.typography.bodySmall) }
         }
     }
+    if (confirmClose) AlertDialog(onDismissRequest = { if (!state.busy) confirmClose = false },
+        title = { Text("Keep this draft?") },
+        text = { Text("Keep the unfinished form on this phone, or discard it.", Modifier.verticalScroll(rememberScrollState())) },
+        confirmButton = {
+            Column(Modifier.fillMaxWidth()) {
+                TextButton(onClick = { model.keepOpportunityDraft { confirmClose = false; close() } }, enabled = !state.busy,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Keep draft") }
+                TextButton(onClick = { model.discardOpportunityDraft { confirmClose = false; close() } }, enabled = !state.busy,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Discard") }
+                TextButton(onClick = { confirmClose = false }, enabled = !state.busy,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Keep editing") }
+            }
+        })
 }
 
 internal fun openLink(context: Context, url: String) {
