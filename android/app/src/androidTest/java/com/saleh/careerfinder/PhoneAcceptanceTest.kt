@@ -28,8 +28,8 @@ class PhoneAcceptanceTest {
 
     @Test fun phoneProfile_survivesActivityRecreation_withoutAnyService() {
         compose.onNodeWithText("Profile").performClick()
-        compose.onNode(hasText("First name") and hasSetTextAction()).performScrollTo().performTextInput("Acceptance")
-        compose.onNode(hasText("Last name") and hasSetTextAction()).performScrollTo().performTextInput("Fixture")
+        compose.onNode(hasText("First or single name") and hasSetTextAction()).performScrollTo().performTextInput("Acceptance")
+        compose.onNode(hasText("Last name (optional)") and hasSetTextAction()).performScrollTo().performTextInput("Fixture")
         compose.onNodeWithTag("profile-list").performScrollToNode(hasText("Save profile on this phone"))
         compose.onNodeWithText("Save profile on this phone").performClick()
         compose.waitUntil(timeoutMillis = 5000) {
@@ -37,7 +37,7 @@ class PhoneAcceptanceTest {
         }
         compose.activityRule.scenario.recreate()
         compose.onNodeWithText("Profile").performClick()
-        compose.onNodeWithTag("profile-list").performScrollToNode(hasText("First name"))
+        compose.onNodeWithTag("profile-list").performScrollToNode(hasText("First or single name"))
         compose.waitUntil(timeoutMillis = 5000) {
             compose.onAllNodes(hasText("Acceptance")).fetchSemanticsNodes().isNotEmpty()
         }

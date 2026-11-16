@@ -79,6 +79,7 @@ export function safeProfile(p, revision) {
   if (copy.resume) { const {dataBase64,...metadata} = copy.resume; copy.resume=metadata; }
   return copy;
 }
+export const applicantName = p => [p.firstName,p.lastName].filter(Boolean).join(' ').trim();
 export function answers(input = {}) {
   object(input,['comments','consentStore','consentMarketing'],'Application answers');
   const result = {comments:text(input.comments,'Additional information',5000,true,true)};
@@ -89,6 +90,6 @@ export function answers(input = {}) {
 }
 export function requiredProfile(p) {
   const missing = [];
-  if (!p.firstName) missing.push('first name'); if (!p.lastName) missing.push('last name'); if (!p.email) missing.push('email'); if (!p.resume) missing.push('PDF résumé');
+  if (!p.firstName) missing.push('name'); if (!p.email) missing.push('email'); if (!p.resume) missing.push('PDF résumé');
   return missing.length ? `Complete your ${missing.join(', ')} before automatic submission.` : '';
 }

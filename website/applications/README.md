@@ -22,6 +22,8 @@ To connect a second device to an existing workspace, append `--workspace EXISTIN
 
 The phone posts `{ "pairingCode": "THE-CODE" }` to `/api/apply/session`. Success returns `sessionToken`, `workspaceId`, `expiresAt` and the profile. The token is stored in the phone's secure credential storage. Subsequent requests use `Authorization: Bearer TOKEN`; they do not need browser Origin or CSRF headers. The server stores only the token's SHA-256 digest. Tokens expire after 30 days. `POST /api/apply/session/revoke` with `{}` revokes the current phone token and preserves application records.
 
+Disconnecting a phone and removing its local draft do not erase the service workspace. Removing the current résumé clears the profile's current attachment; earlier prepared attempts retain their immutable applicant and PDF snapshots so prior approvals and uncertain requests remain traceable. Receipt export contains submission metadata and evidence hashes, not a full personal-data archive or the retained PDFs. Complete workspace erasure, backup retention and reconciliation of uncertain submissions require a separate lifecycle policy before a public service is operated.
+
 ## Authorized Lever connector
 
 `CAREER_APPLY_CONFIG` points to a JSON file outside the static web folder. The configuration contains employer requirements and an environment-variable **name**, never a literal API key. Example structure:
@@ -50,18 +52,24 @@ The phone posts `{ "pairingCode": "THE-CODE" }` to `/api/apply/session`. Success
 
 The example is not a usable employer configuration. An authorized employer administrator must supply the key and accurately reviewed posting requirements. Reviews may remain valid for at most seven days. Unknown/custom questions, missing keys, an unreviewed posting or an expired review prevent dispatch. Global and EU employers are separate configurations.
 
-The supported required fields are `name`, `email`, `resume`, `phone`, `urls`, `comments`, `consentStore` and `consentMarketing`. Consent is never inferred. A required storage-consent field also requires the employer's privacy-policy URL. The Lever API does not expose every custom question, so a public posting GET alone does not establish that a form is supported.
+The supported required fields are `name`, `email`, `resume`, `phone`, `urls`, `comments`, `consentStore` and `consentMarketing`. An applicant can enter a single name in `firstName`; `lastName` is optional. Review and submission use the same trimmed, combined name.
+
+Consent is never inferred. In the reviewed manifest, required `consentMarketing` means the applicant must explicitly answer the marketing question: either `true` or `false` satisfies it, and the exact choice is sent. Required `consentStore` means positive storage permission and also requires the employer's privacy-policy URL. An unanswered consent question is omitted from the payload. The Lever API does not expose every custom question, so a public posting GET alone does not establish that a form is supported.
 
 ## What verification means
 
 An attempt is saved durably before sending. Only Lever's documented HTTP 200 response with `ok: true` and a nonempty `applicationId` becomes confirmed. This establishes API acceptance, not recruiter review, assessment success or employment. The service uploads actual PDF bytes as multipart form data and records the applicant/profile revision, CV hash, reviewed payload hash, requirements revision and response hash.
 
-Timeouts, redirects, malformed success bodies and ambiguous server failures become uncertain and block automatic resubmission. A crash with an in-flight ledger entry also becomes uncertain on restart. A confirmed or uncertain attempt blocks duplicates by stable workspace identity and normalized applicant email. An explicit 429 records cooldown and permits at most three dispatches on the same approved attempt. Creating another plan cannot bypass the waiting attempt. Stop cancels only jobs not yet dispatched.
+Timeouts, redirects, malformed success bodies and ambiguous server failures become uncertain and block automatic resubmission. A crash with an in-flight ledger entry also becomes uncertain on restart. A confirmed or uncertain attempt blocks duplicates by stable workspace identity and normalized applicant email. An explicit 429 records cooldown and permits at most three dispatches on the same approved attempt. Creating another plan cannot bypass the waiting attempt. Stop cancels unsent work and queued rate-limit retries; it preserves in-flight outcomes and any remaining cooldown.
+
+When a user updates the answers in an earlier unapproved review, the client can stop it with `{ "planId": "...", "onlyIfUnapproved": true }` before preparing the replacement. The condition is checked in the same database transaction as stopping. If another phone already approved the plan or any attempt has dispatch evidence, the service returns HTTP 409 with `review_already_approved` and changes nothing. The client must refresh and let the user decide what to stop. Ordinary explicit Stop continues to accept just `planId`.
 
 Test mode uses a separate ledger marker and local loopback upstream. Every mock attempt/receipt includes `evidenceMode: "test"`. Real connector receipts use `evidenceMode: "live"`. Phone UI must label test receipts separately and exclude them from real application totals.
 
 ## Executed local verification
 
 `node applications-check.mjs` runs actual HTTP requests through the real service and a synthetic local Lever upstream. It checks profile/CV validation, exact multipart bytes, sessions and mobile pairing, duplicate handling, approval changes, provider failure responses, cooldown, persistence failures, restart recovery, session isolation and receipt redaction. It makes no live employer POSTs. The formal Postman collection and simulated dependency live under the repository's `postman/` directory.
+
+`applications/fixtures/README.md` describes a separate local TLS fixture for native Android acceptance. Its ephemeral CA is permitted only in the dedicated acceptance build; regular preview and release builds retain normal system trust.
 
 See `docs/Verified-Applications-Contract.md` for the request/response contract. Local passing tests do not establish live employer compatibility or production mobile deployment.

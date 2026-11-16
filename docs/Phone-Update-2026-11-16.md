@@ -1,6 +1,8 @@
 # Career Finder phone update
 
-Development candidate, 16 November 2026. Target platforms: **iOS and Android phones**.
+Initial development candidate, 16 November 2026, commit `396cc370d98a0ee48f8cc2ac89312de08a3dec74`. Target platforms: **iOS and Android phones**.
+
+This page records the first candidate. See the [phone reliability follow-up](Phone-Quality-Review-2026-11-16.md) for subsequent fixes and current checks. Evidence links below are pinned to the original commit so they retain their historical meaning.
 
 ## Delivered behavior
 
@@ -46,7 +48,7 @@ Keychain holds the bearer credential with device-only accessibility. Atomic draf
 
 The native Kotlin/Compose app targets Android phones, minimum Android 8/API 26. It uses Material controls, bottom navigation, light/dark styling, scalable text and right-to-left layout support. Android Keystore-backed AES-GCM protects connection and draft records with independent storage identities; device backup is disabled.
 
-The reproducible Gradle wrapper pins and verifies the Gradle distribution checksum. Debug application identity is `com.saleh.careerfinder.preview`; the release identity is `com.saleh.careerfinder`. Release signing and a Google Play listing remain unconfigured. See [Android build instructions and evidence](../android/README.md).
+The reproducible Gradle wrapper pins and verifies the Gradle distribution checksum. Debug application identity is `com.saleh.careerfinder.preview`; the release identity is `com.saleh.careerfinder`. Release signing and a Google Play listing remain unconfigured. See [Android build instructions and evidence](https://github.com/swonyu/ahmad-career/blob/396cc370d98a0ee48f8cc2ac89312de08a3dec74/android/README.md).
 
 ## Executed checks
 
@@ -63,11 +65,11 @@ The reproducible Gradle wrapper pins and verifies the Gradle distribution checks
 | Android lint | Zero errors; six dependency/idiom advisories | Static Android checks completed without blocking findings |
 | Android phone emulator acceptance | 3 tests passed on an isolated API 36 ARM Pixel 7 emulator | Blank/connection states, encrypted profile persistence after activity recreation, and Keystore ciphertext/AAD isolation |
 
-The service test result is tied to SHA-256 `14a9423b3b5771760feb629861b5c86773886d0655c074e6b469ff147b720a0a` for `website/applications/service.mjs`. Formal HTTP proof and all captured runtime hashes are in [postman/verification.json](../postman/verification.json) and [runtime-manifest.json](../postman/runtime-manifest.json). Exact iOS commands, source hashes and limitations are in [mobile-verification.json](../apple/Checks/mobile-verification.json).
+The service test result is tied to SHA-256 `14a9423b3b5771760feb629861b5c86773886d0655c074e6b469ff147b720a0a` for `website/applications/service.mjs`. Formal HTTP proof and all captured runtime hashes are in [postman/verification.json](https://github.com/swonyu/ahmad-career/blob/396cc370d98a0ee48f8cc2ac89312de08a3dec74/postman/verification.json) and [runtime-manifest.json](https://github.com/swonyu/ahmad-career/blob/396cc370d98a0ee48f8cc2ac89312de08a3dec74/postman/runtime-manifest.json). Exact iOS commands, source hashes and limitations are in [mobile-verification.json](https://github.com/swonyu/ahmad-career/blob/396cc370d98a0ee48f8cc2ac89312de08a3dec74/apple/Checks/mobile-verification.json).
 
 Postman independently observed exactly two synthetic application POSTs, one per application, with actual multipart PDF bytes. Replays caused no further provider POST. Fixture evidence is marked `test` and excluded from live application totals. No live employer POST occurred. Passing this modeled protocol does not establish live provider compatibility.
 
-The iOS check was static plus a Foundation executable, not a linked Xcode project build or rendered device test. The shared Apple build and simulator schedule was preserved. No iOS signing, archive or upload was performed for this candidate. Android's debug APK is signed with a local development key; it is a test installer, not a Play Store release. Neither platform was published to a store. Exact Android source/build/device evidence is in [android/checks/verification.json](../android/checks/verification.json).
+The iOS check was static plus a Foundation executable, not a linked Xcode project build or rendered device test. The shared Apple build and simulator schedule was preserved. No iOS signing, archive or upload was performed for this candidate. Android's debug APK is signed with a local development key; it is a test installer, not a Play Store release. Neither platform was published to a store. Exact Android source/build/device evidence is in [android/checks/verification.json](https://github.com/swonyu/ahmad-career/blob/396cc370d98a0ee48f8cc2ac89312de08a3dec74/android/checks/verification.json).
 
 ## Activation and public release requirements
 

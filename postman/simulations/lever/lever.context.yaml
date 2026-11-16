@@ -46,10 +46,11 @@ assumptions:
     submit replays.
   reason: The actual companion ran against the local Postman simulation; collection assertions and independent mock
     dispatch observations agreed.
-  verification: On 2026-11-16 at 13:02 UTC, Postman CLI 1.90.0 ran 28 HTTP requests with 36 passing assertions,
-    zero failed assertions and exit 0. Two provider POSTs were observed, one per application. Actual multipart PDF
+  verification: On 2026-11-16, checked at 13:44 UTC, Postman CLI 1.90.0 ran 29 HTTP requests with 36 passing assertions,
+    zero failed assertions and exit 0. One workspace poll accounts for the extra request beyond 28 definitions.
+    Two provider POSTs were observed, one per application. Actual multipart PDF
     bytes were observed. This does not establish live Lever compatibility or concurrent-click behavior.
-  source: postman/verification.json; postman/collections/verified-applications; Mac run career-postman-run-ImdXzj
+  source: postman/verification.json; postman/collections/verified-applications; Mac run career-postman-run-olsLCe
   updated_at: '2026-11-16'
 fingerprints:
 - id: initial-fixture
@@ -63,5 +64,9 @@ fingerprints:
   cli: Postman 1.90.0; Node 26.13.0; 28 requests, 36 assertions, exit 0.
 - id: mac-acceptance-20261116-1302
   date: '2026-11-16'
-  commit: Final captured service SHA256 14a9423b3b5771760feb629861b5c86773886d0655c074e6b469ff147b720a0a; complete runtime hashes in postman/runtime-manifest.json. Captured files remained unchanged after the run.
+  commit: Historical captured service SHA256 14a9423b3b5771760feb629861b5c86773886d0655c074e6b469ff147b720a0a. Captured files remained unchanged after the run.
   cli: Postman 1.90.0; Node 26.13.0; 28 HTTP requests, 36 passing assertions, exit 0. Final status initialized/current/signed-out; both fixture ports closed.
+- id: mac-acceptance-20261116-1344
+  date: '2026-11-16'
+  commit: Final captured service SHA256 77d413e1e01078bf9f7b389529e6379580d50a54d24819cc551d347aef07094c; all 43 captured runtime files remained unchanged. Complete hashes are in postman/runtime-manifest.json.
+  cli: Postman 1.90.0; Node 26.13.0; 29 actual HTTP requests across 28 definitions, 36 passing assertions, zero failures, 398ms, exit 0. Both Postman fixture ports closed. Fresh capture stayed signed out and did not initialize project resources or update skills; no cloud account/workspace was needed.

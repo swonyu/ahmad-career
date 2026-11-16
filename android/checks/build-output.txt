@@ -63,6 +63,22 @@ Warning: SDK processing. This version only understands SDK XML versions up to 3 
 > Task :app:stripDebugAndroidTestDebugSymbols NO-SOURCE
 > Task :app:validateSigningDebugAndroidTest UP-TO-DATE
 > Task :app:writeDebugAndroidTestSigningConfigVersions UP-TO-DATE
+> Task :app:preReleaseBuild UP-TO-DATE
+> Task :app:checkReleaseAarMetadata UP-TO-DATE
+> Task :app:processReleaseNavigationResources UP-TO-DATE
+> Task :app:compileReleaseNavigationResources UP-TO-DATE
+> Task :app:generateReleaseResValues UP-TO-DATE
+> Task :app:mapReleaseSourceSetPaths UP-TO-DATE
+> Task :app:generateReleaseResources UP-TO-DATE
+> Task :app:mergeReleaseResources UP-TO-DATE
+> Task :app:packageReleaseResources UP-TO-DATE
+> Task :app:parseReleaseLocalResources UP-TO-DATE
+> Task :app:createReleaseCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksRelease UP-TO-DATE
+> Task :app:processReleaseMainManifest UP-TO-DATE
+> Task :app:processReleaseManifest UP-TO-DATE
+> Task :app:processReleaseManifestForPackage UP-TO-DATE
+> Task :app:processReleaseResources UP-TO-DATE
 > Task :app:compileDebugKotlin
 > Task :app:compileDebugJavaWithJavac UP-TO-DATE
 > Task :app:dexBuilderDebug
@@ -71,15 +87,15 @@ Warning: SDK processing. This version only understands SDK XML versions up to 3 
 > Task :app:mergeDebugJavaResource UP-TO-DATE
 > Task :app:bundleDebugClassesToCompileJar
 > Task :app:generateDebugAndroidTestLintModel
-> Task :app:mergeProjectDexDebug
 > Task :app:generateDebugLintReportModel
 > Task :app:generateDebugUnitTestLintModel
+> Task :app:mergeProjectDexDebug
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect UP-TO-DATE
 > Task :app:assembleDebug
 > Task :app:lintAnalyzeDebugAndroidTest
 > Task :app:lintAnalyzeDebugUnitTest
-> Task :app:compileDebugAndroidTestKotlin UP-TO-DATE
+> Task :app:compileDebugAndroidTestKotlin
 > Task :app:compileDebugAndroidTestJavaWithJavac NO-SOURCE
 > Task :app:dexBuilderDebugAndroidTest UP-TO-DATE
 > Task :app:mergeDebugAndroidTestGlobalSynthetics UP-TO-DATE
@@ -92,9 +108,97 @@ Warning: SDK processing. This version only understands SDK XML versions up to 3 
 > Task :app:lintAnalyzeDebug
 
 > Task :app:lintReportDebug
-Wrote HTML report to file:///Users/saleh/Documents/Codex/2026-11-16/career-finder-everyone/android-check/app/build/reports/lint-results-debug.html
+Wrote HTML report to file://<isolated-task-root>/android-check/app/build/reports/lint-results-debug.html
 
 > Task :app:lintDebug
 
-BUILD SUCCESSFUL in 41s
-76 actionable tasks: 13 executed, 63 up-to-date
+BUILD SUCCESSFUL in 21s
+91 actionable tasks: 14 executed, 77 up-to-date
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.13/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+Warning: SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.
+> Task :app:preBuild UP-TO-DATE
+> Task :app:prepareAcceptanceCa UP-TO-DATE
+> Task :app:preAcceptanceBuild UP-TO-DATE
+> Task :app:mergeAcceptanceNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:checkAcceptanceAarMetadata UP-TO-DATE
+> Task :app:processAcceptanceNavigationResources UP-TO-DATE
+> Task :app:compileAcceptanceNavigationResources UP-TO-DATE
+> Task :app:generateAcceptanceResValues UP-TO-DATE
+> Task :app:mapAcceptanceSourceSetPaths UP-TO-DATE
+> Task :app:generateAcceptanceResources UP-TO-DATE
+> Task :app:mergeAcceptanceResources UP-TO-DATE
+> Task :app:packageAcceptanceResources UP-TO-DATE
+> Task :app:parseAcceptanceLocalResources UP-TO-DATE
+> Task :app:createAcceptanceCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksAcceptance UP-TO-DATE
+> Task :app:processAcceptanceMainManifest UP-TO-DATE
+> Task :app:processAcceptanceManifest UP-TO-DATE
+> Task :app:processAcceptanceManifestForPackage UP-TO-DATE
+> Task :app:processAcceptanceResources UP-TO-DATE
+> Task :app:javaPreCompileAcceptance UP-TO-DATE
+> Task :app:mergeAcceptanceShaders UP-TO-DATE
+> Task :app:compileAcceptanceShaders NO-SOURCE
+> Task :app:generateAcceptanceAssets UP-TO-DATE
+> Task :app:mergeAcceptanceAssets UP-TO-DATE
+> Task :app:compressAcceptanceAssets UP-TO-DATE
+> Task :app:desugarAcceptanceFileDependencies UP-TO-DATE
+> Task :app:checkAcceptanceDuplicateClasses UP-TO-DATE
+> Task :app:mergeExtDexAcceptance UP-TO-DATE
+> Task :app:mergeLibDexAcceptance UP-TO-DATE
+> Task :app:mergeAcceptanceJniLibFolders UP-TO-DATE
+> Task :app:mergeAcceptanceNativeLibs UP-TO-DATE
+> Task :app:stripAcceptanceDebugSymbols UP-TO-DATE
+> Task :app:validateSigningAcceptance UP-TO-DATE
+> Task :app:writeAcceptanceAppMetadata UP-TO-DATE
+> Task :app:writeAcceptanceSigningConfigVersions UP-TO-DATE
+> Task :app:preAcceptanceAndroidTestBuild SKIPPED
+> Task :app:checkAcceptanceAndroidTestAarMetadata UP-TO-DATE
+> Task :app:processAcceptanceAndroidTestNavigationResources UP-TO-DATE
+> Task :app:compileAcceptanceAndroidTestNavigationResources UP-TO-DATE
+> Task :app:generateAcceptanceAndroidTestResValues UP-TO-DATE
+> Task :app:mapAcceptanceAndroidTestSourceSetPaths UP-TO-DATE
+> Task :app:generateAcceptanceAndroidTestResources UP-TO-DATE
+> Task :app:mergeAcceptanceAndroidTestResources UP-TO-DATE
+> Task :app:processAcceptanceAndroidTestManifest UP-TO-DATE
+> Task :app:processAcceptanceAndroidTestResources UP-TO-DATE
+> Task :app:javaPreCompileAcceptanceAndroidTest UP-TO-DATE
+> Task :app:mergeAcceptanceAndroidTestShaders UP-TO-DATE
+> Task :app:compileAcceptanceAndroidTestShaders NO-SOURCE
+> Task :app:generateAcceptanceAndroidTestAssets UP-TO-DATE
+> Task :app:mergeAcceptanceAndroidTestAssets UP-TO-DATE
+> Task :app:compressAcceptanceAndroidTestAssets UP-TO-DATE
+> Task :app:desugarAcceptanceAndroidTestFileDependencies UP-TO-DATE
+> Task :app:checkAcceptanceAndroidTestDuplicateClasses UP-TO-DATE
+> Task :app:mergeExtDexAcceptanceAndroidTest UP-TO-DATE
+> Task :app:mergeLibDexAcceptanceAndroidTest UP-TO-DATE
+> Task :app:mergeAcceptanceAndroidTestJniLibFolders UP-TO-DATE
+> Task :app:mergeAcceptanceAndroidTestNativeLibs NO-SOURCE
+> Task :app:stripAcceptanceAndroidTestDebugSymbols NO-SOURCE
+> Task :app:validateSigningAcceptanceAndroidTest UP-TO-DATE
+> Task :app:writeAcceptanceAndroidTestSigningConfigVersions UP-TO-DATE
+> Task :app:compileAcceptanceKotlin
+> Task :app:compileAcceptanceJavaWithJavac UP-TO-DATE
+> Task :app:dexBuilderAcceptance
+> Task :app:mergeAcceptanceGlobalSynthetics UP-TO-DATE
+> Task :app:processAcceptanceJavaRes UP-TO-DATE
+> Task :app:mergeAcceptanceJavaResource UP-TO-DATE
+> Task :app:bundleAcceptanceClassesToCompileJar
+> Task :app:mergeProjectDexAcceptance
+> Task :app:compileAcceptanceAndroidTestKotlin
+> Task :app:compileAcceptanceAndroidTestJavaWithJavac NO-SOURCE
+> Task :app:dexBuilderAcceptanceAndroidTest UP-TO-DATE
+> Task :app:mergeAcceptanceAndroidTestGlobalSynthetics UP-TO-DATE
+> Task :app:processAcceptanceAndroidTestJavaRes UP-TO-DATE
+> Task :app:mergeAcceptanceAndroidTestJavaResource UP-TO-DATE
+> Task :app:mergeProjectDexAcceptanceAndroidTest UP-TO-DATE
+> Task :app:packageAcceptanceAndroidTest UP-TO-DATE
+> Task :app:createAcceptanceAndroidTestApkListingFileRedirect UP-TO-DATE
+> Task :app:assembleAcceptanceAndroidTest UP-TO-DATE
+> Task :app:packageAcceptance
+> Task :app:createAcceptanceApkListingFileRedirect UP-TO-DATE
+> Task :app:assembleAcceptance
+
+BUILD SUCCESSFUL in 10s
+68 actionable tasks: 6 executed, 62 up-to-date

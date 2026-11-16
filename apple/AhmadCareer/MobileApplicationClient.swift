@@ -1,4 +1,5 @@
 import Foundation
+import CryptoKit
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
@@ -7,10 +8,13 @@ import FoundationNetworking
 enum MobileApplicationPolicy {
     static let maximumResumeBytes = 5 * 1024 * 1024
     static func serviceURL(_ text: String) -> URL? {
-        guard let parts = URLComponents(string: text.trimmingCharacters(in: .whitespacesAndNewlines)),
+        guard var parts = URLComponents(string: text.trimmingCharacters(in: .whitespacesAndNewlines)),
               parts.scheme?.lowercased() == "https", let host = parts.host, !host.isEmpty,
               parts.user == nil, parts.password == nil, parts.query == nil, parts.fragment == nil,
-              parts.path.isEmpty || parts.path == "/" else { return nil }
+              parts.path.isEmpty || parts.path == "/",
+              parts.port == nil || (1...65535).contains(parts.port!) else { return nil }
+        parts.scheme = "https"; parts.host = host.lowercased(); parts.path = ""
+        if parts.port == 443 { parts.port = nil }
         return parts.url
     }
     static func jobURL(_ text: String) -> URL? {
@@ -31,6 +35,22 @@ enum MobileApplicationPolicy {
             return "Use a short PDF filename without path characters."
         }
         return nil
+    }
+    static func readResume(at url: URL) throws -> Data {
+        let file = try FileHandle(forReadingFrom: url)
+        defer { try? file.close() }
+        var bytes = Data()
+        while bytes.count <= maximumResumeBytes {
+            let chunk = try file.read(upToCount: min(64 * 1024, maximumResumeBytes + 1 - bytes.count)) ?? Data()
+            if chunk.isEmpty { break }
+            bytes.append(chunk)
+        }
+        if let error = resumeError(bytes, filename: url.lastPathComponent) { throw MobileApplicationError(message: error) }
+        return bytes
+    }
+    static func isFileSelectionCancelled(_ error: Error) -> Bool {
+        let value = error as NSError
+        return value.domain == NSCocoaErrorDomain && value.code == NSUserCancelledError
     }
     static func isVerified(_ value: [String: ApplicationValue]) -> Bool {
         value["state"]?.string == "confirmed"
@@ -92,6 +112,11 @@ enum ApplicationValue: Codable, Equatable {
     var object: [String: ApplicationValue] { if case .object(let v) = self { return v }; return [:] }
     var array: [ApplicationValue] { if case .array(let v) = self { return v }; return [] }
     var int: Int { if case .number(let v) = self, v.isFinite, v >= Double(Int.min), v < Double(Int.max) { return Int(v) }; return 0 }
+    var integer: Int? {
+        if case .number(let v) = self, v.isFinite, v.rounded(.towardZero) == v,
+           v >= Double(Int.min), v < Double(Int.max) { return Int(v) }
+        return nil
+    }
     var bool: Bool { if case .bool(let v) = self { return v }; return false }
     var display: String {
         switch self {
@@ -107,7 +132,46 @@ enum ApplicationValue: Codable, Equatable {
 
 struct MobileApplicationError: LocalizedError {
     let message: String
+    var statusCode: Int? = nil
+    var code: String? = nil
     var errorDescription: String? { message }
+}
+
+enum MobileApplicationResponse {
+    static func decode(_ data: Data, statusCode: Int) throws -> [String: ApplicationValue] {
+        guard data.count <= 12 * 1024 * 1024 else {
+            throw MobileApplicationError(message: "The service returned an unreadable response. Refresh to check the result.", statusCode: statusCode)
+        }
+        let envelope = try? JSONDecoder().decode([String: ApplicationValue].self, from: data)
+        if (200..<300).contains(statusCode), let envelope, envelope["ok"]?.bool == true { return envelope }
+        let code = envelope?["error"]?.object["code"]?.string
+        let message: String
+        switch statusCode {
+        case 401: message = "Your connection has expired. Request a new invitation for the same workspace to restore access. Your phone draft is kept."
+        case 409: message = "The service has a newer profile or application status. Review the current version before continuing."
+        case 413: message = "This file is too large. Choose a PDF up to 5 MB."
+        case 429: message = "Please wait before trying this action again."
+        default:
+            message = String((envelope?["error"]?.object["message"]?.string
+                ?? "The service returned an incomplete response. Refresh to check the result before trying again.").prefix(300))
+        }
+        throw MobileApplicationError(message: code == "uncertain" ? "This application needs verification. It will not be sent again automatically." : message,
+                                     statusCode: statusCode, code: code)
+    }
+}
+
+@MainActor
+protocol MobileApplicationServing: AnyObject {
+    var origin: URL { get }
+    var token: String? { get set }
+    func request(_ route: String, method: String, body: [String: ApplicationValue]?) async throws -> [String: ApplicationValue]
+    func invalidate()
+}
+
+extension MobileApplicationServing {
+    func request(_ route: String) async throws -> [String: ApplicationValue] {
+        try await request(route, method: "GET", body: nil)
+    }
 }
 
 private final class ApplicationNoRedirect: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
@@ -118,7 +182,8 @@ private final class ApplicationNoRedirect: NSObject, URLSessionTaskDelegate, @un
     }
 }
 
-final class MobileApplicationClient {
+@MainActor
+final class MobileApplicationClient: MobileApplicationServing {
     let origin: URL
     var token: String?
     private let session: URLSession
@@ -137,6 +202,7 @@ final class MobileApplicationClient {
         session = URLSession(configuration: config, delegate: ApplicationNoRedirect(), delegateQueue: nil)
     }
     deinit { session.invalidateAndCancel() }
+    func invalidate() { session.invalidateAndCancel() }
     func request(_ route: String, method: String = "GET", body: [String: ApplicationValue]? = nil) async throws -> [String: ApplicationValue] {
         guard ["status", "session", "session/revoke", "workspace", "profile", "jobs", "prepare", "submit", "stop", "receipts"].contains(route) else {
             throw MobileApplicationError(message: "This application action is unavailable.")
@@ -151,27 +217,10 @@ final class MobileApplicationClient {
             request.httpBody = try JSONEncoder().encode(body)
         }
         let (data, response) = try await session.data(for: request)
-        guard let http = response as? HTTPURLResponse, data.count <= 12 * 1024 * 1024 else {
+        guard let http = response as? HTTPURLResponse else {
             throw MobileApplicationError(message: "The service returned an unreadable response. Your submission status has not been changed.")
         }
-        guard let envelope = try? JSONDecoder().decode([String: ApplicationValue].self, from: data) else {
-            throw MobileApplicationError(message: "The service did not return a valid application receipt. Refresh your applications before trying anything again.")
-        }
-        guard (200..<300).contains(http.statusCode), envelope["ok"]?.bool == true else {
-            let code = envelope["error"]?.object["code"]?.string ?? ""
-            let message: String
-            switch http.statusCode {
-            case 401: message = "Your connection has expired. Connect again to view your existing applications."
-            case 409: message = "Your application details changed or this job already has an attempt. Refresh and review its current status."
-            case 413: message = "This file is too large. Choose a PDF up to 5 MB."
-            case 429: message = "Please wait before trying this action again."
-            default:
-                let supplied = envelope["error"]?.object["message"]?.string ?? "This action could not be completed."
-                message = String(supplied.prefix(300))
-            }
-            throw MobileApplicationError(message: code == "uncertain" ? "This application needs verification. It will not be sent again automatically." : message)
-        }
-        return envelope
+        return try MobileApplicationResponse.decode(data, statusCode: http.statusCode)
     }
 }
 
@@ -184,6 +233,27 @@ struct PhoneApplicationProfile: Codable, Equatable {
     var resumeData: Data?
     var resumeChanged = false
     var resumeRemoved = false
+    var resumeSize: Int?
+    var resumeSHA256: String?
+    var hasContent: Bool {
+        [firstName, lastName, email, phone, city, country, headline, skills, targetRoles, targetCountries, website]
+            .contains { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+            || resumeData != nil || !resumeName.isEmpty || resumeRemoved
+    }
+    mutating func selectResume(_ data: Data, filename: String) throws {
+        if let error = MobileApplicationPolicy.resumeError(data, filename: filename) { throw MobileApplicationError(message: error) }
+        resumeData = data; resumeName = filename; resumeSize = data.count
+        resumeSHA256 = SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+        resumeChanged = true; resumeRemoved = false
+    }
+    mutating func removeResume() {
+        resumeData = nil; resumeName = ""; resumeSize = nil; resumeSHA256 = nil
+        resumeChanged = true; resumeRemoved = true
+    }
+    mutating func adoptResumeMetadata(from other: PhoneApplicationProfile) {
+        resumeName = other.resumeName; resumeSize = other.resumeSize; resumeSHA256 = other.resumeSHA256
+        resumeData = nil; resumeChanged = false; resumeRemoved = false
+    }
     private func words(_ text: String) -> [ApplicationValue] {
         text.split(separator: ",").map { .string($0.trimmingCharacters(in: .whitespacesAndNewlines)) }.filter { !($0.string ?? "").isEmpty }
     }
@@ -218,6 +288,8 @@ struct PhoneApplicationProfile: Codable, Equatable {
         let modes = object["workModes"]?.array.compactMap(\.string) ?? []
         remote = modes.contains("remote"); hybrid = modes.contains("hybrid"); onsite = modes.contains("on-site")
         resumeName = object["resume"]?.object["name"]?.string ?? ""
+        resumeSize = object["resume"]?.object["size"]?.integer
+        resumeSHA256 = object["resume"]?.object["sha256"]?.string
         // Server metadata never reconstructs or substitutes résumé bytes.
         resumeData = nil; resumeChanged = false; resumeRemoved = false
     }

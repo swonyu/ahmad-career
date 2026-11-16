@@ -1,0 +1,126 @@
+name: Phone quality
+
+on:
+  push:
+    branches:
+      - main
+      - 'career-finder-phones-verified-apply-*'
+    paths:
+      - '.github/workflows/phone-quality.yml'
+      - 'website/**'
+      - 'postman/**'
+      - 'android/**'
+      - 'apple/**'
+  pull_request:
+    paths:
+      - '.github/workflows/phone-quality.yml'
+      - 'website/**'
+      - 'postman/**'
+      - 'android/**'
+      - 'apple/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phone-quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  service:
+    name: Service and synthetic HTTPS
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Existing record and discovery regressions
+        working-directory: website
+        run: npm test
+      - name: Verified-submission state and HTTP regressions
+        working-directory: website
+        run: npm run test:applications
+      - name: Synthetic TLS, consent, receipts and recovery
+        run: node website/applications/fixtures/tls-check.mjs
+
+  android:
+    name: Android compile and lint
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+          cache-dependency-path: |
+            android/**/*.gradle.kts
+            android/gradle/wrapper/gradle-wrapper.properties
+          overwrite-settings: false
+      - name: Require the pinned Android SDK
+        shell: bash
+        run: |
+          test -d "$ANDROID_HOME/platforms/android-36"
+          test -d "$ANDROID_HOME/build-tools/35.0.0"
+      - name: Phone URL, PDF and receipt policies
+        run: bash android/checks/run-policy-checks.sh
+      - name: Compile the ordinary preview and its instrumentation
+        working-directory: android
+        run: ./gradlew --no-daemon --max-workers=2 :app:assembleDebug :app:assembleDebugAndroidTest :app:lintDebug
+      - name: Keep the lint report
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: android-lint-${{ github.run_id }}
+          path: android/app/build/reports/lint-results-debug.*
+          if-no-files-found: ignore
+          retention-days: 7
+
+  iphone-policy:
+    name: iPhone logic and unsigned build
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Execute the production client and store checks
+        run: bash apple/Checks/check-mobile.sh
+      - name: Build the iPhone app on this isolated hosted runner
+        shell: bash
+        run: |
+          set -o pipefail
+          xcodebuild -project apple/AhmadCareer.xcodeproj -scheme AhmadCareer \
+            -configuration Debug -sdk iphoneos -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/career-iphone-derived-data" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            build 2>&1 | tee "$RUNNER_TEMP/career-iphone-build.log"
+      - name: Verify the built product targets iPhone
+        shell: python
+        run: |
+          import os, pathlib, plistlib
+          product = pathlib.Path(os.environ['RUNNER_TEMP']) / 'career-iphone-derived-data/Build/Products/Debug-iphoneos/AhmadCareer.app'
+          with (product / 'Info.plist').open('rb') as source:
+              info = plistlib.load(source)
+          assert info['UIDeviceFamily'] == [1], info.get('UIDeviceFamily')
+          assert info['CFBundleIdentifier'] == 'com.ahmadalayed.career'
+          assert info['CFBundleSupportedPlatforms'] == ['iPhoneOS']
+          assert (product / info['CFBundleExecutable']).is_file()
+          print('Built an unsigned iPhone-only product with the preserved app identity.')
+      - name: Keep the unsigned build log
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: iphone-build-log-${{ github.run_id }}
+          path: ${{ runner.temp }}/career-iphone-build.log
+          if-no-files-found: ignore
+          retention-days: 7

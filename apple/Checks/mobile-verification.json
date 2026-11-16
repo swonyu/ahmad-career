@@ -1,52 +1,69 @@
 {
-  "schemaVersion": 1,
-  "checkedAt": "2026-11-16T13:08:10.866257Z",
-  "evidenceMode": "local-static-and-policy",
-  "compiler": "Apple Swift 6.4.2 (swiftlang-6.4.2.1.9 clang-2100.4.1.1)",
-  "commandPathNote": "Personal scratch paths are normalized to <isolated-check-root>. Commands used the listed arguments, copied source files, and dedicated module caches outside the project and shared Xcode build directories.",
-  "foundationPolicy": {
+  "schemaVersion": 2,
+  "checkedAt": "2026-11-16T13:52:04.486398Z",
+  "evidenceMode": "local",
+  "toolchain": {
+    "compilerVersion": "Apple Swift version 6.4.2 (swiftlang-6.4.2.1.9 clang-2100.4.1.1)\nTarget: arm64-apple-macosx27.3.0",
+    "compilerPath": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+    "compilerResolvedPath": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend",
+    "compilerSHA256": "448457da9a8a56741f2c8c4b8931e85b7377fc009c16918cd8ac1a8a3210ea1f",
+    "sdks": {
+      "macosx": {
+        "path": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk",
+        "SDKSettings.jsonSHA256": "82165b15ee21419d4cffaba8895797391b908ac9499ba70f561f3e1bd16758d6",
+        "SDKSettings.plistSHA256": "b6e59c06888f5778bb28c0c3856b057c1639670ce5076fb9ed1b60e34d997f99"
+      },
+      "iphoneos": {
+        "path": "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS27.2.sdk",
+        "SDKSettings.jsonSHA256": "8c5d2efa53dbdb9b602c45e77c5eac5b21165317408fe37ddf14c7aa9c8b9031",
+        "SDKSettings.plistSHA256": "afa82113e98f1ff4d8faf208976d558b444eb8e787181f0850f0382dd6c6052e"
+      }
+    }
+  },
+  "commandPathNote": "Personal scratch paths are normalized to <isolated-check-root>. Standalone checks used dedicated temporary build/module-cache directories; no shared Xcode build directory or native build slot was used.",
+  "reproducibleCheckCommand": [
+    "bash",
+    "apple/Checks/check-mobile.sh"
+  ],
+  "nativeChecks": {
     "result": "PASS",
-    "checksPassed": 40,
-    "compileExitCode": 0,
-    "runExitCode": 0,
-    "stdout": "PASS 40 native application boundary checks",
+    "exitCode": 0,
     "diagnostics": "",
-    "suppliedSDK": "MacOSX27.2.sdk",
-    "target": {
-      "explicitTargetFlag": false,
-      "observedCompilerDefault": "arm64-apple-macosx27.3.0",
-      "executableArchitecture": "arm64",
-      "executableMinimumMacOS": "27.3",
-      "executableSDKLoadCommand": "27.3"
-    },
-    "targetEvidence": "swiftc -print-target-info with the same supplied SDK, plus file/otool inspection of the compiled executable.",
-    "compileCommand": [
-      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
-      "-Onone",
-      "-sdk",
-      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk",
-      "-module-cache-path",
-      "<isolated-check-root>/macos-module-cache",
-      "<isolated-check-root>/apple/AhmadCareer/MobileApplicationClient.swift",
-      "<isolated-check-root>/apple/Checks/MobileApplicationCheck.swift",
-      "-o",
-      "<isolated-check-root>/policy-check"
-    ],
-    "runCommand": [
-      "<isolated-check-root>/policy-check"
-    ],
+    "boundaryChecksPassed": 48,
+    "lifecycleAssertionsPassed": 79,
+    "lifecycleScenariosPassed": 15,
+    "output": "PASS 48 native application boundary checks\nPASS 79 application lifecycle assertions across 15 scenarios\n",
+    "productionStoreExecuted": true,
+    "realTemporaryDraftPersistence": true,
+    "injectedTransport": true,
+    "injectedCredentials": true,
+    "actualKeychainAccess": false,
+    "externalRequests": 0,
     "sourceFiles": [
       "apple/AhmadCareer/MobileApplicationClient.swift",
-      "apple/Checks/MobileApplicationCheck.swift"
+      "apple/AhmadCareer/MobileApplicationState.swift",
+      "apple/AhmadCareer/NativeApplicationsStore.swift",
+      "apple/Checks/MobileApplicationCheck.swift",
+      "apple/Checks/MobileLifecycleCheck.swift"
     ],
-    "rerunAfterViewOnlyFixes": false,
-    "unchangedSourceReason": "The client and policy harness hashes remained identical to the successful compile/execution."
+    "coverage": [
+      "Dirty revision persistence, unknown legacy bases, explicit conflict choices and monotonic confirmed revisions.",
+      "Immediate durable reconciliation of successful profile PUT without a dependent GET.",
+      "Delayed GET successes and 401 errors cannot regress a newer profile/CV or confirmed receipt.",
+      "Delayed former-connection successes/errors cannot populate or disconnect a new workspace.",
+      "Offline local disconnect, expired session cleanup and preservation of phone drafts.",
+      "Saved-link persistence on network failure and canonical local/server identity mapping with explicit negative consent.",
+      "All recoverable reviews, atomic unapproved replacement and concurrent approval conflicts.",
+      "Delayed prepare responses are rejected when selection or answers changed.",
+      "Malformed complete-workspace/profile envelopes preserve visible and persisted state.",
+      "Background draft checkpoints, deliberate discard, disk-write failures and temporary credential unavailability."
+    ]
   },
   "iosStaticTypecheck": {
     "result": "PASS",
     "exitCode": 0,
     "diagnostics": "",
-    "sourceFileCount": 9,
+    "sourceFileCount": 10,
     "target": "arm64-apple-ios16.0",
     "sdk": "iPhoneOS27.2.sdk",
     "swiftLanguageVersion": "5",
@@ -66,6 +83,7 @@
       "<isolated-check-root>/apple/AhmadCareer/CareerPolicy.swift",
       "<isolated-check-root>/apple/AhmadCareer/CareerWebView.swift",
       "<isolated-check-root>/apple/AhmadCareer/MobileApplicationClient.swift",
+      "<isolated-check-root>/apple/AhmadCareer/MobileApplicationState.swift",
       "<isolated-check-root>/apple/AhmadCareer/NativeApplicationsStore.swift",
       "<isolated-check-root>/apple/AhmadCareer/NativeApplicationsViews.swift",
       "<isolated-check-root>/apple/AhmadCareer/NativeCareerStore.swift",
@@ -77,32 +95,36 @@
       "apple/AhmadCareer/CareerPolicy.swift",
       "apple/AhmadCareer/CareerWebView.swift",
       "apple/AhmadCareer/MobileApplicationClient.swift",
+      "apple/AhmadCareer/MobileApplicationState.swift",
       "apple/AhmadCareer/NativeApplicationsStore.swift",
       "apple/AhmadCareer/NativeApplicationsViews.swift",
       "apple/AhmadCareer/NativeCareerStore.swift",
       "apple/AhmadCareer/NativeCareerViews.swift"
-    ],
-    "reasonForLatestRun": "Store and views changed to prevent approving or resuming an older server review while an unsaved local profile draft needs synchronization."
+    ]
   },
   "sourceHashes": {
     "apple/AhmadCareer/AhmadCareerApp.swift": "1cfcb59bf4ac0914c73de50ffa3f11cdc6671e74b4588cc94f16574e8f07f801",
     "apple/AhmadCareer/CareerFeed.swift": "f726dd1144423e71cadea28da4ff60792c5459dc0c873c0a4fb7858b3a6b3273",
     "apple/AhmadCareer/CareerPolicy.swift": "59441ba26db1bca33fbcc6f985c1cfc054ba0774d3c4ff027a9a712e1883a9cf",
     "apple/AhmadCareer/CareerWebView.swift": "ff866bd788485434da518a51d05e65a191a3e69081b24a04772d29eafd0dcd8c",
-    "apple/AhmadCareer/MobileApplicationClient.swift": "09e7dbf331f62b5e3fe3c5af5f625baf0d65463c824a565e302afea590c00907",
-    "apple/AhmadCareer/NativeApplicationsStore.swift": "08fb851972ec60a94ec5cc274919b0a2edc265a61198c71691c0a562fc1e3a41",
-    "apple/AhmadCareer/NativeApplicationsViews.swift": "7e36326273363c337ce2682d0018d52aac33e1f408f744c82820cbef100823cd",
+    "apple/AhmadCareer/MobileApplicationClient.swift": "29d5d7b4c03af29e9d35a94b80fe3065899474163df44c1f57bf4d5771958b55",
+    "apple/AhmadCareer/MobileApplicationState.swift": "db18120729312ca342c4e8d87fd0ba541695d6f18891e49c48d39a768a703d10",
+    "apple/AhmadCareer/NativeApplicationsStore.swift": "eb17f8a38ebdc310fc32257cf2bae38abfcef439b437c3ad9abed57c2268fedb",
+    "apple/AhmadCareer/NativeApplicationsViews.swift": "f33383ced3ef3fa163916f931d3557c6947715d576b8fbb8e13793d75a946102",
     "apple/AhmadCareer/NativeCareerStore.swift": "f0140a3bcea9e947db4689e3784898f1ef59735c3217515d6b309f1cda62f7e7",
     "apple/AhmadCareer/NativeCareerViews.swift": "19d34b43ff400e590b714fdab4acb2391d10d4bcd8a92435dca4ce58459428a7",
     "apple/AhmadCareer/CareerResearch.json": "9337469922d86ad305f109c838a8cf5c0742d6ffcdc438f3ffbe497f7eb92b1b",
-    "apple/Checks/MobileApplicationCheck.swift": "b48f4b4ec00872ab5ac94cc258e675d5934a49657a5b5aea2441774dc279cd13"
+    "apple/Checks/MobileApplicationCheck.swift": "ea10047ffe60b31492fe5bd4fae66951067bfb45e53afb20092144aaebfc18ad",
+    "apple/Checks/MobileLifecycleCheck.swift": "3b14c93a5e97fcd5e9a2e9a29535ed9721b2043b2252248147b4994e4abb9ae1",
+    "apple/Checks/check-mobile.sh": "44ec47d1b210482c8bf0b6f4a28d8dada83f211429395505b08b3e57853b3cc4",
+    "apple/AhmadCareer.xcodeproj/project.pbxproj": "6babe28350296a57c8f485bc4faea3430016a73a48fd1428b12f296f2ece381f"
   },
   "sourceSnapshotUnchangedAfterCheck": true,
   "limitations": [
-    "This is a Foundation policy executable and a static typecheck, not an Xcode project build.",
-    "No simulator, physical-device runtime, signing, archive, installation, or distribution was performed.",
-    "Static typechecking does not validate rendered SwiftUI behavior, accessibility at runtime, project resource packaging, entitlements, or lifecycle behavior.",
-    "The policy harness did not exercise live provider submission or runtime phone networking.",
-    "CareerResearch.json was captured for source identity but is not compiled by swiftc."
+    "No Xcode project build, simulator, physical-device runtime, signing, archive, installation or distribution was performed.",
+    "The lifecycle executable uses the production store with synthetic injected transport/credentials and real temporary files; it does not exercise device Keychain or iPhone networking.",
+    "Static typechecking does not validate rendered SwiftUI behavior, VoiceOver, keyboard/PDF-picker presentation, project resource packaging, entitlements or device file-protection behavior.",
+    "No live employer application submission occurred.",
+    "CareerResearch.json and the project file are captured for source identity; swiftc does not validate project packaging."
   ]
 }

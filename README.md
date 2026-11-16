@@ -2,17 +2,20 @@
 
 Native career and application workspace for **iPhone and Android phones**. The current update adds a personal profile, PDF résumé, opportunities from any country or profession, and an **Auto Apply** flow backed by durable provider receipts.
 
-**Status: development candidate, 16 November 2026.** Source implementation and the checks below are complete or recorded in the [phone update](docs/Phone-Update-2026-11-16.md). This is not a published App Store/Google Play release or a deployed application service. No real employer applications were sent during development.
+**Status: phone development candidate, 16 November 2026.** Current reliability work and exact executed checks are recorded in the [phone quality review](docs/Phone-Quality-Review-2026-11-16.md). The [initial phone update](docs/Phone-Update-2026-11-16.md) preserves the earlier candidate's evidence. Public distribution and live service activation remain separate release steps. No real employer applications were sent during development.
 
 ## What the phone apps do
 
 - Start with a blank personal profile; choose your own country, location, career level, roles, skills and work preferences.
 - Keep phone drafts and select an actual PDF résumé, up to 5 MiB.
+- Preserve unsaved profile edits when the service changes, compare both versions, and make a deliberate choice before saving over newer information.
 - Save and search employer opportunities from any country or profession. Existing iPhone saved roles and application history remain available.
 - Pair a configured HTTPS application service using a short-lived, single-use code. Store its token in platform secure storage.
 - Review the exact applicant details, selected résumé, employer-specific message, explicit data choices and eligible jobs before approving Auto Apply.
 - Track confirmed, uncertain, rejected, rate-limited and stopped outcomes. Reopen eligible reviews after restarting the phone app; resuming requires deliberate approval.
 - Export receipt evidence without résumé bytes, employer keys or phone credentials.
+
+The reliability follow-up protects drafts from delayed network responses and expired connections, keeps employer choices with their intended review, and permits a genuine single name. An explicit “No” to future marketing contact remains a valid answer. Android includes a deliberate offline-draft import and recovery that preserves unreadable encrypted files.
 
 **Verification has a specific meaning:** a confirmed live receipt requires a supported employer API's documented success response and a nonempty application ID. It establishes API acceptance, not a recruiter decision. Opening an employer link or changing a local tracker status cannot create one.
 
@@ -31,7 +34,8 @@ This does not add a worldwide job-feed aggregator. The retained iPhone live disc
 | [website/applications/](website/applications/) | Separate Node/SQLite application service and private pairing CLI |
 | [Application contract](docs/Verified-Applications-Contract.md) | Auth, immutable reviews, dispatch states, consent and receipt evidence |
 | [postman/](postman/) | Real HTTP acceptance collection using a synthetic local Lever dependency |
-| [Phone update and readiness](docs/Phone-Update-2026-11-16.md) | Changes, executed checks, source provenance and release requirements |
+| [Phone quality review](docs/Phone-Quality-Review-2026-11-16.md) | Current fixes, executed evidence, native acceptance scope and remaining release work |
+| [Initial phone update](docs/Phone-Update-2026-11-16.md) | First candidate's implementation, source provenance and dated evidence |
 
 The pre-existing website and Mac source remain for compatibility and history. This candidate targets phones. GitHub source changes do not deploy the existing website.
 
@@ -41,7 +45,13 @@ The pre-existing website and Mac source remain for compatibility and history. Th
 
 Open `apple/AhmadCareer.xcodeproj`, select the **AhmadCareer** scheme and an iPhone destination. The project targets iPhone/iPhone Simulator only. Preserve bundle identifier `com.ahmadalayed.career` and use the authorized signing team for device distribution.
 
-The current source passed a full nine-file Swift typecheck for the iOS 16 target using the installed iPhoneOS SDK, plus 40 executed Foundation policy checks. This is not a linked Xcode app build or device UI acceptance. See [exact evidence](apple/Checks/mobile-verification.json).
+The current source passed a full ten-file Swift typecheck for the iOS 16 target, 48 boundary checks, and 79 assertions across 15 deterministic workspace lifecycle scenarios. The lifecycle harness executes the production store with injected transport and credentials and real temporary persistence:
+
+```sh
+bash apple/Checks/check-mobile.sh
+```
+
+These checks are distinct from a linked Xcode app build and device UI acceptance. See [exact evidence](apple/Checks/mobile-verification.json).
 
 ### Android
 
@@ -72,7 +82,17 @@ For the official local HTTP acceptance suite, from the repository root with Post
 node postman/fixtures/run-acceptance.mjs
 ```
 
-Fixtures are visibly synthetic, use a separate test ledger and cannot count as live applications. [Recorded Postman results](postman/verification.json): 28 requests, 36 assertions, zero failures.
+Fixtures are visibly synthetic, use a separate test ledger and cannot count as live applications. [Recorded Postman results](postman/verification.json): 29 HTTP calls across 28 request definitions, 36 assertions, zero failures.
+
+For the isolated HTTPS service diagnostic:
+
+```sh
+node website/applications/fixtures/tls-check.mjs
+```
+
+This uses an ephemeral private CA and a synthetic local provider. The ordinary Android preview and release build retain normal TLS trust. Only the separately identified acceptance build may trust the fixture CA for the emulator host. See [native HTTPS acceptance](website/applications/fixtures/README.md).
+
+The [Phone quality workflow](.github/workflows/phone-quality.yml) repeats the web/service and HTTPS checks, Android compilation/lint, the iPhone client/store harness, and an unsigned iPhone app build on relevant source changes. Its hosted Mac is isolated from the shared local Apple build schedule. Native UI execution, physical-device checks and distribution signing are recorded separately.
 
 ## Data and release readiness
 

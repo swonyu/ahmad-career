@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {ApplicationError,fail,object,text,publicURL,canonical,sha256} from './validation.mjs';
+import {ApplicationError,fail,object,text,publicURL,canonical,sha256,applicantName} from './validation.mjs';
 
 const supported = new Set(['name','email','resume','phone','urls','comments','consentStore','consentMarketing']);
 const webRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../web');
@@ -41,7 +41,7 @@ export function connectorFor(config,target,env,now=Date.now()) {
   return {supported:true,connector:c,requirements:r};
 }
 export function requirementsError(profile,answer,requirements) {
-  const values={name:profile.firstName&&profile.lastName,email:profile.email,resume:profile.resume,phone:profile.phone,urls:profile.website,comments:answer.comments,consentStore:answer.consentStore===true,consentMarketing:answer.consentMarketing===true};
+  const values={name:applicantName(profile),email:profile.email,resume:profile.resume,phone:profile.phone,urls:profile.website,comments:answer.comments,consentStore:answer.consentStore===true,consentMarketing:typeof answer.consentMarketing==='boolean'};
   const missing=requirements.requiredFields.filter(k=>!values[k]);
   return missing.length?`This employer requires: ${missing.join(', ')}. Review those fields before submitting.`:'';
 }
@@ -77,7 +77,7 @@ export function makeAdapter({testOnly,env=process.env}={}) {
   async function submit(target,snapshot,connector) {
     const form=new FormData();
     const p=snapshot.profile,a=snapshot.answers;
-    form.set('name',`${p.firstName} ${p.lastName}`);form.set('email',p.email);
+    form.set('name',applicantName(p));form.set('email',p.email);
     form.set('resume',new Blob([Buffer.from(p.resume.dataBase64,'base64')],{type:'application/pdf'}),p.resume.name);
     if(p.phone)form.set('phone',p.phone);
     if(p.website)form.set('urls[Portfolio]',p.website);

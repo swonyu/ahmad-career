@@ -1,3 +1,8 @@
+HISTORICAL TESTFLIGHT RECORD — NOT THE CURRENT PHONE CANDIDATE
+The observations below are dated 9 October 2026. They do not establish a
+TestFlight upload, installation or approval for the 16 November phone changes.
+Read START-HERE.txt and Phone-Quality-Review-2026-11-16.md for current readiness.
+
 AHMAD CAREER — TESTFLIGHT RELEASE RECORD
 9 October 2026 • Asia/Riyadh
 

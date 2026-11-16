@@ -13,6 +13,7 @@ struct NativeApplicationsScreen: View {
     @StateObject private var model = NativeApplicationsStore()
     @EnvironmentObject private var career: NativeCareerStore
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var profileSheet = false
     @State private var connectionSheet = false
     @State private var addSheet = false
@@ -47,11 +48,9 @@ struct NativeApplicationsScreen: View {
                     .accessibilityElement(children: .contain)
                 }
                 profileCard
-                HStack(spacing: 10) {
-                    metric("\(model.jobs.count)", "Opportunities", icon: "square.stack")
-                    metric("\(confirmed)", "Confirmed", icon: "checkmark.seal")
-                    metric("\(uncertain)", "To verify", icon: "clock.badge.questionmark")
-                }
+                if dynamicTypeSize.isAccessibilitySize {
+                    VStack(spacing: 10) { metrics }
+                } else { HStack(spacing: 10) { metrics } }
                 if !model.activePlanIDs.isEmpty {
                     HStack(spacing: 12) {
                         ProgressView()
@@ -63,22 +62,26 @@ struct NativeApplicationsScreen: View {
                         Button("Stop") { Task { await model.stop() } }.disabled(model.busy)
                     }.padding().background(ApplyDesign.card, in: RoundedRectangle(cornerRadius: 16))
                 }
-                if let review = model.recoverablePlans.first(where: { candidate in
-                    !model.activePlanIDs.contains(candidate["id"]?.string ?? "")
-                }) {
+                ForEach(model.availableReviews) { review in
                     Button {
-                        reviewSheet = model.resumeReview(review)
+                        reviewSheet = model.resumeReview(review.value)
                     } label: {
                         HStack(spacing: 12) {
                             Image(systemName: "arrow.clockwise.circle").font(.title2)
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Continue an application review").font(.subheadline.weight(.semibold))
-                                Text("Your saved details and any provider cooldown are preserved.").font(.caption).foregroundStyle(.secondary)
+                                Text(review.title).font(.subheadline.weight(.semibold))
+                                    .fixedSize(horizontal: false, vertical: true)
+                                Text("Continue review · \(review.items.count) application\(review.items.count == 1 ? "" : "s")")
+                                    .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                                if let created = ApplicationReviewPolicy.date(review.value["createdAt"]?.string) {
+                                    Text(created.formatted(date: .abbreviated, time: .shortened)).font(.caption2).foregroundStyle(.secondary)
+                                }
                             }
                             Spacer(minLength: 0)
                             Image(systemName: "chevron.right").font(.caption)
                         }.padding(16).background(ApplyDesign.card, in: RoundedRectangle(cornerRadius: 16))
-                    }.buttonStyle(.plain)
+                    }.buttonStyle(.plain).disabled(model.busy)
+                        .accessibilityLabel("Continue review for \(review.title), \(review.items.count) applications")
                 }
                 Picker("Applications view", selection: $activity) {
                     Text("Opportunities").tag(false)
@@ -170,14 +173,19 @@ struct NativeApplicationsScreen: View {
                 VStack(alignment: .leading, spacing: 5) {
                     Text(model.profile.firstName.isEmpty ? "Make it yours" : "\(model.profile.firstName)'s application profile")
                         .font(.headline).foregroundStyle(.primary)
-                    Text(model.profileNeedsSync ? "Phone draft · ready to save" :
+                    Text(model.profileHasConflict ? "Phone draft · resolve profile changes" : model.profileNeedsSync ? "Phone draft · ready to save" :
                             model.profile.resumeName.isEmpty ? "Add your details and a PDF CV" : model.profile.resumeName)
                         .font(.caption).foregroundStyle(.secondary).lineLimit(2)
                 }
                 Spacer(minLength: 0)
                 Image(systemName: "chevron.right").font(.caption.weight(.bold)).foregroundStyle(.secondary)
             }.padding(17).background(ApplyDesign.card, in: RoundedRectangle(cornerRadius: 20))
-        }.buttonStyle(.plain)
+        }.buttonStyle(.plain).disabled(model.busy)
+    }
+    @ViewBuilder private var metrics: some View {
+        metric("\(model.jobs.count)", "Opportunities", icon: "square.stack")
+        metric("\(confirmed)", "Confirmed", icon: "checkmark.seal")
+        metric("\(uncertain)", "To verify", icon: "clock.badge.questionmark")
     }
     private func metric(_ value: String, _ label: String, icon: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -194,7 +202,7 @@ struct NativeApplicationsScreen: View {
             HStack {
                 Text("Your opportunities").font(.title3.weight(.semibold))
                 Spacer()
-                Button { addSheet = true } label: { Label("Add", systemImage: "plus").font(.subheadline.weight(.semibold)).padding(.vertical, 10) }
+                Button { addSheet = true } label: { Label("Add", systemImage: "plus").font(.subheadline.weight(.semibold)).padding(.vertical, 10) }.disabled(model.busy)
             }
             if model.jobs.isEmpty {
                 empty(icon: "square.stack.3d.up", title: "Your next move starts here.",
@@ -225,7 +233,7 @@ struct NativeApplicationsScreen: View {
                                 .font(.title2).foregroundStyle(model.selected.contains(id) ? ApplyDesign.green : Color.secondary)
                                 .frame(minWidth: 30, minHeight: 44)
                         }
-                    }.buttonStyle(.plain)
+                    }.buttonStyle(.plain).disabled(model.busy)
                         .accessibilityLabel("\(job["title"]?.string ?? "Opportunity") at \(job["company"]?.string ?? "")")
                         .accessibilityValue(model.selected.contains(id) ? "Selected" : "Not selected")
                         .accessibilityHint("Select for application review")
@@ -235,6 +243,14 @@ struct NativeApplicationsScreen: View {
                         Spacer()
                         if let raw = job["url"]?.string, let url = MobileApplicationPolicy.jobURL(raw) {
                             Link(destination: url) { Label("View", systemImage: "arrow.up.right").font(.caption.weight(.semibold)).padding(.vertical, 8) }
+                        }
+                    }
+                    if job["localOnly"]?.bool == true {
+                        HStack {
+                            Text("Saved on this phone").font(.caption2).foregroundStyle(.secondary)
+                            Spacer()
+                            Button("Remove saved link", role: .destructive) { model.removeLocalJob(id) }
+                                .font(.caption).disabled(model.busy)
                         }
                     }
                 }.padding(17).background(ApplyDesign.card, in: RoundedRectangle(cornerRadius: 18))
@@ -286,25 +302,56 @@ struct NativeApplicationsScreen: View {
 private struct NativeApplicationProfileEditor: View {
     @ObservedObject var model: NativeApplicationsStore
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
     @State private var draft: PhoneApplicationProfile
+    @State private var original: PhoneApplicationProfile
+    @State private var originallyDirty: Bool
+    @State private var context: ApplicationProfileEditContext
     @State private var pickingPDF = false
+    @State private var readingPDF = false
     @State private var issue: String?
-    @State private var expectedRevision: Int
+    @State private var dismissalChoice = false
+    @State private var replaceChoice = false
+    @State private var checkpointed = false
+    @State private var closingIntentionally = false
+
     init(model: NativeApplicationsStore) {
-        self.model = model; _draft = State(initialValue: model.profile)
-        _expectedRevision = State(initialValue: model.revision)
+        self.model = model
+        _draft = State(initialValue: model.profile); _original = State(initialValue: model.profile)
+        _originallyDirty = State(initialValue: model.profileNeedsSync); _context = State(initialValue: model.editContext)
     }
+    private var changed: Bool { draft != original }
+    private var conflicts: Bool { model.hasConflict(for: context) }
+    private var occupied: Bool { model.busy || readingPDF }
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    Text("Use your own experience and the CV you want employers to receive. Nothing is submitted when you save this profile.")
+                    Text("Use your own experience and the CV you want employers to receive. Saving this profile does not submit an application.")
                         .font(.subheadline).foregroundStyle(.secondary)
                 }
                 if let issue { Section { Text(issue).foregroundStyle(.red).accessibilityAddTraits(.updatesFrequently) } }
+                if conflicts {
+                    Section {
+                        Text("Your phone draft is kept. The service has a different version, so choose which details to keep before saving.")
+                            .font(.subheadline).fixedSize(horizontal: false, vertical: true)
+                        if let remote = model.latestServerProfile, let version = model.latestServerRevision {
+                            DisclosureGroup("Compare the service profile") { serverProfile(remote) }
+                            Button("Keep my phone draft against this version") {
+                                if model.keepDraftAfterReview(draft, context: context, serverRevision: version) { resetFromModel() }
+                                else { issue = model.message }
+                            }
+                            Button("Replace phone draft with service version", role: .destructive) { replaceChoice = true }
+                        } else {
+                            Button("Refresh service profile") { Task { await model.refresh() } }
+                        }
+                    } header: { Text("Resolve profile changes") } footer: {
+                        Text("Keeping your draft does not upload it. Review the CV and then tap Save. An unchanged CV will use the current service file.")
+                    }
+                }
                 Section("About you") {
-                    TextField("First name", text: $draft.firstName).textContentType(.givenName)
-                    TextField("Last name", text: $draft.lastName).textContentType(.familyName)
+                    TextField("First or single name", text: $draft.firstName).textContentType(.givenName)
+                    TextField("Last name (optional)", text: $draft.lastName).textContentType(.familyName)
                     TextField("Email", text: $draft.email).textContentType(.emailAddress).keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never).autocorrectionDisabled()
                     TextField("Phone (optional)", text: $draft.phone).textContentType(.telephoneNumber).keyboardType(.phonePad)
@@ -319,15 +366,22 @@ private struct NativeApplicationProfileEditor: View {
                 Section {
                     Button { pickingPDF = true } label: {
                         Label(draft.resumeName.isEmpty ? "Choose your PDF CV" : draft.resumeName, systemImage: "doc.badge.plus")
-                            .lineLimit(2).padding(.vertical, 8)
+                            .fixedSize(horizontal: false, vertical: true).padding(.vertical, 8)
                     }
+                    if readingPDF { ProgressView("Reading your selected PDF") }
                     if !draft.resumeName.isEmpty {
-                        Button("Remove CV", role: .destructive) {
-                            draft.resumeData = nil; draft.resumeName = ""; draft.resumeRemoved = true; draft.resumeChanged = true
+                        if let size = draft.resumeSize { Text(ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file)).font(.caption).foregroundStyle(.secondary) }
+                        Text(draft.resumeData == nil ? "CV stored in this application workspace." : "Exact file bytes saved with your phone draft.")
+                            .font(.caption).foregroundStyle(.secondary)
+                        if let hash = draft.resumeSHA256 {
+                            DisclosureGroup("CV fingerprint") {
+                                Text(hash).font(.caption.monospaced()).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
+                            }
                         }
+                        Button("Remove CV", role: .destructive) { draft.removeResume() }
                     }
                 } header: { Text("Your CV") } footer: {
-                    Text("PDF · up to 5 MB. The selected file is used exactly as provided. Each submission receipt records its fingerprint.")
+                    Text("PDF · up to 5 MB. A copied snapshot of the selected file is retained; changes to the original file do not change your saved selection.")
                 }
                 Section("Your experience") {
                     TextField("Professional headline (optional)", text: $draft.headline, axis: .vertical)
@@ -335,49 +389,121 @@ private struct NativeApplicationProfileEditor: View {
                     TextField("Portfolio HTTPS link (optional)", text: $draft.website)
                         .keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
                     Picker("Career stage", selection: $draft.experienceLevel) {
-                        Text("Any / not specified").tag("any")
-                        Text("Entry level").tag("entry")
-                        Text("Mid level").tag("mid")
-                        Text("Senior").tag("senior")
+                        Text("Any / not specified").tag("any"); Text("Entry level").tag("entry")
+                        Text("Mid level").tag("mid"); Text("Senior").tag("senior")
                     }
                 }
                 Section {
                     TextField("Target roles, separated by commas", text: $draft.targetRoles, axis: .vertical)
                     TextField("Target country codes, e.g. SA, AE", text: $draft.targetCountries)
                         .textInputAutocapitalization(.characters).autocorrectionDisabled()
-                    Toggle("Remote", isOn: $draft.remote)
-                    Toggle("Hybrid", isOn: $draft.hybrid)
-                    Toggle("On site", isOn: $draft.onsite)
+                    Toggle("Remote", isOn: $draft.remote); Toggle("Hybrid", isOn: $draft.hybrid); Toggle("On site", isOn: $draft.onsite)
                 } header: { Text("What comes next") } footer: {
                     Text("These preferences describe your goals. They do not establish work authorization or qualify you for a role.")
                 }
                 Section {
-                    Text(model.connected ? "Saving synchronizes these details with your connected application service." :
+                    Text(model.connected ? "Save synchronizes these details with your connected application service." :
                             "Your draft is stored privately on this phone. Connect an application service when you are ready to submit.")
                         .font(.caption).foregroundStyle(.secondary)
-                }
-            }.navigationTitle("Application profile").navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Save") { Task { if await model.saveProfile(draft, expectedRevision: expectedRevision) { dismiss() } else { issue = model.message } } }
-                            .disabled(model.busy)
+                    if changed {
+                        Text("Use Cancel to save a phone draft, keep editing, or discard changes. Backgrounding the app keeps a local draft without uploading it.")
+                            .font(.caption).foregroundStyle(.secondary)
                     }
                 }
-                .fileImporter(isPresented: $pickingPDF, allowedContentTypes: [.pdf]) { result in
-                    do {
-                        let url = try result.get()
-                        let scoped = url.startAccessingSecurityScopedResource()
-                        defer { if scoped { url.stopAccessingSecurityScopedResource() } }
-                        let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
-                        guard size <= MobileApplicationPolicy.maximumResumeBytes else { throw MobileApplicationError(message: "Choose a PDF no larger than 5 MB.") }
-                        let data = try Data(contentsOf: url, options: .mappedIfSafe)
-                        if let error = MobileApplicationPolicy.resumeError(data, filename: url.lastPathComponent) { throw MobileApplicationError(message: error) }
-                        draft.resumeData = data; draft.resumeName = url.lastPathComponent
-                        draft.resumeChanged = true; draft.resumeRemoved = false; issue = nil
-                    } catch { issue = error.localizedDescription }
+            }
+            .disabled(occupied)
+            .navigationTitle("Application profile").navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        if changed { dismissalChoice = true }
+                        else { closingIntentionally = true; dismiss() }
+                    }.disabled(occupied)
                 }
-        }.tint(ApplyDesign.green).interactiveDismissDisabled(model.busy)
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        Task {
+                            if await model.saveProfile(draft, context: context) { closingIntentionally = true; dismiss() }
+                            else { issue = model.message }
+                        }
+                    }.disabled(occupied || conflicts)
+                }
+            }
+            .fileImporter(isPresented: $pickingPDF, allowedContentTypes: [.pdf]) { result in
+                do {
+                    let url = try result.get()
+                    Task {
+                        readingPDF = true
+                        let scoped = url.startAccessingSecurityScopedResource()
+                        defer { if scoped { url.stopAccessingSecurityScopedResource() }; readingPDF = false }
+                        do {
+                            let bytes = try await Task.detached(priority: .userInitiated) { try MobileApplicationPolicy.readResume(at: url) }.value
+                            try draft.selectResume(bytes, filename: url.lastPathComponent); issue = nil
+                        } catch {
+                            if !MobileApplicationPolicy.isFileSelectionCancelled(error) { issue = error.localizedDescription }
+                        }
+                    }
+                } catch {
+                    if !MobileApplicationPolicy.isFileSelectionCancelled(error) { issue = error.localizedDescription }
+                }
+            }
+            .confirmationDialog("Keep your profile changes?", isPresented: $dismissalChoice, titleVisibility: .visible) {
+                Button("Save draft on this phone") {
+                    if model.keepProfileDraft(draft, context: context) { closingIntentionally = true; dismiss() }
+                    else { issue = model.message }
+                }
+                Button("Discard changes", role: .destructive) {
+                    if !checkpointed || model.discardCheckpoint(restoring: original, wasDirty: originallyDirty, context: context) {
+                        closingIntentionally = true; dismiss()
+                    } else { issue = model.message }
+                }
+                Button("Keep editing", role: .cancel) {}
+            } message: { Text("Saving a phone draft does not upload details or submit an application.") }
+            .confirmationDialog("Replace this phone draft?", isPresented: $replaceChoice, titleVisibility: .visible) {
+                Button("Use service version", role: .destructive) {
+                    if model.useLatestProfile(context: context) { resetFromModel() }
+                    else { issue = model.message }
+                }
+                Button("Keep editing", role: .cancel) {}
+            } message: { Text("This replaces the phone draft and any PDF selected only on this phone.") }
+        }
+        .tint(ApplyDesign.green).interactiveDismissDisabled(occupied || changed)
+        .onAppear { model.profileEditing = true }
+        .onDisappear {
+            model.profileEditing = false
+            if changed && !closingIntentionally && !model.busy {
+                _ = model.keepProfileDraft(draft, context: context)
+            }
+        }
+        .onChange(of: scenePhase) { phase in
+            if phase != .active && changed && !occupied {
+                if model.keepProfileDraft(draft, context: context) { checkpointed = true }
+                else { issue = model.message }
+            }
+        }
+    }
+    private func resetFromModel() {
+        draft = model.profile; original = draft; originallyDirty = model.profileNeedsSync
+        context = model.editContext; checkpointed = false; issue = nil
+    }
+    private func serverProfile(_ profile: PhoneApplicationProfile) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            profileField("Name", [profile.firstName, profile.lastName].filter { !$0.isEmpty }.joined(separator: " "))
+            profileField("Email", profile.email); profileField("Phone", profile.phone)
+            profileField("Location", [profile.city, profile.country].filter { !$0.isEmpty }.joined(separator: ", "))
+            profileField("Headline", profile.headline); profileField("Skills", profile.skills)
+            profileField("Portfolio", profile.website); profileField("Career stage", profile.experienceLevel)
+            profileField("Target roles", profile.targetRoles); profileField("Target countries", profile.targetCountries)
+            profileField("Work preferences", [profile.remote ? "Remote" : nil, profile.hybrid ? "Hybrid" : nil, profile.onsite ? "On site" : nil].compactMap { $0 }.joined(separator: ", "))
+            profileField("CV", profile.resumeName)
+            if let hash = profile.resumeSHA256 { profileField("CV fingerprint", hash) }
+        }.padding(.vertical, 8)
+    }
+    private func profileField(_ title: String, _ value: String) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(title).font(.caption).foregroundStyle(.secondary)
+            Text(value.isEmpty ? "Not provided" : value).font(.subheadline).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
+        }.accessibilityElement(children: .combine)
     }
     private func countryName(_ code: String) -> String { Locale.current.localizedString(forRegionCode: code) ?? code }
 }
@@ -415,9 +541,9 @@ private struct NativeOpportunityEditor: View {
                     Text("Saving a job does not apply to it. Automatic submission eligibility is checked when you review your selection.")
                         .font(.caption).foregroundStyle(.secondary)
                 }
-            }.navigationTitle("Add opportunity").navigationBarTitleDisplayMode(.inline)
+            }.disabled(model.busy).navigationTitle("Add opportunity").navigationBarTitleDisplayMode(.inline)
                 .toolbar {
-                    ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+                    ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() }.disabled(model.busy) }
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Add") { Task {
                             if await model.addJob(url: url, title: title, company: company, location: location, country: country) { dismiss() }
@@ -435,6 +561,9 @@ private struct NativeApplicationConnection: View {
     @State private var address = ""
     @State private var code = ""
     @State private var issue: String?
+    init(model: NativeApplicationsStore) {
+        self.model = model; _address = State(initialValue: model.serviceAddress)
+    }
     var body: some View {
         NavigationStack {
             Form {
@@ -468,7 +597,7 @@ private struct NativeApplicationConnection: View {
                         HStack { if model.busy { ProgressView() }; Text("Connect securely") }
                     }.disabled(model.busy || address.isEmpty || code.isEmpty)
                 }
-                if let issue { Section { Text(issue).foregroundStyle(.red) } }
+                if let issue = issue ?? model.message { Section { Text(issue).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true) } }
                 Section {
                     Text("Saved phone drafts stay on your device until you explicitly save them to the connected service. Your connection token is kept in the iPhone Keychain.")
                         .font(.caption).foregroundStyle(.secondary)
@@ -485,17 +614,12 @@ private struct NativeApplicationReview: View {
     @Environment(\.dismiss) private var dismiss
     @State private var approved = false
     @State private var changed = false
+    @State private var discardChoices = false
     private var items: [[String: ApplicationValue]] { model.plan?["items"]?.array.map(\.object) ?? [] }
     private var previouslyApproved: Bool { model.plan?["approvedAt"]?.string != nil }
     private func eligible(_ item: [String: ApplicationValue]) -> Bool {
-        if item["state"]?.string == "ready" { return true }
-        if item["state"]?.string == "rate_limited", let raw = item["retryAt"]?.string,
-           let date = Self.dateFormatter.date(from: raw) { return date <= Date() }
-        return false
+        ApplicationReviewPolicy.eligible(item)
     }
-    private static let dateFormatter: ISO8601DateFormatter = {
-        let f = ISO8601DateFormatter(); f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]; return f
-    }()
     private var ready: Int { items.filter(eligible).count }
     private let fieldLabels = ["name": "Name", "email": "Email", "phone": "Phone", "website": "Portfolio", "comments": "Message",
                                "consentStore": "Application data permission", "consentMarketing": "Future opportunities"]
@@ -524,11 +648,22 @@ private struct NativeApplicationReview: View {
                         }
                         let summary = item["payloadSummary"]?.object ?? [:]
                         ForEach(summary.keys.sorted(), id: \.self) { key in
-                            LabeledContent(fieldLabels[key] ?? key, value: summary[key]?.display ?? "")
-                                .font(.subheadline)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(fieldLabels[key] ?? key).font(.caption).foregroundStyle(.secondary)
+                                Text(summary[key]?.display ?? "Not provided").font(.subheadline)
+                                    .textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
+                            }.accessibilityElement(children: .combine)
                         }
                         if let name = item["resume"]?.object["name"]?.string {
-                            Label(name, systemImage: "doc.text").font(.subheadline)
+                            Label(name, systemImage: "doc.text").font(.subheadline).fixedSize(horizontal: false, vertical: true)
+                            if let size = item["resume"]?.object["size"]?.integer {
+                                Text(ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file)).font(.caption).foregroundStyle(.secondary)
+                            }
+                            if let hash = item["resume"]?.object["sha256"]?.string {
+                                DisclosureGroup("CV fingerprint") {
+                                    Text(hash).font(.caption.monospaced()).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
+                                }
+                            }
                         }
                         if let raw = item["privacyPolicyUrl"]?.string, let url = MobileApplicationPolicy.jobURL(raw) {
                             Link("Read this employer's privacy policy", destination: url)
@@ -548,11 +683,11 @@ private struct NativeApplicationReview: View {
                                 Text("Yes").tag("yes")
                                 Text("No").tag("no")
                             }
-                            Text("Review this employer's policy before choosing. These choices are only included after you update the review.")
+                            Text("Review this employer's policy before choosing. You can explicitly decline future-role contact. Changed choices are included only after you update the review.")
                                 .font(.caption).foregroundStyle(.secondary)
                         } }
-                        if item["state"]?.string == "rate_limited", let retry = item["retryAt"]?.string {
-                            Text("Retry becomes available after \(retry). Refresh this review when the waiting period ends.")
+                        if item["state"]?.string == "rate_limited", let retry = ApplicationReviewPolicy.date(item["retryAt"]?.string) {
+                            Text("Retry becomes available after \(retry.formatted(date: .abbreviated, time: .shortened)). Refresh this review when the waiting period ends.")
                                 .font(.caption).foregroundStyle(.secondary)
                         }
                     }
@@ -562,8 +697,8 @@ private struct NativeApplicationReview: View {
                         Button("Update review with my choices") {
                             Task {
                                 let previous = model.plan?["digest"]?.string
-                                await model.prepare(manualAppliedURLs: manualAppliedURLs)
-                                if model.plan?["digest"]?.string != previous { changed = false; approved = false }
+                                await model.prepare(manualAppliedURLs: manualAppliedURLs, replacingUnapprovedReview: true)
+                                if let current = model.plan?["digest"]?.string, current != previous { changed = false; approved = false }
                             }
                         }.disabled(model.busy)
                         if let message = model.message { Text(message).font(.caption).foregroundStyle(.secondary) }
@@ -585,7 +720,7 @@ private struct NativeApplicationReview: View {
                 }
                 Section {
                     Button {
-                        Task { await model.submitReviewed(); dismiss() }
+                        Task { if await model.submitReviewed() { dismiss() } }
                     } label: {
                         Label("Auto Apply to \(ready) job\(ready == 1 ? "" : "s")", systemImage: "paperplane.fill")
                             .font(.headline).frame(maxWidth: .infinity).padding(.vertical, 10)
@@ -599,21 +734,30 @@ private struct NativeApplicationReview: View {
                         }.disabled(model.busy)
                     }
                 }
-            }.navigationTitle("Review applications").navigationBarTitleDisplayMode(.inline)
+            }.disabled(model.busy).navigationTitle("Review applications").navigationBarTitleDisplayMode(.inline)
                 .toolbar {
-                    ToolbarItem(placement: .cancellationAction) { Button("Back") { dismiss() } }
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Back") { if changed { discardChoices = true } else { dismiss() } }.disabled(model.busy)
+                    }
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Refresh") {
                             Task {
-                                let id = model.plan?["id"]?.string
                                 await model.refresh()
-                                if let latest = model.recoverablePlans.first(where: { $0["id"]?.string == id }) { model.resumeReview(latest) }
                             }
                         }.disabled(model.busy)
                     }
                 }
-        }.tint(ApplyDesign.green).interactiveDismissDisabled(model.busy)
+            .confirmationDialog("Discard changes to this review?", isPresented: $discardChoices, titleVisibility: .visible) {
+                Button("Discard changes and go back", role: .destructive) {
+                    if let current = model.plan { _ = model.resumeReview(current) }
+                    dismiss()
+                }
+                Button("Keep editing", role: .cancel) {}
+            } message: { Text("The saved review remains available. Your unreviewed message and permission changes will be discarded.") }
+        }.tint(ApplyDesign.green).interactiveDismissDisabled(model.busy || changed)
             .onChange(of: model.plan?["digest"]?.string) { _ in approved = false }
+            .onChange(of: model.plan?["approvedAt"]?.string) { _ in approved = false; changed = false }
+            .onChange(of: model.plan?["id"]?.string) { id in if id == nil { dismiss() } }
     }
     private func consentBinding(_ jobID: String, _ field: String) -> Binding<String> {
         Binding(get: {

@@ -4,6 +4,24 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+val acceptanceResources = layout.buildDirectory.dir("generated/acceptance-res")
+val prepareAcceptanceCa by tasks.registering {
+    val certificatePath = providers.gradleProperty("careerAcceptanceCa")
+    inputs.property("certificatePath", certificatePath.orElse(""))
+    outputs.dir(acceptanceResources)
+    doLast {
+        val path = certificatePath.orNull ?: error("Set -PcareerAcceptanceCa to the isolated fixture's public CA PEM.")
+        val certificate = file(path).readText()
+        require(certificate.contains("-----BEGIN CERTIFICATE-----") && !certificate.contains("PRIVATE KEY")) {
+            "Only a public fixture CA certificate may be packaged for acceptance."
+        }
+        acceptanceResources.get().file("raw/acceptance_ca.pem").asFile.apply {
+            parentFile.mkdirs()
+            writeText(certificate)
+        }
+    }
+}
+
 android {
     namespace = "com.saleh.careerfinder"
     compileSdk = 36
@@ -11,20 +29,31 @@ android {
         applicationId = "com.saleh.careerfinder"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         debug { applicationIdSuffix = ".preview" }
         release { isMinifyEnabled = false; isDebuggable = false }
+        create("acceptance") {
+            initWith(getByName("debug"))
+            applicationIdSuffix = ".acceptance"
+            versionNameSuffix = "-acceptance"
+            matchingFallbacks += listOf("debug")
+            resValue("string", "app_name", "Career Finder Acceptance")
+        }
     }
+    testBuildType = if (providers.gradleProperty("careerAcceptance").orNull == "true") "acceptance" else "debug"
+    sourceSets.getByName("acceptance").res.srcDir(acceptanceResources)
     buildFeatures { compose = true }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
 }
+
+tasks.matching { it.name == "preAcceptanceBuild" }.configureEach { dependsOn(prepareAcceptanceCa) }
 
 kotlin {
     compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) }

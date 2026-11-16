@@ -1,0 +1,255 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-11-16T14:06:45.668045+00:00",
+  "evidenceMode": "test",
+  "fixtureRunId": "e538c266-ccbe-411d-a2c4-b458712ad28c",
+  "scope": "Server-side evidence captured after final Android r5 acceptance completed its real HTTPS application flow. Native UI and certificate-rejection evidence is recorded separately in android/checks/verification.json.",
+  "clientArtifacts": {
+    "ordinaryPreview": {
+      "bytes": 11816005,
+      "sha256": "ecffb59697d0a87757d117ea0a6fd2aed66daaa1731bcf95a7a09ddf99ed87e3",
+      "trustedFixtureCertificate": false
+    },
+    "isolatedAcceptance": {
+      "bytes": 10994980,
+      "sha256": "9c9edc477bc48b3b374be113addd5843f3f6b0533f3c843a81ec8fa5055811b7",
+      "nativeFlowMilliseconds": 10941
+    },
+    "instrumentationEvidence": "android/checks/verification.json"
+  },
+  "origin": "https://10.0.2.2:4943",
+  "listenerBindAddress": "127.0.0.1",
+  "serviceSHA256": "77d413e1e01078bf9f7b389529e6379580d50a54d24819cc551d347aef07094c",
+  "caFingerprint256": "00:F0:90:34:F5:D5:D0:28:CA:BC:E5:61:68:0F:08:0C:8C:C6:C7:71:DD:72:85:48:F3:F1:0D:7D:1B:D0:C7:3E",
+  "providerPOSTs": {
+    "00000000-0000-4000-8000-000000000005": 2,
+    "00000000-0000-4000-8000-000000000001": 1,
+    "00000000-0000-4000-8000-000000000004": 1
+  },
+  "multipartObservations": [
+    {
+      "id": "00000000-0000-4000-8000-000000000005",
+      "count": 1,
+      "method": "POST",
+      "multipart": true,
+      "byteLength": 1521,
+      "hasPDFBytes": true,
+      "hasNameField": true,
+      "hasEmailField": true,
+      "hasResumeField": true,
+      "bodySHA256": "58a2ad309e254f40966686a90e684904416f6f0269a1b196491bbf47cd12d26a",
+      "interceptedBodyType": "undefined"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000001",
+      "count": 1,
+      "method": "POST",
+      "multipart": true,
+      "byteLength": 1519,
+      "hasPDFBytes": true,
+      "hasNameField": true,
+      "hasEmailField": true,
+      "hasResumeField": true,
+      "bodySHA256": "a93578a6ccc6522f0f6baf872897c2e724609b9ec11a1079d1501d1f5ef161cf",
+      "interceptedBodyType": "undefined"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000004",
+      "count": 1,
+      "method": "POST",
+      "multipart": true,
+      "byteLength": 1519,
+      "hasPDFBytes": true,
+      "hasNameField": true,
+      "hasEmailField": true,
+      "hasResumeField": true,
+      "bodySHA256": "e2d32f5926b01460221b9e340c613a41255978db8c883b813e1d25f9bd5a05fc",
+      "interceptedBodyType": "undefined"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000005",
+      "count": 2,
+      "method": "POST",
+      "multipart": true,
+      "byteLength": 1521,
+      "hasPDFBytes": true,
+      "hasNameField": true,
+      "hasEmailField": true,
+      "hasResumeField": true,
+      "bodySHA256": "49dd1930563e24988061d66bc3e6ce752394c8e2408f082b44b266122f1437c6",
+      "interceptedBodyType": "undefined"
+    }
+  ],
+  "attempts": [
+    {
+      "id": "428f6c93-d016-4e8d-bb6e-f9fc28fd0c5b",
+      "planId": "57cf799e-c891-4e99-9a00-7a30e2e1323a",
+      "state": "cancelled",
+      "dispatchCount": 0,
+      "applicationId": null,
+      "evidenceMode": "test",
+      "postingId": "00000000-0000-4000-8000-000000000005",
+      "profileRevision": 1,
+      "singleName": true,
+      "resumeSHA256": "fccbd3962e482d8b24bea10c69ec047e0879cc55cf3c3b3222909bd89108b86a",
+      "payloadSHA256": "1bdfe270bed40d6545348ba992cbe982b988505ffd2578c9df67f468df8be9a8",
+      "responseSHA256": null,
+      "consentStore": true,
+      "consentMarketing": false
+    },
+    {
+      "id": "adc6ce22-dfea-410b-bccc-6a7703b0af4b",
+      "planId": "57cf799e-c891-4e99-9a00-7a30e2e1323a",
+      "state": "cancelled",
+      "dispatchCount": 0,
+      "applicationId": null,
+      "evidenceMode": "test",
+      "postingId": "00000000-0000-4000-8000-000000000004",
+      "profileRevision": 1,
+      "singleName": true,
+      "resumeSHA256": "fccbd3962e482d8b24bea10c69ec047e0879cc55cf3c3b3222909bd89108b86a",
+      "payloadSHA256": "d123b7e0ec11c1ebed7175c13564a0ce715147c9159e0325155a26f53d2eb262",
+      "responseSHA256": null,
+      "consentStore": true,
+      "consentMarketing": false
+    },
+    {
+      "id": "dab35496-1095-44fb-ab55-6463ff5bc224",
+      "planId": "57cf799e-c891-4e99-9a00-7a30e2e1323a",
+      "state": "cancelled",
+      "dispatchCount": 0,
+      "applicationId": null,
+      "evidenceMode": "test",
+      "postingId": "00000000-0000-4000-8000-000000000001",
+      "profileRevision": 1,
+      "singleName": true,
+      "resumeSHA256": "fccbd3962e482d8b24bea10c69ec047e0879cc55cf3c3b3222909bd89108b86a",
+      "payloadSHA256": "e05f546368efd495fa92eb3bc88d4dbec9c38824125e78e4e4cd308609aed8c9",
+      "responseSHA256": null,
+      "consentStore": true,
+      "consentMarketing": false
+    },
+    {
+      "id": "1976fc1d-6874-4781-b9e2-bfdf2b4e3cc5",
+      "planId": "6b03065a-621b-43f2-a863-7a6808aa53be",
+      "state": "confirmed",
+      "dispatchCount": 2,
+      "applicationId": "test-application-00000000-0000-4000-8000-000000000005",
+      "evidenceMode": "test",
+      "postingId": "00000000-0000-4000-8000-000000000005",
+      "profileRevision": 1,
+      "singleName": true,
+      "resumeSHA256": "fccbd3962e482d8b24bea10c69ec047e0879cc55cf3c3b3222909bd89108b86a",
+      "payloadSHA256": "6e89c69b575513b621296a4189d6ef9361ee36e04187b42ff3a1ebd7213c28fb",
+      "responseSHA256": "596264ef75505c8e237cbb56203d72793e1e99de2667f0a3553d796b3513f470",
+      "consentStore": true,
+      "consentMarketing": false
+    },
+    {
+      "id": "aee32726-ccbc-4bce-9cac-af8083978e2e",
+      "planId": "6b03065a-621b-43f2-a863-7a6808aa53be",
+      "state": "uncertain",
+      "dispatchCount": 1,
+      "applicationId": null,
+      "evidenceMode": "test",
+      "postingId": "00000000-0000-4000-8000-000000000004",
+      "profileRevision": 1,
+      "singleName": true,
+      "resumeSHA256": "fccbd3962e482d8b24bea10c69ec047e0879cc55cf3c3b3222909bd89108b86a",
+      "payloadSHA256": "d123b7e0ec11c1ebed7175c13564a0ce715147c9159e0325155a26f53d2eb262",
+      "responseSHA256": null,
+      "consentStore": true,
+      "consentMarketing": false
+    },
+    {
+      "id": "1f32509d-95a6-46f7-8519-f42e14e3b70c",
+      "planId": "6b03065a-621b-43f2-a863-7a6808aa53be",
+      "state": "confirmed",
+      "dispatchCount": 1,
+      "applicationId": "test-application-00000000-0000-4000-8000-000000000001",
+      "evidenceMode": "test",
+      "postingId": "00000000-0000-4000-8000-000000000001",
+      "profileRevision": 1,
+      "singleName": true,
+      "resumeSHA256": "fccbd3962e482d8b24bea10c69ec047e0879cc55cf3c3b3222909bd89108b86a",
+      "payloadSHA256": "e05f546368efd495fa92eb3bc88d4dbec9c38824125e78e4e4cd308609aed8c9",
+      "responseSHA256": "aec2080652e3f2e54201cac89e877c5f7dfd7aa5b2edfa459beb4bd84fe4036b",
+      "consentStore": true,
+      "consentMarketing": false
+    }
+  ],
+  "plans": [
+    {
+      "id": "57cf799e-c891-4e99-9a00-7a30e2e1323a",
+      "stopped": true,
+      "approved": false,
+      "profileRevision": 1,
+      "digest": "6f9c508fe92f7f1be2abb90383b657748d29354b359ec3e98c25eb036a740dd4",
+      "items": [
+        {
+          "jobId": "c96fa05d-23fc-4d5c-b749-13b6151bb007",
+          "preparedState": "ready"
+        },
+        {
+          "jobId": "5240106b-5e23-4f79-bdc3-83d3e21ae7fe",
+          "preparedState": "ready"
+        },
+        {
+          "jobId": "eb1c3c4f-0e73-46c0-a6f5-83ddecc7dca6",
+          "preparedState": "ready"
+        }
+      ]
+    },
+    {
+      "id": "6b03065a-621b-43f2-a863-7a6808aa53be",
+      "stopped": false,
+      "approved": true,
+      "profileRevision": 1,
+      "digest": "a6594afdd04524f94c36a6416897443ad4cb870caee725f199a2db8f9f4da4fe",
+      "items": [
+        {
+          "jobId": "c96fa05d-23fc-4d5c-b749-13b6151bb007",
+          "preparedState": "ready"
+        },
+        {
+          "jobId": "5240106b-5e23-4f79-bdc3-83d3e21ae7fe",
+          "preparedState": "ready"
+        },
+        {
+          "jobId": "eb1c3c4f-0e73-46c0-a6f5-83ddecc7dca6",
+          "preparedState": "ready"
+        }
+      ]
+    },
+    {
+      "id": "b835cedb-ad17-4bb1-a279-f772528e14ef",
+      "stopped": false,
+      "approved": false,
+      "profileRevision": 1,
+      "digest": "5d3c257d954ff97df386d0275e29c6d4a497b7147afa6332f2d9d133160019ec",
+      "items": [
+        {
+          "jobId": "5240106b-5e23-4f79-bdc3-83d3e21ae7fe",
+          "preparedState": "blocked"
+        }
+      ]
+    }
+  ],
+  "confirmedTestReceipts": 2,
+  "uncertainAttempts": 1,
+  "verifiedLiveReceipts": 0,
+  "obsoleteUnapprovedAttemptsStopped": 3,
+  "liveEmployerRequests": 0,
+  "limitations": [
+    "Synthetic local Lever dependency; no live provider acceptance claimed.",
+    "Acceptance-only CA; normal preview certificate rejection is verified in separate Android instrumentation.",
+    "This snapshot contains hashes and outcomes only, with no bearer tokens, pairing codes or PDF bytes."
+  ],
+  "cleanup": {
+    "stoppedAt": "2026-11-16T14:06:45.785816+00:00",
+    "fixtureProcessSignaled": 3197,
+    "loopback4943Listening": false,
+    "loopback4944Listening": false,
+    "systemTrustChanged": false
+  }
+}

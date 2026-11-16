@@ -16,6 +16,17 @@ data class Connection(val origin: String, val workspaceId: String, val token: St
 
 class ApiFailure(val status: Int, val code: String, override val message: String) : Exception(message)
 
+interface CareerService {
+    suspend fun pair(origin: String, code: String): Connection
+    suspend fun request(connection: Connection, method: String, route: String, body: JSONObject? = null): JSONObject
+}
+
+object HttpsCareerService : CareerService {
+    override suspend fun pair(origin: String, code: String) = CareerApi.pair(origin, code)
+    override suspend fun request(connection: Connection, method: String, route: String, body: JSONObject?) =
+        CareerApi(connection).request(method, route, body)
+}
+
 /** No retries, redirects, cookies or trust overrides. The server owns application outcomes. */
 class CareerApi(private val connection: Connection) {
     suspend fun request(method: String, route: String, body: JSONObject? = null): JSONObject =

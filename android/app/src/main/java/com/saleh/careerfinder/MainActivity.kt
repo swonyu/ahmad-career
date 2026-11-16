@@ -36,12 +36,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -69,18 +71,75 @@ private fun CareerTheme(content: @Composable () -> Unit) {
     val dark = isSystemInDarkTheme()
     val colors = if (dark) darkColorScheme(
         primary = Color(0xFFABD7B5), onPrimary = Color(0xFF113625), primaryContainer = Color(0xFF244A35),
+        onPrimaryContainer = Color(0xFFDCECDF), secondaryContainer = Color(0xFF354B37), onSecondaryContainer = Color(0xFFD6E9CD),
         secondary = Color(0xFFC8D9BB), background = Color(0xFF101713), surface = Color(0xFF172019),
-        onSurface = Color(0xFFE3EBE2), surfaceVariant = Color(0xFF2A372D)
+        onSurface = Color(0xFFE3EBE2), surfaceVariant = Color(0xFF2A372D), onSurfaceVariant = Color(0xFFC0CBBE),
+        outline = Color(0xFF8C9B8C), outlineVariant = Color(0xFF465447)
     ) else lightColorScheme(
         primary = Color(0xFF236247), onPrimary = Color.White, primaryContainer = Color(0xFFDCECDF),
         onPrimaryContainer = Color(0xFF143C2B), secondary = Color(0xFF526B42), background = Color(0xFFF6F7F1),
         surface = Color(0xFFFFFEFA), onSurface = Color(0xFF1D2B22), surfaceVariant = Color(0xFFE8EDE3),
-        outline = Color(0xFF738275)
+        onSurfaceVariant = Color(0xFF465346), secondaryContainer = Color(0xFFE0ECD7), onSecondaryContainer = Color(0xFF263D24),
+        outline = Color(0xFF738275), outlineVariant = Color(0xFFCBD3C6)
     )
-    MaterialTheme(colorScheme = colors, typography = Typography(), content = content)
+    val typography = Typography().run {
+        copy(displayLarge = displayLarge.copy(textDirection = TextDirection.Content),
+            displayMedium = displayMedium.copy(textDirection = TextDirection.Content),
+            displaySmall = displaySmall.copy(textDirection = TextDirection.Content),
+            headlineLarge = headlineLarge.copy(textDirection = TextDirection.Content),
+            headlineMedium = headlineMedium.copy(textDirection = TextDirection.Content),
+            headlineSmall = headlineSmall.copy(textDirection = TextDirection.Content),
+            titleLarge = titleLarge.copy(textDirection = TextDirection.Content),
+            titleMedium = titleMedium.copy(textDirection = TextDirection.Content),
+            titleSmall = titleSmall.copy(textDirection = TextDirection.Content),
+            bodyLarge = bodyLarge.copy(textDirection = TextDirection.Content),
+            bodyMedium = bodyMedium.copy(textDirection = TextDirection.Content),
+            bodySmall = bodySmall.copy(textDirection = TextDirection.Content),
+            labelLarge = labelLarge.copy(textDirection = TextDirection.Content),
+            labelMedium = labelMedium.copy(textDirection = TextDirection.Content),
+            labelSmall = labelSmall.copy(textDirection = TextDirection.Content))
+    }
+    MaterialTheme(colorScheme = colors, typography = typography, content = content)
 }
 
 private data class Destination(val title: String, val icon: ImageVector)
+
+@Composable
+private fun PhoneNavigation(tabs: List<Destination>, selectedIndex: Int, select: (Int) -> Unit) {
+    BoxWithConstraints {
+        if (maxWidth < 420.dp && LocalDensity.current.fontScale >= 1.5f) {
+            Surface(color = MaterialTheme.colorScheme.surface) {
+                Column(Modifier.navigationBarsPadding().padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    tabs.chunked(2).forEach { row ->
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            row.forEach { item ->
+                                val index = tabs.indexOf(item)
+                                OutlinedButton(onClick = { select(index) },
+                                    modifier = Modifier.weight(1f).heightIn(min = 56.dp).semantics {
+                                        role = Role.Tab; selected = selectedIndex == index
+                                    },
+                                    colors = ButtonDefaults.outlinedButtonColors(
+                                        containerColor = if (selectedIndex == index) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+                                        contentColor = MaterialTheme.colorScheme.onSurface),
+                                    shape = RoundedCornerShape(16.dp), contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp)) {
+                                    Icon(item.icon, contentDescription = null, modifier = Modifier.size(20.dp))
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(item.title, style = MaterialTheme.typography.labelLarge)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } else NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
+            tabs.forEachIndexed { index, item ->
+                NavigationBarItem(selected = selectedIndex == index, onClick = { select(index) },
+                    icon = { Icon(item.icon, contentDescription = null) }, label = { Text(item.title) })
+            }
+        }
+    }
+}
 
 @Composable
 fun CareerApp(model: CareerViewModel) {
@@ -108,14 +167,7 @@ fun CareerApp(model: CareerViewModel) {
                 }
             }
         },
-        bottomBar = {
-            NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
-                tabs.forEachIndexed { index, item ->
-                    NavigationBarItem(selected = tab == index, onClick = { tab = index },
-                        icon = { Icon(item.icon, contentDescription = null) }, label = { Text(item.title) })
-                }
-            }
-        }
+        bottomBar = { PhoneNavigation(tabs, tab) { tab = it } }
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
             if (state.busy || !state.loaded) LinearProgressIndicator(Modifier.fillMaxWidth())
@@ -123,6 +175,7 @@ fun CareerApp(model: CareerViewModel) {
             if (state.testService) MessageBanner("Test service: applications and receipts are simulated.", true, null)
             Box(Modifier.weight(1f)) {
                 if (!state.loaded) Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Opening your private workspace…") }
+                else if (state.storageBlocked) StorageRecoveryScreen(state, model)
                 else when (tab) {
                     0 -> JobsScreen(state, model, { showAdd = true }, { tab = 1 })
                     1 -> ApplyScreen(state, model, { showConnect = true }, { tab = 2 })
@@ -132,8 +185,129 @@ fun CareerApp(model: CareerViewModel) {
             }
         }
     }
-    if (showConnect) ConnectionDialog(state, model) { showConnect = false }
-    if (showAdd) AddOpportunityDialog(state, model) { showAdd = false }
+    if (showConnect && !state.storageBlocked) ConnectionDialog(state, model) { showConnect = false }
+    if (showAdd && !state.storageBlocked) AddOpportunityDialog(state, model) { showAdd = false }
+    if (state.phoneImport != null && !state.storageBlocked) PhoneImportDialog(state, model)
+}
+
+@Composable
+private fun StorageRecoveryScreen(state: CareerUiState, model: CareerViewModel) {
+    var confirmFresh by remember { mutableStateOf(false) }
+    LazyColumn(Modifier.fillMaxSize().testTag("storage-recovery"), contentPadding = PaddingValues(20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        item { Heading("Your private files are preserved.", "Saving is paused while this phone’s encrypted storage is unavailable.") }
+        item {
+            Panel {
+                Text("Try storage again", style = MaterialTheme.typography.titleLarge)
+                Text("A temporary device or storage problem may recover. Retrying does not resend an application.")
+                Action("Retry private storage", !state.busy, model::retryStorage)
+            }
+        }
+        item {
+            Panel {
+                Text("Start a separate phone workspace", style = MaterialTheme.typography.titleLarge)
+                Text("If the saved data cannot be opened, you can create a new encrypted workspace. Earlier files and keys stay on this phone; they are not deleted or replaced.")
+                Text("The new workspace starts empty. Service records remain on the service. You will need a new pairing code to reconnect.", style = MaterialTheme.typography.bodyMedium)
+                OutlinedButton(onClick = { confirmFresh = true }, enabled = !state.busy,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)) { Text("Preserve files and start fresh") }
+            }
+        }
+    }
+    if (confirmFresh) AlertDialog(onDismissRequest = { confirmFresh = false },
+        title = { Text("Create a new private workspace?") },
+        text = { Text("This opens an empty local workspace while preserving the existing encrypted files. It does not recover unreadable drafts or revoke any earlier service session. Your server records stay unchanged.") },
+        confirmButton = { TextButton(onClick = { confirmFresh = false; model.startFreshPrivateWorkspace() }) { Text("Create new workspace") } },
+        dismissButton = { TextButton(onClick = { confirmFresh = false }) { Text("Keep current workspace") } })
+}
+
+@Composable
+private fun ProfileSummary(profile: ProfileDraft) {
+    listOf(
+        "Name" to listOf(profile.firstName, profile.lastName).filter(String::isNotBlank).joinToString(" "),
+        "Email" to profile.email, "Phone" to profile.phone,
+        "Location" to listOf(profile.city, profile.country).filter(String::isNotBlank).joinToString(" · "),
+        "Headline" to profile.headline, "Website" to profile.website, "Skills" to profile.skills,
+        "Target roles" to profile.targetRoles, "Target countries" to profile.targetCountries,
+        "Work preferences" to profile.workModes.sorted().joinToString(", "), "Experience" to profile.experienceLevel
+    ).forEach { (label, value) ->
+        Column {
+            Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(value.ifBlank { "Not provided" }, style = MaterialTheme.typography.bodyMedium)
+        }
+    }
+    Text("Résumé: " + (profile.resume?.name ?: "No PDF"), fontWeight = FontWeight.SemiBold)
+    profile.resume?.let { Text(it.sha256, style = MaterialTheme.typography.bodySmall) }
+}
+
+@Composable
+private fun ProfileConflictPanel(state: CareerUiState, model: CareerViewModel) {
+    val newer = state.profileConflict ?: return
+    var compare by remember { mutableStateOf(false) }
+    var confirmation by remember { mutableStateOf<ProfileDraft?>(null) }
+    Panel {
+        StatusPill("A newer saved profile is available", true)
+        Text("Your edited fields are safe on this phone. Compare them with saved version " + newer.revision + " before choosing what to keep.")
+        TextButton(onClick = { compare = !compare }, modifier = Modifier.heightIn(min = 48.dp)) { Text(if (compare) "Hide comparison" else "Compare both profiles") }
+        if (compare) {
+            Text("Your phone draft", style = MaterialTheme.typography.titleMedium)
+            ProfileSummary(state.profile)
+            HorizontalDivider()
+            Text("Latest saved profile", style = MaterialTheme.typography.titleMedium)
+            ProfileSummary(newer)
+        }
+        OutlinedButton(onClick = { confirmation = newer }, enabled = !state.busy,
+            modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)) { Text("Keep my edited fields") }
+        Text("This keeps a private draft. It does not overwrite the service until you save again.", style = MaterialTheme.typography.bodySmall)
+    }
+    confirmation?.let { reviewed ->
+        AlertDialog(onDismissRequest = { confirmation = null }, title = { Text("Keep your edits for review?") },
+            text = {
+                Column(Modifier.heightIn(max = 320.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text("Your draft fields will be kept against saved version " + reviewed.revision + ". You can review everything before saving.")
+                    Text(when {
+                        state.profile.removeResume -> "Your request to remove the PDF is kept."
+                        state.profile.resume?.dataBase64 != null -> "Your newly selected PDF is kept: " + state.profile.resume.name
+                        else -> "The latest saved PDF will be used: " + (reviewed.resume?.name ?: "No PDF") + ". The older file is not stored on this phone."
+                    })
+                    if (state.profile.resume?.dataBase64 == null && !state.profile.removeResume)
+                        reviewed.resume?.let { Text("Latest file fingerprint: " + it.sha256, style = MaterialTheme.typography.bodySmall) }
+                }
+            },
+            confirmButton = { TextButton(onClick = { confirmation = null; model.keepDraftWithLatestProfile(reviewed.revision) }) { Text("Keep as private draft") } },
+            dismissButton = { TextButton(onClick = { confirmation = null }) { Text("Keep comparing") } })
+    }
+}
+
+@Composable
+private fun PhoneImportDialog(state: CareerUiState, model: CareerViewModel) {
+    val phone = state.phoneImport ?: return
+    var profile by remember { mutableStateOf(false) }
+    var jobs by remember { mutableStateOf(false) }
+    FullScreenForm("Review phone draft", model::closePhoneImport) {
+        LazyColumn(Modifier.fillMaxSize().testTag("phone-import"), contentPadding = PaddingValues(20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            item { Heading("Bring your work with you.", "Choose what to copy into a private draft for this connected workspace. The original phone draft stays intact.") }
+            item {
+                Panel {
+                    Text("Saved phone profile", style = MaterialTheme.typography.titleLarge)
+                    ProfileSummary(phone.profile)
+                    CheckLine("Copy this profile into the workspace draft", profile, { profile = it }, !state.busy)
+                    Text("This replaces the profile draft currently shown. It is shared with the service only when you save the connected profile.", style = MaterialTheme.typography.bodySmall)
+                }
+            }
+            if (phone.jobs.isNotEmpty()) item {
+                Panel {
+                    Text("Saved opportunities", style = MaterialTheme.typography.titleLarge)
+                    phone.jobs.forEach { Text(it.title + " · " + it.company, style = MaterialTheme.typography.bodyMedium) }
+                    CheckLine("Copy saved opportunities", jobs, { jobs = it }, !state.busy)
+                    Text("Existing links are skipped. Each copied opportunity stays local until you choose Sync.", style = MaterialTheme.typography.bodySmall)
+                }
+            }
+            if (state.profileConflict != null) item { Text("Resolve the current profile conflict before copying this draft.", color = MaterialTheme.colorScheme.error) }
+            item { Action("Copy selected drafts", (profile || jobs) && !state.busy && state.profileConflict == null) { model.importPhoneDraft(profile, jobs) } }
+            item { Text("Copying never applies to an employer. Your application review and approval are still required.", style = MaterialTheme.typography.bodySmall) }
+        }
+    }
 }
 
 @Composable
@@ -207,7 +381,7 @@ private fun JobsScreen(state: CareerUiState, model: CareerViewModel, add: () -> 
                 OutlinedButton(onClick = { openLink(context, job.url) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Open employer page") }
                 if (job.localOnly && state.connection != null) TextButton(onClick = { model.syncOpportunity(job) }, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Sync this opportunity") }
                 if (!job.localOnly) {
-                    CheckLine("Select for Auto Apply review", job.id in state.selected, { model.toggleJob(job.id) })
+                    CheckLine("Select for Auto Apply review", job.id in state.selected, { model.toggleJob(job.id) }, !state.busy)
                     if (job.id in state.selected) TextButton(onClick = review, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Continue to Auto Apply") }
                 }
             }
@@ -218,12 +392,11 @@ private fun JobsScreen(state: CareerUiState, model: CareerViewModel, add: () -> 
 
 @Composable
 private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: () -> Unit, receipts: () -> Unit) {
-    var answers by remember(state.connection?.workspaceId) { mutableStateOf(emptyMap<String, JobAnswers>()) }
     val context = LocalContext.current
     val plan = state.plan
     var approved by remember(plan?.id, plan?.digest) { mutableStateOf(false) }
     val selectedJobs = state.jobs.filter { it.id in state.selected && !it.localOnly }
-    LazyColumn(Modifier.fillMaxSize().imePadding(), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    LazyColumn(Modifier.fillMaxSize().imePadding().testTag("apply-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         item { Heading("A clear review. A real receipt.", "Auto Apply sends the exact details you approve to supported employers. You stay in control of every batch.") }
         if (state.connection == null || state.requiresPairing) item {
             EmptyState("Connect when you’re ready.", "Keep building your profile and saved roles on this phone. Securely pair a service to review and submit supported applications.", Icons.Default.Lock, "Connect service", connect)
@@ -236,7 +409,7 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
                 TextButton(onClick = receipts, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("View receipts") }
             }
         }
-        items(state.recoverablePlans.filter { it.id != plan?.id }, key = { "recovery-" + it.id }) { savedPlan ->
+        items(state.recoverablePlans.filter { it.id != plan?.id && !(it.unapproved && it.id in state.obsoleteReviews) }, key = { "recovery-" + it.id }) { savedPlan ->
             Panel {
                 Text("Continue an earlier review", style = MaterialTheme.typography.titleLarge)
                 Text("Review the original application details, then approve again. Requests with an uncertain outcome cannot be resumed.")
@@ -244,9 +417,9 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
                 OutlinedButton(onClick = { model.reviewRecovered(savedPlan) }, enabled = !state.busy && !savedPlan.expired(), modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Review remaining applications") }
             }
         }
-        if (state.connection != null && selectedJobs.isEmpty()) item { EmptyState("Choose your opportunities.", "Select synced jobs in the Jobs tab, then return here for a personal, employer-by-employer review.", Icons.Default.Check) }
-        items(selectedJobs, key = Opportunity::id) { job ->
-            val answer = answers[job.id] ?: JobAnswers()
+        if (state.connection != null && selectedJobs.isEmpty() && plan == null) item { EmptyState("Choose your opportunities.", "Select synced jobs in the Jobs tab, then return here for a personal, employer-by-employer review.", Icons.Default.Check) }
+        items(if (state.reviewingRecoveredPlan) emptyList() else selectedJobs, key = { "answer-" + it.id }) { job ->
+            val answer = state.answers[job.id] ?: JobAnswers()
             val reviewed = plan?.items?.find { it.jobId == job.id }
             Panel {
                 Text(job.company, color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
@@ -254,13 +427,13 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
                 CheckLine("I already applied outside Career Finder", job.id in state.manualApplied,
                     { model.markAppliedElsewhere(job.id, it) }, enabled = !state.busy)
                 Field("Message for this employer (optional)", answer.comments, {
-                    answers = answers + (job.id to answer.copy(comments = it.take(5000))); model.invalidatePlan()
+                    model.editAnswers(job.id) { value -> value.copy(comments = it.take(5000)) }
                 }, singleLine = false, enabled = !state.busy)
                 ConsentChoice("Allow this employer to store and process my application", answer.consentStore, !state.busy) {
-                    answers = answers + (job.id to answer.copy(consentStore = it)); model.invalidatePlan()
+                    model.editAnswers(job.id) { value -> value.copy(consentStore = it) }
                 }
                 ConsentChoice("Allow contact about future opportunities (optional)", answer.consentMarketing, !state.busy) {
-                    answers = answers + (job.id to answer.copy(consentMarketing = it)); model.invalidatePlan()
+                    model.editAnswers(job.id) { value -> value.copy(consentMarketing = it) }
                 }
                 if (!reviewed?.privacyPolicyUrl.isNullOrBlank()) TextButton(onClick = { openLink(context, reviewed.privacyPolicyUrl) }, modifier = Modifier.heightIn(min = 48.dp)) { Text("Read this employer’s privacy policy") }
                 if (reviewed?.state == "blocked") {
@@ -270,15 +443,15 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
                 }
             }
         }
-        if (selectedJobs.isNotEmpty()) item {
+        if (selectedJobs.isNotEmpty() && !state.reviewingRecoveredPlan) item {
             if (state.profileDirty) Text("Save your profile before preparing the review.", color = MaterialTheme.colorScheme.error)
-            Action(if (plan == null) "Prepare application review" else "Prepare a fresh review",
-                state.connection != null && !state.busy && !state.profileDirty && !state.requiresPairing) { model.prepare(answers) }
+            Action(if (state.obsoleteReviews.isNotEmpty() || plan?.unapproved == true) "Stop earlier review and prepare update" else "Prepare application review",
+                state.connection != null && !state.busy && !state.profileDirty && !state.requiresPairing, model::prepare)
             Text("Preparing sends nothing to employers. Required custom questions or an unavailable connector will be shown clearly.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         if (plan != null) {
             item { Heading("Review what will be shared.", "This review uses profile version " + plan.profileRevision + ". Expires " + dateLabel(plan.expiresAt) + ".") }
-            items(plan.items, key = ReviewItem::jobId) { item -> ReviewCard(item) }
+            items(plan.items, key = { "review-" + it.jobId }) { item -> ReviewCard(item) }
             item {
                 Panel {
                     val ready = plan.items.count(ReviewItem::canSubmitNow)
@@ -286,7 +459,7 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
                     if (state.testService) Text("This is a test service. Any generated receipt is simulated and does not count as a real application.", color = MaterialTheme.colorScheme.error)
                     CheckLine("I reviewed these details and authorize sending the ready applications to the employers shown above.", approved, { approved = it }, !state.busy)
                     Action(if (state.testService) "Run approved test applications" else "Approve and Auto Apply",
-                        approved && ready > 0 && !state.busy && !plan.expired() && !state.profileDirty) { model.submit(plan) }
+                        approved && ready > 0 && !state.busy && !plan.expired() && !state.profileDirty && !state.requiresPairing) { model.submit(plan) }
                     if (plan.items.any { it.state == "rate_limited" }) TextButton(onClick = model::refresh, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Refresh cooldown availability") }
                     OutlinedButton(onClick = { model.stop(plan.id) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Stop this batch") }
                     Text("Confirmed means the provider accepted the application. It does not mean recruiter review, an interview or an offer.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -299,6 +472,7 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
 @Composable
 private fun ReviewCard(item: ReviewItem) {
     var fingerprint by remember(item.jobId) { mutableStateOf(false) }
+    val context = LocalContext.current
     Panel {
         StatusPill(if (item.canSubmitNow()) "Ready for your approval" else "Not ready to send", !item.canSubmitNow())
         Text(item.title, style = MaterialTheme.typography.titleLarge)
@@ -311,6 +485,8 @@ private fun ReviewCard(item: ReviewItem) {
         }
         Text("Application data processing: " + consentLabel(item.payload.opt("consentStore")))
         Text("Future opportunities: " + consentLabel(item.payload.opt("consentMarketing")))
+        if (item.privacyPolicyUrl.isNotBlank()) TextButton(onClick = { openLink(context, item.privacyPolicyUrl) },
+            modifier = Modifier.heightIn(min = 48.dp)) { Text("Read employer privacy policy") }
         HorizontalDivider()
         Text(item.resume?.name ?: "No PDF selected", fontWeight = FontWeight.SemiBold)
         if (item.resume != null) {
@@ -373,11 +549,14 @@ private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePD
         item {
             Panel {
                 Text(if (state.profileDirty) "You have a profile draft" else if (state.connection == null) "Private on this phone" else "Your connected profile", style = MaterialTheme.typography.titleMedium)
-                Text(if (state.connection == null) "Your saved draft is encrypted on this device. Connecting creates or opens a separate workspace; it does not silently upload this draft." else "Changes are shared with your private service when you save. Employers receive only the fields shown in an approved review.", style = MaterialTheme.typography.bodySmall)
+                Text(if (state.connection == null) "Edits are kept as an encrypted draft on this phone. After pairing, you can review and copy this draft into the connected workspace." else "Edits stay in an encrypted draft on this phone until you save to the service. Employers receive only the fields shown in an approved review.", style = MaterialTheme.typography.bodySmall)
+                if (state.connection != null) OutlinedButton(onClick = model::inspectPhoneDraft, enabled = !state.busy,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Review saved phone draft") }
             }
         }
-        item { Field("First name", profile.firstName, { model.editProfile { p -> p.copy(firstName = it) } }, enabled = !state.busy) }
-        item { Field("Last name", profile.lastName, { model.editProfile { p -> p.copy(lastName = it) } }, enabled = !state.busy) }
+        if (state.profileConflict != null) item { ProfileConflictPanel(state, model) }
+        item { Field("First or single name", profile.firstName, { model.editProfile { p -> p.copy(firstName = it) } }, enabled = !state.busy) }
+        item { Field("Last name (optional)", profile.lastName, { model.editProfile { p -> p.copy(lastName = it) } }, enabled = !state.busy) }
         item { Field("Email", profile.email, { model.editProfile { p -> p.copy(email = it) } }, KeyboardType.Email, enabled = !state.busy) }
         item { Field("Phone (optional)", profile.phone, { model.editProfile { p -> p.copy(phone = it) } }, KeyboardType.Phone, enabled = !state.busy) }
         item { Field("Professional headline (optional)", profile.headline, { model.editProfile { p -> p.copy(headline = it) } }, enabled = !state.busy) }
@@ -412,8 +591,9 @@ private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePD
             }
         }
         item {
-            Action(if (state.connection == null) "Save profile on this phone" else "Save profile to workspace", !state.busy && !state.storageBlocked, model::saveProfile)
-            if (state.profileDirty) TextButton(onClick = { reload = true }, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Reload saved profile") }
+            Action(if (state.connection == null) "Save profile on this phone" else "Save profile to workspace",
+                !state.busy && !state.storageBlocked && state.profileConflict == null, model::saveProfile)
+            if (state.profileDirty && state.connection != null) TextButton(onClick = { reload = true }, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Reload saved profile") }
         }
     }
     if (reload) AlertDialog(onDismissRequest = { reload = false }, title = { Text("Reload the saved profile?") },
@@ -506,6 +686,7 @@ private fun FullScreenForm(title: String, close: () -> Unit, content: @Composabl
 private fun ConnectionDialog(state: CareerUiState, model: CareerViewModel, close: () -> Unit) {
     var origin by rememberSaveable { mutableStateOf(state.connection?.origin ?: "") }
     var code by remember { mutableStateOf("") }
+    var removeLocally by remember { mutableStateOf(false) }
     FullScreenForm("Private connection", close) {
         LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item { Heading("Your phone. Your workspace.", "Connect using an HTTPS service address and its one-time pairing code. No password or API key belongs in this app.") }
@@ -516,6 +697,8 @@ private fun ConnectionDialog(state: CareerUiState, model: CareerViewModel, close
                     Text("Session expires " + dateLabel(state.connection.expiresAt), style = MaterialTheme.typography.bodySmall)
                     OutlinedButton(onClick = model::disconnect, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Revoke connection on this phone") }
                     Text("Revocation requires the service to be reachable. It keeps your application records.", style = MaterialTheme.typography.bodySmall)
+                    TextButton(onClick = { removeLocally = true }, enabled = !state.busy,
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Remove connection locally") }
                 }
             }
             item { Field("HTTPS service address", origin, { origin = it }, KeyboardType.Uri, enabled = !state.busy) }
@@ -531,11 +714,16 @@ private fun ConnectionDialog(state: CareerUiState, model: CareerViewModel, close
                     Text("Built around your privacy", style = MaterialTheme.typography.titleLarge)
                     Text("Connection tokens and saved phone drafts are encrypted with Android Keystore and excluded from backup. Your PDF is shared with the private service only when you save a connected profile.")
                     Text("A service and supported employer integration must be configured before live Auto Apply is available. This app never claims an employer accepted an application without a receipt.")
-                    Text("Phone drafts and connected workspaces remain separate. Pairing does not upload your existing offline draft.", style = MaterialTheme.typography.bodySmall)
+                    Text("After pairing, Profile lets you review and copy your saved phone draft. Nothing is uploaded by pairing alone.", style = MaterialTheme.typography.bodySmall)
                 }
             }
         }
     }
+    if (removeLocally) AlertDialog(onDismissRequest = { removeLocally = false },
+        title = { Text("Remove this phone’s connection?") },
+        text = { Text("This removes the local token and returns to your phone draft. It does not revoke the remote session or stop approved applications. Your connected workspace draft stays encrypted on this phone for a future pairing.") },
+        confirmButton = { TextButton(onClick = { removeLocally = false; model.removeConnectionLocally() }) { Text("Remove locally") } },
+        dismissButton = { TextButton(onClick = { removeLocally = false }) { Text("Keep connection") } })
 }
 
 @Composable

@@ -3,7 +3,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {DatabaseSync} from 'node:sqlite';
 import {randomBytes,randomUUID,createHmac,timingSafeEqual} from 'node:crypto';
-import {ApplicationError,fail,object,text,canonical,sha256,publicURL,leverTarget,profile as validateProfile,safeProfile,answers as validateAnswers,requiredProfile,country} from './validation.mjs';
+import {ApplicationError,fail,object,text,canonical,sha256,publicURL,leverTarget,profile as validateProfile,safeProfile,answers as validateAnswers,requiredProfile,country,applicantName} from './validation.mjs';
 import {loadConfiguration,connectorFor,requirementsError,makeAdapter} from './lever.mjs';
 import {pairingSchema,issuePairingCode,normalizePairingCode} from './pairing.mjs';
 
@@ -43,8 +43,11 @@ function acquireLock(directory) {
 
 /** Personal, loopback-only companion. No request can choose a provider key or POST host. */
 export function createApplicationService({dataDir,configPath=process.env.CAREER_APPLY_CONFIG,origin='http://127.0.0.1:8778',env=process.env,testOnly,clock=Date.now,hooks={}}={}) {
+  const adapter=makeAdapter({testOnly,env});
   let originURL;try{originURL=new URL(origin)}catch{fail('invalid_origin','A loopback HTTP origin is required.',500)}
-  if(originURL.origin!==origin||originURL.username||originURL.password||!(originURL.protocol==='http:'&&originURL.hostname==='127.0.0.1'||originURL.protocol==='https:'&&publicURL(origin)))fail('invalid_origin','Use the exact loopback HTTP origin or a public HTTPS gateway origin.',500);
+  // The isolated Android acceptance runner binds to host loopback; 10.0.2.2 is the emulator's host alias.
+  const emulatorTLS=adapter.mode==='test'&&testOnly?.allowEmulatorTLS===true&&originURL.protocol==='https:'&&originURL.hostname==='10.0.2.2'&&Number.isInteger(Number(originURL.port))&&Number(originURL.port)>=1024&&Number(originURL.port)<=65535;
+  if(originURL.origin!==origin||originURL.username||originURL.password||!(originURL.protocol==='http:'&&originURL.hostname==='127.0.0.1'||emulatorTLS||originURL.protocol==='https:'&&publicURL(origin)))fail('invalid_origin','Use the exact loopback HTTP origin or a public HTTPS gateway origin.',500);
   const directory=path.resolve(dataDir??path.join(process.cwd(),'.career-applications'));
   const webRoot=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../web');
   if(directory===webRoot||directory.startsWith(webRoot+path.sep))fail('unsafe_storage','Application storage must be outside public assets.',500);
@@ -53,7 +56,6 @@ export function createApplicationService({dataDir,configPath=process.env.CAREER_
   const realDirectory=fs.realpathSync(directory),realWebRoot=fs.existsSync(webRoot)?fs.realpathSync(webRoot):webRoot;
   if(realDirectory===realWebRoot||realDirectory.startsWith(realWebRoot+path.sep))fail('unsafe_storage','Application storage cannot resolve inside public assets.',500);
   fs.chmodSync(directory,0o700);
-  const adapter=makeAdapter({testOnly,env});
   const releaseLock=acquireLock(directory);
   let db;
   try{
@@ -238,7 +240,7 @@ export function createApplicationService({dataDir,configPath=process.env.CAREER_
           retireExpiredRateLimits(ws.id,applicantHash,job.key);
           const prior=duplicate(ws.id,applicantHash,job.key);
           let reason=manualIds.includes(id)?'Your tracker already records this application. Reconcile it before applying again.':prior?reasonForDuplicate(prior):requiredProfile(p)||(!matched.supported?matched.reason:requirementsError(p,answer,matched.requirements));
-          const payloadSummary={name:[p.firstName,p.lastName].filter(Boolean).join(' '),email:p.email,phone:p.phone,website:p.website,comments:answer.comments,...(answer.consentStore===undefined?{}:{consentStore:answer.consentStore}),...(answer.consentMarketing===undefined?{}:{consentMarketing:answer.consentMarketing})};
+          const payloadSummary={name:applicantName(p),email:p.email,phone:p.phone,website:p.website,comments:answer.comments,...(answer.consentStore===undefined?{}:{consentStore:answer.consentStore}),...(answer.consentMarketing===undefined?{}:{consentMarketing:answer.consentMarketing})};
           const item={jobId:id,job:{id,title:job.title,company:job.company,url:job.url,location:job.location,country:job.country},title:job.title,company:job.company,state:reason?'blocked':'ready',reason:reason??'',payloadSummary,resume:safeProfile(p,ws.revision).resume,privacyPolicyUrl:matched.requirements?.privacyPolicyUrl??null,requirementsRevision:matched.requirements?.revision??null};
           if(!reason){const attemptId=randomUUID(),snapshot={job,profile:p,profileRevision:ws.revision,answers:answer,requirements:matched.requirements,mode:adapter.mode};snapshot.payloadSHA256=sha256(canonical({jobKey:job.key,profile:p,answers:answer,requirements:matched.requirements}));item.attemptId=attemptId;attemptRows.push({id:attemptId,job,applicantHash,snapshot})}
           items.push(item);
@@ -262,9 +264,15 @@ export function createApplicationService({dataDir,configPath=process.env.CAREER_
         launch(plan.id);send(res,202,{ok:true,plan:planView(db.prepare('SELECT * FROM plans WHERE id=?').get(plan.id)),attempts:attemptsFor(ws.id,plan.id)});return true;
       }
       if(route==='stop'&&req.method==='POST') {
-        const body=object(await jsonBody(req),['planId']);assertID(body.planId,'Plan identifier');
+        const body=object(await jsonBody(req),['planId','onlyIfUnapproved']);assertID(body.planId,'Plan identifier');
+        if(body.onlyIfUnapproved!==undefined&&typeof body.onlyIfUnapproved!=='boolean')fail('invalid_stop_condition','The unapproved-review condition must be a boolean.');
         const plan=db.prepare('SELECT * FROM plans WHERE id=? AND workspace_id=?').get(body.planId,ws.id);if(!plan)fail('plan_not_found','This plan is not in your workspace.',404);
-        transaction(()=>{db.prepare('UPDATE plans SET stopped=1 WHERE id=?').run(plan.id);db.prepare("UPDATE attempts SET state='cancelled',error_code='stopped',error_message='Stopped before this application was sent.' WHERE plan_id=? AND state IN ('ready','rate_limited')").run(plan.id)});
+        transaction(()=>{
+          const current=db.prepare('SELECT approved_at FROM plans WHERE id=? AND workspace_id=?').get(plan.id,ws.id);
+          if(body.onlyIfUnapproved===true&&(current.approved_at||db.prepare("SELECT 1 FROM attempts WHERE plan_id=? AND (dispatched_at IS NOT NULL OR dispatch_count>0 OR state IN ('dispatching','rate_limited','uncertain','confirmed')) LIMIT 1").get(plan.id)))fail('review_already_approved','This review was already approved or dispatched. Refresh it before deciding whether to stop its remaining work.',409);
+          db.prepare('UPDATE plans SET stopped=1 WHERE id=?').run(plan.id);
+          db.prepare("UPDATE attempts SET error_message=CASE WHEN state='rate_limited' THEN 'The provider rejected the earlier request for rate limiting. Its queued retry was stopped; the cooldown still applies.' ELSE 'Stopped before this application was sent.' END,state='cancelled',error_code='stopped' WHERE plan_id=? AND state IN ('ready','rate_limited')").run(plan.id);
+        });
         send(res,200,{ok:true,plan:planView(db.prepare('SELECT * FROM plans WHERE id=?').get(plan.id)),attempts:attemptsFor(ws.id,plan.id),message:'Jobs that had not started were stopped. Any in-flight provider outcome will still be recorded.'});return true;
       }
       if(route==='receipts'&&req.method==='GET'){send(res,200,{ok:true,schemaVersion:1,exportedAt:iso(),mode:adapter.mode,meaning:'Confirmed means the provider returned an application ID; it does not mean recruiter review or selection.',receipts:attemptsFor(ws.id).filter(a=>a.state!=='ready')});return true}
