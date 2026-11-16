@@ -7,7 +7,7 @@
 | Scope | Evidence |
 | --- | --- |
 | Earlier published source | Commit `2a9004a0b684198018ea6583a08ba4f49f2af5b1`; [Phone quality run 43883809010](https://github.com/swonyu/ahmad-career/actions/runs/43883809010) passed all three jobs, including the hosted unsigned iPhone project build. This predates the hosted-service changes. |
-| Current Apple hosted integration | [Exact standalone evidence](../apple/Checks/mobile-verification.json): 61 boundary checks, 117 production-store assertions across 25 scenarios, the native planning-store regression, and all ten Swift app sources typechecked for iOS 16 with zero diagnostics. The evidence file SHA256 is `e5d1061298adf5f480821f5f27d210d7c38470779a61fc94273aff2ee0cf3073`. Synthetic transport and credentials were used. |
+| Current Apple hosted integration | [Exact standalone evidence](../apple/Checks/mobile-verification.json): 61 boundary checks, 117 production-store assertions across 25 scenarios, the native planning-store regression, and all ten Swift app sources typechecked for iOS 16 with zero diagnostics. The evidence file SHA256 is `583f96acc38277070d8bc45113a1417c8b70eeab584220297f343798fb390e20`. Synthetic transport and credentials were used. |
 | Published service | `https://career-finder-service.jazzy-drake-8323.chatgpt.site`; Sites version 1 deployed successfully from source `d078e56f88e1d9cfd4330f0c57f361ab845edaff` at 14:57:43 UTC, 16 November 2026. Eight public HTTP checks passed; browser pages and sign-in navigation were observed. Signed-in production pairing is not yet established. |
 | Provider activation | No employer credentials configured; `liveEnabled: false`. No real employer acceptance is claimed. |
 | Apple identity | Preserve `com.ahmadalayed.career` and the existing publisher-owned App Store Connect record. The numeric store ID and current distribution state must be read from that existing record by its publisher. |
@@ -17,7 +17,7 @@ The current source has no verified mapping to an App Store/TestFlight release or
 
 ## Public name and fresh users
 
-The public name is **Career Finder**. iPhone Debug and Release request both `CFBundleName` and `CFBundleDisplayName` as Career Finder; the Android0.3.0 packaged label was verified as Career Finder. New applicant and planning profiles contain no personal biography, CV, contact details, country/city/career targets or saved history. Regional salary examples are optional historical references. Internal package/target/storage identities stay stable for upgrades and existing records. Built-in iPhone live discovery remains explicitly limited to six selected Saudi employer sources; manually saved opportunities and profiles accept any country or profession.
+The public name is **Career Finder**. iPhone Debug and Release set `PRODUCT_NAME` and `CFBundleDisplayName` to Career Finder, with matching `Career Finder.app` product/scheme references; a new hosted CI run must verify the generated `CFBundleName` after correcting the metadata assertion failure in run 43893803094; the Android 0.3.0 packaged label was verified as Career Finder. New applicant and planning profiles contain no personal biography, CV, contact details, country/city/career targets or saved history. Regional salary examples are optional historical references. Internal package/target/storage identities stay stable for upgrades and existing records. Built-in iPhone live discovery remains explicitly limited to six selected Saudi employer sources; manually saved opportunities and profiles accept any country or profession.
 
 ## Completed hosted work
 

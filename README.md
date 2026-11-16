@@ -23,10 +23,10 @@ The preview currently permits 250 workspaces, five PDFs/25 MiB per workspace and
 - Start with a blank personal profile; choose your own country, location, career level, roles, skills and work preferences.
 - Keep phone drafts and select an actual PDF résumé, up to 5 MiB.
 - Preserve unsaved profile edits when the service changes, compare both versions, and make a deliberate choice before saving over newer information.
-- Save and search employer opportunities from any country or profession. Existing iPhone saved roles and application history remain available.
+- Save employer links from any country or profession and search your saved opportunities. Existing iPhone saved roles and application history remain available.
 - Connect the hosted service through browser sign-in and a short-lived, single-use code, or use your own compatible HTTPS service. Store its token in platform secure storage.
 - Review the exact applicant details, selected résumé, employer-specific message, explicit data choices and eligible jobs before approving Auto Apply.
-- Track confirmed, uncertain, rejected, rate-limited and stopped outcomes. Reopen eligible reviews after restarting the phone app; resuming requires deliberate approval.
+- Track confirmed, uncertain, rejected, rate-limited and stopped outcomes. Reopen reviews after restarting the phone app. Only already-approved eligible work can continue automatically; retrying a rate-limited job requires fresh approval after its cooldown.
 - Export receipt evidence without résumé bytes, employer keys or phone credentials.
 
 The reliability follow-up protects drafts from delayed network responses and expired connections, keeps employer choices with their intended review, and permits a genuine single name. An explicit “No” to future marketing contact remains a valid answer. Android includes a deliberate offline-draft import and recovery that preserves unreadable encrypted files.

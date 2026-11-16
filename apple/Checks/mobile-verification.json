@@ -1,6 +1,6 @@
 {
   "schemaVersion": 4,
-  "checkedAt": "2026-11-16T15:05:14.714027+00:00",
+  "checkedAt": "2026-11-16T15:19:15.952266+00:00",
   "evidenceMode": "local",
   "toolchain": {
     "compilerVersion": "Apple Swift version 6.4.2 (swiftlang-6.4.2.1.9 clang-2100.4.1.1)\nTarget: arm64-apple-macosx27.3.0",
@@ -133,7 +133,8 @@
     "apple/Checks/NativeStoreCheck.swift": "fc1f9f13068a064391540a7bf150251f4fd4866fc768f0ad4573f71be0e92b91",
     "apple/Checks/check-mobile.sh": "37bd56c634c1332c1908e47278d6baa015c0798a559ffe9f5ab4915f86ceefb9",
     "apple/AhmadCareer/CareerResearch.json": "9337469922d86ad305f109c838a8cf5c0742d6ffcdc438f3ffbe497f7eb92b1b",
-    "apple/AhmadCareer.xcodeproj/project.pbxproj": "5882f7c7d50fdb3f3ac6c1c97d6162188a2ce62817349d35c322a1db0ecbd134"
+    "apple/AhmadCareer.xcodeproj/project.pbxproj": "d44b664fa892f600e605d769be305da334ab19ec871540c715fccb2087c79493",
+    "apple/AhmadCareer.xcodeproj/xcshareddata/xcschemes/AhmadCareer.xcscheme": "f9b67f757ea53e6ed0ac8d54c5c2f2ac2609dc5c9a9fb3e4d0434b4a8f7cf395"
   },
   "sourceSnapshotUnchangedAfterCheck": true,
   "limitations": [
@@ -142,7 +143,7 @@
     "Static typechecking does not validate rendered SwiftUI behavior, VoiceOver, keyboard/PDF-picker presentation, project resource packaging, entitlements or device file-protection behavior.",
     "No live employer application submission occurred.",
     "CareerResearch.json and the project file are captured for source identity; swiftc does not validate project packaging.",
-    "Both Xcode configurations request Career Finder for CFBundleDisplayName and CFBundleName, and the project source parses. The generated app Info.plist and external App Store/TestFlight display metadata require the publisher's exact-build verification."
+    "Both Xcode configurations now use PRODUCT_NAME = Career Finder for the generated CFBundleName and preserve CFBundleDisplayName = Career Finder. Product and scheme references agree on Career Finder.app. Project/scheme parsing and identity checks passed; a new hosted build must verify the actual generated app Info.plist. External App Store/TestFlight metadata remains publisher-owned."
   ],
   "hostedIntegration": {
     "defaultOrigin": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
@@ -173,11 +174,26 @@
   "generalAudienceAudit": {
     "publicName": "Career Finder",
     "projectSourceCheck": {
+      "result": "PASS",
+      "checkedAt": "2026-11-16T15:19:15.952266+00:00",
       "exitCode": 0,
+      "plutilResult": "OK",
       "displayNameConfigurations": 2,
-      "bundleNameConfigurations": 2,
+      "productNameConfigurations": 2,
       "value": "Career Finder",
-      "generatedProductPlistVerified": false
+      "productFileName": "Career Finder.app",
+      "schemeBuildableReferencesChecked": 3,
+      "internalTargetAndScheme": "AhmadCareer",
+      "productModuleName": "AhmadCareer",
+      "bundleIdentifier": "com.ahmadalayed.career",
+      "signingAndVersionUnchanged": true,
+      "generatedProductPlistVerified": false,
+      "validation": "macOS plutil parsed the project; Python validated both target build configurations and all scheme XML BuildableReference entries against exact transfer hashes.",
+      "generationRuleSource": "https://developer.apple.com/documentation/xcode/build-settings-reference",
+      "sourceHashes": {
+        "apple/AhmadCareer.xcodeproj/project.pbxproj": "d44b664fa892f600e605d769be305da334ab19ec871540c715fccb2087c79493",
+        "apple/AhmadCareer.xcodeproj/xcshareddata/xcschemes/AhmadCareer.xcscheme": "f9b67f757ea53e6ed0ac8d54c5c2f2ac2609dc5c9a9fb3e4d0434b4a8f7cf395"
+      }
     },
     "freshApplicantDefaults": "Blank name, contact, location, profession, personal URL and CV; career stage unspecified and all work modes available.",
     "freshPlanningDefaults": "Blank biography, target country/city/role, planning currency and salary floor; display zone follows device.",
@@ -188,5 +204,22 @@
     "countryExample": "Region-specific SA/AE placeholder removed.",
     "salaryScreen": "Blank general calculator first; historical Saudi examples retained in an optional disclosure.",
     "discoveryLimit": "Six selected Saudi-oriented employer sources and selected role families; no worldwide discovery coverage claim."
+  },
+  "sourceSnapshotNote": "Native executable and iOS static typecheck results retain their recorded timestamps. All 15 previously recorded Swift, harness, script and research inputs still match those exact hashes. Only project and scheme metadata changed afterward; they were separately parsed and validated without a local Xcode build.",
+  "metadataFailureAndFix": {
+    "previousCommit": "98f8b06ffb28a021c3a26db735b17d90189cadca",
+    "runID": 43893803094,
+    "jobID": 133391770545,
+    "url": "https://github.com/swonyu/ahmad-career/actions/runs/43893803094/job/133391770545",
+    "logSHA256": "3be3843f98b6b595becce57edb0823519f9823fec6450b5b72c7e35714099194",
+    "linkedBuildResult": "success",
+    "buildSucceededAt": "2026-11-16T15:13:23.0092100Z",
+    "packagedBrandingResult": "failure",
+    "failingAssertion": "info['CFBundleName'] == 'Career Finder'",
+    "displayNameAssertionPassed": true,
+    "actualWrongBundleNameWasLogged": false,
+    "cause": "Generated CFBundleName follows PRODUCT_NAME; the attempted INFOPLIST_KEY_CFBundleName did not replace the internal target-derived product name.",
+    "fix": "Use Career Finder as PRODUCT_NAME in both configurations, align product/scheme output references, preserve AhmadCareer as the internal Swift module and target, and remove the ignored bundle-name setting.",
+    "currentGeneratedProductVerification": "Pending final hosted CI; no local project build was performed."
   }
 }

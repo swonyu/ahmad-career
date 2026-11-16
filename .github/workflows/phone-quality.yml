@@ -147,14 +147,14 @@ jobs:
         shell: python
         run: |
           import os, pathlib, plistlib
-          product = pathlib.Path(os.environ['RUNNER_TEMP']) / 'career-iphone-derived-data/Build/Products/Debug-iphoneos/AhmadCareer.app'
+          product = pathlib.Path(os.environ['RUNNER_TEMP']) / 'career-iphone-derived-data/Build/Products/Debug-iphoneos/Career Finder.app'
           with (product / 'Info.plist').open('rb') as source:
               info = plistlib.load(source)
           assert info['UIDeviceFamily'] == [1], info.get('UIDeviceFamily')
-          assert info['CFBundleIdentifier'] == 'com.ahmadalayed.career'
-          assert info['CFBundleDisplayName'] == 'Career Finder'
-          assert info['CFBundleName'] == 'Career Finder'
-          assert info['CFBundleSupportedPlatforms'] == ['iPhoneOS']
+          assert info['CFBundleIdentifier'] == 'com.ahmadalayed.career', info.get('CFBundleIdentifier')
+          assert info['CFBundleDisplayName'] == 'Career Finder', info.get('CFBundleDisplayName')
+          assert info['CFBundleName'] == 'Career Finder', info.get('CFBundleName')
+          assert info['CFBundleSupportedPlatforms'] == ['iPhoneOS'], info.get('CFBundleSupportedPlatforms')
           assert (product / info['CFBundleExecutable']).is_file()
           print('Built an unsigned iPhone-only product with the preserved app identity.')
       - name: Keep the unsigned build log

@@ -31,7 +31,7 @@
         A20000000000000000000003 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerPolicy.swift; sourceTree = "<group>"; };
         A20000000000000000000004 = {isa = PBXFileReference; lastKnownFileType = folder; path = Web; sourceTree = "<group>"; };
         A20000000000000000000005 = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AhmadCareer.entitlements; sourceTree = "<group>"; };
-        A20000000000000000000006 = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AhmadCareer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+        A20000000000000000000006 = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Career Finder.app"; sourceTree = BUILT_PRODUCTS_DIR; };
         A20000000000000000000007 = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
         A20000000000000000000008 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerFeed.swift; sourceTree = "<group>"; };
         A20000000000000000000009 = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -51,7 +51,7 @@
             buildRules = ();
             dependencies = ();
             name = AhmadCareer;
-            productName = AhmadCareer;
+            productName = "Career Finder";
             productReference = A20000000000000000000006;
             productType = "com.apple.product-type.application";
         };
@@ -109,7 +109,6 @@
                 ENABLE_HARDENED_RUNTIME = YES;
                 GENERATE_INFOPLIST_FILE = YES;
                 INFOPLIST_KEY_CFBundleDisplayName = "Career Finder";
-                INFOPLIST_KEY_CFBundleName = "Career Finder";
                 INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
                 INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
                 INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -123,7 +122,8 @@
                 MARKETING_VERSION = 1.1;
                 CURRENT_PROJECT_VERSION = 7;
                 PRODUCT_BUNDLE_IDENTIFIER = com.ahmadalayed.career;
-                PRODUCT_NAME = "$(TARGET_NAME)";
+                PRODUCT_MODULE_NAME = AhmadCareer;
+                PRODUCT_NAME = "Career Finder";
                 SDKROOT = auto;
                 SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
                 SUPPORTS_MACCATALYST = NO;
@@ -142,7 +142,6 @@
                 ENABLE_HARDENED_RUNTIME = YES;
                 GENERATE_INFOPLIST_FILE = YES;
                 INFOPLIST_KEY_CFBundleDisplayName = "Career Finder";
-                INFOPLIST_KEY_CFBundleName = "Career Finder";
                 INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
                 INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
                 INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -156,7 +155,8 @@
                 MARKETING_VERSION = 1.1;
                 CURRENT_PROJECT_VERSION = 7;
                 PRODUCT_BUNDLE_IDENTIFIER = com.ahmadalayed.career;
-                PRODUCT_NAME = "$(TARGET_NAME)";
+                PRODUCT_MODULE_NAME = AhmadCareer;
+                PRODUCT_NAME = "Career Finder";
                 SDKROOT = auto;
                 SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
                 SUPPORTS_MACCATALYST = NO;
