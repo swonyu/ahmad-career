@@ -137,7 +137,8 @@ def create_simulator(output):
     suffix = os.environ.get("GITHUB_RUN_ID", "")
     require(suffix.isdigit(), "This capture helper requires an isolated GitHub-hosted run")
     plan = {"runtime": runtime["identifier"], "runtimeVersion": runtime["version"],
-            "deviceType": device["identifier"], "deviceName": device["name"], "createdForRun": suffix}
+            "deviceType": device["identifier"], "deviceName": device["name"], "createdForRun": suffix,
+            "appearancePolicy": "Unmodified fresh simulator default; not forced or measured"}
     write_json(output / "simulator-plan.json", plan)
     identifier = run(["xcrun", "simctl", "create", "CareerFinderStoreCapture-" + suffix,
                       device["identifier"], runtime["identifier"]]).decode().strip()
@@ -148,7 +149,6 @@ def create_simulator(output):
     write_json(output / "simulator-plan.json", plan)
     run(["xcrun", "simctl", "boot", identifier])
     run(["xcrun", "simctl", "bootstatus", identifier, "-b"], timeout=180)
-    run(["xcrun", "simctl", "ui", identifier, "appearance", "light"])
     print("Created isolated medium simulator:", device["name"], runtime["version"])
 
 
