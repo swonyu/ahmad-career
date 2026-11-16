@@ -1,0 +1,10 @@
+{
+  "observedAt": "2026-11-16T23:45:56.099529+00:00",
+  "repository": "swonyu/ahmad-career",
+  "method": "Authenticated gh secret list and gh variable list; names and updatedAt metadata only",
+  "repositoryActionsSecrets": 0,
+  "repositoryActionsVariables": 0,
+  "secretValuesRead": false,
+  "mutations": 0,
+  "conclusion": "No existing repository Actions secret or variable configuration was observed for a signed native-store publishing path. This does not establish whether the owner has external developer accounts or signing material."
+}

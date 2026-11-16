@@ -1,0 +1,1 @@
+PASS: old Drizzle loader sync and async TypeScript transforms run with esbuild0.28.2

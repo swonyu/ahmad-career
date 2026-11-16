@@ -1,0 +1,91 @@
+
+> career-finder-phone-service@0.6.0 test
+> node tests/linkedin-profile.mjs && node tests/hosted-applications.mjs && node tests/hosted-discovery.mjs && node tests/hosted-phone.mjs && node --test tests/phone-model.mjs tests/phone-api.mjs tests/phone-dispatch.mjs tests/phone-batch-stop.mjs && node tests/phone-vault.mjs
+
+PASS LinkedIn URL boundary: 9 canonical examples, 42 rejected inputs, migration and provider requirements.
+PASS Unconfigured production service exposes no live connector or fixture switch
+PASS Identity, origin and unauthenticated boundaries; account GET is read-only
+PASS Concurrent redemption consumes exactly one code and creates one token
+PASS Actual 5 MiB PDF persists in private R2 with small D1 metadata and exact hash
+PASS Concurrent profile saves preserve one acknowledged revision and exact previous PDF
+PASS Account PDF downloads require matching platform identity
+PASS Unapproved reviews and GET workspace never dispatch
+PASS Exact multipart PDF, single name, explicit No, confirmed test receipt and guarded approval
+PASS Confirmed attempts never resend and block duplicate preparations
+PASS An unverified profile email cannot reveal whether another workspace has a confirmed application
+PASS Same-workspace duplicate protection survives an unverified profile email change
+PASS Cross-workspace duplicate protection remains available for the verified account email
+PASS Approval versus guarded Stop is atomic across concurrent requests
+PASS Concurrent advance claims one POST; deletion refuses active provider dispatch
+PASS Transport uncertainty is durable and cannot be resent or re-prepared
+PASS Mixed ready/429 plan needs a fresh approval after cooldown, not an earlier generation
+PASS Provider acceptance followed by result-write failure stays uncertain
+PASS GET does not mutate interrupted claims; advance recovers expiry without resending
+PASS Expired-plan GET and denied advance/guarded Stop leave dispatch claims unchanged
+PASS A failed expiry-reconciliation write rolls back the plan stop and queued cancellation atomically
+PASS Explicit Stop reconciles only this stopped plan’s expired leases, preserves live and foreign claims, and never resends
+PASS Account export contains owned records and workspace-bound private PDF paths without tokens or provider secrets
+PASS Real R2 tombstones fence late conditional puts in both orderings and erase metadata
+PASS Stale or missing account intent cannot create a workspace, refresh email, or rotate another account pairing code
+PASS Stale workspace confirmation cannot delete, revoke, recover, or alter expired dispatch state in either account
+PASS Stale, missing, or ambiguous download targets cannot expose another account export or read its PDF
+PASS Missing or incomplete platform identity fails closed even with a valid-looking action precondition
+PASS The preserved code redeems normally while expired codes and phone sessions cannot regain access
+PASS Terminated upload before/after R2 write recovers with no original phone or PDF
+PASS An expired upload reservation can be retried under a fresh durable claim
+PASS Account deletion erases pending uploads and prevents a late writer resurrecting PDF data
+PASS Failed erasure remains locked and retries without falsely reporting deletion
+PASS Health checks verify actual R2 accessibility as well as D1
+PASS Owner can revoke a phone; revoked credentials cannot access saved data
+PASS Full profile handler cannot restore a delayed PDF or records after successful deletion
+PASS A stale recovery cannot fence the fresh claim committed by a concurrent phone retry
+PASS Saved-opportunity quota remains atomic under concurrent requests
+PASS PDF reservation quota remains atomic before concurrent R2 writes
+PASS Account GET reports a changed platform email without rebasing data, revision, or prior approval
+PASS Explicit pairing refreshes changed platform email and invalidates old approval until the profile is corrected
+PASS LinkedIn profile URLs are canonical, optional, separate from portfolio and preserved by older phone saves; invalid updates preserve data
+PASS Older clients cannot create or approve a recovered review containing an undisplayed LinkedIn URL; preparation sends nothing
+PASS An explicitly approved LinkedIn profile URL is included exactly in the immutable snapshot and provider multipart payload
+PASS Clearing a link invalidates prior approval; saved LinkedIn job URLs remain manual and never produce automatic-submission receipts
+PASS Global free-service account cap is atomic rather than count-then-create
+{"result":"PASS","groups":45,"syntheticProviderPosts":9,"realEmployerRequests":0}
+PASS Public catalog has seven verified sources, four mixed defaults and no account dependency
+PASS Strict source normalization accepts board and direct-posting links without arbitrary fetch URLs
+PASS Invalid filters, source counts and cursor parameters are rejected before provider traffic
+PASS Public requests ignore account credentials and never persist or forward personal search terms
+PASS Provider identities, plain text, unknown country and remote evidence remain distinct
+PASS Keyword AND, location text and remote-only filters operate on public metadata
+PASS Shared board caching survives handler recreation and preserves original observation time
+PASS Stable cursors page a fair multi-source result without duplicates and bind the original filters
+PASS Refreshing a source invalidates old cursors instead of silently mixing snapshots
+PASS A failed source retains visibly stale facts while successful sources remain current
+PASS Expired stale data and complete source failures are unavailable rather than an empty successful search
+PASS A missing board clears cached vacancies and the negative cooldown suppresses repeated requests
+PASS Provider Retry-After is honored while cached timestamps remain unchanged
+PASS D1 leases coalesce concurrent isolates without process-local queues
+PASS Expired claims recover and late completions cannot overwrite a newer successful snapshot
+PASS Malformed provider data is attributed and never becomes a successful empty board
+PASS Job-count and UTF-8 cache-byte limits remain below a D1 row and disclose partial coverage
+PASS Lever pages are bounded to five public GETs and 500 normalized postings
+PASS Redirects and oversized responses are refused without following untrusted destinations
+PASS A stalled response body is cancelled within the bounded provider timeout
+PASS Client and missing-IP request budgets are shared, atomic and return Retry-After
+PASS Custom negative cache capacity and fetch budgets reserve service for the catalog
+PASS Concurrent custom source admission cannot exceed the durable cache quota
+PASS Security counters expire without storing raw IPs or requiring an applicant account
+PASS Actual bundled workerd runs eight public discovery requests with real D1 and no account or R2
+{"result":"PASS","groups":25,"actualWorkerdRequests":8,"employerApplicationPosts":0}
+PASS A first browser GET returns a blank account view without creating a workspace, salt, throttle or session
+PASS Anonymous requests and caller-forged authentication headers fail behind the modeled trusted Sites edge
+PASS Explicit account-bound creation and reopening create no native credential or pairing code
+PASS Browser PDF/profile writes use shared validation and actual private R2; valid native tokens never choose the browser owner
+PASS No browser mutation or receipt export accepts a native token or forged caller identity in place of Sites authentication
+PASS Every browser mutation rejects stale or missing account/workspace intent before any write, cleanup, throttle, PDF access or provider request
+PASS Workspace and bound receipt GETs remain read-only, including changed email and expired dispatch/session rows
+PASS All browser writes require the exact Origin and reject cross-site, same-site and navigation Fetch Metadata
+PASS The browser allowlist excludes native credential routes, rejects unknown fields, and applies bounded single-pass JSON parsing
+PASS Explicit same-account email refresh advances the revision once and invalidates old approval without creating or rotating phone credentials
+PASS Stale profile replay and unapproved, changed-digest or old-schema reviews cannot replace data or authorize a send
+PASS Explicit approval and continuation submit the exact reviewed PDF/LinkedIn payload once; repeat requests and duplicate reviews do not resend
+PASS An ambiguous browser dispatch remains durably uncertain and cannot be automatically retried or duplicated
+PASS Stop and provider-unavailable continuation preserve the existing fail-closed submission rules

@@ -2,7 +2,7 @@
 
 Career Finder helps people find jobs, keep a shortlist, prepare a profile and PDF CV, and track what happens after applying. It is designed for **iPhone and Android phones**, starts with a blank personal profile, and has no country or profession whitelist.
 
-**Release checkpoint — 17 November 2026:** the 0.6 phone interface, application tracker and reliability improvements are implemented and undergoing final verification. The public HTTPS service is currently version 4. Android 0.6 passed 91 policy checks and all 83 native phone tests, with zero lint issues. The browser app, final iPhone CI and updated downloads have not yet been published at this checkpoint. The [strict review](docs/Strict-Review-2026-11-17.md) records exact results and remaining gates; earlier successful tests do not verify a later source change.
+**Release checkpoint — 17 November 2026:** the 0.6 phone interface, application tracker and reliability improvements are implemented and undergoing final verification. The public HTTPS service is currently version 4. Android 0.6 passed 91 policy checks and all 83 native phone tests, with zero lint issues. The browser app is saved as hosted version 6 with a successful complete dependency audit and final production build; deployment and updated downloads are still pending. The latest iPhone interface run passed nine of thirteen cases; the four failures are being corrected before a new native release. The [strict review](docs/Strict-Review-2026-11-17.md) records exact results and remaining gates; earlier successful tests do not verify a later source change.
 
 ## Start here
 
@@ -92,6 +92,7 @@ npm test
 node tests/hosted-worker.mjs
 node --test tests/browser-api.mjs tests/browser-pairing.mjs
 npm run build
+npm audit --json --fetch-retries=0 --fetch-timeout=30000
 ```
 
 Android uses JDK 21 and Android SDK 36:

@@ -5,7 +5,8 @@ import {createHostedApplicationHandler,SERVICE_ORIGIN} from '../../server/applic
 import {makeAdapter} from '../../server/provider.mjs';
 import {sha256} from '../../server/validation.mjs';
 
-let time=Date.now(),providerGets=0,storageReads=0,storageWrites=0;
+// A deterministic synthetic clock avoids workerd's epoch-valued module-start clock.
+let time=Date.UTC(2026,0,1),providerGets=0,storageReads=0,storageWrites=0;
 const posts=[];
 const accounts={
   a:{id:'phone-synthetic-a',email:'a@example.com'},

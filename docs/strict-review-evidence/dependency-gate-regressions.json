@@ -1,0 +1,23 @@
+{
+  "name": "regressions",
+  "command": [
+    "bash",
+    "scripts/sites-env.sh",
+    "--",
+    "npm",
+    "test"
+  ],
+  "startedAt": "2026-11-16T23:45:08.887169+00:00",
+  "inputSHA256": {
+    "package.json": "68e2b67671d9cab2e1f0f0824eaa3a3ee0b0e873c0b74a76cf639c6db8cd83a0",
+    "package-lock.json": "1c66bc993ac7d0d1fcb5cbdbe54fb2385e23543f13c23a2da21abf5933e7423a",
+    "app/phone/PhoneApp.tsx": "2732dc09e630949cdae226ecf2e6e5acf32856ed28bee4944f61ce91cdf80b21",
+    "tests/hosted-applications.mjs": "546219469ddb31b77c6f3bf6baed278c70042a58d10fe9b14a7435e21fef6f0a",
+    "tests/hosted-discovery.mjs": "0f02a12024432368ce3bb2b6a289cf6fdaee3a1b03164358c9225ef98af5d73a",
+    "tests/hosted-worker.mjs": "f4215495ea46a1dfcb16961a2dee5726ec59312b1952376aa1009788b86c6acb",
+    "tests/hosted-phone.mjs": "d00b292b089de1a6d9b2914f6b208958339aae77f3868c68546c595ee5c16aba",
+    "tests/fixtures/phone-runtime.mjs": "18ac27f3d82f38d9c718ce0919ed0168eb14e64e4806f404ad3120dab88146ac"
+  },
+  "exitCode": 0,
+  "finishedAt": "2026-11-16T23:46:10.828382+00:00"
+}

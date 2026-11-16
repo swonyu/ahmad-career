@@ -1,0 +1,5 @@
+
+> career-finder-phone-service@0.6.0 test
+> node tests/linkedin-profile.mjs && node tests/hosted-applications.mjs && node tests/hosted-discovery.mjs && node tests/hosted-phone.mjs && node --test tests/phone-model.mjs tests/phone-api.mjs tests/phone-dispatch.mjs tests/phone-batch-stop.mjs && node tests/phone-vault.mjs
+
+PASS LinkedIn URL boundary: 9 canonical examples, 42 rejected inputs, migration and provider requirements.

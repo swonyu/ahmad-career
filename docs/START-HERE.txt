@@ -8,8 +8,8 @@ progress. Check the current release handoff before choosing a download.
 
 PUBLIC SERVICE
 https://career-finder-service.jazzy-drake-8323.chatgpt.site
-Current deployed version: 4. The new /phone interface is pending deployment
-at this checkpoint. Search requires no account. Google is available through
+Current deployed version: 4. The new /phone interface is saved as version 6,
+with a clean complete dependency audit and production build; deployment is pending. Search requires no account. Google is available through
 the secure ChatGPT sign-in screen. Native apps use a single-use connection code;
 the browser app uses the signed-in account directly.
 

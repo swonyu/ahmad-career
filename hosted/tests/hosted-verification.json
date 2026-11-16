@@ -1,7 +1,7 @@
 {
-  "observedAt": "2026-11-16T22:39:15.072Z",
+  "observedAt": "2026-11-16T23:45:33.525Z",
   "status": "passed",
-  "checks": 42,
+  "checks": 45,
   "groups": [
     "Unconfigured production service exposes no live connector or fixture switch",
     "Identity, origin and unauthenticated boundaries; account GET is read-only",
@@ -21,6 +21,9 @@
     "Mixed ready/429 plan needs a fresh approval after cooldown, not an earlier generation",
     "Provider acceptance followed by result-write failure stays uncertain",
     "GET does not mutate interrupted claims; advance recovers expiry without resending",
+    "Expired-plan GET and denied advance/guarded Stop leave dispatch claims unchanged",
+    "A failed expiry-reconciliation write rolls back the plan stop and queued cancellation atomically",
+    "Explicit Stop reconciles only this stopped plan’s expired leases, preserves live and foreign claims, and never resends",
     "Account export contains owned records and workspace-bound private PDF paths without tokens or provider secrets",
     "Real R2 tombstones fence late conditional puts in both orderings and erase metadata",
     "Stale or missing account intent cannot create a workspace, refresh email, or rotate another account pairing code",
@@ -51,11 +54,11 @@
   "mode": "Actual Miniflare D1 and R2 bindings; production handler and provider mapping with injected synthetic HTTP dependency.",
   "fiveMiBPDF": true,
   "sourceHashes": {
-    "server/applications.mjs": "b5d4657f5a32cc45f4b2816d9f40077ef24b06176201c4fe1c4ba3209808ecf8",
+    "server/applications.mjs": "34688c0b583e5676b3da29ec1cadd22d5b96de31a93020d8efced3ab048cec3b",
     "server/provider.mjs": "77dde77dd668fc77612f9aa97d70c23088ddd904597aadfd58f273d6ba610240",
     "server/validation.mjs": "d415421ca818a7cb4674224c5af1150c6989e2cc9223deb7ec1ed361208ac2ee",
     "db/schema.ts": "b98d7529cf13e5c5958a6d1d9780e5648c2f6906025fd9d3936c9dc63eb8c07a",
-    "tests/hosted-applications.mjs": "4cc2f39e86d2559763de03072373d2aaf775af5f339404de3f84e467440f7159",
+    "tests/hosted-applications.mjs": "546219469ddb31b77c6f3bf6baed278c70042a58d10fe9b14a7435e21fef6f0a",
     "drizzle/0000_busy_plazm.sql": "5b1e4c5a7ddb05c71a53c112a57daaf9b4a15f58fa38e4b12df8d551bd9e7118",
     "drizzle/0001_smiling_maelstrom.sql": "d0e1b4cbea14b7dca1c1078911fa94c39db7960778bea637341d7bbee4ef9ef6",
     "drizzle/0002_concerned_inhumans.sql": "78823cf83e72da525ffd44e8ec76c524a813ff6eb278cbf6465e8a63fbc05fed"

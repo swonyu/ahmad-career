@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
 import {readFile,readdir,writeFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
-import {Miniflare} from 'miniflare';
+import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {build} from 'esbuild';
 import {createDiscoveryHandler,parseDiscoverySource,DISCOVERY_LIMITS} from '../server/discovery.mjs';
 import {SERVICE_ORIGIN} from '../server/applications.mjs';
 
 const groups=[],base=Date.now();let time=base,calls=[],records=new Map(),behavior=null,handler,db,workerdRequests=0;
-const mf=new Miniflare({modules:true,script:'export default {fetch(){return new Response("isolated public discovery checks")}}',compatibilityDate:'2026-05-15',d1Databases:['DB']});
+// Use the SDK adapter to preserve isolated v4 fixture semantics on Miniflare5.
+const mf=new Miniflare(convertV4MiniflareOptions({modules:true,script:'export default {fetch(){return new Response("isolated public discovery checks")}}',compatibilityDate:'2026-05-15',d1Databases:['DB']}));
 const gh=(id,title='Synthetic opportunity',location='London')=>({id,internal_job_id:id+100000,title,location:{name:location},updated_at:new Date(base-60000).toISOString(),absolute_url:'https://unexpected.example/ignored'});
 const lever=(n,title='Synthetic opportunity',location='Berlin')=>({id:'00000000-0000-4000-8000-'+String(n).padStart(12,'0'),text:title,categories:{location},country:'DE',descriptionPlain:'Synthetic public description',workplaceType:'unspecified'});
 async function migrate(database){for(const file of(await readdir(new URL('../drizzle/',import.meta.url))).filter(f=>f.endsWith('.sql')).sort())for(const sql of(await readFile(new URL('../drizzle/'+file,import.meta.url),'utf8')).split('--> statement-breakpoint').map(s=>s.trim()).filter(Boolean))await database.prepare(sql).run()}
@@ -145,7 +146,7 @@ try{
   });
 
   const built=await build({stdin:{contents:`import {createDiscoveryHandler} from './server/discovery.mjs'; import {SERVICE_ORIGIN} from './server/applications.mjs'; const handler=createDiscoveryHandler({fetchImpl:async()=>Response.json({jobs:Array.from({length:60},(_,i)=>({id:i+1,internal_job_id:i+2,title:'Synthetic runtime role '+i,location:{name:'Remote - Europe'}})),meta:{total:60}})}); export default {async fetch(request,env){const original=new URL(request.url),headers=new Headers(request.headers);headers.set('host',new URL(SERVICE_ORIGIN).host);const response=await handler(new Request(SERVICE_ORIGIN+original.pathname+original.search,new Request(request,{headers})),env);return response??new Response('Not found',{status:404})}};`,resolveDir:process.cwd(),sourcefile:'discovery-runtime-probe.mjs'},bundle:true,format:'esm',platform:'neutral',target:'es2022',external:['node:*'],write:false});
-  const runtime=new Miniflare({modules:true,script:built.outputFiles[0].text,compatibilityDate:'2026-05-15',compatibilityFlags:['nodejs_compat'],d1Databases:['DB']});
+  const runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:built.outputFiles[0].text,compatibilityDate:'2026-05-15',compatibilityFlags:['nodejs_compat'],d1Databases:['DB']}));
   try{
     const runtimeDB=await runtime.getD1Database('DB');await migrate(runtimeDB);
     const request=async(path,options={},status=200)=>{const res=await runtime.dispatchFetch(SERVICE_ORIGIN+path,options),data=await res.json();assert.equal(res.status,status,JSON.stringify(data));workerdRequests++;return data};

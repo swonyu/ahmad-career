@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-11-16T23:21:10.507Z",
+  "observedAt": "2026-11-16T23:41:57.456Z",
   "status": "passed",
   "method": "React renderToStaticMarkup of the actual esbuild-bundled PhoneApp, with installed packages external; no DOM/network server",
   "cases": [
@@ -20,12 +20,12 @@
   ],
   "outboundRequests": 0,
   "dependencies": {
-    "react": "19.2.9",
-    "react-dom": "19.2.9",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "zod": "4.6.7"
   },
   "sourceHashes": {
-    "app/phone/PhoneApp.tsx": "d67e4f2ffbc662f97a8638b14fb9a255bfc4effa6b1e1a1e811d2ed12d68e20c",
+    "app/phone/PhoneApp.tsx": "2732dc09e630949cdae226ecf2e6e5acf32856ed28bee4944f61ce91cdf80b21",
     "app/phone/components.tsx": "f3c88cf05d94e271ca72a29d6d571624b7dcc52354abcd12e8b5c5201f99477c",
     "app/phone/model.ts": "3bdfb877aead35db68a65db8eceaddaf60d9ed7dd2398410aa7802dcdb9787b1",
     "app/phone/api.ts": "81858df76ff0cfc74ca68372125c72a55258f6b6ab56486ebfc51b0466f297ac",
@@ -35,7 +35,11 @@
     "app/components/SiteFrame.tsx": "a3b8811d7bf9b24c8f14cdb75cf43525455fda965bbe7118770810f99ef0d1be",
     "app/components/SignInOptions.tsx": "ee9d52372f19ab2acbd902703a1076ee379db654a68f2cb59554b2f1972abdbc"
   },
-  "previousEvidence": "/workspace/scratch/ddc36eadea1f/strict-review-20261117/phone-ssr-verification-history-20261116T230137925Z.json",
+  "previousEvidence": "/workspace/scratch/ddc36eadea1f/strict-review-20261117/phone-ssr-verification-history-20261116T232110507Z.json",
+  "runner": {
+    "file": "refresh-phone-ssr.mjs",
+    "sha256": "ae2826ae65ebeb109f6a8743d3ee56f6408d61d7f4fb9b0bcd09c3fcece79757"
+  },
   "limits": [
     "Initial PhoneApp server markup only; effects, event handlers, and interactions are not executed.",
     "No browser layout, accessibility interaction, deployed identity-edge, or full production HTTP/HTML acceptance is claimed.",

@@ -1,0 +1,9 @@
+{
+  "observedAt": "2026-11-16T23:44:39.787Z",
+  "status": "passed",
+  "actualWorkerdRequests": 1,
+  "realOutboundRequests": 0,
+  "startup": 0,
+  "requestTime": 1794872679772,
+  "scope": "Installed Miniflare5/workerd20261110 module initialization and request-time clock behavior."
+}

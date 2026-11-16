@@ -1,0 +1,20 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> career-finder-phone-service@0.6.0 install:ci
+> node scripts/install-ci.mjs
+
+/usr/bin/flock
+/usr/bin/timeout
+/usr/bin/curl
+/usr/bin/sha256sum
+[sites] validating writable install environment
+[sites] environment passed: HOME=/workspace/scratch/ddc36eadea1f/career-finder-service/.sites-runtime/home, cache=/workspace/scratch/ddc36eadea1f/career-finder-service/.sites-runtime/npm-cache
+[sites] downloading the complete locked vinext tarball
+[sites] verifying locked vinext tarball integrity
+[sites] network and integrity preflight passed
+[sites] running exactly one bounded npm ci
+npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+
+added 693 packages in 23s
+[sites] npm ci passed and vinext is available

@@ -1,0 +1,22 @@
+{
+  "name": "lint",
+  "command": [
+    "bash",
+    "scripts/sites-env.sh",
+    "--",
+    "node",
+    "node_modules/eslint/bin/eslint.js",
+    "app",
+    "worker",
+    "--max-warnings",
+    "0"
+  ],
+  "startedAt": "2026-11-16T23:41:42.611467+00:00",
+  "inputSHA256": {
+    "package.json": "68e2b67671d9cab2e1f0f0824eaa3a3ee0b0e873c0b74a76cf639c6db8cd83a0",
+    "package-lock.json": "1c66bc993ac7d0d1fcb5cbdbe54fb2385e23543f13c23a2da21abf5933e7423a",
+    "app/phone/PhoneApp.tsx": "2732dc09e630949cdae226ecf2e6e5acf32856ed28bee4944f61ce91cdf80b21"
+  },
+  "exitCode": 0,
+  "finishedAt": "2026-11-16T23:41:49.121311+00:00"
+}

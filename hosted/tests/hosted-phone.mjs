@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile,readdir,writeFile} from 'node:fs/promises';
 import {createHash,randomUUID} from 'node:crypto';
 import {build} from 'esbuild';
-import {Miniflare} from 'miniflare';
+import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {SERVICE_ORIGIN} from '../server/applications.mjs';
 
 const groups=[];
@@ -14,7 +14,8 @@ const linked='https://www.linkedin.com/in/Phone%2BExample';
 const profile=email=>({firstName:'Phone',lastName:'Example',email,country:'SA',website:'https://example.com/portfolio',linkedin:'https://sa.linkedin.com/in/Phone+Example/?trk=discard',resume:{name:'Phone-CV.pdf',mime:'application/pdf',dataBase64:pdf.toString('base64')}});
 const postingId=n=>`00000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
 const bundle=await build({entryPoints:['tests/fixtures/phone-runtime.mjs'],bundle:true,format:'esm',platform:'neutral',target:'es2022',external:['node:*'],write:false});
-const mf=new Miniflare({modules:true,script:bundle.outputFiles[0].text,compatibilityDate:'2026-05-15',compatibilityFlags:['nodejs_compat'],d1Databases:['DB'],r2Buckets:['BUCKET'],outboundService:()=>{throw Error('Real outbound requests are forbidden in phone browser tests')}});
+// Use the SDK adapter to preserve isolated v4 fixture semantics on Miniflare5.
+const mf=new Miniflare(convertV4MiniflareOptions({modules:true,script:bundle.outputFiles[0].text,compatibilityDate:'2026-05-15',compatibilityFlags:['nodejs_compat'],d1Databases:['DB'],r2Buckets:['BUCKET'],outboundService:()=>{throw Error('Real outbound requests are forbidden in phone browser tests')}}));
 
 async function call(path,{actor='a',method='GET',body,raw,headers={},expected=200}={}){
   const h=new Headers({'sec-fetch-site':'same-origin'});

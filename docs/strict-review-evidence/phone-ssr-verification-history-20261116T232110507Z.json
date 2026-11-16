@@ -1,0 +1,44 @@
+{
+  "observedAt": "2026-11-16T23:21:10.507Z",
+  "status": "passed",
+  "method": "React renderToStaticMarkup of the actual esbuild-bundled PhoneApp, with installed packages external; no DOM/network server",
+  "cases": [
+    {
+      "name": "guest",
+      "status": "passed",
+      "utf8Bytes": 6298,
+      "sha256": "16326fe4a37895af5d5d539f33660a698b04731d3fa4061755f00dd8ee4fb934",
+      "htmlArtifact": "/workspace/scratch/ddc36eadea1f/strict-review-20261117/phone-ssr-artifacts/guest.html"
+    },
+    {
+      "name": "signed-in",
+      "status": "passed",
+      "utf8Bytes": 6298,
+      "sha256": "16326fe4a37895af5d5d539f33660a698b04731d3fa4061755f00dd8ee4fb934",
+      "htmlArtifact": "/workspace/scratch/ddc36eadea1f/strict-review-20261117/phone-ssr-artifacts/signed-in.html"
+    }
+  ],
+  "outboundRequests": 0,
+  "dependencies": {
+    "react": "19.2.9",
+    "react-dom": "19.2.9",
+    "zod": "4.6.7"
+  },
+  "sourceHashes": {
+    "app/phone/PhoneApp.tsx": "d67e4f2ffbc662f97a8638b14fb9a255bfc4effa6b1e1a1e811d2ed12d68e20c",
+    "app/phone/components.tsx": "f3c88cf05d94e271ca72a29d6d571624b7dcc52354abcd12e8b5c5201f99477c",
+    "app/phone/model.ts": "3bdfb877aead35db68a65db8eceaddaf60d9ed7dd2398410aa7802dcdb9787b1",
+    "app/phone/api.ts": "81858df76ff0cfc74ca68372125c72a55258f6b6ab56486ebfc51b0466f297ac",
+    "app/phone/dispatch.ts": "da885e77dcac471bed44b72780fd391054ef46b7701faac4b43a50138b10c64d",
+    "app/phone/batch-stop.ts": "d5d3912e09b163c9cd9f9c598ac621d5dc54ac67396f06541f5be46a9ee71f9e",
+    "app/phone/vault.ts": "c8ae23d7b742e040ee20535829db446d31b451213c2cf13dcd42e67793d7a685",
+    "app/components/SiteFrame.tsx": "a3b8811d7bf9b24c8f14cdb75cf43525455fda965bbe7118770810f99ef0d1be",
+    "app/components/SignInOptions.tsx": "ee9d52372f19ab2acbd902703a1076ee379db654a68f2cb59554b2f1972abdbc"
+  },
+  "previousEvidence": "/workspace/scratch/ddc36eadea1f/strict-review-20261117/phone-ssr-verification-history-20261116T230137925Z.json",
+  "limits": [
+    "Initial PhoneApp server markup only; effects, event handlers, and interactions are not executed.",
+    "No browser layout, accessibility interaction, deployed identity-edge, or full production HTTP/HTML acceptance is claimed.",
+    "This component proof does not inspect framework hydration serialization or deployment output."
+  ]
+}

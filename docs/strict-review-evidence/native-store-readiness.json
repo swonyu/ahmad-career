@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-11-16T23:45:04.404297+00:00",
+  "reviewScope": "Read-only native-store readiness review of candidate source/configuration, existing project handoff and historical non-sensitive publisher receipts. No live store session or credential validity was probed.",
+  "candidateSourceCommit": "bc68f1a38cd705eb5d789874bff471f03e084549",
+  "currentCandidateStorePublicationEstablished": false,
+  "iphone": {
+    "identity": {
+      "bundleIdentifier": "com.ahmadalayed.career",
+      "existingAppRecord": "6820749119",
+      "sourceVersion": "1.1",
+      "sourceBuild": "7",
+      "targetDeviceFamily": "1 (iPhone only)",
+      "developmentTeam": "empty in both portable app build configurations",
+      "codeSignStyle": "Automatic"
+    },
+    "completeInReviewedSource": [
+      "Native iPhone source and focused tests are present.",
+      "Existing bundle identity is preserved.",
+      "Isolated GitHub CI builds explicitly disable code signing. Root tracks the current run separately.",
+      "Store listing draft, brand artwork and four ordinary iPhone screenshot candidates are retained for publisher review."
+    ],
+    "historicalPublisherEvidence": {
+      "receiptPathOnMac": "work/ui-critique-2026-10-11/testflight-build13-release.json (separate publisher workspace)",
+      "sha256": "81dbec4244f730703f2ad135bb1fdc2de7665399767cafa5478cd76e6d99ebb0",
+      "observedAt": "2026-10-11T20:27:31.678141+00:00",
+      "appId": "6820749119",
+      "build": "1.1 (13)",
+      "observedStatus": "Testing",
+      "physicalInstallationConfirmed": false,
+      "appStoreProductionRelease": false,
+      "meaning": "An Apple publisher/TestFlight path existed historically. This does not establish current sign-in/signing validity, current 0.6 source-to-store mapping, installation or production availability."
+    },
+    "remainingVerifiedInputs": [
+      "Fresh acknowledgment for the shared local Apple build/publisher schedule; no such acknowledgment was obtained in this review.",
+      "Authorized signing-team/provisioning selection for the exact final source. Existing historical assets are not evidence of current valid credentials.",
+      "Explicit version/build mapping checked against the existing store record; portable source build 7 is also a historical upload number.",
+      "Signed archive and intended distribution export, installation/acceptance evidence, then observed upload/processing/TestFlight or App Store review outcomes.",
+      "Current store metadata/disclosures, support/operator details and screenshot correspondence to the actual signed release."
+    ],
+    "sharedToolingBoundary": {
+      "document": "docs/Phone-Quality-Review-2026-11-16.md",
+      "instruction": "Fresh scheduling acknowledgment is required before acquiring /tmp/dot-ios-build.lock; an absent lock is insufficient.",
+      "canonicalPublisherCheckout": "Separate shared Apple publisher checkout; full local path retained in original report.",
+      "buildOrSigningToolsUsed": false,
+      "checkoutMutated": false
+    },
+    "readyAutomationPath": "No current-candidate native-store publishing workflow was observed. The inspected repository contains Phone quality CI with signing disabled; historical packaging/verification receipts are preserved and are not ready-to-run authorization for a new upload."
+  },
+  "android": {
+    "identity": {
+      "productionApplicationId": "com.saleh.careerfinder",
+      "previewApplicationId": "com.saleh.careerfinder.preview",
+      "acceptanceSuffix": ".acceptance",
+      "sourceVersion": "0.6.0",
+      "sourceVersionCode": 7
+    },
+    "complete": [
+      "Exact debug-signed preview APK with 91 policy checks, 83 native tests and preserved preview certificate is ready for the separately gated GitHub preview release.",
+      "Production package identity remains separate from preview and acceptance variants.",
+      "Store listing draft, icon, feature artwork and four ordinary Android screenshot candidates are retained for publisher review."
+    ],
+    "releaseSigningConfigInInspectedAppGradle": false,
+    "playConsoleStatus": "Not observed. No console login/session probe was performed.",
+    "authorizedProductionSigningOrPublishingCredentials": "Not observed in the reviewed non-sensitive handoff/configuration; this is not a claim that the owner has no account or keys.",
+    "readyStorePublishingWorkflowObserved": false,
+    "remainingVerifiedInputs": [
+      "Authorized production signing and publishing setup for com.saleh.careerfinder.",
+      "Exact production release bundle and version mapping.",
+      "Current store metadata, disclosures, support/operator facts and screenshots matched to the signed release.",
+      "Required installation/acceptance evidence and actual observed Play upload/review/publication outcome."
+    ]
+  },
+  "limitations": [
+    "No App Store Connect or Play Console login, live account inquiry, credential lookup, secret read, signing, archive, emulator/simulator, upload or store mutation was attempted.",
+    "Historical 0.4 screenshot candidates are not proof that the later 0.6 signed release matches those screens.",
+    "Historical receipts are dated evidence only. Current final CI, web deployment and GitHub preview publication are root-owned separate gates.",
+    "No new provider account or paid service was created or proposed as already available."
+  ],
+  "reviewActions": {
+    "repositoryChanges": false,
+    "storeOrAccountMutations": false,
+    "externalMessages": false,
+    "xcodebuildOrSimctl": false,
+    "signingTools": false,
+    "ownReadHelperTerminated": 18765
+  },
+  "sources": [
+    {
+      "path": "apple/AhmadCareer.xcodeproj/project.pbxproj",
+      "sha256": "508514d75ed8cea5f19c755680e423395efe6fe92a2736a837b4dd71dbed502b"
+    },
+    {
+      "path": "android/app/build.gradle.kts",
+      "sha256": "8bac6776515ddc1bb9a8af318780a027d20c9ad6a19e16c13a0ea8fe2195b9e7"
+    },
+    {
+      "path": ".github/workflows/phone-quality.yml",
+      "sha256": "d86600fb5db51dd5837871a632481c053ded7984a8e7047b1c6cb2985223ed8e"
+    },
+    {
+      "path": "docs/HOSTED-RELEASE-HANDOFF.md",
+      "sha256": "ec7582e09018479ecc8736e3b20c3341d094b0cdec130baa11db4365b2a795da"
+    },
+    {
+      "path": "docs/Phone-Quality-Review-2026-11-16.md",
+      "sha256": "cf66310282a02367e95ed466b8db13a4f00267ca7391b758f24f7a274b1c97e4"
+    },
+    {
+      "path": "docs/Mobile-Store-Listing-Draft.md",
+      "sha256": "db8ef7a02ac76e697e14b83e5f3c43087eb9556efbe8eb290394124426b840af"
+    },
+    {
+      "path": "docs/store-assets/README.md",
+      "sha256": "acc5181c0ff0ee312bcf64f15e15daa9466e0255f76534bcc2a1381374e01314"
+    },
+    {
+      "path": "docs/TestFlight-Preparation.txt",
+      "sha256": "ef529877ae2368ebd4a7a910219902de60a678612ed16a7b2613152702e047b6"
+    }
+  ],
+  "publicCopy": {
+    "derivedFromSHA256": "b57f87f58550acfe1f8789cf9c7b24057bef5d8586de237aecefb41e92f5d253",
+    "changes": "Only absolute local workspace paths were shortened; findings, source hashes and historical receipt hash are unchanged."
+  }
+}

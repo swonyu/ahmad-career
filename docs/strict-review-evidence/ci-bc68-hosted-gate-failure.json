@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-11-16T23:38:06.982128+00:00",
+  "repository": "swonyu/ahmad-career",
+  "runId": 43979963388,
+  "attempt": 1,
+  "headSha": "bc68f1a38cd705eb5d789874bff471f03e084549",
+  "jobId": 133693583148,
+  "jobName": "Hosted HTTPS service and durable storage",
+  "conclusion": "failure",
+  "failedStep": "Audit the locked dependencies",
+  "typecheckAndBuild": "passed",
+  "artifact": {
+    "id": 14282972070,
+    "name": "hosted-storage-checks-43979963388",
+    "bytes": 13191,
+    "sha256": "bc82adc4f12835a4cc943654c31f19351f067f6e314cdb1d6e92e3dec2ae3240"
+  },
+  "auditCounts": {
+    "info": 0,
+    "low": 1,
+    "moderate": 14,
+    "high": 12,
+    "critical": 0,
+    "total": 27
+  },
+  "auditFile": "hosted/dependency-audit-ci.json",
+  "auditFileSha256": "0157dea6ec27647c598a278c1c1d0c728053d1fad3a785547410dbc344088f3c",
+  "verification": [
+    {
+      "file": "hosted/hosted-discovery-verification.json",
+      "sha256": "7ad7d6688cec8d5fac3f3efc3b1a8e86b43b1d8174594d373fdd6e3fae434767",
+      "status": "passed",
+      "groupCount": 25,
+      "actualWorkerdRequests": 8,
+      "realEmployerRequests": 0,
+      "sourceHashesMatchPublishedMirror": true
+    },
+    {
+      "file": "hosted/hosted-phone-verification.json",
+      "sha256": "a1832807989834f7966b73a4b53fd1837647311a5d071a1d44bdedc3763684e6",
+      "status": "passed",
+      "groupCount": 19,
+      "actualWorkerdRequests": 164,
+      "realEmployerRequests": 0,
+      "sourceHashesMatchPublishedMirror": true
+    },
+    {
+      "file": "hosted/hosted-verification.json",
+      "sha256": "d506db4aba00354a86394700c8141de7796f0ad7267e2400a59d92075bdedd96",
+      "status": "passed",
+      "groupCount": 45,
+      "actualWorkerdRequests": null,
+      "realEmployerRequests": 0,
+      "sourceHashesMatchPublishedMirror": true
+    },
+    {
+      "file": "hosted/hosted-worker-verification.json",
+      "sha256": "196ee28c57353580b9cd330c2d811620048b78c84c7e7225257665ab030dcf6e",
+      "status": "passed",
+      "groupCount": 17,
+      "actualWorkerdRequests": null,
+      "realEmployerRequests": 0,
+      "sourceHashesMatchPublishedMirror": true
+    }
+  ],
+  "limits": [
+    "Job failure is the all-dependency npm audit; it is not a clean full dependency audit.",
+    "Previously observed production-only audit is a different dependency scope and cannot substitute for this failed gate.",
+    "Handler and workerd regression evidence use synthetic provider traffic and do not demonstrate real employer submission or production Sites identity behavior.",
+    "Native UI run remains separate and was still active at this checkpoint."
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "startedAt": "2026-11-16T23:39:14.817305+00:00",
+  "packageSHA256": "aaba701457e1a50cf3204796eeb8b51cdea55318bef5d89d75183d4d0ee1c22a",
+  "lockSHA256": "68df5ff5e404196bf905f8148ead110c1cb42744b2c0835effb495bfca29d173",
+  "command": [
+    "node",
+    "/home/agent/.codex/plugins/cache/openai-curated-remote/sites/1.1.6/scripts/install-dependencies.mjs"
+  ],
+  "exitCode": 0,
+  "finishedAt": "2026-11-16T23:39:49.311320+00:00"
+}

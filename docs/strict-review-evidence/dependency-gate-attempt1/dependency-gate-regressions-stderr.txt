@@ -1,0 +1,17 @@
+/workspace/scratch/ddc36eadea1f/career-finder-service/node_modules/miniflare/dist/src/index.js:134531
+      const error123 = new MiniflareCoreError(
+                       ^
+
+MiniflareCoreError [ERR_VALIDATION]: Unexpected options passed to `new Miniflare()` constructor:
+✖ Unrecognized keys: "modules", "script", "compatibilityDate", "d1Databases", "r2Buckets"
+✖ Invalid input: expected array, received undefined
+  → at workers
+    at validateOptions (/workspace/scratch/ddc36eadea1f/career-finder-service/node_modules/miniflare/dist/src/index.js:134531:24)
+    at new _Miniflare (/workspace/scratch/ddc36eadea1f/career-finder-service/node_modules/miniflare/dist/src/index.js:134933:38)
+    ... 3 lines matching cause stack trace ...
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  code: 'ERR_VALIDATION',
+  cause: [Getter]
+}
+
+Node.js v24.22.1

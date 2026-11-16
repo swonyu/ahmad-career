@@ -1,14 +1,15 @@
 import assert from 'node:assert/strict';
 import {readFile,readdir,writeFile} from 'node:fs/promises';
 import {randomUUID,createHash} from 'node:crypto';
-import {Miniflare} from 'miniflare';
+import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {createHostedApplicationHandler,SERVICE_ORIGIN,LIMITS} from '../server/applications.mjs';
 import {makeAdapter} from '../server/provider.mjs';
 
 const passed=[];
 let time=Date.now(),postCount=0,posts=[],behaviors=new Map(),postHold=null,postingVersion=new Map();
 const config={version:1,connectors:[{provider:'lever',region:'global',site:'career-fixture',apiKeyEnv:'CAREER_FIXTURE_KEY',postings:{}}]};
-const mf=new Miniflare({modules:true,script:'export default {fetch(){return new Response("isolated application test")}}',compatibilityDate:'2026-05-15',d1Databases:['DB'],r2Buckets:['BUCKET']});
+// Use the SDK adapter to preserve isolated v4 fixture semantics on Miniflare5.
+const mf=new Miniflare(convertV4MiniflareOptions({modules:true,script:'export default {fetch(){return new Response("isolated application test")}}',compatibilityDate:'2026-05-15',d1Databases:['DB'],r2Buckets:['BUCKET']}));
 let db,bucket,env,handler;
 const digest=data=>createHash('sha256').update(data).digest('hex');
 const checkpoint=(name)=>{passed.push(name);console.log('PASS',name)};

@@ -1,0 +1,84 @@
+{
+  "runId": 43979963388,
+  "attempt": 1,
+  "headSha": "bc68f1a38cd705eb5d789874bff471f03e084549",
+  "uiJobId": 133693582731,
+  "uiConclusion": "failure",
+  "tests": [
+    {
+      "test": "testAccessibilityTextKeepsCoreControlsReachable",
+      "outcome": "failed",
+      "durationSeconds": 175.006
+    },
+    {
+      "test": "testApplicationDraftSurvivesCancelAndRelaunch",
+      "outcome": "passed",
+      "durationSeconds": 42.979
+    },
+    {
+      "test": "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+      "outcome": "passed",
+      "durationSeconds": 103.553
+    },
+    {
+      "test": "testDiscoverySaveFlowsIntoSavedAndApply",
+      "outcome": "passed",
+      "durationSeconds": 37.202
+    },
+    {
+      "test": "testFreshStartAndFiveTabs",
+      "outcome": "passed",
+      "durationSeconds": 30.881
+    },
+    {
+      "test": "testLinkedInProfileDraftAndExternalSearchChoice",
+      "outcome": "passed",
+      "durationSeconds": 58.155
+    },
+    {
+      "test": "testOpportunityDiscardRequiresExplicitChoice",
+      "outcome": "passed",
+      "durationSeconds": 24.954
+    },
+    {
+      "test": "testOpportunityDraftKeepSaveAndRestore",
+      "outcome": "passed",
+      "durationSeconds": 62.848
+    },
+    {
+      "test": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+      "outcome": "failed",
+      "durationSeconds": 91.135
+    },
+    {
+      "test": "testProfileReadinessAndSimpleConnectionSetup",
+      "outcome": "failed",
+      "durationSeconds": 40.333
+    },
+    {
+      "test": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+      "outcome": "failed",
+      "durationSeconds": 20.439
+    },
+    {
+      "test": "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+      "outcome": "passed",
+      "durationSeconds": 91.639
+    },
+    {
+      "test": "testSearchEmptyAndFailurePreservesPreviousResults",
+      "outcome": "passed",
+      "durationSeconds": 74.576
+    }
+  ],
+  "executedCountLines": [
+    "2026-11-16T23:50:18.9699990Z \t Executed 13 tests, with 4 failures (0 unexpected) in 853.699 (853.724) seconds",
+    "2026-11-16T23:50:19.0417160Z \t Executed 13 tests, with 4 failures (0 unexpected) in 853.699 (853.726) seconds",
+    "2026-11-16T23:50:19.0424870Z \t Executed 13 tests, with 4 failures (0 unexpected) in 853.699 (853.729) seconds"
+  ],
+  "simulator": {
+    "name": "iPhone Air",
+    "runtime": "iOS 26.5"
+  },
+  "observedAt": "2026-11-16T23:52:06.016059+00:00"
+}

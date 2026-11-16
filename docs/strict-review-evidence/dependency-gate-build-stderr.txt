@@ -1,0 +1,35 @@
+[vinext] Tip: migrate from `vinext build` to `vite build`.
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - JSON import "./.openai/hosting.json" without import attributes (vite.config.ts:3:27). Add `with { type: 'json' }`
+  - import "./scripts/vite/sites-vite-plugin" without a file extension (vite.config.ts:6:23). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mProxy environment variables detected. We'll use your proxy for fetch requests.[0m
+
+
+[plugin rsc:virtual:vite-rsc/assets-manifest] [33m[SOURCEMAP_BROKEN] [0mSourcemap is likely to be incorrect: a plugin (rsc:virtual:vite-rsc/assets-manifest) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect
+
+[plugin rsc:virtual:vite-rsc/assets-manifest] [33m[SOURCEMAP_BROKEN] [0mSourcemap is likely to be incorrect: a plugin (rsc:virtual:vite-rsc/assets-manifest) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect
+
+[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0mapp/layout.tsx is dynamically imported by \0virtual:vinext-rsc-entry but also statically imported by \0virtual:vinext-rsc-entry, dynamic import will not move module into another chunk.
+
+[plugin rsc:inject-async-local-storage] [33m[SOURCEMAP_BROKEN] [0mSourcemap is likely to be incorrect: a plugin (rsc:inject-async-local-storage) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect
+
+[plugin rsc:inject-async-local-storage] [33m[SOURCEMAP_BROKEN] [0mSourcemap is likely to be incorrect: a plugin (rsc:inject-async-local-storage) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect
+
+[plugin rsc:virtual:vite-rsc/assets-manifest] [33m[SOURCEMAP_BROKEN] [0mSourcemap is likely to be incorrect: a plugin (rsc:virtual:vite-rsc/assets-manifest) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect
+
+[plugin rsc:virtual:vite-rsc/assets-manifest] [33m[SOURCEMAP_BROKEN] [0mSourcemap is likely to be incorrect: a plugin (rsc:virtual:vite-rsc/assets-manifest) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect
+
+`output.codeSplitting.groups[0].name` is a function. Set `output.codeSplitting.groups[0].debugName` so the bundler timing report can identify this group.
+`output.codeSplitting.groups[1].name` is a function. Set `output.codeSplitting.groups[1].debugName` so the bundler timing report can identify this group.
+`output.codeSplitting.groups[2].name` is a function. Set `output.codeSplitting.groups[2].debugName` so the bundler timing report can identify this group.
+[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0mnode_modules/vinext/dist/shims/slot.js is dynamically imported by \0virtual:vite-rsc/client-references but also statically imported by node_modules/vinext/dist/server/app-route-tree.js, node_modules/vinext/dist/server/app-ssr-entry.js, node_modules/vinext/dist/shims/client-page-root.js, dynamic import will not move module into another chunk.
+
+[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0mnode_modules/vinext/dist/shims/default-global-error.js is dynamically imported by \0virtual:vite-rsc/client-references but also statically imported by node_modules/vinext/dist/server/app-ssr-entry.js, node_modules/vinext/dist/shims/error-boundary.js, dynamic import will not move module into another chunk.
+
+[plugin rsc:inject-async-local-storage] [33m[SOURCEMAP_BROKEN] [0mSourcemap is likely to be incorrect: a plugin (rsc:inject-async-local-storage) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect
+
+[plugin rsc:inject-async-local-storage] [33m[SOURCEMAP_BROKEN] [0mSourcemap is likely to be incorrect: a plugin (rsc:inject-async-local-storage) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect
+
+[plugin rsc:virtual:vite-rsc/assets-manifest] [33m[SOURCEMAP_BROKEN] [0mSourcemap is likely to be incorrect: a plugin (rsc:virtual:vite-rsc/assets-manifest) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect
+

@@ -1,0 +1,183 @@
+{
+  "checkedAt": "2026-11-16T23:38:08.671506+00:00",
+  "source": "npm registry package metadata",
+  "queries": {
+    "wrangler@4.160.0": {
+      "exitCode": 0,
+      "metadata": {
+        "version": "4.160.0",
+        "dependencies": {
+          "unenv": "2.0.0-rc.24",
+          "esbuild": "0.28.2",
+          "workerd": "1.20261110.1",
+          "miniflare": "5.20261110.0-beta",
+          "blake3-wasm": "2.1.5",
+          "path-to-regexp": "6.3.0",
+          "@cloudflare/unenv-preset": "2.16.2",
+          "@cloudflare/kv-asset-handler": "0.5.0",
+          "@cspotcode/source-map-support": "0.8.1"
+        },
+        "peerDependencies": {
+          "@cloudflare/workers-types": "^5.20261110.1"
+        },
+        "engines": {
+          "node": ">=22.12.0"
+        }
+      }
+    },
+    "vite@8.3.8": {
+      "exitCode": 0,
+      "metadata": {
+        "version": "8.3.8",
+        "dependencies": {
+          "postcss": "^8.5.32",
+          "rolldown": "~1.2.18",
+          "picomatch": "^4.0.7",
+          "tinyglobby": "^0.2.17",
+          "lightningcss": "^1.33.0"
+        },
+        "peerDependencies": {
+          "tsx": "^4.8.1",
+          "jiti": ">=1.21.0",
+          "less": "^4.0.0",
+          "sass": "^1.70.0",
+          "yaml": "^2.4.2",
+          "stylus": ">=0.54.8",
+          "terser": "^5.16.0",
+          "esbuild": "^0.27.0 || ^0.28.0",
+          "sugarss": "^5.0.0",
+          "@types/node": "^20.19.0 || >=22.12.0",
+          "sass-embedded": "^1.70.0",
+          "@vitejs/devtools": "^0.7.1 || ^0.8.0"
+        },
+        "engines": {
+          "node": "^20.19.0 || >=22.12.0"
+        }
+      }
+    },
+    "react@19.3.1": {
+      "exitCode": 0,
+      "metadata": {
+        "version": "19.3.1",
+        "engines": {
+          "node": ">=0.10.0"
+        }
+      }
+    },
+    "@babel/core@7.29.1": {
+      "exitCode": 1,
+      "metadata": {
+        "error": {
+          "code": "E404",
+          "summary": "No match found for version 7.29.1",
+          "detail": "The requested resource '@babel/core@7.29.1' could not be found or you do not have permission to access it.\n\nNote that you can also install from a\ntarball, folder, http url, or git url."
+        }
+      }
+    },
+    "browserslist@4.28.7": {
+      "exitCode": 0,
+      "metadata": {
+        "version": "4.28.7",
+        "dependencies": {
+          "caniuse-lite": "^1.0.30001806",
+          "node-releases": "^2.0.51",
+          "electron-to-chromium": "^1.5.393",
+          "update-browserslist-db": "^1.2.3",
+          "baseline-browser-mapping": "^2.10.44"
+        },
+        "engines": {
+          "node": "^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7"
+        }
+      }
+    },
+    "brace-expansion@1.1.21": {
+      "exitCode": 0,
+      "metadata": {
+        "version": "1.1.21",
+        "dependencies": {
+          "concat-map": "0.0.1",
+          "balanced-match": "^1.0.0"
+        }
+      }
+    },
+    "brace-expansion@5.0.12": {
+      "exitCode": 0,
+      "metadata": {
+        "version": "5.0.12",
+        "dependencies": {
+          "balanced-match": "^4.0.2"
+        },
+        "engines": {
+          "node": "20 || >=22"
+        }
+      }
+    },
+    "fflate@0.7.5": {
+      "exitCode": 0,
+      "metadata": "0.7.5"
+    },
+    "js-yaml@4.3.2": {
+      "exitCode": 0,
+      "metadata": {
+        "version": "4.3.2",
+        "dependencies": {
+          "argparse": "^2.0.1"
+        }
+      }
+    },
+    "sharp@0.35.5": {
+      "exitCode": 0,
+      "metadata": {
+        "version": "0.35.5",
+        "dependencies": {
+          "semver": "^7.8.5",
+          "@img/colour": "^1.1.0",
+          "detect-libc": "^2.1.2"
+        },
+        "engines": {
+          "node": ">=20.9.0"
+        }
+      }
+    },
+    "esbuild@0.28.2": {
+      "exitCode": 0,
+      "metadata": {
+        "version": "0.28.2",
+        "engines": {
+          "node": ">=18"
+        }
+      }
+    },
+    "typescript-eslint@8.73.0": {
+      "exitCode": 0,
+      "metadata": {
+        "version": "8.73.0",
+        "dependencies": {
+          "@typescript-eslint/utils": "8.73.0",
+          "@typescript-eslint/parser": "8.73.0",
+          "@typescript-eslint/eslint-plugin": "8.73.0",
+          "@typescript-eslint/typescript-estree": "8.73.0"
+        },
+        "peerDependencies": {
+          "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
+          "typescript": ">=4.8.4 <6.1.0"
+        },
+        "engines": {
+          "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+        }
+      }
+    },
+    "drizzle-kit": {
+      "exitCode": 0,
+      "metadata": {
+        "version": "0.31.11",
+        "dependencies": {
+          "tsx": "^4.21.0",
+          "esbuild": "^0.25.4",
+          "@drizzle-team/brocli": "^0.10.2",
+          "@esbuild-kit/esm-loader": "^2.5.5"
+        }
+      }
+    }
+  }
+}

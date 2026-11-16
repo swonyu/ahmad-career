@@ -2,12 +2,13 @@ import assert from 'node:assert/strict';
 import {readFile,readdir,writeFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {build} from 'esbuild';
-import {Miniflare} from 'miniflare';
+import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {SERVICE_ORIGIN} from '../server/applications.mjs';
 
 // Miniflare dispatch uses its loopback transport origin. This test-only adapter supplies the deployment's exact URL/Host.
 const output=await build({stdin:{contents:'import {handleApplications,SERVICE_ORIGIN} from "./server/applications.mjs"; export default {fetch(request,env,ctx){const original=new URL(request.url);const headers=new Headers(request.headers);headers.set("host",new URL(SERVICE_ORIGIN).host);const adapted=new Request(SERVICE_ORIGIN+original.pathname+original.search,new Request(request,{headers}));return handleApplications(adapted,env,ctx)}};',resolveDir:process.cwd(),sourcefile:'hosted-runtime-probe.mjs'},bundle:true,format:'esm',platform:'neutral',target:'es2022',external:['node:*'],write:false});
-const mf=new Miniflare({modules:true,script:output.outputFiles[0].text,compatibilityDate:'2026-05-15',compatibilityFlags:['nodejs_compat'],d1Databases:['DB'],r2Buckets:['BUCKET']});
+// Use the SDK adapter to preserve isolated v4 fixture semantics on Miniflare5.
+const mf=new Miniflare(convertV4MiniflareOptions({modules:true,script:output.outputFiles[0].text,compatibilityDate:'2026-05-15',compatibilityFlags:['nodejs_compat'],d1Databases:['DB'],r2Buckets:['BUCKET']}));
 let checks=0;
 try{
   const db=await mf.getD1Database('DB');

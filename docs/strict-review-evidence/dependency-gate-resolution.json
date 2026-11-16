@@ -1,0 +1,506 @@
+{
+  "reviewedAt": "2026-11-16T23:47:43.099680+00:00",
+  "status": "resolved locally; exact new-head CI and production publication are owned by the release coordinator",
+  "sourceBaseline": "219eee0dcef68dd1654b064b4e628b9849d8e35f",
+  "originalFailedCI": {
+    "repository": "swonyu/ahmad-career",
+    "head": "bc68f1a38cd705eb5d789874bff471f03e084549",
+    "runId": 43979963388,
+    "jobId": 133693583148,
+    "url": "https://github.com/swonyu/ahmad-career/actions/runs/43979963388",
+    "affectedDependencyEntries": {
+      "info": 0,
+      "low": 1,
+      "moderate": 14,
+      "high": 12,
+      "critical": 0,
+      "total": 27
+    },
+    "auditSHA256": "0157dea6ec27647c598a278c1c1d0c728053d1fad3a785547410dbc344088f3c"
+  },
+  "securityScope": "The full audit includes production, development, build and optional locked dependencies. Package-manager devDependency classification does not establish whether code can be bundled into runtime or whether a particular advisory is exploitable. No such exploitability claim is made. No findings were excluded or severity thresholds weakened.",
+  "securityResult": {
+    "command": [
+      "bash",
+      "scripts/sites-env.sh",
+      "--",
+      "npm",
+      "audit",
+      "--json",
+      "--fetch-retries=0",
+      "--fetch-timeout=30000"
+    ],
+    "startedAt": "2026-11-16T23:41:31.879982+00:00",
+    "finishedAt": "2026-11-16T23:41:40.651768+00:00",
+    "exitCode": 0,
+    "counts": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "dependencyCounts": {
+      "prod": 197,
+      "dev": 586,
+      "optional": 150,
+      "peer": 44,
+      "peerOptional": 0,
+      "total": 822
+    },
+    "evidence": "dependency-gate-full-audit.json",
+    "rawReportSHA256": "f11f0b145e2a995c3d7297d07f0444008b0f6d828f3e4b7f6adf84095932d3a3"
+  },
+  "packageVersions": [
+    {
+      "package": "@babel/core",
+      "before": [
+        "7.29.0"
+      ],
+      "after": [
+        "7.29.13"
+      ]
+    },
+    {
+      "package": "@cloudflare/vite-plugin",
+      "before": [
+        "1.37.1"
+      ],
+      "after": [
+        "1.69.1"
+      ]
+    },
+    {
+      "package": "@cloudflare/workers-types",
+      "before": [
+        "4.20260515.1"
+      ],
+      "after": [
+        "5.20261110.1"
+      ]
+    },
+    {
+      "package": "@esbuild-kit/core-utils",
+      "before": [
+        "3.3.2"
+      ],
+      "after": [
+        "3.3.2"
+      ]
+    },
+    {
+      "package": "@esbuild-kit/esm-loader",
+      "before": [
+        "2.6.5"
+      ],
+      "after": [
+        "2.6.5"
+      ]
+    },
+    {
+      "package": "@typescript-eslint/eslint-plugin",
+      "before": [
+        "8.59.3"
+      ],
+      "after": [
+        "8.73.0"
+      ]
+    },
+    {
+      "package": "@typescript-eslint/parser",
+      "before": [
+        "8.59.3"
+      ],
+      "after": [
+        "8.73.0"
+      ]
+    },
+    {
+      "package": "@typescript-eslint/type-utils",
+      "before": [
+        "8.59.3"
+      ],
+      "after": [
+        "8.73.0"
+      ]
+    },
+    {
+      "package": "@typescript-eslint/typescript-estree",
+      "before": [
+        "8.59.3"
+      ],
+      "after": [
+        "8.73.0"
+      ]
+    },
+    {
+      "package": "@typescript-eslint/utils",
+      "before": [
+        "8.59.3"
+      ],
+      "after": [
+        "8.73.0"
+      ]
+    },
+    {
+      "package": "@vercel/og",
+      "before": [
+        "0.8.6"
+      ],
+      "after": [
+        "1.0.3"
+      ]
+    },
+    {
+      "package": "brace-expansion",
+      "before": [
+        "1.1.14",
+        "5.0.6"
+      ],
+      "after": [
+        "1.1.22",
+        "5.0.13"
+      ]
+    },
+    {
+      "package": "browserslist",
+      "before": [
+        "4.28.2"
+      ],
+      "after": [
+        "4.29.6"
+      ]
+    },
+    {
+      "package": "drizzle-kit",
+      "before": [
+        "0.31.10"
+      ],
+      "after": [
+        "0.31.10"
+      ]
+    },
+    {
+      "package": "esbuild",
+      "before": [
+        "0.18.20",
+        "0.25.12",
+        "0.27.3",
+        "0.28.0"
+      ],
+      "after": [
+        "0.28.2"
+      ]
+    },
+    {
+      "package": "fflate",
+      "before": [
+        "0.7.4"
+      ],
+      "after": [
+        "0.7.5"
+      ]
+    },
+    {
+      "package": "image-size",
+      "before": [
+        "2.0.2"
+      ],
+      "after": []
+    },
+    {
+      "package": "js-yaml",
+      "before": [
+        "4.1.1"
+      ],
+      "after": [
+        "4.3.2"
+      ]
+    },
+    {
+      "package": "miniflare",
+      "before": [
+        "4.20260515.0"
+      ],
+      "after": [
+        "5.20261110.0-beta"
+      ]
+    },
+    {
+      "package": "minimatch",
+      "before": [
+        "10.2.5",
+        "3.1.5"
+      ],
+      "after": [
+        "11.0.9",
+        "3.1.5"
+      ]
+    },
+    {
+      "package": "react",
+      "before": [
+        "19.2.9"
+      ],
+      "after": [
+        "19.3.1"
+      ]
+    },
+    {
+      "package": "react-dom",
+      "before": [
+        "19.2.9"
+      ],
+      "after": [
+        "19.3.1"
+      ]
+    },
+    {
+      "package": "react-server-dom-webpack",
+      "before": [
+        "19.2.9"
+      ],
+      "after": [
+        "19.3.1"
+      ]
+    },
+    {
+      "package": "satori",
+      "before": [
+        "0.16.0"
+      ],
+      "after": [
+        "0.33.5"
+      ]
+    },
+    {
+      "package": "sharp",
+      "before": [
+        "0.35.4",
+        "0.35.5"
+      ],
+      "after": [
+        "0.35.5"
+      ]
+    },
+    {
+      "package": "typescript-eslint",
+      "before": [
+        "8.59.3"
+      ],
+      "after": [
+        "8.73.0"
+      ]
+    },
+    {
+      "package": "undici",
+      "before": [
+        "7.24.8"
+      ],
+      "after": [
+        "7.30.1"
+      ]
+    },
+    {
+      "package": "vinext",
+      "before": [
+        "1.0.0-beta.5"
+      ],
+      "after": [
+        "1.4.6"
+      ]
+    },
+    {
+      "package": "vite",
+      "before": [
+        "8.0.13"
+      ],
+      "after": [
+        "8.3.8"
+      ]
+    },
+    {
+      "package": "wrangler",
+      "before": [
+        "4.92.0"
+      ],
+      "after": [
+        "4.160.0"
+      ]
+    },
+    {
+      "package": "ws",
+      "before": [
+        "8.18.0"
+      ],
+      "after": [
+        "8.21.0",
+        "8.22.0"
+      ]
+    }
+  ],
+  "additionalOverrides": {
+    "miniflare.sharp": "0.35.5",
+    "esbuild": "0.28.2",
+    "fflate": "0.7.5"
+  },
+  "overrideRationale": {
+    "esbuild": "Use patched compiler across the retained Drizzle loader, tsx and Worker toolchain. The audit recommendation to downgrade drizzle-kit to0.18.1 was not used. Sync and async TypeScript transforms through the old loader, the Drizzle CLI and actual Worker bundling passed.",
+    "fflate": "Satori0.33.5 pins vulnerable fflate0.7.3. Override to compatible patch0.7.5; full audit confirms the old node is absent.",
+    "miniflare.sharp": "Advance the previous pinned image-processing override from0.35.4 to patched0.35.5."
+  },
+  "fixtureMigration": {
+    "constructors": 5,
+    "files": 4,
+    "adapter": "SDK-exported convertV4MiniflareOptions",
+    "semantics": "Preserves original ephemeral storage and v4 opt-in registry behavior; all assertion bodies and outbound request prohibition are unchanged.",
+    "clock": "Only the synthetic browser fixture clock is initialized to Date.UTC(2026,0,1), then advanced by the original1500ms per request. The hard-coded2000 expired leases and2999 live leases remain unchanged.",
+    "clockProbe": "dependency-gate-clock-probe.json",
+    "productionClock": "The production handler captures the Date.now function and calls it inside each request; no production handler change was needed."
+  },
+  "validation": {
+    "checks": [
+      {
+        "name": "typecheck",
+        "exitCode": 0
+      },
+      {
+        "name": "lint",
+        "exitCode": 0
+      },
+      {
+        "name": "esbuild-compatibility",
+        "exitCode": 0
+      },
+      {
+        "name": "drizzle-cli",
+        "exitCode": 0
+      },
+      {
+        "name": "full-audit",
+        "exitCode": 0
+      },
+      {
+        "name": "regressions",
+        "exitCode": 0
+      },
+      {
+        "name": "worker",
+        "exitCode": 0
+      },
+      {
+        "name": "browser-transport",
+        "exitCode": 0
+      },
+      {
+        "name": "build",
+        "exitCode": 0
+      }
+    ],
+    "applicationGroups": 45,
+    "discoveryGroups": 25,
+    "discoveryWorkerdRequests": 8,
+    "phoneGroups": 19,
+    "phoneWorkerdRequests": 164,
+    "modelApiDispatchTAPTests": 56,
+    "vaultGroups": 27,
+    "additionalWorkerRequests": 17,
+    "browserTransportAndPairingTAPTests": 14,
+    "realEmployerRequests": 0,
+    "build": "Passed through official Sites build helper",
+    "sourceHashEvidence": "dependency-gate-validation.json"
+  },
+  "preservedFailures": [
+    {
+      "path": "dependency-gate-attempt1",
+      "reason": "Miniflare5 constructor rejects old v4 top-level options; no regression assertions ran after the initialization failure."
+    },
+    {
+      "path": "dependency-gate-attempt2",
+      "reason": "Old synthetic fixture captured epoch Date.now during workerd module initialization, making year2000 lease fixtures future dates. Application45 and discovery25 groups passed; browser expiry assertion correctly failed."
+    }
+  ],
+  "buildDiagnostics": {
+    "log": "dependency-gate-build-stderr.txt",
+    "suppressed": false,
+    "notes": [
+      "Upstream RSC sourcemap and ineffective dynamic import diagnostics remain in the successful build log.",
+      "Vite warns about future native config-loader requirements for JSON import attributes and a file extension; no shared template/tooling was altered.",
+      "Route classification labels /phone dynamic and the root reexport unknown; actual browser/production behavior remains a release acceptance check."
+    ]
+  },
+  "taskSourceFiles": [
+    {
+      "path": "package.json",
+      "sha256": "68e2b67671d9cab2e1f0f0824eaa3a3ee0b0e873c0b74a76cf639c6db8cd83a0"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "1c66bc993ac7d0d1fcb5cbdbe54fb2385e23543f13c23a2da21abf5933e7423a"
+    },
+    {
+      "path": "tests/hosted-applications.mjs",
+      "sha256": "546219469ddb31b77c6f3bf6baed278c70042a58d10fe9b14a7435e21fef6f0a"
+    },
+    {
+      "path": "tests/hosted-discovery.mjs",
+      "sha256": "0f02a12024432368ce3bb2b6a289cf6fdaee3a1b03164358c9225ef98af5d73a"
+    },
+    {
+      "path": "tests/hosted-worker.mjs",
+      "sha256": "f4215495ea46a1dfcb16961a2dee5726ec59312b1952376aa1009788b86c6acb"
+    },
+    {
+      "path": "tests/hosted-phone.mjs",
+      "sha256": "d00b292b089de1a6d9b2914f6b208958339aae77f3868c68546c595ee5c16aba"
+    },
+    {
+      "path": "tests/fixtures/phone-runtime.mjs",
+      "sha256": "18ac27f3d82f38d9c718ce0919ed0168eb14e64e4806f404ad3120dab88146ac"
+    }
+  ],
+  "generatedProofs": [
+    {
+      "path": "tests/hosted-verification.json",
+      "sha256": "e9e29166adc8dedd6ab853c0ed868936afdba0e303d87cb7c9fc8b43ba588cf2"
+    },
+    {
+      "path": "tests/hosted-discovery-verification.json",
+      "sha256": "52d91cd9b0a82f5e681d11e945778fb1e79294c91040ffa0e91f6a6db9f2d114"
+    },
+    {
+      "path": "tests/hosted-phone-verification.json",
+      "sha256": "318bcd2feb381ed458bbd53831cba5b18edea862c4e4b6aaa5ccae4b66f88190"
+    },
+    {
+      "path": "tests/hosted-worker-verification.json",
+      "sha256": "17cfb75f0c009491aeec3ea977926cd95d7d3262d83f5a158a93fc831d1889f8"
+    }
+  ],
+  "unchangedComparedWithBaseline": [
+    "server/applications.mjs",
+    "server/provider.mjs",
+    "server/validation.mjs",
+    "worker/index.ts",
+    "vite.config.ts",
+    "scripts/run-framework.mjs",
+    "scripts/build-verified.sh"
+  ],
+  "rootOwnedPhoneAppSHA256": "2732dc09e630949cdae226ecf2e6e5acf32856ed28bee4944f61ce91cdf80b21",
+  "publication": "This task did not push a repository, save or deploy a Site, create a release, or change native source. The coordinator owns final mirror synchronization, exact-head CI, packaging and publication.",
+  "primaryReferences": [
+    "https://github.com/react/react/releases/tag/v19.3.1",
+    "https://github.com/cloudflare/vinext/releases/tag/vinext@1.4.6",
+    "https://github.com/vitejs/vite/releases/tag/v8.3.8",
+    "https://github.com/cloudflare/workers-sdk/releases",
+    "https://github.com/cloudflare/workers-sdk/blob/main/packages/miniflare/README.md",
+    "https://github.com/evanw/esbuild/blob/main/CHANGELOG.md",
+    "https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/typescript-eslint/package.json"
+  ],
+  "subsequentReleaseOwnerChange": {
+    "file": "app/page.tsx",
+    "scope": "Coordinator plans an explicit force-dynamic root wrapper around PhonePage after this successful dependency check, addressing the root classification diagnostic.",
+    "verification": "Coordinator owns the resulting packaging build and exact new-head CI. This report does not retroactively claim those later checks."
+  }
+}
