@@ -477,8 +477,14 @@ private struct NativePrivacyScreen: View {
     var body: some View {
         List {
             Section("Your information") {
-                Text("Profile details, country/city/role preferences, planning currency and period, display time zone, saved jobs, application status, completed steps and search results are stored in this app on your device. There is no app account or cloud sync service.")
-                Text("The developer does not receive your profile or application records automatically. Dated employer research is retained only to recover existing saved records; no personal biography is supplied for new users.")
+                Text("Your planning profile, discovery preferences, saved roles, self-entered tracking records and search results are stored on this device. You can use this local workspace without connecting an application service.")
+                Text("New profiles start empty. Dated employer research is retained only to recover existing saved records.")
+            }
+            Section("Optional application connection") {
+                Text("Apply can connect to an application service using the HTTPS address and invitation code you enter. The code is sent to that service; its returned session token is stored in this iPhone's Keychain. A saved connection can be restored automatically.")
+                Text("When connected, saving application details sends your profile fields and any newly selected PDF CV to the configured service. Saving after choosing Remove CV requests removal of the service's stored CV. Adding opportunities and preparing reviews send job details and answers. The app fetches workspace, job, application-attempt and receipt information from that service.")
+                Text("Your approval is required on the review screen before the app requests submission to eligible employers. Automatic submission requires an activated application service and a supported provider integration; connecting alone does not establish that a job can be submitted.")
+                Text("Disconnect this phone first ends the connection for the current app session and attempts to remove its saved token and record that the connection is disabled. It then requests session revocation from the service in the background. The app reports local token or storage errors and unconfirmed remote revocation. Disconnect does not request deletion of profile data, jobs, attempts, receipts or submissions already held by the service or employers.")
             }
             Section("Employer searches and links") {
                 Text("When you run a search, the app sends fixed job queries directly to selected employers and their recruitment providers using HTTPS. Those providers receive normal connection information, including your IP address. Your saved profile, discovery criteria and application notes are not included.")
@@ -490,12 +496,12 @@ private struct NativePrivacyScreen: View {
                 Link("Apple privacy policy", destination: URL(string: "https://www.apple.com/legal/privacy/")!)
             }
             Section("Retention and removal") {
-                Text("You can edit or clear profile fields, remove saved roles and reset individual tracking statuses in the app. Saved or tracked job details may remain locally after a job disappears from a search.")
-                Text("Deleting the app from iPhone Settings removes its local records; offloading the app keeps documents and data. Device backups may retain copies according to your Apple backup settings. Shared exports are separate copies that you manage at their destination.")
+                Text("You can edit or clear local planning profile fields, remove saved roles and reset individual tracking statuses. Saved or tracked job details may remain locally after a job disappears from a search.")
+                Text("Local records, saved connection credentials and remote records are separate. Removing local app data does not remove copies held by an application service, employer, device backup or export destination. Use Disconnect this phone to end the current local connection and attempt saved-token removal and remote session revocation; review any error shown.")
             }
             Section("Beta support") {
                 Text("During beta testing, open this app in TestFlight and choose Send Beta Feedback to contact the developer. Include the screen and steps that caused the problem. Review screenshots and diagnostics before sending.")
-                Text("Policy updated 15 November 2026.").font(.footnote).foregroundStyle(.secondary)
+                Text("Policy updated 16 November 2026.").font(.footnote).foregroundStyle(.secondary)
             }
         }.nativeList().navigationTitle("Privacy & beta support")
             .navigationBarTitleDisplayMode(.inline)

@@ -62,6 +62,8 @@ import Combine
   let restored=NativeCareerStore(researchURL:researchURL,storageURL:stateURL)
   assert(restored.isSaved(first) && restored.status(for:first)=="Preparing")
   var lead=first;lead.id="new-live";lead.rank=nil;lead.kind="live";lead.researchCheckedAt=nil
+  // This synthetic lead tests live acceptance/removal, not the historical deadline.
+  lead.closes="2099-12-31"
   let leadData=try JSONSerialization.jsonObject(with:JSONEncoder().encode(lead))
   let payload:[String:Any] = ["checkedAt":"2026-10-09T00:00:00Z","jobs":[leadData],"sources":[["name":"Johnson & Johnson","ok":true,"count":1]]]
   store.acceptLive(payload);assert(store.liveJobs.count==1)
