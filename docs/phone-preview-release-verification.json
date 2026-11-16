@@ -1,0 +1,243 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-16T18:38:19.967552+00:00",
+  "title": "Career Finder 0.4.0 Android preview and iPhone source release verification",
+  "repository": "https://github.com/swonyu/ahmad-career",
+  "source": {
+    "commit": "caa5ace14fe7b430db845d935a89803700cc7665",
+    "tree": "ede45f7fc0ccc6d93535b99bf6df5baed00e3f0d",
+    "files": 368,
+    "postTestChanges": "Release evidence and documentation only; the release tag stays on this exact tested code.",
+    "documentationChangesObservedDuringFinalization": [
+      "README.md",
+      "docs/HOSTED-RELEASE-HANDOFF.md",
+      "docs/Phone-Polish-Review-2026-11-16.md",
+      "docs/START-HERE.txt"
+    ]
+  },
+  "release": {
+    "tag": "career-finder-v0.4.0-preview",
+    "commit": "caa5ace14fe7b430db845d935a89803700cc7665",
+    "ciRun": "https://github.com/swonyu/ahmad-career/actions/runs/43923335555",
+    "url": "https://github.com/swonyu/ahmad-career/releases/tag/career-finder-v0.4.0-preview",
+    "asset": "https://github.com/swonyu/ahmad-career/releases/download/career-finder-v0.4.0-preview/Career-Finder-Android-Preview.apk",
+    "bytes": 12071908,
+    "sha256": "3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62",
+    "publishedAt": "2026-11-16T18:35:37Z",
+    "prerelease": true,
+    "publicDownloadRehash": {
+      "status": "passed",
+      "bytes": 12071908,
+      "sha256": "3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62",
+      "checkedAt": "2026-11-16T18:35:51.707218+00:00",
+      "authentication": "none",
+      "transport": "standard HTTPS certificate validation"
+    },
+    "sourceDownloadVerification": {
+      "status": "passed",
+      "url": "https://api.github.com/repos/swonyu/ahmad-career/zipball/career-finder-v0.4.0-preview",
+      "commit": "caa5ace14fe7b430db845d935a89803700cc7665",
+      "files": 368,
+      "bytes": 1086102,
+      "sha256": "12c99583a3e8277c56bf3a08f4810dc2053e76b41066570dfda556904b71bf9e",
+      "checkedAt": "2026-11-16T18:35:58.316175+00:00",
+      "authentication": "none",
+      "transport": "standard HTTPS certificate validation",
+      "comparison": "Every file matched the exact tested source manifest by path, length and SHA-256; no extraction or execution.",
+      "archiveHashScope": "Observed generated ZIP bytes; source file hashes provide durable identity."
+    }
+  },
+  "ci": {
+    "runId": 43923335555,
+    "url": "https://github.com/swonyu/ahmad-career/actions/runs/43923335555",
+    "runAttempt": 2,
+    "conclusion": "success",
+    "retryScope": "Only the failed native interface job was rerun. The four passing non-UI results were reused on the identical commit; GitHub assigns them latest-attempt job identifiers while retaining their original execution times.",
+    "jobs": [
+      {
+        "id": 133510144696,
+        "name": "iPhone native interface acceptance",
+        "head_sha": "caa5ace14fe7b430db845d935a89803700cc7665",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-16T18:17:55Z",
+        "completed_at": "2026-11-16T18:34:04Z",
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43923335555/job/133510144696",
+        "executionAttempt": 2,
+        "originalExecutionJobId": 133510144696,
+        "retainedFromPriorAttempt": false
+      },
+      {
+        "id": 133510147494,
+        "name": "Hosted HTTPS service and durable storage",
+        "head_sha": "caa5ace14fe7b430db845d935a89803700cc7665",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-16T17:55:02Z",
+        "completed_at": "2026-11-16T17:56:05Z",
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43923335555/job/133510147494",
+        "executionAttempt": 1,
+        "originalExecutionJobId": 133496114754,
+        "retainedFromPriorAttempt": true
+      },
+      {
+        "id": 133510148174,
+        "name": "Android compile and lint",
+        "head_sha": "caa5ace14fe7b430db845d935a89803700cc7665",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-16T17:55:03Z",
+        "completed_at": "2026-11-16T17:56:35Z",
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43923335555/job/133510148174",
+        "executionAttempt": 1,
+        "originalExecutionJobId": 133496114889,
+        "retainedFromPriorAttempt": true
+      },
+      {
+        "id": 133510231819,
+        "name": "Service and synthetic HTTPS",
+        "head_sha": "caa5ace14fe7b430db845d935a89803700cc7665",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-16T17:55:01Z",
+        "completed_at": "2026-11-16T17:55:25Z",
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43923335555/job/133510231819",
+        "executionAttempt": 1,
+        "originalExecutionJobId": 133496114063,
+        "retainedFromPriorAttempt": true
+      },
+      {
+        "id": 133510250294,
+        "name": "iPhone logic and unsigned build",
+        "head_sha": "caa5ace14fe7b430db845d935a89803700cc7665",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-16T17:55:07Z",
+        "completed_at": "2026-11-16T17:57:11Z",
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43923335555/job/133510250294",
+        "executionAttempt": 1,
+        "originalExecutionJobId": 133496114680,
+        "retainedFromPriorAttempt": true
+      }
+    ],
+    "nativeInterface": {
+      "executed": 7,
+      "passed": 7,
+      "failed": 0,
+      "seconds": 600.248,
+      "device": "iPhone Air",
+      "runtime": "iOS 26.5 Simulator",
+      "tests": [
+        {
+          "name": "testAccessibilityTextKeepsCoreControlsReachable",
+          "result": "passed",
+          "seconds": 79.415
+        },
+        {
+          "name": "testApplicationDraftSurvivesCancelAndRelaunch",
+          "result": "passed",
+          "seconds": 141.858
+        },
+        {
+          "name": "testDiscoverySaveFlowsIntoSavedAndApply",
+          "result": "passed",
+          "seconds": 53.898
+        },
+        {
+          "name": "testFreshStartAndFiveTabs",
+          "result": "passed",
+          "seconds": 65.285
+        },
+        {
+          "name": "testOpportunityDiscardRequiresExplicitChoice",
+          "result": "passed",
+          "seconds": 39.517
+        },
+        {
+          "name": "testOpportunityDraftKeepSaveAndRestore",
+          "result": "passed",
+          "seconds": 134.96
+        },
+        {
+          "name": "testSearchEmptyAndFailurePreservesPreviousResults",
+          "result": "passed",
+          "seconds": 85.316
+        }
+      ],
+      "artifact": {
+        "id": 14256834676,
+        "name": "iphone-ui-acceptance-43923335555",
+        "createdAt": "2026-11-16T18:33:54Z",
+        "bytes": 78643781,
+        "sha256": "520a4487d42d011548d607bb77b8b0f24f0b1a865ad93fcc838fd2bf73e28e6a"
+      },
+      "namedScreenshots": 14,
+      "firstAttempt": "phone-polish-evidence/iphone-ci-43923335555-attempt-1.json",
+      "finalAttempt": "phone-polish-evidence/iphone-ci-43923335555-attempt-2.json",
+      "retry": "One bounded same-code failed-job reproduction after a missed initial Search-tab transition. First attempt passed six of seven tests; the cause of that missed transition remains unproved. No source change, skipped test or increased timeout was used for this retry."
+    },
+    "iphonePolicyAndBuild": {
+      "boundaryChecks": 61,
+      "lifecycleAssertions": 129,
+      "lifecycleScenarios": 27,
+      "discoveryAssertions": 33,
+      "discoveryScenarios": 10,
+      "unsignedRelease": "passed",
+      "productIdentityAssertions": "passed",
+      "originalExecutionJobId": 133496114680,
+      "originalExecutionAttempt": 1,
+      "reusedInAttempt": 2,
+      "latestAttemptJobId": 133510250294,
+      "logSHA256": "851ed69cad2d5f0888e98553f98ede722a7c42cf137f03dda79569f63a6c7f70"
+    }
+  },
+  "android": {
+    "versionName": "0.4.0",
+    "versionCode": 4,
+    "package": "com.saleh.careerfinder.preview",
+    "minimumAndroidApi": 26,
+    "apkBytes": 12071908,
+    "apkSHA256": "3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62",
+    "signerSHA256": "8790e9582889118f556fa287e8f031ee3d2f5221d25008ec5f399c8444c1de17",
+    "compiledInputFiles": 32,
+    "nativeTestsPassed": 35,
+    "nativeTestSeconds": 17.304,
+    "compactCountryDialog": {
+      "passed": true,
+      "seconds": 8.027,
+      "widthDp": 360,
+      "fontScale": 1.8,
+      "locale": "Arabic RTL",
+      "keyboardEnabled": true
+    },
+    "boundaryChecks": 36,
+    "lintErrors": 0,
+    "lintAdvisories": 6,
+    "evidence": "../android/checks/verification.json",
+    "distribution": "Debug-signed development preview; not a Google Play release."
+  },
+  "hosted": {
+    "origin": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
+    "deployment": {
+      "projectId": "appgprj_6afb13851fb4819193358d5db54e73b7",
+      "versionNumber": 2,
+      "sourceCommit": "a2c82c51a37e570cedb6fd6b8459d208228fc578",
+      "deploymentId": "appgdep_6afb2627e0f081918d7e98839bd2d5c1",
+      "provenance": "Saved-source and deployment identity from Sites; HTTP responses do not expose a source commit."
+    },
+    "publicChecksPassed": 13,
+    "publicChecksFailed": 0,
+    "recordedAt": "2026-11-16T15:51:52.773277+00:00",
+    "evidence": "hosted-production-polish-verification.json",
+    "liveAutoApplyEnabled": false,
+    "scope": "Public GETs and anonymous/input/origin boundaries; no signed-in account, uploaded CV or employer application."
+  },
+  "remainingReleaseGates": [
+    "Observed signed-in production browser/phone pairing and account lifecycle acceptance.",
+    "Physical-phone and screen-reader acceptance beyond the recorded emulator/simulator checks.",
+    "Publisher/operator contact and store privacy disclosures.",
+    "Production signing, iPhone/TestFlight/App Store and Google Play distribution and review.",
+    "Employer-authorized connector credentials and posting requirements before live submissions can be enabled."
+  ],
+  "verificationMeaning": "A provider acceptance response and a nonempty application ID establish a live receipt. Synthetic tests, opened links and manual self-reports do not establish an employer submission or recruiter decision."
+}

@@ -2,11 +2,17 @@
 
 Native career and application workspace for **iPhone and Android phones**. Find jobs on selected public employer boards, save opportunities, keep your own profile and PDF résumé, and review applications before using a supported **Auto Apply** integration.
 
-**Status: 0.4.0 phone candidate with a published HTTPS service, 16 November 2026.** Version 0.4 adds public job discovery and phone usability improvements. The [current polish review](docs/Phone-Polish-Review-2026-11-16.md) separates executed checks from pending final-source CI, signed-in phone acceptance and distribution. The [earlier reliability review](docs/Phone-Quality-Review-2026-11-16.md) and [initial phone update](docs/Phone-Update-2026-11-16.md) retain their original evidence. No real employer applications were sent during development.
+**Status: published on GitHub — Android preview 0.4.0 and a published HTTPS service, 16 November 2026.** Version 0.4 adds public job discovery and phone usability improvements. The [current polish review](docs/Phone-Polish-Review-2026-11-16.md) records the tested code, release evidence and remaining signed-in/physical-phone acceptance. iPhone source and an unsigned build are separate from App Store or TestFlight distribution. The [earlier reliability review](docs/Phone-Quality-Review-2026-11-16.md) and [initial phone update](docs/Phone-Update-2026-11-16.md) retain their original evidence. No real employer applications were sent during development.
 
 ## Hosted phone connection
 
-The current phone source candidate is **0.4.0**, targeting iOS 16 or newer and Android 8 or newer. Published preview downloads, with their own versions and checks, are in the [project releases](https://github.com/swonyu/ahmad-career/releases). A published earlier APK does not include later candidate changes. The iPhone source preserves its existing app identity for the authorized publisher.
+The Android **0.4.0 preview** targets Android 8 or newer. It is a debug-signed preview with package `com.saleh.careerfinder.preview`, separate from Google Play distribution. The iPhone source targets iOS 16 or newer and preserves its existing app identity for the authorized publisher.
+
+- [Download the Android 0.4.0 APK](https://github.com/swonyu/ahmad-career/releases/download/career-finder-v0.4.0-preview/Career-Finder-Android-Preview.apk)
+- [Download the tested phone source ZIP](https://api.github.com/repos/swonyu/ahmad-career/zipball/career-finder-v0.4.0-preview)
+- [Release notes and downloads](https://github.com/swonyu/ahmad-career/releases/tag/career-finder-v0.4.0-preview)
+
+The APK is **12,071,908 bytes**, SHA-256 `3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62`. Public download verification: **passed: unauthenticated APK rehash and all 368 source files matched**. The [release verification record](docs/phone-preview-release-verification.json) binds the downloads to tested code `caa5ace14fe7b430db845d935a89803700cc7665` and its CI result. These download links are independent of ChatGPT file access.
 
 The development-preview service is live at **[Connect Career Finder](https://career-finder-service.jazzy-drake-8323.chatgpt.site/connect)**. Hosted version 2, including the discovery API, deployed successfully and passed 13 public production checks. It uses the available managed hosting; no separate paid account, subscription or domain purchase was started.
 
@@ -14,7 +20,7 @@ Public discovery does not require sign-in. To save a private hosted workspace, s
 
 [Privacy](https://career-finder-service.jazzy-drake-8323.chatgpt.site/privacy) · [Help](https://career-finder-service.jazzy-drake-8323.chatgpt.site/support) · [Manage account](https://career-finder-service.jazzy-drake-8323.chatgpt.site/account)
 
-The hosted candidate passed 25 discovery regression groups and 29 application/storage groups, plus eight discovery and eight application requests through the actual workerd runtime. These use local D1/R2 and synthetic dependencies. [Version 2 production observations](docs/hosted-production-polish-verification.json) separately record real public search, pagination, filtering, pages, storage readiness and access boundaries. The [earlier version 1 observations](docs/hosted-production-http-verification.json) remain preserved. Neither public check set establishes a signed-in phone flow; see the [release handoff](docs/HOSTED-RELEASE-HANDOFF.md).
+The hosted service passed 25 discovery regression groups and 29 application/storage groups, plus eight discovery and eight application requests through the actual workerd runtime. These use local D1/R2 and synthetic dependencies. [Version 2 production observations](docs/hosted-production-polish-verification.json) separately record real public search, pagination, filtering, pages, storage readiness and access boundaries. The [earlier version 1 observations](docs/hosted-production-http-verification.json) remain preserved. Neither public check set establishes a signed-in phone flow; see the [release handoff](docs/HOSTED-RELEASE-HANDOFF.md).
 
 The preview currently permits 250 workspaces, five PDFs/25 MiB per workspace and bounded application records. No employer credentials are configured, so live Auto Apply remains disabled until an authorized integration is connected. Hosting and provider quotas do not imply unlimited or perpetual free service.
 
@@ -30,7 +36,7 @@ The preview currently permits 250 workspaces, five PDFs/25 MiB per workspace and
 - Track confirmed, uncertain, rejected, rate-limited and stopped outcomes. Reopen reviews after restarting the phone app. Only already-approved eligible work can continue automatically; retrying a rate-limited job requires fresh approval after its cooldown.
 - Export receipt evidence without résumé bytes, employer keys or phone credentials.
 
-The 0.4 candidate improves first-run guidance, search and source feedback, draft recovery, profile editing and accessibility labels. iPhone opportunity drafts can be saved, resumed or deliberately discarded. Android separates required profile essentials from optional details and adds receipt search and status filters. Platform differences and exact checks are documented in the [polish review](docs/Phone-Polish-Review-2026-11-16.md).
+Version 0.4 improves first-run guidance, search and source feedback, draft recovery, profile editing and accessibility labels. iPhone opportunity drafts can be saved, resumed or deliberately discarded. Android separates required profile essentials from optional details and adds receipt search and status filters. Platform differences and exact checks are documented in the [polish review](docs/Phone-Polish-Review-2026-11-16.md).
 
 The earlier reliability protections remain: delayed responses cannot replace newer drafts or another connection's data, genuine single names are supported, and an explicit “No” to future marketing contact remains a valid answer. Android offers deliberate offline-draft import and preserves unreadable encrypted files during recovery.
 
@@ -60,11 +66,11 @@ Public job discovery and automatic submission have different coverage. A publicl
 | [website/applications/](website/applications/) | Separate Node/SQLite application service and private pairing CLI |
 | [Application contract](docs/Verified-Applications-Contract.md) | Auth, immutable reviews, dispatch states, consent and receipt evidence |
 | [postman/](postman/) | Real HTTP acceptance collection using a synthetic local Lever dependency |
-| [Phone polish review](docs/Phone-Polish-Review-2026-11-16.md) | Current 0.4 candidate features, executed evidence and remaining acceptance |
+| [Phone polish review](docs/Phone-Polish-Review-2026-11-16.md) | Current 0.4 features, release evidence and remaining acceptance |
 | [Earlier phone quality review](docs/Phone-Quality-Review-2026-11-16.md) | Preserved reliability findings and dated evidence from earlier candidates |
 | [Initial phone update](docs/Phone-Update-2026-11-16.md) | First candidate's implementation, source provenance and dated evidence |
 
-The pre-existing website and Mac source remain for compatibility and history. This candidate targets phones. GitHub source changes do not deploy the existing website.
+The pre-existing website and Mac source remain for compatibility and history. This update targets phones. GitHub source changes do not deploy the existing website.
 
 ## Build and verify
 
@@ -78,7 +84,7 @@ The native harness exercises the production client and stores with injected tran
 bash apple/Checks/check-mobile.sh
 ```
 
-See [exact executed Apple evidence](apple/Checks/mobile-verification.json) and the [Apple setup](apple/README.md) for the checked source hashes, current scenarios and limitations. Static checks, a linked Xcode app build, simulator UI execution and physical-device acceptance are separate forms of evidence. The new hosted iPhone UI job is defined for this candidate; its authored tests are not a passing run until the final CI records one.
+See [exact executed Apple evidence](apple/Checks/mobile-verification.json) and the [Apple setup](apple/README.md) for the checked source hashes, current scenarios and limitations. Static checks, a linked Xcode app build, simulator UI execution and physical-device acceptance are separate forms of evidence. The final hosted UI result is **passed (7/7 synthetic tests, attempt 2)**, recorded in [CI run 43923335555](https://github.com/swonyu/ahmad-career/actions/runs/43923335555) and the [release verification record](docs/phone-preview-release-verification.json). The unsigned Release build and synthetic simulator UI checks do not install an iPhone app through a store or establish physical-device acceptance.
 
 ### Android
 
@@ -89,7 +95,7 @@ From `android/`, with JDK 21 and Android SDK 36 installed:
 bash checks/run-policy-checks.sh
 ```
 
-The checked-in Gradle wrapper verifies its pinned distribution checksum. See [Android setup and evidence](android/README.md) for exact package identifiers, build results and device checks. Release signing is not configured.
+The checked-in Gradle wrapper verifies its pinned distribution checksum. The final APK passed 35 native instrumentation tests, 36 boundary-policy checks, compilation and lint. The country confirmation/cancellation flow also passed separately at 360 dp width, 180% text and Arabic RTL. See [Android setup and evidence](android/README.md) for source identity, exact results and limits. Store release signing is not configured.
 
 ### Application service
 
@@ -119,12 +125,12 @@ node website/applications/fixtures/tls-check.mjs
 
 This uses an ephemeral private CA and a synthetic local provider. The ordinary Android preview and release build retain normal TLS trust. Only the separately identified acceptance build may trust the fixture CA for the emulator host. See [native HTTPS acceptance](website/applications/fixtures/README.md).
 
-The [Phone quality workflow](.github/workflows/phone-quality.yml) now defines five jobs: Node service/HTTPS checks, hosted storage/discovery/Worker checks, Android compilation/lint, iPhone logic plus an unsigned **Release** build, and isolated iPhone simulator UI acceptance. The earlier four-job [run 43895371363](https://github.com/swonyu/ahmad-career/actions/runs/43895371363) passed on baseline `06f5e8a069c7debe94becf04ce73d997f9cde747`; it does not validate the later 0.4 changes or new fifth job. Final-candidate CI is pending. Hosted Mac runners are isolated from the shared local Apple build schedule; the local build-slot restriction remains in force.
+The [Phone quality workflow](.github/workflows/phone-quality.yml) defines five jobs: Node service/HTTPS checks, hosted storage/discovery/Worker checks, Android compilation/lint, iPhone logic plus an unsigned **Release** build, and isolated iPhone simulator UI acceptance. [Run 43923335555](https://github.com/swonyu/ahmad-career/actions/runs/43923335555) tests code `caa5ace14fe7b430db845d935a89803700cc7665`; all five gates passed. The four successful non-UI jobs from attempt 1 were retained, and the UI retry passed all seven synthetic tests in attempt 2. Earlier UI failures and retry details remain in the [polish review](docs/Phone-Polish-Review-2026-11-16.md) and release record. Hosted Mac runners are isolated from the shared local Apple build schedule; the local build-slot restriction remains in force.
 
 ## Data and release readiness
 
 Connected use sends a profile and selected résumé to the configured application service, and approved fields/CV to the supported employer. The private service ledger retains immutable dispatch snapshots and receipt evidence. Local legacy records remain separate.
 
-HTTPS hosting, account onboarding/recovery, bounded storage, account-erasure operations and service privacy/support pages are implemented. Hosted version 2 is deployed and public acceptance passed. Final 0.4 source CI and a signed-in production phone flow remain pending. Before store distribution, complete operator/contact and store disclosures, native device/accessibility QA, signing and store review. Enable live Auto Apply only after an authorized employer integration and its acceptance are established. The [release handoff](docs/HOSTED-RELEASE-HANDOFF.md) records the remaining gates without treating historical store builds as this candidate.
+HTTPS hosting, account onboarding/recovery, bounded storage, account-erasure operations and service privacy/support pages are implemented. Hosted version 2 is deployed and public acceptance passed. The code/CI and download status are recorded above; a signed-in production phone flow remains pending. Before store distribution, complete operator/contact and store disclosures, native device/accessibility QA, signing and store review. Enable live Auto Apply only after an authorized employer integration and its acceptance are established. The [release handoff](docs/HOSTED-RELEASE-HANDOFF.md) records the remaining gates without treating historical store builds as this 0.4 preview.
 
-Historical releases, TestFlight observations and earlier checks are preserved in [project history](docs/Project-History-Through-2026-11-15.md) and [Apple history](docs/Apple-History-Through-2026-11-15.md). They are not fresh evidence for this candidate.
+Historical releases, TestFlight observations and earlier checks are preserved in [project history](docs/Project-History-Through-2026-11-15.md) and [Apple history](docs/Apple-History-Through-2026-11-15.md). They are not evidence for this 0.4 preview.

@@ -1,4 +1,4 @@
-CAREER FINDER — 0.4.0 PHONE CANDIDATE
+CAREER FINDER — 0.4.0 ANDROID PREVIEW / IPHONE SOURCE
 16 November 2026 • UTC
 
 PLATFORMS
@@ -20,7 +20,7 @@ signed-in phone acceptance remains separate. Live Auto Apply remains disabled.
 
 READ FIRST
 ../README.md — current features, setup and limits
-Phone-Polish-Review-2026-11-16.md — current candidate, evidence and limits
+Phone-Polish-Review-2026-11-16.md — current preview, evidence and limits
 HOSTED-RELEASE-HANDOFF.md — deployed source, CI and remaining release gates
 Verified-Applications-Contract.md — exact submission and receipt rules
 ../android/README.md — Android preview, build and native checks
@@ -31,9 +31,12 @@ Repository: https://github.com/swonyu/ahmad-career
 Branch: career-finder-phones-verified-apply-20261116
 Development continues in an isolated checkout. Source publication does not
 update a store build, deploy the service or submit an employer application.
-The prior baseline is 06f5e8a069c7debe94becf04ce73d997f9cde747; its four-job
-CI run passed. The expanded five-job workflow has not yet passed on the final
-0.4 source. Exact platform evidence is linked from each platform README.
+Tested code: caa5ace14fe7b430db845d935a89803700cc7665
+CI: https://github.com/swonyu/ahmad-career/actions/runs/43923335555
+Final CI: all five gates passed. Four non-UI successes from attempt 1 were
+retained; the iPhone UI retry passed all seven synthetic tests in attempt 2.
+Exact source, CI attempts and public-download evidence are recorded in
+phone-preview-release-verification.json. No main-branch update is implied.
 
 AUTO APPLY
 A configured HTTPS service and supported, employer-authorized connector are
@@ -44,15 +47,21 @@ does not approve or submit anything. Test results, opened links and manual
 "Applied elsewhere" self-reports stay separate from verified live receipts.
 
 DISTRIBUTION
-Earlier Android preview APKs are available in the project releases; a previous
-version does not include these candidate changes. This 0.4 phone candidate has
-not been released through Google Play, App Store or TestFlight. Historical iOS
-invitations and IPA files describe earlier builds. Preserve the existing app
-identities and publisher records. See the polish review for executed checks.
+Android 0.4.0 preview status: published on GitHub
+Release: https://github.com/swonyu/ahmad-career/releases/tag/career-finder-v0.4.0-preview
+Android APK: https://github.com/swonyu/ahmad-career/releases/download/career-finder-v0.4.0-preview/Career-Finder-Android-Preview.apk
+Tested source ZIP: https://api.github.com/repos/swonyu/ahmad-career/zipball/career-finder-v0.4.0-preview
+Public downloads: passed: unauthenticated APK rehash and all 368 source files matched
+APK: 12,071,908 bytes; SHA-256
+3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62
+The APK is a debug-signed preview, not a Google Play release. The iPhone source
+has an unsigned Release build and synthetic UI acceptance recorded separately;
+it is not an App Store/TestFlight install. Historical iOS invitations and IPA
+files describe earlier builds. Preserve existing identities/publisher records.
 
 REMAINING RELEASE WORK
-Publish the final source and record its CI; execute a signed-in production
-phone/account flow and lifecycle acceptance; complete
+Execute a signed-in production phone/account flow and lifecycle acceptance;
+complete
 physical-phone accessibility/device QA, operator/contact and store disclosures,
 publisher signing and platform review. Real automatic submissions also need
 employer-authorized configuration and applicant approval. The shared local

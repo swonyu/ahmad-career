@@ -1,0 +1,400 @@
+{
+  "schemaVersion": 1,
+  "runId": 43923335555,
+  "runAttempt": 2,
+  "commit": "caa5ace14fe7b430db845d935a89803700cc7665",
+  "runUrl": "https://github.com/swonyu/ahmad-career/actions/runs/43923335555",
+  "conclusion": "success",
+  "run": {
+    "id": 43923335555,
+    "head_sha": "caa5ace14fe7b430db845d935a89803700cc7665",
+    "head_branch": "career-finder-phones-verified-apply-20261116",
+    "run_attempt": 2,
+    "status": "completed",
+    "conclusion": "success",
+    "run_started_at": "2026-11-16T18:17:47Z",
+    "created_at": "2026-11-16T17:54:58Z",
+    "updated_at": "2026-11-16T18:34:04Z",
+    "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43923335555"
+  },
+  "jobs": [
+    {
+      "id": 133510144696,
+      "name": "iPhone native interface acceptance",
+      "head_sha": "caa5ace14fe7b430db845d935a89803700cc7665",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-16T18:17:55Z",
+      "completed_at": "2026-11-16T18:34:04Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43923335555/job/133510144696",
+      "executionAttempt": 2,
+      "originalExecutionJobId": 133510144696,
+      "retainedFromPriorAttempt": false
+    },
+    {
+      "id": 133510147494,
+      "name": "Hosted HTTPS service and durable storage",
+      "head_sha": "caa5ace14fe7b430db845d935a89803700cc7665",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-16T17:55:02Z",
+      "completed_at": "2026-11-16T17:56:05Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43923335555/job/133510147494",
+      "executionAttempt": 1,
+      "originalExecutionJobId": 133496114754,
+      "retainedFromPriorAttempt": true
+    },
+    {
+      "id": 133510148174,
+      "name": "Android compile and lint",
+      "head_sha": "caa5ace14fe7b430db845d935a89803700cc7665",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-16T17:55:03Z",
+      "completed_at": "2026-11-16T17:56:35Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43923335555/job/133510148174",
+      "executionAttempt": 1,
+      "originalExecutionJobId": 133496114889,
+      "retainedFromPriorAttempt": true
+    },
+    {
+      "id": 133510231819,
+      "name": "Service and synthetic HTTPS",
+      "head_sha": "caa5ace14fe7b430db845d935a89803700cc7665",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-16T17:55:01Z",
+      "completed_at": "2026-11-16T17:55:25Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43923335555/job/133510231819",
+      "executionAttempt": 1,
+      "originalExecutionJobId": 133496114063,
+      "retainedFromPriorAttempt": true
+    },
+    {
+      "id": 133510250294,
+      "name": "iPhone logic and unsigned build",
+      "head_sha": "caa5ace14fe7b430db845d935a89803700cc7665",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-16T17:55:07Z",
+      "completed_at": "2026-11-16T17:57:11Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43923335555/job/133510250294",
+      "executionAttempt": 1,
+      "originalExecutionJobId": 133496114680,
+      "retainedFromPriorAttempt": true
+    }
+  ],
+  "device": "iPhone Air",
+  "runtime": "iOS 26.5 Simulator",
+  "simulatorDeviceID": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+  "executedTests": 7,
+  "passedTests": 7,
+  "failedTests": 0,
+  "unexpectedFailures": 0,
+  "testDurationSeconds": 600.248,
+  "tests": [
+    {
+      "name": "testAccessibilityTextKeepsCoreControlsReachable",
+      "result": "passed",
+      "seconds": 79.415
+    },
+    {
+      "name": "testApplicationDraftSurvivesCancelAndRelaunch",
+      "result": "passed",
+      "seconds": 141.858
+    },
+    {
+      "name": "testDiscoverySaveFlowsIntoSavedAndApply",
+      "result": "passed",
+      "seconds": 53.898
+    },
+    {
+      "name": "testFreshStartAndFiveTabs",
+      "result": "passed",
+      "seconds": 65.285
+    },
+    {
+      "name": "testOpportunityDiscardRequiresExplicitChoice",
+      "result": "passed",
+      "seconds": 39.517
+    },
+    {
+      "name": "testOpportunityDraftKeepSaveAndRestore",
+      "result": "passed",
+      "seconds": 134.96
+    },
+    {
+      "name": "testSearchEmptyAndFailurePreservesPreviousResults",
+      "result": "passed",
+      "seconds": 85.316
+    }
+  ],
+  "uiJobId": 133510144696,
+  "uiJobStartedAt": "2026-11-16T18:17:55Z",
+  "uiJobCompletedAt": "2026-11-16T18:34:04Z",
+  "nativeExerciseCompletedAt": "2026-11-16T18:33:44Z",
+  "policyAndRelease": {
+    "originalExecutionJobId": 133496114680,
+    "latestAPIJobId": 133510250294,
+    "executionAttempt": 1,
+    "conclusion": "success",
+    "completedAt": "2026-11-16T17:57:11Z",
+    "boundaryChecks": 61,
+    "lifecycleAssertions": 129,
+    "lifecycleScenarios": 27,
+    "discoveryAssertions": 33,
+    "discoveryScenarios": 10,
+    "legacyStoreChecks": "PASS",
+    "unsignedReleaseBuild": "PASS",
+    "productIdentityAssertions": "PASS",
+    "jobLogSHA256": "851ed69cad2d5f0888e98553f98ede722a7c42cf137f03dda79569f63a6c7f70",
+    "note": "The four non-UI jobs are retained attempt1 executions, represented by new IDs in the latest attempt2 API response; their original execution IDs and timestamps are preserved in jobs."
+  },
+  "uiJobLogSHA256": "b1c8d28b2400a3ea7d6e1571b20f0bf55b3d1acad7b78d5c5a0656cbded1b154",
+  "xcodeLogSHA256": "f2bc8a98714a936a3905a348e290dd7dfacc0677f61f9ad8d3d9c2da1b58a8a8",
+  "artifact": {
+    "id": 14256834676,
+    "name": "iphone-ui-acceptance-43923335555",
+    "createdAt": "2026-11-16T18:33:54Z",
+    "bytes": 78643781,
+    "sha256": "520a4487d42d011548d607bb77b8b0f24f0b1a865ad93fcc838fd2bf73e28e6a"
+  },
+  "namedScreenshots": 14,
+  "screenshotManifest": "retained-screenshots-attempt-2.json",
+  "screenshotManifestSHA256": "72ad4782afad87849b9499d7d7eef976e83a4d9e66c9e9180d96f6235b0feafb",
+  "screenshotTotalBytes": 5783131,
+  "screenshots": [
+    {
+      "name": "01-fresh-start",
+      "path": "attempt-2/selected-screenshots/01-fresh-start.png",
+      "artifactMember": "career-ui-screenshots/01986E70-87DB-4326-BCD4-9622112632AA.png",
+      "test": "CareerFinderUITests/testFreshStartAndFiveTabs()",
+      "device": "iPhone Air",
+      "capturedAtEpochSeconds": 1794853636.974,
+      "bytes": 337835,
+      "sha256": "6fa59333611b0c178a802b1276c0bd673fd6bba28fe3a6047bb8d6a21cbfc9c2"
+    },
+    {
+      "name": "02-discovery-empty",
+      "path": "attempt-2/selected-screenshots/02-discovery-empty.png",
+      "artifactMember": "career-ui-screenshots/520BB453-C7CE-4C0D-8E68-EA575655491B.png",
+      "test": "CareerFinderUITests/testFreshStartAndFiveTabs()",
+      "device": "iPhone Air",
+      "capturedAtEpochSeconds": 1794853657.097,
+      "bytes": 351336,
+      "sha256": "965597defb5b0b73aed3d7e78ffb3b707ce2931386d50e379f1eaa92e0aa54cd"
+    },
+    {
+      "name": "03-application-workspace-empty",
+      "path": "attempt-2/selected-screenshots/03-application-workspace-empty.png",
+      "artifactMember": "career-ui-screenshots/EE934190-E72F-45DF-9429-E7B34438C90F.png",
+      "test": "CareerFinderUITests/testFreshStartAndFiveTabs()",
+      "device": "iPhone Air",
+      "capturedAtEpochSeconds": 1794853689.666,
+      "bytes": 459894,
+      "sha256": "5c79fd38c876aaba78fcac44b9be82cb9b4d313ccd9d44b50ffccd79ddd218e1"
+    },
+    {
+      "name": "04-restored-phone-profile-draft",
+      "path": "attempt-2/selected-screenshots/04-restored-phone-profile-draft.png",
+      "artifactMember": "career-ui-screenshots/A2E291B3-750D-4B92-A5B1-AA176DB207AB.png",
+      "test": "CareerFinderUITests/testApplicationDraftSurvivesCancelAndRelaunch()",
+      "device": "iPhone Air",
+      "capturedAtEpochSeconds": 1794853560.109,
+      "bytes": 248958,
+      "sha256": "cf35940feb07bf2ebb22661994a5a98cd992b68460eba47bf0773b556dab54fc"
+    },
+    {
+      "name": "05-saved-manual-opportunity",
+      "path": "attempt-2/selected-screenshots/05-saved-manual-opportunity.png",
+      "artifactMember": "career-ui-screenshots/62B01C9A-4743-445D-9523-AC3D488BC860.png",
+      "test": "CareerFinderUITests/testOpportunityDraftKeepSaveAndRestore()",
+      "device": "iPhone Air",
+      "capturedAtEpochSeconds": 1794853856.206,
+      "bytes": 245604,
+      "sha256": "a2e4641722e7bbf7fb06930ec36ef5e84634556b68e3daddbb8a66860bb279a0"
+    },
+    {
+      "name": "05a-explicit-keep-editing-choice",
+      "path": "attempt-2/selected-screenshots/05a-explicit-keep-editing-choice.png",
+      "artifactMember": "career-ui-screenshots/92188050-45E4-46DF-BD47-6B3030DF8BA3.png",
+      "test": "CareerFinderUITests/testOpportunityDraftKeepSaveAndRestore()",
+      "device": "iPhone Air",
+      "capturedAtEpochSeconds": 1794853789.337,
+      "bytes": 450658,
+      "sha256": "8c0fe732a5fb9e927a6fe73aba6277116355f65eaf9ad0d445987e8aa1015eb7"
+    },
+    {
+      "name": "06-discovered-role-saved",
+      "path": "attempt-2/selected-screenshots/06-discovered-role-saved.png",
+      "artifactMember": "career-ui-screenshots/61563770-6ACE-4C6A-B480-C3037795636D.png",
+      "test": "CareerFinderUITests/testDiscoverySaveFlowsIntoSavedAndApply()",
+      "device": "iPhone Air",
+      "capturedAtEpochSeconds": 1794853599.974,
+      "bytes": 396762,
+      "sha256": "8e91be3a4a7c1186e9b86a28cbe58c9fccdb80509bd40896bcd0168e562765a7"
+    },
+    {
+      "name": "07-discovery-to-application-workspace",
+      "path": "attempt-2/selected-screenshots/07-discovery-to-application-workspace.png",
+      "artifactMember": "career-ui-screenshots/B9B8200B-93B1-4FA6-911F-F99DE947D270.png",
+      "test": "CareerFinderUITests/testDiscoverySaveFlowsIntoSavedAndApply()",
+      "device": "iPhone Air",
+      "capturedAtEpochSeconds": 1794853614.102,
+      "bytes": 472142,
+      "sha256": "35fde5a79a04d6f57effa64a86a32a69d9021a867064e9c97bc3afae71c44c8d"
+    },
+    {
+      "name": "08-offline-search-keeps-results",
+      "path": "attempt-2/selected-screenshots/08-offline-search-keeps-results.png",
+      "artifactMember": "career-ui-screenshots/3C96A654-1F26-4891-A982-03513F615989.png",
+      "test": "CareerFinderUITests/testSearchEmptyAndFailurePreservesPreviousResults()",
+      "device": "iPhone Air",
+      "capturedAtEpochSeconds": 1794853949.506,
+      "bytes": 398679,
+      "sha256": "1d13818795914bdb001b712a3040253b2d1d7a2737ee106637dd2ced64cb2214"
+    },
+    {
+      "name": "08a-completed-search-with-no-matches",
+      "path": "attempt-2/selected-screenshots/08a-completed-search-with-no-matches.png",
+      "artifactMember": "career-ui-screenshots/D5DC0988-F871-4F70-9D3F-69F5D41021D6.png",
+      "test": "CareerFinderUITests/testSearchEmptyAndFailurePreservesPreviousResults()",
+      "device": "iPhone Air",
+      "capturedAtEpochSeconds": 1794853903.464,
+      "bytes": 390497,
+      "sha256": "4ecc3fa871ecde8d67312a0a15454c322ba1afbc50719776f96d9fb96f13de09"
+    },
+    {
+      "name": "09-start-accessibility-text",
+      "path": "attempt-2/selected-screenshots/09-start-accessibility-text.png",
+      "artifactMember": "career-ui-screenshots/83513369-C9D7-46E3-9AFB-23113259DBB2.png",
+      "test": "CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable()",
+      "device": "iPhone Air",
+      "capturedAtEpochSeconds": 1794853370.788,
+      "bytes": 356318,
+      "sha256": "8ddd65c01b16c142f836a606048a403c7365930e623b8e0dfd98dfcd168c0aa5"
+    },
+    {
+      "name": "10-profile-accessibility-keyboard",
+      "path": "attempt-2/selected-screenshots/10-profile-accessibility-keyboard.png",
+      "artifactMember": "career-ui-screenshots/09A136DC-473E-4FEE-856E-34845BB9E721.png",
+      "test": "CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable()",
+      "device": "iPhone Air",
+      "capturedAtEpochSeconds": 1794853392.892,
+      "bytes": 521800,
+      "sha256": "21ccd412e731350abb1e16f55c55c8324111b59135d560024d3919126043a0e9"
+    },
+    {
+      "name": "11-employer-boards-accessibility-text",
+      "path": "attempt-2/selected-screenshots/11-employer-boards-accessibility-text.png",
+      "artifactMember": "career-ui-screenshots/27E1964A-DDBE-4B79-88AC-050DB90D40E3.png",
+      "test": "CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable()",
+      "device": "iPhone Air",
+      "capturedAtEpochSeconds": 1794853421.212,
+      "bytes": 330991,
+      "sha256": "af085f8b10ebb0870b47702246cc56fb721620988d9e8b249e736006b7b4c6da"
+    },
+    {
+      "name": "12-application-workspace-accessibility-text",
+      "path": "attempt-2/selected-screenshots/12-application-workspace-accessibility-text.png",
+      "artifactMember": "career-ui-screenshots/A66CEFE4-D30D-448C-83C3-9D28CA86BA17.png",
+      "test": "CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable()",
+      "device": "iPhone Air",
+      "capturedAtEpochSeconds": 1794853428.294,
+      "bytes": 821657,
+      "sha256": "e2c32974437936a88552dd3aa22110b1a36835a72572d841e865bcac8299d85b"
+    }
+  ],
+  "frozenInputs": {
+    "commit": "caa5ace14fe7b430db845d935a89803700cc7665",
+    "matchesRemoteContentAPI": true,
+    "sourceFingerprints": {
+      "apple/AhmadCareer/NativeDiscoveryViews.swift": {
+        "sha256": "bf6f2dfd285ef4522de58f7f4b52c4e0a86628ff0875ec9b290cc2ec4979de36",
+        "gitBlobSHA": "084a9da9185b97497d00532b95270385a7240233",
+        "bytes": 16586
+      },
+      "apple/UITests/CareerFinderUITests.swift": {
+        "sha256": "3b42aef15fbc8d31350ddcc19856d6ffb524bf0cd8c6f4cfaa37eb7dd521dd1d",
+        "gitBlobSHA": "d89ee1629e9c7cbe144d5930fb07f563c90362dd",
+        "bytes": 13633
+      }
+    },
+    "appleInputCount": 24,
+    "appleInputHashes": {
+      "apple/AhmadCareer/AhmadCareerApp.swift": "bd025363b777b8a37390008a31dec85c97b4688ec7b2b5a958c74bb49430bccf",
+      "apple/AhmadCareer/CareerAppEnvironment.swift": "ccf1a3d7ce60a4f5d5da822e3991ba632ca29c4385735943410ded0bea7edd08",
+      "apple/AhmadCareer/CareerDiscovery.swift": "7bbe9321917dc051e8911f7556653e807d4f25d3baa934829d21e1c4cebe09cc",
+      "apple/AhmadCareer/CareerFeed.swift": "f726dd1144423e71cadea28da4ff60792c5459dc0c873c0a4fb7858b3a6b3273",
+      "apple/AhmadCareer/CareerPolicy.swift": "59441ba26db1bca33fbcc6f985c1cfc054ba0774d3c4ff027a9a712e1883a9cf",
+      "apple/AhmadCareer/CareerWebView.swift": "ff866bd788485434da518a51d05e65a191a3e69081b24a04772d29eafd0dcd8c",
+      "apple/AhmadCareer/MobileApplicationClient.swift": "20fc9c366bf0b1fa5a51484faa1c4e33d5a07e1bb5413dee1227eaeddd40d6e5",
+      "apple/AhmadCareer/MobileApplicationState.swift": "63333e4b4761cc89e0fcef7ec3949f95fe2ecb92cf04cd13a6d970326de9ea75",
+      "apple/AhmadCareer/NativeApplicationsStore.swift": "28e8cd1465aab66c77c090463d846a116155e9afbfa7e6121d159482a0211591",
+      "apple/AhmadCareer/NativeApplicationsViews.swift": "c25f606fd20cf5aab247cef0f8994db8f08630aaa09f58da9678e84f4c905f33",
+      "apple/AhmadCareer/NativeCareerStore.swift": "f0140a3bcea9e947db4689e3784898f1ef59735c3217515d6b309f1cda62f7e7",
+      "apple/AhmadCareer/NativeCareerViews.swift": "328b7448072c57a2f7ecb18acaf43a216e7b710d2895e84e46820d104d777165",
+      "apple/AhmadCareer/NativeDiscoveryViews.swift": "bf6f2dfd285ef4522de58f7f4b52c4e0a86628ff0875ec9b290cc2ec4979de36",
+      "apple/AhmadCareer/CareerResearch.json": "9337469922d86ad305f109c838a8cf5c0742d6ffcdc438f3ffbe497f7eb92b1b",
+      "apple/Checks/MobileApplicationCheck.swift": "7fb3157dde1c0f4bd9825039b0707a8ce49999cd8ac85142bf52ef90281a66b4",
+      "apple/Checks/MobileLifecycleCheck.swift": "f5709837f1da715206198b0a2a5359ab7ac7d26806699ac9e73f1684e472014f",
+      "apple/Checks/NativeStoreCheck.swift": "fc1f9f13068a064391540a7bf150251f4fd4866fc768f0ad4573f71be0e92b91",
+      "apple/Checks/DiscoveryCheck.swift": "80a6d82da5880a449acd762afc313dc6be7ad74432c3fc6fe600b987b47ce083",
+      "apple/Checks/check-mobile.sh": "6f1387653eb33dcbabb011d02060021a12c30a8f713baf399d8fb2f434bac793",
+      "apple/Checks/Fixtures/discovery-search-v1.json": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7",
+      "apple/UITests/CareerFinderUITests.swift": "3b42aef15fbc8d31350ddcc19856d6ffb524bf0cd8c6f4cfaa37eb7dd521dd1d",
+      "apple/AhmadCareer.xcodeproj/project.pbxproj": "508514d75ed8cea5f19c755680e423395efe6fe92a2736a837b4dd71dbed502b",
+      "apple/AhmadCareer.xcodeproj/xcshareddata/xcschemes/AhmadCareer.xcscheme": "f9b67f757ea53e6ed0ac8d54c5c2f2ac2609dc5c9a9fb3e4d0434b4a8f7cf395",
+      "apple/AhmadCareer.xcodeproj/xcshareddata/xcschemes/CareerFinderAcceptance.xcscheme": "37b0f04c230f409a57419429d44b09543157ffb568cdce8a24fc64bd3736ddba"
+    },
+    "snapshotFile": "apple/Checks/polish-source-snapshot.json",
+    "snapshotFileSHA256": "1ab434e16f389a34950f10f681c370298721c8a4e8fce7311c2f462d3fbf7399",
+    "sourceMismatchCount": 0
+  },
+  "priorAttempt": {
+    "runAttempt": 1,
+    "uiJobId": 133496114661,
+    "conclusion": "failure",
+    "executedTests": 7,
+    "passedTests": 6,
+    "failedTests": 1,
+    "summary": "attempt-1-summary.json",
+    "summarySHA256": "0cc77aa0710f24a82ab3f672ac1e4e0e812239a915d8c25392221d486def62f0",
+    "artifactId": 14255114781,
+    "artifactSHA256": "b564e5c1413e05f30ad0fcbfc6611d6fa38497d52a69cf2b4d4f0f8cfdb006a6",
+    "note": "Missed first Search-tab transition is preserved as observed; its underlying cause is not established. All seven tests passed together on the single authorized unchanged-source reproduction."
+  },
+  "rerunPreconditions": {
+    "localHEAD": "caa5ace14fe7b430db845d935a89803700cc7665",
+    "localClean": true,
+    "dirtyEntryCount": 0,
+    "origin": "github.com/swonyu/ahmad-career",
+    "remoteBranchHEAD": "caa5ace14fe7b430db845d935a89803700cc7665",
+    "runId": 43923335555,
+    "runAttempt": 1,
+    "runHEAD": "caa5ace14fe7b430db845d935a89803700cc7665",
+    "runStatus": "completed",
+    "runConclusion": "failure",
+    "fourNonUIPassed": true,
+    "uiFailed": true,
+    "jobsHEADMatch": true,
+    "authorizedPreconditionsSatisfied": true
+  },
+  "rerunRequest": {
+    "runId": 43923335555,
+    "commit": "caa5ace14fe7b430db845d935a89803700cc7665",
+    "requestedAt": "2026-11-16T18:17:46.395489+00:00",
+    "scope": "Exactly one explicitly authorized failed-job rerun, unchanged source, reproducibility check; no further retry.",
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "scopeLimits": [
+    "This is an actual seven-test pass in one hosted simulator suite; results were not assembled from multiple failed attempts.",
+    "The rerun was an explicitly authorized, one-time reproducibility check. No code, timeout or test expectation changed between attempts.",
+    "The UI suite uses an isolated offline synthetic workspace and no real account, CV or employer submission.",
+    "Simulator success does not establish physical-device, VoiceOver, system PDF-picker, production pairing, signing or store-distribution acceptance.",
+    "No local Xcode project build, simulator or signing was used; no further retry was initiated.",
+    "Full xcresult/archive and raw recordings remain outside the source repository."
+  ]
+}

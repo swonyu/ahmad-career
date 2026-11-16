@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "runId": 43923335555,
+  "runAttempt": 1,
+  "commit": "caa5ace14fe7b430db845d935a89803700cc7665",
+  "run": {
+    "id": 43923335555,
+    "head_sha": "caa5ace14fe7b430db845d935a89803700cc7665",
+    "run_attempt": 1,
+    "status": "completed",
+    "conclusion": "failure",
+    "run_started_at": "2026-11-16T17:54:58Z",
+    "updated_at": "2026-11-16T18:11:59Z",
+    "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43923335555"
+  },
+  "jobs": [
+    {
+      "id": 133496114063,
+      "name": "Service and synthetic HTTPS",
+      "conclusion": "success",
+      "started_at": "2026-11-16T17:55:01Z",
+      "completed_at": "2026-11-16T17:55:25Z",
+      "head_sha": "caa5ace14fe7b430db845d935a89803700cc7665",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43923335555/job/133496114063"
+    },
+    {
+      "id": 133496114661,
+      "name": "iPhone native interface acceptance",
+      "conclusion": "failure",
+      "started_at": "2026-11-16T17:55:07Z",
+      "completed_at": "2026-11-16T18:11:59Z",
+      "head_sha": "caa5ace14fe7b430db845d935a89803700cc7665",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43923335555/job/133496114661"
+    },
+    {
+      "id": 133496114680,
+      "name": "iPhone logic and unsigned build",
+      "conclusion": "success",
+      "started_at": "2026-11-16T17:55:07Z",
+      "completed_at": "2026-11-16T17:57:11Z",
+      "head_sha": "caa5ace14fe7b430db845d935a89803700cc7665",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43923335555/job/133496114680"
+    },
+    {
+      "id": 133496114754,
+      "name": "Hosted HTTPS service and durable storage",
+      "conclusion": "success",
+      "started_at": "2026-11-16T17:55:02Z",
+      "completed_at": "2026-11-16T17:56:05Z",
+      "head_sha": "caa5ace14fe7b430db845d935a89803700cc7665",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43923335555/job/133496114754"
+    },
+    {
+      "id": 133496114889,
+      "name": "Android compile and lint",
+      "conclusion": "success",
+      "started_at": "2026-11-16T17:55:03Z",
+      "completed_at": "2026-11-16T17:56:35Z",
+      "head_sha": "caa5ace14fe7b430db845d935a89803700cc7665",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43923335555/job/133496114889"
+    }
+  ],
+  "device": "iPhone Air",
+  "runtime": "iOS 26.5 Simulator",
+  "executedTests": 7,
+  "passedTests": 6,
+  "failedTests": 1,
+  "unexpectedFailures": 0,
+  "testDurationSeconds": 557.254,
+  "tests": [
+    {
+      "name": "testAccessibilityTextKeepsCoreControlsReachable",
+      "result": "passed",
+      "seconds": 82.03
+    },
+    {
+      "name": "testApplicationDraftSurvivesCancelAndRelaunch",
+      "result": "passed",
+      "seconds": 52.429
+    },
+    {
+      "name": "testDiscoverySaveFlowsIntoSavedAndApply",
+      "result": "passed",
+      "seconds": 37.925
+    },
+    {
+      "name": "testFreshStartAndFiveTabs",
+      "result": "failed",
+      "seconds": 139.588
+    },
+    {
+      "name": "testOpportunityDiscardRequiresExplicitChoice",
+      "result": "passed",
+      "seconds": 60.095
+    },
+    {
+      "name": "testOpportunityDraftKeepSaveAndRestore",
+      "result": "passed",
+      "seconds": 82.904
+    },
+    {
+      "name": "testSearchEmptyAndFailurePreservesPreviousResults",
+      "result": "passed",
+      "seconds": 102.283
+    }
+  ],
+  "failure": {
+    "test": "testFreshStartAndFiveTabs",
+    "sourceLine": 92,
+    "assertion": "discovery.keywords TextField must exist after tapping the Search tab",
+    "observed": "The recorded Search tap does not change the selected tab. Start remains selected in the final video frame and failure hierarchy, and the discovery field is absent. The preceding launch and automation actions are unusually slow, but no explicit AX IPC diagnostic is logged.",
+    "launchObservation": "Recording at50 seconds is white with only the system status bar; setup automation spans test time4.11 through52.28 seconds.",
+    "tap": {
+      "event": "tap",
+      "durationSeconds": 0.05,
+      "point": [
+        137.65,
+        860.0
+      ],
+      "windowSize": [
+        420.0,
+        912.0
+      ],
+      "searchTabFrame": [
+        97.3,
+        833.0,
+        80.6,
+        54.0
+      ],
+      "pointInsideRecordedFrame": true
+    },
+    "timingsSeconds": {
+      "searchButtonResolve": [
+        74.52,
+        90.77
+      ],
+      "synthesizeTap": 99.26,
+      "fieldWaitStarted": 102.29,
+      "hierarchyRequested": 122.06,
+      "failure": 134.34
+    },
+    "interpretation": "A generated tap targeted the correct Search-tab rectangle but the visible transition did not occur. The underlying event/host/application cause is unproved. This is not evidence that Search was visibly correct while its field query lagged. All other search transitions and the full search/error/retained-results test passed in this same suite.",
+    "recommendation": "Do not make a production workaround or widen the field wait without further evidence. Preserve the unchanged source and use a separately authorized bounded reproduction if requested."
+  },
+  "artifact": {
+    "id": 14255114781,
+    "bytes": 94914182,
+    "sha256": "b564e5c1413e05f30ad0fcbfc6611d6fa38497d52a69cf2b4d4f0f8cfdb006a6"
+  },
+  "uiJobLogSHA256": "c084a6697e295355eba83593f3698e45bdc3fb674b930b2f60a15fa8d36f1439",
+  "xcodeLogSHA256": "10ce1bf1c7d91a02d6476eeac5bf346ac0a76627c935c5934e342d17a2676335",
+  "hierarchySHA256": "f43da77386fed7674814838d5b37e3dd2b60197b8f31113da2a449e744c0a4e4",
+  "namedScreenshots": 12,
+  "frames": {
+    "fresh-start-3s.png": "c3a4537c23849f7c3d82311c1e286d06cec0f9a6fe9c9a370e108413db370913",
+    "fresh-start-50s.png": "6fcf2fdfcbf78861fb91906c91cb7161de76bb5fae1c5ca053b0ff011dd2f2cf",
+    "fresh-start-99s.png": "4f7e20de43a19e4770c37471a0adcdfd695df341cc546295bf1f886e6fd06907",
+    "fresh-start-final.png": "ac5b764f9b6ac53fe2189a400c38a81690920d986791c5e45bb85e241a663258"
+  },
+  "sourceFingerprints": {
+    "commit": "caa5ace14fe7b430db845d935a89803700cc7665",
+    "matchesFrozenSource": true,
+    "files": {
+      "apple/AhmadCareer/NativeDiscoveryViews.swift": {
+        "sha256": "bf6f2dfd285ef4522de58f7f4b52c4e0a86628ff0875ec9b290cc2ec4979de36",
+        "gitBlobSHA": "084a9da9185b97497d00532b95270385a7240233",
+        "bytes": 16586
+      },
+      "apple/UITests/CareerFinderUITests.swift": {
+        "sha256": "3b42aef15fbc8d31350ddcc19856d6ffb524bf0cd8c6f4cfaa37eb7dd521dd1d",
+        "gitBlobSHA": "d89ee1629e9c7cbe144d5930fb07f563c90362dd",
+        "bytes": 13633
+      }
+    }
+  },
+  "scopeLimits": [
+    "No source change or automatic retry was made after this failure.",
+    "A single suite PASS is not inferred by combining different failed runs.",
+    "No local Xcode build, local simulator, signing or real employer submission was used."
+  ]
+}

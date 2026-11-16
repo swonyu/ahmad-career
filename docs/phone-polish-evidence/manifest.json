@@ -1,0 +1,30 @@
+[
+  {
+    "path": "iphone-keyboard-before-return.png",
+    "bytes": 439427,
+    "sha256": "181844a521e98e51dd9609a3b978238dd2f6dbe57fc0d4a0d9a1bcf4c30b224f",
+    "source": "iphone-ci-43913861800/attempt-2/search-return-39s.png"
+  },
+  {
+    "path": "iphone-keyboard-after-return.png",
+    "bytes": 419451,
+    "sha256": "c30b66f77fdf1bc6fad1ac8fff83ae33ed0448bfeed14b3eef9c31d60d01cd85",
+    "source": "iphone-ci-43913861800/attempt-2/search-return-42s.png"
+  },
+  {
+    "path": "android-country-keyboard-final.png",
+    "bytes": 106075,
+    "sha256": "796169c233cb51e8d970c8cc01bd025eb44185caa43f348df202df5353be3779",
+    "source": "deliverables/android-v0.4.0/country-keyboard-final.png"
+  },
+  {
+    "path": "iphone-search-final-passed.png",
+    "bytes": 351336,
+    "sha256": "965597defb5b0b73aed3d7e78ffb3b707ce2931386d50e379f1eaa92e0aa54cd",
+    "source": "iphone-ci-43923335555/attempt-2/selected-screenshots/02-discovery-empty.png",
+    "runId": 43923335555,
+    "runAttempt": 2,
+    "commit": "caa5ace14fe7b430db845d935a89803700cc7665",
+    "artifactId": 14256834676
+  }
+]
