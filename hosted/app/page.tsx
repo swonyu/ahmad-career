@@ -1,1 +1,1 @@
-export { default, dynamic } from "./connect/page";
+export { default, dynamic, metadata, viewport } from "./phone/page";

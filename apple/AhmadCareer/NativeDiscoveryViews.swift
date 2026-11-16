@@ -223,7 +223,11 @@ private struct NativeDiscoveryJobDetail: View {
             Section {
                 if saved {
                     Label("Saved for application review", systemImage: "checkmark.circle").accessibilityIdentifier("discovery.saved")
-                    Button("Open application workspace") { navigation.selectedTab = 2 }
+                    if let saved = applications.jobs.first(where: { MobileApplicationPolicy.jobIdentity($0["url"]?.string ?? "") == MobileApplicationPolicy.jobIdentity(job.url) }),
+                       let id = saved["id"]?.string {
+                        NavigationLink("Track this opportunity") { NativeSavedApplicationDetail(id: id) }
+                            .accessibilityIdentifier("discovery.trackOpportunity")
+                    }
                 } else {
                     Button {
                         Task {

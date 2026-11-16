@@ -213,7 +213,8 @@ data class JobAnswers(val comments: String = "", val consentStore: Boolean? = nu
 }
 
 data class StorageProblem(val record: String, val writing: Boolean)
-data class PhoneImport(val profile: ProfileDraft, val jobs: List<Opportunity>, val manualApplied: Set<String>)
+data class PhoneImport(val profile: ProfileDraft, val jobs: List<Opportunity>, val manualApplied: Set<String>,
+    val applicationRecords: Map<String, ApplicationRecordBundle> = emptyMap())
 
 data class CareerUiState(
     val loaded: Boolean = false, val connection: Connection? = null, val requiresPairing: Boolean = false,
@@ -227,7 +228,15 @@ data class CareerUiState(
     val phoneImport: PhoneImport? = null, val reviewingRecoveredPlan: Boolean = false,
     val obsoleteReviews: Set<String> = emptySet(),
     val clientContinuation: Boolean = false, val continuationHolds: Set<String> = emptySet(),
-    val opportunityDraft: OpportunityDraft = OpportunityDraft(), val linkedinProfile: Boolean = false
+    val opportunityDraft: OpportunityDraft = OpportunityDraft(), val linkedinProfile: Boolean = false,
+    val applicationRecords: Map<String, ApplicationRecordBundle> = emptyMap(),
+    val applicationRecordEditor: ApplicationRecordEditorState? = null
 ) {
     val profileConflict: ProfileDraft? get() = serverProfile?.takeIf { profileDirty && it.revision != profile.revision }
+    val privateScope: String get() = connection?.let { "workspace-" + BoundaryPolicy.workspaceKey(it.origin, it.workspaceId) } ?: "workspace-unpaired"
+    fun recordFor(job: Opportunity): ApplicationRecordBundle? = applicationRecords[BoundaryPolicy.jobIdentity(job.url)]
+    val unbookmarkedRecords: List<ApplicationRecordBundle> get() {
+        val bookmarked = jobs.map { BoundaryPolicy.jobIdentity(it.url) }.toSet()
+        return applicationRecords.filterKeys { it !in bookmarked }.values.toList()
+    }
 }

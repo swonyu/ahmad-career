@@ -1,0 +1,134 @@
+{
+  "scope": "Android LinkedIn optional profile link and explicit external job-search handoff",
+  "completedAt": "2026-11-16T22:23:03.294232+00:00",
+  "sourceFrozen": true,
+  "sourceManifest": "source-manifest.json",
+  "sourceManifestSha256": "da6c6e5175286ee4eab87e623248ac8f0f3fedf04253141f5d727175d523ab36",
+  "sourceFileCount": 38,
+  "changedSourceFiles": [
+    "android/README.md",
+    "android/app/build.gradle.kts",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/LinkedInPhoneAcceptanceTest.kt",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/LinkedInRegressionTest.kt",
+    "android/app/src/main/java/com/saleh/careerfinder/BoundaryPolicy.java",
+    "android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt",
+    "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+    "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+    "android/app/src/main/java/com/saleh/careerfinder/Models.kt",
+    "android/checks/BoundaryPolicyCheck.java"
+  ],
+  "artifact": {
+    "path": "/Users/saleh/Documents/Codex/2026-11-16/career-finder-everyone/android-linkedin-check-20261116/run2/artifacts/Career-Finder-Android-0.5.0-preview.apk",
+    "bytes": 12133120,
+    "sha256": "20327d33b650f396694885a3331b03a7708a56b1f1efceea89dde6f9d7d95a9f",
+    "package": "com.saleh.careerfinder.preview",
+    "versionCode": 6,
+    "versionName": "0.5.0",
+    "certificateSha256": "8790e9582889118f556fa287e8f031ee3d2f5221d25008ec5f399c8444c1de17",
+    "matchesImmutable04Signer": true,
+    "immutable04ApkSha256": "3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62",
+    "originalDebugKeystoreUnchanged": true,
+    "normalSystemTrustOnly": true,
+    "fixtureCaEntries": []
+  },
+  "build": {
+    "tasks": [
+      "assembleDebug",
+      "assembleDebugAndroidTest",
+      "lintDebug",
+      "processReleaseResources"
+    ],
+    "passed": true,
+    "lint": {
+      "errors": 0,
+      "warnings": 1,
+      "issues": [
+        {
+          "id": "UseKtx",
+          "severity": "Warning",
+          "message": "Use the KTX extension function `String.toUri` instead?"
+        }
+      ]
+    }
+  },
+  "boundaryChecks": {
+    "passed": 77,
+    "network": false
+  },
+  "instrumentation": {
+    "passed": 28,
+    "elapsedSeconds": 9.4,
+    "groups": {
+      "WorkspaceRegressionTest": 17,
+      "LinkedInRegressionTest": 9,
+      "LinkedInPhoneAcceptanceTest": 2
+    },
+    "device": {
+      "api": 36,
+      "widthDp": 360,
+      "pixels": [
+        1080,
+        1920
+      ],
+      "fontScale": 1.8,
+      "night": true,
+      "locale": "ar",
+      "rtl": true
+    },
+    "sourceInputsUnchangedAfterRun": true
+  },
+  "visualReview": {
+    "reviewed": true,
+    "captures": {
+      "linkedin-profile-guidance": {
+        "width": 1080,
+        "height": 1920,
+        "bitDepth": 8,
+        "colorType": 2,
+        "bytes": 157960,
+        "sha256": "350ccbe816c8498883195af08106a3251bb5655736518e8317d33c5654a3d2a0"
+      },
+      "linkedin-exact-review": {
+        "width": 1080,
+        "height": 1920,
+        "bitDepth": 8,
+        "colorType": 2,
+        "bytes": 123289,
+        "sha256": "d9a5dd3091773280bf39f2b286e8967efa542f22ae420263f383cba909c2db1b"
+      },
+      "linkedin-search-handoff": {
+        "width": 1080,
+        "height": 1920,
+        "bitDepth": 8,
+        "colorType": 2,
+        "bytes": 143190,
+        "sha256": "21baff6c66012a8a2f65ae22d8b37dffda092f41a9ad076e6d1dac023abaff57"
+      }
+    },
+    "findings": "Profile link guidance, exact approval URL and search handoff remain readable and scrollable at large text; no clipped action controls or false connection/submission claim."
+  },
+  "cleanup": {
+    "at": "2026-11-16T22:23:03.294594+00:00",
+    "ownedEmulatorStopped": true,
+    "ownedAdbStopped": true,
+    "newAvdRemoved": true,
+    "oldAvdConfigUnchanged": true,
+    "shared5037Unchanged": true,
+    "portsAfter": {
+      "5053": false,
+      "5578": false,
+      "5579": false
+    }
+  },
+  "history": {
+    "run1": "All28 tests and69 boundary checks passed before additional Cf/bidi and canonical-length guards; original candidate/evidence retained.",
+    "run2": "Final77 boundary checks and28 runtime tests passed after hardening.",
+    "older04and041Artifacts": "Preserved unchanged."
+  },
+  "limitations": [
+    "This feature stores a user-provided public LinkedIn profile URL. It is not LinkedIn OAuth, ownership verification, profile import or a LinkedIn application API.",
+    "The APK is an ordinary debug-signed preview, not a Play Store production release.",
+    "No real employer, LinkedIn account or production account was used by these synthetic tests.",
+    "JVM URI normalization changes raw decomposed Unicode to NFC; existing percent-encoded canonical service URLs roundtrip unchanged. Narrow raw-input consistency finding retained for next pass."
+  ]
+}

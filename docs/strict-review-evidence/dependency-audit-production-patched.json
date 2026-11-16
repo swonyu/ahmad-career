@@ -1,0 +1,35 @@
+{
+  "startedAt": "2026-11-16T23:22:39.108204+00:00",
+  "scope": "production dependencies after all four advisory updates",
+  "command": [
+    "npm",
+    "audit",
+    "--omit=dev",
+    "--json",
+    "--fetch-retries=0",
+    "--fetch-timeout=15000"
+  ],
+  "exitCode": 0,
+  "report": {
+    "auditReportVersion": 2,
+    "vulnerabilities": {},
+    "metadata": {
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "dependencies": {
+        "prod": 195,
+        "dev": 688,
+        "optional": 252,
+        "peer": 44,
+        "peerOptional": 0,
+        "total": 924
+      }
+    }
+  }
+}

@@ -2,7 +2,6 @@ package com.saleh.careerfinder
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -55,6 +54,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.core.view.WindowCompat
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import java.time.Instant
 import java.time.LocalDate
@@ -152,6 +152,7 @@ private fun PhoneNavigation(tabs: List<Destination>, selectedIndex: Int, select:
 @Composable
 fun CareerApp(model: CareerViewModel) {
     val state by model.state.collectAsStateWithLifecycle()
+    val compactHeader = LocalDensity.current.fontScale >= 1.5f
     var tab by rememberSaveable { mutableIntStateOf(0) }
     var jobsSection by rememberSaveable { mutableIntStateOf(0) }
     var showConnect by rememberSaveable { mutableStateOf(false) }
@@ -168,7 +169,7 @@ fun CareerApp(model: CareerViewModel) {
                 Row(Modifier.fillMaxWidth().statusBarsPadding().padding(horizontal = 20.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
                         Text("CAREER FINDER", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
-                        Text("Your next chapter.", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
+                        if (!compactHeader) Text("Your next chapter.", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
                     }
                     IconButton(onClick = { showConnect = true }, modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp)) {
                         Icon(Icons.Default.Settings, contentDescription = "Connection and privacy settings")
@@ -197,6 +198,7 @@ fun CareerApp(model: CareerViewModel) {
     if (showConnect && !state.storageBlocked) ConnectionDialog(state, model) { showConnect = false }
     if (showAdd && !state.storageBlocked) AddOpportunityDialog(state, model) { showAdd = false }
     if (state.phoneImport != null && !state.storageBlocked) PhoneImportDialog(state, model)
+    if (state.applicationRecordEditor != null && !state.storageBlocked) ApplicationRecordEditor(state, model)
 }
 
 @Composable
@@ -304,12 +306,20 @@ private fun PhoneImportDialog(state: CareerUiState, model: CareerViewModel) {
                     Text("This replaces the profile draft currently shown. It is shared with the service only when you save the connected profile.", style = MaterialTheme.typography.bodySmall)
                 }
             }
-            if (phone.jobs.isNotEmpty()) item {
+            if (phone.jobs.isNotEmpty() || phone.applicationRecords.isNotEmpty()) item {
                 Panel {
-                    Text("Saved opportunities", style = MaterialTheme.typography.titleLarge)
+                    Text("Saved links and private records", style = MaterialTheme.typography.titleLarge)
+                    val linkCount = if (phone.jobs.size == 1) "1 saved link" else "${phone.jobs.size} saved links"
+                    val recordCount = if (phone.applicationRecords.size == 1) "1 private record" else "${phone.applicationRecords.size} private records"
+                    Text("$linkCount · $recordCount", style = MaterialTheme.typography.bodySmall)
                     phone.jobs.forEach { Text(it.title + " · " + it.company, style = MaterialTheme.typography.bodyMedium) }
-                    CheckLine("Copy saved opportunities", jobs, { jobs = it }, !state.busy)
-                    Text("Existing links are skipped. Each copied opportunity stays local until you choose Sync.", style = MaterialTheme.typography.bodySmall)
+                    val linked = phone.jobs.map { BoundaryPolicy.jobIdentity(it.url) }.toSet()
+                    phone.applicationRecords.values.filter { it.identity !in linked }.forEach {
+                        Text("Record only: ${it.job.title} · ${it.job.company}", style = MaterialTheme.typography.bodyMedium)
+                    }
+                    CheckLine("Copy saved links and private records", jobs, { jobs = it }, !state.busy)
+                    Text("Matching links are kept once. Different record details stay available for review. Removed links stay removed.", style = MaterialTheme.typography.bodySmall)
+                    Text("Records stay private on this phone. Copied links stay here until you choose Sync.", style = MaterialTheme.typography.bodySmall)
                 }
             }
             if (state.profileConflict != null) item { Text("Resolve the current profile conflict before copying this draft.", color = MaterialTheme.colorScheme.error) }
@@ -323,7 +333,7 @@ private fun PhoneImportDialog(state: CareerUiState, model: CareerViewModel) {
 private fun MessageBanner(text: String, error: Boolean, dismiss: (() -> Unit)?) {
     Surface(color = if (error) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.primaryContainer) {
         Row(Modifier.fillMaxWidth().padding(start = 20.dp, top = 10.dp, bottom = 10.dp, end = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(text, Modifier.weight(1f).semantics { liveRegion = LiveRegionMode.Polite },
+            Text(text, Modifier.weight(1f).heightIn(max = 150.dp).verticalScroll(rememberScrollState()).semantics { liveRegion = LiveRegionMode.Polite },
                 style = MaterialTheme.typography.bodyMedium,
                 color = if (error) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onPrimaryContainer)
             if (dismiss != null) IconButton(onClick = dismiss) { Icon(Icons.Default.Close, "Dismiss message") }
@@ -366,9 +376,14 @@ internal fun EmptyState(title: String, body: String, icon: ImageVector = Icons.D
 
 @Composable
 internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: () -> Unit, review: () -> Unit, discover: () -> Unit) {
-    var query by rememberSaveable { mutableStateOf("") }
-    var removingID by rememberSaveable { mutableStateOf<String?>(null) }
-    val filtered = state.jobs.filter { (it.title + " " + it.company + " " + it.location + " " + it.country).contains(query, ignoreCase = true) }
+    var query by rememberSaveable(state.privateScope) { mutableStateOf("") }
+    var filter by rememberSaveable(state.privateScope) { mutableStateOf(SavedOpportunityFilter.ALL) }
+    var removingID by rememberSaveable(state.privateScope) { mutableStateOf<String?>(null) }
+    val matchingJobs = state.jobs.filter { (it.title + " " + it.company + " " + it.location + " " + it.country).contains(query, ignoreCase = true) && filter.includes(state.recordFor(it)) }
+    val filtered = if (filter == SavedOpportunityFilter.FOLLOW_UP) matchingJobs.sortedBy { state.recordFor(it)?.current?.record?.followUpDate } else matchingJobs
+    val orphaned = state.unbookmarkedRecords.filter { (it.job.title + " " + it.job.company + " " + it.job.location + " " + it.job.country).contains(query, ignoreCase = true) && filter.includes(it) }
+        .let { if (filter == SavedOpportunityFilter.FOLLOW_UP) it.sortedBy { record -> record.current.record.followUpDate } else it }
+    val hasRecords = state.jobs.isNotEmpty() || state.applicationRecords.isNotEmpty()
     val context = LocalContext.current
     LazyColumn(Modifier.fillMaxSize().testTag("jobs-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         item { Heading("Your shortlist.", "Keep the roles you want to come back to, and track the applications you complete yourself.") }
@@ -381,22 +396,32 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
                 if (state.connection != null) IconButton(onClick = model::refresh, enabled = !state.busy) { Icon(Icons.Default.Refresh, "Refresh saved opportunities") }
             }
         }
-        if (state.jobs.isNotEmpty()) item { Field("Search saved opportunities", query, { query = it }, type = KeyboardType.Text) }
-        if (state.jobs.isEmpty()) item { EmptyState("Start with one good opportunity.", "Save a role from Discover, or add an employer link from anywhere. Saving never sends an application.", action = "Discover jobs", onClick = discover) }
-        else if (filtered.isEmpty()) item { EmptyState("No saved opportunities match.", "Your saved roles are still here. Clear the search to see them again.", action = "Clear saved-job search", onClick = { query = "" }) }
+        if (hasRecords) {
+            item { Field("Search saved opportunities", query, { query = it }, type = KeyboardType.Text) }
+            item {
+                Row(Modifier.fillMaxWidth().selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(SavedOpportunityFilter.ALL, SavedOpportunityFilter.FOLLOW_UP).forEach { choice ->
+                        FilterChip(filter == choice, { filter = choice }, label = { Text(choice.label) },
+                            modifier = Modifier.heightIn(min = 48.dp).semantics { role = Role.RadioButton })
+                    }
+                }
+                if (filter == SavedOpportunityFilter.FOLLOW_UP) Text("Dates you set in your private records. Closed applications are hidden here.", style = MaterialTheme.typography.bodySmall)
+            }
+        }
+        if (!hasRecords) item { EmptyState("Start with one good opportunity.", "Save a role from Discover, or add an employer link from anywhere. Saving never sends an application.", action = "Discover jobs", onClick = discover) }
+        else if (filtered.isEmpty() && orphaned.isEmpty()) item { EmptyState(if (filter == SavedOpportunityFilter.FOLLOW_UP) "No follow-ups match." else "No saved opportunities match.",
+            if (filter == SavedOpportunityFilter.FOLLOW_UP) "Add a follow-up date in an application record to see it here." else "Your saved roles are still here. Clear the search to see them again.",
+            action = "Show all saved opportunities", onClick = { query = ""; filter = SavedOpportunityFilter.ALL }) }
         items(filtered, key = Opportunity::id) { job ->
             Panel {
                 Text(job.company.ifBlank { "Employer" }, color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
                 Text(job.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
                 Text(listOf(job.location, job.country).filter(String::isNotBlank).joinToString(" · ").ifBlank { "Location not recorded" }, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(if (job.localOnly) "Saved on this phone" else "Saved to your workspace", style = MaterialTheme.typography.labelMedium)
-                if (job.id in state.manualApplied) StatusPill("Applied elsewhere · self-reported", false)
                 OutlinedButton(onClick = { openLink(context, job.url) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
                     .semantics { contentDescription = "Open employer page for ${job.title} at ${job.company}" }) { Text("Open employer page") }
-                CheckLine("I applied on the employer’s site", job.id in state.manualApplied,
-                    { model.markAppliedElsewhere(job.id, it) }, !state.busy,
-                    accessibilityLabel = "I applied on the employer’s site for ${job.title} at ${job.company}")
-                if (job.id in state.manualApplied) Text("Your own record. This does not create a verified application receipt.", style = MaterialTheme.typography.bodySmall)
+                ApplicationRecordSummary(state.recordFor(job), { model.openApplicationRecord(job, state.privateScope) }, !state.busy,
+                    "Application record for ${job.title} at ${job.company}")
                 if (job.localOnly && state.connection != null) TextButton(onClick = { model.syncOpportunity(job) }, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Sync this opportunity") }
                 if (job.localOnly) TextButton(onClick = { removingID = job.id }, enabled = !state.busy,
                     modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
@@ -408,6 +433,18 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
                 }
             }
         }
+        items(orphaned, key = { "record-" + it.identity }) { record ->
+            Panel {
+                Text(record.job.company.ifBlank { "Employer" }, color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
+                Text(record.job.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
+                Text("Application record · saved link removed", style = MaterialTheme.typography.labelMedium)
+                ApplicationRecordSummary(record, { model.openApplicationRecord(record.job, state.privateScope) }, !state.busy,
+                    "Application record for ${record.job.title} at ${record.job.company}")
+                OutlinedButton(onClick = { openLink(context, record.job.url) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Open employer page") }
+                TextButton(onClick = { model.restoreRecordedOpportunity(record.identity, state.privateScope) }, enabled = !state.busy,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Save opportunity again") }
+            }
+        }
         item { Text("Saving a link does not verify its availability or submit an application. Automatic applications depend on a supported employer integration.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
     }
     state.jobs.firstOrNull { it.id == removingID && it.localOnly }?.let { job ->
@@ -416,7 +453,7 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
             text = {
                 Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text("${job.title} at ${job.company}")
-                    Text("This removes the phone’s link, answers and self-reported application status.")
+                    Text("This removes the saved link and its preparation choices. Your private application record and notes are kept.")
                     Text("Connected records and receipts stay saved.")
                 }
             },
@@ -868,65 +905,103 @@ private fun ConnectionDialog(state: CareerUiState, model: CareerViewModel, close
     val context = LocalContext.current
     var origin by rememberSaveable(state.connection?.origin) { mutableStateOf(ServicePages.initialOrigin(state.connection)) }
     var code by remember { mutableStateOf("") }
-    var removeLocally by remember { mutableStateOf(false) }
+    var advanced by rememberSaveable(state.connection?.origin) { mutableStateOf(ServicePages.initialOrigin(state.connection) != ServicePages.DEFAULT_ORIGIN) }
+    var details by rememberSaveable { mutableStateOf(false) }
+    var phoneOptions by rememberSaveable(state.connection?.origin) { mutableStateOf(false) }
+    var removeLocally by remember { mutableStateOf<Connection?>(null) }
+    var disconnecting by remember { mutableStateOf<Connection?>(null) }
     val validOrigin = remember(origin) { runCatching { BoundaryPolicy.serviceOrigin(origin.trim()) }.getOrNull() }
     val informationOrigin = state.connection?.origin ?: validOrigin
-    FullScreenForm("Private connection", close) {
-        LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            item { Heading("Your phone. Your workspace.", "Open secure setup in your browser, sign in there and create a one-time pairing code. Return here to connect this phone. Your password and employer API keys stay out of the app.") }
+    FullScreenForm("Connect your phone", { if (!state.busy) close() }) {
+        LazyColumn(Modifier.fillMaxSize().imePadding().testTag("phone-connection"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            item { Text("Sign in in your browser, then return with a one-time code.", style = MaterialTheme.typography.bodyMedium) }
             if (state.connection != null) item {
                 Panel {
-                    Text("Connected service", style = MaterialTheme.typography.titleMedium)
-                    Text(state.connection.origin)
-                    Text("Session expires " + dateLabel(state.connection.expiresAt), style = MaterialTheme.typography.bodySmall)
-                    OutlinedButton(onClick = model::disconnect, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Revoke connection on this phone") }
-                    Text("Revocation requires the service to be reachable. It keeps your application records.", style = MaterialTheme.typography.bodySmall)
-                    TextButton(onClick = { removeLocally = true }, enabled = !state.busy,
-                        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Remove connection locally") }
+                    Text(if (state.requiresPairing) "Reconnect this phone" else "This phone is connected", style = MaterialTheme.typography.titleMedium)
+                    Text(if (state.connection.origin == ServicePages.DEFAULT_ORIGIN) "Career Finder" else state.connection.origin)
+                    OutlinedButton(onClick = { openLink(context, ServicePages.url(state.connection.origin, "account")) },
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Manage account") }
+                    TextButton(onClick = { phoneOptions = !phoneOptions }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Phone connection options") }
+                    if (phoneOptions) {
+                        Text("Connected address: " + state.connection.origin, style = MaterialTheme.typography.bodySmall)
+                        Text("Connection expires " + dateLabel(state.connection.expiresAt), style = MaterialTheme.typography.bodySmall)
+                        OutlinedButton(onClick = { disconnecting = state.connection }, enabled = !state.busy,
+                            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Disconnect this phone") }
+                        TextButton(onClick = { removeLocally = state.connection }, enabled = !state.busy,
+                            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Remove connection locally") }
+                    }
                 }
             }
-            item { Field("HTTPS service address", origin, { origin = it }, KeyboardType.Uri, enabled = !state.busy) }
-            item {
-                OutlinedButton(onClick = { validOrigin?.let { openLink(context, ServicePages.url(it, "connect")) } },
-                    enabled = validOrigin != null && !state.busy,
-                    modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text("Open secure connection setup") }
-                Text(if (validOrigin == ServicePages.DEFAULT_ORIGIN)
-                    "On the secure ChatGPT sign-in screen, choose Continue with Google. Return here with your one-time code. Use the same account to recover your workspace."
-                    else "Use this service’s setup page, or request a one-time code from its operator. Check the address before pairing.",
-                    style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-            item {
-                OutlinedTextField(code, { code = it.take(64) }, label = { Text("One-time pairing code") }, modifier = Modifier.fillMaxWidth(),
-                    singleLine = true, enabled = !state.busy, visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters), shape = RoundedCornerShape(14.dp))
-            }
-            item { Action("Pair this phone", !state.busy && validOrigin != null && code.isNotBlank() && !state.storageBlocked) { model.pair(origin, code) { code = ""; close() } } }
-            if (state.error != null) item { Text(state.error, color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }) }
             item {
                 Panel {
-                    Text("Built around your privacy", style = MaterialTheme.typography.titleLarge)
-                    Text("Connection tokens and saved phone drafts are encrypted with Android Keystore and excluded from backup. Saving a connected profile uploads its fields and PDF to the selected service. Synced opportunities and application receipts are also stored there.")
-                    Text("The hosted service keeps this data in your cloud workspace. Employers receive application data only through an approved review and an enabled employer integration. A confirmed receipt is required before an application counts as verified.")
-                    Text("After pairing, Profile lets you review and copy your saved phone draft. Nothing is uploaded by pairing alone.", style = MaterialTheme.typography.bodySmall)
+                    Text("1. Sign in and get a code", style = MaterialTheme.typography.titleLarge)
+                    Action("Sign in and get a code", validOrigin != null && !state.busy) {
+                        validOrigin?.let { openLink(context, ServicePages.url(it, "connect")) }
+                    }
+                    Text(if (validOrigin == ServicePages.DEFAULT_ORIGIN) "Use ChatGPT sign-in. Continue with Google is available there."
+                        else "Use your selected service’s sign-in and create a one-time code.", style = MaterialTheme.typography.bodyMedium)
+                    if (validOrigin != null && validOrigin != ServicePages.DEFAULT_ORIGIN) Text("Destination: $validOrigin", style = MaterialTheme.typography.bodySmall)
+                    Text("Use the same account to return to your saved workspace.", style = MaterialTheme.typography.bodySmall)
+                }
+            }
+            item {
+                Panel {
+                    Text("2. Connect this phone", style = MaterialTheme.typography.titleLarge)
+                    OutlinedTextField(code, { code = it.take(64) }, label = { Text("One-time code") }, modifier = Modifier.fillMaxWidth(),
+                        singleLine = true, enabled = !state.busy, visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters), shape = RoundedCornerShape(14.dp))
+                    Action("Connect this phone", !state.busy && validOrigin != null && code.isNotBlank() && !state.storageBlocked) {
+                        model.pair(origin, code) { code = ""; close() }
+                    }
+                    Text("Connecting does not upload your phone draft. You choose when to save your profile to the workspace.", style = MaterialTheme.typography.bodySmall)
+                }
+            }
+            if (state.error != null) item { Text(state.error, color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }) }
+            item {
+                TextButton(onClick = { advanced = !advanced }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                    Text(if (advanced) "Hide advanced setup" else "Advanced · use another service")
+                }
+                if (advanced) Panel {
+                    Text("Service address", style = MaterialTheme.typography.titleMedium)
+                    Field("HTTPS service address", origin, { origin = it; code = "" }, KeyboardType.Uri, enabled = !state.busy,
+                        error = if (origin.isNotBlank() && validOrigin == null) "Use the HTTPS address without a page path, query or sign-in details." else null)
+                    Text("Only change this if you use another Career Finder service. Get a new code from that service’s own setup page.", style = MaterialTheme.typography.bodySmall)
+                    if (origin != ServicePages.DEFAULT_ORIGIN) TextButton(onClick = { origin = ServicePages.DEFAULT_ORIGIN; code = "" }, enabled = !state.busy,
+                        modifier = Modifier.heightIn(min = 48.dp)) { Text("Use Career Finder") }
+                }
+            }
+            item {
+                Panel {
+                    Text("Your privacy", style = MaterialTheme.typography.titleLarge)
+                    Text("Application notes and follow-up dates stay on this phone. Employers receive only the details in a review you approve.", style = MaterialTheme.typography.bodyMedium)
+                    TextButton(onClick = { details = !details }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(if (details) "Hide storage details" else "How your data is stored") }
+                    if (details) {
+                        Text("Phone drafts, private records and the last search are encrypted and excluded from device backup. Saving a connected profile uploads its fields and PDF to your selected service. Synced jobs and application receipts are stored there too.", style = MaterialTheme.typography.bodySmall)
+                        Text("After connecting, Profile lets you review and copy a separate phone draft. Employers need an enabled integration and your approval before Career Finder can send an application.", style = MaterialTheme.typography.bodySmall)
+                    }
                     if (informationOrigin != null) {
-                        Text("Service information: $informationOrigin", style = MaterialTheme.typography.bodySmall)
                         TextButton(onClick = { openLink(context, ServicePages.url(informationOrigin, "privacy")) },
                             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Privacy and data use") }
                         TextButton(onClick = { openLink(context, ServicePages.url(informationOrigin, "support")) },
                             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Help and support") }
                         TextButton(onClick = { openLink(context, ServicePages.url(informationOrigin, "account")) },
                             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Account, recovery and deletion") }
-                        Text("Account actions open in your browser. Removing this phone’s connection does not delete cloud records or applications already sent to employers.", style = MaterialTheme.typography.bodySmall)
+                        Text("Account actions open in your browser. Disconnecting does not delete cloud records or employer applications.", style = MaterialTheme.typography.bodySmall)
                     }
                 }
             }
         }
     }
-    if (removeLocally) AlertDialog(onDismissRequest = { removeLocally = false },
+    disconnecting?.let { captured -> AlertDialog(onDismissRequest = { disconnecting = null },
+        title = { Text("Disconnect this phone?") },
+        text = { Text("You will need a new code to reconnect. Your saved records stay available, and applications already sent to employers are unchanged.", Modifier.verticalScroll(rememberScrollState())) },
+        confirmButton = { TextButton(onClick = { disconnecting = null; model.disconnect(captured) }, enabled = !state.busy) { Text("Disconnect") } },
+        dismissButton = { TextButton(onClick = { disconnecting = null }) { Text("Keep connected") } }) }
+    removeLocally?.let { captured -> AlertDialog(onDismissRequest = { removeLocally = null },
         title = { Text("Remove this phone’s connection?") },
-        text = { Text("This removes the local token and returns to your phone draft. It does not revoke the remote session or stop approved applications. Your connected workspace draft stays encrypted on this phone for a future pairing.") },
-        confirmButton = { TextButton(onClick = { removeLocally = false; model.removeConnectionLocally() }) { Text("Remove locally") } },
-        dismissButton = { TextButton(onClick = { removeLocally = false }) { Text("Keep connection") } })
+        text = { Text("This removes the local token and returns to your phone draft. It does not revoke the remote session or stop approved applications. Your connected workspace draft stays encrypted on this phone for a future pairing.", Modifier.verticalScroll(rememberScrollState())) },
+        confirmButton = { TextButton(onClick = { removeLocally = null; model.removeConnectionLocally(captured) }) { Text("Remove locally") } },
+        dismissButton = { TextButton(onClick = { removeLocally = null }) { Text("Keep connection") } }) }
 }
 
 @Composable
@@ -968,7 +1043,7 @@ private fun AddOpportunityDialog(state: CareerUiState, model: CareerViewModel, c
 }
 
 internal fun openLink(context: Context, url: String) {
-    try { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(BoundaryPolicy.opportunityURL(url)))) }
+    try { context.startActivity(Intent(Intent.ACTION_VIEW, BoundaryPolicy.opportunityURL(url).toUri())) }
     catch (_: Exception) { Toast.makeText(context, "This HTTPS link could not be opened.", Toast.LENGTH_LONG).show() }
 }
 private fun fileSize(bytes: Long): String = String.format(Locale.getDefault(), "%.1f MiB", bytes / (1024.0 * 1024.0))

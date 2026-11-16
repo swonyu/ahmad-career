@@ -88,6 +88,248 @@ final class NativeApplicationsStore: ObservableObject {
     var serviceAddress: String { state.serviceAddress }
     var connectionSetupAddress: String { MobileApplicationPolicy.connectionSetupAddress(state.serviceAddress) }
     var submissionAvailable: Bool { connected && (mode == "test" || liveSubmissionEnabled == true) }
+    var profileReadiness: ApplicationProfileReadiness { ApplicationProfileReadiness(profile: profile) }
+    private func recordScope(for job: [String: ApplicationValue]) -> PhoneRecordScope {
+        if let id = job["id"]?.string, id.hasPrefix("record-"),
+           let record = state.applicationRecords.first(where: { "record-" + $0.id == id }) { return record.scope }
+        let identity = MobileApplicationPolicy.jobIdentity(job["url"]?.string ?? "")
+        if job["localOnly"]?.bool == true && !state.recordScope.isLocal,
+           !state.applicationRecords.contains(where: { $0.scope == state.recordScope && $0.identity == identity }),
+           state.applicationRecords.contains(where: { $0.scope.isLocal && $0.identity == identity }) { return PhoneRecordScope() }
+        return state.recordScope
+    }
+    func recordVersions(for job: [String: ApplicationValue]) -> [PhoneOpportunityRecord] {
+        let identity = MobileApplicationPolicy.jobIdentity(job["url"]?.string ?? ""), scope = recordScope(for: job)
+        return state.applicationRecords.filter { $0.scope == scope && $0.identity == identity }
+            .sorted { $0.updatedAt == $1.updatedAt ? $0.id < $1.id : $0.updatedAt > $1.updatedAt }
+    }
+    func currentRecord(for job: [String: ApplicationValue]) -> PhoneOpportunityRecord? {
+        let active = recordVersions(for: job).filter { !$0.archived }
+        return active.count == 1 ? active[0] : nil
+    }
+    func isMarkedApplied(_ job: [String: ApplicationValue]) -> Bool {
+        recordVersions(for: job).contains { !$0.archived && $0.appliedElsewhere }
+    }
+    func followUpDay(for job: [String: ApplicationValue]) -> String? {
+        recordVersions(for: job).filter { !$0.archived && $0.stage != .closed && !$0.followUpOn.isEmpty }
+            .map(\.followUpOn).sorted().first
+    }
+    var savedOpportunities: [[String: ApplicationValue]] {
+        var values = jobs
+        let visible = state.applicationRecords.filter { record in
+            (record.scope == state.recordScope || record.scope.isLocal) && !record.archived &&
+                (record.meaningful || state.applicationRecords.contains { $0.archived && $0.meaningful && $0.scope == record.scope && $0.identity == record.identity })
+        }
+        for record in visible {
+            if !values.contains(where: { MobileApplicationPolicy.jobIdentity($0["url"]?.string ?? "") == record.identity
+                && recordScope(for: $0) == record.scope }) {
+                values.append(record.job.applicationJob(id: "record-" + record.id))
+            }
+        }
+        return values
+    }
+    func savedOpportunity(_ id: String) -> [String: ApplicationValue]? { savedOpportunities.first { $0["id"]?.string == id } }
+    private var localAppliedIdentities: Set<String> {
+        Set(jobs.filter(isMarkedApplied).compactMap { $0["url"]?.string }.map(MobileApplicationPolicy.jobIdentity))
+    }
+    private func planContainsMarkedApplication(_ value: [String: ApplicationValue]) -> Bool {
+        value["items"]?.array.contains { raw in
+            let item = raw.object
+            guard ["ready", "rate_limited"].contains(item["state"]?.string ?? "") else { return false }
+            let job = jobs.first { $0["id"] == item["jobId"] } ?? item["job"]?.object ?? [:]
+            return isMarkedApplied(job)
+        } == true
+    }
+    private func continuationConflictsWithPrivateRecords(_ id: String) -> Bool {
+        let applied = Set(state.applicationRecords.filter { $0.scope == state.recordScope && !$0.archived && $0.appliedElsewhere }
+            .map(\.identity)).union(localAppliedIdentities)
+        guard !applied.isEmpty else { return false }
+        guard let review = ([plan].compactMap { $0 } + recoverablePlans).first(where: { $0["id"]?.string == id }),
+              let items = review["items"]?.array, !items.isEmpty else { return true }
+        for raw in items {
+            let item = raw.object
+            guard ["ready", "rate_limited"].contains(item["state"]?.string ?? "") else { continue }
+            let known = jobs.first(where: { $0["id"] == item["jobId"] })
+            guard let url = item["job"]?.object["url"]?.string ?? known?["url"]?.string,
+                  MobileApplicationPolicy.jobURL(url) != nil else { return true }
+            if applied.contains(MobileApplicationPolicy.jobIdentity(url)) { return true }
+        }
+        return false
+    }
+    func recordEditContext(for job: [String: ApplicationValue]) -> PhoneRecordEditContext? {
+        let active = recordVersions(for: job).filter { !$0.archived }
+        guard active.count <= 1 else { return nil }
+        let snapshot = PhoneRecordJob(job)
+        guard snapshot.valid else { return nil }
+        return PhoneRecordEditContext(scope: recordScope(for: job), identity: snapshot.identity, job: snapshot,
+            connection: sessionGeneration, recordID: active.first?.id, revision: active.first?.revision)
+    }
+    func recordChoiceContext(for job: [String: ApplicationValue]) -> PhoneRecordChoiceContext {
+        PhoneRecordChoiceContext(scope: recordScope(for: job), identity: MobileApplicationPolicy.jobIdentity(job["url"]?.string ?? ""),
+            connection: sessionGeneration, versions: Dictionary(uniqueKeysWithValues: recordVersions(for: job).map { ($0.id, $0.revision) }))
+    }
+    private func activeApplicationBlocksRecordChange(_ identity: String) -> Bool {
+        let reviews = [plan].compactMap { $0 } + recoverablePlans
+        for id in activePlanIDs {
+            guard let review = reviews.first(where: { $0["id"]?.string == id }),
+                  let items = review["items"]?.array, !items.isEmpty else { return true }
+            for raw in items {
+                let item = raw.object
+                let job = item["job"]?.object ?? [:]
+                let known = jobs.first(where: { $0["id"] == item["jobId"] })
+                guard let url = job["url"]?.string ?? known?["url"]?.string,
+                      MobileApplicationPolicy.jobURL(url) != nil else { return true }
+                if MobileApplicationPolicy.jobIdentity(url) == identity { return true }
+            }
+        }
+        return false
+    }
+    private func checkUnpairedRecordAdoption(_ identity: String) throws {
+        guard !state.recordScope.isLocal else { return }
+        let alreadyApplied = state.applicationRecords.contains { $0.scope == state.recordScope && $0.identity == identity && !$0.archived && $0.appliedElsewhere }
+        let incomingApplied = state.applicationRecords.contains { $0.scope.isLocal && $0.identity == identity && !$0.archived && $0.appliedElsewhere }
+        if incomingApplied && !alreadyApplied && activeApplicationBlocksRecordChange(identity) {
+            throw MobileApplicationError(message: "Stop the approved application in Apply before associating this applied record. Its notes, dates and earlier versions stay on this phone.")
+        }
+    }
+    func recordAdoptionContext(for job: [String: ApplicationValue]) -> PhoneRecordAdoptionContext? {
+        guard connected, !busy, !state.recordScope.isLocal, recordScope(for: job).isLocal else { return nil }
+        let identity = MobileApplicationPolicy.jobIdentity(job["url"]?.string ?? "")
+        let source = state.applicationRecords.filter { $0.scope.isLocal && $0.identity == identity }
+        guard !source.isEmpty else { return nil }
+        let destination = state.applicationRecords.filter { $0.scope == state.recordScope && $0.identity == identity }
+        return PhoneRecordAdoptionContext(identity: identity, destination: state.recordScope, connection: sessionGeneration,
+            sourceVersions: Dictionary(uniqueKeysWithValues: source.map { ($0.id, $0.revision) }),
+            destinationVersions: Dictionary(uniqueKeysWithValues: destination.map { ($0.id, $0.revision) }))
+    }
+    @discardableResult
+    func adoptUnpairedRecord(_ context: PhoneRecordAdoptionContext) -> Bool {
+        guard connected, !busy, context.connection == sessionGeneration,
+              context.destination == state.recordScope, !context.destination.isLocal else {
+            message = "The connection changed. Your separate phone record is kept; reopen it before choosing a workspace."; return false
+        }
+        let source = state.applicationRecords.filter { $0.scope.isLocal && $0.identity == context.identity }
+        let destination = state.applicationRecords.filter { $0.scope == context.destination && $0.identity == context.identity }
+        guard !source.isEmpty, Dictionary(uniqueKeysWithValues: source.map { ($0.id, $0.revision) }) == context.sourceVersions,
+              Dictionary(uniqueKeysWithValues: destination.map { ($0.id, $0.revision) }) == context.destinationVersions else {
+            message = "These private records changed. They are kept; compare their current versions before choosing a workspace."; return false
+        }
+        do {
+            try checkUnpairedRecordAdoption(context.identity)
+            var next = state
+            for index in next.applicationRecords.indices where context.sourceVersions[next.applicationRecords[index].id] != nil {
+                next.applicationRecords[index].scope = context.destination
+                next.applicationRecords[index].revision += 1
+            }
+            try persist(next)
+            plan = nil; contentGeneration = UUID(); refreshTicket = nil
+            message = "This private record is now kept with the connected workspace on this phone. Its bookmark was not changed, and no notes were uploaded."
+            return true
+        } catch { message = error.localizedDescription; return false }
+    }
+    @discardableResult
+    func saveRecord(_ draft: PhoneRecordDraft, context: PhoneRecordEditContext, confirmNotApplied: Bool = false, now: Date = Date()) -> Bool {
+        guard !busy, context.connection == sessionGeneration else {
+            message = "The connection changed or is busy. Your record draft is kept; reopen this opportunity before saving."; return false
+        }
+        guard savedOpportunities.contains(where: { MobileApplicationPolicy.jobIdentity($0["url"]?.string ?? "") == context.identity
+            && recordScope(for: $0) == context.scope }) else {
+            message = "This opportunity changed or was removed. Your record draft is kept; reopen its current details before saving."; return false
+        }
+        let active = state.applicationRecords.filter { $0.scope == context.scope && $0.identity == context.identity && !$0.archived }
+        let base = active.first
+        guard active.count <= 1, base?.id == context.recordID, base?.revision == context.revision else {
+            message = "This record changed. Your draft is kept; compare the saved version before replacing it."; return false
+        }
+        guard PhoneRecordDay.valid(draft.appliedOn), PhoneRecordDay.valid(draft.followUpOn),
+              draft.appliedOn.isEmpty || draft.appliedOn == base?.appliedOn || draft.appliedOn <= PhoneRecordDay.string(now) else {
+            message = "Choose a real date. The application date can be blank, or today or earlier."; return false
+        }
+        let applied = draft.stage.marksApplied || (base?.appliedElsewhere == true &&
+            (draft.stage == .closed || draft.stage == .saved && base?.stage == .saved && !confirmNotApplied))
+        if base?.appliedElsewhere == true && !applied && !confirmNotApplied {
+            message = "Confirm Mark as not applied before clearing your applied record."; return false
+        }
+        if applied != (base?.appliedElsewhere ?? false), activeApplicationBlocksRecordChange(context.identity) {
+            message = "Stop your queued applications in Apply before changing the applied mark. Your notes draft is kept."; return false
+        }
+        var record = base ?? PhoneOpportunityRecord(scope: context.scope, job: context.job)
+        record.stage = draft.stage; record.appliedElsewhere = applied; record.appliedOn = draft.appliedOn
+        record.followUpOn = draft.followUpOn; record.note = draft.note
+        record.revision = (base?.revision ?? 0) + 1; record.updatedAt = ISO8601DateFormatter().string(from: now)
+        guard record.valid else { message = "Keep the note to 2,000 characters and use readable plain text. Your draft is kept."; return false }
+        do {
+            var next = state
+            next.applicationRecords.removeAll { $0.id == record.id }; next.applicationRecords.append(record)
+            guard next.applicationRecords.count <= 1_000 else { throw MobileApplicationError(message: "This phone has reached its private record limit. Your existing records and this draft are kept.") }
+            try persist(next)
+            if applied != (base?.appliedElsewhere ?? false) { plan = nil; contentGeneration = UUID(); refreshTicket = nil }
+            message = "Your application record is saved on this phone. No employer was contacted."
+            return true
+        } catch { message = error.localizedDescription; return false }
+    }
+    @discardableResult
+    func useRecordVersion(_ id: String, context: PhoneRecordChoiceContext) -> Bool {
+        guard !busy, context.connection == sessionGeneration else { message = "The connection changed. Reopen this record before choosing a version."; return false }
+        let versions = state.applicationRecords.filter { $0.scope == context.scope && $0.identity == context.identity }
+        guard Dictionary(uniqueKeysWithValues: versions.map { ($0.id, $0.revision) }) == context.versions,
+              let chosen = versions.first(where: { $0.id == id }) else {
+            message = "These records changed. Review their latest versions before choosing."; return false
+        }
+        // Choosing historical notes and dates never reverses a deliberate not-applied correction.
+        // Only a new explicit stage edit or job import can introduce a new applied mark.
+        let applied = versions.contains { !$0.archived && $0.appliedElsewhere }
+        do {
+            var next = state
+            let updatedAt = ISO8601DateFormatter().string(from: Date())
+            for index in next.applicationRecords.indices where context.versions[next.applicationRecords[index].id] != nil
+                && !next.applicationRecords[index].archived {
+                next.applicationRecords[index].archived = chosen.archived || next.applicationRecords[index].id != id
+                next.applicationRecords[index].revision += 1
+                next.applicationRecords[index].updatedAt = updatedAt
+                if next.applicationRecords[index].id == id { next.applicationRecords[index].appliedElsewhere = applied }
+            }
+            if chosen.archived {
+                var restored = chosen
+                restored.id = UUID().uuidString; restored.archived = false; restored.revision = 1; restored.updatedAt = updatedAt
+                restored.appliedElsewhere = applied
+                if !applied && chosen.appliedElsewhere { restored.stage = .saved }
+                next.applicationRecords.append(restored)
+            }
+            guard next.applicationRecords.count <= 1_000 else {
+                throw MobileApplicationError(message: "This phone has reached its private record limit. Your current record and earlier versions were kept unchanged.")
+            }
+            try persist(next); plan = nil; contentGeneration = UUID(); refreshTicket = nil
+            message = "Your chosen record is current. Earlier versions are kept on this phone."
+            return true
+        } catch { message = error.localizedDescription; return false }
+    }
+    func removalContext(_ id: String) -> PhoneLocalRemovalContext? {
+        guard !busy, let job = jobs.first(where: { $0["id"]?.string == id }), job["localOnly"]?.bool == true,
+              state.jobs.contains(where: { $0["id"]?.string == id }), activePlanIDs.isEmpty else { return nil }
+        let identity = MobileApplicationPolicy.jobIdentity(job["url"]?.string ?? "")
+        let references = ([plan].compactMap { $0 } + recoverablePlans).contains { review in
+            review["items"]?.array.contains { item in
+                item.object["jobId"]?.string == id || item.object["job"]?.object["url"]?.string.map(MobileApplicationPolicy.jobIdentity) == identity
+            } == true
+        }
+        guard !references else { return nil }
+        return PhoneLocalRemovalContext(id: id, identity: identity, connection: sessionGeneration,
+            title: job["title"]?.string ?? "Opportunity", company: job["company"]?.string ?? "",
+            keepsRecord: recordVersions(for: job).contains(where: \.meaningful))
+    }
+    @discardableResult
+    func removeLocalJob(_ context: PhoneLocalRemovalContext) -> Bool {
+        guard context.connection == sessionGeneration, let current = removalContext(context.id), current.identity == context.identity else {
+            message = "This opportunity changed or is part of a review. It was kept; refresh before removing it."; return false
+        }
+        do {
+            var next = state; next.jobs.removeAll { $0["id"]?.string == context.id }; try persist(next)
+            selected.remove(context.id); answers.removeValue(forKey: context.id); mergeJobs()
+            message = current.keepsRecord ? "Saved link removed. Your application record is kept on this phone." : "Saved link removed."
+            return true
+        } catch { message = error.localizedDescription; return false }
+    }
     var availableReviews: [ApplicationReviewSummary] {
         recoverablePlans.compactMap(ApplicationReviewSummary.init).filter { !activePlanIDs.contains($0.id) }
     }
@@ -117,7 +359,8 @@ final class NativeApplicationsStore: ObservableObject {
             jobs = state.jobs
         } catch {
             storageReadable = false
-            message = "Your saved application draft could not be read. It has been preserved and will not be overwritten."
+            message = (error as? MobileApplicationError)?.message
+                ?? "Your saved application draft could not be read. It has been preserved and will not be overwritten."
         }
         restoreConnection()
     }
@@ -132,6 +375,10 @@ final class NativeApplicationsStore: ObservableObject {
     }
     private func persist(_ next: PhoneApplicationState) throws {
         guard storageReadable else { throw MobileApplicationError(message: "The existing phone draft is preserved because it could not be read.") }
+        guard next.applicationRecordSchema == 1, next.applicationRecords.count <= 1_000,
+              next.applicationRecords.allSatisfy(\.valid), Set(next.applicationRecords.map(\.id)).count == next.applicationRecords.count else {
+            throw MobileApplicationError(message: "The saved application records could not be updated. Your existing phone data is preserved.")
+        }
         let data = try JSONEncoder().encode(next)
         #if os(iOS)
         try data.write(to: folder.appendingPathComponent("phone-draft.json"), options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
@@ -287,7 +534,8 @@ final class NativeApplicationsStore: ObservableObject {
             if let id = plan?["id"]?.string {
                 if !profileNeedsSync, let current = recoverablePlans.first(where: { $0["id"]?.string == id }),
                    ApplicationReviewPolicy.current(current, revision: revision),
-                   ApplicationReviewPolicy.linkedInMatchesProfile(current, link: profile.linkedin) { plan = current }
+                   ApplicationReviewPolicy.linkedInMatchesProfile(current, link: profile.linkedin),
+                   !planContainsMarkedApplication(current) { plan = current }
                 else { plan = nil }
             }
             return true
@@ -301,8 +549,12 @@ final class NativeApplicationsStore: ObservableObject {
     func pollApprovedApplications() async {
         guard !Task.isCancelled, continuationTicket == nil, await refresh() else { return }
         guard !Task.isCancelled, !busy, requiresClientContinuation,
-              monotonicTime() >= nextContinuationTime, let id = activePlanIDs.first,
+              monotonicTime() >= nextContinuationTime, !activePlanIDs.isEmpty,
               let client else { return }
+        guard let id = activePlanIDs.first(where: { !continuationConflictsWithPrivateRecords($0) }) else {
+            message = "A queued application conflicts with a job you marked applied, or its target could not be checked. Review your phone record and stop unsent applications in Apply before continuing."
+            return
+        }
         let ticket = UUID(), generation = sessionGeneration
         continuationTicket = ticket; advancingApprovedApplication = true
         contentGeneration = UUID(); refreshTicket = nil
@@ -417,10 +669,25 @@ final class NativeApplicationsStore: ObservableObject {
     }
     private func rememberImported(_ imported: [String: ApplicationValue], localID: String) throws {
         guard let index = state.jobs.firstIndex(where: { $0["id"]?.string == localID }) else { return }
+        guard let importedURL = imported["url"]?.string, MobileApplicationPolicy.jobURL(importedURL) != nil,
+              MobileApplicationPolicy.jobIdentity(importedURL) == MobileApplicationPolicy.jobIdentity(state.jobs[index]["url"]?.string ?? "") else {
+            throw MobileApplicationError(message: "The service returned a different opportunity. Your saved link and private record are kept.")
+        }
+        try checkUnpairedRecordAdoption(MobileApplicationPolicy.jobIdentity(importedURL))
         var next = state
         var backup = imported.filter { ["url", "title", "company", "location", "country", "provider", "workMode"].contains($0.key) }
         backup["id"] = .string(localID); backup["localOnly"] = .bool(true)
-        next.jobs[index] = backup; try persist(next)
+        next.jobs[index] = backup
+        // A successful user-initiated import is the only point that adopts an unpaired record.
+        // Different account records never move, and colliding versions remain available to compare.
+        if !next.recordScope.isLocal {
+            for index in next.applicationRecords.indices where next.applicationRecords[index].scope.isLocal
+                && next.applicationRecords[index].identity == MobileApplicationPolicy.jobIdentity(importedURL) {
+                next.applicationRecords[index].scope = next.recordScope
+                next.applicationRecords[index].revision += 1
+            }
+        }
+        try persist(next)
     }
     @discardableResult
     func keepOpportunityDraft(_ draft: PhoneOpportunityDraft) -> Bool {
@@ -450,6 +717,7 @@ final class NativeApplicationsStore: ObservableObject {
             guard !jobs.contains(where: { MobileApplicationPolicy.jobIdentity($0["url"]?.string ?? "") == identity }) else {
                 throw MobileApplicationError(message: "This opportunity is already in your workspace.")
             }
+            if client != nil { try checkUnpairedRecordAdoption(identity) }
             let lever = ["jobs.lever.co", "jobs.eu.lever.co"].contains(valid.host?.lowercased() ?? "")
             if client == nil || !lever {
                 guard fields["title"]?.string != nil, fields["company"]?.string != nil else {
@@ -479,12 +747,7 @@ final class NativeApplicationsStore: ObservableObject {
         } catch { acceptError(error, generation: generation); return false }
     }
     func removeLocalJob(_ id: String) {
-        guard !busy, state.jobs.contains(where: { $0["id"]?.string == id }),
-              jobs.first(where: { $0["id"]?.string == id })?["localOnly"]?.bool == true else { return }
-        do {
-            var next = state; next.jobs.removeAll { $0["id"]?.string == id }; try persist(next)
-            selected.remove(id); answers.removeValue(forKey: id); mergeJobs()
-        } catch { message = error.localizedDescription }
+        if let context = removalContext(id) { _ = removeLocalJob(context) }
     }
     func prepare(manualAppliedURLs: Set<String> = [], replacingUnapprovedReview: Bool = false) async {
         guard let client else { message = "Connect your application service to review automatic submissions."; return }
@@ -498,9 +761,11 @@ final class NativeApplicationsStore: ObservableObject {
         let previousPlan = plan
         let chosen = jobs.filter { selected.contains($0["id"]?.string ?? "") }
         let chosenAnswers = answers, chosenSelection = selected, chosenProfile = profile, chosenRevision = revision
+        let chosenAppliedIdentities = localAppliedIdentities
         func inputsAreCurrent() -> Bool {
             generation == sessionGeneration && chosenAnswers == answers && chosenSelection == selected
                 && chosenProfile == profile && chosenRevision == revision && !profileNeedsSync && !profileEditing
+                && chosenAppliedIdentities == localAppliedIdentities
         }
         do {
             if replacingUnapprovedReview {
@@ -516,10 +781,11 @@ final class NativeApplicationsStore: ObservableObject {
             plan = nil
             var ids: [String] = []; var manualIDs: [String] = []
             var mappedAnswers: [String: ApplicationValue] = [:]
-            let manualIdentities = Set(manualAppliedURLs.map(MobileApplicationPolicy.jobIdentity))
+            let manualIdentities = Set(manualAppliedURLs.map(MobileApplicationPolicy.jobIdentity)).union(chosenAppliedIdentities)
             for job in chosen {
                 var id = job["id"]?.string ?? ""
                 if job["localOnly"]?.bool == true {
+                    try checkUnpairedRecordAdoption(MobileApplicationPolicy.jobIdentity(job["url"]?.string ?? ""))
                     let fields = job.filter { ["url", "title", "company", "location", "country"].contains($0.key) }
                     let result = try await client.request("jobs", method: "POST", body: fields)
                     guard generation == sessionGeneration else { return }
@@ -572,6 +838,9 @@ final class NativeApplicationsStore: ObservableObject {
             return false
         }
         guard !profileNeedsSync, !profileEditing else { message = "Save your current application details before approving a submission."; return false }
+        if let plan, planContainsMarkedApplication(plan) {
+            message = "You marked a job in this review as already applied. Prepare a new review before continuing."; return false
+        }
         guard let client, let plan, ApplicationReviewPolicy.current(plan, revision: revision),
               ApplicationReviewPolicy.linkedInMatchesProfile(plan, link: profile.linkedin),
               let id = plan["id"]?.string, let digest = plan["digest"]?.string,
@@ -614,7 +883,8 @@ final class NativeApplicationsStore: ObservableObject {
         guard let id = review["id"]?.string,
               let current = recoverablePlans.first(where: { $0["id"]?.string == id && $0["digest"] == review["digest"] }),
               ApplicationReviewPolicy.current(current, revision: revision),
-              ApplicationReviewPolicy.linkedInMatchesProfile(current, link: profile.linkedin) else {
+              ApplicationReviewPolicy.linkedInMatchesProfile(current, link: profile.linkedin),
+              !planContainsMarkedApplication(current) else {
             message = "This review is no longer current. Refresh your applications."; return false
         }
         plan = current

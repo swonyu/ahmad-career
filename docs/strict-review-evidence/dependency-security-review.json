@@ -1,0 +1,67 @@
+{
+  "reviewedAt": "2026-11-16T23:14:04.206502+00:00",
+  "status": "patched source packaged; production dependency audit clean; final CI and deployment pending",
+  "findings": [
+    {
+      "package": "react-server-dom-webpack",
+      "installedBefore": "19.2.6",
+      "installedAfter": "19.2.9",
+      "advisory": "https://github.com/react/react/security/advisories/GHSA-xqc2-xf4c-x3h3",
+      "severity": "critical"
+    },
+    {
+      "package": "@vitejs/plugin-rsc",
+      "installedBefore": "0.5.26",
+      "installedAfter": "0.5.39",
+      "vendoredBefore": "19.2.6",
+      "vendoredAfter": "19.3.1",
+      "advisory": "https://github.com/vitejs/vite-plugin-react/security/advisories/GHSA-59pf-q495-3c99",
+      "severity": "critical"
+    },
+    {
+      "package": "next",
+      "installedBefore": "16.3.4",
+      "installedAfter": "16.4.6",
+      "advisory": "https://github.com/vercel/next.js/security/advisories/GHSA-f3mh-rxg3-f5g2",
+      "note": "The deployed application uses Vinext; presence of the Next package alone does not establish exposure to each Next-specific path."
+    }
+  ],
+  "coherentReactFamily": {
+    "react": "19.2.9",
+    "react-dom": "19.2.9",
+    "react-server-dom-webpack": "19.2.9"
+  },
+  "eslintConfigNext": "16.4.6",
+  "installation": "Sites dependency helper completed successfully; 705 packages installed",
+  "fullNpmAudit": {
+    "status": "incomplete",
+    "reason": "Full registry audit exceeded a bounded 55-second subprocess timeout; no audit JSON returned."
+  },
+  "exploitEvidence": "No evidence of exploitation was observed; this check does not establish absence of prior exploitation.",
+  "additionalProductionFindings": {
+    "auditFile": "dependency-audit-production.json",
+    "beforeCounts": {
+      "critical": 0,
+      "high": 2,
+      "moderate": 2
+    },
+    "patchedPins": {
+      "zod": "4.6.7",
+      "baseline-browser-mapping": "2.11.0",
+      "fast-uri": "3.1.9",
+      "source-map-js": "1.2.2"
+    },
+    "note": "Application code imports the patched root Zod4 API. No application import uses zod/v3. Dependency presence does not establish runtime exploitability."
+  },
+  "latestChecks": {
+    "typecheck": "passed",
+    "appWorkerLint": "passed",
+    "phoneModelAndAPI": "22 passed with Zod4.6.7",
+    "phoneVault": "27 groups passed with Zod4.6.7",
+    "dispatchAndStopCoordinator": "34 tests passed with Zod4.6.7",
+    "finalBuild": "passed",
+    "fullPatchedAudit": "bounded local audit timed out at55seconds; full audit is now a CI gate",
+    "productionPatchedAudit": "passed: zero advisories at all severities"
+  },
+  "sourceCommit": "219eee0dcef68dd1654b064b4e628b9849d8e35f"
+}

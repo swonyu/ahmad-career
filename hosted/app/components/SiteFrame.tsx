@@ -4,8 +4,8 @@ export function BrandMark() {
 }
 export default function SiteFrame({ children, active = "", narrow = false }: { children: ReactNode; active?: string; narrow?: boolean }) {
   return <><a className="skip-link" href="#main">Skip to content</a>
-    <header className="site-header"><div className="header-inner"><a className="brand" href="/connect" aria-label="Career Finder home"><span className="brand-icon"><BrandMark /></span><span>Career Finder<small>YOUR NEXT CHAPTER</small></span></a>
-      <nav aria-label="Main navigation"><a href="/connect" aria-current={active === "connect" ? "page" : undefined}>Connect</a><a href="/account" aria-current={active === "account" ? "page" : undefined}>Account</a><a href="/support" aria-current={active === "support" ? "page" : undefined}>Help</a></nav>
+    <header className="site-header"><div className="header-inner"><a className="brand" href="/phone" aria-label="Career Finder home"><span className="brand-icon"><BrandMark /></span><span>Career Finder<small>YOUR NEXT CHAPTER</small></span></a>
+      <nav aria-label="Main navigation"><a href="/phone">Open app</a><a href="/connect" aria-current={active === "connect" ? "page" : undefined}>Connect</a><a href="/account" aria-current={active === "account" ? "page" : undefined}>Account</a><a href="/support" aria-current={active === "support" ? "page" : undefined}>Help</a></nav>
     </div></header><main id="main" className={narrow ? "page page-narrow" : "page"}>{children}</main>
     <footer className="site-footer"><span>Made for your next step.</span><div><a href="/privacy">Privacy</a><a href="/support">Support</a><a href="https://github.com/swonyu/ahmad-career/tree/career-finder-phones-verified-apply-20261116" target="_blank" rel="noopener noreferrer">Project source <svg className="arrow-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 12 12 4M4 4h8v8" /></svg></a></div></footer></>;
 }

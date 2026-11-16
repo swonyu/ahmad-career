@@ -1,0 +1,21 @@
+{
+  "observedAt": "2026-11-16T23:12:23.873305+00:00",
+  "status": "passed",
+  "checks": [
+    "Guarded Stop cannot mutate approved plan or any attempt",
+    "Third-statement failure rolls back plan stop and earlier cancellations",
+    "Exact expired claim becomes uncertain while ready and rate-limited work is cancelled",
+    "Live leases, other plans and foreign workspaces remain byte-for-byte unchanged",
+    "Late provider completion cannot overwrite the reconciled uncertain claim",
+    "Guarded Stop still cannot reconcile a previously stopped approved plan",
+    "A repeated explicit Stop can reconcile a lease that expires later",
+    "Unapproved-only Stop preserves its original successful cancellation behavior"
+  ],
+  "count": 8,
+  "method": "Actual Stop query definitions extracted from production handler and executed in local SQLite transactions; no network or workerd",
+  "sourceSHA256": "34688c0b583e5676b3da29ec1cadd22d5b96de31a93020d8efced3ab048cec3b",
+  "realOutboundRequests": 0,
+  "limits": [
+    "This verifies SQL scope and rollback semantics in SQLite; authored hosted-phone and native-route regression suites provide the separate D1/workerd acceptance gate."
+  ]
+}

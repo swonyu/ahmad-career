@@ -1,88 +1,63 @@
-CAREER FINDER — 0.4.0 ANDROID PREVIEW / IPHONE SOURCE
-16 November 2026 • UTC
+CAREER FINDER — PHONES
+17 November 2026
 
-PLATFORMS
-Native iPhone (iOS 16+) and Android phones (Android 8/API 26+).
-Fresh users start with a blank personal profile. The interface is English.
-Primary discovery searches selected public Greenhouse and Lever employer boards
-across regions and professions. Choose up to four catalog/custom boards, filter
-by role/location/remote, and save a posting into the application workspace.
-Coverage is limited to those boards, not every worldwide job or eligibility.
-The earlier six-source Saudi research feed remains historical/compatibility data.
+CURRENT CHECKPOINT
+Version 0.6 source adds application records, follow-up dates, clearer connection
+setup, preserved drafts and a phone browser app. Final CI/publication are in
+progress. Check the current release handoff before choosing a download.
 
-HOSTED SERVICE
-https://career-finder-service.jazzy-drake-8323.chatgpt.site/connect
-Public job search requires no account. Sign in with ChatGPT and generate a
-one-use code to connect a private phone workspace. The account page offers
-recovery, PDF download, export, phone revocation and cloud deletion.
-Hosted version 2 deployed successfully and passed 13 public production checks;
-browser sign-in, first workspace creation, the account dashboard and a blank
-account export have also been verified. Signed-in native phone acceptance and
-the populated account lifecycle remain separate. Live Auto Apply remains disabled.
+PUBLIC SERVICE
+https://career-finder-service.jazzy-drake-8323.chatgpt.site
+Current deployed version: 4. The new /phone interface is pending deployment
+at this checkpoint. Search requires no account. Google is available through
+the secure ChatGPT sign-in screen. Native apps use a single-use connection code;
+the browser app uses the signed-in account directly.
+
+PHONE FLOW
+Search: find a role on selected public employer boards.
+Saved: keep jobs, application stages, private notes and follow-up dates.
+Apply: review exact details when an authorized employer integration is available.
+Profile: choose between a phone draft and an explicit online save.
+
+New people start with a blank profile. There is no country or profession whitelist.
+The current interface is English. Search covers selected Greenhouse/Lever boards,
+not every worldwide vacancy. LinkedIn support saves a personal-profile link and
+opens an explicit search; it is not an OAuth account connection or profile import.
+
+REAL APPLICATIONS
+Live Auto Apply is disabled until an authorized employer integration is configured.
+A verified live receipt requires documented provider acceptance and an application
+ID. Saving a job, opening a form, a self-reported stage or a synthetic test cannot
+produce live confirmation. Uncertain requests are not automatically resent.
+Stop prevents unsent work; a request already sent may still finish.
+
+PLATFORMS AND DOWNLOADS
+Native iPhone: iOS 16+, existing app identity preserved.
+Native Android: Android 8+, ordinary preview is separately debug-signed.
+The latest published historical APK remains version 0.4 until the new release
+is observed and the current handoff is updated.
+https://github.com/swonyu/ahmad-career/releases
+A browser home-screen installation is separate from App Store/Google Play.
+Unsigned iPhone CI and Android previews do not establish store publication.
 
 READ FIRST
-../README.md — current features, setup and limits
-Phone-Polish-Review-2026-11-16.md — current preview, evidence and limits
-HOSTED-RELEASE-HANDOFF.md — deployed source, CI and remaining release gates
-Verified-Applications-Contract.md — exact submission and receipt rules
-../android/README.md — Android preview, build and native checks
-../apple/README.md — iPhone source, checks and outstanding native acceptance
-store-assets/README.md — store artwork, screenshot provenance and capture status
-hosted-workspace-verification-2026-11-16.json — sanitized workspace/export evidence
+../README.md — current features, setup, coverage and limits
+Strict-Review-2026-11-17.md — strict findings and current exact evidence
+HOSTED-RELEASE-HANDOFF.md — publication state and remaining release gates
+Verified-Applications-Contract.md — account, review, submission and receipt rules
+../hosted/README.md — browser storage, API, build and deployment details
+../android/README.md — Android source and native checks
+../apple/README.md — iPhone source, checks and distribution identity
 
 SOURCE
-Repository: https://github.com/swonyu/ahmad-career
-Branch: career-finder-phones-verified-apply-20261116
-Development continues in an isolated checkout. Source publication does not
-update a store build, deploy the service or submit an employer application.
-Published preview code: caa5ace14fe7b430db845d935a89803700cc7665
-Preview CI: https://github.com/swonyu/ahmad-career/actions/runs/43923335555
-Final CI: all five gates passed. Four non-UI successes from attempt 1 were
-retained; the iPhone UI retry passed all seven synthetic tests in attempt 2.
-Exact source, CI attempts and public-download evidence are recorded in
-phone-preview-release-verification.json. No main-branch update is implied.
+https://github.com/swonyu/ahmad-career
+Source work uses branch career-finder-phones-verified-apply-20261116.
+No real employer application was sent during development. Current CI and release
+receipts identify what has actually passed and been published. Earlier failed
+attempts and immutable preview releases remain preserved.
 
-Later iPhone accessibility correction: 0a56340fee907ffab0e4e5f25ac252de76a23c9c
-CI: https://github.com/swonyu/ahmad-career/actions/runs/43949653473
-All five gates passed; native attempt 2 passed 7/7 in 487.824 seconds after
-one unchanged retry of the failed first-launch case. The setup action now
-wraps fully at the largest text size, and actual action/connection screenshots
-were inspected. See phone-polish-evidence/iphone-ci-43949653473-attempt-2.json.
-This later source correction does not move the preview tag or replace its APK.
-
-AUTO APPLY
-A configured HTTPS service and supported, employer-authorized connector are
-required for live submission. Review the exact profile, PDF and employer choices
-before approval. Only an actual provider application ID establishes a confirmed
-receipt. This proves API acceptance, not a recruiter decision. Public discovery
-does not approve or submit anything. Test results, opened links and manual
-"Applied elsewhere" self-reports stay separate from verified live receipts.
-
-DISTRIBUTION
-Android 0.4.0 preview status: published on GitHub
-Release: https://github.com/swonyu/ahmad-career/releases/tag/career-finder-v0.4.0-preview
-Android APK: https://github.com/swonyu/ahmad-career/releases/download/career-finder-v0.4.0-preview/Career-Finder-Android-Preview.apk
-Tested source ZIP: https://api.github.com/repos/swonyu/ahmad-career/zipball/career-finder-v0.4.0-preview
-Public downloads: passed: unauthenticated APK rehash and all 368 source files matched
-APK: 12,071,908 bytes; SHA-256
-3ce9a61e875eb295f6689993884b97d15a1356074e14775c5ebc55c6d0bf1c62
-The APK is a debug-signed preview, not a Google Play release. The iPhone source
-has an unsigned Release build and synthetic UI acceptance recorded separately;
-it is not an App Store/TestFlight install. Historical iOS invitations and IPA
-files describe earlier builds. Preserve existing identities/publisher records.
-
-REMAINING RELEASE WORK
-Execute a signed-in production phone/account flow and lifecycle acceptance;
-complete physical-phone accessibility/device QA, operator/contact and store disclosures,
-publisher signing and platform review. Real automatic submissions also need
-employer-authorized configuration and applicant approval. The shared local
-Apple build/simulator slot acknowledgment still applies. Hosted tests do not
-grant permission to use that local slot or establish physical-phone acceptance.
-
-HISTORICAL RECORDS
-Historical-Release-Handoff-2026-10-09.txt preserves the October handoff verbatim.
-Project-History-Through-2026-11-15.md and Apple-History-Through-2026-11-15.md
-preserve earlier source, website, Mac, iPad and TestFlight observations.
-Phone-Update-2026-11-16.md and Phone-Quality-Review-2026-11-16.md preserve
-the initial candidate and earlier reliability evidence. Version 1 production
-HTTP evidence also stays dated; it does not validate version 2 discovery.
+HISTORY
+Hosted-Release-Handoff-0.4-History.md preserves the previous preview handoff.
+Phone-Polish-Review-2026-11-16.md and Phone-Quality-Review-2026-11-16.md retain
+their original evidence. October and earlier platform/store records remain dated;
+they do not verify this source candidate.

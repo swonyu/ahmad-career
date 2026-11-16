@@ -1,0 +1,44 @@
+{
+  "scope": "PWA encrypted private-draft vault",
+  "sourceStatus": "frozen; real-browser IndexedDB acceptance pending parent",
+  "checkedAt": "2026-11-16T23:01:55.573591+00:00",
+  "files": [
+    {
+      "path": "career-finder-service/app/phone/vault.ts",
+      "bytes": 27947,
+      "sha256": "c8ae23d7b742e040ee20535829db446d31b451213c2cf13dcd42e67793d7a685"
+    },
+    {
+      "path": "career-finder-service/tests/phone-vault.mjs",
+      "bytes": 30312,
+      "sha256": "91976cfa87c5825d46dabda8f5f8a26b1c7b3fcb5aa2885408146200301a55e3"
+    }
+  ],
+  "validation": {
+    "nodeWebCryptoGroups": 27,
+    "typecheck": "pass: npx tsc --noEmit --incremental false --pretty false",
+    "scopedLint": "pass: npx eslint app/phone/vault.ts tests/phone-vault.mjs",
+    "realBrowserIndexedDB": "not yet run",
+    "testCommand": "node tests/phone-vault.mjs",
+    "testLoader": "Existing esbuild dependency bundles actual TypeScript, target Node 22; execution here on Node 24.22.1",
+    "packageTestWiring": "ci_and_release_check confirmed phone-vault included in package test script",
+    "largeDraft": "Passing maximum 200 saved jobs, 500 records with 5,000 CJK-character notes, 200 cached results, four source summaries and a 5 MiB PDF, below 20 MiB envelope bound"
+  },
+  "contract": [
+    "Default load/save/export/remove/list functions; SSR-safe import; phone model imported without modifications",
+    "Exact guest or account:encodedAccountID:UUID/new scope; list exact account prefix only",
+    "AES-GCM-256 non-extractable structured-cloned key, fresh key and 12-byte IV per save; authenticated schema/scope/revision/time",
+    "Versioned bounded 20 MiB plaintext envelope; no plaintext PDF/profile/note storage or localStorage/cache fallback",
+    "Per-scope operation serialization and immediate snapshot capture; IDB read/write CAS transaction on expected envelope ID",
+    "Load/save alone advance expected revision. Export never unblocks corruption or adopts another tab revision",
+    "Corrupt/future data preserved with writes blocked, valid JSON snapshot or explicitly labeled recovery export",
+    "Reset deletes key/ciphertext/personal content and retains only scope/random revision/time reset marker to prevent ABA resurrection",
+    "Metadata lists omit valid reset markers; load of reset returns null; stale tabs must explicitly reload",
+    "Caller must cancel debounced writes on scope changes/reset; UI responsible for verified account identity before scoped calls"
+  ],
+  "limits": [
+    "WebCrypto plus IDB protects browser at-rest records but does not claim defense against script execution in the same origin or a compromised unlocked browser",
+    "An unreadable recovery ciphertext export does not contain the non-extractable key; that key remains in this browser and the file alone cannot restore elsewhere",
+    "Actual browser key structured cloning, durable transaction behavior, blocked tabs and production two-tab flows still require browser acceptance"
+  ]
+}

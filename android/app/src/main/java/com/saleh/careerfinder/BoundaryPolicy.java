@@ -12,6 +12,7 @@ import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
 import java.util.Locale;
 
 /** Shared, executable boundary policy; no Android classes or network side effects. */
@@ -48,10 +49,11 @@ public final class BoundaryPolicy {
             (uri.getPort() != -1 && uri.getPort() != 443)) {
             throw new IllegalArgumentException("Use an HTTPS LinkedIn personal profile link, such as https://www.linkedin.com/in/your-name.");
         }
-        String ascii = uri.toASCIIString();
-        if (decodeURLPart(ascii).codePoints().anyMatch(c -> Character.isISOControl(c) || Character.getType(c) == Character.FORMAT))
+        // URI.toASCIIString() applies NFC normalization. Preserve the user's exact
+        // Unicode spelling so raw and already escaped URLs match every client.
+        if (decodeURLPart(input).codePoints().anyMatch(c -> Character.isISOControl(c) || Character.getType(c) == Character.FORMAT))
             throw new IllegalArgumentException("The LinkedIn link must not contain control characters.");
-        String path = URI.create(ascii).getRawPath();
+        String path = uri.getRawPath();
         if (path == null || !path.startsWith("/in/"))
             throw new IllegalArgumentException("Use a LinkedIn personal profile link beginning with /in/.");
         String slug = path.substring(4);
@@ -89,14 +91,71 @@ public final class BoundaryPolicy {
                 if (high < 0 || low < 0) throw new IllegalArgumentException("The LinkedIn link has invalid encoding.");
                 bytes.write(high * 16 + low);
             } else {
-                if (c > 127) throw new IllegalArgumentException("The LinkedIn link has invalid encoding.");
-                bytes.write(c);
+                if (Character.isHighSurrogate(c)) {
+                    if (i + 1 >= value.length() || !Character.isLowSurrogate(value.charAt(i + 1)))
+                        throw new IllegalArgumentException("The link has invalid Unicode encoding.");
+                    byte[] encoded = value.substring(i, i + 2).getBytes(StandardCharsets.UTF_8);
+                    bytes.write(encoded, 0, encoded.length); i++;
+                } else if (Character.isLowSurrogate(c)) throw new IllegalArgumentException("The link has invalid Unicode encoding.");
+                else {
+                    byte[] encoded = String.valueOf(c).getBytes(StandardCharsets.UTF_8);
+                    bytes.write(encoded, 0, encoded.length);
+                }
             }
         }
         try {
             return StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT)
                 .onUnmappableCharacter(CodingErrorAction.REPORT).decode(ByteBuffer.wrap(bytes.toByteArray())).toString();
         } catch (CharacterCodingException error) { throw new IllegalArgumentException("The LinkedIn link has invalid encoding."); }
+    }
+
+    /** A stable private-record identity; never changes the original link opened for the user. */
+    public static String jobIdentity(String input) {
+        URI uri = httpsURI(input);
+        String host = uri.getHost().toLowerCase(Locale.ROOT);
+        String path = uri.getRawPath() == null ? "" : asciiPreservingUnicode(uri.getRawPath());
+        if ((host.equals("jobs.lever.co") || host.equals("jobs.eu.lever.co")) && (uri.getPort() == -1 || uri.getPort() == 443)) {
+            String[] pieces = uri.getPath().split("/");
+            if (pieces.length >= 3 && pieces[1].matches("[A-Za-z0-9_-]{1,80}") &&
+                pieces[2].matches("[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}"))
+                return host + "/" + pieces[1].toLowerCase(Locale.ROOT) + "/" + pieces[2].toLowerCase(Locale.ROOT);
+        }
+        while (path.endsWith("/")) path = path.substring(0, path.length() - 1);
+        StringBuilder query = new StringBuilder();
+        if (uri.getRawQuery() != null) for (String pair : uri.getRawQuery().split("&", -1)) {
+            String rawName = pair.contains("=") ? pair.substring(0, pair.indexOf('=')) : pair;
+            String name;
+            try { name = decodeURLPart(rawName).toLowerCase(Locale.ROOT); }
+            catch (IllegalArgumentException error) { name = rawName.toLowerCase(Locale.ROOT); }
+            if (name.startsWith("utm_") || name.equals("gclid") || name.equals("fbclid")) continue;
+            if (query.length() > 0) query.append('&');
+            query.append(asciiPreservingUnicode(pair));
+        }
+        return "https://" + host + (uri.getPort() == -1 || uri.getPort() == 443 ? "" : ":" + uri.getPort()) + path +
+            (query.length() == 0 ? "" : "?" + query);
+    }
+
+    private static String asciiPreservingUnicode(String value) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < value.length();) {
+            int point = value.codePointAt(i);
+            if (point <= 127) result.append((char)point);
+            else result.append(encodeProfileSlug(new String(Character.toChars(point))));
+            i += Character.charCount(point);
+        }
+        return result.toString();
+    }
+
+    /** A user-selected calendar date, intentionally independent of time zones. */
+    public static String civilDate(String input) {
+        if (input == null || input.isEmpty()) return "";
+        if (!input.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}"))
+            throw new IllegalArgumentException("Use a calendar date in YYYY-MM-DD format.");
+        try {
+            LocalDate date = LocalDate.parse(input);
+            if (date.getYear() < 1 || date.getYear() > 9999) throw new IllegalArgumentException("Choose a valid calendar year.");
+            return input;
+        } catch (java.time.DateTimeException error) { throw new IllegalArgumentException("Choose a valid calendar date."); }
     }
 
     /** Encodes only the public search terms supplied by the user; no profile or account fields. */

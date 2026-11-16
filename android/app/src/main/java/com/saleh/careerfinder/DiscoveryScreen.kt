@@ -31,7 +31,8 @@ internal fun JobsScreen(state: CareerUiState, model: CareerViewModel, add: () ->
     profile: () -> Unit, connect: () -> Unit, section: Int, selectSection: (Int) -> Unit) {
     Column(Modifier.fillMaxSize()) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp).selectableGroup(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            listOf("Discover", if (state.jobs.isEmpty()) "Saved" else "Saved (${state.jobs.size})").forEachIndexed { index, title ->
+            val savedCount = state.jobs.size + state.unbookmarkedRecords.size
+            listOf("Discover", if (savedCount == 0) "Saved" else "Saved ($savedCount)").forEachIndexed { index, title ->
                 FilterChip(section == index, { selectSection(index) }, label = { Text(title) },
                     modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag(if (index == 0) "jobs-discover-tab" else "jobs-saved-tab")
                         .semantics { role = Role.Tab })
@@ -53,7 +54,28 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
     var chooseSources by remember { mutableStateOf(false) }
     val search: () -> Unit = { keyboard?.hide(); controller.search() }
     LazyColumn(Modifier.fillMaxSize().imePadding().testTag("discovery-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        if (state.restoringSearch) item { LinearProgressIndicator(Modifier.fillMaxWidth()); Text("Opening your last search…") }
+        if (state.restoredSearch) item {
+            Panel {
+                Text(if (state.status == null) "Last search restored" else "Previous results", style = MaterialTheme.typography.titleMedium)
+                state.generatedAt?.let { checkedAt ->
+                    Text("Last checked", style = MaterialTheme.typography.labelSmall)
+                    Text(dateLabel(checkedAt), style = MaterialTheme.typography.bodySmall)
+                }
+                Text(if (state.generatedAt == null) "Your keywords and filters are ready." else "Search again for current openings.", style = MaterialTheme.typography.bodyMedium)
+                OutlinedButton(onClick = search, enabled = !state.loading && !state.restoringSearch, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Search again") }
+            }
+        }
         item { Heading("Find your next role.", "Search selected public employer boards. No account or résumé upload is needed.") }
+        if (state.searchStorageError != null) item {
+            Panel {
+                Text(state.searchStorageError.orEmpty(), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+                OutlinedButton(onClick = controller::retrySavedSearch, enabled = !state.restoringSearch, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                    Text(if (state.searchRestoreBlocked) "Retry previous search" else "Retry saving search")
+                }
+            }
+        }
         item {
             DiscoveryInput("Role, skill or keyword", state.filters.query, { value -> controller.editFilters { it.copy(query = value) } }, search)
         }
@@ -68,7 +90,7 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
             Text("Remote labels describe the posting. Check the employer’s location and work-authorization requirements.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         item {
-            Action(if (state.loading) "Searching employer boards…" else "Search jobs", !state.loading, search)
+            Action(if (state.loading) "Searching employer boards…" else "Search jobs", !state.loading && !state.restoringSearch, search)
             if (state.loading) {
                 LinearProgressIndicator(Modifier.fillMaxWidth().padding(top = 12.dp))
                 TextButton(onClick = controller::cancelSearch, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Cancel search") }

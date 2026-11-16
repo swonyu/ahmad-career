@@ -1,0 +1,1190 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-11-16T22:54:04.872944+00:00",
+  "repository": "swonyu/ahmad-career",
+  "runId": 43970712465,
+  "attempt": 1,
+  "headSha": "3c25a963db4fa10e8162641cbd0ec396e127c06c",
+  "run": {
+    "attempt": 1,
+    "conclusion": "failure",
+    "createdAt": "2026-11-16T22:30:29Z",
+    "databaseId": 43970712465,
+    "headBranch": "career-finder-phones-verified-apply-20261116",
+    "headSha": "3c25a963db4fa10e8162641cbd0ec396e127c06c",
+    "jobs": [
+      {
+        "completedAt": "2026-11-16T22:32:17Z",
+        "conclusion": "success",
+        "databaseId": 133661821500,
+        "name": "iPhone logic and unsigned build",
+        "startedAt": "2026-11-16T22:30:33Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-16T22:30:34Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-16T22:30:33Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:30:38Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "number": 2,
+            "startedAt": "2026-11-16T22:30:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:31:09Z",
+            "conclusion": "success",
+            "name": "Execute the production client and store checks",
+            "number": 3,
+            "startedAt": "2026-11-16T22:30:38Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:32:11Z",
+            "conclusion": "success",
+            "name": "Build the production iPhone configuration on this isolated runner",
+            "number": 4,
+            "startedAt": "2026-11-16T22:31:09Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:32:12Z",
+            "conclusion": "success",
+            "name": "Verify the built product targets iPhone",
+            "number": 5,
+            "startedAt": "2026-11-16T22:32:11Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:32:13Z",
+            "conclusion": "success",
+            "name": "Keep the unsigned build log",
+            "number": 6,
+            "startedAt": "2026-11-16T22:32:12Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:32:14Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "number": 12,
+            "startedAt": "2026-11-16T22:32:13Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:32:15Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 13,
+            "startedAt": "2026-11-16T22:32:14Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/swonyu/ahmad-career/actions/runs/43970712465/job/133661821500"
+      },
+      {
+        "completedAt": "2026-11-16T22:34:36Z",
+        "conclusion": "failure",
+        "databaseId": 133661821821,
+        "name": "Android compile and lint",
+        "startedAt": "2026-11-16T22:30:32Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-16T22:30:36Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-16T22:30:33Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:30:40Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "number": 2,
+            "startedAt": "2026-11-16T22:30:36Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:30:42Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880",
+            "number": 3,
+            "startedAt": "2026-11-16T22:30:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:30:43Z",
+            "conclusion": "success",
+            "name": "Require the pinned Android SDK",
+            "number": 4,
+            "startedAt": "2026-11-16T22:30:42Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:30:45Z",
+            "conclusion": "success",
+            "name": "Phone URL, PDF and receipt policies",
+            "number": 5,
+            "startedAt": "2026-11-16T22:30:43Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:34:34Z",
+            "conclusion": "failure",
+            "name": "Compile the ordinary preview and its instrumentation",
+            "number": 6,
+            "startedAt": "2026-11-16T22:30:45Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:34:34Z",
+            "conclusion": "success",
+            "name": "Keep the lint report",
+            "number": 7,
+            "startedAt": "2026-11-16T22:34:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:34:34Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880",
+            "number": 13,
+            "startedAt": "2026-11-16T22:34:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:34:34Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "number": 14,
+            "startedAt": "2026-11-16T22:34:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:34:34Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 15,
+            "startedAt": "2026-11-16T22:34:34Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/swonyu/ahmad-career/actions/runs/43970712465/job/133661821821"
+      },
+      {
+        "completedAt": "2026-11-16T22:30:45Z",
+        "conclusion": "success",
+        "databaseId": 133661821853,
+        "name": "Service and synthetic HTTPS",
+        "startedAt": "2026-11-16T22:30:32Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-16T22:30:33Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-16T22:30:33Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:30:35Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "number": 2,
+            "startedAt": "2026-11-16T22:30:33Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:30:35Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "number": 3,
+            "startedAt": "2026-11-16T22:30:35Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:30:37Z",
+            "conclusion": "success",
+            "name": "Existing record and discovery regressions",
+            "number": 4,
+            "startedAt": "2026-11-16T22:30:35Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:30:39Z",
+            "conclusion": "success",
+            "name": "Verified-submission state and HTTP regressions",
+            "number": 5,
+            "startedAt": "2026-11-16T22:30:37Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:30:43Z",
+            "conclusion": "success",
+            "name": "Synthetic TLS, consent, receipts and recovery",
+            "number": 6,
+            "startedAt": "2026-11-16T22:30:39Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:30:43Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "number": 11,
+            "startedAt": "2026-11-16T22:30:43Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:30:43Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "number": 12,
+            "startedAt": "2026-11-16T22:30:43Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:30:43Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 13,
+            "startedAt": "2026-11-16T22:30:43Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/swonyu/ahmad-career/actions/runs/43970712465/job/133661821853"
+      },
+      {
+        "completedAt": "2026-11-16T22:47:37Z",
+        "conclusion": "failure",
+        "databaseId": 133661821856,
+        "name": "iPhone native interface acceptance",
+        "startedAt": "2026-11-16T22:30:33Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-16T22:30:35Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-16T22:30:33Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:30:38Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "number": 2,
+            "startedAt": "2026-11-16T22:30:35Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:31:05Z",
+            "conclusion": "success",
+            "name": "Select an iPhone on this disposable hosted runner",
+            "number": 3,
+            "startedAt": "2026-11-16T22:30:38Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:47:12Z",
+            "conclusion": "failure",
+            "name": "Exercise native phone flows with isolated synthetic data",
+            "number": 4,
+            "startedAt": "2026-11-16T22:31:05Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:47:16Z",
+            "conclusion": "success",
+            "name": "Export native interface evidence",
+            "number": 5,
+            "startedAt": "2026-11-16T22:47:12Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:47:27Z",
+            "conclusion": "success",
+            "name": "Keep the native UI results and screenshots",
+            "number": 6,
+            "startedAt": "2026-11-16T22:47:16Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:47:28Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "number": 12,
+            "startedAt": "2026-11-16T22:47:27Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:47:34Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 13,
+            "startedAt": "2026-11-16T22:47:28Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/swonyu/ahmad-career/actions/runs/43970712465/job/133661821856"
+      },
+      {
+        "completedAt": "2026-11-16T22:31:35Z",
+        "conclusion": "success",
+        "databaseId": 133661821910,
+        "name": "Hosted HTTPS service and durable storage",
+        "startedAt": "2026-11-16T22:30:32Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-16T22:30:34Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-16T22:30:33Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:30:36Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "number": 2,
+            "startedAt": "2026-11-16T22:30:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:30:37Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "number": 3,
+            "startedAt": "2026-11-16T22:30:36Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:30:55Z",
+            "conclusion": "success",
+            "name": "Install the pinned hosted service dependencies",
+            "number": 4,
+            "startedAt": "2026-11-16T22:30:37Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:31:02Z",
+            "conclusion": "success",
+            "name": "Check account screens and worker types",
+            "number": 5,
+            "startedAt": "2026-11-16T22:30:55Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:31:29Z",
+            "conclusion": "success",
+            "name": "Exercise the production handler with real local D1 and R2",
+            "number": 6,
+            "startedAt": "2026-11-16T22:31:02Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:31:32Z",
+            "conclusion": "success",
+            "name": "Build the deployable Worker and phone setup pages",
+            "number": 7,
+            "startedAt": "2026-11-16T22:31:29Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:31:33Z",
+            "conclusion": "success",
+            "name": "Keep the hosted regression evidence",
+            "number": 8,
+            "startedAt": "2026-11-16T22:31:32Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:31:33Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "number": 15,
+            "startedAt": "2026-11-16T22:31:33Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:31:33Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "number": 16,
+            "startedAt": "2026-11-16T22:31:33Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-16T22:31:33Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 17,
+            "startedAt": "2026-11-16T22:31:33Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/swonyu/ahmad-career/actions/runs/43970712465/job/133661821910"
+      }
+    ],
+    "status": "completed",
+    "updatedAt": "2026-11-16T22:47:37Z",
+    "url": "https://github.com/swonyu/ahmad-career/actions/runs/43970712465"
+  },
+  "jobs": [
+    {
+      "id": 133661821500,
+      "run_id": 43970712465,
+      "workflow_name": "Phone quality",
+      "head_branch": "career-finder-phones-verified-apply-20261116",
+      "run_url": "https://api.github.com/repos/swonyu/ahmad-career/actions/runs/43970712465",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVBqQas8AAAAfHt2KPA",
+      "head_sha": "3c25a963db4fa10e8162641cbd0ec396e127c06c",
+      "url": "https://api.github.com/repos/swonyu/ahmad-career/actions/jobs/133661821500",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43970712465/job/133661821500",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-16T22:30:30Z",
+      "started_at": "2026-11-16T22:30:33Z",
+      "completed_at": "2026-11-16T22:32:17Z",
+      "name": "iPhone logic and unsigned build",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-16T22:30:33Z",
+          "completed_at": "2026-11-16T22:30:34Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-16T22:30:34Z",
+          "completed_at": "2026-11-16T22:30:38Z"
+        },
+        {
+          "name": "Execute the production client and store checks",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-16T22:30:38Z",
+          "completed_at": "2026-11-16T22:31:09Z"
+        },
+        {
+          "name": "Build the production iPhone configuration on this isolated runner",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-16T22:31:09Z",
+          "completed_at": "2026-11-16T22:32:11Z"
+        },
+        {
+          "name": "Verify the built product targets iPhone",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-16T22:32:11Z",
+          "completed_at": "2026-11-16T22:32:12Z"
+        },
+        {
+          "name": "Keep the unsigned build log",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-16T22:32:12Z",
+          "completed_at": "2026-11-16T22:32:13Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-16T22:32:13Z",
+          "completed_at": "2026-11-16T22:32:14Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-16T22:32:14Z",
+          "completed_at": "2026-11-16T22:32:15Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/swonyu/ahmad-career/check-runs/133661821500",
+      "labels": [
+        "macos-26"
+      ],
+      "runner_id": 1000000075,
+      "runner_name": "GitHub Actions 1000000075",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 133661821821,
+      "run_id": 43970712465,
+      "workflow_name": "Phone quality",
+      "head_branch": "career-finder-phones-verified-apply-20261116",
+      "run_url": "https://api.github.com/repos/swonyu/ahmad-career/actions/runs/43970712465",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVBqQas8AAAAfHt2LfQ",
+      "head_sha": "3c25a963db4fa10e8162641cbd0ec396e127c06c",
+      "url": "https://api.github.com/repos/swonyu/ahmad-career/actions/jobs/133661821821",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43970712465/job/133661821821",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-16T22:30:30Z",
+      "started_at": "2026-11-16T22:30:32Z",
+      "completed_at": "2026-11-16T22:34:36Z",
+      "name": "Android compile and lint",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-16T22:30:33Z",
+          "completed_at": "2026-11-16T22:30:36Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-16T22:30:36Z",
+          "completed_at": "2026-11-16T22:30:40Z"
+        },
+        {
+          "name": "Run actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-16T22:30:40Z",
+          "completed_at": "2026-11-16T22:30:42Z"
+        },
+        {
+          "name": "Require the pinned Android SDK",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-16T22:30:42Z",
+          "completed_at": "2026-11-16T22:30:43Z"
+        },
+        {
+          "name": "Phone URL, PDF and receipt policies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-16T22:30:43Z",
+          "completed_at": "2026-11-16T22:30:45Z"
+        },
+        {
+          "name": "Compile the ordinary preview and its instrumentation",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 6,
+          "started_at": "2026-11-16T22:30:45Z",
+          "completed_at": "2026-11-16T22:34:34Z"
+        },
+        {
+          "name": "Keep the lint report",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-16T22:34:34Z",
+          "completed_at": "2026-11-16T22:34:34Z"
+        },
+        {
+          "name": "Post Run actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-16T22:34:34Z",
+          "completed_at": "2026-11-16T22:34:34Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-16T22:34:34Z",
+          "completed_at": "2026-11-16T22:34:34Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-16T22:34:34Z",
+          "completed_at": "2026-11-16T22:34:34Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/swonyu/ahmad-career/check-runs/133661821821",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000000077,
+      "runner_name": "GitHub Actions 1000000077",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 133661821853,
+      "run_id": 43970712465,
+      "workflow_name": "Phone quality",
+      "head_branch": "career-finder-phones-verified-apply-20261116",
+      "run_url": "https://api.github.com/repos/swonyu/ahmad-career/actions/runs/43970712465",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVBqQas8AAAAfHt2LnQ",
+      "head_sha": "3c25a963db4fa10e8162641cbd0ec396e127c06c",
+      "url": "https://api.github.com/repos/swonyu/ahmad-career/actions/jobs/133661821853",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43970712465/job/133661821853",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-16T22:30:30Z",
+      "started_at": "2026-11-16T22:30:32Z",
+      "completed_at": "2026-11-16T22:30:45Z",
+      "name": "Service and synthetic HTTPS",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-16T22:30:33Z",
+          "completed_at": "2026-11-16T22:30:33Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-16T22:30:33Z",
+          "completed_at": "2026-11-16T22:30:35Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-16T22:30:35Z",
+          "completed_at": "2026-11-16T22:30:35Z"
+        },
+        {
+          "name": "Existing record and discovery regressions",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-16T22:30:35Z",
+          "completed_at": "2026-11-16T22:30:37Z"
+        },
+        {
+          "name": "Verified-submission state and HTTP regressions",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-16T22:30:37Z",
+          "completed_at": "2026-11-16T22:30:39Z"
+        },
+        {
+          "name": "Synthetic TLS, consent, receipts and recovery",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-16T22:30:39Z",
+          "completed_at": "2026-11-16T22:30:43Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-16T22:30:43Z",
+          "completed_at": "2026-11-16T22:30:43Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-16T22:30:43Z",
+          "completed_at": "2026-11-16T22:30:43Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-16T22:30:43Z",
+          "completed_at": "2026-11-16T22:30:43Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/swonyu/ahmad-career/check-runs/133661821853",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000000079,
+      "runner_name": "GitHub Actions 1000000079",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 133661821856,
+      "run_id": 43970712465,
+      "workflow_name": "Phone quality",
+      "head_branch": "career-finder-phones-verified-apply-20261116",
+      "run_url": "https://api.github.com/repos/swonyu/ahmad-career/actions/runs/43970712465",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVBqQas8AAAAfHt2LoA",
+      "head_sha": "3c25a963db4fa10e8162641cbd0ec396e127c06c",
+      "url": "https://api.github.com/repos/swonyu/ahmad-career/actions/jobs/133661821856",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43970712465/job/133661821856",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-16T22:30:30Z",
+      "started_at": "2026-11-16T22:30:33Z",
+      "completed_at": "2026-11-16T22:47:37Z",
+      "name": "iPhone native interface acceptance",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-16T22:30:33Z",
+          "completed_at": "2026-11-16T22:30:35Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-16T22:30:35Z",
+          "completed_at": "2026-11-16T22:30:38Z"
+        },
+        {
+          "name": "Select an iPhone on this disposable hosted runner",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-16T22:30:38Z",
+          "completed_at": "2026-11-16T22:31:05Z"
+        },
+        {
+          "name": "Exercise native phone flows with isolated synthetic data",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 4,
+          "started_at": "2026-11-16T22:31:05Z",
+          "completed_at": "2026-11-16T22:47:12Z"
+        },
+        {
+          "name": "Export native interface evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-16T22:47:12Z",
+          "completed_at": "2026-11-16T22:47:16Z"
+        },
+        {
+          "name": "Keep the native UI results and screenshots",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-16T22:47:16Z",
+          "completed_at": "2026-11-16T22:47:27Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-16T22:47:27Z",
+          "completed_at": "2026-11-16T22:47:28Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-16T22:47:28Z",
+          "completed_at": "2026-11-16T22:47:34Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/swonyu/ahmad-career/check-runs/133661821856",
+      "labels": [
+        "macos-26"
+      ],
+      "runner_id": 1000000076,
+      "runner_name": "GitHub Actions 1000000076",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 133661821910,
+      "run_id": 43970712465,
+      "workflow_name": "Phone quality",
+      "head_branch": "career-finder-phones-verified-apply-20261116",
+      "run_url": "https://api.github.com/repos/swonyu/ahmad-career/actions/runs/43970712465",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVBqQas8AAAAfHt2L1g",
+      "head_sha": "3c25a963db4fa10e8162641cbd0ec396e127c06c",
+      "url": "https://api.github.com/repos/swonyu/ahmad-career/actions/jobs/133661821910",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/43970712465/job/133661821910",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-16T22:30:30Z",
+      "started_at": "2026-11-16T22:30:32Z",
+      "completed_at": "2026-11-16T22:31:35Z",
+      "name": "Hosted HTTPS service and durable storage",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-16T22:30:33Z",
+          "completed_at": "2026-11-16T22:30:34Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-16T22:30:34Z",
+          "completed_at": "2026-11-16T22:30:36Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-16T22:30:36Z",
+          "completed_at": "2026-11-16T22:30:37Z"
+        },
+        {
+          "name": "Install the pinned hosted service dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-16T22:30:37Z",
+          "completed_at": "2026-11-16T22:30:55Z"
+        },
+        {
+          "name": "Check account screens and worker types",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-16T22:30:55Z",
+          "completed_at": "2026-11-16T22:31:02Z"
+        },
+        {
+          "name": "Exercise the production handler with real local D1 and R2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-16T22:31:02Z",
+          "completed_at": "2026-11-16T22:31:29Z"
+        },
+        {
+          "name": "Build the deployable Worker and phone setup pages",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-16T22:31:29Z",
+          "completed_at": "2026-11-16T22:31:32Z"
+        },
+        {
+          "name": "Keep the hosted regression evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-16T22:31:32Z",
+          "completed_at": "2026-11-16T22:31:33Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-16T22:31:33Z",
+          "completed_at": "2026-11-16T22:31:33Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-16T22:31:33Z",
+          "completed_at": "2026-11-16T22:31:33Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-16T22:31:33Z",
+          "completed_at": "2026-11-16T22:31:33Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/swonyu/ahmad-career/check-runs/133661821910",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000000078,
+      "runner_name": "GitHub Actions 1000000078",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ],
+  "nativeTests": {
+    "runId": 43970712465,
+    "attempt": 1,
+    "headSha": "3c25a963db4fa10e8162641cbd0ec396e127c06c",
+    "uiJobId": 133661821856,
+    "uiConclusion": "failure",
+    "tests": [
+      {
+        "test": "testAccessibilityTextKeepsCoreControlsReachable",
+        "outcome": "passed",
+        "durationSeconds": 100.762
+      },
+      {
+        "test": "testApplicationDraftSurvivesCancelAndRelaunch",
+        "outcome": "failed",
+        "durationSeconds": 103.465
+      },
+      {
+        "test": "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+        "outcome": "failed",
+        "durationSeconds": 100.979
+      },
+      {
+        "test": "testDiscoverySaveFlowsIntoSavedAndApply",
+        "outcome": "passed",
+        "durationSeconds": 44.521
+      },
+      {
+        "test": "testFreshStartAndFiveTabs",
+        "outcome": "passed",
+        "durationSeconds": 29.676
+      },
+      {
+        "test": "testLinkedInProfileDraftAndExternalSearchChoice",
+        "outcome": "passed",
+        "durationSeconds": 52.051
+      },
+      {
+        "test": "testOpportunityDiscardRequiresExplicitChoice",
+        "outcome": "passed",
+        "durationSeconds": 20.611
+      },
+      {
+        "test": "testOpportunityDraftKeepSaveAndRestore",
+        "outcome": "passed",
+        "durationSeconds": 56.134
+      },
+      {
+        "test": "testSearchEmptyAndFailurePreservesPreviousResults",
+        "outcome": "passed",
+        "durationSeconds": 83.822
+      }
+    ],
+    "executedCountLines": [
+      "2026-11-16T22:45:35.6592410Z \t Executed 9 tests, with 2 failures (0 unexpected) in 592.020 (592.028) seconds",
+      "2026-11-16T22:45:35.6598660Z \t Executed 9 tests, with 2 failures (0 unexpected) in 592.020 (592.031) seconds",
+      "2026-11-16T22:45:35.6631580Z \t Executed 9 tests, with 2 failures (0 unexpected) in 592.020 (592.034) seconds"
+    ],
+    "simulator": {
+      "name": "iPhone Air",
+      "runtime": "iOS 26.5"
+    },
+    "observedAt": "2026-11-16T22:49:32.713602+00:00"
+  },
+  "logs": [
+    {
+      "jobId": 133661821856,
+      "jobName": "iPhone native interface acceptance",
+      "path": "logs/133661821856.log",
+      "bytes": 383882,
+      "sha256": "b429c918a112f27cb85ef0591bc6408b34e2415cd0e71ca87318a0a9c5228374"
+    },
+    {
+      "jobId": 133661821500,
+      "jobName": "iPhone logic and unsigned build",
+      "path": "logs/133661821500.log",
+      "bytes": 110959,
+      "sha256": "ecf26d70c220a6347c82d86b1bb00d34480a38064601fcf997ed1b9d86c773b9"
+    },
+    {
+      "jobId": 133661821821,
+      "jobName": "Android compile and lint",
+      "path": "logs/133661821821.log",
+      "bytes": 99180,
+      "sha256": "e05cd3b7f75f9af0eee2566523b019180929c288765c1619fec290cfb41562a9"
+    },
+    {
+      "jobId": 133661821853,
+      "jobName": "Service and synthetic HTTPS",
+      "path": "logs/133661821853.log",
+      "bytes": 39008,
+      "sha256": "b3089c07c8c912fa710a0c695596c8d604df1ec3483b170c1a08c212fba384d7"
+    },
+    {
+      "jobId": 133661821910,
+      "jobName": "Hosted HTTPS service and durable storage",
+      "path": "logs/133661821910.log",
+      "bytes": 34456,
+      "sha256": "45ad4ea9af66668317d52e41f65c544e9ddcbc1bf5d725fda8af2a88f1528265"
+    }
+  ],
+  "artifact": {
+    "id": 14279961714,
+    "node_id": "MDg6QXJ0aWZhY3QxNDI3OTk2MTcxNA==",
+    "name": "iphone-ui-acceptance-43970712465",
+    "size_in_bytes": 171811348,
+    "url": "https://api.github.com/repos/swonyu/ahmad-career/actions/artifacts/14279961714",
+    "archive_download_url": "https://api.github.com/repos/swonyu/ahmad-career/actions/artifacts/14279961714/zip",
+    "expired": false,
+    "digest": "sha256:6298842cb9f23fcf7513d48d50c8abda9b04165cc978fc21882371821d850781",
+    "created_at": "2026-11-16T22:47:27Z",
+    "updated_at": "2026-11-16T22:47:27Z",
+    "expires_at": "2026-11-23T22:47:17Z",
+    "workflow_run": {
+      "id": 43970712465,
+      "repository_id": 1411027050,
+      "head_repository_id": 1411027050,
+      "head_branch": "career-finder-phones-verified-apply-20261116",
+      "head_sha": "3c25a963db4fa10e8162641cbd0ec396e127c06c"
+    }
+  },
+  "artifactArchive": {
+    "path": "archive/14279961714.zip",
+    "bytes": 171811348,
+    "sha256": "6298842cb9f23fcf7513d48d50c8abda9b04165cc978fc21882371821d850781"
+  },
+  "exportedPNGCount": 17,
+  "selectedAttachments": [
+    {
+      "label": "10-profile-accessibility-keyboard_0_CE2A2416-BE07-42C1-AD7A-B56A71C09EE0.png",
+      "attachment": {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "2A60844A-965A-488C-A249-D05B65E74AB8.png",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "10-profile-accessibility-keyboard_0_CE2A2416-BE07-42C1-AD7A-B56A71C09EE0.png",
+        "timestamp": 1794868609.12
+      },
+      "path": "exported/2A60844A-965A-488C-A249-D05B65E74AB8.png",
+      "bytes": 519308,
+      "sha256": "546c2572b85b0bd3ffd6aad3f9d970152cc389246a5db9f4c7ddf4998c4fe113"
+    },
+    {
+      "label": "14-disabled-submission-explained_0_A7816D75-3015-4C13-8FF9-C9812AC98745.png",
+      "attachment": {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "B44995C4-43CC-4911-807A-272B6F7E25A3.png",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "14-disabled-submission-explained_0_A7816D75-3015-4C13-8FF9-C9812AC98745.png",
+        "timestamp": 1794868809.262
+      },
+      "path": "exported/B44995C4-43CC-4911-807A-272B6F7E25A3.png",
+      "bytes": 885533,
+      "sha256": "028067f076984feeab19bd3b2a70243b9293f9ed357946f83be5124d74337597"
+    },
+    {
+      "label": "17-linkedin-search-choice_0_3FF80AB5-D96F-466A-992A-ABC2BC124DE4.png",
+      "attachment": {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "53881C90-F79E-431E-9FCB-4C0EAE2AE178.png",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "17-linkedin-search-choice_0_3FF80AB5-D96F-466A-992A-ABC2BC124DE4.png",
+        "timestamp": 1794868974.712
+      },
+      "path": "exported/53881C90-F79E-431E-9FCB-4C0EAE2AE178.png",
+      "bytes": 354662,
+      "sha256": "e56b09183721e176498241c4a709b41446a62c3e485b02778dda491617c1c88a"
+    },
+    {
+      "label": "16-linkedin-profile-link_0_F6B6AB4A-BEA6-4E3B-8A00-D2CFDF72FD7B.png",
+      "attachment": {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "7E182ABF-E64D-4551-BF10-1ACBBC7A05F7.png",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "16-linkedin-profile-link_0_F6B6AB4A-BEA6-4E3B-8A00-D2CFDF72FD7B.png",
+        "timestamp": 1794868967.932
+      },
+      "path": "exported/7E182ABF-E64D-4551-BF10-1ACBBC7A05F7.png",
+      "bytes": 376771,
+      "sha256": "7089592eae206deb463487895145cc063e016ef03289fa35e7fc64b16687c0ed"
+    }
+  ],
+  "sourceFingerprints": [
+    {
+      "path": ".github/workflows/phone-quality.yml",
+      "bytes": 9653,
+      "sha256": "10b500dfa6eecd81fe59d9b1dfc191d0c931ab94da0cc2f549ae72ad6f6a3064"
+    },
+    {
+      "path": "apple/UITests/CareerFinderUITests.swift",
+      "bytes": 18739,
+      "sha256": "9ebc8b5321c5263bac0e2af690882b15ed9dcc7a41aaf7eb55a338eb32ff5691"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeApplicationsViews.swift",
+      "bytes": 65191,
+      "sha256": "aaed3010eaf19d4bc21e13885d0dabe8b263eb12f4d579a89375aaecf3329f9a"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeApplicationsStore.swift",
+      "bytes": 39826,
+      "sha256": "c8ab269dce3014c66d3fc2fdadbe14c495c3ef3fed1d47847c4ce1d28e049a65"
+    },
+    {
+      "path": "apple/AhmadCareer/MobileApplicationClient.swift",
+      "bytes": 22870,
+      "sha256": "24ada065338eec98cd35b6704250c47075f612ef2c1cb0528704e6791b1072cf"
+    },
+    {
+      "path": "apple/AhmadCareer/MobileApplicationState.swift",
+      "bytes": 15386,
+      "sha256": "53488d8a25d4292d196748a33c34b34267eb8bd994f402618428e97ae87b64b0"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeDiscoveryViews.swift",
+      "bytes": 17424,
+      "sha256": "630fb5e57e9f40a3eab5e56445b8a5243cc6787eb81a869def9e03dbc0959199"
+    },
+    {
+      "path": "apple/Checks/MobileLifecycleCheck.swift",
+      "bytes": 78669,
+      "sha256": "1508040ccfcb39571bcfefeed114715140d5aea8284297c02e2ac994ea87a766"
+    }
+  ],
+  "limitations": [
+    "No local Xcode, Simulator, xcresulttool, signing, or physical-device operations were run.",
+    "Only CI-exported PNG/JSON attachments and text logs were extracted; the xcresult was not processed.",
+    "No workflow rerun, cancellation, dispatch, source edit, or publication occurred."
+  ]
+}

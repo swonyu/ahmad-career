@@ -4,11 +4,12 @@ final class CareerFinderUITests: XCTestCase {
     override func setUpWithError() throws { continueAfterFailure = false }
 
     @MainActor
-    private func launch(id: String = UUID().uuidString, largeText: Bool = false, availability: String? = nil) -> XCUIApplication {
+    private func launch(id: String = UUID().uuidString, largeText: Bool = false, availability: String? = nil, orphanRecord: Bool = false) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = ["-career-ui-acceptance", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         app.launchEnvironment["CAREER_UI_TEST_ID"] = id
         if let availability { app.launchEnvironment["CAREER_UI_APPLICATION_AVAILABILITY"] = availability }
+        if orphanRecord { app.launchEnvironment["CAREER_UI_ORPHAN_RECORD"] = "1" }
         if largeText { app.launchArguments += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"] }
         app.launch()
         XCTAssertTrue(app.staticTexts["acceptance.offline"].waitForExistence(timeout: 10), "Acceptance must use an isolated offline workspace")
@@ -31,6 +32,37 @@ final class CareerFinderUITests: XCTestCase {
         XCTAssertTrue(element.exists && element.isHittable, "Expected a reachable control: \(element)")
     }
     @MainActor
+    private func revealInApplicationContent(_ target: XCUIElement, app: XCUIApplication) {
+        let scroll = app.scrollViews["applications.content"]
+        XCTAssertTrue(scroll.waitForExistence(timeout: 5))
+        for _ in 0..<24 {
+            var viewport = scroll.frame.intersection(app.frame)
+            let navigation = app.navigationBars.firstMatch, tabs = app.tabBars.firstMatch
+            let top = max(viewport.minY, navigation.exists ? navigation.frame.maxY + 8 : viewport.minY + 8)
+            var bottom = min(viewport.maxY, tabs.exists ? tabs.frame.minY - 8 : viewport.maxY - 8)
+            let action = app.buttons["applications.review"]
+            if action.exists && action.isHittable { bottom = min(bottom, action.frame.minY - 12) }
+            viewport = CGRect(x: viewport.minX + 12, y: top, width: viewport.width - 24, height: bottom - top)
+            XCTAssertGreaterThan(viewport.height, 120, "Application content must have a usable touch viewport")
+            let targetFrame = target.exists ? target.frame : .null
+            let visible = targetFrame.intersection(viewport)
+            if !visible.isNull && visible.height >= min(targetFrame.height, 44) && target.isHittable {
+                // Action labels must be fully visible; long explanatory headings may span a screen.
+                if target.elementType != .button || targetFrame.minY >= viewport.minY && targetFrame.maxY <= viewport.maxY { return }
+            }
+            let downward = !targetFrame.isNull && targetFrame.midY < viewport.midY
+            let distance = min(180, viewport.height * 0.36)
+            let center = viewport.midY
+            let origin = app.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0))
+            let from = origin.withOffset(CGVector(dx: viewport.midX, dy: center + (downward ? -distance / 2 : distance / 2)))
+            let to = origin.withOffset(CGVector(dx: viewport.midX, dy: center + (downward ? distance / 2 : -distance / 2)))
+            from.press(forDuration: 0.05, thenDragTo: to)
+        }
+        capture("application-control-not-reachable", app: app)
+        print(app.debugDescription)
+        XCTFail("Expected an application control inside the visible scroll area: \(target)")
+    }
+    @MainActor
     private func replace(_ field: XCUIElement, with text: String) {
         XCTAssertTrue(field.waitForExistence(timeout: 5))
         field.tap()
@@ -48,6 +80,28 @@ final class CareerFinderUITests: XCTestCase {
     }
     @MainActor
     private func top(_ app: XCUIApplication) { for _ in 0..<4 { app.swipeDown() } }
+    @MainActor
+    private func addLocalOpportunity(in app: XCUIApplication, title: String, company: String = "Example employer") {
+        let add = app.buttons["home.addOpportunity"]; reveal(add, in: app); add.tap()
+        for (id, value) in [("opportunity.url", "https://careers.example.com/jobs/private-record"), ("opportunity.title", title), ("opportunity.company", company)] {
+            let field = app.textFields[id]; reveal(field, in: app); replace(field, with: value)
+            if app.buttons["Done typing"].exists { app.buttons["Done typing"].tap() }
+        }
+        app.buttons["opportunity.save"].tap()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 5))
+    }
+    @MainActor
+    private func chooseMenu(_ label: String, in app: XCUIApplication) {
+        let matches = app.buttons.matching(NSPredicate(format: "label == %@", label))
+        let ready = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            matches.allElementsBoundByIndex.contains { $0.exists && $0.isHittable }
+        }, object: nil)
+        XCTAssertEqual(XCTWaiter.wait(for: [ready], timeout: 5), .completed)
+        guard let choice = matches.allElementsBoundByIndex.first(where: { $0.exists && $0.isHittable }) else {
+            XCTFail("Missing reachable menu choice: \(label)"); return
+        }
+        choice.tap()
+    }
     @MainActor
     private func searchFromKeyboard(in app: XCUIApplication, usingReturnKey: Bool = false) {
         let keyboard = app.keyboards.firstMatch
@@ -109,7 +163,9 @@ final class CareerFinderUITests: XCTestCase {
         var app = launch(id: id)
         let profile = app.buttons["home.applicationProfile"]; reveal(profile, in: app); profile.tap()
         let name = app.textFields["application.firstName"]
-        XCTAssertTrue(name.waitForExistence(timeout: 5))
+        let opened = name.waitForExistence(timeout: 5)
+        if !opened { capture("profile-initial-open-failure", app: app); print(app.debugDescription) }
+        XCTAssertTrue(opened, "One tap on Start must open the application profile before any draft editing")
         XCTAssertTrue(["", "First or single name"].contains(name.value as? String ?? ""), "A fresh profile must not contain another person's name")
         replace(name, with: "Taylor")
         replace(app.textFields["application.email"], with: "taylor@example.com")
@@ -149,6 +205,90 @@ final class CareerFinderUITests: XCTestCase {
         let search = element("discovery.linkedin", app: app); reveal(search, in: app)
         XCTAssertTrue(search.isHittable, "LinkedIn search must be a deliberate external action")
         capture("17-linkedin-search-choice", app: app)
+    }
+
+    @MainActor
+    func testPrivateApplicationRecordPersistsAndCorrectionIsExplicit() {
+        let id = UUID().uuidString, title = "Private record opportunity"
+        var app = launch(id: id)
+        addLocalOpportunity(in: app, title: title)
+        tab("Saved", in: app); let row = app.staticTexts[title]; reveal(row, in: app); row.tap()
+        let edit = app.buttons["record.edit"]; reveal(edit, in: app); edit.tap()
+        let stage = element("record.stage", app: app); stage.tap(); chooseMenu("Applied", in: app)
+        let followUp = app.switches["record.hasFollowUp"]; reveal(followUp, in: app); followUp.tap()
+        let note = app.textViews["record.note"]; reveal(note, in: app); replace(note, with: "Prepare a thoughtful follow-up.")
+        app.buttons["Done typing"].tap(); app.buttons["record.save"].tap()
+        XCTAssertTrue(app.buttons["record.edit"].waitForExistence(timeout: 5))
+        app.terminate(); app = launch(id: id)
+        tab("Saved", in: app); let restoredRow = app.staticTexts[title]; reveal(restoredRow, in: app); restoredRow.tap()
+        let summary = element("record.stageSummary", app: app); reveal(summary, in: app)
+        XCTAssertEqual(summary.label, "You marked: Applied")
+        XCTAssertTrue(app.staticTexts["Prepare a thoughtful follow-up."].exists)
+        capture("18-private-record-restored", app: app)
+        let reopen = app.buttons["record.edit"]; reveal(reopen, in: app); reopen.tap()
+        element("record.stage", app: app).tap(); chooseMenu("Saved", in: app); app.buttons["record.save"].tap()
+        XCTAssertTrue(app.buttons["Keep application record"].waitForExistence(timeout: 5))
+        app.buttons["Keep application record"].tap()
+        app.navigationBars.buttons["Cancel"].tap(); app.buttons["Discard changes"].tap()
+        XCTAssertEqual(element("record.stageSummary", app: app).label, "You marked: Applied", "Canceling a correction preserves the saved applied record")
+        let again = app.buttons["record.edit"]; reveal(again, in: app); again.tap()
+        element("record.stage", app: app).tap(); chooseMenu("Saved", in: app); app.buttons["record.save"].tap()
+        app.buttons["Mark not applied"].tap()
+        XCTAssertTrue(app.buttons["record.edit"].waitForExistence(timeout: 5))
+        XCTAssertEqual(element("record.stageSummary", app: app).label, "You marked: Saved")
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        element("saved.filter", app: app).tap(); chooseMenu("Follow-ups", in: app)
+        XCTAssertTrue(app.staticTexts[title].waitForExistence(timeout: 5), "The private follow-up remains available after an explicit applied-mark correction")
+        capture("19-private-follow-up-filter", app: app)
+    }
+
+    @MainActor
+    func testSavedLinkRemovalAtLargestTextKeepsCancelReachable() {
+        let id = UUID().uuidString
+        let title = "Accessibility removal opportunity with a long role title for a broad and varied career path"
+        let company = "An example employer with a long organization name for accessible confirmation checks"
+        var app = launch(id: id); addLocalOpportunity(in: app, title: title, company: company)
+        app.terminate(); app = launch(id: id, largeText: true)
+        tab("Saved", in: app); let row = app.staticTexts[title]; reveal(row, in: app, swipes: 25); row.tap()
+        let remove = app.buttons["saved.removeLink"]; reveal(remove, in: app, swipes: 25); remove.tap()
+        let confirm = app.buttons["opportunity.confirmRemove"]; reveal(confirm, in: app, swipes: 25)
+        let keep = app.buttons["opportunity.keepSaved"]; reveal(keep, in: app, swipes: 25)
+        XCTAssertTrue(confirm.isHittable && keep.isHittable, "Both removal choices must remain reachable at the largest text size")
+        capture("20-saved-link-removal-accessibility", app: app)
+        keep.tap()
+        XCTAssertTrue(remove.waitForExistence(timeout: 5), "Canceling preserves the saved opportunity")
+        reveal(remove, in: app, swipes: 25); remove.tap()
+        let finalConfirm = app.buttons["opportunity.confirmRemove"]; reveal(finalConfirm, in: app, swipes: 25); finalConfirm.tap()
+        XCTAssertTrue(app.staticTexts["This opportunity is no longer available here."].waitForExistence(timeout: 5))
+    }
+
+    @MainActor
+    func testProfileReadinessAndSimpleConnectionSetup() {
+        let app = launch()
+        let profile = app.buttons["home.applicationProfile"]; reveal(profile, in: app); profile.tap()
+        replace(app.textFields["application.firstName"], with: "Alex")
+        replace(app.textFields["application.email"], with: "invalid-email")
+        app.navigationBars.buttons["Save"].tap()
+        tab("Apply", in: app)
+        let email = element("profile.essential.email", app: app); reveal(email, in: app)
+        XCTAssertEqual(email.label, "Check your email")
+        XCTAssertEqual(element("profile.essential.name", app: app).label, "Name added")
+        XCTAssertEqual(element("profile.essential.resume", app: app).label, "PDF CV needed")
+        capture("21-profile-readiness", app: app)
+        app.buttons["applications.review"].tap()
+        XCTAssertTrue(app.navigationBars["Application connection"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.textFields["connection.address"].exists, "Default setup needs no service-address editing")
+        let code = app.secureTextFields["connection.code"]; reveal(code, in: app); replace(code, with: "SYNTHETIC")
+        app.buttons["Done typing"].tap()
+        let advanced = app.buttons["Use another service"]; reveal(advanced, in: app); advanced.tap()
+        let address = app.textFields["connection.address"]; reveal(address, in: app)
+        replace(address, with: "https://custom.example.com"); app.buttons["Done typing"].tap()
+        top(app); reveal(code, in: app)
+        XCTAssertTrue(["", "One-time connection code"].contains(code.value as? String ?? ""), "Changing destination clears the unsent code")
+        let reset = app.buttons["Use Career Finder"]; reveal(reset, in: app); reset.tap()
+        XCTAssertFalse(app.textFields["connection.address"].exists)
+        capture("22-simple-default-connection", app: app)
+        app.navigationBars.buttons["Done"].tap()
     }
 
     @MainActor
@@ -291,29 +431,44 @@ final class CareerFinderUITests: XCTestCase {
             XCTAssertEqual(review.label, "Select opportunities to check", "Connection alone must not promise live submission")
             XCTAssertFalse(review.isEnabled, "An empty workspace cannot start an application review")
             let explanation = element("applications.availability.heading", app: app)
-            let content = app.scrollViews.firstMatch
+            let content = app.scrollViews["applications.content"]
             XCTAssertTrue(content.waitForExistence(timeout: 5))
             XCTAssertLessThan(review.frame.height, app.frame.height * 0.4,
                               "The largest text setting must leave most of the phone available for scrolling content")
             XCTAssertGreaterThan(review.frame.minY - app.navigationBars.firstMatch.frame.maxY, app.frame.height * 0.45,
                                  "The fixed application action must leave a usable scrolling viewport above it")
-            for _ in 0..<15 {
-                if explanation.exists && explanation.isHittable { break }
-                content.swipeUp()
-            }
+            revealInApplicationContent(explanation, app: app)
             XCTAssertTrue(explanation.exists && explanation.isHittable, "Availability must be reachable inside the application workspace")
             XCTAssertEqual(explanation.label, heading)
             capture("14-\(availability)-submission-explained", app: app)
             let refresh = app.buttons["applications.availability.refresh"]
-            for _ in 0..<15 {
-                if refresh.exists && refresh.isHittable { break }
-                content.swipeUp()
-            }
+            revealInApplicationContent(refresh, app: app)
             XCTAssertTrue(refresh.exists && refresh.isHittable, "Availability refresh must remain reachable at the largest text setting")
             refresh.tap()
             XCTAssertTrue(explanation.exists, "Refreshing an offline service must preserve its explicit availability state")
             capture("15-\(availability)-refresh-reachable", app: app)
             app.terminate()
         }
+    }
+
+    @MainActor
+    func testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark() {
+        let app = launch(availability: "disabled", orphanRecord: true)
+        tab("Saved", in: app)
+        let role = app.staticTexts["Record without a bookmark"]; reveal(role, in: app); role.tap()
+        let associate = app.buttons["record.keepWithWorkspace"]; reveal(associate, in: app); associate.tap()
+        let cancel = app.buttons["Keep separate on this phone"]
+        XCTAssertTrue(cancel.waitForExistence(timeout: 5)); cancel.tap()
+        XCTAssertTrue(associate.exists, "Cancel leaves the retained record separate from the connected workspace")
+        capture("22-retained-record-cancel", app: app)
+        reveal(associate, in: app); associate.tap()
+        let confirm = app.buttons["Keep with this workspace"]
+        XCTAssertTrue(confirm.waitForExistence(timeout: 5)); confirm.tap()
+        top(app)
+        let note = app.staticTexts["My private retained note"]; reveal(note, in: app)
+        XCTAssertTrue(note.exists, "Confirmed association keeps the note on this phone")
+        XCTAssertFalse(app.buttons["record.keepWithWorkspace"].exists, "The record is now associated with this workspace")
+        XCTAssertFalse(app.buttons["saved.removeLink"].exists, "Association must not recreate a removed bookmark")
+        capture("23-retained-record-associated", app: app)
     }
 }

@@ -1,0 +1,192 @@
+[
+  {
+    "path": ".gitignore",
+    "sha256": "1d0d8aa62aed09180b2264846040bc1e029e2c35a7aba45a92ee078448f5cb53",
+    "mode": "644"
+  },
+  {
+    "path": "README.md",
+    "sha256": "1ff17317a69fe5543bf4b68bc4c36d9b594527065bb219aaa218e89f9dc5a6fd",
+    "mode": "644"
+  },
+  {
+    "path": "app/build.gradle.kts",
+    "sha256": "e4e0d2284c731bcb8d40f2e8582967a6a9d169546f4992b0f294fe9117f3419d",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/acceptance/res/xml/network_security_config.xml",
+    "sha256": "aef8c30928856fe0ae846f20aa2253b923f6a724d5435dc58de946932e75221d",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/androidTest/assets/discovery-search-v1.json",
+    "sha256": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/androidTest/java/com/saleh/careerfinder/ContinuationRegressionTest.kt",
+    "sha256": "848251a8c2e8faa8305fa32f24dfe65cd16a9b1ab50f2d960b3070cdf22cb8ea",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/androidTest/java/com/saleh/careerfinder/DiscoveryRegressionTest.kt",
+    "sha256": "9176a5afe5b51b40d14076aa2974703c2a9e769688cad51bc86bddb9764dd3e9",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/androidTest/java/com/saleh/careerfinder/ExperienceModelRegressionTest.kt",
+    "sha256": "ce786765af24f83631b3456cc70363ebd21452e67f5c419d136e15f5126f3793",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/androidTest/java/com/saleh/careerfinder/LinkedInPhoneAcceptanceTest.kt",
+    "sha256": "585f2fa78c6ef546fbe01bc2645da7d54a917afea8da9530fe98ae6ced3e8a40",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/androidTest/java/com/saleh/careerfinder/LinkedInRegressionTest.kt",
+    "sha256": "e5044d68c9fb343bcd67883fade580f984207fab14301c72b0aa79110dfecd98",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt",
+    "sha256": "344e9a28e12fd0ed6f84711b02bbbeb6279801c24088f202d6eeb874dd809c97",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt",
+    "sha256": "0249dd605084f1e8cf58ffbd6f8dc0621c377744f24ddaa4644ab9c9904b5c6a",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt",
+    "sha256": "b8270edfc2aa47313f543ec57e848f9967a5fd15e8566a29c8818aef3a76bbf4",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/androidTest/java/com/saleh/careerfinder/VaultAcceptanceTest.kt",
+    "sha256": "11d66866ac03ffc98021706d149836b7ca6f780f7841eacd167b13ce67f14968",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/androidTest/java/com/saleh/careerfinder/WorkspaceRegressionTest.kt",
+    "sha256": "84f1cd1dc4d55a416c1fb66620b812d5e472ed2f1670263128e0c5c593557ba6",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/main/AndroidManifest.xml",
+    "sha256": "d824b6e7681f09b3a148b212f16de1b308b9dd9742a8cbcea7cd9807cf7386b0",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/main/java/com/saleh/careerfinder/BoundaryPolicy.java",
+    "sha256": "dd5278af4186cec6c7c7db5c6cb67d2547a8437213ef774088e4277db91851e4",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/main/java/com/saleh/careerfinder/CareerApi.kt",
+    "sha256": "50962862e95f2589ace17e475e12e71bf183c9858e2ad95cea4b103e36ed3404",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt",
+    "sha256": "4f011065c00b7a5645189c26a21554e9b761eb91e8b4e257e36db03102872727",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+    "sha256": "c1a2383b9be52541ab7e137dd4b9d9dfecdfafbf76b6e88d098cf026f27d35b5",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+    "sha256": "4fd8a57349330908280455dbc185c08595e3244b5b48b8bbc268674c944a721a",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+    "sha256": "3ead546076743183f87b3a5531a4b310890cd798d4c066415acff412ebb346c4",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/main/java/com/saleh/careerfinder/Models.kt",
+    "sha256": "bedb60ebc6a40f3db1de2ec335119b9dced55571a5a2ab26e505078159d2fe3d",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/main/java/com/saleh/careerfinder/SecureVault.kt",
+    "sha256": "c892be2f75738457c810cd6e3e317ebc5b717ddd6a90da162e6e53b2825f6999",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/main/res/drawable/ic_career_finder.xml",
+    "sha256": "d588b5a168038756c4e6aa4df0f89b3f2723c37503112b7d269c1974dcba4746",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/main/res/values/strings.xml",
+    "sha256": "e9aafdbf8d3dba742e5c2fc6e562540c61a79d900bb2f4556437ae9087b3d796",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/main/res/values/styles.xml",
+    "sha256": "009e3572499e0fe03b6517824a6376ecade78911c1fd5f7d12cedecb566d326a",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/main/res/xml/data_extraction_rules.xml",
+    "sha256": "8b55ff5489071bb19a4e89967b604a16c0e4d1e87a2df3c73c64417314a59f22",
+    "mode": "644"
+  },
+  {
+    "path": "app/src/main/res/xml/network_security_config.xml",
+    "sha256": "eb5f5c57a88fc656cb97ee142694b996b286064ba973e51e0158bcdff08b34f2",
+    "mode": "644"
+  },
+  {
+    "path": "build.gradle.kts",
+    "sha256": "3120598110d304cc605c5919399ce5a9e68776b327d1462c0ba15bd0dd915b2a",
+    "mode": "644"
+  },
+  {
+    "path": "checks/BoundaryPolicyCheck.java",
+    "sha256": "da47f52aad5d40c340ce903db87f270d2d30ddad0233dd7cb5784645b0115f30",
+    "mode": "644"
+  },
+  {
+    "path": "checks/run-policy-checks.sh",
+    "sha256": "b0e15a9109c01b4bee59d2319335fc736342fbf19da99fff1f1166086f3d8880",
+    "mode": "644"
+  },
+  {
+    "path": "gradle.properties",
+    "sha256": "d83e273790ac248fa6c70b82fbdeec7d8146773136a9028845247cb63873ffee",
+    "mode": "644"
+  },
+  {
+    "path": "gradle/wrapper/gradle-wrapper.jar",
+    "sha256": "81a82aaea5abcc8ff68b3dfcb58b3c3c429378efd98e7433460610fecd7ae45f",
+    "mode": "644"
+  },
+  {
+    "path": "gradle/wrapper/gradle-wrapper.properties",
+    "sha256": "c040b6ef2fb893ff5beea5a281614f2848f1c3996a7886f650b713f8240656a2",
+    "mode": "644"
+  },
+  {
+    "path": "gradlew",
+    "sha256": "734b3879d3501dce471cf0522d3bcbafe76873d9fc5129345b67fb43bd15e933",
+    "mode": "755"
+  },
+  {
+    "path": "gradlew.bat",
+    "sha256": "57931b17dd228e5c24dac90e815d0bf82477e831a4618dfab4136f5446b42a9f",
+    "mode": "644"
+  },
+  {
+    "path": "settings.gradle.kts",
+    "sha256": "df33349123728bf2c303dc9ce52c41a3be7903a23175411d20b493f4b0d6d036",
+    "mode": "644"
+  }
+]

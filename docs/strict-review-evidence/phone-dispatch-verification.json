@@ -1,0 +1,21 @@
+{
+  "observedAt": "2026-11-16T23:19:38.480Z",
+  "status": "passed",
+  "command": "node --test tests/phone-batch-stop.mjs tests/phone-dispatch.mjs",
+  "combinedTests": 34,
+  "combinedFailures": 0,
+  "testsInThisFile": 17,
+  "behavioralCasesInThisFile": 16,
+  "dependencies": {
+    "zod": "4.6.7"
+  },
+  "realOutboundRequests": 0,
+  "scope": "Actual esbuild-bundled production module with injected async boundaries; no network server or real provider calls.",
+  "sourceHashes": {
+    "app/phone/dispatch.ts": "da885e77dcac471bed44b72780fd391054ef46b7701faac4b43a50138b10c64d",
+    "tests/phone-dispatch.mjs": "7e7b2c0ce80a91a2fbe35b9716301dda0138ee9840b27476137f032bce225a5f",
+    "app/phone/model.ts": "3bdfb877aead35db68a65db8eceaddaf60d9ed7dd2398410aa7802dcdb9787b1",
+    "app/components/api.ts": "599db9045ea7a7cbcac9cc10b31582746e266d2cd43e8355fa8f5a7f901a70b4"
+  },
+  "limits": "Native browser effects, production identity headers, actual D1/HTTP continuation, and screen layout have separate acceptance gates."
+}

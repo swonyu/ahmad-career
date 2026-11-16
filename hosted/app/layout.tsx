@@ -2,12 +2,15 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: { default: "Career Finder · Connect your phone", template: "%s · Career Finder" },
-  description: "Connect Career Finder on iPhone and Android. Manage your private workspace, phone connections, and application records.",
+  title: { default: "Career Finder", template: "%s · Career Finder" },
+  description: "Find jobs, keep a shortlist, and manage your next career step on iPhone and Android.",
   robots: { index: false, follow: false },
+  manifest: "/phone.webmanifest",
+  appleWebApp: { capable: true, title: "Career Finder", statusBarStyle: "default" },
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
+    apple: "/phone-icon.png",
   },
 };
 

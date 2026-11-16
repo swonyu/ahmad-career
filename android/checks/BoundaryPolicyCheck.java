@@ -37,6 +37,8 @@ public final class BoundaryPolicyCheck {
         check(BoundaryPolicy.linkedinProfileURL("https://www.linkedin.com/in/a%3Fb").equals("https://www.linkedin.com/in/a%3Fb"), "LinkedIn encoded slug punctuation stays in the path");
         check(BoundaryPolicy.linkedinProfileURL("https://www.linkedin.com/in/alice%2Dsmith").equals("https://www.linkedin.com/in/alice-smith"), "LinkedIn unreserved encoding normalized");
         check(BoundaryPolicy.linkedinProfileURL("https://abc.linkedin.com/in/a~._-0").equals("https://www.linkedin.com/in/a~._-0"), "LinkedIn three-letter region and unreserved slug allowed");
+        check(BoundaryPolicy.linkedinProfileURL("https://linkedin.com/in/Jose\u0301").equals("https://www.linkedin.com/in/Jose%CC%81"), "raw decomposed LinkedIn Unicode spelling preserved");
+        check(BoundaryPolicy.linkedinProfileURL("https://linkedin.com/in/Jose%CC%81").equals("https://www.linkedin.com/in/Jose%CC%81"), "escaped decomposed LinkedIn Unicode spelling preserved");
         String internationalLink = BoundaryPolicy.linkedinProfileURL("https://linkedin.com/in/" + "م".repeat(300));
         check(BoundaryPolicy.linkedinProfileURL(internationalLink).equals(internationalLink), "LinkedIn canonical UTF8 profile can be read back exactly");
         rejects(() -> BoundaryPolicy.linkedinProfileURL("https://linkedin.com/in/" + "م".repeat(400)), "LinkedIn encoded output remains within the response length limit");
@@ -55,6 +57,16 @@ public final class BoundaryPolicyCheck {
         check(BoundaryPolicy.linkedinJobSearchURL("Data & science", "Riyadh, SA").equals("https://www.linkedin.com/jobs/search/?keywords=Data+%26+science&location=Riyadh%2C+SA"), "LinkedIn search encodes only public terms");
         check(BoundaryPolicy.linkedinJobSearchURL("", "").equals("https://www.linkedin.com/jobs/search/"), "empty LinkedIn search opens the public jobs page");
         rejects(() -> BoundaryPolicy.linkedinJobSearchURL("x".repeat(121), ""), "LinkedIn search terms stay bounded");
+        check(BoundaryPolicy.jobIdentity("HTTPS://JOBS.LEVER.CO:443/Example/00000000-0000-4000-8000-000000000001/apply?source=phone#apply")
+            .equals("jobs.lever.co/example/00000000-0000-4000-8000-000000000001"), "same Lever posting keeps one private identity");
+        check(BoundaryPolicy.jobIdentity("https://JOBS.EXAMPLE.ORG:443/opening/?id=42&utm_source=mail&gclid=sample#apply")
+            .equals("https://jobs.example.org/opening?id=42"), "generic identity preserves job parameter and removes tracking");
+        check(!BoundaryPolicy.jobIdentity("https://jobs.example.org/opening?id=42").equals(BoundaryPolicy.jobIdentity("https://jobs.example.org/opening?id=43")), "different job parameters remain distinct");
+        check(!BoundaryPolicy.jobIdentity("https://jobs.example.org:8443/opening").equals(BoundaryPolicy.jobIdentity("https://jobs.example.org/opening")), "custom job origins remain distinct");
+        check(BoundaryPolicy.civilDate("2024-02-29").equals("2024-02-29"), "leap day retained as a civil date");
+        check(BoundaryPolicy.civilDate("").isEmpty(), "optional calendar date stays empty");
+        for (String invalid : new String[]{"2025-02-29", "2026-13-01", "2026-04-31", "2026-1-01", "0000-01-01", "2026-11-17T00:00:00Z"})
+            rejects(() -> BoundaryPolicy.civilDate(invalid), "invalid or instant-like civil date refused");
         check(!BoundaryPolicy.workspaceKey("https://apply.example.org", "one").equals(BoundaryPolicy.workspaceKey("https://apply.example.org", "two")), "workspace identities isolated");
         check(!BoundaryPolicy.workspaceKey("https://apply.example.org", "one").equals(BoundaryPolicy.workspaceKey("https://other.example.org", "one")), "different services isolated");
         check(BoundaryPolicy.workspaceKey("https://apply.example.org/", "one").equals(BoundaryPolicy.workspaceKey("https://apply.example.org", "one")), "same service normalized");

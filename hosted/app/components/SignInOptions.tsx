@@ -1,5 +1,5 @@
 /** Sites owns authentication. This describes its Google option without claiming a direct Google OAuth flow. */
-export default function SignInOptions({ destination }: { destination: "connect" | "account" }) {
+export default function SignInOptions({ destination }: { destination: "connect" | "account" | "phone" }) {
   return <div className="sign-in-options">
     <div className="sign-in-choice" id="sign-in-method-help">
       <h3>Want to use Google?</h3>

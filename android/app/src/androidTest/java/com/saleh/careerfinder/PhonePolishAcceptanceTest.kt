@@ -135,7 +135,8 @@ class PhonePolishAcceptanceTest {
 
     @Test fun discoveredRole_savesPrivately_andManualApplicationRemainsSelfReported() {
         val job = discovery.jobs.first()
-        compose.onNodeWithText("Search jobs").performScrollTo().performClick()
+        compose.onNodeWithTag("discovery-list").performScrollToNode(hasText("Search jobs"))
+        compose.onNodeWithText("Search jobs").performClick()
         compose.waitUntil(5_000) { model.discovery.state.value.jobs.size == 2 && !model.discovery.state.value.loading }
         compose.onNodeWithTag("discovery-list").performScrollToNode(hasContentDescription("Save ${job.title} at ${job.company}"))
         compose.onNodeWithContentDescription("Save ${job.title} at ${job.company}").performClick()
@@ -145,8 +146,12 @@ class PhonePolishAcceptanceTest {
         assertEquals("", saved.country)
         assertTrue(saved.localOnly)
         compose.onNodeWithTag("jobs-saved-tab").performClick()
-        compose.onNodeWithTag("jobs-list").performScrollToNode(hasContentDescription("I applied on the employer’s site for ${job.title} at ${job.company}"))
-        compose.onNodeWithContentDescription("I applied on the employer’s site for ${job.title} at ${job.company}").performClick()
+        compose.onNodeWithTag("jobs-list").performScrollToNode(hasContentDescription("Application record for ${job.title} at ${job.company}"))
+        compose.onNodeWithContentDescription("Application record for ${job.title} at ${job.company}").performClick()
+        compose.onNodeWithTag("application-record-editor").performScrollToNode(hasContentDescription("Application stage: Applied"))
+        compose.onNodeWithContentDescription("Application stage: Applied").performScrollTo().performClick()
+        compose.runOnIdle { assertEquals("Applied stage must be selected before saving", ApplicationStage.APPLIED, model.state.value.applicationRecordEditor?.draft?.stage) }
+        compose.onNodeWithText("Save record on this phone").performClick()
         compose.waitUntil(5_000) { !model.state.value.busy && saved.id in model.state.value.manualApplied }
         compose.onNodeWithTag("jobs-list").performScrollToNode(hasText("Applied elsewhere · self-reported"))
         compose.onNodeWithText("Applied elsewhere · self-reported").assertIsDisplayed()

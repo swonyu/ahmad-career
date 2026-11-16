@@ -4,6 +4,8 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,6 +13,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.URI
@@ -37,7 +41,9 @@ data class DiscoveryUiState(val catalog: DiscoveryCatalog? = null, val catalogLo
     val jobs: List<DiscoveredJob> = emptyList(), val sources: List<DiscoverySourceStatus> = emptyList(),
     val status: String? = null, val generatedAt: String? = null, val nextCursor: String? = null, val totalMatches: Int = 0,
     val limited: Boolean = false, val notice: String = "", val loading: Boolean = false, val loadingMore: Boolean = false,
-    val error: String? = null, val retryAtMillis: Long = 0, val cursorInvalid: Boolean = false) {
+    val error: String? = null, val retryAtMillis: Long = 0, val cursorInvalid: Boolean = false,
+    val restoringSearch: Boolean = false, val restoredSearch: Boolean = false, val searchStorageError: String? = null,
+    val searchRestoreBlocked: Boolean = false) {
     val filtersChanged: Boolean get() = displayedFilters != null && displayedFilters != filters.cleaned()
 }
 
@@ -136,7 +142,7 @@ object DiscoveryCodec {
         valid(sources.map { it.id }.distinct().size == sources.size && defaults.all { id -> sources.any { it.id == id } })
         return DiscoveryCatalog(defaults, sources, max, value.text("notice", true))
     }
-    fun page(value: JSONObject): DiscoveryPage {
+    fun page(value: JSONObject, maxJobs: Int = 50): DiscoveryPage {
         header(value)
         val status = value.text("status"); valid(status in setOf("complete", "partial", "unavailable"))
         val jobs = value.objects("jobs").map { item ->
@@ -147,7 +153,7 @@ object DiscoveryCodec {
                 if (item.isNull("remote")) null else item.getBoolean("remote"), item.text("summary", true),
                 instant(item.nullableText("publishedAt")), instant(item.nullableText("updatedAt")), instant(item.text("checkedAt"))!!, item.flag("stale"))
         }
-        valid(jobs.size <= 50 && jobs.map { it.id }.distinct().size == jobs.size)
+        valid(maxJobs in 1..DiscoverySnapshotCodec.MAX_JOBS && jobs.size <= maxJobs && jobs.map { it.id }.distinct().size == jobs.size)
         val sources = value.objects("sources").map { item ->
             val state = item.text("status"); valid(state in setOf("fresh", "cached", "stale", "unavailable"))
             valid(item.has("error") && (item.isNull("error") || item.opt("error") is JSONObject))
@@ -169,6 +175,87 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
     private var catalogJob: Job? = null
     private var searchJob: Job? = null
     private var generation = 0L
+    private var privateStore: PrivateStore? = null
+    private var privateKey: String? = null
+    private var storageGeneration = 0L
+    private var saveJob: Job? = null
+    private val storageMutex = Mutex()
+    private var maySaveSearch = false
+    private var lastPage: DiscoveryPage? = null
+    private var lastDisplayedFilters: DiscoveryFilters? = null
+
+    suspend fun attachPrivateSession(store: PrivateStore, key: String) {
+        stopPrivateSession(flush = true)
+        privateStore = store; privateKey = key
+        val request = storageGeneration
+        mutable.value = DiscoveryUiState(restoringSearch = true)
+        try {
+            val saved = withContext(Dispatchers.IO) { store.read(key) }
+            if (request != storageGeneration || privateKey != key) return
+            val snapshot = saved?.let(DiscoverySnapshotCodec::decode)
+            lastPage = snapshot?.page; lastDisplayedFilters = snapshot?.displayedFilters
+            val page = snapshot?.page
+            mutable.value = DiscoveryUiState(filters = snapshot?.filters ?: DiscoveryFilters(), displayedFilters = snapshot?.displayedFilters,
+                jobs = page?.jobs.orEmpty(), sources = page?.sources.orEmpty(), status = page?.status, generatedAt = page?.generatedAt,
+                totalMatches = page?.totalMatches ?: 0, limited = page?.limited ?: false, notice = page?.notice.orEmpty(),
+                nextCursor = null, restoredSearch = snapshot != null && (snapshot.page != null || snapshot.filters != DiscoveryFilters()))
+            maySaveSearch = true
+        } catch (cancel: CancellationException) { throw cancel }
+        catch (_: Exception) {
+            if (request == storageGeneration && privateKey == key) {
+                maySaveSearch = false
+                mutable.update { it.copy(restoringSearch = false, searchRestoreBlocked = true,
+                    searchStorageError = "Your previous search could not be opened. Its saved file is preserved. You can search now; new results stay in this session until saved-search recovery succeeds.") }
+            }
+        }
+    }
+
+    /** Drain old writes before storage-area rotation or an account change. */
+    suspend fun stopPrivateSession(flush: Boolean) {
+        saveJob?.cancelAndJoin(); saveJob = null
+        if (flush) saveSearchNow()
+        storageGeneration++; generation++
+        searchJob?.cancel(); catalogJob?.cancel()
+        storageMutex.withLock { privateStore = null; privateKey = null; maySaveSearch = false }
+        lastPage = null; lastDisplayedFilters = null
+        mutable.value = DiscoveryUiState()
+    }
+
+    private fun scheduleSearchSave() {
+        if (!maySaveSearch || privateStore == null || privateKey == null) return
+        saveJob?.cancel()
+        saveJob = scope.launch { delay(350); saveSearchNow() }
+    }
+
+    suspend fun saveSearchNow() {
+        val store = privateStore ?: return
+        val key = privateKey ?: return
+        if (!maySaveSearch) return
+        val request = storageGeneration
+        try {
+            val snapshot = DiscoverySnapshotCodec.encode(DiscoverySnapshot(state.value.filters, lastDisplayedFilters, lastPage))
+            storageMutex.withLock {
+                if (request != storageGeneration || privateKey != key) return@withLock
+                withContext(Dispatchers.IO) { store.write(key, snapshot) }
+            }
+            if (request == storageGeneration && privateKey == key) mutable.update { it.copy(searchStorageError = null) }
+        } catch (cancel: CancellationException) { throw cancel }
+        catch (_: Exception) {
+            if (request == storageGeneration && privateKey == key) mutable.update { it.copy(
+                searchStorageError = "This search is available in this session but could not be saved. The earlier saved search is preserved. Retry saving when private storage is available.") }
+        }
+    }
+
+    fun saveSearchBeforeBackground() {
+        saveJob?.cancel()
+        saveJob = scope.launch { saveSearchNow() }
+    }
+
+    fun retrySavedSearch() {
+        if (state.value.restoringSearch) return
+        val store = privateStore ?: return; val key = privateKey ?: return
+        scope.launch { if (state.value.searchRestoreBlocked) attachPrivateSession(store, key) else saveSearchNow() }
+    }
 
     fun loadSources() {
         if (state.value.catalog != null || catalogJob?.isActive == true) return
@@ -181,10 +268,12 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
         }
     }
     fun editFilters(change: (DiscoveryFilters) -> DiscoveryFilters) {
+        if (state.value.restoringSearch) return
         val next = change(state.value.filters).let { it.copy(query = it.query.take(120), location = it.location.take(100)) }
         if (next == state.value.filters) return
         generation++; searchJob?.cancel()
         mutable.update { it.copy(filters = next, loading = false, loadingMore = false, error = null) }
+        scheduleSearchSave()
     }
     fun cancelSearch() {
         generation++; searchJob?.cancel()
@@ -192,7 +281,7 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
     }
     fun search(more: Boolean = false) {
         val current = state.value
-        if (current.loading) return
+        if (current.loading || current.restoringSearch) return
         if (System.currentTimeMillis() < current.retryAtMillis) {
             mutable.update { it.copy(error = "The search service asked for a short wait. Try again after " + Instant.ofEpochMilli(it.retryAtMillis) + ".") }; return
         }
@@ -214,10 +303,18 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
                             else "The selected employer boards could not be reached. Your earlier results are still shown.") }
                     return@launch
                 }
-                mutable.update { it.copy(jobs = ((if (more) it.jobs else emptyList()) + page.jobs).distinctBy(DiscoveredJob::id),
+                val all = ((if (more) state.value.jobs else emptyList()) + page.jobs).distinctBy(DiscoveredJob::id)
+                val reachedLimit = all.size > DiscoverySnapshotCodec.MAX_JOBS ||
+                    all.size == DiscoverySnapshotCodec.MAX_JOBS && page.nextCursor != null
+                val visible = all.take(DiscoverySnapshotCodec.MAX_JOBS)
+                val notice = page.notice + if (reachedLimit) " Up to ${DiscoverySnapshotCodec.MAX_JOBS} results are kept on this phone. Narrow the search or open an employer board for more." else ""
+                lastDisplayedFilters = filters
+                lastPage = page.copy(jobs = visible, nextCursor = null, limited = page.limited || reachedLimit, notice = notice)
+                mutable.update { it.copy(jobs = visible,
                     displayedFilters = filters, sources = page.sources, status = page.status, generatedAt = page.generatedAt,
-                    nextCursor = page.nextCursor, totalMatches = page.totalMatches, limited = page.limited, notice = page.notice,
-                    error = null, retryAtMillis = 0, cursorInvalid = false) }
+                    nextCursor = if (reachedLimit) null else page.nextCursor, totalMatches = page.totalMatches, limited = page.limited || reachedLimit, notice = notice,
+                    error = null, retryAtMillis = 0, cursorInvalid = false, restoredSearch = false) }
+                scheduleSearchSave()
             } catch (cancel: CancellationException) { throw cancel }
             catch (error: Exception) {
                 if (request != generation) return@launch

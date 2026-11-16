@@ -294,7 +294,7 @@ private final class LifecycleSuite {
             let service = TestService(); service.handle = { _ in self.workspace(6) }
             let (_, folder, tokens) = try fixture(state, service: service)
             var old = try JSONSerialization.jsonObject(with: JSONEncoder().encode(state)) as! [String: Any]
-            for key in ["profileRevision", "latestServerRevision", "latestServerProfile", "connectionEnabled", "credentialAccount", "opportunityDraft"] { old.removeValue(forKey: key) }
+            for key in ["profileRevision", "latestServerRevision", "latestServerProfile", "connectionEnabled", "credentialAccount", "opportunityDraft", "applicationRecordSchema", "applicationRecords"] { old.removeValue(forKey: key) }
             try JSONSerialization.data(withJSONObject: old).write(to: folder.appendingPathComponent("phone-draft.json"))
             tokens.values[state.serviceAddress] = "legacy-synthetic-token"
             let store = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
@@ -511,6 +511,362 @@ private final class LifecycleSuite {
         }
         try await runLiveSubmissionCapability()
         try await runHostedContinuation()
+        try await runPrivateRecords()
+    }
+
+    func runPrivateRecords() async throws {
+        let publicURL = "https://careers.example.com/roles/designer"
+        let localJob: [String: ApplicationValue] = ["id": .string("local-record-job"), "url": .string(publicURL),
+            "title": .string("Product designer"), "company": .string("Example employer"), "localOnly": .bool(true)]
+        let now = ISO8601DateFormatter().date(from: "2026-11-17T12:00:00Z")!
+        // Readiness uses actual required field and selected-file rules; it never verifies a person or application.
+        do {
+            var profile = PhoneApplicationProfile()
+            try check(!ApplicationProfileReadiness(profile: profile).ready && ApplicationProfileReadiness(profile: profile).nextAction == "Add your name", "A fresh applicant sees the first missing essential")
+            profile.firstName = "  نور  "; profile.email = "PERSON@EXAMPLE.COM"
+            try check(ApplicationProfileReadiness(profile: profile).nameReady && ApplicationProfileReadiness(profile: profile).emailReady, "Single and Unicode names and a normalizable email are accepted")
+            for bad in ["person", "a@localhost", "a b@example.com", "a@example.com\n", String(repeating: "a", count: 65) + "@example.com"] {
+                profile.email = bad
+                try check(!ApplicationProfileReadiness(profile: profile).emailReady, "Invalid email is visible before a server review fails")
+            }
+            profile.email = "person@example.com"; try profile.selectResume(pdf, filename: "Resume.pdf")
+            try check(ApplicationProfileReadiness(profile: profile).ready, "A valid selected PDF completes the three essentials")
+            profile.resumeData = nil
+            try check(!ApplicationProfileReadiness(profile: profile).resumeReady, "Unresolved changed-CV state cannot pass the metadata-only readiness check")
+            profile.resumeChanged = false
+            try check(ApplicationProfileReadiness(profile: profile).resumeReady, "Validated service CV metadata is useful without reconstructing bytes")
+            profile.resumeRemoved = true
+            try check(!ApplicationProfileReadiness(profile: profile).resumeReady, "An explicitly removed CV is not ready")
+            scenarios += 1
+        }
+        // Civil dates survive time zones and reject normalization of impossible days.
+        do {
+            for value in ["1500-02-29", "1900-02-29", "2026-02-29", "2026-02-30", "2026-13-01", "2026-01-00", "2026-1-01", "0000-01-01", "2026-11-17T00:00:00Z"] {
+                try check(!PhoneRecordDay.valid(value), "Invalid civil date is not normalized into another day")
+            }
+            for zone in ["Pacific/Kiritimati", "America/Los_Angeles", "Asia/Riyadh", "America/New_York"] {
+                let zone = TimeZone(identifier: zone)!
+                for value in ["2024-02-29", "2026-03-08", "2026-11-01", "2026-11-17"] {
+                    let date = PhoneRecordDay.date(value, zone: zone)!
+                    try check(PhoneRecordDay.string(date, zone: zone) == value, "The chosen Gregorian day remains literal across DST and time zones")
+                }
+            }
+            try check(MobileApplicationPolicy.jobIdentity("HTTPS://CAREERS.example.com:443/roles/designer/?utm_source=a#top") == MobileApplicationPolicy.jobIdentity(publicURL), "Existing URL identity unifies host/default-port/tracking variants for private records")
+            scenarios += 1
+        }
+        // Local stage/date/note data is durable, canceled edits do nothing, and clearing applied is deliberate.
+        do {
+            var state = PhoneApplicationState(); state.jobs = [localJob]
+            state.opportunityDraft.title = "Unrelated draft"
+            let service = TestService(); let (store, folder, tokens) = try fixture(state, service: service)
+            let context = store.recordEditContext(for: localJob)!
+            var draft = PhoneRecordDraft(); draft.stage = .applied; draft.appliedOn = "2026-11-16"; draft.followUpOn = "2026-11-20"; draft.note = "Private follow-up note"
+            let before = try Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))
+            let canceled = draft; _ = canceled
+            let unchanged = try Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))
+            try check(before == unchanged && store.currentRecord(for: localJob) == nil, "Editing and canceling a value draft leaves the persisted record unchanged")
+            try check(store.saveRecord(draft, context: context, now: now), "A local application record saves without an account")
+            try check(store.isMarkedApplied(localJob) && store.attempts.isEmpty && service.calls.isEmpty, "A self-reported application creates no receipt or external request")
+            let restored = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+            try check(restored.currentRecord(for: localJob)?.note == draft.note && restored.followUpDay(for: localJob) == "2026-11-20", "Private note and civil follow-up date survive a real disk reload")
+            try check(restored.opportunityDraft.title == "Unrelated draft", "Saving an application record preserves an unrelated opportunity draft")
+            var closed = draft; closed.stage = .closed
+            try check(store.saveRecord(closed, context: store.recordEditContext(for: localJob)!, now: now) && store.isMarkedApplied(localJob), "Closing an applied application retains duplicate protection")
+            try check(store.followUpDay(for: localJob) == nil, "Closed records do not appear as active follow-ups")
+            var saved = closed; saved.stage = .saved
+            let correctionContext = store.recordEditContext(for: localJob)!
+            let beforeCorrection = try Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))
+            try check(!store.saveRecord(saved, context: correctionContext, now: now), "Saved cannot clear an applied mark without explicit confirmation")
+            let afterCanceledCorrection = try Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))
+            try check(beforeCorrection == afterCanceledCorrection, "Canceling the not-applied correction keeps every persisted field unchanged")
+            try check(store.saveRecord(saved, context: correctionContext, confirmNotApplied: true, now: now) && !store.isMarkedApplied(localJob), "Explicit not-applied confirmation clears only the local duplicate mark")
+            try check(!store.saveRecord(draft, context: context, now: now), "An earlier editor revision cannot overwrite a newer saved record")
+            scenarios += 1
+        }
+        // Bad dates/notes and unreadable future record formats never overwrite existing phone data.
+        do {
+            var state = PhoneApplicationState(); state.jobs = [localJob]
+            let service = TestService(); let (store, folder, tokens) = try fixture(state, service: service)
+            let context = store.recordEditContext(for: localJob)!
+            for bad in ["2026-02-30", "2026-11-19"] {
+                var draft = PhoneRecordDraft(); draft.appliedOn = bad
+                try check(!store.saveRecord(draft, context: context, now: now), "Impossible and newly future application dates cannot save")
+            }
+            var badNote = PhoneRecordDraft(); badNote.note = String(repeating: "x", count: 2_001)
+            try check(!store.saveRecord(badNote, context: context, now: now), "An oversized private note is kept in the editor, not written to storage")
+            var data = try JSONSerialization.jsonObject(with: Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))) as! [String: Any]
+            data["applicationRecordSchema"] = 2
+            let future = try JSONSerialization.data(withJSONObject: data)
+            try future.write(to: folder.appendingPathComponent("phone-draft.json"))
+            let reopened = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+            try check(!reopened.keepOpportunityDraft(PhoneOpportunityDraft(url: publicURL)), "A future private-record schema blocks overwrite rather than resetting the workspace")
+            let kept = try Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))
+            try check(kept == future, "Future-format phone data remains byte-for-byte intact")
+            scenarios += 1
+        }
+        // Removing a bookmark is distinct from deleting useful private application history.
+        do {
+            var state = PhoneApplicationState(); state.jobs = [localJob]
+            let service = TestService(); let (store, folder, _) = try fixture(state, service: service)
+            let path = folder.appendingPathComponent("phone-draft.json"), context = store.recordEditContext(for: localJob)!
+            let originalBytes = try Data(contentsOf: path)
+            try FileManager.default.removeItem(at: path); try FileManager.default.createDirectory(at: path, withIntermediateDirectories: false)
+            var draft = PhoneRecordDraft(); draft.note = "Do not lose this value draft"
+            try check(!store.saveRecord(draft, context: context, now: now) && store.currentRecord(for: localJob) == nil,
+                      "A real atomic-file write failure leaves the live saved record unchanged")
+            try FileManager.default.removeItem(at: path); try originalBytes.write(to: path)
+            try check(store.saveRecord(draft, context: context, now: now) && store.currentRecord(for: localJob)?.note == draft.note,
+                      "The same editor value remains saveable after a recoverable storage failure")
+            scenarios += 1
+        }
+        do {
+            var state = PhoneApplicationState(); state.jobs = [localJob]
+            state.opportunityDraft.title = "Keep this separate draft"
+            let service = TestService(); let (store, folder, _) = try fixture(state, service: service)
+            var draft = PhoneRecordDraft(); draft.stage = .interview; draft.note = "Interview preparation"
+            try check(store.saveRecord(draft, context: store.recordEditContext(for: localJob)!, now: now), "A meaningful private record exists before bookmark removal")
+            store.selected = ["local-record-job"]; store.answers["local-record-job"] = ["comments": .string("Unsent answer")]
+            let captured = store.removalContext("local-record-job")!
+            let before = try Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))
+            try check(captured.keepsRecord && store.jobs.count == 1 && store.selected.count == 1, "Removal confirmation captures the role while leaving selection and storage untouched")
+            let afterCancel = try Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))
+            try check(before == afterCancel, "Canceling removal changes no file")
+            try check(store.removeLocalJob(captured) && store.jobs.isEmpty && store.selected.isEmpty && store.answers.isEmpty, "Confirm removes only the captured local bookmark and its unsent selection")
+            let retained = store.savedOpportunities.first!
+            try check(retained["recordOnly"] == .bool(true) && store.currentRecord(for: retained)?.note == "Interview preparation", "A meaningful private record remains visible after the bookmark is removed")
+            try check(store.opportunityDraft.title == "Keep this separate draft" && service.calls.isEmpty, "Bookmark removal does not touch other drafts or a service")
+            scenarios += 1
+        }
+        // A removed bookmark is not needed to associate an unpaired record with a connected workspace.
+        do {
+            var state = PhoneApplicationState(); state.jobs = [localJob]
+            var local = PhoneOpportunityRecord(scope: PhoneRecordScope(), job: PhoneRecordJob(localJob))
+            local.stage = .applied; local.appliedElsewhere = true; local.note = "Orphan phone note"; local.followUpOn = "2026-11-20"
+            var earlier = local; earlier.id = UUID().uuidString; earlier.archived = true; earlier.note = "Earlier orphan note"
+            let destinationScope = try initial().recordScope
+            var existing = PhoneOpportunityRecord(scope: destinationScope, job: PhoneRecordJob(localJob)); existing.note = "Existing account note"
+            state.applicationRecords = [local, earlier, existing]
+            var remoteJob = localJob; remoteJob["id"] = .string("existing-remote-role"); remoteJob.removeValue(forKey: "localOnly")
+            let first = TestService(), second = TestService(); var destination = first
+            first.handle = { call in
+                if call.route == "session" { return ["ok": .bool(true), "sessionToken": .string("first-token"), "workspaceId": .string("workspace-a"), "profile": .object(self.server(3))] }
+                if call.route == "session/revoke" { return ["ok": .bool(true)] }
+                return self.workspace(3, jobs: [remoteJob])
+            }
+            second.handle = { call in
+                if call.route == "session" { return ["ok": .bool(true), "sessionToken": .string("second-token"), "workspaceId": .string("workspace-b"), "profile": .object(self.server(3))] }
+                if call.route == "session/revoke" { return ["ok": .bool(true)] }
+                return self.workspace(3, jobs: [remoteJob], workspace: "workspace-b")
+            }
+            let (store, folder, _) = try fixture(state, service: first, factory: { _, token in destination.token = token; return destination })
+            try check(store.removeLocalJob(store.removalContext("local-record-job")!), "The original local bookmark can be deliberately removed while keeping its record")
+            let orphanID = "record-" + local.id
+            try check(store.recordAdoptionContext(for: store.savedOpportunity(orphanID)!) == nil, "An unpaired record cannot be associated before a workspace is connected")
+            let paired = await store.connect(address: first.origin.absoluteString, code: "PAIR")
+            let orphan = store.savedOpportunity(orphanID)!
+            let captured = store.recordAdoptionContext(for: orphan)!
+            let path = folder.appendingPathComponent("phone-draft.json"), beforeCancel = try Data(contentsOf: path)
+            try check(paired && store.currentRecord(for: orphan)?.note == local.note && !store.isMarkedApplied(remoteJob),
+                      "Pairing preserves the separate orphan record even when the service already has its job")
+            let afterCancel = try Data(contentsOf: path)
+            try check(beforeCancel == afterCancel, "Keeping a private record separate cancels association without changing any saved data")
+            var edited = PhoneRecordDraft(store.currentRecord(for: orphan)); edited.note = "Updated orphan phone note"
+            try check(store.saveRecord(edited, context: store.recordEditContext(for: orphan)!, now: now), "An orphan record remains editable before association")
+            try check(!store.adoptUnpairedRecord(captured), "A confirmation captured before a record edit cannot associate stale versions")
+            let current = store.recordAdoptionContext(for: orphan)!, calls = first.calls.count
+            try check(store.adoptUnpairedRecord(current), "Explicit confirmation associates an orphan record without importing or recreating its bookmark")
+            let stored = try JSONDecoder().decode(PhoneApplicationState.self, from: Data(contentsOf: path))
+            try check(stored.jobs.isEmpty && stored.applicationRecords.count == 3
+                && stored.applicationRecords.allSatisfy({ $0.scope == destinationScope }),
+                      "The removed bookmark stays removed and every active/archived record belongs to the exact chosen workspace")
+            try check(store.recordVersions(for: remoteJob).count == 3 && store.recordEditContext(for: remoteJob) == nil
+                && store.isMarkedApplied(remoteJob) && Set(store.recordVersions(for: remoteJob).map(\.note)) == Set([edited.note, earlier.note, existing.note]),
+                      "Colliding notes and historical versions are retained for explicit comparison while their applied marks remain protected")
+            try check(first.calls.count == calls, "Private record association uploads no note, job, profile, approval or application request")
+            destination = second; let switched = await store.connect(address: second.origin.absoluteString, code: "PAIR-B")
+            try check(switched && store.recordVersions(for: remoteJob).isEmpty && !store.adoptUnpairedRecord(current),
+                      "A different account at the same origin cannot inherit the orphan notes or reuse the previous confirmation")
+            destination = first; let returned = await store.connect(address: first.origin.absoluteString, code: "PAIR-A")
+            try check(returned && store.recordVersions(for: remoteJob).count == 3 && store.isMarkedApplied(remoteJob),
+                      "Returning to the chosen workspace restores all associated orphan record versions")
+            scenarios += 1
+        }
+        // Association and job import cannot change an applied mark under an already approved queue.
+        do {
+            var state = try initial()
+            var record = PhoneOpportunityRecord(scope: PhoneRecordScope(), job: PhoneRecordJob(localJob))
+            record.stage = .applied; record.appliedElsewhere = true; record.note = "Keep this removed-link note"
+            state.applicationRecords = [record]; state.opportunityDraft.title = "Keep this other pending job draft"
+            var approved = review("orphan-approved", approved: true, itemState: "ready")
+            var item = approved["items"]!.array[0].object; item["jobId"] = .string("approved-job"); item["job"] = .object(localJob)
+            approved["items"] = .array([.object(item)])
+            let service = TestService(); var active = true
+            service.handle = { call in
+                if call.route == "stop" { active = false; return ["ok": .bool(true)] }
+                return self.workspace(3, plans: active ? [approved] : [], active: active ? ["orphan-approved"] : [])
+            }
+            let (store, folder, tokens) = try fixture(state, service: service)
+            await store.refresh(); let orphan = store.savedOpportunity("record-" + record.id)!
+            let captured = store.recordAdoptionContext(for: orphan)!, path = folder.appendingPathComponent("phone-draft.json")
+            let before = try Data(contentsOf: path)
+            try check(!store.adoptUnpairedRecord(captured), "A matching approved queue must be stopped before an orphan applied mark can join the account")
+            let blockedAdd = await store.addJob(url: publicURL, title: "Product designer", company: "Example employer", location: "", country: "")
+            let after = try Data(contentsOf: path)
+            try check(!blockedAdd && before == after && service.calls.allSatisfy({ $0.method == "GET" }),
+                      "The normal job-import path is also blocked before network or bookmark changes; all orphan data stays intact")
+            var note = PhoneRecordDraft(store.currentRecord(for: orphan)); note.note = "Updated private preparation"
+            try check(store.saveRecord(note, context: store.recordEditContext(for: orphan)!, now: now),
+                      "Editing notes without changing the applied flag remains available during the approved queue")
+            await store.stop()
+            let calls = service.calls.count
+            try check(store.activePlanIDs.isEmpty && store.adoptUnpairedRecord(store.recordAdoptionContext(for: orphan)!),
+                      "After explicit Stop is confirmed, the record can join the connected workspace")
+            let stored = try JSONDecoder().decode(PhoneApplicationState.self, from: Data(contentsOf: path))
+            try check(stored.jobs.isEmpty && stored.applicationRecords.first?.note == note.note
+                && stored.applicationRecords.first?.scope == stored.recordScope && service.calls.count == calls,
+                      "Association after Stop preserves a record-only role and never recreates the removed bookmark")
+            let reopened = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+            let retained = reopened.savedOpportunity("record-" + record.id)!
+            try check(retained["recordOnly"]?.bool == true && reopened.isMarkedApplied(retained)
+                && reopened.currentRecord(for: retained)?.note == note.note, "Associated record-only history and duplicate protection survive relaunch")
+            scenarios += 1
+        }
+        // Restored manual evidence must also guard continuation without requiring a new record edit.
+        do {
+            var state = try initial(); state.jobs = [localJob]
+            var record = PhoneOpportunityRecord(scope: state.recordScope, job: PhoneRecordJob(localJob))
+            record.stage = .applied; record.appliedElsewhere = true; record.note = "Already applied before restoring this phone"
+            state.applicationRecords = [record]
+            var approved = review("restored-record-queue", approved: true)
+            var item = approved["items"]!.array[0].object; item["jobId"] = localJob["id"]; item["job"] = .object(localJob)
+            approved["items"] = .array([.object(item)])
+            let service = TestService(); var target = approved
+            service.handle = { call in
+                if call.route == "advance" { return ["ok": .bool(true)] }
+                return self.workspace(3, plans: [target], active: ["restored-record-queue"], continuation: .string("client"))
+            }
+            let (store, _, _) = try fixture(state, service: service)
+            await store.pollApprovedApplications()
+            try check(!service.calls.contains(where: { $0.route == "advance" || $0.route == "stop" })
+                && store.activePlanIDs == ["restored-record-queue"], "Restored applied evidence blocks continuation without pretending the server queue was stopped")
+            item["jobId"] = .string("unknown-job"); item["job"] = .object(["title": .string("Unknown target"), "company": .string("Fixture")])
+            target["items"] = .array([.object(item)]); await store.pollApprovedApplications()
+            try check(!service.calls.contains(where: { $0.route == "advance" }), "Unknown active targets fail closed when the phone has manual applied evidence")
+            var other = localJob; other["id"] = .string("another-job"); other["url"] = .string("https://careers.example.com/roles/another-role")
+            item["jobId"] = other["id"]; item["job"] = .object(other); target["items"] = .array([.object(item)])
+            await store.pollApprovedApplications()
+            try check(service.calls.filter { $0.route == "advance" }.count == 1
+                && !service.calls.contains(where: { $0.route == "stop" || $0.route == "submit" }), "A known unrelated approved plan remains eligible without a false stop or new approval")
+            scenarios += 1
+        }
+        // A first pairing alone does not move records; explicit import does, and other accounts do not inherit them.
+        do {
+            let localID = "local-record-job", remoteID = "service-record-job"
+            var state = PhoneApplicationState(); state.jobs = [localJob]
+            var record = PhoneOpportunityRecord(scope: PhoneRecordScope(), job: PhoneRecordJob(localJob)); record.stage = .applied; record.appliedElsewhere = true; record.note = "Private local applicant note"
+            state.applicationRecords = [record]
+            var remoteJob = localJob; remoteJob["id"] = .string(remoteID); remoteJob.removeValue(forKey: "localOnly")
+            let first = TestService(), second = TestService(); var destination = first, imported = false
+            var blocked = review("manual-record-review", itemState: "blocked")
+            var item = blocked["items"]!.array[0].object; item["jobId"] = .string(remoteID); item["job"] = .object(remoteJob); blocked["items"] = .array([.object(item)])
+            first.handle = { call in
+                if call.route == "session" { return ["ok": .bool(true), "sessionToken": .string("first-token"), "workspaceId": .string("workspace-a"), "profile": .object(self.server(3))] }
+                if call.route == "session/revoke" { return ["ok": .bool(true)] }
+                if call.route == "jobs" { imported = true; return ["ok": .bool(true), "job": .object(remoteJob)] }
+                if call.route == "prepare" { return ["ok": .bool(true), "plan": .object(blocked)] }
+                return self.workspace(3, jobs: imported ? [remoteJob] : [], plans: imported ? [blocked] : [])
+            }
+            second.handle = { call in
+                if call.route == "session" { return ["ok": .bool(true), "sessionToken": .string("second-token"), "workspaceId": .string("workspace-b"), "profile": .object(self.server(3))] }
+                if call.route == "session/revoke" { return ["ok": .bool(true)] }
+                return self.workspace(3, jobs: [remoteJob], workspace: "workspace-b")
+            }
+            let (store, folder, _) = try fixture(state, service: first, factory: { _, token in destination.token = token; return destination })
+            let beforePairRemoval = store.removalContext(localID)!
+            let paired = await store.connect(address: first.origin.absoluteString, code: "PAIR")
+            let afterPair = try JSONDecoder().decode(PhoneApplicationState.self, from: Data(contentsOf: folder.appendingPathComponent("phone-draft.json")))
+            try check(paired && afterPair.applicationRecords[0].scope.isLocal, "Pairing never silently assigns an unpaired private record to an account")
+            try check(!store.removeLocalJob(beforePairRemoval) && store.jobs.count == 1, "A removal captured before a connection change cannot delete the new workspace's link")
+            store.selected = [localID]; await store.prepare()
+            let request = first.calls.first(where: { $0.route == "prepare" })!
+            try check(request.body?["manualAppliedJobIds"]?.array == [.string(remoteID)], "Explicit local-to-service import maps the durable manual mark to the actual service job ID")
+            let serializedBody = String(data: try JSONEncoder().encode(request.body), encoding: .utf8)!
+            try check(!serializedBody.contains(record.note) && !serializedBody.contains("followUp") && !serializedBody.contains("appliedOn"), "Only duplicate-prevention IDs leave the phone; private record contents stay local")
+            let afterImport = try JSONDecoder().decode(PhoneApplicationState.self, from: Data(contentsOf: folder.appendingPathComponent("phone-draft.json")))
+            try check(afterImport.applicationRecords[0].scope.workspaceID == "workspace-a" && store.isMarkedApplied(remoteJob), "A successful explicit import adopts the record into that exact account scope")
+            let oldEditor = store.recordEditContext(for: remoteJob)!
+            destination = second; let switched = await store.connect(address: second.origin.absoluteString, code: "PAIR-B")
+            try check(switched && !store.isMarkedApplied(remoteJob) && store.currentRecord(for: remoteJob) == nil, "Another workspace at the same origin cannot see or use the first account's record")
+            try check(!store.saveRecord(PhoneRecordDraft(record), context: oldEditor, now: now), "An editor from the previous workspace cannot write after an account switch")
+            destination = first; let returned = await store.connect(address: first.origin.absoluteString, code: "PAIR-A")
+            try check(returned && store.currentRecord(for: remoteJob)?.note == record.note && store.isMarkedApplied(remoteJob), "Returning to the original workspace restores its private record without re-creating it")
+            scenarios += 1
+        }
+        // Conflicting copies retain both versions and conservatively keep the applied mark until explicit correction.
+        do {
+            var state = try initial(); state.jobs = [localJob]
+            var current = PhoneOpportunityRecord(scope: state.recordScope, job: PhoneRecordJob(localJob)); current.note = "Current note"
+            var copied = PhoneOpportunityRecord(scope: state.recordScope, job: PhoneRecordJob(localJob)); copied.stage = .applied; copied.appliedElsewhere = true; copied.note = "Copied note"; copied.followUpOn = "2026-11-20"
+            state.applicationRecords = [current, copied]
+            let service = TestService(); let (store, folder, tokens) = try fixture(state, service: service)
+            try check(store.recordEditContext(for: localJob) == nil && store.isMarkedApplied(localJob), "Ambiguous active records must be compared and keep duplicate protection")
+            let choice = store.recordChoiceContext(for: localJob)
+            try check(store.useRecordVersion(current.id, context: choice), "Choosing a current note/date version is explicit")
+            try check(store.recordVersions(for: localJob).count == 2 && store.currentRecord(for: localJob)?.note == "Current note" && store.isMarkedApplied(localJob), "Selecting Saved-stage details cannot silently erase another version's applied mark or note")
+            try check(!store.useRecordVersion(copied.id, context: choice), "An old conflict-choice revision cannot replace a newer decision")
+            var edit = PhoneRecordDraft(store.currentRecord(for: localJob)); edit.note = "Edited current note"
+            try check(store.saveRecord(edit, context: store.recordEditContext(for: localJob)!, now: now) && store.isMarkedApplied(localJob), "An ordinary note edit does not clear a conservatively retained applied mark")
+            try check(store.saveRecord(edit, context: store.recordEditContext(for: localJob)!, confirmNotApplied: true, now: now) && !store.isMarkedApplied(localJob), "A deliberate not-applied correction can clear the retained mark")
+            let restored = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+            try check(!restored.isMarkedApplied(localJob) && restored.recordVersions(for: localJob).contains(where: { $0.archived && $0.note == "Copied note" }), "Archived applied history remains available but does not reassert an explicitly cleared current mark after restart")
+            let originalHistory = restored.recordVersions(for: localJob).first { $0.id == copied.id }!
+            let selected = restored.useRecordVersion(copied.id, context: restored.recordChoiceContext(for: localJob))
+            try check(selected && !restored.isMarkedApplied(localJob) && restored.currentRecord(for: localJob)?.stage == .saved,
+                      "Restoring older details cannot reverse an explicit not-applied correction")
+            try check(restored.currentRecord(for: localJob)?.note == copied.note && restored.currentRecord(for: localJob)?.followUpOn == copied.followUpOn
+                && restored.currentRecord(for: localJob)?.id != copied.id
+                && restored.recordVersions(for: localJob).first(where: { $0.id == copied.id }) == originalHistory,
+                      "Restored notes and dates use a new current record while the original archived version remains byte-for-byte equivalent")
+            let afterRestore = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+            try check(!afterRestore.isMarkedApplied(localJob), "The explicit correction survives another restart after restoring history")
+            var fresh = PhoneRecordDraft(afterRestore.currentRecord(for: localJob)); fresh.stage = .interview
+            try check(afterRestore.saveRecord(fresh, context: afterRestore.recordEditContext(for: localJob)!, now: now)
+                && afterRestore.isMarkedApplied(localJob), "A new explicit Interview stage save may mark the opportunity applied again")
+            scenarios += 1
+        }
+        // Stale removal and manual-record changes cannot approve a recovered ready plan.
+        do {
+            var state = try initial(); state.jobs = [localJob]
+            let service = TestService(); service.handle = { _ in self.workspace(3, active: ["already-approved"]) }
+            let (store, _, _) = try fixture(state, service: service)
+            await store.refresh(); let context = store.recordEditContext(for: localJob)!
+            var draft = PhoneRecordDraft(); draft.stage = .applied; draft.note = "Keep this private note"
+            try check(!store.saveRecord(draft, context: context, now: now) && !store.isMarkedApplied(localJob),
+                      "An applied-mark change cannot pretend to cancel an already approved queue")
+            draft.stage = .saved
+            try check(store.saveRecord(draft, context: context, now: now) && store.currentRecord(for: localJob)?.note == draft.note,
+                      "Notes and dates remain usable while an unrelated service queue is active")
+            try check(service.calls.allSatisfy { $0.method == "GET" }, "Editing private records never stops, prepares, approves or sends an application")
+            scenarios += 1
+        }
+        do {
+            var state = try initial(); state.jobs = [localJob]
+            var ready = review("private-ready"); var item = ready["items"]!.array[0].object
+            item["jobId"] = localJob["id"]; item["job"] = .object(localJob); ready["items"] = .array([.object(item)])
+            let service = TestService(); var showReview = false
+            service.handle = { _ in self.workspace(3, plans: showReview ? [ready] : []) }
+            let (store, _, _) = try fixture(state, service: service)
+            await store.refresh(); let captured = store.removalContext("local-record-job")!
+            showReview = true; await store.refresh()
+            try check(!store.removeLocalJob(captured) && store.jobs.count == 1, "A newly linked review prevents a stale removal confirmation")
+            try check(store.resumeReview(ready), "An untouched review is initially resumable")
+            var draft = PhoneRecordDraft(); draft.stage = .applied
+            try check(store.saveRecord(draft, context: store.recordEditContext(for: localJob)!, now: now) && store.plan == nil, "Marking an external application invalidates its current unapproved review")
+            try check(!store.resumeReview(ready), "The same recovered review cannot be approved after a private applied mark")
+            let submitted = await store.submitReviewed()
+            try check(!submitted && !service.calls.contains(where: { $0.route == "submit" }), "A new manual applied mark produces no approval or submission request")
+            scenarios += 1
+        }
     }
 
     func runLiveSubmissionCapability() async throws {

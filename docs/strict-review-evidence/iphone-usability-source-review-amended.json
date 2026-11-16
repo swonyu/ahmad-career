@@ -1,0 +1,98 @@
+{
+  "scope": "iPhone NAV-1, NAV-2, NAV-4, NAV-5 usability and durable private-record pass",
+  "sourceStatus": "amended source frozen; authoritative exact-source GitHub CI pending",
+  "checkedAt": "2026-11-16T23:01:55.573591+00:00",
+  "nativeUITestFunctions": 12,
+  "privateRecordScenarioBlocksAuthored": 10,
+  "localAppleToolsExecuted": false,
+  "liveEmployerOrLinkedInRequests": 0,
+  "files": [
+    {
+      "path": "apple/AhmadCareer/MobileApplicationClient.swift",
+      "size": 22982,
+      "sha256": "ff4b7169af653f04b6345c15d771b0d9da26096988e6cf02a995035bf52bc39d"
+    },
+    {
+      "path": "apple/AhmadCareer/MobileApplicationState.swift",
+      "size": 23921,
+      "sha256": "05e885eaa7986873ef6be28fb7774f2942ed02ee0a5fe0b855845a5bdf7d7569"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeApplicationsStore.swift",
+      "size": 53462,
+      "sha256": "ebd51e37fd1c50dbd62af653df211b2ae84c814d51efcfde2fff0dfba4adb94e"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeApplicationsViews.swift",
+      "size": 71910,
+      "sha256": "5d80210493ddcf441cc0230c07f453046a40c27f315945c558c24a626338509b"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeDiscoveryViews.swift",
+      "size": 17782,
+      "sha256": "8679716b73fa930d521825cc4579d571165810eab7dca338ef76c97e73ee9298"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeCareerViews.swift",
+      "size": 77792,
+      "sha256": "fff6b8f36b2ed0e855d6fcd095fc64ac0c787f931fe1c25e985bb7ea042c74a8"
+    },
+    {
+      "path": "apple/Checks/MobileApplicationCheck.swift",
+      "size": 15940,
+      "sha256": "16dde5dabf0a7738ac7d787f6ee7680845d62788f4b2f17321aee94dee3b3028"
+    },
+    {
+      "path": "apple/Checks/MobileLifecycleCheck.swift",
+      "size": 102031,
+      "sha256": "ed097eb4f45728da0d2a04e738bd9472b3b601e074c53d38cdb8918f29df0b8a"
+    },
+    {
+      "path": "apple/UITests/CareerFinderUITests.swift",
+      "size": 28624,
+      "sha256": "0a58ddc0de59e8084eb5f4fdf0190bfb9cfb6a526bef76a61727743d31f082d0"
+    }
+  ],
+  "contract": [
+    "Manual records are phone-only and scoped by exact normalized origin/workspace plus canonical job identity",
+    "Unpaired record adoption only on successful explicit job import; pairing alone does not move records",
+    "Saved/Applied/Interview/Offer/Closed; conservative appliedElsewhere union at conflict choice; explicit not-applied confirmation required for correction",
+    "Optional strict Gregorian civil applied/follow-up days and bounded private notes",
+    "Atomic persistence, future-schema preservation, stale edit/version/removal guards and no automatic external action",
+    "Meaningful records remain visible after bookmark removal; record versions remain private history",
+    "Internal prepare/approval duplicate checks reuse durable records; notes and dates never enter application payload",
+    "Three-essential readiness and a two-step default connection with custom service under Advanced",
+    "Existing app/store version and application identifiers unchanged"
+  ],
+  "remainingValidation": [
+    "GitHub macOS lifecycle/policy compilation and execution",
+    "Unsigned iOS build",
+    "Twelve native UI scenarios with exported evidence; prior current-source pass not claimed"
+  ],
+  "priorManifest": "strict-review-20261117/iphone-usability-source-review.json",
+  "priorManifestSHA256": "3649a92bab46b0005b87449eb08bfd06eb8e2eec481b720b6ddc8cc4009ad1af",
+  "amendedFiles": [
+    "apple/AhmadCareer/NativeApplicationsStore.swift",
+    "apple/AhmadCareer/NativeApplicationsViews.swift",
+    "apple/AhmadCareer/NativeCareerViews.swift",
+    "apple/Checks/MobileLifecycleCheck.swift",
+    "apple/UITests/CareerFinderUITests.swift"
+  ],
+  "amendments": [
+    "Restoring an archived record copies notes/dates into a new current version and preserves a deliberate not-applied correction; original archived version remains unchanged",
+    "New explicit Applied/Interview/Offer save may mark the record applied again; lifecycle assertions cover correction/restoration/relaunch/new stage",
+    "Start profile/opportunity editors use one identified sheet route with explicit full-width touch areas; one-tap acceptance assertion is retained",
+    "Availability Refresh precedes the long explanatory body; UI acceptance uses short bidirectional scroll drags constrained to the visible content viewport",
+    "Failure screenshots and hierarchy are attached if initial profile opening or application-control reachability fails"
+  ],
+  "ciFailureEvidence": {
+    "runId": 43970712465,
+    "attempt": 1,
+    "headSha": "3c25a963db4fa10e8162641cbd0ec396e127c06c",
+    "evidence": "strict-review-20261117/ci-3c25/failure-analysis.json",
+    "initialProfileOpen": "Failure occurs before typing, saving, cancellation or relaunch. A tap at (210,621), within the visible enabled profile row, leaves Start visible. Persistence was not reached by this failed test.",
+    "availability": "Final video frame reaches the lower explanatory text; earlier original PNG showed top of availability card. Overscroll is an inference; exact refresh element hierarchy was not exported.",
+    "repairStatus": "source changes only; fixes not declared runtime verified until exact-source CI",
+    "localAppleToolsExecuted": false
+  }
+}

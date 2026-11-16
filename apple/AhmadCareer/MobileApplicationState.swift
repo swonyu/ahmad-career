@@ -105,6 +105,180 @@ struct PhoneOpportunityDraft: Codable, Equatable {
     }
 }
 
+enum PhoneApplicationStage: String, Codable, CaseIterable, Identifiable {
+    case saved, applied, interview, offer, closed
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .saved: return "Saved"
+        case .applied: return "Applied"
+        case .interview: return "Interview"
+        case .offer: return "Offer"
+        case .closed: return "Closed"
+        }
+    }
+    var marksApplied: Bool { [.applied, .interview, .offer].contains(self) }
+}
+
+/// An application date is a civil day, not a timestamp that changes with the display time zone.
+enum PhoneRecordDay {
+    static func calendar(zone: TimeZone = .current) -> Calendar {
+        var calendar = Calendar(identifier: .gregorian); calendar.timeZone = zone
+        return calendar
+    }
+    static func date(_ value: String, zone: TimeZone = .current) -> Date? {
+        guard value.range(of: #"^[0-9]{4}-[0-9]{2}-[0-9]{2}$"#, options: .regularExpression) != nil else { return nil }
+        let parts = value.split(separator: "-").compactMap { Int($0) }
+        guard parts.count == 3, parts[0] >= 1, (1...12).contains(parts[1]) else { return nil }
+        let leap = parts[0] % 4 == 0 && (parts[0] % 100 != 0 || parts[0] % 400 == 0)
+        let days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+        guard (1...days[parts[1] - 1]).contains(parts[2]) else { return nil }
+        let calendar = calendar(zone: zone)
+        guard let date = calendar.date(from: DateComponents(year: parts[0], month: parts[1], day: parts[2], hour: 12)),
+              string(date, zone: zone) == value else { return nil }
+        return date
+    }
+    static func valid(_ value: String) -> Bool { value.isEmpty || date(value, zone: TimeZone(secondsFromGMT: 0)!) != nil }
+    static func string(_ date: Date, zone: TimeZone = .current) -> String {
+        let parts = calendar(zone: zone).dateComponents([.year, .month, .day], from: date)
+        return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
+    }
+}
+
+struct PhoneRecordScope: Codable, Equatable {
+    var origin = ""
+    var workspaceID = ""
+    var isLocal: Bool { origin.isEmpty && workspaceID.isEmpty }
+    var valid: Bool {
+        isLocal || (!workspaceID.isEmpty && workspaceID.utf16.count <= 256
+            && !workspaceID.unicodeScalars.contains { CharacterSet.controlCharacters.contains($0) }
+            && MobileApplicationPolicy.serviceURL(origin)?.absoluteString == origin)
+    }
+}
+
+struct PhoneRecordJob: Codable, Equatable {
+    var url: String
+    var title: String
+    var company: String
+    var location: String
+    var country: String
+    init(_ job: [String: ApplicationValue]) {
+        url = job["url"]?.string ?? ""
+        title = String((job["title"]?.string ?? "Opportunity").prefix(300))
+        company = String((job["company"]?.string ?? "").prefix(300))
+        location = String((job["location"]?.string ?? "").prefix(300))
+        country = String((job["country"]?.string ?? "").prefix(2))
+    }
+    var identity: String { MobileApplicationPolicy.jobIdentity(url) }
+    var valid: Bool {
+        MobileApplicationPolicy.jobURL(url) != nil && url.utf16.count <= 4_096
+            && [title, company, location].allSatisfy { $0.count <= 300 }
+            && country.count <= 2
+    }
+    func applicationJob(id: String) -> [String: ApplicationValue] {
+        ["id": .string(id), "url": .string(url), "title": .string(title), "company": .string(company),
+         "location": .string(location), "country": .string(country), "recordOnly": .bool(true)]
+    }
+}
+
+struct PhoneOpportunityRecord: Codable, Equatable, Identifiable {
+    var id = UUID().uuidString
+    var scope: PhoneRecordScope
+    var job: PhoneRecordJob
+    var stage = PhoneApplicationStage.saved
+    var appliedElsewhere = false
+    var appliedOn = ""
+    var followUpOn = ""
+    var note = ""
+    var revision = 1
+    var archived = false
+    var updatedAt = ISO8601DateFormatter().string(from: Date())
+    var identity: String { job.identity }
+    var meaningful: Bool {
+        stage != .saved || appliedElsewhere || !appliedOn.isEmpty || !followUpOn.isEmpty
+            || !note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+    var valid: Bool {
+        UUID(uuidString: id) != nil && scope.valid && job.valid && revision > 0 && revision < Int.max
+            && PhoneRecordDay.valid(appliedOn) && PhoneRecordDay.valid(followUpOn)
+            && note.unicodeScalars.count <= 2_000
+            && !note.unicodeScalars.contains { $0.value < 0x20 && ![0x09, 0x0a, 0x0d].contains($0.value) || $0.value == 0x7f }
+            && ApplicationReviewPolicy.date(updatedAt) != nil
+            && (!stage.marksApplied || appliedElsewhere)
+    }
+}
+
+struct PhoneRecordDraft: Equatable {
+    var stage = PhoneApplicationStage.saved
+    var appliedOn = ""
+    var followUpOn = ""
+    var note = ""
+    init(_ record: PhoneOpportunityRecord? = nil) {
+        if let record { stage = record.stage; appliedOn = record.appliedOn; followUpOn = record.followUpOn; note = record.note }
+    }
+}
+
+struct PhoneRecordEditContext: Equatable {
+    let scope: PhoneRecordScope
+    let identity: String
+    let job: PhoneRecordJob
+    let connection: UUID
+    let recordID: String?
+    let revision: Int?
+}
+
+struct PhoneRecordChoiceContext: Equatable {
+    let scope: PhoneRecordScope
+    let identity: String
+    let connection: UUID
+    let versions: [String: Int]
+}
+
+struct PhoneRecordAdoptionContext: Equatable {
+    let identity: String
+    let destination: PhoneRecordScope
+    let connection: UUID
+    let sourceVersions: [String: Int]
+    let destinationVersions: [String: Int]
+}
+
+struct PhoneLocalRemovalContext: Identifiable {
+    let id: String
+    let identity: String
+    let connection: UUID
+    let title: String
+    let company: String
+    let keepsRecord: Bool
+}
+
+struct ApplicationProfileReadiness {
+    let profile: PhoneApplicationProfile
+    var nameReady: Bool {
+        !profile.firstName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && profile.firstName.utf16.count <= 150
+            && !profile.firstName.unicodeScalars.contains { $0.value < 0x20 || $0.value == 0x7f }
+    }
+    var emailReady: Bool {
+        let value = profile.email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        return profile.email.utf16.count <= 254 && !profile.email.unicodeScalars.contains { $0.value < 0x20 || $0.value == 0x7f }
+            && (value.split(separator: "@", omittingEmptySubsequences: false).first?.utf16.count ?? 0) <= 64
+            && value.range(of: #"^[^\s@<>]{1,64}@[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?\.[a-z]{2,63}$"#, options: .regularExpression) != nil
+    }
+    var resumeReady: Bool {
+        guard !profile.resumeRemoved else { return false }
+        if let data = profile.resumeData { return MobileApplicationPolicy.resumeError(data, filename: profile.resumeName) == nil }
+        guard !profile.resumeChanged else { return false }
+        return !profile.resumeName.isEmpty && profile.resumeName.lowercased().hasSuffix(".pdf")
+            && (profile.resumeSize.map { (8...MobileApplicationPolicy.maximumResumeBytes).contains($0) } ?? false)
+            && profile.resumeSHA256?.range(of: #"^[a-fA-F0-9]{64}$"#, options: .regularExpression) != nil
+    }
+    var ready: Bool { nameReady && emailReady && resumeReady }
+    var nextAction: String {
+        !nameReady ? "Add your name" : !emailReady ? (profile.email.isEmpty ? "Add your email" : "Check your email")
+            : !resumeReady ? "Choose a PDF CV" : "Review your application profile"
+    }
+    var summary: String { ready ? "Name, email and PDF CV added" : nextAction }
+}
+
 /// The draft's base revision is deliberately independent of the latest server revision.
 /// Old files without a revision migrate to an unknown base, which requires an explicit conflict choice.
 struct PhoneApplicationState: Codable {
@@ -119,11 +293,14 @@ struct PhoneApplicationState: Codable {
     var latestServerProfile: PhoneApplicationProfile?
     var connectionEnabled = false
     var credentialAccount: String?
+    var applicationRecordSchema = 1
+    var applicationRecords: [PhoneOpportunityRecord] = []
 
     init() {}
     private enum CodingKeys: String, CodingKey {
         case profile, profileNeedsSync, jobs, opportunityDraft, serviceAddress, workspaceID, profileRevision
         case latestServerRevision, latestServerProfile, connectionEnabled, credentialAccount
+        case applicationRecordSchema, applicationRecords
     }
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -138,8 +315,19 @@ struct PhoneApplicationState: Codable {
         latestServerProfile = try c.decodeIfPresent(PhoneApplicationProfile.self, forKey: .latestServerProfile)
         connectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .connectionEnabled) ?? !serviceAddress.isEmpty
         credentialAccount = try c.decodeIfPresent(String.self, forKey: .credentialAccount)
+        if c.contains(.applicationRecordSchema) || c.contains(.applicationRecords) {
+            applicationRecordSchema = try c.decode(Int.self, forKey: .applicationRecordSchema)
+            applicationRecords = try c.decode([PhoneOpportunityRecord].self, forKey: .applicationRecords)
+            guard applicationRecordSchema == 1, applicationRecords.count <= 1_000,
+                  applicationRecords.allSatisfy(\.valid), Set(applicationRecords.map(\.id)).count == applicationRecords.count else {
+                throw MobileApplicationError(message: "These saved application records need a compatible app version. The original phone data has been preserved.")
+            }
+        }
     }
     var tokenAccount: String { credentialAccount ?? serviceAddress }
+    var recordScope: PhoneRecordScope {
+        workspaceID.isEmpty ? PhoneRecordScope() : PhoneRecordScope(origin: MobileApplicationPolicy.serviceURL(serviceAddress)?.absoluteString ?? serviceAddress, workspaceID: workspaceID)
+    }
     var hasProfileConflict: Bool {
         profileNeedsSync && latestServerRevision != nil && profileRevision != latestServerRevision
     }

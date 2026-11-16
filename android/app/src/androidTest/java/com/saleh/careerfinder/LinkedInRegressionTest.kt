@@ -106,6 +106,8 @@ class LinkedInRegressionTest {
     }
 
     @Test fun localInvalidLink_isPreservedAcrossRecreation_thenCanonicalSaveKeepsWebsiteSeparate() {
+        assertEquals("https://www.linkedin.com/in/Jose%CC%81", BoundaryPolicy.linkedinProfileURL("https://linkedin.com/in/Jose\u0301"))
+        assertEquals("https://www.linkedin.com/in/Jose%CC%81", BoundaryPolicy.linkedinProfileURL("https://linkedin.com/in/Jose%CC%81"))
         val store = MemoryStore(); val service = Service(); val first = model(store, service)
         main { first.editProfile { it.copy(linkedin = "unfinished link", website = "https://portfolio.example.invalid") }; first.saveProfile() }
         await { !first.state.value.busy && first.state.value.error != null }

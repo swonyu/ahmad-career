@@ -53,6 +53,7 @@ class CareerViewModel internal constructor(application: Application, private val
     private fun workspaceName(connection: Connection? = state.value.connection): String = connection?.let {
         "workspace-" + BoundaryPolicy.workspaceKey(it.origin, it.workspaceId)
     } ?: "workspace-unpaired"
+    private fun searchName(connection: Connection?) = connection?.let { "search-" + BoundaryPolicy.workspaceKey(it.origin, it.workspaceId) } ?: "search-unpaired"
 
     private suspend fun readPrivate(name: String): JSONObject? = try {
         withContext(Dispatchers.IO) { vault.read(name) }
@@ -70,15 +71,21 @@ class CareerViewModel internal constructor(application: Application, private val
         if (stored != null && stored.optInt("schema") != 1)
             throw PrivateStorageFailure(StorageProblem(name, false), IllegalArgumentException("A newer app is needed for this saved workspace."))
         val saved = stored ?: JSONObject()
-        return try { CareerUiState(loaded = true, connection = connection,
+        return try {
+            val jobs = saved.optJSONArray("jobs").objects().map { job -> Opportunity.fromJson(job) }
+            val legacyApplied = saved.optJSONArray("manualApplied").strings().toSet()
+            require(!saved.has("applicationRecords") || saved.opt("applicationRecords") is JSONObject) { "The saved application records could not be read. Their file is preserved." }
+            val records = ApplicationRecordsCodec.migrateLegacy(jobs, legacyApplied, ApplicationRecordsCodec.decode(saved.optJSONObject("applicationRecords")))
+            CareerUiState(loaded = true, connection = connection,
             profile = saved.optJSONObject("profile")?.let(ProfileDraft::fromJson) ?: ProfileDraft(),
             profileDirty = saved.optBoolean("profileDirty"),
             opportunityDraft = if (saved.has("opportunityDraft")) OpportunityDraft.fromJson(saved.getJSONObject("opportunityDraft")) else OpportunityDraft(),
-            jobs = saved.optJSONArray("jobs").objects().map { job -> Opportunity.fromJson(job) },
+            jobs = jobs,
             receipts = saved.optJSONArray("receipts").objects().map(ApplicationReceipt::fromJson),
             activePlans = saved.optJSONArray("activePlans").strings(),
             selected = saved.optJSONArray("selected").strings().toSet(),
-            manualApplied = saved.optJSONArray("manualApplied").strings().toSet(),
+            manualApplied = ApplicationRecordsCodec.appliedIDs(jobs, records, legacyApplied),
+            applicationRecords = records,
             obsoleteReviews = saved.optJSONArray("obsoleteReviews").strings().toSet(),
             continuationHolds = saved.optJSONArray("continuationHolds").strings().toSet(),
             serverProfile = saved.optJSONObject("serverProfile")?.let(ProfileDraft::fromJson),
@@ -93,7 +100,10 @@ class CareerViewModel internal constructor(application: Application, private val
             try { Connection.fromJson(it) }
             catch (error: Exception) { throw PrivateStorageFailure(StorageProblem("connection", false), error) }
         }
-        mutable.value = savedWorkspace(connection).copy(busy = true)
+        val saved = savedWorkspace(connection)
+        discovery.stopPrivateSession(flush = true)
+        mutable.value = saved.copy(busy = true)
+        discovery.attachPrivateSession(vault, searchName(connection))
         try { if (connection != null) refreshInternal() }
         finally { mutable.update { it.copy(busy = false) } }
     }
@@ -103,6 +113,7 @@ class CareerViewModel internal constructor(application: Application, private val
         val snapshot = state.value
         val envelope = JSONObject().put("schema", 1).put("profile", snapshot.profile.privateJson()).put("profileDirty", snapshot.profileDirty)
             .put("opportunityDraft", snapshot.opportunityDraft.privateJson())
+            .put("applicationRecords", ApplicationRecordsCodec.encode(snapshot.applicationRecords))
             .put("jobs", JSONArray(snapshot.jobs.map(Opportunity::privateJson)))
             .put("activePlans", JSONArray(snapshot.activePlans))
             .put("manualApplied", JSONArray(snapshot.manualApplied.toList()))
@@ -188,9 +199,11 @@ class CareerViewModel internal constructor(application: Application, private val
         viewModelScope.launch {
             try {
                 draftSave?.cancel(); polling?.cancel()
+                discovery.stopPrivateSession(flush = false)
                 diskMutex.withLock { withContext(Dispatchers.IO) { vault.startFreshPreservingExisting() } }
                 mutable.value = CareerUiState(loaded = true,
                     notice = "A new private workspace is ready. Earlier encrypted files and service records were preserved.")
+                discovery.attachPrivateSession(vault, searchName(null))
             } catch (error: Exception) { report(PrivateStorageFailure(StorageProblem("connection", true), error)) }
             finally { mutable.update { it.copy(busy = false) } }
         }
@@ -212,12 +225,15 @@ class CareerViewModel internal constructor(application: Application, private val
             throw error
         }
         polling?.cancel()
+        discovery.stopPrivateSession(flush = true)
         mutable.value = saved.copy(busy = true, notice = "Phone paired. Review your saved phone draft in Profile to copy it deliberately.")
+        discovery.attachPrivateSession(vault, searchName(connection))
         done()
         refreshInternal()
     }
 
-    fun disconnect() = action {
+    fun disconnect(expectedConnection: Connection? = state.value.connection) = action {
+        require(state.value.connection == expectedConnection) { "The connection changed. Review the current phone connection before disconnecting." }
         draftSave?.cancel()
         persist()
         polling?.cancel()
@@ -229,18 +245,23 @@ class CareerViewModel internal constructor(application: Application, private val
         }
         try { withContext(Dispatchers.IO) { vault.remove("connection") } }
         catch (error: Exception) { throw PrivateStorageFailure(StorageProblem("connection", true), error) }
+        discovery.stopPrivateSession(flush = true)
         mutable.value = savedWorkspace(null).copy(busy = true)
+        discovery.attachPrivateSession(vault, searchName(null))
         mutable.update { it.copy(notice = "Phone disconnected. Your separate offline draft is available.") }
     }
 
-    fun removeConnectionLocally() = action {
+    fun removeConnectionLocally(expectedConnection: Connection? = state.value.connection) = action {
+        require(state.value.connection == expectedConnection) { "The connection changed. Review the current phone connection before removing it." }
         draftSave?.cancel()
         persist()
         polling?.cancel()
         try { withContext(Dispatchers.IO) { vault.remove("connection") } }
         catch (error: Exception) { throw PrivateStorageFailure(StorageProblem("connection", true), error) }
+        discovery.stopPrivateSession(flush = true)
         mutable.value = savedWorkspace(null).copy(busy = true,
             notice = "Connection removed from this phone. The remote session and any approved work were not revoked or stopped. Your saved workspace draft is preserved.")
+        discovery.attachPrivateSession(vault, searchName(null))
     }
 
     fun editProfile(change: (ProfileDraft) -> ProfileDraft) = editReview { it.copy(profile = change(it.profile), profileDirty = true) }
@@ -328,9 +349,9 @@ class CareerViewModel internal constructor(application: Application, private val
     fun inspectPhoneDraft() = action {
         require(state.value.connection != null) { "Pair a workspace before copying a phone draft." }
         val phone = savedWorkspace(null)
-        if (phone.profile == ProfileDraft() && phone.jobs.isEmpty()) {
+        if (phone.profile == ProfileDraft() && phone.jobs.isEmpty() && phone.applicationRecords.isEmpty()) {
             mutable.update { it.copy(notice = "There is no saved phone draft to copy.") }
-        } else mutable.update { it.copy(phoneImport = PhoneImport(phone.profile, phone.jobs, phone.manualApplied)) }
+        } else mutable.update { it.copy(phoneImport = PhoneImport(phone.profile, phone.jobs, phone.manualApplied, phone.applicationRecords)) }
     }
 
     fun closePhoneImport() { mutable.update { it.copy(phoneImport = null) } }
@@ -341,18 +362,180 @@ class CareerViewModel internal constructor(application: Application, private val
         require(current.profileConflict == null) { "Resolve the profile conflict before copying a phone draft." }
         require(includeProfile || includeJobs) { "Choose what to copy." }
         val phone = current.phoneImport ?: throw IllegalArgumentException("Review the saved phone draft first.")
-        val existing = current.jobs.map { it.url }.toMutableSet()
-        val jobs = if (includeJobs) phone.jobs.filter { existing.add(it.url) }
+        val existing = current.jobs.map { BoundaryPolicy.jobIdentity(it.url) }.toMutableSet()
+        val jobs = if (includeJobs) phone.jobs.filter { existing.add(BoundaryPolicy.jobIdentity(it.url)) }
             .map { source -> source to source.copy(id = "local-" + UUID.randomUUID(), localOnly = true) } else emptyList()
         val profile = if (includeProfile) phone.profile.copy(revision = current.profile.revision,
             removeResume = phone.profile.resume == null) else current.profile
         if (includeProfile && profile.resume != null) require(profile.resume.dataBase64 != null) { "Choose the PDF again before copying this profile." }
+        val allJobs = jobs.map { pair -> pair.second } + current.jobs
+        val records = current.applicationRecords.toMutableMap()
+        if (includeJobs) for ((identity, incoming) in phone.applicationRecords) {
+            // Removed bookmarks can still have meaningful notes/history. Copy those records
+            // explicitly without inventing a new saved link in the destination workspace.
+            val destination = allJobs.firstOrNull { BoundaryPolicy.jobIdentity(it.url) == identity }
+                ?: records[identity]?.job ?: incoming.job.copy(localOnly = true)
+            records[identity] = records[identity]?.merge(incoming, destination)
+                ?: incoming.copy(job = destination, relatedURLs = (incoming.relatedURLs + destination.url).distinct())
+        }
+        requireApplicationStatusChangesAllowed(current, records)
+        val legacyApplied = current.manualApplied + jobs.filter { pair -> pair.first.id in phone.manualApplied }.map { pair -> pair.second.id }
         mutable.update { it.copy(profile = profile, profileDirty = includeProfile || it.profileDirty,
-            jobs = jobs.map { pair -> pair.second } + it.jobs,
-            manualApplied = it.manualApplied + jobs.filter { pair -> pair.first.id in phone.manualApplied }.map { pair -> pair.second.id },
+            jobs = allJobs, applicationRecords = records,
+            manualApplied = ApplicationRecordsCodec.appliedIDs(allJobs, records, legacyApplied),
             phoneImport = null, plan = null, reviewingRecoveredPlan = false, reviewGeneration = it.reviewGeneration + 1) }
         persist()
-        mutable.update { it.copy(notice = "Copied into a private workspace draft. Save the profile and sync each opportunity when ready. Nothing was sent to employers.") }
+        mutable.update { it.copy(notice = if (records.values.any { record -> record.needsReview })
+            "Copied on this phone. Review the saved record versions in Saved; all were kept."
+            else "Copied into a private workspace draft. Save the profile and sync each opportunity when ready. Nothing was sent to employers.") }
+    }
+
+    private fun recordsChanged(current: CareerUiState, records: Map<String, ApplicationRecordBundle>) = current.copy(
+        applicationRecords = records,
+        manualApplied = ApplicationRecordsCodec.appliedIDs(current.jobs, records, current.manualApplied),
+        plan = null, reviewingRecoveredPlan = false, reviewGeneration = current.reviewGeneration + 1,
+        obsoleteReviews = current.obsoleteReviews + listOfNotNull(current.plan?.takeIf(ReviewPlan::unapproved)?.id))
+
+    private val activeApplicationStatusMessage = "Stop active Auto Apply work and refresh receipts before changing whether this job is marked as applied. Your note and date edits are kept."
+    private val alreadyAppliedReviewMessage = "This review includes a job marked as applied on this phone. Stop the earlier review and prepare a new one, or explicitly correct your private record first."
+
+    private fun trackedApplied(current: CareerUiState, identity: String): Boolean = current.applicationRecords[identity]?.appliedElsewhere
+        ?: current.jobs.any { it.id in current.manualApplied && BoundaryPolicy.jobIdentity(it.url) == identity }
+
+    private fun requireApplicationStatusChangesAllowed(current: CareerUiState, records: Map<String, ApplicationRecordBundle>) {
+        val identities = current.applicationRecords.keys + records.keys
+        val changed = identities.filterTo(mutableSetOf()) { trackedApplied(current, it) != (records[it]?.appliedElsewhere == true) }
+        requireApplicationStatusChangesAllowed(current, changed, records)
+    }
+
+    /** A local mark cannot cancel a provider request. A confirmed Stop must come first. */
+    private fun requireApplicationStatusChangesAllowed(current: CareerUiState, changed: Set<String>,
+        records: Map<String, ApplicationRecordBundle> = current.applicationRecords) {
+        if (changed.isEmpty() || current.activePlans.isEmpty()) return
+        val known = (current.recoverablePlans + listOfNotNull(current.plan)).distinctBy(ReviewPlan::id).associateBy(ReviewPlan::id)
+        require(current.activePlans.all { it in known }) { activeApplicationStatusMessage }
+        val knownJobs = (current.jobs + current.applicationRecords.values.map { it.job } + records.values.map { it.job }).map { it.id }.toSet()
+        require(current.activePlans.all { id -> known.getValue(id).items.let { items -> items.isNotEmpty() && items.all { item ->
+            item.jobId in knownJobs || runCatching { BoundaryPolicy.jobIdentity(item.url) }.isSuccess
+        } } }) { activeApplicationStatusMessage }
+        val related = (current.applicationRecords.values + records.values).filter { it.identity in changed }
+        val identities = changed + related.flatMap { record -> record.relatedURLs.map { BoundaryPolicy.jobIdentity(it) } }
+        val jobIDs = (current.jobs + related.map { it.job }).filter { BoundaryPolicy.jobIdentity(it.url) in identities }.map { it.id }.toSet()
+        require(current.activePlans.none { id -> known.getValue(id).items.any { item ->
+            item.jobId in jobIDs || runCatching { BoundaryPolicy.jobIdentity(item.url) in identities }.getOrDefault(false)
+        } }) { activeApplicationStatusMessage }
+    }
+
+    private fun reviewIncludesTrackedApplication(current: CareerUiState, plan: ReviewPlan): Boolean {
+        val applied = current.applicationRecords.values.filter(ApplicationRecordBundle::appliedElsewhere)
+        val identities = applied.flatMap { it.relatedURLs + it.job.url }.map { BoundaryPolicy.jobIdentity(it) }.toSet() +
+            current.jobs.filter { it.id in current.manualApplied }.map { BoundaryPolicy.jobIdentity(it.url) }
+        val ids = current.manualApplied + current.jobs.filter { BoundaryPolicy.jobIdentity(it.url) in identities }.map { it.id } + applied.map { it.job.id }
+        return plan.items.filter { it.state in setOf("ready", "rate_limited") }.any { item ->
+            item.jobId in ids || runCatching { BoundaryPolicy.jobIdentity(item.url) in identities }.getOrDefault(false)
+        }
+    }
+
+    private fun reviewTargetsKnown(current: CareerUiState, plan: ReviewPlan): Boolean {
+        val knownIDs = (current.jobs + current.applicationRecords.values.map { it.job }).map { it.id }.toSet()
+        return plan.items.isNotEmpty() && plan.items.all { item ->
+            item.jobId in knownIDs || runCatching { BoundaryPolicy.jobIdentity(item.url) }.isSuccess
+        }
+    }
+
+    private suspend fun persistRecordChange(records: Map<String, ApplicationRecordBundle>, editor: ApplicationRecordEditorState?) {
+        val before = state.value
+        requireApplicationStatusChangesAllowed(before, records)
+        draftSave?.cancel()
+        mutable.update { recordsChanged(it, records).copy(applicationRecordEditor = editor) }
+        try { persist() }
+        catch (error: Exception) {
+            if (state.value.privateScope == before.privateScope) mutable.update { it.copy(applicationRecords = before.applicationRecords,
+                manualApplied = before.manualApplied, applicationRecordEditor = before.applicationRecordEditor) }
+            throw error
+        }
+    }
+
+    fun openApplicationRecord(job: Opportunity, expectedScope: String = state.value.privateScope) {
+        val current = state.value
+        if (!current.loaded || current.busy || current.storageBlocked || current.privateScope != expectedScope) return
+        val identity = BoundaryPolicy.jobIdentity(job.url)
+        val record = current.applicationRecords[identity]
+        if (current.jobs.none { it.id == job.id && BoundaryPolicy.jobIdentity(it.url) == identity } && record == null) return
+        mutable.update { it.copy(error = null, applicationRecordEditor = ApplicationRecordEditorState(scope = expectedScope,
+            identity = identity, job = job, expectedRevision = record?.revision ?: 0, draft = record?.activeDraft ?: ApplicationRecordDraft())) }
+    }
+
+    fun editApplicationRecordDraft(change: (ApplicationRecordDraft) -> ApplicationRecordDraft, expectedToken: String? = null) {
+        if (state.value.busy || state.value.storageBlocked) return
+        if (expectedToken != null && state.value.applicationRecordEditor?.token != expectedToken) return
+        mutable.update { it.copy(applicationRecordEditor = it.applicationRecordEditor?.let { editor ->
+            editor.copy(draft = change(editor.draft), pendingNotApplied = null)
+        }) }
+    }
+
+    fun closeApplicationRecord(expectedToken: String? = null) {
+        if (!state.value.busy && (expectedToken == null || state.value.applicationRecordEditor?.token == expectedToken)) mutable.update { it.copy(applicationRecordEditor = null) }
+    }
+
+    private fun checkedRecordEditor(expectedToken: String? = null): Pair<ApplicationRecordEditorState, ApplicationRecordBundle?> {
+        val editor = state.value.applicationRecordEditor ?: throw IllegalArgumentException("Reopen the application record before saving.")
+        require(editor.scope == state.value.privateScope && (expectedToken == null || editor.token == expectedToken)) {
+            "The workspace changed. Reopen the correct application record before saving."
+        }
+        val record = state.value.applicationRecords[editor.identity]
+        require((record?.revision ?: 0) == editor.expectedRevision) { "This application record changed. Close this editor and review the saved version before saving." }
+        require(record != null || state.value.jobs.any { it.id == editor.job.id && BoundaryPolicy.jobIdentity(it.url) == editor.identity }) {
+            "This saved link changed. Close this editor and reopen its record."
+        }
+        return editor to record
+    }
+
+    fun saveApplicationRecord(confirmedNotApplied: Boolean = false, expectedToken: String? = null) = action {
+        val (editor, existing) = checkedRecordEditor(expectedToken)
+        val draft = editor.draft.validated()
+        require(existing?.needsReview != true) { "Choose which saved version to use before editing this record." }
+        val wasApplied = trackedApplied(state.value, editor.identity)
+        val willBeApplied = when (draft.stage) { ApplicationStage.SAVED -> false; ApplicationStage.CLOSED -> wasApplied; else -> true }
+        if (wasApplied != willBeApplied) requireApplicationStatusChangesAllowed(state.value, setOf(editor.identity))
+        val clearing = draft.stage == ApplicationStage.SAVED && existing?.appliedElsewhere == true
+        if (clearing && !confirmedNotApplied) {
+            mutable.update { it.copy(applicationRecordEditor = editor.copy(pendingNotApplied = draft)) }
+            return@action
+        }
+        if (confirmedNotApplied) require(expectedToken != null && editor.pendingNotApplied == draft && clearing) {
+            "The correction changed. Review the application record and confirm again."
+        }
+        val base = existing ?: ApplicationRecordBundle.create(editor.job).copy(revision = 0)
+        val updated = base.edited(draft, confirmedNotApplied)
+        persistRecordChange(state.value.applicationRecords + (editor.identity to updated), null)
+        mutable.update { it.copy(notice = "Record saved on this phone.") }
+    }
+
+    fun keepApplicationRecord(expectedToken: String? = null) {
+        if (state.value.busy) return
+        if (expectedToken != null && state.value.applicationRecordEditor?.token != expectedToken) return
+        mutable.update { state ->
+            val editor = state.applicationRecordEditor ?: return@update state
+            if (editor.quickCorrection) state.copy(applicationRecordEditor = null)
+            else state.copy(applicationRecordEditor = editor.copy(pendingNotApplied = null,
+                draft = editor.draft.copy(stage = state.applicationRecords[editor.identity]?.displayStage ?: editor.draft.stage)))
+        }
+    }
+
+    fun chooseApplicationRecordVersion(versionID: String, expectedToken: String) = action {
+        val (editor, existing) = checkedRecordEditor(expectedToken)
+        val record = existing ?: throw IllegalArgumentException("This saved record is no longer available.")
+        val updated = record.choose(versionID)
+        persistRecordChange(state.value.applicationRecords + (editor.identity to updated),
+            editor.copy(expectedRevision = updated.revision, draft = updated.activeDraft, pendingNotApplied = null))
+        mutable.update { it.copy(notice = "Selected details kept on this phone. Other versions remain in record history.") }
+    }
+
+    fun restoreRecordedOpportunity(identity: String, expectedScope: String) = action {
+        require(state.value.privateScope == expectedScope) { "The workspace changed. Open the correct application record again." }
+        val job = state.value.applicationRecords[identity]?.job ?: throw IllegalArgumentException("That application record is no longer available.")
+        addOpportunityInternal(job.url, job.title, job.company, job.location, job.country, null) {}
     }
 
     fun editOpportunityDraft(change: (OpportunityDraft) -> OpportunityDraft) {
@@ -395,7 +578,7 @@ class CareerViewModel internal constructor(application: Application, private val
         val normalized = BoundaryPolicy.opportunityURL(url.trim())
         require(title.trim().isNotBlank() && company.trim().isNotBlank()) { "Add the role title and employer so the saved opportunity is clear." }
         require(country.isBlank() || country.trim().matches(Regex("[A-Za-z]{2}"))) { "Use a two-letter country code or leave it blank." }
-        if (state.value.jobs.any { it.url == normalized }) {
+        if (state.value.jobs.any { BoundaryPolicy.jobIdentity(it.url) == BoundaryPolicy.jobIdentity(normalized) }) {
             mutable.update { it.copy(notice = if (completingDraft == null) "This opportunity is already in your saved list."
                 else "This link is already saved. Your unfinished draft is kept so you can review its details or change the link.") }
             if (completingDraft != null) { draftSave?.cancel(); persist() }
@@ -408,6 +591,7 @@ class CareerViewModel internal constructor(application: Application, private val
         // Only completing this editor may consume its draft. Saving a discovery result or
         // a failed remote sync must not overwrite an unrelated unfinished opportunity.
         mutable.update { it.copy(jobs = listOf(job) + it.jobs,
+            manualApplied = ApplicationRecordsCodec.appliedIDs(listOf(job) + it.jobs, it.applicationRecords, it.manualApplied),
             opportunityDraft = if (completingDraft != null && it.opportunityDraft == completingDraft) OpportunityDraft() else it.opportunityDraft) }
         try { persist() }
         catch (error: Exception) {
@@ -436,7 +620,7 @@ class CareerViewModel internal constructor(application: Application, private val
                 manualApplied = previous.manualApplied, reviewGeneration = previous.reviewGeneration) }
             throw error
         }
-        mutable.update { it.copy(notice = "Saved link removed from this phone. Connected records and application receipts are preserved.") }
+        mutable.update { it.copy(notice = "Saved link removed. Your private application record, connected records and receipts are kept.") }
         done()
     }
 
@@ -444,11 +628,25 @@ class CareerViewModel internal constructor(application: Application, private val
 
     private suspend fun syncInternal(job: Opportunity) {
         val connection = state.value.connection ?: throw IllegalArgumentException("Connect your phone to sync this opportunity.")
+        val sourceIdentity = BoundaryPolicy.jobIdentity(job.url)
+        if (job.localOnly && state.value.applicationRecords[sourceIdentity]?.appliedElsewhere == true)
+            requireApplicationStatusChangesAllowed(state.value, setOf(sourceIdentity))
         val response = service.request(connection, "POST", "jobs", job.inputJson())
         val synced = Opportunity.fromServer(response.getJSONObject("job"))
         require(synced.id.isNotBlank()) { "The service did not return the saved opportunity identity." }
+        val destinationIdentity = BoundaryPolicy.jobIdentity(synced.url)
+        val records = state.value.applicationRecords.toMutableMap()
+        records[sourceIdentity]?.let { source ->
+            records[destinationIdentity] = if (sourceIdentity != destinationIdentity && records[destinationIdentity] != null)
+                records.getValue(destinationIdentity).merge(source, synced)
+            else source.copy(job = synced, relatedURLs = (source.relatedURLs + synced.url).distinct())
+            if (sourceIdentity != destinationIdentity) records.remove(sourceIdentity)
+        }
+        requireApplicationStatusChangesAllowed(state.value, records)
         mutable.update { it.copy(jobs = listOf(synced) + it.jobs.filterNot { existing -> existing.id == job.id || existing.id == synced.id },
-            manualApplied = (it.manualApplied - job.id).let { ids -> if (job.id in it.manualApplied) ids + synced.id else ids },
+            applicationRecords = records,
+            manualApplied = ApplicationRecordsCodec.appliedIDs(listOf(synced) + it.jobs.filterNot { existing -> existing.id == job.id || existing.id == synced.id },
+                records, (it.manualApplied - job.id).let { ids -> if (job.id in it.manualApplied) ids + synced.id else ids }),
             selected = (it.selected - job.id).let { ids -> if (job.id in it.selected) ids + synced.id else ids },
             answers = (it.answers - job.id).let { answers -> it.answers[job.id]?.let { value -> answers + (synced.id to value) } ?: answers },
             plan = null, reviewingRecoveredPlan = false, reviewGeneration = it.reviewGeneration + 1) }
@@ -477,14 +675,27 @@ class CareerViewModel internal constructor(application: Application, private val
         if (!linkedReviewMatchesProfile(plan, state.value.profile)) {
             mutable.update { it.copy(plan = null, error = mismatchedLinkedInReview) }; return
         }
+        if (reviewIncludesTrackedApplication(state.value, plan)) {
+            mutable.update { it.copy(plan = null, error = alreadyAppliedReviewMessage) }; return
+        }
         mutable.update { it.copy(plan = plan, reviewingRecoveredPlan = true,
             notice = "Review the original details before approving any remaining application. Nothing was resumed automatically.") }
     }
     fun markAppliedElsewhere(id: String, applied: Boolean) = action {
-        mutable.update { it.copy(manualApplied = if (applied) it.manualApplied + id else it.manualApplied - id,
-            plan = null, reviewingRecoveredPlan = false, reviewGeneration = it.reviewGeneration + 1,
-            obsoleteReviews = it.obsoleteReviews + listOfNotNull(it.plan?.takeIf(ReviewPlan::unapproved)?.id)) }
-        persist()
+        val current = state.value
+        val job = current.jobs.firstOrNull { it.id == id } ?: throw IllegalArgumentException("This saved opportunity changed. Reopen its record.")
+        val identity = BoundaryPolicy.jobIdentity(job.url)
+        val existing = current.applicationRecords[identity]
+        if (!applied && (existing?.appliedElsewhere == true || id in current.manualApplied)) {
+            requireApplicationStatusChangesAllowed(current, setOf(identity))
+            val draft = (existing?.activeDraft ?: ApplicationRecordDraft()).copy(stage = ApplicationStage.SAVED)
+            mutable.update { it.copy(applicationRecordEditor = ApplicationRecordEditorState(scope = current.privateScope, identity = identity,
+                job = job, expectedRevision = existing?.revision ?: 0, draft = draft, pendingNotApplied = draft, quickCorrection = true)) }
+            return@action
+        }
+        val base = existing ?: ApplicationRecordBundle.create(job).copy(revision = 0)
+        val updated = base.edited(base.activeDraft.copy(stage = if (applied) ApplicationStage.APPLIED else ApplicationStage.SAVED), false)
+        persistRecordChange(current.applicationRecords + (identity to updated), null)
     }
 
     fun prepare() = action {
@@ -533,6 +744,10 @@ class CareerViewModel internal constructor(application: Application, private val
             return@action
         }
         require(linkedReviewMatchesProfile(prepared, current.profile)) { mismatchedLinkedInReview }
+        if (reviewIncludesTrackedApplication(current, prepared)) {
+            mutable.update { it.copy(plan = null, obsoleteReviews = it.obsoleteReviews + listOfNotNull(prepared.takeIf(ReviewPlan::unapproved)?.id)) }
+            throw IllegalArgumentException(alreadyAppliedReviewMessage)
+        }
         mutable.update { it.copy(plan = prepared, reviewingRecoveredPlan = false,
             recoverablePlans = it.recoverablePlans.filterNot { previous -> previous.id in obsolete },
             notice = "Review prepared. Nothing has been submitted.") }
@@ -544,6 +759,7 @@ class CareerViewModel internal constructor(application: Application, private val
         require(current.plan?.id == plan.id && current.plan.digest == plan.digest) { "Prepare a fresh review before applying." }
         require(!plan.expired() && !current.profileDirty && current.profile.revision == plan.profileRevision) { "This review has expired or your profile changed. Prepare it again." }
         require(linkedReviewMatchesProfile(plan, current.profile)) { mismatchedLinkedInReview }
+        require(!reviewIncludesTrackedApplication(current, plan)) { alreadyAppliedReviewMessage }
         require(plan.items.any(ReviewItem::canSubmitNow)) { "There are no applications ready to send. A rate-limited application must finish its cooldown first." }
         val connection = current.connection ?: throw IllegalArgumentException("Reconnect before applying.")
         // Only a new visible approval can supersede this phone's earlier stop intent.
@@ -615,11 +831,13 @@ class CareerViewModel internal constructor(application: Application, private val
         serviceData(capabilities?.opt("liveEnabled") is Boolean && response.opt("mode") in setOf("test", "local"))
         serviceData(!capabilities!!.has("linkedinProfile") || capabilities.opt("linkedinProfile") is Boolean)
         acceptedRefresh = sequence
+        val nextJobs = serverJobs + state.value.jobs.filter(Opportunity::localOnly)
         mutable.update { it.copy(
             profile = if (it.profileDirty && !forceProfile) it.profile else serverProfile,
             serverProfile = serverProfile,
             profileDirty = it.profileDirty && !forceProfile,
-            jobs = serverJobs + it.jobs.filter(Opportunity::localOnly),
+            jobs = nextJobs,
+            manualApplied = ApplicationRecordsCodec.appliedIDs(nextJobs, it.applicationRecords, it.manualApplied),
             receipts = receipts,
             activePlans = activePlans,
             recoverablePlans = recovered,
@@ -643,6 +861,7 @@ class CareerViewModel internal constructor(application: Application, private val
         foreground = active
         if (!active) {
             polling?.cancel(); polling = null
+            discovery.saveSearchBeforeBackground()
             if (state.value.loaded && !state.value.busy && !state.value.storageBlocked && draftSave?.isActive == true)
                 queuePrivateSave(immediate = true)
         } else startPolling()
@@ -660,7 +879,15 @@ class CareerViewModel internal constructor(application: Application, private val
         currentCoroutineContext().ensureActive()
         val current = state.value
         if (!current.clientContinuation) return@withLock
-        val eligible = current.activePlans.filterNot { it in current.continuationHolds }
+        val knownPlans = (current.recoverablePlans + listOfNotNull(current.plan)).distinctBy(ReviewPlan::id).associateBy(ReviewPlan::id)
+        val hasTrackedApplications = current.manualApplied.isNotEmpty() || current.applicationRecords.values.any(ApplicationRecordBundle::appliedElsewhere)
+        val eligible = current.activePlans.filterNot { id ->
+            if (id in current.continuationHolds) true
+            else if (hasTrackedApplications && (knownPlans[id]?.let { !reviewTargetsKnown(current, it) || reviewIncludesTrackedApplication(current, it) } != false)) {
+                mutable.update { it.copy(error = "Auto Apply is paused on this phone because an application record needs review. Stop active work and refresh receipts. This does not stop the service or another phone.") }
+                true
+            } else false
+        }
         if (eligible.isEmpty()) return@withLock
         val next = ((lastAdvancedPlan?.let(eligible::indexOf) ?: -1) + 1) % eligible.size
         val planId = eligible[next]

@@ -116,7 +116,8 @@ enum MobileApplicationPolicy {
     }
     static func jobIdentity(_ text: String) -> String {
         guard var parts = URLComponents(string: text), let host = parts.host?.lowercased() else { return text }
-        parts.fragment = nil
+        parts.scheme = parts.scheme?.lowercased(); parts.host = host; parts.fragment = nil
+        if parts.port == 443 { parts.port = nil }
         if host == "jobs.lever.co" || host == "jobs.eu.lever.co" {
             let segments = parts.path.split(separator: "/")
             if segments.count >= 2 { return host + "/" + segments[0].lowercased() + "/" + segments[1].lowercased() }

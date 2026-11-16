@@ -80,6 +80,10 @@ jobs:
       - name: Build the deployable Worker and phone setup pages
         working-directory: hosted
         run: npm run build
+      - name: Audit the locked dependencies
+        working-directory: hosted
+        timeout-minutes: 3
+        run: npm audit --json --fetch-retries=0 --fetch-timeout=30000 > tests/dependency-audit-ci.json
       - name: Keep the hosted regression evidence
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
@@ -89,6 +93,8 @@ jobs:
             hosted/tests/hosted-verification.json
             hosted/tests/hosted-worker-verification.json
             hosted/tests/hosted-discovery-verification.json
+            hosted/tests/hosted-phone-verification.json
+            hosted/tests/dependency-audit-ci.json
           if-no-files-found: ignore
           retention-days: 7
 
@@ -118,13 +124,29 @@ jobs:
         run: bash android/checks/run-policy-checks.sh
       - name: Compile the ordinary preview and its instrumentation
         working-directory: android
-        run: ./gradlew --no-daemon --max-workers=2 :app:assembleDebug :app:assembleDebugAndroidTest :app:lintDebug
+        shell: bash
+        run: |
+          set -o pipefail
+          for attempt in 1 2; do
+            log="$RUNNER_TEMP/career-android-build-$attempt.log"
+            if ./gradlew --no-daemon --max-workers=2 :app:assembleDebug :app:assembleDebugAndroidTest :app:lintDebug 2>&1 | tee "$log"; then
+              exit 0
+            fi
+            if [ "$attempt" -eq 1 ] && rg -q 'Received status code 429 from server: Too Many Requests' "$log" && ! rg -q '^e: |Compilation error|There were failing tests|Lint found errors' "$log"; then
+              echo 'Dependency provider requested a cooldown. Waiting two minutes before one bounded retry.'
+              sleep 120
+            else
+              exit 1
+            fi
+          done
       - name: Keep the lint report
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: android-lint-${{ github.run_id }}
-          path: android/app/build/reports/lint-results-debug.*
+          path: |
+            android/app/build/reports/lint-results-debug.*
+            ${{ runner.temp }}/career-android-build-*.log
           if-no-files-found: ignore
           retention-days: 7
 

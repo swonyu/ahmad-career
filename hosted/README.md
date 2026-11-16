@@ -1,6 +1,6 @@
 # Career Finder phone service
 
-Public employer-board discovery, hosted HTTPS connection, private account recovery, durable application records, and a bounded submission worker for the native iPhone and Android apps. The web pages manage connections and account data; the career workspace remains in the phone apps.
+Career Finder for phones: a browser app at `/phone`, public employer-board discovery, private account recovery, native iPhone/Android connection, durable application receipts, and a bounded submission worker. The root URL opens the same phone interface.
 
 Service origin: `https://career-finder-service.jazzy-drake-8323.chatgpt.site`
 
@@ -13,9 +13,39 @@ This is a development preview. No employer integration is enabled by default. Sy
 - D1 stores private workspaces, phone sessions, immutable reviews, submission state and evidence. PDF bytes are kept in private R2, outside D1's row-size limit.
 - ChatGPT Sites supplies authenticated, site-specific user identity to browser account routes. The public website does not make account records public.
 - Browser writes require the exact service Origin and JSON. Native routes require a random bearer token obtained by redeeming a short-lived, one-use pairing code. Only token and pairing-code hashes are stored.
+- The phone browser interface uses platform identity and the dedicated `/api/phone/*` routes. It never creates or stores a native bearer token. Local drafts and self-reported application records use a separate encrypted IndexedDB vault.
 - The app's existing Node/SQLite companion service is a separate implementation. Native clients retain GET-only polling with that service unless the exact `dispatchContinuation: "client"` capability is advertised.
 
 The production entrypoint is `worker/index.ts`. It imports the production handler directly; request inputs and environment variables cannot select a synthetic adapter. The test harness injects its synthetic HTTP dependency into a separate handler instance.
+
+## Phone browser app
+
+Open `/phone` in a phone browser. Its four sections are **Search**, **Saved**, **Apply**, and **Profile**. Discovery, a local shortlist, a profile draft and private application notes work without signing in. A home-screen manifest provides ordinary installation where the browser offers it; it does not imply App Store or Google Play distribution. There is no service worker caching private pages. An internet connection is needed to open the app and confirm a signed-in identity.
+
+Saved jobs can have a stage, an applied date, a follow-up date and a private note. Removing a bookmark preserves its application record. Closing a record retains its applied mark; clearing that mark requires a separate confirmation. A mark that could affect an active approved application cannot change until that plan is stopped. The exact reviewed job identity is checked again before preparing, approving or continuing submission.
+
+**Save on this phone** and **Save profile online** are separate actions. An unfinished form can be kept locally; selecting a PDF does not upload it. Online saves use optimistic profile revisions and offer a comparison when another phone has changed the profile. Profile and record forms retain unfinished edits across ordinary tab changes and account rechecks. Closing an unfinished record or new-job form requires an explicit discard choice.
+
+The encrypted vault uses AES-GCM, a fresh non-exportable key and IV for every saved snapshot, and authenticated exact guest/account/workspace metadata. The key is kept in the same browser, so this protects the saved format rather than a compromised website or unlocked browser. Atomic compare-and-set writes reject competing tabs; unknown versions, corruption and storage errors preserve the earlier row. Reset leaves a content-free revision marker so an older tab cannot restore deleted data. Guest data and older workspace drafts are never adopted into a different account automatically. Earlier drafts for the same account can be exported deliberately.
+
+The vault holds at most 200 bookmarks, 500 private records, a bounded 200-result search snapshot and one PDF up to 5 MiB. Search results retain their original check times and restore without a new request or a reusable pagination cursor. Browser-data deletion can remove local information permanently. Readable backup exports include personal information and, when present, PDF bytes; encrypted recovery exports may still need the key in the original browser.
+
+## Browser workspace API
+
+| Route | Method and intent |
+| --- | --- |
+| `/api/phone/workspace` | `GET` reads the existing account workspace without creating it. `POST` explicitly creates/reopens it or confirms an account-email change and requires `expectedAccountId`. |
+| `/api/phone/profile` | `PUT` saves an explicitly reviewed profile and optional PDF using `expectedWorkspaceId` and `expectedRevision`. |
+| `/api/phone/jobs` | `POST` adds a selected job to the connected workspace. A browser-only bookmark is not automatically uploaded. |
+| `/api/phone/prepare` | `POST` freezes an exact review; no provider submission occurs. |
+| `/api/phone/submit` | `POST` records approval of the exact digest and review schema. |
+| `/api/phone/advance` | `POST` attempts at most one already-approved, eligible application. |
+| `/api/phone/stop` | `POST` stops an exact plan, with an optional unapproved-only guard. It can reconcile expired dispatch claims for that stopped plan as uncertain. |
+| `/api/phone/receipts` | `GET` exports receipts for exactly one `expectedWorkspaceId` query value. |
+
+Every workspace mutation after creation includes `expectedWorkspaceId`. The server requires trusted platform identity, exact Origin and JSON for browser writes, and validates the same native application contract. A native bearer token cannot authenticate these browser routes. The client bounds response size to 12 MiB and request duration to 30 seconds, rejects redirects and malformed JSON, omits credentials on public discovery, and never automatically retries a failed write. Application-review bodies are bounded by their actual UTF-8 size before HTTP.
+
+An account or workspace change locks the old page. Returning to the foreground hides private content while identity is rechecked; unfinished forms remain mounted. A delayed startup response cannot reopen an older workspace after a later identity check. Export and UI updates also recheck the captured page generation before revealing private information.
 
 ## Public job discovery
 
@@ -48,7 +78,9 @@ Account GET reports `confirmedEmail` and `emailUpdateRequired` when the platform
 
 Preparing a review freezes the chosen profile revision, exact PDF fingerprint, employer answers and reviewed posting requirements. `/submit` records explicit approval of its digest. `/advance` can process only work already authorized by the persisted server state; it cannot approve a review.
 
-Each continuation request attempts at most one provider submission. It checks the current posting and exact saved PDF, acquires a durable D1 claim before the POST, and records the provider outcome with that claim. Phone apps continue sequentially while active and refresh authoritative workspace state after the request. Closing the app may leave unsent approved work pending. A dispatched request may finish after the phone closes or disconnects.
+Each continuation request attempts at most one provider submission. It checks the current posting and exact saved PDF, acquires a durable D1 claim before the POST, and records the provider outcome with that claim. Phone apps continue sequentially while active and refresh authoritative workspace state after the request. The browser performs at most 20 continuation requests in one explicitly started pass, with one-second pacing after successful progress. It stops on an unchanged response, an in-flight claim, lost approval, hidden page or error. It does not infer new approval from an elapsed provider cooldown. Closing the app may leave unsent approved work pending. A dispatched request may finish after the phone closes or disconnects.
+
+The browser's Stop action targets the captured account workspace and plan. It can be requested while the current request completes; it never recalls an already-sent provider request. An expired dispatch claim on a successfully stopped exact plan becomes **uncertain**, not ready to resend. Recent in-flight claims are preserved so their original provider result can still be recorded. The unapproved-only Stop guard and these state changes share one database transaction; a refused guard changes nothing, including on an already-stopped plan.
 
 Confirmed means the supported provider returned its documented acceptance response and an application ID. It does not mean a recruiter reviewed, selected or hired the applicant. Network interruption, an undocumented response, expired dispatch lease or failure to persist the result remains uncertain and is blocked from automatic resend. A rate-limited attempt requires explicit approval after its cooldown. Stop prevents work that has not passed its durable dispatch claim; it cannot recall a request already sent.
 
@@ -109,6 +141,12 @@ npm run build
 `tests/hosted-discovery.mjs` exercises the actual D1 cache, concurrent leases, bounded source fetches, durable quotas, normalization, privacy boundaries and pagination, including the bundled workerd entrypoint. Its observed results are in `tests/hosted-discovery-verification.json`. `tests/discovery-public-sources.json` separately records bounded public GET observations of the catalog; these checks never POST an employer application. The browser transport suite checks timeout, cancellation, malformed responses and mutation confirmation without silently replaying a failed write.
 
 These checks are distinct from production HTTPS, platform-authentication and native UI acceptance. Production observations belong in the repository's release review, with their source commit and date.
+
+`tests/hosted-phone.mjs` checks the browser workspace boundary through the actual Worker, with isolated identity and synthetic employer requests. `tests/phone-model.mjs`, `tests/phone-api.mjs` and `tests/phone-dispatch.mjs` check canonical job identity, exact review fields, bounded payloads, transport failures and approved continuation. `tests/phone-vault.mjs` uses actual WebCrypto and structured-cloned keys with an injected atomic storage port; it is not evidence of a browser's IndexedDB behavior. Real browser storage and phone interaction remain separate acceptance checks.
+
+### Security dependency pins
+
+The 0.6 candidate updates React, React DOM and `react-server-dom-webpack` together to **19.2.9**, and `@vitejs/plugin-rsc` to **0.5.39**, whose bundled RSC package is **19.3.1**. Updating only the top-level React dependency would leave the old plugin's bundled **19.2.6** copy unchanged. These pins address the October advisories [React GHSA-xqc2-xf4c-x3h3](https://github.com/react/react/security/advisories/GHSA-xqc2-xf4c-x3h3) and [Vite plugin GHSA-59pf-q495-3c99](https://github.com/vitejs/vite-plugin-react/security/advisories/GHSA-59pf-q495-3c99). Next and its ESLint configuration are pinned to **16.4.6**. The application imports patched **Zod 4.6.7**; compatible overrides pin `source-map-js` to **1.2.2**, `baseline-browser-mapping` to **2.11.0** and `fast-uri` to **3.1.9** after the production audit identified additional affected packages. The application runs on Vinext; the presence of Next in the dependency graph alone does not establish exposure to every Next-specific path. Exact installation, build, audit and deployment evidence belongs in the release review; these pins are not a claim that all future vulnerabilities are absent.
 
 The schema lives in `db/schema.ts`. Use `npm run db:generate` for schema changes. Keep the generated migration history under `drizzle/` immutable after publication. The Sites package includes these migrations and the `.openai/hosting.json` bindings for `DB` and `BUCKET`.
 

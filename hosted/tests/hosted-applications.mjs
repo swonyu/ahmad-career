@@ -119,6 +119,38 @@ try {
   const failedResult=await advance(a,persistencePlan,{environment:{...env,DB:faultDB}});assert.equal(failedResult.status,200,JSON.stringify(failedResult.data));assert.equal(failedResult.data.attempts[0].state,'uncertain');checkpoint('Provider acceptance followed by result-write failure stays uncertain');
   const leaseJob=await addJob(a),leasePlan=await review(a,[leaseJob]);await approve(a,leasePlan);await db.prepare("UPDATE attempts SET state='dispatching',dispatch_count=1,claim_token='synthetic-lost-worker',lease_expires_at=? WHERE plan_id=?").bind(new Date(time-1000).toISOString(),leasePlan.id).run();
   const leaseCount=postCount;assert.equal((await call('/api/apply/workspace',{token:a.token})).data.attempts.find(x=>x.planId===leasePlan.id).state,'dispatching');const reclaimed=await advance(a,leasePlan);assert.equal(reclaimed.data.attempts[0].state,'uncertain');assert.equal(postCount,leaseCount);checkpoint('GET does not mutate interrupted claims; advance recovers expiry without resending');
+  const stopJobs=[await addJob(a),await addJob(a),await addJob(a)],expiredStopPlan=await review(a,stopJobs);
+  const separateStopPlan=await review(a,[await addJob(a)]),foreignStopPlan=await review(b,[await addJob(b)]);
+  assert.equal((await approve(a,expiredStopPlan)).status,202);
+  const expiredLease=new Date(time-1000).toISOString(),liveLease=new Date(time+60000).toISOString();
+  await db.prepare("UPDATE attempts SET state='dispatching',dispatch_count=1,dispatched_at=?,claim_token='synthetic-stop-expired',lease_expires_at=? WHERE plan_id=? AND job_id=?").bind(expiredLease,expiredLease,expiredStopPlan.id,stopJobs[0].id).run();
+  await db.prepare("UPDATE attempts SET state='dispatching',dispatch_count=1,dispatched_at=?,claim_token='synthetic-stop-live',lease_expires_at=? WHERE plan_id=? AND job_id=?").bind(expiredLease,liveLease,expiredStopPlan.id,stopJobs[1].id).run();
+  for(const other of [separateStopPlan,foreignStopPlan])await db.prepare("UPDATE attempts SET state='dispatching',dispatch_count=1,lease_expires_at=? WHERE plan_id=?").bind(expiredLease,other.id).run();
+  await db.prepare('UPDATE plans SET expires_at=? WHERE id=?').bind(expiredLease,expiredStopPlan.id).run();
+  const stopRows=async()=>({plans:(await db.prepare('SELECT * FROM plans WHERE id IN (?,?,?) ORDER BY id').bind(expiredStopPlan.id,separateStopPlan.id,foreignStopPlan.id).all()).results,attempts:(await db.prepare('SELECT * FROM attempts WHERE plan_id IN (?,?,?) ORDER BY id').bind(expiredStopPlan.id,separateStopPlan.id,foreignStopPlan.id).all()).results});
+  const beforeExpiredStop=await stopRows(),beforeStopPosts=postCount;
+  await call('/api/apply/workspace',{token:a.token});assert.deepEqual(await stopRows(),beforeExpiredStop);
+  assert.equal((await advance(a,expiredStopPlan)).status,409);assert.deepEqual(await stopRows(),beforeExpiredStop);
+  assert.equal((await call('/api/apply/stop',{method:'POST',token:a.token,body:{planId:expiredStopPlan.id,onlyIfUnapproved:true}})).status,409);assert.deepEqual(await stopRows(),beforeExpiredStop);
+  checkpoint('Expired-plan GET and denied advance/guarded Stop leave dispatch claims unchanged');
+  const atomicStopDB=wrapDB(db);
+  atomicStopDB.batch=statements=>db.batch(statements.map((s,index)=>index===2?db.prepare("INSERT INTO meta(key,value) VALUES('identity_salt','synthetic-duplicate')"):db.prepare(s._sql).bind(...s._args)));
+  assert.equal((await call('/api/apply/stop',{method:'POST',token:a.token,body:{planId:expiredStopPlan.id},environment:{...env,DB:atomicStopDB}})).status,503);
+  assert.deepEqual(await stopRows(),beforeExpiredStop);
+  checkpoint('A failed expiry-reconciliation write rolls back the plan stop and queued cancellation atomically');
+  const stoppedExpired=await call('/api/apply/stop',{method:'POST',token:a.token,body:{planId:expiredStopPlan.id}});assert.equal(stoppedExpired.status,200);
+  const stoppedStates=new Map(stoppedExpired.data.attempts.map(attempt=>[attempt.jobId,attempt]));
+  assert.equal(stoppedStates.get(stopJobs[0].id).state,'uncertain');assert.equal(stoppedStates.get(stopJobs[0].id).error.code,'worker_interrupted');
+  assert.equal(stoppedStates.get(stopJobs[1].id).state,'dispatching');assert.equal(stoppedStates.get(stopJobs[2].id).state,'cancelled');
+  const afterExpiredStop=await stopRows();
+  for(const row of beforeExpiredStop.attempts.filter(row=>row.plan_id!==expiredStopPlan.id||row.job_id===stopJobs[1].id))assert.deepEqual(afterExpiredStop.attempts.find(current=>current.id===row.id),row);
+  assert.equal((await db.prepare("UPDATE attempts SET state='confirmed',application_id='synthetic-late' WHERE plan_id=? AND claim_token='synthetic-stop-expired' AND state='dispatching'").bind(expiredStopPlan.id).run()).meta.changes,0);
+  await db.prepare('UPDATE attempts SET lease_expires_at=? WHERE plan_id=? AND job_id=?').bind(expiredLease,expiredStopPlan.id,stopJobs[1].id).run();
+  const alreadyStopped=await stopRows();
+  assert.equal((await call('/api/apply/stop',{method:'POST',token:a.token,body:{planId:expiredStopPlan.id,onlyIfUnapproved:true}})).status,409);assert.deepEqual(await stopRows(),alreadyStopped);
+  const repeatedStop=await call('/api/apply/stop',{method:'POST',token:a.token,body:{planId:expiredStopPlan.id}});assert.equal(repeatedStop.status,200);
+  assert.equal(repeatedStop.data.attempts.find(attempt=>attempt.jobId===stopJobs[1].id).state,'uncertain');assert.equal(postCount,beforeStopPosts);
+  checkpoint('Explicit Stop reconciles only this stopped plan’s expired leases, preserves live and foreign claims, and never resends');
   const exportResult=await call(`/api/account/export?expectedWorkspaceId=${a.workspaceId}`,{user:a.user});assert.equal(exportResult.status,200);assert.equal(exportResult.data.includesPDFBytes,false);assert.ok(exportResult.data.documents.some(d=>d.sha256===digest(large)));assert.ok(exportResult.data.documents.every(d=>d.downloadPath.endsWith(`?expectedWorkspaceId=${a.workspaceId}`)));assert.ok(!JSON.stringify(exportResult.data).includes('synthetic-only-not-a-real-credential'));checkpoint('Account export contains owned records and workspace-bound private PDF paths without tokens or provider secrets');
 
   // Real R2 conditional semantics: both write/delete orderings erase PDF bytes and all personal metadata.

@@ -1,0 +1,350 @@
+{
+  "classCounts": {
+    "com.saleh.careerfinder.WorkspaceRegressionTest": 17,
+    "com.saleh.careerfinder.LinkedInRegressionTest": 9,
+    "com.saleh.careerfinder.LinkedInPhoneAcceptanceTest": 2,
+    "com.saleh.careerfinder.ApplicationRecordRegressionTest": 18,
+    "com.saleh.careerfinder.DiscoveryRegressionTest": 7,
+    "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest": 8,
+    "com.saleh.careerfinder.NavigationPhoneAcceptanceTest": 4,
+    "com.saleh.careerfinder.PhonePolishAcceptanceTest": 4,
+    "com.saleh.careerfinder.ContinuationRegressionTest": 7,
+    "com.saleh.careerfinder.ExperienceModelRegressionTest": 2,
+    "com.saleh.careerfinder.VaultAcceptanceTest": 3,
+    "com.saleh.careerfinder.PhoneAcceptanceTest": 2
+  },
+  "passedTests": [
+    {
+      "class": "com.saleh.careerfinder.WorkspaceRegressionTest",
+      "test": "concurrentApproval_preventsAutomaticReplacementOfTheOldPlan"
+    },
+    {
+      "class": "com.saleh.careerfinder.WorkspaceRegressionTest",
+      "test": "malformedSuccessfulResponses_doNotReplaceThePhoneDraftOrJobList"
+    },
+    {
+      "class": "com.saleh.careerfinder.WorkspaceRegressionTest",
+      "test": "savingTheSameLink_keepsItsIdentity_andManualTrackingInvalidatesAnEarlierReview"
+    },
+    {
+      "class": "com.saleh.careerfinder.WorkspaceRegressionTest",
+      "test": "explicitNoAndSelections_surviveModelRecreation_withoutRestoringApproval"
+    },
+    {
+      "class": "com.saleh.careerfinder.WorkspaceRegressionTest",
+      "test": "storageReadAndWriteFailures_canRetry_withoutLosingTheDraft"
+    },
+    {
+      "class": "com.saleh.careerfinder.WorkspaceRegressionTest",
+      "test": "failedLocalRemoval_restoresTheLinkAndItsFlags_beforeStorageRecovery"
+    },
+    {
+      "class": "com.saleh.careerfinder.WorkspaceRegressionTest",
+      "test": "failedRemoteOpportunitySync_keepsAnUnrelatedDraft_andTheSavedLocalRole"
+    },
+    {
+      "class": "com.saleh.careerfinder.WorkspaceRegressionTest",
+      "test": "editedReview_stopsOnlyTheUnapprovedPlan_onDeliberatePrepareUpdate"
+    },
+    {
+      "class": "com.saleh.careerfinder.WorkspaceRegressionTest",
+      "test": "unfinishedOpportunity_survivesRestart_andDiscardFailureKeepsTheOriginal"
+    },
+    {
+      "class": "com.saleh.careerfinder.WorkspaceRegressionTest",
+      "test": "removingLocalOpportunity_cleansOnlyItsPrivateFlags_andPreservesRemoteActivity"
+    },
+    {
+      "class": "com.saleh.careerfinder.WorkspaceRegressionTest",
+      "test": "localDisconnect_preservesWorkspaceDraft_andIgnoresItsLateResponse"
+    },
+    {
+      "class": "com.saleh.careerfinder.WorkspaceRegressionTest",
+      "test": "completingOpportunityDraft_persistsItsRoleBeforeClearing_evenIfRemoteSyncFails"
+    },
+    {
+      "class": "com.saleh.careerfinder.WorkspaceRegressionTest",
+      "test": "disabledLiveSending_blocksApprovalBeforeAnySubmissionRequest"
+    },
+    {
+      "class": "com.saleh.careerfinder.WorkspaceRegressionTest",
+      "test": "oldWorkspaceResponse_cannotRegressAnAcknowledgedProfileSave"
+    },
+    {
+      "class": "com.saleh.careerfinder.WorkspaceRegressionTest",
+      "test": "copyingPhoneDraft_isPrivate_preservesOriginal_andMigratesManualAppliedIdentityOnSync"
+    },
+    {
+      "class": "com.saleh.careerfinder.WorkspaceRegressionTest",
+      "test": "backgroundProfileChange_cannotRestoreAStalePreparedPlan"
+    },
+    {
+      "class": "com.saleh.careerfinder.WorkspaceRegressionTest",
+      "test": "profileConflict_keepsOriginalRevision_untilExplicitChoice_andUsesLatestRemotePDF"
+    },
+    {
+      "class": "com.saleh.careerfinder.LinkedInRegressionTest",
+      "test": "unknownOrDisabledService_neverDropsNewOrClearedLink_andLegacyBlankOmitsField"
+    },
+    {
+      "class": "com.saleh.careerfinder.LinkedInRegressionTest",
+      "test": "supportCapability_isNotPersisted_andMalformedRefreshCannotReplaceProfile"
+    },
+    {
+      "class": "com.saleh.careerfinder.LinkedInRegressionTest",
+      "test": "supportedService_savesCanonicalLink_thenExplicitlyClearsIt"
+    },
+    {
+      "class": "com.saleh.careerfinder.LinkedInRegressionTest",
+      "test": "missingOrMismatchedReviewLink_cannotPrepareResumeOrSubmit"
+    },
+    {
+      "class": "com.saleh.careerfinder.LinkedInRegressionTest",
+      "test": "linkedReview_prepareAndVisibleApprovalSendSchema3_blankReviewUsesLegacyProtocol"
+    },
+    {
+      "class": "com.saleh.careerfinder.LinkedInRegressionTest",
+      "test": "malformedProfileReply_keepsPhoneDraftAndOriginalRevision"
+    },
+    {
+      "class": "com.saleh.careerfinder.LinkedInRegressionTest",
+      "test": "olderPrivateProfile_decodesWithoutLosingFields_andFreshProfileHasNoPersonalLink"
+    },
+    {
+      "class": "com.saleh.careerfinder.LinkedInRegressionTest",
+      "test": "localInvalidLink_isPreservedAcrossRecreation_thenCanonicalSaveKeepsWebsiteSeparate"
+    },
+    {
+      "class": "com.saleh.careerfinder.LinkedInRegressionTest",
+      "test": "malformedOptionalFields_failClosed_andMissingFieldsRemainBackwardCompatible"
+    },
+    {
+      "class": "com.saleh.careerfinder.LinkedInPhoneAcceptanceTest",
+      "test": "optionalProfileLink_isHonestEditableAndPrivatelySavedAtLargeText"
+    },
+    {
+      "class": "com.saleh.careerfinder.LinkedInPhoneAcceptanceTest",
+      "test": "exactApprovalLinkAndExternalSearch_areReadableWithoutClaimingSubmission"
+    },
+    {
+      "class": "com.saleh.careerfinder.ApplicationRecordRegressionTest",
+      "test": "activeAlternativeEvidence_mustNotDecodeAsUnapplied_butCorrectedHistoryRemainsValid"
+    },
+    {
+      "class": "com.saleh.careerfinder.ApplicationRecordRegressionTest",
+      "test": "futureRecordSchema_isPreservedAndNeverReplacedWithAnEmptyWorkspace"
+    },
+    {
+      "class": "com.saleh.careerfinder.ApplicationRecordRegressionTest",
+      "test": "saveAndCancel_arePrivate_andCivilDatesSurviveRestartAndTimeZoneChange"
+    },
+    {
+      "class": "com.saleh.careerfinder.ApplicationRecordRegressionTest",
+      "test": "activeReview_allowsNotesButRequiresConfirmedStopBeforeAppliedChanges"
+    },
+    {
+      "class": "com.saleh.careerfinder.ApplicationRecordRegressionTest",
+      "test": "restoredAppliedEvidence_pausesOnlyMatchingContinuation_andUnknownTargetsFailClosed"
+    },
+    {
+      "class": "com.saleh.careerfinder.ApplicationRecordRegressionTest",
+      "test": "syncIdentityCollision_retainsBothVersionsForReview"
+    },
+    {
+      "class": "com.saleh.careerfinder.ApplicationRecordRegressionTest",
+      "test": "workspaceSwitch_invalidatesOldCorrectionAndDisconnectIntent"
+    },
+    {
+      "class": "com.saleh.careerfinder.ApplicationRecordRegressionTest",
+      "test": "removingBookmark_keepsMeaningfulRecordAndRestoringTheLinkKeepsItsApplicationGuard"
+    },
+    {
+      "class": "com.saleh.careerfinder.ApplicationRecordRegressionTest",
+      "test": "manuallyAppliedCooldown_cannotBeRecoveredOrPreparedAsAReadyApplication"
+    },
+    {
+      "class": "com.saleh.careerfinder.ApplicationRecordRegressionTest",
+      "test": "explicitImportKeepsBothConflictingVersions_andAChoiceCannotClearAppliedEvidence"
+    },
+    {
+      "class": "com.saleh.careerfinder.ApplicationRecordRegressionTest",
+      "test": "activeDestination_blocksAppliedSyncAdoption_withoutLosingEitherRecord"
+    },
+    {
+      "class": "com.saleh.careerfinder.ApplicationRecordRegressionTest",
+      "test": "failedRecordSave_keepsEarlierFileAndEditorDraft_forRecovery"
+    },
+    {
+      "class": "com.saleh.careerfinder.ApplicationRecordRegressionTest",
+      "test": "failedAndSuccessfulJobSync_preserveRecordAcrossCanonicalLeverIdentityAndNewID"
+    },
+    {
+      "class": "com.saleh.careerfinder.ApplicationRecordRegressionTest",
+      "test": "legacyAppliedFlag_migratesWithoutInventedDates_orChangingTheSavedFile"
+    },
+    {
+      "class": "com.saleh.careerfinder.ApplicationRecordRegressionTest",
+      "test": "invalidDatesAndStaleEditorRevision_doNotOverwriteTheRecord"
+    },
+    {
+      "class": "com.saleh.careerfinder.ApplicationRecordRegressionTest",
+      "test": "closedRecord_reachesManualAppliedPreparationInput_withoutAProviderReceipt"
+    },
+    {
+      "class": "com.saleh.careerfinder.ApplicationRecordRegressionTest",
+      "test": "closedKeepsAppliedEvidence_andSavedRequiresAnUnchangedExplicitConfirmation"
+    },
+    {
+      "class": "com.saleh.careerfinder.ApplicationRecordRegressionTest",
+      "test": "recordOnlyPhoneDraft_importsWithoutRestoringBookmarks_andKeepsConflicts"
+    },
+    {
+      "class": "com.saleh.careerfinder.DiscoveryRegressionTest",
+      "test": "lateCancelledResponse_cannotReplaceNewerSearchResults"
+    },
+    {
+      "class": "com.saleh.careerfinder.DiscoveryRegressionTest",
+      "test": "paginationDeduplicates_andChangedSnapshotRequiresExplicitRestart"
+    },
+    {
+      "class": "com.saleh.careerfinder.DiscoveryRegressionTest",
+      "test": "searchIsExplicit_andUsesOnlyPublicFiltersAtTheFixedOrigin"
+    },
+    {
+      "class": "com.saleh.careerfinder.DiscoveryRegressionTest",
+      "test": "retryAfterPreventsAnImmediateRepeatedRequest"
+    },
+    {
+      "class": "com.saleh.careerfinder.DiscoveryRegressionTest",
+      "test": "errorsAndUnavailableBoards_preserveEarlierResultsWithoutCallingThemZeroMatches"
+    },
+    {
+      "class": "com.saleh.careerfinder.DiscoveryRegressionTest",
+      "test": "sharedContract_preservesUnknownEligibilityAndExplicitStaleEvidence"
+    },
+    {
+      "class": "com.saleh.careerfinder.DiscoveryRegressionTest",
+      "test": "cancellingSearch_keepsDisplayedResults_andNeverRetriesByItself"
+    },
+    {
+      "class": "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest",
+      "test": "writeFailure_keepsEarlierFile_andExplicitRetrySavesCurrentResult"
+    },
+    {
+      "class": "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest",
+      "test": "futureSavedSearch_isPreservedAndNewResultsStayInMemory_untilExplicitRecovery"
+    },
+    {
+      "class": "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest",
+      "test": "paginationHasABoundedRestorableWindow_andDoesNotReuseItsCursor"
+    },
+    {
+      "class": "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest",
+      "test": "accountChange_cancelsLateSearch_andCannotWriteAcrossPrivateScopes"
+    },
+    {
+      "class": "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest",
+      "test": "recreatedController_restoresExactFiltersAndEvidence_withoutAnyRequestOrOldCursor"
+    },
+    {
+      "class": "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest",
+      "test": "transientReadFailure_canBeRetriedWithoutDiscardingEarlierEvidence"
+    },
+    {
+      "class": "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest",
+      "test": "oversizedAndMalformedSnapshots_cannotReplaceAnExistingSavedSearch"
+    },
+    {
+      "class": "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest",
+      "test": "failedRefresh_keepsEarlierResultEvidence_besideNewUnsavedSearchFilters"
+    },
+    {
+      "class": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest",
+      "test": "recreatedPhone_showsPreviousResults_andSearchAgainIsAnExplicitFreshRequest"
+    },
+    {
+      "class": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest",
+      "test": "privateRecord_datesNotesAndFollowUp_areUsableAtLargeText_withoutCreatingAReceipt"
+    },
+    {
+      "class": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest",
+      "test": "connectionUsesTwoSteps_andPreservesTheChosenCustomAddressUnderAdvanced"
+    },
+    {
+      "class": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest",
+      "test": "clearingAnAppliedRecord_requiresASeparateConfirmation_andKeepsEarlierHistory"
+    },
+    {
+      "class": "com.saleh.careerfinder.PhonePolishAcceptanceTest",
+      "test": "discoveredRole_savesPrivately_andManualApplicationRemainsSelfReported"
+    },
+    {
+      "class": "com.saleh.careerfinder.PhonePolishAcceptanceTest",
+      "test": "unfinishedOpportunity_closeChoicesKeepAndDiscardOnlyTheDraft"
+    },
+    {
+      "class": "com.saleh.careerfinder.PhonePolishAcceptanceTest",
+      "test": "profileEssentials_andCountrySelection_preserveSingleNamesAndCancelledChoices"
+    },
+    {
+      "class": "com.saleh.careerfinder.PhonePolishAcceptanceTest",
+      "test": "localOpportunityRemoval_requiresConfirmation_andPreservesOtherSavedRoles"
+    },
+    {
+      "class": "com.saleh.careerfinder.ContinuationRegressionTest",
+      "test": "lateEligibilityFromAnotherWorkspace_cannotAdvanceOrReplaceTheCurrentWorkspace"
+    },
+    {
+      "class": "com.saleh.careerfinder.ContinuationRegressionTest",
+      "test": "freshEligiblePlans_advanceOnePerCycle_withoutAnyImplicitApproval"
+    },
+    {
+      "class": "com.saleh.careerfinder.ContinuationRegressionTest",
+      "test": "absentCapability_andFreshCooldownOrUncertainState_neverAdvance"
+    },
+    {
+      "class": "com.saleh.careerfinder.ContinuationRegressionTest",
+      "test": "setupPages_preservePairedOrigin_andNeverAttachTheSession"
+    },
+    {
+      "class": "com.saleh.careerfinder.ContinuationRegressionTest",
+      "test": "unauthorizedReadOrAdvance_stopsAllFurtherAutomaticRequests"
+    },
+    {
+      "class": "com.saleh.careerfinder.ContinuationRegressionTest",
+      "test": "cancellationDuringDispatch_requiresFreshEligibilityBeforeAnyNextAttempt"
+    },
+    {
+      "class": "com.saleh.careerfinder.ContinuationRegressionTest",
+      "test": "lostStopResponse_keepsContinuationHeldAcrossRestart"
+    },
+    {
+      "class": "com.saleh.careerfinder.ExperienceModelRegressionTest",
+      "test": "applicationEssentials_supportSingleNames_andKeepIncompleteDraftsHonest"
+    },
+    {
+      "class": "com.saleh.careerfinder.ExperienceModelRegressionTest",
+      "test": "receiptFilters_neverTreatTestOrUnknownEvidenceAsVerified"
+    },
+    {
+      "class": "com.saleh.careerfinder.VaultAcceptanceTest",
+      "test": "originalSchemaOneEnvelope_remainsReadableWithoutAStorageAreaPointer"
+    },
+    {
+      "class": "com.saleh.careerfinder.VaultAcceptanceTest",
+      "test": "freshPrivateArea_preservesUnreadableBytes_andUsesANewKeystoreKey"
+    },
+    {
+      "class": "com.saleh.careerfinder.VaultAcceptanceTest",
+      "test": "storedToken_isEncrypted_andBoundToItsRecordName"
+    },
+    {
+      "class": "com.saleh.careerfinder.PhoneAcceptanceTest",
+      "test": "phoneProfile_survivesActivityRecreation_withoutAnyService"
+    },
+    {
+      "class": "com.saleh.careerfinder.PhoneAcceptanceTest",
+      "test": "blankWorkspace_hasHonestEmptyState_andConnectionRequirement"
+    }
+  ]
+}

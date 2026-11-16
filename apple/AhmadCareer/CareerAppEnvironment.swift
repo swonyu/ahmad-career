@@ -30,6 +30,13 @@ enum CareerAppEnvironment {
                     var state = PhoneApplicationState()
                     state.connect(address: service.origin.absoluteString, workspace: service.workspaceID,
                                   account: "offline-acceptance", server: try ApplicationServerProfile(service.profile))
+                    if ProcessInfo.processInfo.environment["CAREER_UI_ORPHAN_RECORD"] == "1" {
+                        let job: [String: ApplicationValue] = ["url": .string("https://jobs.example.com/retained-record"),
+                            "title": .string("Record without a bookmark"), "company": .string("Synthetic employer")]
+                        var record = PhoneOpportunityRecord(scope: PhoneRecordScope(), job: PhoneRecordJob(job))
+                        record.stage = .applied; record.appliedElsewhere = true; record.note = "My private retained note"
+                        state.applicationRecords = [record]
+                    }
                     try JSONEncoder().encode(state).write(to: folder.appendingPathComponent("phone-draft.json"), options: .atomic)
                 } catch { preconditionFailure("The isolated availability fixture could not be prepared.") }
                 return NativeApplicationsStore(folder: folder, credentials: AcceptanceCredentials(connected: true),

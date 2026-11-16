@@ -1,0 +1,34 @@
+{
+  "scope": "Read-only review of phone web visibility identity and modal-preservation paths",
+  "reviewedAt": "2026-11-16T23:12:09.796322+00:00",
+  "productionFilesEditedByThisAgent": false,
+  "findings": [
+    {
+      "id": "WEB-IDENTITY-EXPORT",
+      "severity": "high",
+      "finding": "Recovery export outside checkingIdentity guard could read/download old account data during failed/pending identity checks or after lock during await.",
+      "recommendedFix": "Gate recovery actions on confirmed identity; capture and recheck generation/scope before download.",
+      "status": "Reported to root; implementation owned by root."
+    },
+    {
+      "id": "WEB-IDENTITY-MODAL",
+      "severity": "medium",
+      "finding": "hidden={checkingIdentity} preserves mounted editor data, but unguarded X/Escape allowed privacy-curtain dismissal to silently unmount dirty record/add forms.",
+      "recommendedFix": "Do not dismiss the curtain while checking identity; make any dirty-form discard explicit.",
+      "status": "Reported; subsequent read shows root now disables X/Escape while checkingIdentity."
+    },
+    {
+      "id": "WEB-IDENTITY-STARTUP-RACE",
+      "severity": "medium",
+      "finding": "An older initial GET could overwrite a workspace confirmed by the independent visibility check when the account is unchanged but workspace was recreated.",
+      "recommendedFix": "Use one identity generation/ticket or compare already-confirmed workspaceRef before accepting the initial response.",
+      "status": "Reported; root acknowledged implementing comparison/ticket."
+    }
+  ],
+  "positiveFindings": [
+    "Modal content uses a hidden wrapper instead of unmounting children on a transient identity check, preserving controlled and uncontrolled form state.",
+    "No current CSS rule inspected overrides display on the hidden wrapper.",
+    "Workspace accountId checks and request generation guards prevent a completed different-account response from silently replacing the original private scope."
+  ],
+  "runtimeValidation": "Source analysis only; production browser acceptance is owned by root."
+}

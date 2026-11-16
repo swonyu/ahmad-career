@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-11-16T22:24:08.800Z",
+  "observedAt": "2026-11-16T22:39:15.072Z",
   "status": "passed",
   "checks": 42,
   "groups": [
@@ -51,7 +51,7 @@
   "mode": "Actual Miniflare D1 and R2 bindings; production handler and provider mapping with injected synthetic HTTP dependency.",
   "fiveMiBPDF": true,
   "sourceHashes": {
-    "server/applications.mjs": "4f349a17702c142a3a44ff5af4ca94ca63f9409684a7e6c88f34de9039aa7461",
+    "server/applications.mjs": "b5d4657f5a32cc45f4b2816d9f40077ef24b06176201c4fe1c4ba3209808ecf8",
     "server/provider.mjs": "77dde77dd668fc77612f9aa97d70c23088ddd904597aadfd58f273d6ba610240",
     "server/validation.mjs": "d415421ca818a7cb4674224c5af1150c6989e2cc9223deb7ec1ed361208ac2ee",
     "db/schema.ts": "b98d7529cf13e5c5958a6d1d9780e5648c2f6906025fd9d3936c9dc63eb8c07a",

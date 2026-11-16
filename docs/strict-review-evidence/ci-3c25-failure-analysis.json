@@ -1,0 +1,45 @@
+{
+  "runId": 43970712465,
+  "attempt": 1,
+  "headSha": "3c25a963db4fa10e8162641cbd0ec396e127c06c",
+  "draftFailure": {
+    "stage": "Initial home.applicationProfile tap; before typing, saving, cancellation, or relaunch",
+    "testSourceLines": [
+      110,
+      111,
+      112
+    ],
+    "tapCoordinates": [
+      {
+        "x": 210.0,
+        "y": 621.0
+      },
+      {
+        "x": 210.0,
+        "y": 621.0
+      }
+    ],
+    "buttonFrame": {
+      "x": 20,
+      "y": 595,
+      "width": 380,
+      "height": 52
+    },
+    "tabBarFrame": {
+      "x": 0,
+      "y": 829,
+      "width": 420,
+      "height": 83
+    },
+    "hierarchy": "failures/CB7F0380-1338-4375-98BB-FD88EAD76A5C.txt",
+    "tapEvent": "failures/F72D0B7F-CC0E-4CB8-928B-5A308A4626EE",
+    "observed": "The Start tab remained selected and the application profile editor was absent. The button and tap do not overlap the tab bar. This test never reached draft-persistence assertions."
+  },
+  "availabilityFailure": {
+    "sourceLine": 312,
+    "observed": "The final recorded frame shows the lower explanatory text and disabled Select opportunities button after repeated upward swipes. The original PNG shows an earlier viewport near the top of the availability card.",
+    "inference": "The helper may have scrolled past the refresh control; this is not yet a proven cause.",
+    "exportedSnapshots": "Available snapshot records for this failure contain an application root with no descendant hierarchy, so no exact refresh-button frame is asserted."
+  },
+  "artifactExtraction": "Existing CI-exported attachments only. Standard Python plist parsing of exported event metadata and ffmpeg frame decoding; no local Apple tools or xcresult processing."
+}

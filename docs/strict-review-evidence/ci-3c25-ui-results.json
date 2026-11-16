@@ -1,0 +1,64 @@
+{
+  "runId": 43970712465,
+  "attempt": 1,
+  "headSha": "3c25a963db4fa10e8162641cbd0ec396e127c06c",
+  "uiJobId": 133661821856,
+  "uiConclusion": "failure",
+  "tests": [
+    {
+      "test": "testAccessibilityTextKeepsCoreControlsReachable",
+      "outcome": "passed",
+      "durationSeconds": 100.762
+    },
+    {
+      "test": "testApplicationDraftSurvivesCancelAndRelaunch",
+      "outcome": "failed",
+      "durationSeconds": 103.465
+    },
+    {
+      "test": "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+      "outcome": "failed",
+      "durationSeconds": 100.979
+    },
+    {
+      "test": "testDiscoverySaveFlowsIntoSavedAndApply",
+      "outcome": "passed",
+      "durationSeconds": 44.521
+    },
+    {
+      "test": "testFreshStartAndFiveTabs",
+      "outcome": "passed",
+      "durationSeconds": 29.676
+    },
+    {
+      "test": "testLinkedInProfileDraftAndExternalSearchChoice",
+      "outcome": "passed",
+      "durationSeconds": 52.051
+    },
+    {
+      "test": "testOpportunityDiscardRequiresExplicitChoice",
+      "outcome": "passed",
+      "durationSeconds": 20.611
+    },
+    {
+      "test": "testOpportunityDraftKeepSaveAndRestore",
+      "outcome": "passed",
+      "durationSeconds": 56.134
+    },
+    {
+      "test": "testSearchEmptyAndFailurePreservesPreviousResults",
+      "outcome": "passed",
+      "durationSeconds": 83.822
+    }
+  ],
+  "executedCountLines": [
+    "2026-11-16T22:45:35.6592410Z \t Executed 9 tests, with 2 failures (0 unexpected) in 592.020 (592.028) seconds",
+    "2026-11-16T22:45:35.6598660Z \t Executed 9 tests, with 2 failures (0 unexpected) in 592.020 (592.031) seconds",
+    "2026-11-16T22:45:35.6631580Z \t Executed 9 tests, with 2 failures (0 unexpected) in 592.020 (592.034) seconds"
+  ],
+  "simulator": {
+    "name": "iPhone Air",
+    "runtime": "iOS 26.5"
+  },
+  "observedAt": "2026-11-16T22:49:32.713602+00:00"
+}

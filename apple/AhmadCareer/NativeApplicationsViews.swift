@@ -22,6 +22,52 @@ struct NativeApplicationRow: Identifiable {
     }
 }
 
+struct NativeProfileEssentials: View {
+    let profile: PhoneApplicationProfile
+    private var readiness: ApplicationProfileReadiness { ApplicationProfileReadiness(profile: profile) }
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            essential(readiness.nameReady ? "Name added" : "Name needed", ready: readiness.nameReady, id: "name")
+            essential(readiness.emailReady ? "Email added" : profile.email.isEmpty ? "Email needed" : "Check your email", ready: readiness.emailReady, id: "email")
+            essential(readiness.resumeReady ? "PDF CV added" : "PDF CV needed", ready: readiness.resumeReady, id: "resume")
+        }
+    }
+    private func essential(_ label: String, ready: Bool, id: String) -> some View {
+        Label(label, systemImage: ready ? "checkmark.circle" : "circle")
+            .font(.subheadline).foregroundStyle(ready ? ApplyDesign.accent : Color.secondary)
+            .fixedSize(horizontal: false, vertical: true).accessibilityElement(children: .combine)
+            .accessibilityIdentifier("profile.essential." + id)
+    }
+}
+
+struct NativeSavedLinkRemoval: View {
+    @ObservedObject var model: NativeApplicationsStore
+    let context: PhoneLocalRemovalContext
+    @Environment(\.dismiss) private var dismiss
+    @State private var issue: String?
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    Text(context.title).font(.headline).fixedSize(horizontal: false, vertical: true)
+                    Text(context.company).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                    Text(context.keepsRecord ? "The saved link will be removed. Your private application record and its notes will stay on this phone." : "This removes the link saved on this phone.")
+                    Text("Applications already sent and provider receipts are kept.").font(.footnote).foregroundStyle(.secondary)
+                }
+                if let issue { Section { Text(issue).foregroundStyle(.red) } }
+                Section {
+                    Button("Remove saved link", role: .destructive) {
+                        if model.removeLocalJob(context) { dismiss() } else { issue = model.message }
+                    }.disabled(model.busy).accessibilityIdentifier("opportunity.confirmRemove")
+                    Button("Keep opportunity", role: .cancel) { dismiss() }
+                        .accessibilityIdentifier("opportunity.keepSaved")
+                }
+            }.navigationTitle("Remove saved link?").navigationBarTitleDisplayMode(.inline)
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Keep opportunity") { dismiss() } } }
+        }.tint(ApplyDesign.accent)
+    }
+}
+
 struct NativeApplicationsScreen: View {
     @EnvironmentObject private var model: NativeApplicationsStore
     @EnvironmentObject private var career: NativeCareerStore
@@ -33,6 +79,7 @@ struct NativeApplicationsScreen: View {
     @State private var activity = false
     @State private var exported: URL?
     @State private var exportSheet = false
+    @State private var removing: PhoneLocalRemovalContext?
 
     private var reviewActionTitle: String {
         guard model.connected else { return "Set up Auto Apply" }
@@ -120,6 +167,7 @@ struct NativeApplicationsScreen: View {
                 coverage
             }.padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 24)
         }
+        .accessibilityIdentifier("applications.content")
         .background(ApplyDesign.canvas)
         .navigationTitle("Career Finder")
         .navigationBarTitleDisplayMode(.inline)
@@ -175,6 +223,7 @@ struct NativeApplicationsScreen: View {
         .sheet(isPresented: $connectionSheet) { NativeApplicationConnection(model: model) }
         .sheet(isPresented: $addSheet) { NativeOpportunityEditor(model: model) }
         .sheet(isPresented: $reviewSheet) { NativeApplicationReview(model: model, manualAppliedURLs: appliedURLs) }
+        .sheet(item: $removing) { NativeSavedLinkRemoval(model: model, context: $0) }
         .sheet(isPresented: $exportSheet) {
             if let exported { NativeApplicationShare(items: [exported]) }
         }
@@ -199,7 +248,8 @@ struct NativeApplicationsScreen: View {
         }.frame(maxWidth: .infinity, alignment: .leading)
     }
     private var profileCard: some View {
-        Button { profileSheet = true } label: {
+        VStack(alignment: .leading, spacing: 16) {
+          Button { profileSheet = true } label: {
             HStack(alignment: .center, spacing: 14) {
                 Image(systemName: "person.crop.rectangle")
                     .font(.title2).foregroundStyle(ApplyDesign.accent)
@@ -207,14 +257,15 @@ struct NativeApplicationsScreen: View {
                 VStack(alignment: .leading, spacing: 5) {
                     Text(model.profile.firstName.isEmpty ? "Make it yours" : "\(model.profile.firstName)'s application profile")
                         .font(.headline).foregroundStyle(.primary)
-                    Text(model.profileHasConflict ? "Phone draft · resolve profile changes" : model.profileNeedsSync ? "Phone draft · ready to save" :
-                            model.profile.resumeName.isEmpty ? "Add your details and a PDF CV" : model.profile.resumeName)
+                    Text(model.profileHasConflict ? "Phone draft · resolve profile changes" : model.profileNeedsSync ? "Phone draft · save before applying" : model.profileReadiness.nextAction)
                         .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 0)
                 Image(systemName: "chevron.right").font(.caption.weight(.bold)).foregroundStyle(.secondary)
-            }.padding(17).background(ApplyDesign.card, in: RoundedRectangle(cornerRadius: 20))
-        }.buttonStyle(.plain).disabled(model.busy).accessibilityIdentifier("applications.profile")
+            }
+          }.buttonStyle(.plain).disabled(model.busy).accessibilityIdentifier("applications.profile")
+          NativeProfileEssentials(profile: model.profile)
+        }.padding(17).background(ApplyDesign.card, in: RoundedRectangle(cornerRadius: 20))
     }
     @ViewBuilder private var metrics: some View {
         metric("\(model.jobs.count)", "Opportunities", icon: "square.stack")
@@ -281,12 +332,17 @@ struct NativeApplicationsScreen: View {
                             Link(destination: url) { Label("View", systemImage: "arrow.up.right").font(.caption.weight(.semibold)).padding(.vertical, 8) }
                         }
                     }
+                    if model.isMarkedApplied(job) {
+                        Label("You marked this as applied", systemImage: "person.crop.circle.badge.checkmark")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
                     if job["localOnly"]?.bool == true {
-                        HStack {
+                        VStack(alignment: .leading, spacing: 6) {
                             Text("Saved on this phone").font(.caption2).foregroundStyle(.secondary)
-                            Spacer()
-                            Button("Remove saved link", role: .destructive) { model.removeLocalJob(id) }
-                                .font(.caption).disabled(model.busy)
+                            Button("Remove saved link", role: .destructive) {
+                                if let context = model.removalContext(id) { removing = context }
+                                else { model.message = "This opportunity is part of a review or queue. Finish or stop that review before removing the saved link." }
+                            }.font(.caption).frame(minHeight: 44).disabled(model.busy)
                         }
                     }
                 }.padding(17).background(ApplyDesign.card, in: RoundedRectangle(cornerRadius: 18))
@@ -334,13 +390,13 @@ struct NativeApplicationsScreen: View {
                   systemImage: "info.circle").font(.subheadline.weight(.semibold))
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityIdentifier("applications.availability.heading")
+            Button("Refresh availability") { Task { await model.refresh() } }
+                .font(.subheadline).frame(minHeight: 44).disabled(model.busy)
+                .accessibilityIdentifier("applications.availability.refresh")
             Text(model.liveSubmissionEnabled == false
                  ? "Your workspace is connected. Keep saving opportunities and preparing your profile. Automatic submission needs an activated employer integration; you can apply through employer links."
                  : "Your workspace is connected, but the service has not confirmed that live submission is available. Keep preparing your profile and checking employer links.")
                 .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-            Button("Refresh availability") { Task { await model.refresh() } }
-                .font(.subheadline).disabled(model.busy)
-                .accessibilityIdentifier("applications.availability.refresh")
         }.padding(16).frame(maxWidth: .infinity, alignment: .leading)
             .background(ApplyDesign.card, in: RoundedRectangle(cornerRadius: 16))
     }
@@ -684,64 +740,106 @@ private struct NativeApplicationConnection: View {
     @State private var address = ""
     @State private var code = ""
     @State private var issue: String?
+    @State private var advanced = false
+    @State private var disconnecting = false
+    @State private var disconnectContext: ApplicationProfileEditContext?
+    @FocusState private var focusedField: String?
     init(model: NativeApplicationsStore) {
         self.model = model; _address = State(initialValue: model.connectionSetupAddress)
+        _advanced = State(initialValue: !MobileApplicationPolicy.isHostedService(model.connectionSetupAddress))
     }
     var body: some View {
         NavigationStack {
             Form {
                 Section {
                     Image(systemName: "lock.shield").font(.largeTitle).foregroundStyle(ApplyDesign.accent).padding(.vertical, 8)
-                    Text(model.connected ? "Your application workspace is connected." : "Connect once. Keep every receipt.")
+                    Text(model.connected ? "Your application workspace is connected." : "Connect your phone in two steps.")
                         .font(.title3.weight(.semibold))
-                    Text("Your application service keeps submission attempts and provider receipts so closing the app cannot cause an automatic duplicate.")
+                    Text("Your phone draft is uploaded only when you choose to save it to the connected service.")
                         .font(.subheadline).foregroundStyle(.secondary)
                 }
                 if model.connected {
                     Section("Connected service") {
-                        Text(model.serviceAddress).font(.footnote).textSelection(.enabled)
+                        Text(MobileApplicationPolicy.isHostedService(model.serviceAddress) ? "Career Finder" : "Your custom service").font(.headline)
                         Button("Refresh applications") { Task { await model.refresh() } }
-                        Button("Disconnect this phone", role: .destructive) { Task { await model.disconnect(); if !model.connected { dismiss() } } }
+                        Button("Disconnect this phone", role: .destructive) { disconnectContext = model.editContext; disconnecting = true }
+                        DisclosureGroup("Connection details") {
+                            Text(model.serviceAddress).font(.footnote).textSelection(.enabled)
+                            Text("The connection token stays in this phone's Keychain. Disconnecting keeps your phone draft and service history.")
+                                .font(.footnote).foregroundStyle(.secondary)
+                        }
                     }
                 } else {
                     if MobileApplicationPolicy.isHostedService(address),
                        let setup = MobileApplicationPolicy.servicePageURL(.connect, address: address) {
-                        Section("1. Get your one-time code") {
-                            Link(destination: setup) { Label("Open secure connection setup", systemImage: "safari") }
-                            Text("On the secure ChatGPT sign-in screen, choose Continue with Google, or use your existing sign-in method. Create a one-time code, then return here. Use the same account to recover your workspace or connect another phone.")
+                        Section("1. Sign in and get a code") {
+                            Text("Career Finder").font(.headline)
+                            Link(destination: setup) { Label("Sign in and get a code", systemImage: "safari") }
+                                .accessibilityIdentifier("connection.signIn")
+                            Text("Choose Continue with Google on ChatGPT sign-in, or use your usual sign-in method. Create a code, then return here. Use the same account on your other phones.")
                                 .font(.footnote).foregroundStyle(.secondary)
+                        }
+                    } else {
+                        Section("1. Get a code") {
+                            Text("Ask your custom service operator for a one-time connection code.")
+                            Text("Check the address under Use another service before connecting.").font(.footnote).foregroundStyle(.secondary)
                         }
                     }
                     Section {
-                        TextField("https://service.example", text: $address).keyboardType(.URL)
-                            .textInputAutocapitalization(.never).autocorrectionDisabled().accessibilityLabel("Application service HTTPS address")
                         SecureField("One-time connection code", text: $code).textInputAutocapitalization(.characters).autocorrectionDisabled()
-                    } header: { Text("Connect this phone") } footer: {
-                        Text("Enter the short-lived code for your workspace. Existing service addresses are preserved. Automatic submission is available only for activated employer integrations; unsupported jobs can still be opened manually.")
+                            .focused($focusedField, equals: "code").submitLabel(.done).onSubmit { focusedField = nil }
+                            .accessibilityIdentifier("connection.code")
+                        Button {
+                            Task {
+                                if await model.connect(address: address, code: code) { code = ""; dismiss() }
+                                else { code = ""; issue = model.message }
+                            }
+                        } label: {
+                            HStack { if model.busy { ProgressView() }; Text("Connect this phone") }
+                        }.disabled(model.busy || address.isEmpty || code.isEmpty)
+                            .accessibilityIdentifier("connection.connect")
+                    } header: { Text("2. Paste your code") } footer: {
+                        Text("Enter the code you just created. Connecting alone does not upload your profile or apply for a job.")
                     }
-                    Button {
-                        Task {
-                            if await model.connect(address: address, code: code) { code = ""; dismiss() }
-                            else { code = ""; issue = model.message }
+                    Section {
+                        DisclosureGroup("Use another service", isExpanded: $advanced) {
+                            TextField("https://service.example", text: $address).keyboardType(.URL)
+                                .textInputAutocapitalization(.never).autocorrectionDisabled()
+                                .focused($focusedField, equals: "address").submitLabel(.done).onSubmit { focusedField = nil }
+                                .accessibilityLabel("Application service HTTPS address").accessibilityIdentifier("connection.address")
+                            Text("Advanced: use the HTTPS address from your own service operator. Its account, privacy and submission features may differ.")
+                                .font(.footnote).foregroundStyle(.secondary)
+                            if !MobileApplicationPolicy.isHostedService(address) {
+                                Button("Use Career Finder") { address = MobileApplicationPolicy.hostedServiceOrigin; advanced = false }
+                            }
                         }
-                    } label: {
-                        HStack { if model.busy { ProgressView() }; Text("Connect securely") }
-                    }.disabled(model.busy || address.isEmpty || code.isEmpty)
+                    }
                 }
                 if let issue = issue ?? model.message { Section { Text(issue).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true) } }
-                Section {
-                    Text("Saved phone drafts stay on your device until you explicitly save them to the connected service. Your connection token is kept in the iPhone Keychain.")
-                        .font(.caption).foregroundStyle(.secondary)
-                }
-                Section("Privacy, recovery and account data") {
+                Section("Account and privacy") {
                     NativeApplicationServiceLinks(address: model.connected ? model.serviceAddress : address,
                                                   includeConnection: model.connected)
-                    Text("Disconnecting this phone keeps its draft and does not delete hosted data. Account deletion is a separate action in the browser and does not remove applications already received by employers.")
-                        .font(.caption).foregroundStyle(.secondary)
+                    DisclosureGroup("How your data is kept") {
+                        Text("The service keeps application attempts and provider receipts. Auto Apply needs an activated employer integration; other jobs still open on the employer website.")
+                        Text("Disconnecting keeps your phone draft and does not delete service data. Manage account opens the separate deletion option. Employer copies are governed by that employer.")
+                    }.font(.footnote).foregroundStyle(.secondary)
                 }
             }.navigationTitle("Application connection").navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } } }
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } }
+                    ToolbarItemGroup(placement: .keyboard) { Spacer(); Button("Done typing") { focusedField = nil } }
+                }
         }.tint(ApplyDesign.accent).interactiveDismissDisabled(model.busy)
+            .onChange(of: address) { _ in code = ""; issue = nil }
+            .confirmationDialog("Disconnect this phone?", isPresented: $disconnecting, titleVisibility: .visible) {
+                Button("Disconnect this phone", role: .destructive) {
+                    guard let captured = disconnectContext,
+                          captured.workspaceID == model.editContext.workspaceID,
+                          captured.serviceAddress == model.editContext.serviceAddress else { issue = "The connection changed. It has been kept."; return }
+                    Task { await model.disconnect(); if !model.connected { dismiss() } }
+                }
+                Button("Keep connected", role: .cancel) { disconnectContext = nil }
+            } message: { Text("Your phone draft and service application history will be kept. You can reconnect with a new code.") }
     }
 }
 

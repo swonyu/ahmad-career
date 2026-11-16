@@ -11,7 +11,7 @@ const worker = {
       const response = await handleDiscovery(request, env);
       if (response) return response;
     }
-    if (pathname.startsWith("/api/apply/") || pathname === "/api/account" || pathname.startsWith("/api/account/") || pathname === "/api/health") {
+    if (pathname.startsWith("/api/apply/") || pathname === "/api/phone" || pathname.startsWith("/api/phone/") || pathname === "/api/account" || pathname.startsWith("/api/account/") || pathname === "/api/health") {
       const response = await handleApplications(request, env, ctx);
       if (response) return response;
       return Response.json({ ok: false, error: { code: "not_found", message: "This service route does not exist." } }, { status: 404, headers: { "Cache-Control": "no-store" } });

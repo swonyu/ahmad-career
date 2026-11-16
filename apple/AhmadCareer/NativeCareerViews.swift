@@ -16,7 +16,7 @@ struct NativeCareerRoot: View {
     @StateObject private var navigation = NativeCareerNavigation()
     private var savedCount: Int {
         Set(store.savedJobs.map { MobileApplicationPolicy.jobIdentity($0.url) }
-            + applications.jobs.compactMap { $0["url"]?.string }.map(MobileApplicationPolicy.jobIdentity)).count
+            + applications.savedOpportunities.compactMap { $0["url"]?.string }.map(MobileApplicationPolicy.jobIdentity)).count
     }
 
     var body: some View {
@@ -67,12 +67,16 @@ struct NativeCareerRoot: View {
     }
 }
 
+private enum NativeStartSheet: String, Identifiable {
+    case profile, opportunity
+    var id: String { rawValue }
+}
+
 private struct NativeShortlistScreen: View {
     @EnvironmentObject private var store: NativeCareerStore
     @EnvironmentObject private var applications: NativeApplicationsStore
     @EnvironmentObject private var navigation: NativeCareerNavigation
-    @State private var editing = false
-    @State private var adding = false
+    @State private var sheet: NativeStartSheet?
 
     var body: some View {
         List {
@@ -84,16 +88,24 @@ private struct NativeShortlistScreen: View {
                 Button { navigation.selectedTab = 1 } label: {
                     Label("Find opportunities", systemImage: "magnifyingglass")
                 }.accessibilityIdentifier("home.discover")
-                Button { adding = true } label: {
+                Button { sheet = .opportunity } label: {
                     Label(applications.opportunityDraft.hasContent ? "Continue your saved job draft" : "Add a job link", systemImage: "link")
-                }.accessibilityIdentifier("home.addOpportunity")
+                        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle())
+                }.buttonStyle(.plain).foregroundStyle(Color.careerAccent).accessibilityIdentifier("home.addOpportunity")
                 Text("Browse public employer boards without an account, or save a public job link from any country or profession.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
             Section("Make your next step easier") {
-                Button { editing = true } label: {
-                    Label(applications.profile.hasContent ? "Review your application profile" : "Create your application profile", systemImage: "person.crop.rectangle")
-                }.accessibilityIdentifier("home.applicationProfile")
+                Button {
+                    sheet = .profile
+                    #if DEBUG
+                    if CareerAppEnvironment.isUIAcceptance { print("UI acceptance: Start requested application profile") }
+                    #endif
+                } label: {
+                    Label(applications.profileReadiness.nextAction, systemImage: "person.crop.rectangle")
+                        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle())
+                }.buttonStyle(.plain).foregroundStyle(Color.careerAccent).accessibilityIdentifier("home.applicationProfile")
+                NativeProfileEssentials(profile: applications.profile)
                 Button { navigation.selectedTab = 3 } label: {
                     Label("Open saved opportunities", systemImage: "heart")
                 }
@@ -112,8 +124,12 @@ private struct NativeShortlistScreen: View {
         .nativeList()
         .navigationTitle("Career Finder")
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $editing) { NativeApplicationProfileEditor(model: applications) }
-        .sheet(isPresented: $adding) { NativeOpportunityEditor(model: applications) }
+        .sheet(item: $sheet) { destination in
+            switch destination {
+            case .profile: NativeApplicationProfileEditor(model: applications)
+            case .opportunity: NativeOpportunityEditor(model: applications)
+            }
+        }
     }
 }
 
@@ -131,18 +147,35 @@ private struct NativeCriteriaSection: View {
     }
 }
 
+private enum NativeSavedFilter: String, CaseIterable, Identifiable {
+    case all = "All", applied = "Applied", followUps = "Follow-ups"
+    var id: String { rawValue }
+}
+
 private struct NativeSavedScreen: View {
     @EnvironmentObject private var store: NativeCareerStore
     @EnvironmentObject private var applications: NativeApplicationsStore
     @EnvironmentObject private var navigation: NativeCareerNavigation
     @State private var query = ""
     @State private var adding = false
-    private var jobs: [CareerJob] { store.savedJobs.filter { nativeMatches($0, query: query) } }
+    @State private var filter = NativeSavedFilter.all
+    private var jobs: [CareerJob] {
+        store.savedJobs.filter { nativeMatches($0, query: query) && filter != .followUps
+            && (filter != .applied || ["Applied", "Interviewing", "Offer received"].contains(store.status(for: $0))) }
+    }
     private var applicationJobs: [NativeApplicationRow] {
         let words = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        return applications.jobs.compactMap { NativeApplicationRow($0) }.filter { row in
-            words.isEmpty || ["title", "company", "location"].compactMap { row.value[$0]?.string }
+        return applications.savedOpportunities.compactMap { NativeApplicationRow($0) }.filter { row in
+            (words.isEmpty || ["title", "company", "location"].compactMap { row.value[$0]?.string }
                 .joined(separator: " ").localizedCaseInsensitiveContains(words)
+            ) && (filter != .applied || applications.isMarkedApplied(row.value))
+                && (filter != .followUps || applications.followUpDay(for: row.value) != nil)
+        }.sorted { left, right in
+            if filter == .followUps {
+                let a = applications.followUpDay(for: left.value) ?? "", b = applications.followUpDay(for: right.value) ?? ""
+                if a != b { return a < b }
+            }
+            return (left.value["title"]?.string ?? "").localizedStandardCompare(right.value["title"]?.string ?? "") == .orderedAscending
         }
     }
     var body: some View {
@@ -152,7 +185,12 @@ private struct NativeSavedScreen: View {
                 NativeIntro(eyebrow: "YOUR OWN SHORTLIST", title: "Keep your next move close.", message: "Jobs saved from Search and your own links are ready in the application workspace. Earlier planning records remain available below.")
             }.listRowBackground(Color.clear)
             }
-            if applications.jobs.isEmpty && store.savedJobs.isEmpty {
+            Section {
+                Picker("Show", selection: $filter) { ForEach(NativeSavedFilter.allCases) { Text($0.rawValue).tag($0) } }
+                    .pickerStyle(.menu).accessibilityIdentifier("saved.filter")
+                if filter == .followUps { Text("Dates you set on this phone, with overdue follow-ups first. No message or notification is sent.").font(.footnote).foregroundStyle(.secondary) }
+            }
+            if applications.savedOpportunities.isEmpty && store.savedJobs.isEmpty {
                 Section {
                     NativeEmpty(title: "Make a shortlist of your own.", message: "Save a role from Search or add a job link. Saving keeps it for review; it does not apply.", icon: "heart")
                     Button("Find opportunities") { navigation.selectedTab = 1 }
@@ -160,8 +198,8 @@ private struct NativeSavedScreen: View {
                 }
             } else if applicationJobs.isEmpty && jobs.isEmpty {
                 Section {
-                    NativeEmpty(title: "No saved roles match this search.", message: "Your saved opportunities are still here. Try another term or clear the search.", icon: "magnifyingglass")
-                    Button("Clear search") { query = "" }
+                    NativeEmpty(title: filter == .followUps ? "No follow-ups to show." : "No saved roles match this view.", message: filter == .followUps ? "Open an opportunity and add a follow-up date to Your record." : "Your opportunities are still here. Try another term or show all records.", icon: filter == .followUps ? "calendar" : "magnifyingglass")
+                    Button("Show all opportunities") { query = ""; filter = .all }
                 }
             }
             if !applicationJobs.isEmpty {
@@ -174,8 +212,17 @@ private struct NativeSavedScreen: View {
                                 if let location = row.value["location"]?.string, !location.isEmpty {
                                     Text(location).font(.caption).foregroundStyle(.secondary)
                                 }
-                                Label(row.value["localOnly"]?.bool == true ? "Saved on this phone" : "Saved with application service", systemImage: "bookmark")
+                                Label(row.value["recordOnly"]?.bool == true ? "Your application record" : row.value["localOnly"]?.bool == true ? "Saved on this phone" : "Saved with application service", systemImage: "bookmark")
                                     .font(.caption).foregroundStyle(.secondary)
+                                if applications.recordVersions(for: row.value).filter({ !$0.archived }).count > 1 {
+                                    Label("Compare your private records", systemImage: "doc.on.doc").font(.caption)
+                                } else if let record = applications.currentRecord(for: row.value) {
+                                    Text("You marked: " + record.stage.title).font(.caption).foregroundStyle(.secondary)
+                                }
+                                if let day = applications.followUpDay(for: row.value) {
+                                    Text((day < PhoneRecordDay.string(Date()) ? "Overdue follow-up · " : day == PhoneRecordDay.string(Date()) ? "Follow up today · " : "Follow up · ") + day)
+                                        .font(.caption).foregroundStyle(.secondary)
+                                }
                             }.padding(.vertical, 5)
                         }
                     }
@@ -198,11 +245,21 @@ private struct NativeSavedScreen: View {
     }
 }
 
-private struct NativeSavedApplicationDetail: View {
+struct NativeSavedApplicationDetail: View {
     @EnvironmentObject private var applications: NativeApplicationsStore
     @EnvironmentObject private var navigation: NativeCareerNavigation
     let id: String
-    private var job: [String: ApplicationValue]? { applications.jobs.first { $0["id"]?.string == id } }
+    @State private var rememberedIdentity: String?
+    @State private var editingRecord = false
+    @State private var reviewingVersions = false
+    @State private var removing: PhoneLocalRemovalContext?
+    @State private var adoption: PhoneRecordAdoptionContext?
+    @State private var confirmingAdoption = false
+    private var job: [String: ApplicationValue]? {
+        applications.savedOpportunity(id) ?? applications.savedOpportunities.first {
+            rememberedIdentity != nil && MobileApplicationPolicy.jobIdentity($0["url"]?.string ?? "") == rememberedIdentity
+        }
+    }
     var body: some View {
         List {
             if let job {
@@ -220,8 +277,205 @@ private struct NativeSavedApplicationDetail: View {
                 } footer: {
                     Text("Review the employer's current requirements. Auto Apply eligibility is checked in the application workspace; opening or sharing this link never counts as a submission.")
                 }
+                Section {
+                    if applications.recordVersions(for: job).filter({ !$0.archived }).count > 1 {
+                        Text("Two private records are kept for this opportunity. Compare them and choose the one to use. Neither version has been deleted.")
+                        Button("Compare records") { reviewingVersions = true }
+                    } else {
+                        if let record = applications.currentRecord(for: job) { NativeModernRecordSummary(record: record) }
+                        else { Text("Keep track of applications you complete on an employer website or LinkedIn.").font(.subheadline).foregroundStyle(.secondary) }
+                        Button(applications.currentRecord(for: job) == nil ? "Add your application record" : "Edit your application record") { editingRecord = true }
+                            .disabled(applications.busy).accessibilityIdentifier("record.edit")
+                    }
+                    if applications.recordVersions(for: job).contains(where: \.archived) {
+                        Button("Earlier record versions") { reviewingVersions = true }
+                    }
+                    if let context = applications.recordAdoptionContext(for: job) {
+                        Button("Keep with connected workspace") { adoption = context; confirmingAdoption = true }
+                            .accessibilityIdentifier("record.keepWithWorkspace")
+                        Text("This record is separate from your connected workspace. You can associate it without saving its job link again.")
+                            .font(.footnote).foregroundStyle(.secondary)
+                    }
+                } header: { Text("Your record · on this phone") } footer: {
+                    Text("Your stage, dates and notes are private. Marking Applied helps avoid duplicate applications; it does not create a provider receipt or contact an employer.")
+                }
+                if let currentID = job["id"]?.string, job["localOnly"]?.bool == true {
+                    Section {
+                        Button("Remove saved link", role: .destructive) {
+                            if let context = applications.removalContext(currentID) { removing = context }
+                            else { applications.message = "Finish or stop this opportunity's application review before removing the saved link." }
+                        }.disabled(applications.busy).accessibilityIdentifier("saved.removeLink")
+                    }
+                }
+                if let message = applications.message { Section { Text(message).font(.footnote).foregroundStyle(.secondary) } }
             } else { NativeEmpty(title: "This opportunity is no longer available here.", message: "Return to Saved to see your current opportunities.", icon: "bookmark") }
         }.nativeList().navigationTitle("Saved opportunity").navigationBarTitleDisplayMode(.inline)
+            .onAppear { if let url = job?["url"]?.string { rememberedIdentity = MobileApplicationPolicy.jobIdentity(url) } }
+            .sheet(isPresented: $editingRecord) { if let job { NativeModernRecordEditor(model: applications, job: job) } }
+            .sheet(isPresented: $reviewingVersions) { if let job { NativeModernRecordVersions(model: applications, job: job) } }
+            .sheet(item: $removing) { NativeSavedLinkRemoval(model: applications, context: $0) }
+            .confirmationDialog("Keep this record with your connected workspace?", isPresented: $confirmingAdoption, titleVisibility: .visible) {
+                Button("Keep with this workspace") { if let adoption { _ = applications.adoptUnpairedRecord(adoption) } }
+                Button("Keep separate on this phone", role: .cancel) { adoption = nil }
+            } message: {
+                Text("The record will belong to the workspace currently connected on this phone. Notes and earlier versions stay private, and any other version is kept for comparison. This does not restore a removed bookmark, upload notes, or contact an employer.")
+            }
+    }
+}
+
+private struct NativeModernRecordSummary: View {
+    let record: PhoneOpportunityRecord
+    var body: some View {
+        VStack(alignment: .leading, spacing: 9) {
+            Text("You marked: " + record.stage.title).font(.headline).accessibilityIdentifier("record.stageSummary")
+            if record.appliedElsewhere { Label("You reported an application", systemImage: "person.crop.circle.badge.checkmark").font(.subheadline) }
+            if !record.appliedOn.isEmpty { Text("Application date · " + record.appliedOn).font(.subheadline) }
+            if !record.followUpOn.isEmpty { Text("Follow-up date · " + record.followUpOn).font(.subheadline) }
+            if !record.note.isEmpty { Text(record.note).font(.subheadline).textSelection(.enabled).fixedSize(horizontal: false, vertical: true) }
+            Text("On this phone").font(.caption).foregroundStyle(.secondary)
+        }.accessibilityElement(children: .contain)
+    }
+}
+
+private struct NativeModernRecordEditor: View {
+    @ObservedObject var model: NativeApplicationsStore
+    let job: [String: ApplicationValue]
+    @Environment(\.dismiss) private var dismiss
+    @State private var draft: PhoneRecordDraft
+    @State private var original: PhoneRecordDraft
+    @State private var context: PhoneRecordEditContext?
+    @State private var baseWasApplied: Bool
+    @State private var issue: String?
+    @State private var discard = false
+    @State private var clearApplied = false
+    @FocusState private var noteFocused: Bool
+    init(model: NativeApplicationsStore, job: [String: ApplicationValue]) {
+        self.model = model; self.job = job
+        let record = model.currentRecord(for: job), draft = PhoneRecordDraft(model.currentRecord(for: job))
+        _draft = State(initialValue: draft); _original = State(initialValue: draft)
+        _baseWasApplied = State(initialValue: record?.appliedElsewhere == true)
+        _context = State(initialValue: model.recordEditContext(for: job))
+    }
+    private var changed: Bool { draft != original }
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    Text(job["title"]?.string ?? "Opportunity").font(.headline)
+                    Text("Your record stays on this phone. Saving it does not send an application or a message.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }
+                if context == nil { Section { Text("Compare the saved record versions before editing this opportunity.").foregroundStyle(.red) } }
+                if let issue { Section { Text(issue).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true) } }
+                Section {
+                    Picker("Stage", selection: $draft.stage) { ForEach(PhoneApplicationStage.allCases) { Text($0.title).tag($0) } }
+                        .pickerStyle(.menu).accessibilityIdentifier("record.stage")
+                    if baseWasApplied && draft.stage == .saved {
+                        Text("Your previous record says you applied. Clearing that mark allows a new application review; it does not withdraw an employer application.")
+                            .font(.footnote).foregroundStyle(.secondary)
+                        if original.stage == .saved {
+                            Button("Mark as not applied") { clearApplied = true }.accessibilityIdentifier("record.clearApplied")
+                        }
+                    }
+                } header: { Text("Application stage") } footer: {
+                    Text("Applied, Interview and Offer mark this role as already applied. Closed keeps any earlier applied mark.")
+                }
+                Section {
+                    Toggle("Add an application date", isOn: Binding(get: { !draft.appliedOn.isEmpty }, set: { draft.appliedOn = $0 ? PhoneRecordDay.string(Date()) : "" }))
+                        .accessibilityIdentifier("record.hasAppliedDate")
+                    if !draft.appliedOn.isEmpty {
+                        DatePicker("Applied on", selection: dayBinding(\.appliedOn), displayedComponents: .date)
+                            .accessibilityIdentifier("record.appliedDate")
+                    }
+                    Toggle("Plan a follow-up", isOn: Binding(get: { !draft.followUpOn.isEmpty }, set: { draft.followUpOn = $0 ? PhoneRecordDay.string(Date()) : "" }))
+                        .accessibilityIdentifier("record.hasFollowUp")
+                    if !draft.followUpOn.isEmpty {
+                        DatePicker("Follow up on", selection: dayBinding(\.followUpOn), displayedComponents: .date)
+                            .accessibilityIdentifier("record.followUpDate")
+                    }
+                } header: { Text("Optional dates") } footer: {
+                    Text("Leave the application date blank if you do not know it. Dates keep the day you selected when your time zone changes. Follow-ups appear in Saved; no notification or message is sent.")
+                }
+                Section {
+                    TextEditor(text: $draft.note).frame(minHeight: 140).focused($noteFocused)
+                        .accessibilityLabel("Private application note").accessibilityIdentifier("record.note")
+                    Text("\(draft.note.unicodeScalars.count) / 2,000 characters").font(.caption).foregroundStyle(.secondary)
+                } header: { Text("Private note (optional)") } footer: {
+                    Text("For your own preparation and reminders. This note is not included in employer application details.")
+                }
+            }.environment(\.calendar, PhoneRecordDay.calendar())
+                .navigationTitle("Your application record").navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") { noteFocused = false; if changed { discard = true } else { dismiss() } }
+                    }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Save") {
+                            noteFocused = false
+                            if baseWasApplied && draft.stage == .saved && original.stage != .saved { clearApplied = true }
+                            else { save() }
+                        }.disabled(model.busy || context == nil).accessibilityIdentifier("record.save")
+                    }
+                    ToolbarItemGroup(placement: .keyboard) { Spacer(); Button("Done typing") { noteFocused = false } }
+                }
+                .confirmationDialog("Discard your unsaved record changes?", isPresented: $discard, titleVisibility: .visible) {
+                    Button("Discard changes", role: .destructive) { dismiss() }
+                    Button("Keep editing", role: .cancel) {}
+                } message: { Text("Your previously saved record will stay unchanged.") }
+                .confirmationDialog("Mark as not applied?", isPresented: $clearApplied, titleVisibility: .visible) {
+                    Button("Mark not applied", role: .destructive) { save(confirmNotApplied: true) }
+                    Button("Keep application record", role: .cancel) {}
+                } message: { Text("This changes your private record and allows a new application review. It does not withdraw or change anything with an employer. Your earlier versions stay on this phone.") }
+        }.tint(.careerAccent).interactiveDismissDisabled(changed || model.busy)
+    }
+    private func dayBinding(_ path: WritableKeyPath<PhoneRecordDraft, String>) -> Binding<Date> {
+        Binding(get: { PhoneRecordDay.date(draft[keyPath: path]) ?? Date() }, set: { draft[keyPath: path] = PhoneRecordDay.string($0) })
+    }
+    private func save(confirmNotApplied: Bool = false) {
+        guard let context else { return }
+        if model.saveRecord(draft, context: context, confirmNotApplied: confirmNotApplied) { dismiss() }
+        else { issue = model.message }
+    }
+}
+
+private struct NativeModernRecordVersions: View {
+    @ObservedObject var model: NativeApplicationsStore
+    let job: [String: ApplicationValue]
+    @Environment(\.dismiss) private var dismiss
+    @State private var chosen: PhoneOpportunityRecord?
+    @State private var choiceContext: PhoneRecordChoiceContext?
+    @State private var confirm = false
+    @State private var issue: String?
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    Text("Choose the details you want to keep. Other versions stay on this phone.")
+                    Text("Choosing a version keeps your current applied mark. If you marked this role as not applied, an older version restores its notes and dates without marking it applied again. You can change the stage in your current record.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }
+                if let issue { Section { Text(issue).foregroundStyle(.red) } }
+                ForEach(model.recordVersions(for: job)) { record in
+                    Section {
+                        NativeModernRecordSummary(record: record)
+                        if let updated = ApplicationReviewPolicy.date(record.updatedAt) {
+                            Text("Saved " + updated.formatted(date: .abbreviated, time: .shortened)).font(.caption).foregroundStyle(.secondary)
+                        }
+                        Button("Use this version") {
+                            chosen = record; choiceContext = model.recordChoiceContext(for: job); confirm = true
+                        }.disabled(model.busy)
+                    } header: { Text(record.archived ? "Earlier version" : "Current record") }
+                }
+            }.navigationTitle("Your record versions").navigationBarTitleDisplayMode(.inline)
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } } }
+                .confirmationDialog("Use this record version?", isPresented: $confirm, titleVisibility: .visible) {
+                    Button("Use this version") {
+                        guard let chosen, let choiceContext else { return }
+                        if model.useRecordVersion(chosen.id, context: choiceContext) { dismiss() } else { issue = model.message }
+                    }
+                    Button("Keep current records", role: .cancel) {}
+                } message: { Text("Your current applied mark stays unchanged, and other versions remain in your private history. This does not send or change an employer application.") }
+        }.tint(.careerAccent)
     }
 }
 
@@ -471,17 +725,20 @@ private struct NativeProfileScreen: View {
             }.listRowBackground(Color.clear)
             Section("Application profile") {
                 Button { applicationEditing = true } label: {
-                    Label(applications.profile.hasContent ? "Edit application details and CV" : "Add application details and CV", systemImage: "person.crop.rectangle")
+                    Label(applications.profileReadiness.nextAction, systemImage: "person.crop.rectangle")
                 }.accessibilityIdentifier("profile.applicationProfile")
+                NativeProfileEssentials(profile: applications.profile)
                 Text("These are the details you can review for employer applications. New profiles start blank. Saving a profile never submits an application.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
             Section {
+              DisclosureGroup("Local planning notes and preferences") {
                 LabeledContent("Relevant years", value: store.workspace.profile.years.isEmpty ? "Not provided" : store.workspace.profile.years)
                 if !store.workspace.profile.degree.isEmpty { Text(store.workspace.profile.degree).font(.subheadline) }
                 Button("Edit planning notes and preferences") { editing = true }
-            } header: { Text("Local planning notes") } footer: { Text("Separate notes kept on this device for preparation. They do not replace your application profile and are not sent to employers.") }
-            NativeCriteriaSection()
+                Text(store.workspace.profile.criteriaSummary).font(.footnote).foregroundStyle(.secondary)
+              }
+            } footer: { Text("These separate planning notes stay on this device. They do not replace your application profile or go to employers.") }
             Section {
                 NavigationLink { NativeSalaryScreen() } label: { Label("Salary & negotiation", systemImage: "chart.bar.doc.horizontal") }
                 NavigationLink { NativePrivacyScreen() } label: { Label("Privacy & support", systemImage: "hand.raised") }
@@ -518,6 +775,7 @@ private struct NativePrivacyScreen: View {
                 Text("Planning notes, earlier self-entered tracking records and preparation steps stay on this device. Search keeps your board choices, search fields and public results locally. Saved shows both your application opportunities and any earlier local records.")
                 Text("Your application workspace keeps a phone draft and your selected PDF. The same application profile is reachable from Start, Profile and Apply. Connecting does not upload that draft. Saving to a connected service sends the applicant fields and selected CV; adding opportunities and preparing reviews sends the links and choices you provide. The phone connection token is stored in Keychain.")
                 Text("A LinkedIn profile link is optional. It is saved with your application profile and appears in the details you review before sharing with an employer. Saving a link does not connect or verify a LinkedIn account, import its content or grant account access.")
+                Text("Application stages, dates, follow-ups and private notes in Saved stay on this phone. They are your own records and are separate from provider receipts. Connecting alone does not move a separate phone record into an account. Choose Keep with connected workspace, or explicitly sync its job, to associate it with that workspace. Other account workspaces do not inherit it.")
             }
             Section("Connected application workspace") {
                 if MobileApplicationPolicy.isHostedService(applications.serviceAddress) {
