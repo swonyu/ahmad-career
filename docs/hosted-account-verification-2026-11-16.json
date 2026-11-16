@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-16T19:52:39.215021+00:00",
+  "title": "Career Finder authenticated production browser milestone",
+  "observation": {
+    "approximateObservedAt": "2026-11-16T19:51:00Z",
+    "timestampPrecision": "Approximate minute supplied by the release coordinator; not an exact event timestamp.",
+    "localTime": "16 November 2026, approximately 22:51 Asia/Riyadh",
+    "method": "Live browser accessibility/DOM observations reported by the release coordinator.",
+    "scope": "Existing-account sign-in and authenticated navigation on the deployed service."
+  },
+  "hosted": {
+    "origin": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
+    "versionNumber": 2,
+    "sourceCommit": "a2c82c51a37e570cedb6fd6b8459d208228fc578",
+    "deploymentId": "appgdep_6afb2627e0f081918d7e98839bd2d5c1",
+    "provenance": "Previously recorded Sites deployment identity; the browser page does not independently expose the source commit.",
+    "publicPathsObserved": [
+      "/connect",
+      "/account"
+    ]
+  },
+  "steps": [
+    {
+      "action": "Use the user-selected Google method in the secure sign-in flow and complete OpenAI consent.",
+      "outcome": "The browser returned to Career Finder.",
+      "status": "completed"
+    },
+    {
+      "action": "Inspect the deployed /connect page after authentication.",
+      "outcome": "The target-domain page showed Signed in securely and the expected account. No account identifier is retained in this record.",
+      "status": "passed"
+    },
+    {
+      "action": "Open /account.",
+      "outcome": "The authenticated page loaded successfully and reported that no cloud workspace had been created yet.",
+      "status": "passed"
+    },
+    {
+      "action": "Return to /connect.",
+      "outcome": "The target-domain page retained its positive signed-in state.",
+      "status": "passed"
+    }
+  ],
+  "acceptance": {
+    "targetDomainSignInVerified": true,
+    "authenticatedAccountPageVerified": true,
+    "signInRetainedAcrossNavigation": true,
+    "cloudWorkspaceExists": false,
+    "cloudWorkspaceCreatedInThisCheck": false,
+    "connectionCodeCreated": false,
+    "nativePhonePaired": false,
+    "fullProductionAccountLifecycleVerified": false,
+    "physicalPhoneAcceptanceVerified": false,
+    "employerSubmissionPerformed": false,
+    "liveVerifiedReceiptEstablished": false
+  },
+  "actionsNotPerformed": [
+    "Connection-code generation or cloud workspace creation",
+    "Native phone pairing or recovery on another phone",
+    "Profile or CV upload/save",
+    "Account export, deletion, device revocation or interrupted-upload recovery",
+    "Employer application submission"
+  ],
+  "staticLifecycleReview": {
+    "method": "Read-only inspection of current production code and existing regression cases.",
+    "repositoryBaseline": "7268fd63ccbdee0cddc8ba5d791cb5bc708c8986",
+    "testedCodeCommit": "caa5ace14fe7b430db845d935a89803700cc7665",
+    "focus": "Could delayed profile, CV, workspace or application responses update the wrong workspace after switching, disconnecting or deleting cloud data?",
+    "result": "No concrete defect identified in the reviewed paths; no code correction or repeated test suite was justified.",
+    "codeChanged": false,
+    "testsRerun": false,
+    "reviewedProtections": [
+      "iPhone session/content generations and operation tickets reject obsolete data and authorization errors.",
+      "iPhone profile editor context binds saves to service origin and workspace; foreign CV metadata cannot silently select another workspace file.",
+      "Android action serialization, workspace-keyed private storage, connection identity, response sequence, save generation and cancellation fence state updates.",
+      "Application continuation requires fresh authenticated server eligibility; old continuation responses cannot become receipts for a new workspace.",
+      "Hosted revocation removes subsequent native access; deletion locks and conditional upload tombstones prevent delayed uploads from restoring deleted PDF contents.",
+      "Browser account reads and mutations use abort and generation checks, with deletion success requiring a confirmed service response."
+    ],
+    "existingEvidence": [
+      "../apple/Checks/MobileLifecycleCheck.swift",
+      "../android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceRegressionTest.kt",
+      "../android/app/src/androidTest/java/com/saleh/careerfinder/ContinuationRegressionTest.kt",
+      "../hosted/tests/hosted-applications.mjs",
+      "../hosted/tests/browser-api.mjs"
+    ],
+    "retainedDraftMeaning": "Private phone drafts can intentionally survive disconnect or cloud deletion. A carried draft still requires deliberate review/save; retaining it is not acceptance of a stale response or automatic transmission.",
+    "limitation": "Static review and previously executed synthetic tests do not establish real-account native lifecycle or physical-phone acceptance."
+  },
+  "remainingProductionAcceptance": [
+    "Deliberate connection-code and cloud workspace creation",
+    "Native phone pairing and same-account recovery on another phone",
+    "Matching applicant email and deliberate profile/PDF save",
+    "Revocation, export, interrupted-upload recovery and deletion",
+    "Physical-phone and screen-reader checks",
+    "Publisher signing, store disclosures and actual store distribution",
+    "Employer-authorized integration before enabling live submissions"
+  ],
+  "evidenceHandling": "No account identifiers, personal names, screenshots, credential values, connection codes, cookies or tokens are included.",
+  "releaseImpact": "Documentation only. The previously tested code, published APK, release tag, hosted deployment and retained CI attempt evidence are unchanged.",
+  "relatedEvidence": [
+    "HOSTED-RELEASE-HANDOFF.md",
+    "phone-preview-release-verification.json",
+    "hosted-production-polish-verification.json"
+  ]
+}
