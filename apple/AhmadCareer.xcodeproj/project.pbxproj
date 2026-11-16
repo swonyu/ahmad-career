@@ -4,6 +4,63 @@
     classes = {};
     objectVersion = 56;
     objects = {
+        A10000000000000000000011 = {isa = PBXBuildFile; fileRef = A20000000000000000000011; };
+        A20000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerDiscovery.swift; sourceTree = "<group>"; };
+        A10000000000000000000012 = {isa = PBXBuildFile; fileRef = A20000000000000000000012; };
+        A20000000000000000000012 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDiscoveryViews.swift; sourceTree = "<group>"; };
+        A10000000000000000000013 = {isa = PBXBuildFile; fileRef = A20000000000000000000013; };
+        A20000000000000000000013 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerAppEnvironment.swift; sourceTree = "<group>"; };
+        B10000000000000000000001 = {isa = PBXBuildFile; fileRef = B20000000000000000000001; };
+        B20000000000000000000001 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerFinderUITests.swift; sourceTree = "<group>"; };
+        B20000000000000000000002 = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CareerFinderUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+        B30000000000000000000001 = {isa = PBXGroup; children = (B20000000000000000000001); path = UITests; sourceTree = "<group>"; };
+        B40000000000000000000001 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B10000000000000000000001); runOnlyForDeploymentPostprocessing = 0; };
+        B40000000000000000000002 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+        B40000000000000000000003 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+        B60000000000000000000001 = {isa = PBXContainerItemProxy; containerPortal = A60000000000000000000001; proxyType = 1; remoteGlobalIDString = A50000000000000000000001; remoteInfo = AhmadCareer; };
+        B70000000000000000000001 = {isa = PBXTargetDependency; target = A50000000000000000000001; targetProxy = B60000000000000000000001; };
+        B80000000000000000000001 = {isa = XCConfigurationList; buildConfigurations = (B90000000000000000000001, B90000000000000000000002); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+        B50000000000000000000001 = {
+            isa = PBXNativeTarget;
+            buildConfigurationList = B80000000000000000000001;
+            buildPhases = (B40000000000000000000001, B40000000000000000000002, B40000000000000000000003);
+            buildRules = (); dependencies = (B70000000000000000000001);
+            name = CareerFinderUITests; productName = CareerFinderUITests;
+            productReference = B20000000000000000000002;
+            productType = "com.apple.product-type.bundle.ui-testing";
+        };
+        B90000000000000000000001 = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                GENERATE_INFOPLIST_FILE = YES;
+                PRODUCT_BUNDLE_IDENTIFIER = com.ahmadalayed.career.UITests;
+                PRODUCT_NAME = "$(TARGET_NAME)";
+                SDKROOT = iphoneos;
+                IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+                SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+                TARGETED_DEVICE_FAMILY = 1;
+                TEST_TARGET_NAME = AhmadCareer;
+                SWIFT_VERSION = 5.0;
+                LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+            };
+            name = Debug;
+        };
+        B90000000000000000000002 = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                GENERATE_INFOPLIST_FILE = YES;
+                PRODUCT_BUNDLE_IDENTIFIER = com.ahmadalayed.career.UITests;
+                PRODUCT_NAME = "$(TARGET_NAME)";
+                SDKROOT = iphoneos;
+                IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+                SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+                TARGETED_DEVICE_FAMILY = 1;
+                TEST_TARGET_NAME = AhmadCareer;
+                SWIFT_VERSION = 5.0;
+                LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+            };
+            name = Release;
+        };
         A10000000000000000000010 = {isa = PBXBuildFile; fileRef = A20000000000000000000010; };
         A20000000000000000000010 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileApplicationState.swift; sourceTree = "<group>"; };
         A1000000000000000000000D = {isa = PBXBuildFile; fileRef = A2000000000000000000000D; };
@@ -36,11 +93,11 @@
         A20000000000000000000008 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerFeed.swift; sourceTree = "<group>"; };
         A20000000000000000000009 = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 
-        A30000000000000000000001 = {isa = PBXGroup; children = (A30000000000000000000002, A20000000000000000000007, A30000000000000000000003); sourceTree = "<group>"; };
-        A30000000000000000000002 = {isa = PBXGroup; children = (A20000000000000000000001, A20000000000000000000002, A20000000000000000000003, A20000000000000000000008, A20000000000000000000009, A2000000000000000000000A, A2000000000000000000000B, A2000000000000000000000C, A2000000000000000000000D, A2000000000000000000000E, A2000000000000000000000F, A20000000000000000000010, A20000000000000000000004, A20000000000000000000005); path = AhmadCareer; sourceTree = "<group>"; };
-        A30000000000000000000003 = {isa = PBXGroup; children = (A20000000000000000000006); name = Products; sourceTree = "<group>"; };
+        A30000000000000000000001 = {isa = PBXGroup; children = (A30000000000000000000002, B30000000000000000000001, A20000000000000000000007, A30000000000000000000003); sourceTree = "<group>"; };
+        A30000000000000000000002 = {isa = PBXGroup; children = (A20000000000000000000001, A20000000000000000000002, A20000000000000000000003, A20000000000000000000008, A20000000000000000000009, A2000000000000000000000A, A2000000000000000000000B, A2000000000000000000000C, A2000000000000000000000D, A2000000000000000000000E, A2000000000000000000000F, A20000000000000000000010, A20000000000000000000011, A20000000000000000000012, A20000000000000000000013, A20000000000000000000004, A20000000000000000000005); path = AhmadCareer; sourceTree = "<group>"; };
+        A30000000000000000000003 = {isa = PBXGroup; children = (A20000000000000000000006, B20000000000000000000002); name = Products; sourceTree = "<group>"; };
 
-        A40000000000000000000001 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001, A10000000000000000000002, A10000000000000000000003, A10000000000000000000005, A10000000000000000000007, A10000000000000000000008, A1000000000000000000000D, A1000000000000000000000E, A1000000000000000000000F, A10000000000000000000010); runOnlyForDeploymentPostprocessing = 0; };
+        A40000000000000000000001 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001, A10000000000000000000002, A10000000000000000000003, A10000000000000000000005, A10000000000000000000007, A10000000000000000000008, A1000000000000000000000D, A1000000000000000000000E, A1000000000000000000000F, A10000000000000000000010, A10000000000000000000011, A10000000000000000000012, A10000000000000000000013); runOnlyForDeploymentPostprocessing = 0; };
         A40000000000000000000002 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000004, A10000000000000000000006, A10000000000000000000009); runOnlyForDeploymentPostprocessing = 0; };
         A40000000000000000000003 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 
@@ -57,7 +114,7 @@
         };
         A60000000000000000000001 = {
             isa = PBXProject;
-            attributes = {BuildIndependentTargetsInParallel = YES; LastSwiftUpdateCheck = 2700; LastUpgradeCheck = 2700; TargetAttributes = {A50000000000000000000001 = {CreatedOnToolsVersion = 27.0; }; }; };
+            attributes = {BuildIndependentTargetsInParallel = YES; LastSwiftUpdateCheck = 2700; LastUpgradeCheck = 2700; TargetAttributes = {A50000000000000000000001 = {CreatedOnToolsVersion = 27.0; }; B50000000000000000000001 = {CreatedOnToolsVersion = 27.0; TestTargetID = A50000000000000000000001; }; }; };
             buildConfigurationList = A70000000000000000000001;
             compatibilityVersion = "Xcode 14.0";
             developmentRegion = en;
@@ -67,7 +124,7 @@
             productRefGroup = A30000000000000000000003;
             projectDirPath = "";
             projectRoot = "";
-            targets = (A50000000000000000000001);
+            targets = (A50000000000000000000001, B50000000000000000000001);
         };
 
         A70000000000000000000001 = {isa = XCConfigurationList; buildConfigurations = (A80000000000000000000001, A80000000000000000000002); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };

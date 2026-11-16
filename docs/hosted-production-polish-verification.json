@@ -1,0 +1,428 @@
+{
+  "schemaVersion": 1,
+  "title": "Career Finder0.4 public hosted acceptance",
+  "recordedAt": "2026-11-16T15:51:52.773277+00:00",
+  "origin": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
+  "deployment": {
+    "projectId": "appgprj_6afb13851fb4819193358d5db54e73b7",
+    "versionNumber": 2,
+    "sourceCommit": "a2c82c51a37e570cedb6fd6b8459d208228fc578",
+    "deploymentId": "appgdep_6afb2627e0f081918d7e98839bd2d5c1",
+    "provenance": "Saved-source and deployment identity from Sites; HTTP responses do not expose a source commit."
+  },
+  "transport": {
+    "environment": "Authorized macOS network",
+    "tlsVerification": true,
+    "redirectsFollowed": false,
+    "cookiesUsed": false,
+    "authorizationHeadersUsed": false
+  },
+  "passed": 13,
+  "failed": 0,
+  "probes": [
+    {
+      "name": "storage_and_live_mode",
+      "path": "/api/health",
+      "method": "GET",
+      "checkedAt": "2026-11-16T15:51:31.619407+00:00",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "cacheControl": "no-store",
+      "body": {
+        "ok": true,
+        "service": "Career Finder",
+        "storage": "ready",
+        "mode": "local",
+        "liveEnabled": false
+      },
+      "passed": true
+    },
+    {
+      "name": "connect_updated_page",
+      "path": "/connect",
+      "method": "GET",
+      "checkedAt": "2026-11-16T15:51:31.619281+00:00",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "cacheControl": "no-store",
+      "title": "Career Finder · Connect your phone",
+      "updatedCopyPresent": true,
+      "passed": true
+    },
+    {
+      "name": "privacy_updated_page",
+      "path": "/privacy",
+      "method": "GET",
+      "checkedAt": "2026-11-16T15:51:31.618610+00:00",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "cacheControl": "no-store",
+      "title": "Privacy · Career Finder",
+      "updatedCopyPresent": true,
+      "passed": true
+    },
+    {
+      "name": "support_updated_page",
+      "path": "/support",
+      "method": "GET",
+      "checkedAt": "2026-11-16T15:51:31.619147+00:00",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "cacheControl": "no-store",
+      "title": "Help and support · Career Finder",
+      "updatedCopyPresent": true,
+      "passed": true
+    },
+    {
+      "name": "anonymous_account",
+      "path": "/api/account",
+      "method": "GET",
+      "checkedAt": "2026-11-16T15:51:33.228350+00:00",
+      "status": 401,
+      "contentType": "application/json; charset=utf-8",
+      "cacheControl": "no-store",
+      "errorCode": "sign_in_required",
+      "hasWorkspace": false,
+      "passed": true
+    },
+    {
+      "name": "anonymous_workspace",
+      "path": "/api/apply/workspace",
+      "method": "GET",
+      "checkedAt": "2026-11-16T15:51:33.643430+00:00",
+      "status": 401,
+      "contentType": "application/json; charset=utf-8",
+      "cacheControl": "no-store",
+      "errorCode": "session_required",
+      "hasWorkspace": false,
+      "passed": true
+    },
+    {
+      "name": "public_source_catalog",
+      "path": "/api/discovery/sources",
+      "method": "GET",
+      "checkedAt": "2026-11-16T15:51:33.877009+00:00",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "cacheControl": "no-store",
+      "sourceIds": [
+        "greenhouse:canonical",
+        "greenhouse:doordashusa",
+        "lever:global:spotify",
+        "greenhouse:freenome",
+        "greenhouse:duolingo",
+        "lever:global:lyrahealth",
+        "lever:global:zoox"
+      ],
+      "defaultSources": [
+        "greenhouse:canonical",
+        "greenhouse:doordashusa",
+        "lever:global:spotify",
+        "greenhouse:freenome"
+      ],
+      "limits": {
+        "maxSources": 4,
+        "pageSize": 50,
+        "maxJobsPerSource": 500
+      },
+      "passed": true
+    },
+    {
+      "name": "public_default_job_search",
+      "path": "/api/discovery/search",
+      "method": "GET",
+      "checkedAt": "2026-11-16T15:51:36.313265+00:00",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "cacheControl": "no-store",
+      "resultStatus": "complete",
+      "jobsReturned": 50,
+      "totalMatches": 855,
+      "nextCursorPresent": true,
+      "limited": false,
+      "sources": [
+        {
+          "id": "greenhouse:canonical",
+          "name": "Canonical",
+          "provider": "greenhouse",
+          "boardUrl": "https://job-boards.greenhouse.io/canonical",
+          "status": "fresh",
+          "checkedAt": "2026-11-16T15:51:40.370Z",
+          "availableCount": 315,
+          "matchedCount": 315,
+          "limited": false,
+          "error": null
+        },
+        {
+          "id": "greenhouse:doordashusa",
+          "name": "DoorDash",
+          "provider": "greenhouse",
+          "boardUrl": "https://job-boards.greenhouse.io/doordashusa",
+          "status": "fresh",
+          "checkedAt": "2026-11-16T15:51:40.542Z",
+          "availableCount": 425,
+          "matchedCount": 425,
+          "limited": false,
+          "error": null
+        },
+        {
+          "id": "lever:global:spotify",
+          "name": "Spotify",
+          "provider": "lever",
+          "boardUrl": "https://jobs.lever.co/spotify",
+          "status": "fresh",
+          "checkedAt": "2026-11-16T15:51:42.148Z",
+          "availableCount": 87,
+          "matchedCount": 87,
+          "limited": false,
+          "error": null
+        },
+        {
+          "id": "greenhouse:freenome",
+          "name": "Freenome",
+          "provider": "greenhouse",
+          "boardUrl": "https://job-boards.greenhouse.io/freenome",
+          "status": "fresh",
+          "checkedAt": "2026-11-16T15:51:40.368Z",
+          "availableCount": 28,
+          "matchedCount": 28,
+          "limited": false,
+          "error": null
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "public_next_page",
+      "path": "/api/discovery/search?cursor=eyJ2IjoxLCJvIjo1MCwicSI6IjJjZWEyYWM5MjVjZTlkYzdkNjU2ZDE3ODZiNmUzNTM2NmEzZjliYmQ0NzdhNDYyNzZkMzU1NmUxNjA2OTMzYTUiLCJzIjoiOWZlNDg1MWNhOWZlODA2MWM1OGE5N2YxOGQ4NzE2ZTk5ODc0MmJkNjYxZDk4NDIwYzk3OTZmMDVjYTVjYjFmNCJ9",
+      "method": "GET",
+      "checkedAt": "2026-11-16T15:51:43.252795+00:00",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "cacheControl": "no-store",
+      "resultStatus": "complete",
+      "jobsReturned": 50,
+      "totalMatches": 855,
+      "nextCursorPresent": true,
+      "limited": false,
+      "sources": [
+        {
+          "id": "greenhouse:canonical",
+          "name": "Canonical",
+          "provider": "greenhouse",
+          "boardUrl": "https://job-boards.greenhouse.io/canonical",
+          "status": "cached",
+          "checkedAt": "2026-11-16T15:51:40.370Z",
+          "availableCount": 315,
+          "matchedCount": 315,
+          "limited": false,
+          "error": null
+        },
+        {
+          "id": "greenhouse:doordashusa",
+          "name": "DoorDash",
+          "provider": "greenhouse",
+          "boardUrl": "https://job-boards.greenhouse.io/doordashusa",
+          "status": "cached",
+          "checkedAt": "2026-11-16T15:51:40.542Z",
+          "availableCount": 425,
+          "matchedCount": 425,
+          "limited": false,
+          "error": null
+        },
+        {
+          "id": "lever:global:spotify",
+          "name": "Spotify",
+          "provider": "lever",
+          "boardUrl": "https://jobs.lever.co/spotify",
+          "status": "cached",
+          "checkedAt": "2026-11-16T15:51:42.148Z",
+          "availableCount": 87,
+          "matchedCount": 87,
+          "limited": false,
+          "error": null
+        },
+        {
+          "id": "greenhouse:freenome",
+          "name": "Freenome",
+          "provider": "greenhouse",
+          "boardUrl": "https://job-boards.greenhouse.io/freenome",
+          "status": "cached",
+          "checkedAt": "2026-11-16T15:51:40.368Z",
+          "availableCount": 28,
+          "matchedCount": 28,
+          "limited": false,
+          "error": null
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "successful_empty_filter",
+      "path": "/api/discovery/search?q=careerfinder-no-such-title-0-4-validation",
+      "method": "GET",
+      "checkedAt": "2026-11-16T15:51:46.280392+00:00",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "cacheControl": "no-store",
+      "resultStatus": "complete",
+      "jobsReturned": 0,
+      "totalMatches": 0,
+      "nextCursorPresent": false,
+      "limited": false,
+      "sources": [
+        {
+          "id": "greenhouse:canonical",
+          "name": "Canonical",
+          "provider": "greenhouse",
+          "boardUrl": "https://job-boards.greenhouse.io/canonical",
+          "status": "cached",
+          "checkedAt": "2026-11-16T15:51:40.370Z",
+          "availableCount": 315,
+          "matchedCount": 0,
+          "limited": false,
+          "error": null
+        },
+        {
+          "id": "greenhouse:doordashusa",
+          "name": "DoorDash",
+          "provider": "greenhouse",
+          "boardUrl": "https://job-boards.greenhouse.io/doordashusa",
+          "status": "cached",
+          "checkedAt": "2026-11-16T15:51:40.542Z",
+          "availableCount": 425,
+          "matchedCount": 0,
+          "limited": false,
+          "error": null
+        },
+        {
+          "id": "lever:global:spotify",
+          "name": "Spotify",
+          "provider": "lever",
+          "boardUrl": "https://jobs.lever.co/spotify",
+          "status": "cached",
+          "checkedAt": "2026-11-16T15:51:42.148Z",
+          "availableCount": 87,
+          "matchedCount": 0,
+          "limited": false,
+          "error": null
+        },
+        {
+          "id": "greenhouse:freenome",
+          "name": "Freenome",
+          "provider": "greenhouse",
+          "boardUrl": "https://job-boards.greenhouse.io/freenome",
+          "status": "cached",
+          "checkedAt": "2026-11-16T15:51:40.368Z",
+          "availableCount": 28,
+          "matchedCount": 0,
+          "limited": false,
+          "error": null
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "explicit_remote_filter",
+      "path": "/api/discovery/search?remote=remote",
+      "method": "GET",
+      "checkedAt": "2026-11-16T15:51:49.275785+00:00",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "cacheControl": "no-store",
+      "resultStatus": "complete",
+      "jobsReturned": 50,
+      "totalMatches": 349,
+      "nextCursorPresent": true,
+      "limited": false,
+      "sources": [
+        {
+          "id": "greenhouse:canonical",
+          "name": "Canonical",
+          "provider": "greenhouse",
+          "boardUrl": "https://job-boards.greenhouse.io/canonical",
+          "status": "cached",
+          "checkedAt": "2026-11-16T15:51:40.370Z",
+          "availableCount": 315,
+          "matchedCount": 271,
+          "limited": false,
+          "error": null
+        },
+        {
+          "id": "greenhouse:doordashusa",
+          "name": "DoorDash",
+          "provider": "greenhouse",
+          "boardUrl": "https://job-boards.greenhouse.io/doordashusa",
+          "status": "cached",
+          "checkedAt": "2026-11-16T15:51:40.542Z",
+          "availableCount": 425,
+          "matchedCount": 34,
+          "limited": false,
+          "error": null
+        },
+        {
+          "id": "lever:global:spotify",
+          "name": "Spotify",
+          "provider": "lever",
+          "boardUrl": "https://jobs.lever.co/spotify",
+          "status": "cached",
+          "checkedAt": "2026-11-16T15:51:42.148Z",
+          "availableCount": 87,
+          "matchedCount": 27,
+          "limited": false,
+          "error": null
+        },
+        {
+          "id": "greenhouse:freenome",
+          "name": "Freenome",
+          "provider": "greenhouse",
+          "boardUrl": "https://job-boards.greenhouse.io/freenome",
+          "status": "cached",
+          "checkedAt": "2026-11-16T15:51:40.368Z",
+          "availableCount": 28,
+          "matchedCount": 17,
+          "limited": false,
+          "error": null
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "unsupported_source_rejected",
+      "path": "/api/discovery/search?source=https%3A%2F%2Fexample.invalid%2Fjobs",
+      "method": "GET",
+      "checkedAt": "2026-11-16T15:51:52.186875+00:00",
+      "status": 400,
+      "contentType": "application/json; charset=utf-8",
+      "cacheControl": "no-store",
+      "errorCode": "invalid_query",
+      "passed": true
+    },
+    {
+      "name": "wrong_origin_discovery_rejected",
+      "path": "/api/discovery/sources",
+      "method": "GET",
+      "checkedAt": "2026-11-16T15:51:52.523903+00:00",
+      "status": 403,
+      "contentType": "application/json; charset=utf-8",
+      "cacheControl": "no-store",
+      "errorCode": "origin_denied",
+      "passed": true
+    }
+  ],
+  "scope": {
+    "publicGETOnly": true,
+    "signedInAccountFlows": false,
+    "nativeFlows": false,
+    "employerApplicationPosts": 0,
+    "workspacesCreated": 0,
+    "PDFsUploaded": 0,
+    "siteBypassTokensUsed": 0,
+    "cacheEffect": "Discovery GETs populate or read bounded public board caches; no account records are written."
+  },
+  "limitations": [
+    "Results reflect only observed selected sources at these request times.",
+    "Signed-in production browser/phone pairing and account lifecycle require separate evidence.",
+    "No live employer submission, signed distribution or physical-phone acceptance is established."
+  ]
+}

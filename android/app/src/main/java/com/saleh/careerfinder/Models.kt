@@ -40,6 +40,11 @@ data class ProfileDraft(
     val experienceLevel: String = "any", val website: String = "", val resume: Resume? = null,
     val removeResume: Boolean = false, val revision: Int = 0
 ) {
+    val hasApplicationName: Boolean get() = firstName.trim().isNotBlank()
+    val hasApplicationEmail: Boolean get() = email.trim().matches(Regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"))
+    val hasApplicationPDF: Boolean get() = resume?.let { it.size in 8..BoundaryPolicy.MAX_PDF_BYTES && it.sha256.matches(Regex("[a-f0-9]{64}")) } == true
+    val essentialsComplete: Boolean get() = hasApplicationName && hasApplicationEmail && hasApplicationPDF
+    val essentialCount: Int get() = listOf(hasApplicationName, hasApplicationEmail, hasApplicationPDF).count { it }
     fun apiJson(): JSONObject = JSONObject().put("firstName", firstName.trim()).put("lastName", lastName.trim())
         .put("email", email.trim()).put("phone", phone.trim()).put("city", city.trim()).put("country", country.trim().uppercase())
         .put("headline", headline.trim()).put("skills", JSONArray(skills.parts())).put("targetRoles", JSONArray(targetRoles.parts()))
@@ -151,6 +156,18 @@ data class ApplicationReceipt(val id: String, val title: String, val company: St
             serviceData(receipt.id.isNotBlank() && receipt.state.isNotBlank())
             return receipt
         }
+    }
+}
+
+enum class ReceiptFilter(val label: String) {
+    ALL("All"), CONFIRMED("Verified"), ATTENTION("Needs attention"), PENDING("Pending"), STOPPED("Stopped"), TEST("Test");
+    fun includes(receipt: ApplicationReceipt): Boolean = when (this) {
+        ALL -> true
+        CONFIRMED -> receipt.verified
+        ATTENTION -> !receipt.testMode && (receipt.state in setOf("uncertain", "rejected", "rate_limited") || receipt.state == "confirmed" && !receipt.verified)
+        PENDING -> !receipt.testMode && receipt.state in setOf("ready", "dispatching")
+        STOPPED -> !receipt.testMode && receipt.state == "cancelled"
+        TEST -> receipt.testMode
     }
 }
 

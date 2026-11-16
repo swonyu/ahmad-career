@@ -1,48 +1,56 @@
 # Hosted phone release handoff
 
-**Recorded 16 November 2026.** This is a source and release-gate handoff. Deployment, signed distribution and store review require their own evidence for the final candidate.
+**Recorded 16 November 2026 — 0.4.0 phone candidate.** The hosted discovery service is deployed and public acceptance passed. Final phone-source CI, signed-in production phone acceptance and store distribution remain separate, unfinished gates. See the [phone polish review](Phone-Polish-Review-2026-11-16.md) for the changes in this candidate.
 
 ## Current evidence and identity
 
 | Scope | Evidence |
 | --- | --- |
-| Earlier published source | Commit `2a9004a0b684198018ea6583a08ba4f49f2af5b1`; [Phone quality run 43883809010](https://github.com/swonyu/ahmad-career/actions/runs/43883809010) passed all three jobs, including the hosted unsigned iPhone project build. This predates the hosted-service changes. |
-| Current Apple hosted integration | [Exact standalone evidence](../apple/Checks/mobile-verification.json): 61 boundary checks, 117 production-store assertions across 25 scenarios, the native planning-store regression, and all ten Swift app sources typechecked for iOS 16 with zero diagnostics. The evidence file SHA256 is `583f96acc38277070d8bc45113a1417c8b70eeab584220297f343798fb390e20`. Synthetic transport and credentials were used. |
-| Published service | `https://career-finder-service.jazzy-drake-8323.chatgpt.site`; Sites version 1 deployed successfully from source `d078e56f88e1d9cfd4330f0c57f361ab845edaff` at 14:57:43 UTC, 16 November 2026. Eight public HTTP checks passed; browser pages and sign-in navigation were observed. Signed-in production pairing is not yet established. |
-| Provider activation | No employer credentials configured; `liveEnabled: false`. No real employer acceptance is claimed. |
-| Apple identity | Preserve `com.ahmadalayed.career` and the existing publisher-owned App Store Connect record. The numeric store ID and current distribution state must be read from that existing record by its publisher. |
-| Android identity | Preserve the release application ID `com.saleh.careerfinder`. `.preview` and `.acceptance` packages are separate test variants. No Play publication is established here. |
+| Published source baseline | `06f5e8a069c7debe94becf04ce73d997f9cde747`; [run 43895371363](https://github.com/swonyu/ahmad-career/actions/runs/43895371363) passed its four jobs. This is the baseline before the 0.4 discovery and polish changes. |
+| Current source candidate | Native and hosted sources are frozen for publication. The expanded workflow defines five jobs, including an unsigned iPhone **Release** build and a new hosted iPhone UI run. No completed final-0.4 CI run is recorded yet. |
+| Current native checks | [Apple evidence](../apple/Checks/mobile-verification.json) and [Android evidence](../android/checks/verification.json) identify their exact source hashes, executed scenarios, tools and limitations. Authored UI cases and static typechecking are not proof of a completed UI run. |
+| Current hosted deployment | Sites version **2**, source `a2c82c51a37e570cedb6fd6b8459d208228fc578`, at [the public HTTPS origin](https://career-finder-service.jazzy-drake-8323.chatgpt.site). Version ID `appgprj_6afb13851fb4819193358d5db54e73b7~appgver_44afb8d73fb48191915b108625641b12`; deployment `appgdep_6afb2627e0f081918d7e98839bd2d5c1`. Deployment succeeded. |
+| Hosted package identity | Archive SHA256 `fe90a6c300ebb2c17689cb03c2be04346320eefe1c610438f1123ea5cb13ef12`. The framework build and package completed successfully. The platform reported `updated_at: 2026-11-16T15:50:25.540440Z`; that metadata is not an independently measured deployment completion time. |
+| Current production checks | [Version 2 public acceptance](hosted-production-polish-verification.json): 13 checks passed, including real public discovery, pagination, remote filtering, pages, D1/R2 health and anonymous/invalid-origin denials. No signed-in workspace, applicant data or employer submission was used. |
+| Provider activation | Production reports `liveEnabled: false`. No employer credentials are configured; no real application acceptance is claimed. |
+| Apple identity | Preserve `com.ahmadalayed.career` and the existing publisher-owned App Store Connect record. The publisher must verify its numeric store ID and distribution state from that record. |
+| Android identity | Preserve `com.saleh.careerfinder`; `.preview` and `.acceptance` remain separate test variants. No Google Play publication is established. |
 
-The current source has no verified mapping to an App Store/TestFlight release or build 13. Historical version numbers and approvals must be associated with their original source/archive evidence.
+The [version 1 production record](hosted-production-http-verification.json) remains historical evidence for source `d078e56f88e1d9cfd4330f0c57f361ab845edaff`. Neither earlier store builds nor historical TestFlight/build-number observations are a verified distribution mapping for this candidate. Privacy and future-fixture corrections from the separate publisher branch `0d665aa` are represented in the candidate; this does not imply a branch merge or a store upload.
 
-## Public name and fresh users
+## Public experience and coverage
 
-The public name is **Career Finder**. iPhone Debug and Release set `PRODUCT_NAME` and `CFBundleDisplayName` to Career Finder, with matching `Career Finder.app` product/scheme references; a new hosted CI run must verify the generated `CFBundleName` after correcting the metadata assertion failure in run 43893803094; the Android 0.3.0 packaged label was verified as Career Finder. New applicant and planning profiles contain no personal biography, CV, contact details, country/city/career targets or saved history. Regional salary examples are optional historical references. Internal package/target/storage identities stay stable for upgrades and existing records. Built-in iPhone live discovery remains explicitly limited to six selected Saudi employer sources; manually saved opportunities and profiles accept any country or profession.
+The public name is **Career Finder**. Fresh applicant and planning profiles contain no bundled individual's biography, résumé, contact details, target location or application history. Internal bundle, package, target and storage identities remain stable for existing records. The interface is English.
 
-## Completed hosted work
+The primary Search/Discover experience now uses selected public Greenhouse and Lever employer boards across regions and professions. A person can select up to four catalog or custom supported boards and filter public results by role, location text and explicit remote metadata. Each board is bounded at 500 validated jobs, with 50 results per page. Sources, check times, stale cache, partial failures and changed page snapshots are visible. Country, remote status and work eligibility are never invented. The earlier six-source Saudi research feed is retained for compatibility/history, not as the primary search limit.
 
-The production health check confirmed D1 and R2 access. Anonymous account/native workspace requests and caller-supplied platform identity headers were rejected. Public connection, privacy and support pages use Career Finder. See [the production HTTP record](hosted-production-http-verification.json). The backend passed 29 local D1/R2 concurrency, quota, approval and erasure groups plus eight requests in the actual workerd runtime. These are synthetic local account/provider flows, separate from production authentication.
+Search requires no account and sends no profile or CV. Search terms are not stored in account records or the shared board cache or forwarded to employers; platform request logs may contain URL fields. Saving a result is an explicit opportunity action. Manual application self-reports and local history cannot produce verified API receipts. Public board access does not authorize automatic application submission.
 
-## Work remaining with the service operator and publisher
+## Completed hosted verification
+
+The candidate passed [25 discovery groups](../hosted/tests/hosted-discovery-verification.json), including eight requests through the bundled workerd entrypoint, and [29 application/storage groups](../hosted/tests/hosted-verification.json) plus [eight application runtime requests](../hosted/tests/hosted-worker-verification.json). These exercise real local D1/R2 and synthetic employer dependencies. [Public provider GET observations](../hosted/tests/discovery-public-sources.json) separately verify the starter catalog. The browser request helper passed ten transport cases covering timeout, cancellation, malformed responses and mutation confirmation; UI lint, framework typechecking and the production build also passed.
+
+Production version 2 acceptance observed 855 validated jobs across the four default sources at 15:51:36–42 UTC, a second page without duplicates, and 349 matches for the remote-only filter. These are one bounded selected-source snapshot, not a worldwide vacancy count. Health reported usable D1/R2 and live submission disabled. Browser checks observed the Career Finder setup, support and signed-out account pages. None of these checks establishes signed-in production pairing or a real provider receipt.
+
+## Remaining operator and publisher work
 
 | Gate | Completion evidence needed |
 | --- | --- |
-| Hosted deployment | Exact deployed source/runtime identity, HTTPS responses, live `/connect`, `/privacy`, `/support` and `/account` pages, sign-in and same-account recovery, phone pairing, and signed-in/applicant email matching. Record the actual deployed status and quotas. |
-| Hosted data lifecycle | Exercise explicit PDF upload and the five-file/25-MiB account limit, approved continuation, interrupted requests, account deletion during an active provider request, immediate upload fencing, token revocation, and removal of account-linked CV content/metadata. Empty random storage markers must retain no account association, filename, CV hash or content. |
-| Final source and CI | Publish the final intended source and require every configured CI job to pass on that exact commit. Retain the commit, job URLs, artifacts and hashes. The earlier run above cannot validate later edits. |
-| Phone acceptance | Exercise the exact candidate on the intended phones: browser sign-in return, PDF picker, large text and screen-reader navigation, offline/restored drafts, conflicts, explicit cooldown approval, receipt sharing, recovery and deletion. Obtain the shared local Apple build-slot acknowledgment before local Xcode/simulator work. |
-| Signing and distribution | Existing publisher verifies app/store identity, signing assets, version/build assignment, archive/install identity, upload and processing status. Record actual TestFlight/store review outcomes. No account, signing, build-number or store-record change was performed by this documentation pass. |
-| Public disclosures and support | Reconcile the [privacy draft](Ahmad-Career-Privacy.html) with the deployed service and distributed app. Confirm the named operator, monitored contact, operational-log and feedback retention, current privacy/support URLs and store data disclosures. |
-| Account and login review | Verify the in-app path directly reaches account deletion and clearly reports pending work. Assess the ChatGPT browser sign-in flow against current Apple login-services rules, including any applicable exception; this handoff makes no review-approval or exemption claim. |
-| Real provider use | Obtain an employer-authorized Lever integration and current reviewed posting requirements. Enable only the configured authorized postings. A real submission still needs the applicant's explicit approval; only documented provider acceptance plus its application ID can establish a live verified receipt. |
+| Final source and CI | Publish the intended 0.4 source and require all five configured jobs to pass on that exact commit. Retain commit, run URLs, artifacts and hashes. The earlier four-job success cannot validate later edits. |
+| Signed-in production lifecycle | Record same-account sign-in/recovery, phone pairing, matching applicant email, deliberate PDF upload, revocation, export, interrupted upload recovery and deletion on the deployed service. Local synthetic lifecycle coverage is already recorded; it is not this production flow. |
+| Phone acceptance | Exercise the exact candidate on intended phones: discovery, draft restoration, browser return, PDF picker, large text/screen reader, conflicts, cooldown approval, receipt sharing and deletion. Record the new hosted iPhone UI run separately from physical-device QA. Obtain the shared local Apple build-slot acknowledgment before local Xcode/simulator work. |
+| Signing and distribution | The existing publisher verifies signing assets, version/build assignment, archive/install identity and upload/processing status. Record actual TestFlight/store outcomes; no new account, signing identity or store record is assumed. |
+| Public disclosures and support | Reconcile the [privacy draft](Ahmad-Career-Privacy.html), deployed [privacy notice](https://career-finder-service.jazzy-drake-8323.chatgpt.site/privacy) and [support page](https://career-finder-service.jazzy-drake-8323.chatgpt.site/support) with the distributed app. Confirm the named operator, monitored contact, operational-log/feedback retention and store disclosures. |
+| Account and login review | Verify the in-app account-deletion path and pending-work explanation. Assess the actual ChatGPT sign-in flow against store login requirements and any applicable exception; no approval or exemption is claimed. |
+| Optional live provider activation | Obtain employer-authorized Lever credentials and current reviewed posting requirements. Enable only those postings. Applicant approval remains mandatory; only documented provider acceptance plus an application ID establishes a live verified receipt. |
+
+The preview retains bounded storage and account limits. Deletion removes account-linked records and PDF content, while empty opaque upload markers prevent late writes from restoring erased files; deletion does not recall employer-held applications or erase a phone's local copy. Service ownership and store publication remain separate responsibilities.
 
 ## Primary store references
 
-Checked on 16 November 2026:
+Reference links retained for the publisher's final review; the candidate has no store-approval claim:
 
-- [Apple account deletion guidance](https://developer.apple.com/help/app-review/guideline-reference/5-1-1-account-deletion): account deletion must be reachable from the app; when completed on a website, use a direct link and explain delays.
-- [Apple App Privacy Details](https://developer.apple.com/app-store/app-privacy-details/): disclosures must reflect actual off-device collection, including data retained for core functionality.
-- [Apple App Review Guidelines, §4.8](https://developer.apple.com/app-store/review/guidelines/#login-services): evaluate equivalent login options and the listed exceptions for the actual primary-account flow.
-- [Google Play account deletion requirements](https://support.google.com/googleplay/android-developer/answer/13327111?hl=en): assess the in-app deletion path, web resource and Data safety responses for account creation reached from the app.
-
-Root owns hosting, packaging and source publication. The established publisher owns physical-device/signing/store work. This handoff does not replace those separate completion records.
+- [Apple account deletion guidance](https://developer.apple.com/help/app-review/guideline-reference/5-1-1-account-deletion)
+- [Apple App Privacy Details](https://developer.apple.com/app-store/app-privacy-details/)
+- [Apple App Review Guidelines, §4.8](https://developer.apple.com/app-store/review/guidelines/#login-services)
+- [Google Play account deletion requirements](https://support.google.com/googleplay/android-developer/answer/13327111?hl=en)

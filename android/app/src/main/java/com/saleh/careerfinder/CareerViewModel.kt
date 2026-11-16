@@ -25,10 +25,12 @@ import java.util.UUID
 
 class CareerViewModel internal constructor(application: Application, private val vault: PrivateStore,
     private val service: CareerService,
+    discoveryService: DiscoveryService = PublicDiscoveryService,
     private val waitForPoll: suspend () -> Unit = { delay(4_000) }) : AndroidViewModel(application) {
     constructor(application: Application) : this(application, SecureVault(application), HttpsCareerService)
     private val mutable = MutableStateFlow(CareerUiState())
     val state = mutable.asStateFlow()
+    val discovery = DiscoveryController(viewModelScope, discoveryService)
     private var polling: Job? = null
     private var foreground = false
     private val diskMutex = Mutex()
@@ -348,6 +350,11 @@ class CareerViewModel internal constructor(application: Application, private val
         val normalized = BoundaryPolicy.opportunityURL(url.trim())
         require(title.trim().isNotBlank() && company.trim().isNotBlank()) { "Add the role title and employer so the saved opportunity is clear." }
         require(country.isBlank() || country.trim().matches(Regex("[A-Za-z]{2}"))) { "Use a two-letter country code or leave it blank." }
+        if (state.value.jobs.any { it.url == normalized }) {
+            mutable.update { it.copy(notice = "This opportunity is already in your saved list.") }
+            done()
+            return@action
+        }
         val job = Opportunity("local-" + UUID.randomUUID(), normalized, title.trim().take(200), company.trim().take(200), location.trim().take(200), country.trim().uppercase(), true)
         mutable.update { it.copy(jobs = listOf(job) + it.jobs) }
         try { persist() } catch (error: Exception) { mutable.update { it.copy(jobs = it.jobs.filterNot { pending -> pending.id == job.id }) }; throw error }
@@ -445,6 +452,7 @@ class CareerViewModel internal constructor(application: Application, private val
 
     fun submit(plan: ReviewPlan) = action {
         val current = state.value
+        require(current.liveEnabled || current.testService) { "Automatic employer sending is not enabled for this service. You can still apply directly on the employer’s site." }
         require(current.plan?.id == plan.id && current.plan.digest == plan.digest) { "Prepare a fresh review before applying." }
         require(!plan.expired() && !current.profileDirty && current.profile.revision == plan.profileRevision) { "This review has expired or your profile changed. Prepare it again." }
         require(plan.items.any(ReviewItem::canSubmitNow)) { "There are no applications ready to send. A rate-limited application must finish its cooldown first." }

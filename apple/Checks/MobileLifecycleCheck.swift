@@ -138,13 +138,14 @@ private final class LifecycleSuite {
             let service = TestService(); service.handle = { _ in self.workspace(6) }
             let (_, folder, tokens) = try fixture(state, service: service)
             var old = try JSONSerialization.jsonObject(with: JSONEncoder().encode(state)) as! [String: Any]
-            for key in ["profileRevision", "latestServerRevision", "latestServerProfile", "connectionEnabled", "credentialAccount"] { old.removeValue(forKey: key) }
+            for key in ["profileRevision", "latestServerRevision", "latestServerProfile", "connectionEnabled", "credentialAccount", "opportunityDraft"] { old.removeValue(forKey: key) }
             try JSONSerialization.data(withJSONObject: old).write(to: folder.appendingPathComponent("phone-draft.json"))
             tokens.values[state.serviceAddress] = "legacy-synthetic-token"
             let store = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
             await store.refresh()
             try check(store.profile.firstName == "Legacy draft" && store.revision == nil, "Legacy dirty draft migrates with an unknown base")
             try check(store.profileHasConflict, "Legacy draft requires a deliberate conflict choice")
+            try check(!store.opportunityDraft.hasContent, "Older files receive an empty opportunity draft without seeded identity")
             scenarios += 1
         }
         // An older GET or its 401 error must not roll back a completed PUT or newer receipts.
@@ -531,6 +532,36 @@ private final class LifecycleSuite {
             newFinished = true; newGate.finish(["ok": .bool(true)]); await newTask.value
             try check(!store.advancingApprovedApplication && store.activePlanIDs.isEmpty && newer.calls.filter { $0.route == "advance" }.count == 1,
                       "The new connection independently reconciles its own continuation")
+            scenarios += 1
+        }
+        // Partly entered job links survive dismissal and relaunch without contacting a service.
+        do {
+            let service = TestService(); let (store, folder, tokens) = try fixture(PhoneApplicationState(), service: service)
+            let draft = PhoneOpportunityDraft(url: "https://careers.example.com/jobs/one", title: "Designer", company: "", location: "Toronto", country: "CA")
+            try check(store.keepOpportunityDraft(draft), "Incomplete add-link details can be saved as a local draft")
+            let restored = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+            try check(restored.opportunityDraft == draft && restored.jobs.isEmpty && service.calls.isEmpty, "Draft survives reload without a job import or submission")
+            var tooLong = draft; tooLong.title = String(repeating: "x", count: 301)
+            try check(!restored.keepOpportunityDraft(tooLong) && restored.opportunityDraft == draft, "Oversized edit cannot overwrite the last durable draft")
+            try check(restored.keepOpportunityDraft(PhoneOpportunityDraft()), "Explicit discard clears the draft")
+            let discarded = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+            try check(!discarded.opportunityDraft.hasContent && discarded.jobs.isEmpty, "Deliberate discard persists without creating a job")
+            scenarios += 1
+        }
+        // Adding the edited job consumes that exact draft in the same durable write as the new local link.
+        do {
+            let service = TestService(); let (store, folder, tokens) = try fixture(PhoneApplicationState(), service: service)
+            let draft = PhoneOpportunityDraft(url: "https://careers.example.com/jobs/one", title: "Designer", company: "Example", location: "Toronto", country: "CA")
+            try check(store.keepOpportunityDraft(draft), "Submitted draft is retained before attempting the add")
+            let added = await store.addJob(url: draft.url, title: draft.title, company: draft.company, location: draft.location, country: draft.country)
+            try check(added && store.jobs.count == 1 && !store.opportunityDraft.hasContent, "Successful local add consumes its matching draft")
+            let restored = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+            try check(restored.jobs.count == 1 && !restored.opportunityDraft.hasContent && service.calls.isEmpty, "Job and consumed draft survive restart atomically without network use")
+            try check(restored.containsOpportunity(url: draft.url + "?utm_source=search"), "Discovery and earlier records use canonical opportunity identity for handoff")
+            let other = PhoneOpportunityDraft(url: "https://careers.example.com/jobs/later", title: "Later draft")
+            try check(restored.keepOpportunityDraft(other), "Another unfinished draft can be retained")
+            let second = await restored.addJob(url: "https://careers.example.com/jobs/two", title: "Analyst", company: "Example", location: "", country: "")
+            try check(second && restored.opportunityDraft == other, "Saving a discovered opportunity cannot erase a different unfinished manual draft")
             scenarios += 1
         }
         // Pending account deletion stops continuation immediately; later token revocation retains the phone draft.

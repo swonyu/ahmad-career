@@ -3,7 +3,7 @@ import SwiftUI
 @main
 struct AhmadCareerApp: App {
     #if os(iOS)
-    @StateObject private var nativeStore = NativeCareerStore()
+    @StateObject private var nativeStore = CareerAppEnvironment.makeCareerStore()
     #endif
     var body: some Scene {
         WindowGroup("Career Finder") {

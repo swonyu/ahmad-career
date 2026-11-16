@@ -18,6 +18,8 @@ class PhoneAcceptanceTest {
     @get:Rule val compose = createAndroidComposeRule<MainActivity>()
 
     @Test fun blankWorkspace_hasHonestEmptyState_andConnectionRequirement() {
+        compose.onNodeWithText("Find your next role.").assertIsDisplayed()
+        compose.onNodeWithTag("jobs-saved-tab").performClick()
         compose.onNodeWithText("Start with one good opportunity.").assertIsDisplayed()
         compose.onNodeWithText("Auto Apply").performClick()
         compose.onNodeWithText("Connect when you’re ready.").assertIsDisplayed()

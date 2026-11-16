@@ -145,6 +145,7 @@ private fun PhoneNavigation(tabs: List<Destination>, selectedIndex: Int, select:
 fun CareerApp(model: CareerViewModel) {
     val state by model.state.collectAsStateWithLifecycle()
     var tab by rememberSaveable { mutableIntStateOf(0) }
+    var jobsSection by rememberSaveable { mutableIntStateOf(0) }
     var showConnect by rememberSaveable { mutableStateOf(false) }
     var showAdd by rememberSaveable { mutableStateOf(false) }
     val tabs = listOf(Destination("Jobs", Icons.Default.Search), Destination("Auto Apply", Icons.AutoMirrored.Filled.Send),
@@ -177,9 +178,9 @@ fun CareerApp(model: CareerViewModel) {
                 if (!state.loaded) Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Opening your private workspace…") }
                 else if (state.storageBlocked) StorageRecoveryScreen(state, model)
                 else when (tab) {
-                    0 -> JobsScreen(state, model, { showAdd = true }, { tab = 1 })
-                    1 -> ApplyScreen(state, model, { showConnect = true }, { tab = 2 })
-                    2 -> ReceiptsScreen(state, model) { exporter.launch("Career-Finder-Receipts-" + LocalDate.now() + ".json") }
+                    0 -> JobsScreen(state, model, { showAdd = true }, { tab = 1 }, { tab = 3 }, { showConnect = true }, jobsSection) { jobsSection = it }
+                    1 -> ApplyScreen(state, model, { showConnect = true }, { tab = 2 }, { tab = 3 }, { tab = 0; jobsSection = 1 })
+                    2 -> ReceiptsScreen(state, model, { tab = 0; jobsSection = 0 }) { exporter.launch("Career-Finder-Receipts-" + LocalDate.now() + ".json") }
                     3 -> ProfileScreen(state, model) { picker.launch(arrayOf("application/pdf")) }
                 }
             }
@@ -323,7 +324,7 @@ private fun MessageBanner(text: String, error: Boolean, dismiss: (() -> Unit)?) 
 }
 
 @Composable
-private fun Heading(title: String, subtitle: String) {
+internal fun Heading(title: String, subtitle: String) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(title, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold, modifier = Modifier.semantics { heading() })
         Text(subtitle, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -331,7 +332,7 @@ private fun Heading(title: String, subtitle: String) {
 }
 
 @Composable
-private fun Panel(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
+internal fun Panel(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
     Surface(modifier.fillMaxWidth(), shape = RoundedCornerShape(24.dp), color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)) {
         Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp), content = content)
@@ -339,12 +340,12 @@ private fun Panel(modifier: Modifier = Modifier, content: @Composable ColumnScop
 }
 
 @Composable
-private fun Action(label: String, enabled: Boolean = true, onClick: () -> Unit) {
+internal fun Action(label: String, enabled: Boolean = true, onClick: () -> Unit) {
     Button(onClick = onClick, enabled = enabled, modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp), shape = RoundedCornerShape(16.dp)) { Text(label) }
 }
 
 @Composable
-private fun EmptyState(title: String, body: String, icon: ImageVector = Icons.Default.Search, action: String? = null, onClick: () -> Unit = {}) {
+internal fun EmptyState(title: String, body: String, icon: ImageVector = Icons.Default.Search, action: String? = null, onClick: () -> Unit = {}) {
     Panel {
         Box(Modifier.size(64.dp).background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(20.dp)), contentAlignment = Alignment.Center) {
             Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(28.dp))
@@ -356,12 +357,12 @@ private fun EmptyState(title: String, body: String, icon: ImageVector = Icons.De
 }
 
 @Composable
-private fun JobsScreen(state: CareerUiState, model: CareerViewModel, add: () -> Unit, review: () -> Unit) {
+internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: () -> Unit, review: () -> Unit, discover: () -> Unit) {
     var query by rememberSaveable { mutableStateOf("") }
     val filtered = state.jobs.filter { (it.title + " " + it.company + " " + it.location + " " + it.country).contains(query, ignoreCase = true) }
     val context = LocalContext.current
     LazyColumn(Modifier.fillMaxSize().testTag("jobs-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        item { Heading("Make room for possibility.", "Save opportunities in any country or profession. Build a search that fits you.") }
+        item { Heading("Your shortlist.", "Keep the roles you want to come back to, and track the applications you complete yourself.") }
         item {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
                 OutlinedButton(onClick = add, modifier = Modifier.weight(1f).heightIn(min = 52.dp)) { Icon(Icons.Default.Add, null); Spacer(Modifier.width(8.dp)); Text("Add opportunity") }
@@ -369,19 +370,25 @@ private fun JobsScreen(state: CareerUiState, model: CareerViewModel, add: () -> 
             }
         }
         if (state.jobs.isNotEmpty()) item { Field("Search saved opportunities", query, { query = it }, type = KeyboardType.Text) }
-        if (state.jobs.isEmpty()) item { EmptyState("Start with one good opportunity.", "Paste an employer’s job link and save its details. Your list starts empty, and your private profile is yours to create.", action = "Save your first opportunity", onClick = add) }
-        else if (filtered.isEmpty()) item { EmptyState("No saved opportunities match.", "Try another title, company or location. Your saved roles are still here.") }
+        if (state.jobs.isEmpty()) item { EmptyState("Start with one good opportunity.", "Save a role from Discover, or add an employer link from anywhere. Saving never sends an application.", action = "Discover jobs", onClick = discover) }
+        else if (filtered.isEmpty()) item { EmptyState("No saved opportunities match.", "Your saved roles are still here. Clear the search to see them again.", action = "Clear saved-job search", onClick = { query = "" }) }
         items(filtered, key = Opportunity::id) { job ->
             Panel {
                 Text(job.company.ifBlank { "Employer" }, color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
                 Text(job.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
                 Text(listOf(job.location, job.country).filter(String::isNotBlank).joinToString(" · ").ifBlank { "Location not recorded" }, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(if (job.localOnly) "Saved on this phone" else "Saved to your workspace", style = MaterialTheme.typography.labelMedium)
-                if (job.id in state.manualApplied) StatusPill("Applied elsewhere", false)
-                OutlinedButton(onClick = { openLink(context, job.url) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Open employer page") }
+                if (job.id in state.manualApplied) StatusPill("Applied elsewhere · self-reported", false)
+                OutlinedButton(onClick = { openLink(context, job.url) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
+                    .semantics { contentDescription = "Open employer page for ${job.title} at ${job.company}" }) { Text("Open employer page") }
+                CheckLine("I applied on the employer’s site", job.id in state.manualApplied,
+                    { model.markAppliedElsewhere(job.id, it) }, !state.busy,
+                    accessibilityLabel = "I applied on the employer’s site for ${job.title} at ${job.company}")
+                if (job.id in state.manualApplied) Text("Your own record. This does not create a verified application receipt.", style = MaterialTheme.typography.bodySmall)
                 if (job.localOnly && state.connection != null) TextButton(onClick = { model.syncOpportunity(job) }, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Sync this opportunity") }
                 if (!job.localOnly) {
-                    CheckLine("Select for Auto Apply review", job.id in state.selected, { model.toggleJob(job.id) }, !state.busy)
+                    CheckLine("Select for Auto Apply review", job.id in state.selected, { model.toggleJob(job.id) }, !state.busy,
+                        accessibilityLabel = "Select ${job.title} at ${job.company} for Auto Apply review")
                     if (job.id in state.selected) TextButton(onClick = review, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Continue to Auto Apply") }
                 }
             }
@@ -391,7 +398,8 @@ private fun JobsScreen(state: CareerUiState, model: CareerViewModel, add: () -> 
 }
 
 @Composable
-private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: () -> Unit, receipts: () -> Unit) {
+private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: () -> Unit, receipts: () -> Unit,
+    profile: () -> Unit, jobs: () -> Unit) {
     val context = LocalContext.current
     val plan = state.plan
     var approved by remember(plan?.id, plan?.digest) { mutableStateOf(false) }
@@ -400,6 +408,21 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
         item { Heading("A clear review. A real receipt.", "Auto Apply sends the exact details you approve to supported employers. You stay in control of every batch.") }
         if (state.connection == null || state.requiresPairing) item {
             EmptyState("Connect when you’re ready.", "Keep building your profile and saved roles on this phone. Securely pair a service to review and submit supported applications.", Icons.Default.Lock, "Connect service", connect)
+        }
+        if (state.connection != null && !state.requiresPairing && !state.liveEnabled && !state.testService) item {
+            Panel {
+                StatusPill("Automatic sending is not enabled", true)
+                Text("You can discover and save jobs, then apply directly on each employer’s site. Automatic sending requires an enabled employer integration; preparing a review does not enable it.")
+                OutlinedButton(onClick = jobs, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Open saved opportunities") }
+            }
+        }
+        if (!state.profile.essentialsComplete || state.profileDirty || state.profileConflict != null) item {
+            Panel {
+                Text("Before your application review", style = MaterialTheme.typography.titleMedium)
+                ProfileEssentials(state.profile)
+                if (state.profileDirty) Text("Save your latest profile draft before preparing a review.", style = MaterialTheme.typography.bodySmall)
+                OutlinedButton(onClick = profile, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Review profile and résumé") }
+            }
         }
         if (state.activePlans.isNotEmpty()) item {
             Panel {
@@ -419,7 +442,7 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
                 OutlinedButton(onClick = { model.reviewRecovered(savedPlan) }, enabled = !state.busy && !savedPlan.expired(), modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Review remaining applications") }
             }
         }
-        if (state.connection != null && selectedJobs.isEmpty() && plan == null) item { EmptyState("Choose your opportunities.", "Select synced jobs in the Jobs tab, then return here for a personal, employer-by-employer review.", Icons.Default.Check) }
+        if (state.connection != null && selectedJobs.isEmpty() && plan == null) item { EmptyState("Choose your opportunities.", "Select synced roles in Saved to review the details for each employer.", Icons.Default.Check, "Choose saved opportunities", jobs) }
         items(if (state.reviewingRecoveredPlan) emptyList() else selectedJobs, key = { "answer-" + it.id }) { job ->
             val answer = state.answers[job.id] ?: JobAnswers()
             val reviewed = plan?.items?.find { it.jobId == job.id }
@@ -448,7 +471,7 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
         if (selectedJobs.isNotEmpty() && !state.reviewingRecoveredPlan) item {
             if (state.profileDirty) Text("Save your profile before preparing the review.", color = MaterialTheme.colorScheme.error)
             Action(if (state.obsoleteReviews.isNotEmpty() || plan?.unapproved == true) "Stop earlier review and prepare update" else "Prepare application review",
-                state.connection != null && !state.busy && !state.profileDirty && !state.requiresPairing, model::prepare)
+                state.connection != null && !state.busy && !state.profileDirty && !state.requiresPairing && state.profile.essentialsComplete, model::prepare)
             Text("Preparing sends nothing to employers. Required custom questions or an unavailable connector will be shown clearly.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         if (plan != null) {
@@ -461,7 +484,8 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
                     if (state.testService) Text("This is a test service. Any generated receipt is simulated and does not count as a real application.", color = MaterialTheme.colorScheme.error)
                     CheckLine("I reviewed these details and authorize sending the ready applications to the employers shown above.", approved, { approved = it }, !state.busy)
                     Action(if (state.testService) "Run approved test applications" else "Approve and Auto Apply",
-                        approved && ready > 0 && !state.busy && !plan.expired() && !state.profileDirty && !state.requiresPairing) { model.submit(plan) }
+                        approved && ready > 0 && !state.busy && !plan.expired() && !state.profileDirty && !state.requiresPairing &&
+                            (state.liveEnabled || state.testService)) { model.submit(plan) }
                     if (plan.items.any { it.state == "rate_limited" }) TextButton(onClick = model::refresh, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Refresh cooldown availability") }
                     OutlinedButton(onClick = { model.stop(plan.id) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Stop this batch") }
                     Text("Confirmed means the provider accepted the application. It does not mean recruiter review, an interview or an offer.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -502,8 +526,12 @@ private fun ReviewCard(item: ReviewItem) {
 }
 
 @Composable
-private fun ReceiptsScreen(state: CareerUiState, model: CareerViewModel, export: () -> Unit) {
+private fun ReceiptsScreen(state: CareerUiState, model: CareerViewModel, browse: () -> Unit, export: () -> Unit) {
     val real = state.receipts.count(ApplicationReceipt::verified)
+    var query by rememberSaveable { mutableStateOf("") }
+    var filter by rememberSaveable { mutableStateOf(ReceiptFilter.ALL) }
+    val visible = state.receipts.filter { filter.includes(it) &&
+        (it.title + " " + it.company + " " + it.applicationId + " " + it.id).contains(query.trim(), ignoreCase = true) }
     LazyColumn(Modifier.fillMaxSize().testTag("receipts-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         item { Heading("Every application, accounted for.", "Confirmed receipts, pending outcomes and stopped applications stay separate.") }
         item {
@@ -517,8 +545,21 @@ private fun ReceiptsScreen(state: CareerUiState, model: CareerViewModel, export:
                 }
             }
         }
-        if (state.receipts.isEmpty()) item { EmptyState("Your first receipt belongs here.", "A saved job or opened employer link does not create a receipt. After an approved application, its actual outcome appears here.", Icons.AutoMirrored.Filled.List) }
-        items(state.receipts, key = ApplicationReceipt::id) { receipt ->
+        if (state.receipts.isNotEmpty()) {
+            item { Field("Search receipts by role, employer or reference", query, { query = it }) }
+            item {
+                Row(Modifier.horizontalScroll(rememberScrollState()).selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    ReceiptFilter.entries.forEach { choice ->
+                        FilterChip(filter == choice, { filter = choice }, label = { Text(choice.label) },
+                            modifier = Modifier.heightIn(min = 48.dp).semantics { role = Role.RadioButton })
+                    }
+                }
+            }
+            item { Text("Showing ${visible.size} of ${state.receipts.size} records", style = MaterialTheme.typography.labelLarge) }
+        }
+        if (state.receipts.isEmpty()) item { EmptyState("Your first receipt belongs here.", "A saved job, self-reported application or opened employer link does not create a receipt. An approved application’s actual outcome appears here.", Icons.AutoMirrored.Filled.List, "Discover opportunities", browse) }
+        else if (visible.isEmpty()) item { EmptyState("No receipts match these filters.", "Your other application records are still available.", action = "Show all receipts", onClick = { query = ""; filter = ReceiptFilter.ALL }) }
+        items(visible, key = ApplicationReceipt::id) { receipt ->
             Panel {
                 StatusPill(receiptLabel(receipt), receipt.state in setOf("uncertain", "rejected", "rate_limited") || receipt.testMode)
                 Text(receipt.title, style = MaterialTheme.typography.titleLarge)
@@ -543,52 +584,96 @@ private fun ReceiptsScreen(state: CareerUiState, model: CareerViewModel, export:
 }
 
 @Composable
+internal fun ProfileEssentials(profile: ProfileDraft) {
+    Text(profile.essentialCount.toString() + " of 3 application essentials ready", style = MaterialTheme.typography.labelLarge)
+    listOf("Name" to profile.hasApplicationName, "Email address" to profile.hasApplicationEmail, "PDF résumé" to profile.hasApplicationPDF).forEach { (label, ready) ->
+        Row(Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}, verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Icon(if (ready) Icons.Default.Check else Icons.Default.Info, contentDescription = null,
+                tint = if (ready) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(20.dp))
+            Text(label + if (ready) " · Ready" else " · Needed", style = MaterialTheme.typography.bodyMedium)
+        }
+    }
+}
+
+@Composable
+internal fun GettingStartedPanel(state: CareerUiState, profile: () -> Unit, connect: () -> Unit) {
+    if (state.profile.essentialsComplete && state.connection != null) return
+    Panel {
+        Text("Make the next step easier.", style = MaterialTheme.typography.titleMedium)
+        Text("You can search without an account. Add your own profile when you’re ready to prepare applications.", style = MaterialTheme.typography.bodyMedium)
+        ProfileEssentials(state.profile)
+        OutlinedButton(onClick = profile, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Set up my profile") }
+        if (state.connection == null) TextButton(onClick = connect, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+            Text("Connect a workspace (optional)")
+        }
+    }
+}
+
+@Composable
 private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePDF: () -> Unit) {
     val profile = state.profile
     var reload by remember { mutableStateOf(false) }
+    var details by rememberSaveable { mutableStateOf(false) }
     LazyColumn(Modifier.fillMaxSize().imePadding().testTag("profile-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        item { Heading("A profile that is yours.", "Start with your own experience and preferences. Save a PDF résumé before preparing applications.") }
+        item { Heading("Your profile.", "Start with the essentials. Everything else is optional, and you can save an unfinished draft.") }
         item {
             Panel {
-                Text(if (state.profileDirty) "You have a profile draft" else if (state.connection == null) "Private on this phone" else "Your connected profile", style = MaterialTheme.typography.titleMedium)
-                Text(if (state.connection == null) "Edits are kept as an encrypted draft on this phone. After pairing, you can review and copy this draft into the connected workspace." else "Edits stay in an encrypted draft on this phone until you save to the service. Employers receive only the fields shown in an approved review.", style = MaterialTheme.typography.bodySmall)
-                if (state.connection != null) OutlinedButton(onClick = model::inspectPhoneDraft, enabled = !state.busy,
+                ProfileEssentials(profile)
+                Text(if (state.connection == null) "Your draft is encrypted on this phone. Pairing alone does not upload it."
+                    else "Edits stay on this phone until you save to the workspace. Employers receive only the details in an approved review.", style = MaterialTheme.typography.bodySmall)
+                if (state.profileDirty) StatusPill(if (state.connection == null) "Private phone draft" else "Unsaved workspace changes", false)
+                if (state.connection != null) TextButton(onClick = model::inspectPhoneDraft, enabled = !state.busy,
                     modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Review saved phone draft") }
             }
         }
         if (state.profileConflict != null) item { ProfileConflictPanel(state, model) }
         item { Field("First or single name", profile.firstName, { model.editProfile { p -> p.copy(firstName = it) } }, enabled = !state.busy) }
         item { Field("Last name (optional)", profile.lastName, { model.editProfile { p -> p.copy(lastName = it) } }, enabled = !state.busy) }
-        item { Field("Email", profile.email, { model.editProfile { p -> p.copy(email = it) } }, KeyboardType.Email, enabled = !state.busy) }
-        item { Field("Phone (optional)", profile.phone, { model.editProfile { p -> p.copy(phone = it) } }, KeyboardType.Phone, enabled = !state.busy) }
-        item { Field("Professional headline (optional)", profile.headline, { model.editProfile { p -> p.copy(headline = it) } }, enabled = !state.busy) }
-        item { CountryChooser("Your country (optional)", profile.country, !state.busy) { model.editProfile { p -> p.copy(country = it) } } }
-        item { Field("City (optional)", profile.city, { model.editProfile { p -> p.copy(city = it) } }, enabled = !state.busy) }
-        item { Field("Website or portfolio (optional)", profile.website, { model.editProfile { p -> p.copy(website = it) } }, KeyboardType.Uri, enabled = !state.busy) }
+        item { Field("Email", profile.email, { model.editProfile { p -> p.copy(email = it) } }, KeyboardType.Email, enabled = !state.busy,
+            error = if (profile.email.isNotBlank() && !profile.hasApplicationEmail) "Enter an email address employers can reply to." else null) }
         item {
             Panel {
                 Text("Your résumé", style = MaterialTheme.typography.titleLarge)
-                Text(profile.resume?.name ?: "Choose your own PDF. No template or personal details are prefilled.")
+                Text(profile.resume?.name ?: "Choose your own PDF. No personal information is prefilled.")
                 if (profile.resume != null) Text(fileSize(profile.resume.size) + " · PDF", style = MaterialTheme.typography.bodySmall)
                 Action(if (profile.resume == null) "Choose PDF résumé" else "Replace PDF résumé", !state.busy, choosePDF)
                 if (profile.resume != null) TextButton(onClick = model::removePDF, enabled = !state.busy, modifier = Modifier.heightIn(min = 48.dp)) { Text("Remove selected résumé") }
-                Text("Up to 5 MiB. The exact file name and fingerprint appear in the application review.", style = MaterialTheme.typography.bodySmall)
+                Text("Up to 5 MiB. The exact file and fingerprint appear in the application review.", style = MaterialTheme.typography.bodySmall)
             }
         }
-        item { Field("Skills (separate with commas)", profile.skills, { model.editProfile { p -> p.copy(skills = it) } }, singleLine = false, enabled = !state.busy) }
-        item { Field("Roles you want (separate with commas)", profile.targetRoles, { model.editProfile { p -> p.copy(targetRoles = it) } }, singleLine = false, enabled = !state.busy) }
-        item { Field("Target country codes (optional, e.g. SA, GB)", profile.targetCountries, { model.editProfile { p -> p.copy(targetCountries = it.uppercase()) } }, enabled = !state.busy) }
         item {
-            Panel {
-                Text("Work preferences", style = MaterialTheme.typography.titleLarge)
-                listOf("on-site" to "On site", "hybrid" to "Hybrid", "remote" to "Remote").forEach { (value, label) ->
-                    CheckLine(label, value in profile.workModes, { checked -> model.editProfile { p -> p.copy(workModes = if (checked) p.workModes + value else p.workModes - value) } }, !state.busy)
-                }
-                Text("Experience level", style = MaterialTheme.typography.labelLarge)
-                Row(Modifier.horizontalScroll(rememberScrollState()).selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    listOf("any" to "Any", "entry" to "Entry", "mid" to "Mid", "senior" to "Senior").forEach { (value, label) ->
-                        FilterChip(selected = profile.experienceLevel == value, onClick = { model.editProfile { it.copy(experienceLevel = value) } }, label = { Text(label) }, enabled = !state.busy, modifier = Modifier.heightIn(min = 48.dp).semantics { role = Role.RadioButton })
+            OutlinedButton(onClick = { details = !details }, modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)
+                .semantics { stateDescription = if (details) "Expanded" else "Collapsed" }) {
+                Text(if (details) "Hide optional profile details" else "Add experience and preferences")
+            }
+        }
+        if (details) {
+            item { Field("Phone (optional)", profile.phone, { model.editProfile { p -> p.copy(phone = it) } }, KeyboardType.Phone, enabled = !state.busy) }
+            item { Field("Professional headline (optional)", profile.headline, { model.editProfile { p -> p.copy(headline = it) } }, enabled = !state.busy) }
+            item { CountryChooser("Your country (optional)", profile.country, !state.busy) { model.editProfile { p -> p.copy(country = it) } } }
+            item { Field("City (optional)", profile.city, { model.editProfile { p -> p.copy(city = it) } }, enabled = !state.busy) }
+            item { Field("Website or portfolio (optional)", profile.website, { model.editProfile { p -> p.copy(website = it) } }, KeyboardType.Uri, enabled = !state.busy) }
+            item { Field("Skills (separate with commas)", profile.skills, { model.editProfile { p -> p.copy(skills = it) } }, singleLine = false, enabled = !state.busy) }
+            item { Field("Roles you want (separate with commas)", profile.targetRoles, { model.editProfile { p -> p.copy(targetRoles = it) } }, singleLine = false, enabled = !state.busy) }
+            item { TargetCountryChooser(profile.targetCountries.parts().toSet(), !state.busy) { values ->
+                model.editProfile { p -> p.copy(targetCountries = values.sorted().joinToString(", ")) }
+            } }
+            item {
+                Panel {
+                    Text("Work preferences", style = MaterialTheme.typography.titleLarge)
+                    listOf("on-site" to "On site", "hybrid" to "Hybrid", "remote" to "Remote").forEach { (value, label) ->
+                        CheckLine(label, value in profile.workModes, { checked -> model.editProfile { p -> p.copy(workModes = if (checked) p.workModes + value else p.workModes - value) } }, !state.busy)
                     }
+                    Text("Experience level", style = MaterialTheme.typography.labelLarge)
+                    Row(Modifier.horizontalScroll(rememberScrollState()).selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        listOf("any" to "Any", "entry" to "Entry", "mid" to "Mid", "senior" to "Senior").forEach { (value, label) ->
+                            FilterChip(selected = profile.experienceLevel == value, onClick = { model.editProfile { it.copy(experienceLevel = value) } }, label = { Text(label) }, enabled = !state.busy,
+                                modifier = Modifier.heightIn(min = 48.dp).semantics { role = Role.RadioButton; contentDescription = "Experience level: " + label })
+                        }
+                    }
+                    Text("Preferences help describe your search. They do not confirm work authorization or employer eligibility.", style = MaterialTheme.typography.bodySmall)
                 }
             }
         }
@@ -605,17 +690,51 @@ private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePD
 }
 
 @Composable
-private fun Field(label: String, value: String, changed: (String) -> Unit, type: KeyboardType = KeyboardType.Text, singleLine: Boolean = true, enabled: Boolean = true) {
-    OutlinedTextField(value = value, onValueChange = { changed(it.take(if (singleLine) 2000 else 5000)) }, label = { Text(label) },
-        modifier = Modifier.fillMaxWidth(), singleLine = singleLine, minLines = if (singleLine) 1 else 3,
-        keyboardOptions = KeyboardOptions(keyboardType = type), enabled = enabled, shape = RoundedCornerShape(14.dp))
+private fun TargetCountryChooser(value: Set<String>, enabled: Boolean, changed: (Set<String>) -> Unit) {
+    val countries = remember { Locale.getISOCountries().map { it to Locale.Builder().setRegion(it).build().displayCountry }.sortedBy { it.second } }
+    var open by remember { mutableStateOf(false) }
+    var draft by remember { mutableStateOf(value) }
+    var search by remember { mutableStateOf("") }
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text("Target countries (optional)", style = MaterialTheme.typography.labelLarge)
+        OutlinedButton(onClick = { draft = value; search = ""; open = true }, enabled = enabled,
+            modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp).semantics { contentDescription = "Choose target countries" }) {
+            Text(if (value.isEmpty()) "No country preference" else value.sorted().joinToString(", ") { code -> countries.find { it.first == code }?.second ?: code })
+        }
+    }
+    if (open) FullScreenForm("Target countries", { open = false }) {
+        Column(Modifier.fillMaxSize().padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Field("Search target countries", search, { search = it })
+            val filtered = countries.filter { (it.first + " " + it.second).contains(search, true) }
+            LazyColumn(Modifier.weight(1f).testTag("target-countries")) {
+                item { Text(draft.size.toString() + " selected · Leave empty for no preference.", style = MaterialTheme.typography.bodyMedium) }
+                item { TextButton(onClick = { draft = emptySet() }, modifier = Modifier.heightIn(min = 48.dp)) { Text("Clear selection") } }
+                if (filtered.isEmpty()) item { Text("No countries match this search.", Modifier.padding(vertical = 16.dp)) }
+                items(filtered, key = { it.first }) { (code, name) ->
+                    CheckLine(name + " · " + code, code in draft, { selected -> draft = if (selected) draft + code else draft - code })
+                }
+            }
+            Action("Use selected countries") { changed(draft); open = false }
+            Spacer(Modifier.height(8.dp))
+        }
+    }
 }
 
 @Composable
-private fun CheckLine(label: String, checked: Boolean, changed: (Boolean) -> Unit, enabled: Boolean = true) {
+internal fun Field(label: String, value: String, changed: (String) -> Unit, type: KeyboardType = KeyboardType.Text, singleLine: Boolean = true,
+    enabled: Boolean = true, error: String? = null) {
+    OutlinedTextField(value = value, onValueChange = { changed(it.take(if (singleLine) 2000 else 5000)) }, label = { Text(label) },
+        modifier = Modifier.fillMaxWidth(), singleLine = singleLine, minLines = if (singleLine) 1 else 3,
+        keyboardOptions = KeyboardOptions(keyboardType = type), enabled = enabled, shape = RoundedCornerShape(14.dp),
+        isError = error != null, supportingText = if (error != null) { { Text(error) } } else null)
+}
+
+@Composable
+internal fun CheckLine(label: String, checked: Boolean, changed: (Boolean) -> Unit, enabled: Boolean = true,
+    accessibilityLabel: String? = null) {
     Row(Modifier.fillMaxWidth().heightIn(min = 48.dp)
         .toggleable(value = checked, enabled = enabled, role = Role.Checkbox, onValueChange = changed)
-        .semantics(mergeDescendants = true) {}, verticalAlignment = Alignment.CenterVertically) {
+        .semantics(mergeDescendants = true) { accessibilityLabel?.let { contentDescription = it } }, verticalAlignment = Alignment.CenterVertically) {
         Checkbox(checked, null, enabled = enabled, modifier = Modifier.clearAndSetSemantics {})
         Text(label, Modifier.padding(start = 8.dp).weight(1f), style = MaterialTheme.typography.bodyMedium)
     }
@@ -641,7 +760,8 @@ private fun CountryChooser(label: String, value: String, enabled: Boolean = true
     val countries = remember { Locale.getISOCountries().map { it to Locale.Builder().setRegion(it).build().displayCountry }.sortedBy { it.second } }
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(label, style = MaterialTheme.typography.labelLarge)
-        OutlinedButton(onClick = { open = true }, enabled = enabled, modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp), shape = RoundedCornerShape(14.dp)) {
+        OutlinedButton(onClick = { open = true }, enabled = enabled, modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)
+            .semantics { contentDescription = label + ": " + (countries.find { it.first == value }?.second ?: "Not selected") }, shape = RoundedCornerShape(14.dp)) {
             Text(if (value.isBlank()) "Not selected" else countries.find { it.first == value }?.second ?: value, Modifier.weight(1f))
             Icon(Icons.Default.ArrowDropDown, null)
         }
@@ -652,6 +772,7 @@ private fun CountryChooser(label: String, value: String, enabled: Boolean = true
                 Field("Search countries", search, { search = it })
                 LazyColumn(Modifier.heightIn(max = 320.dp)) {
                     item { TextButton(onClick = { changed(""); open = false }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Not selected") } }
+                    if (countries.none { (it.first + " " + it.second).contains(search, true) }) item { Text("No countries match this search.", Modifier.padding(vertical = 12.dp)) }
                     items(countries.filter { (it.first + " " + it.second).contains(search, true) }, key = { it.first }) { (code, name) ->
                         TextButton(onClick = { changed(code); open = false; search = "" }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(name + " · " + code) }
                     }
@@ -662,7 +783,7 @@ private fun CountryChooser(label: String, value: String, enabled: Boolean = true
 }
 
 @Composable
-private fun StatusPill(label: String, caution: Boolean) {
+internal fun StatusPill(label: String, caution: Boolean) {
     Surface(shape = RoundedCornerShape(10.dp), color = if (caution) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.primaryContainer) {
         Text(label, Modifier.padding(horizontal = 10.dp, vertical = 7.dp), style = MaterialTheme.typography.labelMedium,
             color = if (caution) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onPrimaryContainer)
@@ -670,7 +791,7 @@ private fun StatusPill(label: String, caution: Boolean) {
 }
 
 @Composable
-private fun FullScreenForm(title: String, close: () -> Unit, content: @Composable () -> Unit) {
+internal fun FullScreenForm(title: String, close: () -> Unit, content: @Composable () -> Unit) {
     Dialog(onDismissRequest = close, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             Column(Modifier.safeDrawingPadding().imePadding()) {
@@ -772,12 +893,12 @@ private fun AddOpportunityDialog(state: CareerUiState, model: CareerViewModel, c
     }
 }
 
-private fun openLink(context: Context, url: String) {
+internal fun openLink(context: Context, url: String) {
     try { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(BoundaryPolicy.opportunityURL(url)))) }
     catch (_: Exception) { Toast.makeText(context, "This HTTPS link could not be opened.", Toast.LENGTH_LONG).show() }
 }
 private fun fileSize(bytes: Long): String = String.format(Locale.getDefault(), "%.1f MiB", bytes / (1024.0 * 1024.0))
-private fun dateLabel(value: String): String = try { DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.getDefault()).withZone(ZoneId.systemDefault()).format(Instant.parse(value)) } catch (_: Exception) { "Time not recorded" }
+internal fun dateLabel(value: String): String = try { DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.getDefault()).withZone(ZoneId.systemDefault()).format(Instant.parse(value)) } catch (_: Exception) { "Time not recorded" }
 private fun consentLabel(value: Any?): String = when (value) { true -> "Yes"; false -> "No"; else -> "Not provided" }
 private fun receiptLabel(receipt: ApplicationReceipt): String {
     val label = when {

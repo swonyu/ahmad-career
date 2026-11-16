@@ -48,3 +48,14 @@ export const throttles = sqliteTable('throttles', {
   key: text('key').primaryKey(), window: integer('window').notNull(), count: integer('count').notNull(),
 }, t => [index('throttle_window').on(t.window)]);
 export const dispatchGates = sqliteTable('dispatch_gates', { key: text('key').primaryKey(), nextAt: integer('next_at').notNull().default(0) });
+
+// Public employer metadata only. Search terms, account identities and applicant data never enter this cache.
+export const discoveryCache = sqliteTable('discovery_cache', {
+  id: text('id').primaryKey(), jobsJson: text('jobs_json').notNull().default('[]'), checkedAt: text('checked_at'),
+  expiresAt: integer('expires_at').notNull().default(0), staleUntil: integer('stale_until').notNull().default(0),
+  retryAt: integer('retry_at').notNull().default(0), claim: text('claim'), leaseUntil: integer('lease_until').notNull().default(0),
+  limited: integer('limited').notNull().default(0), errorCode: text('error_code'), errorMessage: text('error_message'),
+}, t => [index('discovery_cache_expiry').on(t.staleUntil,t.leaseUntil,t.retryAt)]);
+export const discoveryRates = sqliteTable('discovery_rates', {
+  key: text('key').primaryKey(), window: integer('window').notNull(), count: integer('count').notNull(),
+}, t => [index('discovery_rate_window').on(t.window)]);

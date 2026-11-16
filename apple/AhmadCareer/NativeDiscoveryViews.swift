@@ -1,0 +1,238 @@
+#if os(iOS)
+import SwiftUI
+
+struct NativeDiscoveryScreen: View {
+    @EnvironmentObject private var discovery: CareerDiscoveryStore
+    @State private var choosingBoards = false
+    @FocusState private var focused: Bool
+    var body: some View {
+        List {
+            Section {
+                Text("Find your next opportunity.").font(.title2.weight(.bold)).fixedSize(horizontal: false, vertical: true)
+                Text("Search selected public employer boards across locations and professions. You choose which boards and search words to use.")
+                    .font(.subheadline).foregroundStyle(.secondary)
+                TextField("Role, skill or keyword", text: $discovery.query.keywords)
+                    .focused($focused).submitLabel(.search).onSubmit { beginSearch() }
+                    .accessibilityIdentifier("discovery.keywords")
+                TextField("Location text (optional)", text: $discovery.query.location)
+                    .focused($focused).submitLabel(.search).onSubmit { beginSearch() }
+                    .accessibilityIdentifier("discovery.location")
+                Toggle("Remote roles only", isOn: $discovery.query.remoteOnly)
+                    .accessibilityIdentifier("discovery.remote")
+                Button { focused = false; choosingBoards = true } label: {
+                    Label(boardLabel, systemImage: "building.2")
+                }.accessibilityIdentifier("discovery.chooseBoards")
+                if discovery.isSearching {
+                    ProgressView("Checking your employer boards…")
+                    Button("Cancel search", role: .cancel) { discovery.cancelSearch() }
+                        .accessibilityIdentifier("discovery.cancel")
+                } else {
+                    Button(action: beginSearch) {
+                        Label("Search jobs", systemImage: "magnifyingglass").font(.headline).padding(.vertical, 6)
+                    }.accessibilityIdentifier("discovery.search")
+                }
+            } footer: {
+                Text("Search sends only these words and board choices to the public discovery service. No account, application profile or CV is sent. Remote wording does not establish where you can legally work.")
+            }
+            if let error = discovery.error {
+                Section {
+                    Label(error, systemImage: "exclamationmark.circle")
+                        .font(.subheadline).fixedSize(horizontal: false, vertical: true).accessibilityIdentifier("discovery.error")
+                    if let retry = discovery.retryAfter {
+                        Text("Try again after \(retry.formatted(date: .omitted, time: .shortened)).").font(.footnote)
+                    }
+                    if discovery.catalog == nil && !discovery.loadingCatalog {
+                        Button("Retry employer directory") { Task { await discovery.loadCatalog() } }
+                    }
+                }
+            }
+            if let notice = discovery.storageNotice {
+                Section { Label(notice, systemImage: "exclamationmark.triangle").font(.footnote) }
+            }
+            if let page = discovery.page {
+                Section {
+                    if discovery.restoredResults || discovery.criteriaChanged {
+                        Label(discovery.criteriaChanged ? "Previous search — update the search to use your current fields." : "Previous results — search again to check availability.", systemImage: "clock.arrow.circlepath")
+                            .font(.footnote).foregroundStyle(.secondary)
+                    }
+                    if let criteria = discovery.lastQuery { Text(criteria.summary).font(.subheadline).fixedSize(horizontal: false, vertical: true) }
+                    DisclosureGroup("Employer coverage and freshness") {
+                        ForEach(page.sources) { source in
+                            VStack(alignment: .leading, spacing: 5) {
+                                Label(source.name, systemImage: source.status == "unavailable" ? "exclamationmark.circle" : source.status == "stale" ? "clock" : "building.2")
+                                    .font(.subheadline.weight(.semibold))
+                                Text(sourceStatus(source)).font(.caption).foregroundStyle(.secondary)
+                                if let message = source.error?.message { Text(message).font(.caption).fixedSize(horizontal: false, vertical: true) }
+                            }.padding(.vertical, 4).accessibilityElement(children: .combine)
+                        }
+                        Text(page.notice).font(.footnote).foregroundStyle(.secondary)
+                    }
+                } header: { Text("\(discovery.jobs.count) opportunities to review") }
+            }
+            Section {
+                if discovery.jobs.isEmpty {
+                    emptyState
+                } else {
+                    ForEach(discovery.jobs) { job in
+                        NavigationLink { NativeDiscoveryJobDetail(job: job) } label: {
+                            VStack(alignment: .leading, spacing: 7) {
+                                Text(job.title).font(.headline).fixedSize(horizontal: false, vertical: true)
+                                Text(job.company).font(.subheadline).foregroundStyle(.secondary)
+                                Text(job.location.isEmpty ? "Location not specified" : job.location).font(.caption).foregroundStyle(.secondary)
+                                if job.remote == true { Label("Remote wording found", systemImage: "globe").font(.caption) }
+                                if job.stale || discovery.restoredResults { Label("Previous result · check employer", systemImage: "clock").font(.caption).foregroundStyle(.secondary) }
+                            }.padding(.vertical, 6)
+                        }.accessibilityIdentifier("discovery.job.\(job.id)")
+                    }
+                    if discovery.canLoadMore {
+                        Button("Load more results") { Task { await discovery.search(more: true) } }
+                            .accessibilityIdentifier("discovery.loadMore")
+                    }
+                }
+            }
+        }
+        .listStyle(.insetGrouped).navigationTitle("Search jobs").navigationBarTitleDisplayMode(.inline)
+        .task { await discovery.loadCatalog() }
+        .sheet(isPresented: $choosingBoards) { NativeDiscoveryBoards() }
+        .toolbar { ToolbarItemGroup(placement: .keyboard) { Spacer(); Button("Done typing") { focused = false } } }
+        .onChange(of: discovery.error) { issue in
+            if let issue { UIAccessibility.post(notification: .announcement, argument: issue) }
+        }
+    }
+    private var boardLabel: String {
+        discovery.query.sources.isEmpty ? "Employer boards · suggested selection" : "Employer boards · \(discovery.query.sources.count) selected"
+    }
+    private func beginSearch() { focused = false; Task { await discovery.search() } }
+    private func sourceStatus(_ source: DiscoverySourceStatus) -> String {
+        let availability: String
+        switch source.status {
+        case "fresh": availability = "Checked now"
+        case "cached": availability = "Recent cached result"
+        case "stale": availability = "Earlier cached result — recheck employer"
+        default: availability = "Unavailable — this does not mean there are no openings"
+        }
+        return availability + " · \(source.matchedCount) matched" + (source.limited ? " · bounded sample" : "")
+    }
+    private var emptyState: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Image(systemName: "magnifyingglass").font(.title).accessibilityHidden(true)
+            Text(discovery.isSearching ? "Checking employer boards…" : discovery.page == nil ? "A fresh search starts with you." : discovery.page?.status == "unavailable" ? "These boards could not be checked." : "No roles match this search.")
+                .font(.headline).fixedSize(horizontal: false, vertical: true)
+            Text(discovery.page == nil ? "Use a role or skill, add a location if you want, and choose up to four Greenhouse or Lever employer boards. Tap Search jobs when you are ready."
+                 : "Try fewer keywords, another location or a different employer board. Results cover the selected boards, not every employer or country. Your saved opportunities are unchanged.")
+                .font(.subheadline).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+        }.padding(.vertical, 16).accessibilityIdentifier("discovery.empty")
+    }
+}
+
+private struct NativeDiscoveryBoards: View {
+    @EnvironmentObject private var discovery: CareerDiscoveryStore
+    @Environment(\.dismiss) private var dismiss
+    @State private var boardURL = ""
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    Button { discovery.useDefaultSources() } label: {
+                        Label("Use suggested boards", systemImage: discovery.query.sources.isEmpty ? "checkmark.circle.fill" : "circle")
+                    }
+                    Text("Choose up to four boards. With no explicit selection, the service searches its suggested boards. Choosing your first board replaces that suggested selection.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }
+                if let catalog = discovery.catalog {
+                    Section("Choose employers") {
+                        ForEach(catalog.sources) { source in
+                            Button { discovery.toggleSource(source.id) } label: {
+                                HStack(alignment: .top) {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(source.name).foregroundStyle(.primary)
+                                        Text(source.provider == "greenhouse" ? "Greenhouse board" : "Lever board").font(.caption).foregroundStyle(.secondary)
+                                    }
+                                    Spacer(minLength: 8)
+                                    Image(systemName: discovery.query.sources.contains(source.id) ? "checkmark.circle.fill" : "circle")
+                                }.padding(.vertical, 4)
+                            }.accessibilityValue(discovery.query.sources.contains(source.id) ? "Selected" : "Not selected")
+                        }
+                    }
+                } else if discovery.loadingCatalog { ProgressView("Loading employer directory") }
+                let known = Set(discovery.catalog?.sources.map(\.id) ?? [])
+                let custom = discovery.query.sources.filter { !known.contains($0) }
+                if !custom.isEmpty {
+                    Section("Your added boards") {
+                        ForEach(custom, id: \.self) { source in
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(source).font(.footnote).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
+                                Button("Remove board", role: .destructive) { discovery.toggleSource(source) }
+                            }
+                        }
+                    }
+                }
+                Section {
+                    TextField("Public employer board URL", text: $boardURL).keyboardType(.URL)
+                        .textInputAutocapitalization(.never).autocorrectionDisabled().accessibilityIdentifier("discovery.boardURL")
+                    Button("Add this board") { if discovery.addBoard(boardURL) { boardURL = "" } }
+                        .disabled(boardURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                } header: { Text("Add an employer board") } footer: {
+                    Text("Supports boards.greenhouse.io, job-boards.greenhouse.io, jobs.lever.co and jobs.eu.lever.co. You can paste a board or a posting on one of those hosts. Adding it does not search until you tap Search jobs.")
+                }
+                if let issue = discovery.error { Section { Text(issue).font(.footnote) } }
+            }.navigationTitle("Employer boards").navigationBarTitleDisplayMode(.inline)
+                .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+        }
+    }
+}
+
+private struct NativeDiscoveryJobDetail: View {
+    @EnvironmentObject private var applications: NativeApplicationsStore
+    @EnvironmentObject private var navigation: NativeCareerNavigation
+    let job: DiscoveryJob
+    @State private var saveMessage: String?
+    private var saved: Bool { applications.containsOpportunity(url: job.url) }
+    var body: some View {
+        List {
+            Section {
+                Text(job.title).font(.title2.weight(.bold)).fixedSize(horizontal: false, vertical: true)
+                Text(job.company).font(.headline)
+                Label(job.location.isEmpty ? "Location not specified" : job.location, systemImage: "mappin")
+                if job.remote == true { Label("Remote wording found · confirm eligible locations", systemImage: "globe") }
+                if job.stale { Label("Earlier result · confirm the posting is still open", systemImage: "clock") }
+            }
+            if !job.summary.isEmpty { Section("From the employer posting") { Text(job.summary).textSelection(.enabled) } }
+            Section {
+                if saved {
+                    Label("Saved for application review", systemImage: "checkmark.circle").accessibilityIdentifier("discovery.saved")
+                    Button("Open application workspace") { navigation.selectedTab = 2 }
+                } else {
+                    Button {
+                        Task {
+                            _ = await applications.addJob(url: job.url, title: job.title, company: job.company,
+                                                         location: job.location, country: job.country ?? "")
+                            saveMessage = applications.message
+                        }
+                    } label: { Label("Save opportunity", systemImage: "bookmark") }
+                        .disabled(applications.busy).accessibilityIdentifier("discovery.saveOpportunity")
+                }
+                if let saveMessage { Text(saveMessage).font(.footnote).foregroundStyle(.secondary) }
+                if let url = MobileApplicationPolicy.jobURL(job.url) {
+                    Link(destination: url) { Label("Open employer posting", systemImage: "arrow.up.right.square") }
+                    ShareLink(item: url) { Label("Share job link", systemImage: "square.and.arrow.up") }
+                }
+            } footer: {
+                Text("Saving copies this public link and role details into your application workspace. It does not send your profile or submit an application. Confirm qualifications, pay, work authorization and location with the employer.")
+            }
+            Section("Source and freshness") {
+                LabeledContent("Employer board", value: job.sourceName)
+                LabeledContent("Provider", value: job.provider == "greenhouse" ? "Greenhouse" : "Lever")
+                if let checked = ApplicationReviewPolicy.date(job.checkedAt) {
+                    LabeledContent("Checked", value: checked.formatted(date: .abbreviated, time: .shortened))
+                }
+                if let published = job.publishedAt.flatMap(ApplicationReviewPolicy.date) {
+                    LabeledContent("Published", value: published.formatted(date: .abbreviated, time: .omitted))
+                }
+                Text("This is a public lead, not a verified personal fit score. A listing may change or close after it was checked.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+        }.listStyle(.insetGrouped).navigationTitle("Opportunity").navigationBarTitleDisplayMode(.inline)
+    }
+}
+#endif

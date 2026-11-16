@@ -2,10 +2,15 @@ import handler from "vinext/server/fetch-handler";
 import { runWithConnectorBinding } from "../lib/connector-context";
 import type { ConnectorBinding } from "../lib/connector-contract.mjs";
 import { handleApplications } from "../server/applications.mjs";
+import { handleDiscovery } from "../server/discovery.mjs";
 
 const worker = {
   async fetch(request: Request, env: Cloudflare.Env, ctx: ExecutionContext<{ CONNECTORS?: ConnectorBinding }>) {
     const pathname = new URL(request.url).pathname;
+    if (pathname.startsWith("/api/discovery/")) {
+      const response = await handleDiscovery(request, env);
+      if (response) return response;
+    }
     if (pathname.startsWith("/api/apply/") || pathname === "/api/account" || pathname.startsWith("/api/account/") || pathname === "/api/health") {
       const response = await handleApplications(request, env, ctx);
       if (response) return response;

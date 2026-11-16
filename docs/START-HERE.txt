@@ -1,15 +1,27 @@
-CAREER FINDER — PHONE DEVELOPMENT HANDOFF
+CAREER FINDER — 0.4.0 PHONE CANDIDATE
 16 November 2026 • UTC
 
 PLATFORMS
 Native iPhone (iOS 16+) and Android phones (Android 8/API 26+).
-The new connected application flow starts with a blank personal profile.
-Worldwide opportunities can be saved manually; existing live iPhone discovery
-still has disclosed, limited Saudi source coverage. The interface is English.
+Fresh users start with a blank personal profile. The interface is English.
+Primary discovery searches selected public Greenhouse and Lever employer boards
+across regions and professions. Choose up to four catalog/custom boards, filter
+by role/location/remote, and save a posting into the application workspace.
+Coverage is limited to those boards, not every worldwide job or eligibility.
+The earlier six-source Saudi research feed remains historical/compatibility data.
+
+HOSTED SERVICE
+https://career-finder-service.jazzy-drake-8323.chatgpt.site/connect
+Public job search requires no account. Sign in with ChatGPT and generate a
+one-use code to connect a private phone workspace. The account page offers
+recovery, PDF download, export, phone revocation and cloud deletion.
+Hosted version 2 deployed successfully and passed 13 public production checks;
+signed-in phone acceptance remains separate. Live Auto Apply remains disabled.
 
 READ FIRST
 ../README.md — current features, setup and limits
-Phone-Quality-Review-2026-11-16.md — current reliability fixes and executed evidence
+Phone-Polish-Review-2026-11-16.md — current candidate, evidence and limits
+HOSTED-RELEASE-HANDOFF.md — deployed source, CI and remaining release gates
 Verified-Applications-Contract.md — exact submission and receipt rules
 ../android/README.md — Android preview, build and native checks
 ../apple/README.md — iPhone source, checks and outstanding native acceptance
@@ -19,28 +31,38 @@ Repository: https://github.com/swonyu/ahmad-career
 Branch: career-finder-phones-verified-apply-20261116
 Development continues in an isolated checkout. Source publication does not
 update a store build, deploy the service or submit an employer application.
+The prior baseline is 06f5e8a069c7debe94becf04ce73d997f9cde747; its four-job
+CI run passed. The expanded five-job workflow has not yet passed on the final
+0.4 source. Exact platform evidence is linked from each platform README.
 
 AUTO APPLY
 A configured HTTPS service and supported, employer-authorized connector are
 required for live submission. Review the exact profile, PDF and employer choices
 before approval. Only an actual provider application ID establishes a confirmed
-receipt. Test results, manual tracker statuses and opened links stay separate.
+receipt. This proves API acceptance, not a recruiter decision. Public discovery
+does not approve or submit anything. Test results, opened links and manual
+"Applied elsewhere" self-reports stay separate from verified live receipts.
 
 DISTRIBUTION
-The Android APK is a local debug-signed preview. This phone candidate has not
-been released through Google Play, App Store or TestFlight. Historical iOS
-invitations and IPA files describe earlier builds and do not install these changes.
-See the current quality review for precisely which checks were executed.
+Earlier Android preview APKs are available in the project releases; a previous
+version does not include these candidate changes. This 0.4 phone candidate has
+not been released through Google Play, App Store or TestFlight. Historical iOS
+invitations and IPA files describe earlier builds. Preserve the existing app
+identities and publisher records. See the polish review for executed checks.
 
 REMAINING RELEASE WORK
-Production HTTPS operation, authorized live integration acceptance, full data
-retention/erasure/recovery, current privacy/support publication, physical-phone
-accessibility and device QA, store signing and platform review remain required.
-The shared Apple build/simulator scheduling handoff still applies.
+Publish the final source and record its CI; execute a signed-in production
+phone/account flow and lifecycle acceptance; complete
+physical-phone accessibility/device QA, operator/contact and store disclosures,
+publisher signing and platform review. Real automatic submissions also need
+employer-authorized configuration and applicant approval. The shared local
+Apple build/simulator slot acknowledgment still applies. Hosted tests do not
+grant permission to use that local slot or establish physical-phone acceptance.
 
 HISTORICAL RECORDS
 Historical-Release-Handoff-2026-10-09.txt preserves the October handoff verbatim.
 Project-History-Through-2026-11-15.md and Apple-History-Through-2026-11-15.md
 preserve earlier source, website, Mac, iPad and TestFlight observations.
-Phone-Update-2026-11-16.md records the initial phone candidate before this
-reliability follow-up. Dates and source hashes distinguish the evidence.
+Phone-Update-2026-11-16.md and Phone-Quality-Review-2026-11-16.md preserve
+the initial candidate and earlier reliability evidence. Version 1 production
+HTTP evidence also stays dated; it does not validate version 2 discovery.

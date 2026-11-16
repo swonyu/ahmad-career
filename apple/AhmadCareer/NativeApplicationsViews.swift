@@ -5,8 +5,21 @@ import UIKit
 
 private enum ApplyDesign {
     static let green = Color(red: 0.04, green: 0.38, blue: 0.27)
+    static let accent = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark ? UIColor(red: 0.47, green: 0.83, blue: 0.70, alpha: 1)
+            : UIColor(red: 0.04, green: 0.38, blue: 0.27, alpha: 1)
+    })
     static let canvas = Color(uiColor: .systemGroupedBackground)
     static let card = Color(uiColor: .secondarySystemGroupedBackground)
+}
+
+struct NativeApplicationRow: Identifiable {
+    let id: String
+    let value: [String: ApplicationValue]
+    init?(_ value: [String: ApplicationValue], idKey: String = "id") {
+        guard let id = value[idKey]?.string ?? value["attemptId"]?.string, !id.isEmpty else { return nil }
+        self.id = id; self.value = value
+    }
 }
 
 struct NativeApplicationsScreen: View {
@@ -86,10 +99,13 @@ struct NativeApplicationsScreen: View {
                     }.buttonStyle(.plain).disabled(model.busy)
                         .accessibilityLabel("Continue review for \(review.title), \(review.items.count) applications")
                 }
-                Picker("Applications view", selection: $activity) {
-                    Text("Opportunities").tag(false)
-                    Text("Application activity").tag(true)
-                }.pickerStyle(.segmented)
+                if dynamicTypeSize.isAccessibilitySize {
+                    Picker("Show", selection: $activity) { Text("Opportunities").tag(false); Text("Activity").tag(true) }
+                        .pickerStyle(.menu).accessibilityIdentifier("applications.viewPicker")
+                } else {
+                    Picker("Applications view", selection: $activity) { Text("Opportunities").tag(false); Text("Activity").tag(true) }
+                        .pickerStyle(.segmented).accessibilityIdentifier("applications.viewPicker")
+                }
                 if activity { activityList } else { opportunities }
                 coverage
             }.padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 24)
@@ -122,6 +138,7 @@ struct NativeApplicationsScreen: View {
                     }
                     .buttonStyle(.plain).foregroundStyle(.white)
                     .background(ApplyDesign.green, in: RoundedRectangle(cornerRadius: 16))
+                    .accessibilityIdentifier("applications.review")
                     .disabled(model.busy || model.connected && model.selected.isEmpty)
                     .opacity(model.busy || model.connected && model.selected.isEmpty ? 0.65 : 1)
                     Text("Your details. Your choice. A receipt for every confirmed submission.")
@@ -147,8 +164,8 @@ struct NativeApplicationsScreen: View {
                 Image(systemName: model.mode == "test" ? "testtube.2" : "sparkle")
                 Text(model.mode == "test" ? "TEST WORKSPACE" : "YOUR NEXT CHAPTER")
                     .font(.caption.weight(.semibold)).tracking(1.8)
-            }.foregroundStyle(ApplyDesign.green)
-            Text("A career that\nfits your life.")
+            }.foregroundStyle(ApplyDesign.accent)
+            Text("Your application workspace.")
                 .font(.system(.largeTitle, design: .rounded, weight: .bold))
                 .fixedSize(horizontal: false, vertical: true)
             Text("Bring your experience. Choose your opportunities. Apply with confidence.")
@@ -160,19 +177,19 @@ struct NativeApplicationsScreen: View {
         Button { profileSheet = true } label: {
             HStack(alignment: .center, spacing: 14) {
                 Image(systemName: "person.crop.rectangle")
-                    .font(.title2).foregroundStyle(ApplyDesign.green)
+                    .font(.title2).foregroundStyle(ApplyDesign.accent)
                     .frame(width: 48, height: 56).background(ApplyDesign.green.opacity(0.09), in: RoundedRectangle(cornerRadius: 13))
                 VStack(alignment: .leading, spacing: 5) {
                     Text(model.profile.firstName.isEmpty ? "Make it yours" : "\(model.profile.firstName)'s application profile")
                         .font(.headline).foregroundStyle(.primary)
                     Text(model.profileHasConflict ? "Phone draft · resolve profile changes" : model.profileNeedsSync ? "Phone draft · ready to save" :
                             model.profile.resumeName.isEmpty ? "Add your details and a PDF CV" : model.profile.resumeName)
-                        .font(.caption).foregroundStyle(.secondary).lineLimit(2)
+                        .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 0)
                 Image(systemName: "chevron.right").font(.caption.weight(.bold)).foregroundStyle(.secondary)
             }.padding(17).background(ApplyDesign.card, in: RoundedRectangle(cornerRadius: 20))
-        }.buttonStyle(.plain).disabled(model.busy)
+        }.buttonStyle(.plain).disabled(model.busy).accessibilityIdentifier("applications.profile")
     }
     @ViewBuilder private var metrics: some View {
         metric("\(model.jobs.count)", "Opportunities", icon: "square.stack")
@@ -194,7 +211,8 @@ struct NativeApplicationsScreen: View {
             HStack {
                 Text("Your opportunities").font(.title3.weight(.semibold))
                 Spacer()
-                Button { addSheet = true } label: { Label("Add", systemImage: "plus").font(.subheadline.weight(.semibold)).padding(.vertical, 10) }.disabled(model.busy)
+                Button { addSheet = true } label: { Label("Add", systemImage: "plus").font(.subheadline.weight(.semibold)).padding(.vertical, 10) }
+                    .disabled(model.busy).accessibilityLabel("Add an opportunity").accessibilityIdentifier("applications.addOpportunity")
             }
             if model.jobs.isEmpty {
                 empty(icon: "square.stack.3d.up", title: "Your next move starts here.",
@@ -202,8 +220,8 @@ struct NativeApplicationsScreen: View {
                 Button { addSheet = true } label: { Label("Add your first opportunity", systemImage: "plus").frame(maxWidth: .infinity).padding(14) }
                     .buttonStyle(.bordered).tint(ApplyDesign.green)
             }
-            ForEach(Array(model.jobs.enumerated()), id: \.offset) { _, job in
-                let id = job["id"]?.string ?? ""
+            ForEach(model.jobs.compactMap { NativeApplicationRow($0) }) { row in
+                let job = row.value, id = row.id
                 VStack(alignment: .leading, spacing: 12) {
                     Button {
                         if model.selected.contains(id) { model.selected.remove(id) }
@@ -212,8 +230,9 @@ struct NativeApplicationsScreen: View {
                     } label: {
                         HStack(alignment: .top, spacing: 12) {
                             Text(String((job["company"]?.string ?? "?").prefix(1)).uppercased())
-                                .font(.title3.weight(.semibold)).foregroundStyle(ApplyDesign.green)
+                                .font(.title3.weight(.semibold)).foregroundStyle(ApplyDesign.accent)
                                 .frame(width: 42, height: 42).background(ApplyDesign.green.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+                                .accessibilityHidden(true)
                             VStack(alignment: .leading, spacing: 5) {
                                 Text(job["title"]?.string ?? "Opportunity").font(.headline).foregroundStyle(.primary)
                                 Text(job["company"]?.string ?? "").font(.subheadline).foregroundStyle(.secondary)
@@ -222,7 +241,7 @@ struct NativeApplicationsScreen: View {
                                 }
                             }.frame(maxWidth: .infinity, alignment: .leading)
                             Image(systemName: model.selected.contains(id) ? "checkmark.circle.fill" : "circle")
-                                .font(.title2).foregroundStyle(model.selected.contains(id) ? ApplyDesign.green : Color.secondary)
+                                .font(.title2).foregroundStyle(model.selected.contains(id) ? ApplyDesign.accent : Color.secondary)
                                 .frame(minWidth: 30, minHeight: 44)
                         }
                     }.buttonStyle(.plain).disabled(model.busy)
@@ -264,8 +283,8 @@ struct NativeApplicationsScreen: View {
                 empty(icon: "checkmark.seal", title: "Receipts will live here.",
                       detail: "A confirmed application includes a provider receipt. Opening a job link or preparing a draft never counts as a submission.")
             }
-            ForEach(Array(model.attempts.reversed().enumerated()), id: \.offset) { _, attempt in
-                NativeApplicationReceipt(attempt: attempt)
+            ForEach(model.attempts.reversed().compactMap { NativeApplicationRow($0) }) { row in
+                NativeApplicationReceipt(attempt: row.value)
             }
         }
     }
@@ -282,7 +301,7 @@ struct NativeApplicationsScreen: View {
     }
     private func empty(icon: String, title: String, detail: String) -> some View {
         VStack(spacing: 15) {
-            Image(systemName: icon).font(.system(size: 31, weight: .light)).foregroundStyle(ApplyDesign.green)
+            Image(systemName: icon).font(.system(size: 31, weight: .light)).foregroundStyle(ApplyDesign.accent)
                 .frame(width: 72, height: 72).background(ApplyDesign.green.opacity(0.07), in: RoundedRectangle(cornerRadius: 23))
             Text(title).font(.headline).multilineTextAlignment(.center)
             Text(detail).font(.subheadline).foregroundStyle(.secondary).multilineTextAlignment(.center).lineSpacing(3)
@@ -291,7 +310,7 @@ struct NativeApplicationsScreen: View {
     }
 }
 
-private struct NativeApplicationProfileEditor: View {
+struct NativeApplicationProfileEditor: View {
     @ObservedObject var model: NativeApplicationsStore
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
@@ -306,6 +325,7 @@ private struct NativeApplicationProfileEditor: View {
     @State private var replaceChoice = false
     @State private var checkpointed = false
     @State private var closingIntentionally = false
+    @FocusState private var focusedField: String?
 
     init(model: NativeApplicationsStore) {
         self.model = model
@@ -343,11 +363,16 @@ private struct NativeApplicationProfileEditor: View {
                 }
                 Section("About you") {
                     TextField("First or single name", text: $draft.firstName).textContentType(.givenName)
+                        .accessibilityIdentifier("application.firstName").focused($focusedField, equals: "firstName")
                     TextField("Last name (optional)", text: $draft.lastName).textContentType(.familyName)
+                        .focused($focusedField, equals: "lastName")
                     TextField("Email", text: $draft.email).textContentType(.emailAddress).keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never).autocorrectionDisabled()
+                        .accessibilityIdentifier("application.email").focused($focusedField, equals: "email")
                     TextField("Phone (optional)", text: $draft.phone).textContentType(.telephoneNumber).keyboardType(.phonePad)
+                        .focused($focusedField, equals: "phone")
                     TextField("City (optional)", text: $draft.city).textContentType(.addressCity)
+                        .focused($focusedField, equals: "city")
                     Picker("Country or region", selection: $draft.country) {
                         Text("Choose (optional)").tag("")
                         ForEach(Locale.Region.isoRegions.map(\.identifier).sorted { countryName($0) < countryName($1) }, id: \.self) { code in
@@ -377,9 +402,12 @@ private struct NativeApplicationProfileEditor: View {
                 }
                 Section("Your experience") {
                     TextField("Professional headline (optional)", text: $draft.headline, axis: .vertical)
+                        .focused($focusedField, equals: "headline")
                     TextField("Skills, separated by commas", text: $draft.skills, axis: .vertical)
+                        .focused($focusedField, equals: "skills")
                     TextField("Portfolio HTTPS link (optional)", text: $draft.website)
                         .keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
+                        .focused($focusedField, equals: "website")
                     Picker("Career stage", selection: $draft.experienceLevel) {
                         Text("Any / not specified").tag("any"); Text("Entry level").tag("entry")
                         Text("Mid level").tag("mid"); Text("Senior").tag("senior")
@@ -387,8 +415,10 @@ private struct NativeApplicationProfileEditor: View {
                 }
                 Section {
                     TextField("Target roles, separated by commas", text: $draft.targetRoles, axis: .vertical)
+                        .focused($focusedField, equals: "roles")
                     TextField("Target country codes (optional)", text: $draft.targetCountries)
                         .textInputAutocapitalization(.characters).autocorrectionDisabled()
+                        .focused($focusedField, equals: "countries")
                     Toggle("Remote", isOn: $draft.remote); Toggle("Hybrid", isOn: $draft.hybrid); Toggle("On site", isOn: $draft.onsite)
                 } header: { Text("What comes next") } footer: {
                     Text("Leave countries blank for any country, or enter two-letter country codes separated by commas. These preferences describe your goals; they do not establish work authorization or qualify you for a role.")
@@ -420,6 +450,7 @@ private struct NativeApplicationProfileEditor: View {
                         }
                     }.disabled(occupied || conflicts)
                 }
+                ToolbarItemGroup(placement: .keyboard) { Spacer(); Button("Done typing") { focusedField = nil } }
             }
             .fileImporter(isPresented: $pickingPDF, allowedContentTypes: [.pdf]) { result in
                 do {
@@ -500,50 +531,90 @@ private struct NativeApplicationProfileEditor: View {
     private func countryName(_ code: String) -> String { Locale.current.localizedString(forRegionCode: code) ?? code }
 }
 
-private struct NativeOpportunityEditor: View {
+struct NativeOpportunityEditor: View {
     @ObservedObject var model: NativeApplicationsStore
     @Environment(\.dismiss) private var dismiss
-    @State private var url = ""
-    @State private var title = ""
-    @State private var company = ""
-    @State private var location = ""
-    @State private var country = ""
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var draft: PhoneOpportunityDraft
+    @State private var original: PhoneOpportunityDraft
+    @State private var dismissalChoice = false
+    @State private var closingIntentionally = false
     @State private var issue: String?
+    @FocusState private var focusedField: String?
+    init(model: NativeApplicationsStore) {
+        self.model = model
+        _draft = State(initialValue: model.opportunityDraft)
+        _original = State(initialValue: model.opportunityDraft)
+    }
+    private var changed: Bool { draft != original }
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("https://…", text: $url).keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
+                    TextField("https://…", text: $draft.url).keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
+                        .accessibilityLabel("Public HTTPS job link").accessibilityIdentifier("opportunity.url")
+                        .focused($focusedField, equals: "url").submitLabel(.next).onSubmit { focusedField = "title" }
                 } header: { Text("Job link") } footer: {
-                    Text("Use the employer's job posting. Connected Lever postings can import their published details.")
+                    Text("Use the employer's public HTTPS posting. Connected Lever postings can import their published details. Drafts stay on this phone until you add the opportunity.")
                 }
                 Section("Opportunity details") {
-                    TextField("Role title", text: $title)
-                    TextField("Employer", text: $company)
-                    TextField("Location or remote", text: $location)
-                    Picker("Country or region", selection: $country) {
+                    TextField("Role title", text: $draft.title).accessibilityIdentifier("opportunity.title")
+                        .focused($focusedField, equals: "title").submitLabel(.next).onSubmit { focusedField = "company" }
+                    TextField("Employer", text: $draft.company).accessibilityIdentifier("opportunity.company")
+                        .focused($focusedField, equals: "company").submitLabel(.next).onSubmit { focusedField = "location" }
+                    TextField("Location or remote", text: $draft.location).focused($focusedField, equals: "location")
+                    Picker("Country or region", selection: $draft.country) {
                         Text("Not specified").tag("")
-                        ForEach(Locale.Region.isoRegions.map(\.identifier).sorted(), id: \.self) { code in
+                        ForEach(Locale.Region.isoRegions.map(\.identifier).sorted {
+                            (Locale.current.localizedString(forRegionCode: $0) ?? $0) < (Locale.current.localizedString(forRegionCode: $1) ?? $1)
+                        }, id: \.self) { code in
                             Text(Locale.current.localizedString(forRegionCode: code) ?? code).tag(code)
                         }
                     }
                 }
-                if let issue { Section { Text(issue).foregroundStyle(.red) } }
+                if let issue { Section { Text(issue).foregroundStyle(.red).accessibilityIdentifier("opportunity.error") } }
                 Section {
                     Text("Saving a job does not apply to it. Automatic submission eligibility is checked when you review your selection.")
                         .font(.caption).foregroundStyle(.secondary)
                 }
             }.disabled(model.busy).navigationTitle("Add opportunity").navigationBarTitleDisplayMode(.inline)
                 .toolbar {
-                    ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() }.disabled(model.busy) }
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") {
+                            if changed { dismissalChoice = true }
+                            else { closingIntentionally = true; dismiss() }
+                        }.disabled(model.busy)
+                    }
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Add") { Task {
-                            if await model.addJob(url: url, title: title, company: company, location: location, country: country) { dismiss() }
+                            guard model.keepOpportunityDraft(draft) else { issue = model.message; return }
+                            if await model.addJob(url: draft.url, title: draft.title, company: draft.company, location: draft.location, country: draft.country) {
+                                closingIntentionally = true; dismiss()
+                            }
                             else { issue = model.message }
-                        } }.disabled(model.busy || url.isEmpty)
+                        } }.disabled(model.busy || draft.url.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                            .accessibilityIdentifier("opportunity.save")
                     }
+                    ToolbarItemGroup(placement: .keyboard) { Spacer(); Button("Done typing") { focusedField = nil } }
                 }
-        }.tint(ApplyDesign.green).interactiveDismissDisabled(model.busy)
+                .confirmationDialog("Keep this opportunity draft?", isPresented: $dismissalChoice, titleVisibility: .visible) {
+                    Button("Save draft on this phone") {
+                        if model.keepOpportunityDraft(draft) { closingIntentionally = true; dismiss() }
+                        else { issue = model.message }
+                    }
+                    Button("Discard draft", role: .destructive) {
+                        if model.keepOpportunityDraft(PhoneOpportunityDraft()) { closingIntentionally = true; dismiss() }
+                        else { issue = model.message }
+                    }
+                    Button("Keep editing", role: .cancel) {}
+                } message: { Text("Saving a draft does not add it to the service or submit an application.") }
+        }.tint(ApplyDesign.accent).interactiveDismissDisabled(model.busy || changed)
+            .onChange(of: scenePhase) { phase in
+                if phase != .active && changed { if !model.keepOpportunityDraft(draft) { issue = model.message } }
+            }
+            .onDisappear {
+                if changed && !closingIntentionally { model.keepOpportunityDraft(draft) }
+            }
     }
 }
 
@@ -560,7 +631,7 @@ private struct NativeApplicationConnection: View {
         NavigationStack {
             Form {
                 Section {
-                    Image(systemName: "lock.shield").font(.largeTitle).foregroundStyle(ApplyDesign.green).padding(.vertical, 8)
+                    Image(systemName: "lock.shield").font(.largeTitle).foregroundStyle(ApplyDesign.accent).padding(.vertical, 8)
                     Text(model.connected ? "Your application workspace is connected." : "Connect once. Keep every receipt.")
                         .font(.title3.weight(.semibold))
                     Text("Your application service keeps submission attempts and provider receipts so closing the app cannot cause an automatic duplicate.")
@@ -610,7 +681,7 @@ private struct NativeApplicationConnection: View {
                 }
             }.navigationTitle("Application connection").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } } }
-        }.tint(ApplyDesign.green).interactiveDismissDisabled(model.busy)
+        }.tint(ApplyDesign.accent).interactiveDismissDisabled(model.busy)
     }
 }
 
@@ -664,14 +735,15 @@ private struct NativeApplicationReview: View {
                         Label("Test workspace — no real employer application", systemImage: "testtube.2").foregroundStyle(.orange)
                     }
                 }
-                ForEach(Array(items.enumerated()), id: \.offset) { _, item in
+                ForEach(items.compactMap { NativeApplicationRow($0, idKey: "jobId") }) { row in
+                    let item = row.value
                     let job = item["job"]?.object ?? [:]
                     let jobID = item["jobId"]?.string ?? ""
                     Section {
                         Text(job["title"]?.string ?? "Opportunity").font(.headline)
                         Text(job["company"]?.string ?? "").foregroundStyle(.secondary)
                         if eligible(item) {
-                            Label("Ready for your approval", systemImage: "checkmark.circle").foregroundStyle(ApplyDesign.green)
+                            Label("Ready for your approval", systemImage: "checkmark.circle").foregroundStyle(ApplyDesign.accent)
                         } else {
                             Label(item["reason"]?.string ?? "Complete this application on the employer's website.", systemImage: "exclamationmark.circle")
                                 .font(.subheadline).foregroundStyle(.orange)
@@ -784,7 +856,7 @@ private struct NativeApplicationReview: View {
                 }
                 Button("Keep editing", role: .cancel) {}
             } message: { Text("The saved review remains available. Your unreviewed message and permission changes will be discarded.") }
-        }.tint(ApplyDesign.green).interactiveDismissDisabled(model.busy || changed)
+        }.tint(ApplyDesign.accent).interactiveDismissDisabled(model.busy || changed)
             .onChange(of: model.plan?["digest"]?.string) { _ in approved = false }
             .onChange(of: model.plan?["approvedAt"]?.string) { _ in approved = false; changed = false }
             .onChange(of: model.plan?["id"]?.string) { id in if id == nil { dismiss() } }

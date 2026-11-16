@@ -71,12 +71,28 @@ struct ApplicationWorkspaceSnapshot {
     }
 }
 
+struct PhoneOpportunityDraft: Codable, Equatable {
+    var url = ""
+    var title = ""
+    var company = ""
+    var location = ""
+    var country = ""
+    var hasContent: Bool { [url, title, company, location, country].contains { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty } }
+    var storageError: String? {
+        guard url.count <= 4_096, title.count <= 300, company.count <= 300, location.count <= 300, country.count <= 2 else {
+            return "Keep the link under 4,096 characters and each opportunity detail under 300 characters."
+        }
+        return nil
+    }
+}
+
 /// The draft's base revision is deliberately independent of the latest server revision.
 /// Old files without a revision migrate to an unknown base, which requires an explicit conflict choice.
 struct PhoneApplicationState: Codable {
     var profile = PhoneApplicationProfile()
     var profileNeedsSync = false
     var jobs: [[String: ApplicationValue]] = []
+    var opportunityDraft = PhoneOpportunityDraft()
     var serviceAddress = ""
     var workspaceID = ""
     var profileRevision: Int?
@@ -87,7 +103,7 @@ struct PhoneApplicationState: Codable {
 
     init() {}
     private enum CodingKeys: String, CodingKey {
-        case profile, profileNeedsSync, jobs, serviceAddress, workspaceID, profileRevision
+        case profile, profileNeedsSync, jobs, opportunityDraft, serviceAddress, workspaceID, profileRevision
         case latestServerRevision, latestServerProfile, connectionEnabled, credentialAccount
     }
     init(from decoder: Decoder) throws {
@@ -95,6 +111,7 @@ struct PhoneApplicationState: Codable {
         profile = try c.decode(PhoneApplicationProfile.self, forKey: .profile)
         profileNeedsSync = try c.decodeIfPresent(Bool.self, forKey: .profileNeedsSync) ?? false
         jobs = try c.decodeIfPresent([[String: ApplicationValue]].self, forKey: .jobs) ?? []
+        opportunityDraft = try c.decodeIfPresent(PhoneOpportunityDraft.self, forKey: .opportunityDraft) ?? PhoneOpportunityDraft()
         serviceAddress = try c.decodeIfPresent(String.self, forKey: .serviceAddress) ?? ""
         workspaceID = try c.decodeIfPresent(String.self, forKey: .workspaceID) ?? ""
         profileRevision = try c.decodeIfPresent(Int.self, forKey: .profileRevision)

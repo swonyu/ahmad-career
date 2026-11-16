@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-11-16T14:54:41.775Z",
+  "observedAt": "2026-11-16T15:46:21.343Z",
   "status": "passed",
   "checks": 8,
   "scope": "Actual bundled application handler executing inside workerd with nodejs_compat, D1 and R2; local synthetic identity headers only.",

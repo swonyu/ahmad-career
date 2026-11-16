@@ -36,6 +36,7 @@ class WorkspaceRegressionTest {
     }
 
     private class Service(private val connection: Connection) : CareerService {
+        var mode = "test"
         var profile = ProfileDraft(firstName = "Saved", email = "fixture@example.invalid", revision = 1,
             resume = Resume("Old.pdf", 20, "a".repeat(64)))
         var jobs = listOf(Opportunity("job-a", "https://example.invalid/job-a", "Role A", "Employer", "", ""),
@@ -57,7 +58,7 @@ class WorkspaceRegressionTest {
             if (method != "GET") writes += route to JSONObject(body.toString())
             return when (route) {
                 "workspace" -> {
-                    val response = JSONObject().put("ok", true).put("mode", "test").put("workspaceId", connection.workspaceId).put("profile", profileData())
+                    val response = JSONObject().put("ok", true).put("mode", mode).put("workspaceId", connection.workspaceId).put("profile", profileData())
                         .put("jobs", if (malformedWorkspace) JSONObject.NULL else JSONArray(jobs.map(Opportunity::privateJson))).put("attempts", JSONArray())
                         .put("activePlanIds", JSONArray()).put("recoverablePlans", JSONArray()).put("capabilities", JSONObject().put("liveEnabled", false))
                     val deferred = nextWorkspaceGate
@@ -296,5 +297,36 @@ class WorkspaceRegressionTest {
         assertEquals(1, service.prepareCount)
         assertNull(model.state.value.plan)
         assertTrue(model.state.value.error.orEmpty().contains("approved elsewhere"))
+    }
+
+    @Test fun savingTheSameLink_keepsItsIdentity_andManualTrackingInvalidatesAnEarlierReview() {
+        val store = connectedStore(); val service = Service(connection); val model = model(store, service)
+        val original = model.state.value.jobs.first()
+        var closed = false
+        main { model.addOpportunity(original.url, "Repeated discovery title", "Repeated employer", "", "") { closed = true } }
+        await { !model.state.value.busy && closed }
+        assertEquals(2, model.state.value.jobs.size)
+        assertEquals(original, model.state.value.jobs.first())
+        assertFalse(service.writes.any { it.first == "jobs" })
+        main { model.toggleJob(original.id); model.prepare() }; await { !model.state.value.busy && model.state.value.plan != null }
+        val earlier = model.state.value.plan!!.id
+        main { model.markAppliedElsewhere(original.id, true) }; await { !model.state.value.busy }
+        assertTrue(original.id in model.state.value.manualApplied)
+        assertNull(model.state.value.plan)
+        assertTrue(earlier in model.state.value.obsoleteReviews)
+        assertTrue(model.state.value.receipts.isEmpty())
+        assertFalse(service.writes.any { it.first in setOf("submit", "advance", "stop") })
+        assertTrue(store.read(cacheKey())!!.getJSONArray("manualApplied").strings().contains(original.id))
+    }
+
+    @Test fun disabledLiveSending_blocksApprovalBeforeAnySubmissionRequest() {
+        val service = Service(connection).apply { mode = "local" }
+        val model = model(connectedStore(), service)
+        main { model.toggleJob("job-a"); model.prepare() }; await { !model.state.value.busy && model.state.value.plan != null }
+        val plan = model.state.value.plan!!
+        main { model.submit(plan) }; await { !model.state.value.busy && model.state.value.error != null }
+        assertTrue(model.state.value.error.orEmpty().contains("not enabled"))
+        assertTrue(model.state.value.activePlans.isEmpty())
+        assertFalse(service.writes.any { it.first in setOf("submit", "advance") })
     }
 }

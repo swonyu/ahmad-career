@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "public": true,
+  "authentication": "No account, token, cookie or applicant profile is required or read.",
+  "catalog": {
+    "method": "GET",
+    "path": "/api/discovery/sources",
+    "fields": ["ok", "version", "defaultSources", "sources", "limits", "notice"],
+    "sourceFields": ["id", "name", "provider", "region", "board", "boardUrl"]
+  },
+  "search": {
+    "method": "GET",
+    "path": "/api/discovery/search",
+    "parameters": {
+      "source": "Repeat for up to four source IDs or supported HTTPS employer-board URLs. Omit to use defaultSources.",
+      "q": "Optional plain keywords, up to 120 characters; all words match title, company or available summary.",
+      "location": "Optional plain location text, up to 100 characters; matches provider location text without geocoding.",
+      "remote": "any (default) or remote; remote includes only jobs with explicit remote evidence.",
+      "cursor": "Opaque nextCursor from the preceding response. Keep all source/filter parameters unchanged."
+    },
+    "pageSize": 50,
+    "maxJobsPerSource": 500,
+    "fields": ["ok", "version", "generatedAt", "status", "jobs", "sources", "nextCursor", "totalMatches", "limited", "notice"],
+    "statuses": ["complete", "partial", "unavailable"],
+    "jobFields": {
+      "id": "Stable provider, board and posting identity; string.",
+      "sourceId": "Canonical source ID; string.",
+      "sourceName": "Catalog display name or the custom board token; string.",
+      "provider": "greenhouse or lever.",
+      "title": "Plain text; string.",
+      "company": "Catalog employer name or custom board token; string. A board token is not verified legal identity.",
+      "url": "Canonical HTTPS employer posting on the supported provider host.",
+      "location": "Provider-supplied location text, possibly empty; string.",
+      "country": "Provider-supplied recognized ISO alpha-2 code, otherwise null. Never inferred from location.",
+      "remote": "true for explicit remote evidence; false for explicit on-site/hybrid evidence; otherwise null. Not proof of geographic work eligibility.",
+      "summary": "Plain public summary, possibly empty; string. No HTML is returned.",
+      "publishedAt": "Provider-supplied publication timestamp or null.",
+      "updatedAt": "Provider-supplied update timestamp or null; never relabeled as publication time.",
+      "checkedAt": "ISO timestamp of the last successful source response, unchanged for stale fallback.",
+      "stale": "Boolean. True when showing retained results after refresh failure or a refresh already in progress."
+    },
+    "sourceFields": ["id", "name", "provider", "boardUrl", "status", "checkedAt", "availableCount", "matchedCount", "limited", "error"],
+    "sourceStatuses": ["fresh", "cached", "stale", "unavailable"],
+    "sourceError": "null or {code:string,message:string}",
+    "sourceCheckedAt": "ISO timestamp or null when there has been no successful response.",
+    "nextCursor": "String or null. A changed cached snapshot returns HTTP 409 discovery_changed; restart explicitly without cursor.",
+    "partialMeaning": "At least one source is stale, unavailable or capped/invalid; results are not complete coverage.",
+    "unavailableMeaning": "No source returned a usable current or retained response; never present this as zero matching jobs."
+  },
+  "sourceIds": ["greenhouse:<board>", "lever:global:<board>", "lever:eu:<board>"],
+  "customBoardHosts": ["boards.greenhouse.io", "job-boards.greenhouse.io", "jobs.lever.co", "jobs.eu.lever.co"],
+  "httpErrors": {
+    "400": "Invalid query, unsupported source or changed cursor parameters.",
+    "403": "Wrong origin or host.",
+    "405": "Only GET is supported.",
+    "409": "discovery_changed: explicit search restart required.",
+    "429": "Local request budget reached; obey Retry-After.",
+    "503": "Public discovery storage is temporarily unavailable."
+  },
+  "errorEnvelope": {"ok": false, "error": {"code": "invalid_query", "message": "A concise explanation."}},
+  "saveHandoff": {
+    "method": "POST",
+    "path": "/api/apply/jobs",
+    "existingAuthenticatedContract": true,
+    "bodyFields": ["url", "title", "company", "location", "country"],
+    "nullCountry": "Send the empty string for a null discovery country.",
+    "meaning": "Explicit saving only. It neither approves nor submits; existing exact review and receipt rules continue to apply."
+  },
+  "privacy": "q/location are not saved in application records or board caches and are not forwarded to employers. They are visible to the hosted request path and ordinary platform HTTP logging. No profile, CV, application token or email is sent to the discovery API.",
+  "cache": {"freshMinutes": 10, "maximumStaleHours": 24, "scope": "Public board metadata only, shared across searches."},
+  "fixture": "tests/fixtures/discovery-search-v1.json"
+}

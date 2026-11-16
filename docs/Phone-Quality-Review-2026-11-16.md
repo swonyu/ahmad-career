@@ -1,5 +1,7 @@
 # Phone reliability follow-up
 
+> **Historical reliability evidence.** This document preserves the earlier phone candidates' findings and executed checks. See the [0.4 phone polish review](Phone-Polish-Review-2026-11-16.md) for current discovery, usability, deployment and release status. The evidence below has not been relabeled as a 0.4 acceptance result.
+
 Follow-up to the first phone candidate, commit `396cc370d98a0ee48f8cc2ac89312de08a3dec74`. This review addresses concrete behavior found in that source. Results below must describe executed checks, with exact source identity; authored checks are not passing evidence.
 
 ## Findings and acceptance criteria

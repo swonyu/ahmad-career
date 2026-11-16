@@ -3,28 +3,40 @@ import SwiftUI
 import UIKit
 
 @MainActor
+final class NativeCareerNavigation: ObservableObject {
+    @Published var selectedTab = 0
+}
+
+@MainActor
 struct NativeCareerRoot: View {
     @EnvironmentObject private var store: NativeCareerStore
     @Environment(\.scenePhase) private var scenePhase
-    @StateObject private var applications = NativeApplicationsStore()
-    @State private var selectedTab = 2
+    @StateObject private var applications = CareerAppEnvironment.makeApplicationsStore()
+    @StateObject private var discovery = CareerAppEnvironment.makeDiscoveryStore()
+    @StateObject private var navigation = NativeCareerNavigation()
+    private var savedCount: Int {
+        Set(store.savedJobs.map { MobileApplicationPolicy.jobIdentity($0.url) }
+            + applications.jobs.compactMap { $0["url"]?.string }.map(MobileApplicationPolicy.jobIdentity)).count
+    }
 
     var body: some View {
-        TabView(selection: $selectedTab) {
+        TabView(selection: $navigation.selectedTab) {
             NavigationStack { NativeShortlistScreen() }
                 .tabItem { Label("Start", systemImage: "square.stack") }.tag(0)
-            NavigationStack { NativeSearchScreen() }
+            NavigationStack { NativeDiscoveryScreen() }
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }.tag(1)
             NavigationStack { NativeApplicationsScreen() }
                 .tabItem { Label("Apply", systemImage: "paperplane") }.tag(2)
             NavigationStack { NativeSavedScreen() }
                 .tabItem { Label("Saved", systemImage: "heart") }.tag(3)
-                .badge(store.savedJobs.count)
+                .badge(savedCount)
             NavigationStack { NativeProfileScreen() }
                 .tabItem { Label("Profile", systemImage: "person.crop.circle") }.tag(4)
         }
         .environmentObject(store)
         .environmentObject(applications)
+        .environmentObject(discovery)
+        .environmentObject(navigation)
         .tint(.careerAccent)
         .task(id: scenePhase == .active) {
             guard scenePhase == .active else { return }
@@ -39,6 +51,10 @@ struct NativeCareerRoot: View {
             UIAccessibility.post(notification: .announcement, argument: error)
         }
         .safeAreaInset(edge: .top, spacing: 0) {
+            if CareerAppEnvironment.isUIAcceptance {
+                Text("Offline UI acceptance · synthetic data").font(.caption2).padding(4).frame(maxWidth: .infinity)
+                    .background(Color.yellow.opacity(0.2)).accessibilityIdentifier("acceptance.offline")
+            }
             if let error = store.storageError {
                 Label(error, systemImage: "exclamationmark.triangle")
                     .font(.footnote).padding(12).frame(maxWidth: .infinity, alignment: .leading)
@@ -51,31 +67,51 @@ struct NativeCareerRoot: View {
 
 private struct NativeShortlistScreen: View {
     @EnvironmentObject private var store: NativeCareerStore
+    @EnvironmentObject private var applications: NativeApplicationsStore
+    @EnvironmentObject private var navigation: NativeCareerNavigation
     @State private var editing = false
+    @State private var adding = false
 
     var body: some View {
         List {
             Section {
-                NativeIntro(eyebrow: "YOUR CAREER WORKSPACE", title: "Your next career step.",
-                            message: "Start with your own experience, review the available sources and keep a record of your applications.")
+                NativeIntro(eyebrow: "YOUR CAREER WORKSPACE", title: "Find work that fits your life.",
+                            message: "Explore employer boards, keep the roles you like and review every application before it is sent.")
             }.listRowBackground(Color.clear).listRowSeparator(.hidden)
-            Section("Start here") {
-                Text("Your profile starts empty. Add only details you want to keep on this device; every field is optional.")
-                Button("Set up your profile") { editing = true }
-                NavigationLink("Review available job sources") { NativeSearchScreen() }
-                NavigationLink("Open your saved records") { NativeSavedScreen() }
-                NavigationLink("Application preparation plan") { NativePlanScreen() }
+            Section("Start with an opportunity") {
+                Button { navigation.selectedTab = 1 } label: {
+                    Label("Find opportunities", systemImage: "magnifyingglass")
+                }.accessibilityIdentifier("home.discover")
+                Button { adding = true } label: {
+                    Label(applications.opportunityDraft.hasContent ? "Continue your saved job draft" : "Add a job link", systemImage: "link")
+                }.accessibilityIdentifier("home.addOpportunity")
+                Text("Browse public employer boards without an account, or save a public job link from any country or profession.")
+                    .font(.footnote).foregroundStyle(.secondary)
             }
-            Section("Current live coverage") {
-                Text("Live search checks bounded samples from six selected Saudi employer sources for supply-chain, procurement and performance roles.")
-                Text("Countries and role families outside that scope are not supported by live search in this build. Availability of the app in a country does not establish job coverage there.")
-                Text("Existing saved jobs, application records and your entered profile remain on this device. Earlier researched roles are retained only when connected to your existing records; they are not new recommendations.")
+            Section("Make your next step easier") {
+                Button { editing = true } label: {
+                    Label(applications.profile.hasContent ? "Review your application profile" : "Create your application profile", systemImage: "person.crop.rectangle")
+                }.accessibilityIdentifier("home.applicationProfile")
+                Button { navigation.selectedTab = 3 } label: {
+                    Label("Open saved opportunities", systemImage: "heart")
+                }
+                Button { navigation.selectedTab = 2 } label: {
+                    Label(applications.availableReviews.isEmpty ? "Open your application workspace" : "Continue application review", systemImage: "paperplane")
+                }
+                NavigationLink("Application preparation checklist") { NativePlanScreen() }
+            }
+            Section("You stay in control") {
+                Text("Your new profile starts blank. Add your own details and CV when you are ready. An account is needed only for the connected application service.")
+                Text("Auto Apply is available for activated employer integrations. Other roles open on the employer's website. Only a provider receipt confirms a submission.")
+                Text("Existing notes, saved roles and application history stay available. A search result or a saved link is not an application.")
+                    .font(.footnote).foregroundStyle(.secondary)
             }
         }
         .nativeList()
         .navigationTitle("Career Finder")
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $editing) { NativeProfileEditor(profile: store.workspace.profile) }
+        .sheet(isPresented: $editing) { NativeApplicationProfileEditor(model: applications) }
+        .sheet(isPresented: $adding) { NativeOpportunityEditor(model: applications) }
     }
 }
 
@@ -86,138 +122,104 @@ private struct NativeCriteriaSection: View {
         Section {
             Text(store.workspace.profile.criteriaSummary).font(.subheadline)
             Button("Edit criteria") { editing = true }
-        } header: { Text("Filters for supported sources") } footer: {
-            Text("Six limited Saudi-oriented sources only. Preferences filter returned rows on this device and are never sent in search requests. Saved applications stay available. Salary and pay basis still need confirmation.")
+        } header: { Text("Local planning preferences") } footer: {
+            Text("These preferences stay on this device for your planning notes and earlier records. Search uses the role, location and board choices you enter on the Search tab. Salary and pay basis still need confirmation.")
         }
         .sheet(isPresented: $editing) { NativeProfileEditor(profile: store.workspace.profile) }
     }
 }
 
-private enum NativeJobFilter: String, CaseIterable, Identifiable {
-    case all = "All opportunities", healthcare = "Healthcare", leadership = "Leadership", riyadh = "Riyadh"
-    var id: String { rawValue }
-    func includes(_ job: CareerJob) -> Bool {
-        switch self {
-        case .all: return true
-        case .healthcare: return job.healthcare == true || ["Alcon", "Roche", "Johnson & Johnson", "GSK", "Novartis", "BD"].contains(job.company) || job.title.range(of: "healthcare|medical|pharma", options: [.regularExpression, .caseInsensitive]) != nil
-        case .leadership: return job.leadership == true || job.title.range(of: "manager|director|head|lead", options: [.regularExpression, .caseInsensitive]) != nil
-        case .riyadh: return job.hasRiyadhEvidence
-        }
-    }
-}
-
-private struct NativeSearchScreen: View {
-    @EnvironmentObject private var store: NativeCareerStore
-    @State private var query = ""
-    @State private var filter = NativeJobFilter.all
-    private var jobs: [CareerJob] { store.liveJobs.filter { store.workspace.profile.includesInDiscovery($0) && nativeMatches($0, query: query) && filter.includes($0) }.sorted { ($0.title, $0.company, $0.id) < ($1.title, $1.company, $1.id) } }
-
-    var body: some View {
-        List {
-            Section {
-                if query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                NativeIntro(eyebrow: "LIVE EMPLOYER SEARCH", title: "Find the next opportunity.", message: "Search six selected Saudi employer sources for supply-chain, procurement and performance roles. Other countries and role families are not covered in this build; results are not personalized eligibility advice.")
-                }
-                Button {
-                    Task { await store.refresh() }
-                } label: {
-                    HStack {
-                        if store.isSearching { ProgressView().tint(.white) }
-                        Label(store.isSearching ? "Searching employers…" : "Find new openings", systemImage: "sparkle.magnifyingglass")
-                    }.frame(maxWidth: .infinity).padding(.vertical, 6)
-                }
-                .buttonStyle(.borderedProminent).disabled(store.isSearching || !store.workspace.profile.countrySupported)
-                .tint(Color(red: 0.08, green: 0.43, blue: 0.34))
-                Text("Alcon · J&J · Roche · Novartis · GSK · BD\nNo sign-in or CV is sent to search.")
-                    .font(.footnote).foregroundStyle(.secondary)
-                if let error = store.searchError {
-                    NativeNotice(title: "Review search coverage", message: error, warning: true)
-                }
-            }.listRowBackground(Color.clear).listRowSeparator(.hidden)
-            NativeCriteriaSection()
-            if let snapshot = store.workspace.live {
-                Section {
-                    DisclosureGroup("\(snapshot.sources.filter(\.ok).count) of \(snapshot.sources.count) employers responded") {
-                        ForEach(snapshot.sources, id: \.name) { source in
-                            VStack(alignment: .leading, spacing: 5) {
-                                Label(source.name, systemImage: source.ok ? "checkmark.circle" : "exclamationmark.circle")
-                                    .font(.subheadline.weight(.semibold))
-                                if source.ok {
-                                    Text("\(source.count) matching · \(source.scanned.map { String($0) } ?? "—") scanned\(source.limited == true ? " · bounded sample" : "")")
-                                        .font(.caption).foregroundStyle(.secondary)
-                                    if let error = source.error, !error.isEmpty {
-                                        Label(error, systemImage: "exclamationmark.circle").font(.caption)
-                                    } else if let errors = source.detailErrors, errors > 0 {
-                                        Label("\(errors) checks unavailable", systemImage: "exclamationmark.circle").font(.caption)
-                                    }
-                                } else {
-                                    Text(source.error ?? "Source unavailable").font(.caption).foregroundStyle(.secondary)
-                                }
-                            }.padding(.vertical, 3)
-                        }
-                        Text("A bounded sample of selected boards. Filtering can miss suitable jobs. A source failure does not mean that employer has no openings. Earlier results from unavailable employers are retained and marked Not refreshed.")
-                            .font(.footnote).foregroundStyle(.secondary)
-                    }
-                } header: { Text("Checked \(store.workspace.profile.formattedDate(snapshot.checkedAt, includeTime: true))") }
-            }
-            Section {
-                if jobs.isEmpty {
-                    if !store.workspace.profile.countrySupported {
-                        NativeEmpty(title: "Live sources do not cover this country.", message: "Your country preference is \(store.workspace.profile.countryName). This build checks six limited Saudi-oriented sources. Unsupported coverage does not mean there are no jobs there. Your saved records remain available; edit preferences to review the supported scope.", icon: "globe")
-                    } else if !store.isSearching && store.workspace.profile.hidesUnverifiedSalary && !store.liveJobs.isEmpty {
-                        NativeEmpty(title: "No salary-verified leads.", message: "Current leads have no verified salary evidence. Your criteria hide unverified pay; this does not mean there are no vacancies. Edit criteria to review these leads.", icon: "magnifyingglass")
-                    } else {
-                        NativeEmpty(title: store.isSearching ? "Checking employer boards…" : "No matching leads yet.",
-                                    message: store.isSearching ? "Results will appear here when the search finishes." : "City and role words filter only the six limited Saudi-oriented sources. Adjust these local filters or review the supported scope. Empty results do not establish that there are no jobs in other countries or role families.", icon: "magnifyingglass")
-                    }
-                } else {
-                    ForEach(jobs) { NativeJobLink(job: $0) }
-                }
-            } header: { Text("\(jobs.count) leads to review · by role title") }
-        }
-        .onChange(of: store.searchError) { error in
-            if let error { UIAccessibility.post(notification: .announcement, argument: error) }
-        }
-        .nativeList().navigationTitle("Live search")
-        .navigationBarTitleDisplayMode(.inline)
-        .searchable(text: $query, prompt: "Filter results by role or employer")
-        .refreshable { if !store.isSearching { await store.refresh() } }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Menu {
-                    Picker("Show", selection: $filter) {
-                        ForEach(NativeJobFilter.allCases) { Text($0.rawValue).tag($0) }
-                    }
-                } label: { Label(filter == .all ? "Filter" : filter.rawValue, systemImage: "line.3.horizontal.decrease.circle") }
-            }
-        }
-    }
-}
-
 private struct NativeSavedScreen: View {
     @EnvironmentObject private var store: NativeCareerStore
+    @EnvironmentObject private var applications: NativeApplicationsStore
+    @EnvironmentObject private var navigation: NativeCareerNavigation
     @State private var query = ""
+    @State private var adding = false
     private var jobs: [CareerJob] { store.savedJobs.filter { nativeMatches($0, query: query) } }
+    private var applicationJobs: [NativeApplicationRow] {
+        let words = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        return applications.jobs.compactMap { NativeApplicationRow($0) }.filter { row in
+            words.isEmpty || ["title", "company", "location"].compactMap { row.value[$0]?.string }
+                .joined(separator: " ").localizedCaseInsensitiveContains(words)
+        }
+    }
     var body: some View {
         List {
             if query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             Section {
-                NativeIntro(eyebrow: "YOUR OWN SHORTLIST", title: "The ones worth pursuing.", message: "Saved opportunities and application progress stay on this device. Website, iPhone and Mac progress do not sync.")
+                NativeIntro(eyebrow: "YOUR OWN SHORTLIST", title: "Keep your next move close.", message: "Jobs saved from Search and your own links are ready in the application workspace. Earlier planning records remain available below.")
             }.listRowBackground(Color.clear)
             }
-            Section {
-                if store.savedJobs.isEmpty {
-                    NativeEmpty(title: "Make a shortlist of your own.", message: "Save a role from its details to keep it here, even when a later search changes.", icon: "heart")
-                } else if jobs.isEmpty {
+            if applications.jobs.isEmpty && store.savedJobs.isEmpty {
+                Section {
+                    NativeEmpty(title: "Make a shortlist of your own.", message: "Save a role from Search or add a job link. Saving keeps it for review; it does not apply.", icon: "heart")
+                    Button("Find opportunities") { navigation.selectedTab = 1 }
+                    Button("Add a job link") { adding = true }
+                }
+            } else if applicationJobs.isEmpty && jobs.isEmpty {
+                Section {
                     NativeEmpty(title: "No saved roles match this search.", message: "Your saved opportunities are still here. Try another term or clear the search.", icon: "magnifyingglass")
                     Button("Clear search") { query = "" }
-                } else {
+                }
+            }
+            if !applicationJobs.isEmpty {
+                Section("Application opportunities · \(applicationJobs.count)") {
+                    ForEach(applicationJobs) { row in
+                        NavigationLink { NativeSavedApplicationDetail(id: row.id) } label: {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(row.value["title"]?.string ?? "Opportunity").font(.headline).fixedSize(horizontal: false, vertical: true)
+                                Text(row.value["company"]?.string ?? "").font(.subheadline).foregroundStyle(.secondary)
+                                if let location = row.value["location"]?.string, !location.isEmpty {
+                                    Text(location).font(.caption).foregroundStyle(.secondary)
+                                }
+                                Label(row.value["localOnly"]?.bool == true ? "Saved on this phone" : "Saved with application service", systemImage: "bookmark")
+                                    .font(.caption).foregroundStyle(.secondary)
+                            }.padding(.vertical, 5)
+                        }
+                    }
+                }
+            }
+            if !jobs.isEmpty {
+                Section {
                     ForEach(jobs) { NativeJobLink(job: $0) }
+                } header: { Text("Earlier planning records · \(jobs.count)") } footer: {
+                    Text("These original records stay on this device. Open a role to copy its public details into the application workspace; your notes and status are preserved.")
                 }
             }
         }.nativeList().navigationTitle("Saved opportunities")
             .navigationBarTitleDisplayMode(.inline)
             .searchable(text: $query, prompt: "Search saved opportunities")
+            .toolbar { ToolbarItem(placement: .navigationBarTrailing) {
+                Button { adding = true } label: { Label("Add opportunity", systemImage: "plus") }.accessibilityIdentifier("saved.addOpportunity")
+            } }
+            .sheet(isPresented: $adding) { NativeOpportunityEditor(model: applications) }
+    }
+}
+
+private struct NativeSavedApplicationDetail: View {
+    @EnvironmentObject private var applications: NativeApplicationsStore
+    @EnvironmentObject private var navigation: NativeCareerNavigation
+    let id: String
+    private var job: [String: ApplicationValue]? { applications.jobs.first { $0["id"]?.string == id } }
+    var body: some View {
+        List {
+            if let job {
+                Section {
+                    Text(job["title"]?.string ?? "Opportunity").font(.title2.weight(.bold)).fixedSize(horizontal: false, vertical: true)
+                    Text(job["company"]?.string ?? "").font(.headline)
+                    if let location = job["location"]?.string, !location.isEmpty { Label(location, systemImage: "mappin") }
+                }
+                Section {
+                    if let url = job["url"]?.string.flatMap(MobileApplicationPolicy.jobURL) {
+                        Link(destination: url) { Label("Open employer posting", systemImage: "arrow.up.right.square") }
+                        ShareLink(item: url) { Label("Share job link", systemImage: "square.and.arrow.up") }
+                    }
+                    Button("Open application workspace") { navigation.selectedTab = 2 }
+                } footer: {
+                    Text("Review the employer's current requirements. Auto Apply eligibility is checked in the application workspace; opening or sharing this link never counts as a submission.")
+                }
+            } else { NativeEmpty(title: "This opportunity is no longer available here.", message: "Return to Saved to see your current opportunities.", icon: "bookmark") }
+        }.nativeList().navigationTitle("Saved opportunity").navigationBarTitleDisplayMode(.inline)
     }
 }
 
@@ -250,6 +252,8 @@ private struct NativeJobLink: View {
 
 private struct NativeJobDetail: View {
     @EnvironmentObject private var store: NativeCareerStore
+    @EnvironmentObject private var applications: NativeApplicationsStore
+    @EnvironmentObject private var navigation: NativeCareerNavigation
     private let inputJob: CareerJob
     init(job: CareerJob) { inputJob = job }
     private var job: CareerJob { store.current(inputJob) }
@@ -326,6 +330,18 @@ private struct NativeJobDetail: View {
                 Text("This is your own record. Changing status does not submit an application or contact anyone.")
             }
             Section {
+                if applications.containsOpportunity(url: job.url) {
+                    Label("Saved in your application workspace", systemImage: "checkmark.circle")
+                    Button("Open application workspace") { navigation.selectedTab = 2 }
+                } else if MobileApplicationPolicy.jobURL(job.url) != nil {
+                    Button("Copy to application workspace") {
+                        Task { _ = await applications.addJob(url: job.url, title: job.title, company: job.company,
+                                                            location: job.location, country: job.isSaudi ? "SA" : "") }
+                    }.disabled(applications.busy).accessibilityIdentifier("legacy.copyToApplications")
+                    Text("Copies this public job link and role details. Your original notes and status stay here. Saving does not apply.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                    if let message = applications.message { Text(message).font(.footnote) }
+                }
                 if let url = job.applicationURL {
                     Link(destination: url) { Label(job.isExpired ? "Check employer status" : store.status(for: job) == "Not started" ? "Open official application" : "View employer / existing application", systemImage: "arrow.up.right.square") }
                 }
@@ -384,7 +400,7 @@ private let nativePlanItems: [(id: String, title: String, detail: String)] = [
     ("cv", "Prepare your CV materials", "For each application, tailor a version using your own experience and qualifications."),
     ("priority", "Review selected role requirements", "Before each application, check that role's experience and other requirements."),
     ("deadline", "Check selected deadlines", "Before each application, check that role's deadline and current vacancy status directly with the employer."),
-    ("review", "Review each application yourself", "Verify every field, attachment and claim. Nothing is automatically submitted.")
+    ("review", "Review each application yourself", "Verify every field, attachment and claim. Preparation alone does not send an application; Auto Apply requires your explicit approval.")
 ]
 
 private struct NativePlanScreen: View {
@@ -443,20 +459,26 @@ private struct NativePlanScreen: View {
 
 private struct NativeProfileScreen: View {
     @EnvironmentObject private var store: NativeCareerStore
+    @EnvironmentObject private var applications: NativeApplicationsStore
     @State private var editing = false
+    @State private var applicationEditing = false
     var body: some View {
         List {
             Section {
                 NativeIntro(eyebrow: "YOUR PROFILE", title: "Start with what is true.", message: "Your experience gives every application its foundation.")
             }.listRowBackground(Color.clear)
-            Section("Your own starting point") {
-                Text("No biography or qualifications are assumed. Add your own details below, or leave fields blank. The app does not decide whether you qualify for a role.")
+            Section("Application profile") {
+                Button { applicationEditing = true } label: {
+                    Label(applications.profile.hasContent ? "Edit application details and CV" : "Add application details and CV", systemImage: "person.crop.rectangle")
+                }.accessibilityIdentifier("profile.applicationProfile")
+                Text("These are the details you can review for employer applications. New profiles start blank. Saving a profile never submits an application.")
+                    .font(.footnote).foregroundStyle(.secondary)
             }
             Section {
                 LabeledContent("Relevant years", value: store.workspace.profile.years.isEmpty ? "Not provided" : store.workspace.profile.years)
                 if !store.workspace.profile.degree.isEmpty { Text(store.workspace.profile.degree).font(.subheadline) }
-                Button("Edit your profile") { editing = true }
-            } header: { Text("Your own details") } footer: { Text("Saved on this device. These details are not verified qualifications and are not sent to employers.") }
+                Button("Edit planning notes and preferences") { editing = true }
+            } header: { Text("Local planning notes") } footer: { Text("Separate notes kept on this device for preparation. They do not replace your application profile and are not sent to employers.") }
             NativeCriteriaSection()
             Section {
                 NavigationLink { NativeSalaryScreen() } label: { Label("Salary & negotiation", systemImage: "chart.bar.doc.horizontal") }
@@ -465,6 +487,7 @@ private struct NativeProfileScreen: View {
         }.nativeList().navigationTitle("Your profile")
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $editing) { NativeProfileEditor(profile: store.workspace.profile) }
+            .sheet(isPresented: $applicationEditing) { NativeApplicationProfileEditor(model: applications) }
     }
 }
 
@@ -490,8 +513,8 @@ private struct NativePrivacyScreen: View {
     var body: some View {
         List {
             Section("Information on this phone") {
-                Text("The Start, Search, Saved and Profile areas keep your preferences, saved roles, self-entered tracking records, preparation steps and search results on this device. They are separate from the applicant profile and provider receipts in Apply.")
-                Text("Apply keeps a phone draft and your selected PDF. Connecting does not upload that draft. Saving to a connected service sends the applicant fields and selected CV; adding opportunities and preparing reviews sends the links and choices you provide. The phone connection token is stored in Keychain.")
+                Text("Planning notes, earlier self-entered tracking records and preparation steps stay on this device. Search keeps your board choices, search fields and public results locally. Saved shows both your application opportunities and any earlier local records.")
+                Text("Your application workspace keeps a phone draft and your selected PDF. The same application profile is reachable from Start, Profile and Apply. Connecting does not upload that draft. Saving to a connected service sends the applicant fields and selected CV; adding opportunities and preparing reviews sends the links and choices you provide. The phone connection token is stored in Keychain.")
             }
             Section("Connected application workspace") {
                 if MobileApplicationPolicy.isHostedService(applications.serviceAddress) {
@@ -504,7 +527,7 @@ private struct NativePrivacyScreen: View {
                 Text("Approving an eligible application permits the service to send the reviewed fields and PDF to that employer's application provider. Provider acceptance is recorded only when the provider returns a valid receipt. Employer copies remain subject to the employer's own privacy policy.")
             }
             Section("Employer searches and links") {
-                Text("When you run a search, the app sends fixed job queries directly to selected employers and their recruitment providers using HTTPS. Those providers receive normal connection information, including your IP address. Your saved profile, discovery criteria and application notes are not included.")
+                Text("Search uses the public Career Finder discovery service to retrieve postings from your selected Greenhouse and Lever employer boards. It receives the role words, location text and board choices you enter, along with normal connection information. No application token, account cookie, email, applicant profile or CV is sent. Public board metadata is cached by the service; search words are not forwarded to employers but may appear in ordinary hosting request logs.")
                 Text("Opening an employer, LinkedIn or salary-source link takes you to an external website governed by its own privacy policy. Any application or account you create there is managed by that provider.")
             }
             Section("Sharing and beta feedback") {
@@ -554,7 +577,7 @@ private struct NativeProfileEditor: View {
                 }
                 Section {
                     Picker("Country or region", selection: Binding(get: { draft.effectiveCountry }, set: { draft.targetCountry = $0 })) {
-                        Text("Any covered country — Saudi sources").tag("")
+                        Text("Any country or region").tag("")
                         ForEach(NativeProfile.countryCodes.sorted { countryName($0) < countryName($1) }, id: \.self) { code in Text(countryName(code)+" ("+code+")").tag(code) }
                     }
                     TextField("City text, if relevant", text: Binding(get: { draft.effectiveCity }, set: { draft.targetCity = $0 })).focused($focused)
@@ -564,7 +587,7 @@ private struct NativeProfileEditor: View {
                         .accessibilityLabel("Role keywords, optional")
                     Text("Every space-separated word must occur in a returned role title or subtitle. This does not establish eligibility.").font(.caption).foregroundStyle(.secondary)
                 } header: { Text("Country, city and role preferences") } footer: {
-                    Text("Six limited Saudi-oriented sources for supply-chain, procurement and performance roles. Other countries and role families are not covered. These local filters do not add providers or affect saved records.")
+                    Text("Preferences for your planning notes and earlier records. The Search tab uses its own explicit role, location and employer-board choices. These notes do not affect saved application records.")
                 }
                 Section {
                     Picker("Planning currency", selection: Binding(get: { draft.effectiveCurrency }, set: { draft.planningCurrency = $0 })) {
@@ -583,6 +606,7 @@ private struct NativeProfileEditor: View {
                 } header: { Text("Planning and display") } footer: {
                     Text("Display zone applies to timestamps with an explicit offset. Source date-only deadlines keep their published date. Existing application-date validation still uses the Riyadh day; dates are never shifted.")
                 }
+                if draft.minimumMonthlySAR != nil || draft.unknownSalary != nil {
                 Section {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Minimum monthly pay, SAR").font(.caption).foregroundStyle(.secondary)
@@ -592,12 +616,13 @@ private struct NativeProfileEditor: View {
                     if draft.hasPayFloor {
                         Picker("Unverified salaries", selection: Binding(get: { draft.unknownSalary ?? "show" }, set: { draft.unknownSalary = $0 })) {
                             Text("Show for review").tag("show")
-                            Text("Hide from discovery").tag("hide")
+                            Text("Hide unverified earlier leads").tag("hide")
                         }
                     }
                     if let error = draft.criteriaError { Label(error, systemImage: "exclamationmark.circle").font(.caption) }
-                } header: { Text("Salary filter for current Saudi sources") } footer: {
-                    Text("This filter stays monthly SAR regardless of planning currency. Use whole SAR; blank or zero means no minimum. Confirm basic salary versus fixed package. Current roles have no verified salary evidence. All preferences stay on this device and are excluded from search requests and application notes.")
+                } header: { Text("Earlier salary criteria · monthly SAR") } footer: {
+                    Text("This filter stays monthly SAR regardless of planning currency. Use whole SAR; blank or zero means no minimum. Confirm basic salary versus fixed package. This retained preference does not filter the new public board search. It stays on this device and is excluded from discovery requests and application notes.")
+                }
                 }
                 Section("Experience and qualifications") {
                     VStack(alignment: .leading, spacing: 8) { Text("Relevant years of experience").font(.caption).foregroundStyle(.secondary); TextField("Relevant years of experience", text: $draft.years).keyboardType(.decimalPad).focused($focused) }

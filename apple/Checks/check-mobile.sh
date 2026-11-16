@@ -14,6 +14,10 @@ common=(-swift-version 5 -Onone -sdk "$mac_sdk" -module-cache-path "$check_dir/m
   "$task_root/AhmadCareer/MobileApplicationState.swift" "$task_root/AhmadCareer/NativeApplicationsStore.swift" \
   "$task_root/Checks/MobileLifecycleCheck.swift" -o "$check_dir/lifecycle-check"
 "$check_dir/lifecycle-check"
+"$compiler" "${common[@]}" "$task_root/AhmadCareer/MobileApplicationClient.swift" \
+  "$task_root/AhmadCareer/MobileApplicationState.swift" "$task_root/AhmadCareer/CareerDiscovery.swift" \
+  "$task_root/Checks/DiscoveryCheck.swift" -o "$check_dir/discovery-check"
+"$check_dir/discovery-check" "$task_root/Checks/Fixtures/discovery-search-v1.json"
 "$compiler" "${common[@]}" "$task_root/AhmadCareer/CareerFeed.swift" \
   "$task_root/AhmadCareer/NativeCareerStore.swift" "$task_root/Checks/NativeStoreCheck.swift" -o "$check_dir/legacy-store-check"
 "$check_dir/legacy-store-check" "$task_root/AhmadCareer/CareerResearch.json"

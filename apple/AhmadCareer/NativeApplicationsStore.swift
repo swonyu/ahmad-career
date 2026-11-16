@@ -77,6 +77,7 @@ final class NativeApplicationsStore: ObservableObject {
     private let monotonicTime: () -> TimeInterval
 
     var profile: PhoneApplicationProfile { state.profile }
+    var opportunityDraft: PhoneOpportunityDraft { state.opportunityDraft }
     var profileNeedsSync: Bool { state.profileNeedsSync }
     var revision: Int? { state.profileRevision }
     var latestServerRevision: Int? { state.latestServerRevision }
@@ -400,6 +401,18 @@ final class NativeApplicationsStore: ObservableObject {
         backup["id"] = .string(localID); backup["localOnly"] = .bool(true)
         next.jobs[index] = backup; try persist(next)
     }
+    @discardableResult
+    func keepOpportunityDraft(_ draft: PhoneOpportunityDraft) -> Bool {
+        if let error = draft.storageError { message = error; return false }
+        do {
+            var next = state; next.opportunityDraft = draft; try persist(next)
+            return true
+        } catch { message = error.localizedDescription; return false }
+    }
+    func containsOpportunity(url: String) -> Bool {
+        let identity = MobileApplicationPolicy.jobIdentity(url)
+        return jobs.contains { MobileApplicationPolicy.jobIdentity($0["url"]?.string ?? "") == identity }
+    }
     func addJob(url: String, title: String, company: String, location: String, country: String) async -> Bool {
         guard let valid = MobileApplicationPolicy.jobURL(url), let operation = beginOperation() else {
             message = "Use a complete public HTTPS job link."; return false
@@ -424,7 +437,10 @@ final class NativeApplicationsStore: ObservableObject {
             }
             let localID = "local-" + UUID().uuidString
             var local = fields; local["id"] = .string(localID); local["localOnly"] = .bool(true)
-            var next = state; next.jobs.append(local); try persist(next); mergeJobs()
+            var next = state; next.jobs.append(local)
+            let submitted = PhoneOpportunityDraft(url: url, title: title, company: company, location: location, country: country)
+            if next.opportunityDraft == submitted { next.opportunityDraft = PhoneOpportunityDraft() }
+            try persist(next); mergeJobs()
             guard let client else { message = "Opportunity saved on this phone."; return true }
             do {
                 let response = try await client.request("jobs", method: "POST", body: fields)

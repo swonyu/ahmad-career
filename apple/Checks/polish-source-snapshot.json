@@ -1,0 +1,29 @@
+{
+  "checkedAt": "2026-11-16T15:52:23.296173+00:00",
+  "files": {
+    "apple/AhmadCareer/AhmadCareerApp.swift": "bd025363b777b8a37390008a31dec85c97b4688ec7b2b5a958c74bb49430bccf",
+    "apple/AhmadCareer/CareerAppEnvironment.swift": "ccf1a3d7ce60a4f5d5da822e3991ba632ca29c4385735943410ded0bea7edd08",
+    "apple/AhmadCareer/CareerDiscovery.swift": "7bbe9321917dc051e8911f7556653e807d4f25d3baa934829d21e1c4cebe09cc",
+    "apple/AhmadCareer/CareerFeed.swift": "f726dd1144423e71cadea28da4ff60792c5459dc0c873c0a4fb7858b3a6b3273",
+    "apple/AhmadCareer/CareerPolicy.swift": "59441ba26db1bca33fbcc6f985c1cfc054ba0774d3c4ff027a9a712e1883a9cf",
+    "apple/AhmadCareer/CareerWebView.swift": "ff866bd788485434da518a51d05e65a191a3e69081b24a04772d29eafd0dcd8c",
+    "apple/AhmadCareer/MobileApplicationClient.swift": "20fc9c366bf0b1fa5a51484faa1c4e33d5a07e1bb5413dee1227eaeddd40d6e5",
+    "apple/AhmadCareer/MobileApplicationState.swift": "63333e4b4761cc89e0fcef7ec3949f95fe2ecb92cf04cd13a6d970326de9ea75",
+    "apple/AhmadCareer/NativeApplicationsStore.swift": "28e8cd1465aab66c77c090463d846a116155e9afbfa7e6121d159482a0211591",
+    "apple/AhmadCareer/NativeApplicationsViews.swift": "473bc32c7947e4ced98146291df1175176d33ca8905a3abad95126f2c7ffefe4",
+    "apple/AhmadCareer/NativeCareerStore.swift": "f0140a3bcea9e947db4689e3784898f1ef59735c3217515d6b309f1cda62f7e7",
+    "apple/AhmadCareer/NativeCareerViews.swift": "328b7448072c57a2f7ecb18acaf43a216e7b710d2895e84e46820d104d777165",
+    "apple/AhmadCareer/NativeDiscoveryViews.swift": "497f74ab48563029f645f1f6a30892ff5ddde66536bdc95a2ff3386c80a736e6",
+    "apple/AhmadCareer/CareerResearch.json": "9337469922d86ad305f109c838a8cf5c0742d6ffcdc438f3ffbe497f7eb92b1b",
+    "apple/Checks/MobileApplicationCheck.swift": "7fb3157dde1c0f4bd9825039b0707a8ce49999cd8ac85142bf52ef90281a66b4",
+    "apple/Checks/MobileLifecycleCheck.swift": "f5709837f1da715206198b0a2a5359ab7ac7d26806699ac9e73f1684e472014f",
+    "apple/Checks/NativeStoreCheck.swift": "fc1f9f13068a064391540a7bf150251f4fd4866fc768f0ad4573f71be0e92b91",
+    "apple/Checks/DiscoveryCheck.swift": "80a6d82da5880a449acd762afc313dc6be7ad74432c3fc6fe600b987b47ce083",
+    "apple/Checks/check-mobile.sh": "6f1387653eb33dcbabb011d02060021a12c30a8f713baf399d8fb2f434bac793",
+    "apple/Checks/Fixtures/discovery-search-v1.json": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7",
+    "apple/UITests/CareerFinderUITests.swift": "0723e54bb13c23228c53aa3cc995fce4d250723d4d98ede879c1e7e0131ad373",
+    "apple/AhmadCareer.xcodeproj/project.pbxproj": "508514d75ed8cea5f19c755680e423395efe6fe92a2736a837b4dd71dbed502b",
+    "apple/AhmadCareer.xcodeproj/xcshareddata/xcschemes/AhmadCareer.xcscheme": "f9b67f757ea53e6ed0ac8d54c5c2f2ac2609dc5c9a9fb3e4d0434b4a8f7cf395",
+    "apple/AhmadCareer.xcodeproj/xcshareddata/xcschemes/CareerFinderAcceptance.xcscheme": "37b0f04c230f409a57419429d44b09543157ffb568cdce8a24fc64bd3736ddba"
+  }
+}

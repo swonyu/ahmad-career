@@ -1,6 +1,6 @@
 # Career Finder phone service
 
-Hosted HTTPS connection, private account recovery, durable application records, and a bounded submission worker for the native iPhone and Android apps. The web pages manage connections and account data; the career workspace remains in the phone apps.
+Public employer-board discovery, hosted HTTPS connection, private account recovery, durable application records, and a bounded submission worker for the native iPhone and Android apps. The web pages manage connections and account data; the career workspace remains in the phone apps.
 
 Service origin: `https://career-finder-service.jazzy-drake-8323.chatgpt.site`
 
@@ -9,12 +9,23 @@ This is a development preview. No employer integration is enabled by default. Sy
 ## Architecture
 
 - A Cloudflare Worker serves the connection, account, help and privacy pages and the application API.
+- Public discovery uses separate GET-only routes and a shared, bounded D1 cache. It does not read account identity, phone credentials, profiles or CVs.
 - D1 stores private workspaces, phone sessions, immutable reviews, submission state and evidence. PDF bytes are kept in private R2, outside D1's row-size limit.
 - ChatGPT Sites supplies authenticated, site-specific user identity to browser account routes. The public website does not make account records public.
 - Browser writes require the exact service Origin and JSON. Native routes require a random bearer token obtained by redeeming a short-lived, one-use pairing code. Only token and pairing-code hashes are stored.
 - The app's existing Node/SQLite companion service is a separate implementation. Native clients retain GET-only polling with that service unless the exact `dispatchContinuation: "client"` capability is advertised.
 
 The production entrypoint is `worker/index.ts`. It imports the production handler directly; request inputs and environment variables cannot select a synthetic adapter. The test harness injects its synthetic HTTP dependency into a separate handler instance.
+
+## Public job discovery
+
+Version 0.4 adds `/api/discovery/sources` and `/api/discovery/search`. The starter catalog contains seven public employer boards across technology, logistics, music, clinical research, education, mental health and autonomous transport. A person can choose up to four boards per search or supply a supported Greenhouse or Lever board URL. Search is available without signing in. It has no country or profession whitelist, but it covers only the selected boards and the current interface is English.
+
+The service fetches only the providers' fixed public API hosts. It filters the returned title, employer, available summary, location text and explicit remote-work metadata locally. It does not infer work eligibility or forward a person's keywords and location filter to employers. Search terms are not retained in the workspace or public board cache; ordinary platform request logs may include URL fields. See [the exact native API contract](server/discovery-contract.json).
+
+Each board is capped at 500 validated jobs and 512 KiB of normalized cache data. Pages contain at most 50 results. A shared ten-minute cache and durable request/fetch budgets limit upstream traffic. Earlier results may remain visible for at most 24 hours after a refresh failure, with their original check time and stale state. Deleted boards clear cached vacancies. Partial coverage, unavailable sources, invalid filters, cooldowns and changed page snapshots remain distinguishable from a successful empty search.
+
+Discovery never approves or sends an application. Saving a discovered job uses the existing opportunity flow; verified submission still requires the separately authorized employer integration described below.
 
 ## Connect and recover
 
@@ -82,10 +93,14 @@ Use Node 24.22 or a compatible Node version meeting `package.json`'s engine requ
 npm ci
 npm run typecheck
 npm test
+node tests/hosted-worker.mjs
+node --experimental-strip-types tests/browser-api.mjs
 npm run build
 ```
 
 `tests/hosted-applications.mjs` executes the production handler using actual Miniflare D1 and R2 bindings and a synthetic employer dependency. Its dated results and source hashes are in `tests/hosted-verification.json`. Tests cover real 5 MiB storage, concurrent pairing and saves, duplicate and approval gates, transport uncertainty, provider-result persistence failure, quota races, upload recovery and deletion fencing.
+
+`tests/hosted-discovery.mjs` exercises the actual D1 cache, concurrent leases, bounded source fetches, durable quotas, normalization, privacy boundaries and pagination, including the bundled workerd entrypoint. Its observed results are in `tests/hosted-discovery-verification.json`. `tests/discovery-public-sources.json` separately records bounded public GET observations of the catalog; these checks never POST an employer application. The browser transport suite checks timeout, cancellation, malformed responses and mutation confirmation without silently replaying a failed write.
 
 These checks are distinct from production HTTPS, platform-authentication and native UI acceptance. Production observations belong in the repository's release review, with their source commit and date.
 

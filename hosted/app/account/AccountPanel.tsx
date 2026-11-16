@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { readAPI, apiMessage } from "../components/api";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { APIError, requestAPI } from "../components/api";
 
 type Session = { id: string; createdAt: string; expiresAt: string };
 type Document = { sha256: string; name: string; size: number; createdAt: string; state: "ready" | "uploading" | "failed" };
@@ -40,31 +40,46 @@ function parseAccount(data: Record<string, unknown>): Account {
 }
 function DownloadIcon() { return <svg className="arrow-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M8 3v10M4 9l4 4 4-4" /></svg>; }
 async function loadAccount(signal?: AbortSignal): Promise<Account> {
-  const response = await fetch("/api/account", { cache: "no-store", redirect: "error", signal });
-  const data = await readAPI(response);
-  if (!response.ok || data.ok !== true) throw new Error(apiMessage(data, "Your workspace could not be loaded."));
-  return parseAccount(data);
+  return parseAccount(await requestAPI("/api/account", { signal }));
 }
 
 export default function AccountPanel() {
   const [account, setAccount] = useState<Account | null>(null);
   const [error, setError] = useState(""); const [notice, setNotice] = useState(""); const [busy, setBusy] = useState("");
   const [deleteOpen, setDeleteOpen] = useState(false); const [confirmation, setConfirmation] = useState(""); const [deleted, setDeleted] = useState(false);
-  async function refresh() {
-    try {
-      const data = await loadAccount(); setAccount(data); setError("");
-    } catch (e) { setError(e instanceof Error ? e.message : "Your workspace could not be loaded."); }
-  }
-  useEffect(() => {
-    const controller = new AbortController();
-    void loadAccount(controller.signal).then(data => { if (!controller.signal.aborted) setAccount(data); }).catch(e => { if (!controller.signal.aborted) setError(e instanceof Error ? e.message : "Your workspace could not be loaded."); });
-    return () => controller.abort();
+  const [loading, setLoading] = useState(true); const [needsSignIn, setNeedsSignIn] = useState(false);
+  const readRequest = useRef<AbortController | null>(null);
+  const mutation = useRef<AbortController | null>(null);
+  const readGeneration = useRef(0);
+  const confirmationInput = useRef<HTMLInputElement>(null);
+  const refresh = useCallback(() => {
+    readRequest.current?.abort();
+    const controller = new AbortController(); readRequest.current = controller;
+    const generation = ++readGeneration.current;
+    return loadAccount(controller.signal).then(data => {
+      if (controller.signal.aborted || generation !== readGeneration.current) return;
+      setAccount(data); setError(""); setNeedsSignIn(false);
+    }).catch(e => {
+      if (controller.signal.aborted || generation !== readGeneration.current) return;
+      if (e instanceof APIError && e.status === 401) { setAccount(null); setNeedsSignIn(true); setNotice(""); }
+      setError(e instanceof Error ? e.message : "Your workspace could not be loaded.");
+    }).finally(() => {
+      if (readRequest.current === controller) { readRequest.current = null; setLoading(false); }
+    });
   }, []);
-  async function mutate(action: string, path: string, body: object, method = "POST") {
-    if (busy) return; setBusy(action); setError(""); setNotice("");
+  useEffect(() => {
+    void refresh();
+    return () => { readRequest.current?.abort(); readRequest.current = null; mutation.current?.abort(); mutation.current = null; };
+  }, [refresh]);
+  useEffect(() => { if (deleteOpen) confirmationInput.current?.focus(); }, [deleteOpen]);
+  async function mutate(action: string, path: string, body: object, method: "POST" | "DELETE" = "POST") {
+    if (mutation.current) return;
+    const controller = new AbortController(); mutation.current = controller;
+    readGeneration.current++; readRequest.current?.abort(); readRequest.current = null;
+    setLoading(false); setBusy(action); setError(""); setNotice("");
     try {
-      const response = await fetch(path, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), redirect: "error", credentials: "same-origin" }); const data = await readAPI(response);
-      if (!response.ok || data.ok !== true) throw new Error(apiMessage(data, "This change could not be completed."));
+      const data = await requestAPI(path, { method, body, signal: controller.signal });
+      if (controller.signal.aborted || mutation.current !== controller) return;
       if (action === "delete") {
         if (data.deleted !== true) throw new Error("Deletion has not been confirmed. Your workspace is still shown until the service confirms it.");
         setDeleted(true); setAccount(null); setConfirmation("");
@@ -73,22 +88,26 @@ export default function AccountPanel() {
           const recovered = count(data.recovered), retryRequired = count(data.retryRequired);
           setNotice(`${recovered} ${recovered === 1 ? "file recovered" : "files recovered"}. ${retryRequired > 0 ? `${retryRequired} ${retryRequired === 1 ? "file needs" : "files need"} to be saved again from your phone.` : "Uploads still in progress can be checked again after one minute."} A recovered file is attached to your profile only when you explicitly save it from the phone app.`);
         } else setNotice("The phone’s connection was revoked. Already dispatched applications cannot be recalled.");
-        await refresh();
+        setLoading(true); await refresh();
       }
-    } catch (e) { setError(e instanceof Error ? e.message : "This change could not be completed."); } finally { setBusy(""); }
+    } catch (e) {
+      if (controller.signal.aborted || mutation.current !== controller) return;
+      if (e instanceof APIError && e.status === 401) { setAccount(null); setNeedsSignIn(true); }
+      setError(e instanceof Error ? e.message : "This change could not be completed.");
+    } finally { if (mutation.current === controller) { mutation.current = null; setBusy(""); } }
   }
   if (deleted) return <section className="card"><span className="pill">Deletion completed</span><h2>Your cloud workspace was deleted.</h2><p>Its phone connections, saved profiles, CV contents, opportunities, and application records have been removed from the active service.</p><p className="muted">Files already saved on your phones and applications received by employers remain in those places. The privacy page explains infrastructure recovery copies and empty upload markers.</p><a className="button secondary" href="/connect">Start a new workspace</a></section>;
-  return <div className="account-sections">
-    {error && <div className="alert error" role="alert">{error}<button className="text-link" onClick={refresh} disabled={Boolean(busy)}>Try loading again</button></div>}
+  return <div className="account-sections" aria-busy={loading || Boolean(busy)}>
+    {error && <div className="alert error" role="alert">{error}{needsSignIn ? <a className="text-link" href="/signin-with-chatgpt?return_to=%2Faccount" target="_top">Sign in again</a> : <button className="text-link" onClick={() => { setLoading(true); void refresh(); }} disabled={Boolean(busy) || loading}>{loading ? "Loading…" : "Reload current status"}</button>}</div>}
     {notice && <div className="alert" role="status">{notice}</div>}
     {!account && !error && <section className="card" aria-busy="true"><p role="status">Loading your private workspace…</p></section>}
     {account && <>
       <section className="card"><span className="eyebrow">SIGNED IN</span><h2 className="account-email">{account.email || "Your Career Finder account"}</h2><p className="muted">{account.workspaceId ? "Use this same account to recover your workspace on a new phone. Automatic applications must use this account’s email address." : "You have not created a cloud workspace yet. Create a connection code to get started."}</p>{account.deleting ? <p className="alert" role="status">Deletion is pending. New connections, saves, and applications are paused. Finish deleting below to confirm removal.</p> : <a className="button primary" href="/connect">Connect a phone <svg className="arrow-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" /></svg></a>}</section>
       {account.workspaceId && <>
-        <section className="card"><div className="section-heading"><h2>Connected phones</h2><span className="count">{account.sessions.length}</span></div><p className="muted">Disconnect a lost phone or one that is no longer yours. Its locally saved draft is not erased.</p>{account.sessions.length === 0 ? <p className="empty-note">No active phone connections. Your saved workspace is still here.</p> : <ul className="session-list">{account.sessions.map((s, index) => <li key={s.id}><div><h3>Phone connection {index + 1}</h3><p className="small muted">Connected {date(s.createdAt)} · Expires {date(s.expiresAt)}</p></div><button className="button secondary" disabled={Boolean(busy)} onClick={() => mutate(s.id, "/api/account/sessions/revoke", { sessionId: s.id })}>{busy === s.id ? "Disconnecting…" : "Disconnect"}</button></li>)}</ul>}</section>
-        <section className="card"><div className="section-heading"><h2>Your CV files</h2><span className="count">{account.documents.length} / {account.limits.maxResumes}</span></div><p className="muted">{size(account.usage.storedResumeBytes)} of {size(account.limits.maxStoredResumeBytes)} reserved. A PDF can be up to 5 MiB. Saved versions stay available until you delete the workspace, including versions kept for earlier application reviews.</p>{account.documents.length === 0 ? <p className="empty-note">No CV uploaded. Choose a PDF in the phone app when you are ready.</p> : <ul className="session-list document-list">{account.documents.map(d => <li key={d.sha256}><div><h3>{d.name}</h3><p className="small muted">{size(d.size)} · {date(d.createdAt)}</p><p className="small muted">{d.state === "ready" ? "Saved privately" : d.state === "uploading" ? "Upload in progress or awaiting recovery" : "Upload interrupted — recovery or a new save is needed"}</p></div>{d.state === "ready" && <a className="button secondary" href={`/api/account/resumes/${d.sha256}`} download>Download <DownloadIcon /></a>}</li>)}</ul>}{account.documents.some(d => d.state !== "ready") && !account.deleting && <div className="upload-recovery"><p className="small muted">If an upload was interrupted, wait one minute, then check for a recoverable file. This does not replace your phone’s profile or submit an application.</p><button className="button secondary" disabled={Boolean(busy)} onClick={() => mutate("recover", "/api/account/uploads/recover", {})}>{busy === "recover" ? "Checking uploads…" : "Recover interrupted uploads"}</button></div>}</section>
+        <section className="card"><div className="section-heading"><h2>Connected phones</h2><span className="count">{account.sessions.length}</span></div><p className="muted">Disconnect a lost phone or one that is no longer yours. Its locally saved draft is not erased.</p>{account.sessions.length === 0 ? <p className="empty-note">No active phone connections. Your saved workspace is still here.</p> : <ul className="session-list">{account.sessions.map((s, index) => <li key={s.id}><div><h3>Phone connection {index + 1}</h3><p className="small muted">Connected {date(s.createdAt)} · Expires {date(s.expiresAt)}</p></div><button className="button secondary" disabled={Boolean(busy) || loading} onClick={() => mutate(s.id, "/api/account/sessions/revoke", { sessionId: s.id })}>{busy === s.id ? "Disconnecting…" : "Disconnect"}</button></li>)}</ul>}</section>
+        <section className="card"><div className="section-heading"><h2>Your CV files</h2><span className="count">{account.documents.length} / {account.limits.maxResumes}</span></div><p className="muted">{size(account.usage.storedResumeBytes)} of {size(account.limits.maxStoredResumeBytes)} reserved. A PDF can be up to 5 MiB. Saved versions stay available until you delete the workspace, including versions kept for earlier application reviews.</p>{account.documents.length === 0 ? <p className="empty-note">No CV uploaded. Choose a PDF in the phone app when you are ready.</p> : <ul className="session-list document-list">{account.documents.map(d => <li key={d.sha256}><div><h3>{d.name}</h3><p className="small muted">{size(d.size)} · {date(d.createdAt)}</p><p className="small muted">{d.state === "ready" ? "Saved privately" : d.state === "uploading" ? "Upload in progress or awaiting recovery" : "Upload interrupted — recovery or a new save is needed"}</p></div>{d.state === "ready" && <a className="button secondary" href={`/api/account/resumes/${d.sha256}`} download>Download <DownloadIcon /></a>}</li>)}</ul>}{account.documents.some(d => d.state !== "ready") && !account.deleting && <div className="upload-recovery"><p className="small muted">If an upload was interrupted, wait one minute, then check for a recoverable file. This does not replace your phone’s profile or submit an application.</p><button className="button secondary" disabled={Boolean(busy) || loading} onClick={() => mutate("recover", "/api/account/uploads/recover", {})}>{busy === "recover" ? "Checking uploads…" : "Recover interrupted uploads"}</button></div>}</section>
         <section className="card"><h2>A copy for you</h2><p className="muted">Download your profile, saved opportunities, and application records as JSON. CV files are separate downloads above; the JSON includes private download paths that work while you are signed in.</p><dl className="usage-grid"><div><dt>Opportunities</dt><dd>{account.usage.jobs} / {account.limits.maxJobs}</dd></div><div><dt>Reviews</dt><dd>{account.usage.plans} / {account.limits.maxPlans}</dd></div><div><dt>Application records</dt><dd>{account.usage.attempts} / {account.limits.maxAttempts}</dd></div></dl><a className="button secondary" href="/api/account/export" download>Download account records <DownloadIcon /></a><p className="small muted">Keep these downloads private. They contain personal information.</p></section>
-        <section className="card danger-zone"><p className="eyebrow">DELETE CLOUD DATA</p><h2>Leave on your terms.</h2><p className="muted">Permanently remove this workspace’s active cloud records and CV contents, and revoke its phone connections. Applications already received by employers cannot be withdrawn here. Deletion also removes duplicate-prevention history; check earlier employer applications before starting again.</p>{!deleteOpen ? <button className="button danger-outline" onClick={() => setDeleteOpen(true)} disabled={Boolean(busy)}>{account.deleting ? "Finish pending deletion" : "Delete cloud workspace"}</button> : <div className="delete-confirm"><label htmlFor="delete-confirmation">Type <strong>DELETE</strong> to confirm</label><input id="delete-confirmation" value={confirmation} onChange={e => setConfirmation(e.target.value)} autoComplete="off" spellCheck={false} /><div className="action-row"><button className="button danger" disabled={confirmation !== "DELETE" || Boolean(busy)} onClick={() => mutate("delete", "/api/account", { confirmation }, "DELETE")}>{busy === "delete" ? "Deleting your workspace…" : "Permanently delete"}</button><button className="button secondary" disabled={Boolean(busy)} onClick={() => { setDeleteOpen(false); setConfirmation(""); }}>Close</button></div><p className="small muted">An application request already in progress may need to finish first. If deletion is interrupted, retry here until removal is confirmed.</p></div>}</section>
+        <section className="card danger-zone"><p className="eyebrow">DELETE CLOUD DATA</p><h2>Leave on your terms.</h2><p className="muted">Permanently remove this workspace’s active cloud records and CV contents, and revoke its phone connections. Applications already received by employers cannot be withdrawn here. Deletion also removes duplicate-prevention history; check earlier employer applications before starting again.</p>{!deleteOpen ? <button className="button danger-outline" onClick={() => setDeleteOpen(true)} disabled={Boolean(busy) || loading}>{account.deleting ? "Finish pending deletion" : "Delete cloud workspace"}</button> : <div className="delete-confirm"><label htmlFor="delete-confirmation">Type <strong>DELETE</strong> to confirm</label><input id="delete-confirmation" ref={confirmationInput} value={confirmation} onChange={e => setConfirmation(e.target.value)} autoComplete="off" spellCheck={false} /><div className="action-row"><button className="button danger" disabled={confirmation !== "DELETE" || Boolean(busy) || loading} onClick={() => mutate("delete", "/api/account", { confirmation }, "DELETE")}>{busy === "delete" ? "Deleting your workspace…" : "Permanently delete"}</button><button className="button secondary" disabled={Boolean(busy) || loading} onClick={() => { setDeleteOpen(false); setConfirmation(""); }}>Close</button></div><p className="small muted">An application request already in progress may need to finish first. If deletion is interrupted, retry here until removal is confirmed.</p></div>}</section>
       </>}
       <a className="text-link" href="/signout-with-chatgpt?return_to=%2Fconnect" target="_top">Sign out of this browser</a>
     </>}
