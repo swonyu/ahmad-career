@@ -76,7 +76,7 @@ private struct NativeShortlistScreen: View {
         List {
             Section {
                 NativeIntro(eyebrow: "YOUR CAREER WORKSPACE", title: "Find work that fits your life.",
-                            message: "Explore employer boards, keep the roles you like and review every application before it is sent.")
+                            message: "Explore employer boards, keep the roles you like and prepare your applications.")
             }.listRowBackground(Color.clear).listRowSeparator(.hidden)
             Section("Start with an opportunity") {
                 Button { navigation.selectedTab = 1 } label: {
@@ -102,7 +102,7 @@ private struct NativeShortlistScreen: View {
             }
             Section("You stay in control") {
                 Text("Your new profile starts blank. Add your own details and CV when you are ready. An account is needed only for the connected application service.")
-                Text("Auto Apply is available for activated employer integrations. Other roles open on the employer's website. Only a provider receipt confirms a submission.")
+                Text("Live automatic submissions are currently disabled on the hosted preview. Use employer links to apply manually. A custom service requires an activated employer integration and your approval of the reviewed application. Only a provider receipt confirms a submission.")
                 Text("Existing notes, saved roles and application history stay available. A search result or a saved link is not an application.")
                     .font(.footnote).foregroundStyle(.secondary)
             }

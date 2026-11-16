@@ -35,7 +35,7 @@ struct NativeApplicationsScreen: View {
     @State private var exportSheet = false
 
     private var reviewActionTitle: String {
-        model.connected ? (model.selected.isEmpty ? "Select opportunities to apply" : "Review \(model.selected.count) application\(model.selected.count == 1 ? "" : "s")") : "Set up Auto Apply"
+        model.connected ? (model.selected.isEmpty ? "Select opportunities to apply" : "Review \(model.selected.count) application\(model.selected.count == 1 ? "" : "s")") : "Connect application workspace"
     }
     private var confirmed: Int {
         model.attempts.filter { MobileApplicationPolicy.isVerified($0) && $0["evidenceMode"]?.string == "live" }.count
@@ -307,10 +307,12 @@ struct NativeApplicationsScreen: View {
     private var coverage: some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("A workspace for every career", systemImage: "globe").font(.subheadline.weight(.semibold))
-            Text("Save opportunities from any country or profession. Auto Apply works with connected employers whose application requirements are supported. Other jobs open on the employer's website.")
+            Text("Save opportunities from any country or profession and prepare your next application. Open employer links to apply manually.")
+                .font(.caption).foregroundStyle(.secondary).lineSpacing(3)
+            Text("Live automatic submissions are currently disabled on the hosted preview. A custom application service requires an activated, authorized employer integration and your approval of the reviewed details.")
                 .font(.caption).foregroundStyle(.secondary).lineSpacing(3)
             if !model.connected {
-                Text("Automatic submission needs an activated application service. Your phone workspace remains available while it is disconnected.")
+                Text("Your phone workspace remains available while it is disconnected.")
                     .font(.caption).foregroundStyle(.secondary).lineSpacing(3)
             }
         }.padding(.vertical, 6)
