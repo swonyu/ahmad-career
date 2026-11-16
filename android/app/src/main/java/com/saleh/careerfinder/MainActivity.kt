@@ -23,6 +23,7 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
@@ -34,19 +35,26 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.DialogWindowProvider
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import java.time.Instant
 import java.time.LocalDate
@@ -703,8 +711,13 @@ private fun TargetCountryChooser(value: Set<String>, enabled: Boolean, changed: 
         }
     }
     if (open) FullScreenForm("Target countries", { open = false }) {
+        val focus = LocalFocusManager.current
+        val keyboard = LocalSoftwareKeyboardController.current
         Column(Modifier.fillMaxSize().padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Field("Search target countries", search, { search = it })
+            OutlinedTextField(search, { search = it.take(2000) }, label = { Text("Search target countries") },
+                modifier = Modifier.fillMaxWidth(), singleLine = true, shape = RoundedCornerShape(14.dp),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { focus.clearFocus(); keyboard?.hide() }))
             val filtered = countries.filter { (it.first + " " + it.second).contains(search, true) }
             LazyColumn(Modifier.weight(1f).testTag("target-countries")) {
                 item { Text(draft.size.toString() + " selected · Leave empty for no preference.", style = MaterialTheme.typography.bodyMedium) }
@@ -792,7 +805,17 @@ internal fun StatusPill(label: String, caution: Boolean) {
 
 @Composable
 internal fun FullScreenForm(title: String, close: () -> Unit, content: @Composable () -> Unit) {
-    Dialog(onDismissRequest = close, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+    Dialog(onDismissRequest = close, properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false)) {
+        val view = LocalView.current
+        val lightBackground = MaterialTheme.colorScheme.background.luminance() > 0.5f
+        SideEffect {
+            (view.parent as? DialogWindowProvider)?.window?.let { window ->
+                WindowCompat.getInsetsController(window, view).apply {
+                    isAppearanceLightStatusBars = lightBackground
+                    isAppearanceLightNavigationBars = lightBackground
+                }
+            }
+        }
         Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             Column(Modifier.safeDrawingPadding().imePadding()) {
                 Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {

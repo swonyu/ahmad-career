@@ -438,6 +438,7 @@ struct NativeApplicationProfileEditor: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
+                        focusedField = nil
                         if changed { dismissalChoice = true }
                         else { closingIntentionally = true; dismiss() }
                     }.disabled(occupied)
@@ -480,14 +481,14 @@ struct NativeApplicationProfileEditor: View {
                         closingIntentionally = true; dismiss()
                     } else { issue = model.message }
                 }
-                Button("Keep editing", role: .cancel) {}
+                Button("Keep editing") { dismissalChoice = false }
             } message: { Text("Saving a phone draft does not upload details or submit an application.") }
             .confirmationDialog("Replace this phone draft?", isPresented: $replaceChoice, titleVisibility: .visible) {
                 Button("Use service version", role: .destructive) {
                     if model.useLatestProfile(context: context) { resetFromModel() }
                     else { issue = model.message }
                 }
-                Button("Keep editing", role: .cancel) {}
+                Button("Keep editing") { replaceChoice = false }
             } message: { Text("This replaces the phone draft and any PDF selected only on this phone.") }
         }
         .tint(ApplyDesign.green).interactiveDismissDisabled(occupied || changed)
@@ -581,6 +582,7 @@ struct NativeOpportunityEditor: View {
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Cancel") {
+                            focusedField = nil
                             if changed { dismissalChoice = true }
                             else { closingIntentionally = true; dismiss() }
                         }.disabled(model.busy)
@@ -606,7 +608,8 @@ struct NativeOpportunityEditor: View {
                         if model.keepOpportunityDraft(PhoneOpportunityDraft()) { closingIntentionally = true; dismiss() }
                         else { issue = model.message }
                     }
-                    Button("Keep editing", role: .cancel) {}
+                    Button("Keep editing") { dismissalChoice = false }
+                        .accessibilityIdentifier("opportunity.keepEditing")
                 } message: { Text("Saving a draft does not add it to the service or submit an application.") }
         }.tint(ApplyDesign.accent).interactiveDismissDisabled(model.busy || changed)
             .onChange(of: scenePhase) { phase in
@@ -854,7 +857,7 @@ private struct NativeApplicationReview: View {
                     if let current = model.plan { _ = model.resumeReview(current) }
                     dismiss()
                 }
-                Button("Keep editing", role: .cancel) {}
+                Button("Keep editing") { discardChoices = false }
             } message: { Text("The saved review remains available. Your unreviewed message and permission changes will be discarded.") }
         }.tint(ApplyDesign.accent).interactiveDismissDisabled(model.busy || changed)
             .onChange(of: model.plan?["digest"]?.string) { _ in approved = false }

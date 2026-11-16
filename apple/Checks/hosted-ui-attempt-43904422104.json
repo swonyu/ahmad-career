@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "runId": 43904422104,
+  "runAttempt": 1,
+  "commit": "ba836006259bd30162ddc76444e1186726483d33",
+  "runUrl": "https://github.com/swonyu/ahmad-career/actions/runs/43904422104",
+  "policyAndReleaseJob": {
+    "id": 133429312050,
+    "conclusion": "success",
+    "completedAt": "2026-11-16T16:11:51Z",
+    "boundaryChecks": 61,
+    "lifecycleAssertions": 129,
+    "lifecycleScenarios": 27,
+    "discoveryAssertions": 33,
+    "discoveryScenarios": 10,
+    "legacyStoreChecks": "PASS",
+    "unsignedReleaseBuild": "PASS",
+    "productIdentityAssertions": "PASS",
+    "logSHA256": "00cdc25c08f5479e74a3b330629baffb6401197d140310264b9849c4ec8780d9"
+  },
+  "nativeUIJob": {
+    "id": 133429311930,
+    "conclusion": "failure",
+    "completedAt": "2026-11-16T16:20:36Z",
+    "device": "iPhone Air",
+    "runtime": "iOS 26.5 Simulator",
+    "executedTests": 7,
+    "passedTests": 5,
+    "failedTests": 2,
+    "unexpectedFailures": 0,
+    "testDurationSeconds": 279.885,
+    "testSourceSHA256": "0723e54bb13c23228c53aa3cc995fce4d250723d4d98ede879c1e7e0131ad373",
+    "logSHA256": "e01c172033cc40a41e882812623c66015ce9fdf482d8f0a99ab948d871f35641",
+    "artifactId": 14246431638,
+    "artifactName": "iphone-ui-acceptance-43904422104",
+    "artifactBytes": 118339507,
+    "artifactSHA256": "134e22ac3dc6f91eb30e2fcd20a69ea80cb22cf68a8b77b96e762cf96af9f00a",
+    "passed": [
+      "testAccessibilityTextKeepsCoreControlsReachable",
+      "testApplicationDraftSurvivesCancelAndRelaunch",
+      "testDiscoverySaveFlowsIntoSavedAndApply",
+      "testFreshStartAndFiveTabs",
+      "testOpportunityDiscardRequiresExplicitChoice"
+    ],
+    "failures": [
+      {
+        "test": "testOpportunityDraftKeepSaveAndRestore",
+        "assertion": "Keep editing button was not found after Cancel.",
+        "observed": "Exact accessibility hierarchy and screen recording show the confirmation with Save draft and Discard draft, but no cancel-role Keep editing action; keyboard remained open.",
+        "frameSHA256": "148fd848733f1eac0883d23e2bc5e9192f5577a4128213e3910d4eb48fa2c6af",
+        "correction": "Make Keep editing a normal visible action, explicitly dismiss its confirmation, and end editing before showing profile/opportunity dismissal choices. Test waits for its stable semantic ID and verifies both title and URL remain."
+      },
+      {
+        "test": "testSearchEmptyAndFailurePreservesPreviousResults",
+        "assertion": "No roles match this search was not reachable.",
+        "observed": "Exact screen recording shows the typed query and keyboard still open; the body Search row was behind the floating keyboard accessory, so the test did not execute a search.",
+        "frameSHA256": "4c52fda62e1722f73c82603174427a3ed0f50f2166dfa7b02b2fe2e5a0b02612",
+        "correction": "Expose Search jobs in the keyboard toolbar, allow interactive keyboard dismissal, and combine empty-state accessibility copy. Test exercises toolbar and Return submission, waits for keyboard dismissal, asserts the real no-results label, and retains the failure-preserves-results assertion."
+      }
+    ]
+  },
+  "frameExtraction": "Unmodified final test recording frames decoded with ffmpeg at 0.6 seconds before the end; reviewed visually together with the exact Xcode interaction log/hierarchy.",
+  "revisedSourceStaticCheck": {
+    "checkedAt": "2026-11-16T16:29:17.087082+00:00",
+    "release": "PASS",
+    "debug": "PASS",
+    "uiTestSource": "PASS",
+    "appSourceCount": 13,
+    "diagnostics": 0,
+    "hashMismatches": 0,
+    "changedFiles": {
+      "apple/AhmadCareer/NativeApplicationsViews.swift": "c25f606fd20cf5aab247cef0f8994db8f08630aaa09f58da9678e84f4c905f33",
+      "apple/AhmadCareer/NativeDiscoveryViews.swift": "bfed284b2c4b7155da9fc17d7cf6bd33857282e1699e9f6d29c0b204c01e61ad",
+      "apple/UITests/CareerFinderUITests.swift": "bc58934c77360a50a93416fd0e6943657699b1e22b33fd9625d2212c9de2d6ef"
+    }
+  },
+  "scopeLimits": [
+    "Prior runtime outcome is preserved as failure; no failed assertion or previous-results check was disabled.",
+    "The revised source requires the next exact-commit hosted UI run.",
+    "No local Xcode project build, local simulator, signing, real account or real employer submission was used.",
+    "Raw job logs, full xcresult, screen recordings and decoded failure frames remain in isolated scratch outside the source repository."
+  ]
+}

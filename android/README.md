@@ -1,22 +1,30 @@
 # Career Finder for Android phones
 
-Native Kotlin / Jetpack Compose client for the verified-applications service. English interface, system-scaled text, right-to-left layout support, light/dark green theme, bottom navigation, and touch controls of at least 48 dp. The app starts with an empty personal workspace and contains no sample vacancies or seeded identity.
+Native Kotlin / Jetpack Compose phone app for public job discovery, private career planning and the verified-applications service. English interface, system-scaled text, right-to-left layout support, light/dark green theme, bottom navigation, and touch controls of at least 48 dp. The app starts with an empty personal workspace and contains no sample vacancies or seeded identity.
 
 ## Product behavior
 
+- Search selected public Lever and Greenhouse employer boards without an account or résumé upload. Choose up to four catalog employers or supported custom board links, then explicitly search by role, location or an evidenced remote label.
+- See source attribution, freshness, partial availability and search limits. Unknown country/remote values remain unknown; search coverage and a remote label do not establish work eligibility.
+- Save a discovered role into the existing private opportunity flow. Search and save never approve or submit an application. A failed, cancelled or stale search preserves earlier results; changed pagination requires a deliberate fresh search.
 - Create a private phone profile, including a single-name profile with no surname, and pick the exact PDF résumé through Android's document picker.
+- See first/single name, email and PDF essentials before optional experience and preferences. Select target countries with search and explicit confirmation; dismissing the selector preserves the earlier choice.
 - Keep edits, selected opportunities and explicit consent choices in an encrypted phone draft. After pairing, review and deliberately copy a saved phone profile and opportunities into the connected workspace draft; copying does not upload them.
 - Save employer links from any country or profession, with searchable role/company/location details.
+- Mark an opportunity **Applied elsewhere · self-reported** when using an employer's website. This invalidates an earlier review but never creates a verified receipt. Saving the same URL again preserves the saved opportunity's identity.
 - Pair a configured HTTPS service with a one-time code. The bearer session and local drafts use AES-GCM with Android Keystore; no plaintext preferences or backups.
 - Open the selected service's browser setup, privacy, support and account/recovery/deletion pages. New connections start with the hosted Career Finder address; existing paired addresses are preserved.
 - Select synced opportunities, supply separate employer messages and explicit undecided/yes/no data-processing and future-contact choices.
 - Review the server's immutable profile fields, résumé name/size/SHA-256 and per-job readiness before pressing **Approve and Auto Apply**.
 - Stop pending work, review exact outcomes, export redacted receipt evidence, and reopen an earlier rate-limited plan for deliberate review after cooldown.
 - Only confirmed **live** Lever receipts with an application ID count as verified applications. Test/unknown/uncertain records are visibly separate.
+- Search receipts by role, employer or reference, and filter verified, attention, pending, stopped and test outcomes. When live submission is unavailable, the app explains the manual employer route and blocks an approval request before networking.
 - Compare a conflicting saved profile with the preserved phone draft before keeping edited fields or reloading. A changed remote PDF is identified explicitly; a newly chosen local PDF keeps its exact bytes.
 - Retry unavailable private storage, or explicitly start a separate empty storage area while preserving earlier encrypted files and Keystore keys.
 
 Opening an employer link does not submit or create a receipt. Missing connectors, unknown requirements or unsupported custom questions remain manual applications. The phone does not hold an employer API key and does not drive third-party login pages.
+
+Public discovery always uses `https://career-finder-service.jazzy-drake-8323.chatgpt.site`, independently of an optional paired companion. It sends only explicitly chosen search filters, with no bearer token, cookies, profile or PDF. Its synthetic contract fixture is packaged only in the instrumentation APK and is absent from the ordinary preview.
 
 Phone-only drafts and connected workspaces have separate encrypted storage identities. Pairing does not silently upload an offline profile. Tokens expire; revocation preserves server records. Online revocation requires the service to be reachable. A separate **Remove connection locally** choice preserves the workspace draft and removes the phone's token without claiming that the remote session or already approved work was stopped.
 
@@ -35,7 +43,7 @@ Use JDK 21 (JDK 17 also meets AGP's baseline) and Android SDK Platform 36. AGP s
 bash checks/run-policy-checks.sh
 ```
 
-The checked-in wrapper is generated by official Gradle 8.13 and checks the distribution SHA-256. Pinned dependencies: AGP 8.13.2, Kotlin and Compose compiler plugin 2.3.10, Compose BOM 2025.10.01, Activity 1.11.0, Lifecycle 2.9.4. Minimum phone version: Android 8 / API 26. Preview version: **0.3.0**, version code **3**. Debug package: `com.saleh.careerfinder.preview`. Release package: `com.saleh.careerfinder`; release signing is not configured.
+The checked-in wrapper is generated by official Gradle 8.13 and checks the distribution SHA-256. Pinned dependencies: AGP 8.13.2, Kotlin and Compose compiler plugin 2.3.10, Compose BOM 2025.10.01, Activity 1.11.0, Lifecycle 2.9.4. Minimum phone version: Android 8 / API 26. Preview version: **0.4.0**, version code **4**. Debug package: `com.saleh.careerfinder.preview`. Release package: `com.saleh.careerfinder`; release signing is not configured.
 
 Compatibility references:
 
@@ -45,6 +53,7 @@ Compatibility references:
 - [Pinned Compose BOM artifact](https://dl.google.com/dl/android/maven2/androidx/compose/compose-bom/2025.10.01/compose-bom-2025.10.01.pom)
 - [Android domain-specific certificate configuration](https://developer.android.com/privacy-and-security/security-config)
 - [Separate instrumented test build types](https://developer.android.com/studio/test/advanced-test-setup)
+- [Dialog window/IME inset behavior](https://developer.android.com/reference/kotlin/androidx/compose/ui/window/DialogProperties)
 
 ## Connect a phone
 
@@ -56,15 +65,17 @@ Saving a connected profile uploads its fields and PDF to the chosen service; syn
 
 ## Verification
 
-The delivered **0.3.0** source passed `assembleDebug`, `lintDebug`, `assembleDebugAndroidTest` and `processReleaseResources` through the official Gradle wrapper on the isolated macOS ARM toolchain. Lint reported **zero errors and six dependency/idiom advisories**. All **22 instrumented regression tests passed** in 6.437 seconds on the dedicated Android 16 / API 36 ARM emulator, and all **36 Java boundary-policy checks passed**.
+The **0.4.0 candidate** source passed `assembleDebug`, `lintDebug`, `assembleDebugAndroidTest` and `processReleaseResources` through the official Gradle wrapper on the isolated macOS ARM toolchain. Lint reported **zero errors and six dependency/idiom advisories**. All **35 instrumented regression tests passed** in 17.304 seconds on the dedicated Android 16 / API 36 ARM emulator, and all **36 Java boundary-policy checks passed**.
 
-The seven added tests exercise hosted setup origins, one advance per foreground cycle, no automatic approval, compatibility with the companion service, cooldown/uncertain/unapproved exclusions, durable stop intent, expired sessions, workspace changes and cancellation during dispatch. These checks use controlled service doubles with the real Android ViewModel and storage behavior. An owner-authenticated session against the hosted service was not exercised in this run; the browser sign-in requires the account owner.
+The new checks cover public-contract validation, query isolation, explicit search, cancelled and out-of-order responses, unavailable boards, pagination changes, rate-limit delays, duplicate saving, self-reported applications, receipt filtering and disabled live submission. Actual Compose flows exercise a single-name profile, country confirm/cancel, discovery saving and manual tracking. Intermediate attempts exposed lazy-list test-navigation failures and a country-dialog keyboard/locale interaction; all results, including the interrupted run and one test-helper compile failure, are preserved under `checks/attempts` and explained in the verification record. The final country search has an explicit dialog-local Done action, and tests select stable ISO codes without weakening confirm/cancel assertions. That same case also passed separately at 360 dp, 180% text and Arabic RTL in 8.027 seconds.
+
+Before the bounded dialog-only inset/Done refinements, the ordinary installed 0.4 candidate also performed a deliberate public HTTPS search against the deployed service from an empty, unpaired workspace. It displayed 50 of 855 matching jobs at the time of observation, with real employer/source/location details. The final country selector was visually reviewed at 360 dp width, 180% text, dark mode and Arabic RTL layout, with its real keyboard visible and its Done action hiding the keyboard. The final discovery client is identical to the candidate used for the live search; the record identifies each observed APK hash. These are bounded emulator observations, not a claim about every device. No owner-authenticated session or employer submission was exercised in this pass.
 
 The normal APK's installed label is exactly **Career Finder**. The branding audit found no Ahmad branding or personal profile defaults in main source/resources. A fresh profile has blank identity/location/skills/target fields, no PDF and no saved opportunities. Internal package and storage names remain stable for upgrades.
 
-The exact **26-file compiled-source manifest**, APK hash, test names and commands are in [checks/verification.json](checks/verification.json). Packaged normal-preview and release resources use system certificate trust only, with no fixture CA or emulator trust exception. The 0.3.0 preview retains the same package and signing certificate as earlier previews; legacy encrypted records pass the regression suite. It remains a locally debug-signed preview, with no production signing or store publication.
+The exact **32-file compiled-source manifest**, APK hash, test names and commands are in [checks/verification.json](checks/verification.json). Packaged normal-preview and release resources use system certificate trust only, with no fixture CA or emulator trust exception. The 0.4.0 preview retains the same package and signing certificate as earlier previews; legacy encrypted records pass the regression suite. It remains a locally debug-signed preview, with no production signing or store publication.
 
-The complete previous **0.2.0** evidence is preserved in [checks/history/v0.2.0/verification.json](checks/history/v0.2.0/verification.json). That historical run included real native HTTPS calls to a synthetic local provider, ordinary-preview certificate refusal, compact large-text/RTL/dark layouts, and an actual system PDF-picker return with restart persistence. Those observations remain labeled 0.2.0 and are not presented as new 0.3.0 executions.
+Complete earlier evidence is preserved for [0.3.0](checks/history/v0.3.0/verification.json) and [0.2.0](checks/history/v0.2.0/verification.json). The 0.2.0 run included real native HTTPS calls to a synthetic local provider, ordinary-preview certificate refusal and an actual system PDF-picker return with restart persistence. Historical observations are not presented as new 0.4.0 executions.
 
 `checks/run-policy-checks.sh` executes the actual Java policy used by the app: secure URL construction, workspace isolation, PDF bytes/size/name, hashing, and strict live receipt counting. It makes no network requests.
 
@@ -92,4 +103,4 @@ The acceptance test pairs through the real native HTTPS client, saves a single-n
 
 The compact layout adapts the bottom navigation to two labeled rows at large font scales, and text uses content-based paragraph direction inside RTL layouts. The archived 0.2.0 emulator pass covered a 360 dp-wide phone at 180% font scale, dark mode, Arabic RTL layout, and an actual system PDF-picker return with draft persistence after process restart. The interface remains English.
 
-Physical-device acceptance, TalkBack reading/focus, the wider device/OS matrix, live authorized employer acceptance, production privacy/support information, store signing and store review remain separate release work. The Android app does not provision employer credentials.
+Physical-device acceptance, TalkBack reading/focus, the wider device/OS matrix, live authorized employer acceptance, store signing and store review remain separate release work. Hosted service policy and operational readiness are documented separately. The Android app does not provision employer credentials.

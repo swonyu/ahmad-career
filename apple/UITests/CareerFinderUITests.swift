@@ -46,6 +46,20 @@ final class CareerFinderUITests: XCTestCase {
     }
     @MainActor
     private func top(_ app: XCUIApplication) { for _ in 0..<4 { app.swipeDown() } }
+    @MainActor
+    private func searchFromKeyboard(in app: XCUIApplication, usingReturnKey: Bool = false) {
+        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5))
+        if usingReturnKey {
+            app.textFields["discovery.keywords"].typeText("\n")
+        } else {
+            let search = app.buttons["discovery.keyboardSearch"]
+            XCTAssertTrue(search.waitForExistence(timeout: 5))
+            XCTAssertTrue(search.isHittable, "Search must be reachable while the keyboard is open")
+            search.tap()
+        }
+        let dismissed = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: app.keyboards.firstMatch)
+        XCTAssertEqual(XCTWaiter.wait(for: [dismissed], timeout: 5), .completed, "Submitting a search must dismiss the keyboard")
+    }
 
     @MainActor
     func testFreshStartAndFiveTabs() {
@@ -98,8 +112,13 @@ final class CareerFinderUITests: XCTestCase {
         replace(app.textFields["opportunity.url"], with: "https://careers.example.com/jobs/designer")
         replace(app.textFields["opportunity.title"], with: "Product designer")
         app.navigationBars.buttons["Cancel"].tap()
-        app.buttons["Keep editing"].tap()
+        let keepEditing = app.buttons["opportunity.keepEditing"]
+        XCTAssertTrue(keepEditing.waitForExistence(timeout: 5))
+        XCTAssertTrue(keepEditing.isHittable)
+        capture("05a-explicit-keep-editing-choice", app: app)
+        keepEditing.tap()
         XCTAssertEqual(app.textFields["opportunity.title"].value as? String, "Product designer")
+        XCTAssertEqual(app.textFields["opportunity.url"].value as? String, "https://careers.example.com/jobs/designer")
         app.navigationBars.buttons["Cancel"].tap()
         app.buttons["Save draft on this phone"].tap()
         app.terminate(); app = launch(id: id)
@@ -154,16 +173,18 @@ final class CareerFinderUITests: XCTestCase {
     func testSearchEmptyAndFailurePreservesPreviousResults() {
         let app = launch(); tab("Search", in: app)
         replace(app.textFields["discovery.keywords"], with: "nothing matches")
-        app.buttons["discovery.search"].tap()
-        let empty = app.staticTexts["No roles match this search."]
-        reveal(empty, in: app); XCTAssertTrue(empty.exists)
+        searchFromKeyboard(in: app)
+        let empty = element("discovery.empty", app: app)
+        reveal(empty, in: app)
+        XCTAssertTrue(empty.label.contains("No roles match this search."), "The empty state must describe the completed search")
+        capture("08a-completed-search-with-no-matches", app: app)
         top(app)
         replace(app.textFields["discovery.keywords"], with: "")
-        app.buttons["discovery.search"].tap()
+        searchFromKeyboard(in: app, usingReturnKey: true)
         let role = element("discovery.job.fixture-design", app: app); reveal(role, in: app)
         top(app)
         replace(app.textFields["discovery.keywords"], with: "offline error")
-        app.buttons["discovery.search"].tap()
+        searchFromKeyboard(in: app)
         let issue = element("discovery.error", app: app); reveal(issue, in: app)
         XCTAssertTrue(issue.exists)
         reveal(role, in: app); XCTAssertTrue(role.exists)

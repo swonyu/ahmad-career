@@ -12,6 +12,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextInput
@@ -48,6 +49,15 @@ class PhonePolishAcceptanceTest {
     private lateinit var model: CareerViewModel
     private lateinit var discovery: DiscoveryPage
 
+    private fun closeSoftKeyboard() {
+        compose.runOnIdle {
+            val activity = compose.activity
+            (activity.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager)
+                .hideSoftInputFromWindow(activity.window.decorView.windowToken, 0)
+        }
+        compose.waitForIdle()
+    }
+
     @Before fun showPhone() {
         val text = InstrumentationRegistry.getInstrumentation().context.assets.open("discovery-search-v1.json").bufferedReader().use { it.readText() }
         discovery = DiscoveryCodec.page(JSONObject(text))
@@ -66,8 +76,12 @@ class PhonePolishAcceptanceTest {
 
     @Test fun profileEssentials_andCountrySelection_preserveSingleNamesAndCancelledChoices() {
         compose.onNodeWithText("Profile").performClick()
-        compose.onNode(hasText("First or single name") and hasSetTextAction()).performScrollTo().performTextInput("Single")
-        compose.onNode(hasText("Email") and hasSetTextAction()).performScrollTo().performTextInput("single@example.invalid")
+        compose.onNodeWithTag("profile-list").performScrollToNode(hasText("First or single name") and hasSetTextAction())
+        compose.onNode(hasText("First or single name") and hasSetTextAction()).performTextInput("Single")
+        closeSoftKeyboard()
+        compose.onNodeWithTag("profile-list").performScrollToNode(hasText("Email") and hasSetTextAction())
+        compose.onNode(hasText("Email") and hasSetTextAction()).performTextInput("single@example.invalid")
+        closeSoftKeyboard()
         compose.onNodeWithTag("profile-list").performScrollToNode(hasText("2 of 3 application essentials ready"))
         compose.onNodeWithText("2 of 3 application essentials ready").assertIsDisplayed()
         compose.onNodeWithTag("profile-list").performScrollToNode(hasText("Choose PDF résumé"))
@@ -78,17 +92,21 @@ class PhonePolishAcceptanceTest {
         compose.onNodeWithText("Add experience and preferences").performClick()
         compose.onNodeWithTag("profile-list").performScrollToNode(hasContentDescription("Choose target countries"))
         compose.onNodeWithContentDescription("Choose target countries").performClick()
-        compose.onNode(hasText("Search target countries") and hasSetTextAction()).performTextInput("Japan")
-        compose.onNodeWithTag("target-countries").performScrollToNode(hasText("Japan · JP"))
-        compose.onNodeWithText("Japan · JP").performClick()
+        compose.onNode(hasText("Search target countries") and hasSetTextAction()).performTextInput("JP")
+        compose.onNode(hasText("Search target countries") and hasSetTextAction()).performImeAction()
+        android.util.Log.i("CareerPhoneAcceptance", "Country picker: JP Done completed")
+        compose.onNodeWithTag("target-countries").performScrollToNode(hasText(" · JP", substring = true))
+        compose.onNode(hasText(" · JP", substring = true)).performClick()
         assertEquals("", model.state.value.profile.targetCountries)
         compose.onNodeWithText("Use selected countries").performClick()
         assertEquals("JP", model.state.value.profile.targetCountries)
         compose.onNodeWithTag("profile-list").performScrollToNode(hasContentDescription("Choose target countries"))
         compose.onNodeWithContentDescription("Choose target countries").performClick()
-        compose.onNode(hasText("Search target countries") and hasSetTextAction()).performTextInput("France")
-        compose.onNodeWithTag("target-countries").performScrollToNode(hasText("France · FR"))
-        compose.onNodeWithText("France · FR").performClick()
+        compose.onNode(hasText("Search target countries") and hasSetTextAction()).performTextInput("FR")
+        compose.onNode(hasText("Search target countries") and hasSetTextAction()).performImeAction()
+        android.util.Log.i("CareerPhoneAcceptance", "Country picker: FR Done completed")
+        compose.onNodeWithTag("target-countries").performScrollToNode(hasText(" · FR", substring = true))
+        compose.onNode(hasText(" · FR", substring = true)).performClick()
         compose.onNodeWithContentDescription("Close Target countries").performClick()
         assertEquals("JP", model.state.value.profile.targetCountries)
         compose.onNodeWithTag("profile-list").performScrollToNode(hasText("Save profile on this phone"))

@@ -91,10 +91,18 @@ struct NativeDiscoveryScreen: View {
                 }
             }
         }
-        .listStyle(.insetGrouped).navigationTitle("Search jobs").navigationBarTitleDisplayMode(.inline)
+        .listStyle(.insetGrouped).scrollDismissesKeyboard(.interactively)
+        .navigationTitle("Search jobs").navigationBarTitleDisplayMode(.inline)
         .task { await discovery.loadCatalog() }
         .sheet(isPresented: $choosingBoards) { NativeDiscoveryBoards() }
-        .toolbar { ToolbarItemGroup(placement: .keyboard) { Spacer(); Button("Done typing") { focused = false } } }
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Button("Search jobs", action: beginSearch)
+                    .disabled(discovery.isSearching).accessibilityIdentifier("discovery.keyboardSearch")
+                Spacer()
+                Button("Done typing") { focused = false }
+            }
+        }
         .onChange(of: discovery.error) { issue in
             if let issue { UIAccessibility.post(notification: .announcement, argument: issue) }
         }
@@ -121,7 +129,7 @@ struct NativeDiscoveryScreen: View {
             Text(discovery.page == nil ? "Use a role or skill, add a location if you want, and choose up to four Greenhouse or Lever employer boards. Tap Search jobs when you are ready."
                  : "Try fewer keywords, another location or a different employer board. Results cover the selected boards, not every employer or country. Your saved opportunities are unchanged.")
                 .font(.subheadline).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-        }.padding(.vertical, 16).accessibilityIdentifier("discovery.empty")
+        }.padding(.vertical, 16).accessibilityElement(children: .combine).accessibilityIdentifier("discovery.empty")
     }
 }
 
