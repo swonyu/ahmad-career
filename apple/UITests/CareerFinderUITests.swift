@@ -26,6 +26,7 @@ final class CareerFinderUITests: XCTestCase {
             if element.exists && element.isHittable { return }
             app.swipeUp()
         }
+        if !element.exists || !element.isHittable { print(app.debugDescription) }
         XCTAssertTrue(element.exists && element.isHittable, "Expected a reachable control: \(element)")
     }
     @MainActor
@@ -112,9 +113,17 @@ final class CareerFinderUITests: XCTestCase {
         replace(app.textFields["opportunity.url"], with: "https://careers.example.com/jobs/designer")
         replace(app.textFields["opportunity.title"], with: "Product designer")
         app.navigationBars.buttons["Cancel"].tap()
-        let keepEditing = app.buttons["opportunity.keepEditing"]
-        XCTAssertTrue(keepEditing.waitForExistence(timeout: 5))
-        XCTAssertTrue(keepEditing.isHittable)
+        let keepButtons = app.buttons.matching(NSPredicate(format: "label == %@", "Keep editing"))
+        let ready = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            keepButtons.allElementsBoundByIndex.contains { $0.exists && $0.isHittable }
+        }, object: nil)
+        let readiness = XCTWaiter.wait(for: [ready], timeout: 8)
+        if readiness != .completed { print(app.debugDescription) }
+        XCTAssertEqual(readiness, .completed, "The visible Keep editing action must become tappable")
+        guard let keepEditing = keepButtons.allElementsBoundByIndex.first(where: { $0.exists && $0.isHittable }) else {
+            print(app.debugDescription)
+            XCTFail("No reachable Keep editing action was presented"); return
+        }
         capture("05a-explicit-keep-editing-choice", app: app)
         keepEditing.tap()
         XCTAssertEqual(app.textFields["opportunity.title"].value as? String, "Product designer")
@@ -186,7 +195,8 @@ final class CareerFinderUITests: XCTestCase {
         replace(app.textFields["discovery.keywords"], with: "offline error")
         searchFromKeyboard(in: app)
         let issue = element("discovery.error", app: app); reveal(issue, in: app)
-        XCTAssertTrue(issue.exists)
+        XCTAssertTrue(issue.label.contains("Search could not finish."))
+        XCTAssertTrue(issue.label.contains("previous results are kept."))
         reveal(role, in: app); XCTAssertTrue(role.exists)
         capture("08-offline-search-keeps-results", app: app)
     }

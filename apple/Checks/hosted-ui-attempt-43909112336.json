@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "runId": 43909112336,
+  "runAttempt": 1,
+  "commit": "a2c452e8ac382e90e2ce8640b02525e64b69980b",
+  "runUrl": "https://github.com/swonyu/ahmad-career/actions/runs/43909112336",
+  "policyAndReleaseJob": {
+    "id": 133445847129,
+    "conclusion": "success",
+    "completedAt": "2026-11-16T16:36:31Z",
+    "boundaryChecks": 61,
+    "lifecycleAssertions": 129,
+    "lifecycleScenarios": 27,
+    "discoveryAssertions": 33,
+    "discoveryScenarios": 10,
+    "legacyStoreChecks": "PASS",
+    "unsignedReleaseBuild": "PASS",
+    "productIdentityAssertions": "PASS",
+    "logSHA256": "903c1a1cd35d8db3b332e6d1823adb0c5a9c193e7fbfaf2e8876c1278206c637"
+  },
+  "nativeUIJob": {
+    "id": 133445847236,
+    "conclusion": "failure",
+    "completedAt": "2026-11-16T16:48:36Z",
+    "device": "iPhone Air",
+    "runtime": "iOS 26.5 Simulator",
+    "executedTests": 7,
+    "passedTests": 5,
+    "failedTests": 2,
+    "unexpectedFailures": 0,
+    "testDurationSeconds": 471.564,
+    "testSourceSHA256": "bc58934c77360a50a93416fd0e6943657699b1e22b33fd9625d2212c9de2d6ef",
+    "logSHA256": "5125da337b2f189fee4eb804e8d68d1a229f99cfedae2013f15f4a556bf18cb0",
+    "artifactId": 14247546873,
+    "artifactName": "iphone-ui-acceptance-43909112336",
+    "artifactBytes": 179685232,
+    "artifactSHA256": "5cad6d7df130acd049d480db42200f7bb9e60a0ad3a07bd6051e292cd5264cb5",
+    "passed": [
+      "testAccessibilityTextKeepsCoreControlsReachable",
+      "testApplicationDraftSurvivesCancelAndRelaunch",
+      "testDiscoverySaveFlowsIntoSavedAndApply",
+      "testFreshStartAndFiveTabs",
+      "testOpportunityDiscardRequiresExplicitChoice"
+    ],
+    "failures": [
+      {
+        "test": "testOpportunityDraftKeepSaveAndRestore",
+        "assertion": "The custom-identifier Keep editing button existed but isHittable was false.",
+        "observed": "Recording frames approximately six seconds apart are byte-identical: the native Keep editing action is fully visible and unobscured, and the keyboard is dismissed. No hierarchy attachment was captured by this bare assertion.",
+        "frameSHA256": "e5172e2f89a621f590c20a074c4897e2cef4c5c185016c706d9399ae411deffa",
+        "correction": "Keep the production confirmation unchanged. Select the real label-matched native button only after an eight-second bounded exists-and-isHittable predicate, perform its real tap and retain both title/URL assertions. Print the hierarchy if readiness or reachability fails."
+      },
+      {
+        "test": "testSearchEmptyAndFailurePreservesPreviousResults",
+        "assertion": "The discovery.error query resolved to an Image that was not hittable.",
+        "observed": "Toolbar search, keyboard dismissal, completed no-results text and Return search all passed. Recording frames show the complete connection-error text and both previous roles visibly retained.",
+        "frameSHA256": "1b2c37cf4368b681545e2b75cab9d2675b19f0ff3169b7352b6688e4fdd641b6",
+        "correction": "Expose the full error as one static accessibility element, excluding the decorative icon. Assert actual error/recovery text and retain the old-role assertion; failed reveal logs the hierarchy."
+      }
+    ]
+  },
+  "frameExtraction": "Exact hosted test recording frames decoded without visual changes; the last opportunity frame matches the frame six seconds before the recording ended.",
+  "revisedSourceStaticCheck": {
+    "productionSourcesCheckedAt": "2026-11-16T16:57:01.797899+00:00",
+    "uiTestSourceCheckedAt": "2026-11-16T16:59:31.945493+00:00",
+    "release": "PASS",
+    "debug": "PASS",
+    "uiTestSource": "PASS",
+    "appSourceCount": 13,
+    "diagnostics": 0,
+    "hashMismatches": 0,
+    "changedFiles": {
+      "apple/AhmadCareer/NativeDiscoveryViews.swift": "2a165590cd915b93934e5142e2e21135299151cc98015d464b31b58298786836",
+      "apple/UITests/CareerFinderUITests.swift": "92d5679bee3118f103b5ee0dbe9d7cf403765ad49e0df47abf1fdba75332143f"
+    }
+  },
+  "scopeLimits": [
+    "Observed runtime failure is preserved. No failed test or behavioral assertion was disabled.",
+    "This record does not infer a runtime outcome for a subsequent revised commit; see docs/Phone-Polish-Review-2026-11-16.md for later results.",
+    "No local Xcode project build, local simulator, signing, real account or employer submission was used.",
+    "Raw logs, xcresult and recordings remain outside the source repository."
+  ]
+}

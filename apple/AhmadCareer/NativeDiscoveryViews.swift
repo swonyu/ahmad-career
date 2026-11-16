@@ -37,7 +37,9 @@ struct NativeDiscoveryScreen: View {
             if let error = discovery.error {
                 Section {
                     Label(error, systemImage: "exclamationmark.circle")
-                        .font(.subheadline).fixedSize(horizontal: false, vertical: true).accessibilityIdentifier("discovery.error")
+                        .font(.subheadline).fixedSize(horizontal: false, vertical: true)
+                        .accessibilityElement(children: .ignore).accessibilityLabel(error)
+                        .accessibilityAddTraits(.isStaticText).accessibilityIdentifier("discovery.error")
                     if let retry = discovery.retryAfter {
                         Text("Try again after \(retry.formatted(date: .omitted, time: .shortened)).").font(.footnote)
                     }

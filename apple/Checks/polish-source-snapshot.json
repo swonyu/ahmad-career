@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-16T16:29:17.087082+00:00",
+  "checkedAt": "2026-11-16T16:59:31.945493+00:00",
   "files": {
     "apple/AhmadCareer/AhmadCareerApp.swift": "bd025363b777b8a37390008a31dec85c97b4688ec7b2b5a958c74bb49430bccf",
     "apple/AhmadCareer/CareerAppEnvironment.swift": "ccf1a3d7ce60a4f5d5da822e3991ba632ca29c4385735943410ded0bea7edd08",
@@ -13,7 +13,7 @@
     "apple/AhmadCareer/NativeApplicationsViews.swift": "c25f606fd20cf5aab247cef0f8994db8f08630aaa09f58da9678e84f4c905f33",
     "apple/AhmadCareer/NativeCareerStore.swift": "f0140a3bcea9e947db4689e3784898f1ef59735c3217515d6b309f1cda62f7e7",
     "apple/AhmadCareer/NativeCareerViews.swift": "328b7448072c57a2f7ecb18acaf43a216e7b710d2895e84e46820d104d777165",
-    "apple/AhmadCareer/NativeDiscoveryViews.swift": "bfed284b2c4b7155da9fc17d7cf6bd33857282e1699e9f6d29c0b204c01e61ad",
+    "apple/AhmadCareer/NativeDiscoveryViews.swift": "2a165590cd915b93934e5142e2e21135299151cc98015d464b31b58298786836",
     "apple/AhmadCareer/CareerResearch.json": "9337469922d86ad305f109c838a8cf5c0742d6ffcdc438f3ffbe497f7eb92b1b",
     "apple/Checks/MobileApplicationCheck.swift": "7fb3157dde1c0f4bd9825039b0707a8ce49999cd8ac85142bf52ef90281a66b4",
     "apple/Checks/MobileLifecycleCheck.swift": "f5709837f1da715206198b0a2a5359ab7ac7d26806699ac9e73f1684e472014f",
@@ -21,7 +21,7 @@
     "apple/Checks/DiscoveryCheck.swift": "80a6d82da5880a449acd762afc313dc6be7ad74432c3fc6fe600b987b47ce083",
     "apple/Checks/check-mobile.sh": "6f1387653eb33dcbabb011d02060021a12c30a8f713baf399d8fb2f434bac793",
     "apple/Checks/Fixtures/discovery-search-v1.json": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7",
-    "apple/UITests/CareerFinderUITests.swift": "bc58934c77360a50a93416fd0e6943657699b1e22b33fd9625d2212c9de2d6ef",
+    "apple/UITests/CareerFinderUITests.swift": "92d5679bee3118f103b5ee0dbe9d7cf403765ad49e0df47abf1fdba75332143f",
     "apple/AhmadCareer.xcodeproj/project.pbxproj": "508514d75ed8cea5f19c755680e423395efe6fe92a2736a837b4dd71dbed502b",
     "apple/AhmadCareer.xcodeproj/xcshareddata/xcschemes/AhmadCareer.xcscheme": "f9b67f757ea53e6ed0ac8d54c5c2f2ac2609dc5c9a9fb3e4d0434b4a8f7cf395",
     "apple/AhmadCareer.xcodeproj/xcshareddata/xcschemes/CareerFinderAcceptance.xcscheme": "37b0f04c230f409a57419429d44b09543157ffb568cdce8a24fc64bd3736ddba"
