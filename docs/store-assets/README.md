@@ -1,6 +1,6 @@
 # Career Finder — phone store assets
 
-Prepared 16 November 2026. This folder supplies Google Play artwork, preserves the historical phone evidence, and records a separately authorized ordinary Android capture follow-up. **The artwork and four Android screenshot candidates are ready for publisher review. Ordinary iPhone screenshots remain pending.** Nothing in this folder establishes store submission or approval.
+Prepared 16 November 2026. This folder supplies Google Play artwork, preserves the historical phone evidence, and records separately authorized ordinary phone captures. **The artwork, four Android screenshot candidates and four iPhone screenshot candidates are ready for publisher review.** Nothing in this folder establishes store submission or approval.
 
 Use the existing [mobile store listing draft](../Mobile-Store-Listing-Draft.md) for the name, descriptions, keywords and review notes. The initial artwork review changed no app or runtime state. The dated Android follow-up below used the existing published preview APK on an isolated emulator; it did not rebuild the app or change source, signing or hosted service behavior. The [release handoff](../HOSTED-RELEASE-HANDOFF.md) remains the source for other release prerequisites.
 
@@ -54,6 +54,25 @@ The session performed ordinary public job discovery and one local save while unp
 
 The first cold-boot attempt stopped on a capture-helper path-validation error before ordinary UI interaction. Only that helper check was corrected; the unchanged APK was then reinstalled and verified for the completed capture. Both attempts performed cleanup. Final cleanup read back the original observed 180% text, dark appearance and Arabic app locale before shutdown, restored the exact original 1080 × 2400 AVD configuration bytes, stopped only the owned emulator/ADB resources, and preserved the shared ADB service. No app build or acceptance suite was rerun.
 
+## iPhone ordinary capture follow-up — 16 November 2026
+
+All four actual PNGs were opened and accepted by the release coordinator. [Capture run 43955902261](https://github.com/swonyu/ahmad-career/actions/runs/43955902261), attempt 1, passed its single ordinary UI walkthrough in **98.074 seconds**. This artifact run is separate from the five-job code quality gate. It used an isolated GitHub-hosted **iPhone 17 Pro / iOS 26.5 simulator**, with the ordinary unsigned **Release** app: Career Finder, bundle `com.ahmadalayed.career`, observed version **1.1 (7)**. That version/build is simulator metadata, not a claimed TestFlight or App Store upload.
+
+| Order and upload candidate | Visible state | Draft alt text |
+| --- | --- | --- |
+| [1. Start your search](iphone/store-01-start.png) | Career Finder start page with discovery, saved opportunities and a create-profile action; no personal profile. | Career Finder starts with job discovery, saved opportunities and a blank application profile. |
+| [2. Discover public jobs](iphone/store-02-public-search.png) | Actual public roles, employers, locations and qualified remote wording. | Public Career Finder job results show role titles, employers, locations and qualified remote wording. |
+| [3. Inspect a role](iphone/store-03-public-opportunity.png) | Canonical Accountant, EMEA, Greenhouse source, save controls and the saving-is-not-submitting notice. | A Canonical role shows location, source, save controls and a notice that saving does not submit an application. |
+| [4. Prepare your next step](iphone/store-04-application-workspace.png) | One local opportunity, zero confirmations, the disconnected-service explanation and complete Set up Auto Apply action. | One locally saved opportunity and zero confirmations appear above the Set up Auto Apply button. |
+
+Each file is its **unaltered 1206 × 2622, 8-bit RGB / 24-bit PNG original without alpha**. Source and destination byte counts and SHA-256 hashes match. No image was resized, cropped, redrawn, retouched or converted. Normal scroll continuation and native translucent navigation remain visible. In the opportunity screen, the employer and provider are visible; lower freshness information continues below the viewport. The fresh simulator used English, en_US and standard text size. Its appearance setting was not forced or measured; the reviewed images appear light.
+
+The capture branch's **32 production source/resource files and both shared schemes** match verified source `0a56340fee907ffab0e4e5f25ac252de76a23c9c`. A whole-project guard limited the project changes to the exact capture-test references and membership entries. Product checks confirmed Release, the existing bundle identity, iPhone-only device family and disabled signing. The auxiliary workflow, project additions, helper and capture test are excluded from the production branch. [capture-verification.json](iphone/capture-verification.json) retains the source and product proof, image hashes, visual findings and prior capture history.
+
+The first auxiliary run stopped before build when an optional light-appearance setter timed out. The next stopped before compilation because a settings query used a test-only scheme. Their failed logs and artifacts were preserved; each correction was confined to the capture harness. The successful run used the existing production scheme for settings and the existing acceptance scheme for build-for-testing and the ordinary capture. No production code, scheme, launch timeout or acceptance assertion was weakened for these corrections.
+
+The walkthrough performed public discovery and one local save. It did not pair a phone, enter applicant information, select a CV, open an employer link or tap a submission control. A network trace was not captured. The final screen remains disconnected and contains no verified submission receipt. The job completed its disposable-simulator cleanup step; that step tolerates cleanup errors and does not establish a separate deletion readback. No local Apple tooling or physical phone was used.
+
 ## Historical phone captures: retain the original 16-image record
 
 | Original set | Observed properties | Disposition |
@@ -85,21 +104,12 @@ Checked against the official pages on 16 November 2026; recheck the publisher co
 
 Sources: [Apple screenshot specifications](https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications), [Google Play preview assets](https://support.google.com/googleplay/android-developer/answer/9866151?hl=en), and [Google Play icon design specifications](https://developer.android.com/distribute/google-play/resources/icon-design-specifications). These are format checks, not an assurance of review approval.
 
-## Remaining iPhone capture and submission checks
+## Remaining submission checks
 
-The four Android views above are captured and visually accepted for publisher review. Four ordinary iPhone captures remain pending. Use an appropriate iPhone at **1206 × 2622** (or 1179 × 2556) for a direct medium-category set. Keep every original and verify the actual captured dimensions and channel format. Export separate opaque RGB PNGs or JPEGs only as needed; do not resize the old QA images into a new release identity. No iPad or desktop set is requested. Final store-console slot acceptance, release-configuration relevance and submission review still need the publisher.
+Both phone sets are captured and visually accepted for publisher review. The iPhone originals match a documented medium-category portrait size; the four Android RGB copies match the recorded native 9:16 display. Final store-console slot acceptance and correspondence to the actual signed release still require the publisher. No iPad or desktop set is requested.
 
-The titles below are capture labels and possible listing captions, not instructions to draw text over screenshots. Use the actual app interface and retain source, availability and submission-status context.
+Use the per-platform tables above for sequence and alt text. Every proposed alt text is under 140 characters. Public roles, availability and check times are specific to their capture. The screenshots show supported-board discovery, local saving and application preparation; they do not claim universal coverage or enabled live automatic submissions.
 
-| Order | Capture | Intended state | Draft alt text |
-| --- | --- | --- | --- |
-| 1 | Discover jobs | Current results from supported boards, with role, location and source visible. No promise of universal coverage. | Career Finder job results with role, location, source details and save controls. |
-| 2 | Keep a shortlist | An ordinary saved opportunity with clear next steps. Saving must not imply an application was sent. | Saved job opportunities organized in Career Finder for the next step. |
-| 3 | Prepare your profile | A blank ordinary profile, or approved non-sensitive demonstration details when separately authorized. Hide the keyboard only through normal UI interaction. | Career Finder profile fields for preparing experience, preferences and a resume. |
-| 4 | Review application options | The actual application workspace, preserving its live-submission availability and review requirements. | Career Finder application workspace showing preparation steps and current submission availability. |
+Before submission, confirm the final release version/build, signing, operator/support details, privacy disclosures and relevant physical-phone/account acceptance in the [release handoff](../HOSTED-RELEASE-HANDOFF.md). Preserve all originals and their history. If a later production change requires new images, capture the ordinary app again; do not alter these images or substitute the synthetic QA set.
 
-All proposed alt text is under 140 characters. Confirm it still describes the final capture before upload.
-
-Before capturing, record the intended release version/build and exact source identity. Use normal app state without the acceptance fixture flag. Choose non-sensitive reviewer-owned demonstration data; do not include a personal CV, email inbox, pairing code, login session or real applicant record. Public jobs may appear when their source and time-specific availability are clear. The current hosted preview has live submissions disabled, so the capture sequence must not invent a live confirmation. This plan requires no employer application.
-
-The initial artwork and historical-evidence review performed no simulator, device, account, build, store or publication action. The separately authorized Android capture follow-up is complete and documented above. iPhone capture and final release checks remain coordinated work; no store submission or publication was performed by this asset task.
+The initial artwork review performed no app/runtime action. The separate Android and GitHub-hosted iPhone capture follow-ups are documented above. This asset package performed no store upload, submission or publication.

@@ -1,0 +1,655 @@
+{
+  "schemaVersion": 1,
+  "productName": "Career Finder",
+  "recordedAt": "2026-11-16T21:23:45.509752+00:00",
+  "status": "four_ordinary_candidates_visually_accepted_for_publisher_review",
+  "sourceCommit": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+  "mainCommitAtReview": "c3358fe08a7bb259aba852b6fdaa2434408cf6b8",
+  "capture": {
+    "runId": 43955902261,
+    "runAttempt": 1,
+    "head": "6a29c0817b87d5baa36188a232222422020b8a35",
+    "url": "https://github.com/swonyu/ahmad-career/actions/runs/43955902261",
+    "jobId": 133610247108,
+    "result": "success",
+    "testCasesPassed": 1,
+    "failedTests": 0,
+    "unexpectedFailures": 0,
+    "testSeconds": 98.074,
+    "testIdentifier": "CareerFinderStoreCaptureTests/testCaptureOrdinaryScreens()",
+    "artifactId": 14270894106,
+    "artifactBytes": 5006978,
+    "artifactSHA256": "efd4660fed8c3c4102301d986ffd43dcc12cc76f8bfae5ba269fd66c743016f0",
+    "artifactSizeAndDigestMatchedGitHubMetadata": true,
+    "qualityGate": false,
+    "qualityGateReference": "docs/phone-polish-evidence/iphone-ci-43949653473-attempt-2.json"
+  },
+  "sourceVerification": {
+    "schemaVersion": 1,
+    "recordedAt": "2026-11-16T21:02:24.300447+00:00",
+    "purpose": "Ordinary iPhone screenshot capture only; not a quality gate",
+    "baselineCommit": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+    "captureCommit": "6a29c0817b87d5baa36188a232222422020b8a35",
+    "baselineTree": "53d3d9f36d6d897e6b9897549e8e2c0cb2d5253c",
+    "productionSourceAndResources": [
+      {
+        "path": "apple/AhmadCareer/AhmadCareer.entitlements",
+        "mode": "100644",
+        "gitBlobSHA": "ed19632131c9ec0f304fe54a647dc4ded592052e",
+        "bytes": 295,
+        "sha256": "f1d6f59c4f9b163dbfb55695ca3251f87173f855ca893f0e8804d895ea76299e"
+      },
+      {
+        "path": "apple/AhmadCareer/AhmadCareerApp.swift",
+        "mode": "100644",
+        "gitBlobSHA": "124b270d15f6e798332247aec6ab99a8e8ee1aeb",
+        "bytes": 1840,
+        "sha256": "bd025363b777b8a37390008a31dec85c97b4688ec7b2b5a958c74bb49430bccf"
+      },
+      {
+        "path": "apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-iOS-1024.png",
+        "mode": "100644",
+        "gitBlobSHA": "b9f66b26b3b4b4d7d7cd2373645abe4d809df23e",
+        "bytes": 9533,
+        "sha256": "5e6de9fd9a498ad6d12a848e7a9b85afc52bd53e02aef0d76a5e0e4266020405"
+      },
+      {
+        "path": "apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-1024.png",
+        "mode": "100644",
+        "gitBlobSHA": "61718669ffcd9708dfb132c7cb5ec2bbaae1370a",
+        "bytes": 50045,
+        "sha256": "416995206b86126119a710fe61bd2142a40597497c4f1d5f16c12ccb3c477ed0"
+      },
+      {
+        "path": "apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-128.png",
+        "mode": "100644",
+        "gitBlobSHA": "06b4023db8ac46caf0e6b5dddeb1546b30d73032",
+        "bytes": 3806,
+        "sha256": "1bdb4b1e20afd8f32d7629eb6bc4b29e70a85f7313eb56097d16b6d174bc80e7"
+      },
+      {
+        "path": "apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-16.png",
+        "mode": "100644",
+        "gitBlobSHA": "707e4d5858abb3d6ac3f27226132f06d64fb408f",
+        "bytes": 521,
+        "sha256": "e5c11b25f660bec9bd38fbc0c19bb7de0d762b2bd88e0ec2ae978f309b9ef6a0"
+      },
+      {
+        "path": "apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-256.png",
+        "mode": "100644",
+        "gitBlobSHA": "ae00450f9b959bfa0a8fa0a0bc115e524c77b9c4",
+        "bytes": 8226,
+        "sha256": "79202412207df862c6e82ad242f56b19d55e7bdc46e84dd73c95541e6f6b2ce3"
+      },
+      {
+        "path": "apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-32.png",
+        "mode": "100644",
+        "gitBlobSHA": "a2b3d5c06ec22a9a52a8cd54276b38824290e9f0",
+        "bytes": 968,
+        "sha256": "8d8c754028947fe3a0d3e571b409433fdee9bb137ae10c6d02713c26893ff414"
+      },
+      {
+        "path": "apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-512.png",
+        "mode": "100644",
+        "gitBlobSHA": "486a1bea8fc8fcd272b53e359d767d45bb2d9059",
+        "bytes": 19814,
+        "sha256": "d11d7d32e04332b204051cafc7aaaa52f3191506e2e299ba625fe821cf114ddf"
+      },
+      {
+        "path": "apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-64.png",
+        "mode": "100644",
+        "gitBlobSHA": "cd85d1b654d5aa95a91ea98ee91a86fdaef6569c",
+        "bytes": 1857,
+        "sha256": "ff20892bc1d8973669b8aabcb36f1b4cbc26a5c2c0871fc4cdc24047350f4c91"
+      },
+      {
+        "path": "apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/Contents.json",
+        "mode": "100644",
+        "gitBlobSHA": "a96a5f032ba30b4036cfe8fc2593770217a39fe1",
+        "bytes": 1478,
+        "sha256": "c851800c4906508de5420ef9acfe94d15b29d02fb90c2bb7e7406fec27b36e30"
+      },
+      {
+        "path": "apple/AhmadCareer/Assets.xcassets/Contents.json",
+        "mode": "100644",
+        "gitBlobSHA": "4aa7c5350bfce4a2c61e00815cbdbcbfab59ed24",
+        "bytes": 62,
+        "sha256": "3068ae11b833a8ea03990d2ea2a2b5fe7b3c47fbda56de956a4b84888f6c6af8"
+      },
+      {
+        "path": "apple/AhmadCareer/CareerAppEnvironment.swift",
+        "mode": "100644",
+        "gitBlobSHA": "cf43c5a1b7bd966a2bb7a94c55a9ddb74616131b",
+        "bytes": 5046,
+        "sha256": "ccf1a3d7ce60a4f5d5da822e3991ba632ca29c4385735943410ded0bea7edd08"
+      },
+      {
+        "path": "apple/AhmadCareer/CareerDiscovery.swift",
+        "mode": "100644",
+        "gitBlobSHA": "22e83fc6f33cd4f83af1647568ade71d5912c952",
+        "bytes": 17577,
+        "sha256": "7bbe9321917dc051e8911f7556653e807d4f25d3baa934829d21e1c4cebe09cc"
+      },
+      {
+        "path": "apple/AhmadCareer/CareerFeed.swift",
+        "mode": "100644",
+        "gitBlobSHA": "9b0d3ebb0d8c809fcf514975f5a02d5d678024b7",
+        "bytes": 20139,
+        "sha256": "f726dd1144423e71cadea28da4ff60792c5459dc0c873c0a4fb7858b3a6b3273"
+      },
+      {
+        "path": "apple/AhmadCareer/CareerPolicy.swift",
+        "mode": "100644",
+        "gitBlobSHA": "7286d6e53d47ee0bf941caa112d8cdbe7c5a956f",
+        "bytes": 1066,
+        "sha256": "59441ba26db1bca33fbcc6f985c1cfc054ba0774d3c4ff027a9a712e1883a9cf"
+      },
+      {
+        "path": "apple/AhmadCareer/CareerResearch.json",
+        "mode": "100644",
+        "gitBlobSHA": "91a747887d62b610c391c8e785f510525e2c345d",
+        "bytes": 21033,
+        "sha256": "9337469922d86ad305f109c838a8cf5c0742d6ffcdc438f3ffbe497f7eb92b1b"
+      },
+      {
+        "path": "apple/AhmadCareer/CareerWebView.swift",
+        "mode": "100644",
+        "gitBlobSHA": "bb34bdcf87a00b90c892b2d08553127c682e6909",
+        "bytes": 6938,
+        "sha256": "ff866bd788485434da518a51d05e65a191a3e69081b24a04772d29eafd0dcd8c"
+      },
+      {
+        "path": "apple/AhmadCareer/MobileApplicationClient.swift",
+        "mode": "100644",
+        "gitBlobSHA": "f581a1443d783449e0a6e9823cbf8541f516e9a4",
+        "bytes": 17478,
+        "sha256": "20fc9c366bf0b1fa5a51484faa1c4e33d5a07e1bb5413dee1227eaeddd40d6e5"
+      },
+      {
+        "path": "apple/AhmadCareer/MobileApplicationState.swift",
+        "mode": "100644",
+        "gitBlobSHA": "4d4ee369c5f6e2e8ccc64ed175fdb6d2bcf8aff0",
+        "bytes": 12997,
+        "sha256": "63333e4b4761cc89e0fcef7ec3949f95fe2ecb92cf04cd13a6d970326de9ea75"
+      },
+      {
+        "path": "apple/AhmadCareer/NativeApplicationsStore.swift",
+        "mode": "100644",
+        "gitBlobSHA": "734443ee6cbccce7771aff13fc1f252532936b99",
+        "bytes": 37045,
+        "sha256": "28e8cd1465aab66c77c090463d846a116155e9afbfa7e6121d159482a0211591"
+      },
+      {
+        "path": "apple/AhmadCareer/NativeApplicationsViews.swift",
+        "mode": "100644",
+        "gitBlobSHA": "5cde89dfa03f4608a0cfd052cb660350ee5774d8",
+        "bytes": 61569,
+        "sha256": "1b54f9ea4ab60fd6c56ad2e40798a52a0aa8af70e07336ca06f53214b8e27c21"
+      },
+      {
+        "path": "apple/AhmadCareer/NativeCareerStore.swift",
+        "mode": "100644",
+        "gitBlobSHA": "2d7fbeff773bf1e924ce5c6be57391004d9a7d22",
+        "bytes": 41006,
+        "sha256": "f0140a3bcea9e947db4689e3784898f1ef59735c3217515d6b309f1cda62f7e7"
+      },
+      {
+        "path": "apple/AhmadCareer/NativeCareerViews.swift",
+        "mode": "100644",
+        "gitBlobSHA": "be498a2ed42eae01a0fce211a7b52ed02e54dcd6",
+        "bytes": 59627,
+        "sha256": "328b7448072c57a2f7ecb18acaf43a216e7b710d2895e84e46820d104d777165"
+      },
+      {
+        "path": "apple/AhmadCareer/NativeDiscoveryViews.swift",
+        "mode": "100644",
+        "gitBlobSHA": "084a9da9185b97497d00532b95270385a7240233",
+        "bytes": 16586,
+        "sha256": "bf6f2dfd285ef4522de58f7f4b52c4e0a86628ff0875ec9b290cc2ec4979de36"
+      },
+      {
+        "path": "apple/AhmadCareer/Web/app.js",
+        "mode": "100644",
+        "gitBlobSHA": "f4520cb0ed7ca1d6f8e65701a0f653be46073c0f",
+        "bytes": 69807,
+        "sha256": "ec45e468c70ea1f15c070db39a125a9d2d6e530e6e713a6ec46c4f16765f1267"
+      },
+      {
+        "path": "apple/AhmadCareer/Web/core.js",
+        "mode": "100644",
+        "gitBlobSHA": "d9167954d157859c973d398679f68905222229a6",
+        "bytes": 11312,
+        "sha256": "6bcc33f97cb84eb97c6a8e1519f010f0d2a00b3fc420ec8fbeaf43a815577a64"
+      },
+      {
+        "path": "apple/AhmadCareer/Web/data.js",
+        "mode": "100644",
+        "gitBlobSHA": "ba7daa6a1480010c47e32fe7f60d407f698237a9",
+        "bytes": 22252,
+        "sha256": "95e8035cf7d1e173b7c9f006c888de5d60a3ad260dd52ee2f254373d2abda2e8"
+      },
+      {
+        "path": "apple/AhmadCareer/Web/icon.svg",
+        "mode": "100644",
+        "gitBlobSHA": "d81e9cfd43514653c4fbfc7bbac86a7e45b37288",
+        "bytes": 271,
+        "sha256": "60c6f0a7b1908b4e3c3aa05d636b92d41ae119e29665788364b9ffb5e8b3938c"
+      },
+      {
+        "path": "apple/AhmadCareer/Web/index.html",
+        "mode": "100644",
+        "gitBlobSHA": "dbc9146cf2e5cf3d320e47db68aa82366d238ce8",
+        "bytes": 3102,
+        "sha256": "33d675850dd8bd1eb30eeba44966884c72341d2372bc14e48f8b8360b6c72a50"
+      },
+      {
+        "path": "apple/AhmadCareer/Web/manifest.webmanifest",
+        "mode": "100644",
+        "gitBlobSHA": "13da12fd36f8366d78aa76461467efb10de2e32d",
+        "bytes": 229,
+        "sha256": "3ee2c227f0e9f3dcd49e427db5bd10d5c0248d58bdb96c0ec7b478570c11b7b5"
+      },
+      {
+        "path": "apple/AhmadCareer/Web/style.css",
+        "mode": "100644",
+        "gitBlobSHA": "b5238cf6d9863ce2842df6b8dcc42bd9ade826a4",
+        "bytes": 16291,
+        "sha256": "8ff3546374d718f0cbc96df91576c742a1c261745f13a94ecdca90353663cad7"
+      }
+    ],
+    "unchangedSchemes": [
+      {
+        "path": "apple/AhmadCareer.xcodeproj/xcshareddata/xcschemes/AhmadCareer.xcscheme",
+        "mode": "100644",
+        "gitBlobSHA": "1d8360df5d8085a7d70184a536a8fe35b47da652",
+        "bytes": 2100,
+        "sha256": "f9b67f757ea53e6ed0ac8d54c5c2f2ac2609dc5c9a9fb3e4d0434b4a8f7cf395"
+      },
+      {
+        "path": "apple/AhmadCareer.xcodeproj/xcshareddata/xcschemes/CareerFinderAcceptance.xcscheme",
+        "mode": "100644",
+        "gitBlobSHA": "0114fbbe0b32963c97dc747b2e2278f418ed3283",
+        "bytes": 1866,
+        "sha256": "37b0f04c230f409a57419429d44b09543157ffb568cdce8a24fc64bd3736ddba"
+      }
+    ],
+    "baselineProjectSHA256": "508514d75ed8cea5f19c755680e423395efe6fe92a2736a837b4dd71dbed502b",
+    "captureProjectSHA256": "6b3772d7b3f51f8977b9938d94f446e370335b835bdbf7b8de5aa3f0bb22264d",
+    "projectGuard": "Entire parsed project equals baseline plus exactly two UI-test references and their membership entries",
+    "allowedAuxiliaryChanges": [
+      ".github/workflows/phone-quality.yml",
+      "apple/AhmadCareer.xcodeproj/project.pbxproj",
+      "apple/StoreCapture/capture-evidence.py",
+      "apple/UITests/CareerFinderStoreCaptureTests.swift"
+    ],
+    "appIdentityAndBuildSettingsChanged": false,
+    "captureOnly": true,
+    "qualityGate": false,
+    "storePublication": false
+  },
+  "product": {
+    "recordedAt": "2026-11-16T21:13:02.543449+00:00",
+    "configuration": "Release",
+    "signingAllowed": false,
+    "bundleIdentifier": "com.ahmadalayed.career",
+    "displayName": "Career Finder",
+    "version": "1.1",
+    "build": "7",
+    "platform": [
+      "iPhoneSimulator"
+    ],
+    "deviceFamily": [
+      1
+    ],
+    "executableBytes": 10915552,
+    "executableSHA256": "9a8edb38b1a3714a44aeb2e6f51fba3d8273cd934afa346006a84973322ab167",
+    "settingsSHA256": "cca38f2951e42484d6113c73f7fd37000a5f8e8d6da3d0dc249feac515df152f"
+  },
+  "simulator": {
+    "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-5",
+    "runtimeVersion": "26.5",
+    "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro",
+    "deviceName": "iPhone 17 Pro",
+    "createdForRun": "43955902261",
+    "appearancePolicy": "Unmodified fresh simulator default; not forced or measured"
+  },
+  "captureSettings": {
+    "language": "English",
+    "locale": "en_US",
+    "preferredContentSize": "UICTContentSizeCategoryL",
+    "orientation": "portrait",
+    "appearance": "Unmodified fresh simulator default; the reviewed images appear light. No forced or measured appearance setting.",
+    "acceptanceFixtureArguments": false,
+    "acceptanceFixtureEnvironment": false,
+    "appLaunchEnvironment": {},
+    "xcodeVersion": "Xcode 26.6\nBuild version 17F113"
+  },
+  "retainedEvidence": [
+    {
+      "artifactMember": "attachments/manifest.json",
+      "bytes": 2085,
+      "sha256": "4ec2d5e7ba8e2180a0568ca1338ef415836d86585f8587653116aa3907c83306"
+    },
+    {
+      "artifactMember": "capture-manifest.json",
+      "bytes": 3861,
+      "sha256": "e3b1313ce06b87f5ca6c084ddab02038b00e99dc96e480f0d178c6fd858a00e7"
+    },
+    {
+      "artifactMember": "capture.log",
+      "bytes": 11853,
+      "sha256": "63cc2ccaef09f97cf236f25cea50e75dc78029c7beb137b47eb3c63823e18d12"
+    },
+    {
+      "artifactMember": "product-evidence.json",
+      "bytes": 513,
+      "sha256": "9c34961e1b6b005afae0fc47ec5002866799f26b278dcb8a600c7d452c7000ee"
+    },
+    {
+      "artifactMember": "simulator-plan.json",
+      "bytes": 367,
+      "sha256": "547012b6fa1af33c384a811b84f0dba7eb8c385c25faf00ee360e508c63c5608"
+    },
+    {
+      "artifactMember": "source-evidence.json",
+      "bytes": 10365,
+      "sha256": "62e2ad916bef17f8ca08d35babe935b3e53387b38dc022004945ecee08ef61c7"
+    },
+    {
+      "artifactMember": "test-exit-code.txt",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "artifactMember": "xcode-version.txt",
+      "bytes": 32,
+      "sha256": "18730ed2ae28a2c9cf0c2d5db549033a4f07089331391a7133b7b32187454fa9"
+    }
+  ],
+  "transfer": {
+    "fileCount": 13,
+    "totalFileBytes": 1627793,
+    "allSourceAndDestinationBytesAndHashesMatched": true,
+    "transferReceiptSHA256": "de29ec1bdd22253310ac067cd9f45795022d4125f8eb8f3e6ef279548d3c4109",
+    "imageChanges": false
+  },
+  "screenshots": [
+    {
+      "repoPath": "docs/store-assets/iphone/store-01-start.png",
+      "label": "Start your search",
+      "bytes": 310411,
+      "sha256": "c6c493bed0d00264aabed8ca5d92856d898e6dd535def81bd2f623700dbea302",
+      "width": 1206,
+      "height": 2622,
+      "bitsPerChannel": 8,
+      "pngColorType": 2,
+      "channels": "RGB",
+      "alphaChannelPresent": false,
+      "artifactMember": "screenshots/store-01-start.png",
+      "originalAttachment": "attachments/AF418132-9E1F-4142-80F2-C7A1A1C29650.png",
+      "capturedAtUtc": "2026-11-16T21:15:27.955000+00:00",
+      "visualAccepted": true,
+      "visualAssessment": "Career Finder branding, Find opportunities, Add a job link and Create your application profile are readable. The blank-profile start screen contains no personal identity or fixture banner.",
+      "altText": "Career Finder starts with job discovery, saved opportunities and a blank application profile.",
+      "altTextCharacterCount": 93,
+      "originalBytesPreserved": true,
+      "syntheticFixtureContentVisible": false,
+      "realApplicantDataVisible": false,
+      "pairingCredentialsVisible": false,
+      "staleProductNameVisible": false,
+      "storeSubmissionOrApproval": false
+    },
+    {
+      "repoPath": "docs/store-assets/iphone/store-02-public-search.png",
+      "label": "Discover public jobs",
+      "bytes": 434589,
+      "sha256": "c242e2362743623b51da45314e02e0cd07c5eae1b52c3e282c663961072067ad",
+      "width": 1206,
+      "height": 2622,
+      "bitsPerChannel": 8,
+      "pngColorType": 2,
+      "channels": "RGB",
+      "alphaChannelPresent": false,
+      "artifactMember": "screenshots/store-02-public-search.png",
+      "originalAttachment": "attachments/7D3FB6AC-3CAB-4ABF-A214-70C45E0076C9.png",
+      "capturedAtUtc": "2026-11-16T21:15:52.649000+00:00",
+      "visualAccepted": true,
+      "visualAssessment": "Real public roles from Canonical, DoorDash, Spotify and Freenome show titles, employers and locations. Remote wording is qualified. The ordinary scrolled screen continues beneath translucent system navigation.",
+      "altText": "Public Career Finder job results show role titles, employers, locations and qualified remote wording.",
+      "altTextCharacterCount": 101,
+      "originalBytesPreserved": true,
+      "syntheticFixtureContentVisible": false,
+      "realApplicantDataVisible": false,
+      "pairingCredentialsVisible": false,
+      "staleProductNameVisible": false,
+      "storeSubmissionOrApproval": false
+    },
+    {
+      "repoPath": "docs/store-assets/iphone/store-03-public-opportunity.png",
+      "label": "Inspect a role",
+      "bytes": 348784,
+      "sha256": "e59324c844a97cf2dc09efec89a54f0b97662c6fc8fc0a44b6db1817f0259d59",
+      "width": 1206,
+      "height": 2622,
+      "bitsPerChannel": 8,
+      "pngColorType": 2,
+      "channels": "RGB",
+      "alphaChannelPresent": false,
+      "artifactMember": "screenshots/store-03-public-opportunity.png",
+      "originalAttachment": "attachments/7A521751-511B-40D3-BF7D-2A0E65A9FC15.png",
+      "capturedAtUtc": "2026-11-16T21:15:56.277000+00:00",
+      "visualAccepted": true,
+      "visualAssessment": "The real Canonical Accountant role shows EMEA location, eligible-location caution, Save opportunity, employer/share links and the saving-is-not-submitting disclosure. Employer board and Greenhouse source are visible; lower freshness details continue below the viewport.",
+      "altText": "A Canonical role shows location, source, save controls and a notice that saving does not submit an application.",
+      "altTextCharacterCount": 111,
+      "originalBytesPreserved": true,
+      "syntheticFixtureContentVisible": false,
+      "realApplicantDataVisible": false,
+      "pairingCredentialsVisible": false,
+      "staleProductNameVisible": false,
+      "storeSubmissionOrApproval": false
+    },
+    {
+      "repoPath": "docs/store-assets/iphone/store-04-application-workspace.png",
+      "label": "Prepare your next step",
+      "bytes": 501306,
+      "sha256": "abec16bb98ea5e387cbf0367a9e3b58f22bb140135dd0bcb141c8a183383284e",
+      "width": 1206,
+      "height": 2622,
+      "bitsPerChannel": 8,
+      "pngColorType": 2,
+      "channels": "RGB",
+      "alphaChannelPresent": false,
+      "artifactMember": "screenshots/store-04-application-workspace.png",
+      "originalAttachment": "attachments/20402A58-ABAB-4B68-A020-CF03B3FD722B.png",
+      "capturedAtUtc": "2026-11-16T21:16:08.889000+00:00",
+      "visualAccepted": true,
+      "visualAssessment": "One local opportunity, zero confirmed and zero to verify are visible. The Canonical role is marked Saved on this phone. The disconnected-service explanation and complete Set up Auto Apply action are readable; no submission receipt is shown.",
+      "altText": "One locally saved opportunity and zero confirmations appear above the Set up Auto Apply button.",
+      "altTextCharacterCount": 95,
+      "originalBytesPreserved": true,
+      "syntheticFixtureContentVisible": false,
+      "realApplicantDataVisible": false,
+      "pairingCredentialsVisible": false,
+      "staleProductNameVisible": false,
+      "storeSubmissionOrApproval": false
+    }
+  ],
+  "visualAcceptance": {
+    "schemaVersion": 1,
+    "reviewedAt": "2026-11-16T21:23:45.509752+00:00",
+    "sourceCommit": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+    "captureHead": "6a29c0817b87d5baa36188a232222422020b8a35",
+    "run": 43955902261,
+    "attempt": 1,
+    "artifactId": 14270894106,
+    "allFourOriginalImagesOpenedByRoot": true,
+    "images": [
+      {
+        "repoPath": "docs/store-assets/iphone/store-01-start.png",
+        "label": "Start your search",
+        "bytes": 310411,
+        "sha256": "c6c493bed0d00264aabed8ca5d92856d898e6dd535def81bd2f623700dbea302",
+        "width": 1206,
+        "height": 2622,
+        "bitsPerChannel": 8,
+        "pngColorType": 2,
+        "channels": "RGB",
+        "alphaChannelPresent": false,
+        "artifactMember": "screenshots/store-01-start.png",
+        "originalAttachment": "attachments/AF418132-9E1F-4142-80F2-C7A1A1C29650.png",
+        "capturedAtUtc": "2026-11-16T21:15:27.955000+00:00",
+        "visualAccepted": true,
+        "visualAssessment": "Career Finder branding, Find opportunities, Add a job link and Create your application profile are readable. The blank-profile start screen contains no personal identity or fixture banner.",
+        "altText": "Career Finder starts with job discovery, saved opportunities and a blank application profile.",
+        "altTextCharacterCount": 93,
+        "originalBytesPreserved": true,
+        "syntheticFixtureContentVisible": false,
+        "realApplicantDataVisible": false,
+        "pairingCredentialsVisible": false,
+        "staleProductNameVisible": false,
+        "storeSubmissionOrApproval": false
+      },
+      {
+        "repoPath": "docs/store-assets/iphone/store-02-public-search.png",
+        "label": "Discover public jobs",
+        "bytes": 434589,
+        "sha256": "c242e2362743623b51da45314e02e0cd07c5eae1b52c3e282c663961072067ad",
+        "width": 1206,
+        "height": 2622,
+        "bitsPerChannel": 8,
+        "pngColorType": 2,
+        "channels": "RGB",
+        "alphaChannelPresent": false,
+        "artifactMember": "screenshots/store-02-public-search.png",
+        "originalAttachment": "attachments/7D3FB6AC-3CAB-4ABF-A214-70C45E0076C9.png",
+        "capturedAtUtc": "2026-11-16T21:15:52.649000+00:00",
+        "visualAccepted": true,
+        "visualAssessment": "Real public roles from Canonical, DoorDash, Spotify and Freenome show titles, employers and locations. Remote wording is qualified. The ordinary scrolled screen continues beneath translucent system navigation.",
+        "altText": "Public Career Finder job results show role titles, employers, locations and qualified remote wording.",
+        "altTextCharacterCount": 101,
+        "originalBytesPreserved": true,
+        "syntheticFixtureContentVisible": false,
+        "realApplicantDataVisible": false,
+        "pairingCredentialsVisible": false,
+        "staleProductNameVisible": false,
+        "storeSubmissionOrApproval": false
+      },
+      {
+        "repoPath": "docs/store-assets/iphone/store-03-public-opportunity.png",
+        "label": "Inspect a role",
+        "bytes": 348784,
+        "sha256": "e59324c844a97cf2dc09efec89a54f0b97662c6fc8fc0a44b6db1817f0259d59",
+        "width": 1206,
+        "height": 2622,
+        "bitsPerChannel": 8,
+        "pngColorType": 2,
+        "channels": "RGB",
+        "alphaChannelPresent": false,
+        "artifactMember": "screenshots/store-03-public-opportunity.png",
+        "originalAttachment": "attachments/7A521751-511B-40D3-BF7D-2A0E65A9FC15.png",
+        "capturedAtUtc": "2026-11-16T21:15:56.277000+00:00",
+        "visualAccepted": true,
+        "visualAssessment": "The real Canonical Accountant role shows EMEA location, eligible-location caution, Save opportunity, employer/share links and the saving-is-not-submitting disclosure. Employer board and Greenhouse source are visible; lower freshness details continue below the viewport.",
+        "altText": "A Canonical role shows location, source, save controls and a notice that saving does not submit an application.",
+        "altTextCharacterCount": 111,
+        "originalBytesPreserved": true,
+        "syntheticFixtureContentVisible": false,
+        "realApplicantDataVisible": false,
+        "pairingCredentialsVisible": false,
+        "staleProductNameVisible": false,
+        "storeSubmissionOrApproval": false
+      },
+      {
+        "repoPath": "docs/store-assets/iphone/store-04-application-workspace.png",
+        "label": "Prepare your next step",
+        "bytes": 501306,
+        "sha256": "abec16bb98ea5e387cbf0367a9e3b58f22bb140135dd0bcb141c8a183383284e",
+        "width": 1206,
+        "height": 2622,
+        "bitsPerChannel": 8,
+        "pngColorType": 2,
+        "channels": "RGB",
+        "alphaChannelPresent": false,
+        "artifactMember": "screenshots/store-04-application-workspace.png",
+        "originalAttachment": "attachments/20402A58-ABAB-4B68-A020-CF03B3FD722B.png",
+        "capturedAtUtc": "2026-11-16T21:16:08.889000+00:00",
+        "visualAccepted": true,
+        "visualAssessment": "One local opportunity, zero confirmed and zero to verify are visible. The Canonical role is marked Saved on this phone. The disconnected-service explanation and complete Set up Auto Apply action are readable; no submission receipt is shown.",
+        "altText": "One locally saved opportunity and zero confirmations appear above the Set up Auto Apply button.",
+        "altTextCharacterCount": 95,
+        "originalBytesPreserved": true,
+        "syntheticFixtureContentVisible": false,
+        "realApplicantDataVisible": false,
+        "pairingCredentialsVisible": false,
+        "staleProductNameVisible": false,
+        "storeSubmissionOrApproval": false
+      }
+    ],
+    "assessment": "Four ordinary native screenshot candidates accepted for publisher review. Normal scroll continuation and system translucency are retained without edits.",
+    "limits": [
+      "Simulator images only; not physical-phone acceptance.",
+      "Release configuration is unsigned and does not establish a store-distribution build.",
+      "No store upload or approval, enabled live submissions, or real application receipt is established."
+    ]
+  },
+  "priorCaptureRuns": [
+    {
+      "runId": 43952216968,
+      "attempt": 1,
+      "head": "90d884bb29c0cade3180733215aab53a58b850d0",
+      "url": "https://github.com/swonyu/ahmad-career/actions/runs/43952216968",
+      "conclusion": "failure",
+      "sourceGuardPassed": true,
+      "executedUITests": 0,
+      "screenshots": 0,
+      "cause": "Optional simulator light-appearance setter timed out after 60 seconds before app build.",
+      "reviewedCorrection": "Removed only the optional appearance override; fresh simulator default remained unmodified and unmeasured.",
+      "artifactBytes": 4196,
+      "artifactSHA256": "cf8b688f83d2f42e221cbb3d119d2c2d84ffb85d216f5456bbbd7c05a4cc93e3",
+      "promotedToStoreAssets": false,
+      "automaticallyRetried": false
+    },
+    {
+      "runId": 43954613049,
+      "attempt": 1,
+      "head": "7527f933cddc2ad6b7fbce4dcea7b502776e311b",
+      "url": "https://github.com/swonyu/ahmad-career/actions/runs/43954613049",
+      "conclusion": "failure",
+      "sourceGuardPassed": true,
+      "executedUITests": 0,
+      "screenshots": 0,
+      "cause": "The build-settings query selected a test-only scheme with no build-for-running entry and exited 64 before compilation.",
+      "reviewedCorrection": "Changed only the settings-query scheme to the unchanged production AhmadCareer scheme; build-for-testing and capture still use CareerFinderAcceptance.",
+      "artifactBytes": 4839,
+      "artifactSHA256": "d7d3baa543015fea33983cb0dc5771f08c9ca53a509103b206b8abe137b2fd06",
+      "promotedToStoreAssets": false,
+      "automaticallyRetried": false
+    }
+  ],
+  "interactionScope": {
+    "ordinaryPublicDiscovery": true,
+    "localOpportunitiesSaved": 1,
+    "nativePhonePaired": false,
+    "personalProfileOrCVEntered": false,
+    "employerLinksOpened": false,
+    "submissionControlsTapped": false,
+    "networkTraceCaptured": false,
+    "reviewedTestBoundary": "The reviewed capture test never taps employer links, account/pairing controls or application submission. The fresh simulator is disconnected and uses ordinary public discovery GETs plus a local save."
+  },
+  "cleanup": {
+    "hostedRunnerOnly": true,
+    "cleanupStepCompleted": true,
+    "independentSimulatorDeletionReadback": false,
+    "note": "The workflow cleanup step attempted shutdown and deletion of only its disposable simulator. Those commands tolerate cleanup errors; the completed job does not prove a separate deletion readback. No shared local Apple tool or physical phone was used."
+  },
+  "scopeLimits": [
+    "The auxiliary workflow, project delta, capture helper and UI test remain outside the production branch.",
+    "All 32 production app source/resource files and both schemes match the verified code baseline. The entire parsed project was guarded except the exact UI-test-only additions.",
+    "The built version 1.1 (7) is observed unsigned simulator metadata, not an assigned or uploaded TestFlight/App Store release.",
+    "Images preserve their exact original PNG bytes and native dimensions; no resizing, cropping, alpha conversion or retouching.",
+    "Public job availability and locations are specific to the capture; no universal vacancy or eligibility coverage is claimed.",
+    "Live automatic submissions remain disabled on the hosted service. These images show preparation and a local save, not provider acceptance.",
+    "Final store-console acceptance, signing, physical-phone and production account-lifecycle checks remain publisher/operator work."
+  ]
+}
