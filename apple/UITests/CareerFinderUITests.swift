@@ -236,7 +236,21 @@ final class CareerFinderUITests: XCTestCase {
         capture("11-employer-boards-accessibility-text", app: app)
         app.navigationBars.buttons["Done"].tap()
         tab("Apply", in: app)
-        XCTAssertTrue(app.buttons["applications.review"].isHittable)
+        let review = app.buttons["applications.review"]
+        XCTAssertTrue(review.isHittable)
+        XCTAssertEqual(review.label, "Set up Auto Apply")
         capture("12-application-workspace-accessibility-text", app: app)
+        review.tap()
+        let connection = app.navigationBars["Application connection"]
+        XCTAssertTrue(connection.waitForExistence(timeout: 5), "The application CTA must open connection setup")
+        let done = connection.buttons["Done"]
+        XCTAssertTrue(done.isHittable, "Connection setup must have a reachable dismiss control at accessibility text sizes")
+        capture("13-application-connection-accessibility-text", app: app)
+        done.tap()
+        let dismissed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            !connection.exists && review.isHittable
+        }, object: nil)
+        XCTAssertEqual(XCTWaiter.wait(for: [dismissed], timeout: 5), .completed,
+                       "Dismissing connection setup must return to the application CTA")
     }
 }

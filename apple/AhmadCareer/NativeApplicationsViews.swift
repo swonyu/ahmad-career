@@ -34,6 +34,9 @@ struct NativeApplicationsScreen: View {
     @State private var exported: URL?
     @State private var exportSheet = false
 
+    private var reviewActionTitle: String {
+        model.connected ? (model.selected.isEmpty ? "Select opportunities to apply" : "Review \(model.selected.count) application\(model.selected.count == 1 ? "" : "s")") : "Set up Auto Apply"
+    }
     private var confirmed: Int {
         model.attempts.filter { MobileApplicationPolicy.isVerified($0) && $0["evidenceMode"]?.string == "live" }.count
     }
@@ -127,18 +130,31 @@ struct NativeApplicationsScreen: View {
                         if !model.connected { connectionSheet = true }
                         else { Task { await model.prepare(manualAppliedURLs: appliedURLs); reviewSheet = model.plan != nil } }
                     } label: {
-                        HStack {
-                            if model.busy { ProgressView().tint(.white) }
-                            Image(systemName: "paperplane.fill")
-                            Text(model.connected ? (model.selected.isEmpty ? "Select opportunities to apply" : "Review \(model.selected.count) application\(model.selected.count == 1 ? "" : "s")") : "Set up Auto Apply")
-                                .font(.subheadline.weight(.semibold))
-                            Spacer(minLength: 4)
-                            Image(systemName: "arrow.right")
+                        Group {
+                            if dynamicTypeSize.isAccessibilitySize {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    if model.busy { ProgressView().tint(.white) }
+                                    Text(reviewActionTitle)
+                                        .font(.subheadline.weight(.semibold))
+                                        .multilineTextAlignment(.leading).lineLimit(nil)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                            } else {
+                                HStack {
+                                    if model.busy { ProgressView().tint(.white) }
+                                    Image(systemName: "paperplane.fill")
+                                    Text(reviewActionTitle).font(.subheadline.weight(.semibold))
+                                    Spacer(minLength: 4)
+                                    Image(systemName: "arrow.right")
+                                }
+                            }
                         }.padding(16).frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.plain).foregroundStyle(.white)
                     .background(ApplyDesign.green, in: RoundedRectangle(cornerRadius: 16))
                     .accessibilityIdentifier("applications.review")
+                    .accessibilityLabel(reviewActionTitle)
                     .disabled(model.busy || model.connected && model.selected.isEmpty)
                     .opacity(model.busy || model.connected && model.selected.isEmpty ? 0.65 : 1)
                     Text("Your details. Your choice. A receipt for every confirmed submission.")
