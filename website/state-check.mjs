@@ -11,12 +11,21 @@ const scripts = ['core.js', 'data.js', 'app.js'].map(name => ({
 }));
 
 function createApp(initialStorage = new Map(), options = {}) {
+  const appIntl = options.timeZone ? Object.create(Intl) : Intl;
+  if (options.timeZone) {
+    // Intl.DateTimeFormat supports both function and constructor invocation.
+    appIntl.DateTimeFormat = function(locale, configuration = {}) {
+      return new Intl.DateTimeFormat(locale ?? options.locale, {timeZone: options.timeZone, ...configuration});
+    };
+    Object.setPrototypeOf(appIntl.DateTimeFormat, Intl.DateTimeFormat);
+    appIntl.DateTimeFormat.prototype = Intl.DateTimeFormat.prototype;
+  }
   const storage = options.shared ? initialStorage : new Map(initialStorage);
   const listeners = new Map();
   const elements = new Map();
   const toasts = [];
   const downloads = [];
-  const failKeys = new Set();
+  const failKeys = new Set(options.failKeys || []);
   let writesFail = false;
 
   function element(selector) {
@@ -57,7 +66,7 @@ function createApp(initialStorage = new Map(), options = {}) {
   }
 
   const context = vm.createContext({
-    console, URL: TestURL, Blob, Intl, Date, AbortSignal,
+    console, URL: TestURL, Blob, Intl: appIntl, Date, AbortSignal,
     FormData: class { constructor(form) { this.values=form.values; } get(key) { return this.values[key]??null; } },
     confirm: () => false,
     setTimeout: () => 1, clearTimeout() {},
@@ -84,7 +93,7 @@ function createApp(initialStorage = new Map(), options = {}) {
   context.window = context;
   for (const { name, source } of scripts) {
     vm.runInContext(source, context, { filename: name });
-    if(name==='data.js'&&options.bundle)vm.runInContext('globalThis.CAREER_DATA='+JSON.stringify(options.bundle),context);
+    if(name==='data.js'){if(options.bundle)vm.runInContext('globalThis.CAREER_DATA='+JSON.stringify(options.bundle),context);else if(!options.productionBundle)vm.runInContext('CAREER_DATA.jobs=CAREER_DATA.legacyJobs;CAREER_DATA.legacyJobs=[]',context);}
   }
   const evaluate = source => vm.runInContext(source, context);
   return {
@@ -340,8 +349,10 @@ await check('Interleaved tabs serialize workspace mutations when Web Locks are a
 });
 
 
-await check('Riyadh midnight display and sequential live positions', () => {
-  const app = createApp();
+await check('Legacy profile keeps Riyadh midnight display and sequential live positions', () => {
+  // A persisted pre-preferences profile keeps its original Riyadh semantics,
+  // even when the current device uses a different time zone.
+  const app = createApp(new Map([['ahmad-profile', '{}']]), {timeZone: 'UTC', locale: 'en-US'});
   assert.match(app.evaluate("date('2026-10-08T21:23:00Z')"), /Oct 9, 2026/);
   app.evaluate("view='live'");
   assert.match(app.evaluate("row({...D.jobs[0],rank:8},2)"), /class="rank">03</);
@@ -349,9 +360,31 @@ await check('Riyadh midnight display and sequential live positions', () => {
   assert.match(app.evaluate("row({...D.jobs[0],rank:8},2)"), /class="rank">08</);
 });
 
+await check('Fresh profile follows device time zone and a saved explicit zone overrides it', () => {
+  const timestamp = '2026-10-08T21:23:00Z';
+  for (const [zone, expectedDay] of [
+    ['UTC', 'Oct 8, 2026'],
+    ['Asia/Riyadh', 'Oct 9, 2026'],
+    ['Pacific/Honolulu', 'Oct 8, 2026'],
+    ['Pacific/Kiritimati', 'Oct 9, 2026'],
+  ]) {
+    const fresh = createApp(new Map(), {timeZone: zone, locale: 'en-US'});
+    assert.equal(fresh.json('profile.displayTimeZone'), '', 'Fresh users retain device-following preference');
+    assert.equal(fresh.json('P.preferences(profile).zone'), zone);
+    assert.equal(fresh.evaluate(`date(${JSON.stringify(timestamp)})`), expectedDay, zone);
+    assert.equal(fresh.evaluate("date('2026-10-09')"), 'Oct 9, 2026', 'Published civil dates do not shift');
+    assert.equal(fresh.storage.has('ahmad-profile'), false, 'Reading a fresh default does not persist an inferred preference');
+  }
+  const saved = {preferencesVersion: '2', displayTimeZone: 'Pacific/Honolulu'};
+  const stored = JSON.stringify(saved);
+  const explicit = createApp(new Map([['ahmad-profile', stored]]), {timeZone: 'Asia/Riyadh', locale: 'en-US'});
+  assert.equal(explicit.evaluate(`date(${JSON.stringify(timestamp)})`), 'Oct 8, 2026');
+  assert.equal(explicit.storage.get('ahmad-profile'), stored, 'Reading an explicit zone preserves the saved bytes');
+});
+
 await check('Profile and checklist changes merge independent fields across tabs',async()=>{
   const shared=new Map(),a=createApp(shared,{shared:true}),b=createApp(shared,{shared:true});
-  for(const app of [a,b])app.evaluate('globalThis.FormData=class{constructor(form){this.values=form.values}get(k){return this.values[k]??""}}');
+  for(const app of [a,b])app.evaluate('globalThis.FormData=class{constructor(form){this.values=form.values}get(k){return this.values[k]??null}}');
   await a.dispatch('submit',{id:'profile-form',values:{years:'10',degree:'Pharmacy',skills:'',achievements:''}});
   await b.dispatch('submit',{id:'profile-form',values:{years:'',degree:'',skills:'SAP',achievements:''}});
   const profile=JSON.parse(shared.get('ahmad-profile'));
@@ -362,7 +395,7 @@ await check('Profile and checklist changes merge independent fields across tabs'
 });
 await check('Conflicting profile edits require an explicit choice and preserve a declined draft',async()=>{
   const shared=new Map(),a=createApp(shared,{shared:true}),b=createApp(shared,{shared:true});
-  for(const app of [a,b])app.evaluate('globalThis.FormData=class{constructor(form){this.values=form.values}get(k){return this.values[k]??""}};globalThis.confirm=()=>false');
+  for(const app of [a,b])app.evaluate('globalThis.FormData=class{constructor(form){this.values=form.values}get(k){return this.values[k]??null}};globalThis.confirm=()=>false');
   await a.dispatch('submit',{id:'profile-form',values:{degree:'Pharmacy'}});
   await b.dispatch('submit',{id:'profile-form',values:{degree:'Law'}});
   assert.equal(JSON.parse(shared.get('ahmad-profile')).degree,'Pharmacy');
@@ -380,7 +413,7 @@ await check('Failed workspace recovery cannot overwrite another tab and keeps pe
     assert.equal(shared.get('ahmad-workspace'),durable,action+': preserve newer durable state');
     assert.deepEqual(a.json('({saved,states,savedDetails})'),pending,action+': preserve unsaved session');
     assert.match(a.toasts.at(-1),/another tab.*export.*reload/i);
-    assert.ok((await a.exportNotes()).includes('AHMAD CAREER'));
+    assert.ok((await a.exportNotes()).includes('CAREER FINDER'));
   }
 });
 
@@ -432,7 +465,7 @@ await check('Corrected bundled facts win date-only ties while later live facts s
     if(includeCache)initial.set('ahmad-live',JSON.stringify(success([stale],original.researchCheckedAt)));
     const app=createApp(initial),current=app.json(`jobById(${JSON.stringify(original.id)})`);
     for(const key of ['title','location','closes'])assert.equal(current[key],original[key],`${key}: bundled facts win a date-only tie`);
-    assert.equal(app.json(`C.criteriaFor(jobById(${JSON.stringify(original.id)}),profile).included`),true);
+    assert.equal(app.json(`P.criteriaFor(jobById(${JSON.stringify(original.id)}),profile).included`),true);
     await app.receive(success([{...stale,title:'Later Supply Chain Manager'}],newTime));
     const restored=createApp(app.storage),updated=restored.json(`jobById(${JSON.stringify(original.id)})`);
     assert.equal(updated.title,'Later Supply Chain Manager');assert.equal(updated.location,stale.location);assert.equal(updated.closes,stale.closes);
@@ -470,8 +503,8 @@ await check('A newer old-tab cache cannot reintroduce excluded employers after a
 });
 
 
-const criteriaProfile={preferredCity:'riyadh',minimumMonthlySAR:'10000',unknownSalary:'show'};
-const submitProfile=(app,values)=>app.dispatch('submit',{id:'profile-form',values:{years:'',degree:'',skills:'',achievements:'',preferredCity:'',minimumMonthlySAR:'',unknownSalary:'show',...values}});
+const criteriaProfile={preferencesVersion:'2',targetCountry:'SA',targetCity:'Riyadh',roleKeywords:'',planningCurrency:'SAR',planningPayPeriod:'monthly',displayTimeZone:'Asia/Riyadh',minimumMonthlySAR:'10000',unknownSalary:'show'};
+const submitProfile=(app,values)=>app.dispatch('submit',{id:'profile-form',values:{years:'',degree:'',skills:'',achievements:'',minimumMonthlySAR:'',unknownSalary:'show',...values}});
 
 await check('Pre-criteria profiles migrate without losing profile, saved, status or checklist records',async()=>{
   const oldProfile={years:8,degree:'Pharmacy',skills:'SAP',achievements:'A verified outcome'};
@@ -483,7 +516,7 @@ await check('Pre-criteria profiles migrate without losing profile, saved, status
   const app=createApp(initial);
   assert.deepEqual(app.json('profile'),oldProfile);
   assert.equal(app.evaluate('blockedKeys.has("profile")'),false);
-  assert.match(app.evaluate('criteriaSummary()'),/Any Saudi city/);
+  assert.match(app.evaluate('criteriaSummary()'),/Saudi Arabia.*Any city/);
   await submitProfile(app,{...oldProfile,...criteriaProfile});
   const restored=createApp(app.storage);
   assert.deepEqual(restored.json('({...profile,unknownSalary:profile.unknownSalary??"show"})'),{...oldProfile,...criteriaProfile});
@@ -505,7 +538,7 @@ await check('Criteria form canonicalizes Arabic whole amounts and rejects invali
     assert.match(app.toasts.at(-1),/whole.*SAR|monthly pay/i);
     assert.ok(!app.toasts.some(text=>/saved on this device/i.test(text)));
   }
-  for(const invalid of [{preferredCity:'elsewhere'},{unknownSalary:'estimate'}]){
+  for(const invalid of [{targetCountry:'INVALID'},{unknownSalary:'estimate'}]){
     await submitProfile(app,{...criteriaProfile,...invalid});
     assert.equal(app.storage.get('ahmad-profile'),durable);
   }
@@ -525,7 +558,7 @@ await check('Unsaved criteria survive renders and disabled salary policy preserv
   for(const [name,value] of Object.entries(criteriaProfile))await app.dispatch('input',{name,value,closest:selector=>selector==='#profile-form'?{}:null});
   app.evaluate('render()');app.receive(success([role]));
   for(const [name,value] of Object.entries(criteriaProfile))assert.equal(app.json(`profileDraft.${name}`),value);
-  assert.match(app.evaluate('profilePage()'),/name="preferredCity"/);
+  assert.match(app.evaluate('profilePage()'),/name="targetCity"/);
   assert.match(app.evaluate('profilePage()'),/name="minimumMonthlySAR"[^>]*value="10000"/);
   assert.doesNotMatch(app.evaluate('profilePage()'),/name="unknownSalary"[^>]*disabled/);
   app.evaluate('profileDraft.minimumMonthlySAR="";profileDraft.unknownSalary="hide";render()');
@@ -536,10 +569,10 @@ await check('Unsaved criteria survive renders and disabled salary policy preserv
 
 await check('Independent criteria and professional profile edits merge across tabs using legacy neutral defaults',async()=>{
   const shared=new Map([['ahmad-profile','{}']]),a=createApp(shared,{shared:true}),b=createApp(shared,{shared:true});
-  await submitProfile(a,{preferredCity:'riyadh',unknownSalary:'hide'});
+  await submitProfile(a,{targetCity:'Riyadh',unknownSalary:'hide'});
   await submitProfile(b,{minimumMonthlySAR:'10000',skills:'Verified scope'});
   const stored=JSON.parse(shared.get('ahmad-profile'));
-  assert.equal(stored.preferredCity,'riyadh');assert.equal(stored.minimumMonthlySAR,'10000');
+  assert.equal(stored.targetCity,'Riyadh');assert.equal(stored.minimumMonthlySAR,'10000');
   assert.equal(stored.unknownSalary,'hide','A stale form showing the default must not reset a later policy');
   assert.equal(stored.skills,'Verified scope');
 });
@@ -698,7 +731,7 @@ await check('Notes preserve failed saves and valid session data when newer stora
     assert.ok(notes.includes(failure==='pending'?'Synthetic failed degree':seed.degree),failure);
     assert.ok(roleDraft.includes(failure==='pending'?'Synthetic failed achievement':seed.achievements),failure);
     assert.ok(notes.includes('[x] Confirm your professional record'),failure);
-    if(failure==='pending')assert.ok(notes.includes('[x] Build two CV versions'));
+    if(failure==='pending')assert.ok(notes.includes('[x] Prepare your CV materials'));
     else assert.equal(a.evaluate("blockedKeys.has('profile')&&blockedKeys.has('checklist')"),true);
     assert.deepEqual(a.json('({profile,profileDraft,profileBase,checklist,checklistPending})'),before);
     assert.deepEqual([...a.storage],durable);
@@ -802,7 +835,7 @@ await check('Tracking export sees another tab workspace save before the storage 
 });
 await check('Accepted employer corrections redraw an open Saved or Shortlist view',()=>{
  for(const view of ['saved','shortlist']){
-  const app=createApp();const job=view==='saved'?role:app.json('D.jobs[0]');
+  const app=createApp();const job={...(view==='saved'?role:app.json('D.jobs[0]')),closes:null};
   app.receive(success([job]));app.toggleSaved(job.id);app.evaluate(`go('${view}')`);
   app.receive(success([{...job,title:'Corrected Healthcare Supply Chain Manager'}],new Date().toISOString()));
   assert.equal(app.json(`jobById(${JSON.stringify(job.id)}).title`),'Corrected Healthcare Supply Chain Manager','Refresh must be accepted before testing redraw');
@@ -845,11 +878,11 @@ await check('Legacy date-only live checks compare at Saudi midnight for updates 
  }
 });
 
-await check('Fresh Riyadh discovery default survives unrelated saves while explicit and legacy city choices remain',()=>{
- const fresh=createApp();assert.equal(fresh.json('profile.preferredCity'),'riyadh');
+await check('Fresh neutral discovery defaults survive unrelated saves while explicit and legacy city choices remain',()=>{
+ const fresh=createApp();assert.equal(fresh.json('profile.preferredCity??null'),null);
  fresh.evaluate("saveProfile({...profileDraft,achievements:'Synthetic evidence'})");
- assert.equal(fresh.json('profile.preferredCity'),'riyadh');
- assert.equal(createApp(fresh.storage).json('profile.preferredCity'),'riyadh');
+ assert.equal(fresh.json('profile.preferredCity??null'),null);
+ assert.equal(createApp(fresh.storage).json('profile.preferredCity??null'),null);
  for(const stored of [{preferredCity:''},{}]){const app=createApp(new Map([['ahmad-profile',JSON.stringify(stored)]]));assert.equal(app.json('profile.preferredCity??null'),stored.preferredCity??null)}
 });
 await check('Partial employer failure retains old eligible discovery evidence without refreshing it',()=>{
@@ -881,6 +914,182 @@ await check('Exact successful employer exclusions survive partial failure withou
  assert.equal(app.json("states['excluded-role']"),'Applied');assert(app.json('retainedJobs().map(j=>j.id)').includes(gone.id));
  const reload=createApp(app.storage);assert.deepEqual(reload.json('live.jobs.map(j=>j.id)'),[unknown.id]);
  for(const excludedIds of [[''],[1],Array(21).fill('x'),['x'.repeat(257)],'bad'])assert.equal(app.evaluate(`C.normalizeLive(${JSON.stringify({checkedAt:newTime,jobs:[],sources:[{name:'Alcon',ok:true,count:0,excludedIds}]})})`),null);
+});
+
+await check('Production bundle starts without a biography, recommendations or an assumed city',()=>{
+ const fresh=createApp(new Map(),{productionBundle:true});
+ assert.deepEqual(fresh.json('D.jobs'),[]);
+ assert.deepEqual(fresh.json('allJobs()'),[]);
+ assert.deepEqual(fresh.json('profile'),fresh.json('P.freshProfile()'));
+ assert.deepEqual(fresh.json('D.profile'),{name:'',role:'',organization:'',location:'',url:'',facts:[],unknowns:[]});
+ for(const surface of ['shortlistPage()','profilePage()','planPage()','draft('+JSON.stringify(role)+')']){
+  assert.doesNotMatch(fresh.evaluate(surface),/Ahmad|Regulatory KPI Department Manager|Pharmacist at Qassim/);
+ }
+ assert.match(fresh.evaluate('shortlistPage()'),/Countries and role families outside that scope are not supported/);
+ assert.match(fresh.evaluate('shortlistPage()'),/Set up your profile/);
+ assert.equal(fresh.storage.has('ahmad-workspace'),false,'Opening a fresh workspace must not save historical roles');
+});
+
+await check('Production conversion recovers only existing legacy IDs and retains profile, checklist and receipts',async()=>{
+ const seed=createApp(new Map(),{productionBundle:true}).json('D.legacyJobs[0]');
+ const legacyProfile={years:8,degree:'User-entered qualification',skills:'User skill',achievements:'User evidence',preferredCity:'riyadh',minimumMonthlySAR:'12000',unknownSalary:'show'};
+ const receipt={schema:1,jobId:seed.id,appliedAt:'2026-10-09',receiptNote:'Existing private receipt',updatedAt:'2026-10-09T00:00:00.000Z'};
+ const initial=new Map([
+  ['ahmad-saved',JSON.stringify([seed.id])],['ahmad-states',JSON.stringify({[seed.id]:'Applied'})],
+  ['ahmad-profile',JSON.stringify(legacyProfile)],['ahmad-checklist',JSON.stringify({cv:true})],
+  ['ahmad-application-record-v1:'+encodeURIComponent(seed.id),JSON.stringify(receipt)]
+ ]);
+ const app=createApp(initial,{productionBundle:true});
+ assert.equal(app.json('D.jobs.length'),0);
+ assert.deepEqual(app.json('allJobs().map(j=>j.id)'),[seed.id]);
+ assert.equal(app.json('allJobs()[0].kind'),'archived');
+ assert.equal(app.json('allJobs()[0].rank??null'),null);
+ assert.equal(app.json('allJobs()[0].researchCheckedAt'),'2026-10-09');
+ assert.deepEqual(app.json('profile'),legacyProfile);
+ assert.equal(app.json('checklist.cv'),true);
+ assert.deepEqual(JSON.parse(app.storage.get('ahmad-application-record-v1:'+encodeURIComponent(seed.id))),receipt);
+ assert.match(await app.exportNotes(),/Existing private receipt/);
+ assert.match(await app.exportNotes(),/\[x\] Prepare your CV materials/);
+ const reload=createApp(app.storage,{productionBundle:true});
+ assert.deepEqual(reload.json('allJobs().map(j=>j.id)'),[seed.id]);
+ assert.equal(reload.json(`states[${JSON.stringify(seed.id)}]`),'Applied');
+ assert.deepEqual(reload.json('profile'),legacyProfile);
+});
+
+await check('Legacy recovery preserves newer stored facts and does not introduce other researched roles',()=>{
+ const seed=createApp(new Map(),{productionBundle:true}).json('D.legacyJobs[0]');
+ const newer={...seed,title:'User retained newer employer title',summary:'User retained evidence',lastCheckedAt:'2026-11-01T00:00:00Z',researchCheckedAt:'2026-10-09'};
+ const workspace={saved:[seed.id],states:{[seed.id]:'Applied'},savedDetails:{[seed.id]:newer}};
+ const app=createApp(new Map([['ahmad-workspace',JSON.stringify(workspace)]]),{productionBundle:true});
+ assert.equal(app.json('allJobs().length'),1);
+ assert.equal(app.json('allJobs()[0].title'),newer.title);
+ assert.equal(app.json('allJobs()[0].summary'),newer.summary);
+ assert.equal(app.json('allJobs()[0].lastCheckedAt'),newer.lastCheckedAt);
+});
+
+await check('Failed or corrupt legacy recovery preserves durable originals and can be retried on relaunch',()=>{
+ const seed=createApp(new Map(),{productionBundle:true}).json('D.legacyJobs[0]');
+ const initial=new Map([['ahmad-saved',JSON.stringify([seed.id])],['ahmad-states',JSON.stringify({[seed.id]:'Applied'})]]);
+ const blocked=createApp(initial,{productionBundle:true,failKeys:['ahmad-workspace']});
+ assert.deepEqual([...blocked.storage],[...initial]);
+ assert.deepEqual(blocked.json('allJobs().map(j=>j.id)'),[seed.id],'Read-only recovery remains visible without claiming a save');
+ assert.equal(blocked.evaluate("failedKeys.has('workspace')"),true);
+ const retried=createApp(blocked.storage,{productionBundle:true});
+ assert(retried.storage.has('ahmad-workspace'));
+ assert.deepEqual(retried.json('allJobs().map(j=>j.id)'),[seed.id]);
+ const corrupt=new Map([...initial,['ahmad-workspace','{corrupt original']]);
+ const app=createApp(corrupt,{productionBundle:true});
+ assert.deepEqual([...app.storage],[...corrupt]);
+ assert.equal(app.evaluate("blockedKeys.has('workspace')"),true);
+});
+
+await check('Carried preparation checks keep their bits without certifying new per-application work',async()=>{
+ const completed={profile:true,evidence:true,cv:true,priority:true,deadline:true,review:true};
+ const original=JSON.stringify(completed);
+ const app=createApp(new Map([['ahmad-checklist',original]]),{productionBundle:true});
+ const page=app.evaluate('planPage()'),notes=await app.exportNotes();
+ assert.equal(app.storage.get('ahmad-checklist'),original);
+ assert.deepEqual(app.json('checklist'),completed);
+ assert.match(page,/data-check="cv" checked[^>]*><span>Prepare your CV materials/);
+ assert.match(notes,/\[x\] Prepare your CV materials/);
+ assert.match(notes,/\[x\] Review selected role requirements/);
+ assert.match(notes,/\[x\] Check selected deadlines/);
+ assert.doesNotMatch(notes,/\[x\] (?:Tailor your CV to each role|CV tailored to the role)/);
+ assert.match(page,/For each application, tailor a version using your own experience and qualifications/);
+ for(const text of [page,notes])assert.match(text,/Recheck the requirements, dates and materials for each application/);
+});
+
+await check('Local preference upgrade preserves literal legacy profile, SAR units and every tracking record',async()=>{
+ for(const preferredCity of ['', 'riyadh']){
+  const oldProfile={years:8,degree:'Original qualification',skills:'Original scope',achievements:'Original evidence',preferredCity,minimumMonthlySAR:'12000',unknownSalary:'hide'};
+  const receipt={schema:1,jobId:role.id,appliedAt:'2026-10-08',receiptNote:'Original receipt',updatedAt:'2026-10-08T12:00:00.000Z'};
+  const initial=new Map([['ahmad-profile',JSON.stringify(oldProfile)],['ahmad-workspace',JSON.stringify({saved:[role.id],states:{[role.id]:'Applied'},savedDetails:{[role.id]:role}})],['ahmad-checklist',JSON.stringify({cv:true,deadline:false})],['ahmad-application-record-v1:'+encodeURIComponent(role.id),JSON.stringify(receipt)]]);
+  const app=createApp(initial,{productionBundle:true});
+  assert.equal(app.storage.get('ahmad-profile'),initial.get('ahmad-profile'),'Read does not rewrite legacy bytes');
+  assert.deepEqual(app.json('P.preferences(profile)'),{country:'SA',city:preferredCity==='riyadh'?'Riyadh':'',role:'',currency:'SAR',period:'monthly',zone:'Asia/Riyadh'});
+  await submitProfile(app,{...oldProfile,targetCountry:'JP',targetCity:'Tokyo',roleKeywords:'Private preference phrase',planningCurrency:'JPY',planningPayPeriod:'annual',displayTimeZone:'Asia/Tokyo'});
+  const restored=createApp(app.storage,{productionBundle:true});
+  for(const [key,value] of Object.entries(oldProfile))assert.equal(restored.json('profile['+JSON.stringify(key)+']'),value,key);
+  assert.equal(restored.json('profile.preferencesVersion'),'2');assert.equal(restored.json('profile.planningCurrency'),'JPY');
+  assert.equal(restored.json('P.preferences(profile).country'),'JP');assert.equal(restored.json('P.criteriaFor(jobById('+JSON.stringify(role.id)+'),profile).included'),false);
+  for(const [key,value] of initial)if(key!=='ahmad-profile')assert.equal(restored.storage.get(key),value,key+' must retain exact durable bytes');
+  assertTracked(restored,'After worldwide preference upgrade');
+  const notes=await restored.exportNotes(),draft=restored.evaluate('draft(jobById('+JSON.stringify(role.id)+'))');
+  for(const text of [notes,draft])assert.doesNotMatch(text,/Tokyo|Private preference phrase|JPY|Asia\/Tokyo|12000|12,000/);
+  assert.match(notes,/Original receipt/);assert.match(notes,/\[x\] Prepare your CV materials/);
+ }
+});
+
+await check('Unsupported-country discovery is truthful, sends no requests and never filters saved history',async()=>{
+ const requests=[],app=createApp(new Map(),{productionBundle:true,fetch:async(...args)=>{requests.push(args);throw Error('must not fetch')}});
+ app.receive(success([role]));app.toggleSaved(role.id);app.changeStatus(role.id,'Applied');
+ const durableWorkspace=app.storage.get('ahmad-workspace'),durableLive=app.storage.get('ahmad-live');
+ await submitProfile(app,{targetCountry:'US',targetCity:'Boston',roleKeywords:'Nurse',planningCurrency:'USD',displayTimeZone:'America/New_York'});
+ app.evaluate('go("live")');let html=app.evaluate('document.querySelector("#job-list").innerHTML');
+ assert.match(html,/do not cover United States/);assert.match(html,/six selected Saudi-oriented/);assert.match(html,/does not mean there are no jobs/);
+ await app.evaluate('refresh()');assert.equal(requests.length,0);
+ app.evaluate('globalThis.nativeRequests=[];window.webkit={messageHandlers:{careerSearch:{postMessage:p=>nativeRequests.push(p)}}}');
+ await app.evaluate('refresh()');assert.deepEqual(app.json('nativeRequests'),[]);
+ app.evaluate('go("saved")');assert.match(app.evaluate('document.querySelector("#job-list").innerHTML'),/regression fixture/);
+ assert.equal(app.storage.get('ahmad-workspace'),durableWorkspace);assert.equal(app.storage.get('ahmad-live'),durableLive);
+ assertTracked(createApp(app.storage,{productionBundle:true}),'After unsupported-country reload');
+});
+
+await check('Supported local preferences never enter either unchanged refresh transport',async()=>{
+ const requests=[],app=createApp(new Map(),{productionBundle:true,fetch:async(url,options)=>{requests.push({url,options});return {ok:true,json:async()=>success([role])}}});
+ await submitProfile(app,{targetCountry:'SA',targetCity:'Riyadh',roleKeywords:'Supply Chain',planningCurrency:'USD',planningPayPeriod:'annual',displayTimeZone:'Pacific/Honolulu'});
+ const before=app.storage.get('ahmad-profile');await app.evaluate('refresh()');
+ assert.equal(requests.length,1);assert.equal(requests[0].url,'/api/live');assert.deepEqual(Object.keys(requests[0].options).sort(),['headers','signal']);
+ assert.doesNotMatch(JSON.stringify(requests),/targetCountry|targetCity|roleKeywords|planningCurrency|planningPayPeriod|displayTimeZone|Riyadh|Supply Chain|USD|Honolulu/);
+ app.evaluate('globalThis.nativeRequests=[];window.webkit={messageHandlers:{careerSearch:{postMessage:p=>nativeRequests.push(p)}}}');await app.evaluate('refresh()');
+ assert.deepEqual(app.json('nativeRequests'),[{action:'refresh'}]);assert.equal(app.storage.get('ahmad-profile'),before);
+});
+
+await check('Independent worldwide preferences merge across tabs while same-field conflicts retain drafts',async()=>{
+ const shared=new Map([['ahmad-profile',JSON.stringify({preferredCity:'riyadh',minimumMonthlySAR:'12000',years:8})]]),a=createApp(shared,{shared:true}),b=createApp(shared,{shared:true});
+ await submitProfile(a,{years:8,minimumMonthlySAR:'12000',targetCountry:'CA',planningCurrency:'CAD'});
+ await submitProfile(b,{years:8,minimumMonthlySAR:'12000',roleKeywords:'Procurement',displayTimeZone:'America/Toronto'});
+ const combined=JSON.parse(shared.get('ahmad-profile'));
+ assert.equal(combined.targetCountry,'CA');assert.equal(combined.planningCurrency,'CAD');assert.equal(combined.roleKeywords,'Procurement');assert.equal(combined.displayTimeZone,'America/Toronto');assert.equal(combined.targetCity,'Riyadh');assert.equal(combined.preferredCity,'riyadh');assert.equal(combined.minimumMonthlySAR,'12000');
+ await submitProfile(b,{years:8,minimumMonthlySAR:'12000',targetCountry:'GB'});
+ assert.equal(JSON.parse(shared.get('ahmad-profile')).targetCountry,'GB');
+ await submitProfile(a,{years:8,minimumMonthlySAR:'12000',targetCountry:'JP'});
+ assert.equal(JSON.parse(shared.get('ahmad-profile')).targetCountry,'GB');assert.equal(a.json('profileDraft.targetCountry'),'JP');assert.match(a.toasts.at(-1),/draft|another tab/i);
+});
+
+await check('Future and invalid preference schemas preserve their stored bytes',async()=>{
+ for(const payload of [{preferencesVersion:'3',targetCountry:'JP',futureField:'preserve me'},{preferencesVersion:'2',targetCountry:'ZZ'},{preferencesVersion:'2',displayTimeZone:'Mars/Olympus'},{preferencesVersion:'2',planningCurrency:'DOLLARS'}]){
+  const raw=JSON.stringify(payload),app=createApp(new Map([['ahmad-profile',raw]]),{productionBundle:true});
+  assert.equal(app.evaluate('blockedKeys.has("profile")'),true);
+  await submitProfile(app,{targetCountry:'SA',planningCurrency:'SAR'});
+  assert.equal(app.storage.get('ahmad-profile'),raw);assert.match(app.evaluate('storageNotice'),/original data is preserved/i);
+ }
+});
+
+await check('Default display order is alphabetical, independent of leadership and provider relevance',()=>{
+ const app=createApp(new Map(),{productionBundle:true}),analyst={...role,id:'neutral-analyst',title:'Alpha Supply Chain Analyst',relevance:1,leadership:false},director={...role,id:'neutral-director',title:'Zeta Supply Chain Director',relevance:999,leadership:true};
+ app.receive(success([director,analyst]));app.evaluate('go("live")');
+ const html=app.evaluate('document.querySelector("#job-list").innerHTML');assert(html.indexOf(analyst.title)<html.indexOf(director.title));assert.match(app.evaluate('toolbar()'),/Role title \(A–Z\)/);assert.doesNotMatch(app.evaluate('toolbar()'),/Research priority|Title relevance/);
+});
+
+await check('Planning currency affects only explicit calculator amounts and resets on unit changes',async()=>{
+ const app=createApp(new Map(),{productionBundle:true});
+ await submitProfile(app,{planningCurrency:'USD',planningPayPeriod:'annual',minimumMonthlySAR:'12000'});
+ assert.match(app.evaluate('salaryPage()'),/SAR 30,000–45,000/);assert.match(app.evaluate('salaryPage()'),/value="USD" selected/);assert.match(app.evaluate('criteriaSummary()'),/monthly pay SAR 12,000/);
+ app.evaluate('document.querySelector("#package-form").values={currency:"USD",period:"annual",base:"12000",allowances:"600",bonus:"1000"};updatePackage(document.querySelector("#package-form"))');
+ const result=app.evaluate('document.querySelector("#package-result").innerHTML');assert.match(result,/USD 12,600/);assert.match(result,/USD 13,600/);assert.doesNotMatch(result,/SAR|Guaranteed annual/);
+ app.evaluate('globalThis.packageFields=[{value:"12000"},{value:"600"},{value:"1000"}];document.querySelectorAll=s=>s==="#package-form input"?packageFields:[]');
+ await app.dispatch('change',{name:'currency',value:'JPY',id:'',dataset:{},closest:s=>s==='#package-form'?{}:null});
+ assert.deepEqual(app.json('packageFields.map(x=>x.value)'),['','','']);assert.match(app.evaluate('document.querySelector("#package-result").textContent'),/amounts cleared/);
+ assert.equal(app.json('profile.minimumMonthlySAR'),'12000');
+});
+
+await check('Legacy archived assessment stays recognizable without becoming current personal fit advice',()=>{
+ const initial=createApp(new Map(),{productionBundle:true}),old=initial.json('D.legacyJobs[0]');
+ const app=createApp(new Map([['ahmad-workspace',JSON.stringify({saved:[old.id],states:{},savedDetails:{}})]]),{productionBundle:true});
+ app.evaluate('go("saved")');const row=app.evaluate('document.querySelector("#job-list").innerHTML');assert.match(row,/Historical assessment:/);assert.match(row,/Earlier assessment:/);
+ app.evaluate('openJob('+JSON.stringify(old.id)+')');const detail=app.evaluate('document.querySelector("#job-dialog").innerHTML');assert.match(detail,/historical evidence, not personalized advice/);assert.match(detail,/not a verified personal fit score/);
+ assert.equal(app.json('jobById('+JSON.stringify(old.id)+').summary'),old.summary,'Original evidence is preserved, not rewritten');
 });
 
 if (!process.exitCode) console.log(`${cases.length} application-state regression groups passed.`);

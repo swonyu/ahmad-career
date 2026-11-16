@@ -1,0 +1,34 @@
+$kind: http-request
+name: Prepare verified receipt fixture
+order: 11000
+url: '{{baseUrl}}/api/apply/prepare'
+method: POST
+headers:
+  Content-Type: application/json
+  Origin: '{{baseUrl}}'
+  X-Career-CSRF: '{{csrfToken}}'
+  Cookie: '{{sessionCookie}}'
+settings:
+  followRedirects: false
+body:
+  type: json
+  content: |-
+    {
+      "jobIds": [
+        "{{activeJobId}}"
+      ],
+      "answers": {
+        "{{activeJobId}}": {
+          "comments": "Synthetic test only",
+          "consentStore": true,
+          "consentMarketing": false
+        }
+      }
+    }
+scripts:
+- type: afterResponse
+  language: text/javascript
+  code: |
+    const d=pm.response.json();
+    pm.test('Immutable plan is ready for explicit approval',()=>{pm.expect(pm.response.code).to.be.oneOf([200,201]);pm.expect(d.plan.id).to.be.a('string');pm.expect(d.plan.digest).to.be.a('string');pm.expect(d.plan.items).to.have.length(1);pm.expect(d.plan.items[0].state).to.eql('ready');});
+    pm.collectionVariables.set('planId',d.plan.id);pm.collectionVariables.set('planDigest',d.plan.digest);pm.collectionVariables.set('pollCount',0);

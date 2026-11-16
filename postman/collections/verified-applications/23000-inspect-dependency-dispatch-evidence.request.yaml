@@ -1,0 +1,36 @@
+$kind: http-request
+name: Inspect dependency dispatch evidence
+order: 23000
+url: '{{baseUrl}}/__unused'
+method: GET
+headers:
+  Content-Type: application/json
+  Origin: '{{baseUrl}}'
+  X-Career-CSRF: '{{csrfToken}}'
+  Cookie: '{{sessionCookie}}'
+settings:
+  followRedirects: false
+scripts:
+- type: beforeRequest
+  language: text/javascript
+  code: |
+    const target=pm.variables.get('mockUrl');
+    if(!/^http:\/\/127\.0\.0\.1:[0-9]{1,5}\/lever$/.test(target||'')){pm.execution.skipRequest();throw new Error('Local simulation URL required');}
+    pm.request.url=target+'/__test/observations';
+    pm.request.headers.remove('Cookie');pm.request.headers.remove('X-Career-CSRF');
+- type: afterResponse
+  language: text/javascript
+  code: |
+    const d=pm.response.json();
+    pm.test('Only one POST per fixture despite replay',()=>{
+     pm.response.to.have.status(200);
+     pm.expect(d.counts['00000000-0000-4000-8000-000000000001']).to.eql(1);
+     pm.expect(d.counts['00000000-0000-4000-8000-000000000002']).to.eql(1);
+    });
+    pm.test('Actual resume bytes crossed HTTP as multipart',()=>{
+     pm.expect(d.observations).to.have.length(2);
+     for(const o of d.observations){pm.expect(o.multipart).to.eql(true);pm.expect(o.hasPDFBytes).to.eql(true);pm.expect(o.hasResumeField).to.eql(true);}
+    });
+    pm.cookies.jar().clear(pm.variables.get('baseUrl'), error => {
+      pm.test('Browser cookies cleared before native checks', () => pm.expect(error).to.not.exist);
+    });

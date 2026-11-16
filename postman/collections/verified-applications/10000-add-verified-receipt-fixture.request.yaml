@@ -1,0 +1,25 @@
+$kind: http-request
+name: Add verified receipt fixture
+order: 10000
+url: '{{baseUrl}}/api/apply/jobs'
+method: POST
+headers:
+  Content-Type: application/json
+  Origin: '{{baseUrl}}'
+  X-Career-CSRF: '{{csrfToken}}'
+  Cookie: '{{sessionCookie}}'
+settings:
+  followRedirects: false
+body:
+  type: json
+  content: |-
+    {
+      "url": "https://jobs.lever.co/career-fixture/00000000-0000-4000-8000-000000000001/apply"
+    }
+scripts:
+- type: afterResponse
+  language: text/javascript
+  code: |
+    const d=pm.response.json();
+    pm.test('Posting imported through the Lever HTTP mock',()=>{pm.expect(pm.response.code).to.be.oneOf([200,201]);pm.expect(d.job.id).to.be.a('string');});
+    pm.collectionVariables.set('activeJobId',d.job.id);

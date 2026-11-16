@@ -1,0 +1,25 @@
+$kind: http-request
+name: Submit verified receipt fixture
+order: 12000
+url: '{{baseUrl}}/api/apply/submit'
+method: POST
+headers:
+  Content-Type: application/json
+  Origin: '{{baseUrl}}'
+  X-Career-CSRF: '{{csrfToken}}'
+  Cookie: '{{sessionCookie}}'
+settings:
+  followRedirects: false
+body:
+  type: json
+  content: |-
+    {
+      "planId": "{{planId}}",
+      "digest": "{{planDigest}}",
+      "approved": true
+    }
+scripts:
+- type: afterResponse
+  language: text/javascript
+  code: |-
+    pm.test('Approved plan accepted for dispatch',()=>pm.response.to.have.status(202));

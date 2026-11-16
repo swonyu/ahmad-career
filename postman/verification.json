@@ -1,0 +1,107 @@
+{
+  "checkedAt": "2026-11-16T13:02:34.756Z",
+  "evidenceMode": "test",
+  "application": "Actual Career Finder Node companion, exercised over HTTP",
+  "dependency": "Official Postman local simulation of documented Lever API plus defensive failure fixtures",
+  "postmanCLI": "1.90.0",
+  "nodeRuntime": "26.13.0 on macOS arm64",
+  "lint": {
+    "requestsScanned": 28,
+    "errors": 0,
+    "warnings": 0,
+    "exitCode": 0
+  },
+  "run": {
+    "requests": 28,
+    "assertions": 36,
+    "failedRequests": 0,
+    "failedAssertions": 0,
+    "exitCode": 0,
+    "durationMilliseconds": 685
+  },
+  "observed": {
+    "providerPOSTs": 2,
+    "confirmedFixturePOSTs": 1,
+    "uncertainFixturePOSTs": 1,
+    "simulationRequestEvents": 8,
+    "actualMultipartPDFBytes": true,
+    "replayDidNotResubmit": true,
+    "phonePairingUsedOnce": true,
+    "nativeWorkspaceIsolated": true,
+    "invalidNativeBearerRejected": true
+  },
+  "liveEmployerRequests": 0,
+  "externalAccountsCreated": 0,
+  "postmanCloudWorkspaceCreated": false,
+  "postmanEventReporting": false,
+  "postmanFinalStatus": {
+    "exitCode": 0,
+    "resourcesInitialized": true,
+    "skillsCurrent": true,
+    "signedIn": false,
+    "checkedAt": "2026-11-16T13:03:09.400504Z"
+  },
+  "cleanup": {
+    "loopback4907Listening": false,
+    "loopback4908Listening": false
+  },
+  "macRunDirectory": "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-postman-run-ImdXzj",
+  "sourceHashes": {
+    "website/applications/lever.mjs": "ade3216ea0982d204af684ab2a2a0eb8179139627ba4eb0df2ef3f6cb5f821ac",
+    "website/applications/pair.mjs": "86a050aedd14c1d3215778ddae4841089048630f468a4055f4d567e2a9a30945",
+    "website/applications/pairing.mjs": "4d27e80d6bf796078f3e1ae77f789ab186de49c32c0cc2a1f4bf564184a6b9d3",
+    "website/applications/server.mjs": "355c6de33bea4178d2322235dfd7bc74e60f5665089d9afb7d1c2b0cdf19e74b",
+    "website/applications/service.mjs": "14a9423b3b5771760feb629861b5c86773886d0655c074e6b469ff147b720a0a",
+    "website/applications/validation.mjs": "188f1f7e8c338b02c3ef20231c2daa94225d40f5d33d0468731e093f9ba1b7f6"
+  },
+  "resourceManifestSHA256": "afef31ff77a0bba82460bc5010abbd542d2b6b311d08c2ef532962cecb6cb86e",
+  "limitations": [
+    "No live provider acceptance was tested.",
+    "The run tests the companion HTTP protocol and phone authentication, not rendered native phone UI.",
+    "Only confirmed and missing-receipt application outcomes were exercised by this collection; the companion regression suite covers additional failure cases separately.",
+    "Owner-mock/Context Graph discovery was skipped because Postman is signed out. Orbit discovery returned HTTP 403; official Lever docs supplied the contract."
+  ],
+  "resourceManifest": "postman/runtime-manifest.json",
+  "resourceManifestScope": "Captured runtime files: companion modules and package metadata, Postman request definitions, mock, simulation routing, and fixture runner/data. Excludes changing verification/context documentation.",
+  "capturedFilesUnchangedAfterRun": true,
+  "historicalRuns": [
+    {
+      "checkedAt": "2026-11-16T12:52:36Z",
+      "serviceSHA256": "379c629e38c5f9573d974ff2cbef78513008e7ac9bfb69bbb8e417a48a02beab",
+      "run": {
+        "requests": 28,
+        "assertions": 36,
+        "failedRequests": 0,
+        "failedAssertions": 0,
+        "exitCode": 0,
+        "durationMilliseconds": 685
+      },
+      "macRunDirectory": "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-postman-run-JGFCyq"
+    },
+    {
+      "date": "2026-11-16",
+      "serviceSHA256": "fa0b0fb8f67f3e37f812a2da84421a693fd71315a49096d970b7961c088d6509",
+      "run": {
+        "requests": 29,
+        "assertions": 36,
+        "failedAssertions": 0,
+        "exitCode": 0,
+        "durationMilliseconds": 443
+      },
+      "macRunDirectory": "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-postman-run-E9IYXm"
+    },
+    {
+      "date": "2026-11-16",
+      "serviceSHA256": "887c14b744bea4dc7f50a6034c95466b59d4772ce9eee9a04f5069ae830f33cb",
+      "run": {
+        "requests": 29,
+        "assertions": 36,
+        "failedAssertions": 0,
+        "exitCode": 0,
+        "durationMilliseconds": 482
+      },
+      "macRunDirectory": "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-postman-run-e6FWxI"
+    }
+  ],
+  "requestCountNote": "There are 28 request definitions. Workspace polling can repeat a request while an asynchronous dispatch finishes; repeat polls explain the 29-call historical runs."
+}

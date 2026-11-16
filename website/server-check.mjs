@@ -70,5 +70,5 @@ const post=await app.run(new Request('https://career.example/api/live',{method:'
 assert.equal(post.status,405);assert.equal(app.calls(),0);
 const page=await app.run(new Request('https://career.example/'));
 assert.match(page.headers.get('Content-Security-Policy'),/script-src 'self'/);
-assert.match(await page.text(),/Ahmad Career/);
+assert.match(await page.text(),/Career Finder/);
 console.log('Server checks passed: denied cache API resilience, bounded in-memory cooldown, request coalescing, partial/outage coverage, read-only methods and static CSP.');

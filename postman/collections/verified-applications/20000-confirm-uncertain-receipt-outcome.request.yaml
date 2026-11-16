@@ -1,0 +1,25 @@
+$kind: http-request
+name: Confirm uncertain receipt outcome
+order: 20000
+url: '{{baseUrl}}/api/apply/workspace'
+method: GET
+headers:
+  Content-Type: application/json
+  Origin: '{{baseUrl}}'
+  X-Career-CSRF: '{{csrfToken}}'
+  Cookie: '{{sessionCookie}}'
+settings:
+  followRedirects: false
+scripts:
+- type: afterResponse
+  language: text/javascript
+  code: |
+    const d=pm.response.json();const jobId=pm.collectionVariables.get('activeJobId');
+    const attempts=d.attempts.filter(a=>a.jobId===jobId);const a=attempts[0];
+    const polls=Number(pm.collectionVariables.get('pollCount')||0)+1;pm.collectionVariables.set('pollCount',polls);
+    if (a && ['ready','dispatching'].includes(a.state) && polls<30) {
+      pm.execution.setNextRequest(pm.info.requestName);setTimeout(()=>{},100);
+    } else {
+      pm.test('One durable uncertain outcome',()=>{pm.response.to.have.status(200);pm.expect(attempts).to.have.length(1);pm.expect(a.state).to.eql('uncertain');});
+      pm.test('Receipt identifier follows provider evidence',()=>{pm.expect(a.applicationId == null).to.eql(true);});
+    }

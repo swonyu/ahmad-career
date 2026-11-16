@@ -1,0 +1,30 @@
+$kind: http-request
+name: Verify test server
+order: 1000
+url: '{{baseUrl}}/api/apply/status'
+method: GET
+headers:
+  Content-Type: application/json
+  Origin: '{{baseUrl}}'
+  X-Career-CSRF: '{{csrfToken}}'
+  Cookie: '{{sessionCookie}}'
+settings:
+  followRedirects: false
+scripts:
+- type: afterResponse
+  language: text/javascript
+  code: |
+    const d = pm.response.json();
+    pm.test('Test-only companion is available', () => {
+      pm.response.to.have.status(200);
+      pm.expect(d.ok).to.eql(true);
+      pm.expect(d.mode).to.eql('test');
+      pm.expect(d.liveEnabled).to.eql(false);
+    });
+    if (d.mode !== 'test' || d.liveEnabled !== false) {
+      pm.collectionVariables.set('fixtureMode','blocked');
+      pm.execution.setNextRequest(null);
+    } else {
+      pm.collectionVariables.set('fixtureMode','test');
+      pm.collectionVariables.set('runId',Date.now().toString(36));
+    }

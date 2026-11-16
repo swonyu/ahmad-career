@@ -1,0 +1,26 @@
+$kind: http-request
+name: Bootstrap private session
+order: 2000
+url: '{{baseUrl}}/api/apply/session'
+method: POST
+headers:
+  Content-Type: application/json
+  Origin: '{{baseUrl}}'
+  X-Career-CSRF: '{{csrfToken}}'
+  Cookie: '{{sessionCookie}}'
+settings:
+  followRedirects: false
+body:
+  type: json
+  content: |-
+    {}
+scripts:
+- type: afterResponse
+  language: text/javascript
+  code: |
+    const d=pm.response.json();
+    pm.test('Private session was created', () => { pm.response.to.have.status(200); pm.expect(d.ok).to.eql(true); pm.expect(d.csrfToken).to.be.a('string').and.not.empty; });
+    const cookie=pm.response.headers.get('Set-Cookie');
+    pm.test('Session cookie is private', () => { pm.expect(cookie).to.include('HttpOnly'); pm.expect(cookie).to.match(/SameSite=Strict/i); });
+    pm.collectionVariables.set('csrfToken',d.csrfToken);
+    pm.collectionVariables.set('sessionCookie',cookie.split(';')[0]);

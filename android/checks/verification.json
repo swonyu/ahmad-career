@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "observedAtUtc": "2026-11-16T13:15:19.566898+00:00",
+  "sourceRoot": "android/",
+  "scope": "Native Android phone preview; no real employer submission or production release.",
+  "buildInputs": {
+    "manifestSha256": "3727c0abf394ab71efb863e42585ba0a3cfeec9d688ea24d02d1bbc64467e1fd",
+    "manifestEncoding": "SHA-256 of UTF-8 JSON mapping relative paths to SHA-256, keys sorted, compact separators, no trailing newline.",
+    "includes": "App source and instrumentation source, Gradle build configuration, and the official wrapper. Documentation and verification artifacts are excluded.",
+    "files": {
+      "app/build.gradle.kts": "c88210dec01d71b21307d34dadabc466925c6975de05800f457018549bc072d3",
+      "app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt": "a98469e23cdd4227ba8df50e3e7c1f4e92c8336fa66baf1e94e2eb48e871e24d",
+      "app/src/androidTest/java/com/saleh/careerfinder/VaultAcceptanceTest.kt": "bfcf1145234f3acbb4fd9b2bace1d4904a5815095607dc93288f3f07b891d572",
+      "app/src/main/AndroidManifest.xml": "d824b6e7681f09b3a148b212f16de1b308b9dd9742a8cbcea7cd9807cf7386b0",
+      "app/src/main/java/com/saleh/careerfinder/BoundaryPolicy.java": "307722cfcdf3672d58afc9a15f5f4e94d80ef48827150e2b26314cdf025d73fb",
+      "app/src/main/java/com/saleh/careerfinder/CareerApi.kt": "19847a3e6d76ba9ac84daa933c8e4dcb8d85f510d070f326db508d964dcc2fde",
+      "app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt": "1dd7ca71a84062793fb70b22f509dd4c0a42d93fb10c7625832f64b211dfd466",
+      "app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "f0120b46bdf6d89d606e9c2ed1a902dbee8c6d80130cc2ca8a8bbb566ae7a024",
+      "app/src/main/java/com/saleh/careerfinder/Models.kt": "c5c087cf04d50c6c67948f06f2237a222168cc582d3d7d4a376077776939b5d8",
+      "app/src/main/java/com/saleh/careerfinder/SecureVault.kt": "bacb864d733aaccdb00e305698cb338e9421963e20b4cbafd5ccadfe45008119",
+      "app/src/main/res/drawable/ic_career_finder.xml": "d588b5a168038756c4e6aa4df0f89b3f2723c37503112b7d269c1974dcba4746",
+      "app/src/main/res/values/strings.xml": "e9aafdbf8d3dba742e5c2fc6e562540c61a79d900bb2f4556437ae9087b3d796",
+      "app/src/main/res/values/styles.xml": "009e3572499e0fe03b6517824a6376ecade78911c1fd5f7d12cedecb566d326a",
+      "app/src/main/res/xml/data_extraction_rules.xml": "8b55ff5489071bb19a4e89967b604a16c0e4d1e87a2df3c73c64417314a59f22",
+      "app/src/main/res/xml/network_security_config.xml": "eb5f5c57a88fc656cb97ee142694b996b286064ba973e51e0158bcdff08b34f2",
+      "build.gradle.kts": "3120598110d304cc605c5919399ce5a9e68776b327d1462c0ba15bd0dd915b2a",
+      "gradle/wrapper/gradle-wrapper.jar": "81a82aaea5abcc8ff68b3dfcb58b3c3c429378efd98e7433460610fecd7ae45f",
+      "gradle/wrapper/gradle-wrapper.properties": "c040b6ef2fb893ff5beea5a281614f2848f1c3996a7886f650b713f8240656a2",
+      "gradle.properties": "d83e273790ac248fa6c70b82fbdeec7d8146773136a9028845247cb63873ffee",
+      "gradlew": "734b3879d3501dce471cf0522d3bcbafe76873d9fc5129345b67fb43bd15e933",
+      "gradlew.bat": "57931b17dd228e5c24dac90e815d0bf82477e831a4618dfab4136f5446b42a9f",
+      "settings.gradle.kts": "df33349123728bf2c303dc9ce52c41a3be7903a23175411d20b493f4b0d6d036"
+    }
+  },
+  "toolchain": {
+    "host": "macOS ARM64",
+    "java": "JDK 21",
+    "gradle": "8.13",
+    "androidGradlePlugin": "8.13.2",
+    "kotlinAndComposeCompiler": "2.3.10",
+    "composeBom": "2025.10.01",
+    "compileSdk": 36,
+    "targetSdk": 36,
+    "minSdk": 26,
+    "agpSelectedBuildTools": "35.0.0",
+    "wrapperDistributionSha256": "20f1b1176237254a6fc204d8434196fa11a4cfb387567519c61556e8710aed78"
+  },
+  "build": {
+    "status": "passed",
+    "command": "./gradlew --no-daemon --max-workers=2 :app:assembleDebug :app:lintDebug :app:assembleDebugAndroidTest",
+    "output": "build-output.txt",
+    "macOutputPath": "<isolated-task-root>/android-build-r3.log",
+    "lint": {
+      "errors": 0,
+      "warnings": [
+        {
+          "id": "AndroidGradlePluginVersion",
+          "severity": "Warning",
+          "message": "A newer version of Gradle than 8.13 is available: 8.14.7"
+        },
+        {
+          "id": "GradleDependency",
+          "severity": "Warning",
+          "message": "A newer version of androidx.activity:activity-compose than 1.11.0 is available: 1.13.0"
+        },
+        {
+          "id": "GradleDependency",
+          "severity": "Warning",
+          "message": "A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.9.4 is available: 2.11.0"
+        },
+        {
+          "id": "GradleDependency",
+          "severity": "Warning",
+          "message": "A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.9.4 is available: 2.11.0"
+        },
+        {
+          "id": "NewerVersionAvailable",
+          "severity": "Warning",
+          "message": "A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.10.2 is available: 1.11.0"
+        },
+        {
+          "id": "UseKtx",
+          "severity": "Warning",
+          "message": "Use the KTX extension function `String.toUri` instead?"
+        }
+      ]
+    }
+  },
+  "policyChecks": {
+    "status": "passed",
+    "checks": 36,
+    "command": "bash checks/run-policy-checks.sh",
+    "executedOn": [
+      "Linux scratch runtime",
+      "isolated macOS JDK 21"
+    ],
+    "networkRequests": 0
+  },
+  "instrumentation": {
+    "status": "passed",
+    "tests": 3,
+    "durationSeconds": 6.6,
+    "output": "instrumentation-output.txt",
+    "command": "adb -P 5049 -s emulator-5572 shell am instrument -w -r com.saleh.careerfinder.preview.test/androidx.test.runner.AndroidJUnitRunner",
+    "emulator": {
+      "api": 36,
+      "abi": "arm64-v8a",
+      "systemImage": "system-images;android-36;default;arm64-v8a",
+      "deviceProfile": "Pixel 7",
+      "name": "careerfinder_acceptance"
+    },
+    "cases": [
+      "PhoneAcceptanceTest.phoneProfile_survivesActivityRecreation_withoutAnyService",
+      "PhoneAcceptanceTest.blankWorkspace_hasHonestEmptyState_andConnectionRequirement",
+      "VaultAcceptanceTest.storedToken_isEncrypted_andBoundToItsRecordName"
+    ],
+    "fixturePolicy": "Dedicated blank emulator. Fixture profile was cleared before screenshots; no real applicant identity or provider credential.",
+    "realEmployerRequests": 0
+  },
+  "artifacts": [
+    {
+      "path": "<isolated-task-root>/android-check/app/build/outputs/apk/debug/app-debug.apk",
+      "bytes": 11703120,
+      "sha256": "442229812f508ba51ce23f86cbf537cd9a1180d20c87dc46143f10152fff293f"
+    },
+    {
+      "path": "<isolated-task-root>/android-check/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
+      "bytes": 1076787,
+      "sha256": "cbea567fc4ce04637af33607ac409df524859b2812011ef810b822ca1dd605b5"
+    }
+  ],
+  "visualReview": {
+    "status": "passed_for_captured_screens",
+    "configuration": "Pixel 7 portrait, default font size, light theme, English",
+    "observations": "Jobs blank state and disconnected Auto Apply state render legibly without clipped content; primary actions and bottom navigation are visible.",
+    "screenshots": [
+      {
+        "path": "<isolated-task-root>/android-proof/jobs.png",
+        "bytes": 209950,
+        "sha256": "a6a7db5a32c9742a9529aa0e6c81ae01917a52352d73612bef2a0670ba898d26"
+      },
+      {
+        "path": "<isolated-task-root>/android-proof/auto-apply.png",
+        "bytes": 175493,
+        "sha256": "0f2f1374220d80cce296f1b7263c78cb10ca384768605dff460d47fd791e13d9"
+      }
+    ]
+  },
+  "cleanup": {
+    "taskEmulatorExited": true,
+    "isolatedAdbServerStopped": true,
+    "adbPort": 5049,
+    "physicalDevicesUsed": false,
+    "sharedSimulatorsOrAdbServersTouched": false
+  },
+  "limitations": [
+    "Debug-signed preview; no release signing or store submission.",
+    "Minimum SDK is declared API 26; actual device execution covered API 36 only.",
+    "No paired HTTPS end-to-end phone-to-service session or live employer submission was performed.",
+    "Physical devices, TalkBack, enlarged fonts, RTL, system PDF picker return, and production HTTPS gateway remain acceptance checks.",
+    "Offline phone drafts and paired service workspaces remain separate; pairing does not automatically import offline profile or opportunities.",
+    "No global jobs feed is bundled; users can save manual employer opportunities from any country or role.",
+    "Six lint advisories concern newer dependency versions and a Kotlin URI extension idiom."
+  ],
+  "pathNote": "Machine-local proof paths are normalized to <isolated-task-root>; byte counts, hashes and observed outcomes are unchanged."
+}

@@ -4,6 +4,12 @@
     classes = {};
     objectVersion = 56;
     objects = {
+        A1000000000000000000000D = {isa = PBXBuildFile; fileRef = A2000000000000000000000D; };
+        A2000000000000000000000D = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileApplicationClient.swift; sourceTree = "<group>"; };
+        A1000000000000000000000E = {isa = PBXBuildFile; fileRef = A2000000000000000000000E; };
+        A2000000000000000000000E = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeApplicationsStore.swift; sourceTree = "<group>"; };
+        A1000000000000000000000F = {isa = PBXBuildFile; fileRef = A2000000000000000000000F; };
+        A2000000000000000000000F = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeApplicationsViews.swift; sourceTree = "<group>"; };
         A10000000000000000000001 = {isa = PBXBuildFile; fileRef = A20000000000000000000001; };
         A10000000000000000000002 = {isa = PBXBuildFile; fileRef = A20000000000000000000002; };
         A10000000000000000000003 = {isa = PBXBuildFile; fileRef = A20000000000000000000003; };
@@ -29,10 +35,10 @@
         A20000000000000000000009 = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 
         A30000000000000000000001 = {isa = PBXGroup; children = (A30000000000000000000002, A20000000000000000000007, A30000000000000000000003); sourceTree = "<group>"; };
-        A30000000000000000000002 = {isa = PBXGroup; children = (A20000000000000000000001, A20000000000000000000002, A20000000000000000000003, A20000000000000000000008, A20000000000000000000009, A2000000000000000000000A, A2000000000000000000000B, A2000000000000000000000C, A20000000000000000000004, A20000000000000000000005); path = AhmadCareer; sourceTree = "<group>"; };
+        A30000000000000000000002 = {isa = PBXGroup; children = (A20000000000000000000001, A20000000000000000000002, A20000000000000000000003, A20000000000000000000008, A20000000000000000000009, A2000000000000000000000A, A2000000000000000000000B, A2000000000000000000000C, A2000000000000000000000D, A2000000000000000000000E, A2000000000000000000000F, A20000000000000000000004, A20000000000000000000005); path = AhmadCareer; sourceTree = "<group>"; };
         A30000000000000000000003 = {isa = PBXGroup; children = (A20000000000000000000006); name = Products; sourceTree = "<group>"; };
 
-        A40000000000000000000001 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001, A10000000000000000000002, A10000000000000000000003, A10000000000000000000005, A10000000000000000000007, A10000000000000000000008); runOnlyForDeploymentPostprocessing = 0; };
+        A40000000000000000000001 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001, A10000000000000000000002, A10000000000000000000003, A10000000000000000000005, A10000000000000000000007, A10000000000000000000008, A1000000000000000000000D, A1000000000000000000000E, A1000000000000000000000F); runOnlyForDeploymentPostprocessing = 0; };
         A40000000000000000000002 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000004, A10000000000000000000006, A10000000000000000000009); runOnlyForDeploymentPostprocessing = 0; };
         A40000000000000000000003 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 
@@ -100,7 +106,7 @@
                 DEVELOPMENT_TEAM = "";
                 ENABLE_HARDENED_RUNTIME = YES;
                 GENERATE_INFOPLIST_FILE = YES;
-                INFOPLIST_KEY_CFBundleDisplayName = "Ahmad Career";
+                INFOPLIST_KEY_CFBundleDisplayName = "Career Finder";
                 INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
                 INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
                 INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -116,10 +122,10 @@
                 PRODUCT_BUNDLE_IDENTIFIER = com.ahmadalayed.career;
                 PRODUCT_NAME = "$(TARGET_NAME)";
                 SDKROOT = auto;
-                SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+                SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
                 SUPPORTS_MACCATALYST = NO;
                 SWIFT_EMIT_LOC_STRINGS = YES;
-                TARGETED_DEVICE_FAMILY = "1,2";
+                TARGETED_DEVICE_FAMILY = "1";
             };
             name = Debug;
         };
@@ -132,7 +138,7 @@
                 DEVELOPMENT_TEAM = "";
                 ENABLE_HARDENED_RUNTIME = YES;
                 GENERATE_INFOPLIST_FILE = YES;
-                INFOPLIST_KEY_CFBundleDisplayName = "Ahmad Career";
+                INFOPLIST_KEY_CFBundleDisplayName = "Career Finder";
                 INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
                 INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
                 INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -148,10 +154,10 @@
                 PRODUCT_BUNDLE_IDENTIFIER = com.ahmadalayed.career;
                 PRODUCT_NAME = "$(TARGET_NAME)";
                 SDKROOT = auto;
-                SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+                SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
                 SUPPORTS_MACCATALYST = NO;
                 SWIFT_EMIT_LOC_STRINGS = YES;
-                TARGETED_DEVICE_FAMILY = "1,2";
+                TARGETED_DEVICE_FAMILY = "1";
             };
             name = Release;
         };

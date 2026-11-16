@@ -1,0 +1,24 @@
+$kind: http-request
+name: Reject missing CSRF
+order: 5000
+url: '{{baseUrl}}/api/apply/profile'
+method: PUT
+headers:
+  Content-Type: application/json
+  Origin: '{{baseUrl}}'
+  X-Career-CSRF: ''
+  Cookie: '{{sessionCookie}}'
+settings:
+  followRedirects: false
+body:
+  type: json
+  content: |-
+    {
+      "expectedRevision": 0,
+      "profile": {}
+    }
+scripts:
+- type: afterResponse
+  language: text/javascript
+  code: |-
+    pm.test('Missing CSRF is rejected', () => pm.response.to.have.status(403));

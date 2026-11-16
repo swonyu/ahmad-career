@@ -1,0 +1,26 @@
+$kind: http-request
+name: Reject forged provider receipt
+order: 11500
+url: '{{baseUrl}}/api/apply/submit'
+method: POST
+headers:
+  Content-Type: application/json
+  Origin: '{{baseUrl}}'
+  X-Career-CSRF: '{{csrfToken}}'
+  Cookie: '{{sessionCookie}}'
+settings:
+  followRedirects: false
+body:
+  type: json
+  content: |-
+    {
+      "planId": "{{planId}}",
+      "digest": "{{planDigest}}",
+      "approved": true,
+      "applicationId": "forged-browser-value"
+    }
+scripts:
+- type: afterResponse
+  language: text/javascript
+  code: |-
+    pm.test('Client cannot supply verification',()=>pm.response.to.have.status(422));

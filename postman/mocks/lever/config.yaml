@@ -1,0 +1,14 @@
+version: 1
+name: Lever documented submission contract
+slug: career-lever-fixture
+protocol: http
+description: Local synthetic stand-in for the documented Lever Postings API. No real applications.
+port: 4901
+origin:
+  - api.lever.co
+  - api.eu.lever.co
+interceptRequests: true
+scenarios:
+  - name: default
+    path: ./default.js
+    default: true

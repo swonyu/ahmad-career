@@ -1,28 +1,16 @@
 globalThis.CAREER_DATA={
   "checkedAt": "2026-10-09",
   "profile": {
-    "name": "Ahmad Alayed",
-    "role": "Regulatory KPI Department Manager",
-    "organization": "Supply Chain Command Center · MOH / NHCC",
-    "location": "Riyadh, Saudi Arabia",
-    "url": "https://sa.linkedin.com/in/ahmad-alayed-b91185b3",
-    "facts": [
-      "LinkedIn self-report: Regulatory KPI Department Manager, December 2021–present; healthcare supply-chain KPI monitoring across 20 health clusters and Ministry of Health branches, with reports for Ministry leadership.",
-      "Quality Control Department Manager, July 2020–December 2021; led more than 10 staff, managed medical-supply contracts across forecasting, purchasing, tendering and execution, and coordinated contract and supply matters with NUPCO.",
-      "Lists Power BI, SQL and Excel for data analysis, KPI dashboards and management reporting. The depth and outcomes of this work still need role-specific examples.",
-      "Assistant Quality Control Manager, September 2019–July 2020. Medical-supply Pharmacist, May 2018–December 2021; these positions overlap and are not added together.",
-      "Pharmacist at Qassim Health Cluster, March 2010–April 2018. Career dates are self-reported; total pharmacy experience does not establish years in each specialist function.",
-      "Bachelor’s degree in Pharmacy, King Saud University (2004–2010); Bachelor’s degree in Law, Saudi Electronic University (2018–2022). Listed qualifications are not independently credential-verified."
-    ],
-    "unknowns": [
-      "Exact years owning bids/tenders, statistical demand planning and commercial operations",
-      "Current team size, budgets, decision authority and measurable achievements",
-      "Hands-on ERP, SAP, forecasting, customs and logistics systems",
-      "Preferred Saudi cities, acceptable seniority and notice period",
-      "Role-specific CV evidence supporting each vacancy’s mandatory requirements"
-    ]
+    "name": "",
+    "role": "",
+    "organization": "",
+    "location": "",
+    "url": "",
+    "facts": [],
+    "unknowns": []
   },
-  "jobs": [
+  "jobs": [],
+  "legacyJobs": [
     {
       "id": "jj-R-103214",
       "rank": 1,
@@ -464,53 +452,6 @@ globalThis.CAREER_DATA={
       "researchCheckedAt": "2026-10-09"
     }
   ],
-  "excluded": [
-    {
-      "title": "Qiddiya recommendations",
-      "reason": "Outside the chosen healthcare-employer scope; removed from recommendations and live discovery. Any saved history stays on your device.",
-      "url": null
-    },
-    {
-      "title": "BD — Tender & Bid Manager, KSA",
-      "reason": "Fresh official Workday page reports posting unavailable (9 October 2026).",
-      "url": "https://bdx.wd1.myworkdayjobs.com/en-US/EXTERNAL_CAREER_SITE_SAUDI_ARABIA/job/Tender---Bid-Manager--KSA_R-546873-1"
-    },
-    {
-      "title": "Medtronic — Strategic NUPCO Lead",
-      "reason": "Fresh official Workday page reports posting unavailable (9 October 2026).",
-      "url": "https://medtronic.wd1.myworkdayjobs.com/en-US/MedtronicCareers/job/Strategic-NUPCO-Lead--Riyadh_R66768-1"
-    },
-    {
-      "title": "Aljeel — Project Execution Lead",
-      "reason": "Employer LinkedIn page says no longer accepting applications; search snippets are stale.",
-      "url": "https://www.linkedin.com/jobs/view/4459939947/"
-    },
-    {
-      "title": "Alcon — Warehouse & Distribution Manager",
-      "reason": "Expired official indexed end date July 31 2026",
-      "url": "https://alcon.wd5.myworkdayjobs.com/en-US/careers_alcon/job/Jeddah-Saudi-Arabia/Warehouse---Distribution-Manager_R-2026-47706-1"
-    },
-    {
-      "title": "J&J — Senior Planner - KSA",
-      "reason": "Official URL returns 404; do not trust August mirror as live",
-      "url": "https://www.careers.jnj.com/en/jobs/r-093424/senior-planner-ksa/"
-    },
-    {
-      "title": "J&J — Saudi Business Operation Manager",
-      "reason": "LinkedIn explicitly no longer accepting; separate Workday R-078718 end June 5 2026",
-      "url": "https://sa.linkedin.com/jobs/view/saudi-business-operation-manager-at-johnson-johnson-medtech-4417398428"
-    },
-    {
-      "title": "BD — Supply Chain & Demand Planning Manager",
-      "reason": "Absent from live official Saudi Workday board, which has 8 roles and no supply-chain role. Stale indexed lead, not confirmed open.",
-      "url": "https://bdx.wd1.myworkdayjobs.com/en-US/EXTERNAL_CAREER_SITE_SAUDI_ARABIA/job/Supply-Chain---Demand-Planning-Manager_R-546869-1"
-    },
-    {
-      "title": "Biogen — Supply Chain Manager - GCC",
-      "reason": "Official job detail API 404; live Riyadh query zero",
-      "url": "https://biibhr.wd3.myworkdayjobs.com/external/job/Riyadh-Saudi-Arabia/Supply-Chain-Manager---GCC_REQ23283"
-    }
-  ],
   "benchmarks": [
     {
       "source": "Hays Saudi Arabia Salary Guide 2025",
@@ -555,31 +496,6 @@ globalThis.CAREER_DATA={
           53710
         ]
       }
-    }
-  ],
-  "targets": [
-    {
-      "employer": "NUPCO",
-      "role_family": "Supply-chain performance / operational excellence manager",
-      "status": "Employer target only, not a verified vacancy",
-      "url": "https://www.nupco.com/apply-for-a-job/",
-      "why": "Medical procurement, warehousing and distribution; close domain alignment with MOH supply KPI work. General form allows position/department/experience/CV submission.",
-      "salary": "Not published",
-      "application": "Use general CV form only if Ahmad wants speculative registration; it does not establish an open job."
-    },
-    {
-      "employer": "TAAM Health / Tamer",
-      "role_family": "Demand Planning Manager",
-      "status": "Closed historical role; useful target family only",
-      "url": "https://sa.linkedin.com/jobs/view/demand-planning-at-taam-health-4427423495",
-      "requirements": [
-        "7+ years Demand Planning/Supply Chain/Inventory Management",
-        "Statistical forecasting and ERP",
-        "Excel/data analysis, BI advantage",
-        "English fluent; Arabic preferred"
-      ],
-      "scope": "20 hospital clusters, 2 direct reports; consumption forecasts, inventory risk and replenishment governance",
-      "why": "Closest recorded healthcare-system scope, but LinkedIn explicitly no longer accepting applications."
     }
   ]
 };

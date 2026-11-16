@@ -1,0 +1,25 @@
+$kind: http-request
+name: Replay verified receipt request
+order: 14000
+url: '{{baseUrl}}/api/apply/submit'
+method: POST
+headers:
+  Content-Type: application/json
+  Origin: '{{baseUrl}}'
+  X-Career-CSRF: '{{csrfToken}}'
+  Cookie: '{{sessionCookie}}'
+settings:
+  followRedirects: false
+body:
+  type: json
+  content: |-
+    {
+      "planId": "{{planId}}",
+      "digest": "{{planDigest}}",
+      "approved": true
+    }
+scripts:
+- type: afterResponse
+  language: text/javascript
+  code: |-
+    pm.test('Replay cannot create a new logical submission',()=>pm.expect(pm.response.code).to.be.oneOf([200,202,409]));

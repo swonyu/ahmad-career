@@ -1,0 +1,19 @@
+$kind: http-request
+name: Check blank workspace
+order: 3000
+url: '{{baseUrl}}/api/apply/workspace'
+method: GET
+headers:
+  Content-Type: application/json
+  Origin: '{{baseUrl}}'
+  X-Career-CSRF: '{{csrfToken}}'
+  Cookie: '{{sessionCookie}}'
+settings:
+  followRedirects: false
+scripts:
+- type: afterResponse
+  language: text/javascript
+  code: |
+    const d=pm.response.json();
+    pm.test('Fresh profile contains no applicant defaults', () => { pm.response.to.have.status(200); pm.expect(d.profile.revision).to.eql(0); pm.expect(d.jobs).to.have.length(0); pm.expect(d.attempts).to.have.length(0); });
+    if (d.profile.revision !== 0 || d.jobs.length || d.attempts.length) pm.execution.setNextRequest(null);

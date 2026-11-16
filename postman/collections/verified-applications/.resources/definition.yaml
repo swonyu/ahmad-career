@@ -1,0 +1,31 @@
+$kind: collection
+name: Career Finder verified applications — synthetic local acceptance
+description: 'Runs only against a dedicated loopback companion in explicit test mode. Never use a real data directory or employer
+  credential. Contract: docs/Verified-Applications-Contract.md. The local Lever mock is the external dependency; the actual
+  companion is not mocked.'
+variables:
+- key: baseUrl
+  value: http://127.0.0.1:4908
+- key: mockUrl
+  value: http://127.0.0.1:4907/lever
+- key: fixtureMode
+  value: ''
+- key: csrfToken
+  value: ''
+- key: sessionCookie
+  value: ''
+auth:
+  type: noauth
+scripts:
+- type: http:beforeRequest
+  language: text/javascript
+  code: |
+    const base = pm.variables.get('baseUrl');
+    if (!/^http:\/\/127\.0\.0\.1:[0-9]{1,5}$/.test(base || '')) {
+      pm.execution.skipRequest();
+      throw new Error('This collection is restricted to an isolated loopback fixture server.');
+    }
+    if (pm.info.requestName !== 'Verify test server' && pm.collectionVariables.get('fixtureMode') !== 'test') {
+      pm.execution.skipRequest();
+      throw new Error('The application must report mode=test before any fixture mutation.');
+    }

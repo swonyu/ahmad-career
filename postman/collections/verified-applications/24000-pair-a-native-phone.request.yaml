@@ -1,0 +1,26 @@
+$kind: http-request
+name: Pair a native phone
+order: 24000
+url: '{{baseUrl}}/api/apply/session'
+method: POST
+headers:
+  Content-Type: application/json
+settings:
+  followRedirects: false
+body:
+  type: json
+  content: |-
+    {
+      "pairingCode": "{{mobilePairingCode}}"
+    }
+scripts:
+- type: beforeRequest
+  language: text/javascript
+  code: |-
+    pm.request.headers.remove('Origin');pm.request.headers.remove('Cookie');pm.request.headers.remove('X-Career-CSRF');
+- type: afterResponse
+  language: text/javascript
+  code: |
+    const d=pm.response.json();
+    pm.test('One-use pairing creates a private mobile session',()=>{pm.response.to.have.status(200);pm.expect(d.sessionToken).to.match(/^[a-f0-9]{64}$/);pm.expect(d.profile.revision).to.eql(0);});
+    pm.collectionVariables.set('mobileToken',d.sessionToken);

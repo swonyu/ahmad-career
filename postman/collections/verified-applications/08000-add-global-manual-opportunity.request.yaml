@@ -1,0 +1,29 @@
+$kind: http-request
+name: Add global manual opportunity
+order: 8000
+url: '{{baseUrl}}/api/apply/jobs'
+method: POST
+headers:
+  Content-Type: application/json
+  Origin: '{{baseUrl}}'
+  X-Career-CSRF: '{{csrfToken}}'
+  Cookie: '{{sessionCookie}}'
+settings:
+  followRedirects: false
+body:
+  type: json
+  content: |-
+    {
+      "url": "https://example.com/jobs/documentation-specialist",
+      "title": "Documentation Specialist",
+      "company": "Example Fixture",
+      "location": "Auckland",
+      "country": "NZ"
+    }
+scripts:
+- type: afterResponse
+  language: text/javascript
+  code: |
+    const d=pm.response.json();
+    pm.test('Non-Saudi career opportunity is retained',()=>{pm.expect(pm.response.code).to.be.oneOf([200,201]);pm.expect(d.job.id).to.be.a('string');pm.expect(d.job.country).to.eql('NZ');});
+    pm.collectionVariables.set('manualJobId',d.job.id);

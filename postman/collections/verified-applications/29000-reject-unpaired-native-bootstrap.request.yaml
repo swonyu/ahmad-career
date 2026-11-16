@@ -1,0 +1,22 @@
+$kind: http-request
+name: Reject unpaired native bootstrap
+order: 29000
+url: '{{baseUrl}}/api/apply/session'
+method: POST
+headers:
+  Content-Type: application/json
+settings:
+  followRedirects: false
+body:
+  type: json
+  content: |-
+    {}
+scripts:
+- type: beforeRequest
+  language: text/javascript
+  code: |-
+    pm.request.headers.remove('Origin');pm.request.headers.remove('Cookie');pm.request.headers.remove('X-Career-CSRF');
+- type: afterResponse
+  language: text/javascript
+  code: |-
+    pm.test('Native bootstrap requires a pairing code',()=>pm.response.to.have.status(403));

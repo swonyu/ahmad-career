@@ -1,0 +1,24 @@
+$kind: http-request
+name: Reject pairing code reuse
+order: 25000
+url: '{{baseUrl}}/api/apply/session'
+method: POST
+headers:
+  Content-Type: application/json
+settings:
+  followRedirects: false
+body:
+  type: json
+  content: |-
+    {
+      "pairingCode": "{{mobilePairingCode}}"
+    }
+scripts:
+- type: beforeRequest
+  language: text/javascript
+  code: |-
+    pm.request.headers.remove('Origin');pm.request.headers.remove('Cookie');pm.request.headers.remove('X-Career-CSRF');
+- type: afterResponse
+  language: text/javascript
+  code: |-
+    pm.test('Used pairing code is rejected',()=>pm.response.to.have.status(401));

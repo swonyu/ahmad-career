@@ -1,0 +1,31 @@
+$kind: http-request
+name: Save native profile with bearer
+order: 27000
+url: '{{baseUrl}}/api/apply/profile'
+method: PUT
+headers:
+  Content-Type: application/json
+  Authorization: Bearer {{mobileToken}}
+settings:
+  followRedirects: false
+body:
+  type: json
+  content: |-
+    {
+      "expectedRevision": 0,
+      "profile": {
+        "firstName": "Mobile",
+        "lastName": "Fixture",
+        "email": "mobile+{{runId}}@example.com"
+      }
+    }
+scripts:
+- type: beforeRequest
+  language: text/javascript
+  code: |-
+    pm.request.headers.remove('Origin');pm.request.headers.remove('Cookie');pm.request.headers.remove('X-Career-CSRF');
+- type: afterResponse
+  language: text/javascript
+  code: |
+    const d=pm.response.json();
+    pm.test('Authenticated native mutation works without a browser Origin or cookie',()=>{pm.response.to.have.status(200);pm.expect(d.profile.revision).to.eql(1);pm.expect(d.profile.firstName).to.eql('Mobile');});

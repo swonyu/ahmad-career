@@ -1,0 +1,9 @@
+simulation: career-finder-lever
+routing: path
+mocks:
+  - name: Lever documented submission contract
+    routeKey: lever
+    origin:
+      - api.lever.co
+      - api.eu.lever.co
+    path: postman/mocks/lever

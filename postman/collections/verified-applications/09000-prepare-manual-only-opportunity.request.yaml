@@ -1,0 +1,27 @@
+$kind: http-request
+name: Prepare manual-only opportunity
+order: 9000
+url: '{{baseUrl}}/api/apply/prepare'
+method: POST
+headers:
+  Content-Type: application/json
+  Origin: '{{baseUrl}}'
+  X-Career-CSRF: '{{csrfToken}}'
+  Cookie: '{{sessionCookie}}'
+settings:
+  followRedirects: false
+body:
+  type: json
+  content: |-
+    {
+      "jobIds": [
+        "{{manualJobId}}"
+      ],
+      "answers": {}
+    }
+scripts:
+- type: afterResponse
+  language: text/javascript
+  code: |
+    const d=pm.response.json();
+    pm.test('Unsupported application remains blocked',()=>{pm.expect(pm.response.code).to.be.oneOf([200,201]);pm.expect(d.plan.items).to.have.length(1);pm.expect(d.plan.items[0].state).to.eql('blocked');});

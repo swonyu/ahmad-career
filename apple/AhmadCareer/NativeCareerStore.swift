@@ -36,7 +36,7 @@ struct CareerJob: Codable, Identifiable, Hashable {
     var applicationURL: URL? { Self.safeURL(applyUrl ?? url) }
     var sourceURL: URL? { Self.safeURL(sourceUrl ?? url) }
     var isExpired: Bool { Self.expired(closes) }
-    var requirements: [String] { gaps ?? ["Confirm the complete degree, experience, location and seniority requirements on the employer website.","This lead was found by title and location. It has not had the full review of the researched shortlist."] }
+    var requirements: [String] { gaps ?? ["Confirm the complete degree, experience, location and seniority requirements on the employer website.","This lead was found by title and location. It is not a personalized eligibility assessment."] }
     var applicationSteps: [[String]] { (steps ?? [["Read the official description","Check that the position is open and compare all mandatory requirements."],["Tailor your evidence","Use two actual achievements relevant to the responsibilities."],["Apply personally","Open the employer application, review your answers and attachments, then submit when ready."],["Keep the confirmation","Save the acknowledgement and update your application status."]]).filter { $0.count >= 2 } }
     static func safeURL(_ value: String) -> URL? {
         let hosts: Set<String> = ["apply.workable.com","alcon.wd5.myworkdayjobs.com","jj.wd5.myworkdayjobs.com","roche.wd3.myworkdayjobs.com","novartis.wd3.myworkdayjobs.com","gsk.wd5.myworkdayjobs.com","bdx.wd1.myworkdayjobs.com","www.careers.jnj.com","eenp.fa.em3.oraclecloud.com","efan.fa.em3.oraclecloud.com","careers.al-dawaa.com","www.linkedin.com","sa.linkedin.com"]
@@ -55,41 +55,96 @@ struct CareerJob: Codable, Identifiable, Hashable {
     }
 }
 struct PublicProfile: Codable { var name,role,organization,location,url:String; var facts,unknowns:[String] }
-struct CareerResearch: Codable { var checkedAt:String;var jobs:[CareerJob];var profile:PublicProfile }
+struct CareerResearch: Codable { var checkedAt:String;var jobs:[CareerJob];var profile:PublicProfile;var legacyJobs:[CareerJob]?=nil }
 struct NativeProfile: Codable, Equatable {
     var years="";var degree="";var skills="";var achievements=""
+    // Existing keys retain their original Saudi / monthly SAR meaning.
     var preferredCity:String?
     var minimumMonthlySAR:String?
     var unknownSalary:String?
+    var preferencesVersion:String?
+    var targetCountry:String?
+    var targetCity:String?
+    var roleKeywords:String?
+    var planningCurrency:String?
+    var planningPayPeriod:String?
+    var displayTimeZone:String?
+    static let countryCodes="AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XK YE YT ZA ZM ZW".components(separatedBy:" ")
+    static let currencyCodes="AED AFN ALL AMD ANG AOA ARS AUD AWG AZN BAM BBD BDT BGN BHD BIF BMD BND BOB BOV BRL BSD BTN BWP BYN BZD CAD CDF CHE CHF CHW CLF CLP CNY COP COU CRC CUC CUP CVE CZK DJF DKK DOP DZD EGP ERN ETB EUR FJD FKP GBP GEL GHS GIP GMD GNF GTQ GYD HKD HNL HRK HTG HUF IDR ILS INR IQD IRR ISK JMD JOD JPY KES KGS KHR KMF KPW KRW KWD KYD KZT LAK LBP LKR LRD LSL LYD MAD MDL MGA MKD MMK MNT MOP MRU MUR MVR MWK MXN MXV MYR MZN NAD NGN NIO NOK NPR NZD OMR PAB PEN PGK PHP PKR PLN PYG QAR RON RSD RUB RWF SAR SBD SCR SDG SEK SGD SHP SLE SLL SOS SRD SSP STN SVC SYP SZL THB TJS TMT TND TOP TRY TTD TWD TZS UAH UGX USD USN UYI UYU UYW UZS VED VES VND VUV WST XAF XBA XBB XBC XBD XCD XCG XDR XOF XPF XSU XUA YER ZAR ZMW ZWG ZWL".components(separatedBy:" ")
+    static func fresh()->NativeProfile {
+        var value=NativeProfile();value.preferencesVersion="2";value.targetCountry="";value.targetCity="";value.roleKeywords="";value.planningCurrency="";value.planningPayPeriod="monthly";value.displayTimeZone="";return value
+    }
+    var effectiveCountry:String {targetCountry ?? "SA"}
+    var effectiveCity:String {targetCity ?? (preferredCity=="riyadh" ? "Riyadh" : "")}
+    var effectiveCurrency:String {planningCurrency ?? "SAR"}
+    var effectivePayPeriod:String {planningPayPeriod ?? "monthly"}
+    var effectiveTimeZone:String {displayTimeZone.map{$0.isEmpty ? TimeZone.current.identifier : $0} ?? "Asia/Riyadh"}
+    var countrySupported:Bool {["","SA"].contains(effectiveCountry)}
+    var countryName:String {effectiveCountry.isEmpty ? "Any covered country" : Locale.current.localizedString(forRegionCode:effectiveCountry) ?? effectiveCountry}
+    var preferenceError:String? {
+        if let version=preferencesVersion,version != "2" {return "These preferences use an unsupported version. Original data is preserved."}
+        if let country=targetCountry,!country.isEmpty && !Self.countryCodes.contains(country) {return "Choose a country or region from the list."}
+        if let city=targetCity,city.unicodeScalars.count>100 {return "Use up to 100 characters for the city."}
+        if let role=roleKeywords,role.unicodeScalars.count>200 {return "Use up to 200 characters for role keywords."}
+        if let currency=planningCurrency,!currency.isEmpty && !Self.currencyCodes.contains(currency) {return "Choose a planning currency from the list."}
+        if let period=planningPayPeriod,!["monthly","annual"].contains(period) {return "Choose monthly or annual planning amounts."}
+        if let zone=displayTimeZone,!zone.isEmpty && (zone.count>100 || TimeZone(identifier:zone)==nil) {return "Choose a recognized display time zone."}
+        return nil
+    }
     var minimumMonthlyAmount:Double? {
         guard let amount=NativeMoney.parse(minimumMonthlySAR ?? "",limit:1_000_000),amount.rounded()==amount else {return nil}
         return amount
     }
     var criteriaError:String? {
-        guard ["","riyadh"].contains(preferredCity ?? "") else {return "Choose any Saudi city or Riyadh."}
+        if let error=preferenceError {return error}
+        guard ["","riyadh"].contains(preferredCity ?? "") else {return "The saved legacy city must be blank or Riyadh."}
         guard ["show","hide"].contains(unknownSalary ?? "show") else {return "Choose whether to show or hide unverified salaries."}
         guard minimumMonthlyAmount != nil else {return "Enter a whole monthly SAR amount from 0 to 1,000,000, or leave blank."}
         return nil
     }
     var hasPayFloor:Bool { (minimumMonthlyAmount ?? 0)>0 }
     var hidesUnverifiedSalary:Bool { hasPayFloor && unknownSalary=="hide" }
+    func cityMatches(_ job:CareerJob)->Bool {
+        let city=effectiveCity.trimmingCharacters(in:.whitespacesAndNewlines)
+        if city.isEmpty {return true}
+        if ["riyadh","الرياض"].contains(city.lowercased()) {return job.hasRiyadhEvidence}
+        let pattern="(?:^|[^\\p{L}\\p{N}])"+NSRegularExpression.escapedPattern(for:city)+"(?=$|[^\\p{L}\\p{N}])"
+        return job.location.range(of:pattern,options:[.regularExpression,.caseInsensitive]) != nil
+    }
     func includesInDiscovery(_ job:CareerJob)->Bool {
-        (preferredCity != "riyadh" || job.hasRiyadhEvidence) && !hidesUnverifiedSalary
+        let title=[job.title,job.subtitle ?? ""].joined(separator:" ")
+        let role=(roleKeywords ?? "").split(whereSeparator:{$0.isWhitespace}).allSatisfy{title.localizedCaseInsensitiveContains(String($0))}
+        return countrySupported && cityMatches(job) && role && !hidesUnverifiedSalary
     }
     func criteriaMessages(for job:CareerJob)->[String] {
         var messages=[String]()
-        if preferredCity=="riyadh" {
-            if !job.hasRiyadhEvidence {messages.append("Outside current city criteria")}
-            else if job.requiresRiyadhConfirmation {messages.append("Confirm Riyadh assignment")}
+        if !countrySupported {messages.append("Outside current country coverage")}
+        if !effectiveCity.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty {
+            if !cityMatches(job) {messages.append("Outside current city criteria")}
+            else if ["riyadh","الرياض"].contains(effectiveCity.lowercased()) {if job.requiresRiyadhConfirmation {messages.append("Confirm Riyadh assignment")}}
+            else {messages.append("City text match — confirm worksite")}
         }
-        // Current feeds have no comparable, verified monthly pay evidence.
         if hasPayFloor {messages.append("Salary unverified — confirm your minimum")}
         return messages
     }
     var criteriaSummary:String {
-        let city=preferredCity=="riyadh" ? "Riyadh" : "Any Saudi city"
-        guard hasPayFloor,let amount=minimumMonthlyAmount else {return city+" · No pay floor"}
-        return city+" · Minimum SAR \(Int(amount).formatted())/month · "+(hidesUnverifiedSalary ? "Unverified salaries hidden" : "Unverified salaries shown")
+        var parts=[countryName,effectiveCity.isEmpty ? "Any city in that scope" : effectiveCity]
+        if let role=roleKeywords,!role.isEmpty {parts.append("Role words: "+role)}
+        if hasPayFloor,let amount=minimumMonthlyAmount {parts.append("Minimum SAR \(Int(amount).formatted())/month");parts.append(hidesUnverifiedSalary ? "Unverified salaries hidden" : "Unverified salaries shown")}
+        else {parts.append("No pay floor")}
+        return parts.joined(separator:" · ")
+    }
+    func formattedDate(_ value:String,includeTime:Bool=false)->String {
+        guard let parsed=CareerFeed.parsedDate(value) else {return "Not stated"}
+        let dateOnly=value.count==10,formatter=DateFormatter()
+        formatter.locale=Locale.current;formatter.calendar=Calendar(identifier:.gregorian)
+        // Source date-only values retain their Saudi civil date; no invented local instant.
+        let selectedZone=TimeZone(identifier:dateOnly ? "Asia/Riyadh" : effectiveTimeZone) ?? TimeZone.current
+        formatter.timeZone=selectedZone
+        formatter.dateStyle = .medium;formatter.timeStyle=includeTime && !dateOnly ? .short : .none
+        let offset=selectedZone.secondsFromGMT(for:parsed)
+        let offsetLabel=String(format:"UTC%@%02d:%02d",offset<0 ? "−" : "+",abs(offset)/3600,(abs(offset)%3600)/60)
+        return formatter.string(from:parsed)+(includeTime && !dateOnly ? " · "+effectiveTimeZone+" ("+offsetLabel+")" : "")
     }
 }
 struct EmployerStatus: Codable { var name:String;var ok:Bool;var count:Int;var scanned:Int?;var limited:Bool?;var error:String?;var detailErrors:Int?;var excludedIds:[String]?;var incomplete:Bool {!ok || (detailErrors ?? 0)>0 || !(error ?? "").isEmpty} }
@@ -98,7 +153,7 @@ struct NativeWorkspace: Codable {
     var saved=Set<String>()
     var statuses=[String:String]()
     var snapshots=[String:CareerJob]()
-    var profile=NativeProfile(preferredCity:"riyadh")
+    var profile=NativeProfile.fresh()
     var completed=Set<String>()
     var live:LiveSnapshot?
 }
@@ -149,6 +204,7 @@ struct ApplicationAttention: Identifiable {
     @Published private(set) var recordDrafts=[String:ApplicationRecordDraft]()
     @Published private(set) var recordErrors=[String:String]()
     private let storageURL:URL
+    private var legacyResearchJobs=[CareerJob]()
     private var canWrite=true
 
     init(researchURL:URL? = Bundle.main.url(forResource:"CareerResearch",withExtension:"json"), storageURL:URL? = nil) {
@@ -160,13 +216,22 @@ struct ApplicationAttention: Identifiable {
                 var stamped=job;stamped.researchCheckedAt=job.researchCheckedAt ?? loaded.checkedAt;stamped.kind="researched"
                 return stamped
             }
+            legacyResearchJobs=(loaded.legacyJobs ?? []).map { job in
+                var archived=job
+                archived.researchCheckedAt=job.researchCheckedAt ?? loaded.checkedAt
+                archived.kind="archived";archived.rank=nil
+                return archived
+            }
             research=loaded
         } catch {
-            research=CareerResearch(checkedAt:"Unavailable",jobs:[],profile:PublicProfile(name:"Ahmad Alayed",role:"Healthcare supply chain",organization:"",location:"Saudi Arabia",url:"https://www.linkedin.com/in/ahmad-alayed-b91185b3",facts:[],unknowns:["The bundled research could not be loaded. Rebuild the app with CareerResearch.json."]))
+            research=CareerResearch(checkedAt:"Unavailable",jobs:[],profile:PublicProfile(name:"",role:"",organization:"",location:"",url:"",facts:[],unknowns:[]))
             storageError="The research bundle is missing or unreadable."
         }
         if FileManager.default.fileExists(atPath:self.storageURL.path) {
-            do { workspace=try JSONDecoder().decode(NativeWorkspace.self,from:Data(contentsOf:self.storageURL)) }
+            do {
+                workspace=try JSONDecoder().decode(NativeWorkspace.self,from:Data(contentsOf:self.storageURL))
+                if let error=workspace.profile.preferenceError {canWrite=false;storageError=error+" Saved records remain available; this workspace cannot be overwritten."}
+            }
             catch {canWrite=false;storageError="Saved records could not be read. They have been preserved; no new changes will overwrite that file."}
         }
         if canWrite {
@@ -296,7 +361,7 @@ struct ApplicationAttention: Identifiable {
         return retainingEmployerObservation(current,from:candidates+[editorial])
     }}
     private var allJobs:[CareerJob] {
-        var jobs=workspace.snapshots
+        var jobs=retainingLegacyJobs(workspace).snapshots
         for job in cachedEmployerJobs {
             if let prior=jobs[job.id] {
                 let facts=(factsDate(prior) ?? .distantPast) > (factsDate(job) ?? .distantPast) ? prior : ((prior.rank != nil || prior.kind == "archived" || prior.kind == "researched") ? mergeFacts(job,editorial:prior) : job)
@@ -343,8 +408,16 @@ struct ApplicationAttention: Identifiable {
         if done {next.completed.insert(id)} else {next.completed.remove(id)}
         commit(next)
     }
-    private func retainingKnownJobs(_ value:NativeWorkspace)->NativeWorkspace {
+    private func retainingLegacyJobs(_ value:NativeWorkspace)->NativeWorkspace {
         var next=value
+        for job in legacyResearchJobs where next.snapshots[job.id] == nil && (next.saved.contains(job.id) || next.statuses[job.id] != nil) {
+            // Recover only an existing record. Fresh users never receive old recommendations.
+            next.snapshots[job.id]=job
+        }
+        return next
+    }
+    private func retainingKnownJobs(_ value:NativeWorkspace)->NativeWorkspace {
+        var next=retainingLegacyJobs(value)
         let observed=Set(cachedEmployerJobs(in:value).map(\.id))
         for job in shortlistJobs(in:value) where next.snapshots[job.id] != nil || next.saved.contains(job.id) || next.statuses[job.id] != nil || observed.contains(job.id) {
             next.snapshots[job.id]=job
@@ -362,7 +435,9 @@ struct ApplicationAttention: Identifiable {
         } catch {storageError="This change could not be saved. Your previous records are intact. Check device storage and try again.";return false}
     }
     func refresh() async {
-        guard !isSearching else {return};isSearching=true;searchError=nil
+        guard !isSearching else {return}
+        guard workspace.profile.countrySupported else {searchError="Live sources do not cover your selected country. Six limited Saudi-oriented sources are available; saved records are preserved. Change your local country preference to review that scope.";return}
+        isSearching=true;searchError=nil
         defer {isSearching=false}
         acceptLive(await CareerFeed.refresh())
     }
@@ -438,9 +513,9 @@ struct ApplicationAttention: Identifiable {
         let currentJobs=allJobs
         let draftJobs=recordDrafts.values.filter{$0.dirty}.compactMap(\.job).filter{j in !currentJobs.contains{$0.id==j.id}}
         let jobs=(currentJobs+draftJobs).filter{workspace.saved.contains($0.id)||status(for:$0) != "Not started"||applicationRecords[$0.id]?.meaningful==true||recordDrafts[$0.id]?.dirty==true}
-        let labels=["profile":"Professional record", "evidence":"Achievement stories", "cv":"Two focused CVs", "priority":"Priority roles reviewed", "deadline":"Deadlines rechecked", "review":"Applications reviewed"]
+        let labels=["profile":"Professional record", "evidence":"Achievement stories", "cv":"Prepare your CV materials", "priority":"Review selected role requirements", "deadline":"Check selected deadlines", "review":"Applications reviewed"]
         let checklist=labels.keys.sorted().map{(workspace.completed.contains($0) ? "[x] " : "[ ] ")+(labels[$0] ?? $0)}.joined(separator:"\n")
-        return "AHMAD CAREER — Saudi Arabia\nCurrent shortlist research snapshot: \(research.checkedAt)\n\n"+profileText+"\n\nPREPARATION CHECKLIST\n"+checklist+"\n\nSAVED AND TRACKED APPLICATIONS\n\n"+jobs.map{note(for:$0,includeProfile:false)+applicationRecordText($0.id)}.joined(separator:"\n\n——————————\n\n")
+        return "CAREER FINDER — APPLICATION NOTES\nLegacy research reference date (retained records only): \(research.checkedAt)\n\n"+profileText+"\n\nPREPARATION CHECKLIST\n"+checklist+"\n\nChecked items record your preparation on this device. Recheck the requirements, dates and materials for each application.\n\nSAVED AND TRACKED APPLICATIONS\n\n"+jobs.map{note(for:$0,includeProfile:false)+applicationRecordText($0.id)}.joined(separator:"\n\n——————————\n\n")
     }
 }
 

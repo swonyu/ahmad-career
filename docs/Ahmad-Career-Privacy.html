@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
-  <meta name="description" content="Draft privacy and beta support information for the native Ahmad Career iPhone and iPad app.">
-  <title>Ahmad Career — Privacy &amp; beta support draft</title>
+  <meta name="description" content="Unpublished privacy and support draft for the native Career Finder iPhone and iPad readiness candidate.">
+  <title>Career Finder — Privacy &amp; beta support draft</title>
   <style>
     :root { color-scheme: light; --ink:#182522; --muted:#53635d; --line:#dce6e1; --mint:#e9f6ef; --accent:#17694d; }
     * { box-sizing:border-box; }
@@ -42,9 +42,9 @@
 <body>
 <main>
   <header>
-    <div class="brand"><span class="mark" aria-hidden="true">a<span>•</span></span> Ahmad Career</div>
+    <div class="brand"><span class="mark" aria-hidden="true">c<span>•</span></span> Career Finder</div>
     <h1>Privacy &amp; beta support</h1>
-    <p class="meta">Native iPhone and iPad app · Version 1.1, build 4 · Draft prepared 9 October 2026</p>
+    <p class="meta">Native iPhone and iPad app · Unreleased readiness candidate · Draft updated 15 November 2026</p>
     <aside class="draft" aria-label="Draft status">
       <strong>Draft — not yet published as the developer’s policy</strong>
       A monitored developer contact address and a public hosting location still need to be supplied. The developer must also confirm how beta feedback and diagnostics will be used and retained before this page is published. No publisher legal identity or contact details are asserted here.
@@ -52,37 +52,37 @@
   </header>
 
   <div class="summary">
-    <p>Ahmad Career helps you review Saudi job opportunities, prepare applications and track your own progress. Profile and application records are saved on your device. Running a live search contacts employer recruitment services. Sharing a preparation note sends a copy only to a destination you choose.</p>
+    <p>Career Finder provides a local workspace for reviewing opportunities, preparing notes and tracking applications. You can enter your own professional details and planning preferences. Its current live sources provide limited Saudi-oriented samples; choosing another country or obtaining the app in another store does not expand that coverage. Running a live search contacts the configured recruitment services. Sharing a note sends a copy only to a destination you choose.</p>
     <p>This page describes the native iPhone and iPad app. It does not describe the separate website or Mac app.</p>
   </div>
 
   <section aria-labelledby="local">
     <h2 id="local">What stays in the app</h2>
     <dl class="data-list">
-      <div><dt>Details you enter</dt><dd>Relevant years of experience, qualifications, tools and responsibilities, and achievements are saved locally when you save your profile. They help you prepare notes; they are not sent with employer searches.</dd></div>
-      <div><dt>Your job workspace</dt><dd>Saved roles, application statuses, completed checklist steps, retained vacancy details, and the latest accepted search results and source-check information are stored locally. These records let you continue after closing the app.</dd></div>
-      <div><dt>Salary comparisons and list filters</dt><dd>Salary figures are calculated on the device. Salary inputs and text used to filter the displayed job lists are not sent to employer services or written to the app’s saved workspace.</dd></div>
-      <div><dt>Public research included with the app</dt><dd>The app contains a dated professional research snapshot about Ahmad and publicly available employer listings. This bundled content is separate from your entered profile and application records. It is not a live connection to your LinkedIn account, and it does not establish that unverified qualifications are true.</dd></div>
+      <div><dt>Details you enter</dt><dd>Optional professional details, including experience, qualifications, tools, responsibilities and achievements, are saved locally when you save your profile. Country, city, role keywords, planning currency and period, display time zone, and discovery criteria are also local preferences. These details and preferences are not included in employer search requests. Professional details can appear in notes you choose to export; planning and discovery preferences are excluded.</dd></div>
+      <div><dt>Your job workspace</dt><dd>Saved roles, application statuses, completed preparation steps, retained vacancy details, the latest accepted search results and source-check information are stored locally. Per-role application dates and receipt notes are separate local records. These records let you continue after closing the app. Changing an application status does not submit an application or contact an employer.</dd></div>
+      <div><dt>Salary comparisons and list filters</dt><dd>The offer calculator processes the amounts and period you enter on the device. Calculator amounts are not saved to the workspace or sent to employer services. The selected planning currency and period are local profile preferences. No exchange-rate conversion is performed. Existing monthly SAR floors and dated SAR guide figures retain their original units and meaning. Text used to filter a displayed list is not sent to an employer.</dd></div>
+      <div><dt>Public research included with the app</dt><dd>The app retains dated employer-listing information only to help recover earlier saved or tracked records when their stored snapshot is missing. Existing snapshots take precedence. Fresh workspaces do not receive a personal biography or those old roles as current recommendations. Bundled reference material is separate from your entered details and is not a connection to your LinkedIn account.</dd></div>
     </dl>
-    <p style="margin-top:18px">There is no app account, developer-operated cloud sync, advertising SDK, tracking SDK or developer analytics service in this version. The app does not automatically upload your saved profile or application records to the developer. Apple’s TestFlight diagnostics are a separate data flow, explained below.</p>
+    <p style="margin-top:18px">This candidate does not load ads or include an advertising SDK. There is no app account, developer-operated cloud sync, tracking SDK or developer analytics service in this version. The app does not automatically upload your saved profile or application records to the developer. Apple’s TestFlight diagnostics are a separate data flow, explained below.</p>
   </section>
 
   <section aria-labelledby="network">
     <h2 id="network">Employer searches and external websites</h2>
-    <p>When you choose <strong>Find new openings</strong> or refresh the employer results, the app sends fixed job-search requests directly over HTTPS to Alcon, Novartis, Johnson &amp; Johnson, GSK, BD and Roche through their Workday recruitment services, and to Qiddiya through Workable. It also retrieves details for selected vacancies.</p>
-    <p>Those requests contain predefined job queries, location filters, pagination information or vacancy identifiers. They do not contain your entered profile, saved-job selections, application statuses or preparation notes. The recruitment services receive ordinary connection information, including your IP address, request timing and HTTP request information. Their own practices govern any server logs they retain.</p>
-    <p>Opening an application, LinkedIn or salary-source link opens an external website. The website and browser may process information under their own privacy settings and policies. Any account, CV upload or application you submit there is managed by that provider. Ahmad Career does not submit job applications for you.</p>
+    <p>When you choose to search or refresh employer results, the current native app sends fixed job-search requests directly over HTTPS to six configured Workday recruitment sources: Alcon, Novartis, Johnson &amp; Johnson, GSK, BD and Roche. It also retrieves details for selected vacancies. These are bounded samples focused on Saudi locations and selected role families; they are not a complete search of all jobs. Older Qiddiya records may remain in an existing workspace, but Qiddiya is not in the current refresh schedule.</p>
+    <p>Those requests contain predefined job queries, location filters, pagination information or vacancy identifiers. They do not contain your entered profile, country or role preferences, planning currency, time zone, local discovery criteria, saved-job selections, application statuses, receipt notes or preparation notes. The recruitment services receive ordinary connection information, including your IP address, request timing and HTTP request information. Their own practices govern any server logs they retain.</p>
+    <p>Opening an application, LinkedIn or salary-source link opens an external website. The website and browser may process information under their own privacy settings and policies. Any account, CV upload or application you submit there is managed by that provider. Career Finder does not submit job applications for you.</p>
   </section>
 
   <section aria-labelledby="sharing">
     <h2 id="sharing">Notes you choose to share</h2>
-    <p>A single-role preparation note includes the role, preparation guidance, application status and your entered profile. The application-notes export includes your profile, checklist, and saved or tracked roles. The system share sheet lets you choose an app, person or storage destination.</p>
-    <p>Review the note before sending it. Once shared, the copy is handled by the destination you select. Later changes or deletion in Ahmad Career do not recall that copy. Avoid entering confidential employer information or details you do not want included in an export.</p>
+    <p>A single-role preparation note includes the role, preparation guidance and application status; it excludes profile details and receipt notes. A full tracking export can include your professional details, preparation checklist, saved or tracked roles, application dates and receipt notes. When an unsaved receipt draft is included, it is labelled as a draft. Local planning and discovery preferences are excluded from both note types. Exports are readable notes, not an importable backup. The system share sheet lets you choose an app, person or storage destination.</p>
+    <p>Review the note before sending it. Once shared, the copy is handled by the destination you select. Later changes or deletion in Career Finder do not recall that copy. Avoid entering confidential employer information or details you do not want included in an export.</p>
   </section>
 
   <section aria-labelledby="retention">
     <h2 id="retention">Keeping and removing local records</h2>
-    <p>Your saved workspace has no automatic expiry. A successful refresh can replace the displayed live results, while saved or tracked vacancy snapshots may remain so that your application record survives a listing disappearing. If every employer check fails, previous accepted results are preserved. A partially successful refresh can replace the live results.</p>
+    <p>Your saved workspace has no automatic expiry. A successful refresh updates accepted results; saved or tracked vacancy snapshots may remain so that your application record survives a listing disappearing. If every employer check fails, previous accepted results are preserved. A partial refresh distinguishes successful and failed source observations. An employer response, an unavailable listing and your own application status are separate records.</p>
     <ul>
       <li>You can edit or clear profile fields, remove a role from Saved, change its application status to <strong>Not started</strong>, and uncheck completed steps.</li>
       <li>Removing a saved role or resetting its status does not necessarily erase every locally retained vacancy snapshot.</li>
@@ -90,7 +90,7 @@
       <li>Device or computer backups may retain copies according to your backup settings. Restoring a backup can restore app records. Manage those backups separately.</li>
       <li>Exports and feedback already sent elsewhere must be managed at their destination. Deleting the app does not remove them.</li>
     </ul>
-    <p>The public research snapshot is part of the app itself. Clearing your personal entries does not edit that snapshot, and reinstalling the app provides the bundled research again.</p>
+    <p>Dated employer reference material is part of the app itself. Clearing personal entries does not edit that bundled material. Reinstalling starts a fresh workspace unless an operating-system backup or another retained app-data mechanism restores earlier records.</p>
   </section>
 
   <section aria-labelledby="testflight">
@@ -105,13 +105,13 @@
 
   <section aria-labelledby="support">
     <h2 id="support">Beta support and corrections</h2>
-    <p>If you installed the app through TestFlight, open <strong>TestFlight → Ahmad Career → Send Beta Feedback</strong>. Describe the screen, the steps you took and what happened. Check screenshots and attachments before sending them; they may show profile or application information.</p>
-    <p>You can also use beta feedback to flag inaccurate public research. Do not include a CV or sensitive personal documents unless you intentionally choose to share them.</p>
+    <p>If you installed the app through TestFlight, open <strong>TestFlight → this app → Send Beta Feedback</strong>. Describe the screen, the steps you took and what happened. Check screenshots and attachments before sending them; they may show profile or application information.</p>
+    <p>You can also use beta feedback to flag inaccurate or outdated employer information. Do not include a CV or sensitive personal documents unless you intentionally choose to share them.</p>
     <p><strong>Direct developer contact:</strong> pending a monitored address. This page is not ready to serve as a public support destination until that address is supplied and the draft notes are resolved.</p>
   </section>
 
   <footer>
-    <p>This draft describes the native app’s implemented behavior as reviewed for version 1.1, build 4. Update the page when its data flows, support arrangements or service providers change.</p>
+    <p>This unpublished draft describes the native general-audience readiness candidate reviewed on 15 November 2026. It is not a policy for a new released build. Before publication, verify it against the exact signed app, confirm the publisher’s legal identity, monitored contact and feedback-retention practices, and complete the applicable App Store privacy disclosures. Update the page when data flows, support arrangements or service providers change.</p>
   </footer>
 </main>
 </body>

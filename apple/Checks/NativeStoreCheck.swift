@@ -3,9 +3,33 @@ import Combine
 
 @main struct NativeStoreCheck {
  @MainActor static func main() throws {
-  let researchURL=URL(fileURLWithPath:CommandLine.arguments[1])
+  let productionResearchURL=URL(fileURLWithPath:CommandLine.arguments[1])
   let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
   defer {try? FileManager.default.removeItem(at:root)}
+  try FileManager.default.createDirectory(at:root,withIntermediateDirectories:true)
+  var fixtureResearch=try JSONDecoder().decode(CareerResearch.self,from:Data(contentsOf:productionResearchURL))
+  let fresh=NativeCareerStore(researchURL:productionResearchURL,storageURL:root.appendingPathComponent("fresh.json"))
+  assert(fresh.research.jobs.isEmpty && fresh.shortlistJobs.isEmpty && fresh.savedJobs.isEmpty)
+  assert(fresh.research.profile.name.isEmpty && fresh.research.profile.role.isEmpty && fresh.research.profile.facts.isEmpty)
+  assert(fresh.workspace.profile==NativeProfile.fresh(), "Fresh profiles have no personal biography or city assumption")
+  guard let seed=fixtureResearch.legacyJobs?.first else {fatalError("Legacy recovery fixture missing")}
+  var oldWorkspace=NativeWorkspace();oldWorkspace.profile=NativeProfile()
+  oldWorkspace.saved.insert(seed.id);oldWorkspace.statuses[seed.id]="Applied"
+  oldWorkspace.profile.years="8";oldWorkspace.profile.preferredCity="riyadh";oldWorkspace.profile.minimumMonthlySAR="12000"
+  oldWorkspace.completed.insert("cv")
+  let legacyStateURL=root.appendingPathComponent("legacy-conversion.json")
+  try JSONEncoder().encode(oldWorkspace).write(to:legacyStateURL)
+  let migrated=NativeCareerStore(researchURL:productionResearchURL,storageURL:legacyStateURL)
+  assert(migrated.savedJobs.map(\.id)==[seed.id] && migrated.status(for:seed)=="Applied")
+  assert(migrated.savedJobs[0].kind=="archived" && migrated.savedJobs[0].rank==nil)
+  assert(migrated.savedJobs[0].researchCheckedAt==fixtureResearch.checkedAt)
+  assert(migrated.workspace.profile==oldWorkspace.profile && migrated.workspace.completed==oldWorkspace.completed)
+  assert(NativeCareerStore(researchURL:productionResearchURL,storageURL:legacyStateURL).savedJobs.map(\.id)==[seed.id])
+  // Keep the historical merge/date regression scenarios as explicit fixtures,
+  // separate from the production bundle's empty discovery and generic profile.
+  fixtureResearch.jobs=fixtureResearch.legacyJobs ?? [];fixtureResearch.legacyJobs=nil
+  let researchURL=root.appendingPathComponent("historical-research-fixture.json")
+  try JSONEncoder().encode(fixtureResearch).write(to:researchURL)
   let stateURL=root.appendingPathComponent("workspace.json")
   let store=NativeCareerStore(researchURL:researchURL,storageURL:stateURL)
   assert(!store.research.jobs.isEmpty && store.storageError==nil)
@@ -78,7 +102,9 @@ import Combine
   assert(NativeMoney.parse("-5",limit:1e6)==nil)
   profile.degree="Verified degree input";profile.skills="Procurement analytics";store.updateProfile(profile)
   store.setChecklist("cv",done:true)
-  assert(store.exportText().contains("Verified degree input") && store.exportText().contains("Procurement analytics") && store.exportText().contains("[x] Two focused CVs"))
+  assert(store.exportText().contains("Verified degree input") && store.exportText().contains("Procurement analytics") && store.exportText().contains("[x] Prepare your CV materials"))
+  assert(store.exportText().contains("Recheck the requirements, dates and materials for each application."))
+  assert(!store.exportText().contains("[x] CV tailored to the role"))
   var tooLong=profile;tooLong.skills=String(repeating:"x",count:3001);store.updateProfile(tooLong)
   assert(store.workspace.profile.skills==profile.skills && store.storageError != nil)
   profile.years="0000000010";store.updateProfile(profile);assert(store.workspace.profile.years=="10")
@@ -263,7 +289,7 @@ import Combine
   let strictReload=NativeCareerStore(researchURL:researchURL,storageURL:migrationURL)
   assert(strictReload.workspace.profile==strict && strictReload.savedJobs.map(\.id)==savedIDs)
   unwritable.updateProfile(strict)
-  assert(unwritable.workspace.profile==NativeProfile(preferredCity:"riyadh") && unwritable.storageError != nil, "A failed criteria save never announces durable success")
+  assert(unwritable.workspace.profile==NativeProfile.fresh() && unwritable.storageError != nil, "A failed criteria save never announces durable success")
   let recordURL=root.appendingPathComponent("record-workspace.json")
   let records=NativeCareerStore(researchURL:researchURL,storageURL:recordURL)
   records.beginApplicationRecord(first)
@@ -296,7 +322,7 @@ import Combine
   assert(prompts.map(\.id)==["a:deadline","b:deadline","b:requirements","c:requirements"])
   assert(NativeCareerStore.attentionFor([past],statuses:["a":"unknown"],records:[:],now:dateNow).isEmpty)
   let recovery=NativeCareerStore(researchURL:researchURL,storageURL:root.appendingPathComponent("partial.json"))
-  assert(recovery.workspace.profile.preferredCity=="riyadh" && recovery.workspace.profile.minimumMonthlySAR==nil)
+  assert(recovery.workspace.profile.preferredCity==nil && recovery.workspace.profile.minimumMonthlySAR==nil)
   var unknown=lead;unknown.id="unknown";unknown.closes="2099-12-31";unknown.posted="2020-01-01"
   var excluded=unknown;excluded.id="excluded"
   let oldStamp="2026-10-09T00:30:00Z",attemptStamp="2026-10-09T00:40:00Z"
@@ -333,7 +359,45 @@ import Combine
    observationStore.setStatus("Applied",for:current)
    assert(observationStore.workspace.snapshots[first.id]?.lastCheckedAt==observed.lastCheckedAt)
   }
-  print("Full review regression checks passed: fresh Riyadh default, partial evidence age, exact exclusions, saved history, persisted observation chronology and dated exports.")
+  // Version 2 is additive: old country/city, SAR/month and date semantics stay stable.
+  for city in ["", "riyadh"] {
+   let literal=Data(("{\"years\":\"8\",\"degree\":\"Original degree\",\"skills\":\"Original skills\",\"achievements\":\"Original evidence\",\"preferredCity\":\""+city+"\",\"minimumMonthlySAR\":\"12000\",\"unknownSalary\":\"hide\"}").utf8)
+   let old=try JSONDecoder().decode(NativeProfile.self,from:literal)
+   assert(old.preferencesVersion==nil && old.effectiveCountry=="SA" && old.effectiveCity==(city=="riyadh" ? "Riyadh" : ""))
+   assert(old.effectiveCurrency=="SAR" && old.effectivePayPeriod=="monthly" && old.effectiveTimeZone=="Asia/Riyadh")
+   assert(old.minimumMonthlyAmount==12000 && old.hidesUnverifiedSalary)
+   var upgraded=old;upgraded.preferencesVersion="2";upgraded.targetCountry="JP";upgraded.targetCity="Tokyo";upgraded.roleKeywords="Private preference phrase";upgraded.planningCurrency="JPY";upgraded.planningPayPeriod="annual";upgraded.displayTimeZone="Asia/Tokyo"
+   assert(upgraded.criteriaError==nil && !upgraded.includesInDiscovery(first))
+   let encoded=try JSONEncoder().encode(upgraded),roundtrip=try JSONDecoder().decode(NativeProfile.self,from:encoded)
+   assert(roundtrip==upgraded && roundtrip.preferredCity==city && roundtrip.minimumMonthlySAR=="12000")
+   let migrationState=root.appendingPathComponent("global-"+city+".json")
+   var baseline=NativeWorkspace();baseline.profile=old;baseline.saved.insert(first.id);baseline.statuses[first.id]="Applied";baseline.snapshots[first.id]=first;baseline.completed.insert("cv")
+   try JSONEncoder().encode(baseline).write(to:migrationState)
+   let globalStore=NativeCareerStore(researchURL:researchURL,storageURL:migrationState)
+   globalStore.beginApplicationRecord(first);globalStore.editApplicationRecord(first,appliedAt:"2026-10-08",receiptNote:"Original receipt")
+   assert(globalStore.saveApplicationRecord(first));let snapshots=globalStore.workspace.snapshots
+   globalStore.updateProfile(upgraded)
+   let after=NativeCareerStore(researchURL:researchURL,storageURL:migrationState)
+   assert(after.workspace.profile==upgraded && after.workspace.snapshots==snapshots && after.workspace.saved==baseline.saved && after.workspace.statuses==baseline.statuses && after.workspace.completed==baseline.completed)
+   assert(after.applicationRecords[first.id]?.receiptNote=="Original receipt" && after.applicationRecords[first.id]?.appliedAt=="2026-10-08")
+   for output in [after.exportText(),after.note(for:first,includeProfile:true)] {for secret in ["Tokyo","Private preference phrase","JPY","12000"] {assert(!output.contains(secret),"Preferences stay out of application notes")}}
+   let futureState=root.appendingPathComponent("future-"+city+".json")
+   var future=baseline;future.profile.preferencesVersion="99"
+   let futureBytes=try JSONEncoder().encode(future);try futureBytes.write(to:futureState)
+   let futureStore=NativeCareerStore(researchURL:researchURL,storageURL:futureState)
+   assert(futureStore.storageError != nil && futureStore.savedJobs.map(\.id)==[first.id])
+   futureStore.updateProfile(.fresh());let futureAfter=try Data(contentsOf:futureState);assert(futureAfter==futureBytes,"Unknown preference versions must not be overwritten")
+  }
+  var zoned=NativeProfile.fresh();zoned.displayTimeZone="America/New_York"
+  let dateOnly=zoned.formattedDate("2026-11-01",includeTime:true),foldFirst=zoned.formattedDate("2026-11-01T05:30:00Z",includeTime:true),foldSecond=zoned.formattedDate("2026-11-01T06:30:00Z",includeTime:true)
+  assert(foldFirst != foldSecond && foldFirst.contains("04:00") && foldSecond.contains("05:00"),"DST repeated clock time includes its offset")
+  zoned.displayTimeZone="Asia/Tokyo";assert(zoned.formattedDate("2026-11-01",includeTime:true)==dateOnly,"Source date-only values do not move with display zone")
+  assert(zoned.effectiveCurrency.isEmpty && zoned.effectiveCountry.isEmpty)
+  var roleOnly=NativeProfile.fresh();roleOnly.roleKeywords="Supply Analyst";var analyst=first;analyst.title="Supply Chain Analyst";analyst.subtitle=nil
+  assert(roleOnly.includesInDiscovery(analyst));roleOnly.roleKeywords="Nurse";assert(!roleOnly.includesInDiscovery(analyst))
+  roleOnly.roleKeywords="";roleOnly.targetCity="Jeddah";analyst.location="Jeddah, Saudi Arabia";assert(roleOnly.includesInDiscovery(analyst));analyst.location="Jeddahville, Saudi Arabia";assert(!roleOnly.includesInDiscovery(analyst))
+  print("Local preference checks passed: backward decoding, independent country/city/role/currency/period/zone, unchanged monthly SAR, record preservation, future-version protection, export privacy and DST/civil-date semantics.")
+  print("Full review regression checks passed: fresh local preferences, partial evidence age, exact exclusions, saved history, persisted observation chronology and dated exports.")
   print("Application record checks passed: legacy preservation, metadata-only history, conflicts, export privacy, strict date/scalar limits and derived attention.")
   print("Native store checks passed: \(store.research.jobs.count) researched jobs, atomic saves, pre-criteria migration, city/pay criteria, unfiltered history, export privacy, strict URLs/dates, stale response rejection and input validation.")
  }

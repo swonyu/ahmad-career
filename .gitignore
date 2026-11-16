@@ -23,3 +23,16 @@ xcuserdata/
 *.provisionprofile
 *.key
 *.pem
+
+# Private application-service data and device credentials
+.career-applications/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+service.lock
+*.private.json
+android/.gradle/
+android/local.properties
+android/**/build/
+postman/.dependencies/
+postman/.runs/

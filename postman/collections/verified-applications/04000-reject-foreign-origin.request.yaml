@@ -1,0 +1,21 @@
+$kind: http-request
+name: Reject foreign origin
+order: 4000
+url: '{{baseUrl}}/api/apply/session'
+method: POST
+headers:
+  Content-Type: application/json
+  Origin: https://foreign.example
+  X-Career-CSRF: '{{csrfToken}}'
+  Cookie: '{{sessionCookie}}'
+settings:
+  followRedirects: false
+body:
+  type: json
+  content: |-
+    {}
+scripts:
+- type: afterResponse
+  language: text/javascript
+  code: |-
+    pm.test('Foreign origin is rejected', () => pm.response.to.have.status(403));

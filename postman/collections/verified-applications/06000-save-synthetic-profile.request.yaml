@@ -1,0 +1,56 @@
+$kind: http-request
+name: Save synthetic profile
+order: 6000
+url: '{{baseUrl}}/api/apply/profile'
+method: PUT
+headers:
+  Content-Type: application/json
+  Origin: '{{baseUrl}}'
+  X-Career-CSRF: '{{csrfToken}}'
+  Cookie: '{{sessionCookie}}'
+settings:
+  followRedirects: false
+body:
+  type: json
+  content: |-
+    {
+      "expectedRevision": 0,
+      "profile": {
+        "firstName": "Integration",
+        "lastName": "Fixture",
+        "email": "fixture+{{runId}}@example.com",
+        "phone": "+966500000000",
+        "city": "Riyadh",
+        "country": "SA",
+        "headline": "Synthetic test applicant",
+        "skills": [
+          "JavaScript",
+          "API testing"
+        ],
+        "targetRoles": [
+          "Software Developer"
+        ],
+        "targetCountries": [
+          "SA",
+          "NZ"
+        ],
+        "workModes": [
+          "hybrid",
+          "remote"
+        ],
+        "experienceLevel": "entry",
+        "website": "https://example.com/fixture",
+        "resume": {
+          "name": "integration-resume.pdf",
+          "mime": "application/pdf",
+          "dataBase64": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9Db3VudCAxIC9LaWRzIFszIDAgUl0gPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCAzMDAgMTgwXSAvQ29udGVudHMgNCAwIFIgL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgNSAwIFIgPj4gPj4gPj4KZW5kb2JqCjQgMCBvYmoKPDwgL0xlbmd0aCA2MiA+PgpzdHJlYW0KQlQgL0YxIDEyIFRmIDIwIDEyMCBUZCAoU3ludGhldGljIGludGVncmF0aW9uIGZpeHR1cmUgb25seSkgVGogRVQKZW5kc3RyZWFtCmVuZG9iago1IDAgb2JqCjw8IC9UeXBlIC9Gb250IC9TdWJ0eXBlIC9UeXBlMSAvQmFzZUZvbnQgL0hlbHZldGljYSA+PgplbmRvYmoKeHJlZgowIDYKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDA5IDAwMDAwIG4gCjAwMDAwMDAwNTggMDAwMDAgbiAKMDAwMDAwMDExNSAwMDAwMCBuIAowMDAwMDAwMjQxIDAwMDAwIG4gCjAwMDAwMDAzNTYgMDAwMDAgbiAKdHJhaWxlcgo8PCAvU2l6ZSA2IC9Sb290IDEgMCBSID4+CnN0YXJ0eHJlZgo0MjYKJSVFT0YK"
+        }
+      }
+    }
+scripts:
+- type: afterResponse
+  language: text/javascript
+  code: |
+    const d=pm.response.json();
+    pm.test('Profile and resume metadata saved',()=>{pm.response.to.have.status(200);pm.expect(d.ok).to.eql(true);pm.expect(d.profile.revision).to.eql(1);pm.expect(d.profile.resume).to.be.an('object');});
+    pm.test('CV bytes are not returned',()=>pm.expect(pm.response.text()).not.to.include('dataBase64'));

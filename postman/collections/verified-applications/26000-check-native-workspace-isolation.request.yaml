@@ -1,0 +1,20 @@
+$kind: http-request
+name: Check native workspace isolation
+order: 26000
+url: '{{baseUrl}}/api/apply/workspace'
+method: GET
+headers:
+  Content-Type: application/json
+  Authorization: Bearer {{mobileToken}}
+settings:
+  followRedirects: false
+scripts:
+- type: beforeRequest
+  language: text/javascript
+  code: |-
+    pm.request.headers.remove('Origin');pm.request.headers.remove('Cookie');pm.request.headers.remove('X-Career-CSRF');
+- type: afterResponse
+  language: text/javascript
+  code: |
+    const d=pm.response.json();
+    pm.test('Native bearer session owns a separate blank workspace',()=>{pm.response.to.have.status(200);pm.expect(d.profile.revision).to.eql(0);pm.expect(d.jobs).to.have.length(0);pm.expect(d.attempts).to.have.length(0);});
