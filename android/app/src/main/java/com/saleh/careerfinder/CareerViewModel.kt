@@ -10,6 +10,8 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -22,7 +24,8 @@ import org.json.JSONObject
 import java.util.UUID
 
 class CareerViewModel internal constructor(application: Application, private val vault: PrivateStore,
-    private val service: CareerService) : AndroidViewModel(application) {
+    private val service: CareerService,
+    private val waitForPoll: suspend () -> Unit = { delay(4_000) }) : AndroidViewModel(application) {
     constructor(application: Application) : this(application, SecureVault(application), HttpsCareerService)
     private val mutable = MutableStateFlow(CareerUiState())
     val state = mutable.asStateFlow()
@@ -33,6 +36,9 @@ class CareerViewModel internal constructor(application: Application, private val
     private var refreshSequence = 0L
     private var acceptedRefresh = 0L
     private var profileSaveGeneration = 0L
+    private val pollMutex = Mutex()
+    private var foregroundGeneration = 0L
+    private var lastAdvancedPlan: String? = null
     private class PrivateStorageFailure(val problem: StorageProblem, cause: Throwable) : Exception(cause)
 
     init {
@@ -71,6 +77,7 @@ class CareerViewModel internal constructor(application: Application, private val
             selected = saved.optJSONArray("selected").strings().toSet(),
             manualApplied = saved.optJSONArray("manualApplied").strings().toSet(),
             obsoleteReviews = saved.optJSONArray("obsoleteReviews").strings().toSet(),
+            continuationHolds = saved.optJSONArray("continuationHolds").strings().toSet(),
             serverProfile = saved.optJSONObject("serverProfile")?.let(ProfileDraft::fromJson),
             answers = saved.optJSONObject("answers")?.let { answers ->
                 answers.keys().asSequence().mapNotNull { id -> answers.optJSONObject(id)?.let { id to JobAnswers.fromJson(it) } }.toMap()
@@ -97,6 +104,7 @@ class CareerViewModel internal constructor(application: Application, private val
             .put("manualApplied", JSONArray(snapshot.manualApplied.toList()))
             .put("selected", JSONArray(snapshot.selected.toList()))
             .put("obsoleteReviews", JSONArray(snapshot.obsoleteReviews.toList()))
+            .put("continuationHolds", JSONArray(snapshot.continuationHolds.toList()))
             .put("serverProfile", snapshot.serverProfile?.privateJson() ?: JSONObject.NULL)
             .put("answers", JSONObject().apply { snapshot.answers.forEach { (id, value) -> put(id, value.json()) } })
             .put("receipts", JSONArray(snapshot.receipts.map {
@@ -441,6 +449,10 @@ class CareerViewModel internal constructor(application: Application, private val
         require(!plan.expired() && !current.profileDirty && current.profile.revision == plan.profileRevision) { "This review has expired or your profile changed. Prepare it again." }
         require(plan.items.any(ReviewItem::canSubmitNow)) { "There are no applications ready to send. A rate-limited application must finish its cooldown first." }
         val connection = current.connection ?: throw IllegalArgumentException("Reconnect before applying.")
+        // Only a new visible approval can supersede this phone's earlier stop intent.
+        // Do this before the request so a simultaneous Stop always wins locally.
+        mutable.update { it.copy(continuationHolds = it.continuationHolds - plan.id) }
+        persist()
         val incoming = try {
             service.request(connection, "POST", "submit", JSONObject().put("planId", plan.id).put("digest", plan.digest).put("approved", true))
                 .requiredObjects("attempts").map(ApplicationReceipt::fromServer)
@@ -460,8 +472,14 @@ class CareerViewModel internal constructor(application: Application, private val
 
     fun stop(planId: String) {
         val connection = state.value.connection ?: return
+        if (!state.value.loaded || state.value.storageBlocked || state.value.requiresPairing) return
+        // Preserve the stop intent even when the response is lost or the phone restarts.
+        // An already dispatched request can still finish; it is never resent here.
+        mutable.update { it.copy(continuationHolds = it.continuationHolds + planId) }
         viewModelScope.launch {
             try {
+                persist()
+                if (state.value.connection != connection) return@launch
                 service.request(connection, "POST", "stop", JSONObject().put("planId", planId))
                 if (state.value.connection != connection) return@launch
                 mutable.update { it.copy(plan = null, obsoleteReviews = it.obsoleteReviews - planId,
@@ -474,19 +492,21 @@ class CareerViewModel internal constructor(application: Application, private val
 
     fun refresh() = action { refreshInternal() }
 
-    private suspend fun refreshInternal(forceProfile: Boolean = false) {
-        val connection = state.value.connection ?: return
+    private suspend fun refreshInternal(forceProfile: Boolean = false): Boolean {
+        val connection = state.value.connection ?: return false
         val sequence = ++refreshSequence
         val saveGeneration = profileSaveGeneration
         val response = try { service.request(connection, "GET", "workspace") }
+        catch (cancel: CancellationException) { throw cancel }
         catch (error: Exception) {
-            if (state.value.connection != connection || sequence < acceptedRefresh || saveGeneration != profileSaveGeneration) return
+            if (state.value.connection != connection || sequence < acceptedRefresh || saveGeneration != profileSaveGeneration) return false
             throw error
         }
-        if (state.value.connection != connection || sequence < acceptedRefresh || saveGeneration != profileSaveGeneration) return
+        currentCoroutineContext().ensureActive()
+        if (state.value.connection != connection || sequence < acceptedRefresh || saveGeneration != profileSaveGeneration) return false
         serviceData(response.opt("workspaceId") == connection.workspaceId)
         val serverProfile = ProfileDraft.fromServer(response.getJSONObject("profile"))
-        if (serverProfile.revision < (state.value.serverProfile?.revision ?: 0)) return
+        if (serverProfile.revision < (state.value.serverProfile?.revision ?: 0)) return false
         val serverJobs = response.requiredObjects("jobs").map(Opportunity::fromServer)
         val receipts = response.requiredObjects("attempts").map(ApplicationReceipt::fromServer)
         val activePlans = response.requiredStrings("activePlanIds")
@@ -505,6 +525,7 @@ class CareerViewModel internal constructor(application: Application, private val
             activePlans = activePlans,
             recoverablePlans = recovered,
             liveEnabled = capabilities!!.getBoolean("liveEnabled"),
+            clientContinuation = capabilities.opt("dispatchContinuation") == "client",
             testService = response.safeString("mode") == "test",
             requiresPairing = false,
             notice = if (activePlans.isEmpty() && it.notice == "The service is processing your approved applications. Receipts show each actual outcome.")
@@ -514,25 +535,79 @@ class CareerViewModel internal constructor(application: Application, private val
         ) }
         persist()
         startPolling()
+        return true
     }
 
     fun setForeground(active: Boolean) {
+        if (foreground != active) foregroundGeneration++
         foreground = active
         if (!active) { polling?.cancel(); polling = null } else startPolling()
     }
 
+    private fun canPoll(connection: Connection?, generation: Long): Boolean = foreground &&
+        foregroundGeneration == generation && connection != null && state.value.connection == connection &&
+        state.value.loaded && !state.value.busy && !state.value.storageBlocked && !state.value.requiresPairing
+
+    private suspend fun pollApprovedWork(connection: Connection, generation: Long) = pollMutex.withLock {
+        if (!canPoll(connection, generation)) return@withLock
+        // Cached active IDs and a GET by itself never initiate an application. Only
+        // this foreground continuation cycle may act on fresh server eligibility.
+        if (!refreshInternal() || !canPoll(connection, generation)) return@withLock
+        currentCoroutineContext().ensureActive()
+        val current = state.value
+        if (!current.clientContinuation) return@withLock
+        val eligible = current.activePlans.filterNot { it in current.continuationHolds }
+        if (eligible.isEmpty()) return@withLock
+        val next = ((lastAdvancedPlan?.let(eligible::indexOf) ?: -1) + 1) % eligible.size
+        val planId = eligible[next]
+        lastAdvancedPlan = planId
+        try {
+            // The server rechecks approval, stop state, duplicates and cooldown
+            // atomically. This route cannot approve or restart an uncertain attempt.
+            service.request(connection, "POST", "advance", JSONObject().put("planId", planId))
+        } catch (cancel: CancellationException) { throw cancel }
+        catch (error: Exception) {
+            if (!canPoll(connection, generation)) return@withLock
+            if (error is ApiFailure && error.status in setOf(404, 409)) {
+                refreshInternal()
+                return@withLock
+            }
+            throw error
+        }
+        currentCoroutineContext().ensureActive()
+        // Never adopt an advance response into another workspace. A subsequent
+        // read is authoritative, including after a provider timeout or rate limit.
+        if (canPoll(connection, generation)) refreshInternal()
+    }
+
+    internal suspend fun pollOnce(): Boolean {
+        currentCoroutineContext().ensureActive()
+        val connection = state.value.connection ?: return false
+        val generation = foregroundGeneration
+        return try {
+            pollApprovedWork(connection, generation)
+            state.value.connection == connection && foregroundGeneration == generation &&
+                !state.value.requiresPairing && !state.value.storageBlocked
+        } catch (cancel: CancellationException) { throw cancel }
+        catch (error: Exception) {
+            if (state.value.connection == connection && foregroundGeneration == generation) {
+                if (error is PrivateStorageFailure || error is ApiFailure && error.status == 401) report(error)
+                else mutable.update { it.copy(error = "The latest outcome is not available. Refresh receipts when connected; an interrupted request is not a failed application.") }
+            }
+            false
+        }
+    }
+
     private fun startPolling() {
-        if (!foreground || state.value.activePlans.isEmpty() || polling?.isActive == true) return
+        val connection = state.value.connection ?: return
+        if (!foreground || state.value.requiresPairing || state.value.storageBlocked ||
+            state.value.activePlans.isEmpty() || polling?.isActive == true) return
+        val generation = foregroundGeneration
         polling = viewModelScope.launch {
-            while (foreground && state.value.activePlans.isNotEmpty()) {
-                delay(4_000)
-                try { refreshInternal() }
-                catch (cancel: CancellationException) { throw cancel }
-                catch (error: Exception) {
-                    if (error is PrivateStorageFailure || error is ApiFailure && error.status == 401) report(error)
-                    else mutable.update { it.copy(error = "The latest outcome is not available. Refresh receipts when connected; an interrupted request is not a failed application.") }
-                    break
-                }
+            while (foreground && foregroundGeneration == generation && state.value.connection == connection && state.value.activePlans.isNotEmpty() &&
+                !state.value.requiresPairing && !state.value.storageBlocked) {
+                waitForPoll()
+                if (!pollOnce()) break
             }
         }
     }

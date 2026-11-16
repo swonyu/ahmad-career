@@ -13,6 +13,20 @@ struct MobileApplicationCheck {
         check(MobileApplicationPolicy.serviceURL("https://apply.example.com") != nil, "HTTPS service accepted")
         check(MobileApplicationPolicy.serviceURL("https://apply.example.com/") != nil, "HTTPS root accepted")
         check(MobileApplicationPolicy.serviceURL("https://APPLY.example.com:443/")?.absoluteString == "https://apply.example.com", "Equivalent service origins share one identity")
+        check(MobileApplicationPolicy.connectionSetupAddress("") == MobileApplicationPolicy.hostedServiceOrigin, "New setup offers the hosted HTTPS origin")
+        check(MobileApplicationPolicy.connectionSetupAddress("https://existing.example") == "https://existing.example", "Existing custom connection is never replaced by the preset")
+        check(MobileApplicationPolicy.connectionSetupAddress("https://needs-repair.example/private") == "https://needs-repair.example/private", "An invalid existing address remains visible for explicit repair")
+        check(MobileApplicationPolicy.isHostedService(""), "New setup exposes hosted account links")
+        check(!MobileApplicationPolicy.isHostedService("https://operator.example"), "Custom services never inherit hosted account claims")
+        for page in ApplicationServicePage.allCases {
+            let link = MobileApplicationPolicy.servicePageURL(page, address: "")
+            check(link?.absoluteString == MobileApplicationPolicy.hostedServiceOrigin + "/" + page.rawValue,
+                  "Account pages use a fixed HTTPS path without credentials")
+        }
+        check(MobileApplicationPolicy.servicePageURL(.account, address: "https://service.example?token=secret") == nil,
+              "Account links cannot carry an embedded credential or arbitrary query")
+        check(MobileApplicationPolicy.servicePageURL(.privacy, address: "https://existing.example")?.host == "existing.example",
+              "Service page routing preserves the actual configured origin")
         for value in ["javascript:alert(1)", "file:///tmp/resume.pdf", "http://jobs.example.com/1", "https://localhost/x", "https://192.168.1.1/x", "https://user:pass@jobs.example.com/x"] {
             check(MobileApplicationPolicy.jobURL(value) == nil, "Unsafe job link rejected")
         }
@@ -43,8 +57,12 @@ struct MobileApplicationCheck {
         check(MobileApplicationPolicy.jobIdentity(job) == MobileApplicationPolicy.jobIdentity(job + "/apply?utm_source=link#top"),
               "Application URL variants preserve duplicate identity")
         var profile = PhoneApplicationProfile()
-        check(profile.firstName.isEmpty && profile.lastName.isEmpty && profile.email.isEmpty && profile.resumeData == nil,
-              "No personal defaults")
+        check([profile.firstName, profile.lastName, profile.email, profile.phone, profile.city, profile.country,
+               profile.headline, profile.skills, profile.targetRoles, profile.targetCountries, profile.website, profile.resumeName].allSatisfy(\.isEmpty)
+                && profile.resumeData == nil && profile.resumeSize == nil && profile.resumeSHA256 == nil,
+              "New applicants have no personal name, contact, location, profession, link or CV defaults")
+        check(profile.experienceLevel == "any" && profile.remote && profile.hybrid && profile.onsite,
+              "New applicants have no assumed career stage or restricted work mode")
         profile.firstName = " Example "; profile.lastName = " Applicant "
         profile.skills = "Swift, Kotlin"; profile.resumeName = "Resume.pdf"; profile.resumeData = pdf; profile.resumeChanged = true
         let payload = profile.payload()
@@ -88,6 +106,12 @@ struct MobileApplicationCheck {
         do { _ = try MobileApplicationResponse.decode(conflictBody, statusCode: 409) }
         catch let error as MobileApplicationError { conflict = error }
         check(conflict?.statusCode == 409 && conflict?.code == "stale_profile", "Conflict status and code survive response decoding")
+        let deletingBody = try JSONEncoder().encode(["ok": ApplicationValue.bool(false), "error": .object(["code": .string("account_deleting")])])
+        var deleting: MobileApplicationError?
+        do { _ = try MobileApplicationResponse.decode(deletingBody, statusCode: 409) }
+        catch let error as MobileApplicationError { deleting = error }
+        check(deleting?.code == "account_deleting" && deleting?.message.contains("being deleted") == true,
+              "Pending account deletion has an actionable explanation instead of a profile-conflict prompt")
         print("PASS \(checks) native application boundary checks")
     }
 }

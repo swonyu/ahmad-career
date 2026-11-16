@@ -178,7 +178,8 @@ data class CareerUiState(
     val answers: Map<String, JobAnswers> = emptyMap(), val reviewGeneration: Long = 0,
     val serverProfile: ProfileDraft? = null, val storageProblem: StorageProblem? = null,
     val phoneImport: PhoneImport? = null, val reviewingRecoveredPlan: Boolean = false,
-    val obsoleteReviews: Set<String> = emptySet()
+    val obsoleteReviews: Set<String> = emptySet(),
+    val clientContinuation: Boolean = false, val continuationHolds: Set<String> = emptySet()
 ) {
     val profileConflict: ProfileDraft? get() = serverProfile?.takeIf { profileDirty && it.revision != profile.revision }
 }

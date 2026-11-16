@@ -6,6 +6,15 @@ import org.json.JSONObject
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 
+object ServicePages {
+    const val DEFAULT_ORIGIN = "https://career-finder-service.jazzy-drake-8323.chatgpt.site"
+    fun initialOrigin(connection: Connection?): String = connection?.origin ?: DEFAULT_ORIGIN
+    fun url(origin: String, page: String): String {
+        require(page in setOf("connect", "privacy", "support", "account"))
+        return BoundaryPolicy.serviceOrigin(origin.trim()) + "/" + page
+    }
+}
+
 data class Connection(val origin: String, val workspaceId: String, val token: String, val expiresAt: String) {
     fun toJson() = JSONObject().put("origin", origin).put("workspaceId", workspaceId).put("token", token).put("expiresAt", expiresAt)
     companion object {
@@ -44,7 +53,7 @@ class CareerApi(private val connection: Connection) {
         }
 
         private suspend fun call(origin: String, token: String?, method: String, route: String, body: JSONObject?): JSONObject = withContext(Dispatchers.IO) {
-            require(route in setOf("session", "session/revoke", "status", "workspace", "profile", "jobs", "prepare", "submit", "stop", "receipts"))
+            require(route in setOf("session", "session/revoke", "status", "workspace", "profile", "jobs", "prepare", "submit", "advance", "stop", "receipts"))
             require(method in setOf("GET", "POST", "PUT"))
             val url = URL(BoundaryPolicy.serviceOrigin(origin) + "/api/apply/" + route)
             val socket = url.openConnection() as HttpsURLConnection

@@ -10,9 +10,8 @@ private enum ApplyDesign {
 }
 
 struct NativeApplicationsScreen: View {
-    @StateObject private var model = NativeApplicationsStore()
+    @EnvironmentObject private var model: NativeApplicationsStore
     @EnvironmentObject private var career: NativeCareerStore
-    @Environment(\.scenePhase) private var scenePhase
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var profileSheet = false
     @State private var connectionSheet = false
@@ -55,8 +54,12 @@ struct NativeApplicationsScreen: View {
                     HStack(spacing: 12) {
                         ProgressView()
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Applications are processing").font(.subheadline.weight(.semibold))
-                            Text("You can leave this screen. Receipts are saved by the service.").font(.caption).foregroundStyle(.secondary)
+                            Text(model.advancingApprovedApplication ? "Sending an approved application" : "Approved applications are processing")
+                                .font(.subheadline.weight(.semibold)).fixedSize(horizontal: false, vertical: true)
+                            Text(model.requiresClientContinuation
+                                ? "Keep Career Finder open to continue the queue. Closing it pauses further sends; a request already sent may still finish. Receipts stay with the service."
+                                : "You can leave this screen. Receipts are saved by the service.")
+                                .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                         }
                         Spacer(minLength: 0)
                         Button("Stop") { Task { await model.stop() } }.disabled(model.busy)
@@ -134,17 +137,6 @@ struct NativeApplicationsScreen: View {
             if let exported { NativeApplicationShare(items: [exported]) }
         }
         .refreshable { await model.refresh() }
-        .task { await model.refresh() }
-        .task(id: model.activePlanIDs) {
-            guard !model.activePlanIDs.isEmpty else { return }
-            while !Task.isCancelled && !model.activePlanIDs.isEmpty {
-                do { try await Task.sleep(nanoseconds: 2_000_000_000) } catch { break }
-                await model.refresh()
-            }
-        }
-        .onChange(of: scenePhase) { phase in
-            if phase == .active { Task { await model.refresh() } }
-        }
         .onChange(of: model.message) { value in
             if let value { UIAccessibility.post(notification: .announcement, argument: value) }
         }
@@ -395,11 +387,11 @@ private struct NativeApplicationProfileEditor: View {
                 }
                 Section {
                     TextField("Target roles, separated by commas", text: $draft.targetRoles, axis: .vertical)
-                    TextField("Target country codes, e.g. SA, AE", text: $draft.targetCountries)
+                    TextField("Target country codes (optional)", text: $draft.targetCountries)
                         .textInputAutocapitalization(.characters).autocorrectionDisabled()
                     Toggle("Remote", isOn: $draft.remote); Toggle("Hybrid", isOn: $draft.hybrid); Toggle("On site", isOn: $draft.onsite)
                 } header: { Text("What comes next") } footer: {
-                    Text("These preferences describe your goals. They do not establish work authorization or qualify you for a role.")
+                    Text("Leave countries blank for any country, or enter two-letter country codes separated by commas. These preferences describe your goals; they do not establish work authorization or qualify you for a role.")
                 }
                 Section {
                     Text(model.connected ? "Save synchronizes these details with your connected application service." :
@@ -562,7 +554,7 @@ private struct NativeApplicationConnection: View {
     @State private var code = ""
     @State private var issue: String?
     init(model: NativeApplicationsStore) {
-        self.model = model; _address = State(initialValue: model.serviceAddress)
+        self.model = model; _address = State(initialValue: model.connectionSetupAddress)
     }
     var body: some View {
         NavigationStack {
@@ -581,12 +573,20 @@ private struct NativeApplicationConnection: View {
                         Button("Disconnect this phone", role: .destructive) { Task { await model.disconnect(); if !model.connected { dismiss() } } }
                     }
                 } else {
+                    if MobileApplicationPolicy.isHostedService(address),
+                       let setup = MobileApplicationPolicy.servicePageURL(.connect, address: address) {
+                        Section("1. Get your one-time code") {
+                            Link(destination: setup) { Label("Open secure connection setup", systemImage: "safari") }
+                            Text("Sign in with ChatGPT in your browser, create a one-time code, then return here. Use the same account to recover your workspace or connect another phone.")
+                                .font(.footnote).foregroundStyle(.secondary)
+                        }
+                    }
                     Section {
                         TextField("https://service.example", text: $address).keyboardType(.URL)
                             .textInputAutocapitalization(.never).autocorrectionDisabled().accessibilityLabel("Application service HTTPS address")
-                        SecureField("One-time invitation code", text: $code).textInputAutocapitalization(.characters).autocorrectionDisabled()
-                    } header: { Text("Your invitation") } footer: {
-                        Text("Use the service address and short-lived code from your workspace invitation. A provider integration must be activated before automatic submission is available.")
+                        SecureField("One-time connection code", text: $code).textInputAutocapitalization(.characters).autocorrectionDisabled()
+                    } header: { Text("Connect this phone") } footer: {
+                        Text("Enter the short-lived code for your workspace. Existing service addresses are preserved. Automatic submission is available only for activated employer integrations; unsupported jobs can still be opened manually.")
                     }
                     Button {
                         Task {
@@ -602,9 +602,39 @@ private struct NativeApplicationConnection: View {
                     Text("Saved phone drafts stay on your device until you explicitly save them to the connected service. Your connection token is kept in the iPhone Keychain.")
                         .font(.caption).foregroundStyle(.secondary)
                 }
+                Section("Privacy, recovery and account data") {
+                    NativeApplicationServiceLinks(address: model.connected ? model.serviceAddress : address,
+                                                  includeConnection: model.connected)
+                    Text("Disconnecting this phone keeps its draft and does not delete hosted data. Account deletion is a separate action in the browser and does not remove applications already received by employers.")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
             }.navigationTitle("Application connection").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } } }
         }.tint(ApplyDesign.green).interactiveDismissDisabled(model.busy)
+    }
+}
+
+struct NativeApplicationServiceLinks: View {
+    let address: String
+    var includeConnection = true
+    var body: some View {
+        if MobileApplicationPolicy.isHostedService(address) {
+            if includeConnection, let url = MobileApplicationPolicy.servicePageURL(.connect, address: address) {
+                Link("Set up or recover workspace access", destination: url)
+            }
+            if let url = MobileApplicationPolicy.servicePageURL(.privacy, address: address) {
+                Link("Hosted service privacy policy", destination: url)
+            }
+            if let url = MobileApplicationPolicy.servicePageURL(.support, address: address) {
+                Link("Get application-service support", destination: url)
+            }
+            if let url = MobileApplicationPolicy.servicePageURL(.account, address: address) {
+                Link("Manage account and delete hosted data", destination: url)
+            }
+        } else {
+            Text("For this custom service, ask its operator for a new workspace invitation, its privacy policy, support and account deletion. Its connection and data practices are separate from the hosted Career Finder service.")
+                .font(.footnote).foregroundStyle(.secondary)
+        }
     }
 }
 

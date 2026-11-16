@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 2,
-  "checkedAt": "2026-11-16T13:52:04.486398Z",
+  "schemaVersion": 4,
+  "checkedAt": "2026-11-16T15:05:14.714027+00:00",
   "evidenceMode": "local",
   "toolchain": {
     "compilerVersion": "Apple Swift version 6.4.2 (swiftlang-6.4.2.1.9 clang-2100.4.1.1)\nTarget: arm64-apple-macosx27.3.0",
@@ -18,7 +18,8 @@
         "SDKSettings.jsonSHA256": "8c5d2efa53dbdb9b602c45e77c5eac5b21165317408fe37ddf14c7aa9c8b9031",
         "SDKSettings.plistSHA256": "afa82113e98f1ff4d8faf208976d558b444eb8e787181f0850f0382dd6c6052e"
       }
-    }
+    },
+    "hostTriple": "arm64-apple-macosx27.3.0"
   },
   "commandPathNote": "Personal scratch paths are normalized to <isolated-check-root>. Standalone checks used dedicated temporary build/module-cache directories; no shared Xcode build directory or native build slot was used.",
   "reproducibleCheckCommand": [
@@ -29,10 +30,10 @@
     "result": "PASS",
     "exitCode": 0,
     "diagnostics": "",
-    "boundaryChecksPassed": 48,
-    "lifecycleAssertionsPassed": 79,
-    "lifecycleScenariosPassed": 15,
-    "output": "PASS 48 native application boundary checks\nPASS 79 application lifecycle assertions across 15 scenarios\n",
+    "boundaryChecksPassed": 61,
+    "lifecycleAssertionsPassed": 117,
+    "lifecycleScenariosPassed": 25,
+    "output": "PASS 61 native application boundary checks\nPASS 117 application lifecycle assertions across 25 scenarios\nFresh workspace and compatibility checks passed: blank identity/profile/targets, generic exports, no seeded history, device time zone, preserved saved legacy records.\nLocal preference checks passed: backward decoding, independent country/city/role/currency/period/zone, unchanged monthly SAR, record preservation, future-version protection, export privacy and DST/civil-date semantics.\nFull review regression checks passed: fresh local preferences, partial evidence age, exact exclusions, saved history, persisted observation chronology and dated exports.\nApplication record checks passed: legacy preservation, metadata-only history, conflicts, export privacy, strict date/scalar limits and derived attention.\nNative store checks passed: 9 researched jobs, atomic saves, pre-criteria migration, city/pay criteria, unfiltered history, export privacy, strict URLs/dates, stale response rejection and input validation.\n",
     "productionStoreExecuted": true,
     "realTemporaryDraftPersistence": true,
     "injectedTransport": true,
@@ -44,7 +45,10 @@
       "apple/AhmadCareer/MobileApplicationState.swift",
       "apple/AhmadCareer/NativeApplicationsStore.swift",
       "apple/Checks/MobileApplicationCheck.swift",
-      "apple/Checks/MobileLifecycleCheck.swift"
+      "apple/Checks/MobileLifecycleCheck.swift",
+      "apple/AhmadCareer/CareerFeed.swift",
+      "apple/AhmadCareer/NativeCareerStore.swift",
+      "apple/Checks/NativeStoreCheck.swift"
     ],
     "coverage": [
       "Dirty revision persistence, unknown legacy bases, explicit conflict choices and monotonic confirmed revisions.",
@@ -56,8 +60,18 @@
       "All recoverable reviews, atomic unapproved replacement and concurrent approval conflicts.",
       "Delayed prepare responses are rejected when selection or answers changed.",
       "Malformed complete-workspace/profile envelopes preserve visible and persisted state.",
-      "Background draft checkpoints, deliberate discard, disk-write failures and temporary credential unavailability."
-    ]
+      "Background draft checkpoints, deliberate discard, disk-write failures and temporary credential unavailability.",
+      "Setup-only hosted origin preserves existing addresses, persisted connection state and local drafts without initial network requests.",
+      "Only fresh authenticated workspace capability and active plan IDs allow advance; absent/unknown capabilities retain Node GET-only polling.",
+      "Advance carries only planId, never approval; sequential requests enforce a four-second completion gap, and only a subsequent workspace can confirm a receipt.",
+      "Stop remains usable during advance; failed/malformed refreshes cannot reuse cached authority; uncertainty and elapsed 429 cooldowns never create automatic approval.",
+      "Delayed former-connection continuation successes/errors cannot disturb a newer request; account deletion clears continuation authority and token revocation preserves local drafts.",
+      "Fresh production research/profile/history remains blank and neutral; personal links/CVs and country/city/role/currency/salary targets are absent; device time zone and Career Finder exports are verified.",
+      "Existing native planning-store regression executes synthetic live/date/merge cases and preserves historical user profiles, saved roles, statuses, dates and notes. A synthetic live fixture uses a future deadline instead of inheriting an expired archival deadline."
+    ],
+    "checkedAt": "2026-11-16T15:05:14.714027+00:00",
+    "legacyPlanningStoreRegression": "PASS",
+    "legacyPlanningStoreUsesProductionBundle": true
   },
   "iosStaticTypecheck": {
     "result": "PASS",
@@ -75,7 +89,7 @@
       "-sdk",
       "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS27.2.sdk",
       "-module-cache-path",
-      "<isolated-check-root>/ios-module-cache",
+      "<isolated-check-root>/module-cache-ios",
       "-swift-version",
       "5",
       "<isolated-check-root>/apple/AhmadCareer/AhmadCareerApp.swift",
@@ -100,31 +114,79 @@
       "apple/AhmadCareer/NativeApplicationsViews.swift",
       "apple/AhmadCareer/NativeCareerStore.swift",
       "apple/AhmadCareer/NativeCareerViews.swift"
-    ]
+    ],
+    "checkedAt": "2026-11-16T15:05:14.714027+00:00"
   },
   "sourceHashes": {
     "apple/AhmadCareer/AhmadCareerApp.swift": "1cfcb59bf4ac0914c73de50ffa3f11cdc6671e74b4588cc94f16574e8f07f801",
     "apple/AhmadCareer/CareerFeed.swift": "f726dd1144423e71cadea28da4ff60792c5459dc0c873c0a4fb7858b3a6b3273",
     "apple/AhmadCareer/CareerPolicy.swift": "59441ba26db1bca33fbcc6f985c1cfc054ba0774d3c4ff027a9a712e1883a9cf",
     "apple/AhmadCareer/CareerWebView.swift": "ff866bd788485434da518a51d05e65a191a3e69081b24a04772d29eafd0dcd8c",
-    "apple/AhmadCareer/MobileApplicationClient.swift": "29d5d7b4c03af29e9d35a94b80fe3065899474163df44c1f57bf4d5771958b55",
-    "apple/AhmadCareer/MobileApplicationState.swift": "db18120729312ca342c4e8d87fd0ba541695d6f18891e49c48d39a768a703d10",
-    "apple/AhmadCareer/NativeApplicationsStore.swift": "eb17f8a38ebdc310fc32257cf2bae38abfcef439b437c3ad9abed57c2268fedb",
-    "apple/AhmadCareer/NativeApplicationsViews.swift": "f33383ced3ef3fa163916f931d3557c6947715d576b8fbb8e13793d75a946102",
+    "apple/AhmadCareer/MobileApplicationClient.swift": "20fc9c366bf0b1fa5a51484faa1c4e33d5a07e1bb5413dee1227eaeddd40d6e5",
+    "apple/AhmadCareer/MobileApplicationState.swift": "4db24774a7ab3d8df2d3ced74b582b0902971f3f8b2c40ecf06d2c6e48deb703",
+    "apple/AhmadCareer/NativeApplicationsStore.swift": "d479cec07ab84894c84d445eb4502ac08ff03b3502e0b3c6d6e3e9ede721e14a",
+    "apple/AhmadCareer/NativeApplicationsViews.swift": "9cf9596e4a2d8370176e76849bc68d197edd7daa46f057ccc844b0135e06a174",
     "apple/AhmadCareer/NativeCareerStore.swift": "f0140a3bcea9e947db4689e3784898f1ef59735c3217515d6b309f1cda62f7e7",
-    "apple/AhmadCareer/NativeCareerViews.swift": "19d34b43ff400e590b714fdab4acb2391d10d4bcd8a92435dca4ce58459428a7",
+    "apple/AhmadCareer/NativeCareerViews.swift": "9f146b08b6195b475c97b33003616e295b61b4aecd1ea32416a68747258fde61",
+    "apple/Checks/MobileApplicationCheck.swift": "7fb3157dde1c0f4bd9825039b0707a8ce49999cd8ac85142bf52ef90281a66b4",
+    "apple/Checks/MobileLifecycleCheck.swift": "a8d4cfbc0adfeae48aee70e72e244a01da84c7c89f405679122bfaf70ca28a32",
+    "apple/Checks/NativeStoreCheck.swift": "fc1f9f13068a064391540a7bf150251f4fd4866fc768f0ad4573f71be0e92b91",
+    "apple/Checks/check-mobile.sh": "37bd56c634c1332c1908e47278d6baa015c0798a559ffe9f5ab4915f86ceefb9",
     "apple/AhmadCareer/CareerResearch.json": "9337469922d86ad305f109c838a8cf5c0742d6ffcdc438f3ffbe497f7eb92b1b",
-    "apple/Checks/MobileApplicationCheck.swift": "ea10047ffe60b31492fe5bd4fae66951067bfb45e53afb20092144aaebfc18ad",
-    "apple/Checks/MobileLifecycleCheck.swift": "3b14c93a5e97fcd5e9a2e9a29535ed9721b2043b2252248147b4994e4abb9ae1",
-    "apple/Checks/check-mobile.sh": "44ec47d1b210482c8bf0b6f4a28d8dada83f211429395505b08b3e57853b3cc4",
-    "apple/AhmadCareer.xcodeproj/project.pbxproj": "6babe28350296a57c8f485bc4faea3430016a73a48fd1428b12f296f2ece381f"
+    "apple/AhmadCareer.xcodeproj/project.pbxproj": "5882f7c7d50fdb3f3ac6c1c97d6162188a2ce62817349d35c322a1db0ecbd134"
   },
   "sourceSnapshotUnchangedAfterCheck": true,
   "limitations": [
-    "No Xcode project build, simulator, physical-device runtime, signing, archive, installation or distribution was performed.",
-    "The lifecycle executable uses the production store with synthetic injected transport/credentials and real temporary files; it does not exercise device Keychain or iPhone networking.",
+    "No local Xcode project build, simulator, physical-device runtime, signing, archive, installation or distribution was performed for this source snapshot.",
+    "The lifecycle executable uses the production store with synthetic injected transport/credentials and real temporary files; it does not exercise device Keychain, iPhone networking, browser sign-in or the deployed hosted service.",
     "Static typechecking does not validate rendered SwiftUI behavior, VoiceOver, keyboard/PDF-picker presentation, project resource packaging, entitlements or device file-protection behavior.",
     "No live employer application submission occurred.",
-    "CareerResearch.json and the project file are captured for source identity; swiftc does not validate project packaging."
-  ]
+    "CareerResearch.json and the project file are captured for source identity; swiftc does not validate project packaging.",
+    "Both Xcode configurations request Career Finder for CFBundleDisplayName and CFBundleName, and the project source parses. The generated app Info.plist and external App Store/TestFlight display metadata require the publisher's exact-build verification."
+  ],
+  "hostedIntegration": {
+    "defaultOrigin": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
+    "defaultScope": "Setup presentation only; existing saved service origins are never replaced.",
+    "browserPaths": [
+      "/connect",
+      "/privacy",
+      "/support",
+      "/account"
+    ],
+    "capability": "workspace.capabilities.dispatchContinuation == client",
+    "continuation": "Authenticated POST /api/apply/advance with {planId}; fresh workspace GET required before and after.",
+    "minimumGapAfterCompletionSeconds": 4,
+    "maximumConcurrentContinuationRequestsPerConnection": 1,
+    "localApprovalPersistence": false,
+    "automaticSubmitCalls": false,
+    "liveHostedRequestsInThisCheck": 0
+  },
+  "priorHostedBuild": {
+    "commit": "2a9004a0b684198018ea6583a08ba4f49f2af5b1",
+    "runID": 43883809010,
+    "jobID": 133356409913,
+    "url": "https://github.com/swonyu/ahmad-career/actions/runs/43883809010/job/133356409913",
+    "result": "success",
+    "scope": "Earlier published candidate only; does not establish a linked build for subsequent source changes."
+  },
+  "verificationScope": "iPhone hosted connection, general-audience branding, fresh profiles and legacy record compatibility",
+  "generalAudienceAudit": {
+    "publicName": "Career Finder",
+    "projectSourceCheck": {
+      "exitCode": 0,
+      "displayNameConfigurations": 2,
+      "bundleNameConfigurations": 2,
+      "value": "Career Finder",
+      "generatedProductPlistVerified": false
+    },
+    "freshApplicantDefaults": "Blank name, contact, location, profession, personal URL and CV; career stage unspecified and all work modes available.",
+    "freshPlanningDefaults": "Blank biography, target country/city/role, planning currency and salary floor; display zone follows device.",
+    "freshHistory": "No saved jobs, statuses, snapshots, preparation steps, application records or bundled current recommendations.",
+    "currentBundledRecommendations": 0,
+    "archivedRecoveryRoles": 9,
+    "legacyRecordPolicy": "Existing real saved records and compatibility storage/identity keys are preserved; archival fallback is loaded only for existing saved/tracked identifiers.",
+    "countryExample": "Region-specific SA/AE placeholder removed.",
+    "salaryScreen": "Blank general calculator first; historical Saudi examples retained in an optional disclosure.",
+    "discoveryLimit": "Six selected Saudi-oriented employer sources and selected role families; no worldwide discovery coverage claim."
+  }
 }

@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
-  <meta name="description" content="Unpublished privacy and support draft for the native Career Finder iPhone and iPad readiness candidate.">
-  <title>Career Finder — Privacy &amp; beta support draft</title>
+  <meta name="description" content="Candidate privacy and support draft for Career Finder phone apps and its hosted application workspace.">
+  <title>Career Finder — Privacy &amp; support draft</title>
   <style>
     :root { color-scheme: light; --ink:#182522; --muted:#53635d; --line:#dce6e1; --mint:#e9f6ef; --accent:#17694d; }
     * { box-sizing:border-box; }
@@ -43,75 +43,70 @@
 <main>
   <header>
     <div class="brand"><span class="mark" aria-hidden="true">c<span>•</span></span> Career Finder</div>
-    <h1>Privacy &amp; beta support</h1>
-    <p class="meta">Native iPhone and iPad app · Unreleased readiness candidate · Draft updated 15 November 2026</p>
-    <aside class="draft" aria-label="Draft status">
-      <strong>Draft — not yet published as the developer’s policy</strong>
-      A monitored developer contact address and a public hosting location still need to be supplied. The developer must also confirm how beta feedback and diagnostics will be used and retained before this page is published. No publisher legal identity or contact details are asserted here.
+    <h1>Privacy &amp; support</h1>
+    <p class="meta">iPhone and Android candidate · Hosted application workspace · Draft updated 16 November 2026</p>
+    <aside class="draft" aria-label="Candidate and publication status">
+      <strong>Store-review draft — the hosted development preview is published</strong>
+      The published development-preview service is <a href="https://career-finder-service.jazzy-drake-8323.chatgpt.site">career-finder-service.jazzy-drake-8323.chatgpt.site</a>.
+      Its public setup, privacy and support pages and unauthenticated account protections were verified on 16 November 2026. Signed-in production pairing and store distribution require separate acceptance. The publisher must confirm the legal operator, a monitored privacy/support contact and operational-log and beta-feedback retention before adopting this as a public policy.
     </aside>
   </header>
 
   <div class="summary">
-    <p>Career Finder provides a local workspace for reviewing opportunities, preparing notes and tracking applications. You can enter your own professional details and planning preferences. Its current live sources provide limited Saudi-oriented samples; choosing another country or obtaining the app in another store does not expand that coverage. Running a live search contacts the configured recruitment services. Sharing a note sends a copy only to a destination you choose.</p>
-    <p>This page describes the native iPhone and iPad app. It does not describe the separate website or Mac app.</p>
+    <p>Career Finder keeps a phone workspace for opportunities, drafts and application records. Connecting the hosted service adds an account-backed application workspace: you explicitly save applicant details and a PDF CV, review each application and approve eligible submissions. Opening the app or connecting a phone does not upload its existing draft.</p>
+    <p><strong>Current activation state:</strong> the hosted candidate has no employer credentials configured and live submission is disabled (<code>liveEnabled: false</code>). A configured service address, test receipt or successful app build does not establish that an employer received an application.</p>
   </div>
 
   <section aria-labelledby="local">
-    <h2 id="local">What stays in the app</h2>
-    <dl class="data-list">
-      <div><dt>Details you enter</dt><dd>Optional professional details, including experience, qualifications, tools, responsibilities and achievements, are saved locally when you save your profile. Country, city, role keywords, planning currency and period, display time zone, and discovery criteria are also local preferences. These details and preferences are not included in employer search requests. Professional details can appear in notes you choose to export; planning and discovery preferences are excluded.</dd></div>
-      <div><dt>Your job workspace</dt><dd>Saved roles, application statuses, completed preparation steps, retained vacancy details, the latest accepted search results and source-check information are stored locally. Per-role application dates and receipt notes are separate local records. These records let you continue after closing the app. Changing an application status does not submit an application or contact an employer.</dd></div>
-      <div><dt>Salary comparisons and list filters</dt><dd>The offer calculator processes the amounts and period you enter on the device. Calculator amounts are not saved to the workspace or sent to employer services. The selected planning currency and period are local profile preferences. No exchange-rate conversion is performed. Existing monthly SAR floors and dated SAR guide figures retain their original units and meaning. Text used to filter a displayed list is not sent to an employer.</dd></div>
-      <div><dt>Public research included with the app</dt><dd>The app retains dated employer-listing information only to help recover earlier saved or tracked records when their stored snapshot is missing. Existing snapshots take precedence. Fresh workspaces do not receive a personal biography or those old roles as current recommendations. Bundled reference material is separate from your entered details and is not a connection to your LinkedIn account.</dd></div>
-    </dl>
-    <p style="margin-top:18px">This candidate does not load ads or include an advertising SDK. There is no app account, developer-operated cloud sync, tracking SDK or developer analytics service in this version. The app does not automatically upload your saved profile or application records to the developer. Apple’s TestFlight diagnostics are a separate data flow, explained below.</p>
+    <h2 id="local">Information on your phone</h2>
+    <p>The phone keeps your applicant draft, any locally saved selected PDF bytes, saved opportunity links and connection settings. The iPhone also retains its separate local planning profile, discovery preferences, saved roles, self-entered application records, preparation steps and accepted search results. Updating a tracking status or receipt note does not send an application or create a provider receipt.</p>
+    <p>The application profile starts empty. Existing local planning records are not silently converted into applications. A failed connection, expired token or hosted account deletion preserves the phone draft. Shared notes and receipt exports create separate copies at the destination you choose.</p>
+    <p>On iPhone, the device connection token is kept in Keychain and draft files use iOS file protection. Opening a browser setup, support or account link does not place the token or CV in that link.</p>
   </section>
 
-  <section aria-labelledby="network">
-    <h2 id="network">Employer searches and external websites</h2>
-    <p>When you choose to search or refresh employer results, the current native app sends fixed job-search requests directly over HTTPS to six configured Workday recruitment sources: Alcon, Novartis, Johnson &amp; Johnson, GSK, BD and Roche. It also retrieves details for selected vacancies. These are bounded samples focused on Saudi locations and selected role families; they are not a complete search of all jobs. Older Qiddiya records may remain in an existing workspace, but Qiddiya is not in the current refresh schedule.</p>
-    <p>Those requests contain predefined job queries, location filters, pagination information or vacancy identifiers. They do not contain your entered profile, country or role preferences, planning currency, time zone, local discovery criteria, saved-job selections, application statuses, receipt notes or preparation notes. The recruitment services receive ordinary connection information, including your IP address, request timing and HTTP request information. Their own practices govern any server logs they retain.</p>
-    <p>Opening an application, LinkedIn or salary-source link opens an external website. The website and browser may process information under their own privacy settings and policies. Any account, CV upload or application you submit there is managed by that provider. Career Finder does not submit job applications for you.</p>
+  <section aria-labelledby="account">
+    <h2 id="account">Hosted account, recovery and saved data</h2>
+    <p>The hosted flow opens <a href="https://career-finder-service.jazzy-drake-8323.chatgpt.site/connect">connection setup</a> in your browser. ChatGPT sign-in supplies the account identity and email needed to associate and recover the workspace. A one-use code authorizes a phone connection. Use the same signed-in account to recover that workspace or connect another phone. The applicant email used for hosted submissions must match the signed-in account email.</p>
+    <p>Explicitly saving to the connected service uploads the applicant fields you provide, such as name, contact details, location, professional information, preferences and website, plus the selected CV. Adding an opportunity or preparing an application sends the chosen job link and details, message and employer-specific data choices. The service retains reviews, approval records, submission attempts and provider receipts so an interrupted phone request cannot silently create a duplicate.</p>
+    <p>The hosted design uses Sites-managed Workers, a D1 database and private R2 CV storage. A CV must be a PDF of at most 5 MiB. Each account is limited to five stored CV files and 25 MiB of CV content. These are storage limits, not a promise of automatic deletion after a fixed number of days. HTTPS services also receive ordinary connection information, including IP address, request timing and HTTP information.</p>
+    <p>Custom application services use their own operator, account-recovery process and retention practices. The phone preserves an existing custom service address and identifies its operator-managed flow separately from the hosted Career Finder account.</p>
   </section>
 
-  <section aria-labelledby="sharing">
-    <h2 id="sharing">Notes you choose to share</h2>
-    <p>A single-role preparation note includes the role, preparation guidance and application status; it excludes profile details and receipt notes. A full tracking export can include your professional details, preparation checklist, saved or tracked roles, application dates and receipt notes. When an unsaved receipt draft is included, it is labelled as a draft. Local planning and discovery preferences are excluded from both note types. Exports are readable notes, not an importable backup. The system share sheet lets you choose an app, person or storage destination.</p>
-    <p>Review the note before sending it. Once shared, the copy is handled by the destination you select. Later changes or deletion in Career Finder do not recall that copy. Avoid entering confidential employer information or details you do not want included in an export.</p>
+  <section aria-labelledby="submissions">
+    <h2 id="submissions">What an approved application sends</h2>
+    <p>When an authorized employer integration is activated, approval permits the service to send the reviewed applicant fields, PDF CV and explicit choices to the supported Lever posting. Unsupported jobs remain available through their employer website. Future-opportunity contact is a separate explicit choice; declining it is not inferred as consent.</p>
+    <p>A verified receipt requires affirmative provider acceptance and an application identifier. It records API acceptance, not recruiter review, an interview or a job offer. An uncertain outcome is not automatically retried. A provider rate-limit rejection requires a new visible approval after the cooldown before hosted processing continues.</p>
+    <p>The hosted phone flow continues only work already approved on the server. Closing the app pauses further continuation requests; a request already sent may still finish. Employer copies are subject to the employer's privacy policy and are not recalled by deleting the Career Finder workspace.</p>
   </section>
 
   <section aria-labelledby="retention">
-    <h2 id="retention">Keeping and removing local records</h2>
-    <p>Your saved workspace has no automatic expiry. A successful refresh updates accepted results; saved or tracked vacancy snapshots may remain so that your application record survives a listing disappearing. If every employer check fails, previous accepted results are preserved. A partial refresh distinguishes successful and failed source observations. An employer response, an unavailable listing and your own application status are separate records.</p>
-    <ul>
-      <li>You can edit or clear profile fields, remove a role from Saved, change its application status to <strong>Not started</strong>, and uncheck completed steps.</li>
-      <li>Removing a saved role or resetting its status does not necessarily erase every locally retained vacancy snapshot.</li>
-      <li>To remove the app’s local workspace, use <strong>Delete App</strong> in iPhone or iPad Settings. <strong>Offload App</strong> keeps its documents and data.</li>
-      <li>Device or computer backups may retain copies according to your backup settings. Restoring a backup can restore app records. Manage those backups separately.</li>
-      <li>Exports and feedback already sent elsewhere must be managed at their destination. Deleting the app does not remove them.</li>
-    </ul>
-    <p>Dated employer reference material is part of the app itself. Clearing personal entries does not edit that bundled material. Reinstalling starts a fresh workspace unless an operating-system backup or another retained app-data mechanism restores earlier records.</p>
+    <h2 id="retention">Retention, disconnection and deletion</h2>
+    <p>Hosted account records and stored CV versions remain until account deletion or a supported control removes them, subject to the storage limits above. Selecting a new current CV does not itself promise erasure of older stored versions. Use <a href="https://career-finder-service.jazzy-drake-8323.chatgpt.site/account">Manage account and delete hosted data</a> for the hosted deletion flow. Disconnecting a phone revokes that connection; it does not delete the hosted workspace.</p>
+    <p>Requesting deletion immediately fences new uploads. An application request already in flight can temporarily block completion of deletion while its outcome is resolved. The account page must show that pending or blocked state rather than report that deletion has finished.</p>
+    <p>Completed deletion removes account-linked records, CV content and identifying CV metadata. Empty, randomly named storage markers can remain to prevent a previously started upload from recreating a deleted file. These markers retain no account association, filename, CV hash or CV content.</p>
+    <p>Deletion does not erase employers' copies, exports, phone drafts or operating-system backups. Manage those separately. Removing the app's local documents differs from offloading an app while retaining its data. A custom service's operator controls deletion of data sent to that service.</p>
   </section>
 
-  <section aria-labelledby="testflight">
-    <h2 id="testflight">Apple TestFlight is separate</h2>
-    <p>If you install this beta through TestFlight, Apple automatically collects crash logs and usage information and shares them with the application provider. This can include device, app-version and testing information. Feedback you send can include your comments, screenshots and diagnostics. Identity information visible to the provider depends on how you were invited and what you submit.</p>
-    <p>These TestFlight processes are separate from the app’s local storage and employer searches. Review <a href="https://www.apple.com/legal/privacy/data/en/test-flight/">Apple’s TestFlight &amp; Privacy notice</a> for the information involved, Apple’s retention practices and available privacy controls.</p>
-    <aside class="draft" aria-label="Pending beta data handling details">
-      <strong>Developer confirmation needed before publication</strong>
-      State how the developer will use beta feedback and diagnostic information, how long any downloaded or separately stored copies will be retained, and where a tester can request access or deletion. No unconfirmed retention period or deletion promise is made in this draft.
-    </aside>
+  <section aria-labelledby="network">
+    <h2 id="network">Employer searches, websites and sharing</h2>
+    <p>The iPhone's existing discovery feature sends fixed job queries directly to selected recruitment services over HTTPS. It currently checks bounded Saudi-oriented samples and does not establish coverage of other countries or every profession. These search requests exclude your applicant CV, locally entered profile, preferences, application notes and tracking records. The recruitment services receive ordinary network request information.</p>
+    <p>Opening an employer or other external link uses that website's own account, application and privacy practices. Review notes, screenshots and receipts before sharing them; exports can contain professional details and application information. Later edits or deletion do not recall copies already shared.</p>
+  </section>
+
+  <section aria-labelledby="diagnostics">
+    <h2 id="diagnostics">Diagnostics and feedback</h2>
+    <p>The native candidate does not include advertising or tracking SDKs. Platform operations and support feedback are separate from applicant submissions. The publisher must disclose the actual operational logging and any retained support copies in the final published policy; this draft does not invent a retention period or a legal exception to deletion.</p>
+    <p>If a build is supplied through TestFlight, Apple collects beta crash and usage information and shares information with the application provider. Feedback can include your comments, screenshots and testing details; the identity visible to the provider depends on the invitation and feedback. See <a href="https://www.apple.com/legal/privacy/data/en/test-flight/">Apple's TestFlight &amp; Privacy notice</a>. The developer's handling and retention of separately stored beta feedback must be confirmed before public use of this policy.</p>
   </section>
 
   <section aria-labelledby="support">
-    <h2 id="support">Beta support and corrections</h2>
-    <p>If you installed the app through TestFlight, open <strong>TestFlight → this app → Send Beta Feedback</strong>. Describe the screen, the steps you took and what happened. Check screenshots and attachments before sending them; they may show profile or application information.</p>
-    <p>You can also use beta feedback to flag inaccurate or outdated employer information. Do not include a CV or sensitive personal documents unless you intentionally choose to share them.</p>
-    <p><strong>Direct developer contact:</strong> pending a monitored address. This page is not ready to serve as a public support destination until that address is supplied and the draft notes are resolved.</p>
+    <h2 id="support">Support and privacy requests</h2>
+    <p>The published <a href="https://career-finder-service.jazzy-drake-8323.chatgpt.site/support">support page</a> is the service-help destination, and <a href="https://career-finder-service.jazzy-drake-8323.chatgpt.site/privacy">hosted privacy page</a> is the current service-policy location. Both pages were checked after deployment on 16 November 2026. The publisher must supply a monitored contact for privacy, correction, access and unresolved deletion requests.</p>
+    <p>For a build actually installed through TestFlight, use <strong>TestFlight → this app → Send Beta Feedback</strong>. Include the screen and steps involved, and review attachments before sending. No signed release, current TestFlight build or App Store approval is established by this document.</p>
   </section>
 
   <footer>
-    <p>This unpublished draft describes the native general-audience readiness candidate reviewed on 15 November 2026. It is not a policy for a new released build. Before publication, verify it against the exact signed app, confirm the publisher’s legal identity, monitored contact and feedback-retention practices, and complete the applicable App Store privacy disclosures. Update the page when data flows, support arrangements or service providers change.</p>
+    <p>This draft records the phone and hosted-service design supplied for the 16 November 2026 candidate. Final publication requires reconciliation with the deployed service, exact distributed app, identified operator and current store privacy disclosures. No publisher identity, monitored address, store-release status is invented here.</p>
   </footer>
 </main>
 </body>

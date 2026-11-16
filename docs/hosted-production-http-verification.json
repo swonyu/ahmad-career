@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 1,
+  "title": "Career Finder public hosted HTTP acceptance",
+  "recordedAt": "2026-11-16T15:00:33.402Z",
+  "origin": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
+  "deployment": {
+    "projectId": "appgprj_6afb13851fb4819193358d5db54e73b7",
+    "sourceCommit": "d078e56f88e1d9cfd4330f0c57f361ab845edaff",
+    "provenance": "Deployment identifiers supplied by the deployment owner. The public HTTP responses do not expose the deployed source revision."
+  },
+  "transport": {
+    "environment": "Authorized macOS network",
+    "tlsVerification": true,
+    "redirectPolicy": "The first seven probes disabled redirects. The wrong-origin probe used the standard HTTP client and returned origin_denied.",
+    "cloudAttempt": "Connection timed out after eight seconds; public probes then used the authorized Mac network."
+  },
+  "passed": 8,
+  "failed": 0,
+  "probes": [
+    {
+      "name": "health",
+      "method": "GET",
+      "path": "/api/health",
+      "checkedAt": "2026-11-16T14:59:24.632838+00:00",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "cacheControl": "no-store",
+      "body": {
+        "ok": true,
+        "service": "Career Finder",
+        "storage": "ready",
+        "mode": "local",
+        "liveEnabled": false
+      },
+      "passed": true
+    },
+    {
+      "name": "connect",
+      "method": "GET",
+      "path": "/connect",
+      "checkedAt": "2026-11-16T14:59:24.636120+00:00",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "cacheControl": "no-store",
+      "title": "Career Finder · Connect your phone",
+      "hasCareerFinderBrand": true,
+      "passed": true
+    },
+    {
+      "name": "privacy",
+      "method": "GET",
+      "path": "/privacy",
+      "checkedAt": "2026-11-16T14:59:24.636897+00:00",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "cacheControl": "no-store",
+      "title": "Privacy · Career Finder",
+      "hasCareerFinderBrand": true,
+      "passed": true
+    },
+    {
+      "name": "support",
+      "method": "GET",
+      "path": "/support",
+      "checkedAt": "2026-11-16T14:59:24.637878+00:00",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "cacheControl": "no-store",
+      "title": "Help and support · Career Finder",
+      "hasCareerFinderBrand": true,
+      "passed": true
+    },
+    {
+      "name": "anonymous_account",
+      "method": "GET",
+      "path": "/api/account",
+      "checkedAt": "2026-11-16T14:59:26.067137+00:00",
+      "status": 401,
+      "contentType": "application/json; charset=utf-8",
+      "cacheControl": "no-store",
+      "body": {
+        "ok": false,
+        "error": {
+          "code": "sign_in_required",
+          "message": "Sign in with ChatGPT to manage your Career Finder account."
+        }
+      },
+      "hasWorkspaceId": false,
+      "passed": true
+    },
+    {
+      "name": "anonymous_workspace",
+      "method": "GET",
+      "path": "/api/apply/workspace",
+      "checkedAt": "2026-11-16T14:59:26.136878+00:00",
+      "status": 401,
+      "contentType": "application/json; charset=utf-8",
+      "cacheControl": "no-store",
+      "body": {
+        "ok": false,
+        "error": {
+          "code": "session_required",
+          "message": "Your phone session expired or is invalid. Pair this phone again."
+        }
+      },
+      "hasWorkspaceId": false,
+      "passed": true
+    },
+    {
+      "name": "forged_account_identity",
+      "method": "GET",
+      "path": "/api/account",
+      "checkedAt": "2026-11-16T14:59:26.274769+00:00",
+      "status": 401,
+      "contentType": "application/json; charset=utf-8",
+      "cacheControl": "no-store",
+      "body": {
+        "ok": false,
+        "error": {
+          "code": "sign_in_required",
+          "message": "Sign in with ChatGPT to manage your Career Finder account."
+        }
+      },
+      "hasWorkspaceId": false,
+      "passed": true
+    },
+    {
+      "name": "wrong_origin_account",
+      "method": "GET",
+      "path": "/api/account",
+      "checkedAt": "2026-11-16T14:59:53.972974+00:00",
+      "status": 403,
+      "contentType": "application/json; charset=utf-8",
+      "cacheControl": "no-store",
+      "body": {
+        "ok": false,
+        "error": {
+          "code": "origin_denied",
+          "message": "This request did not come from Career Finder."
+        }
+      },
+      "hasWorkspaceId": false,
+      "passed": true
+    }
+  ],
+  "identityHeaderProbe": {
+    "headers": [
+      "oai-authenticated-user-id",
+      "oai-authenticated-user-email"
+    ],
+    "values": "Synthetic nonexistent test identity and an example.invalid email; no real identity or credentials.",
+    "observation": "The public edge did not grant an account identity from caller-supplied platform headers."
+  },
+  "storageCheck": "The production health handler queries the workspaces schema in D1 and performs a harmless R2 HEAD before returning storage: ready.",
+  "scope": {
+    "httpMethods": [
+      "GET"
+    ],
+    "authenticatedRequests": 0,
+    "siteBypassTokensUsed": 0,
+    "cookiesUsed": 0,
+    "stateChangingRequestsSent": 0,
+    "workspacesCreated": 0,
+    "PDFsUploaded": 0,
+    "employerSubmissions": 0
+  },
+  "limitations": [
+    "This record covers public availability, anonymous access rejection, caller-supplied identity-header rejection and wrong-origin rejection.",
+    "Signed-in browser pairing, native session creation, private file upload/download and account deletion require separate authenticated acceptance evidence.",
+    "Live employer submission remains disabled; these checks do not establish employer API acceptance or store distribution."
+  ]
+}

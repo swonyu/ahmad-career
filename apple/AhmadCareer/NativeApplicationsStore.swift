@@ -57,6 +57,8 @@ final class NativeApplicationsStore: ObservableObject {
     @Published private(set) var busy = false
     @Published var message: String?
     @Published private(set) var mode = "local"
+    @Published private(set) var requiresClientContinuation = false
+    @Published private(set) var advancingApprovedApplication = false
     @Published var selected = Set<String>()
     @Published var answers: [String: [String: ApplicationValue]] = [:]
     @Published var profileEditing = false
@@ -66,10 +68,13 @@ final class NativeApplicationsStore: ObservableObject {
     private var contentGeneration = UUID()
     private var refreshTicket: UUID?
     private var operationTicket: UUID?
+    private var continuationTicket: UUID?
+    private var nextContinuationTime: TimeInterval = 0
     private var remoteJobs: [[String: ApplicationValue]] = []
     private let folder: URL
     private let credentials: any ApplicationTokenStore
     private let clientFactory: ClientFactory
+    private let monotonicTime: () -> TimeInterval
 
     var profile: PhoneApplicationProfile { state.profile }
     var profileNeedsSync: Bool { state.profileNeedsSync }
@@ -78,6 +83,7 @@ final class NativeApplicationsStore: ObservableObject {
     var latestServerProfile: PhoneApplicationProfile? { state.latestServerProfile }
     var profileHasConflict: Bool { state.hasProfileConflict }
     var serviceAddress: String { state.serviceAddress }
+    var connectionSetupAddress: String { MobileApplicationPolicy.connectionSetupAddress(state.serviceAddress) }
     var availableReviews: [ApplicationReviewSummary] {
         recoverablePlans.compactMap(ApplicationReviewSummary.init).filter { !activePlanIDs.contains($0.id) }
     }
@@ -86,11 +92,13 @@ final class NativeApplicationsStore: ObservableObject {
     }
 
     /// Dependency injection exercises this same store on macOS without an app build, Keychain access, or live networking.
-    init(folder: URL? = nil, credentials: (any ApplicationTokenStore)? = nil, clientFactory: ClientFactory? = nil) {
+    init(folder: URL? = nil, credentials: (any ApplicationTokenStore)? = nil, clientFactory: ClientFactory? = nil,
+         monotonicTime: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) {
         self.folder = folder ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("VerifiedApplications", isDirectory: true)
         self.credentials = credentials ?? ApplicationKeychain()
         self.clientFactory = clientFactory ?? { try MobileApplicationClient(origin: $0, token: $1) }
+        self.monotonicTime = monotonicTime
         do {
             #if os(iOS)
             try FileManager.default.createDirectory(at: self.folder, withIntermediateDirectories: true,
@@ -144,10 +152,12 @@ final class NativeApplicationsStore: ObservableObject {
     private func clearRemoteViews() {
         remoteJobs = []; jobs = state.jobs; attempts = []; plan = nil
         activePlanIDs = []; recoverablePlans = []; selected = []; answers = [:]; mode = "local"
+        requiresClientContinuation = false
     }
     private func rotateConnection() {
         sessionGeneration = UUID(); contentGeneration = UUID(); refreshTicket = nil
         operationTicket = nil; busy = false
+        continuationTicket = nil; advancingApprovedApplication = false; nextContinuationTime = 0
     }
     private func acceptError(_ error: Error, generation: UUID) {
         guard generation == sessionGeneration else { return }
@@ -155,7 +165,12 @@ final class NativeApplicationsStore: ObservableObject {
             let retired = detachLocally()
             retired?.invalidate()
             message = error.localizedDescription
-        } else if !(error is CancellationError) { message = error.localizedDescription }
+        } else if !(error is CancellationError) {
+            if (error as? MobileApplicationError)?.code == "account_deleting" {
+                activePlanIDs = []; recoverablePlans = []; plan = nil; requiresClientContinuation = false
+            }
+            message = error.localizedDescription
+        }
     }
     @discardableResult
     private func detachLocally() -> (any MobileApplicationServing)? {
@@ -240,16 +255,17 @@ final class NativeApplicationsStore: ObservableObject {
     func disconnect() async {
         if let retired = detachLocally() { retireRemotely(retired, reportWhenDisconnected: true) }
     }
-    func refresh() async {
-        guard !busy else { return }
+    @discardableResult
+    func refresh() async -> Bool {
+        guard !busy, continuationTicket == nil else { return false }
         restoreConnection()
-        guard let client, refreshTicket == nil else { return }
+        guard let client, refreshTicket == nil else { return false }
         let ticket = UUID(); refreshTicket = ticket
         let generation = sessionGeneration, content = contentGeneration
         defer { if refreshTicket == ticket { refreshTicket = nil } }
         do {
             let value = try await client.request("workspace")
-            guard generation == sessionGeneration, content == contentGeneration else { return }
+            guard generation == sessionGeneration, content == contentGeneration else { return false }
             let snapshot = try ApplicationWorkspaceSnapshot(value, workspaceID: state.workspaceID)
             let server = snapshot.profile
             guard server.revision >= (state.latestServerRevision ?? 0) else {
@@ -258,15 +274,44 @@ final class NativeApplicationsStore: ObservableObject {
             var next = state; next.receive(server); try persist(next)
             remoteJobs = snapshot.jobs; attempts = snapshot.attempts
             activePlanIDs = snapshot.activePlanIDs; recoverablePlans = snapshot.recoverablePlans; mode = snapshot.mode
+            requiresClientContinuation = snapshot.requiresClientContinuation
             mergeJobs()
             if let id = plan?["id"]?.string {
                 if !profileNeedsSync, let current = recoverablePlans.first(where: { $0["id"]?.string == id }),
                    ApplicationReviewPolicy.current(current, revision: revision) { plan = current }
                 else { plan = nil }
             }
+            return true
         } catch {
             if content == contentGeneration { acceptError(error, generation: generation) }
+            return false
         }
+    }
+    /// Only a fresh authenticated workspace can authorize continuation of an already approved queue.
+    /// This endpoint cannot approve a review, and its response never creates a local receipt.
+    func pollApprovedApplications() async {
+        guard !Task.isCancelled, continuationTicket == nil, await refresh() else { return }
+        guard !Task.isCancelled, !busy, requiresClientContinuation,
+              monotonicTime() >= nextContinuationTime, let id = activePlanIDs.first,
+              let client else { return }
+        let ticket = UUID(), generation = sessionGeneration
+        continuationTicket = ticket; advancingApprovedApplication = true
+        contentGeneration = UUID(); refreshTicket = nil
+        let content = contentGeneration
+        func finish() {
+            guard continuationTicket == ticket else { return }
+            continuationTicket = nil; advancingApprovedApplication = false
+            nextContinuationTime = monotonicTime() + 4
+        }
+        defer { finish() }
+        do {
+            _ = try await client.request("advance", method: "POST", body: ["planId": .string(id)])
+        } catch {
+            if content == contentGeneration && !Task.isCancelled { acceptError(error, generation: generation) }
+        }
+        finish()
+        guard generation == sessionGeneration, !Task.isCancelled else { return }
+        await refresh()
     }
     func hasConflict(for context: ApplicationProfileEditContext) -> Bool {
         !context.matches(state) || (connected && (state.latestServerRevision == nil || context.revision != state.latestServerRevision))

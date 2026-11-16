@@ -10,8 +10,19 @@ import Combine
   var fixtureResearch=try JSONDecoder().decode(CareerResearch.self,from:Data(contentsOf:productionResearchURL))
   let fresh=NativeCareerStore(researchURL:productionResearchURL,storageURL:root.appendingPathComponent("fresh.json"))
   assert(fresh.research.jobs.isEmpty && fresh.shortlistJobs.isEmpty && fresh.savedJobs.isEmpty)
-  assert(fresh.research.profile.name.isEmpty && fresh.research.profile.role.isEmpty && fresh.research.profile.facts.isEmpty)
+  assert([fresh.research.profile.name,fresh.research.profile.role,fresh.research.profile.organization,fresh.research.profile.location,fresh.research.profile.url].allSatisfy(\.isEmpty)
+    && fresh.research.profile.facts.isEmpty && fresh.research.profile.unknowns.isEmpty,"Bundled research cannot supply a new person's identity or personal URL")
   assert(fresh.workspace.profile==NativeProfile.fresh(), "Fresh profiles have no personal biography or city assumption")
+  assert([fresh.workspace.profile.years,fresh.workspace.profile.degree,fresh.workspace.profile.skills,fresh.workspace.profile.achievements].allSatisfy(\.isEmpty),"A new legacy planning profile is blank")
+  assert(fresh.workspace.profile.effectiveCountry.isEmpty && fresh.workspace.profile.effectiveCity.isEmpty
+    && fresh.workspace.profile.effectiveCurrency.isEmpty && fresh.workspace.profile.roleKeywords=="" && !fresh.workspace.profile.hasPayFloor,
+    "New users have no pinned country, city, profession, currency or salary target")
+  assert(fresh.workspace.profile.displayTimeZone=="" && fresh.workspace.profile.effectiveTimeZone==TimeZone.current.identifier,"New users use their own device display zone")
+  assert(fresh.workspace.saved.isEmpty && fresh.workspace.statuses.isEmpty && fresh.workspace.snapshots.isEmpty && fresh.workspace.completed.isEmpty
+    && fresh.workspace.live==nil && fresh.trackedJobs.isEmpty && fresh.applicationRecords.isEmpty,"Fresh launch never seeds another person's history")
+  let freshExport=fresh.exportText()
+  assert(freshExport.hasPrefix("CAREER FINDER — APPLICATION NOTES") && !freshExport.localizedCaseInsensitiveContains("ahmad")
+    && !freshExport.contains("linkedin.com/in/"),"Fresh exports use Career Finder branding and contain no personal identity/link seed")
   guard let seed=fixtureResearch.legacyJobs?.first else {fatalError("Legacy recovery fixture missing")}
   var oldWorkspace=NativeWorkspace();oldWorkspace.profile=NativeProfile()
   oldWorkspace.saved.insert(seed.id);oldWorkspace.statuses[seed.id]="Applied"
@@ -25,6 +36,7 @@ import Combine
   assert(migrated.savedJobs[0].researchCheckedAt==fixtureResearch.checkedAt)
   assert(migrated.workspace.profile==oldWorkspace.profile && migrated.workspace.completed==oldWorkspace.completed)
   assert(NativeCareerStore(researchURL:productionResearchURL,storageURL:legacyStateURL).savedJobs.map(\.id)==[seed.id])
+  print("Fresh workspace and compatibility checks passed: blank identity/profile/targets, generic exports, no seeded history, device time zone, preserved saved legacy records.")
   // Keep the historical merge/date regression scenarios as explicit fixtures,
   // separate from the production bundle's empty discovery and generic profile.
   fixtureResearch.jobs=fixtureResearch.legacyJobs ?? [];fixtureResearch.legacyJobs=nil
@@ -62,6 +74,8 @@ import Combine
   let restored=NativeCareerStore(researchURL:researchURL,storageURL:stateURL)
   assert(restored.isSaved(first) && restored.status(for:first)=="Preparing")
   var lead=first;lead.id="new-live";lead.rank=nil;lead.kind="live";lead.researchCheckedAt=nil
+  // This synthetic live-record test must not inherit an already expired archival deadline.
+  lead.closes=CareerFeed.saudiDay(Date().addingTimeInterval(365*86400))
   let leadData=try JSONSerialization.jsonObject(with:JSONEncoder().encode(lead))
   let payload:[String:Any] = ["checkedAt":"2026-10-09T00:00:00Z","jobs":[leadData],"sources":[["name":"Johnson & Johnson","ok":true,"count":1]]]
   store.acceptLive(payload);assert(store.liveJobs.count==1)

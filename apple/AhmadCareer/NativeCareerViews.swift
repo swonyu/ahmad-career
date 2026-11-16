@@ -5,6 +5,8 @@ import UIKit
 @MainActor
 struct NativeCareerRoot: View {
     @EnvironmentObject private var store: NativeCareerStore
+    @Environment(\.scenePhase) private var scenePhase
+    @StateObject private var applications = NativeApplicationsStore()
     @State private var selectedTab = 2
 
     var body: some View {
@@ -22,7 +24,17 @@ struct NativeCareerRoot: View {
                 .tabItem { Label("Profile", systemImage: "person.crop.circle") }.tag(4)
         }
         .environmentObject(store)
+        .environmentObject(applications)
         .tint(.careerAccent)
+        .task(id: scenePhase == .active) {
+            guard scenePhase == .active else { return }
+            await applications.refresh()
+            while !Task.isCancelled {
+                do { try await Task.sleep(nanoseconds: 4_000_000_000) } catch { break }
+                guard !Task.isCancelled else { break }
+                if !applications.activePlanIDs.isEmpty { await applications.pollApprovedApplications() }
+            }
+        }
         .onReceive(store.$storageError.compactMap { $0 }) { error in
             UIAccessibility.post(notification: .announcement, argument: error)
         }
@@ -448,7 +460,7 @@ private struct NativeProfileScreen: View {
             NativeCriteriaSection()
             Section {
                 NavigationLink { NativeSalaryScreen() } label: { Label("Salary & negotiation", systemImage: "chart.bar.doc.horizontal") }
-                NavigationLink { NativePrivacyScreen() } label: { Label("Privacy & beta support", systemImage: "hand.raised") }
+                NavigationLink { NativePrivacyScreen() } label: { Label("Privacy & support", systemImage: "hand.raised") }
             }
         }.nativeList().navigationTitle("Your profile")
             .navigationBarTitleDisplayMode(.inline)
@@ -474,11 +486,22 @@ private struct NativeNotesPreview: View {
 }
 
 private struct NativePrivacyScreen: View {
+    @EnvironmentObject private var applications: NativeApplicationsStore
     var body: some View {
         List {
-            Section("Your information") {
-                Text("Profile details, country/city/role preferences, planning currency and period, display time zone, saved jobs, application status, completed steps and search results are stored in this app on your device. There is no app account or cloud sync service.")
-                Text("The developer does not receive your profile or application records automatically. Dated employer research is retained only to recover existing saved records; no personal biography is supplied for new users.")
+            Section("Information on this phone") {
+                Text("The Start, Search, Saved and Profile areas keep your preferences, saved roles, self-entered tracking records, preparation steps and search results on this device. They are separate from the applicant profile and provider receipts in Apply.")
+                Text("Apply keeps a phone draft and your selected PDF. Connecting does not upload that draft. Saving to a connected service sends the applicant fields and selected CV; adding opportunities and preparing reviews sends the links and choices you provide. The phone connection token is stored in Keychain.")
+            }
+            Section("Connected application workspace") {
+                if MobileApplicationPolicy.isHostedService(applications.serviceAddress) {
+                    Text("The hosted service uses ChatGPT sign-in in your browser to create or recover your workspace. It stores the linked account identifier, saved applicant profile and CV, opportunities, review choices, attempts and provider receipts. A one-time code connects this phone to that workspace.")
+                    NativeApplicationServiceLinks(address: applications.connectionSetupAddress)
+                } else {
+                    Text("Your configured application service stores the applicant details, CV, opportunities, review choices and submission history you send to it. Its operator controls account access, retention, recovery and deletion. Consult that operator's privacy and support information.")
+                    Text(applications.serviceAddress).font(.footnote).textSelection(.enabled)
+                }
+                Text("Approving an eligible application permits the service to send the reviewed fields and PDF to that employer's application provider. Provider acceptance is recorded only when the provider returns a valid receipt. Employer copies remain subject to the employer's own privacy policy.")
             }
             Section("Employer searches and links") {
                 Text("When you run a search, the app sends fixed job queries directly to selected employers and their recruitment providers using HTTPS. Those providers receive normal connection information, including your IP address. Your saved profile, discovery criteria and application notes are not included.")
@@ -491,13 +514,14 @@ private struct NativePrivacyScreen: View {
             }
             Section("Retention and removal") {
                 Text("You can edit or clear profile fields, remove saved roles and reset individual tracking statuses in the app. Saved or tracked job details may remain locally after a job disappears from a search.")
-                Text("Deleting the app from iPhone Settings removes its local records; offloading the app keeps documents and data. Device backups may retain copies according to your Apple backup settings. Shared exports are separate copies that you manage at their destination.")
+                Text("Disconnect this phone to revoke its application-service connection. Disconnecting, deleting or offloading the app does not delete the hosted workspace. Use Manage account and delete hosted data for the hosted service, or contact your custom service operator. Deleting hosted data does not remove copies already received by employers or saved in exports.")
+                Text("Phone drafts remain available after disconnection or hosted account deletion. Device backups and shared exports are separate copies that you manage through their own settings and destinations.")
             }
-            Section("Beta support") {
+            Section("Support and feedback") {
                 Text("During beta testing, open this app in TestFlight and choose Send Beta Feedback to contact the developer. Include the screen and steps that caused the problem. Review screenshots and diagnostics before sending.")
-                Text("Policy updated 15 November 2026.").font(.footnote).foregroundStyle(.secondary)
+                Text("Policy updated 16 November 2026. The connected service's published policy describes its hosted data practices.").font(.footnote).foregroundStyle(.secondary)
             }
-        }.nativeList().navigationTitle("Privacy & beta support")
+        }.nativeList().navigationTitle("Privacy & support")
             .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -636,23 +660,8 @@ private struct NativeSalaryScreen: View {
     var body: some View {
         Form {
             Section {
-                NativeNotice(title: "Salary potential is not an offer.", message: "None of the researched roles has a published salary in this research. These historical market benchmarks are not job-specific estimates or guaranteed pay.")
+                NativeNotice(title: "Compare an offer in your own terms.", message: "Choose the currency and pay period, then enter your own amounts. The calculator makes no assumptions about your profession, location, current pay or seniority.")
             }.listRowBackground(Color.clear)
-            Section("Historical 2025 · Hays") {
-                LabeledContent("Supply Chain Manager", value: "SAR 30,000–45,000")
-                LabeledContent("Procurement Manager", value: "SAR 30,000–50,000")
-                Text("Total fixed monthly package, including fixed allowances. Data as of Q4 2024; broad Saudi market, not healthcare-specific. These are not basic-salary ranges.")
-                    .font(.footnote).foregroundStyle(.secondary)
-                Link("Hays 2025 guide · page 38", destination: URL(string: "https://www.hays.ae/documents/d/hays-salary-guide-ae/hays-saudi-arabia-salary-guide-2025")!)
-                Link("Hays 2026 guide", destination: URL(string: "https://www.hays.ae/salary-guide/saudi-arabia-salary-guide")!)
-                Text("The 2026 guide exists; its detailed tables were unavailable without a contact form in this research.").font(.footnote).foregroundStyle(.secondary)
-            }
-            Section {
-                DisclosureGroup("Cross-check with another guide") {
-                    Text("The Professionals 2025 reports Supply & Demand Manager at SAR 30,220 / 42,866 / 53,710 monthly for the 25th percentile / median / 75th percentile (p.49). Methodology (p.15): basic salary, housing and transportation. Different definitions and samples make this context, not an interchangeable quote.").font(.subheadline)
-                    Link("The Professionals 2025 guide", destination: URL(string: "https://theprofessionals.sa/wp-content/uploads/2026/02/Salary-Guide-2025-The-Professionals.pdf")!)
-                }
-            }
             Section {
                 Picker("Currency", selection: $currency) {
                     Text("Choose a currency").tag("")
@@ -682,13 +691,27 @@ private struct NativeSalaryScreen: View {
                     Text("Choose a currency and correct any invalid amount before calculating.").font(.footnote)
                 }
             } header: { Text("Compare your entered package") } footer: {
-                Text("Arithmetic from your entries only. These temporary amounts are not saved. Target bonus is not guaranteed. Blank fields count as zero. Use a comma for thousands and a dot for decimals; Arabic digits and separators are accepted. Input with more than two decimal places is rejected. Monthly equivalents are displayed to two decimal places. Historical salary evidence above stays SAR.")
+                Text("Arithmetic from your entries only. These temporary amounts are not saved. Target bonus is not guaranteed. Blank fields count as zero. Use a comma for thousands and a dot for decimals; Arabic digits and separators are accepted. Input with more than two decimal places is rejected. Monthly equivalents are displayed to two decimal places.")
             }
             Section("The conversation to have") {
-                Text("Ask for the approved grade and fixed monthly range early.")
-                Text("Clarify direct reports, spend authority, KPI ownership and delivery expectations.")
+                Text("Ask for the budgeted pay range, its currency and payment frequency.")
+                Text("Clarify the responsibilities, working hours, decision-making scope and expectations for this role.")
                 Text("Get basic pay, allowances, bonus terms, medical coverage, leave and relocation support in writing.")
                 Text("Use verified achievements when negotiating. Compare commute, hours, probation and progression before committing.")
+            }
+            Section {
+                DisclosureGroup("Historical Saudi salary examples · 2025") {
+                    Text("Optional reference for selected Saudi roles. These dated examples are not a salary estimate for your profession, country or experience. The amounts keep their original monthly SAR units regardless of the calculator settings.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                    LabeledContent("Supply Chain Manager", value: "SAR 30,000–45,000")
+                    LabeledContent("Procurement Manager", value: "SAR 30,000–50,000")
+                    Text("Hays 2025: total fixed monthly package, including fixed allowances, using Q4 2024 data for the broad Saudi market. These are not basic-salary ranges.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                    Link("Hays 2025 guide · page 38", destination: URL(string: "https://www.hays.ae/documents/d/hays-salary-guide-ae/hays-saudi-arabia-salary-guide-2025")!)
+                    Text("The Professionals 2025 reports Supply & Demand Manager at SAR 30,220 / 42,866 / 53,710 monthly for the 25th percentile / median / 75th percentile (p.49), including basic salary, housing and transportation (p.15). Different role definitions and samples are not interchangeable.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                    Link("The Professionals 2025 guide", destination: URL(string: "https://theprofessionals.sa/wp-content/uploads/2026/02/Salary-Guide-2025-The-Professionals.pdf")!)
+                }
             }
         }
         .onAppear { if !initialized { currency = store.workspace.profile.effectiveCurrency; period = store.workspace.profile.effectivePayPeriod; initialized = true } }

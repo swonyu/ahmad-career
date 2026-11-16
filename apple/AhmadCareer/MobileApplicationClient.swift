@@ -4,9 +4,23 @@ import CryptoKit
 import FoundationNetworking
 #endif
 
+enum ApplicationServicePage: String, CaseIterable {
+    case connect, privacy, support, account
+}
+
 /// Phone clients never infer submission from an HTTP status, a tap, or a local note.
 enum MobileApplicationPolicy {
     static let maximumResumeBytes = 5 * 1024 * 1024
+    static let hostedServiceOrigin = "https://career-finder-service.jazzy-drake-8323.chatgpt.site"
+    static func connectionSetupAddress(_ existing: String) -> String {
+        existing.isEmpty ? hostedServiceOrigin : existing
+    }
+    static func isHostedService(_ address: String) -> Bool {
+        serviceURL(connectionSetupAddress(address))?.absoluteString == hostedServiceOrigin
+    }
+    static func servicePageURL(_ page: ApplicationServicePage, address: String) -> URL? {
+        serviceURL(connectionSetupAddress(address))?.appendingPathComponent(page.rawValue)
+    }
     static func serviceURL(_ text: String) -> URL? {
         guard var parts = URLComponents(string: text.trimmingCharacters(in: .whitespacesAndNewlines)),
               parts.scheme?.lowercased() == "https", let host = parts.host, !host.isEmpty,
@@ -147,7 +161,7 @@ enum MobileApplicationResponse {
         let code = envelope?["error"]?.object["code"]?.string
         let message: String
         switch statusCode {
-        case 401: message = "Your connection has expired. Request a new invitation for the same workspace to restore access. Your phone draft is kept."
+        case 401: message = "Your connection has expired or been revoked. Open connection setup and request a new code for the same workspace. Your phone draft is kept."
         case 409: message = "The service has a newer profile or application status. Review the current version before continuing."
         case 413: message = "This file is too large. Choose a PDF up to 5 MB."
         case 429: message = "Please wait before trying this action again."
@@ -155,7 +169,13 @@ enum MobileApplicationResponse {
             message = String((envelope?["error"]?.object["message"]?.string
                 ?? "The service returned an incomplete response. Refresh to check the result before trying again.").prefix(300))
         }
-        throw MobileApplicationError(message: code == "uncertain" ? "This application needs verification. It will not be sent again automatically." : message,
+        let detail: String
+        switch code {
+        case "uncertain": detail = "This application needs verification. It will not be sent again automatically."
+        case "account_deleting": detail = "This hosted workspace is being deleted. New submissions are stopped. Open account management for its current status; your phone draft is kept."
+        default: detail = message
+        }
+        throw MobileApplicationError(message: detail,
                                      statusCode: statusCode, code: code)
     }
 }
@@ -204,7 +224,7 @@ final class MobileApplicationClient: MobileApplicationServing {
     deinit { session.invalidateAndCancel() }
     func invalidate() { session.invalidateAndCancel() }
     func request(_ route: String, method: String = "GET", body: [String: ApplicationValue]? = nil) async throws -> [String: ApplicationValue] {
-        guard ["status", "session", "session/revoke", "workspace", "profile", "jobs", "prepare", "submit", "stop", "receipts"].contains(route) else {
+        guard ["status", "session", "session/revoke", "workspace", "profile", "jobs", "prepare", "submit", "advance", "stop", "receipts"].contains(route) else {
             throw MobileApplicationError(message: "This application action is unavailable.")
         }
         let url = origin.appendingPathComponent("api/apply").appendingPathComponent(route)

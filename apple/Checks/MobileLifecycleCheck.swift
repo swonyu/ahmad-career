@@ -74,10 +74,13 @@ private final class LifecycleSuite {
     }
     func workspace(_ revision: Int, name: String = "Example", jobs: [[String: ApplicationValue]] = [],
                    attempts: [[String: ApplicationValue]] = [], plans: [[String: ApplicationValue]] = [],
-                   workspace: String = "workspace-a", resume: ApplicationValue = .null) -> [String: ApplicationValue] {
-        ["ok": .bool(true), "workspaceId": .string(workspace), "profile": .object(server(revision, name: name, resume: resume)),
+                   workspace: String = "workspace-a", resume: ApplicationValue = .null,
+                   active: [String] = [], continuation: ApplicationValue? = nil) -> [String: ApplicationValue] {
+        var value: [String: ApplicationValue] = ["ok": .bool(true), "workspaceId": .string(workspace), "profile": .object(server(revision, name: name, resume: resume)),
          "jobs": .array(jobs.map(ApplicationValue.object)), "attempts": .array(attempts.map(ApplicationValue.object)),
-         "recoverablePlans": .array(plans.map(ApplicationValue.object)), "activePlanIds": .array([]), "mode": .string("test")]
+         "recoverablePlans": .array(plans.map(ApplicationValue.object)), "activePlanIds": .array(active.map(ApplicationValue.string)), "mode": .string("test")]
+        if let continuation { value["capabilities"] = .object(["dispatchContinuation": continuation]) }
+        return value
     }
     func review(_ id: String, revision: Int = 3, approved: Bool = false, itemState: String = "ready") -> [String: ApplicationValue] {
         ["id": .string(id), "digest": .string("digest-" + id), "profileRevision": .number(Double(revision)),
@@ -88,13 +91,14 @@ private final class LifecycleSuite {
                                   "payloadSummary": .object(["consentMarketing": .bool(false)])])])]
     }
     func fixture(_ state: PhoneApplicationState, service: TestService, tokens: TestTokens? = nil,
-                 factory: NativeApplicationsStore.ClientFactory? = nil) throws -> (NativeApplicationsStore, URL, TestTokens) {
+                 factory: NativeApplicationsStore.ClientFactory? = nil,
+                 clock: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) throws -> (NativeApplicationsStore, URL, TestTokens) {
         let folder = FileManager.default.temporaryDirectory.appendingPathComponent("career-lifecycle-" + UUID().uuidString)
         folders.append(folder); try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         try JSONEncoder().encode(state).write(to: folder.appendingPathComponent("phone-draft.json"))
         let tokens = tokens ?? TestTokens(); tokens.values[state.tokenAccount] = "synthetic-token"
         let create: NativeApplicationsStore.ClientFactory = factory ?? { _, token in service.token = token; return service }
-        return (NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: create), folder, tokens)
+        return (NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: create, monotonicTime: clock), folder, tokens)
     }
     func cleanup() { for folder in folders { try? FileManager.default.removeItem(at: folder) } }
 
@@ -160,7 +164,7 @@ private final class LifecycleSuite {
             await store.refresh()
             if returnError { gate.fail(MobileApplicationError(message: "Old connection expired", statusCode: 401)) }
             else { gate.finish(workspace(3, name: "Old", attempts: [["state": .string("dispatching")]])) }
-            await oldGET.value
+            _ = await oldGET.value
             try check(store.connected && store.revision == 4 && store.profile.firstName == "Saved", "Obsolete GET response/error cannot change acknowledged profile or authentication")
             try check(store.profile.resumeName == "Current.pdf" && store.profile.resumeData == nil, "Obsolete GET cannot restore stale PDF metadata or bytes")
             try check(store.attempts.first?["state"]?.string == "confirmed", "Confirmed receipt cannot regress to in-flight from an older GET")
@@ -187,7 +191,7 @@ private final class LifecycleSuite {
             try check(connected && store.serviceAddress == "https://second.example", "New connection uses a canonical service origin")
             if returnError { gate.fail(MobileApplicationError(message: "Old token expired", statusCode: 401)) }
             else { gate.finish(workspace(99, name: "Old reply", jobs: [["id": .string("old-job")]])) }
-            await oldGET.value
+            _ = await oldGET.value
             try check(store.connected && store.jobs.first?["id"]?.string == "new-job", "Obsolete connection response/error cannot repopulate or disconnect the new workspace")
             try check(store.profileNeedsSync && store.revision == 0 && store.profile.firstName == "Example", "Phone profile transfers only as an explicitly unsaved draft")
             try check(store.profile.resumeName.isEmpty && store.profile.payload()["resume"] == .null, "Foreign workspace CV metadata cannot silently select the new workspace's CV")
@@ -346,6 +350,206 @@ private final class LifecycleSuite {
             try check(!store.connected && store.keepProfileDraft(draft, context: store.editContext), "Locked credentials do not block local draft persistence")
             tokens.failLoad = false; service.handle = { _ in self.workspace(3) }; await store.refresh()
             try check(store.connected && store.profile.firstName == "Kept while locked", "Foreground refresh can restore unlocked credentials without losing the draft")
+            scenarios += 1
+        }
+        try await runHostedContinuation()
+    }
+
+    func runHostedContinuation() async throws {
+        // Offering the hosted address must not create an account, mutate an existing connection, or send a draft.
+        do {
+            let service = TestService()
+            let (fresh, folder, _) = try fixture(PhoneApplicationState(), service: service)
+            try check(fresh.connectionSetupAddress == MobileApplicationPolicy.hostedServiceOrigin && fresh.serviceAddress.isEmpty,
+                      "The new-service preset is presentation only")
+            try check(!fresh.connected && service.calls.isEmpty, "Opening a new phone workspace makes no hosted request")
+            let stored = try JSONDecoder().decode(PhoneApplicationState.self, from: Data(contentsOf: folder.appendingPathComponent("phone-draft.json")))
+            try check(stored.serviceAddress.isEmpty && !stored.connectionEnabled, "The preset does not persist a connection without pairing")
+            let (existing, _, _) = try fixture(initial(), service: service)
+            try check(existing.connectionSetupAddress == "https://first.example" && existing.serviceAddress == "https://first.example",
+                      "An existing companion origin is preserved exactly")
+            scenarios += 1
+        }
+        // Node companions and unknown future capabilities keep their existing GET-only polling behavior.
+        do {
+            let capabilities: [ApplicationValue?] = [nil, .string("server"), .string("future-version")]
+            for capability in capabilities {
+                let service = TestService()
+                service.handle = { _ in self.workspace(3, active: ["server-owned-plan"], continuation: capability) }
+                let (store, _, _) = try fixture(initial(), service: service)
+                await store.pollApprovedApplications()
+                try check(!store.requiresClientContinuation && service.calls.map(\.route) == ["workspace"],
+                          "Only the exact client capability can request advance")
+            }
+            scenarios += 1
+        }
+        // Each advance uses fresh server authority, carries no approval, and trusts only the subsequent workspace receipt.
+        do {
+            let service = TestService(); var now: TimeInterval = 100; var advances = 0
+            service.handle = { call in
+                if call.route == "advance" {
+                    advances += 1
+                    return ["ok": .bool(true), "attempts": .array([.object(["id": .string("ignored"), "state": .string("confirmed"),
+                            "provider": .string("lever"), "applicationId": .string("not-a-workspace-receipt"), "evidenceMode": .string("live")])])]
+                }
+                var attempt: [String: ApplicationValue] = ["id": .string("attempt-1"), "state": .string(advances == 0 ? "ready" : advances == 1 ? "dispatching" : "confirmed"),
+                                                            "provider": .string("lever"), "evidenceMode": .string("test")]
+                if advances >= 2 { attempt["applicationId"] = .string("workspace-receipt") }
+                var value = self.workspace(3, attempts: [attempt], plans: [self.review("unapproved-review")],
+                                           active: advances < 2 ? ["server-approved-plan"] : [], continuation: .string("client"))
+                value["mode"] = .string("local")
+                return value
+            }
+            let (store, folder, tokens) = try fixture(initial(), service: service, clock: { now })
+            store.selected = ["a-different-local-choice"]
+            await store.pollApprovedApplications()
+            try check(service.calls.map(\.route) == ["workspace", "advance", "workspace"], "Advance is bracketed by authenticated workspace reads")
+            try check(service.calls[1].method == "POST" && service.calls[1].body == ["planId": .string("server-approved-plan")],
+                      "Continuation contains only the server's active plan ID, never approval or local choices")
+            try check(service.token == "synthetic-token" && store.mode == "local" && store.requiresClientContinuation,
+                      "Hosted continuation uses the paired client even when the service mode remains local")
+            try check(store.attempts.first?["state"]?.string == "dispatching" && !MobileApplicationPolicy.isVerified(store.attempts.first ?? [:]),
+                      "An advance response cannot fabricate a receipt before the workspace confirms it")
+            await store.pollApprovedApplications(); now = 103.999; await store.pollApprovedApplications()
+            try check(advances == 1, "A four-second completion gap prevents a tight continuation loop")
+            now = 104; await store.pollApprovedApplications()
+            try check(advances == 2 && store.activePlanIDs.isEmpty && store.attempts.first?["applicationId"]?.string == "workspace-receipt",
+                      "The next eligible poll adopts only the service's durable receipt")
+            now = 200; await store.pollApprovedApplications()
+            try check(advances == 2 && !service.calls.contains(where: { ["prepare", "submit"].contains($0.route) }),
+                      "Polling never prepares or approves another application")
+            let saved = try JSONSerialization.jsonObject(with: Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))) as! [String: Any]
+            try check(["approvedAt", "activePlanIds", "recoverablePlans", "capabilities"].allSatisfy { saved[$0] == nil },
+                      "Approval and dispatch authority are never persisted as local phone state")
+            let restored = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+            try check(restored.activePlanIDs.isEmpty && !restored.requiresClientContinuation,
+                      "Relaunch requires a fresh server workspace before any continuation")
+            scenarios += 1
+        }
+        // The user can stop while a request is running; another poll cannot overlap it.
+        do {
+            let service = TestService(); let gate = DelayedResponse(); var stopped = false
+            service.handle = { call in
+                if call.route == "advance" { return try await gate.wait() }
+                if call.route == "stop" { stopped = true; return ["ok": .bool(true)] }
+                return self.workspace(3, active: stopped ? [] : ["approved"], continuation: .string("client"))
+            }
+            let (store, _, _) = try fixture(initial(), service: service)
+            let sending = Task { await store.pollApprovedApplications() }; try await waitUntil { gate.started }
+            try check(store.advancingApprovedApplication && !store.busy, "Approved progress is visible while Stop remains usable")
+            let count = service.calls.count
+            await store.pollApprovedApplications(); let refreshed = await store.refresh()
+            try check(service.calls.count == count && !refreshed, "Concurrent polling cannot overlap an advance or install an older GET")
+            await store.stop()
+            try check(stopped && service.calls.filter { $0.route == "advance" }.count == 1, "Explicit Stop reaches the server during continuation")
+            gate.finish(["ok": .bool(true)]); await sending.value
+            try check(store.activePlanIDs.isEmpty && !store.advancingApprovedApplication, "Completion refresh respects the server's stopped queue")
+            scenarios += 1
+        }
+        // A cached active plan is insufficient if its fresh workspace read fails or is malformed.
+        do {
+            let service = TestService(); var outcome = "valid"
+            service.handle = { _ in
+                if outcome == "offline" { throw URLError(.notConnectedToInternet) }
+                return self.workspace(3, active: ["approved"], continuation: outcome == "malformed" ? .bool(true) : .string("client"))
+            }
+            let (store, _, _) = try fixture(initial(), service: service)
+            await store.refresh()
+            try check(store.activePlanIDs == ["approved"] && store.requiresClientContinuation, "A valid workspace initially exposes the approved queue")
+            outcome = "offline"; await store.pollApprovedApplications()
+            outcome = "malformed"; await store.pollApprovedApplications()
+            try check(!service.calls.contains(where: { $0.route == "advance" }), "Neither an offline GET nor malformed capability permits use of cached authority")
+            try check(store.activePlanIDs == ["approved"] && store.profile.firstName == "Example", "Rejected envelopes preserve existing visible evidence")
+            scenarios += 1
+        }
+        // A timeout is reconciled by GET; an uncertain outcome never enters a client retry path.
+        do {
+            let service = TestService(); var attempted = false; var now: TimeInterval = 100
+            service.handle = { call in
+                if call.route == "advance" { attempted = true; throw URLError(.timedOut) }
+                return self.workspace(3, attempts: attempted ? [["id": .string("uncertain-attempt"), "state": .string("uncertain")]] : [],
+                                      active: attempted ? [] : ["approved"], continuation: .string("client"))
+            }
+            let (store, _, _) = try fixture(initial(), service: service, clock: { now })
+            await store.pollApprovedApplications(); now = 200; await store.pollApprovedApplications()
+            try check(store.attempts.first?["state"]?.string == "uncertain" && store.activePlanIDs.isEmpty,
+                      "Timeout recovery displays uncertainty from the service")
+            try check(service.calls.filter { $0.route == "advance" }.count == 1 && !service.calls.contains(where: { $0.route == "submit" }),
+                      "Uncertain attempts are never automatically retried or reapproved")
+            scenarios += 1
+        }
+        // Unapproved and rate-limited reviews require the visible approval path, even after a cooldown ends.
+        do {
+            let service = TestService(); var explicitlyApproved = false; var advances = 0
+            var held = review("cooldown", approved: true, itemState: "rate_limited")
+            var item = held["items"]!.array[0].object
+            item["retryAt"] = .string("2026-01-01T00:00:00Z"); held["items"] = .array([.object(item)])
+            service.handle = { call in
+                if call.route == "submit" { explicitlyApproved = call.body?["approved"] == .bool(true); return ["ok": .bool(true)] }
+                if call.route == "advance" { advances += 1; return ["ok": .bool(true)] }
+                return self.workspace(3, plans: [self.review("not-approved"), held],
+                                      active: explicitlyApproved && advances == 0 ? ["cooldown"] : [], continuation: .string("client"))
+            }
+            let (store, _, _) = try fixture(initial(), service: service)
+            await store.pollApprovedApplications()
+            try check(advances == 0 && !service.calls.contains(where: { $0.route == "submit" }),
+                      "Neither an unapproved review nor an elapsed 429 cooldown starts automatically")
+            try check(store.resumeReview(held), "A cooldown review remains available for deliberate review")
+            let approved = await store.submitReviewed()
+            try check(approved && explicitlyApproved && advances == 0, "Visible submit records a fresh server approval before continuation")
+            await store.pollApprovedApplications()
+            try check(advances == 1 && service.calls.filter { $0.route == "submit" }.count == 1,
+                      "Only the server's newly active cooldown plan is continued")
+            scenarios += 1
+        }
+        // Old connection completions and 401 errors cannot disturb a newer connection's running request.
+        for oldFails in [false, true] {
+            let old = TestService(); let newer = TestService("https://second.example")
+            let oldGate = DelayedResponse(), newGate = DelayedResponse(); var newFinished = false
+            old.handle = { call in
+                if call.route == "session/revoke" { return ["ok": .bool(true)] }
+                if call.route == "advance" { return try await oldGate.wait() }
+                return self.workspace(3, active: ["old-approved"], continuation: .string("client"))
+            }
+            newer.handle = { call in
+                if call.route == "session" { return ["ok": .bool(true), "sessionToken": .string("new-token"), "workspaceId": .string("workspace-b"), "profile": .object(self.server(0))] }
+                if call.route == "advance" { return try await newGate.wait() }
+                return self.workspace(0, workspace: "workspace-b", active: newFinished ? [] : ["new-approved"], continuation: .string("client"))
+            }
+            let (store, _, _) = try fixture(initial(), service: old, factory: { url, token in
+                let service = url.host == "second.example" ? newer : old; service.token = token; return service
+            })
+            let oldTask = Task { await store.pollApprovedApplications() }; try await waitUntil { oldGate.started }
+            let changed = await store.connect(address: "https://second.example", code: "SYNTHETIC")
+            try check(changed && store.connected && store.activePlanIDs == ["new-approved"], "Changing connection retires the old continuation authority")
+            let newTask = Task { await store.pollApprovedApplications() }; try await waitUntil { newGate.started }
+            if oldFails { oldGate.fail(MobileApplicationError(message: "Old token expired", statusCode: 401)) }
+            else { oldGate.finish(["ok": .bool(true), "activePlanIds": .array([.string("old-approved")])]) }
+            await oldTask.value
+            try check(store.connected && store.advancingApprovedApplication && store.activePlanIDs == ["new-approved"],
+                      "Old continuation results/errors cannot disconnect or clear newer in-flight state")
+            newFinished = true; newGate.finish(["ok": .bool(true)]); await newTask.value
+            try check(!store.advancingApprovedApplication && store.activePlanIDs.isEmpty && newer.calls.filter { $0.route == "advance" }.count == 1,
+                      "The new connection independently reconciles its own continuation")
+            scenarios += 1
+        }
+        // Pending account deletion stops continuation immediately; later token revocation retains the phone draft.
+        do {
+            let service = TestService(); var deleting = false; var revoked = false
+            service.handle = { call in
+                if revoked { throw MobileApplicationError(message: "Revoked", statusCode: 401) }
+                if call.route == "advance" { deleting = true }
+                if deleting { throw MobileApplicationError(message: "Workspace is being deleted", statusCode: 409, code: "account_deleting") }
+                return self.workspace(3, active: ["approved"], continuation: .string("client"))
+            }
+            let (store, _, tokens) = try fixture(initial(), service: service)
+            await store.pollApprovedApplications()
+            try check(store.connected && store.activePlanIDs.isEmpty && !store.requiresClientContinuation && store.plan == nil,
+                      "Pending account deletion clears dispatch/review authority without discarding the phone draft")
+            revoked = true; await store.refresh()
+            try check(!store.connected && tokens.values.isEmpty && store.profile.firstName == "Example", "Completed deletion revokes the phone token and preserves its draft")
+            await store.pollApprovedApplications()
+            try check(service.calls.filter { $0.route == "advance" }.count == 1, "A deleted account cannot continue from cached authority")
             scenarios += 1
         }
     }

@@ -405,6 +405,8 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
             Panel {
                 Text("Applications are in progress", style = MaterialTheme.typography.titleLarge)
                 Text("A stop request cancels jobs that have not been dispatched. Receipts show the actual outcome for anything already sent.")
+                if (state.clientContinuation) Text("Keep Career Finder open to continue the approved batch. Leaving the app pauses the next request; an application already sent may still finish.", style = MaterialTheme.typography.bodySmall)
+                if (state.activePlans.any { it in state.continuationHolds }) Text("Continuation is paused on this phone for a stop request. Refresh receipts to check the service outcome, or request Stop again if needed.", style = MaterialTheme.typography.bodySmall)
                 state.activePlans.forEach { id -> OutlinedButton(onClick = { model.stop(id) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Stop remaining applications") } }
                 TextButton(onClick = receipts, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("View receipts") }
             }
@@ -684,12 +686,15 @@ private fun FullScreenForm(title: String, close: () -> Unit, content: @Composabl
 
 @Composable
 private fun ConnectionDialog(state: CareerUiState, model: CareerViewModel, close: () -> Unit) {
-    var origin by rememberSaveable { mutableStateOf(state.connection?.origin ?: "") }
+    val context = LocalContext.current
+    var origin by rememberSaveable(state.connection?.origin) { mutableStateOf(ServicePages.initialOrigin(state.connection)) }
     var code by remember { mutableStateOf("") }
     var removeLocally by remember { mutableStateOf(false) }
+    val validOrigin = remember(origin) { runCatching { BoundaryPolicy.serviceOrigin(origin.trim()) }.getOrNull() }
+    val informationOrigin = state.connection?.origin ?: validOrigin
     FullScreenForm("Private connection", close) {
         LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            item { Heading("Your phone. Your workspace.", "Connect using an HTTPS service address and its one-time pairing code. No password or API key belongs in this app.") }
+            item { Heading("Your phone. Your workspace.", "Open secure setup in your browser, sign in there and create a one-time pairing code. Return here to connect this phone. Your password and employer API keys stay out of the app.") }
             if (state.connection != null) item {
                 Panel {
                     Text("Connected service", style = MaterialTheme.typography.titleMedium)
@@ -703,18 +708,37 @@ private fun ConnectionDialog(state: CareerUiState, model: CareerViewModel, close
             }
             item { Field("HTTPS service address", origin, { origin = it }, KeyboardType.Uri, enabled = !state.busy) }
             item {
+                OutlinedButton(onClick = { validOrigin?.let { openLink(context, ServicePages.url(it, "connect")) } },
+                    enabled = validOrigin != null && !state.busy,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text("Open secure connection setup") }
+                Text(if (validOrigin == ServicePages.DEFAULT_ORIGIN)
+                    "The hosted setup page uses ChatGPT sign-in in your browser. Create a fresh code, then paste it below."
+                    else "Use this service’s setup page, or request a one-time code from its operator. Check the address before pairing.",
+                    style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            item {
                 OutlinedTextField(code, { code = it.take(64) }, label = { Text("One-time pairing code") }, modifier = Modifier.fillMaxWidth(),
                     singleLine = true, enabled = !state.busy, visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters), shape = RoundedCornerShape(14.dp))
             }
-            item { Action("Pair this phone", !state.busy && origin.isNotBlank() && code.isNotBlank() && !state.storageBlocked) { model.pair(origin, code) { code = ""; close() } } }
+            item { Action("Pair this phone", !state.busy && validOrigin != null && code.isNotBlank() && !state.storageBlocked) { model.pair(origin, code) { code = ""; close() } } }
             if (state.error != null) item { Text(state.error, color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }) }
             item {
                 Panel {
                     Text("Built around your privacy", style = MaterialTheme.typography.titleLarge)
-                    Text("Connection tokens and saved phone drafts are encrypted with Android Keystore and excluded from backup. Your PDF is shared with the private service only when you save a connected profile.")
-                    Text("A service and supported employer integration must be configured before live Auto Apply is available. This app never claims an employer accepted an application without a receipt.")
+                    Text("Connection tokens and saved phone drafts are encrypted with Android Keystore and excluded from backup. Saving a connected profile uploads its fields and PDF to the selected service. Synced opportunities and application receipts are also stored there.")
+                    Text("The hosted service keeps this data in your cloud workspace. Employers receive application data only through an approved review and an enabled employer integration. A confirmed receipt is required before an application counts as verified.")
                     Text("After pairing, Profile lets you review and copy your saved phone draft. Nothing is uploaded by pairing alone.", style = MaterialTheme.typography.bodySmall)
+                    if (informationOrigin != null) {
+                        Text("Service information: $informationOrigin", style = MaterialTheme.typography.bodySmall)
+                        TextButton(onClick = { openLink(context, ServicePages.url(informationOrigin, "privacy")) },
+                            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Privacy and data use") }
+                        TextButton(onClick = { openLink(context, ServicePages.url(informationOrigin, "support")) },
+                            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Help and support") }
+                        TextButton(onClick = { openLink(context, ServicePages.url(informationOrigin, "account")) },
+                            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Account, recovery and deletion") }
+                        Text("Account actions open in your browser. Removing this phone’s connection does not delete cloud records or applications already sent to employers.", style = MaterialTheme.typography.bodySmall)
+                    }
                 }
             }
         }

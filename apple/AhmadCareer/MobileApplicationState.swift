@@ -32,6 +32,7 @@ struct ApplicationWorkspaceSnapshot {
     let recoverablePlans: [[String: ApplicationValue]]
     let activePlanIDs: [String]
     let mode: String
+    let requiresClientContinuation: Bool
     init(_ value: [String: ApplicationValue], workspaceID: String) throws {
         func invalid() -> MobileApplicationError {
             MobileApplicationError(message: "The service returned an incomplete workspace. Your current draft and application activity are preserved.")
@@ -46,6 +47,14 @@ struct ApplicationWorkspaceSnapshot {
         guard value["ok"]?.bool == true, !workspaceID.isEmpty, value["workspaceId"]?.string == workspaceID,
               case .object(let profile)? = value["profile"], case .array(let active)? = value["activePlanIds"],
               active.allSatisfy({ !($0.string?.isEmpty ?? true) }), let mode = value["mode"]?.string, !mode.isEmpty else { throw invalid() }
+        var continuation: String?
+        if let capabilities = value["capabilities"] {
+            guard case .object(let fields) = capabilities else { throw invalid() }
+            if let declared = fields["dispatchContinuation"] {
+                guard let name = declared.string else { throw invalid() }
+                continuation = name
+            }
+        }
         let jobs = try objects("jobs"), attempts = try objects("attempts"), plans = try objects("recoverablePlans")
         guard jobs.allSatisfy({ !($0["id"]?.string?.isEmpty ?? true) && $0["url"]?.string != nil
                     && $0["title"]?.string != nil && $0["company"]?.string != nil }),
@@ -58,6 +67,7 @@ struct ApplicationWorkspaceSnapshot {
               }) else { throw invalid() }
         self.profile = try ApplicationServerProfile(profile); self.jobs = jobs; self.attempts = attempts
         recoverablePlans = plans; activePlanIDs = active.compactMap(\.string); self.mode = mode
+        requiresClientContinuation = continuation == "client"
     }
 }
 

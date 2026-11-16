@@ -1,0 +1,13 @@
+{
+  "observedAt": "2026-11-16T14:54:41.775Z",
+  "status": "passed",
+  "checks": 8,
+  "scope": "Actual bundled application handler executing inside workerd with nodejs_compat, D1 and R2; local synthetic identity headers only.",
+  "realEmployerRequests": 0,
+  "sourceHashes": {
+    "server/applications.mjs": "f22bedd05da7d19a74d20aa0b1c581c2bc69a34a4f521b1db5f6c4908744b8bb",
+    "server/provider.mjs": "4f17a0915f7111d33ff9a42eb1c764ebfce698d51aaf57fb6c8faf67507bf844",
+    "server/validation.mjs": "132624398e14fefe1cd36cab63a0cce45c3a35023ff85b0d069db6ebad8eb4b4",
+    "tests/hosted-worker.mjs": "87595fbc3678ce8c0837ebd0a6fa462fc9bee0bcca0277586d5cbfec583b5281"
+  }
+}

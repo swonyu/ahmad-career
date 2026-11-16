@@ -1,0 +1,40 @@
+{
+  "observedAtUtc": "2026-11-16T14:07:09.541150+00:00",
+  "packagedResources": {
+    "debug": {
+      "path": "<isolated-task-root>/android-check/app/build/outputs/apk/debug/app-debug.apk",
+      "sha256": "ecffb59697d0a87757d117ea0a6fd2aed66daaa1731bcf95a7a09ddf99ed87e3",
+      "bytes": 11816005,
+      "fixtureCaEntries": [],
+      "networkSecurityXml": "E: network-security-config (line=2)\n    E: base-config (line=3)\n      A: cleartextTrafficPermitted=false\n        E: trust-anchors (line=4)\n            E: certificates (line=4)\n              A: src=\"system\" (Raw: \"system\")\n"
+    },
+    "release_resources": {
+      "path": "<isolated-task-root>/android-check/app/build/intermediates/linked_resources_binary_format/release/processReleaseResources/linked-resources-binary-format-release.ap_",
+      "sha256": "f80363b33bd848cf03048c2e22d0a1f704333cca80e74533e23078a91a5e0756",
+      "bytes": 492063,
+      "fixtureCaEntries": [],
+      "networkSecurityXml": "E: network-security-config (line=2)\n    E: base-config (line=3)\n      A: cleartextTrafficPermitted=false\n        E: trust-anchors (line=4)\n            E: certificates (line=4)\n              A: src=\"system\" (Raw: \"system\")\n"
+    },
+    "acceptance": {
+      "path": "<isolated-task-root>/android-check/app/build/outputs/apk/acceptance/app-acceptance.apk",
+      "sha256": "9c9edc477bc48b3b374be113addd5843f3f6b0533f3c843a81ec8fa5055811b7",
+      "bytes": 10994980,
+      "fixtureCaEntries": [
+        "res/raw/acceptance_ca.pem"
+      ],
+      "networkSecurityXml": "E: network-security-config (line=3)\n    E: base-config (line=4)\n      A: cleartextTrafficPermitted=false\n        E: trust-anchors (line=5)\n            E: certificates (line=5)\n              A: src=\"system\" (Raw: \"system\")\n    E: domain-config (line=7)\n      A: cleartextTrafficPermitted=false\n        E: domain (line=8)\n          A: includeSubdomains=false\n            T: '10.0.2.2'\n        E: trust-anchors (line=9)\n            E: certificates (line=9)\n              A: src=@0x7f080000\n"
+    }
+  },
+  "normalApksignerOutput": "Verifies\nVerified using v1 scheme (JAR signing): false\nVerified using v2 scheme (APK Signature Scheme v2): true\nVerified using v3 scheme (APK Signature Scheme v3): false\nVerified using v3.1 scheme (APK Signature Scheme v3.1): false\nVerified using v4 scheme (APK Signature Scheme v4): false\nVerified for SourceStamp: false\nNumber of signers: 1\nSigner #1 certificate DN: C=US, O=Android, CN=Android Debug\nSigner #1 certificate SHA-256 digest: 8790e9582889118f556fa287e8f031ee3d2f5221d25008ec5f399c8444c1de17\nSigner #1 certificate SHA-1 digest: 156fa1f3b0be2e8fc7db4d8f6bfd481465eb4e2a\nSigner #1 certificate MD5 digest: f90eb7fc8ef9693c807400e259c689f8\nSigner #1 key algorithm: RSA\nSigner #1 key size (bits): 2048\nSigner #1 public key SHA-256 digest: 67932e4f7fbf78caa970dbcb085023b5fe60514afaf667c3d5a74f9e92f21902\nSigner #1 public key SHA-1 digest: f6a787d7e0133a84a389796cac3287f5eed2a56d\nSigner #1 public key MD5 digest: 3e4955d2bde7a556d9961d0b00ed999d\n",
+  "normalPackageBadging": [
+    "package: name='com.saleh.careerfinder.preview' versionCode='2' versionName='0.2.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'",
+    "minSdkVersion:'26'",
+    "targetSdkVersion:'36'",
+    "uses-permission: name='android.permission.INTERNET'",
+    "uses-permission: name='com.saleh.careerfinder.preview.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'",
+    "application-label:'Career Finder'"
+  ],
+  "normalSignerMatchesRetainedVersion01": true,
+  "generatedPublicAcceptanceCaPemSha256": "96dc80802f77b3b55412d4a16b4104d19eecea04efc4184a062545e3fa1744db",
+  "systemTrustModified": false
+}

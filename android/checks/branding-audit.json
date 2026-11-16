@@ -1,0 +1,33 @@
+{
+  "observedAtUtc": "2026-11-16T15:05:26.162676+00:00",
+  "normalPackagedLabel": "Career Finder",
+  "sourceLabel": "Career Finder",
+  "mainHeading": "CAREER FINDER",
+  "ahmadMatchesInMainSourceAndResources": 0,
+  "personalDefaults": false,
+  "identityDefaults": {
+    "firstName": "",
+    "lastName": "",
+    "email": "",
+    "phone": ""
+  },
+  "resumeDefault": null,
+  "opportunityDefaults": [],
+  "icon": "res/drawable/ic_career_finder.xml; repository vector, no portrait or personal image",
+  "notificationAPIsInMainSource": [],
+  "internalNamespacesPreserved": [
+    "com.saleh.careerfinder",
+    "com.saleh.careerfinder.preview"
+  ],
+  "hostedOrigin": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
+  "existingPairedOriginsPreserved": true,
+  "sourceAuditCommand": "rg -n -i 'ahmad|saleh|app_name|versionCode|versionName|firstName.*=|lastName.*=|email.*=|Career Finder' app/build.gradle.kts app/src/main README.md",
+  "packageEvidence": [
+    "package: name='com.saleh.careerfinder.preview' versionCode='3' versionName='0.3.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'",
+    "minSdkVersion:'26'",
+    "targetSdkVersion:'36'",
+    "uses-permission: name='android.permission.INTERNET'",
+    "uses-permission: name='com.saleh.careerfinder.preview.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'",
+    "application-label:'Career Finder'"
+  ]
+}

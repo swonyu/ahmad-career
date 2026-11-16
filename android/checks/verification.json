@@ -1,25 +1,26 @@
 {
-  "schemaVersion": 2,
-  "observedAtUtc": "2026-11-16T14:07:09.541150+00:00",
+  "schemaVersion": 3,
+  "observedAtUtc": "2026-11-16 15:07:39 UTC",
   "sourceRoot": "android/",
-  "scope": "Native Android phone preview 0.2.0; isolated synthetic employer acceptance, no real employer submission or production release.",
+  "scope": "Career Finder Android preview 0.3.0 with hosted setup and capability-gated continuation; no owner pairing or employer submission.",
   "buildInputs": {
-    "manifestSha256": "c9fad1a156252d7996c955ec43113c763cc0f962738bdaa9d60daffced71ecf7",
+    "manifestSha256": "df04a7d8cb184ce5c74cfd44b1c6580fea429d5e6a199ef966e4884649a82c65",
     "manifestEncoding": "SHA-256 of UTF-8 JSON mapping relative paths to SHA-256, keys sorted, compact separators, no trailing newline.",
-    "includes": "25 app/instrumentation/acceptance source and Gradle/wrapper files. Generated public acceptance CA is recorded separately. Documentation, checks, build caches and machine-local configuration are excluded.",
+    "includes": "26 app/instrumentation/acceptance source and Gradle/wrapper files. Documentation, checks, generated resources, caches and local configuration excluded.",
     "files": {
-      "app/build.gradle.kts": "d46dc66ae3fe0bfe7d236361e1bf8b27b68266bbd1d3dca0cc0d9fd4d13027fe",
+      "app/build.gradle.kts": "b098b80e50bbf1cd9133f4ee8c45ad903fdde87122fb1f79e979004a785fb9ea",
       "app/src/acceptance/res/xml/network_security_config.xml": "aef8c30928856fe0ae846f20aa2253b923f6a724d5435dc58de946932e75221d",
+      "app/src/androidTest/java/com/saleh/careerfinder/ContinuationRegressionTest.kt": "848251a8c2e8faa8305fa32f24dfe65cd16a9b1ab50f2d960b3070cdf22cb8ea",
       "app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt": "344e9a28e12fd0ed6f84711b02bbbeb6279801c24088f202d6eeb874dd809c97",
       "app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt": "4d306881e91a9031be157e857492dc5ac128c628c54f6a65b817f34a6c8239e7",
       "app/src/androidTest/java/com/saleh/careerfinder/VaultAcceptanceTest.kt": "11d66866ac03ffc98021706d149836b7ca6f780f7841eacd167b13ce67f14968",
       "app/src/androidTest/java/com/saleh/careerfinder/WorkspaceRegressionTest.kt": "27cb1427039e9b382f3cf62e5708d9d9e6024a2bcf4dea11a625e709e282045e",
       "app/src/main/AndroidManifest.xml": "d824b6e7681f09b3a148b212f16de1b308b9dd9742a8cbcea7cd9807cf7386b0",
       "app/src/main/java/com/saleh/careerfinder/BoundaryPolicy.java": "307722cfcdf3672d58afc9a15f5f4e94d80ef48827150e2b26314cdf025d73fb",
-      "app/src/main/java/com/saleh/careerfinder/CareerApi.kt": "06f3acd1834999384a50ab9cd72b455dbc4d12e774457673d417e700ab1d2d4a",
-      "app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt": "b582685832113b4a7a1d7bc0ac605bac0d320cca354228160a5eccb8852f17d6",
-      "app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "7d613849eadeb873dff8cf4bf85822745d48888888f48f44b350a89d4571f6e7",
-      "app/src/main/java/com/saleh/careerfinder/Models.kt": "002335bf19d0dc736fcb5cc267415ac2fb94bc5ea1ec947f7cbff9d35a97db6e",
+      "app/src/main/java/com/saleh/careerfinder/CareerApi.kt": "50962862e95f2589ace17e475e12e71bf183c9858e2ad95cea4b103e36ed3404",
+      "app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt": "6ef3afc06ab2332429b3eb70e439c5d7843c2d9474299bf00171b9e6594b4b93",
+      "app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "1628fc2d6f25afaa9369b508156cde69f7bc3c5abaf6595dbfb0854a07fdfff8",
+      "app/src/main/java/com/saleh/careerfinder/Models.kt": "1596a194911e467b04789a0157a5759d57227d6c4206f33dd0bfbfdc79a2b673",
       "app/src/main/java/com/saleh/careerfinder/SecureVault.kt": "c892be2f75738457c810cd6e3e317ebc5b717ddd6a90da162e6e53b2825f6999",
       "app/src/main/res/drawable/ic_career_finder.xml": "d588b5a168038756c4e6aa4df0f89b3f2723c37503112b7d269c1974dcba4746",
       "app/src/main/res/values/strings.xml": "e9aafdbf8d3dba742e5c2fc6e562540c61a79d900bb2f4556437ae9087b3d796",
@@ -27,9 +28,9 @@
       "app/src/main/res/xml/data_extraction_rules.xml": "8b55ff5489071bb19a4e89967b604a16c0e4d1e87a2df3c73c64417314a59f22",
       "app/src/main/res/xml/network_security_config.xml": "eb5f5c57a88fc656cb97ee142694b996b286064ba973e51e0158bcdff08b34f2",
       "build.gradle.kts": "3120598110d304cc605c5919399ce5a9e68776b327d1462c0ba15bd0dd915b2a",
+      "gradle.properties": "d83e273790ac248fa6c70b82fbdeec7d8146773136a9028845247cb63873ffee",
       "gradle/wrapper/gradle-wrapper.jar": "81a82aaea5abcc8ff68b3dfcb58b3c3c429378efd98e7433460610fecd7ae45f",
       "gradle/wrapper/gradle-wrapper.properties": "c040b6ef2fb893ff5beea5a281614f2848f1c3996a7886f650b713f8240656a2",
-      "gradle.properties": "d83e273790ac248fa6c70b82fbdeec7d8146773136a9028845247cb63873ffee",
       "gradlew": "734b3879d3501dce471cf0522d3bcbafe76873d9fc5129345b67fb43bd15e933",
       "gradlew.bat": "57931b17dd228e5c24dac90e815d0bf82477e831a4618dfab4136f5446b42a9f",
       "settings.gradle.kts": "df33349123728bf2c303dc9ce52c41a3be7903a23175411d20b493f4b0d6d036"
@@ -50,12 +51,9 @@
   },
   "build": {
     "status": "passed",
-    "commands": [
-      "./gradlew --no-daemon --max-workers=2 :app:assembleDebug :app:lintDebug :app:assembleDebugAndroidTest :app:processReleaseResources",
-      "./gradlew --no-daemon --max-workers=2 -PcareerAcceptance=true -PcareerAcceptanceCa=<isolated-task-root>/tls-acceptance-runtime/ca.pem :app:assembleAcceptance :app:assembleAcceptanceAndroidTest"
-    ],
+    "command": "./gradlew --no-daemon --max-workers=2 :app:assembleDebug :app:lintDebug :app:assembleDebugAndroidTest :app:processReleaseResources",
+    "gradleDurationSeconds": 29,
     "output": "build-output.txt",
-    "macOutputPath": "<isolated-task-root>/android-reliability-build-r5.log",
     "lint": {
       "errors": 0,
       "advisories": 6,
@@ -99,7 +97,6 @@
     "checks": 36,
     "command": "bash checks/run-policy-checks.sh",
     "executedOn": [
-      "Linux scratch runtime",
       "isolated macOS JDK 21"
     ],
     "networkRequests": 0,
@@ -107,8 +104,11 @@
   },
   "instrumentation": {
     "status": "passed",
-    "totalPassed": 17,
-    "totalSkipped": 0,
+    "passed": 22,
+    "skipped": 0,
+    "durationSeconds": 6.437,
+    "output": "instrumentation-output.txt",
+    "command": "adb -P 5049 -s emulator-5572 shell am instrument -w -r -e class com.saleh.careerfinder.PhoneAcceptanceTest,com.saleh.careerfinder.VaultAcceptanceTest,com.saleh.careerfinder.WorkspaceRegressionTest,com.saleh.careerfinder.ContinuationRegressionTest com.saleh.careerfinder.preview.test/androidx.test.runner.AndroidJUnitRunner",
     "emulator": {
       "api": 36,
       "abi": "arm64-v8a",
@@ -117,78 +117,45 @@
       "name": "careerfinder_acceptance",
       "adbPort": 5049
     },
-    "suites": [
-      {
-        "name": "ordinary native regressions",
-        "passed": 15,
-        "durationSeconds": 5.606,
-        "output": "instrumentation-output.txt",
-        "command": "adb -P 5049 -s emulator-5572 shell am instrument -w -r -e class com.saleh.careerfinder.PhoneAcceptanceTest,com.saleh.careerfinder.VaultAcceptanceTest,com.saleh.careerfinder.WorkspaceRegressionTest com.saleh.careerfinder.preview.test/androidx.test.runner.AndroidJUnitRunner",
-        "cases": [
-          "PhoneAcceptanceTest.phoneProfile_survivesActivityRecreation_withoutAnyService",
-          "PhoneAcceptanceTest.blankWorkspace_hasHonestEmptyState_andConnectionRequirement",
-          "VaultAcceptanceTest.originalSchemaOneEnvelope_remainsReadableWithoutAStorageAreaPointer",
-          "VaultAcceptanceTest.freshPrivateArea_preservesUnreadableBytes_andUsesANewKeystoreKey",
-          "VaultAcceptanceTest.storedToken_isEncrypted_andBoundToItsRecordName",
-          "WorkspaceRegressionTest.concurrentApproval_preventsAutomaticReplacementOfTheOldPlan",
-          "WorkspaceRegressionTest.malformedSuccessfulResponses_doNotReplaceThePhoneDraftOrJobList",
-          "WorkspaceRegressionTest.explicitNoAndSelections_surviveModelRecreation_withoutRestoringApproval",
-          "WorkspaceRegressionTest.storageReadAndWriteFailures_canRetry_withoutLosingTheDraft",
-          "WorkspaceRegressionTest.editedReview_stopsOnlyTheUnapprovedPlan_onDeliberatePrepareUpdate",
-          "WorkspaceRegressionTest.localDisconnect_preservesWorkspaceDraft_andIgnoresItsLateResponse",
-          "WorkspaceRegressionTest.oldWorkspaceResponse_cannotRegressAnAcknowledgedProfileSave",
-          "WorkspaceRegressionTest.copyingPhoneDraft_isPrivate_preservesOriginal_andMigratesManualAppliedIdentityOnSync",
-          "WorkspaceRegressionTest.backgroundProfileChange_cannotRestoreAStalePreparedPlan",
-          "WorkspaceRegressionTest.profileConflict_keepsOriginalRevision_untilExplicitChoice_andUsesLatestRemotePDF"
-        ]
-      },
-      {
-        "name": "ordinary preview rejects fixture TLS",
-        "passed": 1,
-        "durationSeconds": 0.533,
-        "output": "tls-rejection-output.txt",
-        "command": "adb -P 5049 -s emulator-5572 shell am instrument -w -r -e class com.saleh.careerfinder.TlsBoundaryAcceptanceTest -e fixtureOrigin https://10.0.2.2:4943 com.saleh.careerfinder.preview.test/androidx.test.runner.AndroidJUnitRunner",
-        "cases": [
-          "TlsBoundaryAcceptanceTest.normalPreview_refusesTheIsolatedFixtureCertificate"
-        ],
-        "assertion": "Actual TLS certificate failure was required; an arbitrary connection/network error does not pass."
-      },
-      {
-        "name": "native HTTPS application flow",
-        "passed": 1,
-        "durationSeconds": 10.941,
-        "output": "native-https-output.txt",
-        "command": "NativeHttpsAcceptanceTest run with the fixture origin and fresh private fixture arguments supplied through the dedicated emulator's AndroidJUnitRunner; the one-use pairing code is omitted from evidence.",
-        "cases": [
-          "NativeHttpsAcceptanceTest.nativeReviewAndApproval_preserveExactPDFConsent_andUncertainRetryBoundaries"
-        ]
-      }
+    "cases": [
+      "PhoneAcceptanceTest.phoneProfile_survivesActivityRecreation_withoutAnyService",
+      "PhoneAcceptanceTest.blankWorkspace_hasHonestEmptyState_andConnectionRequirement",
+      "VaultAcceptanceTest.originalSchemaOneEnvelope_remainsReadableWithoutAStorageAreaPointer",
+      "VaultAcceptanceTest.freshPrivateArea_preservesUnreadableBytes_andUsesANewKeystoreKey",
+      "VaultAcceptanceTest.storedToken_isEncrypted_andBoundToItsRecordName",
+      "WorkspaceRegressionTest.concurrentApproval_preventsAutomaticReplacementOfTheOldPlan",
+      "WorkspaceRegressionTest.malformedSuccessfulResponses_doNotReplaceThePhoneDraftOrJobList",
+      "WorkspaceRegressionTest.explicitNoAndSelections_surviveModelRecreation_withoutRestoringApproval",
+      "WorkspaceRegressionTest.storageReadAndWriteFailures_canRetry_withoutLosingTheDraft",
+      "WorkspaceRegressionTest.editedReview_stopsOnlyTheUnapprovedPlan_onDeliberatePrepareUpdate",
+      "WorkspaceRegressionTest.localDisconnect_preservesWorkspaceDraft_andIgnoresItsLateResponse",
+      "WorkspaceRegressionTest.oldWorkspaceResponse_cannotRegressAnAcknowledgedProfileSave",
+      "WorkspaceRegressionTest.copyingPhoneDraft_isPrivate_preservesOriginal_andMigratesManualAppliedIdentityOnSync",
+      "WorkspaceRegressionTest.backgroundProfileChange_cannotRestoreAStalePreparedPlan",
+      "WorkspaceRegressionTest.profileConflict_keepsOriginalRevision_untilExplicitChoice_andUsesLatestRemotePDF",
+      "ContinuationRegressionTest.lateEligibilityFromAnotherWorkspace_cannotAdvanceOrReplaceTheCurrentWorkspace",
+      "ContinuationRegressionTest.freshEligiblePlans_advanceOnePerCycle_withoutAnyImplicitApproval",
+      "ContinuationRegressionTest.absentCapability_andFreshCooldownOrUncertainState_neverAdvance",
+      "ContinuationRegressionTest.setupPages_preservePairedOrigin_andNeverAttachTheSession",
+      "ContinuationRegressionTest.unauthorizedReadOrAdvance_stopsAllFurtherAutomaticRequests",
+      "ContinuationRegressionTest.cancellationDuringDispatch_requiresFreshEligibilityBeforeAnyNextAttempt",
+      "ContinuationRegressionTest.lostStopResponse_keepsContinuationHeldAcrossRestart"
     ],
-    "realEmployerRequests": 0,
-    "fixturePolicy": "Only synthetic applicant data and local fixture provider. No employer API credential, actual employer submission or physical device."
+    "scope": "Real Android ViewModel/Compose/Keystore behavior with isolated deterministic service doubles. No real HTTP provider requests in this 22-test run.",
+    "realEmployerRequests": 0
   },
-  "nativeHTTPS": {
-    "status": "passed",
-    "fixtureRunId": "e538c266-ccbe-411d-a2c4-b458712ad28c",
-    "serviceSha256": "77d413e1e01078bf9f7b389529e6379580d50a54d24819cc551d347aef07094c",
-    "serverEvidence": "../../website/applications/fixtures/native-verification.json",
-    "transport": "Android HttpsURLConnection -> isolated HTTPS fixture gateway -> actual Node application service -> synthetic Lever provider on loopback.",
-    "singleNameProfile": true,
-    "consentStore": true,
-    "consentMarketing": false,
-    "exactPdfMultipartUploads": 4,
-    "providerPostCounts": {
-      "success": 1,
-      "uncertainTimeout": 1,
-      "explicitlyReapprovedCooldown": 2
-    },
-    "confirmedTestReceipts": 2,
-    "uncertainReceipts": 1,
-    "verifiedLiveReceipts": 0,
-    "obsoleteUnapprovedAttemptsCancelled": 3,
-    "subsequentUncertainPrepareBlocked": true,
-    "automaticResubmission": false,
-    "reviewReplacement": "Explicit guarded stop of an unapproved plan, then new review and approval."
+  "hostedContinuation": {
+    "capability": "client",
+    "freshServerActivePlanIdsRequired": true,
+    "maximumAdvanceCallsPerCycle": 1,
+    "minimumDelayAfterCycleMilliseconds": 4000,
+    "clientReadTimeoutMilliseconds": 25000,
+    "persistedStopIntent": true,
+    "automaticSubmit": false,
+    "cooldownRequiresVisibleApproval": true,
+    "uncertainNeverAutomaticallyResubmitted": true,
+    "legacyCompanionBehaviorPreserved": true,
+    "ownerAuthenticatedHostedFlowPerformed": false
   },
   "packagedTrust": {
     "status": "passed",
@@ -196,136 +163,69 @@
     "normalPreviewAndRelease": {
       "systemAnchorsOnly": true,
       "fixtureCaAbsent": true,
-      "emulatorDomainExceptionAbsent": true
-    },
-    "acceptanceOnly": {
-      "package": "com.saleh.careerfinder.acceptance",
-      "label": "Career Finder Acceptance",
-      "trustedDomain": "10.0.2.2",
-      "includeSubdomains": false,
-      "generatedPublicCaPemSha256": "96dc80802f77b3b55412d4a16b4104d19eecea04efc4184a062545e3fa1744db",
-      "userDeliverable": false
+      "emulatorDomainExceptionAbsent": true,
+      "cleartextDisabled": true
     },
     "systemTrustModified": false,
-    "normalPreviewLiveTlsRefusalPassed": true
+    "acceptanceVariantRebuiltInThisRun": false
+  },
+  "branding": {
+    "status": "passed",
+    "evidence": "branding-audit.json",
+    "label": "Career Finder",
+    "blankFreshUserProfile": true,
+    "ahmadMatchesInMainSourceAndResources": 0,
+    "packageAndStorageNamespacesPreserved": true
   },
   "preview": {
     "package": "com.saleh.careerfinder.preview",
-    "versionName": "0.2.0",
-    "versionCode": 2,
+    "versionName": "0.3.0",
+    "versionCode": 3,
     "minSdk": 26,
     "targetSdk": 36,
     "signatureScheme": "APK v2",
     "signerCertificateSha256": "8790e9582889118f556fa287e8f031ee3d2f5221d25008ec5f399c8444c1de17",
-    "signerMatchesRetainedVersion01": true,
-    "retainedVersion01ApkSha256": "442229812f508ba51ce23f86cbf537cd9a1180d20c87dc46143f10152fff293f",
+    "signerMatchesPriorPreviews": true,
     "productionSigned": false
   },
   "artifacts": [
     {
-      "kind": "normal debug preview",
+      "kind": "debug",
       "path": "<isolated-task-root>/android-check/app/build/outputs/apk/debug/app-debug.apk",
-      "sha256": "ecffb59697d0a87757d117ea0a6fd2aed66daaa1731bcf95a7a09ddf99ed87e3",
-      "bytes": 11816005,
+      "bytes": 11563552,
+      "sha256": "89744c5b8b33f1bbdf94ff8381089b0242a80ba921741feb81b8abe759ea197a",
       "userDeliverable": true
     },
     {
-      "kind": "acceptance-only debug APK",
-      "path": "<isolated-task-root>/android-check/app/build/outputs/apk/acceptance/app-acceptance.apk",
-      "sha256": "9c9edc477bc48b3b374be113addd5843f3f6b0533f3c843a81ec8fa5055811b7",
-      "bytes": 10994980,
-      "userDeliverable": false
-    },
-    {
-      "kind": "release resource archive",
+      "kind": "release_resources",
       "path": "<isolated-task-root>/android-check/app/build/intermediates/linked_resources_binary_format/release/processReleaseResources/linked-resources-binary-format-release.ap_",
-      "sha256": "f80363b33bd848cf03048c2e22d0a1f704333cca80e74533e23078a91a5e0756",
       "bytes": 492063,
+      "sha256": "f644acba31816f053d27f7855184ce128e084fb98ef141377bbdc2146dfffceb",
       "userDeliverable": false
     }
   ],
-  "visualAndPicker": {
-    "status": "passed_for_recorded_configuration",
-    "evidence": "picker-and-layout.json",
-    "observedAtUtc": "2026-11-16T14:04:18.662682+00:00",
-    "systemPickerPackage": "com.android.documentsui",
-    "selectedFile": "Career-Finder-Picker-Check.pdf",
-    "fixtureBytes": 609,
-    "fixtureSHA256": "fccbd3962e482d8b24bea10c69ec047e0879cc55cf3c3b3222909bd89108b86a",
-    "returnedToApp": true,
-    "privateDraftSurvivedProcessRestart": true,
-    "configuration": {
-      "sizePixels": "720x1280",
-      "densityDpi": 320,
-      "widthDp": 360,
-      "fontScale": 1.8,
-      "theme": "dark",
-      "appLocale": "ar",
-      "layoutDirection": "RTL"
-    },
-    "controlsReachable": true,
-    "observations": [
-      "Adaptive two-row navigation keeps complete labels at 360 dp and 180% font scale.",
-      "Content-based paragraphs preserve English punctuation within RTL layout.",
-      "Actual Android system PDF picker returned the selected PDF; encrypted draft retained it after force-stop/relaunch.",
-      "Prepared review and receipts clearly identify test evidence and uncertain outcomes."
-    ],
-    "interfaceLanguage": "English; RTL support does not imply translated UI.",
-    "screenshots": [
-      {
-        "name": "compact-rtl-dark-final.png",
-        "path": "<isolated-task-root>/android-proof/reliability/compact-rtl-dark-final.png",
-        "bytes": 109153,
-        "sha256": "e19164587022c69299edca2a74ebc0ba40fe55c221f4b40ada60ac73a8d3afa9"
-      },
-      {
-        "name": "system-picker.png",
-        "path": "<isolated-task-root>/android-proof/reliability/system-picker.png",
-        "bytes": 55506,
-        "sha256": "963ec0f3b3365f53d2172492c64340ccde1ecc4bf37f96a41b4f33a8bd3f549c"
-      },
-      {
-        "name": "picker-restored.png",
-        "path": "<isolated-task-root>/android-proof/reliability/picker-restored.png",
-        "bytes": 98990,
-        "sha256": "569a5171c3705897eb27d251971584b018e7e1b87c338c9a3cc8a663315ffbcb"
-      },
-      {
-        "name": "prepared-review-final.png",
-        "path": "<isolated-task-root>/android-proof/reliability/prepared-review-final.png",
-        "bytes": 207854,
-        "sha256": "706431f0a86a011c1e65f5d119d4e9938e201c73b1871ebc38f0896a23b4151d"
-      },
-      {
-        "name": "test-receipts-final.png",
-        "path": "<isolated-task-root>/android-proof/reliability/test-receipts-final.png",
-        "bytes": 200782,
-        "sha256": "a6e21a0b3db802b63789d28b6384d545d643299b9f62bca6362afb349ef09eef"
-      }
-    ]
+  "historicalEvidence": {
+    "version": "0.2.0",
+    "record": "history/v0.2.0/verification.json",
+    "description": "Complete prior build,17 instrumented checks, real synthetic HTTPS/TLS refusal, compact RTL/dark/large-text and actual PDF-picker evidence preserved here. Those observations are historical and are not relabeled as 0.3.0 results."
   },
   "cleanup": {
-    "emulatorPid": 96537,
+    "emulatorPid": 17493,
     "emulatorExited": true,
     "isolatedAdbPort": 5049,
     "isolatedAdbServerStopped": true,
     "physicalDevicesUsed": false,
     "systemTrustModified": false,
-    "fixturePorts": [
-      4943,
-      4944
-    ],
-    "fixturePortsClosed": true,
-    "sharedSimulatorsOrAdbServersTouched": false,
-    "testPdfRemovedFromEmulator": true
+    "sharedAdbOrSimulatorsTouched": false
   },
   "limitations": [
     "Locally debug-signed preview; no production signing or store submission.",
     "Minimum SDK is API 26; actual emulator execution covered API 36 only.",
-    "Physical phones, TalkBack focus/reading and a wider device/OS matrix remain separate acceptance work.",
-    "Native HTTPS acceptance used a synthetic local provider; no live employer acceptance or production HTTPS gateway was performed.",
-    "Global opportunities can be saved manually; no global job-feed credentials or bundled vacancies are provided.",
-    "Six lint advisories concern newer dependencies and a Kotlin URI idiom; pinned dependencies were not churned."
+    "No actual owner-authenticated hosted pairing or live employer acceptance was performed in this run.",
+    "Public hosted service deployment checks are owned by the separate service verification; Android tests do not claim that evidence.",
+    "Physical-device, TalkBack and wider device/OS acceptance remain separate release work.",
+    "The interface remains English with RTL layout support.",
+    "Six lint advisories concern newer dependencies and a Kotlin URI idiom; dependency versions were retained."
   ],
-  "pathNote": "Machine-local paths are normalized to <isolated-task-root>; observed byte counts, hashes and outcomes are unchanged. Private pairing values and credential material are excluded."
+  "pathNote": "Machine-local paths normalized to <isolated-task-root>; hashes, sizes and observed results are unchanged. No session or pairing credentials included."
 }
