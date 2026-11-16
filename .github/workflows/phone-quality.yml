@@ -43,7 +43,7 @@ jobs:
         run: |
           set -o pipefail
           xcodebuild -version > "$CAPTURE_OUTPUT/xcode-version.txt"
-          xcodebuild -project apple/AhmadCareer.xcodeproj -scheme CareerFinderAcceptance \
+          xcodebuild -project apple/AhmadCareer.xcodeproj -scheme AhmadCareer \
             -configuration Release -sdk iphonesimulator \
             -destination "platform=iOS Simulator,id=$CAPTURE_DEVICE" \
             -derivedDataPath "$CAPTURE_DERIVED" \
