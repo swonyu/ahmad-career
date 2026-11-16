@@ -238,7 +238,7 @@ final class CareerFinderUITests: XCTestCase {
         tab("Apply", in: app)
         let review = app.buttons["applications.review"]
         XCTAssertTrue(review.isHittable)
-        XCTAssertEqual(review.label, "Set up Auto Apply")
+        XCTAssertEqual(review.label, "Connect application workspace")
         capture("12-application-workspace-accessibility-text", app: app)
         review.tap()
         let connection = app.navigationBars["Application connection"]
