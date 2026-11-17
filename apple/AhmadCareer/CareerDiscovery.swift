@@ -68,8 +68,10 @@ struct DiscoveryQuery: Codable, Equatable {
     var location = ""
     var remoteOnly = false
     var validationError: String? {
-        if sources.count > 4 || Set(sources).count != sources.count { return "Choose up to four different employer boards." }
-        if sources.contains(where: { $0.isEmpty || $0.count > 2_048 }) { return "Use a supported employer board or its public board URL." }
+        if sources.count > 4 { return "Choose up to four different employer boards." }
+        if sources.contains(where: { DiscoveryPolicy.canonicalBoard($0) == nil }) { return "Use a supported employer board or its public board URL." }
+        let identities = sources.compactMap { DiscoveryPolicy.canonicalBoard($0)?.id }
+        if Set(identities).count != identities.count { return "Choose each employer board only once." }
         if keywords.count > 120 || location.count > 100 { return "Use up to 120 characters for role words and 100 for location." }
         return nil
     }
@@ -85,6 +87,45 @@ struct DiscoveryFailure: LocalizedError {
     var errorDescription: String? { message }
 }
 
+struct DiscoveryBoardIdentity: Identifiable, Equatable {
+    let id: String
+    let provider: String
+    let region: String
+    let board: String
+    let boardUrl: String
+}
+
+enum DiscoveryPresentation {
+    static func sourceAvailabilityKey(status: String, restored: Bool) -> String {
+        switch status {
+        case "fresh": return restored ? "Saved result from an earlier check" : "Fetched for this search"
+        case "cached": return "Recent cached result"
+        case "stale": return "Earlier cached result — recheck employer"
+        default: return "Unavailable — this does not mean there are no openings"
+        }
+    }
+    static func emptyTitle(searching: Bool, pageStatus: String?) -> String {
+        if searching { return "Checking employer boards…" }
+        switch pageStatus {
+        case "unavailable": return "Current openings could not be checked."
+        case "partial": return "No matches in the results we could check."
+        case "complete": return "No matching jobs in these boards."
+        case nil: return "A fresh search starts with you."
+        default: return "No roles match this search."
+        }
+    }
+    static func emptyDetail(pageStatus: String?) -> String {
+        switch pageStatus {
+        case "unavailable": return "The selected boards did not return results. Retry the same search, or review the source details."
+        case "partial": return "This search is incomplete. Review the source details, or retry the same search."
+        case "complete": return "Try a broader job title, another location, or a different employer board."
+        case nil: return "Use a role or skill, add a location if you want, and choose up to four Greenhouse or Lever employer boards. Tap Search jobs when you are ready."
+        default: return "Try fewer keywords, another location or a different employer board. Results cover the selected boards, not every employer or country. Your saved opportunities are unchanged."
+        }
+    }
+    static func offersSubmittedRetry(status: String?) -> Bool { status == "partial" || status == "unavailable" }
+}
+
 enum DiscoveryPolicy {
     static let maximumSources = 4
     static let maximumStoredJobs = 2_000
@@ -94,14 +135,122 @@ enum DiscoveryPolicy {
               !url.path.trimmingCharacters(in: CharacterSet(charactersIn: "/")).isEmpty else { return nil }
         return url
     }
+    /// Same acceptance rules as the committed hosted parseDiscoverySource. A nil result is not a supported board.
+    static func canonicalBoard(_ raw: String) -> DiscoveryBoardIdentity? {
+        if raw.count > 2048 { return nil }
+        if raw.unicodeScalars.contains(where: { scalar in
+            scalar.value <= 0x1f || scalar.value == 0x7f || scalar == "\\" || Character(scalar).isWhitespace
+        }) { return nil }
+        if raw.lowercased().hasPrefix("https://") { return canonicalHTTPSBoard(raw) }
+        let parts = raw.split(separator: ":", omittingEmptySubsequences: false).map(String.init)
+        if parts.count == 2, parts[0] == "greenhouse" { return finishBoard(provider: "greenhouse", region: "global", board: parts[1]) }
+        if parts.count == 3, parts[0] == "lever", parts[1] == "global" || parts[1] == "eu" {
+            return finishBoard(provider: "lever", region: parts[1], board: parts[2])
+        }
+        return nil
+    }
+    static func canonicalSources(_ sources: [String]) -> [String] {
+        var seen = Set<String>()
+        var result: [String] = []
+        for raw in sources {
+            let token = canonicalBoard(raw)?.id ?? raw
+            if seen.insert(token).inserted { result.append(token) }
+        }
+        return result
+    }
+    static func serviceQuery(_ query: DiscoveryQuery) -> DiscoveryQuery {
+        var copy = query
+        let mapped = query.sources.map { canonicalBoard($0)?.id }
+        if mapped.allSatisfy({ $0 != nil }) { copy.sources = mapped.compactMap { $0 } }
+        return copy
+    }
+    private static func canonicalHTTPSBoard(_ raw: String) -> DiscoveryBoardIdentity? {
+        let headEnd = raw.firstIndex(where: { $0 == "?" || $0 == "#" }) ?? raw.endIndex
+        let head = String(raw[..<headEnd])
+        if head.range(of: #"(?:/\.{1,2}(?:/|$)|%)"#, options: .regularExpression) != nil { return nil }
+        guard let components = URLComponents(string: raw), components.scheme?.lowercased() == "https",
+              components.user == nil, components.password == nil, components.port == nil,
+              components.fragment?.isEmpty != false,
+              !components.percentEncodedPath.contains("%"),
+              let host = components.host?.lowercased() else { return nil }
+        let path = components.percentEncodedPath
+        let pairs = rawQueryPairs(raw)
+        guard let pairs else { return nil }
+        if host == "boards.greenhouse.io" || host == "job-boards.greenhouse.io" {
+            if path == "/embed/job_board" {
+                let tokens = pairs.filter { $0.0 == "for" }
+                guard pairs.allSatisfy({ $0.0 == "for" }), tokens.count == 1, let board = tokens.first?.1 else { return nil }
+                return finishBoard(provider: "greenhouse", region: "global", board: board)
+            }
+            let pieces = pathPieces(path)
+            let directJob = pieces.count == 3 && pieces[1] == "jobs" && pieces[2].range(of: #"^\d{1,20}$"#, options: .regularExpression) != nil
+            guard pieces.count == 1 || directJob else { return nil }
+            guard trackingAllowed(pairs) else { return nil }
+            return finishBoard(provider: "greenhouse", region: "global", board: pieces[0])
+        }
+        if host == "jobs.lever.co" || host == "jobs.eu.lever.co" {
+            let pieces = pathPieces(path)
+            let uuid = #"^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"#
+            let posting = pieces.count == 2 && pieces[1].range(of: uuid, options: .regularExpression) != nil
+            let apply = pieces.count == 3 && pieces[1].range(of: uuid, options: .regularExpression) != nil && pieces[2] == "apply"
+            guard pieces.count == 1 || posting || apply else { return nil }
+            guard trackingAllowed(pairs) else { return nil }
+            return finishBoard(provider: "lever", region: host == "jobs.eu.lever.co" ? "eu" : "global", board: pieces[0])
+        }
+        return nil
+    }
+    private static func trackingAllowed(_ pairs: [(String, String)]) -> Bool {
+        pairs.allSatisfy { key, _ in
+            key.range(of: #"^utm_[a-zA-Z0-9_]+$"#, options: .regularExpression) != nil
+                || key == "gh_jid" || key == "lever-source" || key == "lever-origin" || key == "source"
+        }
+    }
+    private static func rawQueryPairs(_ raw: String) -> [(String, String)]? {
+        guard let queryStart = raw.firstIndex(of: "?") else { return [] }
+        var query = String(raw[raw.index(after: queryStart)...])
+        if let hash = query.firstIndex(of: "#") { query = String(query[..<hash]) }
+        if query.isEmpty { return [] }
+        var pairs: [(String, String)] = []
+        for part in query.split(separator: "&", omittingEmptySubsequences: false) {
+            let piece = String(part)
+            let key: String
+            let value: String
+            if let separator = piece.firstIndex(of: "=") {
+                key = String(piece[..<separator])
+                value = String(piece[piece.index(after: separator)...])
+            } else {
+                key = piece
+                value = ""
+            }
+            if key.contains("%") { return nil }
+            guard let decoded = value.removingPercentEncoding else { return nil }
+            pairs.append((key, decoded))
+        }
+        return pairs
+    }
+    private static func pathPieces(_ path: String) -> [String] {
+        var trimmed = path
+        if trimmed.count > 1, trimmed.hasSuffix("/") { trimmed.removeLast() }
+        var parts = trimmed.split(separator: "/", omittingEmptySubsequences: false).map(String.init)
+        if parts.first == "" { parts.removeFirst() }
+        return parts
+    }
+    private static func finishBoard(provider: String, region: String, board: String) -> DiscoveryBoardIdentity? {
+        guard board.range(of: #"^[A-Za-z0-9][A-Za-z0-9_-]{0,79}$"#, options: .regularExpression) != nil else { return nil }
+        let token = board.lowercased()
+        let id = provider == "greenhouse" ? "greenhouse:\(token)" : "lever:\(region):\(token)"
+        let host = provider == "greenhouse" ? "job-boards.greenhouse.io" : (region == "eu" ? "jobs.eu.lever.co" : "jobs.lever.co")
+        return DiscoveryBoardIdentity(id: id, provider: provider, region: region, board: token, boardUrl: "https://\(host)/\(token)")
+    }
     static func request(route: String, query: DiscoveryQuery? = nil, cursor: String? = nil) throws -> URLRequest {
         guard ["sources", "search"].contains(route) else { throw DiscoveryFailure(message: "This search action is unavailable.") }
         var parts = URLComponents(string: MobileApplicationPolicy.hostedServiceOrigin + "/api/discovery/" + route)!
         if let query {
             if let issue = query.validationError { throw DiscoveryFailure(message: issue) }
-            parts.queryItems = query.sources.map { URLQueryItem(name: "source", value: $0) }
-                + [URLQueryItem(name: "q", value: query.keywords), URLQueryItem(name: "location", value: query.location),
-                   URLQueryItem(name: "remote", value: query.remoteOnly ? "remote" : "any")]
+            let outgoing = serviceQuery(query)
+            parts.queryItems = outgoing.sources.map { URLQueryItem(name: "source", value: $0) }
+                + [URLQueryItem(name: "q", value: outgoing.keywords), URLQueryItem(name: "location", value: outgoing.location),
+                   URLQueryItem(name: "remote", value: outgoing.remoteOnly ? "remote" : "any")]
             if let cursor { parts.queryItems?.append(URLQueryItem(name: "cursor", value: cursor)) }
         }
         guard let url = parts.url else { throw DiscoveryFailure(message: "Check the search fields and try again.") }
@@ -232,6 +381,8 @@ final class CareerDiscoveryStore: ObservableObject {
     private var storageReadable = true
     private var requestTask: Task<DiscoveryPage, Error>?
     private var requestID: UUID?
+    /// In-memory only. A relaunch retries the last saved search through lastQuery.
+    private var submittedQuery: DiscoveryQuery?
     init(file: URL? = nil, service: (any CareerDiscoveryServing)? = nil) {
         self.service = service ?? CareerDiscoveryClient()
         self.file = file ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -242,12 +393,12 @@ final class CareerDiscoveryStore: ObservableObject {
     /// The legacy unscoped file remains the unpaired search; connecting never adopts it implicitly.
     func attach(to target: PhoneRecordScope) {
         guard target.valid, target != scope else { return }
-        persist(); requestID = nil; requestTask?.cancel(); requestTask = nil; isSearching = false
+        persist(); requestID = nil; requestTask?.cancel(); requestTask = nil; isSearching = false; submittedQuery = nil
         scope = target
         let key = SHA256.hash(data: Data((target.origin + "\u{0}" + target.workspaceID).utf8)).map { String(format: "%02x", $0) }.joined()
         file = target.isLocal ? baseFile : baseFile.deletingLastPathComponent().appendingPathComponent("discovery-" + key + ".json")
         restoring = true; query = DiscoveryQuery(); lastQuery = nil; page = nil; jobs = []; restoredResults = false
-        needsNewSearch = false; retryAfter = nil; error = nil; storageNotice = nil; storageReadable = true; restoring = false
+        needsNewSearch = false; retryAfter = nil; error = nil; storageNotice = nil; storageReadable = true; submittedQuery = nil; restoring = false
         restore()
     }
     func saveDraft() { persist() }
@@ -268,24 +419,42 @@ final class CareerDiscoveryStore: ObservableObject {
     func importSnapshot(_ bytes: Data) throws {
         try Self.validateBackup(bytes)
         guard storageReadable else { throw DiscoveryFailure(message: "The earlier search file is unreadable and was preserved. It was not replaced by the backup.") }
-        try write(bytes); requestID = nil; requestTask?.cancel(); requestTask = nil; isSearching = false
+        try write(bytes); requestID = nil; requestTask?.cancel(); requestTask = nil; isSearching = false; submittedQuery = nil
         restore(); needsNewSearch = true; retryAfter = nil
     }
     func clearCurrentScope() throws {
         let bytes = try JSONEncoder().encode(DiscoverySavedState())
-        try write(bytes); requestID = nil; requestTask?.cancel(); requestTask = nil; isSearching = false
+        try write(bytes); requestID = nil; requestTask?.cancel(); requestTask = nil; isSearching = false; submittedQuery = nil
         storageReadable = true; storageNotice = nil; error = nil; needsNewSearch = false; retryAfter = nil
         restore()
     }
+    private func repaired(_ original: DiscoveryQuery) -> DiscoveryQuery {
+        var copy = original
+        copy.sources = DiscoveryPolicy.canonicalSources(original.sources)
+        return copy
+    }
     private func restore() {
+        submittedQuery = nil
         guard FileManager.default.fileExists(atPath: file.path) else { return }
-        restoring = true; defer { restoring = false }
+        restoring = true
+        var persistRepair = false
+        defer { restoring = false; if persistRepair { persist() } }
         do {
             let data = try Data(contentsOf: file)
-            try Self.validateBackup(data)
             let saved = try JSONDecoder().decode(DiscoverySavedState.self, from: data)
-            query = saved.query; lastQuery = saved.lastQuery; page = saved.page; jobs = saved.jobs
-            restoredResults = !jobs.isEmpty
+            guard saved.schemaVersion == 1, saved.jobs.count <= DiscoveryPolicy.maximumStoredJobs,
+                  saved.jobs.allSatisfy({ MobileApplicationPolicy.jobURL($0.url) != nil }),
+                  Set(saved.jobs.map(\.id)).count == saved.jobs.count else { throw CocoaError(.coderReadCorrupt) }
+            if let page = saved.page { try DiscoveryPolicy.validate(page) }
+            let repairedQuery = repaired(saved.query)
+            let repairedLast = saved.lastQuery.map(repaired)
+            query = repairedQuery; lastQuery = repairedLast; page = saved.page; jobs = saved.jobs
+            restoredResults = saved.page != nil || !saved.jobs.isEmpty
+            if repairedQuery.validationError != nil || repairedLast?.validationError != nil {
+                storageNotice = "These search fields exceed the supported limits. Earlier saved search data is kept."
+            } else if repairedQuery.sources != saved.query.sources || repairedLast?.sources != saved.lastQuery?.sources {
+                persistRepair = true
+            }
         } catch {
             storageReadable = false; storageNotice = "The previous search file could not be read. It is preserved; new searches will stay in memory."
         }
@@ -299,19 +468,47 @@ final class CareerDiscoveryStore: ObservableObject {
             let result = try await service.catalog(); try DiscoveryPolicy.validate(result); catalog = result
         } catch { self.error = error.localizedDescription }
     }
+    func boardSelected(_ raw: String) -> Bool {
+        if let id = DiscoveryPolicy.canonicalBoard(raw)?.id {
+            return query.sources.contains { DiscoveryPolicy.canonicalBoard($0)?.id == id }
+        }
+        return query.sources.contains(raw)
+    }
+    func boardDisplay(_ raw: String) -> String { DiscoveryPolicy.canonicalBoard(raw)?.boardUrl ?? raw }
+    func canonicalBoardURL(_ raw: String) -> URL? {
+        guard let identity = DiscoveryPolicy.canonicalBoard(raw) else { return nil }
+        return URL(string: identity.boardUrl)
+    }
+    var recoveryBoardFallbacks: [DiscoveryBoardIdentity] {
+        guard page == nil, error != nil, let sources = submittedQuery?.sources else { return [] }
+        var seen = Set<String>()
+        return sources.compactMap { raw in
+            guard let identity = DiscoveryPolicy.canonicalBoard(raw), seen.insert(identity.id).inserted else { return nil }
+            return identity
+        }
+    }
+    var canRetrySubmittedSearch: Bool {
+        guard !isSearching, (submittedQuery ?? lastQuery) != nil else { return false }
+        if let status = page?.status { return DiscoveryPresentation.offersSubmittedRetry(status: status) }
+        return error != nil
+    }
     func addBoard(_ input: String) -> Bool {
         let value = input.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard DiscoveryPolicy.supportedBoardURL(value) != nil else {
+        guard let identity = DiscoveryPolicy.canonicalBoard(value) else {
             error = "Paste a public Greenhouse or Lever employer board URL."; return false
         }
+        if boardSelected(identity.id) { return true }
         guard query.sources.count < 4 else { error = "Choose up to four employer boards per search."; return false }
-        guard !query.sources.contains(value) else { return true }
-        query.sources.append(value); persist(); return true
+        query.sources.append(identity.id); persist(); return true
     }
     func toggleSource(_ id: String) {
-        if query.sources.contains(id) { query.sources.removeAll { $0 == id } }
-        else if query.sources.count < 4 { query.sources.append(id) }
-        else { error = "Choose up to four employer boards per search."; return }
+        if boardSelected(id) {
+            if let canonical = DiscoveryPolicy.canonicalBoard(id)?.id {
+                query.sources.removeAll { DiscoveryPolicy.canonicalBoard($0)?.id == canonical }
+            } else { query.sources.removeAll { $0 == id } }
+        } else if query.sources.count < 4 {
+            query.sources.append(DiscoveryPolicy.canonicalBoard(id)?.id ?? id)
+        } else { error = "Choose up to four employer boards per search."; return }
         persist()
     }
     func useDefaultSources() { query.sources = []; persist() }
@@ -319,21 +516,38 @@ final class CareerDiscoveryStore: ObservableObject {
         requestID = nil; requestTask?.cancel(); requestTask = nil; isSearching = false
         error = "Search stopped. Previous results and saved opportunities are kept."
     }
+    func retrySubmittedSearch() async {
+        guard canRetrySubmittedSearch, let captured = submittedQuery ?? lastQuery else { return }
+        await execute(captured: captured, more: false, ignoreDraftEdits: true)
+    }
     func search(more: Bool = false) async {
-        guard !isSearching else { return }
         if let retryAfter, retryAfter > Date() {
             error = "Try again after " + retryAfter.formatted(date: .omitted, time: .shortened) + "."; return
         }
+        if more {
+            guard !isSearching, canLoadMore else { return }
+            await execute(captured: query, more: true, ignoreDraftEdits: false)
+            return
+        }
         if let issue = query.validationError { error = issue; return }
-        if more && !canLoadMore { return }
-        let captured = query, cursor = more ? page?.nextCursor : nil, ticket = UUID()
+        if isSearching {
+            requestID = nil; requestTask?.cancel(); requestTask = nil; isSearching = false
+        }
+        await execute(captured: query, more: false, ignoreDraftEdits: false)
+    }
+    private func execute(captured: DiscoveryQuery, more: Bool, ignoreDraftEdits: Bool) async {
+        if let issue = captured.validationError { error = issue; return }
+        let cursor = more ? page?.nextCursor : nil, ticket = UUID()
         requestID = ticket; isSearching = true; error = nil; retryAfter = nil
-        let task = Task { try await service.search(captured, cursor: cursor) }; requestTask = task
+        if !more { submittedQuery = captured }
+        let outgoing = DiscoveryPolicy.serviceQuery(captured)
+        let task = Task { try await service.search(outgoing, cursor: cursor) }
+        requestTask = task
         do {
             let result = try await task.value
             guard requestID == ticket else { return }
             try DiscoveryPolicy.validate(result)
-            guard query == captured else {
+            if !ignoreDraftEdits && query != captured {
                 isSearching = false; requestID = nil; requestTask = nil
                 error = "Your search changed. Search again to use the current fields; previous results are kept."; return
             }

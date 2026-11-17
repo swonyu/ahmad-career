@@ -204,6 +204,68 @@ private final class DiscoverySuite {
             try check(preserved == original && model.jobs.count == 2, "Unreadable storage is preserved while new results remain usable in memory")
             scenarios += 1
         }
+        do {
+            let service = DiscoveryStub(fixture); let (model, file) = store(service)
+            service.handle = { _, _ in self.page(jobs: [], status: "complete") }
+            await model.search()
+            let restored = CareerDiscoveryStore(file: file, service: service)
+            try check(restored.jobs.isEmpty && restored.restoredResults && restored.page?.status == "complete", "A saved empty search is historical after relaunch")
+            service.handle = { _, _ in throw URLError(.notConnectedToInternet) }
+            await restored.search()
+            try check(restored.restoredResults && restored.jobs.isEmpty && restored.error != nil, "A failed refresh keeps an empty saved search historical")
+            service.handle = { _, _ in self.fixture }
+            await restored.search()
+            try check(!restored.restoredResults && restored.jobs == self.fixture.jobs, "A successful new search replaces the historical empty page")
+            for status in ["fresh", "cached", "stale", "unavailable"] {
+                for historical in [false, true] {
+                    try check(DiscoveryPresentation.sourceAvailabilityKey(status: status, restored: historical) != "Checked now", "Freshness copy never says the check just happened")
+                }
+            }
+            try check(DiscoveryPresentation.sourceAvailabilityKey(status: "fresh", restored: true) == "Saved result from an earlier check"
+                && DiscoveryPresentation.sourceAvailabilityKey(status: "fresh", restored: false) == "Fetched for this search", "A restored fresh source stays marked as an earlier check")
+            try check(DiscoveryPresentation.emptyTitle(searching: false, pageStatus: "complete") == "No matching jobs in these boards."
+                && DiscoveryPresentation.emptyTitle(searching: false, pageStatus: "partial") == "No matches in the results we could check."
+                && DiscoveryPresentation.emptyTitle(searching: false, pageStatus: "unavailable") == "Current openings could not be checked.", "Empty outcomes stay distinct")
+            try check(DiscoveryPresentation.offersSubmittedRetry(status: "partial") && DiscoveryPresentation.offersSubmittedRetry(status: "unavailable")
+                && !DiscoveryPresentation.offersSubmittedRetry(status: "complete"), "Only an incomplete search offers the submitted retry")
+            scenarios += 1
+        }
+        do {
+            let same = DiscoveryPolicy.canonicalBoard("greenhouse:canonical")
+            let legacy = DiscoveryPolicy.canonicalBoard("https://boards.greenhouse.io/canonical")
+            let current = DiscoveryPolicy.canonicalBoard("https://job-boards.greenhouse.io/Canonical/")
+            let posting = DiscoveryPolicy.canonicalBoard("https://job-boards.greenhouse.io/canonical/jobs/123?utm_source=mail&gh_jid=9")
+            let embed = DiscoveryPolicy.canonicalBoard("https://boards.greenhouse.io/embed/job_board?for=Canonical")
+            try check(same?.id == "greenhouse:canonical" && legacy?.id == same?.id && current?.id == same?.id && posting?.id == same?.id && embed?.id == same?.id, "Greenhouse spellings share one board id")
+            try check(same?.boardUrl == "https://job-boards.greenhouse.io/canonical", "Stored board links use the public Greenhouse host")
+            try check(DiscoveryPolicy.canonicalBoard("https://jobs.lever.co/spotify")?.id == "lever:global:spotify"
+                && DiscoveryPolicy.canonicalBoard("https://jobs.eu.lever.co/spotify/")?.id == "lever:eu:spotify"
+                && DiscoveryPolicy.canonicalBoard("https://jobs.lever.co/spotify/00000000-0000-4000-8000-000000000001/apply")?.id == "lever:global:spotify", "Lever regions stay distinct and a posting keeps its board")
+            try check(DiscoveryPolicy.canonicalBoard("https://jobs.eu.lever.co/example-board/123") == nil
+                && DiscoveryPolicy.supportedBoardURL("https://jobs.eu.lever.co/example-board/123") != nil, "A loose board-host check is not treated as a canonical board")
+            let rejected = ["https://jobs.lever.co.evil.example/board", "https://user:password@jobs.lever.co/board", "https://jobs.lever.co:443/board", "http://jobs.lever.co/board",
+                            "https://jobs.lever.co/board%2Fhidden", "https://job-boards.greenhouse.io/canonical/../other", "https://job-boards.greenhouse.io/canonical?extra=1",
+                            "https://boards.greenhouse.io/embed/job_board?for=one&for=two", "lever:GLOBAL:board", "https://job-boards.greenhouse.io/canonical#section"]
+            try check(rejected.allSatisfy { DiscoveryPolicy.canonicalBoard($0) == nil }, "Unsafe board URLs and region spellings are refused")
+            try check(DiscoveryPolicy.canonicalBoard("greenhouse:Canonical")?.id == "greenhouse:canonical", "A short board id folds only the board token")
+            let service = DiscoveryStub(fixture); let (model, _) = store(service)
+            try check(model.addBoard("https://boards.greenhouse.io/canonical") && model.addBoard("greenhouse:canonical") && model.addBoard("https://job-boards.greenhouse.io/canonical/"), "Equivalent board URLs are the same selection")
+            try check(model.query.sources == ["greenhouse:canonical"], "Equivalent boards are stored once as the canonical id")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(fixture); let (model, _) = store(service)
+            model.query.keywords = "old"; await model.search()
+            model.query.keywords = "newer draft"; await model.retrySubmittedSearch()
+            try check(model.query.keywords == "newer draft" && service.calls.last?.0.keywords == "old", "Retry repeats the submitted search and leaves the newer draft")
+            let gate = DiscoveryGate(); service.handle = { _, _ in try await gate.wait() }
+            let retry = Task { await model.retrySubmittedSearch() }; try await waitUntil { gate.started }
+            service.handle = { _, _ in self.page(status: "complete") }
+            model.query.keywords = "explicit"; await model.search()
+            gate.finish(self.page(jobs: [], status: "partial")); await retry.value
+            try check(model.query.keywords == "explicit" && model.jobs == self.fixture.jobs && service.calls.last?.0.keywords == "explicit", "A newer explicit search wins over a late submitted retry")
+            scenarios += 1
+        }
     }
 }
 

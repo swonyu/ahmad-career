@@ -1803,6 +1803,17 @@
     "Use a real YYYY-MM-DD due date or leave it blank, and a note up to 500 Unicode characters. A due date or completed action needs a nonblank note.": "استخدم تاريخًا صحيحًا بصيغة سنة-شهر-يوم أو اتركه فارغًا، وملاحظة لا تتجاوز 500 محرف. يتطلب تحديد تاريخ أو اكتمال الخطوة وجود ملاحظة غير فارغة.",
     "This next action changed. Your draft is preserved. Export it before reloading the saved version.": "تغيرت هذه الخطوة التالية. بقيت مسودتك محفوظة. صدّرها قبل إعادة تحميل النسخة المحفوظة.",
     "The opportunity could not be saved. Your next-action draft is preserved.": "تعذر حفظ الفرصة. بقيت مسودة الخطوة التالية محفوظة.",
-    "The next action could not be read or saved. Original data and your session draft are preserved.": "تعذرت قراءة الخطوة التالية أو حفظها. بقيت البيانات الأصلية ومسودة الجلسة كما هي."
+    "The next action could not be read or saved. Original data and your session draft are preserved.": "تعذرت قراءة الخطوة التالية أو حفظها. بقيت البيانات الأصلية ومسودة الجلسة كما هي.",
+    "Current openings could not be checked.": "تعذر التحقق من الوظائف المتاحة حاليًا.",
+    "The selected boards did not return results. Retry the same search, or review the source details.": "لم تُرجع لوحات التوظيف المحددة نتائج. أعد البحث نفسه، أو راجع تفاصيل المصدر.",
+    "No matches in the results we could check.": "لا توجد مطابقات في النتائج التي أمكن التحقق منها.",
+    "This search is incomplete. Review the source details, or retry the same search.": "هذا البحث غير مكتمل. راجع تفاصيل المصدر، أو أعد البحث نفسه.",
+    "No matching jobs in these boards.": "لا توجد وظائف مطابقة في لوحات التوظيف هذه.",
+    "Try a broader job title, another location, or a different employer board.": "جرّب مسمى وظيفي أوسع، أو موقعًا آخر، أو لوحة وظائف مختلفة لجهة العمل.",
+    "Retry this search": "إعادة هذا البحث",
+    "Saved result from an earlier check": "نتيجة محفوظة من تحقق سابق",
+    "Open the employer board": "فتح لوحة وظائف جهة العمل",
+    "Opening this public board in your browser does not submit an application or confirm the listings are still open.": "فتح لوحة التوظيف العامة هذه في المتصفح لا يقدّم طلبًا ولا يؤكد أن الإعلانات ما زالت متاحة.",
+    "Choose each employer board only once.": "اختر كل لوحة وظائف لجهة العمل مرة واحدة فقط."
   }
 }

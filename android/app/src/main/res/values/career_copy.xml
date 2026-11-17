@@ -261,6 +261,7 @@
     <string name="c_366b456a5b15" formatted="false">"Choose an experience level from the list."</string>
     <string name="c_9824113195f5" formatted="false">"Choose and review a backup first."</string>
     <string name="c_343b5a9c7fd6" formatted="false">"Choose date"</string>
+    <string name="c_1a07f5dec4e7" formatted="false">"Choose each employer board only once."</string>
     <string name="c_598cc27ea6a7" formatted="false">"Choose employer boards"</string>
     <string name="c_7a211c7de64b" formatted="false">"Choose employer boards · recommended"</string>
     <string name="c_cfc1a4ff5e4c" formatted="false">"Choose employers"</string>
@@ -389,6 +390,7 @@
     <string name="c_ea2655e46b8f" formatted="false">"Create a new private workspace?"</string>
     <string name="c_390e6e21b4e0" formatted="false">"Create new workspace"</string>
     <string name="c_3ac1a9ec4fa7" formatted="false">"Currency"</string>
+    <string name="c_051987cae744" formatted="false">"Current openings could not be checked."</string>
     <string name="c_e66387b2adbf" formatted="false">"Current phone workspace"</string>
     <string name="c_4d778bed34c7" formatted="false">"Current record"</string>
     <string name="c_ca319a1dc3d3" formatted="false">"Current saved details"</string>
@@ -750,6 +752,8 @@
     <string name="c_d0892c5270f5" formatted="false">"No email entered"</string>
     <string name="c_bb7c5884a81f" formatted="false">"No follow-ups match."</string>
     <string name="c_0e29117dbc58" formatted="false">"No follow-ups to show."</string>
+    <string name="c_b04e9a1f8968" formatted="false">"No matches in the results we could check."</string>
+    <string name="c_20686db7f8fa" formatted="false">"No matching jobs in these boards."</string>
     <string name="c_196bc395c3ad" formatted="false">"No pay floor"</string>
     <string name="c_22142ba328eb" formatted="false">"No private note"</string>
     <string name="c_185e34f87d3d" formatted="false">"No receipts match these filters."</string>
@@ -811,12 +815,14 @@
     <string name="c_ca381c1e76e6" formatted="false">"Open settings"</string>
     <string name="c_52b5fa651218" formatted="false">"Open the current workspace to manage its files."</string>
     <string name="c_7d9d213d2e51" formatted="false">"Open the employer application, review your answers and attachments, then submit when ready."</string>
+    <string name="c_9bc08929d4b5" formatted="false">"Open the employer board"</string>
     <string name="c_ef3676a1dcb1" formatted="false">"Open unpaired phone workspace"</string>
     <string name="c_17f5f3d79656" formatted="false">"Open your application workspace"</string>
     <string name="c_ee6cb85178b4" formatted="false">"Open {0} at {1} on the employer’s site"</string>
     <string name="c_aff4bcbd86ac" formatted="false">"Opened the saved phone workspace. Connect it again to access its service; no data was copied between workspaces."</string>
     <string name="c_c93c9f116bb9" formatted="false">"Opening an employer, LinkedIn or salary-source link takes you to an external website governed by its own privacy policy. Any application or account you create there is managed by that provider."</string>
     <string name="c_b1477012809b" formatted="false">"Opening another saved workspace disconnects this phone first. It does not move a profile, CV or note into another account."</string>
+    <string name="c_b5bed857d286" formatted="false">"Opening this public board in your browser does not submit an application or confirm the listings are still open."</string>
     <string name="c_e113d6881eb4" formatted="false">"Opening your last search…"</string>
     <string name="c_6a875612e99b" formatted="false">"Opening your private workspace…"</string>
     <string name="c_ffc2c370d9b5" formatted="false">"Opens LinkedIn with only your keyword and location text. LinkedIn manages its own sign-in and applications. Career Finder does not read your LinkedIn account or verify applications submitted there."</string>
@@ -1040,6 +1046,7 @@
     <string name="c_61eef6eea09e" formatted="false">"Retry previous search"</string>
     <string name="c_f55281c12499" formatted="false">"Retry private storage"</string>
     <string name="c_6b0ed0dbbc9d" formatted="false">"Retry saving search"</string>
+    <string name="c_de68d74c28a1" formatted="false">"Retry this search"</string>
     <string name="c_4551cb19614f" formatted="false">"Return to Saved to see your current opportunities."</string>
     <string name="c_2b259c4de0d2" formatted="false">"Review a Career Finder iPhone or Android backup before merging it here. You choose whether to replace profile fields or the last search. Existing notes and conflicting history versions are kept."</string>
     <string name="c_ecdc48ba1b69" formatted="false">"Review all incoming details"</string>
@@ -1143,6 +1150,7 @@
     <string name="c_a6af2ba683a3" formatted="false">"Saved opportunity"</string>
     <string name="c_34231c58fb70" formatted="false">"Saved phone profile"</string>
     <string name="c_e740bea66ec8" formatted="false">"Saved records could not be read. They have been preserved; no new changes will overwrite that file."</string>
+    <string name="c_826c7e8e8911" formatted="false">"Saved result from an earlier check"</string>
     <string name="c_8c9ede585e9a" formatted="false">"Saved to your workspace"</string>
     <string name="c_2f29e06988d7" formatted="false">"Saved versions need your review. All are kept."</string>
     <string name="c_e9308de9da13" formatted="false">"Saved with application service"</string>
@@ -1399,6 +1407,7 @@
     <string name="c_f58f6437668e" formatted="false">"The search service returned no results. Try again later."</string>
     <string name="c_e60215b63286" formatted="false">"The secure connection could not be saved on this phone."</string>
     <string name="c_52c9abf0a5ad" formatted="false">"The selected boards could not be checked. Previous results are kept; start a new search when the service is available."</string>
+    <string name="c_d9b0efad5762" formatted="false">"The selected boards did not return results. Retry the same search, or review the source details."</string>
     <string name="c_1cb15d8b6f44" formatted="false">"The selected destination could not be opened."</string>
     <string name="c_1d919cc956c5" formatted="false">"The selected earlier recovery copy and its known equivalent-address files were deleted. Your current workspace, other recovery copies, exported files and cloud records are unchanged."</string>
     <string name="c_217789395221" formatted="false">"The selected employer boards could not be reached. Try again or choose other boards."</string>
@@ -1554,6 +1563,7 @@
     <string name="c_ff69d14867db" formatted="false">"This saved search needs a newer app. Its file is preserved."</string>
     <string name="c_e24b3b6b2426" formatted="false">"This search action is unavailable."</string>
     <string name="c_cd668f65d854" formatted="false">"This search is available in this session but could not be saved. The earlier saved search is preserved. Retry saving when private storage is available."</string>
+    <string name="c_218d03bc832a" formatted="false">"This search is incomplete. Review the source details, or retry the same search."</string>
     <string name="c_7749ca0b0f11" formatted="false">"This search is too large to keep on the phone. Narrow the search to save it."</string>
     <string name="c_eaf082c0a0b4" formatted="false">"This search reached its result limit. Narrow the role or location and search again."</string>
     <string name="c_56e8fa8ab8dd" formatted="false">"This service has not confirmed support for LinkedIn profile links. Your edits are kept on this phone. Refresh the connection or ask its operator to update the service."</string>
@@ -1570,6 +1580,7 @@
     <string name="c_550acf516bbe" formatted="false">"Tools and responsibilities"</string>
     <string name="c_0f367fa2e43b" formatted="false">"Track this application"</string>
     <string name="c_76c176df00fb" formatted="false">"Track this opportunity"</string>
+    <string name="c_11f1c3046c4c" formatted="false">"Try a broader job title, another location, or a different employer board."</string>
     <string name="c_7cbe51fd7c0d" formatted="false">"Try a broader title, another location or different employer boards. This search does not cover every employer."</string>
     <string name="c_ee2557b28441" formatted="false">"Try again after "</string>
     <string name="c_b5432865f8aa" formatted="false">"Try again after {0}"</string>

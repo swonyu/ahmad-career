@@ -59,6 +59,15 @@ struct NativeDiscoveryScreen: View {
                     if discovery.catalog == nil && !discovery.loadingCatalog {
                         Button(l10n("Retry employer directory")) { Task { await discovery.loadCatalog() } }
                     }
+                    if discovery.page == nil && discovery.canRetrySubmittedSearch {
+                        Button(l10n("Retry this search")) { Task { await discovery.retrySubmittedSearch() } }
+                            .accessibilityIdentifier("discovery.retry")
+                    }
+                    if discovery.page == nil {
+                        ForEach(discovery.recoveryBoardFallbacks) { identity in
+                            boardFallback(identity, label: l10n("Open the employer board"))
+                        }
+                    }
                 }
             }
             if let notice = discovery.storageNotice {
@@ -76,9 +85,16 @@ struct NativeDiscoveryScreen: View {
                             VStack(alignment: .leading, spacing: 5) {
                                 Label(source.name, systemImage: source.status == "unavailable" ? "exclamationmark.circle" : source.status == "stale" ? "clock" : "building.2")
                                     .font(.subheadline.weight(.semibold))
-                                Text(l10n(sourceStatus(source))).font(.caption).foregroundStyle(.secondary)
+                                Text(sourceLine(source)).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                                 if let message = source.error?.message { Text(l10n(message)).font(.caption).fixedSize(horizontal: false, vertical: true) }
+                                if let identity = DiscoveryPolicy.canonicalBoard(source.boardUrl) {
+                                    boardFallback(identity, label: l10n.format("Open employer board for {0}", [source.name]))
+                                }
                             }.padding(.vertical, 4).accessibilityElement(children: .combine)
+                        }
+                        if discovery.canRetrySubmittedSearch && (page.status == "partial" || page.status == "unavailable") {
+                            Button(l10n("Retry this search")) { Task { await discovery.retrySubmittedSearch() } }
+                                .accessibilityIdentifier("discovery.retry")
                         }
                         Text(l10n(page.notice)).font(.footnote).foregroundStyle(.secondary)
                     }
@@ -126,23 +142,37 @@ struct NativeDiscoveryScreen: View {
         discovery.query.sources.isEmpty ? "Employer boards · suggested selection" : "Employer boards · \(discovery.query.sources.count) selected"
     }
     private func beginSearch() { focusedField = nil; Task { await discovery.search() } }
-    private func sourceStatus(_ source: DiscoverySourceStatus) -> String {
-        let availability: String
-        switch source.status {
-        case "fresh": availability = "Checked now"
-        case "cached": availability = "Recent cached result"
-        case "stale": availability = "Earlier cached result — recheck employer"
-        default: availability = "Unavailable — this does not mean there are no openings"
+    private var displayedEmptyStatus: String? {
+        if let status = discovery.page?.status { return status }
+        if discovery.page == nil, discovery.error != nil, discovery.canRetrySubmittedSearch { return "unavailable" }
+        return nil
+    }
+    private func sourceLine(_ source: DiscoverySourceStatus) -> String {
+        let availability = DiscoveryPresentation.sourceAvailabilityKey(status: source.status, restored: discovery.restoredResults)
+        var line = l10n(availability) + l10n.format(" · {0} matched", [String(source.matchedCount)])
+        if source.limited { line += l10n(" · bounded sample") }
+        let stamp = source.checkedAt ?? (discovery.restoredResults ? discovery.page?.generatedAt : nil)
+        if let stamp, let parsed = ApplicationReviewPolicy.date(stamp) {
+            line += "\n" + l10n.format("Last checked: {0}", [l10n.date(parsed, includeTime: true)])
         }
-        return l10n(availability) + l10n.format(" · {0} matched", [String(source.matchedCount)]) + (source.limited ? l10n(" · bounded sample") : "")
+        return line
+    }
+    @ViewBuilder private func boardFallback(_ identity: DiscoveryBoardIdentity, label: String) -> some View {
+        if let url = URL(string: identity.boardUrl) {
+            Link(destination: url) { Label(label, systemImage: "arrow.up.right.square") }
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityIdentifier("discovery.board.\(identity.id)")
+            Text(identity.boardUrl).font(.caption).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
+            Text(l10n("Opening this public board in your browser does not submit an application or confirm the listings are still open."))
+                .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+        }
     }
     private var emptyState: some View {
         VStack(alignment: .leading, spacing: 12) {
             Image(systemName: "magnifyingglass").font(.title).accessibilityHidden(true)
-            Text(l10n(discovery.isSearching ? "Checking employer boards…" : discovery.page == nil ? "A fresh search starts with you." : discovery.page?.status == "unavailable" ? "These boards could not be checked." : "No roles match this search."))
+            Text(l10n(DiscoveryPresentation.emptyTitle(searching: discovery.isSearching, pageStatus: displayedEmptyStatus)))
                 .font(.headline).fixedSize(horizontal: false, vertical: true)
-            Text(l10n(discovery.page == nil ? "Use a role or skill, add a location if you want, and choose up to four Greenhouse or Lever employer boards. Tap Search jobs when you are ready."
-                 : "Try fewer keywords, another location or a different employer board. Results cover the selected boards, not every employer or country. Your saved opportunities are unchanged."))
+            Text(l10n(DiscoveryPresentation.emptyDetail(pageStatus: displayedEmptyStatus)))
                 .font(.subheadline).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
         }.padding(.vertical, 16).accessibilityElement(children: .combine).accessibilityIdentifier("discovery.empty")
     }
@@ -173,9 +203,9 @@ private struct NativeDiscoveryBoards: View {
                                         Text(l10n(source.provider == "greenhouse" ? "Greenhouse board" : "Lever board")).font(.caption).foregroundStyle(.secondary)
                                     }
                                     Spacer(minLength: 8)
-                                    Image(systemName: discovery.query.sources.contains(source.id) ? "checkmark.circle.fill" : "circle")
+                                    Image(systemName: discovery.boardSelected(source.id) ? "checkmark.circle.fill" : "circle")
                                 }.padding(.vertical, 4)
-                            }.accessibilityValue(l10n(discovery.query.sources.contains(source.id) ? "Selected" : "Not selected"))
+                            }.accessibilityValue(l10n(discovery.boardSelected(source.id) ? "Selected" : "Not selected"))
                         }
                     }
                 } else if discovery.loadingCatalog { ProgressView(l10n("Loading employer directory")) }
@@ -185,7 +215,7 @@ private struct NativeDiscoveryBoards: View {
                     Section(l10n("Your added boards")) {
                         ForEach(custom, id: \.self) { source in
                             VStack(alignment: .leading, spacing: 8) {
-                                Text(source).font(.footnote).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
+                                Text(discovery.boardDisplay(source)).font(.footnote).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
                                 Button(l10n("Remove board"), role: .destructive) { discovery.toggleSource(source) }
                             }
                         }

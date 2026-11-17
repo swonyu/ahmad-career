@@ -259,6 +259,7 @@
 "Choose an experience level from the list." = "اختر مستوى الخبرة من القائمة.";
 "Choose and review a backup first." = "اختر نسخة احتياطية وراجعها أولًا.";
 "Choose date" = "اختيار تاريخ";
+"Choose each employer board only once." = "اختر كل لوحة وظائف لجهة العمل مرة واحدة فقط.";
 "Choose employer boards" = "اختيار صفحات وظائف جهات العمل";
 "Choose employer boards · recommended" = "اختيار صفحات وظائف جهات العمل · مقترحة";
 "Choose employers" = "اختيار جهات العمل";
@@ -387,6 +388,7 @@
 "Create a new private workspace?" = "هل تريد إنشاء مساحة عمل خاصة جديدة؟";
 "Create new workspace" = "إنشاء مساحة عمل جديدة";
 "Currency" = "العملة";
+"Current openings could not be checked." = "تعذر التحقق من الوظائف المتاحة حاليًا.";
 "Current phone workspace" = "مساحة الهاتف الحالية";
 "Current record" = "السجل الحالي";
 "Current saved details" = "التفاصيل المحفوظة حاليًا";
@@ -748,6 +750,8 @@
 "No email entered" = "لم يُدخل بريد إلكتروني";
 "No follow-ups match." = "لا توجد متابعات مطابقة.";
 "No follow-ups to show." = "لا توجد متابعات لعرضها.";
+"No matches in the results we could check." = "لا توجد مطابقات في النتائج التي أمكن التحقق منها.";
+"No matching jobs in these boards." = "لا توجد وظائف مطابقة في لوحات التوظيف هذه.";
 "No pay floor" = "لا يوجد حد أدنى للراتب";
 "No private note" = "لا توجد ملاحظة خاصة";
 "No receipts match these filters." = "لا توجد إيصالات إرسال تطابق هذه المرشحات.";
@@ -809,12 +813,14 @@
 "Open settings" = "فتح الإعدادات";
 "Open the current workspace to manage its files." = "افتح مساحة العمل الحالية لإدارة ملفاتها.";
 "Open the employer application, review your answers and attachments, then submit when ready." = "افتح طلب جهة العمل، وراجع إجاباتك ومرفقاتك، ثم أرسله عندما تكون مستعدًا.";
+"Open the employer board" = "فتح لوحة وظائف جهة العمل";
 "Open unpaired phone workspace" = "فتح مساحة الهاتف غير المرتبطة";
 "Open your application workspace" = "فتح مساحة عمل طلباتك";
 "Open {0} at {1} on the employer’s site" = "فتح {0} لدى {1} على موقع جهة العمل";
 "Opened the saved phone workspace. Connect it again to access its service; no data was copied between workspaces." = "فُتحت مساحة العمل المحفوظة على الهاتف. أعد ربطها للوصول إلى خدمتها؛ لم تُنسخ بيانات بين مساحات العمل.";
 "Opening an employer, LinkedIn or salary-source link takes you to an external website governed by its own privacy policy. Any application or account you create there is managed by that provider." = "ينقلك فتح رابط جهة عمل أو LinkedIn أو مصدر للرواتب إلى موقع خارجي تحكمه سياسة الخصوصية الخاصة به. ويتولى ذلك المزوّد إدارة أي طلب أو حساب تنشئه هناك.";
 "Opening another saved workspace disconnects this phone first. It does not move a profile, CV or note into another account." = "فتح مساحة عمل محفوظة أخرى يقطع اتصال الهاتف أولًا. لا ينقل ملفًا شخصيًا أو سيرة ذاتية أو ملاحظة إلى حساب آخر.";
+"Opening this public board in your browser does not submit an application or confirm the listings are still open." = "فتح لوحة التوظيف العامة هذه في المتصفح لا يقدّم طلبًا ولا يؤكد أن الإعلانات ما زالت متاحة.";
 "Opening your last search…" = "جارٍ فتح بحثك الأخير…";
 "Opening your private workspace…" = "جارٍ فتح مساحة عملك الخاصة…";
 "Opens LinkedIn with only your keyword and location text. LinkedIn manages its own sign-in and applications. Career Finder does not read your LinkedIn account or verify applications submitted there." = "يفتح LinkedIn باستخدام كلماتك المفتاحية ونص الموقع فقط. يدير LinkedIn تسجيل الدخول وطلبات التقديم الخاصة به. لا يقرأ Career Finder حسابك على LinkedIn ولا يتحقق من الطلبات التي تقدمها هناك.";
@@ -1038,6 +1044,7 @@
 "Retry previous search" = "إعادة محاولة البحث السابق";
 "Retry private storage" = "إعادة محاولة الوصول إلى التخزين الخاص";
 "Retry saving search" = "إعادة محاولة حفظ البحث";
+"Retry this search" = "إعادة هذا البحث";
 "Return to Saved to see your current opportunities." = "ارجع إلى «المحفوظات» لرؤية فرصك الحالية.";
 "Review a Career Finder iPhone or Android backup before merging it here. You choose whether to replace profile fields or the last search. Existing notes and conflicting history versions are kept." = "راجع نسخة Career Finder الاحتياطية من iPhone أو Android قبل دمجها هنا. أنت تختار ما إذا كنت ستستبدل حقول الملف الشخصي أو البحث الأخير. الملاحظات الحالية ونسخ سجل التغييرات المتعارضة محفوظة.";
 "Review all incoming details" = "مراجعة جميع التفاصيل الواردة";
@@ -1141,6 +1148,7 @@
 "Saved opportunity" = "فرصة محفوظة";
 "Saved phone profile" = "الملف الشخصي المحفوظ على الهاتف";
 "Saved records could not be read. They have been preserved; no new changes will overwrite that file." = "تعذّرت قراءة السجلات المحفوظة. تم الاحتفاظ بها؛ ولن تكتب التغييرات الجديدة فوق ذلك الملف.";
+"Saved result from an earlier check" = "نتيجة محفوظة من تحقق سابق";
 "Saved to your workspace" = "محفوظة في مساحة عملك";
 "Saved versions need your review. All are kept." = "تحتاج النسخ المحفوظة إلى مراجعتك. جميعها محفوظة.";
 "Saved with application service" = "محفوظة لدى خدمة التقديم";
@@ -1397,6 +1405,7 @@
 "The search service returned no results. Try again later." = "لم تُرجع خدمة البحث أي نتائج. حاول مجددًا لاحقًا.";
 "The secure connection could not be saved on this phone." = "تعذر حفظ الاتصال الآمن على هذا الهاتف.";
 "The selected boards could not be checked. Previous results are kept; start a new search when the service is available." = "تعذر التحقق من اللوحات المختارة. احتُفظ بالنتائج السابقة؛ ابدأ بحثًا جديدًا عندما تتاح الخدمة.";
+"The selected boards did not return results. Retry the same search, or review the source details." = "لم تُرجع لوحات التوظيف المحددة نتائج. أعد البحث نفسه، أو راجع تفاصيل المصدر.";
 "The selected destination could not be opened." = "تعذّر فتح الوجهة المختارة.";
 "The selected earlier recovery copy and its known equivalent-address files were deleted. Your current workspace, other recovery copies, exported files and cloud records are unchanged." = "تم حذف نسخة الاسترجاع السابقة المختارة وملفاتها المعروفة ذات العناوين المكافئة. مساحة عملك الحالية ونسخ الاسترجاع الأخرى والملفات المصدّرة والسجلات السحابية لم تتغير.";
 "The selected employer boards could not be reached. Try again or choose other boards." = "تعذّر الوصول إلى صفحات وظائف جهات العمل المختارة. حاول مجددًا أو اختر صفحات أخرى.";
@@ -1552,6 +1561,7 @@
 "This saved search needs a newer app. Its file is preserved." = "يحتاج هذا البحث المحفوظ إلى إصدار أحدث من التطبيق. ملفه محفوظ دون تغيير.";
 "This search action is unavailable." = "إجراء البحث هذا غير متاح.";
 "This search is available in this session but could not be saved. The earlier saved search is preserved. Retry saving when private storage is available." = "هذا البحث متاح في هذه الجلسة لكن تعذّر حفظه. البحث المحفوظ السابق محفوظ دون تغيير. أعد محاولة الحفظ عندما يصبح التخزين الخاص متاحًا.";
+"This search is incomplete. Review the source details, or retry the same search." = "هذا البحث غير مكتمل. راجع تفاصيل المصدر، أو أعد البحث نفسه.";
 "This search is too large to keep on the phone. Narrow the search to save it." = "هذا البحث كبير جدًا للاحتفاظ به على الهاتف. ضيّق البحث لحفظه.";
 "This search reached its result limit. Narrow the role or location and search again." = "بلغ هذا البحث الحد الأقصى للنتائج. ضيّق نطاق الوظيفة أو الموقع وابحث مجددًا.";
 "This service has not confirmed support for LinkedIn profile links. Your edits are kept on this phone. Refresh the connection or ask its operator to update the service." = "لم تؤكد هذه الخدمة دعم روابط ملفات LinkedIn. احتُفظ بتعديلاتك على هذا الهاتف. حدّث الاتصال أو اطلب من مشغّل الخدمة تحديثها.";
@@ -1568,6 +1578,7 @@
 "Tools and responsibilities" = "الأدوات والمسؤوليات";
 "Track this application" = "متابعة هذا الطلب";
 "Track this opportunity" = "متابعة هذه الفرصة";
+"Try a broader job title, another location, or a different employer board." = "جرّب مسمى وظيفي أوسع، أو موقعًا آخر، أو لوحة وظائف مختلفة لجهة العمل.";
 "Try a broader title, another location or different employer boards. This search does not cover every employer." = "جرّب مسمى أعمّ، أو موقعًا آخر، أو صفحات وظائف مختلفة لجهات العمل. لا يغطي هذا البحث جميع جهات العمل.";
 "Try again after " = "أعد المحاولة بعد ";
 "Try again after {0}" = "أعد المحاولة بعد {0}";

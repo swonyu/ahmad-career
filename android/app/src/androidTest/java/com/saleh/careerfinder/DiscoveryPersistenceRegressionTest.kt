@@ -218,4 +218,31 @@ class DiscoveryPersistenceRegressionTest {
         assertEquals(original, store.records["search-A"])
         assertEquals(1, service.searches.size)
     }
+
+    @Test fun restoredEmptyCompletePage_staysRestoredUntilASuccessfulSearch_andRepairsEquivalentBoards() {
+        val empty = page().copy(jobs = emptyList(), status = "complete", totalMatches = 0, nextCursor = null)
+        val filters = DiscoveryFilters("saved", "", false, listOf("https://boards.greenhouse.io/example-board", "greenhouse:example-board"))
+        val store = MemoryStore(); store.records["search-A"] = snapshot(filters, empty)
+        val service = Service(page()); val controller = controller(service)
+        suspendMain { controller.attachPrivateSession(store, "search-A") }
+        assertEquals(listOf("greenhouse:example-board"), controller.state.value.filters.sources)
+        assertEquals(listOf("greenhouse:example-board"), controller.state.value.displayedFilters?.sources)
+        assertTrue(controller.state.value.jobs.isEmpty())
+        assertEquals("complete", controller.state.value.status)
+        assertTrue(controller.state.value.restoredSearch)
+        assertEquals("Saved result from an earlier check", DiscoveryPresentation.sourceAvailabilityKey("fresh", controller.state.value.restoredSearch))
+        assertFalse(controller.state.value.canRetrySubmittedSearch)
+        service.failure = java.io.IOException("Synthetic offline")
+        search(controller)
+        assertTrue(controller.state.value.jobs.isEmpty())
+        assertTrue(controller.state.value.restoredSearch)
+        assertEquals("complete", controller.state.value.status)
+        assertNotNull(controller.state.value.error)
+        assertEquals("saved", controller.state.value.displayedFilters?.query)
+        service.failure = null
+        search(controller)
+        assertFalse(controller.state.value.restoredSearch)
+        assertEquals(page().jobs, controller.state.value.jobs)
+        assertEquals(listOf("greenhouse:example-board"), controller.state.value.filters.sources)
+    }
 }
