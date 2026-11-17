@@ -1,0 +1,30 @@
+﻿"Job title","Employer","Job link","Stage (self-entered)","Marked applied (self-entered)","Applied date (self-entered)","Follow-up date (self-entered)","Private note","Last edited (not application time)"
+"Text: =1+1","Text: =1+1","https://example.org/career-finder-csv/0","Saved","No","","2026-11-21","Text: =1+1","2026-11-17T14:00:00.000Z"
+"Text: +SUM(1,2)","Text: +SUM(1,2)","https://example.org/career-finder-csv/1","Interview","Yes","2026-11-17","2026-11-21","Text: +SUM(1,2)","2026-11-17T14:00:00.000Z"
+"Text: -1+2","Text: -1+2","https://example.org/career-finder-csv/2","Saved","No","","2026-11-21","Text: -1+2","2026-11-17T14:00:00.000Z"
+"Text: @SUM(A1:A2)","Text: @SUM(A1:A2)","https://example.org/career-finder-csv/3","Interview","Yes","2026-11-17","2026-11-21","Text: @SUM(A1:A2)","2026-11-17T14:00:00.000Z"
+"Text: 	=1","Text: 	=1","https://example.org/career-finder-csv/4","Saved","No","","2026-11-21","Text: 	=1","2026-11-17T14:00:00.000Z"
+"Text: =1","Text: =1","https://example.org/career-finder-csv/5","Interview","Yes","2026-11-17","2026-11-21","Text: =1","2026-11-17T14:00:00.000Z"
+"Text: 
+=1","Text: 
+=1","https://example.org/career-finder-csv/6","Saved","No","","2026-11-21","Text: 
+=1","2026-11-17T14:00:00.000Z"
+"Text:   =1","Text:   =1","https://example.org/career-finder-csv/7","Interview","Yes","2026-11-17","2026-11-21","Text:   =1","2026-11-17T14:00:00.000Z"
+"Text: ﻿=1","Text: ﻿=1","https://example.org/career-finder-csv/8","Saved","No","","2026-11-21","Text: ﻿=1","2026-11-17T14:00:00.000Z"
+"Text: ⁦=1","Text: ⁦=1","https://example.org/career-finder-csv/9","Interview","Yes","2026-11-17","2026-11-21","Text: ⁦=1","2026-11-17T14:00:00.000Z"
+"Text: '=1","Text: '=1","https://example.org/career-finder-csv/10","Saved","No","","2026-11-21","Text: '=1","2026-11-17T14:00:00.000Z"
+"Text: ""=1","Text: ""=1","https://example.org/career-finder-csv/11","Interview","Yes","2026-11-17","2026-11-21","Text: ""=1","2026-11-17T14:00:00.000Z"
+"Text: ＝1+1","Text: ＝1+1","https://example.org/career-finder-csv/12","Saved","No","","2026-11-21","Text: ＝1+1","2026-11-17T14:00:00.000Z"
+"Text: ＋1","Text: ＋1","https://example.org/career-finder-csv/13","Interview","Yes","2026-11-17","2026-11-21","Text: ＋1","2026-11-17T14:00:00.000Z"
+"Text: －1","Text: －1","https://example.org/career-finder-csv/14","Saved","No","","2026-11-21","Text: －1","2026-11-17T14:00:00.000Z"
+"Text: ＠SUM(1)","Text: ＠SUM(1)","https://example.org/career-finder-csv/15","Interview","Yes","2026-11-17","2026-11-21","Text: ＠SUM(1)","2026-11-17T14:00:00.000Z"
+"Text: 　＝1","Text: 　＝1","https://example.org/career-finder-csv/16","Saved","No","","2026-11-21","Text: 　＝1","2026-11-17T14:00:00.000Z"
+"مهندس, ""أول""","مهندس, ""أول""","https://example.org/career-finder-csv/17","Interview","Yes","2026-11-17","2026-11-21","مهندس, ""أول""","2026-11-17T14:00:00.000Z"
+"Élan — original user text","Élan — original user text","https://example.org/career-finder-csv/18","Saved","No","","2026-11-21","Élan — original user text","2026-11-17T14:00:00.000Z"
+"line one
+line two, ""quoted""
+نص خاص","line one
+line two, ""quoted""
+نص خاص","https://example.org/career-finder-csv/19","Interview","Yes","2026-11-17","2026-11-21","line one
+line two, ""quoted""
+نص خاص","2026-11-17T14:00:00.000Z"

@@ -1,0 +1,13 @@
+{
+  "baseCommit": "880e878f6f528d903c42951f10a8b216094c889c",
+  "command": ["npm", "run", "lint", "--", "--quiet"],
+  "exitCode": 1,
+  "findings": [
+    {"file": "hosted/tests/hosted-applications.mjs", "line": 29, "rule": "react-hooks/rules-of-hooks", "cause": "The request-handler test argument was named useHandler, which the lint rule interpreted as a React Hook."},
+    {"file": "hosted/tests/i18n.mjs", "line": 62, "rule": "@next/next/no-assign-module-variable", "cause": "A local dynamically imported fixture was named module."},
+    {"file": "hosted/tests/web-experience.mjs", "line": 19, "rule": "@next/next/no-assign-module-variable", "cause": "A local dynamically imported fixture was named module."}
+  ],
+  "distinction": "The existing CI lint command was npx eslint app worker --max-warnings0; it did not include these test files. Its earlier pass and this wider local lint failure have different scopes.",
+  "resolution": "Rename local bindings while preserving the test-option property and returned fixture property; no lint suppression, removed test or assertion change.",
+  "followup": "focused-command-results.json records a successful full npm run lint after the correction."
+}

@@ -1,0 +1,97 @@
+{
+  "base_sha": "880e878f6f528d903c42951f10a8b216094c889c",
+  "base_tree": "e8d9d4c0017a5a877d40c172ab72254905de3011",
+  "status": "Implemented and independently source-reviewed for the next exact-source CI; not runtime verified.",
+  "patches": [
+    {
+      "name": "android-viewport-repair-880e878.patch",
+      "bytes": 25020,
+      "sha256": "558157d87ea645eab6cb87026a84f7b2e3773ed7f45efb3e63734f3e3f803f55"
+    },
+    {
+      "name": "iphone-paragraph-selection-880e878.patch",
+      "bytes": 3680,
+      "sha256": "24aa5e46a8d225c6ba18d9ae697e7c9ef5cc8a760463434f6a95547cec693406"
+    }
+  ],
+  "files": [
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+      "before_sha256": "eb51d017e48ac6383ef8ef30df2c10775ea19c6cdaa9b4078a29a602930eb706",
+      "after_sha256": "fea99db3e760c2a99e49de5cd9366a4afe9f159acc79c5b0f96bb43350a8a729"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/NavigationTestActions.kt",
+      "before_sha256": null,
+      "after_sha256": "a11aecda2d3fe037091687dbe295c75c188c496615392352d13c451538225897"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt",
+      "before_sha256": "7ba4aaf87e5c02a871d241de4b0d4fca623dbeaac9d17768adc6899bcc3b8978",
+      "after_sha256": "a01a176c765f0b77c07fb563ba4cf322914a544684a62ecf2939db651880896a"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/NativeLocalizationAcceptanceTest.kt",
+      "before_sha256": "e7f38214368cb783484514c76fe1470bacb040b20863d44ea3b75baa9ff4017b",
+      "after_sha256": "be7bcfc0c3610ba78ab25b522719b26a51e39a322ebc580d216f7fcc43fca916"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/NavigationPhoneAcceptanceTest.kt",
+      "before_sha256": "e36d84532e0bbe511e494332c61c7b3f7e5d342bdb96400ef0366d104bcdc242",
+      "after_sha256": "79cad23b244d5240757be27ab9b7c37aa664be93dbf0c54a718a1c0cbd0b6013"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt",
+      "before_sha256": "b4d32e00ed0edcd161c67fbbd822c2da7e8d6e6cee4ed6dd02ff4e8bb78110bf",
+      "after_sha256": "163c22b2650c98f8fcfba858e4dd169d1c4eae1c9521799ef41fe950a970b433"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt",
+      "before_sha256": "f59aa44ee64be4bdcdb1f0de910525ccf4ebd19d191231fffab463f835e7027c",
+      "after_sha256": "e79be06178abdff67a98f225e6c155227dede4e48d4b550df156a9b55b23a68c"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/LinkedInPhoneAcceptanceTest.kt",
+      "before_sha256": "5b8d2179dd5477f6520367c3cddba9df9c00083501a8edcbf1c8f9186c69d2e0",
+      "after_sha256": "dc1a833ecfd07143c4de494c5d3f42f6977696480f6ddcfa2b2b2794798e0bb3"
+    },
+    {
+      "path": "apple/UITests/CareerFinderUITests.swift",
+      "before_sha256": "2fdbd93e86e288621e90ad0807b0d9ad95c8a202e9f8c61aa280fab7b0f39685",
+      "after_sha256": "d3622213d4941b5fae4347c8725d651b7a32bc310a56427b37adf5a351c2acae",
+      "test_methods_before": 17,
+      "test_methods_after": 17,
+      "test_method_names_unchanged": true,
+      "assertion_calls_before": 141,
+      "assertion_calls_after": 141
+    }
+  ],
+  "android_provenance": {
+    "repository": "swonyu/ahmad-career",
+    "publisher_branch": "continuation/publishing-native-fixes-20261117-01a49",
+    "read_commit": "842472684b194e993355f632902ccc81366c164c",
+    "method": "Read-only GitHub source retrieval. Selectively reused PhoneNavigation, bounded message/content layout, NavigationTestActions and related test-reachability pattern. No whole-file replacement, publisher branch merge, signing, store or shared build changes.",
+    "publisher_helper_git_blob_sha": "e74409d5f601df936d4cfddcdc461a90e775d807",
+    "independent_review_scope": "Peer checked the actual local patch but did not independently fetch or verify the publisher commit object."
+  },
+  "iphone_selection_contract": {
+    "primary": "Reachable native Select All action, followed by Delete.",
+    "alternative": "When no Select All is reachable, only a nonsecure native text/search field with no newline may receive the documented triple-tap/one-finger paragraph-selection gesture, followed by Delete.",
+    "proof": "Existing exact-empty check must pass before replacement; exact requested final field value, keyboard readiness and full keyboard dismissal checks are retained.",
+    "diagnostics": "Keep menu-unavailable screenshot/tree; add screenshot/tree when complete clearing fails.",
+    "new_runtime_status": "Pending next iOS26 CI; supported gesture existence does not prove this concrete field interaction has passed.",
+    "sources": [
+      "https://support.apple.com/en-am/guide/iphone/iph1a9cae52c/26/ios/26",
+      "https://developer.apple.com/documentation/xcuiautomation/xcuielement/tap(withnumberoftaps:numberoftouches:)"
+    ]
+  },
+  "verification": {
+    "git_diff_check": "pass",
+    "android_runtime": "pending",
+    "iphone_runtime": "pending",
+    "all_17_iphone_test_names_retained": true,
+    "all_141_iphone_assertion_calls_retained": true,
+    "no_test_skip_added": true,
+    "timeouts_unchanged": true
+  }
+}

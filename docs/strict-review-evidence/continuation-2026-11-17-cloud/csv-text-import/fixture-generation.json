@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-11-17T14:42:48.912Z",
+  "unchangedExporterSourceCommit": "880e878f6f528d903c42951f10a8b216094c889c",
+  "catalogState": "working follow-up; exact source hashes below",
+  "syntheticRecords": 6,
+  "sampleValues": [
+    "000123",
+    "123456789012345678901",
+    "1E10",
+    "2026-11-17",
+    "مختلط / Mixed 00123",
+    "=1+1"
+  ],
+  "columns": 9,
+  "sourceHashes": {
+    "hosted/app/phone/record-tools.ts": "910dae464cd8504ed225fe5f68fa6b0750c7b7a9c7b18c6454ff4504a772e9a9",
+    "hosted/app/phone/model.ts": "41905ec3d0be5a7c5e729b88e93f3c81163255515ead724b3a79bfee6f4db13e",
+    "hosted/app/i18n/core.ts": "47485ac0ce826dd1dde553d645869f2e272e59639680bd507a9978beb128c030",
+    "hosted/app/i18n/messages.ar.json": "fe90f2bb6fa500983998bb04929e31cb924be1bef6ab855967d9f46ec0cfce54"
+  },
+  "files": [
+    {
+      "name": "career-records-en.csv",
+      "language": "en",
+      "bytes": 1125,
+      "sha256": "f6d4e12c2bb588bfd765c1bb9f8a1eecf5e883735f7d82cfd83a0beea36791fd"
+    },
+    {
+      "name": "career-records-ar.csv",
+      "language": "ar",
+      "bytes": 1354,
+      "sha256": "c2ab9f9b2a8a82ca3d56074ad9bdc6e8a1eed9e79f8ba6319f7e4bd1679aed05"
+    }
+  ],
+  "scope": "Exact product CSV generation only. Engine import, browser saving and calendar import are separate checks."
+}

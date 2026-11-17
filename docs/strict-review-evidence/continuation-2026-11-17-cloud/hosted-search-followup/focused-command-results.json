@@ -1,0 +1,30 @@
+{
+  "completedAt": "2026-11-17T14:49:24.057619+00:00",
+  "results": [
+    {
+      "command": [
+        "npm",
+        "run",
+        "lint"
+      ],
+      "exitCode": 0,
+      "log": "lint.log",
+      "sha256": "8175ec8b8af7e252d6892f4dd64f4ba928eb172e85d4e13e8e1bfa8df6eac7e9"
+    },
+    {
+      "command": [
+        "node",
+        "--test",
+        "tests/i18n.mjs",
+        "tests/web-experience.mjs",
+        "tests/phone-search-workflows.mjs",
+        "tests/phone-localization.mjs",
+        "tests/phone-settings-privacy.mjs",
+        "tests/phone-record-tools.mjs"
+      ],
+      "exitCode": 0,
+      "log": "focused-tests.log",
+      "sha256": "215395be1a013b5a969aead2119935e1da52c3aa21311de7dc79b1f51b1d6d1e"
+    }
+  ]
+}

@@ -16,9 +16,9 @@ let version=0;
 async function themeFixture({saved=null,denyRead=false,denyWrite=false}={}) {
   const stored=new Map(saved===null?[]:[[key,saved]]),writes=[],window=new EventTarget(),document={documentElement:{dataset:{}}};
   window.localStorage={getItem(name){if(denyRead)throw Error('Storage unavailable');return stored.get(name)??null;},setItem(name,value){if(denyWrite)throw Error('Storage unavailable');writes.push([name,value]);stored.set(name,value);}};
-  const module=await import(pathToFileURL(join(directory,'appearance.mjs')).href+'?fixture='+version++);
+  const appearanceModule=await import(pathToFileURL(join(directory,'appearance.mjs')).href+'?fixture='+version++);
   const before={window:globalThis.window,document:globalThis.document};globalThis.window=window;globalThis.document=document;
-  return{module,window,document,stored,writes,restore(){globalThis.window=before.window;globalThis.document=before.document;}};
+  return{module:appearanceModule,window,document,stored,writes,restore(){globalThis.window=before.window;globalThis.document=before.document;}};
 }
 
 test('early theme initialization applies only recognized preferences and follows the device when storage is unavailable',()=>{

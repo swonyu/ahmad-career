@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Base64
+import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.hasSetTextAction
@@ -15,6 +16,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
@@ -100,7 +102,7 @@ class NativeHttpsAcceptanceTest {
                 resolver.openOutputStream(file)!!.use { it.write(bytes) }
                 resolver.update(file, ContentValues().apply { put(MediaStore.MediaColumns.IS_PENDING, 0) }, null, null)
             }
-            step("profile-tab") { compose.onNodeWithTag("navigation-profile").performClick() }
+            step("profile-tab") { compose.onNodeWithTag("navigation-profile").revealNavigationTab().performClick() }
             step("profile-name-scroll") { compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("First or single name"))) }
             step("profile-name-edit") { compose.onNode(hasText(strings("First or single name")) and hasSetTextAction()).performTextInput("Single") }
             step("profile-name-keyboard-dismiss") { closeSoftKeyboard() }
@@ -109,6 +111,10 @@ class NativeHttpsAcceptanceTest {
             step("profile-email-keyboard-dismiss") { closeSoftKeyboard() }
             step("pdf-select") { compose.runOnIdle { model.choosePDF(file) } }
             step("pdf-ready") { await { !model.state.value.busy && model.state.value.profile.resume?.sha256 == expectedHash } }
+            step("profile-content-reachable") {
+                compose.onNodeWithTag("profile-list").assertHeightIsAtLeast(120.dp).assertIsDisplayed()
+            }
+            step("profile-content-capture") { capture("acceptance-profile-large-text.png") }
             step("profile-save-scroll") { compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("Save profile to workspace"))) }
             step("profile-save-click") { compose.onNodeWithText(strings("Save profile to workspace")).performClick() }
             step("profile-saved") { await { !model.state.value.busy && !model.state.value.profileDirty && model.state.value.profile.revision > 0 } }
@@ -127,15 +133,15 @@ class NativeHttpsAcceptanceTest {
                     model.editAnswers(job.id) { JobAnswers("First reviewed message", consentStore = true, consentMarketing = false) }
                 }
             } }
-            step("apply-tab") { compose.onNodeWithTag("navigation-apply").performClick() }
+            step("apply-tab") { compose.onNodeWithTag("navigation-apply").revealNavigationTab().performClick() }
             clickInApply("Prepare application review")
             step("initial-review-ready") { await { !model.state.value.busy && model.state.value.plan != null } }
             val earlier = model.state.value.plan!!
             assertEquals(3, earlier.items.count { it.state == "ready" })
             // Changing tabs keeps the explicit No answer, and changing a message
             // invalidates the earlier unapproved review without submitting it.
-            step("jobs-tab") { compose.onNodeWithTag("navigation-jobs").performClick() }
-            step("apply-tab-return") { compose.onNodeWithTag("navigation-apply").performClick() }
+            step("jobs-tab") { compose.onNodeWithTag("navigation-jobs").revealNavigationTab().performClick() }
+            step("apply-tab-return") { compose.onNodeWithTag("navigation-apply").revealNavigationTab().performClick() }
             assertTrue(model.state.value.answers.values.all { it.consentMarketing == false })
             val changed = model.state.value.jobs.first().id
             step("review-message-edit") { compose.runOnIdle { model.editAnswers(changed) { it.copy(comments = "Updated reviewed message") } } }
@@ -170,14 +176,14 @@ class NativeHttpsAcceptanceTest {
             step("cooldown-outcomes") { await(30_000) { model.state.value.receipts.count { it.state == "confirmed" } == 2 } }
             assertEquals(1, model.state.value.receipts.count { it.state == "uncertain" })
             assertEquals(0, model.state.value.receipts.count(ApplicationReceipt::verified))
-            step("receipts-tab") { compose.onNodeWithTag("navigation-receipts").performClick() }
+            step("receipts-tab") { compose.onNodeWithTag("navigation-receipts").revealNavigationTab().performClick() }
             step("receipt-count-scroll") { compose.onNodeWithTag("receipts-list").performScrollToNode(hasText(strings("verified application receipts"))) }
             step("receipt-count-visible") { compose.onNodeWithText(strings("verified application receipts")).assertIsDisplayed() }
             step("receipts-capture") { capture("acceptance-receipts.png") }
 
             val timeout = model.state.value.jobs.first { it.url == urls[1] }
             step("uncertain-job-select") { compose.runOnIdle { model.state.value.selected.filter { it != timeout.id }.forEach(model::toggleJob) } }
-            step("uncertain-apply-tab") { compose.onNodeWithTag("navigation-apply").performClick() }
+            step("uncertain-apply-tab") { compose.onNodeWithTag("navigation-apply").revealNavigationTab().performClick() }
             clickInApply("Prepare application review")
             step("uncertain-review-ready") { await { !model.state.value.busy && model.state.value.plan != null } }
             assertEquals("blocked", model.state.value.plan!!.items.single().state)

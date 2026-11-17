@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
@@ -87,29 +88,33 @@ class MainActivity : ComponentActivity() {
 
 private data class Destination(val key: String, val title: String, val icon: ImageVector)
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PhoneNavigation(tabs: List<Destination>, selectedIndex: Int, select: (Int) -> Unit) {
     val l10n = rememberCareerStrings()
     BoxWithConstraints {
         if (maxWidth < 420.dp && LocalDensity.current.fontScale >= 1.5f) {
+            val labels = tabs.map { l10n(it.title) }
+            val fontScale = LocalDensity.current.fontScale
+            val direction = LocalLayoutDirection.current
             Surface(color = MaterialTheme.colorScheme.surface) {
-                Column(Modifier.navigationBarsPadding().padding(horizontal = 12.dp, vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    tabs.chunked(2).forEach { row ->
-                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            row.forEach { item ->
-                                val index = tabs.indexOf(item)
-                                OutlinedButton(onClick = { select(index) },
-                                    modifier = Modifier.weight(1f).heightIn(min = 56.dp).testTag("navigation-" + item.key).semantics {
-                                        role = Role.Tab; selected = selectedIndex == index
-                                    },
-                                    colors = ButtonDefaults.outlinedButtonColors(
-                                        containerColor = if (selectedIndex == index) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
-                                        contentColor = MaterialTheme.colorScheme.onSurface),
-                                    shape = RoundedCornerShape(16.dp), contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp)) {
+                // Recreate only the tab row's scroll position after display geometry changes.
+                // Material's row then brings the still-selected destination into view.
+                key(maxWidth, fontScale, direction, labels) {
+                    PrimaryScrollableTabRow(selectedTabIndex = selectedIndex,
+                        modifier = Modifier.navigationBarsPadding().testTag("phone-navigation-scroll"),
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.primary, edgePadding = 12.dp) {
+                        tabs.forEachIndexed { index, item ->
+                            Tab(selected = selectedIndex == index, onClick = { select(index) },
+                                modifier = Modifier.heightIn(min = 56.dp).testTag("navigation-" + item.key),
+                                selectedContentColor = MaterialTheme.colorScheme.primary,
+                                unselectedContentColor = MaterialTheme.colorScheme.onSurface) {
+                                Row(Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                                    verticalAlignment = Alignment.CenterVertically) {
                                     Icon(item.icon, contentDescription = null, modifier = Modifier.size(20.dp))
                                     Spacer(Modifier.width(8.dp))
-                                    Text(l10n(item.title), style = MaterialTheme.typography.labelLarge)
+                                    Text(labels[index], style = MaterialTheme.typography.labelLarge, maxLines = 1)
                                 }
                             }
                         }
@@ -167,19 +172,28 @@ fun CareerApp(model: CareerViewModel) {
         },
         bottomBar = { PhoneNavigation(tabs, tab, selectTab) }
     ) { padding ->
-        Column(Modifier.fillMaxSize().padding(padding)) {
-            if (state.busy || !state.loaded) LinearProgressIndicator(Modifier.fillMaxWidth())
-            if (state.error != null || state.notice != null) MessageBanner(state.error ?: state.notice.orEmpty(), state.error != null, model::dismissMessage)
-            if (state.testService) MessageBanner("Test service: applications and receipts are simulated.", true, null)
-            Box(Modifier.weight(1f)) {
-                if (tab == 4) SettingsScreen(state, { showConnect = true }, { showPhoneData = true }, { selectTab(3) })
-                else if (!state.loaded) Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text(l10n("Opening your private workspace…")) }
-                else if (state.storageBlocked) StorageRecoveryScreen(state, model)
-                else when (tab) {
-                    0 -> JobsScreen(state, model, { showAdd = true }, { tab = 1 }, { tab = 3 }, { showConnect = true }, jobsSection) { jobsSection = it }
-                    1 -> ApplyScreen(state, model, { showConnect = true }, { tab = 2 }, { tab = 3 }, { tab = 0; jobsSection = 1 })
-                    2 -> ReceiptsScreen(state, model, { tab = 0; jobsSection = 0 }) { receiptExportScope = state.privateScope; exporter.launch("Career-Finder-Receipts-" + LocalDate.now() + ".json") }
-                    3 -> ProfileScreen(state, model) { pdfScope = state.privateScope; picker.launch(arrayOf("application/pdf")) }
+        BoxWithConstraints(Modifier.fillMaxSize().padding(padding)) {
+            val messageHeightLimit = maxHeight * 0.35f
+            Column(Modifier.fillMaxSize()) {
+                if (state.busy || !state.loaded) LinearProgressIndicator(Modifier.fillMaxWidth())
+                if (state.error != null || state.notice != null || state.testService) {
+                    // Long notices remain scrollable while the main screen keeps usable height.
+                    Column(Modifier.fillMaxWidth().heightIn(max = messageHeightLimit)
+                        .verticalScroll(rememberScrollState()).testTag("workspace-messages")) {
+                        if (state.testService) MessageBanner("Test service: applications and receipts are simulated.", true, null)
+                        if (state.error != null || state.notice != null) MessageBanner(state.error ?: state.notice.orEmpty(), state.error != null, model::dismissMessage)
+                    }
+                }
+                Box(Modifier.weight(1f).testTag("workspace-content")) {
+                    if (tab == 4) SettingsScreen(state, { showConnect = true }, { showPhoneData = true }, { selectTab(3) })
+                    else if (!state.loaded) Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text(l10n("Opening your private workspace…")) }
+                    else if (state.storageBlocked) StorageRecoveryScreen(state, model)
+                    else when (tab) {
+                        0 -> JobsScreen(state, model, { showAdd = true }, { tab = 1 }, { tab = 3 }, { showConnect = true }, jobsSection) { jobsSection = it }
+                        1 -> ApplyScreen(state, model, { showConnect = true }, { tab = 2 }, { tab = 3 }, { tab = 0; jobsSection = 1 })
+                        2 -> ReceiptsScreen(state, model, { tab = 0; jobsSection = 0 }) { receiptExportScope = state.privateScope; exporter.launch("Career-Finder-Receipts-" + LocalDate.now() + ".json") }
+                        3 -> ProfileScreen(state, model) { pdfScope = state.privateScope; picker.launch(arrayOf("application/pdf")) }
+                    }
                 }
             }
         }

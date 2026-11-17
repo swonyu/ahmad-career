@@ -1307,5 +1307,10 @@
   "Save a valid follow-up date before exporting a calendar reminder.": "احفظ تاريخ متابعة صالحًا قبل تصدير تذكير للتقويم.",
   "Personal follow-up reminder. Check the employer’s current posting before contacting them.": "تذكير شخصي بالمتابعة. راجع إعلان جهة العمل الحالي قبل التواصل معها.",
   "Spreadsheet download started. It includes private notes; keep it private. Your saved data is unchanged.": "بدأ تنزيل جدول البيانات. يتضمن ملاحظات خاصة؛ احتفظ به في مكان خاص. لم تتغيّر بياناتك المحفوظة.",
-  "Calendar download started. Open the file to import it if you choose. Later date changes do not update it; alerts depend on your calendar settings.": "بدأ تنزيل ملف التقويم. افتح الملف لاستيراده إذا رغبت. تغيير التاريخ لاحقًا لا يحدّثه، وتخضع التنبيهات لإعدادات تقويمك."
+  "Calendar download started. Open the file to import it if you choose. Later date changes do not update it; alerts depend on your calendar settings.": "بدأ تنزيل ملف التقويم. افتح الملف لاستيراده إذا رغبت. تغيير التاريخ لاحقًا لا يحدّثه، وتخضع التنبيهات لإعدادات تقويمك.",
+  "Some boards could not provide current results. This search may be incomplete.": "تعذّر جلب نتائج حديثة من بعض مواقع التوظيف. قد تكون نتائج هذا البحث غير مكتملة.",
+  "Retry this search": "إعادة محاولة هذا البحث",
+  "No current matches could be confirmed.": "تعذّر التأكد من وجود فرص مطابقة حاليًا.",
+  "Retry this search or open an employer’s website to check its current openings.": "أعِد محاولة هذا البحث أو افتح موقع صاحب العمل للاطلاع على الفرص المتاحة حاليًا.",
+  "To keep leading zeros and number-like text, import quoted fields as text or set text columns to Text. Use JSON for original values.": "للحفاظ على الأصفار في البداية والنصوص التي تشبه الأرقام، استورد الحقول المحاطة بعلامات اقتباس كنص أو اضبط نوع الأعمدة النصية على «نص». استخدم JSON للاحتفاظ بالقيم الأصلية."
 }

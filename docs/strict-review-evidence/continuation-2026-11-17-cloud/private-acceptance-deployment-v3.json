@@ -1,0 +1,55 @@
+{
+  "recordedAt": "2026-11-17 14:02:55 UTC",
+  "projectId": "appgprj_6afc21bd599c8191a0fb7705274d8582",
+  "version": 3,
+  "sourceCommit": "a02ddf951c3ac8f20739799522d7fa000cba2af0",
+  "sourceParent": "17c29bc9708b1634eddc158184cb63f61135675d",
+  "versionId": "appgprj_6afc21bd599c8191a0fb7705274d8582~appgver_59ee43c1a2f88191972a93ab7f71c59a",
+  "deploymentId": "appgdep_6afc5e2b43308191a36d55e3f495c52b",
+  "deploymentStatus": "succeeded",
+  "deployedAt": "2026-11-17T14:01:38.436158+00:00",
+  "environmentRevision": 1,
+  "url": "https://career-finder-acceptance-20261117.jazzy-drake-8323.chatgpt.site/phone",
+  "audience": {
+    "mode": "custom",
+    "ownerRole": "owner",
+    "allowedAccountUsers": 1,
+    "externalVisitors": 0,
+    "groups": 0,
+    "audienceChanged": false
+  },
+  "sourceChanges": [
+    "English and Arabic recovery download notice reports initiation, not completed saving.",
+    "ACCEPTANCE-LAB.md corrects stale predeployment text and preserves observed deployment/acceptance history."
+  ],
+  "verification": {
+    "typecheck": "passed",
+    "focusedExistingTests": {
+      "executed": 34,
+      "passed": 34,
+      "failed": 0,
+      "skipped": 0
+    },
+    "productionBuild": "passed with existing nonfatal framework warnings",
+    "sourcePush": "exact commit confirmed by Site workflow helper",
+    "archive": "career-finder-private-acceptance-v3.tar.gz",
+    "archiveBytes": 4032080,
+    "archiveSHA256": "77a17bec329a6357f47580bfd5ef212f559df57470650528252da8400f61b30b",
+    "changedPaths": [
+      "ACCEPTANCE-LAB.md",
+      "app/i18n/messages.ar.json",
+      "app/phone/PhoneApp.tsx"
+    ]
+  },
+  "boundaries": {
+    "publicHostedVersion": 7,
+    "publicSiteChanged": false,
+    "providerConfigurationChanged": false,
+    "migrationChanged": false,
+    "realGoogleCallbackVerified": false,
+    "ownerBrowserV3Acceptance": "not performed; correct owner browser context unavailable",
+    "downloadCompletionOrExternalImportVerified": false,
+    "liveAutoApplyEnabled": false,
+    "realEmployerApplicationsSent": 0
+  }
+}

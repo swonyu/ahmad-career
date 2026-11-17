@@ -1,0 +1,36 @@
+--------- beginning of main
+11-17 14:28:32.814  5655  5669 I TestRunner: run started: 1 tests
+11-17 14:28:32.815  5655  5669 I TestRunner: started: nativeReviewAndApproval_preserveExactPDFConsent_andUncertainRetryBoundaries(com.saleh.careerfinder.NativeHttpsAcceptanceTest)
+11-17 14:28:32.846  5655  5669 I CareerPhoneAcceptance: HTTPS phase: activity-rule:starting
+11-17 14:28:34.150  5655  5669 I CareerPhoneAcceptance: HTTPS phase: test-body:entered
+11-17 14:28:34.159  5655  5669 I CareerPhoneAcceptance: HTTPS phase: activity-model:before
+11-17 14:28:34.170  5655  5669 I CareerPhoneAcceptance: HTTPS phase: activity-model:after
+11-17 14:28:34.171  5655  5669 I CareerPhoneAcceptance: HTTPS phase: workspace-readiness:before
+11-17 14:28:34.177  5655  5669 I CareerPhoneAcceptance: HTTPS phase: workspace-readiness:after
+11-17 14:28:34.177  5655  5669 I CareerPhoneAcceptance: HTTPS phase: pair-request:before
+11-17 14:28:34.373  5655  5669 I CareerPhoneAcceptance: HTTPS phase: pair-request:after
+11-17 14:28:34.375  5655  5669 I CareerPhoneAcceptance: HTTPS phase: pair-result:before
+11-17 14:28:35.101  5655  5669 I CareerPhoneAcceptance: HTTPS phase: pair-result:after
+11-17 14:28:35.102  5655  5669 I CareerPhoneAcceptance: HTTPS phase: pdf-document-create:before
+11-17 14:28:35.154  5655  5669 I CareerPhoneAcceptance: HTTPS phase: pdf-document-create:after
+11-17 14:28:35.155  5655  5669 I CareerPhoneAcceptance: HTTPS phase: pdf-document-write:before
+11-17 14:28:35.174  5655  5669 I CareerPhoneAcceptance: HTTPS phase: pdf-document-write:after
+11-17 14:28:35.175  5655  5669 I CareerPhoneAcceptance: HTTPS phase: profile-tab:before
+11-17 14:28:35.264  5655  5669 I CareerPhoneAcceptance: HTTPS phase: profile-tab:after
+11-17 14:28:35.264  5655  5669 I CareerPhoneAcceptance: HTTPS phase: profile-name-scroll:before
+11-17 14:28:37.572  5655  5669 I CareerPhoneAcceptance: HTTPS phase: profile-name-scroll:after
+11-17 14:28:37.572  5655  5669 I CareerPhoneAcceptance: HTTPS phase: profile-name-edit:before
+11-17 14:28:37.931  5655  5669 I CareerPhoneAcceptance: HTTPS phase: profile-name-edit:after
+11-17 14:28:37.931  5655  5669 I CareerPhoneAcceptance: HTTPS phase: profile-name-keyboard-dismiss:before
+11-17 14:28:38.054  5655  5669 I CareerPhoneAcceptance: HTTPS phase: profile-name-keyboard-dismiss:after
+11-17 14:28:38.054  5655  5669 I CareerPhoneAcceptance: HTTPS phase: profile-email-scroll:before
+11-17 14:28:40.486  5655  5669 I CareerPhoneAcceptance: HTTPS phase: profile-email-scroll:after
+11-17 14:28:40.487  5655  5669 I CareerPhoneAcceptance: HTTPS phase: profile-email-edit:before
+11-17 14:28:40.810  5655  5669 I CareerPhoneAcceptance: HTTPS phase: profile-email-edit:after
+11-17 14:28:40.810  5655  5669 I CareerPhoneAcceptance: HTTPS phase: profile-email-keyboard-dismiss:before
+11-17 14:28:41.197  5655  5669 I CareerPhoneAcceptance: HTTPS phase: profile-email-keyboard-dismiss:after
+11-17 14:28:41.199  5655  5669 I CareerPhoneAcceptance: HTTPS phase: pdf-select:before
+11-17 14:28:41.214  5655  5669 I CareerPhoneAcceptance: HTTPS phase: pdf-select:after
+11-17 14:28:41.217  5655  5669 I CareerPhoneAcceptance: HTTPS phase: pdf-ready:before
+11-17 14:28:41.815  5655  5669 I CareerPhoneAcceptance: HTTPS phase: pdf-ready:after
+11-17 14:28:41.816  5655  5669 I CareerPhoneAcceptance: HTTPS phase: profile-save-scroll:before

@@ -1,0 +1,28 @@
+{
+  "id": "appgdep_6afc554c09488191b56039f8dbb7bafb",
+  "project_id": "appgprj_6afc21bd599c8191a0fb7705274d8582",
+  "title": "Career Finder — private acceptance lab",
+  "version_id": "appgprj_6afc21bd599c8191a0fb7705274d8582~appgver_88526c5eb6ac81919bfbf4dc8e672a28",
+  "type": "publish",
+  "status": "succeeded",
+  "url": "https://career-finder-acceptance-20261117.jazzy-drake-8323.chatgpt.site",
+  "has_mcp": false,
+  "screenshot_asset_pointer": null,
+  "provider_deployment_id": "release---6afc2756eea08191a577df45114c20c2",
+  "failure_message": null,
+  "env_set_revision": 1,
+  "updated_at": "2026-11-17T13:23:46.907511+00:00",
+  "source_commit": "17c29bc9708b1634eddc158184cb63f61135675d",
+  "archive": "/workspace/scratch/5bc6158967e8/career-finder-private-acceptance-v2.tar.gz",
+  "audience": "owner-private",
+  "externalVisitors": 0,
+  "change": "Use same-origin browser credentials for existing allowlisted discovery GETs so private hosting can authenticate access; retain server guards and upstream privacy.",
+  "localChecks": {
+    "typecheck": "passed",
+    "phoneAPI": 13,
+    "build": "passed"
+  },
+  "liveSearchRecheck": "blocked: the available cloud browser account is not the owner; platform access denied",
+  "productionV7Changed": false,
+  "migration0004Changed": false
+}

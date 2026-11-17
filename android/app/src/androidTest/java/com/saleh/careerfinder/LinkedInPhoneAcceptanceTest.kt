@@ -76,7 +76,7 @@ class LinkedInPhoneAcceptanceTest {
     }
 
     @Test fun optionalProfileLink_isHonestEditableAndPrivatelySavedAtLargeText() {
-        compose.onNodeWithTag("navigation-profile").performClick()
+        compose.onNodeWithTag("navigation-profile").revealNavigationTab().performClick()
         compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("Add experience and preferences")))
         compose.onNodeWithText(strings("Add experience and preferences")).performClick()
         compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("LinkedIn profile (optional)")) and hasSetTextAction())

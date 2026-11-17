@@ -1,0 +1,725 @@
+{
+  "observedAt": "2026-11-17T14:53:58.767069+00:00",
+  "exporterSourceCommit": "880e878f6f528d903c42951f10a8b216094c889c",
+  "sourceHashes": {
+    "hosted/app/phone/record-tools.ts": "910dae464cd8504ed225fe5f68fa6b0750c7b7a9c7b18c6454ff4504a772e9a9",
+    "hosted/app/phone/model.ts": "41905ec3d0be5a7c5e729b88e93f3c81163255515ead724b3a79bfee6f4db13e",
+    "hosted/app/i18n/core.ts": "47485ac0ce826dd1dde553d645869f2e272e59639680bd507a9978beb128c030",
+    "hosted/app/i18n/messages.ar.json": "fe90f2bb6fa500983998bb04929e31cb924be1bef6ab855967d9f46ec0cfce54"
+  },
+  "engineVersion": "LibreOfficeDev 26.8.0.0.alpha0 2c87e51eeaa2b413ff4ae097b2705eea1995d8e5",
+  "results": [
+    {
+      "mode": "default",
+      "language": "en",
+      "rowsIncludingHeader": 7,
+      "columns": 9,
+      "displayValuesCompared": 63,
+      "emptyCellsCheckedForHiddenStoredValues": 3,
+      "displayMismatches": [
+        {
+          "row": 2,
+          "column": 1,
+          "expected": "000123",
+          "actual": "123"
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "expected": "000123",
+          "actual": "123"
+        },
+        {
+          "row": 2,
+          "column": 8,
+          "expected": "000123",
+          "actual": "123"
+        },
+        {
+          "row": 3,
+          "column": 1,
+          "expected": "123456789012345678901",
+          "actual": "1.23456789012346E+020"
+        },
+        {
+          "row": 3,
+          "column": 2,
+          "expected": "123456789012345678901",
+          "actual": "1.23456789012346E+020"
+        },
+        {
+          "row": 3,
+          "column": 8,
+          "expected": "123456789012345678901",
+          "actual": "1.23456789012346E+020"
+        },
+        {
+          "row": 4,
+          "column": 1,
+          "expected": "1E10",
+          "actual": "10000000000"
+        },
+        {
+          "row": 4,
+          "column": 2,
+          "expected": "1E10",
+          "actual": "10000000000"
+        },
+        {
+          "row": 4,
+          "column": 8,
+          "expected": "1E10",
+          "actual": "10000000000"
+        }
+      ],
+      "nontextNonemptyCells": [
+        {
+          "row": 2,
+          "column": 1,
+          "original": "000123",
+          "type": "float",
+          "displayed": "123",
+          "stored": "123"
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "original": "000123",
+          "type": "float",
+          "displayed": "123",
+          "stored": "123"
+        },
+        {
+          "row": 2,
+          "column": 7,
+          "original": "2026-11-21",
+          "type": "date",
+          "displayed": "2026-11-21",
+          "stored": "2026-11-21"
+        },
+        {
+          "row": 2,
+          "column": 8,
+          "original": "000123",
+          "type": "float",
+          "displayed": "123",
+          "stored": "123"
+        },
+        {
+          "row": 3,
+          "column": 1,
+          "original": "123456789012345678901",
+          "type": "float",
+          "displayed": "1.23456789012346E+020",
+          "stored": "1.23456789012346E+020"
+        },
+        {
+          "row": 3,
+          "column": 2,
+          "original": "123456789012345678901",
+          "type": "float",
+          "displayed": "1.23456789012346E+020",
+          "stored": "1.23456789012346E+020"
+        },
+        {
+          "row": 3,
+          "column": 6,
+          "original": "2026-11-17",
+          "type": "date",
+          "displayed": "2026-11-17",
+          "stored": "2026-11-17"
+        },
+        {
+          "row": 3,
+          "column": 7,
+          "original": "2026-11-21",
+          "type": "date",
+          "displayed": "2026-11-21",
+          "stored": "2026-11-21"
+        },
+        {
+          "row": 3,
+          "column": 8,
+          "original": "123456789012345678901",
+          "type": "float",
+          "displayed": "1.23456789012346E+020",
+          "stored": "1.23456789012346E+020"
+        },
+        {
+          "row": 4,
+          "column": 1,
+          "original": "1E10",
+          "type": "float",
+          "displayed": "10000000000",
+          "stored": "10000000000"
+        },
+        {
+          "row": 4,
+          "column": 2,
+          "original": "1E10",
+          "type": "float",
+          "displayed": "10000000000",
+          "stored": "10000000000"
+        },
+        {
+          "row": 4,
+          "column": 7,
+          "original": "2026-11-21",
+          "type": "date",
+          "displayed": "2026-11-21",
+          "stored": "2026-11-21"
+        },
+        {
+          "row": 4,
+          "column": 8,
+          "original": "1E10",
+          "type": "float",
+          "displayed": "10000000000",
+          "stored": "10000000000"
+        },
+        {
+          "row": 5,
+          "column": 1,
+          "original": "2026-11-17",
+          "type": "date",
+          "displayed": "2026-11-17",
+          "stored": "2026-11-17"
+        },
+        {
+          "row": 5,
+          "column": 2,
+          "original": "2026-11-17",
+          "type": "date",
+          "displayed": "2026-11-17",
+          "stored": "2026-11-17"
+        },
+        {
+          "row": 5,
+          "column": 6,
+          "original": "2026-11-17",
+          "type": "date",
+          "displayed": "2026-11-17",
+          "stored": "2026-11-17"
+        },
+        {
+          "row": 5,
+          "column": 7,
+          "original": "2026-11-21",
+          "type": "date",
+          "displayed": "2026-11-21",
+          "stored": "2026-11-21"
+        },
+        {
+          "row": 5,
+          "column": 8,
+          "original": "2026-11-17",
+          "type": "date",
+          "displayed": "2026-11-17",
+          "stored": "2026-11-17"
+        },
+        {
+          "row": 6,
+          "column": 7,
+          "original": "2026-11-21",
+          "type": "date",
+          "displayed": "2026-11-21",
+          "stored": "2026-11-21"
+        },
+        {
+          "row": 7,
+          "column": 6,
+          "original": "2026-11-17",
+          "type": "date",
+          "displayed": "2026-11-17",
+          "stored": "2026-11-17"
+        },
+        {
+          "row": 7,
+          "column": 7,
+          "original": "2026-11-21",
+          "type": "date",
+          "displayed": "2026-11-21",
+          "stored": "2026-11-21"
+        }
+      ],
+      "coercedFreeText": [
+        {
+          "row": 2,
+          "column": 1,
+          "original": "000123",
+          "type": "float",
+          "displayed": "123",
+          "stored": "123"
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "original": "000123",
+          "type": "float",
+          "displayed": "123",
+          "stored": "123"
+        },
+        {
+          "row": 2,
+          "column": 8,
+          "original": "000123",
+          "type": "float",
+          "displayed": "123",
+          "stored": "123"
+        },
+        {
+          "row": 3,
+          "column": 1,
+          "original": "123456789012345678901",
+          "type": "float",
+          "displayed": "1.23456789012346E+020",
+          "stored": "1.23456789012346E+020"
+        },
+        {
+          "row": 3,
+          "column": 2,
+          "original": "123456789012345678901",
+          "type": "float",
+          "displayed": "1.23456789012346E+020",
+          "stored": "1.23456789012346E+020"
+        },
+        {
+          "row": 3,
+          "column": 8,
+          "original": "123456789012345678901",
+          "type": "float",
+          "displayed": "1.23456789012346E+020",
+          "stored": "1.23456789012346E+020"
+        },
+        {
+          "row": 4,
+          "column": 1,
+          "original": "1E10",
+          "type": "float",
+          "displayed": "10000000000",
+          "stored": "10000000000"
+        },
+        {
+          "row": 4,
+          "column": 2,
+          "original": "1E10",
+          "type": "float",
+          "displayed": "10000000000",
+          "stored": "10000000000"
+        },
+        {
+          "row": 4,
+          "column": 8,
+          "original": "1E10",
+          "type": "float",
+          "displayed": "10000000000",
+          "stored": "10000000000"
+        },
+        {
+          "row": 5,
+          "column": 1,
+          "original": "2026-11-17",
+          "type": "date",
+          "displayed": "2026-11-17",
+          "stored": "2026-11-17"
+        },
+        {
+          "row": 5,
+          "column": 2,
+          "original": "2026-11-17",
+          "type": "date",
+          "displayed": "2026-11-17",
+          "stored": "2026-11-17"
+        },
+        {
+          "row": 5,
+          "column": 8,
+          "original": "2026-11-17",
+          "type": "date",
+          "displayed": "2026-11-17",
+          "stored": "2026-11-17"
+        }
+      ],
+      "formulaAttributes": 0,
+      "protectedFormulaLikeCellsRemainLiteral": 3,
+      "csvSHA256": "f6d4e12c2bb588bfd765c1bb9f8a1eecf5e883735f7d82cfd83a0beea36791fd",
+      "fodsSHA256": "54d8147d43f403222b7713f98c9d0bb9b4530a8b74fcab3573a913205f42fd2f",
+      "documentedTextImportPreservesValues": false
+    },
+    {
+      "mode": "default",
+      "language": "ar",
+      "rowsIncludingHeader": 7,
+      "columns": 9,
+      "displayValuesCompared": 63,
+      "emptyCellsCheckedForHiddenStoredValues": 3,
+      "displayMismatches": [
+        {
+          "row": 2,
+          "column": 1,
+          "expected": "000123",
+          "actual": "123"
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "expected": "000123",
+          "actual": "123"
+        },
+        {
+          "row": 2,
+          "column": 8,
+          "expected": "000123",
+          "actual": "123"
+        },
+        {
+          "row": 3,
+          "column": 1,
+          "expected": "123456789012345678901",
+          "actual": "1.23456789012346E+020"
+        },
+        {
+          "row": 3,
+          "column": 2,
+          "expected": "123456789012345678901",
+          "actual": "1.23456789012346E+020"
+        },
+        {
+          "row": 3,
+          "column": 8,
+          "expected": "123456789012345678901",
+          "actual": "1.23456789012346E+020"
+        },
+        {
+          "row": 4,
+          "column": 1,
+          "expected": "1E10",
+          "actual": "10000000000"
+        },
+        {
+          "row": 4,
+          "column": 2,
+          "expected": "1E10",
+          "actual": "10000000000"
+        },
+        {
+          "row": 4,
+          "column": 8,
+          "expected": "1E10",
+          "actual": "10000000000"
+        }
+      ],
+      "nontextNonemptyCells": [
+        {
+          "row": 2,
+          "column": 1,
+          "original": "000123",
+          "type": "float",
+          "displayed": "123",
+          "stored": "123"
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "original": "000123",
+          "type": "float",
+          "displayed": "123",
+          "stored": "123"
+        },
+        {
+          "row": 2,
+          "column": 7,
+          "original": "2026-11-21",
+          "type": "date",
+          "displayed": "2026-11-21",
+          "stored": "2026-11-21"
+        },
+        {
+          "row": 2,
+          "column": 8,
+          "original": "000123",
+          "type": "float",
+          "displayed": "123",
+          "stored": "123"
+        },
+        {
+          "row": 3,
+          "column": 1,
+          "original": "123456789012345678901",
+          "type": "float",
+          "displayed": "1.23456789012346E+020",
+          "stored": "1.23456789012346E+020"
+        },
+        {
+          "row": 3,
+          "column": 2,
+          "original": "123456789012345678901",
+          "type": "float",
+          "displayed": "1.23456789012346E+020",
+          "stored": "1.23456789012346E+020"
+        },
+        {
+          "row": 3,
+          "column": 6,
+          "original": "2026-11-17",
+          "type": "date",
+          "displayed": "2026-11-17",
+          "stored": "2026-11-17"
+        },
+        {
+          "row": 3,
+          "column": 7,
+          "original": "2026-11-21",
+          "type": "date",
+          "displayed": "2026-11-21",
+          "stored": "2026-11-21"
+        },
+        {
+          "row": 3,
+          "column": 8,
+          "original": "123456789012345678901",
+          "type": "float",
+          "displayed": "1.23456789012346E+020",
+          "stored": "1.23456789012346E+020"
+        },
+        {
+          "row": 4,
+          "column": 1,
+          "original": "1E10",
+          "type": "float",
+          "displayed": "10000000000",
+          "stored": "10000000000"
+        },
+        {
+          "row": 4,
+          "column": 2,
+          "original": "1E10",
+          "type": "float",
+          "displayed": "10000000000",
+          "stored": "10000000000"
+        },
+        {
+          "row": 4,
+          "column": 7,
+          "original": "2026-11-21",
+          "type": "date",
+          "displayed": "2026-11-21",
+          "stored": "2026-11-21"
+        },
+        {
+          "row": 4,
+          "column": 8,
+          "original": "1E10",
+          "type": "float",
+          "displayed": "10000000000",
+          "stored": "10000000000"
+        },
+        {
+          "row": 5,
+          "column": 1,
+          "original": "2026-11-17",
+          "type": "date",
+          "displayed": "2026-11-17",
+          "stored": "2026-11-17"
+        },
+        {
+          "row": 5,
+          "column": 2,
+          "original": "2026-11-17",
+          "type": "date",
+          "displayed": "2026-11-17",
+          "stored": "2026-11-17"
+        },
+        {
+          "row": 5,
+          "column": 6,
+          "original": "2026-11-17",
+          "type": "date",
+          "displayed": "2026-11-17",
+          "stored": "2026-11-17"
+        },
+        {
+          "row": 5,
+          "column": 7,
+          "original": "2026-11-21",
+          "type": "date",
+          "displayed": "2026-11-21",
+          "stored": "2026-11-21"
+        },
+        {
+          "row": 5,
+          "column": 8,
+          "original": "2026-11-17",
+          "type": "date",
+          "displayed": "2026-11-17",
+          "stored": "2026-11-17"
+        },
+        {
+          "row": 6,
+          "column": 7,
+          "original": "2026-11-21",
+          "type": "date",
+          "displayed": "2026-11-21",
+          "stored": "2026-11-21"
+        },
+        {
+          "row": 7,
+          "column": 6,
+          "original": "2026-11-17",
+          "type": "date",
+          "displayed": "2026-11-17",
+          "stored": "2026-11-17"
+        },
+        {
+          "row": 7,
+          "column": 7,
+          "original": "2026-11-21",
+          "type": "date",
+          "displayed": "2026-11-21",
+          "stored": "2026-11-21"
+        }
+      ],
+      "coercedFreeText": [
+        {
+          "row": 2,
+          "column": 1,
+          "original": "000123",
+          "type": "float",
+          "displayed": "123",
+          "stored": "123"
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "original": "000123",
+          "type": "float",
+          "displayed": "123",
+          "stored": "123"
+        },
+        {
+          "row": 2,
+          "column": 8,
+          "original": "000123",
+          "type": "float",
+          "displayed": "123",
+          "stored": "123"
+        },
+        {
+          "row": 3,
+          "column": 1,
+          "original": "123456789012345678901",
+          "type": "float",
+          "displayed": "1.23456789012346E+020",
+          "stored": "1.23456789012346E+020"
+        },
+        {
+          "row": 3,
+          "column": 2,
+          "original": "123456789012345678901",
+          "type": "float",
+          "displayed": "1.23456789012346E+020",
+          "stored": "1.23456789012346E+020"
+        },
+        {
+          "row": 3,
+          "column": 8,
+          "original": "123456789012345678901",
+          "type": "float",
+          "displayed": "1.23456789012346E+020",
+          "stored": "1.23456789012346E+020"
+        },
+        {
+          "row": 4,
+          "column": 1,
+          "original": "1E10",
+          "type": "float",
+          "displayed": "10000000000",
+          "stored": "10000000000"
+        },
+        {
+          "row": 4,
+          "column": 2,
+          "original": "1E10",
+          "type": "float",
+          "displayed": "10000000000",
+          "stored": "10000000000"
+        },
+        {
+          "row": 4,
+          "column": 8,
+          "original": "1E10",
+          "type": "float",
+          "displayed": "10000000000",
+          "stored": "10000000000"
+        },
+        {
+          "row": 5,
+          "column": 1,
+          "original": "2026-11-17",
+          "type": "date",
+          "displayed": "2026-11-17",
+          "stored": "2026-11-17"
+        },
+        {
+          "row": 5,
+          "column": 2,
+          "original": "2026-11-17",
+          "type": "date",
+          "displayed": "2026-11-17",
+          "stored": "2026-11-17"
+        },
+        {
+          "row": 5,
+          "column": 8,
+          "original": "2026-11-17",
+          "type": "date",
+          "displayed": "2026-11-17",
+          "stored": "2026-11-17"
+        }
+      ],
+      "formulaAttributes": 0,
+      "protectedFormulaLikeCellsRemainLiteral": 3,
+      "csvSHA256": "c2ab9f9b2a8a82ca3d56074ad9bdc6e8a1eed9e79f8ba6319f7e4bd1679aed05",
+      "fodsSHA256": "f20b1311366459f82d34f4dfdf2d827f8f01e94dcf04b68c9b6b6459360bf349",
+      "documentedTextImportPreservesValues": false
+    },
+    {
+      "mode": "quoted-as-text",
+      "language": "en",
+      "rowsIncludingHeader": 7,
+      "columns": 9,
+      "displayValuesCompared": 63,
+      "emptyCellsCheckedForHiddenStoredValues": 3,
+      "displayMismatches": [],
+      "nontextNonemptyCells": [],
+      "coercedFreeText": [],
+      "formulaAttributes": 0,
+      "protectedFormulaLikeCellsRemainLiteral": 3,
+      "csvSHA256": "f6d4e12c2bb588bfd765c1bb9f8a1eecf5e883735f7d82cfd83a0beea36791fd",
+      "fodsSHA256": "8d711fbcce774a7ec905f38a608d134e722b38eced61530b98678dcfe6f3f370",
+      "documentedTextImportPreservesValues": true
+    },
+    {
+      "mode": "quoted-as-text",
+      "language": "ar",
+      "rowsIncludingHeader": 7,
+      "columns": 9,
+      "displayValuesCompared": 63,
+      "emptyCellsCheckedForHiddenStoredValues": 3,
+      "displayMismatches": [],
+      "nontextNonemptyCells": [],
+      "coercedFreeText": [],
+      "formulaAttributes": 0,
+      "protectedFormulaLikeCellsRemainLiteral": 3,
+      "csvSHA256": "c2ab9f9b2a8a82ca3d56074ad9bdc6e8a1eed9e79f8ba6319f7e4bd1679aed05",
+      "fodsSHA256": "94c9770d188328bbb724392539af7764df3ad6d15a072949d6d9092503407a01",
+      "documentedTextImportPreservesValues": true
+    }
+  ],
+  "limits": [
+    "Default import intentionally documents coercion, not a successful exact-text preservation result.",
+    "Quoted-as-text imports preserve intended date columns as strings too; users may deliberately convert them after import.",
+    "No GUI, browser file-save, other spreadsheet product, later save/reopen or calendar acceptance.",
+    "The serializer and stored user values were not changed."
+  ]
+}

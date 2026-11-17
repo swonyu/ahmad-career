@@ -1,0 +1,20 @@
+{
+  "recordedAt": "2026-11-17T14:29:11.141660+00:00",
+  "reviewer": "/root/final_product_peer",
+  "method": "Read-only review and verifier replay with only receipt-writing omitted; assertions unchanged. No engine rerun or file writes by reviewer.",
+  "reviewedHashes": {
+    "verify-imports.py": "3adc931770b7d59ee5a9e7c09cb9bb2f260cdf1b7ff8b70ac57b5b93530f8ecf",
+    "verification.json": "26d21c210f0b7d4e7b254ca2975cc38488cf607d330d2c40b68d5d2c08300bd1",
+    "control/positive-control.fods": "9441a65ef95247bd1179c8dde522cdc5322d7380f848ec9fba06f5946dfd3163"
+  },
+  "productionSerializerSHA256": "910dae464cd8504ed225fe5f68fa6b0750c7b7a9c7b18c6454ff4504a772e9a9",
+  "closedFindings": [
+    "Stored date metadata assertions added and matched actual outputs.",
+    "Separate harmless positive control proves formula evaluation under exact explicit options."
+  ],
+  "result": "Four import results and positiveControl match the recorded receipt; no remaining concrete finding within bounded evidence review.",
+  "limits": [
+    "One development build, headless imports only.",
+    "No browser saving, GUI, other-engine, later resaving or calendar acceptance."
+  ]
+}

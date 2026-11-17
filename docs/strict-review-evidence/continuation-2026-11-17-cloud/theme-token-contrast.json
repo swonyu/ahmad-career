@@ -1,0 +1,327 @@
+{
+  "recordedAt": "2026-11-17T13:49:30.579591+00:00",
+  "method": "Static sRGB relative-luminance calculation using actual CSS theme tokens. Ratios compared unrounded. Representative token pairs; no claim of full rendered accessibility acceptance.",
+  "sourcePath": "hosted/app/globals.css",
+  "sourceSHA256": "5f3ff2d03d7877d07bd05d537f196a83f1341b15f3aebbe1d9afb8f4ed954acf",
+  "sources": [
+    "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+    "https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html"
+  ],
+  "pairs": [
+    {
+      "theme": "light",
+      "foreground": "ink",
+      "background": "bg",
+      "ratio": 15.475315557104231,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "light",
+      "foreground": "ink",
+      "background": "surface",
+      "ratio": 16.71266744778806,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "light",
+      "foreground": "ink",
+      "background": "surface-raised",
+      "ratio": 16.71266744778806,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "light",
+      "foreground": "ink",
+      "background": "soft",
+      "ratio": 14.418268031585063,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "light",
+      "foreground": "muted",
+      "background": "bg",
+      "ratio": 5.742118953985985,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "light",
+      "foreground": "muted",
+      "background": "surface",
+      "ratio": 6.201238622210412,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "light",
+      "foreground": "muted",
+      "background": "surface-raised",
+      "ratio": 6.201238622210412,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "light",
+      "foreground": "muted",
+      "background": "soft",
+      "ratio": 5.349901256766803,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "light",
+      "foreground": "accent",
+      "background": "bg",
+      "ratio": 5.582031081137761,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "light",
+      "foreground": "accent",
+      "background": "surface",
+      "ratio": 6.028350685194619,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "light",
+      "foreground": "accent",
+      "background": "surface-raised",
+      "ratio": 6.028350685194619,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "light",
+      "foreground": "accent",
+      "background": "soft",
+      "ratio": 5.200748249138963,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "light",
+      "foreground": "accent-ink",
+      "background": "accent",
+      "ratio": 6.028350685194619,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "light",
+      "foreground": "accent-ink",
+      "background": "accent-hover",
+      "ratio": 7.707361598386894,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "light",
+      "foreground": "danger",
+      "background": "danger-bg",
+      "ratio": 6.360514325569284,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "light",
+      "foreground": "danger-ink",
+      "background": "danger",
+      "ratio": 7.0262523295936905,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "light",
+      "foreground": "field-border",
+      "background": "bg",
+      "ratio": 3.072407792694635,
+      "threshold": 3,
+      "passThreshold": true
+    },
+    {
+      "theme": "light",
+      "foreground": "field-border",
+      "background": "surface",
+      "ratio": 3.318066731099753,
+      "threshold": 3,
+      "passThreshold": true
+    },
+    {
+      "theme": "light",
+      "foreground": "field-border",
+      "background": "surface-raised",
+      "ratio": 3.318066731099753,
+      "threshold": 3,
+      "passThreshold": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "ink",
+      "background": "bg",
+      "ratio": 16.602559440474483,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "ink",
+      "background": "surface",
+      "ratio": 15.061130376652944,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "ink",
+      "background": "surface-raised",
+      "ratio": 13.31149882484102,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "ink",
+      "background": "soft",
+      "ratio": 12.334307552929914,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "muted",
+      "background": "bg",
+      "ratio": 9.351586676270006,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "muted",
+      "background": "surface",
+      "ratio": 8.483358645084177,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "muted",
+      "background": "surface-raised",
+      "ratio": 7.497858116267014,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "muted",
+      "background": "soft",
+      "ratio": 6.947443650874798,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "accent",
+      "background": "bg",
+      "ratio": 9.46578893215136,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "accent",
+      "background": "surface",
+      "ratio": 8.586958037172112,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "accent",
+      "background": "surface-raised",
+      "ratio": 7.589422504300633,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "accent",
+      "background": "soft",
+      "ratio": 7.032286337469557,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "accent-ink",
+      "background": "accent",
+      "ratio": 8.557581888569137,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "accent-ink",
+      "background": "accent-hover",
+      "ratio": 10.405811702011189,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "danger",
+      "background": "danger-bg",
+      "ratio": 8.554119034061394,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "danger-ink",
+      "background": "danger",
+      "ratio": 9.847011225385563,
+      "threshold": 4.5,
+      "passThreshold": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "field-border",
+      "background": "bg",
+      "ratio": 4.932292482212192,
+      "threshold": 3,
+      "passThreshold": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "field-border",
+      "background": "surface",
+      "ratio": 4.474364353081936,
+      "threshold": 3,
+      "passThreshold": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "field-border",
+      "background": "surface-raised",
+      "ratio": 3.9545833771075127,
+      "threshold": 3,
+      "passThreshold": true
+    }
+  ],
+  "allListedPairsPass": true,
+  "sourceCommit": "3a709eb15f1024df78ee03474f511568df2dc3de",
+  "phoneStylesheet": {
+    "path": "hosted/app/phone/phone.css",
+    "sha256": "89d8c325e8009fd9842817b0d580db5386f834447f11023e84f7909070c3bbf8",
+    "inspection": "Later phone-shell and phone-dialog input/select/textarea rules explicitly override the earlier decorative line border with field-border; tokens reviewed in both themes."
+  },
+  "limits": [
+    "No rendered browser or physical-device acceptance was performed for this receipt.",
+    "Selected representative text, active accent/danger, and input-boundary pairs only; not a full WCAG conformance claim."
+  ]
+}

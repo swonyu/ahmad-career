@@ -1,0 +1,23 @@
+{
+  "reviewer": "/root/final_product_peer",
+  "method": "Read-only replay with only receipt-writing omitted; unchanged assertions and in-memory negative probes; no engine reimport or file modification",
+  "sourceChecks": "Generated CSV/source hashes and all four engine-invocation records matched the retained evidence.",
+  "finding": {
+    "id": "CSV-TEXT-VERIFY-01",
+    "severity": "low",
+    "cause": "Expected-empty CSV cells were compared visually but skipped stored-type validation.",
+    "actualArtifactsAffected": false,
+    "initialNegativeProbe": "An in-memory float/value999 attached to an otherwise blank Applied-date cell passed the earlier verifier.",
+    "fix": "Require absent/empty-string kind and no stored numeric, date, time, boolean or currency value for each expected-empty cell.",
+    "status": "closed",
+    "finalActualReplay": "All four actual import receipts matched; three empty cells checked per import.",
+    "finalNegativeProbes": {"englishQuotedImport": "rejected", "arabicQuotedImport": "rejected"}
+  },
+  "hashes": {
+    "verify-imports.py": "6a388af7fdb0ac778bff01df69ae675c8ab49cc561d79a8fcb9e07bb55ef1f6a",
+    "verification.json": "3978b5d277fadee055d8f544ef069bc5e0841120dfee1345645390f40fee9566",
+    "verification-before-empty-cell-review.json": "ec29eafa324b94d3dc8fc5c386100ebdfe73682dbbc85b004ab82e541a2398c8"
+  },
+  "remainingConcreteFindingsWithinScope": 0,
+  "limits": "This is bounded content/type verification of the recorded headless imports; no GUI, browser download, other consumer or later save/reopen acceptance."
+}

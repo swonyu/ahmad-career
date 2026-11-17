@@ -1,0 +1,37 @@
+{
+  "observedAt": "2026-11-17T14:36:43.167948Z",
+  "source": "Authenticated GitHub ref reads through the existing authorized gh session; no credential values read",
+  "remoteHeads": {
+    "continuation/account-acceptance-20261117": "880e878f6f528d903c42951f10a8b216094c889c",
+    "continuation/publishing-native-fixes-20261117-01a49": "842472684b194e993355f632902ccc81366c164c",
+    "career-finder-phones-verified-apply-20261116": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+    "app-store/career-workspace-copy-20261117": "fd9c5399f2b7001b234b3b86bf72e2b36b5114c1"
+  },
+  "sharedMac": {
+    "ownedRelayHead": "303ee73e0e6389593f6cb08eba285405d60f19cb",
+    "ownedRelayIndexExists": false,
+    "sharedBuildLockExists": true,
+    "sharedBuildLockFiles": ["owner.json"],
+    "lockOwnerNotReadInThisCheck": true,
+    "noObservedXcodebuildGradleSwiftFrontendProcess": true,
+    "lockChanged": false,
+    "buildStarted": false
+  },
+  "coordination": {
+    "priorCommentsRetrieved": 5,
+    "latestPriorCommentAt": "2026-11-17T13:30:17Z",
+    "sourceReceipt": "publishing-coordination-comments.json",
+    "newDevelopmentOwnerComment": "https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6951193348",
+    "commentPostCommandExit": 0,
+    "boundedOwnershipDeclared": ["hosted/app/phone/PhoneApp.tsx", "hosted/app/phone/components.tsx", "hosted/app/i18n/messages.ar.json", "hosted/tests/phone-search-workflows.mjs", "hosted/tests/phone-localization.mjs", "hosted/package.json"],
+    "scope": "Partial/stale search retry, preserve edited filters on asynchronous responses, dynamic text direction isolation, and CSV import guidance",
+    "acknowledgmentOf880eOrSharedBuildWindow": false,
+    "dotReadReceipt": false
+  },
+  "limits": [
+    "A published coordination comment is not proof that the publishing owner or Dot read it.",
+    "Publishing integration842472 is distinct from the protected publishing-copy branchfd9c5399.",
+    "The connector's PR-only workflow lookup returned no records for842472; this does not establish absence of push-triggered or manually dispatched runs.",
+    "No branch mutation, shared build, signing operation or public deployment occurred in this ownership check."
+  ]
+}

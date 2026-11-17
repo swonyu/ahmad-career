@@ -43,16 +43,16 @@ class PhoneAcceptanceTest {
         compose.onNodeWithTag("jobs-saved-tab").performClick()
         compose.onNodeWithTag("jobs-list").performScrollToNode(hasText(strings("Start with one good opportunity.")))
         compose.onNodeWithText(strings("Start with one good opportunity.")).assertIsDisplayed()
-        compose.onNodeWithTag("navigation-apply").performClick()
+        compose.onNodeWithTag("navigation-apply").revealNavigationTab().performClick()
         compose.onNodeWithTag("apply-list").performScrollToNode(hasText(strings("Connect when you’re ready.")))
         compose.onNodeWithText(strings("Connect when you’re ready.")).assertIsDisplayed()
-        compose.onNodeWithTag("navigation-receipts").performClick()
+        compose.onNodeWithTag("navigation-receipts").revealNavigationTab().performClick()
         compose.onNodeWithTag("receipts-list").performScrollToNode(hasText(strings("Your first receipt belongs here.")))
         compose.onNodeWithText(strings("Your first receipt belongs here.")).assertIsDisplayed()
     }
 
     @Test fun phoneProfile_survivesActivityRecreation_withoutAnyService() {
-        compose.onNodeWithTag("navigation-profile").performClick()
+        compose.onNodeWithTag("navigation-profile").revealNavigationTab().performClick()
         compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("First or single name")) and hasSetTextAction())
         compose.onNode(hasText(strings("First or single name")) and hasSetTextAction()).performTextInput("Acceptance")
         closeSoftKeyboard()
@@ -65,7 +65,7 @@ class PhoneAcceptanceTest {
             compose.onAllNodes(hasText(strings("Profile saved privately on this phone."))).fetchSemanticsNodes().isNotEmpty()
         }
         compose.activityRule.scenario.recreate()
-        compose.onNodeWithTag("navigation-profile").performClick()
+        compose.onNodeWithTag("navigation-profile").revealNavigationTab().performClick()
         compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("First or single name")))
         compose.waitUntil(timeoutMillis = 5000) {
             compose.onAllNodes(hasText("Acceptance")).fetchSemanticsNodes().isNotEmpty()

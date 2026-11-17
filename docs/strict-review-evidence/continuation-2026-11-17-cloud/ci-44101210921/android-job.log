@@ -1,0 +1,708 @@
+﻿2026-11-17T14:16:01.0198888Z Current runner version: '2.338.2'
+2026-11-17T14:16:01.0221120Z ##[group]Runner Image Provisioner
+2026-11-17T14:16:01.0221916Z Hosted Compute Agent
+2026-11-17T14:16:01.0222414Z Version: 20261103.629
+2026-11-17T14:16:01.0223079Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+2026-11-17T14:16:01.0223703Z Build Date: 2026-11-03T17:26:59Z
+2026-11-17T14:16:01.0224301Z Worker ID: {e3812a74-7f5d-45ef-84e2-733b6782fbe6}
+2026-11-17T14:16:01.0225136Z Region: southcentralus
+2026-11-17T14:16:01.0225657Z Cloud: Azure
+2026-11-17T14:16:01.0226199Z ##[endgroup]
+2026-11-17T14:16:01.0227601Z ##[group]Operating System
+2026-11-17T14:16:01.0228240Z Ubuntu
+2026-11-17T14:16:01.0228721Z 24.04.5
+2026-11-17T14:16:01.0229173Z LTS
+2026-11-17T14:16:01.0229694Z ##[endgroup]
+2026-11-17T14:16:01.0230205Z ##[group]Runner Image
+2026-11-17T14:16:01.0230722Z Image: ubuntu-24.04
+2026-11-17T14:16:01.0231275Z Version: 20261111.370.1
+2026-11-17T14:16:01.0232360Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261111.370/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-17T14:16:01.0233698Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261111.370
+2026-11-17T14:16:01.0234719Z ##[endgroup]
+2026-11-17T14:16:01.0235744Z ##[group]GITHUB_TOKEN Permissions
+2026-11-17T14:16:01.0237299Z Contents: read
+2026-11-17T14:16:01.0237904Z Metadata: read
+2026-11-17T14:16:01.0238407Z ##[endgroup]
+2026-11-17T14:16:01.0240235Z Secret source: Actions
+2026-11-17T14:16:01.0241056Z Cache mode: write
+2026-11-17T14:16:01.0241673Z Prepare workflow directory
+2026-11-17T14:16:01.0545188Z Prepare all required actions
+2026-11-17T14:16:01.0583710Z Getting action download info
+2026-11-17T14:16:01.3451590Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-17T14:16:01.4808460Z Download action repository 'actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880' (SHA:d1374f8ac74474200d16ef8ecee22c7ae7a51880)
+2026-11-17T14:16:02.2409070Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-17T14:16:02.3858586Z Download action repository 'actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f' (SHA:b7c566a772e6b6bfb58ed0dc250532a479d7789f)
+2026-11-17T14:16:02.6470904Z Complete job name: Android compile, lint and native acceptance
+2026-11-17T14:16:02.7329664Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-17T14:16:02.7331152Z with:
+2026-11-17T14:16:02.7331888Z   persist-credentials: false
+2026-11-17T14:16:02.7332779Z   repository: swonyu/ahmad-career
+2026-11-17T14:16:02.7339848Z   token: ***
+2026-11-17T14:16:02.7340587Z   ssh-strict: true
+2026-11-17T14:16:02.7341325Z   ssh-user: git
+2026-11-17T14:16:02.7342048Z   clean: true
+2026-11-17T14:16:02.7342798Z   sparse-checkout-cone-mode: true
+2026-11-17T14:16:02.7343681Z   fetch-depth: 1
+2026-11-17T14:16:02.7344509Z   fetch-tags: false
+2026-11-17T14:16:02.7345270Z   show-progress: true
+2026-11-17T14:16:02.7346076Z   lfs: false
+2026-11-17T14:16:02.7346793Z   submodules: false
+2026-11-17T14:16:02.7347552Z   set-safe-directory: true
+2026-11-17T14:16:02.7348412Z   allow-unsafe-pr-checkout: false
+2026-11-17T14:16:02.7349533Z ##[endgroup]
+2026-11-17T14:16:02.9418305Z Syncing repository: swonyu/ahmad-career
+2026-11-17T14:16:02.9421030Z ##[group]Getting Git version info
+2026-11-17T14:16:02.9422258Z Working directory is '/home/runner/work/ahmad-career/ahmad-career'
+2026-11-17T14:16:02.9423968Z [command]/usr/bin/git version
+2026-11-17T14:16:02.9460646Z git version 2.56.1
+2026-11-17T14:16:02.9477456Z ##[endgroup]
+2026-11-17T14:16:02.9486373Z Temporarily overriding HOME='/home/runner/work/_temp/f7e6e261-77cc-4557-baae-75cf6561054d' before making global git config changes
+2026-11-17T14:16:02.9490906Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-17T14:16:02.9492893Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/ahmad-career/ahmad-career
+2026-11-17T14:16:02.9530794Z Deleting the contents of '/home/runner/work/ahmad-career/ahmad-career'
+2026-11-17T14:16:02.9533413Z ##[group]Determining repository object format
+2026-11-17T14:16:02.9535285Z ##[endgroup]
+2026-11-17T14:16:02.9536483Z ##[group]Initializing the repository
+2026-11-17T14:16:02.9538265Z [command]/usr/bin/git init /home/runner/work/ahmad-career/ahmad-career
+2026-11-17T14:16:02.9611962Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-17T14:16:02.9613911Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-17T14:16:02.9615742Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-17T14:16:02.9617594Z hint: call:
+2026-11-17T14:16:02.9618552Z hint:
+2026-11-17T14:16:02.9619771Z hint: 	git config --global init.defaultBranch <name>
+2026-11-17T14:16:02.9621241Z hint:
+2026-11-17T14:16:02.9622631Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-17T14:16:02.9625078Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-17T14:16:02.9626946Z hint:
+2026-11-17T14:16:02.9627952Z hint: 	git branch -m <name>
+2026-11-17T14:16:02.9629031Z hint:
+2026-11-17T14:16:02.9630498Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-17T14:16:02.9633002Z Initialized empty Git repository in /home/runner/work/ahmad-career/ahmad-career/.git/
+2026-11-17T14:16:02.9636902Z [command]/usr/bin/git remote add origin https://github.com/swonyu/ahmad-career
+2026-11-17T14:16:02.9673833Z ##[endgroup]
+2026-11-17T14:16:02.9675903Z ##[group]Disabling automatic garbage collection
+2026-11-17T14:16:02.9677600Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-17T14:16:02.9707825Z ##[endgroup]
+2026-11-17T14:16:02.9709880Z ##[group]Setting up auth
+2026-11-17T14:16:02.9711167Z Removing SSH command configuration
+2026-11-17T14:16:02.9713160Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T14:16:02.9743981Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-17T14:16:03.0089803Z Removing HTTP extra header
+2026-11-17T14:16:03.0096018Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T14:16:03.0133146Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-17T14:16:03.0331280Z Removing includeIf entries pointing to credentials config files
+2026-11-17T14:16:03.0332944Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T14:16:03.0361891Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-17T14:16:03.0575503Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-3a2b1a72-d58a-4023-9e1f-f6956bdfaf6b.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-17T14:16:03.0617159Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git.path /home/runner/work/_temp/git-credentials-3a2b1a72-d58a-4023-9e1f-f6956bdfaf6b.config
+2026-11-17T14:16:03.0651102Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-3a2b1a72-d58a-4023-9e1f-f6956bdfaf6b.config
+2026-11-17T14:16:03.0690966Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-3a2b1a72-d58a-4023-9e1f-f6956bdfaf6b.config
+2026-11-17T14:16:03.0726114Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-3a2b1a72-d58a-4023-9e1f-f6956bdfaf6b.config
+2026-11-17T14:16:03.0757277Z ##[endgroup]
+2026-11-17T14:16:03.0758563Z ##[group]Fetching the repository
+2026-11-17T14:16:03.0765467Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +b29b07f5d79757ddf8026df507ec4d88d40b28e5:refs/remotes/pull/1/merge
+2026-11-17T14:16:04.9775177Z From https://github.com/swonyu/ahmad-career
+2026-11-17T14:16:04.9775924Z  * [new ref]         b29b07f5d79757ddf8026df507ec4d88d40b28e5 -> pull/1/merge
+2026-11-17T14:16:04.9778376Z ##[endgroup]
+2026-11-17T14:16:04.9780325Z ##[group]Determining the checkout info
+2026-11-17T14:16:04.9781314Z ##[endgroup]
+2026-11-17T14:16:04.9785087Z [command]/usr/bin/git sparse-checkout disable
+2026-11-17T14:16:04.9837170Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-17T14:16:04.9865579Z ##[group]Checking out the ref
+2026-11-17T14:16:04.9869075Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/1/merge
+2026-11-17T14:16:05.1125111Z Note: switching to 'refs/remotes/pull/1/merge'.
+2026-11-17T14:16:05.1125560Z 
+2026-11-17T14:16:05.1125861Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-17T14:16:05.1126419Z changes and commit them, and you can discard any commits you make in this
+2026-11-17T14:16:05.1126931Z state without impacting any branches by switching back to a branch.
+2026-11-17T14:16:05.1127189Z 
+2026-11-17T14:16:05.1127401Z If you want to create a new branch to retain commits you create, you may
+2026-11-17T14:16:05.1127817Z do so (now or later) by using -c with the switch command. Example:
+2026-11-17T14:16:05.1128036Z 
+2026-11-17T14:16:05.1128159Z   git switch -c <new-branch-name>
+2026-11-17T14:16:05.1128327Z 
+2026-11-17T14:16:05.1128451Z Or undo this operation with:
+2026-11-17T14:16:05.1128650Z 
+2026-11-17T14:16:05.1128751Z   git switch -
+2026-11-17T14:16:05.1128912Z 
+2026-11-17T14:16:05.1129108Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-17T14:16:05.1129398Z 
+2026-11-17T14:16:05.1129700Z HEAD is now at b29b07f Merge 880e878f6f528d903c42951f10a8b216094c889c into 949ce0ad327beab79fa7033423b462ebc7bd98be
+2026-11-17T14:16:05.1143096Z ##[endgroup]
+2026-11-17T14:16:05.1183205Z [command]/usr/bin/git log -1 --format=%H
+2026-11-17T14:16:05.1207953Z b29b07f5d79757ddf8026df507ec4d88d40b28e5
+2026-11-17T14:16:05.1216425Z ##[group]Removing auth
+2026-11-17T14:16:05.1216753Z Removing SSH command configuration
+2026-11-17T14:16:05.1219088Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T14:16:05.1246564Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-17T14:16:05.1442760Z Removing HTTP extra header
+2026-11-17T14:16:05.1445894Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T14:16:05.1473489Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-17T14:16:05.1666212Z Removing includeIf entries pointing to credentials config files
+2026-11-17T14:16:05.1669136Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T14:16:05.1693297Z includeif.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git.path
+2026-11-17T14:16:05.1694052Z includeif.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git/worktrees/*.path
+2026-11-17T14:16:05.1694702Z includeif.gitdir:/github/workspace/.git.path
+2026-11-17T14:16:05.1695045Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-17T14:16:05.1700772Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git.path
+2026-11-17T14:16:05.1721118Z /home/runner/work/_temp/git-credentials-3a2b1a72-d58a-4023-9e1f-f6956bdfaf6b.config
+2026-11-17T14:16:05.1731395Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-3a2b1a72\-d58a\-4023\-9e1f\-f6956bdfaf6b\.config
+2026-11-17T14:16:05.1763836Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git/worktrees/*.path
+2026-11-17T14:16:05.1789881Z /home/runner/work/_temp/git-credentials-3a2b1a72-d58a-4023-9e1f-f6956bdfaf6b.config
+2026-11-17T14:16:05.1797452Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-3a2b1a72\-d58a\-4023\-9e1f\-f6956bdfaf6b\.config
+2026-11-17T14:16:05.1827065Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-17T14:16:05.1846238Z /github/runner_temp/git-credentials-3a2b1a72-d58a-4023-9e1f-f6956bdfaf6b.config
+2026-11-17T14:16:05.1852097Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-3a2b1a72\-d58a\-4023\-9e1f\-f6956bdfaf6b\.config
+2026-11-17T14:16:05.1886271Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-17T14:16:05.1907862Z /github/runner_temp/git-credentials-3a2b1a72-d58a-4023-9e1f-f6956bdfaf6b.config
+2026-11-17T14:16:05.1914222Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-3a2b1a72\-d58a\-4023\-9e1f\-f6956bdfaf6b\.config
+2026-11-17T14:16:05.1942743Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-17T14:16:05.2135496Z Removing credentials config '/home/runner/work/_temp/git-credentials-3a2b1a72-d58a-4023-9e1f-f6956bdfaf6b.config'
+2026-11-17T14:16:05.2143793Z ##[endgroup]
+2026-11-17T14:16:05.2436414Z ##[group]Run actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880
+2026-11-17T14:16:05.2436806Z with:
+2026-11-17T14:16:05.2437019Z   distribution: temurin
+2026-11-17T14:16:05.2437247Z   java-version: 21
+2026-11-17T14:16:05.2437455Z   cache: gradle
+2026-11-17T14:16:05.2437837Z   cache-dependency-path: android/**/*.gradle.kts
+android/gradle/wrapper/gradle-wrapper.properties
+
+2026-11-17T14:16:05.2438267Z   overwrite-settings: false
+2026-11-17T14:16:05.2438510Z   java-package: jdk
+2026-11-17T14:16:05.2438729Z   check-latest: false
+2026-11-17T14:16:05.2438955Z   force-download: false
+2026-11-17T14:16:05.2439181Z   set-default: true
+2026-11-17T14:16:05.2439398Z   server-id: github
+2026-11-17T14:16:05.2439634Z   mvn-repositories-include-central: true
+2026-11-17T14:16:05.2439931Z   mvn-repositories-prioritize-central: true
+2026-11-17T14:16:05.2440219Z   cache-read-only: false
+2026-11-17T14:16:05.2440451Z   job-status: success
+2026-11-17T14:16:05.2442421Z   token: ***
+2026-11-17T14:16:05.2442714Z   show-download-progress: false
+2026-11-17T14:16:05.2442974Z   problem-matcher: false
+2026-11-17T14:16:05.2443210Z ##[endgroup]
+2026-11-17T14:16:05.3082138Z ##[group]Installed distributions
+2026-11-17T14:16:05.3713784Z Resolved Java 21.0.13+9 from tool-cache
+2026-11-17T14:16:05.3714292Z Setting Java 21.0.13+9 as the default
+2026-11-17T14:16:05.3720414Z 
+2026-11-17T14:16:05.3720707Z Java configuration:
+2026-11-17T14:16:05.3721107Z   Distribution: temurin
+2026-11-17T14:16:05.3721475Z   Version: 21.0.13+9
+2026-11-17T14:16:05.3721970Z   Path: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+2026-11-17T14:16:05.3722362Z 
+2026-11-17T14:16:05.3754881Z ##[endgroup]
+2026-11-17T14:16:05.3807545Z Creating settings.xml with server-id: github
+2026-11-17T14:16:05.3810374Z Creating toolchains.xml for JDK version 21 from temurin
+2026-11-17T14:16:05.3820678Z Writing to /home/runner/.m2/settings.xml
+2026-11-17T14:16:05.3824956Z Writing to /home/runner/.m2/toolchains.xml
+2026-11-17T14:16:05.3831194Z Configured MAVEN_ARGS to include -ntp to suppress Maven transfer progress logs. Set 'show-download-progress: true' to keep the download progress output.
+2026-11-17T14:16:05.6421200Z gradle cache is not found
+2026-11-17T14:16:05.6562919Z Cache hit for: setup-java-Linux-x64-gradle-wrapper-c528e9349d7d94493a040330c42c8c2e868e3bd13cae977f4d4810619d92dfb2
+2026-11-17T14:16:06.8029454Z Received 134217728 of 138721065 (96.8%), 128.0 MBs/sec
+2026-11-17T14:16:06.9301552Z Received 138721065 of 138721065 (100.0%), 117.4 MBs/sec
+2026-11-17T14:16:06.9302039Z Cache Size: ~132 MB (138721065 B)
+2026-11-17T14:16:06.9399863Z [command]/usr/bin/tar -xf /home/runner/work/_temp/1863ddbc-8636-4e33-a52a-ec488a3e34b4/cache.tzst -P -C /home/runner/work/ahmad-career/ahmad-career --use-compress-program unzstd
+2026-11-17T14:16:07.1295196Z Cache restored successfully
+2026-11-17T14:16:07.1354717Z gradle-wrapper cache restored from key: setup-java-Linux-x64-gradle-wrapper-c528e9349d7d94493a040330c42c8c2e868e3bd13cae977f4d4810619d92dfb2
+2026-11-17T14:16:07.1542515Z ##[group]Run test -d "$ANDROID_HOME/platforms/android-36"
+2026-11-17T14:16:07.1542921Z [36;1mtest -d "$ANDROID_HOME/platforms/android-36"[0m
+2026-11-17T14:16:07.1543227Z [36;1mtest -d "$ANDROID_HOME/build-tools/35.0.0"[0m
+2026-11-17T14:16:07.1565982Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-17T14:16:07.1566274Z env:
+2026-11-17T14:16:07.1566527Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+2026-11-17T14:16:07.1566936Z   JAVA_HOME_21_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+2026-11-17T14:16:07.1567265Z   MAVEN_ARGS: -ntp
+2026-11-17T14:16:07.1567444Z ##[endgroup]
+2026-11-17T14:16:07.2006061Z ##[group]Run bash android/checks/run-policy-checks.sh
+2026-11-17T14:16:07.2006423Z [36;1mbash android/checks/run-policy-checks.sh[0m
+2026-11-17T14:16:07.2024147Z shell: /usr/bin/bash -e {0}
+2026-11-17T14:16:07.2046354Z env:
+2026-11-17T14:16:07.2046712Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+2026-11-17T14:16:07.2047305Z   JAVA_HOME_21_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+2026-11-17T14:16:07.2047729Z   MAVEN_ARGS: -ntp
+2026-11-17T14:16:07.2047948Z ##[endgroup]
+2026-11-17T14:16:10.4563603Z PASS: 122 executable Android boundary-policy checks (no network, no device claims).
+2026-11-17T14:16:10.4666093Z ##[group]Run set -o pipefail
+2026-11-17T14:16:10.4666371Z [36;1mset -o pipefail[0m
+2026-11-17T14:16:10.4666569Z [36;1mfor attempt in 1 2; do[0m
+2026-11-17T14:16:10.4666833Z [36;1m  log="$RUNNER_TEMP/career-android-build-$attempt.log"[0m
+2026-11-17T14:16:10.4667366Z [36;1m  if ./gradlew --no-daemon --max-workers=2 :app:assembleDebug :app:assembleDebugAndroidTest :app:lintDebug 2>&1 | tee "$log"; then[0m
+2026-11-17T14:16:10.4667835Z [36;1m    exit 0[0m
+2026-11-17T14:16:10.4668013Z [36;1m  fi[0m
+2026-11-17T14:16:10.4668542Z [36;1m  if [ "$attempt" -eq 1 ] && grep -Eq 'Received status code 429 from server: Too Many Requests' "$log" && ! grep -Eq '^e: |Compilation error|There were failing tests|Lint found errors' "$log"; then[0m
+2026-11-17T14:16:10.4669267Z [36;1m    echo 'Dependency provider requested a cooldown. Waiting two minutes before one bounded retry.'[0m
+2026-11-17T14:16:10.4669634Z [36;1m    sleep 120[0m
+2026-11-17T14:16:10.4669815Z [36;1m  else[0m
+2026-11-17T14:16:10.4670004Z [36;1m    exit 1[0m
+2026-11-17T14:16:10.4670183Z [36;1m  fi[0m
+2026-11-17T14:16:10.4670347Z [36;1mdone[0m
+2026-11-17T14:16:10.4687631Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-17T14:16:10.4687907Z env:
+2026-11-17T14:16:10.4688169Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+2026-11-17T14:16:10.4688550Z   JAVA_HOME_21_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+2026-11-17T14:16:10.4688847Z   MAVEN_ARGS: -ntp
+2026-11-17T14:16:10.4689028Z ##[endgroup]
+2026-11-17T14:16:11.2118619Z 
+2026-11-17T14:16:11.2119737Z Welcome to Gradle 8.14.7!
+2026-11-17T14:16:11.2120019Z 
+2026-11-17T14:16:11.2123505Z Here are the highlights of this release:
+2026-11-17T14:16:11.2124058Z  - Java 24 support
+2026-11-17T14:16:11.2124290Z  - GraalVM Native Image toolchain selection
+2026-11-17T14:16:11.2124723Z  - Enhancements to test reporting
+2026-11-17T14:16:11.2124952Z  - Build Authoring improvements
+2026-11-17T14:16:11.2125093Z 
+2026-11-17T14:16:11.2125290Z For more details see https://docs.gradle.org/8.14.7/release-notes.html
+2026-11-17T14:16:11.2125552Z 
+2026-11-17T14:16:11.4114679Z To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.7/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+2026-11-17T14:16:12.6135646Z Daemon will be stopped at the end of the build 
+2026-11-17T14:19:22.6176555Z > Task :app:preBuild UP-TO-DATE
+2026-11-17T14:19:22.6185281Z > Task :app:preDebugBuild UP-TO-DATE
+2026-11-17T14:19:22.6215335Z > Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+2026-11-17T14:19:22.6224815Z > Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+2026-11-17T14:19:45.2119426Z > Task :app:checkDebugAarMetadata
+2026-11-17T14:19:45.3112175Z > Task :app:processDebugNavigationResources
+2026-11-17T14:19:46.5128814Z > Task :app:generateDebugResValues
+2026-11-17T14:19:46.5134291Z > Task :app:compileDebugNavigationResources
+2026-11-17T14:19:46.6111908Z > Task :app:mapDebugSourceSetPaths
+2026-11-17T14:19:46.6112240Z > Task :app:generateDebugResources
+2026-11-17T14:19:47.9113313Z > Task :app:mergeDebugResources
+2026-11-17T14:19:47.9113922Z > Task :app:packageDebugResources
+2026-11-17T14:19:48.8134204Z > Task :app:createDebugCompatibleScreenManifests
+2026-11-17T14:19:48.8185221Z > Task :app:extractDeepLinksDebug
+2026-11-17T14:19:48.9125527Z > Task :app:parseDebugLocalResources
+2026-11-17T14:19:49.0115077Z > Task :app:processDebugMainManifest
+2026-11-17T14:19:49.1126076Z > Task :app:processDebugManifest
+2026-11-17T14:19:49.1127244Z > Task :app:processDebugManifestForPackage
+2026-11-17T14:19:49.1127918Z > Task :app:javaPreCompileDebug
+2026-11-17T14:19:49.4134489Z > Task :app:mergeDebugShaders
+2026-11-17T14:19:49.5145572Z > Task :app:compileDebugShaders NO-SOURCE
+2026-11-17T14:19:49.5205422Z > Task :app:generateDebugAssets UP-TO-DATE
+2026-11-17T14:19:49.5231513Z > Task :app:mergeDebugAssets
+2026-11-17T14:19:49.5232481Z > Task :app:compressDebugAssets
+2026-11-17T14:19:49.6111657Z > Task :app:desugarDebugFileDependencies
+2026-11-17T14:19:50.6111688Z > Task :app:processDebugResources
+2026-11-17T14:19:50.7113106Z > Task :app:checkDebugDuplicateClasses
+2026-11-17T14:20:20.7165370Z > Task :app:compileDebugKotlin
+2026-11-17T14:20:27.2115455Z > Task :app:mergeExtDexDebug
+2026-11-17T14:20:50.8126685Z 
+2026-11-17T14:20:50.8175572Z > Task :app:compileDebugKotlin
+2026-11-17T14:20:50.8185698Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt:926:39 Unnecessary non-null assertion (!!) on a non-null receiver of type 'JSONObject'.
+2026-11-17T14:20:50.8187487Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt:113:133 Redundant call of conversion method.
+2026-11-17T14:20:50.8189057Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt:113:238 Redundant call of conversion method.
+2026-11-17T14:20:50.8190539Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt:179:106 Redundant call of conversion method.
+2026-11-17T14:20:50.8192015Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt:183:119 Redundant call of conversion method.
+2026-11-17T14:20:50.8193489Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt:200:71 Redundant call of conversion method.
+2026-11-17T14:20:50.8195075Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt:200:132 Redundant call of conversion method.
+2026-11-17T14:20:50.8196912Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt:201:79 Redundant call of conversion method.
+2026-11-17T14:20:50.8198357Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt:208:120 Redundant call of conversion method.
+2026-11-17T14:20:50.8199799Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt:208:146 Redundant call of conversion method.
+2026-11-17T14:20:50.8201151Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt:211:97 Redundant call of conversion method.
+2026-11-17T14:20:50.8202644Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt:211:123 Redundant call of conversion method.
+2026-11-17T14:20:50.8204115Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt:244:114 Redundant call of conversion method.
+2026-11-17T14:20:50.8205560Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt:244:142 Redundant call of conversion method.
+2026-11-17T14:20:50.8215384Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:274:73 Redundant call of conversion method.
+2026-11-17T14:20:50.8216899Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:325:87 Redundant call of conversion method.
+2026-11-17T14:20:50.8218330Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:361:116 Redundant call of conversion method.
+2026-11-17T14:20:50.8219812Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:396:90 Redundant call of conversion method.
+2026-11-17T14:20:50.8221617Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:396:119 Redundant call of conversion method.
+2026-11-17T14:20:50.8223048Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:507:123 Redundant call of conversion method.
+2026-11-17T14:20:50.8224643Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:507:149 Redundant call of conversion method.
+2026-11-17T14:20:50.8226126Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:513:126 Redundant call of conversion method.
+2026-11-17T14:20:50.8227867Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:513:152 Redundant call of conversion method.
+2026-11-17T14:20:50.8229291Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:540:71 Redundant call of conversion method.
+2026-11-17T14:20:50.8234091Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:540:97 Redundant call of conversion method.
+2026-11-17T14:20:50.8265977Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:596:140 Redundant call of conversion method.
+2026-11-17T14:20:50.8295362Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:596:180 Redundant call of conversion method.
+2026-11-17T14:20:50.8325410Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:675:86 Redundant call of conversion method.
+2026-11-17T14:20:50.8327611Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:680:123 Redundant call of conversion method.
+2026-11-17T14:20:50.8329160Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:802:114 Redundant call of conversion method.
+2026-11-17T14:20:50.8330630Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:853:163 Redundant call of conversion method.
+2026-11-17T14:20:50.8332100Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:1050:101 Redundant call of conversion method.
+2026-11-17T14:20:50.8355400Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:1051:119 Redundant call of conversion method.
+2026-11-17T14:20:50.8366583Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:1066:150 Redundant call of conversion method.
+2026-11-17T14:20:50.8415730Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/Models.kt:147:86 Unnecessary non-null assertion (!!) on a non-null receiver of type 'JSONObject'.
+2026-11-17T14:20:50.8475701Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/Models.kt:151:24 Unnecessary non-null assertion (!!) on a non-null receiver of type 'JSONObject'.
+2026-11-17T14:20:50.8505582Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/Models.kt:154:24 Unnecessary non-null assertion (!!) on a non-null receiver of type 'JSONObject'.
+2026-11-17T14:20:50.8535602Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt:89:156 Redundant call of conversion method.
+2026-11-17T14:20:50.8565422Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt:90:155 Redundant call of conversion method.
+2026-11-17T14:20:50.8579114Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt:112:132 Redundant call of conversion method.
+2026-11-17T14:20:50.8627783Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt:152:125 Redundant call of conversion method.
+2026-11-17T14:20:50.8635402Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/WorkspaceStorage.kt:159:112 No cast needed.
+2026-11-17T14:20:50.8655286Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/WorkspaceTransfer.kt:119:81 No cast needed.
+2026-11-17T14:20:50.8672725Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/WorkspaceTransfer.kt:134:133 No cast needed.
+2026-11-17T14:21:06.3129062Z 
+2026-11-17T14:21:06.3155527Z > Task :app:compileDebugJavaWithJavac
+2026-11-17T14:21:08.5136379Z > Task :app:dexBuilderDebug
+2026-11-17T14:21:08.6112553Z > Task :app:mergeDebugGlobalSynthetics
+2026-11-17T14:21:08.6115615Z > Task :app:processDebugJavaRes
+2026-11-17T14:21:09.1125358Z > Task :app:mergeLibDexDebug
+2026-11-17T14:21:09.7118378Z > Task :app:mergeProjectDexDebug
+2026-11-17T14:21:09.7148284Z > Task :app:mergeDebugJniLibFolders
+2026-11-17T14:21:09.9113443Z > Task :app:mergeDebugJavaResource
+2026-11-17T14:21:09.9135336Z > Task :app:mergeDebugNativeLibs
+2026-11-17T14:21:10.6112386Z > Task :app:validateSigningDebug
+2026-11-17T14:21:10.7138844Z > Task :app:writeDebugAppMetadata
+2026-11-17T14:21:10.7140921Z > Task :app:writeDebugSigningConfigVersions
+2026-11-17T14:21:10.7141466Z 
+2026-11-17T14:21:10.7142205Z > Task :app:stripDebugDebugSymbols
+2026-11-17T14:21:10.7143057Z Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so. Run with --info option to learn more.
+2026-11-17T14:21:10.8113178Z 
+2026-11-17T14:21:10.8138800Z > Task :app:bundleDebugClassesToCompileJar
+2026-11-17T14:21:10.8164813Z > Task :app:preDebugAndroidTestBuild SKIPPED
+2026-11-17T14:21:14.3112111Z > Task :app:checkDebugAndroidTestAarMetadata
+2026-11-17T14:21:14.4155431Z > Task :app:packageDebug
+2026-11-17T14:21:14.4169457Z > Task :app:createDebugApkListingFileRedirect
+2026-11-17T14:21:14.4194848Z > Task :app:assembleDebug
+2026-11-17T14:21:14.4214896Z > Task :app:processDebugAndroidTestNavigationResources
+2026-11-17T14:21:14.4245070Z > Task :app:compileDebugAndroidTestNavigationResources
+2026-11-17T14:21:14.4264872Z > Task :app:generateDebugAndroidTestResValues
+2026-11-17T14:21:14.4305049Z > Task :app:mapDebugAndroidTestSourceSetPaths
+2026-11-17T14:21:14.4335250Z > Task :app:generateDebugAndroidTestResources
+2026-11-17T14:21:14.8112572Z > Task :app:processDebugAndroidTestManifest
+2026-11-17T14:21:14.8118893Z > Task :app:javaPreCompileDebugAndroidTest
+2026-11-17T14:21:14.8119657Z > Task :app:mergeDebugAndroidTestShaders
+2026-11-17T14:21:14.8120316Z > Task :app:compileDebugAndroidTestShaders NO-SOURCE
+2026-11-17T14:21:14.8120943Z > Task :app:generateDebugAndroidTestAssets UP-TO-DATE
+2026-11-17T14:21:14.9115790Z > Task :app:mergeDebugAndroidTestResources
+2026-11-17T14:21:14.9136393Z > Task :app:mergeDebugAndroidTestAssets
+2026-11-17T14:21:14.9141936Z > Task :app:compressDebugAndroidTestAssets
+2026-11-17T14:21:14.9174965Z > Task :app:desugarDebugAndroidTestFileDependencies
+2026-11-17T14:21:15.3142562Z > Task :app:processDebugAndroidTestResources
+2026-11-17T14:21:15.3165293Z > Task :app:checkDebugAndroidTestDuplicateClasses
+2026-11-17T14:21:23.5165993Z > Task :app:mergeExtDexDebugAndroidTest
+2026-11-17T14:21:23.5205863Z > Task :app:mergeLibDexDebugAndroidTest
+2026-11-17T14:21:23.5295568Z > Task :app:mergeDebugAndroidTestJniLibFolders
+2026-11-17T14:21:23.6146080Z > Task :app:mergeDebugAndroidTestNativeLibs NO-SOURCE
+2026-11-17T14:21:23.6195604Z > Task :app:stripDebugAndroidTestDebugSymbols NO-SOURCE
+2026-11-17T14:21:23.6196919Z > Task :app:validateSigningDebugAndroidTest
+2026-11-17T14:21:23.6225543Z > Task :app:writeDebugAndroidTestSigningConfigVersions
+2026-11-17T14:21:25.7135589Z > Task :app:generateDebugAndroidTestLintModel
+2026-11-17T14:21:25.8125460Z > Task :app:extractProguardFiles
+2026-11-17T14:21:26.0135597Z > Task :app:generateDebugLintReportModel
+2026-11-17T14:21:26.0136108Z > Task :app:preDebugUnitTestBuild UP-TO-DATE
+2026-11-17T14:21:26.2115479Z > Task :app:generateDebugUnitTestLintModel
+2026-11-17T14:21:26.4121860Z 
+2026-11-17T14:21:26.4122649Z > Task :app:compileDebugAndroidTestKotlin
+2026-11-17T14:21:26.4123974Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/androidTest/java/com/saleh/careerfinder/ApplicationRecordRegressionTest.kt:170:39 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+2026-11-17T14:21:26.4126205Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/androidTest/java/com/saleh/careerfinder/ApplicationRecordRegressionTest.kt:176:39 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+2026-11-17T14:21:26.4128185Z w: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/androidTest/java/com/saleh/careerfinder/ApplicationRecordRegressionTest.kt:475:41 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+2026-11-17T14:21:32.2124817Z 
+2026-11-17T14:21:32.2195479Z > Task :app:compileDebugAndroidTestJavaWithJavac NO-SOURCE
+2026-11-17T14:21:33.5135888Z > Task :app:dexBuilderDebugAndroidTest
+2026-11-17T14:21:33.6114324Z > Task :app:mergeDebugAndroidTestGlobalSynthetics
+2026-11-17T14:21:33.6148533Z > Task :app:processDebugAndroidTestJavaRes
+2026-11-17T14:21:33.7112634Z > Task :app:mergeDebugAndroidTestJavaResource
+2026-11-17T14:21:33.9125395Z > Task :app:mergeProjectDexDebugAndroidTest
+2026-11-17T14:21:34.0115456Z > Task :app:packageDebugAndroidTest
+2026-11-17T14:21:34.0156385Z > Task :app:createDebugAndroidTestApkListingFileRedirect
+2026-11-17T14:21:34.0175235Z > Task :app:assembleDebugAndroidTest
+2026-11-17T14:21:56.2125473Z > Task :app:lintAnalyzeDebug
+2026-11-17T14:22:04.0115852Z > Task :app:lintAnalyzeDebugAndroidTest
+2026-11-17T14:22:05.2130432Z > Task :app:lintAnalyzeDebugUnitTest
+2026-11-17T14:22:28.1111998Z 
+2026-11-17T14:22:28.1113654Z > Task :app:lintReportDebug
+2026-11-17T14:22:28.1131556Z Wrote HTML report to file:///home/runner/work/ahmad-career/ahmad-career/android/app/build/reports/lint-results-debug.html
+2026-11-17T14:22:28.2125104Z 
+2026-11-17T14:22:28.2125742Z > Task :app:lintDebug
+2026-11-17T14:22:28.2125987Z 
+2026-11-17T14:22:28.2126144Z BUILD SUCCESSFUL in 6m 17s
+2026-11-17T14:22:28.2126385Z 76 actionable tasks: 76 executed
+2026-11-17T14:22:28.5509132Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-17T14:22:28.5509457Z with:
+2026-11-17T14:22:28.5509629Z   node-version: 24
+2026-11-17T14:22:28.5509829Z   package-manager-cache: false
+2026-11-17T14:22:28.5510038Z   check-latest: false
+2026-11-17T14:22:28.5512514Z   token: ***
+2026-11-17T14:22:28.5512691Z env:
+2026-11-17T14:22:28.5512939Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+2026-11-17T14:22:28.5513335Z   JAVA_HOME_21_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+2026-11-17T14:22:28.5513643Z   MAVEN_ARGS: -ntp
+2026-11-17T14:22:28.5513819Z ##[endgroup]
+2026-11-17T14:22:28.6784313Z Found in cache @ /opt/hostedtoolcache/node/24.22.2/x64
+2026-11-17T14:22:29.3044564Z ##[group]Environment details
+2026-11-17T14:22:31.0383597Z node: v24.22.2
+2026-11-17T14:22:31.0383873Z npm: 11.19.1
+2026-11-17T14:22:31.0384049Z yarn: 1.22.22
+2026-11-17T14:22:31.0384965Z ##[endgroup]
+2026-11-17T14:22:31.0504798Z ##[group]Run test -c /dev/kvm
+2026-11-17T14:22:31.0505127Z [36;1mtest -c /dev/kvm[0m
+2026-11-17T14:22:31.0505345Z [36;1msudo chmod a+rw /dev/kvm[0m
+2026-11-17T14:22:31.0505818Z [36;1m"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install 'emulator' 'system-images;android-36;google_apis;x86_64'[0m
+2026-11-17T14:22:31.0506282Z [36;1mnpm ci --prefix website[0m
+2026-11-17T14:22:31.0560789Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-17T14:22:31.0561077Z env:
+2026-11-17T14:22:31.0561329Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+2026-11-17T14:22:31.0561717Z   JAVA_HOME_21_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+2026-11-17T14:22:31.0562026Z   MAVEN_ARGS: -ntp
+2026-11-17T14:22:31.0562205Z ##[endgroup]
+2026-11-17T14:22:32.6898142Z Loading package information...                                                  
+2026-11-17T14:22:32.7639219Z Loading local repository...                                                     
+2026-11-17T14:22:32.7641531Z [                                       ] 3% Loading local repository...        
+2026-11-17T14:22:33.1006087Z [                                       ] 3% Fetch remote repository...         
+2026-11-17T14:22:33.4266502Z [=                                      ] 3% Fetch remote repository...         
+2026-11-17T14:22:33.4685405Z [=                                      ] 4% Fetch remote repository...         
+2026-11-17T14:22:33.4934689Z [=                                      ] 5% Fetch remote repository...         
+2026-11-17T14:22:33.5423353Z [==                                     ] 5% Fetch remote repository...         
+2026-11-17T14:22:33.5959328Z [==                                     ] 6% Fetch remote repository...         
+2026-11-17T14:22:33.7546121Z [==                                     ] 7% Fetch remote repository...         
+2026-11-17T14:22:33.7578966Z [==                                     ] 7% Computing updates...               
+2026-11-17T14:22:33.7644198Z [===                                    ] 8% Computing updates...               
+2026-11-17T14:22:33.7887179Z [===                                    ] 10% Computing updates...              
+2026-11-17T14:22:33.8705146Z [===                                    ] 10% Installing Android Emulator       
+2026-11-17T14:22:33.9701897Z [===                                    ] 10% Downloading emulator-linux_x64-167
+2026-11-17T14:22:34.0688108Z [====                                   ] 10% Downloading emulator-linux_x64-167
+2026-11-17T14:22:34.5364140Z [====                                   ] 11% Downloading emulator-linux_x64-167
+2026-11-17T14:22:34.7497183Z [====                                   ] 12% Downloading emulator-linux_x64-167
+2026-11-17T14:22:34.8960966Z [=====                                  ] 13% Downloading emulator-linux_x64-167
+2026-11-17T14:22:34.9843736Z [=====                                  ] 14% Downloading emulator-linux_x64-167
+2026-11-17T14:22:35.0355948Z [=====                                  ] 15% Downloading emulator-linux_x64-167
+2026-11-17T14:22:35.0762235Z [======                                 ] 15% Downloading emulator-linux_x64-167
+2026-11-17T14:22:35.1619375Z [======                                 ] 16% Downloading emulator-linux_x64-167
+2026-11-17T14:22:35.2279280Z [======                                 ] 17% Downloading emulator-linux_x64-167
+2026-11-17T14:22:35.2979580Z [=======                                ] 18% Downloading emulator-linux_x64-167
+2026-11-17T14:22:35.3911056Z [=======                                ] 19% Downloading emulator-linux_x64-167
+2026-11-17T14:22:35.4220561Z [=======                                ] 20% Downloading emulator-linux_x64-167
+2026-11-17T14:22:35.4577480Z [========                               ] 20% Downloading emulator-linux_x64-167
+2026-11-17T14:22:35.5010951Z [========                               ] 21% Downloading emulator-linux_x64-167
+2026-11-17T14:22:35.5928030Z [========                               ] 21% Unzipping...                      
+2026-11-17T14:22:35.5929095Z [========                               ] 21% Unzipping... emulator/            
+2026-11-17T14:22:35.5930012Z [========                               ] 21% Unzipping... emulator/resources/  
+2026-11-17T14:22:35.6375623Z [========                               ] 21% Unzipping... emulator/qsn         
+2026-11-17T14:22:35.7201836Z [========                               ] 21% Unzipping... emulator/emulator    
+2026-11-17T14:22:35.7423678Z [========                               ] 21% Unzipping... emulator/netsimd     
+2026-11-17T14:22:35.8424278Z [========                               ] 22% Unzipping... emulator/netsimd     
+2026-11-17T14:22:35.8425085Z [========                               ] 22% Unzipping... emulator/bin64/      
+2026-11-17T14:22:35.8425661Z [========                               ] 22% Unzipping... emulator/qemu/       
+2026-11-17T14:22:35.8439199Z [========                               ] 22% Unzipping... emulator/NOTICE.txt  
+2026-11-17T14:22:35.9516881Z [========                               ] 22% Unzipping... emulator/crashpad_han
+2026-11-17T14:22:35.9519775Z [========                               ] 22% Unzipping... emulator/source.prope
+2026-11-17T14:22:36.0079668Z [========                               ] 22% Unzipping... emulator/nimble_bridg
+2026-11-17T14:22:36.0081806Z [========                               ] 22% Unzipping... emulator/LICENSE     
+2026-11-17T14:22:36.0082434Z [========                               ] 22% Unzipping... emulator/lib/        
+2026-11-17T14:22:36.0171953Z [========                               ] 22% Unzipping... emulator/qemu-img    
+2026-11-17T14:22:36.0172832Z [========                               ] 22% Unzipping... emulator/include/    
+2026-11-17T14:22:36.0176431Z [========                               ] 22% Unzipping... emulator/NOTICE.csv  
+2026-11-17T14:22:36.0177101Z [========                               ] 22% Unzipping... emulator/lib64/      
+2026-11-17T14:22:36.0353747Z [========                               ] 22% Unzipping... emulator/emulator-che
+2026-11-17T14:22:36.0523072Z [========                               ] 22% Unzipping... emulator/crashreport 
+2026-11-17T14:22:36.0526025Z [========                               ] 22% Unzipping... emulator/mksdcard    
+2026-11-17T14:22:36.1238900Z [========                               ] 22% Unzipping... emulator/resources/To
+2026-11-17T14:22:36.1294240Z [========                               ] 22% Unzipping... emulator/resources/de
+2026-11-17T14:22:36.1295976Z [========                               ] 22% Unzipping... emulator/resources/To
+2026-11-17T14:22:36.1306169Z [========                               ] 22% Unzipping... emulator/resources/de
+2026-11-17T14:22:36.1415930Z [========                               ] 22% Unzipping... emulator/resources/To
+2026-11-17T14:22:36.1416562Z [========                               ] 22% Unzipping... emulator/resources/ma
+2026-11-17T14:22:36.1436340Z [========                               ] 22% Unzipping... emulator/resources/de
+2026-11-17T14:22:36.1436937Z [========                               ] 22% Unzipping... emulator/resources/sk
+2026-11-17T14:22:36.1463078Z [========                               ] 22% Unzipping... emulator/resources/de
+2026-11-17T14:22:36.1463648Z [========                               ] 22% Unzipping... emulator/resources/ma
+2026-11-17T14:22:36.1473407Z [========                               ] 22% Unzipping... emulator/resources/po
+2026-11-17T14:22:36.1521678Z [========                               ] 22% Unzipping... emulator/resources/ma
+2026-11-17T14:22:36.1534780Z [=========                              ] 23% Unzipping... emulator/resources/ma
+2026-11-17T14:22:36.1573376Z [=========                              ] 23% Unzipping... emulator/resources/sk
+2026-11-17T14:22:36.1582812Z [=========                              ] 23% Unzipping... emulator/resources/ma
+2026-11-17T14:22:36.1611194Z [=========                              ] 23% Unzipping... emulator/bin64/e2fsck
+2026-11-17T14:22:36.1640273Z [=========                              ] 23% Unzipping... emulator/bin64/fsck.e
+2026-11-17T14:22:36.1657687Z [=========                              ] 23% Unzipping... emulator/bin64/tune2f
+2026-11-17T14:22:36.1669086Z [=========                              ] 23% Unzipping... emulator/bin64/resize
+2026-11-17T14:22:36.1688277Z [=========                              ] 23% Unzipping... emulator/bin64/mkfs.e
+2026-11-17T14:22:36.7242329Z [=========                              ] 23% Unzipping... emulator/qemu/linux-x
+2026-11-17T14:22:37.2585653Z [=========                              ] 24% Unzipping... emulator/qemu/linux-x
+2026-11-17T14:22:37.5209548Z [=========                              ] 25% Unzipping... emulator/qemu/linux-x
+2026-11-17T14:22:37.7901003Z [==========                             ] 25% Unzipping... emulator/qemu/linux-x
+2026-11-17T14:22:37.7902994Z [==========                             ] 25% Unzipping... emulator/lib/emulator
+2026-11-17T14:22:37.7905253Z [==========                             ] 25% Unzipping... emulator/lib/rtc_serv
+2026-11-17T14:22:37.9002584Z [==========                             ] 25% Unzipping... emulator/lib/advanced
+2026-11-17T14:22:37.9008733Z [==========                             ] 25% Unzipping... emulator/lib/cmake/  
+2026-11-17T14:22:37.9009665Z [==========                             ] 25% Unzipping... emulator/lib/emulator
+2026-11-17T14:22:37.9010388Z [==========                             ] 25% Unzipping... emulator/lib/control_
+2026-11-17T14:22:37.9013932Z [==========                             ] 25% Unzipping... emulator/lib/emulated
+2026-11-17T14:22:37.9016234Z [==========                             ] 25% Unzipping... emulator/lib/rtc_serv
+2026-11-17T14:22:37.9018876Z [==========                             ] 25% Unzipping... emulator/lib/emu-orig
+2026-11-17T14:22:37.9026454Z [==========                             ] 25% Unzipping... emulator/lib/hardware
+2026-11-17T14:22:37.9026944Z [==========                             ] 25% Unzipping... emulator/lib/pkgconfi
+2026-11-17T14:22:37.9027392Z [==========                             ] 25% Unzipping... emulator/lib/pc-bios/
+2026-11-17T14:22:37.9028099Z [==========                             ] 25% Unzipping... emulator/lib/snapshot
+2026-11-17T14:22:37.9028673Z [==========                             ] 25% Unzipping... emulator/lib/adb_serv
+2026-11-17T14:22:37.9034865Z [==========                             ] 25% Unzipping... emulator/lib/hostapd.
+2026-11-17T14:22:37.9037137Z [==========                             ] 25% Unzipping... emulator/lib/grpc_end
+2026-11-17T14:22:37.9055520Z [==========                             ] 25% Unzipping... emulator/lib/ca-bundl
+2026-11-17T14:22:37.9058395Z [==========                             ] 25% Unzipping... emulator/lib/ui_contr
+2026-11-17T14:22:37.9061497Z [==========                             ] 25% Unzipping... emulator/lib/snapshot
+2026-11-17T14:22:37.9063860Z [==========                             ] 25% Unzipping... emulator/lib/ice_conf
+2026-11-17T14:22:37.9179340Z [==========                             ] 25% Unzipping... emulator/lib/libflatb
+2026-11-17T14:22:37.9360472Z [==========                             ] 26% Unzipping... emulator/lib/libflatb
+2026-11-17T14:22:37.9367236Z [==========                             ] 26% Unzipping... emulator/lib/emulator
+2026-11-17T14:22:37.9368870Z [==========                             ] 26% Unzipping... emulator/lib/waterfal
+2026-11-17T14:22:37.9371418Z [==========                             ] 26% Unzipping... emulator/lib/emulated
+2026-11-17T14:22:37.9381181Z [==========                             ] 26% Unzipping... emulator/lib/cmake/fl
+2026-11-17T14:22:37.9382993Z [==========                             ] 26% Unzipping... emulator/lib/pkgconfi
+2026-11-17T14:22:37.9518461Z [==========                             ] 26% Unzipping... emulator/lib/pc-bios/
+2026-11-17T14:22:38.0053206Z [==========                             ] 26% Unzipping... emulator/include/flat
+2026-11-17T14:22:38.0112516Z [==========                             ] 26% Unzipping... emulator/lib64/libgli
+2026-11-17T14:22:38.0216298Z [==========                             ] 26% Unzipping... emulator/lib64/libpro
+2026-11-17T14:22:38.0216955Z [==========                             ] 26% Unzipping... emulator/lib64/qt/   
+2026-11-17T14:22:38.0559057Z [==========                             ] 26% Unzipping... emulator/lib64/liband
+2026-11-17T14:22:38.1158319Z [==========                             ] 26% Unzipping... emulator/lib64/libgfx
+2026-11-17T14:22:38.1158949Z [==========                             ] 26% Unzipping... emulator/lib64/gles_l
+2026-11-17T14:22:38.1166449Z [==========                             ] 26% Unzipping... emulator/lib64/liband
+2026-11-17T14:22:38.1167079Z [==========                             ] 26% Unzipping... emulator/lib64/vulkan
+2026-11-17T14:22:38.1167659Z [==========                             ] 26% Unzipping... emulator/lib64/gles_s
+2026-11-17T14:22:38.1170480Z [==========                             ] 26% Unzipping... emulator/lib64/libemu
+2026-11-17T14:22:38.1273669Z [==========                             ] 26% Unzipping... emulator/lib64/libpro
+2026-11-17T14:22:38.3781426Z [==========                             ] 26% Unzipping... emulator/lib64/liband
+2026-11-17T14:22:38.3798709Z [==========                             ] 26% Unzipping... emulator/lib64/libtcm
+2026-11-17T14:22:38.3801141Z [==========                             ] 26% Unzipping... emulator/lib64/libima
+2026-11-17T14:22:38.3856958Z [==========                             ] 26% Unzipping... emulator/lib64/libc++
+2026-11-17T14:22:38.4096883Z [==========                             ] 26% Unzipping... emulator/lib64/liband
+2026-11-17T14:22:38.4133868Z [==========                             ] 26% Unzipping... emulator/lib64/libabs
+2026-11-17T14:22:38.4134688Z [==========                             ] 26% Unzipping... emulator/lib64/gles_a
+2026-11-17T14:22:38.4194607Z [==========                             ] 26% Unzipping... emulator/lib64/libsha
+2026-11-17T14:22:38.4252826Z [==========                             ] 26% Unzipping... emulator/lib64/libc++
+2026-11-17T14:22:38.4253533Z [==========                             ] 26% Unzipping... emulator/lib64/qt/res
+2026-11-17T14:22:38.4255050Z [==========                             ] 26% Unzipping... emulator/lib64/qt/lib
+2026-11-17T14:22:38.4255668Z [==========                             ] 26% Unzipping... emulator/lib64/qt/tra
+2026-11-17T14:22:38.4256273Z [==========                             ] 26% Unzipping... emulator/lib64/qt/plu
+2026-11-17T14:22:38.4282949Z [==========                             ] 26% Unzipping... emulator/lib64/qt/res
+2026-11-17T14:22:38.5555869Z [==========                             ] 27% Unzipping... emulator/lib64/qt/res
+2026-11-17T14:22:38.7333049Z [==========                             ] 27% Unzipping... emulator/lib64/qt/lib
+2026-11-17T14:22:39.1028732Z [===========                            ] 28% Unzipping... emulator/lib64/qt/lib
+2026-11-17T14:22:39.4497914Z [===========                            ] 29% Unzipping... emulator/lib64/qt/lib
+2026-11-17T14:22:40.3307576Z [===========                            ] 30% Unzipping... emulator/lib64/qt/lib
+2026-11-17T14:22:40.4030424Z [============                           ] 30% Unzipping... emulator/lib64/qt/lib
+2026-11-17T14:22:40.6023827Z [============                           ] 30% Unzipping... emulator/lib64/qt/tra
+2026-11-17T14:22:40.6117081Z [============                           ] 30% Unzipping... emulator/lib64/qt/plu
+2026-11-17T14:22:40.6297270Z [============                           ] 30% Unzipping... emulator/lib64/gles_l
+2026-11-17T14:22:40.6837771Z [============                           ] 31% Unzipping... emulator/lib64/gles_l
+2026-11-17T14:22:41.0716917Z [============                           ] 31% Unzipping... emulator/lib64/vulkan
+2026-11-17T14:22:41.8587620Z [============                           ] 32% Unzipping... emulator/lib64/vulkan
+2026-11-17T14:22:41.9187342Z [============                           ] 32% Unzipping... emulator/lib64/gles_s
+2026-11-17T14:22:42.0020433Z [============                           ] 32% Unzipping... emulator/lib64/gles_a
+2026-11-17T14:22:42.0609447Z [=============                          ] 33% Unzipping... emulator/lib64/gles_a
+2026-11-17T14:22:42.4506179Z [=====================                  ] 55% Unzipping... emulator/lib64/gles_a
+2026-11-17T14:22:42.5383194Z [=====================                  ] 55% Installing Google APIs Intel x86_6
+2026-11-17T14:22:42.8781996Z [=====================                  ] 55% Downloading x86_64-36_r07.zip... e
+2026-11-17T14:22:43.4217577Z [======================                 ] 55% Downloading x86_64-36_r07.zip... e
+2026-11-17T14:22:44.6665483Z [======================                 ] 56% Downloading x86_64-36_r07.zip... e
+2026-11-17T14:22:45.9712354Z [======================                 ] 57% Downloading x86_64-36_r07.zip... e
+2026-11-17T14:22:47.3385493Z [=======================                ] 58% Downloading x86_64-36_r07.zip... e
+2026-11-17T14:22:48.6598762Z [=======================                ] 59% Downloading x86_64-36_r07.zip... e
+2026-11-17T14:22:49.3970839Z [=======================                ] 60% Downloading x86_64-36_r07.zip... e
+2026-11-17T14:22:50.4713267Z [========================               ] 60% Downloading x86_64-36_r07.zip... e
+2026-11-17T14:22:52.2220771Z [========================               ] 61% Downloading x86_64-36_r07.zip... e
+2026-11-17T14:22:53.4655552Z [========================               ] 62% Downloading x86_64-36_r07.zip... e
+2026-11-17T14:22:54.7824493Z [=========================              ] 63% Downloading x86_64-36_r07.zip... e
+2026-11-17T14:22:56.1868725Z [=========================              ] 64% Downloading x86_64-36_r07.zip... e
+2026-11-17T14:22:56.7947659Z [=========================              ] 65% Downloading x86_64-36_r07.zip... e
+2026-11-17T14:22:57.4936012Z [==========================             ] 65% Downloading x86_64-36_r07.zip... e
+2026-11-17T14:22:58.2966819Z [==========================             ] 66% Downloading x86_64-36_r07.zip... e
+2026-11-17T14:22:58.2985550Z [==========================             ] 66% Unzipping... emulator/lib64/gles_a
+2026-11-17T14:22:58.4535882Z [==========================             ] 66% Unzipping... x86_64/NOTICE.txt    
+2026-11-17T14:22:58.4537695Z [==========================             ] 66% Unzipping... x86_64/VerifiedBootPa
+2026-11-17T14:22:58.4538958Z [==========================             ] 66% Unzipping... x86_64/advancedFeatur
+2026-11-17T14:22:58.4540542Z [==========================             ] 66% Unzipping... x86_64/build.prop    
+2026-11-17T14:22:58.4542140Z [==========================             ] 66% Unzipping... x86_64/data/empty_dat
+2026-11-17T14:22:58.4545426Z [==========================             ] 66% Unzipping... x86_64/data/local.pro
+2026-11-17T14:22:58.4547757Z [==========================             ] 66% Unzipping... x86_64/data/misc/Gold
+2026-11-17T14:22:58.4552009Z [==========================             ] 66% Unzipping... x86_64/data/misc/emul
+2026-11-17T14:22:58.4561606Z [==========================             ] 66% Unzipping... x86_64/data/misc/mode
+2026-11-17T14:22:58.5540728Z [==========================             ] 66% Unzipping... x86_64/data/misc/pixe
+2026-11-17T14:22:58.5996574Z [==========================             ] 66% Unzipping... x86_64/encryptionkey.
+2026-11-17T14:22:58.7018226Z [==========================             ] 66% Unzipping... x86_64/kernel-ranchu 
+2026-11-17T14:22:58.7020492Z [==========================             ] 66% Unzipping... x86_64/kernel_cmdline
+2026-11-17T14:22:58.7134705Z [==========================             ] 66% Unzipping... x86_64/ramdisk.img   
+2026-11-17T14:22:58.7135674Z [==========================             ] 66% Unzipping... x86_64/source.propert
+2026-11-17T14:22:59.0621006Z [==========================             ] 66% Unzipping... x86_64/system.img    
+2026-11-17T14:23:00.3903220Z [==========================             ] 67% Unzipping... x86_64/system.img    
+2026-11-17T14:23:01.8950474Z [===========================            ] 68% Unzipping... x86_64/system.img    
+2026-11-17T14:23:03.2178451Z [===========================            ] 69% Unzipping... x86_64/system.img    
+2026-11-17T14:23:03.9609981Z [===========================            ] 70% Unzipping... x86_64/system.img    
+2026-11-17T14:23:04.6471243Z [============================           ] 70% Unzipping... x86_64/system.img    
+2026-11-17T14:23:06.3100025Z [============================           ] 71% Unzipping... x86_64/system.img    
+2026-11-17T14:23:07.5198845Z [============================           ] 72% Unzipping... x86_64/system.img    
+2026-11-17T14:23:09.0679015Z [=============================          ] 73% Unzipping... x86_64/system.img    
+2026-11-17T14:23:10.5530242Z [=============================          ] 74% Unzipping... x86_64/system.img    
+2026-11-17T14:23:11.3506890Z [=============================          ] 75% Unzipping... x86_64/system.img    
+2026-11-17T14:23:12.0198540Z [==============================         ] 75% Unzipping... x86_64/system.img    
+2026-11-17T14:23:13.8298104Z [==============================         ] 76% Unzipping... x86_64/system.img    
+2026-11-17T14:23:27.0348980Z [==============================         ] 77% Unzipping... x86_64/system.img    
+2026-11-17T14:23:27.9046477Z [==============================         ] 77% Unzipping... x86_64/vendor.img    
+2026-11-17T14:23:28.0812834Z [==============================         ] 78% Unzipping... x86_64/vendor.img    
+2026-11-17T14:23:28.0813605Z [=======================================] 100% Unzipping... x86_64/vendor.img   
+2026-11-17T14:23:28.0865125Z 
+2026-11-17T14:23:30.7370861Z 
+2026-11-17T14:23:30.7371583Z added 5 packages, and audited 6 packages in 3s
+2026-11-17T14:23:30.7377470Z 
+2026-11-17T14:23:30.7377683Z found 0 vulnerabilities
+2026-11-17T14:23:30.7766910Z ##[group]Run node android/checks/run-ci-emulator.mjs
+2026-11-17T14:23:30.7767244Z [36;1mnode android/checks/run-ci-emulator.mjs[0m
+2026-11-17T14:23:30.7784871Z shell: /usr/bin/bash -e {0}
+2026-11-17T14:23:30.7785085Z env:
+2026-11-17T14:23:30.7785356Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+2026-11-17T14:23:30.7785959Z   JAVA_HOME_21_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+2026-11-17T14:23:30.7786266Z   MAVEN_ARGS: -ntp
+2026-11-17T14:23:30.7786446Z ##[endgroup]
+2026-11-17T14:27:29.1636436Z ordinary-phone: 104 instrumented tests passed.
+2026-11-17T14:27:31.7444631Z normal-preview-tls-boundary: 1 instrumented tests passed.
+2026-11-17T14:43:33.1741748Z Preserved 17 native screenshots; 1 paths were unavailable.
+2026-11-17T14:43:34.8524927Z file:///home/runner/work/ahmad-career/ahmad-career/android/checks/run-ci-emulator.mjs:109
+2026-11-17T14:43:34.8528129Z       throw Error(`${path.basename(command)} timed out after ${timeout}ms; see ${log??'runner output'}.`);
+2026-11-17T14:43:34.8528541Z             ^
+2026-11-17T14:43:34.8528653Z 
+2026-11-17T14:43:34.8528868Z Error: adb timed out after 900000ms; see native-https-phone.log.
+2026-11-17T14:43:34.8529388Z     at run (file:///home/runner/work/ahmad-career/ahmad-career/android/checks/run-ci-emulator.mjs:109:13)
+2026-11-17T14:43:34.8529929Z     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-11-17T14:43:34.8530492Z     at async instrument (file:///home/runner/work/ahmad-career/ahmad-career/android/checks/run-ci-emulator.mjs:282:18)
+2026-11-17T14:43:34.8531076Z     at async file:///home/runner/work/ahmad-career/ahmad-career/android/checks/run-ci-emulator.mjs:326:3
+2026-11-17T14:43:34.8531367Z 
+2026-11-17T14:43:34.8531442Z Node.js v24.22.2
+2026-11-17T14:43:34.8636602Z ##[error]Process completed with exit code 1.
+2026-11-17T14:43:34.8732214Z ##[group]Run actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+2026-11-17T14:43:34.8732541Z with:
+2026-11-17T14:43:34.8732724Z   name: android-lint-44101210921
+2026-11-17T14:43:34.8733181Z   path: android/app/build/reports/lint-results-debug.*
+android/checks/ci-evidence/**
+/home/runner/work/_temp/career-android-build-*.log
+
+2026-11-17T14:43:34.8733650Z   if-no-files-found: ignore
+2026-11-17T14:43:34.8733864Z   retention-days: 7
+2026-11-17T14:43:34.8734050Z   compression-level: 6
+2026-11-17T14:43:34.8734234Z   overwrite: false
+2026-11-17T14:43:34.8734644Z   include-hidden-files: false
+2026-11-17T14:43:34.8734845Z env:
+2026-11-17T14:43:34.8735088Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+2026-11-17T14:43:34.8735475Z   JAVA_HOME_21_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+2026-11-17T14:43:34.8735784Z   MAVEN_ARGS: -ntp
+2026-11-17T14:43:34.8735958Z ##[endgroup]
+2026-11-17T14:43:35.0284320Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-11-17T14:43:35.0286233Z The least common ancestor is /home/runner/work. This will be the root directory of the artifact
+2026-11-17T14:43:35.0287077Z With the provided path, there will be 38 files uploaded
+2026-11-17T14:43:35.0291504Z Artifact name is valid!
+2026-11-17T14:43:35.0292137Z Root directory input is valid!
+2026-11-17T14:43:35.3670821Z Beginning upload of artifact content to blob storage
+2026-11-17T14:43:35.8703773Z Uploaded bytes 2658817
+2026-11-17T14:43:35.9103236Z Finished uploading artifact content to blob storage!
+2026-11-17T14:43:35.9103991Z SHA256 digest of uploaded artifact zip is cc0433ed5e50ef61a4285daf130dfdcb4cf4437c171e0dc08bbaa457a1cc9517
+2026-11-17T14:43:35.9105300Z Finalizing artifact upload
+2026-11-17T14:43:36.4010118Z Artifact android-lint-44101210921.zip successfully finalized. Artifact ID 14339410537
+2026-11-17T14:43:36.4010869Z Artifact android-lint-44101210921 has been successfully uploaded! Final size is 2658817 bytes. Artifact ID is 14339410537
+2026-11-17T14:43:36.4013751Z Artifact download URL: https://github.com/swonyu/ahmad-career/actions/runs/44101210921/artifacts/14339410537
+2026-11-17T14:43:36.4234244Z Post job cleanup.
+2026-11-17T14:43:36.5006982Z Post job cleanup.
+2026-11-17T14:43:36.5754095Z [command]/usr/bin/git version
+2026-11-17T14:43:36.5792310Z git version 2.56.1
+2026-11-17T14:43:36.5821977Z Temporarily overriding HOME='/home/runner/work/_temp/51582c4a-f591-42de-9d2a-f3250c5c8fcb' before making global git config changes
+2026-11-17T14:43:36.5823399Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-17T14:43:36.5827002Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/ahmad-career/ahmad-career
+2026-11-17T14:43:36.5862300Z Removing SSH command configuration
+2026-11-17T14:43:36.5868169Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T14:43:36.5900311Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-17T14:43:36.6117289Z Removing HTTP extra header
+2026-11-17T14:43:36.6121890Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T14:43:36.6155627Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-17T14:43:36.6371846Z Removing includeIf entries pointing to credentials config files
+2026-11-17T14:43:36.6378642Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T14:43:36.6409754Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-17T14:43:36.6752012Z Cleaning up orphan processes
+2026-11-17T14:43:36.7135518Z Terminate orphan process: pid (4328) (netsimd)
+

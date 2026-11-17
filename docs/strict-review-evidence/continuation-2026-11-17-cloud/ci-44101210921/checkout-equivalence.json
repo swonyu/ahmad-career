@@ -1,0 +1,29 @@
+{
+  "run_id": 44101210921,
+  "candidate": "880e878f6f528d903c42951f10a8b216094c889c",
+  "candidate_tree": "e8d9d4c0017a5a877d40c172ab72254905de3011",
+  "actual_checkout": "b29b07f5d79757ddf8026df507ec4d88d40b28e5",
+  "evidence": "Service job checkout log plus GitHub candidate-to-checkout file comparison",
+  "comparison": {
+    "repository_full_name": "swonyu/ahmad-career",
+    "base": "880e878f6f528d903c42951f10a8b216094c889c",
+    "head": "b29b07f5d79757ddf8026df507ec4d88d40b28e5",
+    "status": "ahead",
+    "ahead_by": 1,
+    "behind_by": 0,
+    "total_commits": 1,
+    "too_large": null,
+    "base_commit": {
+      "sha": "880e878f6f528d903c42951f10a8b216094c889c",
+      "url": "https://api.github.com/repos/swonyu/ahmad-career/commits/880e878f6f528d903c42951f10a8b216094c889c",
+      "html_url": "https://github.com/swonyu/ahmad-career/commit/880e878f6f528d903c42951f10a8b216094c889c"
+    },
+    "merge_base_commit": {
+      "sha": "880e878f6f528d903c42951f10a8b216094c889c",
+      "url": "https://api.github.com/repos/swonyu/ahmad-career/commits/880e878f6f528d903c42951f10a8b216094c889c",
+      "html_url": "https://github.com/swonyu/ahmad-career/commit/880e878f6f528d903c42951f10a8b216094c889c"
+    },
+    "files": []
+  },
+  "conclusion": "Actual PR merge checkout is distinct from the candidate; the file comparison records whether its content differs."
+}

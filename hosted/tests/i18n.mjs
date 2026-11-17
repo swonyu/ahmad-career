@@ -7,10 +7,14 @@ import {pathToFileURL} from 'node:url';
 import {build} from 'esbuild';
 
 const directory=await mkdtemp(join(tmpdir(),'career-languages-'));
-after(()=>rm(directory,{recursive:true,force:true}));
 await build({entryPoints:['app/i18n/core.ts'],outfile:join(directory,'core.mjs'),bundle:true,platform:'node',format:'esm'});
 const core=await import(pathToFileURL(join(directory,'core.mjs')).href);
 const catalog=JSON.parse(await readFile('app/i18n/messages.ar.json','utf8'));
+// Finish all asynchronous fixture construction before registering tests or teardown.
+await build({entryPoints:['app/i18n/LocaleProvider.tsx'],outfile:join(directory,'locale.mjs'),bundle:true,platform:'node',format:'esm',jsx:'automatic'});
+await build({stdin:{contents:`import React from 'react';import{renderToStaticMarkup}from'react-dom/server';import LocaleProvider from './app/i18n/LocaleProvider';import LanguageSettings from './app/components/LanguageSettings';export function render(language){return renderToStaticMarkup(<LocaleProvider initialLanguage={language} initialPreference={language}><LanguageSettings/></LocaleProvider>)}`,resolveDir:process.cwd(),loader:'tsx'},outfile:join(directory,'render.cjs'),bundle:true,platform:'node',format:'cjs',jsx:'automatic'});
+const {render}=await import(pathToFileURL(join(directory,'render.cjs')).href);
+after(()=>rm(directory,{recursive:true,force:true}));
 const unisolate=value=>value.replace(/[\u2068\u2069]/g,'');
 
 test('language negotiation respects the dedicated preference, weighted device languages, and unsupported-language fallback',()=>{
@@ -52,15 +56,14 @@ test('Arabic counts have zero, one, dual, few, many forms and display Gregorian 
  assert.equal(core.formatDateTime('invalid','ar'),catalog['Date unavailable']);
 });
 
-await build({entryPoints:['app/i18n/LocaleProvider.tsx'],outfile:join(directory,'locale.mjs'),bundle:true,platform:'node',format:'esm',jsx:'automatic'});
 let moduleVersion=0;
 async function fixture({denyWrite=false}={}){
  const values=new Map(),writes=[],window=new EventTarget(),document={cookie:'',documentElement:{lang:'en',dir:'ltr'}};
  window.localStorage={getItem:key=>values.get(key)??null,setItem(key,value){if(denyWrite)throw Error('Synthetic denied storage');values.set(key,value);writes.push([key,value]);}};
  const saved={window:globalThis.window,document:globalThis.document,navigator:Object.getOwnPropertyDescriptor(globalThis,'navigator')};
  globalThis.window=window;globalThis.document=document;Object.defineProperty(globalThis,'navigator',{value:{languages:['ar-SA','en'],language:'ar-SA'},configurable:true});
- const module=await import(pathToFileURL(join(directory,'locale.mjs')).href+'?case='+moduleVersion++);
- return{module,values,writes,window,document,restore(){globalThis.window=saved.window;globalThis.document=saved.document;if(saved.navigator)Object.defineProperty(globalThis,'navigator',saved.navigator);else delete globalThis.navigator;}};
+ const localeModule=await import(pathToFileURL(join(directory,'locale.mjs')).href+'?case='+moduleVersion++);
+ return{module:localeModule,values,writes,window,document,restore(){globalThis.window=saved.window;globalThis.document=saved.document;if(saved.navigator)Object.defineProperty(globalThis,'navigator',saved.navigator);else delete globalThis.navigator;}};
 }
 test('language persistence writes only the independent preference and cookie, including cross-tab clearing',async()=>{
  const f=await fixture();try{
@@ -76,8 +79,6 @@ test('blocked storage still changes this visit without claiming persistence',asy
  const f=await fixture({denyWrite:true});try{assert.equal(f.module.setLanguagePreference('en'),false);assert.equal(f.module.getLanguage(),'en');assert.equal(f.document.documentElement.dir,'ltr');assert.equal(f.writes.length,0);}finally{f.restore();}
 });
 
-await build({stdin:{contents:`import React from 'react';import{renderToStaticMarkup}from'react-dom/server';import LocaleProvider from './app/i18n/LocaleProvider';import LanguageSettings from './app/components/LanguageSettings';export function render(language){return renderToStaticMarkup(<LocaleProvider initialLanguage={language} initialPreference={language}><LanguageSettings/></LocaleProvider>)}`,resolveDir:process.cwd(),loader:'tsx'},outfile:join(directory,'render.cjs'),bundle:true,platform:'node',format:'cjs',jsx:'automatic'});
-const {render}=await import(pathToFileURL(join(directory,'render.cjs')).href);
 test('the actual language control renders Arabic or English on the server with the correct selected preference',()=>{
  const ar=render('ar'),en=render('en');assert.match(ar,/اللغة/);assert.match(en,/Language/);
  assert.match(ar,/value="ar"[^>]*checked=""|checked=""[^>]*value="ar"/);

@@ -1,0 +1,32 @@
+{
+  "observedAt": "2026-11-17T14:43:32.344Z",
+  "packageName": "com.saleh.careerfinder.acceptance",
+  "device": "emulator-5580",
+  "checks": [
+    {
+      "name": "app-pid",
+      "result": "captured"
+    },
+    {
+      "name": "app-thread-backtrace",
+      "result": "unavailable",
+      "reason": "adb failed (1); see native-https-failure-threads.log. "
+    },
+    {
+      "name": "filtered-logcat",
+      "result": "captured"
+    },
+    {
+      "name": "current-screen",
+      "result": "captured"
+    }
+  ],
+  "pid": 5655,
+  "screen": {
+    "file": "native-https-failure-screen.png",
+    "width": 1080,
+    "height": 1920,
+    "bytes": 222022,
+    "sha256": "68bd70b505becac18fe0d2feec17f629ea1026b4c29ee394233df67e7b9046c5"
+  }
+}

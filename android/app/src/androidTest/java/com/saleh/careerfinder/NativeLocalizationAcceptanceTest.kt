@@ -97,7 +97,7 @@ class NativeLocalizationAcceptanceTest {
     }
 
     @Test fun arabicDisplay_keepsProfileAndPrivateScope_andPersistsWithoutServiceCalls() {
-        compose.onNodeWithTag("navigation-profile").performClick()
+        compose.onNodeWithTag("navigation-profile").revealNavigationTab().performClick()
         compose.onNodeWithTag("profile-list").performScrollToNode(hasText("First or single name") and hasSetTextAction())
         compose.onNode(hasText("First or single name") and hasSetTextAction()).performTextInput("Saved")
         val scope = model.state.value.privateScope
@@ -117,7 +117,7 @@ class NativeLocalizationAcceptanceTest {
         assertEquals("Saved", model.state.value.profile.firstName)
         display("en")
         assertEquals(LayoutDirection.Ltr, direction)
-        compose.onNodeWithTag("navigation-profile").performClick()
+        compose.onNodeWithTag("navigation-profile").revealNavigationTab().performClick()
         compose.onNodeWithTag("profile-list").performScrollToNode(hasText("First or single name") and hasSetTextAction())
         compose.onNode(hasText("First or single name") and hasSetTextAction()).assertTextContains("Saved")
         assertEquals(0, service.calls)

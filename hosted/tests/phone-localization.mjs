@@ -127,3 +127,135 @@ test('discovery notice translates only the known service composition and keeps u
     assert.equal(format(unknown, arabic), unknown);
   }
 });
+
+// Inspect rendered production fragments, not a second copy of their markup.
+// Every independent dynamic value must retain its original text inside its own
+// bidi boundary. This checks semantics; physical visual acceptance is separate.
+const phoneSource = read('app/phone/PhoneApp.tsx');
+const phoneTree = ts.createSourceFile('phone.tsx', phoneSource, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+function phoneFragment(predicate) {
+  let result;
+  function visit(node) {
+    if (!result && ts.isJsxElement(node) && predicate(node, node.getText(phoneTree))) result = node;
+    ts.forEachChild(node, visit);
+  }
+  visit(phoneTree); assert(result, 'Expected actual phone presentation fragment');
+  return result.getText(phoneTree);
+}
+const tagName = node => node.openingElement.tagName.getText(phoneTree);
+const hasClass = (node, name) => node.openingElement.attributes.properties.some(prop =>
+  ts.isJsxAttribute(prop) && prop.name.text === 'className' && prop.initializer
+  && ts.isStringLiteral(prop.initializer) && prop.initializer.text === name);
+function allText(node) {
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(allText).join('');
+  if (!React.isValidElement(node)) return '';
+  if (typeof node.type === 'function') return allText(node.type(node.props));
+  return allText(node.props.children);
+}
+function assertIsolatedRawValue(element, value, label) {
+  let occurrences = 0;
+  function visit(node, parents = []) {
+    if (Array.isArray(node)) { node.forEach(child => visit(child, parents)); return; }
+    if (typeof node === 'string') {
+      if (node === value) {
+        occurrences++;
+        const boundary = [...parents].reverse().find(parent =>
+          parent.type === 'bdi' || ['auto', 'ltr'].includes(parent.props.dir));
+        assert(boundary, `${label}: ${value} has no independent bidi boundary`);
+        assert.equal(allText(boundary), value, `${label}: unrelated inline values share the boundary`);
+      }
+      return;
+    }
+    if (!React.isValidElement(node)) return;
+    if (typeof node.type === 'function') { visit(node.type(node.props), parents); return; }
+    visit(node.props.children, [...parents, node]);
+  }
+  visit(element);
+  assert(occurrences > 0, `${label}: original value was changed or omitted`);
+  const escaped = renderToStaticMarkup(React.createElement('span', null, value)).slice(6, -7);
+  assert(renderToStaticMarkup(element).includes(escaped), `${label}: original value absent from rendered markup`);
+  return occurrences;
+}
+const mixedJob = Object.freeze({ id: 'mixed-direction-synthetic',
+  title: 'Data (QA) 2 — العربية', company: 'شركة (Acme) 17', location: 'Riyadh (الرياض) 123',
+  url: 'https://example.org/career-finder-bidi/17', country: 'SA', summary: 'Synthetic mixed-script posting', checkedAt: '2026-11-17T15:00:00Z' });
+const mixedFile = 'CV-أحمد-(QA)-2026.pdf';
+function renderPhoneFragment(fragment, language, additions = {}) {
+  const t = translator(language);
+  const profile = { firstName: 'أحمد (Alex)', lastName: 'Example-17', email: 'synthetic+ar@example.org',
+    resume: { name: mixedFile, size: 1024, sha256: '1'.repeat(64) }, linkedin: 'https://www.linkedin.com/in/synthetic', website: 'https://example.org',
+    phone: '+966500000000', city: 'الرياض (Riyadh)', country: 'SA', headline: 'Synthetic headline',
+    skills: ['TypeScript', 'تحليل'], targetRoles: ['QA'], targetCountries: ['SA'], workModes: ['remote'], experienceLevel: 'mid' };
+  const context = { t, language, job: mixedJob, identity: mixedJob.url, bookmarked: true, record: undefined,
+    busy: '', cannotSave: false, selected: [], applied: true, profile, workspace: { profile },
+    dialog: { job: mixedJob, record: { title: mixedJob.title, company: mixedJob.company } },
+    draft: { id: 'synthetic-recovery', savedAt: '2026-11-17T15:00:00Z', record: { job: mixedJob } },
+    receipt: { id: 'synthetic-receipt', state: 'uncertain', title: mixedJob.title, company: mixedJob.company,
+      createdAt: '2026-11-17T15:00:00Z', url: mixedJob.url },
+    RecordSummary: () => null, today: () => '2026-11-17', formatNumber,
+    displayTime: () => '17 November 2026', countryName: code => code, workModeLabel: value => value,
+    experienceLabel: value => value, receiptLabel: () => 'Outcome needs checking',
+    ...additions };
+  for (const name of ['ArrowUpRight', 'ChevronRight', 'Check']) context[name] = () => null;
+  const View = execute(`exports.View = () => (${fragment});`, context).View;
+  return View();
+}
+
+test('actual Saved, Apply, details and recovery values retain separate bidi boundaries in both languages', () => {
+  const cases = [
+    ['Saved card', phoneFragment(node => hasClass(node, 'phone-card phone-saved-card')), [mixedJob.title, mixedJob.company]],
+    ['Online bookmark copy', phoneFragment((node, text) => tagName(node) === 'div' && hasClass(node, 'phone-recoverable') && text.includes('Copy bookmark to this phone')), [mixedJob.title, mixedJob.company, mixedJob.location]],
+    ['Apply choice', phoneFragment(node => hasClass(node, 'phone-check phone-job-choice')), [mixedJob.title, mixedJob.company]],
+    ['Employer-answer legend', phoneFragment((node, text) => tagName(node) === 'legend' && text.includes('job.company') && text.includes('job.title')), [mixedJob.title, mixedJob.company]],
+    ['Submission receipt', phoneFragment((node, text) => tagName(node) === 'article' && text.includes('phone-receipt') && text.includes('receipt.title')), [mixedJob.title, mixedJob.company]],
+    ['Details location', phoneFragment(node => tagName(node) === 'p' && node.children.some(child => ts.isJsxExpression(child) && child.expression?.getText(phoneTree) === 'dialog.job.location')), [mixedJob.location]],
+    ['Unfinished recovery label', phoneFragment((node, text) => tagName(node) === 'button' && text.includes('draft.record?.job.title')), [mixedJob.title, mixedJob.company]],
+    ['Record-editor summary', phoneFragment((node, text) => tagName(node) === 'p' && text.includes('dialog.job.title') && text.includes('dialog.job.company')), [mixedJob.title, mixedJob.company]],
+    ['Private-record deletion', phoneFragment((node, text) => tagName(node) === 'p' && text.includes('dialog.record.title') && text.includes('dialog.record.company')), [mixedJob.title, mixedJob.company]],
+  ];
+  for (const language of ['en', 'ar']) for (const [label, fragment, values] of cases) {
+    const element = renderPhoneFragment(fragment, language);
+    for (const value of values) assertIsolatedRawValue(element, value, `${language} ${label}`);
+  }
+});
+
+test('actual profile comparison and application review isolate names and CV filenames without changing them', () => {
+  const versions = phoneFragment(node => hasClass(node, 'phone-version-grid'));
+  const reviewSource = declarations(read('app/phone/components.tsx'), ['reviewStateLabels', 'ReviewDetails']);
+  for (const language of ['en', 'ar']) {
+    const element = renderPhoneFragment(versions, language);
+    assert.equal(assertIsolatedRawValue(element, 'أحمد (Alex) Example-17', `${language} profile comparison name`), 2);
+    assert.equal(assertIsolatedRawValue(element, mixedFile, `${language} profile comparison CV`), 2);
+    const ReviewDetails = execute(`${reviewSource}\nexports.ReviewDetails = ReviewDetails;`, {
+      useI18n: () => ({ language, t: translator(language) }),
+    }).ReviewDetails;
+    const review = React.createElement(ReviewDetails, { plan: { items: [{
+      jobId: 'synthetic-review-bidi', state: 'ready', reason: '', title: mixedJob.title, company: mixedJob.company,
+      job: { url: mixedJob.url }, payloadSummary: { name: 'أحمد (Alex) Example-17', email: 'synthetic+ar@example.org', comments: '' },
+      resume: { name: mixedFile }, privacyPolicyUrl: null,
+    }] } });
+    assertIsolatedRawValue(review, mixedFile, `${language} reviewed CV filename`);
+  }
+});
+
+test('actual search inputs preserve mixed-script draft text with automatic direction', () => {
+  const inputs = [];
+  function visit(node) {
+    if (ts.isJsxSelfClosingElement(node) && node.tagName.getText(phoneTree) === 'input') {
+      const value = node.attributes.properties.find(prop => ts.isJsxAttribute(prop) && prop.name.text === 'value');
+      if (value?.initializer && ts.isJsxExpression(value.initializer)
+        && ['filters.query', 'filters.location'].includes(value.initializer.expression?.getText(phoneTree))) inputs.push(node);
+    }
+    ts.forEachChild(node, visit);
+  }
+  visit(phoneTree); assert.equal(inputs.length, 2);
+  for (const language of ['en', 'ar']) for (const input of inputs) {
+    const filters = { query: mixedJob.title, location: mixedJob.location };
+    const View = execute(`exports.View = () => (${input.getText(phoneTree)});`, { t: translator(language), filters }).View;
+    const element = View();
+    assert.equal(element.props.dir, 'auto');
+    assert([mixedJob.title, mixedJob.location].includes(element.props.value));
+    assert(renderToStaticMarkup(element).includes('dir="auto"'));
+  }
+});

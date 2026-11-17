@@ -1,0 +1,636 @@
+﻿2026-11-17T14:16:01.6009790Z Current runner version: '2.338.2'
+2026-11-17T14:16:01.6024810Z ##[group]Runner Image Provisioner
+2026-11-17T14:16:01.6025370Z Hosted Compute Agent
+2026-11-17T14:16:01.6025800Z Version: 20261028.624
+2026-11-17T14:16:01.6026260Z Commit: 54898b74c23fde5556c9b3c3a2290865feef0dfe
+2026-11-17T14:16:01.6026800Z Build Date: 2026-10-28T21:51:42Z
+2026-11-17T14:16:01.6027300Z Worker ID: {a9d18f67-1905-4e5d-af86-8e69328501fb}
+2026-11-17T14:16:01.6027840Z Region: westus
+2026-11-17T14:16:01.6028240Z Cloud: MacCloud
+2026-11-17T14:16:01.6028650Z ##[endgroup]
+2026-11-17T14:16:01.6029570Z ##[group]Operating System
+2026-11-17T14:16:01.6030240Z macOS
+2026-11-17T14:16:01.6030780Z 26.7.2
+2026-11-17T14:16:01.6031170Z 25G332
+2026-11-17T14:16:01.6031700Z ##[endgroup]
+2026-11-17T14:16:01.6032200Z ##[group]Runner Image
+2026-11-17T14:16:01.6032720Z Image: macos-26-arm64
+2026-11-17T14:16:01.6033150Z Version: 20261102.0473.1
+2026-11-17T14:16:01.6034150Z Included Software: https://github.com/actions/runner-images/blob/macos-26-arm64/20261102.0473/images/macos/macos-26-arm64-Readme.md
+2026-11-17T14:16:01.6035830Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-26-arm64%2F20261102.0473
+2026-11-17T14:16:01.6036740Z ##[endgroup]
+2026-11-17T14:16:01.6037730Z ##[group]GITHUB_TOKEN Permissions
+2026-11-17T14:16:01.6038980Z Contents: read
+2026-11-17T14:16:01.6039550Z Metadata: read
+2026-11-17T14:16:01.6040050Z ##[endgroup]
+2026-11-17T14:16:01.6041590Z Secret source: Actions
+2026-11-17T14:16:01.6042320Z Cache mode: write
+2026-11-17T14:16:01.6042890Z Prepare workflow directory
+2026-11-17T14:16:01.6313300Z Prepare all required actions
+2026-11-17T14:16:01.6356060Z Getting action download info
+2026-11-17T14:16:01.7895370Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-17T14:16:01.9692700Z Download action repository 'actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f' (SHA:b7c566a772e6b6bfb58ed0dc250532a479d7789f)
+2026-11-17T14:16:02.1486780Z Complete job name: iPhone logic and unsigned build
+2026-11-17T14:16:02.2132110Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-17T14:16:02.2132910Z with:
+2026-11-17T14:16:02.2133410Z   persist-credentials: false
+2026-11-17T14:16:02.2133890Z   repository: swonyu/ahmad-career
+2026-11-17T14:16:02.2136950Z   token: ***
+2026-11-17T14:16:02.2137310Z   ssh-strict: true
+2026-11-17T14:16:02.2137700Z   ssh-user: git
+2026-11-17T14:16:02.2138060Z   clean: true
+2026-11-17T14:16:02.2138440Z   sparse-checkout-cone-mode: true
+2026-11-17T14:16:02.2138890Z   fetch-depth: 1
+2026-11-17T14:16:02.2139260Z   fetch-tags: false
+2026-11-17T14:16:02.2139670Z   show-progress: true
+2026-11-17T14:16:02.2140150Z   lfs: false
+2026-11-17T14:16:02.2140540Z   submodules: false
+2026-11-17T14:16:02.2140980Z   set-safe-directory: true
+2026-11-17T14:16:02.2141440Z   allow-unsafe-pr-checkout: false
+2026-11-17T14:16:02.2142070Z ##[endgroup]
+2026-11-17T14:16:02.6050380Z Syncing repository: swonyu/ahmad-career
+2026-11-17T14:16:02.6052300Z ##[group]Getting Git version info
+2026-11-17T14:16:02.6053030Z Working directory is '/Users/runner/work/ahmad-career/ahmad-career'
+2026-11-17T14:16:02.6054080Z [command]/opt/homebrew/bin/git version
+2026-11-17T14:16:02.6570640Z git version 2.56.0
+2026-11-17T14:16:02.6585720Z ##[endgroup]
+2026-11-17T14:16:02.6591530Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/9f561aa5-a446-40a6-bc84-0a153bc27867/.gitconfig'
+2026-11-17T14:16:02.6596240Z Temporarily overriding HOME='/Users/runner/work/_temp/9f561aa5-a446-40a6-bc84-0a153bc27867' before making global git config changes
+2026-11-17T14:16:02.6597700Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-17T14:16:02.6600070Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/ahmad-career/ahmad-career
+2026-11-17T14:16:02.6817070Z Deleting the contents of '/Users/runner/work/ahmad-career/ahmad-career'
+2026-11-17T14:16:02.6820750Z ##[group]Determining repository object format
+2026-11-17T14:16:02.6823210Z ##[endgroup]
+2026-11-17T14:16:02.6824090Z ##[group]Initializing the repository
+2026-11-17T14:16:02.6825850Z [command]/opt/homebrew/bin/git init /Users/runner/work/ahmad-career/ahmad-career
+2026-11-17T14:16:02.6993200Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-17T14:16:02.6994250Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-17T14:16:02.6995320Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-17T14:16:02.6996080Z hint: call:
+2026-11-17T14:16:02.6996450Z hint:
+2026-11-17T14:16:02.6996890Z hint: 	git config --global init.defaultBranch <name>
+2026-11-17T14:16:02.6997420Z hint:
+2026-11-17T14:16:02.6997900Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-17T14:16:02.6998770Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-17T14:16:02.6999500Z hint:
+2026-11-17T14:16:02.6999960Z hint: 	git branch -m <name>
+2026-11-17T14:16:02.7000460Z hint:
+2026-11-17T14:16:02.7001090Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-17T14:16:02.7013050Z Initialized empty Git repository in /Users/runner/work/ahmad-career/ahmad-career/.git/
+2026-11-17T14:16:02.7021780Z [command]/opt/homebrew/bin/git remote add origin https://github.com/swonyu/ahmad-career
+2026-11-17T14:16:02.7125880Z ##[endgroup]
+2026-11-17T14:16:02.7126840Z ##[group]Disabling automatic garbage collection
+2026-11-17T14:16:02.7127730Z [command]/opt/homebrew/bin/git config --local gc.auto 0
+2026-11-17T14:16:02.7181730Z ##[endgroup]
+2026-11-17T14:16:02.7182660Z ##[group]Setting up auth
+2026-11-17T14:16:02.7183530Z Removing SSH command configuration
+2026-11-17T14:16:02.7186790Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T14:16:02.7259440Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-17T14:16:02.8613600Z Removing HTTP extra header
+2026-11-17T14:16:02.8617500Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T14:16:02.8686220Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-17T14:16:02.9471870Z Removing includeIf entries pointing to credentials config files
+2026-11-17T14:16:02.9473710Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T14:16:02.9541190Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-17T14:16:03.0323810Z [command]/opt/homebrew/bin/git config --file /Users/runner/work/_temp/git-credentials-1056b9d3-f0e4-4a00-b845-2a31e51956a7.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-17T14:16:03.0715130Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/Users/runner/work/ahmad-career/ahmad-career/.git.path /Users/runner/work/_temp/git-credentials-1056b9d3-f0e4-4a00-b845-2a31e51956a7.config
+2026-11-17T14:16:03.0798420Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/Users/runner/work/ahmad-career/ahmad-career/.git/worktrees/*.path /Users/runner/work/_temp/git-credentials-1056b9d3-f0e4-4a00-b845-2a31e51956a7.config
+2026-11-17T14:16:03.0880460Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-1056b9d3-f0e4-4a00-b845-2a31e51956a7.config
+2026-11-17T14:16:03.0961110Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-1056b9d3-f0e4-4a00-b845-2a31e51956a7.config
+2026-11-17T14:16:03.1036140Z ##[endgroup]
+2026-11-17T14:16:03.1037200Z ##[group]Fetching the repository
+2026-11-17T14:16:03.1040740Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +b29b07f5d79757ddf8026df507ec4d88d40b28e5:refs/remotes/pull/1/merge
+2026-11-17T14:16:05.4231220Z From https://github.com/swonyu/ahmad-career
+2026-11-17T14:16:05.4232200Z  * [new ref]         b29b07f5d79757ddf8026df507ec4d88d40b28e5 -> pull/1/merge
+2026-11-17T14:16:05.4235190Z ##[endgroup]
+2026-11-17T14:16:05.4235720Z ##[group]Determining the checkout info
+2026-11-17T14:16:05.4236340Z ##[endgroup]
+2026-11-17T14:16:05.4239960Z [command]/opt/homebrew/bin/git sparse-checkout disable
+2026-11-17T14:16:05.4336890Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-17T14:16:05.4404970Z ##[group]Checking out the ref
+2026-11-17T14:16:05.4408610Z [command]/opt/homebrew/bin/git checkout --progress --force refs/remotes/pull/1/merge
+2026-11-17T14:16:05.6558990Z HEAD is now at b29b07f Merge 880e878f6f528d903c42951f10a8b216094c889c into 949ce0ad327beab79fa7033423b462ebc7bd98be
+2026-11-17T14:16:05.6572910Z ##[endgroup]
+2026-11-17T14:16:05.6669780Z [command]/opt/homebrew/bin/git log -1 --format=%H
+2026-11-17T14:16:05.6744590Z b29b07f5d79757ddf8026df507ec4d88d40b28e5
+2026-11-17T14:16:05.6751440Z ##[group]Removing auth
+2026-11-17T14:16:05.6751800Z Removing SSH command configuration
+2026-11-17T14:16:05.6754900Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T14:16:05.6828800Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-17T14:16:05.7821480Z Removing HTTP extra header
+2026-11-17T14:16:05.7826040Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T14:16:05.7902800Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-17T14:16:05.8704040Z Removing includeIf entries pointing to credentials config files
+2026-11-17T14:16:05.8706870Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T14:16:05.8775850Z includeif.gitdir:/Users/runner/work/ahmad-career/ahmad-career/.git.path
+2026-11-17T14:16:05.8776620Z includeif.gitdir:/Users/runner/work/ahmad-career/ahmad-career/.git/worktrees/*.path
+2026-11-17T14:16:05.8777110Z includeif.gitdir:/github/workspace/.git.path
+2026-11-17T14:16:05.8777470Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-17T14:16:05.8782640Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/ahmad-career/ahmad-career/.git.path
+2026-11-17T14:16:05.8853490Z /Users/runner/work/_temp/git-credentials-1056b9d3-f0e4-4a00-b845-2a31e51956a7.config
+2026-11-17T14:16:05.8861400Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/Users/runner/work/ahmad-career/ahmad-career/.git.path \/Users\/runner\/work\/_temp\/git\-credentials\-1056b9d3\-f0e4\-4a00\-b845\-2a31e51956a7\.config
+2026-11-17T14:16:05.8939210Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/ahmad-career/ahmad-career/.git/worktrees/*.path
+2026-11-17T14:16:05.8996100Z /Users/runner/work/_temp/git-credentials-1056b9d3-f0e4-4a00-b845-2a31e51956a7.config
+2026-11-17T14:16:05.9006080Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/Users/runner/work/ahmad-career/ahmad-career/.git/worktrees/*.path \/Users\/runner\/work\/_temp\/git\-credentials\-1056b9d3\-f0e4\-4a00\-b845\-2a31e51956a7\.config
+2026-11-17T14:16:05.9071240Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-17T14:16:05.9127160Z /github/runner_temp/git-credentials-1056b9d3-f0e4-4a00-b845-2a31e51956a7.config
+2026-11-17T14:16:05.9132490Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-1056b9d3\-f0e4\-4a00\-b845\-2a31e51956a7\.config
+2026-11-17T14:16:05.9196130Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-17T14:16:05.9250070Z /github/runner_temp/git-credentials-1056b9d3-f0e4-4a00-b845-2a31e51956a7.config
+2026-11-17T14:16:05.9255060Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-1056b9d3\-f0e4\-4a00\-b845\-2a31e51956a7\.config
+2026-11-17T14:16:05.9315560Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-17T14:16:06.0158720Z Removing credentials config '/Users/runner/work/_temp/git-credentials-1056b9d3-f0e4-4a00-b845-2a31e51956a7.config'
+2026-11-17T14:16:06.0165750Z ##[endgroup]
+2026-11-17T14:16:06.0394370Z ##[group]Run bash apple/Checks/check-mobile.sh
+2026-11-17T14:16:06.0394730Z [36;1mbash apple/Checks/check-mobile.sh[0m
+2026-11-17T14:16:06.0433210Z shell: /bin/bash -e {0}
+2026-11-17T14:16:06.0433410Z ##[endgroup]
+2026-11-17T14:16:17.5824580Z CoreGraphics PDF has logged an error. Set environment variable "CG_PDF_VERBOSE" to learn more.
+2026-11-17T14:16:17.5954470Z PASS 120 native application boundary checks
+2026-11-17T14:16:26.8099880Z PASS 503 application lifecycle assertions across 77 scenarios
+2026-11-17T14:16:30.3764170Z PASS 43 public discovery assertions across 13 scenarios
+2026-11-17T14:16:33.5494570Z Fresh workspace and compatibility checks passed: blank identity/profile/targets, generic exports, no seeded history, device time zone, preserved saved legacy records.
+2026-11-17T14:16:33.5500020Z Local preference checks passed: backward decoding, independent country/city/role/currency/period/zone, unchanged monthly SAR, record preservation, future-version protection, export privacy and DST/civil-date semantics.
+2026-11-17T14:16:33.5501470Z Full review regression checks passed: fresh local preferences, partial evidence age, exact exclusions, saved history, persisted observation chronology and dated exports.
+2026-11-17T14:16:33.5509860Z Application record checks passed: legacy preservation, metadata-only history, conflicts, export privacy, strict date/scalar limits and derived attention.
+2026-11-17T14:16:33.5514630Z Native store checks passed: 9 researched jobs, atomic saves, pre-criteria migration, city/pay criteria, unfiltered history, export privacy, strict URLs/dates, stale response rejection and input validation.
+2026-11-17T14:16:35.0565970Z Saved-search comparison contract: 21 cases passed
+2026-11-17T14:16:35.0566650Z Nested typed display contract: app labels localized, source strings and payload preserved
+2026-11-17T14:16:35.0725490Z ##[group]Run set -o pipefail
+2026-11-17T14:16:35.0725820Z [36;1mset -o pipefail[0m
+2026-11-17T14:16:35.0726420Z [36;1mxcodebuild -project apple/AhmadCareer.xcodeproj -scheme AhmadCareer \[0m
+2026-11-17T14:16:35.0727040Z [36;1m  -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' \[0m
+2026-11-17T14:16:35.0727610Z [36;1m  -derivedDataPath "$RUNNER_TEMP/career-iphone-derived-data" \[0m
+2026-11-17T14:16:35.0728120Z [36;1m  CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \[0m
+2026-11-17T14:16:35.0728560Z [36;1m  build 2>&1 | tee "$RUNNER_TEMP/career-iphone-build.log"[0m
+2026-11-17T14:16:35.0922670Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-17T14:16:35.0923090Z ##[endgroup]
+2026-11-17T14:16:36.7315570Z Command line invocation:
+2026-11-17T14:16:36.7317570Z     /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild -project apple/AhmadCareer.xcodeproj -scheme AhmadCareer -configuration Release -sdk iphoneos -destination generic/platform=iOS -derivedDataPath /Users/runner/work/_temp/career-iphone-derived-data CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
+2026-11-17T14:16:36.8439330Z 
+2026-11-17T14:16:36.8439560Z Build settings from command line:
+2026-11-17T14:16:36.8440010Z     CODE_SIGNING_ALLOWED = NO
+2026-11-17T14:16:36.8440340Z     CODE_SIGNING_REQUIRED = NO
+2026-11-17T14:16:36.8440710Z     SDKROOT = iphoneos26.5
+2026-11-17T14:16:36.8441020Z 
+2026-11-17T14:16:42.2701760Z ComputePackagePrebuildTargetDependencyGraph
+2026-11-17T14:16:42.3503950Z 
+2026-11-17T14:16:42.3520180Z Prepare packages
+2026-11-17T14:16:42.3520890Z 
+2026-11-17T14:16:42.3628050Z CreateBuildRequest
+2026-11-17T14:16:42.3770290Z 
+2026-11-17T14:16:42.3888820Z SendProjectDescription
+2026-11-17T14:16:42.3960970Z 
+2026-11-17T14:16:42.3962250Z CreateBuildOperation
+2026-11-17T14:16:42.4085810Z 
+2026-11-17T14:16:42.4197230Z ComputeTargetDependencyGraph
+2026-11-17T14:16:42.4301220Z note: Building targets in dependency order
+2026-11-17T14:16:42.4406950Z note: Target dependency graph (1 target)
+2026-11-17T14:16:42.4511660Z     Target 'AhmadCareer' in project 'AhmadCareer' (no dependencies)
+2026-11-17T14:16:42.4516430Z 
+2026-11-17T14:16:42.4516870Z GatherProvisioningInputs
+2026-11-17T14:16:42.4622930Z 
+2026-11-17T14:16:42.4625400Z CreateBuildDescription
+2026-11-17T14:16:42.4663980Z 
+2026-11-17T14:16:42.4672160Z ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -x c -c /dev/null
+2026-11-17T14:16:42.5170290Z 
+2026-11-17T14:16:42.5172610Z ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/Assets.xcassets
+2026-11-17T14:16:44.9390860Z 
+2026-11-17T14:16:44.9392130Z ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+2026-11-17T14:16:44.9470680Z 
+2026-11-17T14:16:44.9495570Z ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+2026-11-17T14:16:45.1097900Z 
+2026-11-17T14:16:45.1192030Z ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+2026-11-17T14:16:45.1383940Z 
+2026-11-17T14:16:45.1575550Z Build description signature: e4cd81ac411d43393e8c4002fdf8ea7c
+2026-11-17T14:16:45.1586450Z Build description path: /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/XCBuildData/e4cd81ac411d43393e8c4002fdf8ea7c.xcbuilddata
+2026-11-17T14:16:45.2010380Z ClangStatCache /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk /Users/runner/work/_temp/career-iphone-derived-data/SDKStatCaches.noindex/iphoneos26.5-23F81a-688ef53f1462e2c8f657fdc38a81448fee66e23052a0157c865c76b268046726.sdkstatcache
+2026-11-17T14:16:45.2113950Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer.xcodeproj
+2026-11-17T14:16:45.2170800Z     /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -o /Users/runner/work/_temp/career-iphone-derived-data/SDKStatCaches.noindex/iphoneos26.5-23F81a-688ef53f1462e2c8f657fdc38a81448fee66e23052a0157c865c76b268046726.sdkstatcache
+2026-11-17T14:16:47.5285970Z 
+2026-11-17T14:16:47.5292450Z CreateBuildDirectory /Users/runner/work/_temp/career-iphone-derived-data/Build/Products
+2026-11-17T14:16:47.5293270Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer.xcodeproj
+2026-11-17T14:16:47.5294230Z     builtin-create-build-directory /Users/runner/work/_temp/career-iphone-derived-data/Build/Products
+2026-11-17T14:16:47.5298210Z 
+2026-11-17T14:16:47.5300200Z CreateBuildDirectory /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex
+2026-11-17T14:16:47.5301180Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer.xcodeproj
+2026-11-17T14:16:47.5302190Z     builtin-create-build-directory /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex
+2026-11-17T14:16:47.5302710Z 
+2026-11-17T14:16:47.5304230Z WriteAuxiliaryFile /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer-aced9a8aae001062ff885ed1c777373c-VFS-iphoneos/all-product-headers.yaml
+2026-11-17T14:16:47.5305510Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer.xcodeproj
+2026-11-17T14:16:47.5322310Z     write-file /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer-aced9a8aae001062ff885ed1c777373c-VFS-iphoneos/all-product-headers.yaml
+2026-11-17T14:16:47.5323390Z 
+2026-11-17T14:16:47.5324150Z CreateBuildDirectory /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos
+2026-11-17T14:16:47.5325280Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer.xcodeproj
+2026-11-17T14:16:47.5327150Z     builtin-create-build-directory /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos
+2026-11-17T14:16:47.5334250Z 
+2026-11-17T14:16:47.5335010Z CreateBuildDirectory /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+2026-11-17T14:16:47.5340960Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer.xcodeproj
+2026-11-17T14:16:47.5341960Z     builtin-create-build-directory /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+2026-11-17T14:16:47.5342860Z 
+2026-11-17T14:16:47.5343510Z CreateBuildDirectory /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/ExplicitPrecompiledModules
+2026-11-17T14:16:47.5344410Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer.xcodeproj
+2026-11-17T14:16:47.5345370Z     builtin-create-build-directory /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/ExplicitPrecompiledModules
+2026-11-17T14:16:47.5345980Z 
+2026-11-17T14:16:47.5346580Z CreateBuildDirectory /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos
+2026-11-17T14:16:47.5347480Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer.xcodeproj
+2026-11-17T14:16:47.5365450Z     builtin-create-build-directory /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos
+2026-11-17T14:16:47.5366140Z 
+2026-11-17T14:16:47.5367610Z WriteAuxiliaryFile /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/empty-Career\ Finder.plist (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5368740Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5369700Z     write-file /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/empty-Career\ Finder.plist
+2026-11-17T14:16:47.5371910Z 
+2026-11-17T14:16:47.5372900Z WriteAuxiliaryFile /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/Career\ Finder.SwiftFileList (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5374480Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5375560Z     write-file /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/Career\ Finder.SwiftFileList
+2026-11-17T14:16:47.5379620Z 
+2026-11-17T14:16:47.5380530Z WriteAuxiliaryFile /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/Career\ Finder.SwiftConstValuesFileList (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5474540Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5475480Z     write-file /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/Career\ Finder.SwiftConstValuesFileList
+2026-11-17T14:16:47.5476300Z 
+2026-11-17T14:16:47.5477550Z WriteAuxiliaryFile /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/Career\ Finder.LinkFileList (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5478710Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5479590Z     write-file /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/Career\ Finder.LinkFileList
+2026-11-17T14:16:47.5480330Z 
+2026-11-17T14:16:47.5481300Z WriteAuxiliaryFile /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer_const_extract_protocols.json (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5482500Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5483420Z     write-file /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer_const_extract_protocols.json
+2026-11-17T14:16:47.5484200Z 
+2026-11-17T14:16:47.5485070Z WriteAuxiliaryFile /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer-OutputFileMap.json (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5486190Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5487050Z     write-file /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer-OutputFileMap.json
+2026-11-17T14:16:47.5487800Z 
+2026-11-17T14:16:47.5488540Z WriteAuxiliaryFile /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder.hmap (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5489490Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5490810Z     write-file /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder.hmap
+2026-11-17T14:16:47.5491560Z 
+2026-11-17T14:16:47.5492520Z WriteAuxiliaryFile /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder.DependencyStaticMetadataFileList (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5493760Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5494650Z     write-file /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder.DependencyStaticMetadataFileList
+2026-11-17T14:16:47.5495550Z 
+2026-11-17T14:16:47.5496470Z WriteAuxiliaryFile /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder.DependencyMetadataFileList (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5497650Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5498810Z     write-file /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder.DependencyMetadataFileList
+2026-11-17T14:16:47.5499520Z 
+2026-11-17T14:16:47.5501040Z WriteAuxiliaryFile /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-project-headers.hmap (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5502210Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5503140Z     write-file /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-project-headers.hmap
+2026-11-17T14:16:47.5503950Z 
+2026-11-17T14:16:47.5504840Z WriteAuxiliaryFile /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-own-target-headers.hmap (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5505850Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5506750Z     write-file /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-own-target-headers.hmap
+2026-11-17T14:16:47.5507510Z 
+2026-11-17T14:16:47.5508320Z WriteAuxiliaryFile /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-generated-files.hmap (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5509630Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5510550Z     write-file /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-generated-files.hmap
+2026-11-17T14:16:47.5511340Z 
+2026-11-17T14:16:47.5512250Z WriteAuxiliaryFile /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-all-target-headers.hmap (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5513360Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5514210Z     write-file /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-all-target-headers.hmap
+2026-11-17T14:16:47.5526420Z 
+2026-11-17T14:16:47.5527230Z MkDir /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5528010Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5545200Z     /bin/mkdir -p /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app
+2026-11-17T14:16:47.5545710Z 
+2026-11-17T14:16:47.5546690Z WriteAuxiliaryFile /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-all-non-framework-target-headers.hmap (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5547940Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5549210Z     write-file /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-all-non-framework-target-headers.hmap
+2026-11-17T14:16:47.5550130Z 
+2026-11-17T14:16:47.5550900Z MkDir /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_output/thinned (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5551990Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5553150Z     /bin/mkdir -p /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_output/thinned
+2026-11-17T14:16:47.5553880Z 
+2026-11-17T14:16:47.5554610Z MkDir /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_output/unthinned (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5555560Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5556440Z     /bin/mkdir -p /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_output/unthinned
+2026-11-17T14:16:47.5557180Z 
+2026-11-17T14:16:47.5557760Z GenerateAssetSymbols /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/Assets.xcassets (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5558520Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5579150Z     /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/actool /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/Assets.xcassets --compile /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app --output-format human-readable-text --notices --warnings --export-dependency-info /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_dependencies --output-partial-info-plist /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_generated_info.plist --app-icon AppIcon --compress-pngs --enable-on-demand-resources YES --development-region en --target-device iphone --minimum-deployment-target 16.0 --platform iphoneos --bundle-identifier com.ahmadalayed.career --generate-swift-asset-symbol-extensions NO --generate-swift-asset-symbols /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/DerivedSources/GeneratedAssetSymbols.swift --generate-objc-asset-symbols /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/DerivedSources/GeneratedAssetSymbols.h --generate-asset-symbol-index /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+2026-11-17T14:16:47.5599700Z /* com.apple.actool.compilation-results */
+2026-11-17T14:16:47.5600700Z /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+2026-11-17T14:16:47.5605260Z /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/DerivedSources/GeneratedAssetSymbols.h
+2026-11-17T14:16:47.5626690Z /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/DerivedSources/GeneratedAssetSymbols.swift
+2026-11-17T14:16:47.5627620Z 
+2026-11-17T14:16:47.5627890Z 
+2026-11-17T14:16:47.5628850Z CpResource /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/Web /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/Web (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5630170Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5632240Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/Web /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app
+2026-11-17T14:16:47.5650180Z 
+2026-11-17T14:16:47.5682370Z CpResource /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/NativeCopyTemplates.json /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/NativeCopyTemplates.json (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5683770Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5685960Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/NativeCopyTemplates.json /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app
+2026-11-17T14:16:47.5687680Z 
+2026-11-17T14:16:47.5688760Z CpResource /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/CareerResearch.json /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/CareerResearch.json (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5718210Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5720010Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/CareerResearch.json /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app
+2026-11-17T14:16:47.5722040Z 
+2026-11-17T14:16:47.5723220Z CopyStringsFile /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/en.lproj/Localizable.strings /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/en.lproj/Localizable.strings (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5757800Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5759140Z     builtin-copyStrings --validate --outputencoding binary --outfilename Localizable.strings --outdir /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/en.lproj -- /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/en.lproj/Localizable.strings
+2026-11-17T14:16:47.5761020Z /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/en.lproj/Localizable.strings:1:1: note: detected encoding of input file as Unicode (UTF-8) (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5762360Z 
+2026-11-17T14:16:47.5763520Z CopyStringsFile /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/ar.lproj/Localizable.strings /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/ar.lproj/Localizable.strings (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5778160Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5779570Z     builtin-copyStrings --validate --outputencoding binary --outfilename Localizable.strings --outdir /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/ar.lproj -- /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/ar.lproj/Localizable.strings
+2026-11-17T14:16:47.5781430Z /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/ar.lproj/Localizable.strings:1:1: note: detected encoding of input file as Unicode (UTF-8) (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5782380Z 
+2026-11-17T14:16:47.5783730Z CompileAssetCatalogVariant thinned /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/Assets.xcassets (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:47.5785370Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:47.5790500Z     /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/actool /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/Assets.xcassets --compile /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_output/thinned --output-format human-readable-text --notices --warnings --export-dependency-info /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_dependencies_thinned --output-partial-info-plist /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_generated_info.plist_thinned --app-icon AppIcon --compress-pngs --enable-on-demand-resources YES --development-region en --target-device iphone --minimum-deployment-target 16.0 --platform iphoneos
+2026-11-17T14:16:53.6419060Z /* com.apple.actool.compilation-results */
+2026-11-17T14:16:53.6437480Z /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_generated_info.plist_thinned
+2026-11-17T14:16:53.6439420Z /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_output/thinned/AppIcon60x60@2x.png
+2026-11-17T14:16:53.6441670Z /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_output/thinned/AppIcon76x76@2x~ipad.png
+2026-11-17T14:16:53.6444520Z /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_output/thinned/Assets.car
+2026-11-17T14:16:53.6445240Z 
+2026-11-17T14:16:53.6445340Z 
+2026-11-17T14:16:53.6445730Z SwiftDriver AhmadCareer normal arm64 com.apple.xcode.tools.swift.compiler (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:53.6446410Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:53.6477950Z     builtin-SwiftDriver -- /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name AhmadCareer -O -whole-module-optimization @/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/Career\ Finder.SwiftFileList -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -target arm64-apple-ios16.0 -g -module-cache-path /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex -Xfrontend -serialize-debugging-options -swift-version 5 -I /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos -F /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos -emit-localized-strings -emit-localized-strings-path /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64 -c -num-threads 3 -Xcc -ivfsstatcache -Xcc /Users/runner/work/_temp/career-iphone-derived-data/SDKStatCaches.noindex/iphoneos26.5-23F81a-688ef53f1462e2c8f657fdc38a81448fee66e23052a0157c865c76b268046726.sdkstatcache -output-file-map /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex -sdk-module-cache-path /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-generated-files.hmap -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-own-target-headers.hmap -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-project-headers.hmap -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/include -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer-Swift.h -working-directory /Users/runner/work/ahmad-career/ahmad-career/apple -no-emit-module-separately-wmo
+2026-11-17T14:16:53.6499510Z 
+2026-11-17T14:16:53.6502720Z SwiftDriver\ Compilation AhmadCareer normal arm64 com.apple.xcode.tools.swift.compiler (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:53.6504340Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:53.6520570Z     builtin-Swift-Compilation -- /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name AhmadCareer -O -whole-module-optimization @/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/Career\ Finder.SwiftFileList -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -target arm64-apple-ios16.0 -g -module-cache-path /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex -Xfrontend -serialize-debugging-options -swift-version 5 -I /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos -F /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos -emit-localized-strings -emit-localized-strings-path /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64 -c -num-threads 3 -Xcc -ivfsstatcache -Xcc /Users/runner/work/_temp/career-iphone-derived-data/SDKStatCaches.noindex/iphoneos26.5-23F81a-688ef53f1462e2c8f657fdc38a81448fee66e23052a0157c865c76b268046726.sdkstatcache -output-file-map /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex -sdk-module-cache-path /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-generated-files.hmap -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-own-target-headers.hmap -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-project-headers.hmap -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/include -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer-Swift.h -working-directory /Users/runner/work/ahmad-career/ahmad-career/apple -no-emit-module-separately-wmo
+2026-11-17T14:16:53.6563830Z 
+2026-11-17T14:16:53.6564400Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/DeveloperToolsSupport-E6CLEMZZSVQLV2XAEKKDBCL95.pcm
+2026-11-17T14:16:53.6565320Z 
+2026-11-17T14:16:53.6566020Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_SwiftConcurrencyShims-7RPB4678OKAHCSBQFURCYEL61.pcm
+2026-11-17T14:16:53.6566810Z 
+2026-11-17T14:16:53.6567460Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_AvailabilityInternal-F1K4ESRB0K2M6NTM7Z633H1FA.pcm
+2026-11-17T14:16:53.6568520Z 
+2026-11-17T14:16:53.6569080Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_Builtin_stdarg-8IJRFTBEMNPYFSXP7CXG6Z8D7.pcm
+2026-11-17T14:16:53.6569700Z 
+2026-11-17T14:16:53.6570260Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/SwiftShims-1AGXL2PUSQI25RL6R4AIW7CS6.pcm
+2026-11-17T14:16:53.6570900Z 
+2026-11-17T14:16:53.6571470Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_Builtin_float-7LNQVRYWBT9CHJ6C371D7WD1L.pcm
+2026-11-17T14:16:53.6572080Z 
+2026-11-17T14:16:53.6572760Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/ptrcheck-27RY59WBWN9V87YIHJAL49OYI.pcm
+2026-11-17T14:16:53.6573470Z 
+2026-11-17T14:16:53.6574080Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_Builtin_stdbool-BNZYXEO6QHBJ93OZJGHMGQ1KT.pcm
+2026-11-17T14:16:53.6574770Z 
+2026-11-17T14:16:53.6575330Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/ptrauth-18K08OFTGUPT4I8Z0KFH522RN.pcm
+2026-11-17T14:16:53.6575950Z 
+2026-11-17T14:16:53.6576590Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_DarwinFoundation1-6MCECITMI6UFC6YFX8X379B4Z.pcm
+2026-11-17T14:16:53.6577310Z 
+2026-11-17T14:16:53.6577920Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_Builtin_stddef-7MRWOR196QY8AVZ612FGUAQNU.pcm
+2026-11-17T14:16:53.6578610Z 
+2026-11-17T14:16:53.6579150Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_Builtin_limits-8ZBTKS0ZVH9YF71JKCOUJIX8I.pcm
+2026-11-17T14:16:53.6579820Z 
+2026-11-17T14:16:53.6580440Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_DarwinFoundation2-DBTN1G7FFMG0DNRERH238TANP.pcm
+2026-11-17T14:16:53.6581310Z 
+2026-11-17T14:16:53.6581970Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_Builtin_tgmath-2355WV3N4XEZDELCUXTVGQYA4.pcm
+2026-11-17T14:16:53.6582580Z 
+2026-11-17T14:16:53.6583130Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/sys_types-A8X35ZS74AYQV2N0TTAKL3A6Y.pcm
+2026-11-17T14:16:53.6583810Z 
+2026-11-17T14:16:53.6584400Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_Builtin_stdint-CHLDYSLDN475OI62EQG63T7KY.pcm
+2026-11-17T14:16:53.6585100Z 
+2026-11-17T14:16:53.6585950Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_Builtin_intrinsics-4M2EIWLIQHBZMHQQ8DCM8NL7A.pcm
+2026-11-17T14:16:53.6586670Z 
+2026-11-17T14:16:53.6587280Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_DarwinFoundation3-AX3GL1CR6ZTUDPC23SR3BWBG4.pcm
+2026-11-17T14:16:53.6587960Z 
+2026-11-17T14:16:53.6588560Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_Builtin_stdatomic-7ZD0POBWOJIUMP0XMYSS7VTQT.pcm
+2026-11-17T14:16:53.6589210Z 
+2026-11-17T14:16:53.6589680Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_Builtin_inttypes-1GD1E6UNU0ZRFH4KUV2HBL0XW.pcm
+2026-11-17T14:16:53.6590230Z 
+2026-11-17T14:16:53.6590700Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Darwin-2TJEHM7BJTJ2ERM680ODZ62T9.pcm
+2026-11-17T14:16:53.6591230Z 
+2026-11-17T14:16:53.6591750Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/simd-7O8DJLNDNFH7OAFQUDLCU0L5J.pcm
+2026-11-17T14:16:53.6592460Z 
+2026-11-17T14:16:53.6593020Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/MachO-J2PJASZVA93NKS2DQCD6HRBO.pcm
+2026-11-17T14:16:53.6593630Z 
+2026-11-17T14:16:53.6594250Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/ObjectiveC-1LGHFGZAFQXLB5YORIRJFDSOY.pcm
+2026-11-17T14:16:53.6594840Z 
+2026-11-17T14:16:53.6596030Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/os_object-YXN4AYBJ3VKTTOI6CA109KAO.pcm
+2026-11-17T14:16:53.6596660Z 
+2026-11-17T14:16:53.6597220Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Spatial-CYVXIDRTI2CI6VDWQODWL3OZO.pcm
+2026-11-17T14:16:53.6597920Z 
+2026-11-17T14:16:53.6598490Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/os_workgroup-BSZTXCR7RYTKMW8I89EISFA81.pcm
+2026-11-17T14:16:53.6599160Z 
+2026-11-17T14:16:53.6599650Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Dispatch-MGKNEN5X867MBV7DNBP65B9P.pcm
+2026-11-17T14:16:53.6600260Z 
+2026-11-17T14:16:53.6600750Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/dnssd-DT613GK9P2AYT0LQX60QMFTO.pcm
+2026-11-17T14:16:53.6601540Z 
+2026-11-17T14:16:53.6602120Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/CoreFoundation-ALO1VPJMN2POC7OKI794BDGF6.pcm
+2026-11-17T14:16:53.6602750Z 
+2026-11-17T14:16:53.6603330Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/XPC-80WASIHTIM2T8KBUZ8VUOI94Y.pcm
+2026-11-17T14:16:53.6603960Z 
+2026-11-17T14:16:53.6605730Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/os-E5GKNY1N74FJ16V8L2J0DRMCT.pcm
+2026-11-17T14:16:53.6607180Z 
+2026-11-17T14:16:53.6607710Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Security-6W1HZ6S2RYL7S64PW2VUD5JKV.pcm
+2026-11-17T14:16:53.6608330Z 
+2026-11-17T14:16:53.6608870Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/CFNetwork-F4I10C8Z0XIXDG4LZI3KALBFR.pcm
+2026-11-17T14:16:53.6609550Z 
+2026-11-17T14:16:53.6610140Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/CoreGraphics-3BCF7LQV44D45I5K8E7LG7Q09.pcm
+2026-11-17T14:16:53.6610920Z 
+2026-11-17T14:16:53.6611830Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Foundation-3ULUXO95XJ16LMWTO4WFQXJJZ.pcm
+2026-11-17T14:16:53.6612520Z 
+2026-11-17T14:16:53.6613100Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/CoreText-A18J5HZDBWBV64L8C1OEQPP7Z.pcm
+2026-11-17T14:16:53.6613780Z 
+2026-11-17T14:16:53.6615300Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/ImageIO-1LHWC8UYW8X3KPHI6055BH5GP.pcm
+2026-11-17T14:16:53.6616000Z 
+2026-11-17T14:16:53.6616420Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/FileProvider-69GMFG4V1NRIOTB4WYGRAN0AE.pcm
+2026-11-17T14:16:53.6616910Z 
+2026-11-17T14:16:53.6617420Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/LocalAuthentication-DD5U23OM92O0MP655FKXZ99X9.pcm
+2026-11-17T14:16:53.6618490Z 
+2026-11-17T14:16:53.6619110Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/UserNotifications-7U9L4AJTMUB4P32EO8C5VCCVX.pcm
+2026-11-17T14:16:53.6620020Z 
+2026-11-17T14:16:53.6620580Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/UniformTypeIdentifiers-A1SM93LRKZOMAIM1M0HW7A87Q.pcm
+2026-11-17T14:16:53.6621310Z 
+2026-11-17T14:16:53.6624280Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Symbols-1ZB7ICS1NF5BDZLCMNSP7UTAS.pcm
+2026-11-17T14:16:53.6625050Z 
+2026-11-17T14:16:53.6625660Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/UIUtilities-CFBG9V8UHE6MVNOUZEHHJ5SVE.pcm
+2026-11-17T14:16:53.6626330Z 
+2026-11-17T14:16:53.6626930Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/CoreTransferable-CNXDWEY6QFAVKAZ2J4T8JGPVX.pcm
+2026-11-17T14:16:53.6627850Z 
+2026-11-17T14:16:53.6628700Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Accessibility-ARUTDHEQY9WLFSK48HY84QUAC.pcm
+2026-11-17T14:16:53.6629380Z 
+2026-11-17T14:16:53.6629910Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/OSLog-ELQB0TW8CF5XYIS00HXC524KA.pcm
+2026-11-17T14:16:53.6630660Z 
+2026-11-17T14:16:53.6631290Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/DataDetection-A3D2AA196FXPELGUJ0745AYJQ.pcm
+2026-11-17T14:16:53.6632220Z 
+2026-11-17T14:16:53.6632870Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Network-14A3O4XVLJFMA0IP9QVM7UVTS.pcm
+2026-11-17T14:16:53.6633540Z 
+2026-11-17T14:16:53.6634170Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/IOSurface-ESQEUI7ZZTGO6UDFTWGQ9ZO5I.pcm
+2026-11-17T14:16:53.6634910Z 
+2026-11-17T14:16:53.6636110Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/CoreData-D157BFOXTXG3BR24RT6WQI3V2.pcm
+2026-11-17T14:16:53.6636800Z 
+2026-11-17T14:16:53.6637360Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/OpenGLES-7Q944NCFQBFTQX8Z18J56YDSY.pcm
+2026-11-17T14:16:53.6638060Z 
+2026-11-17T14:16:53.6639440Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Metal-E7CJXFJTVYDVMS6INJKM29S2U.pcm
+2026-11-17T14:16:53.6640160Z 
+2026-11-17T14:16:53.6640740Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/CoreVideo-5ILRNYIMZCBCU5V3LG14G1G6M.pcm
+2026-11-17T14:16:53.6641440Z 
+2026-11-17T14:16:53.6641930Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/CoreImage-3LHGGOAD3VJZ2CQ0R9AX5AB27.pcm
+2026-11-17T14:16:53.6643020Z 
+2026-11-17T14:16:53.6643630Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/QuartzCore-1Z8KUK7A58AVWFDYA2T5G5Q1K.pcm
+2026-11-17T14:16:53.6644330Z 
+2026-11-17T14:16:53.6644930Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/SwiftUICore-52C7HB9882ZPAP5GAY5B6OUH.pcm
+2026-11-17T14:16:53.6645590Z 
+2026-11-17T14:16:53.6646130Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/UIKit-40M1X0U69YJT9L46DCXMXWDZW.pcm
+2026-11-17T14:16:53.7885070Z 
+2026-11-17T14:16:53.7886860Z LinkAssetCatalog /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/Assets.xcassets (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:53.7888200Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:53.7894980Z     builtin-linkAssetCatalog --thinned /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_output/thinned --thinned-dependencies /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_dependencies_thinned --thinned-info-plist-content /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_generated_info.plist_thinned --unthinned /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_output/unthinned --unthinned-dependencies /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_dependencies_unthinned --unthinned-info-plist-content /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_generated_info.plist_unthinned --output /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app --plist-output /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_generated_info.plist
+2026-11-17T14:16:53.7901730Z note: Emplaced /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career Finder.app/Assets.car (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:53.7903110Z note: Emplaced /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career Finder.app/AppIcon76x76@2x~ipad.png (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:53.7904450Z note: Emplaced /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career Finder.app/AppIcon60x60@2x.png (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:53.7905220Z 
+2026-11-17T14:16:53.7906480Z ProcessInfoPlistFile /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/Info.plist /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/empty-Career\ Finder.plist (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:53.7908020Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:53.7911340Z     builtin-infoPlistUtility /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/empty-Career\ Finder.plist -producttype com.apple.product-type.application -genpkginfo /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/PkgInfo -expandbuildsettings -format binary -platform iphoneos -additionalcontentfile /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/assetcatalog_generated_info.plist -requiredArchitecture arm64 -o /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/Info.plist
+2026-11-17T14:16:53.7914250Z 
+2026-11-17T14:16:53.7915510Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/PDFKit-CJ65MPG3ND3AO8ECJFZVJA3N6.pcm
+2026-11-17T14:16:53.8976330Z 
+2026-11-17T14:16:53.8977120Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/WebKit-38C4X1YQW5L6UYUGXQCFYYQL2.pcm
+2026-11-17T14:16:53.9263360Z 
+2026-11-17T14:16:53.9274030Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/SwiftUI-3R2VLQNIXFV74V1AFL2EKFWAA.pcm
+2026-11-17T14:16:53.9274900Z 
+2026-11-17T14:16:53.9347710Z SwiftCompile normal arm64 Compiling\ NativeLocalization.swift,\ AhmadCareerApp.swift,\ CareerWebView.swift,\ CareerPolicy.swift,\ CareerFeed.swift,\ NativeCareerStore.swift,\ NativeCareerViews.swift,\ MobileApplicationClient.swift,\ NativeApplicationsStore.swift,\ NativeApplicationsViews.swift,\ MobileApplicationState.swift,\ CareerDiscovery.swift,\ NativeDiscoveryViews.swift,\ CareerAppEnvironment.swift,\ GeneratedAssetSymbols.swift /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/NativeLocalization.swift /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/AhmadCareerApp.swift /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/CareerWebView.swift /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/CareerPolicy.swift /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/CareerFeed.swift /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/NativeCareerStore.swift /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/NativeCareerViews.swift /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/MobileApplicationClient.swift /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/NativeApplicationsStore.swift /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/NativeApplicationsViews.swift /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/MobileApplicationState.swift /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/CareerDiscovery.swift /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/NativeDiscoveryViews.swift /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/CareerAppEnvironment.swift /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/DerivedSources/GeneratedAssetSymbols.swift /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/PDFKit.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_DarwinFoundation2.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/DeveloperToolsSupport.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_DarwinFoundation1.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Dispatch.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/XPC.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreVideo.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CryptoKit.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Symbols.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/WebKit.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/os.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/UIKit.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreText.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Foundation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_WebKit_SwiftUI.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/SwiftUICore.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreTransferable.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Swift.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/LocalAuthentication.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Observation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_DarwinFoundation3.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_StringProcessing.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/OSLog.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/simd.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreImage.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/QuartzCore.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_Builtin_float.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Combine.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Network.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/System.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_Concurrency.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Darwin.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/FileProvider.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Distributed.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/UniformTypeIdentifiers.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/SwiftUI.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Metal.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/DataDetection.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreData.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Accessibility.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Spatial.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/ObjectiveC.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreFoundation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreGraphics.swiftmodule/arm64e-apple-ios.swiftmodule /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/QuartzCore-1Z8KUK7A58AVWFDYA2T5G5Q1K.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_DarwinFoundation2-DBTN1G7FFMG0DNRERH238TANP.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_Builtin_stdatomic-7ZD0POBWOJIUMP0XMYSS7VTQT.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_Builtin_stdarg-8IJRFTBEMNPYFSXP7CXG6Z8D7.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/os-E5GKNY1N74FJ16V8L2J0DRMCT.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/ptrcheck-27RY59WBWN9V87YIHJAL49OYI.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/IOSurface-ESQEUI7ZZTGO6UDFTWGQ9ZO5I.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/FileProvider-69GMFG4V1NRIOTB4WYGRAN0AE.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_Builtin_stdint-CHLDYSLDN475OI62EQG63T7KY.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Security-6W1HZ6S2RYL7S64PW2VUD5JKV.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/XPC-80WASIHTIM2T8KBUZ8VUOI94Y.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/PDFKit-CJ65MPG3ND3AO8ECJFZVJA3N6.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Metal-E7CJXFJTVYDVMS6INJKM29S2U.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Accessibility-ARUTDHEQY9WLFSK48HY84QUAC.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/sys_types-A8X35ZS74AYQV2N0TTAKL3A6Y.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/CoreGraphics-3BCF7LQV44D45I5K8E7LG7Q09.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/UIKit-40M1X0U69YJT9L46DCXMXWDZW.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_DarwinFoundation3-AX3GL1CR6ZTUDPC23SR3BWBG4.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/ImageIO-1LHWC8UYW8X3KPHI6055BH5GP.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/UniformTypeIdentifiers-A1SM93LRKZOMAIM1M0HW7A87Q.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Darwin-2TJEHM7BJTJ2ERM680ODZ62T9.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_Builtin_intrinsics-4M2EIWLIQHBZMHQQ8DCM8NL7A.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/WebKit-38C4X1YQW5L6UYUGXQCFYYQL2.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_Builtin_stdbool-BNZYXEO6QHBJ93OZJGHMGQ1KT.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/CoreFoundation-ALO1VPJMN2POC7OKI794BDGF6.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/MachO-J2PJASZVA93NKS2DQCD6HRBO.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Dispatch-MGKNEN5X867MBV7DNBP65B9P.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/ptrauth-18K08OFTGUPT4I8Z0KFH522RN.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/DeveloperToolsSupport-E6CLEMZZSVQLV2XAEKKDBCL95.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/ObjectiveC-1LGHFGZAFQXLB5YORIRJFDSOY.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Foundation-3ULUXO95XJ16LMWTO4WFQXJJZ.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/CoreVideo-5ILRNYIMZCBCU5V3LG14G1G6M.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/simd-7O8DJLNDNFH7OAFQUDLCU0L5J.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/CoreData-D157BFOXTXG3BR24RT6WQI3V2.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Network-14A3O4XVLJFMA0IP9QVM7UVTS.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_Builtin_limits-8ZBTKS0ZVH9YF71JKCOUJIX8I.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/CFNetwork-F4I10C8Z0XIXDG4LZI3KALBFR.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/OpenGLES-7Q944NCFQBFTQX8Z18J56YDSY.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_Builtin_stddef-7MRWOR196QY8AVZ612FGUAQNU.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/DataDetection-A3D2AA196FXPELGUJ0745AYJQ.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/os_workgroup-BSZTXCR7RYTKMW8I89EISFA81.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/UserNotifications-7U9L4AJTMUB4P32EO8C5VCCVX.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_Builtin_inttypes-1GD1E6UNU0ZRFH4KUV2HBL0XW.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/CoreText-A18J5HZDBWBV64L8C1OEQPP7Z.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_Builtin_tgmath-2355WV3N4XEZDELCUXTVGQYA4.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_DarwinFoundation1-6MCECITMI6UFC6YFX8X379B4Z.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/LocalAuthentication-DD5U23OM92O0MP655FKXZ99X9.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/os_object-YXN4AYBJ3VKTTOI6CA109KAO.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/UIUtilities-CFBG9V8UHE6MVNOUZEHHJ5SVE.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/dnssd-DT613GK9P2AYT0LQX60QMFTO.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_AvailabilityInternal-F1K4ESRB0K2M6NTM7Z633H1FA.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/CoreImage-3LHGGOAD3VJZ2CQ0R9AX5AB27.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_Builtin_float-7LNQVRYWBT9CHJ6C371D7WD1L.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Spatial-CYVXIDRTI2CI6VDWQODWL3OZO.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Symbols-1ZB7ICS1NF5BDZLCMNSP7UTAS.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/SwiftUICore-52C7HB9882ZPAP5GAY5B6OUH.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/OSLog-ELQB0TW8CF5XYIS00HXC524KA.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/SwiftUI-3R2VLQNIXFV74V1AFL2EKFWAA.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/SwiftShims-1AGXL2PUSQI25RL6R4AIW7CS6.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/_SwiftConcurrencyShims-7RPB4678OKAHCSBQFURCYEL61.pcm /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/CoreTransferable-CNXDWEY6QFAVKAZ2J4T8JGPVX.pcm /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer-dependencies-1.json (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:53.9723250Z 
+2026-11-17T14:16:53.9723760Z CompileSwift normal arm64 (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:16:53.9724380Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:16:53.9724740Z     
+2026-11-17T14:17:30.2399220Z /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/NativeLocalization.swift:49:87: warning: 'languageCode' was deprecated in iOS 16: renamed to 'language.languageCode.identifier'
+2026-11-17T14:17:30.2400880Z         let supported = Locale.preferredLanguages.compactMap { Locale(identifier: $0).languageCode }
+2026-11-17T14:17:30.2401560Z                                                                                       ^
+2026-11-17T14:17:30.2402270Z /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/NativeLocalization.swift:49:87: note: use 'language.languageCode.identifier' instead
+2026-11-17T14:17:30.2403130Z         let supported = Locale.preferredLanguages.compactMap { Locale(identifier: $0).languageCode }
+2026-11-17T14:17:30.2403730Z                                                                                       ^~~~~~~~~~~~
+2026-11-17T14:17:30.2404240Z                                                                                       language.languageCode.identifier
+2026-11-17T14:17:30.2405180Z /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/NativeLocalization.swift:53:45: warning: 'languageCode' was deprecated in iOS 16: renamed to 'language.languageCode.identifier'
+2026-11-17T14:17:30.2406150Z     var direction: LayoutDirection { locale.languageCode == "ar" ? .rightToLeft : .leftToRight }
+2026-11-17T14:17:30.2406690Z                                             ^
+2026-11-17T14:17:30.2407400Z /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/NativeLocalization.swift:53:45: note: use 'language.languageCode.identifier' instead
+2026-11-17T14:17:30.2408190Z     var direction: LayoutDirection { locale.languageCode == "ar" ? .rightToLeft : .leftToRight }
+2026-11-17T14:17:30.2408680Z                                             ^~~~~~~~~~~~
+2026-11-17T14:17:30.2409050Z                                             language.languageCode.identifier
+2026-11-17T14:17:30.2409870Z /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/NativeLocalization.swift:73:41: warning: 'languageCode' was deprecated in iOS 16: renamed to 'language.languageCode.identifier'
+2026-11-17T14:17:30.2417850Z     private var isArabic: Bool { locale.languageCode == "ar" }
+2026-11-17T14:17:30.2418560Z                                         ^
+2026-11-17T14:17:30.2419400Z /Users/runner/work/ahmad-career/ahmad-career/apple/AhmadCareer/NativeLocalization.swift:73:41: note: use 'language.languageCode.identifier' instead
+2026-11-17T14:17:30.2420170Z     private var isArabic: Bool { locale.languageCode == "ar" }
+2026-11-17T14:17:30.2420630Z                                         ^~~~~~~~~~~~
+2026-11-17T14:17:30.2421070Z                                         language.languageCode.identifier
+2026-11-17T14:17:30.2421350Z 
+2026-11-17T14:17:30.2732610Z SwiftDriverJobDiscovery normal arm64 Compiling NativeLocalization.swift, AhmadCareerApp.swift, CareerWebView.swift, CareerPolicy.swift, CareerFeed.swift, NativeCareerStore.swift, NativeCareerViews.swift, MobileApplicationClient.swift, NativeApplicationsStore.swift, NativeApplicationsViews.swift, MobileApplicationState.swift, CareerDiscovery.swift, NativeDiscoveryViews.swift, CareerAppEnvironment.swift, GeneratedAssetSymbols.swift (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:17:30.2747400Z 
+2026-11-17T14:17:30.2755270Z SwiftDriver\ Compilation\ Requirements AhmadCareer normal arm64 com.apple.xcode.tools.swift.compiler (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:17:30.2757220Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:17:30.2788810Z     builtin-Swift-Compilation-Requirements -- /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name AhmadCareer -O -whole-module-optimization @/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/Career\ Finder.SwiftFileList -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -target arm64-apple-ios16.0 -g -module-cache-path /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex -Xfrontend -serialize-debugging-options -swift-version 5 -I /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos -F /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos -emit-localized-strings -emit-localized-strings-path /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64 -c -num-threads 3 -Xcc -ivfsstatcache -Xcc /Users/runner/work/_temp/career-iphone-derived-data/SDKStatCaches.noindex/iphoneos26.5-23F81a-688ef53f1462e2c8f657fdc38a81448fee66e23052a0157c865c76b268046726.sdkstatcache -output-file-map /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex -sdk-module-cache-path /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/work/_temp/career-iphone-derived-data/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-generated-files.hmap -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-own-target-headers.hmap -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder-project-headers.hmap -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/include -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer-Swift.h -working-directory /Users/runner/work/ahmad-career/ahmad-career/apple -no-emit-module-separately-wmo
+2026-11-17T14:17:30.2806990Z 
+2026-11-17T14:17:30.3281220Z SwiftMergeGeneratedHeaders /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/DerivedSources/AhmadCareer-Swift.h /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer-Swift.h (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:17:30.3362740Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:17:30.3404810Z     builtin-swiftHeaderTool -arch arm64 /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer-Swift.h -o /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/DerivedSources/AhmadCareer-Swift.h
+2026-11-17T14:17:30.3430650Z 
+2026-11-17T14:17:30.3459890Z Copy /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/AhmadCareer.swiftmodule/arm64-apple-ios.swiftdoc /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer.swiftdoc (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:17:30.3514810Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:17:30.3521670Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks -rename /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer.swiftdoc /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/AhmadCareer.swiftmodule/arm64-apple-ios.swiftdoc
+2026-11-17T14:17:30.3528010Z 
+2026-11-17T14:17:30.3532720Z Copy /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/AhmadCareer.swiftmodule/arm64-apple-ios.swiftmodule /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer.swiftmodule (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:17:30.3536730Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:17:30.3544280Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks -rename /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer.swiftmodule /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/AhmadCareer.swiftmodule/arm64-apple-ios.swiftmodule
+2026-11-17T14:17:30.3588960Z 
+2026-11-17T14:17:30.3592360Z Copy /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/AhmadCareer.swiftmodule/arm64-apple-ios.abi.json /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer.abi.json (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:17:30.3596610Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:17:30.3601800Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks -rename /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer.abi.json /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/AhmadCareer.swiftmodule/arm64-apple-ios.abi.json
+2026-11-17T14:17:30.3606670Z 
+2026-11-17T14:17:30.3609900Z Copy /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/AhmadCareer.swiftmodule/Project/arm64-apple-ios.swiftsourceinfo /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer.swiftsourceinfo (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:17:30.3613570Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:17:30.3618940Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks -rename /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer.swiftsourceinfo /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/AhmadCareer.swiftmodule/Project/arm64-apple-ios.swiftsourceinfo
+2026-11-17T14:17:30.3623960Z 
+2026-11-17T14:17:30.3625310Z Ld /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/Career\ Finder normal (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:17:30.3627190Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:17:30.3646110Z     /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios16.0 -isysroot /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -Os -L/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos -L/Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos -F/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos -F/Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos -filelist /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/Career\ Finder.LinkFileList -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -rpath -Xlinker @executable_path/../Frameworks -Xlinker -dead_strip -Xlinker -object_path_lto -Xlinker /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/Career\ Finder_lto.o -Xlinker -dependency_info -Xlinker /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/Career\ Finder_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer.swiftmodule @/Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/AhmadCareer-linker-args.resp -o /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/Career\ Finder
+2026-11-17T14:17:30.8010770Z 
+2026-11-17T14:17:30.8028460Z CopySwiftLibs /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:17:30.8029270Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:17:30.8035400Z     builtin-swiftStdLibTool --copy --verbose --scan-executable /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/Career\ Finder --scan-folder /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/Frameworks --scan-folder /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/PlugIns --scan-folder /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/SystemExtensions --scan-folder /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/Extensions --platform iphoneos --toolchain /var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.3cQYfH/Metal.xctoolchain --toolchain /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os --back-deploy-swift-span
+2026-11-17T14:17:30.9651220Z Ignoring --strip-bitcode because --sign was not passed
+2026-11-17T14:17:30.9661970Z 
+2026-11-17T14:17:30.9662340Z ExtractAppIntentsMetadata (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:17:30.9663020Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:17:30.9671650Z     /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.3cQYfH/Metal.xctoolchain --module-name AhmadCareer --sdk-root /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk --xcode-version 17F113 --platform-family iOS --deployment-target 16.0 --bundle-identifier com.ahmadalayed.career --output /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app --target-triple arm64-apple-ios16.0 --binary-file /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/Career\ Finder --dependency-file /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/Career\ Finder_dependency_info.dat --stringsdata-file /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/Career\ Finder.SwiftFileList --metadata-file-list /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder.DependencyMetadataFileList --static-metadata-file-list /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder.DependencyStaticMetadataFileList --swift-const-vals-list /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Objects-normal/arm64/Career\ Finder.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-11-17T14:17:31.0598850Z 2026-11-17 14:17:31.043 appintentsmetadataprocessor[2625:11648] Starting appintentsmetadataprocessor export
+2026-11-17T14:17:31.0610210Z 2026-11-17 14:17:31.054 appintentsmetadataprocessor[2625:11648] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+2026-11-17T14:17:31.0639410Z 
+2026-11-17T14:17:31.0641750Z GenerateDSYMFile /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app.dSYM /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/Career\ Finder (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:17:31.0643010Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:17:31.0645010Z     /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/dsymutil /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/Career\ Finder -o /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app.dSYM
+2026-11-17T14:17:31.2489260Z 
+2026-11-17T14:17:31.2489990Z AppIntentsSSUTraining (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:17:31.2490910Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:17:31.2498550Z     /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/Info.plist --temp-dir-path /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/ssu --bundle-id com.ahmadalayed.career --product-path /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app --extracted-metadata-path /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/Metadata.appintents --metadata-file-list /Users/runner/work/_temp/career-iphone-derived-data/Build/Intermediates.noindex/AhmadCareer.build/Release-iphoneos/AhmadCareer.build/Career\ Finder.DependencyMetadataFileList --source-file /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app/Info.plist --archive-ssu-assets
+2026-11-17T14:17:31.2502950Z 2026-11-17 14:17:31.098 appintentsnltrainingprocessor[2675:11752] Parsing options for appintentsnltrainingprocessor
+2026-11-17T14:17:31.2503630Z 2026-11-17 14:17:31.098 appintentsnltrainingprocessor[2675:11752] Starting AppIntents SSU YAML Generation
+2026-11-17T14:17:31.2504380Z 2026-11-17 14:17:31.103 appintentsnltrainingprocessor[2675:11752] No AppShortcuts found - Skipping.
+2026-11-17T14:17:31.2504790Z 
+2026-11-17T14:17:31.2505310Z RegisterExecutionPolicyException /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:17:31.2506210Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:17:31.2506860Z     builtin-RegisterExecutionPolicyException /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app
+2026-11-17T14:17:31.2730770Z 
+2026-11-17T14:17:31.2734590Z Validate /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:17:31.2738230Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:17:31.2740950Z     builtin-validationUtility /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app -shallow-bundle -infoplist-subpath Info.plist
+2026-11-17T14:17:31.2741630Z 
+2026-11-17T14:17:31.2742100Z Touch /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T14:17:31.2743540Z     cd /Users/runner/work/ahmad-career/ahmad-career/apple
+2026-11-17T14:17:31.2744080Z     /usr/bin/touch -c /Users/runner/work/_temp/career-iphone-derived-data/Build/Products/Release-iphoneos/Career\ Finder.app
+2026-11-17T14:17:31.2800660Z 
+2026-11-17T14:17:31.3237020Z ** BUILD SUCCEEDED **
+2026-11-17T14:17:31.3251220Z 
+2026-11-17T14:17:31.3814690Z ##[group]Run import os, pathlib, plistlib
+2026-11-17T14:17:31.3815770Z [36;1mimport os, pathlib, plistlib[0m
+2026-11-17T14:17:31.3817290Z [36;1mproduct = pathlib.Path(os.environ['RUNNER_TEMP']) / 'career-iphone-derived-data/Build/Products/Release-iphoneos/Career Finder.app'[0m
+2026-11-17T14:17:31.3819210Z [36;1mwith (product / 'Info.plist').open('rb') as source:[0m
+2026-11-17T14:17:31.3820030Z [36;1m    info = plistlib.load(source)[0m
+2026-11-17T14:17:31.3821030Z [36;1massert info['UIDeviceFamily'] == [1], info.get('UIDeviceFamily')[0m
+2026-11-17T14:17:31.3822350Z [36;1massert info['CFBundleIdentifier'] == 'com.ahmadalayed.career', info.get('CFBundleIdentifier')[0m
+2026-11-17T14:17:31.3823990Z [36;1massert info['CFBundleDisplayName'] == 'Career Finder', info.get('CFBundleDisplayName')[0m
+2026-11-17T14:17:31.3825390Z [36;1massert info['CFBundleName'] == 'Career Finder', info.get('CFBundleName')[0m
+2026-11-17T14:17:31.3826950Z [36;1massert info['CFBundleSupportedPlatforms'] == ['iPhoneOS'], info.get('CFBundleSupportedPlatforms')[0m
+2026-11-17T14:17:31.3828360Z [36;1massert (product / info['CFBundleExecutable']).is_file()[0m
+2026-11-17T14:17:31.3829530Z [36;1mprint('Built an unsigned iPhone-only product with the preserved app identity.')[0m
+2026-11-17T14:17:31.3981940Z shell: /Library/Frameworks/Python.framework/Versions/Current/bin/python {0}
+2026-11-17T14:17:31.3982450Z ##[endgroup]
+2026-11-17T14:17:31.6335950Z Built an unsigned iPhone-only product with the preserved app identity.
+2026-11-17T14:17:31.6455630Z ##[group]Run actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+2026-11-17T14:17:31.6455980Z with:
+2026-11-17T14:17:31.6456140Z   name: iphone-build-log-44101210921
+2026-11-17T14:17:31.6456410Z   path: /Users/runner/work/_temp/career-iphone-build.log
+2026-11-17T14:17:31.6456680Z   if-no-files-found: ignore
+2026-11-17T14:17:31.6456870Z   retention-days: 7
+2026-11-17T14:17:31.6457040Z   compression-level: 6
+2026-11-17T14:17:31.6457280Z   overwrite: false
+2026-11-17T14:17:31.6457780Z   include-hidden-files: false
+2026-11-17T14:17:31.6458200Z ##[endgroup]
+2026-11-17T14:17:32.0616000Z With the provided path, there will be 1 file uploaded
+2026-11-17T14:17:32.0619230Z Artifact name is valid!
+2026-11-17T14:17:32.0619540Z Root directory input is valid!
+2026-11-17T14:17:32.4374070Z Beginning upload of artifact content to blob storage
+2026-11-17T14:17:32.4679000Z Uploaded bytes 8338
+2026-11-17T14:17:32.4781000Z Finished uploading artifact content to blob storage!
+2026-11-17T14:17:32.4882430Z SHA256 digest of uploaded artifact zip is 80671918b367386434deeb89d1cf5fe9b1dc204f18a043f549e80da7112cf255
+2026-11-17T14:17:32.4955800Z Finalizing artifact upload
+2026-11-17T14:17:32.8464540Z Artifact iphone-build-log-44101210921.zip successfully finalized. Artifact ID 14335408305
+2026-11-17T14:17:32.8465550Z Artifact iphone-build-log-44101210921 has been successfully uploaded! Final size is 8338 bytes. Artifact ID is 14335408305
+2026-11-17T14:17:32.8466450Z Artifact download URL: https://github.com/swonyu/ahmad-career/actions/runs/44101210921/artifacts/14335408305
+2026-11-17T14:17:32.8571030Z Post job cleanup.
+2026-11-17T14:17:32.9619660Z [command]/opt/homebrew/bin/git version
+2026-11-17T14:17:32.9908500Z git version 2.56.0
+2026-11-17T14:17:32.9975360Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/504326d9-3c87-43af-a43e-6d7040925ac6/.gitconfig'
+2026-11-17T14:17:32.9976960Z Temporarily overriding HOME='/Users/runner/work/_temp/504326d9-3c87-43af-a43e-6d7040925ac6' before making global git config changes
+2026-11-17T14:17:32.9978540Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-17T14:17:32.9979210Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/ahmad-career/ahmad-career
+2026-11-17T14:17:33.0086620Z Removing SSH command configuration
+2026-11-17T14:17:33.0087160Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T14:17:33.0392610Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-17T14:17:33.2422660Z Removing HTTP extra header
+2026-11-17T14:17:33.2524360Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T14:17:33.2900210Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-17T14:17:33.4249520Z Removing includeIf entries pointing to credentials config files
+2026-11-17T14:17:33.4352000Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T14:17:33.4609130Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-17T14:17:33.5557710Z Cleaning up orphan processes
+2026-11-17T14:17:34.1888800Z Terminate orphan process: pid (1803) (ibtoold)
+
