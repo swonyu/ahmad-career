@@ -174,6 +174,71 @@ function exportHarness({ signedIn = false, calendar = tools.followUpCalendar } =
   return { context, saved, downloads, notices };
 }
 
+test('record locations are optional for legacy snapshots and bounded for new records', () => {
+  const fresh = record(), legacy = { ...fresh }; delete legacy.location;
+  assert.equal(fresh.location, job.location);
+  assert.equal(model.recordSchema.parse(legacy).location, undefined);
+  const snapshot = { ...model.blankSnapshot('guest'), records: [legacy] };
+  assert.equal(model.parseSnapshot(JSON.parse(JSON.stringify(snapshot)), 'guest').records[0].location, undefined);
+  for (const location of ['x'.repeat(501), 'Riyadh\u0000', 123, null]) assert.throws(() => model.recordSchema.parse({ ...legacy, location }));
+  const recovered = model.parseSnapshot({ ...snapshot, records: [{ ...legacy, location: 'الرياض · Riyadh' }] }, 'guest');
+  assert.equal(recovered.records[0].location, 'الرياض · Riyadh');
+});
+
+test('removing a bookmark retains its latest nonblank location for current, legacy and re-bookmarked records', async () => {
+  const scenarios = [
+    { name: 'current record', previousLocation: 'Riyadh', bookmarkLocation: 'Riyadh', expected: 'Riyadh' },
+    { name: 'legacy record', previousLocation: undefined, bookmarkLocation: 'Riyadh', expected: 'Riyadh' },
+    { name: 're-bookmarked empty location', previousLocation: '', bookmarkLocation: 'Riyadh', expected: 'Riyadh' },
+    { name: 're-bookmarked changed location', previousLocation: 'Jeddah', bookmarkLocation: 'الرياض · Riyadh', expected: 'الرياض · Riyadh' },
+    { name: 'blank bookmark preserves prior location', previousLocation: 'Jeddah', bookmarkLocation: '', expected: 'Jeddah' },
+    { name: 'whitespace bookmark preserves prior location', previousLocation: 'Jeddah', bookmarkLocation: '   ', expected: 'Jeddah' },
+    { name: 'missing legacy location remains unknown', previousLocation: undefined, bookmarkLocation: '', expected: undefined },
+  ];
+  for (const scenario of scenarios) {
+    const h = exportHarness({ signedIn: true }), scope = h.saved.scope;
+    h.saved.jobs = [{ ...job, location: scenario.bookmarkLocation }];
+    if (scenario.previousLocation === undefined) delete h.saved.records[0].location;
+    else h.saved.records[0].location = scenario.previousLocation;
+    const before = JSON.stringify(h.saved), previous = { ...h.saved.records[0] };
+    let persisted = null, selected = [previous.identity];
+    Object.assign(h.context, {
+      // A stale open dialog must not override the latest saved bookmark metadata.
+      dialog: { kind: 'remove', job, scope }, jobIdentity: model.jobIdentity,
+      persist: async (value, generation) => { h.context.assertCurrent(generation, value.scope); persisted = model.parseSnapshot(value, scope); },
+      setSelected: update => { selected = update(selected); }, setDialog: () => {},
+    });
+    install('removeBookmark', h.context); await h.context.removeBookmark();
+    assert.equal(JSON.stringify(h.saved), before, 'removal must not mutate the original snapshot');
+    assert.equal(persisted.jobs.length, 0); assert.equal(persisted.records.length, 1); assert.equal(selected.length, 0);
+    const expected = scenario.expected === undefined ? previous : { ...previous, location: scenario.expected };
+    assert.deepEqual(persisted.records[0], expected, scenario.name);
+    Object.assign(h.context, { jobs: persisted.jobs, records: persisted.records });
+    const retainedJobs = install('recordJobs', h.context);
+    assert.equal(retainedJobs.length, 1);
+    assert.equal(retainedJobs[0].location, scenario.expected ?? '', scenario.name);
+    if (scenario.expected) assert(tools.matchesSavedSearch(retainedJobs[0], persisted.records[0], scenario.expected), scenario.name);
+    assert(tools.matchesSavedSearch(retainedJobs[0], persisted.records[0], 'SYNTHETIC_PRIVATE_NOTE'));
+    assert.equal(model.parseSnapshot(JSON.parse(JSON.stringify(persisted)), scope).records[0].location, scenario.expected);
+  }
+});
+
+test('bookmark metadata preservation fails with account mismatch or rejected persistence', async () => {
+  for (const problem of ['scope', 'storage']) {
+    const h = exportHarness({ signedIn: true }); h.saved.jobs = [job]; delete h.saved.records[0].location;
+    const before = JSON.stringify(h.saved); let persistCalls = 0, closed = false;
+    Object.assign(h.context, {
+      dialog: { kind: 'remove', job, scope: problem === 'scope' ? 'account:another-owner' : h.saved.scope },
+      jobIdentity: model.jobIdentity,
+      persist: async () => { persistCalls++; throw Error('Synthetic storage failure'); },
+      setSelected: () => { assert.fail('Selection must stay after failed removal'); }, setDialog: () => { closed = true; },
+    });
+    install('removeBookmark', h.context); await assert.rejects(h.context.removeBookmark());
+    assert.equal(persistCalls, problem === 'scope' ? 0 : 1); assert.equal(closed, false);
+    assert.equal(JSON.stringify(h.saved), before); assert.equal(h.notices.length, 0);
+  }
+});
+
 test('actual CSV action exports only the current guest or confirmed account records', async () => {
   for (const signedIn of [false, true]) {
     const h = exportHarness({ signedIn }), before = JSON.stringify(h.saved);

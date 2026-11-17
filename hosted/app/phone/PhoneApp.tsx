@@ -43,6 +43,17 @@ function discoveryNoticeText(notice: string, t: (source: string) => string): str
     : t(notice);
 }
 
+function DiscoveryEmptyState({ status, busy, onRetry }: { status: DiscoveryPage["status"]; busy: boolean; onRetry: () => void }) {
+  const { t } = useI18n();
+  const title = status === "unavailable" ? "Current openings could not be checked."
+    : status === "partial" ? "No matches in the results we could check."
+      : "No matching jobs in these boards.";
+  const detail = status === "unavailable" ? "The selected boards did not return results. Retry the same search, or review the source details."
+    : status === "partial" ? "This search is incomplete. Review the source details, or retry the same search."
+      : "Try a broader job title, another location, or a different employer board. You can also search LinkedIn above.";
+  return <div className="phone-empty compact"><h2>{t(title)}</h2><p>{t(detail)}</p>{status !== "complete" && <button type="button" className="button secondary" disabled={busy} onClick={onRetry}>{t("Retry this search")}</button>}</div>;
+}
+
 function message(error: unknown): string {
   if (error instanceof z.ZodError) return "Some information could not be verified. Check your details and try again.";
   return error instanceof Error ? error.message : "This could not be completed. Your earlier information is still here.";
@@ -277,8 +288,8 @@ export default function PhoneApp({ account }: { account: Account }) {
     requestAnimationFrame(() => { heading.current?.focus(); window.scrollTo({ top: 0, behavior: "instant" }); });
   };
 
-  const searchJobs = (more = false) => run(more ? "Loading more jobs" : "Searching employer boards", async generation => {
-    const requested = more && searchedFilters ? searchedFilters : { ...filters, sources: [...new Set(searchSources.map(value => value.trim()).filter(Boolean))] };
+  const searchJobs = (more = false, retryFilters?: Filters) => run(more ? "Loading more jobs" : "Searching employer boards", async generation => {
+    const requested = retryFilters ?? (more && searchedFilters ? searchedFilters : { ...filters, sources: [...new Set(searchSources.map(value => value.trim()).filter(Boolean))] });
     if (!requested.sources.length) throw Error("Choose an employer board under Search options first.");
     const cursor = more && !restored ? searchPage?.nextCursor : null;
     if (more && !cursor) throw Error("Search again to refresh these results.");
@@ -291,8 +302,8 @@ export default function PhoneApp({ account }: { account: Account }) {
       if (jobs.size > 200) throw Error("You have viewed 200 results. Refine the job title, location, or employer boards to narrow your search.");
       result = { ...page, jobs: [...jobs.values()] };
     }
-    setSearchPage(result); setSearchedFilters(requested); setRestored(false); setFilters(requested); searchAbort.current = null;
-    if (snapshotRef.current && !storageProblem) await persist({ ...local(), filters: requested, lastSearch: { filters: requested, page: { ...result, nextCursor: null } } }, generation);
+    setSearchPage(result); setSearchedFilters(requested); setRestored(false); if (!retryFilters) setFilters(requested); searchAbort.current = null;
+    if (snapshotRef.current && !storageProblem) await persist({ ...local(), filters: retryFilters ? filters : requested, lastSearch: { filters: requested, page: { ...result, nextCursor: null } } }, generation);
   });
 
   function exportUnfinished() {
@@ -372,7 +383,11 @@ export default function PhoneApp({ account }: { account: Account }) {
     if (dialog?.kind !== "remove") return;
     const data = local(); if (data.scope !== dialog.scope) throw Error("Your workspace changed. Open the saved job again.");
     const identity = jobIdentity(dialog.job.url);
-    await persist({ ...data, jobs: data.jobs.filter(job => jobIdentity(job.url) !== identity) }, generation);
+    // Keep the latest displayed location when removing a bookmark, including
+    // re-bookmarked jobs. An empty location must not erase useful record context.
+    const location = data.jobs.find(job => jobIdentity(job.url) === identity)?.location;
+    const records = location?.trim() ? data.records.map(record => record.identity === identity ? { ...record, location } : record) : data.records;
+    await persist({ ...data, records, jobs: data.jobs.filter(job => jobIdentity(job.url) !== identity) }, generation);
     setSelected(previous => previous.filter(id => id !== identity)); setDialog(null); setNotice({ text: "Bookmark removed. Any application record and follow-up date were kept." });
   });
 
@@ -591,7 +606,7 @@ export default function PhoneApp({ account }: { account: Account }) {
   const discardConfirmation = confirmDialogDiscard && <section className="phone-warning" role="alert"><h3 ref={discardHeading} tabIndex={-1}>{t("Discard these unsaved changes?")}</h3><p>{t("Your earlier saved information will stay. The unfinished changes in this form will be lost.")}</p><div className="phone-dialog-actions"><button className="button secondary" onClick={() => setConfirmDialogDiscard(false)}>{t("Keep editing")}</button><button className="button danger" onClick={() => void run("Discarding unfinished record", async () => { if (snapshotRef.current) await discardRecovery(snapshotRef.current.scope, recordRecoveryId.current); recordRecoveryId.current = null; setEditorDraft(null); setDialogDirty(false); setConfirmDialogDiscard(false); setDialog(null); })}>{t("Discard changes")}</button></div></section>;
 
   const jobs = snapshot?.jobs ?? [], records = snapshot?.records ?? [], recordsByID = new Map(records.map(record => [record.identity, record]));
-  const recordJobs = records.filter(record => !jobs.some(job => jobIdentity(job.url) === record.identity)).map(record => ({ id: record.identity, title: record.title, company: record.company, url: record.identity, location: "", country: "" }));
+  const recordJobs = records.filter(record => !jobs.some(job => jobIdentity(job.url) === record.identity)).map(record => ({ id: record.identity, title: record.title, company: record.company, url: record.identity, location: record.location ?? "", country: "" }));
   const shownJobs = [...jobs, ...recordJobs].filter(job => {
     const record = recordsByID.get(jobIdentity(job.url));
     return matchesSavedSearch(job, record, savedQuery) && (savedFilter === "all" || savedFilter === "applied" && record?.appliedElsewhere || savedFilter === "followups" && record?.followUpDate && record.stage !== "closed");
@@ -637,14 +652,14 @@ export default function PhoneApp({ account }: { account: Account }) {
         {catalogError && <p className="phone-inline-note">{t(catalogError)} {t(" You can still add an employer board link under Search options.")}</p>}
         </div><aside className={`phone-search-aside${searchPage ? " has-results" : ""}`} aria-label={t("Your search workspace")}><section className="search-companion"><span className="search-companion-icon"><Bookmark size={23} aria-hidden="true" /></span><h2>{t("A place for every next move.")}</h2><p>{t("Save the openings you like. Keep notes and follow-ups together. Bring your best details when it’s time to apply.")}</p><div className="workspace-shortcuts"><button onClick={() => navigate("saved")}><span><strong>{formatNumber(jobs.length, language)}</strong>{t("Saved jobs")}</span><ArrowRight size={18} aria-hidden="true" /></button><button onClick={() => navigate("profile")}><span>{t("Your profile")}<strong>{ready ? t("Essentials ready") : t("Add your essentials")}</strong></span><ArrowRight size={18} aria-hidden="true" /></button></div></section>
         <a className="phone-link-card" href={linkedInSearch(filters)} target="_blank" rel="noopener noreferrer"><div><strong>{t("Search on LinkedIn")}</strong><span>{t("Open the same title and location on LinkedIn")}</span></div><ArrowUpRight size={21} aria-hidden="true" /></a>
-        {due > 0 && <button className="phone-link-card phone-followup-link" onClick={() => { setSavedFilter("followups"); navigate("saved"); }}><div><strong>{t("Follow-ups due: {0}", [formatNumber(due, language)])}</strong><span>{t("Make time for your next small step")}</span></div><ChevronRight size={21} aria-hidden="true" /></button>}
+        {due > 0 && <button className="phone-link-card phone-followup-link" onClick={() => { setSavedQuery(""); setSavedFilter("followups"); navigate("saved"); }}><div><strong>{t("Follow-ups due: {0}", [formatNumber(due, language)])}</strong><span>{t("Make time for your next small step")}</span></div><ChevronRight size={21} aria-hidden="true" /></button>}
         </aside></div>
         {!searchPage ? <section className="phone-empty"><p className="phone-kicker">{t("A FEW PLACES TO BEGIN")}</p><h2>{t("Start with what interests you.")}</h2><p>{t("Choose a direction, or search for something entirely your own.")}</p><div className="phone-suggestions">{["Customer service", "Software", "Healthcare"].map(value => <button key={value} onClick={() => setFilters({ ...filters, query: value })}>{t(value)}</button>)}</div></section> : <section aria-label={t("Job search results")} className="phone-results">
           <div className="phone-section-heading"><h2>{restored ? t("Previous results") : t("Search results")}</h2><span>{t("{0} shown", [formatNumber(searchPage.jobs.length, language)])}</span></div>
           <p className="phone-note">{t("Search from ")}{displayTime(searchPage.generatedAt)}. {restored ? t("Search again to check current openings.") : t("An employer may close or change a job after this check.")}</p>
           {searchedFilters && !same({ ...filters, sources: searchSources }, searchedFilters) && <p className="phone-inline-note">{t("Search again to use your changed filters.")}</p>}
           {searchPage.sources.filter(source => source.error || ["stale", "unavailable"].includes(source.status)).map(source => <div className="phone-source-note" key={source.id}><strong>{source.name}</strong><p>{(source.error?.message ? t(source.error.message) : "") || (source.status === "stale" ? t("Showing an earlier check of this board.") : t("This board could not provide current results."))}</p></div>)}
-          {!searchPage.jobs.length && <div className="phone-empty compact"><h2>{t("No matching jobs in these boards.")}</h2><p>{t("Try a broader job title, another location, or a different employer board. You can also search LinkedIn above.")}</p></div>}
+          {!searchPage.jobs.length && <DiscoveryEmptyState status={searchPage.status} busy={Boolean(busy)} onRetry={() => void searchJobs(false, searchedFilters ?? undefined)} />}
           {searchPage.jobs.map(job => <JobCard key={jobIdentity(job.url)} job={{ ...job, country: job.country ?? "" }} saved={jobs.some(saved => jobIdentity(saved.url) === jobIdentity(job.url))} onSave={() => void saveJob({ ...job, country: job.country ?? "" })} onDetails={() => setDialog({ kind: "details", job: { ...job, country: job.country ?? "" } })} busy={cannotSave} />)}
           {searchPage.nextCursor && !restored && <button className="button secondary full" disabled={Boolean(busy) || searchPage.jobs.length >= 200} onClick={() => void searchJobs(true)}>{t("Load more jobs")}</button>}
           {searchPage.limited && <p className="phone-note">{t("Some boards have more jobs than can be checked at once. Open an employer’s website for its complete list.")}</p>}
