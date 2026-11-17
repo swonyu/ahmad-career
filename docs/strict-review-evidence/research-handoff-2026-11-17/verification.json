@@ -1,0 +1,61 @@
+{
+  "observed_at": "2026-11-17T13:56:07.022917+03:00",
+  "base_commit": "859b84a4bb184cbc9bb5039be34e35ad4ca17356",
+  "branch": "continuation/research-handoff-fixes-20261117",
+  "findings": {
+    "WF-01": "fixed; baseline handler reproduction failed as expected, corrected handler passes",
+    "WF-02": "fixed; rendered component checks for three result states in English/Arabic; retry uses submitted filters and preserves form draft",
+    "WF-03": "implemented; latest known location retained including re-bookmark and legacy records",
+    "WF-04": "open; no real spreadsheet/calendar acceptance or successful browser download claimed"
+  },
+  "validation": {
+    "focused_node_tests": {
+      "passed": 62,
+      "failed": 0
+    },
+    "encrypted_vault_checks": {
+      "passed": 34,
+      "failed": 0
+    },
+    "typescript": "passed",
+    "eslint_app_and_worker": "passed",
+    "production_build": "passed with existing sourcemap and route-classification warnings",
+    "browser": "not completed: standalone Chromium refused local socket creation, supported cloud browser could not reach isolated loopback preview",
+    "native": "not run by this continuation"
+  },
+  "upstream_native_snapshot": {
+    "run_id": 44062756461,
+    "head": "859b84a4bb184cbc9bb5039be34e35ad4ca17356",
+    "checkout": "fdab7f1181ab236be8f8085c562b357d9cfb4874",
+    "services": "both passed",
+    "iphone_logic_unsigned_build": "passed",
+    "android": {
+      "tests": 103,
+      "passed": 92,
+      "failed": 11,
+      "subsequent_tls_suites": "not reached"
+    },
+    "iphone_ui": {
+      "tests": 17,
+      "passed": 14,
+      "failed": 3
+    }
+  },
+  "boundaries": {
+    "deployed": false,
+    "installed": false,
+    "store_released": false,
+    "provider_setup_changed": false,
+    "real_employer_applications_sent": false,
+    "release_branch_changed": false
+  },
+  "source_sha256": {
+    "hosted/app/phone/PhoneApp.tsx": "2ae788155d0da105943b102b1ce91f9e60068cf151ecea4b33d19850311d3660",
+    "hosted/app/phone/model.ts": "6ed2a8a852bced4c030f421168d464d4c3fdd2f1a54d867d1768365ae54a93d4",
+    "hosted/app/i18n/messages.ar.json": "20d4828a28179644ba6656a1aefdc0ed3b2c4a61bae2e856bd086a38bc81144d",
+    "hosted/tests/phone-search-workflows.mjs": "9061e6ac35ac09b60160c4de0998e499a0f01ee0c489e22385f71095d4d5f549",
+    "hosted/tests/phone-record-tools.mjs": "29c7c1e987703b7b50360fafdc8f733aa8e34441a150bcd0fde8ecb3dcffe522",
+    "hosted/tests/phone-vault.mjs": "d048e59cf4988473889edd70f019f25d14b3c21fe45540f39806d6d7c341e21d",
+    "hosted/package.json": "a9c4e380d5a6268f1472a039f51c2b47f22a2bfb9558cfb8a97310a7b803a613"
+  }
+}

@@ -94,6 +94,20 @@ await test("encrypted round trip preserves full draft, PDF, Unicode and unfinish
   assert.equal((await vault.loadPhoneSnapshot(alice)).profile.firstName, value.profile.firstName);
 });
 
+await test("legacy and location-bearing records round trip through encrypted storage and JSON export", async () => {
+  for (const location of [undefined, "الرياض · Riyadh"]) {
+    const port = new MemoryPort(), vault = client(port), value = draft();
+    if (location !== undefined) value.records[0].location = location;
+    await vault.savePhoneSnapshot(alice, value);
+    assert.deepEqual(await client(port).loadPhoneSnapshot(alice), value);
+    assert.deepEqual(JSON.parse(await vault.exportPhoneSnapshot(alice)), value);
+    if (location !== undefined) {
+      const row = port.rows.get(alice);
+      assert.ok(!(JSON.stringify(row) + new TextDecoder().decode(row.ciphertext)).includes(location));
+    }
+  }
+});
+
 await test("every save rotates the opaque key, IV and authenticated envelope ID", async () => {
   const port = new MemoryPort(), vault = client(port);
   await vault.savePhoneSnapshot(alice, draft());
