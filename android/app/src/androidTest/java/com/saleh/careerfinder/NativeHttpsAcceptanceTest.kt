@@ -123,7 +123,7 @@ class NativeHttpsAcceptanceTest {
                     model.editAnswers(job.id) { JobAnswers("First reviewed message", consentStore = true, consentMarketing = false) }
                 }
             } }
-            step("apply-tab") { compose.onNodeWithText("Auto Apply").performClick() }
+            step("apply-tab") { compose.onNodeWithText("Apply").performClick() }
             clickInApply("Prepare application review")
             step("initial-review-ready") { await { !model.state.value.busy && model.state.value.plan != null } }
             val earlier = model.state.value.plan!!
@@ -131,7 +131,7 @@ class NativeHttpsAcceptanceTest {
             // Changing tabs keeps the explicit No answer, and changing a message
             // invalidates the earlier unapproved review without submitting it.
             step("jobs-tab") { compose.onNodeWithText("Jobs").performClick() }
-            step("apply-tab-return") { compose.onNodeWithText("Auto Apply").performClick() }
+            step("apply-tab-return") { compose.onNodeWithText("Apply").performClick() }
             assertTrue(model.state.value.answers.values.all { it.consentMarketing == false })
             val changed = model.state.value.jobs.first().id
             step("review-message-edit") { compose.runOnIdle { model.editAnswers(changed) { it.copy(comments = "Updated reviewed message") } } }
@@ -173,7 +173,7 @@ class NativeHttpsAcceptanceTest {
 
             val timeout = model.state.value.jobs.first { it.url == urls[1] }
             step("uncertain-job-select") { compose.runOnIdle { model.state.value.selected.filter { it != timeout.id }.forEach(model::toggleJob) } }
-            step("uncertain-apply-tab") { compose.onNodeWithText("Auto Apply").performClick() }
+            step("uncertain-apply-tab") { compose.onNodeWithText("Apply").performClick() }
             clickInApply("Prepare application review")
             step("uncertain-review-ready") { await { !model.state.value.busy && model.state.value.plan != null } }
             assertEquals("blocked", model.state.value.plan!!.items.single().state)

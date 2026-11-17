@@ -4,9 +4,9 @@ final class CareerFinderUITests: XCTestCase {
     override func setUpWithError() throws { continueAfterFailure = false }
 
     @MainActor
-    private func launch(id: String = UUID().uuidString, largeText: Bool = false, availability: String? = nil, orphanRecord: Bool = false) -> XCUIApplication {
+    private func launch(id: String = UUID().uuidString, largeText: Bool = false, availability: String? = nil, orphanRecord: Bool = false, languages: String = "(en)") -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments = ["-career-ui-acceptance", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launchArguments = ["-career-ui-acceptance", "-AppleLanguages", languages, "-AppleLocale", "en_US"]
         app.launchEnvironment["CAREER_UI_TEST_ID"] = id
         if let availability { app.launchEnvironment["CAREER_UI_APPLICATION_AVAILABILITY"] = availability }
         if orphanRecord { app.launchEnvironment["CAREER_UI_ORPHAN_RECORD"] = "1" }
@@ -175,7 +175,9 @@ final class CareerFinderUITests: XCTestCase {
         capture("02-discovery-empty", app: app)
         tab("Saved", in: app)
         XCTAssertTrue(app.staticTexts["Make a shortlist of your own."].waitForExistence(timeout: 5))
-        tab("Profile", in: app)
+        tab("Settings", in: app)
+        XCTAssertTrue(app.buttons["settings.profile"].waitForExistence(timeout: 5))
+        app.buttons["settings.profile"].tap()
         XCTAssertTrue(app.buttons["profile.applicationProfile"].waitForExistence(timeout: 5))
         tab("Apply", in: app)
         XCTAssertTrue(app.buttons["applications.profile"].waitForExistence(timeout: 5))
@@ -317,7 +319,7 @@ final class CareerFinderUITests: XCTestCase {
         setup.tap()
         let opened = app.navigationBars["Application connection"].waitForExistence(timeout: 5)
         if !opened { capture("connection-setup-did-not-open", app: app); print(app.debugDescription) }
-        XCTAssertTrue(opened, "One tap on Set up Auto Apply must open connection setup")
+        XCTAssertTrue(opened, "One tap on Connect application workspace must open connection setup")
         XCTAssertFalse(app.textFields["connection.address"].exists, "Default setup needs no service-address editing")
         let code = app.secureTextFields["connection.code"]; reveal(code, in: app); replace(code, with: "SYNTHETIC")
         app.buttons["Done typing"].tap()
@@ -453,7 +455,7 @@ final class CareerFinderUITests: XCTestCase {
         tab("Apply", in: app)
         let review = app.buttons["applications.review"]
         XCTAssertTrue(review.isHittable)
-        XCTAssertEqual(review.label, "Set up Auto Apply")
+        XCTAssertEqual(review.label, "Connect application workspace")
         capture("12-application-workspace-accessibility-text", app: app)
         review.tap()
         let connection = app.navigationBars["Application connection"]
@@ -499,6 +501,95 @@ final class CareerFinderUITests: XCTestCase {
             capture("15-\(availability)-refresh-reachable", app: app)
             app.terminate()
         }
+    }
+
+    @MainActor
+    func testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable() {
+        let id = UUID().uuidString
+        var app = launch(id: id, largeText: true)
+        let gear = app.buttons["navigation.settings"]
+        XCTAssertTrue(gear.waitForExistence(timeout: 5) && gear.isHittable)
+        gear.tap()
+        XCTAssertTrue(app.tabBars.buttons["Settings"].isSelected, "Gear and tab must open the same Settings destination")
+        let system = app.buttons["settings.appearance.system"]
+        reveal(system, in: app)
+        XCTAssertTrue(system.isSelected, "A new isolated workspace follows the system appearance")
+        let dark = app.buttons["settings.appearance.dark"]
+        reveal(dark, in: app); dark.tap()
+        XCTAssertTrue(dark.isSelected)
+        capture("24-settings-dark-large-text", app: app)
+        app.terminate()
+
+        app = launch(id: id, largeText: true)
+        tab("Settings", in: app)
+        let restored = app.buttons["settings.appearance.dark"]
+        reveal(restored, in: app)
+        XCTAssertTrue(restored.isSelected, "Appearance must survive an app relaunch")
+        let light = app.buttons["settings.appearance.light"]
+        reveal(light, in: app); light.tap()
+        XCTAssertTrue(light.isSelected)
+        capture("25-settings-light-large-text", app: app)
+        let automatic = app.buttons["settings.appearance.system"]
+        reveal(automatic, in: app); automatic.tap()
+        XCTAssertTrue(automatic.isSelected)
+        let profile = app.buttons["settings.profile"]
+        reveal(profile, in: app); profile.tap()
+        XCTAssertTrue(app.buttons["profile.applicationProfile"].waitForExistence(timeout: 5), "Settings must retain access to the existing profile editor")
+        capture("26-settings-profile-reachable", app: app)
+    }
+
+    @MainActor
+    func testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText() {
+        let id = UUID().uuidString
+        var app = launch(id: id, largeText: true, availability: "disabled")
+        let profile = app.buttons["home.applicationProfile"]; reveal(profile, in: app); profile.tap()
+        replace(app.textFields["application.firstName"], with: "Saved")
+        replace(app.textFields["application.email"], with: "saved@example.invalid")
+        app.navigationBars.buttons["Cancel"].tap()
+        XCTAssertTrue(app.buttons["Save draft on this phone"].waitForExistence(timeout: 5))
+        app.buttons["Save draft on this phone"].tap()
+        tab("Settings", in: app)
+        let arabic = app.buttons["settings.language.ar"]; reveal(arabic, in: app); arabic.tap()
+        XCTAssertTrue(arabic.isSelected)
+        XCTAssertTrue(app.tabBars.buttons["الإعدادات"].waitForExistence(timeout: 5))
+        let start = app.tabBars.buttons["البداية"], settings = app.tabBars.buttons["الإعدادات"]
+        XCTAssertTrue(start.exists && settings.exists)
+        XCTAssertGreaterThan(start.frame.midX, settings.frame.midX, "Arabic navigation follows right-to-left order")
+        capture("27-settings-arabic-large-text", app: app)
+        app.terminate()
+
+        app = launch(id: id, largeText: true, availability: "disabled")
+        XCTAssertTrue(app.tabBars.buttons["الإعدادات"].waitForExistence(timeout: 5), "Explicit Arabic survives a relaunch on an English device")
+        let reopen = app.buttons["home.applicationProfile"]; reveal(reopen, in: app); reopen.tap()
+        XCTAssertTrue(app.textFields["application.firstName"].waitForExistence(timeout: 5))
+        XCTAssertEqual(app.textFields["application.firstName"].value as? String, "Saved", "User text equal to an English label stays verbatim")
+        XCTAssertEqual(app.textFields["application.email"].value as? String, "saved@example.invalid")
+        capture("28-arabic-profile-original-values", app: app)
+        app.navigationBars.buttons["إلغاء"].tap()
+        tab("الإعدادات", in: app)
+        let english = app.buttons["settings.language.en"]; reveal(english, in: app); english.tap()
+        XCTAssertTrue(app.tabBars.buttons["Settings"].waitForExistence(timeout: 5))
+        XCTAssertTrue(english.isSelected)
+        tab("Apply", in: app)
+        let availability = app.scrollViews["applications.content"].staticTexts["applications.availability.heading"]
+        revealInApplicationContent(availability, app: app)
+        XCTAssertEqual(availability.label, "Auto Apply is not activated")
+        capture("29-english-restored-submission-disabled", app: app)
+    }
+
+    @MainActor
+    func testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride() {
+        let id = UUID().uuidString
+        var app = launch(id: id, languages: "(fr, ar)")
+        XCTAssertTrue(app.tabBars.buttons["الإعدادات"].waitForExistence(timeout: 5), "System chooses Arabic after an unsupported preferred language")
+        tab("الإعدادات", in: app)
+        let system = app.buttons["settings.language.system"]; reveal(system, in: app)
+        XCTAssertTrue(system.isSelected)
+        let english = app.buttons["settings.language.en"]; reveal(english, in: app); english.tap()
+        XCTAssertTrue(app.tabBars.buttons["Settings"].waitForExistence(timeout: 5))
+        app.terminate()
+        app = launch(id: id, languages: "(fr, ar)")
+        XCTAssertTrue(app.tabBars.buttons["Settings"].waitForExistence(timeout: 5), "Explicit English remains separate from device-language fallback")
     }
 
     @MainActor

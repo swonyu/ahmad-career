@@ -1,0 +1,329 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> career-finder-phone-service@0.6.0 test
+> node tests/linkedin-profile.mjs && node --test tests/pdf-readability.mjs && node tests/hosted-auth.mjs && node tests/hosted-auth-worker.mjs && node tests/hosted-applications.mjs && node tests/hosted-discovery.mjs && node tests/hosted-phone.mjs && node --test tests/phone-model.mjs tests/phone-api.mjs tests/phone-dispatch.mjs tests/phone-batch-stop.mjs tests/provider-connections.mjs tests/phone-private-async.mjs && node tests/phone-vault.mjs
+
+PASS LinkedIn URL boundary: 9 canonical examples, 42 rejected inputs, migration and provider requirements.
+✔ ordinary exported PDF, object streams and inherited page size are accepted (55.033177ms)
+✔ truncated, page-less, empty, oversized and invalid page rectangles are rejected (8.891467ms)
+✔ password protection is reported explicitly (2.769989ms)
+✔ cyclic pages and deeply nested objects fail without recursion overflow (3.901502ms)
+✔ bounded content decompression rejects a small compressed expansion bomb (286.149942ms)
+✔ malformed compressed page content fails; separate concurrent parsers keep their own budget (14.311299ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1100.863935
+PASS Provider connection-generation migration preserves existing links, accounts and active browser sessions
+PASS Previous-worker callbacks after migration receive a stable connection generation; recreating the link rotates it
+PASS Unconfigured providers stay unavailable; Sites identity and verified SSR boundaries remain intact
+PASS Google authorization code uses S256, nonce, hashed one-use state and a private opaque browser session
+PASS Provider subject is stable; matching email never merges Google subjects or an existing Sites owner
+PASS Explicit Google linking preserves the exact Sites owner and subsequent Google login returns that owner
+PASS LinkedIn is a basic openid/profile connection with no email, application profile import or login session
+PASS State is browser-bound, provider-bound, one-use and atomically claimed across concurrent callbacks
+PASS Actual RS256 verification rejects wrong audience, issuer, nonce, lifetime, authorized party, signature and unverified email
+PASS Cancellation consumes state without exchanging a code; hostile error descriptions never reach the redirect
+PASS Account changes between connect and callback fail before provider exchange; links cannot transfer between owners
+PASS Concurrent links for the same provider subject create one owner association and never merge either account
+PASS A Google cookie suppresses Sites fallback; mismatched sign-out fails and invalid-cookie recovery clears no Sites account
+PASS Sole Google login cannot be unlinked; Sites-owned Google unlink revokes its sessions and in-flight connections
+PASS A displayed connection ID is required; old clients and mismatched confirmations cannot disconnect a link
+PASS A valid LinkedIn disconnect preserves Google sign-in and another owner connection
+PASS A final-statement database failure rolls back the entire disconnect and cannot report success
+PASS A delayed disconnect cannot remove a deliberately recreated owner generation
+PASS A same-owner same-subject relink has a fresh connection ID and survives an older disconnect
+PASS Revoking a Google session while disconnect is delayed preserves the selected LinkedIn connection
+PASS A disconnect whose first lifecycle lookup follows deletion cannot affect a fresh link
+PASS Deleting an account during provider I/O prevents a late link from recreating removed identity metadata
+PASS Deletion between callback binding and its atomic commit cannot resurrect a Google account or issue a cookie
+PASS Short-lived opaque deletion fences block anonymous logins begun before deletion; a deliberate later login starts a new blank account
+PASS Revoking the Google browser session during a LinkedIn exchange prevents a late account connection
+PASS Identity export is owner-scoped and credential-free; account deletion works before any workspace exists
+PASS Guarded deletion preserves identities when a workspace appeared or the expected account generation changed
+PASS Deletion beginning after the connect precheck cannot create a new empty identity generation
+PASS A stale Google connect request cannot recreate an account deleted after initial cookie resolution
+PASS Revocation immediately before transaction insertion cannot leave a new pending Google-owned link
+PASS Opaque lifecycle generations reject requests that first read after deletion and permit a later deliberate request
+PASS A Sites link whose first lifecycle lookup occurs after deletion cannot recreate removed metadata
+PASS A captured Sites lifecycle cannot create a link after deletion rotates its generation
+PASS A lifecycle rotation immediately before OAuth commit fences identity writes even before other deletion statements run
+PASS A repeated deletion using an older lifecycle generation cannot remove a deliberately recreated Sites connection
+PASS Exact-origin JSON mutation, top-level navigation, safe return paths and callback expiry remain enforced
+PASS Provider redirects and oversized token responses are refused without retry or following any URL
+PASS A stalled provider body is cancelled within the bounded deadline and its claimed transaction cannot replay
+PASS Shared rate budgets reject excess starts and never retain raw network addresses
+Authentication verification: 39 groups passed against isolated D1 and actual synthetic RS256 signatures. No live provider or employer requests.
+{"result":"PASS","actualWorkerdAuthRequests":19,"syntheticProviderRequests":6,"realProviderRequests":0,"realEmployerRequests":0}
+PASS Unconfigured production service exposes no live connector or fixture switch
+PASS Identity, origin and unauthenticated boundaries; account GET is read-only
+PASS Concurrent redemption consumes exactly one code and creates one token
+PASS Actual 5 MiB PDF persists in private R2 with small D1 metadata and exact hash
+PASS Concurrent profile saves preserve one acknowledged revision and exact previous PDF
+PASS Account PDF downloads require matching platform identity
+PASS Unapproved reviews and GET workspace never dispatch
+PASS Exact multipart PDF, single name, explicit No, confirmed test receipt and guarded approval
+PASS Confirmed attempts never resend and block duplicate preparations
+PASS An unverified profile email cannot reveal whether another workspace has a confirmed application
+PASS Same-workspace duplicate protection survives an unverified profile email change
+PASS Cross-workspace duplicate protection remains available for the verified account email
+PASS Approval versus guarded Stop is atomic across concurrent requests
+PASS Concurrent advance claims one POST; deletion refuses active provider dispatch
+PASS Transport uncertainty is durable and cannot be resent or re-prepared
+PASS Mixed ready/429 plan needs a fresh approval after cooldown, not an earlier generation
+PASS Provider acceptance followed by result-write failure stays uncertain
+PASS GET does not mutate interrupted claims; advance recovers expiry without resending
+PASS Expired-plan GET and denied advance/guarded Stop leave dispatch claims unchanged
+PASS A failed expiry-reconciliation write rolls back the plan stop and queued cancellation atomically
+PASS Explicit Stop reconciles only this stopped plan’s expired leases, preserves live and foreign claims, and never resends
+PASS Account export contains owned records and workspace-bound private PDF paths without tokens or provider secrets
+PASS Real R2 tombstones fence late conditional puts in both orderings and erase metadata
+PASS Stale or missing account intent cannot create a workspace, refresh email, or rotate another account pairing code
+PASS Stale workspace confirmation cannot delete, revoke, recover, or alter expired dispatch state in either account
+PASS Stale, missing, or ambiguous download targets cannot expose another account export or read its PDF
+PASS Missing or incomplete platform identity fails closed even with a valid-looking action precondition
+PASS The preserved code redeems normally while expired codes and phone sessions cannot regain access
+PASS Terminated upload before/after R2 write recovers with no original phone or PDF
+PASS An expired upload reservation can be retried under a fresh durable claim
+PASS Account deletion erases pending uploads and prevents a late writer resurrecting PDF data
+PASS Failed erasure remains locked and retries without falsely reporting deletion
+PASS Health checks verify actual R2 accessibility as well as D1
+PASS Owner can revoke a phone; revoked credentials cannot access saved data
+PASS Full profile handler cannot restore a delayed PDF or records after successful deletion
+PASS A stale recovery cannot fence the fresh claim committed by a concurrent phone retry
+PASS Saved-opportunity quota remains atomic under concurrent requests
+PASS PDF reservation quota remains atomic before concurrent R2 writes
+PASS Account GET reports a changed platform email without rebasing data, revision, or prior approval
+PASS Explicit pairing refreshes changed platform email and invalidates old approval until the profile is corrected
+PASS LinkedIn profile URLs are canonical, optional, separate from portfolio and preserved by older phone saves; invalid updates preserve data
+PASS Older clients cannot create or approve a recovered review containing an undisplayed LinkedIn URL; preparation sends nothing
+PASS An explicitly approved LinkedIn profile URL is included exactly in the immutable snapshot and provider multipart payload
+PASS Clearing a link invalidates prior approval; saved LinkedIn job URLs remain manual and never produce automatic-submission receipts
+PASS Truncated and page-less PDFs fail a real parser before profile revision, stored bytes or records can change
+PASS PDF removal rejects a current profile reference or a stale/foreign workspace target without changing either account
+PASS Unused PDF erasure releases its quota, preserves historical fingerprints, fences files and remains idempotent
+PASS A concurrent profile save cannot reattach a PDF retired after its upload lookup
+PASS Employer requirements expiring during posting/PDF preflight produce no application POST
+PASS Requirements expiry while persisting the dispatch claim is rechecked before POST without inventing a dispatch
+PASS Two-day provider cooldowns are not shortened and an unreadable cooldown stays blocked after Stop
+PASS Invalid employer configuration disables submission while account access, export, revocation and erasure remain usable
+PASS A legacy missing or damaged stored PDF is caught during review before an approval or dispatch record exists
+PASS In-flight provider dispatch retains its exact PDF; a failed later erasure is visible and safely retriable without losing the receipt
+PASS Google cookie identity owns account/phone access and a scoped metadata export; invalid cookies never expose a different Sites account or affect native bearer access
+PASS Identity-only account erasure revokes its sessions and links without creating a workspace or changing another signed-in account
+PASS A workspace created during identity-only deletion prevents the stale deletion atomically
+PASS Google pairing and browser-open requests already in flight cannot recreate a deleted owner or mint a phone code
+PASS Opaque owner generations stop stale Sites pairing/open requests before or after lifecycle capture, while a deliberate later request can start fresh
+PASS Full Google-owned workspace erasure removes identity and application state together and preserves the other browser account
+PASS Global free-service account cap is atomic rather than count-then-create
+{"result":"PASS","groups":61,"syntheticProviderPosts":12,"realEmployerRequests":0}
+PASS Public catalog has seven verified sources, four mixed defaults and no account dependency
+PASS Phone client accepts actual default-board and EU search responses without a catalog-only region field
+PASS Strict source normalization accepts board and direct-posting links without arbitrary fetch URLs
+PASS Invalid filters, source counts and cursor parameters are rejected before provider traffic
+PASS Public requests ignore account credentials and never persist or forward personal search terms
+PASS Provider identities, plain text, unknown country and remote evidence remain distinct
+PASS Keyword AND, location text and remote-only filters operate on public metadata
+PASS Shared board caching survives handler recreation and preserves original observation time
+PASS Stable cursors page a fair multi-source result without duplicates and bind the original filters
+PASS Refreshing a source invalidates old cursors instead of silently mixing snapshots
+PASS A failed source retains visibly stale facts while successful sources remain current
+PASS Expired stale data and complete source failures are unavailable rather than an empty successful search
+PASS A missing board clears cached vacancies and the negative cooldown suppresses repeated requests
+PASS Provider Retry-After is honored while cached timestamps remain unchanged
+PASS D1 leases coalesce concurrent isolates without process-local queues
+PASS Expired claims recover and late completions cannot overwrite a newer successful snapshot
+PASS Malformed provider data is attributed and never becomes a successful empty board
+PASS Job-count and UTF-8 cache-byte limits remain below a D1 row and disclose partial coverage
+PASS Lever pages are bounded to five public GETs and 500 normalized postings
+PASS Redirects and oversized responses are refused without following untrusted destinations
+PASS A stalled response body is cancelled within the bounded provider timeout
+PASS Client and missing-IP request budgets are shared, atomic and return Retry-After
+PASS Custom negative cache capacity and fetch budgets reserve service for the catalog
+PASS Concurrent custom source admission cannot exceed the durable cache quota
+PASS Security counters expire without storing raw IPs or requiring an applicant account
+PASS Actual bundled workerd runs eight public discovery requests with real D1 and no account or R2
+{"result":"PASS","groups":26,"actualWorkerdRequests":8,"clientSchemaResponses":63,"employerApplicationPosts":0}
+PASS A first browser GET returns a blank account view without creating a workspace, salt, throttle or session
+PASS Anonymous requests and caller-forged authentication headers fail behind the modeled trusted Sites edge
+PASS Explicit account-bound creation and reopening create no native credential or pairing code
+PASS Browser PDF/profile writes use shared validation and actual private R2; valid native tokens never choose the browser owner
+PASS No browser mutation or receipt export accepts a native token or forged caller identity in place of Sites authentication
+PASS Every browser mutation rejects stale or missing account/workspace intent before any write, cleanup, throttle, PDF access or provider request
+PASS Workspace and bound receipt GETs remain read-only, including changed email and expired dispatch/session rows
+PASS All browser writes require the exact Origin and reject cross-site, same-site and navigation Fetch Metadata
+PASS The browser allowlist excludes native credential routes, rejects unknown fields, and applies bounded single-pass JSON parsing
+PASS Explicit same-account email refresh advances the revision once and invalidates old approval without creating or rotating phone credentials
+PASS Stale profile replay and unapproved, changed-digest or old-schema reviews cannot replace data or authorize a send
+PASS Explicit approval and continuation submit the exact reviewed PDF/LinkedIn payload once; repeat requests and duplicate reviews do not resend
+PASS An ambiguous browser dispatch remains durably uncertain and cannot be automatically retried or duplicated
+PASS Stop and provider-unavailable continuation preserve the existing fail-closed submission rules
+PASS Browser GETs, expired-plan advance and denied guarded Stop cannot reconcile or change expired dispatch claims
+PASS Browser Stop reconciles only the exact stopped plan’s expired claims, preserves live/other-owner claims and never resends
+PASS Manual LinkedIn jobs cause no fetch or receipt; receipt exports remain account-bound and contain no PDF bytes
+PASS A deleted and recreated workspace rejects stale requests even when the signed-in account is unchanged
+PASS A pending deletion remains visible and read-only while browser creation, mutations and receipt downloads stay locked without cleanup
+{"result":"PASS","groups":19,"actualWorkerdRequests":164,"syntheticProviderPosts":2,"realEmployerRequests":0}
+▶ phone API keeps authentication, cancellation and verification bounded
+  ✔ private writes carry the exact intent body, same-origin cookies and no native credential (15.601185ms)
+  ✔ public discovery omits account credentials and preserves encoded search intent (1.006667ms)
+  ✔ oversized multi-job review payloads are rejected before an API call begins (14.618264ms)
+  ✔ foreign destinations, non-app routes and writes to discovery are rejected before fetch (1.765313ms)
+  ✔ HTTP and logical failures remain distinguishable and never replay a mutation (3.591975ms)
+  ✔ unverified content, invalid UTF-8, arrays and empty responses are rejected safely (3.478906ms)
+  ✔ the 12 MiB response limit cancels oversized streams before parsing (2.765774ms)
+  ✔ network errors do not retry writes or expose private exception details (3.383249ms)
+  ✔ caller cancellation aborts once and pre-cancelled work never starts (7.398014ms)
+{"populatedWorkspaceBytes":7112730,"attempts":500,"reviews":20,"reviewItems":400}
+  ✔ the timer aborts a stalled mutation and tells the user to reconcile before retrying (21.184075ms)
+  ✔ a populated valid workspace above 4 MiB remains readable within the native 12 MiB budget (367.506532ms)
+✔ phone API keeps authentication, cancellation and verification bounded (450.009263ms)
+▶ captured batch Stop survives interruption without a duplicate or stale target
+  ✔ one confirmed Stop uses only captured target fields and shares its result (11.491152ms)
+  ✔ an unverified identity curtain does not block the captured Stop or reveal its response (1.009632ms)
+  ✔ a curtain raised during the request defers response adoption (0.743071ms)
+  ✔ stale epochs, missing identity and changed owners are rejected before any POST (1.536869ms)
+  ✔ the displayed workspace cannot retarget a captured batch (0.542637ms)
+  ✔ an epoch or owner change while POST is pending never adopts or refreshes stale UI (2.257601ms)
+  ✔ concurrent helper and finalizer calls share one pending POST (9.357119ms)
+  ✔ durable hold precedes transport and failed persistence never sends a request (0.803183ms)
+  ✔ owner change during durable hold prevents a stale Stop request (0.611889ms)
+  ✔ a lost response remains a failed attempt on every later call (5.173928ms)
+  ✔ synchronous transport failure is also attempted once (1.530433ms)
+  ✔ confirmation requires a fully parsed exact plan with stopped=true (5.261466ms)
+  ✔ a successful Stop followed by failed readback stays confirmed but is never resent (4.740702ms)
+  ✔ a curtain raised during readback prevents returning newly fetched private data (0.438667ms)
+  ✔ stale or foreign readback results cannot be returned as the captured workspace (0.665844ms)
+  ✔ a previously confirmed cached result cannot be reused after an account change (0.44242ms)
+  ✔ an already-attempted context without its promise cannot report false success or resend (0.538479ms)
+  ✔ the finalizer can deliver a requested Stop after submission response loss (9.033074ms)
+✔ captured batch Stop survives interruption without a duplicate or stale target (61.510184ms)
+▶ approved phone continuation is bounded, owner-bound and never grants approval
+  ✔ one explicit run processes a batch with fresh validation and pacing (67.346986ms)
+  ✔ at most twenty advances run even if changing responses remain authorized (66.573248ms)
+  ✔ a hidden page never starts a step and pauses after an in-flight step (5.898791ms)
+  ✔ explicit Stop wins over visibility and is sent once without another advance (1.623044ms)
+  ✔ Stop and visibility are rechecked after pacing (4.764069ms)
+  ✔ dispatching claims halt continuation whether present in a plan or receipt (0.750803ms)
+  ✔ a missing current plan never falls back to an old plan or another review (0.546231ms)
+  ✔ approval, profile revision, expiry and account status are rechecked before writes (1.26648ms)
+  ✔ elapsed 429 cooldown alone cannot trigger a retry (1.03994ms)
+  ✔ a new provider 429 can coexist with other ready jobs without being retried (2.678388ms)
+  ✔ HTTP 429, network and Stop errors propagate once with no retry (2.029651ms)
+  ✔ each returned workspace is checked against the captured account and workspace (1.644208ms)
+  ✔ review mutation and validation failure stop further requests (1.210653ms)
+  ✔ unchanged advance responses stop as waiting without retry or pacing (0.680187ms)
+  ✔ malformed returned data, invalid identifiers and oversized plans fail closed (3.099047ms)
+  ✔ terminal and already-stopped plans require no additional write (0.492357ms)
+✔ approved phone continuation is bounded, owner-bound and never grants approval (167.187144ms)
+▶ phone model keeps canonical identities and private local state separate
+  ✔ LinkedIn values have the same canonical boundary as the application service (6.711369ms)
+  ✔ Lever paths, arbitrary tracking queries and case share the actual remote posting identity (14.396373ms)
+  ✔ scope mismatch, duplicate jobs and noncanonical/contradictory imported records fail closed (26.478954ms)
+  ✔ civil dates and applied history survive stage transitions until explicit clearing (1.952582ms)
+  ✔ profile transport strips local notes, records, revision and resume metadata (3.530452ms)
+  ✔ exact review validates the target and every submitted profile/CV field (27.192299ms)
+  ✔ review requests bind a workspace, distinct UUIDs and explicit consent choices (16.795892ms)
+  ✔ review request budget measures serialized UTF-8 including repeated answers and JSON escaping (23.400234ms)
+✔ phone model keeps canonical identities and private local state separate (125.865322ms)
+✔ model schemas preserve serialized workspace, nullable review and blocked receipt contract fields (6.408199ms)
+✔ phone search accepts the published discovery status contract and preserves it in a restored search (27.682305ms)
+✔ each employer keeps separate exact answers and no missing answer is inferred (2.249848ms)
+✔ receipts require an application ID and consistent live evidence before confirmation (1.755866ms)
+✔ career preferences and an unfinished record stage survive encrypted recovery serialization (2.720978ms)
+✔ provider navigation accepts only official authorization endpoints and safe app returns (1.193446ms)
+✔ OAuth callback feedback only accepts exact provider and result enums once (0.44266ms)
+✔ actual recovery export refuses a late original-account response after identity revalidation starts (76.315103ms)
+▶ actual recovery rejects changed generations, hidden pages and replaced quarantine before export
+  ✔ generation (30.476783ms)
+  ✔ hidden (31.418508ms)
+  ✔ quarantine (21.30488ms)
+✔ actual recovery rejects changed generations, hidden pages and replaced quarantine before export (84.491031ms)
+▶ actual restoration rechecks identity after both vault and safety reads without losing original drafts
+  ✔ vault (17.721578ms)
+  ✔ safety (17.230401ms)
+✔ actual restoration rechecks identity after both vault and safety reads without losing original drafts (35.773275ms)
+✔ recovery cannot start during revalidation and legitimate owner export and restoration remain available (50.344182ms)
+✔ actual browser-worker parser accepts ordinary and object-stream PDFs and preserves bytes and checksum (517.938109ms)
+▶ actual browser-worker parser rejects malformed, truncated, encrypted, cyclic and deeply nested PDFs
+  ✔ malformed (459.528467ms)
+  ✔ truncated (126.18459ms)
+  ✔ encrypted (117.343015ms)
+  ✔ cyclic (440.886443ms)
+  ✔ nested (157.920823ms)
+✔ actual browser-worker parser rejects malformed, truncated, encrypted, cyclic and deeply nested PDFs (1304.689192ms)
+✔ actual browser-worker streaming inflation rejects expansion beyond the existing 16 MiB cap (1032.296361ms)
+✔ actual PDF selection keeps the prior valid local draft on every invalid file and only reports success after validation (403.771804ms)
+▶ actual PDF selection refuses late success after cancellation, identity invalidation or page replacement
+  ✔ abort (11.402664ms)
+  ✔ identity (11.4596ms)
+  ✔ generation (10.80692ms)
+✔ actual PDF selection refuses late success after cancellation, identity invalidation or page replacement (34.731901ms)
+✔ worker timeout, abort and unavailable streaming support fail closed and terminate work (118.632872ms)
+✔ verified connect returns only the official provider authorization URL and expected account (3.084017ms)
+✔ pending connect is aborted and its already completed reply ignored after card unmount (0.599375ms)
+✔ pending disconnect is not confirmed after card unmount (0.43096ms)
+✔ a synchronous identity recheck suppresses a late reply before React rerenders (0.184447ms)
+✔ hidden page cannot navigate or present a successful mutation (0.269304ms)
+✔ account switch cancels earlier work and preserves the new account view (0.232465ms)
+✔ disconnect sends the exact connection and revision captured by its confirmation (0.290425ms)
+✔ relink in the same account cannot reuse a confirmation for the former connection (0.827418ms)
+✔ identity refresh invalidates even a same-account same-connection confirmation (0.420056ms)
+✔ a relink observed while disconnect is in flight cannot produce success for its replacement (0.396888ms)
+✔ double activation cannot send a second request before React updates its busy state (0.254531ms)
+✔ effect cleanup and setup replay cannot revive the earlier request or disable the new card (0.373063ms)
+✔ current failures remain errors, obsolete failures are suppressed, and invalid destinations never navigate (0.333541ms)
+✔ unverified, missing or mismatched disconnect targets never send a mutation (0.310449ms)
+✔ connected-provider responses require an opaque generation without treating it as a credential (5.609598ms)
+ℹ tests 102
+ℹ suites 0
+ℹ pass 102
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5123.718346
+{
+  "ok": true,
+  "groups": 33,
+  "checks": [
+    "encrypted round trip preserves full draft, PDF, Unicode and unfinished fields",
+    "every save rotates the opaque key, IV and authenticated envelope ID",
+    "exact guest, account and workspace scopes remain isolated",
+    "metadata and ciphertext tampering fail closed without replacing the saved row",
+    "copying a row to another account or changing its plaintext owner cannot expose that owner's profile",
+    "future envelope versions are preserved, exportable and blocked until explicit reset",
+    "unknown future profile fields cannot be silently stripped on load or save",
+    "optional job fields receive safe defaults while known draft data remains intact",
+    "bad UTF-8, malformed JSON and duplicate canonical jobs preserve the original ciphertext",
+    "malformed present rows are not mistaken for an empty workspace",
+    "a new tab must load an existing draft before it can replace it",
+    "cross-tab changes are rejected and export does not adopt another tab's version",
+    "compare-and-set closes the race between the initial read and final encrypted commit",
+    "same-tab saves remain ordered and capture values before their queue starts",
+    "a reset cancels older queued saves and leaves no resurrected draft",
+    "deletion in another tab cannot be silently undone by an older draft",
+    "an empty-to-saved-to-reset change cannot bypass another tab's expected revision",
+    "quota failure keeps the prior ciphertext and allows a later explicit retry",
+    "read and delete failures never report an empty or successfully removed draft",
+    "exporting a repaired row does not clear a previous safety block",
+    "valid exports are readable snapshots and do not mutate stored data",
+    "metadata listing isolates exact accounts and never exposes encrypted content or keys",
+    "malformed and ambiguous scope identifiers never reach storage",
+    "invalid or oversized new fields do not replace the last valid draft",
+    "maximum collection counts, full Unicode notes and a 5 MB PDF survive a bounded round trip",
+    "an unfamiliar IndexedDB version surfaces a recovery-safe error without deleting databases",
+    "missing browser capabilities fail explicitly while module import remains SSR-safe",
+    "Stop intent survives reload, failed transport and other account scopes",
+    "recovery keeps unfinished profile and private notes without changing the main vault",
+    "concurrent safety updates merge Stop holds and recovery without losing either",
+    "clearing personal recovery keeps Stop locks and fences queued old draft saves",
+    "recovery quota failure preserves existing Stop intent and supports a later retry",
+    "discarding a stale recovery confirmation cannot erase newer edits"
+  ],
+  "coverage": "Actual Node WebCrypto + structured-cloned non-extractable keys; injected atomic storage port. Real browser IndexedDB acceptance remains a separate check."
+}

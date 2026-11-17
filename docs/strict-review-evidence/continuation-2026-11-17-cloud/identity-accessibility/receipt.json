@@ -1,0 +1,67 @@
+{
+  "scope": "Synthetic actual React/CSS review; no real account/network/store/deployment acceptance",
+  "tested": {
+    "privacy_initial_failure": "Confirmed before stale SSR email/account tools shown after401 with zero confirmedworkspace; after guard none rendered, public retry card appears",
+    "focus_320_200": {
+      "before": {
+        "top": 712.21875,
+        "bottom": 786.21875,
+        "navTop": 734.40625,
+        "coveredPixels": 51.8125
+      },
+      "after": {
+        "top": 642.21875,
+        "bottom": 716.21875,
+        "navTop": 734.40625,
+        "clearancePixels": 18.1875
+      },
+      "classification": "Partial obscuring; not a demonstrated WCAG2.4.11 AA entire-hide failure"
+    },
+    "appearance_320_200": "Before descriptions crossed card boundaries; afterall3choicesfitowncards withzerooverflow.320/100%still3columns.",
+    "modal_opener_focus": "Top-level fixture before Close leftBODY; after layout cleanup EscapeandClose restoreSign-in button",
+    "modal_320_200": {
+      "beforeWidth": 235,
+      "afterWidth": 296,
+      "afterClientWidth": 279,
+      "afterScrollWidth": 279
+    }
+  },
+  "limitations": [
+    "Roottext200% stresscheck, notnativebrowserzoom",
+    "LinuxCloudChrome syntheticresponses, notphysicaliOS/Android orscreenreaderacceptance",
+    "Liveproviderconsentandrealaccountisolationnotrun",
+    "Englishcandidate; Arabic/RTLverificationstillrequired",
+    "IframeTabboundary behaviornotassertedastop-leveldialogtrapfailure"
+  ],
+  "sourceHashes": {
+    "app/phone/PhoneApp.tsx": "9c146b0536551a7dbe780dacab03b7ba24663ab1334809679784d69920f324b2",
+    "app/phone/components.tsx": "2a7f283137a31bbd1f925da61c8b58f8b0f9834a0c785c4e0fae7fe8b2e696e4",
+    "app/phone/phone.css": "d04eb6e1bf35db1392927b387b97b1b3fdde3ac3373f214c592d0894d9cbe366",
+    "app/phone/navigation-inset.ts": "f7d92f4bf6889ba528d976b77266d0757aca781bb5c93474fc5fe7569f5973aa",
+    "app/globals.css": "5f3ff2d03d7877d07bd05d537f196a83f1341b15f3aebbe1d9afb8f4ed954acf",
+    "tests/phone-settings-privacy.mjs": "24d094f360b6b518ee58324f07cb1275494706fe4ef2a0b94a079ce708d9c05c",
+    "tests/phone-navigation-inset.mjs": "9d9251c99680a387ac41ac0dfc8e94badd611f941053d48204549a8694447300",
+    "tests/build-phone-viewport.mjs": "caa91ff2adc065be073b93f94277183e6a908e3476dcd08884da0072f9cf946e"
+  },
+  "evidenceFiles": {
+    "career-dialog-320-text200-dark.jpg": "3f38b6888ac1ae2065e648b735bed54389e73b4a3d3d74bc0cf204575fad6d4d",
+    "before-source-manifest.json": "fc3e268fa5468f1f6e75f354d18e489a2e3e14cfe6526c7fe8ab3c869ee741cb",
+    "after-source-manifest.json": "ebe6b3c4a79e657ebe7f19634d9ffc8d4de9d5ee09054013556d302b697e251d",
+    "career-focus-320-text200-after.json": "691fb7a7608ca146f0a792f9f10bd101338fca6cbb364e5a6e8046834e59c7a8",
+    "career-focus-320-text200-before.jpg": "73fab010be9bd303e0880f8268d11b3dfde3f75539ccb5f5369b521007ad0f67",
+    "career-focus-320-text200-before.json": "572c5a8e8eb1337009a5fc8d947e72a147914b84bb7732d7463ac3eb7d8cffa8",
+    "career-settings-unconfirmed-before.jpg": "3626f3bc17b529e6b094eb0616c606603c3531d0e5c64da5f91a3d1b90d9c5e7",
+    "career-appearance-320-text200-before.json": "450dc4e77b32b41c52d02253bc51498636b4727873c03db0033eb956aa4fe437",
+    "career-dialog-focus-return-before.json": "b16b341b34fb869aaa865337084d2d3576f68b6bc20cc3429a9fb2aa00d4784a",
+    "career-appearance-320-text200-after.json": "ce91b63d9342a81371c20af214f52f316cbf9a9902ec1b7d7f503be655f75f0d",
+    "career-dialog-320-text200-dark-after.jpg": "a8125231ed0b0b39ead70e1a45bd47a9d50d9520f5953b7619aed98152cc896e",
+    "career-dialog-320-text200-dark-after.json": "92900fb2c76123a7f7ffbdf462993294131e8e234ae052ac29f7c176f394d76b",
+    "career-settings-unconfirmed-before.txt": "37ff2622b5cf4e0b9ab8658379a0ed1c7f9ee0deb6011ab1fe3d74395e2347fc",
+    "career-appearance-320-text200-after.jpg": "6a473dfcf1a9e0c35222895e7e6aa1b34e1330bd27e9ee968998a27f4904148a",
+    "career-settings-unconfirmed-after.jpg": "776c357d3e5502c56730eac5af3d1a9d32a3177b6475c03b78c974becf8df610",
+    "career-appearance-320-text200-before.jpg": "f4db3ce10abfd348572c8025f42c93319ec20be8f5c2e622e0c0fa6305637443",
+    "career-settings-unconfirmed-after.txt": "2b4d01acd3ee884a2d3eb581a118703454d39d6aa11d91d39480dd6ae65d0a99",
+    "career-dialog-focus-return-after.json": "a2402ae639315d352f6341b006ce313a0efc7b401761de9a9ebb0db4f7de2b4a",
+    "career-focus-320-text200-after.jpg": "2f040d9ba349e62a8775d195bd6134b5ee84ea057b85abaacefe8e3a804f5cdb"
+  }
+}

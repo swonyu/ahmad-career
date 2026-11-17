@@ -55,10 +55,10 @@ export function today(): string {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 }
-export function friendlyDate(input: string): string {
+export function friendlyDate(input: string, language?: "en" | "ar"): string {
   if (!civilDate(input)) return input;
   const [year, month, day] = input.split("-").map(Number);
-  return new Intl.DateTimeFormat(undefined, { year: "numeric", month: "short", day: "numeric" }).format(new Date(year, month - 1, day, 12));
+  return new Intl.DateTimeFormat(language === "ar" ? "ar-SA-u-ca-gregory-nu-arab" : language, { year: "numeric", month: "short", day: "numeric" }).format(new Date(year, month - 1, day, 12));
 }
 const boundedText = (max: number) => z.string().max(max).refine(v => !/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/.test(v), "Unsupported control characters");
 const https = z.string().max(2048).refine(v => { try { publicURL(v); return true; } catch { return false; } }, "Invalid HTTPS URL");

@@ -1,0 +1,55 @@
+{
+  "recordedAt": "2026-11-17T09:03:58.171857+00:00",
+  "source": "Connected Chrome Google Auth Platform UI and Sites private configuration connector",
+  "projectId": "career-finder-515007",
+  "clientType": "Web application",
+  "clientName": "Career Finder web sign-in",
+  "redirectUris": [
+    "https://career-finder-service.jazzy-drake-8323.chatgpt.site/auth/google/callback"
+  ],
+  "javascriptOrigins": [],
+  "clientCreated": true,
+  "clientEnabled": true,
+  "clientCredentialsStored": true,
+  "secretValuesRecordedInEvidence": false,
+  "sitesProjectId": "appgprj_6afb13851fb4819193358d5db54e73b7",
+  "sitesConfigurationRevision": 1,
+  "sitesConfigurationUpdatedAt": "2026-11-17T08:01:14.075270+00:00",
+  "privateConfigurationKeys": [
+    "CAREER_GOOGLE_CLIENT_ID",
+    "CAREER_GOOGLE_CLIENT_SECRET"
+  ],
+  "scopesSaved": [
+    "openid",
+    "https://www.googleapis.com/auth/userinfo.email",
+    "https://www.googleapis.com/auth/userinfo.profile"
+  ],
+  "sensitiveScopes": [],
+  "restrictedScopes": [],
+  "audience": "External",
+  "publishingStatus": "Testing",
+  "testUserCount": 1,
+  "testUserIdentityRecorded": false,
+  "audienceObservation": "After dismissing an ineligible-accounts dialog, the Audience table displayed one existing owner test user. Duplicate addition may have raced the first save. No second test user was added.",
+  "billingAccountSelected": false,
+  "paidServiceEnabled": false,
+  "brandConfigurationComplete": true,
+  "deployedWithConfigurationRevision1": false,
+  "realConsentCallbackVerified": false,
+  "liveSiteVersion": 7,
+  "liveSiteSource": "1135a3270435d3719c6f62f1a2e3a53e2c040146",
+  "limitations": [
+    "Secret storage is not proof of runtime activation.",
+    "Testing console configuration is not public provider verification.",
+    "No real account was deleted or employer application submitted."
+  ],
+  "initialCheckpointRecordedAt": "2026-11-17T08:24:00Z",
+  "branding": {
+    "homePage": "https://career-finder-service.jazzy-drake-8323.chatgpt.site/phone",
+    "privacyPolicy": "https://career-finder-service.jazzy-drake-8323.chatgpt.site/privacy",
+    "termsOfService": "Not supplied (optional field)",
+    "authorizedDomain": "jazzy-drake-8323.chatgpt.site",
+    "observation": "Connected Chrome showed Branding changes saved and disabled Save after these values were submitted; support/contact identities are intentionally omitted from this public receipt.",
+    "observedDuring": "Continuation session before 2026-11-17T08:43:57Z; exact save timestamp was not separately captured."
+  }
+}

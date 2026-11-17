@@ -30,7 +30,7 @@ class PhoneAcceptanceTest {
         compose.onNodeWithTag("jobs-saved-tab").performClick()
         compose.onNodeWithTag("jobs-list").performScrollToNode(hasText("Start with one good opportunity."))
         compose.onNodeWithText("Start with one good opportunity.").assertIsDisplayed()
-        compose.onNodeWithText("Auto Apply").performClick()
+        compose.onNodeWithText("Apply").performClick()
         compose.onNodeWithTag("apply-list").performScrollToNode(hasText("Connect when you’re ready."))
         compose.onNodeWithText("Connect when you’re ready.").assertIsDisplayed()
         compose.onNodeWithText("Receipts").performClick()

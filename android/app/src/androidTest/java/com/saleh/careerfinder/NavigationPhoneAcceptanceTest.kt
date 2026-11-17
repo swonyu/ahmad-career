@@ -69,7 +69,7 @@ class NavigationPhoneAcceptanceTest {
         compose.activityRule.scenario.onActivity { activity ->
             model = CareerViewModel(activity.application, store, service, discoveryService = publicService)
             owner.put("navigation-phone", model)
-            activity.setContent { CareerTheme { CareerApp(model) } }
+            activity.setContent { CareerLanguage { CareerTheme { CareerApp(model) } } }
         }
         compose.waitUntil(5_000) { model.state.value.loaded && !model.state.value.busy }
     }
@@ -182,7 +182,9 @@ class NavigationPhoneAcceptanceTest {
         compose.waitUntil(5_000) { !model.state.value.busy && removed.id in model.state.value.manualApplied }
         compose.runOnIdle { model.removeLocalOpportunity(removed.id) }
         compose.waitUntil(5_000) { !model.state.value.busy && model.state.value.jobs.isEmpty() }
-        compose.onNodeWithContentDescription("Connection and privacy settings").performClick()
+        compose.onNodeWithTag("open-settings").performClick()
+        compose.onNodeWithTag("settings-list").performScrollToNode(hasTestTag("settings-connection"))
+        compose.onNodeWithTag("settings-connection").performClick()
         compose.onNodeWithTag("phone-connection").performScrollToNode(hasText("1. Sign in and get a code"))
         compose.onNodeWithText("1. Sign in and get a code").assertIsDisplayed()
         compose.onNodeWithTag("phone-connection").performScrollToNode(hasText("Sign in and get a code", substring = false))
@@ -202,7 +204,9 @@ class NavigationPhoneAcceptanceTest {
         compose.waitUntil(5_000) { !model.state.value.busy && model.state.value.connection != null }
         assertEquals(listOf("https://custom.example.invalid" to "SYNTHETIC-123"), service.pairs.toList())
         assertTrue(service.routes.all { it == "workspace" })
-        compose.onNodeWithContentDescription("Connection and privacy settings").performClick()
+        compose.onNodeWithTag("open-settings").performClick()
+        compose.onNodeWithTag("settings-list").performScrollToNode(hasTestTag("settings-connection"))
+        compose.onNodeWithTag("settings-connection").performClick()
         compose.onNodeWithTag("phone-connection").performScrollToNode(hasText("HTTPS service address") and hasSetTextAction())
         compose.onNode(hasText("HTTPS service address") and hasSetTextAction()).assertTextContains("https://custom.example.invalid")
         capture("custom-connection-address")
@@ -222,6 +226,44 @@ class NavigationPhoneAcceptanceTest {
         assertTrue(model.state.value.unbookmarkedRecords.single().appliedElsewhere)
         assertTrue(model.state.value.receipts.isEmpty())
         assertTrue(searches.isEmpty()); assertEquals(0, catalogCalls)
+    }
+
+    @Test fun settingsAppearance_survivesActivityRecreation_withoutChangingWorkspaceOrCallingService() {
+        val preferences = compose.activity.getSharedPreferences(APPEARANCE_PREFERENCES, android.content.Context.MODE_PRIVATE)
+        val previous = preferences.getString(APPEARANCE_KEY, null)
+        try {
+            compose.runOnIdle { preferences.edit().remove(APPEARANCE_KEY).commit() }
+            val job = addJob()
+            val scope = model.state.value.privateScope
+            compose.onNodeWithTag("open-settings").performClick()
+            compose.onNodeWithTag("settings-list").performScrollToNode(hasTestTag("appearance-system"))
+            compose.onNodeWithTag("appearance-system").assertIsSelected()
+            compose.onNodeWithTag("settings-list").performScrollToNode(hasTestTag("appearance-dark"))
+            compose.onNodeWithTag("appearance-dark").performClick().assertIsSelected()
+            assertEquals("dark", preferences.getString(APPEARANCE_KEY, null))
+            capture("settings-dark")
+            compose.runOnIdle { owner.clear(); owner = ViewModelStore() }
+            compose.activityRule.scenario.recreate()
+            createModel()
+            compose.onNodeWithTag("navigation-settings").performClick().assertIsSelected()
+            compose.onNodeWithTag("settings-list").performScrollToNode(hasTestTag("appearance-dark"))
+            compose.onNodeWithTag("appearance-dark").assertIsSelected()
+            assertEquals(scope, model.state.value.privateScope)
+            assertEquals(job, model.state.value.jobs.single())
+            compose.onNodeWithTag("settings-list").performScrollToNode(hasTestTag("appearance-light"))
+            compose.onNodeWithTag("appearance-light").performClick().assertIsSelected()
+            capture("settings-light")
+            compose.onNodeWithTag("settings-list").performScrollToNode(hasTestTag("appearance-system"))
+            compose.onNodeWithTag("appearance-system").performClick().assertIsSelected()
+            compose.onNodeWithText("Profile").performClick()
+            compose.onNodeWithTag("profile-list").assertIsDisplayed()
+            assertTrue(service.pairs.isEmpty()); assertTrue(service.routes.isEmpty())
+            assertTrue(searches.isEmpty()); assertEquals(0, catalogCalls)
+        } finally {
+            compose.runOnIdle {
+                preferences.edit().apply { if (previous == null) remove(APPEARANCE_KEY) else putString(APPEARANCE_KEY, previous) }.commit()
+            }
+        }
     }
 
     @Test fun recreatedPhone_showsPreviousResults_andSearchAgainIsAnExplicitFreshRequest() {

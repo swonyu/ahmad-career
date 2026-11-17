@@ -1,0 +1,34 @@
+{
+  "scope": "Isolated indigo icon asset review; no runtime, device or release claim",
+  "passes": [
+    {
+      "pass": 1,
+      "focus": "User's no-green direction and geometry",
+      "finding": "Previous palette was explicitly rejected; the strong broad rising-path silhouette remains useful at small sizes.",
+      "action": "Edited artwork with built-in imagegen to midnight, ivory and periwinkle; retained the silhouette and safe margins.",
+      "result": "RGB opaque source inspected; zero measured green/teal pixels; slight low-contrast bitmap variation disclosed."
+    },
+    {
+      "pass": 2,
+      "focus": "Small size and platform masks",
+      "finding": "The ordinary unpadded icon should not be marked as a maskable source because the full mark exceeds the stricter maskable safe circle.",
+      "action": "Prepared dedicated opaque PWA and Android padding variants with no creative source edits.",
+      "result": "PWA max foreground radius 0.383572 < 0.4; Android max radius 0.298068 < 33/108; point and tail remain visible in QA simulations."
+    },
+    {
+      "pass": 3,
+      "focus": "Consistency, provenance and file acceptance",
+      "finding": "Active selectors currently refer to old artwork; asset creation alone does not update a running app or installed web app.",
+      "action": "Supplied matching Apple filenames, Android mipmap resources, web metadata guidance, exact provenance and verification manifest. Root owns integration.",
+      "result": "23 integration images are opaque; all PNGs RGB; ICO frames opaque; both XML files parse; Apple catalog names match."
+    }
+  ],
+  "visual_observations": {
+    "small_sizes": "Upward point and broad curved path remain distinct at 24 pixels; the overall directional silhouette remains recognizable at 16 pixels.",
+    "mask_simulations": "Rounded-square, circle, PWA maskable and Android adaptive simulations retain the full significant mark.",
+    "surfaces": "Midnight canvas separates from a light surface; ivory and periwinkle remain clear on a dark surface.",
+    "style": "One bold two-plane mark without text, fine detail, stock briefcase or checkmark clutter."
+  },
+  "parent_independent_review": "Root independently inspected and accepted the large preview, actual small sizes and mask contact sheet before copying integration assets; recorded in the coordination message on 2026-11-17. No native launcher/device claim.",
+  "runtime_or_device_tests_run": false
+}

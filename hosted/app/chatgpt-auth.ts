@@ -6,7 +6,7 @@ export type ChatGPTUser = {
   displayName: string;
   email: string;
   fullName: string | null;
-  method: "chatgpt" | "google";
+  method: "chatgpt" | "google" | "linkedin";
 };
 
 // Worker strips inbound x-career-* headers, resolves the current browser identity
@@ -24,7 +24,7 @@ export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
   const userId = safeDecodeURIComponent(requestHeaders.get(USER_ID_HEADER) ?? "");
   const email = safeDecodeURIComponent(requestHeaders.get(USER_EMAIL_HEADER) ?? "");
   const method = requestHeaders.get(USER_METHOD_HEADER);
-  if (!userId || !email || (method !== "chatgpt" && method !== "google")) return null;
+  if (!userId || !email || (method !== "chatgpt" && method !== "google" && method !== "linkedin")) return null;
 
   const encodedFullName = requestHeaders.get(USER_FULL_NAME_HEADER);
   const fullName =

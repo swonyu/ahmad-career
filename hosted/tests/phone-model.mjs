@@ -152,5 +152,19 @@ test('provider navigation accepts only official authorization endpoints and safe
 test('OAuth callback feedback only accepts exact provider and result enums once',()=>{
   assert.deepEqual(auth.oauthReturn('?oauth_provider=google&oauth_result=signed_in'),{provider:'google',result:'signed_in'});
   assert.deepEqual(auth.oauthReturn('?oauth_provider=linkedin&oauth_result=cancelled&error_description=untrusted'),{provider:'linkedin',result:'cancelled'});
-  for(const query of ['','?oauth_provider=evil&oauth_result=connected','?oauth_provider=google&oauth_result=<script>','?oauth_provider=google&oauth_provider=linkedin&oauth_result=connected','?oauth_provider=google&oauth_result=connected&oauth_result=failed'])assert.equal(auth.oauthReturn(query),null);
+  assert.deepEqual(auth.oauthReturn('?oauth_provider=linkedin&oauth_result=email_required'),{provider:'linkedin',result:'email_required'});
+  for(const query of ['','?oauth_provider=google&oauth_result=email_required','?oauth_provider=evil&oauth_result=connected','?oauth_provider=google&oauth_result=<script>','?oauth_provider=google&oauth_provider=linkedin&oauth_result=connected','?oauth_provider=google&oauth_result=connected&oauth_result=failed'])assert.equal(auth.oauthReturn(query),null);
+});
+
+
+test('provider status represents LinkedIn login without treating older basic-link backends as sign-in support',()=>{
+  const disconnected={configured:true,connected:false};
+  const base={ok:true,account:null,providers:{google:disconnected,linkedin:disconnected}};
+  const previous=auth.authStatusSchema.parse(base);
+  assert.equal(previous.providers.linkedin.signInSupported,false);
+  assert.equal(previous.providers.google.signInSupported,false);
+  const current=auth.authStatusSchema.parse({...base,account:{id:'synthetic-linkedin-owner',email:'person@example.com',displayName:'Synthetic Person',method:'linkedin'},providers:{...base.providers,linkedin:{...disconnected,signInSupported:true,connected:true,connectionId:'a'.repeat(64)}}});
+  assert.equal(current.account.method,'linkedin');assert.equal(current.providers.linkedin.signInSupported,true);
+  for(const method of ['unknown','LinkedIn',''])assert.throws(()=>auth.authStatusSchema.parse({...base,account:{...current.account,method}}));
+  assert.throws(()=>auth.authStatusSchema.parse({...base,providers:{...base.providers,linkedin:{...disconnected,connected:true,signInSupported:true}}}));
 });

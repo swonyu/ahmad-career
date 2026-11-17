@@ -2,6 +2,7 @@
 import SwiftUI
 
 struct NativeDiscoveryScreen: View {
+    @NativeLocalization private var l10n
     @EnvironmentObject private var discovery: CareerDiscoveryStore
     @State private var choosingBoards = false
     private enum SearchField: Hashable { case keywords, location }
@@ -9,79 +10,79 @@ struct NativeDiscoveryScreen: View {
     var body: some View {
         List {
             Section {
-                Text("Find your next opportunity.").font(.title2.weight(.bold)).fixedSize(horizontal: false, vertical: true)
-                Text("Search selected public employer boards across locations and professions. You choose which boards and search words to use.")
+                Text(l10n("Find your next opportunity.")).font(.title2.weight(.bold)).fixedSize(horizontal: false, vertical: true)
+                Text(l10n("Search selected public employer boards across locations and professions. You choose which boards and search words to use."))
                     .font(.subheadline).foregroundStyle(.secondary)
-                TextField("Role, skill or keyword", text: $discovery.query.keywords)
+                TextField(l10n("Role, skill or keyword"), text: $discovery.query.keywords)
                     .focused($focusedField, equals: .keywords).submitLabel(.search).onSubmit { beginSearch() }
                     .accessibilityIdentifier("discovery.keywords")
-                TextField("Location text (optional)", text: $discovery.query.location)
+                TextField(l10n("Location text (optional)"), text: $discovery.query.location)
                     .focused($focusedField, equals: .location).submitLabel(.search).onSubmit { beginSearch() }
                     .accessibilityIdentifier("discovery.location")
-                Toggle("Remote roles only", isOn: $discovery.query.remoteOnly)
+                Toggle(l10n("Remote roles only"), isOn: $discovery.query.remoteOnly)
                     .accessibilityIdentifier("discovery.remote")
                 Button { focusedField = nil; choosingBoards = true } label: {
-                    Label(boardLabel, systemImage: "building.2")
+                    Label(l10n(boardLabel), systemImage: "building.2")
                 }.accessibilityIdentifier("discovery.chooseBoards")
                 if discovery.isSearching {
-                    ProgressView("Checking your employer boards…")
-                    Button("Cancel search", role: .cancel) { discovery.cancelSearch() }
+                    ProgressView(l10n("Checking your employer boards…"))
+                    Button(l10n("Cancel search"), role: .cancel) { discovery.cancelSearch() }
                         .accessibilityIdentifier("discovery.cancel")
                 } else {
                     Button(action: beginSearch) {
-                        Label("Search jobs", systemImage: "magnifyingglass").font(.headline).padding(.vertical, 6)
+                        Label(l10n("Search jobs"), systemImage: "magnifyingglass").font(.headline).padding(.vertical, 6)
                     }.accessibilityIdentifier("discovery.search")
                 }
             } footer: {
-                Text("Search sends only these words and board choices to the public discovery service. No account, application profile or CV is sent. Remote wording does not establish where you can legally work.")
+                Text(l10n("Search sends only these words and board choices to the public discovery service. No account, application profile or CV is sent. Remote wording does not establish where you can legally work."))
             }
             Section {
                 if let url = MobileApplicationPolicy.linkedInJobSearchURL(keywords: discovery.query.keywords, location: discovery.query.location) {
-                    Link(destination: url) { Label("Search LinkedIn", systemImage: "arrow.up.right.square") }
+                    Link(destination: url) { Label(l10n("Search LinkedIn"), systemImage: "arrow.up.right.square") }
                         .accessibilityIdentifier("discovery.linkedin")
                 } else {
-                    Text("Shorten your search to 120 characters and location to 100 characters to open LinkedIn.")
+                    Text(l10n("Shorten your search to 120 characters and location to 100 characters to open LinkedIn."))
                         .font(.footnote).foregroundStyle(.secondary)
                 }
             } footer: {
-                Text("Opens LinkedIn with only your keyword and location text. LinkedIn manages its own sign-in and applications. Career Finder does not read your LinkedIn account or verify applications submitted there.")
+                Text(l10n("Opens LinkedIn with only your keyword and location text. LinkedIn manages its own sign-in and applications. Career Finder does not read your LinkedIn account or verify applications submitted there."))
             }
             if let error = discovery.error {
                 Section {
-                    Label(error, systemImage: "exclamationmark.circle")
+                    Label(l10n.message(error), systemImage: "exclamationmark.circle")
                         .font(.subheadline).fixedSize(horizontal: false, vertical: true)
-                        .accessibilityElement(children: .ignore).accessibilityLabel(error)
+                        .accessibilityElement(children: .ignore).accessibilityLabel(l10n.message(error))
                         .accessibilityAddTraits(.isStaticText).accessibilityIdentifier("discovery.error")
                     if let retry = discovery.retryAfter {
-                        Text("Try again after \(retry.formatted(date: .omitted, time: .shortened)).").font(.footnote)
+                        Text(l10n.format("Try again after {0}.", [String(describing: l10n.time(retry))])).font(.footnote)
                     }
                     if discovery.catalog == nil && !discovery.loadingCatalog {
-                        Button("Retry employer directory") { Task { await discovery.loadCatalog() } }
+                        Button(l10n("Retry employer directory")) { Task { await discovery.loadCatalog() } }
                     }
                 }
             }
             if let notice = discovery.storageNotice {
-                Section { Label(notice, systemImage: "exclamationmark.triangle").font(.footnote) }
+                Section { Label(l10n(notice), systemImage: "exclamationmark.triangle").font(.footnote) }
             }
             if let page = discovery.page {
                 Section {
                     if discovery.restoredResults || discovery.criteriaChanged {
-                        Label(discovery.criteriaChanged ? "Previous search — update the search to use your current fields." : "Previous results — search again to check availability.", systemImage: "clock.arrow.circlepath")
+                        Label(l10n(discovery.criteriaChanged ? "Previous search — update the search to use your current fields." : "Previous results — search again to check availability."), systemImage: "clock.arrow.circlepath")
                             .font(.footnote).foregroundStyle(.secondary)
                     }
-                    if let criteria = discovery.lastQuery { Text(criteria.summary).font(.subheadline).fixedSize(horizontal: false, vertical: true) }
-                    DisclosureGroup("Employer coverage and freshness") {
+                    if let criteria = discovery.lastQuery { Text(l10n(criteria.summary)).font(.subheadline).fixedSize(horizontal: false, vertical: true) }
+                    DisclosureGroup(l10n("Employer coverage and freshness")) {
                         ForEach(page.sources) { source in
                             VStack(alignment: .leading, spacing: 5) {
                                 Label(source.name, systemImage: source.status == "unavailable" ? "exclamationmark.circle" : source.status == "stale" ? "clock" : "building.2")
                                     .font(.subheadline.weight(.semibold))
-                                Text(sourceStatus(source)).font(.caption).foregroundStyle(.secondary)
-                                if let message = source.error?.message { Text(message).font(.caption).fixedSize(horizontal: false, vertical: true) }
+                                Text(l10n(sourceStatus(source))).font(.caption).foregroundStyle(.secondary)
+                                if let message = source.error?.message { Text(l10n(message)).font(.caption).fixedSize(horizontal: false, vertical: true) }
                             }.padding(.vertical, 4).accessibilityElement(children: .combine)
                         }
-                        Text(page.notice).font(.footnote).foregroundStyle(.secondary)
+                        Text(l10n(page.notice)).font(.footnote).foregroundStyle(.secondary)
                     }
-                } header: { Text("\(discovery.jobs.count) opportunities to review") }
+                } header: { Text(l10n.format("{0} opportunities to review", [String(describing: discovery.jobs.count)])) }
             }
             Section {
                 if discovery.jobs.isEmpty {
@@ -92,33 +93,33 @@ struct NativeDiscoveryScreen: View {
                             VStack(alignment: .leading, spacing: 7) {
                                 Text(job.title).font(.headline).fixedSize(horizontal: false, vertical: true)
                                 Text(job.company).font(.subheadline).foregroundStyle(.secondary)
-                                Text(job.location.isEmpty ? "Location not specified" : job.location).font(.caption).foregroundStyle(.secondary)
-                                if job.remote == true { Label("Remote wording found", systemImage: "globe").font(.caption) }
-                                if job.stale || discovery.restoredResults { Label("Previous result · check employer", systemImage: "clock").font(.caption).foregroundStyle(.secondary) }
+                                Text(job.location.isEmpty ? l10n("Location not specified") : job.location).font(.caption).foregroundStyle(.secondary)
+                                if job.remote == true { Label(l10n("Remote wording found"), systemImage: "globe").font(.caption) }
+                                if job.stale || discovery.restoredResults { Label(l10n("Previous result · check employer"), systemImage: "clock").font(.caption).foregroundStyle(.secondary) }
                             }.padding(.vertical, 6)
                         }.accessibilityIdentifier("discovery.job.\(job.id)")
                     }
                     if discovery.canLoadMore {
-                        Button("Load more results") { Task { await discovery.search(more: true) } }
+                        Button(l10n("Load more results")) { Task { await discovery.search(more: true) } }
                             .accessibilityIdentifier("discovery.loadMore")
                     }
                 }
             }
         }
         .listStyle(.insetGrouped).scrollDismissesKeyboard(.interactively)
-        .navigationTitle("Search jobs").navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(l10n("Search jobs")).navigationBarTitleDisplayMode(.inline)
         .task { await discovery.loadCatalog() }
         .sheet(isPresented: $choosingBoards) { NativeDiscoveryBoards() }
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
-                Button("Search jobs", action: beginSearch)
+                Button(l10n("Search jobs"), action: beginSearch)
                     .disabled(discovery.isSearching).accessibilityIdentifier("discovery.keyboardSearch")
                 Spacer()
-                Button("Done typing") { focusedField = nil }
+                Button(l10n("Done typing")) { focusedField = nil }
             }
         }
         .onChange(of: discovery.error) { issue in
-            if let issue { UIAccessibility.post(notification: .announcement, argument: issue) }
+            if let issue { UIAccessibility.post(notification: .announcement, argument: l10n.message(issue)) }
         }
     }
     private var boardLabel: String {
@@ -133,21 +134,22 @@ struct NativeDiscoveryScreen: View {
         case "stale": availability = "Earlier cached result — recheck employer"
         default: availability = "Unavailable — this does not mean there are no openings"
         }
-        return availability + " · \(source.matchedCount) matched" + (source.limited ? " · bounded sample" : "")
+        return l10n(availability) + l10n.format(" · {0} matched", [String(source.matchedCount)]) + (source.limited ? l10n(" · bounded sample") : "")
     }
     private var emptyState: some View {
         VStack(alignment: .leading, spacing: 12) {
             Image(systemName: "magnifyingglass").font(.title).accessibilityHidden(true)
-            Text(discovery.isSearching ? "Checking employer boards…" : discovery.page == nil ? "A fresh search starts with you." : discovery.page?.status == "unavailable" ? "These boards could not be checked." : "No roles match this search.")
+            Text(l10n(discovery.isSearching ? "Checking employer boards…" : discovery.page == nil ? "A fresh search starts with you." : discovery.page?.status == "unavailable" ? "These boards could not be checked." : "No roles match this search."))
                 .font(.headline).fixedSize(horizontal: false, vertical: true)
-            Text(discovery.page == nil ? "Use a role or skill, add a location if you want, and choose up to four Greenhouse or Lever employer boards. Tap Search jobs when you are ready."
-                 : "Try fewer keywords, another location or a different employer board. Results cover the selected boards, not every employer or country. Your saved opportunities are unchanged.")
+            Text(l10n(discovery.page == nil ? "Use a role or skill, add a location if you want, and choose up to four Greenhouse or Lever employer boards. Tap Search jobs when you are ready."
+                 : "Try fewer keywords, another location or a different employer board. Results cover the selected boards, not every employer or country. Your saved opportunities are unchanged."))
                 .font(.subheadline).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
         }.padding(.vertical, 16).accessibilityElement(children: .combine).accessibilityIdentifier("discovery.empty")
     }
 }
 
 private struct NativeDiscoveryBoards: View {
+    @NativeLocalization private var l10n
     @EnvironmentObject private var discovery: CareerDiscoveryStore
     @Environment(\.dismiss) private var dismiss
     @State private var boardURL = ""
@@ -156,55 +158,56 @@ private struct NativeDiscoveryBoards: View {
             Form {
                 Section {
                     Button { discovery.useDefaultSources() } label: {
-                        Label("Use suggested boards", systemImage: discovery.query.sources.isEmpty ? "checkmark.circle.fill" : "circle")
+                        Label(l10n("Use suggested boards"), systemImage: discovery.query.sources.isEmpty ? "checkmark.circle.fill" : "circle")
                     }
-                    Text("Select up to four boards to replace the suggestions.")
+                    Text(l10n("Select up to four boards to replace the suggestions."))
                         .font(.footnote).foregroundStyle(.secondary)
                 }
                 if let catalog = discovery.catalog {
-                    Section("Choose employers") {
+                    Section(l10n("Choose employers")) {
                         ForEach(catalog.sources) { source in
                             Button { discovery.toggleSource(source.id) } label: {
                                 HStack(alignment: .top) {
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text(source.name).foregroundStyle(.primary)
-                                        Text(source.provider == "greenhouse" ? "Greenhouse board" : "Lever board").font(.caption).foregroundStyle(.secondary)
+                                        Text(l10n(source.provider == "greenhouse" ? "Greenhouse board" : "Lever board")).font(.caption).foregroundStyle(.secondary)
                                     }
                                     Spacer(minLength: 8)
                                     Image(systemName: discovery.query.sources.contains(source.id) ? "checkmark.circle.fill" : "circle")
                                 }.padding(.vertical, 4)
-                            }.accessibilityValue(discovery.query.sources.contains(source.id) ? "Selected" : "Not selected")
+                            }.accessibilityValue(l10n(discovery.query.sources.contains(source.id) ? "Selected" : "Not selected"))
                         }
                     }
-                } else if discovery.loadingCatalog { ProgressView("Loading employer directory") }
+                } else if discovery.loadingCatalog { ProgressView(l10n("Loading employer directory")) }
                 let known = Set(discovery.catalog?.sources.map(\.id) ?? [])
                 let custom = discovery.query.sources.filter { !known.contains($0) }
                 if !custom.isEmpty {
-                    Section("Your added boards") {
+                    Section(l10n("Your added boards")) {
                         ForEach(custom, id: \.self) { source in
                             VStack(alignment: .leading, spacing: 8) {
                                 Text(source).font(.footnote).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
-                                Button("Remove board", role: .destructive) { discovery.toggleSource(source) }
+                                Button(l10n("Remove board"), role: .destructive) { discovery.toggleSource(source) }
                             }
                         }
                     }
                 }
                 Section {
-                    TextField("Public employer board URL", text: $boardURL).keyboardType(.URL)
+                    TextField(l10n("Public employer board URL"), text: $boardURL).keyboardType(.URL)
                         .textInputAutocapitalization(.never).autocorrectionDisabled().accessibilityIdentifier("discovery.boardURL")
-                    Button("Add this board") { if discovery.addBoard(boardURL) { boardURL = "" } }
+                    Button(l10n("Add this board")) { if discovery.addBoard(boardURL) { boardURL = "" } }
                         .disabled(boardURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                } header: { Text("Add an employer board") } footer: {
-                    Text("Supports boards.greenhouse.io, job-boards.greenhouse.io, jobs.lever.co and jobs.eu.lever.co. You can paste a board or a posting on one of those hosts. Adding it does not search until you tap Search jobs.")
+                } header: { Text(l10n("Add an employer board")) } footer: {
+                    Text(l10n("Supports boards.greenhouse.io, job-boards.greenhouse.io, jobs.lever.co and jobs.eu.lever.co. You can paste a board or a posting on one of those hosts. Adding it does not search until you tap Search jobs."))
                 }
-                if let issue = discovery.error { Section { Text(issue).font(.footnote) } }
-            }.navigationTitle("Employer boards").navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+                if let issue = discovery.error { Section { Text(l10n.message(issue)).font(.footnote) } }
+            }.navigationTitle(l10n("Employer boards")).navigationBarTitleDisplayMode(.inline)
+                .toolbar { ToolbarItem(placement: .confirmationAction) { Button(l10n("Done")) { dismiss() } } }
         }
     }
 }
 
 private struct NativeDiscoveryJobDetail: View {
+    @NativeLocalization private var l10n
     @EnvironmentObject private var applications: NativeApplicationsStore
     @EnvironmentObject private var navigation: NativeCareerNavigation
     let job: DiscoveryJob
@@ -215,17 +218,17 @@ private struct NativeDiscoveryJobDetail: View {
             Section {
                 Text(job.title).font(.title2.weight(.bold)).fixedSize(horizontal: false, vertical: true)
                 Text(job.company).font(.headline)
-                Label(job.location.isEmpty ? "Location not specified" : job.location, systemImage: "mappin")
-                if job.remote == true { Label("Remote wording found · confirm eligible locations", systemImage: "globe") }
-                if job.stale { Label("Earlier result · confirm the posting is still open", systemImage: "clock") }
+                Label(job.location.isEmpty ? l10n("Location not specified") : job.location, systemImage: "mappin")
+                if job.remote == true { Label(l10n("Remote wording found · confirm eligible locations"), systemImage: "globe") }
+                if job.stale { Label(l10n("Earlier result · confirm the posting is still open"), systemImage: "clock") }
             }
-            if !job.summary.isEmpty { Section("From the employer posting") { Text(job.summary).textSelection(.enabled) } }
+            if !job.summary.isEmpty { Section(l10n("From the employer posting")) { Text(job.summary).textSelection(.enabled) } }
             Section {
                 if saved {
-                    Label("Saved for application review", systemImage: "checkmark.circle").accessibilityIdentifier("discovery.saved")
+                    Label(l10n("Saved for application review"), systemImage: "checkmark.circle").accessibilityIdentifier("discovery.saved")
                     if let saved = applications.jobs.first(where: { MobileApplicationPolicy.jobIdentity($0["url"]?.string ?? "") == MobileApplicationPolicy.jobIdentity(job.url) }),
                        let id = saved["id"]?.string {
-                        NavigationLink("Track this opportunity") { NativeSavedApplicationDetail(id: id) }
+                        NavigationLink(l10n("Track this opportunity")) { NativeSavedApplicationDetail(id: id) }
                             .accessibilityIdentifier("discovery.trackOpportunity")
                     }
                 } else {
@@ -235,30 +238,30 @@ private struct NativeDiscoveryJobDetail: View {
                                                          location: job.location, country: job.country ?? "")
                             saveMessage = applications.message
                         }
-                    } label: { Label("Save opportunity", systemImage: "bookmark") }
+                    } label: { Label(l10n("Save opportunity"), systemImage: "bookmark") }
                         .disabled(applications.busy).accessibilityIdentifier("discovery.saveOpportunity")
                 }
-                if let saveMessage { Text(saveMessage).font(.footnote).foregroundStyle(.secondary) }
+                if let saveMessage { Text(l10n(saveMessage)).font(.footnote).foregroundStyle(.secondary) }
                 if let url = MobileApplicationPolicy.jobURL(job.url) {
-                    Link(destination: url) { Label("Open employer posting", systemImage: "arrow.up.right.square") }
-                    ShareLink(item: url) { Label("Share job link", systemImage: "square.and.arrow.up") }
+                    Link(destination: url) { Label(l10n("Open employer posting"), systemImage: "arrow.up.right.square") }
+                    ShareLink(item: url) { Label(l10n("Share job link"), systemImage: "square.and.arrow.up") }
                 }
             } footer: {
-                Text("Saving copies this public link and role details into your application workspace. It does not send your profile or submit an application. Confirm qualifications, pay, work authorization and location with the employer.")
+                Text(l10n("Saving copies this public link and role details into your application workspace. It does not send your profile or submit an application. Confirm qualifications, pay, work authorization and location with the employer."))
             }
-            Section("Source and freshness") {
-                LabeledContent("Employer board", value: job.sourceName)
-                LabeledContent("Provider", value: job.provider == "greenhouse" ? "Greenhouse" : "Lever")
+            Section(l10n("Source and freshness")) {
+                LabeledContent(l10n("Employer board"), value: job.sourceName)
+                LabeledContent(l10n("Provider"), value: job.provider == "greenhouse" ? "Greenhouse" : "Lever")
                 if let checked = ApplicationReviewPolicy.date(job.checkedAt) {
-                    LabeledContent("Checked", value: checked.formatted(date: .abbreviated, time: .shortened))
+                    LabeledContent(l10n("Checked"), value: l10n.date(checked, includeTime: true))
                 }
                 if let published = job.publishedAt.flatMap(ApplicationReviewPolicy.date) {
-                    LabeledContent("Published", value: published.formatted(date: .abbreviated, time: .omitted))
+                    LabeledContent(l10n("Published"), value: l10n.date(published))
                 }
-                Text("This is a public lead, not a verified personal fit score. A listing may change or close after it was checked.")
+                Text(l10n("This is a public lead, not a verified personal fit score. A listing may change or close after it was checked."))
                     .font(.footnote).foregroundStyle(.secondary)
             }
-        }.listStyle(.insetGrouped).navigationTitle("Opportunity").navigationBarTitleDisplayMode(.inline)
+        }.listStyle(.insetGrouped).navigationTitle(l10n("Opportunity")).navigationBarTitleDisplayMode(.inline)
     }
 }
 #endif

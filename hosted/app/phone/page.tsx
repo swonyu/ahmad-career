@@ -9,9 +9,9 @@ export const metadata: Metadata = {
   description: "Find jobs, build your shortlist and keep track of your next step on iPhone and Android.",
   manifest: "/phone.webmanifest",
   appleWebApp: { capable: true, title: "Career Finder", statusBarStyle: "default" },
-  icons: { icon: "/favicon.svg", apple: "/phone-icon.png" },
+  icons: { icon: [{ url: "/favicon.ico" }, { url: "/favicon-32.png", sizes: "32x32", type: "image/png" }], apple: "/apple-touch-icon.png" },
 };
-export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#23634d" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: [{ media: "(prefers-color-scheme: light)", color: "#f5f6fa" }, { media: "(prefers-color-scheme: dark)", color: "#10121b" }] };
 
 export default async function PhonePage() {
   const user = await getChatGPTUser();

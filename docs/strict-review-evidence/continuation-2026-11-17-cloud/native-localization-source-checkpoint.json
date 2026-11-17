@@ -1,0 +1,62 @@
+{
+  "checkpoint_utc": "2026-11-17 09:23:55 UTC",
+  "kind": "isolated native source/static verification only",
+  "base_local_commit": "d37b94bcaff4a4a438eedd76e1147c7216653194",
+  "patch": {
+    "path": "native-localization.patch",
+    "sha256": "4157616fc455f77b916ea2bc65d3c167061282d8b918823da668cb0456d067e9"
+  },
+  "strings_per_language": 1761,
+  "bounded_templates": 144,
+  "passed": {
+    "python_contract_tests": 8,
+    "generated_artifacts_exact": true,
+    "xml_parsing": true,
+    "xcode_new_reference_resolution": true,
+    "lexical_delimiter_files": 24,
+    "git_diff_whitespace": true,
+    "root_git_apply_check": true
+  },
+  "not_performed": [
+    "Swift/Kotlin compilation",
+    "Android instrumentation execution",
+    "iPhone UI execution",
+    "physical RTL/large-text/VoiceOver/TalkBack acceptance",
+    "shared Mac or signing/store changes",
+    "provider callbacks or real submissions"
+  ],
+  "native_test_source_cases_added": {
+    "android": 3,
+    "iphone": 2
+  },
+  "files": {
+    "android/app/src/androidTest/java/com/saleh/careerfinder/LinkedInPhoneAcceptanceTest.kt": "56247e6e95174b21aa5b82a9b7b2b7fd6e1c8c5b301a76084fec9cf84340bed0",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeLocalizationAcceptanceTest.kt": "cf6760f7869f09e169a3684fca4ebeed7a00f829ec040b6bb8c7c7197908f23a",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NavigationPhoneAcceptanceTest.kt": "0abb065384ce09208f7dcb0b6af3ef51751e4c5561ccebe99e8f7f4f2ba30059",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt": "5ea84f7ce15613996ffe59de9412e2b7dc3b1c83f63d2cbf5715ddfb02c5de76",
+    "android/app/src/main/AndroidManifest.xml": "4f6b7e1ed21bac8873cf2e34ea62b0e3f757ee8792ea56c517eb12b8c0b9f19e",
+    "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt": "69abc5853f6c0232335a59085e3384da02c2715ba313fa44b25d6e0b0eaf4fec",
+    "android/app/src/main/java/com/saleh/careerfinder/CareerLocalization.kt": "de82c568d64a29387307670db45603f25fb2c086c61846d6d35c0dbf3a2ab50d",
+    "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt": "4ccb8f5f4cbeebbaebe53dd138b91aaae5b9d0708c58dc181c42fbb5eb93aa66",
+    "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "78d138381b2e3a637de595f254c6e25cf27222a90db0c0583097a55e4e53f014",
+    "android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt": "af6e0a99b3727ff654d0f32071b219b8688ab4882f059f18112519374b13acf6",
+    "android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt": "a3d450e447d8923a275e3a498bed7e88281001c958bb52938afabd340f54dad2",
+    "android/app/src/main/res/raw/native_copy_templates.json": "593e1729415df65e5b15abefc1ed1b474c066c13f51add015ca27d1dfc6df9e9",
+    "android/app/src/main/res/values-ar/career_copy.xml": "d25fa894ca368da6c86050278336fa8271a8b93251e7ade62323340390796e89",
+    "android/app/src/main/res/values/career_copy.xml": "2dd99c4db74c919581feade960f995f817c244ee87bf20edd3fa0178f96a53f5",
+    "android/app/src/main/res/xml/locales_config.xml": "299c994548f1040a90e3c5ea6e0a24287befd9facc50560cd6cc874fc32ba2d0",
+    "apple/AhmadCareer.xcodeproj/project.pbxproj": "245eba802fcb57e38d8e0d5add72855f8f6b1584b62c3f2492fef0197a9daf8f",
+    "apple/AhmadCareer/NativeApplicationsViews.swift": "1d3363b2eaed08dcc2ffa35e356136b4feac7fea7cf39a1372a54fcb8a82a712",
+    "apple/AhmadCareer/NativeCareerViews.swift": "80c7604ffd71fedd85685e342e7107ccbb84f58328a14438dd9c2b31d65e19cf",
+    "apple/AhmadCareer/NativeCopyTemplates.json": "593e1729415df65e5b15abefc1ed1b474c066c13f51add015ca27d1dfc6df9e9",
+    "apple/AhmadCareer/NativeDiscoveryViews.swift": "173e1d9934d7ecd461dd1cb0bde6368a66d3d7200cf985a0b512dddebcd826da",
+    "apple/AhmadCareer/NativeLocalization.swift": "9d9e14bf63f29e0868dabd6cda4d9a2f7f7df1917bbffad5ab0b1498f1ed20d4",
+    "apple/AhmadCareer/ar.lproj/Localizable.strings": "6d61f95afb4c05956235162ed26acd8c7aa63eb16f82e6c6a0147bdee51689b0",
+    "apple/AhmadCareer/en.lproj/Localizable.strings": "c77b6ec25224ff3f03ae72082bd04eb8bf2ce382a2acf3fbadafc2c3d60bc4a9",
+    "apple/UITests/CareerFinderUITests.swift": "2864e0b5495c8d5d7601b8cfcbfda20b316ec24b3f55448e46a089d6932b7025",
+    "docs/Native-English-Arabic-2026-11-17.md": "04f7d95709ca64442e59b8a2e86d29ece311932cdefc1a589440e3b080f5845f",
+    "localization/native-copy.json": "f02c5d096af46a7fad896ffb17c0743c0084c45dda54ad15541db198d6fbf8bb",
+    "scripts/generate-native-localization.py": "80b146d3cc4e251315c42ce4033f96d06d6828f4b56ec94d519c40fd5745c7ee",
+    "scripts/test-native-localization.py": "0cd4e43efc2924597cd8f0cc2d74d81f1d2d7c328d0f11599c9ed19a8135d6c2"
+  }
+}

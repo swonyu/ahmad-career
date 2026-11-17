@@ -50,7 +50,7 @@ class LinkedInPhoneAcceptanceTest {
         compose.activityRule.scenario.onActivity { activity ->
             model = CareerViewModel(activity.application, store, service, discoveryService = discovery)
             owner.put("linkedin-phone", model)
-            activity.setContent { CareerTheme { CareerApp(model) } }
+            activity.setContent { CareerLanguage { CareerTheme { CareerApp(model) } } }
         }
         compose.waitUntil(5_000) { model.state.value.loaded && !model.state.value.busy }
     }

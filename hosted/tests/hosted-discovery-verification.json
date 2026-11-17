@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-11-17T03:47:48.579Z",
+  "observedAt": "2026-11-17T09:06:09.594Z",
   "status": "passed",
   "groups": 26,
   "checks": [
@@ -38,14 +38,15 @@
   "sourceHashes": {
     "server/discovery.mjs": "d8ac636cc7d88e5b116c6e68f3549694b83391dbfdb2794614930237dfb32bea",
     "server/discovery-contract.json": "b92075bc91feb0a677ccbe28101fc31245730318373e3974ed18dff408967b06",
-    "app/phone/model.ts": "7ef8775c42a0786c7766ef9b09ee42a62dbd54ce290a395bda190372e999e112",
+    "app/phone/model.ts": "41905ec3d0be5a7c5e729b88e93f3c81163255515ead724b3a79bfee6f4db13e",
     "tests/fixtures/discovery-search-v1.json": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7",
     "worker/index.ts": "c82a674ffc6fcebef3b1c48d577f0ec5b28a4a4c2b17462c50a7c0d1708ac09e",
-    "db/schema.ts": "9258f8059261db89d30a667f849836c38e2f3df0566c01bfabdd21c485b1fa87",
+    "db/schema.ts": "0bc620bceb7b8548d69d07c823c2bc20623ad4d0de7c28678163892f9ac0fa15",
     "tests/hosted-discovery.mjs": "9de55ae3a2bad53bf782641fb48eaf51c762dd2d70fdf47f5628e4a3d38b09e7",
     "drizzle/0000_busy_plazm.sql": "5b1e4c5a7ddb05c71a53c112a57daaf9b4a15f58fa38e4b12df8d551bd9e7118",
     "drizzle/0001_smiling_maelstrom.sql": "d0e1b4cbea14b7dca1c1078911fa94c39db7960778bea637341d7bbee4ef9ef6",
     "drizzle/0002_concerned_inhumans.sql": "78823cf83e72da525ffd44e8ec76c524a813ff6eb278cbf6465e8a63fbc05fed",
-    "drizzle/0003_provider_identity.sql": "6060ba69e1ca5fb418e79ae91f0d76b5e89e7e1d28740b2df15a74fe727b4930"
+    "drizzle/0003_provider_identity.sql": "6060ba69e1ca5fb418e79ae91f0d76b5e89e7e1d28740b2df15a74fe727b4930",
+    "drizzle/0004_provider_connection_generation.sql": "408d7c77b0628386d7258673791ca8b1848ab9ea192a0abbdc32aa5b1077a034"
   }
 }

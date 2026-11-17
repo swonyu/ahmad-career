@@ -1,0 +1,15 @@
+[
+  {
+    "activeTag": "BUTTON",
+    "closedBy": "Escape",
+    "dialogOpen": false,
+    "returnedToSignIn": true,
+    "url": "http://127.0.0.1:4173/frame.html"
+  },
+  {
+    "activeTag": "BUTTON",
+    "closedBy": "Close button",
+    "dialogOpen": false,
+    "returnedToSignIn": true
+  }
+]

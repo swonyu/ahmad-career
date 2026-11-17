@@ -1,8 +1,19 @@
 <resources>
-    <style name="Theme.CareerFinder" parent="android:style/Theme.Material.Light.NoActionBar">
+    <style name="Theme.CareerFinder" parent="@style/Theme.CareerFinder.Light" />
+    <style name="Theme.CareerFinder.Light" parent="android:style/Theme.Material.Light.NoActionBar">
         <item name="android:fontFamily">sans</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:colorAccent">#236247</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowBackground">#F4F5FA</item>
+        <item name="android:colorAccent">#5B50CE</item>
+        <item name="android:windowActionModeOverlay">true</item>
+    </style>
+    <style name="Theme.CareerFinder.Dark" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowBackground">#10121B</item>
+        <item name="android:colorAccent">#B6B0FF</item>
         <item name="android:windowActionModeOverlay">true</item>
     </style>
 </resources>

@@ -2,7 +2,7 @@
 
 Prepared 16 November 2026. This folder supplies Google Play artwork, preserves the historical phone evidence, and records separately authorized ordinary phone captures. **The artwork, four Android screenshot candidates and four iPhone screenshot candidates are ready for publisher review.** Nothing in this folder establishes store submission or approval.
 
-Use the existing [mobile store listing draft](../Mobile-Store-Listing-Draft.md) for the name, descriptions, keywords and review notes. The initial artwork review changed no app or runtime state. The dated Android follow-up below used the existing published preview APK on an isolated emulator; it did not rebuild the app or change source, signing or hosted service behavior. The [release handoff](../HOSTED-RELEASE-HANDOFF.md) remains the source for other release prerequisites.
+Use the existing [mobile store listing draft](../Mobile-Store-Listing-Draft.md) for the name, descriptions, keywords and review notes. The initial artwork review changed no app or runtime state. The dated Android follow-up below used the existing published preview APK on an isolated emulator; it did not rebuild the app or change source, signing or hosted service behavior. Use the [publishing handoff](../Publishing-Handoff-2026-11-17.md) and [release integration checklist](../Release-Integration-Checklist-2026-11-17.md) for current release prerequisites. The earlier [v6 handoff](../HOSTED-RELEASE-HANDOFF.md) is historical evidence.
 
 ## Prepared artwork
 
@@ -110,6 +110,6 @@ Both phone sets are captured and visually accepted for publisher review. The iPh
 
 Use the per-platform tables above for sequence and alt text. Every proposed alt text is under 140 characters. Public roles, availability and check times are specific to their capture. The screenshots show supported-board discovery, local saving and application preparation; they do not claim universal coverage or enabled live automatic submissions.
 
-Before submission, confirm the final release version/build, signing, operator/support details, privacy disclosures and relevant physical-phone/account acceptance in the [release handoff](../HOSTED-RELEASE-HANDOFF.md). Preserve all originals and their history. If a later production change requires new images, capture the ordinary app again; do not alter these images or substitute the synthetic QA set.
+Before submission, confirm the final release version/build, signing, operator/support details, privacy disclosures and relevant physical-phone/account acceptance in the [publishing handoff](../Publishing-Handoff-2026-11-17.md) and [release integration checklist](../Release-Integration-Checklist-2026-11-17.md). Preserve all originals and their history. If a later production change requires new images, capture the ordinary app again; do not alter these images or substitute the synthetic QA set.
 
 The initial artwork review performed no app/runtime action. The separate Android and GitHub-hosted iPhone capture follow-ups are documented above. This asset package performed no store upload, submission or publication.

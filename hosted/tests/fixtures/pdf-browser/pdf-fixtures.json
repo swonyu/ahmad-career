@@ -1,0 +1,34 @@
+[
+  {
+    "file": "valid.pdf",
+    "expected": "valid",
+    "pages": 1,
+    "description": "Exact copy of the existing synthetic readable-resume.pdf fixture."
+  },
+  {
+    "file": "object-stream.pdf",
+    "expected": "valid",
+    "pages": 2,
+    "description": "Two synthetic pages using Flate-compressed PDF object streams."
+  },
+  {
+    "file": "malformed.pdf",
+    "expected": "invalid_resume",
+    "description": "PDF prefix and EOF marker without a readable PDF document."
+  },
+  {
+    "file": "truncated.pdf",
+    "expected": "invalid_resume",
+    "description": "First half of the existing synthetic PDF."
+  },
+  {
+    "file": "encrypted.pdf",
+    "expected": "unsupported_resume",
+    "description": "Actual password-encrypted synthetic PDF; fixture password is qa-only."
+  },
+  {
+    "file": "cyclic.pdf",
+    "expected": "invalid_resume",
+    "description": "Synthetic cyclic page tree for bounded rejection."
+  }
+]

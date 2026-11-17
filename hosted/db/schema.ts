@@ -73,6 +73,7 @@ export const accountLifecycles = sqliteTable('account_lifecycles', {
 export const authIdentities = sqliteTable('auth_identities', {
   provider:text('provider').notNull(), subject:text('subject').notNull(), subjectHash:text('subject_hash').notNull(),
   ownerId:text('owner_id').notNull().references(() => authAccounts.ownerId),
+  connectionId:text('connection_id').notNull().default(''),
   email:text('email'), displayName:text('display_name').notNull(), connectedAt:text('connected_at').notNull(), updatedAt:text('updated_at').notNull(),
 }, t => [primaryKey({columns:[t.provider,t.subject]}), uniqueIndex('auth_owner_provider').on(t.ownerId,t.provider), uniqueIndex('auth_subject_hash').on(t.subjectHash)]);
 export const browserSessions = sqliteTable('browser_sessions', {

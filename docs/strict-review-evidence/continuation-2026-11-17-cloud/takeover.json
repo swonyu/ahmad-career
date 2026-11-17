@@ -1,0 +1,53 @@
+{
+  "observedAt": "2026-11-17T07:33:52.920945+00:00",
+  "baseline": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+  "isolatedBranch": "continuation/account-acceptance-20261117",
+  "inheritedRoot": "/workspace/scratch/75bf57c69524/career-finder",
+  "inheritedTrackedChanges": [],
+  "inheritedUntracked": [
+    {
+      "path": "docs/strict-review-evidence/career-finder-saved-record-v6.jpg",
+      "bytes": 51579,
+      "sha256": "a8b23ed55325c2ab3a300bcb69087aa4cb96236c4f89711664e6ffde15459af6"
+    },
+    {
+      "path": "docs/strict-review-evidence/career-finder-search-error-v6.jpg",
+      "bytes": 77642,
+      "sha256": "5d855a8d02d71318f4791d01bfded7d2ded334a16295e652708ea52b18dd7c45"
+    },
+    {
+      "path": "docs/strict-review-evidence/phone-browser-v6-verification.json",
+      "bytes": 4144,
+      "sha256": "978cb4c6abcf888c3a37183aedaa19330390c60de0a864ca0180cac48933769e"
+    }
+  ],
+  "developmentRemoteHead": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+  "releaseRemoteHead": "fd9c5399f2b7001b234b3b86bf72e2b36b5114c1",
+  "githubQueuedRuns": 0,
+  "githubInProgressRuns": 0,
+  "sharedMacLockObserved": false,
+  "sharedMacActiveBuild": "Separate Streamio owned simulator run observed; no Career Finder shared build started",
+  "coordination": {
+    "acknowledged": false,
+    "attempt": "Chrome extension navigation to publishing conversation",
+    "result": "Browser host-access policy rejected navigation to chatgpt.com before page access",
+    "fallback": "Isolated cloud clone and candidate branch; no shared signing, release-branch, deployment or store mutation"
+  },
+  "liveSite": {
+    "version": 7,
+    "source": "1135a3270435d3719c6f62f1a2e3a53e2c040146",
+    "environmentRevision": 0,
+    "configuredProviderKeys": []
+  },
+  "budget": {
+    "originalUserRequestUTC": "2026-11-16T22:26:12Z",
+    "originalAssistantAcceptanceUTC": "2026-11-16T22:26:26Z",
+    "acceptedMeaning": "24 hours of active implementation and testing; external review separate",
+    "retrievalSource": "Personal Context original Career Finder conversation",
+    "originalConversation": "https://chatgpt.com/c/6afaf8fa-6dd4-83eb-9e20-075bfd067b46",
+    "elapsedCheckpointUTC": "2026-11-17T22:26:12Z",
+    "elapsedCheckpointIsCalculatedNotExplicitDeadline": true,
+    "activeHoursRemaining": null,
+    "activeHoursReason": "No complete trustworthy active-work ledger recovered; no fresh clock started"
+  }
+}

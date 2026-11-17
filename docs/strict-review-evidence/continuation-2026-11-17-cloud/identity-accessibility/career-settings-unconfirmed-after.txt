@@ -1,0 +1,95 @@
+- banner:
+  - heading "Career Finder · synthetic viewport review" [level=1]
+  - paragraph: Actual React app and CSS. Synthetic account responses only. Separate encrypted test vaults and appearance key. External requests, online mutations and link navigation are blocked. This fixture never opens the existing guest vault.
+  - generic "Viewport width":
+    - button "320 px"
+    - button "390 px"
+    - button "768 px"
+    - button "Desktop · 1200 px"
+    - strong: 1200 CSS pixels
+    - button "Text 100%"
+    - button "Text 200%"
+  - text: Scenario
+  - combobox "Scenario":
+    - option "Guest · empty test vault"
+    - option "Synthetic account A"
+    - option "Initial account check fails" [selected]
+  - button "Hold account recheck"
+  - button "Resolve account recheck"
+  - button "Switch response to account B"
+  - button "Restore account A response"
+  - button "Check layout and focus" [active]
+- main:
+  - iframe:
+    - link "Skip to content":
+      - /url: "#phone-main"
+    - banner:
+      - link "Career Finder Your career workspace":
+        - /url: /phone
+        - text: Career Finder
+        - generic: Your career workspace
+      - button "Open Settings":
+        - generic: Settings
+    - main:
+      - paragraph: PREFERENCES & PRIVACY
+      - heading "Make it your space." [level=1]
+      - paragraph: Choose your look, manage your connections, and stay in control of your data.
+      - alert:
+        - paragraph: Synthetic initial account check failed. No account was confirmed.
+        - button "Dismiss message":
+      - region "Appearance":
+        - heading "Appearance" [level=2]
+        - paragraph: Make this space feel like yours.
+        - group "Choose a color theme":
+          - generic: Choose a color theme
+          - radio "System Match your device" [checked]
+          - text: System
+          - generic: Match your device
+          - radio "Light A lighter workspace"
+          - text: Light
+          - generic: A lighter workspace
+          - radio "Dark A darker workspace"
+          - text: Dark
+          - generic: A darker workspace
+        - paragraph: Your preference is saved in this browser. System changes with your device’s theme.
+      - status:
+        - heading "Confirm your account" [level=2]
+        - paragraph: We could not confirm which account is open. Your account details stay hidden until this page checks again.
+        - button "Reload and check account"
+        - link "Open sign-in in another tab":
+          - /url: /connect
+      - heading "Add Career Finder to your phone" [level=2]
+      - paragraph:
+        - strong: "iPhone:"
+        - text: open in Safari, tap Share, then Add to Home Screen. Keep Open as Web App on if offered.
+      - paragraph:
+        - strong: "Android:"
+        - text: open the browser menu and choose Add to Home screen or Install app, if offered.
+      - paragraph: An internet connection is needed to open this web app and confirm your account. Native phone app setup is available below.
+      - heading "Here when you need it" [level=2]
+      - paragraph: Clear answers and practical next steps.
+      - link "Help & support Getting started, saving work, and recovery":
+        - /url: /support
+        - text: Help & support
+        - generic: Getting started, saving work, and recovery
+      - link "Privacy & your data What is saved, where it stays, and your choices":
+        - /url: /privacy
+        - text: Privacy & your data
+        - generic: What is saved, where it stays, and your choices
+      - link "Connect the native app Set up another device with a private connection code":
+        - /url: /connect
+        - text: Connect the native app
+        - generic: Set up another device with a private connection code
+    - navigation "App sections":
+      - button "Search":
+        - generic: Search
+      - button "Saved":
+        - generic: Saved
+      - button "Apply":
+        - generic: Apply
+      - button "Profile":
+        - generic: Profile
+      - button "Settings":
+        - generic: Settings
+- generic "Rendered evidence · synthetic only"
+- generic: "{ \"kind\": \"fixture-metrics\", \"lifecycle\": [ { \"event\": \"pageshow\", \"time\": 86 } ], \"firstPrivateEmailEvidence\": null, \"scenario\": \"initial-failure\", \"width\": 1200, \"rootTextSize\": \"16px\", \"focusedBounds\": { \"top\": 0, \"bottom\": 1123.90625, \"left\": 0, \"right\": 1185 }, \"fixedNavBounds\": null, \"focusPartlyBehindNav\": false, \"focusEntirelyBehindNav\": false, \"scrollWidth\": 1185, \"horizontalOverflow\": false, \"scrollY\": 0, \"theme\": \"system\", \"activeElement\": \"BODY\", \"activeLabel\": \"Skip to contentCareer FinderYour career workspaceSettingsPREFERENCES & PRIVACYMake it your space.Cho\", \"privateEmailVisible\": false, \"privateProfileVisible\": false, \"requests\": [ { \"path\": \"/api/phone/workspace\", \"method\": \"GET\" }, { \"path\": \"/api/discovery/sources\", \"method\": \"GET\" }, { \"path\": \"/api/phone/workspace\", \"method\": \"GET\" }, { \"path\": \"/api/discovery/sources\", \"method\": \"GET\" } ] }"

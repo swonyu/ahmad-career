@@ -84,7 +84,7 @@ class PhonePolishAcceptanceTest {
         compose.activityRule.scenario.onActivity { activity ->
             model = CareerViewModel(activity.application, store, service, discoveryService = publicService)
             owner.put("isolated-phone-polish", model)
-            activity.setContent { CareerTheme { CareerApp(model) } }
+            activity.setContent { CareerLanguage { CareerTheme { CareerApp(model) } } }
         }
         compose.waitUntil(5_000) { model.state.value.loaded && !model.state.value.busy }
     }
@@ -98,8 +98,8 @@ class PhonePolishAcceptanceTest {
         compose.onNodeWithTag("profile-list").performScrollToNode(hasText("Email") and hasSetTextAction())
         compose.onNode(hasText("Email") and hasSetTextAction()).performTextInput("single@example.invalid")
         closeSoftKeyboard()
-        compose.onNodeWithTag("profile-list").performScrollToNode(hasText("2 of 3 application essentials ready"))
-        compose.onNodeWithText("2 of 3 application essentials ready").assertIsDisplayed()
+        compose.onNodeWithTag("profile-list").performScrollToNode(hasText("Application essentials ready: 2 / 3"))
+        compose.onNodeWithText("Application essentials ready: 2 / 3").assertIsDisplayed()
         compose.onNodeWithTag("profile-list").performScrollToNode(hasText("Choose PDF résumé"))
         compose.onNodeWithText("Choose PDF résumé").assertIsDisplayed()
         assertEquals("", model.state.value.profile.lastName)

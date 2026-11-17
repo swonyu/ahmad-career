@@ -13,7 +13,7 @@ const mf = new Miniflare(convertV4MiniflareOptions({modules:true,script:'export 
 const key = await generateKeyPair('RS256'), otherKey = await generateKeyPair('RS256');
 const publicKey = {...await exportJWK(key.publicKey),kid:'synthetic-key',alg:'RS256',use:'sig'};
 const secretFixture = 'synthetic-provider-token-never-store';
-let db,env,handler,time = Date.now(),requests = [],codes = new Map(),fetchBehavior = null;
+let db,env,handler,time = Date.now(),requests = [],codes = new Map(),userInfos = new Map(),fetchBehavior = null;
 const groups = [];
 const sites = (id,email = `${id}@example.com`) => ({'oai-authenticated-user-id':'synthetic-'+id,'oai-authenticated-user-email':email,'oai-authenticated-user-full-name':encodeURIComponent('Synthetic '+id),'oai-authenticated-user-full-name-encoding':'percent-encoded-utf-8'});
 const cookieFrom = (response,name) => response.headers.getSetCookie().map(value => value.split(';')[0]).find(value => value.startsWith(name+'='));
@@ -28,33 +28,34 @@ async function call(path,{method='GET',body,headers={},cookie,environment=env,au
   return {response,status:response.status,data:response.headers.get('content-type')?.includes('application/json') ? await response.clone().json() : null,request};
 }
 async function begin(provider='google',{user,intent=user ? 'link' : 'login',cookie,returnTo='/connect'}={}) {
-  const result = await call(intent === 'login' ? '/auth/google/start?return_to='+encodeURIComponent(returnTo) : '/api/auth/connect',intent === 'login' ? {cookie} : {method:'POST',cookie,headers:user,body:{provider,expectedAccountId:user?.['oai-authenticated-user-id'] ?? (await resolveBrowserIdentity(new Request(AUTH_ORIGIN,{headers:{cookie}}),env,{now:time})).id}});
+  const result = await call(intent === 'login' ? `/auth/${provider}/start?return_to=`+encodeURIComponent(returnTo) : '/api/auth/connect',intent === 'login' ? {cookie} : {method:'POST',cookie,headers:user,body:{provider,expectedAccountId:user?.['oai-authenticated-user-id'] ?? (await resolveBrowserIdentity(new Request(AUTH_ORIGIN,{headers:{cookie}}),env,{now:time})).id}});
   assert.equal(result.status,intent === 'login' ? 303 : 200,JSON.stringify(result.data));
   const authorization = new URL(result.data?.authorizationUrl ?? result.response.headers.get('location'));
   const oauthCookie = cookieFrom(result.response,OAUTH_BROWSER_COOKIE);
   assert(oauthCookie);
   return {provider,authorization,state:authorization.searchParams.get('state'),nonce:authorization.searchParams.get('nonce'),cookie:[cookie,oauthCookie].filter(Boolean).join('; '),user,response:result.response};
 }
-async function finish(flow,{claims={},headers=flow.user,cookie=flow.cookie,environment=env,authHandler=handler,behavior,error,code=randomUUID()}={}) {
-  codes.set(code,{flow,claims,behavior});
+async function finish(flow,{claims={},headers=flow.user,cookie=flow.cookie,environment=env,authHandler=handler,behavior,userinfo,error,code=randomUUID()}={}) {
+  codes.set(code,{flow,claims,behavior,userinfo});
   const path=`/auth/${flow.provider}/callback?state=${flow.state}&${error === undefined ? 'code='+code : 'error='+encodeURIComponent(error)}`;
   return call(path,{cookie,headers,environment,authHandler});
 }
-async function login(subject='synthetic-google',{claims={},user}={}) {
-  const flow = await begin('google'),result = await finish(flow,{claims:{sub:subject,...claims},headers:user});
+async function login(subject='synthetic-google',{claims={},user,userinfo,provider='google'}={}) {
+  const flow = await begin(provider),result = await finish(flow,{claims:{sub:subject,...claims},headers:user,userinfo});
   assert.equal(queryResult(result.response),'signed_in',JSON.stringify(result.data));
   const cookie = cookieFrom(result.response,BROWSER_SESSION_COOKIE);
   const identity = await resolveBrowserIdentity(new Request(AUTH_ORIGIN,{headers:{cookie}}),env,{now:time});
   return {flow,result,cookie,identity};
 }
 async function fixture(address,options) {
-  const provider = Object.keys(OAUTH_PROVIDERS).find(name => [OAUTH_PROVIDERS[name].token,OAUTH_PROVIDERS[name].jwks].includes(address));
-  assert(provider,'Only fixed Google/LinkedIn token or public JWKS URLs are permitted');
+  const provider = Object.keys(OAUTH_PROVIDERS).find(name => [OAUTH_PROVIDERS[name].token,OAUTH_PROVIDERS[name].jwks,OAUTH_PROVIDERS[name].userinfo].includes(address));
+  assert(provider,'Only fixed Google/LinkedIn token, public JWKS and LinkedIn userinfo URLs are permitted');
   assert.equal(options.redirect,'manual'); assert(options.signal instanceof AbortSignal);
   assert.equal(new URL(address).search,'');
   requests.push({address,method:options.method});
   if (fetchBehavior) { const value = await fetchBehavior(address,options); if (value) return value; }
   if (address === OAUTH_PROVIDERS[provider].jwks) { assert.equal(options.method,'GET'); return Response.json({keys:[publicKey]}); }
+  if (address === OAUTH_PROVIDERS.linkedin.userinfo) { assert.equal(options.method,'GET'); const info=userInfos.get(options.headers.Authorization?.replace(/^Bearer /,'')); assert(info,'Userinfo uses only the temporary access token from its own synthetic exchange'); return Response.json(info); }
   assert.equal(options.method,'POST');
   const form = new URLSearchParams(options.body),record = codes.get(form.get('code'));
   assert(record,'Every token exchange belongs to a synthetic one-use code'); codes.delete(form.get('code'));
@@ -71,16 +72,18 @@ async function fixture(address,options) {
   const algorithm = claims.algorithm ?? 'RS256'; delete claims.algorithm;
   const kid = claims.kid ?? 'synthetic-key'; delete claims.kid;
   const token = await new SignJWT(claims).setProtectedHeader({alg:algorithm,kid}).sign(algorithm === 'HS256' ? new TextEncoder().encode('synthetic-hmac-key-long-enough-for-test') : signingKey);
-  return Response.json({token_type:'Bearer',access_token:secretFixture,refresh_token:secretFixture+'-refresh',id_token:token});
+  const accessToken=secretFixture+'-'+randomUUID(); userInfos.set(accessToken,record.userinfo??{sub:claims.sub,email:claims.email,email_verified:claims.email_verified});
+  return Response.json({token_type:'Bearer',access_token:accessToken,refresh_token:secretFixture+'-refresh',id_token:token});
 }
 async function reset() {
-  requests=[]; codes=new Map(); fetchBehavior=null; time+=61000;
+  requests=[]; codes=new Map(); userInfos=new Map(); fetchBehavior=null; time+=61000;
   await db.batch(['oauth_transactions','browser_sessions','auth_identities','auth_accounts','auth_deletion_fences','auth_rates','workspaces','account_lifecycles'].map(table => db.prepare('DELETE FROM '+table)));
   handler=createOAuthHandler({fetchImpl:fixture,clock:()=>time});
 }
 async function check(name,action) { await reset(); await action(); groups.push(name); console.log('PASS',name); }
 const count = async table => (await db.prepare('SELECT COUNT(*) AS n FROM '+table).first()).n;
 const tokenRequests = () => requests.filter(request => request.method === 'POST').length;
+const connectionId = async (ownerId,provider) => (await db.prepare('SELECT connection_id FROM auth_identities WHERE owner_id=? AND provider=?').bind(ownerId,provider).first())?.connection_id;
 async function retireOwner(ownerId) {
   const previous=await captureOwnerLifecycle(env,ownerId,{startedAt:time,now:time}),next={key:previous.key,generation:randomUUID()};
   await db.batch([
@@ -93,14 +96,61 @@ async function retireOwner(ownerId) {
 try {
   db=await mf.getD1Database('DB');
   for (const file of (await readdir(new URL('../drizzle/',import.meta.url))).filter(file => file.endsWith('.sql')).sort()) {
+    let legacy;
+    if (file === '0004_provider_connection_generation.sql') {
+      // Exercise the real upgrade against linked identities and an active
+      // session, not only an empty fresh database.
+      await db.prepare('INSERT INTO auth_accounts(owner_id,origin_method,generation,created_at) VALUES(?,?,?,?)').bind('synthetic-upgrade','chatgpt','upgrade-generation',time).run();
+      for (const provider of ['google','linkedin']) await db.prepare('INSERT INTO auth_identities(provider,subject,subject_hash,owner_id,email,display_name,connected_at,updated_at) VALUES(?,?,?,?,?,?,?,?)').bind(provider,'upgrade-'+provider,sha256(provider),'synthetic-upgrade',provider === 'google' ? 'upgrade@example.com' : null,'Synthetic upgrade',new Date(time).toISOString(),new Date(time).toISOString()).run();
+      await db.prepare('INSERT INTO browser_sessions(token_hash,id,owner_id,account_generation,provider,subject,created_at,expires_at) VALUES(?,?,?,?,?,?,?,?)').bind(sha256('a'.repeat(64)),randomUUID(),'synthetic-upgrade','upgrade-generation','google','upgrade-google',time,time+AUTH_LIMITS.sessionMilliseconds).run();
+      legacy={identities:(await db.prepare('SELECT * FROM auth_identities ORDER BY provider').all()).results,sessions:(await db.prepare('SELECT * FROM browser_sessions').all()).results,accounts:(await db.prepare('SELECT * FROM auth_accounts').all()).results};
+    }
     for (const statement of (await readFile(new URL('../drizzle/'+file,import.meta.url),'utf8')).split('--> statement-breakpoint').map(value => value.trim()).filter(Boolean)) await db.prepare(statement).run();
+    if (legacy) {
+      const current=(await db.prepare('SELECT * FROM auth_identities ORDER BY provider').all()).results;
+      assert.deepEqual(current.map(({connection_id,...row})=>row),legacy.identities);
+      assert(current.every(row=>/^[a-f0-9]{64}$/.test(row.connection_id))); assert.equal(new Set(current.map(row=>row.connection_id)).size,2);
+      assert.deepEqual((await db.prepare('SELECT * FROM browser_sessions').all()).results,legacy.sessions);
+      assert.deepEqual((await db.prepare('SELECT * FROM auth_accounts').all()).results,legacy.accounts);
+      assert.equal((await resolveBrowserIdentity(new Request(AUTH_ORIGIN,{headers:{cookie:BROWSER_SESSION_COOKIE+'='+'a'.repeat(64)}}),{DB:db},{now:time})).id,'synthetic-upgrade');
+      groups.push('Provider connection-generation migration preserves existing links, accounts and active browser sessions'); console.log('PASS',groups.at(-1));
+    }
   }
   env={DB:db,CAREER_GOOGLE_CLIENT_ID:'synthetic-google.apps.googleusercontent.com',CAREER_GOOGLE_CLIENT_SECRET:'synthetic-google-secret',CAREER_LINKEDIN_CLIENT_ID:'synthetic-linkedin',CAREER_LINKEDIN_CLIENT_SECRET:'synthetic-linkedin-secret'};
 
+  await check('Previous-worker callbacks after migration receive a stable connection generation; recreating the link rotates it',async()=>{
+    const user=sites('rolling-upgrade'),ownerId=user['oai-authenticated-user-id'];
+    await db.prepare('INSERT INTO auth_accounts(owner_id,origin_method,generation,created_at) VALUES(?,?,?,?)').bind(ownerId,'chatgpt','rolling-generation',time).run();
+    // The previous deployed callback omits connection_id on insert and updates
+    // only display metadata on a same-subject conflict. Exercise that shape
+    // after the one-time migration backfill has already completed.
+    const legacyWrite=()=>db.prepare(`INSERT INTO auth_identities(provider,subject,subject_hash,owner_id,email,display_name,connected_at,updated_at)
+      VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(provider,subject) DO UPDATE SET email=excluded.email,display_name=excluded.display_name,updated_at=excluded.updated_at WHERE auth_identities.owner_id=excluded.owner_id`)
+      .bind('linkedin','rolling-subject',sha256('rolling-subject'),ownerId,null,'Synthetic rolling identity',new Date(time).toISOString(),new Date(time).toISOString()).run();
+    await legacyWrite();
+    const firstStatus=await call('/api/auth/status',{headers:user}),firstConnection=firstStatus.data.providers.linkedin.connectionId;
+    assert.equal(firstStatus.status,200); assert.equal(firstStatus.data.providers.linkedin.connected,true);
+    assert.match(firstConnection ?? '',/^[a-f0-9]{64}$/,'An old worker completing after migration must not produce an unparsable connected status');
+    await legacyWrite();
+    assert.equal(await connectionId(ownerId,'linkedin'),firstConnection,'Routine callbacks preserve the displayed connection generation');
+    await db.prepare('DELETE FROM auth_identities WHERE owner_id=? AND provider=?').bind(ownerId,'linkedin').run();
+    await legacyWrite();
+    const replacement=await connectionId(ownerId,'linkedin'); assert.match(replacement,/^[a-f0-9]{64}$/); assert.notEqual(replacement,firstConnection);
+    const stale=await call('/api/auth/disconnect',{method:'POST',headers:user,body:{provider:'linkedin',expectedAccountId:ownerId,expectedConnectionId:firstConnection}});
+    assert.equal(stale.status,409); assert.equal(stale.data.error.code,'connection_changed'); assert.equal(await connectionId(ownerId,'linkedin'),replacement);
+    const current=await call('/api/auth/disconnect',{method:'POST',headers:user,body:{provider:'linkedin',expectedAccountId:ownerId,expectedConnectionId:replacement}});
+    assert.equal(current.status,200); assert.equal(await connectionId(ownerId,'linkedin'),undefined);
+    const explicit='d'.repeat(64);
+    await db.prepare('INSERT INTO auth_identities(provider,subject,subject_hash,owner_id,connection_id,email,display_name,connected_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)').bind('linkedin','explicit-subject',sha256('explicit-subject'),ownerId,explicit,null,'Synthetic explicit identity',new Date(time).toISOString(),new Date(time).toISOString()).run();
+    assert.equal(await connectionId(ownerId,'linkedin'),explicit,'New-worker explicit generations are preserved');
+    assert.equal(requests.length,0,'No external HTTP request is needed for migration coverage');
+  });
+
   await check('Unconfigured providers stay unavailable; Sites identity and verified SSR boundaries remain intact',async()=>{
     const anonymous=await call('/api/auth/status',{environment:{DB:db}});
-    assert.deepEqual(anonymous.data,{ok:true,account:null,providers:{google:{configured:false,connected:false},linkedin:{configured:false,connected:false}}});
-    assert.equal((await call('/auth/google/start',{environment:{DB:db}})).status,503); assert.equal(requests.length,0);
+    assert.deepEqual(anonymous.data,{ok:true,account:null,providers:{google:{configured:false,signInSupported:true,connected:false},linkedin:{configured:false,signInSupported:true,connected:false}}});
+    for (const provider of ['google','linkedin']) assert.equal((await call(`/auth/${provider}/start`,{environment:{DB:db}})).status,503);
+    assert.equal(requests.length,0);
     const user=sites('alice'),status=await call('/api/auth/status',{headers:user});
     assert.deepEqual(status.data.account,{id:'synthetic-alice',email:'alice@example.com',displayName:'Synthetic alice',method:'chatgpt'});
     assert.equal(await count('auth_accounts'),0);
@@ -133,7 +183,9 @@ try {
 
   await check('Provider subject is stable; matching email never merges Google subjects or an existing Sites owner',async()=>{
     const a=await login('google-one'),b=await login('google-two'); assert.notEqual(a.identity.id,b.identity.id);
+    const originalConnection=await connectionId(a.identity.id,'google'); assert.match(originalConnection,/^[a-f0-9]{64}$/);
     const repeat=await login('google-one',{claims:{email:'updated@example.com'}}); assert.equal(repeat.identity.id,a.identity.id); assert.equal(repeat.identity.email,'updated@example.com');
+    assert.equal(await connectionId(a.identity.id,'google'),originalConnection,'An ordinary sign-in does not replace the same existing connection');
     const site=await call('/api/auth/status',{headers:sites('person','person@example.com')}); assert.notEqual(site.data.account.id,a.identity.id);
     assert.equal(await count('auth_accounts'),2);
   });
@@ -145,14 +197,103 @@ try {
     assert.equal((await db.prepare('SELECT origin_method FROM auth_accounts WHERE owner_id=?').bind(linked.identity.id).first()).origin_method,'chatgpt');
   });
 
-  await check('LinkedIn is a basic openid/profile connection with no email, application profile import or login session',async()=>{
+  await check('Explicit LinkedIn linking retains basic openid/profile scopes without email collection or a new login session',async()=>{
     const user=sites('linkedin-owner'),flow=await begin('linkedin',{user});
     assert.equal(flow.authorization.searchParams.get('scope'),'openid profile'); assert.equal(flow.authorization.searchParams.has('code_challenge'),false); assert(flow.nonce);
     const result=await finish(flow,{claims:{sub:'linkedin-person'}}); assert.equal(queryResult(result.response),'connected');
     const stored=await db.prepare("SELECT * FROM auth_identities WHERE provider='linkedin'").first(); assert.equal(stored.email,null); assert.equal(stored.owner_id,'synthetic-linkedin-owner'); assert.equal(stored.display_name,'Synthetic Person');
     assert.equal(await count('browser_sessions'),0); assert.equal(await count('workspaces'),0);
     const status=await call('/api/auth/status',{headers:user}); assert.equal(status.data.providers.linkedin.connected,true); assert.equal(status.data.account.method,'chatgpt');
-    assert.equal(await handler(new Request(AUTH_ORIGIN+'/auth/linkedin/start'),env),null);
+    assert.equal(status.data.providers.linkedin.signInSupported,true);
+  });
+
+  await check('Direct LinkedIn sign-in requests email, validates a signed subject and creates its own private session',async()=>{
+    const signed=await login('linkedin-login-subject',{provider:'linkedin'});
+    assert.equal(signed.flow.authorization.searchParams.get('scope'),'openid profile email'); assert.equal(signed.flow.authorization.searchParams.get('redirect_uri'),AUTH_ORIGIN+'/auth/linkedin/callback');
+    assert(signed.flow.nonce); assert.equal(signed.identity.method,'linkedin'); assert.equal(signed.identity.email,'person@example.com');
+    assert.equal((await db.prepare('SELECT origin_method FROM auth_accounts WHERE owner_id=?').bind(signed.identity.id).first()).origin_method,'linkedin');
+    const status=await call('/api/auth/status',{cookie:signed.cookie,headers:sites('different')}); assert.equal(status.data.account.id,signed.identity.id); assert.equal(status.data.providers.linkedin.connected,true);
+    assert.equal(requests.filter(row=>row.address===OAUTH_PROVIDERS.linkedin.userinfo).length,0,'Verified signed email needs no extra API request');
+    assert.equal(queryResult((await finish(signed.flow)).response),'failed'); assert.equal(tokenRequests(),1);
+    assert.equal((await call('/auth/linkedin/start',{cookie:signed.cookie})).status,409);
+    assert.equal((await call('/auth/linkedin/start',{headers:{'sec-fetch-site':'cross-site'}})).status,403);
+    for(const table of ['auth_accounts','auth_identities','browser_sessions','oauth_transactions']) assert(!JSON.stringify((await db.prepare('SELECT * FROM '+table).all()).results).includes(secretFixture));
+  });
+
+  await check('LinkedIn userinfo supplies optional verified email only when its subject matches the signed ID token',async()=>{
+    const signed=await login('linkedin-userinfo',{provider:'linkedin',claims:{email:undefined,email_verified:undefined},userinfo:{sub:'linkedin-userinfo',email:'verified@example.com',email_verified:true}});
+    assert.equal(signed.identity.email,'verified@example.com'); assert.equal(requests.filter(row=>row.address===OAUTH_PROVIDERS.linkedin.userinfo).length,1);
+    const flow=await begin('linkedin'),before=await count('auth_accounts');
+    const mismatch=await finish(flow,{claims:{sub:'signed-subject',email:undefined,email_verified:undefined},userinfo:{sub:'different-subject',email:'verified@example.com',email_verified:true}});
+    assert.equal(queryResult(mismatch.response),'failed'); assert.equal(cookieFrom(mismatch.response,BROWSER_SESSION_COOKIE),undefined); assert.equal(await count('auth_accounts'),before);
+  });
+
+  await check('Absent, unverified and invalid LinkedIn email fails with a safe fallback and no partial account or session',async()=>{
+    for(const info of [{sub:'email-optional'},{sub:'email-optional',email:'x@example.com'},{sub:'email-optional',email:'x@example.com',email_verified:false},{sub:'email-optional',email:'x@example.com',email_verified:'true'},{sub:'email-optional',email:'not-an-email',email_verified:true}]) {
+      time+=61000; const flow=await begin('linkedin');
+      const result=await finish(flow,{claims:{sub:'email-optional',email:undefined,email_verified:undefined},userinfo:info});
+      assert.equal(queryResult(result.response),'email_required'); assert.equal(cookieFrom(result.response,BROWSER_SESSION_COOKIE),undefined);
+      for(const table of ['auth_accounts','auth_identities','browser_sessions','oauth_transactions'])assert.equal(await count(table),0,table);
+      assert(!result.response.headers.get('location').includes('x@example.com')); assert.equal(queryResult((await finish(flow)).response),'failed');
+    }
+  });
+
+  await check('LinkedIn userinfo rejects redirects, oversized bodies and invalid signed claims without identity writes',async()=>{
+    for(const behavior of [()=>new Response('',{status:302,headers:{Location:'https://evil.example'}}),()=>new Response('x'.repeat(16385),{headers:{'Content-Type':'application/json'}})]) {
+      const flow=await begin('linkedin'); fetchBehavior=async address=>address===OAUTH_PROVIDERS.linkedin.userinfo?behavior():null;
+      assert.equal(queryResult((await finish(flow,{claims:{email:undefined,email_verified:undefined}})).response),'failed'); assert.equal(await count('auth_accounts'),0); fetchBehavior=null;
+    }
+    for(const claims of [{aud:'wrong-client'},{nonce:'wrong-nonce'},{wrongKey:true}]) {
+      const flow=await begin('linkedin'),before=requests.filter(row=>row.address===OAUTH_PROVIDERS.linkedin.userinfo).length;
+      assert.equal(queryResult((await finish(flow,{claims})).response),'failed'); assert.equal(await count('auth_accounts'),0);
+      assert.equal(requests.filter(row=>row.address===OAUTH_PROVIDERS.linkedin.userinfo).length,before);
+    }
+  });
+
+  await check('LinkedIn subjects never merge by email and explicit ChatGPT or Google links recover their original owner',async()=>{
+    const a=await login('linkedin-a',{provider:'linkedin'}),b=await login('linkedin-b',{provider:'linkedin'}),google=await login('google-same-email');
+    assert.equal(new Set([a.identity.id,b.identity.id,google.identity.id]).size,3);
+    const site=sites('linked-sites','person@example.com'),siteFlow=await begin('linkedin',{user:site}); await finish(siteFlow,{claims:{sub:'sites-linkedin'}});
+    const siteLogin=await login('sites-linkedin',{provider:'linkedin'}); assert.equal(siteLogin.identity.id,site['oai-authenticated-user-id']);
+    const googleFlow=await begin('linkedin',{intent:'link',cookie:google.cookie}); await finish(googleFlow,{claims:{sub:'google-linkedin'}});
+    const googleLogin=await login('google-linkedin',{provider:'linkedin'}); assert.equal(googleLogin.identity.id,google.identity.id);
+    const repeat=await login('linkedin-a',{provider:'linkedin',claims:{email:'updated@example.com'}}); assert.equal(repeat.identity.id,a.identity.id);
+    const relink=await begin('linkedin',{user:site}); await finish(relink,{claims:{sub:'sites-linkedin',email:undefined,email_verified:undefined}});
+    assert.equal((await call('/api/auth/status',{cookie:siteLogin.cookie})).data.account.email,'person@example.com','Basic linking does not erase a previously verified sign-in address');
+  });
+
+  await check('LinkedIn original/current login cannot be removed and expired LinkedIn cookies never reveal a background Sites owner',async()=>{
+    const signed=await login('protected-linkedin',{provider:'linkedin'}),body={provider:'linkedin',expectedAccountId:signed.identity.id,expectedConnectionId:await connectionId(signed.identity.id,'linkedin')};
+    assert.equal((await call('/api/auth/disconnect',{method:'POST',cookie:signed.cookie,body})).data.error.code,'login_method_required');
+    const exported=await exportBrowserIdentity(env,signed.identity.id); assert.equal(exported.browserSessions[0].method,'linkedin'); assert(!JSON.stringify(exported).includes(signed.cookie));
+    time+=AUTH_LIMITS.sessionMilliseconds+1;
+    assert.equal((await call('/api/auth/status',{cookie:signed.cookie,headers:sites('background')})).data.error.code,'invalid_session');
+    const result=await call('/api/auth/signout',{method:'POST',cookie:signed.cookie,headers:sites('background'),body:{expectedAccountId:''}}); assert.equal(result.status,200); assert.equal(await count('browser_sessions'),0);
+  });
+
+  await check('Revoking LinkedIn sign-in during a Google linking callback prevents a late connection',async()=>{
+    const signed=await login('linkedin-link-race',{provider:'linkedin'}),flow=await begin('google',{intent:'link',cookie:signed.cookie});
+    let enter,release; const entered=new Promise(resolve=>enter=resolve),gate=new Promise(resolve=>release=resolve);
+    fetchBehavior=async address=>{if(address===OAUTH_PROVIDERS.google.token){enter();await gate;}return null;};
+    const pending=finish(flow); await entered;
+    assert.equal((await call('/api/auth/signout',{method:'POST',cookie:signed.cookie,body:{expectedAccountId:signed.identity.id}})).status,200);
+    release(); assert.equal(queryResult((await pending).response),'failed'); assert.equal(await count('browser_sessions'),0);
+    assert.equal((await db.prepare("SELECT COUNT(*) AS n FROM auth_identities WHERE provider='google'").first()).n,0);
+    assert.equal((await db.prepare("SELECT COUNT(*) AS n FROM auth_identities WHERE provider='linkedin'").first()).n,1);
+  });
+
+  await check('Deleting a LinkedIn owner while optional userinfo is pending cannot recreate its deleted account',async()=>{
+    const signed=await login('linkedin-delete-race',{provider:'linkedin'}),flow=await begin('linkedin');
+    let enter,release; const entered=new Promise(resolve=>enter=resolve),gate=new Promise(resolve=>release=resolve);
+    fetchBehavior=async address=>{if(address===OAUTH_PROVIDERS.linkedin.userinfo){enter();await gate;}return null;};
+    const pending=finish(flow,{claims:{sub:'linkedin-delete-race',email:undefined,email_verified:undefined},userinfo:{sub:'linkedin-delete-race',email:'person@example.com',email_verified:true}}); await entered;
+    time+=1; await retireOwner(signed.identity.id); release(); assert.equal(queryResult((await pending).response),'failed');
+    for(const table of ['auth_accounts','auth_identities','browser_sessions','oauth_transactions'])assert.equal(await count(table),0,table);
+  });
+
+  await check('Published LinkedIn login and consent cancellation codes spend state without exchanging a token',async()=>{
+    for(const error of ['user_cancelled_login','user_cancelled_authorize']){const flow=await begin('linkedin'); assert.equal(queryResult((await finish(flow,{error})).response),'cancelled'); assert.equal(queryResult((await finish(flow)).response),'failed');}
+    assert.equal(tokenRequests(),0); assert.equal(await count('auth_accounts'),0);
   });
 
   await check('State is browser-bound, provider-bound, one-use and atomically claimed across concurrent callbacks',async()=>{
@@ -174,6 +315,14 @@ try {
       assert.equal(queryResult((await finish(flow)).response),'failed'); assert.equal(tokenRequests(),before+1);
     }
     assert.equal(await count('auth_accounts'),0);
+  });
+
+  await check('OIDC subject bytes reject non-ASCII aliases before any account or session is written',async()=>{
+    for(const provider of ['google','linkedin'])for(const subject of [String.fromCharCode(0xd800),String.fromCharCode(0xd801),'accented-'+String.fromCharCode(0xe9),'emoji-'+String.fromCodePoint(0x1f600)]){
+      time+=61000;const flow=await begin(provider),result=await finish(flow,{claims:{sub:subject}});
+      assert.equal(queryResult(result.response),'failed',provider+' subject '+JSON.stringify(subject)+' must be rejected before D1 Unicode conversion');
+      for(const table of ['auth_accounts','auth_identities','browser_sessions','oauth_transactions'])assert.equal(await count(table),0,table);
+    }
   });
 
   await check('Cancellation consumes state without exchanging a code; hostile error descriptions never reach the redirect',async()=>{
@@ -210,14 +359,117 @@ try {
 
   await check('Sole Google login cannot be unlinked; Sites-owned Google unlink revokes its sessions and in-flight connections',async()=>{
     const signed=await login();
-    assert.equal((await call('/api/auth/disconnect',{method:'POST',cookie:signed.cookie,body:{provider:'google',expectedAccountId:signed.identity.id}})).data.error.code,'login_method_required');
+    assert.equal((await call('/api/auth/disconnect',{method:'POST',cookie:signed.cookie,body:{provider:'google',expectedAccountId:signed.identity.id,expectedConnectionId:await connectionId(signed.identity.id,'google')}})).data.error.code,'login_method_required');
     const user=sites('original'),flow=await begin('google',{user}); await finish(flow,{claims:{sub:'original-google'}});
     const google=await login('original-google'); const pending=await begin('google',{user}),anonymousPending=await begin();
-    assert.equal((await call('/api/auth/disconnect',{method:'POST',headers:user,body:{provider:'google',expectedAccountId:'synthetic-original'}})).status,200);
+    assert.equal((await call('/api/auth/disconnect',{method:'POST',headers:user,body:{provider:'google',expectedAccountId:'synthetic-original',expectedConnectionId:await connectionId('synthetic-original','google')}})).status,200);
     assert.equal((await call('/api/auth/status',{cookie:google.cookie,headers:user})).status,401);
     assert.equal(queryResult((await finish(pending,{claims:{sub:'original-google'}})).response),'failed');
     assert.equal(queryResult((await finish(anonymousPending,{claims:{sub:'original-google'}})).response),'failed');
     assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM auth_identities WHERE owner_id=?').bind('synthetic-original').first()).n,0);
+  });
+
+  await check('A displayed connection ID is required; old clients and mismatched confirmations cannot disconnect a link',async()=>{
+    const user=sites('disconnect-target'),flow=await begin('linkedin',{user}); await finish(flow,{claims:{sub:'target-link'}});
+    const before=(await db.prepare('SELECT * FROM auth_identities').all()).results;
+    const status=await call('/api/auth/status',{headers:user}); assert.match(status.data.providers.linkedin.connectionId,/^[a-f0-9]{64}$/); assert.equal(status.data.providers.google.connectionId,undefined);
+    for (const expectedConnectionId of [undefined,'',42,'a'.repeat(64)]) {
+      const result=await call('/api/auth/disconnect',{method:'POST',headers:user,body:{provider:'linkedin',expectedAccountId:user['oai-authenticated-user-id'],...(expectedConnectionId===undefined?{}:{expectedConnectionId})}});
+      assert.equal(result.status,409); assert.equal(result.data.error.code,'connection_changed');
+    }
+    assert.deepEqual((await db.prepare('SELECT * FROM auth_identities').all()).results,before); assert.equal(await count('auth_deletion_fences'),0);
+  });
+
+  await check('A valid LinkedIn disconnect preserves Google sign-in and another owner connection',async()=>{
+    const signed=await login('disconnect-google-owner');
+    const linked=await begin('linkedin',{intent:'link',cookie:signed.cookie}); await finish(linked,{claims:{sub:'disconnect-linkedin-owner'}});
+    const other=sites('unrelated-owner'),otherFlow=await begin('linkedin',{user:other}); await finish(otherFlow,{claims:{sub:'unrelated-linkedin'}});
+    const untouched=(await db.prepare('SELECT * FROM auth_identities WHERE owner_id=?').bind(other['oai-authenticated-user-id']).all()).results;
+    const googleId=await connectionId(signed.identity.id,'google');
+    const result=await call('/api/auth/disconnect',{method:'POST',cookie:signed.cookie,body:{provider:'linkedin',expectedAccountId:signed.identity.id,expectedConnectionId:await connectionId(signed.identity.id,'linkedin')}});
+    assert.equal(result.status,200); assert.equal(result.data.ok,true);
+    assert.equal(await connectionId(signed.identity.id,'linkedin'),undefined); assert.equal(await connectionId(signed.identity.id,'google'),googleId);
+    assert.equal((await call('/api/auth/status',{cookie:signed.cookie})).data.account.id,signed.identity.id);
+    assert.deepEqual((await db.prepare('SELECT * FROM auth_identities WHERE owner_id=?').bind(other['oai-authenticated-user-id']).all()).results,untouched);
+  });
+
+  await check('A final-statement database failure rolls back the entire disconnect and cannot report success',async()=>{
+    const user=sites('atomic-disconnect'),ownerId=user['oai-authenticated-user-id'];
+    const linked=await begin('google',{user}); await finish(linked,{claims:{sub:'atomic-google-subject'}});
+    const signed=await login('atomic-google-subject'); await begin('google',{user});
+    const expectedConnectionId=await connectionId(ownerId,'google');
+    const tables=['auth_identities','browser_sessions','oauth_transactions','auth_deletion_fences'];
+    const snapshots=await Promise.all(tables.map(async table=>(await db.prepare('SELECT * FROM '+table).all()).results));
+    // Fail at the final identity deletion, after the same D1 batch has attempted
+    // its fence, pending-flow and browser-session writes. SQLite must roll all
+    // of those changes back, not merely skip the final deletion.
+    await db.prepare(`CREATE TRIGGER synthetic_disconnect_abort BEFORE DELETE ON auth_identities
+      WHEN OLD.owner_id='synthetic-atomic-disconnect' AND OLD.provider='google'
+      BEGIN SELECT RAISE(ABORT,'synthetic final-delete failure'); END`).run();
+    try {
+      const result=await call('/api/auth/disconnect',{method:'POST',headers:user,body:{provider:'google',expectedAccountId:ownerId,expectedConnectionId}});
+      assert.equal(result.status,503); assert.equal(result.data.ok,false); assert.equal(result.data.error.code,'auth_unavailable');
+      for(let index=0;index<tables.length;index++)assert.deepEqual((await db.prepare('SELECT * FROM '+tables[index]).all()).results,snapshots[index],tables[index]+' must be unchanged after rollback');
+      assert.equal((await call('/api/auth/status',{cookie:signed.cookie})).data.account.id,ownerId);
+    } finally { await db.prepare('DROP TRIGGER synthetic_disconnect_abort').run(); }
+    assert.equal((await call('/api/auth/disconnect',{method:'POST',headers:user,body:{provider:'google',expectedAccountId:ownerId,expectedConnectionId}})).status,200);
+  });
+
+  await check('A delayed disconnect cannot remove a deliberately recreated owner generation',async()=>{
+    const user=sites('delayed-disconnect'),ownerId=user['oai-authenticated-user-id'];
+    const first=await begin('linkedin',{user}); await finish(first,{claims:{sub:'old-subject'}});
+    const expectedConnectionId=await connectionId(ownerId,'linkedin');
+    let enter,release; const entered=new Promise(resolve=>enter=resolve),gate=new Promise(resolve=>release=resolve);
+    const environment={...env,DB:{prepare:sql=>db.prepare(sql),async batch(statements){enter(); await gate; return db.batch(statements);}}};
+    const pending=call('/api/auth/disconnect',{method:'POST',headers:user,body:{provider:'linkedin',expectedAccountId:ownerId,expectedConnectionId},environment});
+    await entered; time+=1; await retireOwner(ownerId); time+=1;
+    const replacement=await begin('linkedin',{user}); assert.equal(queryResult((await finish(replacement,{claims:{sub:'new-subject'}})).response),'connected');
+    const before=(await db.prepare('SELECT * FROM auth_identities').all()).results;
+    release(); const result=await pending;
+    assert.equal(result.status,409); assert.equal(result.data.error.code,'connection_changed');
+    assert.deepEqual((await db.prepare('SELECT * FROM auth_identities').all()).results,before); assert.notEqual(await connectionId(ownerId,'linkedin'),expectedConnectionId);
+    assert.equal(await count('auth_accounts'),1);
+  });
+
+  await check('A same-owner same-subject relink has a fresh connection ID and survives an older disconnect',async()=>{
+    const user=sites('relinked-disconnect'),ownerId=user['oai-authenticated-user-id'];
+    const first=await begin('linkedin',{user}); await finish(first,{claims:{sub:'same-subject'}});
+    const expectedConnectionId=await connectionId(ownerId,'linkedin'),generation=(await db.prepare('SELECT generation FROM auth_accounts WHERE owner_id=?').bind(ownerId).first()).generation;
+    let enter,release; const entered=new Promise(resolve=>enter=resolve),gate=new Promise(resolve=>release=resolve);
+    const environment={...env,DB:{prepare:sql=>db.prepare(sql),async batch(statements){enter(); await gate; return db.batch(statements);}}};
+    const body={provider:'linkedin',expectedAccountId:ownerId,expectedConnectionId};
+    const pending=call('/api/auth/disconnect',{method:'POST',headers:user,body,environment}); await entered;
+    assert.equal((await call('/api/auth/disconnect',{method:'POST',headers:user,body})).status,200); time+=1;
+    const replacement=await begin('linkedin',{user}); assert.equal(queryResult((await finish(replacement,{claims:{sub:'same-subject'}})).response),'connected');
+    assert.equal((await db.prepare('SELECT generation FROM auth_accounts WHERE owner_id=?').bind(ownerId).first()).generation,generation);
+    assert.notEqual(await connectionId(ownerId,'linkedin'),expectedConnectionId);
+    const before=(await db.prepare('SELECT * FROM auth_identities').all()).results,fences=(await db.prepare('SELECT * FROM auth_deletion_fences').all()).results;
+    release(); assert.equal((await pending).status,409);
+    assert.equal((await call('/api/auth/disconnect',{method:'POST',headers:user,body})).status,409,'An old confirmation remains stale even when sent after the relink');
+    assert.deepEqual((await db.prepare('SELECT * FROM auth_identities').all()).results,before); assert.deepEqual((await db.prepare('SELECT * FROM auth_deletion_fences').all()).results,fences);
+  });
+
+  await check('Revoking a Google session while disconnect is delayed preserves the selected LinkedIn connection',async()=>{
+    const signed=await login('revoked-disconnect-session'),flow=await begin('linkedin',{intent:'link',cookie:signed.cookie}); await finish(flow,{claims:{sub:'keep-after-signout'}});
+    const body={provider:'linkedin',expectedAccountId:signed.identity.id,expectedConnectionId:await connectionId(signed.identity.id,'linkedin')};
+    let enter,release; const entered=new Promise(resolve=>enter=resolve),gate=new Promise(resolve=>release=resolve);
+    const environment={...env,DB:{prepare:sql=>db.prepare(sql),async batch(statements){enter(); await gate; return db.batch(statements);}}};
+    const pending=call('/api/auth/disconnect',{method:'POST',cookie:signed.cookie,body,environment}); await entered;
+    const before=(await db.prepare('SELECT * FROM auth_identities ORDER BY provider').all()).results;
+    assert.equal((await call('/api/auth/signout',{method:'POST',cookie:signed.cookie,body:{expectedAccountId:signed.identity.id}})).status,200);
+    release(); assert.equal((await pending).status,409);
+    assert.equal(await count('browser_sessions'),0); assert.equal(await count('auth_deletion_fences'),0);
+    assert.deepEqual((await db.prepare('SELECT * FROM auth_identities ORDER BY provider').all()).results,before);
+  });
+
+  await check('A disconnect whose first lifecycle lookup follows deletion cannot affect a fresh link',async()=>{
+    const user=sites('late-disconnect-lifecycle'),ownerId=user['oai-authenticated-user-id'],flow=await begin('linkedin',{user}); await finish(flow,{claims:{sub:'late-old'}});
+    const expectedConnectionId=await connectionId(ownerId,'linkedin'); let injected=false;
+    const environment={...env,DB:{batch:statements=>db.batch(statements),prepare(sql){const prepared=db.prepare(sql);if(!sql.startsWith('SELECT origin_method,generation FROM auth_accounts'))return prepared;return{bind(...args){const query=prepared.bind(...args);return{async first(){const account=await query.first();if(!injected){injected=true;time+=1;await retireOwner(ownerId);time+=1;const replacement=await begin('linkedin',{user});assert.equal(queryResult((await finish(replacement,{claims:{sub:'late-new'}})).response),'connected');}return account;}};}};}}};
+    const result=await call('/api/auth/disconnect',{method:'POST',headers:user,body:{provider:'linkedin',expectedAccountId:ownerId,expectedConnectionId},environment});
+    assert(injected); assert.equal(result.status,409); assert.equal(result.data.error.code,'account_changed');
+    assert.equal((await db.prepare('SELECT subject FROM auth_identities WHERE owner_id=?').bind(ownerId).first()).subject,'late-new');
+    assert.notEqual(await connectionId(ownerId,'linkedin'),expectedConnectionId);
   });
 
   await check('Deleting an account during provider I/O prevents a late link from recreating removed identity metadata',async()=>{

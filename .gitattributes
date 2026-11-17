@@ -1,0 +1,5 @@
+# PDF fixtures must retain byte offsets and exact malformed/encrypted samples.
+*.pdf binary
+# Preserve the exact upstream font license bytes, including source whitespace.
+hosted/public/brand/Google-Sans-OFL.txt -whitespace
+hosted/public/fonts/Noto-Sans-Arabic-OFL.txt -whitespace

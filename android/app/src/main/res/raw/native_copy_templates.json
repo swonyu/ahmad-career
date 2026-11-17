@@ -1,0 +1,1180 @@
+[
+  {
+    "key": "{0} file records are kept for reference. They are not counted as verified applications. Connect to the original account and refresh service receipts to recover provider evidence.",
+    "parts": [
+      "",
+      " file records are kept for reference. They are not counted as verified applications. Connect to the original account and refresh service receipts to recover provider evidence."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Destination: {0}. Review whose information this is. The local profile will be replaced, saved records merged, and the original unpaired draft kept. Nothing will be uploaded.",
+    "parts": [
+      "Destination: ",
+      ". Review whose information this is. The local profile will be replaced, saved records merged, and the original unpaired draft kept. Nothing will be uploaded."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "This removes the local profile, PDF, links, search and private notes/history for {0}. An exported backup can restore them. Cloud/employer records and safety holds remain.",
+    "parts": [
+      "This removes the local profile, PDF, links, search and private notes/history for ",
+      ". An exported backup can restore them. Cloud/employer records and safety holds remain."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Destination: {0}. The backup's profile replaces the local draft; links and history are merged. A cloud-only PDF must be selected again. Nothing is uploaded or submitted.",
+    "parts": [
+      "Destination: ",
+      ". The backup's profile replaces the local draft; links and history are merged. A cloud-only PDF must be selected again. Nothing is uploaded or submitted."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Stop could not be saved safely, so this phone disconnected and sent no Stop request. Use Account to revoke the connection or retry after storage is available. {0}",
+    "parts": [
+      "Stop could not be saved safely, so this phone disconnected and sent no Stop request. Use Account to revoke the connection or retry after storage is available. ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Phone workspace exported. The file contains private data{0}. Keep it somewhere you trust; connection tokens and approval authority are excluded.",
+    "parts": [
+      "Phone workspace exported. The file contains private data",
+      ". Keep it somewhere you trust; connection tokens and approval authority are excluded."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "SELF-ENTERED PROFILE — verify before using\nRelevant years: {0}\nDegree and certifications: {1}\nTools and responsibilities: {2}\nAchievements: {3}",
+    "parts": [
+      "SELF-ENTERED PROFILE — verify before using\nRelevant years: ",
+      "\nDegree and certifications: ",
+      "\nTools and responsibilities: ",
+      "\nAchievements: ",
+      ""
+    ],
+    "arguments": 4
+  },
+  {
+    "key": "Choose up to {0} public employer boards. This is a starting catalog, not a complete list of employers or professions.",
+    "parts": [
+      "Choose up to ",
+      " public employer boards. This is a starting catalog, not a complete list of employers or professions."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Your edited fields are safe on this phone. Compare them with saved version {0} before choosing what to keep.",
+    "parts": [
+      "Your edited fields are safe on this phone. Compare them with saved version ",
+      " before choosing what to keep."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} saved jobs · {1} application records · {2} unfinished record edits. No employer application will be submitted.",
+    "parts": [
+      "",
+      " saved jobs · ",
+      " application records · ",
+      " unfinished record edits. No employer application will be submitted."
+    ],
+    "arguments": 3
+  },
+  {
+    "key": "Your draft fields will be kept against saved version {0}. You can review everything before saving.",
+    "parts": [
+      "Your draft fields will be kept against saved version ",
+      ". You can review everything before saving."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": " Up to {0} results are kept on this phone. Narrow the search or open an employer board for more.",
+    "parts": [
+      " Up to ",
+      " results are kept on this phone. Narrow the search or open an employer board for more."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "CAREER FINDER — APPLICATION NOTES\nLegacy research reference date (retained records only): {0}\n\n",
+    "parts": [
+      "CAREER FINDER — APPLICATION NOTES\nLegacy research reference date (retained records only): ",
+      "\n\n"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "You entered fewer relevant years than the {0}+ requested. Review eligibility before applying.",
+    "parts": [
+      "You entered fewer relevant years than the ",
+      "+ requested. Review eligibility before applying."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Phone data cleared and reconnect disabled. Secure token removal needs another attempt: {0}",
+    "parts": [
+      "Phone data cleared and reconnect disabled. Secure token removal needs another attempt: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Your phone profile and records were imported, but the previous search was preserved: {0}",
+    "parts": [
+      "Your phone profile and records were imported, but the previous search was preserved: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} must be on one line with no more than 500 characters. Your unfinished draft is kept.",
+    "parts": [
+      "",
+      " must be on one line with no more than 500 characters. Your unfinished draft is kept."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Retry becomes available after {0}. Refresh this review when the waiting period ends.",
+    "parts": [
+      "Retry becomes available after ",
+      ". Refresh this review when the waiting period ends."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "This removes the local profile, PDF, links, search and private notes/history for {0}",
+    "parts": [
+      "This removes the local profile, PDF, links, search and private notes/history for ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "The profile and records were cleared, but the search file could not be cleared: {0}",
+    "parts": [
+      "The profile and records were cleared, but the search file could not be cleared: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "\nUNSAVED application record draft\nApplication date: {0}\nReceipt / record note: {1}",
+    "parts": [
+      "\nUNSAVED application record draft\nApplication date: ",
+      "\nReceipt / record note: ",
+      ""
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "Your edited fields are safe on this phone. Compare them with saved version {0}",
+    "parts": [
+      "Your edited fields are safe on this phone. Compare them with saved version ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "\nApplication date (self-entered): {0}\nReceipt / record note (self-entered): {1}",
+    "parts": [
+      "\nApplication date (self-entered): ",
+      "\nReceipt / record note (self-entered): ",
+      ""
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "{0} Saved records remain available; this workspace cannot be overwritten.",
+    "parts": [
+      "",
+      " Saved records remain available; this workspace cannot be overwritten."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} saved jobs · {1} private application records · {2} unfinished record edits",
+    "parts": [
+      "",
+      " saved jobs · ",
+      " private application records · ",
+      " unfinished record edits"
+    ],
+    "arguments": 3
+  },
+  {
+    "key": "The search service asked for a short wait. Try again after {0}",
+    "parts": [
+      "The search service asked for a short wait. Try again after ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} Review and submit personally on the employer website.",
+    "parts": [
+      "",
+      " Review and submit personally on the employer website."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Your draft fields will be kept against saved version {0}",
+    "parts": [
+      "Your draft fields will be kept against saved version ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} Qiddiya searches failed; results may be incomplete.",
+    "parts": [
+      "",
+      " Qiddiya searches failed; results may be incomplete."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Checking the result before any further submission. {0}",
+    "parts": [
+      "Checking the result before any further submission. ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Salary was not disclosed in the research checked {0}.",
+    "parts": [
+      "Salary was not disclosed in the research checked ",
+      "."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} listing checks failed; results may be incomplete.",
+    "parts": [
+      "",
+      " listing checks failed; results may be incomplete."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "The provider accepted this application. Receipt: {0}",
+    "parts": [
+      "The provider accepted this application. Receipt: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Record last edited: {0} (not the application time).",
+    "parts": [
+      "Record last edited: ",
+      " (not the application time)."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Selected: {0} / 30 · Leave empty for no preference.",
+    "parts": [
+      "Selected: ",
+      " / 30 · Leave empty for no preference."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} of 30 selected · Leave empty for no preference.",
+    "parts": [
+      "",
+      " of 30 selected · Leave empty for no preference."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "\nRecord last edited (not application time): {0}",
+    "parts": [
+      "\nRecord last edited (not application time): ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} conflicting versions · {1} history versions",
+    "parts": [
+      "",
+      " conflicting versions · ",
+      " history versions"
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "Showing {0} of {1} matches within these boards",
+    "parts": [
+      "Showing ",
+      " of ",
+      " matches within these boards"
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "Research checked: {0} · Employer checked: {1}",
+    "parts": [
+      "Research checked: ",
+      " · Employer checked: ",
+      ""
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "Your draft is kept. Before sharing it: {0}",
+    "parts": [
+      "Your draft is kept. Before sharing it: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Some employer checks were incomplete: {0}",
+    "parts": [
+      "Some employer checks were incomplete: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "The backup contains an invalid {0} field.",
+    "parts": [
+      "The backup contains an invalid ",
+      " field."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Search the public employer board for {0}",
+    "parts": [
+      "Search the public employer board for ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Target annual bonus, not guaranteed, {0}",
+    "parts": [
+      "Target annual bonus, not guaranteed, ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} and any PDF bytes held on this phone",
+    "parts": [
+      "",
+      " and any PDF bytes held on this phone"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} · unfinished; saved status unchanged",
+    "parts": [
+      "",
+      " · unfinished; saved status unchanged"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Fixed allowances for chosen period, {0}",
+    "parts": [
+      "Fixed allowances for chosen period, ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Continue review for {0}, {1} applications",
+    "parts": [
+      "Continue review for ",
+      ", ",
+      " applications"
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "The latest saved PDF will be used: {0}",
+    "parts": [
+      "The latest saved PDF will be used: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Application essentials ready: {0} / 3",
+    "parts": [
+      "Application essentials ready: ",
+      " / 3"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} of 3 application essentials ready",
+    "parts": [
+      "",
+      " of 3 application essentials ready"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Select {0} at {1} for Auto Apply review",
+    "parts": [
+      "Select ",
+      " at ",
+      " for Auto Apply review"
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "The link is saved on this phone. {0}",
+    "parts": [
+      "The link is saved on this phone. ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "This review uses profile version {0}",
+    "parts": [
+      "This review uses profile version ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Your newly selected PDF is kept: {0}",
+    "parts": [
+      "Your newly selected PDF is kept: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Continue review · applications: {0}",
+    "parts": [
+      "Continue review · applications: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Employer request failed (HTTP {0}).",
+    "parts": [
+      "Employer request failed (HTTP ",
+      ")."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Open {0} at {1} on the employer’s site",
+    "parts": [
+      "Open ",
+      " at ",
+      " on the employer’s site"
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "Remove selected employer source {0}",
+    "parts": [
+      "Remove selected employer source ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} invalid listings were excluded.",
+    "parts": [
+      "",
+      " invalid listings were excluded."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Disconnected for this session. {0}",
+    "parts": [
+      "Disconnected for this session. ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} of {1} preparation steps complete",
+    "parts": [
+      "",
+      " of ",
+      " preparation steps complete"
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "{0} before choosing what to keep.",
+    "parts": [
+      "",
+      " before choosing what to keep."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Application data processing: {0}",
+    "parts": [
+      "Application data processing: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Basic pay for chosen period, {0}",
+    "parts": [
+      "Basic pay for chosen period, ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Application opportunities · {0}",
+    "parts": [
+      "Application opportunities · ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Application record for {0} at {1}",
+    "parts": [
+      "Application record for ",
+      " at ",
+      ""
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "Earlier planning records · {0}",
+    "parts": [
+      "Earlier planning records · ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Employer boards · {0} selected",
+    "parts": [
+      "Employer boards · ",
+      " selected"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Open employer page for {0} at {1}",
+    "parts": [
+      "Open employer page for ",
+      " at ",
+      ""
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "Remove saved link for {0} at {1}",
+    "parts": [
+      "Remove saved link for ",
+      " at ",
+      ""
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "Latest file fingerprint: {0}",
+    "parts": [
+      "Latest file fingerprint: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Open employer board for {0}",
+    "parts": [
+      "Open employer board for ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} opportunities to review",
+    "parts": [
+      "",
+      " opportunities to review"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Open saved workspace · {0}",
+    "parts": [
+      "Open saved workspace · ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Future opportunities: {0}",
+    "parts": [
+      "Future opportunities: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "View saved versions ({0})",
+    "parts": [
+      "View saved versions (",
+      ")"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0}'s application profile",
+    "parts": [
+      "",
+      "'s application profile"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Review applications: {0}",
+    "parts": [
+      "Review applications: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Earlier assessment: {0}",
+    "parts": [
+      "Earlier assessment: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Overdue follow-up · {0}",
+    "parts": [
+      "Overdue follow-up · ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Ready applications: {0}",
+    "parts": [
+      "Ready applications: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Recorded reference: {0}",
+    "parts": [
+      "Recorded reference: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Showing {0} of {1} records",
+    "parts": [
+      "Showing ",
+      " of ",
+      " records"
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "{0} of 2,000 characters",
+    "parts": [
+      "",
+      " of 2,000 characters"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} · marked as applied",
+    "parts": [
+      "",
+      " · marked as applied"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Application date · {0}",
+    "parts": [
+      "Application date · ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Application stage: {0}",
+    "parts": [
+      "Application stage: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Auto Apply · jobs: {0}",
+    "parts": [
+      "Auto Apply · jobs: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Connected address: {0}",
+    "parts": [
+      "Connected address: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Connection expires {0}",
+    "parts": [
+      "Connection expires ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Device time zone ({0})",
+    "parts": [
+      "Device time zone (",
+      ")"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Provider cooldown: {0}",
+    "parts": [
+      "Provider cooldown: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} / 2,000 characters",
+    "parts": [
+      "",
+      " / 2,000 characters"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} / 3,000 characters",
+    "parts": [
+      "",
+      " / 3,000 characters"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} / 5,000 characters",
+    "parts": [
+      "",
+      " / 5,000 characters"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Experience level: {0}",
+    "parts": [
+      "Experience level: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Follow up today · {0}",
+    "parts": [
+      "Follow up today · ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Minimum SAR {0}/month",
+    "parts": [
+      "Minimum SAR ",
+      "/month"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} without PDF bytes",
+    "parts": [
+      "",
+      " without PDF bytes"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Follow-up date · {0}",
+    "parts": [
+      "Follow-up date · ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Hide details for {0}",
+    "parts": [
+      "Hide details for ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Listed deadline: {0}",
+    "parts": [
+      "Listed deadline: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Read details for {0}",
+    "parts": [
+      "Read details for ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Storage problem. {0}",
+    "parts": [
+      "Storage problem. ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Try again after {0}.",
+    "parts": [
+      "Try again after ",
+      "."
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} · bounded sample",
+    "parts": [
+      "",
+      " · bounded sample"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "\nRecord notice: {0}",
+    "parts": [
+      "\nRecord notice: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Career Finder · {0}",
+    "parts": [
+      "Career Finder · ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Earlier search: {0}",
+    "parts": [
+      "Earlier search: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Record only: {0} · {1}",
+    "parts": [
+      "Record only: ",
+      " · ",
+      ""
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "Recorded state: {0}",
+    "parts": [
+      "Recorded state: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Try again after {0}",
+    "parts": [
+      "Try again after ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} private records",
+    "parts": [
+      "",
+      " private records"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} · self-reported",
+    "parts": [
+      "",
+      " · self-reported"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Test receipt · {0}",
+    "parts": [
+      "Test receipt · ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Applied date: {0}",
+    "parts": [
+      "Applied date: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Last checked: {0}",
+    "parts": [
+      "Last checked: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} · Wait until ",
+    "parts": [
+      "",
+      " · Wait until "
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} · Wait until {1}",
+    "parts": [
+      "",
+      " · Wait until ",
+      ""
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "{0} · your record",
+    "parts": [
+      "",
+      " · your record"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Connected to {0}",
+    "parts": [
+      "Connected to ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Destination: {0}",
+    "parts": [
+      "Destination: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} of {1} selected",
+    "parts": [
+      "",
+      " of ",
+      " selected"
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "{0} · PDF résumé",
+    "parts": [
+      "",
+      " · PDF résumé"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Follow up · {0}",
+    "parts": [
+      "Follow up · ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Role words: {0}",
+    "parts": [
+      "Role words: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "You marked: {0}",
+    "parts": [
+      "You marked: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} saved links",
+    "parts": [
+      "",
+      " saved links"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "\n\nStatus: {0}\n",
+    "parts": [
+      "\n\nStatus: ",
+      "\n"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": " · {0} matched",
+    "parts": [
+      " · ",
+      " matched"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Follow-up: {0}",
+    "parts": [
+      "Follow-up: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Source: {0} · {1}",
+    "parts": [
+      "Source: ",
+      " · ",
+      ""
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "PRIORITY {0}",
+    "parts": [
+      "PRIORITY ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Save {0} at {1}",
+    "parts": [
+      "Save ",
+      " at ",
+      ""
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "Checked {0}",
+    "parts": [
+      "Checked ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "From {0} · {1}",
+    "parts": [
+      "From ",
+      " · ",
+      ""
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "Résumé: {0}",
+    "parts": [
+      "Résumé: ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Saved ({0})",
+    "parts": [
+      "Saved (",
+      ")"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Choose {0}",
+    "parts": [
+      "Choose ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Clear {0}",
+    "parts": [
+      "Clear ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "Saved {0}",
+    "parts": [
+      "Saved ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} · PDF",
+    "parts": [
+      "",
+      " · PDF"
+    ],
+    "arguments": 1
+  }
+]
