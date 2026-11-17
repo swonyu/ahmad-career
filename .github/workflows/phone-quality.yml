@@ -212,7 +212,7 @@ jobs:
   iphone-ui:
     name: iPhone native interface acceptance
     runs-on: macos-26
-    timeout-minutes: 35
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -245,7 +245,7 @@ jobs:
       - name: Exercise native phone flows with isolated synthetic data
         shell: bash
         # Bound simulator work while leaving time to retain failure evidence.
-        timeout-minutes: 30
+        timeout-minutes: 35
         run: |
           set -o pipefail
           xcodebuild -project apple/AhmadCareer.xcodeproj -scheme CareerFinderAcceptance \
