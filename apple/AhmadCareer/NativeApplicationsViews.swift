@@ -1090,6 +1090,23 @@ private struct NativeApplicationReview: View {
             .onChange(of: model.plan?["digest"]?.string) { _ in approved = false }
             .onChange(of: model.plan?["approvedAt"]?.string) { _ in approved = false; changed = false }
             .onChange(of: model.plan?["id"]?.string) { id in if id == nil { dismiss() } }
+            .onAppear {
+                if !model.submissionAvailable {
+                    UIAccessibility.post(notification: .announcement, argument: l10n("Automatic submission is unavailable for this connection. Return to the application workspace to refresh availability, or use the employer's website."))
+                } else if model.profileNeedsSync {
+                    UIAccessibility.post(notification: .announcement, argument: l10n("Save your current application details before approving this review."))
+                }
+            }
+            .onChange(of: model.submissionAvailable) { available in
+                if !available {
+                    UIAccessibility.post(notification: .announcement, argument: l10n("Automatic submission is unavailable for this connection. Return to the application workspace to refresh availability, or use the employer's website."))
+                }
+            }
+            .onChange(of: model.profileNeedsSync) { needsSync in
+                if needsSync, model.submissionAvailable {
+                    UIAccessibility.post(notification: .announcement, argument: l10n("Save your current application details before approving this review."))
+                }
+            }
     }
     private func consentBinding(_ jobID: String, _ field: String) -> Binding<String> {
         Binding(get: {
