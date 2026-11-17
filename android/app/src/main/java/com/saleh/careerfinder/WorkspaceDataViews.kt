@@ -16,6 +16,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import java.time.LocalDate
+import java.util.Locale
 
 @Composable
 internal fun WorkspaceDataDialog(state: CareerUiState, model: CareerViewModel, editOpportunity: () -> Unit, close: () -> Unit) {
@@ -141,6 +142,11 @@ internal fun WorkspaceDataDialog(state: CareerUiState, model: CareerViewModel, e
 internal fun WorkspaceImportDialog(state: CareerUiState, model: CareerViewModel) {
     val l10n = rememberCareerStrings()
     val preview = state.workspaceImport ?: return
+    val countryNames = remember(l10n.locale.toLanguageTag()) {
+        ProfileContract.COUNTRIES.associateWith { code ->
+            Locale.Builder().setRegion(code).build().getDisplayCountry(l10n.locale).ifBlank { code }
+        }
+    }
     val incoming = preview.snapshot
     var profile by remember(preview.token) { mutableStateOf(false) }
     var pdf by remember(preview.token) { mutableStateOf(false) }
@@ -171,10 +177,12 @@ internal fun WorkspaceImportDialog(state: CareerUiState, model: CareerViewModel)
                 Text(incoming.profile.resume?.name ?: l10n("No résumé in backup"))
                 TextButton(onClick = { details = !details }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n(if (details) "Hide incoming details" else "Review all incoming details")) }
                 if (details) {
-                    listOf("Phone" to incoming.profile.phone, "City" to incoming.profile.city, "Country" to incoming.profile.country,
+                    listOf("Phone" to incoming.profile.phone, "City" to incoming.profile.city, "Country" to spokenRegion(incoming.profile.country, countryNames),
                         "Headline" to incoming.profile.headline, "Skills" to incoming.profile.skills, "Roles" to incoming.profile.targetRoles,
-                        "Target countries" to incoming.profile.targetCountries, "Work preferences" to incoming.profile.workModes.joinToString(", "),
-                        "Experience" to incoming.profile.experienceLevel, "Website" to incoming.profile.website, "LinkedIn profile link" to incoming.profile.linkedin)
+                        "Target countries" to spokenRegions(incoming.profile.targetCountries, countryNames),
+                        "Work preferences" to spokenWorkModes(incoming.profile.workModes, l10n),
+                        "Experience" to spokenExperience(incoming.profile.experienceLevel, l10n),
+                        "Website" to incoming.profile.website, "LinkedIn profile link" to incoming.profile.linkedin)
                         .forEach { (label, value) -> Text(l10n(label) + ": " + value.ifBlank { l10n("Not entered") }) }
                 }
             } }
@@ -198,3 +206,29 @@ internal fun WorkspaceImportDialog(state: CareerUiState, model: CareerViewModel)
         }
     }
 }
+
+/** Closed profile choices use the same words as the profile editor. Free text stays as entered. */
+private fun spokenExperience(level: String, l10n: CareerStrings): String {
+    val label = when (level) {
+        "any" -> "Any"
+        "entry" -> "Entry"
+        "mid" -> "Mid"
+        "senior" -> "Senior"
+        else -> return level
+    }
+    return l10n(label)
+}
+
+private fun spokenWorkModes(modes: Set<String>, l10n: CareerStrings): String = modes.joinToString(", ") { token ->
+    when (token) {
+        "on-site" -> l10n("On site")
+        "hybrid" -> l10n("Hybrid")
+        "remote" -> l10n("Remote")
+        else -> token
+    }
+}
+
+private fun spokenRegion(code: String, names: Map<String, String>): String = names[code] ?: code
+
+private fun spokenRegions(codes: String, names: Map<String, String>): String =
+    codes.parts().joinToString(", ") { names[it] ?: it }
