@@ -57,7 +57,10 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
     var chooseSources by remember { mutableStateOf(false) }
     val search: () -> Unit = { keyboard?.hide(); controller.search() }
     LazyColumn(Modifier.fillMaxSize().imePadding().testTag("discovery-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        if (state.restoringSearch) item { LinearProgressIndicator(Modifier.fillMaxWidth()); Text(l10n("Opening your last search…")) }
+        if (state.restoringSearch) item {
+            LinearProgressIndicator(Modifier.fillMaxWidth())
+            Text(l10n("Opening your last search…"), modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+        }
         if (state.restoredSearch) item {
             Panel {
                 Text(l10n(if (state.status == null) "Last search restored" else "Previous results"), style = MaterialTheme.typography.titleMedium)
@@ -91,6 +94,14 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
             }
             CheckLine("Remote listings only", state.filters.remoteOnly, { checked -> controller.editFilters { it.copy(remoteOnly = checked) } })
             Text(l10n("Remote labels describe the posting. Check the employer’s location and work-authorization requirements."), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        val catalogIssue = state.catalogError
+        if (catalogIssue != null && !chooseSources) item {
+            Text(l10n.message(catalogIssue), color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }.testTag("discovery.catalogError"))
+            OutlinedButton(onClick = controller::loadSources, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("discovery.retryCatalog")) {
+                Text(l10n("Retry employer catalog"))
+            }
         }
         item {
             Action(if (state.loading) "Searching employer boards…" else "Search jobs", !state.loading && !state.restoringSearch, search)
@@ -247,8 +258,9 @@ private fun DiscoverySourcesDialog(state: DiscoveryUiState, controller: Discover
                 item { Text(l10n.format("Choose up to {0} public employer boards. This is a starting catalog, not a complete list of employers or professions.", listOf((limit).toString()))) }
                 item { Text(l10n.format("{0} of {1} selected", listOf((draft.size).toString(), (limit).toString())), style = MaterialTheme.typography.labelLarge) }
                 if (state.catalogLoading) item { LinearProgressIndicator(Modifier.fillMaxWidth()) }
-                if (state.catalogError != null) item {
-                    Text(l10n.message(state.catalogError), color = MaterialTheme.colorScheme.error,
+                val catalogIssue = state.catalogError
+                if (catalogIssue != null) item {
+                    Text(l10n.message(catalogIssue), color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }.testTag("discovery.catalogError"))
                     OutlinedButton(onClick = controller::loadSources, modifier = Modifier.heightIn(min = 48.dp).testTag("discovery.retryCatalog")) { Text(l10n("Retry employer catalog")) }
                 }

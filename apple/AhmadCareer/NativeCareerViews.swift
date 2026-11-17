@@ -496,6 +496,9 @@ private struct NativeModernRecordEditor: View {
         }.tint(.careerAccent).interactiveDismissDisabled(changed || model.busy)
             .onChange(of: scenePhase) { phase in if phase != .active { checkpoint() } }
             .onDisappear { if !closingIntentionally { checkpoint() } }
+            .onChange(of: issue) { value in
+                if let value { UIAccessibility.post(notification: .announcement, argument: l10n.message(value)) }
+            }
     }
     private func checkpoint() {
         if changed, let context, !model.keepRecordDraft(draft, context: context) { issue = model.message }
@@ -549,6 +552,9 @@ private struct NativeModernRecordVersions: View {
                     Button(l10n("Keep current records"), role: .cancel) {}
                 } message: { Text(l10n("Your current applied mark stays unchanged, and other versions remain in your private history. This does not send or change an employer application.")) }
         }.tint(.careerAccent)
+            .onChange(of: issue) { value in
+                if let value { UIAccessibility.post(notification: .announcement, argument: l10n.message(value)) }
+            }
     }
 }
 

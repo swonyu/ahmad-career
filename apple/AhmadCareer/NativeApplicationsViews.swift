@@ -65,6 +65,9 @@ struct NativeSavedLinkRemoval: View {
             }.navigationTitle(l10n("Remove link")).navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button(l10n("Keep opportunity")) { dismiss() } } }
         }.tint(ApplyDesign.accent)
+            .onChange(of: issue) { value in
+                if let value { UIAccessibility.post(notification: .announcement, argument: l10n.message(value)) }
+            }
     }
 }
 
@@ -636,6 +639,9 @@ struct NativeApplicationProfileEditor: View {
                 UIAccessibility.post(notification: .announcement, argument: l10n("Enter an email address employers can reply to."))
             }
             emailFieldFocused = field == "email"
+        }
+        .onChange(of: issue) { value in
+            if let value { UIAccessibility.post(notification: .announcement, argument: l10n.message(value)) }
         }
     }
     private func resetFromModel() {
@@ -1265,6 +1271,9 @@ struct NativePhoneDataScreen: View {
                 }
                 Button(l10n("Keep phone data"), role: .cancel) {}
             } message: { Text(l10n.format("This removes the local profile, PDF, links, search and private notes/history for {0}. An exported backup can restore them. Cloud/employer records and safety holds remain.", [String(describing: target)])) }
+            .onChange(of: issue) { value in
+                if let value { UIAccessibility.post(notification: .announcement, argument: l10n.message(value)) }
+            }
     }
 }
 

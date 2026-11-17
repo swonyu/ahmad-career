@@ -236,7 +236,7 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
         val filters = state.value.filters
         if (filters.query.length > 120 || filters.location.length > 100) {
             // The snapshot cannot store this text. Leave the earlier file alone and keep what was typed on screen.
-            if (request == storageGeneration && privateKey == key) mutable.update { it.copy(
+            if (request == storageGeneration && privateKey == key && state.value.filters == filters) mutable.update { it.copy(
                 searchStorageError = "These search fields exceed the supported limits. Earlier saved search data is kept.") }
             return
         }
