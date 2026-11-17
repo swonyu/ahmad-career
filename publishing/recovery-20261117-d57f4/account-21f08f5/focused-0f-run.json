@@ -1,0 +1,61 @@
+{
+  "run": {
+    "id": 44129604009,
+    "head_sha": "0f0c6f1f591ff173e51671599cbbb6aeff4a69e4",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-17T16:46:38Z",
+    "updated_at": "2026-11-17T17:00:50Z",
+    "head_branch": "recovery/publishing-integrated-20261117-d57f4",
+    "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44129604009"
+  },
+  "jobs": [
+    {
+      "id": 134202710170,
+      "name": "PARTIAL iPhone connection regression",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Exercise native phone flows with isolated synthetic data",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify the partial regression actually ran once",
+          "conclusion": "success"
+        },
+        {
+          "name": "Export native interface evidence",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 134202712342,
+      "name": "Hosted HTTPS service and durable storage",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "id": 134202713110,
+      "name": "Android compile, lint and native acceptance",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "id": 134202713812,
+      "name": "iPhone logic and unsigned build",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "id": 134202785618,
+      "name": "Service and synthetic HTTPS",
+      "status": "completed",
+      "conclusion": "skipped"
+    }
+  ],
+  "acceptedScope": "One selected XCTest journey passed and its finalized artifact export/upload succeeded. Four other quality jobs were intentionally skipped.",
+  "fullReleaseGate": false,
+  "newMergedCandidateAcceptance": "Pending; this run is the unchanged native-source parent, not a five-job run of the new merge."
+}

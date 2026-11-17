@@ -1,0 +1,57 @@
+{
+  "commit": "0f0c6f1f591ff173e51671599cbbb6aeff4a69e4",
+  "runId": 44129604009,
+  "artifactId": 14350775996,
+  "artifactSHA256": "02f5c47dee03ad513e45c508a8235c9b97371db7fed5d0c2e800ee6a58991eed",
+  "originalManifestSHA256": "63664d408f5d00dcbe1f795c1a877e2067a40f1c68d437bee6c9b53061590f21",
+  "originalPNGCount": 2,
+  "actuallyViewedCount": 2,
+  "records": [
+    {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "C80D0661-53A9-4743-B864-FAEAFF9E08F6",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "51BCB55B-FDAF-4BFF-95C0-6BF5B2A103E7.png",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "22-simple-default-connection_0_27187094-F9B7-4277-B105-79A9C195BA0E.png",
+      "timestamp": 1794934705.545,
+      "testIdentifier": "CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup()",
+      "bytes": 357039,
+      "sha256": "abe64b9587fface0a6cd207feb50f01bb4aff6f296b377cb40c5e4e8fcaef49f",
+      "dimensions": [
+        1260,
+        2736
+      ],
+      "actuallyViewed": true,
+      "screening": "Synthetic fixture or normal app copy only; no real applicant/contact, secret or token observed.",
+      "visualReview": "Scrolled Application connection sheet shows disabled empty code controls, Use another service disclosure collapsed, local-draft notice and visible hosted privacy/support/account-deletion links. This is the restored default connection state, not an image of the earlier Clear tap. No connection code, account identity or credential is visible.",
+      "newBlockingFinding": null
+    },
+    {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "C80D0661-53A9-4743-B864-FAEAFF9E08F6",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "0B5FE2F8-FA39-45C8-8524-EDE1827530C7.png",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "21-profile-readiness_0_C4D83B6E-17F0-4816-A6CE-C68CF82EB9DC.png",
+      "timestamp": 1794934634.377,
+      "testIdentifier": "CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup()",
+      "bytes": 466132,
+      "sha256": "a3f2cc76cb6f6ff41cd9d7ac0b1136f5a3eacbf7cc189ee40db6d782b411a6cb",
+      "dimensions": [
+        1260,
+        2736
+      ],
+      "actuallyViewed": true,
+      "screening": "Synthetic fixture or normal app copy only; no real applicant/contact, secret or token observed.",
+      "visualReview": "Apply tab shows synthetic Alex profile, Name added, Check your email, PDF CV needed, zero record counts and Connect application workspace. The DEBUG synthetic-data banner crosses the title area, a known audit-only overlay. No private applicant data or credential is visible.",
+      "newBlockingFinding": null
+    }
+  ],
+  "limitations": [
+    "One selected English iPhone Air synthetic journey; four other jobs skipped.",
+    "Clear interaction and strict entire-field replacement are established by source-bound actual test success/log, not these two final-state PNGs.",
+    "These DEBUG acceptance images contain QA provenance and are not production store-marketing captures.",
+    "No general accessibility/contrast, Arabic, physical-device, provider-login or full release acceptance inferred."
+  ]
+}
