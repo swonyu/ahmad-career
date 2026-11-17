@@ -823,7 +823,7 @@ struct NativeLegacyBackupScreen:View {
             if !notice.isEmpty {Section {Text(l10n.message(notice)).fixedSize(horizontal:false,vertical:true).accessibilityAddTraits(.updatesFrequently)}}
         }.navigationTitle(l10n("Earlier records and backups")).navigationBarTitleDisplayMode(.inline)
             .fileExporter(isPresented:$exporting,document:document,contentType:.json,defaultFilename:"Career-Finder-planning-backup") {result in
-                if case .failure(let error)=result {notice=error.localizedDescription}
+                if case .failure(let error)=result,!MobileApplicationPolicy.isFileSelectionCancelled(error) {notice=error.localizedDescription}
             }
             .fileImporter(isPresented:$importing,allowedContentTypes:[.json]) {result in
                 preview=nil
@@ -834,7 +834,7 @@ struct NativeLegacyBackupScreen:View {
                     let data=try handle.read(upToCount:NativeCareerStore.backupLimit+1) ?? Data()
                     guard data.count<=NativeCareerStore.backupLimit else {throw NativeBackupError.invalid}
                     preview=try store.previewBackup(data);notice=""
-                } catch {notice=error.localizedDescription}
+                } catch {if !MobileApplicationPolicy.isFileSelectionCancelled(error) {notice=error.localizedDescription}}
             }
             .confirmationDialog(l10n("Add missing saved data? Existing values will be preserved."),isPresented:$confirming,titleVisibility:.visible) {
                 Button(l10n("Restore additions")) {
