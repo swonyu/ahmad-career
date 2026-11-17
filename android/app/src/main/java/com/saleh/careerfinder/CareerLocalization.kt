@@ -104,6 +104,10 @@ private fun chooseLanguage(context: Context, choice: LanguagePreference) {
 internal data class LanguageController(val preference: LanguagePreference, val select: (LanguagePreference) -> Unit)
 internal val LocalCareerLanguage = staticCompositionLocalOf<LanguageController> { error("CareerLanguage is required") }
 
+/** Custom locals survive the Android composition boundary of dialogs and popups. */
+private data class CareerDisplayLanguage(val locale: Locale, val strings: CareerStrings)
+private val LocalCareerDisplayLanguage = staticCompositionLocalOf<CareerDisplayLanguage?> { null }
+
 private class LocalizedDisplayContext(base: Context, private val localizedResources: Resources) : ContextWrapper(base) {
     override fun getResources(): Resources = localizedResources
     override fun getAssets() = localizedResources.assets
@@ -136,16 +140,49 @@ internal fun CareerLanguage(content: @Composable () -> Unit) {
     val localizedContext = remember(context, configuration) {
         LocalizedDisplayContext(context, context.createConfigurationContext(configuration).resources)
     }
+    val displayLanguage = remember(localizedContext, locale) {
+        CareerDisplayLanguage(locale, CareerStrings(localizedContext))
+    }
     CompositionLocalProvider(
         LocalContext provides localizedContext,
         LocalConfiguration provides configuration,
         LocalLayoutDirection provides if (language == "ar") LayoutDirection.Rtl else LayoutDirection.Ltr,
         LocalCareerLanguage provides LanguageController(selection) { chooseLanguage(context, it) },
+        LocalCareerDisplayLanguage provides displayLanguage,
+    ) { content() }
+}
+
+/**
+ * A native dialog supplies a new Android context/configuration. Reapply only the
+ * selected locale and direction, retaining that window's density, theme and size.
+ * This does not create a ViewModel, reset a draft or write a language preference.
+ */
+@Composable
+internal fun CareerDisplayContent(content: @Composable () -> Unit) {
+    val display = LocalCareerDisplayLanguage.current
+    if (display == null) { content(); return }
+    val context = LocalContext.current
+    val windowConfiguration = LocalConfiguration.current
+    val configuration = remember(windowConfiguration, display.locale) {
+        Configuration(windowConfiguration).apply {
+            setLocales(LocaleList(display.locale)); setLayoutDirection(display.locale)
+        }
+    }
+    val localizedContext = remember(context, configuration) {
+        LocalizedDisplayContext(context, context.createConfigurationContext(configuration).resources)
+    }
+    CompositionLocalProvider(
+        LocalContext provides localizedContext,
+        LocalConfiguration provides configuration,
+        LocalLayoutDirection provides if (display.locale.language == "ar") LayoutDirection.Rtl else LayoutDirection.Ltr,
     ) { content() }
 }
 
 @Composable
 internal fun rememberCareerStrings(): CareerStrings {
+    // Nested helpers must use the same selected language as their parent screen,
+    // even when Android recreates standard composition locals in another window.
+    LocalCareerDisplayLanguage.current?.let { return it.strings }
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     return remember(context, configuration.locales.toLanguageTags()) { CareerStrings(context) }

@@ -50,7 +50,7 @@ class LinkedInPhoneAcceptanceTest {
         compose.activityRule.scenario.onActivity { activity ->
             model = CareerViewModel(activity.application, store, service, discoveryService = discovery)
             owner.put("linkedin-phone", model)
-            activity.setContent { CareerLanguage { CareerTheme { CareerApp(model) } } }
+            activity.setContent { EnglishAcceptanceLanguage { CareerTheme { CareerApp(model) } } }
         }
         compose.waitUntil(5_000) { model.state.value.loaded && !model.state.value.busy }
     }
@@ -117,9 +117,11 @@ class LinkedInPhoneAcceptanceTest {
         }
         compose.onNodeWithText(exact).performScrollTo().assertIsDisplayed()
         capture("linkedin-exact-review")
-        compose.onNodeWithText("Search LinkedIn").performScrollTo().assertIsDisplayed()
-        compose.onNodeWithText("Search LinkedIn").performClick()
-        compose.onNode(hasText("LinkedIn manages its own sign-in and applications", substring = true)).performScrollTo().assertIsDisplayed()
+        // This standalone component keeps the runner's Arabic/RTL context.
+        val display = CareerStrings(compose.activity)
+        compose.onNodeWithText(display("Search LinkedIn")).performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText(display("Search LinkedIn")).performClick()
+        compose.onNodeWithText(display("Opens LinkedIn with your keywords and location. LinkedIn manages its own sign-in and applications; opening a search does not submit an application.")).performScrollTo().assertIsDisplayed()
         capture("linkedin-search-handoff")
         assertEquals("https://www.linkedin.com/jobs/search/?keywords=Data+%26+science&location=Riyadh%2C+SA", opened)
         assertEquals(0, requests)

@@ -5,6 +5,8 @@ import android.content.ContextWrapper
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.LocaleList
+import android.os.Build
+import android.app.LocaleManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
@@ -27,8 +29,9 @@ import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
 /** Production Compose, resource and language helpers, with synthetic memory data.
- * Preference writes model an external display-language change without changing the
- * instrumentation host's Android per-app locale. Physical OS picker acceptance is separate.
+ * UI choices and external preference changes use an isolated preference file. The
+ * Android locale service is absent only in this test context, so the runner's Arabic
+ * platform locale remains unchanged. Physical OS picker acceptance is separate.
  */
 class NativeLocalizationAcceptanceTest {
     @get:Rule val compose = createAndroidComposeRule<ComponentActivity>()
@@ -47,6 +50,8 @@ class NativeLocalizationAcceptanceTest {
     private class IsolatedDisplayContext(base: Context, private val preferences: SharedPreferences) : ContextWrapper(base) {
         override fun getSharedPreferences(name: String, mode: Int): SharedPreferences =
             if (name == "career_display_language") preferences else super.getSharedPreferences(name, mode)
+        override fun getSystemService(name: String): Any? =
+            if (Build.VERSION.SDK_INT >= 33 && name == Context.LOCALE_SERVICE) null else super.getSystemService(name)
     }
     private val store = Store()
     private val service = NoService()
@@ -149,6 +154,72 @@ class NativeLocalizationAcceptanceTest {
         assertEquals("en", supportedCareerLanguage(listOf("arc", "fr")))
         display("system")
         assertEquals(LanguagePreference.SYSTEM, readLanguagePreference(context))
+        assertEquals(0, service.calls)
+    }
+
+    @Test fun openDialog_keepsHeadingAndNestedActionsInTheSelectedLanguage() {
+        val scope = model.state.value.privateScope
+        val originalProfile = model.state.value.profile
+        compose.onNodeWithTag("open-settings").performClick()
+        compose.onNodeWithTag("settings-list").performScrollToNode(hasTestTag("settings-connection"))
+        compose.onNodeWithTag("settings-connection").performClick()
+        compose.onNodeWithTag("phone-connection").performScrollToNode(hasText("1. Sign in and get a code"))
+        compose.onNodeWithText("1. Sign in and get a code").assertIsDisplayed()
+        // The retained CI failure reached the English heading but could not find
+        // this action. The old nested helper read the dialog's Android context.
+        compose.onNodeWithTag("phone-connection").performScrollToNode(hasText("Sign in and get a code"))
+        compose.onNodeWithText("Sign in and get a code").assertIsDisplayed()
+        display("ar")
+        val ar = strings("ar")
+        compose.onNodeWithTag("phone-connection").performScrollToNode(hasText(ar("1. Sign in and get a code")))
+        compose.onNodeWithText(ar("1. Sign in and get a code")).assertIsDisplayed()
+        compose.onNodeWithTag("phone-connection").performScrollToNode(hasText(ar("Sign in and get a code")))
+        compose.onNodeWithText(ar("Sign in and get a code")).assertIsDisplayed()
+        compose.onNodeWithText("Sign in and get a code").assertDoesNotExist()
+        assertEquals(LayoutDirection.Rtl, direction)
+        display("en")
+        compose.onNodeWithTag("phone-connection").performScrollToNode(hasText("Sign in and get a code"))
+        compose.onNodeWithText("Sign in and get a code").assertIsDisplayed()
+        assertEquals(LayoutDirection.Ltr, direction)
+        assertEquals(scope, model.state.value.privateScope)
+        assertEquals(originalProfile, model.state.value.profile)
+        assertNull(model.state.value.connection)
+        assertTrue(model.state.value.receipts.isEmpty())
+        assertEquals(0, service.calls)
+    }
+
+    @Test fun languageButtons_preserveTheUnfinishedProfileAndPrivateScope() {
+        val platform = if (Build.VERSION.SDK_INT >= 33) compose.activity.getSystemService(LocaleManager::class.java) else null
+        val platformBefore = if (Build.VERSION.SDK_INT >= 33) platform?.applicationLocales?.toLanguageTags() else null
+        val sharedPreferences = compose.activity.getSharedPreferences("career_display_language", Context.MODE_PRIVATE)
+        val sharedBefore = sharedPreferences.all.toMap()
+        val scope = model.state.value.privateScope
+        compose.onNodeWithTag("navigation-profile").performClick()
+        compose.onNodeWithTag("profile-list").performScrollToNode(hasText("First or single name") and hasSetTextAction())
+        compose.onNode(hasText("First or single name") and hasSetTextAction()).performTextInput("Unfinished اسم")
+        compose.onNodeWithTag("open-settings").performClick()
+        compose.onNodeWithTag("settings-list").performScrollToNode(hasTestTag("language-ar"))
+        compose.onNodeWithTag("language-ar").performClick()
+        compose.waitUntil(5_000) { selection == LanguagePreference.ARABIC && direction == LayoutDirection.Rtl }
+        compose.onNodeWithTag("language-ar").assertIsSelected()
+        assertEquals(LanguagePreference.ARABIC, readLanguagePreference(context))
+        assertEquals("Unfinished اسم", model.state.value.profile.firstName)
+        assertEquals(scope, model.state.value.privateScope)
+        mount()
+        compose.waitUntil(5_000) { selection == LanguagePreference.ARABIC && direction == LayoutDirection.Rtl }
+        compose.onNodeWithTag("open-settings").performClick()
+        compose.onNodeWithTag("settings-list").performScrollToNode(hasTestTag("language-en"))
+        compose.onNodeWithTag("language-en").performClick()
+        compose.waitUntil(5_000) { selection == LanguagePreference.ENGLISH && direction == LayoutDirection.Ltr }
+        compose.onNodeWithTag("language-en").assertIsSelected()
+        compose.onNodeWithTag("navigation-profile").performClick()
+        compose.onNodeWithTag("profile-list").performScrollToNode(hasText("First or single name") and hasSetTextAction())
+        compose.onNode(hasText("First or single name") and hasSetTextAction()).assertTextContains("Unfinished اسم")
+        assertEquals(scope, model.state.value.privateScope)
+        assertTrue(model.state.value.profileDirty)
+        assertEquals(sharedBefore, sharedPreferences.all.toMap())
+        if (Build.VERSION.SDK_INT >= 33) assertEquals(platformBefore, platform?.applicationLocales?.toLanguageTags())
+        assertTrue(model.state.value.receipts.isEmpty())
         assertEquals(0, service.calls)
     }
 }

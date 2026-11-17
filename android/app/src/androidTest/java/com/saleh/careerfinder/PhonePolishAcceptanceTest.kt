@@ -84,7 +84,7 @@ class PhonePolishAcceptanceTest {
         compose.activityRule.scenario.onActivity { activity ->
             model = CareerViewModel(activity.application, store, service, discoveryService = publicService)
             owner.put("isolated-phone-polish", model)
-            activity.setContent { CareerLanguage { CareerTheme { CareerApp(model) } } }
+            activity.setContent { EnglishAcceptanceLanguage { CareerTheme { CareerApp(model) } } }
         }
         compose.waitUntil(5_000) { model.state.value.loaded && !model.state.value.busy }
     }

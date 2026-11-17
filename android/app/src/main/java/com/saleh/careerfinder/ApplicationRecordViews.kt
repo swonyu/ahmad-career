@@ -172,7 +172,9 @@ internal fun ApplicationRecordEditor(state: CareerUiState, model: CareerViewMode
                 dateField = null
             }, enabled = picker.selectedDateMillis != null) { Text(l10n("Use date")) } },
             dismissButton = { TextButton(onClick = { dateField = null }) { Text(l10n("Cancel")) } }) {
-            DatePicker(state = picker, title = { Text(l10n(if (dateField == "applied") "Applied date" else "Follow-up date"), Modifier.padding(24.dp)) }, headline = null, showModeToggle = true)
+            CareerDisplayContent {
+                DatePicker(state = picker, title = { Text(l10n(if (dateField == "applied") "Applied date" else "Follow-up date"), Modifier.padding(24.dp)) }, headline = null, showModeToggle = true)
+            }
         }
     }
     if (editor.pendingNotApplied != null) AlertDialog(onDismissRequest = { model.keepApplicationRecord(editor.token) },

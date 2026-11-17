@@ -51,8 +51,10 @@ class WorkspaceAccessibilityRegressionTest {
                 }
             }
         }
-        compose.onNodeWithText("Read full note").assertExists().performScrollTo().performClick()
-        compose.onNodeWithText("Show less").assertExists()
+        // Keep the forced Arabic/RTL platform and the original 2x text layout.
+        val display = CareerStrings(InstrumentationRegistry.getInstrumentation().targetContext)
+        compose.onNodeWithText(display("Read full note")).assertExists().performScrollTo().performClick()
+        compose.onNodeWithText(display("Show less")).assertExists()
         val layouts = mutableListOf<TextLayoutResult>()
         compose.onNodeWithText(note).performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
         assertTrue(layouts.isNotEmpty())

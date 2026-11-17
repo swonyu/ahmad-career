@@ -313,7 +313,8 @@ try {
   const testDirectory=path.join(root,'android/app/src/androidTest/java/com/saleh/careerfinder');
   const classes=fs.readdirSync(testDirectory).filter(name=>name.endsWith('.kt')).flatMap(name=>[...fs.readFileSync(path.join(testDirectory,name),'utf8').matchAll(/^class\s+(\w+(?:Test))\b/gm)].map(match=>match[1])).filter(name=>!['NativeHttpsAcceptanceTest','TlsBoundaryAcceptanceTest'].includes(name)).sort().map(name=>'com.saleh.careerfinder.'+name);
   assert.ok(classes.some(name=>name.endsWith('WorkspaceSafetyRegressionTest')),'New safety regressions must be selected.');
-  await instrument('ordinary-phone','com.saleh.careerfinder.preview',classes,{},97);
+  assert.ok(classes.some(name=>name.endsWith('NativeLocalizationAcceptanceTest')),'Bilingual dialog and language-control regressions must be selected.');
+  await instrument('ordinary-phone','com.saleh.careerfinder.preview',classes,{},105);
   const {startTLSFixture}=await import('../../website/applications/fixtures/tls-fixture.mjs');
   fixture=await startTLSFixture({runtimeDir:path.join(runtime,'tls'),port:4943,mockPort:4944});
   await instrument('normal-preview-tls-boundary','com.saleh.careerfinder.preview',['com.saleh.careerfinder.TlsBoundaryAcceptanceTest'],{fixtureOrigin:fixture.origin});
