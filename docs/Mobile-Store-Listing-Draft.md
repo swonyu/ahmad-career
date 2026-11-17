@@ -1,6 +1,13 @@
 # Career Finder — mobile store listing draft
 
-Prepared 16 November 2026 for the 0.4 phone candidate. Publisher draft only; no store submission, approval or availability is claimed. Copy reflects current implemented behavior, including disabled live submission on the hosted preview. Historical review material was context only and remains unchanged.
+Updated 17 November 2026 against integrated source `918cfaa455b76f217b21c6c01fe862ea95ebe920`. Publisher draft only; no store submission, approval or availability is claimed. Copy reflects implemented behavior, including disabled live submission on the hosted preview. Historical review material remains dated evidence.
+
+| Platform | Current source configuration | Source |
+| --- | --- | --- |
+| iPhone | Version 1.1, build 7; `com.ahmadalayed.career` | `apple/AhmadCareer.xcodeproj/project.pbxproj` |
+| Android | Version 0.6.0, version code 7; release base identity `com.saleh.careerfinder` | `android/app/build.gradle.kts` |
+
+The native source supports English, Arabic and device-language selection. These settings identify the candidate source; signed distribution and the final store-record version remain unverified. The Android `.preview` and `.acceptance` suffixes identify test variants and must not be presented as the release package.
 
 ## Verified limits and exact counts
 
@@ -12,9 +19,9 @@ Counts include spaces, punctuation and internal LF line breaks; exclude headings
 | iPhone subtitle | 30 characters | 30 characters |
 | iPhone promotional text | 155 characters | 170 characters |
 | iPhone keywords | 96 characters / 96 bytes | 100 bytes |
-| iPhone full description | 1617 characters | 4000 characters |
+| iPhone full description | 1715 characters | 4000 characters |
 | Google Play short description | 70 characters | 80 characters |
-| Google Play full description | 1728 characters | 4000 characters |
+| Google Play full description | 1826 characters | 4000 characters |
 
 ## Listing copy
 
@@ -62,7 +69,7 @@ Review applicant details, the selected PDF and employer-specific answers before 
 Understand your records
 Saving a job or recording a manual application does not prove employer receipt. A confirmed live receipt means a supported provider accepted the application, not that an interview or offer is guaranteed. Test and uncertain outcomes are identified separately.
 
-The interface is English. Job availability and employer requirements can change.
+Choose English, Arabic or your device language in Settings. Job postings and personal text stay in their original language. Job availability and employer requirements can change.
 ```
 
 ### Google Play short description
@@ -93,13 +100,13 @@ Auto Apply requires an authorized employer integration and your explicit approva
 Keep outcomes clear
 A confirmed live receipt means a supported provider accepted the application, not that an interview or offer is guaranteed. Test and uncertain results remain separate. Review available account controls for recovery, export and cloud deletion.
 
-The interface is English. Job availability and employer requirements can change.
+Choose English, Arabic or your device language in Settings. Job postings and personal text stay in their original language. Job availability and employer requirements can change.
 ```
 
 ## Publisher review notes — not listing copy
 
 - Review without signing in: launch with a blank profile, search selected boards, inspect source/availability details, save an opportunity, and select a reviewer-owned PDF. Saving and opening links must not send an application. Disabled live Auto Apply is expected in this preview; any test evidence must remain clearly labeled.
-- For the optional connected flow, supply stable reviewer access and connection instructions privately in the store console. A five-minute pairing code alone is insufficient. The publisher must assess ChatGPT browser sign-in and account deletion against applicable review requirements; no login exception or approval is assumed.
+- For the optional connected flow, supply stable reviewer access and connection instructions privately in the store console. A five-minute pairing code alone is insufficient. Assess the actual enabled Google, LinkedIn and ChatGPT primary sign-in choices against Apple guideline 4.8, including an equivalent privacy-preserving login service or a documented applicable exception. An existing ChatGPT sign-in option alone does not establish the required equivalence. Account deletion and real provider success, denial and recovery remain separate acceptance gates; no login exception or approval is assumed.
 - Publisher inputs: confirmed operator/legal name, monitored contact, final support/privacy URLs and disclosures, intended store records, authorized signing, release version/build, current screenshots, and completed release acceptance. Do not substitute the Android preview/acceptance identity for the intended release identity. Recheck this copy if service capabilities change before upload.
 
 ## Official references
