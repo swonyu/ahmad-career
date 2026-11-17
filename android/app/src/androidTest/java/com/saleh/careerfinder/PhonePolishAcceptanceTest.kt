@@ -91,7 +91,7 @@ class PhonePolishAcceptanceTest {
     @After fun clearPhone() { compose.runOnIdle { owner.clear() } }
 
     @Test fun profileEssentials_andCountrySelection_preserveSingleNamesAndCancelledChoices() {
-        compose.onNodeWithText("Profile").performClick()
+        compose.onNodeWithText("Profile").revealNavigationTab().performClick()
         compose.onNodeWithTag("profile-list").performScrollToNode(hasText("First or single name") and hasSetTextAction())
         compose.onNode(hasText("First or single name") and hasSetTextAction()).performTextInput("Single")
         closeSoftKeyboard()

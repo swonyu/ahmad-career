@@ -102,7 +102,7 @@ class NativeLocalizationAcceptanceTest {
     }
 
     @Test fun arabicDisplay_keepsProfileAndPrivateScope_andPersistsWithoutServiceCalls() {
-        compose.onNodeWithTag("navigation-profile").performClick()
+        compose.onNodeWithTag("navigation-profile").revealNavigationTab().performClick()
         compose.onNodeWithTag("profile-list").performScrollToNode(hasText("First or single name") and hasSetTextAction())
         compose.onNode(hasText("First or single name") and hasSetTextAction()).performTextInput("Saved")
         val scope = model.state.value.privateScope
@@ -122,7 +122,7 @@ class NativeLocalizationAcceptanceTest {
         assertEquals("Saved", model.state.value.profile.firstName)
         display("en")
         assertEquals(LayoutDirection.Ltr, direction)
-        compose.onNodeWithTag("navigation-profile").performClick()
+        compose.onNodeWithTag("navigation-profile").revealNavigationTab().performClick()
         compose.onNodeWithTag("profile-list").performScrollToNode(hasText("First or single name") and hasSetTextAction())
         compose.onNode(hasText("First or single name") and hasSetTextAction()).assertTextContains("Saved")
         assertEquals(0, service.calls)
@@ -194,7 +194,7 @@ class NativeLocalizationAcceptanceTest {
         val sharedPreferences = compose.activity.getSharedPreferences("career_display_language", Context.MODE_PRIVATE)
         val sharedBefore = sharedPreferences.all.toMap()
         val scope = model.state.value.privateScope
-        compose.onNodeWithTag("navigation-profile").performClick()
+        compose.onNodeWithTag("navigation-profile").revealNavigationTab().performClick()
         compose.onNodeWithTag("profile-list").performScrollToNode(hasText("First or single name") and hasSetTextAction())
         compose.onNode(hasText("First or single name") and hasSetTextAction()).performTextInput("Unfinished اسم")
         compose.onNodeWithTag("open-settings").performClick()
@@ -212,7 +212,7 @@ class NativeLocalizationAcceptanceTest {
         compose.onNodeWithTag("language-en").performClick()
         compose.waitUntil(5_000) { selection == LanguagePreference.ENGLISH && direction == LayoutDirection.Ltr }
         compose.onNodeWithTag("language-en").assertIsSelected()
-        compose.onNodeWithTag("navigation-profile").performClick()
+        compose.onNodeWithTag("navigation-profile").revealNavigationTab().performClick()
         compose.onNodeWithTag("profile-list").performScrollToNode(hasText("First or single name") and hasSetTextAction())
         compose.onNode(hasText("First or single name") and hasSetTextAction()).assertTextContains("Unfinished اسم")
         assertEquals(scope, model.state.value.privateScope)
