@@ -353,7 +353,7 @@ private fun ProfileConflictPanel(state: CareerUiState, model: CareerViewModel) {
     var compare by remember { mutableStateOf(false) }
     var confirmation by remember { mutableStateOf<ProfileDraft?>(null) }
     Panel {
-        StatusPill("A newer saved profile is available", true)
+        StatusPill("A newer saved profile is available", true, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
         Text(l10n.format("Your edited fields are safe on this phone. Compare them with saved version {0} before choosing what to keep.", listOf((newer.revision).toString())))
         TextButton(onClick = { compare = !compare }, modifier = Modifier.heightIn(min = 48.dp)) { Text(l10n(if (compare) "Hide comparison" else "Compare both profiles")) }
         if (compare) {

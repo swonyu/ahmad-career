@@ -1231,6 +1231,16 @@ private struct NativeProfileEditor: View {
             }
         }
         .interactiveDismissDisabled(dirty)
+        .onAppear {
+            if hasConflict {
+                UIAccessibility.post(notification: .announcement, argument: l10n("Keep a copy of any draft text you need, then cancel and reopen this editor to use the latest profile. Your draft has not been saved."))
+            }
+        }
+        .onChange(of: hasConflict) { conflict in
+            if conflict {
+                UIAccessibility.post(notification: .announcement, argument: l10n("Keep a copy of any draft text you need, then cancel and reopen this editor to use the latest profile. Your draft has not been saved."))
+            }
+        }
         .confirmationDialog(l10n("Discard unsaved profile changes?"), isPresented: $confirmDiscard, titleVisibility: .visible) {
             Button(l10n("Discard changes"), role: .destructive) { dismiss() }
             Button(l10n("Keep editing"), role: .cancel) { }
