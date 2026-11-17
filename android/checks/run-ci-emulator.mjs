@@ -88,7 +88,7 @@ async function start(command,args,log,cwd=root) {
   try {await awaitSpawn(child);return child}
   catch(error){try{await terminate(child)}catch(shutdown){console.warn(shutdown.message)}throw error}
 }
-async function run(command,args,{log,stdin,timeout=120000,cwd=root}={}) {
+async function run(command,args,{log,stdin,timeout=120000,cwd=root,onTimeout}={}) {
   const child=own(spawn(command,args,{cwd,env,detached:true,stdio:['pipe','pipe','pipe']}));
   const chunks=[];let bytes=0;
   const output=log?fs.createWriteStream(path.join(evidence,log),{flags:'a'}):null;
@@ -96,7 +96,18 @@ async function run(command,args,{log,stdin,timeout=120000,cwd=root}={}) {
   try {
     await awaitSpawn(child);child.stdin.end(stdin??'');
     const result=await within(lifecycles.get(child).closed,timeout);
-    if(!result.completed)throw Error(`${path.basename(command)} timed out after ${timeout}ms; see ${log??'runner output'}.`);
+    if(!result.completed) {
+      if(onTimeout) {
+        const controller=new AbortController();
+        try {
+          // Observe the stalled app before terminating its instrumentation client.
+          const diagnostics=await within(Promise.resolve().then(()=>onTimeout(controller.signal)),60000);
+          if(!diagnostics.completed)console.warn('Timeout diagnostics exceeded their sixty-second limit.');
+        } catch {console.warn('Timeout diagnostics unavailable.')}
+        finally {controller.abort()}
+      }
+      throw Error(`${path.basename(command)} timed out after ${timeout}ms; see ${log??'runner output'}.`);
+    }
     const {code,error}=result.value;
     if(error)throw error;
     const text=Buffer.concat(chunks).toString();
@@ -138,8 +149,8 @@ const screenshotDirectories={
   'com.saleh.careerfinder.preview':['cache/navigation-review-evidence','cache/linkedin-review-evidence','cache/strict-review-evidence'],
   'com.saleh.careerfinder.acceptance':['files']
 };
-async function readScreenshot(packageName,remotePath) {
-  const child=own(spawn(adb,['-s',env.ANDROID_SERIAL,'exec-out','run-as',packageName,'cat',remotePath],{cwd:root,env,detached:true,stdio:['ignore','pipe','pipe']}));
+async function readPNG(args) {
+  const child=own(spawn(adb,['-s',env.ANDROID_SERIAL,...args],{cwd:root,env,detached:true,stdio:['ignore','pipe','pipe']}));
   const chunks=[];let bytes=0,stderr='',oversized=false;
   child.stdout.on('data',part=>{
     bytes+=part.length;
@@ -162,6 +173,54 @@ async function readScreenshot(packageName,remotePath) {
     return {png,width,height};
   } finally {await terminate(child)}
 }
+const readScreenshot=(packageName,remotePath)=>readPNG(['exec-out','run-as',packageName,'cat',remotePath]);
+
+async function captureNativeFailure(packageName,signal) {
+  assert.equal(packageName,'com.saleh.careerfinder.acceptance');
+  assert.ok(installedPackages.has(packageName),'Diagnostics require the installed isolated acceptance app.');
+  const report={observedAt:new Date().toISOString(),packageName,device:env.ANDROID_SERIAL,checks:[]};
+  const collect=async(name,action)=>{
+    if(signal?.aborted){report.checks.push({name,result:'unavailable',reason:'Diagnostic time limit reached.'});return}
+    try {await action();report.checks.push({name,result:'captured'})}
+    catch(error){report.checks.push({name,result:'unavailable',reason:error.message})}
+  };
+  await Promise.all([
+    collect('current-screen',async()=>{
+      const {png,width,height}=await readPNG(['exec-out','screencap','-p']);
+      if(signal?.aborted)return;
+      const file='native-https-failure-screen.png';
+      fs.writeFileSync(path.join(evidence,file),png);
+      report.screen={file,width,height,bytes:png.length,sha256:createHash('sha256').update(png).digest('hex')};
+    }),
+    (async()=>{
+      let pid;
+      await collect('app-pid',async()=>{
+        const value=(await run(adb,['-s',env.ANDROID_SERIAL,'shell','pidof',packageName],{log:'native-https-failure-pid.log',timeout:10000})).trim();
+        assert.match(value,/^[1-9][0-9]{0,9}$/,'The acceptance app must have one numeric PID.');
+        pid=value;report.pid=Number(value);
+      });
+      await Promise.all([
+        collect('filtered-logcat',async()=>{
+          // Never log instrumentation argv: it contains the pairing code and PDF.
+          // Restrict output to this app's PID when alive and a fixed tag allowlist.
+          const args=['-s',env.ANDROID_SERIAL,'logcat','-d','-t','300','-v','threadtime'];
+          if(pid)args.push('--pid',pid);
+          args.push('CareerPhoneAcceptance:I','TestRunner:I','AndroidRuntime:E','System.err:W','*:S');
+          await run(adb,args,{log:'native-https-failure-logcat.log',timeout:15000});
+        }),
+        collect('app-thread-backtrace',async()=>{
+          assert.ok(pid,'The acceptance app PID was unavailable.');
+          // -b requests thread stacks only, not a full tombstone or memory dump.
+          // run-as confines this best-effort request to the owned debug app UID.
+          await run(adb,['-s',env.ANDROID_SERIAL,'shell','run-as',packageName,'/system/bin/debuggerd','-b',pid],
+            {log:'native-https-failure-threads.log',timeout:15000});
+        })
+      ]);
+    })()
+  ]);
+  if(!signal?.aborted)fs.writeFileSync(path.join(evidence,'native-https-failure-diagnostics.json'),JSON.stringify(report,null,2));
+}
+
 async function collectScreenshots() {
   const report={observedAt:new Date().toISOString(),device:env.ANDROID_SERIAL,captures:[],unavailable:[]};
   for(const packageName of installedPackages) {
@@ -213,12 +272,27 @@ async function instrument(label,packageName,classes,argumentsMap={},minimum=1) {
   const args=['-s',env.ANDROID_SERIAL,'shell','am','instrument','-w','-r','-e','class',classes.join(',')];
   for(const [name,value] of Object.entries(argumentsMap))args.push('-e',name,String(value));
   args.push(`${packageName}.test/androidx.test.runner.AndroidJUnitRunner`);
-  const output=await run(adb,args,{log:label+'.log',timeout:15*60000});
-  const count=Number(output.match(/OK \((\d+) tests?\)/)?.[1]??0);
-  assert.ok(count>=minimum,`${label} did not report the required completed test count; inspect its log.`);
-  assert.doesNotMatch(output,/FAILURES!!!|INSTRUMENTATION_FAILED|INSTRUMENTATION_STATUS_CODE: -(?:1|2|3|4)\b/);
-  results.push({label,classes,tests:count,result:'passed'});
-  console.log(`${label}: ${count} instrumented tests passed.`);
+  let diagnosticsAttempted=false;
+  const captureDiagnostics=async signal=>{
+    if(diagnosticsAttempted)return;
+    diagnosticsAttempted=true;
+    await captureNativeFailure(packageName,signal);
+  };
+  try {
+    const output=await run(adb,args,{log:label+'.log',timeout:15*60000,
+      onTimeout:label==='native-https-phone'?captureDiagnostics:undefined});
+    const count=Number(output.match(/OK \((\d+) tests?\)/)?.[1]??0);
+    assert.ok(count>=minimum,`${label} did not report the required completed test count; inspect its log.`);
+    assert.doesNotMatch(output,/FAILURES!!!|INSTRUMENTATION_FAILED|INSTRUMENTATION_STATUS_CODE: -(?:1|2|3|4)\b/);
+    results.push({label,classes,tests:count,result:'passed'});
+    console.log(`${label}: ${count} instrumented tests passed.`);
+  } catch(error) {
+    if(label==='native-https-phone'&&!diagnosticsAttempted) {
+      try {await captureDiagnostics()}
+      catch {console.warn('Native failure diagnostics unavailable.')}
+    }
+    throw error;
+  }
 }
 try {
   await run(path.join(sdk,'cmdline-tools/latest/bin/avdmanager'),['create','avd','--name','CareerFinderCI','--package','system-images;android-36;google_apis;x86_64','--device','pixel_7'],{stdin:'no\n',log:'avd-create.log'});

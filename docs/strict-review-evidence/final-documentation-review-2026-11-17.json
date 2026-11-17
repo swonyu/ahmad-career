@@ -1,0 +1,37 @@
+{
+  "observedAt": "2026-11-17T05:50:02.615110+00:00",
+  "reviewer": "Independent service security reviewer, with root source checks",
+  "scope": [
+    "README.md",
+    "docs/Phone-Update-2026-11-16.md",
+    "docs/Continuation-Review-2026-11-17.md",
+    "docs/Publishing-Handoff-2026-11-17.md"
+  ],
+  "findingsImplemented": [
+    {
+      "issue": "Unqualified Stop wording could imply service cancellation after a failed network request.",
+      "correction": "Distinguish durable local hold from confirmed service cancellation; retain late-request outcome semantics."
+    },
+    {
+      "issue": "The two Google routes could suggest automatic recovery or email-based account merge.",
+      "correction": "Explain explicit Google linking from the existing workspace before direct sign-in; matching emails do not merge accounts."
+    },
+    {
+      "issue": "Portable backup limits were insufficiently concrete for cross-platform acceptance.",
+      "correction": "Document Android 24 MiB file/9 MiB destination and iPhone 64 MiB file bounds, narrower transfer and rejection preservation."
+    },
+    {
+      "issue": "Current-check navigation and historical pending wording were stale.",
+      "correction": "Point to the continuation ledger and identify historical pending checks and the superseding frozen hosted source."
+    }
+  ],
+  "productionSourceChanged": false,
+  "sourceReferences": [
+    "apple/AhmadCareer/NativeApplicationsStore.swift",
+    "hosted/app/phone/PhoneApp.tsx",
+    "hosted/server/oauth.mjs",
+    "android/app/src/main/java/com/saleh/careerfinder/WorkspaceTransfer.kt",
+    "android/app/src/main/java/com/saleh/careerfinder/BoundaryPolicy.java"
+  ],
+  "remainingScope": "Run44025002391 is terminal: iPhone13/13 and all other non-Android jobs passed; Android97+1 passed and its final native HTTPS case timed out. Corrected harness needs fresh CI; physical-device/provider/store gates remain explicit."
+}

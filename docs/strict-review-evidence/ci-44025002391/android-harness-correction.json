@@ -1,0 +1,69 @@
+{
+  "baselineCommit": "479e1f03f1a611c9101f39ea729bd742fbe5fbc3",
+  "failedRun": 44025002391,
+  "jobId": 133843098261,
+  "status": "Frozen narrow harness candidate, uncommitted; awaiting independent source review and coordinated CI",
+  "observedFailure": "Native HTTPS test started without further phase/completion output and the existing900000ms outer bound expired.97ordinary+1TLSboundary passed. ProviderPOST observations were empty. Exact blocked operation is unknown.",
+  "candidateMechanism": "Keyboard-visible large-text lazy-list scrolling or another UI/rule synchronization operation may block. The explicit keyboard dismissal reuses the already-passing ordinary fixture pattern; this is not a proved production application defect or a verified runtime fix.",
+  "changes": [
+    "Explicit keyboard dismissal after name/email edits",
+    "Fixed-name phase markers around rule, body, readiness, pairing, profile, PDF, review and approval operations",
+    "Inside-body failed-type marker before rule teardown, without error messages",
+    "Bounded current screen, PID/allowlist-filtered logcat and best-effort own-UID thread-only backtrace before teardown on a native failure",
+    "Original instrumentation failure is rethrown even when diagnostics fail",
+    "Native-only pre-termination onTimeout hook: sixty-second cap, abort guard, exactly-once attempt; other failures keep the catch-path capture"
+  ],
+  "checks": {
+    "nodeSyntax": "passed",
+    "gitDiffCheck": "passed",
+    "originalAssertionExpressionsPreserved": 28,
+    "allOriginalTestMethodNamesPreserved": true,
+    "ordinaryCases": 97,
+    "dedicatedCases": 2,
+    "outerInstrumentationLimitMilliseconds": 900000,
+    "awaitLimitsMilliseconds": [
+      10000,
+      30000
+    ],
+    "diagnosticMockCasesPassed": 15,
+    "unchangedDefaultTLSBoundaryTest": true,
+    "unchangedSyntheticProviderAssertions": true,
+    "unchangedMainRunnerSequenceAndCISettings": true,
+    "unchangedPNGValidationAndBounds": true,
+    "preTerminationHookChecks": "Native-only diagnostics run while the instrumentation client remains alive; exactly one attempt; successful/throwing/expired hooks preserve timeout and terminate owned subprocess; abort prevents later device commands."
+  },
+  "diagnosticLimits": {
+    "pidMilliseconds": 10000,
+    "logcatMilliseconds": 15000,
+    "threadBacktraceMilliseconds": 15000,
+    "screenshotReadMilliseconds": 15000,
+    "screenshotBytes": 16777216,
+    "logcatLastLines": 300,
+    "allowedPackage": "com.saleh.careerfinder.acceptance",
+    "threadCommand": "run-as owned acceptance app, debuggerd -b numericPID; no tombstone/memory dump",
+    "unsupportedDiagnostic": "Recorded unavailable; original test error preserved",
+    "totalTimeoutHookMilliseconds": 60000
+  },
+  "diagnosticReferences": [
+    "https://source.android.com/docs/core/tests/debug",
+    "https://junit.org/junit4/javadoc/4.13/org/junit/rules/RuleChain.html"
+  ],
+  "sourceHashes": {
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt": "2c9d38a3cb3d8420b61ee3bf914955324ea63ec0a6be151985fd45917d4f92d1",
+    "android/checks/run-ci-emulator.mjs": "5c9b51176c71b2cad3a9fb948a1cba688204434d99442134f365c1b82ae0feeb"
+  },
+  "localHelper": {
+    "file": "runner-failure-diagnostics-check.mjs",
+    "sha256": "1823f0109c77c56e4f734dcf74a975e60ca86cb4822a18f131ecb031b0637d4e",
+    "scope": "Actual runner functions with mocked device calls plus three disposable local Node subprocess checks; no Android/emulator/build/network execution"
+  },
+  "notExecuted": [
+    "Kotlin/Android compilation of this harness change",
+    "Native emulator test",
+    "CI dispatch",
+    "Shared Mac or signing",
+    "Commit/push"
+  ],
+  "remainingGate": "Root-coordinated CI must compile and pass97ordinary+2dedicated with syntheticPOSTcounts1/1/2 and valid multipart/hash evidence. Previous candidate remains98completed/99required.",
+  "reviewStatus": "Kotlin source independently approved by both reviewers; initial runner snapshot approved; capture-order delta sent for renewed independent review"
+}

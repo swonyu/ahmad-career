@@ -1,0 +1,18 @@
+{
+  "observedAt": "2026-11-17T05:50:58Z",
+  "repository": "swonyu/ahmad-career",
+  "reviewer": "Independent service security reviewer",
+  "requests": [
+    {
+      "url": "https://api.github.com/repos/swonyu/ahmad-career/issues?state=open&per_page=100&page=1&sort=updated&direction=desc",
+      "result": []
+    },
+    {
+      "url": "https://api.github.com/repos/swonyu/ahmad-career/pulls?state=open&per_page=100&page=1&sort=updated&direction=desc",
+      "result": []
+    }
+  ],
+  "scope": "Successful empty first pages, 100-item page size; includes all open base/head branches. No further pagination needed.",
+  "additionalActionableFindingObserved": false,
+  "limits": "Does not cover closed discussions, other chats or unpublished branch work. No issue/PR mutation occurred."
+}

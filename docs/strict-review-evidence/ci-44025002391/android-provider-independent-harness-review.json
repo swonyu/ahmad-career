@@ -1,0 +1,54 @@
+{
+  "baseline_commit": "479e1f03f1a611c9101f39ea729bd742fbe5fbc3",
+  "reviewed_file": "android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt",
+  "reviewed_bytes": 14321,
+  "reviewed_sha256": "2c9d38a3cb3d8420b61ee3bf914955324ea63ec0a6be151985fd45917d4f92d1",
+  "verdict": "No blocking finding in the frozen Kotlin test source. This is a source review, not execution acceptance.",
+  "independent_comparison": {
+    "assertion_and_assumption_expressions_preserved": 28,
+    "await_duration_and_condition_expressions_preserved": 11,
+    "test_methods_preserved": [
+      "normalPreview_refusesTheIsolatedFixtureCertificate",
+      "nativeReviewAndApproval_preserveExactPDFConsent_andUncertainRetryBoundaries"
+    ],
+    "default_wait_ms": 10000,
+    "outcome_wait_ms": 30000
+  },
+  "preserved_behaviour": [
+    "Ordinary preview rejects the isolated fixture certificate as a TLS error.",
+    "Synthetic PDF bytes are written through MediaStore and the exact expected hash is checked after selection, profile save and every planned employer payload.",
+    "Store consent remains true and marketing consent remains explicitly false, including after tab changes.",
+    "Changing the reviewed message creates a replacement plan with a different ID.",
+    "Recovered approval is explicitly unchecked before fresh approval.",
+    "Initial outcomes must include uncertain, confirmed and rate_limited; all receipts remain test mode and the verified count remains zero.",
+    "Cooldown continuation reaches exactly two confirmed test receipts while one uncertain receipt remains.",
+    "Preparing the uncertain application again must produce a blocked plan with no submit-capable item.",
+    "Synthetic PDF cleanup remains in finally."
+  ],
+  "interaction_assessment": {
+    "lines": [
+      102,
+      105,
+      202
+    ],
+    "finding": "Hiding the software keyboard after name and email entry is a legitimate explicit test interaction before subsequent scrolling and saving.",
+    "limits": [
+      "The source change does not demonstrate that an app production defect existed or was fixed.",
+      "The corrected native HTTPS test still requires its own CI execution result."
+    ]
+  },
+  "diagnostics_assessment": {
+    "lines": [
+      49,
+      56,
+      186,
+      195
+    ],
+    "finding": "Outer rule and body markers distinguish startup/body/cleanup phases. Step wrappers execute each original action once and propagate exceptions. Logging uses fixed phase names, an opportunity index and failure type without pairing arguments, PDF bytes or profile/token values."
+  },
+  "runner_scope": "An earlier diagnostics diff was read, but root requested an additional capture-order change afterward. The service reviewer owns that subsequent runner delta; this receipt does not approve its unreviewed final bytes.",
+  "related_visual_receipt": "provider-independent-visual-review.json",
+  "source_edits": false,
+  "tests_or_builds_run": false,
+  "ci_actions": false
+}

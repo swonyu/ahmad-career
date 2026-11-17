@@ -1,0 +1,17 @@
+Test Case '-[CareerFinderUITests.CareerFinderUITests testAccessibilityTextKeepsCoreControlsReachable]' passed (92.914 seconds).
+Test Case '-[CareerFinderUITests.CareerFinderUITests testApplicationDraftSurvivesCancelAndRelaunch]' passed (48.813 seconds).
+Test Case '-[CareerFinderUITests.CareerFinderUITests testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText]' passed (191.464 seconds).
+Test Case '-[CareerFinderUITests.CareerFinderUITests testDiscoverySaveFlowsIntoSavedAndApply]' passed (56.851 seconds).
+Test Case '-[CareerFinderUITests.CareerFinderUITests testFreshStartAndFiveTabs]' passed (40.439 seconds).
+Test Case '-[CareerFinderUITests.CareerFinderUITests testLinkedInProfileDraftAndExternalSearchChoice]' passed (59.213 seconds).
+Test Case '-[CareerFinderUITests.CareerFinderUITests testOpportunityDiscardRequiresExplicitChoice]' passed (27.815 seconds).
+Test Case '-[CareerFinderUITests.CareerFinderUITests testOpportunityDraftKeepSaveAndRestore]' passed (59.484 seconds).
+Test Case '-[CareerFinderUITests.CareerFinderUITests testPrivateApplicationRecordPersistsAndCorrectionIsExplicit]' passed (136.617 seconds).
+Test Case '-[CareerFinderUITests.CareerFinderUITests testProfileReadinessAndSimpleConnectionSetup]' passed (65.013 seconds).
+Test Case '-[CareerFinderUITests.CareerFinderUITests testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark]' passed (30.017 seconds).
+Test Case '-[CareerFinderUITests.CareerFinderUITests testSavedLinkRemovalAtLargestTextKeepsCancelReachable]' passed (96.929 seconds).
+Test Case '-[CareerFinderUITests.CareerFinderUITests testSearchEmptyAndFailurePreservesPreviousResults]' passed (89.730 seconds).
+	 Executed 13 tests, with 0 failures (0 unexpected) in 995.298 (995.317) seconds
+	 Executed 13 tests, with 0 failures (0 unexpected) in 995.298 (995.319) seconds
+	 Executed 13 tests, with 0 failures (0 unexpected) in 995.298 (995.323) seconds
+** TEST SUCCEEDED **

@@ -1,0 +1,173 @@
+{
+  "commit": "479e1f03f1a611c9101f39ea729bd742fbe5fbc3",
+  "run_id": 44025002391,
+  "job_id": 133843098169,
+  "artifact_id": 14304240828,
+  "artifact_size": 148302693,
+  "artifact_sha256": "d4efdf9e3c3f38650ac5e5e5a49082c6e9be9e0bf4637f1e5424d866ae71a7a7",
+  "job_conclusion": "success",
+  "manifest_test_entries": 12,
+  "manifest_attachment_count": 29,
+  "selected": [
+    {
+      "test": "CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable()",
+      "capture": "11-employer-boards-accessibility-text",
+      "exportedFileName": "5A84DF40-A145-4136-9B7B-D00D4475CDEE.png",
+      "suggestedHumanReadableName": "11-employer-boards-accessibility-text_0_B5405AC3-CC4B-49C2-8AAC-4CE52BBC5203.png",
+      "deviceName": "iPhone Air",
+      "isAssociatedWithFailure": false,
+      "local_file": "selected/11-employer-boards-accessibility-text.png",
+      "bytes": 277999,
+      "sha256": "69bbc94ea219b3b30cce4b30aa65c185c027a682e658a8ef6df9545008a0717d",
+      "visual_review": "Employer boards and Done are fully visible. Use suggested boards wraps completely; the synthetic employer selection label wraps legibly without truncation."
+    },
+    {
+      "test": "CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable()",
+      "capture": "12-application-workspace-accessibility-text",
+      "exportedFileName": "B0BDDF20-85D5-4390-8317-68EB0227904A.png",
+      "suggestedHumanReadableName": "12-application-workspace-accessibility-text_0_717FA912-A667-43E1-94AD-A6CD9A46EBF1.png",
+      "deviceName": "iPhone Air",
+      "isAssociatedWithFailure": false,
+      "local_file": "selected/12-application-workspace-accessibility-text.png",
+      "bytes": 419219,
+      "sha256": "b2d12ae2bc490add83e4194386387f7750f5a41dabb04361f9875251c3e857b4",
+      "visual_review": "Applications intro, complete Set up Auto Apply action, and all five tab labels are visible."
+    },
+    {
+      "test": "CareerFinderUITests/testSavedLinkRemovalAtLargestTextKeepsCancelReachable()",
+      "capture": "20-saved-link-removal-accessibility",
+      "exportedFileName": "E60E0F66-2F4A-4BE0-BE43-B799CFF39254.png",
+      "suggestedHumanReadableName": "20-saved-link-removal-accessibility_0_9E480A00-F0E6-4C33-8B48-83018F6B0B9D.png",
+      "deviceName": "iPhone Air",
+      "isAssociatedWithFailure": false,
+      "local_file": "selected/20-saved-link-removal-accessibility.png",
+      "bytes": 402816,
+      "sha256": "792ee4bc35046db4cab339f03bce41e5ec4a1386ade5e3df8ef0ee97a6b769ae",
+      "visual_review": "Remove link navigation title, Keep opportunity toolbar cancel, and complete remove/keep body choices are visible at the largest text setting."
+    },
+    {
+      "test": "CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup()",
+      "capture": "22-simple-default-connection",
+      "exportedFileName": "8405AB66-F01B-4B90-9424-6B103ACDB8CC.png",
+      "suggestedHumanReadableName": "22-simple-default-connection_0_1E94C327-6A7A-4CA9-8D59-F8AAEE273437.png",
+      "deviceName": "iPhone Air",
+      "isAssociatedWithFailure": false,
+      "local_file": "selected/22-simple-default-connection.png",
+      "bytes": 350949,
+      "sha256": "850a1cc56e5ed5221a271d36279cd85550ff612a96909e45761e24403bb63aa0",
+      "visual_review": "The saved-draft notice uses neutral gray instead of error red. The connection sheet title and Done action are visible."
+    },
+    {
+      "test": "CareerFinderUITests/testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText()",
+      "capture": "14-unverified-submission-explained",
+      "exportedFileName": "0EF5B97A-259D-4A6E-A713-8C570DB65150.png",
+      "suggestedHumanReadableName": "14-unverified-submission-explained_0_6823283D-1CB3-4A70-8E50-E316E28BF73E.png",
+      "deviceName": "iPhone Air",
+      "isAssociatedWithFailure": false,
+      "local_file": "selected/14-unverified-submission-explained.png",
+      "bytes": 805100,
+      "sha256": "ec4ce5ec68b8c392094a7893c93ada2650cc493eeeebb99c941219a4aa53b752",
+      "visual_review": "Submission availability is unverified is fully readable. The complete Refresh availability label is visible above the fixed bottom action."
+    },
+    {
+      "test": "CareerFinderUITests/testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText()",
+      "capture": "15-unverified-refresh-reachable",
+      "exportedFileName": "398CDC54-18AA-452B-9517-4E6A51E07EF2.png",
+      "suggestedHumanReadableName": "15-unverified-refresh-reachable_0_FE63E500-B87C-452C-A893-80368533E3D8.png",
+      "deviceName": "iPhone Air",
+      "isAssociatedWithFailure": false,
+      "local_file": "selected/15-unverified-refresh-reachable.png",
+      "bytes": 804925,
+      "sha256": "652fa1962183abf350cebd836a5782fbd945154564a3fc53fe78e502eab66405",
+      "visual_review": "The full Refresh availability action is visible within the content area above the fixed bottom action; the corresponding scoped-query test completed successfully."
+    }
+  ],
+  "test_summary": {
+    "started": 13,
+    "passed": 13,
+    "failed": 0,
+    "suite_lines": [
+      "Executed 13 tests, with 0 failures (0 unexpected) in 995.298 (995.317) seconds",
+      "Executed 13 tests, with 0 failures (0 unexpected) in 995.298 (995.319) seconds",
+      "Executed 13 tests, with 0 failures (0 unexpected) in 995.298 (995.323) seconds"
+    ],
+    "test_succeeded": true,
+    "cases": [
+      {
+        "name": "testAccessibilityTextKeepsCoreControlsReachable",
+        "result": "passed",
+        "seconds": 92.914
+      },
+      {
+        "name": "testApplicationDraftSurvivesCancelAndRelaunch",
+        "result": "passed",
+        "seconds": 48.813
+      },
+      {
+        "name": "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+        "result": "passed",
+        "seconds": 191.464
+      },
+      {
+        "name": "testDiscoverySaveFlowsIntoSavedAndApply",
+        "result": "passed",
+        "seconds": 56.851
+      },
+      {
+        "name": "testFreshStartAndFiveTabs",
+        "result": "passed",
+        "seconds": 40.439
+      },
+      {
+        "name": "testLinkedInProfileDraftAndExternalSearchChoice",
+        "result": "passed",
+        "seconds": 59.213
+      },
+      {
+        "name": "testOpportunityDiscardRequiresExplicitChoice",
+        "result": "passed",
+        "seconds": 27.815
+      },
+      {
+        "name": "testOpportunityDraftKeepSaveAndRestore",
+        "result": "passed",
+        "seconds": 59.484
+      },
+      {
+        "name": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+        "result": "passed",
+        "seconds": 136.617
+      },
+      {
+        "name": "testProfileReadinessAndSimpleConnectionSetup",
+        "result": "passed",
+        "seconds": 65.013
+      },
+      {
+        "name": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+        "result": "passed",
+        "seconds": 30.017
+      },
+      {
+        "name": "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+        "result": "passed",
+        "seconds": 96.929
+      },
+      {
+        "name": "testSearchEmptyAndFailurePreservesPreviousResults",
+        "result": "passed",
+        "seconds": 89.73
+      }
+    ]
+  },
+  "architecture": {
+    "swift_compile_architectures": [
+      "arm64"
+    ],
+    "destination_arm64": true,
+    "active_arch_only": true,
+    "compiler_target_arm64_simulator": true
+  },
+  "review_scope": "Exactly the six requested exported captures; no unrelated screenshot review.",
+  "new_validated_visual_defects": []
+}

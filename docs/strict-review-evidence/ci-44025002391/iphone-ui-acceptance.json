@@ -1,0 +1,35 @@
+{
+  "commit": "479e1f03f1a611c9101f39ea729bd742fbe5fbc3",
+  "run_id": 44025002391,
+  "job_id": 133843098169,
+  "job_conclusion": "success",
+  "suite_finished_at": "2026-11-17T05:55:22.259Z",
+  "job_finished_at": "2026-11-17T05:56:59Z",
+  "tests": 13,
+  "failures": 0,
+  "test_execution_seconds": 995.298,
+  "connected_large_text_case_seconds": 191.464,
+  "architecture": {
+    "swift_compile_architectures": [
+      "arm64"
+    ],
+    "destination_arm64": true,
+    "active_arch_only": true,
+    "compiler_target_arm64_simulator": true
+  },
+  "device": "iPhone Air",
+  "artifact_id": 14304240828,
+  "artifact_size_verified": 148302693,
+  "artifact_sha256_verified": "d4efdf9e3c3f38650ac5e5e5a49082c6e9be9e0bf4637f1e5424d866ae71a7a7",
+  "reviewed_captures": {
+    "11-employer-boards-accessibility-text": "Employer boards and Done are fully visible. Use suggested boards wraps completely; the synthetic employer selection label wraps legibly without truncation.",
+    "12-application-workspace-accessibility-text": "Applications intro, complete Set up Auto Apply action, and all five tab labels are visible.",
+    "20-saved-link-removal-accessibility": "Remove link navigation title, Keep opportunity toolbar cancel, and complete remove/keep body choices are visible at the largest text setting.",
+    "22-simple-default-connection": "The saved-draft notice uses neutral gray instead of error red. The connection sheet title and Done action are visible.",
+    "14-unverified-submission-explained": "Submission availability is unverified is fully readable. The complete Refresh availability label is visible above the fixed bottom action.",
+    "15-unverified-refresh-reachable": "The full Refresh availability action is visible within the content area above the fixed bottom action; the corresponding scoped-query test completed successfully."
+  },
+  "new_validated_visual_defects": [],
+  "repository_edits": false,
+  "ci_actions": false
+}

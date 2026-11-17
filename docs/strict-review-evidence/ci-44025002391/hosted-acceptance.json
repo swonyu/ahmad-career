@@ -1,0 +1,208 @@
+{
+  "observedAt": "2026-11-17T05:39:40.183220+00:00",
+  "runId": 44025002391,
+  "jobId": 133843098256,
+  "name": "Hosted HTTPS service and durable storage",
+  "sourceCommit": "479e1f03f1a611c9101f39ea729bd742fbe5fbc3",
+  "status": "passed",
+  "jobConclusion": "success",
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1
+    },
+    {
+      "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2
+    },
+    {
+      "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3
+    },
+    {
+      "name": "Install the pinned hosted service dependencies",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 4
+    },
+    {
+      "name": "Check account screens and worker types",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 5
+    },
+    {
+      "name": "Exercise the production handler with real local D1 and R2",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 6
+    },
+    {
+      "name": "Build the deployable Worker and phone setup pages",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 7
+    },
+    {
+      "name": "Audit the locked dependencies",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 8
+    },
+    {
+      "name": "Keep the hosted regression evidence",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 9
+    },
+    {
+      "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 17
+    },
+    {
+      "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 18
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 19
+    }
+  ],
+  "log": {
+    "file": "hosted-job-133843098256.log",
+    "sha256": "e3971595ef1bf9b180cc5e86d494fc7d5784a276347943167787e1aa874df8db",
+    "encoding": "Decoded GitHub job log with normalized LF line endings"
+  },
+  "scope": "Exact published phone branch; no signing, store release or live employer submission inferred.",
+  "checks": {
+    "linkedInURL": {
+      "canonicalExamples": 9,
+      "rejectedInputs": 42,
+      "migrationAndProviderRequirements": "passed"
+    },
+    "pdfReadabilityTests": 6,
+    "authenticationGroups": 30,
+    "actualWorkerdAuthRequests": 15,
+    "authSyntheticProviderRequests": 6,
+    "authRealProviderRequests": 0,
+    "accountApplicationGroups": 61,
+    "accountSyntheticProviderPosts": 12,
+    "phoneAccountGroups": 19,
+    "actualPhoneWorkerdRequests": 164,
+    "phoneSyntheticProviderPosts": 2,
+    "discoveryGroups": 26,
+    "actualDiscoveryWorkerdRequests": 8,
+    "phoneClientSchemaResponses": 63,
+    "phoneFrontendTests": 64,
+    "browserTransportTests": 14,
+    "vaultGroups": 33,
+    "separateWorkerdRequests": 17,
+    "realEmployerRequests": 0,
+    "typecheck": "passed",
+    "appAndWorkerESLint": "passed with --max-warnings 0",
+    "deployableWorkerBuild": "passed"
+  },
+  "dependencyAudit": {
+    "source": "hosted/dependency-audit-ci.json",
+    "sha256": "c08d05b2b03ea46091efa74c8fb869ba6594053f24d325b1eaf366fa6e174e9d",
+    "auditReportVersion": 2,
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "dependencies": {
+      "prod": 205,
+      "dev": 586,
+      "optional": 150,
+      "peer": 44,
+      "peerOptional": 0,
+      "total": 830
+    }
+  },
+  "artifact": {
+    "id": 14303075892,
+    "name": "hosted-storage-checks-44025002391",
+    "size_in_bytes": 8634,
+    "url": "https://api.github.com/repos/swonyu/ahmad-career/actions/artifacts/14303075892",
+    "archive_download_url": "https://api.github.com/repos/swonyu/ahmad-career/actions/artifacts/14303075892/zip",
+    "expired": false,
+    "created_at": "2026-11-17T05:35:36Z",
+    "expires_at": "2026-11-24T05:35:35Z",
+    "updated_at": "2026-11-17T05:35:36Z",
+    "digest": "sha256:e9273b738df5c0fa8d332f5f0894515914a9d2198a8aa7b8e84aa80c26a2c731",
+    "workflow_run": {
+      "id": 44025002391,
+      "repository_id": 1411027050,
+      "head_repository_id": 1411027050,
+      "head_branch": "career-finder-phones-verified-apply-20261116",
+      "head_sha": "479e1f03f1a611c9101f39ea729bd742fbe5fbc3"
+    },
+    "downloadVerified": {
+      "size": 8634,
+      "sha256": "e9273b738df5c0fa8d332f5f0894515914a9d2198a8aa7b8e84aa80c26a2c731",
+      "members": [
+        {
+          "path": "hosted-verification.json",
+          "size": 7894,
+          "sha256": "22388867141763537f8a71468a2f783d6aca48999278fbac6bf9747b1012823e"
+        },
+        {
+          "path": "hosted-discovery-verification.json",
+          "size": 4077,
+          "sha256": "55d08411205d2220f707783ec7b64c457d6102b2f02466607c669dbdc5124132"
+        },
+        {
+          "path": "hosted-phone-verification.json",
+          "size": 3609,
+          "sha256": "2dee4eaa5ed5c6076cfdf65642a59c10da0f5e9f24972611aa30b111a6f25a17"
+        },
+        {
+          "path": "hosted-worker-verification.json",
+          "size": 672,
+          "sha256": "8bdc68a1343bf987d5c21dc60812a3dc69ba6949f99590e7391a4f4889f800a2"
+        },
+        {
+          "path": "dependency-audit-ci.json",
+          "size": 367,
+          "sha256": "c08d05b2b03ea46091efa74c8fb869ba6594053f24d325b1eaf366fa6e174e9d"
+        }
+      ]
+    }
+  },
+  "sourceVerification": {
+    "phoneCommit": "479e1f03f1a611c9101f39ea729bd742fbe5fbc3",
+    "phoneTree": "70a65cd878bdf398ef1426d6c8a8e2d966aad9e0",
+    "hostedCommit": "1135a3270435d3719c6f62f1a2e3a53e2c040146",
+    "hostedTree": "379709814adf9fad26d4c17457b0b942d290c029",
+    "artifactHashEntries": 33,
+    "uniqueArtifactSourceFiles": 21,
+    "allArtifactSourceHashesMatch": true,
+    "trackedHostedFilesCompared": 186,
+    "allTrackedHostedFilesMatch": true,
+    "receipt": "source-provenance.json"
+  },
+  "limits": [
+    "Actual local D1/R2/workerd with injected synthetic providers; live Google/LinkedIn provider approval and account connection are not established.",
+    "Trusted Sites edge stripping is modeled in synthetic Worker checks; public HTTPS, account A/B browser behavior and production-session handoff need their own live acceptance evidence.",
+    "Vault checks use actual Node WebCrypto with an injected atomic storage port; real browser IndexedDB acceptance is separate.",
+    "This CI build does not deploy the hosted site and does not change its provider configuration.",
+    "Native iPhone UI and Android runtime gates are owned and reported separately.",
+    "No real employer applications were submitted."
+  ]
+}

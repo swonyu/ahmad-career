@@ -1,0 +1,14 @@
+2026-11-17T05:41:17.2087920Z ordinary-phone: 97 instrumented tests passed.
+2026-11-17T05:41:19.3847083Z normal-preview-tls-boundary: 1 instrumented tests passed.
+2026-11-17T05:57:11.2085381Z Preserved 15 native screenshots; 1 paths were unavailable.
+2026-11-17T05:57:12.7446217Z file:///home/runner/work/ahmad-career/ahmad-career/android/checks/run-ci-emulator.mjs:99
+2026-11-17T05:57:12.7447469Z     if(!result.completed)throw Error(`${path.basename(command)} timed out after ${timeout}ms; see ${log??'runner output'}.`);
+2026-11-17T05:57:12.7448054Z                                ^
+2026-11-17T05:57:12.7448233Z
+2026-11-17T05:57:12.7448518Z Error: adb timed out after 900000ms; see native-https-phone.log.
+2026-11-17T05:57:12.7449088Z     at run (file:///home/runner/work/ahmad-career/ahmad-career/android/checks/run-ci-emulator.mjs:99:32)
+2026-11-17T05:57:12.7449742Z     at async instrument (file:///home/runner/work/ahmad-career/ahmad-career/android/checks/run-ci-emulator.mjs:216:16)
+2026-11-17T05:57:12.7450364Z     at async file:///home/runner/work/ahmad-career/ahmad-career/android/checks/run-ci-emulator.mjs:252:3
+2026-11-17T05:57:12.7450685Z
+2026-11-17T05:57:12.7450776Z Node.js v24.22.2
+2026-11-17T05:57:12.7522469Z ##[error]Process completed with exit code 1.

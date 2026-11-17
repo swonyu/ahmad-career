@@ -1,0 +1,105 @@
+{
+  "observedAt": "2026-11-17T05:39:40.183220+00:00",
+  "runId": 44025002391,
+  "jobId": 133843097897,
+  "name": "Service and synthetic HTTPS",
+  "sourceCommit": "479e1f03f1a611c9101f39ea729bd742fbe5fbc3",
+  "status": "passed",
+  "jobConclusion": "success",
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1
+    },
+    {
+      "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2
+    },
+    {
+      "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3
+    },
+    {
+      "name": "Install pinned companion dependencies",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 4
+    },
+    {
+      "name": "Existing record and discovery regressions",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 5
+    },
+    {
+      "name": "Verified-submission state and HTTP regressions",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 6
+    },
+    {
+      "name": "Synthetic TLS, consent, receipts and recovery",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 7
+    },
+    {
+      "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 13
+    },
+    {
+      "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 14
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 15
+    }
+  ],
+  "log": {
+    "file": "service-job-133843097897.log",
+    "sha256": "93c2b5101261d2d9976bc622dafd8f139308664593cc41f4c6c81f895b644570",
+    "encoding": "Decoded GitHub job log with normalized LF line endings"
+  },
+  "scope": "Exact published phone branch; no signing, store release or live employer submission inferred.",
+  "checks": {
+    "applicationStateGroups": 77,
+    "verifiedApplicationHTTPGroups": 119,
+    "syntheticTLS": {
+      "result": "passed",
+      "checks": 12,
+      "transport": "HTTPS with explicit isolated CA and normal hostname validation",
+      "mode": "test",
+      "providerPosts": {
+        "00000000-0000-4000-8000-000000000001": 1,
+        "00000000-0000-4000-8000-000000000004": 1,
+        "00000000-0000-4000-8000-000000000005": 2
+      }
+    }
+  },
+  "additionalPassedChecks": [
+    "core discovery and relevance boundaries",
+    "criteria matrix and evidence chronology",
+    "local preferences and civil-date behavior",
+    "application-record fixtures",
+    "feed boundaries",
+    "server cache resilience, cooldown, coalescing, coverage and static CSP"
+  ],
+  "limits": [
+    "Provider acceptance is exercised against synthetic local Lever only.",
+    "The TLS fixture uses an explicit isolated CA and normal hostname validation; it does not validate a public production employer integration.",
+    "Live source coverage and browser/native UI acceptance are separate gates."
+  ]
+}

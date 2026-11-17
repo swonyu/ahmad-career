@@ -1,0 +1,60 @@
+{
+  "observedAt": "2026-11-17T05:50:02.613472+00:00",
+  "sourceCommit": "479e1f03f1a611c9101f39ea729bd742fbe5fbc3",
+  "hostedCommit": "1135a3270435d3719c6f62f1a2e3a53e2c040146",
+  "hostedVersion": 7,
+  "operationScope": "Prepare official provider registration; no app created, provider credentials obtained, consent granted, terms accepted or paid service enabled.",
+  "google": {
+    "entryURL": "https://console.developers.google.com/",
+    "observedURL": "https://console.cloud.google.com/apis/dashboard",
+    "observedTitle": "Site Unavailable",
+    "observedText": "Unable to access this site.",
+    "attempts": "Initial navigation and one ordinary reload",
+    "classification": "Console unavailable in this cloud browser; cause not established. Not classified as bot detection or an OAuth code failure.",
+    "productionOAuthConfigured": false
+  },
+  "linkedin": {
+    "observedURL": "https://www.linkedin.com/developers/apps/new",
+    "appName": "Career Finder",
+    "privacyPolicyURL": "https://career-finder-service.jazzy-drake-8323.chatgpt.site/privacy",
+    "appNameAndPrivacyFieldsVerified": true,
+    "publisherPageSelected": false,
+    "termsAccepted": false,
+    "appCreated": false,
+    "credentialsCreated": false,
+    "productEnabled": false,
+    "logo": {
+      "source": "hosted/public/phone-icon.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "487c11623bd0ab4e851823fdb24db25d04d57db741ba7218455419350d0b6cf3",
+      "uploaded": false,
+      "limitation": "Both documented file-chooser attempts timed out. Form retained for owner upload; no success inferred."
+    },
+    "formRetainedForOwner": true,
+    "manualTakeoverRequested": false,
+    "ownerActions": [
+      "Select an accurate authorized publisher LinkedIn Page; Page association is permanent.",
+      "Upload the existing public Career Finder logo.",
+      "Review and personally accept the displayed API terms if agreed; complete app creation.",
+      "Request Sign In with LinkedIn using OpenID Connect from Products.",
+      "Register the exact callback, privately configure the managed server credentials, and complete real consenting-owner acceptance."
+    ],
+    "officialReferences": [
+      "https://www.linkedin.com/help/linkedin/answer/a548360/",
+      "https://www.linkedin.com/help/linkedin/answer/a543852",
+      "https://learn.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/sign-in-with-linkedin-v2"
+    ],
+    "defaultPageFinding": "No OIDC-specific default Page established. The documented Member Data Portability default belongs to another API and must not be substituted."
+  },
+  "realEmployerApplicationSubmissions": 0,
+  "managedProviderEnvironmentChanged": false,
+  "limits": [
+    "A prepared registration form is not an activated LinkedIn connection.",
+    "Public provider-console navigation occurred; no completed real OAuth consent/token exchange is claimed.",
+    "The setup screenshot attempt timed out; the recorded field state comes from the returned accessibility tree.",
+    "Existing account sessions, user cloud data and signing/store configuration were not changed."
+  ]
+}

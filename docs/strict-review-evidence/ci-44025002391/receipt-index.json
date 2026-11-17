@@ -1,0 +1,104 @@
+{
+  "observedAt": "2026-11-17T05:39:40.183220+00:00",
+  "runId": 44025002391,
+  "sourceCommit": "479e1f03f1a611c9101f39ea729bd742fbe5fbc3",
+  "allAssignedJobsPassed": true,
+  "otherJobs": "Android and iPhone UI remain separately monitored; this receipt makes no whole-run success claim.",
+  "files": {
+    "gate-excerpts.log": {
+      "size": 2734,
+      "sha256": "673839e60ecd2010a52cf8d7f7c0d7301dedac37ff06b305ebe28d7dfa7efd92"
+    },
+    "hosted/artifact-metadata.json": {
+      "size": 1783,
+      "sha256": "c006598bb5c0bba4eb3d486ea2f25b2e52484754650ae120ca30adea7575ae0d"
+    },
+    "hosted/dependency-audit-ci.json": {
+      "size": 367,
+      "sha256": "c08d05b2b03ea46091efa74c8fb869ba6594053f24d325b1eaf366fa6e174e9d"
+    },
+    "hosted/hosted-discovery-verification.json": {
+      "size": 4077,
+      "sha256": "55d08411205d2220f707783ec7b64c457d6102b2f02466607c669dbdc5124132"
+    },
+    "hosted/hosted-phone-verification.json": {
+      "size": 3609,
+      "sha256": "2dee4eaa5ed5c6076cfdf65642a59c10da0f5e9f24972611aa30b111a6f25a17"
+    },
+    "hosted/hosted-verification.json": {
+      "size": 7894,
+      "sha256": "22388867141763537f8a71468a2f783d6aca48999278fbac6bf9747b1012823e"
+    },
+    "hosted/hosted-worker-verification.json": {
+      "size": 672,
+      "sha256": "8bdc68a1343bf987d5c21dc60812a3dc69ba6949f99590e7391a4f4889f800a2"
+    },
+    "hosted-acceptance.json": {
+      "size": 6966,
+      "sha256": "583372dc3732cade85352e14ce53bb62ec4c9b3c82ebbaa82bb9d24cc6e5c9b2"
+    },
+    "hosted-job-133843098256.log": {
+      "size": 85745,
+      "sha256": "e3971595ef1bf9b180cc5e86d494fc7d5784a276347943167787e1aa874df8db"
+    },
+    "hosted-storage-checks-44025002391.zip": {
+      "size": 8634,
+      "sha256": "e9273b738df5c0fa8d332f5f0894515914a9d2198a8aa7b8e84aa80c26a2c731"
+    },
+    "iphone-build/artifact-metadata.json": {
+      "size": 1085,
+      "sha256": "11fd6777bd89c73bd661bad270b4a1b67095905e43542fc49dda3b0533a8d193"
+    },
+    "iphone-build/career-iphone-build.log": {
+      "size": 78685,
+      "sha256": "7166b1e67e07d2e906a3b7f5baca5c24b324698a07635f7b8a050a97dab5f7d0"
+    },
+    "iphone-build-log-44025002391.zip": {
+      "size": 7900,
+      "sha256": "e91075713a1003a6ff352bdc88b6cc6e7882f53f8493d6ac72488b7391a22172"
+    },
+    "iphone-job-133843098150.log": {
+      "size": 111579,
+      "sha256": "97b64d9a2b1bb95704ad7b5aba13e60c12432efa055450aed102e6f491f30d81"
+    },
+    "iphone-logic-and-build.json": {
+      "size": 3854,
+      "sha256": "7ab082ef5f587221df373aca3a5a7645529fc9cf4a3881ac032f6a1cdd779201"
+    },
+    "jobs-observed.json": {
+      "size": 9845,
+      "sha256": "da51f84be4792461aeef2a88d99a9a6aa3474f291161a281eb197fcec8641d5e"
+    },
+    "run-observed.json": {
+      "size": 590,
+      "sha256": "5f33063a50f54195781ac23ccaa7de71069a9a74e1b41cdc48d715aab07497f1"
+    },
+    "service-acceptance.json": {
+      "size": 3237,
+      "sha256": "9960796b820a2631f600007bc996a4b5aadce83c3e5bfa145efdae95fe4d9a19"
+    },
+    "service-job-133843097897.log": {
+      "size": 41397,
+      "sha256": "93c2b5101261d2d9976bc622dafd8f139308664593cc41f4c6c81f895b644570"
+    },
+    "source-provenance.json": {
+      "size": 51098,
+      "sha256": "57daef7f5f8018a9561a91b789d5ca4db8fd5a00c5edbedfbbbfc3389fbed378"
+    }
+  },
+  "actionsPerformed": [
+    "read GitHub metadata and decoded logs",
+    "download two artifacts",
+    "verify archive sizes and SHA-256 against GitHub metadata",
+    "compare artifact fingerprints with both exact Git commits and current source trees",
+    "write curated evidence in the assigned scratch directory"
+  ],
+  "actionsNotPerformed": [
+    "repository edit",
+    "new tests or builds",
+    "CI dispatch or retry",
+    "deployment",
+    "real provider or employer interaction",
+    "signing or store action"
+  ]
+}

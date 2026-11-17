@@ -1,0 +1,54 @@
+{
+  "sourceCommit": "479e1f03f1a611c9101f39ea729bd742fbe5fbc3",
+  "sourceTree": "70a65cd878bdf398ef1426d6c8a8e2d966aad9e0",
+  "runId": 44025002391,
+  "jobId": 133843098261,
+  "jobConclusion": "failure",
+  "productionAndInstrumentationCompile": "passed",
+  "lint": {
+    "errors": 0,
+    "warnings": 6
+  },
+  "ordinarySuite": {
+    "executed": 97,
+    "passed": 97,
+    "failed": 0,
+    "seconds": 123.341
+  },
+  "normalPreviewTLSBoundary": {
+    "executed": 1,
+    "passed": 1,
+    "seconds": 0.549
+  },
+  "acceptanceVariantBuild": {
+    "result": "BUILD SUCCESSFUL",
+    "seconds": 49
+  },
+  "nativeHTTPS": {
+    "started": 1,
+    "completed": 0,
+    "timeoutMilliseconds": 900000,
+    "error": "Error: adb timed out after 900000ms; see native-https-phone.log.",
+    "recordedPhases": "Only instrumentation START; exact blocked operation unknown.",
+    "syntheticProviderPOSTs": 0,
+    "completedAcceptanceScreenshots": 0
+  },
+  "artifact": {
+    "id": 14304086548,
+    "bytes": 1950932,
+    "sha256": "df31ad99fb155f07efa83c637e3f3e562c15ebf71e84acc823de567971c3039f",
+    "sizeAndHashVerifiedBy": "Independent Android owner"
+  },
+  "limits": [
+    "97 ordinary plus1 TLS-boundary pass does not establish all99 acceptance.",
+    "Zero provider POSTs does not establish zero pairing/profile/API requests.",
+    "The open IME before large-text profile scrolling is a plausible test-synchronization candidate, not a proven production cause.",
+    "No real employer applications or production accounts were used."
+  ],
+  "curatedFailureExcerpt": {
+    "file": "android-failure-excerpt.log",
+    "normalization": "Trailing line whitespace removed from curated excerpt only; original artifact and scratch log remain unchanged.",
+    "originalExcerptSHA256": "20d3149a17ac55db58562da961979dd0795e921ec11e8061b2039b640fbcc960",
+    "curatedExcerptSHA256": "6df3975097174a0fcb3bc1b23f76363eadb1a265606b4a6d5c0585a385dce2ec"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "commit": "479e1f03f1a611c9101f39ea729bd742fbe5fbc3",
+  "run_id": 44025002391,
+  "scope": "Independent visual review of only the requested country-picker and expanded-note captures; source read with git show at exact tested commit.",
+  "manifest": "screenshots.json",
+  "selected_images_with_verified_size_and_sha256": [
+    {
+      "packageName": "com.saleh.careerfinder.preview",
+      "remotePath": "cache/strict-review-evidence/expanded-private-note-large-text.png",
+      "file": "captures/com.saleh.careerfinder.preview/cache/strict-review-evidence/expanded-private-note-large-text.png",
+      "bytes": 91427,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "1729881c143fed6c07bfd9ed59058c2fd4d50cc4c609b20f8c0d07ff98de24aa"
+    },
+    {
+      "packageName": "com.saleh.careerfinder.preview",
+      "remotePath": "cache/strict-review-evidence/target-country-jp-draft-after-ime.png",
+      "file": "captures/com.saleh.careerfinder.preview/cache/strict-review-evidence/target-country-jp-draft-after-ime.png",
+      "bytes": 96343,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "3fed6b9b694170ca879727071505f78c545f1188c470a92df983f05da6774fe2"
+    }
+  ],
+  "country_picker": {
+    "source": "android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt",
+    "test": "profileEssentials_andCountrySelection_preserveSingleNamesAndCancelledChoices",
+    "source_lines": "111–136",
+    "observations": [
+      "Target countries title, close action, JP search value and full search label are visible.",
+      "JP and the Arabic Japan label appear with a checked selection; the selection count and Clear selection text are readable.",
+      "The complete Use selected countries action is visible above the gesture bar after IME dismissal."
+    ],
+    "source_evidence": "Capture occurs after the IME Done action and JP selection, while the test asserts model.targetCountries is still empty. Subsequent preserved assertions check Apply commits JP, closing a FR draft keeps JP, and saving the profile keeps the selected country without service requests.",
+    "limits": [
+      "This screenshot shows the picker after IME dismissal; it does not alone establish keyboard-open layout.",
+      "A static image does not alone prove selection persistence; the source assertions and separately recorded passing ordinary suite provide that evidence."
+    ]
+  },
+  "expanded_note": {
+    "source": "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceAccessibilityRegressionTest.kt",
+    "test": "shortMultilineNote_canExpandAtLargeText_withoutClippingItsLastLine",
+    "source_lines": "41–70",
+    "observations": [
+      "All six synthetic note lines are fully visible, including Last private line.",
+      "Show less, the saved state and version timestamp are visible without ellipsis."
+    ],
+    "source_evidence": "The test renders RecordVersionCard at fontScale2.0, expands it, and preserves assertions for unrestricted maxLines, no visual overflow, at least six lines, final character coverage, no final-line ellipsis, and final line within measured height.",
+    "limits": [
+      "This is an isolated card in a scroll Column, not a full application navigation screen.",
+      "Production system-bar insets and every locale/device configuration cannot be established from this component capture."
+    ]
+  },
+  "new_validated_defects": [],
+  "source_edits": false,
+  "builds_or_ci_actions": false
+}

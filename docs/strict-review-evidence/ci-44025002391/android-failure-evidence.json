@@ -1,0 +1,78 @@
+{
+  "commit": "479e1f03f1a611c9101f39ea729bd742fbe5fbc3",
+  "runId": 44025002391,
+  "jobId": 133843098261,
+  "artifact": {
+    "id": 14304086548,
+    "bytes": 1950932,
+    "sha256": "df31ad99fb155f07efa83c637e3f3e562c15ebf71e84acc823de567971c3039f",
+    "verified": true
+  },
+  "ordinary": {
+    "executed": 97,
+    "passed": 97,
+    "failed": 0,
+    "seconds": 123.341
+  },
+  "defaultPreviewTLSBoundary": {
+    "executed": 1,
+    "passed": 1,
+    "seconds": 0.549,
+    "meaning": "Certificate/TLS rejection asserted, not accepted merely because the fixture was unavailable"
+  },
+  "acceptanceBuild": {
+    "result": "passed",
+    "seconds": 49
+  },
+  "nativeHTTPS": {
+    "started": 1,
+    "completed": 0,
+    "result": "runner timeout",
+    "outerTimeoutMilliseconds": 900000,
+    "phase": "Only the START status was recorded; exact blocking operation not identified"
+  },
+  "providerObservations": {
+    "testOnly": true,
+    "observations": [],
+    "counts": {}
+  },
+  "realSubmissionClaim": false,
+  "lint": {
+    "errors": 0,
+    "warnings": 6,
+    "messages": [
+      "Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details.",
+      "A newer version of androidx.activity:activity-compose than 1.11.0 is available: 1.13.0",
+      "A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.9.4 is available: 2.11.0",
+      "A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.9.4 is available: 2.11.0",
+      "A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.10.2 is available: 1.11.0",
+      "Use the KTX function `createBitmap` instead?"
+    ]
+  },
+  "screenshots": {
+    "verified": 15,
+    "unavailable": [
+      {
+        "packageName": "com.saleh.careerfinder.acceptance",
+        "directory": "files",
+        "reason": "No completed screenshot was present; a failed test may not have reached its capture."
+      }
+    ],
+    "newFiles": [
+      "captures/com.saleh.careerfinder.preview/cache/strict-review-evidence/expanded-private-note-large-text.png",
+      "captures/com.saleh.careerfinder.preview/cache/strict-review-evidence/target-country-jp-draft-after-ime.png"
+    ]
+  },
+  "evidenceFiles": {
+    "job-133843098261.log": "62450035e0a7942ac60cc20d901274fb287e252d7ffb7c158176c58c2c4868b4",
+    "ordinary-phone.log": "3bb10fd19d7c9629ff4f07709ae94e73b61da179acdbea41c86fb36610071c6e",
+    "normal-preview-tls-boundary.log": "d57a994d51a63f767ae0cbd59e154f23a158b04d7d5f41dd6adb326ac3cd64cd",
+    "native-https-phone.log": "def4a695e80382cc5a4fb38e7321dbe163f4affa160cc8e6fd127551c773e35b",
+    "acceptance-build.log": "585e99025a67738bf7c7e30e322813ab1b5521954b536485515dd2903aa3a2ff",
+    "synthetic-provider-observations.json": "031bbe8fb45513f7bb59e9e8d8a2335a9b687a4f201c85fb1a4ab12c5f3945dc",
+    "failure-excerpt.log": "20d3149a17ac55db58562da961979dd0795e921ec11e8061b2039b640fbcc960"
+  },
+  "assessment": "98 completed tests passed; full99/provider1/1/2 acceptance failed. No provider POST occurred; pairing/API traffic is not recorded by this observations file, so its absence cannot locate the stall.",
+  "sourceReview": "Native fixture leaves the keyboard open between name/email entry and lazy-list scrolls, unlike the passing ordinary phone tests. UI synchronization/scroll is a plausible mechanism, not yet proven by a stack trace. Independent companion review found no validated fixture hang.",
+  "nextProposedChange": "Awaiting root coordination for explicit keyboard dismissal after each edit, phase markers, and bounded failure diagnostics. No source mutation performed during this monitoring task."
+}

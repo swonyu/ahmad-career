@@ -1,0 +1,33 @@
+FILE service-job-133843097897.log
+276: 2026-11-17T05:34:21.2929540Z 77 application-state regression groups passed.
+405: 2026-11-17T05:34:23.1595024Z PASS: 119 verified-application regression groups (real HTTP against synthetic local Lever only).
+422: 2026-11-17T05:34:25.7028035Z {"result":"passed","checks":12,"transport":"HTTPS with explicit isolated CA and normal hostname validation","mode":"test","providerPosts":{"00000000-0000-4000-8000-000000000001":1,"00000000-0000-4000-8000-000000000004":1,"00000000-0000-4000-8000-000000000005":2}}
+FILE iphone-job-133843098150.log
+154: 2026-11-17T05:34:19.0878340Z PASS 120 native application boundary checks
+155: 2026-11-17T05:34:27.4428210Z PASS 503 application lifecycle assertions across 77 scenarios
+156: 2026-11-17T05:34:31.3049760Z PASS 43 public discovery assertions across 13 scenarios
+547: 2026-11-17T05:35:25.5881990Z ** BUILD SUCCEEDED **
+563: 2026-11-17T05:35:26.2646510Z Built an unsigned iPhone-only product with the preserved app identity.
+FILE hosted-job-133843098256.log
+195: 2026-11-17T05:34:39.8778406Z PASS LinkedIn URL boundary: 9 canonical examples, 42 rejected inputs, migration and provider requirements.
+202: 2026-11-17T05:34:40.0854839Z ℹ tests 6
+204: 2026-11-17T05:34:40.0855772Z ℹ pass 6
+205: 2026-11-17T05:34:40.0856142Z ℹ fail 0
+206: 2026-11-17T05:34:40.0856735Z ℹ cancelled 0
+207: 2026-11-17T05:34:40.0857046Z ℹ skipped 0
+240: 2026-11-17T05:34:52.7984862Z Authentication verification: 30 groups passed against isolated D1 and actual synthetic RS256 signatures. No live provider or employer requests.
+241: 2026-11-17T05:34:53.8174004Z {"result":"PASS","actualWorkerdAuthRequests":15,"syntheticProviderRequests":6,"realProviderRequests":0,"realEmployerRequests":0}
+303: 2026-11-17T05:35:12.4035555Z {"result":"PASS","groups":61,"syntheticProviderPosts":12,"realEmployerRequests":0}
+330: 2026-11-17T05:35:24.2556165Z {"result":"PASS","groups":26,"actualWorkerdRequests":8,"clientSchemaResponses":63,"employerApplicationPosts":0}
+350: 2026-11-17T05:35:27.0557747Z {"result":"PASS","groups":19,"actualWorkerdRequests":164,"syntheticProviderPosts":2,"realEmployerRequests":0}
+420: 2026-11-17T05:35:27.5734179Z ℹ tests 64
+422: 2026-11-17T05:35:27.5735012Z ℹ pass 64
+423: 2026-11-17T05:35:27.5735294Z ℹ fail 0
+424: 2026-11-17T05:35:27.5735523Z ℹ cancelled 0
+425: 2026-11-17T05:35:27.5735751Z ℹ skipped 0
+468: 2026-11-17T05:35:29.2024362Z {"result":"PASS","actualWorkerdRequests":17,"realEmployerRequests":0}
+484: 2026-11-17T05:35:29.3783456Z ℹ tests 14
+486: 2026-11-17T05:35:29.3784129Z ℹ pass 14
+487: 2026-11-17T05:35:29.3784402Z ℹ fail 0
+488: 2026-11-17T05:35:29.3784784Z ℹ cancelled 0
+489: 2026-11-17T05:35:29.3785211Z ℹ skipped 0

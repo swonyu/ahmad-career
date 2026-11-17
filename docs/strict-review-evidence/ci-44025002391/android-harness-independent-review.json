@@ -1,0 +1,45 @@
+{
+  "observedAt": "2026-11-17T06:17:37.061573+00:00",
+  "baselineCommit": "479e1f03f1a611c9101f39ea729bd742fbe5fbc3",
+  "reviewedSourceHashes": {
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt": "2c9d38a3cb3d8420b61ee3bf914955324ea63ec0a6be151985fd45917d4f92d1",
+    "android/checks/run-ci-emulator.mjs": "5c9b51176c71b2cad3a9fb948a1cba688204434d99442134f365c1b82ae0feeb"
+  },
+  "independentReviewers": [
+    "Phone/provider-flow reviewer: Kotlin assertions, waits and legitimate keyboard interaction",
+    "Service/security reviewer: both files, then final timeout-hook delta",
+    "Root: full diff, capture-order correction and final fingerprints"
+  ],
+  "result": "Approved for coordinated CI; runtime not yet verified",
+  "preserved": {
+    "originalAssertionsAndAssumptions": 28,
+    "originalWaitDurationsAndConditions": 11,
+    "ordinaryCases": 97,
+    "dedicatedCases": 2,
+    "instrumentationTimeoutMilliseconds": 900000,
+    "productionTLSAndProviderObservationAssertions": true,
+    "productionSourceChanged": false
+  },
+  "diagnosticOrder": "Native-only onTimeout hook runs while the instrumentation client is alive; at most one capture attempt.",
+  "bounds": {
+    "hookMilliseconds": 60000,
+    "diagnosticCommandMilliseconds": [
+      10000,
+      15000
+    ],
+    "PNGMaxBytes": 16777216
+  },
+  "diagnosticSafety": [
+    "Fixed phase labels, index or exception class only; no instrumentation arguments or credential values.",
+    "Installed acceptance-package guard and validated numeric PID; fixed log tags and own-UID thread-only backtrace.",
+    "Abort guards prevent subsequent commands and final writes after hook expiry; already-running commands retain finite bounds/cleanup.",
+    "Original test timeout/failure is rethrown even if capture fails."
+  ],
+  "ownerChecks": {
+    "nodeSyntax": "passed",
+    "diffWhitespace": "passed",
+    "focusedDiagnosticChecks": 15,
+    "realDisposableNodeProcessChecks": 3
+  },
+  "causalLimit": "Keyboard-visible scrolling is a plausible test-interaction candidate, not a demonstrated production defect or proved sole timeout cause."
+}
