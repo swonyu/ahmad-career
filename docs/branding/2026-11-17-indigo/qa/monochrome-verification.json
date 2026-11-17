@@ -1,0 +1,47 @@
+{
+  "checked_at_utc": "2026-11-17T09:59:27.259629+00:00",
+  "source": "android/app/src/main/res/drawable/ic_career_finder_monochrome.xml",
+  "viewport_dp": [
+    108,
+    108
+  ],
+  "visible_layer_dp": [
+    72,
+    72
+  ],
+  "safe_circle_center_dp": [
+    54,
+    54
+  ],
+  "safe_circle_radius_dp": 33,
+  "maximum_control_point_radius_dp": 32.36703569992161,
+  "all_control_points_inside_safe_circle": true,
+  "closed_single_silhouette": true,
+  "bounding_box_dp": [
+    28.75,
+    79.0,
+    33.75,
+    74.25
+  ],
+  "sampled_alpha_corner": 0,
+  "sampled_alpha_inside_mark": 255,
+  "api33_ordinary_layer_references_unchanged": true,
+  "ordinary_assets_unchanged": {
+    "android/app/src/main/res/drawable-nodpi/career_icon_adaptive.png": "77828dedae56a42a067d32bbc9bd18e91de4b65d47b1d441ec20432860e19a3d",
+    "android/app/src/main/res/mipmap-hdpi/ic_launcher.png": "9f9a8c211565c05b8582230aaa19642cd0305b02a27715af64db71150e27418f",
+    "android/app/src/main/res/mipmap-mdpi/ic_launcher.png": "cd3f89fdba6375660814ea172a0c7665e4d734f944b3fb0d8155ae2636f6e374",
+    "android/app/src/main/res/mipmap-xhdpi/ic_launcher.png": "de05d49051ef4fd762534a8ae9fdd4997faaa5ee8918acd773ecd0d704661a63",
+    "android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png": "b5942e51d730a0e86727777056b33e73bef1c6e7125651cd70a66d6e7febae0e",
+    "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png": "9e97f53695a61bc4a47fd9b95efbaa96bd5b07b1dec1fc5e1263344c520b9a53"
+  },
+  "contact_sheet": "docs/branding/2026-11-17-indigo/qa/monochrome-contact-sheet.png",
+  "contact_sheet_sha256": "ad0202d58953bc38202e6688f2653eae2dedbb80088c155d4e6a7bac25a69be7",
+  "native_compile_lint": "pending next exact-commit cloud CI",
+  "physical_launcher_review": false,
+  "source_sha256": "037f0fe2612c3c413a26e218ea5f00e6ba150a5accd3dc3374019c166f2cf872",
+  "independent_visual_review": {
+    "reviewer": "frontend_critique",
+    "result": "No recognizability or visible clipping defect in contact-sheet samples at 48/32/24 px, light/dark inversions, circle/rounded-square masks",
+    "physical_launcher": false
+  }
+}

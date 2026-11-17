@@ -509,10 +509,15 @@ struct ApplicationAttention: Identifiable {
         if let draft,draft.dirty {text += "\nUNSAVED application record draft\nApplication date: \(draft.appliedAt.isEmpty ? "Not recorded" : draft.appliedAt)\nReceipt / record note: \(draft.receiptNote)"}
         return text
     }
-    func exportText()->String {
+    /// The same retained selection feeds both language-specific export captions.
+    /// Keep the full merged catalog private; callers receive only exportable jobs.
+    var exportJobs:[CareerJob] {
         let currentJobs=allJobs
         let draftJobs=recordDrafts.values.filter{$0.dirty}.compactMap(\.job).filter{j in !currentJobs.contains{$0.id==j.id}}
-        let jobs=(currentJobs+draftJobs).filter{workspace.saved.contains($0.id)||status(for:$0) != "Not started"||applicationRecords[$0.id]?.meaningful==true||recordDrafts[$0.id]?.dirty==true}
+        return (currentJobs+draftJobs).filter{workspace.saved.contains($0.id)||status(for:$0) != "Not started"||applicationRecords[$0.id]?.meaningful==true||recordDrafts[$0.id]?.dirty==true}
+    }
+    func exportText()->String {
+        let jobs=exportJobs
         let labels=["profile":"Professional record", "evidence":"Achievement stories", "cv":"Prepare your CV materials", "priority":"Review selected role requirements", "deadline":"Check selected deadlines", "review":"Applications reviewed"]
         let checklist=labels.keys.sorted().map{(workspace.completed.contains($0) ? "[x] " : "[ ] ")+(labels[$0] ?? $0)}.joined(separator:"\n")
         return "CAREER FINDER — APPLICATION NOTES\nLegacy research reference date (retained records only): \(research.checkedAt)\n\n"+profileText+"\n\nPREPARATION CHECKLIST\n"+checklist+"\n\nChecked items record your preparation on this device. Recheck the requirements, dates and materials for each application.\n\nSAVED AND TRACKED APPLICATIONS\n\n"+jobs.map{note(for:$0,includeProfile:false)+applicationRecordText($0.id)}.joined(separator:"\n\n——————————\n\n")

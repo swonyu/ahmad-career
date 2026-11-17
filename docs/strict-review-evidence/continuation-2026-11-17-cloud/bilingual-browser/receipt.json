@@ -1,0 +1,107 @@
+{
+  "dateUTC": "2026-11-17T09:32:20.484750+00:00",
+  "scope": "Synthetic browser acceptance of actual React components and CSS. Not live provider consent, physical-device, native-app, assistive-technology, production, or release acceptance.",
+  "sourceManifest": "final-source-manifest.json",
+  "finalJSBundleSHA256": "cd4cfde2142612ce7cee4b90227eea5ff08db522f6fa616f01662cb6214fcde4",
+  "finalPhoneCSSSourceSHA256": "89d8c325e8009fd9842817b0d580db5386f834447f11023e84f7909070c3bbf8",
+  "environment": {
+    "browser": "Cloud Chrome via supported CUA API",
+    "phoneViewport": "same-origin iframe with explicit width controls",
+    "largeText": "document root font-size 200% (32 CSS px), not native browser zoom or physical Dynamic Type",
+    "storage": {
+      "vault": "career-finder-synthetic-bilingual-vault",
+      "safety": "career-finder-synthetic-bilingual-safety",
+      "appearance": "career-finder:test:bilingual:appearance:v1",
+      "language": "career-finder:test:bilingual:language:v1",
+      "languageCookie": "career_finder_test_bilingual_language"
+    },
+    "productionRoutesAdded": 0,
+    "realHTTPAdaptersIncluded": false,
+    "network": "fixture transport only, external requests blocked; no online mutations observed"
+  },
+  "changes": [
+    {
+      "finding": "Arabic fixed five-column navigation split whole words into letter fragments at 320 CSS px and 200% root text.",
+      "fix": "Mobile-only wrapping flex navigation, intrinsic minimum button width, whole visible labels. Existing ResizeObserver keeps the content and root scroll inset aligned with actual height.",
+      "file": "hosted/app/phone/phone.css",
+      "patch": "phone-navigation-whole-labels.patch",
+      "beforeCSSSHA256": "d04eb6e1bf35db1392927b387b97b1b3fdde3ac3373f214c592d0894d9cbe366",
+      "afterCSSSHA256": "89d8c325e8009fd9842817b0d580db5386f834447f11023e84f7909070c3bbf8",
+      "classification": "Reproduced readability defect; no assertion of WCAG text loss or fully obscured focus."
+    },
+    {
+      "finding": "Saved filter Follow-ups appeared in English in Arabic mode.",
+      "fix": "Root added the exact Arabic catalog label المتابعات.",
+      "verification": "Exact catalog change included in final manifest. Its rendered post-fix Saved filter was not revisited before browser policy denial."
+    }
+  ],
+  "verifiedChecks": [
+    {
+      "name": "Actual Settings language choice",
+      "result": "Arabic radio changed rendered labels and html lang=ar/dir=rtl; English choice changed back to lang=en/dir=ltr."
+    },
+    {
+      "name": "Dirty Profile locale round trip",
+      "result": "Arabic→English→Arabic preserved firstName QA unsaved عربي Alpha, target roles QA Testing\\nتحليل البيانات, existing Synthetic-CV.pdf, and unsaved-change notice. No profile save was used for the round-trip check. A later explicit local save used only synthetic data."
+    },
+    {
+      "name": "Dirty RecordEditor locale round trip",
+      "result": "Open dialog survived Arabic→English→Arabic. Exact bilingual note and newline persisted; stage remained canonical interview while label became مقابلة. Later local save produced Arabic success notice and a manual applied marker, not a verified employer receipt."
+    },
+    {
+      "name": "Initial account-check privacy",
+      "result": "In Arabic and English, initial failure hid synthetic identity and private account/data controls. MutationObserver firstPrivateEmailEvidence stayed null. Appearance/language/help remained available; no confirmed workspace loaded."
+    },
+    {
+      "name": "Arabic navigation at 320/200%",
+      "result": "After fix, five full labels wrap3+2. Before nav height167.1875px; after148.59375px. No horizontal overflow: document scrollWidth=clientWidth=305px (320px viewport minus scrollbar)."
+    },
+    {
+      "name": "Dark Arabic keyboard focus at 320/200%",
+      "result": "Tab from first name through last name to Email; settled input bottom392.734375px versus nav top695.40625px. Fully visible 74px input with 3px focus outline. Measured inset148.59375px and root scroll-padding180.594px. Email direction remains ltr."
+    },
+    {
+      "name": "English navigation at 320/200%",
+      "result": "Whole labels wrap4+1 with current auto basis. No label truncation. The optional change to balance3+2 was reverted because its rendered verification was blocked."
+    },
+    {
+      "name": "Arabic/English dark dialog at 320/200%",
+      "result": "Dialog width296px, clientWidth=scrollWidth279px in both locales. Internal vertical scrolling retained all content. Locale switch kept dialog open; closing in English restored focus to original Sign in opener."
+    },
+    {
+      "name": "Arabic/light Settings at 390/100%",
+      "result": "Five navigation buttons fit in one row, whole labels; the actual appearance and language sections rendered with Arabic typography and RTL ordering. Screenshot saved."
+    }
+  ],
+  "limitations": [
+    "Not an exhaustive WCAG audit; no physical iPhone/Android or assistive-technology run in this segment.",
+    "The fixture uses synthetic account responses. Real consent/callback/provider activation is not tested.",
+    "Synthetic PDF presence survived locale changes in the rendered form. File bytes/hash/scope were not independently recovered from browser export: iframe download event timed out and reset REPL. Existing dedicated PDF/export tests are separate evidence.",
+    "Final desktop RTL, exhaustive all-screen/theme combinations, and a complete rendered post-fix Follow-ups revisit were not completed.",
+    "Browser URL policy rejected iframe waitFor after a reload with an unsupported-protocol/authority-to-observe message. No workaround, alternate browser surface, or further content inspection was attempted. Tab79 retained for review and CUA completion summary sent.",
+    "Static daemon files and source were restored to the rendered CSS89d8 candidate. The already reloaded live tab may retain the subsequently reverted optional CSS basis until a legitimate reload; its current pixels were not inspected after the policy rejection.",
+    "Fixture initial-failure error sentence is intentionally synthetic English text; production app-owned fallback labels translated. Brand names, URLs, user/employer text and browser-native date-picker labels remain original."
+  ],
+  "artifactHashes": {
+    "career-bilingual-dirty-record-ar.txt": "cdb1e156f162d447af4115230d986c112a9e0898cdc125b6f4df2311f401c9f1",
+    "career-bilingual-initial-failure-ar.txt": "4d78a10b88d9dcb13f8f789599455dc2bba606b520af45cac46eb181521154f6",
+    "career-bilingual-initial-failure-ar.json": "89280c2cf454a27ac394e5a925c223e38ae0fb698d3e252bb5997b99660daf81",
+    "career-ar-320-text200-privacy.jpg": "202d2176456ad1efca66103d32515aae80d3fb54408037762645a0ab9e0548ee",
+    "career-ar-320-text200-focus.json": "fe3c55562b23a8da42be199404f03c907702f5f8b77ffab9c2ce5898efe59d39",
+    "career-ar-320-text200-focus.jpg": "8fddb05a49d13e1d76f16d4f736a50c919722149b790517a472794883504c750",
+    "career-ar-320-text200-nav-after.json": "2f3ae90096dd302c73036ddab1ecbc7232c41b63b2eb03c466a1ccf5d133f71b",
+    "career-ar-320-text200-nav-after.jpg": "ac061c0b87b1228b419edb5b7056ae91c72db4a92be42bdea350d4354da9a4d5",
+    "career-ar-dark-320-text200-focus-after.json": "ac8cc41e89bb56dccdebbb271d599d2ac5b91210d15518036f21fdf5f59301a6",
+    "career-ar-dark-320-text200-focus-after.jpg": "3c11a3a623fa2a00a4abb1d839ea6907c6b8ce0789634ae06c1c6bc05c75998e",
+    "career-ar-dark-320-text200-dialog.json": "46f9545e6e47e698df82ee33da6fa9e668ad9b615f53ec3cc34183d75579e036",
+    "career-ar-dark-320-text200-dialog.jpg": "fd0a8967c0b313861bf7dc230a7e822a05334e43c3709a9dbe2fbead257b7cee",
+    "career-en-dark-320-text200-dialog.json": "ddc3e003e9b35727b4426286deb4dea8abe666052634b1e6c76101483322a302",
+    "career-ar-light-390-settings.jpg": "714f366bab5fb6d19ece653b23112c9f1b4c786b7343ea85bbf93880dae90073"
+  },
+  "validation": {
+    "fixtureBuild": "exit0",
+    "phoneCSSWhitespaceCheck": "pass",
+    "portableLocalization": "4/4 after-only regression groups passed; root integrated into suite",
+    "testScope": "Real React ReviewDetails render, real clipboard handler with synthetic clipboard, recovery formatter count cases, exact discovery formatter. No external services."
+  }
+}

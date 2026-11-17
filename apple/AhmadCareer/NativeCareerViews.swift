@@ -211,15 +211,18 @@ private struct NativeSavedScreen: View {
     @State private var adding = false
     @State private var filter = NativeSavedFilter.all
     private var jobs: [CareerJob] {
-        store.savedJobs.filter { nativeMatches($0, query: query) && filter != .followUps
+        let requested = NativeSavedSearch.terms(query)
+        return store.savedJobs.filter { nativeMatches($0, terms: requested, note: store.applicationRecords[$0.id]?.receiptNote ?? "") && filter != .followUps
             && (filter != .applied || ["Applied", "Interviewing", "Offer received"].contains(store.status(for: $0))) }
     }
     private var applicationJobs: [NativeApplicationRow] {
-        let words = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        let requested = NativeSavedSearch.terms(query)
         return applications.savedOpportunities.compactMap { NativeApplicationRow($0) }.filter { row in
-            (words.isEmpty || ["title", "company", "location"].compactMap { row.value[$0]?.string }
-                .joined(separator: " ").localizedCaseInsensitiveContains(words)
-            ) && (filter != .applied || applications.isMarkedApplied(row.value))
+            // Use the same scoped records already available from this row's detail view.
+            let notes = applications.recordVersions(for: row.value).filter { !$0.archived }.map(\.note)
+            let metadata = ["title", "company", "location"].compactMap { row.value[$0]?.string }
+            return NativeSavedSearch.matches(metadata + notes, terms: requested)
+                && (filter != .applied || applications.isMarkedApplied(row.value))
                 && (filter != .followUps || applications.followUpDay(for: row.value) != nil)
         }.sorted { left, right in
             if filter == .followUps {
@@ -288,11 +291,12 @@ private struct NativeSavedScreen: View {
             }
         }.nativeList().navigationTitle(l10n("Saved opportunities"))
             .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $query, prompt: "Search saved opportunities")
+            .searchable(text: $query, prompt: Text(l10n("Search saved opportunities")))
             .toolbar { ToolbarItem(placement: .navigationBarTrailing) {
                 Button { adding = true } label: { Label(l10n("Add opportunity"), systemImage: "plus") }.accessibilityIdentifier("saved.addOpportunity")
             } }
             .sheet(isPresented: $adding) { NativeOpportunityEditor(model: applications) }
+            .onChange(of: applications.workspaceScope) { _ in query = ""; filter = .all }
     }
 }
 
@@ -555,7 +559,7 @@ private struct NativeJobLink: View {
         NavigationLink { NativeJobDetail(job: job) } label: {
             HStack(alignment: .top, spacing: 13) {
                 Text(job.initials).font(.caption.weight(.bold))
-                    .frame(width: 40, height: 40).background(Color.careerMint, in: RoundedRectangle(cornerRadius: 12))
+                    .frame(width: 40, height: 40).background(NativeDesign.accentSurface, in: RoundedRectangle(cornerRadius: 12))
                     .foregroundStyle(Color.careerAccent).accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 7) {
                     if store.isCurrentResearch(job), let rank = job.rank { Text(l10n.format("PRIORITY {0}", [String(format: "%02d", rank)])).font(.caption2.weight(.semibold)).foregroundStyle(.secondary) }
@@ -1236,9 +1240,8 @@ private extension Color {
     static let careerAccent = NativeDesign.accent
 }
 
-private func nativeMatches(_ job: CareerJob, query: String) -> Bool {
-    let text = query.trimmingCharacters(in: .whitespacesAndNewlines)
-    return text.isEmpty || ([job.title, job.company, job.location, job.summary, job.subtitle ?? ""] + job.requirements).joined(separator: " ").localizedCaseInsensitiveContains(text)
+private func nativeMatches(_ job: CareerJob, terms: [String], note: String) -> Bool {
+    NativeSavedSearch.matches([job.title, job.company, job.location, job.summary, job.subtitle ?? "", note] + job.requirements, terms: terms)
 }
 
 private func nativeHTTPS(_ value: String) -> URL? {

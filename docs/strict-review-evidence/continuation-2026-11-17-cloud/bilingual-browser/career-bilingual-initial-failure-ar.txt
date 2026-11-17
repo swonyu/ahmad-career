@@ -1,0 +1,109 @@
+- banner:
+  - heading "Career Finder · synthetic viewport review" [level=1]
+  - paragraph: Actual React app and CSS. Synthetic account responses only. Separate encrypted test vaults, appearance and language preferences. Synthetic account has an existing harmless test PDF; PDF selection remains disabled in this fixture. External requests, online mutations and link navigation are blocked. This fixture never opens the existing guest vault.
+  - generic "Viewport width":
+    - button "320 px"
+    - button "390 px"
+    - button "768 px"
+    - button "Desktop · 1200 px"
+    - strong: 390 CSS pixels
+    - button "Text 100%"
+    - button "Text 200%"
+    - button "English fixture"
+    - button "العربية · fixture"
+  - text: Scenario
+  - combobox "Scenario":
+    - option "Guest · empty test vault"
+    - option "Synthetic account A"
+    - option "Initial account check fails" [selected]
+  - button "Hold account recheck"
+  - button "Resolve account recheck"
+  - button "Switch response to account B"
+  - button "Restore account A response"
+  - button "Check layout and focus" [active]
+- main:
+  - iframe:
+    - link "الانتقال إلى المحتوى":
+      - /url: "#phone-main"
+    - banner:
+      - link "Career Finder مساحة عملك المهنية":
+        - /url: /phone
+        - text: Career Finder
+        - generic: مساحة عملك المهنية
+      - button "فتح الإعدادات":
+        - generic: الإعدادات
+    - main:
+      - paragraph: التفضيلات والخصوصية
+      - heading "اجعلها مساحتك الخاصة." [level=1]
+      - paragraph: اختر المظهر، وأدر وسائل الربط، وتحكّم في بياناتك.
+      - alert:
+        - paragraph: Synthetic initial account check failed. No account was confirmed.
+        - button "إخفاء الرسالة":
+      - region "المظهر":
+        - heading "المظهر" [level=2]
+        - paragraph: اجعل هذه المساحة تعبّر عنك.
+        - group "اختيار مظهر الألوان":
+          - generic: اختيار مظهر الألوان
+          - radio "النظام اتّباع إعدادات جهازك" [checked]
+          - text: النظام
+          - generic: اتّباع إعدادات جهازك
+          - radio "فاتح مساحة عمل بمظهر فاتح"
+          - text: فاتح
+          - generic: مساحة عمل بمظهر فاتح
+          - radio "داكن مساحة عمل بمظهر داكن"
+          - text: داكن
+          - generic: مساحة عمل بمظهر داكن
+        - paragraph: يُحفَظ تفضيلك في هذا المتصفح. يتغير خيار «النظام» بحسب مظهر جهازك.
+      - region "اللغة":
+        - heading "اللغة" [level=2]
+        - paragraph: اختر اللغة التي ترتاح إليها.
+        - group "اختر لغة التطبيق":
+          - generic: اختر لغة التطبيق
+          - radio "اتّباع إعدادات جهازك"
+          - generic: اتّباع إعدادات جهازك
+          - radio "English"
+          - generic: English
+          - radio "العربية" [checked]
+          - generic: العربية
+        - paragraph: يُحفَظ اختيار اللغة في هذا المتصفح. وتبقى إعلانات الوظائف والأسماء والنصوص التي تكتبها بلغتها الأصلية.
+      - status:
+        - heading "تأكيد حسابك" [level=2]
+        - paragraph: تعذّر تأكيد الحساب المفتوح. ستبقى تفاصيل حسابك مخفية إلى أن تتحقق هذه الصفحة مجددًا.
+        - button "إعادة التحميل والتحقق من الحساب"
+        - link "فتح تسجيل الدخول في علامة تبويب أخرى":
+          - /url: /connect
+      - heading "أضف Career Finder إلى هاتفك" [level=2]
+      - paragraph:
+        - strong: "iPhone:"
+        - text: افتحه في Safari، واضغط على «مشاركة» ثم «إضافة إلى الشاشة الرئيسية». أبقِ خيار «فتح كتطبيق ويب» مفعّلًا إذا ظهر.
+      - paragraph:
+        - strong: "Android:"
+        - text: افتح قائمة المتصفح واختر «إضافة إلى الشاشة الرئيسية» أو «تثبيت التطبيق» إذا ظهر الخيار.
+      - paragraph: يلزم الاتصال بالإنترنت لفتح تطبيق الويب هذا وتأكيد حسابك. ستجد أدناه إرشادات إعداد تطبيق الهاتف الأصلي.
+      - heading "متاح عندما تحتاج إليه" [level=2]
+      - paragraph: إجابات واضحة وخطوات تالية عملية.
+      - link "المساعدة والدعم البدء وحفظ العمل والاسترداد":
+        - /url: /support
+        - text: المساعدة والدعم
+        - generic: البدء وحفظ العمل والاسترداد
+      - link "الخصوصية وبياناتك ما الذي يُحفَظ، وأين يبقى، وما خياراتك":
+        - /url: /privacy
+        - text: الخصوصية وبياناتك
+        - generic: ما الذي يُحفَظ، وأين يبقى، وما خياراتك
+      - link "ربط تطبيق الهاتف الأصلي إعداد جهاز آخر باستخدام رمز اتصال خاص":
+        - /url: /connect
+        - text: ربط تطبيق الهاتف الأصلي
+        - generic: إعداد جهاز آخر باستخدام رمز اتصال خاص
+    - navigation "أقسام التطبيق":
+      - button "البحث":
+        - generic: البحث
+      - button "المحفوظات":
+        - generic: المحفوظات
+      - button "التقديم":
+        - generic: التقديم
+      - button "الملف الشخصي":
+        - generic: الملف الشخصي
+      - button "الإعدادات":
+        - generic: الإعدادات
+- generic "Rendered evidence · synthetic only"
+- generic: "{ \"kind\": \"fixture-metrics\", \"lifecycle\": [ { \"event\": \"pageshow\", \"time\": 434 } ], \"firstPrivateEmailEvidence\": null, \"scenario\": \"initial-failure\", \"width\": 390, \"rootTextSize\": \"16px\", \"focusedBounds\": { \"top\": 0, \"bottom\": 2152.078125, \"left\": 15, \"right\": 390 }, \"fixedNavBounds\": { \"top\": 758.78125, \"bottom\": 844 }, \"focusPartlyBehindNav\": false, \"focusEntirelyBehindNav\": false, \"scrollWidth\": 375, \"horizontalOverflow\": false, \"scrollY\": 0, \"theme\": \"system\", \"language\": \"ar\", \"direction\": \"rtl\", \"onlineMutationCount\": 0, \"activeElement\": \"BODY\", \"activeLabel\": \"الانتقال إلى المحتوىCareer Finderمساحة عملك المهنيةالإعداداتالتفضيلات والخصوصيةاجعلها مساحتك الخاصة.\", \"privateEmailVisible\": false, \"privateProfileVisible\": false, \"requests\": [ { \"path\": \"/api/phone/workspace\", \"method\": \"GET\" }, { \"path\": \"/api/discovery/sources\", \"method\": \"GET\" }, { \"path\": \"/api/phone/workspace\", \"method\": \"GET\" }, { \"path\": \"/api/discovery/sources\", \"method\": \"GET\" } ] }"

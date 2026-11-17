@@ -1,0 +1,812 @@
+{
+  "research_date": "2026-11-17",
+  "clock_checkpoint_utc": "2026-11-17T09:21:51Z",
+  "scope": "Public product and selected review research only; no competitor sign-in, purchase, extension install or application submission.",
+  "billing": "Free built-in search only; paid Parallel not used.",
+  "service_count": 9,
+  "source_page_count": 30,
+  "selected_review_count": 24,
+  "sources": [
+    {
+      "id": "O01",
+      "product": "Teal",
+      "title": "Official tracker overview",
+      "url": "https://www.tealhq.com/tools/job-tracker",
+      "source_kind": "official_product",
+      "retrieval_mode": "indexed_official_page",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn707362159search0"
+      ],
+      "source_date_notes": "Undated current product page",
+      "limits": "Free tracking and notes; advanced features are paid."
+    },
+    {
+      "id": "O02",
+      "product": "Teal",
+      "title": "How to track job applications",
+      "url": "https://help.tealhq.com/en/articles/14435727-how-to-track-your-job-applications",
+      "source_kind": "official_help",
+      "retrieval_mode": "opened",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn707362159search1",
+        "turn847404856view0"
+      ],
+      "source_date_notes": "Relative update label: over two weeks ago",
+      "limits": "Stages, notes, follow-up dates, document context and export."
+    },
+    {
+      "id": "O03",
+      "product": "Huntr",
+      "title": "Free and Pro plans",
+      "url": "https://huntr.co/pricing",
+      "source_kind": "official_pricing",
+      "retrieval_mode": "opened",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn894192324view2"
+      ],
+      "source_date_notes": "Undated current pricing page",
+      "limits": "Free plan lists 100 jobs; tiers and quotas can change."
+    },
+    {
+      "id": "O04",
+      "product": "Huntr",
+      "title": "Application Hub and Packets",
+      "url": "https://help.huntr.co/en/articles/14367332-application-hub-and-packets",
+      "source_kind": "official_help",
+      "retrieval_mode": "indexed_official_page",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn707362159search4"
+      ],
+      "source_date_notes": "2026-05-01",
+      "limits": "Grouping documents per job; no independent effectiveness test."
+    },
+    {
+      "id": "O05",
+      "product": "Simplify",
+      "title": "Use Copilot to autofill applications",
+      "url": "https://help.simplify.jobs/en/help/articles/2415391-use-copilot-to-autofill-applications",
+      "source_kind": "official_help",
+      "retrieval_mode": "opened",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn894192324view3"
+      ],
+      "source_date_notes": "Relative update label: 24 days ago",
+      "limits": "Field filling, user review and final submission remain distinct; Autopilot is separate."
+    },
+    {
+      "id": "O06",
+      "product": "Simplify",
+      "title": "Use the Job Tracker",
+      "url": "https://help.simplify.jobs/en/help/articles/2140179-use-the-job-tracker",
+      "source_kind": "official_help",
+      "retrieval_mode": "opened",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn847404856view1"
+      ],
+      "source_date_notes": "Relative update label: 24 days ago",
+      "limits": "Manual records, notes, CSV import and status checks."
+    },
+    {
+      "id": "O07",
+      "product": "Simplify",
+      "title": "Supported countries and regions",
+      "url": "https://help.simplify.jobs/en/help/articles/6895855-supported-countries-and-regions",
+      "source_kind": "official_help",
+      "retrieval_mode": "opened",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn603268560view4"
+      ],
+      "source_date_notes": "Relative update label: 24 days ago",
+      "limits": "Tool use outside matching regions does not establish local coverage or work eligibility."
+    },
+    {
+      "id": "O08",
+      "product": "Simplify",
+      "title": "Privacy policy",
+      "url": "https://simplify.jobs/privacy",
+      "source_kind": "official_policy",
+      "retrieval_mode": "indexed_official_page",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn707362159search7"
+      ],
+      "source_date_notes": "Search metadata described publication three months earlier",
+      "limits": "Extension processes job/application-page content; not an independent privacy audit."
+    },
+    {
+      "id": "O09",
+      "product": "Jobscan",
+      "title": "Job Application Tracker",
+      "url": "https://www.jobscan.co/job-tracker",
+      "source_kind": "official_product",
+      "retrieval_mode": "opened",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn894192324view1"
+      ],
+      "source_date_notes": "Undated current product page",
+      "limits": "Free tracker, notes, contacts, tasks and interview detail."
+    },
+    {
+      "id": "O10",
+      "product": "Jobscan",
+      "title": "Resume Scanner",
+      "url": "https://www.jobscan.co/resume-scanner",
+      "source_kind": "official_product",
+      "retrieval_mode": "opened_and_found",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn894192324view0",
+        "turn242876157view6"
+      ],
+      "source_date_notes": "Undated current product page",
+      "limits": "Current text explicitly distinguishes its Match Rate from the employer ATS score."
+    },
+    {
+      "id": "O11",
+      "product": "LinkedIn",
+      "title": "Track and organize job opportunities",
+      "url": "https://www.linkedin.com/help/linkedin/answer/a8684146",
+      "source_kind": "official_help",
+      "retrieval_mode": "opened",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn847404856view2"
+      ],
+      "source_date_notes": "Relative update labels differed across indexed/opened snapshots; no exact publication date inferred",
+      "limits": "Stages, manual external updates, notes and stated one-year tracker removal."
+    },
+    {
+      "id": "O12",
+      "product": "LinkedIn",
+      "title": "Manage job alerts",
+      "url": "https://www.linkedin.com/help/linkedin/answer/a1420165",
+      "source_kind": "official_help",
+      "retrieval_mode": "indexed_official_page",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn699453566search3"
+      ],
+      "source_date_notes": "Relative update label: three years ago; current indexed help retrieved",
+      "limits": "Daily/weekly alert channels; current availability was not tested."
+    },
+    {
+      "id": "O13",
+      "product": "Indeed",
+      "title": "What is My Jobs?",
+      "url": "https://support.indeed.com/hc/en-us/articles/205332490-What-is-My-Jobs",
+      "source_kind": "official_help",
+      "retrieval_mode": "indexed_official_page_open_redirect_unavailable",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn699453566search4",
+        "turn847404856view3"
+      ],
+      "source_date_notes": "No exact article update date established",
+      "limits": "Official indexed text describes six-month visible history and manual external status. Current redirect was inaccessible."
+    },
+    {
+      "id": "O14",
+      "product": "Bayt",
+      "title": "Mobile overview",
+      "url": "https://www.bayt.com/en/mobile-promo/",
+      "source_kind": "official_product",
+      "retrieval_mode": "indexed_official_page",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn699453566search8"
+      ],
+      "source_date_notes": "No exact update date established",
+      "limits": "General mobile search/profile/alert overview; current app listing used for free boundary."
+    },
+    {
+      "id": "O15",
+      "product": "Naukrigulf",
+      "title": "Mobile apps overview",
+      "url": "https://www.naukrigulf.com/mobile-apps",
+      "source_kind": "official_product",
+      "retrieval_mode": "indexed_official_page",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn699453566search10"
+      ],
+      "source_date_notes": "No exact update date established",
+      "limits": "General mobile search/profile/notification scope; current listing used for detailed capabilities."
+    },
+    {
+      "id": "O16",
+      "product": "Jadarat",
+      "title": "Individuals service",
+      "url": "https://www.hrdf.org.sa/products-and-services/programs/individuals/other/jadarat",
+      "source_kind": "official_government_help",
+      "retrieval_mode": "indexed_official_page",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn994902498search0",
+        "turn514643951search3"
+      ],
+      "source_date_notes": "2026-08-13 latest-update label",
+      "limits": "Saudi citizen and Nafath/profile boundary; no Career Finder integration is implied."
+    },
+    {
+      "id": "O17",
+      "product": "Jadarat",
+      "title": "Application service and FAQ",
+      "url": "https://www.hrdf.org.sa/products-and-services/programs/individuals/other/jadarat/apply/",
+      "source_kind": "official_government_help",
+      "retrieval_mode": "opened_and_found",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn514643951view1",
+        "turn871333231view2",
+        "turn289882154view1"
+      ],
+      "source_date_notes": "No exact update date extracted",
+      "limits": "Documented support scenarios, statuses and 2 MB external PDF limit; not measured failure prevalence."
+    },
+    {
+      "id": "O18",
+      "product": "Jadarat",
+      "title": "English service metadata",
+      "url": "https://www.hrdf.org.sa/en/products-and-services/programs/individuals/other/jadarat/apply",
+      "source_kind": "official_government_help",
+      "retrieval_mode": "indexed_official_page_direct_open_timeout",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn994902498search3",
+        "turn242876157view2"
+      ],
+      "source_date_notes": "No exact update date extracted",
+      "limits": "Free, citizen eligibility and Arabic/English metadata from official indexed text."
+    },
+    {
+      "id": "O19",
+      "product": "Jadarat",
+      "title": "Consultation impact notice",
+      "url": "https://www.hrdf.org.sa/en/media-center/news/general/consultation-impact-of-the-unified-employment-platform-jadarat/",
+      "source_kind": "official_government_notice",
+      "retrieval_mode": "opened",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn445309192view0",
+        "turn871333231view0"
+      ],
+      "source_date_notes": "Published 2026-11-05; updated 2026-11-10",
+      "limits": "Notice confirms a consultation decision exists; linked decision returned 403 and was not read."
+    },
+    {
+      "id": "O20",
+      "product": "Jadarat",
+      "title": "HRDF customer voice Q3 2025",
+      "url": "https://www.hrdf.org.sa/media/hcngvsiu/voice-customer-q3-2025-en.pdf",
+      "source_kind": "official_provider_survey",
+      "retrieval_mode": "opened_pdf_text_later_find_timed_out",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn514643951view0",
+        "turn514643951search7"
+      ],
+      "source_date_notes": "Report period Q3 2025; not a 2026 survey",
+      "limits": "Historical 71% individuals/85% establishments; provider-reported and not comparable to review stars."
+    },
+    {
+      "id": "R01",
+      "product": "Teal",
+      "title": "Trustpilot public reviews",
+      "url": "https://www.trustpilot.com/review/tealhq.com",
+      "source_kind": "primary_user_reviews",
+      "retrieval_mode": "opened_public_company_page",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn797054310view0",
+        "turn295144433view2"
+      ],
+      "source_date_notes": "Selected review dates in review_samples",
+      "limits": "120 total reviews shown; public selection is not representative. Some individual permalinks restricted."
+    },
+    {
+      "id": "R02",
+      "product": "Huntr",
+      "title": "Trustpilot public reviews",
+      "url": "https://www.trustpilot.com/review/huntr.co",
+      "source_kind": "primary_user_reviews",
+      "retrieval_mode": "opened_public_company_page",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn797054310view1"
+      ],
+      "source_date_notes": "Selected review dates in review_samples",
+      "limits": "22 total reviews shown; small self-selected sample and platform representativeness notice."
+    },
+    {
+      "id": "R03",
+      "product": "Simplify",
+      "title": "Trustpilot public reviews",
+      "url": "https://www.trustpilot.com/review/simplify.jobs",
+      "source_kind": "primary_user_reviews",
+      "retrieval_mode": "opened_public_company_page",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn423264661view0",
+        "turn295144433view3"
+      ],
+      "source_date_notes": "Selected review dates in review_samples",
+      "limits": "22 total reviews shown; includes free/paid experiences. Allegations remain unverified reports."
+    },
+    {
+      "id": "R04",
+      "product": "Jobscan",
+      "title": "Trustpilot public reviews",
+      "url": "https://www.trustpilot.com/review/jobscan.co",
+      "source_kind": "primary_user_reviews",
+      "retrieval_mode": "opened_public_company_page",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn797054310view2",
+        "turn289882154view2"
+      ],
+      "source_date_notes": "Selected review dates in review_samples",
+      "limits": "348 total reviews shown. Selected B Weller excerpt is truncated after the missed-skills point."
+    },
+    {
+      "id": "R05",
+      "product": "Jobscan",
+      "title": "G2 public reviews",
+      "url": "https://www.g2.com/products/jobscan/reviews",
+      "source_kind": "primary_user_reviews",
+      "retrieval_mode": "opened",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn423264661view1"
+      ],
+      "source_date_notes": "Page metadata modified 2026-11-08; individual dates preserved",
+      "limits": "14 reviews; verification/source labels do not prove performance or causality."
+    },
+    {
+      "id": "R06",
+      "product": "LinkedIn",
+      "title": "Google Play listing and reviews",
+      "url": "https://play.google.com/store/apps/details?gl=us&hl=en&id=com.linkedin.android",
+      "source_kind": "official_listing_and_primary_user_reviews",
+      "retrieval_mode": "opened_public_page",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn423264661view3",
+        "turn295144433view1"
+      ],
+      "source_date_notes": "Latest fetched app update 2026-11-16; one selected review is 2025",
+      "limits": "Visible review selection is not a random sample; device/version context may differ."
+    },
+    {
+      "id": "R07",
+      "product": "Indeed",
+      "title": "Google Play listing and reviews",
+      "url": "https://play.google.com/store/apps/details?hl=en-US&id=com.indeed.android.jobsearch",
+      "source_kind": "official_listing_and_primary_user_reviews",
+      "retrieval_mode": "opened_public_page",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn423264661view2",
+        "turn295144433view0"
+      ],
+      "source_date_notes": "Latest fetched app update 2026-11-12; selected reviews 2026",
+      "limits": "Rendered update dates/counts differed across snapshots; no fixed global star ranking used."
+    },
+    {
+      "id": "R08",
+      "product": "Bayt",
+      "title": "Google Play listing and reviews",
+      "url": "https://play.google.com/store/apps/details?hl=en_US&id=com.bayt",
+      "source_kind": "official_listing_and_primary_user_reviews",
+      "retrieval_mode": "opened_listing_selected_reviews_indexed_excerpt",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn994902498search5",
+        "turn242876157view0",
+        "turn871333231view4"
+      ],
+      "source_date_notes": "Selected reviews 2026-08-26",
+      "limits": "Two selected review excerpts were available in indexed result but no longer on later visible page."
+    },
+    {
+      "id": "R09",
+      "product": "Naukrigulf",
+      "title": "Google Play English reviews",
+      "url": "https://play.google.com/store/apps/details?hl=en_IN&id=com.naukriGulf.app",
+      "source_kind": "official_listing_and_primary_user_reviews",
+      "retrieval_mode": "indexed_public_review_excerpts",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn994902498search6"
+      ],
+      "source_date_notes": "Selected reviews 2026-07-27 and 2026-08-29",
+      "limits": "Indexed excerpt; full corpus not downloaded. Reports can concern external application systems."
+    },
+    {
+      "id": "R10",
+      "product": "Naukrigulf",
+      "title": "Google Play Arabic listing and reviews",
+      "url": "https://play.google.com/store/apps/details?hl=ar&id=com.naukriGulf.app",
+      "source_kind": "official_listing_and_primary_user_reviews",
+      "retrieval_mode": "opened_and_indexed_public_review_excerpts",
+      "retrieval_date": "2026-11-17",
+      "tool_references": [
+        "turn994902498search7",
+        "turn242876157view1",
+        "turn871333231view3"
+      ],
+      "source_date_notes": "App update 2026-11-05; selected reviews 2026-09-01 and 2026-09-07",
+      "limits": "Arabic visible selection changed between retrievals; Na Ra from indexed excerpt, Magneto visible in opened page."
+    }
+  ],
+  "review_samples": [
+    {
+      "id": "U01",
+      "source_id": "R01",
+      "public_display_name": "Kristina Bekonja",
+      "published_date": "2026-11-04",
+      "experience_date": "2026-11-04",
+      "polarity": "positive",
+      "paraphrase": "Organized visible records reduce manual tracking burden.",
+      "retrieval_mode": "opened",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U02",
+      "source_id": "R01",
+      "public_display_name": "arsalan ahmed",
+      "published_date": "2026-09-24",
+      "experience_date": "2026-09-23",
+      "polarity": "positive",
+      "paraphrase": "Clean interface, notes and free tracker capacity were useful.",
+      "retrieval_mode": "opened",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U03",
+      "source_id": "R01",
+      "public_display_name": "Steve Koonce",
+      "published_date": "2026-07-21",
+      "experience_date": null,
+      "polarity": "mixed",
+      "paraphrase": "Liked the interface but found repeated resume keyword edits tedious.",
+      "retrieval_mode": "opened_excerpt",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U04",
+      "source_id": "R02",
+      "public_display_name": "Cale Corbett",
+      "published_date": "2026-09-13",
+      "experience_date": "2026-09-01",
+      "polarity": "positive",
+      "paraphrase": "Intuitive interface and low-friction use.",
+      "retrieval_mode": "opened",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U05",
+      "source_id": "R02",
+      "public_display_name": "Malika",
+      "published_date": "2026-03-09",
+      "experience_date": "2026-03-07",
+      "polarity": "positive",
+      "paraphrase": "Valued notes, contacts and interview-process organization.",
+      "retrieval_mode": "opened",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U06",
+      "source_id": "R02",
+      "public_display_name": "Tom K",
+      "published_date": "2026-02-26",
+      "experience_date": "2026-01-31",
+      "polarity": "mixed",
+      "paraphrase": "Helpful tracking and details, with inconsistent autofill.",
+      "retrieval_mode": "opened",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U07",
+      "source_id": "R03",
+      "public_display_name": "Jordan Jones",
+      "published_date": "2026-07-02",
+      "experience_date": "2026-06-29",
+      "polarity": "positive",
+      "paraphrase": "Tracker and resume builder reduced search-management burden.",
+      "retrieval_mode": "opened",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U08",
+      "source_id": "R03",
+      "public_display_name": "Ojas Kerhalkar",
+      "published_date": "2026-06-11",
+      "experience_date": "2026-03-14",
+      "polarity": "mixed",
+      "paraphrase": "Valued follow-up tracking, while wishing for better pricing.",
+      "retrieval_mode": "opened",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U09",
+      "source_id": "R03",
+      "public_display_name": "customer",
+      "published_date": "2026-07-23",
+      "experience_date": "2026-05-29",
+      "polarity": "negative",
+      "paraphrase": "Reported missing and incorrect autofill fields.",
+      "retrieval_mode": "opened",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U10",
+      "source_id": "R03",
+      "public_display_name": "Aaron p",
+      "published_date": "2026-10-15",
+      "experience_date": "2026-10-13",
+      "polarity": "negative",
+      "paraphrase": "Reported conflicting answer records and uncertainty about final application selection.",
+      "retrieval_mode": "opened",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U11",
+      "source_id": "R04",
+      "public_display_name": "B Weller",
+      "published_date": "2026-03-19",
+      "experience_date": null,
+      "polarity": "mixed",
+      "paraphrase": "Found resume blind spots but mentioned overlooked skills; truncated excerpt only.",
+      "retrieval_mode": "opened_excerpt",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U12",
+      "source_id": "R05",
+      "public_display_name": "Basma E.",
+      "published_date": "2026-09-21",
+      "experience_date": null,
+      "polarity": "mixed",
+      "paraphrase": "Quick editing, with concern about score and paid assistance.",
+      "retrieval_mode": "opened",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U13",
+      "source_id": "R05",
+      "public_display_name": "Lina A.",
+      "published_date": "2026-02-19",
+      "experience_date": null,
+      "polarity": "mixed",
+      "paraphrase": "Useful recommendations and easy setup; wanted more free use.",
+      "retrieval_mode": "opened",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U14",
+      "source_id": "R06",
+      "public_display_name": "Erik Lentz",
+      "published_date": "2026-04-07",
+      "experience_date": null,
+      "polarity": "negative",
+      "paraphrase": "Reported excessive notifications and difficult notification settings.",
+      "retrieval_mode": "opened",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U15",
+      "source_id": "R06",
+      "public_display_name": "Rohit Udhwani",
+      "published_date": "2025-08-13",
+      "experience_date": null,
+      "polarity": "negative_historical",
+      "paraphrase": "Reported nonresponsive location entry and poor search relevance; not current-build proof.",
+      "retrieval_mode": "opened",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U16",
+      "source_id": "R07",
+      "public_display_name": "Shug Magnolia",
+      "published_date": "2026-08-19",
+      "experience_date": null,
+      "polarity": "negative_updated_review",
+      "paraphrase": "Reported upload/background errors and having to find the job again.",
+      "retrieval_mode": "opened",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U17",
+      "source_id": "R07",
+      "public_display_name": "Ivy C",
+      "published_date": "2026-05-13",
+      "experience_date": null,
+      "polarity": "negative",
+      "paraphrase": "Reported Saved/Applied overlap and older resume/settings returning.",
+      "retrieval_mode": "opened",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U18",
+      "source_id": "R07",
+      "public_display_name": "joshua nunn",
+      "published_date": "2026-08-14",
+      "experience_date": null,
+      "polarity": "negative_updated_review",
+      "paraphrase": "Reported irrelevant recommendations and questionable listings.",
+      "retrieval_mode": "opened",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U19",
+      "source_id": "R08",
+      "public_display_name": "Tebello Mabe",
+      "published_date": "2026-08-26",
+      "experience_date": null,
+      "polarity": "mixed",
+      "paraphrase": "Liked use but required education choices did not include the school.",
+      "retrieval_mode": "indexed_excerpt",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U20",
+      "source_id": "R08",
+      "public_display_name": "Mercy yeshua Tube",
+      "published_date": "2026-08-26",
+      "experience_date": null,
+      "polarity": "mixed",
+      "paraphrase": "Liked the app but found opportunities difficult for their location/nationality.",
+      "retrieval_mode": "indexed_excerpt",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U21",
+      "source_id": "R09",
+      "public_display_name": "Abbas Khan",
+      "published_date": "2026-08-29",
+      "experience_date": null,
+      "polarity": "negative",
+      "paraphrase": "Reported profile choice fields that would not open.",
+      "retrieval_mode": "indexed_excerpt",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U22",
+      "source_id": "R09",
+      "public_display_name": "Jagadish Debnath",
+      "published_date": "2026-07-27",
+      "experience_date": null,
+      "polarity": "negative",
+      "paraphrase": "Reported resume file picker freezing on an external application.",
+      "retrieval_mode": "indexed_excerpt",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U23",
+      "source_id": "R10",
+      "public_display_name": "Na Ra",
+      "published_date": "2026-09-01",
+      "experience_date": null,
+      "polarity": "negative",
+      "paraphrase": "Arabic report of an unresolved occupational-sector selection issue.",
+      "retrieval_mode": "indexed_excerpt",
+      "independently_reproduced": false
+    },
+    {
+      "id": "U24",
+      "source_id": "R10",
+      "public_display_name": "Magneto Kx",
+      "published_date": "2026-09-07",
+      "experience_date": null,
+      "polarity": "negative",
+      "paraphrase": "Arabic report of few relevant Kuwait results.",
+      "retrieval_mode": "opened",
+      "independently_reproduced": false
+    }
+  ],
+  "method_limits": [
+    "Qualitative convenience sample, not representative prevalence research.",
+    "Official claims and individual reports were separated. No provider-marketing hiring uplift adopted.",
+    "No platform-generated AI review summary or competitor-written SEO review used as independent evidence.",
+    "Source versions, visible review selections and counts can change; historical dates retained.",
+    "No inaccessible endpoint, account or access control was bypassed."
+  ],
+  "blocked_or_partial": [
+    {
+      "url": "https://chromewebstore.google.com/detail/simplify-copilot-autofill/pbanhockgagggenencehbnadejlgchfc/reviews",
+      "result": "Public review view unavailable",
+      "reference": "turn797054310view3"
+    },
+    {
+      "url": "https://www.trustpilot.com/reviews/6a5f9d160f3299c445b24aa1",
+      "result": "Individual permalink restricted; company-page excerpt used",
+      "reference": "turn603268560view0"
+    },
+    {
+      "url": "https://www.trustpilot.com/reviews/6ab4553db11756428e2260c0",
+      "result": "Individual permalink restricted; company-page text used",
+      "reference": "turn603268560view1"
+    },
+    {
+      "url": "https://www.trustpilot.com/reviews/69a07536b206ce25a399f6d0",
+      "result": "Individual permalink restricted; company-page text used",
+      "reference": "turn603268560view2"
+    },
+    {
+      "url": "https://www.trustpilot.com/reviews/6a2b25a6815e6143d7bc2a0c",
+      "result": "Individual permalink restricted; company-page text used",
+      "reference": "turn603268560view3"
+    },
+    {
+      "url": "https://eparticipation.my.gov.sa/en/e-consultations/consultations/general/general-consultation-891/",
+      "result": "403 Forbidden; decision content unknown",
+      "reference": "turn871333231view0"
+    },
+    {
+      "url": "https://www.indeed.com/help/job-seekers/articles/205332490-what-is-my-jobs?hl=en&co=US",
+      "result": "Redirect target unavailable; official indexed help text retained",
+      "reference": "turn847404856view3"
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": 1,
+      "change": "Existing Saved search includes private notes with bounded Arabic-aware comparison normalization",
+      "surface": "Existing search input",
+      "basis": [
+        "R01",
+        "R02",
+        "R10"
+      ],
+      "inference": true,
+      "implemented_in_this_research": false
+    },
+    {
+      "priority": 2,
+      "change": "Application-record CSV under existing export disclosure",
+      "surface": "Settings data tools, in a secondary Spreadsheet export disclosure",
+      "basis": [
+        "O02",
+        "O06",
+        "O11",
+        "O13"
+      ],
+      "inference": true,
+      "implemented_in_this_research": false
+    },
+    {
+      "priority": 3,
+      "change": "Single local follow-up calendar-file export for an existing date",
+      "surface": "Existing job details only when the saved follow-up date is valid; unfinished editor copies are not export targets",
+      "basis": [
+        "O02",
+        "R03",
+        "R06"
+      ],
+      "inference": true,
+      "implemented_in_this_research": false
+    }
+  ],
+  "implementation_scope_checkpoint": {
+    "date": "2026-11-17",
+    "hosted_web": "Saved-note search, CSV and calendar-file export are development follow-ups; the implementation receipt controls integrated source and verified results.",
+    "native_saved_note_search": "Implementation written; compilation and CI verification pending.",
+    "native_csv_and_calendar": "Not implemented in this follow-up; CSV and calendar-file additions are hosted-web only.",
+    "shipping_boundary": "Hosted version 7 and the app-store release remain separate.",
+    "export_url_policy": "CSV and calendar files use the canonical public job URL, not an exact originally pasted URL.",
+    "source_text_policy": "Search does not rewrite stored/displayed source text. Raw JSON preserves source values; derived viewing formats apply documented output escaping and formula-cell marking.",
+    "unverified": [
+      "Rendered browser acceptance of the new disclosures",
+      "Completed file saves",
+      "Calendar-client imports and notifications"
+    ]
+  }
+}

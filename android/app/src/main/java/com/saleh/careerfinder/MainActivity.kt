@@ -70,8 +70,8 @@ class MainActivity : ComponentActivity() {
         synchronizePlatformLanguage(this)
         setTheme(when (readAppearancePreference(this)) {
             AppearancePreference.SYSTEM -> R.style.Theme_CareerFinder
-            AppearancePreference.LIGHT -> R.style.Theme_CareerFinder_Light
-            AppearancePreference.DARK -> R.style.Theme_CareerFinder_Dark
+            AppearancePreference.LIGHT -> R.style.CareerFinderLightTheme
+            AppearancePreference.DARK -> R.style.CareerFinderDarkTheme
         })
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -463,9 +463,10 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
     var query by rememberSaveable(state.privateScope) { mutableStateOf("") }
     var filter by rememberSaveable(state.privateScope) { mutableStateOf(SavedOpportunityFilter.ALL) }
     var removingID by rememberSaveable(state.privateScope) { mutableStateOf<String?>(null) }
-    val matchingJobs = state.jobs.filter { (it.title + " " + it.company + " " + it.location + " " + it.country).contains(query, ignoreCase = true) && filter.includes(state.recordFor(it)) }
+    val searchTerms = remember(query) { SavedSearch.terms(query) }
+    val matchingJobs = state.jobs.filter { savedOpportunityMatches(it, state.recordFor(it), searchTerms) && filter.includes(state.recordFor(it)) }
     val filtered = if (filter == SavedOpportunityFilter.FOLLOW_UP) matchingJobs.sortedBy { state.recordFor(it)?.current?.record?.followUpDate } else matchingJobs
-    val orphaned = state.unbookmarkedRecords.filter { (it.job.title + " " + it.job.company + " " + it.job.location + " " + it.job.country).contains(query, ignoreCase = true) && filter.includes(it) }
+    val orphaned = state.unbookmarkedRecords.filter { savedOpportunityMatches(it.job, it, searchTerms) && filter.includes(it) }
         .let { if (filter == SavedOpportunityFilter.FOLLOW_UP) it.sortedBy { record -> record.current.record.followUpDate } else it }
     val hasRecords = state.jobs.isNotEmpty() || state.applicationRecords.isNotEmpty()
     val context = LocalContext.current

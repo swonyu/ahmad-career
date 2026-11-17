@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-11-17T09:06:09.594Z",
+  "observedAt": "2026-11-17T10:06:18.878Z",
   "status": "passed",
   "groups": 26,
   "checks": [
@@ -47,6 +47,6 @@
     "drizzle/0001_smiling_maelstrom.sql": "d0e1b4cbea14b7dca1c1078911fa94c39db7960778bea637341d7bbee4ef9ef6",
     "drizzle/0002_concerned_inhumans.sql": "78823cf83e72da525ffd44e8ec76c524a813ff6eb278cbf6465e8a63fbc05fed",
     "drizzle/0003_provider_identity.sql": "6060ba69e1ca5fb418e79ae91f0d76b5e89e7e1d28740b2df15a74fe727b4930",
-    "drizzle/0004_provider_connection_generation.sql": "408d7c77b0628386d7258673791ca8b1848ab9ea192a0abbdc32aa5b1077a034"
+    "drizzle/0004_provider_connection_generation.sql": "5e2d86cb79b44e8101f743836a7a7ec58b901b87b96a79159bf30bcbf77f9439"
   }
 }

@@ -1,0 +1,26 @@
+{
+  "kind": "independent actual-D1 schema/lazy-initialization authority review",
+  "recordedAt": "2026-11-17T10:02:06.069Z",
+  "root": "/workspace/scratch/5bc6158967e8/auth-migration-candidate/hosted",
+  "sourceHashes": {
+    "server/oauth.mjs": "00944a1b4bb8288ac7a2c4d1410c885ced2652f9d0aa0b1fe3e4ff01a95dcf83",
+    "server/identity.mjs": "dc7b5843574d64be97829ce05840e515702e13df6f3652aa8d3cd8c058ff702f",
+    "drizzle/0004_provider_connection_generation.sql": "5e2d86cb79b44e8101f743836a7a7ec58b901b87b96a79159bf30bcbf77f9439"
+  },
+  "passed": [
+    "0004 is schema-only and leaves pre-upgrade identity data unbackfilled",
+    "Missing storage remains anonymous configuration information but never authenticated unlinked success",
+    "Lazy initialization is bounded to current-owner supported rows and repeat calls keep generations",
+    "A concurrent successful initializer wins without generation rotation or false empty status",
+    "Captured legacy rows cannot initialize under changed account generation, lifecycle, or deleting workspace",
+    "Provider-session loss or replacement cannot initialize links or return a successful empty status",
+    "A captured old link cannot overwrite or relabel a newly inserted replacement",
+    "Absent auth accounts do not create lifecycle metadata and cannot hide a newly created account or deleting workspace"
+  ],
+  "externalNetworkCalls": 0,
+  "limits": [
+    "Only an isolated local Miniflare/D1 database was used.",
+    "No live provider consent, deployed migration, QA Site, production data, browser, or real account was accessed.",
+    "Races were injected before the actual atomic status batch; no claim of exhaustive concurrency testing."
+  ]
+}

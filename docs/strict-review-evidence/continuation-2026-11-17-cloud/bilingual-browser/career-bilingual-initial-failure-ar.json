@@ -1,0 +1,54 @@
+{
+  "kind": "fixture-metrics",
+  "lifecycle": [
+    {
+      "event": "pageshow",
+      "time": 434
+    }
+  ],
+  "firstPrivateEmailEvidence": null,
+  "scenario": "initial-failure",
+  "width": 390,
+  "rootTextSize": "16px",
+  "focusedBounds": {
+    "top": 0,
+    "bottom": 2152.078125,
+    "left": 15,
+    "right": 390
+  },
+  "fixedNavBounds": {
+    "top": 758.78125,
+    "bottom": 844
+  },
+  "focusPartlyBehindNav": false,
+  "focusEntirelyBehindNav": false,
+  "scrollWidth": 375,
+  "horizontalOverflow": false,
+  "scrollY": 0,
+  "theme": "system",
+  "language": "ar",
+  "direction": "rtl",
+  "onlineMutationCount": 0,
+  "activeElement": "BODY",
+  "activeLabel": "الانتقال إلى المحتوىCareer Finderمساحة عملك المهنيةالإعداداتالتفضيلات والخصوصيةاجعلها مساحتك الخاصة.",
+  "privateEmailVisible": false,
+  "privateProfileVisible": false,
+  "requests": [
+    {
+      "path": "/api/phone/workspace",
+      "method": "GET"
+    },
+    {
+      "path": "/api/discovery/sources",
+      "method": "GET"
+    },
+    {
+      "path": "/api/phone/workspace",
+      "method": "GET"
+    },
+    {
+      "path": "/api/discovery/sources",
+      "method": "GET"
+    }
+  ]
+}

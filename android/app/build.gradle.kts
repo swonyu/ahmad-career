@@ -47,6 +47,8 @@ android {
     testBuildType = if (providers.gradleProperty("careerAcceptance").orNull == "true") "acceptance" else "debug"
     sourceSets.getByName("acceptance").res.srcDir(acceptanceResources)
     buildFeatures { compose = true }
+    // Both supported languages must be available for the offline in-app picker.
+    bundle { language { enableSplit = false } }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17

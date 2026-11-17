@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One alpha silhouette for Android's user-selected themed-icon colors. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M28.75,74.25 C30.70,63.00 36.70,55.00 44.00,52.60 C47.00,51.60 50.80,51.90 54.00,50.85 C57.60,49.85 60.00,46.80 64.65,42.30 L58.25,37.80 L79.00,33.75 L76.20,51.80 L71.40,47.55 C71.50,54.70 71.65,59.00 68.50,62.65 C65.30,66.70 60.80,66.40 56.10,67.60 C53.60,68.25 51.30,70.55 49.50,74.25 Z" />
+</vector>

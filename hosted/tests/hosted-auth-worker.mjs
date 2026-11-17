@@ -51,9 +51,26 @@ async function call(path,{status=200,...options}={}){
   return {response,data:response.headers.get('content-type')?.includes('application/json')?await response.clone().json():null};
 }
 const jsonHeaders={Origin:AUTH_ORIGIN,'Content-Type':'application/json'};
+function identityMetadata(row) { const copy={...row}; delete copy.connection_id; return copy; }
 try{
   const db=await mf.getD1Database('DB');
-  for(const file of(await readdir(new URL('../drizzle/',import.meta.url))).filter(file=>file.endsWith('.sql')).sort())for(const statement of(await readFile(new URL('../drizzle/'+file,import.meta.url),'utf8')).split('--> statement-breakpoint').map(value=>value.trim()).filter(Boolean))await db.prepare(statement).run();
+  const legacyOwner='runtime-legacy-upgrade',legacyToken='b'.repeat(64),legacyNow=Date.now();let legacy;
+  for(const file of(await readdir(new URL('../drizzle/',import.meta.url))).filter(file=>file.endsWith('.sql')).sort()){
+    if(file==='0004_provider_connection_generation.sql'){
+      await db.prepare('INSERT INTO auth_accounts(owner_id,origin_method,generation,created_at) VALUES(?,?,?,?)').bind(legacyOwner,'chatgpt','runtime-legacy-generation',legacyNow).run();
+      for(const provider of ['google','linkedin'])await db.prepare('INSERT INTO auth_identities(provider,subject,subject_hash,owner_id,email,display_name,connected_at,updated_at) VALUES(?,?,?,?,?,?,?,?)').bind(provider,'runtime-legacy-'+provider,sha256('runtime-legacy-'+provider),legacyOwner,provider==='google'?'legacy@example.com':null,'Synthetic legacy identity',new Date(legacyNow).toISOString(),new Date(legacyNow).toISOString()).run();
+      await db.prepare('INSERT INTO browser_sessions(token_hash,id,owner_id,account_generation,provider,subject,created_at,expires_at) VALUES(?,?,?,?,?,?,?,?)').bind(sha256(legacyToken),crypto.randomUUID(),legacyOwner,'runtime-legacy-generation','google','runtime-legacy-google',legacyNow,legacyNow+3600000).run();
+      legacy={identities:(await db.prepare('SELECT * FROM auth_identities ORDER BY provider').all()).results,sessions:(await db.prepare('SELECT * FROM browser_sessions').all()).results};
+    }
+    for(const statement of(await readFile(new URL('../drizzle/'+file,import.meta.url),'utf8')).split('--> statement-breakpoint').map(value=>value.trim()).filter(Boolean))await db.prepare(statement).run();
+  }
+  const unchanged=(await db.prepare('SELECT * FROM auth_identities ORDER BY provider').all()).results;
+  assert(unchanged.every(row=>row.connection_id===''));assert.deepEqual(unchanged.map(identityMetadata),legacy.identities);
+  const upgraded=await call('/api/auth/status',{headers:{Cookie:BROWSER_SESSION_COOKIE+'='+legacyToken}});
+  assert.equal(upgraded.data.account.id,legacyOwner);for(const provider of ['google','linkedin'])assert.match(upgraded.data.providers[provider].connectionId,/^[a-f0-9]{64}$/);
+  const repeatedUpgrade=await call('/api/auth/status',{headers:{Cookie:BROWSER_SESSION_COOKIE+'='+legacyToken}});assert.deepEqual(repeatedUpgrade.data.providers,upgraded.data.providers);
+  assert.deepEqual((await db.prepare('SELECT * FROM browser_sessions').all()).results,legacy.sessions);assert.equal(providerRequests,0);
+  await db.batch([db.prepare('DELETE FROM browser_sessions WHERE owner_id=?').bind(legacyOwner),db.prepare('DELETE FROM auth_identities WHERE owner_id=?').bind(legacyOwner),db.prepare('DELETE FROM auth_accounts WHERE owner_id=?').bind(legacyOwner)]);
   const anonymous=await call('/api/auth/status'); assert.equal(anonymous.data.account,null); assert.equal(anonymous.data.providers.google.configured,true);
   const start=await call('/auth/google/start?return_to=%2Fphone',{status:303}),authorization=new URL(start.response.headers.get('location')),oauthCookie=cookie(start.response,OAUTH_BROWSER_COOKIE);
   codeFixtures.set('runtime-google-code',{authorization});

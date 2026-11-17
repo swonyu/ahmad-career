@@ -1,0 +1,22 @@
+{
+  "recordedAt": "2026-11-17T09:52:33.859092+00:00",
+  "projectId": "appgprj_6afc21bd599c8191a0fb7705274d8582",
+  "googleProject": "career-finder-515007",
+  "clientName": "Career Finder private acceptance — 2026-11-17",
+  "clientId": "416524414930-16dbqvp22r6b0f8aikbgj6t4egopo6td.apps.googleusercontent.com",
+  "callback": "https://career-finder-acceptance-20261117.jazzy-drake-8323.chatgpt.site/auth/google/callback",
+  "javascriptOrigins": [],
+  "scopes": [
+    "openid",
+    "email",
+    "profile"
+  ],
+  "audience": "External Testing",
+  "newTestUserAdded": false,
+  "productionClientModified": false,
+  "secretStoredInSites": true,
+  "environmentRevision": 1,
+  "deployed": false,
+  "realCallbackExecuted": false,
+  "newPaidServiceEnabled": false
+}

@@ -1,0 +1,30 @@
+{
+  "source_commit": "eebe748cb5afca0efcb9389255400a00cf5a480a",
+  "run_id": 44057279267,
+  "url": "https://github.com/swonyu/ahmad-career/actions/runs/44057279267",
+  "pull_request": 1,
+  "gate_results": {
+    "service": "passed",
+    "hosted": "passed",
+    "android": "failed_lint_after_compile",
+    "iphone_build": "failed_compile",
+    "iphone_ui": "not_executed_build_failed"
+  },
+  "android_lint": {
+    "errors": 5,
+    "warnings": 21,
+    "first_error": "ResourceCycle: values-night/styles.xml Theme.CareerFinder / Theme.CareerFinder.Dark",
+    "artifact_id": 14316696631
+  },
+  "swift_errors": [
+    "NativeLocalization.swift:211 allJobs private access",
+    "NativeLocalization.swift:213 filter trailing closure type error, possibly cascading",
+    "NativeCareerViews.swift:558 removed careerMint color",
+    "NativeCareerViews.swift:867 NativeApplicationConnection private access"
+  ],
+  "release_ready": false,
+  "shared_mac_builds": 0,
+  "shared_branches_modified": false,
+  "connector_write_attempt": "403 Resource not accessible by integration",
+  "push_workaround": "Authorized existing gh account in isolated temporary Mac checkout; exact git bundle hash verified before push; only new continuation branch and draft PR created."
+}

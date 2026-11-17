@@ -1,0 +1,96 @@
+- banner:
+  - heading "Career Finder · synthetic viewport review" [level=1]
+  - paragraph: Actual React app and CSS. Synthetic account responses only. Separate encrypted test vaults, appearance and language preferences. Synthetic account has an existing harmless test PDF; PDF selection remains disabled in this fixture. External requests, online mutations and link navigation are blocked. This fixture never opens the existing guest vault.
+  - generic "Viewport width":
+    - button "320 px"
+    - button "390 px"
+    - button "768 px"
+    - button "Desktop · 1200 px"
+    - strong: 390 CSS pixels
+    - button "Text 100%"
+    - button "Text 200%"
+    - button "English fixture"
+    - button "العربية · fixture"
+  - text: Scenario
+  - combobox "Scenario":
+    - option "Guest · empty test vault"
+    - option "Synthetic account A" [selected]
+    - option "Initial account check fails"
+  - button "Hold account recheck"
+  - button "Resolve account recheck"
+  - button "Switch response to account B"
+  - button "Restore account A response"
+  - button "Check layout and focus"
+- main:
+  - iframe [active]:
+    - link "الانتقال إلى المحتوى":
+      - /url: "#phone-main"
+    - banner:
+      - link "Career Finder مساحة عملك المهنية":
+        - /url: /phone
+        - text: Career Finder
+        - generic: مساحة عملك المهنية
+      - button "فتح الإعدادات":
+        - generic: الإعدادات
+    - main:
+      - paragraph: قائمتك المختارة
+      - heading "خطواتك المقبلة." [level=1]
+      - paragraph: قائمة مختصرة واضحة، وملاحظات خاصة، وخطة لخطوتك التالية.
+      - 'generic "استعادة التعديلات غير المكتملة مسودات الاسترداد الخاصة المحفوظة لهذه المساحة: ⁨٢⁩"':
+        - text: استعادة التعديلات غير المكتملة
+        - generic: "مسودات الاسترداد الخاصة المحفوظة لهذه المساحة: ⁨٢⁩"
+      - generic: فرصة محفوظة واحدة
+      - button "إضافة رابط وظيفة":
+        - text: إضافة رابط وظيفة
+      - generic "تصفية الوظائف المحفوظة":
+        - button "الكل" [pressed]
+        - button "تم التقديم"
+        - button "Follow-ups"
+      - generic: البحث عن وظيفة أو جهة عمل محفوظة
+      - searchbox "البحث عن وظيفة أو جهة عمل محفوظة"
+      - article:
+        - paragraph: Synthetic Example
+        - heading "Synthetic design opportunity" [level=2]:
+          - button "Synthetic design opportunity"
+        - button "تعديل سجل التقديم"
+        - link "فتح الوظيفة":
+          - /url: https://example.com/synthetic-opportunity
+          - text: فتح الوظيفة
+    - navigation "أقسام التطبيق":
+      - button "البحث":
+        - generic: البحث
+      - button "المحفوظات":
+        - generic: المحفوظات
+      - button "التقديم":
+        - generic: التقديم
+      - button "الملف الشخصي":
+        - generic: الملف الشخصي
+      - button "الإعدادات":
+        - generic: الإعدادات
+    - dialog "سجل التقديم":
+      - heading "سجل التقديم" [level=2]
+      - button "إغلاق النافذة":
+      - paragraph:
+        - strong: Synthetic design opportunity
+        - text: Synthetic Example
+      - paragraph: سجلك على هذا الهاتف. لا يغيّر سجلات جهة العمل ولا يُنشئ إيصال استلام مؤكّدًا.
+      - text: المرحلة
+      - combobox "المرحلة":
+        - option "المحفوظات"
+        - option "تم التقديم"
+        - option "مقابلة" [selected]
+        - option "عرض وظيفي"
+        - option "مغلق"
+      - text: تاريخ التقديم اختياري
+      - textbox "تاريخ التقديم اختياري"
+      - text: تاريخ المتابعة اختياري
+      - textbox "تاريخ المتابعة اختياري"
+      - text: ملاحظات خاصة
+      - textbox "ملاحظات خاصة":
+        - /placeholder: أشخاص للتواصل معهم، أو تفاصيل مقابلة، أو خطوتك المقبلة
+      - generic "مقارنة بالسجل المحفوظ"
+      - button "إلغاء"
+      - button "حفظ السجل"
+      - button "تصدير السجل غير المكتمل" [active]
+- generic "Rendered evidence · synthetic only"
+- generic: "{ \"kind\": \"fixture-metrics\", \"lifecycle\": [ { \"event\": \"pageshow\", \"time\": 207 }, { \"event\": \"focus\", \"time\": 12425 }, { \"event\": \"focus\", \"time\": 12496 }, { \"event\": \"focus\", \"time\": 12639 }, { \"event\": \"focus\", \"time\": 26259 }, { \"event\": \"focus\", \"time\": 26401 }, { \"event\": \"focus\", \"time\": 98107 }, { \"event\": \"focus\", \"time\": 98208 }, { \"event\": \"focus\", \"time\": 98253 }, { \"event\": \"focus\", \"time\": 118528 }, { \"event\": \"focus\", \"time\": 118617 }, { \"event\": \"focus\", \"time\": 118627 }, { \"event\": \"focus\", \"time\": 118642 }, { \"event\": \"focus\", \"time\": 128143 } ], \"firstPrivateEmailEvidence\": { \"time\": 607, \"requests\": [ { \"path\": \"/api/phone/workspace\", \"method\": \"GET\" }, { \"path\": \"/api/discovery/sources\", \"method\": \"GET\" }, { \"path\": \"/api/phone/workspace\", \"method\": \"GET\" }, { \"path\": \"/api/discovery/sources\", \"method\": \"GET\" } ], \"visibleSyntheticEmail\": \"private-synthetic-a@example.com\", \"accountCardVisible\": false }, \"scenario\": \"account\", \"width\": 390, \"rootTextSize\": \"16px\", \"focusedBounds\": { \"top\": -68, \"bottom\": 876.40625, \"left\": 15, \"right\": 390 }, \"fixedNavBounds\": { \"top\": 758.78125, \"bottom\": 844 }, \"focusPartlyBehindNav\": false, \"focusEntirelyBehindNav\": false, \"scrollWidth\": 375, \"horizontalOverflow\": false, \"scrollY\": 68, \"theme\": \"system\", \"language\": \"ar\", \"direction\": \"rtl\", \"onlineMutationCount\": 0, \"activeElement\": \"BODY\", \"activeLabel\": \"الانتقال إلى المحتوىCareer Finderمساحة عملك المهنيةالإعداداتقائمتك المختارةخطواتك المقبلة.قائمة مختص\", \"privateEmailVisible\": false, \"privateProfileVisible\": false, \"requests\": [ { \"path\": \"/api/phone/workspace\", \"method\": \"GET\" }, { \"path\": \"/api/discovery/sources\", \"method\": \"GET\" }, { \"path\": \"/api/auth/status\", \"method\": \"GET\" }, { \"path\": \"/api/phone/workspace\", \"method\": \"GET\" }, { \"path\": \"/api/auth/status\", \"method\": \"GET\" }, { \"path\": \"/api/phone/workspace\", \"method\": \"GET\" } ] }"
