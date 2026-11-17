@@ -76,10 +76,10 @@ try{
     assert.equal((await call({q:'x'.repeat(121)})).status,400);assert.equal((await call({location:'x'.repeat(101)})).status,400);assert.equal((await call({remote:'maybe'})).status,400);assert.equal((await call({sources:['greenhouse:a','greenhouse:a']})).status,400);assert.equal((await call({sources:['greenhouse:a','greenhouse:b','greenhouse:c','greenhouse:d','greenhouse:e']})).status,400);assert.equal((await call({cursor:'not-a-cursor'})).status,400);assert.equal(calls.length,0);
   });
   await check('Public requests ignore account credentials and never persist or forward personal search terms',async()=>{
-    const result=await call({q:'private-filter-987',location:'private-city-654',headers:{authorization:'Bearer synthetic-private-token',cookie:'session=synthetic-private-cookie','oai-authenticated-user-id':'synthetic-owner'}});
+    const result=await call({q:'private-filter-987',location:'private-city-654',headers:{authorization:'Bearer synthetic-private-token',cookie:'__Host-sites-session=synthetic-hosting-cookie; __Host-career-session=synthetic-private-cookie','oai-authenticated-user-id':'synthetic-owner','oai-authenticated-user-email':'synthetic-private-email@example.invalid'}});
     assert.equal(result.status,200);assert.equal(result.data.status,'complete');assert.equal(result.data.jobs.length,0);assert.equal(calls.length,1);
     const all=JSON.stringify({cache:(await db.prepare('SELECT * FROM discovery_cache').all()).results,rates:(await db.prepare('SELECT * FROM discovery_rates').all()).results,calls});
-    for(const secret of ['private-filter-987','private-city-654','synthetic-private-token','synthetic-private-cookie','synthetic-owner','192.0.2.4'])assert(!all.includes(secret),secret);
+    for(const secret of ['private-filter-987','private-city-654','synthetic-private-token','synthetic-hosting-cookie','synthetic-private-cookie','synthetic-owner','synthetic-private-email@example.invalid','192.0.2.4'])assert(!all.includes(secret),secret);
     assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM workspaces').first()).n,0);assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM native_sessions').first()).n,0);
   });
   await check('Provider identities, plain text, unknown country and remote evidence remain distinct',async()=>{

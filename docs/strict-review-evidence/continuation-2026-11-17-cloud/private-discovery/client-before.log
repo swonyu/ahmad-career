@@ -1,0 +1,40 @@
+{"syntheticPrivateIngress":{"denied":1,"workerRequests":0,"providerRequests":0}}
+▶ phone API keeps authentication, cancellation and verification bounded
+  ✔ private writes carry the exact intent body, same-origin cookies and no native credential (8.839438ms)
+  ✖ the actual source catalog remains readable behind an owner-private same-origin hosting gate (1.132119ms)
+  ✔ public discovery omits account credentials and preserves encoded search intent (0.796967ms)
+  ✔ oversized multi-job review payloads are rejected before an API call begins (4.678993ms)
+  ✔ foreign destinations, non-app routes and writes to discovery are rejected before fetch (0.742877ms)
+  ✔ HTTP and logical failures remain distinguishable and never replay a mutation (2.786537ms)
+  ✔ unverified content, invalid UTF-8, arrays and empty responses are rejected safely (5.683483ms)
+  ✔ the 12 MiB response limit cancels oversized streams before parsing (2.574305ms)
+  ✔ network errors do not retry writes or expose private exception details (0.822481ms)
+  ✔ caller cancellation aborts once and pre-cancelled work never starts (1.285172ms)
+{"populatedWorkspaceBytes":7112730,"attempts":500,"reviews":20,"reviewItems":400}
+  ✔ the timer aborts a stalled mutation and tells the user to reconcile before retrying (20.754235ms)
+  ✔ a populated valid workspace above 4 MiB remains readable within the native 12 MiB budget (357.914807ms)
+✖ phone API keeps authentication, cancellation and verification bounded (412.772842ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 11
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 943.637928
+
+✖ failing tests:
+
+test at tests/phone-api.mjs:25:11
+✖ the actual source catalog remains readable behind an owner-private same-origin hosting gate (1.132119ms)
+  Error [APIError]: The response could not be verified. Your earlier information is still here.
+      at phoneAPI (file:///tmp/career-phone-api-jRnLlJ/client.mjs:34:98)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/discovery-private-qa-candidate/hosted/tests/phone-api.mjs:36:41)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/discovery-private-qa-candidate/hosted/tests/phone-api.mjs:25:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    status: 403,
+    code: 'invalid_response'
+  }

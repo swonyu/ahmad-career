@@ -143,6 +143,45 @@ class NativeLocalizationAcceptanceTest {
         assertEquals(0, service.calls)
     }
 
+    @Test fun selectedLanguage_remainsConsistentInsideAnOpenDialog_withoutLosingItsDraft() {
+        // CI deliberately keeps the activity's per-app locale Arabic while this
+        // isolated display preference starts in English. A Dialog must not fall
+        // back to its window Context for nested Field/Heading/Action copy.
+        assertEquals("The acceptance activity must retain its Arabic platform locale", "ar",
+            compose.activity.resources.configuration.locales[0].language)
+        val rawTitle = "Saved {0} عنوان"
+        val scope = model.state.value.privateScope
+        compose.onNodeWithTag("jobs-saved-tab").performClick()
+        compose.onNodeWithTag("jobs-list").performScrollToNode(hasText("Add opportunity"))
+        compose.onNodeWithText("Add opportunity").performClick()
+        compose.onNodeWithTag("opportunity-editor").performScrollToNode(hasText("Role title") and hasSetTextAction())
+        compose.onNode(hasText("Role title") and hasSetTextAction()).performTextInput(rawTitle)
+        compose.runOnIdle {
+            val activity = compose.activity
+            (activity.getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager)
+                .hideSoftInputFromWindow(activity.window.decorView.windowToken, 0)
+        }
+        compose.onNodeWithTag("opportunity-editor").performScrollToNode(hasText("Save opportunity"))
+        compose.onNodeWithText("Save opportunity").assertIsDisplayed()
+        display("ar")
+        val ar = strings("ar")
+        compose.onNodeWithTag("opportunity-editor").performScrollToNode(hasText(ar("Save opportunity")))
+        compose.onNodeWithText(ar("Save opportunity")).assertIsDisplayed()
+        compose.onNodeWithTag("opportunity-editor").performScrollToNode(hasText(ar("Role title")) and hasSetTextAction())
+        compose.onNode(hasText(ar("Role title")) and hasSetTextAction()).assertTextContains(rawTitle)
+        compose.onNodeWithContentDescription(ar("Close ") + ar("Add opportunity")).assertIsDisplayed()
+        assertEquals(LayoutDirection.Rtl, direction)
+        assertEquals(rawTitle, model.state.value.opportunityDraft.title)
+        assertEquals(scope, model.state.value.privateScope)
+        display("en")
+        compose.onNode(hasText("Role title") and hasSetTextAction()).assertTextContains(rawTitle)
+        assertEquals(LayoutDirection.Ltr, direction)
+        assertEquals(rawTitle, model.state.value.opportunityDraft.title)
+        assertTrue(model.state.value.jobs.isEmpty())
+        assertTrue(model.state.value.receipts.isEmpty())
+        assertEquals(0, service.calls)
+    }
+
     @Test fun systemLanguage_usesTheFirstSupportedFallback_andDoesNotAliasAramaic() {
         assertEquals("ar", supportedCareerLanguage(listOf("fr-FR", "arc", "ar-SA", "en-US")))
         assertEquals("en", supportedCareerLanguage(listOf("fr-FR", "en-GB", "ar")))

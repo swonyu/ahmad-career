@@ -1,0 +1,20 @@
+[
+  {
+    "file": "ios-field-focus-20.jpg",
+    "sha256": "7a250dd94fa3ae6d0acceac7235d6fc406f30e5388c01f9e9090a488c81bddb8",
+    "sourceRecording": "BF90BB19-A755-4CEA-82B1-3F9DBCF29512.mp4",
+    "recordingSha256": "7d723c263aac1d13ae3beeb307d68338aa229be2129841ce1af5ea75f401a8ec",
+    "offsetSeconds": 20,
+    "observation": "Final recorded frame still shows earlier URL field active; failure occurred before largest-text relaunch.",
+    "processing": "ffmpeg single-frame extraction resized to width420; original recording unchanged"
+  },
+  {
+    "file": "ios-search-keyboard-86.jpg",
+    "sha256": "7c24b7e48082ce08e52ddb2f540acada898d37c0e5446b9120fe54d75f23162d",
+    "sourceRecording": "3634D9AE-2F09-4A91-AC2E-1B170264B447.mp4",
+    "recordingSha256": "fc3726d6f0a5d7ce4d538dfa475b23d161feae542bf6636e936603c65d084950",
+    "offsetSeconds": 86,
+    "observation": "The real software keyboard and entered offline error are visible; original readiness predicate nevertheless timed out.",
+    "processing": "ffmpeg single-frame extraction resized to width420; original recording unchanged"
+  }
+]

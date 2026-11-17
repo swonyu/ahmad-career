@@ -1,0 +1,83 @@
+{
+  "runId": 44062756461,
+  "logSha256": "f8f95d38fe3a7a43e791fef8e6bd62d17304cc2a1914c4b709f3d3d7f773ac04",
+  "failures": [
+    {
+      "number": 1,
+      "test": "exactApprovalLinkAndExternalSearch_areReadableWithoutClaimingSubmission",
+      "class": "com.saleh.careerfinder.LinkedInPhoneAcceptanceTest",
+      "message": "java.lang.AssertionError: Action performScrollTo() failed.\nReason: Expected exactly '1' node but could not find any node that satisfies: (Text + InputText + EditableText contains 'Search LinkedIn' (ignoreCase: false))\n\n\tat androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:178)",
+      "source": "LinkedInPhoneAcceptanceTest.kt:120"
+    },
+    {
+      "number": 2,
+      "test": "privateRecord_datesNotesAndFollowUp_areUsableAtLargeText_withoutCreatingAReceipt",
+      "class": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest",
+      "message": "java.lang.AssertionError: No node found that matches ContentDescription = 'Choose Applied date (optional)' (ignoreCase: false) in scrollable container\nSemantics of the node:\nNode #1525 at (l=0.0, t=301.0, r=1080.0, b=1426.0)px, Tag: 'application-record-editor'\nCollectionInfo = 'androidx.compose.ui.semantics.CollectionInfo@7da3341'",
+      "source": "NavigationPhoneAcceptanceTest.kt:117"
+    },
+    {
+      "number": 3,
+      "test": "connectionUsesTwoSteps_andPreservesTheChosenCustomAddressUnderAdvanced",
+      "class": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest",
+      "message": "java.lang.AssertionError: No node found that matches Text + InputText + EditableText contains 'Sign in and get a code' (ignoreCase: false) in scrollable container\nSemantics of the node:\nNode #1766 at (l=0.0, t=401.0, r=1080.0, b=1848.0)px, Tag: 'phone-connection'\nCollectionInfo = 'androidx.compose.ui.semantics.CollectionInfo@c963754'",
+      "source": "NavigationPhoneAcceptanceTest.kt:190"
+    },
+    {
+      "number": 4,
+      "test": "clearingAnAppliedRecord_requiresASeparateConfirmation_andKeepsEarlierHistory",
+      "class": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest",
+      "message": "java.lang.AssertionError: Failed to inject touch input.\nReason: Expected exactly '1' node but could not find any node that satisfies: (Text + InputText + EditableText contains 'Save record on this phone' (ignoreCase: false))\n\n\tat androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:178)",
+      "source": "NavigationPhoneAcceptanceTest.kt:164"
+    },
+    {
+      "number": 5,
+      "test": "phoneProfile_survivesActivityRecreation_withoutAnyService",
+      "class": "com.saleh.careerfinder.PhoneAcceptanceTest",
+      "message": "java.lang.AssertionError: Failed to inject touch input.\nReason: Expected exactly '1' node but could not find any node that satisfies: (Text + InputText + EditableText contains 'Profile' (ignoreCase: false))\n\n\tat androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:178)",
+      "source": "PhoneAcceptanceTest.kt:42"
+    },
+    {
+      "number": 6,
+      "test": "blankWorkspace_hasHonestEmptyState_andConnectionRequirement",
+      "class": "com.saleh.careerfinder.PhoneAcceptanceTest",
+      "message": "java.lang.AssertionError: Assert failed: The component with Text + InputText + EditableText contains 'Find your next role.' (ignoreCase: false) is not displayed!\n\tat androidx.compose.ui.test.AssertionsKt.assertIsDisplayed(Assertions.kt:34)\n\tat com.saleh.careerfinder.PhoneAcceptanceTest.blankWorkspace_hasHonestEmptyState_andConnectionRequirement(PhoneAcceptanceTest.kt:29)",
+      "source": "PhoneAcceptanceTest.kt:29"
+    },
+    {
+      "number": 7,
+      "test": "discoveredRole_savesPrivately_andManualApplicationRemainsSelfReported",
+      "class": "com.saleh.careerfinder.PhonePolishAcceptanceTest",
+      "message": "java.lang.AssertionError: No node found that matches Text + InputText + EditableText contains 'Search jobs' (ignoreCase: false) in scrollable container\nSemantics of the node:\nNode #2239 at (l=0.0, t=505.0, r=1080.0, b=1092.0)px, Tag: 'discovery-list'\nCollectionInfo = 'androidx.compose.ui.semantics.CollectionInfo@ff6086a'",
+      "source": "PhonePolishAcceptanceTest.kt:141"
+    },
+    {
+      "number": 8,
+      "test": "unfinishedOpportunity_closeChoicesKeepAndDiscardOnlyTheDraft",
+      "class": "com.saleh.careerfinder.PhonePolishAcceptanceTest",
+      "message": "java.lang.AssertionError: Failed to inject touch input.\nReason: Expected exactly '1' node but could not find any node that satisfies: (Text + InputText + EditableText contains 'Add opportunity' (ignoreCase: false))\n\n\tat androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:178)",
+      "source": "PhonePolishAcceptanceTest.kt:168"
+    },
+    {
+      "number": 9,
+      "test": "profileEssentials_andCountrySelection_preserveSingleNamesAndCancelledChoices",
+      "class": "com.saleh.careerfinder.PhonePolishAcceptanceTest",
+      "message": "java.lang.AssertionError: Failed to inject touch input.\nReason: Expected exactly '1' node but could not find any node that satisfies: (Text + InputText + EditableText contains 'Profile' (ignoreCase: false))\n\n\tat androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:178)",
+      "source": "PhonePolishAcceptanceTest.kt:94"
+    },
+    {
+      "number": 10,
+      "test": "localOpportunityRemoval_requiresConfirmation_andPreservesOtherSavedRoles",
+      "class": "com.saleh.careerfinder.PhonePolishAcceptanceTest",
+      "message": "java.lang.AssertionError: No node found that matches ContentDescription = 'Remove saved link for Remove fixture at Employer' (ignoreCase: false) in scrollable container\nSemantics of the node:\nNode #2576 at (l=0.0, t=591.0, r=1080.0, b=1092.0)px, Tag: 'jobs-list'\nCollectionInfo = 'androidx.compose.ui.semantics.CollectionInfo@df99766'",
+      "source": "PhonePolishAcceptanceTest.kt:208"
+    },
+    {
+      "number": 11,
+      "test": "shortMultilineNote_canExpandAtLargeText_withoutClippingItsLastLine",
+      "class": "com.saleh.careerfinder.WorkspaceAccessibilityRegressionTest",
+      "message": "java.lang.AssertionError: Failed: assertExists.\nReason: Expected exactly '1' node but could not find any node that satisfies: (Text + InputText + EditableText contains 'Read full note' (ignoreCase: false))\n\n\tat androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:178)",
+      "source": "WorkspaceAccessibilityRegressionTest.kt:54"
+    }
+  ]
+}

@@ -103,6 +103,9 @@ private fun chooseLanguage(context: Context, choice: LanguagePreference) {
 
 internal data class LanguageController(val preference: LanguagePreference, val select: (LanguagePreference) -> Unit)
 internal val LocalCareerLanguage = staticCompositionLocalOf<LanguageController> { error("CareerLanguage is required") }
+// Dialogs install a window Context. Keep the app's selected display copy independent
+// of that Context, including on devices without Android 13 per-app language support.
+private val LocalCareerStrings = compositionLocalOf<CareerStrings?> { null }
 
 private class LocalizedDisplayContext(base: Context, private val localizedResources: Resources) : ContextWrapper(base) {
     override fun getResources(): Resources = localizedResources
@@ -136,16 +139,19 @@ internal fun CareerLanguage(content: @Composable () -> Unit) {
     val localizedContext = remember(context, configuration) {
         LocalizedDisplayContext(context, context.createConfigurationContext(configuration).resources)
     }
+    val strings = remember(localizedContext) { CareerStrings(localizedContext) }
     CompositionLocalProvider(
         LocalContext provides localizedContext,
         LocalConfiguration provides configuration,
         LocalLayoutDirection provides if (language == "ar") LayoutDirection.Rtl else LayoutDirection.Ltr,
         LocalCareerLanguage provides LanguageController(selection) { chooseLanguage(context, it) },
+        LocalCareerStrings provides strings,
     ) { content() }
 }
 
 @Composable
 internal fun rememberCareerStrings(): CareerStrings {
+    LocalCareerStrings.current?.let { return it }
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     return remember(context, configuration.locales.toLanguageTags()) { CareerStrings(context) }

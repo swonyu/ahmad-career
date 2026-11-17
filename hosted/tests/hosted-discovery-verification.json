@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-11-17T10:06:18.878Z",
+  "observedAt": "2026-11-17T10:26:02.072Z",
   "status": "passed",
   "groups": 26,
   "checks": [
@@ -42,7 +42,7 @@
     "tests/fixtures/discovery-search-v1.json": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7",
     "worker/index.ts": "c82a674ffc6fcebef3b1c48d577f0ec5b28a4a4c2b17462c50a7c0d1708ac09e",
     "db/schema.ts": "0bc620bceb7b8548d69d07c823c2bc20623ad4d0de7c28678163892f9ac0fa15",
-    "tests/hosted-discovery.mjs": "9de55ae3a2bad53bf782641fb48eaf51c762dd2d70fdf47f5628e4a3d38b09e7",
+    "tests/hosted-discovery.mjs": "3048396d376a3c9cae3dd2b3fb197219fe9c805e607dbe7442e4ea094e2b6998",
     "drizzle/0000_busy_plazm.sql": "5b1e4c5a7ddb05c71a53c112a57daaf9b4a15f58fa38e4b12df8d551bd9e7118",
     "drizzle/0001_smiling_maelstrom.sql": "d0e1b4cbea14b7dca1c1078911fa94c39db7960778bea637341d7bbee4ef9ef6",
     "drizzle/0002_concerned_inhumans.sql": "78823cf83e72da525ffd44e8ec76c524a813ff6eb278cbf6465e8a63fbc05fed",
