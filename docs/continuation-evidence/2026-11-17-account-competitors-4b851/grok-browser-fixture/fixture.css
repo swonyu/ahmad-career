@@ -1,0 +1,17 @@
+/* Fixture chrome only. Production component styles come from the actual app. */
+.fixture-controls,.fixture-main{width:min(100% - 32px,1040px);margin:24px auto}
+.fixture-controls{border:1px solid var(--line);border-radius:16px;padding:20px;background:var(--surface)}
+.fixture-controls h1{font-size:1.7rem}.fixture-controls p{max-width:90ch}
+.fixture-kicker{font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+.fixture-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:14px}
+.fixture-fields label{display:block;font-size:.85rem;font-weight:650}
+.fixture-fields select{display:block;width:100%;min-height:44px;margin-top:6px;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--surface);color:var(--ink)}
+.fixture-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.fixture-note,.fixture-observation{font-size:.82rem}.fixture-observation output{overflow-wrap:anywhere}
+.fixture-scenario,.fixture-requests{padding:18px;border:1px dashed var(--line);border-radius:12px;margin:20px 0}
+.fixture-scenario h2,.fixture-requests h2{font-size:1rem}.fixture-product{min-height:120px;max-width:700px;margin:28px auto}
+.fixture-product:focus-visible{outline:3px solid var(--accent);outline-offset:6px}
+.fixture-requests pre{font-size:.78rem;max-height:400px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+.fixture-requests dl>div{display:flex;justify-content:space-between;gap:16px}
+.fixture-requests dt{font-family:monospace}.fixture-requests dd{font-weight:bold}
+@media(max-width:500px){.fixture-controls,.fixture-main{width:calc(100% - 20px)}.fixture-controls{padding:14px}.fixture-fields{grid-template-columns:1fr}}

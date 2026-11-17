@@ -1,0 +1,57 @@
+Grok
+Thought for 13m 18s
+
+The four final files match the expected SHA256 at ca3d3411d8b5b36fa7093dff782f4a7b931261c7. The workspace copies were stale for three of them; only SignInOptions.tsx already matched. I fetched just those three blobs and did not edit them. Chrome acceptance was not run, so it is not passed. The old custom-DOM 5/6 run is not evidence.
+
+Node v24.22.3 on these hashes: account-recovery-lifecycle.mjs 16/16. That suite’s own log says it ports the handlers and does not render a DOM, touch a live account, or exercise assistive technology. A separate extraction probe on the same bytes passed; it is not a browser run.
+
+File	Expected SHA256	Workspace before fetch
+OAuthFeedback.tsx	57a9be7c…aff464	mismatch 2f842503…
+ProviderConnections.tsx	596d32d1…c4b2a	mismatch ad928971…
+SessionRecovery.tsx	e5e5fe25…6f917	mismatch bed112f2…
+SignInOptions.tsx	b38862c6…e31f7	match
+Findings
+
+1. Invalid-session sign-in still shows an availability failure. Source-confirmed, expression executed.
+
+SignInOptions.tsx [blocked] line 15 sets unavailable from error || !status with no invalid_session exception. Lines 19 and 21 render Google · / LinkedIn · plus that string. Line 25 correctly hides the longer outage sentence, and line 17 renders SessionRecovery outside that alert.
+
+Executed with errorCode: "invalid_session", status: null, and a non-empty error: the expression evaluates to Availability could not be confirmed. The disabled buttons also keep aria-label Google sign-in unavailable.
+
+Impact: the expired-session screen still asks the user to treat provider setup as unknown. The Clear action is present, but the caption contradicts it.
+
+Proposed fix, not applied (root is the only writer): render no .provider-availability caption when errorCode === "invalid_session". No new catalog string. Acceptance: that code renders the Clear explanation and no availability sentence; a non-session status failure still renders the outage alert.
+
+2. The 16 passing tests do not lock the OAuth tone or any focus behavior. Product source is currently right. Test gap.
+
+account-recovery-lifecycle.mjs [blocked] line 196 asserts tone === "status" only when the provider is connected. The unconfirmed branch only checks the sentence. Line 29 extracts useLayoutEffect only, so the SessionRecovery focus effect is never called. Nothing in the suite fails if OAuth autofocus is added back.
+
+Probe of the real OAuthFeedback effect, same hashes: cancelled → status; failed → alert; connected-but-unconfirmed → alert; signed_in with method chatgpt → alert; signed_in with method google and connected → status. The file contains no .focus(. Untrusted error_description is not in the text. Success still follows /api/auth/status.
+
+3. Disconnect readback and Check current connection do what the source says. Handler probe only, not Chrome.
+
+ProviderConnections.tsx [blocked] lines 35–42 set a success sentence only after refresh() and only when that status says the provider is not connected. If it is still connected, the notice is an error: “This provider is currently connected…”. If the revision moves during that read, no success sentence is kept. Lines 60–61 call changes.cancel() and refresh() only. The probe sent no second disconnect POST (posts stayed 1, cancel ran once).
+
+provider-connections.mjs covers createProviderChanges, not this React readback. The 16 lifecycle tests do not either. I did not mount useAuthStatus, so the render gate notice.revision === revision && !checking was traced, not painted: refresh() increments revisionRef before the await, and confirmationRevision is read after that increment.
+
+4. Client unmount fencing does not prove zero cookie mutation. Source-confirmed mechanism, not executed.
+
+SessionRecovery.tsx [blocked] lines 7–8 and 19–25 key the action by accountId and abort that generation on unmount. Lines 39–44 navigate only if that same operation is still current. The 16 tests passed for unmount, A→B→A, and no second POST. Their requestAPI is a deferred promise; it never applies Set-Cookie.
+
+oauth.mjs [blocked] lines 292–309: if the cookie is already invalid_session, expectedAccountId is not compared. The response still clears both cookie names. SignInOptions.tsx [blocked] line 17 mounts <SessionRecovery /> with accountId "", which is legal on that invalid-cookie path. A still-valid session with "" fails expectedOwner (lines 52–54). Abort can prevent a not-yet-received response. It cannot undo Set-Cookie if headers were already applied.
+
+Acceptance must not treat “no redirect” as “no cookie change.” The missing test is a worker fixture: start sign-out, deliver the clear-cookie headers, abort during the body, and show whether a newer cookie survives. I did not run it.
+
+5. Nested recovery is outside the alert. One control boundary remains.
+
+ProviderConnections.tsx [blocked] line 60: the alert paragraph is only t(error). SessionRecovery and Check again are siblings. SignInOptions.tsx [blocked] line 17 is the same split. Line 25 still puts Check again inside role="alert" for ordinary availability failures. That is a control inside an alert, not a nested alert. Low. Not the invalid-session nesting bug.
+
+6. Focus policy in source, untested by the 16 and not accepted in Chrome here.
+
+OAuthFeedback.tsx [blocked] line 34 has no tabindex and no focus. Cancellation stays polite status (line 23). SessionRecovery.tsx [blocked] lines 27–31 focus Clear only when the active element is body or the document element. ProviderConnections.tsx [blocked] lines 52–58 focus the confirm paragraph and restore the Disconnect button only for Keep connected. Line 25’s window focus listener clears that confirmation. That is a safeguard against a stale confirm, and it can also dismiss the prompt when the window regains focus. Not reproduced here.
+
+Not claimed
+
+Chrome acceptance of the final bundle, VoiceOver/TalkBack, native work, the Picomatch audit, and run 40’s iPhone result. Those stay with their owners. No production file was edited.
+
+Finished.

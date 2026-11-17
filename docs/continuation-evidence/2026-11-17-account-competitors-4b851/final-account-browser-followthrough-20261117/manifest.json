@@ -1,0 +1,696 @@
+{
+  "schema_version": 1,
+  "scope": "Sequential hosted verification of the root ca3d341 tree plus three reviewed dirty implementation/test files; not browser/native/provider/store acceptance.",
+  "repository": "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d",
+  "hosted_cwd": "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted",
+  "expected_head": "ca3d3411d8b5b36fa7093dff782f4a7b931261c7",
+  "expected_branch": "continuation/feed-reliability-20261117-4b851",
+  "expected_reviewed_dirty_sha256": {
+    "hosted/app/components/ProviderConnections.tsx": "349647af29ff63768e342e4ffd96a5efdecbd2828a4867befedd6d7c6f761e5c",
+    "hosted/app/components/SignInOptions.tsx": "fa9818300bdd6c0316befcd04c9fb53ec1aa02282f5acfdbeffb611ac0e731fc",
+    "hosted/tests/account-recovery-lifecycle.mjs": "60a2fd94573de75046060e1b7f9e2be600d9875094c21705340191f90351df9b"
+  },
+  "known_generated_receipts_excluded_only_from_source_digest": [
+    "hosted/tests/hosted-discovery-verification.json",
+    "hosted/tests/hosted-phone-verification.json",
+    "hosted/tests/hosted-verification.json",
+    "hosted/tests/hosted-worker-verification.json"
+  ],
+  "source_manifest_scope": "All git-tracked paths plus untracked non-ignored paths, preserving type and mode; only the four explicitly named generated verification receipts are excluded from the aggregate source digest. Git-ignored build/dependency/runtime files are not git source and are separately identified where relevant.",
+  "guard_interval_seconds": 5,
+  "gates": [
+    {
+      "name": "typecheck",
+      "command": [
+        "/opt/homebrew/bin/npm",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted",
+      "started_at": "2026-11-17T19:56:32.407Z",
+      "status": "passed",
+      "log": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/final-account-browser-followthrough-20261117/01-typecheck.log",
+      "source_before_sha256": "70ead0a855191351fdf014e8a023f4a3366dfaa9f27d2481f19f51a5c0fdf968",
+      "source_guard_observations": 0,
+      "owned_gate_pid": 65368,
+      "ended_at": "2026-11-17T19:56:34.593Z",
+      "duration_seconds": 2.186,
+      "exit_code": 0,
+      "source_after_sha256": "70ead0a855191351fdf014e8a023f4a3366dfaa9f27d2481f19f51a5c0fdf968",
+      "generated_receipt_changes": [],
+      "summary_records": [],
+      "warning_lines": [],
+      "log_sha256": "443da1dddfcff0734c532ffcd1dd9daefa801a87f310fd265557c8d92204a47b",
+      "log_bytes": 63
+    },
+    {
+      "name": "strict-lint",
+      "command": [
+        "/opt/homebrew/bin/npm",
+        "run",
+        "lint",
+        "--",
+        "--max-warnings=0"
+      ],
+      "cwd": "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted",
+      "started_at": "2026-11-17T19:56:34.752Z",
+      "status": "failed",
+      "log": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/final-account-browser-followthrough-20261117/02-strict-lint.log",
+      "source_before_sha256": "70ead0a855191351fdf014e8a023f4a3366dfaa9f27d2481f19f51a5c0fdf968",
+      "source_guard_observations": 1,
+      "owned_gate_pid": 65509,
+      "ended_at": "2026-11-17T19:56:40.953Z",
+      "duration_seconds": 6.201,
+      "exit_code": 1,
+      "source_after_sha256": "70ead0a855191351fdf014e8a023f4a3366dfaa9f27d2481f19f51a5c0fdf968",
+      "generated_receipt_changes": [],
+      "summary_records": [],
+      "warning_lines": [],
+      "log_sha256": "0c05e946f19a743860420a4150f728d77b862426e7a28d1a4f327696234da411",
+      "log_bytes": 4235
+    },
+    {
+      "name": "complete-test-chain",
+      "command": [
+        "/opt/homebrew/bin/npm",
+        "test"
+      ],
+      "cwd": "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted",
+      "started_at": "2026-11-17T19:56:41.112Z",
+      "status": "passed",
+      "log": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/final-account-browser-followthrough-20261117/03-complete-test-chain.log",
+      "source_before_sha256": "70ead0a855191351fdf014e8a023f4a3366dfaa9f27d2481f19f51a5c0fdf968",
+      "source_guard_observations": 8,
+      "owned_gate_pid": 65730,
+      "ended_at": "2026-11-17T19:57:27.774Z",
+      "duration_seconds": 46.661,
+      "exit_code": 0,
+      "source_after_sha256": "70ead0a855191351fdf014e8a023f4a3366dfaa9f27d2481f19f51a5c0fdf968",
+      "generated_receipt_changes": [
+        {
+          "path": "hosted/tests/hosted-discovery-verification.json",
+          "before": {
+            "type": "file",
+            "mode": 420,
+            "bytes": 6086,
+            "sha256": "7a86ed4f42180f799ed7b9f08f5f885287626441afa48c0746bb28c171cbe5d8"
+          },
+          "after": {
+            "type": "file",
+            "mode": 420,
+            "bytes": 6086,
+            "sha256": "2c0f4d8bba953b376d35c3bf8a556d8869732c790b8f216fedd04fde3d7a3721"
+          }
+        },
+        {
+          "path": "hosted/tests/hosted-phone-verification.json",
+          "before": {
+            "type": "file",
+            "mode": 420,
+            "bytes": 3609,
+            "sha256": "39853524487595af3467801650fa04f950f8e9728db0bd9c15c9d1dfb1cd913e"
+          },
+          "after": {
+            "type": "file",
+            "mode": 420,
+            "bytes": 3609,
+            "sha256": "387dfab0d8954a268cba2ada47597789902aa9e8a2d9505d5d068b4b9c33a56c"
+          }
+        },
+        {
+          "path": "hosted/tests/hosted-verification.json",
+          "before": {
+            "type": "file",
+            "mode": 420,
+            "bytes": 8232,
+            "sha256": "ce3ca96ea507fadf62711765fcfab880e41dd29442ccc8106c1653e71040b9b3"
+          },
+          "after": {
+            "type": "file",
+            "mode": 420,
+            "bytes": 8232,
+            "sha256": "741ce650e82ee335b1865f5662dca0cd5be2e767cc86d922c25b547b7d57ec9e"
+          }
+        }
+      ],
+      "summary_records": [
+        "ℹ tests 6",
+        "ℹ suites 0",
+        "ℹ pass 6",
+        "ℹ fail 0",
+        "ℹ cancelled 0",
+        "ℹ skipped 0",
+        "ℹ todo 0",
+        "ℹ duration_ms 210.321084",
+        {
+          "result": "PASS",
+          "actualWorkerdAuthRequests": 30,
+          "syntheticProviderRequests": 12,
+          "realProviderRequests": 0,
+          "realEmployerRequests": 0
+        },
+        {
+          "result": "PASS",
+          "groups": 63,
+          "syntheticProviderPosts": 12,
+          "realEmployerRequests": 0
+        },
+        {
+          "result": "PASS",
+          "groups": 47,
+          "actualWorkerdRequests": 8,
+          "clientSchemaResponses": 97,
+          "employerApplicationPosts": 0
+        },
+        {
+          "result": "PASS",
+          "groups": 19,
+          "actualWorkerdRequests": 164,
+          "syntheticProviderPosts": 2,
+          "realEmployerRequests": 0
+        },
+        "ℹ tests 289",
+        "ℹ suites 0",
+        "ℹ pass 289",
+        "ℹ fail 0",
+        "ℹ cancelled 0",
+        "ℹ skipped 0",
+        "ℹ todo 0",
+        "ℹ duration_ms 855.417458"
+      ],
+      "warning_lines": [
+        "✔ a stale source with an error keeps both the age warning and the source failure explanation (5.585541ms)"
+      ],
+      "log_sha256": "2e6810f340909a97f9c489ad53ac80eeef3c613792b76106f7fca1cf25e99d5c",
+      "log_bytes": 52297
+    },
+    {
+      "name": "hosted-build",
+      "command": [
+        "/opt/homebrew/bin/npm",
+        "run",
+        "build"
+      ],
+      "cwd": "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted",
+      "started_at": "2026-11-17T19:57:27.903Z",
+      "status": "passed",
+      "log": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/final-account-browser-followthrough-20261117/04-hosted-build.log",
+      "source_before_sha256": "70ead0a855191351fdf014e8a023f4a3366dfaa9f27d2481f19f51a5c0fdf968",
+      "source_guard_observations": 0,
+      "owned_gate_pid": 66631,
+      "ended_at": "2026-11-17T19:57:31.089Z",
+      "duration_seconds": 3.185,
+      "exit_code": 0,
+      "source_after_sha256": "70ead0a855191351fdf014e8a023f4a3366dfaa9f27d2481f19f51a5c0fdf968",
+      "generated_receipt_changes": [],
+      "summary_records": [],
+      "warning_lines": [
+        "Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.",
+        "[plugin rsc:virtual:vite-rsc/assets-manifest] \u001b[33m[SOURCEMAP_BROKEN] \u001b[0mSourcemap is likely to be incorrect: a plugin (rsc:virtual:vite-rsc/assets-manifest) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect",
+        "[plugin rsc:virtual:vite-rsc/assets-manifest] \u001b[33m[SOURCEMAP_BROKEN] \u001b[0mSourcemap is likely to be incorrect: a plugin (rsc:virtual:vite-rsc/assets-manifest) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect",
+        "[plugin rsc:inject-async-local-storage] \u001b[33m[SOURCEMAP_BROKEN] \u001b[0mSourcemap is likely to be incorrect: a plugin (rsc:inject-async-local-storage) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect",
+        "[plugin rsc:inject-async-local-storage] \u001b[33m[SOURCEMAP_BROKEN] \u001b[0mSourcemap is likely to be incorrect: a plugin (rsc:inject-async-local-storage) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect",
+        "[plugin rsc:virtual:vite-rsc/assets-manifest] \u001b[33m[SOURCEMAP_BROKEN] \u001b[0mSourcemap is likely to be incorrect: a plugin (rsc:virtual:vite-rsc/assets-manifest) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect",
+        "[plugin rsc:virtual:vite-rsc/assets-manifest] \u001b[33m[SOURCEMAP_BROKEN] \u001b[0mSourcemap is likely to be incorrect: a plugin (rsc:virtual:vite-rsc/assets-manifest) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect",
+        "[plugin rsc:inject-async-local-storage] \u001b[33m[SOURCEMAP_BROKEN] \u001b[0mSourcemap is likely to be incorrect: a plugin (rsc:inject-async-local-storage) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect",
+        "[plugin rsc:inject-async-local-storage] \u001b[33m[SOURCEMAP_BROKEN] \u001b[0mSourcemap is likely to be incorrect: a plugin (rsc:inject-async-local-storage) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect",
+        "[plugin rsc:virtual:vite-rsc/assets-manifest] \u001b[33m[SOURCEMAP_BROKEN] \u001b[0mSourcemap is likely to be incorrect: a plugin (rsc:virtual:vite-rsc/assets-manifest) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect"
+      ],
+      "log_sha256": "2a4ad09639536c94c07bbe389710ffe1522d4204d2d8657a2360d076d0fbb4d1",
+      "log_bytes": 23913
+    },
+    {
+      "name": "audit",
+      "command": [
+        "/opt/homebrew/bin/npm",
+        "audit",
+        "--json"
+      ],
+      "cwd": "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted",
+      "started_at": "2026-11-17T19:57:31.217Z",
+      "status": "failed",
+      "log": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/final-account-browser-followthrough-20261117/05-audit.log",
+      "source_before_sha256": "70ead0a855191351fdf014e8a023f4a3366dfaa9f27d2481f19f51a5c0fdf968",
+      "source_guard_observations": 2,
+      "owned_gate_pid": 66701,
+      "ended_at": "2026-11-17T19:57:42.515Z",
+      "duration_seconds": 11.297,
+      "exit_code": 1,
+      "source_after_sha256": "70ead0a855191351fdf014e8a023f4a3366dfaa9f27d2481f19f51a5c0fdf968",
+      "generated_receipt_changes": [],
+      "summary_records": [],
+      "warning_lines": [],
+      "log_sha256": "8ef6d4983d0ba2566e03b0045735fca24ed97ec0db92287fefbe1209d2d31675",
+      "log_bytes": 10222,
+      "audit_report_version": 2,
+      "audit_metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 19,
+          "critical": 0,
+          "total": 19
+        },
+        "dependencies": {
+          "prod": 205,
+          "dev": 586,
+          "optional": 150,
+          "peer": 44,
+          "peerOptional": 0,
+          "total": 830
+        }
+      },
+      "audit_error": null,
+      "audit_advisories": [
+        {
+          "package": "@next/eslint-plugin-next",
+          "severity": "high",
+          "isDirect": false,
+          "range": ">=14.3.0-canary.0",
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        },
+        {
+          "package": "@typescript-eslint/eslint-plugin",
+          "severity": "high",
+          "isDirect": false,
+          "range": ">=8.47.1-alpha.0",
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        },
+        {
+          "package": "@typescript-eslint/parser",
+          "severity": "high",
+          "isDirect": false,
+          "range": ">=8.47.1-alpha.0",
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        },
+        {
+          "package": "@typescript-eslint/type-utils",
+          "severity": "high",
+          "isDirect": false,
+          "range": ">=8.47.1-alpha.0",
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        },
+        {
+          "package": "@typescript-eslint/typescript-estree",
+          "severity": "high",
+          "isDirect": false,
+          "range": ">=8.47.1-alpha.0",
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        },
+        {
+          "package": "@typescript-eslint/utils",
+          "severity": "high",
+          "isDirect": false,
+          "range": ">=8.47.1-alpha.0",
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        },
+        {
+          "package": "@vitejs/plugin-react",
+          "severity": "high",
+          "isDirect": true,
+          "range": ">=6.0.0-beta.0",
+          "fixAvailable": {
+            "name": "@vitejs/plugin-react",
+            "version": "5.2.0",
+            "isSemVerMajor": true
+          }
+        },
+        {
+          "package": "eslint-config-next",
+          "severity": "high",
+          "isDirect": true,
+          "range": ">=14.3.0-canary.0",
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        },
+        {
+          "package": "eslint-import-resolver-typescript",
+          "severity": "high",
+          "isDirect": false,
+          "range": ">=3.8.0",
+          "fixAvailable": true
+        },
+        {
+          "package": "fast-glob",
+          "severity": "high",
+          "isDirect": false,
+          "range": ">=3.0.0",
+          "fixAvailable": {
+            "name": "vinext",
+            "version": "0.0.0",
+            "isSemVerMajor": true
+          }
+        },
+        {
+          "package": "fdir",
+          "severity": "high",
+          "isDirect": false,
+          "range": ">=5.2.1",
+          "fixAvailable": {
+            "name": "vite",
+            "version": "6.2.7",
+            "isSemVerMajor": true
+          }
+        },
+        {
+          "package": "micromatch",
+          "severity": "high",
+          "isDirect": false,
+          "range": ">=4.0.0",
+          "fixAvailable": {
+            "name": "vinext",
+            "version": "0.0.0",
+            "isSemVerMajor": true
+          }
+        },
+        {
+          "package": "picomatch",
+          "severity": "high",
+          "isDirect": false,
+          "range": "*",
+          "fixAvailable": {
+            "name": "vite",
+            "version": "6.2.7",
+            "isSemVerMajor": true
+          }
+        },
+        {
+          "package": "tinyglobby",
+          "severity": "high",
+          "isDirect": false,
+          "range": "*",
+          "fixAvailable": {
+            "name": "vite",
+            "version": "6.2.7",
+            "isSemVerMajor": true
+          }
+        },
+        {
+          "package": "typescript-eslint",
+          "severity": "high",
+          "isDirect": false,
+          "range": ">=8.47.1-alpha.0",
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        },
+        {
+          "package": "vinext",
+          "severity": "high",
+          "isDirect": true,
+          "range": ">=0.0.1",
+          "fixAvailable": {
+            "name": "vinext",
+            "version": "0.0.0",
+            "isSemVerMajor": true
+          }
+        },
+        {
+          "package": "vite",
+          "severity": "high",
+          "isDirect": true,
+          "range": ">=6.3.0-beta.0",
+          "fixAvailable": {
+            "name": "vite",
+            "version": "6.2.7",
+            "isSemVerMajor": true
+          }
+        },
+        {
+          "package": "vite-plugin-commonjs",
+          "severity": "high",
+          "isDirect": false,
+          "range": "0.5.0 - 0.5.2 || >=0.7.0",
+          "fixAvailable": {
+            "name": "vinext",
+            "version": "0.0.0",
+            "isSemVerMajor": true
+          }
+        },
+        {
+          "package": "vite-plugin-dynamic-import",
+          "severity": "high",
+          "isDirect": false,
+          "range": ">=0.2.0",
+          "fixAvailable": {
+            "name": "vinext",
+            "version": "0.0.0",
+            "isSemVerMajor": true
+          }
+        }
+      ]
+    }
+  ],
+  "preflight_observation": {
+    "initial_read_error": "Initial discovery tried repository-root package.json and got FileNotFoundError; hosted/package.json was then located. No gate ran in the failed discovery call.",
+    "node_on_default_path": "v26.13.0; not used for gates",
+    "no_installation_or_configuration_changes": true
+  },
+  "status": "completed_with_failures",
+  "started_at": "2026-11-17T19:56:31.683Z",
+  "updated_at": "2026-11-17T19:57:42.646Z",
+  "runtime": {
+    "node": {
+      "label": "node",
+      "command": [
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "v24.22.3",
+      "stderr": ""
+    },
+    "npm": {
+      "label": "npm",
+      "command": [
+        "/opt/homebrew/bin/npm",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "11.20.0",
+      "stderr": ""
+    },
+    "audit_level": {
+      "label": "audit_level",
+      "command": [
+        "/opt/homebrew/bin/npm",
+        "config",
+        "get",
+        "audit-level"
+      ],
+      "exit_code": 0,
+      "stdout": "null",
+      "stderr": ""
+    },
+    "omit": {
+      "label": "omit",
+      "command": [
+        "/opt/homebrew/bin/npm",
+        "config",
+        "get",
+        "omit"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "audit_config": {
+      "label": "audit_config",
+      "command": [
+        "/opt/homebrew/bin/npm",
+        "config",
+        "get",
+        "audit"
+      ],
+      "exit_code": 0,
+      "stdout": "false",
+      "stderr": ""
+    },
+    "node_path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+    "npm_path": "/opt/homebrew/bin/npm",
+    "npm_realpath": "/opt/homebrew/lib/node_modules/npm/bin/npm-cli.js",
+    "path_prefix": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin",
+    "package_sha256": "7e02d347153988f4e9180e6348ab4fa405ba98cae1cc85abd4c1ea7e5da85e7a",
+    "package_lock_sha256": "2512e3bd6aebfc4377bbe036d3cf606c27e33613b35c8c58d28f0f3a0d596c99",
+    "installed_dependency_lock_sha256": "ae260128bd11993284c5b8319ad951027505920c2712ccfdaa38bd276e74b257",
+    "checkout_runtime_profile": {
+      "present": false,
+      "sha256": null,
+      "selection": "portable"
+    }
+  },
+  "baseline_source_sha256": "70ead0a855191351fdf014e8a023f4a3366dfaa9f27d2481f19f51a5c0fdf968",
+  "initial_dirty_status": [
+    {
+      "status": " M",
+      "path": "hosted/app/components/ProviderConnections.tsx"
+    },
+    {
+      "status": " M",
+      "path": "hosted/app/components/SignInOptions.tsx"
+    },
+    {
+      "status": " M",
+      "path": "hosted/tests/account-recovery-lifecycle.mjs"
+    }
+  ],
+  "initial_source_snapshot": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/final-account-browser-followthrough-20261117/source-before.json",
+  "generated_receipts_before": {
+    "hosted/tests/hosted-discovery-verification.json": {
+      "sha256": "7a86ed4f42180f799ed7b9f08f5f885287626441afa48c0746bb28c171cbe5d8",
+      "bytes": 6086,
+      "archived_as": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/final-account-browser-followthrough-20261117/generated-receipts-before/hosted-discovery-verification.json"
+    },
+    "hosted/tests/hosted-phone-verification.json": {
+      "sha256": "39853524487595af3467801650fa04f950f8e9728db0bd9c15c9d1dfb1cd913e",
+      "bytes": 3609,
+      "archived_as": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/final-account-browser-followthrough-20261117/generated-receipts-before/hosted-phone-verification.json"
+    },
+    "hosted/tests/hosted-verification.json": {
+      "sha256": "ce3ca96ea507fadf62711765fcfab880e41dd29442ccc8106c1653e71040b9b3",
+      "bytes": 8232,
+      "archived_as": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/final-account-browser-followthrough-20261117/generated-receipts-before/hosted-verification.json"
+    },
+    "hosted/tests/hosted-worker-verification.json": {
+      "sha256": "23ae0240ff20479af4cc755445627a517ac2010d13eeb858cc3097084d94097f",
+      "bytes": 672,
+      "archived_as": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/final-account-browser-followthrough-20261117/generated-receipts-before/hosted-worker-verification.json"
+    }
+  },
+  "final_source_snapshot": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/final-account-browser-followthrough-20261117/source-after.json",
+  "final_source_sha256": "70ead0a855191351fdf014e8a023f4a3366dfaa9f27d2481f19f51a5c0fdf968",
+  "source_hashes_match": true,
+  "final_dirty_status": [
+    {
+      "status": " M",
+      "path": "hosted/app/components/ProviderConnections.tsx"
+    },
+    {
+      "status": " M",
+      "path": "hosted/app/components/SignInOptions.tsx"
+    },
+    {
+      "status": " M",
+      "path": "hosted/tests/account-recovery-lifecycle.mjs"
+    },
+    {
+      "status": " M",
+      "path": "hosted/tests/hosted-discovery-verification.json"
+    },
+    {
+      "status": " M",
+      "path": "hosted/tests/hosted-phone-verification.json"
+    },
+    {
+      "status": " M",
+      "path": "hosted/tests/hosted-verification.json"
+    }
+  ],
+  "exact_changed_path_set_since_before": [
+    "hosted/tests/hosted-discovery-verification.json",
+    "hosted/tests/hosted-phone-verification.json",
+    "hosted/tests/hosted-verification.json"
+  ],
+  "implementation_or_test_source_changes": [],
+  "generated_receipt_changes": [
+    {
+      "path": "hosted/tests/hosted-discovery-verification.json",
+      "before": {
+        "type": "file",
+        "mode": 420,
+        "bytes": 6086,
+        "sha256": "7a86ed4f42180f799ed7b9f08f5f885287626441afa48c0746bb28c171cbe5d8"
+      },
+      "after": {
+        "type": "file",
+        "mode": 420,
+        "bytes": 6086,
+        "sha256": "2c0f4d8bba953b376d35c3bf8a556d8869732c790b8f216fedd04fde3d7a3721"
+      }
+    },
+    {
+      "path": "hosted/tests/hosted-phone-verification.json",
+      "before": {
+        "type": "file",
+        "mode": 420,
+        "bytes": 3609,
+        "sha256": "39853524487595af3467801650fa04f950f8e9728db0bd9c15c9d1dfb1cd913e"
+      },
+      "after": {
+        "type": "file",
+        "mode": 420,
+        "bytes": 3609,
+        "sha256": "387dfab0d8954a268cba2ada47597789902aa9e8a2d9505d5d068b4b9c33a56c"
+      }
+    },
+    {
+      "path": "hosted/tests/hosted-verification.json",
+      "before": {
+        "type": "file",
+        "mode": 420,
+        "bytes": 8232,
+        "sha256": "ce3ca96ea507fadf62711765fcfab880e41dd29442ccc8106c1653e71040b9b3"
+      },
+      "after": {
+        "type": "file",
+        "mode": 420,
+        "bytes": 8232,
+        "sha256": "741ce650e82ee335b1865f5662dca0cd5be2e767cc86d922c25b547b7d57ec9e"
+      }
+    }
+  ],
+  "generated_receipts_after": {
+    "hosted/tests/hosted-discovery-verification.json": {
+      "sha256": "2c0f4d8bba953b376d35c3bf8a556d8869732c790b8f216fedd04fde3d7a3721",
+      "bytes": 6086,
+      "archived_as": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/final-account-browser-followthrough-20261117/generated-receipts-after/hosted-discovery-verification.json"
+    },
+    "hosted/tests/hosted-phone-verification.json": {
+      "sha256": "387dfab0d8954a268cba2ada47597789902aa9e8a2d9505d5d068b4b9c33a56c",
+      "bytes": 3609,
+      "archived_as": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/final-account-browser-followthrough-20261117/generated-receipts-after/hosted-phone-verification.json"
+    },
+    "hosted/tests/hosted-verification.json": {
+      "sha256": "741ce650e82ee335b1865f5662dca0cd5be2e767cc86d922c25b547b7d57ec9e",
+      "bytes": 8232,
+      "archived_as": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/final-account-browser-followthrough-20261117/generated-receipts-after/hosted-verification.json"
+    },
+    "hosted/tests/hosted-worker-verification.json": {
+      "sha256": "23ae0240ff20479af4cc755445627a517ac2010d13eeb858cc3097084d94097f",
+      "bytes": 672,
+      "archived_as": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/final-account-browser-followthrough-20261117/generated-receipts-after/hosted-worker-verification.json"
+    }
+  },
+  "completed_gate_count": 5,
+  "finished_at": "2026-11-17T19:57:42.646Z"
+}

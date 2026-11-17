@@ -1,0 +1,67 @@
+▶ phone model keeps canonical identities and private local state separate
+  ✖ malformed public links use actionable translated guidance without weakening URL policy (1.197791ms)
+  ✔ LinkedIn values have the same canonical boundary as the application service (0.771542ms)
+  ✔ Lever paths, arbitrary tracking queries and case share the actual remote posting identity (4.88475ms)
+  ✔ scope mismatch, duplicate jobs and noncanonical/contradictory imported records fail closed (4.700875ms)
+  ✔ civil dates and applied history survive stage transitions until explicit clearing (0.648916ms)
+  ✔ profile transport strips local notes, records, revision and resume metadata (0.813041ms)
+  ✔ exact review validates the target and every submitted profile/CV field (3.354541ms)
+  ✔ review requests bind a workspace, distinct UUIDs and explicit consent choices (1.091417ms)
+  ✔ review request budget measures serialized UTF-8 including repeated answers and JSON escaping (3.415125ms)
+✖ phone model keeps canonical identities and private local state separate (22.358625ms)
+✔ model schemas preserve serialized workspace, nullable review and blocked receipt contract fields (2.192208ms)
+✔ phone search accepts the published discovery status contract and preserves it in a restored search (6.354042ms)
+✔ each employer keeps separate exact answers and no missing answer is inferred (0.3685ms)
+✔ receipts require an application ID and consistent live evidence before confirmation (0.407917ms)
+✔ career preferences and an unfinished record stage survive encrypted recovery serialization (0.881875ms)
+✔ provider navigation accepts only official authorization endpoints and safe app returns (0.356417ms)
+✔ OAuth callback feedback only accepts exact provider and result enums once (0.11775ms)
+✔ provider status represents LinkedIn login without treating older basic-link backends as sign-in support (1.613208ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 16
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 162.671125
+
+✖ failing tests:
+
+test at tests/phone-model.mjs:25:11
+✖ malformed public links use actionable translated guidance without weakening URL policy (1.197791ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    Comparison {
+  +   message: 'Invalid URL'
+  -   message: 'Enter a complete public HTTPS link without spaces.'
+    }
+  
+      at TestContext.<anonymous> (file:///Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/tests/phone-model.mjs:26:81)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at TestContext.test (node:internal/test_runner/test:400:20)
+      at TestContext.<anonymous> (file:///Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/tests/phone-model.mjs:25:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: TypeError: Invalid URL
+        at new URL (node:internal/url:895:25)
+        at Module.publicURL (file:///private/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-phone-model-aFfHEL/model.mjs:19732:16)
+        at assert.throws.message (file:///Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/tests/phone-model.mjs:26:98)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (file:///Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/tests/phone-model.mjs:26:81)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.start (node:internal/test_runner/test:1262:17)
+        at TestContext.test (node:internal/test_runner/test:400:20),
+    expected: { message: 'Enter a complete public HTTPS link without spaces.' },
+    operator: 'throws',
+    diff: 'simple'
+  }

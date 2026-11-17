@@ -1,0 +1,350 @@
+{
+  "algorithm": "SHA-256",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 13897,
+      "sha256": "9dc494ec3b314c604949c991c4f0ed464bdf73e29ac8cbf633c7c78e6d64a197"
+    },
+    {
+      "path": "baseline/2.3.2/LICENSE",
+      "bytes": 1091,
+      "sha256": "d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9"
+    },
+    {
+      "path": "baseline/2.3.2/README.md",
+      "bytes": 27999,
+      "sha256": "f4653b68a1883a32f852083c1b93381ce87f44c6855ce1f01854d39d0563c98c"
+    },
+    {
+      "path": "baseline/2.3.2/index.js",
+      "bytes": 60,
+      "sha256": "5695ff5dfcd5a338a40630bd506056f2950bcb08fe1cc068519cbbfe60add480"
+    },
+    {
+      "path": "baseline/2.3.2/lib/constants.js",
+      "bytes": 4563,
+      "sha256": "980225ab847a88a784f6d315557b8434f7742b2551ce20e354455c61b938c0a5"
+    },
+    {
+      "path": "baseline/2.3.2/lib/parse.js",
+      "bytes": 33950,
+      "sha256": "3a91656f440069aa8f8e15c9d695b9f6b2209df1eab2be8127c72cbcca45ff5f"
+    },
+    {
+      "path": "baseline/2.3.2/lib/picomatch.js",
+      "bytes": 9956,
+      "sha256": "2cb169cbe17d356036c5f62a377318b85e30817877e59797842aec9d8b15f54b"
+    },
+    {
+      "path": "baseline/2.3.2/lib/scan.js",
+      "bytes": 9189,
+      "sha256": "227fcc994a477ea95c5a0435d32783566334c6bd0dcc4a103029735ad8c9c535"
+    },
+    {
+      "path": "baseline/2.3.2/lib/utils.js",
+      "bytes": 1885,
+      "sha256": "809fc29cf35ab0aa76b99cad29182f62c0ae598902481d10f9868eaef71981ee"
+    },
+    {
+      "path": "baseline/2.3.2/package.json",
+      "bytes": 1912,
+      "sha256": "63264d817e856a4bff57d4304f2b38d2964a4f6df520eb169e7bcdb619f13e9a"
+    },
+    {
+      "path": "baseline/4.0.4/LICENSE",
+      "bytes": 1091,
+      "sha256": "d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9"
+    },
+    {
+      "path": "baseline/4.0.4/README.md",
+      "bytes": 28332,
+      "sha256": "abaa6b58484e1f252b8d40b949b53602f5f2d7e6990f20d85fe6174ca5cb802f"
+    },
+    {
+      "path": "baseline/4.0.4/index.js",
+      "bytes": 479,
+      "sha256": "02ae26406508e28f9ba0865be16cf77f0b33de6c4d4d49c212c4176df1d5625a"
+    },
+    {
+      "path": "baseline/4.0.4/lib/constants.js",
+      "bytes": 4552,
+      "sha256": "c28f952d2758261fe5428a121add485cc25b03e0193633f649de903dc0e5e222"
+    },
+    {
+      "path": "baseline/4.0.4/lib/parse.js",
+      "bytes": 33731,
+      "sha256": "ce57c04e04994b83e2ca566170fa192e6fe19d710bea6da00ce2f76d01c0dea4"
+    },
+    {
+      "path": "baseline/4.0.4/lib/picomatch.js",
+      "bytes": 10091,
+      "sha256": "bbe9824eae8210954eac016e1fa1ac6174093557f30a72e91621d74a6c25e170"
+    },
+    {
+      "path": "baseline/4.0.4/lib/scan.js",
+      "bytes": 9189,
+      "sha256": "227fcc994a477ea95c5a0435d32783566334c6bd0dcc4a103029735ad8c9c535"
+    },
+    {
+      "path": "baseline/4.0.4/lib/utils.js",
+      "bytes": 1994,
+      "sha256": "f04604f70cd1a3f6ace80b84766468674ff38b4bb83818d2ef1d81fc6355f935"
+    },
+    {
+      "path": "baseline/4.0.4/package.json",
+      "bytes": 1896,
+      "sha256": "b8deb10b4e1f7cc2fe8236a70995f4c6b5ec3ecf93f02f2b6427a8600d2c1d20"
+    },
+    {
+      "path": "baseline/4.0.4/posix.js",
+      "bytes": 60,
+      "sha256": "5695ff5dfcd5a338a40630bd506056f2950bcb08fe1cc068519cbbfe60add480"
+    },
+    {
+      "path": "baseline/4.0.7/LICENSE",
+      "bytes": 1091,
+      "sha256": "d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9"
+    },
+    {
+      "path": "baseline/4.0.7/README.md",
+      "bytes": 28319,
+      "sha256": "a69b87120fe2b9cb8f9057eaef6b9f9887f803e02185ca2f431e8162f6312220"
+    },
+    {
+      "path": "baseline/4.0.7/index.js",
+      "bytes": 479,
+      "sha256": "02ae26406508e28f9ba0865be16cf77f0b33de6c4d4d49c212c4176df1d5625a"
+    },
+    {
+      "path": "baseline/4.0.7/lib/constants.js",
+      "bytes": 4552,
+      "sha256": "c28f952d2758261fe5428a121add485cc25b03e0193633f649de903dc0e5e222"
+    },
+    {
+      "path": "baseline/4.0.7/lib/parse.js",
+      "bytes": 35144,
+      "sha256": "4e1e05447668aa1e94366c5516a2bcd8f5fff800cc92b1d0cd7d77703b8618c4"
+    },
+    {
+      "path": "baseline/4.0.7/lib/picomatch.js",
+      "bytes": 10722,
+      "sha256": "fdd249d7ffff853f3bb1c77eafc8baa1a437bea85a94c35877b83c6a40d9ca94"
+    },
+    {
+      "path": "baseline/4.0.7/lib/scan.js",
+      "bytes": 9483,
+      "sha256": "6457a1764e5c2e543cc3a0c00ce12ebb3764097628868198370b64d4e642aaae"
+    },
+    {
+      "path": "baseline/4.0.7/lib/utils.js",
+      "bytes": 1994,
+      "sha256": "f04604f70cd1a3f6ace80b84766468674ff38b4bb83818d2ef1d81fc6355f935"
+    },
+    {
+      "path": "baseline/4.0.7/package.json",
+      "bytes": 1915,
+      "sha256": "479b70b87aa7b44344d62c8a459ae7e53dd2bca6c61f1396bd55e63e9de73fc6"
+    },
+    {
+      "path": "baseline/4.0.7/posix.js",
+      "bytes": 60,
+      "sha256": "5695ff5dfcd5a338a40630bd506056f2950bcb08fe1cc068519cbbfe60add480"
+    },
+    {
+      "path": "candidate/2.3.2/LICENSE",
+      "bytes": 1091,
+      "sha256": "d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9"
+    },
+    {
+      "path": "candidate/2.3.2/README.md",
+      "bytes": 27999,
+      "sha256": "f4653b68a1883a32f852083c1b93381ce87f44c6855ce1f01854d39d0563c98c"
+    },
+    {
+      "path": "candidate/2.3.2/index.js",
+      "bytes": 60,
+      "sha256": "5695ff5dfcd5a338a40630bd506056f2950bcb08fe1cc068519cbbfe60add480"
+    },
+    {
+      "path": "candidate/2.3.2/lib/constants.js",
+      "bytes": 4563,
+      "sha256": "980225ab847a88a784f6d315557b8434f7742b2551ce20e354455c61b938c0a5"
+    },
+    {
+      "path": "candidate/2.3.2/lib/parse.js",
+      "bytes": 34727,
+      "sha256": "b4b99cdece05efcdd1293bb28a05b3067c9241a70ee004436151dc1b31314e32"
+    },
+    {
+      "path": "candidate/2.3.2/lib/picomatch.js",
+      "bytes": 9956,
+      "sha256": "2cb169cbe17d356036c5f62a377318b85e30817877e59797842aec9d8b15f54b"
+    },
+    {
+      "path": "candidate/2.3.2/lib/scan.js",
+      "bytes": 9189,
+      "sha256": "227fcc994a477ea95c5a0435d32783566334c6bd0dcc4a103029735ad8c9c535"
+    },
+    {
+      "path": "candidate/2.3.2/lib/utils.js",
+      "bytes": 1885,
+      "sha256": "809fc29cf35ab0aa76b99cad29182f62c0ae598902481d10f9868eaef71981ee"
+    },
+    {
+      "path": "candidate/2.3.2/package.json",
+      "bytes": 1912,
+      "sha256": "63264d817e856a4bff57d4304f2b38d2964a4f6df520eb169e7bcdb619f13e9a"
+    },
+    {
+      "path": "candidate/4.0.4/LICENSE",
+      "bytes": 1091,
+      "sha256": "d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9"
+    },
+    {
+      "path": "candidate/4.0.4/README.md",
+      "bytes": 28332,
+      "sha256": "abaa6b58484e1f252b8d40b949b53602f5f2d7e6990f20d85fe6174ca5cb802f"
+    },
+    {
+      "path": "candidate/4.0.4/index.js",
+      "bytes": 479,
+      "sha256": "02ae26406508e28f9ba0865be16cf77f0b33de6c4d4d49c212c4176df1d5625a"
+    },
+    {
+      "path": "candidate/4.0.4/lib/constants.js",
+      "bytes": 4552,
+      "sha256": "c28f952d2758261fe5428a121add485cc25b03e0193633f649de903dc0e5e222"
+    },
+    {
+      "path": "candidate/4.0.4/lib/parse.js",
+      "bytes": 34508,
+      "sha256": "300e912a0ee94b4cf3c4de1851d799e392fb1c329ab67e750f467f1b93e700e9"
+    },
+    {
+      "path": "candidate/4.0.4/lib/picomatch.js",
+      "bytes": 10091,
+      "sha256": "bbe9824eae8210954eac016e1fa1ac6174093557f30a72e91621d74a6c25e170"
+    },
+    {
+      "path": "candidate/4.0.4/lib/scan.js",
+      "bytes": 9189,
+      "sha256": "227fcc994a477ea95c5a0435d32783566334c6bd0dcc4a103029735ad8c9c535"
+    },
+    {
+      "path": "candidate/4.0.4/lib/utils.js",
+      "bytes": 1994,
+      "sha256": "f04604f70cd1a3f6ace80b84766468674ff38b4bb83818d2ef1d81fc6355f935"
+    },
+    {
+      "path": "candidate/4.0.4/package.json",
+      "bytes": 1896,
+      "sha256": "b8deb10b4e1f7cc2fe8236a70995f4c6b5ec3ecf93f02f2b6427a8600d2c1d20"
+    },
+    {
+      "path": "candidate/4.0.4/posix.js",
+      "bytes": 60,
+      "sha256": "5695ff5dfcd5a338a40630bd506056f2950bcb08fe1cc068519cbbfe60add480"
+    },
+    {
+      "path": "candidate/4.0.7/LICENSE",
+      "bytes": 1091,
+      "sha256": "d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9"
+    },
+    {
+      "path": "candidate/4.0.7/README.md",
+      "bytes": 28319,
+      "sha256": "a69b87120fe2b9cb8f9057eaef6b9f9887f803e02185ca2f431e8162f6312220"
+    },
+    {
+      "path": "candidate/4.0.7/index.js",
+      "bytes": 479,
+      "sha256": "02ae26406508e28f9ba0865be16cf77f0b33de6c4d4d49c212c4176df1d5625a"
+    },
+    {
+      "path": "candidate/4.0.7/lib/constants.js",
+      "bytes": 4552,
+      "sha256": "c28f952d2758261fe5428a121add485cc25b03e0193633f649de903dc0e5e222"
+    },
+    {
+      "path": "candidate/4.0.7/lib/parse.js",
+      "bytes": 35921,
+      "sha256": "d154c262379061c6272e5cbdd95a224f5fa3f2ad605378aa838779a6732be11a"
+    },
+    {
+      "path": "candidate/4.0.7/lib/picomatch.js",
+      "bytes": 10722,
+      "sha256": "fdd249d7ffff853f3bb1c77eafc8baa1a437bea85a94c35877b83c6a40d9ca94"
+    },
+    {
+      "path": "candidate/4.0.7/lib/scan.js",
+      "bytes": 9483,
+      "sha256": "6457a1764e5c2e543cc3a0c00ce12ebb3764097628868198370b64d4e642aaae"
+    },
+    {
+      "path": "candidate/4.0.7/lib/utils.js",
+      "bytes": 1994,
+      "sha256": "f04604f70cd1a3f6ace80b84766468674ff38b4bb83818d2ef1d81fc6355f935"
+    },
+    {
+      "path": "candidate/4.0.7/package.json",
+      "bytes": 1915,
+      "sha256": "479b70b87aa7b44344d62c8a459ae7e53dd2bca6c61f1396bd55e63e9de73fc6"
+    },
+    {
+      "path": "candidate/4.0.7/posix.js",
+      "bytes": 60,
+      "sha256": "5695ff5dfcd5a338a40630bd506056f2950bcb08fe1cc068519cbbfe60add480"
+    },
+    {
+      "path": "candidate-2.3.2.patch",
+      "bytes": 1300,
+      "sha256": "b2dc4a4a2794b48d24d630095a93ab695aeef23a8e6c24d5919b475d93408842"
+    },
+    {
+      "path": "candidate-4.0.4.patch",
+      "bytes": 1300,
+      "sha256": "cd822d5dd0fee999063e878cb63b7ed8306fa50488739d742b23fecad860e5ba"
+    },
+    {
+      "path": "candidate-4.0.7.patch",
+      "bytes": 1342,
+      "sha256": "a0cb6d1cb12a132dca11efc01c9215165de25c6d319e5bc1365f261dcd5b8df5"
+    },
+    {
+      "path": "prepare-candidate.py",
+      "bytes": 6237,
+      "sha256": "82f61586e8731c7f51b4afb07e98fefa0b79e3fbad9e86ab7118beaca3e1bb2b"
+    },
+    {
+      "path": "prepare.log",
+      "bytes": 269,
+      "sha256": "3acc8f09e58351f135a7aa453e2f3872051342af25a8acf11c7b72ac42538186"
+    },
+    {
+      "path": "probe.cjs",
+      "bytes": 4074,
+      "sha256": "6c09f8bc6eb92416216f4609e1eeda6f3e42c965186d6334a980af24802c2a0c"
+    },
+    {
+      "path": "process-records.jsonl",
+      "bytes": 22092,
+      "sha256": "25e9a6aa1488679decd8fcc664c15e9e691d5159406f7c551c091487b1c108a4"
+    },
+    {
+      "path": "results.json",
+      "bytes": 32869,
+      "sha256": "c919db806ca8b552a2f34a5bf1967f36422109b3d002d4b273630cfa816c62ce"
+    },
+    {
+      "path": "run-supervised.py",
+      "bytes": 6848,
+      "sha256": "9e6fc84c313c58ce97285190703ea99d21d56a61126fc7687cd548f4146ebb78"
+    },
+    {
+      "path": "source-manifest.json",
+      "bytes": 12102,
+      "sha256": "edc28a8e3f4b5c69943b18b889fd1f91220f701d07025acb1dff5c7029635cb2"
+    }
+  ]
+}

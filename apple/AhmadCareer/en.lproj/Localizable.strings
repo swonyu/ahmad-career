@@ -259,6 +259,7 @@
 "Choose an experience level from the list." = "Choose an experience level from the list.";
 "Choose and review a backup first." = "Choose and review a backup first.";
 "Choose date" = "Choose date";
+"Choose each employer board only once." = "Choose each employer board only once.";
 "Choose employer boards" = "Choose employer boards";
 "Choose employer boards · recommended" = "Choose employer boards · recommended";
 "Choose employers" = "Choose employers";
@@ -387,6 +388,7 @@
 "Create a new private workspace?" = "Create a new private workspace?";
 "Create new workspace" = "Create new workspace";
 "Currency" = "Currency";
+"Current openings could not be checked." = "Current openings could not be checked.";
 "Current phone workspace" = "Current phone workspace";
 "Current record" = "Current record";
 "Current saved details" = "Current saved details";
@@ -748,6 +750,8 @@
 "No email entered" = "No email entered";
 "No follow-ups match." = "No follow-ups match.";
 "No follow-ups to show." = "No follow-ups to show.";
+"No matches in the results we could check." = "No matches in the results we could check.";
+"No matching jobs in these boards." = "No matching jobs in these boards.";
 "No pay floor" = "No pay floor";
 "No private note" = "No private note";
 "No receipts match these filters." = "No receipts match these filters.";
@@ -809,12 +813,14 @@
 "Open settings" = "Open settings";
 "Open the current workspace to manage its files." = "Open the current workspace to manage its files.";
 "Open the employer application, review your answers and attachments, then submit when ready." = "Open the employer application, review your answers and attachments, then submit when ready.";
+"Open the employer board" = "Open the employer board";
 "Open unpaired phone workspace" = "Open unpaired phone workspace";
 "Open your application workspace" = "Open your application workspace";
 "Open {0} at {1} on the employer’s site" = "Open {0} at {1} on the employer’s site";
 "Opened the saved phone workspace. Connect it again to access its service; no data was copied between workspaces." = "Opened the saved phone workspace. Connect it again to access its service; no data was copied between workspaces.";
 "Opening an employer, LinkedIn or salary-source link takes you to an external website governed by its own privacy policy. Any application or account you create there is managed by that provider." = "Opening an employer, LinkedIn or salary-source link takes you to an external website governed by its own privacy policy. Any application or account you create there is managed by that provider.";
 "Opening another saved workspace disconnects this phone first. It does not move a profile, CV or note into another account." = "Opening another saved workspace disconnects this phone first. It does not move a profile, CV or note into another account.";
+"Opening this public board in your browser does not submit an application or confirm the listings are still open." = "Opening this public board in your browser does not submit an application or confirm the listings are still open.";
 "Opening your last search…" = "Opening your last search…";
 "Opening your private workspace…" = "Opening your private workspace…";
 "Opens LinkedIn with only your keyword and location text. LinkedIn manages its own sign-in and applications. Career Finder does not read your LinkedIn account or verify applications submitted there." = "Opens LinkedIn with only your keyword and location text. LinkedIn manages its own sign-in and applications. Career Finder does not read your LinkedIn account or verify applications submitted there.";
@@ -1038,6 +1044,7 @@
 "Retry previous search" = "Retry previous search";
 "Retry private storage" = "Retry private storage";
 "Retry saving search" = "Retry saving search";
+"Retry this search" = "Retry this search";
 "Return to Saved to see your current opportunities." = "Return to Saved to see your current opportunities.";
 "Review a Career Finder iPhone or Android backup before merging it here. You choose whether to replace profile fields or the last search. Existing notes and conflicting history versions are kept." = "Review a Career Finder iPhone or Android backup before merging it here. You choose whether to replace profile fields or the last search. Existing notes and conflicting history versions are kept.";
 "Review all incoming details" = "Review all incoming details";
@@ -1141,6 +1148,7 @@
 "Saved opportunity" = "Saved opportunity";
 "Saved phone profile" = "Saved phone profile";
 "Saved records could not be read. They have been preserved; no new changes will overwrite that file." = "Saved records could not be read. They have been preserved; no new changes will overwrite that file.";
+"Saved result from an earlier check" = "Saved result from an earlier check";
 "Saved to your workspace" = "Saved to your workspace";
 "Saved versions need your review. All are kept." = "Saved versions need your review. All are kept.";
 "Saved with application service" = "Saved with application service";
@@ -1397,6 +1405,7 @@
 "The search service returned no results. Try again later." = "The search service returned no results. Try again later.";
 "The secure connection could not be saved on this phone." = "The secure connection could not be saved on this phone.";
 "The selected boards could not be checked. Previous results are kept; start a new search when the service is available." = "The selected boards could not be checked. Previous results are kept; start a new search when the service is available.";
+"The selected boards did not return results. Retry the same search, or review the source details." = "The selected boards did not return results. Retry the same search, or review the source details.";
 "The selected destination could not be opened." = "The selected destination could not be opened.";
 "The selected earlier recovery copy and its known equivalent-address files were deleted. Your current workspace, other recovery copies, exported files and cloud records are unchanged." = "The selected earlier recovery copy and its known equivalent-address files were deleted. Your current workspace, other recovery copies, exported files and cloud records are unchanged.";
 "The selected employer boards could not be reached. Try again or choose other boards." = "The selected employer boards could not be reached. Try again or choose other boards.";
@@ -1552,6 +1561,7 @@
 "This saved search needs a newer app. Its file is preserved." = "This saved search needs a newer app. Its file is preserved.";
 "This search action is unavailable." = "This search action is unavailable.";
 "This search is available in this session but could not be saved. The earlier saved search is preserved. Retry saving when private storage is available." = "This search is available in this session but could not be saved. The earlier saved search is preserved. Retry saving when private storage is available.";
+"This search is incomplete. Review the source details, or retry the same search." = "This search is incomplete. Review the source details, or retry the same search.";
 "This search is too large to keep on the phone. Narrow the search to save it." = "This search is too large to keep on the phone. Narrow the search to save it.";
 "This search reached its result limit. Narrow the role or location and search again." = "This search reached its result limit. Narrow the role or location and search again.";
 "This service has not confirmed support for LinkedIn profile links. Your edits are kept on this phone. Refresh the connection or ask its operator to update the service." = "This service has not confirmed support for LinkedIn profile links. Your edits are kept on this phone. Refresh the connection or ask its operator to update the service.";
@@ -1568,6 +1578,7 @@
 "Tools and responsibilities" = "Tools and responsibilities";
 "Track this application" = "Track this application";
 "Track this opportunity" = "Track this opportunity";
+"Try a broader job title, another location, or a different employer board." = "Try a broader job title, another location, or a different employer board.";
 "Try a broader title, another location or different employer boards. This search does not cover every employer." = "Try a broader title, another location or different employer boards. This search does not cover every employer.";
 "Try again after " = "Try again after ";
 "Try again after {0}" = "Try again after {0}";

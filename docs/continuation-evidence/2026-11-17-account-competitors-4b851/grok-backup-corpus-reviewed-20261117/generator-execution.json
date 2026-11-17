@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/opt/homebrew/opt/python@3.15/bin/python3.15",
+    "-I",
+    "-B",
+    "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/grok-backup-corpus-reviewed-20261117/build_corpus.reviewed.py"
+  ],
+  "cwd": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/grok-backup-corpus-reviewed-20261117",
+  "exitCode": 0,
+  "elapsedSeconds": 0.03260370799944212,
+  "stdout": "{\n  \"files\": 10,\n  \"shapeFailures\": []\n}\n",
+  "stderr": "",
+  "nativeAcceptance": false
+}

@@ -1,0 +1,17 @@
+{
+  "node": "v24.22.3",
+  "recordedAt": "2026-11-17T18:38:43.191545+00:00",
+  "checks": [
+    {
+      "name": "phone-url-guidance-baseline",
+      "exit": 1,
+      "log": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/phone-url-guidance-baseline.log"
+    },
+    {
+      "name": "phone-url-guidance-candidate",
+      "exit": 0,
+      "log": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/phone-url-guidance-candidate.log"
+    }
+  ],
+  "modelSHA256": "955d5afcede6b8f7eb901394f9ae3e00d1bbffa57bf1e457c5436f23541577bf"
+}

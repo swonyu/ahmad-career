@@ -1,0 +1,237 @@
+{
+  "baseline": "ca3d3411d8b5b36fa7093dff782f4a7b931261c7",
+  "files": [
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/WorkspaceTransfer.kt",
+      "ca3GitBlob": "8e1c1dec5bcc1f12a97427c49974e717473e7ccc",
+      "sha256": "766f4101f4164cc434537ef7aac15cddec08c224d22ceb085785c375cf78105e",
+      "bytes": 15469,
+      "snapshotChecks": [
+        {
+          "commit": "8bfd3136227ce79625df8e2b57678de5fbfa201e",
+          "gitExitCode": 128,
+          "blob": null,
+          "sameAsCa3": false,
+          "error": "fatal: path 'android/app/src/main/java/com/saleh/careerfinder/WorkspaceTransfer.kt' exists on disk, but not in '8bfd3136227ce79625df8e2b57678de5fbfa201e'"
+        },
+        {
+          "commit": "3a709eb15f1024df78ee03474f511568df2dc3de",
+          "gitExitCode": 0,
+          "blob": "8e1c1dec5bcc1f12a97427c49974e717473e7ccc",
+          "sameAsCa3": true,
+          "error": null
+        },
+        {
+          "commit": "842472684b194e993355f632902ccc81366c164c",
+          "gitExitCode": 0,
+          "blob": "8e1c1dec5bcc1f12a97427c49974e717473e7ccc",
+          "sameAsCa3": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/Models.kt",
+      "ca3GitBlob": "3be7ca68a2e1291fe7f6ae3ae6624114a1a4c293",
+      "sha256": "e90d89d007cc0679adb03eda4aa71e2c56dab67bebb08a6ec7d28f755ede4464",
+      "bytes": 18102,
+      "snapshotChecks": [
+        {
+          "commit": "8bfd3136227ce79625df8e2b57678de5fbfa201e",
+          "gitExitCode": 128,
+          "blob": null,
+          "sameAsCa3": false,
+          "error": "fatal: path 'android/app/src/main/java/com/saleh/careerfinder/Models.kt' exists on disk, but not in '8bfd3136227ce79625df8e2b57678de5fbfa201e'"
+        },
+        {
+          "commit": "3a709eb15f1024df78ee03474f511568df2dc3de",
+          "gitExitCode": 0,
+          "blob": "3be7ca68a2e1291fe7f6ae3ae6624114a1a4c293",
+          "sameAsCa3": true,
+          "error": null
+        },
+        {
+          "commit": "842472684b194e993355f632902ccc81366c164c",
+          "gitExitCode": 0,
+          "blob": "3be7ca68a2e1291fe7f6ae3ae6624114a1a4c293",
+          "sameAsCa3": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/WorkspaceStorage.kt",
+      "ca3GitBlob": "d4b1765f931ba610521b3ba5d580957b3d5f2b6c",
+      "sha256": "faebf6f1cac2885a6a7b69107a92807411a87b8b3d796e99ca3db9d8f634c05b",
+      "bytes": 11932,
+      "snapshotChecks": [
+        {
+          "commit": "8bfd3136227ce79625df8e2b57678de5fbfa201e",
+          "gitExitCode": 128,
+          "blob": null,
+          "sameAsCa3": false,
+          "error": "fatal: path 'android/app/src/main/java/com/saleh/careerfinder/WorkspaceStorage.kt' exists on disk, but not in '8bfd3136227ce79625df8e2b57678de5fbfa201e'"
+        },
+        {
+          "commit": "3a709eb15f1024df78ee03474f511568df2dc3de",
+          "gitExitCode": 0,
+          "blob": "d4b1765f931ba610521b3ba5d580957b3d5f2b6c",
+          "sameAsCa3": true,
+          "error": null
+        },
+        {
+          "commit": "842472684b194e993355f632902ccc81366c164c",
+          "gitExitCode": 0,
+          "blob": "d4b1765f931ba610521b3ba5d580957b3d5f2b6c",
+          "sameAsCa3": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "path": "apple/AhmadCareer/MobileApplicationState.swift",
+      "ca3GitBlob": "edc87b8f27699167f7b85b204cb4b825f4db9172",
+      "sha256": "1858795ccf563e9802c5cabc0367b402eadba2c9e978a5092c2e70a232d1a489",
+      "bytes": 40079,
+      "snapshotChecks": [
+        {
+          "commit": "8bfd3136227ce79625df8e2b57678de5fbfa201e",
+          "gitExitCode": 128,
+          "blob": null,
+          "sameAsCa3": false,
+          "error": "fatal: path 'apple/AhmadCareer/MobileApplicationState.swift' exists on disk, but not in '8bfd3136227ce79625df8e2b57678de5fbfa201e'"
+        },
+        {
+          "commit": "3a709eb15f1024df78ee03474f511568df2dc3de",
+          "gitExitCode": 0,
+          "blob": "edc87b8f27699167f7b85b204cb4b825f4db9172",
+          "sameAsCa3": true,
+          "error": null
+        },
+        {
+          "commit": "842472684b194e993355f632902ccc81366c164c",
+          "gitExitCode": 0,
+          "blob": "edc87b8f27699167f7b85b204cb4b825f4db9172",
+          "sameAsCa3": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "path": "apple/AhmadCareer/NativeApplicationsStore.swift",
+      "ca3GitBlob": "6f88db83641724f0c6a5381076eee4ce36591176",
+      "sha256": "d838a3cd68908656bd7545e63c84db5decfab6bc89e2a93af7779dd16d9c7883",
+      "bytes": 74753,
+      "snapshotChecks": [
+        {
+          "commit": "8bfd3136227ce79625df8e2b57678de5fbfa201e",
+          "gitExitCode": 128,
+          "blob": null,
+          "sameAsCa3": false,
+          "error": "fatal: path 'apple/AhmadCareer/NativeApplicationsStore.swift' exists on disk, but not in '8bfd3136227ce79625df8e2b57678de5fbfa201e'"
+        },
+        {
+          "commit": "3a709eb15f1024df78ee03474f511568df2dc3de",
+          "gitExitCode": 0,
+          "blob": "6f88db83641724f0c6a5381076eee4ce36591176",
+          "sameAsCa3": true,
+          "error": null
+        },
+        {
+          "commit": "842472684b194e993355f632902ccc81366c164c",
+          "gitExitCode": 0,
+          "blob": "6f88db83641724f0c6a5381076eee4ce36591176",
+          "sameAsCa3": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt",
+      "ca3GitBlob": "2a2d8d11072076d75b844c097c34ce7d908950fd",
+      "sha256": "90bbf37458cd924fd427710245af580c57329cb3699cd575234c443087d49dce",
+      "bytes": 85418,
+      "snapshotChecks": [
+        {
+          "commit": "8bfd3136227ce79625df8e2b57678de5fbfa201e",
+          "gitExitCode": 128,
+          "blob": null,
+          "sameAsCa3": false,
+          "error": "fatal: path 'android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt' exists on disk, but not in '8bfd3136227ce79625df8e2b57678de5fbfa201e'"
+        },
+        {
+          "commit": "3a709eb15f1024df78ee03474f511568df2dc3de",
+          "gitExitCode": 0,
+          "blob": "2a2d8d11072076d75b844c097c34ce7d908950fd",
+          "sameAsCa3": true,
+          "error": null
+        },
+        {
+          "commit": "842472684b194e993355f632902ccc81366c164c",
+          "gitExitCode": 0,
+          "blob": "2a2d8d11072076d75b844c097c34ce7d908950fd",
+          "sameAsCa3": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "path": "hosted/app/phone/model.ts",
+      "ca3GitBlob": "822d518feb6da73709e6b3479c41e73f5e78790b",
+      "sha256": "955d5afcede6b8f7eb901394f9ae3e00d1bbffa57bf1e457c5436f23541577bf",
+      "bytes": 22708,
+      "snapshotChecks": [
+        {
+          "commit": "8bfd3136227ce79625df8e2b57678de5fbfa201e",
+          "gitExitCode": 128,
+          "blob": null,
+          "sameAsCa3": false,
+          "error": "fatal: path 'hosted/app/phone/model.ts' exists on disk, but not in '8bfd3136227ce79625df8e2b57678de5fbfa201e'"
+        },
+        {
+          "commit": "3a709eb15f1024df78ee03474f511568df2dc3de",
+          "gitExitCode": 0,
+          "blob": "c9d4e93c0f14c89b65b29b52f9272a77961114f5",
+          "sameAsCa3": false,
+          "error": null
+        },
+        {
+          "commit": "842472684b194e993355f632902ccc81366c164c",
+          "gitExitCode": 0,
+          "blob": "7654b6517276f66ba6e708e43f6afdeb71ee2e9e",
+          "sameAsCa3": false,
+          "error": null
+        }
+      ]
+    }
+  ],
+  "workspaceTransferClaimedBlobMatches": true,
+  "workspaceTransferClaimedShaMatches": true,
+  "mobileApplicationStateClaimedBlobMatches": true,
+  "nativeExecuted": false,
+  "packetObjectAvailability": [
+    {
+      "snapshot": "8bfd3136227ce79625df8e2b57678de5fbfa201e",
+      "available": false,
+      "objectType": null,
+      "gitExitCode": 128,
+      "error": "fatal: git cat-file: could not get object info"
+    },
+    {
+      "snapshot": "3a709eb15f1024df78ee03474f511568df2dc3de",
+      "available": true,
+      "objectType": "commit",
+      "gitExitCode": 0,
+      "error": null
+    },
+    {
+      "snapshot": "842472684b194e993355f632902ccc81366c164c",
+      "available": true,
+      "objectType": "commit",
+      "gitExitCode": 0,
+      "error": null
+    }
+  ],
+  "fiveSchemaFilesMatchEveryVerifiedAvailablePacket": true,
+  "allThreePacketClaimFullyVerified": false
+}

@@ -1,0 +1,85 @@
+Grok
+Thought for 1m 24s
+
+Career Finder — Deep Research, Blocker Remedies and Strict Independent Critique (Heavy)
+Session role: primary-source research, independent challenge of remedies, actionable blocker/alternative/acceptance matrix. Other sessions own BUILD patch review and UI/native acceptance. This does not duplicate implementation.
+
+Evidence classes and session scope
+
+This session’s actual execution: Read-only GitHub fetches (tree and file contents at specified SHAs including 63eecda5c5c57805aeae1f5ba8e22af65e38ceee and 9878a7e8d3645952435181763802a91691fda4f9) plus primary-source web research/browse of official Lever, Greenhouse, W3C WCAG, GitHub advisory, Apple, and Google documentation (dates noted below). No local Mac, no mutations, no builds, no CI dispatch, no store console, no accounts, no applications, no spending.
+Runtime evidence: Only the supplied CURRENT VERIFIED CONTEXT (commits/CI/provider diagnostics). Not re-executed here. Historical CI passes are exact-source only and do not accept later combined patches.
+Research inference: From primary docs; clearly separated. Live provider probes are diagnostics, not multi-session production acceptance.
+Inspected sources in this session: Repository tree (truncated but extensive under android/, hosted/, .github/workflows/, docs/); full or partial contents of README.md, .github/workflows/phone-quality.yml, hosted/package.json, and docs/continuation-handoffs/2026-11-17-native-search.md (and directory listing of handoffs). No prior 39 screenshots or full UI audit images are readable here (cross-conversation attachments inaccessible; do not resend). No iOS source files beyond handoff references were fully fetched in this turn.
+
+Ranked blocker register (prioritized by user impact on reliable simple journeys, privacy, and truthful state; free-cost limits preserved; no bypass of sign-in/consent/anti-bot/rate limits/store policies/owner boundaries).
+
+Job discovery reliability: incomplete vs filtered zero, pagination/body/cancellation, canonical identity, stale/empty restore, employer-board handoff
+
+Source/date/evidence: Supplied runtime (Lever prefix partial, Lyra later-pagination failure + first-header timeout; single-request probes Lyra 50/100/25 + public board HTTP 200); official Lever postings-api README (GET /v0/postings/SITE?skip=&limit=&mode=json, no auth for published reads, skip/limit manual offset, published-only, no full-text, CORS company-domain; POST apply rate-limited to 2/s with 429); Greenhouse Job Board API (GET /v1/boards/{token}/jobs typically complete single response with meta.total, ?content=true for descriptions, public, no documented standard pagination). Handoff 2026-11-17-native-search.md.
+User impact: Misleading “No roles match” when sources are partial/unavailable/stale; lost progress on cancel/timeout; duplicate board selection rejected; empty historical pages shown as current.
+Root cause: Native UI fall-through of partial+zero to healthy empty; restore logic treating empty persisted page as current; raw-string board dedup vs server canonicalization; blocking HttpsURLConnection without demonstrated prompt cancel + total deadline for trickling bodies (hypothesis, not proven crash).
+Direct fix: Distinguish complete-empty / partial-empty / unavailable in EN/AR copy + accessible status (retry preserves newer draft); treat any restored page (incl. zero) as historical with actual checkedAt; match production parseDiscoverySource for board identity (Greenhouse hosts, Lever global/EU, case, trailing slash, tracking params, job URLs); surface validated public employer board URL as explicit handoff (no application submit, no verification claim). Preserve validated earlier pages as explicitly partial.
+Realistic alternative: Bounded single-request size probes + TTL cache + cooldown; public board handoff when API first-page fails or later page incomplete. Finite diagnostic: thresholds for timeout/partial (e.g., first-header > X s or incomplete pages after validated prefix) grounded in product requirements, not invented provider guarantees.
+Prerequisites/cost/risk: Free official public endpoints only; no scraping/proxy. Risk of incomplete coverage remains (not exhaustive index). Owner: Native search handoff session (register ownership before edits).
+Exact acceptance test: Fixture-driven complete-empty, partial-empty (outage/stale/cap), unavailable; empty and nonempty restore show historical time; duplicate-equivalent boards rejected once; cancel/replacement of slow fixture releases resources without stale UI adoption; EN/AR/RTL/large-text; no old response overwrites newer search.
+
+Account/storage/consent: ready vs Approved labeling, fenced recovery, offline/recheck without cross-account exposure, Stop/reconcile without resubmission
+
+Source/date/evidence: Supplied context (server creates ready attempts BEFORE approval; failed identity recheck has “Check account again”; remote-only excludes unknown remote status; PhoneApp failed-Clear data protection, unique recovered-edit identities, committed-reset stale-UI fencing).
+User impact: Misleading “Approved” on unapproved ready receipts; potential private data leak or cross-account exposure on recovery; uncertain outcomes resubmitted.
+Root cause: Premature labeling of ready state; insufficient fencing on failed recheck/forked copies/staged reset.
+Direct fix: Never label ready as Approved; truthful “Ready — awaiting your approval”. Keep private data fenced on failed recheck. Explicit Stop/reconcile without resubmission for pending/uncertain. Isolate forked recovery copies by identity.
+Realistic alternative: Local-only pending with explicit user action to recheck or stop; import alternatives that preserve provenance without auto-merge. Reject silent cross-account recovery or assuming ready=approved.
+Prerequisites/cost/risk: Zero cost; privacy risk high if fencing fails. Owner: Account/storage owners (preserve singular-copy, source-direction, incomplete-status changes).
+Exact acceptance test: Ready receipt never shows Approved; failed recheck keeps “Check account again” and private data inaccessible to other identities; Stop on uncertain does not resubmit; recovery does not expose another account.
+
+Cross-platform usability & accessibility: Arabic/English/RTL, mixed text/URLs, keyboard/large-text/focus/live announcements; Android cancellation
+
+Source/date/evidence: WCAG 2.2 SC 4.1.3 Status Messages (AA, W3C Understanding, 2026): status messages must be programmatically determinable (role or properties) so AT can present them without receiving focus. role=status is the polite live-region technique (ARIA22); role=alert is assertive for critical only. Do not move focus for routine status (results, saved, partial). Focus not obscured (2.4.11). Android HttpsURLConnection.disconnect() can abort blocked reads on modern devices (SocketException) but historically unreliable on older; timeouts are the reliable bound. Supplied Android code uses timeouts, finally disconnect, bounded reads, ensureActive.
+User impact: Screen-reader users miss status or have focus stolen; mixed RTL/LTR/URLs unreadable; large text or keyboard order broken; Android search cancel leaves hanging resources or stale UI.
+Root cause: Possible incorrect assumption that role=status is a WCAG violation; missing live-region announcements without focus move; hypothesis (not demonstrated crash) on blocking connection cancel.
+Direct fix: Use role=status (or aria-live=polite) for routine status without moving focus; reserve alert/focus move for dialogs or critical form errors. Test mixed bidi (dir=auto or proper isolation), large text, keyboard focus order, live announcements. For Android: keep current timeouts + disconnect; if measured slow/trickling fixture shows incomplete cancel, add strict total deadline while preserving prior page.
+Realistic alternative: Visual + text status only if AT announcement fails; public board handoff on transport failure. Source hypotheses are not claimed crashes.
+Prerequisites/cost/risk: Free; physical VoiceOver/TalkBack remains open gate. Owner: Native and hosted UI owners (coordinate with publisher for device scheduling).
+Exact acceptance test: Status messages announced without focus move on VoiceOver/TalkBack (or simulated); mixed Arabic/English/URL text direction correct; large-text and keyboard journeys complete; Android slow-fixture cancel releases resources and keeps truthful “Search stopped. Earlier results kept.”
+
+CI/dependency/store blockers: Picomatch GHSA, partial runs, provenance, store prerequisites
+
+Source/date/evidence: GitHub advisory GHSA-fc5q-39xc-vjpf (published/updated 2026-10-19): Picomatch through 4.0.7 ReDoS via single-branch repeated extglob patterns (e.g. +(*)), High (CVSS 8.7), affected <=4.0.7, no patched version listed, github_reviewed false. Hosted package.json at 63eecda has no direct picomatch (check transitive via vite/eslint etc.). Supplied CI: development full pass on 21f08f5..., newer audit fail on 63eecda, publishing partial. Apple: privacy policy URL required in metadata + in-app, Data/Privacy Nutrition, support URL, account deletion in-app if accounts exist. Google: Data safety form + public privacy policy URL for every app. No current store-console check performed.
+User impact: Audit gate fails hosted; incomplete CI does not prove full acceptance; store submission blocked without accurate privacy/Data safety.
+Root cause: Transitive dependency on vulnerable picomatch version with no official patch; partial CI runs; store forms not yet completed.
+Direct fix: Examine actual exposure (do untrusted globs reach picomatch?). Pin/override if compatible remedy exists; otherwise avoid user-controlled globs and document residual risk. Do not suppress/waive audit. Exact commit/artifact provenance required for acceptance. Complete public privacy policy + Data safety matching actual collection (incl. third-party).
+Realistic alternative: Temporary isolation of glob usage to developer-controlled patterns only; delay store submission until forms verified.
+Prerequisites/cost/risk: Free; residual ReDoS risk if exposure exists. Owner: Development for dependency investigation; Publisher for signing/stores/integration.
+Exact acceptance test: npm audit clean or residual risk documented with no untrusted glob path; full CI on exact combined source (not partial); privacy policy live and matching Data safety; signed build on physical device with VoiceOver/TalkBack pass on critical journeys.
+
+Mature patterns & remaining open gates (lower priority if above resolved)
+
+Official free tactics: cache+TTL, cooldown, distinguish zeros, canonical board identity, explicit employer-board handoff. Avoid feature quantity that adds policy/data/consent/cost. Real Google callback/unlink/relink, LinkedIn config, disposable-account lifecycle, physical a11y, final integrated store gates remain open (supplied context).
+
+Whole-app coverage matrix (inspected vs unknown in this session)
+
+Inspected (source or primary docs): Hosted package.json, phone-quality.yml workflow, README (high-level architecture, free limits, accounts, discovery catalog), native-search handoff (exact findings), Lever/Greenhouse public contracts, WCAG 4.1.3, Picomatch advisory, Apple/Google store privacy requirements, Android transport code patterns.
+Partially known from supplied context: Feed/API checkpoint d534a6c..., provider diagnostics (Canonical/DoorDash/etc.), Grok Build account patch (SessionRecovery etc., custom DOM tests failed), support pages live earlier.
+Unknown / not inspected here: Full iOS source files, complete Android Discovery/CareerApi bodies, prior 39 screenshots/UI audit images, current store console status, physical device a11y results, real OAuth callbacks, LinkedIn full config, exact transitive picomatch exposure path, full browser/hosted gate results beyond supplied.
+
+Disagreements with other reviews and why
+
+role=status is not automatically a WCAG violation. Primary W3C SC 4.1.3 requires status messages to be programmatically determinable without receiving focus; role=status (polite) is the recommended technique. Moving focus is generally inappropriate for routine status and can violate predictability (3.2.1). Alerts should not routinely move focus.
+Ready receipts must not be labeled Approved (server creates them before approval).
+Picomatch advisory lists no patched version; do not treat an unmerged PR as a fix or suppress the audit. Exposure must be examined.
+Android HttpsURLConnection cancel is a hypothesis to measure, not a claimed crash.
+Live provider checks are diagnostics only.
+
+Prioritized executable sequence (finite, owner-respecting, free-cost)
+
+Native search handoff session registers ownership then implements truthful partial/zero distinction, historical restore, canonical board matching, and explicit employer-board handoff (acceptance tests above).
+Account owners enforce ready ≠ Approved labeling and fenced recovery/Stop without resubmission.
+A11y pass: live regions without focus steal + RTL/mixed/large-text/keyboard on critical journeys (coordinate device time with publisher).
+Development examines picomatch transitive exposure and applies compatible pin/override or documents residual (no suppress).
+Publisher completes privacy policy + Data safety accuracy, signed-build/device/a11y gates, and store forms (no duplicate native fixes).
+Bounded re-diagnostics on Lever/Greenhouse public endpoints with size/timeout/partial thresholds; preserve free limits.
+
+No 100% or release-ready claims. Combined future patches require their own exact-source acceptance. Original start 16 Nov 2026 22:26:12 UTC; extended cutoff unchanged.
+
+Report finished (17 November 2026).

@@ -1,31 +1,86 @@
-# Terminal session 1 — Native search, truthful coverage and provider recovery
+# Terminal session 1 — Native search, coverage and provider recovery
 
-Continue Career Finder only. Apply Saleh Alayed's full saleh-app-workflow; exclude Good Spender. This is authorized continuation, with strict research, critique, fixes and retesting. Preserve the original start 2026-11-16T22:26:12Z and the recovered extended cutoff 2026-11-18T22:26:12Z (19 November 2026, 01:26:12 Riyadh). Do not restart a separate 24-hour clock. Active effort remaining is unknown.
+Updated 17 November 2026; refresh live state before acting.
 
-Repository: https://github.com/swonyu/ahmad-career
-Interrupted-chat context: https://chatgpt.com/c/6afc73d0-92e0-83ed-9b67-6dd671b8fab5
+**Continue existing session:** 01a1ea9d-107f-7f91-bb26-90cb6f496046
+
+**Checkout:** /Users/saleh/Developer/career-finder-native-search-20261117-01a1ea9d107f
+**Branch:** continuation/native-search-20261117-01a1ea9d107f
+**Registered claim:** https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6956511590
+
+Include the previously source-confirmed Android Saved badge canonical-identity mismatch in the owned review. Keep source/board identity equivalent across discovery and Saved.
+
+## Continuation contract
+
+Continue Career Finder only at https://github.com/swonyu/ahmad-career. Apply Saleh Alayed's full saleh-app-workflow; exclude Good Spender. This is authorized continuation: implement substantial useful improvements, research uncertain behavior, conduct independent strict critiques, and fix and retest every validated finding inside your owned scope. Preserve approved navigation and a polished Arabic/English experience, correct RTL/LTR, accessible names, large text, and data continuity.
+
+Original start: **16 November 2026 22:26:12 UTC**. Extended cutoff: **18 November 2026 22:26:12 UTC / 19 November 01:26:12 Riyadh**. Do not start another 24-hour clock or invent active effort remaining. Keep costs free. Preserve source, secrets, unfinished work, ownership, and failed evidence. No live employer application, real account deletion, paid service, or public release is authorized by this handoff.
+
+Before editing, inspect current PR1 owner messages, remote heads, worktrees, dirty files, processes, locks and CI. An idle chat or absent build lock does not transfer ownership. Use the existing isolated lane and coordinate overlapping files; continue independent non-overlapping work while an overlap is resolved. Stop only a currently verified self-owned process. Never force-push, move another owner's branch, weaken assertions, or treat a planned test as passed.
+
 Coordination: https://github.com/swonyu/ahmad-career/pull/1
+Interrupted context: https://chatgpt.com/c/6afc73d0-92e0-83ed-9b67-6dd671b8fab5
 
-Before editing, recover current owners, remote heads, dirty files, worktrees, processes, locks and CI. Register your session ID, branch and exact write set in the existing PR thread. Use your own isolated checkout/worktree; preserve every other owner's dirty files and processes. If newer work overlaps, reconcile the overlapping path with that owner while continuing unblocked research, tests and non-overlapping work. Do not infer build permission from an absent lock.
+## Current seven workstreams — observed 17 November 2026
 
-Current verified evidence, which you must refresh:
-- Publisher d57f4cd77813 owns integrated source, native acceptance/build scheduling, signing and stores. Last verified integrated head was 0f0c6f1f591ff173e51671599cbbb6aeff4a69e4 on recovery/publishing-integrated-20261117-d57f4. A separate publisher CI-finalization branch exists; inspect it before proposing workflow work.
-- Original development 5bc6158967e8 sealed 21f08f5c4509bd1fdbe9112003224bf2316edd2a. Full run 44130275991 passed all five jobs: Android 104 ordinary + 1 TLS + 1 synthetic HTTPS, iPhone 17/17, normal xcodebuild completion, exported/uploaded evidence. This validates that exact source, not every later integrated tree.
-- Publisher focused run 44129604009 at 0f0c6f1 passed exactly one connection test with export/upload; four other jobs were skipped. Earlier run 44124734131 at 2fac36f3 failed. Earlier account run 44122504831 logged 17 passing cases but failed result finalization. Keep those outcomes distinct.
-- Continuation 4b851318da2d owns hosted response/feed reliability and the current hosted follow-up. Safe checkpoint d534a6c23bbe81615b8f7a40d3fb4204bb991781 is pushed on continuation/feed-reliability-20261117-4b851. All seven hosted gates passed on Node v24.22.3, including 47 discovery groups, new provider/frontend cleanup tests, build and dependency audit. Its newer PhoneApp recovery/search changes are still being reviewed: do not copy or edit that live checkout.
-- Read the latest comments, especially 6954889472, 6955496651, 6955617360 and 6955748053. Treat later owner updates as authoritative after verification.
+The requested seven streams already exist. Do not start extra replacement sessions merely because a task is awaiting review.
 
-Grok coordination stays with continuation 4b851318da2d. The separate Build task is https://grok.com/c/adc8cfe9-ed35-4fcd-9961-d1fc081daef0 . It has the four-component account/accessibility lane and a heavy read-only whole-app critique. The publisher reports the prior source packages and 39 images were received. Do not resend those packages/images or start a duplicate Grok task; send findings through the coordination thread for the current Grok coordinator.
+| Stream | Identity and role |
+| --- | --- |
+| Grok browser Build 1 | https://grok.com/c/adc8cfe9-ed35-4fcd-9961-d1fc081daef0 — bounded hosted account review; latest assigned work is evidence-only production CSV/ICS consumer fixtures. |
+| Grok browser Build 2 | https://grok.com/c/abe34c88-8973-4ecb-aacc-9a7e595c33ef — native backup/receipt critique and synthetic corpus; no native implementation ownership. |
+| Grok browser Heavy | https://grok.com/c/3bf518a8-10be-40cd-9d0e-7a811c512a74 — primary-source blocker and whole-app/competitor critique. |
+| Terminal search | 01a1ea9d-107f-7f91-bb26-90cb6f496046; native search and sole central native localization writer. |
+| Terminal recovery | 01a1ea9c-fd25-75a3-b146-e39e344cc262; native transfer, records, receipts and recovery. |
+| Terminal accessibility | 01a1ea56-c4d3-7252-9cae-7595ad0e9957; native accessibility changes, currently overlapping the two lanes above. |
+| Root continuation | 4b851318da2d; hosted fixes, evidence, Grok coordination and reviewed checkpoints. |
 
-Use the project's actual pinned toolchains. CI pins Node major 24; the engines minimum is not the pin. A read-only reusable Node v24.22.3 executable exists at /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node . Do not replace the user's system runtime. Read the repository's current native toolchain requirements. Leave the continuation's loopback account fixture on port 4179 and its test processes alone.
+Separate existing publisher **d57f4cd77813** owns integration, native builds/CI scheduling, signing and stores. Development **5bc6158967e8** owns dependency/audit remediation and related package/lock decisions. Helpers used for review are not additional terminal sessions.
 
-Do not edit .github workflows, existing iPhone exact-value helpers, hosted app/server files, signing material, store metadata or other apps. Do not start competing xcodebuild/Gradle/emulator/simulator/signing jobs. Coordinate one native build reservation with the publisher; use isolated output directories and only your own processes. A safe branch push does not authorize a duplicate full CI dispatch. Prefer a continuation/* branch and coordinate before opening a PR that would trigger native CI.
+At 20:11–20:14 UTC, all three exact terminal identities and Grok processes were observed. Search had 10 dirty paths; recovery had 8, including new NativeRecoveryCheck.swift. Accessibility was at **87d7238804393557ad00ae0d20f3aad465f8173e**, 18 local commits plus dirty NativeCareerViews.swift. Its 20-path series overlaps all 10 search dirty paths and recovery MainActivity.kt, MobileApplicationState.swift and NativeApplicationsViews.swift. Its latest notice still addresses an older continuation identity. **Get explicit current owner acknowledgement and reconcile these changes before integration.** No acknowledgement was established by the latest root snapshot; a posted review is not an acknowledgement.
 
-Preserve secrets, credentials, all unfinished work and original evidence. Use only synthetic accounts/data for new fixtures. Do not submit real employer applications, activate live auto-apply, delete a real account, add paid services or deploy publicly. Push safe reviewable checkpoints; never force-push or move another owner's branch. Report exact commits, source hashes, commands, results, failed attempts, remaining blockers and limits. Planned tests are not passes; source review is not native or physical-device acceptance. Do not claim 100%, release readiness or store submission without evidence.
+Only the search owner writes the shared native catalog and generated translations. Request copy through that owner. Do not independently regenerate or overwrite its catalog. Publisher retains shared test-runner wiring and native build scheduling.
 
-## Your exclusive implementation lane
+## Current source and test evidence
 
-Use branch continuation/native-search-20261117-<your-session-id>. Coordinate with the publisher, then own only:
+Root product follow-up **e1dce0e24ef8d1fe85934578d1ba33bde99f166d** is pushed and independently remote-verified on **continuation/feed-reliability-20261117-4b851**. It changes ProviderConnections synchronous focus preservation, SignInOptions expired-session clarity, and the account lifecycle regression. It retains the earlier feed cleanup and recovery/search fixes.
+
+Under pinned **Node v24.22.3**, the exact final source passed typecheck, strict lint with zero warnings, the complete npm test chain, and the hosted build. Main Node group **289/289**, PDF **6/6**, account lifecycle **17/17**; these are nested/separate suite scopes, not numbers to add into a fabricated combined count. The full audit remains **failed, 19 high affected-package entries**. Existing build warnings remain. Source digest across 1,445 paths: **060eda70b37c2125ecb708d8893adbf60eecda6f46976c3b3dc30894c1f4f96e**.
+
+Actual Chrome synthetic account checks covered readback truth, no mutation replay, confirmation/Keep focus, retry reachability on the earlier focus candidate, no late focus steal, recovery unmount and A→B→A, expired-session copy, and selected OAuth feedback cases. Final Provider hash **03c766b5bfe7b04f30ca545e78dac63225a1b371f8ae35d96a1a80dfaf6047c8** was rebuilt and code-gated but its final English/Arabic narrow-screen browser retest is pending. Do not relabel earlier candidate349 behavior as final03c browser acceptance. Real OAuth/cookie, physical assistive-technology and native acceptance are separate.
+
+Publisher **3a08819d5eae981d62b290f241b58637a2fdd21a** has merged the earlier root source4221871 with publisher243031d. PhoneApp.tsx is byte-identical to root e1; publisher also separately fixed its localization test fixture by extracting and binding the actual addEmployerBoard initializer. Do not report the old four unbound fixture failures as present on 3a. Its test was source-reviewed, not executed in this snapshot. Root's later three e1 files and evidence still need coordinated integration; do not overwrite whole components with older versions.
+
+Latest observed CI: **44147056599 / run41 at 243031d3f35040985c5b274e8ddf4a90adb0eda8**, iPhone-only **17/17**, normal successful completion; four jobs skipped. No new combined-source 3a/e1 five-job pass was established. The publisher workflow at 3a still shares a cancel-in-progress key across full and partial manual scopes; the publisher owns the scope-key correction and subsequent controlled validation. Do not dispatch a competing run.
+
+Full latest evidence and research: **docs/continuation-evidence/2026-11-17-account-competitors-4b851/README.md**. Historical predecessor: docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/README.md.
+
+## Competitor requirements and Grok coordination
+
+The user explicitly requires serious comparison with what competitors can do. Read the new competitor report covering Teal, Huntr, Simplify, Jobscan, LinkedIn, Indeed, Bayt, Naukrigulf and Saudi Jadarat. Documented capabilities, current Career Finder implementation and executed outcomes must stay distinct.
+
+Simplify has iOS/Safari Copilot; Jobscan advertises approval before every submission; Teal supports export/per-application documents and optional connected-account functions; Naukrigulf advertises Arabic AI CV/interview tools. Arabic, export and an approval button alone are not established advantages. Deeper ranking, application autofill, multi-document authoring, inbox/network integration and interview coaching remain unproven parity. Do not promise all features are already better.
+
+Prioritize measurable complete tasks: distinguish unavailable/partial/stale/empty search; preserve job/profile/PDF on external application return; avoid replay after uncertain outcomes; preserve notes and drafts through import/restart; verify actual file/calendar consumers; make Arabic/English keyboard/large-text/reader recovery usable. Keep helpful manual employer-page, JSON-backup and explicit status-read alternatives available. Larger new features require a scoped design and evidence, not unreviewed expansion.
+
+Both Build modes and Heavy were directly verified and actual outputs reviewed. Source packages and 39 images were previously delivered; do not resend blindly. Build2's 10-fixture corpus was extracted, statically reviewed and materialized: all lengths/hashes match. This is integrity evidence, not a native decoder pass. Follow the corrected README: fixture04 has no notes, iPhone already deduplicates its saved links, and Stop restoration depends on a matching workspace. Route it to the recovery owner.
+
+The latest Build1 CSV/ICS response and Heavy competitor correction reply remain unread because the originating Browser extension context is unavailable. Do not bypass that restriction through another browser/control path or claim continuous Grok progress. Root stopped only its verified owned loopback account listener; preserved fixtures can be rebuilt when the authorized browser context returns.
+
+## Toolchain, boundaries and delivery
+
+Use the project's pinned toolchains. Read-only Node executable: /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node. Prepend its bin directory when running npm; do not replace the system runtime. Preserve package/lock files and audit policy for the dependency owner.
+
+Do not edit hosted app/server files, .github workflows, signing material, store metadata, other apps, or the publisher's connection-address/native assertion fix. No competing xcodebuild, Gradle, simulator/emulator, signing job or CI dispatch. Arrange one native build reservation with the publisher. A safe continuation-branch push is allowed; opening a CI-triggering PR must be coordinated.
+
+Use synthetic accounts/data for new fixtures. Preserve exact commands, commits/hashes, failed attempts, actual test results and scope limits. Report implemented, tested, committed, pushed, built, signed, installed, deployed, uploaded, submitted and released separately. Historical store state was a draft; no current signed upload, submission or release was established by this continuation. No 100% or release-ready claim.
+
+The initial findings below are a work queue, not an assertion that every item remains unfixed. Reconcile them against your current owned changes, the overlapping accessibility series and latest publisher source before changing anything.
+
+
+## Existing implementation scope — reconcile overlaps first
+
+Use branch continuation/native-search-20261117-01a1ea9d107f. Coordinate with the publisher, then own only:
 - apple/AhmadCareer/CareerDiscovery.swift
 - apple/AhmadCareer/NativeDiscoveryViews.swift
 - android/app/src/main/java/com/saleh/careerfinder/Discovery.kt
@@ -64,22 +119,3 @@ Read actual current source and existing tests first; deduplicate findings alread
 First run narrow meaningful logic/fixture checks, including cross-generation races and persisted empty searches. Arrange actual iPhone/Android acceptance through the publisher's single build reservation. Include EN/AR, RTL and large-text search/retry/board-selection journeys. Physical VoiceOver/TalkBack results remain separate unless actually exercised.
 
 Return a compact handoff with your exact branch/commits, changed files, before/after failures, successful test commands, source/runtime identity, pending native gates, any requested localization changes and integration risks. Keep all original failed evidence. Do not duplicate the publisher's connection-address/email assertion fix or CI work.
-
-
-## Current coordination addendum — 17 November 2026
-
-The user requested two Grok Build conversations and a separate Heavy research conversation. Their visible modes and actual submitted tasks were verified:
-
-- [Build: account component patch and integration review](https://grok.com/c/adc8cfe9-ed35-4fcd-9961-d1fc081daef0).
-- [Build: independent native, consent and recovery critique](https://grok.com/c/abe34c88-8973-4ecb-aacc-9a7e595c33ef).
-- [Heavy: deep research, blocker remedies and strict critique](https://grok.com/c/3bf518a8-10be-40cd-9d0e-7a811c512a74).
-
-These browser conversations do not confer ownership of native source or builds. Publishing retains integrated CI, local native build scheduling, signing and stores. Root reviews actual findings and patches, rejects unsupported claims, and routes only non-overlapping work. Do not resend source packages or images. The existing hourly continuation monitors all three; the original cutoff is unchanged.
-
-Newer source `63eecda5c5c57805aeae1f5ba8e22af65e38ceee`, run `44139018005`, is terminal with three successful jobs and two failed jobs. iPhone UI: **15/17**, failing keyboard visibility and Settings reachability at large text. Connection setup passed. Evidence export/upload succeeded. Hosted failed the required dependency audit. Development owns Picomatch investigation; development/publishing own the native failure diagnosis. Earlier `21f08f5` full green applies only to its exact source.
-
-Always recover current PR comments, refs, dirty files and processes before integration; later exact checkpoints supersede mutable status below.
-
-### Registered terminal owner
-
-Native search session `01a1ea9d-107f-7f91-bb26-90cb6f496046` registered this lane in [PR comment 6956511590](https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6956511590). Checkout `/Users/saleh/Developer/career-finder-native-search-20261117-01a1ea9d107f`, branch `continuation/native-search-20261117-01a1ea9d107f`, base publisher `11cb3d4d8c15e9b16719b6e7091597f43633cda6`. Reconcile with that owner before starting another editor. Include the source-confirmed Android Saved badge canonical-identity mismatch from PR comment 6956600041.

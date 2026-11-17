@@ -1,0 +1,15 @@
+{
+  "status": "prepared",
+  "node": "v24.22.3",
+  "head": "ca3d3411d8b5b36fa7093dff782f4a7b931261c7",
+  "versions": [
+    "2.3.2",
+    "4.0.4",
+    "4.0.7"
+  ],
+  "sourceFilesCopied": 29,
+  "onlyCandidateChange": "lib/parse.js",
+  "testsExecuted": false
+}
+
+EXIT_CODE=0

@@ -1,0 +1,19 @@
+{
+  "reviewedAtUTC": "2026-11-17T20:04:08.608564+00:00",
+  "decision": "safe to run bounded synthetic generator after full source and AST inspection",
+  "originalSha256": "3092402340d2071d59c574cafab84a71fde2e5e44e8905407265999bfea59e08",
+  "adaptedSha256": "d93d56a8e614bc8c80bfb13a3e1eace40046c1b2a27ef5af6100c5f15b4f73c0",
+  "onlyAdaptation": {
+    "before": "ROOT = Path(__file__).resolve().parent",
+    "after": "ROOT = Path(__file__).resolve().parent / \"generated\""
+  },
+  "imports": [
+    "__future__.annotations",
+    "hashlib",
+    "json",
+    "pathlib.Path"
+  ],
+  "writes": "fixed filenames under generated, no user-controlled names or traversal",
+  "externalOperations": "none; service URL is a string only",
+  "noNativeOrRepositoryExecution": true
+}

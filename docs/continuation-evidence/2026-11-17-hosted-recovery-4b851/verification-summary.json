@@ -1,0 +1,223 @@
+{
+  "recordedAt": "2026-11-17T19:03:46.389445+00:00",
+  "sourceCommit": "9971b7f9367e5a8374890f1c6b8648742c3491b1",
+  "runtime": {
+    "node": "v24.22.3",
+    "npm": "11.20.0"
+  },
+  "initialGates": [
+    {
+      "name": "typecheck",
+      "exit": 0
+    },
+    {
+      "name": "lint",
+      "exit": 0
+    },
+    {
+      "name": "test",
+      "exit": 1
+    },
+    {
+      "name": "worker",
+      "exit": 0
+    },
+    {
+      "name": "browser",
+      "exit": 0
+    },
+    {
+      "name": "build",
+      "exit": 0
+    },
+    {
+      "name": "audit",
+      "exit": 1
+    }
+  ],
+  "initialGeneratedOutputChanges": [
+    "hosted/tests/hosted-discovery-verification.json",
+    "hosted/tests/hosted-phone-verification.json",
+    "hosted/tests/hosted-verification.json",
+    "hosted/tests/hosted-worker-verification.json"
+  ],
+  "initialImplementationAndTestSourceUnchanged": true,
+  "testRetestExit": 0,
+  "testRetestSourceUnchanged": true,
+  "remainingAudit": {
+    "status": "failed",
+    "high": 19,
+    "critical": 0,
+    "waiver": false
+  },
+  "browserAccountAcceptance": "pending: originating-browser-context unavailable",
+  "nativeEvidence": "run44147056599, exact publisher243031d, iPhone-only17/17; fourjobs skipped",
+  "sourcePhoneSHA256": "cea98d8442f0dcb43cee2b1e3d5d5a2814a89130b7c18793ee50f4a8366d5368",
+  "files": [
+    {
+      "path": "integrated-hosted-full-gates-node24.json",
+      "bytes": 28835,
+      "sha256": "03beed2aedebf445b543541d76291dfa7e8cdd7d5c791fb6845d3d7d09a9fba1"
+    },
+    {
+      "path": "integrated-hosted-test-retest-node24.json",
+      "bytes": 25457,
+      "sha256": "b6047dc77f466595726dd9887a4a5aa643acd0d7c76d701392b1bb170c4bee29"
+    },
+    {
+      "path": "integrated-hosted-test-retest-node24.log",
+      "bytes": 52210,
+      "sha256": "8c8717dc22de06db8dbb66e9f55bf4f3417fcb6fd77b05a5d7b08379a41faa06"
+    },
+    {
+      "path": "publisher-root-merge.json",
+      "bytes": 470,
+      "sha256": "2bf5012a5038e5f91a503574cff838c66d752e8408dfe844754188c6b429baa3"
+    },
+    {
+      "path": "grok-account-recovery-root-integration.json",
+      "bytes": 973,
+      "sha256": "2fb5f35704cad2a689a77c7fe8e5c07a42851a3f12bf9003b230ea431ab66e87"
+    },
+    {
+      "path": "grok-account-recovery-final.patch",
+      "bytes": 19922,
+      "sha256": "afe550dfb3f09f4bd81400ebc034a8c4b594a83dc168b692e094997e9e6a5e18"
+    },
+    {
+      "path": "grok-account-recovery-strict-candidate.log",
+      "bytes": 2021,
+      "sha256": "e2b8c999939f4de9498970a984da458d2568094838ee234dd445460138eed0a1"
+    },
+    {
+      "path": "grok-account-recovery-strict-eslint.log",
+      "bytes": 221,
+      "sha256": "779b0edfdbb46b98ac94221543449e92482901367d40085e6c07817426ba26ee"
+    },
+    {
+      "path": "grok-account-recovery-identity-baseline.log",
+      "bytes": 2629,
+      "sha256": "90b8b4ba48274f3f53789cec8177b4f9cb707cf848069094f93366668793f10a"
+    },
+    {
+      "path": "hosted-recovery-search-selection-focused.json",
+      "bytes": 764,
+      "sha256": "2fd315070a5b0f9b125aaa136b912ca6b8ed4625f343dd75d7b8282197785200"
+    },
+    {
+      "path": "hosted-recovery-search-selection-focused.log",
+      "bytes": 7705,
+      "sha256": "0579b8fa97ef06621ec7d6618782a97640cf52bc5290a57c9415ea64a893bb3a"
+    },
+    {
+      "path": "phone-url-guidance-verification.json",
+      "bytes": 572,
+      "sha256": "12f53d5e2ff07a76c6a6a5c8b7028053a40853137ff7a66fef215229c3c2735e"
+    },
+    {
+      "path": "phone-url-guidance-baseline.log",
+      "bytes": 4287,
+      "sha256": "9e9dedda513019f89dfbf8bce2def6ae4ca3dd8005d2b57430e32fa0ad3ba491"
+    },
+    {
+      "path": "phone-url-guidance-candidate.log",
+      "bytes": 2043,
+      "sha256": "6f4f67fbd73a805f06d080b425fdef75c397008c3d64d5db765b44e2bbed4185"
+    },
+    {
+      "path": "native-run41-terminal-observation.json",
+      "bytes": 5904,
+      "sha256": "6ae9e531827dd40331714551cd4d514d2fc92477597b6672aa2513fc4749ce82"
+    },
+    {
+      "path": "search-browser-fixture/chrome-reviewed-results.json",
+      "bytes": 79039,
+      "sha256": "3582a601c41dce95eeaecd98b79c606bbc1c0c8d9cc99867a88c047824d13bd8"
+    },
+    {
+      "path": "search-browser-fixture/chrome-board-enter-baseline.json",
+      "bytes": 16723,
+      "sha256": "9d6176e8b8847edd6904f948906fd8aedf1cede5cf15a37b5c84dc4914bc1b0a"
+    },
+    {
+      "path": "search-browser-fixture/chrome-capped-en.json",
+      "bytes": 14092,
+      "sha256": "cf2589b202ce7035a3be195c363d661ce3e835272dd304188e7f497241d592fc"
+    },
+    {
+      "path": "search-browser-fixture/chrome-exhausted-en.json",
+      "bytes": 14075,
+      "sha256": "f8a9112ff31f60a634dbb0ebb050b3edea8dc2a5c1d6eb682ac1ef0fedc6c6fd"
+    },
+    {
+      "path": "grok-browser-fixture/baseline-observations.json",
+      "bytes": 6638,
+      "sha256": "fe0ac7c0626dfb276464a3b51949c81eb7062463f1798ae11a45e80fac2d762b"
+    },
+    {
+      "path": "grok-heavy-first-report.txt",
+      "bytes": 13737,
+      "sha256": "ea73205ec93f243c5099b91c1ed376ce61cd54f6cd93d8b8906f054d64b65b15"
+    },
+    {
+      "path": "grok-heavy-second-report.txt",
+      "bytes": 14491,
+      "sha256": "cf91b7b43ab2ee3e68c82b2157e9288c09eba44ac6177efc2dfd26bfd495af64"
+    },
+    {
+      "path": "grok-heavy-third-report.txt",
+      "bytes": 7030,
+      "sha256": "939cf0b09e3078a3ce02c38a3f26b4390e1ee06930217d381b4ceb55f7289e87"
+    },
+    {
+      "path": "grok-heavy-fourth-report.txt",
+      "bytes": 5344,
+      "sha256": "f53b088595088264829861f36a0ae99b2b148926632adec29653b27abf033b4f"
+    },
+    {
+      "path": "grok-heavy-fourth-correction-request.txt",
+      "bytes": 1912,
+      "sha256": "cccc4c1cacc265620d44b464d619b4950f3205f50c99d0fba782a220ba1d631c"
+    },
+    {
+      "path": "grok-build-independent-report.txt",
+      "bytes": 11978,
+      "sha256": "7232d2e1ce54c1ff58861c38af3b897253e38dbb01a7dbd1b84bf174cacc4bfa"
+    },
+    {
+      "path": "integrated-hosted-typecheck-node24.log",
+      "bytes": 63,
+      "sha256": "443da1dddfcff0734c532ffcd1dd9daefa801a87f310fd265557c8d92204a47b"
+    },
+    {
+      "path": "integrated-hosted-lint-node24.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "integrated-hosted-test-node24.log",
+      "bytes": 53671,
+      "sha256": "aab91f8577f35b2d986daf2b4ad3f51f6c802cf065aef3548e485781bf415572"
+    },
+    {
+      "path": "integrated-hosted-worker-node24.log",
+      "bytes": 70,
+      "sha256": "27ad97fa3c7bef2b87634959ef80935976221a7c97a7aa8a6531c6accb493d41"
+    },
+    {
+      "path": "integrated-hosted-browser-node24.log",
+      "bytes": 1381,
+      "sha256": "525af463a6843b98c641a68cd927d20875168926bd518b980fa19c0a63fcd7b6"
+    },
+    {
+      "path": "integrated-hosted-build-node24.log",
+      "bytes": 23913,
+      "sha256": "33a90cbbc1b653716a642e07c0856049618c829bdf23d331e38d097727330a43"
+    },
+    {
+      "path": "integrated-hosted-audit-node24.log",
+      "bytes": 10240,
+      "sha256": "f0257bdef8a8aaeae9e4d3820ab78945eeb775f798f88c1922513036d49efd7d"
+    }
+  ]
+}

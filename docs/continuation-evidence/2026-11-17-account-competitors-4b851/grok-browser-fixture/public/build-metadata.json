@@ -1,0 +1,80 @@
+{
+  "generatedAt": "2026-11-17T20:00:49.338Z",
+  "node": "v24.22.3",
+  "repository": "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d",
+  "commit": "ca3d3411d8b5b36fa7093dff782f4a7b931261c7",
+  "note": "Current working-tree source; hashes record dirty files. Real React components and DOM. Only Next Image is replaced. Synthetic service only; not a hosted/native/provider pass.",
+  "dependencies": {
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "esbuild": "0.28.2",
+    "postcss": "8.5.23",
+    "@tailwindcss/postcss": "4.2.1"
+  },
+  "sources": [
+    {
+      "path": "hosted/app/components/GoogleSignInArtwork.tsx",
+      "sha256": "670d2db7e92bb3fbac2f8b15448ba02594c5ecf326bfec4d223c8ee7f0f2f0d5"
+    },
+    {
+      "path": "hosted/app/components/OAuthFeedback.tsx",
+      "sha256": "57a9be7cc19eb2c4cfafc34e3266e511a5a6a824b99776c8302460f4f9aff464"
+    },
+    {
+      "path": "hosted/app/components/ProviderConnections.tsx",
+      "sha256": "03c766b5bfe7b04f30ca545e78dac63225a1b371f8ae35d96a1a80dfaf6047c8"
+    },
+    {
+      "path": "hosted/app/components/SessionRecovery.tsx",
+      "sha256": "e5e5fe25fdd435bb2674f07ed36278281924e33906a3bc816fad22523546f917"
+    },
+    {
+      "path": "hosted/app/components/SignInOptions.tsx",
+      "sha256": "fa9818300bdd6c0316befcd04c9fb53ec1aa02282f5acfdbeffb611ac0e731fc"
+    },
+    {
+      "path": "hosted/app/components/api.ts",
+      "sha256": "a890b5f1ffcd3d792221a1078edc9db5fdf41dd51b0b067fe7bbea6be93e28f1"
+    },
+    {
+      "path": "hosted/app/components/provider-auth.ts",
+      "sha256": "0ba0fd4a2718cf32cc8c9f5f23e7b2ab271918009435a3aac38bdf805db651e9"
+    },
+    {
+      "path": "hosted/app/components/provider-change.ts",
+      "sha256": "586e572c2a84f11eace92150d3f0d249128cb509cc59847b380e500223327fcc"
+    },
+    {
+      "path": "hosted/app/globals.css",
+      "sha256": "5f3ff2d03d7877d07bd05d537f196a83f1341b15f3aebbe1d9afb8f4ed954acf"
+    },
+    {
+      "path": "hosted/app/i18n/LocaleProvider.tsx",
+      "sha256": "69830ee14b8b7b4e57310238cc12477fe349851a7d542c6544a3e1c30368453a"
+    },
+    {
+      "path": "hosted/app/i18n/core.ts",
+      "sha256": "47485ac0ce826dd1dde553d645869f2e272e59639680bd507a9978beb128c030"
+    },
+    {
+      "path": "hosted/app/i18n/i18n.css",
+      "sha256": "c08d6ed5604b8f479c47e4a8f984bd61926a9c8271928754b8777a7d8c7b4e8e"
+    },
+    {
+      "path": "hosted/app/i18n/messages.ar.json",
+      "sha256": "9c7c0c2739ef549af2b11b0cc76f3d3b5d5be0e7e2513d26eedbfb1b88c4cee8"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/grok-browser-fixture/ImageStub.tsx",
+      "sha256": "fa79c9706c1ae5e5110b94f098f1543aacf07d4b8a9e8882184c9773866bea96"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/grok-browser-fixture/fixture.tsx",
+      "sha256": "831422f1a4098558da19ee027a7ac1baffbe5bff12edb67ff2909b8ab384dc48"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/grok-browser-fixture/scenarios.mjs",
+      "sha256": "19da273d34ea96f59f5486f98735e9f683002701c05cc35d06328de026460598"
+    }
+  ]
+}

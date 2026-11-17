@@ -1,0 +1,9 @@
+{
+  "suppliedPatchCheck": "failed: corrupt final hunk count at51; recount then failed206; raw patch retained",
+  "application": "Regenerated valid unified diff from the exact reviewed inserted test block and2 explicit baseline-checked line replacements; gitapplycheck0 then applied",
+  "testExit": 0,
+  "testSHA256": "60a2fd94573de75046060e1b7f9e2be600d9875094c21705340191f90351df9b",
+  "node": "v24.22.3",
+  "log": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/oauth-tone-accepted-patch-test-20261117.log",
+  "reviewedPatch": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/grok-build1-oauth-tone-tests-reviewed.patch"
+}

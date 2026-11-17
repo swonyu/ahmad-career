@@ -1,0 +1,216 @@
+{
+  "createdAtUTC": "2026-11-17T19:51:15.984025+00:00",
+  "repository": "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d",
+  "repositoryHead": "ca3d3411d8b5b36fa7093dff782f4a7b931261c7",
+  "packageLockSha256": "2512e3bd6aebfc4377bbe036d3cf606c27e33613b35c8c58d28f0f3a0d596c99",
+  "nodeExecutable": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+  "nodeVersion": "v24.22.3",
+  "candidateScope": "Only simple single-branch repeated stars, with captures and complex syntax unchanged. Partial remedy experiment, not production patch or full CVE remediation.",
+  "upstreamReferences": [
+    {
+      "url": "https://github.com/micromatch/picomatch/pull/237/files",
+      "commitFromObservedLink": "1bf0d04563cb9ce568cf36efc5f6b7187d9911d5"
+    },
+    {
+      "url": "https://github.com/micromatch/picomatch/pull/246/files",
+      "commitFromObservedLink": "f03bec2c02e46f063fbfdc161aae1d0f854b2565"
+    }
+  ],
+  "packages": [
+    {
+      "version": "2.3.2",
+      "installedPath": "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/picomatch",
+      "files": [
+        {
+          "relativePath": "LICENSE",
+          "installedSha256": "d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9",
+          "baselineSha256": "d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9",
+          "candidateSha256": "d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9"
+        },
+        {
+          "relativePath": "README.md",
+          "installedSha256": "f4653b68a1883a32f852083c1b93381ce87f44c6855ce1f01854d39d0563c98c",
+          "baselineSha256": "f4653b68a1883a32f852083c1b93381ce87f44c6855ce1f01854d39d0563c98c",
+          "candidateSha256": "f4653b68a1883a32f852083c1b93381ce87f44c6855ce1f01854d39d0563c98c"
+        },
+        {
+          "relativePath": "index.js",
+          "installedSha256": "5695ff5dfcd5a338a40630bd506056f2950bcb08fe1cc068519cbbfe60add480",
+          "baselineSha256": "5695ff5dfcd5a338a40630bd506056f2950bcb08fe1cc068519cbbfe60add480",
+          "candidateSha256": "5695ff5dfcd5a338a40630bd506056f2950bcb08fe1cc068519cbbfe60add480"
+        },
+        {
+          "relativePath": "package.json",
+          "installedSha256": "63264d817e856a4bff57d4304f2b38d2964a4f6df520eb169e7bcdb619f13e9a",
+          "baselineSha256": "63264d817e856a4bff57d4304f2b38d2964a4f6df520eb169e7bcdb619f13e9a",
+          "candidateSha256": "63264d817e856a4bff57d4304f2b38d2964a4f6df520eb169e7bcdb619f13e9a"
+        },
+        {
+          "relativePath": "lib/constants.js",
+          "installedSha256": "980225ab847a88a784f6d315557b8434f7742b2551ce20e354455c61b938c0a5",
+          "baselineSha256": "980225ab847a88a784f6d315557b8434f7742b2551ce20e354455c61b938c0a5",
+          "candidateSha256": "980225ab847a88a784f6d315557b8434f7742b2551ce20e354455c61b938c0a5"
+        },
+        {
+          "relativePath": "lib/parse.js",
+          "installedSha256": "3a91656f440069aa8f8e15c9d695b9f6b2209df1eab2be8127c72cbcca45ff5f",
+          "baselineSha256": "3a91656f440069aa8f8e15c9d695b9f6b2209df1eab2be8127c72cbcca45ff5f",
+          "candidateSha256": "b4b99cdece05efcdd1293bb28a05b3067c9241a70ee004436151dc1b31314e32"
+        },
+        {
+          "relativePath": "lib/picomatch.js",
+          "installedSha256": "2cb169cbe17d356036c5f62a377318b85e30817877e59797842aec9d8b15f54b",
+          "baselineSha256": "2cb169cbe17d356036c5f62a377318b85e30817877e59797842aec9d8b15f54b",
+          "candidateSha256": "2cb169cbe17d356036c5f62a377318b85e30817877e59797842aec9d8b15f54b"
+        },
+        {
+          "relativePath": "lib/scan.js",
+          "installedSha256": "227fcc994a477ea95c5a0435d32783566334c6bd0dcc4a103029735ad8c9c535",
+          "baselineSha256": "227fcc994a477ea95c5a0435d32783566334c6bd0dcc4a103029735ad8c9c535",
+          "candidateSha256": "227fcc994a477ea95c5a0435d32783566334c6bd0dcc4a103029735ad8c9c535"
+        },
+        {
+          "relativePath": "lib/utils.js",
+          "installedSha256": "809fc29cf35ab0aa76b99cad29182f62c0ae598902481d10f9868eaef71981ee",
+          "baselineSha256": "809fc29cf35ab0aa76b99cad29182f62c0ae598902481d10f9868eaef71981ee",
+          "candidateSha256": "809fc29cf35ab0aa76b99cad29182f62c0ae598902481d10f9868eaef71981ee"
+        }
+      ],
+      "patchSha256": "b2dc4a4a2794b48d24d630095a93ab695aeef23a8e6c24d5919b475d93408842"
+    },
+    {
+      "version": "4.0.4",
+      "installedPath": "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/tinyglobby/node_modules/picomatch",
+      "files": [
+        {
+          "relativePath": "LICENSE",
+          "installedSha256": "d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9",
+          "baselineSha256": "d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9",
+          "candidateSha256": "d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9"
+        },
+        {
+          "relativePath": "README.md",
+          "installedSha256": "abaa6b58484e1f252b8d40b949b53602f5f2d7e6990f20d85fe6174ca5cb802f",
+          "baselineSha256": "abaa6b58484e1f252b8d40b949b53602f5f2d7e6990f20d85fe6174ca5cb802f",
+          "candidateSha256": "abaa6b58484e1f252b8d40b949b53602f5f2d7e6990f20d85fe6174ca5cb802f"
+        },
+        {
+          "relativePath": "index.js",
+          "installedSha256": "02ae26406508e28f9ba0865be16cf77f0b33de6c4d4d49c212c4176df1d5625a",
+          "baselineSha256": "02ae26406508e28f9ba0865be16cf77f0b33de6c4d4d49c212c4176df1d5625a",
+          "candidateSha256": "02ae26406508e28f9ba0865be16cf77f0b33de6c4d4d49c212c4176df1d5625a"
+        },
+        {
+          "relativePath": "package.json",
+          "installedSha256": "b8deb10b4e1f7cc2fe8236a70995f4c6b5ec3ecf93f02f2b6427a8600d2c1d20",
+          "baselineSha256": "b8deb10b4e1f7cc2fe8236a70995f4c6b5ec3ecf93f02f2b6427a8600d2c1d20",
+          "candidateSha256": "b8deb10b4e1f7cc2fe8236a70995f4c6b5ec3ecf93f02f2b6427a8600d2c1d20"
+        },
+        {
+          "relativePath": "posix.js",
+          "installedSha256": "5695ff5dfcd5a338a40630bd506056f2950bcb08fe1cc068519cbbfe60add480",
+          "baselineSha256": "5695ff5dfcd5a338a40630bd506056f2950bcb08fe1cc068519cbbfe60add480",
+          "candidateSha256": "5695ff5dfcd5a338a40630bd506056f2950bcb08fe1cc068519cbbfe60add480"
+        },
+        {
+          "relativePath": "lib/constants.js",
+          "installedSha256": "c28f952d2758261fe5428a121add485cc25b03e0193633f649de903dc0e5e222",
+          "baselineSha256": "c28f952d2758261fe5428a121add485cc25b03e0193633f649de903dc0e5e222",
+          "candidateSha256": "c28f952d2758261fe5428a121add485cc25b03e0193633f649de903dc0e5e222"
+        },
+        {
+          "relativePath": "lib/parse.js",
+          "installedSha256": "ce57c04e04994b83e2ca566170fa192e6fe19d710bea6da00ce2f76d01c0dea4",
+          "baselineSha256": "ce57c04e04994b83e2ca566170fa192e6fe19d710bea6da00ce2f76d01c0dea4",
+          "candidateSha256": "300e912a0ee94b4cf3c4de1851d799e392fb1c329ab67e750f467f1b93e700e9"
+        },
+        {
+          "relativePath": "lib/picomatch.js",
+          "installedSha256": "bbe9824eae8210954eac016e1fa1ac6174093557f30a72e91621d74a6c25e170",
+          "baselineSha256": "bbe9824eae8210954eac016e1fa1ac6174093557f30a72e91621d74a6c25e170",
+          "candidateSha256": "bbe9824eae8210954eac016e1fa1ac6174093557f30a72e91621d74a6c25e170"
+        },
+        {
+          "relativePath": "lib/scan.js",
+          "installedSha256": "227fcc994a477ea95c5a0435d32783566334c6bd0dcc4a103029735ad8c9c535",
+          "baselineSha256": "227fcc994a477ea95c5a0435d32783566334c6bd0dcc4a103029735ad8c9c535",
+          "candidateSha256": "227fcc994a477ea95c5a0435d32783566334c6bd0dcc4a103029735ad8c9c535"
+        },
+        {
+          "relativePath": "lib/utils.js",
+          "installedSha256": "f04604f70cd1a3f6ace80b84766468674ff38b4bb83818d2ef1d81fc6355f935",
+          "baselineSha256": "f04604f70cd1a3f6ace80b84766468674ff38b4bb83818d2ef1d81fc6355f935",
+          "candidateSha256": "f04604f70cd1a3f6ace80b84766468674ff38b4bb83818d2ef1d81fc6355f935"
+        }
+      ],
+      "patchSha256": "cd822d5dd0fee999063e878cb63b7ed8306fa50488739d742b23fecad860e5ba"
+    },
+    {
+      "version": "4.0.7",
+      "installedPath": "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/vite/node_modules/picomatch",
+      "files": [
+        {
+          "relativePath": "LICENSE",
+          "installedSha256": "d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9",
+          "baselineSha256": "d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9",
+          "candidateSha256": "d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9"
+        },
+        {
+          "relativePath": "README.md",
+          "installedSha256": "a69b87120fe2b9cb8f9057eaef6b9f9887f803e02185ca2f431e8162f6312220",
+          "baselineSha256": "a69b87120fe2b9cb8f9057eaef6b9f9887f803e02185ca2f431e8162f6312220",
+          "candidateSha256": "a69b87120fe2b9cb8f9057eaef6b9f9887f803e02185ca2f431e8162f6312220"
+        },
+        {
+          "relativePath": "index.js",
+          "installedSha256": "02ae26406508e28f9ba0865be16cf77f0b33de6c4d4d49c212c4176df1d5625a",
+          "baselineSha256": "02ae26406508e28f9ba0865be16cf77f0b33de6c4d4d49c212c4176df1d5625a",
+          "candidateSha256": "02ae26406508e28f9ba0865be16cf77f0b33de6c4d4d49c212c4176df1d5625a"
+        },
+        {
+          "relativePath": "package.json",
+          "installedSha256": "479b70b87aa7b44344d62c8a459ae7e53dd2bca6c61f1396bd55e63e9de73fc6",
+          "baselineSha256": "479b70b87aa7b44344d62c8a459ae7e53dd2bca6c61f1396bd55e63e9de73fc6",
+          "candidateSha256": "479b70b87aa7b44344d62c8a459ae7e53dd2bca6c61f1396bd55e63e9de73fc6"
+        },
+        {
+          "relativePath": "posix.js",
+          "installedSha256": "5695ff5dfcd5a338a40630bd506056f2950bcb08fe1cc068519cbbfe60add480",
+          "baselineSha256": "5695ff5dfcd5a338a40630bd506056f2950bcb08fe1cc068519cbbfe60add480",
+          "candidateSha256": "5695ff5dfcd5a338a40630bd506056f2950bcb08fe1cc068519cbbfe60add480"
+        },
+        {
+          "relativePath": "lib/constants.js",
+          "installedSha256": "c28f952d2758261fe5428a121add485cc25b03e0193633f649de903dc0e5e222",
+          "baselineSha256": "c28f952d2758261fe5428a121add485cc25b03e0193633f649de903dc0e5e222",
+          "candidateSha256": "c28f952d2758261fe5428a121add485cc25b03e0193633f649de903dc0e5e222"
+        },
+        {
+          "relativePath": "lib/parse.js",
+          "installedSha256": "4e1e05447668aa1e94366c5516a2bcd8f5fff800cc92b1d0cd7d77703b8618c4",
+          "baselineSha256": "4e1e05447668aa1e94366c5516a2bcd8f5fff800cc92b1d0cd7d77703b8618c4",
+          "candidateSha256": "d154c262379061c6272e5cbdd95a224f5fa3f2ad605378aa838779a6732be11a"
+        },
+        {
+          "relativePath": "lib/picomatch.js",
+          "installedSha256": "fdd249d7ffff853f3bb1c77eafc8baa1a437bea85a94c35877b83c6a40d9ca94",
+          "baselineSha256": "fdd249d7ffff853f3bb1c77eafc8baa1a437bea85a94c35877b83c6a40d9ca94",
+          "candidateSha256": "fdd249d7ffff853f3bb1c77eafc8baa1a437bea85a94c35877b83c6a40d9ca94"
+        },
+        {
+          "relativePath": "lib/scan.js",
+          "installedSha256": "6457a1764e5c2e543cc3a0c00ce12ebb3764097628868198370b64d4e642aaae",
+          "baselineSha256": "6457a1764e5c2e543cc3a0c00ce12ebb3764097628868198370b64d4e642aaae",
+          "candidateSha256": "6457a1764e5c2e543cc3a0c00ce12ebb3764097628868198370b64d4e642aaae"
+        },
+        {
+          "relativePath": "lib/utils.js",
+          "installedSha256": "f04604f70cd1a3f6ace80b84766468674ff38b4bb83818d2ef1d81fc6355f935",
+          "baselineSha256": "f04604f70cd1a3f6ace80b84766468674ff38b4bb83818d2ef1d81fc6355f935",
+          "candidateSha256": "f04604f70cd1a3f6ace80b84766468674ff38b4bb83818d2ef1d81fc6355f935"
+        }
+      ],
+      "patchSha256": "a0cb6d1cb12a132dca11efc01c9215165de25c6d319e5bc1365f261dcd5b8df5"
+    }
+  ]
+}

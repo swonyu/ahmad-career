@@ -9,6 +9,7 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
@@ -19,9 +20,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.*
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -55,6 +58,15 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
     val keyboard = LocalSoftwareKeyboardController.current
     var chooseSources by remember { mutableStateOf(false) }
     val search: () -> Unit = { keyboard?.hide(); controller.search() }
+    val outcomeStatus = when {
+        state.status != null -> state.status
+        state.error != null && state.lastAttemptedFilters != null -> "unavailable"
+        else -> null
+    }
+    val showEmpty = !state.loading && state.jobs.isEmpty() && outcomeStatus != null
+    val showGettingStarted = state.status == null && !state.loading && state.lastAttemptedFilters == null
+    val fallbackBoards = if (state.sources.isEmpty() && state.error != null && state.status == null)
+        recoveryBoards(state.lastAttemptedFilters?.sources.orEmpty()) else emptyList()
     LazyColumn(Modifier.fillMaxSize().imePadding().testTag("discovery-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         if (state.restoringSearch) item { LinearProgressIndicator(Modifier.fillMaxWidth()); Text(l10n("Opening your last search…")) }
         if (state.restoredSearch) item {
@@ -105,8 +117,17 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
         if (state.error != null) item {
             Panel {
                 Text(l10n.message(state.error.orEmpty()), color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+                if (state.canRetrySubmittedSearch) OutlinedButton(onClick = controller::retrySubmittedSearch, enabled = !state.loading,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("discovery-retry")) { Text(l10n("Retry this search")) }
                 if (state.cursorInvalid) OutlinedButton(onClick = search, enabled = !state.loading, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Start a fresh search")) }
+                fallbackBoards.forEach { identity ->
+                    EmployerBoardLink(identity, "Open the employer board", l10n.format("Open employer board for {0}", listOf(identity.board)))
+                }
             }
+        }
+        if (state.canRetrySubmittedSearch && state.error == null) item {
+            OutlinedButton(onClick = controller::retrySubmittedSearch, enabled = !state.loading,
+                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("discovery-retry")) { Text(l10n("Retry this search")) }
         }
         if (state.filtersChanged) item {
             StatusPill("Filters changed · search to update results", true)
@@ -117,9 +138,8 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
             Text(l10n.format("Showing {0} of {1} matches within these boards", listOf((state.jobs.size).toString(), (state.totalMatches).toString())), style = MaterialTheme.typography.titleMedium)
             if (state.limited) Text(l10n("Some boards have more openings than this search can include. Narrow your search or open the original board."), style = MaterialTheme.typography.bodySmall)
         }
-        if (state.status != null && state.jobs.isEmpty() && !state.loading && state.status != "unavailable") item {
-            EmptyState("No roles match this search.", "Try a broader title, another location or different employer boards. This search does not cover every employer.",
-                action = "Clear search filters", onClick = { controller.editFilters { DiscoveryFilters(sources = it.sources) } })
+        if (showEmpty) item {
+            EmptyState(DiscoveryPresentation.emptyTitle(outcomeStatus), DiscoveryPresentation.emptyDetail(outcomeStatus))
         }
         items(state.jobs, key = DiscoveredJob::id) { job ->
             DiscoveryJobCard(job, workspace.jobs.any { it.url == job.url }, workspace.busy, saved) {
@@ -130,7 +150,7 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
             OutlinedButton(onClick = { controller.search(more = true) }, enabled = !state.loading && !state.filtersChanged,
                 modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)) { Text(l10n(if (state.loadingMore) "Loading more roles…" else "Load more roles")) }
         }
-        if (state.status == null && !state.loading) item { GettingStartedPanel(workspace, profile, connect) }
+        if (showGettingStarted) item { GettingStartedPanel(workspace, profile, connect) }
         item {
             Text(l10n(state.notice.ifBlank { "Discovery covers selected public Lever and Greenhouse employer boards. You can add supported employer boards or save a job link from any other website." }),
                 style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -166,7 +186,6 @@ private fun DiscoveryInput(label: String, value: String, changed: (String) -> Un
 private fun DiscoverySourceSummary(state: DiscoveryUiState) {
     val l10n = rememberCareerStrings()
     var expanded by remember(state.generatedAt, state.status) { mutableStateOf(state.status != "complete") }
-    val context = LocalContext.current
     Panel {
         Text(l10n(when (state.status) { "partial" -> "Partial results from selected boards"; "unavailable" -> "Employer boards are unavailable"; else -> "Sources checked for this search" }),
             style = MaterialTheme.typography.titleMedium)
@@ -175,15 +194,40 @@ private fun DiscoverySourceSummary(state: DiscoveryUiState) {
         if (expanded) state.sources.forEach { source ->
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(source.name, fontWeight = FontWeight.SemiBold)
-                Text(l10n(when (source.status) { "fresh" -> "Fetched for this search"; "cached" -> "Recent cached results"; "stale" -> "Earlier cached results · refresh unavailable"; else -> "Could not be reached" }), style = MaterialTheme.typography.bodySmall)
+                Text(l10n(DiscoveryPresentation.sourceAvailabilityKey(source.status, state.restoredSearch)), style = MaterialTheme.typography.bodySmall)
                 source.checkedAt?.let { Text(l10n.format("Last checked: {0}", listOf((l10n.dateTime(it)).toString())), style = MaterialTheme.typography.bodySmall) }
                 source.error?.let { Text(l10n(it), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 if (source.limited) Text(l10n("Only part of this board was included."), style = MaterialTheme.typography.bodySmall)
-                TextButton(onClick = { openLink(context, source.boardUrl) }, modifier = Modifier.heightIn(min = 48.dp)
-                    .semantics { contentDescription = l10n.format("Open employer board for {0}", listOf((source.name).toString()))}) { Text(l10n("Open original employer board")) }
+                PublicDiscoveryService.canonicalBoard(source.boardUrl)?.let { identity ->
+                    EmployerBoardLink(identity, "Open original employer board", l10n.format("Open employer board for {0}", listOf(source.name)))
+                }
             }
         }
     }
+}
+
+private fun recoveryBoards(sources: List<String>): List<DiscoveryBoardIdentity> {
+    val seen = HashSet<String>()
+    val result = ArrayList<DiscoveryBoardIdentity>()
+    for (raw in sources) {
+        val identity = PublicDiscoveryService.canonicalBoard(raw) ?: continue
+        if (seen.add(identity.id)) result.add(identity)
+    }
+    return result
+}
+
+@Composable
+private fun EmployerBoardLink(identity: DiscoveryBoardIdentity, label: String, description: String) {
+    val l10n = rememberCareerStrings()
+    val context = LocalContext.current
+    TextButton(onClick = { openLink(context, identity.boardUrl) }, modifier = Modifier.heightIn(min = 48.dp)
+        .testTag("discovery-board-" + identity.id)
+        .semantics { contentDescription = description }) { Text(l10n(label)) }
+    SelectionContainer {
+        Text(identity.boardUrl, style = MaterialTheme.typography.bodySmall.merge(TextStyle(textDirection = TextDirection.Ltr)))
+    }
+    Text(l10n("Opening this public board in your browser does not submit an application or confirm the listings are still open."),
+        style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 @Composable
@@ -238,14 +282,21 @@ private fun DiscoverySourcesDialog(state: DiscoveryUiState, controller: Discover
                 val filtered = catalog.filter { (it.name + " " + it.provider + " " + it.region).contains(query, true) }
                 if (catalog.isNotEmpty() && filtered.isEmpty()) item { Text(l10n("No catalog employers match. You can add a supported board link below.")) }
                 items(filtered, key = DiscoverySource::id) { source ->
+                    val selected = draft.any { PublicDiscoveryService.sameBoard(it, source.id) }
                     Column {
-                        CheckLine(source.name, source.id in draft, { selected -> touched = true; draft = if (selected) draft + source.id else draft - source.id },
-                            source.id in draft || draft.size < limit, accessibilityLabel = "Search the public employer board for " + source.name)
+                        CheckLine(source.name, selected, { checked ->
+                            touched = true
+                            draft = if (checked) draft.filterNot { PublicDiscoveryService.sameBoard(it, source.id) }.toSet() + source.id
+                                else draft.filterNot { PublicDiscoveryService.sameBoard(it, source.id) }.toSet()
+                        }, selected || draft.size < limit, accessibilityLabel = "Search the public employer board for " + source.name)
                         Text(l10n.format("{0} · {1}", listOf((source.provider.replaceFirstChar(Char::uppercase)).toString(), (source.region).toString())), style = MaterialTheme.typography.bodySmall)
                     }
                 }
-                items(draft.filter { id -> catalog.none { it.id == id } }, key = { "custom-" + it }) { source ->
-                    CheckLine(source, true, { touched = true; draft = draft - source }, accessibilityLabel = "Remove selected employer source " + source)
+                items(draft.filter { id -> catalog.none { PublicDiscoveryService.sameBoard(it.id, id) } }.toList(), key = { "custom-" + it }) { source ->
+                    CheckLine(PublicDiscoveryService.canonicalBoard(source)?.boardUrl ?: source, true, {
+                        touched = true
+                        draft = draft.filterNot { PublicDiscoveryService.sameBoard(it, source) }.toSet()
+                    }, accessibilityLabel = "Remove selected employer source " + source)
                 }
                 item {
                     HorizontalDivider()
@@ -253,14 +304,24 @@ private fun DiscoverySourcesDialog(state: DiscoveryUiState, controller: Discover
                     Field("Public Lever or Greenhouse board link", custom, { custom = it; customError = null }, KeyboardType.Uri, error = customError)
                     Text(l10n("A supported employer board or individual posting URL can be used. Other job links can still be added in Saved."), style = MaterialTheme.typography.bodySmall)
                     OutlinedButton(onClick = {
-                        val value = custom.trim()
-                        if (!PublicDiscoveryService.supportedSource(value)) customError = "Use a public jobs.lever.co, jobs.eu.lever.co, boards.greenhouse.io or job-boards.greenhouse.io link."
-                        else { touched = true; draft = draft + value; custom = ""; customError = null }
-                    }, enabled = custom.isNotBlank() && draft.size < limit, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Add employer board")) }
+                        val identity = PublicDiscoveryService.canonicalBoard(custom.trim())
+                        if (identity == null) {
+                            customError = "Use a supported employer board or its public board URL."
+                            return@OutlinedButton
+                        }
+                        when {
+                            draft.any { PublicDiscoveryService.sameBoard(it, identity.id) } -> customError = "Choose each employer board only once."
+                            draft.size >= limit -> customError = "Choose up to four public Lever or Greenhouse employer boards."
+                            else -> { touched = true; draft = draft + identity.id; custom = ""; customError = null }
+                        }
+                    }, enabled = custom.isNotBlank(), modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Add employer board")) }
                 }
             }
             Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {
-                Action("Use selected boards", draft.isNotEmpty() && draft.size <= limit) { controller.editFilters { it.copy(sources = draft.toList()) }; close() }
+                Action("Use selected boards", draft.isNotEmpty() && draft.size <= limit) {
+                    controller.editFilters { it.copy(sources = PublicDiscoveryService.canonicalSources(draft.toList())) }
+                    close()
+                }
                 TextButton(onClick = { controller.editFilters { it.copy(sources = emptyList()) }; close() }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Use recommended boards")) }
             }
         }

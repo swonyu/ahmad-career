@@ -204,6 +204,143 @@ private final class DiscoverySuite {
             try check(preserved == original && model.jobs.count == 2, "Unreadable storage is preserved while new results remain usable in memory")
             scenarios += 1
         }
+        do {
+            let service = DiscoveryStub(fixture); let (model, file) = store(service)
+            model.query.keywords = "Saved search beyond the byte limit"; await model.search()
+            var oversized = try model.exportSnapshot()
+            oversized.append(Data(repeating: 0x20, count: 12 * 1_024 * 1_024 + 1 - oversized.count))
+            try oversized.write(to: file)
+            let callsBeforeRestore = service.calls.count
+            let restored = CareerDiscoveryStore(file: file, service: service)
+            try check(restored.query == DiscoveryQuery() && restored.lastQuery == nil && restored.page == nil
+                && restored.jobs.isEmpty && !restored.restoredResults && service.calls.count == callsBeforeRestore,
+                "An oversized saved search is refused before restoring records or making a request")
+            let afterRestore = try Data(contentsOf: file)
+            try check(restored.storageNotice != nil && afterRestore == oversized,
+                "Oversized saved search bytes are preserved with an unreadable-storage notice")
+            var exportRefused = false
+            do { _ = try restored.exportSnapshot() } catch { exportRefused = true }
+            try check(exportRefused, "An oversized unreadable saved search cannot be replaced by an empty exported backup")
+            restored.query.keywords = "New in-memory search"; await restored.search()
+            let afterSearch = try Data(contentsOf: file)
+            try check(afterSearch == oversized && restored.jobs == fixture.jobs && restored.query.keywords == "New in-memory search",
+                "New search results stay usable in memory without overwriting the oversized saved file")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(fixture); let (model, file) = store(service)
+            service.handle = { _, _ in self.page(jobs: [], status: "complete") }
+            await model.search()
+            let restored = CareerDiscoveryStore(file: file, service: service)
+            try check(restored.jobs.isEmpty && restored.restoredResults && restored.page?.status == "complete", "A saved empty search is historical after relaunch")
+            service.handle = { _, _ in throw URLError(.notConnectedToInternet) }
+            await restored.search()
+            try check(restored.restoredResults && restored.jobs.isEmpty && restored.error != nil, "A failed refresh keeps an empty saved search historical")
+            service.handle = { _, _ in self.fixture }
+            await restored.search()
+            try check(!restored.restoredResults && restored.jobs == self.fixture.jobs, "A successful new search replaces the historical empty page")
+            for status in ["fresh", "cached", "stale", "unavailable"] {
+                for historical in [false, true] {
+                    try check(DiscoveryPresentation.sourceAvailabilityKey(status: status, restored: historical) != "Checked now", "Freshness copy never says the check just happened")
+                }
+            }
+            try check(DiscoveryPresentation.sourceAvailabilityKey(status: "fresh", restored: true) == "Saved result from an earlier check"
+                && DiscoveryPresentation.sourceAvailabilityKey(status: "fresh", restored: false) == "Fetched for this search", "A restored fresh source stays marked as an earlier check")
+            try check(DiscoveryPresentation.emptyTitle(searching: false, pageStatus: "complete") == "No matching jobs in these boards."
+                && DiscoveryPresentation.emptyTitle(searching: false, pageStatus: "partial") == "No matches in the results we could check."
+                && DiscoveryPresentation.emptyTitle(searching: false, pageStatus: "unavailable") == "Current openings could not be checked.", "Empty outcomes stay distinct")
+            try check(DiscoveryPresentation.offersSubmittedRetry(status: "partial") && DiscoveryPresentation.offersSubmittedRetry(status: "unavailable")
+                && !DiscoveryPresentation.offersSubmittedRetry(status: "complete"), "Only an incomplete search offers the submitted retry")
+            scenarios += 1
+        }
+        do {
+            let same = DiscoveryPolicy.canonicalBoard("greenhouse:canonical")
+            let legacy = DiscoveryPolicy.canonicalBoard("https://boards.greenhouse.io/canonical")
+            let current = DiscoveryPolicy.canonicalBoard("https://job-boards.greenhouse.io/Canonical/")
+            let posting = DiscoveryPolicy.canonicalBoard("https://job-boards.greenhouse.io/canonical/jobs/123?utm_source=mail&gh_jid=9")
+            let embed = DiscoveryPolicy.canonicalBoard("https://boards.greenhouse.io/embed/job_board?for=Canonical")
+            try check(same?.id == "greenhouse:canonical" && legacy?.id == same?.id && current?.id == same?.id && posting?.id == same?.id && embed?.id == same?.id, "Greenhouse spellings share one board id")
+            try check(same?.boardUrl == "https://job-boards.greenhouse.io/canonical", "Stored board links use the public Greenhouse host")
+            try check(DiscoveryPolicy.canonicalBoard("https://jobs.lever.co/spotify")?.id == "lever:global:spotify"
+                && DiscoveryPolicy.canonicalBoard("https://jobs.eu.lever.co/spotify/")?.id == "lever:eu:spotify"
+                && DiscoveryPolicy.canonicalBoard("https://jobs.lever.co/spotify/00000000-0000-4000-8000-000000000001/apply")?.id == "lever:global:spotify", "Lever regions stay distinct and a posting keeps its board")
+            try check(DiscoveryPolicy.canonicalBoard("https://jobs.eu.lever.co/example-board/123") == nil
+                && DiscoveryPolicy.supportedBoardURL("https://jobs.eu.lever.co/example-board/123") != nil, "A loose board-host check is not treated as a canonical board")
+            let rejected = ["https://jobs.lever.co.evil.example/board", "https://user:password@jobs.lever.co/board", "https://jobs.lever.co:443/board", "http://jobs.lever.co/board",
+                            "https://jobs.lever.co/board%2Fhidden", "https://job-boards.greenhouse.io/canonical/../other", "https://job-boards.greenhouse.io/canonical?extra=1",
+                            "https://boards.greenhouse.io/embed/job_board?for=one&for=two", "lever:GLOBAL:board", "https://job-boards.greenhouse.io/canonical#section"]
+            try check(rejected.allSatisfy { DiscoveryPolicy.canonicalBoard($0) == nil }, "Unsafe board URLs and region spellings are refused")
+            try check(DiscoveryPolicy.canonicalBoard("greenhouse:Canonical")?.id == "greenhouse:canonical", "A short board id folds only the board token")
+            let service = DiscoveryStub(fixture); let (model, _) = store(service)
+            try check(model.addBoard("https://boards.greenhouse.io/canonical") && model.addBoard("greenhouse:canonical") && model.addBoard("https://job-boards.greenhouse.io/canonical/"), "Equivalent board URLs are the same selection")
+            try check(model.query.sources == ["greenhouse:canonical"], "Equivalent boards are stored once as the canonical id")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(fixture); let (model, _) = store(service)
+            service.handle = { _, _ in self.page(status: "complete") }
+            model.query.keywords = "earlier complete"; await model.search()
+            let earlierQuery = model.query, earlierJobs = model.jobs
+            model.query.keywords = "failed submitted"
+            let failedQuery = model.query
+            service.handle = { _, _ in throw URLError(.notConnectedToInternet) }; await model.search()
+            try check(model.canRetrySubmittedSearch && model.error != nil && model.page?.status == "complete"
+                && model.lastQuery == earlierQuery && model.jobs == earlierJobs,
+                "A failed submitted search remains retryable while earlier complete results are preserved")
+            model.query.keywords = "newer unsent draft"; let newerDraft = model.query
+            try check(model.canRetrySubmittedSearch && model.jobs == earlierJobs && model.lastQuery == earlierQuery,
+                "Editing a newer draft does not hide the failed submitted search or change earlier results")
+            let gate = DiscoveryGate(); service.handle = { _, _ in try await gate.wait() }
+            let retry = Task { await model.retrySubmittedSearch() }; try await waitUntil { gate.started }
+            try check(service.calls.last?.0 == failedQuery && service.calls.last?.1 == nil && model.query == newerDraft,
+                "Explicit retry sends the failed submitted query from its first page without replacing the draft")
+            try check(model.jobs == earlierJobs && model.lastQuery == earlierQuery && !model.canRetrySubmittedSearch,
+                "Earlier results stay visible and a duplicate retry is unavailable while the request is running")
+            gate.finish(page(jobs: [fixture.jobs[0]], status: "complete")); await retry.value
+            try check(model.query == newerDraft && model.lastQuery == failedQuery && model.jobs == [fixture.jobs[0]]
+                && !model.canRetrySubmittedSearch, "Successful retry updates the result query and clears failed-attempt state while keeping the newer draft")
+            model.query.keywords = "failed before scope change"
+            service.handle = { _, _ in throw URLError(.notConnectedToInternet) }; await model.search()
+            try check(model.canRetrySubmittedSearch, "A later real search failure owns its own retry state")
+            model.attach(to: PhoneRecordScope(origin: "https://scope-reset.example", workspaceID: "other"))
+            try check(!model.canRetrySubmittedSearch && model.jobs.isEmpty && model.lastQuery == nil,
+                "Changing workspace clears the earlier workspace's failed-attempt retry state")
+            model.attach(to: PhoneRecordScope())
+            try check(!model.canRetrySubmittedSearch && model.jobs == [fixture.jobs[0]],
+                "Restoring the prior complete snapshot does not restore transient failed-attempt authority")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(fixture); let (model, _) = store(service)
+            service.handle = { _, _ in self.page(status: "partial") }
+            model.query.keywords = "submitted before wait"; await model.search()
+            let submitted = model.query, preservedJobs = model.jobs
+            let retryDeadline = Date().addingTimeInterval(300)
+            service.handle = { _, _ in throw DiscoveryFailure(message: "Synthetic service wait", code: "rate_limited", retryAfter: retryDeadline) }
+            await model.retrySubmittedSearch()
+            try check(service.calls.count == 2 && model.retryAfter == retryDeadline, "A submitted retry records the service-requested wait")
+            model.query.keywords = "newer draft while waiting"
+            let newerDraft = model.query, callsBeforeWait = service.calls.count
+            await model.retrySubmittedSearch()
+            try check(service.calls.count == callsBeforeWait, "Retry during the service wait makes no new request")
+            try check(model.retryAfter == retryDeadline && !model.isSearching, "A blocked retry preserves the original wait deadline")
+            try check(model.query == newerDraft && model.lastQuery == submitted && model.jobs == preservedJobs, "Waiting preserves the newer draft, submitted search and earlier results")
+            try check(model.error?.hasPrefix("Try again after ") == true, "A blocked retry explains the existing service wait")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(fixture); let (model, _) = store(service)
+            model.query.keywords = "old"; await model.search()
+            model.query.keywords = "newer draft"; await model.retrySubmittedSearch()
+            try check(model.query.keywords == "newer draft" && service.calls.last?.0.keywords == "old", "Retry repeats the submitted search and leaves the newer draft")
+            let gate = DiscoveryGate(); service.handle = { _, _ in try await gate.wait() }
+            let retry = Task { await model.retrySubmittedSearch() }; try await waitUntil { gate.started }
+            service.handle = { _, _ in self.page(status: "complete") }
+            model.query.keywords = "explicit"; await model.search()
+            gate.finish(self.page(jobs: [], status: "partial")); await retry.value
+            try check(model.query.keywords == "explicit" && model.jobs == self.fixture.jobs && service.calls.last?.0.keywords == "explicit", "A newer explicit search wins over a late submitted retry")
+            scenarios += 1
+        }
     }
 }
 

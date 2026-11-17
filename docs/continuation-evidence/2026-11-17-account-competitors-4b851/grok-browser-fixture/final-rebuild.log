@@ -1,0 +1,14 @@
+{
+  "built": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/grok-browser-fixture/public",
+  "node": "v24.22.3",
+  "commit": "9971b7f9367e5a8374890f1c6b8648742c3491b1",
+  "sourceFiles": 16,
+  "dependencies": {
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "esbuild": "0.28.2",
+    "postcss": "8.5.23",
+    "@tailwindcss/postcss": "4.2.1"
+  },
+  "listenerStarted": false
+}

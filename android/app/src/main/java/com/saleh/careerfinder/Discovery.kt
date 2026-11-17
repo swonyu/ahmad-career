@@ -17,16 +17,24 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.net.URI
 import java.net.URL
 import java.net.URLEncoder
+import java.nio.ByteBuffer
+import java.nio.charset.CharacterCodingException
+import java.nio.charset.CodingErrorAction
 import java.time.Instant
+import java.util.Locale
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.net.ssl.HttpsURLConnection
 
 data class DiscoveryFilters(val query: String = "", val location: String = "", val remoteOnly: Boolean = false,
     val sources: List<String> = emptyList()) {
-    fun cleaned() = copy(query = query.trim(), location = location.trim(), sources = sources.map(String::trim).filter(String::isNotBlank).distinct())
+    fun cleaned() = copy(query = query.trim(), location = location.trim(), sources = PublicDiscoveryService.canonicalSources(sources))
 }
+data class DiscoveryBoardIdentity(val id: String, val provider: String, val region: String, val board: String, val boardUrl: String)
 data class DiscoverySource(val id: String, val name: String, val provider: String, val region: String, val board: String, val boardUrl: String)
 data class DiscoveryCatalog(val defaults: List<String>, val sources: List<DiscoverySource>, val maxSources: Int, val notice: String)
 data class DiscoverySourceStatus(val id: String, val name: String, val provider: String, val boardUrl: String,
@@ -43,8 +51,40 @@ data class DiscoveryUiState(val catalog: DiscoveryCatalog? = null, val catalogLo
     val limited: Boolean = false, val notice: String = "", val loading: Boolean = false, val loadingMore: Boolean = false,
     val error: String? = null, val retryAtMillis: Long = 0, val cursorInvalid: Boolean = false,
     val restoringSearch: Boolean = false, val restoredSearch: Boolean = false, val searchStorageError: String? = null,
-    val searchRestoreBlocked: Boolean = false) {
+    val searchRestoreBlocked: Boolean = false, val lastAttemptedFilters: DiscoveryFilters? = null,
+    val submittedSearchFailed: Boolean = false) {
     val filtersChanged: Boolean get() = displayedFilters != null && displayedFilters != filters.cleaned()
+    val canRetrySubmittedSearch: Boolean get() {
+        if (loading || restoringSearch || (lastAttemptedFilters ?: displayedFilters) == null) return false
+        if (submittedSearchFailed) return true
+        val current = status
+        if (current != null) return current == "partial" || current == "unavailable"
+        // editFilters clears the error, but the submitted search stays retryable.
+        return true
+    }
+}
+
+/** Catalog keys only. The view localizes each one once. */
+object DiscoveryPresentation {
+    fun sourceAvailabilityKey(status: String, restored: Boolean) = when (status) {
+        "fresh" -> if (restored) "Saved result from an earlier check" else "Fetched for this search"
+        "cached" -> "Recent cached results"
+        "stale" -> "Earlier cached results · refresh unavailable"
+        else -> "Could not be reached"
+    }
+    fun emptyTitle(status: String?) = when (status) {
+        "unavailable" -> "Current openings could not be checked."
+        "partial" -> "No matches in the results we could check."
+        "complete" -> "No matching jobs in these boards."
+        else -> "No roles match this search."
+    }
+    fun emptyDetail(status: String?) = when (status) {
+        "unavailable" -> "The selected boards did not return results. Retry the same search, or review the source details."
+        "partial" -> "This search is incomplete. Review the source details, or retry the same search."
+        "complete" -> "Try a broader job title, another location, or a different employer board."
+        else -> "Try a broader title, another location or different employer boards. This search does not cover every employer."
+    }
+    fun offersSubmittedRetry(status: String?) = status == "partial" || status == "unavailable"
 }
 
 class DiscoveryFailure(val status: Int, val code: String, override val message: String,
@@ -64,15 +104,164 @@ object PublicDiscoveryService : DiscoveryService {
             url.host.lowercase() in boardHosts && url.port == -1 && !url.path.isNullOrBlank() && url.path != "/"
         }.getOrDefault(false)
 
+    /** Same acceptance rules as the committed hosted parseDiscoverySource. A null result is not a supported board. */
+    fun canonicalBoard(raw: String): DiscoveryBoardIdentity? {
+        if (raw.length > 2048) return null
+        for (character in raw) {
+            val code = character.code
+            if (code <= 0x1f || code == 0x7f || character == '\\' || character.isWhitespace()) return null
+        }
+        if (raw.lowercase(Locale.ROOT).startsWith("https://")) return canonicalHttpsBoard(raw)
+        val parts = splitKeep(raw, ':')
+        if (parts.size == 2 && parts[0] == "greenhouse") return finishBoard("greenhouse", "global", parts[1])
+        if (parts.size == 3 && parts[0] == "lever" && (parts[1] == "global" || parts[1] == "eu")) return finishBoard("lever", parts[1], parts[2])
+        return null
+    }
+
+    fun canonicalSources(sources: List<String>): List<String> {
+        val seen = HashSet<String>()
+        val result = ArrayList<String>(sources.size)
+        for (raw in sources) {
+            val trimmed = raw.trim()
+            if (trimmed.isEmpty()) continue
+            val token = canonicalBoard(trimmed)?.id ?: trimmed
+            if (seen.add(token)) result.add(token)
+        }
+        return result
+    }
+
+    fun hasDuplicateCanonical(sources: List<String>): Boolean {
+        val seen = HashSet<String>()
+        for (raw in sources) {
+            val id = canonicalBoard(raw.trim())?.id ?: continue
+            if (!seen.add(id)) return true
+        }
+        return false
+    }
+
+    fun sameBoard(left: String, right: String): Boolean {
+        val leftId = canonicalBoard(left)?.id
+        val rightId = canonicalBoard(right)?.id
+        return if (leftId != null && rightId != null) leftId == rightId else left == right
+    }
+
     fun searchURL(filters: DiscoveryFilters, cursor: String?): String {
         val clean = filters.cleaned()
         require(clean.query.length <= 120 && clean.location.length <= 100) { "Shorten the keywords or location and try again." }
-        require(clean.sources.size <= 4 && clean.sources.all(::supportedSource)) { "Choose up to four public Lever or Greenhouse employer boards." }
+        require(clean.sources.size <= 4) { "Choose up to four public Lever or Greenhouse employer boards." }
+        require(clean.sources.all { canonicalBoard(it) != null }) { "Use a supported employer board or its public board URL." }
         require(cursor == null || cursor.length in 1..8192) { "Start a fresh search to continue." }
         val values = clean.sources.map { "source" to it } + listOf("q" to clean.query, "location" to clean.location,
             "remote" to if (clean.remoteOnly) "remote" else "any") + listOfNotNull(cursor?.let { "cursor" to it })
         val query = values.joinToString("&") { (key, value) -> key + "=" + URLEncoder.encode(value, "UTF-8") }
         return ServicePages.DEFAULT_ORIGIN + "/api/discovery/search?" + query
+    }
+
+    private fun canonicalHttpsBoard(raw: String): DiscoveryBoardIdentity? {
+        val headEnd = raw.indexOfAny(charArrayOf('?', '#')).let { if (it < 0) raw.length else it }
+        val head = raw.substring(0, headEnd)
+        if (Regex("""(?:/\.{1,2}(?:/|$)|%)""").containsMatchIn(head)) return null
+        val uri = runCatching { URI(raw) }.getOrNull() ?: return null
+        if (uri.scheme?.lowercase(Locale.ROOT) != "https" || uri.userInfo != null || uri.port != -1) return null
+        if (!uri.fragment.isNullOrEmpty()) return null
+        val rawPath = uri.rawPath ?: return null
+        if (rawPath.contains('%')) return null
+        val host = uri.host?.lowercase(Locale.ROOT) ?: return null
+        val pairs = rawQueryPairs(raw) ?: return null
+        if (host == "boards.greenhouse.io" || host == "job-boards.greenhouse.io") {
+            if (rawPath == "/embed/job_board") {
+                val tokens = pairs.filter { it.first == "for" }
+                if (pairs.any { it.first != "for" } || tokens.size != 1) return null
+                return finishBoard("greenhouse", "global", tokens[0].second)
+            }
+            val pieces = pathPieces(rawPath)
+            val directJob = pieces.size == 3 && pieces[1] == "jobs" && Regex("""\d{1,20}""").matches(pieces[2])
+            if (pieces.size != 1 && !directJob) return null
+            if (!trackingAllowed(pairs)) return null
+            return finishBoard("greenhouse", "global", pieces[0])
+        }
+        if (host == "jobs.lever.co" || host == "jobs.eu.lever.co") {
+            val pieces = pathPieces(rawPath)
+            val uuid = Regex("""[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}""")
+            val posting = pieces.size == 2 && uuid.matches(pieces[1])
+            val apply = pieces.size == 3 && uuid.matches(pieces[1]) && pieces[2] == "apply"
+            if (pieces.size != 1 && !posting && !apply) return null
+            if (!trackingAllowed(pairs)) return null
+            return finishBoard("lever", if (host == "jobs.eu.lever.co") "eu" else "global", pieces[0])
+        }
+        return null
+    }
+
+    private fun trackingAllowed(pairs: List<Pair<String, String>>) = pairs.all { (key, _) ->
+        Regex("""utm_[A-Za-z0-9_]+""").matches(key) || key == "gh_jid" || key == "lever-source" || key == "lever-origin" || key == "source"
+    }
+
+    private fun rawQueryPairs(raw: String): List<Pair<String, String>>? {
+        val queryStart = raw.indexOf('?')
+        if (queryStart < 0) return emptyList()
+        var query = raw.substring(queryStart + 1)
+        val hash = query.indexOf('#')
+        if (hash >= 0) query = query.substring(0, hash)
+        if (query.isEmpty()) return emptyList()
+        val pairs = ArrayList<Pair<String, String>>()
+        for (part in splitKeep(query, '&')) {
+            val separator = part.indexOf('=')
+            val key = if (separator < 0) part else part.substring(0, separator)
+            val value = if (separator < 0) "" else part.substring(separator + 1)
+            if (key.contains('%')) return null
+            pairs.add(key to (percentDecode(value) ?: return null))
+        }
+        return pairs
+    }
+
+    private fun pathPieces(path: String): List<String> {
+        val trimmed = if (path.length > 1 && path.endsWith('/')) path.dropLast(1) else path
+        val parts = splitKeep(trimmed, '/')
+        return if (parts.firstOrNull() == "") parts.drop(1) else parts
+    }
+
+    private fun splitKeep(value: String, separator: Char): List<String> {
+        val parts = ArrayList<String>()
+        var start = 0
+        for (index in value.indices) {
+            if (value[index] == separator) {
+                parts.add(value.substring(start, index))
+                start = index + 1
+            }
+        }
+        parts.add(value.substring(start))
+        return parts
+    }
+
+    private fun percentDecode(value: String): String? {
+        val decoded = ByteArrayOutputStream(value.length)
+        var index = 0
+        while (index < value.length) {
+            val character = value[index]
+            if (character == '%') {
+                if (index + 2 >= value.length) return null
+                val high = Character.digit(value[index + 1], 16)
+                val low = Character.digit(value[index + 2], 16)
+                if (high < 0 || low < 0) return null
+                decoded.write((high shl 4) + low)
+                index += 3
+            } else {
+                decoded.write(character.toString().toByteArray(Charsets.UTF_8))
+                index += 1
+            }
+        }
+        return try {
+            Charsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT)
+                .decode(ByteBuffer.wrap(decoded.toByteArray())).toString()
+        } catch (_: CharacterCodingException) { null }
+    }
+
+    private fun finishBoard(provider: String, region: String, board: String): DiscoveryBoardIdentity? {
+        if (!Regex("""[A-Za-z0-9][A-Za-z0-9_-]{0,79}""").matches(board)) return null
+        val token = board.lowercase(Locale.ROOT)
+        val id = if (provider == "greenhouse") "greenhouse:$token" else "lever:$region:$token"
+        val host = if (provider == "greenhouse") "job-boards.greenhouse.io" else if (region == "eu") "jobs.eu.lever.co" else "jobs.lever.co"
+        return DiscoveryBoardIdentity(id, provider, region, token, "https://$host/$token")
     }
 
     override suspend fun sources() = DiscoveryCodec.catalog(get(ServicePages.DEFAULT_ORIGIN + "/api/discovery/sources"))
@@ -81,6 +270,7 @@ object PublicDiscoveryService : DiscoveryService {
     private suspend fun get(address: String): JSONObject = withContext(Dispatchers.IO) {
         val socket = URL(address).openConnection() as HttpsURLConnection
         socket.instanceFollowRedirects = false
+        // Idle gaps stay 15s connect / 25s read. The daemon only bounds a trickling body.
         socket.connectTimeout = 15_000
         socket.readTimeout = 25_000
         socket.useCaches = false
@@ -88,6 +278,21 @@ object PublicDiscoveryService : DiscoveryService {
         socket.setRequestProperty("Accept", "application/json")
         socket.setRequestProperty("Cache-Control", "no-store")
         socket.setRequestProperty("Cookie", "")
+        val timedOut = AtomicBoolean(false)
+        val watchdog = Thread({
+            try {
+                Thread.sleep(30_000)
+                timedOut.set(true)
+                socket.disconnect()
+            } catch (_: InterruptedException) {
+                // The request finished or was cancelled before the total deadline.
+            }
+        }, "discovery-total-deadline")
+        watchdog.isDaemon = true
+        watchdog.start()
+        val completion = currentCoroutineContext()[Job]?.invokeOnCompletion { cause ->
+            if (cause != null) socket.disconnect()
+        }
         try {
             val status = socket.responseCode
             val retry = socket.getHeaderField("Retry-After")?.toIntOrNull()?.coerceIn(0, 86_400)
@@ -106,7 +311,15 @@ object PublicDiscoveryService : DiscoveryService {
                     error?.safeString("message")?.take(500)?.ifBlank { null } ?: "The search could not be completed. Try again later.", retry)
             }
             response
-        } finally { socket.disconnect() }
+        } catch (error: IOException) {
+            currentCoroutineContext().ensureActive()
+            if (timedOut.get()) throw DiscoveryFailure(0, "deadline", "The search could not be completed. Try again later.")
+            throw error
+        } finally {
+            completion?.dispose()
+            watchdog.interrupt()
+            socket.disconnect()
+        }
     }
 }
 
@@ -185,6 +398,13 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
     private var lastPage: DiscoveryPage? = null
     private var lastDisplayedFilters: DiscoveryFilters? = null
 
+    /** Canonicalize saved board ids only. A trailing-space query stays as it was saved. */
+    private fun repairSources(filters: DiscoveryFilters): DiscoveryFilters {
+        val repaired = PublicDiscoveryService.canonicalSources(filters.sources)
+        if (repaired == filters.sources) return filters
+        return filters.copy(sources = repaired)
+    }
+
     suspend fun attachPrivateSession(store: PrivateStore, key: String) {
         stopPrivateSession(flush = true)
         privateStore = store; privateKey = key
@@ -194,13 +414,18 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
             val saved = withContext(Dispatchers.IO) { store.read(key) }
             if (request != storageGeneration || privateKey != key) return
             val snapshot = saved?.let(DiscoverySnapshotCodec::decode)
-            lastPage = snapshot?.page; lastDisplayedFilters = snapshot?.displayedFilters
+            val repairedFilters = snapshot?.filters?.let(::repairSources) ?: DiscoveryFilters()
+            val repairedDisplayed = snapshot?.displayedFilters?.let(::repairSources)
+            lastPage = snapshot?.page; lastDisplayedFilters = repairedDisplayed
             val page = snapshot?.page
-            mutable.value = DiscoveryUiState(filters = snapshot?.filters ?: DiscoveryFilters(), displayedFilters = snapshot?.displayedFilters,
+            mutable.value = DiscoveryUiState(filters = repairedFilters, displayedFilters = repairedDisplayed,
                 jobs = page?.jobs.orEmpty(), sources = page?.sources.orEmpty(), status = page?.status, generatedAt = page?.generatedAt,
                 totalMatches = page?.totalMatches ?: 0, limited = page?.limited ?: false, notice = page?.notice.orEmpty(),
                 nextCursor = null, restoredSearch = snapshot != null && (snapshot.page != null || snapshot.filters != DiscoveryFilters()))
             maySaveSearch = true
+            val sourcesChanged = snapshot != null && (repairedFilters.sources != snapshot.filters.sources ||
+                repairedDisplayed?.sources != snapshot.displayedFilters?.sources)
+            if (sourcesChanged) scheduleSearchSave()
         } catch (cancel: CancellationException) { throw cancel }
         catch (_: Exception) {
             if (request == storageGeneration && privateKey == key) {
@@ -278,26 +503,32 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
     }
     fun cancelSearch() {
         generation++; searchJob?.cancel()
-        mutable.update { it.copy(loading = false, loadingMore = false, error = "Search stopped. Any earlier results are kept.") }
+        mutable.update { it.copy(loading = false, loadingMore = false, submittedSearchFailed = false, error = "Search stopped. Any earlier results are kept.") }
     }
-    fun search(more: Boolean = false) {
+    fun search(more: Boolean = false, submitted: DiscoveryFilters? = null, ignoreDraft: Boolean = false) {
         val current = state.value
-        if (current.loading || current.restoringSearch) return
+        if (current.restoringSearch) return
+        if (more && current.loading) return
         if (System.currentTimeMillis() < current.retryAtMillis) {
             mutable.update { it.copy(error = "The search service asked for a short wait. Try again after " + Instant.ofEpochMilli(it.retryAtMillis) + ".") }; return
         }
-        val filters = current.filters.cleaned()
+        val raw = submitted ?: current.filters
+        if (!more && PublicDiscoveryService.hasDuplicateCanonical(raw.sources)) {
+            mutable.update { it.copy(error = "Choose each employer board only once.") }; return
+        }
+        val filters = raw.cleaned()
         val cursor = if (more) current.nextCursor?.takeIf { !current.filtersChanged && !current.cursorInvalid } ?: return else null
         try { PublicDiscoveryService.searchURL(filters, cursor) }
         catch (error: IllegalArgumentException) { mutable.update { it.copy(error = error.message) }; return }
         val request = ++generation
         searchJob?.cancel()
-        mutable.update { it.copy(loading = true, loadingMore = more, error = null) }
+        mutable.update { it.copy(loading = true, loadingMore = more, error = null, submittedSearchFailed = false,
+            lastAttemptedFilters = if (more) it.lastAttemptedFilters else filters) }
         searchJob = scope.launch {
             try {
                 val page = service.search(filters, cursor)
                 currentCoroutineContext().ensureActive()
-                if (request != generation || state.value.filters.cleaned() != filters) return@launch
+                if (request != generation || (!ignoreDraft && state.value.filters.cleaned() != filters)) return@launch
                 if (page.status == "unavailable") {
                     mutable.update { it.copy(sources = page.sources, status = page.status, notice = page.notice,
                         error = if (it.jobs.isEmpty()) "The selected employer boards could not be reached. Try again or choose other boards."
@@ -324,10 +555,16 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
                     changed -> "These employer boards changed since the last page. Start a new search; your earlier results are still shown."
                     error is DiscoveryFailure || error is IllegalArgumentException -> error.message
                     else -> "The search could not be completed. Earlier results are kept; check your connection and try again."
-                }, nextCursor = if (changed) null else it.nextCursor, cursorInvalid = changed || it.cursorInvalid,
+                }, submittedSearchFailed = !more, nextCursor = if (changed) null else it.nextCursor, cursorInvalid = changed || it.cursorInvalid,
                     retryAtMillis = if (error is DiscoveryFailure && error.retryAfterSeconds != null)
                         System.currentTimeMillis() + error.retryAfterSeconds * 1000L else it.retryAtMillis) }
             } finally { if (request == generation) mutable.update { it.copy(loading = false, loadingMore = false) } }
         }
+    }
+
+    /** Retries the submitted search and leaves a newer filter draft in place. */
+    fun retrySubmittedSearch() {
+        val submitted = state.value.lastAttemptedFilters ?: state.value.displayedFilters ?: return
+        search(submitted = submitted, ignoreDraft = true)
     }
 }

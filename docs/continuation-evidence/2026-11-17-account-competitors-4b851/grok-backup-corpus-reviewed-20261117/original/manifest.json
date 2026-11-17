@@ -1,0 +1,96 @@
+{
+  "kind": "synthetic-phone-backup-corpus",
+  "acceptance": "shape and review expectations only; not WorkspaceTransfer.decode, not a device, not CI",
+  "baseline": {
+    "packetSnapshots": [
+      "8bfd3136227ce79625df8e2b57678de5fbfa201e",
+      "3a709eb15f1024df78ee03474f511568df2dc3de",
+      "842472684b194e993355f632902ccc81366c164c"
+    ],
+    "packetPreparedAt": "2026-11-17T14:07:14.234637+00:00",
+    "schemaFilesIdenticalAtCa3": [
+      "android/app/src/main/java/com/saleh/careerfinder/WorkspaceTransfer.kt",
+      "android/app/src/main/java/com/saleh/careerfinder/Models.kt",
+      "android/app/src/main/java/com/saleh/careerfinder/WorkspaceStorage.kt",
+      "apple/AhmadCareer/MobileApplicationState.swift",
+      "apple/AhmadCareer/NativeApplicationsStore.swift"
+    ],
+    "workspaceTransferGitBlob": "8e1c1dec5bcc1f12a97427c49974e717473e7ccc",
+    "workspaceTransferSha256": "766f4101f4164cc434537ef7aac15cddec08c224d22ceb085785c375cf78105e",
+    "mobileApplicationStateGitBlob": "edc87b8f27699167f7b85b204cb4b825f4db9172",
+    "ca3Commit": "ca3d3411d8b5b36fa7093dff782f4a7b931261c7",
+    "ca3ModelTsDiffers": true,
+    "ca3ModelDelta": "publicURL URL constructor catch, optional hosted record location. Phone backup keys unchanged.",
+    "notCovered": "Unintegrated accessibility patches and any dirty native tree newer than ca3 were not in the uploaded packages."
+  },
+  "files": [
+    {
+      "file": "01-two-unfinished-notes-one-job.json",
+      "sha256": "609ef2b2bd33c36c577af8cfe9257531a89adbe9411b36dfb5412b3d13c0e5a6",
+      "bytes": 1970,
+      "shapeErrors": []
+    },
+    {
+      "file": "02-destination-existing-note.json",
+      "sha256": "a011a1c60559bf5c1acf8b8da87c4103e6a7ddd1eb23593cb83f9fb6204dae5a",
+      "bytes": 1540,
+      "shapeErrors": []
+    },
+    {
+      "file": "02-import-two-alternatives.json",
+      "sha256": "7d996b908f9057a4d7e75e42c0ab1f33be982f4360ab2b5cc8dd9e562770c3ab",
+      "bytes": 1953,
+      "shapeErrors": []
+    },
+    {
+      "file": "03-distinct-lever-global-eu-and-greenhouse-hosts.json",
+      "sha256": "be6a94d3814691c09197073402cab91eb8055261bb09c56958139f040aee5ca0",
+      "bytes": 3873,
+      "shapeErrors": []
+    },
+    {
+      "file": "04-same-greenhouse-link-with-slash-and-utm.json",
+      "sha256": "49a65365e3c79a482cbcd7b34e0819077e50498f8f27be0f95f0d5623fde39e0",
+      "bytes": 1268,
+      "shapeErrors": []
+    },
+    {
+      "file": "05-unknown-root-approval-field.json",
+      "sha256": "56c0a62cc3ecf19c4792691197dc97308c64dcdd0d5744387a33ea353d5c89b2",
+      "bytes": 1557,
+      "shapeErrors": [
+        "unknown root fields: approved"
+      ]
+    },
+    {
+      "file": "06-oversized-draft-note.json",
+      "sha256": "3c300e4cead6e9e0b6bee3823048504b11e82153b613f05af886f00166b8693f",
+      "bytes": 3501,
+      "shapeErrors": [
+        "draft note exceeds 2000 code points/scalars for this ASCII/Arabic sample"
+      ]
+    },
+    {
+      "file": "08-self-reported-flag-and-prepared-receipt.json",
+      "sha256": "ede4156bfb5e801efe6da2b698f589817af5a3c42fcad0f45fcb3f8867b0c369",
+      "bytes": 3183,
+      "shapeErrors": []
+    },
+    {
+      "file": "07-damaged-truncated.json",
+      "sha256": "786c4841b2ba48dd6fe0df325714f92de2891187605f9eac6fc631f48d114bd7",
+      "bytes": 61,
+      "shapeErrors": [
+        "not JSON"
+      ]
+    },
+    {
+      "file": "proposed/09-server-expired-dispatch.json",
+      "sha256": "7dd0268b3ef790a88eef955a89b06b5acc958fa9c33d9467be58c4b444fb6f07",
+      "bytes": 1263,
+      "shapeErrors": [
+        "proposed server view, not a phone backup"
+      ]
+    }
+  ]
+}

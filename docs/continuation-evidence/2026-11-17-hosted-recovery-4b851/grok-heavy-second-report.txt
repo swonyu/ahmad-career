@@ -1,0 +1,141 @@
+Grok
+Thought for 1m 6s
+
+Career Finder — Deep Research, Blocker Remedies and Strict Independent Critique (Heavy) — Second Pass
+Corrections applied; deeper selective primary-source and implementation reads completed. Original report’s stale advisory details, acceptance-gate wording, ready-labeling claim, simulated-AT language, and “X seconds” diagnostic are superseded. This pass does not duplicate Build sessions’ ownership or implementation.
+
+Evidence classes (updated)
+
+This session’s execution: Selective GitHub get_file_contents / tree at exact SHA 63eecda5c5c57805aeae1f5ba8e22af65e38ceee (and prior handoff SHA); primary-source browse/web of GitHub advisory, Lever postings-api README, Greenhouse Job Board API, W3C APG Alert Pattern, WCAG 4.1.3, Apple/Google store docs. No writes, Mac, builds, probes, accounts or uploads.
+Source-confirmed: Code ranges read (exact boundaries noted below).
+Runtime-supplied: CURRENT VERIFIED CONTEXT + new root evidence (SessionRecovery delayed navigation after unmount; disconnect-confirm focus to BODY; busy Connect accessible name idle while visible text said “Opening secure sign-in”; Root rejects OAuth alert autofocus and preserves ordinary cancellation as polite status).
+Hypothesis: Android HttpsURLConnection prompt cancellation of blocking/trickling bodies remains unproven (timeouts exist).
+Research inference: Official provider contracts and mature tracker patterns.
+
+Exact files and read boundaries this pass (not whole-app coverage)
+
+hosted/server/discovery.mjs (full start through Lever pagination loop start; ~20 kB of ~28 kB; truncated mid-loop).
+hosted/server/applications.mjs (large; key sections on activeIDs, recoverablePlans, attemptView, planView, workspaceView; truncated).
+hosted/server/provider.mjs (full).
+hosted/app/phone/dispatch.ts (full).
+hosted/app/phone/safety.ts (full).
+hosted/app/phone/model.ts (schemas, receiptLabel, discoveryPageSchema, review/plan schemas; truncated near checkReview).
+apple/AhmadCareer/CareerDiscovery.swift (structs, DiscoveryPolicy, CareerDiscoveryClient, CareerDiscoveryStore restore/search/cancel; truncated).
+Tree listings confirming apple/AhmadCareer/NativeDiscoveryViews.swift, NativeApplicationsStore.swift, Android counterparts exist; full bodies not fetched (size/rate).
+hosted/package.json, workflow, README, handoff (prior).
+Prior 39 screenshots remain inaccessible. Honest unsupported areas: full vault.ts internals, exact transitive picomatch lockfile path, complete CI audit JSON, physical AT results, current store console.
+1. Picomatch GHSA correction (primary source re-opened)
+
+Accessed 
+github.com/advisories/GHSA-fc5q-39xc-vjpf on 17 November 2026:
+
+High severity, GitHub Reviewed, Published 19 October 2026, Last updated 17 November 2026, Affected versions <= 4.0.7, Patched versions: None.
+Description: ReDoS via single-branch repeated extglob patterns (e.g. +(*) or +(*a)); analyzeRepeatedExtglob in lib/parse.js skips, causing exponential backtracking. References include open PR #194 and source at 4.0.7.
+Earlier “Unreviewed / updated only 19 Oct” claims were stale. No official patched version exists. Pinning to any other <=4.0.7 is not a fix. Exposure assessment (no direct dependency in hosted/package.json; likely transitive via vite/eslint/wrangler tooling) informs prioritization only and cannot turn the required failing hosted audit green.
+
+Real remedies that could satisfy the existing gate (Development owns investigation):
+
+Official upstream patch + release that eliminates the vulnerable code, then lock to the patched version.
+Compatible override or minimal fork that removes the vulnerable path without introducing new issues, with evidence the audit then passes.
+Honest alternatives while investigating: document exact transitive path and confirm no untrusted globs reach it (discovery uses validated board tokens only); residual audit failure remains until a non-affected version is available. Do not suppress/waive.
+(A) Discovery reliability — concrete official-provider alternatives and bounded acceptance
+
+Source-confirmed limits (discovery.mjs DISCOVERY_LIMITS at 63eecda): maxSources=4, pageSize=50, maxJobsPerSource=500, maxCacheBytes=512 KiB, maxResponseBytes=4 MiB, freshMilliseconds=10 min, staleMilliseconds=24 h, sourceMilliseconds=10 000, requestMilliseconds=5 000, upstream rate budgets, etc.
+parseDiscoverySource accepts only Greenhouse/Lever board URLs or greenhouse: / lever:global|eu: IDs; rejects credentials, ports, fragments, extra params, encoded traversal.
+getJSON / readJSON: AbortController + timeout race, body.cancel on non-200, content-type + length bounds, reader.cancel + releaseLock in finally. Greenhouse: single GET https://boards-api.greenhouse.io/v1/boards/{token}/jobs (limited if meta.total > jobs.length or >500). Lever: loop skip=0; skip+=100 up to 500 with ?mode=json&limit=100&skip=. Partial after validated prefix is retained (matches supplied runtime).
+
+Official contracts (primary):
+
+Lever Postings API (
+github.com/lever/postings-api/blob/master/README.md): public GET /v0/postings/SITE?skip=&limit=&mode=json (no auth for published jobs), manual skip/limit, published-only, no full-text, CORS company-domain, POST apply rate-limited to 2/s (429).
+Greenhouse Job Board API (
+developers.greenhouse.io/job-board.html): public GET /v1/boards/{board_token}/jobs typically complete single response with meta.total; ?content=true optional; no standard pagination documented.
+
+Finite diagnostic plan using actual repository limits (not invented “X seconds”):
+
+Single known small catalog board (e.g. one of the seven): expect status=complete (or partial only if meta.total indicates truncation), jobs ≤50, nextCursor null or valid base64url matching query hash, checkedAt within fresh window, body released.
+Mid-pagination fixture (second Lever skip exceeds requestMilliseconds=5000 or sourceMilliseconds=10000): expect status=partial, retained validated prefix, source error/limited, prior page preserved, AbortController + reader.cancel + releaseLock observed, no hanging connection.
+Stale path: force refresh failure after >10 min but <24 h: stale=true, original checkedAt retained, notice distinguishes from filtered-zero.
+Complete-empty vs incomplete-zero: totalMatches=0 + status=complete vs status=partial/unavailable with jobs=[] (different copy + accessible status).
+Resource cleanup and retention: cache eviction after stale_until / lease_until; D1 rates bounded; no profile/CV sent.
+
+Concrete official-provider alternatives: Prefer single-request Greenhouse-style where possible; for Lever use bounded skip only up to known small boards or fall back immediately to public boardUrl handoff (already present in sourceRecord). Mature free pattern from official product docs (LinkedIn Job tracker help, Indeed My Jobs): user-driven stage tracking (Saved → Applied → Interview) with notes and follow-up dates, automatic only for platform-native Easy Apply where the platform owns the status; never invent employer verification. Handoff to public employer board is the reliable free path when API incomplete.
+
+Tradeoff table
+
+Option	Benefit	Cost/Risk	Acceptance threshold
+Current bounded multi-skip + partial retention	More complete results for large Lever boards	Timeout/partial complexity; resource risk if cancel incomplete	Partial never shown as filtered-zero; prefix retained; cleanup verified
+Single-request only + immediate board handoff	Simpler, lower timeout surface, always truthful	Fewer jobs on large boards	Board URL always offered; no invented completeness
+Cache + TTL (10 min fresh / 24 h stale) already present	Reduced upstream load	Stale data risk	Original checkedAt always shown; stale distinguished
+
+Owner: native search / feed owners (register before edits). Hypotheses remain hypotheses.
+
+(B) Native abandoned dispatch Stop/reconcile, import preservation, ready/approval state machine
+
+Source-confirmed:
+
+dispatch.ts continueApprovedPlan: “This function cannot approve work.” Requires plan.approvedAt, activePlanIds inclusion, pending states (ready/rate_limited/dispatching), visibility and Stop checks; returns early on shouldStop without new provider request; max 20 steps, 1 s pace; progress comparison prevents no-op loops.
+provider.mjs submit: confirmed only on exact 200 + ok=true + applicationId; rate_limited on 429 with retryAfter; rejected on 4xx + ok=false; uncertain on transport failure or undocumented response. Bounded text reads.
+applications.mjs snippets: activeIDs and recoverablePlans filter on plan approval_generation, expires, revision, and attempt states ready/dispatching/rate_limited under plan conditions; planView joins attempt state.
+model.ts receiptLabel maps ready → “Approved, waiting to send”; however, per correction and filtering behavior, ready receipts are filtered and approval is proven by the related plan (approvedAt / approval_generation), not attempt.state alone. Server creates ready attempts before full approval path; a ready attempt can belong to an approved plan. Do not invent a universal consent defect.
+safety.ts: separate encrypted vault for Stop holds and recovery drafts; holds survive clear of personal drafts; only confirmed service Stop clears authorization.
+
+Stop/reconcile and import: Explicit Stop returns without resubmission (dispatch.ts + supplied context). Import alternatives must preserve provenance and fence by identity/account (vault/safety scopes).
+
+Tradeoff table
+
+Option	Benefit	Cost/Risk	Acceptance threshold
+Plan-based approval (current)	Prevents premature “approved” labeling; matches server creation order	Requires careful UI filtering of ready receipts	Unapproved ready never shown as approved/queued; Stop on uncertain does not resubmit
+Attempt.state-only labeling	Simpler display	Misleads when ready precedes plan approval	Rejected; contradicts code + correction
+Explicit Stop + reconcile without resubmit	Privacy and no double-submit	User must act	Confirmed: no new provider request after Stop
+
+Owner: account/storage and native recovery handoffs (preserve singular-copy, incomplete-status). New root evidence on SessionRecovery delayed navigation after unmount is noted; another reviewer is preparing bounded corrections — do not duplicate.
+
+(C) Arabic/English/RTL/large-text/keyboard/status patterns
+
+Primary sources:
+
+WCAG 2.2 SC 4.1.3 Status Messages (
+w3.org/WAI/WCAG22/Understanding/status-messages.html): status messages must be programmatically determinable so AT can present them without receiving focus.
+W3C APG Alert Pattern (
+w3.org/WAI/ARIA/apg/patterns/alert, accessed 17 Nov 2026): “it is crucial they do not affect keyboard focus.” Alerts provide important information without interrupting the user’s task; Alert Dialog is the pattern for intentional interruption. role=status (polite live region) is the correct mechanism for routine status (results, saved, partial, cancellation); it is not automatically a WCAG violation.
+Root will preserve ordinary cancellation as polite status and rejects OAuth alert autofocus.
+
+Visual text alone does not close a failed AT requirement. Simulated VoiceOver/TalkBack is not physical AT acceptance. An accessible alternative must itself work and be tested on physical devices.
+
+Executable acceptance (physical AT required):
+
+Search status, partial notice, save confirmation, cancel announcement complete with VoiceOver and TalkBack without focus steal on routine status.
+Mixed Arabic/English/URLs use proper isolation (dir=auto or bidi isolation); large text and keyboard focus order remain usable on critical journeys (search → save → apply review).
+Disconnect-confirm and busy Connect states have correct accessible names matching visible text (baseline focus-to-BODY and idle name noted as open).
+
+Tradeoff table
+
+Option	Benefit	Cost/Risk	Acceptance threshold
+role=status / polite for routine	Non-interrupting; matches SC 4.1.3 and APG	User may miss if verbosity low	Announced without focus move on physical AT
+role=alert + focus move	Stronger interruption	Violates APG “do not affect keyboard focus”; exhausts users	Rejected for routine status; reserved for true alert dialogs
+Visual + text only	Simple	Fails AT users	Insufficient for acceptance
+
+Owner: UI/native owners; physical device scheduling with publisher.
+
+(D) Audit/CI/store dependency chain and working-path prerequisites
+
+Hosted gate fails Picomatch audit (supplied). No direct dep; transitive. Working path: Development investigates exact lockfile exposure and applies only a remedy that makes npm audit pass (upstream patch or verified non-vulnerable override). Publisher owns signed builds, store forms.
+
+Apple prerequisites (official): public privacy policy URL in App Store Connect + in-app; Data/Privacy Nutrition Labels accurate for all collection (incl. third-party); support URL; account deletion in-app if accounts exist. Google: Data safety form + public privacy policy URL for every app. No current store-console status established. Full integrated acceptance and store status remain pending.
+
+Mature job-tracker patterns (official product docs, free-cost fit): LinkedIn Job tracker (help center) and Indeed My Jobs provide Saved/Applied/Interview stages, notes, follow-up, automatic updates only for platform-native apply. Career Finder already mirrors this with local stages, notes, follow-up dates and explicit employer-board handoff. Do not add aggregation or auto-status features that create new consent, rate-limit or cost burdens.
+
+Prioritized executable sequence (unchanged ownership)
+
+Native search handoff: implement/validate partial vs complete-zero distinction, historical restore, canonical board matching, board handoff using the concrete limits above.
+Account owners: enforce plan-based approval display (filter ready receipts; show prepared/unapproved vs approved/queued correctly); Stop/reconcile without resubmission.
+Physical VoiceOver/TalkBack on critical journeys (status without focus steal, RTL/mixed, large text, keyboard).
+Development: picomatch exposure path + only a remedy that greens the audit.
+Publisher: privacy/Data safety accuracy, signed-build/device gates.
+
+Remaining uncertainties
+Exact transitive picomatch path and lockfile; full vault.ts and remaining PhoneApp.tsx ranges; complete CI audit output; physical AT results; current store console; Android transport cancel beyond timeouts. No 100 % or release-ready claims.
+
+Report finished (17 November 2026, second pass).
+[]
