@@ -1336,10 +1336,16 @@ private struct NativeSalaryScreen: View {
     @State private var basic = ""
     @State private var allowances = ""
     @State private var bonus = ""
+    @State private var announcedSalary: String?
     @FocusState private var focused: Bool
     private var basicAmount: Double? { NativeMoney.parse(basic, limit: 1_000_000) }
     private var allowanceAmount: Double? { NativeMoney.parse(allowances, limit: 1_000_000) }
     private var bonusAmount: Double? { NativeMoney.parse(bonus, limit: 10_000_000) }
+    private var salaryValidation: String? {
+        if basicAmount == nil || allowanceAmount == nil { return "Use 0 to 1,000,000 with at most two decimal places." }
+        if bonusAmount == nil { return "Use 0 to 10,000,000 with at most two decimal places." }
+        return nil
+    }
     private func amount(_ value: Double) -> String { currency + " " + value.formatted(.number.precision(.fractionLength(0...2)).locale(l10n.locale)) }
     private func clearAmounts() { basic = ""; allowances = ""; bonus = "" }
     var body: some View {
@@ -1402,6 +1408,12 @@ private struct NativeSalaryScreen: View {
         .onAppear { if !initialized { currency = store.workspace.profile.effectiveCurrency; period = store.workspace.profile.effectivePayPeriod; initialized = true } }
         .onChange(of: currency) { _ in clearAmounts() }
         .onChange(of: period) { _ in clearAmounts() }
+        .onChange(of: salaryValidation) { text in if text == nil { announcedSalary = nil } }
+        .onChange(of: focused) { isFocused in
+            guard !isFocused, let text = salaryValidation, text != announcedSalary else { return }
+            announcedSalary = text
+            UIAccessibility.post(notification: .announcement, argument: l10n(text))
+        }
         .navigationTitle(l10n("Salary & negotiation")).navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItemGroup(placement: .keyboard) { Spacer(); Button(l10n("Done")) { focused = false } } }
     }
