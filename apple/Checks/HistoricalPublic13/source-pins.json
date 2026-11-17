@@ -1,0 +1,74 @@
+{
+  "EmployerMetadataCheck.swift": {
+    "commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+    "source": "apple/Checks/EmployerMetadataCheck.swift",
+    "sha256": "30a32bee2a6a80633764bbec86b5171c5637c8ce8e8a55764b27f06b4a2a8a2c",
+    "gitBlobSHA1": "d90fb1a138cae06813f51f46e9b01a129aa3dd54"
+  },
+  "PublicProviderCheck.swift": {
+    "commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+    "source": "apple/Checks/PublicProviderCheck.swift",
+    "sha256": "da86e1ce972f5eb44e8dd57405346e532dc1d4f5bc0d90f7332498bcbc5842c5",
+    "gitBlobSHA1": "9911db13d5f55fa7d45cb70ddce1f49eed7cd229"
+  },
+  "PublicRetentionCheck.swift": {
+    "commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+    "source": "apple/Checks/PublicRetentionCheck.swift",
+    "sha256": "4cad396cdba03e53509ccb6c3fa1d70e9ef0c12c12cb4aa35049b5bdec550caf",
+    "gitBlobSHA1": "a0f7c2e7719d45e8cced0ca13442b27f271ab8df"
+  },
+  "NativeUpgradeCheck.swift": {
+    "commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+    "source": "apple/Checks/NativeUpgradeCheck.swift",
+    "sha256": "ed38e4d254b8cea10dbec04d3579474484562fe9a038c5e5aa83bf1acba32a7b",
+    "gitBlobSHA1": "03284617e945e44b9811f2960afa305b59934ac7"
+  },
+  "SearchChangesCheck.swift": {
+    "commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+    "source": "apple/Checks/SearchChangesCheck.swift",
+    "sha256": "d45298b15cb7d1167b0664c8e85419cf9b4ecbdedf868036310030a3b68a9aa6",
+    "gitBlobSHA1": "b6d5bafbfe244598c86ba88fb09f7f57a676ad59"
+  },
+  "RoleReviewCheck.swift": {
+    "commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+    "source": "apple/Checks/RoleReviewCheck.swift",
+    "sha256": "5a8ebcde777982daea77030b3aacfad79da886aa2a09bbedf65d3d2798287624",
+    "gitBlobSHA1": "21a25b0ca71f4e72b22a66622922d1be68cd81ab"
+  },
+  "SmartRecruitersCheck.swift": {
+    "commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+    "source": "apple/Checks/SmartRecruitersCheck.swift",
+    "sha256": "0c1d99a87631c2bf2d32e55d57e0488f1c0269d6c3651ec4f88db2d34b6e61a8",
+    "gitBlobSHA1": "b6fd73a33388c0e3e58ad93ddd97b8e337156bfe"
+  },
+  "TransportCheck.swift": {
+    "commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+    "source": "apple/Checks/TransportCheck.swift",
+    "sha256": "e4b244ff903ad2cc774606568b8cc82c349d619bb0218a3799bf7f6e0e5bc530",
+    "gitBlobSHA1": "ffa2d279de5511fed0f89582208b0ced51488c5a"
+  },
+  "NativeBackupCheck.swift": {
+    "commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+    "source": "apple/Checks/NativeBackupCheck.swift",
+    "sha256": "e984165550923b9d1d67407ef7a76989760efae4b1a4e33c6e189cd6d1bf4604",
+    "gitBlobSHA1": "19e5488f8c64e709cb839a0fcbe7b1be988cc69c"
+  },
+  "WebRuntimeCheck.swift": {
+    "commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+    "source": "apple/Checks/WebRuntimeCheck.swift",
+    "sha256": "79732984fbd92bba273d9ff54c86a2c11db796f74ff511ef532748b98061ea1f",
+    "gitBlobSHA1": "31cafea5416eb31e2a0a4e34a493dced3f3fa415"
+  },
+  "check.sh": {
+    "commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+    "source": "apple/Checks/check.sh",
+    "sha256": "f734af5b495267bf0e41069e492ba05ed31f4d9033d82ae41ee5d771df87498b",
+    "gitBlobSHA1": "1b00950ac4e636fd977a361eccef8307ffcb3251"
+  },
+  "main.swift": {
+    "commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+    "source": "apple/Checks/main.swift",
+    "sha256": "836af66e8cfb644d7fb8072c07b0b890c8c42ba835c96e53f66651aed3cfeb5a",
+    "gitBlobSHA1": "a2622106f72ff3ba0f8f7b5df641fa19078ee9ac"
+  }
+}

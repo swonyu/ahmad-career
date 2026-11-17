@@ -1,6 +1,7 @@
 #if os(iOS)
 import SwiftUI
 import UIKit
+import UniformTypeIdentifiers
 
 enum NativeAppearance: String, CaseIterable, Identifiable {
     case system, light, dark
@@ -555,7 +556,7 @@ private struct NativeJobLink: View {
         NavigationLink { NativeJobDetail(job: job) } label: {
             HStack(alignment: .top, spacing: 13) {
                 Text(job.initials).font(.caption.weight(.bold))
-                    .frame(width: 40, height: 40).background(Color.careerMint, in: RoundedRectangle(cornerRadius: 12))
+                    .frame(width: 40, height: 40).background(NativeDesign.accentSurface, in: RoundedRectangle(cornerRadius: 12))
                     .foregroundStyle(Color.careerAccent).accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 7) {
                     if store.isCurrentResearch(job), let rank = job.rank { Text(l10n.format("PRIORITY {0}", [String(format: "%02d", rank)])).font(.caption2.weight(.semibold)).foregroundStyle(.secondary) }
@@ -649,6 +650,7 @@ private struct NativeJobDetail: View {
                     ForEach(NativeCareerStore.statuses, id: \.self) { Text(l10n($0)).tag($0) }
                 }
                 NavigationLink { NativeApplicationRecordEditor(job:job) } label: { Label(l10n("Application date and receipt note"),systemImage:"calendar.badge.clock") }
+                NavigationLink { NativeLegacyNextActionEditor(job:job) } label: { Label(l10n("Your next action"),systemImage:"checklist") }
                 Button { store.toggleSaved(job) } label: {
                     Label(l10n(store.isSaved(job) ? "Remove from saved" : "Save opportunity"), systemImage: store.isSaved(job) ? "heart.fill" : "heart")
                 }
@@ -677,6 +679,120 @@ private struct NativeJobDetail: View {
                 Text(l10n("Review and rewrite every draft before using it. Recheck salary, deadlines and qualifications directly with the employer."))
             }
         }.nativeList().navigationTitle(l10n("Opportunity")).navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+private struct NativeLegacyNextActionEditor: View {
+    @NativeLocalization private var l10n
+    @EnvironmentObject private var store:NativeCareerStore
+    @Environment(\.scenePhase) private var scenePhase
+    let job:CareerJob
+    @State private var discard=false
+    @State private var notice=""
+    private var draft:NextActionDraft {store.nextActionDrafts[job.id] ?? NextActionDraft()}
+    private func edit(dueOn:String?=nil,note:String?=nil,completed:Bool?=nil) {
+        store.editNextAction(job,dueOn:dueOn ?? draft.dueOn,actionNote:note ?? draft.actionNote,completed:completed ?? draft.completed)
+        notice=""
+    }
+    var body:some View {
+        Form {
+            Section {
+                Text(job.title).font(.headline)
+                Text(l10n("This private plan stays with the earlier local record. It is not an application receipt and is not copied into a connected account.")).font(.footnote)
+                TextField(l10n("YYYY-MM-DD, or leave blank"),text:Binding(get:{draft.dueOn},set:{edit(dueOn:$0)}))
+                    .environment(\.layoutDirection,.leftToRight).textInputAutocapitalization(.never).autocorrectionDisabled()
+                    .accessibilityLabel(l10n("Next action due date, YYYY-MM-DD"))
+                    .accessibilityIdentifier("legacyAction.date")
+                TextEditor(text:Binding(get:{draft.actionNote},set:{edit(note:$0)})).frame(minHeight:140)
+                    .accessibilityLabel(l10n("Private next action"))
+                    .accessibilityIdentifier("legacyAction.note")
+                Toggle(l10n("Completed"),isOn:Binding(get:{draft.completed},set:{edit(completed:$0)}))
+            } header:{Text(l10n("Your next action"))} footer:{
+                Text(l10n("Use up to 500 characters. A date or a completed action needs a note. No reminder, message or application is sent."))
+            }
+            Section {
+                if draft.dirty {Text(l10n("Unsaved draft. Kept for this session; export your notes before closing the app.")).foregroundStyle(.secondary)}
+                if let error=store.nextActionErrors[job.id] {Text(l10n.message(error)).foregroundStyle(.red).accessibilityAddTraits(.updatesFrequently)}
+                if !notice.isEmpty {Text(l10n(notice)).accessibilityAddTraits(.updatesFrequently)}
+                Button(l10n("Save next action")) {
+                    notice=store.saveNextAction(job) ? "Next action saved on this phone." : ""
+                    UIAccessibility.post(notification:.announcement,argument:l10n.message(store.nextActionErrors[job.id] ?? notice))
+                }.accessibilityIdentifier("legacyAction.save")
+                Button(l10n("Reload saved record")) {if draft.dirty {discard=true} else {store.beginNextAction(job,discardDraft:true);notice=""}}
+            }
+        }.navigationTitle(l10n("Your next action")).navigationBarTitleDisplayMode(.inline)
+            .onAppear{store.beginNextAction(job)}
+            .onChange(of:scenePhase){phase in if phase == .active {store.beginNextAction(job)}}
+            .confirmationDialog(l10n("Discard this unsaved draft and load the saved record?"),isPresented:$discard,titleVisibility:.visible){
+                Button(l10n("Discard draft and reload"),role:.destructive){store.beginNextAction(job,discardDraft:true);notice=""}
+                Button(l10n("Keep draft"),role:.cancel){}
+            }
+    }
+}
+
+private struct NativeLegacyBackupDocument:FileDocument {
+    static var readableContentTypes:[UTType] {[.json]}
+    var data:Data
+    init(data:Data){self.data=data}
+    init(configuration:ReadConfiguration)throws{data=configuration.file.regularFileContents ?? Data()}
+    func fileWrapper(configuration:WriteConfiguration)throws->FileWrapper{FileWrapper(regularFileWithContents:data)}
+}
+
+struct NativeLegacyBackupScreen:View {
+    @NativeLocalization private var l10n
+    @EnvironmentObject private var store:NativeCareerStore
+    @State private var preview:NativeRestorePreview?
+    @State private var document=NativeLegacyBackupDocument(data:Data())
+    @State private var exporting=false
+    @State private var importing=false
+    @State private var confirming=false
+    @State private var notice=""
+    var body:some View {
+        Form {
+            Section(l10n("Earlier local planning records")) {
+                Text(l10n("These records are separate from every connected account. A backup includes saved roles, self-entered receipt notes, next actions and the saved planning profile. It contains no account credentials or application approvals."))
+                Button(l10n("Export earlier planning records")) {
+                    do {document=NativeLegacyBackupDocument(data:try store.privateBackupData());exporting=true;notice=""}
+                    catch {notice=error.localizedDescription}
+                }.accessibilityIdentifier("legacyBackup.export")
+                NavigationLink { NativeNotesPreview(text:l10n.exportNotes(from:store),includesProfile:true) } label: {Label(l10n("Review my application notes"),systemImage:"doc.text")}
+            } footer:{Text(l10n("This unencrypted file contains private information. Choose a destination you trust. Unsaved drafts are available in reviewed notes, not the saved-data backup."))}
+            Section(l10n("Add earlier records from a backup")) {
+                Button(l10n("Choose an earlier workspace backup")){preview=nil;importing=true}.accessibilityIdentifier("legacyBackup.choose")
+                Text(l10n("Review the additions before restoring. Existing records, profile and checklist are preserved. Nothing is copied into an account, uploaded or submitted."))
+                if let candidate=preview {
+                    Text(l10n.format("{0} additions; {1} existing values preserved; {2} profile or checklist fields skipped.",[String(candidate.additions),String(candidate.conflicts),String(candidate.skipped)]))
+                        .accessibilityIdentifier("legacyBackup.preview")
+                    Button(l10n("Confirm additive restore")){confirming=true}.disabled(candidate.additions==0)
+                        .accessibilityIdentifier("legacyBackup.confirm")
+                    Button(l10n("Cancel preview"),role:.cancel){preview=nil;notice="Preview canceled. Nothing was restored."}
+                }
+            } footer:{Text(l10n("Close older app versions before restoring. A local recovery copy is saved first. If the saved data changes, create a new preview. Older versions may not preserve newer records or preferences."))}
+            if !notice.isEmpty {Section {Text(l10n.message(notice)).fixedSize(horizontal:false,vertical:true).accessibilityAddTraits(.updatesFrequently)}}
+        }.navigationTitle(l10n("Earlier records and backups")).navigationBarTitleDisplayMode(.inline)
+            .fileExporter(isPresented:$exporting,document:document,contentType:.json,defaultFilename:"Career-Finder-planning-backup") {result in
+                if case .failure(let error)=result {notice=error.localizedDescription}
+            }
+            .fileImporter(isPresented:$importing,allowedContentTypes:[.json]) {result in
+                preview=nil
+                do {
+                    let url=try result.get();let access=url.startAccessingSecurityScopedResource()
+                    defer {if access {url.stopAccessingSecurityScopedResource()}}
+                    let handle=try FileHandle(forReadingFrom:url);defer {try? handle.close()}
+                    let data=try handle.read(upToCount:NativeCareerStore.backupLimit+1) ?? Data()
+                    guard data.count<=NativeCareerStore.backupLimit else {throw NativeBackupError.invalid}
+                    preview=try store.previewBackup(data);notice=""
+                } catch {notice=error.localizedDescription}
+            }
+            .confirmationDialog(l10n("Add missing saved data? Existing values will be preserved."),isPresented:$confirming,titleVisibility:.visible) {
+                Button(l10n("Restore additions")) {
+                    guard let candidate=preview else {return}
+                    do {try store.applyBackup(candidate);notice="Additions restored locally. Nothing was sent."}
+                    catch {notice=error.localizedDescription}
+                    preview=nil
+                }
+                Button(l10n("Cancel"),role:.cancel){preview=nil}
+            }
     }
 }
 

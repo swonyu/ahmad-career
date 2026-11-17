@@ -743,7 +743,7 @@ struct NativeOpportunityEditor: View {
     }
 }
 
-private struct NativeApplicationConnection: View {
+struct NativeApplicationConnection: View {
     @NativeLocalization private var l10n
     @ObservedObject var model: NativeApplicationsStore
     @Environment(\.dismiss) private var dismiss
@@ -1145,6 +1145,13 @@ struct NativePhoneDataScreen: View {
                 Text(l10n("The JSON backup contains readable personal information, including your selected PDF when it is on this phone and this workspace's search draft/results. Keep it private. It does not contain connection credentials, online application approvals, provider receipts, or the separate planning notes."))
                     .font(.footnote).foregroundStyle(.secondary)
                 Text(l10n("Import replaces this phone's profile draft and merges saved links and private record history. Existing record versions are retained for comparison. It does not upload data or approve applications."))
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+            Section(l10n("Earlier local planning records")) {
+                NavigationLink { NativeLegacyBackupScreen() } label: {
+                    Label(l10n("Review earlier records and backups"),systemImage:"archivebox")
+                }.accessibilityIdentifier("phoneData.legacyPlanning")
+                Text(l10n("Separate planning notes and older backup files stay local. They are never adopted by a connected account automatically."))
                     .font(.footnote).foregroundStyle(.secondary)
             }
             if model.hasUnpairedDraft {

@@ -1,0 +1,182 @@
+[
+  {
+    "source": {
+      "name": "Mozn",
+      "type": "workable",
+      "board": "mozn-ai"
+    },
+    "data": {
+      "jobs": [
+        {
+          "title": "Junior Software Developer",
+          "shortcode": "FIXTURE1",
+          "country": "Saudi Arabia",
+          "city": "Riyadh",
+          "published_on": "2026-01-01",
+          "experience": "Entry level",
+          "locations": [
+            {
+              "countryCode": "SA",
+              "city": "Riyadh",
+              "hidden": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "source": {
+      "name": "Lucidya",
+      "type": "workable",
+      "board": "lucidya"
+    },
+    "data": {
+      "jobs": [
+        {
+          "title": "Junior Software Developer",
+          "shortcode": "FIXTURE1",
+          "country": "Saudi Arabia",
+          "city": "Riyadh",
+          "published_on": "2026-01-01",
+          "experience": "Entry level",
+          "locations": [
+            {
+              "countryCode": "SA",
+              "city": "Riyadh",
+              "hidden": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "source": {
+      "name": "Foodics",
+      "type": "workable",
+      "board": "foodics"
+    },
+    "data": {
+      "jobs": [
+        {
+          "title": "Junior Software Developer",
+          "shortcode": "FIXTURE1",
+          "country": "Saudi Arabia",
+          "city": "Riyadh",
+          "published_on": "2026-01-01",
+          "experience": "Entry level",
+          "locations": [
+            {
+              "countryCode": "SA",
+              "city": "Riyadh",
+              "hidden": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "source": {
+      "name": "Salla",
+      "type": "workable",
+      "board": "salla"
+    },
+    "data": {
+      "jobs": [
+        {
+          "title": "Junior Software Developer",
+          "shortcode": "FIXTURE1",
+          "country": "Saudi Arabia",
+          "city": "Riyadh",
+          "published_on": "2026-01-01",
+          "experience": "Entry level",
+          "locations": [
+            {
+              "countryCode": "SA",
+              "city": "Riyadh",
+              "hidden": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "source": {
+      "name": "Lean Technologies",
+      "type": "ashby",
+      "board": "LeanTech"
+    },
+    "data": {
+      "jobs": [
+        {
+          "title": "Software Engineering Intern",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "isListed": true,
+          "location": "Riyadh",
+          "publishedAt": "2026-01-01T00:00:00Z",
+          "jobUrl": "https://jobs.ashbyhq.com/LeanTech/11111111-1111-4111-8111-111111111111",
+          "address": {
+            "postalAddress": {
+              "addressCountry": "SA"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "source": {
+      "name": "Tamara",
+      "type": "greenhouse",
+      "board": "tamara"
+    },
+    "data": {
+      "jobs": [
+        {
+          "title": "Tamara Builders Program - Data",
+          "id": 123,
+          "location": {
+            "name": "Riyadh, Saudi Arabia"
+          },
+          "absolute_url": "https://job-boards.eu.greenhouse.io/tamara/jobs/123",
+          "updated_at": "2026-01-02T00:00:00Z"
+        }
+      ]
+    }
+  },
+  {
+    "source": {
+      "name": "Unifonic",
+      "type": "recruitee",
+      "board": "unifonic"
+    },
+    "data": {
+      "offers": [
+        {
+          "id": 12345,
+          "title": "Junior Software Developer",
+          "slug": "junior-software-developer",
+          "status": "published",
+          "careers_url": "https://jobs.unifonic.com/o/junior-software-developer",
+          "published_at": "2026-01-01 00:00:00 UTC",
+          "close_at": null,
+          "remote": false,
+          "on_site": true,
+          "hybrid": false,
+          "employment_type_code": "fulltime_permanent",
+          "locations": [
+            {
+              "country_code": "SA",
+              "country": "Saudi Arabia",
+              "city": "Riyadh"
+            }
+          ],
+          "requirements": "<p>Bachelor\u2019s degree preferred, or equivalent practical experience.</p>"
+        }
+      ]
+    }
+  }
+]

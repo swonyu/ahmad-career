@@ -12,8 +12,13 @@ struct CareerJob: Codable, Identifiable, Hashable {
     var fit: String
     var summary: String
     var rank: Int?
+    var relevance: Int?
     var subtitle: String?
     var mode: String?
+    var postedKind: String?
+    var experienceLevel: String?
+    var employmentType: String?
+    var requirementNotes: [String]?
     var closes: String?
     var applyUrl: String?
     var sourceUrl: String?
@@ -26,6 +31,12 @@ struct CareerJob: Codable, Identifiable, Hashable {
     var lastCheckedAt: String?
     var researchCheckedAt: String?
 
+    var publicationLabel:String {postedKind=="last-published" ? "Last published" : "Published"}
+    var validEmployerMetadata:Bool {
+        (postedKind==nil || ["published","last-published"].contains(postedKind!)) &&
+        (experienceLevel?.utf16.count ?? 0)<=100 && (employmentType?.utf16.count ?? 0)<=100 &&
+        (requirementNotes?.count ?? 0)<=6 && (requirementNotes?.allSatisfy{$0.utf16.count<=300} ?? true)
+    }
     var initials: String { company == "Johnson & Johnson" ? "J&J" : String(company.prefix(1)) }
     var isSaudi: Bool { location.range(of: "Saudi|Riyadh|Jeddah|Dammam|Khobar|\\bSAU\\b|الرياض|جدة|السعودية", options: [.regularExpression,.caseInsensitive]) != nil }
     var hasRiyadhEvidence:Bool { location.replacingOccurrences(of:"\\briyadh\\s+(?:region|province)\\b|(?:منطقة|إقليم)\\s+الرياض",with:"",options:[.regularExpression,.caseInsensitive]).range(of:"(?:^|[^\\p{L}])(?:riyadh|الرياض)(?=$|[^\\p{L}])",options:[.regularExpression,.caseInsensitive]) != nil }
@@ -39,9 +50,19 @@ struct CareerJob: Codable, Identifiable, Hashable {
     var requirements: [String] { gaps ?? ["Confirm the complete degree, experience, location and seniority requirements on the employer website.","This lead was found by title and location. It is not a personalized eligibility assessment."] }
     var applicationSteps: [[String]] { (steps ?? [["Read the official description","Check that the position is open and compare all mandatory requirements."],["Tailor your evidence","Use two actual achievements relevant to the responsibilities."],["Apply personally","Open the employer application, review your answers and attachments, then submit when ready."],["Keep the confirmation","Save the acknowledgement and update your application status."]]).filter { $0.count >= 2 } }
     static func safeURL(_ value: String) -> URL? {
-        let hosts: Set<String> = ["apply.workable.com","alcon.wd5.myworkdayjobs.com","jj.wd5.myworkdayjobs.com","roche.wd3.myworkdayjobs.com","novartis.wd3.myworkdayjobs.com","gsk.wd5.myworkdayjobs.com","bdx.wd1.myworkdayjobs.com","www.careers.jnj.com","eenp.fa.em3.oraclecloud.com","efan.fa.em3.oraclecloud.com","careers.al-dawaa.com","www.linkedin.com","sa.linkedin.com"]
-        guard let u=URL(string:value), u.scheme == "https", let host=u.host?.lowercased(), hosts.contains(host), u.user == nil, u.password == nil, u.port == nil || u.port == 443 else { return nil }
-        if host == "apply.workable.com", u.path.range(of:"^/qiddiya-investment-company-1/j/[A-Za-z0-9]+(?:/apply)?/?$",options:.regularExpression)==nil {return nil}
+        let hosts: Set<String> = ["apply.workable.com","alcon.wd5.myworkdayjobs.com","jj.wd5.myworkdayjobs.com","roche.wd3.myworkdayjobs.com","novartis.wd3.myworkdayjobs.com","gsk.wd5.myworkdayjobs.com","bdx.wd1.myworkdayjobs.com","www.careers.jnj.com","eenp.fa.em3.oraclecloud.com","efan.fa.em3.oraclecloud.com","careers.al-dawaa.com","www.linkedin.com","sa.linkedin.com","jobs.ashbyhq.com","job-boards.eu.greenhouse.io","jobs.unifonic.com","jobs.smartrecruiters.com"]
+        guard let u=URL(string:value), u.scheme?.lowercased() == "https", let host=u.host?.lowercased(), hosts.contains(host), u.user == nil, u.password == nil, u.port == nil || u.port == 443 else { return nil }
+        if host == "apply.workable.com", u.path.range(of:"^/(qiddiya-investment-company-1|mozn-ai|lucidya|foodics|salla)/j/[A-Za-z0-9]{1,64}(?:/apply)?/?$",options:.regularExpression)==nil {return nil}
+        if host == "jobs.ashbyhq.com", u.path.range(of:#"^/LeanTech/[a-f0-9-]{36}(?:/application)?/?$"#,options:[.regularExpression,.caseInsensitive])==nil {return nil}
+        if host == "job-boards.eu.greenhouse.io", u.path.range(of:#"^/tamara/jobs/[0-9]{1,20}/?$"#,options:.regularExpression)==nil {return nil}
+        if host == "jobs.unifonic.com", u.path.range(of:#"^/o/[a-z0-9][a-z0-9-]{0,199}/?$"#,options:[.regularExpression,.caseInsensitive])==nil {return nil}
+        if host == "jobs.smartrecruiters.com" {
+            guard u.query == nil, u.fragment == nil,
+                  var components = URLComponents(url: u, resolvingAgainstBaseURL: false),
+                  components.percentEncodedPath.range(of: #"^/(?:Devoteam|DeliveryHero)/[0-9]{1,20}-[a-z0-9-]{1,240}/?\z"#, options: .regularExpression) != nil else {return nil}
+            components.scheme = "https"; components.host = host; components.port = nil
+            return components.url
+        }
         if host.hasSuffix(".oraclecloud.com"), u.path.range(of:"^/hcmUI/CandidateExperience/en/sites/CX_1/job/[0-9]+/?$",options:.regularExpression)==nil {return nil}
         if host == "careers.al-dawaa.com", !u.path.hasPrefix("/en/saudi-arabia/jobs/") {return nil}
         if host == "www.linkedin.com" || host == "sa.linkedin.com", u.path.range(of:"^/jobs/view/(?:[A-Za-z0-9-]+-)?[0-9]+/?$",options:.regularExpression)==nil {return nil}
@@ -53,6 +74,136 @@ struct CareerJob: Codable, Identifiable, Hashable {
         if value.count == 10 { return value < (today ?? CareerFeed.saudiDay(Date())) }
         return instant < Date()
     }
+}
+// A deterministic reading aid. It never edits records or decides whether someone qualifies.
+struct RoleReview: Equatable {
+    struct Topic: Equatable, Identifiable {
+        let id: String
+        let label: String
+        let excerpts: [String]
+    }
+    static let roleFocuses: [(id: String, label: String)] = [
+        ("software", "Software & web"), ("data-ai", "Data & AI"),
+        ("platform", "Cloud & platform"), ("mobile", "Mobile"), ("quality", "Quality & testing")
+    ]
+    static let overlapLabel = "Mentioned in your profile and available employer text"
+    static let disclaimer = "A reading aid, not an eligibility assessment. Your profile is self-entered; overlapping words do not prove capability or professional experience."
+    private struct Pattern {
+        let id: String
+        let label: String
+        let expression: NSRegularExpression
+        init(_ id: String, _ label: String, _ pattern: String) {
+            self.id = id; self.label = label
+            // Unicode-aware boundaries avoid Bioscience, Swiftly, GitHub and NoSQL matches.
+            expression = try! NSRegularExpression(pattern: #"(?<![\p{L}\p{N}_])(?:"# + pattern + #")(?![\p{L}\p{N}_])"#, options: .caseInsensitive)
+        }
+        func matches(_ text: String) -> Bool {
+            expression.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)) != nil
+        }
+    }
+    private static let rolePatterns: [Pattern] = [
+        Pattern("software", "Software & web", #"software|developers?|front[ -]?end|back[ -]?end|full[ -]?stack|web|مطور|برمجيات"#),
+        Pattern("data-ai", "Data & AI", #"AI|machine[ -]learning|artificial[ -]intelligence|data|analytics|NLP|ذكاء اصطناعي|بيانات"#),
+        Pattern("platform", "Cloud & platform", #"cloud|devops|site[ -]reliability|techops|databases?"#),
+        Pattern("mobile", "Mobile", #"ios|swift(?:ui)?|android|mobile"#),
+        Pattern("quality", "Quality & testing", #"QA|quality[ -]assurance|test[ -]automation"#)
+    ]
+    private static let skillPatterns: [Pattern] = [
+        Pattern("python", "Python", "python"), Pattern("javascript", "JavaScript", "javascript"),
+        Pattern("typescript", "TypeScript", "typescript"), Pattern("swift", "Swift", #"swift(?:ui)?"#),
+        Pattern("sql", "SQL", "sql"), Pattern("react", "React", #"react(?:\.js|js)?"#),
+        Pattern("node", "Node.js", #"node(?:\.js|js)"#), Pattern("docker", "Docker", "docker"),
+        Pattern("kubernetes", "Kubernetes", "kubernetes|k8s"), Pattern("aws", "AWS", "aws|amazon web services"),
+        Pattern("azure", "Azure", "azure"), Pattern("git", "Git", "git"),
+        Pattern("ml", "Machine learning", #"machine[ -]learning|ML"#)
+    ]
+    private static let topicPatterns: [Pattern] = [
+        Pattern("degree", "Education wording", #"degree|bachelor|master.?s|ph\.?d|بكالوريوس"#),
+        Pattern("student", "Student / graduation wording", #"students?|university|graduat[\p{L}]*|enroll[\p{L}]*|تخرج|طالب"#),
+        Pattern("program", "Program eligibility wording", "tamheer|eligible|eligibility|GPA|تمهير"),
+        Pattern("experience", "Experience wording", #"experience|years?|سنوات"#),
+        Pattern("authorization", "Work authorization / nationality wording", #"work authori[sz]ation|visa|citizen(?:ship|s)?|nationality|nationals?"#),
+        Pattern("unpaid", "Unpaid wording", "unpaid")
+    ]
+    let categories: [String]
+    let skills: [String]
+    let overlap: [String]
+    let topics: [Topic]
+    let hasExcerpts: Bool
+    var categoryLabels: [String] { Self.roleFocuses.filter { categories.contains($0.id) }.map(\.label) }
+    var requirementCoverage: String { hasExcerpts ? "Partial employer requirements" : "Employer requirements unavailable" }
+    var coverageMessage: String {
+        hasExcerpts ? "Only bounded excerpts are available. Missing wording, exceptions or conditions may change what the employer asks for. Read the full current description."
+                    : "No usable requirement excerpts are available. Title wording alone cannot establish requirements. Read the full current employer description."
+    }
+    var checklist: [String] {
+        var items = ["Open the official listing and read every requirement, including mandatory, preferred and equivalent routes."]
+        if !topics.isEmpty { items.append("Check the exact wording for: " + topics.map(\.label).joined(separator: "; ") + ". Do not treat a topic flag as a requirement verdict.") }
+        items.append(overlap.isEmpty ? "Choose relevant work or personal-project examples only after reading the full requirements. No skill overlap is established by the available text."
+                     : "For " + overlap.joined(separator: ", ") + ", prepare examples you can substantiate. Label personal projects accurately; they are not formal employment.")
+        items.append(topics.contains { $0.id == "unpaid" } ? "Read the unpaid wording in context and confirm paid status and compensation before proceeding."
+                     : "Confirm paid status, salary, work location and any study or work-authorization conditions with the employer.")
+        items.append("Review your existing application record, then verify your answers and attachments before submitting personally.")
+        return items
+    }
+    init(job: CareerJob, profile: NativeProfile = NativeProfile()) {
+        let title = Self.boundedText(job.title, maximum: 2_000)
+        // Keep complete original excerpts: truncating here could drop preferred/equivalent qualifiers.
+        let notes = Array((job.requirementNotes ?? []).prefix(6)).map { Self.boundedText($0, maximum: 300) }.filter { !$0.isEmpty }
+        let available = ([title] + notes).joined(separator: "\n")
+        let profileText = Self.boundedText(profile.skills, maximum: 3_000)
+        categories = Self.rolePatterns.filter { $0.matches(title) }.map(\.id)
+        skills = Self.skillPatterns.filter { $0.matches(available) }.map(\.label)
+        let own = Set(Self.skillPatterns.filter { $0.matches(profileText) }.map(\.label))
+        overlap = skills.filter { own.contains($0) }
+        topics = Self.topicPatterns.compactMap { pattern in
+            let excerpts = notes.filter { pattern.matches($0) }
+            return excerpts.isEmpty ? nil : Topic(id: pattern.id, label: pattern.label, excerpts: excerpts)
+        }
+        hasExcerpts = !notes.isEmpty
+    }
+    static func categories(for title: String) -> [String] {
+        let text = boundedText(title, maximum: 2_000)
+        return rolePatterns.filter { $0.matches(text) }.map(\.id)
+    }
+    private static func boundedText(_ text: String, maximum: Int) -> String {
+        guard text.utf16.count <= maximum, !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              text.range(of: #"[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]|</?[A-Za-z][^>]*>"#, options: [.regularExpression, .caseInsensitive]) == nil else { return "" }
+        return text
+    }
+    static func matches(_ job: CareerJob, query: String) -> Bool {
+        let text = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        let fields = [job.title, job.company, job.location, job.summary, job.subtitle ?? "", job.mode ?? "", job.employmentType ?? "", job.experienceLevel ?? ""] + job.requirements + (job.requirementNotes ?? [])
+        return text.isEmpty || fields.joined(separator: " ").localizedCaseInsensitiveContains(text)
+    }
+}
+
+struct NativeDiscoveryOptions: Equatable {
+    var company=""
+    var days=0
+    var employmentType=""
+    var hideTracked=false
+    var roleFocus=""
+    var isActive:Bool {!company.isEmpty || days != 0 || !employmentType.isEmpty || hideTracked || !roleFocus.isEmpty}
+    func includes(_ job:CareerJob,tracked:Bool=false,now:Date=Date())->Bool {
+        guard company.isEmpty || job.company==company,employmentType.isEmpty || job.employmentType==employmentType,!hideTracked || !tracked else{return false}
+        guard roleFocus.isEmpty || RoleReview.categories(for: job.title).contains(roleFocus) else {return false}
+        if days>0 {
+            guard let age=Self.ageInSaudiDays(job.posted,now:now),age>=0,age<days else{return false}
+        }
+        return true
+    }
+    static func ageInSaudiDays(_ value:String,now:Date=Date())->Int? {
+        guard let parsed=CareerFeed.parsedDate(value) else{return nil}
+        var calendar=Calendar(identifier:.gregorian)
+        calendar.timeZone=TimeZone(identifier:"Asia/Riyadh")!
+        return calendar.dateComponents([.day],from:calendar.startOfDay(for:parsed),to:calendar.startOfDay(for:now)).day
+    }
+}
+struct NativeApplicationGroup:Identifiable {
+    var status:String
+    var jobs:[CareerJob]
+    var id:String {status}
 }
 struct PublicProfile: Codable { var name,role,organization,location,url:String; var facts,unknowns:[String] }
 struct CareerResearch: Codable { var checkedAt:String;var jobs:[CareerJob];var profile:PublicProfile;var legacyJobs:[CareerJob]?=nil }
@@ -147,8 +298,61 @@ struct NativeProfile: Codable, Equatable {
         return formatter.string(from:parsed)+(includeTime && !dateOnly ? " · "+effectiveTimeZone+" ("+offsetLabel+")" : "")
     }
 }
-struct EmployerStatus: Codable { var name:String;var ok:Bool;var count:Int;var scanned:Int?;var limited:Bool?;var error:String?;var detailErrors:Int?;var excludedIds:[String]?;var incomplete:Bool {!ok || (detailErrors ?? 0)>0 || !(error ?? "").isEmpty} }
-struct LiveSnapshot: Codable { var checkedAt:String;var jobs:[CareerJob];var sources:[EmployerStatus] }
+struct EmployerStatus: Codable { var name:String;var ok:Bool;var count:Int;var scanned:Int?;var limited:Bool?;var error:String?;var detailErrors:Int?;var excludedIds:[String]?;var incomplete:Bool {!ok || limited == true || (detailErrors ?? 0)>0 || !(error ?? "").isEmpty} }
+// Local comparison of consecutive result lists, never a claim about a vacancy's creation date.
+struct SearchComparison: Codable, Equatable {
+    var schema=1
+    var previousCheckedAt:String?
+    var checkedAt:String
+    var addedIds:[String]
+    private enum CodingKeys:String,CodingKey {case schema,previousCheckedAt,checkedAt,addedIds}
+    init(previousCheckedAt:String?,checkedAt:String,addedIds:[String]) {
+        self.previousCheckedAt=previousCheckedAt;self.checkedAt=checkedAt;self.addedIds=addedIds
+    }
+    init(from decoder:Decoder)throws {
+        let values=try decoder.container(keyedBy:CodingKeys.self)
+        schema=try values.decode(Int.self,forKey:.schema)
+        guard values.contains(.previousCheckedAt) else {throw CocoaError(.coderInvalidValue)}
+        previousCheckedAt=try values.decodeIfPresent(String.self,forKey:.previousCheckedAt)
+        checkedAt=try values.decode(String.self,forKey:.checkedAt)
+        addedIds=try values.decode([String].self,forKey:.addedIds)
+    }
+    func encode(to encoder:Encoder)throws {
+        var values=encoder.container(keyedBy:CodingKeys.self)
+        try values.encode(schema,forKey:.schema)
+        try values.encode(previousCheckedAt,forKey:.previousCheckedAt)
+        try values.encode(checkedAt,forKey:.checkedAt)
+        try values.encode(addedIds,forKey:.addedIds)
+    }
+    func valid(checkedAt:String,jobs:[CareerJob])->Bool {
+        guard schema==1,let fetched=CareerFeed.isoDate(self.checkedAt),let checked=CareerFeed.isoDate(checkedAt),fetched==checked,
+              addedIds.count<=1000,Set(addedIds).count==addedIds.count,
+              addedIds.allSatisfy({!$0.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty && $0.utf16.count<=256}),
+              Set(addedIds).isSubset(of:Set(jobs.map(\.id))) else {return false}
+        if let previousCheckedAt {guard let previous=CareerFeed.isoDate(previousCheckedAt),previous<fetched else {return false}}
+        else if !addedIds.isEmpty {return false}
+        return true
+    }
+}
+struct LiveSnapshot: Codable {
+    var checkedAt:String
+    var jobs:[CareerJob]
+    var sources:[EmployerStatus]
+    var searchComparison:SearchComparison?
+    init(checkedAt:String,jobs:[CareerJob],sources:[EmployerStatus],searchComparison:SearchComparison?=nil) {
+        self.checkedAt=checkedAt;self.jobs=jobs;self.sources=sources;self.searchComparison=searchComparison
+    }
+    private enum CodingKeys:String,CodingKey {case checkedAt,jobs,sources,searchComparison}
+    init(from decoder:Decoder)throws {
+        let values=try decoder.container(keyedBy:CodingKeys.self)
+        checkedAt=try values.decode(String.self,forKey:.checkedAt)
+        jobs=try values.decode([CareerJob].self,forKey:.jobs)
+        sources=try values.decode([EmployerStatus].self,forKey:.sources)
+        // Optional view metadata cannot make saved jobs or application history unreadable.
+        let candidate=try? values.decode(SearchComparison.self,forKey:.searchComparison)
+        searchComparison=candidate?.valid(checkedAt:checkedAt,jobs:jobs)==true ? candidate : nil
+    }
+}
 struct NativeWorkspace: Codable {
     var saved=Set<String>()
     var statuses=[String:String]()
@@ -156,6 +360,8 @@ struct NativeWorkspace: Codable {
     var profile=NativeProfile.fresh()
     var completed=Set<String>()
     var live:LiveSnapshot?
+    var importedApplicationRecords:[String:ApplicationRecord]?
+    var importedNextActions:[String:NextActionRecord]?
 }
 
 struct ApplicationRecord: Codable, Equatable {
@@ -182,6 +388,46 @@ struct ApplicationRecordDraft {
     var receiptNote=""
     var dirty:Bool {appliedAt != (base?.appliedAt ?? "") || receiptNote != (base?.receiptNote ?? "")}
 }
+// Private, user-entered planning is separate from application evidence and its schema.
+struct NextActionRecord: Codable, Equatable {
+    var schema=1
+    var jobId:String
+    var dueOn=""
+    var actionNote=""
+    var completed=false
+    var updatedAt:String
+    var meaningful:Bool {!actionNote.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty}
+    func valid(for id:String)->Bool {
+        guard schema==1,jobId==id,!id.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,
+              id.utf16.count<=256,!["__proto__","constructor","prototype"].contains(id),
+              actionNote.unicodeScalars.count<=500,
+              let edited=CareerFeed.isoDate(updatedAt),ApplicationRecord.timestamp(edited)==updatedAt,
+              dueOn.isEmpty || dueOn.range(of:"^[0-9]{4}-[0-9]{2}-[0-9]{2}$",options:.regularExpression) != nil && dueOn.count==10 && CareerFeed.parsedDate(dueOn) != nil else {return false}
+        return meaningful || dueOn.isEmpty && !completed
+    }
+    func group(at now:Date)->String {
+        if completed {return "Completed"}
+        if dueOn.isEmpty {return "No due date"}
+        let today=CareerFeed.saudiDay(now)
+        var calendar=Calendar(identifier:.gregorian);calendar.timeZone=TimeZone(identifier:"Asia/Riyadh")!
+        let last=CareerFeed.saudiDay(calendar.date(byAdding:.day,value:7,to:now)!)
+        return dueOn<today ? "Overdue" : dueOn==today ? "Today" : dueOn<=last ? "Next 7 days" : "Upcoming"
+    }
+}
+struct NextActionDraft {
+    var job:CareerJob?
+    var base:NextActionRecord?
+    var dueOn=""
+    var actionNote=""
+    var completed=false
+    var dirty:Bool {dueOn != (base?.dueOn ?? "") || actionNote != (base?.actionNote ?? "") || completed != (base?.completed ?? false)}
+}
+struct NextActionGroup:Identifiable {
+    var title:String
+    var jobs:[CareerJob]
+    var id:String {title}
+}
+
 struct ApplicationAttention: Identifiable {
     var job:CareerJob
     var kind:String
@@ -189,26 +435,36 @@ struct ApplicationAttention: Identifiable {
     var deadline:Date?
     var id:String {job.id+":"+kind}
     var title:String {
-        kind=="requirements" ? "Review the role requirements" : kind=="applied-date" ? "Application date not recorded — add it if known" : order==0 ? "Past listed deadline — verify employer status" : "Recheck listed deadline"
+        kind=="uncertain" ? "Verify the employer account or receipt before retrying" : kind=="requirements" ? "Review the role requirements" : kind=="applied-date" ? "Application date not recorded — add it if known" : order==0 ? "Past listed deadline — verify employer status" : "Recheck listed deadline"
     }
 }
 
 @MainActor final class NativeCareerStore: ObservableObject {
-    static let statuses=["Not started","Preparing","Applied","Interviewing","Offer received","Closed / not pursuing"]
+    static let statuses=["Not started","Preparing","Submission uncertain","Applied","Interviewing","Offer received","Closed / not pursuing"]
+    #if CAREER_PREVIEW
+    static let storageDirectoryName="CareerFinderPreview"
+    #else
+    static let storageDirectoryName="AhmadCareer"
+    #endif
     let research:CareerResearch
     @Published private(set) var workspace=NativeWorkspace()
     @Published var isSearching=false
     @Published var searchError:String?
+    @Published var searchNotice:String?
     @Published var storageError:String?
     @Published private(set) var applicationRecords=[String:ApplicationRecord]()
     @Published private(set) var recordDrafts=[String:ApplicationRecordDraft]()
     @Published private(set) var recordErrors=[String:String]()
+    @Published private(set) var nextActions=[String:NextActionRecord]()
+    @Published private(set) var nextActionDrafts=[String:NextActionDraft]()
+    @Published private(set) var nextActionErrors=[String:String]()
     private let storageURL:URL
     private var legacyResearchJobs=[CareerJob]()
     private var canWrite=true
+    private var diskWorkspace:Data?
 
     init(researchURL:URL? = Bundle.main.url(forResource:"CareerResearch",withExtension:"json"), storageURL:URL? = nil) {
-        self.storageURL=storageURL ?? FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask)[0].appendingPathComponent("AhmadCareer/native-workspace.json")
+        self.storageURL=storageURL ?? FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask)[0].appendingPathComponent(Self.storageDirectoryName).appendingPathComponent("native-workspace.json")
         do {
             guard let researchURL else { throw CocoaError(.fileNoSuchFile) }
             var loaded=try JSONDecoder().decode(CareerResearch.self,from:Data(contentsOf:researchURL))
@@ -229,7 +485,10 @@ struct ApplicationAttention: Identifiable {
         }
         if FileManager.default.fileExists(atPath:self.storageURL.path) {
             do {
-                workspace=try JSONDecoder().decode(NativeWorkspace.self,from:Data(contentsOf:self.storageURL))
+                let data=try Data(contentsOf:self.storageURL)
+                workspace=try JSONDecoder().decode(NativeWorkspace.self,from:data)
+                diskWorkspace=data
+                try Self.validateStoredWorkspace(data, workspace:workspace)
                 if let error=workspace.profile.preferenceError {canWrite=false;storageError=error+" Saved records remain available; this workspace cannot be overwritten."}
             }
             catch {canWrite=false;storageError="Saved records could not be read. They have been preserved; no new changes will overwrite that file."}
@@ -246,7 +505,7 @@ struct ApplicationAttention: Identifiable {
     }
     private func readApplicationRecord(_ id:String)throws->ApplicationRecord? {
         let url=recordURL(id)
-        guard FileManager.default.fileExists(atPath:url.path) else {return nil}
+        guard FileManager.default.fileExists(atPath:url.path) else {return workspace.importedApplicationRecords?[id]}
         let data=try Data(contentsOf:url)
         guard let object=try JSONSerialization.jsonObject(with:data) as? [String:Any],Set(object.keys)==Set(["schema","jobId","appliedAt","receiptNote","updatedAt"]) else {throw CocoaError(.coderInvalidValue)}
         let value=try JSONDecoder().decode(ApplicationRecord.self,from:data)
@@ -254,14 +513,24 @@ struct ApplicationAttention: Identifiable {
         return value
     }
     func reloadApplicationRecords() {
+        reloadNextActions()
         for job in allJobs {
             do {applicationRecords[job.id]=try readApplicationRecord(job.id);recordErrors[job.id]=nil}
             catch {recordErrors[job.id]="Stored application metadata could not be read. Original data is preserved; record saving is blocked."}
         }
     }
+    private func reloadWorkspaceForRecord()throws {
+        guard canWrite else {throw NativeBackupError.unreadable}
+        if try workspaceMatchesDisk() {return}
+        let data=try Data(contentsOf:storageURL)
+        let latest=try JSONDecoder().decode(NativeWorkspace.self,from:data)
+        try Self.validateStoredWorkspace(data,workspace:latest)
+        workspace=latest;diskWorkspace=data;storageError=nil
+    }
     func beginApplicationRecord(_ job:CareerJob,discardDraft:Bool=false) {
         let id=job.id
         if recordDrafts[id]?.dirty==true && !discardDraft {return}
+        if discardDraft {do {try reloadWorkspaceForRecord()} catch {recordErrors[id]="The latest workspace could not be loaded. Your draft is preserved.";return}}
         do {applicationRecords[id]=try readApplicationRecord(id);recordErrors[id]=nil}
         catch {recordErrors[id]="Stored application metadata could not be read. Original data is preserved; record saving is blocked."}
         let base=applicationRecords[id]
@@ -289,14 +558,91 @@ struct ApplicationAttention: Identifiable {
             return true
         } catch {recordErrors[id]="The record could not be read or saved. Original data and your session draft are preserved.";return false}
     }
-    var recordJobs:[CareerJob] {allJobs.filter{status(for:$0) != "Not started" || applicationRecords[$0.id]?.meaningful==true}}
+    private func nextActionURL(_ id:String)->URL {
+        let filename=SHA256.hash(data:Data(id.utf8)).map{String(format:"%02x",$0)}.joined()
+        return storageURL.appendingPathExtension("next-action-v1").appendingPathComponent(filename+".json")
+    }
+    private func readNextAction(_ id:String)throws->NextActionRecord? {
+        let url=nextActionURL(id)
+        guard FileManager.default.fileExists(atPath:url.path) else {return workspace.importedNextActions?[id]}
+        let data=try Data(contentsOf:url)
+        guard let object=try JSONSerialization.jsonObject(with:data) as? [String:Any],
+              Set(object.keys)==Set(["schema","jobId","dueOn","actionNote","completed","updatedAt"]) else {throw CocoaError(.coderInvalidValue)}
+        let value=try JSONDecoder().decode(NextActionRecord.self,from:data)
+        guard value.valid(for:id) else {throw CocoaError(.coderInvalidValue)}
+        return value
+    }
+    func reloadNextActions() {
+        for job in allJobs {
+            do {nextActions[job.id]=try readNextAction(job.id);nextActionErrors[job.id]=nil}
+            catch {nextActionErrors[job.id]="Stored next action could not be read. Original data is preserved; saving is blocked."}
+        }
+    }
+    func beginNextAction(_ job:CareerJob,discardDraft:Bool=false) {
+        let id=job.id
+        if nextActionDrafts[id]?.dirty==true && !discardDraft {return}
+        if discardDraft {do {try reloadWorkspaceForRecord()} catch {nextActionErrors[id]="The latest workspace could not be loaded. Your draft is preserved.";return}}
+        do {nextActions[id]=try readNextAction(id);nextActionErrors[id]=nil}
+        catch {nextActionErrors[id]="Stored next action could not be read. Original data is preserved; saving is blocked."}
+        let base=nextActions[id]
+        nextActionDrafts[id]=NextActionDraft(job:current(job),base:base,dueOn:base?.dueOn ?? "",actionNote:base?.actionNote ?? "",completed:base?.completed ?? false)
+    }
+    func editNextAction(_ job:CareerJob,dueOn:String,actionNote:String,completed:Bool) {
+        if nextActionDrafts[job.id]==nil {beginNextAction(job)}
+        nextActionDrafts[job.id]?.dueOn=dueOn;nextActionDrafts[job.id]?.actionNote=actionNote;nextActionDrafts[job.id]?.completed=completed
+    }
+    @discardableResult func saveNextAction(_ job:CareerJob)->Bool {
+        let id=job.id
+        guard let draft=nextActionDrafts[id] else {return false}
+        let value=NextActionRecord(jobId:id,dueOn:draft.dueOn,actionNote:draft.actionNote,completed:draft.completed,updatedAt:ApplicationRecord.timestamp(Date()))
+        guard value.valid(for:id) else {nextActionErrors[id]="Use a real YYYY-MM-DD due date or leave it blank, and a note up to 500 Unicode characters. A due date or completed action needs a nonblank note.";return false}
+        do {
+            // MainActor serializes app edits; optimistic comparison detects prior external writes, not cross-process locking.
+            guard try readNextAction(id)==draft.base else {nextActionErrors[id]="This next action changed. Your draft is preserved. Export it before reloading the saved version.";return false}
+            var next=workspace;next.snapshots[id]=current(job)
+            guard commit(next) else {nextActionErrors[id]="The opportunity could not be saved. Your next-action draft is preserved.";return false}
+            let url=nextActionURL(id)
+            try FileManager.default.createDirectory(at:url.deletingLastPathComponent(),withIntermediateDirectories:true)
+            try JSONEncoder().encode(value).write(to:url,options:.atomic)
+            nextActions[id]=value;nextActionDrafts[id]?.base=value;nextActionErrors[id]=nil
+            return true
+        } catch {nextActionErrors[id]="The next action could not be read or saved. Original data and your session draft are preserved.";return false}
+    }
+    func nextActionGroups(at now:Date=Date())->[NextActionGroup] {
+        ["Overdue","Today","Next 7 days","Upcoming","No due date","Completed"].map { title in
+            NextActionGroup(title:title,jobs:allJobs.filter {nextActions[$0.id]?.meaningful==true && nextActions[$0.id]?.group(at:now)==title}.sorted {
+                let a=nextActions[$0.id]?.dueOn ?? "",b=nextActions[$1.id]?.dueOn ?? ""
+                return a==b ? $0.id<$1.id : a<b
+            })
+        }.filter{!$0.jobs.isEmpty}
+    }
+    var recordJobs:[CareerJob] {allJobs.filter{hasApplicationRecord($0) || nextActions[$0.id]?.meaningful==true || nextActionErrors[$0.id] != nil}}
+    func hasApplicationRecord(_ job:CareerJob)->Bool {
+        status(for:job) != "Not started" || applicationRecords[job.id]?.meaningful==true
+    }
+    var applicationGroups:[NativeApplicationGroup] {
+        let order=["Submission uncertain","Preparing","Applied","Interviewing","Offer received","Closed / not pursuing","Not started"]
+        let other=Set(recordJobs.map{status(for:$0)}).subtracting(order).sorted()
+        return (order+other).map{status in NativeApplicationGroup(status:status,jobs:recordJobs.filter{self.status(for:$0)==status})}.filter{!$0.jobs.isEmpty}
+    }
+    func applicationWarnings(for job:CareerJob)->[String] {
+        var messages=[String]()
+        if hasApplicationRecord(job) {
+            messages.append(status(for:job)=="Submission uncertain" ? "Submission is uncertain. Check the employer account or receipt before trying again." : "This role already has a local application record. Review it before applying again.")
+        }
+        let others=allJobs.filter{$0.id != job.id && $0.company.lowercased()==job.company.lowercased() && hasApplicationRecord($0)}
+        if !others.isEmpty {messages.append("You are tracking \(others.count) other role\(others.count==1 ? "" : "s") at \(job.company). Check any company or program application rules. Different roles are not automatically duplicates.")}
+        return messages
+    }
     func attention(at now:Date=Date())->[ApplicationAttention] {Self.attentionFor(allJobs.filter{isSaved($0)||status(for:$0) != "Not started"||applicationRecords[$0.id]?.meaningful==true},statuses:workspace.statuses,records:applicationRecords,now:now)}
     static func attentionFor(_ jobs:[CareerJob],statuses:[String:String],records:[String:ApplicationRecord],now:Date=Date())->[ApplicationAttention] {
         let today=CareerFeed.saudiDay(now),last=CareerFeed.saudiDay(now.addingTimeInterval(7*86400))
         var prompts=[ApplicationAttention]()
         for job in jobs {
             let status=statuses[job.id] ?? "Not started"
-            if ["Applied","Interviewing","Offer received"].contains(status) {
+            if status=="Submission uncertain" {
+                prompts.append(ApplicationAttention(job:job,kind:"uncertain",order:-1))
+            } else if ["Applied","Interviewing","Offer received"].contains(status) {
                 if records[job.id]?.valid(for:job.id,now:now) != true || records[job.id]?.appliedAt.isEmpty != false {prompts.append(ApplicationAttention(job:job,kind:"applied-date",order:2))}
             } else if ["Not started","Preparing"].contains(status) {
                 let closing=job.closes.flatMap(CareerFeed.parsedDate),day=closing.map(CareerFeed.saudiDay)
@@ -334,6 +680,13 @@ struct ApplicationAttention: Identifiable {
         return observed<attempted
     }
     var liveJobs:[CareerJob] {cachedEmployerJobs.filter {!$0.isExpired}}
+    var searchComparison:SearchComparison? {workspace.live?.searchComparison}
+    func isAddedToLatestResults(_ job:CareerJob)->Bool {searchComparison?.addedIds.contains(job.id)==true && liveJobs.contains{$0.id==job.id}}
+    var searchChangeSummary:String {
+        guard let comparison=searchComparison else {return workspace.live == nil ? "Run a search to establish a result-list baseline." : "No comparison is recorded for this saved search. Run another search to compare result lists."}
+        guard let previous=comparison.previousCheckedAt else {return "First successful search: baseline saved. No earlier result list is available to compare."}
+        return "\(comparison.addedIds.count) added to the result list since \(previous). Compared with the successful search at \(comparison.checkedAt)."
+    }
     private func factsDate(_ job:CareerJob)->Date? { [job.lastCheckedAt,job.researchCheckedAt].compactMap{$0.flatMap(CareerFeed.parsedDate)}.max() }
     private func retainingEmployerObservation(_ facts:CareerJob,from observations:[CareerJob])->CareerJob {
         var result=facts
@@ -360,7 +713,7 @@ struct ApplicationAttention: Identifiable {
         }
         return retainingEmployerObservation(current,from:candidates+[editorial])
     }}
-    private var allJobs:[CareerJob] {
+    var allJobs:[CareerJob] {
         var jobs=retainingLegacyJobs(workspace).snapshots
         for job in cachedEmployerJobs {
             if let prior=jobs[job.id] {
@@ -377,6 +730,7 @@ struct ApplicationAttention: Identifiable {
             return current
         }.sorted { ($0.rank ?? 999,$0.title) < ($1.rank ?? 999,$1.title) }
     }
+    var hasLocalPlanningData:Bool {!allJobs.isEmpty || !workspace.completed.isEmpty || workspace.profile != NativeProfile.fresh()}
     var savedJobs:[CareerJob] {allJobs.filter{workspace.saved.contains($0.id)}}
     var trackedJobs:[CareerJob] {allJobs.filter{status(for:$0) != "Not started"}}
     func current(_ job:CareerJob)->CareerJob {allJobs.first(where:{$0.id==job.id}) ?? job}
@@ -424,14 +778,65 @@ struct ApplicationAttention: Identifiable {
         }
         return next
     }
+    // Loading an unknown stored field and re-encoding Codable would discard it. Read it
+    // without mutation instead; recognized legacy imports remain fully writable.
+    private static let profileKeys=Set("years degree skills achievements preferredCity minimumMonthlySAR unknownSalary preferencesVersion targetCountry targetCity roleKeywords planningCurrency planningPayPeriod displayTimeZone".split(separator:" ").map(String.init))
+    private static let jobKeys=Set("id title company location url posted fit summary rank relevance subtitle mode postedKind experienceLevel employmentType requirementNotes closes applyUrl sourceUrl gaps steps minYears healthcare leadership kind lastCheckedAt researchCheckedAt".split(separator:" ").map(String.init))
+    private static func validateStoredWorkspace(_ data:Data,workspace:NativeWorkspace)throws {
+        func object(_ value:Any?,keys:Set<String>)throws->[String:Any] {
+            guard let value=value as? [String:Any],Set(value.keys).isSubset(of:keys) else {throw NativeBackupError.unreadable}
+            return value
+        }
+        func jobs(_ value:Any?)throws {
+            guard let rows=value as? [String:[String:Any]] else {throw NativeBackupError.unreadable}
+            for row in rows.values {_=try object(row,keys:jobKeys)}
+        }
+        let root=try object(JSONSerialization.jsonObject(with:data),keys:Set(["saved","statuses","snapshots","profile","completed","live","importedApplicationRecords","importedNextActions"]))
+        _=try object(root["profile"],keys:profileKeys)
+        try jobs(root["snapshots"])
+        guard workspace.profile.preferenceError==nil,workspace.statuses.values.allSatisfy(statuses.contains),
+              workspace.snapshots.allSatisfy({$0.key==$0.value.id && $0.value.validEmployerMetadata}) else {throw NativeBackupError.unreadable}
+        for (key,fields) in [("importedApplicationRecords",Set(["schema","jobId","appliedAt","receiptNote","updatedAt"])),("importedNextActions",Set(["schema","jobId","dueOn","actionNote","completed","updatedAt"]))] {
+            if let value=root[key],!(value is NSNull) {
+                guard let rows=value as? [String:[String:Any]] else {throw NativeBackupError.unreadable}
+                for row in rows.values { _=try object(row,keys:fields) }
+            }
+        }
+        guard workspace.importedApplicationRecords?.allSatisfy({$0.value.valid(for:$0.key) && workspace.snapshots[$0.key] != nil}) ?? true,
+              workspace.importedNextActions?.allSatisfy({$0.value.valid(for:$0.key) && workspace.snapshots[$0.key] != nil}) ?? true else {throw NativeBackupError.unreadable}
+        if let value=root["live"],!(value is NSNull) {
+            let live=try object(value,keys:Set(["checkedAt","jobs","sources","searchComparison"]))
+            guard let rows=live["jobs"] as? [[String:Any]],let sources=live["sources"] as? [[String:Any]] else {throw NativeBackupError.unreadable}
+            for row in rows {_=try object(row,keys:jobKeys)}
+            for source in sources {_=try object(source,keys:Set(["name","ok","count","scanned","limited","error","detailErrors","excludedIds"]))}
+            if let comparison=live["searchComparison"],!(comparison is NSNull) {
+                _=try object(comparison,keys:Set(["schema","checkedAt","previousCheckedAt","addedIds"]))
+                guard workspace.live?.searchComparison != nil else {throw NativeBackupError.unreadable}
+            }
+        }
+    }
+    private func workspaceMatchesDisk()throws->Bool {
+        let current=FileManager.default.fileExists(atPath:storageURL.path) ? try Data(contentsOf:storageURL) : nil
+        if current==diskWorkspace {return true}
+        // Re-encoding an identical workspace may change dictionary/set ordering.
+        // Compare raw JSON fields so unknown future fields cannot be discarded.
+        func canonical(_ data:Data)throws->Data {
+            guard var object=try JSONSerialization.jsonObject(with:data) as? [String:Any] else {throw NativeBackupError.unreadable}
+            for key in ["saved","completed"] {if let values=object[key] as? [String] {object[key]=values.sorted()}}
+            return try JSONSerialization.data(withJSONObject:object,options:[.sortedKeys])
+        }
+        guard let current,let prior=diskWorkspace,try canonical(current)==canonical(prior) else {return false}
+        diskWorkspace=current;return true
+    }
     @discardableResult private func commit(_ value:NativeWorkspace)->Bool {
         guard canWrite else {storageError="Saved records could not be read. They have been preserved; no new changes will overwrite that file.";return false}
         let next=retainingKnownJobs(value)
         do {
+            guard try workspaceMatchesDisk() else {storageError="Another app instance changed saved records. Export your unsaved drafts, then reopen this app before saving. Existing disk records were preserved.";return false}
             let data=try JSONEncoder().encode(next)
             try FileManager.default.createDirectory(at:storageURL.deletingLastPathComponent(),withIntermediateDirectories:true)
             try data.write(to:storageURL,options:.atomic)
-            workspace=next;storageError=nil;return true
+            workspace=next;diskWorkspace=data;storageError=nil;return true
         } catch {storageError="This change could not be saved. Your previous records are intact. Check device storage and try again.";return false}
     }
     func refresh() async {
@@ -442,28 +847,33 @@ struct ApplicationAttention: Identifiable {
         acceptLive(await CareerFeed.refresh())
     }
     func acceptLive(_ payload:[String:Any],now:Date=Date()) {
+        searchNotice=nil
         do {
             guard let checkedAt=payload["checkedAt"] as? String,let checked=CareerFeed.isoDate(checkedAt),checked<=now.addingTimeInterval(60),
                   let rows=payload["jobs"] as? [Any],rows.count<=1000,
                   let sourceRows=payload["sources"] as? [[String:Any]],sourceRows.count<=20 else {throw CocoaError(.coderInvalidValue)}
             let sources=try sourceRows.map { row -> EmployerStatus in
                 let source=try JSONDecoder().decode(EmployerStatus.self,from:JSONSerialization.data(withJSONObject:row))
-                guard !source.name.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,source.count>=0,(source.scanned ?? 0)>=0,(source.detailErrors ?? 0)>=0,(source.excludedIds?.count ?? 0)<=20,source.excludedIds?.allSatisfy({!$0.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty && $0.count<=256}) ?? true else {throw CocoaError(.coderInvalidValue)}
+                guard !source.name.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,source.count>=0,(source.scanned ?? 0)>=0,(source.detailErrors ?? 0)>=0,(source.excludedIds?.count ?? 0)<=20,source.excludedIds?.allSatisfy({!$0.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty && $0.utf16.count<=256}) ?? true else {throw CocoaError(.coderInvalidValue)}
                 return source
-            }
-            if let previous=workspace.live.flatMap({CareerFeed.isoDate($0.checkedAt)}),checked<previous {
-                searchError="An older employer response was ignored. Previous results are preserved.";return
             }
             guard sources.contains(where:{$0.ok}) else {
                 let failures=sources.map{"\($0.name): \($0.error ?? "unavailable")"}.joined(separator:"\n")
                 searchError="Employer search is unavailable. Previous results are preserved.\n"+failures;return
             }
+            if let previous=workspace.live.flatMap({CareerFeed.isoDate($0.checkedAt)}),checked<=previous {
+                if checked==previous {
+                    searchNotice="No newer search snapshot is available. Results and their original comparison are unchanged."
+                    searchError=workspace.live?.sources.contains(where:{$0.incomplete})==true ? "Some employer checks in the saved search were incomplete. Review source coverage below." : nil
+                } else {searchError="An older employer response was ignored. Previous results are preserved."}
+                return
+            }
             let valid=rows.compactMap { row -> CareerJob? in
                 guard JSONSerialization.isValidJSONObject(row),let data=try? JSONSerialization.data(withJSONObject:row),
                       var job=try? JSONDecoder().decode(CareerJob.self,from:data),
-                      !job.id.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,job.id.count<=256,
+                      !job.id.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,job.id.utf16.count<=256,
                       !job.title.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,
-                      job.applicationURL != nil,job.isSaudi,
+                      job.applicationURL != nil,job.isSaudi,job.validEmployerMetadata,
                       job.posted.isEmpty || CareerFeed.parsedDate(job.posted) != nil,
                       job.closes == nil || job.closes == "" || CareerFeed.parsedDate(job.closes!) != nil else {return nil}
                 job.lastCheckedAt=checkedAt;job.researchCheckedAt=nil;job.rank=nil;job.kind="live"
@@ -474,9 +884,12 @@ struct ApplicationAttention: Identifiable {
             var seen=Set<String>()
             var jobs=valid.filter { healthcareLead($0) && CareerFeed.dateIsEligible($0.posted,now:now,closing:false) && CareerFeed.dateIsEligible($0.closes ?? "",now:now,closing:true) && seen.insert($0.id).inserted }
             let failedNames=Set(sources.filter{$0.incomplete}.map(\.name))
-            jobs += cachedEmployerJobs.filter { job in !seen.contains(job.id) && failedNames.contains(job.company) && !sources.contains(where:{$0.name==job.company && ($0.excludedIds ?? []).contains(job.id)}) && CareerFeed.dateIsEligible(job.posted,now:now,closing:false) && CareerFeed.dateIsEligible(job.closes ?? "",now:now,closing:true) }
-            jobs=jobs.map{($0,CareerFeed.parsedDate($0.posted) ?? .distantPast)}.sorted {a,b in a.1 != b.1 ? a.1>b.1 : (a.0.title,a.0.id)<(b.0.title,b.0.id)}.map{ $0.0 }
-            var next=workspace;next.live=LiveSnapshot(checkedAt:checkedAt,jobs:jobs,sources:sources)
+            jobs += cachedEmployerJobs.filter { job in !seen.contains(job.id) && failedNames.contains(job.company) && !sources.contains(where:{$0.name==job.company && ($0.excludedIds ?? []).contains(job.id)}) && CareerFeed.dateIsEligible(job.posted,now:now,closing:false) && CareerFeed.dateIsEligible(job.closes ?? "",now:now,closing:true) && seen.insert(job.id).inserted }
+            jobs=jobs.map{($0,CareerFeed.parsedDate($0.posted) ?? .distantPast)}.sorted {a,b in (a.0.relevance ?? CareerFeed.relevance(a.0.title)) != (b.0.relevance ?? CareerFeed.relevance(b.0.title)) ? (a.0.relevance ?? CareerFeed.relevance(a.0.title)) > (b.0.relevance ?? CareerFeed.relevance(b.0.title)) : a.1 != b.1 ? a.1>b.1 : (a.0.title,a.0.id)<(b.0.title,b.0.id)}.map{ $0.0 }
+            guard jobs.count<=1000 else {searchError="The combined result list exceeded the local capacity. Previous results and comparison are preserved.";return}
+            let previousIDs=Set(cachedEmployerJobs.map(\.id))
+            let comparison=SearchComparison(previousCheckedAt:workspace.live?.checkedAt,checkedAt:checkedAt,addedIds:workspace.live == nil ? [] : jobs.filter{!previousIDs.contains($0.id)}.map(\.id))
+            var next=workspace;next.live=LiveSnapshot(checkedAt:checkedAt,jobs:jobs,sources:sources,searchComparison:comparison)
             for job in jobs where next.snapshots[job.id] != nil || next.saved.contains(job.id) || next.statuses[job.id] != nil || isCurrentResearch(job) {
                 let prior=next.snapshots[job.id]
                 let editorial=research.jobs.first(where:{$0.id==job.id}) ?? prior.flatMap { $0.rank != nil || $0.kind == "archived" || $0.kind == "researched" ? $0 : nil }
@@ -499,7 +912,9 @@ struct ApplicationAttention: Identifiable {
         let archived=job.kind == "archived" || (!isCurrentResearch(job) && job.rank != nil)
         let salary=researchDate.map { "Salary was not disclosed in the research checked \($0)." } ?? (archived ? "Original research check date is unavailable. Recheck salary." : "Salary was not checked for this live lead.")
         let history=archived ? "\nArchived saved research; this role is not in the current shortlist.\n" : ""
-        return "APPLICATION PREPARATION — \(job.title)\n\(job.company) · \(job.location)\n\(job.applicationURL?.absoluteString ?? job.url)\(history)\n\nEmployer checked: \(employerObservation(job).lastCheckedAt ?? "Not recorded")\nListed deadline: \(job.closes?.isEmpty==false ? job.closes! : "Not published")\nDate-only deadlines use Riyadh calendar days. Past checks and listed deadlines do not establish current availability; recheck with the employer.\n\nFit: \(job.fit)\n\(job.summary)\n\nConfirm first:\n"+job.requirements.map{"• "+$0}.joined(separator:"\n")+"\n\nSteps:\n"+job.applicationSteps.enumerated().map{"\($0.offset+1). \($0.element[0]): \($0.element[1])"}.joined(separator:"\n\n")+(includeProfile ? "\n\n"+profileText : "")+"\n\nStatus: \(status(for:job))\n"+salary+" Review and submit personally on the employer website."
+        let employerEvidence="\n\nEmployer-listed clues (not proof of eligibility):\nExperience level: \(job.experienceLevel.flatMap{$0.isEmpty ? nil:$0} ?? "Not stated")\nEmployment type: \(job.employmentType ?? "Not stated")\nWork arrangement: \(job.mode ?? "Not stated")\n\(job.publicationLabel): \(job.posted.isEmpty ? "Not stated" : job.posted)\n"+((job.requirementNotes ?? []).isEmpty ? "Requirement excerpts unavailable. Read the full employer description." : (job.requirementNotes ?? []).map{"• "+$0}.joined(separator:"\n"))
+        let warnings=applicationWarnings(for:job).joined(separator:"\n")
+        return "APPLICATION PREPARATION — \(job.title)\n\(job.company) · \(job.location)\n\(job.applicationURL?.absoluteString ?? job.url)\(history)\n\nEmployer checked: \(employerObservation(job).lastCheckedAt ?? "Not recorded")\nListed deadline: \(job.closes?.isEmpty==false ? job.closes! : "Not published")\nDate-only deadlines use Riyadh calendar days. Past checks and listed deadlines do not establish current availability; recheck with the employer.\n\nFit: \(job.fit)\n\(job.summary)\n\nConfirm first:\n"+job.requirements.map{"• "+$0}.joined(separator:"\n")+"\n\nSteps:\n"+job.applicationSteps.enumerated().map{"\($0.offset+1). \($0.element[0]): \($0.element[1])"}.joined(separator:"\n\n")+(includeProfile ? "\n\n"+profileText : "")+"\n\nStatus: \(status(for:job))\n"+salary+" Review and submit personally on the employer website."+employerEvidence+(warnings.isEmpty ? "" : "\n\nLocal tracking advisories:\n"+warnings)
     }
     private func applicationRecordText(_ id:String)->String {
         let record=applicationRecords[id],draft=recordDrafts[id]
@@ -509,13 +924,26 @@ struct ApplicationAttention: Identifiable {
         if let draft,draft.dirty {text += "\nUNSAVED application record draft\nApplication date: \(draft.appliedAt.isEmpty ? "Not recorded" : draft.appliedAt)\nReceipt / record note: \(draft.receiptNote)"}
         return text
     }
+    private func nextActionText(_ id:String)->String {
+        var text=""
+        if let record=nextActions[id] {
+            text += "\nNext action (self-entered local plan): \(record.actionNote)\nDue date (Riyadh): \(record.dueOn.isEmpty ? "Not set" : record.dueOn)\nCompleted: \(record.completed ? "Yes" : "No")\nNext action last edited: \(record.updatedAt)"
+        }
+        if let error=nextActionErrors[id] {text += "\nNext-action notice: \(error)"}
+        if let draft=nextActionDrafts[id],draft.dirty {
+            text += "\nUNSAVED next-action draft\nNext action: \(draft.actionNote)\nDue date (Riyadh): \(draft.dueOn.isEmpty ? "Not set" : draft.dueOn)\nCompleted: \(draft.completed ? "Yes" : "No")"
+        }
+        return text
+    }
     func exportText()->String {
         let currentJobs=allJobs
-        let draftJobs=recordDrafts.values.filter{$0.dirty}.compactMap(\.job).filter{j in !currentJobs.contains{$0.id==j.id}}
-        let jobs=(currentJobs+draftJobs).filter{workspace.saved.contains($0.id)||status(for:$0) != "Not started"||applicationRecords[$0.id]?.meaningful==true||recordDrafts[$0.id]?.dirty==true}
+        let draftCandidates=recordDrafts.values.filter{$0.dirty}.compactMap(\.job)+nextActionDrafts.values.filter{$0.dirty}.compactMap(\.job)
+        var seen=Set(currentJobs.map(\.id))
+        let draftJobs=draftCandidates.filter{seen.insert($0.id).inserted}
+        let jobs=(currentJobs+draftJobs).filter{workspace.saved.contains($0.id)||status(for:$0) != "Not started"||applicationRecords[$0.id]?.meaningful==true||recordDrafts[$0.id]?.dirty==true||nextActions[$0.id]?.meaningful==true||nextActionDrafts[$0.id]?.dirty==true||nextActionErrors[$0.id] != nil}
         let labels=["profile":"Professional record", "evidence":"Achievement stories", "cv":"Prepare your CV materials", "priority":"Review selected role requirements", "deadline":"Check selected deadlines", "review":"Applications reviewed"]
         let checklist=labels.keys.sorted().map{(workspace.completed.contains($0) ? "[x] " : "[ ] ")+(labels[$0] ?? $0)}.joined(separator:"\n")
-        return "CAREER FINDER — APPLICATION NOTES\nLegacy research reference date (retained records only): \(research.checkedAt)\n\n"+profileText+"\n\nPREPARATION CHECKLIST\n"+checklist+"\n\nChecked items record your preparation on this device. Recheck the requirements, dates and materials for each application.\n\nSAVED AND TRACKED APPLICATIONS\n\n"+jobs.map{note(for:$0,includeProfile:false)+applicationRecordText($0.id)}.joined(separator:"\n\n——————————\n\n")
+        return "CAREER FINDER — APPLICATION NOTES\nLegacy research reference date (retained records only): \(research.checkedAt)\n\n"+profileText+"\n\nPREPARATION CHECKLIST\n"+checklist+"\n\nChecked items record your preparation on this device. Recheck the requirements, dates and materials for each application.\n\nSAVED AND TRACKED APPLICATIONS\n\n"+jobs.map{note(for:$0,includeProfile:false)+applicationRecordText($0.id)+nextActionText($0.id)}.joined(separator:"\n\n——————————\n\n")
     }
 }
 
@@ -533,5 +961,171 @@ enum NativeMoney {
         guard normalized.range(of:"^(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)(?:\\.[0-9]{1,2})?$",options:.regularExpression) != nil,
               let value=Double(normalized.replacingOccurrences(of:",",with:"")),value.isFinite,value>=0,value<=limit else {return nil}
         return value
+    }
+}
+
+struct NativeBackupEnvelope:Codable {
+    struct Workspace:Codable {var saved:[String];var states:[String:String];var savedDetails:[String:CareerJob]}
+    var format="saleh-career-workspace"
+    var schema=1
+    var exportedAt:String
+    var platform="native"
+    var workspace:Workspace
+    var profile:[String:String]
+    var checklist:[String:Bool]
+    var applicationRecords:[ApplicationRecord]
+    var nextActions:[NextActionRecord]
+}
+struct NativeRestorePreview {
+    fileprivate var envelope:NativeBackupEnvelope
+    fileprivate var fingerprint:Data
+    let additions:Int
+    let conflicts:Int
+    let skipped:Int
+    var summary:String {"\(additions) additions; \(conflicts) existing values preserved; \(skipped) profile/checklist fields skipped. Existing profile, checklist, receipts and plans will not be overwritten."}
+}
+enum NativeBackupError:LocalizedError {
+    case invalid,changed,unreadable
+    var errorDescription:String? {
+        switch self {
+        case .invalid:return "This is not a supported private workspace backup, or it exceeds the limits. Nothing was changed."
+        case .changed:return "Saved data changed after the preview. Create a new preview before restoring."
+        case .unreadable:return "Saved data could not be read or written safely. Nothing was restored."
+        }
+    }
+}
+extension NativeCareerStore {
+    static let backupLimit=4*1024*1024
+    private static func backupID(_ id:String)->Bool { !id.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty && id.utf16.count<=256 && !["__proto__","prototype","constructor"].contains(id) }
+    static func decodeBackup(_ data:Data,now:Date=Date())throws->NativeBackupEnvelope {
+        guard data.count<=backupLimit,String(data:data,encoding:.utf8) != nil,
+              let raw=try JSONSerialization.jsonObject(with:data) as? [String:Any],
+              Set(raw.keys)==Set(["format","schema","exportedAt","platform","workspace","profile","checklist","applicationRecords","nextActions"]),
+              let w=raw["workspace"] as? [String:Any],Set(w.keys)==Set(["saved","states","savedDetails"]),
+              let profile=raw["profile"] as? [String:String],let schema=raw["schema"] as? Int,[1,2].contains(schema),
+              Set(profile.keys).isSubset(of:schema==1 ? Set(["years","degree","skills","achievements","preferredCity","minimumMonthlySAR","unknownSalary"]) : profileKeys) else {throw NativeBackupError.invalid}
+        let value=try JSONDecoder().decode(NativeBackupEnvelope.self,from:data)
+        var normalizedProfile=["years":"","degree":"","skills":"","achievements":""]
+        normalizedProfile.merge(profile,uniquingKeysWith:{_,new in new})
+        let storedProfile=try JSONDecoder().decode(NativeProfile.self,from:JSONSerialization.data(withJSONObject:normalizedProfile))
+        guard storedProfile.preferenceError==nil else {throw NativeBackupError.invalid}
+        guard value.format=="saleh-career-workspace",[1,2].contains(value.schema),["native","web"].contains(value.platform),
+              let exported=CareerFeed.isoDate(value.exportedAt),exported<=now,
+              value.workspace.saved.count<=1000,Set(value.workspace.saved).count==value.workspace.saved.count,
+              value.workspace.saved.allSatisfy(backupID),value.workspace.states.count<=1000,
+              value.workspace.states.allSatisfy({backupID($0.key) && statuses.contains($0.value)}),
+              value.workspace.savedDetails.count<=1000,value.applicationRecords.count<=1000,value.nextActions.count<=1000,
+              value.checklist.count<=100,value.checklist.keys.allSatisfy({backupID($0) && $0.count<80}) else {throw NativeBackupError.invalid}
+        let jobKeys=Set("id title company location url posted fit summary rank relevance subtitle mode postedKind experienceLevel employmentType requirementNotes closes applyUrl sourceUrl gaps steps minYears healthcare leadership kind lastCheckedAt researchCheckedAt".split(separator:" ").map(String.init))
+        guard let jobRows=w["savedDetails"] as? [String:[String:Any]],jobRows.values.allSatisfy({Set($0.keys).isSubset(of:jobKeys)}) else {throw NativeBackupError.invalid}
+        for (id,job) in value.workspace.savedDetails {
+            guard backupID(id),id==job.id,!job.title.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,
+                  CareerJob.safeURL(job.url) != nil,job.applyUrl.map({CareerJob.safeURL($0) != nil}) ?? true,job.sourceUrl.map({CareerJob.safeURL($0) != nil}) ?? true,
+                  job.validEmployerMetadata,job.isSaudi,job.posted.isEmpty || CareerFeed.parsedDate(job.posted) != nil,
+                  job.closes == nil || job.closes == "" || CareerFeed.parsedDate(job.closes!) != nil else {throw NativeBackupError.invalid}
+        }
+        for (key,fields) in [("applicationRecords",Set(["schema","jobId","appliedAt","receiptNote","updatedAt"])),("nextActions",Set(["schema","jobId","dueOn","actionNote","completed","updatedAt"]))] {
+            guard let rows=raw[key] as? [[String:Any]],rows.allSatisfy({Set($0.keys)==fields}) else {throw NativeBackupError.invalid}
+        }
+        guard Set(value.applicationRecords.map(\.jobId)).count==value.applicationRecords.count,
+              Set(value.nextActions.map(\.jobId)).count==value.nextActions.count,
+              value.applicationRecords.allSatisfy({$0.valid(for:$0.jobId,now:now) && (CareerFeed.isoDate($0.updatedAt) ?? .distantFuture)<=now}),
+              value.nextActions.allSatisfy({$0.valid(for:$0.jobId) && (CareerFeed.isoDate($0.updatedAt) ?? .distantFuture)<=now}) else {throw NativeBackupError.invalid}
+        let references=Set(value.workspace.saved).union(value.workspace.states.keys).union(value.applicationRecords.map(\.jobId)).union(value.nextActions.map(\.jobId))
+        guard references.isSubset(of:Set(value.workspace.savedDetails.keys)) else {throw NativeBackupError.invalid}
+        return value
+    }
+    private func backupFingerprint()throws->Data {
+        guard canWrite else {throw NativeBackupError.unreadable}
+        guard try workspaceMatchesDisk() else {throw NativeBackupError.changed}
+        let encoder=JSONEncoder();encoder.outputFormatting=[.sortedKeys]
+        func canonical(_ value:NativeWorkspace)throws->Data {
+            var object=try JSONSerialization.jsonObject(with:encoder.encode(value)) as! [String:Any]
+            object["saved"]=value.saved.sorted();object["completed"]=value.completed.sorted()
+            return try JSONSerialization.data(withJSONObject:object,options:[.sortedKeys])
+        }
+        var data=try canonical(workspace)
+        if FileManager.default.fileExists(atPath:storageURL.path) {
+            let disk=try JSONDecoder().decode(NativeWorkspace.self,from:Data(contentsOf:storageURL))
+            guard try canonical(disk)==data else {throw NativeBackupError.changed}
+        }
+        // Include every sidecar, including unreadable/orphaned files, to detect external changes.
+        for url in [storageURL,storageURL.appendingPathExtension("application-records-v1"),storageURL.appendingPathExtension("next-action-v1")] {
+            if FileManager.default.fileExists(atPath:url.path) {
+                var directory:ObjCBool=false;FileManager.default.fileExists(atPath:url.path,isDirectory:&directory)
+                let files=directory.boolValue ? try FileManager.default.contentsOfDirectory(at:url,includingPropertiesForKeys:nil).sorted{$0.path<$1.path} : [url]
+                for file in files {data.append(Data(file.lastPathComponent.utf8));data.append(try Data(contentsOf:file))}
+            } else {data.append(Data("missing:\(url.lastPathComponent)".utf8))}
+        }
+        return Data(SHA256.hash(data:data))
+    }
+    func privateBackupData(now:Date=Date())throws->Data {
+        _=try backupFingerprint()
+        let ids=Set(workspace.snapshots.keys).union(workspace.saved).union(workspace.statuses.keys)
+        for (directory,known) in [(storageURL.appendingPathExtension("application-records-v1"),Set(ids.map{recordURL($0).lastPathComponent})),(storageURL.appendingPathExtension("next-action-v1"),Set(ids.map{nextActionURL($0).lastPathComponent}))] {
+            if FileManager.default.fileExists(atPath:directory.path) {
+                let files=try FileManager.default.contentsOfDirectory(atPath:directory.path)
+                guard Set(files).isSubset(of:known) else {throw NativeBackupError.unreadable}
+            }
+        }
+        return try portableBackupData(for:workspace,now:now)
+    }
+    private func portableBackupData(for candidate:NativeWorkspace,now:Date=Date())throws->Data {
+        let ids=Set(candidate.snapshots.keys).union(candidate.saved).union(candidate.statuses.keys)
+        var records=[ApplicationRecord](),actions=[NextActionRecord](),details=[String:CareerJob]()
+        for id in ids.sorted() {
+            guard let job=candidate.snapshots[id] ?? allJobs.first(where:{$0.id==id}) else {throw NativeBackupError.unreadable}
+            details[id]=job
+            if let record=try readApplicationRecord(id) ?? candidate.importedApplicationRecords?[id] {records.append(record)}
+            if let action=try readNextAction(id) ?? candidate.importedNextActions?[id] {actions.append(action)}
+        }
+        var profile=try JSONDecoder().decode([String:String].self,from:JSONEncoder().encode(candidate.profile))
+        if let years=profile["years"],!years.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,let number=NativeMoney.parse(years,limit:60) {profile["years"]=String(number)}
+        if let raw=profile["minimumMonthlySAR"],!raw.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,let amount=candidate.profile.minimumMonthlyAmount {profile["minimumMonthlySAR"]=String(Int(amount))}
+        let legacyKeys=Set(["years","degree","skills","achievements","preferredCity","minimumMonthlySAR","unknownSalary"])
+        let schema=Set(profile.keys).isSubset(of:legacyKeys) ? 1 : 2
+        let envelope=NativeBackupEnvelope(schema:schema,exportedAt:ApplicationRecord.timestamp(now.addingTimeInterval(-0.001)),workspace:.init(saved:candidate.saved.sorted(),states:candidate.statuses,savedDetails:details),profile:profile,checklist:Dictionary(uniqueKeysWithValues:candidate.completed.map{($0,true)}),applicationRecords:records,nextActions:actions)
+        let encoder=JSONEncoder();encoder.outputFormatting=[.prettyPrinted,.sortedKeys]
+        let data=try encoder.encode(envelope);_=try Self.decodeBackup(data,now:now);return data
+    }
+    private func restoringWorkspace(_ envelope:NativeBackupEnvelope)throws->NativeWorkspace {
+        var next=workspace
+        for (id,job) in envelope.workspace.savedDetails where next.snapshots[id]==nil {next.snapshots[id]=job}
+        next.saved.formUnion(envelope.workspace.saved)
+        for (id,status) in envelope.workspace.states where next.statuses[id]==nil {next.statuses[id]=status}
+        for r in envelope.applicationRecords where try readApplicationRecord(r.jobId)==nil {if next.importedApplicationRecords==nil {next.importedApplicationRecords=[:]};next.importedApplicationRecords?[r.jobId]=r}
+        for r in envelope.nextActions where try readNextAction(r.jobId)==nil {if next.importedNextActions==nil {next.importedNextActions=[:]};next.importedNextActions?[r.jobId]=r}
+        return next
+    }
+    func previewBackup(_ data:Data)throws->NativeRestorePreview {
+        let envelope=try Self.decodeBackup(data)
+        let fingerprint=try backupFingerprint()
+        _=try privateBackupData()
+        _=try portableBackupData(for:restoringWorkspace(envelope))
+        var additions=0,conflicts=0
+        for id in envelope.workspace.savedDetails.keys {if workspace.snapshots[id]==nil {additions+=1} else {conflicts+=1}}
+        for id in envelope.workspace.saved {if !workspace.saved.contains(id) {additions+=1} else {conflicts+=1}}
+        for id in envelope.workspace.states.keys {if workspace.statuses[id]==nil {additions+=1} else {conflicts+=1}}
+        for r in envelope.applicationRecords {if try readApplicationRecord(r.jobId)==nil {additions+=1} else {conflicts+=1}}
+        for r in envelope.nextActions {if try readNextAction(r.jobId)==nil {additions+=1} else {conflicts+=1}}
+        return NativeRestorePreview(envelope:envelope,fingerprint:fingerprint,additions:additions,conflicts:conflicts,skipped:envelope.profile.count+envelope.checklist.count)
+    }
+    func applyBackup(_ preview:NativeRestorePreview)throws {
+        guard try backupFingerprint()==preview.fingerprint else {throw NativeBackupError.changed}
+        _=try Self.decodeBackup(JSONEncoder().encode(preview.envelope))
+        let next=try restoringWorkspace(preview.envelope)
+        _=try portableBackupData(for:next)
+        let original=try privateBackupData()
+        let encoder=JSONEncoder()
+        let data=try encoder.encode(next)
+        guard next.snapshots.count<=1000,next.saved.count<=1000,next.statuses.count<=1000,
+              (next.importedApplicationRecords?.count ?? 0)<=1000,(next.importedNextActions?.count ?? 0)<=1000,
+              data.count<=Self.backupLimit else {throw NativeBackupError.invalid}
+        try FileManager.default.createDirectory(at:storageURL.deletingLastPathComponent(),withIntermediateDirectories:true)
+        // Immutable recovery copy first. Imported records live in the same atomic workspace transaction.
+        try original.write(to:storageURL.appendingPathExtension("before-restore-"+UUID().uuidString+".json"),options:.atomic)
+        guard try backupFingerprint()==preview.fingerprint else {throw NativeBackupError.changed}
+        try data.write(to:storageURL,options:.atomic)
+        workspace=next;diskWorkspace=data;reloadApplicationRecords();storageError=nil
     }
 }

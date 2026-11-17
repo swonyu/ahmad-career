@@ -206,17 +206,30 @@ extension NativeCopy {
         }
         return result
     }
+    @MainActor private func nextActionNote(_ id:String,in store:NativeCareerStore)->String {
+        var result=""
+        if let record=store.nextActions[id],record.meaningful {
+            result += format("\nNext action (self-entered local plan): {0}\nDue date (Riyadh): {1}\nCompleted: {2}\nNext action last edited: {3}",[record.actionNote,record.dueOn.isEmpty ? self("Not set") : civilDate(record.dueOn),self(record.completed ? "Yes" : "No"),ApplicationReviewPolicy.date(record.updatedAt).map{date($0,includeTime:true)} ?? record.updatedAt])
+        }
+        if let error=store.nextActionErrors[id] {result += format("\nNext-action notice: {0}",[message(error)])}
+        if let draft=store.nextActionDrafts[id],draft.dirty {
+            result += format("\nUNSAVED next-action draft\nNext action: {0}\nDue date (Riyadh): {1}\nCompleted: {2}",[draft.actionNote,draft.dueOn.isEmpty ? self("Not set") : civilDate(draft.dueOn),self(draft.completed ? "Yes" : "No")])
+        }
+        return result
+    }
     @MainActor func exportNotes(from store: NativeCareerStore) -> String {
         guard isArabic else { return store.exportText() }
         let current = store.allJobs
-        let draftJobs = store.recordDrafts.values.filter { $0.dirty }.compactMap(\.job).filter { job in !current.contains { $0.id == job.id } }
-        let jobs = (current + draftJobs).filter { store.workspace.saved.contains($0.id) || store.status(for: $0) != "Not started" || store.applicationRecords[$0.id]?.meaningful == true || store.recordDrafts[$0.id]?.dirty == true }
+        let draftCandidates=store.recordDrafts.values.filter{$0.dirty}.compactMap(\.job)+store.nextActionDrafts.values.filter{$0.dirty}.compactMap(\.job)
+        var seen=Set(current.map(\.id))
+        let draftJobs=draftCandidates.filter{seen.insert($0.id).inserted}
+        let jobs=(current+draftJobs).filter{store.workspace.saved.contains($0.id) || store.status(for:$0) != "Not started" || store.applicationRecords[$0.id]?.meaningful==true || store.recordDrafts[$0.id]?.dirty==true || store.nextActions[$0.id]?.meaningful==true || store.nextActionDrafts[$0.id]?.dirty==true || store.nextActionErrors[$0.id] != nil}
         let labels = ["profile": "Professional record", "evidence": "Achievement stories", "cv": "Prepare your CV materials", "priority": "Review selected role requirements", "deadline": "Check selected deadlines", "review": "Applications reviewed"]
         let checklist = labels.keys.sorted().map { (store.workspace.completed.contains($0) ? "[x] " : "[ ] ") + self(labels[$0] ?? $0) }.joined(separator: "\n")
         return format("CAREER FINDER — APPLICATION NOTES\nLegacy research reference date (retained records only): {0}\n\n", [sourceDate(store.research.checkedAt, profile: store.workspace.profile)])
             + profileNote(store.workspace.profile) + self("\n\nPREPARATION CHECKLIST\n") + checklist
             + self("\n\nChecked items record your preparation on this device. Recheck the requirements, dates and materials for each application.\n\nSAVED AND TRACKED APPLICATIONS\n\n")
-            + jobs.map { note(for: $0, in: store) + recordNote($0.id, in: store) }.joined(separator: "\n\n——————————\n\n")
+            + jobs.map { note(for: $0, in: store) + recordNote($0.id, in: store) + nextActionNote($0.id,in:store) }.joined(separator: "\n\n——————————\n\n")
     }
 }
 #endif

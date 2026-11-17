@@ -23,3 +23,13 @@ common=(-swift-version 5 -Onone -sdk "$mac_sdk" -module-cache-path "$check_dir/m
 "$compiler" "${common[@]}" "$task_root/AhmadCareer/CareerFeed.swift" \
   "$task_root/AhmadCareer/NativeCareerStore.swift" "$task_root/Checks/NativeStoreCheck.swift" -o "$check_dir/legacy-store-check"
 "$check_dir/legacy-store-check" "$task_root/AhmadCareer/CareerResearch.json"
+
+# Published-branch compatibility: restored data, sidecar tombstones and stale-file protection.
+for compatibility_check in NextActionCheck NativeBackupCheck NativeMergeCompatibilityCheck; do
+  "$compiler" "${common[@]}" "$task_root/AhmadCareer/CareerFeed.swift" \
+    "$task_root/AhmadCareer/NativeCareerStore.swift" "$task_root/Checks/$compatibility_check.swift" -o "$check_dir/$compatibility_check"
+  "$check_dir/$compatibility_check" "$task_root/Checks/ResearchFixture.json"
+done
+"$compiler" "${common[@]}" "$task_root/AhmadCareer/CareerFeed.swift" \
+  "$task_root/Checks/NativeTransportLimitCheck.swift" -o "$check_dir/transport-check"
+"$check_dir/transport-check"

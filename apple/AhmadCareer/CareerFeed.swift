@@ -307,19 +307,32 @@ enum CareerFeed {
         }
     }
 
-    private static func json(_ request: URLRequest, session: URLSession) async throws -> [String: Any] {
-        let (data, response) = try await session.data(for: request)
+    // Internal so the offline transport fixture can exercise the exact production byte cap.
+    static func json(_ request: URLRequest, session: URLSession) async throws -> [String: Any] {
+        let (bytes, response) = try await session.bytes(for: request)
+        // Cancel rejected/oversized streams rather than buffering the entire response first.
+        defer { bytes.task.cancel() }
         guard let http = response as? HTTPURLResponse else { throw FeedError.invalidResponse }
         guard (200..<300).contains(http.statusCode) else { throw FeedError.http(http.statusCode) }
-        guard data.count <= 8_000_000, let value = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { throw FeedError.invalidResponse }
+        let limit=8_000_000
+        guard response.expectedContentLength<=limit else {throw FeedError.tooLarge}
+        var data=Data()
+        data.reserveCapacity(min(max(Int(response.expectedContentLength),0),limit))
+        for try await byte in bytes {
+            guard data.count<limit else {throw FeedError.tooLarge}
+            data.append(byte)
+        }
+        try Task.checkCancellation()
+        guard let value = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { throw FeedError.invalidResponse }
         return value
     }
 
     private enum FeedError: LocalizedError {
-        case invalidResponse, http(Int)
+        case invalidResponse, tooLarge, http(Int)
         var errorDescription: String? {
             switch self {
             case .invalidResponse: return "The employer returned an unreadable response."
+            case .tooLarge: return "The employer response exceeded the safe size limit."
             case .http(let status): return "Employer request failed (HTTP \(status))."
             }
         }

@@ -6,9 +6,12 @@
     <string name="c_302f2c41ca8f" formatted="false">"\n\nStatus: {0}\n"</string>
     <string name="c_44e611f2a56e" formatted="false">"\nApplication date (self-entered): {0}\nReceipt / record note (self-entered): {1}"</string>
     <string name="c_ec0d8f0239f5" formatted="false">"\nArchived saved research; this role is not in the current shortlist.\n"</string>
+    <string name="c_159516344a11" formatted="false">"\nNext action (self-entered local plan): {0}\nDue date (Riyadh): {1}\nCompleted: {2}\nNext action last edited: {3}"</string>
+    <string name="c_08563a681ce6" formatted="false">"\nNext-action notice: {0}"</string>
     <string name="c_ba690de03ae9" formatted="false">"\nRecord last edited (not application time): {0}"</string>
     <string name="c_78fe470dbafa" formatted="false">"\nRecord notice: {0}"</string>
     <string name="c_d89d8fcd939b" formatted="false">"\nUNSAVED application record draft\nApplication date: {0}\nReceipt / record note: {1}"</string>
+    <string name="c_37d918c93326" formatted="false">"\nUNSAVED next-action draft\nNext action: {0}\nDue date (Riyadh): {1}\nCompleted: {2}"</string>
     <string name="c_13c631f5038e" formatted="false">" Review and submit personally on the employer website."</string>
     <string name="c_9aa46971a44b" formatted="false">" Saved records remain available; this workspace cannot be overwritten."</string>
     <string name="c_9953e8029308" formatted="false">" Up to {0} results are kept on this phone. Narrow the search or open an employer board for more."</string>
@@ -79,8 +82,10 @@
     <string name="c_07b352283740" formatted="false">"Add an employer board"</string>
     <string name="c_1dbc929db211" formatted="false">"Add an opportunity"</string>
     <string name="c_8c5001ae940e" formatted="false">"Add another employer"</string>
+    <string name="c_8e91520535a9" formatted="false">"Add earlier records from a backup"</string>
     <string name="c_c0a409d7a666" formatted="false">"Add employer board"</string>
     <string name="c_3f804eaacf43" formatted="false">"Add experience and preferences"</string>
+    <string name="c_b467121b7f18" formatted="false">"Add missing saved data? Existing values will be preserved."</string>
     <string name="c_d5bf065e3eef" formatted="false">"Add opportunity"</string>
     <string name="c_46cab158834c" formatted="false">"Add the role and employer so you can recognize this opportunity offline."</string>
     <string name="c_23396229be0b" formatted="false">"Add the role title and employer so the saved opportunity is clear."</string>
@@ -90,6 +95,7 @@
     <string name="c_bf219c3883a7" formatted="false">"Add your first opportunity"</string>
     <string name="c_cf9cefb16ffb" formatted="false">"Add your name"</string>
     <string name="c_00fcfc375119" formatted="false">"Additional details"</string>
+    <string name="c_c1fb60d86eca" formatted="false">"Additions restored locally. Nothing was sent."</string>
     <string name="c_fa9891726fe6" formatted="false">"Advanced · use another service"</string>
     <string name="c_8cfdbe12d3b8" formatted="false">"Advanced: use the HTTPS address from your own service operator. Its account, privacy and submission features may differ."</string>
     <string name="c_db5ee5931bfc" formatted="false">"After connecting, Profile lets you review and copy a separate phone draft. Employers need an enabled integration and your approval before Career Finder can send an application."</string>
@@ -107,6 +113,7 @@
     <string name="c_2c15470a0d78" formatted="false">"An unfinished edit was recovered"</string>
     <string name="c_2c5e81714652" formatted="false">"Annual"</string>
     <string name="c_65095904d6da" formatted="false">"Annual fixed amounts"</string>
+    <string name="c_471877b7f960" formatted="false">"Another app instance changed saved records. Export your unsaved drafts, then reopen this app before saving. Existing disk records were preserved."</string>
     <string name="c_2b505597daa7" formatted="false">"Any"</string>
     <string name="c_a07442fcccb2" formatted="false">"Any / not specified"</string>
     <string name="c_1e508deb1448" formatted="false">"Any city in that scope"</string>
@@ -200,6 +207,7 @@
     <string name="c_c55adff0356e" formatted="false">"CV fingerprint"</string>
     <string name="c_923d88251c36" formatted="false">"CV stored in this application workspace."</string>
     <string name="c_19766ed6ccb2" formatted="false">"Cancel"</string>
+    <string name="c_f657ed08c403" formatted="false">"Cancel preview"</string>
     <string name="c_b54563babd63" formatted="false">"Cancel search"</string>
     <string name="c_d353a99eb455" formatted="false">"Cancelled"</string>
     <string name="c_46b6d4afad19" formatted="false">"Career Finder"</string>
@@ -249,6 +257,7 @@
     <string name="c_9cb2503e2e06" formatted="false">"Choose a recognized display time zone."</string>
     <string name="c_fa1d64ad6011" formatted="false">"Choose a supported Career Finder phone workspace backup."</string>
     <string name="c_ca015563e4d5" formatted="false">"Choose an available sign-in method, or use Google through ChatGPT. Return to your existing account before connecting another provider; matching emails do not merge workspaces. Create a code, then return here."</string>
+    <string name="c_0e725967a05a" formatted="false">"Choose an earlier workspace backup"</string>
     <string name="c_366b456a5b15" formatted="false">"Choose an experience level from the list."</string>
     <string name="c_9824113195f5" formatted="false">"Choose and review a backup first."</string>
     <string name="c_343b5a9c7fd6" formatted="false">"Choose date"</string>
@@ -297,6 +306,7 @@
     <string name="c_ea222b9c80b9" formatted="false">"Clear {0}"</string>
     <string name="c_7d9eb7acb13e" formatted="false">"Close"</string>
     <string name="c_79c84b48c2f0" formatted="false">"Close "</string>
+    <string name="c_2f375465fa2b" formatted="false">"Close older app versions before restoring. A local recovery copy is saved first. If the saved data changes, create a new preview. Older versions may not preserve newer records or preferences."</string>
     <string name="c_2e6e30b24c23" formatted="false">"Close record"</string>
     <string name="c_c21ead0614e7" formatted="false">"Closed"</string>
     <string name="c_6adf9524b314" formatted="false">"Closed / not pursuing"</string>
@@ -314,6 +324,7 @@
     <string name="c_b756da9bdf58" formatted="false">"Complete this application on the employer\'s website."</string>
     <string name="c_8f26f03b491f" formatted="false">"Confirm Mark as not applied before clearing your applied record."</string>
     <string name="c_4dd15a8c5280" formatted="false">"Confirm Riyadh assignment"</string>
+    <string name="c_e682d85e7b9c" formatted="false">"Confirm additive restore"</string>
     <string name="c_d20b587afbf7" formatted="false">"Confirm before marking this job as not applied."</string>
     <string name="c_2a37c4524403" formatted="false">"Confirm the complete degree, experience, location and seniority requirements on the employer website."</string>
     <string name="c_a2748c18d435" formatted="false">"Confirm your professional record"</string>
@@ -442,9 +453,11 @@
     <string name="c_1083091770d6" formatted="false">"Earlier connected workspace"</string>
     <string name="c_27e1140ab2cd" formatted="false">"Earlier connection address copies"</string>
     <string name="c_55f26082c6b9" formatted="false">"Earlier connection copies were preserved. Open phone data settings to review and merge the copy you want."</string>
+    <string name="c_410be0d932f3" formatted="false">"Earlier local planning records"</string>
     <string name="c_1d3953f72b1c" formatted="false">"Earlier phone draft"</string>
     <string name="c_e9a84729b1fd" formatted="false">"Earlier planning records · {0}"</string>
     <string name="c_4a58df073e46" formatted="false">"Earlier record versions"</string>
+    <string name="c_6d3edfe541a7" formatted="false">"Earlier records and backups"</string>
     <string name="c_9451853c9af1" formatted="false">"Earlier recovery areas"</string>
     <string name="c_afeb4673226e" formatted="false">"Earlier result · confirm the posting is still open"</string>
     <string name="c_660e448d8498" formatted="false">"Earlier salary criteria · monthly SAR"</string>
@@ -506,6 +519,7 @@
     <string name="c_d24e7e24ba08" formatted="false">"Export a phone backup"</string>
     <string name="c_735122b7326a" formatted="false">"Export and recovery"</string>
     <string name="c_6835fb2ed50a" formatted="false">"Export application receipts"</string>
+    <string name="c_964e4aef2910" formatted="false">"Export earlier planning records"</string>
     <string name="c_4abbc8621750" formatted="false">"Export first if you need a copy. Clearing removes this workspace\'s local profile, PDF, saved links and private notes/history, and disables this phone connection. Other workspaces and cloud/employer records remain. Restrictive Stop holds remain so an old approved plan cannot silently resume."</string>
     <string name="c_e5cac76c006e" formatted="false">"Export phone workspace"</string>
     <string name="c_6a8aaf143f40" formatted="false">"Export receipt records"</string>
@@ -722,6 +736,8 @@
     <string name="c_07297fa94a99" formatted="false">"Needs review"</string>
     <string name="c_3dddf7d417a7" formatted="false">"Needs verification"</string>
     <string name="c_3dd7e482ff01" formatted="false">"New employer listing. Review full requirements before applying."</string>
+    <string name="c_47e062aefb36" formatted="false">"Next action due date, YYYY-MM-DD"</string>
+    <string name="c_28e775e77fc6" formatted="false">"Next action saved on this phone."</string>
     <string name="c_1ea442a134b2" formatted="false">"No"</string>
     <string name="c_b0fc9c1c1a36" formatted="false">"No PDF"</string>
     <string name="c_7c4dda77ce57" formatted="false">"No PDF selected"</string>
@@ -880,6 +896,7 @@
     <string name="c_5891ca580d9b" formatted="false">"Preserved earlier assessment"</string>
     <string name="c_7652c07ca193" formatted="false">"Preserved private workspace copy"</string>
     <string name="c_0110229df4fc" formatted="false">"Preserved with the earlier assessment from your records. Historical assessments are not personalized advice for your current profile. Recheck the employer and requirements."</string>
+    <string name="c_eaac172efebe" formatted="false">"Preview canceled. Nothing was restored."</string>
     <string name="c_0b4245306a36" formatted="false">"Previous result · check employer"</string>
     <string name="c_f6bcc7909eb7" formatted="false">"Previous results"</string>
     <string name="c_41fb96e5a3e5" formatted="false">"Previous results — search again to check availability."</string>
@@ -888,6 +905,7 @@
     <string name="c_edc41b71b29c" formatted="false">"Privacy and data use"</string>
     <string name="c_1de3864720bd" formatted="false">"Privacy and support"</string>
     <string name="c_f2f2823b7562" formatted="false">"Private application note"</string>
+    <string name="c_f63cfe83332e" formatted="false">"Private next action"</string>
     <string name="c_9f84d6870a37" formatted="false">"Private note (optional)"</string>
     <string name="c_cd9c891651ad" formatted="false">"Private phone draft"</string>
     <string name="c_c3c52cb199ad" formatted="false">"Private saving is available again. Review your draft before sharing it."</string>
@@ -1011,6 +1029,7 @@
     <string name="c_09faf63eb16f" formatted="false">"Resolve the current profile conflict before copying this draft."</string>
     <string name="c_6e38269cc3a2" formatted="false">"Resolve the profile conflict before copying a phone draft."</string>
     <string name="c_be9001499d09" formatted="false">"Resolve the saved profile comparison before importing another draft."</string>
+    <string name="c_f0411f01b9f3" formatted="false">"Restore additions"</string>
     <string name="c_89dd272e712b" formatted="false">"Resume record edit"</string>
     <string name="c_f9e860522911" formatted="false">"Retention and removal"</string>
     <string name="c_b2a8bf9c9108" formatted="false">"Retry Stop"</string>
@@ -1029,6 +1048,7 @@
     <string name="c_da9bc16950a3" formatted="false">"Review applications: {0}"</string>
     <string name="c_4cb99c8e482b" formatted="false">"Review copying my unpaired draft here"</string>
     <string name="c_e438de8e71fa" formatted="false">"Review each application yourself"</string>
+    <string name="c_1d306aea7692" formatted="false">"Review earlier records and backups"</string>
     <string name="c_e38f21d67be8" formatted="false">"Review earlier recovery copy"</string>
     <string name="c_ecd9ca9c3138" formatted="false">"Review my application notes"</string>
     <string name="c_2d75d34e5262" formatted="false">"Review notes"</string>
@@ -1041,6 +1061,7 @@
     <string name="c_17c769cbd62d" formatted="false">"Review remaining applications"</string>
     <string name="c_6ef0d02f497f" formatted="false">"Review saved phone draft"</string>
     <string name="c_828f66ca967c" formatted="false">"Review selected role requirements"</string>
+    <string name="c_7f8c9a0f95ad" formatted="false">"Review the additions before restoring. Existing records, profile and checklist are preserved. Nothing is copied into an account, uploaded or submitted."</string>
     <string name="c_a67aca1bebfd" formatted="false">"Review the employer\'s current requirements. Auto Apply eligibility is checked in the application workspace; opening or sharing this link never counts as a submission."</string>
     <string name="c_1e177e6c4a02" formatted="false">"Review the exact details below. Only eligible applications in this review will be sent."</string>
     <string name="c_7a077794034d" formatted="false">"Review the original application details, then approve again. Requests with an uncertain outcome cannot be resumed."</string>
@@ -1083,6 +1104,7 @@
     <string name="c_0abef8f5e627" formatted="false">"Save a role from any country or profession. Use the employer’s HTTPS page."</string>
     <string name="c_f86854a6bc0f" formatted="false">"Save application record"</string>
     <string name="c_c6b86a6c32b1" formatted="false">"Save draft on this phone"</string>
+    <string name="c_bfa8c1b3c32c" formatted="false">"Save next action"</string>
     <string name="c_492e9a0bc454" formatted="false">"Save opportunities from any country or profession and prepare your next application. Open employer links to apply manually."</string>
     <string name="c_4cd6409c84e4" formatted="false">"Save opportunities, prepare your profile and review your next step. Employer links let you apply manually."</string>
     <string name="c_bd01d7e99246" formatted="false">"Save opportunity"</string>
@@ -1105,6 +1127,8 @@
     <string name="c_b5c120b316c2" formatted="false">"Saved"</string>
     <string name="c_3fb96660cf57" formatted="false">"Saved "</string>
     <string name="c_8d1b357407c0" formatted="false">"Saved ({0})"</string>
+    <string name="c_ee6f03c69778" formatted="false">"Saved data changed after the preview. Create a new preview before restoring."</string>
+    <string name="c_0f1361f4f008" formatted="false">"Saved data could not be read or written safely. Nothing was restored."</string>
     <string name="c_2ed4c00f3c7e" formatted="false">"Saved employer lead. Its current availability is not established by the latest search. Recheck the official page before applying."</string>
     <string name="c_6845d24f9053" formatted="false">"Saved for application review"</string>
     <string name="c_877f83719c96" formatted="false">"Saved in your application workspace"</string>
@@ -1174,6 +1198,7 @@
     <string name="c_f8ffc94a4fb1" formatted="false">"Sending paused on this phone"</string>
     <string name="c_92613a8f4340" formatted="false">"Senior"</string>
     <string name="c_73fb0911f47d" formatted="false">"Separate phone draft"</string>
+    <string name="c_096b35807a17" formatted="false">"Separate planning notes and older backup files stay local. They are never adopted by a connected account automatically."</string>
     <string name="c_3fa5895e4d2e" formatted="false">"Separate unpaired draft"</string>
     <string name="c_ef36f8c99826" formatted="false">"Service address"</string>
     <string name="c_a24eb58bed7c" formatted="false">"Set up my profile"</string>
@@ -1241,7 +1266,9 @@
     <string name="c_24bd3ce20295" formatted="false">"Storage problem. {0}"</string>
     <string name="c_e3c8d8691c70" formatted="false">"Store and process this application"</string>
     <string name="c_c6bd53fbd021" formatted="false">"Stored application metadata could not be read. Original data is preserved; record saving is blocked."</string>
+    <string name="c_807dcdc698a1" formatted="false">"Stored next action could not be read. Original data is preserved; saving is blocked."</string>
     <string name="c_47f62e29cdb6" formatted="false">"Submission availability is unverified"</string>
+    <string name="c_8d359a0c2328" formatted="false">"Submission uncertain"</string>
     <string name="c_64900440a8c9" formatted="false">"Submitted"</string>
     <string name="c_119bcdc1f038" formatted="false">"Supply Chain Manager"</string>
     <string name="c_f554ca309b14" formatted="false">"Support and feedback"</string>
@@ -1320,11 +1347,14 @@
     <string name="c_d5e45d2e4994" formatted="false">"The latest outcome is not available. Refresh receipts when connected; an interrupted request is not a failed application."</string>
     <string name="c_23306a6c8a3c" formatted="false">"The latest saved PDF will be used: "</string>
     <string name="c_af611cfeaa91" formatted="false">"The latest saved PDF will be used: {0}"</string>
+    <string name="c_77f5a975f4d7" formatted="false">"The latest workspace could not be loaded. Your draft is preserved."</string>
     <string name="c_a0c13205e3c4" formatted="false">"The link is saved on this phone. "</string>
     <string name="c_bda14fc3b812" formatted="false">"The link is saved on this phone. {0}"</string>
     <string name="c_20bb10044a6c" formatted="false">"The local record could not be removed. Try again before leaving this workspace."</string>
     <string name="c_e7715235e60f" formatted="false">"The merged shortlist exceeds 200 links. Nothing was replaced."</string>
     <string name="c_ac98abf44440" formatted="false">"The new workspace starts empty. Service records remain on the service. You will need a new pairing code to reconnect."</string>
+    <string name="c_d08d73bed450" formatted="false">"The next action could not be read or saved. Original data and your session draft are preserved."</string>
+    <string name="c_45585a865e6d" formatted="false">"The opportunity could not be saved. Your next-action draft is preserved."</string>
     <string name="c_1249013f7c38" formatted="false">"The opportunity could not be saved. Your record draft is preserved."</string>
     <string name="c_4cd398804785" formatted="false">"The phone draft file could not record this change. Its existing contents are preserved."</string>
     <string name="c_e5c663822b1a" formatted="false">"The previous search file could not be read. It is preserved; new searches will stay in memory."</string>
@@ -1428,6 +1458,7 @@
     <string name="c_5cad29feea2b" formatted="false">"These preferences stay on this device for your planning notes and earlier records. Search uses the role, location and board choices you enter on the Search tab. Salary and pay basis still need confirmation."</string>
     <string name="c_dc0ba80a69a5" formatted="false">"These preferences use an unsupported version. Original data is preserved."</string>
     <string name="c_10773583b1b1" formatted="false">"These private records changed. They are kept; compare their current versions before choosing a workspace."</string>
+    <string name="c_0859c7a5d6c7" formatted="false">"These records are separate from every connected account. A backup includes saved roles, self-entered receipt notes, next actions and the saved planning profile. It contains no account credentials or application approvals."</string>
     <string name="c_83bd4d412731" formatted="false">"These records changed. Review their latest versions before choosing."</string>
     <string name="c_6238c72f230c" formatted="false">"These results changed while you were browsing. Start a new search; the previous results are still here."</string>
     <string name="c_c8c635191404" formatted="false">"These saved application records need a compatible app version. The original phone data has been preserved."</string>
@@ -1465,11 +1496,13 @@
     <string name="c_e63a3b09f69a" formatted="false">"This is a public lead, not a verified personal fit score. A listing may change or close after it was checked."</string>
     <string name="c_9b8b4fb16697" formatted="false">"This is a test service. Any generated receipt is simulated and does not count as a real application."</string>
     <string name="c_91f4014c7980" formatted="false">"This is not a supported Career Finder phone workspace backup. Existing files are unchanged."</string>
+    <string name="c_21632c1c703b" formatted="false">"This is not a supported private workspace backup, or it exceeds the limits. Nothing was changed."</string>
     <string name="c_25f9cd12ebd9" formatted="false">"This is not a verified personal fit score. Compare the employer requirements with your own evidence."</string>
     <string name="c_e35a9270679f" formatted="false">"This is your own record. Changing status does not submit an application or contact anyone."</string>
     <string name="c_92b1a37899e1" formatted="false">"This keeps a private draft. It does not overwrite the service until you save again."</string>
     <string name="c_3ba0c1bc30bb" formatted="false">"This lead was found by title and location. It is not a personalized eligibility assessment."</string>
     <string name="c_eb0b37b02f6c" formatted="false">"This link is already saved. Your unfinished draft is kept so you can review its details or change the link."</string>
+    <string name="c_41ab1155c42c" formatted="false">"This next action changed. Your draft is preserved. Export it before reloading the saved version."</string>
     <string name="c_b5ad610df328" formatted="false">"This opens an empty local workspace while preserving the existing encrypted files. It does not recover unreadable drafts or revoke any earlier service session. Your server records stay unchanged."</string>
     <string name="c_c97e92f5ae7a" formatted="false">"This opportunity changed or is part of a review. It was kept; refresh before removing it."</string>
     <string name="c_ba0e33d18a4f" formatted="false">"This opportunity changed or was removed. Your record draft is kept; reopen its current details before saving."</string>
@@ -1483,6 +1516,7 @@
     <string name="c_3564c181c43a" formatted="false">"This phone is connected"</string>
     <string name="c_b3831fdaba69" formatted="false">"This phone reached its private workspace storage limit. Existing drafts were kept; export and clear an unused workspace before adding another."</string>
     <string name="c_b0259a4c47c3" formatted="false">"This preserved copy is no longer available."</string>
+    <string name="c_cfbab32a3d8a" formatted="false">"This private plan stays with the earlier local record. It is not an application receipt and is not copied into a connected account."</string>
     <string name="c_b72835e049f8" formatted="false">"This private record is now kept with the connected workspace on this phone. Its bookmark was not changed, and no notes were uploaded."</string>
     <string name="c_3a9637fd2b36" formatted="false">"This record changed. Your draft is kept; compare the saved version before replacing it."</string>
     <string name="c_10e7251e66aa" formatted="false">"This record is separate from your connected workspace. You can associate it without saving its job link again."</string>
@@ -1523,6 +1557,7 @@
     <string name="c_56e8fa8ab8dd" formatted="false">"This service has not confirmed support for LinkedIn profile links. Your edits are kept on this phone. Refresh the connection or ask its operator to update the service."</string>
     <string name="c_4d54a5a162e5" formatted="false">"This storage provider cannot open earlier recovery areas."</string>
     <string name="c_797911055dc9" formatted="false">"This storage provider cannot remove earlier recovery areas."</string>
+    <string name="c_f66ca0eac094" formatted="false">"This unencrypted file contains private information. Choose a destination you trust. Unsaved drafts are available in reviewed notes, not the saved-data backup."</string>
     <string name="c_17ecbf2efdf1" formatted="false">"This unfinished opportunity changed. Reopen the draft list."</string>
     <string name="c_a03933e59311" formatted="false">"This unfinished record could not be saved. Keep the note within 2,000 characters and use valid dates."</string>
     <string name="c_46cd45309ef3" formatted="false">"This workspace is too large to save on this phone. Your earlier saved data is intact. Export a backup, reduce the draft or choose a smaller PDF, then save again."</string>
@@ -1574,6 +1609,7 @@
     <string name="c_c11ceb0fc87c" formatted="false">"Use Career Finder"</string>
     <string name="c_b0532421f357" formatted="false">"Use a complete public HTTPS job link."</string>
     <string name="c_f76975427995" formatted="false">"Use a public jobs.lever.co, jobs.eu.lever.co, boards.greenhouse.io or job-boards.greenhouse.io link."</string>
+    <string name="c_70ee1392fb24" formatted="false">"Use a real YYYY-MM-DD due date or leave it blank, and a note up to 500 Unicode characters. A due date or completed action needs a nonblank note."</string>
     <string name="c_ec7c32263ed8" formatted="false">"Use a real application date no later than today in Riyadh, or leave it blank. Notes allow 2,000 characters."</string>
     <string name="c_2d62927540b3" formatted="false">"Use a role or skill, add a location if you want, and choose up to four Greenhouse or Lever employer boards. Tap Search jobs when you are ready."</string>
     <string name="c_a593bbaee8c0" formatted="false">"Use a short PDF filename without path characters."</string>
@@ -1598,6 +1634,7 @@
     <string name="c_35b0a7fac29f" formatted="false">"Use up to 100 characters for the city."</string>
     <string name="c_d665505c7519" formatted="false">"Use up to 120 characters for role words and 100 for location."</string>
     <string name="c_2b9144f1335d" formatted="false">"Use up to 200 characters for role keywords."</string>
+    <string name="c_32aceb1d75bb" formatted="false">"Use up to 500 characters. A date or a completed action needs a note. No reminder, message or application is sent."</string>
     <string name="c_31c52930649c" formatted="false">"Use verified achievements when negotiating. Compare commute, hours, probation and progression before committing."</string>
     <string name="c_1cc5eb068052" formatted="false">"Use your HTTPS LinkedIn personal profile link, beginning with /in/."</string>
     <string name="c_9013acb19714" formatted="false">"Use your device language, or choose English or Arabic."</string>
@@ -1680,6 +1717,7 @@
     <string name="c_b745a67efa84" formatted="false">"Your new profile starts blank. Add your own details and CV when you are ready. An account is needed only for the connected application service."</string>
     <string name="c_88a44118b130" formatted="false">"Your newly selected PDF is kept: "</string>
     <string name="c_6dc583b0911f" formatted="false">"Your newly selected PDF is kept: {0}"</string>
+    <string name="c_8d9409b0a6ca" formatted="false">"Your next action"</string>
     <string name="c_4c673ac3ec6f" formatted="false">"Your next move starts here."</string>
     <string name="c_5effd2c4af94" formatted="false">"Your next step, ready."</string>
     <string name="c_8fbe41d88b16" formatted="false">"Your opportunities"</string>
@@ -1731,6 +1769,7 @@
     <string name="c_2ac897911621" formatted="false">"{0} Qiddiya searches failed; results may be incomplete."</string>
     <string name="c_d87b30adbb5f" formatted="false">"{0} Review and submit personally on the employer website."</string>
     <string name="c_bf75bd410504" formatted="false">"{0} Saved records remain available; this workspace cannot be overwritten."</string>
+    <string name="c_32a5f73abad8" formatted="false">"{0} additions; {1} existing values preserved; {2} profile or checklist fields skipped."</string>
     <string name="c_f45b74c11909" formatted="false">"{0} and any PDF bytes held on this phone"</string>
     <string name="c_f0a220c816cc" formatted="false">"{0} at {1}"</string>
     <string name="c_64031fdbf25a" formatted="false">"{0} before choosing what to keep."</string>

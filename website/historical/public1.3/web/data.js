@@ -1,0 +1,18 @@
+globalThis.CAREER_DATA = {
+  "checkedAt": "2026-11-09",
+  "profile": {
+    "name": "Your name",
+    "role": "Your professional focus",
+    "organization": "",
+    "location": "",
+    "url": "",
+    "facts": [],
+    "unknowns": [
+      "Add your own experience, education, skills and job preferences in Profile."
+    ]
+  },
+  "jobs": [],
+  "excluded": [],
+  "benchmarks": [],
+  "targets": []
+};

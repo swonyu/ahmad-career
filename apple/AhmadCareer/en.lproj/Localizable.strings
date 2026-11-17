@@ -4,9 +4,12 @@
 "\n\nStatus: {0}\n" = "\n\nStatus: {0}\n";
 "\nApplication date (self-entered): {0}\nReceipt / record note (self-entered): {1}" = "\nApplication date (self-entered): {0}\nReceipt / record note (self-entered): {1}";
 "\nArchived saved research; this role is not in the current shortlist.\n" = "\nArchived saved research; this role is not in the current shortlist.\n";
+"\nNext action (self-entered local plan): {0}\nDue date (Riyadh): {1}\nCompleted: {2}\nNext action last edited: {3}" = "\nNext action (self-entered local plan): {0}\nDue date (Riyadh): {1}\nCompleted: {2}\nNext action last edited: {3}";
+"\nNext-action notice: {0}" = "\nNext-action notice: {0}";
 "\nRecord last edited (not application time): {0}" = "\nRecord last edited (not application time): {0}";
 "\nRecord notice: {0}" = "\nRecord notice: {0}";
 "\nUNSAVED application record draft\nApplication date: {0}\nReceipt / record note: {1}" = "\nUNSAVED application record draft\nApplication date: {0}\nReceipt / record note: {1}";
+"\nUNSAVED next-action draft\nNext action: {0}\nDue date (Riyadh): {1}\nCompleted: {2}" = "\nUNSAVED next-action draft\nNext action: {0}\nDue date (Riyadh): {1}\nCompleted: {2}";
 " Review and submit personally on the employer website." = " Review and submit personally on the employer website.";
 " Saved records remain available; this workspace cannot be overwritten." = " Saved records remain available; this workspace cannot be overwritten.";
 " Up to {0} results are kept on this phone. Narrow the search or open an employer board for more." = " Up to {0} results are kept on this phone. Narrow the search or open an employer board for more.";
@@ -77,8 +80,10 @@
 "Add an employer board" = "Add an employer board";
 "Add an opportunity" = "Add an opportunity";
 "Add another employer" = "Add another employer";
+"Add earlier records from a backup" = "Add earlier records from a backup";
 "Add employer board" = "Add employer board";
 "Add experience and preferences" = "Add experience and preferences";
+"Add missing saved data? Existing values will be preserved." = "Add missing saved data? Existing values will be preserved.";
 "Add opportunity" = "Add opportunity";
 "Add the role and employer so you can recognize this opportunity offline." = "Add the role and employer so you can recognize this opportunity offline.";
 "Add the role title and employer so the saved opportunity is clear." = "Add the role title and employer so the saved opportunity is clear.";
@@ -88,6 +93,7 @@
 "Add your first opportunity" = "Add your first opportunity";
 "Add your name" = "Add your name";
 "Additional details" = "Additional details";
+"Additions restored locally. Nothing was sent." = "Additions restored locally. Nothing was sent.";
 "Advanced · use another service" = "Advanced · use another service";
 "Advanced: use the HTTPS address from your own service operator. Its account, privacy and submission features may differ." = "Advanced: use the HTTPS address from your own service operator. Its account, privacy and submission features may differ.";
 "After connecting, Profile lets you review and copy a separate phone draft. Employers need an enabled integration and your approval before Career Finder can send an application." = "After connecting, Profile lets you review and copy a separate phone draft. Employers need an enabled integration and your approval before Career Finder can send an application.";
@@ -105,6 +111,7 @@
 "An unfinished edit was recovered" = "An unfinished edit was recovered";
 "Annual" = "Annual";
 "Annual fixed amounts" = "Annual fixed amounts";
+"Another app instance changed saved records. Export your unsaved drafts, then reopen this app before saving. Existing disk records were preserved." = "Another app instance changed saved records. Export your unsaved drafts, then reopen this app before saving. Existing disk records were preserved.";
 "Any" = "Any";
 "Any / not specified" = "Any / not specified";
 "Any city in that scope" = "Any city in that scope";
@@ -198,6 +205,7 @@
 "CV fingerprint" = "CV fingerprint";
 "CV stored in this application workspace." = "CV stored in this application workspace.";
 "Cancel" = "Cancel";
+"Cancel preview" = "Cancel preview";
 "Cancel search" = "Cancel search";
 "Cancelled" = "Cancelled";
 "Career Finder" = "Career Finder";
@@ -247,6 +255,7 @@
 "Choose a recognized display time zone." = "Choose a recognized display time zone.";
 "Choose a supported Career Finder phone workspace backup." = "Choose a supported Career Finder phone workspace backup.";
 "Choose an available sign-in method, or use Google through ChatGPT. Return to your existing account before connecting another provider; matching emails do not merge workspaces. Create a code, then return here." = "Choose an available sign-in method, or use Google through ChatGPT. Return to your existing account before connecting another provider; matching emails do not merge workspaces. Create a code, then return here.";
+"Choose an earlier workspace backup" = "Choose an earlier workspace backup";
 "Choose an experience level from the list." = "Choose an experience level from the list.";
 "Choose and review a backup first." = "Choose and review a backup first.";
 "Choose date" = "Choose date";
@@ -295,6 +304,7 @@
 "Clear {0}" = "Clear {0}";
 "Close" = "Close";
 "Close " = "Close ";
+"Close older app versions before restoring. A local recovery copy is saved first. If the saved data changes, create a new preview. Older versions may not preserve newer records or preferences." = "Close older app versions before restoring. A local recovery copy is saved first. If the saved data changes, create a new preview. Older versions may not preserve newer records or preferences.";
 "Close record" = "Close record";
 "Closed" = "Closed";
 "Closed / not pursuing" = "Closed / not pursuing";
@@ -312,6 +322,7 @@
 "Complete this application on the employer's website." = "Complete this application on the employer's website.";
 "Confirm Mark as not applied before clearing your applied record." = "Confirm Mark as not applied before clearing your applied record.";
 "Confirm Riyadh assignment" = "Confirm Riyadh assignment";
+"Confirm additive restore" = "Confirm additive restore";
 "Confirm before marking this job as not applied." = "Confirm before marking this job as not applied.";
 "Confirm the complete degree, experience, location and seniority requirements on the employer website." = "Confirm the complete degree, experience, location and seniority requirements on the employer website.";
 "Confirm your professional record" = "Confirm your professional record";
@@ -440,9 +451,11 @@
 "Earlier connected workspace" = "Earlier connected workspace";
 "Earlier connection address copies" = "Earlier connection address copies";
 "Earlier connection copies were preserved. Open phone data settings to review and merge the copy you want." = "Earlier connection copies were preserved. Open phone data settings to review and merge the copy you want.";
+"Earlier local planning records" = "Earlier local planning records";
 "Earlier phone draft" = "Earlier phone draft";
 "Earlier planning records · {0}" = "Earlier planning records · {0}";
 "Earlier record versions" = "Earlier record versions";
+"Earlier records and backups" = "Earlier records and backups";
 "Earlier recovery areas" = "Earlier recovery areas";
 "Earlier result · confirm the posting is still open" = "Earlier result · confirm the posting is still open";
 "Earlier salary criteria · monthly SAR" = "Earlier salary criteria · monthly SAR";
@@ -504,6 +517,7 @@
 "Export a phone backup" = "Export a phone backup";
 "Export and recovery" = "Export and recovery";
 "Export application receipts" = "Export application receipts";
+"Export earlier planning records" = "Export earlier planning records";
 "Export first if you need a copy. Clearing removes this workspace's local profile, PDF, saved links and private notes/history, and disables this phone connection. Other workspaces and cloud/employer records remain. Restrictive Stop holds remain so an old approved plan cannot silently resume." = "Export first if you need a copy. Clearing removes this workspace's local profile, PDF, saved links and private notes/history, and disables this phone connection. Other workspaces and cloud/employer records remain. Restrictive Stop holds remain so an old approved plan cannot silently resume.";
 "Export phone workspace" = "Export phone workspace";
 "Export receipt records" = "Export receipt records";
@@ -720,6 +734,8 @@
 "Needs review" = "Needs review";
 "Needs verification" = "Needs verification";
 "New employer listing. Review full requirements before applying." = "New employer listing. Review full requirements before applying.";
+"Next action due date, YYYY-MM-DD" = "Next action due date, YYYY-MM-DD";
+"Next action saved on this phone." = "Next action saved on this phone.";
 "No" = "No";
 "No PDF" = "No PDF";
 "No PDF selected" = "No PDF selected";
@@ -878,6 +894,7 @@
 "Preserved earlier assessment" = "Preserved earlier assessment";
 "Preserved private workspace copy" = "Preserved private workspace copy";
 "Preserved with the earlier assessment from your records. Historical assessments are not personalized advice for your current profile. Recheck the employer and requirements." = "Preserved with the earlier assessment from your records. Historical assessments are not personalized advice for your current profile. Recheck the employer and requirements.";
+"Preview canceled. Nothing was restored." = "Preview canceled. Nothing was restored.";
 "Previous result · check employer" = "Previous result · check employer";
 "Previous results" = "Previous results";
 "Previous results — search again to check availability." = "Previous results — search again to check availability.";
@@ -886,6 +903,7 @@
 "Privacy and data use" = "Privacy and data use";
 "Privacy and support" = "Privacy and support";
 "Private application note" = "Private application note";
+"Private next action" = "Private next action";
 "Private note (optional)" = "Private note (optional)";
 "Private phone draft" = "Private phone draft";
 "Private saving is available again. Review your draft before sharing it." = "Private saving is available again. Review your draft before sharing it.";
@@ -1009,6 +1027,7 @@
 "Resolve the current profile conflict before copying this draft." = "Resolve the current profile conflict before copying this draft.";
 "Resolve the profile conflict before copying a phone draft." = "Resolve the profile conflict before copying a phone draft.";
 "Resolve the saved profile comparison before importing another draft." = "Resolve the saved profile comparison before importing another draft.";
+"Restore additions" = "Restore additions";
 "Resume record edit" = "Resume record edit";
 "Retention and removal" = "Retention and removal";
 "Retry Stop" = "Retry Stop";
@@ -1027,6 +1046,7 @@
 "Review applications: {0}" = "Review applications: {0}";
 "Review copying my unpaired draft here" = "Review copying my unpaired draft here";
 "Review each application yourself" = "Review each application yourself";
+"Review earlier records and backups" = "Review earlier records and backups";
 "Review earlier recovery copy" = "Review earlier recovery copy";
 "Review my application notes" = "Review my application notes";
 "Review notes" = "Review notes";
@@ -1039,6 +1059,7 @@
 "Review remaining applications" = "Review remaining applications";
 "Review saved phone draft" = "Review saved phone draft";
 "Review selected role requirements" = "Review selected role requirements";
+"Review the additions before restoring. Existing records, profile and checklist are preserved. Nothing is copied into an account, uploaded or submitted." = "Review the additions before restoring. Existing records, profile and checklist are preserved. Nothing is copied into an account, uploaded or submitted.";
 "Review the employer's current requirements. Auto Apply eligibility is checked in the application workspace; opening or sharing this link never counts as a submission." = "Review the employer's current requirements. Auto Apply eligibility is checked in the application workspace; opening or sharing this link never counts as a submission.";
 "Review the exact details below. Only eligible applications in this review will be sent." = "Review the exact details below. Only eligible applications in this review will be sent.";
 "Review the original application details, then approve again. Requests with an uncertain outcome cannot be resumed." = "Review the original application details, then approve again. Requests with an uncertain outcome cannot be resumed.";
@@ -1081,6 +1102,7 @@
 "Save a role from any country or profession. Use the employer’s HTTPS page." = "Save a role from any country or profession. Use the employer’s HTTPS page.";
 "Save application record" = "Save application record";
 "Save draft on this phone" = "Save draft on this phone";
+"Save next action" = "Save next action";
 "Save opportunities from any country or profession and prepare your next application. Open employer links to apply manually." = "Save opportunities from any country or profession and prepare your next application. Open employer links to apply manually.";
 "Save opportunities, prepare your profile and review your next step. Employer links let you apply manually." = "Save opportunities, prepare your profile and review your next step. Employer links let you apply manually.";
 "Save opportunity" = "Save opportunity";
@@ -1103,6 +1125,8 @@
 "Saved" = "Saved";
 "Saved " = "Saved ";
 "Saved ({0})" = "Saved ({0})";
+"Saved data changed after the preview. Create a new preview before restoring." = "Saved data changed after the preview. Create a new preview before restoring.";
+"Saved data could not be read or written safely. Nothing was restored." = "Saved data could not be read or written safely. Nothing was restored.";
 "Saved employer lead. Its current availability is not established by the latest search. Recheck the official page before applying." = "Saved employer lead. Its current availability is not established by the latest search. Recheck the official page before applying.";
 "Saved for application review" = "Saved for application review";
 "Saved in your application workspace" = "Saved in your application workspace";
@@ -1172,6 +1196,7 @@
 "Sending paused on this phone" = "Sending paused on this phone";
 "Senior" = "Senior";
 "Separate phone draft" = "Separate phone draft";
+"Separate planning notes and older backup files stay local. They are never adopted by a connected account automatically." = "Separate planning notes and older backup files stay local. They are never adopted by a connected account automatically.";
 "Separate unpaired draft" = "Separate unpaired draft";
 "Service address" = "Service address";
 "Set up my profile" = "Set up my profile";
@@ -1239,7 +1264,9 @@
 "Storage problem. {0}" = "Storage problem. {0}";
 "Store and process this application" = "Store and process this application";
 "Stored application metadata could not be read. Original data is preserved; record saving is blocked." = "Stored application metadata could not be read. Original data is preserved; record saving is blocked.";
+"Stored next action could not be read. Original data is preserved; saving is blocked." = "Stored next action could not be read. Original data is preserved; saving is blocked.";
 "Submission availability is unverified" = "Submission availability is unverified";
+"Submission uncertain" = "Submission uncertain";
 "Submitted" = "Submitted";
 "Supply Chain Manager" = "Supply Chain Manager";
 "Support and feedback" = "Support and feedback";
@@ -1318,11 +1345,14 @@
 "The latest outcome is not available. Refresh receipts when connected; an interrupted request is not a failed application." = "The latest outcome is not available. Refresh receipts when connected; an interrupted request is not a failed application.";
 "The latest saved PDF will be used: " = "The latest saved PDF will be used: ";
 "The latest saved PDF will be used: {0}" = "The latest saved PDF will be used: {0}";
+"The latest workspace could not be loaded. Your draft is preserved." = "The latest workspace could not be loaded. Your draft is preserved.";
 "The link is saved on this phone. " = "The link is saved on this phone. ";
 "The link is saved on this phone. {0}" = "The link is saved on this phone. {0}";
 "The local record could not be removed. Try again before leaving this workspace." = "The local record could not be removed. Try again before leaving this workspace.";
 "The merged shortlist exceeds 200 links. Nothing was replaced." = "The merged shortlist exceeds 200 links. Nothing was replaced.";
 "The new workspace starts empty. Service records remain on the service. You will need a new pairing code to reconnect." = "The new workspace starts empty. Service records remain on the service. You will need a new pairing code to reconnect.";
+"The next action could not be read or saved. Original data and your session draft are preserved." = "The next action could not be read or saved. Original data and your session draft are preserved.";
+"The opportunity could not be saved. Your next-action draft is preserved." = "The opportunity could not be saved. Your next-action draft is preserved.";
 "The opportunity could not be saved. Your record draft is preserved." = "The opportunity could not be saved. Your record draft is preserved.";
 "The phone draft file could not record this change. Its existing contents are preserved." = "The phone draft file could not record this change. Its existing contents are preserved.";
 "The previous search file could not be read. It is preserved; new searches will stay in memory." = "The previous search file could not be read. It is preserved; new searches will stay in memory.";
@@ -1426,6 +1456,7 @@
 "These preferences stay on this device for your planning notes and earlier records. Search uses the role, location and board choices you enter on the Search tab. Salary and pay basis still need confirmation." = "These preferences stay on this device for your planning notes and earlier records. Search uses the role, location and board choices you enter on the Search tab. Salary and pay basis still need confirmation.";
 "These preferences use an unsupported version. Original data is preserved." = "These preferences use an unsupported version. Original data is preserved.";
 "These private records changed. They are kept; compare their current versions before choosing a workspace." = "These private records changed. They are kept; compare their current versions before choosing a workspace.";
+"These records are separate from every connected account. A backup includes saved roles, self-entered receipt notes, next actions and the saved planning profile. It contains no account credentials or application approvals." = "These records are separate from every connected account. A backup includes saved roles, self-entered receipt notes, next actions and the saved planning profile. It contains no account credentials or application approvals.";
 "These records changed. Review their latest versions before choosing." = "These records changed. Review their latest versions before choosing.";
 "These results changed while you were browsing. Start a new search; the previous results are still here." = "These results changed while you were browsing. Start a new search; the previous results are still here.";
 "These saved application records need a compatible app version. The original phone data has been preserved." = "These saved application records need a compatible app version. The original phone data has been preserved.";
@@ -1463,11 +1494,13 @@
 "This is a public lead, not a verified personal fit score. A listing may change or close after it was checked." = "This is a public lead, not a verified personal fit score. A listing may change or close after it was checked.";
 "This is a test service. Any generated receipt is simulated and does not count as a real application." = "This is a test service. Any generated receipt is simulated and does not count as a real application.";
 "This is not a supported Career Finder phone workspace backup. Existing files are unchanged." = "This is not a supported Career Finder phone workspace backup. Existing files are unchanged.";
+"This is not a supported private workspace backup, or it exceeds the limits. Nothing was changed." = "This is not a supported private workspace backup, or it exceeds the limits. Nothing was changed.";
 "This is not a verified personal fit score. Compare the employer requirements with your own evidence." = "This is not a verified personal fit score. Compare the employer requirements with your own evidence.";
 "This is your own record. Changing status does not submit an application or contact anyone." = "This is your own record. Changing status does not submit an application or contact anyone.";
 "This keeps a private draft. It does not overwrite the service until you save again." = "This keeps a private draft. It does not overwrite the service until you save again.";
 "This lead was found by title and location. It is not a personalized eligibility assessment." = "This lead was found by title and location. It is not a personalized eligibility assessment.";
 "This link is already saved. Your unfinished draft is kept so you can review its details or change the link." = "This link is already saved. Your unfinished draft is kept so you can review its details or change the link.";
+"This next action changed. Your draft is preserved. Export it before reloading the saved version." = "This next action changed. Your draft is preserved. Export it before reloading the saved version.";
 "This opens an empty local workspace while preserving the existing encrypted files. It does not recover unreadable drafts or revoke any earlier service session. Your server records stay unchanged." = "This opens an empty local workspace while preserving the existing encrypted files. It does not recover unreadable drafts or revoke any earlier service session. Your server records stay unchanged.";
 "This opportunity changed or is part of a review. It was kept; refresh before removing it." = "This opportunity changed or is part of a review. It was kept; refresh before removing it.";
 "This opportunity changed or was removed. Your record draft is kept; reopen its current details before saving." = "This opportunity changed or was removed. Your record draft is kept; reopen its current details before saving.";
@@ -1481,6 +1514,7 @@
 "This phone is connected" = "This phone is connected";
 "This phone reached its private workspace storage limit. Existing drafts were kept; export and clear an unused workspace before adding another." = "This phone reached its private workspace storage limit. Existing drafts were kept; export and clear an unused workspace before adding another.";
 "This preserved copy is no longer available." = "This preserved copy is no longer available.";
+"This private plan stays with the earlier local record. It is not an application receipt and is not copied into a connected account." = "This private plan stays with the earlier local record. It is not an application receipt and is not copied into a connected account.";
 "This private record is now kept with the connected workspace on this phone. Its bookmark was not changed, and no notes were uploaded." = "This private record is now kept with the connected workspace on this phone. Its bookmark was not changed, and no notes were uploaded.";
 "This record changed. Your draft is kept; compare the saved version before replacing it." = "This record changed. Your draft is kept; compare the saved version before replacing it.";
 "This record is separate from your connected workspace. You can associate it without saving its job link again." = "This record is separate from your connected workspace. You can associate it without saving its job link again.";
@@ -1521,6 +1555,7 @@
 "This service has not confirmed support for LinkedIn profile links. Your edits are kept on this phone. Refresh the connection or ask its operator to update the service." = "This service has not confirmed support for LinkedIn profile links. Your edits are kept on this phone. Refresh the connection or ask its operator to update the service.";
 "This storage provider cannot open earlier recovery areas." = "This storage provider cannot open earlier recovery areas.";
 "This storage provider cannot remove earlier recovery areas." = "This storage provider cannot remove earlier recovery areas.";
+"This unencrypted file contains private information. Choose a destination you trust. Unsaved drafts are available in reviewed notes, not the saved-data backup." = "This unencrypted file contains private information. Choose a destination you trust. Unsaved drafts are available in reviewed notes, not the saved-data backup.";
 "This unfinished opportunity changed. Reopen the draft list." = "This unfinished opportunity changed. Reopen the draft list.";
 "This unfinished record could not be saved. Keep the note within 2,000 characters and use valid dates." = "This unfinished record could not be saved. Keep the note within 2,000 characters and use valid dates.";
 "This workspace is too large to save on this phone. Your earlier saved data is intact. Export a backup, reduce the draft or choose a smaller PDF, then save again." = "This workspace is too large to save on this phone. Your earlier saved data is intact. Export a backup, reduce the draft or choose a smaller PDF, then save again.";
@@ -1572,6 +1607,7 @@
 "Use Career Finder" = "Use Career Finder";
 "Use a complete public HTTPS job link." = "Use a complete public HTTPS job link.";
 "Use a public jobs.lever.co, jobs.eu.lever.co, boards.greenhouse.io or job-boards.greenhouse.io link." = "Use a public jobs.lever.co, jobs.eu.lever.co, boards.greenhouse.io or job-boards.greenhouse.io link.";
+"Use a real YYYY-MM-DD due date or leave it blank, and a note up to 500 Unicode characters. A due date or completed action needs a nonblank note." = "Use a real YYYY-MM-DD due date or leave it blank, and a note up to 500 Unicode characters. A due date or completed action needs a nonblank note.";
 "Use a real application date no later than today in Riyadh, or leave it blank. Notes allow 2,000 characters." = "Use a real application date no later than today in Riyadh, or leave it blank. Notes allow 2,000 characters.";
 "Use a role or skill, add a location if you want, and choose up to four Greenhouse or Lever employer boards. Tap Search jobs when you are ready." = "Use a role or skill, add a location if you want, and choose up to four Greenhouse or Lever employer boards. Tap Search jobs when you are ready.";
 "Use a short PDF filename without path characters." = "Use a short PDF filename without path characters.";
@@ -1596,6 +1632,7 @@
 "Use up to 100 characters for the city." = "Use up to 100 characters for the city.";
 "Use up to 120 characters for role words and 100 for location." = "Use up to 120 characters for role words and 100 for location.";
 "Use up to 200 characters for role keywords." = "Use up to 200 characters for role keywords.";
+"Use up to 500 characters. A date or a completed action needs a note. No reminder, message or application is sent." = "Use up to 500 characters. A date or a completed action needs a note. No reminder, message or application is sent.";
 "Use verified achievements when negotiating. Compare commute, hours, probation and progression before committing." = "Use verified achievements when negotiating. Compare commute, hours, probation and progression before committing.";
 "Use your HTTPS LinkedIn personal profile link, beginning with /in/." = "Use your HTTPS LinkedIn personal profile link, beginning with /in/.";
 "Use your device language, or choose English or Arabic." = "Use your device language, or choose English or Arabic.";
@@ -1678,6 +1715,7 @@
 "Your new profile starts blank. Add your own details and CV when you are ready. An account is needed only for the connected application service." = "Your new profile starts blank. Add your own details and CV when you are ready. An account is needed only for the connected application service.";
 "Your newly selected PDF is kept: " = "Your newly selected PDF is kept: ";
 "Your newly selected PDF is kept: {0}" = "Your newly selected PDF is kept: {0}";
+"Your next action" = "Your next action";
 "Your next move starts here." = "Your next move starts here.";
 "Your next step, ready." = "Your next step, ready.";
 "Your opportunities" = "Your opportunities";
@@ -1729,6 +1767,7 @@
 "{0} Qiddiya searches failed; results may be incomplete." = "{0} Qiddiya searches failed; results may be incomplete.";
 "{0} Review and submit personally on the employer website." = "{0} Review and submit personally on the employer website.";
 "{0} Saved records remain available; this workspace cannot be overwritten." = "{0} Saved records remain available; this workspace cannot be overwritten.";
+"{0} additions; {1} existing values preserved; {2} profile or checklist fields skipped." = "{0} additions; {1} existing values preserved; {2} profile or checklist fields skipped.";
 "{0} and any PDF bytes held on this phone" = "{0} and any PDF bytes held on this phone";
 "{0} at {1}" = "{0} at {1}";
 "{0} before choosing what to keep." = "{0} before choosing what to keep.";

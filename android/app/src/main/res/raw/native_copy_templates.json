@@ -85,6 +85,17 @@
     "arguments": 3
   },
   {
+    "key": "\nNext action (self-entered local plan): {0}\nDue date (Riyadh): {1}\nCompleted: {2}\nNext action last edited: {3}",
+    "parts": [
+      "\nNext action (self-entered local plan): ",
+      "\nDue date (Riyadh): ",
+      "\nCompleted: ",
+      "\nNext action last edited: ",
+      ""
+    ],
+    "arguments": 4
+  },
+  {
     "key": "Your draft fields will be kept against saved version {0}. You can review everything before saving.",
     "parts": [
       "Your draft fields will be kept against saved version ",
@@ -165,6 +176,16 @@
     "arguments": 1
   },
   {
+    "key": "{0} additions; {1} existing values preserved; {2} profile or checklist fields skipped.",
+    "parts": [
+      "",
+      " additions; ",
+      " existing values preserved; ",
+      " profile or checklist fields skipped."
+    ],
+    "arguments": 3
+  },
+  {
     "key": "\nUNSAVED application record draft\nApplication date: {0}\nReceipt / record note: {1}",
     "parts": [
       "\nUNSAVED application record draft\nApplication date: ",
@@ -189,6 +210,16 @@
       ""
     ],
     "arguments": 2
+  },
+  {
+    "key": "\nUNSAVED next-action draft\nNext action: {0}\nDue date (Riyadh): {1}\nCompleted: {2}",
+    "parts": [
+      "\nUNSAVED next-action draft\nNext action: ",
+      "\nDue date (Riyadh): ",
+      "\nCompleted: ",
+      ""
+    ],
+    "arguments": 3
   },
   {
     "key": "{0} Saved records remain available; this workspace cannot be overwritten.",
@@ -647,6 +678,14 @@
     "parts": [
       "",
       "'s application profile"
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "\nNext-action notice: {0}",
+    "parts": [
+      "\nNext-action notice: ",
+      ""
     ],
     "arguments": 1
   },

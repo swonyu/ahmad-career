@@ -70,8 +70,8 @@ class MainActivity : ComponentActivity() {
         synchronizePlatformLanguage(this)
         setTheme(when (readAppearancePreference(this)) {
             AppearancePreference.SYSTEM -> R.style.Theme_CareerFinder
-            AppearancePreference.LIGHT -> R.style.Theme_CareerFinder_Light
-            AppearancePreference.DARK -> R.style.Theme_CareerFinder_Dark
+            AppearancePreference.LIGHT -> R.style.CareerFinderLightTheme
+            AppearancePreference.DARK -> R.style.CareerFinderDarkTheme
         })
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
