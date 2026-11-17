@@ -987,10 +987,12 @@ private struct NativeSettingsScreen: View {
                             Spacer()
                             if language == option.rawValue {
                                 Image(systemName: "checkmark").foregroundStyle(Color.careerAccent)
+                                    .accessibilityHidden(true)
                             }
                         }.frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel(l10n(option.title))
                     .accessibilityAddTraits(language == option.rawValue ? .isSelected : [])
                     .accessibilityIdentifier("settings.language." + option.rawValue)
                 }
