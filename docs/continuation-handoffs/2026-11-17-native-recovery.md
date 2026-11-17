@@ -70,3 +70,22 @@ Use primary Apple/Android/provider sources for uncertain contracts. Critique lif
 Run narrow meaningful checks first, then coordinate native UI/device execution through the publisher's single build reservation. Include both languages, RTL/large text and actual recovery interactions; source inspection does not prove physical VoiceOver/TalkBack behavior.
 
 Return exact branch/commits, changed files, baseline and candidate evidence, source/runtime hashes, failed attempts, pending acceptance, safe user alternatives and integration notes. Keep the source/head fixed for any claimed full CI pass. Do not claim release or store readiness; no store/account deletion or real employer action is included.
+
+
+## Current coordination addendum — 17 November 2026
+
+The user requested two Grok Build conversations and a separate Heavy research conversation. Their visible modes and actual submitted tasks were verified:
+
+- [Build: account component patch and integration review](https://grok.com/c/adc8cfe9-ed35-4fcd-9961-d1fc081daef0).
+- [Build: independent native, consent and recovery critique](https://grok.com/c/abe34c88-8973-4ecb-aacc-9a7e595c33ef).
+- [Heavy: deep research, blocker remedies and strict critique](https://grok.com/c/3bf518a8-10be-40cd-9d0e-7a811c512a74).
+
+These browser conversations do not confer ownership of native source or builds. Publishing retains integrated CI, local native build scheduling, signing and stores. Root reviews actual findings and patches, rejects unsupported claims, and routes only non-overlapping work. Do not resend source packages or images. The existing hourly continuation monitors all three; the original cutoff is unchanged.
+
+Newer source `63eecda5c5c57805aeae1f5ba8e22af65e38ceee`, run `44139018005`, is terminal with three successful jobs and two failed jobs. iPhone UI: **15/17**, failing keyboard visibility and Settings reachability at large text. Connection setup passed. Evidence export/upload succeeded. Hosted failed the required dependency audit. Development owns Picomatch investigation; development/publishing own the native failure diagnosis. Earlier `21f08f5` full green applies only to its exact source.
+
+Always recover current PR comments, refs, dirty files and processes before integration; later exact checkpoints supersede mutable status below.
+
+### Registered terminal owner
+
+Native recovery session `01a1ea9c-fd25-75a3-b146-e39e344cc262` registered this lane in [PR comment 6956369594](https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6956369594). Checkout `/Users/saleh/Developer/career-finder-native-recovery-20261117-01a1ea9cfd25`, branch `continuation/native-recovery-20261117-01a1ea9cfd25`, base publisher `11cb3d4d8c15e9b16719b6e7091597f43633cda6`. Reconcile with that owner before starting another editor.

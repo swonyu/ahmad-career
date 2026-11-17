@@ -144,7 +144,7 @@ async function readJSON(response,signal){
   let bytes=0;const chunks=[];
   const requireActive=()=>{if(signal.aborted){cancel();throw sourceError('source_timeout','The employer board did not respond in time.')}};
   try{
-    for(;;){requireActive();let part;try{part=await reader.read()}catch{requireActive();throw sourceError('source_unavailable','The employer board connection was interrupted.')}const {done,value}=part;if(done)break;bytes+=value.byteLength;if(bytes>DISCOVERY_LIMITS.maxResponseBytes){cancel();throw sourceError('source_response_large','This employer board exceeds the supported response size.')}chunks.push(value)}
+    for(;;){requireActive();let part;try{part=await reader.read()}catch{requireActive();throw sourceError('source_unavailable','The employer board could not be refreshed.')}const {done,value}=part;if(done)break;bytes+=value.byteLength;if(bytes>DISCOVERY_LIMITS.maxResponseBytes){cancel();throw sourceError('source_response_large','This employer board exceeds the supported response size.')}chunks.push(value)}
     requireActive();
     try{return JSON.parse(Buffer.concat(chunks).toString('utf8'))}catch{throw sourceError('source_response_invalid','The employer board returned unreadable job data.')}
   }finally{signal.removeEventListener('abort',cancel);reader.releaseLock()}

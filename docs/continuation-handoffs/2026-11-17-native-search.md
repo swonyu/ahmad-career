@@ -64,3 +64,22 @@ Read actual current source and existing tests first; deduplicate findings alread
 First run narrow meaningful logic/fixture checks, including cross-generation races and persisted empty searches. Arrange actual iPhone/Android acceptance through the publisher's single build reservation. Include EN/AR, RTL and large-text search/retry/board-selection journeys. Physical VoiceOver/TalkBack results remain separate unless actually exercised.
 
 Return a compact handoff with your exact branch/commits, changed files, before/after failures, successful test commands, source/runtime identity, pending native gates, any requested localization changes and integration risks. Keep all original failed evidence. Do not duplicate the publisher's connection-address/email assertion fix or CI work.
+
+
+## Current coordination addendum — 17 November 2026
+
+The user requested two Grok Build conversations and a separate Heavy research conversation. Their visible modes and actual submitted tasks were verified:
+
+- [Build: account component patch and integration review](https://grok.com/c/adc8cfe9-ed35-4fcd-9961-d1fc081daef0).
+- [Build: independent native, consent and recovery critique](https://grok.com/c/abe34c88-8973-4ecb-aacc-9a7e595c33ef).
+- [Heavy: deep research, blocker remedies and strict critique](https://grok.com/c/3bf518a8-10be-40cd-9d0e-7a811c512a74).
+
+These browser conversations do not confer ownership of native source or builds. Publishing retains integrated CI, local native build scheduling, signing and stores. Root reviews actual findings and patches, rejects unsupported claims, and routes only non-overlapping work. Do not resend source packages or images. The existing hourly continuation monitors all three; the original cutoff is unchanged.
+
+Newer source `63eecda5c5c57805aeae1f5ba8e22af65e38ceee`, run `44139018005`, is terminal with three successful jobs and two failed jobs. iPhone UI: **15/17**, failing keyboard visibility and Settings reachability at large text. Connection setup passed. Evidence export/upload succeeded. Hosted failed the required dependency audit. Development owns Picomatch investigation; development/publishing own the native failure diagnosis. Earlier `21f08f5` full green applies only to its exact source.
+
+Always recover current PR comments, refs, dirty files and processes before integration; later exact checkpoints supersede mutable status below.
+
+### Registered terminal owner
+
+Native search session `01a1ea9d-107f-7f91-bb26-90cb6f496046` registered this lane in [PR comment 6956511590](https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6956511590). Checkout `/Users/saleh/Developer/career-finder-native-search-20261117-01a1ea9d107f`, branch `continuation/native-search-20261117-01a1ea9d107f`, base publisher `11cb3d4d8c15e9b16719b6e7091597f43633cda6`. Reconcile with that owner before starting another editor. Include the source-confirmed Android Saved badge canonical-identity mismatch from PR comment 6956600041.
