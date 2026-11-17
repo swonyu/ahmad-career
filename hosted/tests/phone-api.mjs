@@ -5,11 +5,13 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {build} from 'esbuild';
+import {createDiscoveryHandler} from '../server/discovery.mjs';
+import {SERVICE_ORIGIN} from '../server/applications.mjs';
 
 const directory=await mkdtemp(join(tmpdir(),'career-phone-api-'));
 after(()=>rm(directory,{recursive:true,force:true}));
 await build({stdin:{contents:'export {phoneAPI} from "./app/phone/api.ts"; export {APIError} from "./app/components/api.ts"; export * from "./app/phone/model.ts";',resolveDir:process.cwd(),sourcefile:'phone-api-test.ts'},outfile:join(directory,'client.mjs'),bundle:true,platform:'node',format:'esm'});
-const {phoneAPI,APIError,workspaceSchema,blankProfile,reviewRequest}=await import(pathToFileURL(join(directory,'client.mjs')).href);
+const {phoneAPI,APIError,workspaceSchema,catalogSchema,blankProfile,reviewRequest}=await import(pathToFileURL(join(directory,'client.mjs')).href);
 
 test('phone API keeps authentication, cancellation and verification bounded',async t=>{
   const originalFetch=globalThis.fetch;let requests=[];
@@ -20,8 +22,28 @@ test('phone API keeps authentication, cancellation and verification bounded',asy
     await phoneAPI('/api/phone/profile',{method:'PUT',body});assert.equal(requests.length,1);const request=requests[0];
     assert.equal(request.path,'/api/phone/profile');assert.equal(request.options.method,'PUT');assert.equal(request.options.credentials,'same-origin');assert.equal(request.options.cache,'no-store');assert.equal(request.options.redirect,'error');assert.equal(request.options.body,JSON.stringify(body));assert.equal(new Headers(request.options.headers).get('authorization'),null);
   });
-  await t.test('public discovery omits account credentials and preserves encoded search intent',async()=>{
-    install(()=>Response.json({ok:true}));await phoneAPI('/api/discovery/search?q=Engineer%20%26%20Design&source=remotive');assert.equal(requests[0].options.credentials,'omit');assert.equal(requests[0].options.body,undefined);assert.match(requests[0].path,/q=Engineer%20%26%20Design/);
+  await t.test('the actual source catalog remains readable behind an owner-private same-origin hosting gate',async()=>{
+    let denied=0,workerRequests=0,providerRequests=0;
+    const handler=createDiscoveryHandler({fetchImpl:async()=>{providerRequests++;throw Error('A source catalog must never call an employer');}});
+    const anonymous=await (await handler(new Request(SERVICE_ORIGIN+'/api/discovery/sources'),{})).json();
+    // Model only the private hosting boundary. The response after that boundary
+    // comes from the real discovery handler and is decoded by the real schema.
+    install(async(path,options)=>{
+      if(options.credentials!=='same-origin'){denied++;return new Response('<html>Private site sign-in required</html>',{status:403,headers:{'Content-Type':'text/html'}});}
+      workerRequests++;
+      return handler(new Request(SERVICE_ORIGIN+path,{method:options.method,headers:{Origin:SERVICE_ORIGIN,'Sec-Fetch-Site':'same-origin',Cookie:'__Host-sites-session=synthetic-hosting-cookie; __Host-career-session=synthetic-invalid-app-cookie','oai-authenticated-user-id':'synthetic-private-site-owner'}}),{});
+    });
+    try{
+      const data=await phoneAPI('/api/discovery/sources'),catalog=catalogSchema.parse(data);
+      assert.deepEqual(data,anonymous,'A forged/expired application cookie cannot alter public catalog data');
+      assert.equal(catalog.sources.length,7);assert.equal(catalog.defaults.length,4);
+      assert.equal(denied,0);assert.equal(workerRequests,1);assert.equal(providerRequests,0);
+      assert.equal(new Headers(requests[0].options.headers).get('authorization'),null);assert.equal(requests[0].options.body,undefined);assert.equal(requests[0].options.redirect,'error');
+    }finally{console.log(JSON.stringify({syntheticPrivateIngress:{denied,workerRequests,providerRequests}}));}
+  });
+  await t.test('discovery preserves same-origin hosting access and encoded search intent without a native credential',async()=>{
+    install(()=>Response.json({ok:true}));await phoneAPI('/api/discovery/search?q=Engineer%20%26%20Design&source=greenhouse%3Asynthetic');assert.equal(requests[0].options.credentials,'same-origin');assert.equal(requests[0].options.body,undefined);assert.match(requests[0].path,/q=Engineer%20%26%20Design/);
+    assert.equal(new Headers(requests[0].options.headers).get('authorization'),null);assert.equal(new Headers(requests[0].options.headers).get('cookie'),null);
   });
   await t.test('oversized multi-job review payloads are rejected before an API call begins',async()=>{
     install(()=>Response.json({ok:true}));const ids=Array.from({length:20},(_,i)=>`00000000-0000-4000-8000-${String(i+1).padStart(12,'0')}`),workspace='00000000-0000-4000-8000-000000000999';

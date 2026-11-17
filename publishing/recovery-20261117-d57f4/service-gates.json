@@ -1,0 +1,37 @@
+{
+  "startedUTC": "2026-11-17T14:28:47.469300+00:00",
+  "updatedUTC": "2026-11-17T14:29:08.679683+00:00",
+  "results": [
+    {
+      "name": "website-regressions",
+      "argv": [
+        "npm",
+        "test"
+      ],
+      "cwd": "website",
+      "exitCode": 0,
+      "seconds": 14.899
+    },
+    {
+      "name": "website-applications",
+      "argv": [
+        "npm",
+        "run",
+        "test:applications"
+      ],
+      "cwd": "website",
+      "exitCode": 0,
+      "seconds": 2.45
+    },
+    {
+      "name": "website-synthetic-tls",
+      "argv": [
+        "node",
+        "website/applications/fixtures/tls-check.mjs"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "seconds": 3.859
+    }
+  ]
+}

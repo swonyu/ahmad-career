@@ -1,12 +1,10 @@
 package com.saleh.careerfinder
 
 import android.content.ContentValues
-import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Base64
-import android.view.View
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
@@ -33,18 +31,6 @@ import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import java.io.File
 import javax.net.ssl.SSLException
-
-/** Match the real acceptance Activity: Arabic resources, RTL and enlarged text.
- * Reuse production preference synchronization; do not change any OS setting.
- */
-private fun nativeHttpsAcceptanceStrings(context: Context): CareerStrings {
-    synchronizePlatformLanguage(context)
-    val configuration = context.resources.configuration
-    assertEquals("Acceptance must retain Arabic app resources", "ar", configuration.locales[0].language)
-    assertEquals("Acceptance must retain RTL resources", View.LAYOUT_DIRECTION_RTL, configuration.layoutDirection)
-    assertTrue("Acceptance must retain at least 180% text", configuration.fontScale >= 1.79f)
-    return CareerStrings(context)
-}
 
 class TlsBoundaryAcceptanceTest {
     @Test fun normalPreview_refusesTheIsolatedFixtureCertificate() {
@@ -94,7 +80,7 @@ class NativeHttpsAcceptanceTest {
             requireNotNull(args.getString("cooldownUrl")))
         lateinit var model: CareerViewModel
         step("activity-model") { compose.activityRule.scenario.onActivity {
-            strings = nativeHttpsAcceptanceStrings(it)
+            strings = phoneAcceptanceStrings(it)
             model = ViewModelProvider(it)[CareerViewModel::class.java]
         } }
         step("workspace-readiness") { await { model.state.value.loaded && !model.state.value.busy } }

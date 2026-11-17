@@ -1,6 +1,6 @@
 import { APIError } from "../components/api";
 
-/** No redirects or automatic mutation retries; account writes stay on this origin. */
+/** Same-origin only, with no redirects or automatic mutation retries. */
 export async function phoneAPI(path: string, options: { method?: "GET" | "POST" | "PUT"; body?: object; signal?: AbortSignal } = {}): Promise<Record<string, unknown>> {
   const url = new URL(path, "https://career-finder.invalid");
   if (url.origin !== "https://career-finder.invalid" || !/^\/api\/(?:phone\/[a-z]+|discovery\/(?:sources|search))$/.test(url.pathname)) throw new APIError("This app request is invalid.");
@@ -12,7 +12,9 @@ export async function phoneAPI(path: string, options: { method?: "GET" | "POST" 
   let timedOut = false;
   const timer = setTimeout(() => { timedOut = true; controller.abort(); }, 30_000);
   try {
-    const response = await fetch(url.pathname + url.search, { method, credentials: discovery ? "omit" : "same-origin", cache: "no-store", redirect: "error", signal: controller.signal, headers: { Accept: "application/json", ...(options.body ? { "Content-Type": "application/json" } : {}) }, ...(options.body ? { body: JSON.stringify(options.body) } : {}) });
+    // Owner-private hosting can require its session even for a public-data GET.
+    // Discovery ignores app credentials and never forwards them to employers.
+    const response = await fetch(url.pathname + url.search, { method, credentials: "same-origin", cache: "no-store", redirect: "error", signal: controller.signal, headers: { Accept: "application/json", ...(options.body ? { "Content-Type": "application/json" } : {}) }, ...(options.body ? { body: JSON.stringify(options.body) } : {}) });
     if (!/^application\/json(?:\s*;|$)/i.test(response.headers.get("content-type") ?? "")) throw new APIError("The response could not be verified. Your earlier information is still here.", response.status, "invalid_response");
     const reader = response.body?.getReader(); if (!reader) throw new APIError("The service returned an empty response.", response.status, "invalid_response");
     const parts: Uint8Array[] = []; let length = 0;

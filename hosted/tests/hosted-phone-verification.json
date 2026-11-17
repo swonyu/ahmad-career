@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-11-17T10:06:28.659Z",
+  "observedAt": "2026-11-17T14:31:19.967Z",
   "status": "passed",
   "groups": [
     "A first browser GET returns a blank account view without creating a workspace, salt, throttle or session",

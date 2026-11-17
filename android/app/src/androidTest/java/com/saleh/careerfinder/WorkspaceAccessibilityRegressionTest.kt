@@ -24,6 +24,7 @@ import org.junit.Test
 
 class WorkspaceAccessibilityRegressionTest {
     @get:Rule val compose = createComposeRule()
+    private lateinit var strings: CareerStrings
 
     @After fun captureNoteLayout() {
         runCatching {
@@ -39,22 +40,21 @@ class WorkspaceAccessibilityRegressionTest {
     }
 
     @Test fun shortMultilineNote_canExpandAtLargeText_withoutClippingItsLastLine() {
+        strings = phoneAcceptanceStrings(InstrumentationRegistry.getInstrumentation().targetContext)
         val note = "First\nSecond\nThird\nFourth\nFifth\nLast private line"
         val version = ApplicationRecordVersion.create(ApplicationRecord(note = note))
         compose.setContent {
             val density = LocalDensity.current
             CompositionLocalProvider(LocalDensity provides Density(density.density, 2f)) {
-                CareerTheme {
+                PhoneAcceptanceContent {
                     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
                         RecordVersionCard(version, "Earlier note", null, true) {}
                     }
                 }
             }
         }
-        // Keep the forced Arabic/RTL platform and the original 2x text layout.
-        val display = CareerStrings(InstrumentationRegistry.getInstrumentation().targetContext)
-        compose.onNodeWithText(display("Read full note")).assertExists().performScrollTo().performClick()
-        compose.onNodeWithText(display("Show less")).assertExists()
+        compose.onNodeWithText(strings("Read full note")).assertExists().performScrollTo().performClick()
+        compose.onNodeWithText(strings("Show less")).assertExists()
         val layouts = mutableListOf<TextLayoutResult>()
         compose.onNodeWithText(note).performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
         assertTrue(layouts.isNotEmpty())

@@ -1,0 +1,30 @@
+{
+  "runId": 44092957169,
+  "candidate": "3a709eb15f1024df78ee03474f511568df2dc3de",
+  "testedCheckout": "55adcb006d1e439ea2fdfb9e12702506f60dcdb9",
+  "candidateTree": "452759cff642bd4f5657584f27cec58630dbeb9f",
+  "evidence": "Service job checkout log and GitHub head-to-checkout compare",
+  "comparison": {
+    "repository_full_name": "swonyu/ahmad-career",
+    "base": "3a709eb15f1024df78ee03474f511568df2dc3de",
+    "head": "55adcb006d1e439ea2fdfb9e12702506f60dcdb9",
+    "status": "ahead",
+    "ahead_by": 1,
+    "behind_by": 0,
+    "total_commits": 1,
+    "too_large": null,
+    "base_commit": {
+      "sha": "3a709eb15f1024df78ee03474f511568df2dc3de",
+      "url": "https://api.github.com/repos/swonyu/ahmad-career/commits/3a709eb15f1024df78ee03474f511568df2dc3de",
+      "html_url": "https://github.com/swonyu/ahmad-career/commit/3a709eb15f1024df78ee03474f511568df2dc3de"
+    },
+    "merge_base_commit": {
+      "sha": "3a709eb15f1024df78ee03474f511568df2dc3de",
+      "url": "https://api.github.com/repos/swonyu/ahmad-career/commits/3a709eb15f1024df78ee03474f511568df2dc3de",
+      "html_url": "https://github.com/swonyu/ahmad-career/commit/3a709eb15f1024df78ee03474f511568df2dc3de"
+    },
+    "files": []
+  },
+  "conclusion": "The checked out PR merge has no file changes relative to the candidate. The local candidate tree hash is recorded separately."
+}
+

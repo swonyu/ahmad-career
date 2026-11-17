@@ -1,0 +1,46 @@
+✔ language negotiation respects the dedicated preference, weighted device languages, and unsupported-language fallback (2.487304ms)
+✔ every Arabic entry is nonempty and preserves the exact placeholder multiset (12.533763ms)
+✔ unknown and prototype-looking keys remain safe, while specific templates preserve inserted data byte-for-byte (2.22022ms)
+✔ Arabic counts have zero, one, dual, few, many forms and display Gregorian dates (52.978333ms)
+✔ language persistence writes only the independent preference and cookie, including cross-tab clearing (15.301717ms)
+✔ blocked storage still changes this visit without claiming persistence (14.709637ms)
+✔ the actual language control renders Arabic or English on the server with the correct selected preference (23.066086ms)
+✔ real review rendering localizes every state and preserves user and employer content (101.234925ms)
+✔ recovery notices render full sentences and locale-specific counts from the same stored data (58.562795ms)
+✔ actual copy handler stores translatable notices and copies the exact value on success or refusal (66.790012ms)
+✔ discovery notice translates only the known service composition and keeps unknown text opaque (51.767387ms)
+✔ actual recovery export refuses a late original-account response after identity revalidation starts (102.101286ms)
+▶ actual recovery rejects changed generations, hidden pages and replaced quarantine before export
+  ✔ generation (31.092667ms)
+  ✔ hidden (22.905622ms)
+  ✔ quarantine (18.917164ms)
+✔ actual recovery rejects changed generations, hidden pages and replaced quarantine before export (74.21553ms)
+▶ actual restoration rechecks identity after both vault and safety reads without losing original drafts
+  ✔ vault (22.353896ms)
+  ✔ safety (19.318332ms)
+✔ actual restoration rechecks identity after both vault and safety reads without losing original drafts (42.47396ms)
+✔ recovery cannot start during revalidation and legitimate owner export and restoration remain available (54.35475ms)
+✔ actual browser-worker parser accepts ordinary and object-stream PDFs and preserves bytes and checksum (500.358717ms)
+▶ actual browser-worker parser rejects malformed, truncated, encrypted, cyclic and deeply nested PDFs
+  ✔ malformed (160.157641ms)
+  ✔ truncated (163.172453ms)
+  ✔ encrypted (155.337259ms)
+  ✔ cyclic (124.177169ms)
+  ✔ nested (166.516799ms)
+✔ actual browser-worker parser rejects malformed, truncated, encrypted, cyclic and deeply nested PDFs (772.450609ms)
+✔ actual browser-worker streaming inflation rejects expansion beyond the existing 16 MiB cap (410.165242ms)
+✔ actual PDF selection keeps the prior valid local draft on every invalid file and only reports success after validation (495.541204ms)
+▶ actual PDF selection refuses late success after cancellation, identity invalidation or page replacement
+  ✔ abort (24.067949ms)
+  ✔ identity (14.263357ms)
+  ✔ generation (12.129335ms)
+✔ actual PDF selection refuses late success after cancellation, identity invalidation or page replacement (51.435671ms)
+✔ worker timeout, abort and unavailable streaming support fail closed and terminate work (155.457859ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4150.215935

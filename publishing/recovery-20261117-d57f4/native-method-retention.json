@@ -1,0 +1,274 @@
+{
+  "observedUTC": "2026-11-17T14:28:16.211361+00:00",
+  "parents": {
+    "publishing": "8bfd3136227ce79625df8e2b57678de5fbfa201e",
+    "account": "880e878f6f528d903c42951f10a8b216094c889c"
+  },
+  "native_method_retention": {
+    "android/app/src/androidTest/java/com/saleh/careerfinder/AcceptanceDisplay.kt": {
+      "current": 0,
+      "parents": {
+        "publishing": {
+          "count": 0,
+          "missing": []
+        }
+      }
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/ApplicationRecordRegressionTest.kt": {
+      "current": 18,
+      "parents": {
+        "publishing": {
+          "count": 18,
+          "missing": []
+        },
+        "account": {
+          "count": 18,
+          "missing": []
+        }
+      }
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/ContinuationRegressionTest.kt": {
+      "current": 7,
+      "parents": {
+        "publishing": {
+          "count": 7,
+          "missing": []
+        },
+        "account": {
+          "count": 7,
+          "missing": []
+        }
+      }
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/DiscoveryPersistenceRegressionTest.kt": {
+      "current": 8,
+      "parents": {
+        "publishing": {
+          "count": 8,
+          "missing": []
+        },
+        "account": {
+          "count": 8,
+          "missing": []
+        }
+      }
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/DiscoveryRegressionTest.kt": {
+      "current": 7,
+      "parents": {
+        "publishing": {
+          "count": 7,
+          "missing": []
+        },
+        "account": {
+          "count": 7,
+          "missing": []
+        }
+      }
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/ExperienceModelRegressionTest.kt": {
+      "current": 2,
+      "parents": {
+        "publishing": {
+          "count": 2,
+          "missing": []
+        },
+        "account": {
+          "count": 2,
+          "missing": []
+        }
+      }
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/LinkedInPhoneAcceptanceTest.kt": {
+      "current": 2,
+      "parents": {
+        "publishing": {
+          "count": 2,
+          "missing": []
+        },
+        "account": {
+          "count": 2,
+          "missing": []
+        }
+      }
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/LinkedInRegressionTest.kt": {
+      "current": 9,
+      "parents": {
+        "publishing": {
+          "count": 9,
+          "missing": []
+        },
+        "account": {
+          "count": 9,
+          "missing": []
+        }
+      }
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt": {
+      "current": 2,
+      "parents": {
+        "publishing": {
+          "count": 2,
+          "missing": []
+        },
+        "account": {
+          "count": 2,
+          "missing": []
+        }
+      }
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeLocalizationAcceptanceTest.kt": {
+      "current": 6,
+      "parents": {
+        "publishing": {
+          "count": 5,
+          "missing": []
+        },
+        "account": {
+          "count": 4,
+          "missing": []
+        }
+      }
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NavigationPhoneAcceptanceTest.kt": {
+      "current": 5,
+      "parents": {
+        "publishing": {
+          "count": 5,
+          "missing": []
+        },
+        "account": {
+          "count": 5,
+          "missing": []
+        }
+      }
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NavigationTestActions.kt": {
+      "current": 0,
+      "parents": {
+        "publishing": {
+          "count": 0,
+          "missing": []
+        }
+      }
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceEnvironment.kt": {
+      "current": 0,
+      "parents": {
+        "account": {
+          "count": 0,
+          "missing": []
+        }
+      }
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt": {
+      "current": 2,
+      "parents": {
+        "publishing": {
+          "count": 2,
+          "missing": []
+        },
+        "account": {
+          "count": 2,
+          "missing": []
+        }
+      }
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt": {
+      "current": 4,
+      "parents": {
+        "publishing": {
+          "count": 4,
+          "missing": []
+        },
+        "account": {
+          "count": 4,
+          "missing": []
+        }
+      }
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/SavedSearchRegressionTest.kt": {
+      "current": 2,
+      "parents": {
+        "publishing": {
+          "count": 2,
+          "missing": []
+        },
+        "account": {
+          "count": 2,
+          "missing": []
+        }
+      }
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/VaultAcceptanceTest.kt": {
+      "current": 5,
+      "parents": {
+        "publishing": {
+          "count": 5,
+          "missing": []
+        },
+        "account": {
+          "count": 5,
+          "missing": []
+        }
+      }
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceAccessibilityRegressionTest.kt": {
+      "current": 1,
+      "parents": {
+        "publishing": {
+          "count": 1,
+          "missing": []
+        },
+        "account": {
+          "count": 1,
+          "missing": []
+        }
+      }
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceRegressionTest.kt": {
+      "current": 17,
+      "parents": {
+        "publishing": {
+          "count": 17,
+          "missing": []
+        },
+        "account": {
+          "count": 17,
+          "missing": []
+        }
+      }
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceSafetyRegressionTest.kt": {
+      "current": 11,
+      "parents": {
+        "publishing": {
+          "count": 11,
+          "missing": []
+        },
+        "account": {
+          "count": 11,
+          "missing": []
+        }
+      }
+    },
+    "apple/UITests/CareerFinderUITests.swift": {
+      "current": 17,
+      "parents": {
+        "publishing": {
+          "count": 17,
+          "missing": []
+        },
+        "account": {
+          "count": 17,
+          "missing": []
+        }
+      }
+    }
+  },
+  "missing": [],
+  "duplicate": [],
+  "runtime_native_result": "not_run",
+  "note": "This is source-inventory preservation, not native execution evidence."
+}

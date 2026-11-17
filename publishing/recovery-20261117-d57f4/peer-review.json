@@ -1,0 +1,32 @@
+{
+  "recordedUTC": "2026-11-17T14:34:16.813039+00:00",
+  "reviewer": "/root/lumina_recovery",
+  "method": "Independent read-only review of staged merge against HEAD 8bfd3136 and MERGE_HEAD 880e878f; two collaboration messages supplied to the integration author. No tests, builds or edits by reviewer.",
+  "parents": {
+    "publishing": "8bfd3136227ce79625df8e2b57678de5fbfa201e",
+    "account": "880e878f6f528d903c42951f10a8b216094c889c"
+  },
+  "verdict": "No concrete new blocking defect found in the inspected delta; exact integrated runtime and release gates remain pending.",
+  "reviewedHashes": {
+    "apple/UITests/CareerFinderUITests.swift": "aaeb9119e3a5a6aa94b3f093aea6c521e4e6909199c73b81c86ed4becb09654e",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeLocalizationAcceptanceTest.kt": "2425c37ef03a47ff26a85c3ae4f0dc6e9bcc6183e5bf7276223cf7c6324da1f5"
+  },
+  "observations": [
+    "Runtime delta from publishing is confined to same-origin discovery credentials and truthful English/Arabic download-start wording.",
+    "Same-origin path/GET allowlist, redirect refusal and body/time limits remain; employer headers are constructed fresh in server/discovery.mjs and do not forward cookies or identity.",
+    "Publishing native product/security/fixture source retained. All native test method names from both parents remain.",
+    "The three account native product changes are preserved or strengthened: selected strings across dialogs; localized phone-import counts; seed-only-absent fixture with exclusive creation and corrupt-state preservation.",
+    "iPhone real Select All/Delete, visible keyboard, exact-value wait and 8bfd email reveal remain; no model write replaces real typing.",
+    "Android native HTTPS locale/RTL/text-scale assertions moved intact into the called shared phoneAcceptanceStrings helper.",
+    "Both publishing-specific localization cases and the account open-dialog language case survive."
+  ],
+  "assertionInventory": {
+    "iphoneMethods": 17,
+    "publishingAssertionCallSites": 143,
+    "accountAssertionCallSites": 147,
+    "mergedAssertionCallSites": 149,
+    "note": "Source counts are preservation evidence, not runtime pass counts."
+  },
+  "runtimeNativeVerification": false,
+  "storeVerification": false
+}

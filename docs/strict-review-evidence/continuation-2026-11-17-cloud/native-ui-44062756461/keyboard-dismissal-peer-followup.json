@@ -1,0 +1,48 @@
+{
+  "recordedAt": "2026-11-17T13:24:31.956218+00:00",
+  "baseline": "859b84a4bb184cbc9bb5039be34e35ad4ca17356",
+  "sourcePath": "apple/UITests/CareerFinderUITests.swift",
+  "originalFollowupSourceSha256": "60172c146f4df7937c20ddd26393854fd35ce25630ad30a199221e4fed0596cf",
+  "correctedFollowupSourceSha256": "32597b3bfad17d26a7452556d9a5f27c25bc1fe7f44f6a894ad6aaa69c0a5de7",
+  "additionalPatch": "iphone-dismissal-strength.patch",
+  "additionalPatchSha256": "e7c42ff4a6bc5cdaf42a3f7a423cd0a34e2eb508f98b721c54395ec0b7183d83",
+  "originalIphonePatchSha256": "a73369ae712572730f1041dd3aa78a9f535a25499a1077e3c4272255aa03a97b",
+  "finding": {
+    "id": "NATIVE-PEER-KEYBOARD-DISMISSAL",
+    "type": "source-level acceptance-strength issue",
+    "reviewer": "/root/native_peer",
+    "impact": "The first follow-up could accept dismissal if delete disappeared while another keyboard key remained hittable.",
+    "runtimeReproduced": false,
+    "status": "fixed; independently reviewed in source scope",
+    "correction": "Retain semantic delete for readiness; restore no hittable key of any kind plus no toolbar action for search dismissal, and use all-key absence in finishTyping."
+  },
+  "checks": {
+    "patchIntegrity": "passed",
+    "gitDiffCheck": "passed",
+    "testMethodsBefore": 17,
+    "testMethodsAfter": 17,
+    "assertionCallSitesBefore": 134,
+    "assertionCallSitesAfter": 139,
+    "testSelectionChanged": false,
+    "timeoutsChanged": false,
+    "nativeCompile": "not_run",
+    "nativeUI": "not_run",
+    "physicalDevice": "not_run"
+  },
+  "preservedFailedRun": {
+    "runId": 44062756461,
+    "iphoneUI": {
+      "executed": 17,
+      "passed": 14,
+      "failed": 3,
+      "seconds": 1155.248
+    },
+    "androidOrdinary": {
+      "executed": 103,
+      "passed": 92,
+      "failed": 11
+    },
+    "androidTlsStages": "not_run"
+  },
+  "ownership": "Only isolated native-ci checkout and follow-up patches modified; root and shared Mac/signing/store untouched."
+}

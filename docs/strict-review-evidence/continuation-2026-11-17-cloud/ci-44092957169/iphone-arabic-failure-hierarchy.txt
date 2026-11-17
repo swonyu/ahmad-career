@@ -1,0 +1,182 @@
+Application, 0x1153052c0, pid: 10333, label: 'Career Finder' <App element pid: 10333>
+  Window (Main), 0x115305400, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4372579328.4>
+    Other, 0x115305540, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4421799424.5>
+      Other, 0x115305680, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4423009536.6>
+        Other, 0x1153057c0, {{-420.0, -912.0}, {1260.0, 2736.0}} <AX element pid: 10333, elementOrHash.elementID: 4423012096.166>
+        Other, 0x115305900, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4372580352.7>
+          Other, 0x115305a40, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4421088832.8>
+            Other, 0x115305b80, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4421784832.9>
+              Other, 0x115305cc0, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4421801984.11>
+                Other, 0x115305e00, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4374071936.13>
+                  Other, 0x115305f40, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4372581376.16>
+                    Other, 0x115306080, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4421089728.19>
+                      Other, 0x1153061c0, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4421089280.22>
+                        Other, 0x115306300, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4374242496.28>
+                          NavigationBar, 0x115306440, {{0.0, 68.0}, {420.0, 54.0}}, identifier: 'Career Finder' <AX element pid: 10333, elementOrHash.elementID: 4423143936.37>
+                            StaticText, 0x115306580, {{145.0, 77.3}, {130.0, 25.3}}, label: 'Career Finder' <AX element pid: 10333, elementOrHash.elementID: 4374606976.48>
+                            Other, 0x1153066c0, {{24.0, 72.0}, {48.0, 36.0}}, identifier: 'navigation.settings', label: 'الإعدادات' <AX element pid: 10333, elementOrHash.elementID: 4434502400.49>
+                              Other, 0x115306800, {{24.0, 72.0}, {48.0, 36.0}} <AX element pid: 10333, elementOrHash.elementID: 4421048896.54>
+                                Button, 0x115306940, {{24.0, 72.0}, {48.0, 36.0}}, identifier: 'navigation.settings', label: 'الإعدادات' <AX element pid: 10333, elementOrHash.elementID: 4421048448.58>
+                          Other, 0x115306a80, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4374245632.38>
+                            Other, 0x115306bc0, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4421047552.50>
+                              Other, 0x115306d00, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4374603392.55>
+                                Other, 0x115306e40, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4421090176.59>
+                                  CollectionView, 0x115306f80, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4436983808.61>
+                                    Other, 0x1153070c0, {{-20.0, -486.7}, {460.0, 754.3}} <AX element pid: 10333, elementOrHash.elementID: 4754552832.67>
+                                    Cell, 0x115307200, {{20.0, -92.7}, {380.0, 342.7}} <AX element pid: 10333, elementOrHash.elementID: 4434507520.98>
+                                      Other, 0x115307340, {{20.0, -92.7}, {380.0, 342.7}} <AX element pid: 10333, elementOrHash.elementID: 4754542080.104>
+                                        Other, 0x115307480, {{20.0, -92.7}, {380.0, 342.7}} <AX element pid: 10333, elementOrHash.elementID: 4421063040.115>
+                                      Other, 0x1153075c0, {{20.0, -92.7}, {380.0, 342.7}} <AX element pid: 10333, elementOrHash.elementID: 4421062592.105>
+                                        Other, 0x115307700, {{20.0, -92.7}, {380.0, 342.7}} <AX element pid: 10333, elementOrHash.elementID: 4372569600.116>
+                                          Other, 0x115307840, {{20.0, -92.7}, {380.0, 342.7}} <AX element pid: 10333, elementOrHash.elementID: 4421134400.123>
+                                            StaticText, 0x115307980, {{20.0, -92.7}, {380.0, 342.7}}, label: 'تصفح صفحات وظائف عامة لجهات العمل دون حساب، أو احفظ رابط وظيفة عامًا من أي بلد أو مهنة.' <AX element pid: 10333, elementOrHash.elementID: 4421133952.126>
+                                    Other, 0x115307ac0, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4374337664.63>
+                                      Other, 0x115307c00, {{0.0, 0.0}, {420.0, 176.8}} <AX element pid: 10333, elementOrHash.elementID: 4374423168.69>
+                                      Other, 0x115307d40, {{0.0, 764.2}, {420.0, 147.8}} <AX element pid: 10333, elementOrHash.elementID: 4421044416.70>
+                                    Other, 0x115307e80, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4374336768.64>
+                                      Other, 0x113dd66c0, {{0.0, 0.0}, {420.0, 176.8}} <AX element pid: 10333, elementOrHash.elementID: 4423019136.99>
+                                        Image, 0x115308000, {{-120.0, -172.0}, {660.0, 344.0}}, identifier: 'AdditionalDimmingOverlay' <AX element pid: 10333, elementOrHash.elementID: 4434947584.106>
+                                        Other, 0x115308140, {{0.0, 0.0}, {420.0, 112.0}} <AX element pid: 10333, elementOrHash.elementID: 4421043520.107>
+                                        Other, 0x115308280, {{0.0, 0.0}, {420.0, 176.8}} <AX element pid: 10333, elementOrHash.elementID: 4423150080.108>
+                                          Other, 0x1153083c0, {{0.0, 0.0}, {420.0, 176.8}} <AX element pid: 10333, elementOrHash.elementID: 4374426304.117>
+                                        Other, 0x115308500, {{0.0, 0.0}, {420.0, 176.8}} <AX element pid: 10333, elementOrHash.elementID: 4434947072.109>
+                                          Other, 0x115308640, {{0.0, 0.0}, {420.0, 176.8}} <AX element pid: 10333, elementOrHash.elementID: 4421065280.118>
+                                        Other, 0x115308780, {{0.0, 0.0}, {420.0, 176.8}} <AX element pid: 10333, elementOrHash.elementID: 4423019776.110>
+                                          Other, 0x1153088c0, {{0.0, 0.0}, {420.0, 176.8}} <AX element pid: 10333, elementOrHash.elementID: 4374428544.119>
+                                          Other, 0x115308a00, {{0.0, 0.0}, {420.0, 176.8}} <AX element pid: 10333, elementOrHash.elementID: 4421065728.120>
+                                      Other, 0x115308b40, {{0.0, 764.2}, {420.0, 147.8}} <AX element pid: 10333, elementOrHash.elementID: 4423021056.71>
+                                        Other, 0x115308c80, {{0.0, 764.2}, {420.0, 147.8}} <AX element pid: 10333, elementOrHash.elementID: 4423150848.77>
+                                          Other, 0x115308dc0, {{0.0, 764.2}, {420.0, 147.8}} <AX element pid: 10333, elementOrHash.elementID: 4421044864.83>
+                                        Other, 0x115308f00, {{0.0, 764.2}, {420.0, 147.8}} <AX element pid: 10333, elementOrHash.elementID: 4423021696.78>
+                                          Other, 0x115309040, {{0.0, 764.2}, {420.0, 147.8}} <AX element pid: 10333, elementOrHash.elementID: 4421045760.84>
+                                          Other, 0x115309180, {{0.0, 764.2}, {420.0, 147.8}} <AX element pid: 10333, elementOrHash.elementID: 4421059456.85>
+                                        Image, 0x1153092c0, {{-120.0, 769.0}, {660.0, 286.0}}, identifier: 'AdditionalDimmingOverlay' <AX element pid: 10333, elementOrHash.elementID: 4434949632.79>
+                                    Cell, 0x115309400, {{20.0, 267.3}, {380.0, 145.3}} <AX element pid: 10333, elementOrHash.elementID: 4754853632.131>
+                                      Other, 0x115309540, {{20.0, 267.3}, {380.0, 145.3}} <AX element pid: 10333, elementOrHash.elementID: 4756079616.136>
+                                      Other, 0x115309680, {{20.0, 267.3}, {380.0, 145.3}} <AX element pid: 10333, elementOrHash.elementID: 4421135744.137>
+                                        Other, 0x1153097c0, {{20.0, 267.3}, {380.0, 145.3}} <AX element pid: 10333, elementOrHash.elementID: 4372575744.142>
+                                          Other, 0x115309900, {{20.0, 267.3}, {380.0, 145.3}} <AX element pid: 10333, elementOrHash.elementID: 4421138432.147>
+                                            StaticText, 0x115309a40, {{20.0, 267.3}, {380.0, 145.3}}, label: 'اجعل خطوتك التالية أسهل' <AX element pid: 10333, elementOrHash.elementID: 4421135296.150>
+                                    Other, 0x115309b80, {{-20.0, 267.3}, {460.0, 1084.0}} <AX element pid: 10333, elementOrHash.elementID: 4756081664.132>
+                                    Cell, 0x115309cc0, {{20.0, 412.7}, {380.0, 155.3}} <AX element pid: 10333, elementOrHash.elementID: 4754849792.133>
+                                      Other, 0x115309e00, {{20.0, 412.7}, {380.0, 155.3}} <AX element pid: 10333, elementOrHash.elementID: 4754547712.138>
+                                        Other, 0x115309f40, {{20.0, 412.7}, {380.0, 155.3}} <AX element pid: 10333, elementOrHash.elementID: 4421064384.143>
+                                      Other, 0x11530a080, {{20.0, 412.7}, {380.0, 155.3}} <AX element pid: 10333, elementOrHash.elementID: 4421063936.139>
+                                        Other, 0x11530a1c0, {{20.0, 412.7}, {380.0, 155.3}} <AX element pid: 10333, elementOrHash.elementID: 4372571136.144>
+                                          Other, 0x11530a300, {{20.0, 412.7}, {380.0, 155.3}} <AX element pid: 10333, elementOrHash.elementID: 4421090624.148>
+                                            Button, 0x11530a440, {{20.0, 412.7}, {380.0, 155.3}}, identifier: 'home.applicationProfile', label: 'اختر سيرة ذاتية بصيغة PDF' <AX element pid: 10333, elementOrHash.elementID: 4374494528.151>
+                                              Image, 0x11530a580, {{322.0, 440.3}, {48.3, 38.0}}, identifier: 'person.crop.rectangle', label: 'person.crop.rectangle' <AX element pid: 10333, elementOrHash.elementID: 4421138880.155>
+                                              StaticText, 0x11530a6c0, {{40.0, 427.7}, {340.0, 125.3}}, label: 'اختر سيرة ذاتية بصيغة PDF' <AX element pid: 10333, elementOrHash.elementID: 4421139776.156>
+                                    Other, 0x11530a800, {{40.0, 567.0}, {340.0, 1.0}} <AX element pid: 10333, elementOrHash.elementID: 4756087296.134>
+                                    Cell, 0x11530a940, {{20.0, 568.0}, {380.0, 396.0}} <AX element pid: 10333, elementOrHash.elementID: 4754852352.135>
+                                      Other, 0x11530aa80, {{20.0, 568.0}, {380.0, 396.0}} <AX element pid: 10333, elementOrHash.elementID: 4754553344.140>
+                                        Other, 0x11530abc0, {{20.0, 568.0}, {380.0, 396.0}} <AX element pid: 10333, elementOrHash.elementID: 4421128576.145>
+                                      Other, 0x11530ad00, {{20.0, 568.0}, {380.0, 396.0}} <AX element pid: 10333, elementOrHash.elementID: 4421128128.141>
+                                        Other, 0x11530ae40, {{20.0, 568.0}, {380.0, 396.0}} <AX element pid: 10333, elementOrHash.elementID: 4372574208.146>
+                                          Other, 0x11530af80, {{20.0, 568.0}, {380.0, 396.0}} <AX element pid: 10333, elementOrHash.elementID: 4421143168.149>
+                                            StaticText, 0x11530b0c0, {{71.0, 583.0}, {294.7, 58.7}}, identifier: 'profile.essential.name', label: 'أُضيف الاسم' <AX element pid: 10333, elementOrHash.elementID: 4421050240.152>
+                                              Image, 0x11530b200, {{327.0, 593.0}, {38.7, 38.7}}, identifier: 'checkmark.circle', label: 'محدد', Selected <AX element pid: 10333, elementOrHash.elementID: 4374333632.157>
+                                              StaticText, 0x11530b340, {{71.0, 583.0}, {294.7, 58.7}}, label: 'أُضيف الاسم' <AX element pid: 10333, elementOrHash.elementID: 4374417792.158>
+                                            StaticText, 0x11530b480, {{72.3, 649.7}, {293.3, 116.7}}, identifier: 'profile.essential.email', label: 'أُضيف البريد الإلكتروني' <AX element pid: 10333, elementOrHash.elementID: 4421141376.153>
+                                              Image, 0x11530b5c0, {{327.0, 659.7}, {38.7, 38.7}}, identifier: 'checkmark.circle', label: 'محدد', Selected <AX element pid: 10333, elementOrHash.elementID: 4421140480.159>
+                                              StaticText, 0x11530b700, {{72.3, 649.7}, {293.3, 116.7}}, label: 'أُضيف البريد الإلكتروني' <AX element pid: 10333, elementOrHash.elementID: 4421140928.160>
+                                            StaticText, 0x11530b840, {{47.3, 774.3}, {318.3, 174.7}}, identifier: 'profile.essential.resume', label: 'السيرة الذاتية بصيغة PDF مطلوبة' <AX element pid: 10333, elementOrHash.elementID: 4421142720.154>
+                                              Image, 0x11530b980, {{327.0, 784.3}, {38.7, 38.7}}, identifier: 'circle', label: 'circle' <AX element pid: 10333, elementOrHash.elementID: 4421141824.161>
+                                              StaticText, 0x11530bac0, {{47.3, 774.3}, {318.3, 174.7}}, label: 'السيرة الذاتية بصيغة PDF مطلوبة' <AX element pid: 10333, elementOrHash.elementID: 4421142272.162>
+                                    Other, 0x11530bc00, {{3.0, 122.0}, {30.0, 707.0}}, label: 'Vertical scroll bar, 4 pages', value: 64% <AX element pid: 10333, elementOrHash.elementID: 4753048064.68>
+                                      Other, 0x11530bd40, {{3.0, 438.0}, {3.0, 214.7}} <AX element pid: 10333, elementOrHash.elementID: 4421050688.76>
+                                    Other, 0x11530be80, {{3.0, 122.0}, {30.0, 707.0}}, label: 'Vertical scroll bar, 4 pages', value: 64% <AX element pid: 10333, elementOrHash.elementID: 4753048064.68>
+                                      Other, 0x115310000, {{3.0, 438.0}, {3.0, 214.7}} <AX element pid: 10333, elementOrHash.elementID: 4421050688.76>
+                          Other, 0x115310140, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4434937344.39>
+                            Other, 0x115310280, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4434940928.51>
+              Other, 0x1153103c0, {{0.0, 829.0}, {420.0, 83.0}} <AX element pid: 10333, elementOrHash.elementID: 4421785280.12>
+                Other, 0x115310500, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4421793344.14>
+                  TabBar, 0x115310640, {{0.0, 829.0}, {420.0, 83.0}}, label: 'Tab Bar' <AX element pid: 10333, elementOrHash.elementID: 4423010816.17>
+                    Other, 0x115310780, {{21.0, 829.0}, {378.0, 62.0}} <AX element pid: 10333, elementOrHash.elementID: 4421785728.20>
+                      Other, 0x1153108c0, {{313.3, 833.0}, {81.7, 54.0}} <AX element pid: 10333, elementOrHash.elementID: 4423011456.23>
+                        Other, 0x115310a00, {{313.3, 833.0}, {81.7, 54.0}} <AX element pid: 10333, elementOrHash.elementID: 4421788416.29>
+                          Other, 0x115310b40, {{313.3, 833.0}, {81.7, 54.0}} <AX element pid: 10333, elementOrHash.elementID: 4421786624.40>
+                          Other, 0x115310c80, {{313.3, 833.0}, {81.7, 54.0}} <AX element pid: 10333, elementOrHash.elementID: 4421789312.41>
+                            Other, 0x115310dc0, {{313.3, 833.0}, {81.7, 54.0}} <AX element pid: 10333, elementOrHash.elementID: 4421791104.52>
+                              Other, 0x115310f00, {{313.3, 833.0}, {81.7, 54.0}} <AX element pid: 10333, elementOrHash.elementID: 4421791552.56>
+                                Other, 0x115311040, {{313.3, 833.0}, {81.7, 54.0}} <AX element pid: 10333, elementOrHash.elementID: 4421792000.60>
+                              Other, 0x115311180, {{313.3, 833.0}, {81.7, 54.0}} <AX element pid: 10333, elementOrHash.elementID: 4421789760.57>
+                            Other, 0x1153112c0, {{313.3, 833.0}, {81.7, 54.0}} <AX element pid: 10333, elementOrHash.elementID: 4421790208.53>
+                      Other, 0x115311400, {{21.0, 829.0}, {81.7, 54.0}} <AX element pid: 10333, elementOrHash.elementID: 4374076864.24>
+                      Other, 0x115311540, {{21.0, 829.0}, {378.0, 62.0}} <AX element pid: 10333, elementOrHash.elementID: 4421786176.25>
+                        Button, 0x115311680, {{313.3, 833.0}, {81.7, 54.0}}, identifier: 'square.stack', label: 'البداية', Selected <AX element pid: 10333, elementOrHash.elementID: 4372635136.30>
+                          Image, 0x1153117c0, {{341.3, 837.7}, {26.0, 32.3}}, identifier: 'square.stack.fill', label: 'square.stack.fill' <AX element pid: 10333, elementOrHash.elementID: 4421806592.42>
+                        Button, 0x115311900, {{241.3, 833.0}, {81.7, 54.0}}, identifier: 'magnifyingglass', label: 'البحث' <AX element pid: 10333, elementOrHash.elementID: 4372637696.31>
+                          Image, 0x115311a40, {{268.3, 839.7}, {27.7, 26.7}}, identifier: 'magnifyingglass', label: 'Search' <AX element pid: 10333, elementOrHash.elementID: 4421808128.43>
+                        Button, 0x115311b80, {{169.2, 833.0}, {81.7, 54.0}}, identifier: 'paperplane', label: 'التقديم' <AX element pid: 10333, elementOrHash.elementID: 4372640256.32>
+                          Image, 0x115311cc0, {{195.2, 839.3}, {28.7, 28.0}}, identifier: 'paperplane.fill', label: 'send' <AX element pid: 10333, elementOrHash.elementID: 4421809152.44>
+                        Button, 0x115311e00, {{97.1, 833.0}, {81.7, 54.0}}, identifier: 'heart', label: 'المحفوظات' <AX element pid: 10333, elementOrHash.elementID: 4434493440.33>
+                          Image, 0x115311f40, {{123.1, 840.7}, {28.7, 25.0}}, identifier: 'heart.fill', label: 'love' <AX element pid: 10333, elementOrHash.elementID: 4421810176.45>
+                        Button, 0x115312080, {{25.0, 833.0}, {81.7, 54.0}}, identifier: 'gearshape', label: 'الإعدادات' <AX element pid: 10333, elementOrHash.elementID: 4434496000.34>
+                          Image, 0x1153121c0, {{52.0, 839.0}, {28.0, 28.0}}, identifier: 'gearshape.fill', label: 'gearshape.fill' <AX element pid: 10333, elementOrHash.elementID: 4421811200.46>
+                Other, 0x115312300, {{0.0, 829.0}, {420.0, 83.0}} <AX element pid: 10333, elementOrHash.elementID: 4421800448.15>
+                  Other, 0x115312440, {{0.0, 829.0}, {420.0, 83.0}} <AX element pid: 10333, elementOrHash.elementID: 4374602496.18>
+                    Other, 0x115312580, {{0.0, 829.0}, {420.0, 83.0}} <AX element pid: 10333, elementOrHash.elementID: 4374078208.21>
+                      Other, 0x1153126c0, {{0.0, 829.0}, {420.0, 83.0}} <AX element pid: 10333, elementOrHash.elementID: 4374079552.26>
+                        Other, 0x115312800, {{0.0, 829.0}, {420.0, 83.0}} <AX element pid: 10333, elementOrHash.elementID: 4434935808.35>
+                          Other, 0x115312940, {{0.0, 829.0}, {420.0, 83.0}} <AX element pid: 10333, elementOrHash.elementID: 4374081792.47>
+            StaticText, 0x115312a80, {{0.0, 0.0}, {420.0, 89.3}}, identifier: 'acceptance.offline', label: 'قبول واجهة المستخدم دون اتصال · بيانات اصطناعية' <AX element pid: 10333, elementOrHash.elementID: 4421088384.10>
+    Other, 0x115312bc0, {{0.0, 0.0}, {420.0, 912.0}} <AX element pid: 10333, elementOrHash.elementID: 4756087808.163>
+      Other, 0x115312d00, {{-420.0, -912.0}, {1260.0, 2736.0}} <AX element pid: 10333, elementOrHash.elementID: 4421351808.164>
+      Other, 0x115312e40, {{0.0, 68.0}, {420.0, 844.0}} <AX element pid: 10333, elementOrHash.elementID: 4832772096.165>
+        Other, 0x115312f80, {{0.0, 68.0}, {420.0, 844.0}} <AX element pid: 10333, elementOrHash.elementID: 4421144512.167>
+          Other, 0x1153130c0, {{0.0, 68.0}, {420.0, 844.0}} <AX element pid: 10333, elementOrHash.elementID: 4421144960.168>
+            Other, 0x115313200, {{0.0, 68.0}, {420.0, 844.0}} <AX element pid: 10333, elementOrHash.elementID: 4767384576.169>
+              Other, 0x115313340, {{0.0, 68.0}, {420.0, 844.0}} <AX element pid: 10333, elementOrHash.elementID: 4421315520.170>
+                Other, 0x115313480, {{0.0, 68.0}, {420.0, 844.0}} <AX element pid: 10333, elementOrHash.elementID: 4421149440.171>
+                  NavigationBar, 0x1153135c0, {{0.0, 88.0}, {420.0, 54.0}}, identifier: 'ملف التقديم' <AX element pid: 10333, elementOrHash.elementID: 4423154688.172>
+                    Other, 0x115313700, {{24.0, 92.0}, {60.7, 36.0}}, label: 'إلغاء' <AX element pid: 10333, elementOrHash.elementID: 4754861312.175>
+                      Other, 0x115313840, {{24.0, 92.0}, {60.7, 36.0}} <AX element pid: 10333, elementOrHash.elementID: 4421176832.180>
+                        Button, 0x115313980, {{24.0, 92.0}, {60.7, 36.0}}, label: 'إلغاء' <AX element pid: 10333, elementOrHash.elementID: 4421176384.183>
+                    StaticText, 0x115313ac0, {{156.3, 97.3}, {107.3, 25.3}}, label: 'ملف التقديم' <AX element pid: 10333, elementOrHash.elementID: 4765158016.176>
+                    Other, 0x115313c00, {{329.0, 92.0}, {67.0, 36.0}}, label: 'حفظ' <AX element pid: 10333, elementOrHash.elementID: 4754860032.177>
+                      Other, 0x115313d40, {{329.0, 92.0}, {67.0, 36.0}} <AX element pid: 10333, elementOrHash.elementID: 4421175936.181>
+                        Button, 0x115313e80, {{329.0, 92.0}, {67.0, 36.0}}, label: 'حفظ' <AX element pid: 10333, elementOrHash.elementID: 4421175040.184>
+                  Other, 0x11531c000, {{0.0, 68.0}, {420.0, 844.0}} <AX element pid: 10333, elementOrHash.elementID: 4421150336.173>
+                    Other, 0x11531c140, {{0.0, 68.0}, {420.0, 844.0}} <AX element pid: 10333, elementOrHash.elementID: 4421174592.178>
+                      Other, 0x11531c280, {{0.0, 68.0}, {420.0, 844.0}} <AX element pid: 10333, elementOrHash.elementID: 4765155328.182>
+                        Other, 0x11531c3c0, {{0.0, 68.0}, {420.0, 844.0}} <AX element pid: 10333, elementOrHash.elementID: 4421316416.185>
+                          CollectionView, 0x11531c500, {{0.0, 68.0}, {420.0, 844.0}} <AX element pid: 10333, elementOrHash.elementID: 4436990976.186>
+                            Other, 0x11531c640, {{-20.0, -1546.0}, {460.0, 2235.3}} <AX element pid: 10333, elementOrHash.elementID: 4835257344.187>
+                            Other, 0x11531c780, {{0.0, 68.0}, {420.0, 844.0}} <AX element pid: 10333, elementOrHash.elementID: 4421148992.188>
+                            Other, 0x11531c8c0, {{0.0, 68.0}, {420.0, 844.0}} <AX element pid: 10333, elementOrHash.elementID: 4421148096.189>
+                            Cell, 0x11531ca00, {{20.0, 177.0}, {380.0, 494.7}} <AX element pid: 10333, elementOrHash.elementID: 4754863872.190>
+                              Other, 0x11531cb40, {{20.0, 177.0}, {380.0, 494.7}} <AX element pid: 10333, elementOrHash.elementID: 4834727424.197>
+                                Other, 0x11531cc80, {{20.0, 177.0}, {380.0, 494.7}} <AX element pid: 10333, elementOrHash.elementID: 4421197248.206>
+                              Other, 0x11531cdc0, {{20.0, 177.0}, {380.0, 494.7}} <AX element pid: 10333, elementOrHash.elementID: 4421196352.198>
+                                Other, 0x11531cf00, {{20.0, 177.0}, {380.0, 494.7}} <AX element pid: 10333, elementOrHash.elementID: 4768749568.207>
+                                  Other, 0x11531d040, {{20.0, 177.0}, {380.0, 494.7}} <AX element pid: 10333, elementOrHash.elementID: 4421317312.213>
+                                    StaticText, 0x11531d180, {{20.0, 177.0}, {380.0, 494.7}}, label: 'استخدم خبرتك الفعلية والسيرة الذاتية التي تريد إرسالها إلى جهات العمل. حفظ هذا الملف الشخصي لا يرسل طلب توظيف.' <AX element pid: 10333, elementOrHash.elementID: 4421316864.217>
+                            Other, 0x11531d2c0, {{-20.0, 689.3}, {460.0, 597.0}} <AX element pid: 10333, elementOrHash.elementID: 4835257856.191>
+                            Cell, 0x11531d400, {{20.0, 689.3}, {380.0, 83.3}} <AX element pid: 10333, elementOrHash.elementID: 4834879488.192>
+                              Other, 0x11531d540, {{20.0, 689.3}, {380.0, 83.3}} <AX element pid: 10333, elementOrHash.elementID: 4835255296.199>
+                              Other, 0x11531d680, {{20.0, 689.3}, {380.0, 83.3}} <AX element pid: 10333, elementOrHash.elementID: 4421238784.200>
+                                Other, 0x11531d7c0, {{20.0, 689.3}, {380.0, 83.3}} <AX element pid: 10333, elementOrHash.elementID: 4768757248.208>
+                                  Other, 0x11531d900, {{20.0, 689.3}, {380.0, 83.3}} <AX element pid: 10333, elementOrHash.elementID: 4421318208.214>
+                                    StaticText, 0x11531da40, {{20.0, 689.3}, {380.0, 83.3}}, label: 'نبذة عنك' <AX element pid: 10333, elementOrHash.elementID: 4421317760.218>
+                            Cell, 0x11531db80, {{20.0, 772.7}, {380.0, 95.0}} <AX element pid: 10333, elementOrHash.elementID: 4834869248.193>
+                              Other, 0x11531dcc0, {{20.0, 772.7}, {380.0, 95.0}} <AX element pid: 10333, elementOrHash.elementID: 4834734080.201>
+                                Other, 0x11531de00, {{20.0, 772.7}, {380.0, 95.0}} <AX element pid: 10333, elementOrHash.elementID: 4421198144.209>
+                              Other, 0x11531df40, {{20.0, 772.7}, {380.0, 95.0}} <AX element pid: 10333, elementOrHash.elementID: 4421197696.202>
+                                Other, 0x11531e080, {{20.0, 772.7}, {380.0, 95.0}} <AX element pid: 10333, elementOrHash.elementID: 4768751104.210>
+                                  Other, 0x11531e1c0, {{20.0, 772.7}, {380.0, 95.0}} <AX element pid: 10333, elementOrHash.elementID: 4421319104.215>
+                                    TextField, 0x11531e300, {{40.0, 787.7}, {340.0, 65.0}}, identifier: 'application.firstName', placeholderValue: 'الاسم الأول أو الاسم الوحيد', value: Saved <AX element pid: 10333, elementOrHash.elementID: 4834870528.219>
+                            Cell, 0x11531e440, {{20.0, 867.7}, {380.0, 94.0}} <AX element pid: 10333, elementOrHash.elementID: 4834871808.194>
+                              Other, 0x11531e580, {{20.0, 867.7}, {380.0, 94.0}} <AX element pid: 10333, elementOrHash.elementID: 4834737664.203>
+                                Other, 0x11531e6c0, {{20.0, 867.7}, {380.0, 94.0}} <AX element pid: 10333, elementOrHash.elementID: 4421200832.211>
+                              Other, 0x11531e800, {{20.0, 867.7}, {380.0, 94.0}} <AX element pid: 10333, elementOrHash.elementID: 4421199936.204>
+                                Other, 0x11531e940, {{20.0, 867.7}, {380.0, 94.0}} <AX element pid: 10333, elementOrHash.elementID: 4768752640.212>
+                                  Other, 0x11531ea80, {{20.0, 867.7}, {380.0, 94.0}} <AX element pid: 10333, elementOrHash.elementID: 4421320000.216>
+                                    TextField, 0x11531ebc0, {{40.0, 882.7}, {340.0, 64.0}}, placeholderValue: 'اسم العائلة (اختياري)' <AX element pid: 10333, elementOrHash.elementID: 4834873088.220>
+                            Other, 0x11531ed00, {{40.0, 866.7}, {340.0, 1.0}} <AX element pid: 10333, elementOrHash.elementID: 4835258368.195>
+                            Other, 0x11531ee40, {{387.0, 142.0}, {30.0, 708.0}}, label: 'Vertical scroll bar, 3 pages', value: 0% <AX element pid: 10333, elementOrHash.elementID: 4833227264.196>
+                              Other, 0x11531ef80, {{414.0, 868.0}, {3.0, 7.0}} <AX element pid: 10333, elementOrHash.elementID: 4421179968.205>
+                            Other, 0x11531f0c0, {{387.0, 142.0}, {30.0, 708.0}}, label: 'Vertical scroll bar, 3 pages', value: 0% <AX element pid: 10333, elementOrHash.elementID: 4833227264.196>
+                              Other, 0x11531f200, {{414.0, 868.0}, {3.0, 7.0}} <AX element pid: 10333, elementOrHash.elementID: 4421179968.205>
+                  Other, 0x11531f340, {{0.0, 68.0}, {420.0, 844.0}} <AX element pid: 10333, elementOrHash.elementID: 4756093952.174>
+                    Other, 0x11531f480, {{0.0, 68.0}, {420.0, 844.0}} <AX element pid: 10333, elementOrHash.elementID: 4833215488.179>

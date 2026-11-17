@@ -1,0 +1,13 @@
+PASS untrusted fixture certificate is rejected without changing system trust
+PASS TLS does not weaken exact Host checks
+PASS HTTPS cannot mint anonymous browser workspaces
+PASS native bearer profile and actual PDF traverse trusted TLS
+PASS review over TLS contains the single name and explicit marketing No
+PASS real multipart submission returns a visibly synthetic durable receipt
+PASS review replay sends one provider POST and includes actual PDF bytes
+PASS a provider timeout preserves uncertainty without a fabricated receipt
+PASS a newly paired phone recovers uncertain evidence and cannot replay the POST
+PASS approved cooldown review is recoverable with its exact digest
+PASS cooldown needs a new explicit continuation and preserves one attempt
+PASS TLS receipt export remains labeled test and excludes PDF bytes
+{"result":"passed","checks":12,"transport":"HTTPS with explicit isolated CA and normal hostname validation","mode":"test","providerPosts":{"00000000-0000-4000-8000-000000000001":1,"00000000-0000-4000-8000-000000000004":1,"00000000-0000-4000-8000-000000000005":2}}

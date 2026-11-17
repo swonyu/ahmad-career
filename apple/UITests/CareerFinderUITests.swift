@@ -89,28 +89,89 @@ final class CareerFinderUITests: XCTestCase {
         XCTFail("Expected an application control inside the visible scroll area: \(target)")
     }
     @MainActor
-    private func replace(_ field: XCUIElement, with text: String, in app: XCUIApplication? = nil) {
-        XCTAssertTrue(field.waitForExistence(timeout: 5))
-        field.tap()
-        if let app {
-            let ready = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-                self.hasReachableTypingKey(in: app)
-            }, object: nil)
-            let readiness = XCTWaiter.wait(for: [ready], timeout: 5)
-            if readiness != .completed { print(app.debugDescription) }
-            XCTAssertEqual(readiness, .completed, "The single field tap must present a real keyboard before typing")
-            guard readiness == .completed else { return }
-        }
-        let previous = field.value as? String ?? ""
-        field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: previous.count) + text)
+    private func typingKeyIsVisible(in app: XCUIApplication) -> Bool {
+        // Query a real, locale-independent system key. Enumerating every key by
+        // index traverses zero-size padding and stale keys as the layout changes.
+        app.keyboards.keys.matching(identifier: "delete").allElementsBoundByIndex
+            .contains { $0.exists && $0.isHittable }
     }
     @MainActor
-    private func hasReachableTypingKey(in app: XCUIApplication) -> Bool {
-        // iOS exposes zero-size Padding-Left/Right Key nodes before its real keys.
-        // Resolve one current real key instead of retaining every indexed proxy
-        // across keyboard transitions; a hidden or absent key never satisfies this.
-        let key = app.keyboards.keys.matching(NSPredicate(format: "label != %@ AND label != %@", "Padding-Left", "Padding-Right")).firstMatch
-        return key.exists && key.isHittable
+    private func replace(_ field: XCUIElement, with text: String, in app: XCUIApplication) {
+        XCTAssertTrue(field.waitForExistence(timeout: 5))
+        // tap() can scroll a native Form field into view; keep that behavior.
+        field.tap()
+        let keyboardReady = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            self.typingKeyIsVisible(in: app)
+        }, object: nil)
+        let readiness = XCTWaiter.wait(for: [keyboardReady], timeout: 5)
+        if readiness != .completed { print(app.debugDescription) }
+        XCTAssertEqual(readiness, .completed, "A real keyboard key must be visible before typing")
+        guard readiness == .completed else { return }
+        let value = field.value as? String ?? ""
+        let previous = value == field.placeholderValue ? "" : value
+        if field.elementType == .secureTextField {
+            field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: previous.count) + text)
+        } else {
+            if !previous.isEmpty {
+                // A tap can place the caret inside existing text, especially
+                // mixed Arabic/English text. Use the real editing menu instead
+                // of assuming that backward deletes start at the end.
+                field.press(forDuration: 1.1)
+                let names = ["Select All", "تحديد الكل"]
+                let predicate = NSPredicate(format: "label IN %@ OR identifier IN %@", names, names)
+                let choices = [app.menuItems.matching(predicate), app.buttons.matching(predicate)]
+                let selectable = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+                    choices.flatMap { $0.allElementsBoundByIndex }.contains { $0.exists && $0.isHittable }
+                }, object: nil)
+                let selectionReady = XCTWaiter.wait(for: [selectable], timeout: 5)
+                if selectionReady != .completed {
+                    capture("replacement-select-all-unavailable", app: app)
+                    print(app.debugDescription)
+                }
+                XCTAssertEqual(selectionReady, .completed, "Existing text must expose a reachable Select All edit action")
+                guard let selectAll = choices.flatMap({ $0.allElementsBoundByIndex }).first(where: { $0.exists && $0.isHittable }) else {
+                    XCTFail("Missing reachable Select All edit action"); return
+                }
+                selectAll.tap()
+                field.typeText(XCUIKeyboardKey.delete.rawValue)
+                let cleared = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+                    let value = field.value as? String ?? ""
+                    return value.isEmpty || value == field.placeholderValue
+                }, object: nil)
+                XCTAssertEqual(XCTWaiter.wait(for: [cleared], timeout: 5), .completed,
+                               "Select All and Delete must clear the whole field before replacement")
+            }
+            if !text.isEmpty { field.typeText(text) }
+        }
+        if field.elementType != .secureTextField {
+            let edited = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+                let value = field.value as? String ?? ""
+                return (value == field.placeholderValue ? "" : value) == text
+            }, object: nil)
+            XCTAssertEqual(XCTWaiter.wait(for: [edited], timeout: 5), .completed,
+                           "Typing must update this field to the exact requested value")
+        }
+    }
+    @MainActor
+    private func finishTyping(in app: XCUIApplication) {
+        let done = app.buttons["Done typing"]
+        guard done.exists else {
+            XCTAssertFalse(app.keyboards.keys.allElementsBoundByIndex.contains { $0.isHittable },
+                           "An open editor keyboard must expose its Done action")
+            return
+        }
+        XCTAssertTrue(done.isHittable, "Done typing must be reachable")
+        done.tap()
+        let dismissed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            let keys = app.keyboards.keys.allElementsBoundByIndex
+            let actions = app.buttons.matching(identifier: "Done typing").allElementsBoundByIndex
+            let keyboard = app.keyboards.firstMatch
+            return (!keyboard.exists || !keyboard.isHittable)
+                && !keys.contains(where: { $0.isHittable })
+                && !actions.contains(where: { $0.exists && $0.isHittable })
+        }, object: nil)
+        XCTAssertEqual(XCTWaiter.wait(for: [dismissed], timeout: 5), .completed,
+                       "Finish the keyboard dismissal before moving to the next field")
     }
     @MainActor
     private func capture(_ name: String, app: XCUIApplication) {
@@ -140,17 +201,7 @@ final class CareerFinderUITests: XCTestCase {
             }
             XCTAssertEqual(entry, .completed, "The single typing event must deliver the exact fixture text within the readiness window")
             XCTAssertEqual(field.value as? String, value, "The intended field must receive the exact fixture text")
-            if app.buttons["Done typing"].exists {
-                app.buttons["Done typing"].tap()
-                let dismissed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-                    let keyboard = app.keyboards.firstMatch, done = app.buttons["Done typing"]
-                    return (!keyboard.exists || !keyboard.isHittable) && (!done.exists || !done.isHittable)
-                        && !self.hasReachableTypingKey(in: app)
-                }, object: nil)
-                let dismissal = XCTWaiter.wait(for: [dismissed], timeout: 5)
-                if dismissal != .completed { print(app.debugDescription) }
-                XCTAssertEqual(dismissal, .completed, "Done typing must dismiss its keyboard and toolbar before the next field tap")
-            }
+            finishTyping(in: app)
         }
         app.buttons["opportunity.save"].tap()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 5))
@@ -169,15 +220,14 @@ final class CareerFinderUITests: XCTestCase {
     }
     @MainActor
     private func searchFromKeyboard(in app: XCUIApplication, usingReturnKey: Bool = false) {
-        let keyboard = app.keyboards.firstMatch
-        XCTAssertTrue(keyboard.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5))
         let keyReady = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-            self.hasReachableTypingKey(in: app)
+            self.typingKeyIsVisible(in: app)
         }, object: nil)
         let keyReadiness = XCTWaiter.wait(for: [keyReady], timeout: 5)
         if keyReadiness != .completed { print(app.debugDescription) }
         XCTAssertEqual(keyReadiness, .completed, "A real keyboard key must be visible before submitting")
-        guard hasReachableTypingKey(in: app) else {
+        guard typingKeyIsVisible(in: app) else {
             print(app.debugDescription)
             XCTFail("No reachable keyboard key was presented"); return
         }
@@ -234,8 +284,8 @@ final class CareerFinderUITests: XCTestCase {
         if !opened { capture("profile-initial-open-failure", app: app); print(app.debugDescription) }
         XCTAssertTrue(opened, "One tap on Start must open the application profile before any draft editing")
         XCTAssertTrue(["", "First or single name"].contains(name.value as? String ?? ""), "A fresh profile must not contain another person's name")
-        replace(name, with: "Taylor")
-        replace(app.textFields["application.email"], with: "taylor@example.com")
+        replace(name, with: "Taylor", in: app)
+        replace(app.textFields["application.email"], with: "taylor@example.com", in: app)
         app.navigationBars.buttons["Cancel"].tap()
         XCTAssertTrue(app.buttons["Save draft on this phone"].waitForExistence(timeout: 5))
         app.buttons["Save draft on this phone"].tap()
@@ -256,7 +306,7 @@ final class CareerFinderUITests: XCTestCase {
         let field = app.textFields["application.linkedin"]
         reveal(field, in: app)
         XCTAssertTrue(["", "LinkedIn profile (optional)"].contains(field.value as? String ?? ""), "A new user has no seeded LinkedIn identity")
-        replace(field, with: "https://sa.linkedin.com/in/example-profile/?tracking=discard#about")
+        replace(field, with: "https://sa.linkedin.com/in/example-profile/?tracking=discard#about", in: app)
         app.buttons["Done typing"].tap()
         XCTAssertTrue(app.buttons["application.openLinkedIn"].exists || app.links["application.openLinkedIn"].exists,
                       "A valid saved profile offers an explicit external open action")
@@ -290,7 +340,7 @@ final class CareerFinderUITests: XCTestCase {
         followUpControl.tap()
         XCTAssertTrue(element("record.followUpDate", app: app).waitForExistence(timeout: 5))
         XCTAssertEqual(followUp.value as? String, "1", "The follow-up must be enabled before saving its date")
-        let note = app.textViews["record.note"]; reveal(note, in: app); replace(note, with: "Prepare a thoughtful follow-up.")
+        let note = app.textViews["record.note"]; reveal(note, in: app); replace(note, with: "Prepare a thoughtful follow-up.", in: app)
         app.buttons["Done typing"].tap(); app.buttons["record.save"].tap()
         XCTAssertTrue(app.buttons["record.edit"].waitForExistence(timeout: 5))
         app.terminate(); app = launch(id: id)
@@ -344,8 +394,8 @@ final class CareerFinderUITests: XCTestCase {
     func testProfileReadinessAndSimpleConnectionSetup() {
         let app = launch()
         let profile = app.buttons["home.applicationProfile"]; reveal(profile, in: app); profile.tap()
-        replace(app.textFields["application.firstName"], with: "Alex")
-        replace(app.textFields["application.email"], with: "invalid-email")
+        replace(app.textFields["application.firstName"], with: "Alex", in: app)
+        replace(app.textFields["application.email"], with: "invalid-email", in: app)
         app.navigationBars.buttons["Save"].tap()
         tab("Apply", in: app)
         let email = element("profile.essential.email", app: app); reveal(email, in: app)
@@ -360,11 +410,11 @@ final class CareerFinderUITests: XCTestCase {
         if !opened { capture("connection-setup-did-not-open", app: app); print(app.debugDescription) }
         XCTAssertTrue(opened, "One tap on Connect application workspace must open connection setup")
         XCTAssertFalse(app.textFields["connection.address"].exists, "Default setup needs no service-address editing")
-        let code = app.secureTextFields["connection.code"]; reveal(code, in: app); replace(code, with: "SYNTHETIC")
+        let code = app.secureTextFields["connection.code"]; reveal(code, in: app); replace(code, with: "SYNTHETIC", in: app)
         app.buttons["Done typing"].tap()
         let advanced = app.buttons["Use another service"]; reveal(advanced, in: app); advanced.tap()
         let address = app.textFields["connection.address"]; reveal(address, in: app)
-        replace(address, with: "https://custom.example.com"); app.buttons["Done typing"].tap()
+        replace(address, with: "https://custom.example.com", in: app); app.buttons["Done typing"].tap()
         top(app); reveal(code, in: app)
         XCTAssertTrue(["", "One-time connection code"].contains(code.value as? String ?? ""), "Changing destination clears the unsent code")
         let reset = app.buttons["Use Career Finder"]; reveal(reset, in: app); reset.tap()
@@ -378,8 +428,8 @@ final class CareerFinderUITests: XCTestCase {
         let id = UUID().uuidString
         var app = launch(id: id)
         app.buttons["home.addOpportunity"].tap()
-        replace(app.textFields["opportunity.url"], with: "https://careers.example.com/jobs/designer")
-        replace(app.textFields["opportunity.title"], with: "Product designer")
+        replace(app.textFields["opportunity.url"], with: "https://careers.example.com/jobs/designer", in: app)
+        replace(app.textFields["opportunity.title"], with: "Product designer", in: app)
         app.navigationBars.buttons["Cancel"].tap()
         let keepButtons = app.buttons.matching(NSPredicate(format: "label == %@", "Keep editing"))
         let ready = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
@@ -402,7 +452,7 @@ final class CareerFinderUITests: XCTestCase {
         app.buttons["home.addOpportunity"].tap()
         XCTAssertEqual(app.textFields["opportunity.title"].value as? String, "Product designer")
         XCTAssertEqual(app.textFields["opportunity.url"].value as? String, "https://careers.example.com/jobs/designer")
-        replace(app.textFields["opportunity.company"], with: "Example employer")
+        replace(app.textFields["opportunity.company"], with: "Example employer", in: app)
         app.buttons["opportunity.save"].tap()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 5))
         tab("Saved", in: app)
@@ -416,7 +466,7 @@ final class CareerFinderUITests: XCTestCase {
     func testOpportunityDiscardRequiresExplicitChoice() {
         let app = launch()
         app.buttons["home.addOpportunity"].tap()
-        replace(app.textFields["opportunity.title"], with: "Discard this synthetic draft")
+        replace(app.textFields["opportunity.title"], with: "Discard this synthetic draft", in: app)
         app.navigationBars.buttons["Cancel"].tap()
         XCTAssertTrue(app.buttons["Discard draft"].waitForExistence(timeout: 5))
         app.buttons["Discard draft"].tap()
@@ -449,18 +499,18 @@ final class CareerFinderUITests: XCTestCase {
     @MainActor
     func testSearchEmptyAndFailurePreservesPreviousResults() {
         let app = launch(); tab("Search", in: app)
-        replace(app.textFields["discovery.keywords"], with: "nothing matches")
+        replace(app.textFields["discovery.keywords"], with: "nothing matches", in: app)
         searchFromKeyboard(in: app)
         let empty = element("discovery.empty", app: app)
         reveal(empty, in: app)
         XCTAssertTrue(empty.label.contains("No roles match this search."), "The empty state must describe the completed search")
         capture("08a-completed-search-with-no-matches", app: app)
         top(app)
-        replace(app.textFields["discovery.keywords"], with: "")
+        replace(app.textFields["discovery.keywords"], with: "", in: app)
         searchFromKeyboard(in: app, usingReturnKey: true)
         let role = element("discovery.job.fixture-design", app: app); reveal(role, in: app)
         top(app)
-        replace(app.textFields["discovery.keywords"], with: "offline error")
+        replace(app.textFields["discovery.keywords"], with: "offline error", in: app)
         searchFromKeyboard(in: app)
         let issue = element("discovery.error", app: app); reveal(issue, in: app)
         XCTAssertTrue(issue.label.contains("Search could not finish."))
@@ -481,7 +531,7 @@ final class CareerFinderUITests: XCTestCase {
         let opened = app.navigationBars["Application profile"].waitForExistence(timeout: 5)
         if !opened { capture("large-text-profile-did-not-open", app: app); print(app.debugDescription) }
         XCTAssertTrue(opened, "The fully visible Start profile action must open its sheet with one tap")
-        let name = app.textFields["application.firstName"]; reveal(name, in: app); replace(name, with: "Alex")
+        let name = app.textFields["application.firstName"]; reveal(name, in: app); replace(name, with: "Alex", in: app)
         XCTAssertTrue(app.navigationBars.buttons["Cancel"].isHittable)
         capture("10-profile-accessibility-keyboard", app: app)
         app.navigationBars.buttons["Cancel"].tap()
@@ -582,8 +632,8 @@ final class CareerFinderUITests: XCTestCase {
         let id = UUID().uuidString
         var app = launch(id: id, largeText: true, availability: "disabled")
         let profile = app.buttons["home.applicationProfile"]; reveal(profile, in: app); profile.tap()
-        replace(app.textFields["application.firstName"], with: "Saved")
-        replace(app.textFields["application.email"], with: "saved@example.invalid")
+        replace(app.textFields["application.firstName"], with: "Saved", in: app)
+        replace(app.textFields["application.email"], with: "saved@example.invalid", in: app)
         app.navigationBars.buttons["Cancel"].tap()
         XCTAssertTrue(app.buttons["Save draft on this phone"].waitForExistence(timeout: 5))
         app.buttons["Save draft on this phone"].tap()
@@ -641,18 +691,18 @@ final class CareerFinderUITests: XCTestCase {
         tab("Saved", in: app)
         let row = app.staticTexts[title]; reveal(row, in: app); row.tap()
         let edit = app.buttons["record.edit"]; reveal(edit, in: app); edit.tap()
-        let note = app.textViews["record.note"]; reveal(note, in: app); replace(note, with: originalNote)
+        let note = app.textViews["record.note"]; reveal(note, in: app); replace(note, with: originalNote, in: app)
         app.buttons["Done typing"].tap(); app.buttons["record.save"].tap()
         XCTAssertTrue(app.buttons["record.edit"].waitForExistence(timeout: 5))
         app.terminate(); app = launch(id: id)
         tab("Saved", in: app); top(app)
         let search = app.searchFields.firstMatch
         XCTAssertTrue(search.waitForExistence(timeout: 5))
-        replace(search, with: "casetracker تواصل جهة")
+        replace(search, with: "casetracker تواصل جهة", in: app)
         XCTAssertTrue(app.staticTexts[title].waitForExistence(timeout: 5), "Existing saved search includes original private notes with comparison-only Arabic normalization")
-        replace(search, with: "private-record")
+        replace(search, with: "private-record", in: app)
         XCTAssertTrue(app.staticTexts["No saved roles match this view."].waitForExistence(timeout: 5), "Opaque URL paths are not a search index")
-        replace(search, with: "e\u{0301}lan casetracker")
+        replace(search, with: "e\u{0301}lan casetracker", in: app)
         let result = app.staticTexts[title]; reveal(result, in: app); result.tap()
         XCTAssertTrue(app.staticTexts[originalNote].waitForExistence(timeout: 5), "Matching must preserve the exact saved note")
         capture("30-saved-search-arabic-notes", app: app)

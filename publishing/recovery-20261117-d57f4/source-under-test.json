@@ -1,0 +1,2364 @@
+{
+  "recordedUTC": "2026-11-17T14:30:54.748590+00:00",
+  "purpose": "Exact non-generated source and test input hashes for isolated local gates; native not run.",
+  "publishingParent": "8bfd3136227ce79625df8e2b57678de5fbfa201e",
+  "accountParent": "880e878f6f528d903c42951f10a8b216094c889c",
+  "files": [
+    {
+      "path": ".github/workflows/phone-quality.yml",
+      "bytes": 11842,
+      "sha256": "c6215599990083d1bd35eee42eae6fba6838d7d974132e056763532ae6ee9d6c"
+    },
+    {
+      "path": "android/.gitignore",
+      "bytes": 62,
+      "sha256": "1d0d8aa62aed09180b2264846040bc1e029e2c35a7aba45a92ee078448f5cb53"
+    },
+    {
+      "path": "android/README.md",
+      "bytes": 28624,
+      "sha256": "93063acae22378164da2899534fb4a5acc6059894b0ef714b30e06519d2a7c93"
+    },
+    {
+      "path": "android/app/build.gradle.kts",
+      "bytes": 3535,
+      "sha256": "f1b9718aa704a769af25a2490f456b0947d305dec7eca8fff876b240010e0cb9"
+    },
+    {
+      "path": "android/app/src/acceptance/res/xml/network_security_config.xml",
+      "bytes": 530,
+      "sha256": "aef8c30928856fe0ae846f20aa2253b923f6a724d5435dc58de946932e75221d"
+    },
+    {
+      "path": "android/app/src/androidTest/assets/discovery-search-v1.json",
+      "bytes": 2547,
+      "sha256": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7"
+    },
+    {
+      "path": "android/app/src/androidTest/assets/native-saved-search-v1.json",
+      "bytes": 7891,
+      "sha256": "c1939e5e2b4d3d666b04d0b0c07d3bd868f4cc4f9ef20a63ae0b62599a638a08"
+    },
+    {
+      "path": "android/app/src/androidTest/assets/phone-workspace-v1.json",
+      "bytes": 20801,
+      "sha256": "8cc13c2b2965b4966b25344088a8f993f8ac0fab7ad644638856b449aa40b2da"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/AcceptanceDisplay.kt",
+      "bytes": 1624,
+      "sha256": "0dc53645c53583aa4d7b8bddef9e8cc5c4fd612622cfd7fa3b243f5a6846276b"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/ApplicationRecordRegressionTest.kt",
+      "bytes": 39166,
+      "sha256": "eaf5a38ff1b81332c75192d3087dad42d70bf42a6e7d2973b2143f26574dae4a"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/ContinuationRegressionTest.kt",
+      "bytes": 14948,
+      "sha256": "13cc02ccb8152b3bcf7f5a73612da958d63037965997ada8b07d316dbfc3ff65"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/DiscoveryPersistenceRegressionTest.kt",
+      "bytes": 14401,
+      "sha256": "b4a98b3a44e50a3e9656fd8004f5de560b7c115583496823392e51e4a49a9b09"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/DiscoveryRegressionTest.kt",
+      "bytes": 9869,
+      "sha256": "9176a5afe5b51b40d14076aa2974703c2a9e769688cad51bc86bddb9764dd3e9"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/ExperienceModelRegressionTest.kt",
+      "bytes": 1853,
+      "sha256": "ce786765af24f83631b3456cc70363ebd21452e67f5c419d136e15f5126f3793"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/LinkedInPhoneAcceptanceTest.kt",
+      "bytes": 8198,
+      "sha256": "dc1a833ecfd07143c4de494c5d3f42f6977696480f6ddcfa2b2b2794798e0bb3"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/LinkedInRegressionTest.kt",
+      "bytes": 17081,
+      "sha256": "085ebe7f36af9b2b095e0ed57b94a8a20b22f3c41b22251e5d1d82b16b502d70"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt",
+      "bytes": 15086,
+      "sha256": "a01a176c765f0b77c07fb563ba4cf322914a544684a62ecf2939db651880896a"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/NativeLocalizationAcceptanceTest.kt",
+      "bytes": 16242,
+      "sha256": "2425c37ef03a47ff26a85c3ae4f0dc6e9bcc6183e5bf7276223cf7c6324da1f5"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/NavigationPhoneAcceptanceTest.kt",
+      "bytes": 21332,
+      "sha256": "79cad23b244d5240757be27ab9b7c37aa664be93dbf0c54a718a1c0cbd0b6013"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/NavigationTestActions.kt",
+      "bytes": 1066,
+      "sha256": "a11aecda2d3fe037091687dbe295c75c188c496615392352d13c451538225897"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceEnvironment.kt",
+      "bytes": 1911,
+      "sha256": "08df9d71250f6ca69c50e5c27d228dc25902289a57ca42d317a76126646db4a1"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt",
+      "bytes": 4341,
+      "sha256": "163c22b2650c98f8fcfba858e4dd169d1c4eae1c9521799ef41fe950a970b433"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt",
+      "bytes": 16110,
+      "sha256": "e79be06178abdff67a98f225e6c155227dede4e48d4b550df156a9b55b23a68c"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/SavedSearchRegressionTest.kt",
+      "bytes": 2893,
+      "sha256": "237297b8182ba2d97f9166129fa909250ce0090fc4f9dabf3d4dab6d0c523989"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/VaultAcceptanceTest.kt",
+      "bytes": 9368,
+      "sha256": "7c3adb6d05e4772c0d04d1286b70149644a7771008bf4ad554309ea1df24085b"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceAccessibilityRegressionTest.kt",
+      "bytes": 3975,
+      "sha256": "086685c3cbb442e2e2c05e5e2da6cac20ad077cb45111fe67d5ecf8cfd108d20"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceRegressionTest.kt",
+      "bytes": 28697,
+      "sha256": "84f1cd1dc4d55a416c1fb66620b812d5e472ed2f1670263128e0c5c593557ba6"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceSafetyRegressionTest.kt",
+      "bytes": 20435,
+      "sha256": "aa0a1e39c5e93ef88d7b40f6af7e8b0d5feee0554a45b87183ea3ef39a2ac349"
+    },
+    {
+      "path": "android/app/src/main/AndroidManifest.xml",
+      "bytes": 1183,
+      "sha256": "4f6b7e1ed21bac8873cf2e34ea62b0e3f757ee8792ea56c517eb12b8c0b9f19e"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt",
+      "bytes": 15981,
+      "sha256": "fae61e472fb03d90f9ab268fce705a0a3f586816ee06330b00025fab255043e6"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecords.kt",
+      "bytes": 13736,
+      "sha256": "39c0fcd402fb1a4a694496b88b1f7078962b8cefdddf62a8b1d76125f67b3d88"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/BoundaryPolicy.java",
+      "bytes": 15211,
+      "sha256": "54f162253812226923f0bedf7e80f05a33ac07d40df4ca2943e43ddcd0a53af2"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/CareerApi.kt",
+      "bytes": 7086,
+      "sha256": "e021e56ab3529797c75d56b8c805000d7ed0dfb07cca167b742e1f2997219af4"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/CareerLocalization.kt",
+      "bytes": 14211,
+      "sha256": "be148a9b6c5ad21699c001298c2e0af212b92a2bffb1d2b0da3b6f403e20a1df"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/CareerTheme.kt",
+      "bytes": 7090,
+      "sha256": "9bb54845694a77d533567b1d7fefa5500730ffb41d9a1d002cfc0a4657b145e8"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt",
+      "bytes": 85418,
+      "sha256": "90bbf37458cd924fd427710245af580c57329cb3699cd575234c443087d49dce"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+      "bytes": 22111,
+      "sha256": "d6c0800915ea2b2435487bc0b1946e1714e39796b36cf17ee1c112eb9b8168b4"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+      "bytes": 21153,
+      "sha256": "4ccb8f5f4cbeebbaebe53dd138b91aaae5b9d0708c58dc181c42fbb5eb93aa66"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/DiscoverySnapshot.kt",
+      "bytes": 4103,
+      "sha256": "176599cc8d2e7f49a678f974f2119e108c974649150c3f816ee3dbb52e67f7f9"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+      "bytes": 93278,
+      "sha256": "b8816a383b89ccb61c7e09cea1ce5b9127eacd2853aefa404f28ca5a5755ae1b"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/Models.kt",
+      "bytes": 18102,
+      "sha256": "e90d89d007cc0679adb03eda4aa71e2c56dab67bebb08a6ec7d28f755ede4464"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt",
+      "bytes": 159986,
+      "sha256": "8b2b1503503dbffa5fe9a745ace7abc9371b5db21435a2ee435213dd8aec1b5b"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/ProfileContract.java",
+      "bytes": 4135,
+      "sha256": "4cced3e879ccb3197376c13ebfde19fadd52ade5318d99636910b597937a88cc"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/ProfileValidation.kt",
+      "bytes": 1844,
+      "sha256": "e88ee7d663de01de3463e13f10e4a09bc4d18f2bc47957f208db98018d4bf39d"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/ReadablePDF.kt",
+      "bytes": 1831,
+      "sha256": "239435a8505250082fbf7f7820fe955a80044ebb35a1a002e431334dc2efa169"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/SecureVault.kt",
+      "bytes": 9550,
+      "sha256": "47119b7811b9ea0d991d58d226928250bd91f78bd8d536bdbdc88511060e55de"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt",
+      "bytes": 17937,
+      "sha256": "a3d450e447d8923a275e3a498bed7e88281001c958bb52938afabd340f54dad2"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/WorkspaceStorage.kt",
+      "bytes": 11932,
+      "sha256": "faebf6f1cac2885a6a7b69107a92807411a87b8b3d796e99ca3db9d8f634c05b"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/WorkspaceTransfer.kt",
+      "bytes": 15469,
+      "sha256": "766f4101f4164cc434537ef7aac15cddec08c224d22ceb085785c375cf78105e"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/ic_career_finder.xml",
+      "bytes": 548,
+      "sha256": "d588b5a168038756c4e6aa4df0f89b3f2723c37503112b7d269c1974dcba4746"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/ic_career_finder_monochrome.xml",
+      "bytes": 680,
+      "sha256": "037f0fe2612c3c413a26e218ea5f00e6ba150a5accd3dc3374019c166f2cf872"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
+      "bytes": 268,
+      "sha256": "67a388be78d6eaeb9a4925c3bebe600c64ceed0dfada49c8d44eec99cc6bfc0d"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-anydpi-v33/ic_launcher.xml",
+      "bytes": 344,
+      "sha256": "a36be44fd517d35f31c3b618508dcde7bc21ea9d87963c1693a2d75f68b2aa60"
+    },
+    {
+      "path": "android/app/src/main/res/raw/native_copy_templates.json",
+      "bytes": 25120,
+      "sha256": "bfe34e0a2502d3dce2dd44ebe99b6b5f87acf98778677f329adbc43dc443c7cc"
+    },
+    {
+      "path": "android/app/src/main/res/values-ar/career_copy.xml",
+      "bytes": 273141,
+      "sha256": "bb1f1a05451c9c886d2c91ee272edd0c1efc5a53acabe06f01d783843453f5dd"
+    },
+    {
+      "path": "android/app/src/main/res/values-night/styles.xml",
+      "bytes": 103,
+      "sha256": "dc8b6b6b5d2c0cb61b5ef608775673e096638d3652eae71460236aca31266df9"
+    },
+    {
+      "path": "android/app/src/main/res/values-v27/styles.xml",
+      "bytes": 342,
+      "sha256": "f7bb31810621bc2d0ee8ddd9a06d0c83f8b13c488676de9d1bbe07fbbb584387"
+    },
+    {
+      "path": "android/app/src/main/res/values/career_copy.xml",
+      "bytes": 211046,
+      "sha256": "ec779331e97cab17f53dc52bf11e955e2ac18ef477afe4fcd2413152c70e2046"
+    },
+    {
+      "path": "android/app/src/main/res/values/career_icon_colors.xml",
+      "bytes": 121,
+      "sha256": "676459c4453aece313e56947b07e73954b60d7f272f2264d1842021d27102c82"
+    },
+    {
+      "path": "android/app/src/main/res/values/strings.xml",
+      "bytes": 178,
+      "sha256": "c897abcfdf3e9b89d83242f640ef29c36282ec76e5e167da1f34ca3120fd6dc9"
+    },
+    {
+      "path": "android/app/src/main/res/values/styles.xml",
+      "bytes": 1074,
+      "sha256": "3d440f68d45081c9bacfb9132c7b1ecc4feb02281d82a08e25f016db70b200e9"
+    },
+    {
+      "path": "android/app/src/main/res/xml/data_extraction_rules.xml",
+      "bytes": 671,
+      "sha256": "8b55ff5489071bb19a4e89967b604a16c0e4d1e87a2df3c73c64417314a59f22"
+    },
+    {
+      "path": "android/app/src/main/res/xml/locales_config.xml",
+      "bytes": 197,
+      "sha256": "299c994548f1040a90e3c5ea6e0a24287befd9facc50560cd6cc874fc32ba2d0"
+    },
+    {
+      "path": "android/app/src/main/res/xml/network_security_config.xml",
+      "bytes": 232,
+      "sha256": "eb5f5c57a88fc656cb97ee142694b996b286064ba973e51e0158bcdff08b34f2"
+    },
+    {
+      "path": "android/build.gradle.kts",
+      "bytes": 218,
+      "sha256": "3120598110d304cc605c5919399ce5a9e68776b327d1462c0ba15bd0dd915b2a"
+    },
+    {
+      "path": "android/checks/BoundaryPolicyCheck.java",
+      "bytes": 14971,
+      "sha256": "de8fc36a3769c5a493c304562741add84511ccd1f3790d2eb1452667aaecbb29"
+    },
+    {
+      "path": "android/checks/attempts/v0.4.0-build-metadata-r2.json",
+      "bytes": 7425,
+      "sha256": "d1074da39b319b7be80360c92623d44ff363c7d5e062a58bbb1ed42d90a7fbb4"
+    },
+    {
+      "path": "android/checks/attempts/v0.4.0-build-metadata-r6.json",
+      "bytes": 7477,
+      "sha256": "02cf038cbead97f403ba848c4c443a2bb40e3d2d2adc7f7ff1a0f6512a548681"
+    },
+    {
+      "path": "android/checks/attempts/v0.4.0-build-r2.txt",
+      "bytes": 5833,
+      "sha256": "d837529d56ea8c2945576387885b8b1b87d93b757b1579bb3a5988260521bd84"
+    },
+    {
+      "path": "android/checks/attempts/v0.4.0-build-r4.txt",
+      "bytes": 5888,
+      "sha256": "76ff56408b823a33398e5c9f4d794fc3aed74175b38b97c2c5102da5981e9c8d"
+    },
+    {
+      "path": "android/checks/attempts/v0.4.0-initial-instrumentation.txt",
+      "bytes": 30328,
+      "sha256": "14176e968526439f4fb99ba86525759ba95cf9bd5b66794b55e78933094cb38d"
+    },
+    {
+      "path": "android/checks/attempts/v0.4.0-inputs-r3.json",
+      "bytes": 3793,
+      "sha256": "3cef95e67ee29f38ceef84c30a19a7a1a31d00b829090feecf8056fc6dcc6522"
+    },
+    {
+      "path": "android/checks/attempts/v0.4.0-inputs-r6.json",
+      "bytes": 3793,
+      "sha256": "e8b46f41a7240e101e29a5f50b7dc07270d23ce08774945477ea56c921d88ae2"
+    },
+    {
+      "path": "android/checks/attempts/v0.4.0-instrumentation-r3.txt",
+      "bytes": 25018,
+      "sha256": "14bbb541f90457ad18959d5c9a9d25603dc0841b0367e59e197cd9ae1d960a5e"
+    },
+    {
+      "path": "android/checks/attempts/v0.4.0-instrumentation-r4.txt",
+      "bytes": 31914,
+      "sha256": "070714b575e72d350d30f9c763172c030afeb9f42bf1a3f4b4723833abaf12e7"
+    },
+    {
+      "path": "android/checks/attempts/v0.4.0-instrumentation-r6-interrupted.txt",
+      "bytes": 24638,
+      "sha256": "ff18a70009722d51929e049f09c1d64cc204e72ad9f1de9cb77afbb2cae1a6cc"
+    },
+    {
+      "path": "android/checks/attempts/v0.4.0-test-build-r3.txt",
+      "bytes": 3636,
+      "sha256": "bfd99159f7a9508ab1ca40e49113ad4ca809770b1b0ff1adc594e88506bd873a"
+    },
+    {
+      "path": "android/checks/attempts/v0.4.0-test-build-r5.txt",
+      "bytes": 5006,
+      "sha256": "1b6ccae0e9ad995c84f49fc4cbc2114ac540511bfa315e2fe3752ea5347b3f5e"
+    },
+    {
+      "path": "android/checks/attempts/v0.4.0-test-build-r6.txt",
+      "bytes": 4067,
+      "sha256": "0a4ff8de224159763b7a4d28210cfe6baf03a9abcc6a97ba51bc98d58e48ff45"
+    },
+    {
+      "path": "android/checks/branding-audit.json",
+      "bytes": 478,
+      "sha256": "bfd7f0d9882bca9c28259066089eb0e5f77a94bce1422a3b8291b56840fbc5f2"
+    },
+    {
+      "path": "android/checks/build-output.txt",
+      "bytes": 5712,
+      "sha256": "7d9de98db6259145dfb53e4c96dce9a0fc478ab45808c73823f6134f80aff1d5"
+    },
+    {
+      "path": "android/checks/history/v0.2.0/build-output.txt",
+      "bytes": 10915,
+      "sha256": "0098a00b75ef0da6203abba119053cd76954eff07b4a2721f164884d2f7521be"
+    },
+    {
+      "path": "android/checks/history/v0.2.0/instrumentation-output.txt",
+      "bytes": 10696,
+      "sha256": "3b2e1e5279a49fccdc70c2214cce58d39782bd51de7b67f70e528a44d8bc821b"
+    },
+    {
+      "path": "android/checks/history/v0.2.0/native-https-output.txt",
+      "bytes": 861,
+      "sha256": "bdddfe24b68e278dcbeada1f92ad8d65f001287eb0fec1525d4dcfec33238711"
+    },
+    {
+      "path": "android/checks/history/v0.2.0/picker-and-layout.json",
+      "bytes": 1817,
+      "sha256": "6ae8116955dab8847d25a72684d9ece10131340a4afe3a200a51118f84467579"
+    },
+    {
+      "path": "android/checks/history/v0.2.0/tls-rejection-output.txt",
+      "bytes": 810,
+      "sha256": "9f02801b97f2c52e14a5386a97d0d73c339aff66fcb2e074378a4f3d02ef1f6f"
+    },
+    {
+      "path": "android/checks/history/v0.2.0/trust-and-signing.json",
+      "bytes": 3757,
+      "sha256": "faea2dd63bd5aadb9c77eff795443e6b10b5333d7570f14955c12a6f30bfbf16"
+    },
+    {
+      "path": "android/checks/history/v0.3.0/branding-audit.json",
+      "bytes": 1428,
+      "sha256": "a3134ed8ff12cd8b8875772dc3ac1d730b95c1478df6c1b95847c1bcf4fb95d3"
+    },
+    {
+      "path": "android/checks/history/v0.3.0/build-output.txt",
+      "bytes": 5712,
+      "sha256": "7d9de98db6259145dfb53e4c96dce9a0fc478ab45808c73823f6134f80aff1d5"
+    },
+    {
+      "path": "android/checks/history/v0.3.0/instrumentation-output.txt",
+      "bytes": 15692,
+      "sha256": "d79cf8a2bee9a0c3bc385dcc6e8928b7c70830ec952c8649dae440558bea8e02"
+    },
+    {
+      "path": "android/checks/history/v0.3.0/trust-and-signing.json",
+      "bytes": 2133,
+      "sha256": "3def4d8a3d325aabce335c89f5bcdb5062f368557c855bb20e88ce3db1bb5e21"
+    },
+    {
+      "path": "android/checks/instrumentation-output.txt",
+      "bytes": 15692,
+      "sha256": "d79cf8a2bee9a0c3bc385dcc6e8928b7c70830ec952c8649dae440558bea8e02"
+    },
+    {
+      "path": "android/checks/polish-build-inputs.json",
+      "bytes": 3793,
+      "sha256": "25eb480849d674843e1e3cdd95cda50dbc1133c0ad369ef60a3ff428bf5c4b51"
+    },
+    {
+      "path": "android/checks/polish-build-metadata.json",
+      "bytes": 7425,
+      "sha256": "43868d7154f75275bd4d5de088f640c80087ee0981895e9a7796ab2702674389"
+    },
+    {
+      "path": "android/checks/polish-build-output.txt",
+      "bytes": 5953,
+      "sha256": "be507a2e0271e99f93b53957dfd8264f4ab04d80bc170fa04d52bda77f5030ea"
+    },
+    {
+      "path": "android/checks/polish-cleanup-final.json",
+      "bytes": 257,
+      "sha256": "270a4300449f2572394bd23847ad05f287673c3b64bd90194c511b38ad97057f"
+    },
+    {
+      "path": "android/checks/polish-compact-country-output.txt",
+      "bytes": 862,
+      "sha256": "77b9e5c392c3919dff3557f794c5fb5e37683b39ca7aa0222bc651018f5d7985"
+    },
+    {
+      "path": "android/checks/polish-compile-output.txt",
+      "bytes": 4556,
+      "sha256": "574cb09b4ab6ef96b28d78fd3e28a4930c767469ce9dba042c27c2ae6ff106f1"
+    },
+    {
+      "path": "android/checks/polish-instrumentation-output.txt",
+      "bytes": 25018,
+      "sha256": "4040eaf2d9960787e6d574ca503af3003e6ef526525fe935b77651920e5fae56"
+    },
+    {
+      "path": "android/checks/polish-visual-final.json",
+      "bytes": 1867,
+      "sha256": "ca4088b663c532531f001d33fdf52a229f8e42f660ebd652e0140fe23da4f8bb"
+    },
+    {
+      "path": "android/checks/run-ci-emulator.mjs",
+      "bytes": 23472,
+      "sha256": "1af74288fb044aa4246912eac7f9f0bef84379aae3f5474ec6923e88a38c732f"
+    },
+    {
+      "path": "android/checks/run-policy-checks.sh",
+      "bytes": 749,
+      "sha256": "b1eaf6e0608a0eb1418b91befe613bcec97403684aac97dc7a5adac25c6340b2"
+    },
+    {
+      "path": "android/checks/strict-review-2026-11-17.json",
+      "bytes": 1575,
+      "sha256": "ded50b2fa4a3ea6675f2c76c760f84c9f2f82de1229a27d9d99bbca68e9e478d"
+    },
+    {
+      "path": "android/checks/strict-review-policy-2026-11-17.txt",
+      "bytes": 172,
+      "sha256": "1213d050303fd73a9203b1082e922e4ca578e29a4f95964597b8651667b10362"
+    },
+    {
+      "path": "android/checks/trust-and-signing.json",
+      "bytes": 2133,
+      "sha256": "3def4d8a3d325aabce335c89f5bcdb5062f368557c855bb20e88ce3db1bb5e21"
+    },
+    {
+      "path": "android/gradle.properties",
+      "bytes": 128,
+      "sha256": "d83e273790ac248fa6c70b82fbdeec7d8146773136a9028845247cb63873ffee"
+    },
+    {
+      "path": "android/gradle/wrapper/gradle-wrapper.jar",
+      "bytes": 43705,
+      "sha256": "81a82aaea5abcc8ff68b3dfcb58b3c3c429378efd98e7433460610fecd7ae45f"
+    },
+    {
+      "path": "android/gradle/wrapper/gradle-wrapper.properties",
+      "bytes": 340,
+      "sha256": "c4747a838d5c923931d1791ae5a56c0654e025f4c1a54e4e277f54cdc60a126f"
+    },
+    {
+      "path": "android/gradlew",
+      "bytes": 8752,
+      "sha256": "734b3879d3501dce471cf0522d3bcbafe76873d9fc5129345b67fb43bd15e933"
+    },
+    {
+      "path": "android/gradlew.bat",
+      "bytes": 2966,
+      "sha256": "57931b17dd228e5c24dac90e815d0bf82477e831a4618dfab4136f5446b42a9f"
+    },
+    {
+      "path": "android/settings.gradle.kts",
+      "bytes": 292,
+      "sha256": "df33349123728bf2c303dc9ce52c41a3be7903a23175411d20b493f4b0d6d036"
+    },
+    {
+      "path": "apple/.gitignore",
+      "bytes": 60,
+      "sha256": "8be1d2a1b37fd3b0c5bf9fc8cd2929bf04dbfa4cbdb529e76c6becb115e64973"
+    },
+    {
+      "path": "apple/AhmadCareer.xcodeproj/project.pbxproj",
+      "bytes": 18447,
+      "sha256": "57b8425ca04306ad7f00b829f7195cbb1b9f1c04141a9a77b86d19599668a126"
+    },
+    {
+      "path": "apple/AhmadCareer.xcodeproj/xcshareddata/xcschemes/AhmadCareer.xcscheme",
+      "bytes": 2100,
+      "sha256": "f9b67f757ea53e6ed0ac8d54c5c2f2ac2609dc5c9a9fb3e4d0434b4a8f7cf395"
+    },
+    {
+      "path": "apple/AhmadCareer.xcodeproj/xcshareddata/xcschemes/CareerFinderAcceptance.xcscheme",
+      "bytes": 1866,
+      "sha256": "37b0f04c230f409a57419429d44b09543157ffb568cdce8a24fc64bd3736ddba"
+    },
+    {
+      "path": "apple/AhmadCareer/AhmadCareer.entitlements",
+      "bytes": 295,
+      "sha256": "f1d6f59c4f9b163dbfb55695ca3251f87173f855ca893f0e8804d895ea76299e"
+    },
+    {
+      "path": "apple/AhmadCareer/AhmadCareerApp.swift",
+      "bytes": 1840,
+      "sha256": "bd025363b777b8a37390008a31dec85c97b4688ec7b2b5a958c74bb49430bccf"
+    },
+    {
+      "path": "apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/Contents.json",
+      "bytes": 1478,
+      "sha256": "c851800c4906508de5420ef9acfe94d15b29d02fb90c2bb7e7406fec27b36e30"
+    },
+    {
+      "path": "apple/AhmadCareer/Assets.xcassets/Contents.json",
+      "bytes": 62,
+      "sha256": "3068ae11b833a8ea03990d2ea2a2b5fe7b3c47fbda56de956a4b84888f6c6af8"
+    },
+    {
+      "path": "apple/AhmadCareer/CareerAppEnvironment.swift",
+      "bytes": 9289,
+      "sha256": "2087f29a079d2c129b33a31cd3e12b2cf0c2877edc03d31b05538ca104453c9f"
+    },
+    {
+      "path": "apple/AhmadCareer/CareerDiscovery.swift",
+      "bytes": 21451,
+      "sha256": "d786be47bae9316e2548b325c121aef5322986ab222e7ea924f7f158d6655739"
+    },
+    {
+      "path": "apple/AhmadCareer/CareerFeed.swift",
+      "bytes": 20834,
+      "sha256": "d02808733193c882ebbd85cc81b15fb61c4b23175efe63ca96a49dd66f797a1f"
+    },
+    {
+      "path": "apple/AhmadCareer/CareerPolicy.swift",
+      "bytes": 1270,
+      "sha256": "bf691222911685f3c4a8082d1234d2db281c1f8bda56b952c891b60eb2d41d56"
+    },
+    {
+      "path": "apple/AhmadCareer/CareerResearch.json",
+      "bytes": 21033,
+      "sha256": "9337469922d86ad305f109c838a8cf5c0742d6ffcdc438f3ffbe497f7eb92b1b"
+    },
+    {
+      "path": "apple/AhmadCareer/CareerWebView.swift",
+      "bytes": 10462,
+      "sha256": "19a17ab3dc5da5357f16feee9e77357a695af562c1df1ad50511714cdfeb8ef0"
+    },
+    {
+      "path": "apple/AhmadCareer/MobileApplicationClient.swift",
+      "bytes": 24174,
+      "sha256": "379b187ad17ddce0b8c13536052db8bab364f70dad4eb313071aaeb0b15b4588"
+    },
+    {
+      "path": "apple/AhmadCareer/MobileApplicationState.swift",
+      "bytes": 40079,
+      "sha256": "1858795ccf563e9802c5cabc0367b402eadba2c9e978a5092c2e70a232d1a489"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeApplicationsStore.swift",
+      "bytes": 74753,
+      "sha256": "d838a3cd68908656bd7545e63c84db5decfab6bc89e2a93af7779dd16d9c7883"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeApplicationsViews.swift",
+      "bytes": 84481,
+      "sha256": "d0a2dd335b4ddcd51fb2b989532bffd0777c82c54a69a0ef60862679145cc8f7"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeCareerStore.swift",
+      "bytes": 86329,
+      "sha256": "b5dc5d29b43e17de73ba3d91b567d3bdbc33cc2c2aa6b50fa90b02b18852293e"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeCareerViews.swift",
+      "bytes": 101191,
+      "sha256": "b6a65190c55cd2e86cbdeead6a7a4eee2857bf2da93365c6e95bd8d0f5d986cc"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeCopyTemplates.json",
+      "bytes": 25120,
+      "sha256": "bfe34e0a2502d3dce2dd44ebe99b6b5f87acf98778677f329adbc43dc443c7cc"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeDiscoveryViews.swift",
+      "bytes": 18253,
+      "sha256": "173e1d9934d7ecd461dd1cb0bde6368a66d3d7200cf985a0b512dddebcd826da"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeLocalization.swift",
+      "bytes": 16885,
+      "sha256": "f7756d3ac9d12921b524c0e426000fcfb42c00690649420b5135f2adb8d95a77"
+    },
+    {
+      "path": "apple/AhmadCareer/PrivacyInfo.xcprivacy",
+      "bytes": 826,
+      "sha256": "1faaebba42e775c8eb0b40256c2acecd72c3a4a1ff23870fd08940180e275972"
+    },
+    {
+      "path": "apple/AhmadCareer/Web/app.js",
+      "bytes": 87918,
+      "sha256": "83877ac6b6346c4e047ef4bdf1a83b4c2bf99b0b3718ffaa177f76b5d3b4ffa0"
+    },
+    {
+      "path": "apple/AhmadCareer/Web/backup.js",
+      "bytes": 18252,
+      "sha256": "e7d27010581608eeb3f7357993fa5495aa50a8c6304f0913e9b2298d007b9f75"
+    },
+    {
+      "path": "apple/AhmadCareer/Web/core.js",
+      "bytes": 22860,
+      "sha256": "c2efdaae83418476e6db0553fcc084e3e7edcd48d522effed9db0e7ee1de3840"
+    },
+    {
+      "path": "apple/AhmadCareer/Web/data.js",
+      "bytes": 22252,
+      "sha256": "95e8035cf7d1e173b7c9f006c888de5d60a3ad260dd52ee2f254373d2abda2e8"
+    },
+    {
+      "path": "apple/AhmadCareer/Web/icon.svg",
+      "bytes": 271,
+      "sha256": "60c6f0a7b1908b4e3c3aa05d636b92d41ae119e29665788364b9ffb5e8b3938c"
+    },
+    {
+      "path": "apple/AhmadCareer/Web/index.html",
+      "bytes": 3135,
+      "sha256": "20ed6e4387fefffb976db5202d9425064b7dc8f1d8467c5fbab824a829de3279"
+    },
+    {
+      "path": "apple/AhmadCareer/Web/manifest.webmanifest",
+      "bytes": 229,
+      "sha256": "3ee2c227f0e9f3dcd49e427db5bd10d5c0248d58bdb96c0ec7b478570c11b7b5"
+    },
+    {
+      "path": "apple/AhmadCareer/Web/style.css",
+      "bytes": 18999,
+      "sha256": "438a2a1699d777e7729d7033acb259809b3f4e2919f7e348976305b1f0a925ac"
+    },
+    {
+      "path": "apple/AhmadCareer/ar.lproj/Localizable.strings",
+      "bytes": 269762,
+      "sha256": "9274a26530e794434a1bc62999750866079c58ce6d099ef6a13e07d0c6229b93"
+    },
+    {
+      "path": "apple/AhmadCareer/en.lproj/Localizable.strings",
+      "bytes": 207626,
+      "sha256": "a1b91d9d8fbe129f70c223599b1ffc1cdfb1c5e67b0b049ddd575095b80b90c7"
+    },
+    {
+      "path": "apple/Branding/career-finder.svg",
+      "bytes": 590,
+      "sha256": "71ea33dff259584332d4d8ac6bc1eadc4d2c2aed53c9bf91404ec663a4cbcc9b"
+    },
+    {
+      "path": "apple/Checks/AcceptanceFixtureCheck.swift",
+      "bytes": 9048,
+      "sha256": "d0dee032b756c02c5906df91dd72a4774ea2cb4ebb9a696aad862670dcb2364d"
+    },
+    {
+      "path": "apple/Checks/DiscoveryCheck.swift",
+      "bytes": 16426,
+      "sha256": "9fa19b0235affc8f30c654d824c3d67d119e27add6042536eec6854304e5de50"
+    },
+    {
+      "path": "apple/Checks/EmployerMetadataCheck.swift",
+      "bytes": 10967,
+      "sha256": "30a32bee2a6a80633764bbec86b5171c5637c8ce8e8a55764b27f06b4a2a8a2c"
+    },
+    {
+      "path": "apple/Checks/Fixtures/discovery-search-v1.json",
+      "bytes": 2547,
+      "sha256": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7"
+    },
+    {
+      "path": "apple/Checks/HistoricalPublic13/EmployerMetadataCheck.swift",
+      "bytes": 10967,
+      "sha256": "30a32bee2a6a80633764bbec86b5171c5637c8ce8e8a55764b27f06b4a2a8a2c"
+    },
+    {
+      "path": "apple/Checks/HistoricalPublic13/NativeBackupCheck.swift",
+      "bytes": 7307,
+      "sha256": "e984165550923b9d1d67407ef7a76989760efae4b1a4e33c6e189cd6d1bf4604"
+    },
+    {
+      "path": "apple/Checks/HistoricalPublic13/NativeUpgradeCheck.swift",
+      "bytes": 8292,
+      "sha256": "ed38e4d254b8cea10dbec04d3579474484562fe9a038c5e5aa83bf1acba32a7b"
+    },
+    {
+      "path": "apple/Checks/HistoricalPublic13/PublicProviderCheck.swift",
+      "bytes": 4870,
+      "sha256": "da86e1ce972f5eb44e8dd57405346e532dc1d4f5bc0d90f7332498bcbc5842c5"
+    },
+    {
+      "path": "apple/Checks/HistoricalPublic13/PublicRetentionCheck.swift",
+      "bytes": 4082,
+      "sha256": "4cad396cdba03e53509ccb6c3fa1d70e9ef0c12c12cb4aa35049b5bdec550caf"
+    },
+    {
+      "path": "apple/Checks/HistoricalPublic13/README.txt",
+      "bytes": 1108,
+      "sha256": "6aa62f908418c2782aacc5a24cb8fd4bf2fe35cb1c595658a5b47db9f7ffa172"
+    },
+    {
+      "path": "apple/Checks/HistoricalPublic13/RoleReviewCheck.swift",
+      "bytes": 15000,
+      "sha256": "5a8ebcde777982daea77030b3aacfad79da886aa2a09bbedf65d3d2798287624"
+    },
+    {
+      "path": "apple/Checks/HistoricalPublic13/SearchChangesCheck.swift",
+      "bytes": 9373,
+      "sha256": "d45298b15cb7d1167b0664c8e85419cf9b4ecbdedf868036310030a3b68a9aa6"
+    },
+    {
+      "path": "apple/Checks/HistoricalPublic13/SmartRecruitersCheck.swift",
+      "bytes": 18530,
+      "sha256": "0c1d99a87631c2bf2d32e55d57e0488f1c0269d6c3651ec4f88db2d34b6e61a8"
+    },
+    {
+      "path": "apple/Checks/HistoricalPublic13/TransportCheck.swift",
+      "bytes": 3474,
+      "sha256": "e4b244ff903ad2cc774606568b8cc82c349d619bb0218a3799bf7f6e0e5bc530"
+    },
+    {
+      "path": "apple/Checks/HistoricalPublic13/WebRuntimeCheck.swift",
+      "bytes": 24411,
+      "sha256": "79732984fbd92bba273d9ff54c86a2c11db796f74ff511ef532748b98061ea1f"
+    },
+    {
+      "path": "apple/Checks/HistoricalPublic13/check.sh",
+      "bytes": 3141,
+      "sha256": "f734af5b495267bf0e41069e492ba05ed31f4d9033d82ae41ee5d771df87498b"
+    },
+    {
+      "path": "apple/Checks/HistoricalPublic13/main.swift",
+      "bytes": 18613,
+      "sha256": "836af66e8cfb644d7fb8072c07b0b890c8c42ba835c96e53f66651aed3cfeb5a"
+    },
+    {
+      "path": "apple/Checks/HistoricalPublic13/source-pins.json",
+      "bytes": 3465,
+      "sha256": "73d9907d35432dfb1e05c5e50363fc96f62274a31fb5aaeb0c3b6fb57df7ddae"
+    },
+    {
+      "path": "apple/Checks/LiveFeedCheck.swift",
+      "bytes": 1169,
+      "sha256": "9c153104a3767dd582995040db2ffc288c760f7528b03931afedcec3f02f95fd"
+    },
+    {
+      "path": "apple/Checks/MobileApplicationCheck.swift",
+      "bytes": 16064,
+      "sha256": "c6d0a41a1e4581a9ce3c1cd4c2ac6ea19c2ff5aba358d7e8ab910bbeb9aa9d22"
+    },
+    {
+      "path": "apple/Checks/MobileLifecycleCheck.swift",
+      "bytes": 130346,
+      "sha256": "52fd4d4fba216a37a020b496b03c6bbb9ee2a23378b3f58de8220785ff5333a2"
+    },
+    {
+      "path": "apple/Checks/NativeBackupCheck.swift",
+      "bytes": 7307,
+      "sha256": "2e16a19319e69e57fe5eba5137dd9b4a2e3483b78fe58b2949fe04ed89444017"
+    },
+    {
+      "path": "apple/Checks/NativeLiveCheck.swift",
+      "bytes": 1400,
+      "sha256": "775bb70697d2d3556720c8682c6b6cd1e05a82b6d2142d542f27a73390d65d6a"
+    },
+    {
+      "path": "apple/Checks/NativeMergeCompatibilityCheck.swift",
+      "bytes": 7489,
+      "sha256": "365bf1a36abdf67e6fb057f9f08a6545d5a5145212d29c32e74e2854df4c8e90"
+    },
+    {
+      "path": "apple/Checks/NativeStoreCheck.swift",
+      "bytes": 41577,
+      "sha256": "e1726e9f99bd88dbe67fbdc85959e1b3ee996c2472365094b4197fd2fce3b121"
+    },
+    {
+      "path": "apple/Checks/NativeTransportLimitCheck.swift",
+      "bytes": 3587,
+      "sha256": "b7bc9c43b1a44f04bd871ad84276ba68b2aa26bec3ecda65728386d4169a0a20"
+    },
+    {
+      "path": "apple/Checks/NativeUpgradeCheck.swift",
+      "bytes": 8292,
+      "sha256": "ed38e4d254b8cea10dbec04d3579474484562fe9a038c5e5aa83bf1acba32a7b"
+    },
+    {
+      "path": "apple/Checks/NextActionCheck.swift",
+      "bytes": 8528,
+      "sha256": "44a59ffd712f02ae04501ad8dfec8f73e65567a6edabdce73954596a49786479"
+    },
+    {
+      "path": "apple/Checks/PublicProviderCheck.swift",
+      "bytes": 4870,
+      "sha256": "da86e1ce972f5eb44e8dd57405346e532dc1d4f5bc0d90f7332498bcbc5842c5"
+    },
+    {
+      "path": "apple/Checks/PublicRetentionCheck.swift",
+      "bytes": 4082,
+      "sha256": "4cad396cdba03e53509ccb6c3fa1d70e9ef0c12c12cb4aa35049b5bdec550caf"
+    },
+    {
+      "path": "apple/Checks/ResearchFixture.json",
+      "bytes": 26152,
+      "sha256": "6c5b4aef9129311252344d442182c45b806fcbdf7f7c136442fd0373aae42a38"
+    },
+    {
+      "path": "apple/Checks/RoleReviewCheck.swift",
+      "bytes": 15000,
+      "sha256": "5a8ebcde777982daea77030b3aacfad79da886aa2a09bbedf65d3d2798287624"
+    },
+    {
+      "path": "apple/Checks/SavedSearchCheck.swift",
+      "bytes": 2204,
+      "sha256": "b92c06da590c2912d8c972d3643ad6ef8f0272c1b074fa91d71c2f000987a710"
+    },
+    {
+      "path": "apple/Checks/SearchChangesCheck.swift",
+      "bytes": 9373,
+      "sha256": "d45298b15cb7d1167b0664c8e85419cf9b4ecbdedf868036310030a3b68a9aa6"
+    },
+    {
+      "path": "apple/Checks/SmartRecruitersCheck.swift",
+      "bytes": 18530,
+      "sha256": "0c1d99a87631c2bf2d32e55d57e0488f1c0269d6c3651ec4f88db2d34b6e61a8"
+    },
+    {
+      "path": "apple/Checks/SyntheticPDF.swift",
+      "bytes": 1106,
+      "sha256": "80b35f390b41ddb7c4718ae7d5dad08d37ac8eccbecc67cd1cd48367c1aedc13"
+    },
+    {
+      "path": "apple/Checks/TransportCheck.swift",
+      "bytes": 3474,
+      "sha256": "e4b244ff903ad2cc774606568b8cc82c349d619bb0218a3799bf7f6e0e5bc530"
+    },
+    {
+      "path": "apple/Checks/WebRuntimeCheck.swift",
+      "bytes": 7239,
+      "sha256": "399de5b22adc3a3f3e15e3308d535fc96569333fff3a739a28c983bcd10e0d65"
+    },
+    {
+      "path": "apple/Checks/check-mobile.sh",
+      "bytes": 3397,
+      "sha256": "56895bbfe51f0b374ec2a78cd0ac24f2d97dd23e510e75a900b7f4977441b63d"
+    },
+    {
+      "path": "apple/Checks/check.sh",
+      "bytes": 581,
+      "sha256": "9b93894dde6a2878bcf6903f78448a67a2b0099cf0b5560831c69bae4608518c"
+    },
+    {
+      "path": "apple/Checks/hosted-ui-attempt-43904422104.json",
+      "bytes": 4391,
+      "sha256": "2edb85fab9b7d8caf01eebc8e54dbd5f51fd4484d57988c68fd197436202fee2"
+    },
+    {
+      "path": "apple/Checks/hosted-ui-attempt-43909112336.json",
+      "bytes": 4400,
+      "sha256": "14d0dacd2b666e35269fce3bf72013eb1dee9ce225ba1c134ede14c2cd563696"
+    },
+    {
+      "path": "apple/Checks/hosted-ui-attempt-43913861800.json",
+      "bytes": 11283,
+      "sha256": "581a193adcd44b24e6058e1513b3dd3e390c4d137ba62ed5594edfe0b99c62a2"
+    },
+    {
+      "path": "apple/Checks/hosted-ui-attempt-43921041281.json",
+      "bytes": 8337,
+      "sha256": "ba7f19dbd5e821792c0221403fa255795ab152628bc71c02ffea17b75a7eb604"
+    },
+    {
+      "path": "apple/Checks/main.swift",
+      "bytes": 18841,
+      "sha256": "4d0e48e074f4b930e6dd81b3115ef5f3b5aa304f972f3eab523d2bf61945de64"
+    },
+    {
+      "path": "apple/Checks/polish-source-snapshot.json",
+      "bytes": 2930,
+      "sha256": "1ab434e16f389a34950f10f681c370298721c8a4e8fce7311c2f462d3fbf7399"
+    },
+    {
+      "path": "apple/README.md",
+      "bytes": 22521,
+      "sha256": "97dae2a21b1fedf014821c550f274e92e953303771005f65ea6037be17b98b83"
+    },
+    {
+      "path": "apple/UITests/CareerFinderStoreCaptureTests.swift",
+      "bytes": 5164,
+      "sha256": "1469a5505af04128cfc59fbbb902992b29db2c443f1b2855c089e655eb2885c6"
+    },
+    {
+      "path": "apple/UITests/CareerFinderUITests.swift",
+      "bytes": 46877,
+      "sha256": "aaeb9119e3a5a6aa94b3f093aea6c521e4e6909199c73b81c86ed4becb09654e"
+    },
+    {
+      "path": "hosted/.gitignore",
+      "bytes": 614,
+      "sha256": "5ca3c39bdc1288c108a1931b3f6bc5795464b6253e9457390617774259deed0c"
+    },
+    {
+      "path": "hosted/.npmrc",
+      "bytes": 45,
+      "sha256": "a3909ac0447c469fda12c57374993be70f47ce73e49fd3124678c7c047f2214d"
+    },
+    {
+      "path": "hosted/.openai/hosting.json",
+      "bytes": 95,
+      "sha256": "e2b8c3579495803ddd9b0ab1bad11ad3dca7427f0983dc7c39355bf44dad9e05"
+    },
+    {
+      "path": "hosted/README.md",
+      "bytes": 33008,
+      "sha256": "ef4c19e3000562fbb428615e30747284e8b181927d66dd7d2e1627435544bc9b"
+    },
+    {
+      "path": "hosted/app/account/AccountPanel.tsx",
+      "bytes": 25953,
+      "sha256": "6acd65c81995831aa687b29c4c4f9efb178adf1e6b4e5c4a898ea35aeeb41836"
+    },
+    {
+      "path": "hosted/app/account/page.tsx",
+      "bytes": 1042,
+      "sha256": "88885cb3757e259bfaf2f48d0b72a8c283386da1d3103beb428d76db7a012811"
+    },
+    {
+      "path": "hosted/app/chatgpt-auth.ts",
+      "bytes": 2762,
+      "sha256": "932245cd2b340d8ffd077e1517839c91f6179133d16e7b3ed0c7a0316bb1ee14"
+    },
+    {
+      "path": "hosted/app/components/GoogleSignInArtwork.tsx",
+      "bytes": 785,
+      "sha256": "670d2db7e92bb3fbac2f8b15448ba02594c5ecf326bfec4d223c8ee7f0f2f0d5"
+    },
+    {
+      "path": "hosted/app/components/LanguageSettings.tsx",
+      "bytes": 1611,
+      "sha256": "8e981621da9e144e2a4e33543f953fabfc464a28d2aa8f4060f47229d7ab60b3"
+    },
+    {
+      "path": "hosted/app/components/OAuthFeedback.tsx",
+      "bytes": 2722,
+      "sha256": "58ebf1b3b1f664aa1eefad0c65027426b28b2002a32cb2d341d95e366e408b6e"
+    },
+    {
+      "path": "hosted/app/components/ProviderConnections.tsx",
+      "bytes": 6891,
+      "sha256": "3557105eb0e50da4268e584d80cf8f8447fcf060ac63f66e9a2bec110e43d06e"
+    },
+    {
+      "path": "hosted/app/components/SessionRecovery.tsx",
+      "bytes": 1174,
+      "sha256": "d2ee64029c17789271e09c141b9b850bc92a11ae90ff9901e80f1e8ff387a095"
+    },
+    {
+      "path": "hosted/app/components/SignInOptions.tsx",
+      "bytes": 3226,
+      "sha256": "575ac7d47783bc6c6cdc5600c60aa0740f45ac67899d0ae937f4cb748e0cf2bc"
+    },
+    {
+      "path": "hosted/app/components/SignOutButton.tsx",
+      "bytes": 1029,
+      "sha256": "a54e2389f4538de2d7b7b36dcf40d6eab1989b07b340d1bac63230a95c1abae0"
+    },
+    {
+      "path": "hosted/app/components/SiteFrame.tsx",
+      "bytes": 2052,
+      "sha256": "2489463823ca4208b8be44aec663a8edcb0a467cd3fb386876c6099c5067d0e5"
+    },
+    {
+      "path": "hosted/app/components/ThemeSettings.tsx",
+      "bytes": 2077,
+      "sha256": "679fa8912ca59c33518781c32f062fd8c9e1b42cb07b5602251a595ccf8edbe9"
+    },
+    {
+      "path": "hosted/app/components/api.ts",
+      "bytes": 4377,
+      "sha256": "599db9045ea7a7cbcac9cc10b31582746e266d2cd43e8355fa8f5a7f901a70b4"
+    },
+    {
+      "path": "hosted/app/components/appearance.ts",
+      "bytes": 1591,
+      "sha256": "45e2ba8ef7ceff6af7565018c7afee5d8f1517872ed54f714675fe6d465444d4"
+    },
+    {
+      "path": "hosted/app/components/provider-auth.ts",
+      "bytes": 5480,
+      "sha256": "0ba0fd4a2718cf32cc8c9f5f23e7b2ab271918009435a3aac38bdf805db651e9"
+    },
+    {
+      "path": "hosted/app/components/provider-change.ts",
+      "bytes": 4016,
+      "sha256": "586e572c2a84f11eace92150d3f0d249128cb509cc59847b380e500223327fcc"
+    },
+    {
+      "path": "hosted/app/connect/ConnectionPanel.tsx",
+      "bytes": 8558,
+      "sha256": "4f31027c316c12763f4d4062052f2af77d6faec59cf4f5809b24d301d9805db4"
+    },
+    {
+      "path": "hosted/app/connect/page.tsx",
+      "bytes": 3353,
+      "sha256": "16a92ffed401883d979ef718c8986c145488f89e6a65dfd33a15d35b74dc5aed"
+    },
+    {
+      "path": "hosted/app/connect/pairing-response.ts",
+      "bytes": 1777,
+      "sha256": "86f38908e9fbd076fd2aede2c145621f0d2686bda2e5a4a8cc25972c6d2e918e"
+    },
+    {
+      "path": "hosted/app/globals.css",
+      "bytes": 23287,
+      "sha256": "5f3ff2d03d7877d07bd05d537f196a83f1341b15f3aebbe1d9afb8f4ed954acf"
+    },
+    {
+      "path": "hosted/app/i18n/LocaleProvider.tsx",
+      "bytes": 3857,
+      "sha256": "69830ee14b8b7b4e57310238cc12477fe349851a7d542c6544a3e1c30368453a"
+    },
+    {
+      "path": "hosted/app/i18n/core.ts",
+      "bytes": 6187,
+      "sha256": "47485ac0ce826dd1dde553d645869f2e272e59639680bd507a9978beb128c030"
+    },
+    {
+      "path": "hosted/app/i18n/i18n.css",
+      "bytes": 5762,
+      "sha256": "c08d6ed5604b8f479c47e4a8f984bd61926a9c8271928754b8777a7d8c7b4e8e"
+    },
+    {
+      "path": "hosted/app/i18n/messages.ar.json",
+      "bytes": 229449,
+      "sha256": "e32029874b1d39f9d7166dab225f02b9dee2c466a46506bd20b7fec436e1f593"
+    },
+    {
+      "path": "hosted/app/i18n/server.ts",
+      "bytes": 390,
+      "sha256": "205d1c32affc5acd4e2c187940f1886ce597ca7a7a8e0432dd6f806df0454ade"
+    },
+    {
+      "path": "hosted/app/layout.tsx",
+      "bytes": 1546,
+      "sha256": "baf7bee7ecb34b9e4d089dc113c8796475a314424325e45ff0a53732cfb906c3"
+    },
+    {
+      "path": "hosted/app/page.tsx",
+      "bytes": 198,
+      "sha256": "fecb889a6732cde76dde3d090eaf130cdee1e8677e58abcbc61564339f77d5ae"
+    },
+    {
+      "path": "hosted/app/phone/PhoneApp.tsx",
+      "bytes": 115139,
+      "sha256": "8fb8b449884b9140b76fa4d4ea67f5bee0ea5ed68b2fa3d7b0d6c67f48e017a3"
+    },
+    {
+      "path": "hosted/app/phone/api.ts",
+      "bytes": 3986,
+      "sha256": "f9847a578595407091c442237b6f736cb7450dc3ba4355c3eb875628f891a2d9"
+    },
+    {
+      "path": "hosted/app/phone/batch-stop.ts",
+      "bytes": 3618,
+      "sha256": "124c30bd93e51c3c66874f530947ec02c3dda9379010588e72d15efc5b24e62c"
+    },
+    {
+      "path": "hosted/app/phone/components.tsx",
+      "bytes": 19217,
+      "sha256": "e120c2bf4a143f4d2c78595e84d8c2c558102ddede6ff37ba26d5afb76dc4673"
+    },
+    {
+      "path": "hosted/app/phone/dispatch.ts",
+      "bytes": 5563,
+      "sha256": "da885e77dcac471bed44b72780fd391054ef46b7701faac4b43a50138b10c64d"
+    },
+    {
+      "path": "hosted/app/phone/model.ts",
+      "bytes": 22613,
+      "sha256": "6ed2a8a852bced4c030f421168d464d4c3fdd2f1a54d867d1768365ae54a93d4"
+    },
+    {
+      "path": "hosted/app/phone/navigation-inset.ts",
+      "bytes": 1704,
+      "sha256": "f7d92f4bf6889ba528d976b77266d0757aca781bb5c93474fc5fe7569f5973aa"
+    },
+    {
+      "path": "hosted/app/phone/page.tsx",
+      "bytes": 1074,
+      "sha256": "9f8a081ccc2d346c07531b4ddf145718cbd25a8106508964eebb405d22696cb6"
+    },
+    {
+      "path": "hosted/app/phone/pdf-validation.worker.ts",
+      "bytes": 2240,
+      "sha256": "6565199b38469d62d473099c99ad602cf4822822838e30fed5f540a83befdb32"
+    },
+    {
+      "path": "hosted/app/phone/pdf.ts",
+      "bytes": 4744,
+      "sha256": "66a2b4b4f95e0154f80acbc55003e00d811d06326a0d7487e68e1d81c2fe1935"
+    },
+    {
+      "path": "hosted/app/phone/phone.css",
+      "bytes": 33732,
+      "sha256": "89d8c325e8009fd9842817b0d580db5386f834447f11023e84f7909070c3bbf8"
+    },
+    {
+      "path": "hosted/app/phone/record-tools.ts",
+      "bytes": 4384,
+      "sha256": "910dae464cd8504ed225fe5f68fa6b0750c7b7a9c7b18c6454ff4504a772e9a9"
+    },
+    {
+      "path": "hosted/app/phone/safety.ts",
+      "bytes": 4709,
+      "sha256": "8571c8e0f1625e50fd2d1749ab7cd10aca57f8b24c16107e6179437154eb4c4f"
+    },
+    {
+      "path": "hosted/app/phone/vault.ts",
+      "bytes": 27976,
+      "sha256": "1c45092458fe9f56ee84925091342f3c5f920800409965a7a99ab32b07138c95"
+    },
+    {
+      "path": "hosted/app/privacy/page.tsx",
+      "bytes": 13734,
+      "sha256": "920f8db71169fdad0980424e5328fb41251f72870a1da56943264805b42a1324"
+    },
+    {
+      "path": "hosted/app/support/page.tsx",
+      "bytes": 11559,
+      "sha256": "87f48f2760465136c9a56a516177cbe6ed2576e0a5b25491a140551ed4900beb"
+    },
+    {
+      "path": "hosted/cloudflare-env.d.ts",
+      "bytes": 263,
+      "sha256": "b6538d11c35cd9ff3ecca579a2dd70f733379d92354ffc23e191601013ab551f"
+    },
+    {
+      "path": "hosted/components.json",
+      "bytes": 420,
+      "sha256": "31f4ca67a4a62572571003d3d5aac85ee6fbfca67a192924bac6b168d95e98fd"
+    },
+    {
+      "path": "hosted/components/connector-error.tsx",
+      "bytes": 1082,
+      "sha256": "2d0d04559952ce9c9a327cca499f4b99f35d885cccfce375230e116695d3f155"
+    },
+    {
+      "path": "hosted/components/ui/accordion.tsx",
+      "bytes": 2048,
+      "sha256": "a4f153089ba886dfcf73fac26b5c01ca933fa12fbe88df6fb723912bfffdfbb0"
+    },
+    {
+      "path": "hosted/components/ui/alert-dialog.tsx",
+      "bytes": 5439,
+      "sha256": "9a8d950f2b9b4352d5ebb762fb44d5c28c2d353aa29712071973656a8736e311"
+    },
+    {
+      "path": "hosted/components/ui/alert.tsx",
+      "bytes": 1614,
+      "sha256": "2cc59b5f7bda91c1670884b1bf46bfc8a2a6f226cef184f5762acc037188885b"
+    },
+    {
+      "path": "hosted/components/ui/aspect-ratio.tsx",
+      "bytes": 274,
+      "sha256": "b1c157886236782cb92d8fbcd4749532aaf6d8aabefd6e157ca40358f902f407"
+    },
+    {
+      "path": "hosted/components/ui/attachment.tsx",
+      "bytes": 6002,
+      "sha256": "ae8a25dd1a896d3964e3ef54d97e51221b418cde287dfd794428b89951c5c790"
+    },
+    {
+      "path": "hosted/components/ui/avatar.tsx",
+      "bytes": 2916,
+      "sha256": "58a846bf1617b94b9681921db9b8461d0145f311424663d11678a06b6153cb34"
+    },
+    {
+      "path": "hosted/components/ui/badge.tsx",
+      "bytes": 1776,
+      "sha256": "46a0de5224f6a5d5d63d45246534288518dce888f031064bff925bbc7fe6ad97"
+    },
+    {
+      "path": "hosted/components/ui/breadcrumb.tsx",
+      "bytes": 2350,
+      "sha256": "d4c0831bba2212e778248f54a6ace6ef378df8bba4616d1abf27787a31eabae5"
+    },
+    {
+      "path": "hosted/components/ui/bubble.tsx",
+      "bytes": 4699,
+      "sha256": "870cc0c5cfc8a515053f7e41e706a6bd017a909b45f1305fd3b164a52cc4483b"
+    },
+    {
+      "path": "hosted/components/ui/button-group.tsx",
+      "bytes": 2202,
+      "sha256": "784c89d8ee683e1bc972ae69e6ea8225a7f63abe22aa1b5fc3423ae8a2a399c0"
+    },
+    {
+      "path": "hosted/components/ui/button.tsx",
+      "bytes": 2392,
+      "sha256": "cc36af0f8b5019c33cc039fbf03bb952a513072b15b55b53c592b78af3e5f4c4"
+    },
+    {
+      "path": "hosted/components/ui/calendar.tsx",
+      "bytes": 7832,
+      "sha256": "3855fbe0d3f8ad3a4b93071f98b76a9f6782d46ec8b05f5d2ddbee1e4e39bc84"
+    },
+    {
+      "path": "hosted/components/ui/card.tsx",
+      "bytes": 1987,
+      "sha256": "c48dd3b96be90a7066f1aebf294f0af9d00ebcdc367d5d4aca55429ade570c1c"
+    },
+    {
+      "path": "hosted/components/ui/carousel.tsx",
+      "bytes": 5556,
+      "sha256": "b7ea0dda3903d972c186f739e23da61f547bc83b5a0bf13b16856577846d5fc3"
+    },
+    {
+      "path": "hosted/components/ui/chart.tsx",
+      "bytes": 10614,
+      "sha256": "45aa5ea4a386f4fb5b8869ff4bab3a08cf89255190ee322043baf84c3e950b6a"
+    },
+    {
+      "path": "hosted/components/ui/checkbox.tsx",
+      "bytes": 1214,
+      "sha256": "b23ab9d4deeedf2ac8f512c368361ede681aa383437ef48563a6f9b7dbe95f27"
+    },
+    {
+      "path": "hosted/components/ui/collapsible.tsx",
+      "bytes": 795,
+      "sha256": "c6598e5584f4258b5d9fefadbc5ad6a66888ad58729f4b634a0bb2d9c513188b"
+    },
+    {
+      "path": "hosted/components/ui/combobox.tsx",
+      "bytes": 9158,
+      "sha256": "2d68e78b2dc7e38a085f222dede60a80b4f8229a6e91732c484605e204d46735"
+    },
+    {
+      "path": "hosted/components/ui/command.tsx",
+      "bytes": 4818,
+      "sha256": "361193df1e3d64a9e9b5048f045264782fcb387aab3f00f2b805fdcbf538b16a"
+    },
+    {
+      "path": "hosted/components/ui/context-menu.tsx",
+      "bytes": 8268,
+      "sha256": "2cf1fcf59df0649a3e2a126d1df2f639145f6b6bf5689ee54af1f40ab1245017"
+    },
+    {
+      "path": "hosted/components/ui/dialog.tsx",
+      "bytes": 4303,
+      "sha256": "dce39c6adc47d997bd2567f8b7a72f466b0134715105cd42f9194007b8ecdb14"
+    },
+    {
+      "path": "hosted/components/ui/direction.tsx",
+      "bytes": 506,
+      "sha256": "84ae2ad658207f0e0f367978e5508cd8027cd00c29c41d3d13db21a708c3d1e6"
+    },
+    {
+      "path": "hosted/components/ui/drawer.tsx",
+      "bytes": 4255,
+      "sha256": "cb6eaf58eb0757ca91af284e5d925b89a42ad7eb19cb3f44c575a3487aa9350f"
+    },
+    {
+      "path": "hosted/components/ui/dropdown-menu.tsx",
+      "bytes": 8418,
+      "sha256": "98f0dcdae38225b73734aceeb9213dd751fea2c72ea520df31003cd133deac8a"
+    },
+    {
+      "path": "hosted/components/ui/empty.tsx",
+      "bytes": 2396,
+      "sha256": "ae95bdcf367a076ae02e7925f14522a148798f72d9651749c6d55497dba584c0"
+    },
+    {
+      "path": "hosted/components/ui/field.tsx",
+      "bytes": 6159,
+      "sha256": "ba67d76f017ac059fc86cf8c344e0b2991c4322d3619e125498c19b87f6eefbd"
+    },
+    {
+      "path": "hosted/components/ui/form.tsx",
+      "bytes": 3757,
+      "sha256": "315b46bb75ab7d1c6061b5d750aa4bedf6e7a455e15e2d7f9182f053d5972b1e"
+    },
+    {
+      "path": "hosted/components/ui/hover-card.tsx",
+      "bytes": 1526,
+      "sha256": "f5d8df42c59370ec14d61bcc54f7d68e9bb7dfa0d6a872b2f7cffc2aafbf23b8"
+    },
+    {
+      "path": "hosted/components/ui/input-group.tsx",
+      "bytes": 5065,
+      "sha256": "6afbd58fea4c438e6252dc4568bddc122e84ababead4ad5cee50ace01100c9a0"
+    },
+    {
+      "path": "hosted/components/ui/input-otp.tsx",
+      "bytes": 2254,
+      "sha256": "161946daa89f0eda2575b9271c0494e35807c4ffb55598a49f67160c17fec299"
+    },
+    {
+      "path": "hosted/components/ui/input.tsx",
+      "bytes": 962,
+      "sha256": "8c4612a7c41319ac5049daa3b34b080f9784b6245c17780eb87c127e58e473db"
+    },
+    {
+      "path": "hosted/components/ui/item.tsx",
+      "bytes": 4486,
+      "sha256": "6e2144d6d87142dbbe56d568810bf546318c8aa661447ebb0d76ebbf382cb45f"
+    },
+    {
+      "path": "hosted/components/ui/kbd.tsx",
+      "bytes": 862,
+      "sha256": "6088c3a5432338b1719c17e9b5d0e1fa74fd1f66060f248fc88909d33a82cd13"
+    },
+    {
+      "path": "hosted/components/ui/label.tsx",
+      "bytes": 606,
+      "sha256": "a476e41f08b9de5bd447de66a33d8bc2ad18f2fa6b96c064778bab4b6f439f4c"
+    },
+    {
+      "path": "hosted/components/ui/marker.tsx",
+      "bytes": 1864,
+      "sha256": "3d798763f094b2bb5e7ade2d5cd1b9bab498bc8ca7fd4cfaf4e5835bdedc34a0"
+    },
+    {
+      "path": "hosted/components/ui/menubar.tsx",
+      "bytes": 8389,
+      "sha256": "9243af8afcea03703398ccd1c2a8c0a87ad6cbaf2bd272fb609f5b79fe46aebb"
+    },
+    {
+      "path": "hosted/components/ui/message-scroller.tsx",
+      "bytes": 3992,
+      "sha256": "bb7660a248e4e9589c3816c7c1c199ea1381a70d2c8476ae895b567a7a4d86cf"
+    },
+    {
+      "path": "hosted/components/ui/message.tsx",
+      "bytes": 2232,
+      "sha256": "9d2952bf3b641081f09aa2739535e6bbd1be0a4946789752a2c20d8aaef43185"
+    },
+    {
+      "path": "hosted/components/ui/native-select.tsx",
+      "bytes": 1995,
+      "sha256": "007516b111fca8c98a6c40c94ab91bb68cc5b52afce1ed1f5e510c3d86e7347c"
+    },
+    {
+      "path": "hosted/components/ui/navigation-menu.tsx",
+      "bytes": 6658,
+      "sha256": "889d358a77de88e9cb6f39ea4895ea4c76eaf01d731b74e44f1c41e97a78a044"
+    },
+    {
+      "path": "hosted/components/ui/pagination.tsx",
+      "bytes": 2717,
+      "sha256": "374ad135c3d4ff3ec080a0009cd9745cdd0e12faa89d2b0e86074f11e5127fd1"
+    },
+    {
+      "path": "hosted/components/ui/popover.tsx",
+      "bytes": 2357,
+      "sha256": "31c350309ff5d3034e6ecf1b0eda75ba8855bdbf987fc7ad6d71f0ef07c5a447"
+    },
+    {
+      "path": "hosted/components/ui/progress.tsx",
+      "bytes": 755,
+      "sha256": "c8c26e8f5f041c3cdf4915347dc1d9c022f9448f149990fadcaf303e952fa57d"
+    },
+    {
+      "path": "hosted/components/ui/radio-group.tsx",
+      "bytes": 1460,
+      "sha256": "fe5ce39636d0818c2bf9c4eebddff893d1225fa2c81b5fa4bb8cbb39a8c913ce"
+    },
+    {
+      "path": "hosted/components/ui/resizable.tsx",
+      "bytes": 1815,
+      "sha256": "bc63958467aa00557c551bb0d96a5ae4c965c1e1ba2380e595949d933b132f7c"
+    },
+    {
+      "path": "hosted/components/ui/scroll-area.tsx",
+      "bytes": 1639,
+      "sha256": "8bd9d986b2844c9a87de825c6de4787b6739b36c3dc9a05ccf3eb107160e4043"
+    },
+    {
+      "path": "hosted/components/ui/select.tsx",
+      "bytes": 6353,
+      "sha256": "0b796a108a4eb5ba52d9ad938b7aea36dc56ae66c703a6d0a23dbc24f96daff3"
+    },
+    {
+      "path": "hosted/components/ui/separator.tsx",
+      "bytes": 694,
+      "sha256": "6da346505c8629a4668420d2a5ca48891383bbe0b0ceb14163537c671879427e"
+    },
+    {
+      "path": "hosted/components/ui/sheet.tsx",
+      "bytes": 4188,
+      "sha256": "63863cf2df8f8973e52b3459ac9bdbf81be1262dbc70eb53d5271ffb03488e16"
+    },
+    {
+      "path": "hosted/components/ui/sidebar.tsx",
+      "bytes": 21526,
+      "sha256": "4a8d73e7730a2b1fcecfca31299ed26db65c2307b84197a59c6ec7c01c7ad28e"
+    },
+    {
+      "path": "hosted/components/ui/skeleton.tsx",
+      "bytes": 276,
+      "sha256": "ba48dd5be5a6a1378bd4e011028654b5bf419f1e7d20ee4b9f8330c1264e7239"
+    },
+    {
+      "path": "hosted/components/ui/slider.tsx",
+      "bytes": 1991,
+      "sha256": "0e37484f4b416e79ac18c655cac961aefacf6e67085cfc2b320ea8af545635a3"
+    },
+    {
+      "path": "hosted/components/ui/sonner.tsx",
+      "bytes": 1034,
+      "sha256": "13ccc9b0fe4248e622f83a1d3b2f0566b72b5e04162d7d0c8db8945ecc71b55f"
+    },
+    {
+      "path": "hosted/components/ui/spinner.tsx",
+      "bytes": 331,
+      "sha256": "3e6e6e8d37fb4069f8e43e55318f8db06fbc36e6c8be0096da3c9337c1c798b9"
+    },
+    {
+      "path": "hosted/components/ui/switch.tsx",
+      "bytes": 1408,
+      "sha256": "386d4d4deb39f34126f9700fe9bf5393d238485dd94018bba9d154dda84c62ae"
+    },
+    {
+      "path": "hosted/components/ui/table.tsx",
+      "bytes": 2478,
+      "sha256": "20e5a7f224959c6b75802995706a97e9da171f693d4b6b1b436388fcd9df96f3"
+    },
+    {
+      "path": "hosted/components/ui/tabs.tsx",
+      "bytes": 3782,
+      "sha256": "865d0194331b9b2be36723fa79d3575dc83078b4cb941cafee87cb72fc2cff46"
+    },
+    {
+      "path": "hosted/components/ui/textarea.tsx",
+      "bytes": 759,
+      "sha256": "253cdeb487c73beaaccdf47fc163e36e7d5b7ae6ddf09a4f64998a109a112979"
+    },
+    {
+      "path": "hosted/components/ui/toggle-group.tsx",
+      "bytes": 2308,
+      "sha256": "69f643e889e933f05c1439084480d8646f66a161c7d1cf0730ee926382ade35e"
+    },
+    {
+      "path": "hosted/components/ui/toggle.tsx",
+      "bytes": 1565,
+      "sha256": "ba4d0b0a2b2fee75dc36dfc19e32082e721024b919050c97fd5dc70faa924e16"
+    },
+    {
+      "path": "hosted/components/ui/tooltip.tsx",
+      "bytes": 1830,
+      "sha256": "a0784eb77831a799fad7991df4f1b666f876201565a80175e1aa68733574a2e4"
+    },
+    {
+      "path": "hosted/db/index.ts",
+      "bytes": 423,
+      "sha256": "dc7610b00b918e0ffff1360a63626f16655ced3064b2eaf96095a4101fb14bcd"
+    },
+    {
+      "path": "hosted/db/schema.ts",
+      "bytes": 8934,
+      "sha256": "0bc620bceb7b8548d69d07c823c2bc20623ad4d0de7c28678163892f9ac0fa15"
+    },
+    {
+      "path": "hosted/drizzle.config.ts",
+      "bytes": 148,
+      "sha256": "af081f7384aaeb0082cf422e29f139d137ca2f6a57c69b2c37b9fb1f8479867b"
+    },
+    {
+      "path": "hosted/drizzle/0000_busy_plazm.sql",
+      "bytes": 4512,
+      "sha256": "5b1e4c5a7ddb05c71a53c112a57daaf9b4a15f58fa38e4b12df8d551bd9e7118"
+    },
+    {
+      "path": "hosted/drizzle/0001_smiling_maelstrom.sql",
+      "bytes": 978,
+      "sha256": "d0e1b4cbea14b7dca1c1078911fa94c39db7960778bea637341d7bbee4ef9ef6"
+    },
+    {
+      "path": "hosted/drizzle/0002_concerned_inhumans.sql",
+      "bytes": 762,
+      "sha256": "78823cf83e72da525ffd44e8ec76c524a813ff6eb278cbf6465e8a63fbc05fed"
+    },
+    {
+      "path": "hosted/drizzle/0003_provider_identity.sql",
+      "bytes": 2910,
+      "sha256": "6060ba69e1ca5fb418e79ae91f0d76b5e89e7e1d28740b2df15a74fe727b4930"
+    },
+    {
+      "path": "hosted/drizzle/0004_provider_connection_generation.sql",
+      "bytes": 873,
+      "sha256": "5e2d86cb79b44e8101f743836a7a7ec58b901b87b96a79159bf30bcbf77f9439"
+    },
+    {
+      "path": "hosted/drizzle/meta/0000_snapshot.json",
+      "bytes": 20146,
+      "sha256": "3bb772f85e39920dfa2194ce9a0a107f4c68ea779411ca358ce418467158a69f"
+    },
+    {
+      "path": "hosted/drizzle/meta/0001_snapshot.json",
+      "bytes": 23360,
+      "sha256": "1daf4bf103553f5e15dcb2d2bb5eed4cbbcf63b4e1d40c4642fa8cd9b945ac6c"
+    },
+    {
+      "path": "hosted/drizzle/meta/0002_snapshot.json",
+      "bytes": 26930,
+      "sha256": "8f0d227be96419e1a9020dd17ed2f0e67a7445dd3b5ea8de1ca5db2cffcb8aca"
+    },
+    {
+      "path": "hosted/drizzle/meta/0003_snapshot.json",
+      "bytes": 39117,
+      "sha256": "695f18398af18500b55dc24dc4a8b2eaf2f7b6d0c09f157a0f63e3b4c702b639"
+    },
+    {
+      "path": "hosted/drizzle/meta/0004_snapshot.json",
+      "bytes": 39333,
+      "sha256": "7ee12d558c161d136f5e6634cb202d987b30a26366ed08ba5439221a97c69ee8"
+    },
+    {
+      "path": "hosted/drizzle/meta/_journal.json",
+      "bytes": 794,
+      "sha256": "888e37f5620af113a096995286330ac450bd19fab80ac195db4cad0d328b6639"
+    },
+    {
+      "path": "hosted/eslint.config.mjs",
+      "bytes": 791,
+      "sha256": "eeda7faabe9560fa9fdb26675b0011fa78461ca7061989732f5da9245b87e315"
+    },
+    {
+      "path": "hosted/examples/d1/app/api/notes/route.ts",
+      "bytes": 1700,
+      "sha256": "a3d4a74fd53b7bf53e2df41f169d9d9d44a8b22aeb6d92f4e754956079af8909"
+    },
+    {
+      "path": "hosted/examples/d1/db/schema.ts",
+      "bytes": 370,
+      "sha256": "d89eabd95716ce404f5f7ca2a254220435be8ddce7c899d7ef461ff22ec80454"
+    },
+    {
+      "path": "hosted/hooks/use-mobile.ts",
+      "bytes": 565,
+      "sha256": "ad0936f84f1df79d3697bfbff9c18f8ad58431c1cbaf2359c6a853b0fcc9f28b"
+    },
+    {
+      "path": "hosted/lib/connector-context.ts",
+      "bytes": 612,
+      "sha256": "bbddff68689cb0f6926fecd4b8b96f12f2054277c296e97b0df07d4ad5ece24e"
+    },
+    {
+      "path": "hosted/lib/connector-contract.mts",
+      "bytes": 5362,
+      "sha256": "e1a7b24a8793af34b595690d9b1300c897c7321c14f215cedf58ad95799d7c3e"
+    },
+    {
+      "path": "hosted/lib/connector-errors.mts",
+      "bytes": 2717,
+      "sha256": "a22edf13d6873ae832c4a2a0d579fc666c73ec996ef0722d39172649d38f0871"
+    },
+    {
+      "path": "hosted/lib/connector-preview.d.ts",
+      "bytes": 433,
+      "sha256": "abd69a94f7f61f1359063bb557574faae35e8ff5a028cc4c04b9ee248ef52642"
+    },
+    {
+      "path": "hosted/lib/connectors.ts",
+      "bytes": 416,
+      "sha256": "1c93d747e384c8e17e3e3dd5361b24412babf5eba2a11d2ae7a75f4e0924112c"
+    },
+    {
+      "path": "hosted/lib/utils.ts",
+      "bytes": 177,
+      "sha256": "53f3d3d070f0a9082934da25b875f9499855c2b0693868dd28be8c23d8730f68"
+    },
+    {
+      "path": "hosted/next.config.ts",
+      "bytes": 133,
+      "sha256": "614bce25b089c3f19b1e17a6346c74b858034040154c6621e7d35303004767cc"
+    },
+    {
+      "path": "hosted/package-lock.json",
+      "bytes": 466495,
+      "sha256": "2512e3bd6aebfc4377bbe036d3cf606c27e33613b35c8c58d28f0f3a0d596c99"
+    },
+    {
+      "path": "hosted/package.json",
+      "bytes": 3072,
+      "sha256": "a9c4e380d5a6268f1472a039f51c2b47f22a2bfb9558cfb8a97310a7b803a613"
+    },
+    {
+      "path": "hosted/postcss.config.mjs",
+      "bytes": 94,
+      "sha256": "dfac7ac2d86d326a0e5adb024e7943c181393ed17a5fcb8f0315b24c7da6ddde"
+    },
+    {
+      "path": "hosted/public/brand/Google-Sans-OFL.txt",
+      "bytes": 4488,
+      "sha256": "2b75ef20f13d83a7514aee452c4782c20cdc9ff2dee17600f44d37a06d4fb958"
+    },
+    {
+      "path": "hosted/public/brand/google-sans-medium.ttf",
+      "bytes": 4148,
+      "sha256": "ee5b4ea68ccbf37fbcbb173199d504ef45fb5511dbf2576d2d4e7ef389cf2299"
+    },
+    {
+      "path": "hosted/public/favicon.ico",
+      "bytes": 4397,
+      "sha256": "1b73ea88bb2d33bc8ab0beea071afe082461d7dc4ce3c6383c2e67e128a209c0"
+    },
+    {
+      "path": "hosted/public/favicon.svg",
+      "bytes": 590,
+      "sha256": "71ea33dff259584332d4d8ac6bc1eadc4d2c2aed53c9bf91404ec663a4cbcc9b"
+    },
+    {
+      "path": "hosted/public/fonts/Noto-Sans-Arabic-OFL.txt",
+      "bytes": 4382,
+      "sha256": "07fc70bfeb985cc1a87a8587d0a0c80bab11c86c9dc3fd95b6f0cb332f983e96"
+    },
+    {
+      "path": "hosted/public/fonts/noto-sans-arabic-arabic.woff2",
+      "bytes": 165960,
+      "sha256": "ce85091f020920b65762b387b194ef59457ea5b25b760f2dcc35240a94bb8669"
+    },
+    {
+      "path": "hosted/public/fonts/noto-sans-arabic-latin.woff2",
+      "bytes": 31416,
+      "sha256": "fed070abc960c5f214fcb02b7b178cdab751ef7facd79a899f571bc21d38b8f8"
+    },
+    {
+      "path": "hosted/public/phone.webmanifest",
+      "bytes": 829,
+      "sha256": "12dbfc83e304d9c0bc398babc766e4ea7c29413d28b4a1ac46e26f4e7cb90ef6"
+    },
+    {
+      "path": "hosted/public/theme-init.js",
+      "bytes": 556,
+      "sha256": "ea5a5f149f9221c420fd5165028a18bc177a451435d6ed129d1d6c781e459823"
+    },
+    {
+      "path": "hosted/scripts/build-verified.sh",
+      "bytes": 661,
+      "sha256": "2ae5329ac860076070c9217a43106a15cb5ecf907a0f7baeb9ef903f76b53c68"
+    },
+    {
+      "path": "hosted/scripts/connector-preview/connector-preview-session.mjs",
+      "bytes": 6855,
+      "sha256": "57224ad185a25115a14fccc68d3217e55b199260c3dd98a2c807beffec1a0a9b"
+    },
+    {
+      "path": "hosted/scripts/connector-preview/host-binding.mjs",
+      "bytes": 7793,
+      "sha256": "9e44ab6864133a5c82f834a5904ebb7d6104cb783c24efba3c0fe1a161182cea"
+    },
+    {
+      "path": "hosted/scripts/connector-preview/protocol.mjs",
+      "bytes": 1781,
+      "sha256": "111e062ebf08d3f180130f5bc3dcb3c1414c1d7be3c032c9d675a61c0c7513a8"
+    },
+    {
+      "path": "hosted/scripts/connector-preview/worker.mjs",
+      "bytes": 618,
+      "sha256": "bd9c98fc68f29d975fe10508dfc9029bb681dc5789a62861d5c938bdea2064bb"
+    },
+    {
+      "path": "hosted/scripts/execution-profile.mjs",
+      "bytes": 624,
+      "sha256": "2e71116f4d2b70cff8bb70436f8dd5c709ec7ff62893424530f404e0193d3630"
+    },
+    {
+      "path": "hosted/scripts/install-ci.mjs",
+      "bytes": 1685,
+      "sha256": "4a5a92d60a08d0ba54effd8373da2da06284312c55b767287c68a0bec7200da7"
+    },
+    {
+      "path": "hosted/scripts/install-ci.sh",
+      "bytes": 6783,
+      "sha256": "10d8764a61be50351dc3496e13588270de7956f0aa5f1189c49cabb2d89fe5c0"
+    },
+    {
+      "path": "hosted/scripts/install-pnpm.sh",
+      "bytes": 9015,
+      "sha256": "a684c02c2b493dfbf262a66252a5cd36f81ca995a4024761728662ae63aa40c0"
+    },
+    {
+      "path": "hosted/scripts/npm-install.mjs",
+      "bytes": 7025,
+      "sha256": "9715c6a32d1d4a0289ef6376a0e819c3b6a6416b8a9877733d9fb4339ce626b6"
+    },
+    {
+      "path": "hosted/scripts/pnpm-install.mjs",
+      "bytes": 10633,
+      "sha256": "a83164e344c1947053def83b546be8115deaa827314bbaead7afe6b6451c5cdf"
+    },
+    {
+      "path": "hosted/scripts/run-framework.mjs",
+      "bytes": 993,
+      "sha256": "9bf9f41a29314cabe0238b8e9c540ec3f7b5a6adafc7c8fb6c3940722d061dca"
+    },
+    {
+      "path": "hosted/scripts/sites-env.mjs",
+      "bytes": 522,
+      "sha256": "21d7bde6acb9f716287e652c1b0e43ae4803d79be367ca2192fcba14740b5338"
+    },
+    {
+      "path": "hosted/scripts/sites-env.sh",
+      "bytes": 1600,
+      "sha256": "d18af7b222db748c9de257d5955b9d7f77ec350dab6321f114f0bc44c20388ac"
+    },
+    {
+      "path": "hosted/scripts/tool-environment.mjs",
+      "bytes": 791,
+      "sha256": "6da99286e0eb7905595ca851e68983bedf94a0f93814819d61f2b1f3a0342ba2"
+    },
+    {
+      "path": "hosted/scripts/vite/connector-preview-plugin.mjs",
+      "bytes": 7211,
+      "sha256": "a6a9fe2086e302f94a3f91e3c1a68a45bb3aa07d4a79faf01b14732191eb4e80"
+    },
+    {
+      "path": "hosted/scripts/vite/sites-vite-plugin.LICENSE",
+      "bytes": 1063,
+      "sha256": "7de1e115d165f176e68f962acdb809b5ab8d8ae78d3981e0701392b2ac50c713"
+    },
+    {
+      "path": "hosted/scripts/vite/sites-vite-plugin.ts",
+      "bytes": 7185,
+      "sha256": "07af20e7097d9ed1d76f7c446d02997550b8fc5ca89668b249e25eabd62c6834"
+    },
+    {
+      "path": "hosted/server/README.md",
+      "bytes": 15003,
+      "sha256": "b12c8536aafad0d7a3469581a72aec78a54e9ac7dfd104f0404aabfda1f1516d"
+    },
+    {
+      "path": "hosted/server/applications.mjs",
+      "bytes": 64940,
+      "sha256": "1c2ccb94215543b9ff537c9657d22b28fc41a942b2e1c9aa2e164ba66e299a7a"
+    },
+    {
+      "path": "hosted/server/discovery-contract.json",
+      "bytes": 4860,
+      "sha256": "b92075bc91feb0a677ccbe28101fc31245730318373e3974ed18dff408967b06"
+    },
+    {
+      "path": "hosted/server/discovery.mjs",
+      "bytes": 27228,
+      "sha256": "d8ac636cc7d88e5b116c6e68f3549694b83391dbfdb2794614930237dfb32bea"
+    },
+    {
+      "path": "hosted/server/identity.mjs",
+      "bytes": 10149,
+      "sha256": "dc7b5843574d64be97829ce05840e515702e13df6f3652aa8d3cd8c058ff702f"
+    },
+    {
+      "path": "hosted/server/oauth.mjs",
+      "bytes": 41738,
+      "sha256": "00944a1b4bb8288ac7a2c4d1410c885ced2652f9d0aa0b1fe3e4ff01a95dcf83"
+    },
+    {
+      "path": "hosted/server/pdf-readability.mjs",
+      "bytes": 518,
+      "sha256": "f17bdb9db770a3663d067aa6c9ad1cee0fabfd2420bd96ed3e5ce60c960b61b2"
+    },
+    {
+      "path": "hosted/server/provider.mjs",
+      "bytes": 9095,
+      "sha256": "7e078b63ce3acbe2deb3afa99ac1667e671c58ce56b34075317342ef5ebf7101"
+    },
+    {
+      "path": "hosted/server/retry-after.mjs",
+      "bytes": 973,
+      "sha256": "ad34cbec76b5096665c1ab8b126043ed6ad35cc13a52233b39bf3475b876a70d"
+    },
+    {
+      "path": "hosted/server/validation.mjs",
+      "bytes": 9049,
+      "sha256": "b7b96c7089cbe3c93adcfaed6fd79679b7ea981ca5790ba8b16dc30275825448"
+    },
+    {
+      "path": "hosted/shared/pdf-readability.mjs",
+      "bytes": 7145,
+      "sha256": "65183fe408b4cda8434d2ed064d645f471227db75de7fade416e090feec068a1"
+    },
+    {
+      "path": "hosted/tests/browser-api.mjs",
+      "bytes": 5173,
+      "sha256": "c781cc891d5f42a3bedec096dac936603d11da86ef88c317a9fc315db0e8c9fe"
+    },
+    {
+      "path": "hosted/tests/browser-pairing.mjs",
+      "bytes": 2637,
+      "sha256": "f42217c2f944813bdb4e9c09ee3ad3b68414c99eec7552f7f01b670cfec645b3"
+    },
+    {
+      "path": "hosted/tests/build-pdf-browser.mjs",
+      "bytes": 9326,
+      "sha256": "cd6bc3f5228b94c19b1869d5ceb3b3c3214d77937dc90cb680a06620d2a14b61"
+    },
+    {
+      "path": "hosted/tests/build-phone-viewport.mjs",
+      "bytes": 19545,
+      "sha256": "e0c8514438c835bbf1afe1e855926b43f4cbde57fc0b51cff59a24c4873024a5"
+    },
+    {
+      "path": "hosted/tests/build-provider-browser.mjs",
+      "bytes": 3665,
+      "sha256": "3c76f45bda95d5ce16c7463119838589b06aee7e3449aa7d28202e485eb49b8e"
+    },
+    {
+      "path": "hosted/tests/discovery-public-sources.json",
+      "bytes": 2932,
+      "sha256": "ee08bc17bec358f4f743d2c84a8a64dc06b8328a05afafb280788ff1c92707e5"
+    },
+    {
+      "path": "hosted/tests/fixtures/discovery-search-v1.json",
+      "bytes": 2547,
+      "sha256": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7"
+    },
+    {
+      "path": "hosted/tests/fixtures/pdf-browser/App.template.ts.txt",
+      "bytes": 6766,
+      "sha256": "a569fe7f77943119852dd50b8a0547fb070f15503bcf1862e6f3f02863ab6496"
+    },
+    {
+      "path": "hosted/tests/fixtures/pdf-browser/README.md",
+      "bytes": 5250,
+      "sha256": "4bee74ccb772d434b410fe68d911ef70fd0f5d0231d8a2f145062c8989cf68d9"
+    },
+    {
+      "path": "hosted/tests/fixtures/pdf-browser/index.html",
+      "bytes": 2458,
+      "sha256": "bbbec9a461f31d0a9203e4e480e89026ba067b858cb78942b7f6d953bcf24e2b"
+    },
+    {
+      "path": "hosted/tests/fixtures/pdf-browser/pdf-fixtures.json",
+      "bytes": 926,
+      "sha256": "09b84b3992d9c1abebf27dede564e5fc2b6ea7d48bd6dc3ffa9202abac9c2b0f"
+    },
+    {
+      "path": "hosted/tests/fixtures/pdf-browser/style.css",
+      "bytes": 1609,
+      "sha256": "ba96e5f37bb0d841c5e4f97feca9c6d171b67c0b89f912e1f221f825b310b828"
+    },
+    {
+      "path": "hosted/tests/fixtures/phone-runtime.mjs",
+      "bytes": 4055,
+      "sha256": "18ac27f3d82f38d9c718ce0919ed0168eb14e64e4806f404ad3120dab88146ac"
+    },
+    {
+      "path": "hosted/tests/fixtures/phone-viewport/README.md",
+      "bytes": 3599,
+      "sha256": "71641ccbedc960fe978e7e51aa48dbefe1848b9960b411e88bb79a138516ebc0"
+    },
+    {
+      "path": "hosted/tests/fixtures/provider-browser/App.tsx",
+      "bytes": 1704,
+      "sha256": "74c72ab7f4b65b775b0d2be0e570b938321bd09ea14c94290ab14279efc365e2"
+    },
+    {
+      "path": "hosted/tests/fixtures/provider-browser/Image.tsx",
+      "bytes": 505,
+      "sha256": "e686a31bf0f24df7f317dfb62c616d2f15e8191be47c5016b6e9eaf733b98785"
+    },
+    {
+      "path": "hosted/tests/fixtures/provider-browser/README.md",
+      "bytes": 2955,
+      "sha256": "07a88a33b035623f9b03110b10d47a59487b5e80e3fbddab7e0c35516261a72e"
+    },
+    {
+      "path": "hosted/tests/fixtures/provider-browser/api.ts",
+      "bytes": 3092,
+      "sha256": "215f43e1117cd36584fe1d3fd96255bb7a5cd25b5f69ac0c97c677968449b2ab"
+    },
+    {
+      "path": "hosted/tests/hosted-applications.mjs",
+      "bytes": 75661,
+      "sha256": "126ad51181dcc0bcc2957b8054da629457567f7fa93df1a05f1977a860cd487e"
+    },
+    {
+      "path": "hosted/tests/hosted-auth-worker.mjs",
+      "bytes": 17226,
+      "sha256": "8bd4e26c20b4c1b03cec88575eac4e8d42e0fdf82c4bb847b91d448aeafc4d9f"
+    },
+    {
+      "path": "hosted/tests/hosted-auth.mjs",
+      "bytes": 80217,
+      "sha256": "437acddd2f081b7db0e135a53818e87c1fb57dd09ff8835cdb450dc58673ea7e"
+    },
+    {
+      "path": "hosted/tests/hosted-discovery.mjs",
+      "bytes": 28212,
+      "sha256": "3048396d376a3c9cae3dd2b3fb197219fe9c805e607dbe7442e4ea094e2b6998"
+    },
+    {
+      "path": "hosted/tests/hosted-phone.mjs",
+      "bytes": 28122,
+      "sha256": "f9e528747308354e5e8fbd4c1c7baa0a38e02a9be1a6583619fb77c456b91d00"
+    },
+    {
+      "path": "hosted/tests/hosted-worker.mjs",
+      "bytes": 8641,
+      "sha256": "fcf63a4213df20d0d70c336768313b282c57e51ef3b962912d5522413badec01"
+    },
+    {
+      "path": "hosted/tests/i18n.mjs",
+      "bytes": 7365,
+      "sha256": "3e639ce9f29c537ab08ae10604bb6b6da24c892678176d5c511e89e7024b4be5"
+    },
+    {
+      "path": "hosted/tests/linkedin-profile.mjs",
+      "bytes": 3615,
+      "sha256": "8696add7c7a85e97f6a535fd86f304c1dd4182dc0deaedec2940704d32a2a087"
+    },
+    {
+      "path": "hosted/tests/pdf-readability.mjs",
+      "bytes": 3829,
+      "sha256": "dfa53b9c229b0f19ebef5e1fce1ffff4ddf3c6445c22eabe72546dceabc5648a"
+    },
+    {
+      "path": "hosted/tests/phone-api.mjs",
+      "bytes": 12699,
+      "sha256": "202ccf7507008fd1e727aa31ac2b5e2c07ae1f6ee25aa6e340c1045cd37d5e9a"
+    },
+    {
+      "path": "hosted/tests/phone-batch-stop.mjs",
+      "bytes": 11180,
+      "sha256": "36303fa22ffa2b26608806c75c9321bda2b113b2414bb3fe503a6056eb4d817e"
+    },
+    {
+      "path": "hosted/tests/phone-dispatch.mjs",
+      "bytes": 12965,
+      "sha256": "b87f1c0492affcdfdd4ce9f10ec9e92d83edea7023a9a0d69cf2ab5adf50db44"
+    },
+    {
+      "path": "hosted/tests/phone-localization.mjs",
+      "bytes": 7160,
+      "sha256": "44e9242f7b31d2a47ef6d7d81e4686223472a5f68a0130e71fdd915043c37045"
+    },
+    {
+      "path": "hosted/tests/phone-model.mjs",
+      "bytes": 19691,
+      "sha256": "e297fe90fa5a1b3ba110d63b771188a29c5543958db2e65ad62383f79b506af8"
+    },
+    {
+      "path": "hosted/tests/phone-navigation-inset.mjs",
+      "bytes": 3625,
+      "sha256": "9d9251c99680a387ac41ac0dfc8e94badd611f941053d48204549a8694447300"
+    },
+    {
+      "path": "hosted/tests/phone-private-async.mjs",
+      "bytes": 13093,
+      "sha256": "3992545077da110d13d0ee4014345d25089b5553f9ef489f3eac1839b6ec9663"
+    },
+    {
+      "path": "hosted/tests/phone-record-tools.mjs",
+      "bytes": 24488,
+      "sha256": "29c7c1e987703b7b50360fafdc8f733aa8e34441a150bcd0fde8ecb3dcffe522"
+    },
+    {
+      "path": "hosted/tests/phone-search-workflows.mjs",
+      "bytes": 7519,
+      "sha256": "9061e6ac35ac09b60160c4de0998e499a0f01ee0c489e22385f71095d4d5f549"
+    },
+    {
+      "path": "hosted/tests/phone-settings-privacy.mjs",
+      "bytes": 5092,
+      "sha256": "7200ddc522f0ecf70ae59e2dc0a4693185f48b1780ffa9746343c92e4aa6aa14"
+    },
+    {
+      "path": "hosted/tests/phone-vault.mjs",
+      "bytes": 35767,
+      "sha256": "d048e59cf4988473889edd70f019f25d14b3c21fe45540f39806d6d7c341e21d"
+    },
+    {
+      "path": "hosted/tests/provider-connections.mjs",
+      "bytes": 8326,
+      "sha256": "6d61def8c60ee1827ca6dc567dbea9516e1c992f359c3826bc17785b18b29257"
+    },
+    {
+      "path": "hosted/tests/web-experience.mjs",
+      "bytes": 8814,
+      "sha256": "332af665909295e0019e2fc51aec470d06953608cd3574482c79e05c1bcf4a9b"
+    },
+    {
+      "path": "hosted/tsconfig.json",
+      "bytes": 893,
+      "sha256": "a4c1cc83b63ef9d39641d3babaefffa063dccbbc93338e18017b5013d713163e"
+    },
+    {
+      "path": "hosted/vendor/shadcn-tailwind-4.13.0.LICENSE.md",
+      "bytes": 1063,
+      "sha256": "1564074e13439397221ffd522e2e504d56561994a23d371aa5e3ad43e4f5423f"
+    },
+    {
+      "path": "hosted/vendor/shadcn-tailwind-4.13.0.css",
+      "bytes": 16041,
+      "sha256": "bc7d83425702955b4cb67cb14ede9d603f9d912376d57a2d81d661094d2a782a"
+    },
+    {
+      "path": "hosted/vite.config.ts",
+      "bytes": 2673,
+      "sha256": "22ff558b1636d251e076f74c1697c7166079861667af10922d6bc505cb8f8290"
+    },
+    {
+      "path": "hosted/worker/index.ts",
+      "bytes": 3207,
+      "sha256": "c82a674ffc6fcebef3b1c48d577f0ec5b28a4a4c2b17462c50a7c0d1708ac09e"
+    },
+    {
+      "path": "website/.gitignore",
+      "bytes": 30,
+      "sha256": "1b796d1e0d098711f436f6b54956daa0aa66ab919b5c0b50e19a81dffc8c3d95"
+    },
+    {
+      "path": "website/.openai/hosting.json",
+      "bytes": 63,
+      "sha256": "c378d511c264e2ffc2da456a9b8ba29d00fb3d71106e72428a17ab1f3ca9d63e"
+    },
+    {
+      "path": "website/README.txt",
+      "bytes": 4210,
+      "sha256": "ad06128dfb08920f4d8b251fe91d03bd819336b5f6f65947c0de548c6d8fa689"
+    },
+    {
+      "path": "website/applications-check.mjs",
+      "bytes": 48456,
+      "sha256": "f5b4b917cb7d524ee52f66fb9839f0f478d611536033277b2eda495c26eb32cf"
+    },
+    {
+      "path": "website/applications/README.md",
+      "bytes": 7636,
+      "sha256": "3f4079bcc3a2dcd92cceb5ef08c0266d20c9405a0bc986c3072c5385bc0c2f38"
+    },
+    {
+      "path": "website/applications/fixtures/README.md",
+      "bytes": 3769,
+      "sha256": "588da4a3893cb5586032de42891bd372d50042531e5e7789197846d8c51de43a"
+    },
+    {
+      "path": "website/applications/fixtures/certificates.mjs",
+      "bytes": 4108,
+      "sha256": "010e1e1e5998c287985f773e1b56b3ac7cca5c9e13dc97c4655d297fa440ae90"
+    },
+    {
+      "path": "website/applications/fixtures/tls-check.mjs",
+      "bytes": 7492,
+      "sha256": "397b73fbd6ce029c780debb3e67672120d28af505ea29e0bdb68d2762949fb16"
+    },
+    {
+      "path": "website/applications/fixtures/tls-fixture.mjs",
+      "bytes": 7503,
+      "sha256": "d3d1b1213c0fb0e176216f6760b489d4fd9915304ffec1e5ecf8e603d7f244dc"
+    },
+    {
+      "path": "website/applications/lever.mjs",
+      "bytes": 10457,
+      "sha256": "c4d1d0a7cf5a578e844ba654f3eab3b7cb34344fda90d1f7ded8342a7987cd5a"
+    },
+    {
+      "path": "website/applications/pair.mjs",
+      "bytes": 1603,
+      "sha256": "86a050aedd14c1d3215778ddae4841089048630f468a4055f4d567e2a9a30945"
+    },
+    {
+      "path": "website/applications/pairing.mjs",
+      "bytes": 1441,
+      "sha256": "4d27e80d6bf796078f3e1ae77f789ab186de49c32c0cc2a1f4bf564184a6b9d3"
+    },
+    {
+      "path": "website/applications/pdf-readability.mjs",
+      "bytes": 6282,
+      "sha256": "fba4adf5cb8bc2f72070733bfd93b0eaa9613413b9dc1211e57ba96197f0e4b8"
+    },
+    {
+      "path": "website/applications/retry-after.mjs",
+      "bytes": 973,
+      "sha256": "ad34cbec76b5096665c1ab8b126043ed6ad35cc13a52233b39bf3475b876a70d"
+    },
+    {
+      "path": "website/applications/server.mjs",
+      "bytes": 2288,
+      "sha256": "355c6de33bea4178d2322235dfd7bc74e60f5665089d9afb7d1c2b0cdf19e74b"
+    },
+    {
+      "path": "website/applications/service.mjs",
+      "bytes": 38288,
+      "sha256": "c7ff73c9aa431152c1ae1f00ce90fa82559c5155046fe719da96f1f9bcb84799"
+    },
+    {
+      "path": "website/applications/validation.mjs",
+      "bytes": 9054,
+      "sha256": "d415421ca818a7cb4674224c5af1150c6989e2cc9223deb7ec1ed361208ac2ee"
+    },
+    {
+      "path": "website/backup-check.mjs",
+      "bytes": 10919,
+      "sha256": "b5e340e75c97a8dd98cf9b17391451401c5e841962fe811c9bb409ccc0fe6cfa"
+    },
+    {
+      "path": "website/build.mjs",
+      "bytes": 2571,
+      "sha256": "0b7fdd5fe6edf90c15ca1a669e7b0928ec501487dcad45ccbb329e8443c60530"
+    },
+    {
+      "path": "website/check.mjs",
+      "bytes": 8477,
+      "sha256": "c8073bc40c5d52aad90c21f78f934bd619d5615c862299af778d802cda5fd8b9"
+    },
+    {
+      "path": "website/dev.mjs",
+      "bytes": 1184,
+      "sha256": "7170759629e8922ca635abb816d4081960be45c9f221e076a9a9dfc5f7a59745"
+    },
+    {
+      "path": "website/feed-check.mjs",
+      "bytes": 8657,
+      "sha256": "d557545bc4a9df8f983c0d61bab5ddab7cafb2cbe74a2d8724f7d98ef6ffe4e1"
+    },
+    {
+      "path": "website/feeds.mjs",
+      "bytes": 25965,
+      "sha256": "e4ebfe0b86c58d5b65b97d9ed95ec9d543ef08b1e86c122233f3442489a295ec"
+    },
+    {
+      "path": "website/fixtures/compatibility/continuation/app.js",
+      "bytes": 69807,
+      "sha256": "ec45e468c70ea1f15c070db39a125a9d2d6e530e6e713a6ec46c4f16765f1267"
+    },
+    {
+      "path": "website/fixtures/compatibility/continuation/core.js",
+      "bytes": 11312,
+      "sha256": "6bcc33f97cb84eb97c6a8e1519f010f0d2a00b3fc420ec8fbeaf43a815577a64"
+    },
+    {
+      "path": "website/fixtures/compatibility/continuation/data.js",
+      "bytes": 22252,
+      "sha256": "95e8035cf7d1e173b7c9f006c888de5d60a3ad260dd52ee2f254373d2abda2e8"
+    },
+    {
+      "path": "website/fixtures/native-backup.json",
+      "bytes": 3225,
+      "sha256": "0e4f7962e8e5d949554e422cc16883b8b54db31a6b91285596cab7a7027c4dca"
+    },
+    {
+      "path": "website/fixtures/public-boards.json",
+      "bytes": 4207,
+      "sha256": "1f3978196f2be7d5a0b83934c502851c7ed75da0b98d9054022bfabf3f1f4485"
+    },
+    {
+      "path": "website/fixtures/research.js",
+      "bytes": 26176,
+      "sha256": "279188fa7039fb2f5f1b704ada853629762cda9c6da8bf3972595b56f06c5e05"
+    },
+    {
+      "path": "website/fixtures/smartrecruiters.json",
+      "bytes": 3562,
+      "sha256": "ea62e8ac666c02a18ccadde619ebc251f4596f7a840a3d9e39649e28bdac5ac0"
+    },
+    {
+      "path": "website/fixtures/web-backup.json",
+      "bytes": 3030,
+      "sha256": "ae5b909e91ea8037a337745a6209d225b50a6d8cc22ebd703fb4990b30816224"
+    },
+    {
+      "path": "website/followup-check.mjs",
+      "bytes": 10445,
+      "sha256": "c4a5fb4b407f56a7e769a41deb977b434c88ae18b64c9d9c920937e6d0b98e15"
+    },
+    {
+      "path": "website/legacy-compatibility-check.mjs",
+      "bytes": 14835,
+      "sha256": "e6bd23d14b1f333dcef55eafd52faac6c7621e4aa96c4c933be5af4abe921962"
+    },
+    {
+      "path": "website/package-lock.json",
+      "bytes": 1935,
+      "sha256": "97b8e41b5b1c2af450108739eb3e11dba46361e22e06a3d348324bc85fd047df"
+    },
+    {
+      "path": "website/package.json",
+      "bytes": 836,
+      "sha256": "964d74b45dbe62171724b84f89eddc8d84cdcc87b46b90f078b2f2525a57e189"
+    },
+    {
+      "path": "website/preferences-check.mjs",
+      "bytes": 4657,
+      "sha256": "997bd25a06d906baafb4c2ec398d77c7b507a904c3ac3de9a6956d9c7738f783"
+    },
+    {
+      "path": "website/public-provider-check.mjs",
+      "bytes": 5320,
+      "sha256": "ad4a9c1185e98f6941da7a2955040ef55836e6db0b9cb2b3a2d0a685b7ce56f2"
+    },
+    {
+      "path": "website/record-check.mjs",
+      "bytes": 2396,
+      "sha256": "e2b216f7fd006bae0327f70a851f480f6a10fb05d56175d514eb96d879072783"
+    },
+    {
+      "path": "website/server-check.mjs",
+      "bytes": 5047,
+      "sha256": "66ab5dcc4f459d5db8ffb3cb4e282e0d18c01fdfb454fedfa9aa18620ca4a4d8"
+    },
+    {
+      "path": "website/smartrecruiters-check.mjs",
+      "bytes": 6323,
+      "sha256": "bf2fc2696ddab5f37089182f20d94571dbfb210c6d1decc7107952e437d3ba81"
+    },
+    {
+      "path": "website/state-check.mjs",
+      "bytes": 76873,
+      "sha256": "5cacb87b37815f053cbf1ff1e66c745d124cad8a761e4860128d6995b7640dde"
+    },
+    {
+      "path": "website/transport-check.mjs",
+      "bytes": 2567,
+      "sha256": "5ba5e3197365205ee232ac64e7ec9249f8fa9d042b8604b91ff4d4c134e94377"
+    },
+    {
+      "path": "website/upgrade-check.mjs",
+      "bytes": 6061,
+      "sha256": "dacefa1a4cf4f69d9824505ea1d11edcb709ed95171c4146fe18854793add25e"
+    },
+    {
+      "path": "website/web/app.js",
+      "bytes": 87918,
+      "sha256": "83877ac6b6346c4e047ef4bdf1a83b4c2bf99b0b3718ffaa177f76b5d3b4ffa0"
+    },
+    {
+      "path": "website/web/backup.js",
+      "bytes": 18252,
+      "sha256": "e7d27010581608eeb3f7357993fa5495aa50a8c6304f0913e9b2298d007b9f75"
+    },
+    {
+      "path": "website/web/core.js",
+      "bytes": 22860,
+      "sha256": "c2efdaae83418476e6db0553fcc084e3e7edcd48d522effed9db0e7ee1de3840"
+    },
+    {
+      "path": "website/web/data.js",
+      "bytes": 22252,
+      "sha256": "95e8035cf7d1e173b7c9f006c888de5d60a3ad260dd52ee2f254373d2abda2e8"
+    },
+    {
+      "path": "website/web/icon.svg",
+      "bytes": 271,
+      "sha256": "60c6f0a7b1908b4e3c3aa05d636b92d41ae119e29665788364b9ffb5e8b3938c"
+    },
+    {
+      "path": "website/web/index.html",
+      "bytes": 3135,
+      "sha256": "20ed6e4387fefffb976db5202d9425064b7dc8f1d8467c5fbab824a829de3279"
+    },
+    {
+      "path": "website/web/manifest.webmanifest",
+      "bytes": 229,
+      "sha256": "3ee2c227f0e9f3dcd49e427db5bd10d5c0248d58bdb96c0ec7b478570c11b7b5"
+    },
+    {
+      "path": "website/web/style.css",
+      "bytes": 18999,
+      "sha256": "438a2a1699d777e7729d7033acb259809b3f4e2919f7e348976305b1f0a925ac"
+    }
+  ],
+  "finalSourceRecheckUTC": "2026-11-17T14:34:16.813039+00:00",
+  "sourceChangedDuringGates": false,
+  "additionalUnchangedLocalizationInputs": [
+    {
+      "path": "scripts/generate-native-localization.py",
+      "bytes": 5416,
+      "sha256": "80b146d3cc4e251315c42ce4033f96d06d6828f4b56ec94d519c40fd5745c7ee",
+      "identicalToPublishingParent": true
+    },
+    {
+      "path": "scripts/test-native-localization.py",
+      "bytes": 3778,
+      "sha256": "0cd4e43efc2924597cd8f0cc2d74d81f1d2d7c328d0f11599c9ed19a8135d6c2",
+      "identicalToPublishingParent": true
+    }
+  ]
+}

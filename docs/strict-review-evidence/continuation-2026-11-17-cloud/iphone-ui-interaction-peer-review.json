@@ -1,0 +1,76 @@
+{
+  "reviewer": "/root/final_native_peer",
+  "reviewedAt": "2026-11-17T14:02:15.940388+00:00",
+  "baseCommit": "3a709eb15f1024df78ee03474f511568df2dc3de",
+  "runId": 44092957169,
+  "sourcePath": "apple/UITests/CareerFinderUITests.swift",
+  "sourceBeforeSha256": "32597b3bfad17d26a7452556d9a5f27c25bc1fe7f44f6a894ad6aaa69c0a5de7",
+  "sourceAfterSha256": "2fdbd93e86e288621e90ad0807b0d9ad95c8a202e9f8c61aa280fab7b0f39685",
+  "patchSha256": "9e6b0db587df4b44108b28f5a2b548f2e7d5f20a66c5bfc161485af9224cde6b",
+  "decision": "Accept the narrow test-interaction corrections for required CI; post-fix runtime not yet verified.",
+  "blockingStaticFindings": [],
+  "observedFailures": [
+    {
+      "test": "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+      "finding": "The test reads application.email before revealing that lower lazy Form row. Failure hierarchy shows Arabic profile labels, firstName Saved at y787.7, lastName at y882.7 and no email node in the visible tree. This does not establish email data loss.",
+      "remedy": "Reveal application.email, then retain the exact saved@example.invalid equality."
+    },
+    {
+      "test": "testProfileReadinessAndSimpleConnectionSetup",
+      "finding": "Frame55s visibly contains newly requested https://custom.example.com followed by an old service.jazzy- suffix, with the caret at their join. The helper deleted backward from an unverified middle caret instead of selecting the entire existing value. The whole hidden suffix was not read as exact bytes.",
+      "remedy": "Use an actual reachable Select All action, one delete, assert empty, type requested replacement and retain exact final value assertion."
+    },
+    {
+      "test": "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+      "finding": "Frame92s visibly contains private-record followed by leftover Arabic جهة instead of the requested private-record alone. Initial saved-note creation, relaunch and first normalized Arabic query completed before this replacement failure.",
+      "remedy": "Use the same whole-field replacement interaction without weakening the original search-result and original-note assertions."
+    }
+  ],
+  "checks": {
+    "testNamesUnchanged": true,
+    "testMethodCount": 17,
+    "assertionCountBefore": 139,
+    "assertionCountAfter": 141,
+    "typingReadinessHelperUnchanged": true,
+    "finishTypingHelperUnchanged": true,
+    "finalExactValueAssertionPreserved": true,
+    "emailExactEqualityPreserved": true,
+    "newEmptyAssertion": true,
+    "missingMenuFailsWithDiagnostics": true,
+    "diffCheckExitCode": 0
+  },
+  "evidence": [
+    {
+      "artifactRelativePath": "failure-frames/connection-55s.png",
+      "bytes": 381828,
+      "sha256": "164d97c6eeb88b8658714cbb68e7b96fa22587016c25b56428027b0013df64f2"
+    },
+    {
+      "artifactRelativePath": "failure-frames/saved-search-92s.png",
+      "bytes": 320276,
+      "sha256": "3307a252924b65213121fa82b83b26f33c6223c058d305470506706d71a795fb"
+    },
+    {
+      "artifactRelativePath": "career-ui-screenshots/A72E7ECB-D4A5-4B88-BF8D-9B75ED564D98.txt",
+      "bytes": 29174,
+      "sha256": "83fc19beda683d48231a34e9ab1a5b9b53ad10c5dcf7e99693505ef82d3933d0"
+    },
+    {
+      "artifactRelativePath": "career-ui-screenshots/02C8A63A-FF1D-407A-84E0-445DF5ACBF16.mp4",
+      "bytes": 15711327,
+      "sha256": "ada40f551c96ba530cce282b04a36338e40955a9d870372c7f446a08d6017ef3"
+    },
+    {
+      "artifactRelativePath": "career-ui-screenshots/C3B86475-AE7C-4851-9C89-2F6630597449.mp4",
+      "bytes": 25298140,
+      "sha256": "dc6e79e816ac363811fa480331d28b94984c6244ff2e43f1f4352a9e4eeedcef"
+    }
+  ],
+  "limits": [
+    "Read-only source/log/hierarchy review and visual inspection of extracted recording frames; no native build or runtime in this review.",
+    "Select All menu reachability on every iOS26 existing-text case still requires the next exact-source UI run. Missing menu explicitly fails with diagnostics.",
+    "A long press on a single-word value may select the whole value and omit Select All. The helper currently fails with diagnostics if no explicit reachable Select All action exists; it does not assume whole selection or fall back to caret-based deletion. This is an unverified menu-path edge case for the next full CI, not a demonstrated product defect.",
+    "The exact persisted Arabic email value after reveal and all final Saved search assertions remain pending until corrected runtime completes.",
+    "No application-product change, provider call, shared Mac build, signing, store or release operation was performed by reviewer."
+  ]
+}

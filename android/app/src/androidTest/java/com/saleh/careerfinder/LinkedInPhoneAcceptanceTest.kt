@@ -34,6 +34,7 @@ class LinkedInPhoneAcceptanceTest {
     }
     private val store = MemoryStore()
     private val owner = ViewModelStore()
+    private lateinit var strings: CareerStrings
     private lateinit var model: CareerViewModel
     private var requests = 0
     @Before fun showPhone() {
@@ -48,9 +49,10 @@ class LinkedInPhoneAcceptanceTest {
             override suspend fun search(filters: DiscoveryFilters, cursor: String?): DiscoveryPage = error("No discovery network request")
         }
         compose.activityRule.scenario.onActivity { activity ->
+            strings = phoneAcceptanceStrings(activity)
             model = CareerViewModel(activity.application, store, service, discoveryService = discovery)
             owner.put("linkedin-phone", model)
-            activity.setContent { EnglishAcceptanceLanguage { CareerTheme { CareerApp(model) } } }
+            activity.setContent { PhoneAcceptanceContent { CareerApp(model) } }
         }
         compose.waitUntil(5_000) { model.state.value.loaded && !model.state.value.busy }
     }
@@ -74,19 +76,19 @@ class LinkedInPhoneAcceptanceTest {
     }
 
     @Test fun optionalProfileLink_isHonestEditableAndPrivatelySavedAtLargeText() {
-        compose.onNodeWithText("Profile").revealNavigationTab().performClick()
-        compose.onNodeWithTag("profile-list").performScrollToNode(hasText("Add experience and preferences"))
-        compose.onNodeWithText("Add experience and preferences").performClick()
-        compose.onNodeWithTag("profile-list").performScrollToNode(hasText("LinkedIn profile (optional)") and hasSetTextAction())
-        compose.onNode(hasText("LinkedIn profile (optional)") and hasSetTextAction()).performTextInput("https://sa.linkedin.com/in/example-person/?trk=phone")
+        compose.onNodeWithTag("navigation-profile").revealNavigationTab().performClick()
+        compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("Add experience and preferences")))
+        compose.onNodeWithText(strings("Add experience and preferences")).performClick()
+        compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("LinkedIn profile (optional)")) and hasSetTextAction())
+        compose.onNode(hasText(strings("LinkedIn profile (optional)")) and hasSetTextAction()).performTextInput("https://sa.linkedin.com/in/example-person/?trk=phone")
         hideKeyboard()
-        compose.onNodeWithTag("profile-list").performScrollToNode(hasText("A saved profile link, not a verified LinkedIn account connection.", substring = true))
-        compose.onNode(hasText("A saved profile link, not a verified LinkedIn account connection.", substring = true)).assertIsDisplayed()
+        compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("A saved profile link, not a verified LinkedIn account connection. It is shared with an employer only when it appears in a review you approve."), substring = true))
+        compose.onNode(hasText(strings("A saved profile link, not a verified LinkedIn account connection. It is shared with an employer only when it appears in a review you approve."), substring = true)).assertIsDisplayed()
         capture("linkedin-profile-guidance")
-        compose.onNodeWithTag("profile-list").performScrollToNode(hasText("Open LinkedIn profile"))
-        compose.onNodeWithText("Open LinkedIn profile").assertIsDisplayed()
-        compose.onNodeWithTag("profile-list").performScrollToNode(hasText("Save profile on this phone"))
-        compose.onNodeWithText("Save profile on this phone").performClick()
+        compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("Open LinkedIn profile")))
+        compose.onNodeWithText(strings("Open LinkedIn profile")).assertIsDisplayed()
+        compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("Save profile on this phone")))
+        compose.onNodeWithText(strings("Save profile on this phone")).performClick()
         compose.waitUntil(5_000) { !model.state.value.busy && !model.state.value.profileDirty }
         assertEquals("https://www.linkedin.com/in/example-person", model.state.value.profile.linkedin)
         assertEquals("https://www.linkedin.com/in/example-person", store.read("workspace-unpaired")!!.getJSONObject("profile").getString("linkedin"))
@@ -104,7 +106,7 @@ class LinkedInPhoneAcceptanceTest {
         var opened: String? = null
         compose.activityRule.scenario.onActivity { activity ->
             activity.setContent {
-                CareerTheme {
+                PhoneAcceptanceContent {
                     Surface(color = MaterialTheme.colorScheme.background) {
                         Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().verticalScroll(rememberScrollState())
                             .padding(20.dp).testTag("linkedin-review-content"), verticalArrangement = Arrangement.spacedBy(20.dp)) {
@@ -117,11 +119,9 @@ class LinkedInPhoneAcceptanceTest {
         }
         compose.onNodeWithText(exact).performScrollTo().assertIsDisplayed()
         capture("linkedin-exact-review")
-        // This standalone component keeps the runner's Arabic/RTL context.
-        val display = CareerStrings(compose.activity)
-        compose.onNodeWithText(display("Search LinkedIn")).performScrollTo().assertIsDisplayed()
-        compose.onNodeWithText(display("Search LinkedIn")).performClick()
-        compose.onNodeWithText(display("Opens LinkedIn with your keywords and location. LinkedIn manages its own sign-in and applications; opening a search does not submit an application.")).performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText(strings("Search LinkedIn")).performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText(strings("Search LinkedIn")).performClick()
+        compose.onNode(hasText(strings("Opens LinkedIn with your keywords and location. LinkedIn manages its own sign-in and applications; opening a search does not submit an application."), substring = true)).performScrollTo().assertIsDisplayed()
         capture("linkedin-search-handoff")
         assertEquals("https://www.linkedin.com/jobs/search/?keywords=Data+%26+science&location=Riyadh%2C+SA", opened)
         assertEquals(0, requests)

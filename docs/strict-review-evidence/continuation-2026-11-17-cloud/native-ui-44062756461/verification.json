@@ -1,0 +1,142 @@
+{
+  "observedAt": "2026-11-17T10:54:45.465490+00:00",
+  "baseline": "859b84a4bb184cbc9bb5039be34e35ad4ca17356",
+  "runId": 44062756461,
+  "testedCheckout": "fdab7f1181ab236be8f8085c562b357d9cfb4874",
+  "baselineAndCheckoutTree": "0ab8ce45b11c4f4564e88e55007e5a22111ab15e",
+  "android": {
+    "compile": "passed",
+    "lint": {
+      "errors": 0,
+      "warnings": 20
+    },
+    "ordinary": {
+      "run": 103,
+      "failed": 11,
+      "successful": 92
+    },
+    "normalPreviewTls": "not_run",
+    "nativeSyntheticHttps": "not_run",
+    "platformSettings": {
+      "appLocale": "ar",
+      "fontScale": 1.8,
+      "rtl": true,
+      "widthDp": 360
+    },
+    "allFixturesProvenArabic": false
+  },
+  "iphone": {
+    "logicAndUnsignedBuild": "passed",
+    "interfaceAcceptance": {
+      "result": "failed",
+      "run": 17,
+      "failed": 3,
+      "successful": 14,
+      "unexpectedFailures": 0
+    },
+    "boundaryChecks": 120,
+    "lifecycleAssertions": 503,
+    "lifecycleScenarios": 77,
+    "discoveryAssertions": 43,
+    "discoveryScenarios": 13,
+    "savedSearchCases": 21,
+    "typedDisplayContract": "passed",
+    "artifact": {
+      "id": 14320023688,
+      "bytes": 290340760,
+      "sha256": "f47c75f9b68b145839f82b9252a0fe2f8fbd5e13f4418e97d0e02a1098a2ad51"
+    }
+  },
+  "followup": {
+    "nativeCompile": "not_run",
+    "emulator": "not_run",
+    "physicalDevice": "not_run",
+    "localResourceGenerationCheck": "passed",
+    "localContractTests": 8,
+    "whitespace": "passed",
+    "allOriginalBehavioralAssertionCountsPreserved": true,
+    "testSelectionOrSkipsChanged": false,
+    "newRegression": "selectedLanguage_remainsConsistentInsideAnOpenDialog_withoutLosingItsDraft",
+    "independentReviews": [
+      {
+        "agent": "frontend_critique",
+        "scope": "Android modal-copy/helper/selectors and Swift keyboard helper",
+        "result": "No blocking source/compiler-risk or acceptance weakening finding; runtime unexecuted",
+        "caveat": "Modal test observes root RTL, not independent modal geometry"
+      },
+      {
+        "agent": "auth_critique",
+        "scope": "DEBUG iPhone fixture persistence and dirty-profile restore/refresh",
+        "result": "No further concrete blocker; normal dirty-profile and unreadable-file guards retained; runtime unexecuted"
+      }
+    ],
+    "iphoneTestMethodsPreserved": 17
+  },
+  "patches": [
+    {
+      "file": "android-acceptance-locale.patch",
+      "bytes": 64957,
+      "sha256": "6c458e8b9e7a6565b727bece41b01af16e1894a62a0caca2cb8d6b6825c043b9"
+    },
+    {
+      "file": "android-product-locale.patch",
+      "bytes": 7062,
+      "sha256": "d1a33b8d4e982f407fb3c4cf5c2fac977cf799aad6561d0be8ab427893a90b93"
+    },
+    {
+      "file": "iphone-acceptance-followup.patch",
+      "bytes": 20736,
+      "sha256": "a73369ae712572730f1041dd3aa78a9f535a25499a1077e3c4272255aa03a97b"
+    }
+  ],
+  "files": [
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/LinkedInPhoneAcceptanceTest.kt",
+      "sha256": "5b8d2179dd5477f6520367c3cddba9df9c00083501a8edcbf1c8f9186c69d2e0"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt",
+      "sha256": "7ba4aaf87e5c02a871d241de4b0d4fca623dbeaac9d17768adc6899bcc3b8978"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/NativeLocalizationAcceptanceTest.kt",
+      "sha256": "e7f38214368cb783484514c76fe1470bacb040b20863d44ea3b75baa9ff4017b"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/NavigationPhoneAcceptanceTest.kt",
+      "sha256": "e36d84532e0bbe511e494332c61c7b3f7e5d342bdb96400ef0366d104bcdc242"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceEnvironment.kt",
+      "sha256": "08df9d71250f6ca69c50e5c27d228dc25902289a57ca42d317a76126646db4a1"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt",
+      "sha256": "b4d32e00ed0edcd161c67fbbd822c2da7e8d6e6cee4ed6dd02ff4e8bb78110bf"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt",
+      "sha256": "7256ad163d857a5d5029b839b69bb7f157567e593bd7e0d44d4c49502d614f8a"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceAccessibilityRegressionTest.kt",
+      "sha256": "086685c3cbb442e2e2c05e5e2da6cac20ad077cb45111fe67d5ecf8cfd108d20"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/CareerLocalization.kt",
+      "sha256": "2e291442ce782bea7ed406610bec7f6ca29e745cfe4cf94c4efc228a2251e264"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+      "sha256": "eb51d017e48ac6383ef8ef30df2c10775ea19c6cdaa9b4078a29a602930eb706"
+    },
+    {
+      "path": "apple/AhmadCareer/CareerAppEnvironment.swift",
+      "sha256": "7c827cfdb82d4396dbb3b1611435fc0d5eb299634d2c0240b9809e358ad8203d"
+    },
+    {
+      "path": "apple/UITests/CareerFinderUITests.swift",
+      "sha256": "60172c146f4df7937c20ddd26393854fd35ce25630ad30a199221e4fed0596cf"
+    }
+  ]
+}
