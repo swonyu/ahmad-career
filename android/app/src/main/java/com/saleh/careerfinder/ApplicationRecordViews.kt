@@ -203,7 +203,10 @@ private fun RecordDateField(label: String, date: String, enabled: Boolean, choos
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(l10n(label), style = MaterialTheme.typography.labelLarge)
         OutlinedButton(onClick = choose, enabled = enabled, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
-            .semantics { contentDescription = l10n.format("Choose {0}", listOf(l10n(label)))}) { Text(l10n(if (date.isEmpty()) "Choose date" else l10n.civilDate(date))) }
+            .semantics {
+                contentDescription = l10n.format("Choose {0}", listOf(l10n(label)))
+                if (date.isNotEmpty()) stateDescription = l10n(l10n.civilDate(date))
+            }) { Text(l10n(if (date.isEmpty()) "Choose date" else l10n.civilDate(date))) }
         if (date.isNotEmpty()) TextButton(onClick = clear, enabled = enabled, modifier = Modifier.heightIn(min = 48.dp)
             .semantics { contentDescription = l10n.format("Clear {0}", listOf(l10n(label)))}) { Text(l10n("Clear date")) }
     }
