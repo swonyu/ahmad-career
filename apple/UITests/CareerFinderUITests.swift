@@ -107,7 +107,40 @@ final class CareerFinderUITests: XCTestCase {
                        "A real keyboard key must be visible before typing")
         let value = field.value as? String ?? ""
         let previous = value == field.placeholderValue ? "" : value
-        field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: previous.count) + text)
+        if field.elementType == .secureTextField {
+            field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: previous.count) + text)
+        } else {
+            if !previous.isEmpty {
+                // A tap can place the caret inside existing text, especially
+                // mixed Arabic/English text. Use the real editing menu instead
+                // of assuming that backward deletes start at the end.
+                field.press(forDuration: 1.1)
+                let names = ["Select All", "تحديد الكل"]
+                let predicate = NSPredicate(format: "label IN %@ OR identifier IN %@", names, names)
+                let choices = [app.menuItems.matching(predicate), app.buttons.matching(predicate)]
+                let selectable = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+                    choices.flatMap { $0.allElementsBoundByIndex }.contains { $0.exists && $0.isHittable }
+                }, object: nil)
+                let selectionReady = XCTWaiter.wait(for: [selectable], timeout: 5)
+                if selectionReady != .completed {
+                    capture("replacement-select-all-unavailable", app: app)
+                    print(app.debugDescription)
+                }
+                XCTAssertEqual(selectionReady, .completed, "Existing text must expose a reachable Select All edit action")
+                guard let selectAll = choices.flatMap({ $0.allElementsBoundByIndex }).first(where: { $0.exists && $0.isHittable }) else {
+                    XCTFail("Missing reachable Select All edit action"); return
+                }
+                selectAll.tap()
+                field.typeText(XCUIKeyboardKey.delete.rawValue)
+                let cleared = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+                    let value = field.value as? String ?? ""
+                    return value.isEmpty || value == field.placeholderValue
+                }, object: nil)
+                XCTAssertEqual(XCTWaiter.wait(for: [cleared], timeout: 5), .completed,
+                               "Select All and Delete must clear the whole field before replacement")
+            }
+            if !text.isEmpty { field.typeText(text) }
+        }
         if field.elementType != .secureTextField {
             let edited = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
                 let value = field.value as? String ?? ""
@@ -602,6 +635,7 @@ final class CareerFinderUITests: XCTestCase {
         let reopen = app.buttons["home.applicationProfile"]; reveal(reopen, in: app); reopen.tap()
         XCTAssertTrue(app.textFields["application.firstName"].waitForExistence(timeout: 5))
         XCTAssertEqual(app.textFields["application.firstName"].value as? String, "Saved", "User text equal to an English label stays verbatim")
+        reveal(app.textFields["application.email"], in: app)
         XCTAssertEqual(app.textFields["application.email"].value as? String, "saved@example.invalid")
         capture("28-arabic-profile-original-values", app: app)
         app.navigationBars.buttons["إلغاء"].tap()

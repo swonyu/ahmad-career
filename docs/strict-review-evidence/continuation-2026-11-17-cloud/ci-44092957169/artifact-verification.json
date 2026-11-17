@@ -1,0 +1,49 @@
+{
+  "run_id": 44092957169,
+  "artifacts": [
+    {
+      "artifact_id": 14333756279,
+      "name": "android-lint-44092957169",
+      "bytes": 2322175,
+      "sha256": "a5521d521069c1c185917efc556e7aae901198bd3a6f5226498eefdb8644dbb0",
+      "matches_github_size_and_digest": true,
+      "safe_entry_paths_no_traversal_or_symlink": true,
+      "zip_entry_count": 27,
+      "archive_preserved_in_github": "https://api.github.com/repos/swonyu/ahmad-career/actions/artifacts/14333756279",
+      "expires_at": "2026-11-24T13:39:09Z"
+    },
+    {
+      "artifact_id": 14333475315,
+      "name": "iphone-build-log-44092957169",
+      "bytes": 8391,
+      "sha256": "e60061d5a76c12b3caae11dff63836242a06fe93ed87469cc53a5debe21d432d",
+      "matches_github_size_and_digest": true,
+      "safe_entry_paths_no_traversal_or_symlink": true,
+      "zip_entry_count": 1,
+      "archive_preserved_in_github": "https://api.github.com/repos/swonyu/ahmad-career/actions/artifacts/14333475315",
+      "expires_at": "2026-11-24T13:30:19Z"
+    },
+    {
+      "artifact_id": 14333469470,
+      "name": "iphone-ui-acceptance-44092957169",
+      "bytes": 313830971,
+      "sha256": "18662ca732504b0d7f2b10b48d25366f174a02979e6cf5ce6951ea4aebfbb5f4",
+      "matches_github_size_and_digest": true,
+      "safe_entry_paths_no_traversal_or_symlink": true,
+      "zip_entry_count": 1926,
+      "archive_preserved_in_github": "https://api.github.com/repos/swonyu/ahmad-career/actions/artifacts/14333469470",
+      "expires_at": "2026-11-24T13:51:54Z"
+    },
+    {
+      "artifact_id": 14331754026,
+      "name": "hosted-storage-checks-44092957169",
+      "bytes": 8819,
+      "sha256": "53a6a06266d772c67af50e06759e90f44c77323fde8a8d8e1b89c32282fb6a90",
+      "matches_github_size_and_digest": true,
+      "safe_entry_paths_no_traversal_or_symlink": true,
+      "zip_entry_count": 5,
+      "archive_preserved_in_github": "https://api.github.com/repos/swonyu/ahmad-career/actions/artifacts/14331754026",
+      "expires_at": "2026-11-24T13:29:36Z"
+    }
+  ]
+}

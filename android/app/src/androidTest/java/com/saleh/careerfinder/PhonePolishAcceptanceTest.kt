@@ -167,6 +167,7 @@ class PhonePolishAcceptanceTest {
 
     @Test fun unfinishedOpportunity_closeChoicesKeepAndDiscardOnlyTheDraft() {
         compose.onNodeWithTag("jobs-saved-tab").performClick()
+        compose.onNodeWithTag("jobs-list").performScrollToNode(hasText(strings("Add opportunity")))
         compose.onNodeWithText(strings("Add opportunity")).performClick()
         compose.onNodeWithTag("opportunity-editor").performScrollToNode(hasText(strings("Employer job link")) and hasSetTextAction())
         compose.onNode(hasText(strings("Employer job link")) and hasSetTextAction()).performTextInput("https://example.invalid/later")

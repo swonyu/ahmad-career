@@ -324,7 +324,7 @@ export default function PhoneApp({ account }: { account: Account }) {
     const current = workspaceSchema.parse(await phoneAPI("/api/phone/workspace"));
     assertRecovery();
     if (current.accountId !== account.id) throw Error("Sign in with the original account before recovering these private edits.");
-    if (exportOnly) { download(JSON.stringify({ format: "Career Finder unfinished edits", version: 1, scope: saved.snapshot.scope, profile: saved.formChanged ? saved.profile : undefined, record: saved.dialog?.kind === "record" ? { job: saved.dialog.job, original: saved.dialog.record, draft: saved.editorDraft } : undefined }, null, 2), "Career-Finder-unfinished-edits.json"); setRecoveryStatus("Your unfinished edits were exported. Keep the downloaded file private."); return; }
+    if (exportOnly) { download(JSON.stringify({ format: "Career Finder unfinished edits", version: 1, scope: saved.snapshot.scope, profile: saved.formChanged ? saved.profile : undefined, record: saved.dialog?.kind === "record" ? { job: saved.dialog.job, original: saved.dialog.record, draft: saved.editorDraft } : undefined }, null, 2), "Career-Finder-unfinished-edits.json"); setRecoveryStatus("Recovery download started. It contains your unfinished edits; keep the file private."); return; }
     const scope = `account:${encodeURIComponent(account.id)}:${current.workspaceId ?? "new"}`;
     if (scope !== saved.snapshot.scope) throw Error("This account now uses a different workspace. Export these unfinished edits first; earlier workspace drafts stay separate.");
     const latest = await loadPhoneSnapshot(scope); assertRecovery();

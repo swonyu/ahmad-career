@@ -1,0 +1,67 @@
+{
+  "recordedAt": "2026-11-17T13:53:45.985056+00:00",
+  "finding": "PRODUCT-FINAL-01",
+  "findingStatus": "fixed and focused checks passed in isolated clone; root integration and next CI pending",
+  "baselineCommit": "3a709eb15f1024df78ee03474f511568df2dc3de",
+  "writeScope": [
+    "hosted/app/phone/PhoneApp.tsx",
+    "hosted/app/i18n/messages.ar.json"
+  ],
+  "change": {
+    "beforeEnglish": "Your unfinished edits were exported. Keep the downloaded file private.",
+    "afterEnglish": "Recovery download started. It contains your unfinished edits; keep the file private.",
+    "afterArabic": "بدأ تنزيل نسخة الاسترداد. تتضمن تعديلاتك غير المكتملة؛ حافظ على خصوصية الملف.",
+    "reason": "Browser anchor dispatch observes download initiation, not completed file saving."
+  },
+  "sourceHashes": {
+    "hosted/app/phone/PhoneApp.tsx": {
+      "beforeSHA256": "c4852fa70d2305a9227b68a0423aa4366a1b1c20ea1f2255d66c70ea59724345",
+      "afterSHA256": "85985eddea0b3b9ed15a985c1b3e8c2b1a0be4e87c95a208373579e06df26183"
+    },
+    "hosted/app/i18n/messages.ar.json": {
+      "beforeSHA256": "fb952184194ef54551059fcafa2788415429d4a5f16a7fd630dc7d8d95f2567e",
+      "afterSHA256": "1f2dbabc7daac1a24287e764b0770c9b74760042efb083f0006ffd89b62b6539"
+    }
+  },
+  "structuralVerification": {
+    "PhoneAppEqualsBaselineAfterReversingOnlyNoticeString": true,
+    "CatalogEqualsBaselineAfterReversingOnlyMatchingEntry": true,
+    "oldKeyReferencesInApplicationAndTests": 0,
+    "recoveryDownloadOrAuthorizationLogicChanged": false,
+    "testsAddedOrModified": false
+  },
+  "checks": [
+    {
+      "command": "node --test tests/i18n.mjs tests/phone-localization.mjs tests/phone-private-async.mjs",
+      "cwd": "hosted",
+      "result": "passed",
+      "tests": 34,
+      "passed": 34,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "durationMs": 4150.215935,
+      "log": "focused-tests.log",
+      "logSHA256": "ea39289f1eaaeefb69448cafdf187599a6183baa9d317dcb3c40ff7ba4107b27"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "command": "git apply --check /workspace/scratch/5bc6158967e8/recovery-download-copy.patch",
+      "cwd": "/workspace/scratch/5bc6158967e8/career-finder",
+      "result": "passed; check only, patch not applied"
+    }
+  ],
+  "patch": {
+    "path": "/workspace/scratch/5bc6158967e8/recovery-download-copy.patch",
+    "bytes": 3522,
+    "sha256": "35bd81ecf6145188a244d1c8efd3de0a6bae6b12fbe1421ea56ce6e37fff0c6c"
+  },
+  "limitations": [
+    "Focused synthetic/source checks only; no browser download completion observed.",
+    "No native, shared Mac, provider, real account, production, signing, publishing or deployment action.",
+    "No root checkout file was edited."
+  ]
+}

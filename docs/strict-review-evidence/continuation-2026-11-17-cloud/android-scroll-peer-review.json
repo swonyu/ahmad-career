@@ -1,0 +1,46 @@
+{
+  "reviewer": "/root/final_native_peer",
+  "reviewedAt": "2026-11-17T13:49:41.514458+00:00",
+  "scope": "Independent read-only review of the pending one-line Android acceptance test reachability correction.",
+  "baseCommit": "3a709eb15f1024df78ee03474f511568df2dc3de",
+  "sourcePath": "android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt",
+  "beforeSha256": "7256ad163d857a5d5029b839b69bb7f157567e593bd7e0d44d4c49502d614f8a",
+  "afterSha256": "f59aa44ee64be4bdcdb1f0de910525ccf4ebd19d191231fffab463f835e7027c",
+  "patchSha256": "e0f26689cfdf1f9d0dc4231d9d67c708576558f9195154b4c6b0779f702f0880",
+  "decision": "accept source correction; exact corrected runtime acceptance remains pending",
+  "blockingFindings": [],
+  "checks": {
+    "exactlyOneAddedLine": true,
+    "noRemovedLines": true,
+    "allFourTestMethodsUnchanged": true,
+    "assertionLinesUnchanged": true,
+    "clickPreserved": true,
+    "noTimeoutOrSkipOrSelectionChanges": true,
+    "noProductSourceChange": true,
+    "gitDiffCheck": "passed",
+    "actualScrollableProduct": "SavedJobsScreen owns jobs-list LazyColumn with the translated Add opportunity OutlinedButton as a list item. The new call scrolls this production list before the existing touch click; it does not invoke the view model or handler directly.",
+    "largeTextConditionsRetained": "PhoneAcceptanceEnvironment asserts Arabic app resources and rendered Arabic, RTL, and fontScale >=1.79. The recorded run uses1.8 fontScale, forced RTL, Arabic app locale, dark mode,1080x1920 at480dpi.",
+    "behaviorAssertionsRetained": "Keep editing, keep draft, persisted draft resume, discard, empty saved jobs, cleared persisted draft and zero service requests remain unchanged."
+  },
+  "priorRuntime": {
+    "runId": 44092957169,
+    "executed": 104,
+    "passed": 103,
+    "failed": 1,
+    "skipped": 0,
+    "seconds": 209.039,
+    "independentlyCountedStatusCodes": true,
+    "failure": "unfinishedOpportunity_closeChoicesKeepAndDiscardOnlyTheDraft fails before editing at the prior source line170 touch click: zero matching nodes for the Arabic Add opportunity label.",
+    "rawLogSha256": "23dd0adb8c39f59bcddc431f7818b8129b02f69ba7c441974d23225da9fae911",
+    "artifactSha256IndependentlyVerified": "a5521d521069c1c185917efc556e7aae901198bd3a6f5226498eefdb8644dbb0",
+    "normalPreviewTls": "not_run",
+    "nativeSyntheticHttps": "not_run"
+  },
+  "limits": [
+    "No native build or runtime was performed in this independent review.",
+    "The passing selectedLanguage open-dialog regression already scrolls the same action but initially renders English under an Arabic platform locale; it is corroborating reachability evidence, not a pass for this exact Arabic-only flow.",
+    "The CI harness dynamically includes test classes and rejects failure/skip status codes; its historical minimum97 is not the observed current test count104.",
+    "Rerun the complete required Android gate and retain exact executed counts, including the later TLS stages, before marking native acceptance passed."
+  ],
+  "ownership": "No root checkout files, application source, shared Mac build, signing, store or release state changed by reviewer."
+}
