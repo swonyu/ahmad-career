@@ -187,9 +187,12 @@ internal fun WorkspaceImportDialog(state: CareerUiState, model: CareerViewModel)
             if (state.error != null) item {
                 Text(l10n.message(state.error), color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
             }
-            item { Action("Merge selected data on this phone", !state.busy && (profile || records || search)) {
-                model.importWorkspace(preview.token, profile, pdf, records, search)
-            } }
+            item {
+                if (!profile && !records && !search) Text(l10n("Choose what to import."), color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+                Action("Merge selected data on this phone", !state.busy && (profile || records || search)) {
+                    model.importWorkspace(preview.token, profile, pdf, records, search)
+                }
+            }
             item { TextButton(onClick = model::closeWorkspaceImport, enabled = !state.busy,
                 modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Keep current workspace")) } }
         }
