@@ -1,0 +1,33 @@
+{
+  "observedAt": "2026-11-17T15:15:03.850780Z",
+  "method": "Read-only authenticated GitHub ref and branch-filtered workflow-run API requests through the existing authorized gh session",
+  "branch": "continuation/publishing-native-fixes-20261117-01a49",
+  "currentHead": "842472684b194e993355f632902ccc81366c164c",
+  "queryPageSize": 5,
+  "returnedRuns": [
+    {
+      "id": 44090269239,
+      "head": "5b1493f8584a2d430103bd8a5cf395d53ec111fb",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/swonyu/ahmad-career/actions/runs/44090269239",
+      "updatedAt": "2026-11-17T13:39:46Z"
+    },
+    {
+      "id": 44081037018,
+      "head": "cc695391316567288af891f9d2220e6b2d64b0af",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/swonyu/ahmad-career/actions/runs/44081037018",
+      "updatedAt": "2026-11-17T12:37:37Z"
+    }
+  ],
+  "matchingCurrentHeadRunReturned": false,
+  "limits": [
+    "This bounded branch query returned no run for842472; it does not supply a native acceptance conclusion for that source.",
+    "This branch is distinct from the protected publishing-copy branchfd9c5399 and from the original continuation candidatefa151e2.",
+    "No source mutation, dispatch, shared build, signing or publishing action occurred in this read."
+  ]
+}

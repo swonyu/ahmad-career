@@ -1312,5 +1312,6 @@
   "Retry this search": "إعادة محاولة هذا البحث",
   "No current matches could be confirmed.": "تعذّر التأكد من وجود فرص مطابقة حاليًا.",
   "Retry this search or open an employer’s website to check its current openings.": "أعِد محاولة هذا البحث أو افتح موقع صاحب العمل للاطلاع على الفرص المتاحة حاليًا.",
-  "To keep leading zeros and number-like text, import quoted fields as text or set text columns to Text. Use JSON for original values.": "للحفاظ على الأصفار في البداية والنصوص التي تشبه الأرقام، استورد الحقول المحاطة بعلامات اقتباس كنص أو اضبط نوع الأعمدة النصية على «نص». استخدم JSON للاحتفاظ بالقيم الأصلية."
+  "To keep leading zeros and number-like text, import quoted fields as text or set text columns to Text. Use JSON for original values.": "للحفاظ على الأصفار في البداية والنصوص التي تشبه الأرقام، استورد الحقول المحاطة بعلامات اقتباس كنص أو اضبط نوع الأعمدة النصية على «نص». استخدم JSON للاحتفاظ بالقيم الأصلية.",
+  "This search is incomplete. Review the source details, or retry the same search.": "نتائج هذا البحث غير مكتملة. راجع تفاصيل المصادر أو أعد البحث نفسه."
 }

@@ -20,7 +20,7 @@ function execute(source, scope = {}, loader = require) {
   vm.runInNewContext(result.outputText, context);
   return context.exports;
 }
-const { translate, formatNumber } = execute(read('app/i18n/core.ts'), {}, name => name === './messages.ar.json' ? catalog : require(name));
+const { translate, formatNumber, formatDateTime } = execute(read('app/i18n/core.ts'), {}, name => name === './messages.ar.json' ? catalog : require(name));
 const translator = language => (key, values) => translate(key, language, values);
 
 // Compile the real presentation code, while replacing only its surrounding
@@ -259,3 +259,114 @@ test('actual search inputs preserve mixed-script draft text with automatic direc
     assert(renderToStaticMarkup(element).includes('dir="auto"'));
   }
 });
+
+function renderedElements(element, predicate) {
+  const matches = [];
+  function visit(node) {
+    if (Array.isArray(node)) { node.forEach(visit); return; }
+    if (!React.isValidElement(node)) return;
+    if (typeof node.type === 'function') { visit(node.type(node.props)); return; }
+    if (predicate(node)) matches.push(node);
+    visit(node.props.children);
+  }
+  visit(element);
+  return matches;
+}
+
+// Render the whole production options disclosure so both map/filter branches,
+// their label associations, and their actual checkbox handlers are exercised.
+const boardNames = ['شركة (Acme) 17 / QA', 'Orbit (فريق) 204 — Careers'];
+const catalogBoards = boardNames.map((name, index) => Object.freeze({ id: `lever:synthetic-${index}`, name }));
+const unknownBoard = 'greenhouse:unknown-team-2026';
+const customBoardURL = 'https://jobs.lever.co/synthetic-board-204';
+function renderBoardOptions(language) {
+  const searchSources = Object.freeze([catalogBoards[0].id, unknownBoard, customBoardURL]);
+  const filters = Object.freeze({ query: mixedJob.title, location: mixedJob.location, remoteOnly: false, sources: searchSources });
+  const changes = [], touched = [];
+  const element = renderPhoneFragment(phoneFragment(node => hasClass(node, 'phone-search-options')), language, {
+    catalog: { sources: catalogBoards }, searchSources, filters, customBoard: '',
+    SlidersHorizontal: () => null,
+    setFilters: value => changes.push(value),
+    setBoardsTouched: value => touched.push(value),
+    setNotice: notice => assert.fail(`Unexpected selection notice: ${notice.text}`),
+  });
+  const labels = renderedElements(element, node => node.type === 'label' && node.props.className === 'phone-check');
+  assert.deepEqual(labels.map(allText), [...boardNames, unknownBoard, customBoardURL]);
+  return { labels, changes, touched, filters, searchSources };
+}
+
+function sourceCheckbox(label, value, context) {
+  assert.equal(allText(label), value, `${context}: checkbox label text changed`);
+  const inputs = renderedElements(label, node => node.type === 'input');
+  assert.equal(inputs.length, 1, `${context}: expected one associated input`);
+  assert.equal(inputs[0].props.type, 'checkbox');
+  assert.equal(assertIsolatedRawValue(label, value, context), 1);
+  const spans = renderedElements(label, node => node.type === 'span' && allText(node) === value);
+  assert.equal(spans.length, 1);
+  assert.equal(spans[0].props.dir, 'auto', `${context}: direction must follow the source's own text`);
+  return inputs[0];
+}
+
+for (const language of ['en', 'ar']) {
+  test(`actual catalog-board checkboxes isolate Arabic and Latin source names in ${language}`, () => {
+    const { labels, changes, touched, filters, searchSources } = renderBoardOptions(language);
+    for (const [index, board] of catalogBoards.entries()) {
+      const input = sourceCheckbox(labels[index], board.name, `${language} catalog source`);
+      assert.equal(input.props.checked, index === 0);
+      input.props.onChange({ target: { checked: index !== 0 } });
+      const next = changes.at(-1);
+      assert.equal(next.query, filters.query);
+      assert.equal(next.location, filters.location);
+      assert.deepEqual(Array.from(next.sources), index === 0
+        ? searchSources.filter(id => id !== board.id) : [...searchSources, board.id]);
+    }
+    assert.deepEqual(touched, [true, true]);
+    assert.deepEqual(Array.from(searchSources), [catalogBoards[0].id, unknownBoard, customBoardURL]);
+  });
+
+  test(`actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in ${language}`, () => {
+    assert.equal(new URL(customBoardURL).protocol, 'https:');
+    assert.equal(new URL(customBoardURL).hostname, 'jobs.lever.co');
+    const { labels, changes, touched, filters, searchSources } = renderBoardOptions(language);
+    for (const [index, source] of [unknownBoard, customBoardURL].entries()) {
+      const input = sourceCheckbox(labels[index + catalogBoards.length], source, `${language} custom source`);
+      assert.equal(input.props.checked, true);
+      input.props.onChange();
+      const next = changes.at(-1);
+      assert.equal(next.query, filters.query);
+      assert.equal(next.location, filters.location);
+      assert.deepEqual(Array.from(next.sources), searchSources.filter(value => value !== source));
+    }
+    assert.deepEqual(touched, [true, true]);
+  });
+
+  test(`actual JobCard footer isolates each source name and retains its employer link in ${language}`, () => {
+    const source = declarations(read('app/phone/components.tsx'), ['JobCard']);
+    const JobCard = execute(`${source}\nexports.JobCard = JobCard;`, {
+      useI18n: () => ({ language, t: translator(language) }), formatDateTime,
+      ArrowUpRight: () => null, Bookmark: () => null,
+    }).JobCard;
+    for (const sourceName of [...boardNames, '']) {
+      const job = Object.freeze({ ...mixedJob, sourceName });
+      const element = JobCard({ job, saved: false });
+      const footers = renderedElements(element, node => node.props.className === 'phone-job-footer');
+      assert.equal(footers.length, 1);
+      const footer = footers[0];
+      const spans = renderedElements(footer, node => node.type === 'span');
+      if (sourceName) {
+        assert.equal(assertIsolatedRawValue(footer, sourceName, `${language} JobCard source`), 1);
+        assert.equal(spans.length, 1);
+        assert.equal(spans[0].props.dir, 'auto');
+      } else assert.equal(spans.length, 0, 'No empty source label should appear');
+      const links = renderedElements(footer, node => node.type === 'a');
+      assert.equal(links.length, 1);
+      assert.equal(links[0].props.href, mixedJob.url);
+      assert.equal(links[0].props.target, '_blank');
+      assert.equal(links[0].props.rel, 'noopener noreferrer');
+      assert.equal(allText(links[0]), translator(language)('View job '));
+      const html = renderToStaticMarkup(React.createElement('section', { lang: language, dir: language === 'ar' ? 'rtl' : 'ltr' }, element));
+      assert(html.includes(`lang="${language}"`));
+      assert(html.includes(`href="${mixedJob.url}"`));
+    }
+  });
+}

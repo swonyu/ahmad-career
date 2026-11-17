@@ -814,10 +814,23 @@ struct NativeApplicationConnection: View {
                     }
                     Section {
                         DisclosureGroup(l10n("Use another service"), isExpanded: $advanced) {
-                            TextField("https://service.example", text: $address).keyboardType(.URL)
-                                .textInputAutocapitalization(.never).autocorrectionDisabled()
-                                .focused($focusedField, equals: "address").submitLabel(.done).onSubmit { focusedField = nil }
-                                .accessibilityLabel(l10n("Application service HTTPS address")).accessibilityIdentifier("connection.address")
+                            HStack(spacing: 8) {
+                                TextField("https://service.example", text: $address).keyboardType(.URL)
+                                    .textInputAutocapitalization(.never).autocorrectionDisabled()
+                                    .focused($focusedField, equals: "address").submitLabel(.done).onSubmit { focusedField = nil }
+                                    .accessibilityLabel(l10n("Application service HTTPS address")).accessibilityIdentifier("connection.address")
+                                if !address.isEmpty {
+                                    Button {
+                                        address = ""
+                                        focusedField = "address"
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
+                                            .frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
+                                    }.buttonStyle(.plain).disabled(model.busy)
+                                        .accessibilityLabel(l10n("Clear service address"))
+                                        .accessibilityIdentifier("connection.clearAddress")
+                                }
+                            }
                             Text(l10n("Advanced: use the HTTPS address from your own service operator. Its account, privacy and submission features may differ."))
                                 .font(.footnote).foregroundStyle(.secondary)
                             if !MobileApplicationPolicy.isHostedService(address) {

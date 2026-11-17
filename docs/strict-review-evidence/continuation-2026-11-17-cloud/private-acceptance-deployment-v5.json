@@ -1,0 +1,65 @@
+{
+  "recordedAt": "2026-11-17T15:59:37Z",
+  "projectId": "appgprj_6afc21bd599c8191a0fb7705274d8582",
+  "version": 5,
+  "sourceCommit": "7e0ac76792d31b98863c5e9f8f1e1c4821a7f2e7",
+  "sourceTree": "58107e74b2edeb59568ff236fbfcc0226f22de75",
+  "openingSourceCommit": "8570985f719cbfb374374b0714e74c3d19eeb146",
+  "versionId": "appgprj_6afc21bd599c8191a0fb7705274d8582~appgver_2dd0ee82dfcc8191803a0163f6a17db0",
+  "deploymentId": "appgdep_6afc79b5d8e48191a530aeee7fd7e408",
+  "deploymentStatus": "succeeded",
+  "deployedAt": "2026-11-17T15:59:07.773947+00:00",
+  "environmentRevision": 1,
+  "url": "https://career-finder-acceptance-20261117.jazzy-drake-8323.chatgpt.site/phone",
+  "audience": {
+    "mode": "custom",
+    "policyRevision": 1,
+    "ownerRole": "owner",
+    "allowedAccountUsers": 1,
+    "externalVisitors": 0,
+    "groups": 0,
+    "audienceChanged": false
+  },
+  "sourceChanges": [
+    "Direction boundaries on actual catalog labels, restored/custom board labels and JobCard source names; underlying text and interaction preserved.",
+    "Neutral visible and live search announcements and overall/per-source limit detection; fresh limited results no longer imply an outage.",
+    "Focused actual-rendering English/Arabic tests and lab history update."
+  ],
+  "verification": {
+    "typecheck": "passed",
+    "focusedTests": {
+      "executed": 82,
+      "passed": 82,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "durationMs": 3067.683934
+    },
+    "fullLint": "exit 0; 0 errors and 6 pre-existing warnings",
+    "productionBuild": "passed with existing nonfatal framework sourcemap/import-classification warnings",
+    "sourcePush": "exact commit confirmed by Site workflow helper",
+    "archive": "career-finder-private-acceptance-v5.tar.gz",
+    "archiveBytes": 4033762,
+    "archiveSHA256": "3e15c5e218a60fd92b782c65db3d9f58da48ff4cbbddd7c2e618b2e3aa841caa",
+    "changedPaths": [
+      "ACCEPTANCE-LAB.md",
+      "app/phone/PhoneApp.tsx",
+      "app/phone/components.tsx",
+      "app/i18n/messages.ar.json",
+      "tests/phone-localization.mjs",
+      "tests/phone-search-workflows.mjs"
+    ],
+    "matchingRootHostedEvidence": "search-status-f05/root-verification.json"
+  },
+  "boundaries": {
+    "publicHostedVersion": 7,
+    "publicSiteChanged": false,
+    "providerConfigurationChanged": false,
+    "migrationChanged": false,
+    "realGoogleCallbackVerified": false,
+    "ownerBrowserV5Acceptance": "not performed; correct owner browser context unavailable",
+    "browserDownloadCompletionOrCalendarImportVerified": false,
+    "liveAutoApplyEnabled": false,
+    "realEmployerApplicationsSent": 0
+  }
+}

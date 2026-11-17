@@ -1,0 +1,58 @@
+{
+  "owner": "/root/native_resume",
+  "scope": "Exclusive use of the previously owned Mac object-only Git relay for exact candidate push and the two specifically authorized PR metadata updates; no checkout, native build, signing or store operation.",
+  "initial_observation": {
+    "observed_at": "2026-11-17T15:04:17.723095+00:00",
+    "relay_head": "303ee73e0e6389593f6cb08eba285405d60f19cb",
+    "index_exists": false,
+    "status_sha256": "783aa79d0ad08f26a5da66aacb2c280526900c926ec7dd907e6b83e7776d9868",
+    "remote_heads": {
+      "refs/heads/app-store/career-workspace-copy-20261117": "fd9c5399f2b7001b234b3b86bf72e2b36b5114c1",
+      "refs/heads/career-finder-phones-verified-apply-20261116": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+      "refs/heads/continuation/account-acceptance-20261117": "880e878f6f528d903c42951f10a8b216094c889c"
+    },
+    "shared_build_lock": {
+      "exists": false,
+      "is_directory": false
+    },
+    "relevant_processes": [
+      "34639 02:35:50 /opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/Resources/Python.app/Contents/MacOS/Python"
+    ]
+  },
+  "status_format_diagnosis": [
+    {
+      "options": [
+        "--porcelain=v1",
+        "-z"
+      ],
+      "bytes": 18786,
+      "sha256": "50999aa070f57d30d9d25d8fdf72bb175dab68bc3038423a780289c99af081c9"
+    },
+    {
+      "options": [
+        "--short"
+      ],
+      "bytes": 18786,
+      "sha256": "783aa79d0ad08f26a5da66aacb2c280526900c926ec7dd907e6b83e7776d9868"
+    },
+    {
+      "options": [
+        "--porcelain=v2",
+        "-z"
+      ],
+      "bytes": 63226,
+      "sha256": "cb806028fc31e25aefdea402be232faec93de500c7d3869f9df54f9d62a95bc8"
+    }
+  ],
+  "status_resolution": "The initial mismatch was only line-delimited porcelain versus the prior NUL-delimited porcelain format. git status --porcelain=v1 -z exactly reproduced the prior50999aa070f57d30d9d25d8fdf72bb175dab68bc3038423a780289c99af081c9 fingerprint. No path conflict or source mutation was observed.",
+  "relay_directory_contents": [
+    ".git"
+  ],
+  "relay_index_absent": true,
+  "status_entry_count": 404,
+  "status_entry_interpretation": "Expected absent files in the existing object-only no-checkout relay; not a disposable source checkout to reset.",
+  "shared_build_lock_interpretation": "The shared lock was absent at observation. Absence was not treated as a build reservation.",
+  "relay_released_after": "2026-11-17T15:12:23.077536+00:00",
+  "no_active_mac_process_owned_after_release": true,
+  "protected_branch_heads_unchanged": true
+}

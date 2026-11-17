@@ -1,0 +1,3 @@
+# Preserve raw test/lint stdout and its recorded byte hashes.
+*.log -text -whitespace
+*.tap -text -whitespace

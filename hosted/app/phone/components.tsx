@@ -32,7 +32,7 @@ export function JobCard({ job, saved, onSave, onDetails, busy = false }: { job: 
     <div className="phone-job-top"><span className="company-avatar" aria-hidden="true">{Array.from(job.company.trim())[0]?.toUpperCase() || "•"}</span><div><p className="phone-company"><bdi>{job.company}</bdi></p><h3 dir="auto">{onDetails ? <button className="job-title-button" onClick={onDetails}>{job.title}</button> : job.title}</h3></div>{onSave && <button className={`icon-button bookmark ${saved ? "is-saved" : ""}`} aria-label={saved ? t("{0} is saved", [job.title]) : t("Save {0}", [job.title])} aria-pressed={saved} disabled={busy || saved} onClick={onSave}><Bookmark size={21} fill={saved ? "currentColor" : "none"} aria-hidden="true" /></button>}</div>
     {job.location && <p className="phone-job-location"><bdi>{job.location}</bdi></p>}{job.checkedAt && <p className="phone-note">{t("Posting checked ")}<time dir="auto" dateTime={job.checkedAt}>{formatDateTime(job.checkedAt, language)}</time></p>}
     {job.summary && <p className="phone-job-summary" dir="auto">{job.summary}</p>}
-    <div className="phone-job-footer">{job.sourceName && <span>{job.sourceName}</span>}<a href={job.url} target="_blank" rel="noopener noreferrer">{t("View job ")}<ArrowUpRight size={16} aria-hidden="true" /></a></div>
+    <div className="phone-job-footer">{job.sourceName && <span dir="auto">{job.sourceName}</span>}<a href={job.url} target="_blank" rel="noopener noreferrer">{t("View job ")}<ArrowUpRight size={16} aria-hidden="true" /></a></div>
   </article>;
 }
 

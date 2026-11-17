@@ -52,12 +52,12 @@ function job(index) {
     url: `https://example.org/career-finder-search/${index}`, location: 'Riyadh', country: 'SA',
     remote: false, summary: 'Synthetic test data only', checkedAt: stamp, stale: false, sourceName: 'Synthetic board' };
 }
-function page({ status = 'complete', jobs = [job(9)], sourceStatus = 'fresh', error = null, nextCursor = null } = {}) {
+function page({ status = 'complete', jobs = [job(9)], sourceStatus = 'fresh', error = null, nextCursor = null, limited = false, sourceLimited = false } = {}) {
   return { ok: true, version: 1, generatedAt: stamp, status, jobs,
     sources: [{ id: 'lever:synthetic-a', name: 'Synthetic board', provider: 'lever', boardUrl: 'https://jobs.lever.co/synthetic-a',
       status: sourceStatus, checkedAt: sourceStatus === 'unavailable' ? null : stamp,
-      availableCount: jobs.length, matchedCount: jobs.length, limited: false, error }],
-    nextCursor, totalMatches: jobs.length, limited: false, notice: 'Selected synthetic boards only.' };
+      availableCount: jobs.length, matchedCount: jobs.length, limited: sourceLimited, error }],
+    nextCursor, totalMatches: jobs.length, limited, notice: 'Selected synthetic boards only.' };
 }
 
 // Execute the real search, run, identity, local-data and persistence handlers.
@@ -188,14 +188,20 @@ test('pagination retains the 200-result cap and retry refreshes restored results
   restored.calls[0].resolve(page()); await retry; assert.equal(restored.context.restored, false);
 });
 
-let resultsNode;
+let resultsNode, liveStatusNode;
 function findResults(node) {
   if (ts.isJsxElement(node) && node.openingElement.attributes.properties.some(prop =>
     ts.isJsxAttribute(prop) && prop.name.text === 'className' && prop.initializer && ts.isStringLiteral(prop.initializer) && prop.initializer.text === 'phone-results')) resultsNode = node;
+  if (ts.isJsxElement(node) && node.openingElement.tagName.getText(tree) === 'p'
+    && node.getText(tree).includes('"{0} jobs shown. {1}"')) {
+    assert(!liveStatusNode, 'Expected one actual search announcement');
+    liveStatusNode = node;
+  }
   ts.forEachChild(node, findResults);
 }
 findResults(tree); assert(resultsNode, 'The actual results subtree is required');
-function renderResults(searchPage, language, overrides = {}) {
+assert(liveStatusNode, 'The actual search live region is required');
+function renderSearchSurface(node, searchPage, language, overrides = {}) {
   const calls = [], t = (key, values) => i18n.translate(key, language, values);
   const scope = { searchPage, searchedFilters: submitted(), filters: draft(), searchSources: draft().sources,
     restored: false, busy: '', loading: false, locked: false, checkingIdentity: false, jobs: [], cannotSave: false,
@@ -204,10 +210,12 @@ function renderResults(searchPage, language, overrides = {}) {
     JobCard: ({ job }) => React.createElement('article', { 'data-synthetic-job': job.id }, job.title),
     searchJobs: mode => { calls.push(mode); }, saveJob() {}, setDialog() {}, ...overrides };
   const top = ['discoveryCoverageNotice', 'discoveryLimitNotice'].map(name => `const ${name} = ${declaration(name)};`).join('\n');
-  const { Results } = execute(`${top}\n${declaration('discoveryNoticeText')}\nconst incompleteSearch = ${declaration('incompleteSearch')};\nexports.Results = () => (${resultsNode.getText(tree)});`, scope);
+  const { Results } = execute(`${top}\n${declaration('discoveryNoticeText')}\nconst incompleteSearch = ${declaration('incompleteSearch')};\nexports.Results = () => (${node.getText(tree)});`, scope);
   const element = Results();
   return { element, html: renderToStaticMarkup(element), calls, t };
 }
+const renderResults = (searchPage, language, overrides) => renderSearchSurface(resultsNode, searchPage, language, overrides);
+const renderLiveStatus = (searchPage, language, overrides) => renderSearchSurface(liveStatusNode, searchPage, language, overrides);
 function findButtons(element, text, found = []) {
   if (!React.isValidElement(element)) return found;
   if (element.type === 'button' && element.props.children === text) found.push(element);
@@ -221,7 +229,7 @@ test('actual nonempty partial and stale results show a localized retry that targ
     page({ status: 'complete', sourceStatus: 'stale' }),
   ]) {
     const r = renderResults(value, language);
-    assert(r.html.includes(r.t('Some boards could not provide current results. This search may be incomplete.')));
+    assert(r.html.includes(r.t('This search is incomplete. Review the source details, or retry the same search.')));
     assert.match(r.html, /role="status"/); assert.match(r.html, /data-synthetic-job="synthetic-9"/);
     const buttons = findButtons(r.element, r.t('Retry this search')); assert.equal(buttons.length, 1);
     assert.equal(buttons[0].props.disabled, false); buttons[0].props.onClick(); assert.deepEqual(r.calls, ['retry']);
@@ -253,3 +261,86 @@ test('actual retry control stays disabled during work or identity checks and is 
   const missing = renderResults(partial, 'en', { searchedFilters: null });
   assert.equal(findButtons(missing.element, 'Retry this search').length, 0);
 });
+
+const incompleteMessage = 'This search is incomplete. Review the source details, or retry the same search.';
+const expectedIncomplete = {
+  en: incompleteMessage,
+  ar: 'نتائج هذا البحث غير مكتملة. راجع تفاصيل المصادر أو أعد البحث نفسه.',
+};
+function assertLiveSummary(result, expected) {
+  assert.equal(result.element.type, 'p');
+  assert.equal(result.element.props.role, 'status');
+  assert.equal(result.element.props['aria-live'], 'polite');
+  assert.equal(result.element.props['aria-atomic'], 'true');
+  assert.equal(result.element.props.className, 'visually-hidden');
+  assert.equal(result.element.props.children, expected);
+}
+
+for (const language of ['en', 'ar']) {
+  for (const [label, options] of [
+    ['fresh partial results', { status: 'partial' }],
+    ['only the overall result limit', { limited: true }],
+    ['only a source result limit', { sourceLimited: true }],
+  ]) test(`actual visible and live summaries describe ${label} without inventing an outage in ${language}`, () => {
+    for (const count of [0, 12]) {
+      const value = model.discoveryPageSchema.parse(page({ ...options, jobs: Array.from({ length: count }, (_, index) => job(index)) }));
+      // A displayed count must describe this page, not its larger match estimate.
+      value.totalMatches = 417;
+      assert.equal(value.sources[0].status, 'fresh'); assert.equal(value.sources[0].error, null);
+      const visible = renderResults(value, language), live = renderLiveStatus(value, language);
+      assert.equal(visible.t(incompleteMessage), expectedIncomplete[language], 'The neutral message needs a real locale entry');
+      assertLiveSummary(live, live.t('{0} jobs shown. {1}', [i18n.formatNumber(count, language), expectedIncomplete[language]]));
+      assert(visible.html.includes(expectedIncomplete[language]));
+      assert(visible.html.includes(visible.t('{0} shown', [i18n.formatNumber(count, language)])));
+      assert.equal([...visible.html.matchAll(/data-synthetic-job=/g)].length, count);
+      for (const outage of [
+        'Some boards could not provide current results. This search may be incomplete.',
+        'Some sources could not provide current results.',
+        'This board could not provide current results.',
+        'Showing an earlier check of this board.',
+      ]) {
+        assert(!visible.html.includes(visible.t(outage)), `Fresh results must not claim: ${outage}`);
+        assert(!live.html.includes(live.t(outage)), `The announcement must not claim: ${outage}`);
+      }
+      const retries = findButtons(visible.element, visible.t('Retry this search'));
+      assert.equal(retries.length, 1); assert.equal(retries[0].props.disabled, false);
+      retries[0].props.onClick(); assert.deepEqual(visible.calls, ['retry']);
+      if (!count) {
+        assert(visible.html.includes(visible.t('No current matches could be confirmed.')));
+        assert(!visible.html.includes(visible.t('No matching jobs in these boards.')));
+      }
+    }
+  });
+
+  test(`actual search summaries retain source evidence and distinguish complete zero/nonzero results in ${language}`, () => {
+    for (const { value, incomplete, detail } of [
+      { value: page({ sourceStatus: 'stale' }), incomplete: true, detail: 'Showing an earlier check of this board.' },
+      { value: page({ error: { code: 'source_unavailable', message: 'Synthetic provider refusal.' } }), incomplete: true, detail: 'Synthetic provider refusal.' },
+      { value: page({ status: 'unavailable', sourceStatus: 'unavailable', jobs: [] }), incomplete: true, detail: 'This board could not provide current results.' },
+      { value: page({ jobs: [] }), incomplete: false },
+      { value: page({ jobs: Array.from({ length: 12 }, (_, index) => job(index)) }), incomplete: false },
+    ]) {
+      const visible = renderResults(value, language), live = renderLiveStatus(value, language);
+      const summary = incomplete ? expectedIncomplete[language] : live.t('Search complete.');
+      assertLiveSummary(live, live.t('{0} jobs shown. {1}', [i18n.formatNumber(value.jobs.length, language), summary]));
+      assert.equal(visible.html.includes(expectedIncomplete[language]), incomplete);
+      assert.equal(findButtons(visible.element, visible.t('Retry this search')).length, incomplete ? 1 : 0);
+      if (detail) assert(visible.html.includes(visible.t(detail)), 'Specific source evidence must remain visible');
+      if (!incomplete && !value.jobs.length) {
+        assert(visible.html.includes(visible.t('No matching jobs in these boards.')));
+        assert(!visible.html.includes(visible.t('No current matches could be confirmed.')));
+      }
+    }
+  });
+
+  test(`the actual search live region stays silent during work and before any result page in ${language}`, () => {
+    for (const value of [page(), page({ limited: true }), page({ sourceLimited: true })]) {
+      for (const busy of ['Searching employer boards', 'Loading more jobs']) {
+        assertLiveSummary(renderLiveStatus(value, language, { busy }), '');
+      }
+    }
+    for (const busy of ['', 'Searching employer boards']) {
+      assertLiveSummary(renderLiveStatus(null, language, { busy }), '');
+    }
+  });
+}

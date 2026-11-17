@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/final_native_peer",
+  "reviewed_at_utc": "2026-11-17T15:53:42.358181+00:00",
+  "verdict": "ACCEPT_NARROW_SOURCE_PATCH_FOR_EXACT_CI; NO_BLOCKING_SOURCE_FINDING",
+  "runtime_verdict": "PENDING: the repaired source has not been compiled or run on an iPhone simulator by this reviewer.",
+  "scope": {
+    "checkout": "/workspace/scratch/5bc6158967e8/native-ci-fa151e21",
+    "base_commit": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+    "base_tree": "3a0333e1c210a89cdb21dfd11b765e24ee70254b",
+    "patch": "/workspace/scratch/5bc6158967e8/iphone-clear-address-fa151e2.patch",
+    "patch_sha256": "4d1d2d900e4b2f4a512a19f13039abf4e59d224f3a3d5de8b6e1a9a9ee97b4c1",
+    "working_diff_matches_patch_bytes": true,
+    "changed_file_count": 8,
+    "files": [
+      {
+        "path": "android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt",
+        "sha256": "3538ea760389b40a03f83cd59ecc3a3a25430b63d01730783a0efa00e8696d60"
+      },
+      {
+        "path": "android/app/src/main/res/values-ar/career_copy.xml",
+        "sha256": "5f9faff9d327aef9741ea63eafddd5d9f658cb4f7fd6c42cd7d4bea6c2fa88d9"
+      },
+      {
+        "path": "android/app/src/main/res/values/career_copy.xml",
+        "sha256": "990fdaffc52858740bee96ebb2b68d694804b7cf55ed7fb6325151411568820e"
+      },
+      {
+        "path": "apple/AhmadCareer/NativeApplicationsViews.swift",
+        "sha256": "c1407ff4887d4c6d2747aea7deae060f6fd8769e0dfc12b304246c3fb83d3f32"
+      },
+      {
+        "path": "apple/AhmadCareer/ar.lproj/Localizable.strings",
+        "sha256": "92ba98487768a370fe87095db8e46d66169aa57fec8e85b32161f5df6c33ecfa"
+      },
+      {
+        "path": "apple/AhmadCareer/en.lproj/Localizable.strings",
+        "sha256": "f93857113dfbebbe1d6ad01653402c54922fffb6e25797ccddcf61e774e0a8b3"
+      },
+      {
+        "path": "apple/UITests/CareerFinderUITests.swift",
+        "sha256": "ad0bac775bc17e7cbf2c8ac9c41fc1a0ca1489e579010fb198ff75878d7d557b"
+      },
+      {
+        "path": "localization/native-copy.json",
+        "sha256": "581b82751181e847e7ca6cc15b850ccdf24def2881d81d03d930f1dde054c555"
+      }
+    ]
+  },
+  "failure_evidence": {
+    "run_id": 44111164968,
+    "source_commit": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+    "merge_checkout": "6198d44f05cca0c47d5a30042ff23a134cd4fa90",
+    "log": "/workspace/scratch/5bc6158967e8/native-ci-fa151e21/docs/strict-review-evidence/continuation-2026-11-17-cloud/ci-44111164968/iphone-ui-job.log",
+    "log_sha256": "24d47755e93c7d31c33ab1df5aaa08744eb3f31c4f89f3e3f3cf2d67a80743b9",
+    "case_endings": {
+      "passed": 16,
+      "failed": 1,
+      "skipped": 0
+    },
+    "duration_seconds": 1275.926,
+    "failed_test": "testProfileReadinessAndSimpleConnectionSetup",
+    "failed_guard": "CareerFinderUITests.swift:154 exact-empty before replacement",
+    "before_image": {
+      "path": "/workspace/scratch/5bc6158967e8/ci-44111164968-native/iphone-ui/career-ui-screenshots/F7BBBC3A-56D0-4ABF-B975-0AA00EA43564.png",
+      "sha256": "2081e8d8fd329fc29d3dbba00a17873dedfc2e08adc0249d51d9683751a44c7b",
+      "visually_inspected": true
+    },
+    "after_image": {
+      "path": "/workspace/scratch/5bc6158967e8/ci-44111164968-native/iphone-ui/career-ui-screenshots/E55FB285-097B-4A8B-BE75-E58E2CCD809C.png",
+      "sha256": "608329401f9bdfe161133fb9b3a04d4be7fde1072e35544e51e8b255c4fa3ba2",
+      "visually_inspected": true
+    },
+    "diagnosis": "The event trace records three taps and one Delete. Before/after images show the URL remains and the hyphen between finder and service is removed at the caret. Whole-field selection did not occur. The exact-empty assertion correctly failed before replacement. The partial address change cleared the unsent code and disabled Connect.",
+    "secondary_observation": "Before clearing, the floating Done typing toolbar overlaps the trailing area of the service-address field. The reviewed test dismisses the keyboard completely before revealing the real Clear control; this source review does not claim general keyboard-overlay acceptance.",
+    "value_limit": "The full URL is clipped/truncated in image and accessibility output; no complete residual byte string is asserted."
+  },
+  "verified_review_findings": [
+    "A normal release UI Clear control is added only within the existing advanced service-address row. It appears only for nonempty text and is disabled while model.busy.",
+    "The control uses a local plain button style, a minimum 44 by 44 point label frame with a rectangular content shape, and a localized accessibility label plus stable identifier connection.clearAddress.",
+    "The action mutates local address and focus only. No connection, identity, token, storage, disconnect, protocol or employer-submission implementation changes are present.",
+    "Existing onChange(of: address) code and issue invalidation remains unchanged; existing TextField identifier, URL keyboard, capitalization, autocorrection, focused field, submit behavior and accessibility label are preserved.",
+    "The test is the only caller supplying clearWith. It waits for real initial keyboard readiness, uses full keyboard dismissal, reveals the complete ordinary button, asserts existence/enabled/hittable, and taps it through XCUI.",
+    "Both native Clear and native Select All routes join the same exact-empty predicate before replacement. A fresh keyboard-readiness expectation is created after the Clear route and field refocus.",
+    "The final exact requested-value predicate remains unchanged. The connection destination-change code-clearing assertion, default reset/collapse assertion and other test assertions remain.",
+    "The failed triple-tap fallback is removed. Other fields retain an explicit reachable Select All menu or button requirement with screenshot/tree on failure and Delete followed by the same exact-empty check.",
+    "The one new English/Arabic label is added to localization/native-copy.json with corresponding generated Apple strings, Android XML resources and Kotlin IDs. Generated template files are unchanged. No Android behavioral source is changed."
+  ],
+  "test_integrity": {
+    "test_names_unchanged": true,
+    "test_method_count_before": 17,
+    "test_method_count_after": 17,
+    "assertion_calls_before": 141,
+    "assertion_calls_after": 144,
+    "new_skips": false,
+    "fixture_isolation_unchanged": true,
+    "finish_typing_guard_unchanged": true
+  },
+  "checks_by_reviewer": [
+    "Read complete eight-file patch and relevant product/helper source.",
+    "Independently computed all listed source/patch/screenshot/log hashes.",
+    "Compared exact working diff bytes to reviewed patch.",
+    "Verified 17 identical test method names and assertion call change 141 to 144; no added skip.",
+    "git diff --check passed."
+  ],
+  "author_reported_checks_not_rerun_by_peer": [
+    "Generator --check passed with 1762 strings per language and unchanged 144 templates.",
+    "All eight existing native-localization generator tests passed."
+  ],
+  "research_basis": [
+    {
+      "url": "https://developer.apple.com/design/human-interface-guidelines/text-fields",
+      "use": "Apple recommends a trailing Clear button for quickly erasing field contents on iOS and iPadOS. The source patch implements a normal SwiftUI button; it does not claim direct use of UIKit clearButtonMode."
+    }
+  ],
+  "remaining_qualifications": [
+    "Exact next native CI must compile and execute this changed source, including the service URL Clear route, final URL equality, unsent-code clearing, default reset and complete keyboard dismissal.",
+    "Real iPhone, VoiceOver, Arabic/RTL runtime acceptance of the newly added control, real provider consent/callbacks, disposable-account recovery and release readiness are not established by this source review."
+  ],
+  "reviewer_actions": [
+    "Read-only source, git status/diff and downloaded artifact inspection.",
+    "Wrote this separate peer receipt outside both source checkouts."
+  ],
+  "reviewer_actions_not_performed": [
+    "No source edit, native build, artifact download, CI dispatch, push, Mac operation, signing, store action, provider mutation or real application submission."
+  ]
+}

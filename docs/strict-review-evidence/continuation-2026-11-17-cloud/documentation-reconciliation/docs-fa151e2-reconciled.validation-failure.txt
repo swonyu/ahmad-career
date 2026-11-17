@@ -1,0 +1,11 @@
+Superseding failure note for the earlier documentation patch validation
+
+Earlier patch: docs-fa151e2-reconciled.patch
+Earlier SHA-256: db144fd60e48e323dbf9f0c1a75edbe5fff8005210118388ae0299097d31c7b5
+The original patch and validation receipt are retained unchanged as historical evidence.
+
+A subsequent read-only comparison of the actual applied root files against the intended isolated outputs found three serialization defects. The intended Product-Review-Research, Provider-Generation-Upgrade and Release-Integration-Checklist files lacked terminal newlines. Python difflib concatenated each following diff header into that preceding file's final added text line. git diff --check, git apply --check and relative-link existence checks did not detect this defect.
+
+All other ten reserved files matched the intended outputs byte-for-byte. Each affected file exactly matched its intended output prefix plus one injected diff-header suffix; no other content difference or source/evidence mutation was found.
+
+The four-file follow-up normalizes terminal newlines, removes all three injected tails, adds only the authorized current-source merge-preview documentation to Continuation-Implementation and Release-Integration-Checklist, and validates actual application in a disposable 13-file snapshot against an explicit intended-byte manifest. The earlier validation must not be treated as evidence of exact applied-byte correctness.

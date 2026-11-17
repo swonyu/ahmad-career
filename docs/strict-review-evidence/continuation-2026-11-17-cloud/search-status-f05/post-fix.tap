@@ -1,0 +1,150 @@
+TAP version 13
+# Subtest: retry repeats the displayed search without a cursor and preserves newer visible draft filters
+ok 1 - retry repeats the displayed search without a cursor and preserves newer visible draft filters
+  ---
+  duration_ms: 48.376869
+  type: 'test'
+  ...
+# Subtest: a fresh search response does not overwrite text or boards edited while it is pending
+ok 2 - a fresh search response does not overwrite text or boards edited while it is pending
+  ---
+  duration_ms: 27.756655
+  type: 'test'
+  ...
+# Subtest: pagination uses the displayed search and cursor, merges identities, and leaves draft filters alone
+ok 3 - pagination uses the displayed search and cursor, merges identities, and leaves draft filters alone
+  ---
+  duration_ms: 33.565113
+  type: 'test'
+  ...
+# Subtest: failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller
+    # Subtest: failure
+    ok 1 - failure
+      ---
+      duration_ms: 49.521254
+      type: 'test'
+      ...
+    # Subtest: cancel
+    ok 2 - cancel
+      ---
+      duration_ms: 17.020454
+      type: 'test'
+      ...
+    1..2
+ok 4 - failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller
+  ---
+  duration_ms: 67.594864
+  type: 'test'
+  ...
+# Subtest: late search results cannot cross the existing identity or generation boundary
+    # Subtest: identity
+    ok 1 - identity
+      ---
+      duration_ms: 19.974084
+      type: 'test'
+      ...
+    # Subtest: generation
+    ok 2 - generation
+      ---
+      duration_ms: 21.892085
+      type: 'test'
+      ...
+    1..2
+ok 5 - late search results cannot cross the existing identity or generation boundary
+  ---
+  duration_ms: 42.792133
+  type: 'test'
+  ...
+# Subtest: pagination retains the 200-result cap and retry refreshes restored results without a stale cursor
+ok 6 - pagination retains the 200-result cap and retry refreshes restored results without a stale cursor
+  ---
+  duration_ms: 51.755934
+  type: 'test'
+  ...
+# Subtest: actual nonempty partial and stale results show a localized retry that targets the displayed search
+ok 7 - actual nonempty partial and stale results show a localized retry that targets the displayed search
+  ---
+  duration_ms: 123.971497
+  type: 'test'
+  ...
+# Subtest: actual empty unavailable results distinguish missing evidence from a completed zero-match search in both languages
+ok 8 - actual empty unavailable results distinguish missing evidence from a completed zero-match search in both languages
+  ---
+  duration_ms: 91.135579
+  type: 'test'
+  ...
+# Subtest: actual retry control stays disabled during work or identity checks and is absent without a submitted search
+ok 9 - actual retry control stays disabled during work or identity checks and is absent without a submitted search
+  ---
+  duration_ms: 81.887857
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe fresh partial results without inventing an outage in en
+ok 10 - actual visible and live summaries describe fresh partial results without inventing an outage in en
+  ---
+  duration_ms: 64.075304
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe only the overall result limit without inventing an outage in en
+ok 11 - actual visible and live summaries describe only the overall result limit without inventing an outage in en
+  ---
+  duration_ms: 59.066205
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe only a source result limit without inventing an outage in en
+ok 12 - actual visible and live summaries describe only a source result limit without inventing an outage in en
+  ---
+  duration_ms: 117.914477
+  type: 'test'
+  ...
+# Subtest: actual search summaries retain source evidence and distinguish complete zero/nonzero results in en
+ok 13 - actual search summaries retain source evidence and distinguish complete zero/nonzero results in en
+  ---
+  duration_ms: 87.752609
+  type: 'test'
+  ...
+# Subtest: the actual search live region stays silent during work and before any result page in en
+ok 14 - the actual search live region stays silent during work and before any result page in en
+  ---
+  duration_ms: 43.813422
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe fresh partial results without inventing an outage in ar
+ok 15 - actual visible and live summaries describe fresh partial results without inventing an outage in ar
+  ---
+  duration_ms: 22.649294
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe only the overall result limit without inventing an outage in ar
+ok 16 - actual visible and live summaries describe only the overall result limit without inventing an outage in ar
+  ---
+  duration_ms: 25.774884
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe only a source result limit without inventing an outage in ar
+ok 17 - actual visible and live summaries describe only a source result limit without inventing an outage in ar
+  ---
+  duration_ms: 26.735828
+  type: 'test'
+  ...
+# Subtest: actual search summaries retain source evidence and distinguish complete zero/nonzero results in ar
+ok 18 - actual search summaries retain source evidence and distinguish complete zero/nonzero results in ar
+  ---
+  duration_ms: 95.122055
+  type: 'test'
+  ...
+# Subtest: the actual search live region stays silent during work and before any result page in ar
+ok 19 - the actual search live region stays silent during work and before any result page in ar
+  ---
+  duration_ms: 60.01069
+  type: 'test'
+  ...
+1..19
+# tests 23
+# suites 0
+# pass 23
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2788.015459

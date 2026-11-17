@@ -1,0 +1,69 @@
+{
+  "artifact_id": 14342517725,
+  "source_manifest_sha256": "b00cbe7b546dda8450582715ca4dd900efc2daf4cef709272416f0fe184ab57f",
+  "test_identifier": "CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup()",
+  "test_identifier_url": "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup",
+  "selected_attachments": [
+    {
+      "manifest_attachment": {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "E55FB285-097B-4A8B-BE75-E58E2CCD809C.png",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "replacement-did-not-clear-whole-field_0_DCADFA31-0084-47BA-8807-42296B3DC879.png",
+        "timestamp": 1794929231.104
+      },
+      "bytes": 406688,
+      "sha256": "608329401f9bdfe161133fb9b3a04d4be7fde1072e35544e51e8b255c4fa3ba2",
+      "visually_reviewed_by_author": true
+    },
+    {
+      "manifest_attachment": {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "F7BBBC3A-56D0-4ABF-B975-0AA00EA43564.png",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "replacement-select-all-unavailable_0_31EDD51F-2183-4DC6-82EB-F8C5BF00FE46.png",
+        "timestamp": 1794929221.711
+      },
+      "bytes": 467680,
+      "sha256": "2081e8d8fd329fc29d3dbba00a17873dedfc2e08adc0249d51d9683751a44c7b",
+      "visually_reviewed_by_author": false
+    },
+    {
+      "manifest_attachment": {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "D0C3F2B1-6271-4D6C-9DFB-CFA85BE5809A.png",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "21-profile-readiness_0_6DF82473-D8DD-4DFF-A085-BAE7F0C62D7D.png",
+        "timestamp": 1794929194.109
+      },
+      "bytes": 467213,
+      "sha256": "8a5b682ccdbda54fa598259a901ec38ad6040947555745b601865274d3a6b456",
+      "visually_reviewed_by_author": false
+    },
+    {
+      "manifest_attachment": {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "2686C6DD-53C1-4EF3-8AC3-E2F22650488B.mp4",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "Screen Recording 2026-11-17 at 03.25.59 PM.mp4",
+        "timestamp": 1794929159.539
+      },
+      "bytes": 15065021,
+      "sha256": "23dbbf9588a813ccfb285c95a29f738ed46efb4dec82ba02380cef23bb8b3411",
+      "visually_reviewed_by_author": false
+    }
+  ],
+  "copied_images": {
+    "iphone-partial-clear.png": "E55FB285-097B-4A8B-BE75-E58E2CCD809C.png",
+    "iphone-menu-unavailable.png": "F7BBBC3A-56D0-4ABF-B975-0AA00EA43564.png"
+  },
+  "video_scope": "Recording retained in the downloaded artifact set and linked by hash; it was not needed to infer a successful edit. The actual screenshot and terminal assertion establish failure."
+}

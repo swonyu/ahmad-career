@@ -1,0 +1,30 @@
+{
+  "run_id": 44111164968,
+  "candidate": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+  "candidate_tree": "3a0333e1c210a89cdb21dfd11b765e24ee70254b",
+  "actual_checkout": "6198d44f05cca0c47d5a30042ff23a134cd4fa90",
+  "comparison": {
+    "repository_full_name": "swonyu/ahmad-career",
+    "base": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+    "head": "6198d44f05cca0c47d5a30042ff23a134cd4fa90",
+    "status": "ahead",
+    "ahead_by": 1,
+    "behind_by": 0,
+    "total_commits": 1,
+    "too_large": null,
+    "base_commit": {
+      "sha": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+      "url": "https://api.github.com/repos/swonyu/ahmad-career/commits/fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+      "html_url": "https://github.com/swonyu/ahmad-career/commit/fa151e219ad4e8d9f0d3337eec10a60ed5223d47"
+    },
+    "merge_base_commit": {
+      "sha": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+      "url": "https://api.github.com/repos/swonyu/ahmad-career/commits/fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+      "html_url": "https://github.com/swonyu/ahmad-career/commit/fa151e219ad4e8d9f0d3337eec10a60ed5223d47"
+    },
+    "files": []
+  },
+  "actual_checkout_tree": "3a0333e1c210a89cdb21dfd11b765e24ee70254b",
+  "direct_tree_equality_receipt": "git-tree-equivalence.json",
+  "tree_equal": true
+}

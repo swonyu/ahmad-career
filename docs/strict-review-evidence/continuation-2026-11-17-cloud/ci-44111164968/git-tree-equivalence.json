@@ -1,0 +1,40 @@
+{
+  "run_id": 44111164968,
+  "candidate": {
+    "sha": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+    "tree": {
+      "sha": "3a0333e1c210a89cdb21dfd11b765e24ee70254b",
+      "url": "https://api.github.com/repos/swonyu/ahmad-career/git/trees/3a0333e1c210a89cdb21dfd11b765e24ee70254b"
+    },
+    "parents": [
+      {
+        "sha": "880e878f6f528d903c42951f10a8b216094c889c",
+        "url": "https://api.github.com/repos/swonyu/ahmad-career/git/commits/880e878f6f528d903c42951f10a8b216094c889c"
+      }
+    ],
+    "url": "https://api.github.com/repos/swonyu/ahmad-career/git/commits/fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+    "message": "Preserve search drafts and restore native large-text usability"
+  },
+  "actual_ci_checkout": {
+    "sha": "6198d44f05cca0c47d5a30042ff23a134cd4fa90",
+    "tree": {
+      "sha": "3a0333e1c210a89cdb21dfd11b765e24ee70254b",
+      "url": "https://api.github.com/repos/swonyu/ahmad-career/git/trees/3a0333e1c210a89cdb21dfd11b765e24ee70254b"
+    },
+    "parents": [
+      {
+        "sha": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+        "url": "https://api.github.com/repos/swonyu/ahmad-career/git/commits/949ce0ad327beab79fa7033423b462ebc7bd98be"
+      },
+      {
+        "sha": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+        "url": "https://api.github.com/repos/swonyu/ahmad-career/git/commits/fa151e219ad4e8d9f0d3337eec10a60ed5223d47"
+      }
+    ],
+    "url": "https://api.github.com/repos/swonyu/ahmad-career/git/commits/6198d44f05cca0c47d5a30042ff23a134cd4fa90",
+    "message": "Merge fa151e219ad4e8d9f0d3337eec10a60ed5223d47 into 949ce0ad327beab79fa7033423b462ebc7bd98be"
+  },
+  "tree_equal": true,
+  "changed_files_in_compare": 0,
+  "scope": "Git Data GET responses and candidate-to-merge comparison; CI merge commit is distinct from a merged pull request or release."
+}

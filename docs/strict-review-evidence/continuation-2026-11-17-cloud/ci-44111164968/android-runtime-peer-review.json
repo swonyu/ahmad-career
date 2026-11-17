@@ -1,0 +1,103 @@
+{
+  "reviewer": "/root/final_native_peer",
+  "reviewedAt": "2026-11-17T15:22:57.913914+00:00",
+  "runId": 44111164968,
+  "candidate": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+  "candidateTree": "3a0333e1c210a89cdb21dfd11b765e24ee70254b",
+  "actualCheckout": "6198d44f05cca0c47d5a30042ff23a134cd4fa90",
+  "checkoutProvenance": "Read the preserved candidate-to-PR-merge comparison receipt: zero changed source files. verification.json records the actual merge checkout.",
+  "decision": "Confirmed the repaired Android runtime gate and restored profile viewport in the recorded disposable emulator environment. No new finding within this bounded review.",
+  "sourceHashes": {
+    "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "fea99db3e760c2a99e49de5cd9366a4afe9f159acc79c5b0f96bb43350a8a729",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt": "a01a176c765f0b77c07fb563ba4cf322914a544684a62ecf2939db651880896a",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NavigationTestActions.kt": "a11aecda2d3fe037091687dbe295c75c188c496615392352d13c451538225897"
+  },
+  "resultsIndependentlyParsed": [
+    {
+      "log": "ordinary-phone.log",
+      "sha256": "8c3901e16a459dcf93763f55d1dcf86fd941e1df160a9c0fc6439ca23fbaefc7",
+      "started": 104,
+      "passed": 104,
+      "failed": 0,
+      "reportedSkippedOrIgnored": 0,
+      "seconds": 139.159,
+      "terminalSuccessSummary": "OK (104 tests)"
+    },
+    {
+      "log": "normal-preview-tls-boundary.log",
+      "sha256": "1c91b80d6b86ca409e31d9cd55ab8b6c0ffcaf3d6f4e9843ca83adf298dbc448",
+      "started": 1,
+      "passed": 1,
+      "failed": 0,
+      "reportedSkippedOrIgnored": 0,
+      "seconds": 0.544,
+      "terminalSuccessSummary": "OK (1 test)"
+    },
+    {
+      "log": "native-https-phone.log",
+      "sha256": "2f484160aeda91a560abd50c5ff860d2dc4cd3fb32c256cbd527190b6c7d7dcc",
+      "started": 1,
+      "passed": 1,
+      "failed": 0,
+      "reportedSkippedOrIgnored": 0,
+      "seconds": 20.288,
+      "terminalSuccessSummary": "OK (1 test)"
+    }
+  ],
+  "totalPassed": 106,
+  "totalFailed": 0,
+  "totalReportedSkippedOrIgnored": 0,
+  "httpsFlow": {
+    "allBeforeAfterPhaseCountsMatch": true,
+    "testBodyCompleted": true,
+    "activityRuleFinished": true,
+    "newProfileViewportAssertionReached": true,
+    "originalPhasesBeyondPriorFailure": [
+      "profile-save-scroll",
+      "profile-save-click",
+      "profile-saved",
+      "initial-review-ready",
+      "review-message-edit",
+      "replacement-review-ready",
+      "initial-approval",
+      "initial-outcomes",
+      "recover-review",
+      "recovered-approval-unchecked",
+      "cooldown-approval",
+      "cooldown-outcomes",
+      "receipts-capture",
+      "uncertain-review-ready",
+      "pdf-document-remove"
+    ],
+    "sourceAssertionsReviewed": "Exact-source test retains the saved profile revision and PDF hash,3 jobs, explicit marketing=false, changed review ID, exact payload/CV hash, simulated receipt flags with0verified receipts, recovered approval initially unchecked,2confirmed/1uncertain final outcomes, and uncertain application blocked with0submittable items."
+  },
+  "environment": {
+    "fontScale": 1.8,
+    "locale": "ar",
+    "forcedRTL": true,
+    "darkAppearance": true,
+    "sizePixels": "1080x1920",
+    "density": 480,
+    "effectiveWidthDp": 360,
+    "kind": "Disposable API36 x86_64 Google APIs emulator; ordinary system trust and isolated test CA acceptance variant."
+  },
+  "visualReview": {
+    "file": "captures/com.saleh.careerfinder.acceptance/files/acceptance-profile-large-text.png",
+    "sha256": "c0bd4dccb7a6e8439a03e91f6a27ffddf2fc214caacd0ffe5c66f86afedc164d",
+    "bytes": 181579,
+    "matchesScreenshotManifest": true,
+    "observed": "Profile content is visibly restored between the bounded notices and one-row scrolling navigation. The synthetic email field and PDF card are visible, along with the selected Profile tab. Adjacent tab labels are partially offscreen as expected in the horizontally scrollable row; the test reaches the other tabs through actual scrolling and clicks.",
+    "measurementQualification": "The screenshot was visually inspected; minimum120dp content height is established by the passing runtime assertion, not a manually estimated pixel measurement."
+  },
+  "verificationReports": {
+    "result": "passed",
+    "realEmployerRequests": 0,
+    "productionAccountsUsed": false
+  },
+  "limits": [
+    "This confirms the Android simulator gate at this exact source and environment; it does not establish physical-device, TalkBack, all font/display combinations or store-release readiness.",
+    "The HTTPS provider flow is a synthetic fixture. It is not a real consent/callback, authorized employer integration or real application-submission test.",
+    "iPhone runtime is outside this bounded review and remained in progress when the task was assigned.",
+    "No new test execution, artifact download, source edit, native build, push, CI mutation or shared Mac/signing/store operation was performed by reviewer."
+  ]
+}

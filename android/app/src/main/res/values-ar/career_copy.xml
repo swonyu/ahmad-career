@@ -292,6 +292,7 @@
     <string name="c_4010ae770b53" formatted="false">"مسح بيانات الهاتف"</string>
     <string name="c_53ea94e2a507" formatted="false">"مسح مرشحات البحث"</string>
     <string name="c_cea4d2e010b8" formatted="false">"مسح الاختيار"</string>
+    <string name="c_3a036a95535d" formatted="false">"مسح عنوان الخدمة"</string>
     <string name="c_a23bd2387655" formatted="false">"هل تريد مسح مساحة الهاتف هذه؟"</string>
     <string name="c_23aee864f931" formatted="false">"مسح مساحة العمل هذه من الهاتف"</string>
     <string name="c_ea222b9c80b9" formatted="false">"مسح {0}"</string>

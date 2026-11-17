@@ -1,0 +1,58 @@
+{
+  "observedAt": "2026-11-17T15:34:03.309194+00:00",
+  "candidate": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+  "publishing": "842472684b194e993355f632902ccc81366c164c",
+  "operation": "object-only merge preview; no ref, checkout, index or source mutation",
+  "before": {
+    "head": "303ee73e0e6389593f6cb08eba285405d60f19cb",
+    "indexExists": false,
+    "statusSHA256": "50999aa070f57d30d9d25d8fdf72bb175dab68bc3038423a780289c99af081c9",
+    "entries": 404
+  },
+  "fetch": {
+    "returncode": 0,
+    "stdout": "",
+    "stderr": "From https://github.com/swonyu/ahmad-career\n * branch            842472684b194e993355f632902ccc81366c164c -> FETCH_HEAD\n"
+  },
+  "mergeBase": {
+    "returncode": 0,
+    "stdout": "859b84a4bb184cbc9bb5039be34e35ad4ca17356\n",
+    "stderr": ""
+  },
+  "mergeTree": {
+    "returncode": 1,
+    "stdout": "abef81fd0869754e5a3a64251bae1df485efb938\n100644 26e7c35ed3de991bfe02a6f733136f64fff1db84 1\tandroid/app/src/androidTest/java/com/saleh/careerfinder/LinkedInPhoneAcceptanceTest.kt\n100644 8a3ef5cc3e0099bdd8fe5731499fee9d85067145 2\tandroid/app/src/androidTest/java/com/saleh/careerfinder/LinkedInPhoneAcceptanceTest.kt\n100644 5a2c1e4853d2ff0d77c204e723545ea6f7177099 3\tandroid/app/src/androidTest/java/com/saleh/careerfinder/LinkedInPhoneAcceptanceTest.kt\n100644 f3ba71f96f508784492df77a033ccf5cc26c2650 1\tandroid/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt\n100644 39424b4842dabfea2f28357ad20dbdcb80efbb3f 2\tandroid/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt\n100644 039ab4cc1d5c2f804024c3efa04d5a6935d09fd0 3\tandroid/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt\n100644 144f6281d2bc37158cf7a5ae960885187d7f91bb 1\tandroid/app/src/androidTest/java/com/saleh/careerfinder/NavigationPhoneAcceptanceTest.kt\n100644 7de5bbe7ecce5a914e121ef538b0d40caefabfb1 2\tandroid/app/src/androidTest/java/com/saleh/careerfinder/NavigationPhoneAcceptanceTest.kt\n100644 9470e4baa91735f15e50d16b1a01ccc87f6eb1cd 3\tandroid/app/src/androidTest/java/com/saleh/careerfinder/NavigationPhoneAcceptanceTest.kt\n100644 8fbd83be121b2bbe9a679fe48d99ef7161f37d49 1\tandroid/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt\n100644 1df5278ef15f9cd7af71c721f3c34e5f9f618773 2\tandroid/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt\n100644 e9e1d2d279ee21ca5d44f547731e2dd694232590 3\tandroid/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt\n100644 2ded1c35c9b6a1a6ad83667acb7d933ab89a6ab2 1\tandroid/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt\n100644 042038732de99fea7939aee9e88ae6e130b039bb 2\tandroid/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt\n100644 c456a1df0c8e6051f22c5c9eb2e718ba912e8919 3\tandroid/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt\n100644 bdb716f6184cb4001ae42f3df61a1aee7617adf6 1\tandroid/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceAccessibilityRegressionTest.kt\n100644 28c8cd0aba1a0a4c2f97443eb63426bc7b561cab 2\tandroid/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceAccessibilityRegressionTest.kt\n100644 8e4f12f58f61d4e6da56a8b63f6708d2e5758f73 3\tandroid/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceAccessibilityRegressionTest.kt\n100644 c1eadb96009573efd54f9caba44cf9baa6c4e3a4 1\tandroid/app/src/main/java/com/saleh/careerfinder/CareerLocalization.kt\n100644 2e4cc9ae1156b7a03b8f138ed89e740a94d465c3 2\tandroid/app/src/main/java/com/saleh/careerfinder/CareerLocalization.kt\n100644 9613c9fe384ad7ed6f4c124c56898cc8cdc5d3c8 3\tandroid/app/src/main/java/com/saleh/careerfinder/CareerLocalization.kt\n100644 39d5cd4450685b253bdacfdc2808e2892d88273c 1\tapple/AhmadCareer/CareerAppEnvironment.swift\n100644 cee3e1cecc5960cf0eba8ab6881e9b22250e363d 2\tapple/AhmadCareer/CareerAppEnvironment.swift\n100644 67ebf0cfe96aaecd891d96f830bfb02ce662d742 3\tapple/AhmadCareer/CareerAppEnvironment.swift\n100644 71a3d7bf353c75e268dc70478c373a310aeae7b2 1\tapple/UITests/CareerFinderUITests.swift\n100644 d149ba1e526ee6da565a412bfe7999c2c50a0e85 2\tapple/UITests/CareerFinderUITests.swift\n100644 7973d4222568354da301c90fae96898031efaca5 3\tapple/UITests/CareerFinderUITests.swift\n100644 e0dffaab8b0ed21f4ebddcc9891133403ed1410f 1\thosted/app/i18n/messages.ar.json\n100644 c3eb0790ad91e5256ae53f16f898747da44ece55 2\thosted/app/i18n/messages.ar.json\n100644 e0ff9b8d3b8e9d511687f8fc520609f64407ddd5 3\thosted/app/i18n/messages.ar.json\n100644 59dd90b0d95e7632e9bb33a78f468e6df1dec1f0 1\thosted/app/phone/PhoneApp.tsx\n100644 f263285c93329a43a080f570a339c82a5a8f49dd 2\thosted/app/phone/PhoneApp.tsx\n100644 f793e4bb485acd519e818f16de11523b8b9c2186 3\thosted/app/phone/PhoneApp.tsx\n100644 d58d7a633b800404cc20435d5999751517306895 1\thosted/tests/i18n.mjs\n100644 e4c8a89f1a208b0c7ff19b64f51dd8ba176ed1eb 2\thosted/tests/i18n.mjs\n100644 b01891d6d2010c1378dfc59b028fdb44e9c6df02 3\thosted/tests/i18n.mjs\n100644 7783f1f91bce7e005cc95b1193c4b6b882b06a06 2\thosted/tests/phone-search-workflows.mjs\n100644 762647795669bf1b11774dfd2444f254ddcac90c 3\thosted/tests/phone-search-workflows.mjs\n\nAuto-merging android/app/src/androidTest/java/com/saleh/careerfinder/LinkedInPhoneAcceptanceTest.kt\nCONFLICT (content): Merge conflict in android/app/src/androidTest/java/com/saleh/careerfinder/LinkedInPhoneAcceptanceTest.kt\nAuto-merging android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt\nCONFLICT (content): Merge conflict in android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt\nAuto-merging android/app/src/androidTest/java/com/saleh/careerfinder/NativeLocalizationAcceptanceTest.kt\nAuto-merging android/app/src/androidTest/java/com/saleh/careerfinder/NavigationPhoneAcceptanceTest.kt\nCONFLICT (content): Merge conflict in android/app/src/androidTest/java/com/saleh/careerfinder/NavigationPhoneAcceptanceTest.kt\nAuto-merging android/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt\nCONFLICT (content): Merge conflict in android/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt\nAuto-merging android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt\nCONFLICT (content): Merge conflict in android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt\nAuto-merging android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceAccessibilityRegressionTest.kt\nCONFLICT (content): Merge conflict in android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceAccessibilityRegressionTest.kt\nAuto-merging android/app/src/main/java/com/saleh/careerfinder/CareerLocalization.kt\nCONFLICT (content): Merge conflict in android/app/src/main/java/com/saleh/careerfinder/CareerLocalization.kt\nAuto-merging android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt\nAuto-merging apple/AhmadCareer/CareerAppEnvironment.swift\nCONFLICT (content): Merge conflict in apple/AhmadCareer/CareerAppEnvironment.swift\nAuto-merging apple/UITests/CareerFinderUITests.swift\nCONFLICT (content): Merge conflict in apple/UITests/CareerFinderUITests.swift\nAuto-merging hosted/app/i18n/messages.ar.json\nCONFLICT (content): Merge conflict in hosted/app/i18n/messages.ar.json\nAuto-merging hosted/app/phone/PhoneApp.tsx\nCONFLICT (content): Merge conflict in hosted/app/phone/PhoneApp.tsx\nAuto-merging hosted/tests/i18n.mjs\nCONFLICT (content): Merge conflict in hosted/tests/i18n.mjs\nAuto-merging hosted/tests/phone-search-workflows.mjs\nCONFLICT (add/add): Merge conflict in hosted/tests/phone-search-workflows.mjs\n",
+    "stderr": ""
+  },
+  "after": {
+    "head": "303ee73e0e6389593f6cb08eba285405d60f19cb",
+    "indexExists": false,
+    "statusSHA256": "50999aa070f57d30d9d25d8fdf72bb175dab68bc3038423a780289c99af081c9",
+    "entries": 404
+  },
+  "publishingRefAfter": {
+    "returncode": 0,
+    "stdout": "842472684b194e993355f632902ccc81366c164c\n",
+    "stderr": ""
+  },
+  "conflictingPaths": [
+    "android/app/src/androidTest/java/com/saleh/careerfinder/LinkedInPhoneAcceptanceTest.kt",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NavigationPhoneAcceptanceTest.kt",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceAccessibilityRegressionTest.kt",
+    "android/app/src/main/java/com/saleh/careerfinder/CareerLocalization.kt",
+    "apple/AhmadCareer/CareerAppEnvironment.swift",
+    "apple/UITests/CareerFinderUITests.swift",
+    "hosted/app/i18n/messages.ar.json",
+    "hosted/app/phone/PhoneApp.tsx",
+    "hosted/tests/i18n.mjs",
+    "hosted/tests/phone-search-workflows.mjs"
+  ],
+  "limits": [
+    "Object-only preview, not an integrated source revision or tested build.",
+    "Current branch conclusions are not interchangeable with the protected publishing-copy branch fd9 or earlier 3a709/fd9 preview.",
+    "Publishing acknowledgment is required before conflicting integration or shared release work. No conflicts were resolved or committed in this operation."
+  ]
+}
