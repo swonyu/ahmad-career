@@ -3,15 +3,19 @@ CAREER FINDER — PHONES
 
 CURRENT CHECKPOINT
 Version 0.6 source adds application records, follow-up dates, clearer connection
-setup, preserved drafts and a phone browser app. Final CI/publication are in
-progress. Check the current release handoff before choosing a download.
+setup and preserved drafts. The phone browser app is deployed as hosted version 6.
+Final native CI/publication and live browser acceptance are still in progress.
+Check the current release handoff before choosing a native download.
 
 PUBLIC SERVICE
 https://career-finder-service.jazzy-drake-8323.chatgpt.site
-Current deployed version: 4. The new /phone interface is saved as version 6,
-with a clean complete dependency audit and production build; deployment is pending. Search requires no account. Google is available through
-the secure ChatGPT sign-in screen. Native apps use a single-use connection code;
-the browser app uses the signed-in account directly.
+Current deployed version: 6, observed 17 November 2026 at 00:05:24 UTC.
+Open the phone interface at the public address above or at /phone.
+Its hosted GitHub CI gate passed with zero complete dependency-audit findings.
+Live browser acceptance is in progress; deployment success is recorded separately.
+Search requires no account. Google is available through the secure ChatGPT sign-in
+screen. Native apps use a single-use connection code; the browser app uses the
+signed-in account directly.
 
 PHONE FLOW
 Search: find a role on selected public employer boards.
@@ -40,11 +44,19 @@ https://github.com/swonyu/ahmad-career/releases
 A browser home-screen installation is separate from App Store/Google Play.
 Unsigned iPhone CI and Android previews do not establish store publication.
 
+NATIVE VERIFICATION
+Android 0.6: 91 policy checks and all 83 native tests passed, with zero lint issues.
+Its new APK is not yet published. The latest completed iPhone UI run passed 9 of 13
+cases. Corrections for the four failures are frozen and independently reviewed;
+a fresh 13-case run is pending. The earlier failed run remains preserved. A hosted
+CI pass does not replace the five-gate requirement for the final native candidate.
+
 READ FIRST
 ../README.md — current features, setup, coverage and limits
 Strict-Review-2026-11-17.md — strict findings and current exact evidence
 HOSTED-RELEASE-HANDOFF.md — publication state and remaining release gates
 Verified-Applications-Contract.md — account, review, submission and receipt rules
+strict-review-evidence/phone-web-hosted-deployment-v6.json — observed live release
 ../hosted/README.md — browser storage, API, build and deployment details
 ../android/README.md — Android source and native checks
 ../apple/README.md — iPhone source, checks and distribution identity

@@ -314,7 +314,9 @@ struct NativeSavedApplicationDetail: View {
             .sheet(isPresented: $editingRecord) { if let job { NativeModernRecordEditor(model: applications, job: job) } }
             .sheet(isPresented: $reviewingVersions) { if let job { NativeModernRecordVersions(model: applications, job: job) } }
             .sheet(item: $removing) { NativeSavedLinkRemoval(model: applications, context: $0) }
-            .confirmationDialog("Keep this record with your connected workspace?", isPresented: $confirmingAdoption, titleVisibility: .visible) {
+            // An alert keeps both decisions visible; popover-style confirmation
+            // dialogs can omit their cancel action on a phone.
+            .alert("Keep this record with your connected workspace?", isPresented: $confirmingAdoption) {
                 Button("Keep with this workspace") { if let adoption { _ = applications.adoptUnpairedRecord(adoption) } }
                 Button("Keep separate on this phone", role: .cancel) { adoption = nil }
             } message: {
@@ -418,11 +420,11 @@ private struct NativeModernRecordEditor: View {
                     }
                     ToolbarItemGroup(placement: .keyboard) { Spacer(); Button("Done typing") { noteFocused = false } }
                 }
-                .confirmationDialog("Discard your unsaved record changes?", isPresented: $discard, titleVisibility: .visible) {
+                .alert("Discard your unsaved record changes?", isPresented: $discard) {
                     Button("Discard changes", role: .destructive) { dismiss() }
                     Button("Keep editing", role: .cancel) {}
                 } message: { Text("Your previously saved record will stay unchanged.") }
-                .confirmationDialog("Mark as not applied?", isPresented: $clearApplied, titleVisibility: .visible) {
+                .alert("Mark as not applied?", isPresented: $clearApplied) {
                     Button("Mark not applied", role: .destructive) { save(confirmNotApplied: true) }
                     Button("Keep application record", role: .cancel) {}
                 } message: { Text("This changes your private record and allows a new application review. It does not withdraw or change anything with an employer. Your earlier versions stay on this phone.") }

@@ -1,0 +1,459 @@
+[
+  {
+    "test": "testAccessibilityTextKeepsCoreControlsReachable",
+    "label": "09-start-accessibility-text_0_A22D8D43-5EA0-4221-9BCD-918FB8A4053C.png",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "A87C5F54-F0EB-460E-A186-229E063E4611.png",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "09-start-accessibility-text_0_A22D8D43-5EA0-4221-9BCD-918FB8A4053C.png",
+      "timestamp": 1794872245.962
+    },
+    "archiveMember": "career-ui-screenshots/A87C5F54-F0EB-460E-A186-229E063E4611.png",
+    "path": "failures/testAccessibilityTextKeepsCoreControlsReachable/A87C5F54-F0EB-460E-A186-229E063E4611.png",
+    "bytes": 334038,
+    "sha256": "d29212315d94657be0248979c6c7e2e9200a106b01fa8a00feb8e81078af67b8"
+  },
+  {
+    "test": "testAccessibilityTextKeepsCoreControlsReachable",
+    "label": "Screen Recording 2026-11-16 at 11.36.06 PM.mp4",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "6FDB7EEF-F51B-4292-8831-D6863486731A.mp4",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "Screen Recording 2026-11-16 at 11.36.06 PM.mp4",
+      "timestamp": 1794872166.334
+    },
+    "archiveMember": "career-ui-screenshots/6FDB7EEF-F51B-4292-8831-D6863486731A.mp4",
+    "path": "failures/testAccessibilityTextKeepsCoreControlsReachable/6FDB7EEF-F51B-4292-8831-D6863486731A.mp4",
+    "bytes": 31044156,
+    "sha256": "d5d43b043c89b203c12c69076d6d56013b55a2c89bded08124325900341a5986"
+  },
+  {
+    "test": "testAccessibilityTextKeepsCoreControlsReachable",
+    "label": "Final frame0.5seconds before the end of the retained CI screen recording",
+    "path": "failures/testAccessibilityTextKeepsCoreControlsReachable/failure-final-frame.png",
+    "sourceVideo": "failures/testAccessibilityTextKeepsCoreControlsReachable/6FDB7EEF-F51B-4292-8831-D6863486731A.mp4",
+    "bytes": 502434,
+    "sha256": "80f563bb9268273bc8b3e3d3c87ecce07a69b12013fee4ee534df363d344d26c"
+  },
+  {
+    "test": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+    "label": "App UI hierarchy for com.ahmadalayed_0_EC5888BA-88E4-4D46-9A08-A8650900D96F.career",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "8B67A0A3-EA9E-4078-B301-7B5553FC8710.txt",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "App UI hierarchy for com.ahmadalayed_0_EC5888BA-88E4-4D46-9A08-A8650900D96F.career",
+      "timestamp": 1794872791.54
+    },
+    "archiveMember": "career-ui-screenshots/8B67A0A3-EA9E-4078-B301-7B5553FC8710.txt",
+    "path": "failures/testPrivateApplicationRecordPersistsAndCorrectionIsExplicit/8B67A0A3-EA9E-4078-B301-7B5553FC8710.txt",
+    "bytes": 52559,
+    "sha256": "ebb8a71d4261f959ff74ccd836518f2f549c2fd4e768b63f2bfcd154cdb496f1"
+  },
+  {
+    "test": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+    "label": "Debug description for `\"Keep application record\" Button`_0_F9F05236-2E09-4710-8DE2-47AE5D8A8DB5.txt",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "79E4B753-DBDE-4026-B6B8-83DB548C1E1F.txt",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "Debug description for `\"Keep application record\" Button`_0_F9F05236-2E09-4710-8DE2-47AE5D8A8DB5.txt",
+      "timestamp": 1794872791.119
+    },
+    "archiveMember": "career-ui-screenshots/79E4B753-DBDE-4026-B6B8-83DB548C1E1F.txt",
+    "path": "failures/testPrivateApplicationRecordPersistsAndCorrectionIsExplicit/79E4B753-DBDE-4026-B6B8-83DB548C1E1F.txt",
+    "bytes": 201,
+    "sha256": "192eab4311617799e41e51cf9f832f9f9abc619e8cef1be9a1de81f630c6e6bc"
+  },
+  {
+    "test": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+    "label": "Debug description for `\"Keep application record\" Button`_0_FA7C2725-BBD7-43FD-AFA0-07B512B503BD.txt",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "64C76EA5-7674-4229-8BC8-6B9D4E0E3747.txt",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "Debug description for `\"Keep application record\" Button`_0_FA7C2725-BBD7-43FD-AFA0-07B512B503BD.txt",
+      "timestamp": 1794872790.142
+    },
+    "archiveMember": "career-ui-screenshots/64C76EA5-7674-4229-8BC8-6B9D4E0E3747.txt",
+    "path": "failures/testPrivateApplicationRecordPersistsAndCorrectionIsExplicit/64C76EA5-7674-4229-8BC8-6B9D4E0E3747.txt",
+    "bytes": 201,
+    "sha256": "192eab4311617799e41e51cf9f832f9f9abc619e8cef1be9a1de81f630c6e6bc"
+  },
+  {
+    "test": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+    "label": "Debug description for `\"Keep application record\" Button`_0_6254FE82-3433-46C2-BA4B-2105E26A4439.txt",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "BE632F17-A543-4EFF-BF19-36F328C01D77.txt",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "Debug description for `\"Keep application record\" Button`_0_6254FE82-3433-46C2-BA4B-2105E26A4439.txt",
+      "timestamp": 1794872789.172
+    },
+    "archiveMember": "career-ui-screenshots/BE632F17-A543-4EFF-BF19-36F328C01D77.txt",
+    "path": "failures/testPrivateApplicationRecordPersistsAndCorrectionIsExplicit/BE632F17-A543-4EFF-BF19-36F328C01D77.txt",
+    "bytes": 201,
+    "sha256": "192eab4311617799e41e51cf9f832f9f9abc619e8cef1be9a1de81f630c6e6bc"
+  },
+  {
+    "test": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+    "label": "Debug description for `\"Keep application record\" Button`_0_A2FA9364-0F59-4AED-B4F2-1063022D0D36.txt",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "3C999E87-1E1E-48DF-AB28-01466D8F81C1.txt",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "Debug description for `\"Keep application record\" Button`_0_A2FA9364-0F59-4AED-B4F2-1063022D0D36.txt",
+      "timestamp": 1794872788.239
+    },
+    "archiveMember": "career-ui-screenshots/3C999E87-1E1E-48DF-AB28-01466D8F81C1.txt",
+    "path": "failures/testPrivateApplicationRecordPersistsAndCorrectionIsExplicit/3C999E87-1E1E-48DF-AB28-01466D8F81C1.txt",
+    "bytes": 201,
+    "sha256": "192eab4311617799e41e51cf9f832f9f9abc619e8cef1be9a1de81f630c6e6bc"
+  },
+  {
+    "test": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+    "label": "Debug description for `\"Keep application record\" Button`_0_E3DC4049-A1BC-46A9-AA63-E8A80978A52E.txt",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "78EFCA24-A47F-4F38-8063-DE3864611D77.txt",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "Debug description for `\"Keep application record\" Button`_0_E3DC4049-A1BC-46A9-AA63-E8A80978A52E.txt",
+      "timestamp": 1794872787.309
+    },
+    "archiveMember": "career-ui-screenshots/78EFCA24-A47F-4F38-8063-DE3864611D77.txt",
+    "path": "failures/testPrivateApplicationRecordPersistsAndCorrectionIsExplicit/78EFCA24-A47F-4F38-8063-DE3864611D77.txt",
+    "bytes": 201,
+    "sha256": "192eab4311617799e41e51cf9f832f9f9abc619e8cef1be9a1de81f630c6e6bc"
+  },
+  {
+    "test": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+    "label": "18-private-record-restored_0_CFCB090C-952C-4336-8819-C4EABD2F3C99.png",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "2533451A-9D91-4221-939A-A67ED149D51D.png",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "18-private-record-restored_0_CFCB090C-952C-4336-8819-C4EABD2F3C99.png",
+      "timestamp": 1794872775.284
+    },
+    "archiveMember": "career-ui-screenshots/2533451A-9D91-4221-939A-A67ED149D51D.png",
+    "path": "failures/testPrivateApplicationRecordPersistsAndCorrectionIsExplicit/2533451A-9D91-4221-939A-A67ED149D51D.png",
+    "bytes": 376915,
+    "sha256": "d6d1981339becf0a9f8208a6a2eb89eb031438490e49e374ce45976d27fa9e4b"
+  },
+  {
+    "test": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+    "label": "Screen Recording 2026-11-16 at 11.45.00 PM.mp4",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "AD2213B0-F699-46AD-AAA9-A01B7E83B6C3.mp4",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "Screen Recording 2026-11-16 at 11.45.00 PM.mp4",
+      "timestamp": 1794872700.904
+    },
+    "archiveMember": "career-ui-screenshots/AD2213B0-F699-46AD-AAA9-A01B7E83B6C3.mp4",
+    "path": "failures/testPrivateApplicationRecordPersistsAndCorrectionIsExplicit/AD2213B0-F699-46AD-AAA9-A01B7E83B6C3.mp4",
+    "bytes": 23535660,
+    "sha256": "86eecf43804c31b60e78edfec9187baa25aa15fc4010949207138f0745d3e33b"
+  },
+  {
+    "test": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+    "label": "Final frame0.5seconds before the end of the retained CI screen recording",
+    "path": "failures/testPrivateApplicationRecordPersistsAndCorrectionIsExplicit/failure-final-frame.png",
+    "sourceVideo": "failures/testPrivateApplicationRecordPersistsAndCorrectionIsExplicit/AD2213B0-F699-46AD-AAA9-A01B7E83B6C3.mp4",
+    "bytes": 595898,
+    "sha256": "5af6548a1309dfdffa3546457d1e03aaaac727a696861d868c7d70d851ed110b"
+  },
+  {
+    "test": "testProfileReadinessAndSimpleConnectionSetup",
+    "label": "App UI hierarchy for com.ahmadalayed_0_A8B5275D-CF8F-47A2-A735-A0280A40F79B.career",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "8C55E8C8-1E45-4258-A524-58ADA7551DDF.txt",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "App UI hierarchy for com.ahmadalayed_0_A8B5275D-CF8F-47A2-A735-A0280A40F79B.career",
+      "timestamp": 1794872832.041
+    },
+    "archiveMember": "career-ui-screenshots/8C55E8C8-1E45-4258-A524-58ADA7551DDF.txt",
+    "path": "failures/testProfileReadinessAndSimpleConnectionSetup/8C55E8C8-1E45-4258-A524-58ADA7551DDF.txt",
+    "bytes": 23074,
+    "sha256": "f8d4235b54884ec3b93347da548b3e7310cd8d0f2686be0ff7f00a81107c70cf"
+  },
+  {
+    "test": "testProfileReadinessAndSimpleConnectionSetup",
+    "label": "Debug description for `\"Application connection\" NavigationBar`_0_2AF45A3A-F049-4559-8446-8048AE0A838C.txt",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "604B80E7-0C84-4E0D-B4B1-8303DD0C2F5A.txt",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "Debug description for `\"Application connection\" NavigationBar`_0_2AF45A3A-F049-4559-8446-8048AE0A838C.txt",
+      "timestamp": 1794872831.859
+    },
+    "archiveMember": "career-ui-screenshots/604B80E7-0C84-4E0D-B4B1-8303DD0C2F5A.txt",
+    "path": "failures/testProfileReadinessAndSimpleConnectionSetup/604B80E7-0C84-4E0D-B4B1-8303DD0C2F5A.txt",
+    "bytes": 207,
+    "sha256": "235301aa7eb249e72b1408a4ed076c587622557e3566389e4297bb351c02557c"
+  },
+  {
+    "test": "testProfileReadinessAndSimpleConnectionSetup",
+    "label": "Debug description for `\"Application connection\" NavigationBar`_0_854C1F51-33CD-4E9E-9386-DE032378144C.txt",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "61B2E3FD-B49F-4108-89FC-3840A966957D.txt",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "Debug description for `\"Application connection\" NavigationBar`_0_854C1F51-33CD-4E9E-9386-DE032378144C.txt",
+      "timestamp": 1794872830.956
+    },
+    "archiveMember": "career-ui-screenshots/61B2E3FD-B49F-4108-89FC-3840A966957D.txt",
+    "path": "failures/testProfileReadinessAndSimpleConnectionSetup/61B2E3FD-B49F-4108-89FC-3840A966957D.txt",
+    "bytes": 207,
+    "sha256": "235301aa7eb249e72b1408a4ed076c587622557e3566389e4297bb351c02557c"
+  },
+  {
+    "test": "testProfileReadinessAndSimpleConnectionSetup",
+    "label": "Debug description for `\"Application connection\" NavigationBar`_0_91FF7835-8CDC-4B50-A420-1A0272222D8C.txt",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "3C0D690D-9547-4E86-997B-944C4BFD6302.txt",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "Debug description for `\"Application connection\" NavigationBar`_0_91FF7835-8CDC-4B50-A420-1A0272222D8C.txt",
+      "timestamp": 1794872829.87
+    },
+    "archiveMember": "career-ui-screenshots/3C0D690D-9547-4E86-997B-944C4BFD6302.txt",
+    "path": "failures/testProfileReadinessAndSimpleConnectionSetup/3C0D690D-9547-4E86-997B-944C4BFD6302.txt",
+    "bytes": 207,
+    "sha256": "235301aa7eb249e72b1408a4ed076c587622557e3566389e4297bb351c02557c"
+  },
+  {
+    "test": "testProfileReadinessAndSimpleConnectionSetup",
+    "label": "Debug description for `\"Application connection\" NavigationBar`_0_3543AE53-F905-4337-A8B0-7290E6CD006D.txt",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "67BC01E1-5286-44D3-93C4-EA885952ED2D.txt",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "Debug description for `\"Application connection\" NavigationBar`_0_3543AE53-F905-4337-A8B0-7290E6CD006D.txt",
+      "timestamp": 1794872828.947
+    },
+    "archiveMember": "career-ui-screenshots/67BC01E1-5286-44D3-93C4-EA885952ED2D.txt",
+    "path": "failures/testProfileReadinessAndSimpleConnectionSetup/67BC01E1-5286-44D3-93C4-EA885952ED2D.txt",
+    "bytes": 207,
+    "sha256": "235301aa7eb249e72b1408a4ed076c587622557e3566389e4297bb351c02557c"
+  },
+  {
+    "test": "testProfileReadinessAndSimpleConnectionSetup",
+    "label": "Debug description for `\"Application connection\" NavigationBar`_0_A84D55B3-54D6-4E98-BF2D-EA70F00B291D.txt",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "EDD3BB8B-E49E-47B3-9457-1D8B8CB99870.txt",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "Debug description for `\"Application connection\" NavigationBar`_0_A84D55B3-54D6-4E98-BF2D-EA70F00B291D.txt",
+      "timestamp": 1794872827.894
+    },
+    "archiveMember": "career-ui-screenshots/EDD3BB8B-E49E-47B3-9457-1D8B8CB99870.txt",
+    "path": "failures/testProfileReadinessAndSimpleConnectionSetup/EDD3BB8B-E49E-47B3-9457-1D8B8CB99870.txt",
+    "bytes": 207,
+    "sha256": "235301aa7eb249e72b1408a4ed076c587622557e3566389e4297bb351c02557c"
+  },
+  {
+    "test": "testProfileReadinessAndSimpleConnectionSetup",
+    "label": "21-profile-readiness_0_17AA45DA-7A6D-47D1-B2A8-65CA48CE6B56.png",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "BFA42A5E-A408-41EE-9998-2E32499B8E39.png",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "21-profile-readiness_0_17AA45DA-7A6D-47D1-B2A8-65CA48CE6B56.png",
+      "timestamp": 1794872826.224
+    },
+    "archiveMember": "career-ui-screenshots/BFA42A5E-A408-41EE-9998-2E32499B8E39.png",
+    "path": "failures/testProfileReadinessAndSimpleConnectionSetup/BFA42A5E-A408-41EE-9998-2E32499B8E39.png",
+    "bytes": 461301,
+    "sha256": "16e8f1ba40759d18b38c3712170d895e98c5be8d8fc8149eeb600ec846e5c651"
+  },
+  {
+    "test": "testProfileReadinessAndSimpleConnectionSetup",
+    "label": "Screen Recording 2026-11-16 at 11.46.32 PM.mp4",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "043058D7-429C-4E8C-AE45-1A77CC8BF958.mp4",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "Screen Recording 2026-11-16 at 11.46.32 PM.mp4",
+      "timestamp": 1794872792.015
+    },
+    "archiveMember": "career-ui-screenshots/043058D7-429C-4E8C-AE45-1A77CC8BF958.mp4",
+    "path": "failures/testProfileReadinessAndSimpleConnectionSetup/043058D7-429C-4E8C-AE45-1A77CC8BF958.mp4",
+    "bytes": 5406714,
+    "sha256": "6313097d31dcb0c19f5f979aba9bd722a089188148e3a74fc1a59b10184cd858"
+  },
+  {
+    "test": "testProfileReadinessAndSimpleConnectionSetup",
+    "label": "Final frame0.5seconds before the end of the retained CI screen recording",
+    "path": "failures/testProfileReadinessAndSimpleConnectionSetup/failure-final-frame.png",
+    "sourceVideo": "failures/testProfileReadinessAndSimpleConnectionSetup/043058D7-429C-4E8C-AE45-1A77CC8BF958.mp4",
+    "bytes": 520606,
+    "sha256": "e30188d6d95fd72a9fcb130c4f20ea2471469423eaec668acd26300ad5ddf550"
+  },
+  {
+    "test": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+    "label": "App UI hierarchy for com.ahmadalayed_0_6D4B463E-C26F-4D0F-8D89-40F257D2D5C7.career",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "88D15369-6DAA-4C8C-9953-B37EEC5981FC.txt",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "App UI hierarchy for com.ahmadalayed_0_6D4B463E-C26F-4D0F-8D89-40F257D2D5C7.career",
+      "timestamp": 1794872852.476
+    },
+    "archiveMember": "career-ui-screenshots/88D15369-6DAA-4C8C-9953-B37EEC5981FC.txt",
+    "path": "failures/testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark/88D15369-6DAA-4C8C-9953-B37EEC5981FC.txt",
+    "bytes": 34879,
+    "sha256": "11b609fe722471ae2548a4f45c28363cabdcb039273084ad0affe3084b7e4987"
+  },
+  {
+    "test": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+    "label": "Debug description for `\"Keep separate on this phone\" Button`_0_8ADB8638-E884-4D31-9E08-BD23EDE4A5EC.txt",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "919737BC-553D-4A18-B806-EEBC0B3710AA.txt",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "Debug description for `\"Keep separate on this phone\" Button`_0_8ADB8638-E884-4D31-9E08-BD23EDE4A5EC.txt",
+      "timestamp": 1794872852.236
+    },
+    "archiveMember": "career-ui-screenshots/919737BC-553D-4A18-B806-EEBC0B3710AA.txt",
+    "path": "failures/testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark/919737BC-553D-4A18-B806-EEBC0B3710AA.txt",
+    "bytes": 205,
+    "sha256": "1ff75bc32794cd964292076651dda7e4d368f274c04f58a903c1f4979953ca3a"
+  },
+  {
+    "test": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+    "label": "Debug description for `\"Keep separate on this phone\" Button`_0_70FC8F3B-5151-4418-BA4E-0AB05BCB120F.txt",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "9A2C8013-8CD9-4DB2-965A-A9986266039C.txt",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "Debug description for `\"Keep separate on this phone\" Button`_0_70FC8F3B-5151-4418-BA4E-0AB05BCB120F.txt",
+      "timestamp": 1794872851.275
+    },
+    "archiveMember": "career-ui-screenshots/9A2C8013-8CD9-4DB2-965A-A9986266039C.txt",
+    "path": "failures/testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark/9A2C8013-8CD9-4DB2-965A-A9986266039C.txt",
+    "bytes": 205,
+    "sha256": "1ff75bc32794cd964292076651dda7e4d368f274c04f58a903c1f4979953ca3a"
+  },
+  {
+    "test": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+    "label": "Debug description for `\"Keep separate on this phone\" Button`_0_C5F40496-22EB-4293-85A8-255ACD1E6CE4.txt",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "1132F0D0-92D8-49D0-98D9-157343E9299D.txt",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "Debug description for `\"Keep separate on this phone\" Button`_0_C5F40496-22EB-4293-85A8-255ACD1E6CE4.txt",
+      "timestamp": 1794872850.254
+    },
+    "archiveMember": "career-ui-screenshots/1132F0D0-92D8-49D0-98D9-157343E9299D.txt",
+    "path": "failures/testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark/1132F0D0-92D8-49D0-98D9-157343E9299D.txt",
+    "bytes": 205,
+    "sha256": "1ff75bc32794cd964292076651dda7e4d368f274c04f58a903c1f4979953ca3a"
+  },
+  {
+    "test": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+    "label": "Debug description for `\"Keep separate on this phone\" Button`_0_C73E7333-74E1-4596-9DDC-FE24E71084CD.txt",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "8919E24B-4D35-4778-8605-893E0804193C.txt",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "Debug description for `\"Keep separate on this phone\" Button`_0_C73E7333-74E1-4596-9DDC-FE24E71084CD.txt",
+      "timestamp": 1794872849.329
+    },
+    "archiveMember": "career-ui-screenshots/8919E24B-4D35-4778-8605-893E0804193C.txt",
+    "path": "failures/testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark/8919E24B-4D35-4778-8605-893E0804193C.txt",
+    "bytes": 205,
+    "sha256": "1ff75bc32794cd964292076651dda7e4d368f274c04f58a903c1f4979953ca3a"
+  },
+  {
+    "test": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+    "label": "Debug description for `\"Keep separate on this phone\" Button`_0_CB02CE55-BE5F-4F48-BA1E-0AEC679FEE0F.txt",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "280E60A3-F67B-4756-8359-440E36EF7D8E.txt",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "Debug description for `\"Keep separate on this phone\" Button`_0_CB02CE55-BE5F-4F48-BA1E-0AEC679FEE0F.txt",
+      "timestamp": 1794872848.397
+    },
+    "archiveMember": "career-ui-screenshots/280E60A3-F67B-4756-8359-440E36EF7D8E.txt",
+    "path": "failures/testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark/280E60A3-F67B-4756-8359-440E36EF7D8E.txt",
+    "bytes": 205,
+    "sha256": "1ff75bc32794cd964292076651dda7e4d368f274c04f58a903c1f4979953ca3a"
+  },
+  {
+    "test": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+    "label": "Screen Recording 2026-11-16 at 11.47.12 PM.mp4",
+    "attachment": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+      "deviceName": "iPhone Air",
+      "exportedFileName": "FC91A682-2F01-41AF-9691-2FE02DF29137.mp4",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "Screen Recording 2026-11-16 at 11.47.12 PM.mp4",
+      "timestamp": 1794872832.352
+    },
+    "archiveMember": "career-ui-screenshots/FC91A682-2F01-41AF-9691-2FE02DF29137.mp4",
+    "path": "failures/testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark/FC91A682-2F01-41AF-9691-2FE02DF29137.mp4",
+    "bytes": 5061012,
+    "sha256": "0dd0e3a3c2452b91dbe010e7106c4f6acb8e6f8ecebda7a700dc3bccb178eeb2"
+  },
+  {
+    "test": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+    "label": "Final frame0.5seconds before the end of the retained CI screen recording",
+    "path": "failures/testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark/failure-final-frame.png",
+    "sourceVideo": "failures/testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark/FC91A682-2F01-41AF-9691-2FE02DF29137.mp4",
+    "bytes": 567182,
+    "sha256": "8a849bebe54dd25483d9ae31f0a258f1d1e8cdc5ea227e95013f2472fc736e16"
+  }
+]

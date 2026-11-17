@@ -1,0 +1,256 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-11-16T23:58:43.252081+00:00",
+  "repository": "swonyu/ahmad-career",
+  "runId": 43979963388,
+  "attempt": 1,
+  "headSha": "bc68f1a38cd705eb5d789874bff471f03e084549",
+  "conclusion": "failure",
+  "runURL": "https://github.com/swonyu/ahmad-career/actions/runs/43979963388",
+  "jobs": [
+    {
+      "name": "iPhone native interface acceptance",
+      "id": 133693582731,
+      "status": "completed",
+      "conclusion": "failure",
+      "step": null
+    },
+    {
+      "name": "Hosted HTTPS service and durable storage",
+      "id": 133693583148,
+      "status": "completed",
+      "conclusion": "failure",
+      "step": null
+    },
+    {
+      "name": "Service and synthetic HTTPS",
+      "id": 133693583175,
+      "status": "completed",
+      "conclusion": "success",
+      "step": null
+    },
+    {
+      "name": "Android compile and lint",
+      "id": 133693583220,
+      "status": "completed",
+      "conclusion": "success",
+      "step": null
+    },
+    {
+      "name": "iPhone logic and unsigned build",
+      "id": 133693583221,
+      "status": "completed",
+      "conclusion": "success",
+      "step": null
+    }
+  ],
+  "nativeTests": {
+    "runId": 43979963388,
+    "attempt": 1,
+    "headSha": "bc68f1a38cd705eb5d789874bff471f03e084549",
+    "uiJobId": 133693582731,
+    "uiConclusion": "failure",
+    "tests": [
+      {
+        "test": "testAccessibilityTextKeepsCoreControlsReachable",
+        "outcome": "failed",
+        "durationSeconds": 175.006
+      },
+      {
+        "test": "testApplicationDraftSurvivesCancelAndRelaunch",
+        "outcome": "passed",
+        "durationSeconds": 42.979
+      },
+      {
+        "test": "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+        "outcome": "passed",
+        "durationSeconds": 103.553
+      },
+      {
+        "test": "testDiscoverySaveFlowsIntoSavedAndApply",
+        "outcome": "passed",
+        "durationSeconds": 37.202
+      },
+      {
+        "test": "testFreshStartAndFiveTabs",
+        "outcome": "passed",
+        "durationSeconds": 30.881
+      },
+      {
+        "test": "testLinkedInProfileDraftAndExternalSearchChoice",
+        "outcome": "passed",
+        "durationSeconds": 58.155
+      },
+      {
+        "test": "testOpportunityDiscardRequiresExplicitChoice",
+        "outcome": "passed",
+        "durationSeconds": 24.954
+      },
+      {
+        "test": "testOpportunityDraftKeepSaveAndRestore",
+        "outcome": "passed",
+        "durationSeconds": 62.848
+      },
+      {
+        "test": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+        "outcome": "failed",
+        "durationSeconds": 91.135
+      },
+      {
+        "test": "testProfileReadinessAndSimpleConnectionSetup",
+        "outcome": "failed",
+        "durationSeconds": 40.333
+      },
+      {
+        "test": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+        "outcome": "failed",
+        "durationSeconds": 20.439
+      },
+      {
+        "test": "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+        "outcome": "passed",
+        "durationSeconds": 91.639
+      },
+      {
+        "test": "testSearchEmptyAndFailurePreservesPreviousResults",
+        "outcome": "passed",
+        "durationSeconds": 74.576
+      }
+    ],
+    "executedCountLines": [
+      "2026-11-16T23:50:18.9699990Z \t Executed 13 tests, with 4 failures (0 unexpected) in 853.699 (853.724) seconds",
+      "2026-11-16T23:50:19.0417160Z \t Executed 13 tests, with 4 failures (0 unexpected) in 853.699 (853.726) seconds",
+      "2026-11-16T23:50:19.0424870Z \t Executed 13 tests, with 4 failures (0 unexpected) in 853.699 (853.729) seconds"
+    ],
+    "simulator": {
+      "name": "iPhone Air",
+      "runtime": "iOS 26.5"
+    },
+    "observedAt": "2026-11-16T23:58:32.656615+00:00"
+  },
+  "logs": [
+    {
+      "jobId": 133693582731,
+      "jobName": "iPhone native interface acceptance",
+      "path": "logs/133693582731.log",
+      "bytes": 498337,
+      "sha256": "12c5a689710c7667bb1f66c9717ecd31707fca41910af1b5678715d05ec1a666"
+    },
+    {
+      "jobId": 133693583148,
+      "jobName": "Hosted HTTPS service and durable storage",
+      "path": "logs/133693583148.log",
+      "bytes": 49729,
+      "sha256": "cecde04d079fe7125f866c80245eb29d6354a7aef9c11c88b37ab9588efe0586"
+    },
+    {
+      "jobId": 133693583175,
+      "jobName": "Service and synthetic HTTPS",
+      "path": "logs/133693583175.log",
+      "bytes": 39006,
+      "sha256": "3633b1f2be9a8ab96df20075d90e21c181fc50404613228ab888a958dae354f7"
+    },
+    {
+      "jobId": 133693583220,
+      "jobName": "Android compile and lint",
+      "path": "logs/133693583220.log",
+      "bytes": 33514,
+      "sha256": "bf2dd81bdf4c77ee0b24f180a47fd6ac83b43baaf86fe9f7499682cdf1341935"
+    },
+    {
+      "jobId": 133693583221,
+      "jobName": "iPhone logic and unsigned build",
+      "path": "logs/133693583221.log",
+      "bytes": 110959,
+      "sha256": "8efe349be81c64f8124eeb02f26e71d6c1e435579152bde756b35ae76d7aea54"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 14284171039,
+      "name": "iphone-ui-acceptance-43979963388",
+      "path": "archive/14284171039.zip",
+      "bytes": 247113351,
+      "sha256": "60e37e28ffc97d84b6fecdbb54bde9dcd90ac33dc0c333a5f23698da378a9e96"
+    },
+    {
+      "id": 14282972070,
+      "name": "hosted-storage-checks-43979963388",
+      "path": "archive/14282972070.zip",
+      "bytes": 13191,
+      "sha256": "bc82adc4f12835a4cc943654c31f19351f067f6e314cdb1d6e92e3dec2ae3240"
+    },
+    {
+      "id": 14282823769,
+      "name": "android-lint-43979963388",
+      "path": "archive/14282823769.zip",
+      "bytes": 28284,
+      "sha256": "f6245e1a4492e406b34d4f53514eccbe7bf97fc912376d15b2630480485adafa"
+    },
+    {
+      "id": 14281907876,
+      "name": "iphone-build-log-43979963388",
+      "path": "archive/14281907876.zip",
+      "bytes": 7844,
+      "sha256": "5e44719182929ca06cfaf20c3f3c657410871dc002018e066d6f399927f93e34"
+    }
+  ],
+  "exportedPNGCount": 20,
+  "sourceFingerprints": [
+    {
+      "path": ".github/workflows/phone-quality.yml",
+      "bytes": 10663,
+      "sha256": "d86600fb5db51dd5837871a632481c053ded7984a8e7047b1c6cb2985223ed8e"
+    },
+    {
+      "path": "hosted/package.json",
+      "bytes": 2618,
+      "sha256": "1209c43d10cc7a23a8cbb3aceb98d3fc812b9e1d9d9c66ef5d5948c735abaa6e"
+    },
+    {
+      "path": "hosted/package-lock.json",
+      "bytes": 522492,
+      "sha256": "5d1a54ff59b963a1ca62b61ddc1001c400f72f45988836d5c69837922712cc56"
+    },
+    {
+      "path": "apple/UITests/CareerFinderUITests.swift",
+      "bytes": 30135,
+      "sha256": "15e13660bff760e074ec7979ab9ae1cb3b60bf754f424bc50976e78757c58cd3"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeApplicationsViews.swift",
+      "bytes": 71910,
+      "sha256": "5d80210493ddcf441cc0230c07f453046a40c27f315945c558c24a626338509b"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeApplicationsStore.swift",
+      "bytes": 59478,
+      "sha256": "1270a01969f21576a21a800b0fff5b0d01f42c95984088c72dac47b4609919f7"
+    },
+    {
+      "path": "apple/AhmadCareer/MobileApplicationClient.swift",
+      "bytes": 22982,
+      "sha256": "ff4b7169af653f04b6345c15d771b0d9da26096988e6cf02a995035bf52bc39d"
+    },
+    {
+      "path": "apple/AhmadCareer/MobileApplicationState.swift",
+      "bytes": 24140,
+      "sha256": "a87cc645f2b41cde904c4325fc85575319299986132e8a924ab108768652441e"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeDiscoveryViews.swift",
+      "bytes": 17782,
+      "sha256": "8679716b73fa930d521825cc4579d571165810eab7dca338ef76c97e73ee9298"
+    },
+    {
+      "path": "apple/Checks/MobileLifecycleCheck.swift",
+      "bytes": 113608,
+      "sha256": "5d7822c8b7aa77c26db31eb1d8904f17725a7bf0abcf1334df3937714e94c4d5"
+    }
+  ],
+  "limitations": [
+    "No local Xcode, simulator, xcresulttool, signing or physical device operation was run.",
+    "Only CI-exported PNG/JSON attachments and text logs were extracted; xcresult remains preserved in artifact archive.",
+    "No workflow rerun, cancellation, dispatch, source edit or publication occurred."
+  ]
+}

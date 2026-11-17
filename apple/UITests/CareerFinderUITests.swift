@@ -24,12 +24,38 @@ final class CareerFinderUITests: XCTestCase {
     }
     @MainActor
     private func reveal(_ element: XCUIElement, in app: XCUIApplication, swipes: Int = 10) {
-        for _ in 0..<swipes {
-            if element.exists && element.isHittable { return }
-            app.swipeUp()
+        for attempt in 0...swipes {
+            let exists = element.exists
+            if exists && element.isHittable {
+                if element.elementType != .button { return }
+                let viewport = contentViewport(in: app), frame = element.frame
+                // A partially visible List button can report hittable while its tap
+                // point is underneath the floating tab bar. Reveal the whole action.
+                if frame.minY >= viewport.minY && frame.maxY <= viewport.maxY { return }
+            }
+            if attempt == swipes { break }
+            if exists && element.elementType == .button {
+                let viewport = contentViewport(in: app), frame = element.frame
+                XCTAssertGreaterThan(viewport.height, 120, "A control needs a usable content viewport")
+                let downward = frame.midY < viewport.midY
+                let distance = min(180, viewport.height * 0.36)
+                let origin = app.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0))
+                let from = origin.withOffset(CGVector(dx: viewport.midX, dy: viewport.midY + (downward ? -distance / 2 : distance / 2)))
+                let to = origin.withOffset(CGVector(dx: viewport.midX, dy: viewport.midY + (downward ? distance / 2 : -distance / 2)))
+                from.press(forDuration: 0.05, thenDragTo: to)
+            } else { app.swipeUp() }
         }
-        if !element.exists || !element.isHittable { print(app.debugDescription) }
-        XCTAssertTrue(element.exists && element.isHittable, "Expected a reachable control: \(element)")
+        capture("control-not-fully-reachable", app: app)
+        print(app.debugDescription)
+        XCTFail("Expected a reachable control inside the visible content: \(element)")
+    }
+    @MainActor
+    private func contentViewport(in app: XCUIApplication) -> CGRect {
+        var top = app.frame.minY + 12, bottom = app.frame.maxY - 12
+        let navigation = app.navigationBars.firstMatch, tabs = app.tabBars.firstMatch
+        if navigation.exists && navigation.isHittable { top = max(top, navigation.frame.maxY + 8) }
+        if tabs.exists && tabs.isHittable { bottom = min(bottom, tabs.frame.minY - 12) }
+        return CGRect(x: app.frame.minX + 12, y: top, width: app.frame.width - 24, height: bottom - top)
     }
     @MainActor
     private func revealInApplicationContent(_ target: XCUIElement, app: XCUIApplication) {
@@ -215,7 +241,14 @@ final class CareerFinderUITests: XCTestCase {
         tab("Saved", in: app); let row = app.staticTexts[title]; reveal(row, in: app); row.tap()
         let edit = app.buttons["record.edit"]; reveal(edit, in: app); edit.tap()
         let stage = element("record.stage", app: app); stage.tap(); chooseMenu("Applied", in: app)
-        let followUp = app.switches["record.hasFollowUp"]; reveal(followUp, in: app); followUp.tap()
+        let followUp = app.switches["record.hasFollowUp"]; reveal(followUp, in: app)
+        // SwiftUI exposes a full-row Switch wrapper and a separate native thumb.
+        // Touch the visible control, then prove the selected state before saving.
+        let followUpControl = followUp.switches.firstMatch
+        XCTAssertTrue(followUpControl.waitForExistence(timeout: 5) && followUpControl.isHittable)
+        followUpControl.tap()
+        XCTAssertTrue(element("record.followUpDate", app: app).waitForExistence(timeout: 5))
+        XCTAssertEqual(followUp.value as? String, "1", "The follow-up must be enabled before saving its date")
         let note = app.textViews["record.note"]; reveal(note, in: app); replace(note, with: "Prepare a thoughtful follow-up.")
         app.buttons["Done typing"].tap(); app.buttons["record.save"].tap()
         XCTAssertTrue(app.buttons["record.edit"].waitForExistence(timeout: 5))
@@ -224,9 +257,13 @@ final class CareerFinderUITests: XCTestCase {
         let summary = element("record.stageSummary", app: app); reveal(summary, in: app)
         XCTAssertEqual(summary.label, "You marked: Applied")
         XCTAssertTrue(app.staticTexts["Prepare a thoughtful follow-up."].exists)
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", "Follow-up date · ")).firstMatch.exists,
+                      "The selected follow-up date must survive relaunch")
         capture("18-private-record-restored", app: app)
         let reopen = app.buttons["record.edit"]; reveal(reopen, in: app); reopen.tap()
-        element("record.stage", app: app).tap(); chooseMenu("Saved", in: app); app.buttons["record.save"].tap()
+        element("record.stage", app: app).tap(); chooseMenu("Saved", in: app)
+        XCTAssertTrue(element("record.stage", app: app).label.contains("Saved"))
+        app.buttons["record.save"].tap()
         XCTAssertTrue(app.buttons["Keep application record"].waitForExistence(timeout: 5))
         app.buttons["Keep application record"].tap()
         app.navigationBars.buttons["Cancel"].tap(); app.buttons["Discard changes"].tap()
@@ -275,8 +312,12 @@ final class CareerFinderUITests: XCTestCase {
         XCTAssertEqual(element("profile.essential.name", app: app).label, "Name added")
         XCTAssertEqual(element("profile.essential.resume", app: app).label, "PDF CV needed")
         capture("21-profile-readiness", app: app)
-        app.buttons["applications.review"].tap()
-        XCTAssertTrue(app.navigationBars["Application connection"].waitForExistence(timeout: 5))
+        let setup = app.buttons["applications.review"]
+        XCTAssertTrue(setup.isEnabled && setup.isHittable, "The visible setup action must be enabled")
+        setup.tap()
+        let opened = app.navigationBars["Application connection"].waitForExistence(timeout: 5)
+        if !opened { capture("connection-setup-did-not-open", app: app); print(app.debugDescription) }
+        XCTAssertTrue(opened, "One tap on Set up Auto Apply must open connection setup")
         XCTAssertFalse(app.textFields["connection.address"].exists, "Default setup needs no service-address editing")
         let code = app.secureTextFields["connection.code"]; reveal(code, in: app); replace(code, with: "SYNTHETIC")
         app.buttons["Done typing"].tap()
@@ -391,7 +432,14 @@ final class CareerFinderUITests: XCTestCase {
     func testAccessibilityTextKeepsCoreControlsReachable() {
         let app = launch(largeText: true)
         capture("09-start-accessibility-text", app: app)
-        let profile = app.buttons["home.applicationProfile"]; reveal(profile, in: app); profile.tap()
+        let profile = app.buttons["home.applicationProfile"]; reveal(profile, in: app)
+        XCTAssertLessThan(profile.frame.maxY, app.tabBars.firstMatch.frame.minY,
+                          "The Start action must be above the floating tab bar before it is tapped")
+        capture("09a-start-profile-fully-visible", app: app)
+        profile.tap()
+        let opened = app.navigationBars["Application profile"].waitForExistence(timeout: 5)
+        if !opened { capture("large-text-profile-did-not-open", app: app); print(app.debugDescription) }
+        XCTAssertTrue(opened, "The fully visible Start profile action must open its sheet with one tap")
         let name = app.textFields["application.firstName"]; reveal(name, in: app); replace(name, with: "Alex")
         XCTAssertTrue(app.navigationBars.buttons["Cancel"].isHittable)
         capture("10-profile-accessibility-keyboard", app: app)

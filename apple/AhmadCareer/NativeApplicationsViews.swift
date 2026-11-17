@@ -204,7 +204,7 @@ struct NativeApplicationsScreen: View {
                                     Image(systemName: "arrow.right")
                                 }
                             }
-                        }.padding(16).frame(maxWidth: .infinity)
+                        }.padding(16).frame(maxWidth: .infinity).contentShape(Rectangle())
                     }
                     .buttonStyle(.plain).foregroundStyle(.white)
                     .background(ApplyDesign.green, in: RoundedRectangle(cornerRadius: 16))

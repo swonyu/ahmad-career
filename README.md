@@ -2,11 +2,12 @@
 
 Career Finder helps people find jobs, keep a shortlist, prepare a profile and PDF CV, and track what happens after applying. It is designed for **iPhone and Android phones**, starts with a blank personal profile, and has no country or profession whitelist.
 
-**Release checkpoint — 17 November 2026:** the 0.6 phone interface, application tracker and reliability improvements are implemented and undergoing final verification. The public HTTPS service is currently version 4. Android 0.6 passed 91 policy checks and all 83 native phone tests, with zero lint issues. The browser app is saved as hosted version 6 with a successful complete dependency audit and final production build; deployment and updated downloads are still pending. The latest iPhone interface run passed nine of thirteen cases; the four failures are being corrected before a new native release. The [strict review](docs/Strict-Review-2026-11-17.md) records exact results and remaining gates; earlier successful tests do not verify a later source change.
+**Release checkpoint — 17 November 2026:** hosted **version 6 is deployed**, including the phone browser app and dependency corrections. Its hosted GitHub CI gate passed with zero findings in the complete dependency audit; live browser acceptance is still in progress. Android 0.6 passed 91 policy checks and all 83 native phone tests, with zero lint issues, but its new download is not yet published. The latest completed iPhone UI run passed nine of thirteen cases. Corrections for its four failures are frozen and independently reviewed; a fresh 13-case run is pending. The [deployment receipt](docs/strict-review-evidence/phone-web-hosted-deployment-v6.json) and [strict review](docs/Strict-Review-2026-11-17.md) identify observed results and remaining gates. Earlier successful tests do not verify a later source change.
 
 ## Start here
 
 - [Public Career Finder service](https://career-finder-service.jazzy-drake-8323.chatgpt.site)
+- [Open the phone browser app](https://career-finder-service.jazzy-drake-8323.chatgpt.site/phone)
 - [Connect a native phone app](https://career-finder-service.jazzy-drake-8323.chatgpt.site/connect)
 - [Manage your account](https://career-finder-service.jazzy-drake-8323.chatgpt.site/account)
 - [Help](https://career-finder-service.jazzy-drake-8323.chatgpt.site/support) · [Privacy](https://career-finder-service.jazzy-drake-8323.chatgpt.site/privacy)
@@ -16,7 +17,7 @@ The native Android app targets Android 8 or newer. Its ordinary preview uses `co
 
 ## Simple phone navigation
 
-The new phone browser app uses four sections:
+The deployed phone browser app uses four sections:
 
 | Section | What you can do |
 | --- | --- |
@@ -110,5 +111,7 @@ bash apple/Checks/check-mobile.sh
 ```
 
 The [Phone quality workflow](.github/workflows/phone-quality.yml) has five gates: companion service/synthetic HTTPS, hosted storage and Worker checks, Android compile/lint, iPhone logic/unsigned Release, and isolated iPhone UI acceptance. Test fixtures use synthetic applicants and providers. No real employer application was sent during development.
+
+The hosted gate for published feature commit `5efda90fd5ac58b4d8b8641466056bbd0dc6bbd3` passed in [run 43983824827](https://github.com/swonyu/ahmad-career/actions/runs/43983824827/job/133706762047). This is evidence for the hosted source and full dependency audit, not an all-five-gate pass for the later iPhone repair. The [iPhone repair review](docs/strict-review-evidence/iphone-bc68-ui-repair-review.json) and [independent review](docs/strict-review-evidence/iphone-bc68-ui-repair-independent-review.json) record the corrected bytes and the pending runtime check.
 
 The retained [0.4 release verification](docs/phone-preview-release-verification.json), [earlier polish review](docs/Phone-Polish-Review-2026-11-16.md) and [earlier reliability review](docs/Phone-Quality-Review-2026-11-16.md) remain dated evidence. They must not be relabeled as results for this candidate. Physical-phone acceptance, app-store distribution, direct LinkedIn OAuth and live employer activation require their own observed results.

@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-11-17T00:04:18.196818+00:00",
+  "runId": 43983824827,
+  "attempt": 1,
+  "headSha": "5efda90fd5ac58b4d8b8641466056bbd0dc6bbd3",
+  "hostedSourceCommit": "d0ba1810c2a07fa84b4d2b88e6e56f8c80ad3470",
+  "repository": "swonyu/ahmad-career",
+  "runURL": "https://github.com/swonyu/ahmad-career/actions/runs/43983824827",
+  "jobId": 133706762047,
+  "jobName": "Hosted HTTPS service and durable storage",
+  "conclusion": "success",
+  "startedAt": "2026-11-16T23:58:52Z",
+  "completedAt": "2026-11-17T00:00:01Z",
+  "steps": [
+    {
+      "name": "Set up job",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install the pinned hosted service dependencies",
+      "conclusion": "success"
+    },
+    {
+      "name": "Check account screens and worker types",
+      "conclusion": "success"
+    },
+    {
+      "name": "Exercise the production handler with real local D1 and R2",
+      "conclusion": "success"
+    },
+    {
+      "name": "Build the deployable Worker and phone setup pages",
+      "conclusion": "success"
+    },
+    {
+      "name": "Audit the locked dependencies",
+      "conclusion": "success"
+    },
+    {
+      "name": "Keep the hosted regression evidence",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "conclusion": "success"
+    },
+    {
+      "name": "Complete job",
+      "conclusion": "success"
+    }
+  ],
+  "fullLockedDependencyAudit": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "auditFileSha256": "f11f0b145e2a995c3d7297d07f0444008b0f6d828f3e4b7f6adf84095932d3a3",
+  "artifact": {
+    "id": 14284466663,
+    "name": "hosted-storage-checks-43983824827",
+    "bytes": 7532,
+    "digest": "sha256:6754ac8c802bd97ceb2fdeecb345e8a6144eb4cdb86f08d51ee81253752c0db6"
+  },
+  "verification": [
+    {
+      "file": "hosted/hosted-discovery-verification.json",
+      "sha256": "adb661697a0c357d46a7eef9ecd009a083882798a3cb0b4bbb97b503fe9b9412",
+      "groupCount": 25,
+      "status": "passed",
+      "allSourceHashesMatchPublishedHostedMirror": true,
+      "realEmployerRequests": 0
+    },
+    {
+      "file": "hosted/hosted-phone-verification.json",
+      "sha256": "160d97dab259464ce597ae92741abd7417adf656ede1c821207c7557d87dc386",
+      "groupCount": 19,
+      "status": "passed",
+      "allSourceHashesMatchPublishedHostedMirror": true,
+      "realEmployerRequests": 0
+    },
+    {
+      "file": "hosted/hosted-verification.json",
+      "sha256": "f0520a592e776103619b4268bc5d6e721745e49ddaa0b46d1979a173e5ecfc75",
+      "groupCount": 45,
+      "status": "passed",
+      "allSourceHashesMatchPublishedHostedMirror": true,
+      "realEmployerRequests": 0
+    },
+    {
+      "file": "hosted/hosted-worker-verification.json",
+      "sha256": "064c79080321a6e842263d0bb7ffe227ffe0f41f3c329b1b2990416108dc3c64",
+      "groupCount": 17,
+      "status": "passed",
+      "allSourceHashesMatchPublishedHostedMirror": true,
+      "realEmployerRequests": 0
+    }
+  ],
+  "limits": [
+    "This clears the hosted build and regression gate only; it does not certify the other native jobs or store distribution.",
+    "Native iPhone source in this intermediate commit is unchanged from the known bc68 first-attempt UI failures.",
+    "The actual production phone browser acceptance and provider activation remain separate.",
+    "All employer/provider application requests in these regression suites are synthetic."
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "observedAt": "2026-11-16T23:58:10.672936+00:00",
+  "artifactId": 14284171039,
+  "initialDownloadTimeoutSeconds": 300,
+  "preservedPartialBytes": 231292928,
+  "expectedBytes": 247113351,
+  "expectedSHA256": "60e37e28ffc97d84b6fecdbb54bde9dcd90ac33dc0c333a5f23698da378a9e96",
+  "readOnlyResumeRange": "bytes=231292928-",
+  "resumeMode": "range appended to retained partial",
+  "completedAt": "2026-11-16T23:58:29.490589+00:00",
+  "verifiedSHA256": "60e37e28ffc97d84b6fecdbb54bde9dcd90ac33dc0c333a5f23698da378a9e96",
+  "resumeBytes": 15820423
+}

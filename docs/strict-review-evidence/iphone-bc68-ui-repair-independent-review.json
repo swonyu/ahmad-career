@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-11-17T00:07:51.410854+00:00",
+  "reviewer": "independent CI/evidence agent",
+  "baselineCommit": "bc68f1a38cd705eb5d789874bff471f03e084549",
+  "baselineRunId": 43979963388,
+  "status": "source review completed; new exact-source executable CI required",
+  "reviewedFiles": [
+    {
+      "path": "apple/AhmadCareer/NativeApplicationsViews.swift",
+      "bytes": 71936,
+      "sha256": "f5f92155c39e142be380712c30478917c8a63ef4d93af5fb10e3dfd79f696a27",
+      "beforeSHA256": "5d80210493ddcf441cc0230c07f453046a40c27f315945c558c24a626338509b"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeCareerViews.swift",
+      "bytes": 79149,
+      "sha256": "4cfe626c6044f4c8862b45677687ca7c821dd73f44d07d65e3c97aa084d5f866",
+      "beforeSHA256": "80ce46f00e6c50ad7ad3c29d39197caa1ccef386f9be29e0e371ef16d8dca9f4"
+    },
+    {
+      "path": "apple/UITests/CareerFinderUITests.swift",
+      "bytes": 33658,
+      "sha256": "18c847375755dcd8803a573523882b9a22efd233225a797a7cda9c3d821c8fd1",
+      "beforeSHA256": "15e13660bff760e074ec7979ab9ae1cb3b60bf754f424bc50976e78757c58cd3"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "strict-review-20261117/ci-bc68/targeted-failures.json",
+      "sha256": "6277453cc0d6381c5aa9bc503ae6dd15e41769d92e0163ac2589d287cff6fb8b"
+    },
+    {
+      "path": "strict-review-20261117/ci-bc68/failure-attachments.json",
+      "sha256": "64f952a72a0fca261937f1e463c8d4741425e58a87f52d6c030ea4fb0e90380b"
+    },
+    {
+      "path": "strict-review-20261117/ci-bc68/failures/testPrivateApplicationRecordPersistsAndCorrectionIsExplicit/failure-final-frame.png",
+      "sha256": "5af6548a1309dfdffa3546457d1e03aaaac727a696861d868c7d70d851ed110b"
+    },
+    {
+      "path": "strict-review-20261117/ci-bc68/failures/testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark/failure-final-frame.png",
+      "sha256": "8a849bebe54dd25483d9ae31f0a258f1d1e8cdc5ea227e95013f2472fc736e16"
+    },
+    {
+      "path": "strict-review-20261117/ci-bc68/failures/testProfileReadinessAndSimpleConnectionSetup/BFA42A5E-A408-41EE-9998-2E32499B8E39.png",
+      "sha256": "16e8f1ba40759d18b38c3712170d895e98c5be8d8fc8149eeb600ec846e5c651"
+    },
+    {
+      "path": "strict-review-20261117/ci-bc68/failures/testPrivateApplicationRecordPersistsAndCorrectionIsExplicit/8B67A0A3-EA9E-4078-B301-7B5553FC8710.txt",
+      "sha256": "ebb8a71d4261f959ff74ccd836518f2f549c2fd4e768b63f2bfcd154cdb496f1"
+    }
+  ],
+  "findings": [],
+  "assessment": [
+    "The padded Auto Apply button label now has an explicit rectangular hit shape; callback, disabled conditions, workspace intent and provider policy are unchanged.",
+    "The three binary record decisions use native alerts with existing explicit cancel labels and destructive roles, avoiding dependence on a popover rendering its cancel action. Captured record context and mutation callbacks are preserved.",
+    "The reveal helper now requires whole button visibility above the floating tab bar and uses bounded direction-aware drags; it still fails if the requested control cannot be reached.",
+    "Single-tap navigation assertions now distinguish failure to present a sheet from failure to find a field inside it.",
+    "The follow-up test now targets the native nested switch observed in the retained AX hierarchy, requires an enabled value and date field before save, and checks the follow-up survives relaunch.",
+    "Retained failure video frames visibly confirm missing Keep choices in the two prior popovers, and the pre-CTA capture visibly contains the enabled setup button. These are prior-source observations, not proof of repaired runtime behavior."
+  ],
+  "limits": [
+    "No local Xcode, simulator, signing, Apple-device or network submission test was performed.",
+    "Source review does not turn the four original failed cases into passes.",
+    "All 13 current native cases and the other release jobs must pass on the eventual final source commit."
+  ]
+}
