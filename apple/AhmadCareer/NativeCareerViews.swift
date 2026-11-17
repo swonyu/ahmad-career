@@ -1169,6 +1169,7 @@ private struct NativeProfileEditor: View {
     @State private var draft: NativeProfile
     @State private var confirmDiscard = false
     @State private var announcedValidation: [String] = []
+    @State private var yearsEpisodeSpoken = false
     @FocusState private var focused: Bool
     init(profile: NativeProfile) { _original = State(initialValue: profile); _draft = State(initialValue: profile) }
     private func countryName(_ code: String) -> String { l10n.locale.localizedString(forRegionCode: code) ?? code }
@@ -1176,10 +1177,14 @@ private struct NativeProfileEditor: View {
     private var dirty: Bool { draft != original }
     private var hasConflict: Bool { store.workspace.profile != original }
     private var validLengths: Bool { draft.degree.count <= 300 && draft.skills.count <= 3_000 && draft.achievements.count <= 5_000 }
+    private var yearsSentence: String { "Enter a number from 0 to 60, or leave blank." }
+    private var trimmedYears: String { draft.years.trimmingCharacters(in: .whitespacesAndNewlines) }
     private var validYears: Bool {
-        let years = draft.years.trimmingCharacters(in: .whitespacesAndNewlines)
-        if years.isEmpty { return true }
-        return NativeMoney.parse(years.replacingOccurrences(of: ",", with: "."), limit: 60) != nil
+        if trimmedYears.isEmpty { return true }
+        return NativeMoney.parse(trimmedYears.replacingOccurrences(of: ",", with: "."), limit: 60) != nil
+    }
+    private var yearsPendingDecimal: Bool {
+        trimmedYears.range(of: #"^(?:\p{Nd}*)[.٫,]$"#, options: .regularExpression) != nil
     }
     private var salaryCriteriaVisible: Bool { draft.minimumMonthlySAR != nil || draft.unknownSalary != nil }
     private func planningPreference(_ error: String) -> Bool {
@@ -1189,7 +1194,7 @@ private struct NativeProfileEditor: View {
         var messages = [String]()
         if let error = draft.preferenceError { messages.append(error) }
         if let error = draft.criteriaError, error != draft.preferenceError { messages.append(error) }
-        if !validYears { messages.append("Enter a number from 0 to 60, or leave blank.") }
+        if !validYears { messages.append(yearsSentence) }
         if draft.degree.count > 300 { messages.append("Qualifications exceed 300 characters. Shorten this field before saving.") }
         if draft.skills.count > 3_000 { messages.append("Shorten tools and responsibilities before saving.") }
         if draft.achievements.count > 5_000 { messages.append("Shorten achievements before saving.") }
@@ -1198,6 +1203,21 @@ private struct NativeProfileEditor: View {
     private func speakValidation(_ text: String) {
         let spoken = draft.preferenceError == text || draft.criteriaError == text ? l10n.message(text) : l10n(text)
         UIAccessibility.post(notification: .announcement, argument: spoken)
+    }
+    private func speakFirstFinished(_ messages: [String], skipped: [String]) {
+        guard !hasConflict else { return }
+        let added = messages.filter { message in
+            !skipped.contains(message) && (message != yearsSentence || (!yearsPendingDecimal && !yearsEpisodeSpoken))
+        }
+        guard let text = added.first else { return }
+        if text == yearsSentence { yearsEpisodeSpoken = true }
+        speakValidation(text)
+    }
+    private func speakYearsIfReady(includePending: Bool) {
+        guard !hasConflict, !validYears, !yearsEpisodeSpoken else { return }
+        if yearsPendingDecimal && !includePending { return }
+        yearsEpisodeSpoken = true
+        speakValidation(yearsSentence)
     }
     var body: some View {
         NavigationStack {
@@ -1266,7 +1286,7 @@ private struct NativeProfileEditor: View {
                 }
                 Section(l10n("Experience and qualifications")) {
                     VStack(alignment: .leading, spacing: 8) { Text(l10n("Relevant years of experience")).font(.caption).foregroundStyle(.secondary); TextField(l10n("Relevant years of experience"), text: $draft.years).keyboardType(.decimalPad).focused($focused) }
-                    if !validYears { Label(l10n("Enter a number from 0 to 60, or leave blank."), systemImage: "exclamationmark.circle").font(.caption) }
+                    if !validYears { Label(l10n(yearsSentence), systemImage: "exclamationmark.circle").font(.caption) }
                     TextField(l10n("Degree and certifications"), text: $draft.degree, axis: .vertical).lineLimit(2...5).focused($focused)
                     if draft.degree.count > 300 { Label(l10n("Qualifications exceed 300 characters. Shorten this field before saving."), systemImage: "exclamationmark.circle").font(.caption) }
                 }
@@ -1305,8 +1325,8 @@ private struct NativeProfileEditor: View {
             announcedValidation = validationMessages
             if hasConflict {
                 UIAccessibility.post(notification: .announcement, argument: l10n("Keep a copy of any draft text you need, then cancel and reopen this editor to use the latest profile. Your draft has not been saved."))
-            } else if let text = validationMessages.first {
-                speakValidation(text)
+            } else {
+                speakFirstFinished(validationMessages, skipped: [])
             }
         }
         .onChange(of: hasConflict) { conflict in
@@ -1315,10 +1335,18 @@ private struct NativeProfileEditor: View {
             }
         }
         .onChange(of: validationMessages) { messages in
-            let added = messages.filter { !announcedValidation.contains($0) }
+            let skipped = announcedValidation
             announcedValidation = messages
-            guard !hasConflict, let text = added.first else { return }
-            speakValidation(text)
+            speakFirstFinished(messages, skipped: skipped)
+        }
+        .onChange(of: validYears) { valid in
+            if valid { yearsEpisodeSpoken = false }
+        }
+        .onChange(of: yearsPendingDecimal) { pending in
+            if !pending { speakYearsIfReady(includePending: false) }
+        }
+        .onChange(of: focused) { isFocused in
+            if !isFocused { speakYearsIfReady(includePending: true) }
         }
         .confirmationDialog(l10n("Discard unsaved profile changes?"), isPresented: $confirmDiscard, titleVisibility: .visible) {
             Button(l10n("Discard changes"), role: .destructive) { dismiss() }
