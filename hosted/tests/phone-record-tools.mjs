@@ -149,6 +149,8 @@ test('calendar UID is stable for the public job and date without private fields 
 const source = await readFile(new URL('../app/phone/PhoneApp.tsx', import.meta.url), 'utf8');
 const tree = ts.createSourceFile('PhoneApp.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
 function extract(name) {
+  const top = tree.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === name);
+  if (top) return top.getText(tree);
   const component = tree.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'PhoneApp');
   for (const node of component.body.statements) {
     if (ts.isFunctionDeclaration(node) && node.name?.text === name) return node.getText(tree);
@@ -340,3 +342,111 @@ test('new controls stay inside existing disclosures and require a saved valid fo
     }
   }
 });
+
+// Execute the production download helper against a small DOM/URL boundary.
+// These injected failures verify resource ownership, not browser download policy.
+function downloadHarness(failure) {
+  const allocated = new Set(), revoked = [], attached = new Set(), anchors = [], timers = [], blobs = [];
+  const injected = new Error('Synthetic download boundary failure: ' + failure);
+  const context = {
+    Blob,
+    URL: {
+      createObjectURL(blob) {
+        if (failure === 'allocate') throw injected;
+        const url = 'blob:synthetic-download-' + blobs.length;
+        blobs.push(blob); allocated.add(url); return url;
+      },
+      revokeObjectURL(url) { revoked.push(url); allocated.delete(url); },
+    },
+    document: {
+      createElement(tag) {
+        assert.equal(tag, 'a');
+        if (failure === 'create') throw injected;
+        const anchor = {
+          href: '', download: '', clicked: false, removed: false,
+          click() { if (failure === 'click') throw injected; this.clicked = true; },
+          remove() {
+            if (failure === 'remove') throw injected;
+            this.removed = true; attached.delete(this);
+          },
+        };
+        anchors.push(anchor); return anchor;
+      },
+      body: {
+        appendChild(anchor) {
+          if (failure === 'append') throw injected;
+          attached.add(anchor);
+        },
+      },
+    },
+    setTimeout(callback, delay) { timers.push({ callback, delay }); return timers.length; },
+  };
+  return { download: install('download', context), allocated, revoked, attached, anchors, timers, blobs, injected };
+}
+
+test('actual download helper preserves content and delays successful URL release for the browser', async () => {
+  const h = downloadHarness();
+  const value = '\ufeff"Job title","Private note"\r\n"مهندس","Text: =1+1"\r\n';
+  h.download(value, 'Career-Finder-application-records.csv', 'text/csv;charset=utf-8');
+  assert.equal(h.anchors.length, 1);
+  assert.equal(h.anchors[0].download, 'Career-Finder-application-records.csv');
+  assert.equal(h.anchors[0].clicked, true);
+  assert.equal(h.attached.size, 0);
+  assert.equal(h.allocated.size, 1, 'The browser must retain time to consume the Blob URL');
+  assert.deepEqual(h.revoked, []);
+  assert.equal(h.blobs[0].type, 'text/csv;charset=utf-8');
+  assert.deepEqual(Buffer.from(await h.blobs[0].arrayBuffer()), Buffer.from(value, 'utf8'));
+  assert.equal(h.timers.length, 1); assert.equal(h.timers[0].delay, 30_000);
+  h.timers[0].callback();
+  assert.equal(h.allocated.size, 0); assert.deepEqual(h.revoked, [h.anchors[0].href]);
+});
+
+test('actual download helper attaches no DOM resource when URL allocation fails', () => {
+  const h = downloadHarness('allocate');
+  assert.throws(() => h.download('{}', 'Career-Finder-data.json'), error => error === h.injected);
+  assert.equal(h.attached.size, 0); assert(h.anchors.every(anchor => !anchor.clicked)); assert.equal(h.allocated.size, 0);
+  assert.equal(h.timers.length, 0); assert.deepEqual(h.revoked, []);
+});
+
+for (const failure of ['create', 'append', 'click']) {
+  test('actual download helper releases its URL after a synchronous ' + failure + ' failure', () => {
+    const h = downloadHarness(failure);
+    assert.throws(() => h.download('{}', 'Career-Finder-data.json'), error => error === h.injected);
+    assert.equal(h.allocated.size, 0, 'Failed activation must not retain an allocated Blob URL');
+    assert.equal(h.attached.size, 0, 'Failed activation must not leave its temporary link attached');
+    assert.deepEqual(h.revoked, failure === 'create' ? [] : ['blob:synthetic-download-0']);
+    assert.equal(h.timers.length, 0, 'A failed activation can release the URL immediately');
+  });
+}
+
+test('actual download helper still releases the URL if post-click link removal throws', () => {
+  const h = downloadHarness('remove');
+  assert.throws(() => h.download('{}', 'Career-Finder-data.json'), error => error === h.injected);
+  assert.equal(h.anchors[0].clicked, true);
+  assert.equal(h.allocated.size, 1, 'A returned click still receives the normal browser grace period');
+  assert.equal(h.timers.length, 1); assert.equal(h.timers[0].delay, 30_000);
+  h.timers[0].callback();
+  assert.equal(h.allocated.size, 0); assert.deepEqual(h.revoked, [h.anchors[0].href]);
+});
+
+for (const action of ['exportRecordsCSV', 'exportFollowUp']) {
+  test('actual ' + action + ' preserves the snapshot and withholds success when download activation throws', async () => {
+    const h = exportHarness(), failing = downloadHarness('click');
+    const before = JSON.stringify(h.saved);
+    h.context.download = failing.download;
+    const invoke = () => action === 'exportRecordsCSV'
+      ? h.context.exportRecordsCSV()
+      : h.context.exportFollowUp(h.saved.records[0]);
+    await assert.rejects(invoke(), error => error === failing.injected);
+    assert.equal(JSON.stringify(h.saved), before);
+    assert.equal(h.notices.length, 0, 'A failed handoff must not issue the download-started notice');
+    assert.equal(failing.attached.size, 0); assert.equal(failing.allocated.size, 0);
+    const retry = downloadHarness();
+    h.context.download = retry.download;
+    await invoke();
+    assert.equal(JSON.stringify(h.saved), before);
+    assert.equal(h.notices.length, 1); assert.equal(Boolean(h.notices[0].error), false);
+    assert.equal(retry.anchors[0].clicked, true); assert.equal(retry.attached.size, 0);
+    retry.timers[0].callback(); assert.equal(retry.allocated.size, 0);
+  });
+}

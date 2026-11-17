@@ -67,9 +67,24 @@ function mergeJobs(local: Job[] | null, online: Job[]): Job[] {
   return local.map(job => { const match = remote.get(jobIdentity(job.url)); return match ? { ...job, remoteId: match.id } : { ...job, remoteId: undefined }; });
 }
 function download(value: string, filename: string, mime = "application/json") {
+  const link = document.createElement("a");
   const url = URL.createObjectURL(new Blob([value], { type: mime }));
-  const link = document.createElement("a"); link.href = url; link.download = filename; document.body.appendChild(link); link.click(); link.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 30_000);
+  let clickReturned = false;
+  try {
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    clickReturned = true;
+  } finally {
+    try {
+      link.remove();
+    } finally {
+      // A normal click return needs time for the browser to consume the URL.
+      if (clickReturned) setTimeout(() => URL.revokeObjectURL(url), 30_000);
+      else URL.revokeObjectURL(url);
+    }
+  }
 }
 
 
