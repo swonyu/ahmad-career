@@ -79,6 +79,7 @@ internal fun ApplicationRecordEditor(state: CareerUiState, model: CareerViewMode
     val record = state.applicationRecords[editor.identity]
     var dateField by remember(editor.token) { mutableStateOf<String?>(null) }
     var showHistory by remember(editor.token) { mutableStateOf(false) }
+    var noteLimitSpoken by remember(editor.token) { mutableStateOf(false) }
     val change: ((ApplicationRecordDraft) -> ApplicationRecordDraft) -> Unit = { model.editApplicationRecordDraft(it, editor.token) }
     if (!editor.quickCorrection) FullScreenForm("Application record", { model.closeApplicationRecord(editor.token) }) {
         Column(Modifier.fillMaxSize()) {
@@ -128,8 +129,15 @@ internal fun ApplicationRecordEditor(state: CareerUiState, model: CareerViewMode
                     item { RecordDateField("Follow-up date (optional)", editor.draft.followUpDate, !state.busy,
                         { dateField = "follow-up" }, { change { it.copy(followUpDate = "") } }) }
                     item {
-                        Field("Private note (optional)", editor.draft.note, { text -> change { it.copy(note = boundedApplicationNote(text)) } }, singleLine = false, enabled = !state.busy)
+                        Field("Private note (optional)", editor.draft.note, { text ->
+                            val bounded = boundedApplicationNote(text)
+                            val cut = applicationNoteLength(text) > applicationNoteLength(bounded)
+                            if (cut) noteLimitSpoken = true
+                            else if (applicationNoteLength(bounded) < 2_000) noteLimitSpoken = false
+                            change { it.copy(note = bounded) }
+                        }, singleLine = false, enabled = !state.busy)
                         Text(l10n.format("{0} of 2,000 characters", listOf((applicationNoteLength(editor.draft.note)).toString())), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        if (noteLimitSpoken) Text(l10n("Keep this private note within 2,000 characters."), color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
                     }
                     if (record?.history?.isNotEmpty() == true) {
                         item { TextButton(onClick = { showHistory = !showHistory }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
