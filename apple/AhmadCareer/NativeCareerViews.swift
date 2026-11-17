@@ -837,6 +837,12 @@ struct NativeLegacyBackupScreen:View {
                 }
                 Button(l10n("Cancel"),role:.cancel){preview=nil}
             }
+            .onChange(of: notice) { text in
+                guard !text.isEmpty,
+                      text != "Preview canceled. Nothing was restored.",
+                      text != "Additions restored locally. Nothing was sent." else { return }
+                UIAccessibility.post(notification: .announcement, argument: l10n.message(text))
+            }
     }
 }
 
