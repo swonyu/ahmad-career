@@ -1,0 +1,26 @@
+2026-11-17T05:10:25.6670110Z Test Suite 'All tests' started at 2026-11-17 05:10:25.600.
+2026-11-17T05:10:25.6780840Z Test Suite 'CareerFinderUITests.xctest' started at 2026-11-17 05:10:25.616.
+2026-11-17T05:10:25.7902660Z Test Suite 'CareerFinderUITests' started at 2026-11-17 05:10:25.616.
+2026-11-17T05:10:25.7954760Z Test Case '-[CareerFinderUITests.CareerFinderUITests testAccessibilityTextKeepsCoreControlsReachable]' started.
+2026-11-17T05:12:36.1608450Z Test Case '-[CareerFinderUITests.CareerFinderUITests testAccessibilityTextKeepsCoreControlsReachable]' passed (130.541 seconds).
+2026-11-17T05:12:36.1691300Z Test Case '-[CareerFinderUITests.CareerFinderUITests testApplicationDraftSurvivesCancelAndRelaunch]' started.
+2026-11-17T05:13:49.4129790Z Test Case '-[CareerFinderUITests.CareerFinderUITests testApplicationDraftSurvivesCancelAndRelaunch]' passed (73.240 seconds).
+2026-11-17T05:13:49.4233720Z Test Case '-[CareerFinderUITests.CareerFinderUITests testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText]' started.
+2026-11-17T05:17:21.2285900Z /Users/runner/work/ahmad-career/ahmad-career/apple/UITests/CareerFinderUITests.swift:73: error: -[CareerFinderUITests.CareerFinderUITests testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText] : Failed to get matching snapshots: Timed out while evaluating UI query.
+2026-11-17T05:17:28.1845190Z Test Case '-[CareerFinderUITests.CareerFinderUITests testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText]' failed (218.753 seconds).
+2026-11-17T05:17:28.1885170Z Test Case '-[CareerFinderUITests.CareerFinderUITests testDiscoverySaveFlowsIntoSavedAndApply]' started.
+2026-11-17T05:18:33.8229780Z Test Case '-[CareerFinderUITests.CareerFinderUITests testDiscoverySaveFlowsIntoSavedAndApply]' passed (65.663 seconds).
+2026-11-17T05:18:33.8316190Z Test Case '-[CareerFinderUITests.CareerFinderUITests testFreshStartAndFiveTabs]' started.
+2026-11-17T05:19:12.1183360Z Test Case '-[CareerFinderUITests.CareerFinderUITests testFreshStartAndFiveTabs]' passed (38.201 seconds).
+2026-11-17T05:19:12.1334640Z Test Case '-[CareerFinderUITests.CareerFinderUITests testLinkedInProfileDraftAndExternalSearchChoice]' started.
+2026-11-17T05:20:32.9715250Z Test Case '-[CareerFinderUITests.CareerFinderUITests testLinkedInProfileDraftAndExternalSearchChoice]' passed (80.945 seconds).
+2026-11-17T05:20:33.0265160Z Test Case '-[CareerFinderUITests.CareerFinderUITests testOpportunityDiscardRequiresExplicitChoice]' started.
+2026-11-17T05:21:04.7360120Z Test Case '-[CareerFinderUITests.CareerFinderUITests testOpportunityDiscardRequiresExplicitChoice]' passed (31.750 seconds).
+2026-11-17T05:21:04.7365620Z Test Case '-[CareerFinderUITests.CareerFinderUITests testOpportunityDraftKeepSaveAndRestore]' started.
+2026-11-17T05:22:16.0058670Z Test Case '-[CareerFinderUITests.CareerFinderUITests testOpportunityDraftKeepSaveAndRestore]' passed (71.282 seconds).
+2026-11-17T05:22:16.0400020Z Test Case '-[CareerFinderUITests.CareerFinderUITests testPrivateApplicationRecordPersistsAndCorrectionIsExplicit]' started.
+2026-11-17T05:24:41.6609010Z Test Case '-[CareerFinderUITests.CareerFinderUITests testPrivateApplicationRecordPersistsAndCorrectionIsExplicit]' passed (145.650 seconds).
+2026-11-17T05:24:41.6699310Z Test Case '-[CareerFinderUITests.CareerFinderUITests testProfileReadinessAndSimpleConnectionSetup]' started.
+2026-11-17T05:25:06.8892650Z ##[error]The operation was canceled.
+2026-11-17T05:25:15.8269770Z Error: Failed to create a new result bundle reader, underlying error: Info.plist at /Users/runner/work/_temp/CareerFinderUI.xcresult/Info.plist does not exist, the result bundle might be corrupted or the provided path is not a result bundle
+2026-11-17T05:25:15.8302690Z ##[error]Process completed with exit code 64.

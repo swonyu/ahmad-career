@@ -1,0 +1,149 @@
+{
+  "reviewedAt": "2026-11-17T05:24:43.961920+00:00",
+  "commit": "b07337632b002aafa05a04c5843b9f971cabca26",
+  "runId": 44020929694,
+  "jobId": 133829992940,
+  "artifactId": 14301382415,
+  "artifactSha256": "f6b8e32dd749fe19fdb1f7540ceb10e49bc9a0c74915cc9f8669432c1e1a1ef8",
+  "result": "All 13 captures independently reviewed; no additional actionable visual defect observed",
+  "ordinarySuite": {
+    "executed": 97,
+    "passed": 95,
+    "failed": 2
+  },
+  "environment": {
+    "viewportPixels": "1080x1920",
+    "density": 480,
+    "widthDp": 360,
+    "fontScale": 1.8,
+    "darkMode": true,
+    "forcedRTL": true,
+    "locale": "ar",
+    "copyLanguage": "English"
+  },
+  "captures": [
+    {
+      "artifactPath": "captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/custom-connection-address.png",
+      "sha256": "c82c07aaddb0b5202deb69c59b8edb56f0f01b9744359b481824162ce8bb2063",
+      "bytes": 163595,
+      "width": 1080,
+      "height": 1920,
+      "observation": "Close, advanced label, service-address field and explanation are readable; partial single-line value does not establish a broken field.",
+      "retainedInRepository": false
+    },
+    {
+      "artifactPath": "captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/previous-search-results.png",
+      "sha256": "ecc2aa0f0de5f54acbcb073e69534aaf014b27b847057b4b7b7cc837cf0f880a",
+      "bytes": 157113,
+      "width": 1080,
+      "height": 1920,
+      "observation": "Previous-results status, timestamp, Search again and all four navigation labels fit.",
+      "retainedInRepository": false
+    },
+    {
+      "artifactPath": "captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/private-follow-up-list.png",
+      "sha256": "2814d77884b7119b42990aaf0c6f01a0d0be639875f9ff4202cd8cb06f9a5467",
+      "bytes": 161331,
+      "width": 1080,
+      "height": 1920,
+      "observation": "Saved feedback, self-reported outcome, follow-up date, employer action and navigation are readable.",
+      "retainedInRepository": false
+    },
+    {
+      "artifactPath": "captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/private-record-correction.png",
+      "sha256": "6cef2ce18bed748d7e5b2b9e38b60e6a0d6ecf0c164c99c68f29d6a376c5ef4e",
+      "bytes": 138423,
+      "width": 1080,
+      "height": 1920,
+      "observation": "Correction and cancellation actions are complete; explanatory body is independently scrollable.",
+      "retainedInRepository": false
+    },
+    {
+      "artifactPath": "captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/private-record-date-picker.png",
+      "sha256": "494fe712ecc7e2ba27c9e79571ef683a2a3b9802e6e9daa16f811f1160e8cd03",
+      "bytes": 88335,
+      "width": 1080,
+      "height": 1920,
+      "observation": "Leap-day value, Arabic field label and Use date/Cancel controls are readable without overlap.",
+      "retainedInRepository": false
+    },
+    {
+      "artifactPath": "captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/private-record-editor.png",
+      "sha256": "a153e7b555b8cd5593e41044c08cdcc510b30d6a4f49d4f3ab45fdbb985fed09",
+      "bytes": 117658,
+      "width": 1080,
+      "height": 1920,
+      "observation": "Multiline note, count, Save, close and date controls are clearly separated.",
+      "retainedInRepository": false
+    },
+    {
+      "artifactPath": "captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/record-only-phone-import.png",
+      "sha256": "153c658ff3ec934c1f3d77bc5edc02fed1d7752bc798a040ec792862014030b5",
+      "bytes": 159096,
+      "width": 1080,
+      "height": 1920,
+      "observation": "Zero-bookmark/one-record counts, identity, copy choice and close action are readable; offscreen controls not inferred.",
+      "retainedInRepository": false
+    },
+    {
+      "artifactPath": "captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/two-step-connection.png",
+      "sha256": "c12413214f60b40e5f357d38ec5ebcc60f125eccb1e1e66443ac6f1cd353cc8b",
+      "bytes": 138283,
+      "width": 1080,
+      "height": 1920,
+      "observation": "First-step sign-in, instructions and close wrap cleanly; second step outside this capture was not assessed visually.",
+      "retainedInRepository": false
+    },
+    {
+      "artifactPath": "captures/com.saleh.careerfinder.preview/cache/linkedin-review-evidence/linkedin-exact-review.png",
+      "sha256": "e59d56535de498c66c14b8ae84b3d55d172afd3072b09fd5b5c7de3fb6edd7eb",
+      "bytes": 125363,
+      "width": 1080,
+      "height": 1920,
+      "observation": "Name, email, omitted phone, website and LinkedIn value remain readable, with ordered multiline wrapping.",
+      "retainedInRepository": false
+    },
+    {
+      "artifactPath": "captures/com.saleh.careerfinder.preview/cache/linkedin-review-evidence/linkedin-profile-guidance.png",
+      "sha256": "f699a7a8bb062df899e3a96f1d9971c7f5c6b9bacac5f1bc8cb5fee5e76ee656",
+      "bytes": 157818,
+      "width": 1080,
+      "height": 1920,
+      "observation": "Saved-link versus authenticated-connection distinction and sharing guidance are readable; navigation fits.",
+      "retainedInRepository": false
+    },
+    {
+      "artifactPath": "captures/com.saleh.careerfinder.preview/cache/linkedin-review-evidence/linkedin-search-handoff.png",
+      "sha256": "777187cca84cd954e90b7f4e38e602a0d39b6c97a18f844593b3efc35588f470",
+      "bytes": 148948,
+      "width": 1080,
+      "height": 1920,
+      "observation": "Search action and no-submission explanation, r\u00e9sum\u00e9 name and fingerprint action are readable.",
+      "retainedInRepository": false
+    },
+    {
+      "artifactPath": "captures/com.saleh.careerfinder.preview/cache/strict-review-evidence/remove-local-opportunity-confirmation.png",
+      "sha256": "43b2e79a1fe5c2c292b4ddcf9dda41a5a662c3aa535a363cde82ebc9a8513683",
+      "bytes": 137896,
+      "width": 1080,
+      "height": 1920,
+      "observation": "Preservation explanation and both remove/keep decisions are readable; partial identity is within a scrollable body.",
+      "retainedInRepository": false
+    },
+    {
+      "artifactPath": "captures/com.saleh.careerfinder.preview/cache/strict-review-evidence/unfinished-opportunity-choices.png",
+      "sha256": "e82bdd5695b45a81ce9f452c9f5a2a9f9668d46fb286cee17cbcde0b82dacb7c",
+      "bytes": 99600,
+      "width": 1080,
+      "height": 1920,
+      "observation": "Keep draft, Discard and Keep editing are distinct, readable and fully visible.",
+      "retainedInRepository": false
+    }
+  ],
+  "limits": [
+    "Static synthetic screenshots do not establish real device behavior, TalkBack traversal or measured contrast.",
+    "Scrolling boundaries do not by themselves prove clipping or unreachable controls.",
+    "Corrected target-country and expanded-note captures require the next exact-source run.",
+    "Original13 PNGs remain in the verified artifact and preserved scratch evidence; this receipt does not claim they are embedded in Git."
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "commit": "b07337632b002aafa05a04c5843b9f971cabca26",
+  "run_id": 44020929694,
+  "job_id": 133829992853,
+  "job_conclusion": "cancelled",
+  "started_cases": [
+    "testAccessibilityTextKeepsCoreControlsReachable",
+    "testApplicationDraftSurvivesCancelAndRelaunch",
+    "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+    "testDiscoverySaveFlowsIntoSavedAndApply",
+    "testFreshStartAndFiveTabs",
+    "testLinkedInProfileDraftAndExternalSearchChoice",
+    "testOpportunityDiscardRequiresExplicitChoice",
+    "testOpportunityDraftKeepSaveAndRestore",
+    "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+    "testProfileReadinessAndSimpleConnectionSetup"
+  ],
+  "completed_cases": [
+    {
+      "name": "testAccessibilityTextKeepsCoreControlsReachable",
+      "result": "passed",
+      "seconds": 130.541
+    },
+    {
+      "name": "testApplicationDraftSurvivesCancelAndRelaunch",
+      "result": "passed",
+      "seconds": 73.24
+    },
+    {
+      "name": "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+      "result": "failed",
+      "seconds": 218.753
+    },
+    {
+      "name": "testDiscoverySaveFlowsIntoSavedAndApply",
+      "result": "passed",
+      "seconds": 65.663
+    },
+    {
+      "name": "testFreshStartAndFiveTabs",
+      "result": "passed",
+      "seconds": 38.201
+    },
+    {
+      "name": "testLinkedInProfileDraftAndExternalSearchChoice",
+      "result": "passed",
+      "seconds": 80.945
+    },
+    {
+      "name": "testOpportunityDiscardRequiresExplicitChoice",
+      "result": "passed",
+      "seconds": 31.75
+    },
+    {
+      "name": "testOpportunityDraftKeepSaveAndRestore",
+      "result": "passed",
+      "seconds": 71.282
+    },
+    {
+      "name": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+      "result": "passed",
+      "seconds": 145.65
+    }
+  ],
+  "passed": 8,
+  "failed": 1,
+  "incomplete_started_cases": [
+    "testProfileReadinessAndSimpleConnectionSetup"
+  ],
+  "final_suite_summary_present": false,
+  "requested_captures": [
+    "11-employer-boards-accessibility-text",
+    "12-application-workspace-accessibility-text",
+    "20-saved-link-removal-accessibility",
+    "22-simple-default-connection"
+  ],
+  "visual_review": "Completed for the two recovered requested first-test captures only. No new concrete header/board defect observed. The other two requested captures are absent. This is partial visual evidence; the 13-case acceptance did not complete.",
+  "exported_attachment_manifest_present": false,
+  "raw_entry_count": 80,
+  "recovered_captures": [
+    "11-employer-boards-accessibility-text",
+    "12-application-workspace-accessibility-text"
+  ],
+  "missing_captures": [
+    "20-saved-link-removal-accessibility",
+    "22-simple-default-connection"
+  ],
+  "visual_findings": [
+    {
+      "capture": "11-employer-boards-accessibility-text",
+      "result": "Employer boards title and Done are fully visible; Use suggested boards wraps completely without truncation, and the synthetic employer selector wraps legibly."
+    },
+    {
+      "capture": "12-application-workspace-accessibility-text",
+      "result": "Applications intro is fully visible; complete Set up Auto Apply action and all five tab labels are visible."
+    }
+  ],
+  "failure_evidence": {
+    "case": "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+    "duration_seconds": 218.753,
+    "source": "apple/UITests/CareerFinderUITests.swift:73",
+    "operation": "target.exists ? target.frame : .null for applications.availability.heading",
+    "message": "Failed to get matching snapshots: Timed out while evaluating UI query.",
+    "classification": "Observed snapshot-query timeout; this does not by itself establish a production layout or hit-target defect."
+  },
+  "export_failure": {
+    "message": "CareerFinderUI.xcresult/Info.plist does not exist",
+    "exit_code": 64,
+    "result_bundle": "incomplete",
+    "recovery": "Only two requested screenshots recovered via explicit stored attachment names, payloadRef, and payloadSize metadata; original ZIP unchanged."
+  },
+  "artifact": {
+    "id": 14301917367,
+    "name": "iphone-ui-acceptance-44020929694",
+    "size_in_bytes": 28627045,
+    "url": "https://api.github.com/repos/swonyu/ahmad-career/actions/artifacts/14301917367",
+    "archive_download_url": "https://api.github.com/repos/swonyu/ahmad-career/actions/artifacts/14301917367/zip",
+    "expired": false,
+    "created_at": "2026-11-17T05:25:20Z",
+    "expires_at": "2026-11-24T05:25:16Z",
+    "updated_at": "2026-11-17T05:25:20Z",
+    "digest": "sha256:5f03ad4b81a61e5f3c5aa2c2305aa507104738736292b96ffb809928e0a7ad3a",
+    "workflow_run": {
+      "id": 44020929694,
+      "repository_id": 1411027050,
+      "head_repository_id": 1411027050,
+      "head_branch": "career-finder-phones-verified-apply-20261116",
+      "head_sha": "b07337632b002aafa05a04c5843b9f971cabca26"
+    }
+  },
+  "artifactVerified": {
+    "bytes": 28627045,
+    "sha256": "5f03ad4b81a61e5f3c5aa2c2305aa507104738736292b96ffb809928e0a7ad3a"
+  },
+  "cancellationCause": {
+    "source": "https://api.github.com/repos/swonyu/ahmad-career/check-runs/133829992853/annotations",
+    "message": "The job has exceeded the maximum execution time of 25m0s",
+    "verifiedBy": "Root read-only GitHub API check; raw log alone did not identify trigger"
+  },
+  "testFailureIsIndependentOfCancellation": true,
+  "suiteSummary": "Eight passed, one failed, one interrupted, three not started. The all 13 gate did not pass."
+}

@@ -478,9 +478,11 @@ final class CareerFinderUITests: XCTestCase {
             XCTAssertTrue(review.waitForExistence(timeout: 5))
             XCTAssertEqual(review.label, "Select opportunities to check", "Connection alone must not promise live submission")
             XCTAssertFalse(review.isEnabled, "An empty workspace cannot start an application review")
-            let explanation = element("applications.availability.heading", app: app)
             let content = app.scrollViews["applications.content"]
             XCTAssertTrue(content.waitForExistence(timeout: 5))
+            // These controls belong to this scroll view. A typed, scoped query
+            // avoids repeatedly resolving every element in the application.
+            let explanation = content.staticTexts["applications.availability.heading"]
             XCTAssertLessThan(review.frame.height, app.frame.height * 0.4,
                               "The largest text setting must leave most of the phone available for scrolling content")
             XCTAssertGreaterThan(review.frame.minY - app.navigationBars.firstMatch.frame.maxY, app.frame.height * 0.45,
@@ -489,7 +491,7 @@ final class CareerFinderUITests: XCTestCase {
             XCTAssertTrue(explanation.exists && explanation.isHittable, "Availability must be reachable inside the application workspace")
             XCTAssertEqual(explanation.label, heading)
             capture("14-\(availability)-submission-explained", app: app)
-            let refresh = app.buttons["applications.availability.refresh"]
+            let refresh = content.buttons["applications.availability.refresh"]
             revealInApplicationContent(refresh, app: app)
             XCTAssertTrue(refresh.exists && refresh.isHittable, "Availability refresh must remain reachable at the largest text setting")
             refresh.tap()

@@ -1,0 +1,34 @@
+{
+  "commit": "b07337632b002aafa05a04c5843b9f971cabca26",
+  "run_id": 44020929694,
+  "job_id": 133829992853,
+  "artifact_id": 14301917367,
+  "artifact_sha256": "5f03ad4b81a61e5f3c5aa2c2305aa507104738736292b96ffb809928e0a7ad3a",
+  "method": "Recovered named payload references from Zstandard-compressed ActionTestSummary objects in the incomplete xcresult; this is not an xcresulttool-exported manifest.",
+  "selected": [
+    {
+      "test": "CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable()",
+      "capture": "11-employer-boards-accessibility-text",
+      "metadata_object": "CareerFinderUI.xcresult/Data/data.0~jPi35KaE3rqtVO7B0VpIk-HbULGY2jFX4vBgYL9KHhlNmlp6YKLfQ2OtQlRIbtHLod4GtDmVvX9K5sA5UuFqtA==",
+      "payload_object": "CareerFinderUI.xcresult/Data/data.0~jJZEdKpCmrxjHMPkdTbUdToX0-J6V_casNJ-XKOXOnuWBb5DZ1nud4iBCQQ9exoluvg5vN32hFE8ZhHp1QJEMQ==",
+      "payload_bytes": 276309,
+      "sha256": "e43ea3fbbefb9ab8e7b0c47db1bc60b9f385d1a9ba656f014323933c1f8931c9",
+      "local_file": "selected/11-employer-boards-accessibility-text.png",
+      "metadata_excerpt": "-5D85-4766-8320-D15BA2F9EA84]][S25:ActionTestActivitySummaryK12:activityType[S6:StringK2:_vV53:com.apple.dt.xctest.activity-type.attachmentContainer]K11:attachments[S5:Array[S20:ActionTestAttachmentK8:filename[S6:StringK2:_vV80:11-employer-boards-accessibility-text_0_4FC77CA5-5CC0-4C30-88F0-89B0D4A113AE.png]K8:lifetime[S6:StringK2:_vV10:keepAlways]K4:name[S6:StringK2:_vV37:11-employer-boards-accessibility-text]K10:payloadRef[S9:ReferenceK2:id[S6:StringK2:_vV90:0~jJZEdKpCmrxjHMPkdTbUdToX0-J6V_casNJ-XKOXOnuWBb5DZ1nud4iBCQQ9exoluvg5vN32hFE8ZhHp1QJEMQ==]]K11:payloadSize[S3:IntK2:_vV6:276309]K9:timestamp[S4:DateK2:_vV28:2026-11-17T05:12:21.938+0000]K21:uniformTypeIdentifier[S6:StringK2:_vV10:public.png]K8:userInfo[S19:SortedKeyValueArrayK7:storage[S5:Array[S23:SortedKeyValueArrayPairK3:key[S6:StringK2:_vV5:Scale]K5:value[S6:StringK2:_vV1:3]]]]K4:uuid[S6:StringK2:_vV36:AC990FF8-B305-40B1-BF36-344DDD5BA62E]]]K6:finish[S4:DateK2:_vV28:2026-11-17T05:12:21.939+0000]K5:start[S4:DateK2:_vV28:2026-11-17T05:12:21.938+0000]K5:title[S6:StringK2:_vV62:Added attachment named '11-employer-boards-accessibility-text']K4:uuid[S6:StringK2:_vV36:4FC77CA5-5CC0-4C30-88F0-89B0D4A113AE]][S25:ActionTestA"
+    },
+    {
+      "test": "CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable()",
+      "capture": "12-application-workspace-accessibility-text",
+      "metadata_object": "CareerFinderUI.xcresult/Data/data.0~jPi35KaE3rqtVO7B0VpIk-HbULGY2jFX4vBgYL9KHhlNmlp6YKLfQ2OtQlRIbtHLod4GtDmVvX9K5sA5UuFqtA==",
+      "payload_object": "CareerFinderUI.xcresult/Data/data.0~d94vHJqqtz67r_zNRfSxsnITWFACHxzZGZe-JpBIP1RDTyXijeW1a3R9-npFsQi4gMPK7GqYT6Q9sXixCKQslA==",
+      "payload_bytes": 418511,
+      "sha256": "3bc9b431168570b0341d0285a5e75276f1998138a30328613667a2698c6922f2",
+      "local_file": "selected/12-application-workspace-accessibility-text.png",
+      "metadata_excerpt": "4C10-BBCD-3D61E1DC4D0C]][S25:ActionTestActivitySummaryK12:activityType[S6:StringK2:_vV53:com.apple.dt.xctest.activity-type.attachmentContainer]K11:attachments[S5:Array[S20:ActionTestAttachmentK8:filename[S6:StringK2:_vV86:12-application-workspace-accessibility-text_0_15093295-DFAD-4045-8C03-EA147AE37CD8.png]K8:lifetime[S6:StringK2:_vV10:keepAlways]K4:name[S6:StringK2:_vV43:12-application-workspace-accessibility-text]K10:payloadRef[S9:ReferenceK2:id[S6:StringK2:_vV90:0~d94vHJqqtz67r_zNRfSxsnITWFACHxzZGZe-JpBIP1RDTyXijeW1a3R9-npFsQi4gMPK7GqYT6Q9sXixCKQslA==]]K11:payloadSize[S3:IntK2:_vV6:418511]K9:timestamp[S4:DateK2:_vV28:2026-11-17T05:12:28.573+0000]K21:uniformTypeIdentifier[S6:StringK2:_vV10:public.png]K8:userInfo[S19:SortedKeyValueArrayK7:storage[S5:Array[S23:SortedKeyValueArrayPairK3:key[S6:StringK2:_vV5:Scale]K5:value[S6:StringK2:_vV1:3]]]]K4:uuid[S6:StringK2:_vV36:3705C8D8-E0E1-477F-BF18-79FE37EA5C98]]]K6:finish[S4:DateK2:_vV28:2026-11-17T05:12:28.574+0000]K5:start[S4:DateK2:_vV28:2026-11-17T05:12:28.573+0000]K5:title[S6:StringK2:_vV68:Added attachment named '12-application-workspace-accessibility-text']K4:uuid[S6:StringK2:_vV36:15093295-DFAD-4045-8C03-EA147AE37CD8]][S25:Actio"
+    }
+  ],
+  "missing": [
+    "20-saved-link-removal-accessibility",
+    "22-simple-default-connection"
+  ]
+}

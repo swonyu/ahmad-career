@@ -1,6 +1,6 @@
 # Career Finder — publishing and owner-acceptance handoff
 
-**Status: engineering candidate; Android runtime corrections need fresh acceptance.** This document separates source acceptance, hosted availability, provider activation and store distribution. It is not permission to bypass a remaining gate.
+**Status: engineering candidate; native corrections need fresh acceptance.** This document separates source acceptance, hosted availability, provider activation and store distribution. It is not permission to bypass a remaining gate.
 
 ## Source and ownership
 
@@ -9,7 +9,7 @@
 | Development branch | `career-finder-phones-verified-apply-20261116` |
 | Latest executed phone revision | `b07337632b002aafa05a04c5843b9f971cabca26` |
 | Executed revision tree | `1135edecf4dd3385a41561587ed84fc6cf1727b1` |
-| Current full CI | [Run 44020929694](https://github.com/swonyu/ahmad-career/actions/runs/44020929694); both service jobs and iPhone logic/unsigned Release passed; iPhone UI still running; Android executed 97 ordinary cases with 95 passing and two failing; dedicated TLS cases not reached |
+| Current full CI | [Run 44020929694](https://github.com/swonyu/ahmad-career/actions/runs/44020929694); both service jobs and iPhone logic/unsigned Release passed; iPhone UI cancelled after the 25-minute deadline (8 passed, 1 failed, 1 interrupted, 3 unstarted); Android executed 97 ordinary cases with 95 passing and two failing; dedicated TLS cases not reached |
 | Hosted source | `1135a3270435d3719c6f62f1a2e3a53e2c040146`, tree `379709814adf9fad26d4c17457b0b942d290c029`; the repository's 186 tracked hosted files are byte-identical |
 | Hosted deployment | Public version **7**, deployment `appgdep_6afbcfe3a03881918b131992225ded31`, succeeded `2026-11-17T03:54:40.015318+00:00` |
 | Protected release branch | `app-store/career-workspace-copy-20261117`, last verified `fd9c5399f2b7001b234b3b86bf72e2b36b5114c1`; unchanged by this continuation |
@@ -17,7 +17,7 @@
 
 No shared Mac build, signing, store upload, submission, release tag or release-branch write was performed here. An isolated Git transfer used existing SSH authorization; it changed only the development branch, without a force push or new credentials. The shared build coordination path remains `/tmp/dot-ios-build.lock`; an absent lock does not reserve that machine. Obtain the publishing owner's scheduling acknowledgment before using it.
 
-The release owner should integrate the tested development changes while preserving the release branch's own wording changes. Its earlier successful run on `fd9c539` does not contain or verify the later workspace/PDF isolation, durable Stop and provider/account changes. The full [continuation review](Continuation-Review-2026-11-17.md) records 27 finding groups and their evidence.
+The release owner should integrate the tested development changes while preserving the release branch's own wording changes. Its earlier successful run on `fd9c539` does not contain or verify the later workspace/PDF isolation, durable Stop and provider/account changes. The full [continuation review](Continuation-Review-2026-11-17.md) records 28 finding groups and their evidence.
 
 ## Material behavior changes
 

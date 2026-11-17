@@ -212,7 +212,7 @@ jobs:
   iphone-ui:
     name: iPhone native interface acceptance
     runs-on: macos-26
-    timeout-minutes: 25
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -220,7 +220,7 @@ jobs:
       - name: Select an iPhone on this disposable hosted runner
         shell: python
         run: |
-          import json, os, re, subprocess
+          import json, os, platform, re, subprocess
           inventory = json.loads(subprocess.check_output(['xcrun', 'simctl', 'list', 'devices', 'available', '--json']))
           candidates = []
           for runtime, devices in inventory['devices'].items():
@@ -236,19 +236,24 @@ jobs:
           assert candidates, 'This runner has no available iPhone Simulator with iOS 16 or later.'
           version, compact, name, identifier = sorted(candidates, reverse=True)[0]
           assert re.fullmatch(r'[A-Fa-f0-9-]{36}', identifier)
+          architecture = platform.machine()
+          assert architecture in {'arm64', 'x86_64'}, architecture
           with open(os.environ['GITHUB_ENV'], 'a') as output:
               output.write('CAREER_UI_DEVICE=' + identifier + '\n')
-          print('Selected', name, 'on iOS', '.'.join(map(str, version)))
+              output.write('CAREER_UI_ARCH=' + architecture + '\n')
+          print('Selected', name, 'on iOS', '.'.join(map(str, version)), 'architecture', architecture)
       - name: Exercise native phone flows with isolated synthetic data
         shell: bash
+        # Bound simulator work while leaving time to retain failure evidence.
+        timeout-minutes: 30
         run: |
           set -o pipefail
           xcodebuild -project apple/AhmadCareer.xcodeproj -scheme CareerFinderAcceptance \
-            -configuration Debug -destination "platform=iOS Simulator,id=$CAREER_UI_DEVICE" \
+            -configuration Debug -destination "platform=iOS Simulator,id=$CAREER_UI_DEVICE,arch=$CAREER_UI_ARCH" \
             -derivedDataPath "$RUNNER_TEMP/career-ui-derived" \
             -resultBundlePath "$RUNNER_TEMP/CareerFinderUI.xcresult" \
             -parallel-testing-enabled NO -maximum-concurrent-test-simulator-destinations 1 \
-            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
             test 2>&1 | tee "$RUNNER_TEMP/career-iphone-ui.log"
       - name: Export native interface evidence
         if: always()

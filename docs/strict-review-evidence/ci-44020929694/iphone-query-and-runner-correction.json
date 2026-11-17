@@ -1,0 +1,27 @@
+{
+  "yaml": "parsed",
+  "selectionPython": "compiled",
+  "testStepShell": "syntax passed",
+  "uiCasesPreserved": 13,
+  "assertionLinesUnchanged": true,
+  "jobMinutes": 35,
+  "executionMinutes": 30,
+  "changedHashes": {
+    ".github/workflows/phone-quality.yml": "c6215599990083d1bd35eee42eae6fba6838d7d974132e056763532ae6ee9d6c",
+    "apple/UITests/CareerFinderUITests.swift": "053f36f70f872b15022ca10b043f77214f92204f5f6b5a7ae4d3f02ff50206a5"
+  },
+  "baseCommit": "94dd75d668f4fa34dab478622cd7030b74a4b683",
+  "failedRunSource": "b07337632b002aafa05a04c5843b9f971cabca26",
+  "reason": "One app-wide accessibility query timed out on the unverified availability heading; GitHub independently records the 25-minute job limit. Cold setup preceded the suite by 9m 27s and 8 matching passed cases ran 25 percent slower than 66669da.",
+  "changes": [
+    "Use typed heading and refresh queries inside applications.content; keep the full reachability helper and all assertions",
+    "Select the actual runner architecture from a validated arm64/x86_64 value and build ONLY_ACTIVE_ARCH for that simulator; unsigned Release build unchanged",
+    "Bound the job at 35 minutes and native execution at 30, leaving a margin for evidence and cleanup without retrying or disabling tests"
+  ],
+  "independentReview": "No blocker found; exact 13 methods, both availability scenarios, assertion lines, serial execution, pipefail, unsigned signing flags and always() artifacts retained. Nominal 5minute margin is reduced by setup.",
+  "limits": [
+    "The query change is a source-supported improvement, not proof that query breadth was the sole cause.",
+    "The fresh full CI must establish compilation and all 13passing cases.",
+    "The old suite remains incomplete with one observed test failure; a longer job timeout does not retroactively pass it."
+  ]
+}
