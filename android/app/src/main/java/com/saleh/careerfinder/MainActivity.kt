@@ -414,7 +414,10 @@ private fun PhoneImportDialog(state: CareerUiState, model: CareerViewModel) {
                     Text(l10n("Records stay private on this phone. Copied links stay here until you choose Sync."), style = MaterialTheme.typography.bodySmall)
                 }
             }
-            if (state.profileConflict != null) item { Text(l10n("Resolve the current profile conflict before copying this draft."), color = MaterialTheme.colorScheme.error) }
+            if (state.profileConflict != null) item {
+                Text(l10n("Resolve the current profile conflict before copying this draft."), color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+            }
             item { Action("Copy selected drafts", (profile || jobs) && !state.busy && state.profileConflict == null) { model.importPhoneDraft(profile, jobs) } }
             item { Text(l10n("Copying never applies to an employer. Your application review and approval are still required."), style = MaterialTheme.typography.bodySmall) }
         }

@@ -621,7 +621,17 @@ struct NativeApplicationProfileEditor: View {
             } message: { Text(l10n("This replaces the phone draft and any PDF selected only on this phone.")) }
         }
         .tint(ApplyDesign.accent).interactiveDismissDisabled(occupied || changed)
-        .onAppear { model.profileEditing = true }
+        .onAppear {
+            model.profileEditing = true
+            if conflicts {
+                UIAccessibility.post(notification: .announcement, argument: l10n("Your phone draft is kept. The service has a different version, so choose which details to keep before saving."))
+            }
+        }
+        .onChange(of: conflicts) { value in
+            if value {
+                UIAccessibility.post(notification: .announcement, argument: l10n("Your phone draft is kept. The service has a different version, so choose which details to keep before saving."))
+            }
+        }
         .onDisappear {
             model.profileEditing = false
             if changed && !closingIntentionally && !model.busy {

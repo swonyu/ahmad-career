@@ -92,14 +92,17 @@ internal fun ApplicationRecordEditor(state: CareerUiState, model: CareerViewMode
                 if (editor.restoredOlderRevision) item {
                     Panel {
                         Text(l10n("An unfinished edit was recovered"), style = MaterialTheme.typography.titleMedium)
-                        Text(l10n("The saved record changed after this draft began. Compare the saved details before keeping your edits. No status change has been applied."))
+                        Text(l10n("The saved record changed after this draft began. Compare the saved details before keeping your edits. No status change has been applied."),
+                            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
                         if (record != null) RecordVersionCard(record.current, "Current saved details", null, false) {}
                         Action("Keep draft against latest record", !state.busy) { model.rebaseApplicationRecordDraft(editor.token) }
                     }
                 }
                 if (record?.needsReview == true) {
                     item {
-                        Heading("Choose which details to keep.", "All versions are saved. Choosing notes or dates does not mark an earlier application as not applied.")
+                        Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
+                            Heading("Choose which details to keep.", "All versions are saved. Choosing notes or dates does not mark an earlier application as not applied.")
+                        }
                     }
                     item { RecordVersionCard(record.current, "Current record", "Keep current details", !state.busy) { model.chooseApplicationRecordVersion(record.current.id, editor.token) } }
                     items(record.alternatives, key = { it.id }) { alternative ->

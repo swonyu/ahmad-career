@@ -429,7 +429,13 @@ private struct NativeModernRecordEditor: View {
                     Text(l10n("Your record stays on this phone. Saving it does not send an application or a message."))
                         .font(.footnote).foregroundStyle(.secondary)
                 }
-                if context == nil { Section { Text(l10n("Compare the saved record versions before editing this opportunity.")).foregroundStyle(.red) } }
+                if context == nil {
+                    Section {
+                        Text(l10n("Compare the saved record versions before editing this opportunity."))
+                            .foregroundStyle(.red)
+                            .accessibilityIdentifier("record.compareVersions")
+                    }
+                }
                 if let issue { Section { Text(l10n.message(issue)).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true) } }
                 Section {
                     Picker(l10n("Stage"), selection: $draft.stage) { ForEach(PhoneApplicationStage.allCases) { Text(l10n($0.title)).tag($0) } }
@@ -498,6 +504,11 @@ private struct NativeModernRecordEditor: View {
             .onDisappear { if !closingIntentionally { checkpoint() } }
             .onChange(of: issue) { value in
                 if let value { UIAccessibility.post(notification: .announcement, argument: l10n.message(value)) }
+            }
+            .onAppear {
+                if context == nil {
+                    UIAccessibility.post(notification: .announcement, argument: l10n("Compare the saved record versions before editing this opportunity."))
+                }
             }
     }
     private func checkpoint() {
