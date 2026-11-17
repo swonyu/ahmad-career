@@ -495,6 +495,7 @@
     <string name="c_ba118bf7fc9c" formatted="false">"English"</string>
     <string name="c_326f70c7285f" formatted="false">"Enter a number from 0 to 60, or leave blank."</string>
     <string name="c_d00d10df7eee" formatted="false">"Enter a whole monthly SAR amount from 0 to 1,000,000, or leave blank."</string>
+    <string name="c_3c5168de1403" formatted="false">"Enter an email address employers can reply to."</string>
     <string name="c_be30c0fbb1f3" formatted="false">"Enter relevant experience between 0 and 60 years."</string>
     <string name="c_ff8328b287c8" formatted="false">"Enter the HTTPS address from your application-service invitation."</string>
     <string name="c_f9fe872384b1" formatted="false">"Enter the code you just created. Connecting alone does not upload your profile or apply for a job."</string>

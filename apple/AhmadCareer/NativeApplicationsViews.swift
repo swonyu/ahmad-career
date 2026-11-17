@@ -27,7 +27,7 @@ struct NativeProfileEssentials: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             essential(readiness.nameReady ? "Name added" : "Name needed", ready: readiness.nameReady, id: "name")
-            essential(readiness.emailReady ? "Email added" : profile.email.isEmpty ? "Email needed" : "Check your email", ready: readiness.emailReady, id: "email")
+            essential(readiness.emailEssentialLabel, ready: readiness.emailReady, id: "email")
             essential(readiness.resumeReady ? "PDF CV added" : "PDF CV needed", ready: readiness.resumeReady, id: "resume")
         }
     }
@@ -435,6 +435,7 @@ struct NativeApplicationProfileEditor: View {
     @State private var checkpointed = false
     @State private var closingIntentionally = false
     @FocusState private var focusedField: String?
+    @State private var emailFieldFocused = false
 
     init(model: NativeApplicationsStore) {
         self.model = model
@@ -478,6 +479,11 @@ struct NativeApplicationProfileEditor: View {
                     TextField(l10n("Email"), text: $draft.email).textContentType(.emailAddress).keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never).autocorrectionDisabled()
                         .accessibilityIdentifier("application.email").focused($focusedField, equals: "email")
+                    if ApplicationProfileReadiness(profile: draft).emailNeedsCorrection {
+                        Text(l10n("Enter an email address employers can reply to."))
+                            .font(.footnote).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("application.email.issue")
+                    }
                     TextField(l10n("Phone (optional)"), text: $draft.phone).textContentType(.telephoneNumber).keyboardType(.phonePad)
                         .focused($focusedField, equals: "phone")
                     TextField(l10n("City (optional)"), text: $draft.city).textContentType(.addressCity)
@@ -624,6 +630,12 @@ struct NativeApplicationProfileEditor: View {
                 if model.keepProfileDraft(draft, context: context) { checkpointed = true }
                 else { issue = model.message }
             }
+        }
+        .onChange(of: focusedField) { field in
+            if emailFieldFocused, field != "email", ApplicationProfileReadiness(profile: draft).emailNeedsCorrection {
+                UIAccessibility.post(notification: .announcement, argument: l10n("Enter an email address employers can reply to."))
+            }
+            emailFieldFocused = field == "email"
         }
     }
     private func resetFromModel() {
@@ -840,7 +852,10 @@ struct NativeApplicationConnection: View {
                     }
                 }
                 if let issue {
-                    Section { Text(l10n.message(issue)).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true) }
+                    Section {
+                        Text(l10n.message(issue)).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("connection.issue")
+                    }
                 } else if let notice = model.message {
                     Section { Text(l10n(notice)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true) }
                 }
@@ -859,6 +874,9 @@ struct NativeApplicationConnection: View {
                 }
         }.tint(ApplyDesign.accent).interactiveDismissDisabled(model.busy)
             .onChange(of: address) { _ in code = ""; issue = nil }
+            .onChange(of: issue) { value in
+                if let value { UIAccessibility.post(notification: .announcement, argument: l10n.message(value)) }
+            }
             .confirmationDialog(l10n("Disconnect this phone?"), isPresented: $disconnecting, titleVisibility: .visible) {
                 Button(l10n("Disconnect this phone"), role: .destructive) {
                     guard let captured = disconnectContext,

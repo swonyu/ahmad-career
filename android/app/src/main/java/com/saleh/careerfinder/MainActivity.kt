@@ -759,14 +759,20 @@ private fun ReceiptsScreen(state: CareerUiState, model: CareerViewModel, browse:
 internal fun ProfileEssentials(profile: ProfileDraft) {
     val l10n = rememberCareerStrings()
     Text(l10n.format("Application essentials ready: {0} / 3", listOf((profile.essentialCount).toString())), style = MaterialTheme.typography.labelLarge)
-    listOf("Name" to profile.hasApplicationName, "Email address" to profile.hasApplicationEmail, "PDF résumé" to profile.hasApplicationPDF).forEach { (label, ready) ->
-        Row(Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}, verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Icon(if (ready) Icons.Default.Check else Icons.Default.Info, contentDescription = null,
-                tint = if (ready) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(20.dp))
-            Text(l10n(label) + l10n(if (ready) " · Ready" else " · Needed"), style = MaterialTheme.typography.bodyMedium)
-        }
+    EssentialStatus(profile.hasApplicationName, l10n("Name") + l10n(if (profile.hasApplicationName) " · Ready" else " · Needed"), null)
+    val emailStatus = ProfileContract.emailEssentialLabel(profile.email)
+    EssentialStatus(emailStatus == "Email added", l10n(emailStatus), "profile.essential.email")
+    EssentialStatus(profile.hasApplicationPDF, l10n("PDF résumé") + l10n(if (profile.hasApplicationPDF) " · Ready" else " · Needed"), null)
+}
+
+@Composable
+private fun EssentialStatus(ready: Boolean, spoken: String, tag: String?) {
+    Row(Modifier.fillMaxWidth().let { if (tag == null) it else it.testTag(tag) }.semantics(mergeDescendants = true) {},
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        Icon(if (ready) Icons.Default.Check else Icons.Default.Info, contentDescription = null,
+            tint = if (ready) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(20.dp))
+        Text(spoken, style = MaterialTheme.typography.bodyMedium)
     }
 }
 
@@ -1097,7 +1103,10 @@ private fun ConnectionDialog(state: CareerUiState, model: CareerViewModel, phone
                     Text(l10n("Connecting does not upload your phone draft. You choose when to save your profile to the workspace."), style = MaterialTheme.typography.bodySmall)
                 }
             }
-            if (state.error != null) item { Text(l10n.message(state.error), color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }) }
+            if (state.error != null) item {
+                Text(l10n.message(state.error), color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }.testTag("connection.issue"))
+            }
             item {
                 TextButton(onClick = { advanced = !advanced }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
                     Text(l10n(if (advanced) "Hide advanced setup" else "Advanced · use another service"))

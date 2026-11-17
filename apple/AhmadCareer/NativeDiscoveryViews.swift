@@ -5,6 +5,7 @@ struct NativeDiscoveryScreen: View {
     @NativeLocalization private var l10n
     @EnvironmentObject private var discovery: CareerDiscoveryStore
     @State private var choosingBoards = false
+    @State private var searchClock = Date()
     private enum SearchField: Hashable { case keywords, location }
     @FocusState private var focusedField: SearchField?
     var body: some View {
@@ -53,6 +54,10 @@ struct NativeDiscoveryScreen: View {
                         .font(.subheadline).fixedSize(horizontal: false, vertical: true)
                         .accessibilityElement(children: .ignore).accessibilityLabel(l10n.message(error))
                         .accessibilityAddTraits(.isStaticText).accessibilityIdentifier("discovery.error")
+                    Button(l10n("Search again"), action: beginSearch)
+                        .frame(minHeight: 44)
+                        .disabled((discovery.retryAfter ?? .distantPast) > searchClock)
+                        .accessibilityIdentifier("discovery.retrySearch")
                     if let retry = discovery.retryAfter {
                         Text(l10n.format("Try again after {0}.", [String(describing: l10n.time(retry))])).font(.footnote)
                     }
@@ -120,6 +125,14 @@ struct NativeDiscoveryScreen: View {
         }
         .onChange(of: discovery.error) { issue in
             if let issue { UIAccessibility.post(notification: .announcement, argument: l10n.message(issue)) }
+        }
+        .task(id: discovery.retryAfter) {
+            guard let retry = discovery.retryAfter else { return }
+            let remaining = retry.timeIntervalSinceNow
+            guard remaining > 0 else { return }
+            do { try await Task.sleep(nanoseconds: UInt64(remaining * 1_000_000_000)) }
+            catch { return }
+            searchClock = retry
         }
     }
     private var boardLabel: String {

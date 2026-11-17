@@ -25,6 +25,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.delay
 
 @Composable
 internal fun JobsScreen(state: CareerUiState, model: CareerViewModel, add: () -> Unit, review: () -> Unit,
@@ -103,9 +104,20 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
             LinkedInSearchAction(state.filters.query, state.filters.location) { openLink(context, it) }
         }
         if (state.error != null) item {
+            var nowMillis by remember(state.retryAtMillis) { mutableLongStateOf(System.currentTimeMillis()) }
+            LaunchedEffect(state.retryAtMillis) {
+                val remaining = state.retryAtMillis - System.currentTimeMillis()
+                if (remaining > 0) {
+                    delay(remaining)
+                    nowMillis = maxOf(System.currentTimeMillis(), state.retryAtMillis)
+                }
+            }
+            val waiting = nowMillis < state.retryAtMillis
             Panel {
                 Text(l10n.message(state.error.orEmpty()), color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
                 if (state.cursorInvalid) OutlinedButton(onClick = search, enabled = !state.loading, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Start a fresh search")) }
+                else OutlinedButton(onClick = search, enabled = !state.loading && !waiting,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("discovery.retrySearch")) { Text(l10n("Search again")) }
             }
         }
         if (state.filtersChanged) item {

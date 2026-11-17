@@ -480,6 +480,10 @@ struct ApplicationProfileReadiness {
             && profile.resumeSHA256?.range(of: #"^[a-fA-F0-9]{64}$"#, options: .regularExpression) != nil
     }
     var ready: Bool { nameReady && emailReady && resumeReady }
+    var emailEssentialLabel: String {
+        emailReady ? "Email added" : profile.email.isEmpty ? "Email needed" : "Check your email"
+    }
+    var emailNeedsCorrection: Bool { !profile.email.isEmpty && !emailReady }
     var nextAction: String {
         !nameReady ? "Add your name" : !emailReady ? (profile.email.isEmpty ? "Add your email" : "Check your email")
             : !resumeReady ? "Choose a PDF CV" : "Review your application profile"
