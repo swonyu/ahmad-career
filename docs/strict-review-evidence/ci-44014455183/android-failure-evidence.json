@@ -1,0 +1,94 @@
+{
+  "repo": "swonyu/ahmad-career",
+  "runId": 44014455183,
+  "jobId": 133808907221,
+  "commit": "4bbe5a5087378d6a9bfe3f1cac956233b5d6ba71",
+  "jobURL": "https://github.com/swonyu/ahmad-career/actions/runs/44014455183/job/133808907221",
+  "retrievedAt": "2026-11-17T04:06:22.392Z",
+  "failedStep": "Compile the ordinary preview and its instrumentation",
+  "failedTask": ":app:compileDebugAndroidTestKotlin",
+  "productionDebugAssemble": "passed",
+  "policyChecks": 122,
+  "instrumentationExecuted": false,
+  "lintArtifactId": 14297893649,
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1
+    },
+    {
+      "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2
+    },
+    {
+      "name": "Run actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3
+    },
+    {
+      "name": "Require the pinned Android SDK",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 4
+    },
+    {
+      "name": "Phone URL, PDF and receipt policies",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 5
+    },
+    {
+      "name": "Compile the ordinary preview and its instrumentation",
+      "status": "completed",
+      "conclusion": "failure",
+      "number": 6
+    },
+    {
+      "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 7
+    },
+    {
+      "name": "Prepare the disposable phone emulator and synthetic companion",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 8
+    },
+    {
+      "name": "Exercise actual phone, storage, large text, RTL and synthetic HTTPS flows",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 9
+    },
+    {
+      "name": "Keep the lint report",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 10
+    },
+    {
+      "name": "Post Run actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 19
+    },
+    {
+      "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 20
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 21
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "commit": "4bbe5a5087378d6a9bfe3f1cac956233b5d6ba71",
+  "run": 44014455183,
+  "artifact": 14299756008,
+  "archiveSHA256": "aee071776ad6cbca1539eda776f27b0d6a5d64440d199af2429118b88e4e749c",
+  "selected": [
+    {
+      "test": "CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup()",
+      "capture": "22-simple-default-connection",
+      "exportedFileName": "048AA0F0-0916-421A-9290-949D9205FAEE.png",
+      "path": "22-simple-default-connection.png",
+      "sha256": "eb3ea90c8ca945c868db973523df68f07a5e089563c3c6b1cee3978da0afb0ba",
+      "isAssociatedWithFailure": false
+    },
+    {
+      "test": "CareerFinderUITests/testSavedLinkRemovalAtLargestTextKeepsCancelReachable()",
+      "capture": "20-saved-link-removal-accessibility",
+      "exportedFileName": "FAC75722-3C79-48A5-B926-FFE77B2206ED.png",
+      "path": "20-saved-link-removal-accessibility.png",
+      "sha256": "2caaafaa7e7026db421f368051f49a991a67d5a62e80cbb7c0f8ba9ce514d5d9",
+      "isAssociatedWithFailure": false
+    }
+  ],
+  "reviewedScreenshotCount": 10,
+  "exportedScreenshotCount": 29,
+  "reviewScope": "Bounded review of successful exact-commit UI screenshots; no claim of physical-device or VoiceOver acceptance.",
+  "findings": [
+    {
+      "id": "CONT-21",
+      "severity": "P2",
+      "capture": "22-simple-default-connection",
+      "observed": "Successful application-draft save appears in red.",
+      "fix": "Separate the local connection issue from a neutral generic model notice.",
+      "runtimeAcceptance": "Pending new exact-source UI artifact"
+    },
+    {
+      "id": "CONT-22",
+      "severity": "P3",
+      "capture": "20-saved-link-removal-accessibility",
+      "observed": "Largest-text navigation title truncates; both full decision actions remain visible.",
+      "fix": "Shorten only the navigation title to Remove link.",
+      "runtimeAcceptance": "Pending new exact-source UI artifact"
+    }
+  ]
+}

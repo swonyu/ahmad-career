@@ -1,0 +1,31 @@
+{
+  "failedRunId": 44014455183,
+  "failedJobId": 133808907221,
+  "failedCommit": "4bbe5a5087378d6a9bfe3f1cac956233b5d6ba71",
+  "checkedAt": "2026-11-17T04:07:17.455Z",
+  "fixes": [
+    {
+      "file": "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceAccessibilityRegressionTest.kt",
+      "change": "Removed the invalid top-level assertExists import; existing member calls and assertions preserved."
+    },
+    {
+      "file": "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceSafetyRegressionTest.kt",
+      "change": "Replaced unsupported PdfDocument.use with explicit try/finally close; PDF content and assertions preserved."
+    }
+  ],
+  "localValidation": {
+    "scopedGitDiffCheck": "passed",
+    "testMethodNamesComparedToFailedCommit": "unchanged",
+    "ordinaryTests": 97,
+    "dedicatedTests": 2,
+    "androidCompileExecuted": false,
+    "emulatorExecuted": false,
+    "ciStartedOrCancelled": false
+  },
+  "remainingGate": "Compile the corrected instrumentation, complete lint, then run all 97 ordinary and two dedicated native tests on a new authorized phone CI commit.",
+  "workflowFinding": "Original job also reported rg: command not found in retry detection; workflow correction delegated to root.",
+  "sha256": {
+    "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceAccessibilityRegressionTest.kt": "52046fb2d5d1e28d5352dffde926f2bfe971d077b8e5476b963ebe56a7bfaf14",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceSafetyRegressionTest.kt": "aa0a1e39c5e93ef88d7b40f6af7e8b0d5feee0554a45b87183ea3ef39a2ac349"
+  }
+}

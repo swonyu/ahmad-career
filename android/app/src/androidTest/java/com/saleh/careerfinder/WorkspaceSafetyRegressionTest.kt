@@ -66,14 +66,19 @@ class WorkspaceSafetyRegressionTest {
     }
     private fun file(bytes: ByteArray, suffix: String = ".json") = File.createTempFile("workspace-fixture-", suffix, application.cacheDir)
         .also { it.writeBytes(bytes); files += it }
-    private fun pdf(pages: Int = 1): ByteArray = PdfDocument().use { document ->
-        val paint = Paint().apply { textSize = 10f }
-        repeat(pages) { index ->
-            val page = document.startPage(PdfDocument.PageInfo.Builder(120, 120, index + 1).create())
-            page.canvas.drawText("Synthetic page ${index + 1}", 8f, 30f, paint)
-            document.finishPage(page)
+    private fun pdf(pages: Int = 1): ByteArray {
+        val document = PdfDocument()
+        try {
+            val paint = Paint().apply { textSize = 10f }
+            repeat(pages) { index ->
+                val page = document.startPage(PdfDocument.PageInfo.Builder(120, 120, index + 1).create())
+                page.canvas.drawText("Synthetic page ${index + 1}", 8f, 30f, paint)
+                document.finishPage(page)
+            }
+            return ByteArrayOutputStream().use { output -> document.writeTo(output); output.toByteArray() }
+        } finally {
+            document.close()
         }
-        ByteArrayOutputStream().use { output -> document.writeTo(output); output.toByteArray() }
     }
     private fun resume(bytes: ByteArray, name: String = "Original.pdf") = Resume(name, bytes.size.toLong(), BoundaryPolicy.sha256(bytes), Base64.encodeToString(bytes, Base64.NO_WRAP))
     private fun expectInvalid(block: () -> Unit) {

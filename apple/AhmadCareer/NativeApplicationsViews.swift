@@ -62,7 +62,7 @@ struct NativeSavedLinkRemoval: View {
                     Button("Keep opportunity", role: .cancel) { dismiss() }
                         .accessibilityIdentifier("opportunity.keepSaved")
                 }
-            }.navigationTitle("Remove saved link?").navigationBarTitleDisplayMode(.inline)
+            }.navigationTitle("Remove link").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Keep opportunity") { dismiss() } } }
         }.tint(ApplyDesign.accent)
     }
@@ -815,7 +815,11 @@ private struct NativeApplicationConnection: View {
                         }
                     }
                 }
-                if let issue = issue ?? model.message { Section { Text(issue).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true) } }
+                if let issue {
+                    Section { Text(issue).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true) }
+                } else if let notice = model.message {
+                    Section { Text(notice).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true) }
+                }
                 Section("Account and privacy") {
                     NativeApplicationServiceLinks(address: model.connected ? model.serviceAddress : address,
                                                   includeConnection: model.connected)

@@ -1,0 +1,96 @@
+{
+  "repository": "swonyu/ahmad-career",
+  "branch": "career-finder-phones-verified-apply-20261116",
+  "commit": "4bbe5a5087378d6a9bfe3f1cac956233b5d6ba71",
+  "runId": 44014455183,
+  "jobId": 133808906982,
+  "jobName": "iPhone logic and unsigned build",
+  "source": "GitHub read connector fetch_workflow_job_logs and fetch_workflow_job_steps",
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1
+    },
+    {
+      "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2
+    },
+    {
+      "name": "Execute the production client and store checks",
+      "status": "completed",
+      "conclusion": "failure",
+      "number": 3
+    },
+    {
+      "name": "Build the production iPhone configuration on this isolated runner",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 4
+    },
+    {
+      "name": "Verify the built product targets iPhone",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 5
+    },
+    {
+      "name": "Keep the unsigned build log",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 6
+    },
+    {
+      "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 12
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 13
+    }
+  ],
+  "observedFailure": "FAILED: Foreign workspace CV metadata cannot silently select the new workspace's CV",
+  "boundaryChecks": "PASS 120 native application boundary checks",
+  "unsignedBuild": "skipped after lifecycle assertion failure",
+  "cause": "The lifecycle test expects JSON null (an explicit removal instruction), but a newly acknowledged server profile has no pending resume mutation and therefore omits the resume payload key.",
+  "validation": "Corrected lifecycle execution is pending a publishing-owner-coordinated run; no Swift compiler is available on the Linux workspace.",
+  "uiSuite": "No UI test changed; this job does not report the separate iPhone UI job's result.",
+  "fix": {
+    "file": "apple/Checks/MobileLifecycleCheck.swift",
+    "scope": "Test expectation correction only; production Apple implementation is unchanged.",
+    "checks": [
+      "No foreign CV name, bytes, size or fingerprint in the new workspace.",
+      "Acknowledgement leaves resumeChanged and resumeRemoved false and omits the resume payload key.",
+      "Original workspace profile and CV metadata remain in the original scoped archive.",
+      "The current 500-character opportunity title boundary is accepted and retained.",
+      "A 501-character title is rejected while the last valid 500-character draft remains unchanged."
+    ],
+    "sha256": "52fd4d4fba216a37a020b496b03c6bbb9ee2a23378b3f58de8220785ff5333a2"
+  },
+  "staticValidation": {
+    "gitDiffCheck": "passed",
+    "all13UITests": "unchanged against 4bbe5a5087378d6a9bfe3f1cac956233b5d6ba71",
+    "swiftCompilerAvailableLocally": false,
+    "newBuildStarted": false,
+    "existingBuildCancelled": false,
+    "commitOrPushPerformed": false
+  },
+  "additionalFixtureMismatch": {
+    "discovery": "Bounded read-only review of later lifecycle scenarios after the logged failure; not a newly executed CI failure.",
+    "oldFixture": "MobileLifecycleCheck.swift used a 301-character title as an invalid opportunity draft.",
+    "currentContract": "PhoneOpportunityDraft.storageError in MobileApplicationState.swift accepts title/company/location lengths through 500 characters.",
+    "correction": "Assert 500-character acceptance, then reject 501 characters while retaining the accepted draft. Production limits and scenario count unchanged."
+  },
+  "boundedConsistencyReview": {
+    "laterLifecycleScenarios": "Inspected after the failed CV assertion through the end of the lifecycle suite. No additional resume-null/omission or scoped archive fixture mismatch found.",
+    "otherAppleChecks": "Searched all apple/Checks for the same old 300/301 limit and reviewed related matches. No other fixture tests the obsolete opportunity-detail limit; the remaining 300-character LinkedIn Unicode URL case and 3001-character legacy skills bound are different contracts.",
+    "execution": "Static source inspection only. Corrected lifecycle, discovery and unsigned build execution remain pending."
+  }
+}

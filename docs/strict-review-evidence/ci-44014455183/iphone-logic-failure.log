@@ -1,0 +1,11 @@
+2026-11-17T04:03:23.9439570Z Complete job name: iPhone logic and unsigned build
+2026-11-17T04:03:25.1081790Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +4bbe5a5087378d6a9bfe3f1cac956233b5d6ba71:refs/remotes/origin/career-finder-phones-verified-apply-20261116
+2026-11-17T04:03:26.7258060Z  * [new ref]         4bbe5a5087378d6a9bfe3f1cac956233b5d6ba71 -> origin/career-finder-phones-verified-apply-20261116
+2026-11-17T04:03:26.7433990Z 4bbe5a5087378d6a9bfe3f1cac956233b5d6ba71
+2026-11-17T04:03:27.0135710Z 4bbe5a5087378d6a9bfe3f1cac956233b5d6ba71
+2026-11-17T04:03:27.4597230Z ##[group]Run bash apple/Checks/check-mobile.sh
+2026-11-17T04:03:39.8997640Z CoreGraphics PDF has logged an error. Set environment variable "CG_PDF_VERBOSE" to learn more.
+2026-11-17T04:03:39.9108640Z PASS 120 native application boundary checks
+2026-11-17T04:03:48.7191840Z FAILED: Foreign workspace CV metadata cannot silently select the new workspace's CV
+2026-11-17T04:03:48.7345140Z ##[error]Process completed with exit code 1.
+2026-11-17T04:03:48.9286170Z No files were found with the provided path: /Users/runner/work/_temp/career-iphone-build.log. No artifacts will be uploaded.

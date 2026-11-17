@@ -493,7 +493,7 @@ private final class LifecycleSuite {
                 if call.route == "session" { return ["ok": .bool(true), "sessionToken": .string("new-synthetic-token"), "workspaceId": .string("workspace-b"), "profile": .object(self.server(0, name: "Different person", resume: self.metadata(oldPDF)))] }
                 return self.workspace(0, name: "Different person", jobs: [["id": .string("new-job"), "url": .string("https://jobs.example/new"), "title": .string("New role"), "company": .string("New company")]], workspace: "workspace-b")
             }
-            let (store, _, _) = try fixture(state, service: oldService, factory: { url, token in
+            let (store, folder, _) = try fixture(state, service: oldService, factory: { url, token in
                 let service = url.host == "second.example" ? newService : oldService; service.token = token; return service
             })
             let oldGET = Task { await store.refresh() }; try await waitUntil { gate.started }
@@ -504,7 +504,14 @@ private final class LifecycleSuite {
             _ = await oldGET.value
             try check(store.connected && store.jobs.first?["id"]?.string == "new-job", "Obsolete connection response/error cannot repopulate or disconnect the new workspace")
             try check(!store.profileNeedsSync && store.revision == 0 && store.profile.firstName == "Different person", "A different workspace displays only its own profile without adopting the previous person's draft")
-            try check(store.profile.resumeName.isEmpty && store.profile.payload()["resume"] == .null, "Foreign workspace CV metadata cannot silently select the new workspace's CV")
+            try check(store.profile.resumeName.isEmpty && store.profile.resumeData == nil
+                      && store.profile.resumeSize == nil && store.profile.resumeSHA256 == nil,
+                      "The new workspace's no-CV acknowledgement contains none of the previous workspace's CV metadata or bytes")
+            try check(!store.profile.resumeChanged && !store.profile.resumeRemoved && store.profile.payload()["resume"] == nil,
+                      "Acknowledging the new workspace does not fabricate a CV upload or an explicit deletion")
+            let persisted = try JSONDecoder().decode(PhoneApplicationState.self, from: Data(contentsOf: folder.appendingPathComponent("phone-draft.json")))
+            try check(persisted.workspaceDrafts.first(where: { $0.scope == state.recordScope })?.profile == state.profile,
+                      "The original workspace's profile and CV metadata remain intact in their own archive")
             scenarios += 1
         }
         // Local disconnect remains usable offline, and an expired session cannot remain visually connected.
@@ -1406,8 +1413,10 @@ private final class LifecycleSuite {
             try check(store.keepOpportunityDraft(draft), "Incomplete add-link details can be saved as a local draft")
             let restored = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
             try check(restored.opportunityDraft == draft && restored.jobs.isEmpty && service.calls.isEmpty, "Draft survives reload without a job import or submission")
-            var tooLong = draft; tooLong.title = String(repeating: "x", count: 301)
-            try check(!restored.keepOpportunityDraft(tooLong) && restored.opportunityDraft == draft, "Oversized edit cannot overwrite the last durable draft")
+            var boundary = draft; boundary.title = String(repeating: "x", count: 500)
+            try check(restored.keepOpportunityDraft(boundary) && restored.opportunityDraft == boundary, "The shared 500-character opportunity detail limit is accepted")
+            var tooLong = boundary; tooLong.title = String(repeating: "x", count: 501)
+            try check(!restored.keepOpportunityDraft(tooLong) && restored.opportunityDraft == boundary, "Oversized edit cannot overwrite the last durable draft")
             try check(restored.keepOpportunityDraft(PhoneOpportunityDraft()), "Explicit discard clears the draft")
             let discarded = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
             try check(!discarded.opportunityDraft.hasContent && discarded.jobs.isEmpty, "Deliberate discard persists without creating a job")

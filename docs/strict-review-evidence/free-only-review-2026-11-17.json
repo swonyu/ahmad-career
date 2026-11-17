@@ -1,0 +1,30 @@
+{
+  "observedAt": "2026-11-17T04:15:45.423421+00:00",
+  "productionSourceCommit": "4bbe5a5087378d6a9bfe3f1cac956233b5d6ba71",
+  "hostedSourceCommit": "1135a3270435d3719c6f62f1a2e3a53e2c040146",
+  "scope": [
+    "apple/AhmadCareer",
+    "android/app/src/main",
+    "hosted/app",
+    "hosted/server",
+    "website"
+  ],
+  "check": "Targeted source inspection for payment/subscription SDKs, paid model API endpoints and billing/upgrade paths. Excludes dependency vendor trees and synthetic fixture/test-only configuration.",
+  "findings": [
+    "No payment SDK, subscription purchase path or paid model API call was found in the inspected application sources.",
+    "Employer connector secret references remain explicit; their presence is not employer authorization or a free service entitlement. Production employer integration is unconfigured.",
+    "Hosted capacity failures preserve existing records and say no paid service was enabled.",
+    "The GitHub repository is public; the continuation uses existing hosted CI and did not enable any new paid plan or permission.",
+    "No domain purchase, developer enrollment payment, subscription, hosting upgrade or automatic paid overage was initiated."
+  ],
+  "limits": [
+    "Static inspection does not establish unlimited free third-party capacity or waive any platform/store terms.",
+    "Cloud providers, account quotas and publishing-owner developer programme prerequisites remain external constraints."
+  ],
+  "supportedAlternatives": [
+    "Public web app",
+    "Local encrypted drafts, records and recovery",
+    "Existing account sign-in",
+    "Public employer posting links and manual application review"
+  ]
+}

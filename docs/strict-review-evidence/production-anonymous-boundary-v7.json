@@ -1,0 +1,69 @@
+{
+  "hostedCommit": "1135a3270435d3719c6f62f1a2e3a53e2c040146",
+  "deployedVersion": 7,
+  "requests": "Four read-only HTTP GET requests without cookies or real credentials. Only synthetic identity headers supplied.",
+  "results": [
+    {
+      "case": "health",
+      "status": 200,
+      "json": true,
+      "ok": true,
+      "errorCode": null,
+      "authenticated": null,
+      "userPresent": false,
+      "forgedSubjectReturned": false,
+      "configured": null
+    },
+    {
+      "case": "anonymous-status",
+      "status": 200,
+      "json": true,
+      "ok": true,
+      "errorCode": null,
+      "authenticated": null,
+      "userPresent": false,
+      "forgedSubjectReturned": false,
+      "configured": {
+        "google": {
+          "configured": false,
+          "connected": false
+        },
+        "linkedin": {
+          "configured": false,
+          "connected": false
+        }
+      }
+    },
+    {
+      "case": "forged-status",
+      "status": 200,
+      "json": true,
+      "ok": true,
+      "errorCode": null,
+      "authenticated": null,
+      "userPresent": false,
+      "forgedSubjectReturned": false,
+      "configured": {
+        "google": {
+          "configured": false,
+          "connected": false
+        },
+        "linkedin": {
+          "configured": false,
+          "connected": false
+        }
+      }
+    },
+    {
+      "case": "forged-account",
+      "status": 401,
+      "json": true,
+      "ok": false,
+      "errorCode": "sign_in_required",
+      "authenticated": null,
+      "userPresent": false,
+      "forgedSubjectReturned": false,
+      "configured": null
+    }
+  ]
+}

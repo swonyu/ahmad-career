@@ -1,0 +1,17 @@
+2026-11-17T04:03:29.6037517Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +4bbe5a5087378d6a9bfe3f1cac956233b5d6ba71:refs/remotes/origin/career-finder-phones-verified-apply-20261116
+2026-11-17T04:03:30.9714558Z  * [new ref]         4bbe5a5087378d6a9bfe3f1cac956233b5d6ba71 -> origin/career-finder-phones-verified-apply-20261116
+2026-11-17T04:03:30.9769761Z 4bbe5a5087378d6a9bfe3f1cac956233b5d6ba71
+2026-11-17T04:03:31.0552707Z 4bbe5a5087378d6a9bfe3f1cac956233b5d6ba71
+2026-11-17T04:03:43.4806954Z PASS: 122 executable Android boundary-policy checks (no network, no device claims).
+2026-11-17T04:04:30.2794845Z > Task :app:assembleDebug
+2026-11-17T04:04:33.6741575Z > Task :app:compileDebugAndroidTestKotlin FAILED
+2026-11-17T04:04:33.6771133Z e: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceAccessibilityRegressionTest.kt:11:33 Unresolved reference 'assertExists'.
+2026-11-17T04:04:33.6790811Z e: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceSafetyRegressionTest.kt:69:64 Cannot infer type for type parameter 'R'. Specify it explicitly.
+2026-11-17T04:04:33.6811049Z e: file:///home/runner/work/ahmad-career/ahmad-career/android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceSafetyRegressionTest.kt:69:64 Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+2026-11-17T04:04:33.6812514Z fun <T : Closeable?, R> T.use(block: (T) -> R): R
+2026-11-17T04:05:11.3658273Z Execution failed for task ':app:compileDebugAndroidTestKotlin'.
+2026-11-17T04:05:11.3659863Z    > Compilation error. See log for more details
+2026-11-17T04:05:11.3661814Z BUILD FAILED in 1m 27s
+2026-11-17T04:05:11.7583022Z /home/runner/work/_temp/10ca2b13-3de1-4613-984a-3c0ef3b53618.sh: line 7: rg: command not found
+2026-11-17T04:05:11.7597134Z ##[error]Process completed with exit code 1.
+2026-11-17T04:05:13.4561733Z Artifact android-lint-44014455183.zip successfully finalized. Artifact ID 14297893649
