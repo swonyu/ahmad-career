@@ -1,0 +1,13 @@
+{
+  "id": 44147056599,
+  "run_number": 41,
+  "event": "workflow_dispatch",
+  "head_sha": "243031d3f35040985c5b274e8ddf4a90adb0eda8",
+  "head_branch": "recovery/publishing-integrated-20261117-d57f4",
+  "status": "completed",
+  "conclusion": "success",
+  "run_started_at": "2026-11-17T18:22:03Z",
+  "updated_at": "2026-11-17T18:50:00Z",
+  "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44147056599",
+  "run_attempt": 1
+}

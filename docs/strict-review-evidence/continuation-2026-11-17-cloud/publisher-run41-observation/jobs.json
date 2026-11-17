@@ -1,0 +1,104 @@
+{
+  "jobs": [
+    {
+      "id": 134264967126,
+      "name": "PARTIAL iPhone UI acceptance (all 17 journeys)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44147056599,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Select an iPhone on this disposable hosted runner",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Exercise native phone flows with isolated synthetic data",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Verify the partial regression actually ran once",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5
+        },
+        {
+          "name": "Export native interface evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Keep the native UI results and screenshots",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        }
+      ]
+    },
+    {
+      "id": 134264970339,
+      "name": "Hosted HTTPS service and durable storage",
+      "status": "completed",
+      "conclusion": "skipped",
+      "run_id": 44147056599,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134264970384,
+      "name": "Service and synthetic HTTPS",
+      "status": "completed",
+      "conclusion": "skipped",
+      "run_id": 44147056599,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134264970632,
+      "name": "Android compile, lint and native acceptance",
+      "status": "completed",
+      "conclusion": "skipped",
+      "run_id": 44147056599,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134264970779,
+      "name": "iPhone logic and unsigned build",
+      "status": "completed",
+      "conclusion": "skipped",
+      "run_id": 44147056599,
+      "logs_url": null,
+      "steps": null
+    }
+  ]
+}

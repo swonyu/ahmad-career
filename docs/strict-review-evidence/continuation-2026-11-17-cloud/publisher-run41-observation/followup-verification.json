@@ -1,0 +1,11 @@
+{
+  "verifiedAt": "2026-11-17T18:58:39.670011+00:00",
+  "baseEvidenceCommit": "21234501e5f557c9b30231d7c7eadba06849080c",
+  "applicationSource": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+  "filesBeforeThisReceipt": 15,
+  "localLinksChecked": 308,
+  "missingLinks": [],
+  "commonCredentialPatternLocations": [],
+  "applicationFilesChanged": false,
+  "qualification": "Documentation/log integrity check only; no new application test or release acceptance."
+}

@@ -213,7 +213,7 @@
     ],
     "qualification": "Actual public owner acknowledgment; no completed source, runtime, merge, signing or store result is inferred."
   },
-  "lastUpdatedAt": "2026-11-17T18:24:37.175273+00:00",
+  "lastUpdatedAt": "2026-11-17T18:56:47.553462+00:00",
   "incomingCommentsAfter1800": [
     {
       "id": 6956399634,
@@ -308,7 +308,13 @@
     "methods": 17,
     "assertionSites": 153,
     "delta": "Real delete-key firstMatch query created after each actual field focus, reused for the bounded waiter; tab helper unchanged. New explicitly partial iphone-ui workflow scope retains all17 UI journeys and intentionally skips four other jobs.",
-    "qualification": "Root read committed helper diff and checkpoint, independently fetched live GitHub ref. No runtime pass inferred, no source copied into development. Publisher owns this repair and scheduling."
+    "qualification": "Root read committed helper diff and checkpoint, independently fetched live GitHub ref. No runtime pass inferred, no source copied into development. Publisher owns this repair and scheduling.",
+    "staticCounts": {
+      "XCTAssertCalls": 146,
+      "XCTFailCalls": 7,
+      "combinedAssertionAndFailureSites": 153
+    },
+    "assertionSitesDefinition": "Includes146XCTAssert and7XCTFail; do not directly compare to development144XCTAssert-only count."
   },
   "run40ReadinessOwnerHandoff": {
     "id": 6957000200,
@@ -317,5 +323,15 @@
     "body": "### Run 40 transition evidence for the active publisher helper owner\n\nFresh ownership recovery found the current publisher workspace under `/workspace/scratch/d57f4cd77813`, with active keyboard-query proposals and integrated remote `243031d3f35040985c5b274e8ddf4a90adb0eda8`. This development lane will not author a competing keyboard helper patch or dispatch another native run. Please preserve the current owner’s firstMatch-query correction and its exact-source validation; the older d597/59ba checkout is frozen.\n\nOur sealed source `63eecda5` / run 44139018005 ended with 3 gates passed and 2 failed. All four artifact archives were byte/digest verified; iPhone finalized/exported successfully: 17 executed, 15 passed, 2 failed, Clear passed in107.584 seconds. All55 run40 evidence files have been applied and byte/hash verified in the development evidence worktree.\n\nThe existing failure recordings support a second, specific tab-transition correction: after Save draft, the profile sheet remains visible at98.5s and has closed at100.5s. The helper waits for tab existence, then immediately asserts isHittable (failure at100.49s). Independent review recommends a bounded wait for the SAME button.exists && button.isHittable condition before the single tap; no removed assertion, repeated action or hidden failure. The current243 helper diff reportedly leaves tab() unchanged, so please disposition this case in your owned patch.\n\nThe first-name keyboard frame has a caret/no keyboard at80.0s and a real keyboard/Delete glyph at87.5s. The raw log’s first key enumeration starts83.37s; querying existence reaches86.87–87.60s before the5s waiter fails. We independently read publisher run39 at pre-banner11cb: the SAME keyboard test failed in124.593s, with a later debug snapshot showing the real Delete key. This supports investigating query/presentation readiness; neither record proves banner causality. Our reviewer had proposed a targeted10s initial-key allowance if needed, but that is only a recommendation to validate, not a competing source patch or a blanket timeout change.\n\nRUN38-VIS-01 is only partially qualified: run40’s English-dark Settings original now separates the DEBUG banner/title; the matching Arabic27 capture was not reached because Settings failed before Arabic selection. Please reconcile63e’s single NativeCareerViews banner change when integrating. The single dark image also has a paler tab bar than run38; no settled second frame exists, so this remains an observation to check, not a demonstrated product defect.\n\nDependency investigation remains open: the current advisory has no patched release. A bounded in-memory guard stopped the reproduced slow cases but broke the upstream valid assertion isMatch(\"abc\", \"+(*)c\") === true, so it was rejected. No package/lock/audit-policy change or waiver was made. Current source must not be labelled green or release ready. Native search/recovery owners are now registered; no shared Mac build, signing/store action, public deployment, real provider callback or physical acceptance is claimed here.",
     "exactConnectorReadback": true,
     "bodySha256": "cad7c837da16d8c5bbf884fe5af5176c6dfd9f0f69277c8507d4cdbfd69897f1"
+  },
+  "publisherRun41Terminal": {
+    "run": 44147056599,
+    "source": "243031d3f35040985c5b274e8ddf4a90adb0eda8",
+    "observation": "publisher-run41-observation/README.md",
+    "passed": 17,
+    "failed": 0,
+    "otherGatesSkipped": 4,
+    "partialOnly": true,
+    "banner63Qualified": false
   }
 }

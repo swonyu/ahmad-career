@@ -1,0 +1,148 @@
+{
+  "observed_at": "2026-11-17T18:53:26.772376+00:00",
+  "run_id": 44147056599,
+  "run_number": 41,
+  "url": "https://github.com/swonyu/ahmad-career/actions/runs/44147056599",
+  "event": "workflow_dispatch",
+  "reported_head": "243031d3f35040985c5b274e8ddf4a90adb0eda8",
+  "raw_log_checkout": "243031d3f35040985c5b274e8ddf4a90adb0eda8",
+  "source_tree": "192a239ea8c33e5ec74751f95a63089114822347",
+  "scope": "PARTIAL iPhone UI acceptance; all17 original journeys, four other gates intentionally skipped",
+  "workflow_conclusion": "success",
+  "ui_job_id": 134264967126,
+  "ui_job_conclusion": "success",
+  "executed": 17,
+  "passed": 17,
+  "failed": 0,
+  "unexpected": 0,
+  "reported_test_skips": 0,
+  "seconds": 1283.028,
+  "suite_started_utc": "2026-11-17 18:26:58.370",
+  "suite_finished_utc": "2026-11-17 18:48:21.421",
+  "xcodebuild_success_line": "2026-11-17T18:49:19.1643580Z ** TEST SUCCEEDED **",
+  "export_step": "success",
+  "upload_step": "success",
+  "one_method_connection_verification_step": "skipped",
+  "one_method_step_qualification": "That conditional step applies to connection-only scope; its skipped step status is distinct from the complete17-case passing test inventory.",
+  "device_lines": [
+    "2026-11-17T18:22:41.2882280Z Selected iPhone Air on iOS 26.5 architecture arm64"
+  ],
+  "source_method_set_matches": true,
+  "tests": [
+    {
+      "method": "testAccessibilityTextKeepsCoreControlsReachable",
+      "outcome": "passed",
+      "seconds": 88.894
+    },
+    {
+      "method": "testApplicationDraftSurvivesCancelAndRelaunch",
+      "outcome": "passed",
+      "seconds": 54.165
+    },
+    {
+      "method": "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+      "outcome": "passed",
+      "seconds": 161.231
+    },
+    {
+      "method": "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+      "outcome": "passed",
+      "seconds": 66.445
+    },
+    {
+      "method": "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "outcome": "passed",
+      "seconds": 35.504
+    },
+    {
+      "method": "testDiscoverySaveFlowsIntoSavedAndApply",
+      "outcome": "passed",
+      "seconds": 50.732
+    },
+    {
+      "method": "testFreshStartAndFiveTabs",
+      "outcome": "passed",
+      "seconds": 42.114
+    },
+    {
+      "method": "testLinkedInProfileDraftAndExternalSearchChoice",
+      "outcome": "passed",
+      "seconds": 60.58
+    },
+    {
+      "method": "testOpportunityDiscardRequiresExplicitChoice",
+      "outcome": "passed",
+      "seconds": 24.095
+    },
+    {
+      "method": "testOpportunityDraftKeepSaveAndRestore",
+      "outcome": "passed",
+      "seconds": 63.439
+    },
+    {
+      "method": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+      "outcome": "passed",
+      "seconds": 150.776
+    },
+    {
+      "method": "testProfileReadinessAndSimpleConnectionSetup",
+      "outcome": "passed",
+      "seconds": 74.397
+    },
+    {
+      "method": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+      "outcome": "passed",
+      "seconds": 25.786
+    },
+    {
+      "method": "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+      "outcome": "passed",
+      "seconds": 112.587
+    },
+    {
+      "method": "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+      "outcome": "passed",
+      "seconds": 129.895
+    },
+    {
+      "method": "testSearchEmptyAndFailurePreservesPreviousResults",
+      "outcome": "passed",
+      "seconds": 90.197
+    },
+    {
+      "method": "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+      "outcome": "passed",
+      "seconds": 52.193
+    }
+  ],
+  "skipped_gates": [
+    {
+      "id": 134264970339,
+      "name": "Hosted HTTPS service and durable storage"
+    },
+    {
+      "id": 134264970384,
+      "name": "Service and synthetic HTTPS"
+    },
+    {
+      "id": 134264970632,
+      "name": "Android compile, lint and native acceptance"
+    },
+    {
+      "id": 134264970779,
+      "name": "iPhone logic and unsigned build"
+    }
+  ],
+  "raw_log_bytes": 575717,
+  "raw_log_sha256": "410e95fc7748fdd43e0e688f715af8b7852773197085f2c7df46ef5092cb9c0e",
+  "source_helper_sha256": "163d5698d9e291db53e161e98011fac64174233863063a36efa7ac318fdea84e",
+  "source_static_xctassert_calls": 146,
+  "source_static_xctfail_calls": 7,
+  "limitations": [
+    "No archive downloaded or independently rehashed; successful result finalization/export is evidenced by job steps and raw xcodebuild log.",
+    "This publisher tree is distinct from development63e and does not establish matching63e-banner acceptance.",
+    "Four skipped gates leave full five-gate qualification pending; the separate Hosted dependency audit failure is not resolved by this partial run.",
+    "No real provider, physical assistive-technology, store or release acceptance is inferred."
+  ],
+  "actions": "Read-only metadata/log/source observation; no native build, dispatch, rerun, cancellation, push, source edit or owner artifact download."
+}

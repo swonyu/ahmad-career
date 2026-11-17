@@ -1,0 +1,28 @@
+{
+  "retainedAt": "2026-11-17T18:55:51.451940+00:00",
+  "source": "243031d3f35040985c5b274e8ddf4a90adb0eda8",
+  "run": 44147056599,
+  "files": [
+    {
+      "path": "observation.json",
+      "bytes": 5022,
+      "sha256": "6d8cb0d3df5e51ecc350c5a651b93e3099c354b01c7e27cc5d35dcbd10c21fb0"
+    },
+    {
+      "path": "iphone-ui-job.log",
+      "bytes": 575717,
+      "sha256": "410e95fc7748fdd43e0e688f715af8b7852773197085f2c7df46ef5092cb9c0e"
+    },
+    {
+      "path": "jobs.json",
+      "bytes": 2734,
+      "sha256": "284f151ad99837fe04cddc2a27e68164f59461f497618215e3fb10732294e184"
+    },
+    {
+      "path": "workflow-run.json",
+      "bytes": 437,
+      "sha256": "e39446c9de5387c50842f2e926cdddf8ea2b63e4dc23b0ce18468224ddb108f0"
+    }
+  ],
+  "scope": "Read-only metadata/log observation; no downloaded archive or visual verification."
+}

@@ -1,0 +1,27 @@
+{
+  "observedAt": "2026-11-17T18:56:47.546552+00:00",
+  "operation": "Independent root GitHub metadata and raw UI-job log read",
+  "run": 44147056599,
+  "job": 134264967126,
+  "source": "243031d3f35040985c5b274e8ddf4a90adb0eda8",
+  "rawBytes": 575717,
+  "rawSha256": "410e95fc7748fdd43e0e688f715af8b7852773197085f2c7df46ef5092cb9c0e",
+  "rawMatchesRetainedReviewerLog": true,
+  "passed": 17,
+  "failed": 0,
+  "unexpected": 0,
+  "seconds": 1283.028,
+  "otherGatesSkipped": 4,
+  "publisherSourceStaticCounts": {
+    "methods": 17,
+    "XCTAssertCalls": 146,
+    "XCTFailCalls": 7
+  },
+  "development63SourceStaticCounts": {
+    "methods": 17,
+    "XCTAssertCalls": 144,
+    "XCTFailCalls": 6
+  },
+  "countDefinitionCorrection": "153 means146XCTAssert plus7XCTFail. Development144 countsXCTAssert only, with6additionalXCTFail sites. Earlier direct144-vs153 comparisons mixed definitions; no test code or assertions changed in this documentation correction.",
+  "qualification": "No downloaded archive, capture review,63e-banner qualification or full-five-gate pass."
+}
