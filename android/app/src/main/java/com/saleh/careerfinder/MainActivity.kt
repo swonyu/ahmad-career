@@ -612,11 +612,16 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
                 TextButton(onClick = receipts, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("View receipts")) }
             }
         }
-        items(state.recoverablePlans.filter { it.id != plan?.id && !(it.unapproved && it.id in state.obsoleteReviews) }, key = { "recovery-" + it.id }) { savedPlan ->
+        val earlierReviews = state.recoverablePlans.filter { it.id != plan?.id && !(it.unapproved && it.id in state.obsoleteReviews) }
+        val firstExpiredReview = earlierReviews.firstOrNull { it.expired() }?.id
+        items(earlierReviews, key = { "recovery-" + it.id }) { savedPlan ->
             Panel {
                 Text(l10n("Continue an earlier review"), style = MaterialTheme.typography.titleLarge)
                 Text(l10n("Review the original application details, then approve again. Requests with an uncertain outcome cannot be resumed."))
                 savedPlan.items.filter { it.state == "rate_limited" }.forEach { Text(l10n.format("{0} · Wait until {1}", listOf((it.title).toString(), (l10n.dateTime(it.retryAt)).toString())), style = MaterialTheme.typography.bodySmall) }
+                if (savedPlan.expired()) Text(l10n("This review is out of date. Refresh the workspace before continuing."),
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = if (savedPlan.id == firstExpiredReview) Modifier.semantics { liveRegion = LiveRegionMode.Polite } else Modifier)
                 OutlinedButton(onClick = { model.reviewRecovered(savedPlan) }, enabled = !state.busy && !savedPlan.expired(), modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Review remaining applications")) }
             }
         }
@@ -666,6 +671,9 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
                     Action(if (state.testService) "Run approved test applications" else "Approve and Auto Apply",
                         approved && ready > 0 && !state.busy && !plan.expired() && !state.profileDirty && !state.requiresPairing &&
                             (state.liveEnabled || state.testService)) { model.submit(plan) }
+                    if (plan.expired()) Text(l10n("This review has expired or your profile changed. Prepare it again."),
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
                     if (plan.items.any { it.state == "rate_limited" }) TextButton(onClick = model::refresh, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Refresh cooldown availability")) }
                     OutlinedButton(onClick = { model.stop(plan.id) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Stop this batch")) }
                     Text(l10n("Confirmed means the provider accepted the application. It does not mean recruiter review, an interview or an offer."), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
