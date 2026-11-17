@@ -1,0 +1,33 @@
+{
+  "status": "historical source preserved; not a current capture certification",
+  "originalBase": "0a56340fee907ffab0e4e5f25ac252de76a23c9c",
+  "captureBranchHead": "6a29c0817b87d5baa36188a232222422020b8a35",
+  "files": [
+    {
+      "sourceCommit": "6a29c0817b87d5baa36188a232222422020b8a35",
+      "sourcePath": ".github/workflows/phone-quality.yml",
+      "preservedPath": "apple/StoreCapture/historical-phone-quality-20261116.yml",
+      "bytes": 5433,
+      "sha256": "bd6bbac18addae3b86bc447ad364f95bbba11555ab2f9a4b1769a1a1e0d13faa",
+      "gitBlobSHA1": "272c677beaf35a566445923d1bb154cf5dc21833"
+    },
+    {
+      "sourceCommit": "6a29c0817b87d5baa36188a232222422020b8a35",
+      "sourcePath": "apple/StoreCapture/capture-evidence.py",
+      "preservedPath": "apple/StoreCapture/capture-evidence.py",
+      "bytes": 17232,
+      "sha256": "92838921d87e4b4d312371408231fe139908403cc2cc432cd5300d1bd2a23f75",
+      "gitBlobSHA1": "94b214c1f902beaddf74e94aa4a6c032229335c3"
+    },
+    {
+      "sourceCommit": "6a29c0817b87d5baa36188a232222422020b8a35",
+      "sourcePath": "apple/UITests/CareerFinderStoreCaptureTests.swift",
+      "preservedPath": "apple/UITests/CareerFinderStoreCaptureTests.swift",
+      "bytes": 5164,
+      "sha256": "1469a5505af04128cfc59fbbb902992b29db2c443f1b2855c089e655eb2885c6",
+      "gitBlobSHA1": "3042dafec147ef2e22f4a8b2f6c02e527e8871c5"
+    }
+  ],
+  "activeWorkflow": "the existing five-job phone-quality.yml is retained unchanged",
+  "projectResolution": "current project retained unchanged; historical capture class not compiled by the primary UI-test target"
+}
