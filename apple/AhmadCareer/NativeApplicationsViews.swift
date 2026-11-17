@@ -84,6 +84,14 @@ struct NativeApplicationsScreen: View {
     @State private var exported: URL?
     @State private var exportSheet = false
     @State private var removing: PhoneLocalRemovalContext?
+    @State private var announcedMessage: String?
+
+    private func speakVisibleMessage(_ value: String?) {
+        guard let value else { announcedMessage = nil; return }
+        guard value != announcedMessage else { return }
+        announcedMessage = value
+        UIAccessibility.post(notification: .announcement, argument: l10n(value))
+    }
 
     private var reviewActionTitle: String {
         guard model.connected else { return "Connect application workspace" }
@@ -232,9 +240,8 @@ struct NativeApplicationsScreen: View {
             if let exported { NativeApplicationShare(items: [exported]) }
         }
         .refreshable { await model.refresh() }
-        .onChange(of: model.message) { value in
-            if let value { UIAccessibility.post(notification: .announcement, argument: l10n(value)) }
-        }
+        .onAppear { speakVisibleMessage(model.message) }
+        .onChange(of: model.message) { value in speakVisibleMessage(value) }
     }
     private var header: some View {
         VStack(alignment: .leading, spacing: 12) {
