@@ -389,7 +389,7 @@ private fun PhoneImportDialog(state: CareerUiState, model: CareerViewModel) {
                     Text(l10n("Saved links and private records"), style = MaterialTheme.typography.titleLarge)
                     val linkCount = if (phone.jobs.size == 1) "1 saved link" else "${phone.jobs.size} saved links"
                     val recordCount = if (phone.applicationRecords.size == 1) "1 private record" else "${phone.applicationRecords.size} private records"
-                    Text(l10n.format("{0} · {1}", listOf((linkCount).toString(), (recordCount).toString())), style = MaterialTheme.typography.bodySmall)
+                    Text(l10n.format("{0} · {1}", listOf(l10n(linkCount), l10n(recordCount))), style = MaterialTheme.typography.bodySmall)
                     phone.jobs.forEach { Text(it.title + " · " + it.company, style = MaterialTheme.typography.bodyMedium) }
                     val linked = phone.jobs.map { BoundaryPolicy.jobIdentity(it.url) }.toSet()
                     phone.applicationRecords.values.filter { it.identity !in linked }.forEach {

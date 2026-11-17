@@ -1,10 +1,12 @@
 package com.saleh.careerfinder
 
 import android.content.ContentValues
+import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Base64
+import android.view.View
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.hasSetTextAction
@@ -30,6 +32,18 @@ import org.junit.runner.Description
 import java.io.File
 import javax.net.ssl.SSLException
 
+/** Match the real acceptance Activity: Arabic resources, RTL and enlarged text.
+ * Reuse production preference synchronization; do not change any OS setting.
+ */
+private fun nativeHttpsAcceptanceStrings(context: Context): CareerStrings {
+    synchronizePlatformLanguage(context)
+    val configuration = context.resources.configuration
+    assertEquals("Acceptance must retain Arabic app resources", "ar", configuration.locales[0].language)
+    assertEquals("Acceptance must retain RTL resources", View.LAYOUT_DIRECTION_RTL, configuration.layoutDirection)
+    assertTrue("Acceptance must retain at least 180% text", configuration.fontScale >= 1.79f)
+    return CareerStrings(context)
+}
+
 class TlsBoundaryAcceptanceTest {
     @Test fun normalPreview_refusesTheIsolatedFixtureCertificate() {
         val instrumentation = InstrumentationRegistry.getInstrumentation()
@@ -46,12 +60,13 @@ class TlsBoundaryAcceptanceTest {
 @SdkSuppress(minSdkVersion = 29)
 class NativeHttpsAcceptanceTest {
     private val compose = createAndroidComposeRule<MainActivity>()
+    private lateinit var strings: CareerStrings
     @get:Rule val acceptanceRules: TestRule = RuleChain.outerRule(object : TestWatcher() {
         override fun starting(description: Description) { phase("activity-rule:starting") }
         override fun failed(error: Throwable, description: Description) { phase("activity-rule:failed") }
         override fun finished(description: Description) { phase("activity-rule:finished") }
     }).around(compose)
-    private val approval = "I reviewed these details and authorize sending the ready applications to the employers shown above."
+    private val approval get() = strings("I reviewed these details and authorize sending the ready applications to the employers shown above.")
 
     @Test fun nativeReviewAndApproval_preserveExactPDFConsent_andUncertainRetryBoundaries() {
         phase("test-body:entered")
@@ -76,7 +91,10 @@ class NativeHttpsAcceptanceTest {
         val urls = listOf(requireNotNull(args.getString("successUrl")), requireNotNull(args.getString("timeoutUrl")),
             requireNotNull(args.getString("cooldownUrl")))
         lateinit var model: CareerViewModel
-        step("activity-model") { compose.activityRule.scenario.onActivity { model = ViewModelProvider(it)[CareerViewModel::class.java] } }
+        step("activity-model") { compose.activityRule.scenario.onActivity {
+            strings = nativeHttpsAcceptanceStrings(it)
+            model = ViewModelProvider(it)[CareerViewModel::class.java]
+        } }
         step("workspace-readiness") { await { model.state.value.loaded && !model.state.value.busy } }
         step("pair-request") { compose.runOnIdle { model.pair(origin!!, code) {} } }
         step("pair-result") { await { !model.state.value.busy && model.state.value.connection != null } }
@@ -96,17 +114,17 @@ class NativeHttpsAcceptanceTest {
                 resolver.openOutputStream(file)!!.use { it.write(bytes) }
                 resolver.update(file, ContentValues().apply { put(MediaStore.MediaColumns.IS_PENDING, 0) }, null, null)
             }
-            step("profile-tab") { compose.onNodeWithText("Profile").performClick() }
-            step("profile-name-scroll") { compose.onNodeWithTag("profile-list").performScrollToNode(hasText("First or single name")) }
-            step("profile-name-edit") { compose.onNode(hasText("First or single name") and hasSetTextAction()).performTextInput("Single") }
+            step("profile-tab") { compose.onNodeWithTag("navigation-profile").performClick() }
+            step("profile-name-scroll") { compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("First or single name"))) }
+            step("profile-name-edit") { compose.onNode(hasText(strings("First or single name")) and hasSetTextAction()).performTextInput("Single") }
             step("profile-name-keyboard-dismiss") { closeSoftKeyboard() }
-            step("profile-email-scroll") { compose.onNodeWithTag("profile-list").performScrollToNode(hasText("Email")) }
-            step("profile-email-edit") { compose.onNode(hasText("Email") and hasSetTextAction()).performTextInput("native-fixture@example.invalid") }
+            step("profile-email-scroll") { compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("Email"))) }
+            step("profile-email-edit") { compose.onNode(hasText(strings("Email")) and hasSetTextAction()).performTextInput("native-fixture@example.invalid") }
             step("profile-email-keyboard-dismiss") { closeSoftKeyboard() }
             step("pdf-select") { compose.runOnIdle { model.choosePDF(file) } }
             step("pdf-ready") { await { !model.state.value.busy && model.state.value.profile.resume?.sha256 == expectedHash } }
-            step("profile-save-scroll") { compose.onNodeWithTag("profile-list").performScrollToNode(hasText("Save profile to workspace")) }
-            step("profile-save-click") { compose.onNodeWithText("Save profile to workspace").performClick() }
+            step("profile-save-scroll") { compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("Save profile to workspace"))) }
+            step("profile-save-click") { compose.onNodeWithText(strings("Save profile to workspace")).performClick() }
             step("profile-saved") { await { !model.state.value.busy && !model.state.value.profileDirty && model.state.value.profile.revision > 0 } }
             assertEquals("", model.state.value.profile.lastName)
             assertEquals(expectedHash, model.state.value.profile.resume?.sha256)
@@ -123,15 +141,15 @@ class NativeHttpsAcceptanceTest {
                     model.editAnswers(job.id) { JobAnswers("First reviewed message", consentStore = true, consentMarketing = false) }
                 }
             } }
-            step("apply-tab") { compose.onNodeWithText("Apply").performClick() }
+            step("apply-tab") { compose.onNodeWithTag("navigation-apply").performClick() }
             clickInApply("Prepare application review")
             step("initial-review-ready") { await { !model.state.value.busy && model.state.value.plan != null } }
             val earlier = model.state.value.plan!!
             assertEquals(3, earlier.items.count { it.state == "ready" })
             // Changing tabs keeps the explicit No answer, and changing a message
             // invalidates the earlier unapproved review without submitting it.
-            step("jobs-tab") { compose.onNodeWithText("Jobs").performClick() }
-            step("apply-tab-return") { compose.onNodeWithText("Apply").performClick() }
+            step("jobs-tab") { compose.onNodeWithTag("navigation-jobs").performClick() }
+            step("apply-tab-return") { compose.onNodeWithTag("navigation-apply").performClick() }
             assertTrue(model.state.value.answers.values.all { it.consentMarketing == false })
             val changed = model.state.value.jobs.first().id
             step("review-message-edit") { compose.runOnIdle { model.editAnswers(changed) { it.copy(comments = "Updated reviewed message") } } }
@@ -146,8 +164,8 @@ class NativeHttpsAcceptanceTest {
                 assertEquals(false, it.payload.getBoolean("consentMarketing"))
                 assertEquals(expectedHash, it.resume?.sha256)
             }
-            step("review-summary-scroll") { compose.onNodeWithTag("apply-list").performScrollToNode(hasText("Review what will be shared.")) }
-            step("review-summary-visible") { compose.onNodeWithText("Review what will be shared.").assertIsDisplayed() }
+            step("review-summary-scroll") { compose.onNodeWithTag("apply-list").performScrollToNode(hasText(strings("Review what will be shared."))) }
+            step("review-summary-visible") { compose.onNodeWithText(strings("Review what will be shared.")).assertIsDisplayed() }
             step("review-capture") { capture("acceptance-prepared.png") }
             step("initial-approval") { approve() }
             step("initial-outcomes") { await(30_000) {
@@ -166,14 +184,14 @@ class NativeHttpsAcceptanceTest {
             step("cooldown-outcomes") { await(30_000) { model.state.value.receipts.count { it.state == "confirmed" } == 2 } }
             assertEquals(1, model.state.value.receipts.count { it.state == "uncertain" })
             assertEquals(0, model.state.value.receipts.count(ApplicationReceipt::verified))
-            step("receipts-tab") { compose.onNodeWithText("Receipts").performClick() }
-            step("receipt-count-scroll") { compose.onNodeWithTag("receipts-list").performScrollToNode(hasText("verified application receipts")) }
-            step("receipt-count-visible") { compose.onNodeWithText("verified application receipts").assertIsDisplayed() }
+            step("receipts-tab") { compose.onNodeWithTag("navigation-receipts").performClick() }
+            step("receipt-count-scroll") { compose.onNodeWithTag("receipts-list").performScrollToNode(hasText(strings("verified application receipts"))) }
+            step("receipt-count-visible") { compose.onNodeWithText(strings("verified application receipts")).assertIsDisplayed() }
             step("receipts-capture") { capture("acceptance-receipts.png") }
 
             val timeout = model.state.value.jobs.first { it.url == urls[1] }
             step("uncertain-job-select") { compose.runOnIdle { model.state.value.selected.filter { it != timeout.id }.forEach(model::toggleJob) } }
-            step("uncertain-apply-tab") { compose.onNodeWithText("Apply").performClick() }
+            step("uncertain-apply-tab") { compose.onNodeWithTag("navigation-apply").performClick() }
             clickInApply("Prepare application review")
             step("uncertain-review-ready") { await { !model.state.value.busy && model.state.value.plan != null } }
             assertEquals("blocked", model.state.value.plan!!.items.single().state)
@@ -209,8 +227,8 @@ class NativeHttpsAcceptanceTest {
     }
 
     private fun clickInApply(label: String) {
-        step("apply-action-scroll") { compose.onNodeWithTag("apply-list").performScrollToNode(hasText(label)) }
-        step("apply-action-click") { compose.onNodeWithText(label).performClick() }
+        step("apply-action-scroll") { compose.onNodeWithTag("apply-list").performScrollToNode(hasText(strings(label))) }
+        step("apply-action-click") { compose.onNodeWithText(strings(label)).performClick() }
     }
     private fun approve() {
         step("approval-scroll") { compose.onNodeWithTag("apply-list").performScrollToNode(hasText(approval)) }
