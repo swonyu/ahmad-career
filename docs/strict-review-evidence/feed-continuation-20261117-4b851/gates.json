@@ -1,0 +1,110 @@
+{
+  "startedAt": "2026-11-17T17:14:55.313151+00:00",
+  "base": "0f0c6f1f591ff173e51671599cbbb6aeff4a69e4",
+  "node": "v24.22.3",
+  "sourceHashes": {
+    "hosted/app/components/api.ts": "a890b5f1ffcd3d792221a1078edc9db5fdf41dd51b0b067fe7bbea6be93e28f1",
+    "hosted/app/phone/api.ts": "d66d6262a9507f03c29e66252202007d93462eb6fcb01bcb190b8770a4a8f070",
+    "hosted/package.json": "a57c060d64341ed1e85f0a018388aa55f026a27bc1671cbcd3c0f186c9b601e5",
+    "hosted/server/discovery.mjs": "7be81e9156275622f82d18934f9d04b4aa83bdc2ae91c1ba0450002d0a2f859b",
+    "hosted/server/provider.mjs": "10d3fa0c116b9e5e5fcecb83bfd3a241428903046fdaf864bf77757dff76870e",
+    "hosted/tests/hosted-discovery.mjs": "f015682cb00e32e906f88f8b0dd453a7d78cae3c07a13e3e7330b28bf6517317",
+    "hosted/tests/frontend-body-cleanup.mjs": "ccc6240dd7ed2ccd47c3a24a2d5be91019f3c792625f85cd1e659df5018fb43c",
+    "hosted/tests/provider-body-cleanup.mjs": "9b65028f63ffa127bdcb4e86476ec38fc0cea11ac08219522758c620090244a4"
+  },
+  "gates": [
+    {
+      "name": "typecheck",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "exit": 0,
+      "log": "hosted-full-typecheck-node24.log",
+      "logSha256": "443da1dddfcff0734c532ffcd1dd9daefa801a87f310fd265557c8d92204a47b"
+    },
+    {
+      "name": "lint",
+      "command": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "app",
+        "worker",
+        "--max-warnings",
+        "0"
+      ],
+      "exit": 0,
+      "log": "hosted-full-lint-node24.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "test",
+      "command": [
+        "npm",
+        "test"
+      ],
+      "exit": 0,
+      "log": "hosted-full-test-node24.log",
+      "logSha256": "e2f50d81f53bbdb66dfb0386884eba1c14cbe26b81de1705e7af698246dfecc3"
+    },
+    {
+      "name": "worker",
+      "command": [
+        "node",
+        "tests/hosted-worker.mjs"
+      ],
+      "exit": 0,
+      "log": "hosted-full-worker-node24.log",
+      "logSha256": "27ad97fa3c7bef2b87634959ef80935976221a7c97a7aa8a6531c6accb493d41"
+    },
+    {
+      "name": "browser",
+      "command": [
+        "node",
+        "--test",
+        "tests/browser-api.mjs",
+        "tests/browser-pairing.mjs"
+      ],
+      "exit": 0,
+      "log": "hosted-full-browser-node24.log",
+      "logSha256": "f39946e16e37652e5709ca3a553c68c8cfe1b0cc13c62f24eb78d14e3cb30d9f"
+    },
+    {
+      "name": "build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "exit": 0,
+      "log": "hosted-full-build-node24.log",
+      "logSha256": "a3d4e0ec3c29baab4e7ce00604c3a841b14459bea7c671b693d4ca76b40b1aa3"
+    },
+    {
+      "name": "audit",
+      "command": [
+        "npm",
+        "audit",
+        "--json",
+        "--fetch-retries=0",
+        "--fetch-timeout=30000"
+      ],
+      "exit": 0,
+      "log": "hosted-full-audit-node24.log",
+      "logSha256": "c08d05b2b03ea46091efa74c8fb869ba6594053f24d325b1eaf366fa6e174e9d"
+    }
+  ],
+  "finishedAt": "2026-11-17T17:16:05.881741+00:00",
+  "afterHashes": {
+    "hosted/app/components/api.ts": "a890b5f1ffcd3d792221a1078edc9db5fdf41dd51b0b067fe7bbea6be93e28f1",
+    "hosted/app/phone/api.ts": "d66d6262a9507f03c29e66252202007d93462eb6fcb01bcb190b8770a4a8f070",
+    "hosted/package.json": "a57c060d64341ed1e85f0a018388aa55f026a27bc1671cbcd3c0f186c9b601e5",
+    "hosted/server/discovery.mjs": "7be81e9156275622f82d18934f9d04b4aa83bdc2ae91c1ba0450002d0a2f859b",
+    "hosted/server/provider.mjs": "10d3fa0c116b9e5e5fcecb83bfd3a241428903046fdaf864bf77757dff76870e",
+    "hosted/tests/hosted-discovery.mjs": "f015682cb00e32e906f88f8b0dd453a7d78cae3c07a13e3e7330b28bf6517317",
+    "hosted/tests/frontend-body-cleanup.mjs": "ccc6240dd7ed2ccd47c3a24a2d5be91019f3c792625f85cd1e659df5018fb43c",
+    "hosted/tests/provider-body-cleanup.mjs": "9b65028f63ffa127bdcb4e86476ec38fc0cea11ac08219522758c620090244a4"
+  },
+  "sourceUnchanged": true
+}

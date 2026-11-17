@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-11-17T15:18:18.198Z",
+  "observedAt": "2026-11-17T17:15:57.752Z",
   "status": "passed",
   "groups": [
     "A first browser GET returns a blank account view without creating a workspace, salt, throttle or session",
@@ -31,7 +31,7 @@
   "realEmployerRequests": 0,
   "sourceHashes": {
     "server/applications.mjs": "1c2ccb94215543b9ff537c9657d22b28fc41a942b2e1c9aa2e164ba66e299a7a",
-    "server/provider.mjs": "7e078b63ce3acbe2deb3afa99ac1667e671c58ce56b34075317342ef5ebf7101",
+    "server/provider.mjs": "10d3fa0c116b9e5e5fcecb83bfd3a241428903046fdaf864bf77757dff76870e",
     "server/validation.mjs": "b7b96c7089cbe3c93adcfaed6fd79679b7ea981ca5790ba8b16dc30275825448",
     "worker/index.ts": "c82a674ffc6fcebef3b1c48d577f0ec5b28a4a4c2b17462c50a7c0d1708ac09e",
     "tests/hosted-phone.mjs": "f9e528747308354e5e8fbd4c1c7baa0a38e02a9be1a6583619fb77c456b91d00",

@@ -15,19 +15,22 @@ export async function readAPI(response: Response): Promise<Record<string, unknow
   const reader = response.body?.getReader();
   if (!reader) throw new APIError("The service returned an empty response. Please reload to check its current state.", response.status, "invalid_response");
   const chunks: Uint8Array[] = [];
-  let size = 0;
+  let size = 0, complete = false;
   try {
     for (;;) {
       const part = await reader.read();
-      if (part.done) break;
+      if (part.done) { complete = true; break; }
       size += part.value.byteLength;
       if (size > MAX_RESPONSE_BYTES) {
-        await reader.cancel();
         throw new APIError("The service response was too large to verify. Your saved records have not been replaced.", response.status, "invalid_response");
       }
       chunks.push(part.value);
     }
-  } finally { reader.releaseLock(); }
+  } finally {
+    // Cleanup must not delay or replace the original error if cancellation stalls or rejects.
+    if (!complete) void reader.cancel().catch(() => {});
+    reader.releaseLock();
+  }
   const bytes = new Uint8Array(size);
   let offset = 0;
   for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }

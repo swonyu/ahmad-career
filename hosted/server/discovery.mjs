@@ -132,14 +132,20 @@ function retrySeconds(header,now){
   return Number.isFinite(milliseconds)&&milliseconds>0?Math.max(1,Math.ceil(milliseconds/1000)):60;
 }
 async function readJSON(response,signal){
-  if(!/^application\/json\b/i.test(response.headers.get('content-type')??''))throw sourceError('source_response_invalid','The employer board returned an unexpected response.');
-  const length=Number(response.headers.get('content-length')??0);if(!Number.isFinite(length)||length>DISCOVERY_LIMITS.maxResponseBytes)throw sourceError('source_response_large','This employer board exceeds the supported response size.');
+  // A rejected response still owns a transport, including before a reader exists.
+  // Cleanup must not delay or replace the original validation/timeout error.
+  const rejectResponse=error=>{try{void response.body?.cancel().catch(()=>{})}catch{}throw error};
+  if(!/^application\/json\b/i.test(response.headers.get('content-type')??''))rejectResponse(sourceError('source_response_invalid','The employer board returned an unexpected response.'));
+  const length=Number(response.headers.get('content-length')??0);if(!Number.isFinite(length)||length>DISCOVERY_LIMITS.maxResponseBytes)rejectResponse(sourceError('source_response_large','This employer board exceeds the supported response size.'));
   const reader=response.body?.getReader();if(!reader)throw sourceError('source_response_invalid','The employer board returned no readable data.');
-  const cancel=()=>{void reader.cancel().catch(()=>{})};signal.addEventListener('abort',cancel,{once:true});
+  let cancelled=false;
+  const cancel=()=>{if(cancelled)return;cancelled=true;try{void reader.cancel().catch(()=>{})}catch{}};
+  signal.addEventListener('abort',cancel,{once:true});
   let bytes=0;const chunks=[];
+  const requireActive=()=>{if(signal.aborted){cancel();throw sourceError('source_timeout','The employer board did not respond in time.')}};
   try{
-    for(;;){if(signal.aborted)throw sourceError('source_timeout','The employer board did not respond in time.');const {done,value}=await reader.read();if(done)break;bytes+=value.byteLength;if(bytes>DISCOVERY_LIMITS.maxResponseBytes){await reader.cancel();throw sourceError('source_response_large','This employer board exceeds the supported response size.')}chunks.push(value)}
-    if(signal.aborted)throw sourceError('source_timeout','The employer board did not respond in time.');
+    for(;;){requireActive();let part;try{part=await reader.read()}catch{requireActive();throw sourceError('source_unavailable','The employer board connection was interrupted.')}const {done,value}=part;if(done)break;bytes+=value.byteLength;if(bytes>DISCOVERY_LIMITS.maxResponseBytes){cancel();throw sourceError('source_response_large','This employer board exceeds the supported response size.')}chunks.push(value)}
+    requireActive();
     try{return JSON.parse(Buffer.concat(chunks).toString('utf8'))}catch{throw sourceError('source_response_invalid','The employer board returned unreadable job data.')}
   }finally{signal.removeEventListener('abort',cancel);reader.releaseLock()}
 }
@@ -189,7 +195,7 @@ export function createDiscoveryHandler({fetchImpl=fetch,clock=Date.now}={}){
         try{return await Promise.race([work,timeout])}finally{clearTimeout(timer)}
       }
       async function retrieve(source){
-        const deadline=now()+DISCOVERY_LIMITS.sourceMilliseconds,items=[];let limited=false,invalidRows=0,bytes=2;
+        const deadline=now()+DISCOVERY_LIMITS.sourceMilliseconds,items=[];let limited=false,invalidRows=0,bytes=2,interruption=null,retryAt=0;
         const seen=new Set();
         function accept(rows){
           for(const raw of rows){
@@ -205,14 +211,22 @@ export function createDiscoveryHandler({fetchImpl=fetch,clock=Date.now}={}){
         }else{
           const host=source.region==='eu'?'https://api.eu.lever.co':'https://api.lever.co';
           for(let skip=0;skip<DISCOVERY_LIMITS.maxJobsPerSource;skip+=100){
-            const rows=await getJSON(`${host}/v0/postings/${encodeURIComponent(source.board)}?mode=json&limit=100&skip=${skip}`,deadline,source);
+            let rows;
+            try{rows=await getJSON(`${host}/v0/postings/${encodeURIComponent(source.board)}?mode=json&limit=100&skip=${skip}`,deadline,source)}
+            catch(error){
+              // A later transient failure must not erase already validated pages.
+              // Keep missing boards, redirects and malformed data on their existing failure path.
+              if(!items.length||!(error instanceof DiscoveryError)||!['source_timeout','source_unavailable','source_rate_limited','discovery_rate_limited'].includes(error.code))throw error;
+              interruption=error;retryAt=Math.min(8640000000000000,now()+Math.max(1,error.retrySeconds)*1000);break;
+            }
             if(!Array.isArray(rows)||rows.length>100)throw sourceError('source_response_invalid','The employer board returned an unexpected job page.');
             accept(rows);if(rows.length<100)break;if(limited||skip+100>=DISCOVERY_LIMITS.maxJobsPerSource){limited=true;break}
           }
         }
         if(invalidRows&&!items.length)throw sourceError('source_response_invalid','The employer board returned no usable job records.');
-        const error=invalidRows?{code:'source_incomplete',message:'Some employer records could not be read; only validated postings are shown.'}:null;
-        return {jobs:items,limited:limited||invalidRows>0,error};
+        const error=interruption?{code:interruption.code,message:interruption.code==='discovery_rate_limited'?'The public fetch budget is busy. Try this board again shortly.':interruption.message}:invalidRows?{code:'source_incomplete',message:'Some employer records could not be read; only validated postings are shown.'}:null;
+        // A transient interruption is partial via its error; limited still describes existing data caps.
+        return {jobs:items,limited:limited||invalidRows>0,error,retryAt};
       }
       function view(source,row,state,error=null){
         let jobs=[];
@@ -239,8 +253,10 @@ export function createDiscoveryHandler({fetchImpl=fetch,clock=Date.now}={}){
         }
         try{
           await budget('refreshes:'+client,DISCOVERY_LIMITS.refreshesPerClientMinute);
-          const result=await retrieve(source),checkedAt=new Date(now()).toISOString();
-          const saved=await run('UPDATE discovery_cache SET jobs_json=?,checked_at=?,expires_at=?,stale_until=?,retry_at=0,claim=NULL,lease_until=0,limited=?,error_code=?,error_message=? WHERE id=? AND claim=? AND lease_until>?',JSON.stringify(result.jobs),checkedAt,now()+DISCOVERY_LIMITS.freshMilliseconds,now()+DISCOVERY_LIMITS.staleMilliseconds,result.limited?1:0,result.error?.code??null,result.error?.message??null,source.id,claim,now());
+          const result=await retrieve(source),observedAt=now(),checkedAt=new Date(observedAt).toISOString();
+          const retryAt=result.retryAt;
+          const expiresAt=retryAt?Math.min(observedAt+DISCOVERY_LIMITS.freshMilliseconds,retryAt):observedAt+DISCOVERY_LIMITS.freshMilliseconds;
+          const saved=await run('UPDATE discovery_cache SET jobs_json=?,checked_at=?,expires_at=?,stale_until=?,retry_at=?,claim=NULL,lease_until=0,limited=?,error_code=?,error_message=? WHERE id=? AND claim=? AND lease_until>?',JSON.stringify(result.jobs),checkedAt,expiresAt,observedAt+DISCOVERY_LIMITS.staleMilliseconds,retryAt,result.limited?1:0,result.error?.code??null,result.error?.message??null,source.id,claim,now());
           if(saved.meta.changes!==1){const latest=await first('SELECT * FROM discovery_cache WHERE id=?',source.id);return view(source,latest,latest?.expires_at>now()?'cached':'stale',{code:'source_refreshing',message:'This employer board changed during refresh. Search again to check it.'})}
           const latest=await first('SELECT * FROM discovery_cache WHERE id=?',source.id);return view(source,latest,'fresh',result.error);
         }catch(error){

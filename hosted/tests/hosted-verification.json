@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-11-17T14:30:41.189Z",
+  "observedAt": "2026-11-17T17:15:34.484Z",
   "status": "passed",
   "checks": 63,
   "groups": [
@@ -73,13 +73,13 @@
   "fiveMiBPDF": true,
   "sourceHashes": {
     "server/applications.mjs": "1c2ccb94215543b9ff537c9657d22b28fc41a942b2e1c9aa2e164ba66e299a7a",
-    "server/provider.mjs": "7e078b63ce3acbe2deb3afa99ac1667e671c58ce56b34075317342ef5ebf7101",
+    "server/provider.mjs": "10d3fa0c116b9e5e5fcecb83bfd3a241428903046fdaf864bf77757dff76870e",
     "server/validation.mjs": "b7b96c7089cbe3c93adcfaed6fd79679b7ea981ca5790ba8b16dc30275825448",
     "server/identity.mjs": "dc7b5843574d64be97829ce05840e515702e13df6f3652aa8d3cd8c058ff702f",
     "server/pdf-readability.mjs": "f17bdb9db770a3663d067aa6c9ad1cee0fabfd2420bd96ed3e5ce60c960b61b2",
     "server/retry-after.mjs": "ad34cbec76b5096665c1ab8b126043ed6ad35cc13a52233b39bf3475b876a70d",
     "db/schema.ts": "0bc620bceb7b8548d69d07c823c2bc20623ad4d0de7c28678163892f9ac0fa15",
-    "tests/hosted-applications.mjs": "126ad51181dcc0bcc2957b8054da629457567f7fa93df1a05f1977a860cd487e",
+    "tests/hosted-applications.mjs": "722ca3c60540ddc82f5a8f52e4aa19a625963efc2b9fffb13448035ef7b0026d",
     "drizzle/0000_busy_plazm.sql": "5b1e4c5a7ddb05c71a53c112a57daaf9b4a15f58fa38e4b12df8d551bd9e7118",
     "drizzle/0001_smiling_maelstrom.sql": "d0e1b4cbea14b7dca1c1078911fa94c39db7960778bea637341d7bbee4ef9ef6",
     "drizzle/0002_concerned_inhumans.sql": "78823cf83e72da525ffd44e8ec76c524a813ff6eb278cbf6465e8a63fbc05fed",
