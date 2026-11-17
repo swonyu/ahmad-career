@@ -1,0 +1,25 @@
+{
+  "baseCommit": "b07337632b002aafa05a04c5843b9f971cabca26",
+  "correctionReceiptSha256": "5e68a335192f3e0ffbef313c0c74e58a80d21f530f3f615c0dac1c33590bc8d2",
+  "reviewer": "independent service/security reviewer",
+  "result": "No concrete source-review blocker found in four-file Android delta",
+  "reviewedFileHashes": {
+    "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "b3db5dc6e818c2e07e6539eccfc0fe186258518f4387c83950f69ceb4524e09f",
+    "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt": "c54014f8448c0fa96a08b87765336510fd0b9fb2cdfe840171066bf69668affc",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt": "ffdf753ddf1f16c61e7a9081d6c36ef3b45ba8b33d82e266696ee38a075c937d",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceAccessibilityRegressionTest.kt": "306c7975a8742ce857fc6c805a4bb173ad9978d8648996d641d8e1c80a9cd469"
+  },
+  "acceptanceCounts": {
+    "ordinary": 97,
+    "dedicated": 2
+  },
+  "scope": [
+    "Modal ownership outside lazy item; state and Apply bound to private scope",
+    "Save/cancel behavior, distinct values and guarded 30-country limit",
+    "Full-width note, original overflow and six-line assertions, stronger final-line diagnostics",
+    "No tests removed/disabled, retries added or thresholds relaxed"
+  ],
+  "limits": [
+    "Source review only; no compilation, emulator, CI or publication performed by reviewer."
+  ]
+}

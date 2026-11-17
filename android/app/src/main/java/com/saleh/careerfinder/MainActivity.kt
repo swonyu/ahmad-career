@@ -697,6 +697,7 @@ private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePD
     val errors = ProfileValidation.errors(profile)
     var reload by remember { mutableStateOf(false) }
     var details by rememberSaveable { mutableStateOf(false) }
+    var choosingTargetCountries by rememberSaveable(state.privateScope) { mutableStateOf(false) }
     LazyColumn(Modifier.fillMaxSize().imePadding().testTag("profile-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         item { Heading("Your profile.", "Start with the essentials. Everything else is optional, and you can save an unfinished draft.") }
         item {
@@ -749,9 +750,8 @@ private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePD
             }
             item { Field("Skills (separate with commas)", profile.skills, { model.editProfile { p -> p.copy(skills = it) } }, singleLine = false, enabled = !state.busy, error = errors["skills"]) }
             item { Field("Roles you want (separate with commas)", profile.targetRoles, { model.editProfile { p -> p.copy(targetRoles = it) } }, singleLine = false, enabled = !state.busy, error = errors["targetRoles"]) }
-            item { TargetCountryChooser(profile.targetCountries.parts().toSet(), !state.busy) { values ->
-                model.editProfile { p -> p.copy(targetCountries = values.sorted().joinToString(", ")) }
-            }; errors["targetCountries"]?.let { Text(it, color = MaterialTheme.colorScheme.error) } }
+            item { TargetCountryChooser(profile.targetCountries.parts().toSet(), !state.busy) { choosingTargetCountries = true }
+                errors["targetCountries"]?.let { Text(it, color = MaterialTheme.colorScheme.error) } }
             item {
                 Panel {
                     Text("Work preferences", style = MaterialTheme.typography.titleLarge)
@@ -777,6 +777,18 @@ private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePD
             if (state.profileDirty && state.connection != null) TextButton(onClick = { reload = true }, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Reload saved profile") }
         }
     }
+    // A lazy item can leave composition when the keyboard changes the viewport.
+    // Keep the modal and its unfinished selection owned by the profile screen.
+    if (choosingTargetCountries) {
+        val pickerScope = state.privateScope
+        key(pickerScope) {
+            TargetCountryPicker(profile.targetCountries.parts().toSet(), { choosingTargetCountries = false }) { values ->
+                if (model.state.value.privateScope == pickerScope) {
+                    model.editProfile { p -> p.copy(targetCountries = values.sorted().joinToString(", ")) }
+                }
+            }
+        }
+    }
     if (reload) AlertDialog(onDismissRequest = { reload = false }, title = { Text("Reload the saved profile?") },
         text = { Text("This replaces the edits currently shown with the saved version.") },
         confirmButton = { TextButton(onClick = { reload = false; model.reloadProfile() }) { Text("Reload") } },
@@ -784,19 +796,23 @@ private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePD
 }
 
 @Composable
-private fun TargetCountryChooser(value: Set<String>, enabled: Boolean, changed: (Set<String>) -> Unit) {
+private fun TargetCountryChooser(value: Set<String>, enabled: Boolean, choose: () -> Unit) {
     val countries = remember { ProfileContract.COUNTRIES.map { it to Locale.Builder().setRegion(it).build().displayCountry }.sortedBy { it.second } }
-    var open by remember { mutableStateOf(false) }
-    var draft by remember { mutableStateOf(value) }
-    var search by remember { mutableStateOf("") }
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text("Target countries (optional)", style = MaterialTheme.typography.labelLarge)
-        OutlinedButton(onClick = { draft = value; search = ""; open = true }, enabled = enabled,
+        OutlinedButton(onClick = choose, enabled = enabled,
             modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp).semantics { contentDescription = "Choose target countries" }) {
             Text(if (value.isEmpty()) "No country preference" else value.sorted().joinToString(", ") { code -> countries.find { it.first == code }?.second ?: code })
         }
     }
-    if (open) FullScreenForm("Target countries", { open = false }) {
+}
+
+@Composable
+private fun TargetCountryPicker(value: Set<String>, close: () -> Unit, changed: (Set<String>) -> Unit) {
+    val countries = remember { ProfileContract.COUNTRIES.map { it to Locale.Builder().setRegion(it).build().displayCountry }.sortedBy { it.second } }
+    var draft by rememberSaveable { mutableStateOf(value.toList()) }
+    var search by rememberSaveable { mutableStateOf("") }
+    FullScreenForm("Target countries", close) {
         val focus = LocalFocusManager.current
         val keyboard = LocalSoftwareKeyboardController.current
         Column(Modifier.fillMaxSize().padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -807,14 +823,17 @@ private fun TargetCountryChooser(value: Set<String>, enabled: Boolean, changed: 
             val filtered = countries.filter { (it.first + " " + it.second).contains(search, true) }
             LazyColumn(Modifier.weight(1f).testTag("target-countries")) {
                 item { Text(draft.size.toString() + " of 30 selected · Leave empty for no preference.", style = MaterialTheme.typography.bodyMedium) }
-                item { TextButton(onClick = { draft = emptySet() }, modifier = Modifier.heightIn(min = 48.dp)) { Text("Clear selection") } }
+                item { TextButton(onClick = { draft = emptyList() }, modifier = Modifier.heightIn(min = 48.dp)) { Text("Clear selection") } }
                 if (filtered.isEmpty()) item { Text("No countries match this search.", Modifier.padding(vertical = 16.dp)) }
                 items(filtered, key = { it.first }) { (code, name) ->
-                    CheckLine(name + " · " + code, code in draft, { selected -> draft = if (selected) draft + code else draft - code },
+                    CheckLine(name + " · " + code, code in draft, { selected ->
+                        if (!selected) draft = draft - code
+                        else if (code in draft || draft.size < ProfileContract.MAX_ITEMS) draft = (draft + code).distinct()
+                    },
                         enabled = code in draft || draft.size < ProfileContract.MAX_ITEMS)
                 }
             }
-            Action("Use selected countries", draft.size <= ProfileContract.MAX_ITEMS) { changed(draft); open = false }
+            Action("Use selected countries", draft.size <= ProfileContract.MAX_ITEMS) { changed(draft.toSet()); close() }
             Spacer(Modifier.height(8.dp))
         }
     }

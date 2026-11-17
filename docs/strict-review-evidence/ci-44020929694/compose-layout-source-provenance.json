@@ -1,0 +1,30 @@
+{
+  "bomUrl": "https://dl.google.com/dl/android/maven2/androidx/compose/compose-bom/2025.10.01/compose-bom-2025.10.01.pom",
+  "bomSha256": "7bfbf7a73afedae434570d97f6b78aa1e13df779009a81577baea7c434ab09da",
+  "sources": [
+    {
+      "artifact": "androidx.compose.foundation:foundation",
+      "version": "1.9.4",
+      "url": "https://dl.google.com/dl/android/maven2/androidx/compose/foundation/foundation/1.9.4/foundation-1.9.4-sources.jar",
+      "archiveSha256": "2db380fe1344d7c67cab7c313afc86ca118e75dddd5012c5f4e3cd446bc525c3",
+      "file": "ParagraphLayoutCache.kt",
+      "fileSha256": "e7dcd7051122d18adc560db6518cdc8d4b4adaad0798e08319d9d12df0bd4db4"
+    },
+    {
+      "artifact": "androidx.compose.ui:ui-text",
+      "version": "1.9.4",
+      "url": "https://dl.google.com/dl/android/maven2/androidx/compose/ui/ui-text/1.9.4/ui-text-1.9.4-sources.jar",
+      "archiveSha256": "6514e0df61af6adfb7b671b3501a535e7306df987aef040723207967bf6f167d",
+      "file": "MultiParagraph.kt",
+      "fileSha256": "793ba1ec967b66dd0b94f9baaa9c7a7b04b684f68c9f66c3812ecee40592edb4"
+    },
+    {
+      "artifact": "androidx.compose.ui:ui-text",
+      "version": "1.9.4",
+      "url": "https://dl.google.com/dl/android/maven2/androidx/compose/ui/ui-text/1.9.4/ui-text-1.9.4-sources.jar",
+      "archiveSha256": "6514e0df61af6adfb7b671b3501a535e7306df987aef040723207967bf6f167d",
+      "file": "TextLayoutResult.kt",
+      "fileSha256": "5d6fc0f764765d2cb2361140169e8957807f91bd873c8c78a0861a641d1877c9"
+    }
+  ]
+}

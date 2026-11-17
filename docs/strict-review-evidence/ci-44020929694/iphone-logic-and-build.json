@@ -1,0 +1,56 @@
+{
+  "repository": "swonyu/ahmad-career",
+  "branch": "career-finder-phones-verified-apply-20261116",
+  "commit": "b07337632b002aafa05a04c5843b9f971cabca26",
+  "tree": "1135edecf4dd3385a41561587ed84fc6cf1727b1",
+  "runId": 44020929694,
+  "jobId": 133829992795,
+  "jobUrl": "https://github.com/swonyu/ahmad-career/actions/runs/44020929694/job/133829992795",
+  "result": "passed",
+  "boundaryChecks": 120,
+  "lifecycleAssertions": 503,
+  "lifecycleScenarios": 77,
+  "discoveryAssertions": 43,
+  "discoveryScenarios": 13,
+  "unsignedReleaseBuild": "passed",
+  "sharedMacBuild": false,
+  "signingPerformed": false,
+  "artifact": {
+    "id": 14300224017,
+    "name": "iphone-build-log-44020929694",
+    "size_in_bytes": 7895,
+    "url": "https://api.github.com/repos/swonyu/ahmad-career/actions/artifacts/14300224017",
+    "archive_download_url": "https://api.github.com/repos/swonyu/ahmad-career/actions/artifacts/14300224017/zip",
+    "expired": false,
+    "created_at": "2026-11-17T05:02:09Z",
+    "expires_at": "2026-11-24T05:02:08Z",
+    "updated_at": "2026-11-17T05:02:09Z",
+    "digest": "sha256:55f763dc71d89ebd6f3902adb7d504f56245bbe3ea528b0d06a6ef5cdebe7c62",
+    "workflow_run": {
+      "id": 44020929694,
+      "repository_id": 1411027050,
+      "head_repository_id": 1411027050,
+      "head_branch": "career-finder-phones-verified-apply-20261116",
+      "head_sha": "b07337632b002aafa05a04c5843b9f971cabca26"
+    }
+  },
+  "artifactVerified": {
+    "bytes": 7895,
+    "sha256": "55f763dc71d89ebd6f3902adb7d504f56245bbe3ea528b0d06a6ef5cdebe7c62"
+  },
+  "logEvidence": [
+    "2026-11-17T05:00:12.7711240Z PASS 120 native application boundary checks",
+    "2026-11-17T05:00:27.0950800Z PASS 503 application lifecycle assertions across 77 scenarios",
+    "2026-11-17T05:00:32.4428870Z PASS 43 public discovery assertions across 13 scenarios",
+    "2026-11-17T05:00:37.2768500Z Fresh workspace and compatibility checks passed: blank identity/profile/targets, generic exports, no seeded history, device time zone, preserved saved legacy records.",
+    "2026-11-17T05:00:37.2772210Z Local preference checks passed: backward decoding, independent country/city/role/currency/period/zone, unchanged monthly SAR, record preservation, future-version protection, export privacy and DST/civil-date semantics.",
+    "2026-11-17T05:00:37.2773820Z Full review regression checks passed: fresh local preferences, partial evidence age, exact exclusions, saved history, persisted observation chronology and dated exports.",
+    "2026-11-17T05:00:37.2775630Z Application record checks passed: legacy preservation, metadata-only history, conflicts, export privacy, strict date/scalar limits and derived attention.",
+    "2026-11-17T05:00:37.2778560Z Native store checks passed: 9 researched jobs, atomic saves, pre-criteria migration, city/pay criteria, unfiltered history, export privacy, strict URLs/dates, stale response rejection and input validation.",
+    "2026-11-17T05:02:07.6917350Z ** BUILD SUCCEEDED **"
+  ],
+  "limitations": [
+    "Unsigned build and isolated logic gate; physical devices and store distribution are not established.",
+    "The UI job and overall workflow have independent results."
+  ]
+}

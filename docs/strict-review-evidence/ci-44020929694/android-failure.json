@@ -1,0 +1,53 @@
+{
+  "runId": 44020929694,
+  "jobId": 133829992940,
+  "commit": "b07337632b002aafa05a04c5843b9f971cabca26",
+  "artifactId": 14301382415,
+  "artifactBytes": 1725658,
+  "artifactSha256": "f6b8e32dd749fe19fdb1f7540ceb10e49bc9a0c74915cc9f8669432c1e1a1ef8",
+  "result": "failed",
+  "buildAndLint": "passed",
+  "ordinaryNative": {
+    "executed": 97,
+    "passed": 95,
+    "failed": 2,
+    "skipped": 0,
+    "durationSeconds": 143.513,
+    "failures": [
+      {
+        "class": "PhonePolishAcceptanceTest",
+        "method": "profileEssentials_andCountrySelection_preserveSingleNamesAndCancelledChoices",
+        "sourceLine": 114,
+        "message": "No semantics node with test tag target-countries after performing IME Done in the target-country search"
+      },
+      {
+        "class": "WorkspaceAccessibilityRegressionTest",
+        "method": "shortMultilineNote_canExpandAtLargeText_withoutClippingItsLastLine",
+        "sourceLine": 43,
+        "message": "Expanded note TextLayoutResult.hasVisualOverflow remained true"
+      }
+    ]
+  },
+  "tlsBoundary": "not reached",
+  "nativeHTTPS": "not reached",
+  "screenshots": 13,
+  "environment": {
+    "size": "Physical size: 1080x2400\nOverride size: 1080x1920",
+    "density": "Physical density: 420\nOverride density: 480",
+    "fontScale": "1.8",
+    "rtl": "1",
+    "night": "Night mode: yes",
+    "locales": "Locales for com.saleh.careerfinder.preview for user 0 are [ar]"
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 6
+  },
+  "evidenceFiles": {
+    "ordinary-phone.log": "2c1ad0227b25ab4cc14d46f0a673a014147adbeb9b1014168c3a823a53509ec5",
+    "job-133829992940.log": "4e24efcce6d641357366a31fb7414b569411f26f16271f27c144f8396a84fdf8",
+    "failure-excerpt.log": "453cc5605763a82d26be787fbf94529c4ea9e6bb62b09b9e83ec04b4557dac98",
+    "lint-results-debug.xml": "959e40001a41e2f9f32db6e8dc3c43308ab9fb30310caeac6e0de6f2015940de"
+  },
+  "diagnosis": "Pending source review; neither failure is treated as a pass; no source edits before this receipt"
+}

@@ -1,0 +1,31 @@
+{
+  "projectId": "appgprj_6afb13851fb4819193358d5db54e73b7",
+  "version": 7,
+  "commit": "1135a3270435d3719c6f62f1a2e3a53e2c040146",
+  "deployment": {
+    "id": "appgdep_6afbcfe3a03881918b131992225ded31",
+    "project_id": "appgprj_6afb13851fb4819193358d5db54e73b7",
+    "title": "Career Finder",
+    "version_id": "appgprj_6afb13851fb4819193358d5db54e73b7~appgver_169e858e28b08191bbb650d3e7b4ffe4",
+    "type": "publish",
+    "status": "succeeded",
+    "url": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
+    "has_mcp": false,
+    "screenshot_asset_pointer": "sediment://file_00000000ebac81f8a78038ed0da5cb5f",
+    "provider_deployment_id": "release---6afb19c7dcb081918f1c6b1c2785c3c0",
+    "failure_message": null,
+    "env_set_revision": 0,
+    "updated_at": "2026-11-17T03:54:40.015318+00:00"
+  },
+  "access": "public",
+  "environment": {
+    "revision": 0,
+    "configuredKeys": [],
+    "googleConfigured": false,
+    "linkedInConfigured": false
+  },
+  "mirroredFiles": 186,
+  "mirrorDifferences": [],
+  "scope": "Read-only Sites status/configuration and byte-for-byte comparison of authoritative tracked service files. No secret values, user records or credentials retained; no new deployment or provider activation performed.",
+  "receiptRecordedAt": "2026-11-17T05:10:01.725082+00:00"
+}

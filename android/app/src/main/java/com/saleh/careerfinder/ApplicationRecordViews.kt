@@ -56,7 +56,10 @@ internal fun RecordVersionCard(version: ApplicationRecordVersion, title: String,
         Text(version.record.stage.label + if (version.record.appliedElsewhere) " · marked as applied" else "")
         if (version.record.appliedDate.isNotEmpty()) { Text("Applied date", style = MaterialTheme.typography.labelMedium); Text(civilDateLabel(version.record.appliedDate)) }
         if (version.record.followUpDate.isNotEmpty()) { Text("Follow-up date", style = MaterialTheme.typography.labelMedium); Text(civilDateLabel(version.record.followUpDate)) }
-        Text(version.record.note.ifBlank { "No private note" }, maxLines = if (fullNote) Int.MAX_VALUE else 4, style = MaterialTheme.typography.bodyMedium)
+        // Keep the rendered paragraph and its accessibility layout at the same
+        // width, including short multiline notes in an RTL interface.
+        Text(version.record.note.ifBlank { "No private note" }, Modifier.fillMaxWidth(),
+            maxLines = if (fullNote) Int.MAX_VALUE else 4, style = MaterialTheme.typography.bodyMedium)
         if (version.record.note.isNotBlank()) TextButton(onClick = { fullNote = !fullNote }, modifier = Modifier.heightIn(min = 48.dp)) {
             Text(if (fullNote) "Show less" else "Read full note")
         }

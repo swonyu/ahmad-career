@@ -1,0 +1,83 @@
+{
+  "commit": "b07337632b002aafa05a04c5843b9f971cabca26",
+  "runId": 44020929694,
+  "jobId": 133829992940,
+  "errors": 0,
+  "warnings": 6,
+  "gradle": "8.14.7",
+  "issues": [
+    {
+      "id": "OldTargetApi",
+      "severity": "Warning",
+      "message": "Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details.",
+      "locations": [
+        {
+          "file": "/home/runner/work/ahmad-career/ahmad-career/android/app/build.gradle.kts",
+          "line": "31",
+          "column": "9"
+        }
+      ]
+    },
+    {
+      "id": "GradleDependency",
+      "severity": "Warning",
+      "message": "A newer version of androidx.activity:activity-compose than 1.11.0 is available: 1.13.0",
+      "locations": [
+        {
+          "file": "/home/runner/work/ahmad-career/ahmad-career/android/app/build.gradle.kts",
+          "line": "66",
+          "column": "20"
+        }
+      ]
+    },
+    {
+      "id": "GradleDependency",
+      "severity": "Warning",
+      "message": "A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.9.4 is available: 2.11.0",
+      "locations": [
+        {
+          "file": "/home/runner/work/ahmad-career/ahmad-career/android/app/build.gradle.kts",
+          "line": "72",
+          "column": "20"
+        }
+      ]
+    },
+    {
+      "id": "GradleDependency",
+      "severity": "Warning",
+      "message": "A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.9.4 is available: 2.11.0",
+      "locations": [
+        {
+          "file": "/home/runner/work/ahmad-career/ahmad-career/android/app/build.gradle.kts",
+          "line": "73",
+          "column": "20"
+        }
+      ]
+    },
+    {
+      "id": "NewerVersionAvailable",
+      "severity": "Warning",
+      "message": "A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.10.2 is available: 1.11.0",
+      "locations": [
+        {
+          "file": "/home/runner/work/ahmad-career/ahmad-career/android/app/build.gradle.kts",
+          "line": "74",
+          "column": "20"
+        }
+      ]
+    },
+    {
+      "id": "UseKtx",
+      "severity": "Warning",
+      "message": "Use the KTX function `createBitmap` instead?",
+      "locations": [
+        {
+          "file": "/home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/ReadablePDF.kt",
+          "line": "23",
+          "column": "38"
+        }
+      ]
+    }
+  ],
+  "classification": "The Gradle security-related upgrade is verified. Remaining notices retain the earlier exact-version compatibility/classification; none was suppressed. No zero-warning result is claimed."
+}

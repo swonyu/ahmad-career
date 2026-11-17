@@ -1,0 +1,119 @@
+{
+  "sourceCommit": "b07337632b002aafa05a04c5843b9f971cabca26",
+  "runId": 44020929694,
+  "jobId": 133829992940,
+  "status": "Corrections frozen, uncommitted; Android compilation and runtime acceptance of these edits remain pending",
+  "originalResult": {
+    "ordinaryExecuted": 97,
+    "ordinaryPassed": 95,
+    "ordinaryFailed": 2,
+    "dedicatedCases": "not reached",
+    "lintErrors": 0,
+    "lintWarnings": 6,
+    "gradleBuildEvidence": [
+      "2026-11-17T04:59:56.7438278Z Welcome to Gradle 8.14.7!",
+      "2026-11-17T05:03:24.5436148Z BUILD SUCCESSFUL in 3m 30s",
+      "Welcome to Gradle 8.14.7!",
+      "BUILD SUCCESSFUL in 3m 30s"
+    ]
+  },
+  "corrections": [
+    {
+      "file": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+      "failure": "Target-country picker semantics disappeared after IME Done",
+      "sourceSupportedCause": "The dialog and its local state were emitted inside a disposable LazyColumn item. IME changes can remeasure the profile viewport and remove that item. The old artifact does not contain a lifecycle trace, so item disposal is a source-supported cause, not a separately recorded lifecycle event.",
+      "fix": "Hoist the modal outside the lazy list; scope-key open state, key draft/search composition to the owner, and reject Apply if the current model owner differs. Keep per-open saved draft/search, cancel semantics, distinct country values, and the 30-item limit including repeated callbacks."
+    },
+    {
+      "file": "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt",
+      "failure": "Expanded note GetTextLayoutResult.hasVisualOverflow remained true",
+      "sourceSupportedCause": "Exact Compose 1.9.4 plain-String Text draws an intrinsic-width Paragraph. Its GetTextLayoutResult reconstructs a MultiParagraph with available maxWidth but returns the original smaller layoutSize; didOverflowWidth compares these different widths. This establishes a semantic measurement mismatch for short intrinsic-width notes. The old log lacks width/height metrics and does not prove visible glyph clipping.",
+      "sourceReferences": {
+        "ParagraphLayoutCache.kt": "186-192, 295-310, 366-402",
+        "MultiParagraph.kt": "452",
+        "TextLayoutResult.kt": "312-321"
+      },
+      "fix": "Use the full card content width for the note, matching rendered and accessibility layout constraints without weakening overflow or last-line assertions.",
+      "independentReview": "Confirmed read-only by /root/service_security_review against the downloaded pinned sources."
+    }
+  ],
+  "acceptancePreserved": {
+    "ordinary": 97,
+    "dedicated": 2,
+    "total": 99,
+    "casesBySourceFile": {
+      "ApplicationRecordRegressionTest": 18,
+      "ContinuationRegressionTest": 7,
+      "DiscoveryPersistenceRegressionTest": 8,
+      "DiscoveryRegressionTest": 7,
+      "ExperienceModelRegressionTest": 2,
+      "LinkedInPhoneAcceptanceTest": 2,
+      "LinkedInRegressionTest": 9,
+      "NativeHttpsAcceptanceTest": 2,
+      "NavigationPhoneAcceptanceTest": 4,
+      "PhoneAcceptanceTest": 2,
+      "PhonePolishAcceptanceTest": 4,
+      "VaultAcceptanceTest": 5,
+      "WorkspaceAccessibilityRegressionTest": 1,
+      "WorkspaceRegressionTest": 17,
+      "WorkspaceSafetyRegressionTest": 11
+    },
+    "removedTests": 0,
+    "disabledTests": 0,
+    "runnerChanged": false,
+    "assertionChanges": "Retained no-overflow and >=6 lines; added Int.MAX_VALUE maxLines, complete final line, no ellipsis, and bottom within height with metrics. The original no-overflow assertion remains before any newly added scroll action. Country IME tests additionally require the Close control to remain displayed."
+  },
+  "changedFilesSha256": {
+    "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "b3db5dc6e818c2e07e6539eccfc0fe186258518f4387c83950f69ceb4524e09f",
+    "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt": "c54014f8448c0fa96a08b87765336510fd0b9fb2cdfe840171066bf69668affc",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt": "ffdf753ddf1f16c61e7a9081d6c36ef3b45ba8b33d82e266696ee38a075c937d",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceAccessibilityRegressionTest.kt": "306c7975a8742ce857fc6c805a4bb173ad9978d8648996d641d8e1c80a9cd469"
+  },
+  "dependencySources": {
+    "bomUrl": "https://dl.google.com/dl/android/maven2/androidx/compose/compose-bom/2025.10.01/compose-bom-2025.10.01.pom",
+    "bomSha256": "7bfbf7a73afedae434570d97f6b78aa1e13df779009a81577baea7c434ab09da",
+    "sources": [
+      {
+        "artifact": "androidx.compose.foundation:foundation",
+        "version": "1.9.4",
+        "url": "https://dl.google.com/dl/android/maven2/androidx/compose/foundation/foundation/1.9.4/foundation-1.9.4-sources.jar",
+        "archiveSha256": "2db380fe1344d7c67cab7c313afc86ca118e75dddd5012c5f4e3cd446bc525c3",
+        "file": "ParagraphLayoutCache.kt",
+        "fileSha256": "e7dcd7051122d18adc560db6518cdc8d4b4adaad0798e08319d9d12df0bd4db4"
+      },
+      {
+        "artifact": "androidx.compose.ui:ui-text",
+        "version": "1.9.4",
+        "url": "https://dl.google.com/dl/android/maven2/androidx/compose/ui/ui-text/1.9.4/ui-text-1.9.4-sources.jar",
+        "archiveSha256": "6514e0df61af6adfb7b671b3501a535e7306df987aef040723207967bf6f167d",
+        "file": "MultiParagraph.kt",
+        "fileSha256": "793ba1ec967b66dd0b94f9baaa9c7a7b04b684f68c9f66c3812ecee40592edb4"
+      },
+      {
+        "artifact": "androidx.compose.ui:ui-text",
+        "version": "1.9.4",
+        "url": "https://dl.google.com/dl/android/maven2/androidx/compose/ui/ui-text/1.9.4/ui-text-1.9.4-sources.jar",
+        "archiveSha256": "6514e0df61af6adfb7b671b3501a535e7306df987aef040723207967bf6f167d",
+        "file": "TextLayoutResult.kt",
+        "fileSha256": "5d6fc0f764765d2cb2361140169e8957807f91bd873c8c78a0861a641d1877c9"
+      }
+    ]
+  },
+  "localValidation": [
+    "git diff --check passed",
+    "Only four intended Android source/test files changed",
+    "All original test method names and 97+2 case counts preserved",
+    "Runner, Gradle pin and dependencies unchanged",
+    "Added layout method names and named argument verified against exact pinned ui-text sources",
+    "Owner guard, modal composition key and deduplicated capacity boundary reviewed"
+  ],
+  "notExecuted": [
+    "Kotlin/Android compile of these changes",
+    "Android emulator or instrumentation of these changes",
+    "Shared Mac build",
+    "CI dispatch",
+    "Commit/push"
+  ],
+  "remainingGate": "Root-coordinated CI must compile and pass all 97 ordinary plus 2 dedicated tests; original run remains 95/97 ordinary, not 99/99.",
+  "rawEvidence": "failure-evidence.json and ordinary-phone.log; original artifact retained with verified GitHub size/digest; 13 original PNGs extracted under captures/"
+}

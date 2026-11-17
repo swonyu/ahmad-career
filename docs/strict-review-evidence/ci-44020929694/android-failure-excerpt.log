@@ -1,0 +1,27 @@
+INSTRUMENTATION_RESULT: stream=
+
+Time: 143.513
+There were 2 failures:
+1) profileEssentials_andCountrySelection_preserveSingleNamesAndCancelledChoices(com.saleh.careerfinder.PhonePolishAcceptanceTest)
+java.lang.AssertionError: Failed: performScrollToNode(Text + InputText + EditableText contains ' · JP' (ignoreCase: false) as substring)
+Reason: Expected exactly '1' node but could not find any node that satisfies: (TestTag = 'target-countries')
+
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:178)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow$default(SemanticsNodeInteraction.kt:150)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchSemanticsNode(SemanticsNodeInteraction.kt:84)
+	at androidx.compose.ui.test.ActionsKt.scrollToMatchingDescendantOrReturnScrollable(Actions.kt:277)
+	at androidx.compose.ui.test.ActionsKt.performScrollToNode(Actions.kt:236)
+	at com.saleh.careerfinder.PhonePolishAcceptanceTest.profileEssentials_andCountrySelection_preserveSingleNamesAndCancelledChoices(PhonePolishAcceptanceTest.kt:114)
+2) shortMultilineNote_canExpandAtLargeText_withoutClippingItsLastLine(com.saleh.careerfinder.WorkspaceAccessibilityRegressionTest)
+java.lang.AssertionError
+	at org.junit.Assert.fail(Assert.java:87)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at org.junit.Assert.assertFalse(Assert.java:65)
+	at org.junit.Assert.assertFalse(Assert.java:75)
+	at com.saleh.careerfinder.WorkspaceAccessibilityRegressionTest.shortMultilineNote_canExpandAtLargeText_withoutClippingItsLastLine(WorkspaceAccessibilityRegressionTest.kt:43)
+
+FAILURES!!!
+Tests run: 97,  Failures: 2
+
+
+INSTRUMENTATION_CODE: -1
