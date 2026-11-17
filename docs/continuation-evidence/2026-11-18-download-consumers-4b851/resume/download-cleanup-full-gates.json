@@ -1,0 +1,105 @@
+{
+  "startedUTC": "2026-11-17T23:37:06.618835+00:00",
+  "baseCommit": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+  "versions": {
+    "node": "v24.22.3",
+    "npm": "11.20.0"
+  },
+  "inputHashes": {
+    "app/phone/PhoneApp.tsx": "5b1f3db0063b062f21209870274b83a3def83cb6bb056c987fd7dac0653e6352",
+    "tests/phone-record-tools.mjs": "15ef941aae32725a097e4a88d8d245eb5611738cd41c216eddbd65118c0319a6",
+    "package.json": "7e02d347153988f4e9180e6348ab4fa405ba98cae1cc85abd4c1ea7e5da85e7a",
+    "package-lock.json": "2512e3bd6aebfc4377bbe036d3cf606c27e33613b35c8c58d28f0f3a0d596c99"
+  },
+  "gates": [
+    {
+      "gate": "typecheck",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "startedUTC": "2026-11-17T23:37:06.632468+00:00",
+      "completedUTC": "2026-11-17T23:37:08.585147+00:00",
+      "exit": 0,
+      "log": "download-cleanup-full-typecheck.log"
+    },
+    {
+      "gate": "lint",
+      "command": [
+        "npm",
+        "run",
+        "lint",
+        "--",
+        "--max-warnings=0"
+      ],
+      "startedUTC": "2026-11-17T23:37:08.585298+00:00",
+      "completedUTC": "2026-11-17T23:37:12.686657+00:00",
+      "exit": 0,
+      "log": "download-cleanup-full-lint.log"
+    },
+    {
+      "gate": "test",
+      "command": [
+        "npm",
+        "test"
+      ],
+      "startedUTC": "2026-11-17T23:37:12.686800+00:00",
+      "completedUTC": "2026-11-17T23:37:53.235162+00:00",
+      "exit": 0,
+      "log": "download-cleanup-full-test.log"
+    },
+    {
+      "gate": "build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "startedUTC": "2026-11-17T23:37:53.235322+00:00",
+      "completedUTC": "2026-11-17T23:37:56.057312+00:00",
+      "exit": 0,
+      "log": "download-cleanup-full-build.log"
+    },
+    {
+      "gate": "audit",
+      "command": [
+        "npm",
+        "audit",
+        "--audit-level=high",
+        "--json"
+      ],
+      "startedUTC": "2026-11-17T23:37:56.057460+00:00",
+      "completedUTC": "2026-11-17T23:37:59.057517+00:00",
+      "exit": 1,
+      "log": "download-cleanup-full-audit.log",
+      "auditMetadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 19,
+          "critical": 0,
+          "total": 19
+        },
+        "dependencies": {
+          "prod": 205,
+          "dev": 586,
+          "optional": 150,
+          "peer": 44,
+          "peerOptional": 0,
+          "total": 830
+        }
+      }
+    }
+  ],
+  "completedUTC": "2026-11-17T23:37:59.057741+00:00",
+  "finalHashes": {
+    "app/phone/PhoneApp.tsx": "5b1f3db0063b062f21209870274b83a3def83cb6bb056c987fd7dac0653e6352",
+    "tests/phone-record-tools.mjs": "15ef941aae32725a097e4a88d8d245eb5611738cd41c216eddbd65118c0319a6",
+    "package.json": "7e02d347153988f4e9180e6348ab4fa405ba98cae1cc85abd4c1ea7e5da85e7a",
+    "package-lock.json": "2512e3bd6aebfc4377bbe036d3cf606c27e33613b35c8c58d28f0f3a0d596c99"
+  },
+  "inputsUnchangedDuringGates": true,
+  "gitStatus": " M hosted/app/phone/PhoneApp.tsx\n M hosted/tests/hosted-discovery-verification.json\n M hosted/tests/hosted-phone-verification.json\n M hosted/tests/hosted-verification.json\n M hosted/tests/phone-record-tools.mjs\n"
+}

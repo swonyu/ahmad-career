@@ -1,0 +1,89 @@
+Grok
+Thought for 31s
+
+Second Evidence Pass — Competitor Report Corrections
+Access date: 17 November 2026. Prior table overclaims withdrawn. All statements below are vendor claims from primary pages unless marked otherwise. No tests performed. No Stronger/Parity+ labels used. Saved-note search, CSV, single-date ICS and partial-source hand-off are already implemented or assigned; they appear only as evidence gaps where relevant. Manual stages are not treated as a substitute for relevance matching. Provider cancellation tone is not treated as proof of application-approval correctness. Native phone-workspace JSON import/export exists (Build2 verified schemas); platform scope is noted. Old native lead feed title/date ranking and dated assessments are acknowledged and not erased.
+
+Claim-by-Claim Primary Verification
+
+Simplify — iOS + Safari Copilot
+
+Official help (last updated ~24 days before access): 
+help.simplify.jobs/articles/1749022-install-and-set-up-copilot
+“On iPhone, Copilot is a Safari extension included with the Simplify iOS app.”
+“Choose Autofill this page, review the completed fields, and submit the application yourself.”
+Official iOS help: 
+help.simplify.jobs/articles/6916710-browse-save-and-apply-to-jobs-in-the-ios-app
+“To apply, open the application in Safari for manual review with Copilot, or choose Autopilot with Simplify+ for automatic submission.”
+Explicit website-access / Safari extension permission check required.
+Vendor claim only; not independently tested.
+
+Jobscan Auto Apply
+
+Official product page: 
+jobscan.co/auto-apply
+“Every application goes through a review step before submission. Nothing is submitted without your approval.”
+“The Submit button is always yours.”
+“Roles sourced directly from Greenhouse, Lever, Workable, and 20+ ATS platforms.”
+“Job application AI prepares thoughtful responses using your resume.”
+Launch blog (10 Jun 2026): 
+jobscan.co/blog/auto-apply
+Same human-approval and drafting claims.
+Vendor claim only; credit pricing and actual review enforcement not tested here.
+
+Naukrigulf — current Arabic app listing
+
+Google Play Arabic listing: 
+play.google.com/store/apps/details
+Advertises AI CV maker/analyser (professional templates, AI writing suggestions, instant creation/update) and AI interview preparation (curated Q&A, role-based support).
+English Play listing and App Store listing contain equivalent claims.
+Vendor claim only; no independent verification of Arabic quality or functionality.
+
+Teal — privacy and tracker
+
+Privacy policy (updated 11 Nov 2026): 
+tealhq.com/privacy-policy
+Optional Gmail: reads to find opportunity signals; “Teal never changes an opportunity because of an email; it suggests the change, and you accept or dismiss it.” Does not store email text.
+Optional Google Calendar: can add/change/remove events only after user approval; will not alter events with other attendees.
+Selected Drive files on Google sign-up.
+Tracker features (product page): 
+tealhq.com/tools/job-tracker
+Supports notes, contacts, checklists, email templates; Export Report mentioned in secondary descriptions. Per-application resume attachment is documented in tracker help surfaces.
+Vendor claim only.
+
+Bayt — current official listing (older mobile-promo URL discarded)
+
+Current App Store listing: 
+apps.apple.com/ly/app/bayt-com-jobs-mena-job-search/id510893233
+“Creating a CV, searching jobs, and applying is free. Premium features are optional.”
+“all matched to your profile with AI.”
+In-app purchases: one-month premium $19.99, one-month elite $49.99, etc.
+Vendor claim only.
+
+Indeed (retained, official)
+
+indeed.com/help/job-seekers/articles/205332490-what-is-my-jobs
+External-site applications are not automatically saved; manual move required. Six-month visible history.
+Corrected Platform-Specific Parity Gaps (no Stronger/Parity+ labels)
+Human approval: Jobscan Auto Apply and Simplify Copilot both advertise user review before submission. Career Finder’s approval fencing is a different mechanism (plan.approvedAt + Stop holds). No uniqueness claim without matched task evidence.
+Recovery: Career Finder has vault epochs and recovery drafts; competitors document local recovery or email signals. Platform-specific evidence still required.
+Export / portability: Hosted has CSV + ICS; native apps have phone-workspace JSON import/export (Build2 verified). Not a full reimport absence. Scope is platform-specific.
+Staying free: Teal free tracker unlimited, Huntr free 100, Simplify free autofill/tracker, Bayt/Naukrigulf free search/apply. Career Finder’s free-cost constraint is a design choice, not demonstrated superiority.
+Matching: Old native lead feed already contains title/date ranking and dated assessments. Profile-aware matching on the newer discovery surface is a separate open question. Manual stages do not replace relevance matching.
+Partial hand-off / note search / CSV / ICS: Already implemented or assigned. Remaining work is evidence collection (fixtures, physical AT, consumer reopen), not new missing features.
+Matched Benchmark That Could Falsify a Proposed Advantage
+
+Same set of 10 public Greenhouse/Lever postings, same user profile, same language (Arabic + English).
+Measure: (1) time to reach a truthful partial/stale status with board hand-off, (2) whether a self-entered stage survives export/reimport without inventing employer confirmation, (3) recovery of unfinished note after simulated interruption, (4) physical VoiceOver/TalkBack completion of the status update without focus theft.
+If a competitor completes the same tasks with equal or better accuracy and less user effort on the same samples, the claimed advantage is falsified. No such matched run has been performed here.
+
+3–5 Genuinely Useful Current Gaps (Bounded)
+Partial + board hand-off discoverability (already assigned to search terminal). Smallest test: fixture on integrating checkpoint shows retained prefix + boardUrl. No new infrastructure.
+Native JSON import/export consumer verification (Build2 has schemas). Smallest test: round-trip distinct-draft fixture on device. Owner: recovery terminal.
+Physical AT on critical status paths (a11y terminal under root). Smallest test: VoiceOver/TalkBack on partial notice and save without focus steal.
+Privacy declaration accuracy (publisher + root). Smallest test: signed build in-app deletion + live privacy policy URL matching actual flows.
+Old native ranking visibility (search terminal). Smallest test: confirm title/date ranking still present and not overwritten by newer discovery surface. No new matching model required.
+
+Large infrastructure (Chrome clipper, AI drafting, Autopilot-style sending, broad ATS sourcing) remains outside authorized free-cost workflow and requires separate investment, consent and privacy review.
+
+Second pass finished. Available for further reconciliation. Heavy session remains Heavy.

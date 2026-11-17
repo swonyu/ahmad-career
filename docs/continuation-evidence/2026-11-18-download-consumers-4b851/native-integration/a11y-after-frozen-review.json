@@ -1,0 +1,13 @@
+{
+  "from": "00e4257e519dec88b2b532ef606fbe0633966314",
+  "to": "2230499e48104c7380d150e010d1859ff42b0c6a",
+  "observedAt": "2026-11-17T23:47:29.879323+00:00",
+  "commits": [
+    "2230499e48104c7380d150e010d1859ff42b0c6a\t00e4257e519dec88b2b532ef606fbe0633966314\t2026-11-18T02:40:57+03:00\tSpeak the private backup source"
+  ],
+  "paths": [
+    "android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt"
+  ],
+  "scope": "Preserved exact later delta; separate from the completed27commit map.",
+  "patchSHA256": "a16f15ed18ad7fc821ca9e20bb4a178a320957d0143199e94a62c85221035b95"
+}

@@ -1,0 +1,43 @@
+{
+  "sourceCommit": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+  "phoneAppSHA256": "cea98d8442f0dcb43cee2b1e3d5d5a2814a89130b7c18793ee50f4a8366d5368",
+  "evidenceType": "Normalized observations transcribed from root's browser tool outputs in this conversation; not a saved raw event replay.",
+  "rawRetentionLimit": "The browser context reset cleared volatile result storage before the export raw JSONL was persisted. Account raw JSONL was already saved. Actual export files, their hashes, source metadata and consumer receipts are preserved separately.",
+  "scope": "Connected Mac Chrome, actual production PhoneApp and guest encrypted storage, synthetic loopback origin127.0.0.1:4181. No live account or employer API. Only Next Image is adapted. External employer links are intercepted by the fixture.",
+  "observations": [
+    "Rebuilt fixture at288 with pinned Nodev24.22.3,33source files; preflight exit0. Existing root-owned storage retained, not cleared.",
+    "Saved one synthetic job through visible Saved/Add job link UI: https://example.org/career-finder-ui-export-20261117, title مُهندس, \"أول\" 🧭, employer Synthetic employer / جهة تجريبية, location Riyadh / الرياض.",
+    "Saved record stage Saved and private note =1+1\\nSYNTHETIC_PRIVATE_NOTE_4b851 — ملاحظة خاصة, \"اختبار\"\\n000123. No employer-confirmed receipt was created.",
+    "Download-event wait timed out and reset browser bindings. Before direct retry, known CSV filenames were absent from Downloads and no success notice was shown. Direct visible CSV button then produced an actual downloaded file.",
+    "Initial date fill-only action displayed a valid2026-11-24 DOM value, but save/reopen and first CSV had emptydate. Explicit blur did not resolve it. Native ArrowUp changed to2026-11-25; native ArrowDown restored2026-11-24; save/reopen and card then preserved24November. This is an ineffective fill/event path, not a demonstrated product save transform.",
+    "Two subsequent EN CSV downloads were489bytes, identical SHA6337ab97ad63ddf64bcf6e4cf55a5b176ef1abe99890426f638ff3c17ff44e64. Actual parsed file has9columns, correctdate2026-11-24, original bilingualtitle/quotes, and Text: marker before formula-like private note.",
+    "AR CSV was670bytes, SHA f920db19636bbee85ceb9dfffd4a0045bf8946364f95f8a3a10605786c6542d8, translatedheaders/stage/No, original usertext anddate preserved. At390x844CSS, document.scrollWidth390, RTL/ar. Source product warning explains quoted-fields-as-text import.",
+    "Arabic and English ICS actual UI buttons produced files on disk with DATE20261124, P1D, same UID across languages; private note absent. Native date ArrowUp to2026-11-25 then explicitsave produced a third file with DATE20261125 and differentUID.",
+    "App notice explicitly states later date changes do not update already imported events and calendar controls alerts. No actual Calendar import/reimport, physical phone handoff, signed-in lock or spoken assistive-technology pass was established.",
+    "Browser later denied access because originating context was unavailable. Requested viewport585x1266 yielded observed390x844CSS; this last override could not be reset after disconnection. Last productlanguageEnglish. Root-owned listener4308 is separately stopped after exact command verification; do not assume from this note.",
+    "All three Grok follow-up responses were read before browser loss. Both Build sessions reported no material newly demonstrated hosted defect. Heavy's suggested free-text contact field was rejected locally as duplicating existing searchable private notes, whose placeholder already mentions people to contact; correction has not been sent because Browser is unavailable."
+  ],
+  "downloads": {
+    "initialEnglishBeforeNativeDateCommit": {
+      "file": "Career-Finder-application-records.csv",
+      "bytes": 479,
+      "sha256": "58f92c00320a0215115e143c227334aa73a2c2ee5916bcc96f2896713dd31e2e",
+      "date": ""
+    },
+    "english": {
+      "file": "Career-Finder-application-records (1).csv",
+      "bytes": 489,
+      "sha256": "6337ab97ad63ddf64bcf6e4cf55a5b176ef1abe99890426f638ff3c17ff44e64"
+    },
+    "englishRepeat": {
+      "file": "Career-Finder-application-records (2).csv",
+      "bytes": 489,
+      "sha256": "6337ab97ad63ddf64bcf6e4cf55a5b176ef1abe99890426f638ff3c17ff44e64"
+    },
+    "arabic": {
+      "file": "Career-Finder-application-records (3).csv",
+      "bytes": 670,
+      "sha256": "f920db19636bbee85ceb9dfffd4a0045bf8946364f95f8a3a10605786c6542d8"
+    }
+  }
+}

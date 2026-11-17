@@ -1,0 +1,43 @@
+Grok
+Thought for 5m 18s
+
+The ca3 CSV and single-date ICS exports are already implemented. I ran those functions on synthetic records only. No product file was changed, and there is no new test patch: nothing failed that the current tests do not already lock.
+
+Source at ca3d3411d8b5b36fa7093dff782f4a7b931261c7, Node v24.22.3:
+
+File	SHA256
+hosted/app/phone/record-tools.ts	910dae464cd8504ed225fe5f68fa6b0750c7b7a9c7b18c6454ff4504a772e9a9
+hosted/app/phone/model.ts	955d5afcede6b8f7eb901394f9ae3e00d1bbffa57bf1e457c5436f23541577bf
+
+applicationRecordsCSV and followUpCalendar are in record-tools.ts [blocked]. The existing suite is phone-record-tools.mjs [blocked]. It already checks Arabic, quotes, line breaks, formula markers, secret stripping, civil dates, folding, and a stable UID.
+
+What was executed
+
+Fifteen synthetic rows: Arabic plus English, comma, quotes, \n and \r\n, the emoji 🧭, empty title, employer, dates and note, a 500/250/5000-character row, and formula-like titles (=, +, -, @, leading space, tab, newline, apostrophe, quote, fullwidth ＝, and a value that already begins Text: ). Added profile, password, token and CV fields were not in the file. A NUL title was rejected by the record schema before any CSV was written.
+
+The follow-up file was one all-day event for 2026-11-24, 2026-03-08, 2026-11-01, 2000-02-29 and 9999-12-31. Each date was generated under Asia/Riyadh, Pacific/Kiritimati, Pacific/Pago_Pago and UTC (20 files). The summary included the same mixed text plus the characters BEGIN:VEVENT. The private note was SYNTHETIC_NOTE_NOT_FOR_CALENDAR. The link was the canonical value https://jobs.example.com/roles/a,b;c?x=1. An empty follow-up date threw and produced no calendar.
+
+Checks
+
+Python 3.10’s csv module read the file. That is a real parser, not LibreOffice or Numbers. All 15 rows came back with 9 columns.
+
+Mixed title and employer round-tripped, including quotes, both line-break forms and 🧭.
+The applied and follow-up dates stayed 2026-11-17 and 2026-11-24.
+2026-11-17T23:30:00+03:00 was not rewritten to Z.
+Empty cells stayed empty.
+Formula-like titles came back as Text: plus the original characters. Text: =already was not prefixed again. The marker is intentional; the original text is still after it.
+The 500/250/5000-character row was intact.
+The four secret strings were absent.
+
+No icalendar or vobject package is installed, and no Calendar app was run. The ICS check was a separate octet unfold, not their test helper and not a calendar. For every zone:
+
+DTSTART;VALUE=DATE was the civil day with the dashes removed. UTC+14 and UTC−11 did not move it.
+DURATION was P1D. There was no DTEND, TZID, VTIMEZONE, VALARM or ATTENDEE.
+The UID for a given job and date was identical across the four zones.
+The summary restored the Arabic, emoji, comma, semicolon, backslash and a single newline. \r\n in the title becomes one \n in the calendar text. That is the existing TEXT escape, and the line break remains.
+BEGIN:VEVENT stayed inside the summary. There was still one event.
+The private note was not in the file. The comma and semicolon in the URL stayed on one URL line.
+
+Location is not one of the nine CSV columns. The note is in the CSV and is left out of the calendar on purpose.
+
+LibreOffice, Numbers and Calendar were not run. Those acceptances are not claimed.

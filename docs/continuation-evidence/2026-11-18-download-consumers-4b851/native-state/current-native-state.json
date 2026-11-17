@@ -1,0 +1,1339 @@
+{
+  "schema": "career-finder-native-state-followthrough-v1",
+  "observedFromUtc": "2026-11-17T22:36:12.577553+00:00",
+  "capturedAt": "2026-11-17 22:42:39 UTC",
+  "scope": "Read-only owner, immutable source and CI/log recovery. No source edits, tests, native builds, process stops, lock changes, workflow dispatches, pushes, browser actions or external messages.",
+  "constraints": {
+    "excluded": "Good Spender",
+    "cost": "free",
+    "cutoffUtc": "2026-11-18T22:26:12Z",
+    "cutoffRiyadh": "2026-11-19T01:26:12+03:00",
+    "nativeOwner": "d57f4cd77813",
+    "dependencyOwner": "5bc6158967e8",
+    "sharedLocalizationOwner": "01a1ea9d107f"
+  },
+  "current": {
+    "observed_at": "2026-11-17T22:36:12.577553+00:00",
+    "lanes": {
+      "search": {
+        "path": "/Users/saleh/Developer/career-finder-native-search-20261117-01a1ea9d107f",
+        "exists": true,
+        "head": {
+          "exit": 0,
+          "stdout": "0beff68a6906968f282dca292dc547daad85684f\n",
+          "stderr": ""
+        },
+        "branch": {
+          "exit": 0,
+          "stdout": "continuation/native-search-20261117-01a1ea9d107f\n",
+          "stderr": ""
+        },
+        "dirty": {
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "recent": {
+          "exit": 0,
+          "stdout": "0beff68a6906968f282dca292dc547daad85684f Distinguish incomplete searches, restored checks, and equivalent boards.\n11cb3d4d8c15e9b16719b6e7091597f43633cda6 Merge sealed singular-copy and iPhone evidence finalization fixes\n21f08f5c4509bd1fdbe9112003224bf2316edd2a Correct singular search copy and allow iPhone evidence finalization\n0f0c6f1f591ff173e51671599cbbb6aeff4a69e4 Observe exact UI field values without repeated placeholder queries\ne620d249067a5ab4eeca99b5ee8ac77726b41773 Localize complete prepared review expiry sentence\n",
+          "stderr": ""
+        }
+      },
+      "recovery": {
+        "path": "/Users/saleh/Developer/career-finder-native-recovery-20261117-01a1ea9cfd25",
+        "exists": true,
+        "head": {
+          "exit": 0,
+          "stdout": "11cb3d4d8c15e9b16719b6e7091597f43633cda6\n",
+          "stderr": ""
+        },
+        "branch": {
+          "exit": 0,
+          "stdout": "continuation/native-recovery-20261117-01a1ea9cfd25\n",
+          "stderr": ""
+        },
+        "dirty": {
+          "exit": 0,
+          "stdout": " M android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt\n M android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt\n M android/app/src/main/java/com/saleh/careerfinder/Models.kt\n M android/app/src/main/java/com/saleh/careerfinder/WorkspaceTransfer.kt\n M apple/AhmadCareer/MobileApplicationState.swift\n M apple/AhmadCareer/NativeApplicationsStore.swift\n M apple/AhmadCareer/NativeApplicationsViews.swift\n?? apple/Checks/NativeRecoveryCheck.swift\n",
+          "stderr": ""
+        },
+        "recent": {
+          "exit": 0,
+          "stdout": "11cb3d4d8c15e9b16719b6e7091597f43633cda6 Merge sealed singular-copy and iPhone evidence finalization fixes\n",
+          "stderr": ""
+        }
+      },
+      "accessibility": {
+        "path": "/Users/saleh/Library/Caches/Career-Account-A11y-Lane-20261117-01a1ea56",
+        "exists": true,
+        "head": {
+          "exit": 0,
+          "stdout": "6054d0bcfcd2d84aa5d4701c982d4feb256d9980\n",
+          "stderr": ""
+        },
+        "branch": {
+          "exit": 0,
+          "stdout": "lane/account-search-a11y-20261117\n",
+          "stderr": ""
+        },
+        "dirty": {
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "recent": {
+          "exit": 0,
+          "stdout": "6054d0bcfcd2d84aa5d4701c982d4feb256d9980 Hide the selected language checkmark from VoiceOver\nee3bac20b48022c6b110de043eaabe3e38c7f496 Speak when a backup import has no selection\nc04ea874990e1f0416c0c55f626fd3ed91b14cab Speak when a private note is cut at 2,000 characters\na4f06c1625180352ffa8c3c7f82030ed2249bc8a Speak an invalid experience year after editing\ne33accb6a610dcd408943bc57f294a85c8f61521 Speak an invalid salary amount after editing\n",
+          "stderr": ""
+        }
+      }
+    },
+    "terminal_processes": "17201  1003 ttys003  06:07:36 grok\n61036 60990 ttys011  04:50:53 grok\n61499 61445 ttys012  04:50:48 grok\n",
+    "native_build_processes": {
+      "xcodebuild": [],
+      "gradle": []
+    },
+    "lock": {
+      "exists": false,
+      "is_directory": false
+    },
+    "publisher_ref": {
+      "ref": "refs/heads/recovery/publishing-integrated-20261117-d57f4",
+      "node_id": "REF_kwDOVBqQatoAOHJlZnMvaGVhZHMvcmVjb3ZlcnkvcHVibGlzaGluZy1pbnRlZ3JhdGVkLTIwMjYxMTE3LWQ1N2Y0",
+      "url": "https://api.github.com/repos/swonyu/ahmad-career/git/refs/heads/recovery/publishing-integrated-20261117-d57f4",
+      "object": {
+        "sha": "363ae84aaaf9032b040ee60b16a3c023ec1c1cf2",
+        "type": "commit",
+        "url": "https://api.github.com/repos/swonyu/ahmad-career/git/commits/363ae84aaaf9032b040ee60b16a3c023ec1c1cf2"
+      }
+    },
+    "runs": [
+      {
+        "id": 44185640786,
+        "run_number": 43,
+        "name": "Phone quality",
+        "head_sha": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+        "head_branch": "recovery/publishing-reconciled-20261117-d57",
+        "event": "workflow_dispatch",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-17T22:00:19Z",
+        "updated_at": "2026-11-17T22:23:13Z",
+        "run_attempt": 1,
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44185640786"
+      },
+      {
+        "id": 44172535044,
+        "run_number": 42,
+        "name": "Phone quality",
+        "head_sha": "363ae84aaaf9032b040ee60b16a3c023ec1c1cf2",
+        "head_branch": "recovery/publishing-integrated-20261117-d57f4",
+        "event": "workflow_dispatch",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-17T20:44:50Z",
+        "updated_at": "2026-11-17T21:15:15Z",
+        "run_attempt": 1,
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44172535044"
+      },
+      {
+        "id": 44147056599,
+        "run_number": 41,
+        "name": "Phone quality",
+        "head_sha": "243031d3f35040985c5b274e8ddf4a90adb0eda8",
+        "head_branch": "recovery/publishing-integrated-20261117-d57f4",
+        "event": "workflow_dispatch",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-17T18:22:03Z",
+        "updated_at": "2026-11-17T18:50:00Z",
+        "run_attempt": 1,
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44147056599"
+      },
+      {
+        "id": 44139018005,
+        "run_number": 40,
+        "name": "Phone quality",
+        "head_sha": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+        "head_branch": "continuation/account-acceptance-20261117",
+        "event": "pull_request",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-17T17:37:23Z",
+        "updated_at": "2026-11-17T18:06:31Z",
+        "run_attempt": 1,
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44139018005"
+      },
+      {
+        "id": 44135594938,
+        "run_number": 39,
+        "name": "Phone quality",
+        "head_sha": "11cb3d4d8c15e9b16719b6e7091597f43633cda6",
+        "head_branch": "recovery/publishing-integrated-20261117-d57f4",
+        "event": "workflow_dispatch",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-17T17:18:52Z",
+        "updated_at": "2026-11-17T17:44:58Z",
+        "run_attempt": 1,
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44135594938"
+      },
+      {
+        "id": 44130275991,
+        "run_number": 38,
+        "name": "Phone quality",
+        "head_sha": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+        "head_branch": "continuation/account-acceptance-20261117",
+        "event": "pull_request",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-17T16:50:14Z",
+        "updated_at": "2026-11-17T17:19:09Z",
+        "run_attempt": 1,
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44130275991"
+      },
+      {
+        "id": 44129604009,
+        "run_number": 37,
+        "name": "Phone quality",
+        "head_sha": "0f0c6f1f591ff173e51671599cbbb6aeff4a69e4",
+        "head_branch": "recovery/publishing-integrated-20261117-d57f4",
+        "event": "workflow_dispatch",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-17T16:46:38Z",
+        "updated_at": "2026-11-17T17:00:50Z",
+        "run_attempt": 1,
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44129604009"
+      },
+      {
+        "id": 44124734131,
+        "run_number": 36,
+        "name": "Phone quality",
+        "head_sha": "2fac36f321005d9a2703e6db92acd7d7c14886c5",
+        "head_branch": "recovery/publishing-integrated-20261117-d57f4",
+        "event": "workflow_dispatch",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-17T16:20:58Z",
+        "updated_at": "2026-11-17T16:27:58Z",
+        "run_attempt": 1,
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44124734131"
+      },
+      {
+        "id": 44122504831,
+        "run_number": 35,
+        "name": "Phone quality",
+        "head_sha": "d97bc209ca84ecb830e6c6bad25808164706409f",
+        "head_branch": "continuation/account-acceptance-20261117",
+        "event": "pull_request",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-11-17T16:09:25Z",
+        "updated_at": "2026-11-17T16:41:28Z",
+        "run_attempt": 1,
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44122504831"
+      },
+      {
+        "id": 44117937883,
+        "run_number": 2,
+        "name": "pages build and deployment",
+        "head_sha": "6f8e79fc52f7dcb770eb1bf34a51b144a75d980b",
+        "head_branch": "docs/public-support-20261117-01a49",
+        "event": "dynamic",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-17T15:45:17Z",
+        "updated_at": "2026-11-17T15:45:43Z",
+        "run_attempt": 1,
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44117937883"
+      }
+    ]
+  },
+  "newestPublisher": {
+    "ref": "refs/heads/recovery/publishing-reconciled-20261117-d57",
+    "node_id": "REF_kwDOVBqQatoANnJlZnMvaGVhZHMvcmVjb3ZlcnkvcHVibGlzaGluZy1yZWNvbmNpbGVkLTIwMjYxMTE3LWQ1Nw",
+    "url": "https://api.github.com/repos/swonyu/ahmad-career/git/refs/heads/recovery/publishing-reconciled-20261117-d57",
+    "object": {
+      "sha": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+      "type": "commit",
+      "url": "https://api.github.com/repos/swonyu/ahmad-career/git/commits/2884188263f3dad5753da7b2e507f6ba55e30eb0"
+    }
+  },
+  "newestPublisherCommit": {
+    "sha": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+    "message": "Reconcile native discovery recovery and account acceptance\n\nPreserve the publishing, sealed feed and native-search histories while keeping\nthe real production-AST fixture. Retain submitted-search retries and drafts,\nrestore the saved-file byte limit, and keep retry availability truthful when\nearlier complete results survive a failed new request.\n\nAffected hosted/static gates pass. New native compilation and acceptance are\npending; the unfiltered dependency audit still reports19high findings.",
+    "parents": [
+      {
+        "sha": "363ae84aaaf9032b040ee60b16a3c023ec1c1cf2",
+        "url": "https://api.github.com/repos/swonyu/ahmad-career/git/commits/363ae84aaaf9032b040ee60b16a3c023ec1c1cf2",
+        "html_url": "https://github.com/swonyu/ahmad-career/commit/363ae84aaaf9032b040ee60b16a3c023ec1c1cf2"
+      },
+      {
+        "sha": "9d011492b50185aa74fddbf061a6357b1fb0568f",
+        "url": "https://api.github.com/repos/swonyu/ahmad-career/git/commits/9d011492b50185aa74fddbf061a6357b1fb0568f",
+        "html_url": "https://github.com/swonyu/ahmad-career/commit/9d011492b50185aa74fddbf061a6357b1fb0568f"
+      },
+      {
+        "sha": "0beff68a6906968f282dca292dc547daad85684f",
+        "url": "https://api.github.com/repos/swonyu/ahmad-career/git/commits/0beff68a6906968f282dca292dc547daad85684f",
+        "html_url": "https://github.com/swonyu/ahmad-career/commit/0beff68a6906968f282dca292dc547daad85684f"
+      }
+    ],
+    "tree": {
+      "sha": "ccfd8e314814d5e799ca06808d86a5cd74605303",
+      "url": "https://api.github.com/repos/swonyu/ahmad-career/git/trees/ccfd8e314814d5e799ca06808d86a5cd74605303"
+    },
+    "author": {
+      "name": "Codex",
+      "email": "codex@openai.com",
+      "date": "2026-11-17T21:52:51Z"
+    }
+  },
+  "workflow": {
+    "blob": "f4a5a102d2f6179e02fa40a684627e06ebfb7ab5",
+    "selected_lines": [
+      {
+        "line": 24,
+        "text": "    inputs:"
+      },
+      {
+        "line": 25,
+        "text": "      acceptance_scope:"
+      },
+      {
+        "line": 26,
+        "text": "        description: Full five gates, all iPhone UI only, or one iPhone connection regression"
+      },
+      {
+        "line": 27,
+        "text": "        required: true"
+      },
+      {
+        "line": 28,
+        "text": "        default: full"
+      },
+      {
+        "line": 37,
+        "text": ""
+      },
+      {
+        "line": 38,
+        "text": "concurrency:"
+      },
+      {
+        "line": 39,
+        "text": "  group: phone-quality-${{ github.workflow }}-${{ github.ref }}"
+      },
+      {
+        "line": 40,
+        "text": "  cancel-in-progress: true"
+      },
+      {
+        "line": 41,
+        "text": ""
+      },
+      {
+        "line": 42,
+        "text": "jobs:"
+      },
+      {
+        "line": 43,
+        "text": "  service:"
+      }
+    ]
+  },
+  "run43Jobs": [
+    {
+      "id": 134401338647,
+      "name": "iPhone logic and unsigned build",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44185640786,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Execute the production client and store checks",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Build the production iPhone configuration on this isolated runner",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Verify the built product targets iPhone",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Keep the unsigned build log",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        }
+      ]
+    },
+    {
+      "id": 134401339228,
+      "name": "Android compile, lint and native acceptance",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44185640786,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Require the pinned Android SDK",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Phone URL, PDF and receipt policies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Compile the ordinary preview and its instrumentation",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Prepare the disposable phone emulator and synthetic companion",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Exercise actual phone, storage, large text, RTL and synthetic HTTPS flows",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Keep the lint report",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18
+        },
+        {
+          "name": "Post Run actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21
+        }
+      ]
+    },
+    {
+      "id": 134401339257,
+      "name": "iPhone native interface acceptance",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_id": 44185640786,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Select an iPhone on this disposable hosted runner",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Exercise native phone flows with isolated synthetic data",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 4
+        },
+        {
+          "name": "Verify the partial regression actually ran once",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5
+        },
+        {
+          "name": "Export native interface evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Keep the native UI results and screenshots",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        }
+      ]
+    },
+    {
+      "id": 134401339704,
+      "name": "Hosted HTTPS service and durable storage",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_id": 44185640786,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Install the pinned hosted service dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Check account screens and worker types",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Exercise the production handler with real local D1 and R2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Build the deployable Worker and phone setup pages",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Audit the locked dependencies",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 8
+        },
+        {
+          "name": "Keep the hosted regression evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 17
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19
+        }
+      ]
+    },
+    {
+      "id": 134401339825,
+      "name": "Service and synthetic HTTPS",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44185640786,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Install pinned companion dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Existing record and discovery regressions",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Verified-submission state and HTTP regressions",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Synthetic TLS, consent, receipts and recovery",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        }
+      ]
+    }
+  ],
+  "run43Logs": [
+    {
+      "job": "iphone-ui",
+      "job_id": 134401339257,
+      "log_path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/native-state-followthrough-20261117T2236Z/run43-iphone-ui.log",
+      "bytes": 559962,
+      "sha256": "efac1402c3cae84052d25f971086fd146472bbae38bef4dbb4687d9184ecfe4f",
+      "matches": [
+        {
+          "line": 925,
+          "text": "2026-11-17T22:03:36.6486650Z 2026-11-17 22:03:36.068609+0000 CareerFinderUITests-Runner[4197:18294] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric"
+        },
+        {
+          "line": 926,
+          "text": "2026-11-17T22:03:37.2233590Z 2026-11-17 22:03:36.101948+0000 CareerFinderUITests-Runner[4197:18295] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics"
+        },
+        {
+          "line": 4445,
+          "text": "2026-11-17T22:21:07.8434630Z /Users/runner/work/ahmad-career/ahmad-career/apple/UITests/CareerFinderUITests.swift:553: error: -[CareerFinderUITests.CareerFinderUITests testSearchEmptyAndFailurePreservesPreviousResults] : XCTAssertTrue failed - The empty state must describe the completed search"
+        },
+        {
+          "line": 4447,
+          "text": "2026-11-17T22:21:08.0686550Z Test Case '-[CareerFinderUITests.CareerFinderUITests testSearchEmptyAndFailurePreservesPreviousResults]' failed (28.515 seconds)."
+        },
+        {
+          "line": 4717,
+          "text": "2026-11-17T22:21:57.4307960Z Test Suite 'CareerFinderUITests' failed at 2026-11-17 22:21:57.381."
+        },
+        {
+          "line": 4718,
+          "text": "2026-11-17T22:21:57.4419780Z \t Executed 17 tests, with 1 failure (0 unexpected) in 1083.171 (1083.188) seconds"
+        },
+        {
+          "line": 4719,
+          "text": "2026-11-17T22:21:57.4443310Z Test Suite 'CareerFinderUITests.xctest' failed at 2026-11-17 22:21:57.381."
+        },
+        {
+          "line": 4720,
+          "text": "2026-11-17T22:21:57.4444380Z \t Executed 17 tests, with 1 failure (0 unexpected) in 1083.171 (1083.189) seconds"
+        },
+        {
+          "line": 4721,
+          "text": "2026-11-17T22:21:57.4448130Z Test Suite 'All tests' failed at 2026-11-17 22:21:57.382."
+        },
+        {
+          "line": 4722,
+          "text": "2026-11-17T22:21:57.4457440Z \t Executed 17 tests, with 1 failure (0 unexpected) in 1083.171 (1083.190) seconds"
+        },
+        {
+          "line": 4733,
+          "text": "2026-11-17T22:22:33.3343910Z ** TEST FAILED **"
+        }
+      ]
+    },
+    {
+      "job": "hosted",
+      "job_id": 134401339704,
+      "log_path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/native-state-followthrough-20261117T2236Z/run43-hosted.log",
+      "bytes": 122213,
+      "sha256": "f4a92ea6abbe598a563be755f474b444e2fe0320c5692653975c5960c6384d84",
+      "matches": [
+        {
+          "line": 354,
+          "text": "2026-11-17T22:02:06.9270223Z PASS A real later-page body timeout cancels the reader while preserving completed Lever pages"
+        },
+        {
+          "line": 355,
+          "text": "2026-11-17T22:02:07.2479859Z PASS A later-page shared budget denial preserves jobs without an extra GET or early retry"
+        },
+        {
+          "line": 356,
+          "text": "2026-11-17T22:02:07.3687678Z PASS A malformed later Lever page is not salvaged as a fresh prefix"
+        },
+        {
+          "line": 357,
+          "text": "2026-11-17T22:02:07.4863787Z PASS A redirected later Lever page is not salvaged as a fresh prefix"
+        },
+        {
+          "line": 358,
+          "text": "2026-11-17T22:02:07.7878603Z PASS A new partial snapshot invalidates old cursors and never mixes an old cached tail"
+        },
+        {
+          "line": 359,
+          "text": "2026-11-17T22:02:08.1806636Z PASS A long provider cooldown outlives freshness and stale retention without sliding or new traffic"
+        },
+        {
+          "line": 360,
+          "text": "2026-11-17T22:02:08.3847007Z PASS Lever pages are bounded to five public GETs and 500 normalized postings"
+        },
+        {
+          "line": 361,
+          "text": "2026-11-17T22:02:08.4904219Z PASS Wrong MIME type releases its unread transport and remains an unavailable source"
+        },
+        {
+          "line": 362,
+          "text": "2026-11-17T22:02:08.5977321Z PASS Oversized declared body releases its unread transport and remains an unavailable source"
+        },
+        {
+          "line": 363,
+          "text": "2026-11-17T22:02:08.7032548Z PASS Invalid declared body length releases its unread transport and remains an unavailable source"
+        },
+        {
+          "line": 364,
+          "text": "2026-11-17T22:02:08.8068606Z PASS Header rejection preserves its error when transport cleanup is reject"
+        },
+        {
+          "line": 365,
+          "text": "2026-11-17T22:02:08.9328057Z PASS Header rejection preserves its error when transport cleanup is pending"
+        },
+        {
+          "line": 366,
+          "text": "2026-11-17T22:02:09.0340063Z PASS Streamed overflow releases its reader without waiting for resolve cleanup"
+        },
+        {
+          "line": 367,
+          "text": "2026-11-17T22:02:09.1415111Z PASS Streamed overflow releases its reader without waiting for reject cleanup"
+        },
+        {
+          "line": 368,
+          "text": "2026-11-17T22:02:09.2567618Z PASS Streamed overflow releases its reader without waiting for pending cleanup"
+        },
+        {
+          "line": 369,
+          "text": "2026-11-17T22:02:09.5063346Z PASS A body-rejection cooldown permits a clean successful refresh without false empty-cache success"
+        },
+        {
+          "line": 370,
+          "text": "2026-11-17T22:02:09.8338300Z PASS Redirects and oversized responses are refused without following untrusted destinations"
+        },
+        {
+          "line": 371,
+          "text": "2026-11-17T22:02:14.9384118Z PASS A response arriving after timeout releases its unread body without changing the timeout outcome"
+        },
+        {
+          "line": 372,
+          "text": "2026-11-17T22:02:20.0441508Z PASS A stalled response body is cancelled within the bounded provider timeout"
+        },
+        {
+          "line": 373,
+          "text": "2026-11-17T22:02:20.6210370Z PASS Client and missing-IP request budgets are shared, atomic and return Retry-After"
+        },
+        {
+          "line": 374,
+          "text": "2026-11-17T22:02:21.2787464Z PASS Custom negative cache capacity and fetch budgets reserve service for the catalog"
+        },
+        {
+          "line": 375,
+          "text": "2026-11-17T22:02:21.7456876Z PASS Concurrent custom source admission cannot exceed the durable cache quota"
+        },
+        {
+          "line": 376,
+          "text": "2026-11-17T22:02:21.9548137Z PASS Security counters expire without storing raw IPs or requiring an applicant account"
+        },
+        {
+          "line": 377,
+          "text": "2026-11-17T22:02:22.7754767Z PASS Actual bundled workerd runs eight public discovery requests with real D1 and no account or R2"
+        },
+        {
+          "line": 379,
+          "text": "2026-11-17T22:02:24.3427983Z PASS A first browser GET returns a blank account view without creating a workspace, salt, throttle or session"
+        },
+        {
+          "line": 380,
+          "text": "2026-11-17T22:02:24.4181632Z PASS Anonymous requests and caller-forged authentication headers fail behind the modeled trusted Sites edge"
+        },
+        {
+          "line": 381,
+          "text": "2026-11-17T22:02:24.5369011Z PASS Explicit account-bound creation and reopening create no native credential or pairing code"
+        },
+        {
+          "line": 382,
+          "text": "2026-11-17T22:02:24.6283575Z PASS Browser PDF/profile writes use shared validation and actual private R2; valid native tokens never choose the browser owner"
+        },
+        {
+          "line": 383,
+          "text": "2026-11-17T22:02:24.8683091Z PASS No browser mutation or receipt export accepts a native token or forged caller identity in place of Sites authentication"
+        },
+        {
+          "line": 384,
+          "text": "2026-11-17T22:02:24.9740166Z PASS Every browser mutation rejects stale or missing account/workspace intent before any write, cleanup, throttle, PDF access or provider request"
+        },
+        {
+          "line": 385,
+          "text": "2026-11-17T22:02:25.0602465Z PASS Workspace and bound receipt GETs remain read-only, including changed email and expired dispatch/session rows"
+        },
+        {
+          "line": 386,
+          "text": "2026-11-17T22:02:25.2124507Z PASS All browser writes require the exact Origin and reject cross-site, same-site and navigation Fetch Metadata"
+        },
+        {
+          "line": 387,
+          "text": "2026-11-17T22:02:25.3202445Z PASS The browser allowlist excludes native credential routes, rejects unknown fields, and applies bounded single-pass JSON parsing"
+        },
+        {
+          "line": 388,
+          "text": "2026-11-17T22:02:25.3574698Z PASS Explicit same-account email refresh advances the revision once and invalidates old approval without creating or rotating phone credentials"
+        },
+        {
+          "line": 389,
+          "text": "2026-11-17T22:02:25.5373121Z PASS Stale profile replay and unapproved, changed-digest or old-schema reviews cannot replace data or authorize a send"
+        },
+        {
+          "line": 390,
+          "text": "2026-11-17T22:02:25.5941588Z PASS Explicit approval and continuation submit the exact reviewed PDF/LinkedIn payload once; repeat requests and duplicate reviews do not resend"
+        },
+        {
+          "line": 391,
+          "text": "2026-11-17T22:02:25.6555716Z PASS An ambiguous browser dispatch remains durably uncertain and cannot be automatically retried or duplicated"
+        },
+        {
+          "line": 392,
+          "text": "2026-11-17T22:02:25.7246561Z PASS Stop and provider-unavailable continuation preserve the existing fail-closed submission rules"
+        },
+        {
+          "line": 393,
+          "text": "2026-11-17T22:02:25.8605938Z PASS Browser GETs, expired-plan advance and denied guarded Stop cannot reconcile or change expired dispatch claims"
+        },
+        {
+          "line": 394,
+          "text": "2026-11-17T22:02:25.9233271Z PASS Browser Stop reconciles only the exact stopped plan\u2019s expired claims, preserves live/other-owner claims and never resends"
+        },
+        {
+          "line": 395,
+          "text": "2026-11-17T22:02:25.9441289Z PASS Manual LinkedIn jobs cause no fetch or receipt; receipt exports remain account-bound and contain no PDF bytes"
+        },
+        {
+          "line": 396,
+          "text": "2026-11-17T22:02:26.1380338Z PASS A deleted and recreated workspace rejects stale requests even when the signed-in account is unchanged"
+        },
+        {
+          "line": 397,
+          "text": "2026-11-17T22:02:26.3129594Z PASS A pending deletion remains visible and read-only while browser creation, mutations and receipt downloads stay locked without cleanup"
+        },
+        {
+          "line": 426,
+          "text": "2026-11-17T22:02:27.3305948Z \u2714 account releases a failed body read while preserving caller abort semantics (3.011479ms)"
+        },
+        {
+          "line": 427,
+          "text": "2026-11-17T22:02:27.3307324Z \u2714 account releases a failed body read while preserving timeout semantics (21.004614ms)"
+        },
+        {
+          "line": 428,
+          "text": "2026-11-17T22:02:27.3308719Z \u2714 account releases a failed body read while preserving read failure semantics (0.988975ms)"
+        },
+        {
+          "line": 430,
+          "text": "2026-11-17T22:02:27.3312048Z \u2714 phone releases a failed body read while preserving caller abort semantics (6.254992ms)"
+        },
+        {
+          "line": 431,
+          "text": "2026-11-17T22:02:27.3313311Z \u2714 phone releases a failed body read while preserving timeout semantics (20.69887ms)"
+        },
+        {
+          "line": 432,
+          "text": "2026-11-17T22:02:27.3314581Z \u2714 phone releases a failed body read while preserving read failure semantics (2.097826ms)"
+        },
+        {
+          "line": 465,
+          "text": "2026-11-17T22:02:27.4087692Z   \u2714 durable hold precedes transport and failed persistence never sends a request (0.948664ms)"
+        },
+        {
+          "line": 467,
+          "text": "2026-11-17T22:02:27.4096424Z   \u2714 a lost response remains a failed attempt on every later call (3.872834ms)"
+        },
+        {
+          "line": 470,
+          "text": "2026-11-17T22:02:27.4101246Z   \u2714 a successful Stop followed by failed readback stays confirmed but is never resent (0.410879ms)"
+        },
+        {
+          "line": 638,
+          "text": "2026-11-17T22:02:32.4937703Z \u25b6 failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller"
+        },
+        {
+          "line": 641,
+          "text": "2026-11-17T22:02:32.4976485Z \u2714 failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller (55.638409ms)"
+        },
+        {
+          "line": 667,
+          "text": "2026-11-17T22:02:32.8627262Z \u2714 failed or stale record saves preserve selection and the current editor (183.314231ms)"
+        },
+        {
+          "line": 674,
+          "text": "2026-11-17T22:02:32.9431322Z \u2714 failed initial account check cannot reveal the earlier server-rendered email or account controls (20.387881ms)"
+        },
+        {
+          "line": 708,
+          "text": "2026-11-17T22:02:33.1901589Z \u2714 unconfirmed or failed provider status keeps provider choices disabled and offers an honest retry (1.877458ms)"
+        },
+        {
+          "line": 712,
+          "text": "2026-11-17T22:02:33.2122744Z \u2139 pass 289"
+        },
+        {
+          "line": 739,
+          "text": "2026-11-17T22:02:33.9243174Z     \"an empty-to-saved-to-reset change cannot bypass another tab's expected revision\","
+        },
+        {
+          "line": 750,
+          "text": "2026-11-17T22:02:33.9254931Z     \"Stop intent survives reload, failed transport and other account scopes\","
+        },
+        {
+          "line": 763,
+          "text": "2026-11-17T22:02:35.6322247Z   \u2714 a failed deletion is never silently retried or reported successful (0.474193ms)"
+        },
+        {
+          "line": 777,
+          "text": "2026-11-17T22:02:35.6647408Z \u2139 pass 14"
+        },
+        {
+          "line": 989,
+          "text": "2026-11-17T22:02:44.4090283Z ##[group]Run npm audit --json --fetch-retries=0 --fetch-timeout=30000 > tests/dependency-audit-ci.json"
+        },
+        {
+          "line": 990,
+          "text": "2026-11-17T22:02:44.4091013Z \u001b[36;1mnpm audit --json --fetch-retries=0 --fetch-timeout=30000 > tests/dependency-audit-ci.json\u001b[0m"
+        },
+        {
+          "line": 1001,
+          "text": "hosted/tests/dependency-audit-ci.json"
+        }
+      ]
+    },
+    {
+      "job": "android",
+      "job_id": 134401339228,
+      "log_path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/native-state-followthrough-20261117T2236Z/run43-android.log",
+      "bytes": 66152,
+      "sha256": "d63c66e55b297b19fd7bb83fd76648b3157f2277363e23d2ce87e4d9a3be9d3e",
+      "matches": [
+        {
+          "line": 391,
+          "text": "2026-11-17T22:05:06.3311078Z BUILD SUCCESSFUL in 4m 35s"
+        },
+        {
+          "line": 617,
+          "text": "2026-11-17T22:05:55.4001070Z added 5 packages, and audited 6 packages in 1s"
+        },
+        {
+          "line": 619,
+          "text": "2026-11-17T22:05:55.4009563Z found 0 vulnerabilities"
+        }
+      ]
+    }
+  ],
+  "latestAccessibilityNotice": {
+    "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/COORDINATION-account-search-a11y-01a1ea56-to-01a49fa7c28e-20261117T2137Z.txt",
+    "notice": {
+      "record_type": "cross_session_coordination_notice",
+      "observed_at": "2026-11-17T21:37:45Z",
+      "from_continuation": "01a1ea56",
+      "to_observed_continuation": "01a49fa7c28e",
+      "status": "PATCHES_READY_FOR_OWNER_REVIEW_NOT_INTEGRATED",
+      "supersedes_delivery_of": "COORDINATION-account-search-a11y-01a1ea56-to-01a49fa7c28e-20261117T2109Z.txt",
+      "message": "A twenty-fourth local commit, 6054d0b, hides the decorative checkmark on the selected iPhone Settings language row. The checkmark stays visible, VoiceOver uses the existing language title, and the selected trait still follows the stored language. The owner tip remains 363ae84. That tip changes this same file only by moving the offline acceptance banner. This hunk is the language rows and does not touch that banner, so this lane did not rebase. This lane did not push, merge, deploy, acquire the native slot, or start xcodebuild or gradle.",
+      "repo": "https://github.com/swonyu/ahmad-career.git",
+      "branch": "lane/account-search-a11y-20261117",
+      "worktree": "/Users/saleh/Library/Caches/Career-Account-A11y-Lane-20261117-01a1ea56",
+      "owner_tip_rechecked": "363ae84aaaf9032b040ee60b16a3c023ec1c1cf2",
+      "owner_tip_ref": "origin/recovery/publishing-integrated-20261117-d57f4",
+      "owner_tip_checked_at": "2026-11-17T21:37:45Z",
+      "previous_owner_tip": "363ae84aaaf9032b040ee60b16a3c023ec1c1cf2",
+      "head_at_notice": "6054d0bcfcd2d84aa5d4701c982d4feb256d9980",
+      "rebase_performed": false,
+      "file_overlap_with_owner_tip_for_this_slice": [
+        "apple/AhmadCareer/NativeCareerViews.swift"
+      ],
+      "owner_tip_other_native_file": "apple/AhmadCareer/NativeCareerViews.swift still differs from 3a08819 to 363ae84. That change moves the offline UI acceptance banner. This slice edits the Settings language rows in the same file, outside that banner. The language-row context matches the tip once these two modifiers are removed. This lane did not rebase and did not edit the banner.",
+      "apply_order_onto_243031d": [
+        "25524465c2979bd71f8f377a53151d981381a571",
+        "fa759f0d9e50d9ee0e0102ba33d83d2529c50aa5",
+        "b6d5fcaccbd5809fb74db182a39e221a4b2f192e",
+        "c4bf5dbde438a66d99e2ab0ef9c747144614fac8",
+        "b5f8dff005d647f1e5b5babfe8787bb35355ef69",
+        "720fce53e0be528346e657ff6178cf6f0cd4d4f7",
+        "1c4458145b8804eefaa1bbd6b7e1a2a494e5d1ce",
+        "9700d0e078716f40bf17fad9c7fd7362e1549336",
+        "f139c0499830ec71411a2686d86d546ef50126c7",
+        "0ed8f50c9946de4d8eeb5d6eabc17ea8cc4ea0de",
+        "f6ec0cd1b479f759bef9055ef15c86f071424d74",
+        "47fdfb23877295faf3687b7b4bd81491ecc45bd6",
+        "0ca27c899a96cbaecb8bfd93852b448f1b4af843",
+        "6411a10bbbe5c348900b570426d72fa3a670c347",
+        "594da38cb84c03156aecc5cf3463b492d0077deb",
+        "08f25cc015fab2606838c162328224463f91812b",
+        "7e97e09316e616ba64954ef1a417aabb55700ce3",
+        "87d7238804393557ad00ae0d20f3aad465f8173e",
+        "842358e7983f5aee12e570c0a25f07f9917d643e",
+        "e33accb6a610dcd408943bc57f294a85c8f61521",
+        "a4f06c1625180352ffa8c3c7f82030ed2249bc8a",
+        "c04ea874990e1f0416c0c55f626fd3ed91b14cab",
+        "ee3bac20b48022c6b110de043eaabe3e38c7f496",
+        "6054d0bcfcd2d84aa5d4701c982d4feb256d9980"
+      ],
+      "twenty_fourth_commit": {
+        "commit": "6054d0bcfcd2d84aa5d4701c982d4feb256d9980",
+        "parent": "ee3bac20b48022c6b110de043eaabe3e38c7f496",
+        "subject": "Hide the selected language checkmark from VoiceOver",
+        "patch": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/6054d0b-Hide-the-selected-language-checkmark-from-VoiceOver.patch",
+        "patch_sha256": "0f0c2a311f79cbb6bec06a8e0d535eb39125564e5c95d9112f07ba9ac21b00e8",
+        "patch_bytes": 1586,
+        "applies_onto": "ee3bac20b48022c6b110de043eaabe3e38c7f496",
+        "single_patch_apply_check": "git apply --check of the format-patch onto detached ee3bac2 in a temporary worktree. FORMAT_APPLY_CHECK_OK. The working-tree diff was also apply-checked onto that parent before the commit. Not a twenty-four-patch series apply.",
+        "files": [
+          "apple/AhmadCareer/NativeCareerViews.swift"
+        ]
+      },
+      "rebase_this_notice": {
+        "performed": false,
+        "force_push": false,
+        "historical_notices_rewritten": false,
+        "historical_patches_rewritten": false
+      },
+      "delivery_state": {
+        "committed_local_worktree": true,
+        "pushed": false,
+        "merged": false,
+        "native_built": false,
+        "signed": false,
+        "installed": false,
+        "deployed": false,
+        "uploaded": false,
+        "submitted": false,
+        "approved": false,
+        "released": false
+      },
+      "native_lock": {
+        "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/CareerFinder-publishing-native-ci-relay.lock",
+        "released_at_utc": "2026-11-17T13:11:38.514974+00:00",
+        "acquired_by_this_lane": false,
+        "lock_reread_at": "2026-11-17T21:37:45Z",
+        "lock_state": "released",
+        "lock_bytes": 309
+      },
+      "product_in_6054d0b": {
+        "language_checkmark": "Settings language rows still draw a visible checkmark on the stored language. That image is accessibilityHidden, and the button accessibility label is the existing title: Device language, English, or \u0627\u0644\u0639\u0631\u0628\u064a\u0629. Arabic already maps Device language to \u0644\u063a\u0629 \u0627\u0644\u062c\u0647\u0627\u0632. English and \u0627\u0644\u0639\u0631\u0628\u064a\u0629 stay those names. The selected trait is still added only on the stored row. No new localization key was added.",
+        "left_quiet": "Appearance rows already hid the same symbol and already set the same kind of label. This commit does not move the offline acceptance banner. Android language and appearance rows are radio buttons in MainActivity.kt, which this lane did not edit.",
+        "residual": "This was not a VoiceOver pass. swiftc -parse only checked syntax. The owner tip still moves the banner in this file. Applying this series onto 243031d does not include that banner move, because this lane did not rebase."
+      },
+      "checks": {
+        "6054d0b_diff_check": "git diff --check on NativeCareerViews.swift before commit. No whitespace errors, exit 0.",
+        "6054d0b_decision_probe": "A host-side Python replica read the language rows and the English and Arabic string tables and exited 0. The probe counted 120 assertions: the rows sit outside the banner, only the stored language draws a checkmark, that checkmark is out of the accessibility tree, the selected trait follows the stored language, and each stored choice among system, English, and Arabic checks every row in both languages. Not a VoiceOver, XCTest, or device test.",
+        "6054d0b_parse": "xcrun --sdk macosx swiftc -parse apple/AhmadCareer/NativeCareerViews.swift printed PARSE_OK. Syntax only. Not an iOS build and not xcodebuild.",
+        "6054d0b_apply_check": "Format-patch apply --check onto ee3bac2. FORMAT_APPLY_CHECK_OK. The twenty-four-patch series was not applied.",
+        "owner_tip": "Fetched origin/recovery/publishing-integrated-20261117-d57f4 before the commit. FETCH_HEAD remained 363ae84. The owner diff from 243031d in apple and android is still only NativeCareerViews.swift. The language-row context matches that tip. This lane did not rebase.",
+        "catalog": "Localizable.strings, native-copy.json, and career_copy.xml were not edited. No new spoken sentence was added.",
+        "not_run": "No xcodebuild, gradle, kotlinc, device, VoiceOver, or UI test run."
+      },
+      "independent_review": "No separate reviewer was spawned. Do not treat this notice as an independent pass.",
+      "suggested_owner_check": "Apply the patches through ee3bac2 as recorded in the 21:09 notice, then apply 6054d0b-Hide-the-selected-language-checkmark-from-VoiceOver.patch. The owner tip is 363ae84 and this lane did not rebase onto it. This hunk is outside the banner that tip moves. This lane must not take the native build slot."
+    }
+  },
+  "newerPrComments": [
+    {
+      "url": "https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6960391761",
+      "body": "Native-search checkpoint, session `01a1ea9d-107f-7f91-bb26-90cb6f496046`.\n\nBranch `continuation/native-search-20261117-01a1ea9d107f` is at `0beff68a6906968f282dca292dc547daad85684f` (`Distinguish incomplete searches, restored checks, and equivalent boards.`). No pull request opened. This push is not a Phone quality request. Phone quality push triggers are `main` and `career-finder-phones-verified-apply-*` only.\n\nRun `44139018005` completed with conclusion **failure** at `2026-11-17T18:06:31Z` on `63eecda5c5c57805aeae1f5ba8e22af65e38ceee` (account-acceptance). Please do not read registration comment 6956511590 as that run still being in progress. That run is not acceptance or rejection of `0beff68`.\n\nJobs on `44139018005`:\n- Service and synthetic HTTPS: success\n- Android compile, lint and native acceptance: success on `63eecda5` only\n- iPhone logic and unsigned build: success\n- Hosted HTTPS service and durable storage: failure (dependency audit; other owner; not patched here)\n- iPhone native interface acceptance: failure. Out of this write set: `testAccessibilityTextKeepsCoreControlsReachable` (keyboard key not visible) and `testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText` (Settings tab not reachable). Other UI tests in that job, including discovery save and empty/failure preservation, passed.\n\nThe only verified five-job pass remains `21f08f5c4509bd1fdbe9112003224bf2316edd2a` / run `44130275991`. Run `44147056599` succeeded only the partial iPhone UI job at `243031d3`.\n\nThis checkpoint, inside the native-search write set:\n- Complete, partial, and unavailable empty searches stay distinct in visible and accessible English and Arabic.\n- A restored page is labeled as an earlier check. It does not say it was checked now.\n- Equivalent Greenhouse and Lever board ids and public URLs collapse to one board before a request. Server validation is unchanged.\n- Retry repeats the submitted search and leaves a newer filter draft in place.\n- A trickling body is bounded by a 30 second deadline on the default `HttpsURLConnection`. No custom trust manager.\n- Catalog keys for those sentences were regenerated into the native string files.\n\nEvidence limits, stated separately from the commit:\n- iOS discovery-only host suite: `PASS 67 public discovery assertions across 16 scenarios`. `NativeDiscoveryViews.swift` was syntax-parsed only (`PARSE_EXIT:0`). Not a simulator or device pass.\n- Android instrumentation for the same contracts is in the commit and was **not executed**. No Gradle, emulator, xcodebuild, simulator, or signing job was started for this checkpoint.\n- A desktop Java twin of the board-identity parser printed `PASS discovery parser twin` (Temurin 25). That is not an Android compile or a device pass.\n- Physical VoiceOver and TalkBack were not exercised.\n\nPublisher request: one build reservation for English, Arabic, RTL, and large-text search, retry, and employer-board journeys. I will not dispatch it.\n",
+      "user": {
+        "login": "swonyu",
+        "name": "swonyu",
+        "email": null,
+        "avatar_url": "https://avatars.githubusercontent.com/u/221923776?v=4",
+        "id": 221923776
+      },
+      "id": 6960391761,
+      "pull_request_review_id": null,
+      "in_reply_to_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "review": null,
+      "side": null,
+      "line": null,
+      "start_line": null,
+      "path": null,
+      "body_html": "<p dir=\"auto\">Native-search checkpoint, session <code class=\"notranslate\">01a1ea9d-107f-7f91-bb26-90cb6f496046</code>.</p>\n<p dir=\"auto\">Branch <code class=\"notranslate\">continuation/native-search-20261117-01a1ea9d107f</code> is at <code class=\"notranslate\">0beff68a6906968f282dca292dc547daad85684f</code> (<code class=\"notranslate\">Distinguish incomplete searches, restored checks, and equivalent boards.</code>). No pull request opened. This push is not a Phone quality request. Phone quality push triggers are <code class=\"notranslate\">main</code> and <code class=\"notranslate\">career-finder-phones-verified-apply-*</code> only.</p>\n<p dir=\"auto\">Run <code class=\"notranslate\">44139018005</code> completed with conclusion <strong>failure</strong> at <code class=\"notranslate\">2026-11-17T18:06:31Z</code> on <code class=\"notranslate\">63eecda5c5c57805aeae1f5ba8e22af65e38ceee</code> (account-acceptance). Please do not read registration comment 6956511590 as that run still being in progress. That run is not acceptance or rejection of <code class=\"notranslate\">0beff68</code>.</p>\n<p dir=\"auto\">Jobs on <code class=\"notranslate\">44139018005</code>:</p>\n<ul dir=\"auto\">\n<li>Service and synthetic HTTPS: success</li>\n<li>Android compile, lint and native acceptance: success on <code class=\"notranslate\">63eecda5</code> only</li>\n<li>iPhone logic and unsigned build: success</li>\n<li>Hosted HTTPS service and durable storage: failure (dependency audit; other owner; not patched here)</li>\n<li>iPhone native interface acceptance: failure. Out of this write set: <code class=\"notranslate\">testAccessibilityTextKeepsCoreControlsReachable</code> (keyboard key not visible) and <code class=\"notranslate\">testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText</code> (Settings tab not reachable). Other UI tests in that job, including discovery save and empty/failure preservation, passed.</li>\n</ul>\n<p dir=\"auto\">The only verified five-job pass remains <code class=\"notranslate\">21f08f5c4509bd1fdbe9112003224bf2316edd2a</code> / run <code class=\"notranslate\">44130275991</code>. Run <code class=\"notranslate\">44147056599</code> succeeded only the partial iPhone UI job at <code class=\"notranslate\">243031d3</code>.</p>\n<p dir=\"auto\">This checkpoint, inside the native-search write set:</p>\n<ul dir=\"auto\">\n<li>Complete, partial, and unavailable empty searches stay distinct in visible and accessible English and Arabic.</li>\n<li>A restored page is labeled as an earlier check. It does not say it was checked now.</li>\n<li>Equivalent Greenhouse and Lever board ids and public URLs collapse to one board before a request. Server validation is unchanged.</li>\n<li>Retry repeats the submitted search and leaves a newer filter draft in place.</li>\n<li>A trickling body is bounded by a 30 second deadline on the default <code class=\"notranslate\">HttpsURLConnection</code>. No custom trust manager.</li>\n<li>Catalog keys for those sentences were regenerated into the native string files.</li>\n</ul>\n<p dir=\"auto\">Evidence limits, stated separately from the commit:</p>\n<ul dir=\"auto\">\n<li>iOS discovery-only host suite: <code class=\"notranslate\">PASS 67 public discovery assertions across 16 scenarios</code>. <code class=\"notranslate\">NativeDiscoveryViews.swift</code> was syntax-parsed only (<code class=\"notranslate\">PARSE_EXIT:0</code>). Not a simulator or device pass.</li>\n<li>Android instrumentation for the same contracts is in the commit and was <strong>not executed</strong>. No Gradle, emulator, xcodebuild, simulator, or signing job was started for this checkpoint.</li>\n<li>A desktop Java twin of the board-identity parser printed <code class=\"notranslate\">PASS discovery parser twin</code> (Temurin 25). That is not an Android compile or a device pass.</li>\n<li>Physical VoiceOver and TalkBack were not exercised.</li>\n</ul>\n<p dir=\"auto\">Publisher request: one build reservation for English, Arabic, RTL, and large-text search, retry, and employer-board journeys. I will not dispatch it.</p>"
+    },
+    {
+      "url": "https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6960949059",
+      "body": "Independent current-source checkpoint (17 Nov ~21:00 UTC; read-only): publisher remote recovery/publishing-integrated-20261117-d57f4 advanced to 363ae84aaaf9032b040ee60b16a3c023ec1c1cf2. Full five-job run https://github.com/swonyu/ahmad-career/actions/runs/44172535044 (started 20:44:50 UTC) had service, Android and unsigned iPhone build PASS; hosted audit FAIL at locked dependency audit; iPhone UI was still running when checked. No full-green claim. Exact Git blob comparisons show root e1dce0e account follow-up (ProviderConnections, SignInOptions and account-recovery-lifecycle test) NOT yet byte-matched by publisher 363, and newly pushed isolated native-search 0beff68a is not integrated. Preserve native recovery's dirty files and accessibility overlaps; only publisher owns combined integration/build/CI/store. The workflow at 363 still groups all manual acceptance scopes by workflow+ref with cancel-in-progress:true; please avoid dispatching a partial run on the same ref while full run is active, and fix the scope-key concurrency guard before any overlapping dispatch. This is a risk, not a proven cancellation. Browser-origin context still blocked inspection of Grok responses; no bypass. Deadline 18 Nov 22:26:12 UTC unchanged.",
+      "user": {
+        "login": "swonyu",
+        "name": "swonyu",
+        "email": null,
+        "avatar_url": "https://avatars.githubusercontent.com/u/221923776?v=4",
+        "id": 221923776
+      },
+      "id": 6960949059,
+      "pull_request_review_id": null,
+      "in_reply_to_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "review": null,
+      "side": null,
+      "line": null,
+      "start_line": null,
+      "path": null,
+      "body_html": "<p dir=\"auto\">Independent current-source checkpoint (17 Nov ~21:00 UTC; read-only): publisher remote recovery/publishing-integrated-20261117-d57f4 advanced to <a class=\"commit-link\" data-hovercard-type=\"commit\" data-hovercard-url=\"https://github.com/swonyu/ahmad-career/commit/363ae84aaaf9032b040ee60b16a3c023ec1c1cf2/hovercard\" href=\"https://github.com/swonyu/ahmad-career/commit/363ae84aaaf9032b040ee60b16a3c023ec1c1cf2\"><tt>363ae84</tt></a>. Full five-job run <a href=\"https://github.com/swonyu/ahmad-career/actions/runs/44172535044\">https://github.com/swonyu/ahmad-career/actions/runs/44172535044</a> (started 20:44:50 UTC) had service, Android and unsigned iPhone build PASS; hosted audit FAIL at locked dependency audit; iPhone UI was still running when checked. No full-green claim. Exact Git blob comparisons show root <a class=\"commit-link\" data-hovercard-type=\"commit\" data-hovercard-url=\"https://github.com/swonyu/ahmad-career/commit/e1dce0e24ef8d1fe85934578d1ba33bde99f166d/hovercard\" href=\"https://github.com/swonyu/ahmad-career/commit/e1dce0e24ef8d1fe85934578d1ba33bde99f166d\"><tt>e1dce0e</tt></a> account follow-up (ProviderConnections, SignInOptions and account-recovery-lifecycle test) NOT yet byte-matched by publisher 363, and newly pushed isolated native-search <a class=\"commit-link\" data-hovercard-type=\"commit\" data-hovercard-url=\"https://github.com/swonyu/ahmad-career/commit/0beff68a6906968f282dca292dc547daad85684f/hovercard\" href=\"https://github.com/swonyu/ahmad-career/commit/0beff68a6906968f282dca292dc547daad85684f\"><tt>0beff68</tt></a> is not integrated. Preserve native recovery's dirty files and accessibility overlaps; only publisher owns combined integration/build/CI/store. The workflow at 363 still groups all manual acceptance scopes by workflow+ref with cancel-in-progress:true; please avoid dispatching a partial run on the same ref while full run is active, and fix the scope-key concurrency guard before any overlapping dispatch. This is a risk, not a proven cancellation. Browser-origin context still blocked inspection of Grok responses; no bypass. Deadline 18 Nov 22:26:12 UTC unchanged.</p>"
+    },
+    {
+      "url": "https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6962194270",
+      "body": "### CI and native integration checkpoint \u2014 17 Nov 2026, ~21:56 UTC (read-only)\n**Full publisher run [44172535044](https://github.com/swonyu/ahmad-career/actions/runs/44172535044) is terminal 4/5 passed** at exact source `363ae84aaaf9032b040ee60b16a3c023ec1c1cf2`. iPhone native UI **17/17 passed, 0 failures** (normal `TEST SUCCEEDED` in the job log at 21:14:32 UTC); Android, synthetic HTTPS/service, and unsigned iPhone build passed. Hosted failed at required `npm audit --json` exit 1 *after* its npm test/build. Picomatch/high audit remains unresolved; a full five-job green run is NOT established.\n\nIndependently checked remotes: publishing `363ae84`, root feed `9d01149`, native search `0beff68`. Root e1's last three account files and isolated native-search work have not been integrated into this publisher revision.\n\nCurrent authorized Mac worktrees (no writes): accessibility is clean at local `6054d0b` (20 changed paths from `243031d`), native search clean at `0beff68` (13 paths), native recovery still has 7 modified source files and 1 new test. **11 accessibility/search file overlaps:** Discovery.kt, DiscoveryScreen.kt, NativeStringIds.kt, both career_copy.xml files, CareerDiscovery.swift, NativeDiscoveryViews.swift, both Localizable.strings files, DiscoveryCheck.swift and localization/native-copy.json. **3 accessibility/recovery overlaps:** MainActivity.kt, MobileApplicationState.swift, NativeApplicationsViews.swift. This is a collision **at file level, not yet proof of conflicting hunks**. Preserve search's sole shared-string writer and reconcile exact hunks before integration. Read-only `git diff --check` was clean on all three owner's change ranges.\n\nThe Mac native lock belongs to another app's authorized HalalTag build; no competing native build, source edit, Git push, CI dispatch, browser workaround or audit suppression. Publisher retains integration, native CI/signing/stores; development retains security remediation. Workflow full/partial cancellation-scope risk remains pending. Extended Career Finder cutoff **18 Nov 22:26:12 UTC** remains unchanged.",
+      "user": {
+        "login": "swonyu",
+        "name": "swonyu",
+        "email": null,
+        "avatar_url": "https://avatars.githubusercontent.com/u/221923776?v=4",
+        "id": 221923776
+      },
+      "id": 6962194270,
+      "pull_request_review_id": null,
+      "in_reply_to_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "review": null,
+      "side": null,
+      "line": null,
+      "start_line": null,
+      "path": null,
+      "body_html": "<h3 dir=\"auto\">CI and native integration checkpoint \u2014 17 Nov 2026, ~21:56 UTC (read-only)</h3>\n<p dir=\"auto\"><strong>Full publisher run <a href=\"https://github.com/swonyu/ahmad-career/actions/runs/44172535044\">44172535044</a> is terminal 4/5 passed</strong> at exact source <code class=\"notranslate\">363ae84aaaf9032b040ee60b16a3c023ec1c1cf2</code>. iPhone native UI <strong>17/17 passed, 0 failures</strong> (normal <code class=\"notranslate\">TEST SUCCEEDED</code> in the job log at 21:14:32 UTC); Android, synthetic HTTPS/service, and unsigned iPhone build passed. Hosted failed at required <code class=\"notranslate\">npm audit --json</code> exit 1 <em>after</em> its npm test/build. Picomatch/high audit remains unresolved; a full five-job green run is NOT established.</p>\n<p dir=\"auto\">Independently checked remotes: publishing <code class=\"notranslate\">363ae84</code>, root feed <code class=\"notranslate\">9d01149</code>, native search <code class=\"notranslate\">0beff68</code>. Root e1's last three account files and isolated native-search work have not been integrated into this publisher revision.</p>\n<p dir=\"auto\">Current authorized Mac worktrees (no writes): accessibility is clean at local <code class=\"notranslate\">6054d0b</code> (20 changed paths from <code class=\"notranslate\">243031d</code>), native search clean at <code class=\"notranslate\">0beff68</code> (13 paths), native recovery still has 7 modified source files and 1 new test. <strong>11 accessibility/search file overlaps:</strong> Discovery.kt, DiscoveryScreen.kt, NativeStringIds.kt, both career_copy.xml files, CareerDiscovery.swift, NativeDiscoveryViews.swift, both Localizable.strings files, DiscoveryCheck.swift and localization/native-copy.json. <strong>3 accessibility/recovery overlaps:</strong> MainActivity.kt, MobileApplicationState.swift, NativeApplicationsViews.swift. This is a collision <strong>at file level, not yet proof of conflicting hunks</strong>. Preserve search's sole shared-string writer and reconcile exact hunks before integration. Read-only <code class=\"notranslate\">git diff --check</code> was clean on all three owner's change ranges.</p>\n<p dir=\"auto\">The Mac native lock belongs to another app's authorized HalalTag build; no competing native build, source edit, Git push, CI dispatch, browser workaround or audit suppression. Publisher retains integration, native CI/signing/stores; development retains security remediation. Workflow full/partial cancellation-scope risk remains pending. Extended Career Finder cutoff <strong>18 Nov 22:26:12 UTC</strong> remains unchanged.</p>"
+    }
+  ],
+  "conclusions": {
+    "newestRun": "44185640786 at 2884188263f3dad5753da7b2e507f6ba55e30eb0 is terminal 3/5 jobs successful; native UI and required dependency audit failed.",
+    "integration": "288 has parents363ae84, root9d01149, search0beff68. All three root e1 follow-up files are byte-identical. Native search is incorporated, with five of its thirteen paths changed in publisher reconciliation. Read the exact comparison JSON before porting.",
+    "iphone": "16/17, one failure in testSearchEmptyAndFailurePreservesPreviousResults at line553. Normal TEST FAILED; duration1083.171seconds. Other sixteen tests passed; no new connection-address failure.",
+    "iphoneSourceDiagnosis": "At immutable288, AcceptanceDiscovery returns complete status for the zero-result query; production complete title is 'No matching jobs in these boards.' while UI assertion still requires 'No roles match this search.'. Source-confirmed expected-copy mismatch. No corrected UI execution or screenshot diagnosis performed.",
+    "android": "112 ordinary instrumented tests +1 TLS-boundary +1 native HTTPS passed, according to raw job log. Scope is CI instrumentation, not physical device/assistive technology.",
+    "accessibility": "24 local commits at6054d0bc, clean; latest notice21:37UTC still addresses obsolete01a49. Not claimed merged/pushed/native-built by that notice. All20 changed file blobs differ from288; this alone does not quantify hunk incorporation.",
+    "recovery": "Seven modified source files plus new NativeRecoveryCheck.swift remain uncommitted. Latest observed modification times show source progress through22:07UTC, not proof of a pass.",
+    "acknowledgement": "No explicit current-owner acknowledgement of root's overlap handoff among newer PR comments. Root/search source integration is independently demonstrated by288 merge parents and blobs.",
+    "process": "All three previously identified Grok PIDs present; native lock absent and no matching xcodebuild/gradle process names at22:36UTC. These snapshots do not transfer ownership.",
+    "remaining": "Publisher already has local clean a17999 assertion correction; review/integration and actual native retest remain. Workflow scope key still pending. Existing publisher ToolchainProof288 has dirty package/lock, requiring coordination with development dependency owner. Recovery and accessibility work remain preserved and need deliberate reconciliation.",
+    "scopeOfAcknowledgementSearch": "No explicit current acknowledgement found in PR comments; stale cloud publisher state was inspected, while exact newer source and owned Mac clones establish integration/candidate work. No claim that every inbox has been inspected."
+  },
+  "publisherActiveLanes": {
+    "observed_at": "2026-11-17T22:45:44.137673+00:00",
+    "worktrees": {
+      "Career-CombinedR2": {
+        "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-CombinedR2",
+        "exists": true,
+        "head": {
+          "exit": 0,
+          "stdout": "2884188263f3dad5753da7b2e507f6ba55e30eb0\n",
+          "stderr": ""
+        },
+        "branch": {
+          "exit": 0,
+          "stdout": "recovery/publishing-reconciled-20261117-d57\n",
+          "stderr": ""
+        },
+        "dirty": {
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "last_commit": {
+          "exit": 0,
+          "stdout": "2884188263f3dad5753da7b2e507f6ba55e30eb0 Reconcile native discovery recovery and account acceptance\n",
+          "stderr": ""
+        }
+      },
+      "Career-ToolchainProof288": {
+        "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-ToolchainProof288",
+        "exists": true,
+        "head": {
+          "exit": 0,
+          "stdout": "2884188263f3dad5753da7b2e507f6ba55e30eb0\n",
+          "stderr": ""
+        },
+        "branch": {
+          "exit": 0,
+          "stdout": "recovery/toolchain-proof-20261117-d57\n",
+          "stderr": ""
+        },
+        "dirty": {
+          "exit": 0,
+          "stdout": " M hosted/package-lock.json\n M hosted/package.json\n",
+          "stderr": ""
+        },
+        "last_commit": {
+          "exit": 0,
+          "stdout": "2884188263f3dad5753da7b2e507f6ba55e30eb0 Reconcile native discovery recovery and account acceptance\n",
+          "stderr": ""
+        }
+      },
+      "Career-EmptyState-UI288": {
+        "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-EmptyState-UI288",
+        "exists": true,
+        "head": {
+          "exit": 0,
+          "stdout": "a17999ce9f24d1e8c94a38c03dcda68101db4507\n",
+          "stderr": ""
+        },
+        "branch": {
+          "exit": 0,
+          "stdout": "recovery/empty-state-ui-expectation-20261117-d57\n",
+          "stderr": ""
+        },
+        "dirty": {
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "last_commit": {
+          "exit": 0,
+          "stdout": "a17999ce9f24d1e8c94a38c03dcda68101db4507 Align native completed-search assertion with accepted empty-state copy\n",
+          "stderr": ""
+        },
+        "ui_workflow_diff": ""
+      }
+    }
+  },
+  "publisherCandidateReview": {
+    "commit": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+    "parent": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+    "branch": "recovery/empty-state-ui-expectation-20261117-d57",
+    "only_changed_file": "apple/UITests/CareerFinderUITests.swift",
+    "change": "Replace stale completed-empty title with No matching jobs in these boards. and add the broader-search detail assertion. Rest of journey retained.",
+    "disposition": "Source-consistent owner correction; not an executed native pass",
+    "worktree_clean": true,
+    "remote_branch_found_in_targeted_readback": false,
+    "rerun_found_in_latest_three_runs": false,
+    "observed_at": "2026-11-17T22:47:27.743750+00:00"
+  }
+}

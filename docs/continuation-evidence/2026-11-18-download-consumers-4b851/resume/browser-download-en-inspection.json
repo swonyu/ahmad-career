@@ -1,0 +1,33 @@
+[
+  {
+    "path": "/Users/saleh/Downloads/Career-Finder-application-records.csv",
+    "bytes": 479,
+    "modifiedUTC": "2026-11-17T23:20:43.124239+00:00",
+    "sha256": "58f92c00320a0215115e143c227334aa73a2c2ee5916bcc96f2896713dd31e2e",
+    "bom": "efbbbf",
+    "parsed": [
+      [
+        "Job title",
+        "Employer",
+        "Job link",
+        "Stage (self-entered)",
+        "Marked applied (self-entered)",
+        "Applied date (self-entered)",
+        "Follow-up date (self-entered)",
+        "Private note",
+        "Last edited (not application time)"
+      ],
+      [
+        "مُهندس, \"أول\" 🧭",
+        "Synthetic employer / جهة تجريبية",
+        "https://example.org/career-finder-ui-export-20261117",
+        "Saved",
+        "No",
+        "",
+        "",
+        "Text: =1+1\nSYNTHETIC_PRIVATE_NOTE_4b851 — ملاحظة خاصة, \"اختبار\"\n000123",
+        "2026-11-17T23:07:30.305Z"
+      ]
+    ]
+  }
+]

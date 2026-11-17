@@ -1,0 +1,77 @@
+[
+  {
+    "path": "README.md",
+    "bytes": 3710,
+    "sha256": "f60a4d348c377a897146e13881112423c61554af9a18334966842abd70fa1aef"
+  },
+  {
+    "path": "inputs/actual-ui-ar.csv",
+    "bytes": 670,
+    "sha256": "f920db19636bbee85ceb9dfffd4a0045bf8946364f95f8a3a10605786c6542d8"
+  },
+  {
+    "path": "inputs/actual-ui-en.csv",
+    "bytes": 489,
+    "sha256": "6337ab97ad63ddf64bcf6e4cf55a5b176ef1abe99890426f638ff3c17ff44e64"
+  },
+  {
+    "path": "output/actual-ui-ar.fods",
+    "bytes": 27061,
+    "sha256": "a5e4d9ec3eb95d8ef22c9e0e1be389244084a78ed18b92e50ed2d73ab408523c"
+  },
+  {
+    "path": "output/actual-ui-en.fods",
+    "bytes": 26879,
+    "sha256": "3a17e32f2d270cd710ed308078251587056c0c386a1b4a4e7898982fa56d93d0"
+  },
+  {
+    "path": "receipts/browser-fixture-build-metadata.json",
+    "bytes": 5708,
+    "sha256": "e7afccc8ad33343dbe4863395eebc4e2bc32135a37b01269431bc6effc05493d"
+  },
+  {
+    "path": "receipts/consumer-version.txt",
+    "bytes": 63,
+    "sha256": "d76acfafe5464152cf52440ece8d46ea64e12897a3c68d191f859d626531abdb"
+  },
+  {
+    "path": "receipts/import.stderr.log",
+    "bytes": 446,
+    "sha256": "9835899306d9b912cefd1791953ca5daff8467a8b99678252f4ebd2e47da030d"
+  },
+  {
+    "path": "receipts/import.stdout.log",
+    "bytes": 800,
+    "sha256": "2c10fe18d3c628e1e42461cf3ebe0bc3ffec5c655ea5d28fca3d4643c3d5a7f4"
+  },
+  {
+    "path": "receipts/inputs.json",
+    "bytes": 3386,
+    "sha256": "8e849d4fd92a6110139ce49f29df5b2be42bf7870395e68488141e77bbebf898"
+  },
+  {
+    "path": "receipts/invocation.json",
+    "bytes": 2460,
+    "sha256": "5ae8f05c86468a8e13f1787a26a72e12e493ead77efc82392067a896c1816209"
+  },
+  {
+    "path": "receipts/verification.stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "receipts/verification.stdout.log",
+    "bytes": 1064,
+    "sha256": "fb47bc572a11d6a94321583c32201a56547b64ae4745eb52e5ccd244a8c2dda7"
+  },
+  {
+    "path": "ui-download-consumer-receipt.json",
+    "bytes": 9458,
+    "sha256": "c7d2e38bea02060d821984bf0e33d2e829ce1bf32e7090698291407516353696"
+  },
+  {
+    "path": "verify-ui-download-consumer.py",
+    "bytes": 5364,
+    "sha256": "ee9ee74e66230b04337bae55bb7ddcca63ba4feda5c861cbb237c685f1d06d91"
+  }
+]

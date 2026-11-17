@@ -1,0 +1,34 @@
+{
+  "created_utc": "2026-11-17T22:43:02.646014+00:00",
+  "owner": "/root/export_consumer_review",
+  "repo": "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d",
+  "head": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+  "source": [
+    {
+      "path": "hosted/app/phone/record-tools.ts",
+      "bytes": 4384,
+      "sha256": "910dae464cd8504ed225fe5f68fa6b0750c7b7a9c7b18c6454ff4504a772e9a9"
+    },
+    {
+      "path": "hosted/app/phone/model.ts",
+      "bytes": 22708,
+      "sha256": "955d5afcede6b8f7eb901394f9ae3e00d1bbffa57bf1e457c5436f23541577bf"
+    },
+    {
+      "path": "hosted/app/i18n/core.ts",
+      "bytes": 6187,
+      "sha256": "47485ac0ce826dd1dde553d645869f2e272e59639680bd507a9978beb128c030"
+    },
+    {
+      "path": "hosted/app/i18n/messages.ar.json",
+      "bytes": 230593,
+      "sha256": "9c7c0c2739ef549af2b11b0cc76f3d3b5d5be0e7e2513d26eedbfb1b88c4cee8"
+    },
+    {
+      "path": "hosted/tests/phone-record-tools.mjs",
+      "bytes": 24488,
+      "sha256": "29c7c1e987703b7b50360fafdc8f733aa8e34441a150bcd0fde8ecb3dcffe522"
+    }
+  ],
+  "scope": "Actual production export generation plus isolated installed consumer checks; no product/native/package changes, calendar/account/UI actions or browser acceptance"
+}

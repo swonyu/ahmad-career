@@ -1,0 +1,9 @@
+{
+  "args": [
+    "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+    "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/search-browser-fixture/build.mjs"
+  ],
+  "exit": 0,
+  "stdout": "{\"output\":\"/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/search-browser-fixture/public\",\"node\":\"v24.22.3\",\"phoneAppSHA256\":\"cea98d8442f0dcb43cee2b1e3d5d5a2814a89130b7c18793ee50f4a8366d5368\",\"sourceFiles\":33,\"dependencies\":{\"react\":\"19.3.1\",\"react-dom\":\"19.3.1\",\"esbuild\":\"0.28.2\",\"postcss\":\"8.5.23\",\"@tailwindcss/postcss\":\"4.2.1\",\"zod\":\"4.6.7\"},\"listenerStarted\":false}\n",
+  "stderr": ""
+}

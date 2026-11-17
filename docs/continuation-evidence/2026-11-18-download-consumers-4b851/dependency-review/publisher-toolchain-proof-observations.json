@@ -1,0 +1,2631 @@
+{
+  "scope": "Read-only review of existing publisher-owned Career-ToolchainProof288; no install, tests, builds, CI, source/package/lock edits, process stops, external posts or Browser actions.",
+  "observations": [
+    {
+      "observed_at": "2026-11-17T22:51:02.585887+00:00",
+      "root": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-ToolchainProof288"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdout": "2884188263f3dad5753da7b2e507f6ba55e30eb0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "branch",
+        "--show-current"
+      ],
+      "exit": 0,
+      "stdout": "recovery/toolchain-proof-20261117-d57\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "exit": 0,
+      "stdout": " M hosted/package-lock.json\n M hosted/package.json\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--numstat"
+      ],
+      "exit": 0,
+      "stdout": "4078\t7042\thosted/package-lock.json\n7\t8\thosted/package.json\n",
+      "stderr": ""
+    },
+    {
+      "file": "hosted/package.json",
+      "sha256": "3a9d133111d0a01b699f8040ee4764d4fdd644c106b65fbb69202634cd24182d",
+      "base_sha256": "7e02d347153988f4e9180e6348ab4fa405ba98cae1cc85abd4c1ea7e5da85e7a",
+      "bytes": 3261,
+      "changed_fields": {
+        "dependencies": {
+          "before": {
+            "@base-ui/react": "^1.7.0",
+            "@hookform/resolvers": "^5.7.1",
+            "@shadcn/react": "^0.3.0",
+            "class-variance-authority": "0.7.1",
+            "clsx": "2.1.1",
+            "cmdk": "^1.1.1",
+            "date-fns": "^4.4.0",
+            "drizzle-orm": "0.45.2",
+            "embla-carousel-react": "^8.6.0",
+            "input-otp": "^1.4.2",
+            "jose": "6.2.17",
+            "lucide-react": "^1.31.0",
+            "next": "16.4.6",
+            "next-themes": "^0.4.6",
+            "pdf-lib": "1.17.1",
+            "radix-ui": "^1.6.7",
+            "react": "19.3.1",
+            "react-day-picker": "^10.0.1",
+            "react-dom": "19.3.1",
+            "react-hook-form": "^7.85.0",
+            "react-resizable-panels": "^4.12.2",
+            "recharts": "^3.8.0",
+            "sonner": "^2.0.8",
+            "tailwind-merge": "3.6.0",
+            "vaul": "^1.1.2",
+            "zod": "4.6.7"
+          },
+          "after": {
+            "@base-ui/react": "^1.7.0",
+            "@hookform/resolvers": "^5.7.1",
+            "@shadcn/react": "^0.3.0",
+            "class-variance-authority": "0.7.1",
+            "clsx": "2.1.1",
+            "cmdk": "^1.1.1",
+            "date-fns": "^4.4.0",
+            "drizzle-orm": "0.45.2",
+            "embla-carousel-react": "^8.6.0",
+            "input-otp": "^1.4.2",
+            "jose": "6.2.17",
+            "lucide-react": "^1.31.0",
+            "next-themes": "^0.4.6",
+            "pdf-lib": "1.17.1",
+            "radix-ui": "^1.6.7",
+            "react": "19.3.1",
+            "react-day-picker": "^10.0.1",
+            "react-dom": "19.3.1",
+            "react-hook-form": "^7.85.0",
+            "react-resizable-panels": "^4.12.2",
+            "recharts": "^3.8.0",
+            "sonner": "^2.0.8",
+            "tailwind-merge": "3.6.0",
+            "vaul": "^1.1.2",
+            "zod": "4.6.7"
+          }
+        },
+        "devDependencies": {
+          "before": {
+            "@cloudflare/vite-plugin": "1.69.1",
+            "@cloudflare/workers-types": "5.20261110.1",
+            "@tailwindcss/postcss": "4.2.1",
+            "@types/node": "22.19.19",
+            "@types/react": "19.2.14",
+            "@types/react-dom": "19.2.3",
+            "@vitejs/plugin-react": "6.0.2",
+            "@vitejs/plugin-rsc": "0.5.39",
+            "drizzle-kit": "0.31.10",
+            "eslint": "9.39.4",
+            "eslint-config-next": "16.4.6",
+            "json-rpc-2.0": "1.7.1",
+            "raw-body": "3.0.2",
+            "react-server-dom-webpack": "19.3.1",
+            "tailwindcss": "4.2.1",
+            "tw-animate-css": "^1.4.0",
+            "typescript": "5.9.3",
+            "vinext": "1.4.6",
+            "vite": "8.3.8",
+            "wrangler": "4.160.0"
+          },
+          "after": {
+            "@cloudflare/workers-types": "5.20261110.1",
+            "@tailwindcss/postcss": "4.2.1",
+            "@types/node": "22.19.19",
+            "@types/react": "19.2.14",
+            "@types/react-dom": "19.2.3",
+            "drizzle-kit": "0.31.10",
+            "esbuild": "0.28.2",
+            "eslint": "9.39.4",
+            "eslint-plugin-import": "2.32.0",
+            "eslint-plugin-jsx-a11y": "6.10.2",
+            "eslint-plugin-react": "7.37.5",
+            "eslint-plugin-react-hooks": "7.1.1",
+            "json-rpc-2.0": "1.7.1",
+            "miniflare": "5.20261110.0-beta",
+            "oxlint": "1.94.0",
+            "raw-body": "3.0.2",
+            "tailwindcss": "4.2.1",
+            "tw-animate-css": "^1.4.0",
+            "typescript": "5.9.3",
+            "wrangler": "4.160.0"
+          }
+        }
+      }
+    },
+    {
+      "file": "hosted/package-lock.json",
+      "sha256": "a83a723aa9fb56015617ba5c95e972bb2661d9cb9eae9dc5207a5280b1c66fff",
+      "base_sha256": "2512e3bd6aebfc4377bbe036d3cf606c27e33613b35c8c58d28f0f3a0d596c99",
+      "bytes": 360607,
+      "changed_package_count": 277,
+      "versionChanges": [
+        {
+          "path": "",
+          "before": "0.6.0",
+          "after": "0.6.0"
+        },
+        {
+          "path": "node_modules/@cloudflare/vite-plugin",
+          "before": "1.69.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@emnapi/core",
+          "before": "1.10.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/@emnapi/runtime",
+          "before": "1.11.3",
+          "after": "1.11.3"
+        },
+        {
+          "path": "node_modules/@emnapi/wasi-threads",
+          "before": "1.2.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@img/colour",
+          "before": "1.1.0",
+          "after": "1.1.0"
+        },
+        {
+          "path": "node_modules/@img/sharp-darwin-arm64",
+          "before": "0.35.5",
+          "after": "0.35.5"
+        },
+        {
+          "path": "node_modules/@img/sharp-darwin-x64",
+          "before": "0.35.5",
+          "after": "0.35.5"
+        },
+        {
+          "path": "node_modules/@img/sharp-freebsd-wasm32",
+          "before": "0.35.5",
+          "after": "0.35.5"
+        },
+        {
+          "path": "node_modules/@img/sharp-libvips-darwin-arm64",
+          "before": "1.3.4",
+          "after": "1.3.4"
+        },
+        {
+          "path": "node_modules/@img/sharp-libvips-darwin-x64",
+          "before": "1.3.4",
+          "after": "1.3.4"
+        },
+        {
+          "path": "node_modules/@img/sharp-libvips-linux-arm",
+          "before": "1.3.4",
+          "after": "1.3.4"
+        },
+        {
+          "path": "node_modules/@img/sharp-libvips-linux-arm64",
+          "before": "1.3.4",
+          "after": "1.3.4"
+        },
+        {
+          "path": "node_modules/@img/sharp-libvips-linux-ppc64",
+          "before": "1.3.4",
+          "after": "1.3.4"
+        },
+        {
+          "path": "node_modules/@img/sharp-libvips-linux-riscv64",
+          "before": "1.3.4",
+          "after": "1.3.4"
+        },
+        {
+          "path": "node_modules/@img/sharp-libvips-linux-s390x",
+          "before": "1.3.4",
+          "after": "1.3.4"
+        },
+        {
+          "path": "node_modules/@img/sharp-libvips-linux-x64",
+          "before": "1.3.4",
+          "after": "1.3.4"
+        },
+        {
+          "path": "node_modules/@img/sharp-libvips-linuxmusl-arm64",
+          "before": "1.3.4",
+          "after": "1.3.4"
+        },
+        {
+          "path": "node_modules/@img/sharp-libvips-linuxmusl-x64",
+          "before": "1.3.4",
+          "after": "1.3.4"
+        },
+        {
+          "path": "node_modules/@img/sharp-linux-arm",
+          "before": "0.35.5",
+          "after": "0.35.5"
+        },
+        {
+          "path": "node_modules/@img/sharp-linux-arm64",
+          "before": "0.35.5",
+          "after": "0.35.5"
+        },
+        {
+          "path": "node_modules/@img/sharp-linux-ppc64",
+          "before": "0.35.5",
+          "after": "0.35.5"
+        },
+        {
+          "path": "node_modules/@img/sharp-linux-riscv64",
+          "before": "0.35.5",
+          "after": "0.35.5"
+        },
+        {
+          "path": "node_modules/@img/sharp-linux-s390x",
+          "before": "0.35.5",
+          "after": "0.35.5"
+        },
+        {
+          "path": "node_modules/@img/sharp-linux-x64",
+          "before": "0.35.5",
+          "after": "0.35.5"
+        },
+        {
+          "path": "node_modules/@img/sharp-linuxmusl-arm64",
+          "before": "0.35.5",
+          "after": "0.35.5"
+        },
+        {
+          "path": "node_modules/@img/sharp-linuxmusl-x64",
+          "before": "0.35.5",
+          "after": "0.35.5"
+        },
+        {
+          "path": "node_modules/@img/sharp-wasm32",
+          "before": "0.35.5",
+          "after": "0.35.5"
+        },
+        {
+          "path": "node_modules/@img/sharp-webcontainers-wasm32",
+          "before": "0.35.5",
+          "after": "0.35.5"
+        },
+        {
+          "path": "node_modules/@img/sharp-win32-arm64",
+          "before": "0.35.5",
+          "after": "0.35.5"
+        },
+        {
+          "path": "node_modules/@img/sharp-win32-ia32",
+          "before": "0.35.5",
+          "after": "0.35.5"
+        },
+        {
+          "path": "node_modules/@img/sharp-win32-x64",
+          "before": "0.35.5",
+          "after": "0.35.5"
+        },
+        {
+          "path": "node_modules/@isaacs/nonrecursive-glob-match",
+          "before": "1.1.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/@jridgewell/source-map",
+          "before": "0.3.11",
+          "after": null
+        },
+        {
+          "path": "node_modules/@napi-rs/wasm-runtime",
+          "before": "0.2.12",
+          "after": null
+        },
+        {
+          "path": "node_modules/@next/env",
+          "before": "16.4.6",
+          "after": null
+        },
+        {
+          "path": "node_modules/@next/eslint-plugin-next",
+          "before": "16.4.6",
+          "after": null
+        },
+        {
+          "path": "node_modules/@next/swc-darwin-arm64",
+          "before": "16.4.6",
+          "after": null
+        },
+        {
+          "path": "node_modules/@next/swc-darwin-x64",
+          "before": "16.4.6",
+          "after": null
+        },
+        {
+          "path": "node_modules/@next/swc-linux-arm64-gnu",
+          "before": "16.4.6",
+          "after": null
+        },
+        {
+          "path": "node_modules/@next/swc-linux-arm64-musl",
+          "before": "16.4.6",
+          "after": null
+        },
+        {
+          "path": "node_modules/@next/swc-linux-x64-gnu",
+          "before": "16.4.6",
+          "after": null
+        },
+        {
+          "path": "node_modules/@next/swc-linux-x64-musl",
+          "before": "16.4.6",
+          "after": null
+        },
+        {
+          "path": "node_modules/@next/swc-win32-arm64-msvc",
+          "before": "16.4.6",
+          "after": null
+        },
+        {
+          "path": "node_modules/@next/swc-win32-x64-msvc",
+          "before": "16.4.6",
+          "after": null
+        },
+        {
+          "path": "node_modules/@nodelib/fs.scandir",
+          "before": "2.1.5",
+          "after": null
+        },
+        {
+          "path": "node_modules/@nodelib/fs.stat",
+          "before": "2.0.5",
+          "after": null
+        },
+        {
+          "path": "node_modules/@nodelib/fs.walk",
+          "before": "1.2.8",
+          "after": null
+        },
+        {
+          "path": "node_modules/@nolyfill/is-core-module",
+          "before": "1.0.39",
+          "after": null
+        },
+        {
+          "path": "node_modules/@oxc-project/types",
+          "before": "0.156.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/@oxlint/binding-android-arm-eabi",
+          "before": null,
+          "after": "1.94.0"
+        },
+        {
+          "path": "node_modules/@oxlint/binding-android-arm64",
+          "before": null,
+          "after": "1.94.0"
+        },
+        {
+          "path": "node_modules/@oxlint/binding-darwin-arm64",
+          "before": null,
+          "after": "1.94.0"
+        },
+        {
+          "path": "node_modules/@oxlint/binding-darwin-x64",
+          "before": null,
+          "after": "1.94.0"
+        },
+        {
+          "path": "node_modules/@oxlint/binding-freebsd-x64",
+          "before": null,
+          "after": "1.94.0"
+        },
+        {
+          "path": "node_modules/@oxlint/binding-linux-arm-gnueabihf",
+          "before": null,
+          "after": "1.94.0"
+        },
+        {
+          "path": "node_modules/@oxlint/binding-linux-arm-musleabihf",
+          "before": null,
+          "after": "1.94.0"
+        },
+        {
+          "path": "node_modules/@oxlint/binding-linux-arm64-gnu",
+          "before": null,
+          "after": "1.94.0"
+        },
+        {
+          "path": "node_modules/@oxlint/binding-linux-arm64-musl",
+          "before": null,
+          "after": "1.94.0"
+        },
+        {
+          "path": "node_modules/@oxlint/binding-linux-ppc64-gnu",
+          "before": null,
+          "after": "1.94.0"
+        },
+        {
+          "path": "node_modules/@oxlint/binding-linux-riscv64-gnu",
+          "before": null,
+          "after": "1.94.0"
+        },
+        {
+          "path": "node_modules/@oxlint/binding-linux-riscv64-musl",
+          "before": null,
+          "after": "1.94.0"
+        },
+        {
+          "path": "node_modules/@oxlint/binding-linux-s390x-gnu",
+          "before": null,
+          "after": "1.94.0"
+        },
+        {
+          "path": "node_modules/@oxlint/binding-linux-x64-gnu",
+          "before": null,
+          "after": "1.94.0"
+        },
+        {
+          "path": "node_modules/@oxlint/binding-linux-x64-musl",
+          "before": null,
+          "after": "1.94.0"
+        },
+        {
+          "path": "node_modules/@oxlint/binding-openharmony-arm64",
+          "before": null,
+          "after": "1.94.0"
+        },
+        {
+          "path": "node_modules/@oxlint/binding-win32-arm64-msvc",
+          "before": null,
+          "after": "1.94.0"
+        },
+        {
+          "path": "node_modules/@oxlint/binding-win32-ia32-msvc",
+          "before": null,
+          "after": "1.94.0"
+        },
+        {
+          "path": "node_modules/@oxlint/binding-win32-x64-msvc",
+          "before": null,
+          "after": "1.94.0"
+        },
+        {
+          "path": "node_modules/@resvg/resvg-wasm",
+          "before": "2.4.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/binding-android-arm-eabi",
+          "before": "1.2.19",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/binding-android-arm64",
+          "before": "1.2.19",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/binding-darwin-arm64",
+          "before": "1.2.19",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/binding-darwin-x64",
+          "before": "1.2.19",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/binding-freebsd-x64",
+          "before": "1.2.19",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/binding-linux-arm-gnueabihf",
+          "before": "1.2.19",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/binding-linux-arm64-gnu",
+          "before": "1.2.19",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/binding-linux-arm64-musl",
+          "before": "1.2.19",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/binding-linux-ppc64-gnu",
+          "before": "1.2.19",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/binding-linux-s390x-gnu",
+          "before": "1.2.19",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/binding-linux-x64-gnu",
+          "before": "1.2.19",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/binding-linux-x64-musl",
+          "before": "1.2.19",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/binding-openharmony-arm64",
+          "before": "1.2.19",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/binding-wasm32-wasi",
+          "before": "1.2.19",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/binding-wasm32-wasi/node_modules/@emnapi/core",
+          "before": "2.0.0-beta.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/binding-wasm32-wasi/node_modules/@emnapi/runtime",
+          "before": "2.0.0-beta.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/binding-wasm32-wasi/node_modules/@emnapi/wasi-threads",
+          "before": "2.2.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/binding-wasm32-wasi/node_modules/@napi-rs/wasm-runtime",
+          "before": "1.2.6",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/binding-win32-arm64-msvc",
+          "before": "1.2.19",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/binding-win32-x64-msvc",
+          "before": "1.2.19",
+          "after": null
+        },
+        {
+          "path": "node_modules/@rolldown/pluginutils",
+          "before": "1.0.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@shuding/opentype.js",
+          "before": "1.4.0-beta.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/@swc/helpers",
+          "before": "0.5.23",
+          "after": null
+        },
+        {
+          "path": "node_modules/@tybys/wasm-util",
+          "before": "0.10.5",
+          "after": null
+        },
+        {
+          "path": "node_modules/@types/eslint",
+          "before": "9.6.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@types/eslint-scope",
+          "before": "3.7.7",
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/eslint-plugin",
+          "before": "8.73.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/eslint-plugin/node_modules/ignore",
+          "before": "7.0.14",
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/parser",
+          "before": "8.73.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/project-service",
+          "before": "8.73.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/scope-manager",
+          "before": "8.73.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/tsconfig-utils",
+          "before": "8.73.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/type-utils",
+          "before": "8.73.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/types",
+          "before": "8.73.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/typescript-estree",
+          "before": "8.73.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/typescript-estree/node_modules/balanced-match",
+          "before": "4.0.4",
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/typescript-estree/node_modules/brace-expansion",
+          "before": "5.0.13",
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/typescript-estree/node_modules/minimatch",
+          "before": "11.0.9",
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/typescript-estree/node_modules/semver",
+          "before": "7.8.6",
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/utils",
+          "before": "8.73.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/visitor-keys",
+          "before": "8.73.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/visitor-keys/node_modules/eslint-visitor-keys",
+          "before": "5.0.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unpic/core",
+          "before": "1.0.3",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unpic/react",
+          "before": "1.0.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unrs/resolver-binding-android-arm-eabi",
+          "before": "1.11.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unrs/resolver-binding-android-arm64",
+          "before": "1.11.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unrs/resolver-binding-darwin-arm64",
+          "before": "1.11.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unrs/resolver-binding-darwin-x64",
+          "before": "1.11.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unrs/resolver-binding-freebsd-x64",
+          "before": "1.11.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unrs/resolver-binding-linux-arm-gnueabihf",
+          "before": "1.11.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unrs/resolver-binding-linux-arm-musleabihf",
+          "before": "1.11.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unrs/resolver-binding-linux-arm64-gnu",
+          "before": "1.11.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unrs/resolver-binding-linux-arm64-musl",
+          "before": "1.11.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unrs/resolver-binding-linux-ppc64-gnu",
+          "before": "1.11.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unrs/resolver-binding-linux-riscv64-gnu",
+          "before": "1.11.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unrs/resolver-binding-linux-riscv64-musl",
+          "before": "1.11.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unrs/resolver-binding-linux-s390x-gnu",
+          "before": "1.11.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unrs/resolver-binding-linux-x64-gnu",
+          "before": "1.11.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unrs/resolver-binding-linux-x64-musl",
+          "before": "1.11.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unrs/resolver-binding-wasm32-wasi",
+          "before": "1.11.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unrs/resolver-binding-win32-arm64-msvc",
+          "before": "1.11.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unrs/resolver-binding-win32-ia32-msvc",
+          "before": "1.11.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@unrs/resolver-binding-win32-x64-msvc",
+          "before": "1.11.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@vercel/og",
+          "before": "1.0.3",
+          "after": null
+        },
+        {
+          "path": "node_modules/@vinext/types",
+          "before": "1.0.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/@vitejs/plugin-react",
+          "before": "6.0.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/@vitejs/plugin-rsc",
+          "before": "0.5.39",
+          "after": null
+        },
+        {
+          "path": "node_modules/@vitejs/plugin-rsc/node_modules/es-module-lexer",
+          "before": "3.0.5",
+          "after": null
+        },
+        {
+          "path": "node_modules/@vitejs/plugin-rsc/node_modules/magic-string",
+          "before": "1.4.5",
+          "after": null
+        },
+        {
+          "path": "node_modules/@webassemblyjs/ast",
+          "before": "1.14.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@webassemblyjs/floating-point-hex-parser",
+          "before": "1.13.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/@webassemblyjs/helper-api-error",
+          "before": "1.13.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/@webassemblyjs/helper-buffer",
+          "before": "1.14.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@webassemblyjs/helper-numbers",
+          "before": "1.13.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/@webassemblyjs/helper-wasm-bytecode",
+          "before": "1.13.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/@webassemblyjs/helper-wasm-section",
+          "before": "1.14.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@webassemblyjs/ieee754",
+          "before": "1.13.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/@webassemblyjs/leb128",
+          "before": "1.13.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/@webassemblyjs/utf8",
+          "before": "1.13.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/@webassemblyjs/wasm-edit",
+          "before": "1.14.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@webassemblyjs/wasm-gen",
+          "before": "1.14.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@webassemblyjs/wasm-opt",
+          "before": "1.14.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@webassemblyjs/wasm-parser",
+          "before": "1.14.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@webassemblyjs/wast-printer",
+          "before": "1.14.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/@xtuc/ieee754",
+          "before": "1.2.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/@xtuc/long",
+          "before": "4.2.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/acorn-import-phases",
+          "before": "1.0.4",
+          "after": null
+        },
+        {
+          "path": "node_modules/acorn-loose",
+          "before": "8.5.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/ajv",
+          "before": "8.20.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/ajv-formats",
+          "before": "2.1.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/base64-js",
+          "before": "0.0.8",
+          "after": null
+        },
+        {
+          "path": "node_modules/baseline-browser-mapping",
+          "before": "2.11.0",
+          "after": "2.11.0"
+        },
+        {
+          "path": "node_modules/braces",
+          "before": "3.0.3",
+          "after": null
+        },
+        {
+          "path": "node_modules/camelize",
+          "before": "1.0.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/caniuse-lite",
+          "before": "1.0.30001826",
+          "after": "1.0.30001826"
+        },
+        {
+          "path": "node_modules/chrome-trace-event",
+          "before": "1.0.4",
+          "after": null
+        },
+        {
+          "path": "node_modules/client-only",
+          "before": "0.0.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/commander",
+          "before": "2.20.3",
+          "after": null
+        },
+        {
+          "path": "node_modules/css-background-parser",
+          "before": "0.1.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/css-box-shadow",
+          "before": "1.0.0-3",
+          "after": null
+        },
+        {
+          "path": "node_modules/css-color-keywords",
+          "before": "1.0.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/css-gradient-parser",
+          "before": "0.0.17",
+          "after": null
+        },
+        {
+          "path": "node_modules/css-to-react-native",
+          "before": "3.2.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/detect-libc",
+          "before": "2.1.2",
+          "after": "2.1.2"
+        },
+        {
+          "path": "node_modules/emoji-regex-xs",
+          "before": "2.0.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/es-module-lexer",
+          "before": "2.1.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/escape-html",
+          "before": "1.0.3",
+          "after": null
+        },
+        {
+          "path": "node_modules/eslint-config-next",
+          "before": "16.4.6",
+          "after": null
+        },
+        {
+          "path": "node_modules/eslint-config-next/node_modules/globals",
+          "before": "16.4.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/eslint-import-resolver-typescript",
+          "before": "3.10.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/estree-walker",
+          "before": "3.0.3",
+          "after": null
+        },
+        {
+          "path": "node_modules/events",
+          "before": "3.3.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/fast-glob",
+          "before": "3.3.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/fast-glob/node_modules/glob-parent",
+          "before": "5.1.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/fast-uri",
+          "before": "3.1.9",
+          "after": null
+        },
+        {
+          "path": "node_modules/fastq",
+          "before": "1.20.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/fflate",
+          "before": "0.7.5",
+          "after": null
+        },
+        {
+          "path": "node_modules/fill-range",
+          "before": "7.1.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/glob-to-regexp",
+          "before": "0.4.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/harfbuzzjs",
+          "before": "0.10.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/hex-rgb",
+          "before": "4.3.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/ipaddr.js",
+          "before": "2.4.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/is-bun-module",
+          "before": "2.0.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/is-bun-module/node_modules/semver",
+          "before": "7.8.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/is-number",
+          "before": "7.0.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/jest-worker",
+          "before": "27.5.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/jest-worker/node_modules/supports-color",
+          "before": "8.1.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/json-schema-traverse",
+          "before": "1.0.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/linebreak",
+          "before": "1.1.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/loader-runner",
+          "before": "4.3.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/merge-stream",
+          "before": "2.0.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/merge2",
+          "before": "1.4.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/micromatch",
+          "before": "4.0.8",
+          "after": null
+        },
+        {
+          "path": "node_modules/mime-db",
+          "before": "1.54.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/nanoid",
+          "before": "3.3.20",
+          "after": "3.3.20"
+        },
+        {
+          "path": "node_modules/napi-postinstall",
+          "before": "0.3.4",
+          "after": null
+        },
+        {
+          "path": "node_modules/neo-async",
+          "before": "2.6.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/next",
+          "before": "16.4.6",
+          "after": null
+        },
+        {
+          "path": "node_modules/obug",
+          "before": "3.0.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/oxlint",
+          "before": null,
+          "after": "1.94.0"
+        },
+        {
+          "path": "node_modules/pako",
+          "before": "0.2.9",
+          "after": null
+        },
+        {
+          "path": "node_modules/parse-css-color",
+          "before": "0.2.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/picocolors",
+          "before": "1.1.1",
+          "after": "1.1.1"
+        },
+        {
+          "path": "node_modules/picomatch",
+          "before": "2.3.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/postcss",
+          "before": "8.5.23",
+          "after": "8.5.23"
+        },
+        {
+          "path": "node_modules/postcss-value-parser",
+          "before": "4.2.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/queue-microtask",
+          "before": "1.2.3",
+          "after": null
+        },
+        {
+          "path": "node_modules/react-server-dom-webpack",
+          "before": "19.3.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/require-from-string",
+          "before": "2.0.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/reusify",
+          "before": "1.1.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/rolldown",
+          "before": "1.2.19",
+          "after": null
+        },
+        {
+          "path": "node_modules/run-parallel",
+          "before": "1.2.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/satori",
+          "before": "0.33.5",
+          "after": null
+        },
+        {
+          "path": "node_modules/schema-utils",
+          "before": "4.3.3",
+          "after": null
+        },
+        {
+          "path": "node_modules/schema-utils/node_modules/ajv-keywords",
+          "before": "5.1.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/sharp",
+          "before": "0.35.5",
+          "after": "0.35.5"
+        },
+        {
+          "path": "node_modules/sharp/node_modules/semver",
+          "before": "7.8.5",
+          "after": "7.8.5"
+        },
+        {
+          "path": "node_modules/source-map-js",
+          "before": "1.2.2",
+          "after": "1.2.2"
+        },
+        {
+          "path": "node_modules/srvx",
+          "before": "1.0.8",
+          "after": null
+        },
+        {
+          "path": "node_modules/stable-hash",
+          "before": "0.0.5",
+          "after": null
+        },
+        {
+          "path": "node_modules/string.prototype.codepointat",
+          "before": "0.2.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/strip-literal",
+          "before": "4.0.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/strip-literal/node_modules/js-tokens",
+          "before": "10.0.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/styled-jsx",
+          "before": "5.1.6",
+          "after": null
+        },
+        {
+          "path": "node_modules/terser",
+          "before": "5.47.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/terser-webpack-plugin",
+          "before": "5.6.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/tiny-inflate",
+          "before": "1.0.3",
+          "after": null
+        },
+        {
+          "path": "node_modules/tinyglobby",
+          "before": "0.2.17",
+          "after": null
+        },
+        {
+          "path": "node_modules/tinyglobby/node_modules/fdir",
+          "before": "6.5.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/tinyglobby/node_modules/picomatch",
+          "before": "4.0.4",
+          "after": null
+        },
+        {
+          "path": "node_modules/to-regex-range",
+          "before": "5.0.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/ts-api-utils",
+          "before": "2.5.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/turbo-stream",
+          "before": "3.2.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/typescript-eslint",
+          "before": "8.73.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/unicode-trie",
+          "before": "2.0.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/unpic",
+          "before": "4.2.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/unrs-resolver",
+          "before": "1.11.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/vinext",
+          "before": "1.4.6",
+          "after": null
+        },
+        {
+          "path": "node_modules/vite",
+          "before": "8.3.8",
+          "after": null
+        },
+        {
+          "path": "node_modules/vite-plugin-commonjs",
+          "before": "0.10.4",
+          "after": null
+        },
+        {
+          "path": "node_modules/vite-plugin-dynamic-import",
+          "before": "1.6.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/vite-plugin-dynamic-import/node_modules/es-module-lexer",
+          "before": "1.7.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/vite-plugin-dynamic-import/node_modules/fast-glob",
+          "before": "3.3.3",
+          "after": null
+        },
+        {
+          "path": "node_modules/vite-plugin-dynamic-import/node_modules/glob-parent",
+          "before": "5.1.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/vite/node_modules/lightningcss",
+          "before": "1.33.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/vite/node_modules/lightningcss-android-arm64",
+          "before": "1.33.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/vite/node_modules/lightningcss-darwin-arm64",
+          "before": "1.33.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/vite/node_modules/lightningcss-darwin-x64",
+          "before": "1.33.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/vite/node_modules/lightningcss-freebsd-x64",
+          "before": "1.33.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/vite/node_modules/lightningcss-linux-arm-gnueabihf",
+          "before": "1.33.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/vite/node_modules/lightningcss-linux-arm64-gnu",
+          "before": "1.33.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/vite/node_modules/lightningcss-linux-arm64-musl",
+          "before": "1.33.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/vite/node_modules/lightningcss-linux-x64-gnu",
+          "before": "1.33.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/vite/node_modules/lightningcss-linux-x64-musl",
+          "before": "1.33.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/vite/node_modules/lightningcss-win32-arm64-msvc",
+          "before": "1.33.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/vite/node_modules/lightningcss-win32-x64-msvc",
+          "before": "1.33.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/vite/node_modules/picomatch",
+          "before": "4.0.7",
+          "after": null
+        },
+        {
+          "path": "node_modules/vite/node_modules/postcss",
+          "before": "8.5.33",
+          "after": null
+        },
+        {
+          "path": "node_modules/vitefu",
+          "before": "1.1.3",
+          "after": null
+        },
+        {
+          "path": "node_modules/watchpack",
+          "before": "2.5.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/web-vitals",
+          "before": "4.2.4",
+          "after": null
+        },
+        {
+          "path": "node_modules/webpack",
+          "before": "5.106.2",
+          "after": null
+        },
+        {
+          "path": "node_modules/webpack-sources",
+          "before": "3.4.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/webpack/node_modules/eslint-scope",
+          "before": "5.1.1",
+          "after": null
+        },
+        {
+          "path": "node_modules/webpack/node_modules/estraverse",
+          "before": "4.3.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/ws",
+          "before": "8.22.0",
+          "after": null
+        },
+        {
+          "path": "node_modules/yoga-layout",
+          "before": "3.2.1",
+          "after": null
+        }
+      ],
+      "affectedPaths": [
+        {
+          "path": "node_modules/@next/eslint-plugin-next",
+          "before": {
+            "name": null,
+            "version": "16.4.6",
+            "dev": true,
+            "dependencies": {
+              "@eslint-community/eslint-utils": "4.9.1",
+              "fast-glob": "3.3.1"
+            }
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/eslint-plugin",
+          "before": {
+            "name": null,
+            "version": "8.73.0",
+            "dev": true,
+            "dependencies": {
+              "@eslint-community/regexpp": "^4.12.2",
+              "@typescript-eslint/scope-manager": "8.73.0",
+              "@typescript-eslint/type-utils": "8.73.0",
+              "@typescript-eslint/utils": "8.73.0",
+              "@typescript-eslint/visitor-keys": "8.73.0",
+              "ignore": "^7.0.5",
+              "natural-compare": "^1.4.0",
+              "ts-api-utils": "^2.5.0"
+            }
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/eslint-plugin/node_modules/ignore",
+          "before": {
+            "name": null,
+            "version": "7.0.14",
+            "dev": true,
+            "dependencies": null
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/parser",
+          "before": {
+            "name": null,
+            "version": "8.73.0",
+            "dev": true,
+            "dependencies": {
+              "@typescript-eslint/scope-manager": "8.73.0",
+              "@typescript-eslint/types": "8.73.0",
+              "@typescript-eslint/typescript-estree": "8.73.0",
+              "@typescript-eslint/visitor-keys": "8.73.0",
+              "debug": "^4.4.3"
+            }
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/project-service",
+          "before": {
+            "name": null,
+            "version": "8.73.0",
+            "dev": true,
+            "dependencies": {
+              "@typescript-eslint/tsconfig-utils": "^8.73.0",
+              "@typescript-eslint/types": "^8.73.0",
+              "debug": "^4.4.3"
+            }
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/scope-manager",
+          "before": {
+            "name": null,
+            "version": "8.73.0",
+            "dev": true,
+            "dependencies": {
+              "@typescript-eslint/types": "8.73.0",
+              "@typescript-eslint/visitor-keys": "8.73.0"
+            }
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/tsconfig-utils",
+          "before": {
+            "name": null,
+            "version": "8.73.0",
+            "dev": true,
+            "dependencies": null
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/type-utils",
+          "before": {
+            "name": null,
+            "version": "8.73.0",
+            "dev": true,
+            "dependencies": {
+              "@typescript-eslint/types": "8.73.0",
+              "@typescript-eslint/typescript-estree": "8.73.0",
+              "@typescript-eslint/utils": "8.73.0",
+              "debug": "^4.4.3",
+              "ts-api-utils": "^2.5.0"
+            }
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/types",
+          "before": {
+            "name": null,
+            "version": "8.73.0",
+            "dev": true,
+            "dependencies": null
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/typescript-estree",
+          "before": {
+            "name": null,
+            "version": "8.73.0",
+            "dev": true,
+            "dependencies": {
+              "@typescript-eslint/project-service": "8.73.0",
+              "@typescript-eslint/tsconfig-utils": "8.73.0",
+              "@typescript-eslint/types": "8.73.0",
+              "@typescript-eslint/visitor-keys": "8.73.0",
+              "debug": "^4.4.3",
+              "minimatch": "^11.0.1",
+              "semver": "^7.7.3",
+              "tinyglobby": "^0.2.15",
+              "ts-api-utils": "^2.5.0"
+            }
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/typescript-estree/node_modules/balanced-match",
+          "before": {
+            "name": null,
+            "version": "4.0.4",
+            "dev": true,
+            "dependencies": null
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/typescript-estree/node_modules/brace-expansion",
+          "before": {
+            "name": null,
+            "version": "5.0.13",
+            "dev": true,
+            "dependencies": {
+              "balanced-match": "^4.0.2"
+            }
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/typescript-estree/node_modules/minimatch",
+          "before": {
+            "name": null,
+            "version": "11.0.9",
+            "dev": true,
+            "dependencies": {
+              "@isaacs/nonrecursive-glob-match": "^1.1.0",
+              "brace-expansion": "^5.0.12"
+            }
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/typescript-estree/node_modules/semver",
+          "before": {
+            "name": null,
+            "version": "7.8.6",
+            "dev": true,
+            "dependencies": null
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/utils",
+          "before": {
+            "name": null,
+            "version": "8.73.0",
+            "dev": true,
+            "dependencies": {
+              "@eslint-community/eslint-utils": "^4.9.1",
+              "@typescript-eslint/scope-manager": "8.73.0",
+              "@typescript-eslint/types": "8.73.0",
+              "@typescript-eslint/typescript-estree": "8.73.0"
+            }
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/visitor-keys",
+          "before": {
+            "name": null,
+            "version": "8.73.0",
+            "dev": true,
+            "dependencies": {
+              "@typescript-eslint/types": "8.73.0",
+              "eslint-visitor-keys": "^5.0.0"
+            }
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/@typescript-eslint/visitor-keys/node_modules/eslint-visitor-keys",
+          "before": {
+            "name": null,
+            "version": "5.0.1",
+            "dev": true,
+            "dependencies": null
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/@vinext/types",
+          "before": {
+            "name": null,
+            "version": "1.0.2",
+            "dev": true,
+            "dependencies": null
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/eslint-config-next",
+          "before": {
+            "name": null,
+            "version": "16.4.6",
+            "dev": true,
+            "dependencies": {
+              "@next/eslint-plugin-next": "16.4.6",
+              "eslint-import-resolver-node": "^0.3.6",
+              "eslint-import-resolver-typescript": "^3.5.2",
+              "eslint-plugin-import": "^2.32.0",
+              "eslint-plugin-jsx-a11y": "^6.10.0",
+              "eslint-plugin-react": "^7.37.0",
+              "eslint-plugin-react-hooks": "^7.1.0",
+              "globals": "16.4.0",
+              "typescript-eslint": "^8.56.0"
+            }
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/eslint-config-next/node_modules/globals",
+          "before": {
+            "name": null,
+            "version": "16.4.0",
+            "dev": true,
+            "dependencies": null
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/micromatch",
+          "before": {
+            "name": null,
+            "version": "4.0.8",
+            "dev": true,
+            "dependencies": {
+              "braces": "^3.0.3",
+              "picomatch": "^2.3.1"
+            }
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/next",
+          "before": {
+            "name": null,
+            "version": "16.4.6",
+            "dev": null,
+            "dependencies": {
+              "@next/env": "16.4.6",
+              "@swc/helpers": "0.5.23",
+              "baseline-browser-mapping": "^2.9.19",
+              "caniuse-lite": "^1.0.30001579",
+              "postcss": "8.5.23",
+              "styled-jsx": "5.1.6"
+            }
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/picomatch",
+          "before": {
+            "name": null,
+            "version": "2.3.2",
+            "dev": true,
+            "dependencies": null
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/react-server-dom-webpack",
+          "before": {
+            "name": null,
+            "version": "19.3.1",
+            "dev": true,
+            "dependencies": {
+              "acorn-loose": "^8.3.0",
+              "neo-async": "^2.6.1",
+              "webpack-sources": "^3.2.0"
+            }
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/tinyglobby",
+          "before": {
+            "name": null,
+            "version": "0.2.17",
+            "dev": true,
+            "dependencies": {
+              "fdir": "^6.5.0",
+              "picomatch": "^4.0.4"
+            }
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/tinyglobby/node_modules/fdir",
+          "before": {
+            "name": null,
+            "version": "6.5.0",
+            "dev": true,
+            "dependencies": null
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/tinyglobby/node_modules/picomatch",
+          "before": {
+            "name": null,
+            "version": "4.0.4",
+            "dev": true,
+            "dependencies": null
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/typescript-eslint",
+          "before": {
+            "name": null,
+            "version": "8.73.0",
+            "dev": true,
+            "dependencies": {
+              "@typescript-eslint/eslint-plugin": "8.73.0",
+              "@typescript-eslint/parser": "8.73.0",
+              "@typescript-eslint/typescript-estree": "8.73.0",
+              "@typescript-eslint/utils": "8.73.0"
+            }
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/vinext",
+          "before": {
+            "name": null,
+            "version": "1.4.6",
+            "dev": true,
+            "dependencies": {
+              "@unpic/react": "^1.0.2",
+              "@vercel/og": "1.0.3",
+              "@vinext/types": "^1.0.2",
+              "ipaddr.js": "^2.1.0",
+              "magic-string": "^0.30.21",
+              "vite-plugin-commonjs": "^0.10.4",
+              "web-vitals": "^4.2.4"
+            }
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/vite",
+          "before": {
+            "name": null,
+            "version": "8.3.8",
+            "dev": true,
+            "dependencies": {
+              "lightningcss": "^1.33.0",
+              "picomatch": "^4.0.7",
+              "postcss": "^8.5.32",
+              "rolldown": "~1.2.18",
+              "tinyglobby": "^0.2.17"
+            }
+          },
+          "after": null
+        },
+        {
+          "path": "node_modules/vite/node_modules/picomatch",
+          "before": {
+            "name": null,
+            "version": "4.0.7",
+            "dev": true,
+            "dependencies": null
+          },
+          "after": null
+        }
+      ]
+    }
+  ],
+  "directDependencyChanges": [
+    {
+      "section": "dependencies",
+      "name": "next",
+      "before": "16.4.6",
+      "after": null
+    },
+    {
+      "section": "devDependencies",
+      "name": "@cloudflare/vite-plugin",
+      "before": "1.69.1",
+      "after": null
+    },
+    {
+      "section": "devDependencies",
+      "name": "@vitejs/plugin-react",
+      "before": "6.0.2",
+      "after": null
+    },
+    {
+      "section": "devDependencies",
+      "name": "@vitejs/plugin-rsc",
+      "before": "0.5.39",
+      "after": null
+    },
+    {
+      "section": "devDependencies",
+      "name": "eslint-config-next",
+      "before": "16.4.6",
+      "after": null
+    },
+    {
+      "section": "devDependencies",
+      "name": "react-server-dom-webpack",
+      "before": "19.3.1",
+      "after": null
+    },
+    {
+      "section": "devDependencies",
+      "name": "vinext",
+      "before": "1.4.6",
+      "after": null
+    },
+    {
+      "section": "devDependencies",
+      "name": "vite",
+      "before": "8.3.8",
+      "after": null
+    },
+    {
+      "section": "devDependencies",
+      "name": "esbuild",
+      "before": null,
+      "after": "0.28.2"
+    },
+    {
+      "section": "devDependencies",
+      "name": "eslint-plugin-import",
+      "before": null,
+      "after": "2.32.0"
+    },
+    {
+      "section": "devDependencies",
+      "name": "eslint-plugin-jsx-a11y",
+      "before": null,
+      "after": "6.10.2"
+    },
+    {
+      "section": "devDependencies",
+      "name": "eslint-plugin-react",
+      "before": null,
+      "after": "7.37.5"
+    },
+    {
+      "section": "devDependencies",
+      "name": "eslint-plugin-react-hooks",
+      "before": null,
+      "after": "7.1.1"
+    },
+    {
+      "section": "devDependencies",
+      "name": "miniflare",
+      "before": null,
+      "after": "5.20261110.0-beta"
+    },
+    {
+      "section": "devDependencies",
+      "name": "oxlint",
+      "before": null,
+      "after": "1.94.0"
+    }
+  ],
+  "configurations": [
+    {
+      "observed_at": "2026-11-17T22:53:16.095946+00:00"
+    },
+    {
+      "scripts": {
+        "install:ci": "node scripts/install-ci.mjs",
+        "dev": "node scripts/run-framework.mjs dev",
+        "build": "node scripts/run-framework.mjs build",
+        "start": "node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js dev --config dist/server/wrangler.json --local --persist-to .wrangler/state --ip 127.0.0.1 --inspector-port 0",
+        "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+        "db:generate": "drizzle-kit generate",
+        "test": "node tests/linkedin-profile.mjs && node --test tests/pdf-readability.mjs && node tests/hosted-auth.mjs && node tests/hosted-auth-worker.mjs && node tests/hosted-applications.mjs && node tests/hosted-discovery.mjs && node tests/hosted-phone.mjs && node --test tests/provider-body-cleanup.mjs tests/frontend-body-cleanup.mjs tests/phone-model.mjs tests/phone-api.mjs tests/phone-dispatch.mjs tests/phone-batch-stop.mjs tests/provider-connections.mjs tests/phone-private-async.mjs tests/web-experience.mjs tests/phone-settings-privacy.mjs tests/phone-navigation-inset.mjs tests/i18n.mjs tests/phone-localization.mjs tests/phone-record-tools.mjs tests/phone-search-workflows.mjs tests/phone-search-cap.mjs tests/phone-recovery-isolation.mjs tests/phone-selection-board-actions.mjs tests/account-recovery-lifecycle.mjs && node tests/phone-vault.mjs",
+        "typecheck": "tsc --noEmit"
+      },
+      "engines": {
+        "node": ">=22.13.0"
+      },
+      "overrides": {
+        "miniflare": {
+          "sharp": "0.35.5"
+        },
+        "baseline-browser-mapping": "2.11.0",
+        "fast-uri": "3.1.9",
+        "source-map-js": "1.2.2",
+        "esbuild": "0.28.2",
+        "fflate": "0.7.5"
+      }
+    },
+    {
+      "file": "hosted/vite.config.ts",
+      "sha256": "22ff558b1636d251e076f74c1697c7166079861667af10922d6bc505cb8f8290",
+      "content": "import vinext from \"vinext\";\nimport { defineConfig } from \"vite\";\nimport hostingConfig from \"./.openai/hosting.json\";\nimport { readExecutionProfile } from \"./scripts/execution-profile.mjs\";\nimport { configureToolEnvironment } from \"./scripts/tool-environment.mjs\";\nimport { sites } from \"./scripts/vite/sites-vite-plugin\";\nimport { connectorPreview } from \"./scripts/vite/connector-preview-plugin.mjs\";\n\nconst SITE_CREATOR_PLACEHOLDER_DATABASE_ID =\n  \"00000000-0000-4000-8000-000000000000\";\n\nconst { d1, r2 } = hostingConfig;\n\n// macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.\nconst isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === \"seatbelt\";\nconst managedLinux = readExecutionProfile() === \"managed-linux\";\n\nconst localBindingConfig = {\n  main: \"./worker/index.ts\",\n  compatibility_flags: [\"nodejs_compat\"],\n  d1_databases: d1\n    ? [\n        {\n          binding: d1,\n          database_name: \"site-creator-d1\",\n          database_id: SITE_CREATOR_PLACEHOLDER_DATABASE_ID,\n        },\n      ]\n    : [],\n  r2_buckets: r2\n    ? [\n        {\n          binding: r2,\n          bucket_name: \"site-creator-r2\",\n        },\n      ]\n    : [],\n};\n\nexport default defineConfig(async ({ command }) => {\n  configureToolEnvironment(process.cwd());\n\n  // Wrangler snapshots its log path while the Cloudflare plugin is imported.\n  const { cloudflare } = await import(\"@cloudflare/vite-plugin\");\n\n  return {\n    server: {\n      ...(managedLinux\n        ? { host: \"0.0.0.0\", allowedHosts: [\"terminal.local\"] }\n        : {}),\n      ...(isCodexSeatbeltSandbox\n        ? { watch: { useFsEvents: false, usePolling: true } }\n        : {}),\n    },\n    plugins: [\n      vinext(),\n      sites({ mockAuth: !managedLinux }),\n      connectorPreview(),\n      cloudflare({\n        viteEnvironment: { name: \"rsc\", childEnvironments: [\"ssr\"] },\n        inspectorPort: false,\n        config: {\n          ...localBindingConfig,\n          ...(command === \"serve\"\n            ? {\n                services: [\n                  {\n                    binding: \"CONNECTORS\",\n                    service: \"sites-connector-preview\",\n                    entrypoint: \"ConnectorPreview\",\n                  },\n                ],\n              }\n            : {}),\n        },\n        ...(command === \"serve\"\n          ? {\n              auxiliaryWorkers: [\n                {\n                  config: {\n                    name: \"sites-connector-preview\",\n                    main: \"./scripts/connector-preview/worker.mjs\",\n                    compatibility_date: \"2026-05-15\",\n                  },\n                },\n              ],\n            }\n          : {}),\n      }),\n    ],\n  };\n});\n"
+    },
+    {
+      "file": "hosted/tsconfig.json",
+      "sha256": "a4c1cc83b63ef9d39641d3babaefffa063dccbbc93338e18017b5013d713163e",
+      "content": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2017\",\n    \"lib\": [\n      \"dom\",\n      \"dom.iterable\",\n      \"esnext\"\n    ],\n    \"allowJs\": true,\n    \"skipLibCheck\": true,\n    \"strict\": true,\n    \"noEmit\": true,\n    \"esModuleInterop\": true,\n    \"module\": \"esnext\",\n    \"moduleResolution\": \"bundler\",\n    \"resolveJsonModule\": true,\n    \"isolatedModules\": true,\n    \"jsx\": \"react-jsx\",\n    \"incremental\": true,\n    \"plugins\": [\n      {\n        \"name\": \"next\"\n      }\n    ],\n    \"paths\": {\n      \"@/*\": [\n        \"./*\"\n      ]\n    },\n    \"types\": [\n      \"node\",\n      \"@cloudflare/workers-types\"\n    ]\n  },\n  \"include\": [\n    \"next-env.d.ts\",\n    \"**/*.ts\",\n    \"**/*.tsx\",\n    \".next/types/**/*.ts\",\n    \".next/dev/types/**/*.ts\",\n    \"**/*.mts\"\n  ],\n  \"exclude\": [\n    \"node_modules\",\n    \"examples\",\n    \"dist\",\n    \".vinext\",\n    \".wrangler\",\n    \".sites-runtime\",\n    \"outputs\",\n    \"work\"\n  ]\n}\n"
+    },
+    {
+      "file": "hosted/eslint.config.mjs",
+      "sha256": "eeda7faabe9560fa9fdb26675b0011fa78461ca7061989732f5da9245b87e315",
+      "content": "import { defineConfig, globalIgnores } from \"eslint/config\";\nimport nextVitals from \"eslint-config-next/core-web-vitals\";\nimport nextTs from \"eslint-config-next/typescript\";\n\nconst eslintConfig = defineConfig([\n  ...nextVitals,\n  ...nextTs,\n  globalIgnores([\n    \"dist/**\",\n    \".vinext/**\",\n    \".wrangler/**\",\n    \".sites-runtime/**\",\n    \"outputs/**\",\n    \"work/**\",\n  ]),\n  {\n    files: [\"components/ui/**/*.{ts,tsx}\", \"hooks/use-mobile.ts\"],\n    rules: {\n      // These files are vendored verbatim from shadcn@4.17.0. Keep the\n      // registry source intact while applying the stricter rules to Site code.\n      \"@typescript-eslint/no-unused-vars\": \"off\",\n      \"react-hooks/purity\": \"off\",\n      \"react-hooks/set-state-in-effect\": \"off\",\n    },\n  },\n]);\n\nexport default eslintConfig;\n"
+    },
+    {
+      "file": "hosted/next.config.ts",
+      "sha256": "614bce25b089c3f19b1e17a6346c74b858034040154c6621e7d35303004767cc",
+      "content": "import type { NextConfig } from \"next\";\n\nconst nextConfig: NextConfig = {\n  /* config options here */\n};\n\nexport default nextConfig;\n"
+    }
+  ],
+  "entrypointReview": [
+    {
+      "file": "hosted/scripts/run-framework.mjs",
+      "bytes": 993,
+      "sha256": "9bf9f41a29314cabe0238b8e9c540ec3f7b5a6adafc7c8fb6c3940722d061dca",
+      "content": "import { spawnSync } from \"node:child_process\";\nimport { fileURLToPath } from \"node:url\";\nimport { readExecutionProfile } from \"./execution-profile.mjs\";\n\nconst [command, ...args] = process.argv.slice(2);\nif (![\"dev\", \"build\"].includes(command)) throw new Error(\"Expected dev or build.\");\nconst managedLinux = readExecutionProfile() === \"managed-linux\";\n\nif (managedLinux && command === \"build\") {\n  const result = spawnSync(\"bash\", [\n    fileURLToPath(new URL(\"./build-verified.sh\", import.meta.url)), ...args,\n  ], { stdio: \"inherit\" });\n  if (result.error) throw result.error;\n  process.exit(result.status ?? 1);\n}\n\n// Import in this process so the preview owner retains its PID and signals.\nconst cli = new URL(managedLinux\n  ? \"../node_modules/vite/bin/vite.js\"\n  : \"../node_modules/vinext/dist/cli.js\", import.meta.url);\nprocess.argv = [process.execPath, fileURLToPath(cli), command,\n  ...(!managedLinux && command === \"dev\" ? [\"--port\", \"5173\"] : []), ...args];\nawait import(cli.href);\n"
+    },
+    {
+      "file": "hosted/scripts/install-ci.mjs",
+      "bytes": 1685,
+      "sha256": "4a5a92d60a08d0ba54effd8373da2da06284312c55b767287c68a0bec7200da7",
+      "content": "import { spawnSync } from \"node:child_process\";\nimport { accessSync, constants } from \"node:fs\";\nimport path from \"node:path\";\nimport { projectRoot } from \"./sites-env.mjs\";\nimport { readExecutionProfile } from \"./execution-profile.mjs\";\nimport { runNpmInstall } from \"./npm-install.mjs\";\n\nif (!process.env.npm_execpath) {\n  throw new Error(\"Run this installer with npm run install:ci.\");\n}\n\nif (![\n  \"SHARP_IGNORE_GLOBAL_LIBVIPS\",\n  \"SHARP_FORCE_GLOBAL_LIBVIPS\",\n  \"npm_config_build_from_source\",\n  \"NPM_CONFIG_BUILD_FROM_SOURCE\",\n].some((key) => key in process.env)) {\n  process.env.SHARP_IGNORE_GLOBAL_LIBVIPS = \"1\";\n}\n\nif (readExecutionProfile() === \"managed-linux\") {\n  const result = spawnSync(\"bash\", [path.join(projectRoot, \"scripts/install-ci.sh\")], {\n    stdio: \"inherit\",\n  });\n  if (result.error) throw result.error;\n  process.exit(result.status ?? 1);\n}\n\n// Invoke npm's JavaScript entrypoint, avoiding platform-specific shell shims.\nconst installed = await runNpmInstall([\n  process.execPath,\n    process.env.npm_execpath, \"ci\", \"--prefix\", projectRoot, \"--workspaces=false\",\n    \"--include=dev\", \"--include=optional\", \"--prefer-offline\", \"--no-audit\", \"--no-fund\",\n]);\nif (installed.signal) process.kill(process.pid, installed.signal);\nif (installed.code !== 0 || installed.signal) process.exit(installed.code || 1);\n\ntry {\n  accessSync(\n    path.join(\n      projectRoot, \"node_modules\", \".bin\",\n      process.platform === \"win32\" ? \"vinext.cmd\" : \"vinext\",\n    ),\n    process.platform === \"win32\" ? constants.F_OK : constants.X_OK,\n  );\n} catch {\n  console.error(\"npm ci exited successfully but the local vinext executable is unavailable.\");\n  process.exitCode = 69;\n}\n"
+    },
+    {
+      "file": "hosted/scripts/sites-env.mjs",
+      "bytes": 522,
+      "sha256": "21d7bde6acb9f716287e652c1b0e43ae4803d79be367ca2192fcba14740b5338",
+      "content": "import { mkdirSync } from \"node:fs\";\nimport path from \"node:path\";\nimport { fileURLToPath } from \"node:url\";\nimport { configureToolEnvironment } from \"./tool-environment.mjs\";\n\nexport const projectRoot = fileURLToPath(new URL(\"../\", import.meta.url));\nconfigureToolEnvironment(projectRoot);\n\nprocess.chdir(projectRoot);\nfor (const directory of [\n  path.dirname(process.env.WRANGLER_LOG_PATH),\n  process.env.WRANGLER_REGISTRY_PATH,\n  process.env.MINIFLARE_REGISTRY_PATH,\n]) {\n  mkdirSync(directory, { recursive: true });\n}\n"
+    },
+    {
+      "file": "hosted/worker/index.ts",
+      "bytes": 3207,
+      "sha256": "c82a674ffc6fcebef3b1c48d577f0ec5b28a4a4c2b17462c50a7c0d1708ac09e",
+      "content": "import handler from \"vinext/server/fetch-handler\";\nimport { runWithConnectorBinding } from \"../lib/connector-context\";\nimport type { ConnectorBinding } from \"../lib/connector-contract.mjs\";\nimport { handleApplications } from \"../server/applications.mjs\";\nimport { handleDiscovery } from \"../server/discovery.mjs\";\nimport { handleOAuth } from \"../server/oauth.mjs\";\nimport { resolveBrowserIdentity, stripInternalIdentityHeaders, verifiedSSRRequest } from \"../server/identity.mjs\";\n\nconst worker = {\n  async fetch(request: Request, env: Cloudflare.Env, ctx: ExecutionContext<{ CONNECTORS?: ConnectorBinding }>) {\n    request = stripInternalIdentityHeaders(request);\n    const pathname = new URL(request.url).pathname;\n    const authResponse = await handleOAuth(request, env);\n    if (authResponse) return authResponse;\n    if (pathname.startsWith(\"/api/discovery/\")) {\n      const response = await handleDiscovery(request, env);\n      if (response) return response;\n    }\n    if (pathname.startsWith(\"/api/apply/\") || pathname === \"/api/phone\" || pathname.startsWith(\"/api/phone/\") || pathname === \"/api/account\" || pathname.startsWith(\"/api/account/\") || pathname === \"/api/health\") {\n      const response = await handleApplications(request, env, ctx);\n      if (response) return response;\n      return Response.json({ ok: false, error: { code: \"not_found\", message: \"This service route does not exist.\" } }, { status: 404, headers: { \"Cache-Control\": \"no-store\" } });\n    }\n    let binding = ctx.props?.CONNECTORS;\n    // Local preview emulates the same request-scoped capability. This branch and\n    // the auxiliary service binding are absent from production builds.\n    if (import.meta.env.DEV && !binding && env.CONNECTORS) {\n      const preview = env.CONNECTORS;\n      const expiresAt = Date.now() + 60_000;\n      binding = {\n        async getContext() {\n          if (Date.now() >= expiresAt) return { status: \"request_context_expired\" };\n          return preview.getContext?.() ?? { status: \"binding_unavailable\" };\n        },\n        async invoke(connectorId, actionName, args) {\n          if (Date.now() >= expiresAt) {\n            return { status: \"request_context_expired\", message: \"This request has expired. Please try again.\" };\n          }\n          return preview.invoke(connectorId, actionName, args);\n        },\n      };\n    }\n    // Only this request's verified identity reaches SSR. Invalid Career Finder\n    // cookies render the signed-out recovery UI, never a fallback Sites account.\n    let identity = null;\n    try { identity = await resolveBrowserIdentity(request, env); } catch { /* /api/auth/status supplies a safe recovery error. */ }\n    const ssrRequest = verifiedSSRRequest(request, identity);\n    const response = await runWithConnectorBinding(binding, () => handler.fetch(ssrRequest, env, ctx));\n    const secured = new Response(response.body, response);\n    secured.headers.set(\"Cache-Control\", \"no-store\");\n    secured.headers.set(\"Referrer-Policy\", \"no-referrer\");\n    secured.headers.set(\"X-Content-Type-Options\", \"nosniff\");\n    secured.headers.set(\"Permissions-Policy\", \"camera=(), microphone=(), geolocation=()\");\n    return secured;\n  },\n};\n\nexport default worker;\n"
+    },
+    {
+      "imports_rg_exit": 0,
+      "count": 12,
+      "lines": [
+        "hosted/worker/index.ts:1:import handler from \"vinext/server/fetch-handler\";",
+        "hosted/scripts/vite/sites-vite-plugin.ts:1:// Vendored from @openai/sites-vite-plugin 0.2.0 (openai/sites#9).",
+        "hosted/scripts/vite/sites-vite-plugin.ts:6:import type { Plugin } from \"vite\";",
+        "hosted/app/i18n/server.ts:1:import { headers } from \"next/headers\";",
+        "hosted/tests/build-pdf-browser.mjs:24:const { build } = await import(pathToFileURL(require.resolve('vite')).href);",
+        "hosted/app/layout.tsx:1:import type { Metadata } from \"next\";",
+        "hosted/app/layout.tsx:2:import { headers } from \"next/headers\";",
+        "hosted/app/chatgpt-auth.ts:1:import { headers } from \"next/headers\";",
+        "hosted/app/chatgpt-auth.ts:2:import { redirect } from \"next/navigation\";",
+        "hosted/app/components/SiteFrame.tsx:4:import Image from \"next/image\";",
+        "hosted/app/phone/page.tsx:1:import type { Metadata, Viewport } from \"next\";",
+        "hosted/app/components/GoogleSignInArtwork.tsx:2:import Image from \"next/image\";"
+      ]
+    }
+  ],
+  "resolutionSummary": [
+    {
+      "package_counts": {
+        "base": 831,
+        "proposed": 632,
+        "added": 20,
+        "removed": 219,
+        "changed_existing": 38
+      },
+      "lock_version": 3,
+      "non_registry_resolutions": []
+    },
+    {
+      "dependency": "esbuild",
+      "before_version": "0.28.2",
+      "after_version": "0.28.2",
+      "resolved": "https://registry.npmjs.org/esbuild/-/esbuild-0.28.2.tgz",
+      "integrity": "sha512-HKVLS8dvII+xoKW9kmqxbRKrnWEXfJJr/FZhhJmiqIB0e053QNYFqOBouTMO/k5sID4MvCiUCvv8b9M4h32wIA==",
+      "engines": {
+        "node": ">=18"
+      },
+      "peerDependencies": null
+    },
+    {
+      "dependency": "miniflare",
+      "before_version": "5.20261110.0-beta",
+      "after_version": "5.20261110.0-beta",
+      "resolved": "https://registry.npmjs.org/miniflare/-/miniflare-5.20261110.0-beta.tgz",
+      "integrity": "sha512-UiJRL6D4pNkHxgZ3QXDCaz/N27FFuuHRRgOmD/SucEZIwDOfWwX7s/n8ZrFemFlURRfnQpBfAdWy8ixsW0yJWA==",
+      "engines": {
+        "node": ">=22.12.0"
+      },
+      "peerDependencies": {
+        "kerberos": "^2.0.0"
+      }
+    },
+    {
+      "dependency": "oxlint",
+      "before_version": null,
+      "after_version": "1.94.0",
+      "resolved": "https://registry.npmjs.org/oxlint/-/oxlint-1.94.0.tgz",
+      "integrity": "sha512-Fnt+3wSKRhtLmvgRfxgRX0excSPCoyiXRol4eWKZLtXxWMQtwQ3KjKQUYXOw5loyinfnZfGzh4RCYf7opfL0vw==",
+      "engines": {
+        "node": "^20.19.0 || >=22.12.0"
+      },
+      "peerDependencies": {
+        "oxlint-tsgolint": ">=7.0.2007",
+        "vite-plus": "*"
+      }
+    },
+    {
+      "dependency": "eslint-plugin-import",
+      "before_version": "2.32.0",
+      "after_version": "2.32.0",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-import/-/eslint-plugin-import-2.32.0.tgz",
+      "integrity": "sha512-whOE1HFo/qJDyX4SnXzP4N6zOWn79WhnCUY/iDR0mPfQZO8wcYE4JClzI2oZrhBnnMUCBCHZhO6VQyoBU95mZA==",
+      "engines": {
+        "node": ">=4"
+      },
+      "peerDependencies": {
+        "eslint": "^2 || ^3 || ^4 || ^5 || ^6 || ^7.2.0 || ^8 || ^9"
+      }
+    },
+    {
+      "dependency": "eslint-plugin-jsx-a11y",
+      "before_version": "6.10.2",
+      "after_version": "6.10.2",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-6.10.2.tgz",
+      "integrity": "sha512-scB3nz4WmG75pV8+3eRUQOHZlNSUhFNq37xnpgRkCCELU3XMvXAxLk1eqWWyE22Ki4Q01Fnsw9BA3cJHDPgn2Q==",
+      "engines": {
+        "node": ">=4.0"
+      },
+      "peerDependencies": {
+        "eslint": "^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9"
+      }
+    },
+    {
+      "dependency": "eslint-plugin-react",
+      "before_version": "7.37.5",
+      "after_version": "7.37.5",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-react/-/eslint-plugin-react-7.37.5.tgz",
+      "integrity": "sha512-Qteup0SqU15kdocexFNAJMvCJEfa2xUKNV4CC1xsVMrIIqEy3SQ/rqyxCWNzfrd3/ldy6HMlD2e0JDVpDg2qIA==",
+      "engines": {
+        "node": ">=4"
+      },
+      "peerDependencies": {
+        "eslint": "^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9.7"
+      }
+    },
+    {
+      "dependency": "eslint-plugin-react-hooks",
+      "before_version": "7.1.1",
+      "after_version": "7.1.1",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-7.1.1.tgz",
+      "integrity": "sha512-f2I7Gw6JbvCexzIInuSbZpfdQ44D7iqdWX01FKLvrPgqxoE7oMj8clOfto8U6vYiz4yd5oKu39rRSVOe1zRu0g==",
+      "engines": {
+        "node": ">=18"
+      },
+      "peerDependencies": {
+        "eslint": "^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0 || ^10.0.0"
+      }
+    },
+    {
+      "dependency": "wrangler",
+      "before_version": "4.160.0",
+      "after_version": "4.160.0",
+      "resolved": "https://registry.npmjs.org/wrangler/-/wrangler-4.160.0.tgz",
+      "integrity": "sha512-nwzmpu7Hd5Csax02twpCNRAloC+kduXKw9rjfq+oEuo8RnjWRaahSV+qk+p0w88EgafMcDE0XnZRSfOM3lKEKg==",
+      "engines": {
+        "node": ">=22.12.0"
+      },
+      "peerDependencies": {
+        "@cloudflare/workers-types": "^5.20261110.1"
+      }
+    },
+    {
+      "file": "hosted/scripts/build-verified.sh",
+      "bytes": 661,
+      "sha256": "2ae5329ac860076070c9217a43106a15cb5ecf907a0f7baeb9ef903f76b53c68",
+      "relevant_lines": [
+        {
+          "line": 7,
+          "text": "  exec \"${script_dir}/sites-env.sh\" -- \"$0\" \"$@\""
+        },
+        {
+          "line": 12,
+          "text": "  exit 69"
+        },
+        {
+          "line": 15,
+          "text": "vinext=\"${SITES_PROJECT_ROOT}/node_modules/.bin/vinext\""
+        },
+        {
+          "line": 16,
+          "text": "if [[ ! -x \"${vinext}\" ]]; then"
+        },
+        {
+          "line": 17,
+          "text": "  echo \"vinext is unavailable. Run npm run install:ci and wait for it to finish before building.\" >&2"
+        },
+        {
+          "line": 18,
+          "text": "  exit 69"
+        },
+        {
+          "line": 21,
+          "text": "echo \"Running bounded vinext build...\""
+        },
+        {
+          "line": 26,
+          "text": "  \"${vinext}\" build"
+        }
+      ]
+    },
+    {
+      "file": "hosted/scripts/install-ci.sh",
+      "bytes": 6783,
+      "sha256": "10d8764a61be50351dc3496e13588270de7956f0aa5f1189c49cabb2d89fe5c0",
+      "relevant_lines": [
+        {
+          "line": 7,
+          "text": "  exec \"${script_dir}/sites-env.sh\" -- \"$0\" \"$@\""
+        },
+        {
+          "line": 12,
+          "text": "  exit 69"
+        },
+        {
+          "line": 16,
+          "text": "  exit 69"
+        },
+        {
+          "line": 20,
+          "text": "  exit 69"
+        },
+        {
+          "line": 24,
+          "text": "  exit 69"
+        },
+        {
+          "line": 29,
+          "text": "expected_cache=\"${runtime_root}/npm-cache\""
+        },
+        {
+          "line": 34,
+          "text": "  exit 78"
+        },
+        {
+          "line": 36,
+          "text": "actual_cache=\"$(npm --prefix \"${SITES_PROJECT_ROOT}\" --workspaces=false config get cache)\""
+        },
+        {
+          "line": 38,
+          "text": "  echo \"Expected npm cache ${expected_cache}, got ${actual_cache}.\" >&2"
+        },
+        {
+          "line": 39,
+          "text": "  exit 78"
+        },
+        {
+          "line": 46,
+          "text": "exec 9>\"${lock_file}\""
+        },
+        {
+          "line": 49,
+          "text": "  exit 75"
+        },
+        {
+          "line": 60,
+          "text": "  if [[ \"${process_command}\" == *\"npm ci\"* ]]; then"
+        },
+        {
+          "line": 61,
+          "text": "    echo \"Another npm ci is visible in ${SITES_PROJECT_ROOT}; refusing to overlap installs.\" >&2"
+        },
+        {
+          "line": 62,
+          "text": "    exit 75"
+        },
+        {
+          "line": 70,
+          "text": "seed_cache=\"${SITES_NPM_CACHE_SEED:-}\""
+        },
+        {
+          "line": 74,
+          "text": "    echo \"[sites] restoring image-seeded npm cache\""
+        },
+        {
+          "line": 85,
+          "text": "locked_vinext_output=\"$({ node --input-type=module - \"${SITES_PROJECT_ROOT}/package-lock.json\" <<'NODE'"
+        },
+        {
+          "line": 86,
+          "text": "import { readFile } from \"node:fs/promises\";"
+        },
+        {
+          "line": 89,
+          "text": "const vinext = lock.packages?.[\"node_modules/vinext\"];"
+        },
+        {
+          "line": 90,
+          "text": "if (!vinext?.resolved || !vinext?.integrity) {"
+        },
+        {
+          "line": 91,
+          "text": "  throw new Error(\"package-lock.json does not contain a resolved, integrity-pinned vinext tarball\");"
+        },
+        {
+          "line": 93,
+          "text": "console.log(vinext.resolved);"
+        },
+        {
+          "line": 94,
+          "text": "console.log(vinext.integrity);"
+        },
+        {
+          "line": 95,
+          "text": "NODE"
+        },
+        {
+          "line": 97,
+          "text": "  echo \"Could not read the integrity-pinned vinext tarball from package-lock.json.\" >&2"
+        },
+        {
+          "line": 98,
+          "text": "  exit 65"
+        },
+        {
+          "line": 100,
+          "text": "mapfile -t locked_vinext <<<\"${locked_vinext_output}\""
+        },
+        {
+          "line": 101,
+          "text": "if [[ \"${#locked_vinext[@]}\" -ne 2 ]]; then"
+        },
+        {
+          "line": 102,
+          "text": "  echo \"Expected exactly one Vinext URL and integrity value from package-lock.json.\" >&2"
+        },
+        {
+          "line": 103,
+          "text": "  exit 65"
+        },
+        {
+          "line": 106,
+          "text": "locked_tarball=\"${locked_vinext[0]}\""
+        },
+        {
+          "line": 107,
+          "text": "locked_integrity=\"${locked_vinext[1]}\""
+        },
+        {
+          "line": 110,
+          "text": "  registry=\"$(npm --prefix \"${SITES_PROJECT_ROOT}\" --workspaces=false config get registry)\""
+        },
+        {
+          "line": 111,
+          "text": "  preflight_url=\"$({ node --input-type=module - \"${locked_tarball}\" \"${registry}\" <<'NODE'"
+        },
+        {
+          "line": 114,
+          "text": "if (locked.hostname === \"registry.npmjs.org\") {"
+        },
+        {
+          "line": 120,
+          "text": "NODE"
+        },
+        {
+          "line": 123,
+          "text": "  exit 65"
+        },
+        {
+          "line": 127,
+          "text": "  preflight_tarball=\"${preflight_dir}/vinext.tgz\""
+        },
+        {
+          "line": 130,
+          "text": "  echo \"[sites] downloading the complete locked vinext tarball\""
+        },
+        {
+          "line": 142,
+          "text": "  echo \"[sites] verifying locked vinext tarball integrity\""
+        },
+        {
+          "line": 143,
+          "text": "  node --input-type=module - \"${preflight_tarball}\" \"${locked_integrity}\" <<'NODE'"
+        },
+        {
+          "line": 144,
+          "text": "import { createHash } from \"node:crypto\";"
+        },
+        {
+          "line": 145,
+          "text": "import { readFile } from \"node:fs/promises\";"
+        },
+        {
+          "line": 155,
+          "text": "  throw new Error(`vinext tarball integrity mismatch for ${algorithm}`);"
+        },
+        {
+          "line": 157,
+          "text": "NODE"
+        },
+        {
+          "line": 161,
+          "text": "echo \"[sites] running exactly one bounded npm ci\""
+        },
+        {
+          "line": 162,
+          "text": "export NPM_CONFIG_MAXSOCKETS=1"
+        },
+        {
+          "line": 163,
+          "text": "export NPM_CONFIG_FETCH_RETRIES=0"
+        },
+        {
+          "line": 164,
+          "text": "export NPM_CONFIG_FETCH_TIMEOUT=30000"
+        },
+        {
+          "line": 165,
+          "text": "npm_ci_args=(ci --prefix \"${SITES_PROJECT_ROOT}\" --workspaces=false --include=dev --include=optional --cache \"${expected_cache}\")"
+        },
+        {
+          "line": 167,
+          "text": "  npm_ci_args+=(--prefer-offline)"
+        },
+        {
+          "line": 173,
+          "text": "  node \"${script_dir}/npm-install.mjs\" \"${cache_seed_result}\" npm \"${npm_ci_args[@]}\""
+        },
+        {
+          "line": 175,
+          "text": "vinext=\"${SITES_PROJECT_ROOT}/node_modules/.bin/vinext\""
+        },
+        {
+          "line": 176,
+          "text": "if [[ ! -x \"${vinext}\" ]]; then"
+        },
+        {
+          "line": 177,
+          "text": "  echo \"npm ci exited successfully but node_modules/.bin/vinext is unavailable.\" >&2"
+        },
+        {
+          "line": 178,
+          "text": "  exit 69"
+        },
+        {
+          "line": 181,
+          "text": "node --input-type=module - \"${SITES_PROJECT_ROOT}/node_modules/.sites-install.json\" \"${lockfile_sha256}\" <<'NODE'"
+        },
+        {
+          "line": 182,
+          "text": "import { writeFile } from \"node:fs/promises\";"
+        },
+        {
+          "line": 188,
+          "text": "    node: process.version,"
+        },
+        {
+          "line": 192,
+          "text": "NODE"
+        },
+        {
+          "line": 193,
+          "text": "echo \"[sites] npm ci passed and vinext is available\""
+        }
+      ]
+    }
+  ],
+  "evidenceSearchLimits": {
+    "proofWorktree": {
+      "candidateFiles": 309,
+      "candidatesModifiedAfterCreation": []
+    },
+    "adjacent": [
+      {
+        "scope": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-CombinedR2/publishing",
+        "rg_exit": 0,
+        "recent_candidates": [],
+        "total": 0
+      },
+      {
+        "scope": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-CombinedR2/hosted/tests",
+        "rg_exit": 0,
+        "recent_candidates": [],
+        "total": 0
+      },
+      {
+        "scope": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-EmptyState-UI288/publishing",
+        "rg_exit": 0,
+        "recent_candidates": [
+          {
+            "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-EmptyState-UI288/publishing/recovery-20261117-d57f4/hosted-gates.json",
+            "bytes": 1363,
+            "mtime": "2026-11-17T22:32:57.328539+00:00"
+          },
+          {
+            "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-EmptyState-UI288/publishing/recovery-20261117-d57f4/arabic-review-expiry/android-visual-audit-567.json",
+            "bytes": 20093,
+            "mtime": "2026-11-17T22:32:57.327834+00:00"
+          },
+          {
+            "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-EmptyState-UI288/publishing/recovery-20261117-d57f4/service-gates.json",
+            "bytes": 710,
+            "mtime": "2026-11-17T22:32:57.330667+00:00"
+          }
+        ],
+        "total": 3
+      },
+      {
+        "current_file": "hosted/package.json",
+        "sha256": "3a9d133111d0a01b699f8040ee4764d4fdd644c106b65fbb69202634cd24182d",
+        "mtime": "2026-11-17T22:35:46.743601+00:00"
+      },
+      {
+        "current_file": "hosted/package-lock.json",
+        "sha256": "a83a723aa9fb56015617ba5c95e972bb2661d9cb9eae9dc5207a5280b1c66fff",
+        "mtime": "2026-11-17T22:35:54.529454+00:00"
+      }
+    ],
+    "publisherNoIgnore": {
+      "noignore_recent_publisher_evidence": [],
+      "rg_exit": 0
+    },
+    "notes": "rg --files with --hidden --no-ignore excluded .git, node_modules, .env*. First default-ignore filename search corrected with no-ignore. Historical copied logs cannot qualify proposal. No entire-Mac or owner-inbox completeness claim."
+  },
+  "prCoordination": {
+    "lastObservedCommentId": 6963355309,
+    "proofOwnedBy": "Publisher d57f4cd77813",
+    "dependencyDecisionOwner": "development 5bc6158967e8",
+    "noAcknowledgedOwnershipTransfer": true
+  },
+  "processNote": "One candidate PID 84965 resolved to a Desktop Commander node process with cwd @wonderwhy-er/desktop-commander/dist and pipe stdout. It is not established as an install or build and was not altered.",
+  "followupNativeReviewer": {
+    "observedAt": "2026-11-17T22:58:00Z",
+    "attribution": "/root/current_native_coordination",
+    "result": "No new proof receipt in bounded PR/CI snapshot; exact ToolchainProof remote branch absent; local package+lock still dirty at 288. Native a179 and run 44 are separate and cannot validate this dependency proposal."
+  }
+}

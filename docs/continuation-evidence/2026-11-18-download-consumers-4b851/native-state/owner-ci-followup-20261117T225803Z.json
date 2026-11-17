@@ -1,0 +1,155 @@
+{
+  "startedAt": "2026-11-17T22:58:01.999645+00:00",
+  "capturedAt": "2026-11-17T22:58:03.400143+00:00",
+  "scope": "One bounded read-only owner, ref and CI follow-up since 22:53 UTC; no builds, tests, source changes, dispatches or external posts.",
+  "commentsSince": "2026-11-17T22:53:00Z",
+  "comments": [
+    {
+      "id": 6963355309,
+      "html_url": "https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6963355309",
+      "created_at": "2026-11-17T22:53:08Z",
+      "updated_at": "2026-11-17T22:53:08Z",
+      "body": "### Foreground continuation resumed \u2014 18 November, 01:50 Riyadh\n\nRoot4b851 is ACTIVE again. The same authorized Chrome context recovered; both existing Grok conversations are still Build and the third is Heavy. Their outstanding replies have been read. New bounded tasks are running: Build1 reviews hosted export-action error/recovery boundaries; Build2 reviews the publisher's EXISTING native assertion correction; Heavy critiques current free-cost remedies/consumer standards and measurable competitor improvements. No source packages or39images resent.\n\n**New source recovery:** latest reconciled publisher is **2884188263f3dad5753da7b2e507f6ba55e30eb0**, merging363 + root9d01149 + native-search0beff68. All3 e1 account follow-up files match. Root fast-forwarded only its own clean continuation checkout9d\u2192288 and rebuilt its synthetic account browser fixture; publisher/search/native worktrees are untouched. Root remote still9d until the next evidence checkpoint.\n\n**Run43 /44185640786:** service, Android, unsigned iPhone build pass; hosted audit fails after289main Node tests/build; iPhone16/17 with sole completed-empty expected-copy failure. Android log reports112ordinary +1TLS +1HTTPS checks, not physical-device accessibility.\n\n**Publisher-owned correction already exists:** clean local **a17999ce9f24d1e8c94a38c03dcda68101db4507** in Career-EmptyState-UI288 changes only apple/UITests/CareerFinderUITests.swift. It aligns the complete-state title and adds the broadening-guidance assertion. Root independently confirmed the complete-empty fixture/source contract; Build2 is reviewing the stronger existing candidate, not integrating a competing patch. No remote checkpoint/rerun pass for a179 was established. Please preserve and finish that owner-controlled integration/acceptance.\n\n**Dependency proof already exists:** Career-ToolchainProof288 is publisher-owned, based on288, with dirty hosted/package.json and package-lock.json. Root's dependency helper is reading that actual proposal before recommending any further work; no competing package edits/install. New upstream PR257 remains open/unreleased and requires capture-semantic scrutiny. No audit waiver or clean-gate claim.\n\n**Native lanes:** search is clean/pushed0beff68 and now integrated. Recovery has7modified source files+new NativeRecoveryCheck.swift, with actual changes through22:07UTC. Accessibility is clean local6054d0bc,24commits/20paths, still reporting PATCHES_READY_FOR_OWNER_REVIEW_NOT_INTEGRATED to obsolete01a49. Its11search/3recovery file overlaps still need explicit current-owner acknowledgement and hunk reconciliation. Search remains sole shared localization writer.\n\nRoot is completing final03c EN/AR mounted account focus/retry checks and the previously interrupted failed-OAuth case at actual narrow browser widths. An independent helper is exercising actual production CSV/ICS outputs in already-installed LibreOffice using isolated profiles and synthetic data; no personal calendar writes or new dependency. No native build/CI/store action by root. During this foreground work, scheduled checks should remain read-only on these tabs/files. Original cutoff18Nov22:26:12UTC /19Nov01:26:12Riyadh unchanged; Good Spender excluded.",
+      "login": "swonyu"
+    }
+  ],
+  "selectedRefs": {
+    "refs/heads/recovery/empty-state-ui-expectation-20261117-d57": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+    "refs/heads/recovery/publishing-integrated-20261117-d57f4": "363ae84aaaf9032b040ee60b16a3c023ec1c1cf2",
+    "refs/heads/recovery/publishing-reconciled-20261117-d57": "2884188263f3dad5753da7b2e507f6ba55e30eb0"
+  },
+  "selectedRefsAbsent": [
+    "refs/heads/recovery/toolchain-proof-20261117-d57"
+  ],
+  "latestRuns": [
+    {
+      "id": 44194197445,
+      "run_number": 44,
+      "head_branch": "recovery/empty-state-ui-expectation-20261117-d57",
+      "head_sha": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+      "event": "workflow_dispatch",
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-11-17T22:52:21Z",
+      "updated_at": "2026-11-17T22:52:31Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445"
+    },
+    {
+      "id": 44185640786,
+      "run_number": 43,
+      "head_branch": "recovery/publishing-reconciled-20261117-d57",
+      "head_sha": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-17T22:00:19Z",
+      "updated_at": "2026-11-17T22:23:13Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44185640786"
+    },
+    {
+      "id": 44172535044,
+      "run_number": 42,
+      "head_branch": "recovery/publishing-integrated-20261117-d57f4",
+      "head_sha": "363ae84aaaf9032b040ee60b16a3c023ec1c1cf2",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-17T20:44:50Z",
+      "updated_at": "2026-11-17T21:15:15Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44172535044"
+    },
+    {
+      "id": 44147056599,
+      "run_number": 41,
+      "head_branch": "recovery/publishing-integrated-20261117-d57f4",
+      "head_sha": "243031d3f35040985c5b274e8ddf4a90adb0eda8",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-17T18:22:03Z",
+      "updated_at": "2026-11-17T18:50:00Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44147056599"
+    },
+    {
+      "id": 44139018005,
+      "run_number": 40,
+      "head_branch": "continuation/account-acceptance-20261117",
+      "head_sha": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-17T17:37:23Z",
+      "updated_at": "2026-11-17T18:06:31Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44139018005"
+    }
+  ],
+  "newRunJobs": {
+    "44194197445": [
+      {
+        "id": 134431174905,
+        "name": "PARTIAL iPhone UI acceptance (all 17 journeys)",
+        "status": "in_progress",
+        "conclusion": null,
+        "started_at": "2026-11-17T22:52:30Z",
+        "completed_at": null,
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/job/134431174905"
+      },
+      {
+        "id": 134431176866,
+        "name": "Android compile, lint and native acceptance",
+        "status": "completed",
+        "conclusion": "skipped",
+        "started_at": "2026-11-17T22:52:22Z",
+        "completed_at": "2026-11-17T22:52:22Z",
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/job/134431176866"
+      },
+      {
+        "id": 134431177187,
+        "name": "Service and synthetic HTTPS",
+        "status": "completed",
+        "conclusion": "skipped",
+        "started_at": "2026-11-17T22:52:22Z",
+        "completed_at": "2026-11-17T22:52:22Z",
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/job/134431177187"
+      },
+      {
+        "id": 134431177737,
+        "name": "Hosted HTTPS service and durable storage",
+        "status": "completed",
+        "conclusion": "skipped",
+        "started_at": "2026-11-17T22:52:22Z",
+        "completed_at": "2026-11-17T22:52:22Z",
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/job/134431177737"
+      },
+      {
+        "id": 134431177800,
+        "name": "iPhone logic and unsigned build",
+        "status": "completed",
+        "conclusion": "skipped",
+        "started_at": "2026-11-17T22:52:22Z",
+        "completed_at": "2026-11-17T22:52:22Z",
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/job/134431177800"
+      }
+    ]
+  },
+  "publisherLocalWorktrees": {
+    "Career-CombinedR2": {
+      "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-CombinedR2",
+      "head": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+      "branch": "recovery/publishing-reconciled-20261117-d57",
+      "status": ""
+    },
+    "Career-EmptyState-UI288": {
+      "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-EmptyState-UI288",
+      "head": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+      "branch": "recovery/empty-state-ui-expectation-20261117-d57",
+      "status": ""
+    },
+    "Career-ToolchainProof288": {
+      "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-ToolchainProof288",
+      "head": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+      "branch": "recovery/toolchain-proof-20261117-d57",
+      "status": "M hosted/package-lock.json\n M hosted/package.json"
+    }
+  }
+}

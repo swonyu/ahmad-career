@@ -1,0 +1,97 @@
+{
+  "verifiedAt": "2026-11-17T23:26:50.279952+00:00",
+  "owner": "/root/export_consumer_review",
+  "rootReportedOrigin": "Actual root-operated PhoneApp browser downloads; synthetic record only. This agent did not operate the browser.",
+  "inputs": [
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-application-records (1).csv",
+      "copy": "actual-ui-en.csv",
+      "bytes": 489,
+      "sha256": "6337ab97ad63ddf64bcf6e4cf55a5b176ef1abe99890426f638ff3c17ff44e64",
+      "rows": [
+        [
+          "Job title",
+          "Employer",
+          "Job link",
+          "Stage (self-entered)",
+          "Marked applied (self-entered)",
+          "Applied date (self-entered)",
+          "Follow-up date (self-entered)",
+          "Private note",
+          "Last edited (not application time)"
+        ],
+        [
+          "مُهندس, \"أول\" 🧭",
+          "Synthetic employer / جهة تجريبية",
+          "https://example.org/career-finder-ui-export-20261117",
+          "Saved",
+          "No",
+          "",
+          "2026-11-24",
+          "Text: =1+1\nSYNTHETIC_PRIVATE_NOTE_4b851 — ملاحظة خاصة, \"اختبار\"\n000123",
+          "2026-11-17T23:22:18.354Z"
+        ]
+      ]
+    },
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-application-records (2).csv",
+      "copy": null,
+      "bytes": 489,
+      "sha256": "6337ab97ad63ddf64bcf6e4cf55a5b176ef1abe99890426f638ff3c17ff44e64",
+      "rows": [
+        [
+          "Job title",
+          "Employer",
+          "Job link",
+          "Stage (self-entered)",
+          "Marked applied (self-entered)",
+          "Applied date (self-entered)",
+          "Follow-up date (self-entered)",
+          "Private note",
+          "Last edited (not application time)"
+        ],
+        [
+          "مُهندس, \"أول\" 🧭",
+          "Synthetic employer / جهة تجريبية",
+          "https://example.org/career-finder-ui-export-20261117",
+          "Saved",
+          "No",
+          "",
+          "2026-11-24",
+          "Text: =1+1\nSYNTHETIC_PRIVATE_NOTE_4b851 — ملاحظة خاصة, \"اختبار\"\n000123",
+          "2026-11-17T23:22:18.354Z"
+        ]
+      ]
+    },
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-application-records (3).csv",
+      "copy": "actual-ui-ar.csv",
+      "bytes": 670,
+      "sha256": "f920db19636bbee85ceb9dfffd4a0045bf8946364f95f8a3a10605786c6542d8",
+      "rows": [
+        [
+          "المسمى الوظيفي",
+          "جهة العمل",
+          "رابط الوظيفة",
+          "المرحلة (أدخلتها بنفسك)",
+          "علامة تم التقديم (أدخلتها بنفسك)",
+          "تاريخ التقديم (أدخلته بنفسك)",
+          "تاريخ المتابعة (أدخلته بنفسك)",
+          "ملاحظة خاصة",
+          "آخر تعديل (وليس وقت التقديم)"
+        ],
+        [
+          "مُهندس, \"أول\" 🧭",
+          "Synthetic employer / جهة تجريبية",
+          "https://example.org/career-finder-ui-export-20261117",
+          "المحفوظات",
+          "لا",
+          "",
+          "2026-11-24",
+          "Text: =1+1\nSYNTHETIC_PRIVATE_NOTE_4b851 — ملاحظة خاصة, \"اختبار\"\n000123",
+          "2026-11-17T23:22:18.354Z"
+        ]
+      ]
+    }
+  ]
+}

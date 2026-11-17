@@ -1,0 +1,151 @@
+{
+  "observedAt": "2026-11-17T23:47:29.879323+00:00",
+  "run": {
+    "id": 44194197445,
+    "run_number": 44,
+    "head_branch": "recovery/empty-state-ui-expectation-20261117-d57",
+    "head_sha": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+    "event": "workflow_dispatch",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-17T22:52:21Z",
+    "updated_at": "2026-11-17T23:27:52Z",
+    "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445"
+  },
+  "scope": "iPhone UI simulator acceptance only; other four workflow jobs skipped",
+  "source": "Raw GitHub job134431174905 log, not job label",
+  "testCases": [
+    {
+      "name": "testAccessibilityTextKeepsCoreControlsReachable",
+      "result": "passed",
+      "seconds": 169.805,
+      "logLine": 1183
+    },
+    {
+      "name": "testApplicationDraftSurvivesCancelAndRelaunch",
+      "result": "passed",
+      "seconds": 56.818,
+      "logLine": 1319
+    },
+    {
+      "name": "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+      "result": "passed",
+      "seconds": 129.358,
+      "logLine": 1682
+    },
+    {
+      "name": "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+      "result": "passed",
+      "seconds": 107.074,
+      "logLine": 1960
+    },
+    {
+      "name": "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "result": "passed",
+      "seconds": 29.035,
+      "logLine": 2038
+    },
+    {
+      "name": "testDiscoverySaveFlowsIntoSavedAndApply",
+      "result": "passed",
+      "seconds": 45.315,
+      "logLine": 2192
+    },
+    {
+      "name": "testFreshStartAndFiveTabs",
+      "result": "passed",
+      "seconds": 31.243,
+      "logLine": 2279
+    },
+    {
+      "name": "testLinkedInProfileDraftAndExternalSearchChoice",
+      "result": "passed",
+      "seconds": 77.669,
+      "logLine": 2438
+    },
+    {
+      "name": "testOpportunityDiscardRequiresExplicitChoice",
+      "result": "passed",
+      "seconds": 25.623,
+      "logLine": 2503
+    },
+    {
+      "name": "testOpportunityDraftKeepSaveAndRestore",
+      "result": "passed",
+      "seconds": 65.948,
+      "logLine": 2680
+    },
+    {
+      "name": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+      "result": "passed",
+      "seconds": 163.187,
+      "logLine": 3138
+    },
+    {
+      "name": "testProfileReadinessAndSimpleConnectionSetup",
+      "result": "passed",
+      "seconds": 92.157,
+      "logLine": 3441
+    },
+    {
+      "name": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+      "result": "passed",
+      "seconds": 35.604,
+      "logLine": 3605
+    },
+    {
+      "name": "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+      "result": "passed",
+      "seconds": 124.346,
+      "logLine": 3970
+    },
+    {
+      "name": "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+      "result": "passed",
+      "seconds": 151.534,
+      "logLine": 4390
+    },
+    {
+      "name": "testSearchEmptyAndFailurePreservesPreviousResults",
+      "result": "passed",
+      "seconds": 107.517,
+      "logLine": 4671
+    },
+    {
+      "name": "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+      "result": "passed",
+      "seconds": 66.567,
+      "logLine": 4940
+    }
+  ],
+  "uniqueNamedCases": 17,
+  "testsExecuted": 17,
+  "failures": 0,
+  "unexpectedFailures": 0,
+  "suiteSeconds": 1478.798,
+  "testSucceededMarker": true,
+  "finalizedResultBundle": {
+    "path": "/Users/runner/work/_temp/CareerFinderUI.xcresult",
+    "evidence": "Log4951-4954 reports completed test session and TEST SUCCEEDED; xcresulttool successfully exported attachments thereafter.",
+    "exportedAttachmentCount": 36,
+    "attachmentExportGroups": 15,
+    "screenshotVisualReviewPerformed": false,
+    "archiveDownloadedOrIndependentlyParsed": false
+  },
+  "artifact": {
+    "id": 14378904630,
+    "bytes": 191254748,
+    "sha256ReportedByUpload": "08c9fcd0b8860524b0d3eced694da7c3beabca2576051eeb619cdb762e1bf6ee",
+    "url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/artifacts/14378904630",
+    "uploadFinalized": true,
+    "uploadedFileCount": 1624
+  },
+  "skippedWorkflowJobs": [
+    "Android compile, lint and native acceptance",
+    "Service and synthetic HTTPS",
+    "Hosted HTTPS service and durable storage",
+    "iPhone logic and unsigned build"
+  ],
+  "partialVerificationStep": "Verify the partial regression actually ran once was skipped; actual17case log and full suite total were independently inspected.",
+  "rawLogSHA256": "8e6a0e5ad754a4e3bf0e0c15f5f8fd6f7d5fc039a344042adb2f2781ac2f602a"
+}

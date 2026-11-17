@@ -1,0 +1,985 @@
+{
+  "schema": "career-accessibility-source-integration-map-v1",
+  "createdAt": "2026-11-17T23:50:04.175084+00:00",
+  "scope": "Source review only; no integration/runtime/AT pass or acknowledgement inferred",
+  "frozenRefs": {
+    "base": "243031d3f35040985c5b274e8ddf4a90adb0eda8",
+    "requestedAccessibility": "6054d0bcfcd2d84aa5d4701c982d4feb256d9980",
+    "currentAccessibility": "00e4257e519dec88b2b532ef606fbe0633966314",
+    "publisher": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+    "recoveryHead": "11cb3d4d8c15e9b16719b6e7091597f43633cda6"
+  },
+  "frozenCommitCount": 27,
+  "laterObservedAccessibility": {
+    "from": "00e4257e519dec88b2b532ef606fbe0633966314",
+    "to": "2230499e48104c7380d150e010d1859ff42b0c6a",
+    "observedAt": "2026-11-17T23:47:29.879323+00:00",
+    "commits": [
+      "2230499e48104c7380d150e010d1859ff42b0c6a\t00e4257e519dec88b2b532ef606fbe0633966314\t2026-11-18T02:40:57+03:00\tSpeak the private backup source"
+    ],
+    "paths": [
+      "android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt"
+    ],
+    "scope": "Preserved exact later delta; separate from the completed27commit map.",
+    "patchSHA256": "a16f15ed18ad7fc821ca9e20bb4a178a320957d0143199e94a62c85221035b95"
+  },
+  "currentObservedCommitCount": 28,
+  "paths": [
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt",
+      "publisherEqualsBase243": true,
+      "a11y6054EqualsPublisher": false,
+      "currentA11yEquals6054": false,
+      "recoveryDirtyOverlap": false,
+      "recoveryHeadEqualsBase243": null,
+      "a11yHunks": [
+        "@@ -81,0 +82 @@\n",
+        "@@ -95 +96,2 @@\n",
+        "@@ -102 +104,3 @@\n",
+        "@@ -128 +132,7 @@\n",
+        "@@ -129,0 +140 @@\n"
+      ],
+      "publisherHunks": [],
+      "recoveryDirtyHunks": []
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+      "publisherEqualsBase243": false,
+      "a11y6054EqualsPublisher": false,
+      "currentA11yEquals6054": true,
+      "recoveryDirtyOverlap": false,
+      "recoveryHeadEqualsBase243": null,
+      "a11yHunks": [
+        "@@ -235,0 +236,7 @@\n",
+        "@@ -273 +280 @@\n"
+      ],
+      "publisherHunks": [
+        "@@ -19,0 +20,2 @@\n",
+        "@@ -22,0 +25,3 @@\n",
+        "@@ -23,0 +29,2 @@\n",
+        "@@ -28,2 +35,3 @@\n",
+        "@@ -46 +54,2 @@\n",
+        "@@ -47,0 +57,31 @@\n",
+        "@@ -66,0 +107,41 @@\n",
+        "@@ -70 +151,2 @@\n",
+        "@@ -77,0 +160,107 @@\n",
+        "@@ -83,0 +273 @@\n",
+        "@@ -90,0 +281,15 @@\n",
+        "@@ -109 +314,9 @@\n",
+        "@@ -187,0 +401,7 @@\n",
+        "@@ -197 +417,3 @@\n",
+        "@@ -199 +421 @@\n",
+        "@@ -203,0 +426,3 @@\n",
+        "@@ -281,3 +506,3 @@\n",
+        "@@ -285 +510,2 @@\n",
+        "@@ -289 +515,5 @@\n",
+        "@@ -295 +525,2 @@\n",
+        "@@ -300 +531 @@\n",
+        "@@ -327 +558 @@\n",
+        "@@ -333 +564,7 @@\n"
+      ],
+      "recoveryDirtyHunks": []
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+      "publisherEqualsBase243": false,
+      "a11y6054EqualsPublisher": false,
+      "currentA11yEquals6054": true,
+      "recoveryDirtyOverlap": false,
+      "recoveryHeadEqualsBase243": null,
+      "a11yHunks": [
+        "@@ -27,0 +28 @@\n",
+        "@@ -59 +60,4 @@\n",
+        "@@ -93,0 +98,8 @@\n",
+        "@@ -105,0 +118,9 @@\n",
+        "@@ -107 +128,2 @@\n",
+        "@@ -108,0 +131,6 @@\n",
+        "@@ -152 +180,3 @@\n",
+        "@@ -232,3 +262,5 @@\n",
+        "@@ -253 +285 @@\n",
+        "@@ -259,0 +292,4 @@\n"
+      ],
+      "publisherHunks": [
+        "@@ -11,0 +12 @@\n",
+        "@@ -21,0 +23 @@\n",
+        "@@ -24,0 +27 @@\n",
+        "@@ -57,0 +61,9 @@\n",
+        "@@ -107,0 +120,2 @@\n",
+        "@@ -109 +123,8 @@\n",
+        "@@ -120,3 +141,2 @@\n",
+        "@@ -133 +153 @@\n",
+        "@@ -169 +188,0 @@\n",
+        "@@ -178 +197 @@\n",
+        "@@ -182,5 +201,30 @@\n",
+        "@@ -240,0 +285 @@\n",
+        "@@ -242,2 +287,5 @@\n",
+        "@@ -247,2 +295,5 @@\n",
+        "@@ -256,4 +307,11 @@\n",
+        "@@ -263 +321,4 @@\n"
+      ],
+      "recoveryDirtyHunks": []
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+      "publisherEqualsBase243": true,
+      "a11y6054EqualsPublisher": false,
+      "currentA11yEquals6054": true,
+      "recoveryDirtyOverlap": true,
+      "recoveryHeadEqualsBase243": true,
+      "a11yHunks": [
+        "@@ -273,3 +273,5 @@\n",
+        "@@ -298 +300,5 @@\n",
+        "@@ -350 +356 @@\n",
+        "@@ -417 +423,4 @@\n",
+        "@@ -583 +592 @@\n",
+        "@@ -606 +615,3 @@\n",
+        "@@ -610,0 +622,3 @@\n",
+        "@@ -641 +655,2 @@\n",
+        "@@ -658,0 +674,3 @@\n",
+        "@@ -762,8 +780,14 @@\n",
+        "@@ -1007 +1031 @@\n",
+        "@@ -1010 +1034 @@\n",
+        "@@ -1061 +1085,2 @@\n",
+        "@@ -1100 +1125,4 @@\n",
+        "@@ -1168 +1196,4 @@\n"
+      ],
+      "publisherHunks": [],
+      "recoveryDirtyHunks": [
+        "@@ -332 +332,2 @@\n",
+        "@@ -340,0 +342,21 @@\n",
+        "@@ -400,0 +423,18 @@\n",
+        "@@ -418 +458 @@\n",
+        "@@ -750,0 +791,4 @@\n"
+      ]
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt",
+      "publisherEqualsBase243": false,
+      "a11y6054EqualsPublisher": false,
+      "currentA11yEquals6054": true,
+      "recoveryDirtyOverlap": false,
+      "recoveryHeadEqualsBase243": null,
+      "a11yHunks": [
+        "@@ -525,0 +526 @@\n",
+        "@@ -631 +631,0 @@\n",
+        "@@ -634,0 +635 @@\n",
+        "@@ -784 +784,0 @@\n",
+        "@@ -787,0 +788 @@\n",
+        "@@ -937 +937,0 @@\n",
+        "@@ -940,0 +941 @@\n",
+        "@@ -1090 +1090,0 @@\n",
+        "@@ -1093,0 +1094 @@\n",
+        "@@ -1243 +1243,0 @@\n",
+        "@@ -1246,0 +1247 @@\n",
+        "@@ -1396 +1396,0 @@\n",
+        "@@ -1399,0 +1400 @@\n",
+        "@@ -1549 +1549,0 @@\n",
+        "@@ -1552,0 +1553 @@\n",
+        "@@ -1702 +1702,0 @@\n",
+        "@@ -1705,0 +1706 @@\n",
+        "@@ -1855 +1855,0 @@\n",
+        "@@ -1858,0 +1859 @@\n"
+      ],
+      "publisherHunks": [
+        "@@ -285,0 +286 @@\n",
+        "@@ -325 +325,0 @@\n",
+        "@@ -328,0 +329 @@\n",
+        "@@ -416,0 +418 @@\n",
+        "@@ -477,2 +478,0 @@\n",
+        "@@ -481,0 +482,2 @@\n",
+        "@@ -630,2 +631,0 @@\n",
+        "@@ -634,0 +635,2 @@\n",
+        "@@ -783,2 +784,0 @@\n",
+        "@@ -787,0 +788,4 @@\n",
+        "@@ -847,0 +852 @@\n",
+        "@@ -853,0 +859 @@\n",
+        "@@ -931,0 +938,3 @@\n",
+        "@@ -938,3 +946,0 @@\n",
+        "@@ -1079,0 +1086 @@\n",
+        "@@ -1083,0 +1091,3 @@\n",
+        "@@ -1091,3 +1100,0 @@\n",
+        "@@ -1185,0 +1193 @@\n",
+        "@@ -1235,0 +1244,3 @@\n",
+        "@@ -1244,3 +1254,0 @@\n",
+        "@@ -1388,0 +1397,3 @@\n",
+        "@@ -1397,3 +1407,0 @@\n",
+        "@@ -1447,0 +1456 @@\n",
+        "@@ -1540,0 +1550,3 @@\n",
+        "@@ -1550,3 +1561,0 @@\n",
+        "@@ -1605,0 +1615 @@\n",
+        "@@ -1621,0 +1632 @@\n",
+        "@@ -1691,0 +1703,3 @@\n",
+        "@@ -1703,3 +1716,0 @@\n",
+        "@@ -1844,0 +1856,3 @@\n",
+        "@@ -1856,3 +1869,0 @@\n"
+      ],
+      "recoveryDirtyHunks": []
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/ProfileContract.java",
+      "publisherEqualsBase243": true,
+      "a11y6054EqualsPublisher": false,
+      "currentA11yEquals6054": true,
+      "recoveryDirtyOverlap": false,
+      "recoveryHeadEqualsBase243": null,
+      "a11yHunks": [
+        "@@ -29,0 +30,5 @@\n"
+      ],
+      "publisherHunks": [],
+      "recoveryDirtyHunks": []
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt",
+      "publisherEqualsBase243": true,
+      "a11y6054EqualsPublisher": false,
+      "currentA11yEquals6054": false,
+      "recoveryDirtyOverlap": false,
+      "recoveryHeadEqualsBase243": null,
+      "a11yHunks": [
+        "@@ -119 +119,2 @@\n",
+        "@@ -160 +161,3 @@\n",
+        "@@ -184,4 +187,9 @@\n"
+      ],
+      "publisherHunks": [],
+      "recoveryDirtyHunks": []
+    },
+    {
+      "path": "android/app/src/main/res/values-ar/career_copy.xml",
+      "publisherEqualsBase243": false,
+      "a11y6054EqualsPublisher": false,
+      "currentA11yEquals6054": true,
+      "recoveryDirtyOverlap": false,
+      "recoveryHeadEqualsBase243": null,
+      "a11yHunks": [
+        "@@ -497,0 +498 @@\n"
+      ],
+      "publisherHunks": [
+        "@@ -263,0 +264 @@\n",
+        "@@ -391,0 +393 @@\n",
+        "@@ -752,0 +755,2 @@\n",
+        "@@ -813,0 +818 @@\n",
+        "@@ -819,0 +825 @@\n",
+        "@@ -1042,0 +1049 @@\n",
+        "@@ -1145,0 +1153 @@\n",
+        "@@ -1401,0 +1410 @@\n",
+        "@@ -1556,0 +1566 @@\n",
+        "@@ -1572,0 +1583 @@\n"
+      ],
+      "recoveryDirtyHunks": []
+    },
+    {
+      "path": "android/app/src/main/res/values/career_copy.xml",
+      "publisherEqualsBase243": false,
+      "a11y6054EqualsPublisher": false,
+      "currentA11yEquals6054": true,
+      "recoveryDirtyOverlap": false,
+      "recoveryHeadEqualsBase243": null,
+      "a11yHunks": [
+        "@@ -497,0 +498 @@\n"
+      ],
+      "publisherHunks": [
+        "@@ -263,0 +264 @@\n",
+        "@@ -391,0 +393 @@\n",
+        "@@ -752,0 +755,2 @@\n",
+        "@@ -813,0 +818 @@\n",
+        "@@ -819,0 +825 @@\n",
+        "@@ -1042,0 +1049 @@\n",
+        "@@ -1145,0 +1153 @@\n",
+        "@@ -1401,0 +1410 @@\n",
+        "@@ -1556,0 +1566 @@\n",
+        "@@ -1572,0 +1583 @@\n"
+      ],
+      "recoveryDirtyHunks": []
+    },
+    {
+      "path": "android/checks/BoundaryPolicyCheck.java",
+      "publisherEqualsBase243": true,
+      "a11y6054EqualsPublisher": false,
+      "currentA11yEquals6054": true,
+      "recoveryDirtyOverlap": false,
+      "recoveryHeadEqualsBase243": null,
+      "a11yHunks": [
+        "@@ -33,0 +34,5 @@\n"
+      ],
+      "publisherHunks": [],
+      "recoveryDirtyHunks": []
+    },
+    {
+      "path": "apple/AhmadCareer/CareerDiscovery.swift",
+      "publisherEqualsBase243": false,
+      "a11y6054EqualsPublisher": false,
+      "currentA11yEquals6054": true,
+      "recoveryDirtyOverlap": false,
+      "recoveryHeadEqualsBase243": null,
+      "a11yHunks": [
+        "@@ -223,0 +224 @@\n",
+        "@@ -224,0 +226 @@\n",
+        "@@ -288,0 +291 @@\n",
+        "@@ -291,0 +295,11 @@\n",
+        "@@ -297 +311 @@\n",
+        "@@ -300 +314,3 @@\n"
+      ],
+      "publisherHunks": [
+        "@@ -71,2 +71,4 @@\n",
+        "@@ -85,0 +88,39 @@\n",
+        "@@ -96,0 +138,107 @@\n",
+        "@@ -102,3 +250,4 @@\n",
+        "@@ -234,0 +384,3 @@\n",
+        "@@ -245 +397 @@\n",
+        "@@ -250 +402 @@\n",
+        "@@ -271 +423 @@\n",
+        "@@ -276 +428 @@\n",
+        "@@ -279,0 +432,5 @@\n",
+        "@@ -280,0 +438 @@\n",
+        "@@ -282 +440,3 @@\n",
+        "@@ -285 +445 @@\n",
+        "@@ -287,2 +447,13 @@\n",
+        "@@ -301,0 +473,25 @@\n",
+        "@@ -304 +500 @@\n",
+        "@@ -306,0 +503 @@\n",
+        "@@ -308,2 +505 @@\n",
+        "@@ -312,3 +508,7 @@\n",
+        "@@ -319 +519 @@\n",
+        "@@ -321,0 +522,4 @@\n",
+        "@@ -323 +526,0 @@\n",
+        "@@ -326,0 +530,5 @@\n",
+        "@@ -328,4 +536,16 @@\n",
+        "@@ -336 +556 @@\n",
+        "@@ -353,0 +574 @@\n"
+      ],
+      "recoveryDirtyHunks": []
+    },
+    {
+      "path": "apple/AhmadCareer/MobileApplicationState.swift",
+      "publisherEqualsBase243": true,
+      "a11y6054EqualsPublisher": false,
+      "currentA11yEquals6054": true,
+      "recoveryDirtyOverlap": true,
+      "recoveryHeadEqualsBase243": true,
+      "a11yHunks": [
+        "@@ -482,0 +483,4 @@\n"
+      ],
+      "publisherHunks": [],
+      "recoveryDirtyHunks": [
+        "@@ -156,0 +157,7 @@\n",
+        "@@ -278,0 +286,2 @@\n",
+        "@@ -280 +289 @@\n",
+        "@@ -282,0 +292 @@\n",
+        "@@ -289,0 +300,2 @@\n",
+        "@@ -389 +401,25 @@\n",
+        "@@ -407,0 +444 @@\n",
+        "@@ -423,0 +461 @@\n",
+        "@@ -425 +463 @@\n",
+        "@@ -492 +530 @@\n",
+        "@@ -508,0 +547,4 @@\n",
+        "@@ -516 +558 @@\n",
+        "@@ -533,0 +576,2 @@\n",
+        "@@ -536 +580,3 @@\n",
+        "@@ -618,0 +665,20 @@\n"
+      ]
+    },
+    {
+      "path": "apple/AhmadCareer/NativeApplicationsViews.swift",
+      "publisherEqualsBase243": true,
+      "a11y6054EqualsPublisher": false,
+      "currentA11yEquals6054": true,
+      "recoveryDirtyOverlap": true,
+      "recoveryHeadEqualsBase243": true,
+      "a11yHunks": [
+        "@@ -30 +30 @@\n",
+        "@@ -67,0 +68,3 @@\n",
+        "@@ -83,0 +87,8 @@\n",
+        "@@ -232,3 +243,2 @@\n",
+        "@@ -395,3 +405,3 @@\n",
+        "@@ -408,0 +419,7 @@\n",
+        "@@ -437,0 +455 @@\n",
+        "@@ -480,0 +499,5 @@\n",
+        "@@ -615 +638,11 @@\n",
+        "@@ -626,0 +660,9 @@\n",
+        "@@ -741,0 +784,3 @@\n",
+        "@@ -843 +888,4 @@\n",
+        "@@ -861,0 +910,3 @@\n",
+        "@@ -1055,0 +1107,17 @@\n",
+        "@@ -1246,0 +1315,3 @@\n"
+      ],
+      "publisherHunks": [],
+      "recoveryDirtyHunks": [
+        "@@ -373 +373,3 @@\n",
+        "@@ -640 +642 @@\n",
+        "@@ -642 +644 @@\n",
+        "@@ -651,0 +654,8 @@\n",
+        "@@ -1071,0 +1082 @@\n",
+        "@@ -1094,0 +1106,5 @@\n",
+        "@@ -1163,0 +1180,38 @@\n"
+      ]
+    },
+    {
+      "path": "apple/AhmadCareer/NativeCareerViews.swift",
+      "publisherEqualsBase243": false,
+      "a11y6054EqualsPublisher": false,
+      "currentA11yEquals6054": true,
+      "recoveryDirtyOverlap": false,
+      "recoveryHeadEqualsBase243": null,
+      "a11yHunks": [
+        "@@ -432 +432,7 @@\n",
+        "@@ -498,0 +505,8 @@\n",
+        "@@ -551,0 +566,3 @@\n",
+        "@@ -593,0 +611,13 @@\n",
+        "@@ -685,0 +716,8 @@\n",
+        "@@ -699,0 +738,8 @@\n",
+        "@@ -725 +771 @@\n",
+        "@@ -728,2 +774,2 @@\n",
+        "@@ -731 +777 @@\n",
+        "@@ -780 +826 @@\n",
+        "@@ -791 +837 @@\n",
+        "@@ -801,0 +848,6 @@\n",
+        "@@ -812,0 +865,8 @@\n",
+        "@@ -834 +894 @@\n",
+        "@@ -837,2 +897,2 @@\n",
+        "@@ -840 +900 @@\n",
+        "@@ -929,0 +990 @@\n",
+        "@@ -933,0 +995 @@\n",
+        "@@ -1110,0 +1173,2 @@\n",
+        "@@ -1117,0 +1182,2 @@\n",
+        "@@ -1119,3 +1185,38 @@\n",
+        "@@ -1135,0 +1237 @@\n",
+        "@@ -1137,0 +1240 @@\n",
+        "@@ -1140,0 +1244 @@\n",
+        "@@ -1141,0 +1246,2 @@\n",
+        "@@ -1149,0 +1256 @@\n",
+        "@@ -1153,0 +1261 @@\n",
+        "@@ -1158,0 +1267 @@\n",
+        "@@ -1162 +1271 @@\n",
+        "@@ -1175 +1284 @@\n",
+        "@@ -1182 +1291 @@\n",
+        "@@ -1216,0 +1326,27 @@\n",
+        "@@ -1232,0 +1369 @@\n",
+        "@@ -1236,0 +1374,5 @@\n",
+        "@@ -1298,0 +1441,6 @@\n"
+      ],
+      "publisherHunks": [
+        "@@ -44,0 +45,24 @@\n",
+        "@@ -77,0 +102 @@\n",
+        "@@ -103,6 +127,0 @@\n"
+      ],
+      "recoveryDirtyHunks": []
+    },
+    {
+      "path": "apple/AhmadCareer/NativeDiscoveryViews.swift",
+      "publisherEqualsBase243": false,
+      "a11y6054EqualsPublisher": false,
+      "currentA11yEquals6054": true,
+      "recoveryDirtyOverlap": false,
+      "recoveryHeadEqualsBase243": null,
+      "a11yHunks": [
+        "@@ -7,0 +8,2 @@\n",
+        "@@ -45 +47,2 @@\n",
+        "@@ -55,0 +59,4 @@\n",
+        "@@ -59 +66 @@\n",
+        "@@ -63,0 +71,11 @@\n",
+        "@@ -65 +83,9 @@\n",
+        "@@ -123,0 +150,19 @@\n",
+        "@@ -128,0 +174,7 @@\n",
+        "@@ -202 +254,16 @@\n"
+      ],
+      "publisherHunks": [
+        "@@ -61,0 +62,9 @@\n",
+        "@@ -79 +88 @@\n",
+        "@@ -80,0 +90,3 @@\n",
+        "@@ -81,0 +94,4 @@\n",
+        "@@ -129,9 +145,24 @@\n",
+        "@@ -142 +173 @@\n",
+        "@@ -144,2 +175 @@\n",
+        "@@ -176 +206 @@\n",
+        "@@ -178 +208 @@\n",
+        "@@ -188 +218 @@\n"
+      ],
+      "recoveryDirtyHunks": []
+    },
+    {
+      "path": "apple/AhmadCareer/ar.lproj/Localizable.strings",
+      "publisherEqualsBase243": false,
+      "a11y6054EqualsPublisher": false,
+      "currentA11yEquals6054": true,
+      "recoveryDirtyOverlap": false,
+      "recoveryHeadEqualsBase243": null,
+      "a11yHunks": [
+        "@@ -495,0 +496 @@\n"
+      ],
+      "publisherHunks": [
+        "@@ -261,0 +262 @@\n",
+        "@@ -389,0 +391 @@\n",
+        "@@ -750,0 +753,2 @@\n",
+        "@@ -811,0 +816 @@\n",
+        "@@ -817,0 +823 @@\n",
+        "@@ -1040,0 +1047 @@\n",
+        "@@ -1143,0 +1151 @@\n",
+        "@@ -1399,0 +1408 @@\n",
+        "@@ -1554,0 +1564 @@\n",
+        "@@ -1570,0 +1581 @@\n"
+      ],
+      "recoveryDirtyHunks": []
+    },
+    {
+      "path": "apple/AhmadCareer/en.lproj/Localizable.strings",
+      "publisherEqualsBase243": false,
+      "a11y6054EqualsPublisher": false,
+      "currentA11yEquals6054": true,
+      "recoveryDirtyOverlap": false,
+      "recoveryHeadEqualsBase243": null,
+      "a11yHunks": [
+        "@@ -495,0 +496 @@\n"
+      ],
+      "publisherHunks": [
+        "@@ -261,0 +262 @@\n",
+        "@@ -389,0 +391 @@\n",
+        "@@ -750,0 +753,2 @@\n",
+        "@@ -811,0 +816 @@\n",
+        "@@ -817,0 +823 @@\n",
+        "@@ -1040,0 +1047 @@\n",
+        "@@ -1143,0 +1151 @@\n",
+        "@@ -1399,0 +1408 @@\n",
+        "@@ -1554,0 +1564 @@\n",
+        "@@ -1570,0 +1581 @@\n"
+      ],
+      "recoveryDirtyHunks": []
+    },
+    {
+      "path": "apple/Checks/DiscoveryCheck.swift",
+      "publisherEqualsBase243": false,
+      "a11y6054EqualsPublisher": false,
+      "currentA11yEquals6054": true,
+      "recoveryDirtyOverlap": false,
+      "recoveryHeadEqualsBase243": null,
+      "a11yHunks": [
+        "@@ -7,0 +8 @@\n",
+        "@@ -17 +18,5 @@\n",
+        "@@ -204,0 +210,69 @@\n"
+      ],
+      "publisherHunks": [
+        "@@ -206,0 +207,137 @@\n"
+      ],
+      "recoveryDirtyHunks": []
+    },
+    {
+      "path": "apple/Checks/MobileLifecycleCheck.swift",
+      "publisherEqualsBase243": true,
+      "a11y6054EqualsPublisher": false,
+      "currentA11yEquals6054": true,
+      "recoveryDirtyOverlap": false,
+      "recoveryHeadEqualsBase243": null,
+      "a11yHunks": [
+        "@@ -685,0 +686 @@\n",
+        "@@ -687 +688,9 @@\n",
+        "@@ -690 +699,2 @@\n"
+      ],
+      "publisherHunks": [],
+      "recoveryDirtyHunks": []
+    },
+    {
+      "path": "localization/native-copy.json",
+      "publisherEqualsBase243": false,
+      "a11y6054EqualsPublisher": false,
+      "currentA11yEquals6054": true,
+      "recoveryDirtyOverlap": false,
+      "recoveryHeadEqualsBase243": null,
+      "a11yHunks": [
+        "@@ -485,0 +486 @@\n"
+      ],
+      "publisherHunks": [
+        "@@ -1806 +1806,12 @@\n"
+      ],
+      "recoveryDirtyHunks": []
+    }
+  ],
+  "commitDispositions": [
+    {
+      "short": "2552446",
+      "subject": "Show a recoverable email check and job-search retry",
+      "disposition": "Mixed: email hints/readiness helpers/tests and search recovery UI are distinct; iPhone three-way essential label already exists inline, and publisher retry behavior is stronger. Split email/search/localization pieces.",
+      "commit": "25524465c2979bd71f8f377a53151d981381a571",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+        "android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt",
+        "android/app/src/main/java/com/saleh/careerfinder/ProfileContract.java",
+        "android/app/src/main/res/values-ar/career_copy.xml",
+        "android/app/src/main/res/values/career_copy.xml",
+        "android/checks/BoundaryPolicyCheck.java",
+        "apple/AhmadCareer/MobileApplicationState.swift",
+        "apple/AhmadCareer/NativeApplicationsViews.swift",
+        "apple/AhmadCareer/NativeDiscoveryViews.swift",
+        "apple/AhmadCareer/ar.lproj/Localizable.strings",
+        "apple/AhmadCareer/en.lproj/Localizable.strings",
+        "apple/Checks/MobileLifecycleCheck.swift",
+        "localization/native-copy.json"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "fa759f0",
+      "subject": "Recover a saved job search that failed to open or save",
+      "disposition": "Distinct iPhone saved-search read/write retry; adapt restore and checks around newer canonical/retry state. Android already has saved-search recovery; this commit adds its cooldown explanation. Do not replace full search files.",
+      "commit": "fa759f0d9e50d9ee0e0102ba33d83d2529c50aa5",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+        "apple/AhmadCareer/CareerDiscovery.swift",
+        "apple/AhmadCareer/NativeDiscoveryViews.swift",
+        "apple/Checks/DiscoveryCheck.swift"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "b6d5fca",
+      "subject": "Keep employer-directory retry separate from job search",
+      "disposition": "Distinct iPhone catalogError isolation and catalog-only retry. Android hunk adds LinkedIn live semantics/tag only. Preserve publisher search error/captured query; catalog error translation already exists.",
+      "commit": "b6d5fcaccbd5809fb74db182a39e221a4b2f192e",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+        "apple/AhmadCareer/CareerDiscovery.swift",
+        "apple/AhmadCareer/NativeDiscoveryViews.swift",
+        "apple/Checks/DiscoveryCheck.swift"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "c4bf5db",
+      "subject": "Keep long job-search text and speak the recovery failure",
+      "disposition": "Distinct long-input retention and recovery/board/LinkedIn error feedback. Android board Field error association must be retained during adaptation.",
+      "commit": "c4bf5dbde438a66d99e2ab0ef9c747144614fac8",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+        "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+        "apple/AhmadCareer/NativeApplicationsViews.swift"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "b5f8dff",
+      "subject": "Speak recovery failures and keep the catalog retry",
+      "disposition": "Distinct late-catalog filter guard and failure announcements; preserve current search model. iPhone next-action/recovery notices are view-local.",
+      "commit": "b5f8dff005d647f1e5b5babfe8787bb35355ef69",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+        "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+        "apple/AhmadCareer/NativeApplicationsViews.swift",
+        "apple/AhmadCareer/NativeCareerViews.swift"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "720fce5",
+      "subject": "Speak backup and review blockers",
+      "disposition": "Distinct backup/review live regions and current-directory retry. Split WorkspaceDataViews from shared MainActivity/search contexts.",
+      "commit": "720fce53e0be528346e657ff6178cf6f0cd4d4f7",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+        "android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "1c44581",
+      "subject": "Speak blockers that are already on screen",
+      "disposition": "Distinct pre-existing blocker announcements in Android record/review and iPhone record/profile views. Split by view and coordinate MainActivity/NativeApplicationsViews recovery edits.",
+      "commit": "1c4458145b8804eefaa1bbd6b7e1a2a494e5d1ce",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt",
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+        "apple/AhmadCareer/NativeApplicationsViews.swift",
+        "apple/AhmadCareer/NativeCareerViews.swift"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "9700d0e",
+      "subject": "Speak the storage pause that replaces the workspace",
+      "disposition": "Distinct Android storage-pause live announcement. MainActivity common path but separate from recovery changes.",
+      "commit": "9700d0e078716f40bf17fad9c7fd7362e1549336",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "f139c04",
+      "subject": "Explain a review that can no longer continue",
+      "disposition": "Distinct Android unavailable review explanation and announcement. Preserve existing execution/approval guards.",
+      "commit": "f139c0499830ec71411a2686d86d546ef50126c7",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "0ed8f50",
+      "subject": "Speak a review that cannot be approved yet",
+      "disposition": "Distinct iPhone review-open/change announcements for submission availability and profile-needs-sync. Preserve recovery view changes.",
+      "commit": "0ed8f50c9946de4d8eeb5d6eabc17ea8cc4ea0de",
+      "paths": [
+        "apple/AhmadCareer/NativeApplicationsViews.swift"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "f6ec0cd",
+      "subject": "Speak when automatic sending is not available",
+      "disposition": "Distinct Android/iPhone unavailable automatic-submission announcements; no change to actual availability or send authorization.",
+      "commit": "f6ec0cd1b479f759bef9055ef15c86f071424d74",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+        "apple/AhmadCareer/NativeApplicationsViews.swift"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "47fdfb2",
+      "subject": "Speak a profile change that blocks saving",
+      "disposition": "Distinct profile conflict/validation feedback in Android MainActivity and iPhone NativeProfileEditor; split platform views.",
+      "commit": "47fdfb23877295faf3687b7b4bd81491ecc45bd6",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+        "apple/AhmadCareer/NativeCareerViews.swift"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "0ca27c8",
+      "subject": "Speak a job warning that is already on screen",
+      "disposition": "Distinct iPhone existing expired/experience-gap listing warnings; view-local and outside recovery dirty files.",
+      "commit": "0ca27c899a96cbaecb8bfd93852b448f1b4af843",
+      "paths": [
+        "apple/AhmadCareer/NativeCareerViews.swift"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "6411a10",
+      "subject": "Speak the reconnect title when pairing is required",
+      "disposition": "Distinct Android reconnect-required heading announcement; adjacent owner context must remain intact.",
+      "commit": "6411a10bbbe5c348900b570426d72fa3a670c347",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "594da38",
+      "subject": "Speak a planning backup that failed",
+      "disposition": "Distinct iPhone planning-backup failure announcement; preserve existing success/cancel semantics.",
+      "commit": "594da38cb84c03156aecc5cf3463b492d0077deb",
+      "paths": [
+        "apple/AhmadCareer/NativeCareerViews.swift"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "08f25cc",
+      "subject": "Speak a record blocker that is already on screen",
+      "disposition": "Distinct iPhone existing record comparison blocker announcement/identifier; view-local.",
+      "commit": "08f25cc015fab2606838c162328224463f91812b",
+      "paths": [
+        "apple/AhmadCareer/NativeCareerViews.swift"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "7e97e09",
+      "subject": "Speak an Apply message that is already on screen",
+      "disposition": "Distinct iPhone already-visible Apply message on appearance with deduplication;288 only handles changes.",
+      "commit": "7e97e09316e616ba64954ef1a417aabb55700ce3",
+      "paths": [
+        "apple/AhmadCareer/NativeApplicationsViews.swift"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "87d7238",
+      "subject": "Ignore a canceled planning backup file choice",
+      "disposition": "Distinct iPhone planning importer/exporter cancellation suppression using existing cancellation policy; no storage write behavior change intended.",
+      "commit": "87d7238804393557ad00ae0d20f3aad465f8173e",
+      "paths": [
+        "apple/AhmadCareer/NativeCareerViews.swift"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "842358e",
+      "subject": "Show a profile preference error beside its field",
+      "disposition": "Distinct iPhone field-local planning preference errors; keep validation rules and shared profile helper dependencies.",
+      "commit": "842358e7983f5aee12e570c0a25f07f9917d643e",
+      "paths": [
+        "apple/AhmadCareer/NativeCareerViews.swift"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "e33accb",
+      "subject": "Speak an invalid salary amount after editing",
+      "disposition": "Distinct iPhone salary error announcement on focus leave; retain correction reset/deduplication.",
+      "commit": "e33accb6a610dcd408943bc57f294a85c8f61521",
+      "paths": [
+        "apple/AhmadCareer/NativeCareerViews.swift"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "a4f06c1",
+      "subject": "Speak an invalid experience year after editing",
+      "disposition": "Distinct iPhone pending-decimal/invalid experience announcement handling; depends on prior validation helpers, not isolated whole-commit blind application.",
+      "commit": "a4f06c1625180352ffa8c3c7f82030ed2249bc8a",
+      "paths": [
+        "apple/AhmadCareer/NativeCareerViews.swift"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "c04ea87",
+      "subject": "Speak when a private note is cut at 2,000 characters",
+      "disposition": "Distinct Android2000-character note limit feedback; independent file from active recovery.",
+      "commit": "c04ea874990e1f0416c0c55f626fd3ed91b14cab",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "ee3bac2",
+      "subject": "Speak when a backup import has no selection",
+      "disposition": "Distinct Android no-selection backup-import live feedback; independent file from active recovery.",
+      "commit": "ee3bac20b48022c6b110de043eaabe3e38c7f496",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "6054d0b",
+      "subject": "Hide the selected language checkmark from VoiceOver",
+      "disposition": "Distinct iPhone language button explicit label and decorative checkmark hiding. Small independent first review unit.",
+      "commit": "6054d0bcfcd2d84aa5d4701c982d4feb256d9980",
+      "paths": [
+        "apple/AhmadCareer/NativeCareerViews.swift"
+      ],
+      "afterRequested6054": false
+    },
+    {
+      "short": "1838e0a",
+      "subject": "Speak the selected application date",
+      "disposition": "NEW after6054: distinct Android selected application-date accessibility value.",
+      "commit": "1838e0aaf97664a5a4a67e9affb5fdc60a24ade9",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt"
+      ],
+      "afterRequested6054": true
+    },
+    {
+      "short": "910369f",
+      "subject": "Speak the Arabic record stage",
+      "disposition": "NEW after6054: distinct Android localized stage display/accessibility.",
+      "commit": "910369f7f5ee09242762d6ea27c804a03fb4f489",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt"
+      ],
+      "afterRequested6054": true
+    },
+    {
+      "short": "00e4257",
+      "subject": "Speak backup profile choices",
+      "disposition": "NEW after6054: distinct Android backup profile choice labels/state semantics.",
+      "commit": "00e4257e519dec88b2b532ef606fbe0633966314",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt"
+      ],
+      "afterRequested6054": true
+    }
+  ],
+  "ownerReviewUnits": [
+    {
+      "unit": "1. iPhone language selector ",
+      "scope": "6054d0b; NativeCareerViews settings button label and hidden decorative checkmark ",
+      "preserveAndPendingAcceptance": " Preserve selected trait and publisher provenance wrapper. Check EN/AR selector announcement and visible selected state with VoiceOver. "
+    },
+    {
+      "unit": "2. Android private record dialog ",
+      "scope": "ApplicationRecordViews slices of1c44581+c04ea87, then1838e0a+910369f ",
+      "preserveAndPendingAcceptance": " Preserve private-note limit and draft state. Check warning appears/announces once, selected date and Arabic stage, large text and TalkBack. "
+    },
+    {
+      "unit": "3. Android planning backup choices ",
+      "scope": "WorkspaceDataViews slices of720fce5+ee3bac2, then00e4257 ",
+      "preserveAndPendingAcceptance": " Preserve actual import-choice state and explicit selection. Check empty selection, conflict/error live regions, each profile choice and no implicit import. "
+    },
+    {
+      "unit": "4. iPhone legacy record and backup feedback ",
+      "scope": "NativeCareerViews view-local slices ofb5f8dff,1c44581,594da38,08f25cc,87d7238 ",
+      "preserveAndPendingAcceptance": " Keep existing draft/discard behavior. Verify pre-existing error on open, reload error, backup failure and ordinary file-picker cancellation. "
+    },
+    {
+      "unit": "5. iPhone planning profile validation ",
+      "scope": "NativeProfileEditor slices of47fdfb2+842358e+a4f06c1 ",
+      "preserveAndPendingAcceptance": " Keep field-local error display and draft preservation. Verify initial conflict, invalid/pending decimal years, corrected values and no repeated spoken error storm. "
+    },
+    {
+      "unit": "6. iPhone salary and listing notices ",
+      "scope": "NativeSalaryScreen e33accb; NativeJobDetail0ca27c8, separately reviewable views ",
+      "preserveAndPendingAcceptance": " Verify focus-leave invalid salary and expired/experience-gap warning priorities. Keep localized dynamic values. "
+    },
+    {
+      "unit": "7. Email readiness feedback ",
+      "scope": "2552446 email-only slices in ProfileContract/MainActivity/MobileApplicationState/NativeApplicationsViews plus BoundaryPolicyCheck/MobileLifecycleCheck ",
+      "preserveAndPendingAcceptance": " Helper label is partly equivalent on iPhone; hint and focus behavior distinct. Coordinate the three recovery-owned files. No unrelated search hunk required. "
+    },
+    {
+      "unit": "8. Application/recovery announcements ",
+      "scope": "Remaining NativeApplicationsViews and MainActivity slices, including1c44581,9700d0e,f139c04,0ed8f50,f6ec0cd,6411a10,7e97e09 ",
+      "preserveAndPendingAcceptance": " Review after recovery owner seals or explicitly shares its changes. Preserve receipts, no-auto-resubmit and recovered draft choices. Check existing and changed blockers, focus and announcement duplication in both locales. "
+    },
+    {
+      "unit": "9. Catalog error isolation ",
+      "scope": "b6d5fca iPhone catalog/UI slices plus Android top-level catalog retry fromb5f8dff; existing catalog translation ",
+      "preserveAndPendingAcceptance": " Preserve search error independently; catalog retry must not issue a job search. Require stub checks and native failure/retry journey; the catalog error sentence is already translated. "
+    },
+    {
+      "unit": "10. Saved search recovery ",
+      "scope": "fa759f0 iPhone store/UI/check slices adapted to the current store; Android already has saved-search recovery ",
+      "preserveAndPendingAcceptance": " Preserve unreadable file, recover repaired file, retry failed save, keep newer draft and scope isolation. Keep all current canonical/retry checks. "
+    },
+    {
+      "unit": "11. Search accessibility/retention ",
+      "scope": "Remaining2552446,c4bf5db,b5f8dff,720fce5 search slices ",
+      "preserveAndPendingAcceptance": " Keep captured-query retry; add cooldown semantics deliberately. Retain long text, field error association, board/LinkedIn announcements and current canonical/empty/fallback behavior. "
+    }
+  ],
+  "androidDetailsFile": "ANDROID-HUNK-REVIEW.json",
+  "recoveryDirtySHA256": {
+    "android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt": "f6427a0030e13f2738b115dd406ae0b0cbd77b43b5959fc7407a7fc99c932fb8",
+    "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "1a01a32a739d8f62f4639f52012b37d06a498a36db9db6988034617c24ea92a5",
+    "android/app/src/main/java/com/saleh/careerfinder/Models.kt": "716fe6ff51f9dd614cc0532e353dd0b16319cef2de39b39a2f906107eec0032c",
+    "android/app/src/main/java/com/saleh/careerfinder/WorkspaceTransfer.kt": "fa5e64e4ac918b712dcadce2144aacf012da1d25a6d7ad8f931b245ad580b6c7",
+    "apple/AhmadCareer/MobileApplicationState.swift": "74af420b46db2ca75355eda9f97716a0e5e12d45a41a204145c277f33838a404",
+    "apple/AhmadCareer/NativeApplicationsStore.swift": "2b77bb0d0aa075c7568fbabd784eced430a568ebb59f792ec2ba566fc949cd6f",
+    "apple/AhmadCareer/NativeApplicationsViews.swift": "0a831b8f25668e4bd9985885ade653ce71a23720cd172be53f5e8874231c896a",
+    "apple/Checks/NativeRecoveryCheck.swift": "97a9f308d0b31a461ae0adda08687b79ce9bf9fb6e40fb3c792064688cc24117"
+  },
+  "recoveryDirtyHashesUnchangedAtFinalReceipt": true,
+  "equivalentOrStrongerAtPublisher": [
+    "captured submitted-query retry",
+    "iPhone three-way email essential label inline",
+    "Android saved-search recovery",
+    "Android connection/search error live regions; some a11y hunks add only test tags"
+  ],
+  "integrationCaveats": [
+    "Retain publisher retrySubmittedSearch and canonical search behavior",
+    "Preserve board Field error=customError semantics while adding live feedback",
+    "Merge iPhone restore recovery reset before newer limit/repair notice branch",
+    "Preserve all recovery draft serialization and receipt-stop behavior",
+    "New email-correction translation goes through shared localization owner"
+  ],
+  "latestCI": "run44-result-summary.json",
+  "finalStateReceipt": "final-state-receipt.json",
+  "acknowledgement": "No new PR1 comment in final receipt window; no ack inferred",
+  "testsRunByReview": false
+}
