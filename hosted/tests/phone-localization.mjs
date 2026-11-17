@@ -181,7 +181,7 @@ const mixedJob = Object.freeze({ id: 'mixed-direction-synthetic',
   title: 'Data (QA) 2 — العربية', company: 'شركة (Acme) 17', location: 'Riyadh (الرياض) 123',
   url: 'https://example.org/career-finder-bidi/17', country: 'SA', summary: 'Synthetic mixed-script posting', checkedAt: '2026-11-17T15:00:00Z' });
 const mixedFile = 'CV-أحمد-(QA)-2026.pdf';
-function renderPhoneFragment(fragment, language, additions = {}) {
+function renderPhoneFragment(fragment, language, additions = {}, setup = '') {
   const t = translator(language);
   const profile = { firstName: 'أحمد (Alex)', lastName: 'Example-17', email: 'synthetic+ar@example.org',
     resume: { name: mixedFile, size: 1024, sha256: '1'.repeat(64) }, linkedin: 'https://www.linkedin.com/in/synthetic', website: 'https://example.org',
@@ -198,7 +198,7 @@ function renderPhoneFragment(fragment, language, additions = {}) {
     experienceLabel: value => value, receiptLabel: () => 'Outcome needs checking',
     ...additions };
   for (const name of ['ArrowUpRight', 'ChevronRight', 'Check']) context[name] = () => null;
-  const View = execute(`exports.View = () => (${fragment});`, context).View;
+  const View = execute(`${setup}\nexports.View = () => (${fragment});`, context).View;
   return View();
 }
 
@@ -280,6 +280,13 @@ const catalogBoards = boardNames.map((name, index) => Object.freeze({ id: `lever
 const unknownBoard = 'greenhouse:unknown-team-2026';
 const customBoardURL = 'https://jobs.lever.co/synthetic-board-204';
 function renderBoardOptions(language) {
+  const app = phoneTree.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'PhoneApp');
+  assert(app?.body, 'Expected the actual PhoneApp function body');
+  const actions = app.body.statements.flatMap(node => ts.isVariableStatement(node)
+    ? [...node.declarationList.declarations] : []).filter(node => node.name.getText(phoneTree) === 'addEmployerBoard');
+  assert.equal(actions.length, 1, 'Expected one actual addEmployerBoard declaration');
+  assert(actions[0].initializer, 'Expected the actual addEmployerBoard initializer');
+  const setup = `const addEmployerBoard = ${actions[0].initializer.getText(phoneTree)};`;
   const searchSources = Object.freeze([catalogBoards[0].id, unknownBoard, customBoardURL]);
   const filters = Object.freeze({ query: mixedJob.title, location: mixedJob.location, remoteOnly: false, sources: searchSources });
   const changes = [], touched = [];
@@ -289,7 +296,7 @@ function renderBoardOptions(language) {
     setFilters: value => changes.push(value),
     setBoardsTouched: value => touched.push(value),
     setNotice: notice => assert.fail(`Unexpected selection notice: ${notice.text}`),
-  });
+  }, setup);
   const labels = renderedElements(element, node => node.type === 'label' && node.props.className === 'phone-check');
   assert.deepEqual(labels.map(allText), [...boardNames, unknownBoard, customBoardURL]);
   return { labels, changes, touched, filters, searchSources };

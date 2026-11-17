@@ -22,6 +22,11 @@ const profile={...model.blankProfile(),firstName:'Synthetic',email:'a@example.co
 function plan(){return{id:'00000000-0000-4000-8000-000000000099',digest:'a'.repeat(64),profileRevision:1,createdAt:new Date().toISOString(),expiresAt:new Date(Date.now()+1800000).toISOString(),stopped:false,approvedAt:null,items:[{jobId:jobID,job:{...job},title:job.title,company:job.company,state:'ready',reason:'',payloadSummary:{name:profile.firstName,email:profile.email,phone:'',website:'',linkedin:profile.linkedin,comments:'Explicit application message',consentStore:true,consentMarketing:false},resume,privacyPolicyUrl:'https://example.com/privacy',requirementsRevision:'synthetic-1',retryAt:null}]}}
 
 test('phone model keeps canonical identities and private local state separate',async t=>{
+  await t.test('malformed public links use actionable translated guidance without weakening URL policy',()=>{
+    for(const input of ['', 'not-a-url', 'https://', 'https://[broken']) assert.throws(()=>model.publicURL(input),{message:'Enter a complete public HTTPS link without spaces.'});
+    for(const input of ['http://example.com/job','https://name:secret@example.com/job','https://example.com:8443/job','https://127.0.0.1/job','https://private.local/job']) assert.throws(()=>model.publicURL(input),{message:'Use a public HTTPS link without a password or custom port.'});
+    assert.equal(model.publicURL('https://example.com:443/job#section'),'https://example.com/job');
+  });
   await t.test('LinkedIn values have the same canonical boundary as the application service',()=>{
     for(const input of ['https://linkedin.com/in/a+b','HTTPS://SA.LINKEDIN.COM:443/in/Example/?trk=phone#about','https://linkedin.com/in/Jose\u0301','https://linkedin.com/in/سلام',"https://linkedin.com/in/a!'()*b",'https://linkedin.com/in/a%3fb'])assert.equal(model.linkedInURL(input),linkedinProfileURL(input));
     for(const input of ['https://linkedin.com.evil.example/in/a','https://linkedin.com/jobs/view/123','https://linkedin.com/in/a%2fb','https://linkedin.com/in/a%252fb','https://linkedin.com/in/a%E2%80%AEb','https://linkedin.com/in/a%C2%85b','https://linkedin.com/in/a#%0a','https://linkedin.com/in/a%FF','https://linkedin.com/in/'+'س'.repeat(400)]){assert.throws(()=>model.linkedInURL(input));assert.throws(()=>linkedinProfileURL(input))}

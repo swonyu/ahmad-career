@@ -43,7 +43,8 @@ export function requirementsError(profile,answer,requirements) {
 async function boundedText(response,max) {
   const reader=response.body?.getReader(); if(!reader)return '';
   let size=0; const chunks=[];
-  try { for(;;){ const part=await reader.read(); if(part.done)break; size+=part.value.byteLength; if(size>max){await reader.cancel();throw Error('response-too-large')} chunks.push(part.value); } }
+  // Size rejection must not wait for upstream cleanup or inherit its failure.
+  try { for(;;){ const part=await reader.read(); if(part.done)break; size+=part.value.byteLength; if(size>max){void reader.cancel().catch(()=>{});throw Error('response-too-large')} chunks.push(part.value); } }
   finally {reader.releaseLock()}
   return Buffer.concat(chunks).toString('utf8');
 }

@@ -15,12 +15,25 @@ export async function phoneAPI(path: string, options: { method?: "GET" | "POST" 
     // Owner-private hosting can require its session even for a public-data GET.
     // Discovery ignores app credentials and never forwards them to employers.
     const response = await fetch(url.pathname + url.search, { method, credentials: "same-origin", cache: "no-store", redirect: "error", signal: controller.signal, headers: { Accept: "application/json", ...(options.body ? { "Content-Type": "application/json" } : {}) }, ...(options.body ? { body: JSON.stringify(options.body) } : {}) });
-    if (!/^application\/json(?:\s*;|$)/i.test(response.headers.get("content-type") ?? "")) throw new APIError("The response could not be verified. Your earlier information is still here.", response.status, "invalid_response");
+    if (!/^application\/json(?:\s*;|$)/i.test(response.headers.get("content-type") ?? "")) {
+      void response.body?.cancel().catch(() => {});
+      throw new APIError("The response could not be verified. Your earlier information is still here.", response.status, "invalid_response");
+    }
     const reader = response.body?.getReader(); if (!reader) throw new APIError("The service returned an empty response.", response.status, "invalid_response");
-    const parts: Uint8Array[] = []; let length = 0;
+    const parts: Uint8Array[] = []; let length = 0, complete = false;
     try {
-      for (;;) { const part = await reader.read(); if (part.done) break; length += part.value.byteLength; if (length > 12 * 1024 * 1024) { await reader.cancel(); throw new APIError("The response is too large to verify. Your earlier information is still here.", response.status, "invalid_response"); } parts.push(part.value); }
-    } finally { reader.releaseLock(); }
+      for (;;) {
+        const part = await reader.read();
+        if (part.done) { complete = true; break; }
+        length += part.value.byteLength;
+        if (length > 12 * 1024 * 1024) throw new APIError("The response is too large to verify. Your earlier information is still here.", response.status, "invalid_response");
+        parts.push(part.value);
+      }
+    } finally {
+      // Cleanup must not delay or replace the original error if cancellation stalls or rejects.
+      if (!complete) void reader.cancel().catch(() => {});
+      reader.releaseLock();
+    }
     const bytes = new Uint8Array(length); let offset = 0; for (const part of parts) { bytes.set(part, offset); offset += part.byteLength; }
     let value: unknown;
     try { value = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes)); } catch { throw new APIError("The response could not be read safely. Your earlier information is still here.", response.status, "invalid_response"); }

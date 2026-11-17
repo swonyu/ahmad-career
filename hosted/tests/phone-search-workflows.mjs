@@ -221,7 +221,7 @@ function renderSearchSurface(node, searchPage, language, overrides = {}) {
     JobCard: ({ job }) => React.createElement('article', { 'data-synthetic-job': job.id }, job.title),
     searchJobs: mode => { calls.push(mode); }, saveJob() {}, setDialog() {}, ...overrides };
   const top = ['discoveryCoverageNotice', 'discoveryLimitNotice'].map(name => `const ${name} = ${declaration(name)};`).join('\n');
-  const { Results } = execute(`${top}\n${declaration('discoveryNoticeText')}\n${declaration('DiscoveryEmptyState')}\nconst incompleteSearch = ${declaration('incompleteSearch')};\nexports.Results = () => (${node.getText(tree)});`, {
+  const { Results } = execute(`${top}\n${declaration('discoveryNoticeText')}\n${declaration('DiscoveryEmptyState')}\nconst incompleteSearch = ${declaration('incompleteSearch')};\nconst localResultLimitReached = ${declaration('localResultLimitReached')};\nconst searchSummary = ${declaration('searchSummary')};\nexports.Results = () => (${node.getText(tree)});`, {
     ...scope, useI18n: () => ({ t, language }),
   });
   const element = Results();
