@@ -610,6 +610,19 @@ private struct NativeJobDetail: View {
         return entered < Double(required)
     }
 
+    private func speakListingWarning(expired: Bool) {
+        if expired {
+            UIAccessibility.post(notification: .announcement, argument: l10n("Check the employer's current status before spending time on this application."))
+        } else if experienceGap {
+            speakExperienceWarning()
+        }
+    }
+
+    private func speakExperienceWarning() {
+        guard let years = job.minYears else { return }
+        UIAccessibility.post(notification: .announcement, argument: l10n("You entered fewer relevant years than the \(years)+ requested. Review eligibility before applying."))
+    }
+
     var body: some View {
         List {
             Section {
@@ -700,6 +713,14 @@ private struct NativeJobDetail: View {
                 Text(l10n("Review and rewrite every draft before using it. Recheck salary, deadlines and qualifications directly with the employer."))
             }
         }.nativeList().navigationTitle(l10n("Opportunity")).navigationBarTitleDisplayMode(.inline)
+        .onAppear { speakListingWarning(expired: job.isExpired) }
+        .onChange(of: job.isExpired) { expired in
+            speakListingWarning(expired: expired)
+        }
+        .onChange(of: experienceGap) { gap in
+            guard gap, !job.isExpired else { return }
+            speakExperienceWarning()
+        }
     }
 }
 
