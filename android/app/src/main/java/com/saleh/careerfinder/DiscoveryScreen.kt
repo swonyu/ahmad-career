@@ -116,8 +116,12 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
             Panel {
                 Text(l10n.message(state.error.orEmpty()), color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
                 if (state.cursorInvalid) OutlinedButton(onClick = search, enabled = !state.loading, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Start a fresh search")) }
-                else OutlinedButton(onClick = search, enabled = !state.loading && !waiting,
-                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("discovery.retrySearch")) { Text(l10n("Search again")) }
+                else {
+                    OutlinedButton(onClick = search, enabled = !state.loading && !waiting,
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("discovery.retrySearch")) { Text(l10n("Search again")) }
+                    if (waiting) Text(l10n.format("Try again after {0}.", listOf(l10n.dateTime(java.time.Instant.ofEpochMilli(state.retryAtMillis).toString()))),
+                        style = MaterialTheme.typography.bodySmall)
+                }
             }
         }
         if (state.filtersChanged) item {

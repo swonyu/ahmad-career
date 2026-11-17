@@ -67,7 +67,15 @@ struct NativeDiscoveryScreen: View {
                 }
             }
             if let notice = discovery.storageNotice {
-                Section { Label(l10n(notice), systemImage: "exclamationmark.triangle").font(.footnote) }
+                Section {
+                    Label(l10n(notice), systemImage: "exclamationmark.triangle")
+                        .font(.footnote).fixedSize(horizontal: false, vertical: true)
+                        .accessibilityIdentifier("discovery.storageNotice")
+                    Button(l10n(discovery.savedSearchRestoreBlocked ? "Retry previous search" : "Retry saving search"),
+                           action: discovery.retrySavedSearch)
+                        .frame(minHeight: 44)
+                        .accessibilityIdentifier("discovery.retrySavedSearch")
+                }
             }
             if let page = discovery.page {
                 Section {
@@ -125,6 +133,9 @@ struct NativeDiscoveryScreen: View {
         }
         .onChange(of: discovery.error) { issue in
             if let issue { UIAccessibility.post(notification: .announcement, argument: l10n.message(issue)) }
+        }
+        .onChange(of: discovery.storageNotice) { notice in
+            if let notice { UIAccessibility.post(notification: .announcement, argument: l10n(notice)) }
         }
         .task(id: discovery.retryAfter) {
             guard let retry = discovery.retryAfter else { return }

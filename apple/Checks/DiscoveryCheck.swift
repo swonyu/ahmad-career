@@ -202,6 +202,58 @@ private final class DiscoverySuite {
             let model = CareerDiscoveryStore(file: file, service: service); await model.search()
             let preserved = try Data(contentsOf: file)
             try check(preserved == original && model.jobs.count == 2, "Unreadable storage is preserved while new results remain usable in memory")
+            model.retrySavedSearch()
+            let retried = try Data(contentsOf: file)
+            try check(retried == original && model.savedSearchRestoreBlocked && model.storageNotice != nil,
+                      "Retry leaves an unreadable search file untouched")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(fixture); let (healthy, file) = store(service)
+            healthy.query.keywords = "Nurse"
+            let recovered = try Data(contentsOf: file)
+            try Data("unrecognized prior discovery data".utf8).write(to: file)
+            let blocked = CareerDiscoveryStore(file: file, service: service)
+            try check(blocked.savedSearchRestoreBlocked && blocked.query.keywords.isEmpty, "A damaged search file is not adopted")
+            try recovered.write(to: file)
+            blocked.retrySavedSearch()
+            try check(!blocked.savedSearchRestoreBlocked && blocked.storageNotice == nil && blocked.query.keywords == "Nurse",
+                      "Retry reads a repaired search file without starting a request")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(fixture); let (model, file) = store(service)
+            model.query.keywords = "Nurse"
+            let preserved = try Data(contentsOf: file)
+            model.query.keywords = String(repeating: "ن", count: 121)
+            try check(model.storageNotice == "These search fields exceed the supported limits. Earlier saved search data is kept."
+                      && !model.savedSearchRestoreBlocked, "Oversized search fields explain why saving stopped")
+            model.retrySavedSearch()
+            let afterRetry = try Data(contentsOf: file)
+            try check(afterRetry == preserved, "Retry does not replace the earlier saved search while fields are too long")
+            model.query.keywords = "Nurse"
+            try check(model.storageNotice == nil, "A corrected search is saved again")
+            let reopened = CareerDiscoveryStore(file: file, service: service)
+            try check(reopened.query.keywords == "Nurse" && reopened.storageNotice == nil, "The corrected search is still there after relaunch")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(fixture); let (model, file) = store(service)
+            model.query.keywords = "Nurse"
+            let parent = file.deletingLastPathComponent()
+            try FileManager.default.removeItem(at: parent)
+            try Data("not a directory".utf8).write(to: parent)
+            model.query.keywords = "Pharmacist"
+            try check(model.storageNotice == "These search results are available now, but could not be saved on this phone."
+                      && !model.savedSearchRestoreBlocked, "A failed save stays on screen without hiding the search")
+            model.retrySavedSearch()
+            try check(model.storageNotice != nil, "Retry reports the save is still unavailable")
+            try FileManager.default.removeItem(at: parent)
+            try FileManager.default.createDirectory(at: parent, withIntermediateDirectories: true)
+            model.retrySavedSearch()
+            try check(model.storageNotice == nil, "Retry saves the search when storage is available again")
+            let reopened = CareerDiscoveryStore(file: file, service: service)
+            try check(reopened.query.keywords == "Pharmacist", "The retried save survives relaunch")
             scenarios += 1
         }
     }

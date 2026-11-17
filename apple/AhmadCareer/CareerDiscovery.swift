@@ -222,6 +222,7 @@ final class CareerDiscoveryStore: ObservableObject {
     @Published private(set) var restoredResults = false
     @Published private(set) var error: String?
     @Published private(set) var storageNotice: String?
+    var savedSearchRestoreBlocked: Bool { !storageReadable }
     @Published private(set) var retryAfter: Date?
     @Published private(set) var needsNewSearch = false
     private let service: any CareerDiscoveryServing
@@ -286,9 +287,21 @@ final class CareerDiscoveryStore: ObservableObject {
             let saved = try JSONDecoder().decode(DiscoverySavedState.self, from: data)
             query = saved.query; lastQuery = saved.lastQuery; page = saved.page; jobs = saved.jobs
             restoredResults = !jobs.isEmpty
+            storageReadable = true; storageNotice = nil
         } catch {
             storageReadable = false; storageNotice = "The previous search file could not be read. It is preserved; new searches will stay in memory."
         }
+    }
+    /// Try the failed read or save again. An unreadable file is left in place until it can be read.
+    func retrySavedSearch() {
+        if !storageReadable {
+            restore()
+            if !storageReadable && !FileManager.default.fileExists(atPath: file.path) {
+                storageReadable = true; storageNotice = nil
+            }
+        }
+        guard storageReadable else { return }
+        persist()
     }
     var canLoadMore: Bool { page?.nextCursor != nil && lastQuery == query && !isSearching && !restoredResults && !needsNewSearch }
     var criteriaChanged: Bool { lastQuery != nil && lastQuery != query }
