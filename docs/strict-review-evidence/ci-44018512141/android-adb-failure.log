@@ -1,0 +1,6 @@
+11-17 04:40:49.598  2850  2850 W adb     : network.cpp:149 failed to connect to '127.0.0.1:5054': Connection refused
+* cannot start server on remote host
+error: cannot connect to daemon at tcp:127.0.0.1:5054: failed to connect to '127.0.0.1:5054': Connection refused
+error: could not connect to TCP port 5580: Connection refused
+11-17 04:40:49.603  2852  2852 W adb     : network.cpp:149 failed to connect to '127.0.0.1:5054': Connection refused
+cannot connect to daemon at tcp:127.0.0.1:5054: failed to connect to '127.0.0.1:5054': Connection refused

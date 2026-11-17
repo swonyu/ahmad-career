@@ -1,0 +1,96 @@
+{
+  "commit": "66669da8bd34943ad3fc9dae45e9a8288ff0d9e7",
+  "runId": 44018512141,
+  "jobId": 133822121155,
+  "artifactId": 14299158917,
+  "artifactSHA256": "18ca642d46cdcec7e5966b22b1d6a0a95f0f1fdd820ca95733f6280c2878c951",
+  "lintErrors": 0,
+  "lintWarnings": 7,
+  "issues": [
+    {
+      "id": "OldTargetApi",
+      "severity": "Warning",
+      "message": "Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details.",
+      "locations": [
+        {
+          "file": "android/app/build.gradle.kts",
+          "line": "31",
+          "column": "9"
+        }
+      ]
+    },
+    {
+      "id": "AndroidGradlePluginVersion",
+      "severity": "Warning",
+      "message": "A newer version of Gradle than 8.13 is available: 8.14.7",
+      "locations": [
+        {
+          "file": "android/gradle/wrapper/gradle-wrapper.properties",
+          "line": "4",
+          "column": "17"
+        }
+      ]
+    },
+    {
+      "id": "GradleDependency",
+      "severity": "Warning",
+      "message": "A newer version of androidx.activity:activity-compose than 1.11.0 is available: 1.13.0",
+      "locations": [
+        {
+          "file": "android/app/build.gradle.kts",
+          "line": "66",
+          "column": "20"
+        }
+      ]
+    },
+    {
+      "id": "GradleDependency",
+      "severity": "Warning",
+      "message": "A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.9.4 is available: 2.11.0",
+      "locations": [
+        {
+          "file": "android/app/build.gradle.kts",
+          "line": "72",
+          "column": "20"
+        }
+      ]
+    },
+    {
+      "id": "GradleDependency",
+      "severity": "Warning",
+      "message": "A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.9.4 is available: 2.11.0",
+      "locations": [
+        {
+          "file": "android/app/build.gradle.kts",
+          "line": "73",
+          "column": "20"
+        }
+      ]
+    },
+    {
+      "id": "NewerVersionAvailable",
+      "severity": "Warning",
+      "message": "A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.10.2 is available: 1.11.0",
+      "locations": [
+        {
+          "file": "android/app/build.gradle.kts",
+          "line": "74",
+          "column": "20"
+        }
+      ]
+    },
+    {
+      "id": "UseKtx",
+      "severity": "Warning",
+      "message": "Use the KTX function `createBitmap` instead?",
+      "locations": [
+        {
+          "file": "android/app/src/main/java/com/saleh/careerfinder/ReadablePDF.kt",
+          "line": "23",
+          "column": "38"
+        }
+      ]
+    }
+  ],
+  "interpretation": "Successful lint execution with warnings; not a zero-issue report. Current target/dependency advisories require classification before implying a release blocker."
+}

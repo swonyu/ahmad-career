@@ -15,7 +15,9 @@ assert.ok(sdk && process.env.RUNNER_TEMP);
 const runtime = fs.mkdtempSync(path.join(process.env.RUNNER_TEMP, 'career-android-'));
 const evidence = path.join(root, 'android/checks/ci-evidence');
 fs.mkdirSync(evidence, {recursive:true});
-const env = {...process.env, ANDROID_AVD_HOME:path.join(runtime,'avd'), ANDROID_USER_HOME:path.join(runtime,'user'), ANDROID_SERIAL:'emulator-5580', ANDROID_ADB_SERVER_PORT:'5054', ADB_SERVER_SOCKET:'tcp:127.0.0.1:5054', ADB_MDNS_AUTO_CONNECT:'0'};
+// adb permits local daemon startup for a hostless TCP socket. Its local-host
+// check treats numeric 127.0.0.1 as remote and refuses to auto-start that server.
+const env = {...process.env, ANDROID_AVD_HOME:path.join(runtime,'avd'), ANDROID_USER_HOME:path.join(runtime,'user'), ANDROID_SERIAL:'emulator-5580', ANDROID_ADB_SERVER_PORT:'5054', ADB_SERVER_SOCKET:'tcp:5054', ADB_MDNS_AUTO_CONNECT:'0'};
 fs.mkdirSync(env.ANDROID_AVD_HOME,{recursive:true});fs.mkdirSync(env.ANDROID_USER_HOME,{recursive:true});
 const adb = path.join(sdk, 'platform-tools/adb');
 const processes = new Set(), lifecycles = new WeakMap(), results = [], installedPackages = new Set();

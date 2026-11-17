@@ -1,0 +1,20 @@
+{
+  "repository": "swonyu/ahmad-career",
+  "branch": "career-finder-phones-verified-apply-20261116",
+  "commit": "66669da8bd34943ad3fc9dae45e9a8288ff0d9e7",
+  "tree": "dac3df831224a8bf71cbdb51978aec5f3a7dc6f3",
+  "runId": 44018512141,
+  "jobId": 133822121213,
+  "jobUrl": "https://github.com/swonyu/ahmad-career/actions/runs/44018512141/job/133822121213",
+  "result": "passed",
+  "tests": 13,
+  "failures": 0,
+  "durationSeconds": 851.194,
+  "suiteFinishedAt": "2026-11-17T04:56:34.373Z",
+  "artifactId": 14301231123,
+  "artifactBytes": 130702746,
+  "artifactDigest": "sha256:0688ad42d08ed83bc4f20610b0ad7c2c9f83b350e595c9f6d82084b24226c352",
+  "overallRun": "failed: Android isolated ADB startup failed before instrumentation; all other jobs passed",
+  "visualReview": "Artifact review of two presentation corrections in progress; no later header/board polish is covered by this commit.",
+  "realEmployerApplications": 0
+}

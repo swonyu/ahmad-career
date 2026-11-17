@@ -234,17 +234,21 @@ struct NativeApplicationsScreen: View {
     }
     private var header: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 6) {
-                Image(systemName: model.mode == "test" ? "testtube.2" : "sparkle")
-                Text(model.mode == "test" ? "TEST WORKSPACE" : "YOUR NEXT CHAPTER")
-                    .font(.caption.weight(.semibold)).tracking(1.8)
-            }.foregroundStyle(ApplyDesign.accent)
-            Text("Your application workspace.")
+            if model.mode == "test" || !dynamicTypeSize.isAccessibilitySize {
+                HStack(spacing: 6) {
+                    Image(systemName: model.mode == "test" ? "testtube.2" : "sparkle")
+                    Text(model.mode == "test" ? "TEST WORKSPACE" : "YOUR NEXT CHAPTER")
+                        .font(.caption.weight(.semibold)).tracking(1.8)
+                }.foregroundStyle(ApplyDesign.accent)
+            }
+            Text(dynamicTypeSize.isAccessibilitySize ? "Applications" : "Your application workspace.")
                 .font(.system(.largeTitle, design: .rounded, weight: .bold))
                 .fixedSize(horizontal: false, vertical: true)
-            Text("Bring your experience. Choose your opportunities. Apply with confidence.")
-                .font(.subheadline).foregroundStyle(.secondary).lineSpacing(3)
-                .fixedSize(horizontal: false, vertical: true)
+            if !dynamicTypeSize.isAccessibilitySize {
+                Text("Bring your experience. Choose your opportunities. Apply with confidence.")
+                    .font(.subheadline).foregroundStyle(.secondary).lineSpacing(3)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }.frame(maxWidth: .infinity, alignment: .leading)
     }
     private var profileCard: some View {

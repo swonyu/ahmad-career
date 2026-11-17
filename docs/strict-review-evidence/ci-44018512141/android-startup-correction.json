@@ -1,0 +1,39 @@
+{
+  "failedRunId": 44018512141,
+  "failedJobId": 133822121155,
+  "failedCommit": "66669da8bd34943ad3fc9dae45e9a8288ff0d9e7",
+  "checkedAt": "2026-11-17T04:44:30.220Z",
+  "file": "android/checks/run-ci-emulator.mjs",
+  "change": "Use ADB_SERVER_SOCKET=tcp:5054 so adb can auto-start the isolated local daemon.",
+  "validation": {
+    "nodeSyntaxCheck": "passed",
+    "scopedDiffCheck": "passed",
+    "sharedSpawnEnvironment": "all three spawn sites use the same env",
+    "serverStartup": "port5054",
+    "deviceAndInstrumentationClients": "port5054, emulator-5580",
+    "screenshotRead": "port5054, emulator-5580",
+    "serverCleanup": "port5054",
+    "testCounts": {
+      "ordinary": 97,
+      "dedicated": 2
+    },
+    "adbOrEmulatorExecuted": false,
+    "buildExecuted": false
+  },
+  "officialSources": [
+    {
+      "url": "https://android.googlesource.com/platform/packages/modules/adb/+/refs/heads/main/client/commandline.cpp",
+      "finding": "ADB_SERVER_SOCKET takes precedence over environment host/port, and a hostless server address is built as tcp:<port>."
+    },
+    {
+      "url": "https://android.googlesource.com/platform/packages/modules/adb/+/f57e56cd2d1415dcc346682e9e55b79c7501a222/socket_spec_test.cpp",
+      "finding": "Official unit test accepts a port-only TCP socket and parses an empty hostname."
+    },
+    {
+      "url": "https://android.googlesource.com/platform/system/core/+/48a92d715d828cba992382b4e66476be62a343b9/adb/socket_spec.cpp",
+      "finding": "Local TCP host classification accepts an empty hostname or literal localhost; the actual CI adb log confirms numeric loopback was rejected."
+    }
+  ],
+  "sha256": "2f9e8b2d21898f209ba776c13c3238fe650a6330fab8da440e03566840d7823f",
+  "remainingGate": "A new authorized CI commit must launch the emulator and execute all 99 native cases."
+}

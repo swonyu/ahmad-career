@@ -1,0 +1,33 @@
+{
+  "repository": "swonyu/ahmad-career",
+  "branch": "career-finder-phones-verified-apply-20261116",
+  "commit": "66669da8bd34943ad3fc9dae45e9a8288ff0d9e7",
+  "tree": "dac3df831224a8bf71cbdb51978aec5f3a7dc6f3",
+  "runId": 44018512141,
+  "jobId": 133822120817,
+  "jobUrl": "https://github.com/swonyu/ahmad-career/actions/runs/44018512141/job/133822120817",
+  "result": "passed",
+  "boundaryChecks": 120,
+  "lifecycleAssertions": 503,
+  "lifecycleScenarios": 77,
+  "discoveryAssertions": 43,
+  "discoveryScenarios": 13,
+  "unsignedReleaseBuild": "passed",
+  "sharedMacBuild": false,
+  "signingPerformed": false,
+  "logEvidence": [
+    "2026-11-17T04:38:25.5422400Z PASS 120 native application boundary checks",
+    "2026-11-17T04:38:39.8290900Z PASS 503 application lifecycle assertions across 77 scenarios",
+    "2026-11-17T04:38:45.6972520Z PASS 43 public discovery assertions across 13 scenarios",
+    "2026-11-17T04:38:51.0016420Z Fresh workspace and compatibility checks passed: blank identity/profile/targets, generic exports, no seeded history, device time zone, preserved saved legacy records.",
+    "2026-11-17T04:38:51.0021430Z Local preference checks passed: backward decoding, independent country/city/role/currency/period/zone, unchanged monthly SAR, record preservation, future-version protection, export privacy and DST/civil-date semantics.",
+    "2026-11-17T04:38:51.0024310Z Full review regression checks passed: fresh local preferences, partial evidence age, exact exclusions, saved history, persisted observation chronology and dated exports.",
+    "2026-11-17T04:38:51.0029240Z Application record checks passed: legacy preservation, metadata-only history, conflicts, export privacy, strict date/scalar limits and derived attention.",
+    "2026-11-17T04:38:51.0032980Z Native store checks passed: 9 researched jobs, atomic saves, pre-criteria migration, city/pay criteria, unfiltered history, export privacy, strict URLs/dates, stale response rejection and input validation.",
+    "2026-11-17T04:40:24.6713650Z ** BUILD SUCCEEDED **"
+  ],
+  "limitations": [
+    "This is an unsigned build and logic gate on an isolated CI runner, not physical-device or store acceptance.",
+    "The UI job and overall run have independent results."
+  ]
+}

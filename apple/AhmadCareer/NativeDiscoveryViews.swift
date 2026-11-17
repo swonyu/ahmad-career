@@ -158,7 +158,7 @@ private struct NativeDiscoveryBoards: View {
                     Button { discovery.useDefaultSources() } label: {
                         Label("Use suggested boards", systemImage: discovery.query.sources.isEmpty ? "checkmark.circle.fill" : "circle")
                     }
-                    Text("Choose up to four boards. With no explicit selection, the service searches its suggested boards. Choosing your first board replaces that suggested selection.")
+                    Text("Select up to four boards to replace the suggestions.")
                         .font(.footnote).foregroundStyle(.secondary)
                 }
                 if let catalog = discovery.catalog {

@@ -1,0 +1,176 @@
+{
+  "commit": "4bbe5a5087378d6a9bfe3f1cac956233b5d6ba71",
+  "run": 44014455183,
+  "artifact": 14299756008,
+  "archiveSHA256": "aee071776ad6cbca1539eda776f27b0d6a5d64440d199af2429118b88e4e749c",
+  "skippedAdjacentCaptures": [
+    "09-start-accessibility-text",
+    "14-unverified-submission-explained"
+  ],
+  "reviewed": [
+    {
+      "test": "CareerFinderUITests/testFreshStartAndFiveTabs()",
+      "capture": "01-fresh-start",
+      "exportedFileName": "6E644BC9-320A-479F-ACB1-D4ABB47A1241.png",
+      "sha256": "0587d668ec67eaf010782a805c2dfa99e4bae6cb3b47892671756a96b302fcf4",
+      "isAssociatedWithFailure": false,
+      "retainedInRepository": false
+    },
+    {
+      "test": "CareerFinderUITests/testFreshStartAndFiveTabs()",
+      "capture": "02-discovery-empty",
+      "exportedFileName": "C0302D2D-3138-49EC-B2ED-E2A98C36868C.png",
+      "sha256": "3d6182c55d1309766e8c709746e1d6824bc448aa07f4977ea7cf7841c2b100ee",
+      "isAssociatedWithFailure": false,
+      "retainedInRepository": false
+    },
+    {
+      "test": "CareerFinderUITests/testFreshStartAndFiveTabs()",
+      "capture": "03-application-workspace-empty",
+      "exportedFileName": "A2C6716D-2AA3-4C90-AEF9-B5B697C14841.png",
+      "sha256": "209383e2874924ae3c9de653d62df7d11ec4097033c9198c14a14fc80e4d7984",
+      "isAssociatedWithFailure": false,
+      "retainedInRepository": false
+    },
+    {
+      "test": "CareerFinderUITests/testApplicationDraftSurvivesCancelAndRelaunch()",
+      "capture": "04-restored-phone-profile-draft",
+      "exportedFileName": "821C1BE3-2309-4945-8DDD-F2F56F21FFBE.png",
+      "sha256": "dc051324cbb91451c01d405f4268b983666112ff504a4fd3f9b8a572e53c1089",
+      "isAssociatedWithFailure": false,
+      "retainedInRepository": false
+    },
+    {
+      "test": "CareerFinderUITests/testOpportunityDraftKeepSaveAndRestore()",
+      "capture": "05-saved-manual-opportunity",
+      "exportedFileName": "7D4AEE20-DCA6-46B0-A2F5-10D937A76656.png",
+      "sha256": "93b48297168124fe7459c262cccee6dd0bc30c3dda83e6ab4a5e11ec8e95c8b1",
+      "isAssociatedWithFailure": false,
+      "retainedInRepository": false
+    },
+    {
+      "test": "CareerFinderUITests/testOpportunityDraftKeepSaveAndRestore()",
+      "capture": "05a-explicit-keep-editing-choice",
+      "exportedFileName": "19212E52-4CC2-4273-8CA1-F9CAE715B83B.png",
+      "sha256": "ef69c6482f487976e64a5e5a425f1cd370c73bcdc07d5f8bc432daa9c055b869",
+      "isAssociatedWithFailure": false,
+      "retainedInRepository": false
+    },
+    {
+      "test": "CareerFinderUITests/testDiscoverySaveFlowsIntoSavedAndApply()",
+      "capture": "06-discovered-role-saved",
+      "exportedFileName": "44ADC902-B756-40B4-BCB8-18C893D2A3E0.png",
+      "sha256": "5e304e97eed8b3c14837d800c3bf5b668080156d5741fb6076b9c74602a697cd",
+      "isAssociatedWithFailure": false,
+      "retainedInRepository": false
+    },
+    {
+      "test": "CareerFinderUITests/testDiscoverySaveFlowsIntoSavedAndApply()",
+      "capture": "07-discovery-to-application-workspace",
+      "exportedFileName": "E66970B7-7226-45BA-8029-622227B44586.png",
+      "sha256": "d165c2e93340b80c5b54f5664ff225506c8579de8bfbd9f54f740a83ef16e8ee",
+      "isAssociatedWithFailure": false,
+      "retainedInRepository": false
+    },
+    {
+      "test": "CareerFinderUITests/testSearchEmptyAndFailurePreservesPreviousResults()",
+      "capture": "08-offline-search-keeps-results",
+      "exportedFileName": "F6A77566-F3E9-4FAB-9E76-008BA3C0560D.png",
+      "sha256": "4baad8aa9199eb909fe17fa9fab730505c0e56a6d5a86c2deaf75693b07e44f5",
+      "isAssociatedWithFailure": false,
+      "retainedInRepository": false
+    },
+    {
+      "test": "CareerFinderUITests/testSearchEmptyAndFailurePreservesPreviousResults()",
+      "capture": "08a-completed-search-with-no-matches",
+      "exportedFileName": "7230D55A-8F98-4E32-831C-C02C8CB29B9C.png",
+      "sha256": "3121f03f7a583d5012addf9931a837b279bce27c345f5f5d8cf3cf2f62834983",
+      "isAssociatedWithFailure": false,
+      "retainedInRepository": false
+    },
+    {
+      "test": "CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable()",
+      "capture": "11-employer-boards-accessibility-text",
+      "exportedFileName": "D352CB7A-528D-423E-8882-571C9A68EC52.png",
+      "sha256": "7169b4efaf5d5ca536cadbbb2c9d2910da083f54f201cc358ca6e8d96c9c3ee9",
+      "isAssociatedWithFailure": false,
+      "retainedInRepository": true,
+      "repositoryFile": "11-employer-boards-accessibility-text.png"
+    },
+    {
+      "test": "CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable()",
+      "capture": "12-application-workspace-accessibility-text",
+      "exportedFileName": "856A9993-772B-4C22-BDCA-A368D2377708.png",
+      "sha256": "3ce56ef1ab9c667ca766bf835318aef3e02544d44baf6d8b343d16b45657fc51",
+      "isAssociatedWithFailure": false,
+      "retainedInRepository": true,
+      "repositoryFile": "12-application-workspace-accessibility-text.png"
+    },
+    {
+      "test": "CareerFinderUITests/testLinkedInProfileDraftAndExternalSearchChoice()",
+      "capture": "16-linkedin-profile-link",
+      "exportedFileName": "5CA34235-8E70-4229-969B-D46579D7AB34.png",
+      "sha256": "136569c82d193967e4cce52f682b888f12ae87202b61073bf6b86275cbef55c3",
+      "isAssociatedWithFailure": false,
+      "retainedInRepository": false
+    },
+    {
+      "test": "CareerFinderUITests/testLinkedInProfileDraftAndExternalSearchChoice()",
+      "capture": "17-linkedin-search-choice",
+      "exportedFileName": "7E79EACB-7B80-4602-92F4-9DFF6073A329.png",
+      "sha256": "42c35ecf454f14646b56f4249bcc7786a857c29d8d2d8a808c6fd944f240da73",
+      "isAssociatedWithFailure": false,
+      "retainedInRepository": false
+    },
+    {
+      "test": "CareerFinderUITests/testPrivateApplicationRecordPersistsAndCorrectionIsExplicit()",
+      "capture": "19-private-follow-up-filter",
+      "exportedFileName": "6E4B94F4-0531-48D8-9401-0C21FB638D8E.png",
+      "sha256": "dbabf4dd74871f8cfb628c70d7c20977263878cb71201dff7bb8ed690014c7a8",
+      "isAssociatedWithFailure": false,
+      "retainedInRepository": false
+    },
+    {
+      "test": "CareerFinderUITests/testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark()",
+      "capture": "22-retained-record-cancel",
+      "exportedFileName": "50474E62-7425-4B52-B25E-AD2CF921A5FC.png",
+      "sha256": "35cecf2d836348ecd8d05c8b7dbd95e85018e05da303f34bb5faa92424258eae",
+      "isAssociatedWithFailure": false,
+      "retainedInRepository": false
+    },
+    {
+      "test": "CareerFinderUITests/testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark()",
+      "capture": "23-retained-record-associated",
+      "exportedFileName": "8AD3F2C0-7DE1-48F4-B407-D3F6B7B8A0DB.png",
+      "sha256": "efab17c6ba33a2dd1f2355b267d9eed557795b8acc06ecdb025b6914111218e6",
+      "isAssociatedWithFailure": false,
+      "retainedInRepository": false
+    }
+  ],
+  "reviewMethod": "Each of the 17 listed original PNGs was opened directly with view_image. No image manipulation, UI interaction, build or CI action.",
+  "findings": [
+    {
+      "severity": "low",
+      "category": "Large-text navigation polish",
+      "captures": [
+        "11-employer-boards-accessibility-text",
+        "12-application-workspace-accessibility-text"
+      ],
+      "observation": "At the captured accessibility text size, the board chooser opening viewport contains the suggested-board button and a lengthy introductory explanation before individual board choices. The Apply opening viewport is dominated by its decorative tag, hero heading and introductory copy; its setup button remains visible and reachable.",
+      "sourceContext": "CareerFinderUITests captures both immediately after opening the corresponding view; NativeDiscoveryViews.swift 159-161 and NativeApplicationsViews.swift 239-245 contain the displayed introductory content.",
+      "impact": "More scrolling before detailed choices for users of the largest text sizes.",
+      "proposedFix": "Use concise introductory copy at accessibility text sizes and place optional explanation in a disclosure, while retaining user-selected text scaling and existing control targets.",
+      "limits": "A polish finding only. The screenshots do not establish unreachable controls, clipping at the bottom of a complete scroll view, or a functional acceptance failure.",
+      "id": "CONT-24",
+      "implementedCorrection": "Shorten board helper; at accessibility text sizes use Applications and omit decorative introduction while preserving TEST WORKSPACE and full user text scaling.",
+      "runtimeAcceptance": "Pending new exact-source UI run; this is before-fix evidence."
+    }
+  ],
+  "newFunctionalBlockers": [],
+  "excludedFindings": [
+    "Generic success text colored red and the removal navigation title were already reported and fixed in 66669da; neither is repeated as a new finding.",
+    "The synthetic acceptance banner is test instrumentation, not assumed to be production chrome.",
+    "Elements outside a scrolled capture are not treated as missing or inaccessible."
+  ],
+  "branchEvidenceLimit": "These visual observations apply to commit 4bbe5a5087378d6a9bfe3f1cac956233b5d6ba71 and run 44014455183 only; they are not claimed as visual verification of later commit 66669da."
+}

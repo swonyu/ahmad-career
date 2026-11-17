@@ -1,0 +1,191 @@
+{
+  "recordedAt": "2026-11-17T04:54:24.880217+00:00",
+  "sourceCommit": "66669da8bd34943ad3fc9dae45e9a8288ff0d9e7",
+  "status": "Uncommitted narrow security pin; local structural validation passed; new build and instrumentation verification pending coordinated CI",
+  "changedFile": "android/gradle/wrapper/gradle-wrapper.properties",
+  "propertiesSha256": "c4747a838d5c923931d1791ae5a56c0654e025f4c1a54e4e277f54cdc60a126f",
+  "change": {
+    "from": "8.13",
+    "to": "8.14.7",
+    "distributionUrl": "https://services.gradle.org/distributions/gradle-8.14.7-bin.zip",
+    "distributionSha256Sum": "903bfc4bc7622323124054c10f509246212a1902948bdaf26c379cca8735e856",
+    "checksumSource": "https://gradle.org/release-checksums/",
+    "archiveDownloadedOrExecutedLocally": false
+  },
+  "wrapperJar": {
+    "changed": false,
+    "version": "8.13",
+    "sha256": "81a82aaea5abcc8ff68b3dfcb58b3c3c429378efd98e7433460610fecd7ae45f",
+    "matchesOfficialChecksum": true,
+    "rationale": "The Gradle manual permits a manual distributionUrl upgrade and says newer Gradle distributions can normally run using older wrapper files. The inspected security advisories concern Gradle distribution components; no requirement to replace this verified launcher JAR was found.",
+    "source": "https://docs.gradle.org/current/userguide/gradle_wrapper.html"
+  },
+  "securityApplicability": [
+    {
+      "id": "GHSA-3cfg-jpcr-gfp3",
+      "source": "https://github.com/gradle/gradle/security/advisories/GHSA-3cfg-jpcr-gfp3",
+      "affected8x": ">=7.0 <=8.14.6",
+      "fixed8x": "8.14.7",
+      "assessment": "The pinned version 8.13 is affected by the advisory range. Exploitation requires a malicious version catalog; no local or imported catalog was found in the inspected Android configuration. This is not evidence of exploitation."
+    },
+    {
+      "id": "GHSA-xwqc-3h47-hg64",
+      "source": "https://github.com/gradle/gradle/security/advisories/GHSA-xwqc-3h47-hg64",
+      "affected8x": "<=8.14.5",
+      "fixed8x": "8.14.6",
+      "assessment": "The pinned version 8.13 is affected. The pre-authentication daemon channel issue requires access on the build host; it is not a remote APK issue. A disposable single-tenant runner limits exposure. CI uses a single-use daemon even with --no-daemon, so that flag is not treated as eliminating applicability."
+    },
+    {
+      "id": "GHSA-j5m7-59rp-24f5",
+      "source": "https://github.com/gradle/gradle/security/advisories/GHSA-j5m7-59rp-24f5",
+      "affected8x": "<=8.14.5",
+      "fixed8x": "8.14.6",
+      "assessment": "The pinned version 8.13 is affected by the repository SSL-failure fallback issue. The build has multiple repositories, but exploitation also requires attack prerequisites including control of a subsequently selected repository. No compromise is asserted."
+    }
+  ],
+  "releaseNotes": "https://docs.gradle.org/8.14.7/release-notes.html",
+  "compatibility": {
+    "agp": "8.13.2 unchanged; documented minimum Gradle 8.13; maximum Android API 36.1",
+    "agpSource": "https://developer.android.com/build/releases/agp-8-13-0-release-notes?hl=en",
+    "kotlin": "2.3.10 unchanged; documented fully supported Gradle 7.6.3–9.0.0 and AGP 8.2.2–9.0.0",
+    "kotlinSource": "https://kotlinlang.org/docs/gradle-configure-project.html",
+    "compileSdk": 36,
+    "targetSdk": 36,
+    "assessment": "8.14.7 meets the documented version bounds. Actual build and test compatibility remains a CI gate."
+  },
+  "originalLintReceipt": {
+    "runId": 44018512141,
+    "jobId": 133822121155,
+    "artifactId": 14299158917,
+    "artifact": "android-lint-44018512141.zip",
+    "artifactSha256": "18ca642d46cdcec7e5966b22b1d6a0a95f0f1fdd820ca95733f6280c2878c951",
+    "xmlMember": "ahmad-career/ahmad-career/android/app/build/reports/lint-results-debug.xml",
+    "lintVersion": "lint 8.13.2",
+    "errors": 0,
+    "warnings": 7,
+    "issues": [
+      {
+        "id": "OldTargetApi",
+        "severity": "Warning",
+        "message": "Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details.",
+        "location": {
+          "file": "/home/runner/work/ahmad-career/ahmad-career/android/app/build.gradle.kts",
+          "line": "31",
+          "column": "9"
+        }
+      },
+      {
+        "id": "AndroidGradlePluginVersion",
+        "severity": "Warning",
+        "message": "A newer version of Gradle than 8.13 is available: 8.14.7",
+        "location": {
+          "file": "/home/runner/work/ahmad-career/ahmad-career/android/gradle/wrapper/gradle-wrapper.properties",
+          "line": "4",
+          "column": "17"
+        }
+      },
+      {
+        "id": "GradleDependency",
+        "severity": "Warning",
+        "message": "A newer version of androidx.activity:activity-compose than 1.11.0 is available: 1.13.0",
+        "location": {
+          "file": "/home/runner/work/ahmad-career/ahmad-career/android/app/build.gradle.kts",
+          "line": "66",
+          "column": "20"
+        }
+      },
+      {
+        "id": "GradleDependency",
+        "severity": "Warning",
+        "message": "A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.9.4 is available: 2.11.0",
+        "location": {
+          "file": "/home/runner/work/ahmad-career/ahmad-career/android/app/build.gradle.kts",
+          "line": "72",
+          "column": "20"
+        }
+      },
+      {
+        "id": "GradleDependency",
+        "severity": "Warning",
+        "message": "A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.9.4 is available: 2.11.0",
+        "location": {
+          "file": "/home/runner/work/ahmad-career/ahmad-career/android/app/build.gradle.kts",
+          "line": "73",
+          "column": "20"
+        }
+      },
+      {
+        "id": "NewerVersionAvailable",
+        "severity": "Warning",
+        "message": "A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.10.2 is available: 1.11.0",
+        "location": {
+          "file": "/home/runner/work/ahmad-career/ahmad-career/android/app/build.gradle.kts",
+          "line": "74",
+          "column": "20"
+        }
+      },
+      {
+        "id": "UseKtx",
+        "severity": "Warning",
+        "message": "Use the KTX function `createBitmap` instead?",
+        "location": {
+          "file": "/home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/ReadablePDF.kt",
+          "line": "23",
+          "column": "38"
+        }
+      }
+    ]
+  },
+  "otherWarnings": [
+    {
+      "warning": "OldTargetApi",
+      "classification": "Current Play phone submission target requirement satisfied by API 36; not a proven submission target blocker",
+      "source": "https://support.google.com/googleplay/android-developer/answer/11926878?hl=en-en",
+      "basis": "Official current guidance requires API 36 or higher for new phone apps and updates from August 31, 2026. This is not an assertion that all store requirements are met."
+    },
+    {
+      "warning": "activity-compose 1.11.0 to 1.13.0",
+      "classification": "Freshness warning; no concrete present blocker identified in this bounded pass",
+      "source": "https://developer.android.com/jetpack/androidx/releases/activity",
+      "basis": "The release notes include photo/video picker and edge-to-edge changes. This app uses document picker contracts, and no corresponding failed flow was established. No upgrade or suppression was performed."
+    },
+    {
+      "warning": "Two Lifecycle 2.9.4 to 2.11.0 notices",
+      "classification": "Freshness warnings; upgrading requires separate coordinated toolchain assessment",
+      "source": "https://developer.android.com/jetpack/androidx/releases/lifecycle",
+      "basis": "The 2.11 release notes specify Compose compileSdk 37 and minimum AGP 9.2.0; blindly upgrading would exceed the current AGP-supported API level. No applicable present security defect established in this bounded pass."
+    },
+    {
+      "warning": "coroutines-android 1.10.2 to 1.11.0",
+      "classification": "Freshness warning; no concrete present blocker identified in this bounded pass",
+      "source": "https://github.com/Kotlin/kotlinx.coroutines/releases/tag/1.11.0",
+      "basis": "Named fixed paths were not established as used by this app. No upgrade or suppression was performed; this is not a complete dependency vulnerability audit."
+    },
+    {
+      "warning": "UseKtx createBitmap",
+      "classification": "Productivity/style suggestion; no functional blocker established",
+      "source": "https://developer.android.com/reference/android/graphics/Bitmap.html",
+      "basis": "The existing supported Bitmap.createBitmap API remains valid; the bitmap is recycled in finally."
+    }
+  ],
+  "localValidation": [
+    "Exact two-line distribution version/checksum change verified against HEAD",
+    "SHA-256 property format and official checksum match verified",
+    "Wrapper JAR unchanged and hash matches official 8.13 reference",
+    "AGP/Kotlin/compileSdk/targetSdk files byte-identical to HEAD",
+    "git diff --check passed"
+  ],
+  "notExecuted": [
+    "Gradle wrapper",
+    "Distribution archive download",
+    "Android build",
+    "Android instrumentation",
+    "Shared Mac or emulator",
+    "CI dispatch"
+  ],
+  "remainingGates": [
+    "Coordinated CI must validate Gradle 8.14.7 production and instrumentation compilation/lint",
+    "All existing 97 ordinary plus 2 dedicated TLS/native HTTPS cases must execute and pass; no previous compile pass is presented as an instrumentation pass"
+  ],
+  "ownership": "Only wrapper properties changed for this security task. Root owns staging, commit, push, workflow and CI. Existing pending runner and Apple corrections were preserved."
+}
