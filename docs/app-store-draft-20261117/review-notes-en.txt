@@ -1,0 +1,18 @@
+Career Finder is a native iPhone app for discovering public job openings, keeping a shortlist, preparing a PDF CV and recording application follow-ups. The interface supports English and Arabic, with device-language, light and dark settings.
+
+NATIVE NAVIGATION
+The five sections are Start, Search, Apply, Saved and Settings. Profile opens from Settings; the application profile is also reachable from Start and Apply.
+
+REVIEW WITHOUT AN ACCOUNT
+Start with the blank profile. Search selected public Greenhouse or Lever employer boards by role and optional location, inspect the posting's source/check time, save a role or add a public employer link, and keep a local application record with notes and a follow-up date. Select a reviewer-owned PDF if needed. Browsing, local preparation and saving a role do not send an application.
+
+OPTIONAL ONLINE WORKSPACE
+The native app opens browser sign-in and connects to the selected workspace with a one-use code that expires after five minutes. Connecting alone does not upload the phone draft or CV. Save to a connected workspace explicitly uploads the reviewed profile fields and selected PDF. Google, LinkedIn and ChatGPT sign-in choices depend on the configured hosted service. Matching email addresses never automatically merge accounts.
+
+APPLICATION STATUS
+Live automatic submission is disabled in the current public hosted preview, and the app explains that limitation. Employer links remain available for manual applications. A self-reported application stage is separate from a provider receipt. A confirmed live receipt requires acceptance and an application ID from a supported employer integration; it is not a promise of an interview or job offer. Uncertain outcomes prevent an automatic resend. No real employer applications are needed for review.
+
+DATA AND ACCOUNT CONTROLS
+Settings includes local data and privacy controls. The hosted-service links include Manage account and delete hosted data. Cloud deletion is separate from phone drafts, exports and copies already received by employers. Disconnecting a phone does not itself delete its hosted account.
+
+This candidate contains no advertising or in-app purchase flow. Public job postings and personal text keep their original language.
