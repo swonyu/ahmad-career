@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "verified_at_utc": "2026-11-17T18:15:03.484380+00:00",
+  "status": "PASS_STATIC_WORKFLOW_SCOPE_COMPARISON_ONLY",
+  "base_commit": "11cb3d4d8c15e9b16719b6e7091597f43633cda6",
+  "workflow_path": ".github/workflows/phone-quality.yml",
+  "old_sha256": "38565c0d5cb82ad4667dddcef8b61973858ce4d3f123ececa8f7f388707e7bca",
+  "new_sha256": "03a9eb0b74efbf33422d734558c14fc13b8b5d26bcfb0d4c2eef716a35ed1581",
+  "new_scope": "iphone-ui",
+  "scope_semantics": {
+    "full": "All five existing jobs, default unchanged.",
+    "iphone-ui": "Partial CI: all 17 iPhone UI journeys, other four jobs skipped.",
+    "iphone-connection": "Existing partial one-journey selector retained unchanged."
+  },
+  "proved": {
+    "push_and_pull_request_semantics_unchanged": true,
+    "full_default_unchanged": true,
+    "non_ui_job_bodies_unchanged": true,
+    "ui_command_unchanged_except_new_empty_selection_branch": true,
+    "existing_connection_selector_and_one_run_check_unchanged": true,
+    "all_timeout_artifact_retention_export_action_and_permission_settings_unchanged": true,
+    "all_ui_other_steps_unchanged": true,
+    "no_extra_only_testing_selector": true,
+    "git_diff_check_passed": true
+  },
+  "other_four_jobs_condition_truth_table": [
+    {
+      "event": "workflow_dispatch",
+      "scope": "full",
+      "old_other_four_jobs": true,
+      "new_other_four_jobs": true,
+      "ui_job_present": true
+    },
+    {
+      "event": "workflow_dispatch",
+      "scope": "iphone-connection",
+      "old_other_four_jobs": false,
+      "new_other_four_jobs": false,
+      "ui_job_present": true
+    },
+    {
+      "event": "workflow_dispatch",
+      "scope": "iphone-ui",
+      "old_other_four_jobs": true,
+      "new_other_four_jobs": false,
+      "ui_job_present": true
+    },
+    {
+      "event": "workflow_dispatch",
+      "scope": "",
+      "old_other_four_jobs": true,
+      "new_other_four_jobs": true,
+      "ui_job_present": true
+    },
+    {
+      "event": "push",
+      "scope": "full",
+      "old_other_four_jobs": true,
+      "new_other_four_jobs": true,
+      "ui_job_present": true
+    },
+    {
+      "event": "push",
+      "scope": "iphone-connection",
+      "old_other_four_jobs": true,
+      "new_other_four_jobs": true,
+      "ui_job_present": true
+    },
+    {
+      "event": "push",
+      "scope": "iphone-ui",
+      "old_other_four_jobs": true,
+      "new_other_four_jobs": true,
+      "ui_job_present": true
+    },
+    {
+      "event": "push",
+      "scope": "",
+      "old_other_four_jobs": true,
+      "new_other_four_jobs": true,
+      "ui_job_present": true
+    },
+    {
+      "event": "pull_request",
+      "scope": "full",
+      "old_other_four_jobs": true,
+      "new_other_four_jobs": true,
+      "ui_job_present": true
+    },
+    {
+      "event": "pull_request",
+      "scope": "iphone-connection",
+      "old_other_four_jobs": true,
+      "new_other_four_jobs": true,
+      "ui_job_present": true
+    },
+    {
+      "event": "pull_request",
+      "scope": "iphone-ui",
+      "old_other_four_jobs": true,
+      "new_other_four_jobs": true,
+      "ui_job_present": true
+    },
+    {
+      "event": "pull_request",
+      "scope": "",
+      "old_other_four_jobs": true,
+      "new_other_four_jobs": true,
+      "ui_job_present": true
+    }
+  ],
+  "changed_ui_steps": [
+    "Exercise native phone flows with isolated synthetic data"
+  ],
+  "native_invoked": false,
+  "workflow_dispatched": false,
+  "tests_run": false,
+  "remaining_gate": "Root verifies exact remote head and no active run in the same concurrency group, then dispatches iphone-ui. This is partial CI and cannot establish the five-job release gate.",
+  "inherited_concurrency": "cancel-in-progress true is unchanged; do not dispatch on a ref with an active run."
+}

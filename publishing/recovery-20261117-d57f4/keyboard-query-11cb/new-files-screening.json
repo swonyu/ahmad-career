@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "screened_at_utc": "2026-11-17T18:18:10.585093+00:00",
+  "scope": "Exact eight new or modified files versus11cb; predecessor full-tree screening remains separate.",
+  "files": [
+    {
+      "path": ".github/workflows/phone-quality.yml",
+      "bytes": 14507,
+      "sha256": "03a9eb0b74efbf33422d734558c14fc13b8b5d26bcfb0d4c2eef716a35ed1581"
+    },
+    {
+      "path": "apple/UITests/CareerFinderUITests.swift",
+      "bytes": 49868,
+      "sha256": "163d5698d9e291db53e161e98011fac64174233863063a36efa7ac318fdea84e"
+    },
+    {
+      "path": "publishing/recovery-20261117-d57f4/keyboard-query-11cb/README.md",
+      "bytes": 4048,
+      "sha256": "bfb7880eae271937ac6b4e31a91a056020db8a521630687d27bece010e2a1091"
+    },
+    {
+      "path": "publishing/recovery-20261117-d57f4/keyboard-query-11cb/failure-evidence.json",
+      "bytes": 3293,
+      "sha256": "db75466b76b114bcfb21bd22c6d3b5d2057977b4d3c4a1992857a73c92dcd2a5"
+    },
+    {
+      "path": "publishing/recovery-20261117-d57f4/keyboard-query-11cb/helper-peer-review.json",
+      "bytes": 2431,
+      "sha256": "32f3c3d0213edada2acebef8c7fec141a6bd76a054a42302459891b6b6ebf1d6"
+    },
+    {
+      "path": "publishing/recovery-20261117-d57f4/keyboard-query-11cb/source-retention.json",
+      "bytes": 3883,
+      "sha256": "846bb5846912223fcbcbbd5b74777dbf0dfec4f14f9c5e1605f9764c1d6ff7a0"
+    },
+    {
+      "path": "publishing/recovery-20261117-d57f4/keyboard-query-11cb/workflow-peer-review.json",
+      "bytes": 1963,
+      "sha256": "16cab4ad8c954dfb5c7fb8ee284b415c011654ad03b60221132b56266ac1ed6f"
+    },
+    {
+      "path": "publishing/recovery-20261117-d57f4/keyboard-query-11cb/workflow-scope-review.json",
+      "bytes": 3770,
+      "sha256": "290c53c0e79a1801db6b81849d49b4e8a467f9c38c92476f832d8cec7177c16f"
+    }
+  ],
+  "findings": [
+    {
+      "path": "apple/UITests/CareerFinderUITests.swift",
+      "kind": "email_address",
+      "line": 334,
+      "value": "taylor@example.com",
+      "disposition": "Unchanged synthetic example-domain fixture in a byte-identical original test method."
+    },
+    {
+      "path": "apple/UITests/CareerFinderUITests.swift",
+      "kind": "email_address",
+      "line": 343,
+      "value": "taylor@example.com",
+      "disposition": "Unchanged synthetic example-domain fixture in a byte-identical original test method."
+    },
+    {
+      "path": "apple/UITests/CareerFinderUITests.swift",
+      "kind": "email_address",
+      "line": 683,
+      "value": "saved@example.invalid",
+      "disposition": "Unchanged synthetic example-domain fixture in a byte-identical original test method."
+    },
+    {
+      "path": "apple/UITests/CareerFinderUITests.swift",
+      "kind": "email_address",
+      "line": 703,
+      "value": "saved@example.invalid",
+      "disposition": "Unchanged synthetic example-domain fixture in a byte-identical original test method."
+    }
+  ],
+  "unresolved_findings": 0,
+  "private_key_or_provider_credential_or_jwt_matches": 0,
+  "example_fixture_email_matches": 4,
+  "new_binary_files": 0,
+  "manual_review": "All new prose/JSON and both narrow diffs were read. They contain technical provenance, public Apple documentation links, synthetic UI descriptions and no discovered private support/review contact or credential. Existing source fixtures are byte-identical outside the three reviewed helpers.",
+  "limitations": "Signature and contextual screening do not prove the absence of every possible secret. This does not rescreen the inherited complete tree.",
+  "native_invoked": false,
+  "push_invoked": false
+}
