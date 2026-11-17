@@ -1542,6 +1542,7 @@
     <string name="c_a557f84fa312" formatted="false">"This review is out of date. Refresh the workspace before continuing."</string>
     <string name="c_ff6fc3013606" formatted="false">"This review uses profile version "</string>
     <string name="c_d2c66216c1e0" formatted="false">"This review uses profile version {0}"</string>
+    <string name="c_10d808649566" formatted="false">"This review uses profile version {0}. Expires {1}."</string>
     <string name="c_5db4e6cb1b70" formatted="false">"This review was stopped. Provider cooldowns still apply to rejected attempts."</string>
     <string name="c_493f52a316e0" formatted="false">"This role appeared in that search. Recheck the official page for changes before applying."</string>
     <string name="c_ebbf7853ec66" formatted="false">"This role note excludes your profile fields. Review the requirements and your local application status before sharing."</string>

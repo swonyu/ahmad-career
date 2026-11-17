@@ -1,0 +1,35 @@
+{
+  "at": "2026-11-17T16:36:19.983815+00:00",
+  "researchReadBy": "Root coordinator in existing Grok research chat; findings relayed to this source reviewer",
+  "reviewedSourceCommit": "56784d740a25d07d2fbd4616f57e55cf0cb4453f",
+  "coordinatorReportedDelivery": "Grok acknowledged the current567 complete source plus31-image package as readable; four current Android screenshots were read in the bounded follow-up. This worker did not operate Grok or independently attest the upload.",
+  "findings": [
+    {
+      "id": "CF-REV-01",
+      "disposition": "VALIDATED_AND_FIXED_PENDING_NATIVE_RETEST",
+      "finding": "English Expires appears in the actual Arabic prepared-review summary.",
+      "independentEvidence": "Current567 Android acceptance-prepared.png SHA2565f09d5433a780eb01771c4fc2adbcf7f667cd4981439e24ecef9a3691b671a33; local complete20-image visual review independently found it before this Grok report.",
+      "change": "Full two-argument localized sentence and real visible-summary/native localization assertions, pinned in verification.json.",
+      "retest": "Generator check and8 generator tests passed; exact successor Android/native HTTPS remains required."
+    },
+    {
+      "id": "CF-CONN-01",
+      "disposition": "INCORRECT_VERSION_ATTRIBUTION_WITH_VALID_UNRESOLVED_JOURNEY",
+      "finding": "Grok described source567 as containing the new Clear service-address control.",
+      "evidence": "git show567:apple/AhmadCareer/NativeApplicationsViews.swift has no connection.clearAddress identifier. The real control was introduced by original owner d97 and integrated into2fac. The actual567 failure was a triple-tap/delete gesture that removed only one hyphen, not a Clear-button failure.",
+      "currentState": "Focused2fac run44124734131 failed while verifying profile email before reaching Clear. No Clear runtime acceptance is established."
+    },
+    {
+      "id": "CF-API-01",
+      "disposition": "REJECTED_AS_NETWORK_DESTINATION_BUG",
+      "finding": "Grok treated https://career-finder.invalid as a hardcoded network endpoint.",
+      "source": "hosted/app/phone/api.ts",
+      "evidence": "The origin is a parsing and allowlist sentinel. The actual fetch receives url.pathname + url.search with credentials same-origin and redirect error. Out-of-origin paths and disallowed API routes are rejected before fetch. hosted/server/discovery.mjs constructs fresh public employer request headers rather than forwarding browser credentials.",
+      "change": "None. Preserve the current same-origin/security contract; do not replace the parsing sentinel with an external endpoint."
+    }
+  ],
+  "limits": [
+    "Reported research observations do not establish a new native pass or store release.",
+    "This source correction and its peer review do not imply all current images or optional account/provider routes were accepted."
+  ]
+}

@@ -644,7 +644,8 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
             Text(l10n("Preparing sends nothing to employers. Required custom questions or an unavailable connector will be shown clearly."), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         if (plan != null) {
-            item { Heading("Review what will be shared.", "This review uses profile version " + plan.profileRevision + ". Expires " + l10n.dateTime(plan.expiresAt) + ".") }
+            item { Heading("Review what will be shared.", l10n.format("This review uses profile version {0}. Expires {1}.",
+                listOf(plan.profileRevision.toString(), l10n.dateTime(plan.expiresAt)))) }
             items(plan.items, key = { "review-" + it.jobId }) { item -> ReviewCard(item) }
             item {
                 Panel {

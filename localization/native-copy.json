@@ -1509,6 +1509,7 @@
     "This review is out of date. Refresh the workspace before continuing.": "هذه المراجعة قديمة. حدّث مساحة العمل قبل المتابعة.",
     "This review uses profile version ": "تستخدم هذه المراجعة نسخة الملف الشخصي ",
     "This review uses profile version {0}": "تستخدم هذه المراجعة نسخة الملف الشخصي {0}",
+    "This review uses profile version {0}. Expires {1}.": "تستخدم هذه المراجعة نسخة الملف الشخصي {0}. تنتهي الصلاحية في {1}.",
     "This review was stopped. Provider cooldowns still apply to rejected attempts.": "أُوقفت هذه المراجعة. لا تزال فترات الانتظار التي يفرضها المزوّد سارية على محاولات الإرسال المرفوضة.",
     "This role appeared in that search. Recheck the official page for changes before applying.": "ظهرت هذه الوظيفة في ذلك البحث. راجع الصفحة الرسمية للتحقق من أي تغييرات قبل التقديم.",
     "This role note excludes your profile fields. Review the requirements and your local application status before sharing.": "لا تتضمن ملاحظة الوظيفة هذه حقول ملفك الشخصي. راجع المتطلبات وحالة التقديم المحلية قبل المشاركة.",

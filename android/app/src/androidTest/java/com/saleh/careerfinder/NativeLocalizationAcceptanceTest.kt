@@ -144,6 +144,16 @@ class NativeLocalizationAcceptanceTest {
         val civil = ar.civilDate("2024-02-29")
         assertEquals(ar.date(LocalDate.of(2024, 2, 29)), civil)
         assertTrue(civil.contains("2024") || civil.contains("٢٠٢٤"))
+        val expiry = "2026-11-17T16:00:00Z"
+        val summaryKey = "This review uses profile version {0}. Expires {1}."
+        val arExpiry = ar.dateTime(expiry)
+        val arSummary = ar.format(summaryKey, listOf("7", arExpiry))
+        assertTrue(arSummary.contains("تنتهي الصلاحية في"))
+        assertFalse(arSummary.contains("Expires"))
+        assertTrue(arSummary.contains(arExpiry))
+        val en = strings("en")
+        assertEquals("This review uses profile version 7. Expires ${en.dateTime(expiry)}.",
+            en.format(summaryKey, listOf("7", en.dateTime(expiry))))
         assertEquals("Raw employer title {0}", ar("Raw employer title {0}"))
         assertEquals(0, service.calls)
     }

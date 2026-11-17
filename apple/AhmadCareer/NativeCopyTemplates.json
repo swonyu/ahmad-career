@@ -336,6 +336,15 @@
     "arguments": 1
   },
   {
+    "key": "This review uses profile version {0}. Expires {1}.",
+    "parts": [
+      "This review uses profile version ",
+      ". Expires ",
+      "."
+    ],
+    "arguments": 2
+  },
+  {
     "key": "{0} conflicting versions · {1} history versions",
     "parts": [
       "",

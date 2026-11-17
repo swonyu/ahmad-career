@@ -158,6 +158,14 @@ class NativeHttpsAcceptanceTest {
             }
             step("review-summary-scroll") { compose.onNodeWithTag("apply-list").performScrollToNode(hasText(strings("Review what will be shared."))) }
             step("review-summary-visible") { compose.onNodeWithText(strings("Review what will be shared.")).assertIsDisplayed() }
+            val reviewSummary = strings.format("This review uses profile version {0}. Expires {1}.",
+                listOf(plan.profileRevision.toString(), strings.dateTime(plan.expiresAt)))
+            assertTrue("Arabic review must explain when its approval expires", reviewSummary.contains("تنتهي الصلاحية في"))
+            assertFalse("Arabic review must not retain the English expiry label", reviewSummary.contains("Expires"))
+            step("review-summary-localized") {
+                compose.onNodeWithTag("apply-list").performScrollToNode(hasText(reviewSummary))
+                compose.onNodeWithText(reviewSummary).assertIsDisplayed()
+            }
             step("review-capture") { capture("acceptance-prepared.png") }
             step("initial-approval") { approve() }
             step("initial-outcomes") { await(30_000) {

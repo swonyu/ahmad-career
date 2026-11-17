@@ -1591,6 +1591,7 @@ private fun nativeCopyIds10(): Map<String, Int> = mapOf(
     "This review is out of date. Refresh the workspace before continuing." to R.string.c_a557f84fa312,
     "This review uses profile version " to R.string.c_ff6fc3013606,
     "This review uses profile version {0}" to R.string.c_d2c66216c1e0,
+    "This review uses profile version {0}. Expires {1}." to R.string.c_10d808649566,
     "This review was stopped. Provider cooldowns still apply to rejected attempts." to R.string.c_5db4e6cb1b70,
     "This role appeared in that search. Recheck the official page for changes before applying." to R.string.c_493f52a316e0,
     "This role note excludes your profile fields. Review the requirements and your local application status before sharing." to R.string.c_ebbf7853ec66,
@@ -1699,10 +1700,10 @@ private fun nativeCopyIds10(): Map<String, Int> = mapOf(
     "View receipts" to R.string.c_9d172d0159c4,
     "View saved versions ({0})" to R.string.c_b1e26038a4a2,
     "Waiting for provider" to R.string.c_d18eb49c1ba0,
-    "Waiting to retry" to R.string.c_e8d51f7276c8,
 )
 
 private fun nativeCopyIds11(): Map<String, Int> = mapOf(
+    "Waiting to retry" to R.string.c_e8d51f7276c8,
     "Website" to R.string.c_b5a229ac8bec,
     "Website or portfolio (optional)" to R.string.c_b19832280f3d,
     "Weekly" to R.string.c_2975132481a7,
@@ -1852,9 +1853,9 @@ private fun nativeCopyIds11(): Map<String, Int> = mapOf(
     "{0} · unfinished; saved status unchanged" to R.string.c_02898fd37173,
     "{0} · your record" to R.string.c_cda300621627,
     "{0} · {1}" to R.string.c_cd55a9d95751,
-    "{0}'s application profile" to R.string.c_071865fbf4b0,
 )
 
 private fun nativeCopyIds12(): Map<String, Int> = mapOf(
+    "{0}'s application profile" to R.string.c_071865fbf4b0,
     "العربية" to R.string.c_d27415986305,
 )

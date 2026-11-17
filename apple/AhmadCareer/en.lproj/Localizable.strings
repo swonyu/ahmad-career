@@ -1540,6 +1540,7 @@
 "This review is out of date. Refresh the workspace before continuing." = "This review is out of date. Refresh the workspace before continuing.";
 "This review uses profile version " = "This review uses profile version ";
 "This review uses profile version {0}" = "This review uses profile version {0}";
+"This review uses profile version {0}. Expires {1}." = "This review uses profile version {0}. Expires {1}.";
 "This review was stopped. Provider cooldowns still apply to rejected attempts." = "This review was stopped. Provider cooldowns still apply to rejected attempts.";
 "This role appeared in that search. Recheck the official page for changes before applying." = "This role appeared in that search. Recheck the official page for changes before applying.";
 "This role note excludes your profile fields. Review the requirements and your local application status before sharing." = "This role note excludes your profile fields. Review the requirements and your local application status before sharing.";
