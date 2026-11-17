@@ -1,0 +1,124 @@
+{
+  "observedAt": "2026-11-17T06:27:26.393289+00:00",
+  "runId": 44030852040,
+  "jobId": 133862170490,
+  "name": "iPhone logic and unsigned build",
+  "sourceCommit": "e66d1809ece7666c7d99412d48aa193cdf024c42",
+  "status": "passed",
+  "jobConclusion": "success",
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1
+    },
+    {
+      "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2
+    },
+    {
+      "name": "Execute the production client and store checks",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3
+    },
+    {
+      "name": "Build the production iPhone configuration on this isolated runner",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 4
+    },
+    {
+      "name": "Verify the built product targets iPhone",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 5
+    },
+    {
+      "name": "Keep the unsigned build log",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 6
+    },
+    {
+      "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 12
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 13
+    }
+  ],
+  "log": {
+    "file": "iphone-job-133862170490.log",
+    "sha256": "4261ef746cad1221b8cc9949630dac564e8eead9d3eeec7c1d0210e4214d8be4",
+    "encoding": "Decoded GitHub job log with normalized LF line endings"
+  },
+  "scope": "Exact published phone branch; no signing, store release or live employer submission inferred.",
+  "checks": {
+    "applicationBoundaries": 120,
+    "lifecycleAssertions": 503,
+    "lifecycleScenarios": 77,
+    "discoveryAssertions": 43,
+    "discoveryScenarios": 13,
+    "legacyAndNativeStoreChecks": "passed"
+  },
+  "unsignedBuild": {
+    "configuration": "Release",
+    "sdk": "iphoneos",
+    "destination": "generic/platform=iOS",
+    "codeSigningAllowed": false,
+    "codeSigningRequired": false,
+    "result": "BUILD SUCCEEDED",
+    "productVerification": "passed",
+    "deviceFamily": [
+      1
+    ],
+    "bundleIdentifier": "com.ahmadalayed.career",
+    "displayName": "Career Finder",
+    "supportedPlatforms": [
+      "iPhoneOS"
+    ]
+  },
+  "artifact": {
+    "id": 14304672634,
+    "name": "iphone-build-log-44030852040",
+    "size_in_bytes": 7896,
+    "url": "https://api.github.com/repos/swonyu/ahmad-career/actions/artifacts/14304672634",
+    "archive_download_url": "https://api.github.com/repos/swonyu/ahmad-career/actions/artifacts/14304672634/zip",
+    "expired": false,
+    "created_at": "2026-11-17T06:25:06Z",
+    "expires_at": "2026-11-24T06:25:05Z",
+    "updated_at": "2026-11-17T06:25:06Z",
+    "digest": "sha256:f5c3b37b35c933a7abb3fc4c6ce7ca431ffbd59066ca87b789708c31931d0d37",
+    "workflow_run": {
+      "id": 44030852040,
+      "repository_id": 1411027050,
+      "head_repository_id": 1411027050,
+      "head_branch": "career-finder-phones-verified-apply-20261116",
+      "head_sha": "e66d1809ece7666c7d99412d48aa193cdf024c42"
+    },
+    "downloadVerified": {
+      "size": 7896,
+      "sha256": "f5c3b37b35c933a7abb3fc4c6ce7ca431ffbd59066ca87b789708c31931d0d37",
+      "members": [
+        {
+          "path": "career-iphone-build.log",
+          "size": 78685,
+          "sha256": "6413f00e4654a4d148cb160ee1ec56e7a67a738132bde6c186a10a06646a41a1"
+        }
+      ]
+    }
+  },
+  "limits": [
+    "These logic/build results are independent of the iPhone UI job.",
+    "Unsigned build success does not establish physical-device acceptance, signing, TestFlight availability, App Store approval or a public release."
+  ]
+}

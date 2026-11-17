@@ -1,0 +1,335 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "E6678320-678E-4404-83BD-3832C24BCA7D.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "13-application-connection-accessibility-text_0_CF5A7381-5A99-4C58-964C-0814E1165BAB.png",
+        "timestamp" : 1794897007.741
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "2241D0B7-906D-4972-855E-EF257B9513A4.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "12-application-workspace-accessibility-text_0_B9499009-7E29-4B94-81B2-0D929390CFC9.png",
+        "timestamp" : 1794897004.894
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "F9991A9B-DDD6-4085-9D38-B918C9490BBA.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "11-employer-boards-accessibility-text_0_365B1E5F-66DA-4CAE-82B1-6B9B4B9F00D2.png",
+        "timestamp" : 1794896998.239
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "B155492B-8CAF-44F9-86EA-1460404CBEF6.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "10-profile-accessibility-keyboard_0_316BC7CE-B014-4A63-9B34-ED350AC5C220.png",
+        "timestamp" : 1794896961.967
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "BF99F0A9-ACCB-48A6-88DE-572B69DC2FC0.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "09a-start-profile-fully-visible_0_A3B22495-2F0C-47C6-A5C6-B020EB69E543.png",
+        "timestamp" : 1794896947.884
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "0543A023-95B4-4149-B49D-2AB9D55494AA.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "09-start-accessibility-text_0_45059A14-9F73-4FF2-B462-D5A33C69341F.png",
+        "timestamp" : 1794896928.525
+      }
+    ],
+    "testIdentifier" : "CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable()",
+    "testIdentifierURL" : "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "DC92E2AB-C2FB-468A-ACC6-4552827D5DA4.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "04-restored-phone-profile-draft_0_DC1054E2-002A-4661-B7E7-F313D857BBF3.png",
+        "timestamp" : 1794897057.874
+      }
+    ],
+    "testIdentifier" : "CareerFinderUITests/testApplicationDraftSurvivesCancelAndRelaunch()",
+    "testIdentifierURL" : "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testApplicationDraftSurvivesCancelAndRelaunch"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "510F2C02-5D08-425C-9E2A-06001285C2D4.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "15-unverified-refresh-reachable_0_0E1B0A9C-8E4F-4113-988B-C1DAF4459F13.png",
+        "timestamp" : 1794897225.122
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "A8422836-B601-42DC-96A6-FF7127395F7E.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "14-unverified-submission-explained_0_C1FCF4E7-1A57-44A3-8FB3-7071A444CC8C.png",
+        "timestamp" : 1794897192.307
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "9C7BE69D-6256-4AA6-8058-EFBFE69259A7.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "15-disabled-refresh-reachable_0_D30A5445-8F6F-43F4-A578-ADEB7D5EA49A.png",
+        "timestamp" : 1794897097.714
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "3BFC0D5A-61BC-43A5-80B8-23AB21C47E44.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "14-disabled-submission-explained_0_B8FC1749-4636-45C0-BD94-166D074E2034.png",
+        "timestamp" : 1794897087.137
+      }
+    ],
+    "testIdentifier" : "CareerFinderUITests/testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText()",
+    "testIdentifierURL" : "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "9FEF9DBF-6F9B-4E51-BCAD-7ABDE28300F1.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "07-discovery-to-application-workspace_0_C064F118-B7D0-4F7C-938A-A175E41E35CD.png",
+        "timestamp" : 1794897297.904
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "750EE233-D565-431C-8D6F-0A660130509E.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "06-discovered-role-saved_0_536D0826-8CC0-4729-96DB-468ED2E9157C.png",
+        "timestamp" : 1794897280.492
+      }
+    ],
+    "testIdentifier" : "CareerFinderUITests/testDiscoverySaveFlowsIntoSavedAndApply()",
+    "testIdentifierURL" : "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testDiscoverySaveFlowsIntoSavedAndApply"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "076F0D83-72A9-4846-A2AB-7E4C25A0212E.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "03-application-workspace-empty_0_6588EB0C-578D-429A-B467-C17D9B718B4C.png",
+        "timestamp" : 1794897334.236
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "F4CE2778-0562-4E3A-B07E-DE6EC92F65EF.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "02-discovery-empty_0_6E86AA36-EBE1-44B8-B280-47A8D9264847.png",
+        "timestamp" : 1794897317.027
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "4925DADF-BC15-409E-969F-ED3E40040A6D.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "01-fresh-start_0_52C2248F-A031-4D69-A797-3C27A069836B.png",
+        "timestamp" : 1794897309.354
+      }
+    ],
+    "testIdentifier" : "CareerFinderUITests/testFreshStartAndFiveTabs()",
+    "testIdentifierURL" : "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testFreshStartAndFiveTabs"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "B705F998-E8D2-4797-A6B9-52B5AE5E0C8D.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "17-linkedin-search-choice_0_389C65F4-CAE8-45D5-8FB1-84B7239CAAC2.png",
+        "timestamp" : 1794897424.593
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "1A66AB98-7225-4DCF-8865-D9DD3DFA9BAD.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "16-linkedin-profile-link_0_A6F1A28B-2204-4093-B316-4005DE720730.png",
+        "timestamp" : 1794897403.291
+      }
+    ],
+    "testIdentifier" : "CareerFinderUITests/testLinkedInProfileDraftAndExternalSearchChoice()",
+    "testIdentifierURL" : "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testLinkedInProfileDraftAndExternalSearchChoice"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "6E14BB80-3A94-4AA7-B24F-A2494305C8B0.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "05-saved-manual-opportunity_0_41C99901-6ED1-489E-A74F-2769BF96E538.png",
+        "timestamp" : 1794897518.654
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "DEE7DE12-112B-4E09-9CFA-7F39ECBAC00D.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "05a-explicit-keep-editing-choice_0_521D8611-40B9-4F32-B272-FC8343F67D0A.png",
+        "timestamp" : 1794897482.336
+      }
+    ],
+    "testIdentifier" : "CareerFinderUITests/testOpportunityDraftKeepSaveAndRestore()",
+    "testIdentifierURL" : "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testOpportunityDraftKeepSaveAndRestore"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "578FCBAB-63DD-4729-99CB-3F079391451A.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "19-private-follow-up-filter_0_5A8D781B-2038-432A-A124-708684DFC591.png",
+        "timestamp" : 1794897669.244
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "8554A00A-DA61-4F7C-8358-2E3EEAA922E3.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "18-private-record-restored_0_7580C251-BC9B-471B-A97F-1B635CBBC30A.png",
+        "timestamp" : 1794897622.14
+      }
+    ],
+    "testIdentifier" : "CareerFinderUITests/testPrivateApplicationRecordPersistsAndCorrectionIsExplicit()",
+    "testIdentifierURL" : "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testPrivateApplicationRecordPersistsAndCorrectionIsExplicit"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "478075CA-B6A6-40C6-BF9A-C13CCAD2DE4B.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "22-simple-default-connection_0_8D1FF10E-84A3-4902-BCCC-C0D46999597F.png",
+        "timestamp" : 1794897734.264
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "EC888699-9A2E-4885-9FFA-55048229CBA7.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "21-profile-readiness_0_A2B69DFF-41CA-4B7D-9672-10970E53BC2A.png",
+        "timestamp" : 1794897699.817
+      }
+    ],
+    "testIdentifier" : "CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup()",
+    "testIdentifierURL" : "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "8585ADF8-05D0-4D4F-B8ED-93039C9A7E1E.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "23-retained-record-associated_0_F1DF7D19-9121-449D-AFD8-72219428C992.png",
+        "timestamp" : 1794897768.027
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "73BA1BDA-E41B-4010-B59E-8D9A58B032BB.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "22-retained-record-cancel_0_85A5FA4B-E2C8-4FC9-9885-BCE28816612E.png",
+        "timestamp" : 1794897757.182
+      }
+    ],
+    "testIdentifier" : "CareerFinderUITests/testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark()",
+    "testIdentifierURL" : "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "A37BAF29-2730-4264-8021-204FAA9DA855.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "20-saved-link-removal-accessibility_0_BDFC193C-9328-4ED4-BCCC-5FB61F6B1F60.png",
+        "timestamp" : 1794897860.11
+      }
+    ],
+    "testIdentifier" : "CareerFinderUITests/testSavedLinkRemovalAtLargestTextKeepsCancelReachable()",
+    "testIdentifierURL" : "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testSavedLinkRemovalAtLargestTextKeepsCancelReachable"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "A0CBA007-CFDC-4080-BA6B-860613A50C26.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "08-offline-search-keeps-results_0_CE6F2E51-8178-40AF-8ABF-5EEFD3440841.png",
+        "timestamp" : 1794897965.106
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "E055B3DB-9BFE-441E-98A1-88628E651590.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "08a-completed-search-with-no-matches_0_D1E59940-D1F7-4625-90E4-D06CAD421CF4.png",
+        "timestamp" : 1794897908.715
+      }
+    ],
+    "testIdentifier" : "CareerFinderUITests/testSearchEmptyAndFailurePreservesPreviousResults()",
+    "testIdentifierURL" : "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testSearchEmptyAndFailurePreservesPreviousResults"
+  }
+]

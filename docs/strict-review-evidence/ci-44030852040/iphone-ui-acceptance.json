@@ -1,0 +1,46 @@
+{
+  "commit": "e66d1809ece7666c7d99412d48aa193cdf024c42",
+  "run_id": 44030852040,
+  "job_id": 133862170500,
+  "job_conclusion": "success",
+  "tests": 13,
+  "failures": 0,
+  "unexpected_failures": 0,
+  "test_execution_seconds": 1059.01,
+  "architecture": {
+    "swift_compile_architectures": [
+      "arm64"
+    ],
+    "destination_arm64": true,
+    "active_arch_only": true,
+    "compiler_target_arm64_simulator": true
+  },
+  "device": "iPhone Air",
+  "artifact_id": 14306710673,
+  "size": 134427489,
+  "hash": "b2dd9c845eb2c45a65c564d0d4d229c937e49ea62be902f4bb292f24c0c9fbf5",
+  "hash_algorithm": "sha256",
+  "artifact_integrity_verified": true,
+  "artifact_name": "iphone-ui-acceptance-44030852040",
+  "artifact_created_at": "2026-11-17T06:47:32Z",
+  "artifact_expires_at": "2026-11-24T06:47:24Z",
+  "job_started_at": "2026-11-17T06:23:32Z",
+  "job_finished_at": "2026-11-17T06:47:39Z",
+  "suite_finished_at": "2026-11-17T06:46:05.559Z",
+  "test_succeeded_marker": true,
+  "raw_suite_summary": "Executed 13 tests, with 0 failures (0 unexpected) in 1059.010 (1059.042) seconds",
+  "connected_large_text_case_seconds": 169.161,
+  "manifest_test_entries": 12,
+  "exported_screenshot_count": 29,
+  "reviewed_capture_count": 2,
+  "targeted_review_manifest": "selected-review-manifest.json",
+  "visual_observations": {
+    "14-unverified-submission-explained": "The full Submission availability is unverified heading and Refresh availability action are readable at the largest captured text size. The refresh action is above the fixed bottom action. No new concrete defect observed in this target.",
+    "20-saved-link-removal-accessibility": "Remove link title, Keep opportunity toolbar cancel, and full Remove saved link and Keep opportunity body choices are visible. No new concrete confirmation-control defect observed."
+  },
+  "new_validated_visual_defects": [],
+  "reviewed_at": "2026-11-17T06:52:40.324056+00:00",
+  "scope": "Exact-source synthetic iPhone simulator acceptance and the two selected screenshots. This does not establish provider activation, physical-device acceptance or store distribution.",
+  "repository_edits": false,
+  "ci_actions": false
+}

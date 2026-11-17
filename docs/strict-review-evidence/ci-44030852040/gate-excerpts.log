@@ -1,0 +1,26 @@
+service-job-133862170588.log
+2026-11-17T06:23:41.4325915Z 77 application-state regression groups passed.
+2026-11-17T06:23:43.7591642Z PASS: 119 verified-application regression groups (real HTTP against synthetic local Lever only).
+2026-11-17T06:23:46.1178811Z {"result":"passed","checks":12,"transport":"HTTPS with explicit isolated CA and normal hostname validation","mode":"test","providerPosts":{"00000000-0000-4000-8000-000000000001":1,"00000000-0000-4000-8000-000000000004":1,"00000000-0000-4000-8000-000000000005":2}}
+iphone-job-133862170490.log
+2026-11-17T06:23:52.6802830Z PASS 120 native application boundary checks
+2026-11-17T06:24:01.8638930Z PASS 503 application lifecycle assertions across 77 scenarios
+2026-11-17T06:24:05.6882700Z PASS 43 public discovery assertions across 13 scenarios
+2026-11-17T06:25:04.0690600Z ** BUILD SUCCEEDED **
+hosted-job-133862170234.log
+2026-11-17T06:24:08.8779797Z PASS LinkedIn URL boundary: 9 canonical examples, 42 rejected inputs, migration and provider requirements.
+2026-11-17T06:24:09.0908802Z ℹ tests 6
+2026-11-17T06:24:09.0910639Z ℹ pass 6
+2026-11-17T06:24:09.0911038Z ℹ fail 0
+2026-11-17T06:24:21.6989577Z Authentication verification: 30 groups passed against isolated D1 and actual synthetic RS256 signatures. No live provider or employer requests.
+2026-11-17T06:24:56.6462373Z ℹ tests 64
+2026-11-17T06:24:56.6462987Z ℹ pass 64
+2026-11-17T06:24:56.6463354Z ℹ fail 0
+2026-11-17T06:24:58.4025323Z ℹ tests 14
+2026-11-17T06:24:58.4025839Z ℹ pass 14
+2026-11-17T06:24:58.4026108Z ℹ fail 0
+2026-11-17T06:25:00.5510945Z ✓ built in 563ms
+2026-11-17T06:25:00.7968979Z ✓ built in 239ms
+2026-11-17T06:25:02.2319420Z ✓ built in 1.43s
+2026-11-17T06:25:03.3886050Z ✓ built in 1.15s
+2026-11-17T06:25:03.8813218Z ✓ built in 485ms

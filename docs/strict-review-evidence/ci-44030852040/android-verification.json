@@ -1,0 +1,59 @@
+{
+  "commit": "e66d1809ece7666c7d99412d48aa193cdf024c42",
+  "observedAt": "2026-11-17T06:32:29.966Z",
+  "result": "passed",
+  "results": [
+    {
+      "label": "ordinary-phone",
+      "classes": [
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest",
+        "com.saleh.careerfinder.ContinuationRegressionTest",
+        "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest",
+        "com.saleh.careerfinder.DiscoveryRegressionTest",
+        "com.saleh.careerfinder.ExperienceModelRegressionTest",
+        "com.saleh.careerfinder.LinkedInPhoneAcceptanceTest",
+        "com.saleh.careerfinder.LinkedInRegressionTest",
+        "com.saleh.careerfinder.NavigationPhoneAcceptanceTest",
+        "com.saleh.careerfinder.PhoneAcceptanceTest",
+        "com.saleh.careerfinder.PhonePolishAcceptanceTest",
+        "com.saleh.careerfinder.VaultAcceptanceTest",
+        "com.saleh.careerfinder.WorkspaceAccessibilityRegressionTest",
+        "com.saleh.careerfinder.WorkspaceRegressionTest",
+        "com.saleh.careerfinder.WorkspaceSafetyRegressionTest"
+      ],
+      "tests": 97,
+      "result": "passed"
+    },
+    {
+      "label": "normal-preview-tls-boundary",
+      "classes": [
+        "com.saleh.careerfinder.TlsBoundaryAcceptanceTest"
+      ],
+      "tests": 1,
+      "result": "passed"
+    },
+    {
+      "label": "native-https-phone",
+      "classes": [
+        "com.saleh.careerfinder.NativeHttpsAcceptanceTest"
+      ],
+      "tests": 1,
+      "result": "passed"
+    }
+  ],
+  "hashes": {
+    "android/app/build/outputs/apk/debug/app-debug.apk": "a4c94ee8f63a15c2b3bc97a2aef52af7adf02d4e87ec34fd5cb2049f2037288a",
+    "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk": "e67e843fcec6380fc625c2e3b1d02cf9204469efb384e59347cbe4671130638f",
+    "android/app/build/outputs/apk/acceptance/app-acceptance.apk": "a1332f6da1328fe0e2d4cfea8972204def87877397363e4eed7e68d67b6c8e3f",
+    "android/app/build/outputs/apk/androidTest/acceptance/app-acceptance-androidTest.apk": "d5839bda25fb2559c18567a3dd1b83744a82ef2eed223c8a7f4fd4a0adc29ca3"
+  },
+  "providerPOSTCounts": {
+    "00000000-0000-4000-8000-000000000001": 1,
+    "00000000-0000-4000-8000-000000000004": 1,
+    "00000000-0000-4000-8000-000000000005": 2
+  },
+  "screenshotManifest": "screenshots.json",
+  "realEmployerRequests": 0,
+  "productionAccountsUsed": false,
+  "environment": "Disposable API36 x86_64 Google APIs phone; 360dp, 180% text, dark appearance, Arabic app locale and forced RTL; system trust for ordinary preview, isolated test CA only in acceptance variant."
+}

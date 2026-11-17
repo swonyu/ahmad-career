@@ -1,0 +1,35 @@
+{
+  "commit": "e66d1809ece7666c7d99412d48aa193cdf024c42",
+  "run_id": 44030852040,
+  "scope": "Only the two requested native HTTPS acceptance PNGs, with independent verification against supplied artifact hashes.",
+  "images": [
+    {
+      "file": "captures/com.saleh.careerfinder.acceptance/files/acceptance-prepared.png",
+      "bytes": 176085,
+      "sha256_verified": "e634ddce09fdc41bcba2976ef24c193d8cd60f4dcbc38ad052296f8da2b1b9ba"
+    },
+    {
+      "file": "captures/com.saleh.careerfinder.acceptance/files/acceptance-receipts.png",
+      "bytes": 161693,
+      "sha256_verified": "3d2f444a96706a6685b2f7294aed974abc6fcd1959190a195683d79e2d513a28"
+    }
+  ],
+  "prepared_observations": [
+    "The complete Review prepared. Nothing has been submitted. notice is readable.",
+    "The complete Test service: applications and receipts are simulated. banner is prominent and readable.",
+    "Review what will be shared. and all four bottom navigation labels are readable at the captured large text size."
+  ],
+  "receipt_observations": [
+    "The same explicit simulated-test-service banner is readable.",
+    "The summary clearly shows 0 verified application receipts.",
+    "The latest-outcome notice and all four bottom navigation labels are readable."
+  ],
+  "limitations": [
+    "No individual uncertain receipt is visible in these two frames; its exact wording/readability is not visually verified by this review.",
+    "The screenshots do not display the complete employer payload or approval controls. Their correctness is separate from this bounded visual check.",
+    "This is an emulator capture for the exact candidate, not physical-device or live-employer acceptance."
+  ],
+  "new_validated_visual_defects": [],
+  "source_edits": false,
+  "builds_or_ci_actions": false
+}

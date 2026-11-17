@@ -1,0 +1,456 @@
+{
+  "observedAtUTC": "2026-11-17T06:53:45.849206+00:00",
+  "repository": "swonyu/ahmad-career",
+  "branch": "career-finder-phones-verified-apply-20261116",
+  "testedApplicationSource": "e66d1809ece7666c7d99412d48aa193cdf024c42",
+  "testedTree": "2bbffcaa056fa08b2cdea9da7b9426cac8476fc0",
+  "runId": 44030852040,
+  "runURL": "https://github.com/swonyu/ahmad-career/actions/runs/44030852040",
+  "status": "all-five-jobs-passed",
+  "jobs": [
+    {
+      "id": 133862170234,
+      "name": "Hosted HTTPS service and durable storage",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44030852040,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Install the pinned hosted service dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Check account screens and worker types",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Exercise the production handler with real local D1 and R2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Build the deployable Worker and phone setup pages",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Audit the locked dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Keep the hosted regression evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19
+        }
+      ]
+    },
+    {
+      "id": 133862170490,
+      "name": "iPhone logic and unsigned build",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44030852040,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Execute the production client and store checks",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Build the production iPhone configuration on this isolated runner",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Verify the built product targets iPhone",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Keep the unsigned build log",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        }
+      ]
+    },
+    {
+      "id": 133862170500,
+      "name": "iPhone native interface acceptance",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44030852040,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Select an iPhone on this disposable hosted runner",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Exercise native phone flows with isolated synthetic data",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Export native interface evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Keep the native UI results and screenshots",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        }
+      ]
+    },
+    {
+      "id": 133862170566,
+      "name": "Android compile, lint and native acceptance",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44030852040,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Require the pinned Android SDK",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Phone URL, PDF and receipt policies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Compile the ordinary preview and its instrumentation",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Prepare the disposable phone emulator and synthetic companion",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Exercise actual phone, storage, large text, RTL and synthetic HTTPS flows",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Keep the lint report",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18
+        },
+        {
+          "name": "Post Run actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21
+        }
+      ]
+    },
+    {
+      "id": 133862170588,
+      "name": "Service and synthetic HTTPS",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44030852040,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Install pinned companion dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Existing record and discovery regressions",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Verified-submission state and HTTP regressions",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Synthetic TLS, consent, receipts and recovery",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        }
+      ]
+    }
+  ],
+  "android": {
+    "tests": 99,
+    "failures": 0,
+    "skips": 0,
+    "nativeHTTPSSeconds": 24.871,
+    "syntheticProviderPOSTCounts": [
+      1,
+      1,
+      2
+    ],
+    "lintErrors": 0,
+    "lintWarnings": 6,
+    "artifactId": 14304698652,
+    "artifactBytes": 2240594,
+    "artifactSHA256": "4b33b268ae2130226fd4ed40812d57b1a4d07527917b573dcf03e26886e72e67"
+  },
+  "iphoneUI": {
+    "commit": "e66d1809ece7666c7d99412d48aa193cdf024c42",
+    "run_id": 44030852040,
+    "job_id": 133862170500,
+    "job_conclusion": "success",
+    "tests": 13,
+    "failures": 0,
+    "unexpected_failures": 0,
+    "test_execution_seconds": 1059.01,
+    "architecture": {
+      "swift_compile_architectures": [
+        "arm64"
+      ],
+      "destination_arm64": true,
+      "active_arch_only": true,
+      "compiler_target_arm64_simulator": true
+    },
+    "device": "iPhone Air",
+    "artifact_id": 14306710673,
+    "size": 134427489,
+    "hash": "b2dd9c845eb2c45a65c564d0d4d229c937e49ea62be902f4bb292f24c0c9fbf5",
+    "hash_algorithm": "sha256",
+    "artifact_integrity_verified": true,
+    "artifact_name": "iphone-ui-acceptance-44030852040",
+    "artifact_created_at": "2026-11-17T06:47:32Z",
+    "artifact_expires_at": "2026-11-24T06:47:24Z",
+    "job_started_at": "2026-11-17T06:23:32Z",
+    "job_finished_at": "2026-11-17T06:47:39Z",
+    "suite_finished_at": "2026-11-17T06:46:05.559Z",
+    "test_succeeded_marker": true,
+    "raw_suite_summary": "Executed 13 tests, with 0 failures (0 unexpected) in 1059.010 (1059.042) seconds",
+    "connected_large_text_case_seconds": 169.161,
+    "manifest_test_entries": 12,
+    "exported_screenshot_count": 29,
+    "reviewed_capture_count": 2,
+    "targeted_review_manifest": "selected-review-manifest.json",
+    "visual_observations": {
+      "14-unverified-submission-explained": "The full Submission availability is unverified heading and Refresh availability action are readable at the largest captured text size. The refresh action is above the fixed bottom action. No new concrete defect observed in this target.",
+      "20-saved-link-removal-accessibility": "Remove link title, Keep opportunity toolbar cancel, and full Remove saved link and Keep opportunity body choices are visible. No new concrete confirmation-control defect observed."
+    },
+    "new_validated_visual_defects": [],
+    "reviewed_at": "2026-11-17T06:52:40.324056+00:00",
+    "scope": "Exact-source synthetic iPhone simulator acceptance and the two selected screenshots. This does not establish provider activation, physical-device acceptance or store distribution.",
+    "repository_edits": false,
+    "ci_actions": false
+  },
+  "hosted": {
+    "source": "1135a3270435d3719c6f62f1a2e3a53e2c040146",
+    "filesMatch": 186,
+    "deploymentVersion": 7,
+    "deploymentId": "appgdep_6afbcfe3a03881918b131992225ded31",
+    "deploymentPerformedByThisCI": false
+  },
+  "reviewFindingGroups": 29,
+  "realEmployerApplications": 0,
+  "manualGates": [
+    "Direct provider console/managed-secret activation and real consent",
+    "Full same-browser multi-account, export/deletion and storage behavior",
+    "Independent default-font and full keyboard/screen-reader acceptance",
+    "Coordinated physical phones and signed upgrade path",
+    "Publishing-owner integration acknowledgment and public store distribution",
+    "Employer-authorized integration before enabling live Auto Apply"
+  ],
+  "releaseBranchChanged": false,
+  "sharedMacBuilds": 0,
+  "paidServicesEnabled": false
+}

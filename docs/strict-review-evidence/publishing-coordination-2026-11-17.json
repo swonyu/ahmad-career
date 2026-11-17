@@ -1,0 +1,22 @@
+{
+  "observedAtUTC": "2026-11-17T06:41:23.075849+00:00",
+  "ownerConversation": "https://chatgpt.com/c/6afbbd6f-cfa0-83eb-a63d-dc3fbb646fdd",
+  "observedTitle": "Apple Account Sign In",
+  "observedState": "Could not load this ChatGPT conversation; Try again button disabled",
+  "attempts": "One initial navigation and one ordinary reload; both reached the same error after the Conversation region appeared",
+  "classification": "Conversation unavailable in this browser; cause not established, not a bot-detection claim",
+  "lastPreviouslyVerifiedUpdate": "Version7/4bbe5a5/run44014455183/free-only constraint and hold for corrected terminal evidence were posted earlier in this continuation. Latest acknowledgment not observed.",
+  "latestTerminalHandoffPosted": false,
+  "latestOwnerAcknowledgmentObserved": false,
+  "supportedAlternative": "Publish exact source/CI/provider/device handoff in docs/Publishing-Handoff-2026-11-17.md and owner steps in docs/Owner-Acceptance-2026-11-17.md on the existing development branch. Owner integration acknowledgment remains open.",
+  "protectedReleaseBranch": "app-store/career-workspace-copy-20261117",
+  "lastVerifiedReleaseHead": "fd9c5399f2b7001b234b3b86bf72e2b36b5114c1",
+  "sharedMacBuildsByThisContinuation": 0,
+  "releaseBranchWritesByThisContinuation": 0,
+  "signingOrStoreActionsByThisContinuation": 0,
+  "ciStatusAtAttempt": "e66d180 run44030852040: four jobs passed; iPhone UI in progress",
+  "finalEngineeringSource": "e66d1809ece7666c7d99412d48aa193cdf024c42",
+  "finalEngineeringRun": 44030852040,
+  "finalEngineeringResult": "All five jobs passed; 99 Android and 13 iPhone UI cases, artifacts verified",
+  "repositoryHandoffPrepared": true
+}

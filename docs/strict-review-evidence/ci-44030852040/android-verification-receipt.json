@@ -1,0 +1,369 @@
+{
+  "verifiedAt": "2026-11-17T06:36:58.375777+00:00",
+  "commit": "e66d1809ece7666c7d99412d48aa193cdf024c42",
+  "tree": "2bbffcaa056fa08b2cdea9da7b9426cac8476fc0",
+  "repository": "swonyu/ahmad-career",
+  "branch": "career-finder-phones-verified-apply-20261116",
+  "workflowRun": 44030852040,
+  "androidJob": 133862170566,
+  "jobURL": "https://github.com/swonyu/ahmad-career/actions/runs/44030852040/job/133862170566",
+  "terminalConclusion": "success",
+  "artifact": {
+    "id": 14304698652,
+    "name": "android-lint-44030852040",
+    "file": "android-lint-44030852040.zip",
+    "bytes": 2240594,
+    "sha256": "4b33b268ae2130226fd4ed40812d57b1a4d07527917b573dcf03e26886e72e67",
+    "sizeAndSHA256MatchGitHubMetadata": true
+  },
+  "results": [
+    {
+      "label": "ordinary-phone",
+      "expectedCases": 97,
+      "passedUniqueCases": 97,
+      "failedOrSkippedStatusEvents": 0,
+      "instrumentationStatusCounts": {
+        "1": 97,
+        "0": 97
+      },
+      "durationSeconds": 135.653,
+      "log": "ordinary-phone.log",
+      "logSHA256": "68c5595064520f20dbb2860afb6d6593f11c41b5bd68222d062e7c06d3513bb1",
+      "cases": [
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest.activeAlternativeEvidence_mustNotDecodeAsUnapplied_butCorrectedHistoryRemainsValid",
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest.futureRecordSchema_isPreservedAndNeverReplacedWithAnEmptyWorkspace",
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest.saveAndCancel_arePrivate_andCivilDatesSurviveRestartAndTimeZoneChange",
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest.activeReview_allowsNotesButRequiresConfirmedStopBeforeAppliedChanges",
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest.restoredAppliedEvidence_pausesOnlyMatchingContinuation_andUnknownTargetsFailClosed",
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest.syncIdentityCollision_retainsBothVersionsForReview",
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest.workspaceSwitch_invalidatesOldCorrectionAndDisconnectIntent",
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest.removingBookmark_keepsMeaningfulRecordAndRestoringTheLinkKeepsItsApplicationGuard",
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest.manuallyAppliedCooldown_cannotBeRecoveredOrPreparedAsAReadyApplication",
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest.explicitImportKeepsBothConflictingVersions_andAChoiceCannotClearAppliedEvidence",
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest.activeDestination_blocksAppliedSyncAdoption_withoutLosingEitherRecord",
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest.failedRecordSave_keepsEarlierFileAndEditorDraft_forRecovery",
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest.failedAndSuccessfulJobSync_preserveRecordAcrossCanonicalLeverIdentityAndNewID",
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest.legacyAppliedFlag_migratesWithoutInventedDates_orChangingTheSavedFile",
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest.invalidDatesAndStaleEditorRevision_doNotOverwriteTheRecord",
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest.closedRecord_reachesManualAppliedPreparationInput_withoutAProviderReceipt",
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest.closedKeepsAppliedEvidence_andSavedRequiresAnUnchangedExplicitConfirmation",
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest.recordOnlyPhoneDraft_importsWithoutRestoringBookmarks_andKeepsConflicts",
+        "com.saleh.careerfinder.ContinuationRegressionTest.lateEligibilityFromAnotherWorkspace_cannotAdvanceOrReplaceTheCurrentWorkspace",
+        "com.saleh.careerfinder.ContinuationRegressionTest.freshEligiblePlans_advanceOnePerCycle_withoutAnyImplicitApproval",
+        "com.saleh.careerfinder.ContinuationRegressionTest.absentCapability_andFreshCooldownOrUncertainState_neverAdvance",
+        "com.saleh.careerfinder.ContinuationRegressionTest.setupPages_preservePairedOrigin_andNeverAttachTheSession",
+        "com.saleh.careerfinder.ContinuationRegressionTest.unauthorizedReadOrAdvance_stopsAllFurtherAutomaticRequests",
+        "com.saleh.careerfinder.ContinuationRegressionTest.cancellationDuringDispatch_requiresFreshEligibilityBeforeAnyNextAttempt",
+        "com.saleh.careerfinder.ContinuationRegressionTest.lostStopResponse_keepsContinuationHeldAcrossRestart",
+        "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest.writeFailure_keepsEarlierFile_andExplicitRetrySavesCurrentResult",
+        "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest.futureSavedSearch_isPreservedAndNewResultsStayInMemory_untilExplicitRecovery",
+        "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest.paginationHasABoundedRestorableWindow_andDoesNotReuseItsCursor",
+        "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest.accountChange_cancelsLateSearch_andCannotWriteAcrossPrivateScopes",
+        "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest.recreatedController_restoresExactFiltersAndEvidence_withoutAnyRequestOrOldCursor",
+        "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest.transientReadFailure_canBeRetriedWithoutDiscardingEarlierEvidence",
+        "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest.oversizedAndMalformedSnapshots_cannotReplaceAnExistingSavedSearch",
+        "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest.failedRefresh_keepsEarlierResultEvidence_besideNewUnsavedSearchFilters",
+        "com.saleh.careerfinder.DiscoveryRegressionTest.lateCancelledResponse_cannotReplaceNewerSearchResults",
+        "com.saleh.careerfinder.DiscoveryRegressionTest.paginationDeduplicates_andChangedSnapshotRequiresExplicitRestart",
+        "com.saleh.careerfinder.DiscoveryRegressionTest.searchIsExplicit_andUsesOnlyPublicFiltersAtTheFixedOrigin",
+        "com.saleh.careerfinder.DiscoveryRegressionTest.retryAfterPreventsAnImmediateRepeatedRequest",
+        "com.saleh.careerfinder.DiscoveryRegressionTest.errorsAndUnavailableBoards_preserveEarlierResultsWithoutCallingThemZeroMatches",
+        "com.saleh.careerfinder.DiscoveryRegressionTest.sharedContract_preservesUnknownEligibilityAndExplicitStaleEvidence",
+        "com.saleh.careerfinder.DiscoveryRegressionTest.cancellingSearch_keepsDisplayedResults_andNeverRetriesByItself",
+        "com.saleh.careerfinder.ExperienceModelRegressionTest.applicationEssentials_supportSingleNames_andKeepIncompleteDraftsHonest",
+        "com.saleh.careerfinder.ExperienceModelRegressionTest.receiptFilters_neverTreatTestOrUnknownEvidenceAsVerified",
+        "com.saleh.careerfinder.LinkedInPhoneAcceptanceTest.optionalProfileLink_isHonestEditableAndPrivatelySavedAtLargeText",
+        "com.saleh.careerfinder.LinkedInPhoneAcceptanceTest.exactApprovalLinkAndExternalSearch_areReadableWithoutClaimingSubmission",
+        "com.saleh.careerfinder.LinkedInRegressionTest.unknownOrDisabledService_neverDropsNewOrClearedLink_andLegacyBlankOmitsField",
+        "com.saleh.careerfinder.LinkedInRegressionTest.supportCapability_isNotPersisted_andMalformedRefreshCannotReplaceProfile",
+        "com.saleh.careerfinder.LinkedInRegressionTest.supportedService_savesCanonicalLink_thenExplicitlyClearsIt",
+        "com.saleh.careerfinder.LinkedInRegressionTest.missingOrMismatchedReviewLink_cannotPrepareResumeOrSubmit",
+        "com.saleh.careerfinder.LinkedInRegressionTest.linkedReview_prepareAndVisibleApprovalSendSchema3_blankReviewUsesLegacyProtocol",
+        "com.saleh.careerfinder.LinkedInRegressionTest.malformedProfileReply_keepsPhoneDraftAndOriginalRevision",
+        "com.saleh.careerfinder.LinkedInRegressionTest.olderPrivateProfile_decodesWithoutLosingFields_andFreshProfileHasNoPersonalLink",
+        "com.saleh.careerfinder.LinkedInRegressionTest.localInvalidLink_isPreservedAcrossRecreation_thenCanonicalSaveKeepsWebsiteSeparate",
+        "com.saleh.careerfinder.LinkedInRegressionTest.malformedOptionalFields_failClosed_andMissingFieldsRemainBackwardCompatible",
+        "com.saleh.careerfinder.NavigationPhoneAcceptanceTest.recreatedPhone_showsPreviousResults_andSearchAgainIsAnExplicitFreshRequest",
+        "com.saleh.careerfinder.NavigationPhoneAcceptanceTest.privateRecord_datesNotesAndFollowUp_areUsableAtLargeText_withoutCreatingAReceipt",
+        "com.saleh.careerfinder.NavigationPhoneAcceptanceTest.connectionUsesTwoSteps_andPreservesTheChosenCustomAddressUnderAdvanced",
+        "com.saleh.careerfinder.NavigationPhoneAcceptanceTest.clearingAnAppliedRecord_requiresASeparateConfirmation_andKeepsEarlierHistory",
+        "com.saleh.careerfinder.PhoneAcceptanceTest.phoneProfile_survivesActivityRecreation_withoutAnyService",
+        "com.saleh.careerfinder.PhoneAcceptanceTest.blankWorkspace_hasHonestEmptyState_andConnectionRequirement",
+        "com.saleh.careerfinder.PhonePolishAcceptanceTest.discoveredRole_savesPrivately_andManualApplicationRemainsSelfReported",
+        "com.saleh.careerfinder.PhonePolishAcceptanceTest.unfinishedOpportunity_closeChoicesKeepAndDiscardOnlyTheDraft",
+        "com.saleh.careerfinder.PhonePolishAcceptanceTest.profileEssentials_andCountrySelection_preserveSingleNamesAndCancelledChoices",
+        "com.saleh.careerfinder.PhonePolishAcceptanceTest.localOpportunityRemoval_requiresConfirmation_andPreservesOtherSavedRoles",
+        "com.saleh.careerfinder.VaultAcceptanceTest.earlierRecoveryCopies_canBeReadAndDeletedIndividually_withoutTouchingTheCurrentArea",
+        "com.saleh.careerfinder.VaultAcceptanceTest.originalSchemaOneEnvelope_remainsReadableWithoutAStorageAreaPointer",
+        "com.saleh.careerfinder.VaultAcceptanceTest.freshPrivateArea_preservesUnreadableBytes_andUsesANewKeystoreKey",
+        "com.saleh.careerfinder.VaultAcceptanceTest.storedToken_isEncrypted_andBoundToItsRecordName",
+        "com.saleh.careerfinder.VaultAcceptanceTest.capacityFailure_preservesEncryptedBytes_andDoesNotPreventASmallerSave",
+        "com.saleh.careerfinder.WorkspaceAccessibilityRegressionTest.shortMultilineNote_canExpandAtLargeText_withoutClippingItsLastLine",
+        "com.saleh.careerfinder.WorkspaceRegressionTest.concurrentApproval_preventsAutomaticReplacementOfTheOldPlan",
+        "com.saleh.careerfinder.WorkspaceRegressionTest.malformedSuccessfulResponses_doNotReplaceThePhoneDraftOrJobList",
+        "com.saleh.careerfinder.WorkspaceRegressionTest.savingTheSameLink_keepsItsIdentity_andManualTrackingInvalidatesAnEarlierReview",
+        "com.saleh.careerfinder.WorkspaceRegressionTest.explicitNoAndSelections_surviveModelRecreation_withoutRestoringApproval",
+        "com.saleh.careerfinder.WorkspaceRegressionTest.storageReadAndWriteFailures_canRetry_withoutLosingTheDraft",
+        "com.saleh.careerfinder.WorkspaceRegressionTest.failedLocalRemoval_restoresTheLinkAndItsFlags_beforeStorageRecovery",
+        "com.saleh.careerfinder.WorkspaceRegressionTest.failedRemoteOpportunitySync_keepsAnUnrelatedDraft_andTheSavedLocalRole",
+        "com.saleh.careerfinder.WorkspaceRegressionTest.editedReview_stopsOnlyTheUnapprovedPlan_onDeliberatePrepareUpdate",
+        "com.saleh.careerfinder.WorkspaceRegressionTest.unfinishedOpportunity_survivesRestart_andDiscardFailureKeepsTheOriginal",
+        "com.saleh.careerfinder.WorkspaceRegressionTest.removingLocalOpportunity_cleansOnlyItsPrivateFlags_andPreservesRemoteActivity",
+        "com.saleh.careerfinder.WorkspaceRegressionTest.localDisconnect_preservesWorkspaceDraft_andIgnoresItsLateResponse",
+        "com.saleh.careerfinder.WorkspaceRegressionTest.completingOpportunityDraft_persistsItsRoleBeforeClearing_evenIfRemoteSyncFails",
+        "com.saleh.careerfinder.WorkspaceRegressionTest.disabledLiveSending_blocksApprovalBeforeAnySubmissionRequest",
+        "com.saleh.careerfinder.WorkspaceRegressionTest.oldWorkspaceResponse_cannotRegressAnAcknowledgedProfileSave",
+        "com.saleh.careerfinder.WorkspaceRegressionTest.copyingPhoneDraft_isPrivate_preservesOriginal_andMigratesManualAppliedIdentityOnSync",
+        "com.saleh.careerfinder.WorkspaceRegressionTest.backgroundProfileChange_cannotRestoreAStalePreparedPlan",
+        "com.saleh.careerfinder.WorkspaceRegressionTest.profileConflict_keepsOriginalRevision_untilExplicitChoice_andUsesLatestRemotePDF",
+        "com.saleh.careerfinder.WorkspaceSafetyRegressionTest.equivalentOriginCopies_migrateWithoutOverwritingLegacy_andKeepAccountIsolation",
+        "com.saleh.careerfinder.WorkspaceSafetyRegressionTest.importIsAnExplicitLocalMerge_foreignHoldsAndEmployerConsentsAreNotAdopted",
+        "com.saleh.careerfinder.WorkspaceSafetyRegressionTest.malformedNestedLocalValues_preserveOriginalFile_andPreventAnyRewrite",
+        "com.saleh.careerfinder.WorkspaceSafetyRegressionTest.partialLegacyProfileAndBlankNewProfile_remainSupported",
+        "com.saleh.careerfinder.WorkspaceSafetyRegressionTest.unreadablePDF_preservesEarlierBytes_andValidRenderedPDFCanReplaceIt",
+        "com.saleh.careerfinder.WorkspaceSafetyRegressionTest.malformedBackupAndStalePickerScope_doNotMutateTheCurrentWorkspace",
+        "com.saleh.careerfinder.WorkspaceSafetyRegressionTest.portableBackup_preservesHistoryUnicodeAndDrafts_withoutCredentialsOrApprovalAuthority",
+        "com.saleh.careerfinder.WorkspaceSafetyRegressionTest.localDeletion_isScoped_andStaleConfirmationCannotDeleteAnotherWorkspace",
+        "com.saleh.careerfinder.WorkspaceSafetyRegressionTest.sharedIPhoneAndroidWireFixture_decodesNewRecordDraftPDFHistoryAndHolds",
+        "com.saleh.careerfinder.WorkspaceSafetyRegressionTest.dirtyRecordDismissal_requiresChoice_andKeepDraftSurvivesRestartWithoutChangingStatus",
+        "com.saleh.careerfinder.WorkspaceSafetyRegressionTest.PDFCapacityFailure_isRecoverable_andNeverReplacesTheEarlierResume"
+      ]
+    },
+    {
+      "label": "normal-preview-tls-boundary",
+      "expectedCases": 1,
+      "passedUniqueCases": 1,
+      "failedOrSkippedStatusEvents": 0,
+      "instrumentationStatusCounts": {
+        "1": 1,
+        "0": 1
+      },
+      "durationSeconds": 0.185,
+      "log": "normal-preview-tls-boundary.log",
+      "logSHA256": "be0412b50b0880ba25d20e27c0b7f05a2fc8448f44fc24584dbcf11644131c2b",
+      "cases": [
+        "com.saleh.careerfinder.TlsBoundaryAcceptanceTest.normalPreview_refusesTheIsolatedFixtureCertificate"
+      ]
+    },
+    {
+      "label": "native-https-phone",
+      "expectedCases": 1,
+      "passedUniqueCases": 1,
+      "failedOrSkippedStatusEvents": 0,
+      "instrumentationStatusCounts": {
+        "1": 1,
+        "2": 132,
+        "0": 1
+      },
+      "durationSeconds": 24.871,
+      "log": "native-https-phone.log",
+      "logSHA256": "b626545dd64954afac2794798480458d26e10b49cf3ce1f71e690fc6b32a3125",
+      "cases": [
+        "com.saleh.careerfinder.NativeHttpsAcceptanceTest.nativeReviewAndApproval_preserveExactPDFConsent_andUncertainRetryBoundaries"
+      ]
+    }
+  ],
+  "totalUniqueCasesPassed": 99,
+  "totalFailedOrSkipped": 0,
+  "nativePhaseEvidence": {
+    "bodyEntered": true,
+    "bodyCompleted": true,
+    "activityRuleFinished": true,
+    "failedPhaseMarkers": 0,
+    "statusPhaseMarkers": 132,
+    "previousRunTimeoutCause": "Not established. Explicit IME dismissal was a source-supported test interaction correction; this successful rerun does not prove the exact former stuck operation."
+  },
+  "provider": {
+    "testOnly": true,
+    "counts": {
+      "00000000-0000-4000-8000-000000000005": 2,
+      "00000000-0000-4000-8000-000000000001": 1,
+      "00000000-0000-4000-8000-000000000004": 1
+    },
+    "observationCount": 4,
+    "everyMethodPOST": true,
+    "everyMultipartPDFNameEmailResumeFlagTrue": true,
+    "everyBodyLengthPositiveAndAtMost8MiB": true,
+    "everyBodySHA256Is64LowercaseHex": true,
+    "sequenceCountsMatchRecordedTotals": true,
+    "meaning": {
+      "00000000-0000-4000-8000-000000000001": "confirmed synthetic acceptance, one request",
+      "00000000-0000-4000-8000-000000000004": "uncertain synthetic timeout, one request and no duplicate retry",
+      "00000000-0000-4000-8000-000000000005": "synthetic rate limit then explicit approved retry, two requests"
+    },
+    "observationsFile": "synthetic-provider-observations.json",
+    "observationsSHA256": "107bb4380d35dac58cd9530c4bbf0e838ab8b393c6d814acbf7cc9750c4efdeb"
+  },
+  "tlsBoundary": {
+    "defaultPreviewRejectedFixtureCA": true,
+    "testRequiresSSLExceptionInCauseChain": true,
+    "acceptanceVariantTrustedOnlyIsolatedTestCA": true,
+    "productionTrustNotWeakenedByTestHarness": true
+  },
+  "nativeAssertionScope": [
+    "Exact selected PDF SHA-256 is preserved in profile and each employer review payload.",
+    "Single given name preserves blank last name.",
+    "Each employer receives explicitly reviewed storage and marketing choices.",
+    "Changing reviewed message invalidates the old unapproved review.",
+    "Recovered approval starts unchecked and requires a new explicit approval.",
+    "Initial outcomes include confirmed, uncertain, and rate limited; explicit retry resolves only the cooldown case.",
+    "All synthetic receipts remain test mode and live verified application count remains zero.",
+    "A fresh review of the uncertain job cannot submit it again."
+  ],
+  "environment": "Disposable API36 x86_64 Google APIs phone; 360dp, 180% text, dark appearance, Arabic app locale and forced RTL; system trust for ordinary preview, isolated test CA only in acceptance variant.",
+  "observedSettings": {
+    "com.saleh.careerfinder.preview-settings.json": {
+      "size": "Physical size: 1080x2400\nOverride size: 1080x1920",
+      "density": "Physical density: 420\nOverride density: 480",
+      "fontScale": "1.8",
+      "rtl": "1",
+      "night": "Night mode: yes",
+      "locales": "Locales for com.saleh.careerfinder.preview for user 0 are [ar]"
+    },
+    "com.saleh.careerfinder.acceptance-settings.json": {
+      "size": "Physical size: 1080x2400\nOverride size: 1080x1920",
+      "density": "Physical density: 420\nOverride density: 480",
+      "fontScale": "1.8",
+      "rtl": "1",
+      "night": "Night mode: yes",
+      "locales": "Locales for com.saleh.careerfinder.acceptance for user 0 are [ar]"
+    }
+  },
+  "build": {
+    "gradleVersion": "8.14.7",
+    "ordinaryBuildAndLint": "passed (3m 6s)",
+    "acceptanceBuild": "passed (50s)",
+    "apkHashesReportedByCIRunner": {
+      "android/app/build/outputs/apk/debug/app-debug.apk": "a4c94ee8f63a15c2b3bc97a2aef52af7adf02d4e87ec34fd5cb2049f2037288a",
+      "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk": "e67e843fcec6380fc625c2e3b1d02cf9204469efb384e59347cbe4671130638f",
+      "android/app/build/outputs/apk/acceptance/app-acceptance.apk": "a1332f6da1328fe0e2d4cfea8972204def87877397363e4eed7e68d67b6c8e3f",
+      "android/app/build/outputs/apk/androidTest/acceptance/app-acceptance-androidTest.apk": "d5839bda25fb2559c18567a3dd1b83744a82ef2eed223c8a7f4fd4a0adc29ca3"
+    },
+    "apkHashVerificationBoundary": "APKs were hashed by the successful CI runner. This artifact contains the hash receipt, not APK files; APK bytes were not independently downloaded and rehashed locally."
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 6,
+    "issues": [
+      {
+        "id": "OldTargetApi",
+        "severity": "Warning",
+        "message": "Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details.",
+        "locations": [
+          {
+            "file": "/home/runner/work/ahmad-career/ahmad-career/android/app/build.gradle.kts",
+            "line": "31",
+            "column": "9"
+          }
+        ]
+      },
+      {
+        "id": "GradleDependency",
+        "severity": "Warning",
+        "message": "A newer version of androidx.activity:activity-compose than 1.11.0 is available: 1.13.0",
+        "locations": [
+          {
+            "file": "/home/runner/work/ahmad-career/ahmad-career/android/app/build.gradle.kts",
+            "line": "66",
+            "column": "20"
+          }
+        ]
+      },
+      {
+        "id": "GradleDependency",
+        "severity": "Warning",
+        "message": "A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.9.4 is available: 2.11.0",
+        "locations": [
+          {
+            "file": "/home/runner/work/ahmad-career/ahmad-career/android/app/build.gradle.kts",
+            "line": "72",
+            "column": "20"
+          }
+        ]
+      },
+      {
+        "id": "GradleDependency",
+        "severity": "Warning",
+        "message": "A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.9.4 is available: 2.11.0",
+        "locations": [
+          {
+            "file": "/home/runner/work/ahmad-career/ahmad-career/android/app/build.gradle.kts",
+            "line": "73",
+            "column": "20"
+          }
+        ]
+      },
+      {
+        "id": "NewerVersionAvailable",
+        "severity": "Warning",
+        "message": "A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.10.2 is available: 1.11.0",
+        "locations": [
+          {
+            "file": "/home/runner/work/ahmad-career/ahmad-career/android/app/build.gradle.kts",
+            "line": "74",
+            "column": "20"
+          }
+        ]
+      },
+      {
+        "id": "UseKtx",
+        "severity": "Warning",
+        "message": "Use the KTX function `createBitmap` instead?",
+        "locations": [
+          {
+            "file": "/home/runner/work/ahmad-career/ahmad-career/android/app/src/main/java/com/saleh/careerfinder/ReadablePDF.kt",
+            "line": "23",
+            "column": "38"
+          }
+        ]
+      }
+    ],
+    "file": "lint-results-debug.xml",
+    "sha256": "959e40001a41e2f9f32db6e8dc3c43308ab9fb30310caeac6e0de6f2015940de",
+    "classification": "Six existing target/API freshness, dependency freshness, and KTX style notices; no newly observed lint errors. This receipt is not a full dependency security audit."
+  },
+  "screenshots": {
+    "manifest": "screenshots.json",
+    "manifestSHA256": "096ee2102e44ee643e0e0d275f497c104347f11bb4d7cdd444ab1564e5a79a88",
+    "extracted": 17,
+    "unavailable": 0,
+    "allManifestByteSizesSHA256AndPNGDimensionsVerified": true,
+    "dimensions": [
+      1080,
+      1920
+    ],
+    "visualReview": {
+      "expanded-private-note-large-text.png": "All six lines including Last private line and Show less are visible without truncation in the current capture.",
+      "target-country-jp-draft-after-ime.png": "Modal, JP selection count, checked Japan entry and full Use selected countries action remain visible after IME dismissal.",
+      "acceptancePreparedAndReceipts": {
+        "reviewer": "/root/provider_flow_review",
+        "file": "provider-independent-native-https-visual-review.json",
+        "sha256": "d9b4ff7144ef58db752e6de4e8afb8ca914e70ad7ae7f45d21e00c02f748ae23",
+        "result": "No new concrete visual defect. Prepared capture says nothing has been submitted; both captures visibly identify simulated test service; receipts capture shows zero verified application receipts.",
+        "boundary": "No individual uncertain receipt, full payload, or approval controls are visible in the two captures. Their exact visual wording/readability is not established by these frames; native test assertions passed separately."
+      }
+    }
+  },
+  "sourceHashes": {
+    "android/checks/run-ci-emulator.mjs": "5c9b51176c71b2cad3a9fb948a1cba688204434d99442134f365c1b82ae0feeb",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt": "2c9d38a3cb3d8420b61ee3bf914955324ea63ec0a6be151985fd45917d4f92d1",
+    "android/gradle/wrapper/gradle-wrapper.properties": "c4747a838d5c923931d1791ae5a56c0654e025f4c1a54e4e277f54cdc60a126f"
+  },
+  "evidenceFileHashes": {
+    "job-133862170566.log": "8401bf2e5d8b267d95fee0fdb1bb88295b223afd07111f2d11a7931e0c563bef",
+    "verification.json": "28b0111f36fd75e306605db77f2844a170c0fe81f05fff8917f1973ec9f0cfa7",
+    "acceptance-build.log": "8954412a76a42a141b076fb9c23c3e069a69d642d71230f225a88c28494666b9",
+    "career-android-build-1.log": "d254846e9960f81a5d7346af11b98ece0beffb229d4991cd230731f15231dee8",
+    "screenshots.json": "096ee2102e44ee643e0e0d275f497c104347f11bb4d7cdd444ab1564e5a79a88",
+    "screenshot-extraction.log": "a4b78418ddc9a462115d4ef0b63d1fb0d3a8093b58ab933a8a5edb723b93bd76",
+    "native-https-phone.log": "b626545dd64954afac2794798480458d26e10b49cf3ce1f71e690fc6b32a3125",
+    "ordinary-phone.log": "68c5595064520f20dbb2860afb6d6593f11c41b5bd68222d062e7c06d3513bb1",
+    "normal-preview-tls-boundary.log": "be0412b50b0880ba25d20e27c0b7f05a2fc8448f44fc24584dbcf11644131c2b"
+  },
+  "limits": [
+    "Synthetic fixture only; no real employer applications or production accounts used.",
+    "Disposable API36 emulator acceptance; physical-device and store publication gates are separate.",
+    "This receipt covers Android at e66d180 only; it makes no claim about iPhone or the protected publishing revision.",
+    "No source edits, builds, CI dispatch/cancellation, signing or release actions were performed during terminal verification."
+  ]
+}

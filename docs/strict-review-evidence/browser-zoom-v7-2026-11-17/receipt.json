@@ -1,0 +1,183 @@
+{
+  "observedAtUTC": "2026-11-17T06:27:55.881492+00:00",
+  "url": "https://career-finder-service.jazzy-drake-8323.chatgpt.site/phone",
+  "deploymentVersion": 7,
+  "deploymentId": "appgdep_6afbcfe3a03881918b131992225ded31",
+  "hostedSource": "1135a3270435d3719c6f62f1a2e3a53e2c040146",
+  "phoneSourceMirror": "e66d1809ece7666c7d99412d48aa193cdf024c42",
+  "method": "native desktop input focused actual Career Finder browser tab; standard Control+plus shortcuts; browser UI explicitly displayed 200% and400%; DOM metrics read only",
+  "status": "bounded-zoom-navigation-and-dialog-checks-passed",
+  "checks": [
+    {
+      "zoomPercent": 200,
+      "section": "Saved",
+      "heading": "Your shortlist.",
+      "clientWidth": 674,
+      "scrollWidth": 674,
+      "viewportHeight": 468,
+      "devicePixelRatio": 2.0,
+      "navigationButtons": 4,
+      "navigationButtonWidthCSS": 132.25,
+      "navigationButtonHeightCSS": 58,
+      "horizontalOverflowInCheckedVisibleElements": []
+    },
+    {
+      "zoomPercent": 200,
+      "section": "Apply",
+      "heading": "Apply with confidence.",
+      "clientWidth": 674,
+      "scrollWidth": 674,
+      "viewportHeight": 468,
+      "devicePixelRatio": 2.0,
+      "navigationButtons": 4,
+      "navigationButtonWidthCSS": 132.25,
+      "navigationButtonHeightCSS": 58,
+      "horizontalOverflowInCheckedVisibleElements": []
+    },
+    {
+      "zoomPercent": 200,
+      "section": "Profile",
+      "heading": "A little about you.",
+      "clientWidth": 674,
+      "scrollWidth": 674,
+      "viewportHeight": 468,
+      "devicePixelRatio": 2.0,
+      "navigationButtons": 4,
+      "navigationButtonWidthCSS": 132.25,
+      "navigationButtonHeightCSS": 58,
+      "horizontalOverflowInCheckedVisibleElements": []
+    },
+    {
+      "zoomPercent": 200,
+      "section": "Search",
+      "heading": "Find your next step.",
+      "clientWidth": 674,
+      "scrollWidth": 674,
+      "viewportHeight": 468,
+      "devicePixelRatio": 2.0,
+      "navigationButtons": 4,
+      "navigationButtonWidthCSS": 132.25,
+      "navigationButtonHeightCSS": 58,
+      "horizontalOverflowInCheckedVisibleElements": []
+    },
+    {
+      "zoomPercent": 400,
+      "section": "Saved",
+      "heading": "Your shortlist.",
+      "clientWidth": 337,
+      "scrollWidth": 337,
+      "viewportHeight": 234,
+      "devicePixelRatio": 4.0,
+      "navigationButtons": 4,
+      "navigationButtonWidthCSS": 77,
+      "navigationButtonHeightCSS": 58,
+      "horizontalOverflowInCheckedVisibleElements": []
+    },
+    {
+      "zoomPercent": 400,
+      "section": "Apply",
+      "heading": "Apply with confidence.",
+      "clientWidth": 337,
+      "scrollWidth": 337,
+      "viewportHeight": 234,
+      "devicePixelRatio": 4.0,
+      "navigationButtons": 4,
+      "navigationButtonWidthCSS": 77,
+      "navigationButtonHeightCSS": 58,
+      "horizontalOverflowInCheckedVisibleElements": []
+    },
+    {
+      "zoomPercent": 400,
+      "section": "Profile",
+      "heading": "A little about you.",
+      "clientWidth": 337,
+      "scrollWidth": 337,
+      "viewportHeight": 234,
+      "devicePixelRatio": 4.0,
+      "navigationButtons": 4,
+      "navigationButtonWidthCSS": 77,
+      "navigationButtonHeightCSS": 58,
+      "horizontalOverflowInCheckedVisibleElements": []
+    },
+    {
+      "zoomPercent": 400,
+      "section": "Search",
+      "heading": "Find your next step.",
+      "clientWidth": 337,
+      "scrollWidth": 337,
+      "viewportHeight": 234,
+      "devicePixelRatio": 4.0,
+      "navigationButtons": 4,
+      "navigationButtonWidthCSS": 77,
+      "navigationButtonHeightCSS": 58,
+      "horizontalOverflowInCheckedVisibleElements": []
+    }
+  ],
+  "checkedElementTypes": [
+    "h1",
+    "h2",
+    "h3",
+    "label",
+    "button",
+    "p",
+    "summary"
+  ],
+  "excluded": "zero-size and visually-hidden elements; this is not a complete automated accessibility audit",
+  "dialog400Percent": {
+    "opened": "blank Save a job link form",
+    "clientWidth": 293,
+    "scrollWidth": 293,
+    "clientHeight": 200,
+    "scrollHeight": 616,
+    "rectangleCSS": {
+      "left": 19,
+      "right": 318,
+      "top": 16,
+      "bottom": 218
+    },
+    "keyboardAction": "Tab from optional Location input",
+    "focusedControl": "Save on this phone",
+    "focusedControlTop": 157.0859375,
+    "focusedControlBottom": 207.64453125,
+    "viewportHeight": 234,
+    "dialogScrollTop": 407,
+    "escapeClosed": true,
+    "openDialogsAfterEscape": 0
+  },
+  "restored": {
+    "zoomPercent": 100,
+    "devicePixelRatio": 1,
+    "clientWidth": 1348,
+    "scrollWidth": 1348,
+    "viewportHeight": 936,
+    "section": "Search"
+  },
+  "profileJobRecordEdits": 0,
+  "freshSearchRequests": 0,
+  "applicationSubmissions": 0,
+  "screenshots": [
+    {
+      "file": "career-finder-v7-400-percent.jpg",
+      "bytes": 8452,
+      "sha256": "22473d64be9554e0c5d561d22e512e919a91b2d12dc526c11f121f2d35dc48d5",
+      "capture": "actual cloud-browser screenshot at CSS viewport resolution; browser zoom observed independently through native UI and devicePixelRatio"
+    },
+    {
+      "file": "career-finder-v7-400-percent-dialog.jpg",
+      "bytes": 8798,
+      "sha256": "1a090b11f835fb285ec722b33273238401c96fdc20a64642f93ed1375a0c861a",
+      "capture": "actual cloud-browser screenshot at CSS viewport resolution; browser zoom observed independently through native UI and devicePixelRatio"
+    }
+  ],
+  "remainingLimits": [
+    "Independent browser default-font preferences were not changed or verified.",
+    "Not a full VoiceOver/TalkBack/physical-device accessibility pass.",
+    "Only the blank job-link dialog and current loaded section states were checked; signed-in provider and account lifecycle scenarios remain separately gated.",
+    "Browser screenshots are CSS-pixel sized and do not include the desktop zoom badge."
+  ],
+  "earlierAttempt": {
+    "method": "separate local headless Chromium with isolated font preferences",
+    "status": "blocked before browser launch",
+    "reason": "socket() Operation not permitted; no environment restriction bypass"
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "observedAt": "2026-11-17T06:27:57.685332+00:00",
+  "runId": 44030852040,
+  "sourceCommit": "e66d1809ece7666c7d99412d48aa193cdf024c42",
+  "allAssignedJobsPassed": true,
+  "otherJobs": "Android and iPhone UI are separately monitored; this receipt makes no whole-run success claim.",
+  "files": {
+    "gate-excerpts.log": {
+      "size": 1796,
+      "sha256": "91992b564fccfcdbe8dbc835ca202cb3126a0f9fe3726f694f5ffd54c255d69d"
+    },
+    "hosted/artifact-metadata.json": {
+      "size": 1783,
+      "sha256": "f633af845e34d6c48a2969d0a2fa1c8611c12c7ec693729d83159954ff0122ed"
+    },
+    "hosted/dependency-audit-ci.json": {
+      "size": 367,
+      "sha256": "c08d05b2b03ea46091efa74c8fb869ba6594053f24d325b1eaf366fa6e174e9d"
+    },
+    "hosted/hosted-discovery-verification.json": {
+      "size": 4077,
+      "sha256": "34f1816b3e08b90310098edf7488c42860789c684eecb945a80410ccf2eebea3"
+    },
+    "hosted/hosted-phone-verification.json": {
+      "size": 3609,
+      "sha256": "46be75f5663d57ab1f3bebf85b70e1a4433d8858a9c362f368d6e0bc99da7cf0"
+    },
+    "hosted/hosted-verification.json": {
+      "size": 7894,
+      "sha256": "cd53a6fb95b01aa2a12d0caf50c4bbf2a12962dc18b8b240f8b72e99a17c13c8"
+    },
+    "hosted/hosted-worker-verification.json": {
+      "size": 672,
+      "sha256": "810b46294d397c44a821b6f7d1b416ca563a31f53d3a77dc605d7f251b43fe1e"
+    },
+    "hosted-acceptance.json": {
+      "size": 6966,
+      "sha256": "04da0b9c6127e1efe13ab53bcc6cb0e5496be5f007612cda453a7aa548f15503"
+    },
+    "hosted-job-133862170234.log": {
+      "size": 85736,
+      "sha256": "bb46c16a5c72ea457689911b569fcfc6bc458c9bdd3bd13ceda4a6a7ed396c09"
+    },
+    "hosted-storage-checks-44030852040.zip": {
+      "size": 8634,
+      "sha256": "2dedb6c88d5d791b725302f5d51135075f2fcbaa28c236674c4318541384b371"
+    },
+    "iphone-build/artifact-metadata.json": {
+      "size": 1085,
+      "sha256": "019f69847d258782c25307df2d23758fc0ec23d1ff7abfd171d89c235776960b"
+    },
+    "iphone-build/career-iphone-build.log": {
+      "size": 78685,
+      "sha256": "6413f00e4654a4d148cb160ee1ec56e7a67a738132bde6c186a10a06646a41a1"
+    },
+    "iphone-build-log-44030852040.zip": {
+      "size": 7896,
+      "sha256": "f5c3b37b35c933a7abb3fc4c6ce7ca431ffbd59066ca87b789708c31931d0d37"
+    },
+    "iphone-job-133862170490.log": {
+      "size": 111578,
+      "sha256": "4261ef746cad1221b8cc9949630dac564e8eead9d3eeec7c1d0210e4214d8be4"
+    },
+    "iphone-logic-and-build.json": {
+      "size": 3854,
+      "sha256": "6b30b9cfc55e55d5ef3fd442fd4c51564a55e4d472c5423f680038fabc1b54a5"
+    },
+    "jobs-observed.json": {
+      "size": 9845,
+      "sha256": "ef288df5e5eb38341dff137e638e5a8a0ee2254aed1e88a52062cff853210f56"
+    },
+    "run-observed.json": {
+      "size": 389,
+      "sha256": "7a644956bf50f397d32d1aaac927731d21c4ed578d883d0c15c0d2e18e9c7b98"
+    },
+    "service-acceptance.json": {
+      "size": 3237,
+      "sha256": "de7c4c7b2347c19c493f2081b9a9ad44bd95a11510537f9775fd097599d7661b"
+    },
+    "service-job-133862170588.log": {
+      "size": 41395,
+      "sha256": "0f70e8340f12a12924f5dc9a1f6c10aeb7a7d0a2ee9aac760f3374f4562c7d54"
+    },
+    "source-provenance.json": {
+      "size": 51461,
+      "sha256": "5d7b37fb08f5447c4be936694a64d190fec98029e55e96b915fa913e9b2585fb"
+    }
+  },
+  "actionsPerformed": [
+    "read GitHub metadata and decoded logs",
+    "download two artifacts",
+    "verify archive sizes and SHA-256 against GitHub metadata",
+    "compare artifact fingerprints with both exact Git commits and current source trees",
+    "write curated evidence in the assigned scratch directory"
+  ],
+  "actionsNotPerformed": [
+    "repository edit",
+    "new tests or builds",
+    "CI dispatch or retry",
+    "deployment",
+    "real provider or employer interaction",
+    "signing or store action"
+  ],
+  "downloadNote": "One initial artifact HTTP read returned503; the subsequent bounded read succeeded and both archives were fully verified.",
+  "inventoryScope": "Original service-review scratch inventory. This repository publishes the curated receipts, excerpts and source-provenance record; files listed here but not copied are preserved in the original downloaded GitHub artifacts and review scratch directory. Native acceptance and terminal all-five status are recorded separately in complete-source-acceptance.json."
+}

@@ -31,7 +31,13 @@
       ],
       "sha256": "487c11623bd0ab4e851823fdb24db25d04d57db741ba7218455419350d0b6cf3",
       "uploaded": false,
-      "limitation": "Both documented file-chooser attempts timed out. Form retained for owner upload; no success inferred."
+      "limitation": "Documented browser file-chooser attempts timed out. A focused native click eventually opened the native file picker. Location-field typing hit an unavailable AT-SPI provider; a subsequent clipboard/key attempt did not produce a selected logo. The final page still displayed its 1\u00d71 placeholder. No completed upload is claimed.",
+      "nativeFallbackAttempted": true,
+      "nativePickerReached": true,
+      "observedPreviewNaturalSize": [
+        1,
+        1
+      ]
     },
     "formRetainedForOwner": true,
     "manualTakeoverRequested": false,
@@ -54,7 +60,16 @@
   "limits": [
     "A prepared registration form is not an activated LinkedIn connection.",
     "Public provider-console navigation occurred; no completed real OAuth consent/token exchange is claimed.",
-    "The setup screenshot attempt timed out; the recorded field state comes from the returned accessibility tree.",
+    "Earlier clipped setup screenshot attempts timed out; a later full-viewport screenshot succeeded. It is retained privately for owner review, separate from the public repository.",
     "Existing account sessions, user cloud data and signing/store configuration were not changed."
-  ]
+  ],
+  "lastPreparedFormRecheckUTC": "2026-11-17T06:50:00.743122+00:00",
+  "latestSourceCommit": "e66d1809ece7666c7d99412d48aa193cdf024c42",
+  "ownerSetupScreenshot": {
+    "filename": "Career-Finder-LinkedIn-Owner-Setup-2026-11-17.jpg",
+    "bytes": 84627,
+    "sha256": "b8b972a0bf7cda749f37b019debe6ff3bd4e2f640139cd7e082ad1fadf18712d",
+    "includedInPublicRepository": false,
+    "purpose": "Prepared name/privacy URL and still-empty Page/logo; no app creation or provider consent"
+  }
 }

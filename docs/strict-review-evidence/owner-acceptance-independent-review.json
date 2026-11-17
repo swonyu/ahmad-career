@@ -1,0 +1,70 @@
+{
+  "reviewedAtUTC": "2026-11-17T06:37:01.665725+00:00",
+  "reviewer": "/root/service_security_review",
+  "mode": "read-only-document-and-source-consistency-review",
+  "status": "prior-findings-addressed",
+  "reviewedDocument": {
+    "path": "/workspace/scratch/75bf57c69524/career-finder/docs/Owner-Acceptance-2026-11-17.md",
+    "bytes": 12582,
+    "sha256": "0b933a9b3f654b2a4b62b5361bbda4434572b715652fed2c4e936bdea488f9e9",
+    "repositoryHead": "e66d1809ece7666c7d99412d48aa193cdf024c42"
+  },
+  "authoritativeHostedHead": "1135a3270435d3719c6f62f1a2e3a53e2c040146",
+  "findings": [
+    {
+      "id": "fresh-workspace-before-online-save",
+      "status": "addressed",
+      "documentLine": 71,
+      "verifiedCorrection": "Fresh account A opens Profile and creates its private workspace before entering test data and choosing Save profile online; existing drafts remain subject to explicit preservation choices.",
+      "sourceReferences": [
+        "app/phone/PhoneApp.tsx:369-377",
+        "app/phone/PhoneApp.tsx:606-609",
+        "app/phone/components.tsx:72"
+      ]
+    },
+    {
+      "id": "google-disconnect-authority",
+      "status": "addressed",
+      "documentLine": 64,
+      "verifiedCorrection": "ChatGPT-origin users return through their original ChatGPT account before disconnecting Google; current Google sessions and Google-origin accounts are correctly described as unable to unlink Google.",
+      "sourceReferences": [
+        "server/oauth.mjs:197-201"
+      ]
+    },
+    {
+      "id": "google-visible-and-accessible-labels",
+      "status": "addressed",
+      "documentLine": 60,
+      "verifiedCorrection": "The step identifies the visible Sign in with Google artwork in the Google section and separately names its Connect Google to this Career Finder account accessible label.",
+      "sourceReferences": [
+        "app/components/ProviderConnections.tsx:26",
+        "app/components/GoogleSignInArtwork.tsx"
+      ]
+    },
+    {
+      "id": "shared-browser-draft-isolation-coverage",
+      "status": "addressed-as-an-unperformed-acceptance-step",
+      "documentLine": 72,
+      "verifiedCorrection": "Adds explicit A to B to A within the same browser profile, including distinctive synthetic local drafts, PDF, private notes and restoration of A state; distinguishes this from isolated browser-profile checks."
+    },
+    {
+      "id": "linkedin-logo-attempt-description",
+      "status": "updated-without-success-overclaim",
+      "documentLine": 18,
+      "verifiedCorrection": "Acknowledges that the native file picker was reached after the automated chooser failed, but the form still displayed its placeholder and logo selection remains unfinished.",
+      "evidenceScope": "The browser-attempt outcome is reported by the parent agent. This reviewer checked the document wording, not the live form. No logo upload or app creation is independently claimed."
+    }
+  ],
+  "otherReviewedClaims": "Provider callback URLs and key names/scopes, account-download and deletion UI labels, separate private PDF downloads, local-data retention, lifecycle fences, native import size limits, free-only requirements and conditional milestone estimates remain consistent with the source reviewed in the prior pass.",
+  "remainingLimits": [
+    "This is documentation review, not execution or completion of the owner checklist.",
+    "Real provider registration, configuration, consent and callbacks remain unverified by this review.",
+    "LinkedIn logo selection and app creation remain unfinished; no terms acceptance or provider enablement is inferred.",
+    "Same-browser and physical-device account switching, export/deletion, accessibility and publication gates require their own actual results and exact build/source receipts.",
+    "Conditional setup and testing estimates do not guarantee provider, Page, domain, signing or store approvals."
+  ],
+  "unresolvedConcreteFindingsInReviewedCorrections": [],
+  "sourceChanges": 0,
+  "browserActions": 0,
+  "testsOrBuilds": 0
+}

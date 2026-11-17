@@ -1,0 +1,77 @@
+{
+  "observedAtUTC": "2026-11-17T06:36:30.461760+00:00",
+  "hostedSource": "1135a3270435d3719c6f62f1a2e3a53e2c040146",
+  "version": 7,
+  "method": "Actual loaded Account and Connect in cloud Chrome; native standard zoom shortcuts; read-only rendered DOM measurements",
+  "status": "bounded-horizontal-reflow-spot-checks-passed",
+  "observations": [
+    {
+      "page": "account",
+      "zoom": 200,
+      "metrics": {
+        "dpr": 2,
+        "height": 468,
+        "overflow": [],
+        "scrollWidth": 674,
+        "title": "Your account \u00b7 Career Finder",
+        "width": 674
+      }
+    },
+    {
+      "page": "account",
+      "zoom": 400,
+      "metrics": {
+        "dpr": 4,
+        "height": 234,
+        "overflow": [],
+        "scrollWidth": 337,
+        "title": "Your account \u00b7 Career Finder",
+        "width": 337
+      }
+    },
+    {
+      "page": "connect",
+      "zoom": 200,
+      "metrics": {
+        "createCodeButtonPresent": true,
+        "dpr": 2,
+        "height": 468,
+        "overflow": [],
+        "scrollWidth": 674,
+        "title": "Career Finder",
+        "width": 674
+      }
+    },
+    {
+      "page": "connect",
+      "zoom": 400,
+      "metrics": {
+        "createCodeButtonPresent": true,
+        "dpr": 4,
+        "height": 234,
+        "overflow": [],
+        "scrollWidth": 337,
+        "title": "Career Finder",
+        "width": 337
+      }
+    }
+  ],
+  "accountReadiness": "Loaded account, provider, phone, CV, export and deletion sections; account identity excluded from receipt",
+  "connectReadiness": "Create connection code button visible after identity check; button was not clicked",
+  "restored": {
+    "zoomPercent": 100,
+    "devicePixelRatio": 1,
+    "clientWidth": 1348,
+    "scrollWidth": 1348
+  },
+  "cloudDataMutations": 0,
+  "newPairingCodes": 0,
+  "profileRecordExports": 0,
+  "deletions": 0,
+  "screenshotsPersisted": false,
+  "limits": [
+    "No provider-consent, account-switch, export or deletion flow was executed.",
+    "No independent browser default-font setting, physical device or screen-reader claim.",
+    "Checks cover horizontal bounds of rendered headings,labels,buttons,paragraphs,summaries and links; not every interactive state or full keyboard traversal."
+  ]
+}

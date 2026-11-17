@@ -1,0 +1,81 @@
+{
+  "reviewedAtUTC": "2026-11-17T06:55:00.869503+00:00",
+  "reviewer": "/root/phone_source_review",
+  "status": "passed-no-remaining-errors-in-reviewed-scope",
+  "mode": "Read-only review of actual four-document diffs and local linked evidence; only this scratch receipt was written.",
+  "testedApplicationSource": "e66d1809ece7666c7d99412d48aa193cdf024c42",
+  "testedTree": "2bbffcaa056fa08b2cdea9da7b9426cac8476fc0",
+  "runId": 44030852040,
+  "documents": [
+    {
+      "path": "README.md",
+      "bytes": 17058,
+      "sha256": "95eb61b0a0243c2544fcbfaf338b81268962bd7d37b9861fd6923a07f2d08bf0",
+      "localLinkOccurrencesChecked": 23,
+      "missingLocalLinks": []
+    },
+    {
+      "path": "docs/Phone-Update-2026-11-16.md",
+      "bytes": 17049,
+      "sha256": "197b418ff7c3303042573df9087e4adb0ca0e58e63999f0bb25a8aef9e36ef76",
+      "localLinkOccurrencesChecked": 11,
+      "missingLocalLinks": []
+    },
+    {
+      "path": "docs/Continuation-Review-2026-11-17.md",
+      "bytes": 65971,
+      "sha256": "9a4a760a87eba1d9ef08fc0548cafa2242cda36896f4f986efa1310cfde2ca67",
+      "localLinkOccurrencesChecked": 33,
+      "missingLocalLinks": []
+    },
+    {
+      "path": "docs/Publishing-Handoff-2026-11-17.md",
+      "bytes": 13128,
+      "sha256": "bcca593253cfcce6150e5b7351568b1cd1be639ac286c56dd58225573daa62fa",
+      "localLinkOccurrencesChecked": 9,
+      "missingLocalLinks": []
+    }
+  ],
+  "fixedFindings": [
+    {
+      "id": "DOC-01",
+      "result": "The complete-source acceptance row is contiguous with the revision table; its preceding line is the historical 479e1f0 row and the blank line now follows the new row."
+    },
+    {
+      "id": "DOC-02",
+      "result": "The stale country/note fresh-run requirement is removed; actual passes at 479e1f0 and e66d180 are stated."
+    },
+    {
+      "id": "DOC-03",
+      "result": "Initial source-freeze and coordinated CI milestones are explicitly completed. Remaining estimates cover manual/provider/device/publishing gates without requiring another full run for this documentation update."
+    },
+    {
+      "id": "DOC-04",
+      "result": "All four documents separately link Account/Connect horizontal-reflow evidence to account-connect-receipt.json rather than relying only on the phone-section receipt."
+    }
+  ],
+  "evidenceCrossChecks": {
+    "fiveTerminalJobs": "All five entries are completed/success for run 44030852040.",
+    "android": "99 unique passed; zero failed/skipped; 24.871 seconds native HTTPS; synthetic POST counts 1/1/2; artifact 2,240,594 bytes and SHA-256 4b33b268ae2130226fd4ed40812d57b1a4d07527917b573dcf03e26886e72e67; lint 0 errors / 6 warnings.",
+    "iphone": "13 passed, zero failures, 1059.01 seconds; same e66d180 source, integrity-verified artifact and existing targeted-review manifest.",
+    "otherGates": "Hosted: 61 account groups, 19 phone groups / 164 Worker requests, 64 frontend + 14 transport tests, 33 vault groups, 26 discovery groups, 30 auth groups + 15 requests, 17 separate Worker requests, 6 parser groups and zero audit findings. Companion: 119 HTTP / 77 state groups / 12 TLS checks. iPhone: 120 boundary checks, 503 lifecycle assertions / 77 scenarios and 43 discovery assertions / 13 scenarios. These match the exact-run receipts.",
+    "browser": "Phone-section zoom and Account/Connect loaded-state horizontal-reflow claims have distinct receipts; no full keyboard, default-font, screen-reader or account-switch pass is implied.",
+    "causeAttribution": "Previous Android stall remains explicitly unlocalized; current success is not described as proving the original cause.",
+    "historyAndOwnership": "Older partial runs and protected release evidence remain separate; provider activation, physical devices, signing, publisher acknowledgment and stores remain open."
+  },
+  "localLinks": {
+    "occurrencesChecked": 76,
+    "missing": [],
+    "scope": "Local Markdown targets in these four documents, plus the current iPhone targeted-review manifest. External links were not revisited."
+  },
+  "remainingErrors": [],
+  "actionsNotPerformed": [
+    "finalizer execution",
+    "repository document or application source edits",
+    "test or build execution",
+    "CI dispatch or cancellation",
+    "deployment",
+    "signing or release changes"
+  ],
+  "frozen": true
+}

@@ -1,0 +1,59 @@
+{
+  "reviewedAtUTC": "2026-11-17T06:31:31.937365+00:00",
+  "reviewer": "/root/service_security_review",
+  "mode": "independent-read-only-artifact-review",
+  "status": "approved-as-bounded-evidence-claim",
+  "target": {
+    "url": "https://career-finder-service.jazzy-drake-8323.chatgpt.site/phone",
+    "deploymentVersion": 7,
+    "deploymentId": "appgdep_6afbcfe3a03881918b131992225ded31",
+    "hostedSource": "1135a3270435d3719c6f62f1a2e3a53e2c040146",
+    "phoneSourceMirror": "e66d1809ece7666c7d99412d48aa193cdf024c42"
+  },
+  "inspectedFiles": [
+    {
+      "path": "/workspace/scratch/75bf57c69524/career-finder/docs/strict-review-evidence/browser-zoom-v7-2026-11-17/receipt.json",
+      "file": "receipt.json",
+      "bytes": 6069,
+      "sha256": "332c6494355211d240fe3ad9068ae31c83d90f524c09b77b541079a163ff4f1c",
+      "inspection": "Read complete JSON receipt."
+    },
+    {
+      "path": "/workspace/scratch/75bf57c69524/career-finder/docs/strict-review-evidence/browser-zoom-v7-2026-11-17/career-finder-v7-400-percent.jpg",
+      "file": "career-finder-v7-400-percent.jpg",
+      "bytes": 8452,
+      "sha256": "22473d64be9554e0c5d561d22e512e919a91b2d12dc526c11f121f2d35dc48d5",
+      "matchesReceipt": true,
+      "inspection": "Visually inspected complete image."
+    },
+    {
+      "path": "/workspace/scratch/75bf57c69524/career-finder/docs/strict-review-evidence/browser-zoom-v7-2026-11-17/career-finder-v7-400-percent-dialog.jpg",
+      "file": "career-finder-v7-400-percent-dialog.jpg",
+      "bytes": 8798,
+      "sha256": "1a090b11f835fb285ec722b33273238401c96fdc20a64642f93ed1375a0c861a",
+      "matchesReceipt": true,
+      "inspection": "Visually inspected complete image."
+    }
+  ],
+  "approvedWording": "Live v7 passed standard desktop Chrome zoom spot checks at 200% and 400% across the four loaded sections. The blank job-link dialog scrolled its focused Save button into view and closed with Escape. Zoom was restored to 100%. Independent browser font preferences and broader accessibility and account acceptance remain open.",
+  "findings": [
+    "The receipt labels the outcome as bounded zoom, navigation and blank-dialog checks rather than a complete accessibility audit.",
+    "The receipt records equal document client and scroll widths for all eight section/zoom observations, with no horizontal overflow in the checked visible element types.",
+    "The 400% section screenshot visibly contains the four navigation controls.",
+    "The 400% dialog screenshot visibly contains a focused, readable Save on this phone button.",
+    "The partially visible Search heading in the short viewport does not independently demonstrate clipping or unreachability.",
+    "Both JPEG byte lengths and SHA-256 hashes match the receipt."
+  ],
+  "limits": [
+    "This review checked the saved receipt and two screenshots; it did not independently rerun the browser interactions.",
+    "The screenshots use CSS viewport resolution and do not display the browser zoom badge. The zoom setting is supported by the receipt of a separate native browser observation and DOM metrics.",
+    "Both saved screenshots show 400% states. The 200% observations and the other section states are recorded in the receipt, not separately visible in these two images.",
+    "The evidence concerns the four currently loaded section states and one blank job-link dialog, not every content state, control or keyboard traversal.",
+    "No WCAG conformance, full screen-reader acceptance, physical-device acceptance, mobile-browser zoom acceptance or multi-account/provider lifecycle acceptance is established.",
+    "Independent browser default-font preferences were not verified. The separate headless attempt failed before browser launch with a socket permission error; it is not a passing test and no bypass was attempted."
+  ],
+  "additionalActionableDefectsObserved": [],
+  "newBrowserActions": 0,
+  "newTestsOrBuilds": 0,
+  "sourceChanges": 0
+}

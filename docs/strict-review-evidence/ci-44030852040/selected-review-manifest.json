@@ -1,0 +1,124 @@
+{
+  "commit": "e66d1809ece7666c7d99412d48aa193cdf024c42",
+  "run_id": 44030852040,
+  "job_id": 133862170500,
+  "artifact_id": 14306710673,
+  "artifact_size": 134427489,
+  "artifact_sha256": "b2dd9c845eb2c45a65c564d0d4d229c937e49ea62be902f4bb292f24c0c9fbf5",
+  "manifest_test_entries": 12,
+  "manifest_attachment_count": 29,
+  "selected": [
+    {
+      "test": "CareerFinderUITests/testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText()",
+      "capture": "14-unverified-submission-explained",
+      "exportedFileName": "A8422836-B601-42DC-96A6-FF7127395F7E.png",
+      "suggestedHumanReadableName": "14-unverified-submission-explained_0_C1FCF4E7-1A57-44A3-8FB3-7071A444CC8C.png",
+      "deviceName": "iPhone Air",
+      "isAssociatedWithFailure": false,
+      "local_file": "selected/14-unverified-submission-explained.png",
+      "bytes": 848964,
+      "sha256": "d7ef7193f77def51500294f18dc95ac1af0755b9be56c9b05f7a348845ce038d",
+      "visual_review": "The full Submission availability is unverified heading and Refresh availability action are readable at the largest captured text size. The refresh action is above the fixed bottom action. No new concrete defect observed in this target."
+    },
+    {
+      "test": "CareerFinderUITests/testSavedLinkRemovalAtLargestTextKeepsCancelReachable()",
+      "capture": "20-saved-link-removal-accessibility",
+      "exportedFileName": "A37BAF29-2730-4264-8021-204FAA9DA855.png",
+      "suggestedHumanReadableName": "20-saved-link-removal-accessibility_0_BDFC193C-9328-4ED4-BCCC-5FB61F6B1F60.png",
+      "deviceName": "iPhone Air",
+      "isAssociatedWithFailure": false,
+      "local_file": "selected/20-saved-link-removal-accessibility.png",
+      "bytes": 402528,
+      "sha256": "cc70fa3032199bb924f462ca9824acfb1c3a8ca3ce31f245ea3d84acb1de577e",
+      "visual_review": "Remove link title, Keep opportunity toolbar cancel, and full Remove saved link and Keep opportunity body choices are visible. No new concrete confirmation-control defect observed."
+    }
+  ],
+  "test_summary": {
+    "started": 13,
+    "passed": 13,
+    "failed": 0,
+    "suite_lines": [
+      "Executed 13 tests, with 0 failures (0 unexpected) in 1059.010 (1059.038) seconds",
+      "Executed 13 tests, with 0 failures (0 unexpected) in 1059.010 (1059.041) seconds",
+      "Executed 13 tests, with 0 failures (0 unexpected) in 1059.010 (1059.042) seconds"
+    ],
+    "test_succeeded": true,
+    "cases": [
+      {
+        "name": "testAccessibilityTextKeepsCoreControlsReachable",
+        "result": "passed",
+        "seconds": 106.671
+      },
+      {
+        "name": "testApplicationDraftSurvivesCancelAndRelaunch",
+        "result": "passed",
+        "seconds": 45.939
+      },
+      {
+        "name": "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+        "result": "passed",
+        "seconds": 169.161
+      },
+      {
+        "name": "testDiscoverySaveFlowsIntoSavedAndApply",
+        "result": "passed",
+        "seconds": 69.913
+      },
+      {
+        "name": "testFreshStartAndFiveTabs",
+        "result": "passed",
+        "seconds": 36.3
+      },
+      {
+        "name": "testLinkedInProfileDraftAndExternalSearchChoice",
+        "result": "passed",
+        "seconds": 90.43
+      },
+      {
+        "name": "testOpportunityDiscardRequiresExplicitChoice",
+        "result": "passed",
+        "seconds": 28.787
+      },
+      {
+        "name": "testOpportunityDraftKeepSaveAndRestore",
+        "result": "passed",
+        "seconds": 71.206
+      },
+      {
+        "name": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+        "result": "passed",
+        "seconds": 144.715
+      },
+      {
+        "name": "testProfileReadinessAndSimpleConnectionSetup",
+        "result": "passed",
+        "seconds": 66.444
+      },
+      {
+        "name": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+        "result": "passed",
+        "seconds": 32.213
+      },
+      {
+        "name": "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+        "result": "passed",
+        "seconds": 106.1
+      },
+      {
+        "name": "testSearchEmptyAndFailurePreservesPreviousResults",
+        "result": "passed",
+        "seconds": 91.132
+      }
+    ]
+  },
+  "architecture": {
+    "swift_compile_architectures": [
+      "arm64"
+    ],
+    "destination_arm64": true,
+    "active_arch_only": true,
+    "compiler_target_arm64_simulator": true
+  },
+  "review_scope": "Only the two requested targets: large-text availability and explicit saved-link removal confirmation. No other images reviewed in this run.",
+  "new_validated_visual_defects": []
+}

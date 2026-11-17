@@ -1,0 +1,19 @@
+{
+  "observedAtUTC": "2026-11-17T06:50:23.489813+00:00",
+  "projectId": "appgprj_6afb13851fb4819193358d5db54e73b7",
+  "siteStatus": "active",
+  "access": "public",
+  "version": 7,
+  "sourceCommit": "1135a3270435d3719c6f62f1a2e3a53e2c040146",
+  "deploymentId": "appgdep_6afbcfe3a03881918b131992225ded31",
+  "versionId": "appgprj_6afb13851fb4819193358d5db54e73b7~appgver_169e858e28b08191bbb650d3e7b4ffe4",
+  "deploymentStatus": "succeeded",
+  "deploymentUpdatedAt": "2026-11-17T03:54:40.015318+00:00",
+  "url": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
+  "environmentRevision": 0,
+  "managedEnvironmentKeys": [],
+  "googleConfigured": false,
+  "linkedinConfigured": false,
+  "newDeploymentPerformed": false,
+  "source": "Root Sites get_site, get_deployment_status and get_environment_variables responses in the final review; values and owner-identifying access metadata excluded."
+}

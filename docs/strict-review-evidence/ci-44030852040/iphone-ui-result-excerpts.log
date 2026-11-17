@@ -1,0 +1,36 @@
+2026-11-17T06:28:27.2205720Z Test Suite 'All tests' started at 2026-11-17 06:28:26.517.
+2026-11-17T06:28:27.2453030Z Test Suite 'CareerFinderUITests.xctest' started at 2026-11-17 06:28:26.518.
+2026-11-17T06:28:27.2642740Z Test Suite 'CareerFinderUITests' started at 2026-11-17 06:28:26.519.
+2026-11-17T06:28:27.2656340Z Test Case '-[CareerFinderUITests.CareerFinderUITests testAccessibilityTextKeepsCoreControlsReachable]' started.
+2026-11-17T06:30:13.2134540Z Test Case '-[CareerFinderUITests.CareerFinderUITests testAccessibilityTextKeepsCoreControlsReachable]' passed (106.671 seconds).
+2026-11-17T06:30:13.2237770Z Test Case '-[CareerFinderUITests.CareerFinderUITests testApplicationDraftSurvivesCancelAndRelaunch]' started.
+2026-11-17T06:30:59.1500380Z Test Case '-[CareerFinderUITests.CareerFinderUITests testApplicationDraftSurvivesCancelAndRelaunch]' passed (45.939 seconds).
+2026-11-17T06:30:59.1612970Z Test Case '-[CareerFinderUITests.CareerFinderUITests testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText]' started.
+2026-11-17T06:33:48.6434370Z Test Case '-[CareerFinderUITests.CareerFinderUITests testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText]' passed (169.161 seconds).
+2026-11-17T06:33:48.8117060Z Test Case '-[CareerFinderUITests.CareerFinderUITests testDiscoverySaveFlowsIntoSavedAndApply]' started.
+2026-11-17T06:34:58.2308790Z Test Case '-[CareerFinderUITests.CareerFinderUITests testDiscoverySaveFlowsIntoSavedAndApply]' passed (69.913 seconds).
+2026-11-17T06:34:58.2416950Z Test Case '-[CareerFinderUITests.CareerFinderUITests testFreshStartAndFiveTabs]' started.
+2026-11-17T06:35:34.5833510Z Test Case '-[CareerFinderUITests.CareerFinderUITests testFreshStartAndFiveTabs]' passed (36.300 seconds).
+2026-11-17T06:35:34.5985430Z Test Case '-[CareerFinderUITests.CareerFinderUITests testLinkedInProfileDraftAndExternalSearchChoice]' started.
+2026-11-17T06:37:04.9628460Z Test Case '-[CareerFinderUITests.CareerFinderUITests testLinkedInProfileDraftAndExternalSearchChoice]' passed (90.430 seconds).
+2026-11-17T06:37:04.9657130Z Test Case '-[CareerFinderUITests.CareerFinderUITests testOpportunityDiscardRequiresExplicitChoice]' started.
+2026-11-17T06:37:33.7702060Z Test Case '-[CareerFinderUITests.CareerFinderUITests testOpportunityDiscardRequiresExplicitChoice]' passed (28.787 seconds).
+2026-11-17T06:37:33.7831170Z Test Case '-[CareerFinderUITests.CareerFinderUITests testOpportunityDraftKeepSaveAndRestore]' started.
+2026-11-17T06:38:44.9523790Z Test Case '-[CareerFinderUITests.CareerFinderUITests testOpportunityDraftKeepSaveAndRestore]' passed (71.206 seconds).
+2026-11-17T06:38:44.9664430Z Test Case '-[CareerFinderUITests.CareerFinderUITests testPrivateApplicationRecordPersistsAndCorrectionIsExplicit]' started.
+2026-11-17T06:41:09.7070950Z Test Case '-[CareerFinderUITests.CareerFinderUITests testPrivateApplicationRecordPersistsAndCorrectionIsExplicit]' passed (144.715 seconds).
+2026-11-17T06:41:09.7413570Z Test Case '-[CareerFinderUITests.CareerFinderUITests testProfileReadinessAndSimpleConnectionSetup]' started.
+2026-11-17T06:42:16.1475670Z Test Case '-[CareerFinderUITests.CareerFinderUITests testProfileReadinessAndSimpleConnectionSetup]' passed (66.444 seconds).
+2026-11-17T06:42:16.1606600Z Test Case '-[CareerFinderUITests.CareerFinderUITests testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark]' started.
+2026-11-17T06:42:48.3244320Z Test Case '-[CareerFinderUITests.CareerFinderUITests testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark]' passed (32.213 seconds).
+2026-11-17T06:42:48.3359160Z Test Case '-[CareerFinderUITests.CareerFinderUITests testSavedLinkRemovalAtLargestTextKeepsCancelReachable]' started.
+2026-11-17T06:44:34.4860820Z Test Case '-[CareerFinderUITests.CareerFinderUITests testSavedLinkRemovalAtLargestTextKeepsCancelReachable]' passed (106.100 seconds).
+2026-11-17T06:44:34.5010500Z Test Case '-[CareerFinderUITests.CareerFinderUITests testSearchEmptyAndFailurePreservesPreviousResults]' started.
+2026-11-17T06:46:05.5577660Z Test Case '-[CareerFinderUITests.CareerFinderUITests testSearchEmptyAndFailurePreservesPreviousResults]' passed (91.132 seconds).
+2026-11-17T06:46:05.5667110Z Test Suite 'CareerFinderUITests' passed at 2026-11-17 06:46:05.557.
+2026-11-17T06:46:05.5671430Z 	 Executed 13 tests, with 0 failures (0 unexpected) in 1059.010 (1059.038) seconds
+2026-11-17T06:46:05.8268530Z Test Suite 'CareerFinderUITests.xctest' passed at 2026-11-17 06:46:05.559.
+2026-11-17T06:46:05.8302090Z 	 Executed 13 tests, with 0 failures (0 unexpected) in 1059.010 (1059.041) seconds
+2026-11-17T06:46:05.8303130Z Test Suite 'All tests' passed at 2026-11-17 06:46:05.559.
+2026-11-17T06:46:05.8303530Z 	 Executed 13 tests, with 0 failures (0 unexpected) in 1059.010 (1059.042) seconds
+2026-11-17T06:47:00.5186150Z ** TEST SUCCEEDED **
