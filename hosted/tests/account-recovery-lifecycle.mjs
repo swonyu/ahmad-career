@@ -193,8 +193,38 @@ test("actual OAuth success language still requires service confirmation", async 
     h.calls[0].resolve(authStatus({ connected })); await flush();
     assert.equal(h.feedback.length, 1);
     assert.match(h.feedback[0].text, connected ? /is connected to your current/ : /check which connection is active/);
-    if (connected) assert.equal(h.feedback[0].tone, "status"); h.cleanup();
+    assert.equal(h.feedback[0].tone, connected ? "status" : "alert");
+    assert.equal(h.feedback[0].text.includes("SYNTHETIC_UNTRUSTED_TEXT"), false);
+    h.cleanup();
   });
+});
+
+test("actual OAuth negative tones stay alerts unless the service confirms the same provider", async () => {
+  // The production effect and authStatusSchema decide the tone. This does not
+  // render a document and does not treat a string search as a focus result.
+  const cases = [
+    { name: "failed", result: "failed", status: null, tone: "alert", text: /could not be completed/, calls: 0 },
+    { name: "cancelled-polite", result: "cancelled", status: null, tone: "status", text: /cancelled/, calls: 0 },
+    { name: "signed-in-wrong-method", result: "signed_in", status: authStatus({ connected: true, method: "chatgpt" }), tone: "alert", text: /check which connection is active/, calls: 1 },
+    { name: "signed-in-verified", result: "signed_in", status: authStatus({ connected: true, method: "google" }), tone: "status", text: /sign-in is confirmed/, calls: 1 },
+  ];
+  for (const item of cases) {
+    const h = oauthHarness(item.result);
+    await flush();
+    assert.equal(h.calls.length, item.calls, item.name);
+    if (item.calls) assert.equal(h.calls[0].path, "/api/auth/status", item.name);
+    if (item.status) {
+      helpers.authStatusSchema.parse(item.status);
+      h.calls[0].resolve(item.status);
+      await flush();
+    }
+    assert.equal(h.feedback.length, 1, item.name);
+    assert.equal(h.feedback[0].tone, item.tone, item.name);
+    assert.match(h.feedback[0].text, item.text, item.name);
+    assert.equal(h.feedback[0].text.includes("SYNTHETIC_UNTRUSTED_TEXT"), false, item.name);
+    if (item.tone === "alert") assert.doesNotMatch(h.feedback[0].text, /is connected to your current|sign-in is confirmed/);
+    h.cleanup();
+  }
 });
 
 test("actual OAuth cleanup suppresses a late status result", async () => {
@@ -206,7 +236,7 @@ test("actual OAuth cleanup suppresses a late status result", async () => {
 console.log(JSON.stringify({ sources: {
   SessionRecovery: createHash("sha256").update(sessionSource).digest("hex"),
   OAuthFeedback: createHash("sha256").update(oauthSource).digest("hex"),
-}, coverage: "Production handler/effect logic with synthetic promise and browser-navigation ports; no DOM, live authentication or assistive-technology result." }));
+}, coverage: "Production handler/effect tones with synthetic status promises; no DOM, cookie jar, live authentication, or assistive-technology result." }));
 
 test("actual keyed action and rendered button recover from A to B to A without clicking a disabled control", async () => {
   // Select instances using the real wrapper's React element type/key. The button
