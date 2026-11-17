@@ -736,6 +736,14 @@ private struct NativeLegacyNextActionEditor: View {
         store.editNextAction(job,dueOn:dueOn ?? draft.dueOn,actionNote:note ?? draft.actionNote,completed:completed ?? draft.completed)
         notice=""
     }
+    private func reloadNextAction(discardDraft: Bool, announceExisting: Bool) {
+        let before = store.nextActionErrors[job.id]
+        store.beginNextAction(job, discardDraft: discardDraft)
+        guard let error = store.nextActionErrors[job.id] else { return }
+        if announceExisting || error != before {
+            UIAccessibility.post(notification: .announcement, argument: l10n.message(error))
+        }
+    }
     var body:some View {
         Form {
             Section {
@@ -760,13 +768,13 @@ private struct NativeLegacyNextActionEditor: View {
                     notice=store.saveNextAction(job) ? "Next action saved on this phone." : ""
                     UIAccessibility.post(notification:.announcement,argument:l10n.message(store.nextActionErrors[job.id] ?? notice))
                 }.accessibilityIdentifier("legacyAction.save")
-                Button(l10n("Reload saved record")) {if draft.dirty {discard=true} else {store.beginNextAction(job,discardDraft:true);notice=""}}
+                Button(l10n("Reload saved record")) {if draft.dirty {discard=true} else {reloadNextAction(discardDraft:true,announceExisting:true);notice=""}}
             }
         }.navigationTitle(l10n("Your next action")).navigationBarTitleDisplayMode(.inline)
-            .onAppear{store.beginNextAction(job)}
-            .onChange(of:scenePhase){phase in if phase == .active {store.beginNextAction(job)}}
+            .onAppear{reloadNextAction(discardDraft:false,announceExisting:true)}
+            .onChange(of:scenePhase){phase in if phase == .active {reloadNextAction(discardDraft:false,announceExisting:false)}}
             .confirmationDialog(l10n("Discard this unsaved draft and load the saved record?"),isPresented:$discard,titleVisibility:.visible){
-                Button(l10n("Discard draft and reload"),role:.destructive){store.beginNextAction(job,discardDraft:true);notice=""}
+                Button(l10n("Discard draft and reload"),role:.destructive){reloadNextAction(discardDraft:true,announceExisting:true);notice=""}
                 Button(l10n("Keep draft"),role:.cancel){}
             }
     }
@@ -854,6 +862,14 @@ private struct NativeApplicationRecordEditor: View {
     @State private var discard=false
     @State private var savedMessage=""
     private var draft:ApplicationRecordDraft {store.recordDrafts[job.id] ?? ApplicationRecordDraft()}
+    private func reloadRecord(discardDraft: Bool, announceExisting: Bool) {
+        let before = store.recordErrors[job.id]
+        store.beginApplicationRecord(job, discardDraft: discardDraft)
+        guard let error = store.recordErrors[job.id] else { return }
+        if announceExisting || error != before {
+            UIAccessibility.post(notification: .announcement, argument: l10n.message(error))
+        }
+    }
     var body:some View {
         Form {
             Section {
@@ -875,13 +891,13 @@ private struct NativeApplicationRecordEditor: View {
                     savedMessage=store.saveApplicationRecord(job) ? "Application date and note saved on this device. Status is unchanged." : ""
                     UIAccessibility.post(notification:.announcement,argument:l10n.message(store.recordErrors[job.id] ?? savedMessage))
                 }
-                Button(l10n("Reload saved record")) {if draft.dirty {discard=true} else {store.beginApplicationRecord(job,discardDraft:true);savedMessage=""}}
+                Button(l10n("Reload saved record")) {if draft.dirty {discard=true} else {reloadRecord(discardDraft:true,announceExisting:true);savedMessage=""}}
             }
         }.navigationTitle(l10n("Application record")).navigationBarTitleDisplayMode(.inline)
-            .onAppear{store.beginApplicationRecord(job)}
-            .onChange(of:scenePhase){phase in if phase == .active {store.beginApplicationRecord(job)}}
+            .onAppear{reloadRecord(discardDraft:false,announceExisting:true)}
+            .onChange(of:scenePhase){phase in if phase == .active {reloadRecord(discardDraft:false,announceExisting:false)}}
             .confirmationDialog(l10n("Discard this unsaved draft and load the saved record?"),isPresented:$discard,titleVisibility:.visible){
-                Button(l10n("Discard draft and reload"),role:.destructive){store.beginApplicationRecord(job,discardDraft:true);savedMessage=""}
+                Button(l10n("Discard draft and reload"),role:.destructive){reloadRecord(discardDraft:true,announceExisting:true);savedMessage=""}
                 Button(l10n("Keep draft"),role:.cancel){}
             }
     }
