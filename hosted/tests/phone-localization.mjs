@@ -286,6 +286,7 @@ function renderBoardOptions(language) {
   const element = renderPhoneFragment(phoneFragment(node => hasClass(node, 'phone-search-options')), language, {
     catalog: { sources: catalogBoards }, searchSources, filters, customBoard: '',
     SlidersHorizontal: () => null,
+    addEmployerBoard: () => assert.fail("This localization probe must not activate the separate Add action."),
     setFilters: value => changes.push(value),
     setBoardsTouched: value => touched.push(value),
     setNotice: notice => assert.fail(`Unexpected selection notice: ${notice.text}`),
