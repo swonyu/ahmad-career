@@ -3,3 +3,6 @@
 # Preserve the exact upstream font license bytes, including source whitespace.
 hosted/public/brand/Google-Sans-OFL.txt -whitespace
 hosted/public/fonts/Noto-Sans-Arabic-OFL.txt -whitespace
+# Preserve raw terminal evidence, including framework table padding.
+docs/strict-review-evidence/continuation-2026-11-17-cloud/integrated-followup/followup-typecheck.log -whitespace
+docs/strict-review-evidence/continuation-2026-11-17-cloud/record-tools/record-tools-build.log -whitespace

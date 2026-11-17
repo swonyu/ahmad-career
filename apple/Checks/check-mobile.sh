@@ -23,6 +23,10 @@ common=(-swift-version 5 -Onone -sdk "$mac_sdk" -module-cache-path "$check_dir/m
 "$compiler" "${common[@]}" "$task_root/AhmadCareer/CareerFeed.swift" \
   "$task_root/AhmadCareer/NativeCareerStore.swift" "$task_root/Checks/NativeStoreCheck.swift" -o "$check_dir/legacy-store-check"
 "$check_dir/legacy-store-check" "$task_root/AhmadCareer/CareerResearch.json"
+"$compiler" "${common[@]}" "$task_root/AhmadCareer/MobileApplicationClient.swift" \
+  "$task_root/AhmadCareer/NativeLocalization.swift" \
+  "$task_root/Checks/SavedSearchCheck.swift" -o "$check_dir/saved-search-check"
+"$check_dir/saved-search-check" "$task_root/../android/app/src/androidTest/assets/native-saved-search-v1.json"
 
 # Published-branch compatibility: restored data, sidecar tombstones and stale-file protection.
 for compatibility_check in NextActionCheck NativeBackupCheck NativeMergeCompatibilityCheck; do

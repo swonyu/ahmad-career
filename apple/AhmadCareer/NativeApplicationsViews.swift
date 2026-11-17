@@ -743,6 +743,7 @@ struct NativeOpportunityEditor: View {
     }
 }
 
+/// Shared entry from Apply and Settings; connection fields remain private view state.
 struct NativeApplicationConnection: View {
     @NativeLocalization private var l10n
     @ObservedObject var model: NativeApplicationsStore

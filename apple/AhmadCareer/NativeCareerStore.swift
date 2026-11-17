@@ -713,7 +713,7 @@ struct ApplicationAttention: Identifiable {
         }
         return retainingEmployerObservation(current,from:candidates+[editorial])
     }}
-    var allJobs:[CareerJob] {
+    private var allJobs:[CareerJob] {
         var jobs=retainingLegacyJobs(workspace).snapshots
         for job in cachedEmployerJobs {
             if let prior=jobs[job.id] {
@@ -935,12 +935,17 @@ struct ApplicationAttention: Identifiable {
         }
         return text
     }
-    func exportText()->String {
+    /// The same retained selection feeds both language-specific export captions.
+    /// Keep the full merged catalog private; callers receive only exportable jobs.
+    var exportJobs:[CareerJob] {
         let currentJobs=allJobs
         let draftCandidates=recordDrafts.values.filter{$0.dirty}.compactMap(\.job)+nextActionDrafts.values.filter{$0.dirty}.compactMap(\.job)
         var seen=Set(currentJobs.map(\.id))
         let draftJobs=draftCandidates.filter{seen.insert($0.id).inserted}
-        let jobs=(currentJobs+draftJobs).filter{workspace.saved.contains($0.id)||status(for:$0) != "Not started"||applicationRecords[$0.id]?.meaningful==true||recordDrafts[$0.id]?.dirty==true||nextActions[$0.id]?.meaningful==true||nextActionDrafts[$0.id]?.dirty==true||nextActionErrors[$0.id] != nil}
+        return (currentJobs+draftJobs).filter{workspace.saved.contains($0.id)||status(for:$0) != "Not started"||applicationRecords[$0.id]?.meaningful==true||recordDrafts[$0.id]?.dirty==true||nextActions[$0.id]?.meaningful==true||nextActionDrafts[$0.id]?.dirty==true||nextActionErrors[$0.id] != nil}
+    }
+    func exportText()->String {
+        let jobs=exportJobs
         let labels=["profile":"Professional record", "evidence":"Achievement stories", "cv":"Prepare your CV materials", "priority":"Review selected role requirements", "deadline":"Check selected deadlines", "review":"Applications reviewed"]
         let checklist=labels.keys.sorted().map{(workspace.completed.contains($0) ? "[x] " : "[ ] ")+(labels[$0] ?? $0)}.joined(separator:"\n")
         return "CAREER FINDER — APPLICATION NOTES\nLegacy research reference date (retained records only): \(research.checkedAt)\n\n"+profileText+"\n\nPREPARATION CHECKLIST\n"+checklist+"\n\nChecked items record your preparation on this device. Recheck the requirements, dates and materials for each application.\n\nSAVED AND TRACKED APPLICATIONS\n\n"+jobs.map{note(for:$0,includeProfile:false)+applicationRecordText($0.id)+nextActionText($0.id)}.joined(separator:"\n\n——————————\n\n")

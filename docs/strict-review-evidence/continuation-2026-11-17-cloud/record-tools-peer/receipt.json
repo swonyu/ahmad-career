@@ -1,0 +1,26 @@
+{
+  "kind": "independent source-executing peer review",
+  "recordedAt": "2026-11-17T09:56:35.575Z",
+  "root": "/workspace/scratch/5bc6158967e8/career-finder/hosted",
+  "sourceHashes": {
+    "app/phone/record-tools.ts": "910dae464cd8504ed225fe5f68fa6b0750c7b7a9c7b18c6454ff4504a772e9a9",
+    "app/phone/PhoneApp.tsx": "c4852fa70d2305a9227b68a0423aa4366a1b1c20ea1f2255d66c70ea59724345",
+    "app/phone/model.ts": "41905ec3d0be5a7c5e729b88e93f3c81163255515ead724b3a79bfee6f4db13e",
+    "app/i18n/messages.ar.json": "fb952184194ef54551059fcafa2788415429d4a5f16a7fd630dc7d8d95f2567e"
+  },
+  "passed": [
+    "CSV parses with Python stdlib, preserves quoted multiline text, and marks formula triggers",
+    "ICS physical UTF-8 folding, escaped TEXT, required properties, and privacy exclusions",
+    "ICS civil dates reject invalid boundaries and stable UID excludes private fields",
+    "Arabic search compares accents and tatweel across fields without rewriting original data",
+    "Actual calendar handler blocks delayed download after identity, scope, snapshot, record, or epoch change",
+    "Actual CSV handler rejects unconfirmed or mismatched current account and only exports captured records"
+  ],
+  "limits": [
+    "No browser access used after policy denial.",
+    "No real spreadsheet/calendar import was exercised.",
+    "Integration handlers run from actual AST with synthetic surrounding state, not a mounted React application.",
+    "No real accounts, applications, external network, or production writes.",
+    "Formula defense verified for listed import strings; not a universal resave guarantee."
+  ]
+}

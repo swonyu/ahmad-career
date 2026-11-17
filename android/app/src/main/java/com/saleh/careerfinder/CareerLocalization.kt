@@ -15,12 +15,52 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import org.json.JSONArray
+import java.text.Normalizer
 import java.time.LocalDate
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
+
+/** Comparison-only matching; original fields, URLs and opaque identities never change. */
+internal object SavedSearch {
+    fun normalized(value: String): String {
+        val canonical = Normalizer.normalize(value, Normalizer.Form.NFC)
+        val cleaned = buildString {
+            for (character in canonical) {
+                if (character != '\u0640' && character !in '\u064B'..'\u0652' && character != '\u0670') append(character)
+            }
+        }
+        return Normalizer.normalize(cleaned.lowercase(Locale.ROOT), Normalizer.Form.NFC)
+    }
+    fun terms(query: String): List<String> {
+        val terms = mutableListOf<String>()
+        val current = StringBuilder()
+        for (character in normalized(query)) {
+            if (character.isWhitespace()) {
+                if (current.isNotEmpty()) { terms += current.toString(); current.setLength(0) }
+            } else current.append(character)
+        }
+        if (current.isNotEmpty()) terms += current.toString()
+        return terms
+    }
+    fun matches(fields: List<String>, query: String): Boolean = matches(fields, terms(query))
+    fun matches(fields: List<String>, requested: List<String>): Boolean {
+        if (requested.isEmpty()) return true
+        val searchable = normalized(fields.joinToString(" "))
+        return requested.all { searchable.contains(it) }
+    }
+}
+
+/** Inputs come only from the displayed workspace's already-scoped record bundle. */
+internal fun savedOpportunityMatches(job: Opportunity, record: ApplicationRecordBundle?, query: String): Boolean {
+    return savedOpportunityMatches(job, record, SavedSearch.terms(query))
+}
+internal fun savedOpportunityMatches(job: Opportunity, record: ApplicationRecordBundle?, terms: List<String>): Boolean {
+    val notes = record?.takeIf { it.identity == BoundaryPolicy.jobIdentity(job.url) }?.let { listOf(it.current.record.note) + it.alternatives.map { version -> version.record.note } }.orEmpty()
+    return SavedSearch.matches(listOf(job.title, job.company, job.location, job.country) + notes, terms)
+}
 
 internal enum class LanguagePreference(val value: String, val title: String) {
     SYSTEM("system", "Device language"), ENGLISH("en", "English"), ARABIC("ar", "العربية");

@@ -132,6 +132,51 @@ export function createOAuthHandler({fetchImpl = fetch, clock = Date.now} = {}) {
     return {...claims,email};
   }
 
+  async function statusConnections(request, env, identity, startedAt) {
+    if (!identity) return [];
+    if (!env.DB) fail('auth_unavailable','Account sign-in is temporarily unavailable.',503);
+    const db = env.DB, stmt = (sql,...args) => db.prepare(sql).bind(...args);
+    const changed = () => fail('account_changed','Your account or workspace changed. Reload to open the current one.',409);
+    const account = await stmt('SELECT generation FROM auth_accounts WHERE owner_id=?',identity.id).first();
+    if (!account) {
+      if (providerSession(identity)) changed();
+      // A new Sites account needs no lifecycle row or generation write. Confirm
+      // absence atomically, so a racing callback/deletion cannot look unlinked.
+      const result = await db.batch([stmt(`SELECT 1 AS allowed
+        WHERE NOT EXISTS(SELECT 1 FROM auth_accounts WHERE owner_id=?)
+        AND NOT EXISTS(SELECT 1 FROM workspaces WHERE owner_id=? AND deleting_at IS NOT NULL)`,identity.id,identity.id)]);
+      if (result[0].results.length !== 1) changed();
+      return [];
+    }
+    const lifecycle = await captureOwnerLifecycle(env,identity.id,{startedAt,now:clock()});
+    // The unique (owner_id, provider) index and two supported provider names
+    // bound the read and lazy initialization to at most two existing links.
+    const rows = (await stmt(`SELECT provider,subject,connection_id FROM auth_identities
+      WHERE owner_id=? AND provider IN ('google','linkedin') LIMIT 2`,identity.id).all()).results;
+    const missing = rows.filter(row => row.connection_id === '');
+    const browserSession = providerSession(identity) ? sha256(cookieValue(request,BROWSER_SESSION_COOKIE)) : null;
+    const eligible = `EXISTS(SELECT 1 FROM auth_accounts WHERE owner_id=? AND generation=?)
+      AND EXISTS(SELECT 1 FROM account_lifecycles WHERE owner_hash=? AND generation=? AND (deleted_at IS NULL OR deleted_at<?))
+      AND NOT EXISTS(SELECT 1 FROM workspaces WHERE owner_id=? AND deleting_at IS NOT NULL)
+      AND (? IS NULL OR EXISTS(SELECT 1 FROM browser_sessions s
+        JOIN auth_accounts a ON a.owner_id=s.owner_id AND a.generation=s.account_generation
+        JOIN auth_identities i ON i.owner_id=s.owner_id AND i.provider=s.provider AND i.subject=s.subject
+        WHERE s.token_hash=? AND s.owner_id=? AND s.provider=? AND s.expires_at>?))`;
+    const args = [identity.id,account.generation,lifecycle.key,lifecycle.generation,startedAt,identity.id,browserSession,browserSession,identity.id,identity.method,clock()];
+    const result = await db.batch([
+      ...missing.map(row => stmt(`UPDATE auth_identities SET connection_id=?
+        WHERE owner_id=? AND provider=? AND subject=? AND connection_id='' AND ${eligible}`,
+        opaqueToken(),identity.id,row.provider,row.subject,...args)),
+      stmt(`SELECT 1 AS allowed WHERE ${eligible}`,...args),
+      stmt(`SELECT provider,display_name,connection_id FROM auth_identities
+        WHERE owner_id=? AND provider IN ('google','linkedin') AND ${eligible} LIMIT 2`,identity.id,...args),
+    ]);
+    // A concurrent initializer may legitimately win every UPDATE. Authority is
+    // checked separately: revoked access must never become an empty success.
+    if (result[missing.length].results.length !== 1) changed();
+    return result[missing.length + 1].results;
+  }
+
   return async function handleOAuth(request, env) {
     const requestStartedAt = clock();
     const url = new URL(request.url), callback = url.pathname.match(/^\/auth\/(google|linkedin)\/callback$/), loginStart = url.pathname.match(/^\/auth\/(google|linkedin)\/start$/);
@@ -144,7 +189,7 @@ export function createOAuthHandler({fetchImpl = fetch, clock = Date.now} = {}) {
       if (!callback && (request.headers.get('origin') && request.headers.get('origin') !== AUTH_ORIGIN || request.headers.get('sec-fetch-site') === 'cross-site')) fail('origin_denied','This request did not come from Career Finder.',403);
       if (url.pathname === '/api/auth/status' && request.method === 'GET') {
         const identity = await resolveBrowserIdentity(request,env,{now:clock()});
-        const rows = identity && env.DB ? (await env.DB.prepare('SELECT provider,display_name,connection_id FROM auth_identities WHERE owner_id=?').bind(identity.id).all()).results : [];
+        const rows = await statusConnections(request,env,identity,requestStartedAt);
         const providers = Object.fromEntries(Object.keys(OAUTH_PROVIDERS).map(provider => { const row = rows.find(row => row.provider === provider); return [provider,{configured:Boolean(env.DB && configured(env,provider)),signInSupported:true,connected:Boolean(row),...(row?.connection_id ? {connectionId:row.connection_id} : {}),...(row?.display_name ? {displayName:row.display_name} : {})}]; }));
         return json(200,{ok:true,account:identity,providers});
       }

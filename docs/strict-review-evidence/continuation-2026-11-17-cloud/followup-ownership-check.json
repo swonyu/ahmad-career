@@ -1,0 +1,18 @@
+{
+  "shared_development_head": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+  "publishing_head": "fd9c5399f2b7001b234b3b86bf72e2b36b5114c1",
+  "candidate_remote_head": "eebe748cb5afca0efcb9389255400a00cf5a480a",
+  "repository_visibility": "public",
+  "remote_transfer_checkout": "/tmp/career-finder-continuation-20261117-5a9yff_m/repo",
+  "remote_checkout_mode": "intentional --no-checkout object transfer relay; staged deletion list is expected from empty index, not removed source work",
+  "shared_build_lock_present": false,
+  "relevant_build_or_git_processes": [],
+  "shared_mac_build_started": false,
+  "shared_source_or_signing_changed": false,
+  "publishing_acknowledged": false,
+  "note": "Fresh read-only observations within recorded clock bounds, not a reservation; recheck before next push.",
+  "observation_window_utc": {
+    "after": "2026-11-17T09:54:29Z",
+    "before": "2026-11-17T09:59:41Z"
+  }
+}

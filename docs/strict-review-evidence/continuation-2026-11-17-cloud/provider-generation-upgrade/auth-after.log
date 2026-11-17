@@ -1,0 +1,56 @@
+PASS Schema-only connection-generation upgrade and bounded status initialization preserve existing links, accounts and active browser sessions
+PASS Previous-worker callbacks after migration receive a stable connection generation; recreating the link rotates it
+PASS Legacy connection generations initialize only the confirmed owner and remain stable across concurrent status reads
+PASS Delayed provider status rejects revoked, expired and deleted/recreated authority instead of exposing replacement connections
+PASS A delayed Sites status cannot initialize a recreated owner or treat a racing new account as unlinked
+PASS Sites status checks deleting workspaces even without provider-account metadata and leaves new accounts unmodified
+PASS A link replaced while legacy initialization waits keeps the new insert generation and the old subject is not recreated
+PASS A failed lazy initialization rolls back both provider IDs and reports failure instead of empty connections
+PASS Unconfigured providers stay unavailable; Sites identity and verified SSR boundaries remain intact
+PASS Google authorization code uses S256, nonce, hashed one-use state and a private opaque browser session
+PASS Provider subject is stable; matching email never merges Google subjects or an existing Sites owner
+PASS Explicit Google linking preserves the exact Sites owner and subsequent Google login returns that owner
+PASS Explicit LinkedIn linking retains basic openid/profile scopes without email collection or a new login session
+PASS Direct LinkedIn sign-in requests email, validates a signed subject and creates its own private session
+PASS LinkedIn userinfo supplies optional verified email only when its subject matches the signed ID token
+PASS Absent, unverified and invalid LinkedIn email fails with a safe fallback and no partial account or session
+PASS LinkedIn userinfo rejects redirects, oversized bodies and invalid signed claims without identity writes
+PASS LinkedIn subjects never merge by email and explicit ChatGPT or Google links recover their original owner
+PASS LinkedIn original/current login cannot be removed and expired LinkedIn cookies never reveal a background Sites owner
+PASS Revoking LinkedIn sign-in during a Google linking callback prevents a late connection
+PASS Deleting a LinkedIn owner while optional userinfo is pending cannot recreate its deleted account
+PASS Published LinkedIn login and consent cancellation codes spend state without exchanging a token
+PASS State is browser-bound, provider-bound, one-use and atomically claimed across concurrent callbacks
+PASS Actual RS256 verification rejects wrong audience, issuer, nonce, lifetime, authorized party, signature and unverified email
+PASS OIDC subject bytes reject non-ASCII aliases before any account or session is written
+PASS Cancellation consumes state without exchanging a code; hostile error descriptions never reach the redirect
+PASS Account changes between connect and callback fail before provider exchange; links cannot transfer between owners
+PASS Concurrent links for the same provider subject create one owner association and never merge either account
+PASS A Google cookie suppresses Sites fallback; mismatched sign-out fails and invalid-cookie recovery clears no Sites account
+PASS Sole Google login cannot be unlinked; Sites-owned Google unlink revokes its sessions and in-flight connections
+PASS A displayed connection ID is required; old clients and mismatched confirmations cannot disconnect a link
+PASS A valid LinkedIn disconnect preserves Google sign-in and another owner connection
+PASS A final-statement database failure rolls back the entire disconnect and cannot report success
+PASS A delayed disconnect cannot remove a deliberately recreated owner generation
+PASS A same-owner same-subject relink has a fresh connection ID and survives an older disconnect
+PASS Revoking a Google session while disconnect is delayed preserves the selected LinkedIn connection
+PASS A disconnect whose first lifecycle lookup follows deletion cannot affect a fresh link
+PASS Deleting an account during provider I/O prevents a late link from recreating removed identity metadata
+PASS Deletion between callback binding and its atomic commit cannot resurrect a Google account or issue a cookie
+PASS Short-lived opaque deletion fences block anonymous logins begun before deletion; a deliberate later login starts a new blank account
+PASS Revoking the Google browser session during a LinkedIn exchange prevents a late account connection
+PASS Identity export is owner-scoped and credential-free; account deletion works before any workspace exists
+PASS Guarded deletion preserves identities when a workspace appeared or the expected account generation changed
+PASS Deletion beginning after the connect precheck cannot create a new empty identity generation
+PASS A stale Google connect request cannot recreate an account deleted after initial cookie resolution
+PASS Revocation immediately before transaction insertion cannot leave a new pending Google-owned link
+PASS Opaque lifecycle generations reject requests that first read after deletion and permit a later deliberate request
+PASS A Sites link whose first lifecycle lookup occurs after deletion cannot recreate removed metadata
+PASS A captured Sites lifecycle cannot create a link after deletion rotates its generation
+PASS A lifecycle rotation immediately before OAuth commit fences identity writes even before other deletion statements run
+PASS A repeated deletion using an older lifecycle generation cannot remove a deliberately recreated Sites connection
+PASS Exact-origin JSON mutation, top-level navigation, safe return paths and callback expiry remain enforced
+PASS Provider redirects and oversized token responses are refused without retry or following any URL
+PASS A stalled provider body is cancelled within the bounded deadline and its claimed transaction cannot replay
+PASS Shared rate budgets reject excess starts and never retain raw network addresses
+Authentication verification: 55 groups passed against isolated D1 and actual synthetic RS256 signatures. No live provider or employer requests.

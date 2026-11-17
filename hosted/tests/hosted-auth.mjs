@@ -84,6 +84,7 @@ async function check(name,action) { await reset(); await action(); groups.push(n
 const count = async table => (await db.prepare('SELECT COUNT(*) AS n FROM '+table).first()).n;
 const tokenRequests = () => requests.filter(request => request.method === 'POST').length;
 const connectionId = async (ownerId,provider) => (await db.prepare('SELECT connection_id FROM auth_identities WHERE owner_id=? AND provider=?').bind(ownerId,provider).first())?.connection_id;
+function identityMetadata(row) { const copy={...row}; delete copy.connection_id; return copy; }
 async function retireOwner(ownerId) {
   const previous=await captureOwnerLifecycle(env,ownerId,{startedAt:time,now:time}),next={key:previous.key,generation:randomUUID()};
   await db.batch([
@@ -105,15 +106,27 @@ try {
       await db.prepare('INSERT INTO browser_sessions(token_hash,id,owner_id,account_generation,provider,subject,created_at,expires_at) VALUES(?,?,?,?,?,?,?,?)').bind(sha256('a'.repeat(64)),randomUUID(),'synthetic-upgrade','upgrade-generation','google','upgrade-google',time,time+AUTH_LIMITS.sessionMilliseconds).run();
       legacy={identities:(await db.prepare('SELECT * FROM auth_identities ORDER BY provider').all()).results,sessions:(await db.prepare('SELECT * FROM browser_sessions').all()).results,accounts:(await db.prepare('SELECT * FROM auth_accounts').all()).results};
     }
-    for (const statement of (await readFile(new URL('../drizzle/'+file,import.meta.url),'utf8')).split('--> statement-breakpoint').map(value => value.trim()).filter(Boolean)) await db.prepare(statement).run();
+    const migration = (await readFile(new URL('../drizzle/'+file,import.meta.url),'utf8')).split('--> statement-breakpoint').map(value => value.trim()).filter(Boolean);
+    if (file === '0004_provider_connection_generation.sql') {
+      assert.equal(migration.length,2,'The upgrade contains only bounded schema operations, no standalone data backfill');
+      assert.match(migration[0],/^ALTER TABLE/);
+      assert.match(migration[1].replace(/^--[^\n]*(?:\n|$)/gm,''),/^\s*CREATE TRIGGER/);
+    }
+    for (const statement of migration) await db.prepare(statement).run();
     if (legacy) {
       const current=(await db.prepare('SELECT * FROM auth_identities ORDER BY provider').all()).results;
-      assert.deepEqual(current.map(({connection_id,...row})=>row),legacy.identities);
-      assert(current.every(row=>/^[a-f0-9]{64}$/.test(row.connection_id))); assert.equal(new Set(current.map(row=>row.connection_id)).size,2);
+      assert.deepEqual(current.map(identityMetadata),legacy.identities);
+      assert(current.every(row=>row.connection_id===''),'Schema migration must leave existing identity rows at the constant default');
+      assert.equal((await resolveBrowserIdentity(new Request(AUTH_ORIGIN,{headers:{cookie:BROWSER_SESSION_COOKIE+'='+'a'.repeat(64)}}),{DB:db},{now:time})).id,'synthetic-upgrade');
+      const initialized=await call('/api/auth/status',{cookie:BROWSER_SESSION_COOKIE+'='+'a'.repeat(64),environment:{DB:db},authHandler:createOAuthHandler({clock:()=>time,fetchImpl:()=>{throw Error('Status cannot contact a provider');}})});
+      assert.equal(initialized.status,200);
+      const ids=['google','linkedin'].map(provider=>initialized.data.providers[provider].connectionId);
+      assert(ids.every(id=>/^[a-f0-9]{64}$/.test(id)));assert.equal(new Set(ids).size,2);
+      assert.deepEqual((await db.prepare('SELECT * FROM auth_identities ORDER BY provider').all()).results.map(identityMetadata),legacy.identities);
       assert.deepEqual((await db.prepare('SELECT * FROM browser_sessions').all()).results,legacy.sessions);
       assert.deepEqual((await db.prepare('SELECT * FROM auth_accounts').all()).results,legacy.accounts);
       assert.equal((await resolveBrowserIdentity(new Request(AUTH_ORIGIN,{headers:{cookie:BROWSER_SESSION_COOKIE+'='+'a'.repeat(64)}}),{DB:db},{now:time})).id,'synthetic-upgrade');
-      groups.push('Provider connection-generation migration preserves existing links, accounts and active browser sessions'); console.log('PASS',groups.at(-1));
+      groups.push('Schema-only connection-generation upgrade and bounded status initialization preserve existing links, accounts and active browser sessions'); console.log('PASS',groups.at(-1));
     }
   }
   env={DB:db,CAREER_GOOGLE_CLIENT_ID:'synthetic-google.apps.googleusercontent.com',CAREER_GOOGLE_CLIENT_SECRET:'synthetic-google-secret',CAREER_LINKEDIN_CLIENT_ID:'synthetic-linkedin',CAREER_LINKEDIN_CLIENT_SECRET:'synthetic-linkedin-secret'};
@@ -123,7 +136,7 @@ try {
     await db.prepare('INSERT INTO auth_accounts(owner_id,origin_method,generation,created_at) VALUES(?,?,?,?)').bind(ownerId,'chatgpt','rolling-generation',time).run();
     // The previous deployed callback omits connection_id on insert and updates
     // only display metadata on a same-subject conflict. Exercise that shape
-    // after the one-time migration backfill has already completed.
+    // after the schema-only migration, without relying on a global backfill.
     const legacyWrite=()=>db.prepare(`INSERT INTO auth_identities(provider,subject,subject_hash,owner_id,email,display_name,connected_at,updated_at)
       VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(provider,subject) DO UPDATE SET email=excluded.email,display_name=excluded.display_name,updated_at=excluded.updated_at WHERE auth_identities.owner_id=excluded.owner_id`)
       .bind('linkedin','rolling-subject',sha256('rolling-subject'),ownerId,null,'Synthetic rolling identity',new Date(time).toISOString(),new Date(time).toISOString()).run();
@@ -146,9 +159,103 @@ try {
     assert.equal(requests.length,0,'No external HTTP request is needed for migration coverage');
   });
 
+  await check('Legacy connection generations initialize only the confirmed owner and remain stable across concurrent status reads',async()=>{
+    const user=sites('legacy-status'),other=sites('legacy-other'),ownerId=user['oai-authenticated-user-id'];
+    for(const [provider,headers,subject] of [['google',user,'legacy-google'],['linkedin',user,'legacy-linkedin'],['google',other,'legacy-other-google']]) {
+      const flow=await begin(provider,{user:headers});assert.equal(queryResult((await finish(flow,{claims:{sub:subject}})).response),'connected');
+    }
+    const signed=await login('legacy-google');assert.equal(signed.identity.id,ownerId);
+    // Emulate rows that existed before ADD COLUMN; no production initializer
+    // or trigger can be disabled by a request or environment option.
+    await db.prepare("UPDATE auth_identities SET connection_id=''").run();
+    const before=(await db.prepare('SELECT * FROM auth_identities ORDER BY owner_id,provider').all()).results;
+    const sessions=(await db.prepare('SELECT * FROM browser_sessions').all()).results,accounts=(await db.prepare('SELECT * FROM auth_accounts ORDER BY owner_id').all()).results,requestsBefore=requests.length;
+    const statuses=await Promise.all([call('/api/auth/status',{cookie:signed.cookie}),call('/api/auth/status',{headers:user})]);
+    for(const result of statuses){assert.equal(result.status,200);for(const provider of ['google','linkedin'])assert.match(result.data.providers[provider].connectionId??'',/^[a-f0-9]{64}$/);}
+    assert.deepEqual(statuses[0].data.providers,statuses[1].data.providers);
+    const current=(await db.prepare('SELECT * FROM auth_identities ORDER BY owner_id,provider').all()).results;
+    assert.deepEqual(current.map(identityMetadata),before.map(identityMetadata));
+    assert.equal(current.find(row=>row.owner_id===other['oai-authenticated-user-id']).connection_id,'','Other accounts are not backfilled by this request');
+    assert.deepEqual((await call('/api/auth/status',{cookie:signed.cookie})).data.providers,statuses[0].data.providers);
+    assert.deepEqual((await db.prepare('SELECT * FROM browser_sessions').all()).results,sessions);
+    assert.deepEqual((await db.prepare('SELECT * FROM auth_accounts ORDER BY owner_id').all()).results,accounts);
+    assert.equal(requests.length,requestsBefore,'Status makes no provider request');
+  });
+
+  await check('Delayed provider status rejects revoked, expired and deleted/recreated authority instead of exposing replacement connections',async()=>{
+    for(const provider of ['google','linkedin'])for(const change of ['revoke','expire','recreate']) {
+      const subject=`status-${provider}-${change}`,signed=await login(subject,{provider});
+      await db.prepare("UPDATE auth_identities SET connection_id='' WHERE owner_id=?").bind(signed.identity.id).run();
+      let enter,release,captured=false;const entered=new Promise(resolve=>enter=resolve),gate=new Promise(resolve=>release=resolve);
+      const environment={...env,DB:{batch:statements=>db.batch(statements),prepare(sql){const prepared=db.prepare(sql);if(!sql.startsWith('SELECT s.owner_id'))return prepared;return{bind(...args){const query=prepared.bind(...args);return{async first(){const row=await query.first();if(!captured){captured=true;enter();await gate;}return row;}};}};}}};
+      const pending=call('/api/auth/status',{cookie:signed.cookie,environment});await entered;
+      if(change==='revoke')assert.equal((await call('/api/auth/signout',{method:'POST',cookie:signed.cookie,body:{expectedAccountId:signed.identity.id}})).status,200);
+      else if(change==='expire')time+=AUTH_LIMITS.sessionMilliseconds+1;
+      else {time+=1;await retireOwner(signed.identity.id);time+=1;await login(subject,{provider});}
+      const before=(await db.prepare('SELECT * FROM auth_identities ORDER BY owner_id,provider').all()).results;
+      release();const result=await pending;
+      assert.equal(result.status,409,provider+' '+change);assert.equal(result.data.error.code,'account_changed');assert.equal(result.data.account,undefined);assert.equal(result.data.providers,undefined);
+      assert.deepEqual((await db.prepare('SELECT * FROM auth_identities ORDER BY owner_id,provider').all()).results,before);
+    }
+  });
+
+  await check('A delayed Sites status cannot initialize a recreated owner or treat a racing new account as unlinked',async()=>{
+    for(const existing of [false,true]) {
+      const user=sites('status-generation-'+existing),ownerId=user['oai-authenticated-user-id'];
+      if(existing){const flow=await begin('linkedin',{user});await finish(flow,{claims:{sub:'status-old-owner'}});await db.prepare("UPDATE auth_identities SET connection_id='' WHERE owner_id=?").bind(ownerId).run();}
+      let enter,release;const entered=new Promise(resolve=>enter=resolve),gate=new Promise(resolve=>release=resolve);
+      const environment={...env,DB:{prepare:sql=>db.prepare(sql),async batch(statements){enter();await gate;return db.batch(statements);}}};
+      const pending=call('/api/auth/status',{headers:user,environment});await entered;
+      if(existing){time+=1;await retireOwner(ownerId);}time+=1;
+      const replacement=await begin('linkedin',{user});await finish(replacement,{claims:{sub:'status-new-owner-'+existing}});
+      const before=(await db.prepare('SELECT * FROM auth_identities WHERE owner_id=?').bind(ownerId).all()).results;
+      release();const result=await pending;assert.equal(result.status,409);assert.equal(result.data.error.code,'account_changed');assert.equal(result.data.providers,undefined);
+      assert.deepEqual((await db.prepare('SELECT * FROM auth_identities WHERE owner_id=?').bind(ownerId).all()).results,before);
+    }
+  });
+
+  await check('Sites status checks deleting workspaces even without provider-account metadata and leaves new accounts unmodified',async()=>{
+    const user=sites('status-no-provider'),ownerId=user['oai-authenticated-user-id'];
+    const first=await call('/api/auth/status',{headers:user});assert.equal(first.status,200);assert.equal(first.data.providers.google.connected,false);assert.equal(first.data.providers.linkedin.connected,false);
+    assert.equal(await count('auth_accounts'),0);assert.equal(await count('account_lifecycles'),0);
+    await db.prepare('INSERT INTO workspaces(id,owner_id,owner_email,created_at,profile_json,deleting_at) VALUES(?,?,?,?,?,?)').bind(randomUUID(),ownerId,user['oai-authenticated-user-email'],new Date(time).toISOString(),'{}',new Date(time).toISOString()).run();
+    const deleted=await call('/api/auth/status',{headers:user});assert.equal(deleted.status,409);assert.equal(deleted.data.error.code,'account_changed');assert.equal(deleted.data.providers,undefined);
+    assert.equal(await count('auth_accounts'),0);assert.equal(await count('account_lifecycles'),0);
+  });
+
+  await check('A link replaced while legacy initialization waits keeps the new insert generation and the old subject is not recreated',async()=>{
+    const user=sites('status-relink'),ownerId=user['oai-authenticated-user-id'],flow=await begin('linkedin',{user});await finish(flow,{claims:{sub:'status-old-link'}});
+    await db.prepare("UPDATE auth_identities SET connection_id='' WHERE owner_id=?").bind(ownerId).run();
+    let enter,release;const entered=new Promise(resolve=>enter=resolve),gate=new Promise(resolve=>release=resolve);
+    const environment={...env,DB:{prepare:sql=>db.prepare(sql),async batch(statements){enter();await gate;return db.batch(statements);}}};
+    const pending=call('/api/auth/status',{headers:user,environment});await entered;
+    await db.prepare('DELETE FROM auth_identities WHERE owner_id=? AND provider=?').bind(ownerId,'linkedin').run();
+    const replacement=await begin('linkedin',{user});await finish(replacement,{claims:{sub:'status-new-link'}});
+    const before=(await db.prepare('SELECT * FROM auth_identities WHERE owner_id=?').bind(ownerId).all()).results;
+    release();const result=await pending;assert.equal(result.status,200);assert.equal(result.data.providers.linkedin.connectionId,before[0].connection_id);
+    assert.deepEqual((await db.prepare('SELECT * FROM auth_identities WHERE owner_id=?').bind(ownerId).all()).results,before);
+    assert.equal(before[0].subject,'status-new-link');
+  });
+
+  await check('A failed lazy initialization rolls back both provider IDs and reports failure instead of empty connections',async()=>{
+    const user=sites('status-atomic'),ownerId=user['oai-authenticated-user-id'];
+    for(const provider of ['google','linkedin']){const flow=await begin(provider,{user});await finish(flow,{claims:{sub:'status-atomic-'+provider}});}
+    await db.prepare("UPDATE auth_identities SET connection_id='' WHERE owner_id=?").bind(ownerId).run();
+    await db.prepare(`CREATE TRIGGER synthetic_generation_abort BEFORE UPDATE OF connection_id ON auth_identities
+      WHEN OLD.owner_id='synthetic-status-atomic' AND OLD.provider='linkedin'
+      BEGIN SELECT RAISE(ABORT,'synthetic initialization refusal'); END`).run();
+    try{
+      const result=await call('/api/auth/status',{headers:user});assert.equal(result.status,503);assert.equal(result.data.providers,undefined);
+      assert((await db.prepare('SELECT connection_id FROM auth_identities WHERE owner_id=?').bind(ownerId).all()).results.every(row=>row.connection_id===''));
+    }finally{await db.prepare('DROP TRIGGER synthetic_generation_abort').run();}
+    const result=await call('/api/auth/status',{headers:user});assert.equal(result.status,200);assert.match(result.data.providers.google.connectionId,/^[a-f0-9]{64}$/);assert.match(result.data.providers.linkedin.connectionId,/^[a-f0-9]{64}$/);
+  });
+
   await check('Unconfigured providers stay unavailable; Sites identity and verified SSR boundaries remain intact',async()=>{
     const anonymous=await call('/api/auth/status',{environment:{DB:db}});
     assert.deepEqual(anonymous.data,{ok:true,account:null,providers:{google:{configured:false,signInSupported:true,connected:false},linkedin:{configured:false,signInSupported:true,connected:false}}});
+    const noDatabase=await call('/api/auth/status',{environment:{}});assert.equal(noDatabase.status,200);assert.equal(noDatabase.data.account,null);assert.equal(noDatabase.data.providers.google.configured,false);
+    const unavailable=await call('/api/auth/status',{headers:sites('no-database'),environment:{}});assert.equal(unavailable.status,503);assert.equal(unavailable.data.error.code,'auth_unavailable');assert.equal(unavailable.data.providers,undefined);
     for (const provider of ['google','linkedin']) assert.equal((await call(`/auth/${provider}/start`,{environment:{DB:db}})).status,503);
     assert.equal(requests.length,0);
     const user=sites('alice'),status=await call('/api/auth/status',{headers:user});

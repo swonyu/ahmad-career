@@ -1,0 +1,36 @@
+{
+  "input": {
+    "background": "rgb(25, 28, 41)",
+    "border": "rgb(182, 176, 255)",
+    "bounds": {
+      "bottom": 392.734375,
+      "height": 74,
+      "left": 49,
+      "right": 286,
+      "top": 318.734375,
+      "width": 237,
+      "x": 49,
+      "y": 318.734375
+    },
+    "direction": "ltr",
+    "focused": true,
+    "outline": "rgb(182, 176, 255) solid 3px"
+  },
+  "nav": {
+    "bottom": 844,
+    "height": 148.59375,
+    "left": 15,
+    "right": 320,
+    "top": 695.40625,
+    "width": 305,
+    "x": 15,
+    "y": 695.40625
+  },
+  "root": {
+    "clientWidth": 305,
+    "measuredInset": "148.59375px",
+    "rootTextSize": "32px",
+    "scrollPadding": "180.594px",
+    "scrollWidth": 305
+  }
+}

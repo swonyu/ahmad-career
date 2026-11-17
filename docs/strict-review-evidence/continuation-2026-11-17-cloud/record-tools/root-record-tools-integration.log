@@ -1,0 +1,38 @@
+✔ Saved search finds every term across visible metadata and the active saved note (3.190183ms)
+✔ Saved comparison removes only the agreed Arabic vowel marks and tatweel while preserving distinct letters (0.645012ms)
+✔ CSV is UTF-8 BOM, quoted CRLF data with original Arabic, quotes and multiline notes (5.551209ms)
+✔ CSV visibly neutralizes formula-like text including compatibility characters and leading controls (5.23095ms)
+✔ CSV selects only record fields and translates app labels without translating private content (1.199862ms)
+✔ calendar uses civil DATE and one day even on leap days and the maximum supported year (130.137965ms)
+✔ calendar escapes injected properties and folds long Arabic and emoji by UTF-8 octets (2.883964ms)
+✔ calendar UID is stable for the public job and date without private fields or provider state (6.195291ms)
+✔ actual CSV action exports only the current guest or confirmed account records (96.367738ms)
+▶ actual record exports fail closed before reading unconfirmed, locked, wrong-owner or earlier-workspace data
+  ✔ identity (31.888342ms)
+  ✔ checking (9.953252ms)
+  ✔ locked (14.083412ms)
+  ✔ owner (8.790763ms)
+  ✔ missingOwner (16.934658ms)
+  ✔ olderWorkspace (17.437026ms)
+  ✔ earlierScope (27.199839ms)
+✔ actual record exports fail closed before reading unconfirmed, locked, wrong-owner or earlier-workspace data (127.702772ms)
+▶ actual calendar action rechecks identity, generation, workspace and record after asynchronous hashing
+  ✔ revalidation (14.235171ms)
+  ✔ generation (10.532569ms)
+  ✔ owner (20.363973ms)
+  ✔ workspace (8.718516ms)
+  ✔ snapshot (7.788899ms)
+  ✔ date (8.445713ms)
+  ✔ removal (7.998882ms)
+✔ actual calendar action rechecks identity, generation, workspace and record after asynchronous hashing (79.641013ms)
+✔ actual calendar action accepts a saved record and rejects unsaved editor copies or missing dates (13.911981ms)
+✔ actual Saved selector searches active notes and keeps the existing applied/follow-up filters (11.980621ms)
+✔ new controls stay inside existing disclosures and require a saved valid follow-up day (44.764258ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1618.39339

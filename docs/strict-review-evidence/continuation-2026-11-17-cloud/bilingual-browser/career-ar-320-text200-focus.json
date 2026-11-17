@@ -1,0 +1,28 @@
+{
+  "name": "Arabic 320px text 200% keyboard Email",
+  "input": {
+    "dir": "ltr",
+    "focused": true,
+    "rect": {
+      "bottom": 383.203125,
+      "height": 74,
+      "left": 49,
+      "right": 286,
+      "top": 309.203125,
+      "width": 237,
+      "x": 49,
+      "y": 309.203125
+    }
+  },
+  "nav": {
+    "bottom": 844,
+    "height": 167.1875,
+    "left": 15,
+    "right": 320,
+    "top": 676.8125,
+    "width": 305,
+    "x": 15,
+    "y": 676.8125
+  },
+  "rootStyle": "--phone-viewport-inset: 167.1875px; font-size: 200%;"
+}

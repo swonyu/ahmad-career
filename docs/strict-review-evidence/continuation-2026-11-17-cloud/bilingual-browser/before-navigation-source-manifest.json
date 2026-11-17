@@ -1,0 +1,43 @@
+{
+  "scope": "Synthetic responsive/privacy fixture; actual React PhoneApp/components/CSS; not live acceptance",
+  "sourceRoot": "/workspace/scratch/5bc6158967e8/career-finder/hosted",
+  "sourceHashes": {
+    "app/i18n/messages.ar.json": "d64fad0202a23f4c85371f8760ccca3a4b66181b858461d99334248caff60cd2",
+    "app/i18n/core.ts": "b0bf5274df224c413cee11bc4a9afca958063c7ea30c2a2c6b03b95366c8292c",
+    "app/i18n/LocaleProvider.tsx": "83a5d510ab5ea9cb89b7c9e10f2d8491ed797c8705d6f53f73c730aac0f8d038",
+    "app/phone/model.ts": "41905ec3d0be5a7c5e729b88e93f3c81163255515ead724b3a79bfee6f4db13e",
+    "app/components/provider-auth.ts": "0ba0fd4a2718cf32cc8c9f5f23e7b2ab271918009435a3aac38bdf805db651e9",
+    "app/components/OAuthFeedback.tsx": "58ebf1b3b1f664aa1eefad0c65027426b28b2002a32cb2d341d95e366e408b6e",
+    "app/components/SiteFrame.tsx": "2489463823ca4208b8be44aec663a8edcb0a467cd3fb386876c6099c5067d0e5",
+    "app/components/GoogleSignInArtwork.tsx": "670d2db7e92bb3fbac2f8b15448ba02594c5ecf326bfec4d223c8ee7f0f2f0d5",
+    "app/components/SessionRecovery.tsx": "d2ee64029c17789271e09c141b9b850bc92a11ae90ff9901e80f1e8ff387a095",
+    "app/components/SignInOptions.tsx": "575ac7d47783bc6c6cdc5600c60aa0740f45ac67899d0ae937f4cb748e0cf2bc",
+    "app/components/appearance.ts": "45e2ba8ef7ceff6af7565018c7afee5d8f1517872ed54f714675fe6d465444d4",
+    "app/components/ThemeSettings.tsx": "679fa8912ca59c33518781c32f062fd8c9e1b42cb07b5602251a595ccf8edbe9",
+    "app/components/LanguageSettings.tsx": "8e981621da9e144e2a4e33543f953fabfc464a28d2aa8f4060f47229d7ab60b3",
+    "app/components/provider-change.ts": "586e572c2a84f11eace92150d3f0d249128cb509cc59847b380e500223327fcc",
+    "app/components/ProviderConnections.tsx": "3557105eb0e50da4268e584d80cf8f8447fcf060ac63f66e9a2bec110e43d06e",
+    "app/components/SignOutButton.tsx": "a54e2389f4538de2d7b7b36dcf40d6eab1989b07b340d1bac63230a95c1abae0",
+    "app/phone/vault.ts": "1c45092458fe9f56ee84925091342f3c5f920800409965a7a99ab32b07138c95",
+    "app/phone/safety.ts": "8571c8e0f1625e50fd2d1749ab7cd10aca57f8b24c16107e6179437154eb4c4f",
+    "app/phone/navigation-inset.ts": "f7d92f4bf6889ba528d976b77266d0757aca781bb5c93474fc5fe7569f5973aa",
+    "app/phone/dispatch.ts": "da885e77dcac471bed44b72780fd391054ef46b7701faac4b43a50138b10c64d",
+    "app/phone/batch-stop.ts": "124c30bd93e51c3c66874f530947ec02c3dda9379010588e72d15efc5b24e62c",
+    "app/phone/components.tsx": "e120c2bf4a143f4d2c78595e84d8c2c558102ddede6ff37ba26d5afb76dc4673",
+    "app/phone/PhoneApp.tsx": "ed7a250cdb07f029bd60e8a304981a4ada4bcd9ec94da49c4780f6a2901b857c",
+    "app/globals.css": "5f3ff2d03d7877d07bd05d537f196a83f1341b15f3aebbe1d9afb8f4ed954acf",
+    "app/phone/phone.css": "d04eb6e1bf35db1392927b387b97b1b3fdde3ac3373f214c592d0894d9cbe366",
+    "app/i18n/i18n.css": "c08d6ed5604b8f479c47e4a8f984bd61926a9c8271928754b8777a7d8c7b4e8e",
+    "public/theme-init.js": "ea5a5f149f9221c420fd5165028a18bc177a451435d6ed129d1d6c781e459823"
+  },
+  "storageNames": {
+    "vault": "career-finder-synthetic-bilingual-vault",
+    "safety": "career-finder-synthetic-bilingual-safety",
+    "appearance": "career-finder:test:bilingual:appearance:v1",
+    "language": "career-finder:test:bilingual:language:v1",
+    "languageCookie": "career_finder_test_bilingual_language"
+  },
+  "realHTTPAdaptersIncluded": false,
+  "productionRoutesAdded": 0,
+  "bundleSHA256": "5c95c37b08ce1499fdbfd25ccbf9f3d7ccb77215baf9cf2903ce49cd14ab0073"
+}

@@ -1,0 +1,77 @@
+[
+  {
+    "bounds": {
+      "bottom": 769.203125,
+      "height": 65.796875,
+      "left": 228.5,
+      "right": 310,
+      "top": 703.40625,
+      "width": 81.5,
+      "x": 228.5,
+      "y": 703.40625
+    },
+    "label": "البحث",
+    "minInlineSize": "max-content",
+    "whiteSpace": "nowrap"
+  },
+  {
+    "bounds": {
+      "bottom": 769.203125,
+      "height": 65.796875,
+      "left": 108.6875,
+      "right": 226.5,
+      "top": 703.40625,
+      "width": 117.8125,
+      "x": 108.6875,
+      "y": 703.40625
+    },
+    "label": "المحفوظات",
+    "minInlineSize": "max-content",
+    "whiteSpace": "nowrap"
+  },
+  {
+    "bounds": {
+      "bottom": 769.203125,
+      "height": 65.796875,
+      "left": 25,
+      "right": 106.6875,
+      "top": 703.40625,
+      "width": 81.6875,
+      "x": 25,
+      "y": 703.40625
+    },
+    "label": "التقديم",
+    "minInlineSize": "max-content",
+    "whiteSpace": "nowrap"
+  },
+  {
+    "bounds": {
+      "bottom": 837,
+      "height": 65.796875,
+      "left": 143.53125,
+      "right": 310,
+      "top": 771.203125,
+      "width": 166.46875,
+      "x": 143.53125,
+      "y": 771.203125
+    },
+    "label": "الملف الشخصي",
+    "minInlineSize": "max-content",
+    "whiteSpace": "nowrap"
+  },
+  {
+    "bounds": {
+      "bottom": 837,
+      "height": 65.796875,
+      "left": 25,
+      "right": 141.53125,
+      "top": 771.203125,
+      "width": 116.53125,
+      "x": 25,
+      "y": 771.203125
+    },
+    "label": "الإعدادات",
+    "minInlineSize": "max-content",
+    "whiteSpace": "nowrap"
+  }
+]

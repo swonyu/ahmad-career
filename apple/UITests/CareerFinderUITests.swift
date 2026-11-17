@@ -593,6 +593,32 @@ final class CareerFinderUITests: XCTestCase {
     }
 
     @MainActor
+    func testSavedSearchFindsArabicNotesAndKeepsOriginalText() {
+        let id = UUID().uuidString, title = "Synthetic engineering role"
+        let originalNote = "تَوَاصُل مع جــهة التوظيف CaseTracker"
+        var app = launch(id: id)
+        addLocalOpportunity(in: app, title: title, company: "Élan")
+        tab("Saved", in: app)
+        let row = app.staticTexts[title]; reveal(row, in: app); row.tap()
+        let edit = app.buttons["record.edit"]; reveal(edit, in: app); edit.tap()
+        let note = app.textViews["record.note"]; reveal(note, in: app); replace(note, with: originalNote)
+        app.buttons["Done typing"].tap(); app.buttons["record.save"].tap()
+        XCTAssertTrue(app.buttons["record.edit"].waitForExistence(timeout: 5))
+        app.terminate(); app = launch(id: id)
+        tab("Saved", in: app); top(app)
+        let search = app.searchFields.firstMatch
+        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        replace(search, with: "casetracker تواصل جهة")
+        XCTAssertTrue(app.staticTexts[title].waitForExistence(timeout: 5), "Existing saved search includes original private notes with comparison-only Arabic normalization")
+        replace(search, with: "private-record")
+        XCTAssertTrue(app.staticTexts["No saved roles match this view."].waitForExistence(timeout: 5), "Opaque URL paths are not a search index")
+        replace(search, with: "e\u{0301}lan casetracker")
+        let result = app.staticTexts[title]; reveal(result, in: app); result.tap()
+        XCTAssertTrue(app.staticTexts[originalNote].waitForExistence(timeout: 5), "Matching must preserve the exact saved note")
+        capture("30-saved-search-arabic-notes", app: app)
+    }
+
+    @MainActor
     func testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark() {
         let app = launch(availability: "disabled", orphanRecord: true)
         tab("Saved", in: app)

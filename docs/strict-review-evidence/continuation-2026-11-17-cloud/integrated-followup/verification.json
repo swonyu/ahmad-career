@@ -1,0 +1,42 @@
+{
+  "kind": "integrated follow-up local terminal checks",
+  "source_baseline": "eebe748cb5afca0efcb9389255400a00cf5a480a",
+  "typecheck_exit": 0,
+  "eslint_app_worker_max_warnings_zero_exit": 0,
+  "npm_test_exit": 0,
+  "results": {
+    "auth_groups": 55,
+    "auth_workerd_requests": 30,
+    "synthetic_provider_requests_in_auth_workerd": 12,
+    "application_groups": 63,
+    "discovery_groups": 26,
+    "phone_groups": 19,
+    "node_test_aggregate": 157,
+    "node_test_failed": 0,
+    "pdf_readability_tests": 6,
+    "vault_groups": 33,
+    "real_employer_requests": 0
+  },
+  "native_resource_contracts": 8,
+  "native_ci_for_followup": "pending",
+  "source_sha256": {
+    "hosted/server/oauth.mjs": "00944a1b4bb8288ac7a2c4d1410c885ced2652f9d0aa0b1fe3e4ff01a95dcf83",
+    "hosted/server/identity.mjs": "dc7b5843574d64be97829ce05840e515702e13df6f3652aa8d3cd8c058ff702f",
+    "hosted/drizzle/0004_provider_connection_generation.sql": "5e2d86cb79b44e8101f743836a7a7ec58b901b87b96a79159bf30bcbf77f9439",
+    "hosted/app/phone/PhoneApp.tsx": "c4852fa70d2305a9227b68a0423aa4366a1b1c20ea1f2255d66c70ea59724345",
+    "hosted/app/phone/record-tools.ts": "910dae464cd8504ed225fe5f68fa6b0750c7b7a9c7b18c6454ff4504a772e9a9",
+    "hosted/app/i18n/messages.ar.json": "fb952184194ef54551059fcafa2788415429d4a5f16a7fd630dc7d8d95f2567e",
+    "hosted/app/phone/phone.css": "89d8c325e8009fd9842817b0d580db5386f834447f11023e84f7909070c3bbf8",
+    "hosted/package.json": "f856c510331a4dd5767a9004635a87d11aada23fdb2ddd314ce6636961c90e20"
+  },
+  "logs": {
+    "followup-lint.log": "7125f194612fcff2f454c05d848e7cb71facc1967b4d5017e25b34fdee3ba74f",
+    "followup-typecheck.log": "c9014ba170f2161ecee9b3ba8984934aa5bf66e685e29ed495d14ac261d546e9",
+    "followup-tests.log": "bdc8b345b5d5c8c13aa591b22f4cc5092bf8cac5bd539e6ad71d98e1d70e3f93"
+  },
+  "limitations": [
+    "Native runtime requires new exact-commit cloud run.",
+    "Local provider responses are synthetic.",
+    "Browser file completion and physical devices not established."
+  ]
+}

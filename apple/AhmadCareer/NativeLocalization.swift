@@ -1,5 +1,42 @@
-#if os(iOS)
 import Foundation
+
+/// Translate app-owned labels at every typed level, preserving all string payloads.
+func nativeDisplayValue(_ value: ApplicationValue?, appCopy: (String) -> String) -> String {
+    guard let value else { return appCopy("Not provided") }
+    switch value {
+    case .string(let text): return text
+    case .bool(let enabled): return appCopy(enabled ? "Yes" : "No")
+    case .null: return appCopy("Not provided")
+    case .array(let values): return values.map { nativeDisplayValue($0, appCopy: appCopy) }.joined(separator: ", ")
+    case .object: return appCopy("Additional details")
+    case .number: return value.display
+    }
+}
+
+/// Comparison-only Saved search. Never use this value as a record key or exported text.
+enum NativeSavedSearch {
+    static func normalized(_ value: String) -> String {
+        let canonical = value.precomposedStringWithCanonicalMapping
+        let scalars = canonical.unicodeScalars.filter { scalar in
+            scalar.value != 0x0640 && !(0x064B...0x0652).contains(scalar.value) && scalar.value != 0x0670
+        }
+        return String(String.UnicodeScalarView(scalars)).lowercased(with: Locale(identifier: "en_US_POSIX"))
+            .precomposedStringWithCanonicalMapping
+    }
+    static func terms(_ query: String) -> [String] {
+        normalized(query).split(whereSeparator: { $0.isWhitespace }).map(String.init)
+    }
+    static func matches(_ fields: [String], query: String) -> Bool {
+        matches(fields, terms: terms(query))
+    }
+    static func matches(_ fields: [String], terms requested: [String]) -> Bool {
+        guard !requested.isEmpty else { return true }
+        let searchable = normalized(fields.joined(separator: " "))
+        return requested.allSatisfy { searchable.contains($0) }
+    }
+}
+
+#if os(iOS)
 import SwiftUI
 
 /// A display preference only: accounts, workspace records and wire values are unchanged.
@@ -102,15 +139,9 @@ struct NativeCopy {
         }
         return text
     }
-    /// Only typed service booleans/null are app copy; string payload fields stay original.
+    /// Typed labels and container captions are app copy; string payload fields stay original.
     func displayValue(_ value: ApplicationValue?) -> String {
-        guard let value else { return self("Not provided") }
-        switch value {
-        case .string(let text): return text
-        case .bool(let enabled): return self(enabled ? "Yes" : "No")
-        case .null: return self("Not provided")
-        default: return value.display
-        }
+        nativeDisplayValue(value, appCopy: { self($0) })
     }
     func format(_ key: String, _ arguments: [String]) -> String {
         interpolate(isArabic ? value(key) ?? key : key, arguments)
@@ -219,11 +250,7 @@ extension NativeCopy {
     }
     @MainActor func exportNotes(from store: NativeCareerStore) -> String {
         guard isArabic else { return store.exportText() }
-        let current = store.allJobs
-        let draftCandidates=store.recordDrafts.values.filter{$0.dirty}.compactMap(\.job)+store.nextActionDrafts.values.filter{$0.dirty}.compactMap(\.job)
-        var seen=Set(current.map(\.id))
-        let draftJobs=draftCandidates.filter{seen.insert($0.id).inserted}
-        let jobs=(current+draftJobs).filter{store.workspace.saved.contains($0.id) || store.status(for:$0) != "Not started" || store.applicationRecords[$0.id]?.meaningful==true || store.recordDrafts[$0.id]?.dirty==true || store.nextActions[$0.id]?.meaningful==true || store.nextActionDrafts[$0.id]?.dirty==true || store.nextActionErrors[$0.id] != nil}
+        let jobs = store.exportJobs
         let labels = ["profile": "Professional record", "evidence": "Achievement stories", "cv": "Prepare your CV materials", "priority": "Review selected role requirements", "deadline": "Check selected deadlines", "review": "Applications reviewed"]
         let checklist = labels.keys.sorted().map { (store.workspace.completed.contains($0) ? "[x] " : "[ ] ") + self(labels[$0] ?? $0) }.joined(separator: "\n")
         return format("CAREER FINDER — APPLICATION NOTES\nLegacy research reference date (retained records only): {0}\n\n", [sourceDate(store.research.checkedAt, profile: store.workspace.profile)])
