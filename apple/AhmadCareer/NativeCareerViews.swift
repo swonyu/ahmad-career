@@ -1168,6 +1168,7 @@ private struct NativeProfileEditor: View {
     @State private var original: NativeProfile
     @State private var draft: NativeProfile
     @State private var confirmDiscard = false
+    @State private var announcedValidation: [String] = []
     @FocusState private var focused: Bool
     init(profile: NativeProfile) { _original = State(initialValue: profile); _draft = State(initialValue: profile) }
     private func countryName(_ code: String) -> String { l10n.locale.localizedString(forRegionCode: code) ?? code }
@@ -1179,6 +1180,24 @@ private struct NativeProfileEditor: View {
         let years = draft.years.trimmingCharacters(in: .whitespacesAndNewlines)
         if years.isEmpty { return true }
         return NativeMoney.parse(years.replacingOccurrences(of: ",", with: "."), limit: 60) != nil
+    }
+    private var salaryCriteriaVisible: Bool { draft.minimumMonthlySAR != nil || draft.unknownSalary != nil }
+    private func planningPreference(_ error: String) -> Bool {
+        error == "Choose a planning currency from the list." || error == "Choose monthly or annual planning amounts." || error == "Choose a recognized display time zone."
+    }
+    private var validationMessages: [String] {
+        var messages = [String]()
+        if let error = draft.preferenceError { messages.append(error) }
+        if let error = draft.criteriaError, error != draft.preferenceError { messages.append(error) }
+        if !validYears { messages.append("Enter a number from 0 to 60, or leave blank.") }
+        if draft.degree.count > 300 { messages.append("Qualifications exceed 300 characters. Shorten this field before saving.") }
+        if draft.skills.count > 3_000 { messages.append("Shorten tools and responsibilities before saving.") }
+        if draft.achievements.count > 5_000 { messages.append("Shorten achievements before saving.") }
+        return messages
+    }
+    private func speakValidation(_ text: String) {
+        let spoken = draft.preferenceError == text || draft.criteriaError == text ? l10n.message(text) : l10n(text)
+        UIAccessibility.post(notification: .announcement, argument: spoken)
     }
     var body: some View {
         NavigationStack {
@@ -1193,12 +1212,17 @@ private struct NativeProfileEditor: View {
                         Text(l10n("Any country or region")).tag("")
                         ForEach(NativeProfile.countryCodes.sorted { countryName($0) < countryName($1) }, id: \.self) { code in Text(l10n.format("{0} ({1})", [String(describing: countryName(code)), String(describing: code)])).tag(code) }
                     }
+                    if let error = draft.preferenceError, ["Choose a country or region from the list.", "These preferences use an unsupported version. Original data is preserved."].contains(error) { Label(l10n.message(error), systemImage: "exclamationmark.circle").font(.caption) }
                     TextField(l10n("City text, if relevant"), text: Binding(get: { draft.effectiveCity }, set: { draft.targetCity = $0 })).focused($focused)
                         .accessibilityLabel(l10n("Preferred city text, optional"))
+                    if draft.preferenceError == "Use up to 100 characters for the city." { Label(l10n.message("Use up to 100 characters for the city."), systemImage: "exclamationmark.circle").font(.caption) }
                     Text(l10n("Matches returned location text only. Confirm the worksite and spelling with the employer.")).font(.caption).foregroundStyle(.secondary)
                     TextField(l10n("Role keywords"), text: Binding(get: { draft.roleKeywords ?? "" }, set: { draft.roleKeywords = $0 })).focused($focused)
                         .accessibilityLabel(l10n("Role keywords, optional"))
+                    if draft.preferenceError == "Use up to 200 characters for role keywords." { Label(l10n.message("Use up to 200 characters for role keywords."), systemImage: "exclamationmark.circle").font(.caption) }
                     Text(l10n("Every space-separated word must occur in a returned role title or subtitle. This does not establish eligibility.")).font(.caption).foregroundStyle(.secondary)
+                    if let error = draft.preferenceError, !planningPreference(error), !["Choose a country or region from the list.", "These preferences use an unsupported version. Original data is preserved.", "Use up to 100 characters for the city.", "Use up to 200 characters for role keywords."].contains(error) { Label(l10n.message(error), systemImage: "exclamationmark.circle").font(.caption) }
+                    if let error = draft.criteriaError, draft.preferenceError == nil, !salaryCriteriaVisible { Label(l10n.message(error), systemImage: "exclamationmark.circle").font(.caption) }
                 } header: { Text(l10n("Country, city and role preferences")) } footer: {
                     Text(l10n("Preferences for your planning notes and earlier records. The Search tab uses its own explicit role, location and employer-board choices. These notes do not affect saved application records."))
                 }
@@ -1207,19 +1231,22 @@ private struct NativeProfileEditor: View {
                         Text(l10n("Choose a currency")).tag("")
                         ForEach(NativeProfile.currencyCodes, id: \.self) { Text($0).tag($0) }
                     }
+                    if draft.preferenceError == "Choose a planning currency from the list." { Label(l10n.message("Choose a planning currency from the list."), systemImage: "exclamationmark.circle").font(.caption) }
                     Picker(l10n("Planning amount period"), selection: Binding(get: { draft.effectivePayPeriod }, set: { draft.planningPayPeriod = $0 })) {
                         Text(l10n("Monthly fixed amounts")).tag("monthly")
                         Text(l10n("Annual fixed amounts")).tag("annual")
                     }
+                    if draft.preferenceError == "Choose monthly or annual planning amounts." { Label(l10n.message("Choose monthly or annual planning amounts."), systemImage: "exclamationmark.circle").font(.caption) }
                     Text(l10n("Only a default for your local offer calculator. Existing SAR criteria and source evidence stay SAR; no conversion is performed.")).font(.caption).foregroundStyle(.secondary)
                     Picker(l10n("Display time zone"), selection: Binding(get: { draft.displayTimeZone ?? "Asia/Riyadh" }, set: { draft.displayTimeZone = $0 })) {
                         Text(l10n.format("Device time zone ({0})", [String(describing: TimeZone.current.identifier)])).tag("")
                         ForEach(displayZones, id: \.self) { Text(l10n($0)).tag($0) }
                     }
+                    if draft.preferenceError == "Choose a recognized display time zone." { Label(l10n.message("Choose a recognized display time zone."), systemImage: "exclamationmark.circle").font(.caption) }
                 } header: { Text(l10n("Planning and display")) } footer: {
                     Text(l10n("Display zone applies to timestamps with an explicit offset. Source date-only deadlines keep their published date. Existing application-date validation still uses the Riyadh day; dates are never shifted."))
                 }
-                if draft.minimumMonthlySAR != nil || draft.unknownSalary != nil {
+                if salaryCriteriaVisible {
                 Section {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(l10n("Minimum monthly pay, SAR")).font(.caption).foregroundStyle(.secondary)
@@ -1232,7 +1259,7 @@ private struct NativeProfileEditor: View {
                             Text(l10n("Hide unverified earlier leads")).tag("hide")
                         }
                     }
-                    if let error = draft.criteriaError { Label(l10n.message(error), systemImage: "exclamationmark.circle").font(.caption) }
+                    if let error = draft.criteriaError, error != draft.preferenceError { Label(l10n.message(error), systemImage: "exclamationmark.circle").font(.caption) }
                 } header: { Text(l10n("Earlier salary criteria · monthly SAR")) } footer: {
                     Text(l10n("This filter stays monthly SAR regardless of planning currency. Use whole SAR; blank or zero means no minimum. Confirm basic salary versus fixed package. This retained preference does not filter the new public board search. It stays on this device and is excluded from discovery requests and application notes."))
                 }
@@ -1275,14 +1302,23 @@ private struct NativeProfileEditor: View {
         }
         .interactiveDismissDisabled(dirty)
         .onAppear {
+            announcedValidation = validationMessages
             if hasConflict {
                 UIAccessibility.post(notification: .announcement, argument: l10n("Keep a copy of any draft text you need, then cancel and reopen this editor to use the latest profile. Your draft has not been saved."))
+            } else if let text = validationMessages.first {
+                speakValidation(text)
             }
         }
         .onChange(of: hasConflict) { conflict in
             if conflict {
                 UIAccessibility.post(notification: .announcement, argument: l10n("Keep a copy of any draft text you need, then cancel and reopen this editor to use the latest profile. Your draft has not been saved."))
             }
+        }
+        .onChange(of: validationMessages) { messages in
+            let added = messages.filter { !announcedValidation.contains($0) }
+            announcedValidation = messages
+            guard !hasConflict, let text = added.first else { return }
+            speakValidation(text)
         }
         .confirmationDialog(l10n("Discard unsaved profile changes?"), isPresented: $confirmDiscard, titleVisibility: .visible) {
             Button(l10n("Discard changes"), role: .destructive) { dismiss() }
