@@ -130,8 +130,10 @@ class ApplicationRecordRegressionTest {
         main { model.openApplicationRecord(localJob) }
         edit(model) { it.copy(stage = ApplicationStage.APPLIED, appliedDate = "2024-02-29", followUpDate = "2026-12-01", note = "Private interview note") }
         main { model.closeApplicationRecord() }
-        assertEquals(original, store.records["workspace-unpaired"])
+        assertTrue(model.state.value.applicationRecordEditor!!.confirmClose)
+        assertEquals(JSONObject(original!!).getJSONObject("applicationRecords").toString(), store.read("workspace-unpaired")!!.getJSONObject("applicationRecords").toString())
         assertTrue(model.state.value.applicationRecords.isEmpty())
+        main { model.discardApplicationRecordDraft(model.state.value.applicationRecordEditor!!.token) }; await { !model.state.value.busy }
         main { model.openApplicationRecord(localJob) }
         edit(model) { it.copy(stage = ApplicationStage.APPLIED, appliedDate = "2024-02-29", followUpDate = "2026-12-01", note = "Private interview note") }
         save(model)
@@ -163,15 +165,15 @@ class ApplicationRecordRegressionTest {
         val before = store.records["workspace-unpaired"]
         main { model.openApplicationRecord(localJob) }; edit(model) { it.copy(stage = ApplicationStage.SAVED) }; save(model)
         assertNotNull(model.state.value.applicationRecordEditor!!.pendingNotApplied)
-        assertEquals(before, store.records["workspace-unpaired"])
+        assertEquals(JSONObject(before!!).getJSONObject("applicationRecords").toString(), store.read("workspace-unpaired")!!.getJSONObject("applicationRecords").toString())
         main { model.keepApplicationRecord(model.state.value.applicationRecordEditor!!.token) }
-        assertEquals(before, store.records["workspace-unpaired"])
+        assertEquals(JSONObject(before!!).getJSONObject("applicationRecords").toString(), store.read("workspace-unpaired")!!.getJSONObject("applicationRecords").toString())
         assertTrue(model.state.value.applicationRecords.getValue(identity()).appliedElsewhere)
         edit(model) { it.copy(stage = ApplicationStage.SAVED) }; save(model)
         val token = model.state.value.applicationRecordEditor!!.token
         edit(model) { it.copy(note = "Changed after confirmation opened") }
         main { model.saveApplicationRecord(true, token) }; await { !model.state.value.busy }
-        assertEquals(before, store.records["workspace-unpaired"])
+        assertEquals(JSONObject(before!!).getJSONObject("applicationRecords").toString(), store.read("workspace-unpaired")!!.getJSONObject("applicationRecords").toString())
         assertTrue(model.state.value.applicationRecords.getValue(identity()).appliedElsewhere)
         save(model)
         main { model.saveApplicationRecord(true, token) }; await { !model.state.value.busy }
@@ -289,7 +291,7 @@ class ApplicationRecordRegressionTest {
         val model = model(store, service); val original = store.records[key(connection)]
         main { model.openApplicationRecord(job) }; edit(model) { it.copy(stage = ApplicationStage.APPLIED, note = "Kept editor draft") }; save(model)
         assertTrue(model.state.value.error.orEmpty().contains("Stop active Auto Apply"))
-        assertEquals(original, store.records[key(connection)])
+        assertEquals(JSONObject(original!!).getJSONObject("applicationRecords").toString(), store.read(key(connection))!!.getJSONObject("applicationRecords").toString())
         assertEquals("Kept editor draft", model.state.value.applicationRecordEditor!!.draft.note)
         assertFalse(job.id in model.state.value.manualApplied)
         edit(model) { it.copy(stage = ApplicationStage.SAVED) }; save(model)
@@ -461,15 +463,16 @@ class ApplicationRecordRegressionTest {
     }
 
     @Test fun invalidDatesAndStaleEditorRevision_doNotOverwriteTheRecord() {
-        assertEquals("x".repeat(1_999), boundedApplicationNote("x".repeat(1_999) + "\uD83D\uDE00"))
+        assertEquals("x".repeat(1_999) + "\uD83D\uDE00", boundedApplicationNote("x".repeat(1_999) + "\uD83D\uDE00"))
+        assertEquals("x".repeat(2_000), boundedApplicationNote("x".repeat(2_000) + "\uD83D\uDE00"))
         assertEquals("x".repeat(1_998) + "\uD83D\uDE00", boundedApplicationNote("x".repeat(1_998) + "\uD83D\uDE00"))
         val record = savedRecord("Current note")
         val store = MemoryStore().apply { records["workspace-unpaired"] = workspace(records = listOf(record)).toString() }
         val model = model(store); val original = store.records["workspace-unpaired"]
         main { model.openApplicationRecord(localJob) }; edit(model) { it.copy(appliedDate = "2025-02-29") }; save(model)
-        assertEquals(original, store.records["workspace-unpaired"])
+        assertEquals(JSONObject(original!!).getJSONObject("applicationRecords").toString(), store.read("workspace-unpaired")!!.getJSONObject("applicationRecords").toString())
         edit(model) { it.copy(appliedDate = "2024-02-29", note = "Malformed \uD800") }; save(model)
-        assertEquals(original, store.records["workspace-unpaired"])
+        assertEquals(JSONObject(original!!).getJSONObject("applicationRecords").toString(), store.read("workspace-unpaired")!!.getJSONObject("applicationRecords").toString())
         edit(model) { it.copy(appliedDate = "2024-02-29", note = "Old editor draft") }
         main { model.markAppliedElsewhere(localJob.id, true) }; await { !model.state.value.busy }
         assertNull(model.state.value.applicationRecordEditor)

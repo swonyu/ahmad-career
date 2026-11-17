@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-11-16T23:46:08.578Z",
+  "observedAt": "2026-11-17T03:49:02.803Z",
   "status": "passed",
   "groups": [
     "A first browser GET returns a blank account view without creating a workspace, salt, throttle or session",
@@ -26,15 +26,15 @@
   "actualWorkerdRequests": 164,
   "syntheticProviderPosts": 2,
   "syntheticProviderGets": 10,
-  "observedR2Reads": 3,
+  "observedR2Reads": 10,
   "observedR2Writes": 3,
   "realEmployerRequests": 0,
   "sourceHashes": {
-    "server/applications.mjs": "34688c0b583e5676b3da29ec1cadd22d5b96de31a93020d8efced3ab048cec3b",
-    "server/provider.mjs": "77dde77dd668fc77612f9aa97d70c23088ddd904597aadfd58f273d6ba610240",
-    "server/validation.mjs": "d415421ca818a7cb4674224c5af1150c6989e2cc9223deb7ec1ed361208ac2ee",
-    "worker/index.ts": "87d5b6b266c34375131f63ef5a34706a2e4f784ca043d75470136a4ba8e08bfe",
-    "tests/hosted-phone.mjs": "d00b292b089de1a6d9b2914f6b208958339aae77f3868c68546c595ee5c16aba",
+    "server/applications.mjs": "1dad2638f722bbee8a42a6c2af39ed4dec2ec86b4f819ebbf542a67dfa7beab8",
+    "server/provider.mjs": "7e078b63ce3acbe2deb3afa99ac1667e671c58ce56b34075317342ef5ebf7101",
+    "server/validation.mjs": "b7b96c7089cbe3c93adcfaed6fd79679b7ea981ca5790ba8b16dc30275825448",
+    "worker/index.ts": "c82a674ffc6fcebef3b1c48d577f0ec5b28a4a4c2b17462c50a7c0d1708ac09e",
+    "tests/hosted-phone.mjs": "f9e528747308354e5e8fbd4c1c7baa0a38e02a9be1a6583619fb77c456b91d00",
     "tests/fixtures/phone-runtime.mjs": "18ac27f3d82f38d9c718ce0919ed0168eb14e64e4806f404ad3120dab88146ac"
   },
   "scope": "Bundled production application handler inside actual workerd with real local D1 and R2. Provider HTTP is synthetic and all real outbound requests are forbidden.",

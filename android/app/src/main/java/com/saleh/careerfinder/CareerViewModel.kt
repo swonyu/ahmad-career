@@ -60,39 +60,58 @@ class CareerViewModel internal constructor(application: Application, private val
     } catch (cancel: CancellationException) { throw cancel }
     catch (error: Exception) { throw PrivateStorageFailure(StorageProblem(name, false), error) }
 
-    private suspend fun writePrivate(name: String, value: JSONObject) = try {
-        withContext(Dispatchers.IO) { vault.write(name, value) }
-    } catch (cancel: CancellationException) { throw cancel }
-    catch (error: Exception) { throw PrivateStorageFailure(StorageProblem(name, true), error) }
+    private suspend fun writePrivate(name: String, value: JSONObject) {
+        // Validation and capacity are recoverable draft errors, not a broken encryption store.
+        requirePrivateCapacity(value)
+        try { withContext(Dispatchers.IO) { vault.write(name, value) } }
+        catch (cancel: CancellationException) { throw cancel }
+        catch (error: PrivateCapacityException) { throw error }
+        catch (error: Exception) { throw PrivateStorageFailure(StorageProblem(name, true), error) }
+    }
+
+    private fun holdsName(connection: Connection?) = connection?.let { "holds-" + BoundaryPolicy.workspaceKey(it.origin, it.workspaceId) } ?: "holds-unpaired"
 
     private suspend fun savedWorkspace(connection: Connection?): CareerUiState {
         val name = workspaceName(connection)
-        val stored = readPrivate(name)
-        if (stored != null && stored.optInt("schema") != 1)
-            throw PrivateStorageFailure(StorageProblem(name, false), IllegalArgumentException("A newer app is needed for this saved workspace."))
-        val saved = stored ?: JSONObject()
+        var stored = readPrivate(name)
+        val aliases = connection?.legacyKeys().orEmpty().map { "workspace-$it" }
+        val existingNames = try { withContext(Dispatchers.IO) { vault.names() } }
+            catch (error: Exception) { throw PrivateStorageFailure(StorageProblem(name, false), error) }
+        val preserved = aliases.filter { it in existingNames }.toMutableList()
+        // A legacy alias is copied only when no canonical workspace exists. Originals are retained.
+        if (stored == null) {
+            val copies = aliases.mapNotNull { alias -> readPrivate(alias)?.let { alias to it } }
+            preserved.addAll(copies.map { it.first })
+            if (copies.size == 1 || copies.isNotEmpty() && copies.map { it.second.toString() }.distinct().size == 1) {
+                val (alias, old) = copies.first()
+                try { WorkspaceStorage.decode(old, connection) }
+                catch (error: Exception) { throw PrivateStorageFailure(StorageProblem(alias, false), error) }
+                writePrivate(name, old)
+                val legacyKey = alias.removePrefix("workspace-")
+                for (prefix in listOf("search-", "holds-")) {
+                    val destination = prefix + name.removePrefix("workspace-")
+                    if (readPrivate(destination) == null) readPrivate(prefix + legacyKey)?.let {
+                        if (prefix == "search-") DiscoverySnapshotCodec.decode(it)
+                        else { require(it.opt("schema") == 1); it.requiredStrings("planIds") }
+                        writePrivate(destination, it)
+                    }
+                }
+                stored = old
+            }
+        }
         return try {
-            val jobs = saved.optJSONArray("jobs").objects().map { job -> Opportunity.fromJson(job) }
-            val legacyApplied = saved.optJSONArray("manualApplied").strings().toSet()
-            require(!saved.has("applicationRecords") || saved.opt("applicationRecords") is JSONObject) { "The saved application records could not be read. Their file is preserved." }
-            val records = ApplicationRecordsCodec.migrateLegacy(jobs, legacyApplied, ApplicationRecordsCodec.decode(saved.optJSONObject("applicationRecords")))
-            CareerUiState(loaded = true, connection = connection,
-            profile = saved.optJSONObject("profile")?.let(ProfileDraft::fromJson) ?: ProfileDraft(),
-            profileDirty = saved.optBoolean("profileDirty"),
-            opportunityDraft = if (saved.has("opportunityDraft")) OpportunityDraft.fromJson(saved.getJSONObject("opportunityDraft")) else OpportunityDraft(),
-            jobs = jobs,
-            receipts = saved.optJSONArray("receipts").objects().map(ApplicationReceipt::fromJson),
-            activePlans = saved.optJSONArray("activePlans").strings(),
-            selected = saved.optJSONArray("selected").strings().toSet(),
-            manualApplied = ApplicationRecordsCodec.appliedIDs(jobs, records, legacyApplied),
-            applicationRecords = records,
-            obsoleteReviews = saved.optJSONArray("obsoleteReviews").strings().toSet(),
-            continuationHolds = saved.optJSONArray("continuationHolds").strings().toSet(),
-            serverProfile = saved.optJSONObject("serverProfile")?.let(ProfileDraft::fromJson),
-            answers = saved.optJSONObject("answers")?.let { answers ->
-                answers.keys().asSequence().mapNotNull { id -> answers.optJSONObject(id)?.let { id to JobAnswers.fromJson(it) } }.toMap()
-            } ?: emptyMap()
-        ) } catch (error: Exception) { throw PrivateStorageFailure(StorageProblem(name, false), error) }
+            val saved = WorkspaceStorage.decode(stored, connection)
+            val journal = readPrivate(holdsName(connection))
+            val holds = if (journal == null) emptySet() else {
+                require(journal.opt("schema") == 1)
+                journal.requiredStrings("planIds").toSet()
+            }
+            saved.copy(continuationHolds = saved.continuationHolds + holds,
+                preservedWorkspaceCopies = preserved.distinct(),
+                preservedRecoveryWorkspaces = withContext(Dispatchers.IO) { vault.preservedWorkspaces() },
+                notice = if (stored == null && preserved.isNotEmpty()) "Earlier connection copies were preserved. Open phone data settings to review and merge the copy you want." else null)
+        } catch (error: PrivateStorageFailure) { throw error }
+        catch (error: Exception) { throw PrivateStorageFailure(StorageProblem(name, false), error) }
     }
 
     private suspend fun loadSavedWorkspace() {
@@ -102,7 +121,7 @@ class CareerViewModel internal constructor(application: Application, private val
         }
         val saved = savedWorkspace(connection)
         discovery.stopPrivateSession(flush = true)
-        mutable.value = saved.copy(busy = true)
+        mutable.value = saved.copy(busy = true, continuationHolds = saved.continuationHolds + state.value.takeIf { it.privateScope == saved.privateScope }?.continuationHolds.orEmpty())
         discovery.attachPrivateSession(vault, searchName(connection))
         try { if (connection != null) refreshInternal() }
         finally { mutable.update { it.copy(busy = false) } }
@@ -111,22 +130,8 @@ class CareerViewModel internal constructor(application: Application, private val
     private suspend fun persist(allowBlocked: Boolean = false) = diskMutex.withLock {
         check(allowBlocked || !state.value.storageBlocked) { "Private storage is unavailable; the original files are preserved." }
         val snapshot = state.value
-        val envelope = JSONObject().put("schema", 1).put("profile", snapshot.profile.privateJson()).put("profileDirty", snapshot.profileDirty)
-            .put("opportunityDraft", snapshot.opportunityDraft.privateJson())
-            .put("applicationRecords", ApplicationRecordsCodec.encode(snapshot.applicationRecords))
-            .put("jobs", JSONArray(snapshot.jobs.map(Opportunity::privateJson)))
-            .put("activePlans", JSONArray(snapshot.activePlans))
-            .put("manualApplied", JSONArray(snapshot.manualApplied.toList()))
-            .put("selected", JSONArray(snapshot.selected.toList()))
-            .put("obsoleteReviews", JSONArray(snapshot.obsoleteReviews.toList()))
-            .put("continuationHolds", JSONArray(snapshot.continuationHolds.toList()))
-            .put("serverProfile", snapshot.serverProfile?.privateJson() ?: JSONObject.NULL)
-            .put("answers", JSONObject().apply { snapshot.answers.forEach { (id, value) -> put(id, value.json()) } })
-            .put("receipts", JSONArray(snapshot.receipts.map {
-                JSONObject().put("attemptId", it.id).put("title", it.title).put("employer", it.company).put("state", it.state)
-                    .put("applicationId", it.applicationId).put("createdAt", it.date).put("error", it.error)
-                    .put("evidenceMode", it.evidenceMode).put("resumeSHA256", it.resumeSHA256).put("provider", it.provider)
-            }))
+        val envelope = WorkspaceStorage.encode(snapshot)
+        requirePrivateCapacity(envelope)
         val name = workspaceName(snapshot.connection)
         writePrivate(name, envelope)
     }
@@ -202,6 +207,7 @@ class CareerViewModel internal constructor(application: Application, private val
                 discovery.stopPrivateSession(flush = false)
                 diskMutex.withLock { withContext(Dispatchers.IO) { vault.startFreshPreservingExisting() } }
                 mutable.value = CareerUiState(loaded = true,
+                    preservedRecoveryWorkspaces = withContext(Dispatchers.IO) { vault.preservedWorkspaces() },
                     notice = "A new private workspace is ready. Earlier encrypted files and service records were preserved.")
                 discovery.attachPrivateSession(vault, searchName(null))
             } catch (error: Exception) { report(PrivateStorageFailure(StorageProblem("connection", true), error)) }
@@ -226,7 +232,8 @@ class CareerViewModel internal constructor(application: Application, private val
         }
         polling?.cancel()
         discovery.stopPrivateSession(flush = true)
-        mutable.value = saved.copy(busy = true, notice = "Phone paired. Review your saved phone draft in Profile to copy it deliberately.")
+        mutable.value = saved.copy(busy = true, continuationHolds = saved.continuationHolds + state.value.takeIf { it.privateScope == saved.privateScope }?.continuationHolds.orEmpty(),
+            notice = "Phone paired. Review your saved phone draft in Profile to copy it deliberately.")
         discovery.attachPrivateSession(vault, searchName(connection))
         done()
         refreshInternal()
@@ -266,7 +273,9 @@ class CareerViewModel internal constructor(application: Application, private val
 
     fun editProfile(change: (ProfileDraft) -> ProfileDraft) = editReview { it.copy(profile = change(it.profile), profileDirty = true) }
 
-    fun choosePDF(uri: Uri) = action {
+    fun choosePDF(uri: Uri, expectedScope: String = state.value.privateScope) = action {
+        require(state.value.privateScope == expectedScope) { "The workspace changed while choosing a PDF. Choose it again from the intended profile." }
+        draftSave?.cancel()
         val resume = withContext(Dispatchers.IO) {
             val resolver = getApplication<Application>().contentResolver
             val name = resolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use { cursor ->
@@ -274,13 +283,21 @@ class CareerViewModel internal constructor(application: Application, private val
             }?.let { BoundaryPolicy.pdfName(it) } ?: "Resume.pdf"
             val bytes = resolver.openInputStream(uri)?.use { BoundaryPolicy.readPDF(it) }
                 ?: throw IllegalArgumentException("This document could not be opened. Choose it again from Files.")
-            Resume(name, bytes.size.toLong(), BoundaryPolicy.sha256(bytes), Base64.encodeToString(bytes, Base64.NO_WRAP))
+            try {
+                ReadablePDF.validate(getApplication(), bytes)
+                Resume(name, bytes.size.toLong(), BoundaryPolicy.sha256(bytes), Base64.encodeToString(bytes, Base64.NO_WRAP))
+            } finally { bytes.fill(0) }
         }
-        mutable.update { it.copy(profile = it.profile.copy(resume = resume, removeResume = false), profileDirty = true, plan = null,
-            reviewGeneration = it.reviewGeneration + 1, reviewingRecoveredPlan = false,
-            obsoleteReviews = it.obsoleteReviews + listOfNotNull(it.plan?.takeIf(ReviewPlan::unapproved)?.id)) }
-        persist()
-        mutable.update { it.copy(notice = "PDF kept in your private draft. Save the connected profile when you are ready to share it.") }
+        val before = state.value
+        val next = before.copy(profile = before.profile.copy(resume = resume, removeResume = false), profileDirty = true, plan = null,
+            reviewGeneration = before.reviewGeneration + 1, reviewingRecoveredPlan = false,
+            obsoleteReviews = before.obsoleteReviews + listOfNotNull(before.plan?.takeIf(ReviewPlan::unapproved)?.id))
+        val envelope = WorkspaceStorage.encode(next)
+        requirePrivateCapacity(envelope)
+        diskMutex.withLock { writePrivate(workspaceName(before.connection), envelope) }
+        mutable.update { it.copy(profile = next.profile, profileDirty = true, plan = null, reviewGeneration = next.reviewGeneration,
+            reviewingRecoveredPlan = false, obsoleteReviews = next.obsoleteReviews,
+            notice = "PDF kept in your private draft. Save the connected profile when you are ready to share it.") }
     }
 
     fun removePDF() { editProfile { it.copy(resume = null, removeResume = true) } }
@@ -290,14 +307,13 @@ class CareerViewModel internal constructor(application: Application, private val
         val captured = state.value.profile
         // Keep even invalid or unsupported edits before validation or a service request.
         persist()
-        if (captured.country.isNotBlank()) require(captured.country.trim().matches(Regex("[A-Za-z]{2}"))) { "Use a two-letter country code, such as SA or GB." }
-        if (captured.website.isNotBlank()) BoundaryPolicy.opportunityURL(captured.website.trim())
-        val linkedin = if (captured.linkedin.isEmpty()) "" else BoundaryPolicy.linkedinProfileURL(captured.linkedin)
         val connection = state.value.connection
+        if (connection != null) ProfileValidation.requireValid(captured)
+        val linkedin = if (captured.linkedin.isEmpty()) "" else BoundaryPolicy.linkedinProfileURL(captured.linkedin)
         if (connection == null) {
             mutable.update { it.copy(profile = it.profile.copy(linkedin = linkedin), profileDirty = false) }
             try { persist() } catch (error: Exception) { mutable.update { it.copy(profile = captured, profileDirty = true) }; throw error }
-            mutable.update { it.copy(notice = "Profile saved privately on this phone.") }
+            mutable.update { it.copy(notice = if (ProfileValidation.errors(captured).isEmpty()) "Profile saved privately on this phone." else "Unfinished profile saved privately. Review the field guidance before sharing it.") }
         } else {
             val supportsLinkedIn = state.value.linkedinProfile
             require(supportsLinkedIn || (linkedin.isEmpty() && state.value.serverProfile?.linkedin.isNullOrEmpty())) {
@@ -380,11 +396,14 @@ class CareerViewModel internal constructor(application: Application, private val
         }
         requireApplicationStatusChangesAllowed(current, records)
         val legacyApplied = current.manualApplied + jobs.filter { pair -> pair.first.id in phone.manualApplied }.map { pair -> pair.second.id }
-        mutable.update { it.copy(profile = profile, profileDirty = includeProfile || it.profileDirty,
+        val next = current.copy(profile = profile, profileDirty = includeProfile || current.profileDirty,
             jobs = allJobs, applicationRecords = records,
             manualApplied = ApplicationRecordsCodec.appliedIDs(allJobs, records, legacyApplied),
-            phoneImport = null, plan = null, reviewingRecoveredPlan = false, reviewGeneration = it.reviewGeneration + 1) }
-        persist()
+            phoneImport = null, plan = null, reviewingRecoveredPlan = false, reviewGeneration = current.reviewGeneration + 1)
+        val envelope = WorkspaceStorage.encode(next); requirePrivateCapacity(envelope)
+        draftSave?.cancel()
+        diskMutex.withLock { writePrivate(workspaceName(current.connection), envelope) }
+        mutable.value = next.copy(continuationHolds = state.value.continuationHolds + next.continuationHolds)
         mutable.update { it.copy(notice = if (records.values.any { record -> record.needsReview })
             "Copied on this phone. Review the saved record versions in Saved; all were kept."
             else "Copied into a private workspace draft. Save the profile and sync each opportunity when ready. Nothing was sent to employers.") }
@@ -443,15 +462,16 @@ class CareerViewModel internal constructor(application: Application, private val
         }
     }
 
-    private suspend fun persistRecordChange(records: Map<String, ApplicationRecordBundle>, editor: ApplicationRecordEditorState?) {
+    private suspend fun persistRecordChange(records: Map<String, ApplicationRecordBundle>, editor: ApplicationRecordEditorState?, clearDraftIdentity: String? = null) {
         val before = state.value
         requireApplicationStatusChangesAllowed(before, records)
         draftSave?.cancel()
-        mutable.update { recordsChanged(it, records).copy(applicationRecordEditor = editor) }
+        mutable.update { recordsChanged(it, records).copy(applicationRecordEditor = editor,
+            recordDrafts = if (clearDraftIdentity == null) it.recordDrafts else it.recordDrafts - clearDraftIdentity) }
         try { persist() }
         catch (error: Exception) {
             if (state.value.privateScope == before.privateScope) mutable.update { it.copy(applicationRecords = before.applicationRecords,
-                manualApplied = before.manualApplied, applicationRecordEditor = before.applicationRecordEditor) }
+                manualApplied = before.manualApplied, applicationRecordEditor = before.applicationRecordEditor, recordDrafts = before.recordDrafts) }
             throw error
         }
     }
@@ -461,21 +481,67 @@ class CareerViewModel internal constructor(application: Application, private val
         if (!current.loaded || current.busy || current.storageBlocked || current.privateScope != expectedScope) return
         val identity = BoundaryPolicy.jobIdentity(job.url)
         val record = current.applicationRecords[identity]
-        if (current.jobs.none { it.id == job.id && BoundaryPolicy.jobIdentity(it.url) == identity } && record == null) return
+        if (current.jobs.none { it.id == job.id && BoundaryPolicy.jobIdentity(it.url) == identity } && record == null && identity !in current.recordDrafts) return
+        val checkpoint = current.recordDrafts[identity]
+        val savedDraft = record?.activeDraft ?: ApplicationRecordDraft()
         mutable.update { it.copy(error = null, applicationRecordEditor = ApplicationRecordEditorState(scope = expectedScope,
-            identity = identity, job = job, expectedRevision = record?.revision ?: 0, draft = record?.activeDraft ?: ApplicationRecordDraft())) }
+            identity = identity, job = job, expectedRevision = checkpoint?.baseRevision ?: record?.revision ?: 0,
+            draft = checkpoint?.draft ?: savedDraft, initialDraft = savedDraft,
+            restoredOlderRevision = checkpoint != null && checkpoint.baseRevision != (record?.revision ?: 0))) }
     }
 
     fun editApplicationRecordDraft(change: (ApplicationRecordDraft) -> ApplicationRecordDraft, expectedToken: String? = null) {
         if (state.value.busy || state.value.storageBlocked) return
-        if (expectedToken != null && state.value.applicationRecordEditor?.token != expectedToken) return
-        mutable.update { it.copy(applicationRecordEditor = it.applicationRecordEditor?.let { editor ->
-            editor.copy(draft = change(editor.draft), pendingNotApplied = null)
-        }) }
+        val editor = state.value.applicationRecordEditor ?: return
+        if (editor.scope != state.value.privateScope || expectedToken != null && editor.token != expectedToken) return
+        val updated = editor.copy(draft = change(editor.draft), pendingNotApplied = null, confirmClose = false)
+        val checkpoint = RecordDraftCheckpoint(updated.scope, updated.identity, updated.job, updated.expectedRevision, updated.draft)
+        mutable.update { it.copy(applicationRecordEditor = updated, recordDrafts = it.recordDrafts + (updated.identity to checkpoint)) }
+        queuePrivateSave()
     }
 
+    /** Back, close, and Cancel all make the same explicit keep/discard choice. */
     fun closeApplicationRecord(expectedToken: String? = null) {
-        if (!state.value.busy && (expectedToken == null || state.value.applicationRecordEditor?.token == expectedToken)) mutable.update { it.copy(applicationRecordEditor = null) }
+        if (state.value.busy) return
+        val editor = state.value.applicationRecordEditor ?: return
+        if (expectedToken != null && editor.token != expectedToken) return
+        mutable.update { it.copy(applicationRecordEditor = if (editor.hasChanges && !editor.quickCorrection) editor.copy(confirmClose = true) else null) }
+    }
+
+    fun continueApplicationRecord(expectedToken: String) {
+        mutable.update { if (it.applicationRecordEditor?.token == expectedToken) it.copy(applicationRecordEditor = it.applicationRecordEditor.copy(confirmClose = false)) else it }
+    }
+
+    fun keepApplicationRecordDraft(expectedToken: String) = action {
+        val editor = state.value.applicationRecordEditor ?: return@action
+        require(editor.token == expectedToken && editor.scope == state.value.privateScope) { "The workspace changed. Reopen this record." }
+        draftSave?.cancel()
+        val checkpoint = RecordDraftCheckpoint(editor.scope, editor.identity, editor.job, editor.expectedRevision, editor.draft)
+        mutable.update { it.copy(recordDrafts = it.recordDrafts + (editor.identity to checkpoint)) }
+        persist()
+        mutable.update { it.copy(applicationRecordEditor = null, notice = "Unfinished record kept on this phone. Its saved application status is unchanged.") }
+    }
+
+    fun discardApplicationRecordDraft(expectedToken: String) = action {
+        val before = state.value
+        val editor = before.applicationRecordEditor ?: return@action
+        require(editor.token == expectedToken && editor.scope == before.privateScope) { "The workspace changed. Reopen this record." }
+        draftSave?.cancel()
+        mutable.update { it.copy(recordDrafts = it.recordDrafts - editor.identity) }
+        try { persist() } catch (error: Exception) { mutable.update { it.copy(recordDrafts = before.recordDrafts) }; throw error }
+        mutable.update { it.copy(applicationRecordEditor = null, notice = "Unfinished changes discarded. Saved notes, history and application status are kept.") }
+    }
+
+    fun rebaseApplicationRecordDraft(expectedToken: String) {
+        if (state.value.busy || state.value.storageBlocked) return
+        val editor = state.value.applicationRecordEditor ?: return
+        if (editor.token != expectedToken || editor.scope != state.value.privateScope) return
+        val record = state.value.applicationRecords[editor.identity]
+        val updated = editor.copy(expectedRevision = record?.revision ?: 0, initialDraft = record?.activeDraft ?: ApplicationRecordDraft(),
+            restoredOlderRevision = false, pendingNotApplied = null)
+        mutable.update { it.copy(applicationRecordEditor = updated, recordDrafts = it.recordDrafts + (editor.identity to
+            RecordDraftCheckpoint(editor.scope, editor.identity, editor.job, updated.expectedRevision, updated.draft))) }
+        queuePrivateSave()
     }
 
     private fun checkedRecordEditor(expectedToken: String? = null): Pair<ApplicationRecordEditorState, ApplicationRecordBundle?> {
@@ -485,7 +551,7 @@ class CareerViewModel internal constructor(application: Application, private val
         }
         val record = state.value.applicationRecords[editor.identity]
         require((record?.revision ?: 0) == editor.expectedRevision) { "This application record changed. Close this editor and review the saved version before saving." }
-        require(record != null || state.value.jobs.any { it.id == editor.job.id && BoundaryPolicy.jobIdentity(it.url) == editor.identity }) {
+        require(record != null || editor.identity in state.value.recordDrafts || state.value.jobs.any { it.id == editor.job.id && BoundaryPolicy.jobIdentity(it.url) == editor.identity }) {
             "This saved link changed. Close this editor and reopen its record."
         }
         return editor to record
@@ -508,27 +574,29 @@ class CareerViewModel internal constructor(application: Application, private val
         }
         val base = existing ?: ApplicationRecordBundle.create(editor.job).copy(revision = 0)
         val updated = base.edited(draft, confirmedNotApplied)
-        persistRecordChange(state.value.applicationRecords + (editor.identity to updated), null)
+        persistRecordChange(state.value.applicationRecords + (editor.identity to updated), null, if (editor.quickCorrection) null else editor.identity)
         mutable.update { it.copy(notice = "Record saved on this phone.") }
     }
 
     fun keepApplicationRecord(expectedToken: String? = null) {
-        if (state.value.busy) return
-        if (expectedToken != null && state.value.applicationRecordEditor?.token != expectedToken) return
-        mutable.update { state ->
-            val editor = state.applicationRecordEditor ?: return@update state
-            if (editor.quickCorrection) state.copy(applicationRecordEditor = null)
-            else state.copy(applicationRecordEditor = editor.copy(pendingNotApplied = null,
-                draft = editor.draft.copy(stage = state.applicationRecords[editor.identity]?.displayStage ?: editor.draft.stage)))
-        }
+        if (state.value.busy || state.value.storageBlocked) return
+        val current = state.value.applicationRecordEditor ?: return
+        if (expectedToken != null && current.token != expectedToken || current.scope != state.value.privateScope) return
+        if (current.quickCorrection) { mutable.update { it.copy(applicationRecordEditor = null) }; return }
+        val updated = current.copy(pendingNotApplied = null,
+            draft = current.draft.copy(stage = state.value.applicationRecords[current.identity]?.displayStage ?: current.draft.stage))
+        val checkpoint = RecordDraftCheckpoint(updated.scope, updated.identity, updated.job, updated.expectedRevision, updated.draft)
+        mutable.update { it.copy(applicationRecordEditor = updated, recordDrafts = it.recordDrafts + (updated.identity to checkpoint)) }
+        queuePrivateSave()
     }
 
     fun chooseApplicationRecordVersion(versionID: String, expectedToken: String) = action {
         val (editor, existing) = checkedRecordEditor(expectedToken)
         val record = existing ?: throw IllegalArgumentException("This saved record is no longer available.")
+        require(!editor.hasChanges) { "Keep or discard your unfinished edits before choosing a saved version." }
         val updated = record.choose(versionID)
         persistRecordChange(state.value.applicationRecords + (editor.identity to updated),
-            editor.copy(expectedRevision = updated.revision, draft = updated.activeDraft, pendingNotApplied = null))
+            editor.copy(expectedRevision = updated.revision, draft = updated.activeDraft, initialDraft = updated.activeDraft, pendingNotApplied = null), editor.identity)
         mutable.update { it.copy(notice = "Selected details kept on this phone. Other versions remain in record history.") }
     }
 
@@ -577,7 +645,9 @@ class CareerViewModel internal constructor(application: Application, private val
         completingDraft: OpportunityDraft?, done: () -> Unit) {
         val normalized = BoundaryPolicy.opportunityURL(url.trim())
         require(title.trim().isNotBlank() && company.trim().isNotBlank()) { "Add the role title and employer so the saved opportunity is clear." }
-        require(country.isBlank() || country.trim().matches(Regex("[A-Za-z]{2}"))) { "Use a two-letter country code or leave it blank." }
+        require(ProfileContract.countryError(country) == null) { "Choose a recognized country or region, or leave it blank." }
+        for ((label, value) in listOf("Role title" to title, "Employer" to company, "Location" to location))
+            require(ProfileContract.textError(value, label, 500) == null) { "$label must be on one line with no more than 500 characters. Your unfinished draft is kept." }
         if (state.value.jobs.any { BoundaryPolicy.jobIdentity(it.url) == BoundaryPolicy.jobIdentity(normalized) }) {
             mutable.update { it.copy(notice = if (completingDraft == null) "This opportunity is already in your saved list."
                 else "This link is already saved. Your unfinished draft is kept so you can review its details or change the link.") }
@@ -585,7 +655,7 @@ class CareerViewModel internal constructor(application: Application, private val
             done()
             return
         }
-        val job = Opportunity("local-" + UUID.randomUUID(), normalized, title.trim().take(200), company.trim().take(200), location.trim().take(200), country.trim().uppercase(), true)
+        val job = Opportunity("local-" + UUID.randomUUID(), normalized, title.trim(), company.trim(), location.trim(), country.trim().uppercase(), true)
         draftSave?.cancel()
         val previousDraft = state.value.opportunityDraft
         // Only completing this editor may consume its draft. Saving a discovery result or
@@ -628,6 +698,7 @@ class CareerViewModel internal constructor(application: Application, private val
 
     private suspend fun syncInternal(job: Opportunity) {
         val connection = state.value.connection ?: throw IllegalArgumentException("Connect your phone to sync this opportunity.")
+        require(job.url.length <= 2048 && job.company.length <= 250) { "This saved link remains on your phone. The connected service accepts employer names up to 250 characters and links up to 2,048 characters; use the employer website or add a shorter corrected link to sync." }
         val sourceIdentity = BoundaryPolicy.jobIdentity(job.url)
         if (job.localOnly && state.value.applicationRecords[sourceIdentity]?.appliedElsewhere == true)
             requireApplicationStatusChangesAllowed(state.value, setOf(sourceIdentity))
@@ -765,7 +836,9 @@ class CareerViewModel internal constructor(application: Application, private val
         // Only a new visible approval can supersede this phone's earlier stop intent.
         // Do this before the request so a simultaneous Stop always wins locally.
         mutable.update { it.copy(continuationHolds = it.continuationHolds - plan.id) }
+        diskMutex.withLock { writePrivate(holdsName(connection), JSONObject().put("schema", 1).put("planIds", JSONArray(state.value.continuationHolds.toList()))) }
         persist()
+        require(plan.id !in state.value.continuationHolds) { "Stop was requested while preparing to send. Review receipts before approving again." }
         val incoming = try {
             service.request(connection, "POST", "submit", JSONObject().put("planId", plan.id).put("digest", plan.digest).put("approved", true)
                 .apply { if (plan.items.any { it.payload.safeString("linkedin").isNotEmpty() }) put("reviewSchema", 3) })
@@ -785,15 +858,24 @@ class CareerViewModel internal constructor(application: Application, private val
     }
 
     fun stop(planId: String) {
-        val connection = state.value.connection ?: return
-        if (!state.value.loaded || state.value.storageBlocked || state.value.requiresPairing) return
-        // Preserve the stop intent even when the response is lost or the phone restarts.
-        // An already dispatched request can still finish; it is never resent here.
+        val captured = state.value
+        val connection = captured.connection ?: return
+        if (!captured.loaded || planId.isBlank()) return
+        // Stop is a local safety decision even after a 401 or while another operation is busy.
+        // A small independent journal keeps this decision durable even when the main draft is full.
+        val holds = captured.continuationHolds + planId
         mutable.update { it.copy(continuationHolds = it.continuationHolds + planId) }
         viewModelScope.launch {
             try {
-                persist()
+                diskMutex.withLock {
+                    val retained = if (state.value.privateScope == captured.privateScope) state.value.continuationHolds + holds else holds
+                    writePrivate(holdsName(connection), JSONObject().put("schema", 1).put("planIds", JSONArray(retained.toList())))
+                }
                 if (state.value.connection != connection) return@launch
+                if (state.value.requiresPairing) {
+                    mutable.update { it.copy(notice = "Stop is saved on this phone. Reconnect to request the server stop and recover receipts. An already dispatched application can still finish.") }
+                    return@launch
+                }
                 service.request(connection, "POST", "stop", JSONObject().put("planId", planId))
                 if (state.value.connection != connection) return@launch
                 mutable.update { it.copy(plan = null, obsoleteReviews = it.obsoleteReviews - planId,
@@ -943,7 +1025,209 @@ class CareerViewModel internal constructor(application: Application, private val
         }
     }
 
-    fun exportReceipts(uri: Uri) = action {
+    fun exportWorkspace(uri: Uri, expectedScope: String, includePDF: Boolean) = action {
+        require(state.value.privateScope == expectedScope) { "The workspace changed while choosing the export destination. Open export again for the workspace you want." }
+        val snapshot = state.value
+        val data = WorkspaceTransfer.export(snapshot, discovery.exportSnapshot(), includePDF).toString().toByteArray(Charsets.UTF_8)
+        withContext(Dispatchers.IO) {
+            try {
+                getApplication<Application>().contentResolver.openOutputStream(uri, "w")?.use { it.write(data) }
+                    ?: throw IllegalArgumentException("The export destination could not be opened. Your phone data is unchanged.")
+            } finally { data.fill(0) }
+        }
+        mutable.update { it.copy(notice = "Phone workspace exported. The file contains private data${if (includePDF) " and any PDF bytes held on this phone" else " without PDF bytes"}. Keep it somewhere you trust; connection tokens and approval authority are excluded.") }
+    }
+
+    fun inspectWorkspaceImport(uri: Uri, expectedScope: String) = action {
+        require(state.value.privateScope == expectedScope) { "The workspace changed while choosing a backup. Choose the file again from the destination workspace." }
+        val preview = withContext(Dispatchers.IO) {
+            val bytes = getApplication<Application>().contentResolver.openInputStream(uri)?.use { BoundaryPolicy.readBounded(it, WorkspaceTransfer.MAX_BYTES) }
+                ?: throw IllegalArgumentException("The backup could not be opened. Choose it again from Files.")
+            try {
+                val decoder = Charsets.UTF_8.newDecoder().onMalformedInput(java.nio.charset.CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(java.nio.charset.CodingErrorAction.REPORT)
+                val text = decoder.decode(java.nio.ByteBuffer.wrap(bytes)).toString()
+                val parser = org.json.JSONTokener(text)
+                val value = parser.nextValue()
+                require(value is JSONObject && parser.nextClean() == '\u0000') { "Choose a complete JSON phone workspace backup." }
+                val decoded = WorkspaceTransfer.decode(value, expectedScope)
+                val pdfIssue = decoded.snapshot.profile.resume?.dataBase64?.let { encoded ->
+                    val pdf = Base64.decode(encoded, Base64.NO_WRAP)
+                    try { runCatching { ReadablePDF.validate(getApplication(), pdf) }.exceptionOrNull()?.message }
+                    finally { pdf.fill(0) }
+                }
+                decoded.copy(pdfProblem = pdfIssue)
+            } finally { bytes.fill(0) }
+        }
+        require(state.value.privateScope == expectedScope) { "The destination workspace changed. Review the backup again." }
+        mutable.update { it.copy(workspaceImport = preview) }
+    }
+
+    fun inspectPreservedWorkspace(name: String, expectedScope: String) = action {
+        require(state.value.privateScope == expectedScope && name in state.value.preservedWorkspaceCopies) { "Reopen phone data settings for the current workspace." }
+        val value = readPrivate(name) ?: throw IllegalArgumentException("This preserved copy is no longer available.")
+        val source = WorkspaceStorage.decode(value, state.value.connection)
+        val search = readPrivate("search-" + name.removePrefix("workspace-"))
+        val preview = WorkspaceTransfer.decode(WorkspaceTransfer.export(source, search, true), expectedScope)
+        mutable.update { it.copy(workspaceImport = preview) }
+    }
+
+    fun inspectRecoveryWorkspace(copy: PreservedWorkspace, expectedScope: String) = action {
+        require(state.value.privateScope == expectedScope && copy in state.value.preservedRecoveryWorkspaces) { "The workspace changed. Reopen recovery settings." }
+        val preview = withContext(Dispatchers.IO) {
+            val value = vault.readPreserved(copy.area, copy.record) ?: throw IllegalArgumentException("This earlier workspace is no longer available.")
+            val savedConnection = vault.readPreserved(copy.area, "connection")?.let { runCatching { Connection.fromJson(it) }.getOrNull() }
+            val sourceConnection = savedConnection?.takeIf { connection -> copy.record == workspaceName(connection) ||
+                copy.record.removePrefix("workspace-") in connection.legacyKeys() }
+            val source = WorkspaceStorage.decode(value, sourceConnection, expectedScope = copy.record)
+            val journal = vault.readPreserved(copy.area, "holds-" + copy.record.removePrefix("workspace-"))
+            val held = if (journal == null) emptySet() else { require(journal.opt("schema") == 1); journal.requiredStrings("planIds").toSet() }
+            val search = vault.readPreserved(copy.area, "search-" + copy.record.removePrefix("workspace-"))
+            search?.let(DiscoverySnapshotCodec::decode)
+            val transfer = WorkspaceTransfer.export(source.copy(continuationHolds = source.continuationHolds + held), search, true)
+            WorkspaceTransfer.decode(transfer, expectedScope)
+        }
+        mutable.update { it.copy(workspaceImport = preview) }
+    }
+
+    fun deleteRecoveryWorkspace(copy: PreservedWorkspace, expectedScope: String) = action {
+        require(state.value.privateScope == expectedScope && copy in state.value.preservedRecoveryWorkspaces) { "The workspace changed. Reopen recovery settings." }
+        withContext(Dispatchers.IO) {
+            val savedConnection = vault.readPreserved(copy.area, "connection")?.let { runCatching { Connection.fromJson(it) }.getOrNull() }
+            val matched = savedConnection?.takeIf { copy.record == workspaceName(it) || copy.record.removePrefix("workspace-") in it.legacyKeys() }
+            val names = mutableSetOf(copy.record, "search-" + copy.record.removePrefix("workspace-"), "holds-" + copy.record.removePrefix("workspace-"))
+            matched?.let { connection ->
+                names += "connection"
+                (connection.legacyKeys() + BoundaryPolicy.workspaceKey(connection.origin, connection.workspaceId)).forEach { key ->
+                    names += setOf("workspace-$key", "search-$key", "holds-$key")
+                }
+            }
+            vault.removePreserved(copy.area, names)
+        }
+        val remaining = withContext(Dispatchers.IO) { vault.preservedWorkspaces() }
+        mutable.update { it.copy(preservedRecoveryWorkspaces = remaining,
+            notice = "The selected earlier recovery copy and its known equivalent-address files were deleted. Your current workspace, other recovery copies, exported files and cloud records are unchanged.") }
+    }
+
+    fun closeWorkspaceImport() { if (!state.value.busy) mutable.update { it.copy(workspaceImport = null) } }
+
+    fun importWorkspace(token: String, includeProfile: Boolean, includePDF: Boolean, includeRecords: Boolean, includeSearch: Boolean) = action {
+        val before = state.value
+        val preview = before.workspaceImport ?: throw IllegalArgumentException("Choose and review a backup first.")
+        require(preview.token == token && preview.expectedScope == before.privateScope) { "The destination changed. Review the backup again." }
+        require(includeProfile || includeRecords || includeSearch) { "Choose what to import." }
+        if (includeSearch) require(preview.search != null) { "This backup has no compatible saved search." }
+        if (includeProfile) require(before.profileConflict == null) { "Resolve the saved profile comparison before importing another draft." }
+        if (includePDF) require(includeProfile && preview.pdfProblem == null && preview.snapshot.profile.resume?.dataBase64 != null) { "Choose a readable PDF before replacing your current résumé." }
+        val incoming = preview.snapshot
+        val jobs = before.jobs.toMutableList()
+        val idMap = mutableMapOf<String, String>()
+        if (includeRecords) for (job in incoming.jobs) {
+            val identity = BoundaryPolicy.jobIdentity(job.url)
+            val destination = jobs.firstOrNull { BoundaryPolicy.jobIdentity(it.url) == identity }
+                ?: job.copy(id = "local-" + UUID.randomUUID(), localOnly = true).also { jobs.add(it) }
+            idMap[job.id] = destination.id
+        }
+        val records = before.applicationRecords.toMutableMap()
+        if (includeRecords) for ((identity, record) in incoming.applicationRecords) {
+            val destination = jobs.firstOrNull { BoundaryPolicy.jobIdentity(it.url) == identity }
+                ?: records[identity]?.job ?: record.job.copy(id = "local-" + UUID.randomUUID(), localOnly = true)
+            records[identity] = records[identity]?.merge(record, destination)
+                ?: record.copy(job = destination, relatedURLs = (record.relatedURLs + destination.url).distinct())
+        }
+        requireApplicationStatusChangesAllowed(before, records)
+        val drafts = before.recordDrafts.toMutableMap()
+        val alternatives = before.recordDraftAlternatives.toMutableList()
+        if (includeRecords) for (checkpoint in incoming.recordDrafts.values + incoming.recordDraftAlternatives) {
+            val destination = jobs.firstOrNull { BoundaryPolicy.jobIdentity(it.url) == checkpoint.identity }
+                ?: records[checkpoint.identity]?.job ?: checkpoint.job.copy(id = "local-" + UUID.randomUUID(), localOnly = true)
+            val candidate = checkpoint.copy(scope = before.privateScope, job = destination)
+            val existing = drafts[candidate.identity]
+            if (existing == null) drafts[candidate.identity] = candidate
+            else if (existing.draft != candidate.draft || existing.baseRevision != candidate.baseRevision) alternatives += candidate
+        }
+        val incomingOpportunity = incoming.opportunityDraft.takeIf { includeRecords && it.hasContent }
+        val opportunity = if (!before.opportunityDraft.hasContent && incomingOpportunity != null) incomingOpportunity else before.opportunityDraft
+        val recovered = (before.recoveredOpportunityDrafts + if (includeRecords) incoming.recoveredOpportunityDrafts else emptyList()) +
+            listOfNotNull(incomingOpportunity?.takeIf { before.opportunityDraft.hasContent && it != before.opportunityDraft })
+        val answers = before.answers.toMutableMap()
+        if (includeRecords) for ((oldID, answer) in incoming.answers) idMap[oldID]?.let { destination ->
+            // Employer consents are never recovered as fresh authorization.
+            if (destination !in answers) answers[destination] = answer.copy(consentStore = null, consentMarketing = null)
+        }
+        val profile = if (includeProfile) incoming.profile.copy(revision = before.profile.revision,
+            resume = if (includePDF) incoming.profile.resume else before.profile.resume,
+            removeResume = if (includePDF) false else before.profile.removeResume) else before.profile
+        val next = before.copy(profile = profile, profileDirty = includeProfile || before.profileDirty,
+            jobs = jobs, applicationRecords = records, recordDrafts = drafts, recordDraftAlternatives = alternatives.distinct(),
+            opportunityDraft = opportunity, recoveredOpportunityDrafts = recovered.distinct(), answers = answers,
+            selected = before.selected + if (includeRecords) incoming.selected.mapNotNull { idMap[it] } else emptyList(),
+            manualApplied = ApplicationRecordsCodec.appliedIDs(jobs, records, before.manualApplied),
+            importedReceipts = (before.importedReceipts + if (includeRecords) incoming.importedReceipts else emptyList()).distinctBy { it.id + "|" + it.applicationId },
+            continuationHolds = before.continuationHolds + if (preview.matches(before.connection)) incoming.continuationHolds else emptySet(),
+            workspaceImport = null, plan = null, reviewingRecoveredPlan = false, reviewGeneration = before.reviewGeneration + 1,
+            obsoleteReviews = before.obsoleteReviews + listOfNotNull(before.plan?.takeIf(ReviewPlan::unapproved)?.id))
+        val envelope = WorkspaceStorage.encode(next)
+        requirePrivateCapacity(envelope)
+        draftSave?.cancel()
+        diskMutex.withLock { writePrivate(workspaceName(before.connection), envelope) }
+        mutable.value = next.copy(continuationHolds = state.value.continuationHolds + next.continuationHolds, notice = "Backup merged privately. Other workspaces and the original file are kept. Review conflicting notes and drafts in phone data settings. Imported receipt copies are unverified; refresh service receipts to recover evidence.")
+        if (includeSearch) {
+            discovery.stopPrivateSession(flush = true)
+            try { writePrivate(searchName(before.connection), checkNotNull(preview.search)) }
+            catch (cancel: CancellationException) { throw cancel }
+            catch (_: Exception) { mutable.update { it.copy(error = "The selected phone records were merged, but the saved search could not be replaced. Its earlier file is preserved. Retry the search import from your backup.") } }
+            finally { discovery.attachPrivateSession(vault, searchName(before.connection)) }
+        }
+    }
+
+    fun restoreOpportunityDraft(index: Int, expectedScope: String, done: () -> Unit) = action {
+        val before = state.value
+        require(before.privateScope == expectedScope) { "The workspace changed. Review its drafts again." }
+        val restored = before.recoveredOpportunityDrafts.getOrNull(index) ?: throw IllegalArgumentException("This unfinished opportunity changed. Reopen the draft list.")
+        val kept = before.recoveredOpportunityDrafts.filterIndexed { item, _ -> item != index } + listOfNotNull(before.opportunityDraft.takeIf { it.hasContent && it != restored })
+        val next = before.copy(opportunityDraft = restored, recoveredOpportunityDrafts = kept.distinct())
+        val envelope = WorkspaceStorage.encode(next); requirePrivateCapacity(envelope)
+        diskMutex.withLock { writePrivate(workspaceName(before.connection), envelope) }
+        mutable.value = next.copy(continuationHolds = state.value.continuationHolds + next.continuationHolds); done()
+    }
+
+    fun useRecoveredRecordDraft(checkpoint: RecordDraftCheckpoint, expectedScope: String) = action {
+        val before = state.value
+        require(before.privateScope == expectedScope && checkpoint in before.recordDraftAlternatives) { "This draft list changed. Open it again." }
+        val previous = before.recordDrafts[checkpoint.identity]
+        val alternatives = before.recordDraftAlternatives - checkpoint + listOfNotNull(previous?.takeIf { it != checkpoint })
+        val next = before.copy(recordDrafts = before.recordDrafts + (checkpoint.identity to checkpoint), recordDraftAlternatives = alternatives.distinct(), applicationRecordEditor = null)
+        val envelope = WorkspaceStorage.encode(next); requirePrivateCapacity(envelope)
+        diskMutex.withLock { writePrivate(workspaceName(before.connection), envelope) }
+        mutable.value = next.copy(continuationHolds = state.value.continuationHolds + next.continuationHolds, notice = "Recovered edit selected. Open its record to review and save; earlier draft versions are kept.")
+    }
+
+    fun deleteLocalWorkspace(expectedScope: String) = action {
+        val before = state.value
+        require(before.privateScope == expectedScope) { "The workspace changed. Review the deletion choice again." }
+        require(before.activePlans.isEmpty()) { "Stop active Auto Apply work and refresh receipts before deleting this workspace from the phone." }
+        draftSave?.cancel(); polling?.cancel()
+        discovery.stopPrivateSession(flush = false)
+        val aliases = before.connection?.legacyKeys().orEmpty()
+        val names = listOf(workspaceName(before.connection), searchName(before.connection), holdsName(before.connection)) +
+            aliases.flatMap { listOf("workspace-$it", "search-$it", "holds-$it") }
+        try {
+            diskMutex.withLock { withContext(Dispatchers.IO) {
+                if (before.connection != null) vault.remove("connection")
+                names.distinct().forEach(vault::remove)
+            } }
+        } catch (error: Exception) {
+            throw PrivateStorageFailure(StorageProblem(workspaceName(before.connection), false), error)
+        }
+        // Only this selected scope and its known equivalent-address aliases are erased.
+        mutable.value = savedWorkspace(null).copy(busy = true,
+            notice = "This workspace was removed from the phone. Other phone workspaces, older preserved recovery areas, exported files, cloud records and employer applications were not deleted.")
+        discovery.attachPrivateSession(vault, searchName(null))
+    }
+
+    fun exportReceipts(uri: Uri, expectedScope: String = state.value.privateScope) = action {
+        require(state.value.privateScope == expectedScope) { "The workspace changed while choosing the export destination. Export again from the intended account." }
         val connection = state.value.connection ?: throw IllegalArgumentException("Connect to export the current service receipts.")
         val data = service.request(connection, "GET", "receipts").toString(2).toByteArray(Charsets.UTF_8)
         withContext(Dispatchers.IO) {

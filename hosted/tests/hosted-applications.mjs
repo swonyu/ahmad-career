@@ -6,7 +6,7 @@ import {createHostedApplicationHandler,SERVICE_ORIGIN,LIMITS} from '../server/ap
 import {makeAdapter} from '../server/provider.mjs';
 
 const passed=[];
-let time=Date.now(),postCount=0,posts=[],behaviors=new Map(),postHold=null,postingVersion=new Map();
+let time=Date.now(),postCount=0,posts=[],behaviors=new Map(),postHold=null,postingVersion=new Map(),getHook=null;
 const config={version:1,connectors:[{provider:'lever',region:'global',site:'career-fixture',apiKeyEnv:'CAREER_FIXTURE_KEY',postings:{}}]};
 // Use the SDK adapter to preserve isolated v4 fixture semantics on Miniflare5.
 const mf=new Miniflare(convertV4MiniflareOptions({modules:true,script:'export default {fetch(){return new Response("isolated application test")}}',compatibilityDate:'2026-05-15',d1Databases:['DB'],r2Buckets:['BUCKET']}));
@@ -14,7 +14,7 @@ let db,bucket,env,handler;
 const digest=data=>createHash('sha256').update(data).digest('hex');
 const checkpoint=(name)=>{passed.push(name);console.log('PASS',name)};
 const owner=(id)=>({'oai-authenticated-user-id':'synthetic-'+id,'oai-authenticated-user-email':`${id}@example.com`});
-const pdf=Buffer.from('%PDF-1.4\n1 0 obj<</Type/Catalog>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n');
+const pdf=Buffer.from('JVBERi0xLjcKJYGBgYEKCjEgMCBvYmoKPDwKL1R5cGUgL1BhZ2VzCi9LaWRzIFsgNCAwIFIgXQovQ291bnQgMQo+PgplbmRvYmoKCjIgMCBvYmoKPDwKL1R5cGUgL0NhdGFsb2cKL1BhZ2VzIDEgMCBSCj4+CmVuZG9iagoKMyAwIG9iago8PAovUHJvZHVjZXIgPEZFRkYwMDcwMDA2NDAwNjYwMDJEMDA2QzAwNjkwMDYyMDAyMDAwMjgwMDY4MDA3NDAwNzQwMDcwMDA3MzAwM0EwMDJGMDAyRjAwNjcwMDY5MDA3NDAwNjgwMDc1MDA2MjAwMkUwMDYzMDA2RjAwNkQwMDJGMDA0ODAwNkYwMDcwMDA2NDAwNjkwMDZFMDA2NzAwMkYwMDcwMDA2NDAwNjYwMDJEMDA2QzAwNjkwMDYyMDAyOT4KL01vZERhdGUgKEQ6MjAyNjAxMDEwMDAwMDBaKQovQ3JlYXRvciA8RkVGRjAwNzAwMDY0MDA2NjAwMkQwMDZDMDA2OTAwNjIwMDIwMDAyODAwNjgwMDc0MDA3NDAwNzAwMDczMDAzQTAwMkYwMDJGMDA2NzAwNjkwMDc0MDA2ODAwNzUwMDYyMDAyRTAwNjMwMDZGMDA2RDAwMkYwMDQ4MDA2RjAwNzAwMDY0MDA2OTAwNkUwMDY3MDAyRjAwNzAwMDY0MDA2NjAwMkQwMDZDMDA2OTAwNjIwMDI5PgovQ3JlYXRpb25EYXRlIChEOjIwMjYwMTAxMDAwMDAwWikKPj4KZW5kb2JqCgo0IDAgb2JqCjw8Ci9UeXBlIC9QYWdlCi9QYXJlbnQgMSAwIFIKL1Jlc291cmNlcyA8PAovRm9udCA8PAovSGVsdmV0aWNhLTcwOTg0ODA3ODkgNSAwIFIKPj4KL1hPYmplY3QgPDwKPj4KL0V4dEdTdGF0ZSA8PAo+Pgo+PgovTWVkaWFCb3ggWyAwIDAgNjEyIDc5MiBdCi9Bbm5vdHMgWyBdCi9Db250ZW50cyBbIDYgMCBSIF0KPj4KZW5kb2JqCgo1IDAgb2JqCjw8Ci9UeXBlIC9Gb250Ci9TdWJ0eXBlIC9UeXBlMQovQmFzZUZvbnQgL0hlbHZldGljYQovRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZwo+PgplbmRvYmoKCjYgMCBvYmoKPDwKL0ZpbHRlciAvRmxhdGVEZWNvZGUKL0xlbmd0aCAxMzIKPj4Kc3RyZWFtCnicJYvBCkJBCEX3foXrINIZRx2IFsFAizaBPxDxiqIWRfT9+YqL4j0cn7ANIJzzusBqN90/0/t6Oi6NuouTeUcuGGcogrEH/qmMQmg58YB1q9Z1mKhry921FpKqbEVbkpJNkw6Vf1PWmmlGaXPyvJOmY25ibf7bYNwgFjACDvAFvpcjUgplbmRzdHJlYW0KZW5kb2JqCgp4cmVmCjAgNwowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMTYgMDAwMDAgbiAKMDAwMDAwMDA3NiAwMDAwMCBuIAowMDAwMDAwMTI2IDAwMDAwIG4gCjAwMDAwMDA1OTYgMDAwMDAgbiAKMDAwMDAwMDc5MSAwMDAwMCBuIAowMDAwMDAwODg5IDAwMDAwIG4gCgp0cmFpbGVyCjw8Ci9TaXplIDcKL1Jvb3QgMiAwIFIKL0luZm8gMyAwIFIKPj4KCnN0YXJ0eHJlZgoxMDk0CiUlRU9G','base64');
 const résumé=(bytes=pdf,name='Synthetic-CV.pdf')=>({name,mime:'application/pdf',dataBase64:bytes.toString('base64')});
 const profile=(id,bytes=pdf)=>({firstName:'Single',lastName:'',email:`${id}@example.com`,phone:'',city:'Riyadh',country:'SA',headline:'Synthetic applicant',skills:['Testing'],targetRoles:[],targetCountries:['SA'],workModes:['remote'],experienceLevel:'entry',website:'',resume:résumé(bytes)});
 function wrapDB(target,fail){
@@ -43,12 +43,14 @@ async function approve(a,plan){return call('/api/apply/submit',{method:'POST',to
 async function advance(a,plan,extra={}){time+=1100;return call('/api/apply/advance',{method:'POST',token:a.token,body:{planId:plan.id},...extra})}
 async function fetchFixture(url,options={}){
   const target=new URL(url),id=target.pathname.split('/').at(-1);assert.ok(['api.lever.co','api.eu.lever.co'].includes(target.hostname));
-  if(options.method!=='POST')return Response.json({id,text:'Synthetic '+id,categories:{location:'Riyadh'},country:'SA',descriptionPlain:postingVersion.get(id)??'Fixture job'});
+  if(options.method!=='POST'){if(getHook){const hook=getHook;getHook=null;await hook()}return Response.json({id,text:'Synthetic '+id,categories:{location:'Riyadh'},country:'SA',descriptionPlain:postingVersion.get(id)??'Fixture job'})}
   postCount++;const f=options.body,file=f.get('resume'),bytes=new Uint8Array(await file.arrayBuffer());posts.push({id,name:f.get('name'),email:f.get('email'),consentStore:f.get('consent[store]'),consentMarketing:f.get('consent[marketing]'),pdfSHA256:digest(bytes),pdfBytes:bytes.byteLength,linkedin:f.get('urls[LinkedIn]'),portfolio:f.get('urls[Portfolio]')});
   if(postHold){const hold=postHold;postHold=null;hold.entered();await hold.release}
   const value=behaviors.get(id);
   if(value==='timeout')throw Error('synthetic ambiguous network failure');
   if(value==='429'){behaviors.set(id,'success');return Response.json({ok:false},{status:429,headers:{'Retry-After':'30'}})}
+  if(value==='429-long')return Response.json({ok:false},{status:429,headers:{'Retry-After':'172800'}});
+  if(value==='429-invalid')return Response.json({ok:false},{status:429,headers:{'Retry-After':'not-a-waiting-period'}});
   if(value==='malformed')return new Response('not a receipt',{status:200});
   if(value==='rejected')return Response.json({ok:false},{status:422});
   return Response.json({ok:true,applicationId:'synthetic-'+id});
@@ -279,10 +281,153 @@ try {
   const manualLinked=await call('/api/apply/jobs',{method:'POST',token:linked.token,body:{url:'https://www.linkedin.com/jobs/view/123456789/',title:'Synthetic manual role',company:'Example'}});assert.equal(manualLinked.status,201);assert.equal(manualLinked.data.job.provider,'manual');assert.equal(manualLinked.data.job.submissionSupported,false);
   const manualLinkedReview=await review(linked,[{id:manualLinked.data.job.id}]);assert.equal(manualLinkedReview.items[0].state,'blocked');assert.equal(postCount,beforeLinkedPosts+1);
   checkpoint('Clearing a link invalidates prior approval; saved LinkedIn job URLs remain manual and never produce automatic-submission receipts');
+
+  {
+  const safeguarded=await account('safeguarded');await save(safeguarded);
+  const originalPrivate=await privateState(safeguarded),invalidPDFs=[Buffer.from('%PDF-123'),Buffer.from('%PDF-1.4\n1 0 obj <</Type /Catalog>> endobj\ntrailer <</Root 1 0 R>>\n%%EOF')];
+  for(const bytes of invalidPDFs){
+    const invalid=await call('/api/apply/profile',{method:'PUT',token:safeguarded.token,body:{expectedRevision:1,profile:profile(safeguarded.id,bytes)}});
+    assert.equal(invalid.status,422);assert.equal(invalid.data.error.code,'invalid_resume');assert.deepEqual(await privateState(safeguarded),originalPrivate);
+  }
+  checkpoint('Truncated and page-less PDFs fail a real parser before profile revision, stored bytes or records can change');
+  const removalBody={expectedWorkspaceId:safeguarded.workspaceId,sha256:digest(pdf)};
+  const attached=await call('/api/account',{user:safeguarded.user});assert.equal(attached.data.accountId,safeguarded.user['oai-authenticated-user-id']);assert.equal(attached.data.documents[0].removable,false);
+  assert.equal((await call('/api/account/resumes/remove',{method:'POST',user:safeguarded.user,body:removalBody})).status,409);
+  assert.equal((await call('/api/account/resumes/remove',{method:'POST',user:b.user,body:removalBody})).status,409);
+  assert.deepEqual(await privateState(safeguarded),originalPrivate);
+  checkpoint('PDF removal rejects a current profile reference or a stale/foreign workspace target without changing either account');
+  const oldReview=await review(safeguarded,[await addJob(safeguarded)]),secondPDF=Buffer.concat([pdf,Buffer.from('\n% Synthetic distinct résumé version\n')]);
+  const replacement=await call('/api/apply/profile',{method:'PUT',token:safeguarded.token,body:{expectedRevision:1,profile:profile(safeguarded.id,secondPDF)}});assert.equal(replacement.status,200);
+  assert.equal((await call('/api/account',{user:safeguarded.user})).data.documents.find(r=>r.sha256===digest(pdf)).removable,true);
+  const beforeRemovalAttempts=(await db.prepare('SELECT * FROM attempts WHERE workspace_id=? ORDER BY id').bind(safeguarded.workspaceId).all()).results;
+  const removed=await call('/api/account/resumes/remove',{method:'POST',user:safeguarded.user,body:removalBody});assert.equal(removed.status,200);assert.equal(removed.data.removed,true);
+  assert.equal((await call('/api/account',{user:safeguarded.user})).data.usage.storedResumes,1);
+  assert.deepEqual((await db.prepare('SELECT * FROM attempts WHERE workspace_id=? ORDER BY id').bind(safeguarded.workspaceId).all()).results,beforeRemovalAttempts);
+  assert.equal((await approve(safeguarded,oldReview)).status,409);
+  assert.equal((await call('/api/account/resumes/'+digest(pdf)+'?expectedWorkspaceId='+safeguarded.workspaceId,{user:safeguarded.user})).status,404);
+  assert.equal((await call('/api/account/resumes/remove',{method:'POST',user:safeguarded.user,body:removalBody})).status,200);
+  checkpoint('Unused PDF erasure releases its quota, preserves historical fingerprints, fences files and remains idempotent');
+  const reinstate=await call('/api/apply/profile',{method:'PUT',token:safeguarded.token,body:{expectedRevision:2,profile:profile(safeguarded.id,pdf)}});assert.equal(reinstate.status,200);
+  const another=await call('/api/apply/profile',{method:'PUT',token:safeguarded.token,body:{expectedRevision:3,profile:profile(safeguarded.id,secondPDF)}});assert.equal(another.status,200);
+  let racedRemoval=false;
+  const removeBeforeAttach=wrapDB(db,async(sql)=>{if(!racedRemoval&&sql.startsWith('UPDATE workspaces SET profile_json=')){racedRemoval=true;assert.equal((await call('/api/account/resumes/remove',{method:'POST',user:safeguarded.user,body:removalBody})).status,200)}return false});
+  const raced=await call('/api/apply/profile',{method:'PUT',token:safeguarded.token,body:{expectedRevision:4,profile:profile(safeguarded.id,pdf)},environment:{...env,DB:removeBeforeAttach}});
+  assert.equal(raced.status,409);assert.equal((await call('/api/apply/workspace',{token:safeguarded.token})).data.profile.resume.sha256,digest(secondPDF));
+  checkpoint('A concurrent profile save cannot reattach a PDF retired after its upload lookup');
+  const expiry=await account('requirements-expiry');await save(expiry);
+  const expiringJob=await addJob(expiry);config.connectors[0].postings[expiringJob.postingId].expiresAt=new Date(time+2000).toISOString();
+  const expiringPlan=await review(expiry,[expiringJob]);await approve(expiry,expiringPlan);const beforeExpiry=postCount;
+  getHook=()=>{time+=1500};const expiredDuringRead=await advance(expiry,expiringPlan);
+  assert.equal(expiredDuringRead.data.attempts[0].state,'blocked');assert.equal(expiredDuringRead.data.attempts[0].error.code,'requirements_changed');assert.equal(postCount,beforeExpiry);
+  checkpoint('Employer requirements expiring during posting/PDF preflight produce no application POST');
+  const claimExpiryJob=await addJob(expiry);config.connectors[0].postings[claimExpiryJob.postingId].expiresAt=new Date(time+2000).toISOString();
+  const claimExpiryPlan=await review(expiry,[claimExpiryJob]);await approve(expiry,claimExpiryPlan);let delayedClaim=false;
+  const delayedDB=wrapDB(db,(sql)=>{if(!delayedClaim&&sql.startsWith("UPDATE attempts SET state='dispatching'")){delayedClaim=true;time+=1500}return false});
+  const expiredDuringClaim=await advance(expiry,claimExpiryPlan,{environment:{...env,DB:delayedDB}});
+  assert.equal(expiredDuringClaim.data.attempts[0].state,'blocked');assert.equal(expiredDuringClaim.data.attempts[0].dispatchCount,0);assert.equal(expiredDuringClaim.data.attempts[0].dispatchedAt,null);assert.equal(postCount,beforeExpiry);
+  checkpoint('Requirements expiry while persisting the dispatch claim is rechecked before POST without inventing a dispatch');
+  const rate=await account('extended-cooldown');await save(rate);
+  const longJob=await addJob(rate,'429-long'),longPlan=await review(rate,[longJob]);await approve(rate,longPlan);const rateBefore=time;const longResult=await advance(rate,longPlan);
+  assert.equal(longResult.data.attempts[0].state,'rate_limited');assert.ok(Date.parse(longResult.data.attempts[0].retryAt)-rateBefore>=172800000);
+  await call('/api/apply/stop',{method:'POST',token:rate.token,body:{planId:longPlan.id}});assert.equal((await review(rate,[longJob])).items[0].state,'blocked');
+  const unknownJob=await addJob(rate,'429-invalid'),unknownPlan=await review(rate,[unknownJob]);await approve(rate,unknownPlan);const unknown=await advance(rate,unknownPlan);const unknownPosts=postCount;
+  assert.equal(unknown.data.attempts[0].state,'rate_limited');assert.equal(unknown.data.attempts[0].retryAt,undefined);assert.equal(unknown.data.attempts[0].error.code,'provider_cooldown_unknown');
+  await call('/api/apply/stop',{method:'POST',token:rate.token,body:{planId:unknownPlan.id}});assert.equal((await review(rate,[unknownJob])).items[0].state,'blocked');assert.equal(postCount,unknownPosts);
+  checkpoint('Two-day provider cooldowns are not shortened and an unreadable cooldown stays blocked after Stop');
+  const configured=await account('broken-connector');await save(configured);
+  const badConfiguration={...env,CAREER_CONNECTORS_JSON:'{broken configuration'};
+  async function badConfig(path,method='GET',body){const result=await handler(new Request(SERVICE_ORIGIN+path,{method,headers:{...configured.user,...(body?{origin:SERVICE_ORIGIN,'content-type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})}),badConfiguration);return{status:result.status,data:await result.json()}}
+  assert.equal((await badConfig('/api/account')).status,200);
+  assert.equal((await badConfig('/api/account/export?expectedWorkspaceId='+configured.workspaceId)).status,200);
+  assert.equal((await badConfig('/api/apply/status')).data.liveEnabled,false);
+  const phoneSession=(await call('/api/account',{user:configured.user})).data.sessions[0].id;
+  assert.equal((await badConfig('/api/account/sessions/revoke','POST',{expectedWorkspaceId:configured.workspaceId,sessionId:phoneSession})).status,200);
+  assert.equal((await badConfig('/api/account','DELETE',{expectedWorkspaceId:configured.workspaceId,confirmation:'DELETE'})).status,200);
+  checkpoint('Invalid employer configuration disables submission while account access, export, revocation and erasure remain usable');
+
+  const legacy=await account('legacy-pdf');await save(legacy);const legacyJob=await addJob(legacy),legacyResume=await db.prepare('SELECT * FROM resumes WHERE workspace_id=?').bind(legacy.workspaceId).first();
+  await bucket.put(legacyResume.object_key,new Uint8Array(pdf.length));
+  const legacyPrepared=await review(legacy,[legacyJob]);assert.equal(legacyPrepared.items[0].state,'blocked');assert.match(legacyPrepared.items[0].reason,/exact saved résumé could not be opened/);assert.equal(legacyPrepared.items[0].attemptId,undefined);
+  assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM attempts WHERE workspace_id=?').bind(legacy.workspaceId).first()).n,0);
+  checkpoint('A legacy missing or damaged stored PDF is caught during review before an approval or dispatch record exists');
+
+  const cleanup=await account('pdf-cleanup-retry');await save(cleanup);const cleanupJob=await addJob(cleanup),cleanupPlan=await review(cleanup,[cleanupJob]);await approve(cleanup,cleanupPlan);
+  let enterCleanup,releaseCleanup;const cleanupEntered=new Promise(resolve=>enterCleanup=resolve),cleanupGate=new Promise(resolve=>releaseCleanup=resolve);postHold={entered:enterCleanup,release:cleanupGate};
+  const cleanupSending=advance(cleanup,cleanupPlan);await cleanupEntered;
+  const cleanupNext=await call('/api/apply/profile',{method:'PUT',token:cleanup.token,body:{expectedRevision:1,profile:profile(cleanup.id,secondPDF)}});assert.equal(cleanupNext.status,200);
+  const cleanupRemoval={expectedWorkspaceId:cleanup.workspaceId,sha256:digest(pdf)};
+  assert.equal((await call('/api/account/resumes/remove',{method:'POST',user:cleanup.user,body:cleanupRemoval})).status,409);
+  releaseCleanup();assert.equal((await cleanupSending).data.attempts[0].state,'confirmed');
+  let failedRetirement=false;
+  const brokenErasure=new Proxy(bucket,{get(target,key){if(key==='put')return async(...args)=>{if(args[1].byteLength===0&&!failedRetirement){failedRetirement=true;throw Error('Synthetic erasure unavailable')}return target.put(...args)};const value=target[key];return typeof value==='function'?value.bind(target):value}});
+  const cleanupFailed=await call('/api/account/resumes/remove',{method:'POST',user:cleanup.user,body:cleanupRemoval,environment:{...env,BUCKET:brokenErasure}});assert.equal(cleanupFailed.status,503);
+  const pendingRemoval=(await call('/api/account',{user:cleanup.user})).data.documents.find(item=>item.sha256===digest(pdf));assert.equal(pendingRemoval.state,'deleting');assert.equal(pendingRemoval.removable,true);
+  assert.equal((await call('/api/account/resumes/remove',{method:'POST',user:cleanup.user,body:cleanupRemoval})).status,200);
+  assert.equal((await call('/api/apply/receipts',{token:cleanup.token})).data.receipts[0].state,'confirmed');
+  checkpoint('In-flight provider dispatch retains its exact PDF; a failed later erasure is visible and safely retriable without losing the receipt');
+
+  async function googleIdentity(label){
+    const id='synthetic-google-'+label,generation=randomUUID(),subject='google-subject-'+label,token=digest('synthetic-browser-token-'+label),sessionID=randomUUID();
+    await db.batch([
+      db.prepare("INSERT INTO auth_accounts(owner_id,origin_method,generation,created_at) VALUES(?,'google',?,?)").bind(id,generation,time),
+      db.prepare("INSERT INTO auth_identities(provider,subject,subject_hash,owner_id,email,display_name,connected_at,updated_at) VALUES('google',?,?,?,?,?,?,?)").bind(subject,digest(subject),id,label+'@example.com','Synthetic '+label,new Date(time).toISOString(),new Date(time).toISOString()),
+      db.prepare("INSERT INTO browser_sessions(token_hash,id,owner_id,account_generation,provider,subject,created_at,expires_at) VALUES(?,?,?,?,'google',?,?,?)").bind(digest(token),sessionID,id,generation,subject,time,time+600000),
+    ]);
+    return{id,generation,token,headers:{cookie:'__Host-career-session='+token}};
+  }
+  const googleOnly=await googleIdentity('identity-only'),otherBefore=await privateState(b);
+  const googleAccount=await call('/api/account',{user:b.user,headers:googleOnly.headers});assert.equal(googleAccount.status,200);assert.equal(googleAccount.data.accountId,googleOnly.id);assert.equal(googleAccount.data.workspaceId,null);
+  const googlePhone=await call('/api/phone/workspace',{user:b.user,headers:googleOnly.headers});assert.equal(googlePhone.data.accountId,googleOnly.id);assert.equal(googlePhone.data.workspaceId,null);
+  for(const cookie of ['__Host-career-session=bad','__Host-career-session='+digest('expired')])assert.equal((await call('/api/account',{user:b.user,headers:{cookie}})).status,401);
+  assert.equal((await call('/api/apply/workspace',{token:cleanup.token,headers:{cookie:'__Host-career-session=bad'}})).status,200);
+  assert.equal((await call('/api/account/export?expectedAccountId='+b.user['oai-authenticated-user-id'],{user:b.user,headers:googleOnly.headers})).status,409);
+  const identityExport=await call('/api/account/export?expectedAccountId='+googleOnly.id,{user:b.user,headers:googleOnly.headers});assert.equal(identityExport.status,200);assert.equal(identityExport.data.connections.length,1);assert.equal(identityExport.data.browserSessions.length,1);assert.equal(identityExport.data.workspaceId,null);assert.ok(!JSON.stringify(identityExport.data).includes(digest(googleOnly.token)));assert.ok(!JSON.stringify(identityExport.data).includes(googleOnly.token));
+  checkpoint('Google cookie identity owns account/phone access and a scoped metadata export; invalid cookies never expose a different Sites account or affect native bearer access');
+  assert.equal((await call('/api/account',{method:'DELETE',body:{expectedAccountId:b.user['oai-authenticated-user-id'],expectedWorkspaceId:null,confirmation:'DELETE'},user:b.user,headers:googleOnly.headers})).status,409);
+  const identityRemoved=await call('/api/account',{method:'DELETE',body:{expectedAccountId:googleOnly.id,expectedWorkspaceId:null,confirmation:'DELETE'},user:b.user,headers:googleOnly.headers});assert.equal(identityRemoved.status,200);assert.match(identityRemoved.headers.get('set-cookie'),/Max-Age=0/);assert.equal(identityRemoved.data.redirectTo,'/signout-with-chatgpt?return_to=%2Faccount');
+  for(const table of ['auth_accounts','auth_identities','browser_sessions'])assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM '+table+' WHERE owner_id=?').bind(googleOnly.id).first()).n,0);
+  assert.deepEqual(await privateState(b),otherBefore);assert.equal((await call('/api/account',{user:b.user,headers:googleOnly.headers})).status,401);
+  checkpoint('Identity-only account erasure revokes its sessions and links without creating a workspace or changing another signed-in account');
+
+  const raceIdentity=await googleIdentity('creation-race'),raceDB=wrapDB(db);let insertedWorkspace=false;
+  raceDB.batch=async statements=>{if(!insertedWorkspace&&statements[0]?._sql.startsWith('UPDATE account_lifecycles SET generation=')){insertedWorkspace=true;await db.prepare('INSERT INTO workspaces(id,owner_id,owner_email,created_at,profile_json) VALUES(?,?,?,?,?)').bind(randomUUID(),raceIdentity.id,'creation-race@example.com',new Date(time).toISOString(),JSON.stringify(empty.data.profile)).run()}return db.batch(statements.map(s=>db.prepare(s._sql).bind(...s._args)))};
+  const raceDelete=await call('/api/account',{method:'DELETE',body:{expectedAccountId:raceIdentity.id,expectedWorkspaceId:null,confirmation:'DELETE'},user:b.user,headers:raceIdentity.headers,environment:{...env,DB:raceDB}});assert.equal(raceDelete.status,409);assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM auth_identities WHERE owner_id=?').bind(raceIdentity.id).first()).n,1);
+  checkpoint('A workspace created during identity-only deletion prevents the stale deletion atomically');
+
+  for(const [label,path] of [['pair','/api/account/pairing'],['open','/api/phone/workspace']]){
+    const staleIdentity=await googleIdentity('stale-'+label);let deletedBeforeCreate=false;
+    const delayedCreation=wrapDB(db,async sql=>{if(!deletedBeforeCreate&&sql.startsWith('INSERT OR IGNORE INTO workspaces')){deletedBeforeCreate=true;const erased=await call('/api/account',{method:'DELETE',body:{expectedAccountId:staleIdentity.id,expectedWorkspaceId:null,confirmation:'DELETE'},user:b.user,headers:staleIdentity.headers});assert.equal(erased.status,200)}return false});
+    const staleRequest=await call(path,{method:'POST',body:{expectedAccountId:staleIdentity.id},user:b.user,headers:staleIdentity.headers,environment:{...env,DB:delayedCreation}});
+    assert.equal(deletedBeforeCreate,true);assert.equal(staleRequest.status,401);assert.equal(staleRequest.data.error.code,'invalid_session');
+    for(const table of ['workspaces','auth_accounts','auth_identities','browser_sessions'])assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM '+table+' WHERE owner_id=?').bind(staleIdentity.id).first()).n,0);
+  }
+  checkpoint('Google pairing and browser-open requests already in flight cannot recreate a deleted owner or mint a phone code');
+
+  for(const [label,path] of [['pair','/api/account/pairing'],['open','/api/phone/workspace']])for(const stage of ['before-lifecycle','before-create']){
+    const user=owner('sites-stale-'+label+'-'+stage),id=user['oai-authenticated-user-id'];let deletedBeforeCreate=false;
+    const delayedCreation=wrapDB(db,async sql=>{
+      const matches=stage==='before-create'?sql.startsWith('INSERT OR IGNORE INTO workspaces'):sql.startsWith("INSERT OR IGNORE INTO meta(key,value) VALUES('auth_fence_salt'");
+      if(!deletedBeforeCreate&&matches){deletedBeforeCreate=true;time++;const erased=await call('/api/account',{method:'DELETE',body:{expectedAccountId:id,expectedWorkspaceId:null,confirmation:'DELETE'},user});assert.equal(erased.status,200)}return false;
+    });
+    const staleRequest=await call(path,{method:'POST',body:{expectedAccountId:id},user,environment:{...env,DB:delayedCreation}});
+    assert.equal(deletedBeforeCreate,true);assert.equal(staleRequest.status,409);assert.equal(staleRequest.data.error.code,'account_changed');
+    assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM workspaces WHERE owner_id=?').bind(id).first()).n,0);
+    time++;const freshRequest=await call(path,{method:'POST',body:{expectedAccountId:id},user});assert.ok([200,201].includes(freshRequest.status),JSON.stringify(freshRequest.data));
+  }
+  checkpoint('Opaque owner generations stop stale Sites pairing/open requests before or after lifecycle capture, while a deliberate later request can start fresh');
+
+  const fullIdentity=await googleIdentity('full-account'),googleOpened=await call('/api/phone/workspace',{method:'POST',body:{expectedAccountId:fullIdentity.id},user:b.user,headers:fullIdentity.headers});assert.equal(googleOpened.status,200);const googleWorkspace=googleOpened.data.workspaceId;
+  const fullExport=await call('/api/account/export?expectedWorkspaceId='+googleWorkspace,{user:b.user,headers:fullIdentity.headers});assert.equal(fullExport.data.connections[0].provider,'google');assert.equal(fullExport.data.accountId,fullIdentity.id);
+  const fullDelete=await call('/api/account',{method:'DELETE',body:{expectedWorkspaceId:googleWorkspace,confirmation:'DELETE'},user:b.user,headers:fullIdentity.headers});assert.equal(fullDelete.status,200);
+  for(const table of ['auth_accounts','auth_identities','browser_sessions','workspaces'])assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM '+table+' WHERE owner_id=?').bind(fullIdentity.id).first()).n,0);
+  assert.deepEqual(await privateState(b),otherBefore);
+  checkpoint('Full Google-owned workspace erasure removes identity and application state together and preserves the other browser account');
+
+  }
   const currentAccounts=(await db.prepare('SELECT COUNT(*) AS n FROM workspaces').first()).n,accountSeed=[];for(let i=currentAccounts;i<LIMITS.maxAccounts-1;i++)accountSeed.push(db.prepare('INSERT INTO workspaces(id,owner_id,owner_email,created_at,profile_json) VALUES(?,?,?,?,?)').bind(randomUUID(),'seeded-account-'+i,'synthetic@example.com',new Date(time).toISOString(),'{}'));await db.batch(accountSeed);
   const accountRace=await Promise.all(['cap-a','cap-b'].map(id=>call('/api/account/pairing',{method:'POST',body:{expectedAccountId:owner(id)['oai-authenticated-user-id']},user:owner(id)})));assert.deepEqual(accountRace.map(r=>r.status).sort(),[201,503]);assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM workspaces').first()).n,LIMITS.maxAccounts);checkpoint('Global free-service account cap is atomic rather than count-then-create');
 
-  const files=['server/applications.mjs','server/provider.mjs','server/validation.mjs','db/schema.ts','tests/hosted-applications.mjs',...(await readdir(new URL('../drizzle/',import.meta.url))).filter(f=>f.endsWith('.sql')).sort().map(f=>'drizzle/'+f)];const hashes={};for(const file of files)hashes[file]=digest(await readFile(new URL('../'+file,import.meta.url)));
+  const files=['server/applications.mjs','server/provider.mjs','server/validation.mjs','server/identity.mjs','server/pdf-readability.mjs','server/retry-after.mjs','db/schema.ts','tests/hosted-applications.mjs',...(await readdir(new URL('../drizzle/',import.meta.url))).filter(f=>f.endsWith('.sql')).sort().map(f=>'drizzle/'+f)];const hashes={};for(const file of files)hashes[file]=digest(await readFile(new URL('../'+file,import.meta.url)));
   const evidence={observedAt:new Date().toISOString(),status:'passed',checks:passed.length,groups:passed,providerPosts:postCount,realEmployerRequests:0,mode:'Actual Miniflare D1 and R2 bindings; production handler and provider mapping with injected synthetic HTTP dependency.',fiveMiBPDF:true,sourceHashes:hashes,limits:'Local workerd storage and Node handler execution; production HTTPS, Sites trusted identity headers and native phone interaction require separate deployment checks.'};
   await writeFile(new URL('./hosted-verification.json',import.meta.url),JSON.stringify(evidence,null,2)+'\n');console.log(JSON.stringify({result:'PASS',groups:passed.length,syntheticProviderPosts:postCount,realEmployerRequests:0}));
 } finally {await mf.dispose()}

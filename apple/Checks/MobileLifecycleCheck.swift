@@ -45,7 +45,7 @@ private final class LifecycleSuite {
     var checks = 0
     var scenarios = 0
     var folders: [URL] = []
-    let pdf = Data("%PDF-1.4\nsynthetic lifecycle fixture\n%%EOF".utf8)
+    let pdf = SyntheticPDF.onePage
     func check(_ condition: @autoclosure () -> Bool, _ message: String) throws {
         guard condition() else { throw MobileApplicationError(message: "FAILED: " + message) }
         checks += 1
@@ -115,7 +115,160 @@ private final class LifecycleSuite {
     }
     func cleanup() { for folder in folders { try? FileManager.default.removeItem(at: folder) } }
 
+    func sharedPortableFixture(_ url: URL) throws {
+        let backup = try NativeApplicationsStore.readWorkspaceBackup(at: url)
+        try check(backup.valid && backup.draft.scope.origin == "https://fixture.example.org"
+                  && backup.draft.scope.workspaceID == "portable-fixture-workspace",
+                  "The exact shared Android fixture decodes into its declared workspace scope")
+        try check(backup.recordDrafts.count == 1 && backup.recordDrafts[0].recordID == nil
+                  && backup.recordDrafts[0].revision == nil && backup.recordDrafts[0].draft.note.hasPrefix("New unfinished edit:"),
+                  "A new record checkpoint with absent recordID and revision imports without inventing an existing-record base")
+        try check(backup.records.count == 2 && backup.records.filter(\.archived).count == 1
+                  && backup.records.contains { $0.archived && $0.appliedElsewhere && $0.appliedOn == "2024-02-29" },
+                  "Current private notes and archived self-reported history retain their distinct meanings")
+        try check(backup.records.contains { $0.note.unicodeScalars.contains { $0.value == 0x301 } && $0.note.contains("مرحبا") && $0.note.contains("😀") },
+                  "Cross-platform notes preserve combining accents, Arabic and emoji")
+        try check(backup.draft.jobs.first?["url"]?.string?.utf16.count == 4_096
+                  && backup.draft.jobs.first?["title"]?.string?.utf16.count == 500,
+                  "The common URL and title boundary lengths remain portable")
+        try check(backup.draft.profile.resumeData?.count == 624
+                  && backup.draft.profile.resumeSHA256 == "bb5c2715eb26f653ce4b8ac581bdb54322bb9c4976e07bcab17c100776006b4b",
+                  "The fixture's actual readable PDF survives exact byte and hash validation")
+        let service = TestService()
+        let (store, folder, _) = try fixture(PhoneApplicationState(), service: service)
+        try check(store.mergeBackup(backup, context: store.workspaceActionContext), "The shared fixture merges into an explicitly selected phone workspace")
+        let saved = try JSONDecoder().decode(PhoneApplicationState.self, from: Data(contentsOf: folder.appendingPathComponent("phone-draft.json")))
+        try check(saved.applicationRecords.count == 2 && saved.recordDrafts.count == 1 && saved.submissionHolds.isEmpty
+                  && !saved.connectionEnabled && service.calls.isEmpty,
+                  "Cross-account import retains private drafts/history without importing service holds, credentials or sending an application")
+        scenarios += 1
+    }
+
     func run() async throws {
+        // Cross-account switches preserve the exact A draft, and never display or upload it as B.
+        do {
+            var state = try initial(), draft = PhoneApplicationProfile()
+            draft.firstName = "Private A"; draft.email = "a@example.invalid"; try draft.selectResume(pdf, filename: "A.pdf")
+            state.retainDraft(draft, basedOn: 3)
+            state.opportunityDraft = PhoneOpportunityDraft(url: "https://jobs.example.com/a", title: "Private unfinished A")
+            state.jobs = [["id": .string("local-a"), "url": .string("https://jobs.example.com/a"), "title": .string("A role"), "company": .string("A employer"), "localOnly": .bool(true)]]
+            let original = state.activeDraft
+            state.connect(address: "https://second.example", workspace: "workspace-b", account: "b", server: try ApplicationServerProfile(server(0, name: "Person B")))
+            try check(state.profile.firstName == "Person B" && state.profile.resumeData == nil && !state.profileNeedsSync && state.jobs.isEmpty && !state.opportunityDraft.hasContent,
+                      "A fresh B workspace contains none of A's draft, PDF, links or unfinished opportunity")
+            var b = state.profile; b.city = "B-only city"; state.retainDraft(b, basedOn: 0)
+            state = try JSONDecoder().decode(PhoneApplicationState.self, from: JSONEncoder().encode(state))
+            state.connect(address: "https://first.example", workspace: "workspace-a", account: "a-again", server: try ApplicationServerProfile(server(3)))
+            try check(state.profile == original.profile && state.jobs == original.jobs && state.opportunityDraft == original.opportunityDraft && state.profileNeedsSync,
+                      "A to B to relaunch to A restores A's exact selected PDF and all unfinished work")
+            state.connect(address: "https://second.example", workspace: "workspace-b", account: "b-again", server: try ApplicationServerProfile(server(0, name: "Person B")))
+            try check(state.profile.city == "B-only city" && state.profile.firstName == "Person B", "B's independently saved draft also survives switching back")
+            scenarios += 1
+        }
+        // Stop intent survives offline failure, 401, process restart and deliberate pairing to the same account.
+        for unauthorized in [false, true] {
+            let service = TestService(), heldReview = review("held-review", approved: true)
+            service.handle = { call in
+                if call.route == "stop" {
+                    if unauthorized { throw MobileApplicationError(message: "Expired", statusCode: 401) }
+                    throw URLError(.notConnectedToInternet)
+                }
+                if call.route == "session" { return ["sessionToken": .string("fresh-token"), "workspaceId": .string("workspace-a"), "profile": .object(self.server(3))] }
+                return self.workspace(3, plans: [heldReview], active: ["held-review"], continuation: .string("client"))
+            }
+            let (store, folder, tokens) = try fixture(initial(), service: service)
+            await store.refresh()
+            if unauthorized { await store.stopReview("held-review") } else { await store.stop() }
+            let persisted = try JSONDecoder().decode(PhoneApplicationState.self, from: Data(contentsOf: folder.appendingPathComponent("phone-draft.json")))
+            try check(persisted.holdsSubmission("held-review"), "Stop is durable before a failed or unauthorized server response")
+            let reopened = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+            if unauthorized { _ = await reopened.connect(address: "https://first.example", code: "REPAIR") }
+            await reopened.pollApprovedApplications()
+            try check(!service.calls.contains(where: { $0.route == "advance" }), "A fresh server active-plan list cannot resume a held review after restart or re-pair")
+            try check(!reopened.resumeReview(heldReview), "A held approved review cannot be reopened as permission to send")
+            scenarios += 1
+        }
+        // Explicit unpaired import is destination-bound; portable recovery preserves removed bookmarks and history.
+        do {
+            var state = PhoneApplicationState(); var local = state.profile
+            local.firstName = "Unpaired person"; try local.selectResume(pdf, filename: "Unpaired.pdf"); state.retainDraft(local, basedOn: nil)
+            let savedJob: [String: ApplicationValue] = ["id": .string("local-recovery"), "url": .string("https://jobs.example.com/recovery"), "title": .string("Recovery role"), "company": .string("Synthetic employer"), "localOnly": .bool(true)]
+            var retained = PhoneOpportunityRecord(scope: PhoneRecordScope(), job: PhoneRecordJob(savedJob))
+            retained.stage = .applied; retained.appliedElsewhere = true; retained.note = "Retained without bookmark"
+            state.applicationRecords = [retained]
+            let service = TestService()
+            service.handle = { call in
+                if call.route == "session" { return ["sessionToken": .string("fresh-token"), "workspaceId": .string("workspace-a"), "profile": .object(self.server(0, name: ""))] }
+                return self.workspace(0, name: "")
+            }
+            let (store, _, _) = try fixture(state, service: service)
+            _ = await store.connect(address: "https://first.example", code: "PAIR")
+            try check(store.profile.firstName.isEmpty && store.profile.resumeData == nil && store.hasUnpairedDraft,
+                      "Connecting leaves the original unpaired profile and PDF separate")
+            let stale = store.workspaceActionContext
+            _ = store.keepOpportunityDraft(PhoneOpportunityDraft(title: "A newer edit"))
+            try check(!store.importUnpairedDraft(context: stale), "A stale import confirmation cannot replace a newer destination draft")
+            try check(store.importUnpairedDraft(context: store.workspaceActionContext) && store.profile == local,
+                      "Only an explicit current-target import copies the unpaired person's exact draft")
+            guard let exported = store.exportWorkspace(context: store.workspaceActionContext) else { throw MobileApplicationError(message: "Missing workspace export") }
+            let backup = try NativeApplicationsStore.readWorkspaceBackup(at: exported)
+            try check(backup.records.count == 1 && backup.records[0].note == retained.note && backup.draft.jobs.isEmpty,
+                      "Export retains private record-only history without recreating a removed bookmark")
+            let exportedBytes = try Data(contentsOf: exported)
+            var wire = try JSONSerialization.jsonObject(with: exportedBytes) as! [String: Any]
+            try check(wire["format"] as? String == "career-finder-phone-workspace" && wire["version"] as? Int == 1,
+                      "Native export uses the shared versioned iPhone and Android envelope")
+            try check(!String(decoding: exportedBytes, as: UTF8.self).contains("fresh-token") && wire["credentialAccount"] == nil,
+                      "Portable export contains neither pairing credentials nor the active token")
+            wire["platform"] = "android"; wire["extensions"] = ["android": ["receiptArchive": ["evidenceMode": "imported"]]]
+            let portable = try JSONDecoder().decode(PhoneWorkspaceBackup.self, from: JSONSerialization.data(withJSONObject: wire))
+            try check(portable.records.map(\.note) == backup.records.map(\.note) && portable.draft.profile.resumeData == pdf,
+                      "Common Android envelope fields recover private history and exact CV without reading platform receipt claims")
+            var unknown = backup; unknown.schemaVersion = 99
+            let before = store.profile
+            try check(!store.mergeBackup(unknown, context: store.workspaceActionContext) && store.profile == before,
+                      "Future backup schema cannot alter a phone workspace")
+            try check(store.clearWorkspaceOnPhone(context: store.workspaceActionContext) && store.profile.firstName.isEmpty && !store.connected,
+                      "Explicit local clear disables the connection and removes only this scope's personal draft")
+            try check(store.hasUnpairedDraft, "Clearing the connected scope preserves the separate unpaired original")
+            try check(store.mergeBackup(backup, context: store.workspaceActionContext) && store.profile.firstName == local.firstName,
+                      "The exported backup restores the local draft without reconnecting or approving anything")
+            try check(!service.calls.contains(where: { ["profile", "submit", "advance"].contains($0.route) }),
+                      "Import, export and local recovery send no profile or employer application")
+            scenarios += 1
+        }
+        // Clearing personal phone data cannot erase a Stop barrier for an active service review.
+        do {
+            var state = try initial(); state.holdSubmissions(["held-after-clear"])
+            let service = TestService(); service.handle = { _ in self.workspace(3, active: ["held-after-clear"], continuation: .string("client")) }
+            let (store, folder, tokens) = try fixture(state, service: service)
+            await store.refresh()
+            try check(store.clearWorkspaceOnPhone(context: store.workspaceActionContext), "A target-bound local clear succeeds")
+            let saved = try JSONDecoder().decode(PhoneApplicationState.self, from: Data(contentsOf: folder.appendingPathComponent("phone-draft.json")))
+            try check(saved.holdsSubmission("held-after-clear") && !saved.connectionEnabled && saved.profile.firstName.isEmpty,
+                      "A clear removes personal draft content while keeping restrictive Stop intent")
+            let reopened = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+            await reopened.pollApprovedApplications()
+            try check(!reopened.connected && !service.calls.contains(where: { $0.route == "advance" }), "Relaunch after clearing cannot revive an approved queue")
+            scenarios += 1
+        }
+        // Unfinished private notes recover with their exact base revision; an explicit discard is durable.
+        do {
+            var state = PhoneApplicationState()
+            let job: [String: ApplicationValue] = ["id": .string("local-note"), "url": .string("https://jobs.example.com/note"), "title": .string("Note role"), "company": .string("Synthetic"), "localOnly": .bool(true)]
+            state.jobs = [job]
+            let service = TestService(); let (store, folder, tokens) = try fixture(state, service: service)
+            guard let context = store.recordEditContext(for: job) else { throw MobileApplicationError(message: "Missing draft context") }
+            var draft = PhoneRecordDraft(); draft.note = "Unfinished private note"; draft.followUpOn = "2026-12-01"
+            try check(store.keepRecordDraft(draft, context: context), "Background checkpoint stores an unfinished record without committing its stage")
+            let reopened = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+            guard let restoredContext = reopened.recordEditContext(for: job) else { throw MobileApplicationError(message: "Missing restored context") }
+            try check(reopened.restoredRecordDraft(for: restoredContext) == draft && reopened.currentRecord(for: job) == nil,
+                      "Relaunch restores the note editor while the saved application mark remains unchanged")
+            try check(reopened.discardRecordDraft(context: restoredContext) && reopened.restoredRecordDraft(for: restoredContext) == nil,
+                      "Discard clears the unfinished checkpoint without changing saved records")
+            scenarios += 1
+        }
         // Older stored drafts gain an empty LinkedIn field without changing their existing data.
         do {
             var state = try initial(); var draft = state.profile
@@ -338,7 +491,7 @@ private final class LifecycleSuite {
             }
             newService.handle = { call in
                 if call.route == "session" { return ["ok": .bool(true), "sessionToken": .string("new-synthetic-token"), "workspaceId": .string("workspace-b"), "profile": .object(self.server(0, name: "Different person", resume: self.metadata(oldPDF)))] }
-                return self.workspace(0, jobs: [["id": .string("new-job"), "url": .string("https://jobs.example/new"), "title": .string("New role"), "company": .string("New company")]], workspace: "workspace-b")
+                return self.workspace(0, name: "Different person", jobs: [["id": .string("new-job"), "url": .string("https://jobs.example/new"), "title": .string("New role"), "company": .string("New company")]], workspace: "workspace-b")
             }
             let (store, _, _) = try fixture(state, service: oldService, factory: { url, token in
                 let service = url.host == "second.example" ? newService : oldService; service.token = token; return service
@@ -350,7 +503,7 @@ private final class LifecycleSuite {
             else { gate.finish(workspace(99, name: "Old reply", jobs: [["id": .string("old-job")]])) }
             _ = await oldGET.value
             try check(store.connected && store.jobs.first?["id"]?.string == "new-job", "Obsolete connection response/error cannot repopulate or disconnect the new workspace")
-            try check(store.profileNeedsSync && store.revision == 0 && store.profile.firstName == "Example", "Phone profile transfers only as an explicitly unsaved draft")
+            try check(!store.profileNeedsSync && store.revision == 0 && store.profile.firstName == "Different person", "A different workspace displays only its own profile without adopting the previous person's draft")
             try check(store.profile.resumeName.isEmpty && store.profile.payload()["resume"] == .null, "Foreign workspace CV metadata cannot silently select the new workspace's CV")
             scenarios += 1
         }
@@ -786,14 +939,17 @@ private final class LifecycleSuite {
             let paired = await store.connect(address: first.origin.absoluteString, code: "PAIR")
             let afterPair = try JSONDecoder().decode(PhoneApplicationState.self, from: Data(contentsOf: folder.appendingPathComponent("phone-draft.json")))
             try check(paired && afterPair.applicationRecords[0].scope.isLocal, "Pairing never silently assigns an unpaired private record to an account")
-            try check(!store.removeLocalJob(beforePairRemoval) && store.jobs.count == 1, "A removal captured before a connection change cannot delete the new workspace's link")
-            store.selected = [localID]; await store.prepare()
+            try check(!store.removeLocalJob(beforePairRemoval) && store.jobs.isEmpty, "A removal captured before a connection change cannot touch the separately archived unpaired link")
+            try check(store.importUnpairedDraft(context: store.workspaceActionContext), "A separate explicit choice copies the unpaired link and record into this workspace")
+            store.selected = Set(store.jobs.compactMap { $0["id"]?.string }); await store.prepare()
             let request = first.calls.first(where: { $0.route == "prepare" })!
             try check(request.body?["manualAppliedJobIds"]?.array == [.string(remoteID)], "Explicit local-to-service import maps the durable manual mark to the actual service job ID")
             let serializedBody = String(data: try JSONEncoder().encode(request.body), encoding: .utf8)!
             try check(!serializedBody.contains(record.note) && !serializedBody.contains("followUp") && !serializedBody.contains("appliedOn"), "Only duplicate-prevention IDs leave the phone; private record contents stay local")
             let afterImport = try JSONDecoder().decode(PhoneApplicationState.self, from: Data(contentsOf: folder.appendingPathComponent("phone-draft.json")))
-            try check(afterImport.applicationRecords[0].scope.workspaceID == "workspace-a" && store.isMarkedApplied(remoteJob), "A successful explicit import adopts the record into that exact account scope")
+            try check(afterImport.applicationRecords.contains(where: { $0.scope.workspaceID == "workspace-a" && $0.note == record.note })
+                && afterImport.applicationRecords.contains(where: { $0.scope.isLocal && $0.note == record.note }) && store.isMarkedApplied(remoteJob),
+                      "Explicit import keeps a protected account copy and preserves the separate unpaired original")
             let oldEditor = store.recordEditContext(for: remoteJob)!
             destination = second; let switched = await store.connect(address: second.origin.absoluteString, code: "PAIR-B")
             try check(switched && !store.isMarkedApplied(remoteJob) && store.currentRecord(for: remoteJob) == nil, "Another workspace at the same origin cannot see or use the first account's record")
@@ -1026,8 +1182,8 @@ private final class LifecycleSuite {
             var unknown = workspace(0, workspace: "workspace-b"); unknown["mode"] = .string("local")
             newGate.finish(unknown)
             let changed = await changing.value
-            try check(changed && store.liveSubmissionEnabled == nil && !store.submissionAvailable && store.profile.resumeData == pdf,
-                      "A new workspace without live capability stays unknown and preserves the explicitly kept CV draft")
+            try check(changed && store.liveSubmissionEnabled == nil && !store.submissionAvailable && store.profile.resumeData == nil,
+                      "A new workspace without live capability stays unknown and never adopts the previous person's CV")
             newer.handle = { call in
                 if call.route == "session/revoke" { return ["ok": .bool(true)] }
                 var response = self.workspace(0, workspace: "workspace-b", liveEnabled: .bool(true)); response["mode"] = .string("local"); return response
@@ -1035,11 +1191,13 @@ private final class LifecycleSuite {
             let newEnabled = await store.refresh()
             try check(newEnabled && store.liveSubmissionEnabled == true && store.submissionAvailable, "Only the new workspace can establish its own enabled capability")
             await store.disconnect()
-            try check(!store.connected && store.liveSubmissionEnabled == nil && !store.submissionAvailable && store.profile.resumeData == pdf,
-                      "Disconnect immediately clears verified capability while keeping the phone draft")
+            try check(!store.connected && store.liveSubmissionEnabled == nil && !store.submissionAvailable && store.profile.resumeData == nil,
+                      "Disconnect clears verified capability without showing a previous workspace's CV")
             let restored = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in newer })
-            try check(!restored.connected && restored.liveSubmissionEnabled == nil && !restored.submissionAvailable && restored.profile.resumeData == pdf,
-                      "A disconnected relaunch cannot resurrect another account's enabled capability")
+            let scopedSaved = try JSONDecoder().decode(PhoneApplicationState.self, from: Data(contentsOf: folder.appendingPathComponent("phone-draft.json")))
+            try check(!restored.connected && restored.liveSubmissionEnabled == nil && !restored.submissionAvailable && restored.profile.resumeData == nil
+                && scopedSaved.workspaceDrafts.contains(where: { $0.scope.workspaceID == "workspace-a" && $0.profile.resumeData == pdf }),
+                      "Disconnected relaunch keeps the old CV in its own archived scope and cannot resurrect its capability")
             scenarios += 1
         }
         // Revocation and the account-deletion barrier reset availability without destroying a local draft.
@@ -1298,6 +1456,10 @@ struct MobileLifecycleCheck {
     @MainActor static func main() async {
         let suite = LifecycleSuite(); defer { suite.cleanup() }
         do {
+            guard CommandLine.arguments.count == 2 else {
+                throw MobileApplicationError(message: "Pass the shared phone-workspace-v1.json fixture path to the lifecycle check.")
+            }
+            try suite.sharedPortableFixture(URL(fileURLWithPath: CommandLine.arguments[1]))
             try await suite.run()
             print("PASS \(suite.checks) application lifecycle assertions across \(suite.scenarios) scenarios")
         } catch {

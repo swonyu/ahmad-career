@@ -4,6 +4,12 @@ Initial development candidate, 16 November 2026, commit `396cc370d98a0ee48f8cc2a
 
 This page records the first candidate. See the [phone reliability follow-up](Phone-Quality-Review-2026-11-16.md) for subsequent fixes and current checks. Evidence links below are pinned to the original commit so they retain their historical meaning.
 
+## Current continuation — 17 November 2026
+
+The repaired phone baseline `6f95db3a09a60be8f0b325c8ad01cdcd305dd8de` now has a successful [five-job run 43986038118](https://github.com/swonyu/ahmad-career/actions/runs/43986038118), including **all 13 iPhone UI cases**. The additional continuation changes require their own exact-source acceptance; the live site is now version 7 and provider activation and store distribution remain separate gates. Read the [continuation review and acceptance ledger](Continuation-Review-2026-11-17.md) for the current findings, implementation status, provider setup and coordinated release boundaries. The original candidate and evidence below remain historical.
+
+The final local continuation checks pass **61 account groups**, **19 phone groups / 164 Worker requests**, **64 frontend + 14 browser transport tests**, **33 vault groups**, **26 discovery groups**, **30 auth groups + 15 auth Worker requests**, and the separate 17-request Worker gate; the complete hosted audit has **zero findings**. Companion checks pass 119 HTTP groups, 77 application-state groups and 12 TLS checks; Android passes 122 policy checks. Authoritative hosted source is pushed at `1135a3270435d3719c6f62f1a2e3a53e2c040146`, and its production build passed. **Current-source iPhone all-13 and Android 97 ordinary + 2 TLS instrumentation remain pending**, along with the new phone/repository commit, GitHub CI receipts and full device/browser acceptance. The continuation ledger explains the tested account deletion races and the separate durable owner and ten-minute provider fences.
+
 ## Delivered behavior
 
 The update adds native application workspaces to the existing iPhone app and a new Kotlin/Jetpack Compose Android app. Everyone starts with a blank applicant profile. The person chooses their own name, location, country, roles, skills, work modes and career level; no historical biography or presumed qualification becomes their application.

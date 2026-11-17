@@ -6,28 +6,29 @@ export type ChatGPTUser = {
   displayName: string;
   email: string;
   fullName: string | null;
+  method: "chatgpt" | "google";
 };
 
-const USER_ID_HEADER = "oai-authenticated-user-id";
-const USER_EMAIL_HEADER = "oai-authenticated-user-email";
-const USER_FULL_NAME_HEADER = "oai-authenticated-user-full-name";
-const USER_FULL_NAME_ENCODING_HEADER =
-  "oai-authenticated-user-full-name-encoding";
-const PERCENT_ENCODED_UTF8 = "percent-encoded-utf-8";
+// Worker strips inbound x-career-* headers, resolves the current browser identity
+// and supplies these fields for this request only. Never read raw OAI headers here.
+const USER_ID_HEADER = "x-career-user-id";
+const USER_EMAIL_HEADER = "x-career-user-email";
+const USER_FULL_NAME_HEADER = "x-career-user-name";
+const USER_METHOD_HEADER = "x-career-user-method";
 const SIGN_IN_PATH = "/signin-with-chatgpt";
 const SIGN_OUT_PATH = "/signout-with-chatgpt";
 const CALLBACK_PATH = "/callback";
 
 export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
   const requestHeaders = await headers();
-  const userId = requestHeaders.get(USER_ID_HEADER);
-  const email = requestHeaders.get(USER_EMAIL_HEADER);
-  if (!userId || !email) return null;
+  const userId = safeDecodeURIComponent(requestHeaders.get(USER_ID_HEADER) ?? "");
+  const email = safeDecodeURIComponent(requestHeaders.get(USER_EMAIL_HEADER) ?? "");
+  const method = requestHeaders.get(USER_METHOD_HEADER);
+  if (!userId || !email || (method !== "chatgpt" && method !== "google")) return null;
 
   const encodedFullName = requestHeaders.get(USER_FULL_NAME_HEADER);
   const fullName =
-    encodedFullName &&
-    requestHeaders.get(USER_FULL_NAME_ENCODING_HEADER) === PERCENT_ENCODED_UTF8
+    encodedFullName
       ? safeDecodeURIComponent(encodedFullName)
       : null;
 
@@ -36,6 +37,7 @@ export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
     displayName: fullName ?? email,
     email,
     fullName,
+    method,
   };
 }
 

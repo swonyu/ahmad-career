@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import CryptoKit
 
 struct DiscoverySource: Codable, Identifiable, Equatable {
     let id: String
@@ -190,15 +191,28 @@ final class CareerDiscoveryClient: CareerDiscoveryServing {
 }
 
 private struct DiscoverySavedState: Codable {
+    var schemaVersion = 1
     var query = DiscoveryQuery()
     var lastQuery: DiscoveryQuery?
     var page: DiscoveryPage?
     var jobs: [DiscoveryJob] = []
+    init(query: DiscoveryQuery = DiscoveryQuery(), lastQuery: DiscoveryQuery? = nil, page: DiscoveryPage? = nil, jobs: [DiscoveryJob] = []) {
+        self.query = query; self.lastQuery = lastQuery; self.page = page; self.jobs = jobs
+    }
+    private enum CodingKeys: String, CodingKey { case schemaVersion, query, lastQuery, page, jobs }
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        schemaVersion = try c.decodeIfPresent(Int.self, forKey: .schemaVersion) ?? 1
+        query = try c.decode(DiscoveryQuery.self, forKey: .query)
+        lastQuery = try c.decodeIfPresent(DiscoveryQuery.self, forKey: .lastQuery)
+        page = try c.decodeIfPresent(DiscoveryPage.self, forKey: .page)
+        jobs = try c.decode([DiscoveryJob].self, forKey: .jobs)
+    }
 }
 
 @MainActor
 final class CareerDiscoveryStore: ObservableObject {
-    @Published var query = DiscoveryQuery()
+    @Published var query = DiscoveryQuery() { didSet { if !restoring { persist() } } }
     @Published private(set) var catalog: DiscoveryCatalog?
     @Published private(set) var jobs: [DiscoveryJob] = []
     @Published private(set) var page: DiscoveryPage?
@@ -211,7 +225,10 @@ final class CareerDiscoveryStore: ObservableObject {
     @Published private(set) var retryAfter: Date?
     @Published private(set) var needsNewSearch = false
     private let service: any CareerDiscoveryServing
-    private let file: URL
+    private let baseFile: URL
+    private var file: URL
+    private var scope = PhoneRecordScope()
+    private var restoring = false
     private var storageReadable = true
     private var requestTask: Task<DiscoveryPage, Error>?
     private var requestID: UUID?
@@ -219,14 +236,54 @@ final class CareerDiscoveryStore: ObservableObject {
         self.service = service ?? CareerDiscoveryClient()
         self.file = file ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("CareerFinder/discovery-v1.json")
-        guard FileManager.default.fileExists(atPath: self.file.path) else { return }
+        self.baseFile = self.file
+        restore()
+    }
+    /// The legacy unscoped file remains the unpaired search; connecting never adopts it implicitly.
+    func attach(to target: PhoneRecordScope) {
+        guard target.valid, target != scope else { return }
+        persist(); requestID = nil; requestTask?.cancel(); requestTask = nil; isSearching = false
+        scope = target
+        let key = SHA256.hash(data: Data((target.origin + "\u{0}" + target.workspaceID).utf8)).map { String(format: "%02x", $0) }.joined()
+        file = target.isLocal ? baseFile : baseFile.deletingLastPathComponent().appendingPathComponent("discovery-" + key + ".json")
+        restoring = true; query = DiscoveryQuery(); lastQuery = nil; page = nil; jobs = []; restoredResults = false
+        needsNewSearch = false; retryAfter = nil; error = nil; storageNotice = nil; storageReadable = true; restoring = false
+        restore()
+    }
+    func saveDraft() { persist() }
+    nonisolated static func validateBackup(_ bytes: Data) throws {
+        guard bytes.count <= 12 * 1_024 * 1_024 else { throw CocoaError(.coderInvalidValue) }
+        let saved = try JSONDecoder().decode(DiscoverySavedState.self, from: bytes)
+        guard saved.schemaVersion == 1, saved.query.validationError == nil, saved.lastQuery?.validationError == nil,
+              saved.jobs.count <= DiscoveryPolicy.maximumStoredJobs,
+              saved.jobs.allSatisfy({ MobileApplicationPolicy.jobURL($0.url) != nil }),
+              Set(saved.jobs.map(\.id)).count == saved.jobs.count else { throw CocoaError(.coderInvalidValue) }
+        if let page = saved.page { try DiscoveryPolicy.validate(page) }
+    }
+    func exportSnapshot() throws -> Data {
+        guard storageReadable else { throw DiscoveryFailure(message: "The saved search is unreadable and has been preserved. Clear it deliberately or recover its original file before exporting a new workspace backup.") }
+        let bytes = try JSONEncoder().encode(DiscoverySavedState(query: query, lastQuery: lastQuery, page: page, jobs: jobs))
+        try Self.validateBackup(bytes); return bytes
+    }
+    func importSnapshot(_ bytes: Data) throws {
+        try Self.validateBackup(bytes)
+        guard storageReadable else { throw DiscoveryFailure(message: "The earlier search file is unreadable and was preserved. It was not replaced by the backup.") }
+        try write(bytes); requestID = nil; requestTask?.cancel(); requestTask = nil; isSearching = false
+        restore(); needsNewSearch = true; retryAfter = nil
+    }
+    func clearCurrentScope() throws {
+        let bytes = try JSONEncoder().encode(DiscoverySavedState())
+        try write(bytes); requestID = nil; requestTask?.cancel(); requestTask = nil; isSearching = false
+        storageReadable = true; storageNotice = nil; error = nil; needsNewSearch = false; retryAfter = nil
+        restore()
+    }
+    private func restore() {
+        guard FileManager.default.fileExists(atPath: file.path) else { return }
+        restoring = true; defer { restoring = false }
         do {
-            let data = try Data(contentsOf: self.file)
-            guard data.count <= 12 * 1_024 * 1_024 else { throw CocoaError(.coderInvalidValue) }
+            let data = try Data(contentsOf: file)
+            try Self.validateBackup(data)
             let saved = try JSONDecoder().decode(DiscoverySavedState.self, from: data)
-            guard saved.query.validationError == nil, saved.jobs.count <= DiscoveryPolicy.maximumStoredJobs,
-                  saved.jobs.allSatisfy({ MobileApplicationPolicy.jobURL($0.url) != nil }) else { throw CocoaError(.coderInvalidValue) }
-            if let page = saved.page { try DiscoveryPolicy.validate(page) }
             query = saved.query; lastQuery = saved.lastQuery; page = saved.page; jobs = saved.jobs
             restoredResults = !jobs.isEmpty
         } catch {
@@ -305,17 +362,23 @@ final class CareerDiscoveryStore: ObservableObject {
         }
     }
     private func persist() {
-        guard storageReadable else { return }
+        guard storageReadable, !restoring else { return }
+        guard query.validationError == nil else {
+            storageNotice = "These search fields exceed the supported limits. Earlier saved search data is kept."; return
+        }
         do {
             let saved = DiscoverySavedState(query: query, lastQuery: lastQuery, page: page, jobs: jobs)
             let data = try JSONEncoder().encode(saved)
-            try FileManager.default.createDirectory(at: file.deletingLastPathComponent(), withIntermediateDirectories: true)
-            #if os(iOS)
-            try data.write(to: file, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
-            #else
-            try data.write(to: file, options: [.atomic])
-            #endif
+            try Self.validateBackup(data); try write(data)
             storageNotice = nil
         } catch { storageNotice = "These search results are available now, but could not be saved on this phone." }
+    }
+    private func write(_ bytes: Data) throws {
+        try FileManager.default.createDirectory(at: file.deletingLastPathComponent(), withIntermediateDirectories: true)
+        #if os(iOS)
+        try bytes.write(to: file, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+        #else
+        try bytes.write(to: file, options: .atomic)
+        #endif
     }
 }

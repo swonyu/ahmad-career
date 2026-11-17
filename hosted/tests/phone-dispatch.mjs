@@ -65,7 +65,7 @@ test('approved phone continuation is bounded, owner-bound and never grants appro
   });
   await t.test('a missing current plan never falls back to an old plan or another review',async()=>{
     const missing=fixture();missing.recoverablePlans=[];assert.equal((await continueApprovedPlan(missing,planId,controls())).reason,'waiting');
-    missing.activePlanIds=[];missing.attempts[0].state='confirmed';assert.equal((await continueApprovedPlan(missing,planId,controls())).reason,'complete');
+    missing.activePlanIds=[];missing.attempts[0].state='confirmed';missing.attempts[0].applicationId='synthetic-confirmed-missing-plan';assert.equal((await continueApprovedPlan(missing,planId,controls())).reason,'complete');
     missing.attempts=[];assert.equal((await continueApprovedPlan(missing,planId,controls())).reason,'paused');
   });
   await t.test('approval, profile revision, expiry and account status are rechecked before writes',async()=>{

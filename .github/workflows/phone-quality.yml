@@ -42,6 +42,9 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
+      - name: Install pinned companion dependencies
+        working-directory: website
+        run: npm ci
       - name: Existing record and discovery regressions
         working-directory: website
         run: npm test
@@ -99,9 +102,9 @@ jobs:
           retention-days: 7
 
   android:
-    name: Android compile and lint
+    name: Android compile, lint and native acceptance
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -139,6 +142,19 @@ jobs:
               exit 1
             fi
           done
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Prepare the disposable phone emulator and synthetic companion
+        shell: bash
+        run: |
+          test -c /dev/kvm
+          sudo chmod a+rw /dev/kvm
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install 'emulator' 'system-images;android-36;google_apis;x86_64'
+          npm ci --prefix website
+      - name: Exercise actual phone, storage, large text, RTL and synthetic HTTPS flows
+        run: node android/checks/run-ci-emulator.mjs
       - name: Keep the lint report
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
@@ -146,6 +162,7 @@ jobs:
           name: android-lint-${{ github.run_id }}
           path: |
             android/app/build/reports/lint-results-debug.*
+            android/checks/ci-evidence/**
             ${{ runner.temp }}/career-android-build-*.log
           if-no-files-found: ignore
           retention-days: 7

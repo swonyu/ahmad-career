@@ -19,6 +19,27 @@ public final class BoundaryPolicyCheck {
     public static void main(String[] args) throws Exception {
         check(BoundaryPolicy.serviceOrigin("https://apply.example.org/").equals("https://apply.example.org"), "origin strips only root slash");
         check(BoundaryPolicy.serviceOrigin("HTTPS://APPLY.EXAMPLE.ORG:8443").equals("https://apply.example.org:8443"), "normalizes scheme/host and preserves port");
+        check(BoundaryPolicy.serviceOrigin("https://APPLY.EXAMPLE.ORG:443/").equals("https://apply.example.org"), "default HTTPS port has one origin");
+        check(BoundaryPolicy.serviceOrigin("https://apply.example.org:00443").equals("https://apply.example.org"), "zero-padded default port has one origin");
+        check(BoundaryPolicy.workspaceKey("https://apply.example.org:443", "one").equals(BoundaryPolicy.workspaceKey("https://apply.example.org", "one")), "equivalent default-port workspace is isolated by account, not spelling");
+        check(!BoundaryPolicy.legacyWorkspaceKey("https://apply.example.org:00443", "one").equals(BoundaryPolicy.workspaceKey("https://apply.example.org", "one")), "old default-port alias stays discoverable without overwriting its file");
+        check(BoundaryPolicy.serviceOrigin("https://[2001:db8::1]:443").equals("https://[2001:db8::1]"), "IPv6 default HTTPS port canonicalized");
+        check(ProfileContract.textError("a".repeat(150), "Name", 150) == null, "150-character name accepted");
+        check(ProfileContract.textError("a".repeat(151), "Name", 150) != null, "151-character name reports an error");
+        check(ProfileContract.textError("First\nLast", "Name", 150) != null, "multiline name rejected before sharing");
+        check(ProfileContract.emailError("") == null, "blank unfinished profile is valid");
+        check(ProfileContract.emailError("person+jobs@EXAMPLE.ORG") == null, "service-compatible email accepted");
+        check(ProfileContract.emailError("person<name>@example.org") != null, "unsupported email punctuation rejected");
+        check(ProfileContract.emailError("x".repeat(65) + "@example.org") != null, "oversized email local part rejected");
+        check(ProfileContract.countryError("XK") == null, "supported region beyond Java ISO list accepted");
+        check(ProfileContract.countryError("ZZ") != null, "unknown country rejected");
+        check(ProfileContract.listError(java.util.stream.IntStream.range(0,30).mapToObj(i -> "Role " + i).collect(java.util.stream.Collectors.joining(",")), "Roles", false) == null, "30 role entries accepted");
+        check(ProfileContract.listError(java.util.stream.IntStream.range(0,31).mapToObj(i -> "Role " + i).collect(java.util.stream.Collectors.joining(",")), "Roles", false) != null, "31 role entries report an error without truncation");
+        check(ProfileContract.listError("x".repeat(101), "Skills", false) != null, "oversized list item rejected");
+        check(ProfileContract.listError("US, ZZ", "Target countries", true) != null, "invalid target country rejected");
+        check(ProfileContract.websiteError("https://portfolio.example.org/") == null, "public portfolio accepted");
+        for (String invalid : new String[]{"https://127.0.0.1/", "https://[::1]/", "https://example.local", "https://example.invalid", "https://example.org:8443/", "http://example.org"})
+            check(ProfileContract.websiteError(invalid) != null, "service-incompatible portfolio rejected: " + invalid);
         rejects(() -> BoundaryPolicy.serviceOrigin("http://apply.example.org"), "cleartext refused");
         rejects(() -> BoundaryPolicy.serviceOrigin("https://name:password@apply.example.org"), "credentials refused");
         rejects(() -> BoundaryPolicy.serviceOrigin("https://apply.example.org/api"), "origin path refused");
@@ -73,6 +94,13 @@ public final class BoundaryPolicyCheck {
         check(BoundaryPolicy.pdfName("../CV:current\\version").equals("_CV_current_version.pdf"), "safe plain PDF filename");
         check(BoundaryPolicy.pdfName("..").equals("Resume.pdf"), "dot filename cannot create hidden files");
         check(BoundaryPolicy.pdfName("Profile.PDF").equals("Profile.PDF"), "valid name preserved");
+        check(BoundaryPolicy.validUnicode("Name \uD83D\uDE00"), "complete non-BMP character preserved");
+        check(!BoundaryPolicy.validUnicode("Name \uD800"), "unpaired surrogate cannot be saved lossily");
+        check(BoundaryPolicy.validUnicode(BoundaryPolicy.pdfName("x".repeat(174) + "\uD83D\uDE00")), "long PDF filename never splits a Unicode scalar");
+        check(ProfileContract.emailError("first\u00a0last@example.org") != null, "Unicode-space email rejected consistently with service");
+        check(ProfileContract.websiteError("https://example.org/a\u00a0b") != null, "Unicode-space public URL rejected consistently with service");
+        check(BoundaryPolicy.opportunityURL("https://example.org/" + "x".repeat(4076)).length() == 4096, "portable local job URL can retain 4096 characters");
+
         byte[] document = "%PDF-1.7\nsample bytes".getBytes(StandardCharsets.US_ASCII);
         check(Arrays.equals(document, BoundaryPolicy.readPDF(new ByteArrayInputStream(document))), "PDF bytes preserved exactly");
         checks++;

@@ -98,8 +98,8 @@ struct PhoneOpportunityDraft: Codable, Equatable {
     var country = ""
     var hasContent: Bool { [url, title, company, location, country].contains { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty } }
     var storageError: String? {
-        guard url.count <= 4_096, title.count <= 300, company.count <= 300, location.count <= 300, country.count <= 2 else {
-            return "Keep the link under 4,096 characters and each opportunity detail under 300 characters."
+        guard url.count <= 4_096, title.count <= 500, company.count <= 500, location.count <= 500, country.count <= 2 else {
+            return "Keep the link under 4,096 characters and each opportunity detail under 500 characters."
         }
         return nil
     }
@@ -164,15 +164,15 @@ struct PhoneRecordJob: Codable, Equatable {
     var country: String
     init(_ job: [String: ApplicationValue]) {
         url = job["url"]?.string ?? ""
-        title = String((job["title"]?.string ?? "Opportunity").prefix(300))
-        company = String((job["company"]?.string ?? "").prefix(300))
-        location = String((job["location"]?.string ?? "").prefix(300))
+        title = String((job["title"]?.string ?? "Opportunity").prefix(500))
+        company = String((job["company"]?.string ?? "").prefix(500))
+        location = String((job["location"]?.string ?? "").prefix(500))
         country = String((job["country"]?.string ?? "").prefix(2))
     }
     var identity: String { MobileApplicationPolicy.jobIdentity(url) }
     var valid: Bool {
         MobileApplicationPolicy.jobURL(url) != nil && url.utf16.count <= 4_096
-            && [title, company, location].allSatisfy { $0.count <= 300 }
+            && [title, company, location].allSatisfy { $0.count <= 500 }
             && country.count <= 2
     }
     func applicationJob(id: String) -> [String: ApplicationValue] {
@@ -208,13 +208,221 @@ struct PhoneOpportunityRecord: Codable, Equatable, Identifiable {
     }
 }
 
-struct PhoneRecordDraft: Equatable {
+struct PhoneRecordDraft: Codable, Equatable {
     var stage = PhoneApplicationStage.saved
     var appliedOn = ""
     var followUpOn = ""
     var note = ""
     init(_ record: PhoneOpportunityRecord? = nil) {
         if let record { stage = record.stage; appliedOn = record.appliedOn; followUpOn = record.followUpOn; note = record.note }
+    }
+}
+
+/// A checkpoint is an unfinished edit, never an applied mark or provider receipt.
+struct PhoneRecordDraftCheckpoint: Codable, Equatable {
+    var scope: PhoneRecordScope
+    var identity: String
+    var job: PhoneRecordJob
+    var recordID: String?
+    var revision: Int?
+    var draft: PhoneRecordDraft
+    var valid: Bool {
+        scope.valid && job.valid && identity == job.identity && draft.note.unicodeScalars.count <= 2_000
+            && PhoneRecordDay.valid(draft.appliedOn) && PhoneRecordDay.valid(draft.followUpOn)
+            && (recordID == nil || UUID(uuidString: recordID!) != nil)
+            && (revision == nil || revision! > 0)
+    }
+}
+
+struct PhoneSubmissionHold: Codable, Equatable {
+    var scope: PhoneRecordScope
+    var planID: String
+    var valid: Bool { scope.valid && !scope.isLocal && !planID.isEmpty && planID.utf16.count <= 256 }
+}
+
+/// Only inactive drafts are archived. Tokens and server approval are never copied here.
+struct PhoneWorkspaceDraft: Codable, Equatable {
+    var scope: PhoneRecordScope
+    var profile: PhoneApplicationProfile
+    var profileNeedsSync: Bool
+    var profileRevision: Int?
+    var latestServerRevision: Int?
+    var latestServerProfile: PhoneApplicationProfile?
+    var jobs: [[String: ApplicationValue]]
+    var opportunityDraft: PhoneOpportunityDraft
+    var valid: Bool {
+        scope.valid && jobs.count <= 200 && jobs.allSatisfy { job in
+            guard let url = job["url"]?.string, MobileApplicationPolicy.jobURL(url) != nil, url.utf16.count <= 4_096 else { return false }
+            return ["title", "company", "location"].allSatisfy { (job[$0]?.string?.utf16.count ?? 0) <= 500 }
+                && (job["country"]?.string?.count ?? 0) <= 2
+        }
+            && opportunityDraft.storageError == nil
+            && (profile.resumeData?.count ?? 0) <= MobileApplicationPolicy.maximumResumeBytes
+            && (profileRevision == nil || profileRevision! >= 0)
+    }
+}
+
+struct PhoneWorkspaceActionContext: Equatable {
+    let scope: PhoneRecordScope
+    let connection: UUID
+    let content: UUID
+}
+
+struct PhoneWorkspaceBackup: Codable {
+    var schemaVersion = 1
+    var exportedAt = ISO8601DateFormatter().string(from: Date())
+    var draft: PhoneWorkspaceDraft
+    var records: [PhoneOpportunityRecord]
+    var recordDrafts: [PhoneRecordDraftCheckpoint]
+    var submissionHolds: [PhoneSubmissionHold]
+    var discoverySnapshot: Data?
+    init(draft: PhoneWorkspaceDraft, records: [PhoneOpportunityRecord], recordDrafts: [PhoneRecordDraftCheckpoint],
+         submissionHolds: [PhoneSubmissionHold], discoverySnapshot: Data? = nil) {
+        self.draft = draft; self.records = records; self.recordDrafts = recordDrafts
+        self.submissionHolds = submissionHolds; self.discoverySnapshot = discoverySnapshot
+    }
+    var valid: Bool {
+        schemaVersion == 1 && ApplicationReviewPolicy.date(exportedAt) != nil && draft.valid
+            && records.count <= 1_000 && records.allSatisfy { $0.valid && $0.scope == draft.scope }
+            && Set(records.map(\.id)).count == records.count
+            && recordDrafts.count <= 200 && recordDrafts.allSatisfy { $0.valid && $0.scope == draft.scope }
+            && submissionHolds.count <= 500 && submissionHolds.allSatisfy { $0.valid && $0.scope == draft.scope }
+            && (discoverySnapshot?.count ?? 0) <= 12 * 1_024 * 1_024
+    }
+    /// Common iPhone/Android wire format. Platform extensions contain no reusable authentication or approval.
+    private struct Source: Codable {
+        var scope: String
+        var serviceOrigin: String?
+        var workspaceId: String?
+        var value: PhoneRecordScope? {
+            if scope == "unpaired", serviceOrigin == nil, workspaceId == nil { return PhoneRecordScope() }
+            guard scope == "workspace", let serviceOrigin, let workspaceId else { return nil }
+            let value = PhoneRecordScope(origin: serviceOrigin, workspaceID: workspaceId)
+            return value.valid && !value.isLocal ? value : nil
+        }
+    }
+    private struct Resume: Codable {
+        var name: String; var mime: String; var size: Int; var sha256: String; var dataBase64: String?
+    }
+    private struct Profile: Codable {
+        var firstName: String; var lastName: String; var email: String; var phone: String; var city: String; var country: String
+        var headline: String; var skills: [String]; var targetRoles: [String]; var targetCountries: [String]; var workModes: [String]
+        var experienceLevel: String; var website: String; var linkedin: String; var resume: Resume?
+        init(_ p: PhoneApplicationProfile) {
+            func list(_ text: String) -> [String] { text.split(separator: ",").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty } }
+            firstName = p.firstName; lastName = p.lastName; email = p.email; phone = p.phone; city = p.city; country = p.country
+            headline = p.headline; skills = list(p.skills); targetRoles = list(p.targetRoles); targetCountries = list(p.targetCountries)
+            workModes = [(p.remote ? "remote" : nil), (p.hybrid ? "hybrid" : nil), (p.onsite ? "on-site" : nil)].compactMap { $0 }
+            experienceLevel = p.experienceLevel; website = p.website; linkedin = p.linkedin
+            if !p.resumeRemoved, let size = p.resumeSize, let hash = p.resumeSHA256, !p.resumeName.isEmpty {
+                resume = Resume(name: p.resumeName, mime: "application/pdf", size: size, sha256: hash, dataBase64: p.resumeData?.base64EncodedString())
+            }
+        }
+        func decoded() throws -> PhoneApplicationProfile {
+            let strings = [firstName, lastName, email, phone, city, country, headline, website, linkedin]
+            guard strings.allSatisfy({ $0.utf16.count <= 10_000 }), skills.count <= 30, targetRoles.count <= 30, targetCountries.count <= 30,
+                  (skills + targetRoles + targetCountries).allSatisfy({ $0.utf16.count <= 1_000 }),
+                  workModes.count <= 3, Set(workModes).count == workModes.count,
+                  workModes.allSatisfy({ ["remote", "hybrid", "on-site"].contains($0) }),
+                  ["entry", "mid", "senior", "any"].contains(experienceLevel) else {
+                throw MobileApplicationError(message: "The backup profile is outside supported limits. Existing phone data is unchanged.")
+            }
+            var p = PhoneApplicationProfile()
+            p.firstName = firstName; p.lastName = lastName; p.email = email; p.phone = phone; p.city = city; p.country = country
+            p.headline = headline; p.skills = skills.joined(separator: ", "); p.targetRoles = targetRoles.joined(separator: ", ")
+            p.targetCountries = targetCountries.joined(separator: ", "); p.remote = workModes.contains("remote")
+            p.hybrid = workModes.contains("hybrid"); p.onsite = workModes.contains("on-site")
+            p.experienceLevel = experienceLevel; p.website = website; p.linkedin = linkedin
+            if let resume {
+                guard resume.mime == "application/pdf", (8...MobileApplicationPolicy.maximumResumeBytes).contains(resume.size),
+                      resume.sha256.range(of: #"^[a-f0-9]{64}$"#, options: .regularExpression) != nil else {
+                    throw MobileApplicationError(message: "The backup contains invalid CV metadata.")
+                }
+                p.resumeName = resume.name; p.resumeSize = resume.size; p.resumeSHA256 = resume.sha256
+                if let encoded = resume.dataBase64 {
+                    guard let bytes = Data(base64Encoded: encoded), bytes.base64EncodedString() == encoded else {
+                        throw MobileApplicationError(message: "The backup CV encoding is invalid.")
+                    }
+                    try p.selectResume(bytes, filename: resume.name)
+                    guard p.resumeSize == resume.size, p.resumeSHA256 == resume.sha256 else { throw MobileApplicationError(message: "The backup CV does not match its fingerprint.") }
+                }
+            }
+            return p
+        }
+    }
+    private struct Record: Codable {
+        var id: String; var job: PhoneRecordJob; var stage: PhoneApplicationStage; var appliedElsewhere: Bool
+        var appliedOn: String; var followUpOn: String; var note: String; var revision: Int; var archived: Bool; var updatedAt: String
+        init(_ r: PhoneOpportunityRecord) {
+            id = r.id; job = r.job; stage = r.stage; appliedElsewhere = r.appliedElsewhere; appliedOn = r.appliedOn
+            followUpOn = r.followUpOn; note = r.note; revision = r.revision; archived = r.archived; updatedAt = r.updatedAt
+        }
+        func decoded(scope: PhoneRecordScope) -> PhoneOpportunityRecord {
+            var r = PhoneOpportunityRecord(scope: scope, job: job)
+            r.id = id; r.stage = stage; r.appliedElsewhere = appliedElsewhere; r.appliedOn = appliedOn; r.followUpOn = followUpOn
+            r.note = note; r.revision = revision; r.archived = archived; r.updatedAt = updatedAt; return r
+        }
+    }
+    private struct RecordDraft: Codable {
+        var job: PhoneRecordJob; var recordID: String?; var revision: Int?; var draft: PhoneRecordDraft
+    }
+    private struct Job: Codable {
+        var url: String; var title: String; var company: String; var location: String; var country: String
+        init(_ value: [String: ApplicationValue]) {
+            url = value["url"]?.string ?? ""; title = value["title"]?.string ?? ""; company = value["company"]?.string ?? ""
+            location = value["location"]?.string ?? ""; country = value["country"]?.string ?? ""
+        }
+        func decoded(index: Int) -> [String: ApplicationValue] {
+            ["id": .string("local-import-\(index)"), "localOnly": .bool(true), "url": .string(url), "title": .string(title),
+             "company": .string(company), "location": .string(location), "country": .string(country)]
+        }
+    }
+    private struct Contents: Codable {
+        var profile: Profile
+        var jobs: [Job]
+        var applicationRecords: [Record]
+        var recordDrafts: [RecordDraft]
+        var opportunityDraft: PhoneOpportunityDraft
+        var continuationHolds: [String]
+    }
+    private struct IOS: Codable { var discoverySnapshotBase64: String? }
+    private struct Extensions: Codable { var ios: IOS? }
+    private struct Envelope: Codable {
+        var format: String; var version: Int; var platform: String; var exportedAt: String; var source: Source; var data: Contents; var extensions: Extensions?
+    }
+    init(from decoder: Decoder) throws {
+        let envelope = try Envelope(from: decoder)
+        guard envelope.format == "career-finder-phone-workspace", envelope.version == 1,
+              ["ios", "android"].contains(envelope.platform), let scope = envelope.source.value else {
+            throw MobileApplicationError(message: "This is not a supported Career Finder phone workspace backup. Existing files are unchanged.")
+        }
+        schemaVersion = envelope.version; exportedAt = envelope.exportedAt
+        let contents = envelope.data
+        draft = PhoneWorkspaceDraft(scope: scope, profile: try contents.profile.decoded(), profileNeedsSync: true,
+            profileRevision: nil, latestServerRevision: nil, latestServerProfile: nil,
+            jobs: contents.jobs.enumerated().map { $0.element.decoded(index: $0.offset) }, opportunityDraft: contents.opportunityDraft)
+        records = contents.applicationRecords.map { $0.decoded(scope: scope) }
+        recordDrafts = contents.recordDrafts.map { PhoneRecordDraftCheckpoint(scope: scope, identity: $0.job.identity, job: $0.job,
+            recordID: $0.recordID, revision: $0.revision, draft: $0.draft) }
+        submissionHolds = contents.continuationHolds.map { PhoneSubmissionHold(scope: scope, planID: $0) }
+        if let encoded = envelope.extensions?.ios?.discoverySnapshotBase64 {
+            guard let data = Data(base64Encoded: encoded), data.base64EncodedString() == encoded else {
+                throw MobileApplicationError(message: "The saved search in this backup is unreadable.")
+            }
+            discoverySnapshot = data
+        }
+        guard valid else { throw MobileApplicationError(message: "This backup contains invalid or unsupported phone data. Nothing was replaced.") }
+    }
+    func encode(to encoder: Encoder) throws {
+        let scope = draft.scope
+        let source = Source(scope: scope.isLocal ? "unpaired" : "workspace", serviceOrigin: scope.isLocal ? nil : scope.origin,
+            workspaceId: scope.isLocal ? nil : scope.workspaceID)
+        let contents = Contents(profile: Profile(draft.profile), jobs: draft.jobs.map(Job.init),
+            applicationRecords: records.map(Record.init),
+            recordDrafts: recordDrafts.map { RecordDraft(job: $0.job, recordID: $0.recordID, revision: $0.revision, draft: $0.draft) },
+            opportunityDraft: draft.opportunityDraft, continuationHolds: submissionHolds.map(\.planID))
+        try Envelope(format: "career-finder-phone-workspace", version: schemaVersion, platform: "ios", exportedAt: exportedAt,
+            source: source, data: contents, extensions: Extensions(ios: IOS(discoverySnapshotBase64: discoverySnapshot?.base64EncodedString()))).encode(to: encoder)
     }
 }
 
@@ -295,12 +503,17 @@ struct PhoneApplicationState: Codable {
     var credentialAccount: String?
     var applicationRecordSchema = 1
     var applicationRecords: [PhoneOpportunityRecord] = []
+    var workspaceDraftSchema = 1
+    var workspaceDrafts: [PhoneWorkspaceDraft] = []
+    var recordDrafts: [PhoneRecordDraftCheckpoint] = []
+    var submissionHolds: [PhoneSubmissionHold] = []
 
     init() {}
     private enum CodingKeys: String, CodingKey {
         case profile, profileNeedsSync, jobs, opportunityDraft, serviceAddress, workspaceID, profileRevision
         case latestServerRevision, latestServerProfile, connectionEnabled, credentialAccount
         case applicationRecordSchema, applicationRecords
+        case workspaceDraftSchema, workspaceDrafts, recordDrafts, submissionHolds
     }
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -315,6 +528,20 @@ struct PhoneApplicationState: Codable {
         latestServerProfile = try c.decodeIfPresent(PhoneApplicationProfile.self, forKey: .latestServerProfile)
         connectionEnabled = try c.decodeIfPresent(Bool.self, forKey: .connectionEnabled) ?? !serviceAddress.isEmpty
         credentialAccount = try c.decodeIfPresent(String.self, forKey: .credentialAccount)
+        workspaceDraftSchema = try c.decodeIfPresent(Int.self, forKey: .workspaceDraftSchema) ?? 1
+        workspaceDrafts = try c.decodeIfPresent([PhoneWorkspaceDraft].self, forKey: .workspaceDrafts) ?? []
+        recordDrafts = try c.decodeIfPresent([PhoneRecordDraftCheckpoint].self, forKey: .recordDrafts) ?? []
+        submissionHolds = try c.decodeIfPresent([PhoneSubmissionHold].self, forKey: .submissionHolds) ?? []
+        guard workspaceDraftSchema == 1, workspaceDrafts.count <= 32, workspaceDrafts.allSatisfy(\.valid),
+              recordDrafts.count <= 200, recordDrafts.allSatisfy(\.valid),
+              submissionHolds.count <= 500, submissionHolds.allSatisfy(\.valid) else {
+            throw MobileApplicationError(message: "These workspace drafts need a compatible app version. The original phone data has been preserved.")
+        }
+        for (index, draft) in workspaceDrafts.enumerated() {
+            guard draft.scope != recordScope, !workspaceDrafts.prefix(index).contains(where: { $0.scope == draft.scope }) else {
+                throw MobileApplicationError(message: "Conflicting workspace drafts were preserved without choosing or replacing either version.")
+            }
+        }
         if c.contains(.applicationRecordSchema) || c.contains(.applicationRecords) {
             applicationRecordSchema = try c.decode(Int.self, forKey: .applicationRecordSchema)
             applicationRecords = try c.decode([PhoneOpportunityRecord].self, forKey: .applicationRecords)
@@ -330,6 +557,22 @@ struct PhoneApplicationState: Codable {
     }
     var hasProfileConflict: Bool {
         profileNeedsSync && latestServerRevision != nil && profileRevision != latestServerRevision
+    }
+    var activeDraft: PhoneWorkspaceDraft {
+        PhoneWorkspaceDraft(scope: recordScope, profile: profile, profileNeedsSync: profileNeedsSync,
+            profileRevision: profileRevision, latestServerRevision: latestServerRevision,
+            latestServerProfile: latestServerProfile, jobs: jobs, opportunityDraft: opportunityDraft)
+    }
+    mutating func loadDraft(_ draft: PhoneWorkspaceDraft) {
+        profile = draft.profile; profileNeedsSync = draft.profileNeedsSync; profileRevision = draft.profileRevision
+        latestServerRevision = draft.latestServerRevision; latestServerProfile = draft.latestServerProfile
+        jobs = draft.jobs; opportunityDraft = draft.opportunityDraft
+    }
+    func holdsSubmission(_ id: String) -> Bool {
+        submissionHolds.contains { $0.scope == recordScope && $0.planID == id }
+    }
+    mutating func holdSubmissions(_ ids: [String]) {
+        for id in ids where !holdsSubmission(id) { submissionHolds.append(PhoneSubmissionHold(scope: recordScope, planID: id)) }
     }
     mutating func retainDraft(_ draft: PhoneApplicationProfile, basedOn revision: Int?) {
         profile = draft; profileRevision = revision; profileNeedsSync = true
@@ -347,13 +590,15 @@ struct PhoneApplicationState: Codable {
     mutating func connect(address: String, workspace: String, account: String, server: ApplicationServerProfile) {
         let same = workspaceID == workspace && MobileApplicationPolicy.serviceURL(serviceAddress)?.absoluteString == address
         if !same {
-            latestServerRevision = nil; latestServerProfile = nil
-            if profileNeedsSync || profile.hasContent {
-                // Metadata from another workspace cannot silently select that workspace's CV.
-                if profile.resumeData == nil { profile.removeResume() }
-                else { profile.resumeChanged = true; profile.resumeRemoved = false }
-                profileNeedsSync = true; profileRevision = server.revision
-            } else { acknowledge(server) }
+            let previous = activeDraft, target = PhoneRecordScope(origin: address, workspaceID: workspace)
+            let restored = workspaceDrafts.first { $0.scope == target }
+            workspaceDrafts.removeAll { $0.scope == previous.scope || $0.scope == target }
+            workspaceDrafts.append(previous)
+            if let restored { loadDraft(restored) }
+            else {
+                profile = PhoneApplicationProfile(); profileNeedsSync = false; profileRevision = nil
+                latestServerRevision = nil; latestServerProfile = nil; jobs = []; opportunityDraft = PhoneOpportunityDraft()
+            }
         }
         serviceAddress = address; workspaceID = workspace; credentialAccount = account; connectionEnabled = true
         receive(server)

@@ -9,11 +9,13 @@ import {createApplicationService} from './applications/service.mjs';
 import {profile as validateProfile,country,publicURL,leverTarget} from './applications/validation.mjs';
 
 const temp=fs.mkdtempSync(path.join(os.tmpdir(),'career-application-check-'));
-const pdf=Buffer.from('%PDF-1.4\n1 0 obj\n<< /Type /Catalog >>\nendobj\ntrailer\n<< /Root 1 0 R >>\n%%EOF\n');
+const pdf=Buffer.from('JVBERi0xLjcKJYGBgYEKCjEgMCBvYmoKPDwKL1R5cGUgL1BhZ2VzCi9LaWRzIFsgNCAwIFIgXQovQ291bnQgMQo+PgplbmRvYmoKCjIgMCBvYmoKPDwKL1R5cGUgL0NhdGFsb2cKL1BhZ2VzIDEgMCBSCj4+CmVuZG9iagoKMyAwIG9iago8PAovUHJvZHVjZXIgPEZFRkYwMDcwMDA2NDAwNjYwMDJEMDA2QzAwNjkwMDYyMDAyMDAwMjgwMDY4MDA3NDAwNzQwMDcwMDA3MzAwM0EwMDJGMDAyRjAwNjcwMDY5MDA3NDAwNjgwMDc1MDA2MjAwMkUwMDYzMDA2RjAwNkQwMDJGMDA0ODAwNkYwMDcwMDA2NDAwNjkwMDZFMDA2NzAwMkYwMDcwMDA2NDAwNjYwMDJEMDA2QzAwNjkwMDYyMDAyOT4KL01vZERhdGUgKEQ6MjAyNjAxMDEwMDAwMDBaKQovQ3JlYXRvciA8RkVGRjAwNzAwMDY0MDA2NjAwMkQwMDZDMDA2OTAwNjIwMDIwMDAyODAwNjgwMDc0MDA3NDAwNzAwMDczMDAzQTAwMkYwMDJGMDA2NzAwNjkwMDc0MDA2ODAwNzUwMDYyMDAyRTAwNjMwMDZGMDA2RDAwMkYwMDQ4MDA2RjAwNzAwMDY0MDA2OTAwNkUwMDY3MDAyRjAwNzAwMDY0MDA2NjAwMkQwMDZDMDA2OTAwNjIwMDI5PgovQ3JlYXRpb25EYXRlIChEOjIwMjYwMTAxMDAwMDAwWikKPj4KZW5kb2JqCgo0IDAgb2JqCjw8Ci9UeXBlIC9QYWdlCi9QYXJlbnQgMSAwIFIKL1Jlc291cmNlcyA8PAovRm9udCA8PAovSGVsdmV0aWNhLTcwOTg0ODA3ODkgNSAwIFIKPj4KL1hPYmplY3QgPDwKPj4KL0V4dEdTdGF0ZSA8PAo+Pgo+PgovTWVkaWFCb3ggWyAwIDAgNjEyIDc5MiBdCi9Bbm5vdHMgWyBdCi9Db250ZW50cyBbIDYgMCBSIF0KPj4KZW5kb2JqCgo1IDAgb2JqCjw8Ci9UeXBlIC9Gb250Ci9TdWJ0eXBlIC9UeXBlMQovQmFzZUZvbnQgL0hlbHZldGljYQovRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZwo+PgplbmRvYmoKCjYgMCBvYmoKPDwKL0ZpbHRlciAvRmxhdGVEZWNvZGUKL0xlbmd0aCAxMzIKPj4Kc3RyZWFtCnicJYvBCkJBCEX3foXrINIZRx2IFsFAizaBPxDxiqIWRfT9+YqL4j0cn7ANIJzzusBqN90/0/t6Oi6NuouTeUcuGGcogrEH/qmMQmg58YB1q9Z1mKhry921FpKqbEVbkpJNkw6Vf1PWmmlGaXPyvJOmY25ibf7bYNwgFjACDvAFvpcjUgplbmRzdHJlYW0KZW5kb2JqCgp4cmVmCjAgNwowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMTYgMDAwMDAgbiAKMDAwMDAwMDA3NiAwMDAwMCBuIAowMDAwMDAwMTI2IDAwMDAwIG4gCjAwMDAwMDA1OTYgMDAwMDAgbiAKMDAwMDAwMDc5MSAwMDAwMCBuIAowMDAwMDAwODg5IDAwMDAwIG4gCgp0cmFpbGVyCjw8Ci9TaXplIDcKL1Jvb3QgMiAwIFIKL0luZm8gMyAwIFIKPj4KCnN0YXJ0eHJlZgoxMDk0CiUlRU9G','base64');
 const cv={name:'Fixture-CV.pdf',mime:'application/pdf',dataBase64:pdf.toString('base64')};
 const candidate={firstName:'Amina',lastName:'Example',email:'amina@example.com',phone:'+966 50 000 0000',city:'Riyadh',country:'SA',headline:'Independent software developer',skills:['Swift','JavaScript'],targetRoles:['Software'],targetCountries:['SA'],workModes:['remote','hybrid'],experienceLevel:'entry',website:'https://example.com/portfolio',resume:cv};
 let checks=0;const check=(name,fn)=>{fn();checks++;console.log(`PASS ${name}`)};
-const counts=new Map(),requests=[],scenarios=new Map();let changedTitle=false;
+const counts=new Map(),requests=[],scenarios=new Map(),retryHeaders=new Map(),postingGates=new Map(),responseGates=new Map();let changedTitle=false;
+function requestGate(){let release;const gate={entered:false,wait:new Promise(resolve=>{release=resolve}),release:()=>release()};return gate}
+async function waitForGate(gate){for(let i=0;i<100;i++){if(gate.entered)return;await new Promise(resolve=>setTimeout(resolve,20))}throw Error('The synthetic provider request did not reach its gate')}
 const postingID=n=>`00000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
 const postingURL=n=>`https://jobs.lever.co/career-fixture/${postingID(n)}`;
 const mock=http.createServer(async(req,res)=>{
@@ -22,6 +24,7 @@ const mock=http.createServer(async(req,res)=>{
   if(!match){res.writeHead(501);res.end('Unmodeled mock route');return}
   const id=match[1],n=Number(id.slice(-12));
   if(req.method==='GET') {
+    const gate=postingGates.get(n);if(gate){gate.entered=true;await gate.wait}
     if(scenarios.get(n)==='closed'){res.writeHead(404);res.end('{}');return}
     res.setHeader('Content-Type','application/json');res.end(JSON.stringify({id,text:changedTitle?'Updated role':'Software developer',categories:{location:'Riyadh'},country:'SA',workplaceType:'hybrid',descriptionPlain:'Synthetic test posting',hostedUrl:postingURL(n),applyUrl:postingURL(n)+'/apply'}));return;
   }
@@ -29,6 +32,7 @@ const mock=http.createServer(async(req,res)=>{
   const chunks=[];for await(const chunk of req)chunks.push(chunk);
   const body=Buffer.concat(chunks);counts.set(n,(counts.get(n)??0)+1);
   requests.push({n,body,contentType:req.headers['content-type'],key:u.searchParams.get('key')});
+  const gate=responseGates.get(n);if(gate){gate.entered=true;await gate.wait}
   if(u.searchParams.get('key')!=='fixture-key-never-real'){res.writeHead(403,{'Content-Type':'application/json'});res.end(JSON.stringify({ok:false,error:'fake key required'}));return}
   const scenario=scenarios.get(n)??'success';
   if(scenario==='timeout')await new Promise(resolve=>setTimeout(resolve,250));
@@ -38,7 +42,7 @@ const mock=http.createServer(async(req,res)=>{
   if(scenario==='server-error'){res.writeHead(503,{'Content-Type':'application/json'});res.end(JSON.stringify({ok:false,error:'internal fixture-key-never-real'}));return}
   if(scenario==='redirect'){res.writeHead(302,{Location:'https://example.com/must-not-follow'});res.end();return}
   if(scenario==='rejected'){res.writeHead(400,{'Content-Type':'application/json'});res.end(JSON.stringify({ok:false,error:'private fixture-key-never-real'}));return}
-  if(scenario==='rate-limit'&&(counts.get(n)??0)===1){res.writeHead(429,{'Content-Type':'application/json','Retry-After':'1'});res.end(JSON.stringify({ok:false,error:'rate limit'}));return}
+  if(scenario==='rate-limit'&&(counts.get(n)??0)===1){res.writeHead(429,{'Content-Type':'application/json','Retry-After':retryHeaders.get(n)??'1'});res.end(JSON.stringify({ok:false,error:'rate limit'}));return}
   res.writeHead(200,{'Content-Type':'application/json'});res.end(JSON.stringify({ok:true,applicationId:`test-application-${n}`}));
 });
 mock.listen(0,'127.0.0.1');await once(mock,'listening');
@@ -86,6 +90,9 @@ try {
   r=await c.request('PUT','profile',{expectedRevision:0,profile:candidate},{'X-Career-CSRF':'wrong'});check('wrong CSRF cannot mutate profile',()=>assert.equal(r.status,403));
   r=await c.request('PUT','profile',{expectedRevision:0,profile:{...candidate,verified:true}});check('client-supplied verification field rejected',()=>assert.equal(r.status,422));
   const saved=await save(c);check('résumé saved as bytes but not returned to UI',()=>{assert.equal(saved.resume.size,pdf.length);assert.equal(saved.resume.dataBase64,undefined);assert.equal(saved.revision,1)});
+  const unreadable=await c.request('PUT','profile',{expectedRevision:1,profile:{...candidate,resume:{...cv,dataBase64:Buffer.from('%PDF-1.7\n'+('not a document\n').repeat(8)+'%%EOF\n').toString('base64')}}});
+  const afterUnreadable=(await c.request('GET','workspace')).data.profile;
+  check('unreadable PDF rejection preserves the previous résumé and profile revision',()=>{assert.equal(unreadable.status,422);assert.equal(unreadable.data.error.code,'invalid_resume');assert.deepEqual(afterUnreadable,saved)});
   r=await c.request('PUT','profile',{expectedRevision:0,profile:candidate});check('stale profile revision cannot overwrite newer profile',()=>assert.equal(r.status,409));
   const j=await job(c,1);r=await c.request('POST','jobs',{url:postingURL(1)+'/apply?utm_source=test'});check('canonical Lever URLs share one opportunity identity',()=>assert.equal(r.data.job.id,j.id));
   const p=await plan(c,[j.id]);check('preparation reviews exact fields without sending',()=>{assert.equal(p.items[0].state,'ready');assert.equal(p.items[0].payloadSummary.name,'Amina Example');assert.equal(p.items[0].resume.sha256,saved.resume.sha256);assert.equal(counts.get(1),undefined)});
@@ -131,6 +138,45 @@ try {
   r=await submit(cr,pr);check('429 retry before cooldown is denied',()=>assert.equal(r.status,409));clockTime+=1500;await submit(cr,pr);wr=await settled(cr,pr.id);check('429 retry after cooldown uses same approved attempt',()=>{assert.equal(wr.attempts[0].state,'confirmed');assert.equal(wr.attempts.length,1);assert.equal(counts.get(5),2)});
   scenarios.set(20,'rate-limit');const expiredRateJob=await job(cr,20),expiredRatePlan=await plan(cr,[expiredRateJob.id]);await submit(cr,expiredRatePlan);await settled(cr,expiredRatePlan.id);clockTime+=31*60000;const freshRatePlan=await plan(cr,[expiredRateJob.id]);check('expired rate-limited review can be replaced after its cooldown',()=>{assert.equal(freshRatePlan.items[0].state,'ready');assert.equal(counts.get(20),1)});await submit(cr,freshRatePlan);const replacementState=await settled(cr,freshRatePlan.id);check('replacement needs a fresh approval and preserves prior rejection evidence',()=>{assert.equal(replacementState.attempts.find(a=>a.planId===expiredRatePlan.id).state,'cancelled');assert.equal(replacementState.attempts.find(a=>a.planId===freshRatePlan.id).state,'confirmed');assert.equal(counts.get(20),2)});
   scenarios.set(21,'rate-limit');const stoppedRateJob=await job(cr,21),stoppedRatePlan=await plan(cr,[stoppedRateJob.id]);await submit(cr,stoppedRatePlan);await settled(cr,stoppedRatePlan.id);await cr.request('POST','stop',{planId:stoppedRatePlan.id});const bypassedRatePlan=await plan(cr,[stoppedRateJob.id]);check('stopping a429 retry cannot bypass the provider cooldown',()=>{assert.equal(bypassedRatePlan.items[0].state,'blocked');assert.match(bypassedRatePlan.items[0].reason,/cooldown remains active/);assert.equal(counts.get(21),1)});clockTime+=1500;const afterStoppedCooldown=await plan(cr,[stoppedRateJob.id]);check('a stopped429 attempt permits a fresh review after cooldown',()=>{assert.equal(afterStoppedCooldown.items[0].state,'ready');assert.equal(counts.get(21),1)});
+  for(const [n,header,label] of [[27,'not-a-time','malformed'],[28,'31536000','one-year']]) {
+    let cooldownTime=Date.now();const fc=await fixture('strict-cooldown-'+label,{clock:()=>cooldownTime}),cc=await fc.browser();
+    await save(cc,{...candidate,email:`${label}-cooldown@example.com`});scenarios.set(n,'rate-limit');retryHeaders.set(n,header);
+    const jc=await job(cc,n),pc=await plan(cc,[jc.id]);await submit(cc,pc);const beforeStop=(await settled(cc,pc.id)).attempts.find(a=>a.planId===pc.id);
+    check(`${label} Retry-After retains a complete waiting period or explicit reconciliation hold`,()=>{assert.equal(beforeStop.state,'rate_limited');assert.equal(counts.get(n),1);assert.ok(beforeStop.responseSHA256);if(label==='malformed'){assert.equal(beforeStop.error.code,'provider_cooldown_unknown');assert.equal(beforeStop.retryAt,undefined)}else assert.equal(Date.parse(beforeStop.retryAt),cooldownTime+31536000000)});
+    const tooEarly=await submit(cc,pc);
+    check(`${label} cooldown cannot be retried and explains the actual next step`,()=>{assert.equal(tooEarly.status,409);assert.equal(counts.get(n),1);if(label==='malformed'){assert.equal(tooEarly.data.error.code,'provider_cooldown_unknown');assert.match(tooEarly.data.error.message,/reconcile/i)}else assert.equal(tooEarly.data.error.code,'cooldown_active')});
+    const stopped=await cc.request('POST','stop',{planId:pc.id}),stoppedAttempt=stopped.data.attempts.find(a=>a.planId===pc.id);
+    check(`${label} cooldown Stop retains the provider rejection evidence`,()=>{assert.equal(stopped.status,200);assert.equal(stoppedAttempt.state,'cancelled');assert.equal(stoppedAttempt.dispatchCount,1);assert.equal(stoppedAttempt.responseSHA256,beforeStop.responseSHA256);assert.equal(stoppedAttempt.retryAt,beforeStop.retryAt);if(label==='malformed'){assert.equal(stoppedAttempt.error.code,'provider_cooldown_unknown');assert.match(stoppedAttempt.error.message,/reconcile/i)}});
+    cooldownTime+=2*86400000;
+    const config=JSON.parse(fs.readFileSync(fc.configPath));config.connectors[0].postings[postingID(n)]={...config.connectors[0].postings[postingID(n)],revision:'fixture-v2',reviewedAt:new Date(cooldownTime-60000).toISOString(),expiresAt:new Date(cooldownTime+86400000).toISOString()};fs.writeFileSync(fc.configPath,JSON.stringify(config));
+    await save(cc,{...candidate,email:`changed-${label}@example.com`},1);const held=await plan(cc,[jc.id]);
+    check(`${label} stopped cooldown survives expired review, new requirements and changed profile`,()=>{assert.equal(held.items[0].state,'blocked');assert.equal(held.items[0].attemptId,undefined);assert.equal(counts.get(n),1);if(label==='malformed'){assert.match(held.items[0].reason,/reconcile/i);assert.doesNotMatch(held.items[0].reason,/Continue that review/i)}else assert.match(held.items[0].reason,/cooldown remains active/)});
+    if(label==='one-year') {
+      cooldownTime=Date.parse(beforeStop.retryAt);config.connectors[0].postings[postingID(n)].reviewedAt=new Date(cooldownTime-60000).toISOString();config.connectors[0].postings[postingID(n)].expiresAt=new Date(cooldownTime+86400000).toISOString();fs.writeFileSync(fc.configPath,JSON.stringify(config));
+      const afterEntireCooldown=await plan(cc,[jc.id]);check('the full long cooldown must elapse before a new review becomes available',()=>{assert.equal(afterEntireCooldown.items[0].state,'ready');assert.equal(counts.get(n),1)});
+      await submit(cc,afterEntireCooldown);const afterExplicitApproval=await settled(cc,afterEntireCooldown.id);check('a stopped long cooldown requires a fresh explicit approval and retains its earlier rejection',()=>{assert.equal(counts.get(n),2);assert.equal(afterExplicitApproval.attempts.find(a=>a.planId===pc.id).state,'cancelled');assert.equal(afterExplicitApproval.attempts.find(a=>a.planId===afterEntireCooldown.id).state,'confirmed')});
+    }
+  }
+  for(const [n,header,label] of [[29,'999999999999999999999999999999','unrepresentable'],[30,'300000','long']]) {
+    const fc=await fixture('stop-in-flight-'+label,{timeoutMs:5000}),cc=await fc.browser();await save(cc,{...candidate,email:`in-flight-${label}@example.com`});
+    scenarios.set(n,'rate-limit');retryHeaders.set(n,header);const jc=await job(cc,n),pc=await plan(cc,[jc.id]),gate=requestGate();responseGates.set(n,gate);
+    try {assert.equal((await submit(cc,pc)).status,202);await waitForGate(gate);const stopping=await cc.request('POST','stop',{planId:pc.id});assert.equal(stopping.status,200);assert.equal(stopping.data.attempts[0].state,'dispatching')}finally{gate.release();responseGates.delete(n)}
+    const stopped=(await settled(cc,pc.id)).attempts.find(a=>a.planId===pc.id),held=await plan(cc,[jc.id]);
+    check(`${label} late429 records the rejection and honors Stop without requeueing`,()=>{assert.equal(stopped.state,'cancelled');assert.equal(stopped.dispatchCount,1);assert.ok(stopped.responseSHA256);assert.equal(stopped.applicationId,undefined);assert.equal(counts.get(n),1);assert.equal(held.items[0].state,'blocked');if(label==='unrepresentable'){assert.equal(stopped.error.code,'provider_cooldown_unknown');assert.match(stopped.error.message,/reconcile/i);assert.match(held.items[0].reason,/reconcile/i)}else{assert.ok(Date.parse(stopped.retryAt)>Date.now()+299000000);assert.match(held.items[0].reason,/cooldown remains active/)}});
+    const repeated=await cc.request('POST','stop',{planId:pc.id});check(`${label} repeated Stop preserves the late provider evidence exactly`,()=>{assert.deepEqual(repeated.data.attempts.find(a=>a.planId===pc.id),stopped);assert.equal(counts.get(n),1)});
+  }
+  for(const [n,postingResult] of [[31,'closed'],[32,'success']]) {
+    const fc=await fixture('stop-during-preflight-'+postingResult,{timeoutMs:5000}),cc=await fc.browser();await save(cc,{...candidate,email:`preflight-${postingResult}@example.com`});
+    const jc=await job(cc,n),pc=await plan(cc,[jc.id]),gate=requestGate();postingGates.set(n,gate);
+    try {assert.equal((await submit(cc,pc)).status,202);await waitForGate(gate);assert.equal((await cc.request('POST','stop',{planId:pc.id})).status,200);scenarios.set(n,postingResult)}finally{gate.release();postingGates.delete(n)}
+    const stopped=(await settled(cc,pc.id)).attempts.find(a=>a.planId===pc.id);
+    check(`Stop during ${postingResult} posting preflight remains cancelled without a provider POST`,()=>{assert.equal(stopped.state,'cancelled');assert.equal(stopped.error.code,'stopped');assert.equal(stopped.dispatchCount,0);assert.equal(counts.get(n),undefined)});
+  }
+  const requirementsRace=await fixture('requirements-during-preflight',{timeoutMs:5000}),requirementsClient=await requirementsRace.browser();await save(requirementsClient,{...candidate,email:'requirements-race@example.com'});
+  const requirementsJob=await job(requirementsClient,33),requirementsPlan=await plan(requirementsClient,[requirementsJob.id]),requirementsGate=requestGate();postingGates.set(33,requirementsGate);
+  try {await submit(requirementsClient,requirementsPlan);await waitForGate(requirementsGate);const config=JSON.parse(fs.readFileSync(requirementsRace.configPath));config.connectors[0].postings[postingID(33)].hasCustomQuestions=true;fs.writeFileSync(requirementsRace.configPath,JSON.stringify(config))}finally{requirementsGate.release();postingGates.delete(33)}
+  const changedRequirements=(await settled(requirementsClient,requirementsPlan.id)).attempts.find(a=>a.planId===requirementsPlan.id);
+  check('requirements changed during asynchronous preflight are rechecked before any POST',()=>{assert.equal(changedRequirements.state,'blocked');assert.equal(changedRequirements.error.code,'requirements_changed');assert.equal(counts.get(33),undefined)});
   const j10=await job(c,10),p10=await plan(c,[j10.id]);r=await c.request('GET','workspace');check('unsent current reviews are recoverable after reload',()=>assert.ok(r.data.recoverablePlans.some(value=>value.id===p10.id&&value.digest===p10.digest)));await save(c,{...candidate,email:'changed@example.com',headline:'Updated headline'},2);r=await submit(c,p10);check('profile changes invalidate existing approval',()=>{assert.equal(r.status,409);assert.equal(counts.get(10),undefined)});r=await c.request('GET','workspace');check('outdated profile reviews are excluded from recovery',()=>assert.ok(!r.data.recoverablePlans.some(value=>value.id===p10.id)));
   const j11=await job(c,11),p11=await plan(c,[j11.id]);r=await c.request('POST','stop',{planId:p11.id});await submit(c,p11);check('stop before dispatch sends nothing',()=>{assert.equal(r.status,200);assert.equal(r.data.attempts[0].state,'cancelled');assert.equal(counts.get(11),undefined)});
   r=await c.request('GET','workspace');check('stopped reviews are excluded from recovery',()=>assert.ok(!r.data.recoverablePlans.some(value=>value.id===p11.id)));

@@ -188,7 +188,7 @@ function browserCrypto(): Crypto {
 }
 
 /** No browser globals are accessed until an operation is requested (safe during SSR). */
-export function createIndexedDBPhoneVaultPort(factory?: IDBFactory): PhoneVaultPort {
+export function createIndexedDBPhoneVaultPort(factory?: IDBFactory, databaseName = DATABASE_NAME): PhoneVaultPort {
   let opening: Promise<IDBDatabase> | undefined;
   function database(): Promise<IDBDatabase> {
     if (opening) return opening;
@@ -204,7 +204,7 @@ export function createIndexedDBPhoneVaultPort(factory?: IDBFactory): PhoneVaultP
         if (error) reject(storageError(error)); else if (db) resolve(db);
       }
       let request: IDBOpenDBRequest;
-      try { request = indexedDB.open(DATABASE_NAME, STORAGE_VERSION); }
+      try { request = indexedDB.open(databaseName, STORAGE_VERSION); }
       catch (error) { finish(error); return; }
       request.onblocked = () => finish(new PhoneVaultError("unavailable", "Close other Career Finder tabs and try again so this browser can open your saved drafts. Your existing data was kept."));
       request.onerror = () => finish(request.error);

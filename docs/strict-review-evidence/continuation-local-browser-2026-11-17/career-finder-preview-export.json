@@ -1,0 +1,108 @@
+{
+  "format": "Career Finder browser records",
+  "version": 2,
+  "scope": "guest",
+  "exportedAt": "2026-11-17T03:45:28.138Z",
+  "saved": {
+    "schema": 1,
+    "scope": "guest",
+    "profile": {
+      "firstName": "Synthetic QA",
+      "lastName": "",
+      "email": "qa@example.com",
+      "phone": "",
+      "city": "",
+      "country": "",
+      "headline": "",
+      "skills": [],
+      "targetRoles": [
+        "Customer service",
+        "خدمة العملاء"
+      ],
+      "targetCountries": [
+        "SA"
+      ],
+      "workModes": [
+        "remote"
+      ],
+      "experienceLevel": "any",
+      "website": "",
+      "linkedin": "",
+      "resume": {
+        "name": "career-finder-synthetic-resume.pdf",
+        "mime": "application/pdf",
+        "size": 1311,
+        "sha256": "149f96a4dc6ed08b2adf0ae75c9d00f8fba75fcd777ea790d9a27e622fa38a61",
+        "dataBase64": "JVBERi0xLjcKJYGBgYEKCjEgMCBvYmoKPDwKL1R5cGUgL1BhZ2VzCi9LaWRzIFsgNCAwIFIgXQovQ291bnQgMQo+PgplbmRvYmoKCjIgMCBvYmoKPDwKL1R5cGUgL0NhdGFsb2cKL1BhZ2VzIDEgMCBSCj4+CmVuZG9iagoKMyAwIG9iago8PAovUHJvZHVjZXIgPEZFRkYwMDcwMDA2NDAwNjYwMDJEMDA2QzAwNjkwMDYyMDAyMDAwMjgwMDY4MDA3NDAwNzQwMDcwMDA3MzAwM0EwMDJGMDAyRjAwNjcwMDY5MDA3NDAwNjgwMDc1MDA2MjAwMkUwMDYzMDA2RjAwNkQwMDJGMDA0ODAwNkYwMDcwMDA2NDAwNjkwMDZFMDA2NzAwMkYwMDcwMDA2NDAwNjYwMDJEMDA2QzAwNjkwMDYyMDAyOT4KL01vZERhdGUgKEQ6MjAyNjAxMDEwMDAwMDBaKQovQ3JlYXRvciA8RkVGRjAwNzAwMDY0MDA2NjAwMkQwMDZDMDA2OTAwNjIwMDIwMDAyODAwNjgwMDc0MDA3NDAwNzAwMDczMDAzQTAwMkYwMDJGMDA2NzAwNjkwMDc0MDA2ODAwNzUwMDYyMDAyRTAwNjMwMDZGMDA2RDAwMkYwMDQ4MDA2RjAwNzAwMDY0MDA2OTAwNkUwMDY3MDAyRjAwNzAwMDY0MDA2NjAwMkQwMDZDMDA2OTAwNjIwMDI5PgovQ3JlYXRpb25EYXRlIChEOjIwMjYwMTAxMDAwMDAwWikKPj4KZW5kb2JqCgo0IDAgb2JqCjw8Ci9UeXBlIC9QYWdlCi9QYXJlbnQgMSAwIFIKL1Jlc291cmNlcyA8PAovRm9udCA8PAovSGVsdmV0aWNhLTcwOTg0ODA3ODkgNSAwIFIKPj4KL1hPYmplY3QgPDwKPj4KL0V4dEdTdGF0ZSA8PAo+Pgo+PgovTWVkaWFCb3ggWyAwIDAgNjEyIDc5MiBdCi9Bbm5vdHMgWyBdCi9Db250ZW50cyBbIDYgMCBSIF0KPj4KZW5kb2JqCgo1IDAgb2JqCjw8Ci9UeXBlIC9Gb250Ci9TdWJ0eXBlIC9UeXBlMQovQmFzZUZvbnQgL0hlbHZldGljYQovRW5jb2RpbmcgL1dpbkFuc2lFbmNvZGluZwo+PgplbmRvYmoKCjYgMCBvYmoKPDwKL0ZpbHRlciAvRmxhdGVEZWNvZGUKL0xlbmd0aCAxMzIKPj4Kc3RyZWFtCnicJYvBCkJBCEX3foXrINIZRx2IFsFAizaBPxDxiqIWRfT9+YqL4j0cn7ANIJzzusBqN90/0/t6Oi6NuouTeUcuGGcogrEH/qmMQmg58YB1q9Z1mKhry921FpKqbEVbkpJNkw6Vf1PWmmlGaXPyvJOmY25ibf7bYNwgFjACDvAFvpcjUgplbmRzdHJlYW0KZW5kb2JqCgp4cmVmCjAgNwowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMTYgMDAwMDAgbiAKMDAwMDAwMDA3NiAwMDAwMCBuIAowMDAwMDAwMTI2IDAwMDAwIG4gCjAwMDAwMDA1OTYgMDAwMDAgbiAKMDAwMDAwMDc5MSAwMDAwMCBuIAowMDAwMDAwODg5IDAwMDAwIG4gCgp0cmFpbGVyCjw8Ci9TaXplIDcKL1Jvb3QgMiAwIFIKL0luZm8gMyAwIFIKPj4KCnN0YXJ0eHJlZgoxMDk0CiUlRU9G"
+      },
+      "revision": 0
+    },
+    "profileDirty": true,
+    "jobs": [
+      {
+        "id": "4557704d-72a4-4d19-86aa-b70b2676c0ce",
+        "title": "Synthetic QA role",
+        "company": "Example test employer",
+        "url": "https://example.com/careers/qa-preview",
+        "location": "Worldwide — اختبار",
+        "country": ""
+      }
+    ],
+    "records": [
+      {
+        "identity": "https://example.com/careers/qa-preview",
+        "title": "Synthetic QA role",
+        "company": "Example test employer",
+        "stage": "saved",
+        "appliedElsewhere": false,
+        "appliedDate": "",
+        "followUpDate": "",
+        "note": "Synthetic browser acceptance only.\nخطوة جديدة 🌍\nThird line\nFourth line\nFifth line",
+        "updatedAt": "2026-11-17T03:39:09.202Z"
+      }
+    ],
+    "filters": {
+      "query": "",
+      "location": "",
+      "remoteOnly": false,
+      "sources": []
+    },
+    "lastSearch": null
+  },
+  "recovery": {
+    "schema": 1,
+    "scope": "guest",
+    "profile": {
+      "firstName": "",
+      "lastName": "",
+      "email": "",
+      "phone": "",
+      "city": "",
+      "country": "",
+      "headline": "",
+      "skills": [],
+      "targetRoles": [],
+      "targetCountries": [],
+      "workModes": [],
+      "experienceLevel": "any",
+      "website": "",
+      "linkedin": "",
+      "resume": null,
+      "revision": 0
+    },
+    "profileDirty": false,
+    "jobs": [],
+    "records": [],
+    "filters": {
+      "query": "",
+      "location": "",
+      "remoteOnly": false,
+      "sources": []
+    },
+    "lastSearch": null,
+    "safety": {
+      "holds": [],
+      "recovery": []
+    }
+  }
+}

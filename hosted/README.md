@@ -6,14 +6,18 @@ Service origin: `https://career-finder-service.jazzy-drake-8323.chatgpt.site`
 
 This is a development preview. No employer integration is enabled by default. Synthetic test receipts never establish that a real employer received an application.
 
+**Continuation checkpoint — 17 November 2026:** this source implements direct Google OAuth sign-in and an explicit LinkedIn OpenID Connect profile connection, with account-isolated browser sessions, export and deletion. The managed provider configuration remains empty at revision 0, so these external connections are **not activated or externally verified**. The currently deployed service remains version 6, source `d0ba1810c2a07fa84b4d2b88e6e56f8c80ad3470`; source changes and synthetic tests do not establish a later deployment. ChatGPT sign-in remains available.
+
+**Free-only requirement:** retain the available free infrastructure and free supported interfaces. Do not add paid APIs, subscriptions, upgrades, domain purchases or automatic paid overages. Preserve data and report a limit when free capacity is exhausted. The quotas below are real bounded capacity, not unlimited worldwide hosting. Store developer fees and approvals remain separate publishing-owner gates; no spending or paid enrollment is authorized here.
+
 ## Architecture
 
 - A Cloudflare Worker serves the connection, account, help and privacy pages and the application API.
 - Public discovery uses separate GET-only routes and a shared, bounded D1 cache. It does not read account identity, phone credentials, profiles or CVs.
 - D1 stores private workspaces, phone sessions, immutable reviews, submission state and evidence. PDF bytes are kept in private R2, outside D1's row-size limit.
-- ChatGPT Sites supplies authenticated, site-specific user identity to browser account routes. The public website does not make account records public.
+- ChatGPT Sites supplies authenticated, site-specific identity; configured direct Google OAuth can also establish an opaque Career Finder browser session. Stable account identity protects browser account routes. The public website does not make account records public. Provider configuration is still inactive at the checkpoint above.
 - Browser writes require the exact service Origin and JSON. Native routes require a random bearer token obtained by redeeming a short-lived, one-use pairing code. Only token and pairing-code hashes are stored.
-- The phone browser interface uses platform identity and the dedicated `/api/phone/*` routes. It never creates or stores a native bearer token. Local drafts and self-reported application records use a separate encrypted IndexedDB vault.
+- The phone browser interface uses the verified browser identity and dedicated `/api/phone/*` routes. It never creates or stores a native bearer token. Local drafts and self-reported application records use a separate encrypted IndexedDB vault.
 - The app's existing Node/SQLite companion service is a separate implementation. Native clients retain GET-only polling with that service unless the exact `dispatchContinuation: "client"` capability is advertised.
 
 The production entrypoint is `worker/index.ts`. It imports the production handler directly; request inputs and environment variables cannot select a synthetic adapter. The test harness injects its synthetic HTTP dependency into a separate handler instance.
@@ -59,20 +63,28 @@ Discovery never approves or sends an application. Saving a discovered job uses t
 
 ## Connect and recover
 
-1. Open `/connect` and continue to the secure ChatGPT sign-in screen. Choose **Continue with Google** there to use Google, or use the same method as your existing account. The hosted preview uses ChatGPT identity; it is not an independent Career Finder Google OAuth client.
+1. Open `/connect` and use a sign-in option actually shown as available. Deployed version 6 uses ChatGPT sign-in, including its **Continue with Google** option. This source also implements independent Career Finder Google OAuth, displayed only when its server configuration is present. Its external activation is still pending. Use the same account as your existing workspace; matching email alone never merges accounts.
 2. Generate a connection code. This explicitly creates or reuses a workspace.
 3. Enter the service address and code in the phone app. Codes expire after five minutes and can be redeemed once.
 4. Review the phone draft before saving it. Connecting does not automatically upload an existing draft.
 
-Phone sessions expire after 30 days. `/account` lists active sessions, revokes a lost phone, exports account records, downloads retained CV files, recovers interrupted uploads and deletes the cloud workspace. Account GET is read-only and does not create a workspace.
+Phone sessions expire after 30 days. `/account` lists active sessions, revokes a lost phone, exports account records, downloads retained CV files, removes unused retained CVs, recovers interrupted uploads and deletes cloud account data. Provider identity export/deletion also works before an application workspace exists. Account GET is read-only and does not create a workspace.
 
-Browser actions are bound to the account the person reviewed. Pairing requires `expectedAccountId`; deletion, session revocation and upload recovery require `expectedWorkspaceId`. Export and PDF links include exactly one `expectedWorkspaceId` query parameter. A stale or missing target returns `409 account_changed` or `409 workspace_changed` before modifying business records or reading a private PDF. The browser clears stale confirmation intent and asks the person to reload. Disconnecting a phone has its own confirmation step.
+Browser actions are bound to the account the person reviewed. Pairing and provider changes require `expectedAccountId`; workspace deletion, session revocation, résumé removal and upload recovery require the reviewed `expectedWorkspaceId`. Workspace export and PDF links include exactly one `expectedWorkspaceId` query parameter. An account without a workspace uses `expectedAccountId` for export and sends that ID with `expectedWorkspaceId:null` for deletion. A stale or missing target returns `409 account_changed` or `409 workspace_changed` before modifying business records or reading a private PDF. The browser hides private content while identity is rechecked and clears stale confirmation intent. Disconnecting a phone has its own confirmation step.
 
 Pairing returns `serverTime` and `expiresAt`. The browser derives a conservative lifetime from their difference, subtracts the elapsed request time and counts down with a monotonic clock. A wrong device date cannot extend the displayed lifetime, and redemption still checks the authoritative server expiry.
 
 Automatic submission requires the email address supplied by the signed-in account. This is an account association, not verification of legal identity, qualifications or the contents of a CV.
 
 Account GET reports `confirmedEmail` and `emailUpdateRequired` when the platform email has changed since the last explicit pairing. It does not silently alter a profile, approval or revision. Creating a fresh connection code updates the confirmed address and advances the workspace revision; the phone must then review and correct its application profile before submission.
+
+### Supported provider connection contract
+
+Google uses `CAREER_GOOGLE_CLIENT_ID` and `CAREER_GOOGLE_CLIENT_SECRET`, scopes `openid email profile`, and callback `https://career-finder-service.jazzy-drake-8323.chatgpt.site/auth/google/callback`. LinkedIn uses `CAREER_LINKEDIN_CLIENT_ID` and `CAREER_LINKEDIN_CLIENT_SECRET`, scopes `openid profile`, and callback `https://career-finder-service.jazzy-drake-8323.chatgpt.site/auth/linkedin/callback`. Keep these values in the managed server environment. The authorized owner must configure a Google web OAuth client and LinkedIn's **Sign In with LinkedIn using OpenID Connect** product, meet the providers' domain/audience requirements, then complete real consent/cancellation/account-isolation acceptance. No approval date is guaranteed and no paid prerequisite may be enabled under the free-only instruction.
+
+`GET /api/auth/status` reports configuration and actual connection state. Anonymous Google sign-in begins with a top-level navigation to `/auth/google/start`; linking an existing account uses `POST /api/auth/connect` with `{provider,expectedAccountId}`. `/api/auth/disconnect` uses the same owner guard and refuses to remove the sole Google login. LinkedIn provides a basic profile connection to an already authenticated account; it does not grant full résumé, jobs or employer application permissions, and this implementation does not request LinkedIn email. Neither provider is legal identity verification. See [Google OIDC](https://developers.google.com/identity/openid-connect/openid-connect) and [LinkedIn OIDC](https://learn.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/sign-in-with-linkedin-v2).
+
+The server validates signed ID tokens and stable provider subjects; it does not merge accounts by email or retain provider access/refresh tokens. Expired/invalid Career Finder cookies block fallback to a different background Sites identity. Explicit recovery or normal sign-out clears both browser sign-in layers before returning through `/signout-with-chatgpt?return_to=%2Fconnect`. Account deletion also removes provider links, browser sessions and pending owner-bound OAuth requests, including for an account with no workspace. Export contains connection/session metadata but never session credentials or provider tokens. Provider-level permission grants can be removed separately in Google or LinkedIn settings.
 
 ## Submission guarantees and limits
 
@@ -117,6 +129,8 @@ Never put employer keys, phone tokens, pairing codes, real CVs or personal expor
 
 Quotas are enforced in conditional D1 writes, including concurrent requests. Capacity errors preserve existing records. These application caps do not guarantee unlimited provider resources or perpetual free hosting, and do not authorize paid upgrades.
 
+Account documents include `removable` and, when applicable, `retentionReason`. `POST /api/account/resumes/remove` takes `{expectedWorkspaceId,sha256}` and removes only an unused owned document. Current profile, active-review and in-flight application references protect the PDF. Temporary `deleting` state remains visible and is excluded from interrupted-upload recovery; failed removal can be retried after rechecking status.
+
 PDF uploads reserve a durable claim before storage. If a Worker stops before acknowledging a completed write, `/api/account/uploads/recover` can recover the exact file after its one-minute lease expires. Recovery never silently attaches a CV to a profile. The phone must save explicitly.
 
 Deletion locks the workspace, fences all retained upload keys, erases PDF contents and metadata, and deletes its active database records and phone sessions. A provider request already in progress must finish or become durably uncertain first. Failed erasure remains pending and can be retried; success is reported only after confirmation. Empty objects at opaque random retired-upload keys remain to prevent late conditional writes from resurrecting erased content. They contain no account identifier, filename, CV bytes or document fingerprint.
@@ -160,7 +174,7 @@ Public support is available through `https://github.com/swonyu/ahmad-career/issu
 
 ## LinkedIn profile links
 
-The phone apps can save an optional personal LinkedIn profile URL, open that profile, and hand a job search to LinkedIn. This is a saved link and external navigation, not an OAuth connection, verified account, profile import, or LinkedIn application integration. No LinkedIn password or access token is collected. Search sends only the explicitly entered public keyword/location query to LinkedIn.
+The phone apps can save an optional personal LinkedIn profile URL, open that profile, and hand a job search to LinkedIn. These saved-link and external-navigation features remain separate from the supported OIDC connection implemented above. A saved URL does not establish a connected or verified account. No LinkedIn password is collected and no provider access/refresh token is retained. Search sends only the explicitly entered public keyword/location query to LinkedIn. The OIDC connection remains inactive until authorized provider setup and acceptance are complete, and never grants LinkedIn application submission rights.
 
 The profile API accepts optional `linkedin` independently of `website`. Only canonical personal `/in/` links on LinkedIn HTTPS hosts are accepted; tracking query/fragment components are removed and ambiguous paths, credentials, custom ports, malformed UTF-8, controls and Unicode format characters are refused. Omitting the field preserves a previous value for older clients; an explicit empty string clears it. `capabilities.linkedinProfile: true` advertises support. New clients with a nonblank link require that capability before syncing.
 

@@ -146,8 +146,12 @@ class NavigationPhoneAcceptanceTest {
         compose.onNodeWithContentDescription("Application record for ${job.title} at ${job.company}").performClick()
         compose.onNodeWithTag("application-record-editor").performScrollToNode(hasText("Private note (optional)") and hasSetTextAction())
         compose.onNode(hasText("Private note (optional)") and hasSetTextAction()).performTextReplacement("Discard this edit")
-        hideKeyboard(); compose.onNodeWithText("Cancel changes").performClick()
-        assertEquals(saved, store.records["workspace-unpaired"])
+        hideKeyboard(); compose.onNodeWithText("Close record").performClick()
+        compose.onNodeWithText("Keep your unfinished record?").assertIsDisplayed()
+        compose.onNodeWithText("Discard unfinished changes").performClick()
+        compose.waitUntil(5_000) { !model.state.value.busy && model.state.value.applicationRecordEditor == null }
+        assertEquals(JSONObject(saved).getJSONObject("applicationRecords").toString(), store.read("workspace-unpaired")!!.getJSONObject("applicationRecords").toString())
+        assertTrue(model.state.value.recordDrafts.isEmpty())
         assertTrue(model.state.value.receipts.isEmpty()); assertTrue(service.routes.isEmpty())
     }
 
@@ -160,10 +164,10 @@ class NavigationPhoneAcceptanceTest {
         save()
         compose.onNodeWithText("Mark as not applied?").assertIsDisplayed()
         capture("private-record-correction")
-        assertEquals(original, store.records["workspace-unpaired"])
+        assertEquals(JSONObject(original).getJSONObject("applicationRecords").toString(), store.read("workspace-unpaired")!!.getJSONObject("applicationRecords").toString())
         compose.onNodeWithText("Keep application record").performClick()
         assertTrue(job.id in model.state.value.manualApplied)
-        assertEquals(original, store.records["workspace-unpaired"])
+        assertEquals(JSONObject(original).getJSONObject("applicationRecords").toString(), store.read("workspace-unpaired")!!.getJSONObject("applicationRecords").toString())
         stage("Saved"); save()
         compose.onNodeWithText("Mark not applied").performClick()
         compose.waitUntil(5_000) { !model.state.value.busy && model.state.value.applicationRecordEditor == null }

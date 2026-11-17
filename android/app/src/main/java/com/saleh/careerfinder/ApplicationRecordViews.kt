@@ -49,7 +49,7 @@ internal fun ApplicationRecordSummary(record: ApplicationRecordBundle?, open: ()
 }
 
 @Composable
-private fun RecordVersionCard(version: ApplicationRecordVersion, title: String, useLabel: String?, enabled: Boolean, choose: () -> Unit) {
+internal fun RecordVersionCard(version: ApplicationRecordVersion, title: String, useLabel: String?, enabled: Boolean, choose: () -> Unit) {
     var fullNote by remember(version.id) { mutableStateOf(false) }
     Panel {
         Text(title, style = MaterialTheme.typography.titleMedium)
@@ -57,7 +57,7 @@ private fun RecordVersionCard(version: ApplicationRecordVersion, title: String, 
         if (version.record.appliedDate.isNotEmpty()) { Text("Applied date", style = MaterialTheme.typography.labelMedium); Text(civilDateLabel(version.record.appliedDate)) }
         if (version.record.followUpDate.isNotEmpty()) { Text("Follow-up date", style = MaterialTheme.typography.labelMedium); Text(civilDateLabel(version.record.followUpDate)) }
         Text(version.record.note.ifBlank { "No private note" }, maxLines = if (fullNote) Int.MAX_VALUE else 4, style = MaterialTheme.typography.bodyMedium)
-        if (version.record.note.length > 160) TextButton(onClick = { fullNote = !fullNote }, modifier = Modifier.heightIn(min = 48.dp)) {
+        if (version.record.note.isNotBlank()) TextButton(onClick = { fullNote = !fullNote }, modifier = Modifier.heightIn(min = 48.dp)) {
             Text(if (fullNote) "Show less" else "Read full note")
         }
         Text("Version saved", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -82,6 +82,14 @@ internal fun ApplicationRecordEditor(state: CareerUiState, model: CareerViewMode
                     Text(editor.job.company, color = MaterialTheme.colorScheme.primary)
                     Text("Your record · on this phone. Dates and notes stay private. This does not create a verified employer receipt.",
                         style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                if (editor.restoredOlderRevision) item {
+                    Panel {
+                        Text("An unfinished edit was recovered", style = MaterialTheme.typography.titleMedium)
+                        Text("The saved record changed after this draft began. Compare the saved details before keeping your edits. No status change has been applied.")
+                        if (record != null) RecordVersionCard(record.current, "Current saved details", null, false) {}
+                        Action("Keep draft against latest record", !state.busy) { model.rebaseApplicationRecordDraft(editor.token) }
+                    }
                 }
                 if (record?.needsReview == true) {
                     item {
@@ -112,7 +120,7 @@ internal fun ApplicationRecordEditor(state: CareerUiState, model: CareerViewMode
                         { dateField = "follow-up" }, { change { it.copy(followUpDate = "") } }) }
                     item {
                         Field("Private note (optional)", editor.draft.note, { text -> change { it.copy(note = boundedApplicationNote(text)) } }, singleLine = false, enabled = !state.busy)
-                        Text("${editor.draft.note.length} of 2,000 characters", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("${applicationNoteLength(editor.draft.note)} of 2,000 characters", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     if (record?.history?.isNotEmpty() == true) {
                         item { TextButton(onClick = { showHistory = !showHistory }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
@@ -127,11 +135,22 @@ internal fun ApplicationRecordEditor(state: CareerUiState, model: CareerViewMode
             }
             Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (state.error != null) Text(state.error, color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
-                Action("Save record on this phone", !state.busy && record?.needsReview != true && !state.storageBlocked) { model.saveApplicationRecord(expectedToken = editor.token) }
-                TextButton(onClick = { model.closeApplicationRecord(editor.token) }, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Cancel changes") }
+                Action("Save record on this phone", !state.busy && record?.needsReview != true && !state.storageBlocked && !editor.restoredOlderRevision) { model.saveApplicationRecord(expectedToken = editor.token) }
+                TextButton(onClick = { model.closeApplicationRecord(editor.token) }, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Close record") }
             }
         }
     }
+    if (editor.confirmClose) AlertDialog(onDismissRequest = { model.continueApplicationRecord(editor.token) },
+        title = { Text("Keep your unfinished record?") },
+        text = { Text("Keep this edit to continue later, or discard only these unfinished changes. Saved notes, history and application status stay as they are.", Modifier.verticalScroll(rememberScrollState())) },
+        confirmButton = { TextButton(onClick = { model.keepApplicationRecordDraft(editor.token) }, enabled = !state.busy,
+            modifier = Modifier.heightIn(min = 48.dp)) { Text("Keep draft") } },
+        dismissButton = { Column {
+            TextButton(onClick = { model.continueApplicationRecord(editor.token) }, enabled = !state.busy,
+                modifier = Modifier.heightIn(min = 48.dp)) { Text("Keep editing") }
+            TextButton(onClick = { model.discardApplicationRecordDraft(editor.token) }, enabled = !state.busy,
+                modifier = Modifier.heightIn(min = 48.dp)) { Text("Discard unfinished changes") }
+        } })
     if (dateField != null && !editor.quickCorrection) {
         val current = if (dateField == "applied") editor.draft.appliedDate else editor.draft.followUpDate
         val selected = runCatching { LocalDate.parse(current) }.getOrElse { LocalDate.now() }

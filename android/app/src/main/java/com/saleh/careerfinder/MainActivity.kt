@@ -157,10 +157,19 @@ fun CareerApp(model: CareerViewModel) {
     var jobsSection by rememberSaveable { mutableIntStateOf(0) }
     var showConnect by rememberSaveable { mutableStateOf(false) }
     var showAdd by rememberSaveable { mutableStateOf(false) }
+    var showPhoneData by rememberSaveable { mutableStateOf(false) }
     val tabs = listOf(Destination("Jobs", Icons.Default.Search), Destination("Auto Apply", Icons.AutoMirrored.Filled.Send),
         Destination("Receipts", Icons.AutoMirrored.Filled.List), Destination("Profile", Icons.Default.Person))
-    val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri -> uri?.let(model::choosePDF) }
-    val exporter = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri -> uri?.let(model::exportReceipts) }
+    var pdfScope by rememberSaveable { mutableStateOf<String?>(null) }
+    var receiptExportScope by rememberSaveable { mutableStateOf<String?>(null) }
+    val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        val captured = pdfScope; pdfScope = null
+        if (uri != null && captured != null) model.choosePDF(uri, captured)
+    }
+    val exporter = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        val captured = receiptExportScope; receiptExportScope = null
+        if (uri != null && captured != null) model.exportReceipts(uri, captured)
+    }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -189,13 +198,15 @@ fun CareerApp(model: CareerViewModel) {
                 else when (tab) {
                     0 -> JobsScreen(state, model, { showAdd = true }, { tab = 1 }, { tab = 3 }, { showConnect = true }, jobsSection) { jobsSection = it }
                     1 -> ApplyScreen(state, model, { showConnect = true }, { tab = 2 }, { tab = 3 }, { tab = 0; jobsSection = 1 })
-                    2 -> ReceiptsScreen(state, model, { tab = 0; jobsSection = 0 }) { exporter.launch("Career-Finder-Receipts-" + LocalDate.now() + ".json") }
-                    3 -> ProfileScreen(state, model) { picker.launch(arrayOf("application/pdf")) }
+                    2 -> ReceiptsScreen(state, model, { tab = 0; jobsSection = 0 }) { receiptExportScope = state.privateScope; exporter.launch("Career-Finder-Receipts-" + LocalDate.now() + ".json") }
+                    3 -> ProfileScreen(state, model) { pdfScope = state.privateScope; picker.launch(arrayOf("application/pdf")) }
                 }
             }
         }
     }
-    if (showConnect && !state.storageBlocked) ConnectionDialog(state, model) { showConnect = false }
+    if (showConnect && !state.storageBlocked) ConnectionDialog(state, model, { showConnect = false; showPhoneData = true }) { showConnect = false }
+    if (showPhoneData && !state.storageBlocked) WorkspaceDataDialog(state, model, { showAdd = true }) { showPhoneData = false }
+    if (state.workspaceImport != null && !state.storageBlocked) WorkspaceImportDialog(state, model)
     if (showAdd && !state.storageBlocked) AddOpportunityDialog(state, model) { showAdd = false }
     if (state.phoneImport != null && !state.storageBlocked) PhoneImportDialog(state, model)
     if (state.applicationRecordEditor != null && !state.storageBlocked) ApplicationRecordEditor(state, model)
@@ -683,6 +694,7 @@ internal fun GettingStartedPanel(state: CareerUiState, profile: () -> Unit, conn
 @Composable
 private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePDF: () -> Unit) {
     val profile = state.profile
+    val errors = ProfileValidation.errors(profile)
     var reload by remember { mutableStateOf(false) }
     var details by rememberSaveable { mutableStateOf(false) }
     LazyColumn(Modifier.fillMaxSize().imePadding().testTag("profile-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -698,10 +710,10 @@ private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePD
             }
         }
         if (state.profileConflict != null) item { ProfileConflictPanel(state, model) }
-        item { Field("First or single name", profile.firstName, { model.editProfile { p -> p.copy(firstName = it) } }, enabled = !state.busy) }
-        item { Field("Last name (optional)", profile.lastName, { model.editProfile { p -> p.copy(lastName = it) } }, enabled = !state.busy) }
+        item { Field("First or single name", profile.firstName, { model.editProfile { p -> p.copy(firstName = it) } }, enabled = !state.busy, error = errors["firstName"]) }
+        item { Field("Last name (optional)", profile.lastName, { model.editProfile { p -> p.copy(lastName = it) } }, enabled = !state.busy, error = errors["lastName"]) }
         item { Field("Email", profile.email, { model.editProfile { p -> p.copy(email = it) } }, KeyboardType.Email, enabled = !state.busy,
-            error = if (profile.email.isNotBlank() && !profile.hasApplicationEmail) "Enter an email address employers can reply to." else null) }
+            error = errors["email"]) }
         item {
             Panel {
                 Text("Your résumé", style = MaterialTheme.typography.titleLarge)
@@ -719,11 +731,11 @@ private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePD
             }
         }
         if (details) {
-            item { Field("Phone (optional)", profile.phone, { model.editProfile { p -> p.copy(phone = it) } }, KeyboardType.Phone, enabled = !state.busy) }
-            item { Field("Professional headline (optional)", profile.headline, { model.editProfile { p -> p.copy(headline = it) } }, enabled = !state.busy) }
+            item { Field("Phone (optional)", profile.phone, { model.editProfile { p -> p.copy(phone = it) } }, KeyboardType.Phone, enabled = !state.busy, error = errors["phone"]) }
+            item { Field("Professional headline (optional)", profile.headline, { model.editProfile { p -> p.copy(headline = it) } }, enabled = !state.busy, error = errors["headline"]) }
             item { CountryChooser("Your country (optional)", profile.country, !state.busy) { model.editProfile { p -> p.copy(country = it) } } }
-            item { Field("City (optional)", profile.city, { model.editProfile { p -> p.copy(city = it) } }, enabled = !state.busy) }
-            item { Field("Website or portfolio (optional)", profile.website, { model.editProfile { p -> p.copy(website = it) } }, KeyboardType.Uri, enabled = !state.busy) }
+            item { Field("City (optional)", profile.city, { model.editProfile { p -> p.copy(city = it) } }, enabled = !state.busy, error = errors["city"]) }
+            item { Field("Website or portfolio (optional)", profile.website, { model.editProfile { p -> p.copy(website = it) } }, KeyboardType.Uri, enabled = !state.busy, error = errors["website"]) }
             item {
                 val context = LocalContext.current
                 val link = profile.linkedin.takeIf(String::isNotEmpty)?.let { runCatching { BoundaryPolicy.linkedinProfileURL(it) }.getOrNull() }
@@ -735,11 +747,11 @@ private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePD
                     if (link != null) TextButton(onClick = { openLink(context, link) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Open LinkedIn profile") }
                 }
             }
-            item { Field("Skills (separate with commas)", profile.skills, { model.editProfile { p -> p.copy(skills = it) } }, singleLine = false, enabled = !state.busy) }
-            item { Field("Roles you want (separate with commas)", profile.targetRoles, { model.editProfile { p -> p.copy(targetRoles = it) } }, singleLine = false, enabled = !state.busy) }
+            item { Field("Skills (separate with commas)", profile.skills, { model.editProfile { p -> p.copy(skills = it) } }, singleLine = false, enabled = !state.busy, error = errors["skills"]) }
+            item { Field("Roles you want (separate with commas)", profile.targetRoles, { model.editProfile { p -> p.copy(targetRoles = it) } }, singleLine = false, enabled = !state.busy, error = errors["targetRoles"]) }
             item { TargetCountryChooser(profile.targetCountries.parts().toSet(), !state.busy) { values ->
                 model.editProfile { p -> p.copy(targetCountries = values.sorted().joinToString(", ")) }
-            } }
+            }; errors["targetCountries"]?.let { Text(it, color = MaterialTheme.colorScheme.error) } }
             item {
                 Panel {
                     Text("Work preferences", style = MaterialTheme.typography.titleLarge)
@@ -758,6 +770,8 @@ private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePD
             }
         }
         item {
+            if (errors.isNotEmpty()) Text("Your draft is kept. Before sharing it: " + errors.values.joinToString(" "),
+                color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
             Action(if (state.connection == null) "Save profile on this phone" else "Save profile to workspace",
                 !state.busy && !state.storageBlocked && state.profileConflict == null, model::saveProfile)
             if (state.profileDirty && state.connection != null) TextButton(onClick = { reload = true }, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Reload saved profile") }
@@ -771,7 +785,7 @@ private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePD
 
 @Composable
 private fun TargetCountryChooser(value: Set<String>, enabled: Boolean, changed: (Set<String>) -> Unit) {
-    val countries = remember { Locale.getISOCountries().map { it to Locale.Builder().setRegion(it).build().displayCountry }.sortedBy { it.second } }
+    val countries = remember { ProfileContract.COUNTRIES.map { it to Locale.Builder().setRegion(it).build().displayCountry }.sortedBy { it.second } }
     var open by remember { mutableStateOf(false) }
     var draft by remember { mutableStateOf(value) }
     var search by remember { mutableStateOf("") }
@@ -792,14 +806,15 @@ private fun TargetCountryChooser(value: Set<String>, enabled: Boolean, changed: 
                 keyboardActions = KeyboardActions(onDone = { focus.clearFocus(); keyboard?.hide() }))
             val filtered = countries.filter { (it.first + " " + it.second).contains(search, true) }
             LazyColumn(Modifier.weight(1f).testTag("target-countries")) {
-                item { Text(draft.size.toString() + " selected · Leave empty for no preference.", style = MaterialTheme.typography.bodyMedium) }
+                item { Text(draft.size.toString() + " of 30 selected · Leave empty for no preference.", style = MaterialTheme.typography.bodyMedium) }
                 item { TextButton(onClick = { draft = emptySet() }, modifier = Modifier.heightIn(min = 48.dp)) { Text("Clear selection") } }
                 if (filtered.isEmpty()) item { Text("No countries match this search.", Modifier.padding(vertical = 16.dp)) }
                 items(filtered, key = { it.first }) { (code, name) ->
-                    CheckLine(name + " · " + code, code in draft, { selected -> draft = if (selected) draft + code else draft - code })
+                    CheckLine(name + " · " + code, code in draft, { selected -> draft = if (selected) draft + code else draft - code },
+                        enabled = code in draft || draft.size < ProfileContract.MAX_ITEMS)
                 }
             }
-            Action("Use selected countries") { changed(draft); open = false }
+            Action("Use selected countries", draft.size <= ProfileContract.MAX_ITEMS) { changed(draft); open = false }
             Spacer(Modifier.height(8.dp))
         }
     }
@@ -808,7 +823,7 @@ private fun TargetCountryChooser(value: Set<String>, enabled: Boolean, changed: 
 @Composable
 internal fun Field(label: String, value: String, changed: (String) -> Unit, type: KeyboardType = KeyboardType.Text, singleLine: Boolean = true,
     enabled: Boolean = true, error: String? = null) {
-    OutlinedTextField(value = value, onValueChange = { changed(it.take(if (singleLine) 2000 else 5000)) }, label = { Text(label) },
+    OutlinedTextField(value = value, onValueChange = changed, label = { Text(label) },
         modifier = Modifier.fillMaxWidth(), singleLine = singleLine, minLines = if (singleLine) 1 else 3,
         keyboardOptions = KeyboardOptions(keyboardType = type), enabled = enabled, shape = RoundedCornerShape(14.dp),
         isError = error != null, supportingText = if (error != null) { { Text(error) } } else null)
@@ -842,7 +857,7 @@ private fun ConsentChoice(label: String, value: Boolean?, enabled: Boolean, chan
 private fun CountryChooser(label: String, value: String, enabled: Boolean = true, changed: (String) -> Unit) {
     var open by remember { mutableStateOf(false) }
     var search by remember { mutableStateOf("") }
-    val countries = remember { Locale.getISOCountries().map { it to Locale.Builder().setRegion(it).build().displayCountry }.sortedBy { it.second } }
+    val countries = remember { ProfileContract.COUNTRIES.map { it to Locale.Builder().setRegion(it).build().displayCountry }.sortedBy { it.second } }
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(label, style = MaterialTheme.typography.labelLarge)
         OutlinedButton(onClick = { open = true }, enabled = enabled, modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)
@@ -901,7 +916,7 @@ internal fun FullScreenForm(title: String, close: () -> Unit, content: @Composab
 }
 
 @Composable
-private fun ConnectionDialog(state: CareerUiState, model: CareerViewModel, close: () -> Unit) {
+private fun ConnectionDialog(state: CareerUiState, model: CareerViewModel, phoneData: () -> Unit, close: () -> Unit) {
     val context = LocalContext.current
     var origin by rememberSaveable(state.connection?.origin) { mutableStateOf(ServicePages.initialOrigin(state.connection)) }
     var code by remember { mutableStateOf("") }
@@ -938,8 +953,7 @@ private fun ConnectionDialog(state: CareerUiState, model: CareerViewModel, close
                     Action("Sign in and get a code", validOrigin != null && !state.busy) {
                         validOrigin?.let { openLink(context, ServicePages.url(it, "connect")) }
                     }
-                    Text(if (validOrigin == ServicePages.DEFAULT_ORIGIN) "Use ChatGPT sign-in. Continue with Google is available there."
-                        else "Use your selected service’s sign-in and create a one-time code.", style = MaterialTheme.typography.bodyMedium)
+                    Text("Choose one of the sign-in options shown on the service page, then create a one-time phone code.", style = MaterialTheme.typography.bodyMedium)
                     if (validOrigin != null && validOrigin != ServicePages.DEFAULT_ORIGIN) Text("Destination: $validOrigin", style = MaterialTheme.typography.bodySmall)
                     Text("Use the same account to return to your saved workspace.", style = MaterialTheme.typography.bodySmall)
                 }
@@ -973,7 +987,8 @@ private fun ConnectionDialog(state: CareerUiState, model: CareerViewModel, close
             item {
                 Panel {
                     Text("Your privacy", style = MaterialTheme.typography.titleLarge)
-                    Text("Application notes and follow-up dates stay on this phone. Employers receive only the details in a review you approve.", style = MaterialTheme.typography.bodyMedium)
+                    OutlinedButton(onClick = phoneData, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Phone data, backup and recovery") }
+                    Text("Application notes and follow-up dates stay in your phone workspace unless you export a backup. Employers receive only the details in a review you approve.", style = MaterialTheme.typography.bodyMedium)
                     TextButton(onClick = { details = !details }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(if (details) "Hide storage details" else "How your data is stored") }
                     if (details) {
                         Text("Phone drafts, private records and the last search are encrypted and excluded from device backup. Saving a connected profile uploads its fields and PDF to your selected service. Synced jobs and application receipts are stored there too.", style = MaterialTheme.typography.bodySmall)

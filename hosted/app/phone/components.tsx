@@ -10,7 +10,7 @@ export function Modal({ title, children, onClose, busy = false, notice, checking
   useEffect(() => { if (checkingIdentity) recheck.current?.focus(); }, [checkingIdentity]);
   return <dialog className="phone-dialog" ref={dialog} onCancel={event => { event.preventDefault(); if (!busy && !checkingIdentity) onClose(); }} aria-labelledby="phone-dialog-title">
     <div className="phone-dialog-head"><h2 id="phone-dialog-title">{checkingIdentity ? "Confirming your account" : title}</h2><button type="button" className="icon-button" aria-label="Close dialog" disabled={busy || checkingIdentity} onClick={onClose}><X aria-hidden="true" size={22} /></button></div>
-    {checkingIdentity && <div className="phone-warning" role="status"><p>Your unfinished form is kept here. Confirm this account before viewing or changing its private details.</p><button className="button secondary full" ref={recheck} disabled={busy} onClick={onCheckIdentity}>Check account again</button></div>}
+    {checkingIdentity && <div className="phone-warning" role="status"><p>Your unfinished form is kept here. Confirm this account before viewing or changing its private details.</p>{notice?.error && <p role="alert">{notice.text}</p>}<button className="button secondary full" ref={recheck} disabled={busy} onClick={onCheckIdentity}>Check account again</button></div>}
     {notice && !checkingIdentity && <div className={`phone-notice ${notice.error ? "is-error" : ""}`} role={notice.error ? "alert" : "status"}><p>{notice.text}</p></div>}
     {busy && <p className="phone-note" role="status">Working… Your changes are being checked.</p>}
     <fieldset hidden={checkingIdentity} disabled={busy || checkingIdentity}>{children}</fieldset>
@@ -37,6 +37,7 @@ export function ProfileEditor({ profile, onChange, onPDF, onSaveLocal, onSaveOnl
 }) {
   const countries = useMemo(() => { const names = new Intl.DisplayNames(["en"], { type: "region" }); return countryCodes.map(code => ({ code, name: names.of(code) || code })).sort((a,b) => a.name.localeCompare(b.name, "en")); }, []);
   const fileInput = useRef<HTMLInputElement>(null);
+  const [targetCountry, setTargetCountry] = useState("");
   const validLinkedIn = useMemo(() => { try { return profile.linkedin ? linkedInURL(profile.linkedin) : ""; } catch { return ""; } }, [profile.linkedin]);
   return <div className="phone-profile-form">
     <section className="phone-card"><div className="section-label"><span>01</span><h2>Your essentials</h2></div><Readiness profile={profile} />
@@ -54,6 +55,13 @@ export function ProfileEditor({ profile, onChange, onPDF, onSaveLocal, onSaveOnl
       {validLinkedIn && <a className="phone-external" href={validLinkedIn} target="_blank" rel="noopener noreferrer">Open LinkedIn profile <ArrowUpRight size={16} aria-hidden="true" /></a>}
       <label>Portfolio or website <span className="optional">optional</span><input type="url" inputMode="url" autoCapitalize="none" autoCorrect="off" spellCheck={false} placeholder="https://example.com" maxLength={2048} value={profile.website} onChange={e => onChange({ website: e.target.value })} /></label>
     </section>
+    <section className="phone-card"><div className="section-label"><span>03</span><h2>Your career preferences</h2></div><p className="phone-note">Choose what suits you. These preferences stay blank until you add them.</p>
+      <label>Target roles <span className="optional">up to 30, one per line</span><textarea rows={3} maxLength={3029} value={profile.targetRoles.join("\n")} onChange={e => onChange({ targetRoles: e.target.value ? e.target.value.split("\n") : [] })} /></label>
+      <label>Target country or region<select value={targetCountry} onChange={e => setTargetCountry(e.target.value)}><option value="">Choose a country to add</option>{countries.filter(country => !profile.targetCountries.includes(country.code)).map(country => <option key={country.code} value={country.code}>{country.name}</option>)}</select></label>
+      <button type="button" className="button secondary" disabled={busy || !targetCountry || profile.targetCountries.length >= 30} onClick={() => { if (targetCountry && !profile.targetCountries.includes(targetCountry)) onChange({ targetCountries: [...profile.targetCountries, targetCountry] }); setTargetCountry(""); }}>Add target country</button>
+      {profile.targetCountries.length > 0 && <ul className="phone-preference-list" aria-label="Selected target countries">{profile.targetCountries.map(code => <li key={code}><span>{countries.find(country => country.code === code)?.name ?? code}</span><button type="button" className="icon-button" disabled={busy} aria-label={`Remove ${countries.find(country => country.code === code)?.name ?? code} from target countries`} onClick={() => onChange({ targetCountries: profile.targetCountries.filter(value => value !== code) })}><X size={17} aria-hidden="true" /></button></li>)}</ul>}
+      <fieldset className="phone-choice-group"><legend>Work preferences <span className="optional">choose any that suit you</span></legend>{([{ value: "on-site", label: "On site" }, { value: "hybrid", label: "Hybrid" }, { value: "remote", label: "Remote" }] as const).map(mode => <label className="phone-check" key={mode.value}><input type="checkbox" checked={profile.workModes.includes(mode.value)} onChange={event => onChange({ workModes: event.target.checked ? [...profile.workModes, mode.value] : profile.workModes.filter(value => value !== mode.value) })} /><span>{mode.label}</span></label>)}</fieldset>
+    </section>
     <details className="phone-card phone-disclosure"><summary>More profile details <span>Optional</span></summary>
       <label>Phone number<input type="tel" autoComplete="tel" maxLength={150} value={profile.phone} onChange={e => onChange({ phone: e.target.value })} /></label>
       <div className="phone-field-pair"><label>City<input autoComplete="address-level2" maxLength={150} value={profile.city} onChange={e => onChange({ city: e.target.value })} /></label><label>Country or region<select value={profile.country} onChange={e => onChange({ country: e.target.value })}><option value="">Choose a country</option>{countries.map(c => <option value={c.code} key={c.code}>{c.name}</option>)}</select></label></div>
@@ -65,17 +73,18 @@ export function ProfileEditor({ profile, onChange, onPDF, onSaveLocal, onSaveOnl
   </div>;
 }
 
-export function RecordEditor({ record, onSave, onCancel, onDirtyChange, busy }: { record: ApplicationRecord; onSave: (draft: ApplicationRecord, clearApplied: boolean) => void; onCancel: () => void; onDirtyChange: (changed: boolean) => void; busy: boolean }) {
-  const [draft, setDraft] = useState(record), [confirmClear, setConfirmClear] = useState(false);
+export function RecordEditor({ record, initialDraft, onDraftChange, onSave, onCancel, onDirtyChange, busy }: { record: ApplicationRecord; initialDraft?: ApplicationRecord; onDraftChange: (draft: ApplicationRecord) => void; onSave: (draft: ApplicationRecord, clearApplied: boolean) => void; onCancel: () => void; onDirtyChange: (changed: boolean) => void; busy: boolean }) {
+  const [draft, setDraft] = useState(initialDraft ?? record), [confirmClear, setConfirmClear] = useState(false);
   const changed = JSON.stringify(draft) !== JSON.stringify(record);
   useEffect(() => { onDirtyChange(changed); }, [changed, onDirtyChange]);
-  const edit = (value: Partial<ApplicationRecord>) => { setDraft(previous => ({ ...previous, ...value })); setConfirmClear(false); };
+  const edit = (value: Partial<ApplicationRecord>) => { const next = { ...draft, ...value }; setDraft(next); onDraftChange(next); setConfirmClear(false); };
   return <form onSubmit={event => { event.preventDefault(); if (record.appliedElsewhere && draft.stage === "saved" && !confirmClear) setConfirmClear(true); else onSave(draft, confirmClear); }}>
     <p className="phone-note">Your record on this phone. It does not change the employer’s records or create a verified receipt.</p>
     <label>Stage<select value={draft.stage} onChange={e => edit({ stage: e.target.value as ApplicationRecord["stage"] })}>{stages.map(stage => <option key={stage} value={stage}>{stageNames[stage]}</option>)}</select></label>
     <div className="phone-field-pair"><label>Applied date <span className="optional">optional</span><input type="date" min="1900-01-01" max="9999-12-31" value={draft.appliedDate} onChange={e => edit({ appliedDate: e.target.value })} /></label><label>Follow-up date <span className="optional">optional</span><input type="date" min="1900-01-01" max="9999-12-31" value={draft.followUpDate} onChange={e => edit({ followUpDate: e.target.value })} /></label></div>
     <label>Private notes<textarea maxLength={5000} rows={5} value={draft.note} placeholder="People to contact, interview details, or your next step" onChange={e => edit({ note: e.target.value })} /></label>
-    {confirmClear && <div className="phone-warning" role="alert"><h3>Mark as not applied?</h3><p>This removes your own applied mark and allows a new application review. It does not withdraw an application from an employer.</p><button type="button" className="button secondary full" onClick={() => { setConfirmClear(false); setDraft(previous => ({ ...previous, stage: record.stage })); }}>Keep application record</button></div>}
+    {changed && <details className="phone-disclosure"><summary>Compare with the saved record</summary><RecordSummary record={record} /><p className="preserve-lines">{record.note || "No saved private note."}</p></details>}
+    {confirmClear && <div className="phone-warning" role="alert"><h3>Mark as not applied?</h3><p>This removes your own applied mark and allows a new application review. It does not withdraw an application from an employer.</p><button type="button" className="button secondary full" onClick={() => edit({ stage: record.stage })}>Keep application record</button></div>}
     <div className="phone-dialog-actions"><button type="button" className="button secondary" disabled={busy} onClick={onCancel}>Cancel</button><button type="submit" className="button primary" disabled={busy}>{confirmClear ? "Mark not applied" : "Save record"}</button></div>
   </form>;
 }

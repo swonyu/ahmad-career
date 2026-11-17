@@ -17,9 +17,9 @@ function fixture(){
   const current={accountId:'synthetic-owner',workspaceId:id(3)};
   const batch={generation:7,scope:'synthetic-scope',accountId:current.accountId,workspaceId:current.workspaceId,planId:plan.id,stopAttempted:false};
   const state={generation:7,workspace:{...current},identityUnverified:false};
-  const calls={posts:[],accepts:0,deferrals:0};
+  const calls={posts:[],accepts:0,deferrals:0,holds:0,confirmations:0};
   const response={ok:true,plan};
-  const controls={readState:()=>state,post:async body=>{assert.equal(batch.stopAttempted,true);assert.equal(batch.stopConfirmed,false);calls.posts.push(structuredClone(body));return response},accept:async()=>{calls.accepts++;return{...current,refreshed:true}},deferRefresh:()=>{calls.deferrals++}};
+  const controls={readState:()=>state,persistHold:async()=>{calls.holds++},confirmHold:async()=>{calls.confirmations++},post:async body=>{assert.equal(batch.stopAttempted,true);assert.equal(batch.stopConfirmed,false);calls.posts.push(structuredClone(body));return response},accept:async()=>{calls.accepts++;return{...current,refreshed:true}},deferRefresh:()=>{calls.deferrals++}};
   return{job,plan,current,batch,state,calls,response,controls};
 }
 function deferred(){let resolve,reject;const promise=new Promise((yes,no)=>{resolve=yes;reject=no});return{promise,resolve,reject}}
@@ -48,13 +48,20 @@ test('captured batch Stop survives interruption without a duplicate or stale tar
   });
   await t.test('an epoch or owner change while POST is pending never adopts or refreshes stale UI',async()=>{
     for(const mutate of [f=>{f.state.generation++},f=>{f.state.workspace.accountId='another-owner'},f=>{f.state.workspace.workspaceId=id(99)}]){
-      const f=fixture(),pending=deferred();f.controls.post=async body=>{f.calls.posts.push(body);return pending.promise};const task=stopBatchOnce(f.batch,f.current,f.controls);mutate(f);pending.resolve(f.response);
+      const f=fixture(),pending=deferred();f.controls.post=async body=>{f.calls.posts.push(body);return pending.promise};const task=stopBatchOnce(f.batch,f.current,f.controls);await Promise.resolve();mutate(f);pending.resolve(f.response);
       await assert.rejects(task,/changed before Stop/);assert.equal(f.calls.posts.length,1);assert.equal(f.calls.accepts,0);assert.equal(f.calls.deferrals,0);assert.equal(f.batch.stopConfirmed,true);
     }
   });
   await t.test('concurrent helper and finalizer calls share one pending POST',async()=>{
     const f=fixture(),pending=deferred();f.controls.post=async body=>{f.calls.posts.push(body);return pending.promise};const first=stopBatchOnce(f.batch,f.current,f.controls),second=stopBatchOnce(f.batch,f.current,f.controls);
-    assert.equal(f.calls.posts.length,1);assert.equal(f.batch.stopConfirmed,false);pending.resolve(f.response);assert.deepEqual(await first,await second);assert.equal(f.calls.accepts,1);
+    await Promise.resolve();assert.equal(f.calls.posts.length,1);assert.equal(f.batch.stopConfirmed,false);pending.resolve(f.response);assert.deepEqual(await first,await second);assert.equal(f.calls.accepts,1);
+  });
+  await t.test('durable hold precedes transport and failed persistence never sends a request',async()=>{
+    const f=fixture(),saved=deferred();f.controls.persistHold=()=>saved.promise;const task=stopBatchOnce(f.batch,f.current,f.controls);assert.equal(f.calls.posts.length,0);saved.resolve();await task;assert.equal(f.calls.posts.length,1);assert.equal(f.calls.confirmations,1);
+    const failed=fixture();failed.controls.persistHold=async()=>{throw new Error('Synthetic full storage')};await assert.rejects(stopBatchOnce(failed.batch,failed.current,failed.controls),/full storage/);assert.equal(failed.calls.posts.length,0);assert.equal(failed.batch.stopConfirmed,false);
+  });
+  await t.test('owner change during durable hold prevents a stale Stop request',async()=>{
+    const f=fixture(),saved=deferred();f.controls.persistHold=()=>saved.promise;const task=stopBatchOnce(f.batch,f.current,f.controls);f.state.workspace.accountId='another-owner';saved.resolve();await assert.rejects(task,/changed before Stop/);assert.equal(f.calls.posts.length,0);
   });
   await t.test('a lost response remains a failed attempt on every later call',async()=>{
     const f=fixture(),failure=new Error('Synthetic lost POST response');f.controls.post=async body=>{f.calls.posts.push(body);throw failure};

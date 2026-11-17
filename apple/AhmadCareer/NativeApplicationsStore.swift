@@ -68,6 +68,7 @@ final class NativeApplicationsStore: ObservableObject {
     private var storageReadable = true
     private var sessionGeneration = UUID()
     private var contentGeneration = UUID()
+    private var workspaceMutation = UUID()
     private var refreshTicket: UUID?
     private var operationTicket: UUID?
     private var continuationTicket: UUID?
@@ -88,6 +89,16 @@ final class NativeApplicationsStore: ObservableObject {
     var serviceAddress: String { state.serviceAddress }
     var connectionSetupAddress: String { MobileApplicationPolicy.connectionSetupAddress(state.serviceAddress) }
     var submissionAvailable: Bool { connected && (mode == "test" || liveSubmissionEnabled == true) }
+    var workspaceScope: PhoneRecordScope { state.recordScope }
+    var heldPlanIDs: [String] { state.submissionHolds.filter { $0.scope == state.recordScope }.map(\.planID) }
+    var hasSubmissionHold: Bool { activePlanIDs.contains(where: state.holdsSubmission) }
+    var workspaceActionContext: PhoneWorkspaceActionContext {
+        PhoneWorkspaceActionContext(scope: state.recordScope, connection: sessionGeneration, content: workspaceMutation)
+    }
+    var hasUnpairedDraft: Bool {
+        !state.recordScope.isLocal && state.workspaceDrafts.contains { $0.scope.isLocal && ($0.profile.hasContent || !$0.jobs.isEmpty || $0.opportunityDraft.hasContent) }
+    }
+    var savedWorkspaceScopes: [PhoneRecordScope] { state.workspaceDrafts.map(\.scope) }
     var profileReadiness: ApplicationProfileReadiness { ApplicationProfileReadiness(profile: profile) }
     private func recordScope(for job: [String: ApplicationValue]) -> PhoneRecordScope {
         if let id = job["id"]?.string, id.hasPrefix("record-"),
@@ -261,6 +272,7 @@ final class NativeApplicationsStore: ObservableObject {
         do {
             var next = state
             next.applicationRecords.removeAll { $0.id == record.id }; next.applicationRecords.append(record)
+            next.recordDrafts.removeAll { $0.scope == context.scope && $0.identity == context.identity }
             guard next.applicationRecords.count <= 1_000 else { throw MobileApplicationError(message: "This phone has reached its private record limit. Your existing records and this draft are kept.") }
             try persist(next)
             if applied != (base?.appliedElsewhere ?? false) { plan = nil; contentGeneration = UUID(); refreshTicket = nil }
@@ -354,7 +366,9 @@ final class NativeApplicationsStore: ObservableObject {
             #endif
             let path = self.folder.appendingPathComponent("phone-draft.json")
             if FileManager.default.fileExists(atPath: path.path) {
-                state = try JSONDecoder().decode(PhoneApplicationState.self, from: Data(contentsOf: path))
+                let data = try Data(contentsOf: path)
+                guard data.count <= 64 * 1_024 * 1_024 else { throw CocoaError(.coderInvalidValue) }
+                state = try JSONDecoder().decode(PhoneApplicationState.self, from: data)
             }
             jobs = state.jobs
         } catch {
@@ -376,15 +390,25 @@ final class NativeApplicationsStore: ObservableObject {
     private func persist(_ next: PhoneApplicationState) throws {
         guard storageReadable else { throw MobileApplicationError(message: "The existing phone draft is preserved because it could not be read.") }
         guard next.applicationRecordSchema == 1, next.applicationRecords.count <= 1_000,
-              next.applicationRecords.allSatisfy(\.valid), Set(next.applicationRecords.map(\.id)).count == next.applicationRecords.count else {
+              next.applicationRecords.allSatisfy(\.valid), Set(next.applicationRecords.map(\.id)).count == next.applicationRecords.count,
+              next.workspaceDraftSchema == 1, next.workspaceDrafts.count <= 32, next.workspaceDrafts.allSatisfy(\.valid),
+              next.recordDrafts.count <= 200, next.recordDrafts.allSatisfy(\.valid),
+              next.submissionHolds.count <= 500, next.submissionHolds.allSatisfy(\.valid) else {
             throw MobileApplicationError(message: "The saved application records could not be updated. Your existing phone data is preserved.")
         }
         let data = try JSONEncoder().encode(next)
+        guard data.count <= 64 * 1_024 * 1_024 else {
+            throw MobileApplicationError(message: "This phone reached its private workspace storage limit. Existing drafts were kept; export and clear an unused workspace before adding another.")
+        }
         #if os(iOS)
         try data.write(to: folder.appendingPathComponent("phone-draft.json"), options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
         #else
         try data.write(to: folder.appendingPathComponent("phone-draft.json"), options: [.atomic])
         #endif
+        if next.profile != state.profile || next.profileRevision != state.profileRevision || next.jobs != state.jobs
+            || next.applicationRecords != state.applicationRecords || next.opportunityDraft != state.opportunityDraft
+            || next.recordDrafts != state.recordDrafts || next.workspaceDrafts != state.workspaceDrafts
+            || next.submissionHolds != state.submissionHolds { workspaceMutation = UUID() }
         state = next
     }
     private func beginOperation() -> UUID? {
@@ -551,8 +575,9 @@ final class NativeApplicationsStore: ObservableObject {
         guard !Task.isCancelled, !busy, requiresClientContinuation,
               monotonicTime() >= nextContinuationTime, !activePlanIDs.isEmpty,
               let client else { return }
-        guard let id = activePlanIDs.first(where: { !continuationConflictsWithPrivateRecords($0) }) else {
-            message = "A queued application conflicts with a job you marked applied, or its target could not be checked. Review your phone record and stop unsent applications in Apply before continuing."
+        guard let id = activePlanIDs.first(where: { !state.holdsSubmission($0) && !continuationConflictsWithPrivateRecords($0) }) else {
+            message = hasSubmissionHold ? "Sending is paused on this phone because you requested Stop. Retry Stop to confirm it with the service; this phone will not resume the held review."
+                : "A queued application conflicts with a job you marked applied, or its target could not be checked. Review your phone record and stop unsent applications in Apply before continuing."
             return
         }
         let ticket = UUID(), generation = sessionGeneration
@@ -678,15 +703,8 @@ final class NativeApplicationsStore: ObservableObject {
         var backup = imported.filter { ["url", "title", "company", "location", "country", "provider", "workMode"].contains($0.key) }
         backup["id"] = .string(localID); backup["localOnly"] = .bool(true)
         next.jobs[index] = backup
-        // A successful user-initiated import is the only point that adopts an unpaired record.
-        // Different account records never move, and colliding versions remain available to compare.
-        if !next.recordScope.isLocal {
-            for index in next.applicationRecords.indices where next.applicationRecords[index].scope.isLocal
-                && next.applicationRecords[index].identity == MobileApplicationPolicy.jobIdentity(importedURL) {
-                next.applicationRecords[index].scope = next.recordScope
-                next.applicationRecords[index].revision += 1
-            }
-        }
+        // Synchronizing a bookmark never moves a separate person's private records.
+        // Copy/association has its own captured-scope confirmation and preserves conflicts.
         try persist(next)
     }
     @discardableResult
@@ -775,6 +793,7 @@ final class NativeApplicationsStore: ObservableObject {
                       previousPlan["items"]?.array.allSatisfy({ ["ready", "blocked"].contains($0.object["state"]?.string ?? "") }) == true else {
                     throw MobileApplicationError(message: "This review has already started or changed. Stop it explicitly before creating a different review.")
                 }
+                guard retainStopHolds([previousID], clearReview: false) else { return }
                 _ = try await client.request("stop", method: "POST", body: ["planId": .string(previousID), "onlyIfUnapproved": .bool(true)])
                 guard generation == sessionGeneration else { return }
             }
@@ -811,7 +830,9 @@ final class NativeApplicationsStore: ObservableObject {
             guard generation == sessionGeneration else { return }
             guard inputsAreCurrent() else {
                 if let obsoleteID = value["plan"]?.object["id"]?.string {
-                    _ = try? await client.request("stop", method: "POST", body: ["planId": .string(obsoleteID), "onlyIfUnapproved": .bool(true)])
+                    if retainStopHolds([obsoleteID]) {
+                        _ = try? await client.request("stop", method: "POST", body: ["planId": .string(obsoleteID), "onlyIfUnapproved": .bool(true)])
+                    }
                 }
                 guard generation == sessionGeneration else { return }
                 plan = nil; message = "Your choices changed. The older review will not be approved; prepare your current selection again."
@@ -844,6 +865,7 @@ final class NativeApplicationsStore: ObservableObject {
         guard let client, let plan, ApplicationReviewPolicy.current(plan, revision: revision),
               ApplicationReviewPolicy.linkedInMatchesProfile(plan, link: profile.linkedin),
               let id = plan["id"]?.string, let digest = plan["digest"]?.string,
+              !state.holdsSubmission(id),
               plan["items"]?.array.contains(where: { ApplicationReviewPolicy.eligible($0.object) }) == true,
               let operation = beginOperation() else { message = "Refresh this review before approving it."; return false }
         defer { finishOperation(operation) }
@@ -865,9 +887,10 @@ final class NativeApplicationsStore: ObservableObject {
         return true
     }
     func stop() async {
-        guard let client, let operation = beginOperation() else { return }
+        let ids = activePlanIDs
+        guard retainStopHolds(ids), let client, let operation = beginOperation() else { return }
         defer { finishOperation(operation) }
-        let generation = sessionGeneration, ids = activePlanIDs
+        let generation = sessionGeneration
         do {
             for id in ids {
                 _ = try await client.request("stop", method: "POST", body: ["planId": .string(id)])
@@ -879,8 +902,12 @@ final class NativeApplicationsStore: ObservableObject {
     }
     @discardableResult
     func resumeReview(_ review: [String: ApplicationValue]) -> Bool {
+        if let id = review["id"]?.string, state.holdsSubmission(id) {
+            message = "This review is held because you requested Stop. Retry Stop to confirm it with the service, then prepare a new review if you still want to apply."; return false
+        }
         guard !busy, !profileNeedsSync, !profileEditing else { message = "Save or close your profile draft before continuing a review."; return false }
         guard let id = review["id"]?.string,
+              !state.holdsSubmission(id),
               let current = recoverablePlans.first(where: { $0["id"]?.string == id && $0["digest"] == review["digest"] }),
               ApplicationReviewPolicy.current(current, revision: revision),
               ApplicationReviewPolicy.linkedInMatchesProfile(current, link: profile.linkedin),
@@ -896,7 +923,7 @@ final class NativeApplicationsStore: ObservableObject {
         return true
     }
     func stopReview(_ id: String) async {
-        guard let client, let operation = beginOperation() else { return }
+        guard retainStopHolds([id]), let client, let operation = beginOperation() else { return }
         defer { finishOperation(operation) }
         let generation = sessionGeneration
         do {
@@ -906,6 +933,184 @@ final class NativeApplicationsStore: ObservableObject {
             message = "This review was stopped. Provider cooldowns still apply to rejected attempts."
             finishOperation(operation); await refresh()
         } catch { acceptError(error, generation: generation) }
+    }
+    /// Persist intent before networking. A lost response or 401 never restores local permission to send.
+    private func retainStopHolds(_ ids: [String], clearReview: Bool = true) -> Bool {
+        guard !state.recordScope.isLocal, !ids.isEmpty else { return false }
+        do {
+            var next = state; next.holdSubmissions(ids); try persist(next)
+            if clearReview, let id = plan?["id"]?.string, ids.contains(id) { plan = nil }
+            message = "Sending is paused on this phone. Checking whether the service stopped unsent work."
+            return true
+        } catch {
+            state.holdSubmissions(ids)
+            let retired = detachLocally(); retired?.invalidate()
+            message = "Stop could not be saved safely, so this phone disconnected and sent no Stop request. Use Account to revoke the connection or retry after storage is available. " + error.localizedDescription
+            return false
+        }
+    }
+    private func actionMatches(_ context: PhoneWorkspaceActionContext) -> Bool {
+        context == workspaceActionContext && !busy && !profileEditing
+    }
+    func restoredRecordDraft(for context: PhoneRecordEditContext) -> PhoneRecordDraft? {
+        state.recordDrafts.first { $0.scope == context.scope && $0.identity == context.identity
+            && $0.recordID == context.recordID && $0.revision == context.revision }?.draft
+    }
+    @discardableResult
+    func keepRecordDraft(_ draft: PhoneRecordDraft, context: PhoneRecordEditContext) -> Bool {
+        guard context.connection == sessionGeneration else { return false }
+        let checkpoint = PhoneRecordDraftCheckpoint(scope: context.scope, identity: context.identity, job: context.job,
+            recordID: context.recordID, revision: context.revision, draft: draft)
+        guard checkpoint.valid else { message = "This unfinished record could not be saved. Keep the note within 2,000 characters and use valid dates."; return false }
+        do {
+            var next = state
+            next.recordDrafts.removeAll { $0.scope == context.scope && $0.identity == context.identity }
+            next.recordDrafts.append(checkpoint); try persist(next); return true
+        } catch { message = error.localizedDescription; return false }
+    }
+    @discardableResult
+    func discardRecordDraft(context: PhoneRecordEditContext) -> Bool {
+        guard context.connection == sessionGeneration else { return false }
+        do {
+            var next = state; next.recordDrafts.removeAll { $0.scope == context.scope && $0.identity == context.identity }
+            try persist(next); return true
+        } catch { message = error.localizedDescription; return false }
+    }
+    @discardableResult
+    func importUnpairedDraft(context: PhoneWorkspaceActionContext) -> Bool {
+        guard actionMatches(context), !state.recordScope.isLocal,
+              let source = state.workspaceDrafts.first(where: { $0.scope.isLocal }) else {
+            message = "The destination or its draft changed. Review the import again."; return false
+        }
+        let backup = PhoneWorkspaceBackup(draft: source, records: state.applicationRecords.filter { $0.scope.isLocal },
+            recordDrafts: state.recordDrafts.filter { $0.scope.isLocal }, submissionHolds: [])
+        return mergeBackup(backup, context: context, replaceProfile: source.profile.hasContent)
+    }
+    @discardableResult
+    func openPhoneWorkspace(_ scope: PhoneRecordScope, context: PhoneWorkspaceActionContext) -> Bool {
+        guard actionMatches(context), scope != state.recordScope,
+              let restored = state.workspaceDrafts.first(where: { $0.scope == scope }) else {
+            message = "The saved workspace changed. Reopen its current details."; return false
+        }
+        do {
+            var next = state; let previous = next.activeDraft, account = next.tokenAccount, retired = client
+            next.workspaceDrafts.removeAll { $0.scope == scope || $0.scope == previous.scope }
+            next.workspaceDrafts.append(previous); next.loadDraft(restored)
+            next.serviceAddress = scope.origin; next.workspaceID = scope.workspaceID
+            next.connectionEnabled = false; next.credentialAccount = nil
+            try persist(next)
+            client = nil; connected = false; rotateConnection(); clearRemoteViews()
+            try? credentials.remove(account: account)
+            if let retired { retireRemotely(retired, reportWhenDisconnected: false) }
+            message = "Opened the saved phone workspace. Connect it again to access its service; no data was copied between workspaces."
+            return true
+        } catch { message = error.localizedDescription; return false }
+    }
+    /// This export includes only this scope; no tokens, active approvals, or invented provider receipts.
+    func exportWorkspace(context: PhoneWorkspaceActionContext, discoverySnapshot: Data? = nil) -> URL? {
+        guard actionMatches(context) else { message = "The workspace changed. Review the export target again."; return nil }
+        do {
+            let scope = state.recordScope
+            let backup = PhoneWorkspaceBackup(draft: state.activeDraft,
+                records: state.applicationRecords.filter { $0.scope == scope },
+                recordDrafts: state.recordDrafts.filter { $0.scope == scope },
+                submissionHolds: state.submissionHolds.filter { $0.scope == scope }, discoverySnapshot: discoverySnapshot)
+            let encoder = JSONEncoder(); encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+            let bytes = try encoder.encode(backup)
+            guard bytes.count <= 64 * 1_024 * 1_024 else { throw MobileApplicationError(message: "This backup exceeds the supported 64 MiB size. Existing phone data is unchanged.") }
+            let output = folder.appendingPathComponent("Career-Finder-Phone-Workspace-" + UUID().uuidString + ".json")
+            #if os(iOS)
+            try bytes.write(to: output, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+            #else
+            try bytes.write(to: output, options: .atomic)
+            #endif
+            return output
+        } catch { message = error.localizedDescription; return nil }
+    }
+    nonisolated static func readWorkspaceBackup(at url: URL) throws -> PhoneWorkspaceBackup {
+        let file = try FileHandle(forReadingFrom: url); defer { try? file.close() }
+        let bytes = try file.read(upToCount: 64 * 1_024 * 1_024 + 1) ?? Data()
+        guard bytes.count <= 64 * 1_024 * 1_024 else { throw MobileApplicationError(message: "This backup exceeds the 64 MiB import limit. Existing phone data is unchanged.") }
+        let backup = try JSONDecoder().decode(PhoneWorkspaceBackup.self, from: bytes)
+        guard backup.valid else { throw MobileApplicationError(message: "This file is damaged or uses an unsupported backup version. Existing phone data is unchanged.") }
+        if let pdf = backup.draft.profile.resumeData {
+            var verified = backup.draft.profile
+            try verified.selectResume(pdf, filename: verified.resumeName)
+            guard verified.resumeSHA256 == backup.draft.profile.resumeSHA256, verified.resumeSize == backup.draft.profile.resumeSize else {
+                throw MobileApplicationError(message: "The backup's CV does not match its recorded fingerprint. Existing phone data is unchanged.")
+            }
+        }
+        return backup
+    }
+    /// The confirmation explicitly replaces the local profile, merges links/history and uploads nothing.
+    @discardableResult
+    func mergeBackup(_ backup: PhoneWorkspaceBackup, context: PhoneWorkspaceActionContext, replaceProfile: Bool = true) -> Bool {
+        guard actionMatches(context), backup.valid else {
+            message = "The destination changed or the backup is not supported. Nothing was imported."; return false
+        }
+        guard activePlanIDs.isEmpty else {
+            message = "Stop active applications before replacing this phone's profile with a backup. Existing data is unchanged."; return false
+        }
+        do {
+            var next = state, imported = backup.draft.profile
+            if imported.resumeData == nil { imported.removeResume() }
+            else { imported.resumeChanged = true; imported.resumeRemoved = false }
+            if replaceProfile { next.retainDraft(imported, basedOn: next.latestServerRevision ?? next.profileRevision) }
+            var existing = Set(next.jobs.compactMap { $0["url"]?.string }.map(MobileApplicationPolicy.jobIdentity))
+            for job in backup.draft.jobs where existing.insert(MobileApplicationPolicy.jobIdentity(job["url"]?.string ?? "")).inserted {
+                var local = job.filter { ["url", "title", "company", "location", "country"].contains($0.key) }
+                local["id"] = .string("local-" + UUID().uuidString); local["localOnly"] = .bool(true); next.jobs.append(local)
+            }
+            guard next.jobs.count <= 200 else { throw MobileApplicationError(message: "The merged shortlist exceeds 200 links. Nothing was replaced.") }
+            // Keep destination opportunity text; import the source draft only into an empty field set.
+            if !next.opportunityDraft.hasContent { next.opportunityDraft = backup.draft.opportunityDraft }
+            var importedIDs: [String: String] = [:]
+            for original in backup.records {
+                var record = original; record.scope = next.recordScope
+                if let same = next.applicationRecords.first(where: { old in var comparable = old; comparable.id = record.id; return comparable == record }) {
+                    importedIDs[original.id] = same.id; continue
+                }
+                if next.applicationRecords.contains(where: { $0.id == record.id }) { record.id = UUID().uuidString }
+                importedIDs[original.id] = record.id; next.applicationRecords.append(record)
+            }
+            for original in backup.recordDrafts {
+                var draft = original; draft.scope = next.recordScope
+                if let id = draft.recordID, let replacement = importedIDs[id] { draft.recordID = replacement }
+                // A destination draft is never silently overwritten by recovery.
+                if !next.recordDrafts.contains(where: { $0.scope == draft.scope && $0.identity == draft.identity }) { next.recordDrafts.append(draft) }
+            }
+            // Restore only restrictive Stop intent; importing can never authorize dispatch.
+            if !next.recordScope.isLocal && backup.draft.scope == next.recordScope {
+                for hold in backup.submissionHolds { next.holdSubmissions([hold.planID]) }
+            }
+            try persist(next); plan = nil; selected = []; answers = [:]; mergeJobs()
+            contentGeneration = UUID(); refreshTicket = nil
+            message = "Phone data imported. Review the profile before saving online. Saved links and record history were merged; no application was approved or sent."
+            return true
+        } catch { message = error.localizedDescription; return false }
+    }
+    @discardableResult
+    func clearWorkspaceOnPhone(context: PhoneWorkspaceActionContext) -> Bool {
+        guard actionMatches(context) else { message = "The workspace changed. Review the clear action again."; return false }
+        do {
+            var next = state
+            // Retain every Stop hold, including active service plans, across a deliberate local clear.
+            if !next.recordScope.isLocal { next.holdSubmissions(activePlanIDs) }
+            next.profile = PhoneApplicationProfile(); next.profileNeedsSync = false; next.profileRevision = nil
+            next.latestServerRevision = nil; next.latestServerProfile = nil; next.jobs = []; next.opportunityDraft = PhoneOpportunityDraft()
+            next.applicationRecords.removeAll { $0.scope == context.scope }
+            next.recordDrafts.removeAll { $0.scope == context.scope }
+            next.workspaceDrafts.removeAll { $0.scope == context.scope }
+            next.connectionEnabled = false
+            let account = state.tokenAccount, retired = client
+            try persist(next)
+            client = nil; connected = false; rotateConnection(); clearRemoteViews()
+            do { try credentials.remove(account: account) }
+            catch { message = "Phone data cleared and reconnect disabled. Secure token removal needs another attempt: " + error.localizedDescription; retired?.invalidate(); return true }
+            if let retired { retireRemotely(retired, reportWhenDisconnected: false) }
+            message = "This workspace's private phone data was cleared and its phone connection disabled. Other workspaces, exported files and employer/cloud records are unchanged. Stop holds were retained."
+            return true
+        } catch { message = error.localizedDescription; return false }
     }
     func exportReceipts() async -> URL? {
         guard let client, let operation = beginOperation() else { return nil }

@@ -68,9 +68,10 @@ struct MobileApplicationCheck {
               "Empty LinkedIn search does not add profile or tracking fields")
         check(MobileApplicationPolicy.linkedInJobSearchURL(keywords: String(repeating: "x", count: 121), location: "") == nil,
               "External search keeps the same bounded keyword field")
-        let pdf = Data("%PDF-1.4\nsynthetic policy fixture\n%%EOF".utf8)
+        let pdf = SyntheticPDF.onePage
         check(MobileApplicationPolicy.resumeError(pdf, filename: "Resume.pdf") == nil, "PDF accepted")
         check(MobileApplicationPolicy.resumeError(Data("not a PDF".utf8), filename: "Resume.pdf") != nil, "Mismatched bytes rejected")
+        check(MobileApplicationPolicy.resumeError(Data("%PDF-123".utf8), filename: "Resume.pdf") != nil, "A signature-only file cannot become a readable CV")
         check(MobileApplicationPolicy.resumeError(Data(repeating: 1, count: 5 * 1024 * 1024 + 1), filename: "Resume.pdf") != nil, "Oversize rejected")
         for name in ["../Resume.pdf", "folder\\Resume.pdf", ".Resume.pdf", "Resume:copy.pdf", "Resume.docx"] {
             check(MobileApplicationPolicy.resumeError(pdf, filename: name) != nil, "Unsafe filename rejected")

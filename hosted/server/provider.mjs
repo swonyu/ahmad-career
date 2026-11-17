@@ -1,4 +1,5 @@
-import {ApplicationError,fail,object,text,publicURL,canonical,sha256,applicantName} from './validation.mjs';
+import {retryAfterDelay} from './retry-after.mjs';
+import {fail,object,text,publicURL,canonical,sha256,applicantName} from './validation.mjs';
 const supported = new Set(['name','email','resume','phone','urls','comments','consentStore','consentMarketing']);
 export function loadConfiguration(env) {
   if (!env.CAREER_CONNECTORS_JSON) return {version:1,connectors:[]};
@@ -69,7 +70,7 @@ export function makeAdapter(env,{fetchImpl=fetch}={}) {
     try{response=await fetchImpl(url,{method:'POST',body:form,headers:{Accept:'application/json'},redirect:'manual',signal:AbortSignal.timeout(Math.max(1,Math.min(8000,timeoutMs)))});body=await boundedText(response,128*1024)}catch{return {state:'uncertain',error:{code:'unconfirmed_transport',message:'The request began without a reliable provider result. Reconcile this attempt before applying again.'}}}
     const responseSHA256=sha256(body);let data;try{data=JSON.parse(body)}catch{data=null}
     if(response.status===200&&data?.ok===true&&typeof data.applicationId==='string'&&data.applicationId.trim()&&data.applicationId.length<=200&&!/[\x00-\x1f\x7f]/.test(data.applicationId))return {state:'confirmed',applicationId:data.applicationId.trim(),responseSHA256};
-    if(response.status===429){const header=response.headers.get('retry-after');let delay=header&&/^\d+$/.test(header)?Number(header)*1000:Date.parse(header)-Date.now();if(!Number.isFinite(delay)||delay<1000)delay=30000;return {state:'rate_limited',retryDelay:Math.min(delay,86400000),responseSHA256,error:{code:'provider_rate_limited',message:'The provider rejected this request for rate limiting. Review and approve again after the cooldown.'}}}
+    if(response.status===429){const delay=retryAfterDelay(response.headers.get('retry-after'));return {state:'rate_limited',retryDelay:delay,responseSHA256,error:{code:delay===null?'provider_cooldown_unknown':'provider_rate_limited',message:delay===null?'The provider rejected this request for rate limiting, but its waiting period could not be read safely. Reconcile with the employer before any new attempt.':'The provider rejected this request for rate limiting. Review and approve again after the complete cooldown.'}}}
     if([400,401,403,404,422].includes(response.status)&&data?.ok===false)return {state:'rejected',responseSHA256,error:{code:'provider_rejected',message:'The provider explicitly rejected this application. Review the employer form or integration before a corrected attempt.'}};
     return {state:'uncertain',responseSHA256,error:{code:'unconfirmed_response',message:'The provider did not return a documented application receipt. Reconcile this attempt before applying again.'}};
   }

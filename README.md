@@ -2,6 +2,18 @@
 
 Career Finder helps people find jobs, keep a shortlist, prepare a profile and PDF CV, and track what happens after applying. It is designed for **iPhone and Android phones**, starts with a blank personal profile, and has no country or profession whitelist.
 
+## Current continuation — 17 November 2026
+
+The repaired phone baseline `6f95db3a09a60be8f0b325c8ad01cdcd305dd8de` passed **all five jobs, including all 13 iPhone UI cases**, in [run 43986038118](https://github.com/swonyu/ahmad-career/actions/runs/43986038118). Additional account, provider, recovery, application-safety and accessibility repairs are a new integration candidate; that baseline pass does not verify them. See the [continuation finding ledger and acceptance plan](docs/Continuation-Review-2026-11-17.md) for exact source boundaries, local test evidence and remaining gates.
+
+Final local checks now pass **61 hosted account groups**, **19 phone groups / 164 Worker requests**, **64 frontend + 14 browser transport tests**, **33 vault groups**, **26 discovery groups**, and **30 authentication groups + 15 auth Worker requests**. The separate Worker gate passes 17 requests; the complete hosted audit reports **zero findings** across 830 dependencies. Companion checks pass 119 HTTP groups, 77 application-state groups and 12 TLS checks; Android policy checks pass 122. Authoritative hosted source is pushed at `1135a3270435d3719c6f62f1a2e3a53e2c040146`, with a successful production build. These results do not verify native instrumentation: **97 ordinary + 2 TLS Android tests and all 13 current-source iPhone UI cases remain pending**, as do the new phone/repository commit, GitHub CI receipts and full browser/device acceptance. Account race tests now cover durable owner lifecycle fences, distinct from the ten-minute provider callback fence.
+
+The live service is **version 7**, source `1135a3270435d3719c6f62f1a2e3a53e2c040146`; see its [deployment receipt](docs/strict-review-evidence/hosted-v7-deployment.json). Live job search, saving, Account and Connect were observed working. Direct Google OAuth and a supported basic LinkedIn connection are implemented in the candidate, but their managed provider configuration is still empty and external activation is unverified. The separate App Publishing owner retains signing and the `app-store/career-workspace-copy-20261117` release branch. Preview availability, simulator success and hosted deployment are separate from a public store release.
+
+**Free-only requirement:** keep the app on available free infrastructure; do not add paid APIs, subscriptions, upgrades or automatic paid overages. Existing capacity limits, including 250 service accounts, remain real limits. Store developer fees and external approvals remain separate publishing-owner gates; this continuation does not authorize spending or promise that those fees are free.
+
+### Earlier checkpoint retained for history
+
 **Release checkpoint — 17 November 2026:** hosted **version 6 is deployed**, including the phone browser app and dependency corrections. Its hosted GitHub CI gate passed with zero findings in the complete dependency audit; live browser acceptance is still in progress. Android 0.6 passed 91 policy checks and all 83 native phone tests, with zero lint issues, but its new download is not yet published. The latest completed iPhone UI run passed nine of thirteen cases. Corrections for its four failures are frozen and independently reviewed; a fresh 13-case run is pending. The [deployment receipt](docs/strict-review-evidence/phone-web-hosted-deployment-v6.json) and [strict review](docs/Strict-Review-2026-11-17.md) identify observed results and remaining gates. Earlier successful tests do not verify a later source change.
 
 ## Start here

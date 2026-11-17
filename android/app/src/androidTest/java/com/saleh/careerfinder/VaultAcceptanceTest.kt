@@ -8,6 +8,55 @@ import java.io.File
 import java.util.UUID
 
 class VaultAcceptanceTest {
+    @Test fun earlierRecoveryCopies_canBeReadAndDeletedIndividually_withoutTouchingTheCurrentArea() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val namespace = UUID.randomUUID().toString()
+        val root = File(context.noBackupFilesDir, "career-private-$namespace")
+        val vault = SecureVault(context, namespace)
+        val prefix = "career-finder-v1-$namespace"
+        val other = "workspace-" + "a".repeat(64)
+        try {
+            vault.write("workspace-unpaired", WorkspaceStorage.encode(CareerUiState(profile = ProfileDraft(firstName = "Earlier phone draft"))))
+            vault.write(other, WorkspaceStorage.encode(CareerUiState(profile = ProfileDraft(firstName = "Another preserved workspace"))))
+            vault.startFreshPreservingExisting()
+            vault.write("workspace-unpaired", WorkspaceStorage.encode(CareerUiState(profile = ProfileDraft(firstName = "Current draft"))))
+            val copies = vault.preservedWorkspaces()
+            assertEquals(2, copies.size)
+            val selected = copies.single { it.record == "workspace-unpaired" }
+            assertEquals("Earlier phone draft", vault.readPreserved(selected.area, selected.record)!!.getJSONObject("profile").getString("firstName"))
+            vault.removePreserved(selected.area, setOf(selected.record, "search-unpaired", "holds-unpaired"))
+            assertEquals(listOf(other), vault.preservedWorkspaces().map { it.record })
+            assertEquals("Another preserved workspace", vault.readPreserved(selected.area, other)!!.getJSONObject("profile").getString("firstName"))
+            assertEquals("Current draft", vault.read("workspace-unpaired")!!.getJSONObject("profile").getString("firstName"))
+            try { vault.readPreserved("../", "workspace-unpaired"); fail("A recovery path must not leave its area.") }
+            catch (_: IllegalArgumentException) { }
+        } finally {
+            root.deleteRecursively()
+            val keys = java.security.KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+            keys.aliases().asSequence().filter { it.startsWith(prefix) }.toList().forEach(keys::deleteEntry)
+        }
+    }
+
+    @Test fun capacityFailure_preservesEncryptedBytes_andDoesNotPreventASmallerSave() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val namespace = UUID.randomUUID().toString()
+        val root = File(context.noBackupFilesDir, "career-private-$namespace")
+        val vault = SecureVault(context, namespace)
+        val alias = "career-finder-v1-$namespace"
+        try {
+            vault.write("workspace-unpaired", JSONObject().put("schema", 1))
+            val original = File(root, "workspace-unpaired.enc").readBytes()
+            try { vault.write("workspace-unpaired", JSONObject().put("tooLarge", "x".repeat(BoundaryPolicy.MAX_PRIVATE_BYTES))); fail("Capacity must be rejected before encryption replaces the file.") }
+            catch (_: PrivateCapacityException) { }
+            assertArrayEquals(original, File(root, "workspace-unpaired.enc").readBytes())
+            vault.write("workspace-unpaired", JSONObject().put("schema", 1).put("profileDirty", true))
+            assertTrue(vault.read("workspace-unpaired")!!.getBoolean("profileDirty"))
+        } finally {
+            root.deleteRecursively()
+            java.security.KeyStore.getInstance("AndroidKeyStore").apply { load(null); deleteEntry(alias) }
+        }
+    }
+
     @Test fun storedToken_isEncrypted_andBoundToItsRecordName() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val vault = SecureVault(context)

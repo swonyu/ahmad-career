@@ -55,6 +55,54 @@ private final class DiscoverySuite {
     }
     func run() async throws {
         do {
+            let service = DiscoveryStub(fixture); let (model, file) = store(service)
+            model.query.keywords = "Unsent role"; model.query.location = "Tokyo"; model.query.remoteOnly = true
+            let reopened = CareerDiscoveryStore(file: file, service: service)
+            try check(reopened.query == model.query && service.calls.isEmpty, "Unsent search fields persist on edit without making a request")
+            await reopened.search()
+            reopened.query.keywords = "Failed new query"
+            service.handle = { _, _ in throw URLError(.notConnectedToInternet) }; await reopened.search()
+            let failed = CareerDiscoveryStore(file: file, service: service)
+            try check(failed.query.keywords == "Failed new query" && failed.jobs == fixture.jobs && failed.restoredResults,
+                      "A failed search preserves both the newest fields and older attributed results across relaunch")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(fixture); let (model, file) = store(service)
+            let a = PhoneRecordScope(origin: "https://first.example", workspaceID: "a")
+            let b = PhoneRecordScope(origin: "https://second.example", workspaceID: "b")
+            model.query.keywords = "Unpaired search"
+            model.attach(to: a); model.query.keywords = "Private A"; await model.search()
+            let gate = DiscoveryGate(); service.handle = { _, _ in try await gate.wait() }
+            let pending = Task { await model.search() }; try await waitUntil { gate.started }
+            model.attach(to: b)
+            try check(model.query.keywords.isEmpty && model.jobs.isEmpty && !model.isSearching, "A new workspace cannot display A's search fields or results")
+            gate.finish(fixture); await pending.value
+            try check(model.jobs.isEmpty && model.query.keywords.isEmpty, "A delayed A result cannot populate workspace B")
+            model.query.keywords = "Private B"; model.attach(to: a)
+            try check(model.query.keywords == "Private A" && model.jobs == fixture.jobs && model.restoredResults,
+                      "Returning to A restores its exact previous search without refetching")
+            let reopened = CareerDiscoveryStore(file: file, service: service); reopened.attach(to: b)
+            try check(reopened.query.keywords == "Private B" && reopened.jobs.isEmpty, "B's unfinished search persists independently across relaunch")
+            reopened.attach(to: PhoneRecordScope())
+            try check(reopened.query.keywords == "Unpaired search", "Legacy/unpaired search remains separately recoverable")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(fixture); let (model, _) = store(service)
+            model.query.keywords = "Exported search"; await model.search(); let backup = try model.exportSnapshot()
+            try model.clearCurrentScope()
+            try check(model.query.keywords.isEmpty && model.jobs.isEmpty, "Explicit search clear removes fields and results for the active scope")
+            try model.importSnapshot(backup)
+            try check(model.query.keywords == "Exported search" && model.jobs == fixture.jobs && !model.canLoadMore,
+                      "Search backup restores attributed results without reusable pagination authority")
+            var future = try JSONSerialization.jsonObject(with: backup) as! [String: Any]; future["schemaVersion"] = 99
+            var refused = false
+            do { try model.importSnapshot(JSONSerialization.data(withJSONObject: future)) } catch { refused = true }
+            try check(refused && model.jobs == fixture.jobs && model.query.keywords == "Exported search", "Unknown search backup versions preserve the current data")
+            scenarios += 1
+        }
+        do {
             let query = DiscoveryQuery(sources: ["lever:eu:example-board", "https://job-boards.greenhouse.io/example-board"],
                 keywords: "clinic operations", location: "London", remoteOnly: true)
             let request = try DiscoveryPolicy.request(route: "search", query: query, cursor: "opaque+/=")

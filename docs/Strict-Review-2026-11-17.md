@@ -1,5 +1,7 @@
 # Career Finder — strict review and completion ledger
 
+> **Historical checkpoint, superseded by the [continuation review and acceptance ledger](Continuation-Review-2026-11-17.md).** The repaired phone baseline `6f95db3a09a60be8f0b325c8ad01cdcd305dd8de` subsequently passed all five jobs, including all 13 iPhone UI cases, in run 43986038118. The older results below remain intact; that baseline pass does not verify the continuation's later working-tree changes.
+
 **Review date:** 17 November 2026. The evidence below includes checks recorded on 16 November in UTC.  
 **Status:** Hosted **version 6 is deployed**, source `d0ba1810c2a07fa84b4d2b88e6e56f8c80ad3470`, with terminal success observed at `2026-11-17T00:05:24.410309Z`. The matching `5efda90` hosted CI job passed its full dependency audit with zero findings and its type/build/D1/Worker gates. Production browser acceptance is in progress and has no completed pass at this checkpoint. The earlier `bc68f1a` run remains failed: three jobs passed, hosted audit and iPhone UI failed, and nine of 13 iPhone UI cases passed. Its four failing assertion stages now have three-file, independently reviewed source repairs; fresh exact-source compilation and all 13 UI cases are still required. Android 0.6 retains its separately verified 91 boundary checks and 83 native cases; its preview is unpublished. Native distribution and provider activation remain separate gates. This is a release checkpoint, not a claim that everything is finished.
 

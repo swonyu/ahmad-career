@@ -1,15 +1,18 @@
-/** Sites owns authentication. This describes its Google option without claiming a direct Google OAuth flow. */
+"use client";
+import GoogleSignInArtwork from "./GoogleSignInArtwork";
+import SessionRecovery from "./SessionRecovery";
+import { useAuthStatus } from "./provider-auth";
+
 export default function SignInOptions({ destination }: { destination: "connect" | "account" | "phone" }) {
+  const { status, checking, error, errorCode, refresh } = useAuthStatus();
   return <div className="sign-in-options">
-    <div className="sign-in-choice" id="sign-in-method-help">
-      <h3>Want to use Google?</h3>
-      <p>Continue below, then choose <strong>Continue with Google</strong> on the secure ChatGPT sign-in screen.</p>
-    </div>
-    <a className="button primary full" href={`/signin-with-chatgpt?return_to=%2F${destination}`} target="_top" aria-describedby="sign-in-method-help sign-in-account-help">
-      Continue to secure sign-in
-      <svg className="arrow-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 12 12 4M4 4h8v8" /></svg>
-    </a>
-    <p className="small muted" id="sign-in-account-help">This preview uses a ChatGPT account to protect your Career Finder workspace. You can create or use that account with Google. If you previously used another sign-in method, use the same account to keep your saved workspace.</p>
-    <p className="small muted">Career Finder does not receive your Google password or read your ChatGPT conversations. Browsing jobs in the phone app does not require an account.</p>
+    {errorCode === "invalid_session" && <SessionRecovery />}
+    {status?.providers.google.configured && <a className="google-sign-in-button" href={`/auth/google/start?return_to=%2F${destination}`} target="_top"><GoogleSignInArtwork /></a>}
+    <a className={`button ${status?.providers.google.configured ? "secondary" : "primary"} full`} href={`/signin-with-chatgpt?return_to=%2F${destination}`} target="_top">Continue with ChatGPT</a>
+    <p className="small muted">Use the same account to recover your existing workspace. You can also choose Google on the secure ChatGPT sign-in screen. To add a different sign-in method to an existing workspace, sign in first and connect it from Account.</p>
+    {checking && <p className="small muted" role="status">Checking available sign-in methods…</p>}
+    {error && <p className="small muted" role="status">Additional sign-in methods could not be checked. ChatGPT sign-in remains available. <button className="text-link" onClick={() => void refresh()}>Check again</button></p>}
+    {status && !status.providers.google.configured && <p className="small muted">Direct Google sign-in is awaiting service-owner setup.</p>}
+    <p className="small muted">Career Finder does not receive your provider passwords or read your ChatGPT conversations. Browsing jobs does not require an account.</p>
   </div>;
 }

@@ -33,7 +33,7 @@ class LinkedInRegressionTest {
         var reviewLinkedIn: String? = null
         var omitReviewLinkedIn = false
         var profile = ProfileDraft(firstName = "Synthetic", email = "profile@example.invalid", revision = 1,
-            resume = Resume("Fixture.pdf", 20, "a".repeat(64)), website = "https://portfolio.example.invalid")
+            resume = Resume("Fixture.pdf", 20, "a".repeat(64)), website = "https://portfolio.example.org")
         val writes = mutableListOf<Pair<String, JSONObject>>()
         private fun profileData(): JSONObject = profile.apiJson(includeLinkedIn = capability == true || profile.linkedin.isNotEmpty())
             .put("revision", profile.revision).put("resume", profile.resume?.metadata() ?: JSONObject.NULL)
@@ -96,7 +96,7 @@ class LinkedInRegressionTest {
     @After fun clearModels() { main { owners.forEach(ViewModelStore::clear) }; owners.clear() }
 
     @Test fun olderPrivateProfile_decodesWithoutLosingFields_andFreshProfileHasNoPersonalLink() {
-        val original = ProfileDraft(firstName = "Single", website = "https://portfolio.example.invalid", resume = Resume("Own.pdf", 20, "b".repeat(64), "private-pdf-bytes"))
+        val original = ProfileDraft(firstName = "Single", website = "https://portfolio.example.org", resume = Resume("Own.pdf", 20, "b".repeat(64), "private-pdf-bytes"))
         val old = original.privateJson().apply { remove("linkedin") }
         assertEquals(original, ProfileDraft.fromJson(old))
         assertEquals("", ProfileDraft().linkedin)
@@ -109,7 +109,7 @@ class LinkedInRegressionTest {
         assertEquals("https://www.linkedin.com/in/Jose%CC%81", BoundaryPolicy.linkedinProfileURL("https://linkedin.com/in/Jose\u0301"))
         assertEquals("https://www.linkedin.com/in/Jose%CC%81", BoundaryPolicy.linkedinProfileURL("https://linkedin.com/in/Jose%CC%81"))
         val store = MemoryStore(); val service = Service(); val first = model(store, service)
-        main { first.editProfile { it.copy(linkedin = "unfinished link", website = "https://portfolio.example.invalid") }; first.saveProfile() }
+        main { first.editProfile { it.copy(linkedin = "unfinished link", website = "https://portfolio.example.org") }; first.saveProfile() }
         await { !first.state.value.busy && first.state.value.error != null }
         assertEquals("unfinished link", store.read("workspace-unpaired")!!.getJSONObject("profile").getString("linkedin"))
         val second = model(store, service)
@@ -117,7 +117,7 @@ class LinkedInRegressionTest {
         main { second.editProfile { it.copy(linkedin = "https://sa.linkedin.com/in/Jos%C3%A9-42/?trk=phone#about") }; second.saveProfile() }
         await { !second.state.value.busy && !second.state.value.profileDirty }
         assertEquals(canonical, second.state.value.profile.linkedin)
-        assertEquals("https://portfolio.example.invalid", second.state.value.profile.website)
+        assertEquals("https://portfolio.example.org", second.state.value.profile.website)
         assertEquals(canonical, ProfileDraft.fromJson(store.read("workspace-unpaired")!!.getJSONObject("profile")).linkedin)
         assertTrue(service.writes.isEmpty())
     }
@@ -129,7 +129,7 @@ class LinkedInRegressionTest {
         await { !model.state.value.busy && !model.state.value.profileDirty }
         assertEquals(canonical, service.writes.single().second.getJSONObject("profile").getString("linkedin"))
         assertEquals(canonical, model.state.value.profile.linkedin)
-        assertEquals("https://portfolio.example.invalid", model.state.value.profile.website)
+        assertEquals("https://portfolio.example.org", model.state.value.profile.website)
         main { model.editProfile { it.copy(linkedin = "") }; model.saveProfile() }
         await { !model.state.value.busy && !model.state.value.profileDirty }
         assertEquals("", service.writes.last().second.getJSONObject("profile").getString("linkedin"))

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test,{after} from 'node:test';
-import {mkdtemp,rm} from 'node:fs/promises';
+import {mkdtemp,readFile,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
@@ -12,6 +12,8 @@ const directory=await mkdtemp(join(tmpdir(),'career-phone-model-'));
 after(()=>rm(directory,{recursive:true,force:true}));
 await build({entryPoints:['app/phone/model.ts'],outfile:join(directory,'model.mjs'),bundle:true,platform:'node',format:'esm'});
 const model=await import(pathToFileURL(join(directory,'model.mjs')).href);
+await build({entryPoints:['app/components/provider-auth.ts'],outfile:join(directory,'auth.mjs'),bundle:true,platform:'node',format:'esm'});
+const auth=await import(pathToFileURL(join(directory,'auth.mjs')).href);
 const jobID='00000000-0000-4000-8000-000000000001',scope='account:synthetic-a';
 const job={id:jobID,title:'Synthetic role',company:'phone-fixture',url:`https://jobs.lever.co/phone-fixture/${jobID}`,location:'Remote',country:'SA'};
 const pdf=Buffer.from('%PDF-1.4\n1 0 obj<</Type/Catalog>>endobj\n%%EOF\n');
@@ -94,4 +96,61 @@ test('model schemas preserve serialized workspace, nullable review and blocked r
   const blocked={...prepared,items:prepared.items.map(item=>({...item,state:'blocked',reason:receipt.error.message}))};assert.equal(model.planSchema.parse(blocked).items[0].state,'blocked');assert.equal(model.receiptSchema.parse(receipt).state,'blocked');
   const workspace={...base,workspaceId:'00000000-0000-4000-8000-000000000456',profile,jobs:[job],attempts:[receipt]};assert.equal(model.workspaceSchema.parse(workspace).attempts[0].state,'blocked');assert.equal(model.workspaceSchema.parse({...workspace,deleting:true}).deleting,true);
   const retryAt=new Date(Date.now()+30000).toISOString(),retry={...prepared,items:prepared.items.map(item=>({...item,state:'rate_limited',retryAt}))};assert.equal(model.planSchema.parse(retry).items[0].retryAt,retryAt);
+});
+
+test('phone search accepts the published discovery status contract and preserves it in a restored search',async()=>{
+  const fixture=JSON.parse(await readFile(new URL('./fixtures/discovery-search-v1.json',import.meta.url),'utf8'));
+  assert(fixture.sources.every(source=>!Object.hasOwn(source,'region')));
+  const page=model.discoveryPageSchema.parse(fixture);
+  assert.equal(page.status,'partial');assert.equal(page.jobs.length,2);
+  assert.deepEqual(page.sources,fixture.sources);
+  const filters={...model.emptyFilters,sources:fixture.sources.map(source=>source.id)};
+  const snapshot={...model.blankSnapshot(scope),filters,lastSearch:{filters,page}};
+  assert.deepEqual(model.parseSnapshot(JSON.parse(JSON.stringify(snapshot)),scope).lastSearch,{filters,page});
+  for(const changes of [{provider:'unsupported'},{status:'unknown'},{boardUrl:'http://localhost/private'},{availableCount:501},{error:{code:'source_failed'}}]){
+    assert.throws(()=>model.discoveryPageSchema.parse({...fixture,sources:[{...fixture.sources[0],...changes}]}));
+  }
+});
+
+
+test('each employer keeps separate exact answers and no missing answer is inferred',()=>{
+  const workspace='00000000-0000-4000-8000-000000000999',ids=['00000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000002'];
+  const answers={ [ids[0]]:{comments:'Message for employer A',consentStore:true,consentMarketing:false}, [ids[1]]:{comments:'Message for employer B',consentStore:false,consentMarketing:true} };
+  const body=model.reviewRequest(workspace,ids,'',false,false,answers);assert.deepEqual(body.answers,answers);assert.notEqual(body.answers[ids[0]],answers[ids[0]]);
+  assert.throws(()=>model.reviewRequest(workspace,ids,'',false,false,{[ids[0]]:answers[ids[0]]}));
+  assert.throws(()=>model.reviewRequest(workspace,ids,'',false,false,{...answers,[ids[1]]:{...answers[ids[1]],consentMarketing:undefined}}));
+});
+
+test('receipts require an application ID and consistent live evidence before confirmation',()=>{
+  const receipt={id:jobID,planId:plan().id,jobId:jobID,title:job.title,company:job.company,url:job.url,state:'confirmed',createdAt:new Date().toISOString(),mode:'local',evidenceMode:'live',error:null};
+  for(const applicationId of [undefined,'','   '])assert.throws(()=>model.receiptSchema.parse({...receipt,applicationId}));
+  const confirmed=model.receiptSchema.parse({...receipt,applicationId:'synthetic-employer-acceptance-123',dispatchCount:1});assert.equal(model.receiptLabel(confirmed),'Submission confirmed');
+  assert.throws(()=>model.receiptSchema.parse({...confirmed,mode:'test'}));
+  assert.match(model.receiptLabel({...confirmed,mode:'test',evidenceMode:'test'}),/Test receipt/);
+  assert.match(model.receiptLabel({...receipt,state:'cancelled',dispatchCount:0}),/Stopped before sending/);
+  assert.match(model.receiptLabel({...receipt,state:'cancelled',dispatchCount:1}),/earlier request recorded/);
+  assert.doesNotMatch(model.receiptLabel({...receipt,state:'cancelled'}),/before sending/);
+});
+
+test('career preferences and an unfinished record stage survive encrypted recovery serialization',()=>{
+  const value={...model.blankSnapshot(scope),profile:{...model.blankProfile(),targetRoles:['Designer','Nurse'],targetCountries:['NZ','KE','SA'],workModes:['hybrid','remote']}};
+  assert.deepEqual(model.parseSnapshot(JSON.parse(JSON.stringify(value)),scope),value);
+  const original=model.blankRecord(job),draft={...original,stage:'interview',note:'Unfinished private follow-up'};
+  assert.throws(()=>model.recordSchema.parse(draft));
+  const recovery=model.recoveryDraftSchema.parse({id:jobID,savedAt:new Date().toISOString(),record:{job,original,draft,existed:false}});assert.equal(recovery.record.draft.note,draft.note);assert.equal(recovery.record.draft.appliedElsewhere,false);
+});
+
+
+test('provider navigation accepts only official authorization endpoints and safe app returns',()=>{
+  assert.match(auth.authorizationTarget('google','https://accounts.google.com/o/oauth2/v2/auth?state=synthetic'),/^https:\/\/accounts\.google\.com/);
+  assert.match(auth.authorizationTarget('linkedin','https://www.linkedin.com/oauth/v2/authorization?state=synthetic'),/^https:\/\/www\.linkedin\.com/);
+  for(const value of ['https://accounts.google.com.evil.example/o/oauth2/v2/auth','http://accounts.google.com/o/oauth2/v2/auth','https://user:secret@accounts.google.com/o/oauth2/v2/auth','https://accounts.google.com/o/oauth2/v2/auth#fragment','https://www.linkedin.com/jobs'])assert.throws(()=>auth.authorizationTarget('google',value));
+  assert.equal(auth.internalAuthRedirect('/signout-with-chatgpt?return_to=%2Faccount','https://career.example'),'https://career.example/signout-with-chatgpt?return_to=%2Faccount');
+  for(const value of ['//evil.example/','https://evil.example/','/unknown','/signout-with-chatgpt?return_to=https%3A%2F%2Fevil.example','/\\evil.example','/connect\n'])assert.throws(()=>auth.internalAuthRedirect(value,'https://career.example'));
+});
+
+test('OAuth callback feedback only accepts exact provider and result enums once',()=>{
+  assert.deepEqual(auth.oauthReturn('?oauth_provider=google&oauth_result=signed_in'),{provider:'google',result:'signed_in'});
+  assert.deepEqual(auth.oauthReturn('?oauth_provider=linkedin&oauth_result=cancelled&error_description=untrusted'),{provider:'linkedin',result:'cancelled'});
+  for(const query of ['','?oauth_provider=evil&oauth_result=connected','?oauth_provider=google&oauth_result=<script>','?oauth_provider=google&oauth_provider=linkedin&oauth_result=connected','?oauth_provider=google&oauth_result=connected&oauth_result=failed'])assert.equal(auth.oauthReturn(query),null);
 });

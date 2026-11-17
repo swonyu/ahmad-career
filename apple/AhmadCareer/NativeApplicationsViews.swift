@@ -124,15 +124,15 @@ struct NativeApplicationsScreen: View {
                     HStack(spacing: 12) {
                         ProgressView()
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(model.advancingApprovedApplication ? "Sending an approved application" : "Approved applications are processing")
+                            Text(model.hasSubmissionHold ? "Sending paused on this phone" : model.advancingApprovedApplication ? "Sending an approved application" : "Approved applications are processing")
                                 .font(.subheadline.weight(.semibold)).fixedSize(horizontal: false, vertical: true)
-                            Text(model.requiresClientContinuation
+                            Text(model.hasSubmissionHold ? "Your Stop request is kept, including after reopening or reconnecting. Retry Stop to confirm it with the service. A request already sent may still finish." : model.requiresClientContinuation
                                 ? "Keep Career Finder open to continue the queue. Closing it pauses further sends; a request already sent may still finish. Receipts stay with the service."
                                 : "You can leave this screen. Receipts are saved by the service.")
                                 .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                         }
                         Spacer(minLength: 0)
-                        Button("Stop") { Task { await model.stop() } }.disabled(model.busy)
+                        Button(model.hasSubmissionHold ? "Retry Stop" : "Stop") { Task { await model.stop() } }.disabled(model.busy)
                     }.padding().background(ApplyDesign.card, in: RoundedRectangle(cornerRadius: 16))
                 }
                 ForEach(model.availableReviews) { review in
@@ -603,7 +603,7 @@ struct NativeApplicationProfileEditor: View {
                 Button("Keep editing") { replaceChoice = false }
             } message: { Text("This replaces the phone draft and any PDF selected only on this phone.") }
         }
-        .tint(ApplyDesign.green).interactiveDismissDisabled(occupied || changed)
+        .tint(ApplyDesign.accent).interactiveDismissDisabled(occupied || changed)
         .onAppear { model.profileEditing = true }
         .onDisappear {
             model.profileEditing = false
@@ -1086,6 +1086,125 @@ private struct NativeApplicationReceipt: View {
                 }.font(.caption).padding(.top, 10)
             }.font(.caption)
         }.padding(17).background(ApplyDesign.card, in: RoundedRectangle(cornerRadius: 18))
+    }
+}
+
+struct NativePhoneDataScreen: View {
+    @ObservedObject var model: NativeApplicationsStore
+    @EnvironmentObject private var discovery: CareerDiscoveryStore
+    @State private var exported: URL?
+    @State private var sharing = false
+    @State private var selecting = false
+    @State private var reading = false
+    @State private var pending: PhoneWorkspaceBackup?
+    @State private var context: PhoneWorkspaceActionContext?
+    @State private var importing = false
+    @State private var clearing = false
+    @State private var copyingUnpaired = false
+    @State private var issue: String?
+    private var target: String {
+        model.workspaceScope.isLocal ? "Unpaired phone workspace" : model.workspaceScope.origin + " · " + String(model.workspaceScope.workspaceID.suffix(8))
+    }
+    var body: some View {
+        List {
+            Section("Current phone workspace") {
+                Text(target).font(.subheadline).textSelection(.enabled)
+                Text("Your local profile, selected PDF, saved links, private records, their history and unfinished record drafts are kept separately for each workspace.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+            if let issue { Section { Text(issue).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true) } }
+            if let notice = model.message { Section { Text(notice).font(.footnote).fixedSize(horizontal: false, vertical: true) } }
+            Section("Export and recovery") {
+                Button("Export this phone workspace") {
+                    do {
+                        if let file = model.exportWorkspace(context: model.workspaceActionContext, discoverySnapshot: try discovery.exportSnapshot()) { exported = file; sharing = true; issue = nil }
+                        else { issue = model.message }
+                    } catch { issue = error.localizedDescription }
+                }.accessibilityIdentifier("phoneData.export")
+                Button(reading ? "Reading backup…" : "Import a phone workspace backup") {
+                    context = model.workspaceActionContext; selecting = true
+                }.disabled(reading).accessibilityIdentifier("phoneData.import")
+                Text("The JSON backup contains readable personal information, including your selected PDF when it is on this phone and this workspace's search draft/results. Keep it private. It does not contain connection credentials, online application approvals, provider receipts, or the separate planning notes.")
+                    .font(.footnote).foregroundStyle(.secondary)
+                Text("Import replaces this phone's profile draft and merges saved links and private record history. Existing record versions are retained for comparison. It does not upload data or approve applications.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+            if model.hasUnpairedDraft {
+                Section("Separate unpaired draft") {
+                    Button("Review copying my unpaired draft here") { context = model.workspaceActionContext; copyingUnpaired = true }
+                    Text("Connecting kept your earlier phone draft separate. Copy it only if it belongs to the person using this workspace; the original remains available.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }
+            }
+            if !model.savedWorkspaceScopes.isEmpty {
+                Section("Other workspaces on this phone") {
+                    ForEach(Array(model.savedWorkspaceScopes.enumerated()), id: \.offset) { _, scope in
+                        Button(scope.isLocal ? "Open unpaired phone workspace" : "Open saved workspace · " + String(scope.workspaceID.suffix(8))) {
+                            if !model.openPhoneWorkspace(scope, context: model.workspaceActionContext) { issue = model.message }
+                            else { issue = nil }
+                        }
+                    }
+                    Text("Opening another saved workspace disconnects this phone first. It does not move a profile, CV or note into another account.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }
+            }
+            Section {
+                Button("Clear this workspace from this phone", role: .destructive) { context = model.workspaceActionContext; clearing = true }
+                    .accessibilityIdentifier("phoneData.clear")
+            } header: { Text("Local data") } footer: {
+                Text("Export first if you need a copy. Clearing removes this workspace's local profile, PDF, saved links and private notes/history, and disables this phone connection. Other workspaces and cloud/employer records remain. Restrictive Stop holds remain so an old approved plan cannot silently resume.")
+            }
+        }.navigationTitle("Phone data").navigationBarTitleDisplayMode(.inline).tint(ApplyDesign.accent)
+            .disabled(model.busy || reading)
+            .sheet(isPresented: $sharing) { if let exported { NativeApplicationShare(items: [exported]) } }
+            .fileImporter(isPresented: $selecting, allowedContentTypes: [.json]) { result in
+                do {
+                    let url = try result.get()
+                    Task {
+                        reading = true; let access = url.startAccessingSecurityScopedResource()
+                        defer { reading = false; if access { url.stopAccessingSecurityScopedResource() } }
+                        do {
+                            let backup = try await Task.detached(priority: .userInitiated) { try NativeApplicationsStore.readWorkspaceBackup(at: url) }.value
+                            if let search = backup.discoverySnapshot { try CareerDiscoveryStore.validateBackup(search) }
+                            pending = backup
+                            importing = true; issue = nil
+                        } catch { issue = error.localizedDescription }
+                    }
+                } catch { if !MobileApplicationPolicy.isFileSelectionCancelled(error) { issue = error.localizedDescription } }
+            }
+            .alert("Import into this phone workspace?", isPresented: $importing) {
+                Button("Replace draft and merge records") {
+                    if let pending, let context {
+                        if model.mergeBackup(pending, context: context) {
+                            if let search = pending.discoverySnapshot {
+                                do { try discovery.importSnapshot(search) }
+                                catch { issue = "Your phone profile and records were imported, but the previous search was preserved: " + error.localizedDescription }
+                            }
+                        } else { issue = model.message }
+                    }
+                    self.pending = nil
+                }
+                Button("Keep current data", role: .cancel) { pending = nil }
+            } message: {
+                Text("Destination: " + target + ". The backup's profile replaces the local draft; links and history are merged. A cloud-only PDF must be selected again. Nothing is uploaded or submitted.")
+            }
+            .alert("Copy your unpaired draft here?", isPresented: $copyingUnpaired) {
+                Button("Copy draft and merge records") {
+                    if let context, !model.importUnpairedDraft(context: context) { issue = model.message }
+                }
+                Button("Keep separate", role: .cancel) {}
+            } message: { Text("Destination: " + target + ". Review whose information this is. The local profile will be replaced, saved records merged, and the original unpaired draft kept. Nothing will be uploaded.") }
+            .alert("Clear this phone workspace?", isPresented: $clearing) {
+                Button("Clear phone data", role: .destructive) {
+                    if let context {
+                        if model.clearWorkspaceOnPhone(context: context) {
+                            do { try discovery.clearCurrentScope() }
+                            catch { issue = "The profile and records were cleared, but the search file could not be cleared: " + error.localizedDescription }
+                        } else { issue = model.message }
+                    }
+                }
+                Button("Keep phone data", role: .cancel) {}
+            } message: { Text("This removes the local profile, PDF, links, search and private notes/history for " + target + ". An exported backup can restore them. Cloud/employer records and safety holds remain.") }
     }
 }
 

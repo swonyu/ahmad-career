@@ -3,10 +3,15 @@ import { runWithConnectorBinding } from "../lib/connector-context";
 import type { ConnectorBinding } from "../lib/connector-contract.mjs";
 import { handleApplications } from "../server/applications.mjs";
 import { handleDiscovery } from "../server/discovery.mjs";
+import { handleOAuth } from "../server/oauth.mjs";
+import { resolveBrowserIdentity, stripInternalIdentityHeaders, verifiedSSRRequest } from "../server/identity.mjs";
 
 const worker = {
   async fetch(request: Request, env: Cloudflare.Env, ctx: ExecutionContext<{ CONNECTORS?: ConnectorBinding }>) {
+    request = stripInternalIdentityHeaders(request);
     const pathname = new URL(request.url).pathname;
+    const authResponse = await handleOAuth(request, env);
+    if (authResponse) return authResponse;
     if (pathname.startsWith("/api/discovery/")) {
       const response = await handleDiscovery(request, env);
       if (response) return response;
@@ -35,7 +40,12 @@ const worker = {
         },
       };
     }
-    const response = await runWithConnectorBinding(binding, () => handler.fetch(request, env, ctx));
+    // Only this request's verified identity reaches SSR. Invalid Career Finder
+    // cookies render the signed-out recovery UI, never a fallback Sites account.
+    let identity = null;
+    try { identity = await resolveBrowserIdentity(request, env); } catch { /* /api/auth/status supplies a safe recovery error. */ }
+    const ssrRequest = verifiedSSRRequest(request, identity);
+    const response = await runWithConnectorBinding(binding, () => handler.fetch(ssrRequest, env, ctx));
     const secured = new Response(response.body, response);
     secured.headers.set("Cache-Control", "no-store");
     secured.headers.set("Referrer-Policy", "no-referrer");

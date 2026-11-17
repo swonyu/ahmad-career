@@ -15,11 +15,27 @@ object ServicePages {
     }
 }
 
-data class Connection(val origin: String, val workspaceId: String, val token: String, val expiresAt: String) {
+data class Connection(val origin: String, val workspaceId: String, val token: String, val expiresAt: String,
+    val legacyOrigins: Set<String> = emptySet()) {
     fun toJson() = JSONObject().put("origin", origin).put("workspaceId", workspaceId).put("token", token).put("expiresAt", expiresAt)
+        .put("legacyOrigins", org.json.JSONArray(legacyOrigins.toList()))
+    fun legacyKeys(): Set<String> {
+        val canonical = BoundaryPolicy.serviceOrigin(origin)
+        val candidates = legacyOrigins + origin + if (java.net.URI(canonical).port == -1) setOf(canonical + ":443") else emptySet()
+        return candidates.filter { BoundaryPolicy.serviceOrigin(it) == canonical }.map {
+            BoundaryPolicy.legacyWorkspaceKey(it, workspaceId)
+        }.filter { it != BoundaryPolicy.workspaceKey(canonical, workspaceId) }.toSet()
+    }
     companion object {
-        fun fromJson(value: JSONObject) = Connection(BoundaryPolicy.serviceOrigin(value.getString("origin")),
-            value.getString("workspaceId"), value.getString("token"), value.getString("expiresAt"))
+        fun fromJson(value: JSONObject): Connection {
+            listOf("origin", "workspaceId", "token", "expiresAt").forEach { require(value.opt(it) is String) { "The saved connection is invalid. Its file is preserved." } }
+            val raw = value.getString("origin")
+            val canonical = BoundaryPolicy.serviceOrigin(raw)
+            val aliases = if (value.has("legacyOrigins")) value.requiredStrings("legacyOrigins").toSet() else emptySet()
+            require(aliases.all { BoundaryPolicy.serviceOrigin(it) == canonical })
+            return Connection(canonical, value.getString("workspaceId"), value.getString("token"), value.getString("expiresAt"),
+                (aliases + BoundaryPolicy.legacyServiceOrigin(raw)).filter { it != canonical }.toSet())
+        }
     }
 }
 
@@ -49,7 +65,8 @@ class CareerApi(private val connection: Connection) {
             val token = response.getString("sessionToken")
             val workspace = response.getString("workspaceId")
             require(token.isNotBlank() && workspace.isNotBlank()) { "The service did not return a valid private session." }
-            return Connection(base, workspace, token, response.getString("expiresAt"))
+            return Connection(base, workspace, token, response.getString("expiresAt"),
+                setOf(BoundaryPolicy.legacyServiceOrigin(origin.trim())).filter { it != base }.toSet())
         }
 
         private suspend fun call(origin: String, token: String?, method: String, route: String, body: JSONObject?): JSONObject = withContext(Dispatchers.IO) {

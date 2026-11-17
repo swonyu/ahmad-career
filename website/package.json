@@ -9,5 +9,8 @@
     "test:applications": "node applications-check.mjs",
     "applications": "node applications/server.mjs",
     "pair-phone": "node applications/pair.mjs"
+  },
+  "dependencies": {
+    "pdf-lib": "1.17.1"
   }
 }

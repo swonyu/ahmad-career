@@ -1,3 +1,4 @@
+import {assertReadablePDF} from './pdf-readability.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -119,21 +120,32 @@ export function createApplicationService({dataDir,configPath=process.env.CAREER_
   function attemptsFor(workspace,planId){const rows=planId?db.prepare('SELECT * FROM attempts WHERE workspace_id=? AND plan_id=? ORDER BY created_at,id').all(workspace,planId):db.prepare('SELECT * FROM attempts WHERE workspace_id=? ORDER BY created_at DESC,id').all(workspace);return rows.map(attemptView);}
   function planView(row){const attempts=new Map(db.prepare('SELECT * FROM attempts WHERE plan_id=?').all(row.id).map(r=>[r.id,r]));return {id:row.id,digest:row.digest,profileRevision:row.profile_revision,createdAt:row.created_at,expiresAt:row.expires_at,stopped:Boolean(row.stopped),approvedAt:row.approved_at,items:JSON.parse(row.items_json).map(item=>{const a=attempts.get(item.attemptId);return a?{...item,state:a.state,reason:a.error_message??item.reason,applicationId:a.state==='confirmed'?a.application_id:undefined,retryAt:a.retry_at}:item})};}
   function workspaceView(ws){const conf=config();return {ok:true,mode:adapter.mode,workspaceId:ws.id,profile:safeProfile(JSON.parse(ws.profile_json),ws.revision),jobs:db.prepare('SELECT * FROM jobs WHERE workspace_id=? ORDER BY rowid DESC').all(ws.id).map(r=>jobView({...JSON.parse(r.data_json),id:r.id},conf)),attempts:attemptsFor(ws.id),capabilities:capabilities(),recoverablePlans:db.prepare("SELECT p.* FROM plans p WHERE p.workspace_id=? AND p.stopped=0 AND p.expires_at>? AND p.profile_revision=? AND EXISTS(SELECT 1 FROM attempts a WHERE a.plan_id=p.id AND a.state IN ('ready','rate_limited')) ORDER BY p.rowid DESC LIMIT 20").all(ws.id,iso(),ws.revision).map(planView),activePlanIds:[...active.keys()].filter(id=>db.prepare('SELECT workspace_id FROM plans WHERE id=?').get(id)?.workspace_id===ws.id)};}
-  function duplicate(workspaceId,jobKey,except='') {return db.prepare("SELECT id,state,retry_at FROM attempts WHERE job_key=? AND workspace_id=? AND id<>? AND (state IN ('dispatching','confirmed','uncertain','rate_limited') OR retry_at>?) LIMIT 1").get(jobKey,workspaceId,except,iso())}
+  function duplicate(workspaceId,jobKey,except='') {return db.prepare("SELECT id,state,retry_at,error_code FROM attempts WHERE job_key=? AND workspace_id=? AND id<>? AND (state IN ('dispatching','confirmed','uncertain','rate_limited') OR retry_at>? OR error_code='provider_cooldown_unknown') LIMIT 1").get(jobKey,workspaceId,except,iso())}
   function retireExpiredRateLimits(workspaceId,jobKey) {
     const rows=db.prepare("SELECT a.id,a.retry_at,p.expires_at,p.stopped,p.profile_revision,w.revision FROM attempts a JOIN plans p ON p.id=a.plan_id JOIN workspaces w ON w.id=a.workspace_id WHERE a.job_key=? AND a.workspace_id=? AND a.state='rate_limited'").all(jobKey,workspaceId);
     for(const row of rows)if(Date.parse(row.retry_at)<=now()&&(Date.parse(row.expires_at)<=now()||row.stopped||row.profile_revision!==row.revision))db.prepare("UPDATE attempts SET state='cancelled',error_code='review_replaced_after_cooldown',error_message='The provider had rejected this attempt for rate limiting. Its cooldown ended and an expired or changed review was replaced. No automatic resend occurred.' WHERE id=? AND state='rate_limited'").run(row.id);
   }
-  function reasonForDuplicate(d){return d.state==='confirmed'?'This applicant already has a confirmed application for this posting.':d.state==='rate_limited'?'An earlier approved attempt is waiting for the provider cooldown. Continue that review instead of preparing a duplicate.':d.retry_at&&Date.parse(d.retry_at)>now()?`The provider cooldown remains active until ${d.retry_at}, even though its queued retry was stopped. Wait until then before preparing another application.`:'An earlier attempt for this applicant and posting is active or unconfirmed. Reconcile it before applying again.'}
+  const unknownCooldownReason='The provider rejected the earlier request for rate limiting, but its waiting period could not be read safely. Reconcile with the employer before any new attempt.';
+  function reasonForDuplicate(d){return d.state==='confirmed'?'This applicant already has a confirmed application for this posting.':d.error_code==='provider_cooldown_unknown'?unknownCooldownReason:d.state==='rate_limited'?'An earlier approved attempt is waiting for the provider cooldown. Continue that review instead of preparing a duplicate.':d.retry_at&&Date.parse(d.retry_at)>now()?`The provider cooldown remains active until ${d.retry_at}, even though its queued retry was stopped. Wait until then before preparing another application.`:'An earlier attempt for this applicant and posting is active or unconfirmed. Reconcile it before applying again.'}
   function setOutcome(id,outcome){db.prepare('UPDATE attempts SET state=?,application_id=?,response_hash=?,confirmed_at=?,error_code=?,error_message=?,retry_at=? WHERE id=?').run(outcome.state,outcome.applicationId??null,outcome.responseSHA256??null,outcome.state==='confirmed'?iso():null,outcome.error?.code??null,outcome.error?.message??null,outcome.retryDelay?new Date(now()+outcome.retryDelay).toISOString():null,id)}
+  function cancelPending(planId) {
+    // Stopping queued work must not erase an earlier provider response or turn
+    // an unreadable waiting period into permission to prepare another attempt.
+    db.prepare("UPDATE attempts SET error_message=CASE WHEN error_code='provider_cooldown_unknown' THEN ? WHEN state='rate_limited' THEN 'The provider rejected the earlier request for rate limiting. Its queued retry was stopped; the cooldown still applies.' ELSE 'Stopped before this application was sent.' END,state='cancelled',error_code=CASE WHEN error_code='provider_cooldown_unknown' THEN error_code ELSE 'stopped' END WHERE plan_id=? AND state IN ('ready','rate_limited')").run('Its queued retry was stopped. '+unknownCooldownReason,planId);
+  }
+  function setPendingOutcome(id,outcome) {
+    const current=db.prepare('SELECT a.state,a.plan_id,p.stopped FROM attempts a JOIN plans p ON p.id=a.plan_id WHERE a.id=?').get(id);
+    if(current?.stopped){cancelPending(current.plan_id);return}
+    if(current&&['ready','rate_limited'].includes(current.state))setOutcome(id,outcome);
+  }
   async function runPlan(planId) {
     const rows=db.prepare("SELECT id FROM attempts WHERE plan_id=? AND state IN ('ready','rate_limited') ORDER BY created_at,id").all(planId);
     for(const {id} of rows) {
       if(closed)break;
       let row=db.prepare('SELECT * FROM attempts WHERE id=?').get(id),plan=db.prepare('SELECT * FROM plans WHERE id=?').get(planId);
-      if(plan.stopped){if(['ready','rate_limited'].includes(row.state))setOutcome(id,{state:'cancelled',error:{code:'stopped',message:'Stopped before this application was sent.'}});continue}
+      if(plan.stopped){cancelPending(planId);continue}
       if(!['ready','rate_limited'].includes(row.state))continue;
-      if(row.state==='rate_limited'&&Date.parse(row.retry_at)>now())continue;
+      if(row.state==='rate_limited'&&(!row.retry_at||!Number.isFinite(Date.parse(row.retry_at))||Date.parse(row.retry_at)>now()))continue;
       if(row.dispatch_count>=3){setOutcome(id,{state:'blocked',error:{code:'retry_limit',message:'This application reached its automatic retry limit. Complete it on the employer site.'}});continue}
       const snapshot=JSON.parse(row.snapshot_json),ws=db.prepare('SELECT * FROM workspaces WHERE id=?').get(row.workspace_id);
       if(Date.parse(plan.expires_at)<=now()||ws.revision!==plan.profile_revision){setOutcome(id,{state:'blocked',error:{code:'stale_review',message:'Your profile or review changed. Prepare a new application review.'}});continue}
@@ -141,16 +153,18 @@ export function createApplicationService({dataDir,configPath=process.env.CAREER_
       try {
         matched=support(snapshot.job);
         if(!matched.supported||canonical(matched.requirements)!==canonical(snapshot.requirements)){setOutcome(id,{state:'blocked',error:{code:'requirements_changed',message:matched.reason??'The employer requirements changed. Prepare a new review.'}});continue}
+        await assertReadablePDF(Buffer.from(snapshot.profile.resume.dataBase64,'base64'));
         const latest=await adapter.posting(snapshot.job);
-        if(latest.metadataHash!==snapshot.job.metadataHash){setOutcome(id,{state:'blocked',error:{code:'posting_changed',message:'The employer changed this posting. Add its link again and prepare a fresh review.'}});continue}
-      } catch(error) {setOutcome(id,{state:'blocked',error:{code:error instanceof ApplicationError?error.code:'preflight_failed',message:error instanceof ApplicationError?error.message:'The current posting could not be checked. Nothing was sent.'}});continue}
+        if(latest.metadataHash!==snapshot.job.metadataHash){setPendingOutcome(id,{state:'blocked',error:{code:'posting_changed',message:'The employer changed this posting. Add its link again and prepare a fresh review.'}});continue}
+      } catch(error) {setPendingOutcome(id,{state:'blocked',error:{code:error instanceof ApplicationError?error.code:'preflight_failed',message:error instanceof ApplicationError?error.message:'The current posting could not be checked. Nothing was sent.'}});continue}
       if(adapter.mode==='local'&&lastDispatchAt){const wait=1000-(Date.now()-lastDispatchAt);if(wait>0)await new Promise(resolve=>setTimeout(resolve,wait))}
       let claimed=false;
       try {
         claimed=transaction(()=>{
           const current=db.prepare('SELECT * FROM attempts WHERE id=?').get(id),freshPlan=db.prepare('SELECT * FROM plans WHERE id=?').get(planId),freshWs=db.prepare('SELECT revision FROM workspaces WHERE id=?').get(row.workspace_id);
-          if(freshPlan.stopped||freshWs.revision!==freshPlan.profile_revision||Date.parse(freshPlan.expires_at)<=now()){setOutcome(id,{state:freshPlan.stopped?'cancelled':'blocked',error:{code:'review_invalidated',message:'The application was stopped or its review is no longer current.'}});return false}
+          if(freshPlan.stopped){cancelPending(planId);return false}
           if(!['ready','rate_limited'].includes(current.state))return false;
+          if(freshWs.revision!==freshPlan.profile_revision||Date.parse(freshPlan.expires_at)<=now()){setOutcome(id,{state:'blocked',error:{code:'review_invalidated',message:'The application review is no longer current.'}});return false}
           const currentSupport=support(snapshot.job);
           if(!currentSupport.supported||canonical(currentSupport.requirements)!==canonical(snapshot.requirements)){setOutcome(id,{state:'blocked',error:{code:'requirements_changed',message:currentSupport.reason??'The employer requirements changed. Prepare a new review.'}});return false}
           matched=currentSupport;
@@ -165,7 +179,7 @@ export function createApplicationService({dataDir,configPath=process.env.CAREER_
       lastDispatchAt=Date.now();
       let result;
       try {result=await adapter.submit(snapshot.job,snapshot,matched.connector)}catch{result={state:'uncertain',error:{code:'unconfirmed_transport',message:'The provider outcome is unknown. Reconcile this attempt before applying again.'}}}
-      try {hooks.beforeResultCommit?.({attemptId:id,result});transaction(()=>setOutcome(id,result))}
+      try {hooks.beforeResultCommit?.({attemptId:id,result});transaction(()=>{setOutcome(id,result);if(db.prepare('SELECT stopped FROM plans WHERE id=?').get(planId).stopped)cancelPending(planId)})}
       catch {try{setOutcome(id,{state:'uncertain',error:{code:'result_persistence_failed',message:'The provider result could not be saved durably. Reconcile this attempt before applying again.'}})}catch{}}
     }
   }
@@ -217,6 +231,7 @@ export function createApplicationService({dataDir,configPath=process.env.CAREER_
         const body=object(await jsonBody(req),['expectedRevision','profile']);
         if(!Number.isInteger(body.expectedRevision)||body.expectedRevision!==ws.revision)fail('stale_profile','Your profile changed in another tab. Reload before saving.',409);
         const p=validateProfile(body.profile,JSON.parse(ws.profile_json));
+        if(p.resume)await assertReadablePDF(Buffer.from(p.resume.dataBase64,'base64'));
         const result=db.prepare('UPDATE workspaces SET profile_json=?,revision=revision+1 WHERE id=? AND revision=?').run(json(p),ws.id,body.expectedRevision);
         if(result.changes!==1)fail('stale_profile','Your profile changed in another tab. Reload before saving.',409);
         send(res,200,{ok:true,profile:safeProfile(p,ws.revision+1)});return true;
@@ -262,6 +277,7 @@ export function createApplicationService({dataDir,configPath=process.env.CAREER_
         const pending=db.prepare("SELECT * FROM attempts WHERE plan_id=? AND state IN ('ready','rate_limited')").all(plan.id);
         const eligible=pending.filter(a=>a.state==='ready'||Date.parse(a.retry_at)<=now());
         if(!eligible.length&&!active.has(plan.id)) {
+          if(pending.some(a=>a.error_code==='provider_cooldown_unknown'))fail('provider_cooldown_unknown',unknownCooldownReason,409);
           if(pending.length)fail('cooldown_active','Wait for the provider cooldown before retrying the same review.',409);
           send(res,200,{ok:true,plan:planView(plan),attempts:attemptsFor(ws.id,plan.id)});return true;
         }
@@ -276,7 +292,7 @@ export function createApplicationService({dataDir,configPath=process.env.CAREER_
           const current=db.prepare('SELECT approved_at FROM plans WHERE id=? AND workspace_id=?').get(plan.id,ws.id);
           if(body.onlyIfUnapproved===true&&(current.approved_at||db.prepare("SELECT 1 FROM attempts WHERE plan_id=? AND (dispatched_at IS NOT NULL OR dispatch_count>0 OR state IN ('dispatching','rate_limited','uncertain','confirmed')) LIMIT 1").get(plan.id)))fail('review_already_approved','This review was already approved or dispatched. Refresh it before deciding whether to stop its remaining work.',409);
           db.prepare('UPDATE plans SET stopped=1 WHERE id=?').run(plan.id);
-          db.prepare("UPDATE attempts SET error_message=CASE WHEN state='rate_limited' THEN 'The provider rejected the earlier request for rate limiting. Its queued retry was stopped; the cooldown still applies.' ELSE 'Stopped before this application was sent.' END,state='cancelled',error_code='stopped' WHERE plan_id=? AND state IN ('ready','rate_limited')").run(plan.id);
+          cancelPending(plan.id);
         });
         send(res,200,{ok:true,plan:planView(db.prepare('SELECT * FROM plans WHERE id=?').get(plan.id)),attempts:attemptsFor(ws.id,plan.id),message:'Jobs that had not started were stopped. Any in-flight provider outcome will still be recorded.'});return true;
       }

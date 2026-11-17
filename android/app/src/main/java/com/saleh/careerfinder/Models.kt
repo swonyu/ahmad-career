@@ -50,7 +50,7 @@ data class ProfileDraft(
     val removeResume: Boolean = false, val revision: Int = 0, val linkedin: String = ""
 ) {
     val hasApplicationName: Boolean get() = firstName.trim().isNotBlank()
-    val hasApplicationEmail: Boolean get() = email.trim().matches(Regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"))
+    val hasApplicationEmail: Boolean get() = email.trim().isNotEmpty() && ProfileContract.emailError(email) == null
     val hasApplicationPDF: Boolean get() = resume?.let { it.size in 8..BoundaryPolicy.MAX_PDF_BYTES && it.sha256.matches(Regex("[a-f0-9]{64}")) } == true
     val essentialsComplete: Boolean get() = hasApplicationName && hasApplicationEmail && hasApplicationPDF
     val essentialCount: Int get() = listOf(hasApplicationName, hasApplicationEmail, hasApplicationPDF).count { it }
@@ -65,12 +65,15 @@ data class ProfileDraft(
             else resume?.dataBase64?.let { put("resume", JSONObject().put("name", resume.name).put("mime", "application/pdf").put("dataBase64", it)) }
         }
     fun privateJson() = apiJson().apply { remove("resume") }.put("revision", revision).put("draftResume", resume?.privateJson() ?: JSONObject.NULL)
+        .put("firstName", firstName).put("lastName", lastName).put("email", email).put("phone", phone).put("city", city)
+        .put("country", country).put("headline", headline).put("website", website)
+        .put("draftSkills", skills).put("draftTargetRoles", targetRoles).put("draftTargetCountries", targetCountries)
         .put("removeResume", removeResume).put("linkedin", linkedin)
     companion object {
         fun fromJson(value: JSONObject): ProfileDraft = ProfileDraft(
             value.safeString("firstName"), value.safeString("lastName"), value.safeString("email"), value.safeString("phone"),
-            value.safeString("city"), value.safeString("country"), value.safeString("headline"), value.optJSONArray("skills").strings().joinToString(", "),
-            value.optJSONArray("targetRoles").strings().joinToString(", "), value.optJSONArray("targetCountries").strings().joinToString(", "),
+            value.safeString("city"), value.safeString("country"), value.safeString("headline"), value.safeString("draftSkills", value.optJSONArray("skills").strings().joinToString(", ")),
+            value.safeString("draftTargetRoles", value.optJSONArray("targetRoles").strings().joinToString(", ")), value.safeString("draftTargetCountries", value.optJSONArray("targetCountries").strings().joinToString(", ")),
             value.optJSONArray("workModes").strings().toSet(), value.safeString("experienceLevel", "any"), value.safeString("website"),
             Resume.fromJson(value.optJSONObject("draftResume") ?: value.optJSONObject("resume")), value.optBoolean("removeResume"), value.optInt("revision"),
             if (value.has("linkedin")) { require(value.opt("linkedin") is String) { "The saved LinkedIn draft could not be read." }; value.getString("linkedin") } else ""
@@ -230,7 +233,14 @@ data class CareerUiState(
     val clientContinuation: Boolean = false, val continuationHolds: Set<String> = emptySet(),
     val opportunityDraft: OpportunityDraft = OpportunityDraft(), val linkedinProfile: Boolean = false,
     val applicationRecords: Map<String, ApplicationRecordBundle> = emptyMap(),
-    val applicationRecordEditor: ApplicationRecordEditorState? = null
+    val applicationRecordEditor: ApplicationRecordEditorState? = null,
+    val recordDrafts: Map<String, RecordDraftCheckpoint> = emptyMap(),
+    val recordDraftAlternatives: List<RecordDraftCheckpoint> = emptyList(),
+    val importedReceipts: List<ApplicationReceipt> = emptyList(),
+    val recoveredOpportunityDrafts: List<OpportunityDraft> = emptyList(),
+    val preservedWorkspaceCopies: List<String> = emptyList(),
+    val preservedRecoveryWorkspaces: List<PreservedWorkspace> = emptyList(),
+    val workspaceImport: WorkspaceImportPreview? = null
 ) {
     val profileConflict: ProfileDraft? get() = serverProfile?.takeIf { profileDirty && it.revision != profile.revision }
     val privateScope: String get() = connection?.let { "workspace-" + BoundaryPolicy.workspaceKey(it.origin, it.workspaceId) } ?: "workspace-unpaired"

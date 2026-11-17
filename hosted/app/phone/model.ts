@@ -101,7 +101,9 @@ export const filtersSchema = z.object({ query: boundedText(120), location: bound
 export type Filters = z.infer<typeof filtersSchema>;
 export const emptyFilters: Filters = { query: "", location: "", remoteOnly: false, sources: [] };
 export const discoveryJobSchema = z.object({ id: z.string().max(250), title: boundedText(500), company: boundedText(250), url: https, location: boundedText(500), country: z.string().nullable(), remote: z.boolean().nullable(), summary: boundedText(1000), checkedAt: timestamp, stale: z.boolean(), sourceName: boundedText(150) });
-export const discoveryPageSchema = z.object({ ok: z.literal(true), version: z.literal(1), generatedAt: timestamp, status: z.enum(["complete", "partial", "unavailable"]), jobs: z.array(discoveryJobSchema).max(50), sources: z.array(z.object({ id: boundedText(150), name: boundedText(150), provider: z.enum(["greenhouse", "lever"]), region: z.enum(["global", "eu"]), boardUrl: https, status: z.enum(["fresh", "cached", "stale", "unavailable"]), checkedAt: timestamp.nullable(), availableCount: z.number().int().min(0).max(500), matchedCount: z.number().int().min(0).max(500), limited: z.boolean(), error: z.object({ code: boundedText(100), message: boundedText(1000) }).nullable() })).max(4), nextCursor: z.string().max(8192).nullable(), totalMatches: z.number().int().min(0).max(2000), limited: z.boolean(), notice: boundedText(2000) });
+// Search source statuses follow discovery-contract.json. The optional legacy region
+// is retained when opening older encrypted snapshots, but is never required.
+export const discoveryPageSchema = z.object({ ok: z.literal(true), version: z.literal(1), generatedAt: timestamp, status: z.enum(["complete", "partial", "unavailable"]), jobs: z.array(discoveryJobSchema).max(50), sources: z.array(z.object({ id: boundedText(150), name: boundedText(150), provider: z.enum(["greenhouse", "lever"]), region: z.enum(["global", "eu"]).optional(), boardUrl: https, status: z.enum(["fresh", "cached", "stale", "unavailable"]), checkedAt: timestamp.nullable(), availableCount: z.number().int().min(0).max(500), matchedCount: z.number().int().min(0).max(500), limited: z.boolean(), error: z.object({ code: boundedText(100), message: boundedText(1000) }).nullable() })).max(4), nextCursor: z.string().max(8192).nullable(), totalMatches: z.number().int().min(0).max(2000), limited: z.boolean(), notice: boundedText(2000) });
 export type DiscoveryPage = z.infer<typeof discoveryPageSchema>;
 export const catalogSchema = z.object({ ok: z.literal(true), version: z.literal(1), defaultSources: z.array(boundedText(150)).max(4), sources: z.array(z.object({ id: boundedText(150), name: boundedText(150), boardUrl: https })).max(100), limits: z.object({ maxSources: z.number().int().min(1).max(4) }), notice: boundedText(2000) }).transform(v => ({ defaults: v.defaultSources, sources: v.sources, maxSources: v.limits.maxSources, notice: v.notice }));
 export type Catalog = z.infer<typeof catalogSchema>;
@@ -119,10 +121,13 @@ export function linkedInSearch(filters: Filters): string {
   return "https://www.linkedin.com/jobs/search/" + (query.size ? "?" + query.toString() : "");
 }
 
-export function reviewRequest(workspaceId: string, jobIds: string[], comments: string, consentStore: boolean, consentMarketing: boolean) {
+export const employerAnswerSchema = z.object({ comments: boundedText(5000), consentStore: z.boolean(), consentMarketing: z.boolean() });
+export type EmployerAnswer = z.infer<typeof employerAnswerSchema>;
+export const blankEmployerAnswer = (): EmployerAnswer => ({ comments: "", consentStore: false, consentMarketing: false });
+export function reviewRequest(workspaceId: string, jobIds: string[], comments: string, consentStore: boolean, consentMarketing: boolean, individualAnswers?: Record<string, EmployerAnswer>) {
   z.string().uuid().parse(workspaceId); z.array(z.string().uuid()).min(1).max(20).parse(jobIds); boundedText(5000).parse(comments);
   if (new Set(jobIds).size !== jobIds.length || typeof consentStore !== "boolean" || typeof consentMarketing !== "boolean") throw Error("Choose distinct jobs and explicit permission answers.");
-  const answers = Object.fromEntries(jobIds.map(id => [id, { comments, consentStore, consentMarketing }]));
+  const answers = Object.fromEntries(jobIds.map(id => [id, employerAnswerSchema.parse(individualAnswers ? individualAnswers[id] : { comments, consentStore, consentMarketing })]));
   const body = { expectedWorkspaceId: workspaceId, jobIds, answers, manualAppliedJobIds: [] as string[], reviewSchema: 3 };
   if (new TextEncoder().encode(JSON.stringify(body)).byteLength > 32 * 1024) throw Error(`Your message is too long for ${jobIds.length} selected jobs in one review. Shorten the message or select fewer jobs; nothing was submitted.`);
   return body;
@@ -132,8 +137,13 @@ const summarySchema = z.object({ name: boundedText(400), email: boundedText(254)
 export const reviewItemSchema = z.object({ jobId: z.string().uuid(), job: z.object({ id: z.string().uuid(), url: https, title: boundedText(500), company: boundedText(250), location: boundedText(500), country: z.string() }), title: boundedText(500), company: boundedText(250), state: z.enum(["ready", "blocked", "dispatching", "confirmed", "uncertain", "rate_limited", "rejected", "cancelled"]), reason: boundedText(2000), payloadSummary: summarySchema, resume: resumeSchema.nullable(), privacyPolicyUrl: https.nullable(), requirementsRevision: z.string().nullable(), applicationId: z.string().optional(), retryAt: timestamp.nullable().optional() });
 export const planSchema = z.object({ id: z.string().uuid(), digest: z.string().regex(/^[a-f0-9]{64}$/), profileRevision: z.number().int().min(0), createdAt: timestamp, expiresAt: timestamp, stopped: z.boolean(), approvedAt: timestamp.nullable(), items: z.array(reviewItemSchema).min(1).max(20) });
 export type Plan = z.infer<typeof planSchema>;
-export const receiptSchema = z.object({ id: z.string().uuid(), planId: z.string().uuid(), jobId: z.string().uuid(), title: boundedText(500), company: boundedText(250), url: https, state: z.enum(["ready", "blocked", "dispatching", "confirmed", "uncertain", "rate_limited", "rejected", "cancelled"]), applicationId: z.string().optional(), createdAt: timestamp, mode: z.enum(["local", "test"]), evidenceMode: z.enum(["live", "test"]), error: z.object({ message: boundedText(2000), code: z.string() }).nullable(), retryAt: timestamp.optional() }).passthrough();
+export const receiptSchema = z.object({ id: z.string().uuid(), planId: z.string().uuid(), jobId: z.string().uuid(), title: boundedText(500), company: boundedText(250), url: https, state: z.enum(["ready", "blocked", "dispatching", "confirmed", "uncertain", "rate_limited", "rejected", "cancelled"]), applicationId: boundedText(500).optional(), createdAt: timestamp, mode: z.enum(["local", "test"]), evidenceMode: z.enum(["live", "test"]), dispatchCount: z.number().int().min(0).optional(), dispatchedAt: timestamp.nullable().optional(), error: z.object({ message: boundedText(2000), code: z.string() }).nullable(), retryAt: timestamp.optional() }).passthrough().refine(value => value.evidenceMode === (value.mode === "test" ? "test" : "live"), "Receipt evidence does not match its service mode").refine(value => value.state !== "confirmed" || Boolean(value.applicationId?.trim()), "A confirmed receipt needs an employer application ID");
 export type Receipt = z.infer<typeof receiptSchema>;
+export function receiptLabel(receipt: Receipt): string {
+  if (receipt.state === "confirmed") return receipt.applicationId?.trim() ? receipt.evidenceMode === "live" && receipt.mode === "local" ? "Submission confirmed" : "Test receipt — not sent to an employer" : "Outcome needs checking";
+  if (receipt.state === "cancelled") return (receipt.dispatchCount ?? 0) > 0 || receipt.dispatchedAt ? "Retry stopped — earlier request recorded" : receipt.dispatchCount === 0 ? "Stopped before sending" : "Unsent work stopped — check earlier request details";
+  return ({ ready: "Approved, waiting to send", dispatching: "Checking submission", uncertain: "Outcome needs checking", rate_limited: "Waiting for employer cooldown", rejected: "Employer rejected the request", blocked: "Submission blocked" } as const)[receipt.state];
+}
 export const workspaceSchema = z.object({ ok: z.literal(true), accountId: z.string().min(1), accountEmail: z.string(), confirmedEmail: z.string(), emailUpdateRequired: z.boolean(), deleting: z.boolean().default(false), workspaceId: z.string().uuid().nullable(), mode: z.enum(["local", "test"]), profile: profileSchema, jobs: z.array(jobSchema).max(200), attempts: z.array(receiptSchema).max(500), capabilities: z.object({ liveEnabled: z.boolean(), linkedinProfile: z.boolean().optional(), mode: z.enum(["local", "test"]), coverage: z.string() }).passthrough(), recoverablePlans: z.array(planSchema).max(100), activePlanIds: z.array(z.string().uuid()).max(100) });
 export type Workspace = z.infer<typeof workspaceSchema>;
 export function checkReview(plan: Plan, profile: Profile, jobs: Job[], records: ApplicationRecord[]) {
@@ -147,7 +157,16 @@ export function checkReview(plan: Plan, profile: Profile, jobs: Job[], records: 
   }
 }
 
-export const phoneSnapshotSchema = z.object({ schema: z.literal(PHONE_SCHEMA), scope: z.string().min(1).max(600), profile: draftProfileSchema, profileDirty: z.boolean(), jobs: z.array(jobSchema).max(200), records: z.array(recordSchema).max(500), filters: filtersSchema, lastSearch: z.object({ filters: filtersSchema, page: discoveryPageSchema.extend({ jobs: z.array(discoveryJobSchema).max(200) }) }).nullable() });
+// Recovery drafts may contain an unfinished stage change. Only an explicit save
+// passes through updateRecord and the applied-mark confirmation.
+export const recordDraftSchema = z.object(recordSchema.shape);
+export const recoveryDraftSchema = z.object({ id: z.string().uuid(), savedAt: timestamp, profile: draftProfileSchema.optional(), record: z.object({ job: jobSchema, original: recordSchema, draft: recordDraftSchema, existed: z.boolean() }).optional() }).refine(value => Boolean(value.profile) !== Boolean(value.record), "Choose one recovery draft type");
+export type RecoveryDraft = z.infer<typeof recoveryDraftSchema>;
+export const stopHoldSchema = z.object({ planId: z.string().uuid(), requestedAt: timestamp, confirmed: z.boolean() });
+export type StopHold = z.infer<typeof stopHoldSchema>;
+export const phoneSafetySchema = z.object({ holds: z.array(stopHoldSchema).max(100), recovery: z.array(recoveryDraftSchema).max(20) });
+export type PhoneSafety = z.infer<typeof phoneSafetySchema>;
+export const phoneSnapshotSchema = z.object({ schema: z.literal(PHONE_SCHEMA), scope: z.string().min(1).max(600), profile: draftProfileSchema, profileDirty: z.boolean(), jobs: z.array(jobSchema).max(200), records: z.array(recordSchema).max(500), filters: filtersSchema, lastSearch: z.object({ filters: filtersSchema, page: discoveryPageSchema.extend({ jobs: z.array(discoveryJobSchema).max(200) }) }).nullable(), safety: phoneSafetySchema.optional() });
 export type PhoneSnapshot = z.infer<typeof phoneSnapshotSchema>;
 export function blankSnapshot(scope: string): PhoneSnapshot { return { schema: PHONE_SCHEMA, scope, profile: blankProfile(), profileDirty: false, jobs: [], records: [], filters: { ...emptyFilters, sources: [] }, lastSearch: null }; }
 export function parseSnapshot(value: unknown, scope: string): PhoneSnapshot {

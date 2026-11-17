@@ -38,6 +38,9 @@ struct NativeCareerRoot: View {
         .environmentObject(discovery)
         .environmentObject(navigation)
         .tint(.careerAccent)
+        .onAppear { discovery.attach(to: applications.workspaceScope) }
+        .onChange(of: applications.workspaceScope) { discovery.attach(to: $0) }
+        .onChange(of: scenePhase) { phase in if phase != .active { discovery.saveDraft() } }
         .task(id: scenePhase == .active) {
             guard scenePhase == .active else { return }
             await applications.refresh()
@@ -343,6 +346,7 @@ private struct NativeModernRecordEditor: View {
     @ObservedObject var model: NativeApplicationsStore
     let job: [String: ApplicationValue]
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
     @State private var draft: PhoneRecordDraft
     @State private var original: PhoneRecordDraft
     @State private var context: PhoneRecordEditContext?
@@ -350,13 +354,15 @@ private struct NativeModernRecordEditor: View {
     @State private var issue: String?
     @State private var discard = false
     @State private var clearApplied = false
+    @State private var closingIntentionally = false
     @FocusState private var noteFocused: Bool
     init(model: NativeApplicationsStore, job: [String: ApplicationValue]) {
         self.model = model; self.job = job
-        let record = model.currentRecord(for: job), draft = PhoneRecordDraft(model.currentRecord(for: job))
-        _draft = State(initialValue: draft); _original = State(initialValue: draft)
+        let record = model.currentRecord(for: job), original = PhoneRecordDraft(record), context = model.recordEditContext(for: job)
+        let draft = context.flatMap { model.restoredRecordDraft(for: $0) } ?? original
+        _draft = State(initialValue: draft); _original = State(initialValue: original)
         _baseWasApplied = State(initialValue: record?.appliedElsewhere == true)
-        _context = State(initialValue: model.recordEditContext(for: job))
+        _context = State(initialValue: context)
     }
     private var changed: Bool { draft != original }
     var body: some View {
@@ -421,7 +427,10 @@ private struct NativeModernRecordEditor: View {
                     ToolbarItemGroup(placement: .keyboard) { Spacer(); Button("Done typing") { noteFocused = false } }
                 }
                 .alert("Discard your unsaved record changes?", isPresented: $discard) {
-                    Button("Discard changes", role: .destructive) { dismiss() }
+                    Button("Discard changes", role: .destructive) {
+                        if let context, !model.discardRecordDraft(context: context) { issue = model.message }
+                        else { closingIntentionally = true; dismiss() }
+                    }
                     Button("Keep editing", role: .cancel) {}
                 } message: { Text("Your previously saved record will stay unchanged.") }
                 .alert("Mark as not applied?", isPresented: $clearApplied) {
@@ -429,13 +438,18 @@ private struct NativeModernRecordEditor: View {
                     Button("Keep application record", role: .cancel) {}
                 } message: { Text("This changes your private record and allows a new application review. It does not withdraw or change anything with an employer. Your earlier versions stay on this phone.") }
         }.tint(.careerAccent).interactiveDismissDisabled(changed || model.busy)
+            .onChange(of: scenePhase) { phase in if phase != .active { checkpoint() } }
+            .onDisappear { if !closingIntentionally { checkpoint() } }
+    }
+    private func checkpoint() {
+        if changed, let context, !model.keepRecordDraft(draft, context: context) { issue = model.message }
     }
     private func dayBinding(_ path: WritableKeyPath<PhoneRecordDraft, String>) -> Binding<Date> {
         Binding(get: { PhoneRecordDay.date(draft[keyPath: path]) ?? Date() }, set: { draft[keyPath: path] = PhoneRecordDay.string($0) })
     }
     private func save(confirmNotApplied: Bool = false) {
         guard let context else { return }
-        if model.saveRecord(draft, context: context, confirmNotApplied: confirmNotApplied) { dismiss() }
+        if model.saveRecord(draft, context: context, confirmNotApplied: confirmNotApplied) { closingIntentionally = true; dismiss() }
         else { issue = model.message }
     }
 }
@@ -742,6 +756,7 @@ private struct NativeProfileScreen: View {
               }
             } footer: { Text("These separate planning notes stay on this device. They do not replace your application profile or go to employers.") }
             Section {
+                NavigationLink { NativePhoneDataScreen(model: applications) } label: { Label("Phone data and recovery", systemImage: "externaldrive") }
                 NavigationLink { NativeSalaryScreen() } label: { Label("Salary & negotiation", systemImage: "chart.bar.doc.horizontal") }
                 NavigationLink { NativePrivacyScreen() } label: { Label("Privacy & support", systemImage: "hand.raised") }
             }

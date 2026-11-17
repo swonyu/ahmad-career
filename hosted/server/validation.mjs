@@ -101,7 +101,7 @@ export function profile(input, previous = {}) {
 }
 export function safeProfile(p, revision) {
   const copy = {...p,linkedin:p.linkedin??'',revision};
-  if (copy.resume) { const {dataBase64,...metadata} = copy.resume; copy.resume=metadata; }
+  if (copy.resume) { copy.resume = {...copy.resume}; delete copy.resume.dataBase64; }
   return copy;
 }
 export const applicantName = p => [p.firstName,p.lastName].filter(Boolean).join(' ').trim();

@@ -8,11 +8,12 @@ import { build } from "esbuild";
 
 // Exercise the actual TypeScript modules on every Node version supported by this repo.
 const directory = await mkdtemp(join(tmpdir(), "career-phone-vault-"));
-let vaultModule, modelModule;
+let vaultModule, modelModule, safetyModule;
 try {
-  await build({ entryPoints: { vault: "app/phone/vault.ts", model: "app/phone/model.ts" }, outdir: directory, outExtension: { ".js": ".mjs" }, bundle: true, platform: "node", format: "esm", target: "node22" });
+  await build({ entryPoints: { vault: "app/phone/vault.ts", model: "app/phone/model.ts", safety: "app/phone/safety.ts" }, splitting: true, outdir: directory, outExtension: { ".js": ".mjs" }, bundle: true, platform: "node", format: "esm", target: "node22" });
   vaultModule = await import(pathToFileURL(join(directory, "vault.mjs")).href);
   modelModule = await import(pathToFileURL(join(directory, "model.mjs")).href);
+  safetyModule = await import(pathToFileURL(join(directory, "safety.mjs")).href);
 } finally { await rm(directory, { recursive: true, force: true }); }
 const { createPhoneVault, createIndexedDBPhoneVaultPort, PhoneVaultError } = vaultModule;
 const { blankSnapshot, MAX_PDF_BYTES, countryCodes } = modelModule;
@@ -354,12 +355,12 @@ await test("metadata listing isolates exact accounts and never exposes encrypted
   assert.equal(rows.find(row => row.scope === malformed).updatedAt, "");
   assert.deepEqual((await vault.listPhoneSnapshots("guest")).map(row => row.scope), ["guest"]);
   assert.deepEqual((await vault.listPhoneSnapshots("account:alice%3Abob:")).map(row => row.scope), [`account:alice%3Abob:${workspace}`]);
-  for (const prefix of ["", "account:", "account:alice", "account:ali", "account:alice: ", "account:alice%3abob:", "guest:"]) await assert.rejects(vault.listPhoneSnapshots(prefix), errorCode("invalid_scope"));
+  for (const prefix of ["", "account:", "account:alice", "account:ali", "account:alice:\0", "account:alice%3abob:", "guest:"]) await assert.rejects(vault.listPhoneSnapshots(prefix), errorCode("invalid_scope"));
 });
 
 await test("malformed and ambiguous scope identifiers never reach storage", async () => {
   const port = new MemoryPort(), vault = client(port);
-  for (const scope of ["", "Guest", "account:alice:", "account:alice:123", "account:alice:bob:new", "account:%61lice:new", "account:%:new", "account:%00:new", "account::new", "account:alice:new/other", "guest "]) {
+  for (const scope of ["", "Guest", "account:alice:", "account:alice:123", "account:alice:bob:new", "account:%61lice:new", "account:%:new", "account:%00:new", "account::new", "account:alice:new/other", "guest\0"]) {
     await assert.rejects(vault.loadPhoneSnapshot(scope), errorCode("invalid_scope"));
     await assert.rejects(vault.savePhoneSnapshot(scope, draft(scope)), errorCode("invalid_scope"));
     await assert.rejects(vault.removePhoneSnapshot(scope), errorCode("invalid_scope"));
@@ -417,6 +418,58 @@ await test("missing browser capabilities fail explicitly while module import rem
   const port = new MemoryPort();
   await assert.rejects(client(port, { crypto: brokenCrypto }).savePhoneSnapshot(alice, draft()), errorCode("unavailable"));
   assert.equal(port.rows.has(alice), false);
+});
+
+const { createPhoneSafety, heldPlan } = safetyModule;
+const planOne = "33333333-3333-4333-8333-333333333333", planTwo = "44444444-4444-4444-8444-444444444444";
+const recoveryId = "55555555-5555-4555-8555-555555555555";
+function recoveredProfile(id = recoveryId) { return { id, savedAt: fixedNow().toISOString(), profile: draft().profile }; }
+
+await test("Stop intent survives reload, failed transport and other account scopes", async () => {
+  const port = new MemoryPort(), safety = createPhoneSafety(client(port));
+  await safety.hold(alice, planOne);
+  const reloaded = createPhoneSafety(client(port));
+  assert.equal(heldPlan((await reloaded.load(alice)).holds, planOne), true);
+  assert.deepEqual((await reloaded.load(bob)).holds, []);
+  assert.deepEqual((await reloaded.load(aliceOld)).holds, []);
+  assert.equal((await reloaded.load(alice)).holds[0].confirmed, false);
+  await reloaded.confirm(alice, planOne);
+  assert.equal((await createPhoneSafety(client(port)).load(alice)).holds[0].confirmed, true);
+  assert.equal(port.rows.get(alice).key.extractable, false);
+});
+await test("recovery keeps unfinished profile and private notes without changing the main vault", async () => {
+  const originalPort = new MemoryPort(), original = client(originalPort), recoveryPort = new MemoryPort(), safety = createPhoneSafety(client(recoveryPort));
+  const saved = draft(); await original.savePhoneSnapshot(alice, saved);
+  await safety.recover(alice, recoveredProfile());
+  const record = saved.records[0], recoveryRecord = { id: planTwo, savedAt: fixedNow().toISOString(), record: { job: saved.jobs[0], original: record, draft: { ...record, stage: "saved", note: "Unfinished PRIVATE note" }, existed: true } };
+  await safety.recover(alice, recoveryRecord);
+  const restored = await createPhoneSafety(client(recoveryPort)).load(alice);
+  assert.equal(restored.recovery.length, 2); assert.equal(restored.recovery[1].record.draft.note, recoveryRecord.record.draft.note);
+  assert.deepEqual(await original.loadPhoneSnapshot(alice), saved);
+  assert.ok(!new TextDecoder().decode(recoveryPort.rows.get(alice).ciphertext).includes("PRIVATE"));
+});
+await test("concurrent safety updates merge Stop holds and recovery without losing either", async () => {
+  const port = new MemoryPort(), first = createPhoneSafety(client(port)), second = createPhoneSafety(client(port));
+  await Promise.all([first.hold(alice, planOne), second.recover(alice, recoveredProfile()), first.load(alice)]);
+  const value = await createPhoneSafety(client(port)).load(alice);
+  assert.equal(heldPlan(value.holds, planOne), true); assert.equal(value.recovery.length, 1);
+});
+await test("clearing personal recovery keeps Stop locks and fences queued old draft saves", async () => {
+  const port = new MemoryPort(), safety = createPhoneSafety(client(port)); await safety.hold(alice, planOne); await safety.recover(alice, recoveredProfile());
+  const pending = safety.recover(alice, recoveredProfile(planTwo)), cleared = safety.clearRecovery(alice);
+  await assert.rejects(pending, errorCode("reset_pending")); await cleared;
+  const value = await createPhoneSafety(client(port)).load(alice); assert.equal(value.recovery.length, 0); assert.equal(heldPlan(value.holds, planOne), true); assert.deepEqual(await safety.list("account:alice:"), []);
+});
+await test("recovery quota failure preserves existing Stop intent and supports a later retry", async () => {
+  const port = new MemoryPort(), safety = createPhoneSafety(client(port)); await safety.hold(alice, planOne);
+  port.writeFailure = new DOMException("full", "QuotaExceededError"); await assert.rejects(safety.checkWritable(alice), errorCode("storage_full")); await assert.rejects(safety.recover(alice, recoveredProfile()), errorCode("storage_full"));
+  assert.equal(heldPlan((await safety.load(alice)).holds, planOne), true);
+  port.writeFailure = null; await safety.recover(alice, recoveredProfile()); assert.equal((await safety.load(alice)).recovery.length, 1);
+});
+await test("discarding a stale recovery confirmation cannot erase newer edits", async () => {
+  const port = new MemoryPort(), safety = createPhoneSafety(client(port)); const before = recoveredProfile(); await safety.recover(alice, before);
+  const newer = { ...before, savedAt: "2026-11-17T12:01:00.000Z", profile: { ...before.profile, firstName: "Newer edit" } }; await safety.recover(alice, newer);
+  await assert.rejects(safety.discard(alice, before.id, before.savedAt), errorCode("changed_elsewhere")); assert.equal((await safety.load(alice)).recovery[0].profile.firstName, "Newer edit");
 });
 
 console.log(JSON.stringify({ ok: true, groups: results.length, checks: results, coverage: "Actual Node WebCrypto + structured-cloned non-extractable keys; injected atomic storage port. Real browser IndexedDB acceptance remains a separate check." }, null, 2));

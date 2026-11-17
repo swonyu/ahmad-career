@@ -18,6 +18,29 @@ interface PrivateStore {
     fun write(name: String, value: JSONObject)
     fun remove(name: String)
     fun startFreshPreservingExisting()
+    fun names(): Set<String> = emptySet()
+    fun preservedWorkspaces(): List<PreservedWorkspace> = emptyList()
+    fun readPreserved(area: String, name: String): JSONObject? = throw IllegalArgumentException("This storage provider cannot open earlier recovery areas.")
+    fun removePreserved(area: String, names: Set<String>): Unit = throw IllegalArgumentException("This storage provider cannot remove earlier recovery areas.")
+}
+
+data class PreservedWorkspace(val area: String, val record: String) {
+    val id: String get() = "$area/$record"
+}
+
+/** A valid draft that exceeds capacity can be reduced without replacing earlier encrypted data. */
+class PrivateCapacityException : IllegalArgumentException("This workspace is too large to save on this phone. Your earlier saved data is intact. Export a backup, reduce the draft or choose a smaller PDF, then save again.")
+
+internal fun requirePrivateCapacity(value: JSONObject) {
+    fun validStrings(item: Any?) {
+        when (item) {
+            is String -> require(BoundaryPolicy.validUnicode(item)) { "A draft contains an incomplete character. Correct it before saving; the earlier file is kept." }
+            is JSONObject -> item.keys().asSequence().forEach { key -> validStrings(key); validStrings(item.opt(key)) }
+            is org.json.JSONArray -> (0 until item.length()).forEach { validStrings(item.opt(it)) }
+        }
+    }
+    validStrings(value)
+    if (value.toString().toByteArray(Charsets.UTF_8).size > BoundaryPolicy.MAX_PRIVATE_BYTES) throw PrivateCapacityException()
 }
 
 /** A fresh area keeps every earlier encrypted file and Keystore key intact. */
@@ -57,7 +80,10 @@ class SecureVault(context: Context, namespace: String? = null) : PrivateStore {
     }
 
     @Synchronized override fun read(name: String): JSONObject? {
-        val area = activeArea()
+        return read(activeArea(), name)
+    }
+
+    private fun read(area: Area, name: String): JSONObject? {
         val target = file(area, name)
         if (!target.baseFile.exists() && !File(area.directory, "$name.enc.bak").exists()) return null
         val bytes = target.openRead().use { BoundaryPolicy.readBounded(it, 10 * 1024 * 1024) }
@@ -72,8 +98,9 @@ class SecureVault(context: Context, namespace: String? = null) : PrivateStore {
     @Synchronized override fun write(name: String, value: JSONObject) = write(activeArea(), name, value)
 
     private fun write(area: Area, name: String, value: JSONObject) {
+        requirePrivateCapacity(value)
         val clear = value.toString().toByteArray(Charsets.UTF_8)
-        require(clear.size <= 9 * 1024 * 1024) { "This private record is too large to save." }
+        if (clear.size > BoundaryPolicy.MAX_PRIVATE_BYTES) { clear.fill(0); throw PrivateCapacityException() }
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
         cipher.init(Cipher.ENCRYPT_MODE, key(area, create = true))
         cipher.updateAAD(name.toByteArray(Charsets.UTF_8))
@@ -88,7 +115,45 @@ class SecureVault(context: Context, namespace: String? = null) : PrivateStore {
         } catch (error: Exception) { target.failWrite(output); throw error }
     }
 
-    @Synchronized override fun remove(name: String) { file(activeArea(), name).delete() }
+    @Synchronized override fun remove(name: String) {
+        val target = file(activeArea(), name)
+        target.delete()
+        check(!target.baseFile.exists() && !File(target.baseFile.path + ".bak").exists()) { "The local record could not be removed. Try again before leaving this workspace." }
+    }
+
+    @Synchronized override fun names(): Set<String> = activeArea().directory.listFiles().orEmpty()
+        .mapNotNull { it.name.removeSuffix(".bak").takeIf { name -> name.endsWith(".enc") }?.removeSuffix(".enc") }
+        .filter { it.matches(Regex("[a-z0-9-]{1,100}")) }.toSet()
+
+    private fun preservedArea(id: String): Area {
+        require(id == "original" || id.matches(Regex("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}"))) { "Invalid recovery area." }
+        val area = if (id == "original") Area(root, legacyAlias) else Area(File(root, "areas/$id"), "$legacyAlias-$id")
+        require(area.directory.isDirectory && area != activeArea()) { "Open the current workspace to manage its files." }
+        return area
+    }
+
+    @Synchronized override fun preservedWorkspaces(): List<PreservedWorkspace> {
+        val current = activeArea()
+        val areas = listOf("original" to Area(root, legacyAlias)) + File(root, "areas").listFiles().orEmpty()
+            .filter { it.isDirectory && it.name.matches(Regex("[a-f0-9-]{36}")) }
+            .map { it.name to Area(it, "$legacyAlias-${it.name}") }
+        return areas.filter { it.second != current }.flatMap { (id, area) ->
+            area.directory.listFiles().orEmpty().map { it.name.removeSuffix(".bak") }.distinct()
+                .filter { it.matches(Regex("workspace-(unpaired|[a-f0-9]{64})\\.enc")) }
+                .map { PreservedWorkspace(id, it.removeSuffix(".enc")) }
+        }
+    }
+
+    @Synchronized override fun readPreserved(area: String, name: String): JSONObject? = read(preservedArea(area), name)
+
+    @Synchronized override fun removePreserved(area: String, names: Set<String>) {
+        val selected = preservedArea(area)
+        for (name in names) {
+            val target = file(selected, name)
+            target.delete()
+            check(!target.baseFile.exists() && !File(target.baseFile.path + ".bak").exists()) { "An earlier local file could not be removed. Try again." }
+        }
+    }
 
     @Synchronized override fun startFreshPreservingExisting() {
         val id = UUID.randomUUID().toString()

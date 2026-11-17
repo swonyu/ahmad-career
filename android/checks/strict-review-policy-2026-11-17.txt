@@ -1,0 +1,3 @@
+warning: [options] system modules path not set in conjunction with -source 17
+1 warning
+PASS: 122 executable Android boundary-policy checks (no network, no device claims).

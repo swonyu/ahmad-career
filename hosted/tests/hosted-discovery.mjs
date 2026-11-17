@@ -1,12 +1,16 @@
 import assert from 'node:assert/strict';
-import {readFile,readdir,writeFile} from 'node:fs/promises';
+import {mkdtemp,readFile,readdir,rm,writeFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {pathToFileURL} from 'node:url';
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {build} from 'esbuild';
 import {createDiscoveryHandler,parseDiscoverySource,DISCOVERY_LIMITS} from '../server/discovery.mjs';
 import {SERVICE_ORIGIN} from '../server/applications.mjs';
 
-const groups=[],base=Date.now();let time=base,calls=[],records=new Map(),behavior=null,handler,db,workerdRequests=0;
+const groups=[],base=Date.now();let time=base,calls=[],records=new Map(),behavior=null,handler,db,phoneModel,workerdRequests=0,clientSchemaResponses=0;
+const directory=await mkdtemp(join(tmpdir(),'career-discovery-client-'));
 // Use the SDK adapter to preserve isolated v4 fixture semantics on Miniflare5.
 const mf=new Miniflare(convertV4MiniflareOptions({modules:true,script:'export default {fetch(){return new Response("isolated public discovery checks")}}',compatibilityDate:'2026-05-15',d1Databases:['DB']}));
 const gh=(id,title='Synthetic opportunity',location='London')=>({id,internal_job_id:id+100000,title,location:{name:location},updated_at:new Date(base-60000).toISOString(),absolute_url:'https://unexpected.example/ignored'});
@@ -31,16 +35,35 @@ async function call({sources=['greenhouse:synthetic'],q,location,remote,cursor,h
   const u=new URL(SERVICE_ORIGIN+path);if(path.endsWith('/search'))for(const source of sources)u.searchParams.append('source',source);
   for(const [key,value] of Object.entries({q,location,remote,cursor}))if(value!==undefined)u.searchParams.set(key,value);
   const response=await requestHandler(new Request(u,{method,headers:{...(noIP?{}:{'cf-connecting-ip':'192.0.2.4'}),...headers}}),environment);
-  return {status:response.status,data:await response.json(),headers:response.headers};
+  const data=await response.json();validateClientResponse(path,response.status,data);
+  return {status:response.status,data,headers:response.headers};
+}
+function validateClientResponse(path,status,data){
+  if(status!==200)return;
+  if(path.startsWith('/api/discovery/search'))phoneModel.discoveryPageSchema.parse(data);
+  else if(path.startsWith('/api/discovery/sources'))phoneModel.catalogSchema.parse(data);
+  else return;
+  clientSchemaResponses++;
 }
 async function cached(source='greenhouse:synthetic'){return db.prepare('SELECT * FROM discovery_cache WHERE id=?').bind(source).first()}
 
 try{
+  await build({entryPoints:['app/phone/model.ts'],outfile:join(directory,'model.mjs'),bundle:true,platform:'node',format:'esm'});
+  phoneModel=await import(pathToFileURL(join(directory,'model.mjs')).href);
   db=await mf.getD1Database('DB');await migrate(db);
   await check('Public catalog has seven verified sources, four mixed defaults and no account dependency',async()=>{
     const result=await call({path:'/api/discovery/sources',environment:{}});assert.equal(result.status,200);assert.equal(result.data.version,1);assert.equal(result.data.sources.length,7);assert.equal(result.data.defaultSources.length,4);assert.equal(result.data.limits.pageSize,50);
     assert(result.data.defaultSources.includes('greenhouse:freenome'));assert(result.data.defaultSources.includes('lever:global:spotify'));assert.equal(calls.length,0);assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM workspaces').first()).n,0);
     assert.equal((await call({method:'HEAD'})).status,405);assert.equal((await call({method:'POST'})).status,405);assert.equal((await call({headers:{origin:'https://unrelated.example'}})).status,403);assert.equal((await call({headers:{host:'unrelated.example'}})).status,403);
+  });
+  await check('Phone client accepts actual default-board and EU search responses without a catalog-only region field',async()=>{
+    const catalog=await call({path:'/api/discovery/sources',environment:{}});
+    const defaults=await call({sources:catalog.data.defaultSources,q:'Synthetic'});
+    assert.equal(defaults.status,200);assert.equal(defaults.data.status,'complete');assert.equal(defaults.data.sources.length,4);
+    assert.deepEqual(new Set(defaults.data.sources.map(source=>source.provider)),new Set(['greenhouse','lever']));
+    assert(defaults.data.sources.every(source=>!Object.hasOwn(source,'region')));assert(defaults.data.jobs.length>0);
+    const eu=await call({sources:['lever:eu:synthetic']});assert.equal(eu.status,200);
+    assert.equal(eu.data.sources[0].boardUrl,'https://jobs.eu.lever.co/synthetic');assert(eu.data.jobs.length>0);
   });
   await check('Strict source normalization accepts board and direct-posting links without arbitrary fetch URLs',async()=>{
     assert.equal(parseDiscoverySource('https://boards.greenhouse.io/Synthetic/jobs/123?gh_jid=123').id,'greenhouse:synthetic');
@@ -145,11 +168,11 @@ try{
     await call();const keys=(await db.prepare('SELECT key FROM discovery_rates').all()).results.map(r=>r.key);assert(keys.some(k=>/^requests:[a-f0-9]{64}$/.test(k)));assert(keys.every(k=>!k.includes('192.0.2.4')));time+=11*60000;await call({headers:{'cf-connecting-ip':'192.0.2.88'}});assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM discovery_rates WHERE window<?').bind(Math.floor(time/60000)-10).first()).n,0);assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM workspaces').first()).n,0);
   });
 
-  const built=await build({stdin:{contents:`import {createDiscoveryHandler} from './server/discovery.mjs'; import {SERVICE_ORIGIN} from './server/applications.mjs'; const handler=createDiscoveryHandler({fetchImpl:async()=>Response.json({jobs:Array.from({length:60},(_,i)=>({id:i+1,internal_job_id:i+2,title:'Synthetic runtime role '+i,location:{name:'Remote - Europe'}})),meta:{total:60}})}); export default {async fetch(request,env){const original=new URL(request.url),headers=new Headers(request.headers);headers.set('host',new URL(SERVICE_ORIGIN).host);const response=await handler(new Request(SERVICE_ORIGIN+original.pathname+original.search,new Request(request,{headers})),env);return response??new Response('Not found',{status:404})}};`,resolveDir:process.cwd(),sourcefile:'discovery-runtime-probe.mjs'},bundle:true,format:'esm',platform:'neutral',target:'es2022',external:['node:*'],write:false});
+  const built=await build({stdin:{contents:`import {createDiscoveryHandler} from './server/discovery.mjs'; import {SERVICE_ORIGIN} from './server/applications.mjs'; const handler=createDiscoveryHandler({fetchImpl:async()=>Response.json({jobs:Array.from({length:60},(_,i)=>({id:i+1,internal_job_id:i+2,title:'Synthetic runtime role '+i,location:{name:'Remote - Europe'}})),meta:{total:60}})}); export default {async fetch(request,env){const original=new URL(request.url),headers=new Headers(request.headers);headers.set('host',new URL(SERVICE_ORIGIN).host);const response=await handler(new Request(SERVICE_ORIGIN+original.pathname+original.search,new Request(request,{headers})),env);return response??new Response('Not found',{status:404})}};`,resolveDir:process.cwd(),sourcefile:'discovery-runtime-probe.mjs'},bundle:true,format:'esm',platform:'neutral',mainFields:['module','main'],target:'es2022',external:['node:*'],write:false});
   const runtime=new Miniflare(convertV4MiniflareOptions({modules:true,script:built.outputFiles[0].text,compatibilityDate:'2026-05-15',compatibilityFlags:['nodejs_compat'],d1Databases:['DB']}));
   try{
     const runtimeDB=await runtime.getD1Database('DB');await migrate(runtimeDB);
-    const request=async(path,options={},status=200)=>{const res=await runtime.dispatchFetch(SERVICE_ORIGIN+path,options),data=await res.json();assert.equal(res.status,status,JSON.stringify(data));workerdRequests++;return data};
+    const request=async(path,options={},status=200)=>{const res=await runtime.dispatchFetch(SERVICE_ORIGIN+path,options),data=await res.json();assert.equal(res.status,status,JSON.stringify(data));validateClientResponse(path,res.status,data);workerdRequests++;return data};
     const catalog=await request('/api/discovery/sources');assert.equal(catalog.sources.length,7);
     const first=await request('/api/discovery/search?source=greenhouse:runtime');assert.equal(first.jobs.length,50);assert.equal(first.status,'complete');
     const second=await request('/api/discovery/search?source=greenhouse:runtime&cursor='+first.nextCursor);assert.equal(second.jobs.length,10);assert.equal(second.nextCursor,null);
@@ -160,8 +183,8 @@ try{
     const tokenless=await request('/api/discovery/search?source=greenhouse:runtime',{headers:{Authorization:'Bearer synthetic-not-a-session'}});assert.equal(tokenless.status,'complete');
     assert.equal((await runtimeDB.prepare('SELECT COUNT(*) AS n FROM workspaces').first()).n,0);groups.push('Actual bundled workerd runs eight public discovery requests with real D1 and no account or R2');console.log('PASS',groups.at(-1));
   }finally{await runtime.dispose()}
-  const paths=['server/discovery.mjs','server/discovery-contract.json','tests/fixtures/discovery-search-v1.json','worker/index.ts','db/schema.ts','tests/hosted-discovery.mjs',...(await readdir(new URL('../drizzle/',import.meta.url))).filter(f=>f.endsWith('.sql')).sort().map(f=>'drizzle/'+f)],sourceHashes={};
+  const paths=['server/discovery.mjs','server/discovery-contract.json','app/phone/model.ts','tests/fixtures/discovery-search-v1.json','worker/index.ts','db/schema.ts','tests/hosted-discovery.mjs',...(await readdir(new URL('../drizzle/',import.meta.url))).filter(f=>f.endsWith('.sql')).sort().map(f=>'drizzle/'+f)],sourceHashes={};
   for(const path of paths)sourceHashes[path]=createHash('sha256').update(await readFile(new URL('../'+path,import.meta.url))).digest('hex');
-  await writeFile(new URL('./hosted-discovery-verification.json',import.meta.url),JSON.stringify({observedAt:new Date().toISOString(),status:'passed',groups:groups.length,checks:groups,actualWorkerdRequests:workerdRequests,publicProviderRequests:0,applicationSubmissions:0,scope:'Actual local D1 SQL concurrency/quotas/cache with production discovery handler and synthetic bounded provider GETs; actual bundled workerd public API requests. Real public source availability is recorded separately.',sourceHashes},null,2)+'\n');
-  console.log(JSON.stringify({result:'PASS',groups:groups.length,actualWorkerdRequests:workerdRequests,employerApplicationPosts:0}));
-}finally{await mf.dispose()}
+  await writeFile(new URL('./hosted-discovery-verification.json',import.meta.url),JSON.stringify({observedAt:new Date().toISOString(),status:'passed',groups:groups.length,checks:groups,actualWorkerdRequests:workerdRequests,clientSchemaResponses,publicProviderRequests:0,applicationSubmissions:0,scope:'Actual local D1 SQL concurrency/quotas/cache with production discovery handler and synthetic bounded provider GETs; actual bundled workerd public API requests. Every successful response is parsed by the phone client model. Real public source availability is recorded separately.',sourceHashes},null,2)+'\n');
+  console.log(JSON.stringify({result:'PASS',groups:groups.length,actualWorkerdRequests:workerdRequests,clientSchemaResponses,employerApplicationPosts:0}));
+}finally{await mf.dispose();await rm(directory,{recursive:true,force:true})}

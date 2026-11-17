@@ -208,6 +208,19 @@ class ContinuationRegressionTest {
             assertFalse(poll(h))
             assertEquals(reads, h.service.workspaceCalls)
             assertEquals(writes, h.service.writes.size)
+            val holdKey = "holds-" + BoundaryPolicy.workspaceKey(connection.origin, connection.workspaceId)
+            await { h.store.read(holdKey)?.optJSONArray("planIds")?.strings()?.contains("approved-auth") == true }
+            assertTrue("approved-auth" in h.model.state.value.continuationHolds)
+            // A valid replacement token and a restart cannot erase the earlier Stop decision.
+            main { h.model.setForeground(false) }
+            val restarted = create(h.store, h.service)
+            main { restarted.model.pair(connection.origin, "replacement-code") {} }
+            await { !restarted.model.state.value.busy && !restarted.model.state.value.requiresPairing }
+            foreground(restarted)
+            val previousAdvances = advances(restarted).size
+            assertTrue(poll(restarted))
+            assertEquals(previousAdvances, advances(restarted).size)
+            assertTrue("approved-auth" in restarted.model.state.value.continuationHolds)
         }
     }
 

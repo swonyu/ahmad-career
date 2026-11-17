@@ -1,0 +1,20 @@
+{
+  "hostedSourceCommit": "1135a3270435d3719c6f62f1a2e3a53e2c040146",
+  "hostedSourceTree": "379709814adf9fad26d4c17457b0b942d290c029",
+  "versionNumber": 7,
+  "versionId": "appgprj_6afb13851fb4819193358d5db54e73b7~appgver_169e858e28b08191bbb650d3e7b4ffe4",
+  "projectId": "appgprj_6afb13851fb4819193358d5db54e73b7",
+  "deploymentId": "appgdep_6afbcfe3a03881918b131992225ded31",
+  "status": "succeeded",
+  "updatedAt": "2026-11-17T03:54:40.015318+00:00",
+  "url": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
+  "audience": "public",
+  "environmentRevision": 0,
+  "providerActivation": "Unconfigured; no external provider success claimed",
+  "localArchiveSHA256": "aa7c228114ecad22a8f82c93f06281ccf7e63a2fce3c2b050d331ff329f45e8c",
+  "savedArchiveContentHash": "sha256:b8e3de3b8e75b2118a3c2767925edb694cfdbedd149cc374c6898b76c42e2695",
+  "savedArchiveSizeBytes": 10608640,
+  "savedArchiveFileCount": 209,
+  "realEmployerSubmissions": 0,
+  "publicStoreRelease": false
+}

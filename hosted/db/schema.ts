@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { sqliteTable, text, integer, index, uniqueIndex } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, index, uniqueIndex, primaryKey } from 'drizzle-orm/sqlite-core';
 
 export const meta = sqliteTable('meta', { key: text('key').primaryKey(), value: text('value').notNull() });
 export const workspaces = sqliteTable('workspaces', {
@@ -59,3 +59,37 @@ export const discoveryCache = sqliteTable('discovery_cache', {
 export const discoveryRates = sqliteTable('discovery_rates', {
   key: text('key').primaryKey(), window: integer('window').notNull(), count: integer('count').notNull(),
 }, t => [index('discovery_rate_window').on(t.window)]);
+
+// Provider subjects identify an account; email addresses never merge accounts.
+export const authAccounts = sqliteTable('auth_accounts', {
+  ownerId:text('owner_id').primaryKey(), originMethod:text('origin_method').notNull(),
+  generation:text('generation').notNull(), createdAt:integer('created_at').notNull(),
+});
+// Permanent HMAC-only lifecycle markers fence delayed requests after deletion.
+// They contain no account identifier, email, profile or credentials.
+export const accountLifecycles = sqliteTable('account_lifecycles', {
+  ownerHash:text('owner_hash').primaryKey(), generation:text('generation').notNull(), deletedAt:integer('deleted_at'),
+});
+export const authIdentities = sqliteTable('auth_identities', {
+  provider:text('provider').notNull(), subject:text('subject').notNull(), subjectHash:text('subject_hash').notNull(),
+  ownerId:text('owner_id').notNull().references(() => authAccounts.ownerId),
+  email:text('email'), displayName:text('display_name').notNull(), connectedAt:text('connected_at').notNull(), updatedAt:text('updated_at').notNull(),
+}, t => [primaryKey({columns:[t.provider,t.subject]}), uniqueIndex('auth_owner_provider').on(t.ownerId,t.provider), uniqueIndex('auth_subject_hash').on(t.subjectHash)]);
+export const browserSessions = sqliteTable('browser_sessions', {
+  tokenHash:text('token_hash').primaryKey(), id:text('id').notNull().unique(),
+  ownerId:text('owner_id').notNull().references(() => authAccounts.ownerId), accountGeneration:text('account_generation').notNull(),
+  provider:text('provider').notNull(), subject:text('subject').notNull(), createdAt:integer('created_at').notNull(), expiresAt:integer('expires_at').notNull(),
+}, t => [index('browser_session_owner').on(t.ownerId),index('browser_session_expiry').on(t.expiresAt)]);
+export const oauthTransactions = sqliteTable('oauth_transactions', {
+  stateHash:text('state_hash').primaryKey(), browserHash:text('browser_hash').notNull(), provider:text('provider').notNull(), intent:text('intent').notNull(),
+  ownerId:text('owner_id'), accountGeneration:text('account_generation'), nonceHash:text('nonce_hash').notNull(), verifier:text('verifier'),
+  lifecycleKey:text('lifecycle_key'), lifecycleGeneration:text('lifecycle_generation'),
+  returnTo:text('return_to').notNull(), createdAt:integer('created_at').notNull(), expiresAt:integer('expires_at').notNull(), claim:text('claim'),
+}, t => [index('oauth_owner').on(t.ownerId), index('oauth_expiry').on(t.expiresAt)]);
+// HMAC provider-subject fences expire after the maximum pending OAuth lifetime.
+export const authDeletionFences = sqliteTable('auth_deletion_fences', {
+  subjectHash:text('subject_hash').primaryKey(), deletedAt:integer('deleted_at').notNull(), expiresAt:integer('expires_at').notNull(),
+}, t => [index('auth_deletion_expiry').on(t.expiresAt)]);
+export const authRates = sqliteTable('auth_rates', {
+  key:text('key').primaryKey(), window:integer('window').notNull(), count:integer('count').notNull(),
+}, t => [index('auth_rate_window').on(t.window)]);

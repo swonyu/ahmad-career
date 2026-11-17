@@ -1,0 +1,41 @@
+{
+  "environment": "Managed local preview at http://127.0.0.1:4173/; synthetic data only",
+  "sourceCommit": "1135a3270435d3719c6f62f1a2e3a53e2c040146",
+  "observed": [
+    "Blank profile and navigation",
+    "Save manual example.com job",
+    "Edit Unicode multiline private note with discard/keep confirmation",
+    "Reload and explicitly recover unfinished draft",
+    "Save optional role, country and remote preferences",
+    "Select readable 1311-byte PDF and preserve it through reload",
+    "Export readable workspace and verify byte-exact PDF",
+    "Application readiness does not claim a submission"
+  ],
+  "limits": [
+    "Canonical-HTTPS account/discovery API cannot be exercised on loopback",
+    "No real provider login or employer requests",
+    "No verified mobile viewport or browser enlarged-text pass"
+  ],
+  "files": [
+    {
+      "file": "career-finder-preview-profile.jpg",
+      "bytes": 60407,
+      "sha256": "c4ce71cc9ab33d1997c74bd1c6149eec17da2e558d1591288f8ebea7d3de9b87"
+    },
+    {
+      "file": "career-finder-preview-apply.jpg",
+      "bytes": 61976,
+      "sha256": "a9de8b4d322ee1e78e7ed9b47bdc59e032a35e3360d4b3e3c0de3faa0fcce592"
+    },
+    {
+      "file": "career-finder-preview-export.json",
+      "bytes": 4310,
+      "sha256": "48f3af8ef9831840a9637305324220fa5fcd3914185ca2dd6fbc742162a5d2c6"
+    },
+    {
+      "file": "career-finder-synthetic-resume.pdf",
+      "bytes": 1311,
+      "sha256": "149f96a4dc6ed08b2adf0ae75c9d00f8fba75fcd777ea790d9a27e622fa38a61"
+    }
+  ]
+}

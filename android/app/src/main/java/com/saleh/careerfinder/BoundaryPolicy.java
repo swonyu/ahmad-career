@@ -19,7 +19,18 @@ import java.util.Locale;
 public final class BoundaryPolicy {
     public static final int MAX_PDF_BYTES = 5 * 1024 * 1024;
     public static final int MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
+    public static final int MAX_PRIVATE_BYTES = 9 * 1024 * 1024;
     private BoundaryPolicy() { }
+
+    public static boolean validUnicode(String value) {
+        for (int index = 0; index < value.length(); index++) {
+            char next = value.charAt(index);
+            if (Character.isHighSurrogate(next)) {
+                if (++index >= value.length() || !Character.isLowSurrogate(value.charAt(index))) return false;
+            } else if (Character.isLowSurrogate(next)) return false;
+        }
+        return true;
+    }
 
     public static String serviceOrigin(String input) {
         URI uri = httpsURI(input);
@@ -28,12 +39,23 @@ public final class BoundaryPolicy {
             (path != null && !path.isEmpty() && !path.equals("/"))) {
             throw new IllegalArgumentException("Enter the HTTPS service address without a path, query or fragment.");
         }
-        return uri.getScheme().toLowerCase(Locale.ROOT) + "://" +
-            uri.getRawAuthority().toLowerCase(Locale.ROOT);
+        String host = uri.getHost().toLowerCase(Locale.ROOT);
+        int port = uri.getPort();
+        return "https://" + host + (port == -1 || port == 443 ? "" : ":" + port);
+    }
+
+    /** Only for finding existing encrypted files; never used for a new namespace or request. */
+    public static String legacyServiceOrigin(String input) {
+        serviceOrigin(input);
+        return "https://" + httpsURI(input).getRawAuthority().toLowerCase(Locale.ROOT);
+    }
+
+    public static String legacyWorkspaceKey(String origin, String workspaceId) {
+        return sha256((legacyServiceOrigin(origin) + "\n" + workspaceId).getBytes(StandardCharsets.UTF_8));
     }
 
     public static String opportunityURL(String input) {
-        URI uri = httpsURI(input);
+        URI uri = httpsURI(input, 4096);
         String normalized = uri.toASCIIString();
         return uri.getRawFragment() == null ? normalized : normalized.substring(0, normalized.indexOf('#'));
     }
@@ -111,7 +133,7 @@ public final class BoundaryPolicy {
 
     /** A stable private-record identity; never changes the original link opened for the user. */
     public static String jobIdentity(String input) {
-        URI uri = httpsURI(input);
+        URI uri = httpsURI(input, 4096);
         String host = uri.getHost().toLowerCase(Locale.ROOT);
         String path = uri.getRawPath() == null ? "" : asciiPreservingUnicode(uri.getRawPath());
         if ((host.equals("jobs.lever.co") || host.equals("jobs.eu.lever.co")) && (uri.getPort() == -1 || uri.getPort() == 443)) {
@@ -171,8 +193,10 @@ public final class BoundaryPolicy {
         } catch (java.io.UnsupportedEncodingException impossible) { throw new IllegalStateException(impossible); }
     }
 
-    private static URI httpsURI(String input) {
-        if (input == null || input.length() > 2048 || input.chars().anyMatch(c -> c <= 0x20 || c == 0x7f))
+    private static URI httpsURI(String input) { return httpsURI(input, 2048); }
+
+    private static URI httpsURI(String input, int maximumLength) {
+        if (input == null || input.length() > maximumLength || !validUnicode(input) || input.chars().anyMatch(c -> c <= 0x20 || c == 0x7f))
             throw new IllegalArgumentException("Enter a valid HTTPS address without spaces.");
         try {
             URI uri = new URI(input);
@@ -225,6 +249,7 @@ public final class BoundaryPolicy {
         while (name.startsWith(".")) name = name.substring(1);
         if (name.trim().isEmpty()) name = "Resume";
         if (name.length() > 175) name = name.substring(0, 175);
+        if (!name.isEmpty() && Character.isHighSurrogate(name.charAt(name.length() - 1))) name = name.substring(0, name.length() - 1);
         if (!name.toLowerCase(Locale.ROOT).endsWith(".pdf")) name += ".pdf";
         return name;
     }

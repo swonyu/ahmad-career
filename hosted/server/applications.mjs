@@ -1,6 +1,8 @@
 import {randomBytes,randomUUID,createHmac,timingSafeEqual} from 'node:crypto';
 import {ApplicationError,fail,object,text,canonical,sha256,publicURL,leverTarget,profile as validateProfile,answers as validateAnswers,requiredProfile,country,applicantName} from './validation.mjs';
 import {loadConfiguration,connectorFor,requirementsError,makeAdapter} from './provider.mjs';
+import {assertReadablePDF} from './pdf-readability.mjs';
+import {resolveBrowserIdentity,exportBrowserIdentity,identityDeletionStatements,clearBrowserSessionCookie,cookieValue,BROWSER_SESSION_COOKIE,captureOwnerLifecycle} from './identity.mjs';
 
 export const SERVICE_ORIGIN='https://career-finder-service.jazzy-drake-8323.chatgpt.site';
 export const LIMITS=Object.freeze({maxResumeBytes:5*1024*1024,maxStoredResumeBytes:25*1024*1024,maxResumes:5,maxUploadClaimsPerResume:20,maxJobs:200,maxPlans:100,maxAttempts:500,maxSessions:10,maxSelectedJobs:20,maxAccounts:250,maxGlobalResumeBytes:4*1024*1024*1024,maxGlobalAttempts:10000});
@@ -28,7 +30,7 @@ export function createHostedApplicationHandler({clock=Date.now,adapterFactory=ma
     const url=new URL(request.url);
     const browserPhone=/^\/api\/phone(?:\/|$)/.test(url.pathname);
     if(url.pathname!=='/api/health'&&!url.pathname.startsWith('/api/apply/')&&!/^\/api\/account(?:\/|$)/.test(url.pathname)&&!browserPhone)return null;
-    const now=()=>clock(),iso=()=>new Date(now()).toISOString();
+    const startedAt=clock(),now=()=>clock(),iso=()=>new Date(now()).toISOString();
     try {
       if(url.origin!==SERVICE_ORIGIN||request.headers.get('host')&&request.headers.get('host')!==url.host)fail('host_denied','Use the configured Career Finder HTTPS address.',403);
       const origin=request.headers.get('origin');
@@ -39,12 +41,15 @@ export function createHostedApplicationHandler({clock=Date.now,adapterFactory=ma
       const first=(sql,...args)=>stmt(sql,...args).first();
       const all=async(sql,...args)=>(await stmt(sql,...args).all()).results;
       const run=(sql,...args)=>stmt(sql,...args).run();
-      const config=loadConfiguration(env),adapter=adapterFactory(env),mode=adapter.mode;
-      const support=job=>job.provider==='lever'?connectorFor(config,job,env,now()):{supported:false,reason:'This employer uses a manual application form. Open the employer site to apply.'};
+      let config,configurationUnavailable=false;
+      try{config=loadConfiguration(env)}catch{config={version:1,connectors:[]};configurationUnavailable=true}
+      const adapter=adapterFactory(env),mode=adapter.mode;
+      const support=job=>job.provider==='lever'?configurationUnavailable?{supported:false,reason:'The employer connection is temporarily unavailable. Your records and account controls remain available.'}:connectorFor(config,job,env,now()):{supported:false,reason:'This employer uses a manual application form. Open the employer site to apply.'};
       const jobView=job=>{const s=support(job);return {...job,submissionSupported:s.supported,reason:s.reason??''}};
       const capabilities=()=>({mode,liveEnabled:mode==='local'&&config.connectors.some(c=>env[c.apiKeyEnv]&&Object.keys(c.postings).some(postingId=>connectorFor(config,{...c,postingId},env,now()).supported)),providers:config.connectors.map(c=>({provider:'lever',region:c.region,site:c.site,connected:Boolean(env[c.apiKeyEnv]),reviewedPostingCount:Object.keys(c.postings).filter(postingId=>connectorFor(config,{...c,postingId},env,now()).supported).length})),coverage:'Only employer-authorized integrations with current reviewed requirements can submit automatically.',storage:'Private hosted workspace',hosting:'managed-https',dispatchContinuation:'client',linkedinProfile:true,applicantEmailPolicy:'signed-in-account',maxResumeBytes:LIMITS.maxResumeBytes,maxSelectedJobs:LIMITS.maxSelectedJobs});
       if(url.pathname==='/api/health'&&request.method==='GET'){await first('SELECT 1 AS ready FROM workspaces LIMIT 1');await env.BUCKET.head('service-health-probe');return response(200,{ok:true,service:'Career Finder',storage:'ready',mode,liveEnabled:capabilities().liveEnabled})}
-      const owner=()=>{const id=request.headers.get('oai-authenticated-user-id'),email=request.headers.get('oai-authenticated-user-email');if(!id||!email||id.length>250||email.length>254)fail('sign_in_required','Sign in with ChatGPT to manage your Career Finder account.',401);return{id,email:email.toLowerCase()}};
+      const owner=async()=>{const identity=await resolveBrowserIdentity(request,env,{now:now()});if(!identity)fail('sign_in_required','Sign in to manage your Career Finder account.',401);return identity};
+      const browserAuthority=(who,lifecycle)=>{const sql=who.method==='google'?"EXISTS(SELECT 1 FROM browser_sessions s JOIN auth_accounts a ON a.owner_id=s.owner_id AND a.generation=s.account_generation JOIN auth_identities i ON i.owner_id=s.owner_id AND i.provider=s.provider AND i.subject=s.subject WHERE s.token_hash=? AND s.owner_id=? AND s.provider='google' AND s.expires_at>?)":'1';return{sql:sql+(lifecycle?' AND EXISTS(SELECT 1 FROM account_lifecycles WHERE owner_hash=? AND generation=? AND (deleted_at IS NULL OR deleted_at<?))':''),args:()=>[...(who.method==='google'?[sha256(cookieValue(request,BROWSER_SESSION_COOKIE)),who.id,now()]:[]),...(lifecycle?[lifecycle.key,lifecycle.generation,startedAt]:[])]}};
       const requireBrowserWrite=()=>{if(origin!==SERVICE_ORIGIN)fail('origin_denied','Account changes require the exact Career Finder website origin.',403)};
       async function throttle(key,limit=60){
         const window=Math.floor(now()/60000);
@@ -69,12 +74,15 @@ export function createHostedApplicationHandler({clock=Date.now,adapterFactory=ma
         return{...view,accountId:who.id,accountEmail:who.email,confirmedEmail:ws?.owner_email??who.email,emailUpdateRequired:Boolean(ws&&ws.owner_email!==who.email),deleting:Boolean(ws?.deleting_at)};
       }
       async function nativeSession(){const match=(request.headers.get('authorization')??'').match(/^Bearer ([a-f0-9]{64})$/),row=match?await first('SELECT w.* FROM native_sessions s JOIN workspaces w ON w.id=s.workspace_id WHERE s.token_hash=? AND s.expires_at>?',sha256(match[1]),iso()):null;if(!row)fail('session_required','Your phone session expired or is invalid. Pair this phone again.',401);if(row.deleting_at)fail('account_deleting','This account is being deleted. No new applications can be started.',409);return row}
-      async function documents(ws){return(await all("SELECT hash,name,bytes,created_at,state FROM resumes WHERE workspace_id=? ORDER BY created_at DESC LIMIT 5",ws.id)).map(r=>({sha256:r.hash,name:r.name,size:r.bytes,createdAt:r.created_at,state:r.state,downloadPath:`/api/account/resumes/${r.hash}?expectedWorkspaceId=${encodeURIComponent(ws.id)}`}))}
+      const retainedResumeSQL="EXISTS(SELECT 1 FROM workspaces w WHERE w.id=resumes.workspace_id AND json_extract(w.profile_json,'$.resume.sha256')=resumes.hash) OR EXISTS(SELECT 1 FROM attempts a JOIN plans p ON p.id=a.plan_id JOIN workspaces w ON w.id=a.workspace_id WHERE a.workspace_id=resumes.workspace_id AND json_extract(a.snapshot_json,'$.profile.resume.sha256')=resumes.hash AND (a.state='dispatching' OR (a.state IN ('ready','rate_limited') AND p.stopped=0 AND p.expires_at>? AND p.profile_revision=w.revision)))";
+      async function documents(ws){return(await all(`SELECT hash,name,bytes,created_at,state,(${retainedResumeSQL}) AS retained FROM resumes WHERE workspace_id=? ORDER BY created_at DESC LIMIT 5`,iso(),ws.id)).map(r=>({sha256:r.hash,name:r.name,size:r.bytes,createdAt:r.created_at,state:r.state,removable:!ws.deleting_at&&!r.retained&&r.state!=='uploading',...(r.retained?{retentionReason:'This résumé is attached to your profile, an active review or an application being sent.'}:r.state==='uploading'?{retentionReason:'Wait for this upload to finish or recover it first.'}:{}),downloadPath:`/api/account/resumes/${r.hash}?expectedWorkspaceId=${encodeURIComponent(ws.id)}`}))}
       async function usage(ws){const r=await first('SELECT COUNT(*) AS files,COALESCE(SUM(bytes),0) AS bytes FROM resumes WHERE workspace_id=?',ws.id);return{storedResumes:r.files,storedResumeBytes:r.bytes,jobs:(await first('SELECT COUNT(*) AS n FROM jobs WHERE workspace_id=?',ws.id)).n,plans:(await first('SELECT COUNT(*) AS n FROM plans WHERE workspace_id=?',ws.id)).n,attempts:(await first('SELECT COUNT(*) AS n FROM attempts WHERE workspace_id=?',ws.id)).n}}
       // A permanent, opaque empty object fences conditional late writers. No account ID, hash, filename or PDF metadata is retained in these markers.
       async function tombstone(key){await env.BUCKET.put(key,new Uint8Array(0),{httpMetadata:{contentType:'application/octet-stream'},customMetadata:{purpose:'retired-upload'}});const head=await env.BUCKET.head(key);if(!head||head.size!==0||head.customMetadata?.purpose!=='retired-upload')fail('deletion_pending','Private file erasure is not confirmed. Try again.',503)}
       async function storeResume(ws,resume,data){
+        await assertReadablePDF(data);
         const fileId=ws.id+':'+resume.sha256,existing=await first('SELECT * FROM resumes WHERE id=?',fileId);
+        if(existing?.state==='deleting')fail('file_deleting','This old résumé is being removed. Finish that removal before uploading it again.',409);
         if(existing?.state==='ready')return {...safeResume(resume),objectKey:existing.object_key};
         if(existing?.state==='uploading'&&Date.parse(existing.lease_expires_at)>now())fail('upload_in_progress','This PDF is still being saved. Retry or recover it after one minute.',409);
         const claim=randomUUID(),key='uploads/'+randomUUID(),lease=new Date(now()+60000).toISOString();
@@ -93,39 +101,66 @@ export function createHostedApplicationHandler({clock=Date.now,adapterFactory=ma
       }
 
       if(url.pathname.startsWith('/api/account')) {
-        const who=owner(),mutation=!['GET','HEAD'].includes(request.method);if(mutation)requireBrowserWrite();
+        const who=await owner(),mutation=!['GET','HEAD'].includes(request.method);if(mutation)requireBrowserWrite();let lifecycle,authority=browserAuthority(who);
         let ws=await first('SELECT * FROM workspaces WHERE owner_id=?',who.id);
-        if(url.pathname==='/api/account'&&request.method==='GET')return response(200,{ok:true,workspaceId:ws?.id??null,email:who.email,confirmedEmail:ws?.owner_email??who.email,emailUpdateRequired:Boolean(ws&&ws.owner_email!==who.email),createdAt:ws?.created_at??null,deleting:Boolean(ws?.deleting_at),profile:publicProfile(ws?JSON.parse(ws.profile_json):BLANK,ws?.revision??0),sessions:ws?await all('SELECT id,created_at AS createdAt,expires_at AS expiresAt FROM native_sessions WHERE workspace_id=? AND expires_at>? ORDER BY created_at DESC LIMIT 10',ws.id,iso()):[],documents:ws?await documents(ws):[],limits:LIMITS,usage:ws?await usage(ws):{storedResumes:0,storedResumeBytes:0,jobs:0,plans:0,attempts:0}});
+        if(url.pathname==='/api/account'&&request.method==='GET')return response(200,{ok:true,accountId:who.id,workspaceId:ws?.id??null,email:who.email,confirmedEmail:ws?.owner_email??who.email,emailUpdateRequired:Boolean(ws&&ws.owner_email!==who.email),createdAt:ws?.created_at??null,deleting:Boolean(ws?.deleting_at),profile:publicProfile(ws?JSON.parse(ws.profile_json):BLANK,ws?.revision??0),sessions:ws?await all('SELECT id,created_at AS createdAt,expires_at AS expiresAt FROM native_sessions WHERE workspace_id=? AND expires_at>? ORDER BY created_at DESC LIMIT 10',ws.id,iso()):[],documents:ws?await documents(ws):[],limits:LIMITS,usage:ws?await usage(ws):{storedResumes:0,storedResumeBytes:0,jobs:0,plans:0,attempts:0}});
         if(url.pathname==='/api/account/pairing'&&request.method==='POST'){
           const body=object(await bodyJSON(request),['expectedAccountId']);
           if(body.expectedAccountId!==who.id)fail('account_changed','The signed-in account changed. Reload this page before creating a connection code.',409);
+          lifecycle=await captureOwnerLifecycle(env,who.id,{startedAt,now:now()});authority=browserAuthority(who,lifecycle);
           await throttle('account:'+sha256(who.id),30);
           if(ws?.deleting_at)fail('account_deleting','Finish deleting this account before creating another connection.',409);
-          if(!ws){const id=randomUUID();await run('INSERT OR IGNORE INTO workspaces(id,owner_id,owner_email,created_at,profile_json) SELECT ?,?,?,?,? WHERE (SELECT COUNT(*) FROM workspaces)<?',id,who.id,who.email,iso(),stringify(BLANK),LIMITS.maxAccounts);ws=await first('SELECT * FROM workspaces WHERE owner_id=?',who.id);if(!ws)fail('capacity_reached','The free service has reached its current account capacity. No paid service was enabled.',503)}
-          if(ws.owner_email!==who.email){await run('UPDATE workspaces SET owner_email=?,revision=revision+1 WHERE id=? AND owner_email<>? AND deleting_at IS NULL',who.email,ws.id,who.email);ws=await first('SELECT * FROM workspaces WHERE owner_id=?',who.id);if(!ws||ws.deleting_at)fail('account_deleting','This account is being deleted.',409)}
+          if(!ws){const id=randomUUID();await run(`INSERT OR IGNORE INTO workspaces(id,owner_id,owner_email,created_at,profile_json) SELECT ?,?,?,?,? WHERE (SELECT COUNT(*) FROM workspaces)<? AND ${authority.sql}`,id,who.id,who.email,iso(),stringify(BLANK),LIMITS.maxAccounts,...authority.args());ws=await first('SELECT * FROM workspaces WHERE owner_id=?',who.id);if(!ws){await owner();await captureOwnerLifecycle(env,who.id,{startedAt,now:now()});fail('capacity_reached','The free service has reached its current account capacity. No paid service was enabled.',503)}}
+          if(ws.owner_email!==who.email){await run(`UPDATE workspaces SET owner_email=?,revision=revision+1 WHERE id=? AND owner_email<>? AND deleting_at IS NULL AND ${authority.sql}`,who.email,ws.id,who.email,...authority.args());ws=await first('SELECT * FROM workspaces WHERE owner_id=?',who.id);if(!ws||ws.deleting_at)fail('account_deleting','This account is being deleted.',409)}
           await run("INSERT OR IGNORE INTO meta(key,value) VALUES('identity_salt',?)",randomBytes(32).toString('hex'));
           await run('DELETE FROM native_sessions WHERE workspace_id=? AND expires_at<=?',ws.id,iso());
           if((await first('SELECT COUNT(*) AS n FROM native_sessions WHERE workspace_id=?',ws.id)).n>=LIMITS.maxSessions)fail('session_limit','Remove an older phone connection before pairing another.',409);
           const raw=[...randomBytes(16)].map(b=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[b&31]).join(''),expiresAt=new Date(now()+300000).toISOString();
-          const savedCode=await db.batch([stmt('DELETE FROM pairing_codes WHERE workspace_id=?',ws.id),stmt('INSERT INTO pairing_codes(code_hash,workspace_id,created_at,expires_at) SELECT ?,?,?,? FROM workspaces WHERE id=? AND deleting_at IS NULL',sha256(raw),ws.id,iso(),expiresAt,ws.id)]);
+          const savedCode=await db.batch([stmt(`DELETE FROM pairing_codes WHERE workspace_id=? AND ${authority.sql}`,ws.id,...authority.args()),stmt(`INSERT INTO pairing_codes(code_hash,workspace_id,created_at,expires_at) SELECT ?,?,?,? FROM workspaces WHERE id=? AND deleting_at IS NULL AND ${authority.sql}`,sha256(raw),ws.id,iso(),expiresAt,ws.id,...authority.args())]);
           if(savedCode[1].meta.changes!==1)fail('account_deleting','This account was deleted or locked before a pairing code could be issued.',409);
           return response(201,{ok:true,pairingCode:raw.match(/.{4}/g).join('-'),expiresAt,serverTime:iso(),workspaceId:ws.id,origin:SERVICE_ORIGIN});
         }
-        const mutationFields=url.pathname==='/api/account'&&request.method==='DELETE'?['confirmation']:url.pathname==='/api/account/sessions/revoke'&&request.method==='POST'?['sessionId']:url.pathname==='/api/account/uploads/recover'&&request.method==='POST'?[]:null;
+        const mutationFields=url.pathname==='/api/account'&&request.method==='DELETE'?['confirmation']:url.pathname==='/api/account/sessions/revoke'&&request.method==='POST'?['sessionId']:url.pathname==='/api/account/uploads/recover'&&request.method==='POST'?[]:url.pathname==='/api/account/resumes/remove'&&request.method==='POST'?['sha256']:null;
         let accountBody;
         if(mutationFields!==null){
-          accountBody=object(await bodyJSON(request),['expectedWorkspaceId',...mutationFields]);
-          // Bind the user's displayed target to this request's current Sites identity.
+          accountBody=object(await bodyJSON(request),['expectedWorkspaceId','expectedAccountId',...mutationFields]);
+          // Bind the user's displayed target to this request's verified identity.
           // Check before changing codes, sessions, documents, or deletion state.
-          if(!ws||typeof accountBody.expectedWorkspaceId!=='string'||accountBody.expectedWorkspaceId!==ws.id)fail('workspace_changed','The signed-in workspace changed. Reload this page before making changes.',409);
+          if(accountBody.expectedAccountId!==undefined&&accountBody.expectedAccountId!==who.id)fail('account_changed','The signed-in account changed. Reload this page before making changes.',409);
+          const identityOnlyDelete=url.pathname==='/api/account'&&request.method==='DELETE'&&!ws&&accountBody.expectedWorkspaceId===null&&accountBody.expectedAccountId===who.id;
+          if(!identityOnlyDelete&&(!ws||typeof accountBody.expectedWorkspaceId!=='string'||accountBody.expectedWorkspaceId!==ws.id))fail('workspace_changed','The signed-in workspace changed. Reload this page before making changes.',409);
+          if(url.pathname==='/api/account'&&request.method==='DELETE')lifecycle=await captureOwnerLifecycle(env,who.id,{startedAt,now:now()});
           await throttle('account:'+sha256(who.id),30);
         }
         const file=url.pathname.match(/^\/api\/account\/resumes\/([a-f0-9]{64})$/);
         if(request.method==='GET'&&(url.pathname==='/api/account/export'||file)){
-          const targets=url.searchParams.getAll('expectedWorkspaceId');
-          if(!ws||targets.length!==1||targets[0]!==ws.id)fail('workspace_changed','The signed-in workspace changed. Reload this page before downloading records.',409);
+          const targets=url.searchParams.getAll('expectedWorkspaceId'),accounts=url.searchParams.getAll('expectedAccountId');
+          if(accounts.length&&(accounts.length!==1||accounts[0]!==who.id))fail('account_changed','The signed-in account changed. Reload this page before downloading records.',409);
+          const identityOnlyExport=url.pathname==='/api/account/export'&&!ws&&targets.length===0&&accounts.length===1&&accounts[0]===who.id;
+          if(!identityOnlyExport&&(!ws||targets.length!==1||targets[0]!==ws.id))fail('workspace_changed','The signed-in workspace changed. Reload this page before downloading records.',409);
+        }
+        if(!ws&&url.pathname==='/api/account/export'&&request.method==='GET')return response(200,{ok:true,schemaVersion:1,exportedAt:iso(),accountId:who.id,workspaceId:null,email:who.email,profile:publicProfile(BLANK,0),jobs:[],plans:[],attempts:[],documents:[],...await exportBrowserIdentity(env,who.id),includesPDFBytes:false,pdfInstructions:'This account has no hosted workspace or saved PDFs.'},{'Content-Disposition':'attachment; filename="career-finder-records.json"'});
+        if(!ws&&url.pathname==='/api/account'&&request.method==='DELETE'){
+          if(accountBody.confirmation!=='DELETE')fail('deletion_confirmation_required','Type DELETE to permanently remove this Career Finder account.',409);
+          const generation=(await first('SELECT generation FROM auth_accounts WHERE owner_id=?',who.id))?.generation??null;
+          const deletionGeneration=randomUUID(),guard=stmt('UPDATE account_lifecycles SET generation=?,deleted_at=? WHERE owner_hash=? AND generation=? AND NOT EXISTS(SELECT 1 FROM workspaces WHERE owner_id=?) AND (? IS NULL AND NOT EXISTS(SELECT 1 FROM auth_accounts WHERE owner_id=?) OR EXISTS(SELECT 1 FROM auth_accounts WHERE owner_id=? AND generation=?))',deletionGeneration,now(),lifecycle.key,lifecycle.generation,who.id,generation,who.id,who.id,generation);
+          const result=await db.batch([guard,...identityDeletionStatements(db,who.id,{now:now(),expectedWorkspaceId:null,expectedGeneration:generation,lifecycle:{key:lifecycle.key,generation:deletionGeneration}})]);
+          if(result[0].meta.changes!==1)fail('account_changed','This account changed while deletion was starting. Reload it and review the current records before trying again.',409);
+          return response(200,{ok:true,deleted:true,redirectTo:'/signout-with-chatgpt?return_to=%2Faccount',scope:'Career Finder provider connections and browser sessions erased. This account had no hosted workspace or saved PDFs. Provider-held data and managed backup retention are separate.'},{'Set-Cookie':clearBrowserSessionCookie()});
         }
         if(!ws)fail('workspace_missing','Create a phone connection to start your hosted workspace.',404);
+        if(url.pathname==='/api/account/resumes/remove'&&request.method==='POST'){
+          const hash=accountBody.sha256;if(typeof hash!=='string'||!/^[a-f0-9]{64}$/.test(hash))fail('invalid_identifier','Choose a saved résumé from this account.');
+          if(ws.deleting_at)fail('account_deleting','Finish deleting the workspace first.',409);
+          const row=await first('SELECT * FROM resumes WHERE workspace_id=? AND hash=?',ws.id,hash);
+          if(!row)return response(200,{ok:true,removed:true});
+          const retired=await run(`UPDATE resumes SET state='deleting',lease_expires_at=NULL WHERE id=? AND state IN ('ready','failed','deleting') AND NOT (${retainedResumeSQL}) AND EXISTS(SELECT 1 FROM workspaces w WHERE w.id=resumes.workspace_id AND w.deleting_at IS NULL)`,row.id,iso());
+          if(retired.meta.changes!==1)fail('resume_in_use','This résumé is still attached to your profile, an active review, an upload or an application being sent. Remove or stop those references first.',409);
+          const keys=await all('SELECT object_key FROM resume_uploads WHERE resume_id=? LIMIT 20',row.id);
+          for(const key of new Set([row.object_key,...keys.map(item=>item.object_key)]))await tombstone(key);
+          await db.batch([stmt("DELETE FROM resume_uploads WHERE resume_id=? AND EXISTS(SELECT 1 FROM resumes WHERE id=? AND state='deleting')",row.id,row.id),stmt("DELETE FROM resumes WHERE id=? AND workspace_id=? AND state='deleting'",row.id,ws.id)]);
+          return response(200,{ok:true,removed:true});
+        }
         if(url.pathname==='/api/account/sessions/revoke'&&request.method==='POST'){idCheck(accountBody.sessionId);await run('DELETE FROM native_sessions WHERE id=? AND workspace_id=?',accountBody.sessionId,ws.id);return response(200,{ok:true})}
         if(url.pathname==='/api/account/uploads/recover'&&request.method==='POST'){
           if(ws.deleting_at)fail('account_deleting','Finish the pending deletion instead of recovering files.',409);
@@ -139,7 +174,7 @@ export function createHostedApplicationHandler({clock=Date.now,adapterFactory=ma
         }
         if(url.pathname==='/api/account/export'&&request.method==='GET'){
           const planRows=await all('SELECT * FROM plans WHERE workspace_id=? ORDER BY created_at,id LIMIT 100',ws.id),attemptRows=await all('SELECT * FROM attempts WHERE workspace_id=? ORDER BY created_at,id LIMIT 500',ws.id);
-          return response(200,{ok:true,schemaVersion:1,exportedAt:iso(),workspaceId:ws.id,email:who.email,profile:publicProfile(JSON.parse(ws.profile_json),ws.revision),jobs:(await all('SELECT * FROM jobs WHERE workspace_id=? ORDER BY created_at,id LIMIT 200',ws.id)).map(r=>({...JSON.parse(r.data_json),id:r.id})),plans:await Promise.all(planRows.map(p=>planView(p,attemptRows))),attempts:attemptRows.map(r=>{const s=JSON.parse(r.snapshot_json);return{...attemptView(r),submittedProfile:publicProfile(s.profile,s.profileRevision),answers:s.answers,requirements:s.requirements}}),documents:await documents(ws),includesPDFBytes:false,pdfInstructions:'Download the private PDFs using each document downloadPath while signed in. This JSON export contains records and PDF fingerprints.'},{'Content-Disposition':'attachment; filename="career-finder-records.json"'});
+          return response(200,{ok:true,schemaVersion:1,exportedAt:iso(),accountId:who.id,workspaceId:ws.id,email:who.email,profile:publicProfile(JSON.parse(ws.profile_json),ws.revision),jobs:(await all('SELECT * FROM jobs WHERE workspace_id=? ORDER BY created_at,id LIMIT 200',ws.id)).map(r=>({...JSON.parse(r.data_json),id:r.id})),plans:await Promise.all(planRows.map(p=>planView(p,attemptRows))),attempts:attemptRows.map(r=>{const s=JSON.parse(r.snapshot_json);return{...attemptView(r),submittedProfile:publicProfile(s.profile,s.profileRevision),answers:s.answers,requirements:s.requirements}}),documents:await documents(ws),...await exportBrowserIdentity(env,who.id),includesPDFBytes:false,pdfInstructions:'Download the private PDFs using each document downloadPath while signed in. This JSON export contains records and PDF fingerprints.'},{'Content-Disposition':'attachment; filename="career-finder-records.json"'});
         }
         if(file&&request.method==='GET'){if(ws.deleting_at)fail('account_deleting','This account is being erased. Its PDFs are no longer available for download.',409);const row=await first("SELECT * FROM resumes WHERE workspace_id=? AND hash=? AND state='ready'",ws.id,file[1]);if(!row)fail('file_not_found','This PDF is not in your account.',404);const stored=await env.BUCKET.get(row.object_key);if(!stored||stored.size!==row.bytes)fail('file_unavailable','The exact stored PDF is temporarily unavailable.',503);return new Response(stored.body,{headers:{'Content-Type':'application/pdf','Content-Disposition':`attachment; filename*=UTF-8''${encodeURIComponent(row.name)}`,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'}})}
         if(url.pathname==='/api/account'&&request.method==='DELETE'){
@@ -148,9 +183,13 @@ export function createHostedApplicationHandler({clock=Date.now,adapterFactory=ma
           // R2 tombstones fence late conditional uploads; an actual provider dispatch must finish or become durably uncertain first.
           const lock=await run("UPDATE workspaces SET deleting_at=COALESCE(deleting_at,?) WHERE id=? AND NOT EXISTS(SELECT 1 FROM attempts WHERE workspace_id=? AND state='dispatching')",iso(),ws.id,ws.id);
           if(lock.meta.changes!==1)fail('work_in_flight','An application request is still in progress. Resolve its outcome before deleting the account.',409);
+          const generation=(await first('SELECT generation FROM auth_accounts WHERE owner_id=?',who.id))?.generation??null;
           const objects=await all('SELECT object_key FROM resume_uploads WHERE workspace_id=? LIMIT 100',ws.id);for(const item of objects)await tombstone(item.object_key);
-          await db.batch(['attempts','plans','jobs','resume_uploads','resumes','native_sessions','pairing_codes'].map(table=>stmt(`DELETE FROM ${table} WHERE workspace_id=?`,ws.id)).concat([stmt('DELETE FROM throttles WHERE key IN (?,?)','workspace:'+ws.id,'account:'+sha256(who.id)),stmt('DELETE FROM workspaces WHERE id=? AND deleting_at IS NOT NULL',ws.id)]));
-          return response(200,{ok:true,deleted:true,scope:'Hosted account records, PDF contents, application records, pairing codes and phone sessions erased. Opaque empty upload markers prevent delayed writes from restoring deleted files. Employer-held applications and managed backup retention are separate.'});
+          const deletionGeneration=randomUUID(),guard=stmt('UPDATE account_lifecycles SET generation=?,deleted_at=? WHERE owner_hash=? AND generation=? AND EXISTS(SELECT 1 FROM workspaces WHERE owner_id=? AND id=? AND deleting_at IS NOT NULL) AND (? IS NULL AND NOT EXISTS(SELECT 1 FROM auth_accounts WHERE owner_id=?) OR EXISTS(SELECT 1 FROM auth_accounts WHERE owner_id=? AND generation=?))',deletionGeneration,now(),lifecycle.key,lifecycle.generation,who.id,ws.id,generation,who.id,who.id,generation);
+          const deletionGuard='EXISTS(SELECT 1 FROM account_lifecycles WHERE owner_hash=? AND generation=?)',deletionArgs=[lifecycle.key,deletionGeneration];
+          const result=await db.batch([guard,...['attempts','plans','jobs','resume_uploads','resumes','native_sessions','pairing_codes'].map(table=>stmt(`DELETE FROM ${table} WHERE workspace_id=? AND ${deletionGuard}`,ws.id,...deletionArgs)),...identityDeletionStatements(db,who.id,{now:now(),expectedWorkspaceId:ws.id,expectedGeneration:generation,lifecycle:{key:lifecycle.key,generation:deletionGeneration}}),stmt(`DELETE FROM throttles WHERE key IN (?,?) AND ${deletionGuard}`,'workspace:'+ws.id,'account:'+sha256(who.id),...deletionArgs),stmt(`DELETE FROM workspaces WHERE id=? AND deleting_at IS NOT NULL AND ${deletionGuard}`,ws.id,...deletionArgs)]);
+          if(result[0].meta.changes!==1)fail('account_changed','This account connection changed during deletion. Reload to check its current state.',409);
+          return response(200,{ok:true,deleted:true,redirectTo:'/signout-with-chatgpt?return_to=%2Faccount',scope:'Hosted account records, PDF contents, application records, pairing codes, phone sessions, provider connections and browser sessions erased. Opaque empty upload markers prevent delayed writes from restoring deleted files. Employer-held applications and managed backup retention are separate.'},{'Set-Cookie':clearBrowserSessionCookie()});
         }
         fail('not_found','This account endpoint or method is not supported.',404);
       }
@@ -158,25 +197,27 @@ export function createHostedApplicationHandler({clock=Date.now,adapterFactory=ma
       const route=url.pathname.slice(browserPhone?'/api/phone/'.length:'/api/apply/'.length);
       let ws,browserBody;
       if(browserPhone){
-        // The platform owns browser authentication. A native bearer, a body field,
+        // Verified browser identity owns this workspace. A native bearer, a body field,
         // or a caller-supplied workspace never substitutes for the trusted owner.
         const fields={profile:['expectedRevision','profile'],jobs:['url','title','company','location','country'],prepare:['jobIds','answers','manualAppliedJobIds','reviewSchema'],submit:['planId','digest','approved','reviewSchema'],advance:['planId'],stop:['planId','onlyIfUnapproved']};
         const mutation=request.method==='PUT'&&route==='profile'||request.method==='POST'&&['jobs','prepare','submit','advance','stop'].includes(route);
         const open=route==='workspace'&&request.method==='POST',read=request.method==='GET'&&['workspace','receipts'].includes(route);
         if(!mutation&&!open&&!read)fail('not_found','This phone website endpoint or method is not supported.',404);
-        const who=owner(),fetchSite=request.headers.get('sec-fetch-site');
+        const who=await owner(),fetchSite=request.headers.get('sec-fetch-site');
         if(fetchSite&&fetchSite!=='same-origin')fail('origin_denied','Open Career Finder directly before using your private workspace.',403);
         if(mutation||open)requireBrowserWrite();
         ws=await first('SELECT * FROM workspaces WHERE owner_id=?',who.id);
         if(open){
           const body=object(await bodyJSON(request),['expectedAccountId']);
           if(body.expectedAccountId!==who.id)fail('account_changed','The signed-in account changed. Reload this page before opening your workspace.',409);
+          const lifecycle=await captureOwnerLifecycle(env,who.id,{startedAt,now:now()}),authority=browserAuthority(who,lifecycle);
           // Intent is checked before cleanup, throttling, email refresh or creation.
           if(ws?.deleting_at)fail('account_deleting','Finish deleting this account before opening another workspace.',409);
           await throttle('account:'+sha256(who.id),30);
-          if(!ws){const id=randomUUID();await run('INSERT OR IGNORE INTO workspaces(id,owner_id,owner_email,created_at,profile_json) SELECT ?,?,?,?,? WHERE (SELECT COUNT(*) FROM workspaces)<?',id,who.id,who.email,iso(),stringify(BLANK),LIMITS.maxAccounts);ws=await first('SELECT * FROM workspaces WHERE owner_id=?',who.id);if(!ws)fail('capacity_reached','The free service has reached its current account capacity. No paid service was enabled.',503)}
-          if(ws.owner_email!==who.email){await run('UPDATE workspaces SET owner_email=?,revision=revision+1 WHERE id=? AND owner_email<>? AND deleting_at IS NULL',who.email,ws.id,who.email);ws=await first('SELECT * FROM workspaces WHERE owner_id=?',who.id)}
+          if(!ws){const id=randomUUID();await run(`INSERT OR IGNORE INTO workspaces(id,owner_id,owner_email,created_at,profile_json) SELECT ?,?,?,?,? WHERE (SELECT COUNT(*) FROM workspaces)<? AND ${authority.sql}`,id,who.id,who.email,iso(),stringify(BLANK),LIMITS.maxAccounts,...authority.args());ws=await first('SELECT * FROM workspaces WHERE owner_id=?',who.id);if(!ws){await owner();await captureOwnerLifecycle(env,who.id,{startedAt,now:now()});fail('capacity_reached','The free service has reached its current account capacity. No paid service was enabled.',503)}}
+          if(ws.owner_email!==who.email){await run(`UPDATE workspaces SET owner_email=?,revision=revision+1 WHERE id=? AND owner_email<>? AND deleting_at IS NULL AND ${authority.sql}`,who.email,ws.id,who.email,...authority.args());ws=await first('SELECT * FROM workspaces WHERE owner_id=?',who.id)}
           if(!ws||ws.deleting_at)fail('account_deleting','This account is being deleted.',409);
+          await owner();
           await run("INSERT OR IGNORE INTO meta(key,value) VALUES('identity_salt',?)",randomBytes(32).toString('hex'));
           return response(200,await browserWorkspaceView(who,ws));
         }
@@ -220,7 +261,7 @@ export function createHostedApplicationHandler({clock=Date.now,adapterFactory=ma
         if(p.resume?.dataBase64){
           p.resume=await storeResume(ws,p.resume,Buffer.from(p.resume.dataBase64,'base64'));
         }
-        const updated=await run('UPDATE workspaces SET profile_json=?,revision=revision+1 WHERE id=? AND revision=? AND deleting_at IS NULL',stringify(p),ws.id,body.expectedRevision);
+        const updated=await run("UPDATE workspaces SET profile_json=?,revision=revision+1 WHERE id=? AND revision=? AND deleting_at IS NULL AND (? IS NULL OR EXISTS(SELECT 1 FROM resumes WHERE workspace_id=? AND hash=? AND state='ready'))",stringify(p),ws.id,body.expectedRevision,p.resume?.sha256??null,ws.id,p.resume?.sha256??null);
         if(updated.meta.changes!==1)fail('stale_profile','Your profile changed or is being deleted. Your previous version was preserved.',409);
         return response(200,{ok:true,profile:publicProfile(p,ws.revision+1)});
       }
@@ -234,7 +275,7 @@ export function createHostedApplicationHandler({clock=Date.now,adapterFactory=ma
       }
 
       // Plan creation, approval and advancement below use D1 comparisons rather than isolate-local locks.
-      const duplicate=async(applicantHash,jobKey,except='')=>first("SELECT id,state,retry_at FROM attempts WHERE job_key=? AND (workspace_id=? OR applicant_hash=?) AND id<>? AND (state IN ('dispatching','confirmed','uncertain','rate_limited') OR retry_at>?) LIMIT 1",jobKey,ws.id,applicantHash,except,iso());
+      const duplicate=async(applicantHash,jobKey,except='')=>first("SELECT id,state,retry_at FROM attempts WHERE job_key=? AND (workspace_id=? OR applicant_hash=?) AND id<>? AND (state IN ('dispatching','confirmed','uncertain','rate_limited') OR retry_at>? OR error_code='provider_cooldown_unknown') LIMIT 1",jobKey,ws.id,applicantHash,except,iso());
       const duplicateReason=d=>d.state==='confirmed'?'This applicant already has a confirmed application for this posting.':d.state==='rate_limited'?'A prior attempt is waiting for its cooldown. Reopen that review and approve it again after the waiting time.':'A previous application is active, uncertain, or still within a cooldown. Reconcile it before applying again.';
       async function planOwned(id){idCheck(id);const p=await first('SELECT * FROM plans WHERE id=? AND workspace_id=?',id,ws.id);if(!p)fail('plan_not_found','This review is not in your workspace.',404);return p}
       async function planReply(plan){return{ok:true,plan:await planView(plan),attempts:await attemptsFor(ws.id,plan.id),activePlanIds:await activeIDs(ws.id)}}
@@ -248,13 +289,20 @@ export function createHostedApplicationHandler({clock=Date.now,adapterFactory=ma
         const identity=emailAuthorized?createHmac('sha256',await salt()).update(p.email.trim().toLowerCase()).digest('hex'):null;
         const selectedRows=await all(`SELECT * FROM jobs WHERE workspace_id=? AND id IN (${body.jobIds.map(()=>'?').join(',')})`,ws.id,...body.jobIds),selectedMap=new Map(selectedRows.map(r=>[r.id,r]));
         if(selectedRows.length!==body.jobIds.length)fail('job_not_found','A selected opportunity is not in your workspace.',404);
+        let resumeProblem=null,resumeChecked=false;
         await run("UPDATE attempts SET state='cancelled',error_code='review_replaced_after_cooldown',error_message='The rejected request cooldown ended and an obsolete review was retired. No automatic resend occurred.' WHERE workspace_id=? AND state='rate_limited' AND retry_at<=? AND EXISTS(SELECT 1 FROM plans p WHERE p.id=attempts.plan_id AND (p.stopped=1 OR p.expires_at<=? OR p.profile_revision<>?))",ws.id,iso(),iso(),ws.revision);
         const keys=selectedRows.map(r=>r.job_key),scope=emailAuthorized?'(workspace_id=? OR applicant_hash=?)':'workspace_id=?',scopeArgs=emailAuthorized?[ws.id,identity]:[ws.id];
-        const priorRows=await all(`SELECT id,job_key,state,retry_at FROM attempts WHERE ${scope} AND job_key IN (${keys.map(()=>'?').join(',')}) AND (state IN ('dispatching','confirmed','uncertain','rate_limited') OR retry_at>?) LIMIT 500`,...scopeArgs,...keys,iso()),priorMap=new Map(priorRows.map(r=>[r.job_key,r]));
+        const priorRows=await all(`SELECT id,job_key,state,retry_at FROM attempts WHERE ${scope} AND job_key IN (${keys.map(()=>'?').join(',')}) AND (state IN ('dispatching','confirmed','uncertain','rate_limited') OR retry_at>? OR error_code='provider_cooldown_unknown') LIMIT 500`,...scopeArgs,...keys,iso()),priorMap=new Map(priorRows.map(r=>[r.job_key,r]));
         for(const id of body.jobIds){
           const saved=selectedMap.get(id);
           const job={...JSON.parse(saved.data_json),id},answer=validateAnswers(answerMap[id]??{}),matched=support(job);
-          const prior=priorMap.get(job.key),reason=manual.includes(id)?'Your tracker already records this application. Reconcile it before applying again.':prior?duplicateReason(prior):requiredProfile(p)||(p.linkedin&&body.reviewSchema!==3?'Update Career Finder to review the LinkedIn profile link before approving this application.':null)||(!emailAuthorized?'Automatic submission requires the email verified by your signed-in account.':null)||(!matched.supported?matched.reason:requirementsError(p,answer,matched.requirements));
+          const prior=priorMap.get(job.key);let reason=manual.includes(id)?'Your tracker already records this application. Reconcile it before applying again.':prior?duplicateReason(prior):requiredProfile(p)||(p.linkedin&&body.reviewSchema!==3?'Update Career Finder to review the LinkedIn profile link before approving this application.':null)||(!emailAuthorized?'Automatic submission requires the email verified by your signed-in account.':null)||(!matched.supported?matched.reason:requirementsError(p,answer,matched.requirements));
+          // Unsupported/manual and already-blocked jobs never need to read a
+          // private PDF. Verify its exact bytes once before any eligible item.
+          if(!reason){
+            if(!resumeChecked){resumeChecked=true;try{const stored=await env.BUCKET.get(p.resume.objectKey);if(!stored||stored.size!==p.resume.size)throw Error('missing-pdf');const bytes=new Uint8Array(await stored.arrayBuffer());if(sha256(bytes)!==p.resume.sha256)throw Error('pdf-integrity');await assertReadablePDF(bytes)}catch{resumeProblem='The exact saved résumé could not be opened. Upload a readable PDF and prepare another review. Your existing records were preserved.'}}
+            reason=resumeProblem;
+          }
           const item={jobId:id,job:{id,title:job.title,company:job.company,url:job.url,location:job.location,country:job.country},title:job.title,company:job.company,state:reason?'blocked':'ready',reason:reason??'',payloadSummary:{name:applicantName(p),email:p.email,phone:p.phone,website:p.website,...(p.linkedin?{linkedin:p.linkedin}:{}),comments:answer.comments,...(answer.consentStore===undefined?{}:{consentStore:answer.consentStore}),...(answer.consentMarketing===undefined?{}:{consentMarketing:answer.consentMarketing})},resume:safeResume(p.resume),privacyPolicyUrl:matched.requirements?.privacyPolicyUrl??null,requirementsRevision:matched.requirements?.revision??null};
           if(!reason){const id=randomUUID(),snapshot={job,profile:p,profileRevision:ws.revision,answers:answer,requirements:matched.requirements,mode};snapshot.payloadSHA256=sha256(canonical({schema:p.linkedin?3:2,jobKey:job.key,profile:publicProfile(p,ws.revision),answers:answer,requirements:matched.requirements}));item.attemptId=id;rows.push({id,job,identity,snapshot})}items.push(item);
         }
@@ -270,7 +318,7 @@ export function createHostedApplicationHandler({clock=Date.now,adapterFactory=ma
         if(body.approved!==true||!equal(body.digest,plan.digest))fail('approval_required','Approve the exact current application review before submitting.',409);
         if(plan.stopped||Date.parse(plan.expires_at)<=now()||plan.profile_revision!==ws.revision)fail('stale_review','This review has stopped, expired, or changed. Prepare another review.',409);
         const pending=await all("SELECT state,retry_at FROM attempts WHERE plan_id=? AND state IN ('ready','rate_limited') LIMIT 20",plan.id);
-        if(!pending.some(a=>a.state==='ready'||Date.parse(a.retry_at)<=now())){if(pending.length)fail('cooldown_active','Wait for the provider cooldown before approving this review again.',409);return response(200,await planReply(plan))}
+        if(!pending.some(a=>a.state==='ready'||Date.parse(a.retry_at)<=now())){const current=await planOwned(plan.id);if(current.stopped||Date.parse(current.expires_at)<=now()||current.profile_revision!==ws.revision)fail('stale_review','This review stopped, expired or changed before approval. Prepare another review.',409);if(pending.length)fail('cooldown_active','Wait for the provider cooldown before approving this review again.',409);return response(200,await planReply(current))}
         const update=await run('UPDATE plans SET approved_at=COALESCE(approved_at,?),last_approved_at=?,approval_generation=approval_generation+1 WHERE id=? AND workspace_id=? AND stopped=0 AND expires_at>? AND profile_revision=(SELECT revision FROM workspaces WHERE id=? AND deleting_at IS NULL)',iso(),iso(),plan.id,ws.id,iso(),ws.id);
         if(update.meta.changes!==1)fail('stale_review','This review changed before approval could be recorded.',409);
         return response(202,await planReply(await planOwned(plan.id)));
@@ -285,7 +333,7 @@ export function createHostedApplicationHandler({clock=Date.now,adapterFactory=ma
         // Expired claims remain uncertain; live claims may still record a result.
         const updates=await db.batch([
           stmt(`UPDATE plans SET stopped=1 WHERE id=? AND workspace_id=? ${stopGuard}`,plan.id,ws.id),
-          stmt(`UPDATE attempts SET error_message=CASE WHEN state='rate_limited' THEN 'The provider rejected the earlier request for rate limiting. Its queued retry was stopped; the cooldown still applies.' ELSE 'Stopped before this application was sent.' END,state='cancelled',error_code='stopped' WHERE workspace_id=? AND plan_id=? AND state IN ('ready','rate_limited') AND ${stoppedPlan}`,ws.id,plan.id,plan.id,ws.id),
+          stmt(`UPDATE attempts SET error_message=CASE WHEN error_code='provider_cooldown_unknown' THEN 'The queued retry was stopped. The provider waiting period remains unknown; reconcile with the employer before any new attempt.' WHEN state='rate_limited' THEN 'The provider rejected the earlier request for rate limiting. Its queued retry was stopped; the cooldown still applies.' ELSE 'Stopped before this application was sent.' END,state='cancelled',error_code=CASE WHEN error_code='provider_cooldown_unknown' THEN error_code ELSE 'stopped' END WHERE workspace_id=? AND plan_id=? AND state IN ('ready','rate_limited') AND ${stoppedPlan}`,ws.id,plan.id,plan.id,ws.id),
           stmt(`UPDATE attempts SET state='uncertain',error_code='worker_interrupted',error_message='The dispatch lease expired without a durable provider result. No automatic resend occurred.' WHERE workspace_id=? AND plan_id=? AND state='dispatching' AND lease_expires_at<=? AND ${stoppedPlan}`,ws.id,plan.id,iso(),plan.id,ws.id),
         ]);
         if(guarded&&updates[0].meta.changes!==1)fail('review_already_approved','This review was already approved or dispatched. Refresh before deciding whether to stop it.',409);
@@ -304,14 +352,21 @@ export function createHostedApplicationHandler({clock=Date.now,adapterFactory=ma
           if(!matched.supported||canonical(matched.requirements)!==canonical(snapshot.requirements)){await block('requirements_changed',matched.reason??'The employer requirements changed. Prepare another review.');return}
           if(snapshot.profile.email!==ws.owner_email){await block('email_not_verified','The application email must match your signed-in account.');return}
           let pdf;
-          try{const latest=await adapter.posting(snapshot.job);if(latest.metadataHash!==snapshot.job.metadataHash){await block('posting_changed','The employer changed this posting. Add its link again and prepare another review.');return}const stored=await env.BUCKET.get(snapshot.profile.resume.objectKey);if(!stored)throw Error('missing-pdf');pdf=new Uint8Array(await stored.arrayBuffer());if(pdf.byteLength!==snapshot.profile.resume.size||sha256(pdf)!==snapshot.profile.resume.sha256)throw Error('pdf-integrity')}
+          try{const latest=await adapter.posting(snapshot.job);if(latest.metadataHash!==snapshot.job.metadataHash){await block('posting_changed','The employer changed this posting. Add its link again and prepare another review.');return}const stored=await env.BUCKET.get(snapshot.profile.resume.objectKey);if(!stored)throw Error('missing-pdf');pdf=new Uint8Array(await stored.arrayBuffer());if(pdf.byteLength!==snapshot.profile.resume.size||sha256(pdf)!==snapshot.profile.resume.sha256)throw Error('pdf-integrity');await assertReadablePDF(pdf)}
           catch(error){await block(error instanceof ApplicationError?error.code:'preflight_failed',error instanceof ApplicationError?error.message:'The exact saved PDF and posting could not be verified. Nothing was sent.');return}
           if(now()>deadline-1000)return;
+          const refreshed=support(snapshot.job);
+          if(!refreshed.supported||canonical(refreshed.requirements)!==canonical(snapshot.requirements)){await block('requirements_changed',refreshed.reason??'The employer requirements changed. Prepare another review.');return}
           const gateKey=`lever:${snapshot.job.region}:${snapshot.job.site.toLowerCase()}`;await run('INSERT OR IGNORE INTO dispatch_gates(key,next_at) VALUES(?,0)',gateKey);if((await run('UPDATE dispatch_gates SET next_at=? WHERE key=? AND next_at<=?',now()+1000,gateKey,now())).meta.changes!==1)return;
           const claim=randomUUID();
           let claimed;
-          try{claimed=await run("UPDATE attempts SET state='dispatching',dispatched_at=?,dispatch_count=dispatch_count+1,approval_generation=(SELECT approval_generation FROM plans WHERE id=?),claim_token=?,lease_expires_at=?,error_code=NULL,error_message=NULL,retry_at=NULL WHERE id=? AND dispatch_count<3 AND (state='ready' OR (state='rate_limited' AND retry_at<=? AND approval_generation<(SELECT approval_generation FROM plans WHERE id=?) AND retry_at<=(SELECT last_approved_at FROM plans WHERE id=?))) AND EXISTS(SELECT 1 FROM plans p JOIN workspaces w ON w.id=p.workspace_id WHERE p.id=? AND p.workspace_id=? AND p.stopped=0 AND p.expires_at>? AND p.approval_generation>0 AND p.profile_revision=w.revision AND w.owner_email=? AND w.deleting_at IS NULL) AND NOT EXISTS(SELECT 1 FROM attempts other WHERE other.id<>attempts.id AND other.job_key=attempts.job_key AND (other.workspace_id=attempts.workspace_id OR other.applicant_hash=attempts.applicant_hash) AND (other.state IN ('dispatching','confirmed','uncertain','rate_limited') OR other.retry_at>?))",iso(),plan.id,claim,new Date(now()+45000).toISOString(),row.id,iso(),plan.id,plan.id,plan.id,ws.id,iso(),snapshot.profile.email,iso())}catch{claimed=null}
+          try{claimed=await run("UPDATE attempts SET state='dispatching',dispatched_at=?,dispatch_count=dispatch_count+1,approval_generation=(SELECT approval_generation FROM plans WHERE id=?),claim_token=?,lease_expires_at=?,error_code=NULL,error_message=NULL,retry_at=NULL WHERE id=? AND dispatch_count<3 AND (state='ready' OR (state='rate_limited' AND retry_at<=? AND approval_generation<(SELECT approval_generation FROM plans WHERE id=?) AND retry_at<=(SELECT last_approved_at FROM plans WHERE id=?))) AND EXISTS(SELECT 1 FROM plans p JOIN workspaces w ON w.id=p.workspace_id WHERE p.id=? AND p.workspace_id=? AND p.stopped=0 AND p.expires_at>? AND p.approval_generation>0 AND p.profile_revision=w.revision AND w.owner_email=? AND w.deleting_at IS NULL) AND NOT EXISTS(SELECT 1 FROM attempts other WHERE other.id<>attempts.id AND other.job_key=attempts.job_key AND (other.workspace_id=attempts.workspace_id OR other.applicant_hash=attempts.applicant_hash) AND (other.state IN ('dispatching','confirmed','uncertain','rate_limited') OR other.retry_at>? OR other.error_code='provider_cooldown_unknown'))",iso(),plan.id,claim,new Date(now()+45000).toISOString(),row.id,iso(),plan.id,plan.id,plan.id,ws.id,iso(),snapshot.profile.email,iso())}catch{claimed=null}
           if(claimed?.meta.changes!==1){const prior=await duplicate(row.applicant_hash,row.job_key,row.id);if(prior)await block('duplicate_application',duplicateReason(prior));return}
+          // The durable claim itself can be delayed. Check the immutable review
+          // again immediately before the only outbound application POST.
+          if(!support(snapshot.job).supported||Date.parse(snapshot.requirements.expiresAt)<=now()){
+            await run("UPDATE attempts SET state='blocked',error_code='requirements_changed',error_message='The employer requirements expired before dispatch. Nothing was sent.',dispatch_count=?,dispatched_at=?,lease_expires_at=NULL WHERE id=? AND claim_token=? AND state='dispatching'",row.dispatch_count,row.dispatched_at,row.id,claim);return;
+          }
           let outcome;
           try{outcome=await adapter.submit(snapshot.job,snapshot,matched.connector,pdf,{timeoutMs:Math.max(1,Math.min(8000,deadline-now()))})}catch{outcome={state:'uncertain',error:{code:'unconfirmed_transport',message:'The provider outcome is unknown. Reconcile before applying again.'}}}
           try{await run("UPDATE attempts SET state=?,application_id=?,response_hash=?,confirmed_at=?,error_code=?,error_message=?,retry_at=?,lease_expires_at=NULL WHERE id=? AND claim_token=? AND state='dispatching'",outcome.state,outcome.applicationId??null,outcome.responseSHA256??null,outcome.state==='confirmed'?iso():null,outcome.error?.code??null,outcome.error?.message??null,outcome.retryDelay?new Date(now()+outcome.retryDelay).toISOString():null,row.id,claim)}catch{try{await run("UPDATE attempts SET state='uncertain',error_code='result_persistence_failed',error_message='The provider result could not be recorded durably. Reconcile this attempt before applying again.' WHERE id=? AND claim_token=? AND state='dispatching'",row.id,claim)}catch{}}

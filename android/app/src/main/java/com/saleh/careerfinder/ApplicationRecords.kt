@@ -6,8 +6,10 @@ import java.time.Instant
 import java.time.LocalDate
 import java.util.UUID
 
-internal fun boundedApplicationNote(value: String): String = value.take(2_000).let {
-    if (it.lastOrNull()?.let(Character::isHighSurrogate) == true) it.dropLast(1) else it
+internal fun applicationNoteLength(value: String): Int = value.codePointCount(0, value.length)
+internal fun boundedApplicationNote(value: String): String {
+    val bounded = if (applicationNoteLength(value) <= 2_000) value else value.substring(0, value.offsetByCodePoints(0, 2_000))
+    return if (bounded.lastOrNull()?.let(Character::isHighSurrogate) == true) bounded.dropLast(1) else bounded
 }
 
 enum class ApplicationStage(val stored: String, val label: String) {
@@ -22,7 +24,7 @@ data class ApplicationRecordDraft(val stage: ApplicationStage = ApplicationStage
     val followUpDate: String = "", val note: String = "") {
     fun validated(): ApplicationRecordDraft {
         BoundaryPolicy.civilDate(appliedDate); BoundaryPolicy.civilDate(followUpDate)
-        require(note.length <= 2_000) { "Keep this private note within 2,000 characters." }
+        require(applicationNoteLength(note) <= 2_000) { "Keep this private note within 2,000 characters." }
         require(note.toByteArray(Charsets.UTF_8).toString(Charsets.UTF_8) == note) { "Check the characters in this private note before saving." }
         return this
     }
@@ -174,7 +176,11 @@ object ApplicationRecordsCodec {
 
 data class ApplicationRecordEditorState(val token: String = UUID.randomUUID().toString(), val scope: String,
     val identity: String, val job: Opportunity, val expectedRevision: Int, val draft: ApplicationRecordDraft,
-    val pendingNotApplied: ApplicationRecordDraft? = null, val quickCorrection: Boolean = false)
+    val pendingNotApplied: ApplicationRecordDraft? = null, val quickCorrection: Boolean = false,
+    val initialDraft: ApplicationRecordDraft = draft, val confirmClose: Boolean = false,
+    val restoredOlderRevision: Boolean = false) {
+    val hasChanges: Boolean get() = draft != initialDraft
+}
 
 enum class SavedOpportunityFilter(val label: String) {
     ALL("All"), FOLLOW_UP("Follow-ups"), APPLIED("Applied"), INTERVIEW("Interview"), OFFER("Offers"), CLOSED("Closed");

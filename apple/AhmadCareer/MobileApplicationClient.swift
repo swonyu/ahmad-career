@@ -1,5 +1,8 @@
 import Foundation
 import CryptoKit
+#if canImport(PDFKit)
+import PDFKit
+#endif
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
@@ -90,6 +93,22 @@ enum MobileApplicationPolicy {
             || filename.hasPrefix(".") || !filename.lowercased().hasSuffix(".pdf") || filename.count > 180 {
             return "Use a short PDF filename without path characters."
         }
+        #if canImport(PDFKit)
+        guard let document = PDFDocument(data: data), !document.isLocked, !document.isEncrypted else {
+            return "This PDF cannot be read without a password. Export an unencrypted PDF CV and choose it again. Your previous CV is kept."
+        }
+        guard (1...200).contains(document.pageCount) else { return "Choose a readable PDF CV with between 1 and 200 pages." }
+        for index in 0..<document.pageCount {
+            guard let page = document.page(at: index) else { return "A page in this PDF could not be read. Export the CV again; your previous selection is kept." }
+            let bounds = page.bounds(for: .mediaBox)
+            guard bounds.width.isFinite, bounds.height.isFinite, bounds.width > 0, bounds.height > 0,
+                  bounds.width <= 14_400, bounds.height <= 14_400 else {
+                return "This PDF has an unsupported page size. Export it using a standard paper size."
+            }
+        }
+        #else
+        return "PDF readability checks are unavailable on this platform. Choose this file in the iPhone app before using it for an application."
+        #endif
         return nil
     }
     static func readResume(at url: URL) throws -> Data {

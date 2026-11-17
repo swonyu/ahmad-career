@@ -17,6 +17,8 @@ export type BatchStopState = {
 export type BatchStopBody = { expectedWorkspaceId: string; planId: string; onlyIfUnapproved: false };
 export type BatchStopControls = {
   readState(): BatchStopState;
+  persistHold(): Promise<void>;
+  confirmHold(): Promise<void>;
   post(body: BatchStopBody): Promise<Record<string, unknown>>;
   accept(response: Record<string, unknown>): Promise<Workspace>;
   deferRefresh(): void;
@@ -51,10 +53,13 @@ export function stopBatchOnce(batch: BatchContext, current: Workspace, controls:
     // This flag is set before calling any asynchronous transport, including a
     // transport that rejects synchronously or loses the eventual response.
     batch.stopAttempted = true; batch.stopConfirmed = false;
+    await controls.persistHold();
+    requireTarget(batch, controls.readState());
     const response = await controls.post({ expectedWorkspaceId: batch.workspaceId, planId: batch.planId, onlyIfUnapproved: false });
     const stopped = planSchema.parse(response.plan);
     if (stopped.id !== batch.planId || !stopped.stopped) throw Error("Stop could not be confirmed. Refresh the receipts before taking another action.");
     batch.stopConfirmed = true;
+    await controls.confirmHold();
     const state = controls.readState(); requireTarget(batch, state);
     if (state.identityUnverified) { controls.deferRefresh(); return current; }
     const accepted = await controls.accept(response);

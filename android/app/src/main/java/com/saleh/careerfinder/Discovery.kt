@@ -171,6 +171,7 @@ object DiscoveryCodec {
 
 class DiscoveryController(private val scope: CoroutineScope, private val service: DiscoveryService = PublicDiscoveryService) {
     private val mutable = MutableStateFlow(DiscoveryUiState())
+    internal fun exportSnapshot(): JSONObject = DiscoverySnapshotCodec.encode(DiscoverySnapshot(state.value.filters, lastDisplayedFilters, lastPage))
     val state = mutable.asStateFlow()
     private var catalogJob: Job? = null
     private var searchJob: Job? = null
