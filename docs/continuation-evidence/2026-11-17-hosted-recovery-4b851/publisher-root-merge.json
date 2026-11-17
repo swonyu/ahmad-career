@@ -1,0 +1,9 @@
+{
+  "mergedAt": "2026-11-17T18:50:59.181590+00:00",
+  "commit": "2c4862192d5fdd2dcb656c95619ea1b85cb74110",
+  "rootParent": "4221871aea33f79b29ee75b4b054502a0eb1add9",
+  "publisherParent": "243031d3f35040985c5b274e8ddf4a90adb0eda8",
+  "conflict": "Only PhoneApp live announcement; preserved singular key and combined searchSummary",
+  "phoneSHA256": "cea98d8442f0dcb43cee2b1e3d5d5a2814a89130b7c18793ee50f4a8366d5368",
+  "publisherNativeWorkflowAndLockUnchanged": true
+}

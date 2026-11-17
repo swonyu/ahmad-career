@@ -1,0 +1,117 @@
+{
+  "run": 44147056599,
+  "source": "243031d3f35040985c5b274e8ddf4a90adb0eda8",
+  "job": 134264967126,
+  "kind": "iPhone UI-only partial workflow",
+  "tests": 17,
+  "failures": 0,
+  "durationSeconds": 1283.028,
+  "otherJobs": "four skipped",
+  "terminalSuccess": true,
+  "logLines": [
+    "2026-11-17T18:28:27.3056130Z Test Case '-[CareerFinderUITests.CareerFinderUITests testAccessibilityTextKeepsCoreControlsReachable]' passed (88.894 seconds).",
+    "2026-11-17T18:29:21.4435340Z Test Case '-[CareerFinderUITests.CareerFinderUITests testApplicationDraftSurvivesCancelAndRelaunch]' passed (54.165 seconds).",
+    "2026-11-17T18:32:02.7217780Z Test Case '-[CareerFinderUITests.CareerFinderUITests testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText]' passed (161.231 seconds).",
+    "2026-11-17T18:33:09.1399560Z Test Case '-[CareerFinderUITests.CareerFinderUITests testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText]' passed (66.445 seconds).",
+    "2026-11-17T18:33:44.6332130Z Test Case '-[CareerFinderUITests.CareerFinderUITests testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride]' passed (35.504 seconds).",
+    "2026-11-17T18:34:35.3573020Z Test Case '-[CareerFinderUITests.CareerFinderUITests testDiscoverySaveFlowsIntoSavedAndApply]' passed (50.732 seconds).",
+    "2026-11-17T18:35:17.4651190Z Test Case '-[CareerFinderUITests.CareerFinderUITests testFreshStartAndFiveTabs]' passed (42.114 seconds).",
+    "2026-11-17T18:36:18.0462350Z Test Case '-[CareerFinderUITests.CareerFinderUITests testLinkedInProfileDraftAndExternalSearchChoice]' passed (60.580 seconds).",
+    "2026-11-17T18:36:42.1498440Z Test Case '-[CareerFinderUITests.CareerFinderUITests testOpportunityDiscardRequiresExplicitChoice]' passed (24.095 seconds).",
+    "2026-11-17T18:37:45.5996880Z Test Case '-[CareerFinderUITests.CareerFinderUITests testOpportunityDraftKeepSaveAndRestore]' passed (63.439 seconds).",
+    "2026-11-17T18:40:16.3583070Z Test Case '-[CareerFinderUITests.CareerFinderUITests testPrivateApplicationRecordPersistsAndCorrectionIsExplicit]' passed (150.776 seconds).",
+    "2026-11-17T18:41:30.7704560Z Test Case '-[CareerFinderUITests.CareerFinderUITests testProfileReadinessAndSimpleConnectionSetup]' passed (74.397 seconds).",
+    "2026-11-17T18:41:56.5574330Z Test Case '-[CareerFinderUITests.CareerFinderUITests testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark]' passed (25.786 seconds).",
+    "2026-11-17T18:43:49.1316430Z Test Case '-[CareerFinderUITests.CareerFinderUITests testSavedLinkRemovalAtLargestTextKeepsCancelReachable]' passed (112.587 seconds).",
+    "2026-11-17T18:45:59.0285380Z Test Case '-[CareerFinderUITests.CareerFinderUITests testSavedSearchFindsArabicNotesAndKeepsOriginalText]' passed (129.895 seconds).",
+    "2026-11-17T18:47:29.2395600Z Test Case '-[CareerFinderUITests.CareerFinderUITests testSearchEmptyAndFailurePreservesPreviousResults]' passed (90.197 seconds).",
+    "2026-11-17T18:48:21.4408700Z Test Case '-[CareerFinderUITests.CareerFinderUITests testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable]' passed (52.193 seconds).",
+    "2026-11-17T18:48:21.4410710Z \t Executed 17 tests, with 0 failures (0 unexpected) in 1283.028 (1283.048) seconds",
+    "2026-11-17T18:48:21.4411900Z \t Executed 17 tests, with 0 failures (0 unexpected) in 1283.028 (1283.049) seconds",
+    "2026-11-17T18:48:21.4413080Z \t Executed 17 tests, with 0 failures (0 unexpected) in 1283.028 (1283.051) seconds",
+    "2026-11-17T18:49:19.1643580Z ** TEST SUCCEEDED **"
+  ],
+  "jobs": [
+    {
+      "id": 134264967126,
+      "name": "PARTIAL iPhone UI acceptance (all 17 journeys)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Select an iPhone on this disposable hosted runner",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Exercise native phone flows with isolated synthetic data",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify the partial regression actually ran once",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Export native interface evidence",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Keep the native UI results and screenshots",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 134264970339,
+      "name": "Hosted HTTPS service and durable storage",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "id": 134264970384,
+      "name": "Service and synthetic HTTPS",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "id": 134264970632,
+      "name": "Android compile, lint and native acceptance",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "id": 134264970779,
+      "name": "iPhone logic and unsigned build",
+      "status": "completed",
+      "conclusion": "skipped"
+    }
+  ],
+  "limitations": [
+    "No root combined native pass; no physical-device or store submission evidence",
+    "Hosted full audit remains separate and failing"
+  ]
+}

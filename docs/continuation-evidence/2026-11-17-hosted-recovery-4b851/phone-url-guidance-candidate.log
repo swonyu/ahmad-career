@@ -1,0 +1,27 @@
+▶ phone model keeps canonical identities and private local state separate
+  ✔ malformed public links use actionable translated guidance without weakening URL policy (1.095458ms)
+  ✔ LinkedIn values have the same canonical boundary as the application service (0.740666ms)
+  ✔ Lever paths, arbitrary tracking queries and case share the actual remote posting identity (5.215708ms)
+  ✔ scope mismatch, duplicate jobs and noncanonical/contradictory imported records fail closed (5.279667ms)
+  ✔ civil dates and applied history survive stage transitions until explicit clearing (0.379ms)
+  ✔ profile transport strips local notes, records, revision and resume metadata (1.812292ms)
+  ✔ exact review validates the target and every submitted profile/CV field (4.980917ms)
+  ✔ review requests bind a workspace, distinct UUIDs and explicit consent choices (2.304667ms)
+  ✔ review request budget measures serialized UTF-8 including repeated answers and JSON escaping (3.357791ms)
+✔ phone model keeps canonical identities and private local state separate (26.378542ms)
+✔ model schemas preserve serialized workspace, nullable review and blocked receipt contract fields (2.135791ms)
+✔ phone search accepts the published discovery status contract and preserves it in a restored search (5.620542ms)
+✔ each employer keeps separate exact answers and no missing answer is inferred (0.594125ms)
+✔ receipts require an application ID and consistent live evidence before confirmation (0.327416ms)
+✔ career preferences and an unfinished record stage survive encrypted recovery serialization (0.786458ms)
+✔ provider navigation accepts only official authorization endpoints and safe app returns (0.222708ms)
+✔ OAuth callback feedback only accepts exact provider and result enums once (0.09225ms)
+✔ provider status represents LinkedIn login without treating older basic-link backends as sign-in support (1.379959ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 178.450208

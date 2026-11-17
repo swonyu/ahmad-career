@@ -1,0 +1,46 @@
+{"sources":{"SessionRecovery":"4e8296df4c1a42c8c49463326f35109ffc2e4da276101045ced10dee46f854b8","OAuthFeedback":"57a9be7cc19eb2c4cfafc34e3266e511a5a6a824b99776c8302460f4f9aff464"},"coverage":"Production handler/effect logic with synthetic promise and browser-navigation ports; no DOM, live authentication or assistive-technology result."}
+✔ actual recovery preserves expectedAccountId and the existing same-origin redirect allowlist (4.314042ms)
+✔ actual recovery aborts on unmount and ignores an already completed late success (1.182416ms)
+✔ actual recovery does not publish a late failure after unmount (0.916875ms)
+▶ actual account-generation replacement keeps the newer request intact after an old success or failure
+  ✔ success (0.873209ms)
+  ✔ failure (1.185375ms)
+✔ actual account-generation replacement keeps the newer request intact after an old success or failure (2.572875ms)
+✔ actual cleanup/setup replay cannot revive the earlier request or clear the replacement operation (1.032458ms)
+✔ actual recovery does not send duplicate mutations before React commits its busy state (1.07275ms)
+✔ actual current failures remain visible and permit only an explicit retry (1.062333ms)
+✔ actual recovery rejects an untrusted redirect without navigation or automatic replay (1.211917ms)
+✔ actual OAuth cancellation is polite and does not render untrusted provider text (3.459708ms)
+▶ actual OAuth success language still requires service confirmation
+  ✔ verified (8.698625ms)
+  ✔ unconfirmed (1.39025ms)
+✔ actual OAuth success language still requires service confirmation (11.06875ms)
+✔ actual OAuth cleanup suppresses a late status result (1.439ms)
+✖ actual keyed action and rendered button recover from A to B to A without clicking a disabled control (7.997708ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 15
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 44.093625
+
+✖ failing tests:
+
+test at [eval1]:211:1
+✖ actual keyed action and rendered button recover from A to B to A without clicking a disabled control (7.997708ms)
+  AssertionError [ERR_ASSERTION]: Returning to A must not revive its cancelled busy state
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/[eval1]:232:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

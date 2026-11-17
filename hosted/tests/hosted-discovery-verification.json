@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-11-17T17:15:56.048Z",
+  "observedAt": "2026-11-17T18:54:50.545Z",
   "status": "passed",
   "groups": 47,
   "checks": [
@@ -57,9 +57,9 @@
   "applicationSubmissions": 0,
   "scope": "Actual local D1 SQL concurrency/quotas/cache with production discovery handler and synthetic bounded provider GETs; actual bundled workerd public API requests. Every successful response is parsed by the phone client model. Real public source availability is recorded separately.",
   "sourceHashes": {
-    "server/discovery.mjs": "7be81e9156275622f82d18934f9d04b4aa83bdc2ae91c1ba0450002d0a2f859b",
+    "server/discovery.mjs": "bc8984b41d9ff1a4c7d69abd4a3e3ee2656120ca8151eb4cd899667acf140887",
     "server/discovery-contract.json": "b92075bc91feb0a677ccbe28101fc31245730318373e3974ed18dff408967b06",
-    "app/phone/model.ts": "6ed2a8a852bced4c030f421168d464d4c3fdd2f1a54d867d1768365ae54a93d4",
+    "app/phone/model.ts": "955d5afcede6b8f7eb901394f9ae3e00d1bbffa57bf1e457c5436f23541577bf",
     "tests/fixtures/discovery-search-v1.json": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7",
     "worker/index.ts": "c82a674ffc6fcebef3b1c48d577f0ec5b28a4a4c2b17462c50a7c0d1708ac09e",
     "db/schema.ts": "0bc620bceb7b8548d69d07c823c2bc20623ad4d0de7c28678163892f9ac0fa15",

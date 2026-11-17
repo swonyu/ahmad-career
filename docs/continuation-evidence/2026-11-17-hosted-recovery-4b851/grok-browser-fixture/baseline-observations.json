@@ -1,0 +1,33 @@
+{
+  "description": "Real connected Chrome, actual production components, synthetic loopback accounts only. Baseline unchanged four component files at d534/0f.",
+  "unmountStart": {
+    "content": [
+      {
+        "type": "text",
+        "text": "\"'\n    - option \"Disconnect POST succeeds; status still connected\"\n    - option \"Session recovery fails (503)\"\n    - 'option \"OAuth: verified Google connection\"'\n    - 'option \"OAuth: URL claims connection, status does not\"'\n    - 'option \"OAuth: verified Google sign-in\"'\n    - 'option \"OAuth: status unavailable\"'\n    - 'option \"OAuth: cancelled\"'\n    - 'option \"OAuth: failed\"'\n    - 'option \"OAuth: LinkedIn email required\"'\n  - text: Response delay\n  - combobox \"Response delay\":\n    - option \"0 ms\"\n    - option \"500 ms\"\n    - option \"1500 ms\"\n    - option \"4000 ms\" [selected]\n    - option \"21000 ms (exceeds API timeout)\"\n  - text: Product language\n  - combobox \"Product language\":\n    - option \"English\" [selected]\n    - option \"العربية\"\n  - button \"Apply scenario and mount\"\n  - button \"Make next responses healthy\"\n  - button \"Mount component\" [active]\n  - paragraph: Apply resets synthetic request counts and remounts the component. Make next responses healthy changes only the stub server; use the component's own retry afterward. Focus monitoring is observational and never moves focus.\n  - paragraph:\n    - text: \"Focused element:\"\n    - status: button · Mount component\n  - link \"Jump to component\":\n    - /url: \"#component-under-test\"\n  - text: ·\n  - link \"Source and build metadata\":\n    - /url: /build-metadata.json\n- main:\n  - heading \"Active synthetic scenario · SessionRecovery\" [level=2]\n  - paragraph: Both synthetic connections exist. Disconnect requires the component's explicit confirmation.\n  - paragraph:\n    - text: \"Account supplied to components:\"\n    - code: fixture-account-a\n    - text: \". Delay: 4000 ms.\"\n  - region \"Production component under test\":\n    - paragraph: Component unmounted.\n  - heading \"Synthetic request ledger\" [level=2]\n  - paragraph: Only auth endpoint traffic is counted. Focus, pageshow and visibility recovery may legitimately add status GETs. No automatic replay of a mutation is expected.\n  - term: POST /api/auth/signout\n  - definition: \"1\"\n  - generic \"Synthetic auth request ledger\": \"[ { \\\"id\\\": 1, \\\"method\\\": \\\"POST\\\", \\\"path\\\": \\\"/api/auth/signout\\\", \\\"status\\\": null, \\\"body\\\": { \\\"expectedAccountId\\\": \\\"fixture-account-a\\\" } } ]\""
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "unmountEnd": {
+    "content": [
+      {
+        "type": "text",
+        "text": "ork Image alone is rendered as an ordinary image. No live authentication, provider account, OAuth redirect or hosted backend is used.\n  - text: Component\n  - combobox \"Component\":\n    - option \"ProviderConnections\"\n    - option \"SignInOptions\"\n    - option \"SessionRecovery\" [selected]\n    - option \"OAuthFeedback\"\n  - text: Server scenario\n  - combobox \"Server scenario\":\n    - 'option \"Healthy: Google + LinkedIn connected\" [selected]'\n    - option \"Configured providers, disconnected\"\n    - option \"Providers not configured\"\n    - option \"LinkedIn connection only, no direct sign-in\"\n    - option \"Status unavailable (503)\"\n    - option \"Expired session (401)\"\n    - option \"Different account returned\"\n    - option \"Disconnect fails (503)\"\n    - 'option \"Disconnect refused: only sign-in method (409)\"'\n    - option \"Disconnect POST succeeds; status still connected\"\n    - option \"Session recovery fails (503)\"\n    - 'option \"OAuth: verified Google connection\"'\n    - 'option \"OAuth: URL claims connection, status does not\"'\n    - 'option \"OAuth: verified Google sign-in\"'\n    - 'option \"OAuth: status unavailable\"'\n    - 'option \"OAuth: cancelled\"'\n    - 'option \"OAuth: failed\"'\n    - 'option \"OAuth: LinkedIn email required\"'\n  - text: Response delay\n  - combobox \"Response delay\":\n    - option \"0 ms\"\n    - option \"500 ms\"\n    - option \"1500 ms\"\n    - option \"4000 ms\" [selected]\n    - option \"21000 ms (exceeds API timeout)\"\n  - text: Product language\n  - combobox \"Product language\":\n    - option \"English\" [selected]\n    - option \"العربية\"\n  - button \"Apply scenario and mount\"\n  - button \"Make next responses healthy\"\n  - button \"Unmount component\"\n  - paragraph: Apply resets synthetic request counts and remounts the component. Make next responses healthy changes only the stub server; use the component's own retry afterward. Focus monitoring is observational and never moves focus.\n  - paragraph:\n    - text: \"Focused element:\"\n    - status: body (no focused control)\n  - link \"Jump to component\":\n    - /url: \"#component-under-test\"\n  - text: ·\n  - link \"Source and build metadata\":\n    - /url: /build-metadata.json\n- main:\n  - heading \"Active synthetic scenario · SessionRecovery\" [level=2]\n  - paragraph: Both synthetic connections exist. Disconnect requires the component's explicit confirmation.\n  - paragraph:\n    - text: \"Account supplied to components:\"\n    - code: fixture-account-a\n    - text: \". Delay: 4000 ms.\"\n  - status: Local recovery navigation completed. No provider was contacted.\n  - region \"Production component under test\":\n    - paragraph: Clear the expired Career Finder sign-in to choose your account again. Saved workspace records are not deleted.\n    - button \"Clear expired sign-in\"\n  - heading \"Synthetic request ledger\" [level=2]\n  - paragraph: Only auth endpoint traffic is counted. Focus, pageshow and visibility recovery may legitimately add status GETs. No automatic replay of a mutation is expected.\n  - term: POST /api/auth/signout\n  - definition: \"1\"\n  - generic \"Synthetic auth request ledger\": \"[ { \\\"id\\\": 1, \\\"method\\\": \\\"POST\\\", \\\"path\\\": \\\"/api/auth/signout\\\", \\\"status\\\": 200, \\\"body\\\": { \\\"expectedAccountId\\\": \\\"fixture-account-a\\\" } } ]\""
+      },
+      {
+        "type": "text",
+        "text": "[{\"id\":\"573776329\",\"url\":\"http://127.0.0.1:4179/account?component=recovery&fixture_return=recovered\"}]"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "limitations": [
+    "No real provider or account used",
+    "Synthetic signout POST returned local allowed redirect",
+    "No native or assistive-technology acceptance"
+  ],
+  "observedTime": "2026-11-17 18:14:14 UTC"
+}

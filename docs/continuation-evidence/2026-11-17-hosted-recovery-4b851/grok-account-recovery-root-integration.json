@@ -1,0 +1,16 @@
+{
+  "appliedAt": "2026-11-17T18:49:32.250619+00:00",
+  "patch": "grok-account-recovery-final.patch",
+  "sha256": "afe550dfb3f09f4bd81400ebc034a8c4b594a83dc168b692e094997e9e6a5e18",
+  "files": {
+    "hosted/app/components/OAuthFeedback.tsx": "57a9be7cc19eb2c4cfafc34e3266e511a5a6a824b99776c8302460f4f9aff464",
+    "hosted/app/components/ProviderConnections.tsx": "596d32d1ef51408040e3482204579adf74363653ef75541b35e49f3da9dc4b2a",
+    "hosted/app/components/SessionRecovery.tsx": "e5e5fe25fdd435bb2674f07ed36278281924e33906a3bc816fad22523546f917",
+    "hosted/app/components/SignInOptions.tsx": "b38862c6c3528aa57f49aee57236f639875cec950070cc67a7de1ed358ae31f7"
+  },
+  "regression": "hosted/tests/account-recovery-lifecycle.mjs",
+  "authorStrictLintLog": "grok-account-recovery-strict-eslint.log",
+  "authorTestLog": "grok-account-recovery-strict-candidate.log",
+  "rootFullGates": "pending",
+  "rootCandidateChrome": "blocked by originating-browser-context access error"
+}

@@ -1,0 +1,14 @@
+app/components/SessionRecovery.tsx
+Exit: 0
+
+app/components/OAuthFeedback.tsx
+Exit: 0
+
+app/components/ProviderConnections.tsx
+Exit: 0
+
+app/components/SignInOptions.tsx
+Exit: 0
+
+tests/account-recovery-lifecycle.mjs
+Exit: 0

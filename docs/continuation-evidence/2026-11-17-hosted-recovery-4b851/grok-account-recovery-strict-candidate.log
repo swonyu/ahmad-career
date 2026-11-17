@@ -1,0 +1,30 @@
+Node: v24.22.3
+Test SHA256: 8601594175e6829057c9b26cca301e6e0a96d9ae63cf6d9f9e2db0a16f170030
+Exit: 0
+{"sources":{"SessionRecovery":"e5e5fe25fdd435bb2674f07ed36278281924e33906a3bc816fad22523546f917","OAuthFeedback":"57a9be7cc19eb2c4cfafc34e3266e511a5a6a824b99776c8302460f4f9aff464"},"coverage":"Production handler/effect logic with synthetic promise and browser-navigation ports; no DOM, live authentication or assistive-technology result."}
+✔ actual recovery preserves expectedAccountId and the existing same-origin redirect allowlist (3.391375ms)
+✔ actual recovery aborts on unmount and ignores an already completed late success (0.929834ms)
+✔ actual recovery does not publish a late failure after unmount (0.634833ms)
+▶ actual account-generation replacement keeps the newer request intact after an old success or failure
+  ✔ success (0.513208ms)
+  ✔ failure (0.370292ms)
+✔ actual account-generation replacement keeps the newer request intact after an old success or failure (1.138ms)
+✔ actual cleanup/setup replay cannot revive the earlier request or clear the replacement operation (0.479084ms)
+✔ actual recovery does not send duplicate mutations before React commits its busy state (0.407208ms)
+✔ actual current failures remain visible and permit only an explicit retry (0.376458ms)
+✔ actual recovery rejects an untrusted redirect without navigation or automatic replay (0.382416ms)
+✔ actual OAuth cancellation is polite and does not render untrusted provider text (1.038041ms)
+▶ actual OAuth success language still requires service confirmation
+  ✔ verified (3.65825ms)
+  ✔ unconfirmed (0.983042ms)
+✔ actual OAuth success language still requires service confirmation (5.008208ms)
+✔ actual OAuth cleanup suppresses a late status result (0.661792ms)
+✔ actual keyed action and rendered button recover from A to B to A without clicking a disabled control (5.125292ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 21.917083

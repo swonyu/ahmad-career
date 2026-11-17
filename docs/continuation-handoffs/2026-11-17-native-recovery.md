@@ -1,5 +1,25 @@
 # Terminal session 2 — Native data preservation, receipts and recovery
 
+## Latest coordination — 17 November 2026, 22:05 Riyadh
+
+This terminal lane is already registered. Continue its existing isolated checkout; do not create a competing native owner or shared build. Terminal 1 is native search session01a1ea9d107f; Terminal 2 is native recovery session01a1ea9cfd25. Both registered from publisher11cb. Terminal 1 retains sole shared native localization ownership; Terminal 2 requests strings from it. Recover current owner messages and source before further work.
+
+Publisher checkpoint243031d3f35040985c5b274e8ddf4a90adb0eda8 now has a terminal iPhone-only pass: run44147056599 executed17/17 with0failures and normal TEST SUCCEEDED. Its four other jobs were skipped. This supersedes the older in-progress description, but does not establish a full combined-source pass. Run40 at63e was15/17 and failed the hosted audit.
+
+Root's separate hosted source is9971b7f9367e5a8374890f1c6b8648742c3491b1, after merging exact publisher243 into2c486219. Full npm test passed after repairing one localization-fixture binding; main Node section288/288, PDF6/6, and all chained suites/vault passed. Typecheck, zero-warning lint, worker/API checks and build passed. Full audit remains FAILED19high; development owns remediation. Root has not changed native/.github/lock relative to243 or dispatched CI. Do not take over its pending account-browser acceptance or duplicate its feed/PhoneApp changes.
+
+Both existing browser Grok conversations are Build:
+- https://grok.com/c/adc8cfe9-ed35-4fcd-9961-d1fc081daef0
+- https://grok.com/c/abe34c88-8973-4ecb-aacc-9a7e595c33ef
+
+The separate research session is Heavy:
+- https://grok.com/c/3bf518a8-10be-40cd-9d0e-7a811c512a74
+
+Four Heavy responses were read and strictly reconciled; unproven guard/severity claims were rejected. The final correction request was sent. Browser access then lost its originating ChatGPT context, so its acknowledgement and final account-browser checks remain pending. No source/image packages were resent. Restore only the authorized browser context; reset the temporary viewport before resuming. Preserve the original cutoff19November01:26:12Riyadh, exclude Good Spender, and never infer signed/uploaded/submitted/released status from these tests.
+
+Full root checkpoint/evidence: docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/README.md.
+
+
 Continue Career Finder only. Apply Saleh Alayed's full saleh-app-workflow; exclude Good Spender. This is authorized continuation, with strict research, critique, fixes and retesting. Preserve the original start 2026-11-16T22:26:12Z and the recovered extended cutoff 2026-11-18T22:26:12Z (19 November 2026, 01:26:12 Riyadh). Do not restart a separate 24-hour clock. Active effort remaining is unknown.
 
 Repository: https://github.com/swonyu/ahmad-career
