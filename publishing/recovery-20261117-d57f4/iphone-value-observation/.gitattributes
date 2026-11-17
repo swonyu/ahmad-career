@@ -1,0 +1,2 @@
+# Preserve the exact original XCTest excerpt.
+*.log -whitespace

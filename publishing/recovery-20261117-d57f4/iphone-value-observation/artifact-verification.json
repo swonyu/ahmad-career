@@ -1,0 +1,12 @@
+{
+  "observedAt": "2026-11-17T16:30:26.683056+00:00",
+  "runId": 44124734131,
+  "commit": "2fac36f321005d9a2703e6db92acd7d7c14886c5",
+  "artifactId": 14348190277,
+  "bytes": 79953340,
+  "sha256": "2880c05799c6ac4420075f48c57ddebfe7ed12c76a367d0300be9b2bd3859ff6",
+  "archive": "/workspace/scratch/d57f4cd77813/career/.git/ci-focused-2fac-44124734131/iphone.zip",
+  "extractedFiles": 14,
+  "pngCount": 0,
+  "scope": "Focused connection journey only; failed; four other workflow jobs skipped. Original ZIP retained with XCResult."
+}

@@ -1,0 +1,39 @@
+{
+  "at": "2026-11-17T16:40:04.235469+00:00",
+  "parent": "e620d249067a5ab4eeca99b5ee8ac77726b41773",
+  "branch": "recovery/iphone-value-observation-20261117-d57f4",
+  "sourceSHA256": {
+    "apple/UITests/CareerFinderUITests.swift": "74e747dbe6824a5c700fc458aa5fb1b08fe14edeb8c50b655573617038aa5aef"
+  },
+  "onlyReplaceHelperChanged": true,
+  "all17JourneyBodiesByteIdenticalTo2fac": true,
+  "testMethods": [
+    "testFreshStartAndFiveTabs",
+    "testApplicationDraftSurvivesCancelAndRelaunch",
+    "testLinkedInProfileDraftAndExternalSearchChoice",
+    "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+    "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+    "testProfileReadinessAndSimpleConnectionSetup",
+    "testOpportunityDraftKeepSaveAndRestore",
+    "testOpportunityDiscardRequiresExplicitChoice",
+    "testDiscoverySaveFlowsIntoSavedAndApply",
+    "testSearchEmptyAndFailurePreservesPreviousResults",
+    "testAccessibilityTextKeepsCoreControlsReachable",
+    "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+    "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+    "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+    "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+    "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+    "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark"
+  ],
+  "assertionCallKindsAndOrderRetained": true,
+  "assertions": 146,
+  "allTimeoutValuesAndOrderRetained": true,
+  "productAndWorkflowChanged": false,
+  "nativeBuildOrTestExecuted": false,
+  "swiftCompilerAvailableInCloud": false,
+  "scope": "Static source retention and original failure triage only; no typecheck or runtime acceptance claimed.",
+  "ownerWorkspaceModified": false,
+  "pushInvoked": false,
+  "ciInvoked": false
+}

@@ -1,0 +1,129 @@
+{
+  "at": "2026-11-17T16:40:04.227695+00:00",
+  "run": {
+    "id": 44124734131,
+    "url": "https://github.com/swonyu/ahmad-career/actions/runs/44124734131",
+    "commit": "2fac36f321005d9a2703e6db92acd7d7c14886c5",
+    "jobId": 134185319392,
+    "jobName": "PARTIAL iPhone connection regression",
+    "conclusion": "failure",
+    "testsExecuted": 1,
+    "testsPassed": 0,
+    "testsFailed": 1,
+    "otherJobsSkipped": 4
+  },
+  "device": {
+    "name": "iPhone Air",
+    "id": "C80D0661-53A9-4743-B864-FAEAFF9E08F6",
+    "os": "iOS26.5",
+    "xcode": "26.6"
+  },
+  "failedAssertion": {
+    "test": "testProfileReadinessAndSimpleConnectionSetup",
+    "source": "apple/UITests/CareerFinderUITests.swift:173",
+    "message": "Typing must update this field to the exact requested value",
+    "field": "application.email",
+    "expectedSyntheticValue": "invalid-email",
+    "clearRouteReached": false
+  },
+  "originalLog": {
+    "artifactFile": "career-iphone-ui.log",
+    "sha256": "a1819ab059813e2816acd48398325547bd2a94d7cc525ec7705297ce9f5cf10c",
+    "excerpt": "focused-2fac-failed-journey.log",
+    "sourceByteRange": [
+      135772,
+      142098
+    ],
+    "excerptSHA256": "d2dc51213128af191592872fa212523cbf0e00ace95ab10101234f539de56d8c"
+  },
+  "actualVideoObservations": [
+    {
+      "seconds": 38,
+      "observation": "First name Alex is present with caret; email placeholder is visible above the keyboard."
+    },
+    {
+      "seconds": 43,
+      "observation": "Email visibly contains the exact complete invalid-email with caret at its end; first name Alex remains; email field is clear of floating Done control."
+    },
+    {
+      "seconds": 52,
+      "observation": "Email still visibly contains exact invalid-email and caret; no edit overlay obscures the field."
+    }
+  ],
+  "originalPNGs": 0,
+  "derivedFrames": "Exact frames were extracted from the original test MP4, never represented as original screenshot attachments. Their source-video and frame hashes are in derived-frame-provenance.json. Images/video remain in the verified original artifact/private evidence folder, not embedded in this source receipt.",
+  "axSnapshots": [
+    {
+      "file": "0D771831-3280-4F82-904E-04E1F98DA643",
+      "bytes": 1211,
+      "sha256": "a298584818da054fc16177545b8713ca44a05aa3d97382dbae91f309047c599c",
+      "timestamp": 1794932728.206,
+      "rootChildCount": 0,
+      "classification": "Root-only UIApplication snapshot, including earlier successful interactions; not enough to infer hierarchy loss at failure."
+    },
+    {
+      "file": "FC798918-0BC4-44BD-94A0-6B4F65ECA6F6",
+      "bytes": 1211,
+      "sha256": "a298584818da054fc16177545b8713ca44a05aa3d97382dbae91f309047c599c",
+      "timestamp": 1794932724.995,
+      "rootChildCount": 0,
+      "classification": "Root-only UIApplication snapshot, including earlier successful interactions; not enough to infer hierarchy loss at failure."
+    },
+    {
+      "file": "3DB2AC9C-3F73-4CCE-BE5C-FA56BF7766FC",
+      "bytes": 1211,
+      "sha256": "a298584818da054fc16177545b8713ca44a05aa3d97382dbae91f309047c599c",
+      "timestamp": 1794932720.12,
+      "rootChildCount": 0,
+      "classification": "Root-only UIApplication snapshot, including earlier successful interactions; not enough to infer hierarchy loss at failure."
+    },
+    {
+      "file": "AE8DC58A-140C-42AB-9B8B-E599BF714CF3",
+      "bytes": 1211,
+      "sha256": "a298584818da054fc16177545b8713ca44a05aa3d97382dbae91f309047c599c",
+      "timestamp": 1794932708.276,
+      "rootChildCount": 0,
+      "classification": "Root-only UIApplication snapshot, including earlier successful interactions; not enough to infer hierarchy loss at failure."
+    },
+    {
+      "file": "FE3F8EB5-830C-4FE3-87F9-D899FC7C00DB",
+      "bytes": 1211,
+      "sha256": "a298584818da054fc16177545b8713ca44a05aa3d97382dbae91f309047c599c",
+      "timestamp": 1794932704.74,
+      "rootChildCount": 0,
+      "classification": "Root-only UIApplication snapshot, including earlier successful interactions; not enough to infer hierarchy loss at failure."
+    }
+  ],
+  "logTiming": {
+    "typeTextStarts": 41.38,
+    "syntheticInputEvent": 41.82,
+    "idleAfterType": 42.3,
+    "subsequentFieldQueries": [
+      42.33,
+      43.64,
+      46.99
+    ],
+    "queryRetries": 47.96,
+    "snapshotCollection": 47.97,
+    "assertionResult": "XCTWaiterResult2 timeout rather than1 completed"
+  },
+  "validatedSourceIssues": [
+    "The final nonsecure-value predicate reads both AX value and placeholder on every evaluation, even for nonempty expected text.",
+    "It maps a value equal to the placeholder to empty, preventing exact acceptance of legitimate nonempty text equal to that placeholder.",
+    "The clear/final predicates use an empty string fallback for a missing/non-string value, which could count an unreadable field as empty.",
+    "Final-value failure does not capture an explicit screenshot or the last value read, preventing a precise diagnosis from this failed run alone."
+  ],
+  "rootCauseLimit": "The video proves visible complete entry at the inspected frames. The original AX attachments do not record the field value. Expensive repeated query work contributing to the5-second predicate failure is a supported hypothesis, not a proven platform root cause.",
+  "newBehavior": "Cache stable placeholder and field type before input. Each whole-empty/final predicate performs one actual value read and fails on unavailable/non-string values. Nonempty expected text compares directly; empty accepts only empty or the cached placeholder. Capture last observation, screenshot and actual hierarchy on failure.",
+  "retainedBoundaries": [
+    "All existing5-second predicate deadlines",
+    "Real keyboard visibility and typing",
+    "Actual user-facing Clear action and whole-field-empty check before replacement",
+    "Real reachable Select All/Delete for other nonempty fields",
+    "Exact expected final value",
+    "All17 journey bodies and146 XCTest assertion calls/order",
+    "No input retry, state injection, test fixture substitution, product or workflow mutation"
+  ],
+  "nativeExecuted": false,
+  "pendingGate": "One exact-successor focused connection journey, then full exact-successor five-job gate including17 iPhone journeys and the changed Android expiry assertions."
+}

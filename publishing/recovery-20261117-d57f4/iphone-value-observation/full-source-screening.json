@@ -1,0 +1,297 @@
+{
+  "at": "2026-11-17T16:41:56.898587+00:00",
+  "screenedStagedTreeBeforeThisReceipt": "56c498d91ddfcfbaa8edd0763df19720d180bf39",
+  "trackedFilesBeforeThisReceipt": 1374,
+  "trackedBytesBeforeThisReceipt": 38917552,
+  "nestedMembers": 71,
+  "scannerSHA256": "6b3e8847c2587e729e23b78fc77c9087ed62bb4d6a1f53af89c0af4e1414ae62",
+  "categoryCounts": {
+    "reserved_domain_example": 176,
+    "contact_email_candidate": 13,
+    "credential_candidate": 13,
+    "local_provenance_path": 6045,
+    "asset_filename_email_false_positive": 21,
+    "contact_phone_candidate": 4
+  },
+  "credentialOrContactCandidates": 30,
+  "candidateDispositions": {
+    "614c56b64897a14451caf478549afa541c106dbe1ab20f6c6637f6d8d4c488a7": {
+      "content_sha256": "9176a5afe5b51b40d14076aa2974703c2a9e769688cad51bc86bddb9764dd3e9",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "email_address",
+      "line": 91,
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/DiscoveryRegressionTest.kt",
+      "reason": "Inspected explicit rejection-test URL containing generic user@host or password@host URL userinfo; regex sees a mailbox shape inside a hostile-URL fixture. This is not a contact address.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "919f512e748275f2b5686537965d404b81911f370c4deec5a4a6368900b5dc30": {
+      "content_sha256": "de8fc36a3769c5a493c304562741add84511ccd1f3790d2eb1452667aaecbb29",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "credential_url",
+      "line": 44,
+      "path": "android/checks/BoundaryPolicyCheck.java",
+      "reason": "Inspected negative URL-validation fixture: generic user/name and pass/password/secret strings are deliberately rejected by explicit throws/nil/blocked assertions. No live account or authentication token.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "b6220ab88264ac0b3544e45ccc0f8ca300ebb4327b991efdf7c8104905a1f403": {
+      "content_sha256": "de8fc36a3769c5a493c304562741add84511ccd1f3790d2eb1452667aaecbb29",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "email_address",
+      "line": 67,
+      "path": "android/checks/BoundaryPolicyCheck.java",
+      "reason": "Inspected explicit rejection-test URL containing generic user@host or password@host URL userinfo; regex sees a mailbox shape inside a hostile-URL fixture. This is not a contact address.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "ca9dd2cc6805ceda32ea9bdb29dc437d8feaa8fb7732b85fab67ffebbd9108c7": {
+      "content_sha256": "9fa19b0235affc8f30c654d824c3d67d119e27add6042536eec6854304e5de50",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "credential_url",
+      "line": 118,
+      "path": "apple/Checks/DiscoveryCheck.swift",
+      "reason": "Inspected negative URL-validation fixture: generic user/name and pass/password/secret strings are deliberately rejected by explicit throws/nil/blocked assertions. No live account or authentication token.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "bf457dd165cc768f297c1792dbf810ceb0abcc02d63c34f54d04ae1f24fb99f0": {
+      "content_sha256": "9fa19b0235affc8f30c654d824c3d67d119e27add6042536eec6854304e5de50",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "email_address",
+      "line": 118,
+      "path": "apple/Checks/DiscoveryCheck.swift",
+      "reason": "Inspected explicit rejection-test URL containing generic user@host or password@host URL userinfo; regex sees a mailbox shape inside a hostile-URL fixture. This is not a contact address.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "bc3916bf5e712c2493df72f45e2d5caae5abe3f74fe07aac512f0b9de21a1ffe": {
+      "content_sha256": "836af66e8cfb644d7fb8072c07b0b890c8c42ba835c96e53f66651aed3cfeb5a",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "credential_url",
+      "line": 21,
+      "path": "apple/Checks/HistoricalPublic13/main.swift",
+      "reason": "Inspected negative URL-validation fixture: generic user/name and pass/password/secret strings are deliberately rejected by explicit throws/nil/blocked assertions. No live account or authentication token.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "2d28c157bc3338cb3d5a71bb00782e8e129102a3c46ce3ba1cc246eb1b6d9837": {
+      "content_sha256": "c6d0a41a1e4581a9ce3c1cd4c2ac6ea19c2ff5aba358d7e8ab910bbeb9aa9d22",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "credential_url",
+      "line": 10,
+      "path": "apple/Checks/MobileApplicationCheck.swift",
+      "reason": "Inspected negative URL-validation fixture: generic user/name and pass/password/secret strings are deliberately rejected by explicit throws/nil/blocked assertions. No live account or authentication token.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "386fa170a7c502d95f6c435bf2ba3a28c2c18100d185b9daf21e785f93be3cd1": {
+      "content_sha256": "c6d0a41a1e4581a9ce3c1cd4c2ac6ea19c2ff5aba358d7e8ab910bbeb9aa9d22",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "credential_url",
+      "line": 30,
+      "path": "apple/Checks/MobileApplicationCheck.swift",
+      "reason": "Inspected negative URL-validation fixture: generic user/name and pass/password/secret strings are deliberately rejected by explicit throws/nil/blocked assertions. No live account or authentication token.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "d2d55e1b0ec48571150e5ca75fd07ff8b6c6b389ccc61a51f1805269ad8abb24": {
+      "content_sha256": "c6d0a41a1e4581a9ce3c1cd4c2ac6ea19c2ff5aba358d7e8ab910bbeb9aa9d22",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "email_address",
+      "line": 56,
+      "path": "apple/Checks/MobileApplicationCheck.swift",
+      "reason": "Inspected explicit rejection-test URL containing generic user@host or password@host URL userinfo; regex sees a mailbox shape inside a hostile-URL fixture. This is not a contact address.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "64ef13c256ec0a99a83eb92308c2d98ca9c5d978686f6086f819179e33ff782c": {
+      "content_sha256": "e1726e9f99bd88dbe67fbdc85959e1b3ee996c2472365094b4197fd2fce3b121",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "email_address",
+      "line": 144,
+      "path": "apple/Checks/NativeStoreCheck.swift",
+      "reason": "Inspected explicit rejection-test URL containing generic user@host or password@host URL userinfo; regex sees a mailbox shape inside a hostile-URL fixture. This is not a contact address.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "758787a9cde5164eb4e0ef308401db012ef597b34ae2c6bd74245ca63563e146": {
+      "content_sha256": "4d0e48e074f4b930e6dd81b3115ef5f3b5aa304f972f3eab523d2bf61945de64",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "credential_url",
+      "line": 21,
+      "path": "apple/Checks/main.swift",
+      "reason": "Inspected negative URL-validation fixture: generic user/name and pass/password/secret strings are deliberately rejected by explicit throws/nil/blocked assertions. No live account or authentication token.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "fb61421fd8c0b284c5a94f5f0a19bbe3810fc5f1e19dccd90ff62be8f5fdf3cb": {
+      "content_sha256": "a2bd2779f0d2d98e5a639236a6ad23479c91ee94c2d71e7ae935b6eafeb25245",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "email_address",
+      "line": 81,
+      "path": "docs/strict-review-evidence/ci-bc68-attempt-1.json",
+      "reason": "Historical public CI head_commit author/committer provenance. Value is a non-routable .local Git identity, not a real email contact, sign-in credential, review-contact field or private account dump. Already present byte-identically in the baseline tracked tree.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "70ccc16ef63ab719727e4ea4d906abf17493f089cbdea132d37dc453d564c36c": {
+      "content_sha256": "a2bd2779f0d2d98e5a639236a6ad23479c91ee94c2d71e7ae935b6eafeb25245",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "email_address",
+      "line": 85,
+      "path": "docs/strict-review-evidence/ci-bc68-attempt-1.json",
+      "reason": "Historical public CI head_commit author/committer provenance. Value is a non-routable .local Git identity, not a real email contact, sign-in credential, review-contact field or private account dump. Already present byte-identically in the baseline tracked tree.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "5d57dc59a28fc23c649ecd2596413853eb0e2d3a1f87e8bf686d715fde039789": {
+      "content_sha256": "3048396d376a3c9cae3dd2b3fb197219fe9c805e607dbe7442e4ea094e2b6998",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "credential_url",
+      "line": 72,
+      "path": "hosted/tests/hosted-discovery.mjs",
+      "reason": "Inspected negative URL-validation fixture: generic user/name and pass/password/secret strings are deliberately rejected by explicit throws/nil/blocked assertions. No live account or authentication token.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "f3653ec6b1f0688fc3e5c56ef773367fc22d8e622e9f09cf601e20d53ab3f6ab": {
+      "content_sha256": "3048396d376a3c9cae3dd2b3fb197219fe9c805e607dbe7442e4ea094e2b6998",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "email_address",
+      "line": 72,
+      "path": "hosted/tests/hosted-discovery.mjs",
+      "reason": "Inspected explicit rejection-test URL containing generic user@host or password@host URL userinfo; regex sees a mailbox shape inside a hostile-URL fixture. This is not a contact address.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "c83fa08fc92eb481e0735ff493fb36d4115d5efcff7fd6c7175d34c807d1ac04": {
+      "content_sha256": "8696add7c7a85e97f6a535fd86f304c1dd4182dc0deaedec2940704d32a2a087",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "email_address",
+      "line": 19,
+      "path": "hosted/tests/linkedin-profile.mjs",
+      "reason": "Inspected explicit rejection-test URL containing generic user@host or password@host URL userinfo; regex sees a mailbox shape inside a hostile-URL fixture. This is not a contact address.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "2229322613121d664f765724df1e0a300a7dc0d0dc3c5bb51e720371bade5fb3": {
+      "path": "hosted/tests/phone-localization.mjs",
+      "kind": "phone_literal",
+      "line": 188,
+      "content_sha256": "877fa8eaf10d723b57c05016f1cef36d4a9a824971f64932cccbe37051fe6f63",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "reason": "Re-inspected unchanged synthetic profile fixture with reserved-domain email and explicitly synthetic surrounding records; appended source-label tests change file digest but not this value or its context.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "83e2159bc70599133810b222fe493ee293281555c84a7654edc107aecbed8e52": {
+      "content_sha256": "e297fe90fa5a1b3ba110d63b771188a29c5543958db2e65ad62383f79b506af8",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "credential_url",
+      "line": 147,
+      "path": "hosted/tests/phone-model.mjs",
+      "reason": "Inspected negative URL-validation fixture: generic user/name and pass/password/secret strings are deliberately rejected by explicit throws/nil/blocked assertions. No live account or authentication token.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "680da883b73f2dcecb9f7f53d647be834082f406255824dd07f6a1f9193dc9e8": {
+      "content_sha256": "e297fe90fa5a1b3ba110d63b771188a29c5543958db2e65ad62383f79b506af8",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "email_address",
+      "line": 147,
+      "path": "hosted/tests/phone-model.mjs",
+      "reason": "Inspected explicit rejection-test URL containing generic user@host or password@host URL userinfo; regex sees a mailbox shape inside a hostile-URL fixture. This is not a contact address.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "1e8d97338edf9a47a8c2bed1366b1aeb5d34a506c094d0ae7ad458f8b8e03365": {
+      "content_sha256": "1b8aab1c8fd284ab16002cda514cd10bc16d71af017ef3e3b73a9eeb15688834",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "phone_literal",
+      "line": 22,
+      "path": "postman/collections/verified-applications/06000-save-synthetic-profile.request.yaml",
+      "reason": "Inspected synthetic applicant/profile fixture. Country code with all-zero national number accompanies Example/Fixture names and reserved-domain email. No live private applicant or support phone number.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "b144528387e2f3c01978543b9099f58b35dafe6bbfe5076a9b1b7bc04f3cbcc8": {
+      "content_sha256": "5cfa002d55f582c22e5c38ae5e434216f25ccd774170b8b79eec82a7a637470c",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "phone_literal",
+      "line": 22,
+      "path": "postman/collections/verified-applications/07000-reject-stale-profile-revision.request.yaml",
+      "reason": "Inspected synthetic applicant/profile fixture. Country code with all-zero national number accompanies Example/Fixture names and reserved-domain email. No live private applicant or support phone number.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "2217b8ea781fd90343fe28add744087b5e09062568259c20bcc877a35c6fa732": {
+      "content_sha256": "bbcdfc15dc8e2a798fa189b5143fdbd57d0c51e2f17df9e25518b411fbdf4623",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "quoted_credential_assignment",
+      "line": 4,
+      "path": "postman/fixtures/jobs.json",
+      "reason": "Inspected fixture-key-never-real literal in the deterministic career-fixture Postman test jobs file; no real API provider credential.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "a58b9571df2d65444062d9a5f85c5d6c34c289fd08045bab325c414cbe1d7584": {
+      "content_sha256": "f5b4b917cb7d524ee52f66fb9839f0f478d611536033277b2eda495c26eb32cf",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "credential_url",
+      "line": 225,
+      "path": "website/applications-check.mjs",
+      "reason": "Inspected negative URL-validation fixture: generic user/name and pass/password/secret strings are deliberately rejected by explicit throws/nil/blocked assertions. No live account or authentication token.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "eb7f7cb1b4c50cbf4b8d440898d1d4cecac7ba0cc21c5d20c6f2014ea96e4287": {
+      "content_sha256": "f5b4b917cb7d524ee52f66fb9839f0f478d611536033277b2eda495c26eb32cf",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "phone_literal",
+      "line": 14,
+      "path": "website/applications-check.mjs",
+      "reason": "Inspected synthetic applicant/profile fixture. Country code with all-zero national number accompanies Example/Fixture names and reserved-domain email. No live private applicant or support phone number.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "4e3616f416594b94ae1d0ad46b352612d8816ffb572611e39544a0f9a17bd4e0": {
+      "content_sha256": "c8073bc40c5d52aad90c21f78f934bd619d5615c862299af778d802cda5fd8b9",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "credential_url",
+      "line": 16,
+      "path": "website/check.mjs",
+      "reason": "Inspected negative URL-validation fixture: generic user/name and pass/password/secret strings are deliberately rejected by explicit throws/nil/blocked assertions. No live account or authentication token.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "43a35176a24193388f659f90bf4886750793bf745d5261e5d216a7997e7d95da": {
+      "content_sha256": "781e6e18c1481285672cacedb1e97ee5343cfd512d83e8cd0455ffd1ce83ff70",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "credential_url",
+      "line": 16,
+      "path": "website/historical/public1.3/check.mjs",
+      "reason": "Inspected negative URL-validation fixture: generic user/name and pass/password/secret strings are deliberately rejected by explicit throws/nil/blocked assertions. No live account or authentication token.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "e3e8112fa7e9569834a2dfe4d6384fe459f4419f6ad39a2dda27e1f196061cb7": {
+      "content_sha256": "dacefa1a4cf4f69d9824505ea1d11edcb709ed95171c4146fe18854793add25e",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "email_address",
+      "line": 41,
+      "path": "website/historical/public1.3/upgrade-check.mjs",
+      "reason": "Inspected explicit rejection-test URL containing generic user@host or password@host URL userinfo; regex sees a mailbox shape inside a hostile-URL fixture. This is not a contact address.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "da9363e109a11d43a91a90c816451510c4b20d8930c411abc5a3b9639a36744a": {
+      "content_sha256": "781e6e18c1481285672cacedb1e97ee5343cfd512d83e8cd0455ffd1ce83ff70",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "credential_url",
+      "line": 16,
+      "path": "website/merge-evidence/pre-resolution-owned-paths.zip::website/check.mjs",
+      "reason": "Inspected negative URL-validation fixture: generic user/name and pass/password/secret strings are deliberately rejected by explicit throws/nil/blocked assertions. No live account or authentication token.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "8f398ac4f0a5dd910498777374ad08d5e7c3a27d23d7fc8d147d7ee2ef159d92": {
+      "content_sha256": "dacefa1a4cf4f69d9824505ea1d11edcb709ed95171c4146fe18854793add25e",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "email_address",
+      "line": 41,
+      "path": "website/merge-evidence/pre-resolution-owned-paths.zip::website/upgrade-check.mjs",
+      "reason": "Inspected explicit rejection-test URL containing generic user@host or password@host URL userinfo; regex sees a mailbox shape inside a hostile-URL fixture. This is not a contact address.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    },
+    "e59a4d0f655ea3d160fd4f16d1fdb0585beecb17bbb5031c3abeac954243f177": {
+      "content_sha256": "dacefa1a4cf4f69d9824505ea1d11edcb709ed95171c4146fe18854793add25e",
+      "decision": "SAFE_CONTEXT_CONFIRMED",
+      "kind": "email_address",
+      "line": 41,
+      "path": "website/upgrade-check.mjs",
+      "reason": "Inspected explicit rejection-test URL containing generic user@host or password@host URL userinfo; regex sees a mailbox shape inside a hostile-URL fixture. This is not a contact address.",
+      "basis": "Exact finding identity and content hash match the reviewed2fac complete-source ledger; every tracked blob and71 embedded archive members were rescanned in the successor."
+    }
+  },
+  "unresolvedCandidates": [],
+  "scope": "Complete indexed source and all embedded ZIP/JAR members, including the Arabic correction, helper correction and run/peer/research evidence. This final metadata-only receipt is separately screened before commit.",
+  "limitations": [
+    "Signature and contextual screening do not guarantee discovery of every possible private value.",
+    "Original fixture contacts and reserved domains remain explicitly synthetic; no value is made real by a successful scan.",
+    "Failure video is referenced by exact original artifact/video hashes; neither it nor derived frames is represented as embedded in this source receipt.",
+    "Screening does not establish native or store acceptance."
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "reviewedBy": "Root coordinator",
+  "at": "2026-11-17T16:41:13.295707+00:00",
+  "sourceSHA256": "74e747dbe6824a5c700fc458aa5fb1b08fe14edeb8c50b655573617038aa5aef",
+  "decision": "ACCEPTED_FOR_SAFE_CHECKPOINT_AND_FOCUSED_NATIVE_RETEST",
+  "acceptedScope": "Cache-before-edit; strict single actual AX value per predicate; reject non-string values; unchanged5s deadlines, real Clear and typing; detailed failure-only diagnostics.",
+  "limits": [
+    "Initial previous-value derivation still normalizes value equal to placeholder as empty; this ambiguity is not claimed fully solved. Only the final nonempty expected-value comparison now preserves literal placeholder text.",
+    "No native compile or runtime acceptance is established. Root alone will push and dispatch after exact-head/process checks."
+  ]
+}

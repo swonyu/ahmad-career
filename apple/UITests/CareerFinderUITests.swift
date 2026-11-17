@@ -107,9 +107,15 @@ final class CareerFinderUITests: XCTestCase {
         if readiness != .completed { print(app.debugDescription) }
         XCTAssertEqual(readiness, .completed, "A real keyboard key must be visible before typing")
         guard readiness == .completed else { return }
-        let value = field.value as? String ?? ""
-        let previous = value == field.placeholderValue ? "" : value
-        if field.elementType == .secureTextField {
+        let placeholder = field.placeholderValue
+        let isSecure = field.elementType == .secureTextField
+        guard let value = field.value as? String else {
+            capture("replacement-value-unavailable", app: app)
+            print(app.debugDescription)
+            XCTFail("The actual field value must be readable before editing"); return
+        }
+        let previous = value == placeholder ? "" : value
+        if isSecure {
             field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: previous.count) + text)
         } else {
             if !previous.isEmpty {
@@ -143,13 +149,17 @@ final class CareerFinderUITests: XCTestCase {
                     selectAll.tap()
                     field.typeText(XCUIKeyboardKey.delete.rawValue)
                 }
+                var lastClearValue = "No value observation completed"
                 let cleared = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-                    let value = field.value as? String ?? ""
-                    return value.isEmpty || value == field.placeholderValue
+                    let observed = field.value
+                    lastClearValue = String(reflecting: observed)
+                    guard let value = observed as? String else { return false }
+                    return value.isEmpty || value == placeholder
                 }, object: nil)
                 let clearResult = XCTWaiter.wait(for: [cleared], timeout: 5)
                 if clearResult != .completed {
                     capture("replacement-did-not-clear-whole-field", app: app)
+                    print("Last actual field value after clearing: \(lastClearValue)")
                     print(app.debugDescription)
                 }
                 XCTAssertEqual(clearResult, .completed,
@@ -165,12 +175,24 @@ final class CareerFinderUITests: XCTestCase {
             }
             if !text.isEmpty { field.typeText(text) }
         }
-        if field.elementType != .secureTextField {
+        if !isSecure {
+            var lastEditedValue = "No value observation completed"
             let edited = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-                let value = field.value as? String ?? ""
-                return (value == field.placeholderValue ? "" : value) == text
+                // Each evaluation reads the real AX value once. Placeholder/type
+                // queries can consume this bounded wait after a keyboard change.
+                let observed = field.value
+                lastEditedValue = String(reflecting: observed)
+                guard let value = observed as? String else { return false }
+                // Entered text may legitimately equal the placeholder itself.
+                return text.isEmpty ? (value.isEmpty || value == placeholder) : value == text
             }, object: nil)
-            XCTAssertEqual(XCTWaiter.wait(for: [edited], timeout: 5), .completed,
+            let editResult = XCTWaiter.wait(for: [edited], timeout: 5)
+            if editResult != .completed {
+                capture("replacement-did-not-match-exact-value", app: app)
+                print("Expected exact field value: \(String(reflecting: text)); last observed: \(lastEditedValue)")
+                print(app.debugDescription)
+            }
+            XCTAssertEqual(editResult, .completed,
                            "Typing must update this field to the exact requested value")
         }
     }
