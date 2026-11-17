@@ -1,0 +1,35 @@
+{
+  "scope": "One unique existing upstream assertion appearing in two files; selected compatibility check, not complete upstream suite",
+  "officialArchiveSha256": "5f9d5c0f6d890b88bfa7844a1b7b3c9496ed07208f0e3e09f4946d2f76ca86f9",
+  "upstreamVersion": "4.0.7",
+  "references": [
+    {
+      "file": "test/extglobs.js",
+      "line": 529,
+      "sha256": "5b8906c1320a21ceb9c69ad2b1bb6caf7c1baaeb5e85c37a3a743cf3a75a0404"
+    },
+    {
+      "file": "test/options.maxExtglobRecursion.js",
+      "line": 34,
+      "sha256": "5f327500924b9c6563b1ddf3b48b17f65632ee14abdab9a49c29d80b77b1db2a"
+    }
+  ],
+  "results": [
+    {
+      "variant": "baseline",
+      "exit": 0,
+      "input": "abc",
+      "pattern": "+(*)c",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "variant": "guard",
+      "exit": 0,
+      "input": "abc",
+      "pattern": "+(*)c",
+      "expected": true,
+      "actual": false
+    }
+  ]
+}

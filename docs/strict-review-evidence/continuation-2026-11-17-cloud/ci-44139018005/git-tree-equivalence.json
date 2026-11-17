@@ -1,0 +1,14 @@
+{
+  "candidate_sha": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+  "ci_merge_checkout_sha": "e3e875cee10e379c34d833ae22827f0ae9aee570",
+  "common_tree": "74b02b205e7a256f589d9961b2f4a9c129b6935d",
+  "candidate_git_data_url": "https://api.github.com/repos/swonyu/ahmad-career/git/commits/63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+  "merge_git_data_url": "https://api.github.com/repos/swonyu/ahmad-career/git/commits/e3e875cee10e379c34d833ae22827f0ae9aee570",
+  "merge_parents": [
+    "949ce0ad327beab79fa7033423b462ebc7bd98be",
+    "63eecda5c5c57805aeae1f5ba8e22af65e38ceee"
+  ],
+  "changed_files": [],
+  "checkout_log": "service-job.log",
+  "scope": "Temporary pull-request CI merge; not a merged PR, deployment or release."
+}

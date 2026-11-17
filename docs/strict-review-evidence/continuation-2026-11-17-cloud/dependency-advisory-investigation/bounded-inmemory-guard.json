@@ -1,0 +1,699 @@
+{
+  "recordedAt": "2026-11-17T17:50:31.960973+00:00",
+  "scope": "Isolated bounded child-process evaluation; in-memory parser change only, no installed/app file writes",
+  "perCaseTimeoutMs": 1000,
+  "guard": "const hasTopLevelUnboundedStar = branch => {\n  let escaped = false, bracket = 0, paren = 0;\n  for (let i = 0; i < branch.length; i++) {\n    const ch = branch[i];\n    if (escaped) { escaped = false; continue; }\n    if (ch === '\\\\') { escaped = true; continue; }\n    if (ch === '[') { bracket++; continue; }\n    if (ch === ']' && bracket > 0) { bracket--; continue; }\n    if (bracket > 0) continue;\n    if (ch === '(') { paren++; continue; }\n    if (ch === ')' && paren > 0) { paren--; continue; }\n    if (paren === 0 && ch === '*' && branch[i + 1] !== '(') return true;\n  }\n  return false;\n};\n",
+  "guardPlacement": "After branch splitting in analyzeRepeatedExtglob; existing explicit maxExtglobRecursion=false opt-out remains",
+  "cases": [
+    {
+      "id": "single_star_reject",
+      "pattern": "+(*)",
+      "input": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/"
+    },
+    {
+      "id": "single_star_suffix_reject",
+      "pattern": "+(*a)",
+      "input": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!"
+    },
+    {
+      "id": "mixed_star_question_reject",
+      "pattern": "+(*?a)",
+      "input": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!"
+    },
+    {
+      "id": "fixed_literal_repetition",
+      "pattern": "+(abc)",
+      "input": "abcabcabcabcabcabcabcabc"
+    },
+    {
+      "id": "escaped_star_literal",
+      "pattern": "+(\\*a)",
+      "input": "*a*a"
+    },
+    {
+      "id": "class_star_literal",
+      "pattern": "+([*]a)",
+      "input": "*a*a"
+    },
+    {
+      "id": "nested_safe_star",
+      "pattern": "+(*(a))",
+      "input": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "id": "literalized_unsafe_control",
+      "pattern": "+(*a)",
+      "input": "+(*a)"
+    },
+    {
+      "id": "semantic_positive_unbounded",
+      "pattern": "+(*a)",
+      "input": "ba"
+    },
+    {
+      "id": "no_extglob_control",
+      "pattern": "+(*a)",
+      "input": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!",
+      "options": {
+        "noextglob": true
+      }
+    },
+    {
+      "id": "max_zero_is_not_fix",
+      "pattern": "+(*a)",
+      "input": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!",
+      "options": {
+        "maxExtglobRecursion": 0
+      }
+    }
+  ],
+  "results": [
+    {
+      "version": "2.3.2",
+      "variant": "baseline",
+      "case": "single_star_reject",
+      "timeoutMs": 1000
+    },
+    {
+      "version": "2.3.2",
+      "variant": "baseline",
+      "case": "single_star_suffix_reject",
+      "timeoutMs": 1000
+    },
+    {
+      "version": "2.3.2",
+      "variant": "baseline",
+      "case": "mixed_star_question_reject",
+      "timeoutMs": 1000
+    },
+    {
+      "version": "2.3.2",
+      "variant": "baseline",
+      "case": "fixed_literal_repetition",
+      "exit": 0,
+      "wallMs": 104.567,
+      "result": true,
+      "elapsedMs": 2.6506180000000086,
+      "regex": "/^(?:(?=.)(?:abc)+)$/"
+    },
+    {
+      "version": "2.3.2",
+      "variant": "baseline",
+      "case": "escaped_star_literal",
+      "exit": 0,
+      "wallMs": 95.319,
+      "result": true,
+      "elapsedMs": 2.9533990000000045,
+      "regex": "/^(?:(?=.)(?:\\*a)+)$/"
+    },
+    {
+      "version": "2.3.2",
+      "variant": "baseline",
+      "case": "class_star_literal",
+      "exit": 0,
+      "wallMs": 152.194,
+      "result": true,
+      "elapsedMs": 4.259190000000018,
+      "regex": "/^(?:(?=.)(?:[*]a)+)$/"
+    },
+    {
+      "version": "2.3.2",
+      "variant": "baseline",
+      "case": "nested_safe_star",
+      "exit": 0,
+      "wallMs": 100.108,
+      "result": true,
+      "elapsedMs": 4.000144000000006,
+      "regex": "/^(?:(?=.)a*)$/"
+    },
+    {
+      "version": "2.3.2",
+      "variant": "baseline",
+      "case": "literalized_unsafe_control",
+      "exit": 0,
+      "wallMs": 93.611,
+      "result": true,
+      "elapsedMs": 2.6971559999999926,
+      "regex": "/^(?:(?=.)(?:[^/]*?a)+)$/"
+    },
+    {
+      "version": "2.3.2",
+      "variant": "baseline",
+      "case": "semantic_positive_unbounded",
+      "exit": 0,
+      "wallMs": 113.94,
+      "result": true,
+      "elapsedMs": 2.572794000000002,
+      "regex": "/^(?:(?=.)(?:[^/]*?a)+)$/"
+    },
+    {
+      "version": "2.3.2",
+      "variant": "baseline",
+      "case": "no_extglob_control",
+      "exit": 0,
+      "wallMs": 110.47,
+      "result": false,
+      "elapsedMs": 2.2020650000000046,
+      "regex": "/^(?:\\+([^/]*?a))$/"
+    },
+    {
+      "version": "2.3.2",
+      "variant": "baseline",
+      "case": "max_zero_is_not_fix",
+      "timeoutMs": 1000
+    },
+    {
+      "version": "2.3.2",
+      "variant": "guard",
+      "case": "single_star_reject",
+      "exit": 0,
+      "wallMs": 109.37,
+      "result": false,
+      "elapsedMs": 2.408910000000006,
+      "regex": "/^(?:\\+\\(\\*\\))$/"
+    },
+    {
+      "version": "2.3.2",
+      "variant": "guard",
+      "case": "single_star_suffix_reject",
+      "exit": 0,
+      "wallMs": 96.743,
+      "result": false,
+      "elapsedMs": 2.903821999999991,
+      "regex": "/^(?:\\+\\(\\*a\\))$/"
+    },
+    {
+      "version": "2.3.2",
+      "variant": "guard",
+      "case": "mixed_star_question_reject",
+      "exit": 0,
+      "wallMs": 116.914,
+      "result": false,
+      "elapsedMs": 3.4291370000000114,
+      "regex": "/^(?:\\+\\(\\*\\?a\\))$/"
+    },
+    {
+      "version": "2.3.2",
+      "variant": "guard",
+      "case": "fixed_literal_repetition",
+      "exit": 0,
+      "wallMs": 104.491,
+      "result": true,
+      "elapsedMs": 3.935704000000001,
+      "regex": "/^(?:(?=.)(?:abc)+)$/"
+    },
+    {
+      "version": "2.3.2",
+      "variant": "guard",
+      "case": "escaped_star_literal",
+      "exit": 0,
+      "wallMs": 93.796,
+      "result": true,
+      "elapsedMs": 2.357428999999996,
+      "regex": "/^(?:(?=.)(?:\\*a)+)$/"
+    },
+    {
+      "version": "2.3.2",
+      "variant": "guard",
+      "case": "class_star_literal",
+      "exit": 0,
+      "wallMs": 138.526,
+      "result": true,
+      "elapsedMs": 6.719946000000007,
+      "regex": "/^(?:(?=.)(?:[*]a)+)$/"
+    },
+    {
+      "version": "2.3.2",
+      "variant": "guard",
+      "case": "nested_safe_star",
+      "exit": 0,
+      "wallMs": 109.826,
+      "result": true,
+      "elapsedMs": 4.218292000000005,
+      "regex": "/^(?:(?=.)a*)$/"
+    },
+    {
+      "version": "2.3.2",
+      "variant": "guard",
+      "case": "literalized_unsafe_control",
+      "exit": 0,
+      "wallMs": 133.652,
+      "result": true,
+      "elapsedMs": 2.6017989999999998,
+      "regex": "/^(?:\\+\\(\\*a\\))$/"
+    },
+    {
+      "version": "2.3.2",
+      "variant": "guard",
+      "case": "semantic_positive_unbounded",
+      "exit": 0,
+      "wallMs": 104.385,
+      "result": false,
+      "elapsedMs": 2.608602999999988,
+      "regex": "/^(?:\\+\\(\\*a\\))$/"
+    },
+    {
+      "version": "2.3.2",
+      "variant": "guard",
+      "case": "no_extglob_control",
+      "exit": 0,
+      "wallMs": 96.72,
+      "result": false,
+      "elapsedMs": 3.4677870000000013,
+      "regex": "/^(?:\\+([^/]*?a))$/"
+    },
+    {
+      "version": "2.3.2",
+      "variant": "guard",
+      "case": "max_zero_is_not_fix",
+      "exit": 0,
+      "wallMs": 125.481,
+      "result": false,
+      "elapsedMs": 2.7215360000000004,
+      "regex": "/^(?:\\+\\(\\*a\\))$/"
+    },
+    {
+      "version": "4.0.4",
+      "variant": "baseline",
+      "case": "single_star_reject",
+      "timeoutMs": 1000
+    },
+    {
+      "version": "4.0.4",
+      "variant": "baseline",
+      "case": "single_star_suffix_reject",
+      "timeoutMs": 1000
+    },
+    {
+      "version": "4.0.4",
+      "variant": "baseline",
+      "case": "mixed_star_question_reject",
+      "timeoutMs": 1000
+    },
+    {
+      "version": "4.0.4",
+      "variant": "baseline",
+      "case": "fixed_literal_repetition",
+      "exit": 0,
+      "wallMs": 103.997,
+      "result": true,
+      "elapsedMs": 1.972020999999998,
+      "regex": "/^(?:(?=.)(?:abc)+)$/"
+    },
+    {
+      "version": "4.0.4",
+      "variant": "baseline",
+      "case": "escaped_star_literal",
+      "exit": 0,
+      "wallMs": 132.478,
+      "result": true,
+      "elapsedMs": 2.6984659999999963,
+      "regex": "/^(?:(?=.)(?:\\*a)+)$/"
+    },
+    {
+      "version": "4.0.4",
+      "variant": "baseline",
+      "case": "class_star_literal",
+      "exit": 0,
+      "wallMs": 106.995,
+      "result": true,
+      "elapsedMs": 2.7746170000000063,
+      "regex": "/^(?:(?=.)(?:[*]a)+)$/"
+    },
+    {
+      "version": "4.0.4",
+      "variant": "baseline",
+      "case": "nested_safe_star",
+      "exit": 0,
+      "wallMs": 137.073,
+      "result": true,
+      "elapsedMs": 3.325013999999996,
+      "regex": "/^(?:(?=.)a*)$/"
+    },
+    {
+      "version": "4.0.4",
+      "variant": "baseline",
+      "case": "literalized_unsafe_control",
+      "exit": 0,
+      "wallMs": 101.224,
+      "result": true,
+      "elapsedMs": 2.645899,
+      "regex": "/^(?:(?=.)(?:[^/]*?a)+)$/"
+    },
+    {
+      "version": "4.0.4",
+      "variant": "baseline",
+      "case": "semantic_positive_unbounded",
+      "exit": 0,
+      "wallMs": 102.65,
+      "result": true,
+      "elapsedMs": 2.9993399999999895,
+      "regex": "/^(?:(?=.)(?:[^/]*?a)+)$/"
+    },
+    {
+      "version": "4.0.4",
+      "variant": "baseline",
+      "case": "no_extglob_control",
+      "exit": 0,
+      "wallMs": 138.228,
+      "result": false,
+      "elapsedMs": 1.9670729999999992,
+      "regex": "/^(?:\\+([^/]*?a))$/"
+    },
+    {
+      "version": "4.0.4",
+      "variant": "baseline",
+      "case": "max_zero_is_not_fix",
+      "timeoutMs": 1000
+    },
+    {
+      "version": "4.0.4",
+      "variant": "guard",
+      "case": "single_star_reject",
+      "exit": 0,
+      "wallMs": 119.868,
+      "result": false,
+      "elapsedMs": 2.870929000000004,
+      "regex": "/^(?:\\+\\(\\*\\))$/"
+    },
+    {
+      "version": "4.0.4",
+      "variant": "guard",
+      "case": "single_star_suffix_reject",
+      "exit": 0,
+      "wallMs": 130.803,
+      "result": false,
+      "elapsedMs": 5.192835000000002,
+      "regex": "/^(?:\\+\\(\\*a\\))$/"
+    },
+    {
+      "version": "4.0.4",
+      "variant": "guard",
+      "case": "mixed_star_question_reject",
+      "exit": 0,
+      "wallMs": 114.161,
+      "result": false,
+      "elapsedMs": 3.1869899999999944,
+      "regex": "/^(?:\\+\\(\\*\\?a\\))$/"
+    },
+    {
+      "version": "4.0.4",
+      "variant": "guard",
+      "case": "fixed_literal_repetition",
+      "exit": 0,
+      "wallMs": 84.199,
+      "result": true,
+      "elapsedMs": 2.292490000000001,
+      "regex": "/^(?:(?=.)(?:abc)+)$/"
+    },
+    {
+      "version": "4.0.4",
+      "variant": "guard",
+      "case": "escaped_star_literal",
+      "exit": 0,
+      "wallMs": 118.048,
+      "result": true,
+      "elapsedMs": 2.8595030000000037,
+      "regex": "/^(?:(?=.)(?:\\*a)+)$/"
+    },
+    {
+      "version": "4.0.4",
+      "variant": "guard",
+      "case": "class_star_literal",
+      "exit": 0,
+      "wallMs": 96.509,
+      "result": true,
+      "elapsedMs": 2.4984270000000066,
+      "regex": "/^(?:(?=.)(?:[*]a)+)$/"
+    },
+    {
+      "version": "4.0.4",
+      "variant": "guard",
+      "case": "nested_safe_star",
+      "exit": 0,
+      "wallMs": 96.528,
+      "result": true,
+      "elapsedMs": 2.853663999999995,
+      "regex": "/^(?:(?=.)a*)$/"
+    },
+    {
+      "version": "4.0.4",
+      "variant": "guard",
+      "case": "literalized_unsafe_control",
+      "exit": 0,
+      "wallMs": 102.459,
+      "result": true,
+      "elapsedMs": 7.422529999999995,
+      "regex": "/^(?:\\+\\(\\*a\\))$/"
+    },
+    {
+      "version": "4.0.4",
+      "variant": "guard",
+      "case": "semantic_positive_unbounded",
+      "exit": 0,
+      "wallMs": 99.062,
+      "result": false,
+      "elapsedMs": 2.300314,
+      "regex": "/^(?:\\+\\(\\*a\\))$/"
+    },
+    {
+      "version": "4.0.4",
+      "variant": "guard",
+      "case": "no_extglob_control",
+      "exit": 0,
+      "wallMs": 113.652,
+      "result": false,
+      "elapsedMs": 2.595663000000002,
+      "regex": "/^(?:\\+([^/]*?a))$/"
+    },
+    {
+      "version": "4.0.4",
+      "variant": "guard",
+      "case": "max_zero_is_not_fix",
+      "exit": 0,
+      "wallMs": 97.358,
+      "result": false,
+      "elapsedMs": 2.748506000000006,
+      "regex": "/^(?:\\+\\(\\*a\\))$/"
+    },
+    {
+      "version": "4.0.7",
+      "variant": "baseline",
+      "case": "single_star_reject",
+      "timeoutMs": 1000
+    },
+    {
+      "version": "4.0.7",
+      "variant": "baseline",
+      "case": "single_star_suffix_reject",
+      "timeoutMs": 1000
+    },
+    {
+      "version": "4.0.7",
+      "variant": "baseline",
+      "case": "mixed_star_question_reject",
+      "timeoutMs": 1000
+    },
+    {
+      "version": "4.0.7",
+      "variant": "baseline",
+      "case": "fixed_literal_repetition",
+      "exit": 0,
+      "wallMs": 92.797,
+      "result": true,
+      "elapsedMs": 2.164947000000012,
+      "regex": "/^(?:(?=.)(?:abc)+)$/"
+    },
+    {
+      "version": "4.0.7",
+      "variant": "baseline",
+      "case": "escaped_star_literal",
+      "exit": 0,
+      "wallMs": 101.771,
+      "result": true,
+      "elapsedMs": 2.347539999999995,
+      "regex": "/^(?:(?=.)(?:\\*a)+)$/"
+    },
+    {
+      "version": "4.0.7",
+      "variant": "baseline",
+      "case": "class_star_literal",
+      "exit": 0,
+      "wallMs": 123.339,
+      "result": true,
+      "elapsedMs": 2.5646919999999938,
+      "regex": "/^(?:(?=.)(?:[*]a)+)$/"
+    },
+    {
+      "version": "4.0.7",
+      "variant": "baseline",
+      "case": "nested_safe_star",
+      "exit": 0,
+      "wallMs": 85.449,
+      "result": true,
+      "elapsedMs": 2.5941179999999946,
+      "regex": "/^(?:(?=.)a*)$/"
+    },
+    {
+      "version": "4.0.7",
+      "variant": "baseline",
+      "case": "literalized_unsafe_control",
+      "exit": 0,
+      "wallMs": 114.377,
+      "result": true,
+      "elapsedMs": 3.319611000000009,
+      "regex": "/^(?:(?=.)(?:[^/]*?a)+)$/"
+    },
+    {
+      "version": "4.0.7",
+      "variant": "baseline",
+      "case": "semantic_positive_unbounded",
+      "exit": 0,
+      "wallMs": 90.843,
+      "result": true,
+      "elapsedMs": 2.567142000000004,
+      "regex": "/^(?:(?=.)(?:[^/]*?a)+)$/"
+    },
+    {
+      "version": "4.0.7",
+      "variant": "baseline",
+      "case": "no_extglob_control",
+      "exit": 0,
+      "wallMs": 90.312,
+      "result": false,
+      "elapsedMs": 2.1219329999999985,
+      "regex": "/^(?:\\+([^/]*?a))$/"
+    },
+    {
+      "version": "4.0.7",
+      "variant": "baseline",
+      "case": "max_zero_is_not_fix",
+      "timeoutMs": 1000
+    },
+    {
+      "version": "4.0.7",
+      "variant": "guard",
+      "case": "single_star_reject",
+      "exit": 0,
+      "wallMs": 129.928,
+      "result": false,
+      "elapsedMs": 3.867401000000001,
+      "regex": "/^(?:\\+\\(\\*\\))$/"
+    },
+    {
+      "version": "4.0.7",
+      "variant": "guard",
+      "case": "single_star_suffix_reject",
+      "exit": 0,
+      "wallMs": 105.373,
+      "result": false,
+      "elapsedMs": 2.537703999999991,
+      "regex": "/^(?:\\+\\(\\*a\\))$/"
+    },
+    {
+      "version": "4.0.7",
+      "variant": "guard",
+      "case": "mixed_star_question_reject",
+      "exit": 0,
+      "wallMs": 124.036,
+      "result": false,
+      "elapsedMs": 3.700359999999989,
+      "regex": "/^(?:\\+\\(\\*\\?a\\))$/"
+    },
+    {
+      "version": "4.0.7",
+      "variant": "guard",
+      "case": "fixed_literal_repetition",
+      "exit": 0,
+      "wallMs": 121.467,
+      "result": true,
+      "elapsedMs": 5.669567999999998,
+      "regex": "/^(?:(?=.)(?:abc)+)$/"
+    },
+    {
+      "version": "4.0.7",
+      "variant": "guard",
+      "case": "escaped_star_literal",
+      "exit": 0,
+      "wallMs": 105.855,
+      "result": true,
+      "elapsedMs": 2.7360709999999955,
+      "regex": "/^(?:(?=.)(?:\\*a)+)$/"
+    },
+    {
+      "version": "4.0.7",
+      "variant": "guard",
+      "case": "class_star_literal",
+      "exit": 0,
+      "wallMs": 160.52,
+      "result": true,
+      "elapsedMs": 3.672664999999995,
+      "regex": "/^(?:(?=.)(?:[*]a)+)$/"
+    },
+    {
+      "version": "4.0.7",
+      "variant": "guard",
+      "case": "nested_safe_star",
+      "exit": 0,
+      "wallMs": 110.551,
+      "result": true,
+      "elapsedMs": 3.994589000000005,
+      "regex": "/^(?:(?=.)a*)$/"
+    },
+    {
+      "version": "4.0.7",
+      "variant": "guard",
+      "case": "literalized_unsafe_control",
+      "exit": 0,
+      "wallMs": 106.914,
+      "result": true,
+      "elapsedMs": 3.8618749999999977,
+      "regex": "/^(?:\\+\\(\\*a\\))$/"
+    },
+    {
+      "version": "4.0.7",
+      "variant": "guard",
+      "case": "semantic_positive_unbounded",
+      "exit": 0,
+      "wallMs": 91.481,
+      "result": false,
+      "elapsedMs": 2.6918579999999963,
+      "regex": "/^(?:\\+\\(\\*a\\))$/"
+    },
+    {
+      "version": "4.0.7",
+      "variant": "guard",
+      "case": "no_extglob_control",
+      "exit": 0,
+      "wallMs": 136.246,
+      "result": false,
+      "elapsedMs": 2.604483000000002,
+      "regex": "/^(?:\\+([^/]*?a))$/"
+    },
+    {
+      "version": "4.0.7",
+      "variant": "guard",
+      "case": "max_zero_is_not_fix",
+      "exit": 0,
+      "wallMs": 88.665,
+      "result": false,
+      "elapsedMs": 2.5688690000000065,
+      "regex": "/^(?:\\+\\(\\*a\\))$/"
+    }
+  ],
+  "parserHashes": {
+    "/workspace/scratch/5bc6158967e8/career-finder/hosted/node_modules/picomatch/lib/parse.js": {
+      "before": "3a91656f440069aa8f8e15c9d695b9f6b2209df1eab2be8127c72cbcca45ff5f",
+      "after": "3a91656f440069aa8f8e15c9d695b9f6b2209df1eab2be8127c72cbcca45ff5f"
+    },
+    "/workspace/scratch/5bc6158967e8/career-finder/hosted/node_modules/tinyglobby/node_modules/picomatch/lib/parse.js": {
+      "before": "ce57c04e04994b83e2ca566170fa192e6fe19d710bea6da00ce2f76d01c0dea4",
+      "after": "ce57c04e04994b83e2ca566170fa192e6fe19d710bea6da00ce2f76d01c0dea4"
+    },
+    "/workspace/scratch/5bc6158967e8/career-finder/hosted/node_modules/vite/node_modules/picomatch/lib/parse.js": {
+      "before": "4e1e05447668aa1e94366c5516a2bcd8f5fff800cc92b1d0cd7d77703b8618c4",
+      "after": "4e1e05447668aa1e94366c5516a2bcd8f5fff800cc92b1d0cd7d77703b8618c4"
+    }
+  },
+  "warning": "Candidate literalizes previously accepted unbounded-star extglobs. This is not a compatibility-approved or npm-audit-clearing repair."
+}

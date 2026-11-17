@@ -1,0 +1,97 @@
+{
+  "scope": "Frames decoded from existing failed-test recordings, not a new app run or original XCTest PNG capture. Seek positions, source hashes and commands are preserved.",
+  "frames": [
+    {
+      "video": "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/career-ui-screenshots/BDEECE23-863D-4E90-93A5-ADFFCF77D8F8.mp4",
+      "video_sha256": "3e7704b9a1b952607249bb565f1b0396e80f92527bacc21a5a6fc2ebd0ac39a0",
+      "seek_seconds": 87.5,
+      "frame": "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/diagnostic-frames/keyboard-readiness-87.5s.png",
+      "bytes": 391602,
+      "sha256": "0e3f62a15fb7269e51c8203177c11d2a7dda3b01385bc16fdca8c44cc6c27625",
+      "command": [
+        "ffmpeg",
+        "-v",
+        "error",
+        "-ss",
+        "87.5",
+        "-i",
+        "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/career-ui-screenshots/BDEECE23-863D-4E90-93A5-ADFFCF77D8F8.mp4",
+        "-frames:v",
+        "1",
+        "-update",
+        "1",
+        "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/diagnostic-frames/keyboard-readiness-87.5s.png"
+      ],
+      "retained_file": "iphone-keyboard-readiness-87.5s.png"
+    },
+    {
+      "video": "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/career-ui-screenshots/D7B51337-9CED-488F-8CD4-1A2C6AA51711.mp4",
+      "video_sha256": "acc446f539142fa6d809a5fa5c1d79d57cb411779699db6daae6938cca4571ca",
+      "seek_seconds": 100.5,
+      "frame": "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/diagnostic-frames/settings-unreachable-100.5s.png",
+      "bytes": 423091,
+      "sha256": "afe24dd254d9c0f1f6942ce3a58fa7106e526d6602df0f3addeebdf9df496b94",
+      "command": [
+        "ffmpeg",
+        "-v",
+        "error",
+        "-ss",
+        "100.5",
+        "-i",
+        "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/career-ui-screenshots/D7B51337-9CED-488F-8CD4-1A2C6AA51711.mp4",
+        "-frames:v",
+        "1",
+        "-update",
+        "1",
+        "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/diagnostic-frames/settings-unreachable-100.5s.png"
+      ],
+      "retained_file": "iphone-settings-unreachable-100.5s.png"
+    },
+    {
+      "video": "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/career-ui-screenshots/BDEECE23-863D-4E90-93A5-ADFFCF77D8F8.mp4",
+      "video_sha256": "3e7704b9a1b952607249bb565f1b0396e80f92527bacc21a5a6fc2ebd0ac39a0",
+      "seek_seconds": 80.0,
+      "frame": "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/diagnostic-frames/keyboard-readiness-80.0s.png",
+      "bytes": 345477,
+      "sha256": "8e461587064961b6e12faf6d3c5b155c5fa625d5fbe15859719b0630563d5b59",
+      "command": [
+        "ffmpeg",
+        "-v",
+        "error",
+        "-ss",
+        "80.0",
+        "-i",
+        "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/career-ui-screenshots/BDEECE23-863D-4E90-93A5-ADFFCF77D8F8.mp4",
+        "-frames:v",
+        "1",
+        "-update",
+        "1",
+        "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/diagnostic-frames/keyboard-readiness-80.0s.png"
+      ],
+      "retained_file": "iphone-keyboard-readiness-80.0s.png"
+    },
+    {
+      "video": "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/career-ui-screenshots/D7B51337-9CED-488F-8CD4-1A2C6AA51711.mp4",
+      "video_sha256": "acc446f539142fa6d809a5fa5c1d79d57cb411779699db6daae6938cca4571ca",
+      "seek_seconds": 98.5,
+      "frame": "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/diagnostic-frames/settings-unreachable-98.5s.png",
+      "bytes": 319066,
+      "sha256": "9373d3da5d6adc08392e7597c3b921c0dc54b82b13d2897f0c33784f7a097798",
+      "command": [
+        "ffmpeg",
+        "-v",
+        "error",
+        "-ss",
+        "98.5",
+        "-i",
+        "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/career-ui-screenshots/D7B51337-9CED-488F-8CD4-1A2C6AA51711.mp4",
+        "-frames:v",
+        "1",
+        "-update",
+        "1",
+        "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/diagnostic-frames/settings-unreachable-98.5s.png"
+      ],
+      "retained_file": "iphone-settings-unreachable-98.5s.png"
+    }
+  ]
+}

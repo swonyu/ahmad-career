@@ -1,0 +1,170 @@
+{
+  "kind": "ad-hoc actual render review; no test registration",
+  "cases": 10,
+  "passed": 8,
+  "failed": 2,
+  "results": [
+    {
+      "language": "en",
+      "count": 0,
+      "expectedNumber": "0",
+      "expectedLabel": "Saved jobs",
+      "ariaLabel": null,
+      "actualNumber": "0",
+      "actualLabel": "Saved jobs",
+      "contentText": "0Saved jobs",
+      "renderedMarkup": "<button><span><strong>0</strong>Saved jobs</span></button>",
+      "navigations": [
+        "saved",
+        "profile"
+      ],
+      "passed": true
+    },
+    {
+      "language": "en",
+      "count": 1,
+      "expectedNumber": "1",
+      "expectedLabel": "Saved job",
+      "ariaLabel": null,
+      "actualNumber": "1",
+      "actualLabel": "Saved jobs",
+      "contentText": "1Saved jobs",
+      "renderedMarkup": "<button><span><strong>1</strong>Saved jobs</span></button>",
+      "navigations": [
+        "saved",
+        "profile"
+      ],
+      "passed": false,
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'Saved jobs'\n- 'Saved job'\n            ^\n"
+    },
+    {
+      "language": "en",
+      "count": 2,
+      "expectedNumber": "2",
+      "expectedLabel": "Saved jobs",
+      "ariaLabel": null,
+      "actualNumber": "2",
+      "actualLabel": "Saved jobs",
+      "contentText": "2Saved jobs",
+      "renderedMarkup": "<button><span><strong>2</strong>Saved jobs</span></button>",
+      "navigations": [
+        "saved",
+        "profile"
+      ],
+      "passed": true
+    },
+    {
+      "language": "en",
+      "count": 12,
+      "expectedNumber": "12",
+      "expectedLabel": "Saved jobs",
+      "ariaLabel": null,
+      "actualNumber": "12",
+      "actualLabel": "Saved jobs",
+      "contentText": "12Saved jobs",
+      "renderedMarkup": "<button><span><strong>12</strong>Saved jobs</span></button>",
+      "navigations": [
+        "saved",
+        "profile"
+      ],
+      "passed": true
+    },
+    {
+      "language": "en",
+      "count": 200,
+      "expectedNumber": "200",
+      "expectedLabel": "Saved jobs",
+      "ariaLabel": null,
+      "actualNumber": "200",
+      "actualLabel": "Saved jobs",
+      "contentText": "200Saved jobs",
+      "renderedMarkup": "<button><span><strong>200</strong>Saved jobs</span></button>",
+      "navigations": [
+        "saved",
+        "profile"
+      ],
+      "passed": true
+    },
+    {
+      "language": "ar",
+      "count": 0,
+      "expectedNumber": "٠",
+      "expectedLabel": "الوظائف المحفوظة",
+      "ariaLabel": null,
+      "actualNumber": "٠",
+      "actualLabel": "الوظائف المحفوظة",
+      "contentText": "٠الوظائف المحفوظة",
+      "renderedMarkup": "<button><span><strong>٠</strong>الوظائف المحفوظة</span></button>",
+      "navigations": [
+        "saved",
+        "profile"
+      ],
+      "passed": true
+    },
+    {
+      "language": "ar",
+      "count": 1,
+      "expectedNumber": "١",
+      "expectedLabel": "وظيفة محفوظة",
+      "ariaLabel": null,
+      "actualNumber": "١",
+      "actualLabel": "الوظائف المحفوظة",
+      "contentText": "١الوظائف المحفوظة",
+      "renderedMarkup": "<button><span><strong>١</strong>الوظائف المحفوظة</span></button>",
+      "navigations": [
+        "saved",
+        "profile"
+      ],
+      "passed": false,
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'الوظائف المحفوظة'\n- 'وظيفة محفوظة'\n"
+    },
+    {
+      "language": "ar",
+      "count": 2,
+      "expectedNumber": "٢",
+      "expectedLabel": "الوظائف المحفوظة",
+      "ariaLabel": null,
+      "actualNumber": "٢",
+      "actualLabel": "الوظائف المحفوظة",
+      "contentText": "٢الوظائف المحفوظة",
+      "renderedMarkup": "<button><span><strong>٢</strong>الوظائف المحفوظة</span></button>",
+      "navigations": [
+        "saved",
+        "profile"
+      ],
+      "passed": true
+    },
+    {
+      "language": "ar",
+      "count": 12,
+      "expectedNumber": "١٢",
+      "expectedLabel": "الوظائف المحفوظة",
+      "ariaLabel": null,
+      "actualNumber": "١٢",
+      "actualLabel": "الوظائف المحفوظة",
+      "contentText": "١٢الوظائف المحفوظة",
+      "renderedMarkup": "<button><span><strong>١٢</strong>الوظائف المحفوظة</span></button>",
+      "navigations": [
+        "saved",
+        "profile"
+      ],
+      "passed": true
+    },
+    {
+      "language": "ar",
+      "count": 200,
+      "expectedNumber": "٢٠٠",
+      "expectedLabel": "الوظائف المحفوظة",
+      "ariaLabel": null,
+      "actualNumber": "٢٠٠",
+      "actualLabel": "الوظائف المحفوظة",
+      "contentText": "٢٠٠الوظائف المحفوظة",
+      "renderedMarkup": "<button><span><strong>٢٠٠</strong>الوظائف المحفوظة</span></button>",
+      "navigations": [
+        "saved",
+        "profile"
+      ],
+      "passed": true
+    }
+  ]
+}

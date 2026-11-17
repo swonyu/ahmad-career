@@ -1,0 +1,64 @@
+{
+  "recordedAt": "2026-11-17T16:11:32.842160+00:00",
+  "baseCommit": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+  "candidateCommit": "d97bc209ca84ecb830e6c6bad25808164706409f",
+  "candidateTree": "7ccafbdaad98f000e5e12a385dd69fc5beb72f50",
+  "files": {
+    "android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt": {
+      "beforeSHA256": "af6e0a99b3727ff654d0f32071b219b8688ab4882f059f18112519374b13acf6",
+      "afterSHA256": "3538ea760389b40a03f83cd59ecc3a3a25430b63d01730783a0efa00e8696d60"
+    },
+    "android/app/src/main/res/values-ar/career_copy.xml": {
+      "beforeSHA256": "d25fa894ca368da6c86050278336fa8271a8b93251e7ade62323340390796e89",
+      "afterSHA256": "5f9faff9d327aef9741ea63eafddd5d9f658cb4f7fd6c42cd7d4bea6c2fa88d9"
+    },
+    "android/app/src/main/res/values/career_copy.xml": {
+      "beforeSHA256": "2dd99c4db74c919581feade960f995f817c244ee87bf20edd3fa0178f96a53f5",
+      "afterSHA256": "990fdaffc52858740bee96ebb2b68d694804b7cf55ed7fb6325151411568820e"
+    },
+    "apple/AhmadCareer/NativeApplicationsViews.swift": {
+      "beforeSHA256": "3d2fe61f101280474920c7cef0b98fb79c632249625a2fba2086e5eef4dc7804",
+      "afterSHA256": "c1407ff4887d4c6d2747aea7deae060f6fd8769e0dfc12b304246c3fb83d3f32"
+    },
+    "apple/AhmadCareer/ar.lproj/Localizable.strings": {
+      "beforeSHA256": "6d61f95afb4c05956235162ed26acd8c7aa63eb16f82e6c6a0147bdee51689b0",
+      "afterSHA256": "92ba98487768a370fe87095db8e46d66169aa57fec8e85b32161f5df6c33ecfa"
+    },
+    "apple/AhmadCareer/en.lproj/Localizable.strings": {
+      "beforeSHA256": "c77b6ec25224ff3f03ae72082bd04eb8bf2ce382a2acf3fbadafc2c3d60bc4a9",
+      "afterSHA256": "f93857113dfbebbe1d6ad01653402c54922fffb6e25797ccddcf61e774e0a8b3"
+    },
+    "apple/UITests/CareerFinderUITests.swift": {
+      "beforeSHA256": "d3622213d4941b5fae4347c8725d651b7a32bc310a56427b37adf5a351c2acae",
+      "afterSHA256": "ad0bac775bc17e7cbf2c8ac9c41fc1a0ca1489e579010fb198ff75878d7d557b"
+    },
+    "hosted/app/i18n/messages.ar.json": {
+      "beforeSHA256": "fe90f2bb6fa500983998bb04929e31cb924be1bef6ab855967d9f46ec0cfce54",
+      "afterSHA256": "d9b18a3505fe07b7a215c1708bb17e407b40c502cd9c3af930946736a477413b"
+    },
+    "hosted/app/phone/PhoneApp.tsx": {
+      "beforeSHA256": "7fbf684a5b400a064f01fb62173192d821f1eb4ce6d076435d1fe9ac58c9c590",
+      "afterSHA256": "a8c60e30d5ab70ba341df3369846fe85e35c5fa28c633557742b704974cddd3c"
+    },
+    "hosted/app/phone/components.tsx": {
+      "beforeSHA256": "cec98ced40e35044f821525e4d979d17fd52ea66a6dc139307cdf7ebe11ecded",
+      "afterSHA256": "c7614e923223d427e3a218f9c8d1038e4d90f244de9da8707bb92bf8dce90c52"
+    },
+    "hosted/tests/phone-localization.mjs": {
+      "beforeSHA256": "6d97414cb6b1915a2a58431155a4b004fa94f99c17afbf1cbb2df47a651665f8",
+      "afterSHA256": "877fa8eaf10d723b57c05016f1cef36d4a9a824971f64932cccbe37051fe6f63"
+    },
+    "hosted/tests/phone-search-workflows.mjs": {
+      "beforeSHA256": "8af894ca2c9f7221f8d989a747ab646889379570ba08ef0f157eb36b1b91e0d9",
+      "afterSHA256": "522a4930a4efc2597f6ba28f2934109d4e89ef2e02569f61f3be9198615b304b"
+    },
+    "localization/native-copy.json": {
+      "beforeSHA256": "f02c5d096af46a7fad896ffb17c0743c0084c45dda54ad15541db198d6fbf8bb",
+      "afterSHA256": "581b82751181e847e7ca6cc15b850ccdf24def2881d81d03d930f1dde054c555"
+    }
+  },
+  "patchBytes": 54806,
+  "patchSHA256": "933da56f7f1568e75b85f76d9dccf31695c6535a5554ddd44b8c099091e916f9",
+  "acceptanceAtPreparation": "82 local hosted checks pass; exact-source CI44122504831 is pending. Source reviews and native generator checks are documented separately.",
+  "integrationBoundary": "A minimal development source/test diff, not an applied or accepted publishing recovery merge. Merge the canonical native copy entry with recovery changes and regenerate generated platform files; preserve both histories and same-origin discovery credentials."
+}

@@ -1,0 +1,676 @@
+diff --git a/android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt b/android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt
+index a9e422a..e7c66df 100644
+--- a/android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt
++++ b/android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt
+@@ -313,6 +313,7 @@ private fun nativeCopyIds1(): Map<String, Int> = mapOf(
+     "Clear phone data" to R.string.c_4010ae770b53,
+     "Clear search filters" to R.string.c_53ea94e2a507,
+     "Clear selection" to R.string.c_cea4d2e010b8,
++    "Clear service address" to R.string.c_3a036a95535d,
+     "Clear this phone workspace?" to R.string.c_a23bd2387655,
+     "Clear this workspace from this phone" to R.string.c_23aee864f931,
+     "Clear {0}" to R.string.c_ea222b9c80b9,
+@@ -321,10 +322,10 @@ private fun nativeCopyIds1(): Map<String, Int> = mapOf(
+     "Close record" to R.string.c_2e6e30b24c23,
+     "Closed" to R.string.c_c21ead0614e7,
+     "Closed / not pursuing" to R.string.c_6adf9524b314,
+-    "Closing date" to R.string.c_d34f597093df,
+ )
+ 
+ private fun nativeCopyIds2(): Map<String, Int> = mapOf(
++    "Closing date" to R.string.c_d34f597093df,
+     "Closing keeps your earlier application on record." to R.string.c_5dea0491e782,
+     "Collapsed" to R.string.c_b322b65227bc,
+     "Compare an offer in your own terms." to R.string.c_a20e221c9960,
+@@ -474,10 +475,10 @@ private fun nativeCopyIds2(): Map<String, Int> = mapOf(
+     "Earlier salary criteria · monthly SAR" to R.string.c_660e448d8498,
+     "Earlier search: " to R.string.c_139042351ee4,
+     "Earlier search: {0}" to R.string.c_b87cf758ddae,
+-    "Earlier search: {0}{1}" to R.string.c_4692f6f5d9cb,
+ )
+ 
+ private fun nativeCopyIds3(): Map<String, Int> = mapOf(
++    "Earlier search: {0}{1}" to R.string.c_4692f6f5d9cb,
+     "Earlier version" to R.string.c_e12fd2a25b0d,
+     "Edit criteria" to R.string.c_e79aafa453f2,
+     "Edit planning notes and preferences" to R.string.c_37caab54c8d3,
+@@ -627,10 +628,10 @@ private fun nativeCopyIds3(): Map<String, Int> = mapOf(
+     "Jobs saved from Search and your own links are ready in the application workspace. Earlier planning records remain available below." to R.string.c_33186308849d,
+     "Keep Career Finder open to continue the approved batch. Leaving the app pauses the next request; an application already sent may still finish." to R.string.c_d59db53772a9,
+     "Keep Career Finder open to continue the queue. Closing it pauses further sends; a request already sent may still finish. Receipts stay with the service." to R.string.c_eded25b81ef0,
+-    "Keep a copy of any draft text you need, then cancel and reopen this editor to use the latest profile. Your draft has not been saved." to R.string.c_a199ac03dba8,
+ )
+ 
+ private fun nativeCopyIds4(): Map<String, Int> = mapOf(
++    "Keep a copy of any draft text you need, then cancel and reopen this editor to use the latest profile. Your draft has not been saved." to R.string.c_a199ac03dba8,
+     "Keep application record" to R.string.c_fd3eddc1a476,
+     "Keep as private draft" to R.string.c_0ed21ab9f14e,
+     "Keep building your profile and saved roles on this phone. The hosted preview has live automatic submissions disabled. Use employer links to apply manually." to R.string.c_3d7205cac64a,
+@@ -780,10 +781,10 @@ private fun nativeCopyIds4(): Map<String, Int> = mapOf(
+     "Not provided" to R.string.c_d83b9ff3c07a,
+     "Not published" to R.string.c_c652001687f1,
+     "Not ready to send" to R.string.c_edbc803220c8,
+-    "Not recorded" to R.string.c_b37c7879f6c3,
+ )
+ 
+ private fun nativeCopyIds5(): Map<String, Int> = mapOf(
++    "Not recorded" to R.string.c_b37c7879f6c3,
+     "Not refreshed in the latest attempt. This previous result is retained because its employer search was unavailable." to R.string.c_17c800c05906,
+     "Not refreshed — previous result" to R.string.c_8557b64038db,
+     "Not researched" to R.string.c_4a84c5c5659d,
+@@ -933,10 +934,10 @@ private fun nativeCopyIds5(): Map<String, Int> = mapOf(
+     "Profile" to R.string.c_d696a35bdd18,
+     "Profile and résumé" to R.string.c_555ed88a4625,
+     "Profile saved privately on this phone." to R.string.c_bd87f810cb55,
+-    "Profile saved to your connected workspace." to R.string.c_f58abf3d062e,
+ )
+ 
+ private fun nativeCopyIds6(): Map<String, Int> = mapOf(
++    "Profile saved to your connected workspace." to R.string.c_f58abf3d062e,
+     "Profile text exceeds the field limit. Shorten it before saving; your existing profile is unchanged." to R.string.c_2c72a7dd21a0,
+     "Prompts from your saved records. Past checks do not establish current availability. Recheck employer information; these are not eligibility decisions or automatic applications." to R.string.c_9595317bd09b,
+     "Provider" to R.string.c_472590ae974d,
+@@ -1086,10 +1087,10 @@ private fun nativeCopyIds6(): Map<String, Int> = mapOf(
+     "Review the saved phone draft first." to R.string.c_c389beee24a2,
+     "Review the saved versions before editing this record." to R.string.c_8ce3f9e00543,
+     "Review this employer's policy before choosing. You can explicitly decline future-role contact. Changed choices are included only after you update the review." to R.string.c_63a00fd05d29,
+-    "Review this step" to R.string.c_fc39364b6714,
+ )
+ 
+ private fun nativeCopyIds7(): Map<String, Int> = mapOf(
++    "Review this step" to R.string.c_fc39364b6714,
+     "Review up to 20 opportunities in one batch." to R.string.c_1308c6069438,
+     "Review what will be shared." to R.string.c_a0de7bb16481,
+     "Review your application profile" to R.string.c_7bef09af94a5,
+@@ -1239,10 +1240,10 @@ private fun nativeCopyIds7(): Map<String, Int> = mapOf(
+     "Sign in in your browser, then return with a one-time code." to R.string.c_05296b90960e,
+     "Skills" to R.string.c_66d0f523a379,
+     "Skills (separate with commas)" to R.string.c_f0bad40061c9,
+-    "Skills, separated by commas" to R.string.c_5bc21d65de1f,
+ )
+ 
+ private fun nativeCopyIds8(): Map<String, Int> = mapOf(
++    "Skills, separated by commas" to R.string.c_5bc21d65de1f,
+     "Some boards have more openings than this search can include. Narrow your search or open the original board." to R.string.c_fc01531d66ba,
+     "Some employer checks were incomplete: " to R.string.c_84b2cc451e6c,
+     "Some employer checks were incomplete: {0}" to R.string.c_b2a61242bb56,
+@@ -1392,10 +1393,10 @@ private fun nativeCopyIds8(): Map<String, Int> = mapOf(
+     "The saved link will be removed. Your private application record and its notes will stay on this phone." to R.string.c_b012eb7a27b1,
+     "The saved opportunity draft could not be read." to R.string.c_18830c731f47,
+     "The saved private record cannot be read. It has been preserved." to R.string.c_21791228a39f,
+-    "The saved profile changed again. Review the latest comparison before keeping your edits." to R.string.c_12ad467e5108,
+ )
+ 
+ private fun nativeCopyIds9(): Map<String, Int> = mapOf(
++    "The saved profile changed again. Review the latest comparison before keeping your edits." to R.string.c_12ad467e5108,
+     "The saved record changed after this draft began. Compare the saved details before keeping your edits. No status change has been applied." to R.string.c_55b65ef46566,
+     "The saved record identity could not be verified. Its file is preserved." to R.string.c_6f4f28b081ab,
+     "The saved review remains available. Your unreviewed message and permission changes will be discarded." to R.string.c_616239b657a3,
+@@ -1545,10 +1546,10 @@ private fun nativeCopyIds9(): Map<String, Int> = mapOf(
+     "This replaces the profile draft currently shown. It is shared with the service only when you save the connected profile." to R.string.c_e54f7e720b6f,
+     "This restores the same reviewed details. Stop this review first if you need to change them." to R.string.c_cdc106b6fb34,
+     "This review has already started or changed. Stop it explicitly before creating a different review." to R.string.c_e459d7736ff4,
+-    "This review has expired or your profile changed. Prepare it again." to R.string.c_3c2651f7760a,
+ )
+ 
+ private fun nativeCopyIds10(): Map<String, Int> = mapOf(
++    "This review has expired or your profile changed. Prepare it again." to R.string.c_3c2651f7760a,
+     "This review includes a job marked as applied on this phone. Stop the earlier review and prepare a new one, or explicitly correct your private record first." to R.string.c_9c7852acfc62,
+     "This review is held because you requested Stop. Retry Stop to confirm it with the service, then prepare a new review if you still want to apply." to R.string.c_1d55374cc421,
+     "This review is no longer current. Refresh your applications." to R.string.c_52bf6aeb689e,
+@@ -1698,10 +1699,10 @@ private fun nativeCopyIds10(): Map<String, Int> = mapOf(
+     "Your application workspace keeps a phone draft and your selected PDF. The same application profile is reachable from Start, Apply and Profile in Settings. Connecting does not upload that draft. Saving to a connected service sends the applicant fields and selected CV; adding opportunities and preparing reviews sends the links and choices you provide. The phone connection token is stored in Keychain." to R.string.c_347f13b581b5,
+     "Your application, step by step" to R.string.c_0cd91e4435f4,
+     "Your approved applications are processing. Confirmed receipts will appear here." to R.string.c_4b0a24156e35,
+-    "Your choices changed while this review was being prepared. Review the current selection again." to R.string.c_8fdc0b61bd71,
+ )
+ 
+ private fun nativeCopyIds11(): Map<String, Int> = mapOf(
++    "Your choices changed while this review was being prepared. Review the current selection again." to R.string.c_8fdc0b61bd71,
+     "Your choices changed. The older review will not be approved; prepare your current selection again." to R.string.c_249b17007506,
+     "Your chosen record is current. Earlier versions are kept on this phone." to R.string.c_6672e352a366,
+     "Your configured application service stores the applicant details, CV, opportunities, review choices and submission history you send to it. Its operator controls account access, retention, recovery and deletion. Consult that operator's privacy and support information." to R.string.c_4a3497f2cafd,
+diff --git a/android/app/src/main/res/values-ar/career_copy.xml b/android/app/src/main/res/values-ar/career_copy.xml
+index b04a583..17e6672 100644
+--- a/android/app/src/main/res/values-ar/career_copy.xml
++++ b/android/app/src/main/res/values-ar/career_copy.xml
+@@ -292,6 +292,7 @@
+     <string name="c_4010ae770b53" formatted="false">"مسح بيانات الهاتف"</string>
+     <string name="c_53ea94e2a507" formatted="false">"مسح مرشحات البحث"</string>
+     <string name="c_cea4d2e010b8" formatted="false">"مسح الاختيار"</string>
++    <string name="c_3a036a95535d" formatted="false">"مسح عنوان الخدمة"</string>
+     <string name="c_a23bd2387655" formatted="false">"هل تريد مسح مساحة الهاتف هذه؟"</string>
+     <string name="c_23aee864f931" formatted="false">"مسح مساحة العمل هذه من الهاتف"</string>
+     <string name="c_ea222b9c80b9" formatted="false">"مسح {0}"</string>
+diff --git a/android/app/src/main/res/values/career_copy.xml b/android/app/src/main/res/values/career_copy.xml
+index da5fff5..c400887 100644
+--- a/android/app/src/main/res/values/career_copy.xml
++++ b/android/app/src/main/res/values/career_copy.xml
+@@ -292,6 +292,7 @@
+     <string name="c_4010ae770b53" formatted="false">"Clear phone data"</string>
+     <string name="c_53ea94e2a507" formatted="false">"Clear search filters"</string>
+     <string name="c_cea4d2e010b8" formatted="false">"Clear selection"</string>
++    <string name="c_3a036a95535d" formatted="false">"Clear service address"</string>
+     <string name="c_a23bd2387655" formatted="false">"Clear this phone workspace?"</string>
+     <string name="c_23aee864f931" formatted="false">"Clear this workspace from this phone"</string>
+     <string name="c_ea222b9c80b9" formatted="false">"Clear {0}"</string>
+diff --git a/apple/AhmadCareer/NativeApplicationsViews.swift b/apple/AhmadCareer/NativeApplicationsViews.swift
+index 049e3f4..37b1b00 100644
+--- a/apple/AhmadCareer/NativeApplicationsViews.swift
++++ b/apple/AhmadCareer/NativeApplicationsViews.swift
+@@ -814,10 +814,23 @@ struct NativeApplicationConnection: View {
+                     }
+                     Section {
+                         DisclosureGroup(l10n("Use another service"), isExpanded: $advanced) {
+-                            TextField("https://service.example", text: $address).keyboardType(.URL)
+-                                .textInputAutocapitalization(.never).autocorrectionDisabled()
+-                                .focused($focusedField, equals: "address").submitLabel(.done).onSubmit { focusedField = nil }
+-                                .accessibilityLabel(l10n("Application service HTTPS address")).accessibilityIdentifier("connection.address")
++                            HStack(spacing: 8) {
++                                TextField("https://service.example", text: $address).keyboardType(.URL)
++                                    .textInputAutocapitalization(.never).autocorrectionDisabled()
++                                    .focused($focusedField, equals: "address").submitLabel(.done).onSubmit { focusedField = nil }
++                                    .accessibilityLabel(l10n("Application service HTTPS address")).accessibilityIdentifier("connection.address")
++                                if !address.isEmpty {
++                                    Button {
++                                        address = ""
++                                        focusedField = "address"
++                                    } label: {
++                                        Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
++                                            .frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
++                                    }.buttonStyle(.plain).disabled(model.busy)
++                                        .accessibilityLabel(l10n("Clear service address"))
++                                        .accessibilityIdentifier("connection.clearAddress")
++                                }
++                            }
+                             Text(l10n("Advanced: use the HTTPS address from your own service operator. Its account, privacy and submission features may differ."))
+                                 .font(.footnote).foregroundStyle(.secondary)
+                             if !MobileApplicationPolicy.isHostedService(address) {
+diff --git a/apple/AhmadCareer/ar.lproj/Localizable.strings b/apple/AhmadCareer/ar.lproj/Localizable.strings
+index b648757..363ed6e 100644
+--- a/apple/AhmadCareer/ar.lproj/Localizable.strings
++++ b/apple/AhmadCareer/ar.lproj/Localizable.strings
+@@ -290,6 +290,7 @@
+ "Clear phone data" = "مسح بيانات الهاتف";
+ "Clear search filters" = "مسح مرشحات البحث";
+ "Clear selection" = "مسح الاختيار";
++"Clear service address" = "مسح عنوان الخدمة";
+ "Clear this phone workspace?" = "هل تريد مسح مساحة الهاتف هذه؟";
+ "Clear this workspace from this phone" = "مسح مساحة العمل هذه من الهاتف";
+ "Clear {0}" = "مسح {0}";
+diff --git a/apple/AhmadCareer/en.lproj/Localizable.strings b/apple/AhmadCareer/en.lproj/Localizable.strings
+index 3dc9181..f7a178b 100644
+--- a/apple/AhmadCareer/en.lproj/Localizable.strings
++++ b/apple/AhmadCareer/en.lproj/Localizable.strings
+@@ -290,6 +290,7 @@
+ "Clear phone data" = "Clear phone data";
+ "Clear search filters" = "Clear search filters";
+ "Clear selection" = "Clear selection";
++"Clear service address" = "Clear service address";
+ "Clear this phone workspace?" = "Clear this phone workspace?";
+ "Clear this workspace from this phone" = "Clear this workspace from this phone";
+ "Clear {0}" = "Clear {0}";
+diff --git a/apple/UITests/CareerFinderUITests.swift b/apple/UITests/CareerFinderUITests.swift
+index d149ba1..a414032 100644
+--- a/apple/UITests/CareerFinderUITests.swift
++++ b/apple/UITests/CareerFinderUITests.swift
+@@ -96,7 +96,7 @@ final class CareerFinderUITests: XCTestCase {
+             .contains { $0.exists && $0.isHittable }
+     }
+     @MainActor
+-    private func replace(_ field: XCUIElement, with text: String, in app: XCUIApplication) {
++    private func replace(_ field: XCUIElement, with text: String, in app: XCUIApplication, clearWith clearButton: XCUIElement? = nil) {
+         XCTAssertTrue(field.waitForExistence(timeout: 5))
+         // tap() can scroll a native Form field into view; keep that behavior.
+         field.tap()
+@@ -111,37 +111,36 @@ final class CareerFinderUITests: XCTestCase {
+             field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: previous.count) + text)
+         } else {
+             if !previous.isEmpty {
+-                // A tap can place the caret inside existing text, especially
+-                // mixed Arabic/English text. Select existing text through native
+-                // editing interactions rather than assuming the caret is at the end.
+-                field.press(forDuration: 1.1)
+-                let names = ["Select All", "تحديد الكل"]
+-                let predicate = NSPredicate(format: "label IN %@ OR identifier IN %@", names, names)
+-                let choices = [app.menuItems.matching(predicate), app.buttons.matching(predicate)]
+-                let selectable = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+-                    choices.flatMap { $0.allElementsBoundByIndex }.contains { $0.exists && $0.isHittable }
+-                }, object: nil)
+-                let selectionReady = XCTWaiter.wait(for: [selectable], timeout: 5)
+-                if selectionReady != .completed {
+-                    capture("replacement-select-all-unavailable", app: app)
+-                    print(app.debugDescription)
+-                }
+-                let selectAll = choices.flatMap({ $0.allElementsBoundByIndex }).first(where: { $0.exists && $0.isHittable })
+-                let canSelectParagraph = (field.elementType == .textField || field.elementType == .searchField)
+-                    && previous.rangeOfCharacter(from: .newlines) == nil
+-                XCTAssertTrue(selectAll != nil || canSelectParagraph,
+-                              "Existing text requires a reachable Select All action or a single-line native field")
+-                if let selectAll {
+-                    selectAll.tap()
+-                } else if canSelectParagraph {
+-                    // iOS can leave only a caret after a long press. Its documented
+-                    // paragraph-selection gesture covers the whole single-line value.
+-                    // The empty-value check below proves that selection actually worked.
+-                    field.tap(withNumberOfTaps: 3, numberOfTouches: 1)
++                if let clearButton {
++                    // The service-address row offers a real user-facing Clear action.
++                    // Dismiss the floating keyboard toolbar before revealing its full target.
++                    finishTyping(in: app)
++                    XCTAssertTrue(clearButton.waitForExistence(timeout: 5), "The field's Clear action must exist")
++                    reveal(clearButton, in: app)
++                    XCTAssertTrue(clearButton.isEnabled && clearButton.isHittable, "The visible Clear action must be enabled")
++                    clearButton.tap()
+                 } else {
+-                    XCTFail("Missing supported whole-field selection interaction"); return
++                    // A tap can place the caret inside existing text. Use the real
++                    // Select All action rather than assuming backward-delete starts at the end.
++                    field.press(forDuration: 1.1)
++                    let names = ["Select All", "تحديد الكل"]
++                    let predicate = NSPredicate(format: "label IN %@ OR identifier IN %@", names, names)
++                    let choices = [app.menuItems.matching(predicate), app.buttons.matching(predicate)]
++                    let selectable = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
++                        choices.flatMap { $0.allElementsBoundByIndex }.contains { $0.exists && $0.isHittable }
++                    }, object: nil)
++                    let selectionReady = XCTWaiter.wait(for: [selectable], timeout: 5)
++                    if selectionReady != .completed {
++                        capture("replacement-select-all-unavailable", app: app)
++                        print(app.debugDescription)
++                    }
++                    XCTAssertEqual(selectionReady, .completed, "Existing text must expose a reachable Select All edit action")
++                    guard let selectAll = choices.flatMap({ $0.allElementsBoundByIndex }).first(where: { $0.exists && $0.isHittable }) else {
++                        XCTFail("Missing reachable Select All edit action"); return
++                    }
++                    selectAll.tap()
++                    field.typeText(XCUIKeyboardKey.delete.rawValue)
+                 }
+-                field.typeText(XCUIKeyboardKey.delete.rawValue)
+                 let cleared = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+                     let value = field.value as? String ?? ""
+                     return value.isEmpty || value == field.placeholderValue
+@@ -152,7 +151,15 @@ final class CareerFinderUITests: XCTestCase {
+                     print(app.debugDescription)
+                 }
+                 XCTAssertEqual(clearResult, .completed,
+-                               "Native selection and Delete must clear the whole field before replacement")
++                               "The native editing action must clear the whole field before replacement")
++                if clearButton != nil {
++                    field.tap()
++                    let keyboardAfterClear = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
++                        self.typingKeyIsVisible(in: app)
++                    }, object: nil)
++                    XCTAssertEqual(XCTWaiter.wait(for: [keyboardAfterClear], timeout: 5), .completed,
++                                   "A real keyboard key must be visible after clearing before replacement")
++                }
+             }
+             if !text.isEmpty { field.typeText(text) }
+         }
+@@ -412,7 +419,8 @@ final class CareerFinderUITests: XCTestCase {
+         app.buttons["Done typing"].tap()
+         let advanced = app.buttons["Use another service"]; reveal(advanced, in: app); advanced.tap()
+         let address = app.textFields["connection.address"]; reveal(address, in: app)
+-        replace(address, with: "https://custom.example.com", in: app); app.buttons["Done typing"].tap()
++        replace(address, with: "https://custom.example.com", in: app, clearWith: app.buttons["connection.clearAddress"])
++        finishTyping(in: app)
+         top(app); reveal(code, in: app)
+         XCTAssertTrue(["", "One-time connection code"].contains(code.value as? String ?? ""), "Changing destination clears the unsent code")
+         let reset = app.buttons["Use Career Finder"]; reveal(reset, in: app); reset.tap()
+diff --git a/hosted/app/i18n/messages.ar.json b/hosted/app/i18n/messages.ar.json
+index c3eb079..2c3c0c0 100644
+--- a/hosted/app/i18n/messages.ar.json
++++ b/hosted/app/i18n/messages.ar.json
+@@ -1312,5 +1312,6 @@
+   "Retry this search": "إعادة محاولة هذا البحث",
+   "No current matches could be confirmed.": "تعذّر التأكد من وجود فرص مطابقة حاليًا.",
+   "Retry this search or open an employer’s website to check its current openings.": "أعِد محاولة هذا البحث أو افتح موقع صاحب العمل للاطلاع على الفرص المتاحة حاليًا.",
+-  "To keep leading zeros and number-like text, import quoted fields as text or set text columns to Text. Use JSON for original values.": "للحفاظ على الأصفار في البداية والنصوص التي تشبه الأرقام، استورد الحقول المحاطة بعلامات اقتباس كنص أو اضبط نوع الأعمدة النصية على «نص». استخدم JSON للاحتفاظ بالقيم الأصلية."
++  "To keep leading zeros and number-like text, import quoted fields as text or set text columns to Text. Use JSON for original values.": "للحفاظ على الأصفار في البداية والنصوص التي تشبه الأرقام، استورد الحقول المحاطة بعلامات اقتباس كنص أو اضبط نوع الأعمدة النصية على «نص». استخدم JSON للاحتفاظ بالقيم الأصلية.",
++  "This search is incomplete. Review the source details, or retry the same search.": "نتائج هذا البحث غير مكتملة. راجع تفاصيل المصادر أو أعد البحث نفسه."
+ }
+diff --git a/hosted/app/phone/PhoneApp.tsx b/hosted/app/phone/PhoneApp.tsx
+index f263285..d188db5 100644
+--- a/hosted/app/phone/PhoneApp.tsx
++++ b/hosted/app/phone/PhoneApp.tsx
+@@ -613,7 +613,7 @@ export default function PhoneApp({ account }: { account: Account }) {
+   const cannotSave = Boolean(busy || loading || locked || checkingIdentity || storageProblem || !snapshot);
+   const profilesDiffer = workspace && (profile.revision !== workspace.profile.revision || snapshot?.profileDirty);
+   const searchSources = boardsTouched ? filters.sources : filters.sources.length ? filters.sources : catalog?.defaults ?? [];
+-  const incompleteSearch = Boolean(searchPage && (searchPage.status !== "complete" || searchPage.sources.some(source => source.error || ["stale", "unavailable"].includes(source.status))));
++  const incompleteSearch = Boolean(searchPage && (searchPage.status !== "complete" || searchPage.limited || searchPage.sources.some(source => source.limited || source.error || ["stale", "unavailable"].includes(source.status))));
+ 
+   return <div className="phone-shell">
+     <a className="skip-link" href="#phone-main">{t("Skip to content")}</a>
+@@ -632,14 +632,14 @@ export default function PhoneApp({ account }: { account: Account }) {
+ 
+ 
+       {!checkingIdentity && !locked && tab === "search" && <>
+-        <p className="visually-hidden" role="status" aria-live="polite" aria-atomic="true">{!busy && searchPage ? t("{0} jobs shown. {1}", [formatNumber(searchPage.jobs.length, language), t(incompleteSearch ? "Some sources could not provide current results." : "Search complete.")]) : ""}</p>
++        <p className="visually-hidden" role="status" aria-live="polite" aria-atomic="true">{!busy && searchPage ? t("{0} jobs shown. {1}", [formatNumber(searchPage.jobs.length, language), t(incompleteSearch ? "This search is incomplete. Review the source details, or retry the same search." : "Search complete.")]) : ""}</p>
+         <div className="phone-discovery-layout"><div className="phone-search-primary"><form className="phone-search-card" onSubmit={event => { event.preventDefault(); void searchJobs(); }}>
+           <label>{t("Job title or skill")}<div className="phone-input-icon"><Search size={19} aria-hidden="true" /><input dir="auto" autoComplete="off" maxLength={120} placeholder={t("e.g. Designer, nurse, sales")} value={filters.query} onChange={event => setFilters({ ...filters, query: event.target.value })} /></div></label>
+           <label>{t("Location ")}<span className="optional">{t("optional")}</span><input dir="auto" maxLength={100} placeholder={t("City, country, or region")} value={filters.location} onChange={event => setFilters({ ...filters, location: event.target.value })} /></label>
+           <label className="phone-check"><input type="checkbox" checked={filters.remoteOnly} onChange={event => setFilters({ ...filters, remoteOnly: event.target.checked })} /><span>{t("Remote jobs only")}</span></label>
+           <details className="phone-search-options"><summary><SlidersHorizontal size={17} aria-hidden="true" /> {t(" Search options ")}<span>{searchSources.length} {t(" boards")}</span></summary><p className="phone-note">{t("Search up to four employer boards at a time. These results cover the boards you choose, not every job available.")}</p>
+-            {catalog?.sources.map(source => <label className="phone-check" key={source.id}><input type="checkbox" checked={searchSources.includes(source.id)} onChange={event => { const next = event.target.checked ? [...searchSources, source.id] : searchSources.filter(id => id !== source.id); if (next.length <= 4) { setBoardsTouched(true); setFilters({ ...filters, sources: next }); } else setNotice({ text: "Choose up to four employer boards at a time.", error: true }); }} /><span>{source.name}</span></label>)}
+-            {searchSources.filter(source => !catalog?.sources.some(known => known.id === source)).map(source => <label className="phone-check" key={source}><input type="checkbox" checked onChange={() => { setBoardsTouched(true); setFilters({ ...filters, sources: searchSources.filter(value => value !== source) }); }} /><span>{source}</span></label>)}
++            {catalog?.sources.map(source => <label className="phone-check" key={source.id}><input type="checkbox" checked={searchSources.includes(source.id)} onChange={event => { const next = event.target.checked ? [...searchSources, source.id] : searchSources.filter(id => id !== source.id); if (next.length <= 4) { setBoardsTouched(true); setFilters({ ...filters, sources: next }); } else setNotice({ text: "Choose up to four employer boards at a time.", error: true }); }} /><span dir="auto">{source.name}</span></label>)}
++            {searchSources.filter(source => !catalog?.sources.some(known => known.id === source)).map(source => <label className="phone-check" key={source}><input type="checkbox" checked onChange={() => { setBoardsTouched(true); setFilters({ ...filters, sources: searchSources.filter(value => value !== source) }); }} /><span dir="auto">{source}</span></label>)}
+             <label>{t("Another employer’s board ")}<span className="optional">{t("optional")}</span><input type="url" dir="ltr" maxLength={2048} value={customBoard} onChange={event => setCustomBoard(event.target.value)} placeholder="https://jobs.lever.co/employer" autoCapitalize="none" autoCorrect="off" /></label><button type="button" className="button secondary full" onClick={() => { try { const value = publicURL(customBoard.trim()); const url = new URL(value); if (!["jobs.lever.co", "jobs.eu.lever.co", "boards.greenhouse.io", "job-boards.greenhouse.io"].includes(url.hostname)) throw Error("Choose a Lever or Greenhouse employer board. Other job links can be added directly in Saved."); if (searchSources.length >= 4) throw Error("Uncheck one board before adding another. You can search four at a time."); if (searchSources.includes(value)) throw Error("This board is already selected."); setBoardsTouched(true); setFilters({ ...filters, sources: [...searchSources, value] }); setCustomBoard(""); } catch (error) { setNotice({ text: message(error), error: true }); } }}>{t("Add employer board")}</button><p className="phone-note">{t("Use a public Lever or Greenhouse employer board link. Other job pages can be added directly in Saved.")}</p>
+           </details>
+           <button className="button primary full" type="submit" disabled={Boolean(busy)}><Search size={18} aria-hidden="true" />{t("Search jobs")}</button>
+@@ -653,7 +653,7 @@ export default function PhoneApp({ account }: { account: Account }) {
+           <div className="phone-section-heading"><h2>{restored ? t("Previous results") : t("Search results")}</h2><span>{t("{0} shown", [formatNumber(searchPage.jobs.length, language)])}</span></div>
+           <p className="phone-note">{t("Search from ")}<bdi>{displayTime(searchPage.generatedAt)}</bdi>. {restored ? t("Search again to check current openings.") : t("An employer may close or change a job after this check.")}</p>
+           {searchedFilters && !same({ ...filters, sources: searchSources }, searchedFilters) && <p className="phone-inline-note">{t("Search again to use your changed filters.")}</p>}
+-          {incompleteSearch && <div className="phone-inline-note" role="status"><p>{t("Some boards could not provide current results. This search may be incomplete.")}</p>{searchedFilters && <button className="text-button" disabled={Boolean(busy) || loading || locked || checkingIdentity} onClick={() => void searchJobs("retry")}>{t("Retry this search")}</button>}</div>}
++          {incompleteSearch && <div className="phone-inline-note" role="status"><p>{t("This search is incomplete. Review the source details, or retry the same search.")}</p>{searchedFilters && <button className="text-button" disabled={Boolean(busy) || loading || locked || checkingIdentity} onClick={() => void searchJobs("retry")}>{t("Retry this search")}</button>}</div>}
+           {searchPage.sources.filter(source => source.error || ["stale", "unavailable"].includes(source.status)).map(source => <div className="phone-source-note" key={source.id}><strong><bdi>{source.name}</bdi></strong>{source.status === "stale" && <p>{t("Showing an earlier check of this board.")}</p>}{(source.error?.message || source.status !== "stale") && <p>{source.error?.message ? t(source.error.message) : t("This board could not provide current results.")}</p>}</div>)}
+           {!searchPage.jobs.length && <div className="phone-empty compact"><h2>{t(incompleteSearch ? "No current matches could be confirmed." : "No matching jobs in these boards.")}</h2><p>{t(incompleteSearch ? "Retry this search or open an employer’s website to check its current openings." : "Try a broader job title, another location, or a different employer board. You can also search LinkedIn above.")}</p></div>}
+           {searchPage.jobs.map(job => <JobCard key={jobIdentity(job.url)} job={{ ...job, country: job.country ?? "" }} saved={jobs.some(saved => jobIdentity(saved.url) === jobIdentity(job.url))} onSave={() => void saveJob({ ...job, country: job.country ?? "" })} onDetails={() => setDialog({ kind: "details", job: { ...job, country: job.country ?? "" } })} busy={cannotSave} />)}
+diff --git a/hosted/app/phone/components.tsx b/hosted/app/phone/components.tsx
+index b8b700e..37b5733 100644
+--- a/hosted/app/phone/components.tsx
++++ b/hosted/app/phone/components.tsx
+@@ -32,7 +32,7 @@ export function JobCard({ job, saved, onSave, onDetails, busy = false }: { job:
+     <div className="phone-job-top"><span className="company-avatar" aria-hidden="true">{Array.from(job.company.trim())[0]?.toUpperCase() || "•"}</span><div><p className="phone-company"><bdi>{job.company}</bdi></p><h3 dir="auto">{onDetails ? <button className="job-title-button" onClick={onDetails}>{job.title}</button> : job.title}</h3></div>{onSave && <button className={`icon-button bookmark ${saved ? "is-saved" : ""}`} aria-label={saved ? t("{0} is saved", [job.title]) : t("Save {0}", [job.title])} aria-pressed={saved} disabled={busy || saved} onClick={onSave}><Bookmark size={21} fill={saved ? "currentColor" : "none"} aria-hidden="true" /></button>}</div>
+     {job.location && <p className="phone-job-location"><bdi>{job.location}</bdi></p>}{job.checkedAt && <p className="phone-note">{t("Posting checked ")}<time dir="auto" dateTime={job.checkedAt}>{formatDateTime(job.checkedAt, language)}</time></p>}
+     {job.summary && <p className="phone-job-summary" dir="auto">{job.summary}</p>}
+-    <div className="phone-job-footer">{job.sourceName && <span>{job.sourceName}</span>}<a href={job.url} target="_blank" rel="noopener noreferrer">{t("View job ")}<ArrowUpRight size={16} aria-hidden="true" /></a></div>
++    <div className="phone-job-footer">{job.sourceName && <span dir="auto">{job.sourceName}</span>}<a href={job.url} target="_blank" rel="noopener noreferrer">{t("View job ")}<ArrowUpRight size={16} aria-hidden="true" /></a></div>
+   </article>;
+ }
+ 
+diff --git a/hosted/tests/phone-localization.mjs b/hosted/tests/phone-localization.mjs
+index 6f6e29b..a6b6fb5 100644
+--- a/hosted/tests/phone-localization.mjs
++++ b/hosted/tests/phone-localization.mjs
+@@ -20,7 +20,7 @@ function execute(source, scope = {}, loader = require) {
+   vm.runInNewContext(result.outputText, context);
+   return context.exports;
+ }
+-const { translate, formatNumber } = execute(read('app/i18n/core.ts'), {}, name => name === './messages.ar.json' ? catalog : require(name));
++const { translate, formatNumber, formatDateTime } = execute(read('app/i18n/core.ts'), {}, name => name === './messages.ar.json' ? catalog : require(name));
+ const translator = language => (key, values) => translate(key, language, values);
+ 
+ // Compile the real presentation code, while replacing only its surrounding
+@@ -259,3 +259,114 @@ test('actual search inputs preserve mixed-script draft text with automatic direc
+     assert(renderToStaticMarkup(element).includes('dir="auto"'));
+   }
+ });
++
++function renderedElements(element, predicate) {
++  const matches = [];
++  function visit(node) {
++    if (Array.isArray(node)) { node.forEach(visit); return; }
++    if (!React.isValidElement(node)) return;
++    if (typeof node.type === 'function') { visit(node.type(node.props)); return; }
++    if (predicate(node)) matches.push(node);
++    visit(node.props.children);
++  }
++  visit(element);
++  return matches;
++}
++
++// Render the whole production options disclosure so both map/filter branches,
++// their label associations, and their actual checkbox handlers are exercised.
++const boardNames = ['شركة (Acme) 17 / QA', 'Orbit (فريق) 204 — Careers'];
++const catalogBoards = boardNames.map((name, index) => Object.freeze({ id: `lever:synthetic-${index}`, name }));
++const unknownBoard = 'greenhouse:unknown-team-2026';
++const customBoardURL = 'https://jobs.lever.co/synthetic-board-204';
++function renderBoardOptions(language) {
++  const searchSources = Object.freeze([catalogBoards[0].id, unknownBoard, customBoardURL]);
++  const filters = Object.freeze({ query: mixedJob.title, location: mixedJob.location, remoteOnly: false, sources: searchSources });
++  const changes = [], touched = [];
++  const element = renderPhoneFragment(phoneFragment(node => hasClass(node, 'phone-search-options')), language, {
++    catalog: { sources: catalogBoards }, searchSources, filters, customBoard: '',
++    SlidersHorizontal: () => null,
++    setFilters: value => changes.push(value),
++    setBoardsTouched: value => touched.push(value),
++    setNotice: notice => assert.fail(`Unexpected selection notice: ${notice.text}`),
++  });
++  const labels = renderedElements(element, node => node.type === 'label' && node.props.className === 'phone-check');
++  assert.deepEqual(labels.map(allText), [...boardNames, unknownBoard, customBoardURL]);
++  return { labels, changes, touched, filters, searchSources };
++}
++
++function sourceCheckbox(label, value, context) {
++  assert.equal(allText(label), value, `${context}: checkbox label text changed`);
++  const inputs = renderedElements(label, node => node.type === 'input');
++  assert.equal(inputs.length, 1, `${context}: expected one associated input`);
++  assert.equal(inputs[0].props.type, 'checkbox');
++  assert.equal(assertIsolatedRawValue(label, value, context), 1);
++  const spans = renderedElements(label, node => node.type === 'span' && allText(node) === value);
++  assert.equal(spans.length, 1);
++  assert.equal(spans[0].props.dir, 'auto', `${context}: direction must follow the source's own text`);
++  return inputs[0];
++}
++
++for (const language of ['en', 'ar']) {
++  test(`actual catalog-board checkboxes isolate Arabic and Latin source names in ${language}`, () => {
++    const { labels, changes, touched, filters, searchSources } = renderBoardOptions(language);
++    for (const [index, board] of catalogBoards.entries()) {
++      const input = sourceCheckbox(labels[index], board.name, `${language} catalog source`);
++      assert.equal(input.props.checked, index === 0);
++      input.props.onChange({ target: { checked: index !== 0 } });
++      const next = changes.at(-1);
++      assert.equal(next.query, filters.query);
++      assert.equal(next.location, filters.location);
++      assert.deepEqual(Array.from(next.sources), index === 0
++        ? searchSources.filter(id => id !== board.id) : [...searchSources, board.id]);
++    }
++    assert.deepEqual(touched, [true, true]);
++    assert.deepEqual(Array.from(searchSources), [catalogBoards[0].id, unknownBoard, customBoardURL]);
++  });
++
++  test(`actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in ${language}`, () => {
++    assert.equal(new URL(customBoardURL).protocol, 'https:');
++    assert.equal(new URL(customBoardURL).hostname, 'jobs.lever.co');
++    const { labels, changes, touched, filters, searchSources } = renderBoardOptions(language);
++    for (const [index, source] of [unknownBoard, customBoardURL].entries()) {
++      const input = sourceCheckbox(labels[index + catalogBoards.length], source, `${language} custom source`);
++      assert.equal(input.props.checked, true);
++      input.props.onChange();
++      const next = changes.at(-1);
++      assert.equal(next.query, filters.query);
++      assert.equal(next.location, filters.location);
++      assert.deepEqual(Array.from(next.sources), searchSources.filter(value => value !== source));
++    }
++    assert.deepEqual(touched, [true, true]);
++  });
++
++  test(`actual JobCard footer isolates each source name and retains its employer link in ${language}`, () => {
++    const source = declarations(read('app/phone/components.tsx'), ['JobCard']);
++    const JobCard = execute(`${source}\nexports.JobCard = JobCard;`, {
++      useI18n: () => ({ language, t: translator(language) }), formatDateTime,
++      ArrowUpRight: () => null, Bookmark: () => null,
++    }).JobCard;
++    for (const sourceName of [...boardNames, '']) {
++      const job = Object.freeze({ ...mixedJob, sourceName });
++      const element = JobCard({ job, saved: false });
++      const footers = renderedElements(element, node => node.props.className === 'phone-job-footer');
++      assert.equal(footers.length, 1);
++      const footer = footers[0];
++      const spans = renderedElements(footer, node => node.type === 'span');
++      if (sourceName) {
++        assert.equal(assertIsolatedRawValue(footer, sourceName, `${language} JobCard source`), 1);
++        assert.equal(spans.length, 1);
++        assert.equal(spans[0].props.dir, 'auto');
++      } else assert.equal(spans.length, 0, 'No empty source label should appear');
++      const links = renderedElements(footer, node => node.type === 'a');
++      assert.equal(links.length, 1);
++      assert.equal(links[0].props.href, mixedJob.url);
++      assert.equal(links[0].props.target, '_blank');
++      assert.equal(links[0].props.rel, 'noopener noreferrer');
++      assert.equal(allText(links[0]), translator(language)('View job '));
++      const html = renderToStaticMarkup(React.createElement('section', { lang: language, dir: language === 'ar' ? 'rtl' : 'ltr' }, element));
++      assert(html.includes(`lang="${language}"`));
++      assert(html.includes(`href="${mixedJob.url}"`));
++    }
++  });
++}
+diff --git a/hosted/tests/phone-search-workflows.mjs b/hosted/tests/phone-search-workflows.mjs
+index 7783f1f..bfb6d96 100644
+--- a/hosted/tests/phone-search-workflows.mjs
++++ b/hosted/tests/phone-search-workflows.mjs
+@@ -52,12 +52,12 @@ function job(index) {
+     url: `https://example.org/career-finder-search/${index}`, location: 'Riyadh', country: 'SA',
+     remote: false, summary: 'Synthetic test data only', checkedAt: stamp, stale: false, sourceName: 'Synthetic board' };
+ }
+-function page({ status = 'complete', jobs = [job(9)], sourceStatus = 'fresh', error = null, nextCursor = null } = {}) {
++function page({ status = 'complete', jobs = [job(9)], sourceStatus = 'fresh', error = null, nextCursor = null, limited = false, sourceLimited = false } = {}) {
+   return { ok: true, version: 1, generatedAt: stamp, status, jobs,
+     sources: [{ id: 'lever:synthetic-a', name: 'Synthetic board', provider: 'lever', boardUrl: 'https://jobs.lever.co/synthetic-a',
+       status: sourceStatus, checkedAt: sourceStatus === 'unavailable' ? null : stamp,
+-      availableCount: jobs.length, matchedCount: jobs.length, limited: false, error }],
+-    nextCursor, totalMatches: jobs.length, limited: false, notice: 'Selected synthetic boards only.' };
++      availableCount: jobs.length, matchedCount: jobs.length, limited: sourceLimited, error }],
++    nextCursor, totalMatches: jobs.length, limited, notice: 'Selected synthetic boards only.' };
+ }
+ 
+ // Execute the real search, run, identity, local-data and persistence handlers.
+@@ -188,14 +188,20 @@ test('pagination retains the 200-result cap and retry refreshes restored results
+   restored.calls[0].resolve(page()); await retry; assert.equal(restored.context.restored, false);
+ });
+ 
+-let resultsNode;
++let resultsNode, liveStatusNode;
+ function findResults(node) {
+   if (ts.isJsxElement(node) && node.openingElement.attributes.properties.some(prop =>
+     ts.isJsxAttribute(prop) && prop.name.text === 'className' && prop.initializer && ts.isStringLiteral(prop.initializer) && prop.initializer.text === 'phone-results')) resultsNode = node;
++  if (ts.isJsxElement(node) && node.openingElement.tagName.getText(tree) === 'p'
++    && node.getText(tree).includes('"{0} jobs shown. {1}"')) {
++    assert(!liveStatusNode, 'Expected one actual search announcement');
++    liveStatusNode = node;
++  }
+   ts.forEachChild(node, findResults);
+ }
+ findResults(tree); assert(resultsNode, 'The actual results subtree is required');
+-function renderResults(searchPage, language, overrides = {}) {
++assert(liveStatusNode, 'The actual search live region is required');
++function renderSearchSurface(node, searchPage, language, overrides = {}) {
+   const calls = [], t = (key, values) => i18n.translate(key, language, values);
+   const scope = { searchPage, searchedFilters: submitted(), filters: draft(), searchSources: draft().sources,
+     restored: false, busy: '', loading: false, locked: false, checkingIdentity: false, jobs: [], cannotSave: false,
+@@ -204,10 +210,12 @@ function renderResults(searchPage, language, overrides = {}) {
+     JobCard: ({ job }) => React.createElement('article', { 'data-synthetic-job': job.id }, job.title),
+     searchJobs: mode => { calls.push(mode); }, saveJob() {}, setDialog() {}, ...overrides };
+   const top = ['discoveryCoverageNotice', 'discoveryLimitNotice'].map(name => `const ${name} = ${declaration(name)};`).join('\n');
+-  const { Results } = execute(`${top}\n${declaration('discoveryNoticeText')}\nconst incompleteSearch = ${declaration('incompleteSearch')};\nexports.Results = () => (${resultsNode.getText(tree)});`, scope);
++  const { Results } = execute(`${top}\n${declaration('discoveryNoticeText')}\nconst incompleteSearch = ${declaration('incompleteSearch')};\nexports.Results = () => (${node.getText(tree)});`, scope);
+   const element = Results();
+   return { element, html: renderToStaticMarkup(element), calls, t };
+ }
++const renderResults = (searchPage, language, overrides) => renderSearchSurface(resultsNode, searchPage, language, overrides);
++const renderLiveStatus = (searchPage, language, overrides) => renderSearchSurface(liveStatusNode, searchPage, language, overrides);
+ function findButtons(element, text, found = []) {
+   if (!React.isValidElement(element)) return found;
+   if (element.type === 'button' && element.props.children === text) found.push(element);
+@@ -221,7 +229,7 @@ test('actual nonempty partial and stale results show a localized retry that targ
+     page({ status: 'complete', sourceStatus: 'stale' }),
+   ]) {
+     const r = renderResults(value, language);
+-    assert(r.html.includes(r.t('Some boards could not provide current results. This search may be incomplete.')));
++    assert(r.html.includes(r.t('This search is incomplete. Review the source details, or retry the same search.')));
+     assert.match(r.html, /role="status"/); assert.match(r.html, /data-synthetic-job="synthetic-9"/);
+     const buttons = findButtons(r.element, r.t('Retry this search')); assert.equal(buttons.length, 1);
+     assert.equal(buttons[0].props.disabled, false); buttons[0].props.onClick(); assert.deepEqual(r.calls, ['retry']);
+@@ -253,3 +261,86 @@ test('actual retry control stays disabled during work or identity checks and is
+   const missing = renderResults(partial, 'en', { searchedFilters: null });
+   assert.equal(findButtons(missing.element, 'Retry this search').length, 0);
+ });
++
++const incompleteMessage = 'This search is incomplete. Review the source details, or retry the same search.';
++const expectedIncomplete = {
++  en: incompleteMessage,
++  ar: 'نتائج هذا البحث غير مكتملة. راجع تفاصيل المصادر أو أعد البحث نفسه.',
++};
++function assertLiveSummary(result, expected) {
++  assert.equal(result.element.type, 'p');
++  assert.equal(result.element.props.role, 'status');
++  assert.equal(result.element.props['aria-live'], 'polite');
++  assert.equal(result.element.props['aria-atomic'], 'true');
++  assert.equal(result.element.props.className, 'visually-hidden');
++  assert.equal(result.element.props.children, expected);
++}
++
++for (const language of ['en', 'ar']) {
++  for (const [label, options] of [
++    ['fresh partial results', { status: 'partial' }],
++    ['only the overall result limit', { limited: true }],
++    ['only a source result limit', { sourceLimited: true }],
++  ]) test(`actual visible and live summaries describe ${label} without inventing an outage in ${language}`, () => {
++    for (const count of [0, 12]) {
++      const value = model.discoveryPageSchema.parse(page({ ...options, jobs: Array.from({ length: count }, (_, index) => job(index)) }));
++      // A displayed count must describe this page, not its larger match estimate.
++      value.totalMatches = 417;
++      assert.equal(value.sources[0].status, 'fresh'); assert.equal(value.sources[0].error, null);
++      const visible = renderResults(value, language), live = renderLiveStatus(value, language);
++      assert.equal(visible.t(incompleteMessage), expectedIncomplete[language], 'The neutral message needs a real locale entry');
++      assertLiveSummary(live, live.t('{0} jobs shown. {1}', [i18n.formatNumber(count, language), expectedIncomplete[language]]));
++      assert(visible.html.includes(expectedIncomplete[language]));
++      assert(visible.html.includes(visible.t('{0} shown', [i18n.formatNumber(count, language)])));
++      assert.equal([...visible.html.matchAll(/data-synthetic-job=/g)].length, count);
++      for (const outage of [
++        'Some boards could not provide current results. This search may be incomplete.',
++        'Some sources could not provide current results.',
++        'This board could not provide current results.',
++        'Showing an earlier check of this board.',
++      ]) {
++        assert(!visible.html.includes(visible.t(outage)), `Fresh results must not claim: ${outage}`);
++        assert(!live.html.includes(live.t(outage)), `The announcement must not claim: ${outage}`);
++      }
++      const retries = findButtons(visible.element, visible.t('Retry this search'));
++      assert.equal(retries.length, 1); assert.equal(retries[0].props.disabled, false);
++      retries[0].props.onClick(); assert.deepEqual(visible.calls, ['retry']);
++      if (!count) {
++        assert(visible.html.includes(visible.t('No current matches could be confirmed.')));
++        assert(!visible.html.includes(visible.t('No matching jobs in these boards.')));
++      }
++    }
++  });
++
++  test(`actual search summaries retain source evidence and distinguish complete zero/nonzero results in ${language}`, () => {
++    for (const { value, incomplete, detail } of [
++      { value: page({ sourceStatus: 'stale' }), incomplete: true, detail: 'Showing an earlier check of this board.' },
++      { value: page({ error: { code: 'source_unavailable', message: 'Synthetic provider refusal.' } }), incomplete: true, detail: 'Synthetic provider refusal.' },
++      { value: page({ status: 'unavailable', sourceStatus: 'unavailable', jobs: [] }), incomplete: true, detail: 'This board could not provide current results.' },
++      { value: page({ jobs: [] }), incomplete: false },
++      { value: page({ jobs: Array.from({ length: 12 }, (_, index) => job(index)) }), incomplete: false },
++    ]) {
++      const visible = renderResults(value, language), live = renderLiveStatus(value, language);
++      const summary = incomplete ? expectedIncomplete[language] : live.t('Search complete.');
++      assertLiveSummary(live, live.t('{0} jobs shown. {1}', [i18n.formatNumber(value.jobs.length, language), summary]));
++      assert.equal(visible.html.includes(expectedIncomplete[language]), incomplete);
++      assert.equal(findButtons(visible.element, visible.t('Retry this search')).length, incomplete ? 1 : 0);
++      if (detail) assert(visible.html.includes(visible.t(detail)), 'Specific source evidence must remain visible');
++      if (!incomplete && !value.jobs.length) {
++        assert(visible.html.includes(visible.t('No matching jobs in these boards.')));
++        assert(!visible.html.includes(visible.t('No current matches could be confirmed.')));
++      }
++    }
++  });
++
++  test(`the actual search live region stays silent during work and before any result page in ${language}`, () => {
++    for (const value of [page(), page({ limited: true }), page({ sourceLimited: true })]) {
++      for (const busy of ['Searching employer boards', 'Loading more jobs']) {
++        assertLiveSummary(renderLiveStatus(value, language, { busy }), '');
++      }
++    }
++    for (const busy of ['', 'Searching employer boards']) {
++      assertLiveSummary(renderLiveStatus(null, language, { busy }), '');
++    }
++  });
++}
+diff --git a/localization/native-copy.json b/localization/native-copy.json
+index a535828..7531bee 100644
+--- a/localization/native-copy.json
++++ b/localization/native-copy.json
+@@ -293,6 +293,7 @@
+     "Clear phone data": "مسح بيانات الهاتف",
+     "Clear search filters": "مسح مرشحات البحث",
+     "Clear selection": "مسح الاختيار",
++    "Clear service address": "مسح عنوان الخدمة",
+     "Clear this phone workspace?": "هل تريد مسح مساحة الهاتف هذه؟",
+     "Clear this workspace from this phone": "مسح مساحة العمل هذه من الهاتف",
+     "Clear {0}": "مسح {0}",

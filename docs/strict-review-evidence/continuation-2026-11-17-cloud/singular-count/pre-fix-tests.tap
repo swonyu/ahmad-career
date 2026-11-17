@@ -1,0 +1,407 @@
+TAP version 13
+# Subtest: real review rendering localizes every state and preserves user and employer content
+ok 1 - real review rendering localizes every state and preserves user and employer content
+  ---
+  duration_ms: 49.293521
+  type: 'test'
+  ...
+# Subtest: recovery notices render full sentences and locale-specific counts from the same stored data
+ok 2 - recovery notices render full sentences and locale-specific counts from the same stored data
+  ---
+  duration_ms: 33.630106
+  type: 'test'
+  ...
+# Subtest: actual copy handler stores translatable notices and copies the exact value on success or refusal
+ok 3 - actual copy handler stores translatable notices and copies the exact value on success or refusal
+  ---
+  duration_ms: 58.636711
+  type: 'test'
+  ...
+# Subtest: discovery notice translates only the known service composition and keeps unknown text opaque
+ok 4 - discovery notice translates only the known service composition and keeps unknown text opaque
+  ---
+  duration_ms: 76.187915
+  type: 'test'
+  ...
+# Subtest: actual Saved, Apply, details and recovery values retain separate bidi boundaries in both languages
+ok 5 - actual Saved, Apply, details and recovery values retain separate bidi boundaries in both languages
+  ---
+  duration_ms: 147.240435
+  type: 'test'
+  ...
+# Subtest: actual profile comparison and application review isolate names and CV filenames without changing them
+ok 6 - actual profile comparison and application review isolate names and CV filenames without changing them
+  ---
+  duration_ms: 88.297671
+  type: 'test'
+  ...
+# Subtest: actual search inputs preserve mixed-script draft text with automatic direction
+ok 7 - actual search inputs preserve mixed-script draft text with automatic direction
+  ---
+  duration_ms: 40.590774
+  type: 'test'
+  ...
+# Subtest: actual catalog-board checkboxes isolate Arabic and Latin source names in en
+ok 8 - actual catalog-board checkboxes isolate Arabic and Latin source names in en
+  ---
+  duration_ms: 20.913449
+  type: 'test'
+  ...
+# Subtest: actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in en
+ok 9 - actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in en
+  ---
+  duration_ms: 15.55932
+  type: 'test'
+  ...
+# Subtest: actual JobCard footer isolates each source name and retains its employer link in en
+ok 10 - actual JobCard footer isolates each source name and retains its employer link in en
+  ---
+  duration_ms: 70.104684
+  type: 'test'
+  ...
+# Subtest: actual catalog-board checkboxes isolate Arabic and Latin source names in ar
+ok 11 - actual catalog-board checkboxes isolate Arabic and Latin source names in ar
+  ---
+  duration_ms: 12.435105
+  type: 'test'
+  ...
+# Subtest: actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in ar
+ok 12 - actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in ar
+  ---
+  duration_ms: 11.462615
+  type: 'test'
+  ...
+# Subtest: actual JobCard footer isolates each source name and retains its employer link in ar
+ok 13 - actual JobCard footer isolates each source name and retains its employer link in ar
+  ---
+  duration_ms: 28.740702
+  type: 'test'
+  ...
+# Subtest: retry repeats the displayed search without a cursor and preserves newer visible draft filters
+ok 14 - retry repeats the displayed search without a cursor and preserves newer visible draft filters
+  ---
+  duration_ms: 49.692776
+  type: 'test'
+  ...
+# Subtest: a fresh search response does not overwrite text or boards edited while it is pending
+ok 15 - a fresh search response does not overwrite text or boards edited while it is pending
+  ---
+  duration_ms: 29.137348
+  type: 'test'
+  ...
+# Subtest: pagination uses the displayed search and cursor, merges identities, and leaves draft filters alone
+ok 16 - pagination uses the displayed search and cursor, merges identities, and leaves draft filters alone
+  ---
+  duration_ms: 30.686314
+  type: 'test'
+  ...
+# Subtest: failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller
+    # Subtest: failure
+    ok 1 - failure
+      ---
+      duration_ms: 40.653167
+      type: 'test'
+      ...
+    # Subtest: cancel
+    ok 2 - cancel
+      ---
+      duration_ms: 14.2037
+      type: 'test'
+      ...
+    1..2
+ok 17 - failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller
+  ---
+  duration_ms: 55.985706
+  type: 'test'
+  ...
+# Subtest: late search results cannot cross the existing identity or generation boundary
+    # Subtest: identity
+    ok 1 - identity
+      ---
+      duration_ms: 15.799542
+      type: 'test'
+      ...
+    # Subtest: generation
+    ok 2 - generation
+      ---
+      duration_ms: 14.488926
+      type: 'test'
+      ...
+    1..2
+ok 18 - late search results cannot cross the existing identity or generation boundary
+  ---
+  duration_ms: 31.273647
+  type: 'test'
+  ...
+# Subtest: pagination retains the 200-result cap and retry refreshes restored results without a stale cursor
+ok 19 - pagination retains the 200-result cap and retry refreshes restored results without a stale cursor
+  ---
+  duration_ms: 57.028536
+  type: 'test'
+  ...
+# Subtest: actual nonempty partial and stale results show a localized retry that targets the displayed search
+ok 20 - actual nonempty partial and stale results show a localized retry that targets the displayed search
+  ---
+  duration_ms: 109.725195
+  type: 'test'
+  ...
+# Subtest: actual empty unavailable results distinguish missing evidence from a completed zero-match search in both languages
+ok 21 - actual empty unavailable results distinguish missing evidence from a completed zero-match search in both languages
+  ---
+  duration_ms: 79.45817
+  type: 'test'
+  ...
+# Subtest: actual retry control stays disabled during work or identity checks and is absent without a submitted search
+ok 22 - actual retry control stays disabled during work or identity checks and is absent without a submitted search
+  ---
+  duration_ms: 47.843021
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe fresh partial results without inventing an outage in en
+not ok 23 - actual visible and live summaries describe fresh partial results without inventing an outage in en
+  ---
+  duration_ms: 31.1381
+  type: 'test'
+  location: '/workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:284:6'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + '1 jobs shown. This search is incomplete. Review the source details, or retry the same search.'
+    - '1 job shown. This search is incomplete. Review the source details, or retry the same search.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '1 job shown. This search is incomplete. Review the source details, or retry the same search.'
+  actual: '1 jobs shown. This search is incomplete. Review the source details, or retry the same search.'
+  operator: 'strictEqual'
+  stack: |-
+    assertLiveSummary (file:///workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:276:10)
+    TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:294:7)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: actual visible and live summaries describe only the overall result limit without inventing an outage in en
+not ok 24 - actual visible and live summaries describe only the overall result limit without inventing an outage in en
+  ---
+  duration_ms: 23.693347
+  type: 'test'
+  location: '/workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:284:6'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + '1 jobs shown. This search is incomplete. Review the source details, or retry the same search.'
+    - '1 job shown. This search is incomplete. Review the source details, or retry the same search.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '1 job shown. This search is incomplete. Review the source details, or retry the same search.'
+  actual: '1 jobs shown. This search is incomplete. Review the source details, or retry the same search.'
+  operator: 'strictEqual'
+  stack: |-
+    assertLiveSummary (file:///workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:276:10)
+    TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:294:7)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: actual visible and live summaries describe only a source result limit without inventing an outage in en
+not ok 25 - actual visible and live summaries describe only a source result limit without inventing an outage in en
+  ---
+  duration_ms: 53.151379
+  type: 'test'
+  location: '/workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:284:6'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + '1 jobs shown. This search is incomplete. Review the source details, or retry the same search.'
+    - '1 job shown. This search is incomplete. Review the source details, or retry the same search.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '1 job shown. This search is incomplete. Review the source details, or retry the same search.'
+  actual: '1 jobs shown. This search is incomplete. Review the source details, or retry the same search.'
+  operator: 'strictEqual'
+  stack: |-
+    assertLiveSummary (file:///workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:276:10)
+    TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:294:7)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: actual search summaries retain source evidence and distinguish complete zero/nonzero results in en
+not ok 26 - actual search summaries retain source evidence and distinguish complete zero/nonzero results in en
+  ---
+  duration_ms: 22.485724
+  type: 'test'
+  location: '/workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:317:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + '1 jobs shown. Search complete.'
+    - '1 job shown. Search complete.'
+            ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '1 job shown. Search complete.'
+  actual: '1 jobs shown. Search complete.'
+  operator: 'strictEqual'
+  stack: |-
+    assertLiveSummary (file:///workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:276:10)
+    TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:329:7)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: the actual search live region stays silent during work and before any result page in en
+ok 27 - the actual search live region stays silent during work and before any result page in en
+  ---
+  duration_ms: 30.91759
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe fresh partial results without inventing an outage in ar
+not ok 28 - actual visible and live summaries describe fresh partial results without inventing an outage in ar
+  ---
+  duration_ms: 25.195542
+  type: 'test'
+  location: '/workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:284:6'
+  failureType: 'testCodeFailure'
+  error: |-
+    The singular Arabic template must retain both placeholders
+    + actual - expected
+    
+    + undefined
+    - 'الوظائف المعروضة: {0}. {1}'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'الوظائف المعروضة: {0}. {1}'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:293:52)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: actual visible and live summaries describe only the overall result limit without inventing an outage in ar
+not ok 29 - actual visible and live summaries describe only the overall result limit without inventing an outage in ar
+  ---
+  duration_ms: 26.750556
+  type: 'test'
+  location: '/workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:284:6'
+  failureType: 'testCodeFailure'
+  error: |-
+    The singular Arabic template must retain both placeholders
+    + actual - expected
+    
+    + undefined
+    - 'الوظائف المعروضة: {0}. {1}'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'الوظائف المعروضة: {0}. {1}'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:293:52)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: actual visible and live summaries describe only a source result limit without inventing an outage in ar
+not ok 30 - actual visible and live summaries describe only a source result limit without inventing an outage in ar
+  ---
+  duration_ms: 21.165428
+  type: 'test'
+  location: '/workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:284:6'
+  failureType: 'testCodeFailure'
+  error: |-
+    The singular Arabic template must retain both placeholders
+    + actual - expected
+    
+    + undefined
+    - 'الوظائف المعروضة: {0}. {1}'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'الوظائف المعروضة: {0}. {1}'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:293:52)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: actual search summaries retain source evidence and distinguish complete zero/nonzero results in ar
+not ok 31 - actual search summaries retain source evidence and distinguish complete zero/nonzero results in ar
+  ---
+  duration_ms: 8.515413
+  type: 'test'
+  location: '/workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:317:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'الوظائف المعروضة: ⁨١⁩. ⁨اكتمل البحث.⁩'
+    - '١ job shown. اكتمل البحث.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '١ job shown. اكتمل البحث.'
+  actual: 'الوظائف المعروضة: ⁨١⁩. ⁨اكتمل البحث.⁩'
+  operator: 'strictEqual'
+  stack: |-
+    assertLiveSummary (file:///workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:276:10)
+    TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/singular-count-d97/hosted/tests/phone-search-workflows.mjs:329:7)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: the actual search live region stays silent during work and before any result page in ar
+ok 32 - the actual search live region stays silent during work and before any result page in ar
+  ---
+  duration_ms: 21.632269
+  type: 'test'
+  ...
+1..32
+# tests 36
+# suites 0
+# pass 28
+# fail 8
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2011.597262

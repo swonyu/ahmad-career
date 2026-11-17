@@ -1,0 +1,33 @@
+{
+  "verified_at": "2026-11-17T16:14:40.724933+00:00",
+  "archives": [
+    {
+      "artifact_id": 14345462809,
+      "archive": "/workspace/scratch/5bc6158967e8/ci-44122504831-native/hosted.zip",
+      "bytes": 8817,
+      "sha256": "b8c0d8caeee3e9c9e074820f1a3ffcb8537fe87d9f732906bc1aa8f106fc9e50",
+      "matches_github_digest": true,
+      "expires_at": "2026-11-24T16:11:37Z",
+      "extracted_to": "/workspace/scratch/5bc6158967e8/ci-44122504831-native/hosted",
+      "files": [
+        "hosted-phone-verification.json",
+        "hosted-verification.json",
+        "hosted-worker-verification.json",
+        "dependency-audit-ci.json",
+        "hosted-discovery-verification.json"
+      ]
+    },
+    {
+      "artifact_id": 14344859128,
+      "archive": "/workspace/scratch/5bc6158967e8/ci-44122504831-native/iphone-build.zip",
+      "bytes": 8371,
+      "sha256": "4d02e71fbdcbf2ea118b29c026b4eb4563910a684d22ebebb784185f0cb8cb1e",
+      "matches_github_digest": true,
+      "expires_at": "2026-11-24T16:11:41Z",
+      "extracted_to": "/workspace/scratch/5bc6158967e8/ci-44122504831-native/iphone-build",
+      "files": [
+        "career-iphone-build.log"
+      ]
+    }
+  ]
+}

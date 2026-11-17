@@ -1,0 +1,45 @@
+{
+  "verified_at": "2026-11-17T17:25:30.990252+00:00",
+  "run_id": 44130275991,
+  "candidate": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+  "archives": [
+    {
+      "artifact_id": 14348339106,
+      "archive": "/workspace/scratch/5bc6158967e8/ci-44130275991-native/hosted.zip",
+      "bytes": 8816,
+      "sha256": "7b45086cb91136d33fe11ebaa4d364474ddace7515100b13c2bae291b2047203",
+      "matches_github_digest": true,
+      "expires_at": "2026-11-24T16:52:05Z",
+      "extracted_to": "/workspace/scratch/5bc6158967e8/ci-44130275991-native/hosted"
+    },
+    {
+      "artifact_id": 14349148427,
+      "archive": "/workspace/scratch/5bc6158967e8/ci-44130275991-native/iphone-build.zip",
+      "bytes": 8349,
+      "sha256": "49136f50cbc11beee85b48848fc4abb792a01c47834aec8008d01c185a28c89b",
+      "matches_github_digest": true,
+      "expires_at": "2026-11-24T16:52:42Z",
+      "extracted_to": "/workspace/scratch/5bc6158967e8/ci-44130275991-native/iphone-build"
+    },
+    {
+      "artifact_id": 14350187116,
+      "archive": "/workspace/scratch/5bc6158967e8/ci-44130275991-native/android.zip",
+      "bytes": 3107392,
+      "sha256": "0f217cb73dd30c866cf95c3ca3438f8f3409fecf744c43573c53e49fd7e80edb",
+      "matches_github_digest": true,
+      "expires_at": "2026-11-24T16:58:55Z",
+      "extracted_to": "/workspace/scratch/5bc6158967e8/ci-44130275991-native/android"
+    },
+    {
+      "artifact_id": 14350559318,
+      "archive": "/workspace/scratch/5bc6158967e8/ci-44130275991-native/iphone-ui.zip",
+      "bytes": 177487782,
+      "sha256": "4895285f086dece71aefd3e3af8d325e79c0440035740eb648dfc1768bae5ec3",
+      "matches_github_digest": true,
+      "expires_at": "2026-11-24T17:18:48Z",
+      "extracted_to": "/workspace/scratch/5bc6158967e8/ci-44130275991-native/iphone-ui"
+    }
+  ],
+  "all_four_exact_sizes_and_sha256_match_github_metadata": true,
+  "iphone_finalized_result_bundle_and_export_verified": true
+}

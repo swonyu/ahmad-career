@@ -1,0 +1,26 @@
+{
+  "candidate": "d97bc209ca84ecb830e6c6bad25808164706409f",
+  "actual_ci_checkout": "50c05cb61cc28f59f4591ddcd53fa49d755fda44",
+  "common_tree": "7ccafbdaad98f000e5e12a385dd69fc5beb72f50",
+  "method": "testProfileReadinessAndSimpleConnectionSetup",
+  "outcome": "passed",
+  "seconds": 86.706,
+  "logged_real_control_tap": "t=61.74s Tap connection.clearAddress Button",
+  "guards_retained_in_executed_source": [
+    "Full keyboard dismissal before clear target reveal",
+    "Visible and enabled real Clear target",
+    "Common exact-empty field predicate",
+    "Fresh keyboard readiness after refocus",
+    "Original exact-final-value predicate",
+    "Changing destination clears unsent connection code",
+    "Resetting to Career Finder hides the advanced address"
+  ],
+  "source_sha256": {
+    "apple/AhmadCareer/NativeApplicationsViews.swift": "c1407ff4887d4c6d2747aea7deae060f6fd8769e0dfc12b304246c3fb83d3f32",
+    "apple/UITests/CareerFinderUITests.swift": "ad0bac775bc17e7cbf2c8ac9c41fc1a0ca1489e579010fb198ff75878d7d557b"
+  },
+  "case_excerpt": "iphone-clear-control-case.log",
+  "case_excerpt_sha256": "8d82546b77645bc46e96e42bb6149569df8c9599177470c7bdf2b1cd5518257d",
+  "evidence_basis": "Real control interaction is explicit in the raw log. Guard success is established by the passing method bound to the reviewed exact source, rather than a separately captured field-value dump.",
+  "limitations": "Aggregate iPhone gate failed on wrapper timeout; screenshot/video export did not complete. No physical accessibility or other publishing-candidate result is inferred."
+}

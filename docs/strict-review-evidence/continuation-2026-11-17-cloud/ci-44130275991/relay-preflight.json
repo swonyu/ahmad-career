@@ -1,0 +1,17 @@
+{
+  "observed_at": "2026-11-17T16:49:21.903767+00:00",
+  "relay": "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-finder-ci-clear-repair-20261117-lamssjwx/repo.git",
+  "bare": true,
+  "head_symbolic": "refs/heads/relay-placeholder",
+  "head_sha256": "d57d92a98c323ab4a7386bc1a7c3ecf9910ed19bb009bf3b04e516601add0a05",
+  "index_exists": false,
+  "git_lock_paths": [],
+  "remote_refs": {
+    "refs/heads/app-store/career-workspace-copy-20261117": "fd9c5399f2b7001b234b3b86bf72e2b36b5114c1",
+    "refs/heads/career-finder-phones-verified-apply-20261116": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+    "refs/heads/continuation/account-acceptance-20261117": "d97bc209ca84ecb830e6c6bad25808164706409f"
+  },
+  "shared_build_lock_exists": false,
+  "shared_build_lock_owner": null,
+  "authorization": "Root released existing object-only relay for21f08f5 normal candidate push. No shared build reservation is inferred."
+}

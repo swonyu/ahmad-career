@@ -1,0 +1,46 @@
+{
+  "started_at": "2026-11-17T17:37:15.538939+00:00",
+  "completed_at": "2026-11-17T17:37:18.386895+00:00",
+  "relay": "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-finder-ci-clear-repair-20261117-lamssjwx/repo.git",
+  "bundle": "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-finder-ci-clear-repair-20261117-lamssjwx/acceptance-banner-63eecda5.bundle",
+  "bundle_bytes": 978,
+  "bundle_sha256": "4e91903884a75bcb129f8c46df0c3e5a64af036f52df3f1c1cf38deebc88d661",
+  "bundle_verify_stdout": "The bundle contains this ref:\n63eecda5c5c57805aeae1f5ba8e22af65e38ceee refs/heads/continuation/account-acceptance-20261117\nThe bundle requires this ref:\n21f08f5c4509bd1fdbe9112003224bf2316edd2a \nThe bundle uses this hash algorithm: sha1\n",
+  "bundle_verify_stderr": "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-finder-ci-clear-repair-20261117-lamssjwx/acceptance-banner-63eecda5.bundle is okay\n",
+  "new_head": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+  "parent": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+  "tree": "74b02b205e7a256f589d9961b2f4a9c129b6935d",
+  "changed_paths": [
+    "apple/AhmadCareer/NativeCareerViews.swift"
+  ],
+  "numstat": "25\t6\tapple/AhmadCareer/NativeCareerViews.swift",
+  "reviewed_source_sha256": "01864eda7719516dc46458a0518209a17c4a85dfe0bf236063ca93cb88e84cd7",
+  "refs_before": {
+    "refs/heads/app-store/career-workspace-copy-20261117": "fd9c5399f2b7001b234b3b86bf72e2b36b5114c1",
+    "refs/heads/career-finder-phones-verified-apply-20261116": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+    "refs/heads/continuation/account-acceptance-20261117": "21f08f5c4509bd1fdbe9112003224bf2316edd2a"
+  },
+  "refs_after": {
+    "refs/heads/app-store/career-workspace-copy-20261117": "fd9c5399f2b7001b234b3b86bf72e2b36b5114c1",
+    "refs/heads/career-finder-phones-verified-apply-20261116": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+    "refs/heads/continuation/account-acceptance-20261117": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee"
+  },
+  "push_stdout": "",
+  "push_stderr": "To https://github.com/swonyu/ahmad-career.git\n   21f08f5..63eecda  63eecda5c5c57805aeae1f5ba8e22af65e38ceee -> continuation/account-acceptance-20261117\n",
+  "ordinary_nonforce_push": true,
+  "state_before": {
+    "bare_head_sha256": "d57d92a98c323ab4a7386bc1a7c3ecf9910ed19bb009bf3b04e516601add0a05",
+    "index_exists": false,
+    "git_locks": [],
+    "shared_build_lock_exists": false,
+    "shared_build_lock_owner": null
+  },
+  "state_after": {
+    "bare_head_sha256": "d57d92a98c323ab4a7386bc1a7c3ecf9910ed19bb009bf3b04e516601add0a05",
+    "index_exists": false,
+    "git_locks": [],
+    "shared_build_lock_exists": false,
+    "shared_build_lock_owner": null
+  },
+  "no_checkout_build_signing_dispatch_rerun_or_cancel": true
+}

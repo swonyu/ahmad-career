@@ -1,0 +1,28 @@
+{
+  "recorded_at_utc": "2026-11-17T17:10:49.436403+00:00",
+  "source": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+  "outputs": {
+    "review.json": {
+      "bytes": 28148,
+      "sha256": "ec10032f2d81cda1e79f39730eaa3166c21f82e1f88ee1909cca56ef53d3f295"
+    },
+    "review.md": {
+      "bytes": 9787,
+      "sha256": "9def0263613d83e22bc993bf47366667d85dc48766acdf90fae3f7a73e964e5d"
+    }
+  },
+  "input_count": 30,
+  "new_material_defects": 0,
+  "source_or_root_doc_edits": false,
+  "new_tests_builds_or_paid_calls": false,
+  "predecessor_sha256": {
+    "review.md": "b15db49d1cc3a78dc6e7d5014a2509386634ebe8a0bdfcfb7550f67d8013aac9",
+    "review.json": "b5e33c0bf0c52ee459527b43a2e28f8ea0dc51db2466623ab703f1d30175355c",
+    "receipt.json": "e9e49c2564d156a638627a9914e8c4c390a133b73d90ec44c8d8ae562606d5ff"
+  },
+  "documentation_corrections": [
+    "Changed only the Markdown JSON link to portable relative review.json.",
+    "Clarified only clock text/fields: original 24-active-hour budget, derived request-plus-24-hour elapsed checkpoint rather than independently established hard deadline, unknown active remainder and owner-reported later extension."
+  ],
+  "bounded_change_check": "Reverse substitution reproduces predecessor Markdown exactly; JSON objects are identical outside clock."
+}

@@ -1,0 +1,53 @@
+{
+  "run_id": 44139018005,
+  "candidate": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+  "actual_checkout": "e3e875cee10e379c34d833ae22827f0ae9aee570",
+  "gate": "Hosted HTTPS service and durable storage",
+  "failed_step": "Audit the locked dependencies",
+  "observed_step_exit": 1,
+  "failed_at": "2026-11-17T17:40:09.2861885Z",
+  "current_audit_sha256": "8ef6d4983d0ba2566e03b0045735fca24ed97ec0db92287fefbe1209d2d31675",
+  "current_counts": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 19,
+    "critical": 0,
+    "total": 19
+  },
+  "root_advisory": {
+    "source": 1247710,
+    "name": "picomatch",
+    "dependency": "picomatch",
+    "title": "picomatch vulnerable to ReDoS through single-branch repeated extglobs",
+    "url": "https://github.com/advisories/GHSA-fc5q-39xc-vjpf",
+    "severity": "high",
+    "cwe": [
+      "CWE-1333"
+    ],
+    "cvss": {
+      "score": 7.5,
+      "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+    },
+    "range": "<=4.0.7"
+  },
+  "locked_picomatch_versions": {
+    "node_modules/picomatch": "2.3.2",
+    "node_modules/tinyglobby/node_modules/picomatch": "4.0.4",
+    "node_modules/vite/node_modules/picomatch": "4.0.7"
+  },
+  "parent_source_delta": [
+    "apple/AhmadCareer/NativeCareerViews.swift"
+  ],
+  "previous_run_id": 44130275991,
+  "previous_audit_sha256": "c08d05b2b03ea46091efa74c8fb869ba6594053f24d325b1eaf366fa6e174e9d",
+  "previous_counts": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "qualification": "Observed audit results differ while hosted source and lock are unchanged by the banner-only commit. No advisory publication time, external exploit, or runtime vulnerability reachability is inferred. Current gate remains failed; no audit bypass or retry was performed."
+}

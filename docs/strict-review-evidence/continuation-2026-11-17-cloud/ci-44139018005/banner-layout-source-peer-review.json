@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/final_native_peer",
+  "reviewed_at_utc": "2026-11-17T17:33:44.634610+00:00",
+  "verdict": "ACCEPT_SOURCE_PATCH_FOR_SUCCESSOR_CI; no blocking source finding.",
+  "finding_addressed": "RUN38-VIS-01: acceptance-only provenance banner overlaps the Settings navigation title in Arabic largest-text and English dark largest-text captures.",
+  "runtime_status": "PENDING. Run38 remains the historical passing source. The banner correction has not been built, executed or visually verified by this reviewer; do not mark the visual finding runtime-resolved yet.",
+  "scope": {
+    "base_commit": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+    "base_tree": "b2a2ca81df383a468c318e4ebc629c13f16e5fe9",
+    "checkout": "/workspace/scratch/5bc6158967e8/career-finder",
+    "source_file": "apple/AhmadCareer/NativeCareerViews.swift",
+    "source_before_sha256": "6ef2dd17277a020cca1d53ae30175443fabe00fb569df35e0e087ca81785616f",
+    "source_after_sha256": "01864eda7719516dc46458a0518209a17c4a85dfe0bf236063ca93cb88e84cd7",
+    "patch_path": "/workspace/scratch/5bc6158967e8/iphone-acceptance-banner-21f08f5.patch",
+    "patch_sha256": "496af5c50b31cd994d160cc627693fe0ff716e1e2d9b7f5de5da8698f7ee681f",
+    "patch_bytes": 2555,
+    "patch_matches_target_working_diff": true,
+    "source_patch_files": 1,
+    "insertions": 25,
+    "deletions": 6,
+    "other_dirty_documents": "Observed as owned work in root status; neither reviewed nor modified."
+  },
+  "verified_findings": [
+    "The private @MainActor ViewModifier is defined inside the existing iOS compilation guard.",
+    "Only DEBUG with CareerAppEnvironment.isUIAcceptance creates a banner-first VStack. Nonacceptance DEBUG and Release return the content proxy directly.",
+    "The acceptance flag/valid UUID isolation guard in CareerAppEnvironment is byte-identical to the historical source; the new modifier does not alter fixture creation, storage or network dependencies.",
+    "The marker retains the exact localized source text, acceptance.offline identifier, fixed11pt font, single line, padding, full-width framing and yellow background treatment.",
+    "The modifier is applied to the existing TabView before the unchanged environment objects, tint, appearance, locale, layout direction, calendar and lifecycle modifiers; both its banner and content inherit those settings.",
+    "The five tab labels/tags/navigation stacks and saved-count badge are unchanged.",
+    "The old acceptance marker alone is removed from safeAreaInset. The storage-error Label, its announcement handler, text, styling and accessibility label remain unchanged.",
+    "No account identity, submission, recovery, provider, consent, signing, workflow, or other application behavior is changed by this patch.",
+    "UITest source is byte-identical:17 test methods and144 assertion calls; no assertion, wait, skip or test removal."
+  ],
+  "compile_review": {
+    "assessment": "No source-level syntax, actor-isolation or availability blocker identified. The ViewModifier body returns view content in every conditional compilation branch; the involved SwiftUI constructs predate the project minimum target. This is a source assessment, not a compiler result.",
+    "project_observation": "Existing Xcode project uses Swift language mode5.0 and iOS deployment target16.0; neither changes.",
+    "primary_references": [
+      {
+        "url": "https://developer.apple.com/documentation/swiftui/viewmodifier",
+        "claim": "Apple documents ViewModifier as MainActor/preconcurrency and body(content:) returning its associated View body."
+      },
+      {
+        "url": "https://developer.apple.com/documentation/swiftui/viewbuilder",
+        "claim": "Apple documents conditional ViewBuilder content; Xcode26 and earlier use ViewBuilder for view-producing content."
+      }
+    ]
+  },
+  "material_pending_risk": "The acceptance-only VStack intentionally gives the marker its own row and therefore reduces the child content viewport by the marker row height. Successor native gates must confirm controls remain reachable, and matching Arabic/dark large-text Settings captures must confirm title separation. Nonacceptance and Release branches do not add that row.",
+  "static_checks": {
+    "target_diff_check": "passed",
+    "test_bytes_unchanged": true,
+    "test_method_count": 17,
+    "assertion_call_count": 144,
+    "fixture_environment_bytes_unchanged": true
+  },
+  "reviewer_actions": [
+    "Read target diff, surrounding view structure, relevant existing project settings and fixture guard.",
+    "Independently verified patch/source hashes and exact target-diff equality.",
+    "Consulted official Apple protocol/builder documentation.",
+    "Wrote this separate peer receipt outside root."
+  ],
+  "not_performed": [
+    "Source or workflow edit",
+    "Swift compiler/native build",
+    "Tests or CI dispatch",
+    "Browser or Mac operation",
+    "Git commit/push",
+    "Signing/store/public deployment"
+  ],
+  "qualification": "This source review neither changes the historical run38 gate status nor extends its runtime proof to the new patch; physical-device, VoiceOver, real-provider and release acceptance remain separate."
+}

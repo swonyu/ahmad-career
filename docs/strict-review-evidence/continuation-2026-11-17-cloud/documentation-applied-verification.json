@@ -1,0 +1,75 @@
+{
+  "verifiedAt": "2026-11-17T18:33:59.697120+00:00",
+  "applicationSource": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+  "patchSha256": "0e329bdad7995fc99ad7cbdc850021d2e26fba50c8e0ecb25ba5d42f4dd2b537",
+  "manifestSha256": "ada1325357169ad8daa9f6fddaa23b2eef60062409fb36fda311bed396bbae86",
+  "all13BytesMatch": true,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 38818,
+      "sha256": "b1610ea0d6cf83ebd403e317a3aaaf9507806f327cb372c5b5584201336c7fa0"
+    },
+    {
+      "path": "docs/Continuation-Implementation-2026-11-17.md",
+      "bytes": 135516,
+      "sha256": "17d125bbba8ca49b015c18a95eccbe0d2f75dbbdd59865cbc0cecbfed44da50c"
+    },
+    {
+      "path": "docs/Continuation-Review-2026-11-17.md",
+      "bytes": 66490,
+      "sha256": "9a27eb1687ed988b0611d22ff77fa165c640915cfde099d892725e641b8a373c"
+    },
+    {
+      "path": "docs/Native-Compiler-Search-Followup-2026-11-17.md",
+      "bytes": 26258,
+      "sha256": "b5986ba1cea6e0f8de841de79bd4790525d93e4473e2086b7f32ddd5e236955e"
+    },
+    {
+      "path": "docs/Open-Source-and-Interoperability-Research-2026-11-17.md",
+      "bytes": 27808,
+      "sha256": "891d930dafb10b4350daa58cf3b8ca2537f2df5497430e663fdaf3b0a65b1c44"
+    },
+    {
+      "path": "docs/Owner-Acceptance-2026-11-17.md",
+      "bytes": 29535,
+      "sha256": "88d3a42e803d4c425003b816a866aae2c06cca2a1140a393ea7a8b47757b1158"
+    },
+    {
+      "path": "docs/Product-Review-Research-2026-11-17.md",
+      "bytes": 36792,
+      "sha256": "26d6090dda5ac24fe98b1114eeb45592bb25a75d8eee21d4228793f0c4421041"
+    },
+    {
+      "path": "docs/Provider-Generation-Upgrade-2026-11-17.md",
+      "bytes": 13635,
+      "sha256": "93a7920355e71e2b9cb9cea0899de746209f42cbb9256dc6c2b297aa05529e1a"
+    },
+    {
+      "path": "docs/Publishing-Handoff-2026-11-17.md",
+      "bytes": 13723,
+      "sha256": "4d74c1c9a11b0b0cca1a09b2adc92c21c17972269e1217958cfbe280ebc37ffe"
+    },
+    {
+      "path": "docs/Release-Integration-Checklist-2026-11-17.md",
+      "bytes": 38861,
+      "sha256": "8c7e456f6089ef2a7c8bf8ec563ee4a708573701cc9e43724bebdd61fec708d1"
+    },
+    {
+      "path": "docs/strict-review-evidence/continuation-2026-11-17-cloud/record-tools-peer/README.md",
+      "bytes": 11182,
+      "sha256": "aff5c7dac753fdda0786bea6d7acdc00cbc849a921c39ec30468abcfc1f31531"
+    },
+    {
+      "path": "docs/strict-review-evidence/continuation-2026-11-17-cloud/record-tools/record-tools-handoff.md",
+      "bytes": 10463,
+      "sha256": "95a41b6cf3b2e5ae52fbe1e7a9066ec6371c8af208a878246cf10935f84bc52c"
+    },
+    {
+      "path": "hosted/README.md",
+      "bytes": 38857,
+      "sha256": "79d00873e2d47d8800199cef5e1660029bc6dbf83a266730c873c2c3e86fb36c"
+    }
+  ],
+  "scope": "Documentation-only incremental reconciliation; no application-source mutation."
+}

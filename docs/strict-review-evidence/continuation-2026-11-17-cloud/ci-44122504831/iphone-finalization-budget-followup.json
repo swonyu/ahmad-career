@@ -1,0 +1,41 @@
+{
+  "observed_at": "2026-11-17T16:43:51.099101+00:00",
+  "base_candidate": "d97bc209ca84ecb830e6c6bad25808164706409f",
+  "workflow": ".github/workflows/phone-quality.yml",
+  "before_sha256": "c6215599990083d1bd35eee42eae6fba6838d7d974132e056763532ae6ee9d6c",
+  "after_sha256": "0f6da9de21b2d7fd9373a9375dbb2d4090168930fbeda8ebda7c21af3c5f19f9",
+  "patch_path": "/workspace/scratch/5bc6158967e8/iphone-ui-finalization-budget-d97bc209.patch",
+  "patch_sha256": "950f19aba6adb72e86118891792141ee74027f7b72efc311aff9944893cf3696",
+  "patch_bytes": 856,
+  "exact_delta_verification": "Byte comparison proves only the iPhone UI job35\u219240 and native-flow step30\u219235 minute numeric limits change. All other workflow bytes, commands, source, test methods, assertions, retry policy and per-assertion wait values remain identical.",
+  "prior_step_minutes": 30,
+  "new_step_minutes": 35,
+  "prior_job_minutes": 35,
+  "new_job_minutes": 40,
+  "run35_suite_started_at": "2026-11-17T16:15:07.239Z",
+  "run35_suite_finished_at": "2026-11-17T16:39:38.455Z",
+  "run35_timeout_at": "2026-11-17T16:39:56.275130Z",
+  "seconds_between_suite_end_and_timeout": 17.82013,
+  "run35_observed_test_cases": {
+    "executed": 17,
+    "passed": 17,
+    "failed": 0,
+    "unexpected": 0,
+    "seconds": 1471.177
+  },
+  "run35_job_conclusion": "failure",
+  "run35_export_failure": "Info.plist absent from unfinished result bundle; xcresulttool exit64.",
+  "tests_performed_for_this_configuration_delta": [
+    "Exact expected byte replacement equality",
+    "git diff --check"
+  ],
+  "not_performed": [
+    "Native build or test rerun",
+    "Shared Mac operation",
+    "Git push or workflow dispatch"
+  ],
+  "limitations": "New wrapper budget is source-reviewed only until a successor run reaches terminal completion and successfully exports its native evidence.",
+  "nominal_job_minus_step_margin_minutes_before": 5,
+  "nominal_job_minus_step_margin_minutes_after": 5,
+  "margin_qualification": "The same five-minute nominal job-minus-step margin remains for surrounding setup and evidence work; this is not a promise of five full minutes after any particular execution."
+}

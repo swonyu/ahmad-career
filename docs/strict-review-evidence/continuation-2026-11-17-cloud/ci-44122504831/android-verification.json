@@ -1,0 +1,61 @@
+{
+  "commit": "50c05cb61cc28f59f4591ddcd53fa49d755fda44",
+  "observedAt": "2026-11-17T16:19:41.541Z",
+  "result": "passed",
+  "results": [
+    {
+      "label": "ordinary-phone",
+      "classes": [
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest",
+        "com.saleh.careerfinder.ContinuationRegressionTest",
+        "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest",
+        "com.saleh.careerfinder.DiscoveryRegressionTest",
+        "com.saleh.careerfinder.ExperienceModelRegressionTest",
+        "com.saleh.careerfinder.LinkedInPhoneAcceptanceTest",
+        "com.saleh.careerfinder.LinkedInRegressionTest",
+        "com.saleh.careerfinder.NativeLocalizationAcceptanceTest",
+        "com.saleh.careerfinder.NavigationPhoneAcceptanceTest",
+        "com.saleh.careerfinder.PhoneAcceptanceTest",
+        "com.saleh.careerfinder.PhonePolishAcceptanceTest",
+        "com.saleh.careerfinder.SavedSearchRegressionTest",
+        "com.saleh.careerfinder.VaultAcceptanceTest",
+        "com.saleh.careerfinder.WorkspaceAccessibilityRegressionTest",
+        "com.saleh.careerfinder.WorkspaceRegressionTest",
+        "com.saleh.careerfinder.WorkspaceSafetyRegressionTest"
+      ],
+      "tests": 104,
+      "result": "passed"
+    },
+    {
+      "label": "normal-preview-tls-boundary",
+      "classes": [
+        "com.saleh.careerfinder.TlsBoundaryAcceptanceTest"
+      ],
+      "tests": 1,
+      "result": "passed"
+    },
+    {
+      "label": "native-https-phone",
+      "classes": [
+        "com.saleh.careerfinder.NativeHttpsAcceptanceTest"
+      ],
+      "tests": 1,
+      "result": "passed"
+    }
+  ],
+  "hashes": {
+    "android/app/build/outputs/apk/debug/app-debug.apk": "22fe3f1997fabbf11bf7c211522a36b9cd45d7e680df3dbb7a30c802f3267d8d",
+    "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk": "6c0d212e22c3d34f08c33da8d5eec44f16fb5f1f2d0f8c145fff521a51391e49",
+    "android/app/build/outputs/apk/acceptance/app-acceptance.apk": "78dc2a64a883351ef2f82de20029709e6735a907d1b17a1ba4a2f569141f8ea1",
+    "android/app/build/outputs/apk/androidTest/acceptance/app-acceptance-androidTest.apk": "33c5f4ccd8ad9e4478090d1d6578bfd59d6d515a84ee33d9d1880f4bf3639b3d"
+  },
+  "providerPOSTCounts": {
+    "00000000-0000-4000-8000-000000000001": 1,
+    "00000000-0000-4000-8000-000000000004": 1,
+    "00000000-0000-4000-8000-000000000005": 2
+  },
+  "screenshotManifest": "screenshots.json",
+  "realEmployerRequests": 0,
+  "productionAccountsUsed": false,
+  "environment": "Disposable API36 x86_64 Google APIs phone; 360dp, 180% text, dark appearance, Arabic app locale and forced RTL; system trust for ordinary preview, isolated test CA only in acceptance variant."
+}

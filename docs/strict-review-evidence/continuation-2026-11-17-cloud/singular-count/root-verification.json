@@ -1,0 +1,47 @@
+{
+  "recordedAt": "2026-11-17T16:45:26.965781+00:00",
+  "baseCommit": "d97bc209ca84ecb830e6c6bad25808164706409f",
+  "scope": "Integrated singular search announcement and Saved shortcut wording; existing test matrix extended without new registered tests",
+  "sourceHashes": {
+    "hosted/app/phone/PhoneApp.tsx": "b9599e9a6f7f955da7009feb3485174a29834b08ef8e588de4addbc08f726dfa",
+    "hosted/app/i18n/messages.ar.json": "9ee8b541b125a5be4906043dad78eb0bdbd6d58c3b9234cf7e65626a2f2dd704",
+    "hosted/tests/phone-search-workflows.mjs": "66aebaa324cb225705546a21a9793a146a9e63a99c32c176865357d5a5d373e4",
+    "hosted/tests/phone-localization.mjs": "877fa8eaf10d723b57c05016f1cef36d4a9a824971f64932cccbe37051fe6f63"
+  },
+  "arabicCatalogEntries": 1317,
+  "focusedTests": {
+    "tests": 82,
+    "pass": 82,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "durationMs": 3388.400649
+  },
+  "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "tests/i18n.mjs",
+    "tests/phone-localization.mjs",
+    "tests/phone-record-tools.mjs",
+    "tests/phone-search-workflows.mjs",
+    "tests/phone-settings-privacy.mjs",
+    "tests/web-experience.mjs"
+  ],
+  "workingDirectory": "hosted",
+  "typecheckExitCode": 0,
+  "fullLintExitCode": 0,
+  "lintWarnings": 6,
+  "lintErrors": 0,
+  "logs": {
+    "root-focused.tap": "23226e506b5a8017c809a6a891cc1f41c5783ebe828831019472d4e6e1d451e8",
+    "root-typecheck.log": "c9014ba170f2161ecee9b3ba8984934aa5bf66e685e29ed495d14ac261d546e9",
+    "root-lint.log": "8175ec8b8af7e252d6892f4dd64f4ba928eb172e85d4e13e8e1bfa8df6eac7e9"
+  },
+  "limits": [
+    "The82-case run overlaps earlier subset evidence; do not sum these as distinct tests.",
+    "Production JSX/handlers exercised with synthetic state; no new browser, assistive-technology, real provider or physical-device acceptance.",
+    "No new navigation, ARIA override, account or provider capability.",
+    "Application source remains a local working follow-up until an exact source commit and push are recorded."
+  ]
+}

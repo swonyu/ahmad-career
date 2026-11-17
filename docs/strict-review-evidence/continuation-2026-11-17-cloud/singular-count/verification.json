@@ -1,0 +1,111 @@
+{
+  "recorded_at_utc": "2026-11-17T16:41:33.853715+00:00",
+  "base_commit": "d97bc209ca84ecb830e6c6bad25808164706409f",
+  "working_checkout": "/workspace/scratch/5bc6158967e8/singular-count-d97",
+  "node_version": "v24.22.1",
+  "ownership": "Only phone-search-workflows.mjs was authored. Phone-localization remains byte-identical. Exact root-authored PhoneApp.tsx and Arabic catalog bytes were overlaid into this isolated checkout after preserving failing baseline evidence.",
+  "files": {
+    "hosted/app/phone/PhoneApp.tsx": {
+      "baseline_sha256": "a8c60e30d5ab70ba341df3369846fe85e35c5fa28c633557742b704974cddd3c",
+      "candidate_sha256": "b9599e9a6f7f955da7009feb3485174a29834b08ef8e588de4addbc08f726dfa",
+      "matches_root_bytes": true
+    },
+    "hosted/app/i18n/messages.ar.json": {
+      "baseline_sha256": "d9b18a3505fe07b7a215c1708bb17e407b40c502cd9c3af930946736a477413b",
+      "candidate_sha256": "9ee8b541b125a5be4906043dad78eb0bdbd6d58c3b9234cf7e65626a2f2dd704",
+      "matches_root_bytes": true
+    },
+    "hosted/tests/phone-search-workflows.mjs": {
+      "baseline_sha256": "522a4930a4efc2597f6ba28f2934109d4e89ef2e02569f61f3be9198615b304b",
+      "candidate_sha256": "66aebaa324cb225705546a21a9793a146a9e63a99c32c176865357d5a5d373e4",
+      "matches_root_bytes": false
+    },
+    "hosted/tests/phone-localization.mjs": {
+      "baseline_sha256": "877fa8eaf10d723b57c05016f1cef36d4a9a824971f64932cccbe37051fe6f63",
+      "candidate_sha256": "877fa8eaf10d723b57c05016f1cef36d4a9a824971f64932cccbe37051fe6f63",
+      "matches_root_bytes": true
+    },
+    "hosted/app/i18n/core.ts": {
+      "baseline_sha256": "47485ac0ce826dd1dde553d645869f2e272e59639680bd507a9978beb128c030",
+      "candidate_sha256": "47485ac0ce826dd1dde553d645869f2e272e59639680bd507a9978beb128c030",
+      "matches_root_bytes": true
+    }
+  },
+  "patch": {
+    "path": "/workspace/scratch/5bc6158967e8/singular-count-regressions.patch",
+    "sha256": "bc037fdc4eaa4161c919e17894d2cf660f17c6768b23e8fe2619f4d5f71bcb6d",
+    "files": [
+      "hosted/tests/phone-search-workflows.mjs"
+    ],
+    "insertions": 8,
+    "deletions": 3
+  },
+  "focused_tests": {
+    "command": "node --test --test-reporter=tap hosted/tests/phone-search-workflows.mjs hosted/tests/phone-localization.mjs",
+    "pre_fix": {
+      "exit_code": 1,
+      "tests": 36,
+      "top_level_tests": 32,
+      "nested_tests": 4,
+      "passed": 28,
+      "failed": 8,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 2011.597262,
+      "log": "pre-fix-tests.tap"
+    },
+    "post_fix": {
+      "exit_code": 0,
+      "tests": 36,
+      "top_level_tests": 32,
+      "nested_tests": 4,
+      "passed": 36,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 2611.863592,
+      "log": "post-fix-tests.tap"
+    },
+    "inventory": "No test functions or groups were added or removed. AST comparison preserved all registration names. This is the scoped two-file run, not a rerun of the broader 82-case batch."
+  },
+  "shortcut_review": {
+    "command": "node /workspace/scratch/5bc6158967e8/singular-count-evidence/shortcut-count-review.mjs /workspace/scratch/5bc6158967e8/singular-count-d97",
+    "type": "Ad-hoc review only, reusing the existing render helpers in memory with test registration disabled; no committed test module or shortcut test cases were added.",
+    "pre_fix": {
+      "cases": 10,
+      "passed": 8,
+      "failed": 2,
+      "only_failures": [
+        "en count=1",
+        "ar count=1"
+      ],
+      "receipt": "pre-fix-shortcuts.json"
+    },
+    "post_fix": {
+      "cases": 10,
+      "passed": 10,
+      "failed": 0,
+      "receipt": "post-fix-shortcuts.json"
+    },
+    "coverage": "Counts 0, 1, 2, 12 and 200 in English and Arabic. Actual source JSX execution and SSR markup retain numeric strong/span layout, the content-derived accessible name without an overriding aria-label, and Saved/Profile navigation."
+  },
+  "peer_review": {
+    "result": "bounded_clean",
+    "source_delta_verified": "Exact byte reconstruction confirms only a singular/plural translation-key choice for the live announcement and Saved shortcut. Parsed Arabic data differs by exactly two new keys, preserving both placeholders in the singular announcement and using وظيفة محفوظة for Saved job; 1317 total keys.",
+    "regression_coverage": "Existing incomplete matrices extend 0/12 to 0/1/12, and the existing complete-results group includes a one-result fixture. English singular output is independently asserted as 1 job shown. Prior neutral incomplete copy, counts, live-region silence, source evidence, retry/draft/pagination/identity assertions remain.",
+    "limitations": [
+      "Automated component rendering and handler checks only; no physical browser or assistive-technology acceptance is claimed.",
+      "No app source authored, root file changes, broad suite, native tests, CI changes, deployments or external/paid calls.",
+      "Run 35 status and its failure diagnosis remain owned by root/native owners."
+    ]
+  },
+  "artifact_sha256": {
+    "post-fix-shortcuts.json": "38649ff7c12c341a6645407c02b83c17d4be922ead0710fcf3bac283b54358c9",
+    "post-fix-tests.tap": "7e05825697147095ff5156f1ed86bec6dd567ae83b708df05da90f2c32e0e654",
+    "shortcut-count-review.mjs": "4ee4f17fb02b112b60ef4b74cc86579aa3ea1e7b34eb9f98d41118c5503faf2a",
+    "registration-inventory.json": "608498ea1e020adc44cacb205c21838f192993967dfc00a14d6b57b9fa4baa3d",
+    "pre-fix-shortcuts.json": "902178348236395705993886dd7658a9a347b0b07632f0c30ad6e2be93577145",
+    "pre-fix-tests.tap": "ecd1b3af9b3123a0efdfafeff6639130bfc16c6c43ad788da29760c307ce7d44"
+  },
+  "whitespace_check": "git diff --check passed"
+}

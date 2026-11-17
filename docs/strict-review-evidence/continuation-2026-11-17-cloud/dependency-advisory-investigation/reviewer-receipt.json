@@ -1,0 +1,201 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "/root/dependency_audit",
+  "reviewedAt": "2026-11-17T17:53:38.636447+00:00",
+  "verdict": "NO VERIFIED COMPATIBLE REMEDY CURRENTLY SATISFIES THE UNCHANGED AUDIT GATE. Preserve release blocker. A bounded local rejection mitigation was demonstrated but fails an existing upstream compatibility assertion and is not approved for integration.",
+  "scope": {
+    "repository": "/workspace/scratch/5bc6158967e8/career-finder",
+    "commit": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+    "currentRun": 44139018005,
+    "runtime": "v24.22.1",
+    "sourceWrites": false,
+    "packageOrLockMutation": false,
+    "workflowMutation": false,
+    "sharedMacOrNativeActions": false,
+    "dependencyInstallation": false,
+    "paidServices": false,
+    "sourceHashes": {
+      "hosted/package.json": "a9c4e380d5a6268f1472a039f51c2b47f22a2bfb9558cfb8a97310a7b803a613",
+      "hosted/package-lock.json": "2512e3bd6aebfc4377bbe036d3cf606c27e33613b35c8c58d28f0f3a0d596c99",
+      "hosted/vite.config.ts": "22ff558b1636d251e076f74c1697c7166079861667af10922d6bc505cb8f8290",
+      "hosted/worker/index.ts": "c82a674ffc6fcebef3b1c48d577f0ec5b28a4a4c2b17462c50a7c0d1708ac09e"
+    }
+  },
+  "audit": {
+    "rawPath": "/workspace/scratch/5bc6158967e8/ci-44139018005-native/hosted/dependency-audit-ci.json",
+    "sha256": "8ef6d4983d0ba2566e03b0045735fca24ed97ec0db92287fefbe1209d2d31675",
+    "highDependencyFindings": 19,
+    "uniqueUnderlyingAdvisory": "GHSA-fc5q-39xc-vjpf / CVE-2026-112366",
+    "affected": "picomatch <=4.0.7",
+    "installed": [
+      {
+        "path": "node_modules/picomatch",
+        "version": "2.3.2",
+        "dev": true,
+        "license": "MIT"
+      },
+      {
+        "path": "node_modules/tinyglobby/node_modules/picomatch",
+        "version": "4.0.4",
+        "dev": true,
+        "license": "MIT"
+      },
+      {
+        "path": "node_modules/vite/node_modules/picomatch",
+        "version": "4.0.7",
+        "dev": true,
+        "license": "MIT"
+      }
+    ],
+    "priorRun38ZeroResult": "Parent/native evidence reports zero at the earlier audit on unchanged hosted source; this peer did not rerun that historical audit.",
+    "publicationQualification": "Current primary advisory says Published Oct19, Reviewed/Updated Nov17. Older search cache said unreviewed; current opened primary page takes precedence. Do not infer exact registry propagation time from two CI results."
+  },
+  "primaryResearch": [
+    {
+      "url": "https://github.com/advisories/GHSA-fc5q-39xc-vjpf",
+      "observed": "Current opened primary page lists npm picomatch <=4.0.7; Patched versions None; Reviewed/Updated Nov17,2026."
+    },
+    {
+      "url": "https://github.com/micromatch/picomatch/releases",
+      "observed": "4.0.7 remains latest official release."
+    },
+    {
+      "url": "https://github.com/micromatch/picomatch/blob/master/CHANGELOG.md",
+      "observed": "Top release4.0.7 dated2026-08-24; no repaired release identified."
+    },
+    {
+      "url": "https://github.com/micromatch/picomatch/issues/239",
+      "observed": "Open request for a release addressing this CVE; the rendered discussion contains no maintainer-provided repair."
+    },
+    {
+      "url": "https://github.com/micromatch/picomatch/pull/194/files",
+      "observed": "Open candidate, displayed0checks. It adds hasMixedWildcards requiring both?and*. Its guard and tests do not establish protection for the advisory pure-star examples+(*)or+(*a). Not accepted as complete fix."
+    },
+    {
+      "url": "https://docs.npmjs.com/cli/v11/commands/npm-audit/",
+      "observed": "Audit submits dependency names/versions, calculates metavulnerabilities and may require manual review; force permits changes outside current ranges. It does not evaluate a local parser patch."
+    },
+    {
+      "url": "https://docs.npmjs.com/cli/v11/configuring-npm/package-json/#overrides",
+      "observed": "npm supports overrides to different packages, Git commits or local forks. Mechanism support alone proves neither code safety nor compatibility."
+    },
+    {
+      "url": "https://github.com/micromatch/picomatch/blob/master/LICENSE",
+      "observed": "MIT; modifications/distribution require retention of the copyright and permission notice."
+    }
+  ],
+  "registryObservation": {
+    "owner": "/root",
+    "command": "npm view picomatch version dist-tags --json --fetch-retries=0 --fetch-timeout=15000",
+    "reportedResult": {
+      "version": "4.0.7",
+      "latest": "4.0.7"
+    },
+    "independentRetrieval": "This peer attempted direct registry page through web tool, which was inaccessible; parent supplied actual npm query result. No fabricated independent registry pass."
+  },
+  "localProof": {
+    "artifact": "/workspace/scratch/5bc6158967e8/dependency-audit-lab/bounded-inmemory-guard.json",
+    "sha256": "763820cb2a8a842ebc725bf41db80737fc7b7b9a7c17c0f19e28016108d9c69b",
+    "executions": 66,
+    "perCaseProcessTimeoutMs": 1000,
+    "baselineExecutions": 33,
+    "baselineTimeouts": 12,
+    "guardExecutions": 33,
+    "guardTimeouts": 0,
+    "allInstalledParserHashesUnchanged": true,
+    "demonstrated": "Advisory single-star and suffix/mixed-star examples exceed the child limit in2.3.2,4.0.4,4.0.7. maxExtglobRecursion:0 does not prevent them. An in-memory top-level unescaped-star guard returns promptly by using existing risky-pattern literalization. Escaped/class stars, fixed repetition and safe nested-star controls retained selected behavior.",
+    "scopeLimit": "Finite bounded cases establish reproduction and one mitigation candidate, not an exhaustive ReDoS proof. Existing explicit maxExtglobRecursion:false bypass remains by source inspection. No app/build runtime tested with candidate."
+  },
+  "compatibility": {
+    "artifact": "/workspace/scratch/5bc6158967e8/dependency-audit-lab/upstream-compatibility-check.json",
+    "sha256": "043a25c6d9ab0bc2c7446787608b4a7ec5ef57d0b4368309e84f3ad6f3c3b992",
+    "selectedUpstreamAssertion": [
+      {
+        "variant": "baseline",
+        "exit": 0,
+        "input": "abc",
+        "pattern": "+(*)c",
+        "expected": true,
+        "actual": true
+      },
+      {
+        "variant": "guard",
+        "exit": 0,
+        "input": "abc",
+        "pattern": "+(*)c",
+        "expected": true,
+        "actual": false
+      }
+    ],
+    "fullUpstreamSuiteRun": false,
+    "upstreamTestFilesInspectedInventory": 37,
+    "conclusion": "The candidate changes accepted semantics:ba against+(*a)becomesfalse, and the official existing assertionabc against+(*)c changestrue→false. Reject for direct integration. Do not describe this as a compatible patch or as a working release workaround."
+  },
+  "upstreamArchive": {
+    "url": "https://codeload.github.com/micromatch/picomatch/tar.gz/refs/tags/4.0.7",
+    "path": "/workspace/scratch/5bc6158967e8/dependency-audit-lab/picomatch-4.0.7-official.tar.gz",
+    "bytes": 105735,
+    "sha256": "5f9d5c0f6d890b88bfa7844a1b7b3c9496ed07208f0e3e09f4946d2f76ca86f9",
+    "safeExtracted": true,
+    "members": 86,
+    "license": "MIT",
+    "licenseSha256": "d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9",
+    "fullTests": "37JavaScript testfiles; npm test runs ESLint then Mocha. Mocha not installed in the app environment; no test-runner installation was performed because the selected existing assertion already disproves compatibility."
+  },
+  "exposure": {
+    "lockClassification": "All three picomatch entries have dev:true. Actual npm ls shows ESLint→fast-glob→micromatch→2.3.2 and Vite→4.0.7/tinyglobby→4.0.4.",
+    "directApplicationUsage": "No references found in bounded app/server/worker/scripts/config search. This is a limited static finding, not a global reachability proof.",
+    "qa6Build": {
+      "checkout": "/workspace/sites/career-finder-acceptance-20261117",
+      "commit": "ed3aba5dd9b0e6888a2fb47440954a1d4cce3acd",
+      "jsFiles": 112,
+      "sourceMaps": 79,
+      "mapSourceEntries": 658,
+      "picomatchSourceEntries": 0,
+      "vulnerableFunctionStringHitsInJs": 0,
+      "singleMapMention": "Comment in vinext/dist/server/image-local-patterns.js describing its own pathname-regex converter; not a mapped picomatch module."
+    },
+    "qualification": "Evidence suggests the observed dependency is in build/lint tooling, but no deployed request trace or exhaustive bundle proof was performed. This does not close the required all-dependency audit gate or justify a false green status."
+  },
+  "rejectedAlternatives": [
+    {
+      "alternative": "npm audit fix --force",
+      "reason": "Raw suggestions include vinext0.0.0,vite6.2.7,eslint-config-next14.2.35,plugin-react5.2.0 versus pinned1.4.6/8.3.8/16.4.6/6.0.2. They are unverified functional downgrades across the current Next/worker toolchain, not a validated compatible repair. None was run."
+    },
+    {
+      "alternative": "Upgrade all picomatch copies to4.0.7",
+      "reason": "4.0.7 is affected and reproduced; forcing2.xconsumers to4.xalso introduces major-version compatibility risk."
+    },
+    {
+      "alternative": "Apply PR194 blindly",
+      "reason": "Open/unverified candidate does not cover the advisory pure-star branch cases by its added guard."
+    },
+    {
+      "alternative": "Set maxExtglobRecursion:0",
+      "reason": "Reproduced timeout on all3versions; it does not fix the missed branch."
+    },
+    {
+      "alternative": "Disable extglobs globally",
+      "reason": "Selected failure is avoided, but valid syntax/consumer semantics change; complete downstream compatibility and allcallsite control are unverified. Audit still sees affected versions."
+    },
+    {
+      "alternative": "Rename/version-bump/omit dev dependencies/change audit threshold",
+      "reason": "Would not itself repair code; would hide or weaken the existing acceptance condition. Not performed."
+    }
+  ],
+  "feasibleNextPath": [
+    "Preserve the current dependency blocker and all other completed source-bound results; do not repeatedly rerun the same known audit or claim current63eallgreen.",
+    "Prefer an actual maintained compatible release when published, then update all affected resolution paths and rerun install/type/lint/unit/workerd/browser/build plus unchanged audit.",
+    "A local fork is technically possible under MIT/npm overrides, but needs an actual semantic design, version-specific2.x/4.xcompatibility, upstreamfullsuite/adversarialtests and downstreamframeworkgates before adoption. The tested rejection guard is not that repair.",
+    "For a maintained fork, retain exact origin/license/sourcehashes and diff, use honest fork identity/version, record the upstream advisory mapping in SBOM/evidence, and verify every resolution path after cleaninstall. A zero advisory count for an unknown package name is not security proof. npm audit treatment must remain explicit, with independent source/security acceptance; no version laundering.",
+    "Continue independent app work and existing authorized access paths while release remains blocked. Existing hosted availability does not turn this failure into success."
+  ],
+  "actionsNotTaken": [
+    "No app/package/lock/workflow modification",
+    "No dependency install",
+    "No deployment/provider/account/employer request",
+    "No shared Mac/native build/signing/store action",
+    "No audit exception or forced downgrade",
+    "No upstream issue/PR message or package publication"
+  ]
+}

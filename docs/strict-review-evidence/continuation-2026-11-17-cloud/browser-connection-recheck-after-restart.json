@@ -1,0 +1,17 @@
+{
+  "recordedAt": "2026-11-17 16:16:19 UTC",
+  "reasonForRecheck": "The authorized Mac restarted at 15:57:20 UTC; rechecked the documented Chrome connection after that observed state change.",
+  "operation": "Documented Browser bootstrap only",
+  "result": "blocked before browser code execution",
+  "message": "Browser access requires the originating browser context. Open ChatGPT in the browser with the connected extension and try again.",
+  "tabsInspected": 0,
+  "providerRequestsStarted": 0,
+  "googleConsentOrCallbackVerified": false,
+  "siteAudienceChanged": false,
+  "cloudAccountChanged": false,
+  "limits": [
+    "This is a browser-connection availability result, not a new provider or application acceptance result.",
+    "The original Google transaction remains expired; a new Connect action still requires the correct owner context and the provider's passkey verification.",
+    "No alternate browser, session, device automation, cookie or credential technique was used to bypass the connection boundary."
+  ]
+}

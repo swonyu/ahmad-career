@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/final_native_peer",
+  "reviewed_at_utc": "2026-11-17T18:21:29.264043+00:00",
+  "verdict": "ENDORSE_NARROW_READINESS_REPAIR_IN_PRINCIPLE; exact source patch and successor runtime still require review/verification.",
+  "scope": "Read-only diagnosis and smallest bounded synchronization recommendation. No source was written.",
+  "evidence": {
+    "publishing_run39": {
+      "checkout_from_raw_log": "11cb3d4d8c15e9b16719b6e7091597f43633cda6",
+      "raw_log": "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/acceptance-readiness/publishing-run39-iphone-job.log",
+      "bytes": 606388,
+      "sha256": "4fa8b77315270836b88416302bb75abebd713f311aafb2a30ad420d508141457",
+      "phase_excerpt": "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/acceptance-readiness/publishing-run39-keyboard-phase.txt",
+      "phase_sha256": "65903df5ae592856c30384b4ff1597e4d6445c899fcdb7cea7f8d76ba5a4ade0",
+      "passed": 16,
+      "failed": 1,
+      "failed_method": "testAccessibilityTextKeepsCoreControlsReachable",
+      "method_seconds": 124.593,
+      "failed_guard": "CareerFinderUITests.swift:108: A real keyboard key must be visible before typing",
+      "late_snapshot_delete_frame": {
+        "x": 363.7,
+        "y": 730.0,
+        "width": 54.0,
+        "height": 56.0
+      },
+      "qualification": "The debug snapshot is taken after the initial readiness wait phase. Its real delete-key geometry does not prove the key was hittable within the original five-second deadline. The publisher tree is not otherwise reviewed here."
+    },
+    "run40": {
+      "candidate": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+      "raw_log": "/workspace/scratch/5bc6158967e8/native-ci-63eecda5/docs/strict-review-evidence/continuation-2026-11-17-cloud/ci-44139018005/iphone-ui-job.log",
+      "sha256": "a819d558527ac8853b1b487ecf285fb958fbfc8cb8a6e83612c99d1c6c000980",
+      "visual_receipt": "/workspace/scratch/5bc6158967e8/final-native-peer-run40-runtime-visual-review.json",
+      "visual_receipt_sha256": "2b1e64c423aa47e62acbddb89508199dcc31b2613b5826231e2fb3faf1666785",
+      "observed_phases": [
+        "Focused name field with no keyboard at video80.0s; keyboard/Delete visible at87.5s.",
+        "Profile sheet still visible atvideo98.5s; sheet closed and Settings exposed at100.5s.",
+        "Tab helper waits for existence then makes an immediate isHittable assertion."
+      ]
+    }
+  },
+  "recommended_delta": {
+    "tab_helper": [
+      "Retain the existing waitForExistence(timeout:5) assertion.",
+      "Replace the immediate isHittable assertion with one bounded five-second expectation requiring the same button.exists && button.isHittable condition.",
+      "Assert completion and tap exactly once. The completion assertion replaces the original hittability assertion, preserving the assertion count."
+    ],
+    "replace_helper": [
+      "Increase only the initial pretyping real-key readiness waiter from five to ten seconds.",
+      "Keep typingKeyIsVisible unchanged: an actual delete key must both exist and be hittable.",
+      "Keep the after-Clear keyboard waiter at five seconds, and keep exact-empty, exact-final-value, secure-field handling and full finishTyping checks unchanged.",
+      "Do not add a second tap, fixed sleep, test retry, conditional bypass or app-state injection."
+    ],
+    "failure_diagnostics": "Optional screenshot and debugDescription capture only when the readiness waiter fails, before the unchanged failure assertion. This improves next-failure evidence without adding or removing assertions."
+  },
+  "why_ten_seconds": "The current frames show delayed initial keyboard presentation that straddles the existing wait. Ten seconds adds a limited five-second allowance only to that phase; an already-ready key completes immediately. It is a conservative synchronization cap to verify, not proof that every AX/simulator stall will resolve in ten seconds.",
+  "causal_assessment": "The independently read publisher run39 log reproduces the same keyboard guard failure on the earlier source, corroborating that it is not newly established as a banner-specific geometric defect. Run40 frames support presentation/dismissal readiness timing. Exact AX timing and the source of simulator delays remain uncertain.",
+  "invariants_to_preserve": {
+    "current_ui_test_source": "/workspace/scratch/5bc6158967e8/native-ci-63eecda5/apple/UITests/CareerFinderUITests.swift",
+    "current_sha256": "ad0bac775bc17e7cbf2c8ac9c41fc1a0ca1489e579010fb198ff75878d7d557b",
+    "test_methods": 17,
+    "assertion_calls": 144,
+    "requirements": [
+      "17 methods and144 assertion calls",
+      "Actual key exists+hittable",
+      "Tab exists+hittable before tap",
+      "Exact empty and final values",
+      "All consent, identity, privacy, five-tab, language and draft assertions",
+      "No blanket wait, workflow budget, runner or product-layout change"
+    ]
+  },
+  "pending": [
+    "Deliver this recommendation and exact evidence to the active publisher helper owner; no competing root patch or root CI before coordination.",
+    "Exact resulting patch review.",
+    "Successor native runtime and matching Arabic/dark visual evidence.",
+    "Separate Hosted audit resolution; run40 remains failed and run38 remains historical."
+  ],
+  "reviewer_actions": [
+    "Read local raw/excerpt logs, current helper source and already verified frame observations.",
+    "Computed local evidence hashes.",
+    "Wrote this separate recommendation receipt outside root."
+  ],
+  "not_performed": [
+    "Source/test/workflow mutation",
+    "Build/test/CI action",
+    "Remote/browser/Mac operation",
+    "Download",
+    "Publisher tree mutation"
+  ],
+  "ownership_decision": {
+    "reported_by": "/root",
+    "current_publisher_workspace": "/workspace/scratch/d57f4cd77813",
+    "status": "Root reports an active publisher-owned keyboard-helper proposal. Root will not author a competing patch or start root CI before coordination. This receipt is a recommendation for the current owner, not an implementation or runtime acceptance.",
+    "independent_scope": "Reviewer did not inspect or mutate the publisher workspace."
+  }
+}

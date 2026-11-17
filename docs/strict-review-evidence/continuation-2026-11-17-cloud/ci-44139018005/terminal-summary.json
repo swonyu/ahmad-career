@@ -1,0 +1,65 @@
+{
+  "observed_at": "2026-11-17T18:13:46.864166+00:00",
+  "run_id": 44139018005,
+  "run_number": 40,
+  "candidate": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+  "actual_checkout": "e3e875cee10e379c34d833ae22827f0ae9aee570",
+  "tree": "74b02b205e7a256f589d9961b2f4a9c129b6935d",
+  "conclusion": "failure",
+  "passed_gates": 3,
+  "failed_gates": 2,
+  "gates": [
+    {
+      "id": 134236345900,
+      "name": "iPhone logic and unsigned build",
+      "conclusion": "success"
+    },
+    {
+      "id": 134236346231,
+      "name": "Service and synthetic HTTPS",
+      "conclusion": "success"
+    },
+    {
+      "id": 134236346366,
+      "name": "iPhone native interface acceptance",
+      "conclusion": "failure"
+    },
+    {
+      "id": 134236346452,
+      "name": "Android compile, lint and native acceptance",
+      "conclusion": "success"
+    },
+    {
+      "id": 134236346520,
+      "name": "Hosted HTTPS service and durable storage",
+      "conclusion": "failure"
+    }
+  ],
+  "all_five_raw_logs_match_checkout": true,
+  "matching_raw_logs": [
+    "service-job.log",
+    "hosted-job.log",
+    "iphone-logic-build-job.log",
+    "android-job.log",
+    "iphone-ui-job.log"
+  ],
+  "iphone_cases": {
+    "executed": 17,
+    "passed": 15,
+    "failed": 2,
+    "unexpected": 0,
+    "reported_skips": 0
+  },
+  "android_cases": {
+    "ordinary": 104,
+    "normal_tls": 1,
+    "native_https": 1,
+    "all_passed": true
+  },
+  "hosted_audit": {
+    "high": 19,
+    "root_advisory": "GHSA-fc5q-39xc-vjpf",
+    "unchanged_lock": true
+  },
+  "scope": "Current source is not a five-gate success. Prior run38 remains separately recorded. No new retry, rerun, cancellation, shared build or source change was made in this evidence lane."
+}

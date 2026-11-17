@@ -1,0 +1,54 @@
+{
+  "recordedAt": "2026-11-17T17:01:42Z",
+  "repository": "swonyu/ahmad-career",
+  "applicationSource": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+  "applicationTree": "b2a2ca81df383a468c318e4ebc629c13f16e5fe9",
+  "pr": {
+    "url": "https://github.com/swonyu/ahmad-career/pull/1",
+    "draft": true,
+    "merged": false,
+    "base": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+    "bodyReadbackExact": true,
+    "bodyBytes": 8848,
+    "bodySha256": "f47d9cec346f25516053a0ad4193dafc72a0ab4b57148b3c18b3d9913d12f8d8",
+    "updatedAt": "2026-11-17T16:55:12Z"
+  },
+  "recovery": {
+    "branch": "recovery/publishing-integrated-20261117-d57f4",
+    "head": "0f0c6f1f591ff173e51671599cbbb6aeff4a69e4",
+    "tree": "0b26c4f2c5c31883dd982c48d76e7240b18bca7f",
+    "parents": [
+      "e620d249067a5ab4eeca99b5ee8ac77726b41773"
+    ],
+    "status": "diverged",
+    "aheadOfApplication": 33,
+    "behindApplication": 1,
+    "mergeBase": "d97bc209ca84ecb830e6c6bad25808164706409f",
+    "applicationChangesTransferredIntoRecoveryByThisLane": false
+  },
+  "ownerAcknowledgment": {
+    "commentId": 6954689974,
+    "url": "https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6954689974",
+    "createdAt": "2026-11-17T16:49:53Z",
+    "body": "### Continuation4b851: isolated feed repair and expanded strict review\n\nSaleh has handed over the interrupted Career Finder continuation (https://chatgpt.com/c/6afc73d0-92e0-83ed-9b67-6dd671b8fab5), restating \"I requested another 24 hours of substantial work\", and now additionally requests heavy deep research and strict critique of blockers and the whole app both here and Grok, followed by fixes or working alternatives. Preserve original start2026-11-16T22:26:12Z and recovered extended cutoff2026-11-18T22:26:12Z =19Nov01:26:12Riyadh; do not restart. Existing receipt6953430895 and publisher recovery budget_extension record agree; active effort balance remains unknown.\n\nI have read current comments including6954524633 and verified CI. Publisherd57 retains integrated branch, native exact-email observation, focused/full concurrency, shared builds/signing/store. Development5bc retains singular wording and the just-claimed30→35/35→40minute timeout values. No competing native builds/dispatch or edits from this lane.\n\nClaimed nonoverlapping isolated branch: continuation/feed-reliability-20261117-4b851, base2fac36f321005d9a2703e6db92acd7d7c14886c5. Primary write set hosted/server/discovery.mjs and hosted/tests/hosted-discovery.mjs. Original dirty feed patch remains preserved. Independent review validates early-rejection body cleanup and adjacent awaited cancellation rejection/hang. Will use CI Node24 and real-handler regressions wired into npm test, then applicable full gates and a safe reviewable checkpoint. Publishing branch will not be moved here.\n\nGrok separate Build task now has verified source access at2fac and has accepted expanded research plus isolated component accessibility/error recovery only: SessionRecovery.tsx, OAuthFeedback.tsx, ProviderConnections.tsx, SignInOptions.tsx and new tests. Excluded native/.github/discovery and all current PhoneApp/messages.ar/search-tests owner files. No source/image resend, no Mac access/native build/remote push by Grok; actual diff and tests require independent integration review.\n\nRun44122504831 has17/17 passing iPhone cases but failed finalization/xcresult; no green claim. Integrated44124734131 is separate PARTIAL1test failure before Clear, four other jobs skipped. Agree with development bounded timeout repair; retain publisher exact-source helper/concurrency changes.\n\nPlease flag conflicts. Source/build/store ownership is preserved. This lane's actual writes/test results and any new findings will be posted here for integration; provider/device acceptance remains separately pending.",
+    "developmentScopeAcknowledged": true,
+    "dotIdentityReadReceiptEstablished": false,
+    "sharedSigningBuildReservationGranted": false
+  },
+  "clock": {
+    "originalStart": "2026-11-16T22:26:12Z",
+    "activeWorkRemaining": "unknown",
+    "originalDerivedCheckpoint": "2026-11-17T22:26:12Z",
+    "reportedExtension": "2026-11-18T22:26:12Z",
+    "reportedPrimaryChat": "https://chatgpt.com/c/6afc73d0-92e0-83ed-9b67-6dd671b8fab5",
+    "reportedUserQuote": "I requested another 24 hours of substantial work",
+    "primaryChatDirectlyReadByThisLane": false,
+    "newClockStarted": false
+  },
+  "limits": [
+    "Recovery branch and this application source share d97bc209 but have diverged; publisher owns integration.",
+    "The successor CI run44130275991 is separate from the parent run35 and publisher focused runs.",
+    "The new feed and Grok component tasks are owner-reported assigned work; their result/source gates have not been verified by this lane.",
+    "No private browser access, device reservation, signing change, merge, store upload or public deployment is inferred from coordination."
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "observed_at": "2026-11-17T16:43:27.489671+00:00",
+  "candidate": "d97bc209ca84ecb830e6c6bad25808164706409f",
+  "actual_ci_checkout": "50c05cb61cc28f59f4591ddcd53fa49d755fda44",
+  "common_tree": "7ccafbdaad98f000e5e12a385dd69fc5beb72f50",
+  "job_id": 134177369578,
+  "job_conclusion": "failure",
+  "executed_cases": 17,
+  "passed_cases": 17,
+  "failed_cases": 0,
+  "unexpected_failures": 0,
+  "reported_skips": 0,
+  "suite_seconds": 1471.177,
+  "suite_started_at": "2026-11-17T16:15:07.239Z",
+  "suite_finished_at": "2026-11-17T16:39:38.455Z",
+  "timeout_reported_at": "2026-11-17T16:39:56.2751300Z",
+  "current_wrapper_step_budget_minutes": 30,
+  "current_job_budget_minutes": 35,
+  "complete_expected_test_method_set": true,
+  "tests": [
+    {
+      "method": "testAccessibilityTextKeepsCoreControlsReachable",
+      "outcome": "passed",
+      "seconds": 109.118
+    },
+    {
+      "method": "testApplicationDraftSurvivesCancelAndRelaunch",
+      "outcome": "passed",
+      "seconds": 56.384
+    },
+    {
+      "method": "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+      "outcome": "passed",
+      "seconds": 119.635
+    },
+    {
+      "method": "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+      "outcome": "passed",
+      "seconds": 95.883
+    },
+    {
+      "method": "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "outcome": "passed",
+      "seconds": 29.18
+    },
+    {
+      "method": "testDiscoverySaveFlowsIntoSavedAndApply",
+      "outcome": "passed",
+      "seconds": 47.918
+    },
+    {
+      "method": "testFreshStartAndFiveTabs",
+      "outcome": "passed",
+      "seconds": 34.109
+    },
+    {
+      "method": "testLinkedInProfileDraftAndExternalSearchChoice",
+      "outcome": "passed",
+      "seconds": 107.21
+    },
+    {
+      "method": "testOpportunityDiscardRequiresExplicitChoice",
+      "outcome": "passed",
+      "seconds": 55.347
+    },
+    {
+      "method": "testOpportunityDraftKeepSaveAndRestore",
+      "outcome": "passed",
+      "seconds": 87.226
+    },
+    {
+      "method": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+      "outcome": "passed",
+      "seconds": 183.539
+    },
+    {
+      "method": "testProfileReadinessAndSimpleConnectionSetup",
+      "outcome": "passed",
+      "seconds": 86.706
+    },
+    {
+      "method": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+      "outcome": "passed",
+      "seconds": 37.462
+    },
+    {
+      "method": "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+      "outcome": "passed",
+      "seconds": 117.206
+    },
+    {
+      "method": "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+      "outcome": "passed",
+      "seconds": 145.45
+    },
+    {
+      "method": "testSearchEmptyAndFailurePreservesPreviousResults",
+      "outcome": "passed",
+      "seconds": 102.091
+    },
+    {
+      "method": "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+      "outcome": "passed",
+      "seconds": 56.712
+    }
+  ],
+  "error_lines": [
+    "2026-11-17T16:39:56.2751300Z ##[error]The action 'Exercise native phone flows with isolated synthetic data' has timed out after 30 minutes.",
+    "2026-11-17T16:40:01.3610200Z Error: Failed to create a new result bundle reader, underlying error: Info.plist at /Users/runner/work/_temp/CareerFinderUI.xcresult/Info.plist does not exist, the result bundle might be corrupted or the provided path is not a result bundle",
+    "2026-11-17T16:40:01.3631820Z ##[error]Process completed with exit code 64."
+  ],
+  "raw_test_log_sha256": "4d16ff45585cf2e50936ded3598915f6b8e33bf62539242f2fd33e3ed2b33fc7",
+  "raw_job_log_sha256": "6d90027419b8b19cd10553865f6a3fb4d2469cf007c331d0a9661dc4d65764c6",
+  "xcresult_finalized": false,
+  "exported_screenshot_manifest_present": false,
+  "causal_finding": "All17cases completed successfully. The job-level execution-step timer killed xcodebuild about18seconds after the suite footer and before result-bundle finalization; export then failed because Info.plist was absent. This is not a five-gate pass.",
+  "scope": "Disposable iPhone Simulator test-case execution. This establishes the exact Clear-control path executed successfully, while the aggregate gate/evidence finalization failed. No physical-device, provider callback or release claim."
+}

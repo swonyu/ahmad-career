@@ -1,0 +1,51 @@
+{
+  "observedAt": "2026-11-17T16:22:10.201503+00:00",
+  "method": "Read-only xcrun devicectl list devices after observed Mac restart",
+  "previousReceipt": "device-availability.json",
+  "deviceEntries": 92,
+  "simulatedEntries": 89,
+  "physicalEntries": 3,
+  "physicalDevices": [
+    {
+      "type": "iPad",
+      "platform": "iOS",
+      "reality": "physical",
+      "osVersion": "27.0",
+      "tunnelState": "unavailable",
+      "transportType": null
+    },
+    {
+      "type": "iPhone",
+      "platform": "iOS",
+      "reality": "physical",
+      "osVersion": "27.0",
+      "tunnelState": "unavailable",
+      "transportType": null
+    },
+    {
+      "type": "iPhone",
+      "platform": "iOS",
+      "reality": "physical",
+      "osVersion": "27.2",
+      "tunnelState": "unavailable",
+      "transportType": null
+    }
+  ],
+  "sharedLockBefore": {
+    "present": false
+  },
+  "sharedLockAfter": {
+    "present": false
+  },
+  "lockUnchanged": true,
+  "sharedBuildLockAcquired": false,
+  "noBuildBootInstallLaunchPairingOrSettingsChange": true,
+  "physicalRuntimeAcceptance": false,
+  "screenReaderAcceptance": false,
+  "rawIdentifiersPublished": false,
+  "limits": [
+    "All three listed physical devices still report unavailable tunnels and no transport.",
+    "The absent shared lock is an observation, not a build or device-testing reservation.",
+    "This does not establish physical Android availability, candidate installation or assistive-technology acceptance."
+  ]
+}

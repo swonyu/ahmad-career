@@ -1,0 +1,13 @@
+{
+  "associated_preflight_at": "2026-11-17T17:36:32.455505+00:00",
+  "device_id": "05509780-2165-49cc-8999-da7ddd41502d",
+  "device_online": true,
+  "session_inventory": [
+    "PID: 36719, Blocked: false, Runtime: 2027s\nPID: 39588, Blocked: false, Runtime: 1596s\nPID: 53449, Blocked: false, Runtime: 162s",
+    "\n[executed on device: Salehs-MacBook-Pro.local (05509780-2165-49cc-8999-da7ddd41502d)]"
+  ],
+  "relevant_native_git_relay_process_matches": [
+    "PID: 54798, Command: /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /Users/saleh/Library/Caches/HalalTag-ProductionCompositionR7-NativeQA/20261117T170914Z-39588-7dd1ee578a/DerivedData/Build/Products/HalalTagQA_iphonesimulator27.2-arm64.xctestrun -destination platform=iOS Simulator,id=CE2F9D59-9408-4DEC-B8A5-82D4854574B1 -resultBundlePath /Users/saleh/Library/Caches/HalalTag-ProductionCompositionR7-NativeQA/20261117T170914Z-39588-7dd1ee578a/cases/state-language-relaunch/HalalTag-NativeUITest.xcresult -only-testing:HalalTagQAUItests/HalalTagLanguageStateUITests/testLanguagePreferenceSurvivesRelaunchButDraftAndResultDoNot -parallel-testing-enabled NO -maximum-concurrent-test-simulator-destinations 1 -maximum-parallel-testing-workers 1, CPU: 12.0, Memory: 0.4"
+  ],
+  "scope": "Read-only inventory before the exclusive object-only relay transfer. Existing unrelated native/feed activity was preserved; second preflight recorded the then-current session and lock state."
+}

@@ -1,10 +1,10 @@
 {
-  "asOf": "2026-11-17T15:59:37Z",
+  "asOf": "2026-11-17T16:50:54Z",
   "projectId": "appgprj_6afc21bd599c8191a0fb7705274d8582",
   "configurationReceipt": "google-acceptance-configuration.json",
   "environmentRevision": 1,
-  "deployedVersion": 5,
-  "deployedSource": "7e0ac76792d31b98863c5e9f8f1e1c4821a7f2e7",
+  "deployedVersion": 6,
+  "deployedSource": "ed3aba5dd9b0e6888a2fb47440954a1d4cce3acd",
   "audience": "owner-private",
   "googleAudience": "External Testing",
   "scopes": [
@@ -33,7 +33,7 @@
     "version": 2,
     "source": "17c29bc9708b1634eddc158184cb63f61135675d"
   },
-  "deploymentReceipt": "private-acceptance-deployment-v5.json",
+  "deploymentReceipt": "private-acceptance-deployment-v6.json",
   "configurationUnchangedByVersion3": true,
   "browserEvidenceUnchangedSince": "2026-11-17T13:28:42Z",
   "deploymentHistoryAfterPreviousObservation": [
@@ -46,13 +46,33 @@
       "version": 4,
       "source": "8570985f719cbfb374374b0714e74c3d19eeb146",
       "receipt": "private-acceptance-deployment-v4.json"
+    },
+    {
+      "version": 5,
+      "source": "7e0ac76792d31b98863c5e9f8f1e1c4821a7f2e7",
+      "receipt": "private-acceptance-deployment-v5.json"
+    },
+    {
+      "version": 6,
+      "source": "ed3aba5dd9b0e6888a2fb47440954a1d4cce3acd",
+      "receipt": "private-acceptance-deployment-v6.json"
     }
   ],
   "configurationUnchangedByVersion4": true,
   "latestConnectionAvailabilityCheck": {
-    "observedAt": "2026-11-17T15:19:24Z",
-    "receipt": "browser-connection-recheck.json",
-    "result": "Originating connected-browser context unavailable; no browser code executed or new consent result observed."
+    "recordedAt": "2026-11-17 16:16:19 UTC",
+    "receipt": "browser-connection-recheck-after-restart.json",
+    "result": "blocked before browser code execution",
+    "message": "Browser access requires the originating browser context. Open ChatGPT in the browser with the connected extension and try again.",
+    "providerAcceptanceChanged": false
   },
-  "configurationUnchangedByVersion5": true
+  "configurationUnchangedByVersion5": true,
+  "connectionAvailabilityCheckHistory": [
+    {
+      "observedAt": "2026-11-17T15:19:24Z",
+      "receipt": "browser-connection-recheck.json",
+      "result": "Originating connected-browser context unavailable; no browser code executed or new consent result observed."
+    }
+  ],
+  "configurationUnchangedByVersion6": true
 }

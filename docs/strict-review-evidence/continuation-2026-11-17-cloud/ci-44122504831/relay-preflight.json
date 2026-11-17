@@ -1,0 +1,85 @@
+{
+  "phase": "preflight",
+  "captured_relay": {
+    "created_at": "2026-11-17T16:05:20.414462+00:00",
+    "parent": "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-finder-ci-clear-repair-20261117-lamssjwx",
+    "repo": "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-finder-ci-clear-repair-20261117-lamssjwx/repo.git",
+    "bare": "true",
+    "head_symbolic": "refs/heads/relay-placeholder",
+    "head_sha256": "d57d92a98c323ab4a7386bc1a7c3ecf9910ed19bb009bf3b04e516601add0a05",
+    "index_exists": false,
+    "fetch_head": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+    "candidate_tree": "3a0333e1c210a89cdb21dfd11b765e24ee70254b",
+    "reason": "Previous owned temporary relay absent after observed15:57:20UTC boot; this new object-only bare repository has no worktree or shared-source changes."
+  },
+  "prior_relay_missing": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Process started with PID 3634 (shell: /bin/zsh)\nInitial output:\nTraceback (most recent call last):\n  File \"<stdin>\", line 8, in <module>\n  File \"<stdin>\", line 7, in git\n  File \"<stdin>\", line 4, in run\n  File \"/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/subprocess.py\", line 669, in run\n    with Popen(*popenargs, **kwargs) as process:\n         ~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/subprocess.py\", line 1213, in __init__\n    self._execute_child(args, executable, preexec_fn, close_fds,\n    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n                        pass_fds, cwd, env,\n                        ^^^^^^^^^^^^^^^^^^^\n    ...<5 lines>...\n                        gid, gids, uid, umask,\n                        ^^^^^^^^^^^^^^^^^^^^^^\n                        start_new_session, process_group)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/subprocess.py\", line 2156, in _execute_child\n    raise child_exception_type(errno_num, err_msg, err_filename)\nFileNotFoundError: [Errno 2] No such file or directory: PosixPath('/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-finder-ci-repair-20261117-4f1gplcu/repo')\n\n✅ Process 3634 has finished execution"
+      },
+      {
+        "type": "text",
+        "text": "\n[executed on device: Salehs-MacBook-Pro.local (05509780-2165-49cc-8999-da7ddd41502d)]"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "recovery_inspection": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Process started with PID 4171 (shell: /bin/zsh)\nInitial output:\n{\n  \"time\": \"2026-11-17T16:04:40.756192+00:00\",\n  \"temp\": \"/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T\",\n  \"temp_exists\": true,\n  \"old_parent_exists\": false,\n  \"owned_prefix_matches\": [],\n  \"boot\": {\n    \"exit\": 0,\n    \"stdout\": \"{ sec = 1794931040, usec = 618408 } Tue Nov 17 18:57:20 2026\\n\",\n    \"stderr\": \"\"\n  },\n  \"session_2779\": {\n    \"exit\": 0,\n    \"stdout\": \" 2779  2458 01:02 /bin/zsh\\n\",\n    \"stderr\": \"\"\n  },\n  \"lock_exists\": true,\n  \"lock_is_dir\": true,\n  \"lock_content\": null,\n  \"lock_entries\": [\n    \"owner.json\"\n  ],\n  \"refs\": {\n    \"exit\": 0,\n    \"stdout\": \"fd9c5399f2b7001b234b3b86bf72e2b36b5114c1\\trefs/heads/app-store/career-workspace-copy-20261117\\n949ce0ad327beab79fa7033423b462ebc7bd98be\\trefs/heads/career-finder-phones-verified-apply-20261116\\nfa151e219ad4e8d9f0d3337eec10a60ed5223d47\\trefs/heads/continuation/account-acceptance-20261117\\n\",\n    \"stderr\": \"\"\n  }\n}\n\n✅ Process 4171 has finished execution"
+      },
+      {
+        "type": "text",
+        "text": "\n[executed on device: Salehs-MacBook-Pro.local (05509780-2165-49cc-8999-da7ddd41502d)]"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "shared_build_lock": {
+    "content": [
+      {
+        "type": "text",
+        "text": "[Reading 1 lines from start (total: 1 lines, 0 remaining)]\n\n{\"host\": \"Salehs-MacBook-Pro.local\", \"marker\": \"publishing:09b55551150f4c4ea4a0b2ede2d7578d\", \"output\": \"/Users/saleh/Library/Caches/HalalTag-ProductionCompositionR6-NativeQA/20261117T160346Z-2944-09b5555115\", \"owner\": \"ios-app-publishing-and-quality\", \"pid\": 2944, \"slot_authorized\": \"publishing-d57-halaltag-r6b-20261117\", \"started_at\": \"2026-11-17T16:03:46.359522+00:00\"}"
+      },
+      {
+        "type": "text",
+        "text": "\n[executed on device: Salehs-MacBook-Pro.local (05509780-2165-49cc-8999-da7ddd41502d)]"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "device_inventory": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Desktop Commander devices\n\n1. Salehs-MacBook-Pro.local\n   Status: Online\n   ID: 05509780-2165-49cc-8999-da7ddd41502d\n   Last seen: 1m ago\n   App version: 0.3.3\n\n2. Air-nouf\n   Status: Offline\n   ID: a3330fc5-76e7-4381-946f-20d648d24a18\n   Last seen: 41h ago\n   App version: 0.3.3\n\nManage devices: https://mcp.desktopcommander.app/\nYou can view, add, or revoke devices there."
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "sessions": {
+    "status": "fulfilled",
+    "value": {
+      "content": [
+        {
+          "type": "text",
+          "text": "PID: 2779, Blocked: false, Runtime: 2s"
+        },
+        {
+          "type": "text",
+          "text": "\n[executed on device: Salehs-MacBook-Pro.local (05509780-2165-49cc-8999-da7ddd41502d)]"
+        }
+      ],
+      "structuredContent": null,
+      "isError": false
+    }
+  },
+  "relevant_process_matches": []
+}

@@ -1,0 +1,34 @@
+{
+  "recordedAt": "2026-11-17T17:55:52.297260+00:00",
+  "source": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+  "sourceHashBindingsVerified": 4,
+  "retainedOriginals": [
+    {
+      "file": "reviewer-receipt.json",
+      "bytes": 11415,
+      "sha256": "ed89f93c5151c5ddac840803df1098bce8d5ec0ca9656ecbde7bf6c49c10557e"
+    },
+    {
+      "file": "bounded-inmemory-guard.json",
+      "bytes": 18347,
+      "sha256": "763820cb2a8a842ebc725bf41db80737fc7b7b9a7c17c0f19e28016108d9c69b"
+    },
+    {
+      "file": "upstream-compatibility-check.json",
+      "bytes": 922,
+      "sha256": "043a25c6d9ab0bc2c7446787608b4a7ec5ef57d0b4368309e84f3ad6f3c3b992"
+    },
+    {
+      "file": "picomatch-4.0.7-official.tar.gz",
+      "bytes": 105735,
+      "sha256": "5f9d5c0f6d890b88bfa7844a1b7b3c9496ed07208f0e3e09f4946d2f76ca86f9"
+    },
+    {
+      "file": "UPSTREAM-LICENSE.txt",
+      "bytes": 1091,
+      "sha256": "d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9"
+    }
+  ],
+  "applicationMutation": false,
+  "qualification": "Copies preserve exact original peer/experiment/archive bytes. Relative files are indexed here; absolute original scratch paths inside receipts remain historical provenance."
+}

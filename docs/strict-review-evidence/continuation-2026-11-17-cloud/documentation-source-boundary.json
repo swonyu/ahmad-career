@@ -1,0 +1,29 @@
+{
+  "recordedAt": "2026-11-17T18:30:37.728179+00:00",
+  "applicationCommit": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+  "applicationOriginalTree": "74b02b205e7a256f589d9961b2f4a9c129b6935d",
+  "evidenceBranch": "continuation/account-acceptance-evidence-20261117",
+  "applicationSourceBranch": "continuation/account-acceptance-20261117",
+  "protectedDevelopment": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+  "protectedPublishingCopy": "fd9c5399f2b7001b234b3b86bf72e2b36b5114c1",
+  "evidencePackages": [
+    {
+      "name": "run38",
+      "candidate": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+      "runId": 44130275991,
+      "fileCount": 50,
+      "allFileHashesMatch": true,
+      "sourceManifestSha256": "49668ec372dad51b14c53080a41a4a1c127d51ce2df402c600d3461fa0e24ede"
+    },
+    {
+      "name": "run40",
+      "candidate": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+      "runId": 44139018005,
+      "fileCount": 55,
+      "allFileBytesAndHashesMatch": true,
+      "sourceManifestSha256": "4734f029c8d17ef952fbbfb50aa6f33c2405c54f47ef8ecac2e54786162540c3"
+    }
+  ],
+  "boundary": "The evidence branch adds only documentation and retained observations. Its whole Git tree differs because documentation changes; application, native tests, workflow, package and lock bytes remain source63e bytes. Source-run qualification is retained rather than transferred to a new application build.",
+  "newSourceBuildOrCiDispatched": false
+}

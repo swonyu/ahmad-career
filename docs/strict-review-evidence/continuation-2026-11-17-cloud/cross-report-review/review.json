@@ -1,0 +1,605 @@
+{
+  "schema": "career-cross-report-provenance-review/v1",
+  "recorded_at_utc": "2026-11-17T17:06:35.484397+00:00",
+  "owner": "/root/final_product_peer",
+  "development_source": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+  "result": "No novel material application defect established. Actual saved attributed model-response text is available and was inspected; source packets and later read/delivery claims remain separate evidence classes.",
+  "actions": {
+    "source_edits": false,
+    "root_document_edits": false,
+    "new_research_searches": 0,
+    "tests_or_builds_run": 0,
+    "ci_actions": 0,
+    "browser_or_model_prompts": 0,
+    "uploads_or_messages_to_external_services": 0,
+    "zip_access_or_download": 0,
+    "paid_calls": 0,
+    "writes": "Only isolated cross-report-review outputs."
+  },
+  "inputs": [
+    {
+      "id": "P1",
+      "path": "/workspace/scratch/5bc6158967e8/career-finder/docs/Product-Review-Research-2026-11-17.md",
+      "classification": "existing product decision brief",
+      "read_scope": "Working document; substantive decision, methods, review table, limits and cross-report provenance sections inspected.",
+      "bytes": 34869,
+      "sha256": "581e9cb0a3cb6594f56b1c80bec6a3dd1e25cd5823d343ca15dfa9ec01c919c7",
+      "present_in_head": true,
+      "head_sha256": "26e347e43498e52e629b152e277454f4b44b47a4ef19c0167b0c4cb7f1f985b5",
+      "working_bytes_equal_head": false
+    },
+    {
+      "id": "P2",
+      "path": "/workspace/scratch/5bc6158967e8/career-finder/docs/Open-Source-and-Interoperability-Research-2026-11-17.md",
+      "classification": "existing open-source decision brief",
+      "read_scope": "Working document; six-project comparison, reuse/cost policy, CSV/calendar decisions and acceptance limits inspected.",
+      "bytes": 25795,
+      "sha256": "b0263ff3215eae65ab8e19f31a466377d404eed01a96fd1b9e2ecfadaa1f95be",
+      "present_in_head": true,
+      "head_sha256": "f4639185040673a4092a10a834ef20d8e9132450052ddac0771719a217cc75b0",
+      "working_bytes_equal_head": false
+    },
+    {
+      "id": "P3",
+      "path": "/workspace/scratch/5bc6158967e8/career-finder/docs/Research-Audit-2026-11-17.md",
+      "classification": "existing technical acceptance audit",
+      "read_scope": "Relevant provider/identity/accessibility scope and dated evidence boundaries inspected; no fresh underlying external-source lookup.",
+      "bytes": 46087,
+      "sha256": "55fd1f200e95e423abee45d47da0e347705dd9c23f780ab5137de400106d1da7",
+      "present_in_head": true,
+      "head_sha256": "55fd1f200e95e423abee45d47da0e347705dd9c23f780ab5137de400106d1da7",
+      "working_bytes_equal_head": true
+    },
+    {
+      "id": "P4",
+      "path": "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/product-research/source-ledger.json",
+      "classification": "existing public-research ledger",
+      "read_scope": "Recorded sample sizes and container structure checked; individual external pages were not reopened.",
+      "bytes": 30642,
+      "sha256": "38ad2c8529fc419b9ed081bf31d63d1b5ba9aa3772da7bfdf729dbab79db5daa",
+      "present_in_head": true,
+      "head_sha256": "38ad2c8529fc419b9ed081bf31d63d1b5ba9aa3772da7bfdf729dbab79db5daa",
+      "working_bytes_equal_head": true
+    },
+    {
+      "id": "H1",
+      "path": "/workspace/scratch/0d7eb5b44ac0/library-existing/Career-Finder-Research-Review-2026-11-17.txt",
+      "classification": "ChatGPT-authored composite handoff",
+      "read_scope": "Front checkpoint and relevant provenance/traceability sections inspected; not a Gemini/Grok response.",
+      "bytes": 50506,
+      "sha256": "b74c3449a7ab9f6761512e5b7045d8c23eb817db91ce4f9c2d5a5343163a3cd7"
+    },
+    {
+      "id": "H2",
+      "path": "/workspace/scratch/0d7eb5b44ac0/library-existing/Original-Research-Review-v0.txt",
+      "classification": "ChatGPT-authored earlier reconciliation",
+      "read_scope": "Relevant research access, decision corrections, sampling, consumer and acceptance sections inspected.",
+      "bytes": 22444,
+      "sha256": "5914aea69dbaf10529ab38ad984278f75f091bf7812034cbfd3ee08be1da4f0c"
+    },
+    {
+      "id": "H3",
+      "path": "/workspace/scratch/0d7eb5b44ac0/Career-Finder-Research-Traceability-Appendix-2026-11-17.txt",
+      "classification": "ChatGPT-authored later reconciliation",
+      "read_scope": "Provenance, owner/finding map, accepted/rejected proposals and evidence map inspected.",
+      "bytes": 16584,
+      "sha256": "54c2df4151b11905faccc89873cbb6aa56c4eff66ca6942ae3b2b19b2eb88b1f"
+    },
+    {
+      "id": "H4",
+      "path": "/workspace/scratch/0d7eb5b44ac0/research-report-save-receipt.json",
+      "classification": "persistence receipt",
+      "read_scope": "Full receipt inspected; establishes reported save status/size/version, not model authorship or review validity.",
+      "bytes": 305,
+      "sha256": "034a51e5c00bffe3aaca42618824cc7311e5817d687e582fada7060b7d788b50"
+    },
+    {
+      "id": "G1",
+      "path": "/workspace/scratch/45e59e74267a/gemini-native-career-research-2026-11-17.txt",
+      "classification": "saved response text attributed to Gemini",
+      "read_scope": "Substantive narrative and extracted tables inspected directly; native app/conversation not reopened.",
+      "bytes": 32984,
+      "sha256": "02f9d430015b455c1392922838beb04071b40f6cc9addd392840ed98e884dd74"
+    },
+    {
+      "id": "G2",
+      "path": "/workspace/scratch/45e59e74267a/gemini-native-career-research-latest-48-2026-11-17.txt",
+      "classification": "saved response text attributed to Gemini",
+      "read_scope": "Entire saved matrix/decision/findings capture inspected; full original conversation/canvas not reopened.",
+      "bytes": 8712,
+      "sha256": "b4fe489a5649d66ad79227cfd35ea94738caea592188c40db49f161953946d10"
+    },
+    {
+      "id": "G3",
+      "path": "/workspace/scratch/45e59e74267a/gemini-native-career-research-latest-52-2026-11-17.txt",
+      "classification": "saved response text attributed to Gemini",
+      "read_scope": "Access ledger, evidence ledger, technical decisions and findings inspected directly; full original conversation/canvas not reopened.",
+      "bytes": 31892,
+      "sha256": "67ba2d4fccdad3db73c0eec35e9cf78bad571061e6858af60dc5e1d477e8700d"
+    },
+    {
+      "id": "R0",
+      "path": "/workspace/scratch/45e59e74267a/grok-products-research-2026-11-17.json",
+      "classification": "saved conversation response capture attributed to Grok",
+      "read_scope": "Capture metadata and Career Finder sections of response indices 0 and 2 inspected; unrelated products/workflow excluded.",
+      "bytes": 42488,
+      "sha256": "6028a247425fc82fed6be9d0feba348a4f1c504fdfc7cce81413fbcd81790c98"
+    },
+    {
+      "id": "R1",
+      "path": "/workspace/scratch/45e59e74267a/grok-products-research-update-2026-11-17.json",
+      "classification": "saved subsequent response capture attributed to Grok",
+      "read_scope": "Career Finder exact-ref/read-scope ledger and findings in response index 3 inspected; collector assessment kept separate.",
+      "bytes": 9242,
+      "sha256": "d56d210313eed97cb8b9170b9e6672fa72c10ce52f1a5afdacb2c8107ad0139e"
+    },
+    {
+      "id": "R2",
+      "path": "/workspace/scratch/45e59e74267a/grok-full-review-20261117/review-batches/GROK-A-HOSTED-RESPONSE.txt",
+      "classification": "saved bounded Grok reply",
+      "read_scope": "Entire saved reply read; selected-packet read claims are the model report, not a new repository/runtime review here.",
+      "bytes": 10070,
+      "sha256": "a554bc99aaf790ddb3aa7d8e706c6c7462e21c11f0416ca5b503b3f59ce506ec"
+    },
+    {
+      "id": "R3",
+      "path": "/workspace/scratch/45e59e74267a/grok-full-review-20261117/review-batches/GROK-B-NATIVE-RESPONSE.txt",
+      "classification": "saved bounded Grok reply",
+      "read_scope": "Entire saved reply read; its claimed inspection of 17 older images was not repeated or independently authenticated here.",
+      "bytes": 10568,
+      "sha256": "5127c3cb0ec2363270c664478805744b678ba0eb14277e2f64bab830bd49d965"
+    },
+    {
+      "id": "R4",
+      "path": "/workspace/scratch/45e59e74267a/grok-full-review-20261117/review-batches/GROK-C-IDENTITY-RESPONSE.txt",
+      "classification": "saved bounded Grok reply",
+      "read_scope": "Entire saved reply read; no new account/provider/security execution in this audit.",
+      "bytes": 6119,
+      "sha256": "8286f3d51079853605740c864c261fbcf65d17df100b57d826973e3c0347f0cf"
+    },
+    {
+      "id": "S1",
+      "path": "/workspace/scratch/0d7eb5b44ac0/grok-current-supplement/README.md",
+      "classification": "source-packet description",
+      "read_scope": "Full metadata description read; application/source payload and ZIP were not opened.",
+      "bytes": 3706,
+      "sha256": "0d6348740b75e8a05c3aa0c5cd8132b0fff0979096fbdc3ce3753af156b195c9"
+    },
+    {
+      "id": "S2",
+      "path": "/workspace/scratch/0d7eb5b44ac0/grok-current-supplement/packaging-receipt.json",
+      "classification": "source-packet receipt",
+      "read_scope": "Full receipt read; prepared input, not a model response or later delivery/read receipt.",
+      "bytes": 2217,
+      "sha256": "bb7c70f55fb7393d74305e211d1c7d7fd6b6d08c6ed38ab557fd825a5bcef581"
+    },
+    {
+      "id": "S3",
+      "path": "/workspace/scratch/0d7eb5b44ac0/grok-successor-2fac36f/README.md",
+      "classification": "successor source-packet description",
+      "read_scope": "Full metadata description read; no reconstruction, ZIP access or source-packet review performed.",
+      "bytes": 3561,
+      "sha256": "e5a76cd1fe9b1bee40857b3cc6796ccddeada7361f6a8ff33c2ad19be5cb7104"
+    },
+    {
+      "id": "S4",
+      "path": "/workspace/scratch/0d7eb5b44ac0/grok-successor-2fac36f/packaging-receipt.json",
+      "classification": "successor source-packet receipt",
+      "read_scope": "Full receipt read; upload_performed and external_review_performed false at preparation.",
+      "bytes": 2178,
+      "sha256": "317fa489da2284adf599c90275807ce769ea788dd6f636621ae75e56729f7399"
+    },
+    {
+      "id": "S5",
+      "path": "/workspace/scratch/0d7eb5b44ac0/grok-successor-2fac36f/review-status.json",
+      "classification": "dated owner-status packet",
+      "read_scope": "Full status metadata read; historical pinned-source states are not current CI38 conclusions.",
+      "bytes": 3652,
+      "sha256": "81c216f7caddf327e54e6e29649ecbb86657db152fc4cea9cb026a498d3611a6"
+    },
+    {
+      "id": "C1",
+      "path": "/workspace/scratch/0d7eb5b44ac0/career-continuation-state.json",
+      "classification": "continuation owner receipt",
+      "read_scope": "Relevant Grok delivery/read and clock fields read; live Grok page not reopened.",
+      "bytes": 6970,
+      "sha256": "1efcc1d0dbcd0e0b3c524d6b5a37f90356ec5d3a660eec06d6059f0bcbb67157"
+    },
+    {
+      "id": "C2",
+      "path": "/workspace/scratch/0d7eb5b44ac0/CAREER-DEADLINE-EXTENDED-0d7eb5b44ac0-20261117.json",
+      "classification": "owner-reported deadline extension",
+      "read_scope": "Full receipt read; quoted user instruction is in an owner receipt, not primary chat opened by this audit.",
+      "bytes": 823,
+      "sha256": "2e6ffc11a102a7b23571e24695f63b73951c3e8e7b94aca3fde7a42b2a2abc3d"
+    },
+    {
+      "id": "E1",
+      "path": "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/source-label-bidi/root-verification.json",
+      "classification": "existing source-bound verification receipt",
+      "read_scope": "Receipt read; current component hash compared; no tests rerun.",
+      "bytes": 1306,
+      "sha256": "82e815272338f405c9b4bb8267184011c4182dd863dde833c564b941baadf1d7",
+      "present_in_head": true,
+      "head_sha256": "82e815272338f405c9b4bb8267184011c4182dd863dde833c564b941baadf1d7",
+      "working_bytes_equal_head": true
+    },
+    {
+      "id": "E2",
+      "path": "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/search-status-f05/root-verification.json",
+      "classification": "existing source-bound verification receipt",
+      "read_scope": "Receipt read; overlaps earlier subsets and does not certify native/physical/provider acceptance.",
+      "bytes": 2078,
+      "sha256": "9452ac261a8ace9ee6ee0fdfbf1d90f03cc2b9515dd9cb89bb27590b50f66d05",
+      "present_in_head": true,
+      "head_sha256": "9452ac261a8ace9ee6ee0fdfbf1d90f03cc2b9515dd9cb89bb27590b50f66d05",
+      "working_bytes_equal_head": true
+    },
+    {
+      "id": "E3",
+      "path": "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/singular-count/root-verification.json",
+      "classification": "existing source-bound verification receipt",
+      "read_scope": "Receipt read; current PhoneApp/catalog/test hashes compared; no tests rerun.",
+      "bytes": 2025,
+      "sha256": "4d25b1a550dcd7b882817f0180e185d7fd51d9d5aa72ab27a9838c9cf1a77c08",
+      "present_in_head": false
+    },
+    {
+      "id": "I1",
+      "path": "/workspace/scratch/5bc6158967e8/career-finder/hosted/app/phone/PhoneApp.tsx",
+      "classification": "current source identity only",
+      "read_scope": "Hash only in this pass; no duplicate component/discovery critique.",
+      "bytes": 115718,
+      "sha256": "b9599e9a6f7f955da7009feb3485174a29834b08ef8e588de4addbc08f726dfa",
+      "present_in_head": true,
+      "head_sha256": "b9599e9a6f7f955da7009feb3485174a29834b08ef8e588de4addbc08f726dfa",
+      "working_bytes_equal_head": true
+    },
+    {
+      "id": "I2",
+      "path": "/workspace/scratch/5bc6158967e8/career-finder/hosted/app/phone/components.tsx",
+      "classification": "current source identity only",
+      "read_scope": "Hash only in this pass; no duplicate current Grok/component work.",
+      "bytes": 19250,
+      "sha256": "c7614e923223d427e3a218f9c8d1038e4d90f244de9da8707bb92bf8dce90c52",
+      "present_in_head": true,
+      "head_sha256": "c7614e923223d427e3a218f9c8d1038e4d90f244de9da8707bb92bf8dce90c52",
+      "working_bytes_equal_head": true
+    },
+    {
+      "id": "I3",
+      "path": "/workspace/scratch/5bc6158967e8/career-finder/hosted/app/phone/record-tools.ts",
+      "classification": "current serializer identity only",
+      "read_scope": "Hash only; compared with the separately reported publishing consumer source.",
+      "bytes": 4384,
+      "sha256": "910dae464cd8504ed225fe5f68fa6b0750c7b7a9c7b18c6454ff4504a772e9a9",
+      "present_in_head": true,
+      "head_sha256": "910dae464cd8504ed225fe5f68fa6b0750c7b7a9c7b18c6454ff4504a772e9a9",
+      "working_bytes_equal_head": true
+    },
+    {
+      "id": "I4",
+      "path": "/workspace/scratch/5bc6158967e8/career-finder/hosted/app/i18n/messages.ar.json",
+      "classification": "current catalog identity only",
+      "read_scope": "Hash and entry count only.",
+      "bytes": 230114,
+      "sha256": "9ee8b541b125a5be4906043dad78eb0bdbd6d58c3b9234cf7e65626a2f2dd704",
+      "present_in_head": true,
+      "head_sha256": "9ee8b541b125a5be4906043dad78eb0bdbd6d58c3b9234cf7e65626a2f2dd704",
+      "working_bytes_equal_head": true
+    }
+  ],
+  "provenance_findings": [
+    {
+      "id": "PROV-01",
+      "evidence": [
+        "H1",
+        "H2",
+        "H3",
+        "H4"
+      ],
+      "conclusion": "The named library report is a ChatGPT reconciliation, not a model response. It contains H2 and H3 verbatim exactly once; these are not three independent research reports. Save receipt confirms reported persistence/size/version only.",
+      "exact_embedded_components": {
+        "H2": 1,
+        "H3": 1
+      }
+    },
+    {
+      "id": "PROV-02",
+      "evidence": [
+        "G1",
+        "G2",
+        "G3",
+        "H2"
+      ],
+      "conclusion": "Three accessible local text captures are attributed to native Gemini. The original service/conversation and any fuller canvas were not reopened. G3 explicitly says project files, CI logs and previews were not directly opened; project findings evaluate an old 859b84a handoff, even where labeled source-confirmed."
+    },
+    {
+      "id": "PROV-03",
+      "evidence": [
+        "R0",
+        "R1"
+      ],
+      "conclusion": "Actual saved broad Grok response text also exists. The earlier default-branch mismatch was corrected in response 3, whose own ledger says exact842 README was substantial but truncated. It is not a full source or CI audit. Career Finder sections only were used."
+    },
+    {
+      "id": "PROV-04",
+      "evidence": [
+        "R2",
+        "R3",
+        "R4"
+      ],
+      "conclusion": "Actual saved focused Grok replies were read. Their scope is selected P8bfd/D880/fa packets; native image inspection is self-reported in the saved reply. These are stronger scoped reports than an inferred verdict from a ZIP, but not a fresh review or acceptance of21f08f5."
+    },
+    {
+      "id": "PROV-05",
+      "evidence": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "C1"
+      ],
+      "conclusion": "567 and2fac materials are input source packets, not model responses. Prepared upload=false is compatible with a later owner receipt reporting delivery. C1 reports the45993-byte567 text read, ZIP delivered but not extracted, and not all35 files read. That receipt was read; its live page was not reopened. 2fac packaging proves preparation only at its recorded time. No current4b/Grok component/discovery review was duplicated."
+    }
+  ],
+  "agreements": [
+    {
+      "id": "AGR-01",
+      "evidence": [
+        "P1",
+        "P2",
+        "G1",
+        "G3",
+        "R0",
+        "R1"
+      ],
+      "decision": "Keep useful work contextual in existing destinations; retain the selected Saved-note search, secondary CSV action and one saved-date calendar export. No dashboard, new tab or feature collection is justified."
+    },
+    {
+      "id": "AGR-02",
+      "evidence": [
+        "P1",
+        "P2",
+        "G1",
+        "G3",
+        "R2",
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "decision": "Retry the submitted search while retaining edited drafts, keep incomplete/stale state honest, and isolate dynamic mixed-direction values. Those bounded source findings already have owner verification; model agreement is not an additional test pass."
+    },
+    {
+      "id": "AGR-03",
+      "evidence": [
+        "P1",
+        "P2",
+        "P3",
+        "G1",
+        "R4"
+      ],
+      "decision": "Preserve blank personal defaults, original content, guarded exports/quarantine, exact CV/payload approval, no same-email merge and no unapproved employer submission. Real consent, account recovery and device acceptance remain independent gates."
+    },
+    {
+      "id": "AGR-04",
+      "evidence": [
+        "P1",
+        "P2",
+        "G1",
+        "G2",
+        "G3",
+        "H2"
+      ],
+      "decision": "Organization, interruption recovery and low-noise follow-ups are useful qualitative signals. They support test priorities; no reviewed corpus proves employment-outcome uplift or universal product superiority."
+    },
+    {
+      "id": "AGR-05",
+      "evidence": [
+        "P2",
+        "G1",
+        "G3",
+        "R1"
+      ],
+      "decision": "Retain bounded existing ATS access and defer new scraping, heavy resume/PDF infrastructure and optional paid model services. Copy workflow lessons, not competitor source/assets or every suggested feature."
+    }
+  ],
+  "contradictions_and_qualifications": [
+    {
+      "id": "QUAL-01",
+      "evidence": [
+        "G1",
+        "G2",
+        "G3",
+        "R1",
+        "R2",
+        "R4"
+      ],
+      "issue": "Source-confirmed or current labels exceed actual access/version scope.",
+      "disposition": "Treat Gemini project claims as supplied-snapshot analysis. Later Grok selected-source findings are independently scoped to their named older snapshots, not current runtime."
+    },
+    {
+      "id": "QUAL-02",
+      "evidence": [
+        "G2",
+        "G3",
+        "P2",
+        "H2"
+      ],
+      "issue": "G2 recommends replacing the internal profile model with JSON Resume; G1/G3 frame interchange compatibility instead.",
+      "disposition": "Keep internal revision, PDF hash, approval and recovery contracts. Optional interchange is deferred; no schema replacement is authorized by this research."
+    },
+    {
+      "id": "QUAL-03",
+      "evidence": [
+        "G1",
+        "G3",
+        "H2",
+        "H3"
+      ],
+      "issue": "Due-now badge is treated as a promise that the entire Followups list has exactly that length.",
+      "disposition": "Do not remove future nonclosed reminders merely to force count equality. Query clearing is a bounded known correction in the publishing lineage; do not duplicate or transplant its implementation."
+    },
+    {
+      "id": "QUAL-04",
+      "evidence": [
+        "G3",
+        "H2",
+        "P1",
+        "E2"
+      ],
+      "issue": "Complete is equated with fresh HTTP200 and partial with failed boards; retry-only-failed is presented as required.",
+      "disposition": "Preserve valid cached completeness and fresh result-limit cases. Neutral incomplete copy and same-submitted-search retry are established decisions; a new subset-merge protocol is not required."
+    },
+    {
+      "id": "QUAL-05",
+      "evidence": [
+        "G1",
+        "G3",
+        "H2",
+        "P2"
+      ],
+      "issue": "Mandatory DTEND and deterministic-UID import/upsert guarantees are stronger than the accepted calendar contract.",
+      "disposition": "Retain the documented all-day one-day-duration representation absent a reproduced consumer defect. Same-date and changed-date import behavior remain consumer gates; deterministic export identity is not a synchronization guarantee."
+    },
+    {
+      "id": "QUAL-06",
+      "evidence": [
+        "G1",
+        "G3",
+        "P1",
+        "P2",
+        "H2"
+      ],
+      "issue": "BOM, apostrophe/tab sanitization or automated browser checks are described as guaranteeing spreadsheet/calendar/accessibility acceptance.",
+      "disposition": "Retain the tested visible Text: marker and quoted-as-text guidance, exact engine/source scopes and real-consumer/device gates. Neither model response nor automation closes those gates by itself."
+    },
+    {
+      "id": "QUAL-07",
+      "evidence": [
+        "G1",
+        "G3",
+        "H2",
+        "P2"
+      ],
+      "issue": "Blanket OpenResume incompatibility/Arabic-impossibility and simplified MPL obligations are asserted without a project-specific reuse decision.",
+      "disposition": "Do not promote these to established facts. Preserve the current pinned-source/license/notice review requirement and deferred dependency decision; this audit provides no legal determination."
+    },
+    {
+      "id": "QUAL-08",
+      "evidence": [
+        "G2",
+        "G3",
+        "P1",
+        "P2"
+      ],
+      "issue": "Unique combination, free-forever architecture, outcome claims and absolute competitor comparisons exceed the evidence.",
+      "disposition": "Keep free-only authorized operation and explicit existing quotas, without perpetual-infrastructure, market-uniqueness or hiring-performance promises."
+    },
+    {
+      "id": "QUAL-09",
+      "evidence": [
+        "G1",
+        "G2",
+        "G3",
+        "P1",
+        "H2"
+      ],
+      "issue": "Gemini matrices disagree internally on competitor Arabic support, tracking/free boundaries and some dates. Ten ledger entries mix user reviews, developer declarations, aggregates and articles; the earlier eighteen records include release notes.",
+      "disposition": "Keep the existing9-service/30-page/24-selected-review ledger unchanged. Do not add counts without record-level deduplication. Localized storefront URLs do not establish region or runtime RTL. H2 reports selected primary-source corrections, but those pages were not re-opened in this audit."
+    },
+    {
+      "id": "QUAL-10",
+      "evidence": [
+        "G1",
+        "G3",
+        "H3",
+        "P1",
+        "P2"
+      ],
+      "issue": "A universal hosted five-tab list and WebView-wrapper framing are applied to all native platforms.",
+      "disposition": "Preserve each platform’s existing navigation contract. Hosted CSV/ICS support does not establish native export parity or authorize native restructuring."
+    }
+  ],
+  "already_addressed_or_owned": [
+    {
+      "finding": "F05/F06 and singular English counts",
+      "owner": "Original development/integration owners",
+      "evidence": [
+        "E1",
+        "E2",
+        "E3",
+        "I1",
+        "I2",
+        "I4"
+      ],
+      "state": "Existing receipts; current relevant source hashes match later fixes. All referenced receipt log hashes checked. No rerun, native/runtime promotion, or sum of overlapping72/82/subset counts."
+    },
+    {
+      "finding": "WF01 query reset and WF03 retained location; persistent-draft integration",
+      "owner": "Publishing/research integration lineage",
+      "evidence": [
+        "H2",
+        "H3"
+      ],
+      "state": "Reported integrated in24a/567 lineage. This provenance pass does not establish complete source parity with21f08 or reapply a publishing fix."
+    },
+    {
+      "finding": "Android viewport, iPhone exact-field interaction/finalization, workflow scope concurrency and Arabic expiry suffix",
+      "owner": "Existing native/publishing owners",
+      "evidence": [
+        "R3",
+        "S5"
+      ],
+      "state": "Dated findings/receipts, already assigned. Their old CI counts must not be called current. CI38 remains separately owned; no CI conclusion refreshed here."
+    },
+    {
+      "finding": "CSV consumer and calendar behavior",
+      "owner": "Existing development/publishing acceptance owners",
+      "evidence": [
+        "P1",
+        "P2",
+        "H2",
+        "H3",
+        "I3"
+      ],
+      "state": "Current exporter hash matches the separately reported publishing consumer source. Reported Mac import/save/reopen evidence remains separate from this lane’s headless-engine evidence. No additional consumer, download or calendar pass established."
+    },
+    {
+      "finding": "Provider consent/callback, disposable-account recovery, physical accessibility and store release",
+      "owner": "Existing provider/acceptance/publishing owners",
+      "evidence": [
+        "P3",
+        "R4",
+        "H3"
+      ],
+      "state": "Independent external acceptance gates. No new interaction or claim of completion in this audit."
+    },
+    {
+      "finding": "Working research-document continuity wording",
+      "owner": "Root documentation reconciliation",
+      "evidence": [
+        "P1",
+        "P2"
+      ],
+      "state": "Working documents still describe d97/#35/v5 snapshots and say this lane has not directly read model reports. Preserve historical records and append this scoped captured-text comparison; do not replace history with a claim of full conversation/current-source review."
+    }
+  ],
+  "clock": {
+    "original_start": "2026-11-16T22:26:12Z",
+    "original_active_work_budget_hours": 24,
+    "derived_request_plus_24h_elapsed_checkpoint": "2026-11-17T22:26:12Z",
+    "derived_checkpoint_basis": "Request timestamp plus 24 elapsed hours; not independent evidence of a hard deadline.",
+    "extended_cutoff_owner_reported": "2026-11-18T22:26:12Z",
+    "extension_evidence": [
+      "C1",
+      "C2"
+    ],
+    "primary_chat_opened_here": false,
+    "active_hours_remaining": null,
+    "decision": "Preserve the original start and original 24-active-hour work budget. The request-plus-24-hour timestamp is a derived elapsed checkpoint, not an independently established hard deadline. The later extension remains owner-reported; its primary chat reference was not opened here. A complete active-work ledger has not been established, so the active remainder is unknown. No reset or invented active-hours balance."
+  },
+  "novel_material_defects": [],
+  "next_action": "Root may append the source-bound provenance/decision audit to owned documentation. No new app feature, source patch, model upload, competitor search or duplicate acceptance run is warranted by this pass."
+}

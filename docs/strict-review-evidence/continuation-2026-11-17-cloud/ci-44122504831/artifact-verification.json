@@ -1,0 +1,47 @@
+{
+  "verified_at": "2026-11-17T16:46:15.344162+00:00",
+  "run_id": 44122504831,
+  "candidate": "d97bc209ca84ecb830e6c6bad25808164706409f",
+  "archives": [
+    {
+      "artifact_id": 14345462809,
+      "archive": "/workspace/scratch/5bc6158967e8/ci-44122504831-native/hosted.zip",
+      "bytes": 8817,
+      "sha256": "b8c0d8caeee3e9c9e074820f1a3ffcb8537fe87d9f732906bc1aa8f106fc9e50",
+      "matches_github_digest": true,
+      "expires_at": "2026-11-24T16:11:37Z",
+      "extracted_to": "/workspace/scratch/5bc6158967e8/ci-44122504831-native/hosted"
+    },
+    {
+      "artifact_id": 14344859128,
+      "archive": "/workspace/scratch/5bc6158967e8/ci-44122504831-native/iphone-build.zip",
+      "bytes": 8371,
+      "sha256": "4d02e71fbdcbf2ea118b29c026b4eb4563910a684d22ebebb784185f0cb8cb1e",
+      "matches_github_digest": true,
+      "expires_at": "2026-11-24T16:11:41Z",
+      "extracted_to": "/workspace/scratch/5bc6158967e8/ci-44122504831-native/iphone-build"
+    },
+    {
+      "verified_at": "2026-11-17T16:21:30.145719+00:00",
+      "artifact_id": 14346782415,
+      "archive": "/workspace/scratch/5bc6158967e8/ci-44122504831-native/android.zip",
+      "bytes": 3071702,
+      "sha256": "65959f4f510876430bbec6c73cfcf84b576052ab266e47a4c40a53afd2f4b6dc",
+      "matches_github_digest": true,
+      "expires_at": "2026-11-24T16:19:44Z",
+      "extracted_to": "/workspace/scratch/5bc6158967e8/ci-44122504831-native/android"
+    },
+    {
+      "verified_at": "2026-11-17T16:41:31.230922+00:00",
+      "artifact_id": 14347768655,
+      "archive": "/workspace/scratch/5bc6158967e8/ci-44122504831-native/iphone-ui.zip",
+      "bytes": 28681944,
+      "sha256": "3037c836cbfd2a0f7d539fe2207669553e85515e76812254896338852fbbaa2a",
+      "matches_github_digest": true,
+      "expires_at": "2026-11-24T16:40:03Z",
+      "extracted_to": "/workspace/scratch/5bc6158967e8/ci-44122504831-native/iphone-ui"
+    }
+  ],
+  "all_four_exact_sizes_and_sha256_match_github_metadata": true,
+  "iphone_scope": "Archive contains raw17-pass test log and unfinished xcresult staging data. No finalized result bundle or exported screenshot manifest is claimed."
+}

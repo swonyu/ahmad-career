@@ -1,0 +1,116 @@
+2026-11-17T17:23:37.7725300Z Test Case '-[CareerFinderUITests.CareerFinderUITests testAccessibilityTextKeepsCoreControlsReachable]' started.
+2026-11-17T17:23:37.7726370Z     t =     0.00s Start Test at 2026-11-17 17:23:32.001
+2026-11-17T17:23:37.7867350Z     t =     1.59s Set Up
+2026-11-17T17:23:37.8180980Z     t =     1.60s Open com.ahmadalayed.career
+2026-11-17T17:23:37.8182550Z     t =     1.61s     Launch com.ahmadalayed.career
+2026-11-17T17:23:57.3029060Z     t =    25.15s         Setting up automation session
+2026-11-17T17:23:57.3041570Z     t =    25.24s         Wait for com.ahmadalayed.career to idle
+2026-11-17T17:23:59.0549270Z     t =    26.26s Waiting 10.0s for "acceptance.offline" StaticText to exist
+2026-11-17T17:23:59.3457820Z     t =    27.35s     Checking `Expect predicate `existsNoRetry == 1` for object "acceptance.offline" StaticText`
+2026-11-17T17:23:59.3560590Z     t =    27.35s         Checking existence of `"acceptance.offline" StaticText`
+2026-11-17T17:23:59.7816060Z     t =    27.77s Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:00.4160670Z     t =    28.20s Added attachment named '09-start-accessibility-text'
+2026-11-17T17:24:00.4243580Z     t =    28.20s Checking existence of `"home.applicationProfile" Button`
+2026-11-17T17:24:00.5869030Z     t =    28.57s Swipe up Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:00.6081330Z     t =    28.57s     Wait for com.ahmadalayed.career to idle
+2026-11-17T17:24:00.6206830Z     t =    28.57s     Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:00.6686280Z     t =    28.65s     Check for interrupting elements affecting "Career Finder" Application
+2026-11-17T17:24:01.1940970Z     t =    28.83s     Synthesize event
+2026-11-17T17:24:02.9662320Z     t =    30.10s     Wait for com.ahmadalayed.career to idle
+2026-11-17T17:24:04.4966390Z     t =    32.30s Checking existence of `"home.applicationProfile" Button`
+2026-11-17T17:24:04.7875370Z     t =    32.77s Swipe up Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:04.8129920Z     t =    32.77s     Wait for com.ahmadalayed.career to idle
+2026-11-17T17:24:05.4402900Z     t =    33.43s     Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:05.5459830Z     t =    33.51s     Check for interrupting elements affecting "Career Finder" Application
+2026-11-17T17:24:05.6716140Z     t =    33.65s     Synthesize event
+2026-11-17T17:24:06.6189720Z     t =    34.14s     Wait for com.ahmadalayed.career to idle
+2026-11-17T17:24:08.4116940Z     t =    36.29s Checking existence of `"home.applicationProfile" Button`
+2026-11-17T17:24:08.7043810Z     t =    36.67s Find the "home.applicationProfile" Button
+2026-11-17T17:24:08.8141310Z     t =    36.79s Find the "home.applicationProfile" Button
+2026-11-17T17:24:08.8851360Z     t =    36.87s Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:08.9686730Z     t =    36.93s Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:08.9990650Z     t =    36.97s Checking existence of `NavigationBar (First Match)`
+2026-11-17T17:24:09.3612130Z     t =    37.33s Find the NavigationBar (First Match)
+2026-11-17T17:24:09.7523320Z     t =    37.72s Find the "Career Finder" NavigationBar
+2026-11-17T17:24:11.6474360Z     t =    39.63s Checking existence of `TabBar (First Match)`
+2026-11-17T17:24:11.7695260Z     t =    39.74s Find the TabBar (First Match)
+2026-11-17T17:24:12.0963820Z     t =    40.09s Find the "Tab Bar" TabBar
+2026-11-17T17:24:12.3314970Z     t =    40.29s Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:12.4273810Z     t =    40.41s Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:12.5011410Z     t =    40.49s Find the "home.applicationProfile" Button
+2026-11-17T17:24:12.7245760Z     t =    40.72s Find the "home.applicationProfile" Button
+2026-11-17T17:24:12.8531470Z     t =    40.85s Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:12.9403660Z     t =    40.92s Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:13.0099600Z     t =    41.00s Checking existence of `NavigationBar (First Match)`
+2026-11-17T17:24:13.1488870Z     t =    41.11s Find the NavigationBar (First Match)
+2026-11-17T17:24:13.3164440Z     t =    41.31s Find the "Career Finder" NavigationBar
+2026-11-17T17:24:13.4225540Z     t =    41.41s Checking existence of `TabBar (First Match)`
+2026-11-17T17:24:13.9979230Z     t =    41.98s Find the TabBar (First Match)
+2026-11-17T17:24:14.3288900Z     t =    42.30s Find the "Tab Bar" TabBar
+2026-11-17T17:24:14.4415550Z     t =    42.40s Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:14.5098740Z     t =    42.46s Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:14.6740990Z     t =    42.65s Find the "home.applicationProfile" Button
+2026-11-17T17:24:14.8443530Z     t =    42.82s Press Target Application 'com.ahmadalayed.career'[0.00, 0.00] -> (210.0, 563.5) for 0.1 seconds, then drag to Target Application 'com.ahmadalayed.career'[0.00, 0.00] -> (210.0, 383.5) with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+2026-11-17T17:24:14.8491720Z     t =    42.82s     Wait for com.ahmadalayed.career to idle
+2026-11-17T17:24:14.8648160Z     t =    42.83s     Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:14.9115060Z     t =    42.88s     Check for interrupting elements affecting "Career Finder" Application
+2026-11-17T17:24:15.0249600Z     t =    43.02s     Synthesize event
+2026-11-17T17:24:15.0476390Z     t =    43.02s         Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:15.1002750Z     t =    43.08s         Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:15.2059690Z     t =    43.18s         Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:15.2199830Z     t =    43.22s         Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:15.2799920Z     t =    43.27s         Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:16.0959000Z     t =    44.00s     Wait for com.ahmadalayed.career to idle
+2026-11-17T17:24:17.9257770Z     t =    45.89s Checking existence of `"home.applicationProfile" Button`
+2026-11-17T17:24:18.1739990Z     t =    46.14s Find the "home.applicationProfile" Button
+2026-11-17T17:24:18.5591450Z     t =    46.50s Find the "home.applicationProfile" Button
+2026-11-17T17:24:18.7182760Z     t =    46.68s Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:18.7989470Z     t =    46.77s Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:18.8575670Z     t =    46.84s Checking existence of `NavigationBar (First Match)`
+2026-11-17T17:24:19.2840100Z     t =    47.15s Find the NavigationBar (First Match)
+2026-11-17T17:24:19.9225750Z     t =    47.88s Find the "Career Finder" NavigationBar
+2026-11-17T17:24:20.2752840Z     t =    48.24s Checking existence of `TabBar (First Match)`
+2026-11-17T17:24:20.5680090Z     t =    48.53s Find the TabBar (First Match)
+2026-11-17T17:24:21.0284900Z     t =    49.00s Find the "Tab Bar" TabBar
+2026-11-17T17:24:21.7228300Z     t =    49.68s Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:21.7925030Z     t =    49.76s Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:21.8963540Z     t =    49.87s Find the "home.applicationProfile" Button
+2026-11-17T17:24:22.2703410Z     t =    50.26s Find the "home.applicationProfile" Button
+2026-11-17T17:24:22.4468650Z     t =    50.42s Find the TabBar (First Match)
+2026-11-17T17:24:22.5439600Z     t =    50.52s Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T17:24:22.7652070Z     t =    50.75s Added attachment named '09a-start-profile-fully-visible'
+2026-11-17T17:24:22.7767980Z     t =    50.76s Tap "home.applicationProfile" Button
+2026-11-17T17:24:22.7909880Z     t =    50.76s     Wait for com.ahmadalayed.career to idle
+2026-11-17T17:24:22.8198930Z     t =    50.78s     Find the "home.applicationProfile" Button
+2026-11-17T17:24:22.9031640Z     t =    50.89s     Check for interrupting elements affecting "home.applicationProfile" Button
+2026-11-17T17:24:24.5634410Z     t =    52.41s     Synthesize event
+2026-11-17T17:24:25.0744860Z     t =    52.98s     Wait for com.ahmadalayed.career to idle
+2026-11-17T17:24:25.5246220Z     t =    53.49s Waiting 5.0s for "Application profile" NavigationBar to exist
+2026-11-17T17:24:26.6769680Z     t =    54.55s     Checking `Expect predicate `existsNoRetry == 1` for object "Application profile" NavigationBar`
+2026-11-17T17:24:26.7086610Z     t =    54.55s         Checking existence of `"Application profile" NavigationBar`
+2026-11-17T17:24:26.9609520Z     t =    54.94s Checking existence of `"application.firstName" TextField`
+2026-11-17T17:24:27.1169260Z     t =    55.10s Find the "application.firstName" TextField
+2026-11-17T17:24:27.3384210Z     t =    55.30s Find the "application.firstName" TextField
+2026-11-17T17:24:27.4423030Z     t =    55.44s Waiting 5.0s for "application.firstName" TextField to exist
+2026-11-17T17:24:28.8161070Z     t =    56.53s     Checking `Expect predicate `existsNoRetry == 1` for object "application.firstName" TextField`
+2026-11-17T17:24:28.8972750Z     t =    56.54s         Checking existence of `"application.firstName" TextField`
+2026-11-17T17:24:31.3075720Z     t =    58.74s Tap "application.firstName" TextField
+2026-11-17T17:24:31.6486620Z     t =    58.74s     Wait for com.ahmadalayed.career to idle
+2026-11-17T17:24:32.4031330Z     t =    58.99s     Find the "application.firstName" TextField
+2026-11-17T17:24:38.0097810Z     t =    65.37s     Check for interrupting elements affecting "application.firstName" TextField
+2026-11-17T17:24:39.1685380Z     t =    67.02s     Synthesize event
+2026-11-17T17:24:40.0600290Z     t =    67.98s     Wait for com.ahmadalayed.career to idle
+2026-11-17T17:24:47.8782620Z     t =    74.26s Get all elements bound by index for: Elements matching predicate '"delete" IN identifiers'
+2026-11-17T17:24:56.0737580Z     t =    78.69s Requesting snapshot of accessibility hierarchy for app with pid 4793
+2026-11-17T17:25:22.0408750Z     t =    93.80s Requesting snapshot of accessibility hierarchy for app with pid 4793
+2026-11-17T17:25:34.1993780Z Element subtree:
+2026-11-17T17:25:34.3682450Z Path to element:
+2026-11-17T17:25:34.3683890Z Query chain:
+2026-11-17T17:25:34.3684450Z  →Find: Target Application 'com.ahmadalayed.career'
+2026-11-17T17:25:34.3684690Z   Output: {
+2026-11-17T17:25:34.3686160Z   }
+2026-11-17T17:25:34.3686230Z 
+2026-11-17T17:25:36.1212590Z /Users/runner/work/ahmad-career/ahmad-career/apple/UITests/CareerFinderUITests.swift:108: error: -[CareerFinderUITests.CareerFinderUITests testAccessibilityTextKeepsCoreControlsReachable] : XCTAssertEqual failed: ("XCTWaiterResult(rawValue: 2)") is not equal to ("XCTWaiterResult(rawValue: 1)") - A real keyboard key must be visible before typing
+2026-11-17T17:25:36.1315880Z     t =   124.12s Tear Down
+2026-11-17T17:25:36.7213660Z Test Case '-[CareerFinderUITests.CareerFinderUITests testAccessibilityTextKeepsCoreControlsReachable]' failed (124.593 seconds).
+

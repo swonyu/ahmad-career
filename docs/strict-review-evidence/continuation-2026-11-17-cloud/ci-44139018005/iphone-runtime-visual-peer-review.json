@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/final_native_peer",
+  "reviewed_at_utc": "2026-11-17T18:14:18.058723+00:00",
+  "verdict": "PARTIAL_VISUAL_CONFIRMATION; RUN38-VIS-01 NOT FULLY CLOSED; CURRENT IPHONE GATE FAILED.",
+  "source": {
+    "candidate": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+    "tree": "74b02b205e7a256f589d9961b2f4a9c129b6935d",
+    "local_head": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+    "run_id": 44139018005,
+    "artifact_id": 14356650272,
+    "artifact_bytes_verified_by_native_owner": 203742723,
+    "artifact_sha256_verified_by_native_owner": "582a1de6b8079597f23080d052de95cea30b849b3b398f34597a3b5c4f839303",
+    "manifest": "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/career-ui-screenshots/manifest.json",
+    "manifest_sha256": "73483bd9a5aa025fa3bc3cb2aff381693db33789271c0c7924427bda50931f16"
+  },
+  "runtime_summary_from_raw_log": {
+    "log": "/workspace/scratch/5bc6158967e8/native-ci-63eecda5/docs/strict-review-evidence/continuation-2026-11-17-cloud/ci-44139018005/iphone-ui-job.log",
+    "sha256": "a819d558527ac8853b1b487ecf285fb958fbfc8cb8a6e83612c99d1c6c000980",
+    "executed": 17,
+    "passed": 15,
+    "failed": 2,
+    "skipped": 0,
+    "unexpected_failures": 0,
+    "suite_seconds": 1287.324,
+    "failed_methods": [
+      "testAccessibilityTextKeepsCoreControlsReachable",
+      "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText"
+    ],
+    "clear_connection_case": {
+      "method": "testProfileReadinessAndSimpleConnectionSetup",
+      "result": "passed",
+      "seconds": 107.584
+    }
+  },
+  "dark_visual_comparison": {
+    "before_run": 44130275991,
+    "before_source": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+    "before_original": "/workspace/scratch/5bc6158967e8/native-ci-21f08f5/docs/strict-review-evidence/continuation-2026-11-17-cloud/ci-44130275991/iphone-settings-dark-large-text.png",
+    "before_sha256": "29d6b75a580fb74b62b82c7ae2818a3a0603510295429ce43285ef9ab4c16bd6",
+    "after_original": "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/career-ui-screenshots/559345F1-F614-4CFD-9685-C04B8B61928E.png",
+    "after_sha256": "3134eefb51b1833c185eca5c47ea2b04432c410f06429e36615288f255da2cad",
+    "test": "CareerFinderUITests/testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable()",
+    "capture_name": "24-settings-dark-large-text_0_68E67024-95FB-4582-B2E9-DFB8AF3E33B2.png",
+    "both_originals_visually_inspected": true,
+    "banner_title_result": "The English dark Settings title is visibly below the provenance banner, unlike the overlap in run38. This frame confirms the intended separation for this one state.",
+    "visible_controls": "System, Light and Dark rows and their selected marker remain distinct and visible; all five tab labels are visible. The banner row reduces vertical content room but does not visibly cover those appearance controls. Static pixels do not establish touch reachability.",
+    "contrast_observation": "The current dark screenshot has a substantially paler tab-bar material and lower-contrast tab labels than the run38 dark screenshot. No passing-method recording or later settled dark frame exists, so a transient theme transition cannot be distinguished from stable styling. This is recorded as an unverified observation, not a proven product defect or contrast sign-off."
+  },
+  "arabic_comparison": {
+    "current_matching_capture_present": false,
+    "verified_by_export_manifest": true,
+    "reason": "The Arabic persistence test fails at tab(Settings) before selecting Arabic and before its27 capture. No current Arabic direction/layout comparison is available.",
+    "status": "OPEN; no bilingual closure inferred from the English dark frame."
+  },
+  "diagnostic_frames": [
+    {
+      "frame": "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/diagnostic-frames/keyboard-readiness-87.5s.png",
+      "sha256": "0e3f62a15fb7269e51c8203177c11d2a7dda3b01385bc16fdca8c44cc6c27625",
+      "seek_seconds": 87.5,
+      "video": "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/career-ui-screenshots/BDEECE23-863D-4E90-93A5-ADFFCF77D8F8.mp4",
+      "video_sha256": "3e7704b9a1b952607249bb565f1b0396e80f92527bacc21a5a6fc2ebd0ac39a0",
+      "visually_inspected": true,
+      "observation": "The insertion caret, complete software keyboard, Delete glyph and Done typing action are visible. No physical occluder covers Delete."
+    },
+    {
+      "frame": "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/diagnostic-frames/settings-unreachable-100.5s.png",
+      "sha256": "afe24dd254d9c0f1f6942ce3a58fa7106e526d6602df0f3addeebdf9df496b94",
+      "seek_seconds": 100.5,
+      "video": "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/career-ui-screenshots/D7B51337-9CED-488F-8CD4-1A2C6AA51711.mp4",
+      "video_sha256": "acc446f539142fa6d809a5fa5c1d79d57cb411779699db6daae6938cca4571ca",
+      "visually_inspected": true,
+      "observation": "The profile sheet has closed. All five tabs, including Settings, are visibly present and unobscured; Name added and Email added are visible."
+    },
+    {
+      "frame": "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/diagnostic-frames/keyboard-readiness-80.0s.png",
+      "sha256": "8e461587064961b6e12faf6d3c5b155c5fa625d5fbe15859719b0630563d5b59",
+      "seek_seconds": 80.0,
+      "video": "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/career-ui-screenshots/BDEECE23-863D-4E90-93A5-ADFFCF77D8F8.mp4",
+      "video_sha256": "3e7704b9a1b952607249bb565f1b0396e80f92527bacc21a5a6fc2ebd0ac39a0",
+      "visually_inspected": true,
+      "observation": "The first-name insertion caret is visible but the software keyboard has not appeared."
+    },
+    {
+      "frame": "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/diagnostic-frames/settings-unreachable-98.5s.png",
+      "sha256": "9373d3da5d6adc08392e7597c3b921c0dc54b82b13d2897f0c33784f7a097798",
+      "seek_seconds": 98.5,
+      "video": "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/career-ui-screenshots/D7B51337-9CED-488F-8CD4-1A2C6AA51711.mp4",
+      "video_sha256": "acc446f539142fa6d809a5fa5c1d79d57cb411779699db6daae6938cca4571ca",
+      "visually_inspected": true,
+      "observation": "The profile sheet remains onscreen; the underlying Settings tab is not presented as an exposed control."
+    }
+  ],
+  "diagnostic_extraction_receipt": {
+    "path": "/workspace/scratch/5bc6158967e8/ci-44139018005-native/iphone-ui/diagnostic-frames/extraction.json",
+    "sha256": "b535ea528b7565b8b7510108c603ed2a3c7424003752b39c810de1fd6ecc4c69",
+    "frame_and_source_video_hashes_independently_verified": true,
+    "extraction_performed_by": "/root/native_resume; reviewer did not duplicate extraction"
+  },
+  "failure_assessment": {
+    "keyboard": "Raw trace reaches the profile sheet, finds and taps firstName, then the five-second visible-Delete-key predicate fails before any typing. The80.0s/87.5s video frames show the keyboard appearing during this phase. They support presentation/AX readiness timing as a hypothesis; they cannot prove the instantaneous exists/isHittable state or precise cause.",
+    "settings": "Name/email exact-value checks succeed, Cancel and Save draft are tapped, then the helper waits for Settings existence and immediately asserts isHittable. The98.5s/100.5s frames bracket sheet dismissal. This supports a transition-readiness race and does not show a persistent tab obstruction.",
+    "hierarchy_limit": "Native owner reports exported failure NSKeyedArchiver snapshots have an empty UIApplication children array; no readable field/key/tab geometry was available. This reviewer independently inspected the manifest and found no TXT hierarchy attachment for these failures.",
+    "causality_limit": "The banner VStack is the one application-source difference from run38, but temporal association alone does not establish that it caused either readiness delay. No layout rollback or product style change is justified by these frames alone.",
+    "bounded_remedy_direction": "For the observed sheet-dismissal race, wait a bounded interval for the same exists-and-isHittable tab condition before asserting and tapping. For cold keyboard presentation, retain real visible-key readiness and exact-value checks; any timing adjustment should be bounded and failure-diagnostic, with no nonexistent-key bypass. A specific repair has not been reviewed in this receipt."
+  },
+  "test_integrity": {
+    "ui_test_bytes_unchanged_from_run38": true,
+    "test_methods": 17,
+    "assertion_calls": 144
+  },
+  "gate_distinction": "Run38 remains the dated historical all-five-pass checkpoint. Run40 has failed iPhone UI acceptance and a separate Hosted Picomatch audit failure reported by the owning agents. This partial visual result is not an overall CI pass.",
+  "remaining_limits": [
+    "Current Arabic-largest-text visual proof is absent.",
+    "Physical device, VoiceOver, provider consent/callbacks, account recovery and release readiness are not established.",
+    "No real applications or Auto Apply were used by this review."
+  ],
+  "reviewer_actions": [
+    "Read exact source helpers and raw failure traces.",
+    "Viewed the two dark originals and four owner-derived phase frames.",
+    "Verified image/video/manifest hashes and linkage; did not download or derive any frame.",
+    "Wrote this separate receipt outside source checkouts."
+  ],
+  "not_performed": [
+    "Source/test/workflow edit",
+    "Build or test run",
+    "CI rerun or polling",
+    "Browser/Mac/store action",
+    "Artifact download or duplicate extraction"
+  ]
+}

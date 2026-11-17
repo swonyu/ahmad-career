@@ -1,0 +1,48 @@
+{
+  "observedAt": "2026-11-17T18:28:17Z",
+  "operation": "Read-only Site metadata and existing QA6 deployment status",
+  "records": [
+    {
+      "i": 0,
+      "id": "appgprj_6afb13851fb4819193358d5db54e73b7",
+      "status": "active",
+      "title": "Career Finder",
+      "latestVersion": 7,
+      "url": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
+      "updatedAt": "2026-11-17T03:55:25.017223+00:00",
+      "access": {
+        "mode": "public",
+        "revision": 2,
+        "users": 1,
+        "groups": 0,
+        "externalVisitors": 0
+      }
+    },
+    {
+      "i": 1,
+      "id": "appgprj_6afc21bd599c8191a0fb7705274d8582",
+      "status": "active",
+      "title": "Career Finder — private acceptance lab",
+      "latestVersion": 6,
+      "url": "https://career-finder-acceptance-20261117.jazzy-drake-8323.chatgpt.site",
+      "updatedAt": "2026-11-17T16:53:04.885914+00:00",
+      "access": {
+        "mode": "custom",
+        "revision": 1,
+        "users": 1,
+        "groups": 0,
+        "externalVisitors": 0
+      }
+    },
+    {
+      "i": 2,
+      "id": "appgdep_6afc85c17f9c8191ae12253faa38f01e",
+      "versionId": "appgprj_6afc21bd599c8191a0fb7705274d8582~appgver_d57b4d9951ac81918c9dfc10f510afd5",
+      "status": "succeeded",
+      "updatedAt": "2026-11-17T16:50:33.360699+00:00",
+      "envRevision": 1,
+      "url": "https://career-finder-acceptance-20261117.jazzy-drake-8323.chatgpt.site"
+    }
+  ],
+  "qualification": "No source/version/deployment/audience/environment mutation. Latest saved public/private version numbers remain7/6. Known QA6 deployment remains succeeded at environment revision1. No new browser, provider or physical acceptance is inferred."
+}

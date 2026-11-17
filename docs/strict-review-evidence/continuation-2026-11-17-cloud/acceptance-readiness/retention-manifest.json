@@ -1,0 +1,23 @@
+{
+  "source": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+  "publishingCorroborationSource": "11cb3d4d8c15e9b16719b6e7091597f43633cda6",
+  "decision": "Hand evidence to active publisher; do not create a competing helper patch or CI run",
+  "files": [
+    {
+      "path": "publishing-run39-iphone-job.log",
+      "bytes": 606388,
+      "sha256": "4fa8b77315270836b88416302bb75abebd713f311aafb2a30ad420d508141457"
+    },
+    {
+      "path": "publishing-run39-keyboard-phase.txt",
+      "bytes": 11290,
+      "sha256": "65903df5ae592856c30384b4ff1597e4d6445c899fcdb7cea7f8d76ba5a4ade0"
+    },
+    {
+      "path": "independent-readiness-recommendation.json",
+      "bytes": 6304,
+      "sha256": "795545cd7940cd4ef75b9004e0a4e98d15068da3732e09c10de1969fd35c4f42"
+    }
+  ],
+  "qualification": "Recommendation only; no successor development implementation or runtime acceptance. Original run40 failure and partial bilingual banner qualification remain."
+}

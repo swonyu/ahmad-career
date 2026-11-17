@@ -1,0 +1,31 @@
+{
+  "recordedAt": "2026-11-17T17:43:02.615368+00:00",
+  "finding": "RUN38-VIS-01",
+  "source": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+  "tree": "74b02b205e7a256f589d9961b2f4a9c129b6935d",
+  "parent": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+  "sourceFile": "apple/AhmadCareer/NativeCareerViews.swift",
+  "sourceSha256": "01864eda7719516dc46458a0518209a17c4a85dfe0bf236063ca93cb88e84cd7",
+  "sourcePatchSha256": "496af5c50b31cd994d160cc627693fe0ff716e1e2d9b7f5de5da8698f7ee681f",
+  "peerReceiptSha256": "3255a95f85e64f40c14251c2a4530bec951fb62538abf7c326f7e1df483707a1",
+  "changeScope": {
+    "files": 1,
+    "insertions": 25,
+    "deletions": 6,
+    "testMethodsUnchanged": 17,
+    "assertionCallsUnchanged": 144
+  },
+  "pushReportedAt": "2026-11-17T17:37:18Z",
+  "successorRun": 44139018005,
+  "ciMerge": "e3e875cee10e379c34d833ae22827f0ae9aee570",
+  "ciMergeTreeMatches": true,
+  "runtimeStatus": "Run40 completed:3 gates passed,2 failed; iPhone15/17 with normal finalization/export. English-dark title separation observed, Arabic matching capture not reached; bilingual visual closure remains incomplete.",
+  "releaseBehavior": "Source review establishes ordinary DEBUG and Release return original content; runtime claims require successor evidence",
+  "hostedChange": false,
+  "publicSiteVersion": 7,
+  "privateQaSiteVersion": 6,
+  "runtimeEvidence": "../ci-44139018005/README.md",
+  "runtimePeerReceipt": "../ci-44139018005/iphone-runtime-visual-peer-review.json",
+  "runtimeSourceUnchanged": true,
+  "updatedAt": "2026-11-17T18:24:37.172524+00:00"
+}

@@ -1,0 +1,126 @@
+{
+  "observed_at": "2026-11-17T17:25:30.983005+00:00",
+  "candidate": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+  "actual_ci_checkout": "8ea5e6b2108772cfade35f7e266659a27ab00b2e",
+  "common_tree": "b2a2ca81df383a468c318e4ebc629c13f16e5fe9",
+  "job_id": 134205127135,
+  "job_conclusion": "success",
+  "execution_step": "success",
+  "export_step": "success",
+  "upload_step": "success",
+  "executed_cases": 17,
+  "passed_cases": 17,
+  "failed_cases": 0,
+  "unexpected_failures": 0,
+  "reported_skips": 0,
+  "suite_seconds": 1350.545,
+  "suite_started_at_utc": "2026-11-17 16:55:17.683",
+  "suite_finished_at_utc": "2026-11-17 17:17:48.267",
+  "xcodebuild_success_line": "2026-11-17T17:18:27.4276990Z ** TEST SUCCEEDED **",
+  "execution_step_budget_minutes": 35,
+  "job_budget_minutes": 40,
+  "complete_expected_test_method_set": true,
+  "tests": [
+    {
+      "method": "testAccessibilityTextKeepsCoreControlsReachable",
+      "outcome": "passed",
+      "seconds": 85.551
+    },
+    {
+      "method": "testApplicationDraftSurvivesCancelAndRelaunch",
+      "outcome": "passed",
+      "seconds": 47.368
+    },
+    {
+      "method": "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+      "outcome": "passed",
+      "seconds": 173.097
+    },
+    {
+      "method": "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+      "outcome": "passed",
+      "seconds": 79.318
+    },
+    {
+      "method": "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "outcome": "passed",
+      "seconds": 24.228
+    },
+    {
+      "method": "testDiscoverySaveFlowsIntoSavedAndApply",
+      "outcome": "passed",
+      "seconds": 49.648
+    },
+    {
+      "method": "testFreshStartAndFiveTabs",
+      "outcome": "passed",
+      "seconds": 34.209
+    },
+    {
+      "method": "testLinkedInProfileDraftAndExternalSearchChoice",
+      "outcome": "passed",
+      "seconds": 57.597
+    },
+    {
+      "method": "testOpportunityDiscardRequiresExplicitChoice",
+      "outcome": "passed",
+      "seconds": 37.864
+    },
+    {
+      "method": "testOpportunityDraftKeepSaveAndRestore",
+      "outcome": "passed",
+      "seconds": 75.658
+    },
+    {
+      "method": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+      "outcome": "passed",
+      "seconds": 151.819
+    },
+    {
+      "method": "testProfileReadinessAndSimpleConnectionSetup",
+      "outcome": "passed",
+      "seconds": 91.008
+    },
+    {
+      "method": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+      "outcome": "passed",
+      "seconds": 39.555
+    },
+    {
+      "method": "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+      "outcome": "passed",
+      "seconds": 111.14
+    },
+    {
+      "method": "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+      "outcome": "passed",
+      "seconds": 134.727
+    },
+    {
+      "method": "testSearchEmptyAndFailurePreservesPreviousResults",
+      "outcome": "passed",
+      "seconds": 99.935
+    },
+    {
+      "method": "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+      "outcome": "passed",
+      "seconds": 57.823
+    }
+  ],
+  "raw_test_log_sha256": "db6091c32f7358c26dbe343f981acdee35c4292692b0d05b85ec48ed5d285e6b",
+  "raw_job_log_sha256": "ea5b34a80de704534fea2152ce4ae0e3809f0a39cdd2865e4c8e80b8b8771934",
+  "xcresult_finalized": true,
+  "xcresult_info_bytes": 715,
+  "xcresult_info_sha256": "62065f4b4ef9c304164140a0f9101f17e4493ec4fc45b0302dadfbd1e11ed6fd",
+  "exported_screenshot_manifest_present": true,
+  "exported_png_count": 36,
+  "attachment_bearing_test_groups": 15,
+  "methods_without_exported_attachments": [
+    "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+    "testOpportunityDiscardRequiresExplicitChoice"
+  ],
+  "selected_device_log": [
+    "2026-11-17T16:50:33.8363260Z Selected iPhone Air on iOS 26.5 architecture arm64"
+  ],
+  "scope": "Current-source disposable iPhone Simulator acceptance and completed evidence finalization. No physical assistive-technology, real provider callback, other publishing-tree or release acceptance is inferred."
+}

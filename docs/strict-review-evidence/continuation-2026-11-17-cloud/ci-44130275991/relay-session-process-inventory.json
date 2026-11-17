@@ -1,0 +1,12 @@
+{
+  "associated_preflight_at": "2026-11-17T16:49:21.903767+00:00",
+  "device_id": "05509780-2165-49cc-8999-da7ddd41502d",
+  "device_online": true,
+  "session_inventory": [
+    "No active sessions",
+    "\n[executed on device: Salehs-MacBook-Pro.local (05509780-2165-49cc-8999-da7ddd41502d)]"
+  ],
+  "relevant_native_git_relay_process_matches": [],
+  "process_inventory_error": false,
+  "scope": "Read-only device/session/process inventory before the exclusive object-only relay operation. No shared native build reservation or persistent process absence is inferred."
+}

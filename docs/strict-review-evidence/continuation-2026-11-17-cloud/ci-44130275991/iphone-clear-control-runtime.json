@@ -1,0 +1,27 @@
+{
+  "candidate": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+  "actual_ci_checkout": "8ea5e6b2108772cfade35f7e266659a27ab00b2e",
+  "common_tree": "b2a2ca81df383a468c318e4ebc629c13f16e5fe9",
+  "method": "testProfileReadinessAndSimpleConnectionSetup",
+  "outcome": "passed",
+  "seconds": 91.008,
+  "logged_real_control_tap": "t =    64.00s Tap \"connection.clearAddress\" Button",
+  "guards_retained_in_executed_source": [
+    "Full keyboard dismissal before clear target reveal",
+    "Visible and enabled real Clear target",
+    "Common exact-empty field predicate",
+    "Fresh keyboard readiness after refocus",
+    "Original exact-final-value predicate",
+    "Changing destination clears the unsent connection code",
+    "Restoring Career Finder hides the advanced address"
+  ],
+  "source_sha256": {
+    "apple/AhmadCareer/NativeApplicationsViews.swift": "c1407ff4887d4c6d2747aea7deae060f6fd8769e0dfc12b304246c3fb83d3f32",
+    "apple/UITests/CareerFinderUITests.swift": "ad0bac775bc17e7cbf2c8ac9c41fc1a0ca1489e579010fb198ff75878d7d557b"
+  },
+  "case_excerpt": "iphone-clear-control-case.log",
+  "case_excerpt_sha256": "5ac401cc9deccff21ee6c0c23a5817ab24c8227d61356d918058bc682971161a",
+  "evidence_basis": "The control tap is explicit in the raw log; success of the exact-empty, exact-final and code-invalidation guards follows from the passing method bound to the reviewed source. No separate field-value dump is claimed.",
+  "visual_scope": "The saved connection screenshot follows restoration of the default service; it does not show the expanded Clear control.",
+  "limits": "Simulator/runtime result only; no physical-device, live provider or another owner candidate claim."
+}

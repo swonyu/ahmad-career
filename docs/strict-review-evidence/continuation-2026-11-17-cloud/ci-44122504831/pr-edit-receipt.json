@@ -1,0 +1,32 @@
+{
+  "completed_at": "2026-11-17T16:11:30.639964+00:00",
+  "body_bytes": 9775,
+  "body_sha256": "6a2d90dae84ff5db063df9903f06629a37d6795743b127d627c3185dee8e6039",
+  "body_path": "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-finder-ci-clear-repair-20261117-lamssjwx/pr-body-d97bc20-run35.md",
+  "before": {
+    "baseRefName": "career-finder-phones-verified-apply-20261116",
+    "headRefName": "continuation/account-acceptance-20261117",
+    "headRefOid": "d97bc209ca84ecb830e6c6bad25808164706409f",
+    "isDraft": true,
+    "state": "OPEN",
+    "url": "https://github.com/swonyu/ahmad-career/pull/1",
+    "body_sha256": "935cae8852d9b4c948e644b51df78082a1b90a807efc5ea14152bba85b1fa9b9"
+  },
+  "after": {
+    "baseRefName": "career-finder-phones-verified-apply-20261116",
+    "headRefName": "continuation/account-acceptance-20261117",
+    "headRefOid": "d97bc209ca84ecb830e6c6bad25808164706409f",
+    "isDraft": true,
+    "state": "OPEN",
+    "url": "https://github.com/swonyu/ahmad-career/pull/1",
+    "body_sha256": "6a2d90dae84ff5db063df9903f06629a37d6795743b127d627c3185dee8e6039"
+  },
+  "edit_stdout": "https://github.com/swonyu/ahmad-career/pull/1\n",
+  "edit_stderr": "",
+  "run_id": 44122504831,
+  "run_number": 35,
+  "no_comment_or_state_change": true,
+  "bare_head_preserved": true,
+  "index_exists": false,
+  "pre_edit_guard_correction": "Initial guard expected one extra LF from the local patch-created review copy and stopped before gh. Canonical prepared text plus the single authorized run-link replacement independently matches the remote file at 9775 bytes and SHA6a2d90da."
+}

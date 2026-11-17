@@ -1,0 +1,228 @@
+TAP version 13
+# Subtest: real review rendering localizes every state and preserves user and employer content
+ok 1 - real review rendering localizes every state and preserves user and employer content
+  ---
+  duration_ms: 51.357307
+  type: 'test'
+  ...
+# Subtest: recovery notices render full sentences and locale-specific counts from the same stored data
+ok 2 - recovery notices render full sentences and locale-specific counts from the same stored data
+  ---
+  duration_ms: 48.209387
+  type: 'test'
+  ...
+# Subtest: actual copy handler stores translatable notices and copies the exact value on success or refusal
+ok 3 - actual copy handler stores translatable notices and copies the exact value on success or refusal
+  ---
+  duration_ms: 38.758285
+  type: 'test'
+  ...
+# Subtest: discovery notice translates only the known service composition and keeps unknown text opaque
+ok 4 - discovery notice translates only the known service composition and keeps unknown text opaque
+  ---
+  duration_ms: 75.003454
+  type: 'test'
+  ...
+# Subtest: actual Saved, Apply, details and recovery values retain separate bidi boundaries in both languages
+ok 5 - actual Saved, Apply, details and recovery values retain separate bidi boundaries in both languages
+  ---
+  duration_ms: 182.880549
+  type: 'test'
+  ...
+# Subtest: actual profile comparison and application review isolate names and CV filenames without changing them
+ok 6 - actual profile comparison and application review isolate names and CV filenames without changing them
+  ---
+  duration_ms: 134.674082
+  type: 'test'
+  ...
+# Subtest: actual search inputs preserve mixed-script draft text with automatic direction
+ok 7 - actual search inputs preserve mixed-script draft text with automatic direction
+  ---
+  duration_ms: 43.955125
+  type: 'test'
+  ...
+# Subtest: actual catalog-board checkboxes isolate Arabic and Latin source names in en
+ok 8 - actual catalog-board checkboxes isolate Arabic and Latin source names in en
+  ---
+  duration_ms: 27.452414
+  type: 'test'
+  ...
+# Subtest: actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in en
+ok 9 - actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in en
+  ---
+  duration_ms: 22.609047
+  type: 'test'
+  ...
+# Subtest: actual JobCard footer isolates each source name and retains its employer link in en
+ok 10 - actual JobCard footer isolates each source name and retains its employer link in en
+  ---
+  duration_ms: 43.999293
+  type: 'test'
+  ...
+# Subtest: actual catalog-board checkboxes isolate Arabic and Latin source names in ar
+ok 11 - actual catalog-board checkboxes isolate Arabic and Latin source names in ar
+  ---
+  duration_ms: 16.034511
+  type: 'test'
+  ...
+# Subtest: actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in ar
+ok 12 - actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in ar
+  ---
+  duration_ms: 14.239501
+  type: 'test'
+  ...
+# Subtest: actual JobCard footer isolates each source name and retains its employer link in ar
+ok 13 - actual JobCard footer isolates each source name and retains its employer link in ar
+  ---
+  duration_ms: 21.879239
+  type: 'test'
+  ...
+# Subtest: retry repeats the displayed search without a cursor and preserves newer visible draft filters
+ok 14 - retry repeats the displayed search without a cursor and preserves newer visible draft filters
+  ---
+  duration_ms: 61.579478
+  type: 'test'
+  ...
+# Subtest: a fresh search response does not overwrite text or boards edited while it is pending
+ok 15 - a fresh search response does not overwrite text or boards edited while it is pending
+  ---
+  duration_ms: 38.790471
+  type: 'test'
+  ...
+# Subtest: pagination uses the displayed search and cursor, merges identities, and leaves draft filters alone
+ok 16 - pagination uses the displayed search and cursor, merges identities, and leaves draft filters alone
+  ---
+  duration_ms: 78.317395
+  type: 'test'
+  ...
+# Subtest: failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller
+    # Subtest: failure
+    ok 1 - failure
+      ---
+      duration_ms: 16.576011
+      type: 'test'
+      ...
+    # Subtest: cancel
+    ok 2 - cancel
+      ---
+      duration_ms: 14.375329
+      type: 'test'
+      ...
+    1..2
+ok 17 - failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller
+  ---
+  duration_ms: 32.136954
+  type: 'test'
+  ...
+# Subtest: late search results cannot cross the existing identity or generation boundary
+    # Subtest: identity
+    ok 1 - identity
+      ---
+      duration_ms: 19.285932
+      type: 'test'
+      ...
+    # Subtest: generation
+    ok 2 - generation
+      ---
+      duration_ms: 23.681918
+      type: 'test'
+      ...
+    1..2
+ok 18 - late search results cannot cross the existing identity or generation boundary
+  ---
+  duration_ms: 43.947349
+  type: 'test'
+  ...
+# Subtest: pagination retains the 200-result cap and retry refreshes restored results without a stale cursor
+ok 19 - pagination retains the 200-result cap and retry refreshes restored results without a stale cursor
+  ---
+  duration_ms: 64.769297
+  type: 'test'
+  ...
+# Subtest: actual nonempty partial and stale results show a localized retry that targets the displayed search
+ok 20 - actual nonempty partial and stale results show a localized retry that targets the displayed search
+  ---
+  duration_ms: 122.180097
+  type: 'test'
+  ...
+# Subtest: actual empty unavailable results distinguish missing evidence from a completed zero-match search in both languages
+ok 21 - actual empty unavailable results distinguish missing evidence from a completed zero-match search in both languages
+  ---
+  duration_ms: 56.878399
+  type: 'test'
+  ...
+# Subtest: actual retry control stays disabled during work or identity checks and is absent without a submitted search
+ok 22 - actual retry control stays disabled during work or identity checks and is absent without a submitted search
+  ---
+  duration_ms: 49.745614
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe fresh partial results without inventing an outage in en
+ok 23 - actual visible and live summaries describe fresh partial results without inventing an outage in en
+  ---
+  duration_ms: 50.636153
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe only the overall result limit without inventing an outage in en
+ok 24 - actual visible and live summaries describe only the overall result limit without inventing an outage in en
+  ---
+  duration_ms: 70.29101
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe only a source result limit without inventing an outage in en
+ok 25 - actual visible and live summaries describe only a source result limit without inventing an outage in en
+  ---
+  duration_ms: 42.053679
+  type: 'test'
+  ...
+# Subtest: actual search summaries retain source evidence and distinguish complete zero/nonzero results in en
+ok 26 - actual search summaries retain source evidence and distinguish complete zero/nonzero results in en
+  ---
+  duration_ms: 80.924208
+  type: 'test'
+  ...
+# Subtest: the actual search live region stays silent during work and before any result page in en
+ok 27 - the actual search live region stays silent during work and before any result page in en
+  ---
+  duration_ms: 39.370097
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe fresh partial results without inventing an outage in ar
+ok 28 - actual visible and live summaries describe fresh partial results without inventing an outage in ar
+  ---
+  duration_ms: 73.160753
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe only the overall result limit without inventing an outage in ar
+ok 29 - actual visible and live summaries describe only the overall result limit without inventing an outage in ar
+  ---
+  duration_ms: 60.599877
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe only a source result limit without inventing an outage in ar
+ok 30 - actual visible and live summaries describe only a source result limit without inventing an outage in ar
+  ---
+  duration_ms: 44.065359
+  type: 'test'
+  ...
+# Subtest: actual search summaries retain source evidence and distinguish complete zero/nonzero results in ar
+ok 31 - actual search summaries retain source evidence and distinguish complete zero/nonzero results in ar
+  ---
+  duration_ms: 69.110461
+  type: 'test'
+  ...
+# Subtest: the actual search live region stays silent during work and before any result page in ar
+ok 32 - the actual search live region stays silent during work and before any result page in ar
+  ---
+  duration_ms: 62.708955
+  type: 'test'
+  ...
+1..32
+# tests 36
+# suites 0
+# pass 36
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2611.863592

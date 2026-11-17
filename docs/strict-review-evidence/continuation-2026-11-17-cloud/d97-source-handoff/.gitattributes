@@ -1,0 +1,2 @@
+# Preserve the exact source handoff patch bytes.
+*.patch -text -whitespace

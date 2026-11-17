@@ -1,0 +1,43 @@
+{
+  "observed_at": "2026-11-17T17:36:32.455505+00:00",
+  "relay": "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-finder-ci-clear-repair-20261117-lamssjwx/repo.git",
+  "bare": true,
+  "head_symbolic": "refs/heads/relay-placeholder",
+  "head_sha256": "d57d92a98c323ab4a7386bc1a7c3ecf9910ed19bb009bf3b04e516601add0a05",
+  "index_exists": false,
+  "git_lock_paths": [],
+  "remote_refs": {
+    "refs/heads/app-store/career-workspace-copy-20261117": "fd9c5399f2b7001b234b3b86bf72e2b36b5114c1",
+    "refs/heads/career-finder-phones-verified-apply-20261116": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+    "refs/heads/continuation/account-acceptance-20261117": "21f08f5c4509bd1fdbe9112003224bf2316edd2a"
+  },
+  "sessions": [
+    {
+      "pid": "36719",
+      "description": "36719  2458 34:28 /opt/homebrew/bin/node",
+      "cwd": "p36719\nfcwd\nn/Users/saleh/.npm/_npx/4b4c857f6efdfb61/node_modules/@wonderwhy-er/desktop-commander/dist",
+      "mentions_owned_relay": false,
+      "mentions_career_repository": false,
+      "mentions_halaltag": false
+    },
+    {
+      "pid": "39588",
+      "description": "",
+      "cwd": "",
+      "mentions_owned_relay": false,
+      "mentions_career_repository": false,
+      "mentions_halaltag": false
+    },
+    {
+      "pid": "53449",
+      "description": "53449  2458 03:23 /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+      "cwd": "p53449\nfcwd\nn/Users/saleh/.npm/_npx/4b4c857f6efdfb61/node_modules/@wonderwhy-er/desktop-commander/dist",
+      "mentions_owned_relay": false,
+      "mentions_career_repository": false,
+      "mentions_halaltag": false
+    }
+  ],
+  "shared_build_lock_exists": false,
+  "shared_build_lock_owner": null,
+  "authorization": "Root released the owned object-only relay for a63eecda5 ordinary candidate push; active unrelated native work remains untouched."
+}

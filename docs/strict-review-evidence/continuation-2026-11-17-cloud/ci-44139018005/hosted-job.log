@@ -1,0 +1,920 @@
+﻿2026-11-17T17:37:29.3036326Z Current runner version: '2.338.2'
+2026-11-17T17:37:29.3054855Z ##[group]Runner Image Provisioner
+2026-11-17T17:37:29.3055553Z Hosted Compute Agent
+2026-11-17T17:37:29.3055964Z Version: 20261103.629
+2026-11-17T17:37:29.3056465Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+2026-11-17T17:37:29.3056984Z Build Date: 2026-11-03T17:26:59Z
+2026-11-17T17:37:29.3057538Z Worker ID: {b8f9577d-f6a2-4439-adc9-b25bd13fc2d6}
+2026-11-17T17:37:29.3058085Z Region: us-west-2
+2026-11-17T17:37:29.3058699Z Cloud: AWS
+2026-11-17T17:37:29.3059131Z ##[endgroup]
+2026-11-17T17:37:29.3060260Z ##[group]Operating System
+2026-11-17T17:37:29.3060728Z Ubuntu
+2026-11-17T17:37:29.3061112Z 24.04.5
+2026-11-17T17:37:29.3061473Z LTS
+2026-11-17T17:37:29.3061868Z ##[endgroup]
+2026-11-17T17:37:29.3062281Z ##[group]Runner Image
+2026-11-17T17:37:29.3062710Z Image: ubuntu-24.04
+2026-11-17T17:37:29.3063130Z Version: 20261111.127.1
+2026-11-17T17:37:29.3064108Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261111.127/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-17T17:37:29.3065262Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261111.127
+2026-11-17T17:37:29.3066008Z ##[endgroup]
+2026-11-17T17:37:29.3066787Z ##[group]GITHUB_TOKEN Permissions
+2026-11-17T17:37:29.3068612Z Contents: read
+2026-11-17T17:37:29.3069163Z Metadata: read
+2026-11-17T17:37:29.3069580Z ##[endgroup]
+2026-11-17T17:37:29.3071118Z Secret source: Actions
+2026-11-17T17:37:29.3071815Z Cache mode: write
+2026-11-17T17:37:29.3072282Z Prepare workflow directory
+2026-11-17T17:37:29.3302409Z Prepare all required actions
+2026-11-17T17:37:29.3339137Z Getting action download info
+2026-11-17T17:37:29.6628879Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-17T17:37:31.0680144Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-17T17:37:31.2894521Z Download action repository 'actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f' (SHA:b7c566a772e6b6bfb58ed0dc250532a479d7789f)
+2026-11-17T17:37:31.6002356Z Complete job name: Hosted HTTPS service and durable storage
+2026-11-17T17:37:31.6783440Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-17T17:37:31.6784828Z with:
+2026-11-17T17:37:31.6785541Z   persist-credentials: false
+2026-11-17T17:37:31.6786386Z   repository: swonyu/ahmad-career
+2026-11-17T17:37:31.6792940Z   token: ***
+2026-11-17T17:37:31.6793884Z   ssh-strict: true
+2026-11-17T17:37:31.6794579Z   ssh-user: git
+2026-11-17T17:37:31.6795253Z   clean: true
+2026-11-17T17:37:31.6795958Z   sparse-checkout-cone-mode: true
+2026-11-17T17:37:31.6796807Z   fetch-depth: 1
+2026-11-17T17:37:31.6797559Z   fetch-tags: false
+2026-11-17T17:37:31.6798597Z   show-progress: true
+2026-11-17T17:37:31.6799369Z   lfs: false
+2026-11-17T17:37:31.6800048Z   submodules: false
+2026-11-17T17:37:31.6800790Z   set-safe-directory: true
+2026-11-17T17:37:31.6801604Z   allow-unsafe-pr-checkout: false
+2026-11-17T17:37:31.6802619Z ##[endgroup]
+2026-11-17T17:37:34.2433187Z Syncing repository: swonyu/ahmad-career
+2026-11-17T17:37:34.2434634Z ##[group]Getting Git version info
+2026-11-17T17:37:34.2435095Z Working directory is '/home/runner/work/ahmad-career/ahmad-career'
+2026-11-17T17:37:34.2435743Z [command]/usr/bin/git version
+2026-11-17T17:37:34.3909379Z git version 2.56.1
+2026-11-17T17:37:34.3922720Z ##[endgroup]
+2026-11-17T17:37:34.3932156Z Temporarily overriding HOME='/home/runner/work/_temp/15e99997-e03e-4d03-a92b-b865cf61a3bd' before making global git config changes
+2026-11-17T17:37:34.3933119Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-17T17:37:34.3936027Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/ahmad-career/ahmad-career
+2026-11-17T17:37:34.4340398Z Deleting the contents of '/home/runner/work/ahmad-career/ahmad-career'
+2026-11-17T17:37:34.4342783Z ##[group]Determining repository object format
+2026-11-17T17:37:34.4344936Z ##[endgroup]
+2026-11-17T17:37:34.4345497Z ##[group]Initializing the repository
+2026-11-17T17:37:34.4347689Z [command]/usr/bin/git init /home/runner/work/ahmad-career/ahmad-career
+2026-11-17T17:37:34.4841652Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-17T17:37:34.4842529Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-17T17:37:34.4843070Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-17T17:37:34.4843803Z hint: call:
+2026-11-17T17:37:34.4844126Z hint:
+2026-11-17T17:37:34.4844514Z hint: 	git config --global init.defaultBranch <name>
+2026-11-17T17:37:34.4844876Z hint:
+2026-11-17T17:37:34.4845258Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-17T17:37:34.4845720Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-17T17:37:34.4846094Z hint:
+2026-11-17T17:37:34.4846389Z hint: 	git branch -m <name>
+2026-11-17T17:37:34.4846713Z hint:
+2026-11-17T17:37:34.4847271Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-17T17:37:34.4849828Z Initialized empty Git repository in /home/runner/work/ahmad-career/ahmad-career/.git/
+2026-11-17T17:37:34.4859454Z [command]/usr/bin/git remote add origin https://github.com/swonyu/ahmad-career
+2026-11-17T17:37:34.4917171Z ##[endgroup]
+2026-11-17T17:37:34.4917695Z ##[group]Disabling automatic garbage collection
+2026-11-17T17:37:34.4920376Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-17T17:37:34.4943434Z ##[endgroup]
+2026-11-17T17:37:34.4944135Z ##[group]Setting up auth
+2026-11-17T17:37:34.4944592Z Removing SSH command configuration
+2026-11-17T17:37:34.4947792Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T17:37:34.4973539Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-17T17:37:34.8143665Z Removing HTTP extra header
+2026-11-17T17:37:34.8150593Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T17:37:34.8183188Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-17T17:37:34.8329118Z Removing includeIf entries pointing to credentials config files
+2026-11-17T17:37:34.8332745Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T17:37:34.8355486Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-17T17:37:34.8504203Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-b4a5bad1-3b5d-4944-b2b1-04cb6cfec30f.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-17T17:37:34.8530863Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git.path /home/runner/work/_temp/git-credentials-b4a5bad1-3b5d-4944-b2b1-04cb6cfec30f.config
+2026-11-17T17:37:34.8549933Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-b4a5bad1-3b5d-4944-b2b1-04cb6cfec30f.config
+2026-11-17T17:37:34.8569267Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-b4a5bad1-3b5d-4944-b2b1-04cb6cfec30f.config
+2026-11-17T17:37:34.8588186Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-b4a5bad1-3b5d-4944-b2b1-04cb6cfec30f.config
+2026-11-17T17:37:34.8612761Z ##[endgroup]
+2026-11-17T17:37:34.8613422Z ##[group]Fetching the repository
+2026-11-17T17:37:34.8616872Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +e3e875cee10e379c34d833ae22827f0ae9aee570:refs/remotes/pull/1/merge
+2026-11-17T17:37:36.3366754Z From https://github.com/swonyu/ahmad-career
+2026-11-17T17:37:36.3367430Z  * [new ref]         e3e875cee10e379c34d833ae22827f0ae9aee570 -> pull/1/merge
+2026-11-17T17:37:36.3370952Z ##[endgroup]
+2026-11-17T17:37:36.3371408Z ##[group]Determining the checkout info
+2026-11-17T17:37:36.3371924Z ##[endgroup]
+2026-11-17T17:37:36.3375595Z [command]/usr/bin/git sparse-checkout disable
+2026-11-17T17:37:36.3449989Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-17T17:37:36.3460765Z ##[group]Checking out the ref
+2026-11-17T17:37:36.3464040Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/1/merge
+2026-11-17T17:37:36.4921633Z Note: switching to 'refs/remotes/pull/1/merge'.
+2026-11-17T17:37:36.4922068Z 
+2026-11-17T17:37:36.4922328Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-17T17:37:36.4922844Z changes and commit them, and you can discard any commits you make in this
+2026-11-17T17:37:36.4923299Z state without impacting any branches by switching back to a branch.
+2026-11-17T17:37:36.4923546Z 
+2026-11-17T17:37:36.4923761Z If you want to create a new branch to retain commits you create, you may
+2026-11-17T17:37:36.4924163Z do so (now or later) by using -c with the switch command. Example:
+2026-11-17T17:37:36.4924374Z 
+2026-11-17T17:37:36.4924544Z   git switch -c <new-branch-name>
+2026-11-17T17:37:36.4924752Z 
+2026-11-17T17:37:36.4924881Z Or undo this operation with:
+2026-11-17T17:37:36.4925057Z 
+2026-11-17T17:37:36.4925186Z   git switch -
+2026-11-17T17:37:36.4925376Z 
+2026-11-17T17:37:36.4925546Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-17T17:37:36.4925799Z 
+2026-11-17T17:37:36.4926092Z HEAD is now at e3e875c Merge 63eecda5c5c57805aeae1f5ba8e22af65e38ceee into 949ce0ad327beab79fa7033423b462ebc7bd98be
+2026-11-17T17:37:36.4937335Z ##[endgroup]
+2026-11-17T17:37:36.4976851Z [command]/usr/bin/git log -1 --format=%H
+2026-11-17T17:37:36.4997388Z e3e875cee10e379c34d833ae22827f0ae9aee570
+2026-11-17T17:37:36.5003500Z ##[group]Removing auth
+2026-11-17T17:37:36.5003840Z Removing SSH command configuration
+2026-11-17T17:37:36.5005982Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T17:37:36.5027195Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-17T17:37:36.5174733Z Removing HTTP extra header
+2026-11-17T17:37:36.5177424Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T17:37:36.5199942Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-17T17:37:36.5344341Z Removing includeIf entries pointing to credentials config files
+2026-11-17T17:37:36.5347274Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T17:37:36.5368554Z includeif.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git.path
+2026-11-17T17:37:36.5369411Z includeif.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git/worktrees/*.path
+2026-11-17T17:37:36.5370087Z includeif.gitdir:/github/workspace/.git.path
+2026-11-17T17:37:36.5370601Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-17T17:37:36.5374546Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git.path
+2026-11-17T17:37:36.5390494Z /home/runner/work/_temp/git-credentials-b4a5bad1-3b5d-4944-b2b1-04cb6cfec30f.config
+2026-11-17T17:37:36.5397464Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-b4a5bad1\-3b5d\-4944\-b2b1\-04cb6cfec30f\.config
+2026-11-17T17:37:36.5424881Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git/worktrees/*.path
+2026-11-17T17:37:36.5439904Z /home/runner/work/_temp/git-credentials-b4a5bad1-3b5d-4944-b2b1-04cb6cfec30f.config
+2026-11-17T17:37:36.5450103Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-b4a5bad1\-3b5d\-4944\-b2b1\-04cb6cfec30f\.config
+2026-11-17T17:37:36.5466863Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-17T17:37:36.5481656Z /github/runner_temp/git-credentials-b4a5bad1-3b5d-4944-b2b1-04cb6cfec30f.config
+2026-11-17T17:37:36.5485849Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-b4a5bad1\-3b5d\-4944\-b2b1\-04cb6cfec30f\.config
+2026-11-17T17:37:36.5507022Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-17T17:37:36.5522757Z /github/runner_temp/git-credentials-b4a5bad1-3b5d-4944-b2b1-04cb6cfec30f.config
+2026-11-17T17:37:36.5527715Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-b4a5bad1\-3b5d\-4944\-b2b1\-04cb6cfec30f\.config
+2026-11-17T17:37:36.5551088Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-17T17:37:36.5692692Z Removing credentials config '/home/runner/work/_temp/git-credentials-b4a5bad1-3b5d-4944-b2b1-04cb6cfec30f.config'
+2026-11-17T17:37:36.5697589Z ##[endgroup]
+2026-11-17T17:37:36.5925664Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-17T17:37:36.5926018Z with:
+2026-11-17T17:37:36.5926244Z   node-version: 24
+2026-11-17T17:37:36.5926487Z   package-manager-cache: false
+2026-11-17T17:37:36.5926744Z   check-latest: false
+2026-11-17T17:37:36.5928633Z   token: ***
+2026-11-17T17:37:36.5928873Z ##[endgroup]
+2026-11-17T17:37:36.8152251Z Found in cache @ /opt/hostedtoolcache/node/24.22.2/x64
+2026-11-17T17:37:37.9552165Z ##[group]Environment details
+2026-11-17T17:37:39.1852864Z node: v24.22.2
+2026-11-17T17:37:39.1853265Z npm: 11.19.1
+2026-11-17T17:37:39.1853516Z yarn: 1.22.22
+2026-11-17T17:37:39.1854052Z ##[endgroup]
+2026-11-17T17:37:39.1943769Z ##[group]Run npm ci
+2026-11-17T17:37:39.1944057Z [36;1mnpm ci[0m
+2026-11-17T17:37:39.4687997Z shell: /usr/bin/bash -e {0}
+2026-11-17T17:37:39.4688782Z ##[endgroup]
+2026-11-17T17:37:43.3815196Z npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+2026-11-17T17:37:43.4090246Z npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+2026-11-17T17:37:52.0296650Z 
+2026-11-17T17:37:52.0297840Z added 698 packages in 13s
+2026-11-17T17:37:52.0305210Z npm warn install-scripts 3 packages have install scripts not yet covered by allowScripts:
+2026-11-17T17:37:52.0306054Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+2026-11-17T17:37:52.0307045Z npm warn install-scripts   unrs-resolver@1.11.1 (postinstall: napi-postinstall unrs-resolver 1.11.1 check)
+2026-11-17T17:37:52.0307875Z npm warn install-scripts   workerd@1.20261110.1 (postinstall: node install.js)
+2026-11-17T17:37:52.0308682Z npm warn install-scripts
+2026-11-17T17:37:52.0309599Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-11-17T17:37:52.0700115Z ##[group]Run npm run typecheck
+2026-11-17T17:37:52.0700460Z [36;1mnpm run typecheck[0m
+2026-11-17T17:37:52.0700747Z [36;1mnpx eslint app worker --max-warnings 0[0m
+2026-11-17T17:37:52.0726567Z shell: /usr/bin/bash -e {0}
+2026-11-17T17:37:52.0726868Z ##[endgroup]
+2026-11-17T17:37:52.1500276Z 
+2026-11-17T17:37:52.1501290Z > career-finder-phone-service@0.6.0 typecheck
+2026-11-17T17:37:52.1502302Z > tsc --noEmit
+2026-11-17T17:37:52.1502481Z 
+2026-11-17T17:38:03.3437093Z ##[group]Run npm test
+2026-11-17T17:38:03.3437362Z [36;1mnpm test[0m
+2026-11-17T17:38:03.3437623Z [36;1mnode tests/hosted-worker.mjs[0m
+2026-11-17T17:38:03.3437984Z [36;1mnode --test tests/browser-api.mjs tests/browser-pairing.mjs[0m
+2026-11-17T17:38:03.3463996Z shell: /usr/bin/bash -e {0}
+2026-11-17T17:38:03.3464292Z ##[endgroup]
+2026-11-17T17:38:03.4185131Z 
+2026-11-17T17:38:03.4186454Z > career-finder-phone-service@0.6.0 test
+2026-11-17T17:38:03.4190445Z > node tests/linkedin-profile.mjs && node --test tests/pdf-readability.mjs && node tests/hosted-auth.mjs && node tests/hosted-auth-worker.mjs && node tests/hosted-applications.mjs && node tests/hosted-discovery.mjs && node tests/hosted-phone.mjs && node --test tests/phone-model.mjs tests/phone-api.mjs tests/phone-dispatch.mjs tests/phone-batch-stop.mjs tests/provider-connections.mjs tests/phone-private-async.mjs tests/web-experience.mjs tests/phone-settings-privacy.mjs tests/phone-navigation-inset.mjs tests/i18n.mjs tests/phone-localization.mjs tests/phone-record-tools.mjs tests/phone-search-workflows.mjs && node tests/phone-vault.mjs
+2026-11-17T17:38:03.4192788Z 
+2026-11-17T17:38:03.4497696Z PASS LinkedIn URL boundary: 9 canonical examples, 42 rejected inputs, migration and provider requirements.
+2026-11-17T17:38:03.6519511Z ✔ ordinary exported PDF, object streams and inherited page size are accepted (14.951751ms)
+2026-11-17T17:38:03.6521076Z ✔ truncated, page-less, empty, oversized and invalid page rectangles are rejected (1.930877ms)
+2026-11-17T17:38:03.6522046Z ✔ password protection is reported explicitly (0.645649ms)
+2026-11-17T17:38:03.6522768Z ✔ cyclic pages and deeply nested objects fail without recursion overflow (1.775811ms)
+2026-11-17T17:38:03.6523433Z ✔ bounded content decompression rejects a small compressed expansion bomb (45.290668ms)
+2026-11-17T17:38:03.6548611Z ✔ malformed compressed page content fails; separate concurrent parsers keep their own budget (3.834082ms)
+2026-11-17T17:38:03.6633996Z ℹ tests 6
+2026-11-17T17:38:03.6634423Z ℹ suites 0
+2026-11-17T17:38:03.6634795Z ℹ pass 6
+2026-11-17T17:38:03.6635050Z ℹ fail 0
+2026-11-17T17:38:03.6635306Z ℹ cancelled 0
+2026-11-17T17:38:03.6635653Z ℹ skipped 0
+2026-11-17T17:38:03.6635942Z ℹ todo 0
+2026-11-17T17:38:03.6636228Z ℹ duration_ms 183.71903
+2026-11-17T17:38:04.6834632Z PASS Schema-only connection-generation upgrade and bounded status initialization preserve existing links, accounts and active browser sessions
+2026-11-17T17:38:04.9058898Z PASS Previous-worker callbacks after migration receive a stable connection generation; recreating the link rotates it
+2026-11-17T17:38:05.5481564Z PASS Legacy connection generations initialize only the confirmed owner and remain stable across concurrent status reads
+2026-11-17T17:38:06.6889597Z PASS Delayed provider status rejects revoked, expired and deleted/recreated authority instead of exposing replacement connections
+2026-11-17T17:38:07.1458957Z PASS A delayed Sites status cannot initialize a recreated owner or treat a racing new account as unlinked
+2026-11-17T17:38:07.1913157Z PASS Sites status checks deleting workspaces even without provider-account metadata and leaves new accounts unmodified
+2026-11-17T17:38:07.4776312Z PASS A link replaced while legacy initialization waits keeps the new insert generation and the old subject is not recreated
+2026-11-17T17:38:07.7865381Z PASS A failed lazy initialization rolls back both provider IDs and reports failure instead of empty connections
+2026-11-17T17:38:07.8093737Z PASS Unconfigured providers stay unavailable; Sites identity and verified SSR boundaries remain intact
+2026-11-17T17:38:07.9695495Z PASS Google authorization code uses S256, nonce, hashed one-use state and a private opaque browser session
+2026-11-17T17:38:08.2632289Z PASS Provider subject is stable; matching email never merges Google subjects or an existing Sites owner
+2026-11-17T17:38:08.4665565Z PASS Explicit Google linking preserves the exact Sites owner and subsequent Google login returns that owner
+2026-11-17T17:38:08.6169722Z PASS Explicit LinkedIn linking retains basic openid/profile scopes without email collection or a new login session
+2026-11-17T17:38:08.7944080Z PASS Direct LinkedIn sign-in requests email, validates a signed subject and creates its own private session
+2026-11-17T17:38:08.9389462Z PASS LinkedIn userinfo supplies optional verified email only when its subject matches the signed ID token
+2026-11-17T17:38:09.2070993Z PASS Absent, unverified and invalid LinkedIn email fails with a safe fallback and no partial account or session
+2026-11-17T17:38:09.3819612Z PASS LinkedIn userinfo rejects redirects, oversized bodies and invalid signed claims without identity writes
+2026-11-17T17:38:10.2931947Z PASS LinkedIn subjects never merge by email and explicit ChatGPT or Google links recover their original owner
+2026-11-17T17:38:10.4384410Z PASS LinkedIn original/current login cannot be removed and expired LinkedIn cookies never reveal a background Sites owner
+2026-11-17T17:38:10.6696504Z PASS Revoking LinkedIn sign-in during a Google linking callback prevents a late connection
+2026-11-17T17:38:10.8650128Z PASS Deleting a LinkedIn owner while optional userinfo is pending cannot recreate its deleted account
+2026-11-17T17:38:10.9484572Z PASS Published LinkedIn login and consent cancellation codes spend state without exchanging a token
+2026-11-17T17:38:11.0587798Z PASS State is browser-bound, provider-bound, one-use and atomically claimed across concurrent callbacks
+2026-11-17T17:38:11.6790366Z PASS Actual RS256 verification rejects wrong audience, issuer, nonce, lifetime, authorized party, signature and unverified email
+2026-11-17T17:38:12.0264950Z PASS OIDC subject bytes reject non-ASCII aliases before any account or session is written
+2026-11-17T17:38:12.0887254Z PASS Cancellation consumes state without exchanging a code; hostile error descriptions never reach the redirect
+2026-11-17T17:38:12.3722887Z PASS Account changes between connect and callback fail before provider exchange; links cannot transfer between owners
+2026-11-17T17:38:12.5510608Z PASS Concurrent links for the same provider subject create one owner association and never merge either account
+2026-11-17T17:38:12.7168268Z PASS A Google cookie suppresses Sites fallback; mismatched sign-out fails and invalid-cookie recovery clears no Sites account
+2026-11-17T17:38:13.1899555Z PASS Sole Google login cannot be unlinked; Sites-owned Google unlink revokes its sessions and in-flight connections
+2026-11-17T17:38:13.3539704Z PASS A displayed connection ID is required; old clients and mismatched confirmations cannot disconnect a link
+2026-11-17T17:38:13.9105115Z PASS A valid LinkedIn disconnect preserves Google sign-in and another owner connection
+2026-11-17T17:38:14.2903636Z PASS A final-statement database failure rolls back the entire disconnect and cannot report success
+2026-11-17T17:38:14.5981802Z PASS A delayed disconnect cannot remove a deliberately recreated owner generation
+2026-11-17T17:38:14.9513941Z PASS A same-owner same-subject relink has a fresh connection ID and survives an older disconnect
+2026-11-17T17:38:15.2512382Z PASS Revoking a Google session while disconnect is delayed preserves the selected LinkedIn connection
+2026-11-17T17:38:15.5556656Z PASS A disconnect whose first lifecycle lookup follows deletion cannot affect a fresh link
+2026-11-17T17:38:15.6803462Z PASS Deleting an account during provider I/O prevents a late link from recreating removed identity metadata
+2026-11-17T17:38:15.8519718Z PASS Deletion between callback binding and its atomic commit cannot resurrect a Google account or issue a cookie
+2026-11-17T17:38:16.1877837Z PASS Short-lived opaque deletion fences block anonymous logins begun before deletion; a deliberate later login starts a new blank account
+2026-11-17T17:38:16.3808993Z PASS Revoking the Google browser session during a LinkedIn exchange prevents a late account connection
+2026-11-17T17:38:16.6235645Z PASS Identity export is owner-scoped and credential-free; account deletion works before any workspace exists
+2026-11-17T17:38:16.8206153Z PASS Guarded deletion preserves identities when a workspace appeared or the expected account generation changed
+2026-11-17T17:38:16.8945790Z PASS Deletion beginning after the connect precheck cannot create a new empty identity generation
+2026-11-17T17:38:17.1070183Z PASS A stale Google connect request cannot recreate an account deleted after initial cookie resolution
+2026-11-17T17:38:17.2562116Z PASS Revocation immediately before transaction insertion cannot leave a new pending Google-owned link
+2026-11-17T17:38:17.3553394Z PASS Opaque lifecycle generations reject requests that first read after deletion and permit a later deliberate request
+2026-11-17T17:38:17.4204760Z PASS A Sites link whose first lifecycle lookup occurs after deletion cannot recreate removed metadata
+2026-11-17T17:38:17.5853826Z PASS A captured Sites lifecycle cannot create a link after deletion rotates its generation
+2026-11-17T17:38:17.7014664Z PASS A lifecycle rotation immediately before OAuth commit fences identity writes even before other deletion statements run
+2026-11-17T17:38:17.9592260Z PASS A repeated deletion using an older lifecycle generation cannot remove a deliberately recreated Sites connection
+2026-11-17T17:38:17.9958931Z PASS Exact-origin JSON mutation, top-level navigation, safe return paths and callback expiry remain enforced
+2026-11-17T17:38:18.1084709Z PASS Provider redirects and oversized token responses are refused without retry or following any URL
+2026-11-17T17:38:24.1783639Z PASS A stalled provider body is cancelled within the bounded deadline and its claimed transaction cannot replay
+2026-11-17T17:38:24.4321329Z PASS Shared rate budgets reject excess starts and never retain raw network addresses
+2026-11-17T17:38:24.4322383Z Authentication verification: 55 groups passed against isolated D1 and actual synthetic RS256 signatures. No live provider or employer requests.
+2026-11-17T17:38:25.6539444Z {"result":"PASS","actualWorkerdAuthRequests":30,"syntheticProviderRequests":12,"realProviderRequests":0,"realEmployerRequests":0}
+2026-11-17T17:38:26.5741164Z PASS Unconfigured production service exposes no live connector or fixture switch
+2026-11-17T17:38:26.5876751Z PASS Identity, origin and unauthenticated boundaries; account GET is read-only
+2026-11-17T17:38:26.7412040Z PASS Concurrent redemption consumes exactly one code and creates one token
+2026-11-17T17:38:27.1412330Z PASS Actual 5 MiB PDF persists in private R2 with small D1 metadata and exact hash
+2026-11-17T17:38:27.2193404Z PASS Concurrent profile saves preserve one acknowledged revision and exact previous PDF
+2026-11-17T17:38:27.4650992Z PASS Account PDF downloads require matching platform identity
+2026-11-17T17:38:27.7773031Z PASS Unapproved reviews and GET workspace never dispatch
+2026-11-17T17:38:28.1153723Z PASS Exact multipart PDF, single name, explicit No, confirmed test receipt and guarded approval
+2026-11-17T17:38:28.2473158Z PASS Confirmed attempts never resend and block duplicate preparations
+2026-11-17T17:38:28.9749964Z PASS An unverified profile email cannot reveal whether another workspace has a confirmed application
+2026-11-17T17:38:29.0439813Z PASS Same-workspace duplicate protection survives an unverified profile email change
+2026-11-17T17:38:29.1670651Z PASS Cross-workspace duplicate protection remains available for the verified account email
+2026-11-17T17:38:29.4670648Z PASS Approval versus guarded Stop is atomic across concurrent requests
+2026-11-17T17:38:30.0292665Z PASS Concurrent advance claims one POST; deletion refuses active provider dispatch
+2026-11-17T17:38:30.5944455Z PASS Transport uncertainty is durable and cannot be resent or re-prepared
+2026-11-17T17:38:31.7102093Z PASS Mixed ready/429 plan needs a fresh approval after cooldown, not an earlier generation
+2026-11-17T17:38:32.1814056Z PASS Provider acceptance followed by result-write failure stays uncertain
+2026-11-17T17:38:32.5214368Z PASS GET does not mutate interrupted claims; advance recovers expiry without resending
+2026-11-17T17:38:33.2550018Z PASS Expired-plan GET and denied advance/guarded Stop leave dispatch claims unchanged
+2026-11-17T17:38:33.2946457Z PASS A failed expiry-reconciliation write rolls back the plan stop and queued cancellation atomically
+2026-11-17T17:38:33.4611998Z PASS Explicit Stop reconciles only this stopped plan’s expired leases, preserves live and foreign claims, and never resends
+2026-11-17T17:38:33.5084601Z PASS Account export contains owned records and workspace-bound private PDF paths without tokens or provider secrets
+2026-11-17T17:38:33.5298995Z PASS Real R2 tombstones fence late conditional puts in both orderings and erase metadata
+2026-11-17T17:38:34.2311475Z PASS Stale or missing account intent cannot create a workspace, refresh email, or rotate another account pairing code
+2026-11-17T17:38:34.3759905Z PASS Stale workspace confirmation cannot delete, revoke, recover, or alter expired dispatch state in either account
+2026-11-17T17:38:34.5391386Z PASS Stale, missing, or ambiguous download targets cannot expose another account export or read its PDF
+2026-11-17T17:38:34.6320488Z PASS Missing or incomplete platform identity fails closed even with a valid-looking action precondition
+2026-11-17T17:38:34.7680964Z PASS The preserved code redeems normally while expired codes and phone sessions cannot regain access
+2026-11-17T17:38:35.0295634Z PASS Terminated upload before/after R2 write recovers with no original phone or PDF
+2026-11-17T17:38:35.0841041Z PASS An expired upload reservation can be retried under a fresh durable claim
+2026-11-17T17:38:35.2878589Z PASS Account deletion erases pending uploads and prevents a late writer resurrecting PDF data
+2026-11-17T17:38:35.5642019Z PASS Failed erasure remains locked and retries without falsely reporting deletion
+2026-11-17T17:38:35.5699437Z PASS Health checks verify actual R2 accessibility as well as D1
+2026-11-17T17:38:35.6323536Z PASS Owner can revoke a phone; revoked credentials cannot access saved data
+2026-11-17T17:38:35.8775045Z PASS Full profile handler cannot restore a delayed PDF or records after successful deletion
+2026-11-17T17:38:36.1251120Z PASS A stale recovery cannot fence the fresh claim committed by a concurrent phone retry
+2026-11-17T17:38:36.7160134Z PASS Saved-opportunity quota remains atomic under concurrent requests
+2026-11-17T17:38:36.9206756Z PASS PDF reservation quota remains atomic before concurrent R2 writes
+2026-11-17T17:38:37.3049547Z PASS Account GET reports a changed platform email without rebasing data, revision, or prior approval
+2026-11-17T17:38:37.5751562Z PASS Explicit pairing refreshes changed platform email and invalidates old approval until the profile is corrected
+2026-11-17T17:38:37.8001407Z PASS LinkedIn profile URLs are canonical, optional, separate from portfolio and preserved by older phone saves; invalid updates preserve data
+2026-11-17T17:38:38.0290993Z PASS Older clients cannot create or approve a recovered review containing an undisplayed LinkedIn URL; preparation sends nothing
+2026-11-17T17:38:38.1596710Z PASS An explicitly approved LinkedIn profile URL is included exactly in the immutable snapshot and provider multipart payload
+2026-11-17T17:38:38.3427929Z PASS Clearing a link invalidates prior approval; saved LinkedIn job URLs remain manual and never produce automatic-submission receipts
+2026-11-17T17:38:38.7321120Z PASS Truncated and page-less PDFs fail a real parser before profile revision, stored bytes or records can change
+2026-11-17T17:38:38.8445279Z PASS PDF removal rejects a current profile reference or a stale/foreign workspace target without changing either account
+2026-11-17T17:38:39.1548380Z PASS Unused PDF erasure releases its quota, preserves historical fingerprints, fences files and remains idempotent
+2026-11-17T17:38:39.3067117Z PASS A concurrent profile save cannot reattach a PDF retired after its upload lookup
+2026-11-17T17:38:39.6354561Z PASS Employer requirements expiring during posting/PDF preflight produce no application POST
+2026-11-17T17:38:39.8491347Z PASS Requirements expiry while persisting the dispatch claim is rechecked before POST without inventing a dispatch
+2026-11-17T17:38:40.6190381Z PASS Two-day provider cooldowns are not shortened and an unreadable cooldown stays blocked after Stop
+2026-11-17T17:38:40.9726210Z PASS Invalid employer configuration disables submission while account access, export, revocation and erasure remain usable
+2026-11-17T17:38:41.1887027Z PASS A legacy missing or damaged stored PDF is caught during review before an approval or dispatch record exists
+2026-11-17T17:38:41.7411984Z PASS In-flight provider dispatch retains its exact PDF; a failed later erasure is visible and safely retriable without losing the receipt
+2026-11-17T17:38:41.8641834Z PASS Google cookie identity owns account/phone access and a scoped metadata export; invalid cookies never expose a different Sites account or affect native bearer access
+2026-11-17T17:38:41.9862460Z PASS Identity-only account erasure revokes its sessions and links without creating a workspace or changing another signed-in account
+2026-11-17T17:38:42.0608084Z PASS A workspace created during identity-only deletion prevents the stale deletion atomically
+2026-11-17T17:38:42.3308376Z PASS Google pairing and browser-open requests already in flight cannot recreate a deleted owner or mint a phone code
+2026-11-17T17:38:42.9890781Z PASS Opaque owner generations stop stale Sites pairing/open requests before or after lifecycle capture, while a deliberate later request can start fresh
+2026-11-17T17:38:43.2350716Z PASS Full Google-owned workspace erasure removes identity and application state together and preserves the other browser account
+2026-11-17T17:38:43.5265108Z PASS LinkedIn session identity owns its verified email, workspace, export and deletion without exposing another browser account
+2026-11-17T17:38:43.6578140Z PASS Revoked LinkedIn sessions cannot finish delayed pairing or workspace creation
+2026-11-17T17:38:44.2713526Z PASS Global free-service account cap is atomic rather than count-then-create
+2026-11-17T17:38:44.2743932Z {"result":"PASS","groups":63,"syntheticProviderPosts":12,"realEmployerRequests":0}
+2026-11-17T17:38:45.2421376Z PASS Public catalog has seven verified sources, four mixed defaults and no account dependency
+2026-11-17T17:38:45.6263916Z PASS Phone client accepts actual default-board and EU search responses without a catalog-only region field
+2026-11-17T17:38:45.6331930Z PASS Strict source normalization accepts board and direct-posting links without arbitrary fetch URLs
+2026-11-17T17:38:45.6383218Z PASS Invalid filters, source counts and cursor parameters are rejected before provider traffic
+2026-11-17T17:38:45.7609466Z PASS Public requests ignore account credentials and never persist or forward personal search terms
+2026-11-17T17:38:45.9631679Z PASS Provider identities, plain text, unknown country and remote evidence remain distinct
+2026-11-17T17:38:46.1109229Z PASS Keyword AND, location text and remote-only filters operate on public metadata
+2026-11-17T17:38:46.2465033Z PASS Shared board caching survives handler recreation and preserves original observation time
+2026-11-17T17:38:46.4861160Z PASS Stable cursors page a fair multi-source result without duplicates and bind the original filters
+2026-11-17T17:38:46.7087635Z PASS Refreshing a source invalidates old cursors instead of silently mixing snapshots
+2026-11-17T17:38:46.9216857Z PASS A failed source retains visibly stale facts while successful sources remain current
+2026-11-17T17:38:47.0896799Z PASS Expired stale data and complete source failures are unavailable rather than an empty successful search
+2026-11-17T17:38:47.3565540Z PASS A missing board clears cached vacancies and the negative cooldown suppresses repeated requests
+2026-11-17T17:38:47.6618386Z PASS Provider Retry-After is honored while cached timestamps remain unchanged
+2026-11-17T17:38:47.8453280Z PASS D1 leases coalesce concurrent isolates without process-local queues
+2026-11-17T17:38:48.0334737Z PASS Expired claims recover and late completions cannot overwrite a newer successful snapshot
+2026-11-17T17:38:48.2965497Z PASS Malformed provider data is attributed and never becomes a successful empty board
+2026-11-17T17:38:48.5611103Z PASS Job-count and UTF-8 cache-byte limits remain below a D1 row and disclose partial coverage
+2026-11-17T17:38:48.7112717Z PASS Lever pages are bounded to five public GETs and 500 normalized postings
+2026-11-17T17:38:48.9848946Z PASS Redirects and oversized responses are refused without following untrusted destinations
+2026-11-17T17:38:54.0802547Z PASS A stalled response body is cancelled within the bounded provider timeout
+2026-11-17T17:38:54.5571068Z PASS Client and missing-IP request budgets are shared, atomic and return Retry-After
+2026-11-17T17:38:55.1076054Z PASS Custom negative cache capacity and fetch budgets reserve service for the catalog
+2026-11-17T17:38:55.4556719Z PASS Concurrent custom source admission cannot exceed the durable cache quota
+2026-11-17T17:38:55.6496130Z PASS Security counters expire without storing raw IPs or requiring an applicant account
+2026-11-17T17:38:56.3186150Z PASS Actual bundled workerd runs eight public discovery requests with real D1 and no account or R2
+2026-11-17T17:38:56.3287193Z {"result":"PASS","groups":26,"actualWorkerdRequests":8,"clientSchemaResponses":63,"employerApplicationPosts":0}
+2026-11-17T17:38:57.4930086Z PASS A first browser GET returns a blank account view without creating a workspace, salt, throttle or session
+2026-11-17T17:38:57.5579247Z PASS Anonymous requests and caller-forged authentication headers fail behind the modeled trusted Sites edge
+2026-11-17T17:38:57.6585051Z PASS Explicit account-bound creation and reopening create no native credential or pairing code
+2026-11-17T17:38:57.7265888Z PASS Browser PDF/profile writes use shared validation and actual private R2; valid native tokens never choose the browser owner
+2026-11-17T17:38:57.9324460Z PASS No browser mutation or receipt export accepts a native token or forged caller identity in place of Sites authentication
+2026-11-17T17:38:58.0238088Z PASS Every browser mutation rejects stale or missing account/workspace intent before any write, cleanup, throttle, PDF access or provider request
+2026-11-17T17:38:58.0983209Z PASS Workspace and bound receipt GETs remain read-only, including changed email and expired dispatch/session rows
+2026-11-17T17:38:58.2402745Z PASS All browser writes require the exact Origin and reject cross-site, same-site and navigation Fetch Metadata
+2026-11-17T17:38:58.3363834Z PASS The browser allowlist excludes native credential routes, rejects unknown fields, and applies bounded single-pass JSON parsing
+2026-11-17T17:38:58.3707163Z PASS Explicit same-account email refresh advances the revision once and invalidates old approval without creating or rotating phone credentials
+2026-11-17T17:38:58.5207401Z PASS Stale profile replay and unapproved, changed-digest or old-schema reviews cannot replace data or authorize a send
+2026-11-17T17:38:58.5682706Z PASS Explicit approval and continuation submit the exact reviewed PDF/LinkedIn payload once; repeat requests and duplicate reviews do not resend
+2026-11-17T17:38:58.6167109Z PASS An ambiguous browser dispatch remains durably uncertain and cannot be automatically retried or duplicated
+2026-11-17T17:38:58.6704240Z PASS Stop and provider-unavailable continuation preserve the existing fail-closed submission rules
+2026-11-17T17:38:58.7803933Z PASS Browser GETs, expired-plan advance and denied guarded Stop cannot reconcile or change expired dispatch claims
+2026-11-17T17:38:58.8324710Z PASS Browser Stop reconciles only the exact stopped plan’s expired claims, preserves live/other-owner claims and never resends
+2026-11-17T17:38:58.8503415Z PASS Manual LinkedIn jobs cause no fetch or receipt; receipt exports remain account-bound and contain no PDF bytes
+2026-11-17T17:38:59.0234767Z PASS A deleted and recreated workspace rejects stale requests even when the signed-in account is unchanged
+2026-11-17T17:38:59.1690987Z PASS A pending deletion remains visible and read-only while browser creation, mutations and receipt downloads stay locked without cleanup
+2026-11-17T17:38:59.1719370Z {"result":"PASS","groups":19,"actualWorkerdRequests":164,"syntheticProviderPosts":2,"realEmployerRequests":0}
+2026-11-17T17:38:59.6655040Z ✔ language negotiation respects the dedicated preference, weighted device languages, and unsupported-language fallback (1.266988ms)
+2026-11-17T17:38:59.6695551Z ✔ every Arabic entry is nonempty and preserves the exact placeholder multiset (10.509709ms)
+2026-11-17T17:38:59.6704207Z ✔ unknown and prototype-looking keys remain safe, while specific templates preserve inserted data byte-for-byte (4.038495ms)
+2026-11-17T17:38:59.6705502Z ✔ Arabic counts have zero, one, dual, few, many forms and display Gregorian dates (17.812801ms)
+2026-11-17T17:38:59.6706800Z ✔ language persistence writes only the independent preference and cookie, including cross-tab clearing (7.093682ms)
+2026-11-17T17:38:59.6707847Z ✔ blocked storage still changes this visit without claiming persistence (6.707937ms)
+2026-11-17T17:38:59.6709234Z ✔ the actual language control renders Arabic or English on the server with the correct selected preference (11.928231ms)
+2026-11-17T17:38:59.7359946Z {"syntheticPrivateIngress":{"denied":0,"workerRequests":1,"providerRequests":0}}
+2026-11-17T17:38:59.7363824Z ▶ phone API keeps authentication, cancellation and verification bounded
+2026-11-17T17:38:59.7364969Z   ✔ private writes carry the exact intent body, same-origin cookies and no native credential (24.221765ms)
+2026-11-17T17:38:59.7366048Z   ✔ the actual source catalog remains readable behind an owner-private same-origin hosting gate (8.201428ms)
+2026-11-17T17:38:59.7367062Z   ✔ discovery preserves same-origin hosting access and encoded search intent without a native credential (0.847063ms)
+2026-11-17T17:38:59.7367891Z   ✔ oversized multi-job review payloads are rejected before an API call begins (3.457828ms)
+2026-11-17T17:38:59.7368749Z   ✔ foreign destinations, non-app routes and writes to discovery are rejected before fetch (0.822336ms)
+2026-11-17T17:38:59.7369727Z   ✔ HTTP and logical failures remain distinguishable and never replay a mutation (3.851331ms)
+2026-11-17T17:38:59.7370584Z   ✔ unverified content, invalid UTF-8, arrays and empty responses are rejected safely (1.947124ms)
+2026-11-17T17:38:59.7371365Z   ✔ the 12 MiB response limit cancels oversized streams before parsing (3.527233ms)
+2026-11-17T17:38:59.7372123Z   ✔ network errors do not retry writes or expose private exception details (0.378539ms)
+2026-11-17T17:38:59.7372812Z   ✔ caller cancellation aborts once and pre-cancelled work never starts (0.62002ms)
+2026-11-17T17:38:59.7373549Z {"populatedWorkspaceBytes":7112730,"attempts":500,"reviews":20,"reviewItems":400}
+2026-11-17T17:38:59.7380296Z   ✔ the timer aborts a stalled mutation and tells the user to reconcile before retrying (20.525234ms)
+2026-11-17T17:38:59.7381394Z   ✔ a populated valid workspace above 4 MiB remains readable within the native 12 MiB budget (137.354202ms)
+2026-11-17T17:38:59.7382439Z ✔ phone API keeps authentication, cancellation and verification bounded (209.125917ms)
+2026-11-17T17:38:59.7562557Z ▶ captured batch Stop survives interruption without a duplicate or stale target
+2026-11-17T17:38:59.7563552Z   ✔ one confirmed Stop uses only captured target fields and shares its result (11.158062ms)
+2026-11-17T17:38:59.7564346Z   ✔ an unverified identity curtain does not block the captured Stop or reveal its response (0.698245ms)
+2026-11-17T17:38:59.7565071Z   ✔ a curtain raised during the request defers response adoption (0.532312ms)
+2026-11-17T17:38:59.7565761Z   ✔ stale epochs, missing identity and changed owners are rejected before any POST (0.89588ms)
+2026-11-17T17:38:59.7566385Z   ✔ the displayed workspace cannot retarget a captured batch (0.289109ms)
+2026-11-17T17:38:59.7567171Z   ✔ an epoch or owner change while POST is pending never adopts or refreshes stale UI (0.922704ms)
+2026-11-17T17:38:59.7567823Z   ✔ concurrent helper and finalizer calls share one pending POST (0.404489ms)
+2026-11-17T17:38:59.7569226Z   ✔ durable hold precedes transport and failed persistence never sends a request (1.536688ms)
+2026-11-17T17:38:59.7570939Z   ✔ owner change during durable hold prevents a stale Stop request (0.536663ms)
+2026-11-17T17:38:59.7572291Z   ✔ a lost response remains a failed attempt on every later call (2.247169ms)
+2026-11-17T17:38:59.7573016Z   ✔ synchronous transport failure is also attempted once (1.135053ms)
+2026-11-17T17:38:59.7573732Z   ✔ confirmation requires a fully parsed exact plan with stopped=true (1.652458ms)
+2026-11-17T17:38:59.7574674Z   ✔ a successful Stop followed by failed readback stays confirmed but is never resent (2.260161ms)
+2026-11-17T17:38:59.7575550Z   ✔ a curtain raised during readback prevents returning newly fetched private data (0.32809ms)
+2026-11-17T17:38:59.7576431Z   ✔ stale or foreign readback results cannot be returned as the captured workspace (0.61808ms)
+2026-11-17T17:38:59.7577298Z   ✔ a previously confirmed cached result cannot be reused after an account change (0.237713ms)
+2026-11-17T17:38:59.7578292Z   ✔ an already-attempted context without its promise cannot report false success or resend (0.205917ms)
+2026-11-17T17:38:59.7579908Z   ✔ the finalizer can deliver a requested Stop after submission response loss (0.233354ms)
+2026-11-17T17:38:59.7580848Z ✔ captured batch Stop survives interruption without a duplicate or stale target (34.743394ms)
+2026-11-17T17:38:59.7595965Z ▶ approved phone continuation is bounded, owner-bound and never grants approval
+2026-11-17T17:38:59.7608289Z   ✔ one explicit run processes a batch with fresh validation and pacing (31.95873ms)
+2026-11-17T17:38:59.7609797Z   ✔ at most twenty advances run even if changing responses remain authorized (55.159164ms)
+2026-11-17T17:38:59.7610808Z   ✔ a hidden page never starts a step and pauses after an in-flight step (1.021584ms)
+2026-11-17T17:38:59.7615489Z   ✔ explicit Stop wins over visibility and is sent once without another advance (0.867677ms)
+2026-11-17T17:38:59.7629422Z   ✔ Stop and visibility are rechecked after pacing (3.723812ms)
+2026-11-17T17:38:59.7636802Z   ✔ dispatching claims halt continuation whether present in a plan or receipt (0.709617ms)
+2026-11-17T17:38:59.7642069Z   ✔ a missing current plan never falls back to an old plan or another review (0.463464ms)
+2026-11-17T17:38:59.7643110Z   ✔ approval, profile revision, expiry and account status are rechecked before writes (1.096986ms)
+2026-11-17T17:38:59.7644021Z   ✔ elapsed 429 cooldown alone cannot trigger a retry (0.828124ms)
+2026-11-17T17:38:59.7763143Z   ✔ a new provider 429 can coexist with other ready jobs without being retried (4.523425ms)
+2026-11-17T17:38:59.7780304Z   ✔ HTTP 429, network and Stop errors propagate once with no retry (1.599821ms)
+2026-11-17T17:38:59.7781367Z   ✔ each returned workspace is checked against the captured account and workspace (1.672806ms)
+2026-11-17T17:38:59.7782276Z   ✔ review mutation and validation failure stop further requests (1.087246ms)
+2026-11-17T17:38:59.7783139Z   ✔ unchanged advance responses stop as waiting without retry or pacing (0.584322ms)
+2026-11-17T17:38:59.7784375Z   ✔ malformed returned data, invalid identifiers and oversized plans fail closed (3.59846ms)
+2026-11-17T17:38:59.7785307Z   ✔ terminal and already-stopped plans require no additional write (0.404982ms)
+2026-11-17T17:38:59.7786284Z ✔ approved phone continuation is bounded, owner-bound and never grants approval (112.615698ms)
+2026-11-17T17:39:00.5574825Z ✔ real review rendering localizes every state and preserves user and employer content (49.169175ms)
+2026-11-17T17:39:00.5576426Z ✔ recovery notices render full sentences and locale-specific counts from the same stored data (32.202272ms)
+2026-11-17T17:39:00.5577814Z ✔ actual copy handler stores translatable notices and copies the exact value on success or refusal (40.232432ms)
+2026-11-17T17:39:00.5579124Z ✔ discovery notice translates only the known service composition and keeps unknown text opaque (80.12729ms)
+2026-11-17T17:39:00.5580368Z ✔ actual Saved, Apply, details and recovery values retain separate bidi boundaries in both languages (112.071214ms)
+2026-11-17T17:39:00.5582919Z ✔ actual profile comparison and application review isolate names and CV filenames without changing them (50.41275ms)
+2026-11-17T17:39:00.5584034Z ✔ actual search inputs preserve mixed-script draft text with automatic direction (14.490523ms)
+2026-11-17T17:39:00.5585016Z ✔ actual catalog-board checkboxes isolate Arabic and Latin source names in en (13.436963ms)
+2026-11-17T17:39:00.5586042Z ✔ actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in en (8.29855ms)
+2026-11-17T17:39:00.5592295Z ✔ actual JobCard footer isolates each source name and retains its employer link in en (12.177719ms)
+2026-11-17T17:39:00.5593677Z ✔ actual catalog-board checkboxes isolate Arabic and Latin source names in ar (15.81798ms)
+2026-11-17T17:39:00.5595012Z ✔ actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in ar (15.943951ms)
+2026-11-17T17:39:00.5596330Z ✔ actual JobCard footer isolates each source name and retains its employer link in ar (17.683568ms)
+2026-11-17T17:39:00.5825087Z ▶ phone model keeps canonical identities and private local state separate
+2026-11-17T17:39:00.5830184Z   ✔ LinkedIn values have the same canonical boundary as the application service (2.651624ms)
+2026-11-17T17:39:00.5831622Z   ✔ Lever paths, arbitrary tracking queries and case share the actual remote posting identity (6.442323ms)
+2026-11-17T17:39:00.5850300Z   ✔ scope mismatch, duplicate jobs and noncanonical/contradictory imported records fail closed (18.71622ms)
+2026-11-17T17:39:00.5863180Z   ✔ civil dates and applied history survive stage transitions until explicit clearing (1.342652ms)
+2026-11-17T17:39:00.5864531Z   ✔ profile transport strips local notes, records, revision and resume metadata (4.55257ms)
+2026-11-17T17:39:00.5865434Z   ✔ exact review validates the target and every submitted profile/CV field (14.512204ms)
+2026-11-17T17:39:00.5919751Z   ✔ review requests bind a workspace, distinct UUIDs and explicit consent choices (3.919784ms)
+2026-11-17T17:39:00.5920944Z   ✔ review request budget measures serialized UTF-8 including repeated answers and JSON escaping (9.153171ms)
+2026-11-17T17:39:00.5941158Z ✔ phone model keeps canonical identities and private local state separate (65.542815ms)
+2026-11-17T17:39:00.5945425Z ✔ model schemas preserve serialized workspace, nullable review and blocked receipt contract fields (9.540671ms)
+2026-11-17T17:39:00.5969846Z ✔ phone search accepts the published discovery status contract and preserves it in a restored search (13.660518ms)
+2026-11-17T17:39:00.5994339Z ✔ each employer keeps separate exact answers and no missing answer is inferred (1.192333ms)
+2026-11-17T17:39:00.6019744Z ✔ receipts require an application ID and consistent live evidence before confirmation (0.741046ms)
+2026-11-17T17:39:00.6049709Z ✔ career preferences and an unfinished record stage survive encrypted recovery serialization (2.059687ms)
+2026-11-17T17:39:00.6056797Z ✔ provider navigation accepts only official authorization endpoints and safe app returns (0.684526ms)
+2026-11-17T17:39:00.6079536Z ✔ OAuth callback feedback only accepts exact provider and result enums once (0.493983ms)
+2026-11-17T17:39:00.6102838Z ✔ provider status represents LinkedIn login without treating older basic-link backends as sign-in support (4.300314ms)
+2026-11-17T17:39:00.6121728Z ✔ larger navigation and text reflow update both content spacing and viewport focus clearance (1.150938ms)
+2026-11-17T17:39:00.6126231Z ✔ desktop rail reserves no bottom inset and returning to mobile restores its measured height (0.30862ms)
+2026-11-17T17:39:00.6127524Z ✔ cleanup restores pre-existing inline values and priorities and ignores queued resize callbacks (0.29127ms)
+2026-11-17T17:39:00.6128756Z ✔ resize fallback remains usable without ResizeObserver and clears owned styles on unmount (0.208435ms)
+2026-11-17T17:39:01.0485491Z ✔ actual recovery export refuses a late original-account response after identity revalidation starts (61.075222ms)
+2026-11-17T17:39:01.0521296Z ▶ actual recovery rejects changed generations, hidden pages and replaced quarantine before export
+2026-11-17T17:39:01.0540012Z   ✔ generation (18.261467ms)
+2026-11-17T17:39:01.0540890Z   ✔ hidden (18.511645ms)
+2026-11-17T17:39:01.0541409Z   ✔ quarantine (17.510614ms)
+2026-11-17T17:39:01.0542354Z ✔ actual recovery rejects changed generations, hidden pages and replaced quarantine before export (55.215025ms)
+2026-11-17T17:39:01.0543490Z ▶ actual restoration rechecks identity after both vault and safety reads without losing original drafts
+2026-11-17T17:39:01.0544160Z   ✔ vault (19.413091ms)
+2026-11-17T17:39:01.0544652Z   ✔ safety (16.499386ms)
+2026-11-17T17:39:01.0545531Z ✔ actual restoration rechecks identity after both vault and safety reads without losing original drafts (36.866315ms)
+2026-11-17T17:39:01.0546773Z ✔ recovery cannot start during revalidation and legitimate owner export and restoration remain available (45.720946ms)
+2026-11-17T17:39:01.2791644Z ✔ actual browser-worker parser accepts ordinary and object-stream PDFs and preserves bytes and checksum (232.694489ms)
+2026-11-17T17:39:01.3460481Z ▶ actual browser-worker parser rejects malformed, truncated, encrypted, cyclic and deeply nested PDFs
+2026-11-17T17:39:01.3466102Z   ✔ malformed (69.261784ms)
+2026-11-17T17:39:01.4249550Z   ✔ truncated (78.136936ms)
+2026-11-17T17:39:01.4809237Z   ✔ encrypted (55.941453ms)
+2026-11-17T17:39:01.5570241Z   ✔ cyclic (73.856022ms)
+2026-11-17T17:39:01.7051677Z   ✔ nested (94.322357ms)
+2026-11-17T17:39:01.7127828Z ✔ actual browser-worker parser rejects malformed, truncated, encrypted, cyclic and deeply nested PDFs (373.266431ms)
+2026-11-17T17:39:01.9108696Z ✔ actual browser-worker streaming inflation rejects expansion beyond the existing 16 MiB cap (237.322151ms)
+2026-11-17T17:39:02.2451342Z ✔ actual PDF selection keeps the prior valid local draft on every invalid file and only reports success after validation (328.329131ms)
+2026-11-17T17:39:02.2471996Z ▶ actual PDF selection refuses late success after cancellation, identity invalidation or page replacement
+2026-11-17T17:39:02.2473221Z   ✔ abort (8.691133ms)
+2026-11-17T17:39:02.2473765Z   ✔ identity (7.996076ms)
+2026-11-17T17:39:02.2474268Z   ✔ generation (10.95659ms)
+2026-11-17T17:39:02.2475254Z ✔ actual PDF selection refuses late success after cancellation, identity invalidation or page replacement (28.174399ms)
+2026-11-17T17:39:02.3131416Z ✔ worker timeout, abort and unavailable streaming support fail closed and terminate work (70.346442ms)
+2026-11-17T17:39:02.3298273Z ✔ Saved search finds every term across visible metadata and the active saved note (2.281574ms)
+2026-11-17T17:39:02.3300937Z ✔ Saved comparison removes only the agreed Arabic vowel marks and tatweel while preserving distinct letters (0.413207ms)
+2026-11-17T17:39:02.3301944Z ✔ CSV is UTF-8 BOM, quoted CRLF data with original Arabic, quotes and multiline notes (4.40779ms)
+2026-11-17T17:39:02.3302899Z ✔ CSV visibly neutralizes formula-like text including compatibility characters and leading controls (3.066072ms)
+2026-11-17T17:39:02.3304010Z ✔ CSV selects only record fields and translates app labels without translating private content (0.909976ms)
+2026-11-17T17:39:02.3304905Z ✔ calendar uses civil DATE and one day even on leap days and the maximum supported year (136.986774ms)
+2026-11-17T17:39:02.3305797Z ✔ calendar escapes injected properties and folds long Arabic and emoji by UTF-8 octets (3.991757ms)
+2026-11-17T17:39:02.3306688Z ✔ calendar UID is stable for the public job and date without private fields or provider state (4.989682ms)
+2026-11-17T17:39:02.3307500Z ✔ actual CSV action exports only the current guest or confirmed account records (93.862735ms)
+2026-11-17T17:39:02.3312026Z ▶ actual record exports fail closed before reading unconfirmed, locked, wrong-owner or earlier-workspace data
+2026-11-17T17:39:02.3312544Z   ✔ identity (17.798527ms)
+2026-11-17T17:39:02.3312852Z   ✔ checking (10.586011ms)
+2026-11-17T17:39:02.3313114Z   ✔ locked (12.92657ms)
+2026-11-17T17:39:02.3313356Z   ✔ owner (15.131636ms)
+2026-11-17T17:39:02.3314069Z   ✔ missingOwner (8.23335ms)
+2026-11-17T17:39:02.3314467Z   ✔ olderWorkspace (16.430696ms)
+2026-11-17T17:39:02.3314769Z   ✔ earlierScope (6.175709ms)
+2026-11-17T17:39:02.3315349Z ✔ actual record exports fail closed before reading unconfirmed, locked, wrong-owner or earlier-workspace data (88.503834ms)
+2026-11-17T17:39:02.3316092Z ▶ actual calendar action rechecks identity, generation, workspace and record after asynchronous hashing
+2026-11-17T17:39:02.3316608Z   ✔ revalidation (19.74174ms)
+2026-11-17T17:39:02.3316890Z   ✔ generation (25.064707ms)
+2026-11-17T17:39:02.3317167Z   ✔ owner (18.35502ms)
+2026-11-17T17:39:02.3317429Z   ✔ workspace (10.166359ms)
+2026-11-17T17:39:02.3317835Z   ✔ snapshot (12.992148ms)
+2026-11-17T17:39:02.3318124Z   ✔ date (8.722248ms)
+2026-11-17T17:39:02.3318412Z   ✔ removal (9.83971ms)
+2026-11-17T17:39:02.3319248Z ✔ actual calendar action rechecks identity, generation, workspace and record after asynchronous hashing (108.147815ms)
+2026-11-17T17:39:02.3319982Z ✔ actual calendar action accepts a saved record and rejects unsaved editor copies or missing dates (14.339749ms)
+2026-11-17T17:39:02.3320666Z ✔ actual Saved selector searches active notes and keeps the existing applied/follow-up filters (14.153614ms)
+2026-11-17T17:39:02.3321322Z ✔ new controls stay inside existing disclosures and require a saved valid follow-up day (60.945259ms)
+2026-11-17T17:39:02.3321990Z ✔ retry repeats the displayed search without a cursor and preserves newer visible draft filters (46.017231ms)
+2026-11-17T17:39:02.3322628Z ✔ a fresh search response does not overwrite text or boards edited while it is pending (12.681724ms)
+2026-11-17T17:39:02.3323321Z ✔ pagination uses the displayed search and cursor, merges identities, and leaves draft filters alone (12.418471ms)
+2026-11-17T17:39:02.3323998Z ▶ failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller
+2026-11-17T17:39:02.3324470Z   ✔ failure (19.74316ms)
+2026-11-17T17:39:02.3324733Z   ✔ cancel (9.304219ms)
+2026-11-17T17:39:02.3325291Z ✔ failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller (29.658367ms)
+2026-11-17T17:39:02.3325910Z ▶ late search results cannot cross the existing identity or generation boundary
+2026-11-17T17:39:02.3326250Z   ✔ identity (13.625226ms)
+2026-11-17T17:39:02.3326556Z   ✔ generation (10.485719ms)
+2026-11-17T17:39:02.3327009Z ✔ late search results cannot cross the existing identity or generation boundary (24.649584ms)
+2026-11-17T17:39:02.3327651Z ✔ pagination retains the 200-result cap and retry refreshes restored results without a stale cursor (32.008115ms)
+2026-11-17T17:39:02.3328336Z ✔ actual nonempty partial and stale results show a localized retry that targets the displayed search (66.046535ms)
+2026-11-17T17:39:02.3329218Z ✔ actual empty unavailable results distinguish missing evidence from a completed zero-match search in both languages (52.276253ms)
+2026-11-17T17:39:02.3330029Z ✔ actual retry control stays disabled during work or identity checks and is absent without a submitted search (30.001692ms)
+2026-11-17T17:39:02.3330797Z ✔ actual visible and live summaries describe fresh partial results without inventing an outage in en (27.823598ms)
+2026-11-17T17:39:02.3331514Z ✔ actual visible and live summaries describe only the overall result limit without inventing an outage in en (69.394535ms)
+2026-11-17T17:39:02.3332233Z ✔ actual visible and live summaries describe only a source result limit without inventing an outage in en (50.278995ms)
+2026-11-17T17:39:02.3332949Z ✔ actual search summaries retain source evidence and distinguish complete zero/nonzero results in en (68.807701ms)
+2026-11-17T17:39:02.3333647Z ✔ the actual search live region stays silent during work and before any result page in en (24.368799ms)
+2026-11-17T17:39:02.3334312Z ✔ actual visible and live summaries describe fresh partial results without inventing an outage in ar (34.877911ms)
+2026-11-17T17:39:02.3335142Z ✔ actual visible and live summaries describe only the overall result limit without inventing an outage in ar (26.93901ms)
+2026-11-17T17:39:02.3335976Z ✔ actual visible and live summaries describe only a source result limit without inventing an outage in ar (33.205034ms)
+2026-11-17T17:39:02.3336690Z ✔ actual search summaries retain source evidence and distinguish complete zero/nonzero results in ar (54.452281ms)
+2026-11-17T17:39:02.3337442Z ✔ the actual search live region stays silent during work and before any result page in ar (63.431195ms)
+2026-11-17T17:39:02.3338112Z ✔ failed initial account check cannot reveal the earlier server-rendered email or account controls (11.181888ms)
+2026-11-17T17:39:02.3338888Z ✔ only the confirmed matching account may show private Settings (4.075614ms)
+2026-11-17T17:39:02.3339535Z ✔ loading, revalidation and locked Settings retain public appearance and hide private identity (4.856636ms)
+2026-11-17T17:39:02.3340348Z ✔ verified connect returns only the official provider authorization URL and expected account (1.754273ms)
+2026-11-17T17:39:02.3341048Z ✔ pending connect is aborted and its already completed reply ignored after card unmount (0.221696ms)
+2026-11-17T17:39:02.3341595Z ✔ pending disconnect is not confirmed after card unmount (0.240305ms)
+2026-11-17T17:39:02.3342190Z ✔ a synchronous identity recheck suppresses a late reply before React rerenders (0.117856ms)
+2026-11-17T17:39:02.3342734Z ✔ hidden page cannot navigate or present a successful mutation (0.23088ms)
+2026-11-17T17:39:02.3343264Z ✔ account switch cancels earlier work and preserves the new account view (0.276835ms)
+2026-11-17T17:39:02.3343858Z ✔ disconnect sends the exact connection and revision captured by its confirmation (0.241979ms)
+2026-11-17T17:39:02.3344506Z ✔ relink in the same account cannot reuse a confirmation for the former connection (0.633368ms)
+2026-11-17T17:39:02.3345122Z ✔ identity refresh invalidates even a same-account same-connection confirmation (0.228628ms)
+2026-11-17T17:39:02.3345732Z ✔ a relink observed while disconnect is in flight cannot produce success for its replacement (0.228977ms)
+2026-11-17T17:39:02.3346344Z ✔ double activation cannot send a second request before React updates its busy state (0.26366ms)
+2026-11-17T17:39:02.3346990Z ✔ effect cleanup and setup replay cannot revive the earlier request or disable the new card (0.236125ms)
+2026-11-17T17:39:02.3347672Z ✔ current failures remain errors, obsolete failures are suppressed, and invalid destinations never navigate (0.240954ms)
+2026-11-17T17:39:02.3348318Z ✔ unverified, missing or mismatched disconnect targets never send a mutation (0.268732ms)
+2026-11-17T17:39:02.3349135Z ✔ connected-provider responses require an opaque generation without treating it as a credential (3.915694ms)
+2026-11-17T17:39:02.3565220Z ✔ early theme initialization applies only recognized preferences and follows the device when storage is unavailable (4.396216ms)
+2026-11-17T17:39:02.3566821Z ✔ appearance is immediately applied, persisted independently of accounts and cleared to System without forcing a color (2.045832ms)
+2026-11-17T17:39:02.3568111Z ✔ blocked persistence retains the chosen theme for this visit and reports that it was not saved (0.676326ms)
+2026-11-17T17:39:02.3569239Z ✔ another tab changing or clearing appearance updates this page; unrelated storage never changes it (0.75267ms)
+2026-11-17T17:39:02.3570026Z ✔ configured Google and supported LinkedIn expose their own real start routes (7.330012ms)
+2026-11-17T17:39:02.3570934Z ✔ missing configuration and an older link-only backend cannot expose a fake direct-provider login (2.030206ms)
+2026-11-17T17:39:02.3571670Z ✔ unconfirmed or failed provider status keeps provider choices disabled and offers an honest retry (1.291984ms)
+2026-11-17T17:39:02.3630871Z ✔ both actual palettes retain normal-text, action-text and input-boundary contrast (4.143798ms)
+2026-11-17T17:39:02.3737944Z ℹ tests 190
+2026-11-17T17:39:02.3738268Z ℹ suites 0
+2026-11-17T17:39:02.3738771Z ℹ pass 190
+2026-11-17T17:39:02.3738990Z ℹ fail 0
+2026-11-17T17:39:02.3739585Z ℹ cancelled 0
+2026-11-17T17:39:02.3739855Z ℹ skipped 0
+2026-11-17T17:39:02.3740178Z ℹ todo 0
+2026-11-17T17:39:02.3740457Z ℹ duration_ms 3149.695949
+2026-11-17T17:39:02.9088681Z {
+2026-11-17T17:39:02.9089061Z   "ok": true,
+2026-11-17T17:39:02.9089326Z   "groups": 33,
+2026-11-17T17:39:02.9089619Z   "checks": [
+2026-11-17T17:39:02.9090045Z     "encrypted round trip preserves full draft, PDF, Unicode and unfinished fields",
+2026-11-17T17:39:02.9090586Z     "every save rotates the opaque key, IV and authenticated envelope ID",
+2026-11-17T17:39:02.9091021Z     "exact guest, account and workspace scopes remain isolated",
+2026-11-17T17:39:02.9091483Z     "metadata and ciphertext tampering fail closed without replacing the saved row",
+2026-11-17T17:39:02.9092031Z     "copying a row to another account or changing its plaintext owner cannot expose that owner's profile",
+2026-11-17T17:39:02.9092588Z     "future envelope versions are preserved, exportable and blocked until explicit reset",
+2026-11-17T17:39:02.9093145Z     "unknown future profile fields cannot be silently stripped on load or save",
+2026-11-17T17:39:02.9093636Z     "optional job fields receive safe defaults while known draft data remains intact",
+2026-11-17T17:39:02.9094208Z     "bad UTF-8, malformed JSON and duplicate canonical jobs preserve the original ciphertext",
+2026-11-17T17:39:02.9094699Z     "malformed present rows are not mistaken for an empty workspace",
+2026-11-17T17:39:02.9095089Z     "a new tab must load an existing draft before it can replace it",
+2026-11-17T17:39:02.9095514Z     "cross-tab changes are rejected and export does not adopt another tab's version",
+2026-11-17T17:39:02.9095996Z     "compare-and-set closes the race between the initial read and final encrypted commit",
+2026-11-17T17:39:02.9096495Z     "same-tab saves remain ordered and capture values before their queue starts",
+2026-11-17T17:39:02.9096951Z     "a reset cancels older queued saves and leaves no resurrected draft",
+2026-11-17T17:39:02.9097360Z     "deletion in another tab cannot be silently undone by an older draft",
+2026-11-17T17:39:02.9097838Z     "an empty-to-saved-to-reset change cannot bypass another tab's expected revision",
+2026-11-17T17:39:02.9098338Z     "quota failure keeps the prior ciphertext and allows a later explicit retry",
+2026-11-17T17:39:02.9098962Z     "read and delete failures never report an empty or successfully removed draft",
+2026-11-17T17:39:02.9099423Z     "exporting a repaired row does not clear a previous safety block",
+2026-11-17T17:39:02.9099829Z     "valid exports are readable snapshots and do not mutate stored data",
+2026-11-17T17:39:02.9100278Z     "metadata listing isolates exact accounts and never exposes encrypted content or keys",
+2026-11-17T17:39:02.9100786Z     "malformed and ambiguous scope identifiers never reach storage",
+2026-11-17T17:39:02.9101183Z     "invalid or oversized new fields do not replace the last valid draft",
+2026-11-17T17:39:02.9101674Z     "maximum collection counts, full Unicode notes and a 5 MB PDF survive a bounded round trip",
+2026-11-17T17:39:02.9102188Z     "an unfamiliar IndexedDB version surfaces a recovery-safe error without deleting databases",
+2026-11-17T17:39:02.9102729Z     "missing browser capabilities fail explicitly while module import remains SSR-safe",
+2026-11-17T17:39:02.9103211Z     "Stop intent survives reload, failed transport and other account scopes",
+2026-11-17T17:39:02.9103662Z     "recovery keeps unfinished profile and private notes without changing the main vault",
+2026-11-17T17:39:02.9104195Z     "concurrent safety updates merge Stop holds and recovery without losing either",
+2026-11-17T17:39:02.9104671Z     "clearing personal recovery keeps Stop locks and fences queued old draft saves",
+2026-11-17T17:39:02.9105136Z     "recovery quota failure preserves existing Stop intent and supports a later retry",
+2026-11-17T17:39:02.9105587Z     "discarding a stale recovery confirmation cannot erase newer edits"
+2026-11-17T17:39:02.9105885Z   ],
+2026-11-17T17:39:02.9106776Z   "coverage": "Actual Node WebCrypto + structured-cloned non-extractable keys; injected atomic storage port. Real browser IndexedDB acceptance remains a separate check."
+2026-11-17T17:39:02.9107415Z }
+2026-11-17T17:39:04.0391701Z {"result":"PASS","actualWorkerdRequests":17,"realEmployerRequests":0}
+2026-11-17T17:39:04.1852569Z ▶ browser account transport keeps mutations bounded and explicit
+2026-11-17T17:39:04.1853609Z   ✔ successful writes preserve same-origin authentication and never redirect (22.849758ms)
+2026-11-17T17:39:04.1854592Z   ✔ expired sessions remain distinguishable from ordinary network errors (0.747408ms)
+2026-11-17T17:39:04.1855354Z   ✔ a failed deletion is never silently retried or reported successful (0.34736ms)
+2026-11-17T17:39:04.1856093Z   ✔ an unconfirmed 200 response cannot become a successful mutation (0.316335ms)
+2026-11-17T17:39:04.1856973Z   ✔ malformed and non-object responses are rejected without exposing their content (1.473262ms)
+2026-11-17T17:39:04.1864596Z   ✔ a response larger than the browser record budget is cancelled (0.707491ms)
+2026-11-17T17:39:04.2047731Z   ✔ a stalled request times out once without replaying the write (19.668365ms)
+2026-11-17T17:39:04.2048975Z   ✔ leaving a page cancels its pending read without a retry (0.54459ms)
+2026-11-17T17:39:04.2049952Z   ✔ an already cancelled page never starts a request (0.202169ms)
+2026-11-17T17:39:04.2051143Z   ✔ external or non-API destinations are rejected before sending credentials (0.252052ms)
+2026-11-17T17:39:04.2052373Z ✔ browser account transport keeps mutations bounded and explicit (49.581393ms)
+2026-11-17T17:39:04.2131945Z ✔ pairing validity is relative to the server, independent of the phone wall clock (0.737209ms)
+2026-11-17T17:39:04.2132901Z ✔ delayed replies cannot extend validity or revive an expired code (0.348878ms)
+2026-11-17T17:39:04.2133755Z ✔ unverified codes, foreign origins, invalid clocks and excessive validity fail closed (0.274157ms)
+2026-11-17T17:39:04.2134522Z ℹ tests 14
+2026-11-17T17:39:04.2134832Z ℹ suites 0
+2026-11-17T17:39:04.2135188Z ℹ pass 14
+2026-11-17T17:39:04.2135486Z ℹ fail 0
+2026-11-17T17:39:04.2135815Z ℹ cancelled 0
+2026-11-17T17:39:04.2136206Z ℹ skipped 0
+2026-11-17T17:39:04.2136484Z ℹ todo 0
+2026-11-17T17:39:04.2136812Z ℹ duration_ms 125.293586
+2026-11-17T17:39:04.2212883Z ##[group]Run npm run build
+2026-11-17T17:39:04.2213279Z [36;1mnpm run build[0m
+2026-11-17T17:39:04.2248025Z shell: /usr/bin/bash -e {0}
+2026-11-17T17:39:04.2248313Z ##[endgroup]
+2026-11-17T17:39:04.2978206Z 
+2026-11-17T17:39:04.2979323Z > career-finder-phone-service@0.6.0 build
+2026-11-17T17:39:04.2979823Z > node scripts/run-framework.mjs build
+2026-11-17T17:39:04.2980022Z 
+2026-11-17T17:39:04.4616223Z [vinext] Tip: migrate from `vinext build` to `vite build`.
+2026-11-17T17:39:04.6502250Z [33m(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+2026-11-17T17:39:04.6503457Z   - JSON import "./.openai/hosting.json" without import attributes (vite.config.ts:3:27). Add `with { type: 'json' }`
+2026-11-17T17:39:04.6504315Z   - import "./scripts/vite/sites-vite-plugin" without a file extension (vite.config.ts:6:23). Add the file extension
+2026-11-17T17:39:04.6505146Z Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.[39m
+2026-11-17T17:39:05.8498590Z [34m[1/5] analyze client references...[39m
+2026-11-17T17:39:05.8499636Z [36mvite v8.3.8 [32mbuilding rsc environment for production...[36m[39m
+2026-11-17T17:39:05.8871292Z transforming...
+2026-11-17T17:39:06.4258061Z ✓ 528 modules transformed.
+2026-11-17T17:39:06.4372871Z rendering chunks...
+2026-11-17T17:39:06.4440179Z [33m[plugin rsc:virtual:vite-rsc/assets-manifest] [33m[SOURCEMAP_BROKEN] [0mSourcemap is likely to be incorrect: a plugin (rsc:virtual:vite-rsc/assets-manifest) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect
+2026-11-17T17:39:06.4442018Z [39m
+2026-11-17T17:39:06.4442655Z [32m✓ built in 591ms[39m
+2026-11-17T17:39:06.4498112Z [34m[2/5] analyze server references...[39m
+2026-11-17T17:39:06.4498871Z [36mvite v8.3.8 [32mbuilding ssr environment for production...[36m[39m
+2026-11-17T17:39:06.4688117Z transforming...
+2026-11-17T17:39:06.7333282Z ✓ 311 modules transformed.
+2026-11-17T17:39:06.7361408Z rendering chunks...
+2026-11-17T17:39:06.7382624Z [33m[plugin rsc:virtual:vite-rsc/assets-manifest] [33m[SOURCEMAP_BROKEN] [0mSourcemap is likely to be incorrect: a plugin (rsc:virtual:vite-rsc/assets-manifest) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect
+2026-11-17T17:39:06.7383849Z [39m
+2026-11-17T17:39:06.7384201Z [32m✓ built in 288ms[39m
+2026-11-17T17:39:06.7433461Z [34m[3/5] build rsc environment...[39m
+2026-11-17T17:39:06.7434245Z [36mvite v8.3.8 [32mbuilding rsc environment for production...[36m[39m
+2026-11-17T17:39:06.7603089Z transforming...
+2026-11-17T17:39:07.5490459Z ✓ 556 modules transformed.
+2026-11-17T17:39:08.0126727Z rendering chunks...
+2026-11-17T17:39:08.2139876Z computing gzip size...
+2026-11-17T17:39:08.2251509Z dist/server/__vinext_cacheability_manifest.js                                                                                                0.02 kB
+2026-11-17T17:39:08.2252393Z dist/server/__vinext_cacheability_request_projection.js                                                                                      0.02 kB
+2026-11-17T17:39:08.2253291Z dist/server/__vinext_pregenerated_concrete_paths.js                                                                                          0.05 kB
+2026-11-17T17:39:08.2254613Z dist/server/wrangler.json                                                                                                                    1.44 kB │ gzip:   0.73 kB
+2026-11-17T17:39:08.2255646Z dist/server/_next/static/css/D7aydOr5.css                                                                                                   32.95 kB │ gzip:   6.72 kB
+2026-11-17T17:39:08.2256793Z dist/server/_next/static/css/BJnpROJJ.css                                                                                                  127.91 kB │ gzip:  22.26 kB
+2026-11-17T17:39:08.2257609Z dist/server/_next/static/navigation.react-server-B8ZcI2mP.js                                                                                 0.04 kB │ gzip:   0.06 kB
+2026-11-17T17:39:08.2258379Z dist/server/index.js                                                                                                                         0.06 kB │ gzip:   0.08 kB
+2026-11-17T17:39:08.2259457Z dist/server/_next/static/cacheability-limits-BTpP4ZoO.js                                                                                     0.11 kB │ gzip:   0.13 kB │ map:     0.94 kB
+2026-11-17T17:39:08.2260338Z dist/server/_next/static/websocket-upgrade-response-Br6dDtPT.js                                                                              0.13 kB │ gzip:   0.14 kB │ map:     0.96 kB
+2026-11-17T17:39:08.2261312Z dist/server/_next/static/work-unit-async-storage-bA0VaW_f.js                                                                                 0.20 kB │ gzip:   0.18 kB │ map:     1.18 kB
+2026-11-17T17:39:08.2262238Z dist/server/_next/static/page-B3Y6BO9X.js                                                                                                    0.21 kB │ gzip:   0.19 kB │ map:     0.47 kB
+2026-11-17T17:39:08.2263051Z dist/server/_next/static/framework~index-CO_E0l8v.js                                                                                         0.24 kB │ gzip:   0.19 kB │ map:     0.59 kB
+2026-11-17T17:39:08.2263899Z dist/server/_next/static/compare-c1f121CO.js                                                                                                 0.29 kB │ gzip:   0.22 kB │ map:     1.63 kB
+2026-11-17T17:39:08.2264872Z dist/server/_next/static/app-prerender-static-params-BCpMn6ul.js                                                                             0.35 kB │ gzip:   0.27 kB │ map:     5.50 kB
+2026-11-17T17:39:08.2265757Z dist/server/_next/static/client-trace-metadata-DUR2PiYt.js                                                                                   0.40 kB │ gzip:   0.25 kB │ map:     5.81 kB
+2026-11-17T17:39:08.2266614Z dist/server/_next/static/revalidation-request-DCri8OJO.js                                                                                    0.40 kB │ gzip:   0.29 kB │ map:     2.45 kB
+2026-11-17T17:39:08.2267482Z dist/server/_next/static/base-path-DhuerTYQ.js                                                                                               0.42 kB │ gzip:   0.28 kB │ map:     3.12 kB
+2026-11-17T17:39:08.2268309Z dist/server/_next/static/SiteFrame-ST5mUgOy.js                                                                                               0.43 kB │ gzip:   0.33 kB │ map:     0.88 kB
+2026-11-17T17:39:08.2269288Z dist/server/_next/static/asset-prefix-DG5zdfn4.js                                                                                            0.44 kB │ gzip:   0.29 kB │ map:     7.42 kB
+2026-11-17T17:39:08.2270128Z dist/server/_next/static/isolate-shared-promise-D5afjYoQ.js                                                                                  0.44 kB │ gzip:   0.30 kB │ map:     3.60 kB
+2026-11-17T17:39:08.2270998Z dist/server/_next/static/hash-lY2-Pf5M.js                                                                                                    0.47 kB │ gzip:   0.32 kB │ map:     3.31 kB
+2026-11-17T17:39:08.2271934Z dist/server/_next/static/chatgpt-auth-BQg-JVHt.js                                                                                            0.55 kB │ gzip:   0.37 kB │ map:     3.78 kB
+2026-11-17T17:39:08.2272794Z dist/server/_next/static/request-context-BxrBcbOz.js                                                                                         0.61 kB │ gzip:   0.39 kB │ map:     3.71 kB
+2026-11-17T17:39:08.2273710Z dist/server/_next/static/server-BHtcAp5a.js                                                                                                  0.65 kB │ gzip:   0.44 kB │ map:     7.41 kB
+2026-11-17T17:39:08.2274520Z dist/server/_next/static/rolldown-runtime-XKyaHtl9.js                                                                                        0.72 kB │ gzip:   0.42 kB
+2026-11-17T17:39:08.2275350Z dist/server/_next/static/isr-decision-C-j0Y7K8.js                                                                                            0.81 kB │ gzip:   0.40 kB │ map:     4.61 kB
+2026-11-17T17:39:08.2276166Z dist/server/_next/static/work-store-scope-uH-G2746.js                                                                                        0.83 kB │ gzip:   0.48 kB │ map:     6.43 kB
+2026-11-17T17:39:08.2277039Z dist/server/_next/static/implicit-tags-CXjh_Chj.js                                                                                           0.84 kB │ gzip:   0.49 kB │ map:     4.44 kB
+2026-11-17T17:39:08.2277853Z dist/server/_next/static/utils-JoVumalc.js                                                                                                   0.84 kB │ gzip:   0.40 kB │ map:    11.39 kB
+2026-11-17T17:39:08.2278828Z dist/server/_next/static/worker-prerender-discovery-DREdVWdm.js                                                                              0.89 kB │ gzip:   0.52 kB │ map:     4.42 kB
+2026-11-17T17:39:08.2279790Z dist/server/_next/static/app-static-generation-BX8cz43B.js                                                                                   0.97 kB │ gzip:   0.55 kB │ map:     2.19 kB
+2026-11-17T17:39:08.2280683Z dist/server/_next/static/navigation-context-state-lUoUcOQU.js                                                                                0.99 kB │ gzip:   0.50 kB │ map:     6.73 kB
+2026-11-17T17:39:08.2281625Z dist/server/_next/static/http-error-responses-B2gV-Vqb.js                                                                                    1.01 kB │ gzip:   0.47 kB │ map:     6.03 kB
+2026-11-17T17:39:08.2282471Z dist/server/_next/static/middleware-response-headers-Xqmnn01b.js                                                                             1.33 kB │ gzip:   0.71 kB │ map:     7.00 kB
+2026-11-17T17:39:08.2283334Z dist/server/_next/static/page-BO-kTCh1.js                                                                                                    1.33 kB │ gzip:   0.68 kB │ map:     2.30 kB
+2026-11-17T17:39:08.2284106Z dist/server/_next/static/cdn-cache-CWsmUDzl.js                                                                                               1.34 kB │ gzip:   0.74 kB │ map:     8.12 kB
+2026-11-17T17:39:08.2284882Z dist/server/_next/static/page-CDMMYTSU.js                                                                                                    1.86 kB │ gzip:   1.05 kB │ map:     2.24 kB
+2026-11-17T17:39:08.2285741Z dist/server/_next/static/worker-image-optimization-DQhgJMTV.js                                                                               2.13 kB │ gzip:   1.06 kB │ map:    10.43 kB
+2026-11-17T17:39:08.2286579Z dist/server/_next/static/app-prerender-endpoints-DTo3YYEm.js                                                                                 2.62 kB │ gzip:   1.07 kB │ map:     8.76 kB
+2026-11-17T17:39:08.2287431Z dist/server/_next/static/headers-C716FvLG.js                                                                                                 2.74 kB │ gzip:   1.16 kB │ map:    21.92 kB
+2026-11-17T17:39:08.2288272Z dist/server/_next/static/app-page-cache-render-Bi20138G.js                                                                                   2.97 kB │ gzip:   1.34 kB │ map:    10.69 kB
+2026-11-17T17:39:08.2289543Z dist/server/_next/static/request-error-log-BGDB1XHa.js                                                                                       3.30 kB │ gzip:   1.43 kB │ map:    26.74 kB
+2026-11-17T17:39:08.2290441Z dist/server/_next/static/isr-cache-BqHSNheX.js                                                                                               4.19 kB │ gzip:   2.01 kB │ map:    26.80 kB
+2026-11-17T17:39:08.2291333Z dist/server/_next/static/page-CNctfGM_.js                                                                                                    4.35 kB │ gzip:   1.67 kB │ map:     7.46 kB
+2026-11-17T17:39:08.2292222Z dist/server/_next/static/cache-headers-Bc-9g33O.js                                                                                           4.46 kB │ gzip:   1.81 kB │ map:    30.50 kB
+2026-11-17T17:39:08.2293049Z dist/server/_next/static/cache-control-BbH8sQKU.js                                                                                           4.53 kB │ gzip:   1.79 kB │ map:    24.71 kB
+2026-11-17T17:39:08.2293892Z dist/server/_next/static/cache-handler-BoFDLe_1.js                                                                                           4.54 kB │ gzip:   1.70 kB │ map:    19.60 kB
+2026-11-17T17:39:08.2294727Z dist/server/_next/static/app-page-tracing-D1qZfYqD.js                                                                                        4.62 kB │ gzip:   2.30 kB │ map:    17.70 kB
+2026-11-17T17:39:08.2295627Z dist/server/_next/static/unified-request-context-Df7rhQ7M.js                                                                                 5.32 kB │ gzip:   2.12 kB │ map:    23.77 kB
+2026-11-17T17:39:08.2296491Z dist/server/_next/static/request-pipeline-DLFC6_9p.js                                                                                        5.66 kB │ gzip:   2.28 kB │ map:    50.18 kB
+2026-11-17T17:39:08.2297462Z dist/server/_next/static/framework~index~page~page~layout~page~page~page~page~app-rsc-response-stage~app-route-handl~mqywhxe1-CcOTYhCj.js    5.85 kB │ gzip:   2.44 kB │ map:    23.94 kB
+2026-11-17T17:39:08.2298698Z dist/server/_next/static/response-stage-policy-eksn8oJv.js                                                                                   6.97 kB │ gzip:   2.44 kB │ map:    32.76 kB
+2026-11-17T17:39:08.2299597Z dist/server/_next/static/app-rsc-response-stage-C6uzfFDH.js                                                                                  7.68 kB │ gzip:   2.70 kB │ map:    23.11 kB
+2026-11-17T17:39:08.2300482Z dist/server/_next/static/app-page-cache-BHoGyT5V.js                                                                                          8.24 kB │ gzip:   2.88 kB │ map:    64.83 kB
+2026-11-17T17:39:08.2301323Z dist/server/_next/static/app-worker-stages-vGuNzLUl.js                                                                                       8.29 kB │ gzip:   3.34 kB │ map:    53.01 kB
+2026-11-17T17:39:08.2302167Z dist/server/_next/static/config-headers-D-Mvh2Mr.js                                                                                          8.62 kB │ gzip:   3.53 kB │ map:    88.62 kB
+2026-11-17T17:39:08.2303542Z dist/server/_next/static/app-page-cache-finalizer-CSzL6t7s.js                                                                                9.87 kB │ gzip:   3.43 kB │ map:    36.27 kB
+2026-11-17T17:39:08.2304442Z dist/server/_next/static/cacheability-request-BZjZbB1a.js                                                                                   10.95 kB │ gzip:   3.82 kB │ map:    44.24 kB
+2026-11-17T17:39:08.2305338Z dist/server/_next/static/route-miss-response-B7-xSyPG.js                                                                                    11.76 kB │ gzip:   4.05 kB │ map:    60.75 kB
+2026-11-17T17:39:08.2306167Z dist/server/_next/static/headers-5jF0Vjbh.js                                                                                                11.88 kB │ gzip:   4.15 kB │ map:    73.47 kB
+2026-11-17T17:39:08.2306972Z dist/server/_next/static/client-build-files-CbQbVNcI.js                                                                                     12.97 kB │ gzip:   5.29 kB │ map:    68.80 kB
+2026-11-17T17:39:08.2307882Z dist/server/_next/static/page-orfpEBk3.js                                                                                                   13.32 kB │ gzip:   4.27 kB │ map:    20.30 kB
+2026-11-17T17:39:08.2308920Z dist/server/_next/static/navigation-signal-DTzfpfwo.js                                                                                      13.49 kB │ gzip:   4.77 kB │ map:    69.66 kB
+2026-11-17T17:39:08.2309767Z dist/server/_next/static/page-CTofD9iL.js                                                                                                   14.64 kB │ gzip:   5.16 kB │ map:    17.92 kB
+2026-11-17T17:39:08.2310571Z dist/server/_next/static/text-stream-DZXcXd5V.js                                                                                            19.66 kB │ gzip:   6.22 kB │ map:    77.03 kB
+2026-11-17T17:39:08.2311414Z dist/server/_next/static/fetch-cache-Dgl_D6BZ.js                                                                                            24.54 kB │ gzip:   8.54 kB │ map:   113.34 kB
+2026-11-17T17:39:08.2312331Z dist/server/_next/static/framework~index~page~page~layout~page~page~page~page-D-ma_glj.js                                                   57.11 kB │ gzip:  17.53 kB │ map:    19.06 kB
+2026-11-17T17:39:08.2313234Z dist/server/_next/static/app-route-handler-dispatch-Bybil2WB.js                                                                             60.06 kB │ gzip:  20.89 kB │ map:   240.84 kB
+2026-11-17T17:39:08.2314079Z dist/server/_next/static/core-G-59JveU.js                                                                                                  226.51 kB │ gzip:  59.61 kB │ map:     9.80 kB
+2026-11-17T17:39:08.2314913Z dist/server/_next/static/worker-entry-CTXmZpLa.js                                                                                          901.45 kB │ gzip: 318.08 kB │ map: 3,553.73 kB
+2026-11-17T17:39:08.2315247Z 
+2026-11-17T17:39:08.2398883Z [33m[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0mapp/layout.tsx is dynamically imported by \0virtual:vinext-rsc-entry but also statically imported by \0virtual:vinext-rsc-entry, dynamic import will not move module into another chunk.
+2026-11-17T17:39:08.2399877Z [39m
+2026-11-17T17:39:08.2401416Z [33m[plugin rsc:inject-async-local-storage] [33m[SOURCEMAP_BROKEN] [0mSourcemap is likely to be incorrect: a plugin (rsc:inject-async-local-storage) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect
+2026-11-17T17:39:08.2402393Z [39m
+2026-11-17T17:39:08.2404088Z [33m[plugin rsc:inject-async-local-storage] [33m[SOURCEMAP_BROKEN] [0mSourcemap is likely to be incorrect: a plugin (rsc:inject-async-local-storage) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect
+2026-11-17T17:39:08.2405639Z [39m
+2026-11-17T17:39:08.2407746Z [33m[plugin rsc:virtual:vite-rsc/assets-manifest] [33m[SOURCEMAP_BROKEN] [0mSourcemap is likely to be incorrect: a plugin (rsc:virtual:vite-rsc/assets-manifest) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect
+2026-11-17T17:39:08.2409454Z [39m
+2026-11-17T17:39:08.2411403Z [33m[plugin rsc:virtual:vite-rsc/assets-manifest] [33m[SOURCEMAP_BROKEN] [0mSourcemap is likely to be incorrect: a plugin (rsc:virtual:vite-rsc/assets-manifest) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect
+2026-11-17T17:39:08.2412498Z [39m
+2026-11-17T17:39:08.2412930Z [32m✓ built in 1.50s[39m
+2026-11-17T17:39:08.2457320Z [34m[4/5] build client environment...[39m
+2026-11-17T17:39:08.2457940Z [36mvite v8.3.8 [32mbuilding client environment for production...[36m[39m
+2026-11-17T17:39:08.2504647Z [33m`output.codeSplitting.groups[0].name` is a function. Set `output.codeSplitting.groups[0].debugName` so the bundler timing report can identify this group.[39m
+2026-11-17T17:39:08.2506074Z [33m`output.codeSplitting.groups[1].name` is a function. Set `output.codeSplitting.groups[1].debugName` so the bundler timing report can identify this group.[39m
+2026-11-17T17:39:08.2507340Z [33m`output.codeSplitting.groups[2].name` is a function. Set `output.codeSplitting.groups[2].debugName` so the bundler timing report can identify this group.[39m
+2026-11-17T17:39:08.2755733Z transforming...
+2026-11-17T17:39:09.4673649Z ✓ 2105 modules transformed.
+2026-11-17T17:39:09.5424370Z rendering chunks...
+2026-11-17T17:39:09.6009753Z computing gzip size...
+2026-11-17T17:39:09.6053460Z dist/client/.assetsignore                                 0.02 kB
+2026-11-17T17:39:09.6054303Z dist/client/.vite/vinext-client-reference-sources.json    0.37 kB │ gzip:  0.22 kB
+2026-11-17T17:39:09.6055115Z dist/client/vinext-client-entry-manifest.json             1.84 kB │ gzip:  0.42 kB
+2026-11-17T17:39:09.6055681Z dist/client/.vite/manifest.json                           5.17 kB │ gzip:  0.84 kB
+2026-11-17T17:39:09.6056129Z dist/client/_next/static/workers/ccfbb691-S5o1etW8.js   518.44 kB
+2026-11-17T17:39:09.6056654Z dist/client/_next/static/css/D7aydOr5.css                32.95 kB │ gzip:  6.72 kB
+2026-11-17T17:39:09.6057216Z dist/client/_next/static/css/BJnpROJJ.css               127.91 kB │ gzip: 22.26 kB
+2026-11-17T17:39:09.6057828Z dist/client/_next/static/chunks/C6ymND1K.js               0.10 kB │ gzip:  0.11 kB
+2026-11-17T17:39:09.6058358Z dist/client/_next/static/chunks/CC6g1BCS.js               0.11 kB │ gzip:  0.11 kB
+2026-11-17T17:39:09.6059044Z dist/client/_next/static/chunks/CTA0_pUo.js               0.46 kB │ gzip:  0.32 kB
+2026-11-17T17:39:09.6059865Z dist/client/_next/static/chunks/CcyWYbDU.js               0.75 kB │ gzip:  0.45 kB
+2026-11-17T17:39:09.6060427Z dist/client/_next/static/chunks/RyBGhmLh.js               1.02 kB │ gzip:  0.37 kB
+2026-11-17T17:39:09.6060970Z dist/client/_next/static/chunks/BsEG2a_R.js               1.29 kB │ gzip:  0.36 kB
+2026-11-17T17:39:09.6061465Z dist/client/_next/static/chunks/6OXTmecn.js               4.21 kB │ gzip:  1.80 kB
+2026-11-17T17:39:09.6062008Z dist/client/_next/static/chunks/DLOXlqdw.js               5.17 kB │ gzip:  1.82 kB
+2026-11-17T17:39:09.6062523Z dist/client/_next/static/chunks/Inv6UIkZ.js               6.37 kB │ gzip:  2.40 kB
+2026-11-17T17:39:09.6063020Z dist/client/_next/static/chunks/CHgzY9Q_.js               7.71 kB │ gzip:  2.98 kB
+2026-11-17T17:39:09.6063612Z dist/client/_next/static/chunks/CVBtvWo3.js              20.32 kB │ gzip:  5.95 kB
+2026-11-17T17:39:09.6064130Z dist/client/_next/static/chunks/DgaGyViI.js             105.55 kB │ gzip: 31.81 kB
+2026-11-17T17:39:09.6064624Z dist/client/_next/static/chunks/BaAdGni2.js             128.97 kB │ gzip: 38.92 kB
+2026-11-17T17:39:09.6065192Z dist/client/_next/static/chunks/BpxdbFA0.js             137.95 kB │ gzip: 41.19 kB
+2026-11-17T17:39:09.6065722Z dist/client/_next/static/chunks/Bm5dBeZv.js             153.16 kB │ gzip: 43.46 kB
+2026-11-17T17:39:09.6066232Z dist/client/_next/static/chunks/B0PXqnjO.js             219.27 kB │ gzip: 68.42 kB
+2026-11-17T17:39:09.6066765Z dist/client/_next/static/chunks/CToOlqBv.js             228.74 kB │ gzip: 60.49 kB
+2026-11-17T17:39:09.6067052Z 
+2026-11-17T17:39:09.6102578Z [32m✓ built in 1.36s[39m
+2026-11-17T17:39:09.6169419Z [34m[5/5] build ssr environment...[39m
+2026-11-17T17:39:09.6170052Z [36mvite v8.3.8 [32mbuilding ssr environment for production...[36m[39m
+2026-11-17T17:39:09.6363848Z transforming...
+2026-11-17T17:39:09.8811655Z ✓ 317 modules transformed.
+2026-11-17T17:39:10.0721713Z rendering chunks...
+2026-11-17T17:39:10.1450301Z computing gzip size...
+2026-11-17T17:39:10.1471756Z dist/server/ssr/_next/static/workers/ccfbb691-S5o1etW8.js        518.44 kB
+2026-11-17T17:39:10.1473433Z dist/server/ssr/_next/static/static.edge-Ecj_PjJ1.js               0.25 kB │ gzip:  0.19 kB │ map:   0.68 kB
+2026-11-17T17:39:10.1474614Z dist/server/ssr/_next/static/layout-segment-context-CumDz8Zg.js    0.47 kB │ gzip:  0.34 kB │ map:   3.39 kB
+2026-11-17T17:39:10.1475678Z dist/server/ssr/_next/static/streamed-icons-BtBaR2ok.js            0.74 kB │ gzip:  0.48 kB │ map:   2.76 kB
+2026-11-17T17:39:10.1476811Z dist/server/ssr/_next/static/client-page-root-Df-XuHJr.js          0.85 kB │ gzip:  0.52 kB │ map:  30.33 kB
+2026-11-17T17:39:10.1477844Z dist/server/ssr/_next/static/SignOutButton-BQ3fvIOb.js             0.87 kB │ gzip:  0.57 kB │ map:   2.16 kB
+2026-11-17T17:39:10.1479216Z dist/server/ssr/_next/static/app-router-scroll-D8jxhpV9.js         2.86 kB │ gzip:  1.28 kB │ map:  15.52 kB
+2026-11-17T17:39:10.1480326Z dist/server/ssr/_next/static/SiteFrame-Cq_HKI1M.js                 4.31 kB │ gzip:  1.88 kB │ map:  10.18 kB
+2026-11-17T17:39:10.1481340Z dist/server/ssr/_next/static/SignInOptions-Dc28xVE2.js             4.69 kB │ gzip:  1.80 kB │ map:  11.55 kB
+2026-11-17T17:39:10.1482350Z dist/server/ssr/_next/static/error-boundary-DLLIdIrS.js            6.07 kB │ gzip:  1.91 kB │ map:  27.01 kB
+2026-11-17T17:39:10.1483413Z dist/server/ssr/_next/static/ProviderConnections-CiE7Zgb_.js       6.48 kB │ gzip:  2.49 kB │ map:  18.51 kB
+2026-11-17T17:39:10.1484437Z dist/server/ssr/_next/static/ConnectionPanel-DY959yhP.js           7.81 kB │ gzip:  3.06 kB │ map:  19.31 kB
+2026-11-17T17:39:10.1485353Z dist/server/ssr/_next/static/react-1cso1KEy.js                     8.30 kB │ gzip:  3.23 kB │ map:  30.68 kB
+2026-11-17T17:39:10.1486237Z dist/server/ssr/_next/static/AccountPanel-CAYRvq7E.js             20.40 kB │ gzip:  6.02 kB │ map:  46.57 kB
+2026-11-17T17:39:10.1487226Z dist/server/ssr/_next/static/createLucideIcon-DQlDK3Yl.js        138.34 kB │ gzip: 41.32 kB │ map: 757.34 kB
+2026-11-17T17:39:10.1488656Z dist/server/ssr/_next/static/PhoneApp-WqaZ9ch1.js                153.32 kB │ gzip: 43.61 kB │ map: 411.84 kB
+2026-11-17T17:39:10.1489610Z dist/server/ssr/_next/static/LocaleProvider-Bv6Bc4x4.js          228.65 kB │ gzip: 60.48 kB │ map:  16.50 kB
+2026-11-17T17:39:10.1490579Z dist/server/ssr/index.js                                         312.62 kB │ gzip: 97.99 kB │ map: 965.97 kB
+2026-11-17T17:39:10.1490962Z 
+2026-11-17T17:39:10.1553548Z [33m[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0mnode_modules/vinext/dist/shims/slot.js is dynamically imported by \0virtual:vite-rsc/client-references but also statically imported by node_modules/vinext/dist/server/app-route-tree.js, node_modules/vinext/dist/server/app-ssr-entry.js, node_modules/vinext/dist/shims/client-page-root.js, dynamic import will not move module into another chunk.
+2026-11-17T17:39:10.1554990Z [39m
+2026-11-17T17:39:10.1556644Z [33m[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0mnode_modules/vinext/dist/shims/default-global-error.js is dynamically imported by \0virtual:vite-rsc/client-references but also statically imported by node_modules/vinext/dist/server/app-ssr-entry.js, node_modules/vinext/dist/shims/error-boundary.js, dynamic import will not move module into another chunk.
+2026-11-17T17:39:10.1558026Z [39m
+2026-11-17T17:39:10.1559993Z [33m[plugin rsc:inject-async-local-storage] [33m[SOURCEMAP_BROKEN] [0mSourcemap is likely to be incorrect: a plugin (rsc:inject-async-local-storage) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect
+2026-11-17T17:39:10.1561310Z [39m
+2026-11-17T17:39:10.1566213Z [33m[plugin rsc:inject-async-local-storage] [33m[SOURCEMAP_BROKEN] [0mSourcemap is likely to be incorrect: a plugin (rsc:inject-async-local-storage) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect
+2026-11-17T17:39:10.1567307Z [39m
+2026-11-17T17:39:10.1569158Z [33m[plugin rsc:virtual:vite-rsc/assets-manifest] [33m[SOURCEMAP_BROKEN] [0mSourcemap is likely to be incorrect: a plugin (rsc:virtual:vite-rsc/assets-manifest) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect
+2026-11-17T17:39:10.1570313Z [39m
+2026-11-17T17:39:10.1574622Z [32m✓ built in 540ms[39m
+2026-11-17T17:39:10.1677338Z 
+2026-11-17T17:39:10.1677878Z   Route (app)
+2026-11-17T17:39:10.1678408Z   ┌ ƒ /       
+2026-11-17T17:39:10.1678983Z   ├ ƒ /account
+2026-11-17T17:39:10.1679257Z   ├ ƒ /connect
+2026-11-17T17:39:10.1679491Z   ├ ƒ /phone  
+2026-11-17T17:39:10.1679772Z   ├ ? /privacy
+2026-11-17T17:39:10.1679996Z   └ ? /support
+2026-11-17T17:39:10.1680119Z 
+2026-11-17T17:39:10.1680289Z   ƒ Dynamic  ? Unknown
+2026-11-17T17:39:10.1680448Z 
+2026-11-17T17:39:10.1680704Z   ? Some routes could not be classified. vinext currently uses static analysis
+2026-11-17T17:39:10.1681171Z     and cannot detect dynamic API usage (headers(), cookies(), etc.) at build time.
+2026-11-17T17:39:10.1681641Z     Automatic classification will be improved in a future release.
+2026-11-17T17:39:10.1681872Z 
+2026-11-17T17:39:10.1681991Z   Build complete.
+2026-11-17T17:39:10.1682117Z 
+2026-11-17T17:39:10.3040485Z ##[group]Run npm audit --json --fetch-retries=0 --fetch-timeout=30000 > tests/dependency-audit-ci.json
+2026-11-17T17:39:10.3041102Z [36;1mnpm audit --json --fetch-retries=0 --fetch-timeout=30000 > tests/dependency-audit-ci.json[0m
+2026-11-17T17:39:10.3069489Z shell: /usr/bin/bash -e {0}
+2026-11-17T17:39:10.3069815Z ##[endgroup]
+2026-11-17T17:40:09.2861885Z ##[error]Process completed with exit code 1.
+2026-11-17T17:40:09.2944231Z ##[group]Run actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+2026-11-17T17:40:09.2944733Z with:
+2026-11-17T17:40:09.2944976Z   name: hosted-storage-checks-44139018005
+2026-11-17T17:40:09.2945725Z   path: hosted/tests/hosted-verification.json
+hosted/tests/hosted-worker-verification.json
+hosted/tests/hosted-discovery-verification.json
+hosted/tests/hosted-phone-verification.json
+hosted/tests/dependency-audit-ci.json
+
+2026-11-17T17:40:09.2946426Z   if-no-files-found: ignore
+2026-11-17T17:40:09.2946683Z   retention-days: 7
+2026-11-17T17:40:09.2946918Z   compression-level: 6
+2026-11-17T17:40:09.2947144Z   overwrite: false
+2026-11-17T17:40:09.2947354Z   include-hidden-files: false
+2026-11-17T17:40:09.2947624Z ##[endgroup]
+2026-11-17T17:40:09.4290578Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-11-17T17:40:09.4293016Z The least common ancestor is /home/runner/work/ahmad-career/ahmad-career/hosted/tests. This will be the root directory of the artifact
+2026-11-17T17:40:09.4293978Z With the provided path, there will be 5 files uploaded
+2026-11-17T17:40:09.4296523Z Artifact name is valid!
+2026-11-17T17:40:09.4296957Z Root directory input is valid!
+2026-11-17T17:40:09.9664951Z Beginning upload of artifact content to blob storage
+2026-11-17T17:40:10.3744919Z Uploaded bytes 9908
+2026-11-17T17:40:10.4632661Z Finished uploading artifact content to blob storage!
+2026-11-17T17:40:10.4633712Z SHA256 digest of uploaded artifact zip is 71dc243b282ff1cf057089c17661c95c0c7e30b1a19bf5b2bda0d87e17af3e12
+2026-11-17T17:40:10.4634274Z Finalizing artifact upload
+2026-11-17T17:40:11.0398853Z Artifact hosted-storage-checks-44139018005.zip successfully finalized. Artifact ID 14353622226
+2026-11-17T17:40:11.0399681Z Artifact hosted-storage-checks-44139018005 has been successfully uploaded! Final size is 9908 bytes. Artifact ID is 14353622226
+2026-11-17T17:40:11.0401500Z Artifact download URL: https://github.com/swonyu/ahmad-career/actions/runs/44139018005/artifacts/14353622226
+2026-11-17T17:40:11.0564107Z Post job cleanup.
+2026-11-17T17:40:11.1217881Z [command]/usr/bin/git version
+2026-11-17T17:40:11.1249638Z git version 2.56.1
+2026-11-17T17:40:11.1273956Z Temporarily overriding HOME='/home/runner/work/_temp/570e2e22-d234-4e73-9220-80daa8c5273b' before making global git config changes
+2026-11-17T17:40:11.1275444Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-17T17:40:11.1277712Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/ahmad-career/ahmad-career
+2026-11-17T17:40:11.1301974Z Removing SSH command configuration
+2026-11-17T17:40:11.1306627Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T17:40:11.1331394Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-17T17:40:11.1483409Z Removing HTTP extra header
+2026-11-17T17:40:11.1487024Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T17:40:11.1514247Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-17T17:40:11.1662007Z Removing includeIf entries pointing to credentials config files
+2026-11-17T17:40:11.1666679Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T17:40:11.1693266Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-17T17:40:11.1956549Z Cleaning up orphan processes

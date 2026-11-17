@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-11-17T15:59:37Z",
+  "asOf": "2026-11-17T16:50:54Z",
   "environment": "separate owner-private acceptance Site",
   "site": "appgprj_6afc21bd599c8191a0fb7705274d8582",
   "version1": {
@@ -82,9 +82,11 @@
     "audienceChanged": false
   },
   "latestConnectionAvailabilityCheck": {
-    "observedAt": "2026-11-17T15:19:24Z",
-    "receipt": "browser-connection-recheck.json",
-    "result": "Originating connected-browser context unavailable; no browser code executed or new consent result observed."
+    "recordedAt": "2026-11-17 16:16:19 UTC",
+    "receipt": "browser-connection-recheck-after-restart.json",
+    "result": "blocked before browser code execution",
+    "message": "Browser access requires the originating browser context. Open ChatGPT in the browser with the connected extension and try again.",
+    "providerAcceptanceChanged": false
   },
   "version5": {
     "source": "7e0ac76792d31b98863c5e9f8f1e1c4821a7f2e7",
@@ -92,5 +94,21 @@
     "browserAcceptance": "Not performed; the correct owner browser context remains unavailable.",
     "changeScope": "Three source-label direction boundaries, neutral visible/live search summary, limit detection, focused tests and lab history.",
     "audienceChanged": false
+  },
+  "connectionAvailabilityCheckHistory": [
+    {
+      "observedAt": "2026-11-17T15:19:24Z",
+      "receipt": "browser-connection-recheck.json",
+      "result": "Originating connected-browser context unavailable; no browser code executed or new consent result observed."
+    }
+  ],
+  "version6": {
+    "source": "ed3aba5dd9b0e6888a2fb47440954a1d4cce3acd",
+    "deployedAt": "2026-11-17T16:50:33.360699Z",
+    "deploymentReceipt": "private-acceptance-deployment-v6.json",
+    "change": "Singular search and Saved shortcut wording with corresponding Arabic; existing layout and content-derived accessible name retained.",
+    "browserAcceptance": "Not newly executed by this lane: the originating browser context remains unavailable.",
+    "providerAcceptance": "No new consent/callback or disposable-account lifecycle result.",
+    "audience": "Unchanged owner-only audience; no external visitors."
   }
 }

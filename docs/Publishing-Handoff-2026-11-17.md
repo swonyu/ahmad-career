@@ -1,15 +1,17 @@
 # Career Finder — publishing and owner-acceptance handoff
 
-**Status: all five automated engineering gates passed; real provider/account/device and store gates remain open.** This document separates exact-source acceptance, hosted availability, provider activation and store distribution.
+> **Preserved baseline handoff.** The source and test results below belong to the earlier `e66d180` / evidence-commit `949ce0ad` milestone. They do not certify the later redesign, provider or research-driven changes. Read the [current continuation implementation](Continuation-Implementation-2026-11-17.md) and [release integration checklist](Release-Integration-Checklist-2026-11-17.md) for the separate candidate, private acceptance deployment, current test outcomes and remaining gates. Historical receipts below are retained unchanged.
+
+**Status at the preserved baseline: all five automated engineering gates passed; real provider/account/device and store gates remained open.** This document separates exact-source acceptance, hosted availability, provider activation and store distribution.
 
 ## Source and ownership
 
 | Item | Exact state |
 | --- | --- |
 | Development branch | `career-finder-phones-verified-apply-20261116` |
-| Latest tested application source | `e66d1809ece7666c7d99412d48aa193cdf024c42` |
+| Tested application source at this baseline | `e66d1809ece7666c7d99412d48aa193cdf024c42` |
 | Tested application-source tree | `2bbffcaa056fa08b2cdea9da7b9426cac8476fc0` |
-| Current full CI | [Run 44030852040](https://github.com/swonyu/ahmad-career/actions/runs/44030852040): **all five jobs passed**, including 99/99 Android and 13/13 iPhone UI. Artifact digests and exact source provenance are verified. |
+| Complete CI at this baseline | [Run 44030852040](https://github.com/swonyu/ahmad-career/actions/runs/44030852040): **all five jobs passed**, including 99/99 Android and 13/13 iPhone UI. Artifact digests and exact source provenance are verified. |
 | Hosted source | `1135a3270435d3719c6f62f1a2e3a53e2c040146`, tree `379709814adf9fad26d4c17457b0b942d290c029`; the repository's 186 tracked hosted files are byte-identical |
 | Hosted deployment | Public version **7**, deployment `appgdep_6afbcfe3a03881918b131992225ded31`, succeeded `2026-11-17T03:54:40.015318+00:00` |
 | Protected release branch | `app-store/career-workspace-copy-20261117`, last verified `fd9c5399f2b7001b234b3b86bf72e2b36b5114c1`; unchanged by this continuation |
@@ -33,7 +35,7 @@ The release owner should integrate the tested development changes while preservi
 
 ## Evidence and limits
 
-Current source `e66d180` passed **13 iPhone UI cases, zero failures**, in **1059.01 seconds**, **120 boundary checks**, **503 lifecycle assertions across 77 scenarios**, **43 discovery assertions across 13 scenarios**, the remaining store checks and an **unsigned Release build**. Android passed **all 99 cases**: 97 ordinary, 1 default-preview TLS rejection and 1 native HTTPS. Its HTTPS case completed in 24.871 seconds with four synthetic POSTs in the exact success/uncertainty/cooldown counts 1/1/2, multipart/PDF evidence, fresh approval and uncertain-retry protection. The current Android artifact includes 17 verified captures; the new prepared/receipt images explicitly identify simulation and zero genuine verified receipts. The previous 900-second timeout belongs to 479e1f0, remains preserved, and does not prove which original operation stalled. See the [complete exact-source receipt](strict-review-evidence/ci-44030852040/complete-source-acceptance.json), [Android receipt](strict-review-evidence/ci-44030852040/android-verification-receipt.json) and [iPhone UI receipt](strict-review-evidence/ci-44030852040/iphone-ui-acceptance.json).
+Baseline source `e66d180` passed **13 iPhone UI cases, zero failures**, in **1059.01 seconds**, **120 boundary checks**, **503 lifecycle assertions across 77 scenarios**, **43 discovery assertions across 13 scenarios**, the remaining store checks and an **unsigned Release build**. Android passed **all 99 cases**: 97 ordinary, 1 default-preview TLS rejection and 1 native HTTPS. Its HTTPS case completed in 24.871 seconds with four synthetic POSTs in the exact success/uncertainty/cooldown counts 1/1/2, multipart/PDF evidence, fresh approval and uncertain-retry protection. That baseline Android artifact includes 17 verified captures; the new prepared/receipt images explicitly identify simulation and zero genuine verified receipts. The previous 900-second timeout belongs to 479e1f0, remains preserved, and does not prove which original operation stalled. See the [complete exact-source receipt](strict-review-evidence/ci-44030852040/complete-source-acceptance.json), [Android receipt](strict-review-evidence/ci-44030852040/android-verification-receipt.json) and [iPhone UI receipt](strict-review-evidence/ci-44030852040/iphone-ui-acceptance.json).
 
 The frozen hosted source passed 61 account/application groups, 19 phone groups / 164 Worker requests, 30 authentication groups / 15 auth Worker requests, 26 discovery groups, 64 frontend + 14 browser-transport tests, 33 vault groups, six PDF parser groups and the separate 17-request Worker gate. The complete hosted dependency audit reports zero findings. Companion checks passed 119 HTTP groups, 77 application-state groups and 12 TLS checks. These are scoped engineering tests, not real provider consent or employer acceptance.
 

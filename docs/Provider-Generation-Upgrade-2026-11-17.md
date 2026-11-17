@@ -2,7 +2,7 @@
 
 ## Scope and status
 
-This is a source-candidate follow-up to `eebe748cb5afca0efcb9389255400a00cf5a480a`. The implementation changes `hosted/server/oauth.mjs`, the **unapplied** `0004_provider_connection_generation.sql`, and the two existing auth test programs. It changes no provider scopes, credentials, identity keys, email policy, account schema shape, Drizzle snapshot or journal. No hosted database was accessed or migrated by this work.
+This is a source-candidate follow-up to `eebe748cb5afca0efcb9389255400a00cf5a480a`. The implementation changes `hosted/server/oauth.mjs`, the **then-unapplied at the time of repair** `0004_provider_connection_generation.sql`, and the two existing auth test programs. It changes no provider scopes, credentials, identity keys, email policy, account schema shape, Drizzle snapshot or journal. No hosted database was accessed or migrated by that isolated repair lane. The subsequent QA deployment below applied 0004; it is now immutable.
 
 Before this edit, the integration owner confirmed that 0004 had never been attempted on the live or QA Site: the live phone deployment remained version 7 and the private QA Site was unpublished. That confirmation is the reason this source migration could be repaired. Once any migration is applied, its SQL, snapshot and journal are immutable. A failed deployment can already have applied SQL; check actual migration state before any later repair.
 
@@ -67,8 +67,8 @@ These are isolated source/runtime checks. They are not real consent, hosted ingr
 
 ## Rollout and recovery
 
-1. Confirm source ownership and the target Site's actual migration/deployment state. Apply this repair only while 0004 is known unapplied. Do not change an already-applied SQL file based only on a failed deployment result.
-2. Integrate the four-file source patch with the current UI/native/docs candidate and keep the existing Drizzle schema, 0004 snapshot and journal, whose column shape is unchanged. Run the full combined candidate gates and record the exact commit.
+1. Confirm source ownership and the target Site's actual migration/deployment state. That source repair was authorized only while 0004 was known unapplied. It is now applied to private QA; preserve the corrected SQL and use a new ordered migration for any later schema repair. Do not change an already-applied SQL file based only on a failed deployment result.
+2. The four-file source correction is integrated in the continuation candidate; keep the existing Drizzle schema, applied 0004 snapshot and journal, whose column shape is unchanged. Recheck the exact combined source manifest, run its required gates and record the actual commit/results. The recorded provider-slice checks do not certify later UI/native changes.
 3. Package through the supported Sites workflow. Sites applies pending schema before the Worker upload. Verify that the intended environment and origin belong to the target QA or production Site; do not mix its credentials, callback URLs or version receipts with another deployment.
 4. On an authorized disposable account, verify the real status path, sign-in persistence, current connection display and legitimate disconnect. Repeat the old-client/mismatched confirmation rejection and deletion/recovery acceptance. The local tests do not substitute for those checks.
 5. No administrator backfill or global update is required. If initialization cannot establish current authority, the client receives an error and must reload/reconfirm the account. Do not bypass the connection ID requirement or replace an error with disconnected status.
@@ -79,3 +79,5 @@ The live version 7, source candidate and publishing branch remain distinct artif
 ## Subsequent private QA deployment
 
 After this repair and its tests, the corrected migration was applied successfully to the separate owner-private acceptance Site at `2026-11-17T10:07:50.731812Z`, source `8a31c7db5c761e80d08272d0f7700b4c2dc3ce99`, environment revision 1. The SQL/snapshot/journal are now immutable. The [deployment receipt](strict-review-evidence/continuation-2026-11-17-cloud/private-acceptance-deployment.json) records the Site and saved version. Public hosted v7 remains unchanged. This successful fresh-database deployment does not establish production-data upgrade or real-provider acceptance.
+
+The later private v2–v5 and current [private v6 deployment](strict-review-evidence/continuation-2026-11-17-cloud/private-acceptance-deployment-v6.json) retain the already-applied migration and environment revision 1. Private v6 source `ed3aba5dd9b0e6888a2fb47440954a1d4cce3acd` adds only singular wording and the existing count matrix from application `21f08f5`; no schema repair, provider configuration change or public migration occurs. Earlier source-label/search-status and v4 search/draft/CSV receipts remain historical. The real Google link remains blocked before a verified callback. Newer source/deployment receipts do not turn the historical provider-slice checks into real consent or production-data upgrade acceptance.

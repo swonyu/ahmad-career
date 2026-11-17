@@ -1,0 +1,11 @@
+{
+  "startedAt": "2026-11-17T18:22:49.010286+00:00",
+  "completedAt": "2026-11-17T18:23:00.808296+00:00",
+  "source": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+  "command": "npm audit --omit=dev --json",
+  "exitCode": 0,
+  "outputBytes": 367,
+  "outputSha256": "c08d05b2b03ea46091efa74c8fb869ba6594053f24d325b1eaf366fa6e174e9d",
+  "stderr": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n",
+  "qualification": "Exposure classification only. Required full dependency audit remains failed; this does not prove bundle unreachability or release readiness."
+}

@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/final_native_peer",
+  "reviewed_at_utc": "2026-11-17T17:26:10.362446+00:00",
+  "review_type": "Bounded read-only visual critique of four actual run38 exported iPhone originals.",
+  "source": {
+    "candidate": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+    "ci_merge_checkout": "8ea5e6b2108772cfade35f7e266659a27ab00b2e",
+    "common_tree": "b2a2ca81df383a468c318e4ebc629c13f16e5fe9",
+    "local_head": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+    "run_id": 44130275991,
+    "artifact_id": 14350559318,
+    "artifact_sha256_verified_by_native_owner": "4895285f086dece71aefd3e3af8d325e79c0440035740eb648dfc1768bae5ec3",
+    "manifest_path": "/workspace/scratch/5bc6158967e8/native-ci-21f08f5/docs/strict-review-evidence/continuation-2026-11-17-cloud/ci-44130275991/iphone-exported-manifest.json",
+    "manifest_sha256": "2e86bdde017b5bf0ffd6a809547d0ea870df69cb7daa97d33759efd17992fb6c"
+  },
+  "reviewed_captures": [
+    {
+      "retained_path": "/workspace/scratch/5bc6158967e8/native-ci-21f08f5/docs/strict-review-evidence/continuation-2026-11-17-cloud/ci-44130275991/iphone-default-connection.png",
+      "original_path": "/workspace/scratch/5bc6158967e8/ci-44130275991-native/iphone-ui/career-ui-screenshots/D493AB67-3A58-4BE3-9814-1E2088D6E7E9.png",
+      "sha256": "1fa2672dee8b9db53e5434315671c77ee3ced9c90f5c555956f989f90ae42be8",
+      "bytes": 356522,
+      "dimensions": [
+        1260,
+        2736
+      ],
+      "capture_name": "22-simple-default-connection",
+      "test_identifier": "CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup()",
+      "visually_inspected_original": true,
+      "byte_identical_to_exported_original": true,
+      "manifest_link_verified": true,
+      "observation": "The restored default connection view shows the code field, disabled empty-code Connect action, collapsed Use another service row and account/privacy links without a new actionable overlap in those visible controls. The address field and Clear control are not expanded or visible."
+    },
+    {
+      "retained_path": "/workspace/scratch/5bc6158967e8/native-ci-21f08f5/docs/strict-review-evidence/continuation-2026-11-17-cloud/ci-44130275991/iphone-arabic-profile-original-values.png",
+      "original_path": "/workspace/scratch/5bc6158967e8/ci-44130275991-native/iphone-ui/career-ui-screenshots/EA644BB2-5C73-48EA-80F1-2F0992A99FC9.png",
+      "sha256": "5ba41163ed42b005d38d240f3970169d0b42c01e859f9afcb238974191f3aa71",
+      "bytes": 394772,
+      "dimensions": [
+        1260,
+        2736
+      ],
+      "capture_name": "28-arabic-profile-original-values",
+      "test_identifier": "CareerFinderUITests/testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText()",
+      "visually_inspected_original": true,
+      "byte_identical_to_exported_original": true,
+      "manifest_link_verified": true,
+      "observation": "The large-text Arabic profile shows localized labels, visible Save/Cancel actions and a retained Latin synthetic email value. The email is ellipsized in this single-line screenshot; the complete saved value cannot be established visually. No new actionable defect is reproduced in the visible form-control region."
+    },
+    {
+      "retained_path": "/workspace/scratch/5bc6158967e8/native-ci-21f08f5/docs/strict-review-evidence/continuation-2026-11-17-cloud/ci-44130275991/iphone-settings-arabic-large-text.png",
+      "original_path": "/workspace/scratch/5bc6158967e8/ci-44130275991-native/iphone-ui/career-ui-screenshots/0EB0D57F-C4FD-435E-9BB4-3427A118D213.png",
+      "sha256": "7fb7b864481396b59333a01980d2e060727a5a845e4e66e0d11281fca8fa145d",
+      "bytes": 361911,
+      "dimensions": [
+        1260,
+        2736
+      ],
+      "capture_name": "27-settings-arabic-large-text",
+      "test_identifier": "CareerFinderUITests/testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText()",
+      "visually_inspected_original": true,
+      "byte_identical_to_exported_original": true,
+      "manifest_link_verified": true,
+      "observation": "The large-text Arabic Settings language choices and Arabic selection marker are distinct; the bottom bar visibly has five Arabic tabs in right-to-left order. The acceptance provenance banner intrudes into the small Settings navigation-title region."
+    },
+    {
+      "retained_path": "/workspace/scratch/5bc6158967e8/native-ci-21f08f5/docs/strict-review-evidence/continuation-2026-11-17-cloud/ci-44130275991/iphone-settings-dark-large-text.png",
+      "original_path": "/workspace/scratch/5bc6158967e8/ci-44130275991-native/iphone-ui/career-ui-screenshots/944E55C1-B2F4-466B-84CF-0743D9DD8BFC.png",
+      "sha256": "29d6b75a580fb74b62b82c7ae2818a3a0603510295429ce43285ef9ab4c16bd6",
+      "bytes": 433838,
+      "dimensions": [
+        1260,
+        2736
+      ],
+      "capture_name": "24-settings-dark-large-text",
+      "test_identifier": "CareerFinderUITests/testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable()",
+      "visually_inspected_original": true,
+      "byte_identical_to_exported_original": true,
+      "manifest_link_verified": true,
+      "observation": "The large-text dark Settings view shows distinct System, Light and Dark choices with Dark selected, dark surfaces, light text and five visible tabs. The same acceptance provenance banner intrudes into the small Settings navigation-title region."
+    }
+  ],
+  "product_result": "No new actionable product-control visual defect was reproduced in the visible regions of this bounded four-image sample. This is not a whole-app or expanded Clear-control visual acceptance.",
+  "reproduced_findings": [
+    {
+      "id": "RUN38-VIS-01",
+      "severity": "low",
+      "category": "Acceptance harness / evidence readability",
+      "finding": "The offline synthetic-data provenance banner overlaps the small Settings navigation-title region at the top in both the Arabic large-text and English dark large-text captures.",
+      "evidence_files": [
+        "iphone-settings-arabic-large-text.png",
+        "iphone-settings-dark-large-text.png"
+      ],
+      "source_classification": "NativeCareerViews.swift places acceptance.offline in a top safeAreaInset only when CareerAppEnvironment.isUIAcceptance. CareerAppEnvironment.acceptanceRoot requires DEBUG, the explicit acceptance argument and a valid UUID; it returns nil in non-DEBUG builds.",
+      "release_scope": "Not a verified release UI defect: the overlapping provenance banner is acceptance-only. No main Settings choice or tab was seen obstructed by it in these captures.",
+      "actionable_followup": "Keep the acceptance provenance marker visible while positioning it clear of the navigation title in a future harness-only correction, preserving fixture-isolation assertions. This review does not authorize or perform a source change or additional run."
+    }
+  ],
+  "source_files_read_for_classification": [
+    {
+      "path": "apple/AhmadCareer/NativeCareerViews.swift",
+      "sha256": "6ef2dd17277a020cca1d53ae30175443fabe00fb569df35e0e087ca81785616f"
+    },
+    {
+      "path": "apple/AhmadCareer/CareerAppEnvironment.swift",
+      "sha256": "7c827cfdb82d4396dbb3b1611435fc0d5eb299634d2c0240b9809e358ad8203d"
+    }
+  ],
+  "limits": [
+    "None of the exported attachment names or the four inspected originals documents the expanded service address/Clear control; the default-connection capture follows restoration and collapse. The successful Clear interaction belongs to the separate exact-source test/log evidence, not this visual claim.",
+    "A static screenshot cannot establish touch reachability, scrolling behavior, focus order, full untruncated field values, measured contrast or assistive-technology behavior.",
+    "No physical iPhone, VoiceOver, real provider consent/callback, account isolation/recovery or release acceptance was performed here.",
+    "Only the four assigned originals were viewed. All five gate outcomes and archive-download integrity are owned by the native evidence owner and were not rerun or re-downloaded for this review."
+  ],
+  "actions": [
+    "Read the existing screenshot metadata/exported manifest and relevant acceptance-banner source guards.",
+    "Viewed four actual original PNGs.",
+    "Verified their SHA-256 values, byte identity to extracted originals and exact manifest/test linkage.",
+    "Wrote this separate review receipt outside source checkouts."
+  ],
+  "not_performed": [
+    "Source or workflow edit",
+    "Build or test execution",
+    "CI/browser action",
+    "Artifact download",
+    "Shared Mac operation",
+    "Signing/store/publishing change"
+  ]
+}

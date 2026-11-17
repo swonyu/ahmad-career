@@ -1,0 +1,3 @@
+# Preserve byte-exact runner logs and retained source diffs as evidence.
+*.log -whitespace
+*.patch -whitespace

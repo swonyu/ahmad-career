@@ -1,0 +1,21 @@
+{
+  "command": [
+    "npm",
+    "view",
+    "picomatch",
+    "version",
+    "dist-tags",
+    "--json",
+    "--fetch-retries=0",
+    "--fetch-timeout=15000"
+  ],
+  "exit": 0,
+  "result": {
+    "version": "4.0.7",
+    "dist-tags": {
+      "latest": "4.0.7"
+    }
+  },
+  "qualification": "The public registry result was read by this bound; the exact query completion time was not retained. This is not a package publication time.",
+  "resultReadBy": "2026-11-17T17:48:35Z"
+}

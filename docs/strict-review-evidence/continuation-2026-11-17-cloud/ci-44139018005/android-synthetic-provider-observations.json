@@ -1,0 +1,62 @@
+{
+  "testOnly": true,
+  "observations": [
+    {
+      "id": "00000000-0000-4000-8000-000000000004",
+      "count": 1,
+      "method": "POST",
+      "multipart": true,
+      "byteLength": 1519,
+      "hasPDFBytes": true,
+      "hasNameField": true,
+      "hasEmailField": true,
+      "hasResumeField": true,
+      "bodySHA256": "1330371d168ed1748068101547f44e109a43c6379d6b4138f9a502404482d6eb",
+      "interceptedBodyType": "undefined"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000005",
+      "count": 1,
+      "method": "POST",
+      "multipart": true,
+      "byteLength": 1521,
+      "hasPDFBytes": true,
+      "hasNameField": true,
+      "hasEmailField": true,
+      "hasResumeField": true,
+      "bodySHA256": "44044cb06e556962f4e8a0433b42ae0518429bd1d6f703e3badb0663662318c4",
+      "interceptedBodyType": "undefined"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000001",
+      "count": 1,
+      "method": "POST",
+      "multipart": true,
+      "byteLength": 1519,
+      "hasPDFBytes": true,
+      "hasNameField": true,
+      "hasEmailField": true,
+      "hasResumeField": true,
+      "bodySHA256": "f19796e261dc68a16ca8ea8b26638a3cfc8163adee949293770bcffc4fd5f2b9",
+      "interceptedBodyType": "undefined"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000005",
+      "count": 2,
+      "method": "POST",
+      "multipart": true,
+      "byteLength": 1521,
+      "hasPDFBytes": true,
+      "hasNameField": true,
+      "hasEmailField": true,
+      "hasResumeField": true,
+      "bodySHA256": "5d00a87ac3daf079ad6c79c61078321c0667e0a4a7f93729bb934997d0428fb5",
+      "interceptedBodyType": "undefined"
+    }
+  ],
+  "counts": {
+    "00000000-0000-4000-8000-000000000004": 1,
+    "00000000-0000-4000-8000-000000000005": 2,
+    "00000000-0000-4000-8000-000000000001": 1
+  }
+}

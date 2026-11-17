@@ -1,0 +1,64 @@
+{
+  "recordedAt": "2026-11-17T16:50:54Z",
+  "projectId": "appgprj_6afc21bd599c8191a0fb7705274d8582",
+  "version": 6,
+  "siteCommit": "ed3aba5dd9b0e6888a2fb47440954a1d4cce3acd",
+  "siteTree": "4727f577dee227fffa7a59c63efb1eedaab8afb7",
+  "siteParent": "7e0ac76792d31b98863c5e9f8f1e1c4821a7f2e7",
+  "applicationSource": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+  "applicationTree": "b2a2ca81df383a468c318e4ebc629c13f16e5fe9",
+  "copiedHostedPaths": [
+    "app/phone/PhoneApp.tsx",
+    "app/i18n/messages.ar.json",
+    "tests/phone-search-workflows.mjs"
+  ],
+  "additionalSitePath": "ACCEPTANCE-LAB.md",
+  "deployment": {
+    "id": "appgdep_6afc85c17f9c8191ae12253faa38f01e",
+    "versionId": "appgprj_6afc21bd599c8191a0fb7705274d8582~appgver_d57b4d9951ac81918c9dfc10f510afd5",
+    "status": "succeeded",
+    "completedAt": "2026-11-17T16:50:33.360699+00:00",
+    "environmentRevision": 1,
+    "url": "https://career-finder-acceptance-20261117.jazzy-drake-8323.chatgpt.site"
+  },
+  "archive": {
+    "file": "career-finder-private-acceptance-v6.tar.gz",
+    "bytes": 4029591,
+    "sha256": "6c14483e9c1792ca22f8ccb243cda14f9b462dd710fda7a133a129a654fbaab6"
+  },
+  "verification": {
+    "focusedTests": 82,
+    "passed": 82,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "durationMs": 2811.776084,
+    "typecheckExitCode": 0,
+    "lintExitCode": 0,
+    "lintErrors": 0,
+    "lintWarnings": 6,
+    "productionBuildExitCode": 0
+  },
+  "audience": {
+    "mode": "custom",
+    "policyRevision": 1,
+    "allowedUsers": 1,
+    "allowedGroups": 0,
+    "externalVisitors": 0,
+    "changed": false
+  },
+  "publicSite": {
+    "projectId": "appgprj_6afb13851fb4819193358d5db54e73b7",
+    "version": 7,
+    "audience": "public",
+    "policyRevision": 2,
+    "changed": false
+  },
+  "providerOrSchemaChanges": false,
+  "limits": [
+    "Publication and source-bound checks do not prove a real browser/provider/account/device acceptance pass.",
+    "The three hosted file hashes match application source21f08f5; the private Site remains a separate environment and commit.",
+    "Existing private audience and Google environment revision1 were preserved. Public v7 remains unchanged.",
+    "No real employer applications, live Auto Apply activation or paid service."
+  ]
+}

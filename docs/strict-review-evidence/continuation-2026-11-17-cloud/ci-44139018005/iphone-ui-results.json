@@ -1,0 +1,130 @@
+{
+  "observed_at": "2026-11-17T18:13:08.537149+00:00",
+  "candidate": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+  "actual_ci_checkout": "e3e875cee10e379c34d833ae22827f0ae9aee570",
+  "common_tree": "74b02b205e7a256f589d9961b2f4a9c129b6935d",
+  "job_id": 134236346366,
+  "job_conclusion": "failure",
+  "execution_step": "failure",
+  "export_step": "success",
+  "upload_step": "success",
+  "executed_cases": 17,
+  "passed_cases": 15,
+  "failed_cases": 2,
+  "unexpected_failures": 0,
+  "reported_skips": 0,
+  "suite_seconds": 1287.324,
+  "suite_started_at_utc": "2026-11-17 17:43:26.895",
+  "suite_finished_at_utc": "2026-11-17 18:04:54.248",
+  "xcodebuild_failure_line": "2026-11-17T18:05:40.4457750Z ** TEST FAILED **",
+  "execution_step_budget_minutes": 35,
+  "job_budget_minutes": 40,
+  "complete_expected_test_method_set": true,
+  "tests": [
+    {
+      "method": "testAccessibilityTextKeepsCoreControlsReachable",
+      "outcome": "failed",
+      "seconds": 92.714
+    },
+    {
+      "method": "testApplicationDraftSurvivesCancelAndRelaunch",
+      "outcome": "passed",
+      "seconds": 53.94
+    },
+    {
+      "method": "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+      "outcome": "failed",
+      "seconds": 102.057
+    },
+    {
+      "method": "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+      "outcome": "passed",
+      "seconds": 68.869
+    },
+    {
+      "method": "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "outcome": "passed",
+      "seconds": 25.589
+    },
+    {
+      "method": "testDiscoverySaveFlowsIntoSavedAndApply",
+      "outcome": "passed",
+      "seconds": 40.657
+    },
+    {
+      "method": "testFreshStartAndFiveTabs",
+      "outcome": "passed",
+      "seconds": 34.028
+    },
+    {
+      "method": "testLinkedInProfileDraftAndExternalSearchChoice",
+      "outcome": "passed",
+      "seconds": 54.657
+    },
+    {
+      "method": "testOpportunityDiscardRequiresExplicitChoice",
+      "outcome": "passed",
+      "seconds": 22.579
+    },
+    {
+      "method": "testOpportunityDraftKeepSaveAndRestore",
+      "outcome": "passed",
+      "seconds": 74.776
+    },
+    {
+      "method": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+      "outcome": "passed",
+      "seconds": 158.876
+    },
+    {
+      "method": "testProfileReadinessAndSimpleConnectionSetup",
+      "outcome": "passed",
+      "seconds": 107.584
+    },
+    {
+      "method": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+      "outcome": "passed",
+      "seconds": 43.058
+    },
+    {
+      "method": "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+      "outcome": "passed",
+      "seconds": 121.077
+    },
+    {
+      "method": "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+      "outcome": "passed",
+      "seconds": 137.688
+    },
+    {
+      "method": "testSearchEmptyAndFailurePreservesPreviousResults",
+      "outcome": "passed",
+      "seconds": 93.476
+    },
+    {
+      "method": "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+      "outcome": "passed",
+      "seconds": 55.7
+    }
+  ],
+  "raw_test_log_sha256": "e8a76a4bfbc20ab1c77e05a19918af822b95fac4c213eb760a77e0bc4c8fe215",
+  "raw_job_log_sha256": "a819d558527ac8853b1b487ecf285fb958fbfc8cb8a6e83612c99d1c6c000980",
+  "xcresult_finalized": true,
+  "xcresult_info_bytes": 715,
+  "xcresult_info_sha256": "c84b7a2ccdff55f71cce6db49fef6df3f028b5c991f799beb4a2f6d73369ee94",
+  "exported_screenshot_manifest_present": true,
+  "exported_png_count": 29,
+  "attachment_bearing_test_groups": 15,
+  "methods_without_exported_attachments": [
+    "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+    "testOpportunityDiscardRequiresExplicitChoice"
+  ],
+  "failure_lines": [
+    "2026-11-17T17:44:57.1159930Z /Users/runner/work/ahmad-career/ahmad-career/apple/UITests/CareerFinderUITests.swift:106: error: -[CareerFinderUITests.CareerFinderUITests testAccessibilityTextKeepsCoreControlsReachable] : XCTAssertEqual failed: (\"XCTWaiterResult(rawValue: 2)\") is not equal to (\"XCTWaiterResult(rawValue: 1)\") - A real keyboard key must be visible before typing",
+    "2026-11-17T17:47:34.4251640Z /Users/runner/work/ahmad-career/ahmad-career/apple/UITests/CareerFinderUITests.swift:22: error: -[CareerFinderUITests.CareerFinderUITests testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText] : XCTAssertTrue failed - Tab must be reachable: Settings"
+  ],
+  "selected_device_log": [
+    "2026-11-17T17:37:39.5211910Z Selected iPhone Air on iOS 26.5 architecture arm64"
+  ],
+  "scope": "Current-source disposable iPhone Simulator suite failed two cases; result finalization and evidence export succeeded. The job budget did not expire. Case-level keyboard/tab readiness failures are preserved, with no skip/retry or banner-causality inference. Hosted audit failure, real provider callback, physical assistive technology, other publishing trees and release readiness remain separate."
+}

@@ -1,0 +1,506 @@
+TAP version 13
+# Subtest: language negotiation respects the dedicated preference, weighted device languages, and unsupported-language fallback
+ok 1 - language negotiation respects the dedicated preference, weighted device languages, and unsupported-language fallback
+  ---
+  duration_ms: 1.828534
+  type: 'test'
+  ...
+# Subtest: every Arabic entry is nonempty and preserves the exact placeholder multiset
+ok 2 - every Arabic entry is nonempty and preserves the exact placeholder multiset
+  ---
+  duration_ms: 6.613518
+  type: 'test'
+  ...
+# Subtest: unknown and prototype-looking keys remain safe, while specific templates preserve inserted data byte-for-byte
+ok 3 - unknown and prototype-looking keys remain safe, while specific templates preserve inserted data byte-for-byte
+  ---
+  duration_ms: 0.877817
+  type: 'test'
+  ...
+# Subtest: Arabic counts have zero, one, dual, few, many forms and display Gregorian dates
+ok 4 - Arabic counts have zero, one, dual, few, many forms and display Gregorian dates
+  ---
+  duration_ms: 35.201266
+  type: 'test'
+  ...
+# Subtest: language persistence writes only the independent preference and cookie, including cross-tab clearing
+ok 5 - language persistence writes only the independent preference and cookie, including cross-tab clearing
+  ---
+  duration_ms: 9.793978
+  type: 'test'
+  ...
+# Subtest: blocked storage still changes this visit without claiming persistence
+ok 6 - blocked storage still changes this visit without claiming persistence
+  ---
+  duration_ms: 12.997241
+  type: 'test'
+  ...
+# Subtest: the actual language control renders Arabic or English on the server with the correct selected preference
+ok 7 - the actual language control renders Arabic or English on the server with the correct selected preference
+  ---
+  duration_ms: 15.785926
+  type: 'test'
+  ...
+# Subtest: real review rendering localizes every state and preserves user and employer content
+ok 8 - real review rendering localizes every state and preserves user and employer content
+  ---
+  duration_ms: 66.340908
+  type: 'test'
+  ...
+# Subtest: recovery notices render full sentences and locale-specific counts from the same stored data
+ok 9 - recovery notices render full sentences and locale-specific counts from the same stored data
+  ---
+  duration_ms: 58.565344
+  type: 'test'
+  ...
+# Subtest: actual copy handler stores translatable notices and copies the exact value on success or refusal
+ok 10 - actual copy handler stores translatable notices and copies the exact value on success or refusal
+  ---
+  duration_ms: 119.264081
+  type: 'test'
+  ...
+# Subtest: discovery notice translates only the known service composition and keeps unknown text opaque
+ok 11 - discovery notice translates only the known service composition and keeps unknown text opaque
+  ---
+  duration_ms: 150.49846
+  type: 'test'
+  ...
+# Subtest: actual Saved, Apply, details and recovery values retain separate bidi boundaries in both languages
+ok 12 - actual Saved, Apply, details and recovery values retain separate bidi boundaries in both languages
+  ---
+  duration_ms: 136.147858
+  type: 'test'
+  ...
+# Subtest: actual profile comparison and application review isolate names and CV filenames without changing them
+ok 13 - actual profile comparison and application review isolate names and CV filenames without changing them
+  ---
+  duration_ms: 82.385586
+  type: 'test'
+  ...
+# Subtest: actual search inputs preserve mixed-script draft text with automatic direction
+ok 14 - actual search inputs preserve mixed-script draft text with automatic direction
+  ---
+  duration_ms: 29.659945
+  type: 'test'
+  ...
+# Subtest: actual catalog-board checkboxes isolate Arabic and Latin source names in en
+ok 15 - actual catalog-board checkboxes isolate Arabic and Latin source names in en
+  ---
+  duration_ms: 23.710556
+  type: 'test'
+  ...
+# Subtest: actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in en
+ok 16 - actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in en
+  ---
+  duration_ms: 26.870405
+  type: 'test'
+  ...
+# Subtest: actual JobCard footer isolates each source name and retains its employer link in en
+ok 17 - actual JobCard footer isolates each source name and retains its employer link in en
+  ---
+  duration_ms: 41.480471
+  type: 'test'
+  ...
+# Subtest: actual catalog-board checkboxes isolate Arabic and Latin source names in ar
+ok 18 - actual catalog-board checkboxes isolate Arabic and Latin source names in ar
+  ---
+  duration_ms: 21.489367
+  type: 'test'
+  ...
+# Subtest: actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in ar
+ok 19 - actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in ar
+  ---
+  duration_ms: 23.025267
+  type: 'test'
+  ...
+# Subtest: actual JobCard footer isolates each source name and retains its employer link in ar
+ok 20 - actual JobCard footer isolates each source name and retains its employer link in ar
+  ---
+  duration_ms: 33.868582
+  type: 'test'
+  ...
+# Subtest: Saved search finds every term across visible metadata and the active saved note
+ok 21 - Saved search finds every term across visible metadata and the active saved note
+  ---
+  duration_ms: 2.608863
+  type: 'test'
+  ...
+# Subtest: Saved comparison removes only the agreed Arabic vowel marks and tatweel while preserving distinct letters
+ok 22 - Saved comparison removes only the agreed Arabic vowel marks and tatweel while preserving distinct letters
+  ---
+  duration_ms: 0.545414
+  type: 'test'
+  ...
+# Subtest: CSV is UTF-8 BOM, quoted CRLF data with original Arabic, quotes and multiline notes
+ok 23 - CSV is UTF-8 BOM, quoted CRLF data with original Arabic, quotes and multiline notes
+  ---
+  duration_ms: 5.707774
+  type: 'test'
+  ...
+# Subtest: CSV visibly neutralizes formula-like text including compatibility characters and leading controls
+ok 24 - CSV visibly neutralizes formula-like text including compatibility characters and leading controls
+  ---
+  duration_ms: 4.100645
+  type: 'test'
+  ...
+# Subtest: CSV selects only record fields and translates app labels without translating private content
+ok 25 - CSV selects only record fields and translates app labels without translating private content
+  ---
+  duration_ms: 1.113211
+  type: 'test'
+  ...
+# Subtest: calendar uses civil DATE and one day even on leap days and the maximum supported year
+ok 26 - calendar uses civil DATE and one day even on leap days and the maximum supported year
+  ---
+  duration_ms: 123.45332
+  type: 'test'
+  ...
+# Subtest: calendar escapes injected properties and folds long Arabic and emoji by UTF-8 octets
+ok 27 - calendar escapes injected properties and folds long Arabic and emoji by UTF-8 octets
+  ---
+  duration_ms: 2.262576
+  type: 'test'
+  ...
+# Subtest: calendar UID is stable for the public job and date without private fields or provider state
+ok 28 - calendar UID is stable for the public job and date without private fields or provider state
+  ---
+  duration_ms: 5.05013
+  type: 'test'
+  ...
+# Subtest: actual CSV action exports only the current guest or confirmed account records
+ok 29 - actual CSV action exports only the current guest or confirmed account records
+  ---
+  duration_ms: 86.961389
+  type: 'test'
+  ...
+# Subtest: actual record exports fail closed before reading unconfirmed, locked, wrong-owner or earlier-workspace data
+    # Subtest: identity
+    ok 1 - identity
+      ---
+      duration_ms: 21.328336
+      type: 'test'
+      ...
+    # Subtest: checking
+    ok 2 - checking
+      ---
+      duration_ms: 10.313023
+      type: 'test'
+      ...
+    # Subtest: locked
+    ok 3 - locked
+      ---
+      duration_ms: 11.00315
+      type: 'test'
+      ...
+    # Subtest: owner
+    ok 4 - owner
+      ---
+      duration_ms: 19.511556
+      type: 'test'
+      ...
+    # Subtest: missingOwner
+    ok 5 - missingOwner
+      ---
+      duration_ms: 21.518259
+      type: 'test'
+      ...
+    # Subtest: olderWorkspace
+    ok 6 - olderWorkspace
+      ---
+      duration_ms: 19.46583
+      type: 'test'
+      ...
+    # Subtest: earlierScope
+    ok 7 - earlierScope
+      ---
+      duration_ms: 32.902863
+      type: 'test'
+      ...
+    1..7
+ok 30 - actual record exports fail closed before reading unconfirmed, locked, wrong-owner or earlier-workspace data
+  ---
+  duration_ms: 137.993917
+  type: 'test'
+  ...
+# Subtest: actual calendar action rechecks identity, generation, workspace and record after asynchronous hashing
+    # Subtest: revalidation
+    ok 1 - revalidation
+      ---
+      duration_ms: 13.100879
+      type: 'test'
+      ...
+    # Subtest: generation
+    ok 2 - generation
+      ---
+      duration_ms: 15.163529
+      type: 'test'
+      ...
+    # Subtest: owner
+    ok 3 - owner
+      ---
+      duration_ms: 23.604192
+      type: 'test'
+      ...
+    # Subtest: workspace
+    ok 4 - workspace
+      ---
+      duration_ms: 35.328842
+      type: 'test'
+      ...
+    # Subtest: snapshot
+    ok 5 - snapshot
+      ---
+      duration_ms: 10.829263
+      type: 'test'
+      ...
+    # Subtest: date
+    ok 6 - date
+      ---
+      duration_ms: 10.153785
+      type: 'test'
+      ...
+    # Subtest: removal
+    ok 7 - removal
+      ---
+      duration_ms: 9.625611
+      type: 'test'
+      ...
+    1..7
+ok 31 - actual calendar action rechecks identity, generation, workspace and record after asynchronous hashing
+  ---
+  duration_ms: 120.26991
+  type: 'test'
+  ...
+# Subtest: actual calendar action accepts a saved record and rejects unsaved editor copies or missing dates
+ok 32 - actual calendar action accepts a saved record and rejects unsaved editor copies or missing dates
+  ---
+  duration_ms: 20.022902
+  type: 'test'
+  ...
+# Subtest: actual Saved selector searches active notes and keeps the existing applied/follow-up filters
+ok 33 - actual Saved selector searches active notes and keeps the existing applied/follow-up filters
+  ---
+  duration_ms: 11.771074
+  type: 'test'
+  ...
+# Subtest: new controls stay inside existing disclosures and require a saved valid follow-up day
+ok 34 - new controls stay inside existing disclosures and require a saved valid follow-up day
+  ---
+  duration_ms: 46.77471
+  type: 'test'
+  ...
+# Subtest: retry repeats the displayed search without a cursor and preserves newer visible draft filters
+ok 35 - retry repeats the displayed search without a cursor and preserves newer visible draft filters
+  ---
+  duration_ms: 66.857152
+  type: 'test'
+  ...
+# Subtest: a fresh search response does not overwrite text or boards edited while it is pending
+ok 36 - a fresh search response does not overwrite text or boards edited while it is pending
+  ---
+  duration_ms: 35.625669
+  type: 'test'
+  ...
+# Subtest: pagination uses the displayed search and cursor, merges identities, and leaves draft filters alone
+ok 37 - pagination uses the displayed search and cursor, merges identities, and leaves draft filters alone
+  ---
+  duration_ms: 22.4562
+  type: 'test'
+  ...
+# Subtest: failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller
+    # Subtest: failure
+    ok 1 - failure
+      ---
+      duration_ms: 29.281803
+      type: 'test'
+      ...
+    # Subtest: cancel
+    ok 2 - cancel
+      ---
+      duration_ms: 14.623879
+      type: 'test'
+      ...
+    1..2
+ok 38 - failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller
+  ---
+  duration_ms: 44.81822
+  type: 'test'
+  ...
+# Subtest: late search results cannot cross the existing identity or generation boundary
+    # Subtest: identity
+    ok 1 - identity
+      ---
+      duration_ms: 16.824708
+      type: 'test'
+      ...
+    # Subtest: generation
+    ok 2 - generation
+      ---
+      duration_ms: 13.143958
+      type: 'test'
+      ...
+    1..2
+ok 39 - late search results cannot cross the existing identity or generation boundary
+  ---
+  duration_ms: 30.744641
+  type: 'test'
+  ...
+# Subtest: pagination retains the 200-result cap and retry refreshes restored results without a stale cursor
+ok 40 - pagination retains the 200-result cap and retry refreshes restored results without a stale cursor
+  ---
+  duration_ms: 76.011123
+  type: 'test'
+  ...
+# Subtest: actual nonempty partial and stale results show a localized retry that targets the displayed search
+ok 41 - actual nonempty partial and stale results show a localized retry that targets the displayed search
+  ---
+  duration_ms: 131.236085
+  type: 'test'
+  ...
+# Subtest: actual empty unavailable results distinguish missing evidence from a completed zero-match search in both languages
+ok 42 - actual empty unavailable results distinguish missing evidence from a completed zero-match search in both languages
+  ---
+  duration_ms: 68.985561
+  type: 'test'
+  ...
+# Subtest: actual retry control stays disabled during work or identity checks and is absent without a submitted search
+ok 43 - actual retry control stays disabled during work or identity checks and is absent without a submitted search
+  ---
+  duration_ms: 50.064032
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe fresh partial results without inventing an outage in en
+ok 44 - actual visible and live summaries describe fresh partial results without inventing an outage in en
+  ---
+  duration_ms: 48.406407
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe only the overall result limit without inventing an outage in en
+ok 45 - actual visible and live summaries describe only the overall result limit without inventing an outage in en
+  ---
+  duration_ms: 57.190793
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe only a source result limit without inventing an outage in en
+ok 46 - actual visible and live summaries describe only a source result limit without inventing an outage in en
+  ---
+  duration_ms: 51.116805
+  type: 'test'
+  ...
+# Subtest: actual search summaries retain source evidence and distinguish complete zero/nonzero results in en
+ok 47 - actual search summaries retain source evidence and distinguish complete zero/nonzero results in en
+  ---
+  duration_ms: 58.437559
+  type: 'test'
+  ...
+# Subtest: the actual search live region stays silent during work and before any result page in en
+ok 48 - the actual search live region stays silent during work and before any result page in en
+  ---
+  duration_ms: 27.283542
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe fresh partial results without inventing an outage in ar
+ok 49 - actual visible and live summaries describe fresh partial results without inventing an outage in ar
+  ---
+  duration_ms: 32.290037
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe only the overall result limit without inventing an outage in ar
+ok 50 - actual visible and live summaries describe only the overall result limit without inventing an outage in ar
+  ---
+  duration_ms: 34.528369
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe only a source result limit without inventing an outage in ar
+ok 51 - actual visible and live summaries describe only a source result limit without inventing an outage in ar
+  ---
+  duration_ms: 35.957753
+  type: 'test'
+  ...
+# Subtest: actual search summaries retain source evidence and distinguish complete zero/nonzero results in ar
+ok 52 - actual search summaries retain source evidence and distinguish complete zero/nonzero results in ar
+  ---
+  duration_ms: 68.276316
+  type: 'test'
+  ...
+# Subtest: the actual search live region stays silent during work and before any result page in ar
+ok 53 - the actual search live region stays silent during work and before any result page in ar
+  ---
+  duration_ms: 27.367743
+  type: 'test'
+  ...
+# Subtest: failed initial account check cannot reveal the earlier server-rendered email or account controls
+ok 54 - failed initial account check cannot reveal the earlier server-rendered email or account controls
+  ---
+  duration_ms: 30.758049
+  type: 'test'
+  ...
+# Subtest: only the confirmed matching account may show private Settings
+ok 55 - only the confirmed matching account may show private Settings
+  ---
+  duration_ms: 17.378429
+  type: 'test'
+  ...
+# Subtest: loading, revalidation and locked Settings retain public appearance and hide private identity
+ok 56 - loading, revalidation and locked Settings retain public appearance and hide private identity
+  ---
+  duration_ms: 16.379586
+  type: 'test'
+  ...
+# Subtest: early theme initialization applies only recognized preferences and follows the device when storage is unavailable
+ok 57 - early theme initialization applies only recognized preferences and follows the device when storage is unavailable
+  ---
+  duration_ms: 16.034927
+  type: 'test'
+  ...
+# Subtest: appearance is immediately applied, persisted independently of accounts and cleared to System without forcing a color
+ok 58 - appearance is immediately applied, persisted independently of accounts and cleared to System without forcing a color
+  ---
+  duration_ms: 3.529835
+  type: 'test'
+  ...
+# Subtest: blocked persistence retains the chosen theme for this visit and reports that it was not saved
+ok 59 - blocked persistence retains the chosen theme for this visit and reports that it was not saved
+  ---
+  duration_ms: 1.669425
+  type: 'test'
+  ...
+# Subtest: another tab changing or clearing appearance updates this page; unrelated storage never changes it
+ok 60 - another tab changing or clearing appearance updates this page; unrelated storage never changes it
+  ---
+  duration_ms: 3.334708
+  type: 'test'
+  ...
+# Subtest: configured Google and supported LinkedIn expose their own real start routes
+ok 61 - configured Google and supported LinkedIn expose their own real start routes
+  ---
+  duration_ms: 27.694141
+  type: 'test'
+  ...
+# Subtest: missing configuration and an older link-only backend cannot expose a fake direct-provider login
+ok 62 - missing configuration and an older link-only backend cannot expose a fake direct-provider login
+  ---
+  duration_ms: 12.129439
+  type: 'test'
+  ...
+# Subtest: unconfirmed or failed provider status keeps provider choices disabled and offers an honest retry
+ok 63 - unconfirmed or failed provider status keeps provider choices disabled and offers an honest retry
+  ---
+  duration_ms: 7.119031
+  type: 'test'
+  ...
+# Subtest: both actual palettes retain normal-text, action-text and input-boundary contrast
+ok 64 - both actual palettes retain normal-text, action-text and input-boundary contrast
+  ---
+  duration_ms: 36.870852
+  type: 'test'
+  ...
+1..64
+# tests 82
+# suites 0
+# pass 82
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2811.776084

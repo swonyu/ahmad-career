@@ -1,0 +1,188 @@
+{
+  "observed_at": "2026-11-17T16:55:48.422738+00:00",
+  "candidate": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+  "artifact_source_hash_base": "hosted/",
+  "verified_hosted_hash_entries": [
+    {
+      "receipt": "hosted-discovery-verification.json",
+      "path": "hosted/server/discovery.mjs",
+      "sha256": "d8ac636cc7d88e5b116c6e68f3549694b83391dbfdb2794614930237dfb32bea"
+    },
+    {
+      "receipt": "hosted-discovery-verification.json",
+      "path": "hosted/server/discovery-contract.json",
+      "sha256": "b92075bc91feb0a677ccbe28101fc31245730318373e3974ed18dff408967b06"
+    },
+    {
+      "receipt": "hosted-discovery-verification.json",
+      "path": "hosted/app/phone/model.ts",
+      "sha256": "41905ec3d0be5a7c5e729b88e93f3c81163255515ead724b3a79bfee6f4db13e"
+    },
+    {
+      "receipt": "hosted-discovery-verification.json",
+      "path": "hosted/tests/fixtures/discovery-search-v1.json",
+      "sha256": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7"
+    },
+    {
+      "receipt": "hosted-discovery-verification.json",
+      "path": "hosted/worker/index.ts",
+      "sha256": "c82a674ffc6fcebef3b1c48d577f0ec5b28a4a4c2b17462c50a7c0d1708ac09e"
+    },
+    {
+      "receipt": "hosted-discovery-verification.json",
+      "path": "hosted/db/schema.ts",
+      "sha256": "0bc620bceb7b8548d69d07c823c2bc20623ad4d0de7c28678163892f9ac0fa15"
+    },
+    {
+      "receipt": "hosted-discovery-verification.json",
+      "path": "hosted/tests/hosted-discovery.mjs",
+      "sha256": "3048396d376a3c9cae3dd2b3fb197219fe9c805e607dbe7442e4ea094e2b6998"
+    },
+    {
+      "receipt": "hosted-discovery-verification.json",
+      "path": "hosted/drizzle/0000_busy_plazm.sql",
+      "sha256": "5b1e4c5a7ddb05c71a53c112a57daaf9b4a15f58fa38e4b12df8d551bd9e7118"
+    },
+    {
+      "receipt": "hosted-discovery-verification.json",
+      "path": "hosted/drizzle/0001_smiling_maelstrom.sql",
+      "sha256": "d0e1b4cbea14b7dca1c1078911fa94c39db7960778bea637341d7bbee4ef9ef6"
+    },
+    {
+      "receipt": "hosted-discovery-verification.json",
+      "path": "hosted/drizzle/0002_concerned_inhumans.sql",
+      "sha256": "78823cf83e72da525ffd44e8ec76c524a813ff6eb278cbf6465e8a63fbc05fed"
+    },
+    {
+      "receipt": "hosted-discovery-verification.json",
+      "path": "hosted/drizzle/0003_provider_identity.sql",
+      "sha256": "6060ba69e1ca5fb418e79ae91f0d76b5e89e7e1d28740b2df15a74fe727b4930"
+    },
+    {
+      "receipt": "hosted-discovery-verification.json",
+      "path": "hosted/drizzle/0004_provider_connection_generation.sql",
+      "sha256": "5e2d86cb79b44e8101f743836a7a7ec58b901b87b96a79159bf30bcbf77f9439"
+    },
+    {
+      "receipt": "hosted-phone-verification.json",
+      "path": "hosted/server/applications.mjs",
+      "sha256": "1c2ccb94215543b9ff537c9657d22b28fc41a942b2e1c9aa2e164ba66e299a7a"
+    },
+    {
+      "receipt": "hosted-phone-verification.json",
+      "path": "hosted/server/provider.mjs",
+      "sha256": "7e078b63ce3acbe2deb3afa99ac1667e671c58ce56b34075317342ef5ebf7101"
+    },
+    {
+      "receipt": "hosted-phone-verification.json",
+      "path": "hosted/server/validation.mjs",
+      "sha256": "b7b96c7089cbe3c93adcfaed6fd79679b7ea981ca5790ba8b16dc30275825448"
+    },
+    {
+      "receipt": "hosted-phone-verification.json",
+      "path": "hosted/worker/index.ts",
+      "sha256": "c82a674ffc6fcebef3b1c48d577f0ec5b28a4a4c2b17462c50a7c0d1708ac09e"
+    },
+    {
+      "receipt": "hosted-phone-verification.json",
+      "path": "hosted/tests/hosted-phone.mjs",
+      "sha256": "f9e528747308354e5e8fbd4c1c7baa0a38e02a9be1a6583619fb77c456b91d00"
+    },
+    {
+      "receipt": "hosted-phone-verification.json",
+      "path": "hosted/tests/fixtures/phone-runtime.mjs",
+      "sha256": "18ac27f3d82f38d9c718ce0919ed0168eb14e64e4806f404ad3120dab88146ac"
+    },
+    {
+      "receipt": "hosted-verification.json",
+      "path": "hosted/server/applications.mjs",
+      "sha256": "1c2ccb94215543b9ff537c9657d22b28fc41a942b2e1c9aa2e164ba66e299a7a"
+    },
+    {
+      "receipt": "hosted-verification.json",
+      "path": "hosted/server/provider.mjs",
+      "sha256": "7e078b63ce3acbe2deb3afa99ac1667e671c58ce56b34075317342ef5ebf7101"
+    },
+    {
+      "receipt": "hosted-verification.json",
+      "path": "hosted/server/validation.mjs",
+      "sha256": "b7b96c7089cbe3c93adcfaed6fd79679b7ea981ca5790ba8b16dc30275825448"
+    },
+    {
+      "receipt": "hosted-verification.json",
+      "path": "hosted/server/identity.mjs",
+      "sha256": "dc7b5843574d64be97829ce05840e515702e13df6f3652aa8d3cd8c058ff702f"
+    },
+    {
+      "receipt": "hosted-verification.json",
+      "path": "hosted/server/pdf-readability.mjs",
+      "sha256": "f17bdb9db770a3663d067aa6c9ad1cee0fabfd2420bd96ed3e5ce60c960b61b2"
+    },
+    {
+      "receipt": "hosted-verification.json",
+      "path": "hosted/server/retry-after.mjs",
+      "sha256": "ad34cbec76b5096665c1ab8b126043ed6ad35cc13a52233b39bf3475b876a70d"
+    },
+    {
+      "receipt": "hosted-verification.json",
+      "path": "hosted/db/schema.ts",
+      "sha256": "0bc620bceb7b8548d69d07c823c2bc20623ad4d0de7c28678163892f9ac0fa15"
+    },
+    {
+      "receipt": "hosted-verification.json",
+      "path": "hosted/tests/hosted-applications.mjs",
+      "sha256": "722ca3c60540ddc82f5a8f52e4aa19a625963efc2b9fffb13448035ef7b0026d"
+    },
+    {
+      "receipt": "hosted-verification.json",
+      "path": "hosted/drizzle/0000_busy_plazm.sql",
+      "sha256": "5b1e4c5a7ddb05c71a53c112a57daaf9b4a15f58fa38e4b12df8d551bd9e7118"
+    },
+    {
+      "receipt": "hosted-verification.json",
+      "path": "hosted/drizzle/0001_smiling_maelstrom.sql",
+      "sha256": "d0e1b4cbea14b7dca1c1078911fa94c39db7960778bea637341d7bbee4ef9ef6"
+    },
+    {
+      "receipt": "hosted-verification.json",
+      "path": "hosted/drizzle/0002_concerned_inhumans.sql",
+      "sha256": "78823cf83e72da525ffd44e8ec76c524a813ff6eb278cbf6465e8a63fbc05fed"
+    },
+    {
+      "receipt": "hosted-verification.json",
+      "path": "hosted/drizzle/0003_provider_identity.sql",
+      "sha256": "6060ba69e1ca5fb418e79ae91f0d76b5e89e7e1d28740b2df15a74fe727b4930"
+    },
+    {
+      "receipt": "hosted-verification.json",
+      "path": "hosted/drizzle/0004_provider_connection_generation.sql",
+      "sha256": "5e2d86cb79b44e8101f743836a7a7ec58b901b87b96a79159bf30bcbf77f9439"
+    },
+    {
+      "receipt": "hosted-worker-verification.json",
+      "path": "hosted/server/applications.mjs",
+      "sha256": "1c2ccb94215543b9ff537c9657d22b28fc41a942b2e1c9aa2e164ba66e299a7a"
+    },
+    {
+      "receipt": "hosted-worker-verification.json",
+      "path": "hosted/server/provider.mjs",
+      "sha256": "7e078b63ce3acbe2deb3afa99ac1667e671c58ce56b34075317342ef5ebf7101"
+    },
+    {
+      "receipt": "hosted-worker-verification.json",
+      "path": "hosted/server/validation.mjs",
+      "sha256": "b7b96c7089cbe3c93adcfaed6fd79679b7ea981ca5790ba8b16dc30275825448"
+    },
+    {
+      "receipt": "hosted-worker-verification.json",
+      "path": "hosted/tests/hosted-worker.mjs",
+      "sha256": "fcf63a4213df20d0d70c336768313b282c57e51ef3b962912d5522413badec01"
+    }
+  ],
+  "reviewed_native_and_workflow_hashes": {
+    "apple/AhmadCareer/NativeApplicationsViews.swift": "c1407ff4887d4c6d2747aea7deae060f6fd8769e0dfc12b304246c3fb83d3f32",
+    "apple/UITests/CareerFinderUITests.swift": "ad0bac775bc17e7cbf2c8ac9c41fc1a0ca1489e579010fb198ff75878d7d557b",
+    ".github/workflows/phone-quality.yml": "0f6da9de21b2d7fd9373a9375dbb2d4090168930fbeda8ebda7c21af3c5f19f9"
+  },
+  "scope": "Source and artifact integrity; terminal native runtime and finalization outcomes are separate."
+}

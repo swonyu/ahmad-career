@@ -1,0 +1,16 @@
+{
+  "at": "2026-11-17T18:35:29.039762+00:00",
+  "source": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+  "changedFilesBeforeThisReceipt": 222,
+  "totalBytes": 11211066,
+  "textFilesScreened": 209,
+  "commonCredentialPatternLocations": [],
+  "localInlineLinksInspected": 513,
+  "missingLinks": [],
+  "uiMethods": 17,
+  "XCTAssertCalls": 144,
+  "XCTFailCalls": 6,
+  "outsideDocumentScope": [],
+  "evidenceWhitespace": "Byte-exact .log and .patch artifacts retain original whitespace; document-scoped attributes exclude those artifacts from formatting checks. Source, Markdown and JSON checks remain unchanged.",
+  "qualification": "Bounded common-pattern changed-file screen and inline link check; not a comprehensive secret audit or a new application test run."
+}

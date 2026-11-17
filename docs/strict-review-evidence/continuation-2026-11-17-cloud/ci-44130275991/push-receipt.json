@@ -1,0 +1,47 @@
+{
+  "started_at": "2026-11-17T16:50:04.418053+00:00",
+  "completed_at": "2026-11-17T16:50:07.680405+00:00",
+  "relay": "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-finder-ci-clear-repair-20261117-lamssjwx/repo.git",
+  "bundle": "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-finder-ci-clear-repair-20261117-lamssjwx/singular-finalization-21f08f5.bundle",
+  "bundle_bytes": 1620,
+  "bundle_sha256": "7ca73e54b2f4e236586b39225abc4565530edff0c6294ebf310a359e55439c3b",
+  "bundle_verify_stdout": "The bundle contains this ref:\n21f08f5c4509bd1fdbe9112003224bf2316edd2a refs/heads/continuation/account-acceptance-20261117\nThe bundle requires this ref:\nd97bc209ca84ecb830e6c6bad25808164706409f \nThe bundle uses this hash algorithm: sha1\n",
+  "bundle_verify_stderr": "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-finder-ci-clear-repair-20261117-lamssjwx/singular-finalization-21f08f5.bundle is okay\n",
+  "new_head": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+  "parent": "d97bc209ca84ecb830e6c6bad25808164706409f",
+  "tree": "b2a2ca81df383a468c318e4ebc629c13f16e5fe9",
+  "changed_paths": [
+    ".github/workflows/phone-quality.yml",
+    "hosted/app/i18n/messages.ar.json",
+    "hosted/app/phone/PhoneApp.tsx",
+    "hosted/tests/phone-search-workflows.mjs"
+  ],
+  "refs_before": {
+    "refs/heads/app-store/career-workspace-copy-20261117": "fd9c5399f2b7001b234b3b86bf72e2b36b5114c1",
+    "refs/heads/career-finder-phones-verified-apply-20261116": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+    "refs/heads/continuation/account-acceptance-20261117": "d97bc209ca84ecb830e6c6bad25808164706409f"
+  },
+  "refs_after": {
+    "refs/heads/app-store/career-workspace-copy-20261117": "fd9c5399f2b7001b234b3b86bf72e2b36b5114c1",
+    "refs/heads/career-finder-phones-verified-apply-20261116": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+    "refs/heads/continuation/account-acceptance-20261117": "21f08f5c4509bd1fdbe9112003224bf2316edd2a"
+  },
+  "push_stdout": "",
+  "push_stderr": "To https://github.com/swonyu/ahmad-career.git\n   d97bc20..21f08f5  21f08f5c4509bd1fdbe9112003224bf2316edd2a -> continuation/account-acceptance-20261117\n",
+  "ordinary_nonforce_push": true,
+  "state_before": {
+    "bare_head_sha256": "d57d92a98c323ab4a7386bc1a7c3ecf9910ed19bb009bf3b04e516601add0a05",
+    "index_exists": false,
+    "git_locks": [],
+    "shared_build_lock_exists": false,
+    "shared_build_lock_owner": null
+  },
+  "state_after": {
+    "bare_head_sha256": "d57d92a98c323ab4a7386bc1a7c3ecf9910ed19bb009bf3b04e516601add0a05",
+    "index_exists": false,
+    "git_locks": [],
+    "shared_build_lock_exists": false,
+    "shared_build_lock_owner": null
+  },
+  "no_checkout_build_signing_dispatch_rerun_or_cancel": true
+}

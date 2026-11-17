@@ -1,0 +1,26 @@
+{
+  "recordedAt": "2026-11-17T17:49:06.267443+00:00",
+  "advisory": {
+    "id": "GHSA-fc5q-39xc-vjpf",
+    "url": "https://github.com/advisories/GHSA-fc5q-39xc-vjpf",
+    "currentPage": "GitHub-reviewed high-severity npm Picomatch advisory. Affected <=4.0.7; patched versions: none. Page states published Oct19 and reviewed/updated Nov17,2026.",
+    "qualification": "Initial cached search result was older/unreviewed. Direct current-page reading supersedes that status; no exact update time is inferred."
+  },
+  "releases": {
+    "url": "https://github.com/micromatch/picomatch/releases",
+    "currentPage": "Latest displayed release is4.0.7."
+  },
+  "referencedPullRequest": {
+    "url": "https://github.com/micromatch/picomatch/pull/194",
+    "currentPage": "Open pull request; its presence in advisory references does not establish a complete or released security repair."
+  },
+  "observedGate": "Run40 Hosted audit failed with19 propagated high dependency entries for this one advisory; prior run38 zero-audit result is retained separately.",
+  "currentSource": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+  "mutations": {
+    "dependencyManifest": false,
+    "lockfile": false,
+    "workflowOrAuditThreshold": false,
+    "suppression": false
+  },
+  "nextEvidence": "Independent bounded review completed; see reviewer-receipt.json and README.md. Local rejection mitigation fails existing upstream compatibility; dependency gate remains open."
+}

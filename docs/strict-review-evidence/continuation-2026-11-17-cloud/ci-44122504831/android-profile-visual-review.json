@@ -1,0 +1,20 @@
+{
+  "reviewer": "/root/native_resume/run35_visual_review",
+  "scope": "Independent read-only source and screenshot comparison; no edit, download, test, build, CI call or Mac operation",
+  "candidate": "d97bc209ca84ecb830e6c6bad25808164706409f",
+  "comparison_candidate": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+  "decision": "No new clipping or overlap defect established; no source correction justified by this bounded review.",
+  "findings": [
+    "Notice column is capped at35% available height and scrolls vertically; profile occupies remaining weighted space as a subsequent Column child.",
+    "Run33 clips Email at the profile viewport top; run35 clips First or single name at the same boundary. Capture occurs after field scrolling, keyboard dismissal and PDF completion without resetting list scroll.",
+    "In the run35 inspected label region, field-label foreground RGB190,193,211 first appears at row781, exactly where profile background begins. Zero matching field pixels appear above that boundary; adjacent notice text has RGB232,229,255."
+  ],
+  "source_hashes": {
+    "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "fea99db3e760c2a99e49de5cd9366a4afe9f159acc79c5b0f96bb43350a8a729"
+  },
+  "screenshot_hashes": {
+    "run35-profile": "8655cbf8c381f6a73b3cbcde91e2609d8d491ace8b9690f0df2dbe4c4afed690",
+    "run33-profile": "c0bd4dccb7a6e8439a03e91f6a27ffddf2fc214caacd0ffe5c66f86afedc164d"
+  },
+  "limitations": "Images demonstrate substantial profile content space, not physical assistive-technology acceptance or simultaneous readability of every vertically scrollable notice."
+}

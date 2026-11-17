@@ -1,0 +1,40 @@
+[
+  {
+    "file": "tests/phone-search-workflows.mjs",
+    "registeredCallSites": 14,
+    "namesUnchanged": true,
+    "names": [
+      "'retry repeats the displayed search without a cursor and preserves newer visible draft filters'",
+      "'a fresh search response does not overwrite text or boards edited while it is pending'",
+      "'pagination uses the displayed search and cursor, merges identities, and leaves draft filters alone'",
+      "'failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller'",
+      "outcome",
+      "'late search results cannot cross the existing identity or generation boundary'",
+      "boundary",
+      "'pagination retains the 200-result cap and retry refreshes restored results without a stale cursor'",
+      "'actual nonempty partial and stale results show a localized retry that targets the displayed search'",
+      "'actual empty unavailable results distinguish missing evidence from a completed zero-match search in both languages'",
+      "'actual retry control stays disabled during work or identity checks and is absent without a submitted search'",
+      "`actual visible and live summaries describe ${label} without inventing an outage in ${language}`",
+      "`actual search summaries retain source evidence and distinguish complete zero/nonzero results in ${language}`",
+      "`the actual search live region stays silent during work and before any result page in ${language}`"
+    ]
+  },
+  {
+    "file": "tests/phone-localization.mjs",
+    "registeredCallSites": 10,
+    "namesUnchanged": true,
+    "names": [
+      "'real review rendering localizes every state and preserves user and employer content'",
+      "'recovery notices render full sentences and locale-specific counts from the same stored data'",
+      "'actual copy handler stores translatable notices and copies the exact value on success or refusal'",
+      "'discovery notice translates only the known service composition and keeps unknown text opaque'",
+      "'actual Saved, Apply, details and recovery values retain separate bidi boundaries in both languages'",
+      "'actual profile comparison and application review isolate names and CV filenames without changing them'",
+      "'actual search inputs preserve mixed-script draft text with automatic direction'",
+      "`actual catalog-board checkboxes isolate Arabic and Latin source names in ${language}`",
+      "`actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in ${language}`",
+      "`actual JobCard footer isolates each source name and retains its employer link in ${language}`"
+    ]
+  }
+]

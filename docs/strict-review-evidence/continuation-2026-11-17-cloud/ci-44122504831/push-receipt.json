@@ -1,0 +1,55 @@
+{
+  "started_at": "2026-11-17T16:09:14.168737+00:00",
+  "completed_at": "2026-11-17T16:09:18.423677+00:00",
+  "relay": "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-finder-ci-clear-repair-20261117-lamssjwx/repo.git",
+  "bundle": "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-finder-ci-clear-repair-20261117-lamssjwx/search-status-clear-address-d97bc209.bundle",
+  "bundle_bytes": 1365897,
+  "bundle_sha256": "042bd41ecf0d3a26d32a2e4bfc8a3d3512cf968b9037453ecd4482b7d4d93a9c",
+  "bundle_verify_stdout": "The bundle contains this ref:\nd97bc209ca84ecb830e6c6bad25808164706409f refs/heads/continuation/account-acceptance-20261117\nThe bundle requires this ref:\nfa151e219ad4e8d9f0d3337eec10a60ed5223d47 \nThe bundle uses this hash algorithm: sha1\n",
+  "bundle_verify_stderr": "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-finder-ci-clear-repair-20261117-lamssjwx/search-status-clear-address-d97bc209.bundle is okay\n",
+  "new_head": "d97bc209ca84ecb830e6c6bad25808164706409f",
+  "parent": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+  "tree": "7ccafbdaad98f000e5e12a385dd69fc5beb72f50",
+  "refs_before": {
+    "refs/heads/app-store/career-workspace-copy-20261117": "fd9c5399f2b7001b234b3b86bf72e2b36b5114c1",
+    "refs/heads/career-finder-phones-verified-apply-20261116": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+    "refs/heads/continuation/account-acceptance-20261117": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47"
+  },
+  "refs_after": {
+    "refs/heads/app-store/career-workspace-copy-20261117": "fd9c5399f2b7001b234b3b86bf72e2b36b5114c1",
+    "refs/heads/career-finder-phones-verified-apply-20261116": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+    "refs/heads/continuation/account-acceptance-20261117": "d97bc209ca84ecb830e6c6bad25808164706409f"
+  },
+  "push_stdout": "",
+  "push_stderr": "To https://github.com/swonyu/ahmad-career.git\n   fa151e2..d97bc20  d97bc209ca84ecb830e6c6bad25808164706409f -> continuation/account-acceptance-20261117\n",
+  "ordinary_nonforce_push": true,
+  "bare_head_sha256": "d57d92a98c323ab4a7386bc1a7c3ecf9910ed19bb009bf3b04e516601add0a05",
+  "index_exists": false,
+  "shared_lock_before": {
+    "exists": true,
+    "sha256": "ed1b44ab4b9406d2c57c4c3c593a5e3f39ee4f5f74e7cd037b01a32d1436e245",
+    "owner": {
+      "host": "Salehs-MacBook-Pro.local",
+      "marker": "publishing:09b55551150f4c4ea4a0b2ede2d7578d",
+      "output": "/Users/saleh/Library/Caches/HalalTag-ProductionCompositionR6-NativeQA/20261117T160346Z-2944-09b5555115",
+      "owner": "ios-app-publishing-and-quality",
+      "pid": 2944,
+      "slot_authorized": "publishing-d57-halaltag-r6b-20261117",
+      "started_at": "2026-11-17T16:03:46.359522+00:00"
+    }
+  },
+  "shared_lock_after": {
+    "exists": true,
+    "sha256": "ed1b44ab4b9406d2c57c4c3c593a5e3f39ee4f5f74e7cd037b01a32d1436e245",
+    "owner": {
+      "host": "Salehs-MacBook-Pro.local",
+      "marker": "publishing:09b55551150f4c4ea4a0b2ede2d7578d",
+      "output": "/Users/saleh/Library/Caches/HalalTag-ProductionCompositionR6-NativeQA/20261117T160346Z-2944-09b5555115",
+      "owner": "ios-app-publishing-and-quality",
+      "pid": 2944,
+      "slot_authorized": "publishing-d57-halaltag-r6b-20261117",
+      "started_at": "2026-11-17T16:03:46.359522+00:00"
+    }
+  },
+  "no_checkout_build_signing_or_dispatch": true
+}

@@ -1,0 +1,187 @@
+{
+  "observedAt": "2026-11-17T16:19:41.552Z",
+  "device": "emulator-5580",
+  "captures": [
+    {
+      "packageName": "com.saleh.careerfinder.preview",
+      "remotePath": "cache/navigation-review-evidence/custom-connection-address.png",
+      "file": "captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/custom-connection-address.png",
+      "bytes": 150557,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "4bdb49cd8d6f3c2cc9f5eea50d7ec17cc39e4977f3eb434a61aa729e78df8729"
+    },
+    {
+      "packageName": "com.saleh.careerfinder.preview",
+      "remotePath": "cache/navigation-review-evidence/previous-search-results.png",
+      "file": "captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/previous-search-results.png",
+      "bytes": 151957,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "c4b1d7acbdda7e4b9f34f4c4c61881f512465c1f3b20c4afa884838722c742f9"
+    },
+    {
+      "packageName": "com.saleh.careerfinder.preview",
+      "remotePath": "cache/navigation-review-evidence/private-follow-up-list.png",
+      "file": "captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/private-follow-up-list.png",
+      "bytes": 185062,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "e0467357420e5ceae879ddf252f01daae42de78407086d2f91c4630f913cafb3"
+    },
+    {
+      "packageName": "com.saleh.careerfinder.preview",
+      "remotePath": "cache/navigation-review-evidence/private-record-correction.png",
+      "file": "captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/private-record-correction.png",
+      "bytes": 187471,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "9ef6d2b134907cae61f45b2c54397706388da144b80a457dfcaf42d7e6c16a11"
+    },
+    {
+      "packageName": "com.saleh.careerfinder.preview",
+      "remotePath": "cache/navigation-review-evidence/private-record-date-picker.png",
+      "file": "captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/private-record-date-picker.png",
+      "bytes": 100597,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "f297989360607044f05f1e021e9e3f5a4250629da08834556628d574084f4d3d"
+    },
+    {
+      "packageName": "com.saleh.careerfinder.preview",
+      "remotePath": "cache/navigation-review-evidence/private-record-editor.png",
+      "file": "captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/private-record-editor.png",
+      "bytes": 103525,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "211256c3ce9f37f5e9d847c187800f9a55c186f7448b5a55e833018e876b3441"
+    },
+    {
+      "packageName": "com.saleh.careerfinder.preview",
+      "remotePath": "cache/navigation-review-evidence/record-only-phone-import.png",
+      "file": "captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/record-only-phone-import.png",
+      "bytes": 195325,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "80e8afd81c4d39100473830bc1bbcb30ecf9c5298ac583b4716e3fbade46c51d"
+    },
+    {
+      "packageName": "com.saleh.careerfinder.preview",
+      "remotePath": "cache/navigation-review-evidence/settings-dark.png",
+      "file": "captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/settings-dark.png",
+      "bytes": 163728,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "0ce1bbbb46d70dea821184ad33a1ef7ace14b204a6aaa69c0887abcea84ccaf2"
+    },
+    {
+      "packageName": "com.saleh.careerfinder.preview",
+      "remotePath": "cache/navigation-review-evidence/settings-light.png",
+      "file": "captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/settings-light.png",
+      "bytes": 170116,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "a3d15f5225798b080f3e5a8e3404d7a34e336da75bb929a1dff33933b9c3122a"
+    },
+    {
+      "packageName": "com.saleh.careerfinder.preview",
+      "remotePath": "cache/navigation-review-evidence/two-step-connection.png",
+      "file": "captures/com.saleh.careerfinder.preview/cache/navigation-review-evidence/two-step-connection.png",
+      "bytes": 152200,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "bf8ed6f6ef8b5649939dfc28e00f0de3d2635e4beba8f7af06356a5cb7414343"
+    },
+    {
+      "packageName": "com.saleh.careerfinder.preview",
+      "remotePath": "cache/linkedin-review-evidence/linkedin-exact-review.png",
+      "file": "captures/com.saleh.careerfinder.preview/cache/linkedin-review-evidence/linkedin-exact-review.png",
+      "bytes": 144520,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "a3f27e8fbf7a228cb4c38e401653be25d12c1da9f4a6199b8cdc1625180d81f2"
+    },
+    {
+      "packageName": "com.saleh.careerfinder.preview",
+      "remotePath": "cache/linkedin-review-evidence/linkedin-profile-guidance.png",
+      "file": "captures/com.saleh.careerfinder.preview/cache/linkedin-review-evidence/linkedin-profile-guidance.png",
+      "bytes": 220553,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "e0d359e11ef7c390b9665992aa23d647a693bc8dfae8c4a1c6e7a4cba6d73e70"
+    },
+    {
+      "packageName": "com.saleh.careerfinder.preview",
+      "remotePath": "cache/linkedin-review-evidence/linkedin-search-handoff.png",
+      "file": "captures/com.saleh.careerfinder.preview/cache/linkedin-review-evidence/linkedin-search-handoff.png",
+      "bytes": 170183,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "7ba06215e5974f61526c468d4f01bbe7deb2ea10e24a4f5c9613f259085fb9e0"
+    },
+    {
+      "packageName": "com.saleh.careerfinder.preview",
+      "remotePath": "cache/strict-review-evidence/expanded-private-note-large-text.png",
+      "file": "captures/com.saleh.careerfinder.preview/cache/strict-review-evidence/expanded-private-note-large-text.png",
+      "bytes": 94779,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "174d594b258e59cd0741b6f272ad11e7af378a8783379467881f60d444dbad46"
+    },
+    {
+      "packageName": "com.saleh.careerfinder.preview",
+      "remotePath": "cache/strict-review-evidence/remove-local-opportunity-confirmation.png",
+      "file": "captures/com.saleh.careerfinder.preview/cache/strict-review-evidence/remove-local-opportunity-confirmation.png",
+      "bytes": 157953,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "7d1f358cc4f4ef41d9d3a6f7f3fbd0ae276653ecb79e69aeff0c1f96b3784900"
+    },
+    {
+      "packageName": "com.saleh.careerfinder.preview",
+      "remotePath": "cache/strict-review-evidence/target-country-jp-draft-after-ime.png",
+      "file": "captures/com.saleh.careerfinder.preview/cache/strict-review-evidence/target-country-jp-draft-after-ime.png",
+      "bytes": 111400,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "c04842e84f6f20de40a0c94d510f94e7d55954007450f626c3982ac2e1cc07dd"
+    },
+    {
+      "packageName": "com.saleh.careerfinder.preview",
+      "remotePath": "cache/strict-review-evidence/unfinished-opportunity-choices.png",
+      "file": "captures/com.saleh.careerfinder.preview/cache/strict-review-evidence/unfinished-opportunity-choices.png",
+      "bytes": 132317,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "c2145637bdd9bf018a5dedfc3c22886c491dbe0070f3e9aa8792e5d623b8221a"
+    },
+    {
+      "packageName": "com.saleh.careerfinder.acceptance",
+      "remotePath": "files/acceptance-prepared.png",
+      "file": "captures/com.saleh.careerfinder.acceptance/files/acceptance-prepared.png",
+      "bytes": 206295,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "12b00644f2506460440808c038385ae24e88f85ae78c7e69048e8b81012ce7dc"
+    },
+    {
+      "packageName": "com.saleh.careerfinder.acceptance",
+      "remotePath": "files/acceptance-profile-large-text.png",
+      "file": "captures/com.saleh.careerfinder.acceptance/files/acceptance-profile-large-text.png",
+      "bytes": 185423,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "8655cbf8c381f6a73b3cbcde91e2609d8d491ace8b9690f0df2dbe4c4afed690"
+    },
+    {
+      "packageName": "com.saleh.careerfinder.acceptance",
+      "remotePath": "files/acceptance-receipts.png",
+      "file": "captures/com.saleh.careerfinder.acceptance/files/acceptance-receipts.png",
+      "bytes": 195596,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "5e7a423196f144f5a10d867ace60fe203ca80e0a67ea452001189689662c48f2"
+    }
+  ],
+  "unavailable": []
+}

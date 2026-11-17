@@ -1,0 +1,16 @@
+{
+  "candidate": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+  "run_id": 44139018005,
+  "method": "testProfileReadinessAndSimpleConnectionSetup",
+  "result": {
+    "method": "testProfileReadinessAndSimpleConnectionSetup",
+    "outcome": "passed",
+    "seconds": 107.584
+  },
+  "actual_clear_tap_lines": [
+    "    t =    78.36s Tap \"connection.clearAddress\" Button"
+  ],
+  "source_sha256": "ad0bac775bc17e7cbf2c8ac9c41fc1a0ca1489e579010fb198ff75878d7d557b",
+  "case_log_sha256": "459705998645c88b023f601109558d5585925c77f76248c96a79be77ce1addea",
+  "qualification": "The passing exact-source case retains keyboard dismissal/readiness, enabled real control, exact-empty/final values and unsent-code invalidation. No separately captured field-value dump or expanded-Clear visual qualification is claimed."
+}
