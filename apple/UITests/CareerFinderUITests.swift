@@ -550,7 +550,9 @@ final class CareerFinderUITests: XCTestCase {
         searchFromKeyboard(in: app)
         let empty = element("discovery.empty", app: app)
         reveal(empty, in: app)
-        XCTAssertTrue(empty.label.contains("No roles match this search."), "The empty state must describe the completed search")
+        XCTAssertTrue(empty.label.contains("No matching jobs in these boards."), "The empty state must describe the completed search")
+        XCTAssertTrue(empty.label.contains("Try a broader job title, another location, or a different employer board."),
+                      "A completed empty search must explain how to broaden the submitted search")
         capture("08a-completed-search-with-no-matches", app: app)
         top(app)
         replace(app.textFields["discovery.keywords"], with: "", in: app)
