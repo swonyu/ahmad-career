@@ -386,14 +386,16 @@ for (const language of ['en', 'ar']) {
     ['only the overall result limit', { limited: true }],
     ['only a source result limit', { sourceLimited: true }],
   ]) test(`actual visible and live summaries describe ${label} without inventing an outage in ${language}`, () => {
-    for (const count of [0, 12]) {
+    for (const count of [0, 1, 12]) {
       const value = model.discoveryPageSchema.parse(page({ ...options, jobs: Array.from({ length: count }, (_, index) => job(index)) }));
       // A displayed count must describe this page, not its larger match estimate.
       value.totalMatches = 417;
       assert.equal(value.sources[0].status, 'fresh'); assert.equal(value.sources[0].error, null);
       const visible = renderResults(value, language), live = renderLiveStatus(value, language);
       assert.equal(visible.t(incompleteMessage), expectedIncomplete[language], 'The neutral message needs a real locale entry');
-      assertLiveSummary(live, live.t('{0} jobs shown. {1}', [i18n.formatNumber(count, language), expectedIncomplete[language]]));
+      const announcementKey = count === 1 ? '{0} job shown. {1}' : '{0} jobs shown. {1}';
+      if (count === 1 && language === 'ar') assert.equal(catalog[announcementKey], 'الوظائف المعروضة: {0}. {1}', 'The singular Arabic template must retain both placeholders');
+      assertLiveSummary(live, live.t(announcementKey, [i18n.formatNumber(count, language), expectedIncomplete[language]]));
       assert(visible.html.includes(expectedIncomplete[language]));
       assert(visible.html.includes(visible.t('{0} shown', [i18n.formatNumber(count, language)])));
       assert.equal([...visible.html.matchAll(/data-synthetic-job=/g)].length, count);
@@ -419,6 +421,7 @@ for (const language of ['en', 'ar']) {
 
   test(`actual search summaries retain source evidence and distinguish complete zero/nonzero results in ${language}`, () => {
     for (const { value, incomplete, detail } of [
+      { value: page(), incomplete: false },
       { value: page({ sourceStatus: 'stale' }), incomplete: true, detail: 'Showing an earlier check of this board.' },
       { value: page({ error: { code: 'source_unavailable', message: 'Synthetic provider refusal.' } }), incomplete: true, detail: 'Synthetic provider refusal.' },
       { value: page({ status: 'unavailable', sourceStatus: 'unavailable', jobs: [] }), incomplete: true, detail: 'This board could not provide current results.' },
@@ -427,7 +430,9 @@ for (const language of ['en', 'ar']) {
     ]) {
       const visible = renderResults(value, language), live = renderLiveStatus(value, language);
       const summary = incomplete ? expectedIncomplete[language] : live.t('Search complete.');
-      assertLiveSummary(live, live.t('{0} jobs shown. {1}', [i18n.formatNumber(value.jobs.length, language), summary]));
+      const announcementKey = value.jobs.length === 1 ? '{0} job shown. {1}' : '{0} jobs shown. {1}';
+      assertLiveSummary(live, live.t(announcementKey, [i18n.formatNumber(value.jobs.length, language), summary]));
+      if (value.jobs.length === 1 && language === 'en') assert.equal(live.element.props.children, `1 job shown. ${summary}`);
       if (incomplete && value.status === 'unavailable' && !value.jobs.length) {
         assert(visible.html.includes(visible.t('Current openings could not be checked.')));
         assert(visible.html.includes(visible.t('The selected boards did not return results. Retry the same search, or review the source details.')));

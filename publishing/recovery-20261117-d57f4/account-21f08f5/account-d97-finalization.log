@@ -1,0 +1,9 @@
+2026-11-17T16:09:44.4732890Z     /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild -project apple/AhmadCareer.xcodeproj -scheme CareerFinderAcceptance -configuration Debug -destination "platform=iOS Simulator,id=D26ED71E-9D97-4E79-B376-C104ABB9517A,arch=arm64" -derivedDataPath /Users/runner/work/_temp/career-ui-derived -resultBundlePath /Users/runner/work/_temp/CareerFinderUI.xcresult -parallel-testing-enabled NO -maximum-concurrent-test-simulator-destinations 1 ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO test
+2026-11-17T16:10:34.6543690Z note: Disabling hardened runtime with ad-hoc codesigning. (in target 'AhmadCareer' from project 'AhmadCareer')
+2026-11-17T16:15:08.1616670Z Test Suite 'All tests' started at 2026-11-17 16:15:07.239.
+2026-11-17T16:39:38.4848630Z 	 Executed 17 tests, with 0 failures (0 unexpected) in 1471.177 (1471.212) seconds
+2026-11-17T16:39:38.6443650Z 	 Executed 17 tests, with 0 failures (0 unexpected) in 1471.177 (1471.214) seconds
+2026-11-17T16:39:38.6457370Z Test Suite 'All tests' passed at 2026-11-17 16:39:38.455.
+2026-11-17T16:39:38.6467000Z 	 Executed 17 tests, with 0 failures (0 unexpected) in 1471.177 (1471.216) seconds
+2026-11-17T16:39:56.2751300Z ##[error]The action 'Exercise native phone flows with isolated synthetic data' has timed out after 30 minutes.
+2026-11-17T16:40:01.3610200Z Error: Failed to create a new result bundle reader, underlying error: Info.plist at /Users/runner/work/_temp/CareerFinderUI.xcresult/Info.plist does not exist, the result bundle might be corrupted or the provided path is not a result bundle

@@ -89,19 +89,19 @@ final class CareerFinderUITests: XCTestCase {
         XCTFail("Expected an application control inside the visible scroll area: \(target)")
     }
     @MainActor
-    private func typingKeyIsVisible(in app: XCUIApplication) -> Bool {
-        // Query a real, locale-independent system key. Enumerating every key by
-        // index traverses zero-size padding and stale keys as the layout changes.
-        app.keyboards.keys.matching(identifier: "delete").allElementsBoundByIndex
-            .contains { $0.exists && $0.isHittable }
+    private func typingKeyIsVisible(_ deleteKey: XCUIElement) -> Bool {
+        // Reuse the exact system-key query for this keyboard presentation.
+        // Each poll still resolves its real existence and hit-testable state.
+        deleteKey.exists && deleteKey.isHittable
     }
     @MainActor
     private func replace(_ field: XCUIElement, with text: String, in app: XCUIApplication, clearWith clearButton: XCUIElement? = nil) {
         XCTAssertTrue(field.waitForExistence(timeout: 5))
         // tap() can scroll a native Form field into view; keep that behavior.
         field.tap()
+        let deleteKey = app.keyboards.keys.matching(identifier: "delete").firstMatch
         let keyboardReady = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-            self.typingKeyIsVisible(in: app)
+            self.typingKeyIsVisible(deleteKey)
         }, object: nil)
         let readiness = XCTWaiter.wait(for: [keyboardReady], timeout: 5)
         if readiness != .completed { print(app.debugDescription) }
@@ -166,8 +166,9 @@ final class CareerFinderUITests: XCTestCase {
                                "The native editing action must clear the whole field before replacement")
                 if clearButton != nil {
                     field.tap()
+                    let reopenedDeleteKey = app.keyboards.keys.matching(identifier: "delete").firstMatch
                     let keyboardAfterClear = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-                        self.typingKeyIsVisible(in: app)
+                        self.typingKeyIsVisible(reopenedDeleteKey)
                     }, object: nil)
                     XCTAssertEqual(XCTWaiter.wait(for: [keyboardAfterClear], timeout: 5), .completed,
                                    "A real keyboard key must be visible after clearing before replacement")
@@ -265,13 +266,14 @@ final class CareerFinderUITests: XCTestCase {
     @MainActor
     private func searchFromKeyboard(in app: XCUIApplication, usingReturnKey: Bool = false) {
         XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5))
+        let deleteKey = app.keyboards.keys.matching(identifier: "delete").firstMatch
         let keyReady = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-            self.typingKeyIsVisible(in: app)
+            self.typingKeyIsVisible(deleteKey)
         }, object: nil)
         let keyReadiness = XCTWaiter.wait(for: [keyReady], timeout: 5)
         if keyReadiness != .completed { print(app.debugDescription) }
         XCTAssertEqual(keyReadiness, .completed, "A real keyboard key must be visible before submitting")
-        guard typingKeyIsVisible(in: app) else {
+        guard typingKeyIsVisible(deleteKey) else {
             print(app.debugDescription)
             XCTFail("No reachable keyboard key was presented"); return
         }

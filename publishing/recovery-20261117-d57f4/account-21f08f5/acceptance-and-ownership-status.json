@@ -1,0 +1,116 @@
+{
+  "recordedAt": "2026-11-17T17:11:41.060370+00:00",
+  "method": "Read-only original-owner records; public deployment/provider-log facts separately reported by root after its direct Sites inspection. No provider, browser, deployment or device action by this reviewer.",
+  "originalOwner": {
+    "commit": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+    "dirtyDocumentationPreserved": true,
+    "sealedCommitImported": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+    "receipts": [
+      {
+        "name": "private-acceptance-deployment-v6.json",
+        "sha256": "6f047a155d71a787a251cc6decc6b40726a00969288c209e2448f4eaa2159875"
+      },
+      {
+        "name": "google-acceptance-current.json",
+        "sha256": "73794917b22663d6316cefb4ebccf277ce89265e06fb00264a84dc766e1a4374"
+      },
+      {
+        "name": "live-browser-acceptance.json",
+        "sha256": "c383caf756ab178cde5a42c9a9e0b5c138ed10cd37766cd4c9c12004f2053cee"
+      },
+      {
+        "name": "browser-connection-recheck-after-restart.json",
+        "sha256": "57b0c51983cdde4599f9af2ee23d079189e323b5c61c3ce8db0c7556f211bc4d"
+      },
+      {
+        "name": "device-availability-after-restart.json",
+        "sha256": "bce79b9d1c818934397e8e99ebf2b4e6633c458317a6f26414b39d68cf48e7f9"
+      },
+      {
+        "name": "coordination-after-21f08f5.json",
+        "sha256": "645f4b45dac7feebc78a2745b1abec466bc00ddb4f801a0fad9373109752c5ba"
+      }
+    ]
+  },
+  "publicDeployment": {
+    "url": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
+    "version": 7,
+    "succeededAt": "2026-11-17T03:54:40Z",
+    "commitPrefix": "1135a327",
+    "source": "Root direct read-only Sites inspection, relayed to this reviewer. Full SHA not supplied here.",
+    "currentRecoverySourceDeployed": false,
+    "providerLogSchemaObservation": "Root observed request URL and network IP headers in the production provider schema; the public privacy wording already acknowledges service logs. Retention is not invented."
+  },
+  "privateAcceptance": {
+    "version": 6,
+    "applicationSource": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+    "siteCommit": "ed3aba5dd9b0e6888a2fb47440954a1d4cce3acd",
+    "succeededAt": "2026-11-17T16:50:33.360699+00:00",
+    "audience": "Existing owner-private audience unchanged; not a public production update.",
+    "environmentRevision": 1,
+    "latestDeploymentHasNewRealBrowserAcceptance": false
+  },
+  "realOAuth": {
+    "basicScopesOnly": [
+      "openid",
+      "email",
+      "profile"
+    ],
+    "observedEarlierJourney": "The correct private-QA origin reached account choice and Google passkey verification.",
+    "consentAndCallbackVerified": false,
+    "denialUnlinkRelinkVerified": false,
+    "originalTransactionExpired": true,
+    "latestOriginatingBrowserBootstrap": "16:16:19 UTC returned originating-context restriction before tab/provider operation; no bypass or audience change.",
+    "workspaceABIsolationRecoveryAndDownloads": "Not established by the available real-session evidence."
+  },
+  "physicalAndAssistiveTechnology": {
+    "observedAt": "2026-11-17T16:22:10Z",
+    "physicalDevicesListed": 3,
+    "usableTunnels": 0,
+    "physicalAcceptanceVerified": false,
+    "voiceOverTalkBackAcceptanceVerified": false
+  },
+  "pendingOtherLanes": [
+    {
+      "lane": "Owner-reported continuation4b851",
+      "base": "2fac36f321005d9a2703e6db92acd7d7c14886c5",
+      "branch": "continuation/feed-reliability-20261117-4b851",
+      "claimedPaths": [
+        "hosted/server/discovery.mjs",
+        "hosted/tests/hosted-discovery.mjs"
+      ],
+      "reportedFindings": [
+        "Early-rejection response-body cleanup",
+        "Awaited cancellation rejection or hang"
+      ],
+      "status": "Unsealed follow-up/results not yet independently verified; excluded from this merge."
+    },
+    {
+      "lane": "Owner-reported separate Grok Build task",
+      "base": "2fac36f321005d9a2703e6db92acd7d7c14886c5",
+      "claimedPaths": [
+        "SessionRecovery.tsx",
+        "OAuthFeedback.tsx",
+        "ProviderConnections.tsx",
+        "SignInOptions.tsx",
+        "new focused tests"
+      ],
+      "excludedScopes": [
+        "native",
+        ".github",
+        "discovery",
+        "PhoneApp",
+        "messages.ar",
+        "phone-search-workflows"
+      ],
+      "status": "Assigned task, no completed diff/test/integration verified; excluded from this merge."
+    }
+  ],
+  "releaseClaims": {
+    "storePublished": false,
+    "newPublicDeployment": false,
+    "realGoogleCallback": false,
+    "physicalDeviceAcceptance": false
+  },
+  "nextGate": "Parent will pin and run all five jobs on this reviewed 0f+21 merge. Later sealed integrations require explicit diff review and affected retests; pending source cannot silently alter this gate head."
+}

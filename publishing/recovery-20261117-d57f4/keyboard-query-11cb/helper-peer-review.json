@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-11-17T18:08:21.252338+00:00",
+  "reviewer": "/root/lumina_recovery",
+  "status": "NO_BLOCKING_SOURCE_FINDING_NATIVE_RESULT_PENDING",
+  "base_commit": "11cb3d4d8c15e9b16719b6e7091597f43633cda6",
+  "source_sha256": "163d5698d9e291db53e161e98011fac64174233863063a36efa7ac318fdea84e",
+  "patch_sha256": "61707412136653d63daff1b1b38aae92e6f8c849337bb0cd6fb8f598381d7b9b",
+  "scope": [
+    "typingKeyIsVisible",
+    "replace",
+    "searchFromKeyboard"
+  ],
+  "findings": [],
+  "review": [
+    "The exact delete-key query is created after the actual field tap and separately recreated after Clear reopens the keyboard. Each predicate still evaluates real exists and isHittable; no cached Boolean or direct field injection is used.",
+    "The observed failure AX has exactly one delete key, 54 by 56 points, and the failed call was indexed query collection materialization. A short-circuit firstMatch query directly addresses that observed call without accepting zero-size padding or another key.",
+    "All 17 test method bodies compare byte-identical to HEAD, all 153 assertion call sites remain, and the diff retains each existing five-second wait and exact-clear/exact-replacement checks. Keyboard-dismissal collection checks remain untouched.",
+    "This is a bounded test-query repair, not evidence of a shipping-product fix. Caching the query does not cache successful visibility or establish a hard wall-clock timeout; XCTest may still wait internally for snapshots."
+  ],
+  "actual_evidence_read": "/workspace/scratch/d57f4cd77813/career/.git/ci-integrated-11cb-44135594938/iphone-failure-job-context.log",
+  "official_sources": [
+    {
+      "url": "https://developer.apple.com/documentation/xcuiautomation/xcuielementtypequeryprovider/firstmatch",
+      "retrieved": true,
+      "basis": "Stops accessibility traversal at the first match and is suitable only when a unique match is known."
+    },
+    {
+      "url": "https://developer.apple.com/documentation/xcuiautomation/xcuielementquery/allelementsboundbyindex",
+      "retrieved": true,
+      "basis": "Immediately evaluates the query and creates indexed results."
+    }
+  ],
+  "native_or_build_invoked": false,
+  "tests_run": false,
+  "source_edits": false,
+  "mac_writes": false,
+  "remaining_gate": "Actual focused accessibility journey and subsequent complete native acceptance on the sealed integrated candidate."
+}

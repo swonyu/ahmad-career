@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-11-17T18:14:45.964638+00:00",
+  "reviewer": "/root/lumina_recovery",
+  "status": "NO_BLOCKING_FILE_REVIEW_FINDING_CI_NOT_RUN",
+  "base_commit": "11cb3d4d8c15e9b16719b6e7091597f43633cda6",
+  "path": "/workspace/scratch/d57f4cd77813/career-keyboard-query-recovery/.github/workflows/phone-quality.yml",
+  "sha256": "03a9eb0b74efbf33422d734558c14fc13b8b5d26bcfb0d4c2eef716a35ed1581",
+  "reviewed_diff": "Manual iphone-ui choice, four non-UI job exclusions, explicit partial UI job label/log, and an empty selector case for the full iPhone suite.",
+  "findings": [],
+  "routing": {
+    "push_or_pull_request": "All five existing jobs remain eligible regardless of absent workflow inputs.",
+    "manual_full": "All five existing jobs remain eligible; UI selector stays empty.",
+    "manual_iphone_ui": "Only iPhone UI job runs; selector stays empty, using the unchanged full CareerFinderAcceptance scheme. The job name/log explicitly say partial CI and all17 journeys.",
+    "manual_iphone_connection": "Only iPhone UI runs with the unchanged one-method selector and exact-once log verification.",
+    "unknown_scope": "Native case rejects unsupported values."
+  },
+  "retained": [
+    "Full remains the manual default.",
+    "Existing xcodebuild command, scheme, concurrency controls,35-minute test step and40-minute job bounds are unchanged.",
+    "Artifact retention/export steps and permissions remain unchanged.",
+    "The separate cached-delete helper remains the already reviewed SHA163d5698d9e291db53e161e98011fac64174233863063a36efa7ac318fdea84e."
+  ],
+  "acceptance_limit": "The new option requests the full17-method iPhone suite, but only actual result inventory can prove all17 executed and passed. A green partial iphone-ui job cannot establish the four omitted release gates.",
+  "actions": {
+    "source_edits": false,
+    "tests_or_workflow_execution": false,
+    "native_or_mac_actions": false
+  }
+}

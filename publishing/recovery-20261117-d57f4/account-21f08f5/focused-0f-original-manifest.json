@@ -1,0 +1,26 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "C80D0661-53A9-4743-B864-FAEAFF9E08F6",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "51BCB55B-FDAF-4BFF-95C0-6BF5B2A103E7.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "22-simple-default-connection_0_27187094-F9B7-4277-B105-79A9C195BA0E.png",
+        "timestamp" : 1794934705.545
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "C80D0661-53A9-4743-B864-FAEAFF9E08F6",
+        "deviceName" : "iPhone Air",
+        "exportedFileName" : "0B5FE2F8-FA39-45C8-8524-EDE1827530C7.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "21-profile-readiness_0_C4D83B6E-17F0-4816-A6CE-C68CF82EB9DC.png",
+        "timestamp" : 1794934634.377
+      }
+    ],
+    "testIdentifier" : "CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup()",
+    "testIdentifierURL" : "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup"
+  }
+]

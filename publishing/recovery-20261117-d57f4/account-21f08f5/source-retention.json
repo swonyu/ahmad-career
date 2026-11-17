@@ -1,0 +1,36 @@
+{
+  "recordedAt": "2026-11-17T17:11:00.108636+00:00",
+  "sourceHashesMatchTests": true,
+  "indexMatchesWorkingSource": true,
+  "unmergedEntries": 0,
+  "workflowEqualsPublishingParentExceptTwoTimeoutIntegers": true,
+  "allAppleAndroidLocalizationBytesUnchangedFromPublishingParent": true,
+  "iPhoneMethods": [
+    "testFreshStartAndFiveTabs",
+    "testApplicationDraftSurvivesCancelAndRelaunch",
+    "testLinkedInProfileDraftAndExternalSearchChoice",
+    "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+    "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+    "testProfileReadinessAndSimpleConnectionSetup",
+    "testOpportunityDraftKeepSaveAndRestore",
+    "testOpportunityDiscardRequiresExplicitChoice",
+    "testDiscoverySaveFlowsIntoSavedAndApply",
+    "testSearchEmptyAndFailurePreservesPreviousResults",
+    "testAccessibilityTextKeepsCoreControlsReachable",
+    "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+    "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+    "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+    "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+    "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+    "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark"
+  ],
+  "hostedRuntimeDeltaExactlyTwoSingularChoices": true,
+  "sourceScope": [
+    ".github/workflows/phone-quality.yml",
+    "hosted/app/i18n/messages.ar.json",
+    "hosted/app/phone/PhoneApp.tsx",
+    "hosted/tests/phone-search-workflows.mjs"
+  ],
+  "testBodyAndPerAssertionDeadlinesUnchanged": true,
+  "fullGatePendingOnMerge": true
+}
