@@ -128,6 +128,17 @@ final class CareerFinderUITests: XCTestCase {
         let add = app.buttons["home.addOpportunity"]; reveal(add, in: app); add.tap()
         for (id, value) in [("opportunity.url", "https://careers.example.com/jobs/private-record"), ("opportunity.title", title), ("opportunity.company", company)] {
             let field = app.textFields[id]; reveal(field, in: app); replace(field, with: value, in: app)
+            // One native typing event can still be delivering characters when
+            // typeText returns. Observe its exact result without typing again.
+            let entered = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+                field.exists && (field.value as? String) == value
+            }, object: nil)
+            let entry = XCTWaiter.wait(for: [entered], timeout: 5)
+            if entry != .completed {
+                capture("opportunity-input-incomplete-\(id)", app: app)
+                print(app.debugDescription)
+            }
+            XCTAssertEqual(entry, .completed, "The single typing event must deliver the exact fixture text within the readiness window")
             XCTAssertEqual(field.value as? String, value, "The intended field must receive the exact fixture text")
             if app.buttons["Done typing"].exists {
                 app.buttons["Done typing"].tap()
@@ -591,6 +602,7 @@ final class CareerFinderUITests: XCTestCase {
         let reopen = app.buttons["home.applicationProfile"]; reveal(reopen, in: app); reopen.tap()
         XCTAssertTrue(app.textFields["application.firstName"].waitForExistence(timeout: 5))
         XCTAssertEqual(app.textFields["application.firstName"].value as? String, "Saved", "User text equal to an English label stays verbatim")
+        reveal(app.textFields["application.email"], in: app)
         XCTAssertEqual(app.textFields["application.email"].value as? String, "saved@example.invalid")
         capture("28-arabic-profile-original-values", app: app)
         app.navigationBars.buttons["إلغاء"].tap()
