@@ -221,6 +221,7 @@ final class CareerDiscoveryStore: ObservableObject {
     @Published private(set) var loadingCatalog = false
     @Published private(set) var restoredResults = false
     @Published private(set) var error: String?
+    @Published private(set) var catalogError: String?
     @Published private(set) var storageNotice: String?
     var savedSearchRestoreBlocked: Bool { !storageReadable }
     @Published private(set) var retryAfter: Date?
@@ -307,10 +308,12 @@ final class CareerDiscoveryStore: ObservableObject {
     var criteriaChanged: Bool { lastQuery != nil && lastQuery != query }
     func loadCatalog() async {
         guard catalog == nil, !loadingCatalog else { return }
-        loadingCatalog = true; defer { loadingCatalog = false }
+        loadingCatalog = true; catalogError = nil; defer { loadingCatalog = false }
         do {
             let result = try await service.catalog(); try DiscoveryPolicy.validate(result); catalog = result
-        } catch { self.error = error.localizedDescription }
+        } catch {
+            catalogError = "Employer boards could not be loaded. You can retry or search the recommended boards."
+        }
     }
     func addBoard(_ input: String) -> Bool {
         let value = input.trimmingCharacters(in: .whitespacesAndNewlines)

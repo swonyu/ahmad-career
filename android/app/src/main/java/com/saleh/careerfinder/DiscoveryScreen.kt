@@ -165,7 +165,9 @@ internal fun LinkedInSearchAction(keywords: String, location: String, open: (Str
             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Search LinkedIn")) }
         Text(l10n("Opens LinkedIn with your keywords and location. LinkedIn manages its own sign-in and applications; opening a search does not submit an application."),
             style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        if (destination == null) Text(l10n("Shorten the keywords or location to open LinkedIn search."), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+        if (destination == null) Text(l10n("Shorten the keywords or location to open LinkedIn search."),
+            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error,
+            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }.testTag("discovery.linkedinIssue"))
     }
 }
 

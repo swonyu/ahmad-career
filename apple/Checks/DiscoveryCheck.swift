@@ -5,6 +5,7 @@ import Darwin
 private final class DiscoveryStub: CareerDiscoveryServing {
     let directory: DiscoveryCatalog
     var catalogCalls = 0
+    var catalogFailure = false
     var calls: [(DiscoveryQuery, String?)] = []
     var handle: (DiscoveryQuery, String?) async throws -> DiscoveryPage
     init(_ fixture: DiscoveryPage) {
@@ -14,7 +15,11 @@ private final class DiscoveryStub: CareerDiscoveryServing {
             limits: DiscoveryLimits(maxSources: 4, pageSize: 50, maxJobsPerSource: 500), notice: "Synthetic directory")
         handle = { _, _ in fixture }
     }
-    func catalog() async throws -> DiscoveryCatalog { catalogCalls += 1; return directory }
+    func catalog() async throws -> DiscoveryCatalog {
+        catalogCalls += 1
+        if catalogFailure { throw URLError(.cannotConnectToHost) }
+        return directory
+    }
     func search(_ query: DiscoveryQuery, cursor: String?) async throws -> DiscoveryPage {
         calls.append((query, cursor)); return try await handle(query, cursor)
     }
@@ -254,6 +259,23 @@ private final class DiscoverySuite {
             try check(model.storageNotice == nil, "Retry saves the search when storage is available again")
             let reopened = CareerDiscoveryStore(file: file, service: service)
             try check(reopened.query.keywords == "Pharmacist", "The retried save survives relaunch")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(fixture); let (model, _) = store(service)
+            model.query.keywords = "Nurse"
+            service.handle = { _, _ in throw URLError(.cannotConnectToHost) }
+            await model.search()
+            let searchError = model.error
+            service.catalogFailure = true
+            await model.loadCatalog()
+            try check(model.catalog == nil && model.catalogError == "Employer boards could not be loaded. You can retry or search the recommended boards."
+                      && model.error == searchError && service.calls.count == 1,
+                      "A failed employer directory stays separate from the job-search error")
+            service.catalogFailure = false
+            await model.loadCatalog()
+            try check(model.catalog != nil && model.catalogError == nil && model.error == searchError && service.catalogCalls == 2 && service.calls.count == 1,
+                      "Retry loads the employer directory without repeating the job search or clearing its error")
             scenarios += 1
         }
     }
