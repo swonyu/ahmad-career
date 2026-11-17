@@ -30,7 +30,7 @@ internal fun ApplicationRecordSummary(record: ApplicationRecordBundle?, open: ()
     val l10n = rememberCareerStrings()
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         if (record != null) {
-            StatusPill(if (record.displayStage == ApplicationStage.APPLIED) "Applied elsewhere · self-reported" else "${record.displayStage.label} · your record", false)
+            StatusPill(if (record.displayStage == ApplicationStage.APPLIED) "Applied elsewhere · self-reported" else l10n.format("{0} · your record", listOf(l10n(record.displayStage.label))), false)
             if (record.current.record.followUpDate.isNotEmpty() && record.displayStage != ApplicationStage.CLOSED) {
                 Text(l10n(if (record.followUpDue()) "Follow-up due:" else "Follow up:"), style = MaterialTheme.typography.labelMedium)
                 // A separate paragraph preserves the native date order in both RTL and LTR.
