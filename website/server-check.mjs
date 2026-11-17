@@ -31,7 +31,7 @@ function worker(mode,cacheFailure){
     if(mode==='offline'||url.includes('/Bad_'))return new Response('{}',{status:503});
     return Response.json({jobPostingInfo:{title:'Supply Chain Manager',jobReqId:'REQ',canApply:true,posted:true,location:'Riyadh',country:{descriptor:'Saudi Arabia'},startDate:'2026-10-01'}});
   };
-  const context=vm.createContext({URL,Request,Response,Headers,AbortSignal,Date,Intl,fetch:fetcher,caches:{get default(){if(cacheFailure==='access')throw Error('This Worker is not permitted to access the default cache.');return {match:async()=>{if(cacheFailure==='match')throw Error('This Worker is not permitted to access the default cache.');return null},put:async(k,v)=>{puts.push(v)}}}}});
+  const context=vm.createContext({URL,Request,Response,Headers,AbortSignal,TextDecoder,TextEncoder,Date,Intl,fetch:fetcher,caches:{get default(){if(cacheFailure==='access')throw Error('This Worker is not permitted to access the default cache.');return {match:async()=>{if(cacheFailure==='match')throw Error('This Worker is not permitted to access the default cache.');return null},put:async(k,v)=>{puts.push(v)}}}}});
   vm.runInContext(workerSource.replace('export default {','globalThis.worker = {'),context);
   return {context,puts,pending,calls:()=>calls,run:request=>context.worker.fetch(request,{}, {waitUntil:p=>pending.push(p)})};
 }

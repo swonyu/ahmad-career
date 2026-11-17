@@ -753,15 +753,16 @@ struct NativeLegacyBackupScreen:View {
     @State private var notice=""
     var body:some View {
         Form {
-            Section(l10n("Earlier local planning records")) {
+            Section {
                 Text(l10n("These records are separate from every connected account. A backup includes saved roles, self-entered receipt notes, next actions and the saved planning profile. It contains no account credentials or application approvals."))
                 Button(l10n("Export earlier planning records")) {
                     do {document=NativeLegacyBackupDocument(data:try store.privateBackupData());exporting=true;notice=""}
                     catch {notice=error.localizedDescription}
                 }.accessibilityIdentifier("legacyBackup.export")
                 NavigationLink { NativeNotesPreview(text:l10n.exportNotes(from:store),includesProfile:true) } label: {Label(l10n("Review my application notes"),systemImage:"doc.text")}
+            } header: { Text(l10n("Earlier local planning records"))
             } footer:{Text(l10n("This unencrypted file contains private information. Choose a destination you trust. Unsaved drafts are available in reviewed notes, not the saved-data backup."))}
-            Section(l10n("Add earlier records from a backup")) {
+            Section {
                 Button(l10n("Choose an earlier workspace backup")){preview=nil;importing=true}.accessibilityIdentifier("legacyBackup.choose")
                 Text(l10n("Review the additions before restoring. Existing records, profile and checklist are preserved. Nothing is copied into an account, uploaded or submitted."))
                 if let candidate=preview {
@@ -771,6 +772,7 @@ struct NativeLegacyBackupScreen:View {
                         .accessibilityIdentifier("legacyBackup.confirm")
                     Button(l10n("Cancel preview"),role:.cancel){preview=nil;notice="Preview canceled. Nothing was restored."}
                 }
+            } header: { Text(l10n("Add earlier records from a backup"))
             } footer:{Text(l10n("Close older app versions before restoring. A local recovery copy is saved first. If the saved data changes, create a new preview. Older versions may not preserve newer records or preferences."))}
             if !notice.isEmpty {Section {Text(l10n.message(notice)).fixedSize(horizontal:false,vertical:true).accessibilityAddTraits(.updatesFrequently)}}
         }.navigationTitle(l10n("Earlier records and backups")).navigationBarTitleDisplayMode(.inline)

@@ -885,7 +885,17 @@ struct ApplicationAttention: Identifiable {
             var jobs=valid.filter { healthcareLead($0) && CareerFeed.dateIsEligible($0.posted,now:now,closing:false) && CareerFeed.dateIsEligible($0.closes ?? "",now:now,closing:true) && seen.insert($0.id).inserted }
             let failedNames=Set(sources.filter{$0.incomplete}.map(\.name))
             jobs += cachedEmployerJobs.filter { job in !seen.contains(job.id) && failedNames.contains(job.company) && !sources.contains(where:{$0.name==job.company && ($0.excludedIds ?? []).contains(job.id)}) && CareerFeed.dateIsEligible(job.posted,now:now,closing:false) && CareerFeed.dateIsEligible(job.closes ?? "",now:now,closing:true) && seen.insert(job.id).inserted }
-            jobs=jobs.map{($0,CareerFeed.parsedDate($0.posted) ?? .distantPast)}.sorted {a,b in (a.0.relevance ?? CareerFeed.relevance(a.0.title)) != (b.0.relevance ?? CareerFeed.relevance(b.0.title)) ? (a.0.relevance ?? CareerFeed.relevance(a.0.title)) > (b.0.relevance ?? CareerFeed.relevance(b.0.title)) : a.1 != b.1 ? a.1>b.1 : (a.0.title,a.0.id)<(b.0.title,b.0.id)}.map{ $0.0 }
+            let rankedJobs: [(job: CareerJob, posted: Date, relevance: Int)] = jobs.map { job in
+                (job: job, posted: CareerFeed.parsedDate(job.posted) ?? .distantPast,
+                 relevance: job.relevance ?? CareerFeed.relevance(job.title))
+            }
+            let sortedJobs = rankedJobs.sorted { left, right in
+                if left.relevance != right.relevance { return left.relevance > right.relevance }
+                if left.posted != right.posted { return left.posted > right.posted }
+                if left.job.title != right.job.title { return left.job.title < right.job.title }
+                return left.job.id < right.job.id
+            }
+            jobs = sortedJobs.map { $0.job }
             guard jobs.count<=1000 else {searchError="The combined result list exceeded the local capacity. Previous results and comparison are preserved.";return}
             let previousIDs=Set(cachedEmployerJobs.map(\.id))
             let comparison=SearchComparison(previousCheckedAt:workspace.live?.checkedAt,checkedAt:checkedAt,addedIds:workspace.live == nil ? [] : jobs.filter{!previousIDs.contains($0.id)}.map(\.id))
