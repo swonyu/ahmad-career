@@ -37,3 +37,13 @@ done
 "$compiler" "${common[@]}" "$task_root/AhmadCareer/CareerFeed.swift" \
   "$task_root/Checks/NativeTransportLimitCheck.swift" -o "$check_dir/transport-check"
 "$check_dir/transport-check"
+
+# Exercise the app's actual DEBUG fixture initializer, including relaunch and
+# unreadable-file preservation. Existing release-policy checks above stay intact.
+"$compiler" "${common[@]}" -D DEBUG \
+  "$task_root/AhmadCareer/MobileApplicationClient.swift" \
+  "$task_root/AhmadCareer/MobileApplicationState.swift" "$task_root/AhmadCareer/NativeApplicationsStore.swift" \
+  "$task_root/AhmadCareer/CareerFeed.swift" "$task_root/AhmadCareer/NativeCareerStore.swift" \
+  "$task_root/AhmadCareer/CareerDiscovery.swift" "$task_root/AhmadCareer/CareerAppEnvironment.swift" \
+  "$task_root/Checks/SyntheticPDF.swift" "$task_root/Checks/AcceptanceFixtureCheck.swift" -o "$check_dir/acceptance-fixture-check"
+"$check_dir/acceptance-fixture-check"

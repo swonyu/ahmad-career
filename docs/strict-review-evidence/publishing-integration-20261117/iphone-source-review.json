@@ -1,0 +1,64 @@
+{
+  "observed_at_utc": "2026-11-17T11:25:20.469537+00:00",
+  "base_commit": "ddc1881a4ec6855854784f581e0b8cb7136bfc11",
+  "status": "source checks passed; Swift/native and UI execution pending",
+  "paths": {
+    "apple/AhmadCareer/CareerAppEnvironment.swift": {
+      "sha256": "2087f29a079d2c129b33a31cd3e12b2cf0c2877edc03d31b05538ca104453c9f",
+      "bytes": 9289
+    },
+    "apple/UITests/CareerFinderUITests.swift": {
+      "sha256": "4b7b504ce3f7ffc2eb2556559c2276a6cea3bbae85126472e81f1aee2c185f5c",
+      "bytes": 43005
+    },
+    "apple/Checks/check-mobile.sh": {
+      "sha256": "56895bbfe51f0b374ec2a78cd0ac24f2d97dd23e510e75a900b7f4977441b63d",
+      "bytes": 3397
+    },
+    "apple/Checks/AcceptanceFixtureCheck.swift": {
+      "sha256": "d0dee032b756c02c5906df91dd72a4774ea2cb4ebb9a696aad862670dcb2364d",
+      "bytes": 9048
+    }
+  },
+  "original_ui_methods": [
+    "testFreshStartAndFiveTabs",
+    "testApplicationDraftSurvivesCancelAndRelaunch",
+    "testLinkedInProfileDraftAndExternalSearchChoice",
+    "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+    "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+    "testProfileReadinessAndSimpleConnectionSetup",
+    "testOpportunityDraftKeepSaveAndRestore",
+    "testOpportunityDiscardRequiresExplicitChoice",
+    "testDiscoverySaveFlowsIntoSavedAndApply",
+    "testSearchEmptyAndFailurePreservesPreviousResults",
+    "testAccessibilityTextKeepsCoreControlsReachable",
+    "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+    "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+    "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+    "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+    "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+    "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark"
+  ],
+  "original_ui_method_bodies_exact": 17,
+  "original_ui_assertion_calls_retained": 134,
+  "current_ui_assertion_calls": 137,
+  "existing_native_gate_bytes_preserved": true,
+  "release_environment_code_unchanged": true,
+  "original_search_submission_and_dismissal_source_unchanged": true,
+  "new_fixture_check_assertion_sites": 19,
+  "new_fixture_regression_execution": "not run",
+  "compiler_execution": "not run",
+  "native_device_or_simulator_execution": "not run",
+  "limitations": [
+    "Keyboard synchronization diagnosis remains a source/log-supported hypothesis until the same journeys rerun.",
+    "No physical keyboard, OS locale-picker, account-provider or store-release acceptance is claimed."
+  ],
+  "independent_review": {
+    "reviewer": "/root/lumina_review",
+    "result": "No definite source-level compile/API or data-preservation blocker found",
+    "recommended_strengthening": "Require no reachable real key in addition to keyboard/toolbar dismissal",
+    "strengthening_applied": true,
+    "native_execution": false
+  },
+  "expected_new_fixture_assertion_executions_if_complete": 38
+}

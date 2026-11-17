@@ -89,11 +89,28 @@ final class CareerFinderUITests: XCTestCase {
         XCTFail("Expected an application control inside the visible scroll area: \(target)")
     }
     @MainActor
-    private func replace(_ field: XCUIElement, with text: String) {
+    private func replace(_ field: XCUIElement, with text: String, in app: XCUIApplication? = nil) {
         XCTAssertTrue(field.waitForExistence(timeout: 5))
         field.tap()
+        if let app {
+            let ready = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+                self.hasReachableTypingKey(in: app)
+            }, object: nil)
+            let readiness = XCTWaiter.wait(for: [ready], timeout: 5)
+            if readiness != .completed { print(app.debugDescription) }
+            XCTAssertEqual(readiness, .completed, "The single field tap must present a real keyboard before typing")
+            guard readiness == .completed else { return }
+        }
         let previous = field.value as? String ?? ""
         field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: previous.count) + text)
+    }
+    @MainActor
+    private func hasReachableTypingKey(in app: XCUIApplication) -> Bool {
+        // iOS exposes zero-size Padding-Left/Right Key nodes before its real keys.
+        // Resolve one current real key instead of retaining every indexed proxy
+        // across keyboard transitions; a hidden or absent key never satisfies this.
+        let key = app.keyboards.keys.matching(NSPredicate(format: "label != %@ AND label != %@", "Padding-Left", "Padding-Right")).firstMatch
+        return key.exists && key.isHittable
     }
     @MainActor
     private func capture(_ name: String, app: XCUIApplication) {
@@ -110,8 +127,19 @@ final class CareerFinderUITests: XCTestCase {
     private func addLocalOpportunity(in app: XCUIApplication, title: String, company: String = "Example employer") {
         let add = app.buttons["home.addOpportunity"]; reveal(add, in: app); add.tap()
         for (id, value) in [("opportunity.url", "https://careers.example.com/jobs/private-record"), ("opportunity.title", title), ("opportunity.company", company)] {
-            let field = app.textFields[id]; reveal(field, in: app); replace(field, with: value)
-            if app.buttons["Done typing"].exists { app.buttons["Done typing"].tap() }
+            let field = app.textFields[id]; reveal(field, in: app); replace(field, with: value, in: app)
+            XCTAssertEqual(field.value as? String, value, "The intended field must receive the exact fixture text")
+            if app.buttons["Done typing"].exists {
+                app.buttons["Done typing"].tap()
+                let dismissed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+                    let keyboard = app.keyboards.firstMatch, done = app.buttons["Done typing"]
+                    return (!keyboard.exists || !keyboard.isHittable) && (!done.exists || !done.isHittable)
+                        && !self.hasReachableTypingKey(in: app)
+                }, object: nil)
+                let dismissal = XCTWaiter.wait(for: [dismissed], timeout: 5)
+                if dismissal != .completed { print(app.debugDescription) }
+                XCTAssertEqual(dismissal, .completed, "Done typing must dismiss its keyboard and toolbar before the next field tap")
+            }
         }
         app.buttons["opportunity.save"].tap()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 5))
@@ -133,12 +161,12 @@ final class CareerFinderUITests: XCTestCase {
         let keyboard = app.keyboards.firstMatch
         XCTAssertTrue(keyboard.waitForExistence(timeout: 5))
         let keyReady = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-            keyboard.keys.allElementsBoundByIndex.contains { $0.exists && $0.isHittable }
+            self.hasReachableTypingKey(in: app)
         }, object: nil)
         let keyReadiness = XCTWaiter.wait(for: [keyReady], timeout: 5)
         if keyReadiness != .completed { print(app.debugDescription) }
         XCTAssertEqual(keyReadiness, .completed, "A real keyboard key must be visible before submitting")
-        guard keyboard.keys.allElementsBoundByIndex.contains(where: { $0.exists && $0.isHittable }) else {
+        guard hasReachableTypingKey(in: app) else {
             print(app.debugDescription)
             XCTFail("No reachable keyboard key was presented"); return
         }
