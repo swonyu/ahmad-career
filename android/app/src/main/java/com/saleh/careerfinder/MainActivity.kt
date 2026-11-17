@@ -270,9 +270,11 @@ private fun SettingsScreen(state: CareerUiState, connect: () -> Unit, phoneData:
                     modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp).testTag("settings-phone-data")) {
                     Text(l10n("Phone data, backup and recovery"))
                 }
-                Text(l10n(if (state.storageBlocked) "Your private files are preserved. Return to Jobs to retry storage or review recovery options."
-                    else "Your profile, application records and appearance preference remain separate. Connecting never submits an application."),
-                    style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                val workspaceNote = if (state.storageBlocked) "Your private files are preserved. Return to Jobs to retry storage or review recovery options."
+                    else "Your profile, application records and appearance preference remain separate. Connecting never submits an application."
+                Text(l10n(workspaceNote),
+                    style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = if (state.storageBlocked) Modifier.semantics { liveRegion = LiveRegionMode.Polite } else Modifier)
             }
         }
         item {
@@ -295,7 +297,11 @@ private fun StorageRecoveryScreen(state: CareerUiState, model: CareerViewModel) 
     var confirmFresh by remember { mutableStateOf(false) }
     LazyColumn(Modifier.fillMaxSize().testTag("storage-recovery"), contentPadding = PaddingValues(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        item { Heading("Your private files are preserved.", "Saving is paused while this phone’s encrypted storage is unavailable.") }
+        item {
+            Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
+                Heading("Your private files are preserved.", "Saving is paused while this phone’s encrypted storage is unavailable.")
+            }
+        }
         item {
             Panel {
                 Text(l10n("Try storage again"), style = MaterialTheme.typography.titleLarge)
