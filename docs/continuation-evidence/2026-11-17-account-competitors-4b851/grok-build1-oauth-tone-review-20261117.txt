@@ -1,0 +1,100 @@
+Grok
+Thought for 3m 10s
+
+The ca3 baseline is unchanged. No product file was edited. Root's ProviderConnections candidate and the invalid-session caption were left alone.
+
+Test patch
+
+Against ca3d3411d8b5b36fa7093dff782f4a7b931261c7 file hosted/tests/account-recovery-lifecycle.mjs only. Baseline SHA256 remains 8601594175e6829057c9b26cca301e6e0a96d9ae63cf6d9f9e2db0a16f170030.
+
+The new cases run the existing production-effect harness and authStatusSchema.parse. They do not build a document and do not search for .focus.
+
+Diff
+--- a/hosted/tests/account-recovery-lifecycle.mjs
++++ b/hosted/tests/account-recovery-lifecycle.mjs
+@@ -193,10 +193,40 @@
+     h.calls[0].resolve(authStatus({ connected })); await flush();
+     assert.equal(h.feedback.length, 1);
+     assert.match(h.feedback[0].text, connected ? /is connected to your current/ : /check which connection is active/);
+-    if (connected) assert.equal(h.feedback[0].tone, "status"); h.cleanup();
++    assert.equal(h.feedback[0].tone, connected ? "status" : "alert");
++    assert.equal(h.feedback[0].text.includes("SYNTHETIC_UNTRUSTED_TEXT"), false);
++    h.cleanup();
+   });
+ });
+ 
++test("actual OAuth negative tones stay alerts unless the service confirms the same provider", async () => {
++  // The production effect and authStatusSchema decide the tone. This does not
++  // render a document and does not treat a string search as a focus result.
++  const cases = [
++    { name: "failed", result: "failed", status: null, tone: "alert", text: /could not be completed/, calls: 0 },
++    { name: "cancelled-polite", result: "cancelled", status: null, tone: "status", text: /cancelled/, calls: 0 },
++    { name: "signed-in-wrong-method", result: "signed_in", status: authStatus({ connected: true, method: "chatgpt" }), tone: "alert", text: /check which connection is active/, calls: 1 },
++    { name: "signed-in-verified", result: "signed_in", status: authStatus({ connected: true, method: "google" }), tone: "status", text: /sign-in is confirmed/, calls: 1 },
++  ];
++  for (const item of cases) {
++    const h = oauthHarness(item.result);
++    await flush();
++    assert.equal(h.calls.length, item.calls, item.name);
++    if (item.calls) assert.equal(h.calls[0].path, "/api/auth/status", item.name);
++    if (item.status) {
++      helpers.authStatusSchema.parse(item.status);
++      h.calls[0].resolve(item.status);
++      await flush();
++    }
++    assert.equal(h.feedback.length, 1, item.name);
++    assert.equal(h.feedback[0].tone, item.tone, item.name);
++    assert.match(h.feedback[0].text, item.text, item.name);
++    assert.equal(h.feedback[0].text.includes("SYNTHETIC_UNTRUSTED_TEXT"), false, item.name);
++    if (item.tone === "alert") assert.doesNotMatch(h.feedback[0].text, /is connected to your current|sign-in is confirmed/);
++    h.cleanup();
++  }
++});
++
+ test("actual OAuth cleanup suppresses a late status result", async () => {
+   const h = oauthHarness("signed_in"); await flush(); assert.equal(h.calls.length, 1);
+   h.cleanup(); h.calls[0].resolve(authStatus()); await flush();
+@@ -206,7 +236,7 @@
+ console.log(JSON.stringify({ sources: {
+   SessionRecovery: createHash("sha256").update(sessionSource).digest("hex"),
+   OAuthFeedback: createHash("sha256").update(oauthSource).digest("hex"),
+-}, coverage: "Production handler/effect logic with synthetic promise and browser-navigation ports; no DOM, live authentication or assistive-technology result." }));
++}, coverage: "Production handler/effect tones with synthetic status promises; no DOM, cookie jar, live authentication, or assistive-technology result." }));
+
+Command, from a tree whose components are the ca3 blobs (OAuthFeedback 57a9be7c…aff464, SessionRecovery e5e5fe25…6f917):
+
+/tmp/node-v24.22.3-linux-x64/bin/node -v → v24.22.3
+
+CAREER_ACCOUNT_COMPONENT_SOURCE_DIR="$PWD/app/components" node --test tests/account-recovery-lifecycle.mjs
+
+Result: 17 passed, 0 failed, about 702 ms. The log printed those two source hashes. The unconfirmed branch now requires tone === "alert". failed is alert with no status call. Cancellation stays status. signed_in with method chatgpt is alert. signed_in with method google and a connected provider is status and "sign-in is confirmed". This is still a deferred status promise, not Chrome and not a cookie jar.
+
+Cookies
+
+This is old server behavior, not a regression from the accepted client patch.
+
+Blob	2fac, 0f0c6f1, d534a6c, ca3
+hosted/server/oauth.mjs	identical 00944a1b…dcf83
+hosted/server/identity.mjs	identical dc7b5843…f702f
+hosted/tests/hosted-auth.mjs	identical 437acddd…ea7e
+SessionRecovery.tsx	changed, 1174 bytes → ca3 e5e5fe25…
+
+The client patch aborts its own fetch and skips location.assign after unmount. It does not set or clear cookies. A deferred-promise test that sees no redirect does not show anything about cookies.
+
+ca3 hosted-auth.mjs already drives the real handler. I did not re-run it: Miniflare is not installed here, and I did not add a package. The existing check "mismatched sign-out fails and invalid-cookie recovery clears no Sites account" expects:
+
+A live session plus a different expectedAccountId returns 409 and leaves browser_sessions at 1. That assertion does not inspect Set-Cookie.
+An expired cookie plus expectedAccountId: "" returns 200, redirectTo /signout-with-chatgpt?return_to=%2Fconnect, and headers.get("set-cookie") matches Max-Age=0. auth_identities stays 1.
+
+Those are response headers. headers.get("set-cookie") is not getSetCookie(), and neither is a browser cookie jar. On the success path the handler appends two clears: __Host-career-session and __Host-career-oauth, each Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=0.
+
+The header-versus-jar race cannot be executed in this session. Protocol for a later real browser, without changing sign-out security:
+
+One Chromium profile, loopback only, no live provider. Read HttpOnly cookies with the devtools cookie store, not document.cookie.
+Hold the sign-out response. Abort before any bytes: the newer session cookie must remain, and the page must not navigate.
+Release the two Set-Cookie clears, then abort during the body: record the jar separately from the header list. Applying Max-Age=0 after headers arrive is ordinary fetch timing, not a new account bypass. Account rows stay.
+A still-valid session with the wrong expectedAccountId must stay 409 and must not send either clear.
+
+Root's Chrome confirmation-focus, Keep-connected, disconnect readback, still-connected, and 503 GET results are Root's. They are not relabeled as this run.
+
+Finished.

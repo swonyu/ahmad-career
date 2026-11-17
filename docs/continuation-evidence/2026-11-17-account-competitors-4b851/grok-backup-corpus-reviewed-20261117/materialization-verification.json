@@ -1,0 +1,159 @@
+{
+  "generatorExitCode": 0,
+  "files": [
+    {
+      "file": "01-two-unfinished-notes-one-job.json",
+      "claimedBytes": 1970,
+      "actualBytes": 1970,
+      "bytesMatch": true,
+      "claimedSha256": "609ef2b2bd33c36c577af8cfe9257531a89adbe9411b36dfb5412b3d13c0e5a6",
+      "actualSha256": "609ef2b2bd33c36c577af8cfe9257531a89adbe9411b36dfb5412b3d13c0e5a6",
+      "sha256Match": true,
+      "claimedShapeErrors": [],
+      "independentJsonSyntax": {
+        "jsonParse": "success",
+        "rootType": "dict"
+      }
+    },
+    {
+      "file": "02-destination-existing-note.json",
+      "claimedBytes": 1540,
+      "actualBytes": 1540,
+      "bytesMatch": true,
+      "claimedSha256": "a011a1c60559bf5c1acf8b8da87c4103e6a7ddd1eb23593cb83f9fb6204dae5a",
+      "actualSha256": "a011a1c60559bf5c1acf8b8da87c4103e6a7ddd1eb23593cb83f9fb6204dae5a",
+      "sha256Match": true,
+      "claimedShapeErrors": [],
+      "independentJsonSyntax": {
+        "jsonParse": "success",
+        "rootType": "dict"
+      }
+    },
+    {
+      "file": "02-import-two-alternatives.json",
+      "claimedBytes": 1953,
+      "actualBytes": 1953,
+      "bytesMatch": true,
+      "claimedSha256": "7d996b908f9057a4d7e75e42c0ab1f33be982f4360ab2b5cc8dd9e562770c3ab",
+      "actualSha256": "7d996b908f9057a4d7e75e42c0ab1f33be982f4360ab2b5cc8dd9e562770c3ab",
+      "sha256Match": true,
+      "claimedShapeErrors": [],
+      "independentJsonSyntax": {
+        "jsonParse": "success",
+        "rootType": "dict"
+      }
+    },
+    {
+      "file": "03-distinct-lever-global-eu-and-greenhouse-hosts.json",
+      "claimedBytes": 3873,
+      "actualBytes": 3873,
+      "bytesMatch": true,
+      "claimedSha256": "be6a94d3814691c09197073402cab91eb8055261bb09c56958139f040aee5ca0",
+      "actualSha256": "be6a94d3814691c09197073402cab91eb8055261bb09c56958139f040aee5ca0",
+      "sha256Match": true,
+      "claimedShapeErrors": [],
+      "independentJsonSyntax": {
+        "jsonParse": "success",
+        "rootType": "dict"
+      }
+    },
+    {
+      "file": "04-same-greenhouse-link-with-slash-and-utm.json",
+      "claimedBytes": 1268,
+      "actualBytes": 1268,
+      "bytesMatch": true,
+      "claimedSha256": "49a65365e3c79a482cbcd7b34e0819077e50498f8f27be0f95f0d5623fde39e0",
+      "actualSha256": "49a65365e3c79a482cbcd7b34e0819077e50498f8f27be0f95f0d5623fde39e0",
+      "sha256Match": true,
+      "claimedShapeErrors": [],
+      "independentJsonSyntax": {
+        "jsonParse": "success",
+        "rootType": "dict"
+      }
+    },
+    {
+      "file": "05-unknown-root-approval-field.json",
+      "claimedBytes": 1557,
+      "actualBytes": 1557,
+      "bytesMatch": true,
+      "claimedSha256": "56c0a62cc3ecf19c4792691197dc97308c64dcdd0d5744387a33ea353d5c89b2",
+      "actualSha256": "56c0a62cc3ecf19c4792691197dc97308c64dcdd0d5744387a33ea353d5c89b2",
+      "sha256Match": true,
+      "claimedShapeErrors": [
+        "unknown root fields: approved"
+      ],
+      "independentJsonSyntax": {
+        "jsonParse": "success",
+        "rootType": "dict"
+      }
+    },
+    {
+      "file": "06-oversized-draft-note.json",
+      "claimedBytes": 3501,
+      "actualBytes": 3501,
+      "bytesMatch": true,
+      "claimedSha256": "3c300e4cead6e9e0b6bee3823048504b11e82153b613f05af886f00166b8693f",
+      "actualSha256": "3c300e4cead6e9e0b6bee3823048504b11e82153b613f05af886f00166b8693f",
+      "sha256Match": true,
+      "claimedShapeErrors": [
+        "draft note exceeds 2000 code points/scalars for this ASCII/Arabic sample"
+      ],
+      "independentJsonSyntax": {
+        "jsonParse": "success",
+        "rootType": "dict"
+      }
+    },
+    {
+      "file": "08-self-reported-flag-and-prepared-receipt.json",
+      "claimedBytes": 3183,
+      "actualBytes": 3183,
+      "bytesMatch": true,
+      "claimedSha256": "ede4156bfb5e801efe6da2b698f589817af5a3c42fcad0f45fcb3f8867b0c369",
+      "actualSha256": "ede4156bfb5e801efe6da2b698f589817af5a3c42fcad0f45fcb3f8867b0c369",
+      "sha256Match": true,
+      "claimedShapeErrors": [],
+      "independentJsonSyntax": {
+        "jsonParse": "success",
+        "rootType": "dict"
+      }
+    },
+    {
+      "file": "07-damaged-truncated.json",
+      "claimedBytes": 61,
+      "actualBytes": 61,
+      "bytesMatch": true,
+      "claimedSha256": "786c4841b2ba48dd6fe0df325714f92de2891187605f9eac6fc631f48d114bd7",
+      "actualSha256": "786c4841b2ba48dd6fe0df325714f92de2891187605f9eac6fc631f48d114bd7",
+      "sha256Match": true,
+      "claimedShapeErrors": [
+        "not JSON"
+      ],
+      "independentJsonSyntax": {
+        "jsonParse": "failure",
+        "error": "Expecting value: line 1 column 62 (char 61)"
+      }
+    },
+    {
+      "file": "proposed/09-server-expired-dispatch.json",
+      "claimedBytes": 1263,
+      "actualBytes": 1263,
+      "bytesMatch": true,
+      "claimedSha256": "7dd0268b3ef790a88eef955a89b06b5acc958fa9c33d9467be58c4b444fb6f07",
+      "actualSha256": "7dd0268b3ef790a88eef955a89b06b5acc958fa9c33d9467be58c4b444fb6f07",
+      "sha256Match": true,
+      "claimedShapeErrors": [
+        "proposed server view, not a phone backup"
+      ],
+      "independentJsonSyntax": {
+        "jsonParse": "success",
+        "rootType": "dict"
+      }
+    }
+  ],
+  "allGeneratedFixtureBytesAndHashesMatch": true,
+  "generatedManifestByteIdenticalToInline": true,
+  "generatedManifestSha256": "345252ff401c05dbd0bb23aba64a91f4f8a88c18a5e8075e68bddbff788bf6e9",
+  "zipPresent": false,
+  "zipClaimVerified": false,
+  "nativeAcceptance": false
+}

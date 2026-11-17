@@ -1,0 +1,27 @@
+Grok
+Thought for 7s
+
+Concise Correction Append — Fourth Report
+Source-scope labels corrected. No tests were executed in this session. Existing-test descriptions are distinguished from any execution here (none occurred). Budget/provenance corrections from the prior addendum are preserved. Native, audit, and build ownership remain unchanged. No edits to the four account components under final zero-warning review.
+
+Corrections Required
+
+Account switch and reset epochs
+Account switch itself does not increment vault or safety reset epochs. PhoneApp lock() increments the UI generation token and quarantines prior edits/snapshot. reset_pending is produced by removePhoneSnapshot / clearRecovery epoch fencing (and related reset paths). Existing scope/generation checks can reject page or account-confirmation changes; they are not evidence that an account switch alone advances the vault/safety epoch.
+
+Safety concurrent CAS behavior
+safety.ts update explicitly retries CAS conflicts up to 3 times. The existing concurrent test expects both Stop holds and recovery additions to be retained after the race. It is therefore not universally “exactly one success + one changed_elsewhere”. Baseline d534 restore reused draft.id; the CAS path did not by itself prevent the semantic cross-tab cleanup collision that root’s candidate fixes address. The earlier “exactly one succeeds” framing is withdrawn for the safety vault.
+
+Clear excerpt and server mutation
+The quoted local Clear handler (clearRecovery → removePhoneSnapshot → reload) contains no server Stop, remote mutation, or cancellation path. It cannot prove (or disprove) cancellation-after-server-mutation behavior and supplies no basis for a severity claim on that scenario. The prior severity statement is withdrawn.
+
+Export/reimport and quota headings
+Absence of a UI import route is not proof of export/reimport integrity. The quota paragraph described an abort before commit (transaction failure before expected.set), not an error after a committed write. Both headings are therefore treated as unverified scenarios until an actual relevant boundary and corresponding test are inspected. No “Severity: None” or “passed” label is applied.
+
+Status Notes (supplied, not re-verified here)
+
+Root candidate now records 76/76 recovery/search/selection checks plus 18/18 model checks, and actual Arabic Chrome cap/partial/stale/unavailable checks. Four account components remain under final zero-warning review; they are not edited. Both native terminal owners remain active.
+
+This session executed no tests, performed no uploads or deployments, and made no duplicate native/audit/build changes. The useful budget clarification (smaller Lever pages increase request count for 500-record coverage; 10 s source deadline is a total budget) and the d534 vs 63e provenance distinction stand.
+
+Correction append finished. Available for the next evidence-based question. Heavy session remains Heavy.

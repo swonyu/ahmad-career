@@ -1,0 +1,204 @@
+
+SOURCE android/app/src/main/java/com/saleh/careerfinder/BoundaryPolicy.java
+135:     public static String jobIdentity(String input) {
+136:         URI uri = httpsURI(input, 4096);
+137:         String host = uri.getHost().toLowerCase(Locale.ROOT);
+138:         String path = uri.getRawPath() == null ? "" : asciiPreservingUnicode(uri.getRawPath());
+139:         if ((host.equals("jobs.lever.co") || host.equals("jobs.eu.lever.co")) && (uri.getPort() == -1 || uri.getPort() == 443)) {
+140:             String[] pieces = uri.getPath().split("/");
+141:             if (pieces.length >= 3 && pieces[1].matches("[A-Za-z0-9_-]{1,80}") &&
+142:                 pieces[2].matches("[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}"))
+143:                 return host + "/" + pieces[1].toLowerCase(Locale.ROOT) + "/" + pieces[2].toLowerCase(Locale.ROOT);
+144:         }
+145:         while (path.endsWith("/")) path = path.substring(0, path.length() - 1);
+146:         StringBuilder query = new StringBuilder();
+147:         if (uri.getRawQuery() != null) for (String pair : uri.getRawQuery().split("&", -1)) {
+148:             String rawName = pair.contains("=") ? pair.substring(0, pair.indexOf('=')) : pair;
+149:             String name;
+150:             try { name = decodeURLPart(rawName).toLowerCase(Locale.ROOT); }
+151:             catch (IllegalArgumentException error) { name = rawName.toLowerCase(Locale.ROOT); }
+152:             if (name.startsWith("utm_") || name.equals("gclid") || name.equals("fbclid")) continue;
+153:             if (query.length() > 0) query.append('&');
+154:             query.append(asciiPreservingUnicode(pair));
+155:         }
+156:         return "https://" + host + (uri.getPort() == -1 || uri.getPort() == 443 ? "" : ":" + uri.getPort()) + path +
+157:             (query.length() == 0 ? "" : "?" + query);
+158:     }
+159: 
+160:     private static String asciiPreservingUnicode(String value) {
+161:         StringBuilder result = new StringBuilder();
+162:         for (int i = 0; i < value.length();) {
+163:             int point = value.codePointAt(i);
+164:             if (point <= 127) result.append((char)point);
+165:             else result.append(encodeProfileSlug(new String(Character.toChars(point))));
+166:             i += Character.charCount(point);
+167:         }
+168:         return result.toString();
+169:     }
+170: 
+
+SOURCE android/app/src/main/java/com/saleh/careerfinder/BoundaryPolicy.java
+258:         return "confirmed".equals(state) && applicationId != null && !applicationId.trim().isEmpty() &&
+259:             applicationId.length() <= 200 && applicationId.chars().noneMatch(c -> c < 0x20 || c == 0x7f);
+260:     }
+261: 
+262:     public static boolean isLiveReceipt(String evidenceMode, String provider, String state, String applicationId) {
+263:         return "live".equals(evidenceMode) && "lever".equals(provider) && isConfirmed(state, applicationId);
+264:     }
+265: 
+266:     public static boolean blocksResubmission(String state) {
+267:         return "confirmed".equals(state) || "uncertain".equals(state) || "dispatching".equals(state);
+268:     }
+269: }
+
+SOURCE android/app/src/main/java/com/saleh/careerfinder/ApplicationRecords.kt
+1: package com.saleh.careerfinder
+2: 
+3: import org.json.JSONArray
+4: import org.json.JSONObject
+5: import java.time.Instant
+6: import java.time.LocalDate
+7: import java.util.UUID
+8: 
+9: internal fun applicationNoteLength(value: String): Int = value.codePointCount(0, value.length)
+10: internal fun boundedApplicationNote(value: String): String {
+11:     val bounded = if (applicationNoteLength(value) <= 2_000) value else value.substring(0, value.offsetByCodePoints(0, 2_000))
+12:     return if (bounded.lastOrNull()?.let(Character::isHighSurrogate) == true) bounded.dropLast(1) else bounded
+13: }
+14: 
+15: enum class ApplicationStage(val stored: String, val label: String) {
+16:     SAVED("saved", "Saved"), APPLIED("applied", "Applied"), INTERVIEW("interview", "Interview"), OFFER("offer", "Offer"), CLOSED("closed", "Closed");
+17:     companion object {
+18:         fun decode(value: String) = entries.firstOrNull { it.stored == value }
+19:             ?: throw IllegalArgumentException("This application record needs a newer app. Its saved file is preserved.")
+20:     }
+21: }
+22: 
+23: data class ApplicationRecordDraft(val stage: ApplicationStage = ApplicationStage.SAVED, val appliedDate: String = "",
+24:     val followUpDate: String = "", val note: String = "") {
+25:     fun validated(): ApplicationRecordDraft {
+26:         BoundaryPolicy.civilDate(appliedDate); BoundaryPolicy.civilDate(followUpDate)
+27:         require(applicationNoteLength(note) <= 2_000) { "Keep this private note within 2,000 characters." }
+28:         require(note.toByteArray(Charsets.UTF_8).toString(Charsets.UTF_8) == note) { "Check the characters in this private note before saving." }
+29:         return this
+30:     }
+31: }
+32: 
+33: data class ApplicationRecord(val stage: ApplicationStage = ApplicationStage.SAVED, val appliedDate: String = "",
+34:     val followUpDate: String = "", val note: String = "", val appliedElsewhere: Boolean = false) {
+35:     fun draft() = ApplicationRecordDraft(stage, appliedDate, followUpDate, note)
+36:     fun json() = JSONObject().put("stage", stage.stored).put("appliedDate", appliedDate).put("followUpDate", followUpDate)
+37:         .put("note", note).put("appliedElsewhere", appliedElsewhere)
+38:     companion object {
+39:         fun decode(value: JSONObject): ApplicationRecord {
+40:             for (key in listOf("stage", "appliedDate", "followUpDate", "note")) require(value.opt(key) is String) { "The saved application record could not be read. It is preserved." }
+41:             require(value.opt("appliedElsewhere") is Boolean) { "The saved application status could not be read. It is preserved." }
+42:             val draft = ApplicationRecordDraft(ApplicationStage.decode(value.getString("stage")), value.getString("appliedDate"),
+43:                 value.getString("followUpDate"), value.getString("note")).validated()
+44:             val applied = value.getBoolean("appliedElsewhere")
+45:             require(draft.stage !in setOf(ApplicationStage.APPLIED, ApplicationStage.INTERVIEW, ApplicationStage.OFFER) || applied) {
+
+SOURCE apple/AhmadCareer/MobileApplicationClient.swift
+125:     }
+126:     static func isFileSelectionCancelled(_ error: Error) -> Bool {
+127:         let value = error as NSError
+128:         return value.domain == NSCocoaErrorDomain && value.code == NSUserCancelledError
+129:     }
+130:     static func isVerified(_ value: [String: ApplicationValue]) -> Bool {
+131:         value["state"]?.string == "confirmed"
+132:             && value["provider"]?.string == "lever"
+133:             && ["live", "test"].contains(value["evidenceMode"]?.string ?? "")
+134:             && !(value["applicationId"]?.string?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
+135:     }
+136:     static func jobIdentity(_ text: String) -> String {
+137:         guard var parts = URLComponents(string: text), let host = parts.host?.lowercased() else { return text }
+138:         parts.scheme = parts.scheme?.lowercased(); parts.host = host; parts.fragment = nil
+139:         if parts.port == 443 { parts.port = nil }
+140:         if host == "jobs.lever.co" || host == "jobs.eu.lever.co" {
+141:             let segments = parts.path.split(separator: "/")
+142:             if segments.count >= 2 { return host + "/" + segments[0].lowercased() + "/" + segments[1].lowercased() }
+143:         }
+144:         parts.queryItems = parts.queryItems?.filter { !$0.name.lowercased().hasPrefix("utm_") && !["gclid", "fbclid"].contains($0.name.lowercased()) }
+145:         if parts.queryItems?.isEmpty == true { parts.query = nil }
+146:         while parts.path.hasSuffix("/") { parts.path.removeLast() }
+147:         return parts.string ?? text
+148:     }
+149:     static func stateTitle(_ state: String, test: Bool = false) -> String {
+150:         switch state {
+151:         case "confirmed": return test ? "Test receipt" : "Confirmed"
+152:         case "dispatching": return "Sending"
+153:         case "uncertain": return "Needs verification"
+154:         case "rate_limited": return "Waiting to retry"
+155:         case "rejected": return "Not accepted"
+156:         case "ready": return "Ready to review"
+157:         case "cancelled": return "Stopped"
+158:         case "blocked": return "Action needed"
+159:         default: return "Status unavailable"
+160:         }
+161:     }
+162: }
+163: 
+164: /// Small typed JSON boundary shared by the native client and executable contract checks.
+165: enum ApplicationValue: Codable, Equatable {
+
+SOURCE android/app/src/main/java/com/saleh/careerfinder/WorkspaceStorage.kt
+61:                     BoundaryPolicy.readPDF(bytes.inputStream())
+62:                 } finally { bytes.fill(0) }
+63:             }
+64:         }
+65:         return ProfileDraft.fromJson(value)
+66:     }
+67:     internal fun job(value: JSONObject): Opportunity {
+68:         listOf("id", "url", "title", "company", "location", "country").forEach { requireType(value.opt(it) is String) }
+69:         value.booleanFields("localOnly")
+70:         val job = Opportunity.fromJson(value)
+71:         requireType(job.id.isNotBlank())
+72:         BoundaryPolicy.opportunityURL(job.url)
+73:         return job
+74:     }
+75:     private fun receipt(value: JSONObject): ApplicationReceipt {
+76:         value.textFields("attemptId", "id", "title", "employer", "company", "state", "applicationId", "createdAt", "confirmedAt",
+77:             "evidenceMode", "mode", "resumeSHA256", "provider")
+78:         requireType(value.opt("attemptId") is String || value.opt("id") is String)
+79:         requireType(value.opt("state") is String && (value.opt("createdAt") is String || value.opt("confirmedAt") is String))
+80:         value.optionalObject("job", nullable = true)?.textFields("title", "company", "url")
+81:         if (value.has("error") && !value.isNull("error")) {
+82:             requireType(value.opt("error") is String || value.opt("error") is JSONObject)
+83:             value.optJSONObject("error")?.textFields("message", "code")
+84:         }
+85:         return ApplicationReceipt.fromJson(value).also { requireType(it.id.isNotBlank() && it.state.isNotBlank()) }
+86:     }
+87:     fun decode(value: JSONObject?, connection: Connection?, expectedScope: String? = null): CareerUiState {
+88:         if (value == null) return CareerUiState(loaded = true, connection = connection)
+89:         requireType(value.opt("schema") == 1)
+90:         val known = setOf("schema", "profile", "profileDirty", "opportunityDraft", "applicationRecords", "recordDrafts", "recordDraftAlternatives", "jobs", "activePlans", "manualApplied",
+91:             "selected", "obsoleteReviews", "continuationHolds", "serverProfile", "answers", "receipts", "importedReceipts", "recoveredOpportunityDrafts")
+92:         requireType(value.keys().asSequence().all { it in known })
+93:         value.booleanFields("profileDirty")
+94:         val jobs = value.objects("jobs").map(::job)
+95:         requireType(jobs.map { it.id }.distinct().size == jobs.size)
+96:         val legacy = value.strings("manualApplied").toSet()
+97:         val records = ApplicationRecordsCodec.migrateLegacy(jobs, legacy, ApplicationRecordsCodec.decode(value.optionalObject("applicationRecords")))
+98:         val drafts = value.objects("recordDrafts").map(RecordDraftCheckpoint::decode)
+99:         val alternatives = value.objects("recordDraftAlternatives").map(RecordDraftCheckpoint::decode)
+100:         requireType(drafts.map { it.identity }.distinct().size == drafts.size)
+101:         val scope = expectedScope ?: CareerUiState(connection = connection).privateScope
+102:         requireType((drafts + alternatives).all { it.scope == scope })
+103:         val answers = value.optionalObject("answers")?.let { map -> map.keys().asSequence().associateWith { id ->
+104:             requireType(map.opt(id) is JSONObject)
+105:             val answer = map.getJSONObject(id)
+106:             answer.textFields("comments"); answer.booleanFields("consentStore", "consentMarketing")
+107:             JobAnswers.fromJson(answer)
+108:         } }.orEmpty()
+109:         return CareerUiState(loaded = true, connection = connection,
+110:             profile = value.optionalObject("profile")?.let(::profile) ?: ProfileDraft(), profileDirty = value.optBoolean("profileDirty"),
+111:             serverProfile = value.optionalObject("serverProfile", nullable = true)?.let(::profile),
+112:             opportunityDraft = value.optionalObject("opportunityDraft")?.let(OpportunityDraft::fromJson) ?: OpportunityDraft(),
+113:             recoveredOpportunityDrafts = value.objects("recoveredOpportunityDrafts").map(OpportunityDraft::fromJson),
+114:             applicationRecords = records, recordDrafts = drafts.associateBy { it.identity }, recordDraftAlternatives = alternatives, jobs = jobs,
+115:             manualApplied = ApplicationRecordsCodec.appliedIDs(jobs, records, legacy), answers = answers,
+116:             receipts = value.objects("receipts").map(::receipt), importedReceipts = value.objects("importedReceipts").map { receipt(it).copy(evidenceMode = "imported") },
+117:             activePlans = value.strings("activePlans"), selected = value.strings("selected").toSet(),
+118:             obsoleteReviews = value.strings("obsoleteReviews").toSet(), continuationHolds = value.strings("continuationHolds").toSet())
+119:     }
+120:     fun receiptJson(receipt: ApplicationReceipt) = JSONObject().put("attemptId", receipt.id).put("title", receipt.title)

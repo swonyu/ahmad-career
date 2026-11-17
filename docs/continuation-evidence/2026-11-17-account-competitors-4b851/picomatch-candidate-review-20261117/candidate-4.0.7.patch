@@ -1,0 +1,40 @@
+--- baseline/4.0.7/lib/parse.js
++++ candidate/4.0.7/lib/parse.js
+@@ -284,6 +284,15 @@
+   return depth;
+ };
+ 
++// Experimental partial remedy: simple non-capturing branches only.
++// Quoted/escaped/complex syntax, captures and explicit opt-outs stay unchanged.
++const isSimpleRepeatedStarBranch = branch => {
++  const excluded = ['\\', '/', '"', "'", '?', '(', ')', '[', ']', '{', '}', '|', '!', '+', '@'];
++  return branch.includes('*') &&
++    !branch.includes('**') &&
++    !excluded.some(character => branch.includes(character));
++};
++
+ const analyzeRepeatedExtglob = (body, options) => {
+   if (options.maxExtglobRecursion === false) {
+     return { risky: false };
+@@ -341,6 +350,10 @@
+     return combinable
+       ? { risky: true, safeOutput: buildCharClassStar([...new Set(safeChars)]) }
+       : { risky: true };
++  }
++
++  if (!options.capture && !options.contains && !options.flags && !options.prepend && branches.length === 1 && isSimpleRepeatedStarBranch(branches[0])) {
++    return { risky: false, collapse: true };
+   }
+ 
+   return { risky: false };
+@@ -565,6 +578,10 @@
+       return;
+     }
+ 
++    if (analysis.collapse === true && (token.type === 'plus' || token.type === 'star')) {
++      token.close = token.type === 'plus' ? ')' : ')?';
++    }
++
+     let output = token.close + (opts.capture ? ')' : '');
+     let rest;
+ 

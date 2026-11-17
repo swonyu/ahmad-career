@@ -1,0 +1,14 @@
+diff --git a/hosted/app/phone/model.ts b/hosted/app/phone/model.ts
+index 7654b65..822d518 100644
+--- a/hosted/app/phone/model.ts
++++ b/hosted/app/phone/model.ts
+@@ -8,7 +8,8 @@ export const countryCodes = "AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA
+ 
+ export function publicURL(input: string): string {
+   if (typeof input !== "string" || input.length > 2048 || /[\s\\\x00-\x1f\x7f]/u.test(input)) throw Error("Enter a complete public HTTPS link without spaces.");
+-  const url = new URL(input);
++  let url: URL;
++  try { url = new URL(input); } catch { throw Error("Enter a complete public HTTPS link without spaces."); }
+   if (url.protocol !== "https:" || url.username || url.password || url.port && url.port !== "443" || !url.hostname.includes(".") || /^[\d.]+$/.test(url.hostname) || url.hostname.startsWith("[") || /(^|\.)(localhost|local|internal|test|invalid)$/.test(url.hostname)) throw Error("Use a public HTTPS link without a password or custom port.");
+   url.hash = "";
+   return url.href;

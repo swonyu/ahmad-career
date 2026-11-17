@@ -1,0 +1,89 @@
+Grok
+Thought for 35s
+
+Evidence Append and Explicit Corrections — Picomatch and Acceptance Strategy
+Access date: 17 November 2026. Prior withdrawals and evidence limits preserved. No implementation, no package/lock edits, no new native builds. Distinctions: confirmed source / inference / proposed test / verified result (none executed here).
+
+1. Contested Advisory Status (Correction)
+
+Confirmed source fact (GitHub Advisory Database, re-opened now):
+
+github.com/advisories/GHSA-fc5q-39xc-vjpf
+
+High severity, GitHub Reviewed (reviewed ~2 hours ago on 17 Nov 2026), published 19 Oct 2026, last updated 17 Nov 2026.
+Affected: <= 4.0.7. Patched versions: None.
+No mention of dispute or revocation on the GitHub page.
+Description and references unchanged (NVD, open PRs, parse.js L287–L307).
+
+Confirmed source fact (Snyk, opened now):
+
+security.snyk.io/vuln/SNYK-JS-PICOMATCH-21248802
+
+Explicitly revoked and “deemed not a vulnerability.”
+“This CVE was disputed by the maintainer.”
+“The advisory has been revoked — it doesn’t affect any version of package picomatch.”
+Published/disclosed 19 Oct 2026; amendment states it was deemed not a vulnerability.
+Snyk package page for picomatch currently shows “No known security issues” for latest and lists no active entry for this CVE on 4.0.7.
+
+Inference (not a waiver): The two databases disagree. GitHub Reviewed High remains active with no patched version; Snyk has revoked the entry after maintainer dispute. This does not waive the existing audit gate. The gate still requires either a version that GitHub no longer flags or an accepted residual-risk decision by the development owner. Snyk revocation alone is insufficient.
+
+2. Candidate PR Grammar / Capture / Quote Compatibility (Correction)
+
+Confirmed source (PR #246 v2, open, commit f03bec2c02e46f063fbfdc161aae1d0f854b2565):
+
+github.com/micromatch/picomatch/pull/246/files
+
+Narrower grammar: single-branch containing a star (not **) and no special characters in the set [\\"/?()[]{}|!+@].
+When capture: true, returns { risky: true } and falls back to literalization rather than collapsing.
+Discussion quote: “This deliberately changes capture-mode matching for the affected patterns, consistently with the existing safeguard for other risky extglobs.”
+Tests include +( * )c (and variants) and non-matching long inputs; externally bounded.
+Risk: literalization under capture: true changes valid matches for affected patterns.
+
+Confirmed source (PR #237, open, commit 1bf0d04563cb9ce568cf36efc5f6b7187d9911d5):
+
+github.com/micromatch/picomatch/pull/237/files
+
+Detects self-repeating star branch and collapses (risky: false, collapse: true) when possible.
+Exact positive test present: assert(isMatch('abc', '+(*)c')); (ASCII star).
+Capture handling preserves existing opts.capture behavior in output construction; quotes/escapes need independent review.
+Inline timing probe: Date.now() around isMatch with < 100 assertion.
+Risk: the timing probe is unsafe if the match hangs (test runner blocks); does not constitute external enforcement.
+
+No executions claimed. Neither PR is merged. Development’s prior rejection of a simplistic guard that changes valid isMatch('abc','+(*)c') remains relevant to both candidates.
+
+3. Scanner Coverage vs Code Remediation (Correction)
+
+The prior table conflated them. Separated:
+
+Source proof: Vulnerable code path in lib/parse.js (analyzeRepeatedExtglob skip of single-branch repeated extglobs) is present in 2.3.2 / 4.0.4 / 4.0.7. A renamed fork or override can make a scanner report green without removing that path.
+Execution proof: Behavioral fixture showing no catastrophic backtracking on advisory examples and preservation of valid matches (including +(*)c under the options used by consumers) on the exact resolved tree.
+Scanner proof: npm audit (or equivalent) clean on the lockfile after a change that GitHub Advisory Database recognizes as patched, or an explicit residual-risk acceptance that the gate owner has recorded. Same-version patched code can remain flagged until the advisory is updated.
+
+Supplied fresh trace (not re-executed here): lock SHA 2512e3bd6aebfc4377bbe036d3cf606c27e33613b35c8c58d28f0f3a0d596c99 at ca3; micromatch 4.0.8 → picomatch 2.3.2; tinyglobby 0.2.17 → 4.0.4; vite 8.3.8 → 4.0.7. No direct literal names in source or 112 built JS/MJS files scanned; that does not prove reachability or minified absence. The 19 audit entries are not 19 independent exploits. Development 5bc owns the remedy.
+
+4. OAuth / SessionRecovery Correction
+
+A synthetic fixture cannot close the real provider OAuth gate even if it is intended to mirror cookies or redirects; no equivalence is claimed.
+The local SessionRecovery action POSTs /signout. Recommending “clear only local session” does not match the current contract and is withdrawn. Any session-clear path must account for the server-side sign-out request and its cancellation/timeout behavior.
+
+5. Store Fallback Correction
+
+“Manual opportunity” does not resolve signing, privacy declarations, or store acceptance. Actual provider verification, signed-device testing, and store-console evidence must be routed to the publisher with root review coordination. No store status is claimed here.
+
+Challenge to the Recommended Remedy (with Counterexamples)
+
+Recommended direction (unchanged in spirit): Prefer a change that removes the vulnerable parse path while preserving valid +(*)c behavior, then obtain both execution proof and scanner proof.
+
+Counterexamples / falsifiable tests (proposed, not executed):
+
+Apply PR #246 grammar: under capture: true, confirm whether isMatch('abc','+(*)c') (or equivalent capture consumers) still returns true. If false, the change fails the development owner’s prior rejection criterion.
+Apply PR #237: confirm the ASCII-star positive case holds and that the timing probe does not hang the runner on a longer adversarial input.
+Renamed-fork test: publish or override to a package whose name/version scanner does not flag; verify the parse.js path is still present (source proof fails even if scanner is green).
+Same-version patch: apply a local patch to 4.0.7, keep version number, re-run audit — expect the entry to remain until the advisory is updated (scanner proof fails).
+Trust boundary: identify any build/config path that passes an untrusted pattern string into micromatch/tinyglobby/vite; if none, residual risk is limited to developer tooling, but still does not satisfy a clean-audit gate.
+
+Exact owner acceptance: Development 5bc must record which of source / execution / scanner proof is accepted, with the residual risk statement if the GitHub advisory remains active. Fallback if no upstream release: minimal verified override that passes the +(*)c positive case and removes the backtracking path, plus explicit residual for any remaining 2.x transitive, owned by 5bc. Do not claim any candidate has passed.
+
+Unverified: Whether any runtime or minified path reaches the matcher; physical AT; real OAuth provider behavior; store console; Android results on the integrating checkpoint. Research is not product readiness.
+
+Append finished. Available for the next evidence-based question. Heavy session remains Heavy.

@@ -1,0 +1,11 @@
+--- original/build_corpus.py
++++ build_corpus.reviewed.py
+@@ -11,7 +11,7 @@
+ import json
+ from pathlib import Path
+ 
+-ROOT = Path(__file__).resolve().parent
++ROOT = Path(__file__).resolve().parent / "generated"
+ ORIGIN = "https://career-finder-service.jazzy-drake-8323.chatgpt.site"
+ WORKSPACE = "22222222-2222-4222-8222-222222222222"
+ EXPORTED = "2026-11-17T18:00:00Z"

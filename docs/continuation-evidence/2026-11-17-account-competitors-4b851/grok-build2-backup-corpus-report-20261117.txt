@@ -1,0 +1,51 @@
+Grok
+Thought for 5m 27s
+
+The synthetic backup corpus is in backup-corpus.zip. It is shape-checked test data only. WorkspaceTransfer.decode, the iPhone decoder, and a device were not run.
+
+Schema inventory
+
+Uploaded packet career-finder-full-source-deduplicated.zip (prepared 2026-11-17T14:07:14Z) holds three trees: 8bfd3136, 3a709eb1, and 84247268. The other three zips do not contain the backup writers.
+
+These backup files are the same blob in all three trees and at ca3d3411d8b5b36fa7093dff782f4a7b931261c7:
+
+File	Git blob	SHA-256
+WorkspaceTransfer.kt	8e1c1dec5bcc1f12a97427c49974e717473e7ccc	766f4101f4164cc434537ef7aac15cddec08c224d22ceb085785c375cf78105e
+MobileApplicationState.swift	edc87b8f27699167f7b85b204cb4b825f4db9172	1858795ccf563e9802c5cabc0367b402eadba2c9e978a5092c2e70a232d1a489
+Models.kt, WorkspaceStorage.kt, NativeApplicationsStore.swift	same at ca3 as in the packet	compared by blob id, not re-copied
+
+ca3 hosted/app/phone/model.ts is blob 822d518feb6d, not the packet development blob c9d4e93c0f14. The diff is a publicURL parse catch and optional hosted record location. Phone-backup keys are unchanged. The 16 unintegrated accessibility patches were not in the packages, so they are not covered.
+
+The real interchange format is career-finder-phone-workspace version 1. Android rejects unknown root, source, and data keys. iPhone JSONDecoder ignores unknown keys. receiptJson has no planId. activePlanIds is a workspace GET field, not a backup field.
+
+Corpus
+
+Command run: python3 /workspace/artifacts/evidence/backup-corpus/build_corpus.py. Shape results are in manifest.json. Review text is EXPECTED-OUTCOMES.md (7f8a122c06c08bec…).
+
+File	SHA-256	What it is
+01-two-unfinished-notes-one-job.json	609ef2b2bd33…	Two saved drafts, one Lever URL, Arabic notes
+02-destination-existing-note.json	a011a1c60559…	Destination note only
+02-import-two-alternatives.json	7d996b908f90…	Two different imported notes for that same URL
+03-distinct-lever-global-eu-and-greenhouse-hosts.json	be6a94d38146…	Global vs EU, plus both Greenhouse hosts, four notes
+04-same-greenhouse-link-with-slash-and-utm.json	49a65365e3c7…	One board written two ways
+05-unknown-root-approval-field.json	56c0a62cc3ec…	Extra root approved: true
+06-oversized-draft-note.json	3c300e4cead6…	2001-character note
+07-damaged-truncated.json	786c4841b2ba…	Truncated, not JSON
+08-self-reported-flag-and-prepared-receipt.json	ede4156bfb5e…	applied + appliedElsewhere, ready and dispatching receipts, one hold id
+proposed/09-server-expired-dispatch.json	7dd0268b3ef7…	Not a phone backup
+
+Wire values kept: stage saved/applied, experienceLevel: mid, workModes: ["remote","hybrid"]. No translated labels. No invented approval field inside a valid backup.
+
+Expected results, with the false passes removed
+01. Android decode keeps both notes: first draft, second alternative. iPhone mergeBackup keeps only the first on an empty destination and skips the second. The source file stays intact. Counting two JSON entries is not an iPhone pass.
+02. Android importWorkspace keeps the destination note and adds both different imports as alternatives. iPhone skips both because a destination draft for that identity already exists. One assertion of three surviving notes on both platforms would be a false pass.
+03. Host is part of native job identity, so Lever global/EU and boards.greenhouse.io / job-boards.greenhouse.io stay four records. Server parseDiscoverySource would collapse the Greenhouse hosts. Applying that rule here would be a false pass.
+04. Android identity strips the slash and utm_source, then rejects duplicate identities. Data must be unchanged. iPhone valid does not check distinct identities, so "both platforms reject" is a false pass until the owner runs it.
+05. Android objectOnly rejects approved. iPhone ignores unknown keys, so the file may decode, and that Boolean must not approve or submit.
+06 and 07. Reject before any replacement. The 2000-character notes in the other files must not be truncated.
+08. appliedElsewhere is a self-reported flag, not approvedAt. ready must not be labeled approved. Android forces imported receipts to evidenceMode: "imported", so they are not live verified. planId cannot be stored in receiptArchive. blocksResubmission is still true for state dispatching after that copy. The owner must prove those imported rows do not submit or advance. iPhone ignores the Android receipt extension.
+09. Proposed only. Empty activePlanIds plus a dispatching attempt with planId matches attemptView / workspace GET, not the backup. Required owner proof remains: one explicit Stop, zero submit/advance, no automatic resend after an uncertain result.
+
+Native recovery terminal 01a1ea9cfd25 owns the real import and receipt tests. This corpus does not. Cutoff is unchanged.
+
+Finished.

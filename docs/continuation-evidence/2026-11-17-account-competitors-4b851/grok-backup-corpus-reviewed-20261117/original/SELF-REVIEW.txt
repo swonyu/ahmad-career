@@ -1,0 +1,13 @@
+Self-review: data-loss and consent false passes
+
+The saved expectations already block several false passes. These further readings still stand, and they are not native results:
+
+An empty shapeErrors list for 01, 02, 03, 04, and 08 is the largest false pass. File 04 is supposed to be rejected by Android, and file 08 carries a self-reported applied flag plus evidenceMode: "live". The shape checker never calls a decoder, so a clean row does not mean notes were kept or consent was withheld.
+"Source file hash unchanged" does not prove the second note reached the destination. On iPhone, file 01 can leave the file intact while dropping ملاحظة ثانية مختلفة. That is import omission, not a successful keep.
+File 01's Android "both notes remain" describes grouping inside that one file. It does not prove a pre-existing destination note, profile, or unrelated job survives. Every fixture carries a full synthetic profile. Importing one onto a populated test workspace can overwrite data that is absent from the file. The owner must compare the whole destination snapshot, not only the imported notes.
+File 04 can lose a note on iPhone even if Android rejects it. If iPhone stores both URL rows and a later identity pass collapses them, one note can disappear. Android rejection is not an iPhone keep.
+File 06 says reject rather than truncate. The read schema has both validated(), which throws past 2000, and boundedApplicationNote(), which cuts at 2000. A test that accepts the truncated note is silent data loss. The owner must show the destination note is untouched, not shortened.
+File 08 is a consent trap if the assertion reads the file instead of the imported object. The file itself says appliedElsewhere: true and evidenceMode: "live". Those bytes must not be called approval. The imported receipt has to be checked for imported, empty application id, no approvedAt, and no submit/advance. The unfinished draft مسودة غير معتمدة must stay a draft beside the self-reported record. Seeing stage applied and calling the draft approved is a false pass.
+A continuationHolds entry, or file 09's empty activePlanIds, is not evidence that Stop was sent. File 09 must not be fed to the phone importer.
+
+Completed.

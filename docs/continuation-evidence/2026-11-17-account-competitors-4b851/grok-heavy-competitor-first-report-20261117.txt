@@ -1,0 +1,56 @@
+Grok
+Thought for 40s
+
+Career Finder — Competitor Capability and Quality Investigation + Adversarial Self-Critique
+Heavy session, supplements blocker work. Access date for new primary sources: 17 November 2026. Prior research recovered from repository docs at commit 636d79a… (Product-Review-Research-2026-11-17.md and Open-Source-and-Interoperability-Research-2026-11-17.md successfully read; remaining docs not re-fetched). Current integrated source ca3d341 incorporates publisher 243031d. No duplicate source edits or native builds. Vendor claims are vendor claims. Good Spender excluded.
+
+Recovered Prior Research (Source Fact)
+
+The 17 Nov product brief covered Teal, Huntr, Simplify, Jobscan, LinkedIn, Indeed, Bayt, Naukrigulf and Jadarat (30 primary pages + 24 qualitative reviews). Core lesson retained: organization, recoverable context, and portable personal records matter more than AI scores or bulk dashboards. Open-source brief selected saved-note search, CSV and single-date calendar export inside existing five sections. Those remain within authorized workflow. No claim of competitor superiority or physical AT/store readiness was made then and is not made now.
+
+Concrete Capability Matrix (Primary Sources, 17 Nov 2026)
+Capability	Competitor evidence + primary URL/date	Career Finder source/runtime evidence	Parity status	Meaningful gap	Best feasible free alternative	Owner	Measurable success criterion
+Job-source coverage & freshness	Huntr/Teal Chrome clippers claim 40+ boards (Huntr.co product pages, Teal job-tracker page); Indeed My Jobs official help states external applications are not automatically saved.	Public Lever/Greenhouse JSON feeds with explicit 10 s/source, 5 s/request, 50 UI-page, 500/source, 4 MiB, 512 KiB limits; partial vs complete-empty distinction.	Partial	No broad board coverage; relies on public APIs + manual board handoff.	Explicit employer-board fallback (zero API budget) + truthful partial/stale status.	Search terminal	Fixture: partial after validated prefix retains jobs, boardUrl handoff present, no invented completeness.
+Relevance / matching / explainability	Teal/Huntr advertise keyword highlighting and AI match scores (product pages); Jobscan explicitly says its Match Rate is not the employer ATS score (prior research).	Manual/applied/verified/uncertain distinction; no AI score.	Partial / intentional	No automated ranking.	Keep inspectable manual stages; never claim employer verification.	Search terminal	User can filter by self-entered stage; status copy never implies employer confirmation.
+CV tailoring & application answers	Simplify free Copilot autofills supported fields; AI tailoring/cover letters require Simplify+ (help.simplify.jobs, 2026). Huntr free limited tailored materials.	User-owned CV + private records; no automated rewriting.	Gap (by design)	No free AI generation.	User edits own notes/CV; export of exact answers.	Recovery terminal	Export contains user-entered text only; no inferred employer status.
+Autofill / automation & approval controls	Simplify Copilot: free autofill + user submits; Autopilot (paid) submits without review (help articles). Huntr claims one-click autofill.	Manual apply + approval fencing (plan.approvedAt); Stop holds survive clear.	Stronger on control	No browser extension autofill.	Explicit “review then submit yourself” path + employer-link handoff.	Recovery terminal + root	No ready attempt is labeled approved solely by attempt.state; cancellation is polite status.
+Employer-link fallbacks	Indeed official: external applications require manual tracking.	boardUrl handoff already in discovery design.	Parity+	—	Preserve and surface boardUrl when API partial/unavailable.	Search terminal	Partial result always offers board link; zero additional API cost.
+Tracking / follow-up	Teal free: unlimited tracked jobs, notes, contacts, stages, checklists, email templates (tealhq.com/tools/job-tracker). Huntr free: 100 jobs.	Stages, notes, follow-up dates, CSV + ICS export of user-chosen date.	Partial	No contacts list or bulk templates.	Existing note search + single-date ICS already in scope.	Hosted integration (root)	CSV/ICS contain only user data; Arabic note search matches without vowel marks.
+Duplicate prevention	Huntr/Teal claim clipper avoids re-applying (product pages).	Canonical job identity + appliedElsewhere flag.	Partial	Relies on user/manual.	Existing identity check blocks selecting already-applied.	Recovery terminal	Fixture: selecting applied job is rejected; record retained.
+Failed-operation recovery	Competitor reviews (prior) report lost work after picker/interruption.	Vault epochs, quarantine on account change, recovery drafts, clear preserves holds.	Stronger	Physical device evidence pending.	Existing recovery + last-valid CV retention.	Recovery terminal	Abort after mutation does not resurrect cleared draft; holds survive.
+Profile / import / export portability	Teal/Huntr export trackers; Simplify CSV import.	CSV + JSON recovery export; no silent import of damaged vault.	Partial	No full reimport path.	Existing CSV + recovery JSON; document limits.	Hosted integration	Export is read-only; original encrypted row unchanged.
+Privacy / account deletion	Competitors require accounts; deletion claims vary.	Local encrypted vault + server account; clear path.	Unknown	Store privacy declarations pending.	Accurate data-safety declaration matching actual flows.	Publisher	Privacy policy URL live; in-app deletion works on signed build.
+iPhone/Android usability + Arabic/English/RTL + a11y	Competitors offer mobile apps; no independent physical AT evidence here.	Native lanes active; Arabic catalog; large-text issues previously observed.	Unknown	Physical AT and Android on integrating checkpoint open.	Existing polite status + large-text keyboard fixes under coordination.	Native + a11y terminals	Physical VoiceOver/TalkBack complete critical journeys without focus theft on status.
+Ongoing cost	Teal free tracker unlimited; Huntr free 100 jobs then Pro; Simplify free autofill/tracker, paid AI/Autopilot.	Free-cost limits preserved; no paid AI.	Stronger on free	—	Stay within existing free limits.	Development + root	No new paid dependency introduced.
+Highest-Value 3–5 Improvements Inside Existing Authorized Workflow
+Truthful partial/stale + board handoff (already directionally present): surface boardUrl and checkedAt on every partial. Acceptance: fixture shows retained prefix + handoff link; no completeness claim. Owner: search terminal.
+User-driven stage + note search (already in prior scope): keep NFC/tatweel/vowel handling. Acceptance: Arabic note matches without marks; empty result recoverable. Owner: hosted integration.
+Portable CSV + single-date ICS (already implemented direction): disclosure of formula prefixing. Acceptance: LibreOffice-style import preserves text; no credential leak. Owner: hosted integration.
+Approval fencing + Stop survival (existing): never treat ready attempt.state as approval. Acceptance: clear preserves holds; cancellation is polite. Owner: recovery terminal + root.
+Physical AT + large-text reachability (coordination only): polite status, no focus steal. Acceptance: physical VoiceOver/TalkBack on integrated checkpoint. Owner: a11y terminal under root coordination.
+Tradeoffs and What Requires New Investment
+Adding Chrome clipper / broad board coverage requires extension permissions, anti-bot handling, and ongoing maintenance — outside free-cost authorized workflow.
+AI tailoring or Autopilot-style sending requires paid inference, consent for automated submission, and liability for employer confirmation — separate investment decision; not recommended.
+Contacts CRM or bulk email templates add data retention and privacy surface without proven hiring outcome.
+“Better” can only be demonstrated by reproducible matched tasks (same job set, same user steps, measured recovery time, status accuracy, export fidelity) on honest samples — not by feature count.
+Adversarial Self-Critique
+Parity assumptions challenged: “Stronger on control” is true only relative to Autopilot’s no-review submit; it does not prove Career Finder’s apply path is faster or more reliable on real employer forms.
+Missing marketing text ≠ absence: Competitors may have unadvertised mobile Arabic or a11y features; absence of text is not evidence of lack.
+Vendor promises untested: No competitor account was created; “unlimited free tracker” and “one-click autofill” are claims, not independently verified quality.
+Own findings over-reach risk: Treating existing boardUrl design as “parity+” assumes the handoff is discoverable and usable; that requires the search terminal’s fixture, not research assertion.
+Cost boundary: Staying free is a constraint, not automatic superiority if users need AI drafting that competitors monetize.
+Counterexample: A user who relies on Huntr’s 100-job free clipper may find Career Finder’s public-API limit more restrictive for the same coverage goal; the 10 s source budget is a real tradeoff, not a free win.
+Source Limitations and Next Actions
+Huntr activities help page and Teal tracking help page returned insufficient content on this pass; matrix uses product pages and prior research.
+No physical AT, real OAuth, or store-console evidence produced here.
+Native lanes, recovery terminal, a11y terminal, publisher, development, and root retain their ownership.
+
+Explicit next actions:
+
+Search terminal: fixture for partial + boardUrl handoff on integrating checkpoint.
+Recovery terminal: confirm approval fencing and Stop survival under concurrent clear.
+Publisher + root: privacy policy URL and in-app deletion on signed build.
+A11y terminal (under root): physical VoiceOver/TalkBack on critical journeys.
+Development: continue picomatch remedy ownership; do not waive audit.
+
+Investigation finished. Available for reconciliation with root’s independent review. Heavy session remains Heavy.

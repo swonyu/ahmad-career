@@ -1,0 +1,57 @@
+{
+  "format": "career-finder-phone-workspace",
+  "version": 1,
+  "platform": "android",
+  "exportedAt": "2026-11-17T18:00:00Z",
+  "source": {
+    "scope": "unpaired"
+  },
+  "data": {
+    "profile": {
+      "firstName": "Synthetic",
+      "lastName": "Applicant",
+      "email": "synthetic@example.com",
+      "phone": "",
+      "city": "Riyadh",
+      "country": "SA",
+      "headline": "",
+      "skills": [],
+      "targetRoles": [],
+      "targetCountries": [],
+      "workModes": [
+        "remote",
+        "hybrid"
+      ],
+      "experienceLevel": "mid",
+      "website": "",
+      "linkedin": "",
+      "resume": null
+    },
+    "jobs": [
+      {
+        "url": "https://boards.greenhouse.io/canonical",
+        "title": "One role",
+        "company": "Canonical",
+        "location": "Riyadh",
+        "country": "SA"
+      },
+      {
+        "url": "https://boards.greenhouse.io/canonical/?utm_source=mail",
+        "title": "One role",
+        "company": "Canonical",
+        "location": "Riyadh",
+        "country": "SA"
+      }
+    ],
+    "applicationRecords": [],
+    "recordDrafts": [],
+    "opportunityDraft": {
+      "url": "",
+      "title": "",
+      "company": "",
+      "location": "",
+      "country": ""
+    },
+    "continuationHolds": []
+  }
+}

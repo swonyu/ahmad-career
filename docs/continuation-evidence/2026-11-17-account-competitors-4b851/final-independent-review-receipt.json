@@ -1,0 +1,25 @@
+{
+  "recorded_at": "2026-11-17T20:26:12.735439+00:00",
+  "product_commit": "e1dce0e24ef8d1fe85934578d1ba33bde99f166d",
+  "reviews": [
+    {
+      "reviewer": "/root/corpus_finish",
+      "method": "Independent read-only commit/source/hash/manifest/log inspection; no tests rerun",
+      "outcome": "No new source discrepancy; final03c browser, audit and native corpus acceptance explicitly pending",
+      "checks": [
+        "Three committed source hashes match final manifests",
+        "Four final gate exits 0 and log hashes match",
+        "Account17/17; main Node289/289; no summing nested counts",
+        "Raw corpus10/10 integrity only"
+      ]
+    },
+    {
+      "reviewer": "/root/native_state_final",
+      "method": "Independent immutable publisher tree/workflow, owner snapshot and final handoff/report read",
+      "outcome": "Native/CI/ownership/release bounds confirmed; one stale generic branch instruction in each handoff corrected",
+      "fixed_finding": "Both generic branch placeholders replaced with registered exact branches; scope heading now requires reconciliation first",
+      "verification": "Root read back both files and confirmed old placeholders absent and exact registered branches present"
+    }
+  ],
+  "limits": "Documentation correction does not require or establish new application/native/CI acceptance"
+}
