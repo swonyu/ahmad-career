@@ -125,7 +125,8 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
             }
             val waiting = nowMillis < state.retryAtMillis
             Panel {
-                Text(l10n.message(state.error.orEmpty()), color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+                Text(l10n.message(state.error.orEmpty()), color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }.testTag("discovery.error"))
                 if (state.cursorInvalid) OutlinedButton(onClick = search, enabled = !state.loading, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Start a fresh search")) }
                 else {
                     OutlinedButton(onClick = search, enabled = !state.loading && !waiting,

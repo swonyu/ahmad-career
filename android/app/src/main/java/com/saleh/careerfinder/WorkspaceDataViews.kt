@@ -116,7 +116,8 @@ internal fun WorkspaceDataDialog(state: CareerUiState, model: CareerViewModel, e
                 Text(l10n("Delete this workspace from this phone"), style = MaterialTheme.typography.titleLarge)
                 Text(l10n("Deletes this scope's phone profile, résumé, saved jobs, notes, drafts, local receipt copies, search and known equivalent-address copies. Export a backup first if you want to keep them."))
                 Text(l10n("Other phone workspaces, older preserved recovery areas, exported files, cloud records and employer applications are separate. Manage cloud account deletion in the account page."), style = MaterialTheme.typography.bodySmall)
-                if (state.activePlans.isNotEmpty()) Text(l10n("Stop active Auto Apply work and refresh receipts before deleting this phone workspace."), color = MaterialTheme.colorScheme.error)
+                if (state.activePlans.isNotEmpty()) Text(l10n("Stop active Auto Apply work and refresh receipts before deleting this phone workspace."), color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
                 OutlinedButton(onClick = { deletingScope = scope }, enabled = !state.busy && state.activePlans.isEmpty(),
                     modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Delete this phone workspace…")) }
             } }
@@ -157,7 +158,9 @@ internal fun WorkspaceImportDialog(state: CareerUiState, model: CareerViewModel)
                 CheckLine("Replace profile fields with this private draft", profile, { profile = it; if (!it) pdf = false }, !state.busy)
                 Text(l10n("The current résumé stays selected unless you also choose to replace its bytes. Cloud profiles are not changed until you explicitly save."), style = MaterialTheme.typography.bodySmall)
                 CheckLine("Replace résumé with the backup PDF", pdf, { pdf = it }, !state.busy && profile && incoming.profile.resume?.dataBase64 != null && preview.pdfProblem == null)
-                preview.pdfProblem?.let { Text(l10n(it), color = MaterialTheme.colorScheme.error) }
+                preview.pdfProblem?.let { problem ->
+                    Text(l10n(problem), color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+                }
                 if (incoming.profile.resume != null && incoming.profile.resume.dataBase64 == null) Text(l10n("The backup has résumé metadata only. Choose the actual PDF again if needed."))
                 if (preview.search != null) CheckLine("Replace this workspace's last search", search, { search = it }, !state.busy)
             } }
@@ -181,7 +184,9 @@ internal fun WorkspaceImportDialog(state: CareerUiState, model: CareerViewModel)
                 Text(record.current.record.note.ifBlank { l10n("No private note") })
                 Text(l10n.format("{0} conflicting versions · {1} history versions", listOf((record.alternatives.size).toString(), (record.history.size).toString())))
             } }
-            if (state.error != null) item { Text(l10n.message(state.error), color = MaterialTheme.colorScheme.error) }
+            if (state.error != null) item {
+                Text(l10n.message(state.error), color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+            }
             item { Action("Merge selected data on this phone", !state.busy && (profile || records || search)) {
                 model.importWorkspace(preview.token, profile, pdf, records, search)
             } }

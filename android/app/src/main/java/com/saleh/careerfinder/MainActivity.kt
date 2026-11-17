@@ -638,7 +638,8 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
             }
         }
         if (selectedJobs.isNotEmpty() && !state.reviewingRecoveredPlan) item {
-            if (state.profileDirty) Text(l10n("Save your profile before preparing the review."), color = MaterialTheme.colorScheme.error)
+            if (state.profileDirty) Text(l10n("Save your profile before preparing the review."), color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
             Action(if (state.obsoleteReviews.isNotEmpty() || plan?.unapproved == true) "Stop earlier review and prepare update" else "Prepare application review",
                 state.connection != null && !state.busy && !state.profileDirty && !state.requiresPairing && state.profile.essentialsComplete, model::prepare)
             Text(l10n("Preparing sends nothing to employers. Required custom questions or an unavailable connector will be shown clearly."), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
