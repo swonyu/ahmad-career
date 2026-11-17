@@ -45,6 +45,30 @@ final class NativeCareerNavigation: ObservableObject {
 }
 
 @MainActor
+private struct NativeAcceptanceProvenance: ViewModifier {
+    let text: String
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        #if DEBUG
+        if CareerAppEnvironment.isUIAcceptance {
+            // Give test provenance its own row so UIKit navigation titles cannot draw beneath it.
+            VStack(spacing: 0) {
+                Text(text).font(.system(size: 11, weight: .medium))
+                    .lineLimit(1).padding(4).frame(maxWidth: .infinity)
+                    .background(Color.yellow.opacity(0.2)).accessibilityIdentifier("acceptance.offline")
+                content
+            }
+        } else {
+            content
+        }
+        #else
+        content
+        #endif
+    }
+}
+
+@MainActor
 struct NativeCareerRoot: View {
     private var l10n: NativeCopy { NativeCopy(locale: (NativeLanguage(rawValue: language) ?? .system).locale) }
     @EnvironmentObject private var store: NativeCareerStore
@@ -74,6 +98,7 @@ struct NativeCareerRoot: View {
                 .id(navigation.settingsNavigationID)
                 .tabItem { Label(l10n("Settings"), systemImage: "gearshape") }.tag(4)
         }
+        .modifier(NativeAcceptanceProvenance(text: l10n("Offline UI acceptance · synthetic data")))
         .environmentObject(store)
         .environmentObject(applications)
         .environmentObject(discovery)
@@ -99,12 +124,6 @@ struct NativeCareerRoot: View {
             UIAccessibility.post(notification: .announcement, argument: l10n.message(error))
         }
         .safeAreaInset(edge: .top, spacing: 0) {
-            if CareerAppEnvironment.isUIAcceptance {
-                // Test-only provenance must not obscure or resize the production accessibility layout.
-                Text(l10n("Offline UI acceptance · synthetic data")).font(.system(size: 11, weight: .medium))
-                    .lineLimit(1).padding(4).frame(maxWidth: .infinity)
-                    .background(Color.yellow.opacity(0.2)).accessibilityIdentifier("acceptance.offline")
-            }
             if let error = store.storageError {
                 Label(l10n.message(error), systemImage: "exclamationmark.triangle")
                     .font(.footnote).padding(12).frame(maxWidth: .infinity, alignment: .leading)
