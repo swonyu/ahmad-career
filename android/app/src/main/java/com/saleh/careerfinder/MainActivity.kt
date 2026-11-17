@@ -1082,7 +1082,8 @@ private fun ConnectionDialog(state: CareerUiState, model: CareerViewModel, phone
             item { Text(l10n("Sign in in your browser, then return with a one-time code."), style = MaterialTheme.typography.bodyMedium) }
             if (state.connection != null) item {
                 Panel {
-                    Text(l10n(if (state.requiresPairing) "Reconnect this phone" else "This phone is connected"), style = MaterialTheme.typography.titleMedium)
+                    Text(l10n(if (state.requiresPairing) "Reconnect this phone" else "This phone is connected"), style = MaterialTheme.typography.titleMedium,
+                        modifier = if (state.requiresPairing) Modifier.semantics { liveRegion = LiveRegionMode.Polite } else Modifier)
                     Text(l10n(if (state.connection.origin == ServicePages.DEFAULT_ORIGIN) "Career Finder" else state.connection.origin))
                     OutlinedButton(onClick = { openLink(context, ServicePages.url(state.connection.origin, "account")) },
                         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Manage account")) }
