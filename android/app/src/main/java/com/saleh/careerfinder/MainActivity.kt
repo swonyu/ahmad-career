@@ -589,7 +589,7 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
         }
         if (state.connection != null && !state.requiresPairing && !state.liveEnabled && !state.testService) item {
             Panel {
-                StatusPill("Automatic sending is not enabled", true)
+                StatusPill("Automatic sending is not enabled", true, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
                 Text(l10n("You can discover and save jobs, then apply directly on each employer’s site. A custom service needs an activated, authorized employer integration and your approval of the reviewed details. Preparing a review does not enable automatic sending."))
                 OutlinedButton(onClick = jobs, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Open saved opportunities")) }
             }
@@ -1028,10 +1028,10 @@ private fun CountryChooser(label: String, value: String, enabled: Boolean = true
 }
 
 @Composable
-internal fun StatusPill(label: String, caution: Boolean) {
+internal fun StatusPill(label: String, caution: Boolean, modifier: Modifier = Modifier) {
     val l10n = rememberCareerStrings()
     Surface(shape = RoundedCornerShape(10.dp), color = if (caution) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.primaryContainer) {
-        Text(l10n(label), Modifier.padding(horizontal = 10.dp, vertical = 7.dp), style = MaterialTheme.typography.labelMedium,
+        Text(l10n(label), modifier.padding(horizontal = 10.dp, vertical = 7.dp), style = MaterialTheme.typography.labelMedium,
             color = if (caution) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onPrimaryContainer)
     }
 }

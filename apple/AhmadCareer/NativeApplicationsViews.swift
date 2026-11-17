@@ -395,9 +395,9 @@ struct NativeApplicationsScreen: View {
         }.padding(.vertical, 6)
     }
     private var submissionAvailability: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Label(l10n(model.liveSubmissionEnabled == false ? "Auto Apply is not activated" : "Submission availability is unverified"),
-                  systemImage: "info.circle").font(.subheadline.weight(.semibold))
+        let heading = model.liveSubmissionEnabled == false ? "Auto Apply is not activated" : "Submission availability is unverified"
+        return VStack(alignment: .leading, spacing: 10) {
+            Label(l10n(heading), systemImage: "info.circle").font(.subheadline.weight(.semibold))
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityIdentifier("applications.availability.heading")
             Button(l10n("Refresh availability")) { Task { await model.refresh() } }
@@ -409,6 +409,13 @@ struct NativeApplicationsScreen: View {
                 .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
         }.padding(16).frame(maxWidth: .infinity, alignment: .leading)
             .background(ApplyDesign.card, in: RoundedRectangle(cornerRadius: 16))
+            .onAppear {
+                UIAccessibility.post(notification: .announcement, argument: l10n(heading))
+            }
+            .onChange(of: model.liveSubmissionEnabled) { enabled in
+                guard enabled != true else { return }
+                UIAccessibility.post(notification: .announcement, argument: l10n(enabled == false ? "Auto Apply is not activated" : "Submission availability is unverified"))
+            }
     }
     private func empty(icon: String, title: String, detail: String) -> some View {
         VStack(spacing: 15) {
