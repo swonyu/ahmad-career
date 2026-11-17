@@ -1,0 +1,22 @@
+{
+  "checkedAt": "2026-11-17T16:02:13.024190+00:00",
+  "base": "56784d740a25d07d2fbd4616f57e55cf0cb4453f",
+  "workflowSHA256": "9d1e606cf4a2e2fce19be48f270129e88793e15c6229890c3374a76b1a5bae74",
+  "changedPaths": [
+    ".github/workflows/phone-quality.yml"
+  ],
+  "defaultScope": "full",
+  "focusedScope": "iphone-connection",
+  "pushPRConditionsAndPermissionsUnchanged": true,
+  "unrelatedJobStepsUnchanged": true,
+  "yamlParsed": true,
+  "bashSyntaxPassed": true,
+  "fullCommandArgumentsIdenticalToBaseAfterTempDirectoryNormalization": true,
+  "focusedCommandOnlyAddsExactOneTestSelector": true,
+  "unknownScopeFailsBeforeInvokingXcodebuild": true,
+  "routingCheckUsedShellStubNotNativeExecution": true,
+  "nativeTestsInvoked": false,
+  "remoteDispatchInvoked": false,
+  "partialEvidenceIsNotReleaseGate": true,
+  "initialRoutingCheckCorrection": "The first comparison used different temporary directories; corrected only comparison normalization. No workflow change was required."
+}

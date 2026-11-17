@@ -21,6 +21,15 @@ on:
       - 'android/**'
       - 'apple/**'
   workflow_dispatch:
+    inputs:
+      acceptance_scope:
+        description: Full release gates, or a partial iPhone connection regression
+        required: true
+        default: full
+        type: choice
+        options:
+          - full
+          - iphone-connection
 
 permissions:
   contents: read
@@ -32,6 +41,7 @@ concurrency:
 jobs:
   service:
     name: Service and synthetic HTTPS
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope != 'iphone-connection' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -56,6 +66,7 @@ jobs:
 
   hosted:
     name: Hosted HTTPS service and durable storage
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope != 'iphone-connection' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -103,6 +114,7 @@ jobs:
 
   android:
     name: Android compile, lint and native acceptance
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope != 'iphone-connection' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 40
     steps:
@@ -169,6 +181,7 @@ jobs:
 
   iphone-policy:
     name: iPhone logic and unsigned build
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope != 'iphone-connection' }}
     runs-on: macos-26
     timeout-minutes: 20
     steps:
@@ -210,9 +223,11 @@ jobs:
           retention-days: 7
 
   iphone-ui:
-    name: iPhone native interface acceptance
+    name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-connection' && 'PARTIAL iPhone connection regression' || 'iPhone native interface acceptance' }}
     runs-on: macos-26
     timeout-minutes: 35
+    env:
+      CAREER_UI_ACCEPTANCE_SCOPE: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope || 'full' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -248,13 +263,32 @@ jobs:
         timeout-minutes: 30
         run: |
           set -o pipefail
+          selection=()
+          case "$CAREER_UI_ACCEPTANCE_SCOPE" in
+            full) ;;
+            iphone-connection)
+              selection=(-only-testing:CareerFinderUITests/CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup)
+              echo 'PARTIAL regression: this one journey cannot establish the full release gate.'
+              ;;
+            *) echo 'Unsupported acceptance scope'; exit 1 ;;
+          esac
           xcodebuild -project apple/AhmadCareer.xcodeproj -scheme CareerFinderAcceptance \
             -configuration Debug -destination "platform=iOS Simulator,id=$CAREER_UI_DEVICE,arch=$CAREER_UI_ARCH" \
             -derivedDataPath "$RUNNER_TEMP/career-ui-derived" \
             -resultBundlePath "$RUNNER_TEMP/CareerFinderUI.xcresult" \
             -parallel-testing-enabled NO -maximum-concurrent-test-simulator-destinations 1 \
             ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
-            test 2>&1 | tee "$RUNNER_TEMP/career-iphone-ui.log"
+            "${selection[@]}" test 2>&1 | tee "$RUNNER_TEMP/career-iphone-ui.log"
+      - name: Verify the partial regression actually ran once
+        if: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-connection' }}
+        shell: python
+        run: |
+          import os, pathlib, re
+          log = (pathlib.Path(os.environ['RUNNER_TEMP']) / 'career-iphone-ui.log').read_text()
+          observed = re.findall(r"Test Case '-\[CareerFinderUITests\.CareerFinderUITests (test\w+)\]' (passed|failed) \(", log)
+          expected = [('testProfileReadinessAndSimpleConnectionSetup', 'passed')]
+          assert observed == expected, observed
+          print('PARTIAL: one connection journey passed. The full five-job gate remains required.')
       - name: Export native interface evidence
         if: always()
         shell: bash
@@ -268,7 +302,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
-          name: iphone-ui-acceptance-${{ github.run_id }}
+          name: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-connection' && 'PARTIAL-iphone-connection-regression' || 'iphone-ui-acceptance' }}-${{ github.run_id }}
           path: |
             ${{ runner.temp }}/career-iphone-ui.log
             ${{ runner.temp }}/CareerFinderUI.xcresult
