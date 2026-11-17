@@ -1174,7 +1174,10 @@ private fun AddOpportunityDialog(state: CareerUiState, model: CareerViewModel, c
             item { Field("City or location (optional)", draft.location, { value -> model.editOpportunityDraft { it.copy(location = value.take(200)) } }, enabled = !state.busy) }
             item { CountryChooser("Country (optional)", draft.country, !state.busy) { value -> model.editOpportunityDraft { it.copy(country = value) } } }
             item { Action("Save opportunity", !state.busy && draft.url.isNotBlank() && draft.title.isNotBlank() && draft.company.isNotBlank()) { model.saveOpportunityDraft(close) } }
-            if (state.error != null) item { Text(l10n.message(state.error), color = MaterialTheme.colorScheme.error) }
+            if (state.error != null) item {
+                Text(l10n.message(state.error), color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }.testTag("opportunity.error"))
+            }
             item { Text(l10n("You can close this form and keep an unfinished draft on this phone, even if some fields are blank."), style = MaterialTheme.typography.bodySmall) }
             item { Text(l10n("Saving keeps a private record. It does not verify the vacancy or send an application. Unsupported employers remain available for manual application."), style = MaterialTheme.typography.bodySmall) }
         }

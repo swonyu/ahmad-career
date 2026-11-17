@@ -752,6 +752,9 @@ struct NativeOpportunityEditor: View {
             .onDisappear {
                 if changed && !closingIntentionally { model.keepOpportunityDraft(draft) }
             }
+            .onChange(of: issue) { value in
+                if let value { UIAccessibility.post(notification: .announcement, argument: l10n.message(value)) }
+            }
     }
 }
 

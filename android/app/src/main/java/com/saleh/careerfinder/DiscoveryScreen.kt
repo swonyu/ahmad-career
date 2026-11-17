@@ -248,8 +248,9 @@ private fun DiscoverySourcesDialog(state: DiscoveryUiState, controller: Discover
                 item { Text(l10n.format("{0} of {1} selected", listOf((draft.size).toString(), (limit).toString())), style = MaterialTheme.typography.labelLarge) }
                 if (state.catalogLoading) item { LinearProgressIndicator(Modifier.fillMaxWidth()) }
                 if (state.catalogError != null) item {
-                    Text(l10n.message(state.catalogError), color = MaterialTheme.colorScheme.error)
-                    OutlinedButton(onClick = controller::loadSources, modifier = Modifier.heightIn(min = 48.dp)) { Text(l10n("Retry employer catalog")) }
+                    Text(l10n.message(state.catalogError), color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }.testTag("discovery.catalogError"))
+                    OutlinedButton(onClick = controller::loadSources, modifier = Modifier.heightIn(min = 48.dp).testTag("discovery.retryCatalog")) { Text(l10n("Retry employer catalog")) }
                 }
                 item { Field("Find an employer in the catalog", query, { query = it }) }
                 val catalog = state.catalog?.sources.orEmpty()
@@ -268,13 +269,17 @@ private fun DiscoverySourcesDialog(state: DiscoveryUiState, controller: Discover
                 item {
                     HorizontalDivider()
                     Text(l10n("Add another employer"), style = MaterialTheme.typography.titleMedium)
-                    Field("Public Lever or Greenhouse board link", custom, { custom = it; customError = null }, KeyboardType.Uri, error = customError)
+                    Field("Public Lever or Greenhouse board link", custom, { custom = it; customError = null }, KeyboardType.Uri)
                     Text(l10n("A supported employer board or individual posting URL can be used. Other job links can still be added in Saved."), style = MaterialTheme.typography.bodySmall)
                     OutlinedButton(onClick = {
                         val value = custom.trim()
                         if (!PublicDiscoveryService.supportedSource(value)) customError = "Use a public jobs.lever.co, jobs.eu.lever.co, boards.greenhouse.io or job-boards.greenhouse.io link."
                         else { touched = true; draft = draft + value; custom = ""; customError = null }
                     }, enabled = custom.isNotBlank() && draft.size < limit, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Add employer board")) }
+                    customError?.let { issue ->
+                        Text(l10n.message(issue), color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }.testTag("discovery.boardIssue"))
+                    }
                 }
             }
             Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {
