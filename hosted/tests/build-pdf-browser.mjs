@@ -94,7 +94,8 @@ try {
   const fixtureHashes = {}; for (const file of [...files, 'pdf-fixtures.json', ...fixtures.map(value => value.file)]) fixtureHashes['tests/fixtures/pdf-browser/' + file] = digest(await readFile(path.join(fixtureRoot, file)));
   fixtureHashes['tests/build-pdf-browser.mjs'] = digest(await readFile(fileURLToPath(import.meta.url)));
   const outputHashes = {}; for (const file of assets) outputHashes[file] = digest(await readFile(path.join(output, file)));
-  const manifest = { scope: 'Test-only synthetic memory state. Actual PDF client, browser module worker, shared bounded parser and extracted current PhoneApp readPDF/assertCurrent. Not a full React/vault/account/device acceptance.', sourceRoot, sourceHashes, handlerHashes, fixtureHashes, outputHashes, workerPaths: workers, bundledProductionModules: [...bundledSource].sort(), fixturePreflight: fixtures.map(({ bytes, ...value }) => value), productionRoutesAdded: 0, apiRequests: 0, externalRequests: 0, persistentStorageUsed: false, browserAcceptance: 'pending actual file-picker checks' };
+  const fixtureMetadata = fixtures.map(fixture => { const value = { ...fixture }; delete value.bytes; return value; });
+  const manifest = { scope: 'Test-only synthetic memory state. Actual PDF client, browser module worker, shared bounded parser and extracted current PhoneApp readPDF/assertCurrent. Not a full React/vault/account/device acceptance.', sourceRoot, sourceHashes, handlerHashes, fixtureHashes, outputHashes, workerPaths: workers, bundledProductionModules: [...bundledSource].sort(), fixturePreflight: fixtureMetadata, productionRoutesAdded: 0, apiRequests: 0, externalRequests: 0, persistentStorageUsed: false, browserAcceptance: 'pending actual file-picker checks' };
   await writeFile(path.join(output, 'source-manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
   await mkdir(uploadFolder, { recursive: true });
   for (const fixture of fixtures) {
@@ -102,6 +103,6 @@ try {
     try { const current = await readFile(destination); if (digest(current) !== fixture.sha256) throw Error('Preserving an existing different upload fixture: ' + destination); }
     catch (error) { if (error.code !== 'ENOENT') throw error; await writeFile(destination, fixture.bytes, { flag: 'wx' }); }
   }
-  console.log(JSON.stringify({ output, uploadFolder, workers, fixtures: fixtures.map(({ bytes, ...value }) => value), productionRoutesAdded: 0, sourceHashes }, null, 2));
+  console.log(JSON.stringify({ output, uploadFolder, workers, fixtures: fixtureMetadata, productionRoutesAdded: 0, sourceHashes }, null, 2));
 } catch (error) { if (outputOwned) await rm(output, { recursive: true, force: true }); throw error; }
 finally { await rm(temp, { recursive: true, force: true }); }

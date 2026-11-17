@@ -1,0 +1,55 @@
+{
+  "observedAt": "2026-11-17T14:50:43.642575+00:00",
+  "baseCommit": "880e878f6f528d903c42951f10a8b216094c889c",
+  "state": "working follow-up; exact hashes bound below",
+  "sourceHashes": {
+    "hosted/app/phone/PhoneApp.tsx": "7fbf684a5b400a064f01fb62173192d821f1eb4ce6d076435d1fe9ac58c9c590",
+    "hosted/app/phone/components.tsx": "cec98ced40e35044f821525e4d979d17fd52ea66a6dc139307cdf7ebe11ecded",
+    "hosted/app/i18n/messages.ar.json": "fe90f2bb6fa500983998bb04929e31cb924be1bef6ab855967d9f46ec0cfce54",
+    "hosted/package.json": "a9c4e380d5a6268f1472a039f51c2b47f22a2bfb9558cfb8a97310a7b803a613",
+    "hosted/tests/phone-search-workflows.mjs": "8af894ca2c9f7221f8d989a747ab646889379570ba08ef0f157eb36b1b91e0d9",
+    "hosted/tests/phone-localization.mjs": "6d97414cb6b1915a2a58431155a4b004fa94f99c17afbf1cbb2df47a651665f8",
+    "hosted/tests/i18n.mjs": "54405800a50bfaf3073d52ec8ac5ffedf8cc94f44733c35e0f4ab318e345465b",
+    "hosted/tests/web-experience.mjs": "bbe13c844bab3ddc86701cd2642a2ce88966ee789e3177b43b75dba0bc0a0623",
+    "hosted/tests/hosted-applications.mjs": "722ca3c60540ddc82f5a8f52e4aa19a625963efc2b9fffb13448035ef7b0026d"
+  },
+  "arabicCatalogEntries": 1314,
+  "focusedTests": {
+    "executed": 66,
+    "passed": 66,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "log": "focused-tests.log"
+  },
+  "lint": {
+    "command": [
+      "npm",
+      "run",
+      "lint"
+    ],
+    "exitCode": 0,
+    "log": "lint.log"
+  },
+  "typecheck": {
+    "command": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "exitCode": 0,
+    "log": "typecheck.log"
+  },
+  "claims": [
+    "Retry uses a copied last-submitted filter set without pagination cursor and preserves newer visible filter edits.",
+    "Old results survive pending, failed and cancelled requests. Identity/epoch checks and the200-result cap remain enforced.",
+    "Dynamic display values use direction isolation without changing saved/exported strings.",
+    "CSV import guidance appears inside the existing disclosure; no main screen or new navigation added."
+  ],
+  "limits": [
+    "Synthetic handler and actual-markup tests; no new browser visual or physical-device acceptance.",
+    "Visible filter drafts remain distinct from persisting the last completed search; not every keystroke is saved for reload.",
+    "The application serializer is unchanged. Numeric-coercion evidence is under ../csv-text-import/.",
+    "Native run32 and its later correction are separate evidence."
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "candidate_sha": "880e878f6f528d903c42951f10a8b216094c889c",
+  "run_id": 44101210921,
+  "executed": 17,
+  "passed": 16,
+  "failed": 1,
+  "unexpected_errors": 0,
+  "skipped": 0,
+  "test_body_seconds": 1473.804,
+  "tests": [
+    {
+      "name": "testAccessibilityTextKeepsCoreControlsReachable",
+      "outcome": "passed",
+      "seconds": 101.269
+    },
+    {
+      "name": "testApplicationDraftSurvivesCancelAndRelaunch",
+      "outcome": "passed",
+      "seconds": 85.726
+    },
+    {
+      "name": "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+      "outcome": "passed",
+      "seconds": 207.196
+    },
+    {
+      "name": "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+      "outcome": "passed",
+      "seconds": 76.218
+    },
+    {
+      "name": "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "outcome": "passed",
+      "seconds": 26.921
+    },
+    {
+      "name": "testDiscoverySaveFlowsIntoSavedAndApply",
+      "outcome": "passed",
+      "seconds": 45.865
+    },
+    {
+      "name": "testFreshStartAndFiveTabs",
+      "outcome": "passed",
+      "seconds": 32.574
+    },
+    {
+      "name": "testLinkedInProfileDraftAndExternalSearchChoice",
+      "outcome": "passed",
+      "seconds": 70.59
+    },
+    {
+      "name": "testOpportunityDiscardRequiresExplicitChoice",
+      "outcome": "passed",
+      "seconds": 27.323
+    },
+    {
+      "name": "testOpportunityDraftKeepSaveAndRestore",
+      "outcome": "passed",
+      "seconds": 70.58
+    },
+    {
+      "name": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+      "outcome": "passed",
+      "seconds": 168.975
+    },
+    {
+      "name": "testProfileReadinessAndSimpleConnectionSetup",
+      "outcome": "failed",
+      "seconds": 83.346
+    },
+    {
+      "name": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+      "outcome": "passed",
+      "seconds": 36.052
+    },
+    {
+      "name": "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+      "outcome": "passed",
+      "seconds": 137.537
+    },
+    {
+      "name": "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+      "outcome": "passed",
+      "seconds": 138.229
+    },
+    {
+      "name": "testSearchEmptyAndFailurePreservesPreviousResults",
+      "outcome": "passed",
+      "seconds": 109.034
+    },
+    {
+      "name": "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+      "outcome": "passed",
+      "seconds": 56.369
+    }
+  ],
+  "raw_summary_and_failure_lines": [
+    "2026-11-17T14:37:15.5762690Z /Users/runner/work/ahmad-career/ahmad-career/apple/UITests/CareerFinderUITests.swift:129: error: -[CareerFinderUITests.CareerFinderUITests testProfileReadinessAndSimpleConnectionSetup] : XCTAssertEqual failed: (\"XCTWaiterResult(rawValue: 2)\") is not equal to (\"XCTWaiterResult(rawValue: 1)\") - Existing text must expose a reachable Select All edit action",
+    "2026-11-17T14:45:13.0245590Z \t Executed 17 tests, with 1 failure (0 unexpected) in 1473.804 (1473.830) seconds",
+    "2026-11-17T14:45:13.1319590Z \t Executed 17 tests, with 1 failure (0 unexpected) in 1473.804 (1473.833) seconds",
+    "2026-11-17T14:45:13.1356400Z \t Executed 17 tests, with 1 failure (0 unexpected) in 1473.804 (1473.834) seconds"
+  ],
+  "remaining_failure_classification": "Native UI test interaction: long press left only a caret in an existing single-line URL; no reachable Select All menu was observed. Whole-text selection was not observed and is not assumed."
+}

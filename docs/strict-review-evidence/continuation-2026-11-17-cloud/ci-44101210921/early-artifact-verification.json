@@ -1,0 +1,18 @@
+[
+  {
+    "artifact_id": 14335414165,
+    "local_archive": "hosted.zip",
+    "bytes": 8819,
+    "sha256": "ba12eee5632990a3d8261a4bc4f0d9e1b88915813669467a64a5ad63db17611b",
+    "github_size_and_digest_match": true,
+    "safe_entry_paths": true
+  },
+  {
+    "artifact_id": 14335408305,
+    "local_archive": "iphone-build.zip",
+    "bytes": 8338,
+    "sha256": "80671918b367386434deeb89d1cf5fe9b1dc204f18a043f549e80da7112cf255",
+    "github_size_and_digest_match": true,
+    "safe_entry_paths": true
+  }
+]

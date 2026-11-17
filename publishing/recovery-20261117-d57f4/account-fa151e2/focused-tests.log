@@ -1,0 +1,784 @@
+TAP version 13
+# Subtest: language negotiation respects the dedicated preference, weighted device languages, and unsupported-language fallback
+ok 1 - language negotiation respects the dedicated preference, weighted device languages, and unsupported-language fallback
+  ---
+  duration_ms: 17.805762
+  type: 'test'
+  ...
+# Subtest: every Arabic entry is nonempty and preserves the exact placeholder multiset
+ok 2 - every Arabic entry is nonempty and preserves the exact placeholder multiset
+  ---
+  duration_ms: 16.833213
+  type: 'test'
+  ...
+# Subtest: unknown and prototype-looking keys remain safe, while specific templates preserve inserted data byte-for-byte
+ok 3 - unknown and prototype-looking keys remain safe, while specific templates preserve inserted data byte-for-byte
+  ---
+  duration_ms: 1.27619
+  type: 'test'
+  ...
+# Subtest: Arabic counts have zero, one, dual, few, many forms and display Gregorian dates
+ok 4 - Arabic counts have zero, one, dual, few, many forms and display Gregorian dates
+  ---
+  duration_ms: 213.010827
+  type: 'test'
+  ...
+# Subtest: language persistence writes only the independent preference and cookie, including cross-tab clearing
+ok 5 - language persistence writes only the independent preference and cookie, including cross-tab clearing
+  ---
+  duration_ms: 34.833892
+  type: 'test'
+  ...
+# Subtest: blocked storage still changes this visit without claiming persistence
+ok 6 - blocked storage still changes this visit without claiming persistence
+  ---
+  duration_ms: 18.005194
+  type: 'test'
+  ...
+# Subtest: the actual language control renders Arabic or English on the server with the correct selected preference
+ok 7 - the actual language control renders Arabic or English on the server with the correct selected preference
+  ---
+  duration_ms: 35.783271
+  type: 'test'
+  ...
+# {"syntheticPrivateIngress":{"denied":0,"workerRequests":1,"providerRequests":0}}
+# Subtest: phone API keeps authentication, cancellation and verification bounded
+    # Subtest: private writes carry the exact intent body, same-origin cookies and no native credential
+    ok 1 - private writes carry the exact intent body, same-origin cookies and no native credential
+      ---
+      duration_ms: 12.61114
+      type: 'test'
+      ...
+    # Subtest: the actual source catalog remains readable behind an owner-private same-origin hosting gate
+    ok 2 - the actual source catalog remains readable behind an owner-private same-origin hosting gate
+      ---
+      duration_ms: 12.90918
+      type: 'test'
+      ...
+    # Subtest: discovery preserves same-origin hosting access and encoded search intent without a native credential
+    ok 3 - discovery preserves same-origin hosting access and encoded search intent without a native credential
+      ---
+      duration_ms: 0.915679
+      type: 'test'
+      ...
+    # Subtest: oversized multi-job review payloads are rejected before an API call begins
+    ok 4 - oversized multi-job review payloads are rejected before an API call begins
+      ---
+      duration_ms: 6.117164
+      type: 'test'
+      ...
+    # Subtest: foreign destinations, non-app routes and writes to discovery are rejected before fetch
+    ok 5 - foreign destinations, non-app routes and writes to discovery are rejected before fetch
+      ---
+      duration_ms: 1.517711
+      type: 'test'
+      ...
+    # Subtest: HTTP and logical failures remain distinguishable and never replay a mutation
+    ok 6 - HTTP and logical failures remain distinguishable and never replay a mutation
+      ---
+      duration_ms: 18.76827
+      type: 'test'
+      ...
+    # Subtest: unverified content, invalid UTF-8, arrays and empty responses are rejected safely
+    ok 7 - unverified content, invalid UTF-8, arrays and empty responses are rejected safely
+      ---
+      duration_ms: 2.122609
+      type: 'test'
+      ...
+    # Subtest: the 12 MiB response limit cancels oversized streams before parsing
+    ok 8 - the 12 MiB response limit cancels oversized streams before parsing
+      ---
+      duration_ms: 8.451088
+      type: 'test'
+      ...
+    # Subtest: network errors do not retry writes or expose private exception details
+    ok 9 - network errors do not retry writes or expose private exception details
+      ---
+      duration_ms: 0.878788
+      type: 'test'
+      ...
+    # Subtest: caller cancellation aborts once and pre-cancelled work never starts
+    ok 10 - caller cancellation aborts once and pre-cancelled work never starts
+      ---
+      duration_ms: 13.550351
+      type: 'test'
+      ...
+# {"populatedWorkspaceBytes":7112730,"attempts":500,"reviews":20,"reviewItems":400}
+    # Subtest: the timer aborts a stalled mutation and tells the user to reconcile before retrying
+    ok 11 - the timer aborts a stalled mutation and tells the user to reconcile before retrying
+      ---
+      duration_ms: 27.018211
+      type: 'test'
+      ...
+    # Subtest: a populated valid workspace above 4 MiB remains readable within the native 12 MiB budget
+    ok 12 - a populated valid workspace above 4 MiB remains readable within the native 12 MiB budget
+      ---
+      duration_ms: 744.815356
+      type: 'test'
+      ...
+    1..12
+ok 8 - phone API keeps authentication, cancellation and verification bounded
+  ---
+  duration_ms: 857.45995
+  type: 'test'
+  ...
+# Subtest: real review rendering localizes every state and preserves user and employer content
+ok 9 - real review rendering localizes every state and preserves user and employer content
+  ---
+  duration_ms: 153.199665
+  type: 'test'
+  ...
+# Subtest: recovery notices render full sentences and locale-specific counts from the same stored data
+ok 10 - recovery notices render full sentences and locale-specific counts from the same stored data
+  ---
+  duration_ms: 85.743317
+  type: 'test'
+  ...
+# Subtest: actual copy handler stores translatable notices and copies the exact value on success or refusal
+ok 11 - actual copy handler stores translatable notices and copies the exact value on success or refusal
+  ---
+  duration_ms: 106.894326
+  type: 'test'
+  ...
+# Subtest: discovery notice translates only the known service composition and keeps unknown text opaque
+ok 12 - discovery notice translates only the known service composition and keeps unknown text opaque
+  ---
+  duration_ms: 173.778504
+  type: 'test'
+  ...
+# Subtest: actual Saved, Apply, details and recovery values retain separate bidi boundaries in both languages
+ok 13 - actual Saved, Apply, details and recovery values retain separate bidi boundaries in both languages
+  ---
+  duration_ms: 248.692362
+  type: 'test'
+  ...
+# Subtest: actual profile comparison and application review isolate names and CV filenames without changing them
+ok 14 - actual profile comparison and application review isolate names and CV filenames without changing them
+  ---
+  duration_ms: 119.239384
+  type: 'test'
+  ...
+# Subtest: actual search inputs preserve mixed-script draft text with automatic direction
+ok 15 - actual search inputs preserve mixed-script draft text with automatic direction
+  ---
+  duration_ms: 31.087534
+  type: 'test'
+  ...
+# Subtest: phone model keeps canonical identities and private local state separate
+    # Subtest: LinkedIn values have the same canonical boundary as the application service
+    ok 1 - LinkedIn values have the same canonical boundary as the application service
+      ---
+      duration_ms: 23.529632
+      type: 'test'
+      ...
+    # Subtest: Lever paths, arbitrary tracking queries and case share the actual remote posting identity
+    ok 2 - Lever paths, arbitrary tracking queries and case share the actual remote posting identity
+      ---
+      duration_ms: 21.789199
+      type: 'test'
+      ...
+    # Subtest: scope mismatch, duplicate jobs and noncanonical/contradictory imported records fail closed
+    ok 3 - scope mismatch, duplicate jobs and noncanonical/contradictory imported records fail closed
+      ---
+      duration_ms: 52.929245
+      type: 'test'
+      ...
+    # Subtest: civil dates and applied history survive stage transitions until explicit clearing
+    ok 4 - civil dates and applied history survive stage transitions until explicit clearing
+      ---
+      duration_ms: 18.270569
+      type: 'test'
+      ...
+    # Subtest: profile transport strips local notes, records, revision and resume metadata
+    ok 5 - profile transport strips local notes, records, revision and resume metadata
+      ---
+      duration_ms: 13.036348
+      type: 'test'
+      ...
+    # Subtest: exact review validates the target and every submitted profile/CV field
+    ok 6 - exact review validates the target and every submitted profile/CV field
+      ---
+      duration_ms: 76.773807
+      type: 'test'
+      ...
+    # Subtest: review requests bind a workspace, distinct UUIDs and explicit consent choices
+    ok 7 - review requests bind a workspace, distinct UUIDs and explicit consent choices
+      ---
+      duration_ms: 30.488128
+      type: 'test'
+      ...
+    # Subtest: review request budget measures serialized UTF-8 including repeated answers and JSON escaping
+    ok 8 - review request budget measures serialized UTF-8 including repeated answers and JSON escaping
+      ---
+      duration_ms: 81.232368
+      type: 'test'
+      ...
+    1..8
+ok 16 - phone model keeps canonical identities and private local state separate
+  ---
+  duration_ms: 332.559569
+  type: 'test'
+  ...
+# Subtest: model schemas preserve serialized workspace, nullable review and blocked receipt contract fields
+ok 17 - model schemas preserve serialized workspace, nullable review and blocked receipt contract fields
+  ---
+  duration_ms: 36.658468
+  type: 'test'
+  ...
+# Subtest: phone search accepts the published discovery status contract and preserves it in a restored search
+ok 18 - phone search accepts the published discovery status contract and preserves it in a restored search
+  ---
+  duration_ms: 33.128495
+  type: 'test'
+  ...
+# Subtest: each employer keeps separate exact answers and no missing answer is inferred
+ok 19 - each employer keeps separate exact answers and no missing answer is inferred
+  ---
+  duration_ms: 3.888414
+  type: 'test'
+  ...
+# Subtest: receipts require an application ID and consistent live evidence before confirmation
+ok 20 - receipts require an application ID and consistent live evidence before confirmation
+  ---
+  duration_ms: 1.996019
+  type: 'test'
+  ...
+# Subtest: career preferences and an unfinished record stage survive encrypted recovery serialization
+ok 21 - career preferences and an unfinished record stage survive encrypted recovery serialization
+  ---
+  duration_ms: 19.147953
+  type: 'test'
+  ...
+# Subtest: provider navigation accepts only official authorization endpoints and safe app returns
+ok 22 - provider navigation accepts only official authorization endpoints and safe app returns
+  ---
+  duration_ms: 1.047418
+  type: 'test'
+  ...
+# Subtest: OAuth callback feedback only accepts exact provider and result enums once
+ok 23 - OAuth callback feedback only accepts exact provider and result enums once
+  ---
+  duration_ms: 0.676562
+  type: 'test'
+  ...
+# Subtest: provider status represents LinkedIn login without treating older basic-link backends as sign-in support
+ok 24 - provider status represents LinkedIn login without treating older basic-link backends as sign-in support
+  ---
+  duration_ms: 20.230628
+  type: 'test'
+  ...
+# Subtest: actual recovery export refuses a late original-account response after identity revalidation starts
+ok 25 - actual recovery export refuses a late original-account response after identity revalidation starts
+  ---
+  duration_ms: 147.400512
+  type: 'test'
+  ...
+# Subtest: actual recovery rejects changed generations, hidden pages and replaced quarantine before export
+    # Subtest: generation
+    ok 1 - generation
+      ---
+      duration_ms: 53.85696
+      type: 'test'
+      ...
+    # Subtest: hidden
+    ok 2 - hidden
+      ---
+      duration_ms: 45.553244
+      type: 'test'
+      ...
+    # Subtest: quarantine
+    ok 3 - quarantine
+      ---
+      duration_ms: 32.609993
+      type: 'test'
+      ...
+    1..3
+ok 26 - actual recovery rejects changed generations, hidden pages and replaced quarantine before export
+  ---
+  duration_ms: 134.50504
+  type: 'test'
+  ...
+# Subtest: actual restoration rechecks identity after both vault and safety reads without losing original drafts
+    # Subtest: vault
+    ok 1 - vault
+      ---
+      duration_ms: 28.722269
+      type: 'test'
+      ...
+    # Subtest: safety
+    ok 2 - safety
+      ---
+      duration_ms: 25.193105
+      type: 'test'
+      ...
+    1..2
+ok 27 - actual restoration rechecks identity after both vault and safety reads without losing original drafts
+  ---
+  duration_ms: 54.773968
+  type: 'test'
+  ...
+# Subtest: recovery cannot start during revalidation and legitimate owner export and restoration remain available
+ok 28 - recovery cannot start during revalidation and legitimate owner export and restoration remain available
+  ---
+  duration_ms: 77.434475
+  type: 'test'
+  ...
+# Subtest: actual browser-worker parser accepts ordinary and object-stream PDFs and preserves bytes and checksum
+ok 29 - actual browser-worker parser accepts ordinary and object-stream PDFs and preserves bytes and checksum
+  ---
+  duration_ms: 521.887018
+  type: 'test'
+  ...
+# Subtest: actual browser-worker parser rejects malformed, truncated, encrypted, cyclic and deeply nested PDFs
+    # Subtest: malformed
+    ok 1 - malformed
+      ---
+      duration_ms: 139.107653
+      type: 'test'
+      ...
+    # Subtest: truncated
+    ok 2 - truncated
+      ---
+      duration_ms: 177.486712
+      type: 'test'
+      ...
+    # Subtest: encrypted
+    ok 3 - encrypted
+      ---
+      duration_ms: 140.911983
+      type: 'test'
+      ...
+    # Subtest: cyclic
+    ok 4 - cyclic
+      ---
+      duration_ms: 143.602539
+      type: 'test'
+      ...
+    # Subtest: nested
+    ok 5 - nested
+      ---
+      duration_ms: 178.771474
+      type: 'test'
+      ...
+    1..5
+ok 30 - actual browser-worker parser rejects malformed, truncated, encrypted, cyclic and deeply nested PDFs
+  ---
+  duration_ms: 782.603065
+  type: 'test'
+  ...
+# Subtest: actual browser-worker streaming inflation rejects expansion beyond the existing 16 MiB cap
+ok 31 - actual browser-worker streaming inflation rejects expansion beyond the existing 16 MiB cap
+  ---
+  duration_ms: 388.289779
+  type: 'test'
+  ...
+# Subtest: actual PDF selection keeps the prior valid local draft on every invalid file and only reports success after validation
+ok 32 - actual PDF selection keeps the prior valid local draft on every invalid file and only reports success after validation
+  ---
+  duration_ms: 485.386998
+  type: 'test'
+  ...
+# Subtest: actual PDF selection refuses late success after cancellation, identity invalidation or page replacement
+    # Subtest: abort
+    ok 1 - abort
+      ---
+      duration_ms: 15.389435
+      type: 'test'
+      ...
+    # Subtest: identity
+    ok 2 - identity
+      ---
+      duration_ms: 9.903092
+      type: 'test'
+      ...
+    # Subtest: generation
+    ok 3 - generation
+      ---
+      duration_ms: 15.056603
+      type: 'test'
+      ...
+    1..3
+ok 33 - actual PDF selection refuses late success after cancellation, identity invalidation or page replacement
+  ---
+  duration_ms: 41.322469
+  type: 'test'
+  ...
+# Subtest: worker timeout, abort and unavailable streaming support fail closed and terminate work
+ok 34 - worker timeout, abort and unavailable streaming support fail closed and terminate work
+  ---
+  duration_ms: 159.968198
+  type: 'test'
+  ...
+# Subtest: Saved search finds every term across visible metadata and the active saved note
+ok 35 - Saved search finds every term across visible metadata and the active saved note
+  ---
+  duration_ms: 4.19024
+  type: 'test'
+  ...
+# Subtest: Saved comparison removes only the agreed Arabic vowel marks and tatweel while preserving distinct letters
+ok 36 - Saved comparison removes only the agreed Arabic vowel marks and tatweel while preserving distinct letters
+  ---
+  duration_ms: 1.123905
+  type: 'test'
+  ...
+# Subtest: CSV is UTF-8 BOM, quoted CRLF data with original Arabic, quotes and multiline notes
+ok 37 - CSV is UTF-8 BOM, quoted CRLF data with original Arabic, quotes and multiline notes
+  ---
+  duration_ms: 7.879477
+  type: 'test'
+  ...
+# Subtest: CSV visibly neutralizes formula-like text including compatibility characters and leading controls
+ok 38 - CSV visibly neutralizes formula-like text including compatibility characters and leading controls
+  ---
+  duration_ms: 5.871341
+  type: 'test'
+  ...
+# Subtest: CSV selects only record fields and translates app labels without translating private content
+ok 39 - CSV selects only record fields and translates app labels without translating private content
+  ---
+  duration_ms: 1.366974
+  type: 'test'
+  ...
+# Subtest: calendar uses civil DATE and one day even on leap days and the maximum supported year
+ok 40 - calendar uses civil DATE and one day even on leap days and the maximum supported year
+  ---
+  duration_ms: 303.874728
+  type: 'test'
+  ...
+# Subtest: calendar escapes injected properties and folds long Arabic and emoji by UTF-8 octets
+ok 41 - calendar escapes injected properties and folds long Arabic and emoji by UTF-8 octets
+  ---
+  duration_ms: 5.732525
+  type: 'test'
+  ...
+# Subtest: calendar UID is stable for the public job and date without private fields or provider state
+ok 42 - calendar UID is stable for the public job and date without private fields or provider state
+  ---
+  duration_ms: 11.788572
+  type: 'test'
+  ...
+# Subtest: record locations are optional for legacy snapshots and bounded for new records
+ok 43 - record locations are optional for legacy snapshots and bounded for new records
+  ---
+  duration_ms: 23.264381
+  type: 'test'
+  ...
+# Subtest: removing a bookmark retains its latest nonblank location for current, legacy and re-bookmarked records
+ok 44 - removing a bookmark retains its latest nonblank location for current, legacy and re-bookmarked records
+  ---
+  duration_ms: 354.188097
+  type: 'test'
+  ...
+# Subtest: bookmark metadata preservation fails with account mismatch or rejected persistence
+ok 45 - bookmark metadata preservation fails with account mismatch or rejected persistence
+  ---
+  duration_ms: 38.772657
+  type: 'test'
+  ...
+# Subtest: actual CSV action exports only the current guest or confirmed account records
+ok 46 - actual CSV action exports only the current guest or confirmed account records
+  ---
+  duration_ms: 43.069892
+  type: 'test'
+  ...
+# Subtest: actual record exports fail closed before reading unconfirmed, locked, wrong-owner or earlier-workspace data
+    # Subtest: identity
+    ok 1 - identity
+      ---
+      duration_ms: 15.408541
+      type: 'test'
+      ...
+    # Subtest: checking
+    ok 2 - checking
+      ---
+      duration_ms: 42.179454
+      type: 'test'
+      ...
+    # Subtest: locked
+    ok 3 - locked
+      ---
+      duration_ms: 43.718474
+      type: 'test'
+      ...
+    # Subtest: owner
+    ok 4 - owner
+      ---
+      duration_ms: 24.661623
+      type: 'test'
+      ...
+    # Subtest: missingOwner
+    ok 5 - missingOwner
+      ---
+      duration_ms: 96.075492
+      type: 'test'
+      ...
+    # Subtest: olderWorkspace
+    ok 6 - olderWorkspace
+      ---
+      duration_ms: 25.586388
+      type: 'test'
+      ...
+    # Subtest: earlierScope
+    ok 7 - earlierScope
+      ---
+      duration_ms: 15.031503
+      type: 'test'
+      ...
+    1..7
+ok 47 - actual record exports fail closed before reading unconfirmed, locked, wrong-owner or earlier-workspace data
+  ---
+  duration_ms: 265.632986
+  type: 'test'
+  ...
+# Subtest: actual calendar action rechecks identity, generation, workspace and record after asynchronous hashing
+    # Subtest: revalidation
+    ok 1 - revalidation
+      ---
+      duration_ms: 28.582626
+      type: 'test'
+      ...
+    # Subtest: generation
+    ok 2 - generation
+      ---
+      duration_ms: 23.751081
+      type: 'test'
+      ...
+    # Subtest: owner
+    ok 3 - owner
+      ---
+      duration_ms: 23.37961
+      type: 'test'
+      ...
+    # Subtest: workspace
+    ok 4 - workspace
+      ---
+      duration_ms: 11.269726
+      type: 'test'
+      ...
+    # Subtest: snapshot
+    ok 5 - snapshot
+      ---
+      duration_ms: 17.928229
+      type: 'test'
+      ...
+    # Subtest: date
+    ok 6 - date
+      ---
+      duration_ms: 17.588327
+      type: 'test'
+      ...
+    # Subtest: removal
+    ok 7 - removal
+      ---
+      duration_ms: 13.737859
+      type: 'test'
+      ...
+    1..7
+ok 48 - actual calendar action rechecks identity, generation, workspace and record after asynchronous hashing
+  ---
+  duration_ms: 138.489343
+  type: 'test'
+  ...
+# Subtest: actual calendar action accepts a saved record and rejects unsaved editor copies or missing dates
+ok 49 - actual calendar action accepts a saved record and rejects unsaved editor copies or missing dates
+  ---
+  duration_ms: 24.666553
+  type: 'test'
+  ...
+# Subtest: actual Saved selector searches active notes and keeps the existing applied/follow-up filters
+ok 50 - actual Saved selector searches active notes and keeps the existing applied/follow-up filters
+  ---
+  duration_ms: 15.051489
+  type: 'test'
+  ...
+# Subtest: new controls stay inside existing disclosures and require a saved valid follow-up day
+ok 51 - new controls stay inside existing disclosures and require a saved valid follow-up day
+  ---
+  duration_ms: 64.992181
+  type: 'test'
+  ...
+# Subtest: retry repeats the displayed search without a cursor and preserves newer visible draft filters
+ok 52 - retry repeats the displayed search without a cursor and preserves newer visible draft filters
+  ---
+  duration_ms: 85.710672
+  type: 'test'
+  ...
+# Subtest: a fresh search response does not overwrite text or boards edited while it is pending
+ok 53 - a fresh search response does not overwrite text or boards edited while it is pending
+  ---
+  duration_ms: 22.982533
+  type: 'test'
+  ...
+# Subtest: pagination uses the displayed search and cursor, merges identities, and leaves draft filters alone
+ok 54 - pagination uses the displayed search and cursor, merges identities, and leaves draft filters alone
+  ---
+  duration_ms: 24.61013
+  type: 'test'
+  ...
+# Subtest: failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller
+    # Subtest: failure
+    ok 1 - failure
+      ---
+      duration_ms: 50.021159
+      type: 'test'
+      ...
+    # Subtest: cancel
+    ok 2 - cancel
+      ---
+      duration_ms: 21.556297
+      type: 'test'
+      ...
+    1..2
+ok 55 - failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller
+  ---
+  duration_ms: 72.842242
+  type: 'test'
+  ...
+# Subtest: late search results cannot cross the existing identity or generation boundary
+    # Subtest: identity
+    ok 1 - identity
+      ---
+      duration_ms: 18.232977
+      type: 'test'
+      ...
+    # Subtest: generation
+    ok 2 - generation
+      ---
+      duration_ms: 22.719315
+      type: 'test'
+      ...
+    1..2
+ok 56 - late search results cannot cross the existing identity or generation boundary
+  ---
+  duration_ms: 41.757859
+  type: 'test'
+  ...
+# Subtest: pagination retains the 200-result cap and retry refreshes restored results without a stale cursor
+ok 57 - pagination retains the 200-result cap and retry refreshes restored results without a stale cursor
+  ---
+  duration_ms: 50.2901
+  type: 'test'
+  ...
+# Subtest: actual nonempty partial and stale results show a localized retry that targets the displayed search
+ok 58 - actual nonempty partial and stale results show a localized retry that targets the displayed search
+  ---
+  duration_ms: 166.214622
+  type: 'test'
+  ...
+# Subtest: actual empty unavailable results distinguish missing evidence from a completed zero-match search in both languages
+ok 59 - actual empty unavailable results distinguish missing evidence from a completed zero-match search in both languages
+  ---
+  duration_ms: 55.22667
+  type: 'test'
+  ...
+# Subtest: actual retry control stays disabled during work or identity checks and is absent without a submitted search
+ok 60 - actual retry control stays disabled during work or identity checks and is absent without a submitted search
+  ---
+  duration_ms: 62.569885
+  type: 'test'
+  ...
+# Subtest: empty discovery output distinguishes unavailable, incomplete and healthy empty results in both languages
+ok 61 - empty discovery output distinguishes unavailable, incomplete and healthy empty results in both languages
+  ---
+  duration_ms: 12.658007
+  type: 'test'
+  ...
+# Subtest: due shortcut reveals the promised record after an unrelated Saved search
+ok 62 - due shortcut reveals the promised record after an unrelated Saved search
+  ---
+  duration_ms: 96.500501
+  type: 'test'
+  ...
+# Subtest: retry reuses the submitted filters and boards even when unsubmitted form edits differ
+ok 63 - retry reuses the submitted filters and boards even when unsubmitted form edits differ
+  ---
+  duration_ms: 16.549322
+  type: 'test'
+  ...
+# Subtest: fresh but limited results explain incomplete coverage without inventing a source outage
+ok 64 - fresh but limited results explain incomplete coverage without inventing a source outage
+  ---
+  duration_ms: 42.072544
+  type: 'test'
+  ...
+# Subtest: a stale source with an error keeps both the age warning and the source failure explanation
+ok 65 - a stale source with an error keeps both the age warning and the source failure explanation
+  ---
+  duration_ms: 33.232524
+  type: 'test'
+  ...
+# Subtest: failed initial account check cannot reveal the earlier server-rendered email or account controls
+ok 66 - failed initial account check cannot reveal the earlier server-rendered email or account controls
+  ---
+  duration_ms: 19.364777
+  type: 'test'
+  ...
+# Subtest: only the confirmed matching account may show private Settings
+ok 67 - only the confirmed matching account may show private Settings
+  ---
+  duration_ms: 8.663385
+  type: 'test'
+  ...
+# Subtest: loading, revalidation and locked Settings retain public appearance and hide private identity
+ok 68 - loading, revalidation and locked Settings retain public appearance and hide private identity
+  ---
+  duration_ms: 17.423203
+  type: 'test'
+  ...
+# Subtest: early theme initialization applies only recognized preferences and follows the device when storage is unavailable
+ok 69 - early theme initialization applies only recognized preferences and follows the device when storage is unavailable
+  ---
+  duration_ms: 9.013646
+  type: 'test'
+  ...
+# Subtest: appearance is immediately applied, persisted independently of accounts and cleared to System without forcing a color
+ok 70 - appearance is immediately applied, persisted independently of accounts and cleared to System without forcing a color
+  ---
+  duration_ms: 9.491341
+  type: 'test'
+  ...
+# Subtest: blocked persistence retains the chosen theme for this visit and reports that it was not saved
+ok 71 - blocked persistence retains the chosen theme for this visit and reports that it was not saved
+  ---
+  duration_ms: 1.374341
+  type: 'test'
+  ...
+# Subtest: another tab changing or clearing appearance updates this page; unrelated storage never changes it
+ok 72 - another tab changing or clearing appearance updates this page; unrelated storage never changes it
+  ---
+  duration_ms: 1.214926
+  type: 'test'
+  ...
+# Subtest: configured Google and supported LinkedIn expose their own real start routes
+ok 73 - configured Google and supported LinkedIn expose their own real start routes
+  ---
+  duration_ms: 14.045947
+  type: 'test'
+  ...
+# Subtest: missing configuration and an older link-only backend cannot expose a fake direct-provider login
+ok 74 - missing configuration and an older link-only backend cannot expose a fake direct-provider login
+  ---
+  duration_ms: 6.394123
+  type: 'test'
+  ...
+# Subtest: unconfirmed or failed provider status keeps provider choices disabled and offers an honest retry
+ok 75 - unconfirmed or failed provider status keeps provider choices disabled and offers an honest retry
+  ---
+  duration_ms: 4.035612
+  type: 'test'
+  ...
+# Subtest: both actual palettes retain normal-text, action-text and input-boundary contrast
+ok 76 - both actual palettes retain normal-text, action-text and input-boundary contrast
+  ---
+  duration_ms: 6.956794
+  type: 'test'
+  ...
+1..76
+# tests 127
+# suites 0
+# pass 127
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5763.249367

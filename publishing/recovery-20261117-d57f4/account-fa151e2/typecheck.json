@@ -1,0 +1,15 @@
+{
+  "name": "typecheck",
+  "command": [
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "cwd": "hosted",
+  "startedAt": "2026-11-17T15:16:33.486675+00:00",
+  "finishedAt": "2026-11-17T15:16:48.745218+00:00",
+  "durationSeconds": 15.259,
+  "exitCode": 0,
+  "log": "typecheck.log",
+  "sourceUnderTest": "source-under-test.json"
+}

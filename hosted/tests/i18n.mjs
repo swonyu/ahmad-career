@@ -69,8 +69,8 @@ async function fixture({denyWrite=false}={}){
  window.localStorage={getItem:key=>values.get(key)??null,setItem(key,value){if(denyWrite)throw Error('Synthetic denied storage');values.set(key,value);writes.push([key,value]);}};
  const saved={window:globalThis.window,document:globalThis.document,navigator:Object.getOwnPropertyDescriptor(globalThis,'navigator')};
  globalThis.window=window;globalThis.document=document;Object.defineProperty(globalThis,'navigator',{value:{languages:['ar-SA','en'],language:'ar-SA'},configurable:true});
- const module=await import(pathToFileURL(join(directory,'locale.mjs')).href+'?case='+moduleVersion++);
- return{module,values,writes,window,document,restore(){globalThis.window=saved.window;globalThis.document=saved.document;if(saved.navigator)Object.defineProperty(globalThis,'navigator',saved.navigator);else delete globalThis.navigator;}};
+ const localeModule=await import(pathToFileURL(join(directory,'locale.mjs')).href+'?case='+moduleVersion++);
+ return{module:localeModule,values,writes,window,document,restore(){globalThis.window=saved.window;globalThis.document=saved.document;if(saved.navigator)Object.defineProperty(globalThis,'navigator',saved.navigator);else delete globalThis.navigator;}};
 }
 test('language persistence writes only the independent preference and cookie, including cross-tab clearing',async()=>{
  const f=await fixture();try{

@@ -1,0 +1,47 @@
+{
+  "asOf": "2026-11-17T15:00:26Z",
+  "projectId": "appgprj_6afc21bd599c8191a0fb7705274d8582",
+  "configurationReceipt": "google-acceptance-configuration.json",
+  "environmentRevision": 1,
+  "deployedVersion": 4,
+  "deployedSource": "8570985f719cbfb374374b0714e74c3d19eeb146",
+  "audience": "owner-private",
+  "googleAudience": "External Testing",
+  "scopes": [
+    "openid",
+    "email",
+    "profile"
+  ],
+  "realLinkStart": {
+    "route": "/api/auth/connect",
+    "status": 200,
+    "observedAt": "2026-11-17T10:10:42.646Z"
+  },
+  "realGoogleAccountChoice": "existing explicitly listed test user selected",
+  "currentConsentEvidence": "Google asked for passkey verification; no completed consent/callback was observed",
+  "callbackVerified": false,
+  "deniedConsentVerified": false,
+  "unlinkRelinkVerified": false,
+  "newPaidServiceEnabled": false,
+  "productionClientModified": false,
+  "productionV7Changed": false,
+  "localBrowserState": "Originating connected-browser context unavailable after interruption",
+  "cloudBrowserState": "Saved ChatGPT account differs from private Site owner; platform correctly returned explicit access denied",
+  "accessWasWidened": false,
+  "previousDeploymentObservation": {
+    "asOf": "2026-11-17T13:28:42Z",
+    "version": 2,
+    "source": "17c29bc9708b1634eddc158184cb63f61135675d"
+  },
+  "deploymentReceipt": "private-acceptance-deployment-v4.json",
+  "configurationUnchangedByVersion3": true,
+  "browserEvidenceUnchangedSince": "2026-11-17T13:28:42Z",
+  "deploymentHistoryAfterPreviousObservation": [
+    {
+      "version": 3,
+      "source": "a02ddf951c3ac8f20739799522d7fa000cba2af0",
+      "receipt": "private-acceptance-deployment-v3.json"
+    }
+  ],
+  "configurationUnchangedByVersion4": true
+}

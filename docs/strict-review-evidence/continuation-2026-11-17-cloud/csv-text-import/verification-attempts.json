@@ -1,0 +1,20 @@
+{
+  "attempts": [
+    {
+      "order": 1,
+      "command": "python3 verify-imports.py",
+      "engineState": "Process81031 still running; all four imports had not completed",
+      "exitCode": 1,
+      "error": "FileNotFoundError: default/career-records-ar.fods",
+      "interpretation": "Premature verification invocation; no completed product acceptance result. The running engine process was allowed to finish."
+    },
+    {
+      "order": 2,
+      "command": "python3 verify-imports.py",
+      "engineState": "All four imports completed with exitCode0",
+      "exitCode": 0,
+      "resultReceipt": "verification.json",
+      "interpretation": "Default coercion reproduced in both languages; documented text-import option preserved all63 displayed values and nonempty text-cell types in both languages."
+    }
+  ]
+}

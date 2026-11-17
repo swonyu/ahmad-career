@@ -1,0 +1,17 @@
+{
+  "countMeaning": "Static native test method identifiers, not execution or passes.",
+  "currentMethods": 126,
+  "parents": {
+    "f47e4280f0e3b341979708acf244d5aa070ba690": {
+      "methods": 126,
+      "missing": []
+    },
+    "fa151e219ad4e8d9f0d3337eec10a60ed5223d47": {
+      "methods": 123,
+      "missing": []
+    }
+  },
+  "iphoneTestMethods": 17,
+  "iphoneSHA256": "d06059cecb95125d5c12333c0811b60dfe440171a414e852fc60b2e46e2233c0",
+  "androidProductUnchangedFromFirstParent": true
+}

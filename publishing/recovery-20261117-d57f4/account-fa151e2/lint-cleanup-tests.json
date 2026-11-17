@@ -1,0 +1,17 @@
+{
+  "name": "lint-cleanup-tests",
+  "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "tests/web-experience.mjs",
+    "tests/phone-batch-stop.mjs"
+  ],
+  "cwd": "hosted",
+  "startedAt": "2026-11-17T15:18:06.307999+00:00",
+  "finishedAt": "2026-11-17T15:18:07.614474+00:00",
+  "durationSeconds": 1.307,
+  "exitCode": 0,
+  "log": "lint-cleanup-tests.log",
+  "sourceUnderTest": "source-under-test.json"
+}

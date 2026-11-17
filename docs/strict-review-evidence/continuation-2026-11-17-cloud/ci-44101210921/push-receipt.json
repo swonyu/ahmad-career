@@ -1,0 +1,33 @@
+{
+  "candidate": "880e878f6f528d903c42951f10a8b216094c889c",
+  "tree": "e8d9d4c0017a5a877d40c172ab72254905de3011",
+  "bundle_sha256": "9bd55f91f7b3e00b0abab23c8bd19f0ed9a15082be5a648dfacf3b65b376030e",
+  "heads_before": {
+    "refs/heads/app-store/career-workspace-copy-20261117": "fd9c5399f2b7001b234b3b86bf72e2b36b5114c1",
+    "refs/heads/career-finder-phones-verified-apply-20261116": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+    "refs/heads/continuation/account-acceptance-20261117": "3a709eb15f1024df78ee03474f511568df2dc3de"
+  },
+  "started_utc": "2026-11-17T14:15:44.498868+00:00",
+  "force": false,
+  "shared_checkout_changed": false,
+  "build_or_signing_performed": false,
+  "heads_after": {
+    "refs/heads/app-store/career-workspace-copy-20261117": "fd9c5399f2b7001b234b3b86bf72e2b36b5114c1",
+    "refs/heads/career-finder-phones-verified-apply-20261116": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+    "refs/heads/continuation/account-acceptance-20261117": "880e878f6f528d903c42951f10a8b216094c889c"
+  },
+  "completed_utc": "2026-11-17T14:15:50.956737+00:00",
+  "relay_status_unchanged": true,
+  "relay_head_unchanged": true,
+  "result": "ordinary nonforce push succeeded",
+  "transferRecovery": {
+    "initialDeviceOutage": true,
+    "initialCompletionEstimateCorrected": true,
+    "missingAsyncChunk": 6,
+    "asyncCallId": "50fdc2fd-f75f-4e0f-8e54-81ef73badfd4",
+    "terminalCallStatus": "failed: Timeout - no response from device",
+    "missingFileVerified": true,
+    "restoredSeparateChunk": "recovered-part-006.b64",
+    "completeByteAndShaVerificationBeforeFetch": true
+  }
+}

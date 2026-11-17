@@ -1,0 +1,30 @@
+﻿"المسمى الوظيفي","جهة العمل","رابط الوظيفة","المرحلة (أدخلتها بنفسك)","علامة تم التقديم (أدخلتها بنفسك)","تاريخ التقديم (أدخلته بنفسك)","تاريخ المتابعة (أدخلته بنفسك)","ملاحظة خاصة","آخر تعديل (وليس وقت التقديم)"
+"Text: =1+1","Text: =1+1","https://example.org/career-finder-csv/0","المحفوظات","لا","","2026-11-21","Text: =1+1","2026-11-17T14:00:00.000Z"
+"Text: +SUM(1,2)","Text: +SUM(1,2)","https://example.org/career-finder-csv/1","مقابلة","نعم","2026-11-17","2026-11-21","Text: +SUM(1,2)","2026-11-17T14:00:00.000Z"
+"Text: -1+2","Text: -1+2","https://example.org/career-finder-csv/2","المحفوظات","لا","","2026-11-21","Text: -1+2","2026-11-17T14:00:00.000Z"
+"Text: @SUM(A1:A2)","Text: @SUM(A1:A2)","https://example.org/career-finder-csv/3","مقابلة","نعم","2026-11-17","2026-11-21","Text: @SUM(A1:A2)","2026-11-17T14:00:00.000Z"
+"Text: 	=1","Text: 	=1","https://example.org/career-finder-csv/4","المحفوظات","لا","","2026-11-21","Text: 	=1","2026-11-17T14:00:00.000Z"
+"Text: =1","Text: =1","https://example.org/career-finder-csv/5","مقابلة","نعم","2026-11-17","2026-11-21","Text: =1","2026-11-17T14:00:00.000Z"
+"Text: 
+=1","Text: 
+=1","https://example.org/career-finder-csv/6","المحفوظات","لا","","2026-11-21","Text: 
+=1","2026-11-17T14:00:00.000Z"
+"Text:   =1","Text:   =1","https://example.org/career-finder-csv/7","مقابلة","نعم","2026-11-17","2026-11-21","Text:   =1","2026-11-17T14:00:00.000Z"
+"Text: ﻿=1","Text: ﻿=1","https://example.org/career-finder-csv/8","المحفوظات","لا","","2026-11-21","Text: ﻿=1","2026-11-17T14:00:00.000Z"
+"Text: ⁦=1","Text: ⁦=1","https://example.org/career-finder-csv/9","مقابلة","نعم","2026-11-17","2026-11-21","Text: ⁦=1","2026-11-17T14:00:00.000Z"
+"Text: '=1","Text: '=1","https://example.org/career-finder-csv/10","المحفوظات","لا","","2026-11-21","Text: '=1","2026-11-17T14:00:00.000Z"
+"Text: ""=1","Text: ""=1","https://example.org/career-finder-csv/11","مقابلة","نعم","2026-11-17","2026-11-21","Text: ""=1","2026-11-17T14:00:00.000Z"
+"Text: ＝1+1","Text: ＝1+1","https://example.org/career-finder-csv/12","المحفوظات","لا","","2026-11-21","Text: ＝1+1","2026-11-17T14:00:00.000Z"
+"Text: ＋1","Text: ＋1","https://example.org/career-finder-csv/13","مقابلة","نعم","2026-11-17","2026-11-21","Text: ＋1","2026-11-17T14:00:00.000Z"
+"Text: －1","Text: －1","https://example.org/career-finder-csv/14","المحفوظات","لا","","2026-11-21","Text: －1","2026-11-17T14:00:00.000Z"
+"Text: ＠SUM(1)","Text: ＠SUM(1)","https://example.org/career-finder-csv/15","مقابلة","نعم","2026-11-17","2026-11-21","Text: ＠SUM(1)","2026-11-17T14:00:00.000Z"
+"Text: 　＝1","Text: 　＝1","https://example.org/career-finder-csv/16","المحفوظات","لا","","2026-11-21","Text: 　＝1","2026-11-17T14:00:00.000Z"
+"مهندس, ""أول""","مهندس, ""أول""","https://example.org/career-finder-csv/17","مقابلة","نعم","2026-11-17","2026-11-21","مهندس, ""أول""","2026-11-17T14:00:00.000Z"
+"Élan — original user text","Élan — original user text","https://example.org/career-finder-csv/18","المحفوظات","لا","","2026-11-21","Élan — original user text","2026-11-17T14:00:00.000Z"
+"line one
+line two, ""quoted""
+نص خاص","line one
+line two, ""quoted""
+نص خاص","https://example.org/career-finder-csv/19","مقابلة","نعم","2026-11-17","2026-11-21","line one
+line two, ""quoted""
+نص خاص","2026-11-17T14:00:00.000Z"

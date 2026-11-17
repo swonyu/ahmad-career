@@ -1,0 +1,153 @@
+{
+  "observedAt": "2026-11-17T15:20:59.343907+00:00",
+  "source": "source-under-test.json",
+  "checks": [
+    {
+      "name": "focused-tests",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "tests/phone-search-workflows.mjs",
+        "tests/phone-localization.mjs",
+        "tests/i18n.mjs",
+        "tests/phone-model.mjs",
+        "tests/phone-record-tools.mjs",
+        "tests/phone-private-async.mjs",
+        "tests/phone-settings-privacy.mjs",
+        "tests/web-experience.mjs",
+        "tests/phone-api.mjs"
+      ],
+      "cwd": "hosted",
+      "startedAt": "2026-11-17T15:16:33.485658+00:00",
+      "finishedAt": "2026-11-17T15:16:39.481053+00:00",
+      "durationSeconds": 5.995,
+      "exitCode": 0,
+      "log": "focused-tests.log",
+      "sourceUnderTest": "source-under-test.json"
+    },
+    {
+      "name": "typecheck",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "hosted",
+      "startedAt": "2026-11-17T15:16:33.486675+00:00",
+      "finishedAt": "2026-11-17T15:16:48.745218+00:00",
+      "durationSeconds": 15.259,
+      "exitCode": 0,
+      "log": "typecheck.log",
+      "sourceUnderTest": "source-under-test.json"
+    },
+    {
+      "name": "lint",
+      "command": [
+        "npm",
+        "run",
+        "lint",
+        "--",
+        "--max-warnings=0"
+      ],
+      "cwd": "hosted",
+      "startedAt": "2026-11-17T15:18:06.301045+00:00",
+      "finishedAt": "2026-11-17T15:18:27.856262+00:00",
+      "durationSeconds": 21.555,
+      "exitCode": 0,
+      "log": "lint.log",
+      "sourceUnderTest": "source-under-test.json"
+    },
+    {
+      "name": "production-build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "cwd": "hosted",
+      "startedAt": "2026-11-17T15:18:06.339383+00:00",
+      "finishedAt": "2026-11-17T15:18:25.434186+00:00",
+      "durationSeconds": 19.095,
+      "exitCode": 0,
+      "log": "production-build.log",
+      "sourceUnderTest": "source-under-test.json"
+    },
+    {
+      "name": "lint-cleanup-tests",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "tests/web-experience.mjs",
+        "tests/phone-batch-stop.mjs"
+      ],
+      "cwd": "hosted",
+      "startedAt": "2026-11-17T15:18:06.307999+00:00",
+      "finishedAt": "2026-11-17T15:18:07.614474+00:00",
+      "durationSeconds": 1.307,
+      "exitCode": 0,
+      "log": "lint-cleanup-tests.log",
+      "sourceUnderTest": "source-under-test.json"
+    },
+    {
+      "name": "phone-worker-fixture",
+      "command": [
+        "node",
+        "tests/hosted-phone.mjs"
+      ],
+      "cwd": "hosted",
+      "startedAt": "2026-11-17T15:18:06.261981+00:00",
+      "finishedAt": "2026-11-17T15:18:22.958838+00:00",
+      "durationSeconds": 16.697,
+      "exitCode": 0,
+      "log": "phone-worker-fixture.log",
+      "sourceUnderTest": "source-under-test.json"
+    }
+  ],
+  "testCounts": {
+    "focused": {
+      "passed": 127,
+      "failed": 0,
+      "includesSubtests": true
+    },
+    "searchWorkflowSubset": {
+      "passed": 18,
+      "failed": 0,
+      "includedInFocused": true
+    },
+    "cleanupFollowup": {
+      "passed": 27,
+      "failed": 0,
+      "overlapsFocusedThemeTests": true
+    },
+    "localWorkerdGroups": 19
+  },
+  "regressionBeforeFix": {
+    "file": "regressions-before-fixes.log",
+    "failed": 6,
+    "passed": 12,
+    "meaning": "Locally resolved uncommitted merge before the two follow-up fixes; exact pre-fix source hash was not recorded."
+  },
+  "regressionAfterFix": {
+    "file": "regressions-after-fixes.log",
+    "passed": 18,
+    "failed": 0
+  },
+  "sourceHashesStable": true,
+  "nativeExecution": "Not run in this Linux executor. Await exact combined-candidate five-job workflow.",
+  "accountParentCI": {
+    "head": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+    "run": 44111164968,
+    "observedStatus": "in_progress",
+    "event": "pull_request",
+    "doesNotValidateCombinedCandidate": true
+  },
+  "screening": "full-source-screening.json",
+  "limits": [
+    "Counts from overlapping runs must not be summed as unique coverage.",
+    "Local workerd uses synthetic provider HTTP and rejects real outbound requests; production identity/header behavior needs independent acceptance.",
+    "Historical screenshots and CI artifacts remain attributed to their recorded source commits.",
+    "No native simulator, physical install, signing, store upload, submission, approval or release claimed."
+  ]
+}

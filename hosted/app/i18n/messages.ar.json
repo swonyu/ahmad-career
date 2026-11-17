@@ -1312,5 +1312,9 @@
   "No matches in the results we could check.": "لا توجد نتائج مطابقة ضمن ما تمكّنا من التحقّق منه.",
   "The selected boards did not return results. Retry the same search, or review the source details.": "لم تُرجع لوحات الوظائف المحددة نتائج. أعد البحث نفسه أو راجع تفاصيل المصادر.",
   "This search is incomplete. Review the source details, or retry the same search.": "نتائج هذا البحث غير مكتملة. راجع تفاصيل المصادر أو أعد البحث نفسه.",
-  "Retry this search": "إعادة البحث نفسه"
+  "Retry this search": "إعادة البحث نفسه",
+  "Some boards could not provide current results. This search may be incomplete.": "تعذّر جلب نتائج حديثة من بعض مواقع التوظيف. قد تكون نتائج هذا البحث غير مكتملة.",
+  "No current matches could be confirmed.": "تعذّر التأكد من وجود فرص مطابقة حاليًا.",
+  "Retry this search or open an employer’s website to check its current openings.": "أعِد محاولة هذا البحث أو افتح موقع صاحب العمل للاطلاع على الفرص المتاحة حاليًا.",
+  "To keep leading zeros and number-like text, import quoted fields as text or set text columns to Text. Use JSON for original values.": "للحفاظ على الأصفار في البداية والنصوص التي تشبه الأرقام، استورد الحقول المحاطة بعلامات اقتباس كنص أو اضبط نوع الأعمدة النصية على «نص». استخدم JSON للاحتفاظ بالقيم الأصلية."
 }

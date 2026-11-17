@@ -21,12 +21,12 @@ function wrapDB(target,fail){
   const statement=(sql,args=[])=>({bind(...values){return statement(sql,values)},async first(...params){if(await fail?.(sql,args))throw Error('synthetic durable failure');return target.prepare(sql).bind(...args).first(...params)},async all(){if(await fail?.(sql,args))throw Error('synthetic durable failure');return target.prepare(sql).bind(...args).all()},async run(){if(await fail?.(sql,args))throw Error('synthetic durable failure');return target.prepare(sql).bind(...args).run()},_sql:sql,_args:args});
   return {prepare:sql=>statement(sql),batch:statements=>target.batch(statements.map(s=>target.prepare(s._sql).bind(...s._args)))};
 }
-async function call(path,{method='GET',body,token,user,headers={},environment=env,useHandler=handler}={}){
+async function call(path,{method='GET',body,token,user,headers={},environment=env,useHandler:requestHandler=handler}={}){
   const requestHeaders={...user,...headers};if(token)requestHeaders.authorization='Bearer '+token;
   if(body!==undefined){requestHeaders['content-type']='application/json';if(user)requestHeaders.origin=SERVICE_ORIGIN}
   environment.CAREER_CONNECTORS_JSON=JSON.stringify(config);
   const request=new Request(SERVICE_ORIGIN+path,{method,headers:requestHeaders,...(body===undefined?{}:{body:JSON.stringify(body)})});
-  const res=await useHandler(request,environment,{waitUntil(){}});
+  const res=await requestHandler(request,environment,{waitUntil(){}});
   const data=res.headers.get('content-type')?.includes('application/json')?await res.json():new Uint8Array(await res.arrayBuffer());
   return {status:res.status,data,headers:res.headers};
 }

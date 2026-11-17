@@ -1,0 +1,25 @@
+{
+  "observedAt": "2026-11-17T13:28:42Z",
+  "repository": "swonyu/ahmad-career",
+  "candidateBranch": "continuation/account-acceptance-20261117",
+  "candidateHead": "3a709eb15f1024df78ee03474f511568df2dc3de",
+  "developmentHead": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+  "publishingHead": "fd9c5399f2b7001b234b3b86bf72e2b36b5114c1",
+  "sharedBuildLock": {
+    "path": "/tmp/dot-ios-build.lock",
+    "exists": true,
+    "owner": "dithar-native",
+    "rootAcquired": false
+  },
+  "rootSharedMacBuilds": 0,
+  "gitRelay": "new isolated no-checkout clone; ordinary fast-forward push; no shared project edits or global credentials",
+  "ciRun": 44092957169,
+  "ciAtObservation": "in_progress",
+  "dotPublishingHandoffAcknowledged": false,
+  "originalRequest": "2026-11-16T22:26:12Z",
+  "acceptedBudget": "24 active implementation/testing hours",
+  "activeRemaining": "unknown: no complete active-work ledger",
+  "derivedElapsedCheckpoint": "2026-11-17T22:26:12Z",
+  "derivedCheckpointAgreedDeadline": false,
+  "elapsedRemainingAtObservationSeconds": 32250
+}

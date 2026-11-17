@@ -1,0 +1,29 @@
+{
+  "scope": "Three local test identifiers renamed to avoid false React/Next lint classification; all asynchronous i18n fixture builds now finish before test/teardown registration, addressing the independently reported cleanup race. No assertions or scenarios removed.",
+  "files": {
+    "hosted/tests/hosted-applications.mjs": {
+      "beforeSHA256": "126ad51181dcc0bcc2957b8054da629457567f7fa93df1a05f1977a860cd487e",
+      "afterSHA256": "722ca3c60540ddc82f5a8f52e4aa19a625963efc2b9fffb13448035ef7b0026d",
+      "testRegistrationsBefore": 0,
+      "testRegistrationsAfter": 0,
+      "assertionTokensBefore": 343,
+      "assertionTokensAfter": 343
+    },
+    "hosted/tests/i18n.mjs": {
+      "beforeSHA256": "8bca87b765caaed01f2b746e7354ae652d8433c51be1bb06149c32a6a920447a",
+      "afterSHA256": "54405800a50bfaf3073d52ec8ac5ffedf8cc94f44733c35e0f4ab318e345465b",
+      "testRegistrationsBefore": 7,
+      "testRegistrationsAfter": 7,
+      "assertionTokensBefore": 49,
+      "assertionTokensAfter": 49
+    },
+    "hosted/tests/web-experience.mjs": {
+      "beforeSHA256": "332af665909295e0019e2fc51aec470d06953608cd3574482c79e05c1bcf4a9b",
+      "afterSHA256": "bbe13c844bab3ddc86701cd2642a2ce88966ee789e3177b43b75dba0bc0a0623",
+      "testRegistrationsBefore": 9,
+      "testRegistrationsAfter": 9,
+      "assertionTokensBefore": 39,
+      "assertionTokensAfter": 39
+    }
+  }
+}

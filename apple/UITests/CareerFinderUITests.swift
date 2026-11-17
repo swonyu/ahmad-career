@@ -114,8 +114,8 @@ final class CareerFinderUITests: XCTestCase {
         } else {
             if !previous.isEmpty {
                 // A tap can place the caret inside existing text, especially
-                // mixed Arabic/English text. Use the real editing menu instead
-                // of assuming that backward deletes start at the end.
+                // mixed Arabic/English text. Select existing text through native
+                // editing interactions rather than assuming the caret is at the end.
                 field.press(forDuration: 1.1)
                 let names = ["Select All", "تحديد الكل"]
                 let predicate = NSPredicate(format: "label IN %@ OR identifier IN %@", names, names)
@@ -128,18 +128,33 @@ final class CareerFinderUITests: XCTestCase {
                     capture("replacement-select-all-unavailable", app: app)
                     print(app.debugDescription)
                 }
-                XCTAssertEqual(selectionReady, .completed, "Existing text must expose a reachable Select All edit action")
-                guard let selectAll = choices.flatMap({ $0.allElementsBoundByIndex }).first(where: { $0.exists && $0.isHittable }) else {
-                    XCTFail("Missing reachable Select All edit action"); return
+                let selectAll = choices.flatMap({ $0.allElementsBoundByIndex }).first(where: { $0.exists && $0.isHittable })
+                let canSelectParagraph = (field.elementType == .textField || field.elementType == .searchField)
+                    && previous.rangeOfCharacter(from: .newlines) == nil
+                XCTAssertTrue(selectAll != nil || canSelectParagraph,
+                              "Existing text requires a reachable Select All action or a single-line native field")
+                if let selectAll {
+                    selectAll.tap()
+                } else if canSelectParagraph {
+                    // iOS can leave only a caret after a long press. Its documented
+                    // paragraph-selection gesture covers the whole single-line value.
+                    // The empty-value check below proves that selection actually worked.
+                    field.tap(withNumberOfTaps: 3, numberOfTouches: 1)
+                } else {
+                    XCTFail("Missing supported whole-field selection interaction"); return
                 }
-                selectAll.tap()
                 field.typeText(XCUIKeyboardKey.delete.rawValue)
                 let cleared = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
                     let value = field.value as? String ?? ""
                     return value.isEmpty || value == field.placeholderValue
                 }, object: nil)
-                XCTAssertEqual(XCTWaiter.wait(for: [cleared], timeout: 5), .completed,
-                               "Select All and Delete must clear the whole field before replacement")
+                let clearResult = XCTWaiter.wait(for: [cleared], timeout: 5)
+                if clearResult != .completed {
+                    capture("replacement-did-not-clear-whole-field", app: app)
+                    print(app.debugDescription)
+                }
+                XCTAssertEqual(clearResult, .completed,
+                               "Native selection and Delete must clear the whole field before replacement")
             }
             if !text.isEmpty { field.typeText(text) }
         }

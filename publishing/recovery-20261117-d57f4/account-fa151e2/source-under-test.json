@@ -1,0 +1,35 @@
+{
+  "observedAt": "2026-11-17T15:16:31.892254+00:00",
+  "firstParent": "f47e4280f0e3b341979708acf244d5aa070ba690",
+  "secondParent": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+  "files": {
+    "hosted/app/phone/PhoneApp.tsx": "1b7f1ba9e06b0426055114d0745591ca1add1aaac0ada0c8272b3088a714b24b",
+    "hosted/app/phone/components.tsx": "cec98ced40e35044f821525e4d979d17fd52ea66a6dc139307cdf7ebe11ecded",
+    "hosted/app/i18n/messages.ar.json": "6401b87b0ffdb29dcda06325994d629a0a1c6ef80882a826fd29ca338829ff89",
+    "hosted/tests/phone-search-workflows.mjs": "591ab3073dfe309ea382bedba2ba56ec3e1883ad9a5db4f5cc838dd9a090b0d8",
+    "hosted/tests/phone-localization.mjs": "6d97414cb6b1915a2a58431155a4b004fa94f99c17afbf1cbb2df47a651665f8",
+    "hosted/tests/i18n.mjs": "d6a003e4be39ec0fd8366752d0633343875e5dcd503d9a0ec8be8a471f1ab69f",
+    "apple/UITests/CareerFinderUITests.swift": "d06059cecb95125d5c12333c0811b60dfe440171a414e852fc60b2e46e2233c0",
+    "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "b8816a383b89ccb61c7e09cea1ce5b9127eacd2853aefa404f28ca5a5755ae1b",
+    "hosted/public/theme-init.js": "8e9c25b4d131405dc934369aa30e037488f89709e3be4b164f14049b70ba1d9a",
+    "hosted/tests/build-pdf-browser.mjs": "a0c754b64c927818be69f24b2b155fc8f8b6f54a9e6e18e6d91f4a5aca8ba3f3",
+    "hosted/tests/fixtures/phone-runtime.mjs": "9be5ddb7d9fcd5fef67e372c7812d1a30bb8ae0970bf3938d98345144ac59331",
+    "hosted/tests/phone-batch-stop.mjs": "3fa4b9e39d2e8e236131f061c05405275cb7e3b3488fa9f8d49a34436e71f7ba",
+    "hosted/tests/web-experience.mjs": "752a6447118e22b1108532247a3a462812114c8fab72d2b0e1c11ccc6b006cb7"
+  },
+  "limits": [
+    "Merged worktree, not yet committed or pushed.",
+    "No native runtime or CI acceptance asserted."
+  ],
+  "lintCleanup": {
+    "addedToManifestAt": "2026-11-17T15:20:59.343907+00:00",
+    "files": [
+      "hosted/public/theme-init.js",
+      "hosted/tests/build-pdf-browser.mjs",
+      "hosted/tests/fixtures/phone-runtime.mjs",
+      "hosted/tests/phone-batch-stop.mjs",
+      "hosted/tests/web-experience.mjs"
+    ],
+    "note": "These mechanical unused-binding/export cleanup edits followed the first focused suite and typecheck. Full lint, production build, theme/batch-stop tests and actual local workerd fixture ran after them; the TypeScript product and search files were unchanged."
+  }
+}

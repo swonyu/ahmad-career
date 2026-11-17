@@ -1,0 +1,186 @@
+✖ retry repeats the displayed search without a cursor and preserves newer visible draft filters (56.922722ms)
+✖ a fresh search response does not overwrite text or boards edited while it is pending (39.045444ms)
+✖ pagination uses the displayed search and cursor, merges identities, and leaves draft filters alone (39.014955ms)
+▶ failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller
+  ✔ failure (46.670016ms)
+  ✔ cancel (16.576008ms)
+✔ failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller (64.41163ms)
+▶ late search results cannot cross the existing identity or generation boundary
+  ✔ identity (18.740909ms)
+  ✔ generation (22.200845ms)
+✔ late search results cannot cross the existing identity or generation boundary (42.089362ms)
+✔ pagination retains the 200-result cap and retry refreshes restored results without a stale cursor (66.918065ms)
+✖ actual nonempty partial and stale results show a localized retry that targets the displayed search (87.38415ms)
+✔ actual empty unavailable results distinguish missing evidence from a completed zero-match search in both languages (84.510419ms)
+✔ actual retry control stays disabled during work or identity checks and is absent without a submitted search (88.669001ms)
+✔ empty discovery output distinguishes unavailable, incomplete and healthy empty results in both languages (21.008463ms)
+✔ due shortcut reveals the promised record after an unrelated Saved search (60.704888ms)
+✖ retry reuses the submitted filters and boards even when unsubmitted form edits differ (26.924207ms)
+✖ fresh but limited results explain incomplete coverage without inventing a source outage (86.190107ms)
+✔ a stale source with an error keeps both the age warning and the source failure explanation (33.76015ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 12
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2226.099226
+
+✖ failing tests:
+
+test at tests/phone-search-workflows.mjs:114:1
+✖ retry repeats the displayed search without a cursor and preserves newer visible draft filters (56.922722ms)
+  AssertionError [ERR_ASSERTION]: reload must restore the current draft, not the retried filters
+  + actual - expected
+  
+    {
+  +   location: 'Riyadh',
+  +   query: 'Engineer العربية',
+  -   location: 'الدمام',
+  -   query: 'Healthcare typed while waiting',
+      remoteOnly: false,
+      sources: [
+  +     'lever:synthetic-a'
+  -     'lever:synthetic-c'
+      ]
+    }
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/d57f4cd77813/career/hosted/tests/phone-search-workflows.mjs:127:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { query: 'Engineer العربية', location: 'Riyadh', remoteOnly: false, sources: [ 'lever:synthetic-a' ] },
+    expected: { query: 'Healthcare typed while waiting', location: 'الدمام', remoteOnly: false, sources: [ 'lever:synthetic-c' ] },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/phone-search-workflows.mjs:133:1
+✖ a fresh search response does not overwrite text or boards edited while it is pending (39.045444ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    {
+  +   location: 'Jeddah',
+  +   query: 'Designer draft',
+  +   remoteOnly: true,
+  -   location: 'الدمام',
+  -   query: 'Healthcare typed while waiting',
+  -   remoteOnly: false,
+      sources: [
+  +     'lever:synthetic-b'
+  -     'lever:synthetic-c'
+      ]
+    }
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/d57f4cd77813/career/hosted/tests/phone-search-workflows.mjs:139:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { query: 'Designer draft', location: 'Jeddah', remoteOnly: true, sources: [ 'lever:synthetic-b' ] },
+    expected: { query: 'Healthcare typed while waiting', location: 'الدمام', remoteOnly: false, sources: [ 'lever:synthetic-c' ] },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/phone-search-workflows.mjs:143:1
+✖ pagination uses the displayed search and cursor, merges identities, and leaves draft filters alone (39.014955ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    {
+  +   location: 'Riyadh',
+  +   query: 'Engineer العربية',
+  -   location: 'الدمام',
+  -   query: 'Healthcare typed while waiting',
+      remoteOnly: false,
+      sources: [
+  +     'lever:synthetic-a'
+  -     'lever:synthetic-c'
+      ]
+    }
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/d57f4cd77813/career/hosted/tests/phone-search-workflows.mjs:153:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { query: 'Engineer العربية', location: 'Riyadh', remoteOnly: false, sources: [ 'lever:synthetic-a' ] },
+    expected: { query: 'Healthcare typed while waiting', location: 'الدمام', remoteOnly: false, sources: [ 'lever:synthetic-c' ] },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/phone-search-workflows.mjs:227:1
+✖ actual nonempty partial and stale results show a localized retry that targets the displayed search (87.38415ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert(r.html.includes(r.t('This search is incomplete. Review the source details, or retry the same search.')))
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/d57f4cd77813/career/hosted/tests/phone-search-workflows.mjs:233:5)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/phone-search-workflows.mjs:319:1
+✖ retry reuses the submitted filters and boards even when unsubmitted form edits differ (26.924207ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    {
+  +   location: 'Riyadh',
+  +   query: 'Engineer العربية',
+  +   remoteOnly: false,
+  -   location: 'Jeddah',
+  -   query: 'Designer draft',
+  -   remoteOnly: true,
+      sources: [
+  +     'lever:synthetic-a'
+  -     'lever:synthetic-b'
+      ]
+    }
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/d57f4cd77813/career/hosted/tests/phone-search-workflows.mjs:324:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { query: 'Engineer العربية', location: 'Riyadh', remoteOnly: false, sources: [ 'lever:synthetic-a' ] },
+    expected: { query: 'Designer draft', location: 'Jeddah', remoteOnly: true, sources: [ 'lever:synthetic-b' ] },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/phone-search-workflows.mjs:329:1
+✖ fresh but limited results explain incomplete coverage without inventing a source outage (86.190107ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert(r.html.includes(r.t('This search is incomplete. Review the source details, or retry the same search.')))
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/d57f4cd77813/career/hosted/tests/phone-search-workflows.mjs:333:5)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

@@ -1,0 +1,14 @@
+{
+  "name": "phone-worker-fixture",
+  "command": [
+    "node",
+    "tests/hosted-phone.mjs"
+  ],
+  "cwd": "hosted",
+  "startedAt": "2026-11-17T15:18:06.261981+00:00",
+  "finishedAt": "2026-11-17T15:18:22.958838+00:00",
+  "durationSeconds": 16.697,
+  "exitCode": 0,
+  "log": "phone-worker-fixture.log",
+  "sourceUnderTest": "source-under-test.json"
+}

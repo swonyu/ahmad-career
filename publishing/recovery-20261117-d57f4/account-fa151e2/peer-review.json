@@ -1,0 +1,25 @@
+{
+  "observedAt": "2026-11-17T15:20:59.343907+00:00",
+  "reviewer": "Independent Lumina recovery agent",
+  "mode": "Read-only source review; no reviewer tests/builds/edits",
+  "firstParent": "f47e4280f0e3b341979708acf244d5aa070ba690",
+  "secondParent": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+  "sourceHashes": {
+    "hosted/app/phone/PhoneApp.tsx": "1b7f1ba9e06b0426055114d0745591ca1add1aaac0ada0c8272b3088a714b24b",
+    "apple/UITests/CareerFinderUITests.swift": "d06059cecb95125d5c12333c0811b60dfe440171a414e852fc60b2e46e2233c0"
+  },
+  "blockingFindings": [],
+  "reviewed": [
+    "Frozen sanitized submitted filters and cursor; Retry starts first page using the displayed search.",
+    "Synchronous draft ref preserves current visible and persisted edits while the request closure remains immutable.",
+    "Identity/generation/local-data guards and 200-result cap retained.",
+    "Distinct unavailable/partial/healthy empty states and truthful limited-but-fresh coverage copy; English and Arabic.",
+    "Owner nonempty Retry and dynamic bidi isolation preserved.",
+    "iPhone selection uses actual Select All or documented triple-tap on eligible single-line fields, then requires empty field and exact replacement.",
+    "All 17 iPhone journeys retained with publishing keyboard and fixture assertions."
+  ],
+  "limits": [
+    "Source review does not establish that the iPhone triple-tap interaction succeeds on the target OS.",
+    "Final combined-candidate native workflow remains required."
+  ]
+}
