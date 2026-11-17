@@ -623,6 +623,14 @@ private struct NativeJobDetail: View {
         UIAccessibility.post(notification: .announcement, argument: l10n("You entered fewer relevant years than the \(years)+ requested. Review eligibility before applying."))
     }
 
+    /// Profile work-arrangement words already have catalog phrases. Other employer text stays as stored.
+    private func spokenWorkArrangement(_ mode: String) -> String {
+        switch mode {
+        case "On site", "Hybrid", "Remote": return l10n(mode)
+        default: return mode
+        }
+    }
+
     var body: some View {
         List {
             Section {
@@ -641,7 +649,7 @@ private struct NativeJobDetail: View {
                 ForEach(store.workspace.profile.criteriaMessages(for: job), id: \.self) { message in
                     Label(l10n(message), systemImage: "questionmark.circle").font(.footnote)
                 }
-                if let mode = job.mode, mode != "Not stated" { LabeledContent(l10n("Work arrangement"), value: mode) }
+                if let mode = job.mode, mode != "Not stated" { LabeledContent(l10n("Work arrangement"), value: spokenWorkArrangement(mode)) }
             }
             Section(l10n("Evidence and freshness")) {
                 if store.isCurrentResearch(job) {
