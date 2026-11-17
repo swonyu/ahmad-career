@@ -1,0 +1,46 @@
+{
+  "run_id": 44111164968,
+  "observed_at": "2026-11-17T15:56:14.399748+00:00",
+  "artifacts": [
+    {
+      "id": 14342517725,
+      "name": "iphone-ui-acceptance-44111164968",
+      "bytes": 215217128,
+      "sha256": "a4973d476abe2fc6c3d1f29d14fac482e0de6bd8eaee68d9e71b8a2278ed23c9",
+      "size_and_sha256_verified_at_download": true,
+      "archive_paths_and_no_symlinks_checked_before_extraction": true,
+      "download_and_extraction_completed": true,
+      "expires_at": "2026-11-24T15:35:49Z"
+    },
+    {
+      "id": 14342200600,
+      "name": "android-lint-44111164968",
+      "bytes": 3133765,
+      "sha256": "a8c946e43b3a25b5a4f4ded86143354b288839fc6447d2b6233286ecc1d403e8",
+      "size_and_sha256_verified_at_download": true,
+      "archive_paths_and_no_symlinks_checked_before_extraction": true,
+      "download_and_extraction_completed": true,
+      "expires_at": "2026-11-24T15:19:15Z"
+    },
+    {
+      "id": 14341935393,
+      "name": "hosted-storage-checks-44111164968",
+      "bytes": 8816,
+      "sha256": "bb91e737f912a94ed10882e7aeb9c3dbf2387728bf383a1de9da4b41e4aabd0d",
+      "size_and_sha256_verified_at_download": true,
+      "archive_paths_and_no_symlinks_checked_before_extraction": true,
+      "download_and_extraction_completed": true,
+      "expires_at": "2026-11-24T15:12:16Z"
+    },
+    {
+      "id": 14340033158,
+      "name": "iphone-build-log-44111164968",
+      "bytes": 8357,
+      "sha256": "77d6e061634f53fe21915bccd392e9a3dd9c393e2df4aaaa630c12b9dc17b52d",
+      "size_and_sha256_verified_at_download": true,
+      "archive_paths_and_no_symlinks_checked_before_extraction": true,
+      "download_and_extraction_completed": true,
+      "expires_at": "2026-11-24T15:12:23Z"
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+# Retain exact failed and corrected patch evidence, including unified-diff context whitespace.
+*.patch -text -whitespace

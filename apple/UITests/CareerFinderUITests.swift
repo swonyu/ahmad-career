@@ -96,7 +96,7 @@ final class CareerFinderUITests: XCTestCase {
             .contains { $0.exists && $0.isHittable }
     }
     @MainActor
-    private func replace(_ field: XCUIElement, with text: String, in app: XCUIApplication) {
+    private func replace(_ field: XCUIElement, with text: String, in app: XCUIApplication, clearWith clearButton: XCUIElement? = nil) {
         XCTAssertTrue(field.waitForExistence(timeout: 5))
         // tap() can scroll a native Form field into view; keep that behavior.
         field.tap()
@@ -113,37 +113,36 @@ final class CareerFinderUITests: XCTestCase {
             field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: previous.count) + text)
         } else {
             if !previous.isEmpty {
-                // A tap can place the caret inside existing text, especially
-                // mixed Arabic/English text. Select existing text through native
-                // editing interactions rather than assuming the caret is at the end.
-                field.press(forDuration: 1.1)
-                let names = ["Select All", "تحديد الكل"]
-                let predicate = NSPredicate(format: "label IN %@ OR identifier IN %@", names, names)
-                let choices = [app.menuItems.matching(predicate), app.buttons.matching(predicate)]
-                let selectable = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-                    choices.flatMap { $0.allElementsBoundByIndex }.contains { $0.exists && $0.isHittable }
-                }, object: nil)
-                let selectionReady = XCTWaiter.wait(for: [selectable], timeout: 5)
-                if selectionReady != .completed {
-                    capture("replacement-select-all-unavailable", app: app)
-                    print(app.debugDescription)
-                }
-                let selectAll = choices.flatMap({ $0.allElementsBoundByIndex }).first(where: { $0.exists && $0.isHittable })
-                let canSelectParagraph = (field.elementType == .textField || field.elementType == .searchField)
-                    && previous.rangeOfCharacter(from: .newlines) == nil
-                XCTAssertTrue(selectAll != nil || canSelectParagraph,
-                              "Existing text requires a reachable Select All action or a single-line native field")
-                if let selectAll {
-                    selectAll.tap()
-                } else if canSelectParagraph {
-                    // iOS can leave only a caret after a long press. Its documented
-                    // paragraph-selection gesture covers the whole single-line value.
-                    // The empty-value check below proves that selection actually worked.
-                    field.tap(withNumberOfTaps: 3, numberOfTouches: 1)
+                if let clearButton {
+                    // The service-address row offers a real user-facing Clear action.
+                    // Dismiss the floating keyboard toolbar before revealing its full target.
+                    finishTyping(in: app)
+                    XCTAssertTrue(clearButton.waitForExistence(timeout: 5), "The field's Clear action must exist")
+                    reveal(clearButton, in: app)
+                    XCTAssertTrue(clearButton.isEnabled && clearButton.isHittable, "The visible Clear action must be enabled")
+                    clearButton.tap()
                 } else {
-                    XCTFail("Missing supported whole-field selection interaction"); return
+                    // A tap can place the caret inside existing text. Use the real
+                    // Select All action rather than assuming backward-delete starts at the end.
+                    field.press(forDuration: 1.1)
+                    let names = ["Select All", "تحديد الكل"]
+                    let predicate = NSPredicate(format: "label IN %@ OR identifier IN %@", names, names)
+                    let choices = [app.menuItems.matching(predicate), app.buttons.matching(predicate)]
+                    let selectable = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+                        choices.flatMap { $0.allElementsBoundByIndex }.contains { $0.exists && $0.isHittable }
+                    }, object: nil)
+                    let selectionReady = XCTWaiter.wait(for: [selectable], timeout: 5)
+                    if selectionReady != .completed {
+                        capture("replacement-select-all-unavailable", app: app)
+                        print(app.debugDescription)
+                    }
+                    XCTAssertEqual(selectionReady, .completed, "Existing text must expose a reachable Select All edit action")
+                    guard let selectAll = choices.flatMap({ $0.allElementsBoundByIndex }).first(where: { $0.exists && $0.isHittable }) else {
+                        XCTFail("Missing reachable Select All edit action"); return
+                    }
+                    selectAll.tap()
+                    field.typeText(XCUIKeyboardKey.delete.rawValue)
                 }
-                field.typeText(XCUIKeyboardKey.delete.rawValue)
                 let cleared = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
                     let value = field.value as? String ?? ""
                     return value.isEmpty || value == field.placeholderValue
@@ -154,7 +153,15 @@ final class CareerFinderUITests: XCTestCase {
                     print(app.debugDescription)
                 }
                 XCTAssertEqual(clearResult, .completed,
-                               "Native selection and Delete must clear the whole field before replacement")
+                               "The native editing action must clear the whole field before replacement")
+                if clearButton != nil {
+                    field.tap()
+                    let keyboardAfterClear = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+                        self.typingKeyIsVisible(in: app)
+                    }, object: nil)
+                    XCTAssertEqual(XCTWaiter.wait(for: [keyboardAfterClear], timeout: 5), .completed,
+                                   "A real keyboard key must be visible after clearing before replacement")
+                }
             }
             if !text.isEmpty { field.typeText(text) }
         }
@@ -429,7 +436,8 @@ final class CareerFinderUITests: XCTestCase {
         app.buttons["Done typing"].tap()
         let advanced = app.buttons["Use another service"]; reveal(advanced, in: app); advanced.tap()
         let address = app.textFields["connection.address"]; reveal(address, in: app)
-        replace(address, with: "https://custom.example.com", in: app); app.buttons["Done typing"].tap()
+        replace(address, with: "https://custom.example.com", in: app, clearWith: app.buttons["connection.clearAddress"])
+        finishTyping(in: app)
         top(app); reveal(code, in: app)
         XCTAssertTrue(["", "One-time connection code"].contains(code.value as? String ?? ""), "Changing destination clears the unsent code")
         let reset = app.buttons["Use Career Finder"]; reveal(reset, in: app); reset.tap()

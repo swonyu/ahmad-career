@@ -301,6 +301,7 @@
     <string name="c_4010ae770b53" formatted="false">"Clear phone data"</string>
     <string name="c_53ea94e2a507" formatted="false">"Clear search filters"</string>
     <string name="c_cea4d2e010b8" formatted="false">"Clear selection"</string>
+    <string name="c_3a036a95535d" formatted="false">"Clear service address"</string>
     <string name="c_a23bd2387655" formatted="false">"Clear this phone workspace?"</string>
     <string name="c_23aee864f931" formatted="false">"Clear this workspace from this phone"</string>
     <string name="c_ea222b9c80b9" formatted="false">"Clear {0}"</string>

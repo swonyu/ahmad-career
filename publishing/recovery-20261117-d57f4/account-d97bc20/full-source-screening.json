@@ -1,0 +1,24 @@
+{
+  "observedAt": "2026-11-17T16:15:55.024564+00:00",
+  "stagedTreeBeforeThisReceipt": "1e0a95c9898b18e8718c29f57054c7094ba208e8",
+  "trackedFilesBeforeThisReceipt": 1354,
+  "trackedBytes": 38848127,
+  "nestedMembers": 71,
+  "scannerSHA256": "6b3e8847c2587e729e23b78fc77c9087ed62bb4d6a1f53af89c0af4e1414ae62",
+  "categoryCounts": {
+    "reserved_domain_example": 176,
+    "contact_email_candidate": 13,
+    "credential_candidate": 13,
+    "local_provenance_path": 6044,
+    "asset_filename_email_false_positive": 21,
+    "contact_phone_candidate": 4
+  },
+  "candidateCount": 30,
+  "unresolvedCandidates": [],
+  "dispositionsFile": "retention-and-screening-dispositions.json",
+  "scope": "Complete staged merged tree plus embedded ZIP/JAR members. All30 flagged contact/credential forms have content-digest-bound reviewed synthetic/rejection-fixture or non-routable provenance dispositions. No candidate values printed. Receipt itself and subsequent peer receipt are reviewed metadata.",
+  "limitations": [
+    "Signature/contextual screening does not prove absence of every possible private value.",
+    "Historical owner CI receipts keep their original source/run attribution; they do not establish new combined native acceptance."
+  ]
+}

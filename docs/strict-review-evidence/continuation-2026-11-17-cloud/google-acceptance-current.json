@@ -1,10 +1,10 @@
 {
-  "asOf": "2026-11-17T15:00:26Z",
+  "asOf": "2026-11-17T15:59:37Z",
   "projectId": "appgprj_6afc21bd599c8191a0fb7705274d8582",
   "configurationReceipt": "google-acceptance-configuration.json",
   "environmentRevision": 1,
-  "deployedVersion": 4,
-  "deployedSource": "8570985f719cbfb374374b0714e74c3d19eeb146",
+  "deployedVersion": 5,
+  "deployedSource": "7e0ac76792d31b98863c5e9f8f1e1c4821a7f2e7",
   "audience": "owner-private",
   "googleAudience": "External Testing",
   "scopes": [
@@ -33,7 +33,7 @@
     "version": 2,
     "source": "17c29bc9708b1634eddc158184cb63f61135675d"
   },
-  "deploymentReceipt": "private-acceptance-deployment-v4.json",
+  "deploymentReceipt": "private-acceptance-deployment-v5.json",
   "configurationUnchangedByVersion3": true,
   "browserEvidenceUnchangedSince": "2026-11-17T13:28:42Z",
   "deploymentHistoryAfterPreviousObservation": [
@@ -41,7 +41,18 @@
       "version": 3,
       "source": "a02ddf951c3ac8f20739799522d7fa000cba2af0",
       "receipt": "private-acceptance-deployment-v3.json"
+    },
+    {
+      "version": 4,
+      "source": "8570985f719cbfb374374b0714e74c3d19eeb146",
+      "receipt": "private-acceptance-deployment-v4.json"
     }
   ],
-  "configurationUnchangedByVersion4": true
+  "configurationUnchangedByVersion4": true,
+  "latestConnectionAvailabilityCheck": {
+    "observedAt": "2026-11-17T15:19:24Z",
+    "receipt": "browser-connection-recheck.json",
+    "result": "Originating connected-browser context unavailable; no browser code executed or new consent result observed."
+  },
+  "configurationUnchangedByVersion5": true
 }

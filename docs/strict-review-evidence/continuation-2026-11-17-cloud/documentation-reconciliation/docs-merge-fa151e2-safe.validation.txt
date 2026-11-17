@@ -1,0 +1,28 @@
+Career Finder current publishing merge preview and serialization correction
+Validated at: 2026-11-17T15:40:41.451725+00:00
+Root HEAD: fa151e219ad4e8d9f0d3337eec10a60ed5223d47
+Patch: /workspace/scratch/5bc6158967e8/docs-merge-fa151e2-safe.patch
+Patch bytes: 16890
+Patch SHA-256: fae0ad24d6f3b8be89077d42a2bd581f794db3e226112382df4bc5382dd9df6f
+Final-byte manifest: /workspace/scratch/5bc6158967e8/docs-merge-fa151e2-final.sha256
+Final-byte manifest SHA-256: 48f2b6e0b5f1e70b3e11e227d3c08c1c6ac9175c10103af9f159fb05cbbf39c0
+Baseline: all 13 prior Markdown files copied from actual applied root working bytes.
+Changed scope: exactly the four reserved Markdown files.
+Root bytes still equal captured baseline: PASS
+Git-produced unified patch; root git apply --check --whitespace=error-all: PASS
+git diff --check --no-index: no whitespace diagnostics; exit 1 denotes differences.
+Actual git apply --whitespace=error-all in disposable snapshot: PASS
+Applied bytes equal intended output: 13/13
+Terminal newlines: 13/13
+Embedded diff/patch markers in intended/applied documents: 0
+Relative Markdown links resolved: 305; missing: 0; root-only receipt occurrences: 9
+Independent four-file review: clean. Subsequent exact-object qualification limits the result to fa151e2/842472, excluding other recovery/integration revisions.
+Previous defective patch and receipt preserved unchanged; validation-failure note records all three injected-tail defects.
+Run 33 iPhone wording remains pending. New comment/current-source updates remain for the parent-owned later addendum.
+Application/JSON/native edits, root writes, builds, commits, pushes: NONE by this documentation agent.
+
+docs/Continuation-Implementation-2026-11-17.md   |    4 +++-
+ docs/Product-Review-Research-2026-11-17.md       |    2 +-
+ docs/Provider-Generation-Upgrade-2026-11-17.md   |    2 +-
+ docs/Release-Integration-Checklist-2026-11-17.md |    6 ++++--
+ 4 files changed, 9 insertions(+), 5 deletions(-)

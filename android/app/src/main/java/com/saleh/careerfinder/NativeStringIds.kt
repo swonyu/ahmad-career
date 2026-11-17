@@ -15,6 +15,7 @@ internal val nativeStringIds: Map<String, Int> by lazy {
         putAll(nativeCopyIds9())
         putAll(nativeCopyIds10())
         putAll(nativeCopyIds11())
+        putAll(nativeCopyIds12())
     }
 }
 
@@ -325,6 +326,7 @@ private fun nativeCopyIds1(): Map<String, Int> = mapOf(
 )
 
 private fun nativeCopyIds2(): Map<String, Int> = mapOf(
+    "Clear service address" to R.string.c_3a036a95535d,
     "Clear this phone workspace?" to R.string.c_a23bd2387655,
     "Clear this workspace from this phone" to R.string.c_23aee864f931,
     "Clear {0}" to R.string.c_ea222b9c80b9,
@@ -474,10 +476,10 @@ private fun nativeCopyIds2(): Map<String, Int> = mapOf(
     "Earlier cached listing" to R.string.c_a46ebf4f0671,
     "Earlier cached result — recheck employer" to R.string.c_59cd3ffe8d64,
     "Earlier cached results · refresh unavailable" to R.string.c_15313f3ba984,
-    "Earlier connected workspace" to R.string.c_1083091770d6,
 )
 
 private fun nativeCopyIds3(): Map<String, Int> = mapOf(
+    "Earlier connected workspace" to R.string.c_1083091770d6,
     "Earlier connection address copies" to R.string.c_27e1140ab2cd,
     "Earlier connection copies were preserved. Open phone data settings to review and merge the copy you want." to R.string.c_55f26082c6b9,
     "Earlier local planning records" to R.string.c_410be0d932f3,
@@ -627,10 +629,10 @@ private fun nativeCopyIds3(): Map<String, Int> = mapOf(
     "Imported receipt copies" to R.string.c_45f386280381,
     "Include PDF résumé bytes" to R.string.c_22c74836100a,
     "Include what changed, over what period, and your own contribution. Avoid confidential employer data." to R.string.c_fc5b4dd36319,
-    "Includes your profile, saved jobs, notes, dates, history, unfinished edits, receipt copies and last search. This JSON file is readable by anyone who has it. Store it somewhere you trust." to R.string.c_7d13bc7f6d92,
 )
 
 private fun nativeCopyIds4(): Map<String, Int> = mapOf(
+    "Includes your profile, saved jobs, notes, dates, history, unfinished edits, receipt copies and last search. This JSON file is readable by anyone who has it. Store it somewhere you trust." to R.string.c_7d13bc7f6d92,
     "Including target annual bonus" to R.string.c_48b7baac2c96,
     "Incoming profile" to R.string.c_78fda11d4b12,
     "Information on this phone" to R.string.c_e82e3eddefd9,
@@ -780,10 +782,10 @@ private fun nativeCopyIds4(): Map<String, Int> = mapOf(
     "No follow-ups match." to R.string.c_bb7c5884a81f,
     "No follow-ups to show." to R.string.c_0e29117dbc58,
     "No pay floor" to R.string.c_196bc395c3ad,
-    "No private note" to R.string.c_22142ba328eb,
 )
 
 private fun nativeCopyIds5(): Map<String, Int> = mapOf(
+    "No private note" to R.string.c_22142ba328eb,
     "No receipts match these filters." to R.string.c_185e34f87d3d,
     "No roles match this search." to R.string.c_864fc63bc631,
     "No résumé in backup" to R.string.c_8e30f88ebfa4,
@@ -933,10 +935,10 @@ private fun nativeCopyIds5(): Map<String, Int> = mapOf(
     "Previous result · check employer" to R.string.c_0b4245306a36,
     "Previous results" to R.string.c_f6bcc7909eb7,
     "Previous results — search again to check availability." to R.string.c_41fb96e5a3e5,
-    "Previous search — update the search to use your current fields." to R.string.c_2135230bfaf0,
 )
 
 private fun nativeCopyIds6(): Map<String, Int> = mapOf(
+    "Previous search — update the search to use your current fields." to R.string.c_2135230bfaf0,
     "Privacy & support" to R.string.c_7531266b6af6,
     "Privacy and data use" to R.string.c_edc41b71b29c,
     "Privacy and support" to R.string.c_1de3864720bd,
@@ -1086,10 +1088,10 @@ private fun nativeCopyIds6(): Map<String, Int> = mapOf(
     "Review each application yourself" to R.string.c_e438de8e71fa,
     "Review earlier records and backups" to R.string.c_1d306aea7692,
     "Review earlier recovery copy" to R.string.c_e38f21d67be8,
-    "Review my application notes" to R.string.c_ecd9ca9c3138,
 )
 
 private fun nativeCopyIds7(): Map<String, Int> = mapOf(
+    "Review my application notes" to R.string.c_ecd9ca9c3138,
     "Review notes" to R.string.c_2d75d34e5262,
     "Review phone backup" to R.string.c_c110a4f55363,
     "Review phone draft" to R.string.c_f5da3d3781c5,
@@ -1239,10 +1241,10 @@ private fun nativeCopyIds7(): Map<String, Int> = mapOf(
     "Separate phone draft" to R.string.c_73fb0911f47d,
     "Separate planning notes and older backup files stay local. They are never adopted by a connected account automatically." to R.string.c_096b35807a17,
     "Separate unpaired draft" to R.string.c_3fa5895e4d2e,
-    "Service address" to R.string.c_ef36f8c99826,
 )
 
 private fun nativeCopyIds8(): Map<String, Int> = mapOf(
+    "Service address" to R.string.c_ef36f8c99826,
     "Set up my profile" to R.string.c_a24eb58bed7c,
     "Set up or recover workspace access" to R.string.c_06923b7479a6,
     "Settings" to R.string.c_74a883a037bc,
@@ -1392,10 +1394,10 @@ private fun nativeCopyIds8(): Map<String, Int> = mapOf(
     "The latest workspace could not be loaded. Your draft is preserved." to R.string.c_77f5a975f4d7,
     "The link is saved on this phone. " to R.string.c_a0c13205e3c4,
     "The link is saved on this phone. {0}" to R.string.c_bda14fc3b812,
-    "The local record could not be removed. Try again before leaving this workspace." to R.string.c_20bb10044a6c,
 )
 
 private fun nativeCopyIds9(): Map<String, Int> = mapOf(
+    "The local record could not be removed. Try again before leaving this workspace." to R.string.c_20bb10044a6c,
     "The merged shortlist exceeds 200 links. Nothing was replaced." to R.string.c_e7715235e60f,
     "The new workspace starts empty. Service records remain on the service. You will need a new pairing code to reconnect." to R.string.c_ac98abf44440,
     "The next action could not be read or saved. Original data and your session draft are preserved." to R.string.c_d08d73bed450,
@@ -1545,10 +1547,10 @@ private fun nativeCopyIds9(): Map<String, Int> = mapOf(
     "This is not a verified personal fit score. Compare the employer requirements with your own evidence." to R.string.c_25f9cd12ebd9,
     "This is your own record. Changing status does not submit an application or contact anyone." to R.string.c_e35a9270679f,
     "This keeps a private draft. It does not overwrite the service until you save again." to R.string.c_92b1a37899e1,
-    "This lead was found by title and location. It is not a personalized eligibility assessment." to R.string.c_3ba0c1bc30bb,
 )
 
 private fun nativeCopyIds10(): Map<String, Int> = mapOf(
+    "This lead was found by title and location. It is not a personalized eligibility assessment." to R.string.c_3ba0c1bc30bb,
     "This link is already saved. Your unfinished draft is kept so you can review its details or change the link." to R.string.c_eb0b37b02f6c,
     "This next action changed. Your draft is preserved. Export it before reloading the saved version." to R.string.c_41ab1155c42c,
     "This opens an empty local workspace while preserving the existing encrypted files. It does not recover unreadable drafts or revoke any earlier service session. Your server records stay unchanged." to R.string.c_b5ad610df328,
@@ -1698,10 +1700,10 @@ private fun nativeCopyIds10(): Map<String, Int> = mapOf(
     "View saved versions ({0})" to R.string.c_b1e26038a4a2,
     "Waiting for provider" to R.string.c_d18eb49c1ba0,
     "Waiting to retry" to R.string.c_e8d51f7276c8,
-    "Website" to R.string.c_b5a229ac8bec,
 )
 
 private fun nativeCopyIds11(): Map<String, Int> = mapOf(
+    "Website" to R.string.c_b5a229ac8bec,
     "Website or portfolio (optional)" to R.string.c_b19832280f3d,
     "Weekly" to R.string.c_2975132481a7,
     "What comes next" to R.string.c_1afde71b02ce,
@@ -1851,5 +1853,8 @@ private fun nativeCopyIds11(): Map<String, Int> = mapOf(
     "{0} · your record" to R.string.c_cda300621627,
     "{0} · {1}" to R.string.c_cd55a9d95751,
     "{0}'s application profile" to R.string.c_071865fbf4b0,
+)
+
+private fun nativeCopyIds12(): Map<String, Int> = mapOf(
     "العربية" to R.string.c_d27415986305,
 )

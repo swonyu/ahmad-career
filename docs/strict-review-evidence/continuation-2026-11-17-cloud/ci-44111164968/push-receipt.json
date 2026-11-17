@@ -1,0 +1,29 @@
+{
+  "candidate": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+  "parent": "880e878f6f528d903c42951f10a8b216094c889c",
+  "tree": "3a0333e1c210a89cdb21dfd11b765e24ee70254b",
+  "bundle_sha256": "ab274dc0179b6d04f65e148c620871ccd93c60cab9927e0be0d43e79bb9d2232",
+  "bundle_bytes": 949090,
+  "heads_before": {
+    "refs/heads/app-store/career-workspace-copy-20261117": "fd9c5399f2b7001b234b3b86bf72e2b36b5114c1",
+    "refs/heads/career-finder-phones-verified-apply-20261116": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+    "refs/heads/continuation/account-acceptance-20261117": "880e878f6f528d903c42951f10a8b216094c889c"
+  },
+  "started_utc": "2026-11-17T15:09:47.237142+00:00",
+  "force": false,
+  "shared_checkout_changed": false,
+  "build_or_signing_performed": false,
+  "relay_status_format": "git status --porcelain=v1 -z",
+  "relay_status_sha256": "50999aa070f57d30d9d25d8fdf72bb175dab68bc3038423a780289c99af081c9",
+  "heads_after": {
+    "refs/heads/app-store/career-workspace-copy-20261117": "fd9c5399f2b7001b234b3b86bf72e2b36b5114c1",
+    "refs/heads/career-finder-phones-verified-apply-20261116": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+    "refs/heads/continuation/account-acceptance-20261117": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47"
+  },
+  "completed_utc": "2026-11-17T15:09:51.030827+00:00",
+  "relay_status_unchanged": true,
+  "relay_head_unchanged": true,
+  "relay_index_still_absent": true,
+  "result": "ordinary nonforce push succeeded",
+  "push_output": "To https://github.com/swonyu/ahmad-career.git\n   880e878..fa151e2  fa151e219ad4e8d9f0d3337eec10a60ed5223d47 -> continuation/account-acceptance-20261117"
+}

@@ -1,0 +1,26 @@
+{
+  "reviewComment": "https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6952895732",
+  "reviewScope": "Research/review lane acknowledges original development5bc and publishing integrationd57 ownership; no competing application edit or native build claimed.",
+  "developmentComment": "https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6953044301",
+  "updatedAt": "2026-11-17T15:51:21Z",
+  "declaredNativeFiles": 8,
+  "scopeCorrection": "Canonical native catalog plus all generated platform outputs required; initial four-file estimate corrected.",
+  "hostedFindings": [
+    "F06 source-label direction isolation",
+    "F05 visible and live incomplete-search wording"
+  ],
+  "deliveryVerified": true,
+  "exactBodyVerified": true,
+  "owningDevelopmentBranch": "continuation/account-acceptance-20261117",
+  "recoveryBranch": "recovery/publishing-integrated-20261117-d57f4",
+  "recoveryLatestObservedCommit": "56784d740a25d07d2fbd4616f57e55cf0cb4453f",
+  "sharedBuildWindowGranted": false,
+  "signingOrStoreOwnershipChanged": false,
+  "dotReadReceipt": false,
+  "connectorWriteAttempt": {
+    "result": "GitHub integration lacks comment write permission",
+    "httpStatus": 403,
+    "fallback": "User-authorized existing gh authentication posted and updated the bounded coordination comment successfully; no credential or access-policy change."
+  },
+  "recordedAt": "2026-11-17T16:01:31.677228+00:00"
+}

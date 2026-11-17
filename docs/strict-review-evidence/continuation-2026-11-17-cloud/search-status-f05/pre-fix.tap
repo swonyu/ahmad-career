@@ -1,0 +1,351 @@
+TAP version 13
+# Subtest: retry repeats the displayed search without a cursor and preserves newer visible draft filters
+ok 1 - retry repeats the displayed search without a cursor and preserves newer visible draft filters
+  ---
+  duration_ms: 65.158631
+  type: 'test'
+  ...
+# Subtest: a fresh search response does not overwrite text or boards edited while it is pending
+ok 2 - a fresh search response does not overwrite text or boards edited while it is pending
+  ---
+  duration_ms: 35.347007
+  type: 'test'
+  ...
+# Subtest: pagination uses the displayed search and cursor, merges identities, and leaves draft filters alone
+ok 3 - pagination uses the displayed search and cursor, merges identities, and leaves draft filters alone
+  ---
+  duration_ms: 31.703298
+  type: 'test'
+  ...
+# Subtest: failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller
+    # Subtest: failure
+    ok 1 - failure
+      ---
+      duration_ms: 51.872371
+      type: 'test'
+      ...
+    # Subtest: cancel
+    ok 2 - cancel
+      ---
+      duration_ms: 16.617891
+      type: 'test'
+      ...
+    1..2
+ok 4 - failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller
+  ---
+  duration_ms: 69.806515
+  type: 'test'
+  ...
+# Subtest: late search results cannot cross the existing identity or generation boundary
+    # Subtest: identity
+    ok 1 - identity
+      ---
+      duration_ms: 15.540583
+      type: 'test'
+      ...
+    # Subtest: generation
+    ok 2 - generation
+      ---
+      duration_ms: 15.868656
+      type: 'test'
+      ...
+    1..2
+ok 5 - late search results cannot cross the existing identity or generation boundary
+  ---
+  duration_ms: 32.8778
+  type: 'test'
+  ...
+# Subtest: pagination retains the 200-result cap and retry refreshes restored results without a stale cursor
+ok 6 - pagination retains the 200-result cap and retry refreshes restored results without a stale cursor
+  ---
+  duration_ms: 83.213319
+  type: 'test'
+  ...
+# Subtest: actual nonempty partial and stale results show a localized retry that targets the displayed search
+not ok 7 - actual nonempty partial and stale results show a localized retry that targets the displayed search
+  ---
+  duration_ms: 72.393629
+  type: 'test'
+  location: '/workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:226:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert(r.html.includes(r.t('This search is incomplete. Review the source details, or retry the same search.')))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:232:5)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: actual empty unavailable results distinguish missing evidence from a completed zero-match search in both languages
+ok 8 - actual empty unavailable results distinguish missing evidence from a completed zero-match search in both languages
+  ---
+  duration_ms: 86.383958
+  type: 'test'
+  ...
+# Subtest: actual retry control stays disabled during work or identity checks and is absent without a submitted search
+ok 9 - actual retry control stays disabled during work or identity checks and is absent without a submitted search
+  ---
+  duration_ms: 95.632823
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe fresh partial results without inventing an outage in en
+not ok 10 - actual visible and live summaries describe fresh partial results without inventing an outage in en
+  ---
+  duration_ms: 30.898479
+  type: 'test'
+  location: '/workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:284:6'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + '0 jobs shown. Some sources could not provide current results.'
+    - '0 jobs shown. This search is incomplete. Review the source details, or retry the same search.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '0 jobs shown. This search is incomplete. Review the source details, or retry the same search.'
+  actual: '0 jobs shown. Some sources could not provide current results.'
+  operator: 'strictEqual'
+  stack: |-
+    assertLiveSummary (file:///workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:276:10)
+    TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:292:7)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: actual visible and live summaries describe only the overall result limit without inventing an outage in en
+not ok 11 - actual visible and live summaries describe only the overall result limit without inventing an outage in en
+  ---
+  duration_ms: 23.320247
+  type: 'test'
+  location: '/workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:284:6'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + '0 jobs shown. Search complete.'
+    - '0 jobs shown. This search is incomplete. Review the source details, or retry the same search.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '0 jobs shown. This search is incomplete. Review the source details, or retry the same search.'
+  actual: '0 jobs shown. Search complete.'
+  operator: 'strictEqual'
+  stack: |-
+    assertLiveSummary (file:///workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:276:10)
+    TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:292:7)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: actual visible and live summaries describe only a source result limit without inventing an outage in en
+not ok 12 - actual visible and live summaries describe only a source result limit without inventing an outage in en
+  ---
+  duration_ms: 25.435671
+  type: 'test'
+  location: '/workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:284:6'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + '0 jobs shown. Search complete.'
+    - '0 jobs shown. This search is incomplete. Review the source details, or retry the same search.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '0 jobs shown. This search is incomplete. Review the source details, or retry the same search.'
+  actual: '0 jobs shown. Search complete.'
+  operator: 'strictEqual'
+  stack: |-
+    assertLiveSummary (file:///workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:276:10)
+    TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:292:7)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: actual search summaries retain source evidence and distinguish complete zero/nonzero results in en
+not ok 13 - actual search summaries retain source evidence and distinguish complete zero/nonzero results in en
+  ---
+  duration_ms: 27.280569
+  type: 'test'
+  location: '/workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:315:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + '1 jobs shown. Some sources could not provide current results.'
+    - '1 jobs shown. This search is incomplete. Review the source details, or retry the same search.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '1 jobs shown. This search is incomplete. Review the source details, or retry the same search.'
+  actual: '1 jobs shown. Some sources could not provide current results.'
+  operator: 'strictEqual'
+  stack: |-
+    assertLiveSummary (file:///workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:276:10)
+    TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:325:7)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: the actual search live region stays silent during work and before any result page in en
+ok 14 - the actual search live region stays silent during work and before any result page in en
+  ---
+  duration_ms: 63.164947
+  type: 'test'
+  ...
+# Subtest: actual visible and live summaries describe fresh partial results without inventing an outage in ar
+not ok 15 - actual visible and live summaries describe fresh partial results without inventing an outage in ar
+  ---
+  duration_ms: 74.625136
+  type: 'test'
+  location: '/workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:284:6'
+  failureType: 'testCodeFailure'
+  error: |-
+    The neutral message needs a real locale entry
+    + actual - expected
+    
+    + 'This search is incomplete. Review the source details, or retry the same search.'
+    - 'نتائج هذا البحث غير مكتملة. راجع تفاصيل المصادر أو أعد البحث نفسه.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'نتائج هذا البحث غير مكتملة. راجع تفاصيل المصادر أو أعد البحث نفسه.'
+  actual: 'This search is incomplete. Review the source details, or retry the same search.'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:291:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: actual visible and live summaries describe only the overall result limit without inventing an outage in ar
+not ok 16 - actual visible and live summaries describe only the overall result limit without inventing an outage in ar
+  ---
+  duration_ms: 19.149874
+  type: 'test'
+  location: '/workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:284:6'
+  failureType: 'testCodeFailure'
+  error: |-
+    The neutral message needs a real locale entry
+    + actual - expected
+    
+    + 'This search is incomplete. Review the source details, or retry the same search.'
+    - 'نتائج هذا البحث غير مكتملة. راجع تفاصيل المصادر أو أعد البحث نفسه.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'نتائج هذا البحث غير مكتملة. راجع تفاصيل المصادر أو أعد البحث نفسه.'
+  actual: 'This search is incomplete. Review the source details, or retry the same search.'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:291:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: actual visible and live summaries describe only a source result limit without inventing an outage in ar
+not ok 17 - actual visible and live summaries describe only a source result limit without inventing an outage in ar
+  ---
+  duration_ms: 11.826228
+  type: 'test'
+  location: '/workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:284:6'
+  failureType: 'testCodeFailure'
+  error: |-
+    The neutral message needs a real locale entry
+    + actual - expected
+    
+    + 'This search is incomplete. Review the source details, or retry the same search.'
+    - 'نتائج هذا البحث غير مكتملة. راجع تفاصيل المصادر أو أعد البحث نفسه.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'نتائج هذا البحث غير مكتملة. راجع تفاصيل المصادر أو أعد البحث نفسه.'
+  actual: 'This search is incomplete. Review the source details, or retry the same search.'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:291:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: actual search summaries retain source evidence and distinguish complete zero/nonzero results in ar
+not ok 18 - actual search summaries retain source evidence and distinguish complete zero/nonzero results in ar
+  ---
+  duration_ms: 15.102482
+  type: 'test'
+  location: '/workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:315:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'الوظائف المعروضة: ⁨١⁩. ⁨تعذّر على بعض المصادر توفير نتائج حالية.⁩'
+    - 'الوظائف المعروضة: ⁨١⁩. ⁨نتائج هذا البحث غير مكتملة. راجع تفاصيل المصادر أو أعد البحث نفسه.⁩'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'الوظائف المعروضة: ⁨١⁩. ⁨نتائج هذا البحث غير مكتملة. راجع تفاصيل المصادر أو أعد البحث نفسه.⁩'
+  actual: 'الوظائف المعروضة: ⁨١⁩. ⁨تعذّر على بعض المصادر توفير نتائج حالية.⁩'
+  operator: 'strictEqual'
+  stack: |-
+    assertLiveSummary (file:///workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:276:10)
+    TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/search-status-f05-fa151e2/hosted/tests/phone-search-workflows.mjs:325:7)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: the actual search live region stays silent during work and before any result page in ar
+ok 19 - the actual search live region stays silent during work and before any result page in ar
+  ---
+  duration_ms: 38.351751
+  type: 'test'
+  ...
+1..19
+# tests 23
+# suites 0
+# pass 14
+# fail 9
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2162.575808

@@ -299,6 +299,7 @@
 "Clear phone data" = "مسح بيانات الهاتف";
 "Clear search filters" = "مسح مرشحات البحث";
 "Clear selection" = "مسح الاختيار";
+"Clear service address" = "مسح عنوان الخدمة";
 "Clear this phone workspace?" = "هل تريد مسح مساحة الهاتف هذه؟";
 "Clear this workspace from this phone" = "مسح مساحة العمل هذه من الهاتف";
 "Clear {0}" = "مسح {0}";

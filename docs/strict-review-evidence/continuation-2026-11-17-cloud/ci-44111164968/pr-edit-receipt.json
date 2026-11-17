@@ -1,0 +1,22 @@
+{
+  "observed_at": "2026-11-17T15:10:58.481970+00:00",
+  "before": {
+    "baseRefName": "career-finder-phones-verified-apply-20261116",
+    "headRefName": "continuation/account-acceptance-20261117",
+    "headRefOid": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+    "isDraft": true,
+    "url": "https://github.com/swonyu/ahmad-career/pull/1"
+  },
+  "after": {
+    "baseRefName": "career-finder-phones-verified-apply-20261116",
+    "headRefName": "continuation/account-acceptance-20261117",
+    "headRefOid": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+    "isDraft": true,
+    "url": "https://github.com/swonyu/ahmad-career/pull/1"
+  },
+  "body_bytes": 7522,
+  "body_sha256": "935cae8852d9b4c948e644b51df78082a1b90a807efc5ea14152bba85b1fa9b9",
+  "exact_body_matches": true,
+  "draft_preserved": true,
+  "result": "https://github.com/swonyu/ahmad-career/pull/1"
+}

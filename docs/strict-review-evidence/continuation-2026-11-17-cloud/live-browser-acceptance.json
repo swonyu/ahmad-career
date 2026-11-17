@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-11-17T15:00:26Z",
+  "asOf": "2026-11-17T15:59:37Z",
   "environment": "separate owner-private acceptance Site",
   "site": "appgprj_6afc21bd599c8191a0fb7705274d8582",
   "version1": {
@@ -79,6 +79,18 @@
     "deploymentReceipt": "private-acceptance-deployment-v4.json",
     "browserAcceptance": "Not performed; the correct owner browser context remains unavailable.",
     "changeScope": "Contextual search retry/draft preservation, dynamic bilingual text isolation, CSV guidance, focused tests and lab documentation.",
+    "audienceChanged": false
+  },
+  "latestConnectionAvailabilityCheck": {
+    "observedAt": "2026-11-17T15:19:24Z",
+    "receipt": "browser-connection-recheck.json",
+    "result": "Originating connected-browser context unavailable; no browser code executed or new consent result observed."
+  },
+  "version5": {
+    "source": "7e0ac76792d31b98863c5e9f8f1e1c4821a7f2e7",
+    "deploymentReceipt": "private-acceptance-deployment-v5.json",
+    "browserAcceptance": "Not performed; the correct owner browser context remains unavailable.",
+    "changeScope": "Three source-label direction boundaries, neutral visible/live search summary, limit detection, focused tests and lab history.",
     "audienceChanged": false
   }
 }

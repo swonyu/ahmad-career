@@ -1,0 +1,13 @@
+{
+  "observedAt": "2026-11-17T15:19:25.236104+00:00",
+  "requestedSurface": "Original connected local browser extension; user-requested Chrome",
+  "operation": "Initialize documented browser runtime and request capability documentation",
+  "result": "Browser access requires the originating browser context. Open ChatGPT in the browser with the connected extension and try again.",
+  "browserCodeExecuted": false,
+  "tabsInspected": false,
+  "newGoogleTransactionStarted": false,
+  "consentOrCallbackCompleted": false,
+  "audienceChanged": false,
+  "scope": "A later availability check after the cloud runtime recovered. It does not close or reinterpret the earlier passkey-blocked Google flow.",
+  "workaround": "Resume this chat in the browser context with its connected extension, using the actual private Site owner session; start a fresh Connect Google transaction and complete the requested passkey verification. The old transaction is expired."
+}

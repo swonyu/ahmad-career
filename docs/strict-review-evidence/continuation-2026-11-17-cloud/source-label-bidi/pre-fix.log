@@ -1,0 +1,149 @@
+✔ real review rendering localizes every state and preserves user and employer content (56.148568ms)
+✔ recovery notices render full sentences and locale-specific counts from the same stored data (47.903806ms)
+✔ actual copy handler stores translatable notices and copies the exact value on success or refusal (61.08506ms)
+✔ discovery notice translates only the known service composition and keeps unknown text opaque (103.25934ms)
+✔ actual Saved, Apply, details and recovery values retain separate bidi boundaries in both languages (148.845669ms)
+✔ actual profile comparison and application review isolate names and CV filenames without changing them (104.228975ms)
+✔ actual search inputs preserve mixed-script draft text with automatic direction (33.230737ms)
+✖ actual catalog-board checkboxes isolate Arabic and Latin source names in en (23.164171ms)
+✖ actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in en (32.936895ms)
+✖ actual JobCard footer isolates each source name and retains its employer link in en (21.168152ms)
+✖ actual catalog-board checkboxes isolate Arabic and Latin source names in ar (9.917982ms)
+✖ actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in ar (11.348161ms)
+✖ actual JobCard footer isolates each source name and retains its employer link in ar (14.792724ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 7
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1571.887506
+
+✖ failing tests:
+
+test at hosted/tests/phone-localization.mjs:311:3
+✖ actual catalog-board checkboxes isolate Arabic and Latin source names in en (23.164171ms)
+  AssertionError [ERR_ASSERTION]: en catalog source: شركة (Acme) 17 / QA has no independent bidi boundary
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:165:9)
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:172:5)
+      at file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:159:54
+      at Array.forEach (<anonymous>)
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:159:37)
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:172:5)
+      at assertIsolatedRawValue (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:174:3)
+      at sourceCheckbox (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:303:16)
+      at TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:314:21)
+      at Test.runInAsyncScope (node:async_hooks:227:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at hosted/tests/phone-localization.mjs:327:3
+✖ actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in en (32.936895ms)
+  AssertionError [ERR_ASSERTION]: en custom source: greenhouse:unknown-team-2026 has no independent bidi boundary
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:165:9)
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:172:5)
+      at file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:159:54
+      at Array.forEach (<anonymous>)
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:159:37)
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:172:5)
+      at assertIsolatedRawValue (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:174:3)
+      at sourceCheckbox (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:303:16)
+      at TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:332:21)
+      at Test.runInAsyncScope (node:async_hooks:227:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at hosted/tests/phone-localization.mjs:343:3
+✖ actual JobCard footer isolates each source name and retains its employer link in en (21.168152ms)
+  AssertionError [ERR_ASSERTION]: en JobCard source: شركة (Acme) 17 / QA has no independent bidi boundary
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:165:9)
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:172:5)
+      at file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:159:54
+      at Array.forEach (<anonymous>)
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:159:37)
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:172:5)
+      at assertIsolatedRawValue (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:174:3)
+      at TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:357:22)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at hosted/tests/phone-localization.mjs:311:3
+✖ actual catalog-board checkboxes isolate Arabic and Latin source names in ar (9.917982ms)
+  AssertionError [ERR_ASSERTION]: ar catalog source: شركة (Acme) 17 / QA has no independent bidi boundary
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:165:9)
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:172:5)
+      at file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:159:54
+      at Array.forEach (<anonymous>)
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:159:37)
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:172:5)
+      at assertIsolatedRawValue (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:174:3)
+      at sourceCheckbox (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:303:16)
+      at TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:314:21)
+      at Test.runInAsyncScope (node:async_hooks:227:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at hosted/tests/phone-localization.mjs:327:3
+✖ actual unknown and HTTPS board checkboxes isolate their unchanged identifiers in ar (11.348161ms)
+  AssertionError [ERR_ASSERTION]: ar custom source: greenhouse:unknown-team-2026 has no independent bidi boundary
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:165:9)
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:172:5)
+      at file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:159:54
+      at Array.forEach (<anonymous>)
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:159:37)
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:172:5)
+      at assertIsolatedRawValue (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:174:3)
+      at sourceCheckbox (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:303:16)
+      at TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:332:21)
+      at Test.runInAsyncScope (node:async_hooks:227:14) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at hosted/tests/phone-localization.mjs:343:3
+✖ actual JobCard footer isolates each source name and retains its employer link in ar (14.792724ms)
+  AssertionError [ERR_ASSERTION]: ar JobCard source: شركة (Acme) 17 / QA has no independent bidi boundary
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:165:9)
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:172:5)
+      at file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:159:54
+      at Array.forEach (<anonymous>)
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:159:37)
+      at visit (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:172:5)
+      at assertIsolatedRawValue (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:174:3)
+      at TestContext.<anonymous> (file:///workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2/hosted/tests/phone-localization.mjs:357:22)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

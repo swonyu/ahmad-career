@@ -1,0 +1,21 @@
+{
+  "run_id": 44111164968,
+  "all_sizes_and_sha256_match": true,
+  "safe_paths_and_no_symlinks": true,
+  "artifacts": [
+    {
+      "file": "hosted.zip",
+      "folder": "hosted",
+      "artifact": 14341935393,
+      "bytes": 8816,
+      "sha": "bb91e737f912a94ed10882e7aeb9c3dbf2387728bf383a1de9da4b41e4aabd0d"
+    },
+    {
+      "file": "iphone-build.zip",
+      "folder": "iphone-build",
+      "artifact": 14340033158,
+      "bytes": 8357,
+      "sha": "77d6e061634f53fe21915bccd392e9a3dd9c393e2df4aaaa630c12b9dc17b52d"
+    }
+  ]
+}

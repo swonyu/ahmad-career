@@ -1,0 +1,73 @@
+{
+  "recorded_at_utc": "2026-11-17T15:43:53.754265+00:00",
+  "base_commit": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+  "working_checkout": "/workspace/scratch/5bc6158967e8/source-label-bidi-fa151e2",
+  "node_version": "v24.22.1",
+  "scope": "Only the owned localization test file was authored. Root-authored source bytes were copied into this isolated checkout solely for the authorized post-fix test.",
+  "files": {
+    "hosted/app/phone/PhoneApp.tsx": {
+      "baseline_sha256": "7fbf684a5b400a064f01fb62173192d821f1eb4ce6d076435d1fe9ac58c9c590",
+      "candidate_sha256": "5b12352782ae30dbb468b6567a78731a58c9734d25e8b276467edc98a3e15610",
+      "matches_root_bytes": true
+    },
+    "hosted/app/phone/components.tsx": {
+      "baseline_sha256": "cec98ced40e35044f821525e4d979d17fd52ea66a6dc139307cdf7ebe11ecded",
+      "candidate_sha256": "c7614e923223d427e3a218f9c8d1038e4d90f244de9da8707bb92bf8dce90c52",
+      "matches_root_bytes": true
+    },
+    "hosted/tests/phone-localization.mjs": {
+      "baseline_sha256": "6d97414cb6b1915a2a58431155a4b004fa94f99c17afbf1cbb2df47a651665f8",
+      "candidate_sha256": "877fa8eaf10d723b57c05016f1cef36d4a9a824971f64932cccbe37051fe6f63",
+      "root_remains_at_baseline": true
+    }
+  },
+  "patch": {
+    "path": "/workspace/scratch/5bc6158967e8/source-label-bidi-localization-tests.patch",
+    "sha256": "621735fb24da7b09b636a57f16a92ff5f6cb68c56ae907f8c1f8ca39ee819d1f",
+    "files": [
+      "hosted/tests/phone-localization.mjs"
+    ]
+  },
+  "pre_fix": {
+    "command": "node --test hosted/tests/phone-localization.mjs",
+    "exit_code": 1,
+    "tests": 13,
+    "passed": 7,
+    "failed": 6,
+    "cancelled": 0,
+    "skipped": 0,
+    "duration_ms": 1571.887506,
+    "log": "pre-fix.log",
+    "sha256": "9bf2d73eeb2d8dd1f5b4ad84736f4fa380a82d3f551ff0b2e923f9734520e425",
+    "reason": "Every added surface/locale case failed because its original raw source text had no independent bidi boundary."
+  },
+  "post_fix": {
+    "command": "node --test --test-reporter=tap hosted/tests/phone-localization.mjs",
+    "exit_code": 0,
+    "tests": 13,
+    "passed": 13,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "duration_ms": 1235.733682,
+    "log": "post-fix.tap",
+    "sha256": "a85ba9017d696d1a8a4776918fe93dadb5e5ba9549e4f5bb6795c5da6c79525d"
+  },
+  "coverage": [
+    "Both catalog source-label map and unknown/custom source-label filter/map are executed from the whole actual search-options disclosure.",
+    "Catalog label names start with Arabic or Latin and contain both scripts, parentheses, a slash or dash, and digits; exact raw text is preserved in English and Arabic.",
+    "An unknown provider identifier and valid HTTPS jobs.lever.co board URL retain exact text, checked state, association with one checkbox, and automatic direction.",
+    "Actual source-checkbox selection and removal handlers keep the original query/location and exact source identifiers without mutating the fixture.",
+    "Actual JobCard renders sourceName with automatic direction, preserves its job URL, target, rel and translated link text, and omits the source label when sourceName is empty."
+  ],
+  "peer_review": {
+    "result": "bounded_clean",
+    "source_delta": "Exactly two dir=\"auto\" attributes on existing PhoneApp source-label spans and one on the existing JobCard source-name span; independently reconstructed expected bytes exactly matched root. Tags, text expressions, map/filter branches, conditions, handlers, and CSS classes are unchanged.",
+    "limitations": [
+      "No browser layout or physical-device visual acceptance is claimed.",
+      "No broader suite, build, native test, CI run, deployment, external request, account or paid service was invoked.",
+      "CI run 33 and root ownership were left untouched."
+    ]
+  },
+  "whitespace_check": "git diff --check passed"
+}
