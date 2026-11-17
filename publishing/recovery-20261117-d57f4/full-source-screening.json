@@ -1,0 +1,33 @@
+{
+  "trackedFiles": 1144,
+  "hits": [],
+  "scope": "Credential-signature and sensitive-filename screen of complete tracked tree; no values printed; contextual review still applies.",
+  "recordedUTC": "2026-11-17T14:35:46.337483+00:00",
+  "screenedCommit": "ee87d6e6049452cb022a9e125b54e0f9e1dcdf20",
+  "sourceMethod": "Read every tracked file from the clean integrated checkout; scan documented credential signatures and sensitive filenames. Existing real UI screenshots remain tied to historical test commits.",
+  "excludedFromVersionedTree": [
+    "node_modules",
+    "local environment files",
+    "signing material",
+    "private recovery copy of uncommitted account documents"
+  ],
+  "matchedValuesPrinted": false,
+  "scopeLimit": "No matches does not guarantee every possible secret format or complete visual privacy review; no real-account provider acceptance is claimed.",
+  "syntheticArtifactProvenance": [
+    {
+      "path": "hosted/tests/fixtures/readable-resume.pdf",
+      "sha256": "149f96a4dc6ed08b2adf0ae75c9d00f8fba75fcd777ea790d9a27e622fa38a61",
+      "classification": "Repository-owned synthetic test fixture; no user CV copied by this integration."
+    },
+    {
+      "path": "postman/fixtures/integration-resume.pdf",
+      "sha256": "fccbd3962e482d8b24bea10c69ec047e0879cc55cf3c3b3222909bd89108b86a",
+      "classification": "Repository-owned synthetic test fixture; no user CV copied by this integration."
+    },
+    {
+      "path": "website/applications/fixtures/certificates.mjs",
+      "sha256": "010e1e1e5998c287985f773e1b56b3ac7cca5c9e13dc97c4655d297fa440ae90",
+      "classification": "Repository-owned synthetic test fixture; no user CV copied by this integration."
+    }
+  ]
+}
