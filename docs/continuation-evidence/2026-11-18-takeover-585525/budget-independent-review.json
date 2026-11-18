@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "observedAtUTC": "2026-11-18T19:38:00Z",
+  "baseCommit": "e279d00d5004c9f0a984e91958fbadf6c83beea3",
+  "applicationCodeBaseline": "b78b83b09739fefe69a6c8b72d7d1a60a4feb22a",
+  "workflowSha256": "40984c51bcb5216ba46268c323eceee1cc61b69f91b66f4ad461370c4a5cf9e9",
+  "change": {
+    "combinedBuildAndUI": {
+      "beforeMinutes": 45,
+      "afterMinutes": 55
+    },
+    "iphoneJob": {
+      "beforeMinutes": 55,
+      "afterMinutes": 65
+    },
+    "strictReadinessMinutes": 5
+  },
+  "independentReview": {
+    "agents": [
+      "/root/iphone_boot_repair",
+      "/root/concurrent_owner_review"
+    ],
+    "causalDiagnosis": "45-minute combined action deadline interrupted normal activity in method 16 after 15 passed; method 17 unstarted; no completed XCTest method failed.",
+    "actualDiffReviewed": true,
+    "nonCommentWorkflowDiff": "Only the two budget values above.",
+    "commandsRunnerRuntimeScopesSelectionUnchanged": true,
+    "all17TestsAndIndividualAssertionsAndTimeoutsUnchanged": true,
+    "productAndTestTreesUnchangedFromBaseline": true,
+    "decision": "Approve bounded resource allocation; complete new full five-job run still required."
+  },
+  "measurements": {
+    "buildAndRunnerLaunchSeconds": 347.184,
+    "currentFirst15Seconds": 2185.85,
+    "baselineFirst15Seconds": 1633.804,
+    "commonMethodRatio": 1.33788998,
+    "baselineRemainingTwoSeconds": 346.421,
+    "estimatedCompleteCommandWithBaselineFinalizationSeconds": 3037.5,
+    "estimateIsNotPassPrediction": true
+  },
+  "validation": {
+    "actionlint": "passed",
+    "simulatorSelectionFixtures": "12 passed",
+    "strictBootParserFixtures": "11 passed",
+    "authoredWhitespace": "passed"
+  },
+  "costScope": "Existing standard hosted runners in verified public repository; no new paid service.",
+  "originalCutoff": "2026-11-19T01:26:12+03:00",
+  "remainingGate": "Exact new candidate must complete all five jobs, all 17 iPhone journeys, 116 Android cases and retained artifact review before merge."
+}

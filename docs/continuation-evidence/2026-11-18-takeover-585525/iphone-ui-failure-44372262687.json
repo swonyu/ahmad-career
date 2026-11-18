@@ -1,0 +1,291 @@
+{
+  "schemaVersion": 1,
+  "reviewedAtUTC": "2026-11-18T19:35:39.522777+00:00",
+  "scope": "Read-only failure and resource-budget assessment. No source edit, native build, simulator operation, dispatch, push, or process kill.",
+  "run": {
+    "id": 44372262687,
+    "jobID": 135041937172,
+    "conclusion": "failure",
+    "otherFourJobs": "success",
+    "event": "pull_request",
+    "prHead": "b78b83b09739fefe69a6c8b72d7d1a60a4feb22a",
+    "expectedCheckout": "29ecd9cbe2bccf694e57bf1df32d706a1f86f321",
+    "actualCheckout": "29ecd9cbe2bccf694e57bf1df32d706a1f86f321",
+    "sourceEquivalence": "Root separately verified the tested merge tree equals PR-head tree; this receipt directly verifies checkout attestation.",
+    "runnerLabel": "macos-26",
+    "observedImage": "macos-26-arm64/20261102.0473.1",
+    "xcode": "26.6",
+    "runtime": "iOS26.5",
+    "model": "iPhone17Pro"
+  },
+  "artifact": {
+    "id": 14464116993,
+    "path": "/workspace/scratch/585525b87de6/iphone-boot-investigation/run-44372262687/iphone-ui-44372262687.zip",
+    "bytes": 49257287,
+    "sha256": "bec131db5d9a8da1a92044afacc41abe6c7f946af27c96b4947cf1675eea2a0e",
+    "digestVerified": true,
+    "members": 173,
+    "retentionDays": 7
+  },
+  "boot": {
+    "passed": true,
+    "selectedUUID": "2E5E72E7-E7BC-4A2B-ABF9-62D3DDC25773",
+    "processResults": {
+      "boot": 0,
+      "log": 0,
+      "inventory": 0
+    },
+    "finalStatus": {
+      "line": 332,
+      "status": 4294967295,
+      "terminal": true,
+      "elapsed": "02:00"
+    },
+    "verifierSHA256": "5c2233107dfcaddd7273846e3d77aca7902976d34ac73bae6eb4a016647102bf",
+    "retainedInputHashesVerified": true
+  },
+  "timeline": {
+    "uiStepStartedAt": "2026-11-18T18:43:09Z",
+    "suiteStartedAt": "2026-11-18T18:48:56.184Z",
+    "preTestBuildAndLaunchSeconds": 347.184,
+    "deadlineErrorAt": "2026-11-18T19:28:22.609267Z",
+    "deadlineError": "The action 'Exercise native phone flows with isolated synthetic data' has timed out after 45 minutes.",
+    "exportErrorAt": "2026-11-18T19:28:28.620353Z",
+    "exportExit": 64,
+    "exportError": "CareerFinderUI.xcresult/Info.plist does not exist; result-bundle reader could not be created.",
+    "artifactFinalizedAt": "2026-11-18T19:28:42.641419Z",
+    "lastRetainedCleanupLogAt": "2026-11-18T19:29:12.500836Z"
+  },
+  "tests": {
+    "expectedMethods": [
+      "testFreshStartAndFiveTabs",
+      "testApplicationDraftSurvivesCancelAndRelaunch",
+      "testLinkedInProfileDraftAndExternalSearchChoice",
+      "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+      "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+      "testProfileReadinessAndSimpleConnectionSetup",
+      "testOpportunityDraftKeepSaveAndRestore",
+      "testOpportunityDiscardRequiresExplicitChoice",
+      "testDiscoverySaveFlowsIntoSavedAndApply",
+      "testSearchEmptyAndFailurePreservesPreviousResults",
+      "testAccessibilityTextKeepsCoreControlsReachable",
+      "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+      "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+      "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+      "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+      "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark"
+    ],
+    "startedCount": 16,
+    "completedCount": 15,
+    "passedCount": 15,
+    "failedCompletedCount": 0,
+    "completed": [
+      {
+        "atUTC": "2026-11-18T18:55:09.5622820Z",
+        "method": "testAccessibilityTextKeepsCoreControlsReachable",
+        "outcome": "passed",
+        "durationSeconds": 373.339,
+        "baselineDurationSeconds": 283.353
+      },
+      {
+        "atUTC": "2026-11-18T18:57:32.3368230Z",
+        "method": "testApplicationDraftSurvivesCancelAndRelaunch",
+        "outcome": "passed",
+        "durationSeconds": 142.769,
+        "baselineDurationSeconds": 104.972
+      },
+      {
+        "atUTC": "2026-11-18T19:01:02.5468440Z",
+        "method": "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+        "outcome": "passed",
+        "durationSeconds": 210.214,
+        "baselineDurationSeconds": 138.914
+      },
+      {
+        "atUTC": "2026-11-18T19:02:29.3310690Z",
+        "method": "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+        "outcome": "passed",
+        "durationSeconds": 86.768,
+        "baselineDurationSeconds": 60.207
+      },
+      {
+        "atUTC": "2026-11-18T19:04:50.1774130Z",
+        "method": "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+        "outcome": "passed",
+        "durationSeconds": 140.875,
+        "baselineDurationSeconds": 108.003
+      },
+      {
+        "atUTC": "2026-11-18T19:05:32.5639710Z",
+        "method": "testDiscoverySaveFlowsIntoSavedAndApply",
+        "outcome": "passed",
+        "durationSeconds": 42.376,
+        "baselineDurationSeconds": 38.78
+      },
+      {
+        "atUTC": "2026-11-18T19:06:18.3010210Z",
+        "method": "testFreshStartAndFiveTabs",
+        "outcome": "passed",
+        "durationSeconds": 45.73,
+        "baselineDurationSeconds": 45.194
+      },
+      {
+        "atUTC": "2026-11-18T19:08:23.3781120Z",
+        "method": "testLinkedInProfileDraftAndExternalSearchChoice",
+        "outcome": "passed",
+        "durationSeconds": 125.09,
+        "baselineDurationSeconds": 96.819
+      },
+      {
+        "atUTC": "2026-11-18T19:08:53.2639650Z",
+        "method": "testOpportunityDiscardRequiresExplicitChoice",
+        "outcome": "passed",
+        "durationSeconds": 29.865,
+        "baselineDurationSeconds": 24.668
+      },
+      {
+        "atUTC": "2026-11-18T19:10:19.0566080Z",
+        "method": "testOpportunityDraftKeepSaveAndRestore",
+        "outcome": "passed",
+        "durationSeconds": 85.806,
+        "baselineDurationSeconds": 64.889
+      },
+      {
+        "atUTC": "2026-11-18T19:14:42.1145490Z",
+        "method": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+        "outcome": "passed",
+        "durationSeconds": 263.062,
+        "baselineDurationSeconds": 187.19
+      },
+      {
+        "atUTC": "2026-11-18T19:18:56.7604330Z",
+        "method": "testProfileReadinessAndSimpleConnectionSetup",
+        "outcome": "passed",
+        "durationSeconds": 254.63,
+        "baselineDurationSeconds": 173.895
+      },
+      {
+        "atUTC": "2026-11-18T19:19:40.0405210Z",
+        "method": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+        "outcome": "passed",
+        "durationSeconds": 43.285,
+        "baselineDurationSeconds": 34.032
+      },
+      {
+        "atUTC": "2026-11-18T19:22:06.3343360Z",
+        "method": "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+        "outcome": "passed",
+        "durationSeconds": 146.302,
+        "baselineDurationSeconds": 124.635
+      },
+      {
+        "atUTC": "2026-11-18T19:25:22.1223210Z",
+        "method": "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+        "outcome": "passed",
+        "durationSeconds": 195.739,
+        "baselineDurationSeconds": 148.253
+      }
+    ],
+    "interruptedMethod": "testSearchEmptyAndFailurePreservesPreviousResults",
+    "interruptedStartedAt": "2026-11-18T19:25:22.131260Z",
+    "interruptedProgress": "The method continued ordinary query editing, keyboard search, error checks, and real scrolling. Published job log stops at t180.24s; uploaded UI log includes a later field existence check at t185.45s; retained staging stdout continues through t198.45s. This is not evidence of a 185-second wait or a hung method.",
+    "unstartedMethods": [
+      "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable"
+    ],
+    "final17TestSummaryPresent": false,
+    "testSucceededMarkerPresent": false,
+    "classification": "Outer combined build/UI step deadline interrupted an active sixteenth journey before the seventeenth began; no completed XCTest method failed."
+  },
+  "comparison": {
+    "baselineRun": 44328888955,
+    "baselineSource": "b6614346cb4f0e72b9bde0e96ab083ea7df72371",
+    "baselineAll17Passed": true,
+    "commonMethodCount": 15,
+    "baselineCommonSeconds": 1633.804,
+    "currentCommonSeconds": 2185.85,
+    "aggregateRatio": 1.3378899794589802,
+    "remainingTwoBaselineSeconds": 346.421,
+    "observedPreTestSeconds": 347.184,
+    "extrapolatedFullCommandBeforeFinalizationSeconds": 2996.5071845741595,
+    "extrapolationLimit": "The scaling is a sizing estimate, not proof that the remaining methods or a future run pass."
+  },
+  "evidenceCompleteness": {
+    "resultBundleFinalized": false,
+    "rootInfoPlistPresent": false,
+    "exportedScreenshotManifestPresent": false,
+    "directPNGDataPayloads": 49,
+    "screenshotAssociation": "Focused PNG payloads matched to Session log attachment records by unique byte counts; no official export manifest was produced.",
+    "focusedVisualReview": "Profile-copy confirmation is visible; Arabic profile labels and saved values are present; Arabic Safari presentation returns to the native large-text connection sheet. The browser screenshot is still loading and does not prove hosted-page contents loaded.",
+    "limit": "Partial raw screenshots and 15 passed methods cannot establish all17 acceptance or a fully exportable result bundle."
+  },
+  "budgetReview": {
+    "recommendation": "Approve bounded budget-only repair for a fresh full run, after current owner/source reconciliation.",
+    "readinessMinutes": 5,
+    "combinedBuildAndUIMinutes": 55,
+    "jobMinutes": 65,
+    "reserveOutsideReadinessAndUIAtCeilingsMinutes": 5,
+    "reason": "The first15 methods took1.338x their passing-baseline time and setup consumed5m47; observed-progress scaling suggests approximately50\u201352minutes for the whole command including finalization.55minutes gives bounded margin;65 total retains5minutes for setup and evidence beyond readiness5 and UI55.",
+    "mustRemainUnchanged": [
+      "All17 method identities and assertions",
+      "Actual xcodebuild command and full-suite selection",
+      "Standard runner/runtime/model selection",
+      "Strict boot parser and5-minute readiness",
+      "Fresh simulator/UUID checks",
+      "Evidence retention and failure semantics"
+    ],
+    "notEstablished": "This does not diagnose the underlying broad slowdown, approve skipping any test, or count this failed run as acceptance."
+  },
+  "inputs": [
+    {
+      "path": "/workspace/scratch/585525b87de6/iphone-boot-investigation/run-44372262687/completed-job.log",
+      "bytes": 868074,
+      "sha256": "f1ffd3ad84e85b48109e4748f75393f07f4a5d350f352ed1db86e0ae2d0e82a5"
+    },
+    {
+      "path": "/workspace/scratch/585525b87de6/iphone-boot-investigation/run-44372262687/artifact/career-iphone-ui.log",
+      "bytes": 587451,
+      "sha256": "f59160fb39377b07aa0c8a64837a0ba6cb6a234f5b299c87ac363e19c41f3e84"
+    },
+    {
+      "path": "/workspace/scratch/585525b87de6/iphone-boot-investigation/run-44372262687/artifact/career-iphone-boot-verification.json",
+      "bytes": 1534,
+      "sha256": "7ffbf4efd8a31bc602d6e9e51de805a4fc2a85c3d2cb6b48e9b93590c9fd7457"
+    },
+    {
+      "path": "/workspace/scratch/585525b87de6/iphone-boot-investigation/run-44372262687/artifact/career-iphone-selection.json",
+      "bytes": 841,
+      "sha256": "df70e14681987bca3a619a6203806284f9de052805a5eb2a5189e0cb0b612eab"
+    },
+    {
+      "path": "/workspace/scratch/585525b87de6/iphone-boot-investigation/run-44372262687/artifact/career-iphone-boot.log",
+      "bytes": 19352,
+      "sha256": "656a5ba7e01e8ca8f0fc79fdb01af7b74a5e8127abb42528a8b1637ecf170a69"
+    },
+    {
+      "path": "/workspace/scratch/585525b87de6/iphone-boot-investigation/run-44372262687/artifact/career-iphone-boot-devices.json",
+      "bytes": 1403,
+      "sha256": "38b3d0e4df8faf325fbeb4fbbeb060d61c6f9d009650ef4b838a8b5f4d394415"
+    },
+    {
+      "path": "/workspace/scratch/585525b87de6/iphone-boot-investigation/run-44372262687/artifact/CareerFinderUI.xcresult/Staging/1_Test/Diagnostics/CareerFinderUITests-EBBEE0E4-711C-4123-9F39-CD2787BE9971-Configuration-Test Scheme Action-Iteration-1/CareerFinderUITests-E53C44F4-49D9-4ECB-B800-AB15F74AE436/Session-CareerFinderUITests-2026-11-18_184807-AOoeif.log",
+      "bytes": 73396402,
+      "sha256": "fc1a63d16fe1d7731ff61deb3b9f376fe4fbeed6568dfeff2e3b22fd08cffc9a"
+    },
+    {
+      "path": "/workspace/scratch/585525b87de6/iphone-boot-investigation/run-44372262687/artifact/CareerFinderUI.xcresult/Staging/1_Test/Diagnostics/CareerFinderUITests-EBBEE0E4-711C-4123-9F39-CD2787BE9971-Configuration-Test Scheme Action-Iteration-1/CareerFinderUITests-E53C44F4-49D9-4ECB-B800-AB15F74AE436/StandardOutputAndStandardError.txt",
+      "bytes": 450120,
+      "sha256": "4c6af1530a3369f3cd64d7c2ebdc37ac1473d29e49f1096d6d137bea95eb13e8"
+    },
+    {
+      "path": "/workspace/scratch/585525b87de6/iphone-boot-investigation/run-44372262687/artifact/CareerFinderUI.xcresult/Staging/1_Test/Diagnostics/CareerFinderUITests-EBBEE0E4-711C-4123-9F39-CD2787BE9971-Configuration-Test Scheme Action-Iteration-1/CareerFinderUITests-E53C44F4-49D9-4ECB-B800-AB15F74AE436/StandardOutputAndStandardError-com.ahmadalayed.career.txt",
+      "bytes": 339298625,
+      "sha256": "c2e60a9f9d12c8f7132a71f21d57275b97cd14ba331405aa94887ec8a3cb40d8"
+    },
+    {
+      "path": "/workspace/scratch/585525b87de6/iphone-boot-investigation/baseline-44328888955-job.log",
+      "bytes": 952538,
+      "sha256": "b92f3e6ad943009df6f6c832c874db9ac3833715c5cfbe157047e47febb550b1"
+    }
+  ]
+}
