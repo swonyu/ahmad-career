@@ -1,0 +1,226 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "/root/publication_review",
+  "reviewedUTC": "2026-11-18 12:47:15 UTC",
+  "scope": "Independent source-level native UI layout, SwiftUI wrapper, task-navigation and English/Arabic wording review. Clipboard/privacy review is separately owned by /root/ci_evidence.",
+  "source": {
+    "head": "b6f499361279a27edec4635735cae97a13c6931b",
+    "parent": "56304712d8b4d37da823973752e80a6649d5b6ff",
+    "worktree": "/Users/saleh/Developer/career-finder-android-action-20261118-ebb3eed5",
+    "cleanWhenSnapshotRead": true,
+    "rootIntegration": "74b8ab0, as reported by /root"
+  },
+  "sourceHashes": {
+    "apple/AhmadCareer/NativeApplicationsViews.swift": "10673021bebb3c2724e613fe400c887ed87fcd079571ffebc2e6ff73557edb3e",
+    "apple/AhmadCareer/NativeDiscoveryViews.swift": "ad2426798b85b84ff692283c24f4ad5e85a7765b80012a653318bdfd92bcc11a",
+    "apple/AhmadCareer/NativeCareerViews.swift": "c090fa4c6c36a7952ee53975136ea56b8819436c80a9dac9daf07c0a0848fb8e",
+    "android/app/src/main/java/com/saleh/careerfinder/CareerTheme.kt": "02e036796d5ed988233884b3f8cf26072b880e8451c1753cfda227954830b69f",
+    "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt": "5462a522d208b8538bbe83eca2a799339312df1212b6d681a12a53403080f5a2",
+    "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "1900d41b1312fc16d740b6d1168a6dd7e0c46dd420364a376c1838f4c8959bca",
+    "localization/native-copy.json": "5fb914e61e6f00312ee1b545559c652bb7d9ef3da1f074c5cef1feb9c148461f",
+    "apple/UITests/CareerFinderUITests.swift": "a0ab66527cfd7e5378523fb8eb9b98222b334c998ae1484a7c178ed7eebea26c",
+    "apple/UITests/CareerFinderStoreCaptureTests.swift": "98dfbf0e4806797cf9d9f657295176bbc1d3ef38529a3cec50a8673e1cb3ce71"
+  },
+  "findings": [
+    {
+      "id": "native-profile-role-chooser-label",
+      "severity": "P3",
+      "evidenceLevel": "Exact source and bilingual catalog",
+      "status": "source_correction_verified_runtime_pending",
+      "evidence": [
+        {
+          "file": "apple/AhmadCareer/NativeDiscoveryViews.swift",
+          "lines": "25–42"
+        },
+        {
+          "file": "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+          "lines": "104–119"
+        },
+        {
+          "file": "localization/native-copy.json",
+          "section": "New role-chooser pair"
+        }
+      ],
+      "original": {
+        "en": "Search a role from your saved profile",
+        "ar": "ابحث عن مسمى وظيفي من ملفك المحفوظ"
+      },
+      "observedBehavior": "The initial control expands job-title choices; choosing one fills only the keyword field. Search is a separate later action.",
+      "issue": "The English wording is awkward and both action labels suggest running a search before the actual search action.",
+      "authorProposal": {
+        "en": "Choose a job title from your profile",
+        "ar": "اختر مسمى وظيفيًا من ملفك"
+      },
+      "rootAcceptedPair": {
+        "en": "Choose a job title from your saved profile",
+        "ar": "اختر مسمى وظيفيًا من ملفك المحفوظ"
+      },
+      "fixOwner": "/root/recovery_review (native), /root (hosted)",
+      "retain": "Keep the explanation that the choice fills only the job title and Search jobs runs the search. No behavior change.",
+      "retest": "Verify both native source callsites, canonical EN/AR pair and generated resource bindings; then inspect the actual chooser at large text in both languages during the owned native verification.",
+      "verifiedSuccessor": "927b7c49f5cd5722e5d8fbdb8e5b5b4a11173101",
+      "verification": "Read-only Git inspection verified both native callsites, canonical English/Arabic pair, both Apple resources, both Android resources and Android lookup IDs. The explanation that selection fills only the title and Search jobs performs the search remains in both source callsites. No native run was performed."
+    }
+  ],
+  "independentCrossReview": [
+    {
+      "reviewer": "/root/ci_evidence",
+      "finding": "iOS record-only guest Apply should consult savedOpportunities, matching Saved and its badge, rather than only model.jobs.",
+      "owner": "/root/recovery_review",
+      "disposition": "Accepted by root; not duplicated in this review's finding count."
+    },
+    {
+      "reviewer": "/root/ci_evidence",
+      "finding": "Android clipboard write failure/confirmation semantics.",
+      "owner": "/root/recovery_review",
+      "disposition": "Separate privacy/failure review; no duplicate source edit or acceptance claim here."
+    }
+  ],
+  "boundedSourceObservations": [
+    {
+      "topic": "Navigation",
+      "evidence": "NativeCareerViews.swift:141–159",
+      "result": "The five tab indices remain Start0, Search1, Apply2, Saved3, Settings4. NativeApplicationsScreen receives the same navigation environment object from the root."
+    },
+    {
+      "topic": "SwiftUI wrapper scope",
+      "evidence": "NativeCareerViews.swift:31–80 and the replacement callsites",
+      "result": "NativeList and NativeForm apply colors through app-owned SwiftUI content and row traits. NativeScrollPalette changes app scroll/navigation/tab appearance only in dark mode. The delta does not modify UIKit appearance proxies or the Safari presenter."
+    },
+    {
+      "topic": "Large-text layout in source",
+      "evidence": "NativeApplicationsViews.swift:200–242,268–282,712–758; NativeDiscoveryViews.swift:24–42",
+      "result": "The sticky primary action keeps the existing accessibility-size vertical layout. New titles/values can wrap vertically; new iPhone actions retain minimum44pt heights. Actual clipping/hittability remains a runtime check."
+    },
+    {
+      "topic": "Android responsive controls",
+      "evidence": "MainActivity.kt:630–643,993–1026; DiscoveryScreen.kt:104–120",
+      "result": "New manual-application controls fill width with48/56dp minimum heights; reusable values and role choices are in vertical containers without new max-line truncation."
+    },
+    {
+      "topic": "Bidirectional content",
+      "evidence": "NativeApplicationsViews.swift:712–753; MainActivity.kt:982–1019",
+      "result": "Email, phone, website and LinkedIn values receive explicit left-to-right presentation; names/cities retain content/app direction. Source strings remain localized. Actual RTL rendering is still unverified."
+    },
+    {
+      "topic": "Plain and precise copy",
+      "evidence": "localization/native-copy.json added/changed entries",
+      "result": "Application receipts, Review application details, Job title or keyword, searchable-field scope, explicit manual employer application and Saved for later wording are concrete and preserve provider/self-reported distinctions. Arabic action wording for removing an applied mark now clearly refers to the local mark."
+    }
+  ],
+  "nominalSourceContrast": {
+    "method": "sRGB relative luminance, (lighter +0.05)/(darker +0.05); opaque source color values only.",
+    "pairs": [
+      {
+        "role": "Dark action text",
+        "foreground": "#151936",
+        "background": "#A5ACFF",
+        "ratio": 8.12
+      },
+      {
+        "role": "Dark accent on normal surface",
+        "foreground": "#A5ACFF",
+        "background": "#191E33",
+        "ratio": 7.8
+      },
+      {
+        "role": "Dark body text",
+        "foreground": "#F3F0E9",
+        "background": "#191E33",
+        "ratio": 14.47
+      },
+      {
+        "role": "Dark muted text",
+        "foreground": "#BBC3DD",
+        "background": "#191E33",
+        "ratio": 9.38
+      },
+      {
+        "role": "Dark muted on elevated surface",
+        "foreground": "#BBC3DD",
+        "background": "#2A3153",
+        "ratio": 7.2
+      },
+      {
+        "role": "Android outline on normal surface",
+        "foreground": "#8995B8",
+        "background": "#191E33",
+        "ratio": 5.53
+      },
+      {
+        "role": "Android outline on elevated surface",
+        "foreground": "#8995B8",
+        "background": "#2A3153",
+        "ratio": 4.24
+      },
+      {
+        "role": "Dark error text",
+        "foreground": "#FFB5C2",
+        "background": "#191E33",
+        "ratio": 9.92
+      },
+      {
+        "role": "Light action text",
+        "foreground": "#FFFFFF",
+        "background": "#5B50CE",
+        "ratio": 6.03
+      }
+    ],
+    "limitation": "These calculations do not measure composited, disabled, focused, system-material or rendered native pixels, and are not a blanket accessibility pass."
+  },
+  "remainingVerification": [
+    "Native compile and owned focused journeys on a simulator with positively verified boot evidence.",
+    "Actual dark and light app screens, English and Arabic, including largest text and new chooser/contact rows.",
+    "Guest Apply with no jobs, saved jobs and a retained record without a bookmark must reach the appropriate real destination.",
+    "The selected job title must fill only its field; other chosen filters remain unchanged and an explicit search is still required.",
+    "The three original failed journeys remain failed until the actual new run demonstrates their required outcomes."
+  ],
+  "limits": {
+    "sourceEdits": false,
+    "builds": false,
+    "nativeExecution": false,
+    "browserActions": false,
+    "testsRun": false,
+    "paidTools": false,
+    "publication": false
+  },
+  "overallDisposition": "The b6 source-level UI/wrapper/wording review is complete. Its one copy correction is verified in successor927b7c49 with matching generated resources; no further supported wrapper/layout defect was found. Native rendered and journey acceptance remains pending. The previously called designContract tab array has been corrected to observedImplementation after documentary evidence confirmed platform-specific navigation; no exact shared tab-label requirement was recovered.",
+  "observedImplementation": {
+    "tabs": [
+      "Start",
+      "Search",
+      "Apply",
+      "Saved",
+      "Settings"
+    ],
+    "tagOrder": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "audience": "Worldwide job seekers; English and Arabic",
+    "latestPalette": "Midnight navy with periwinkle/lavender accents; this supersedes the previous warm palette, per root's current user-instruction recovery.",
+    "freeCostConstraintPreserved": true,
+    "qualification": "These iPhone tab labels are observed implementation, not a recovered explicit cross-platform label contract. See the navigation-scope receipt."
+  },
+  "reviewUpdatedUTC": "2026-11-18T12:53:05.093902+00:00",
+  "successorReview": {
+    "head": "927b7c49f5cd5722e5d8fbdb8e5b5b4a11173101",
+    "cleanWhenRead": true,
+    "scope": "Role-chooser wording correction and generated binding inspection; UI review also confirms retained-record routing now uses model.savedOpportunities. Clipboard behavior remains independently reviewed by /root/ci_evidence.",
+    "sourceHashes": {
+      "apple/AhmadCareer/NativeDiscoveryViews.swift": "1519520588680d784fc13a4bb9fdadd454806371d0f4f39c878d1563af652116",
+      "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt": "a02d6f0dfc1a2d03583cddef56a2e1c70f78929188635c974d5487f4ce4ed237",
+      "localization/native-copy.json": "7e1a3460bcba2a74d1a1ecda0b4685e32efbc8f5eb3223b74b2a528242269669",
+      "apple/AhmadCareer/NativeApplicationsViews.swift": "1790f8e0d9eefac7f58059d8a487edd0309442c2a34fa818cd416c76077015cd",
+      "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "16aa3856a3dd2e39574948570765fcaf52bc697c74e92168030bd226d9a2cf0d",
+      "apple/AhmadCareer/en.lproj/Localizable.strings": "52813283bb3d5d42d9a9408c6377e602806a15e4988d38388f0fe231c627cdbd",
+      "apple/AhmadCareer/ar.lproj/Localizable.strings": "88babac93bb211c5121a5b44029a4c42828b521e738ea01cca06a13b8f2757fc",
+      "android/app/src/main/res/values/career_copy.xml": "b62ff474fb5b9c123c4e2af70fe426fa90717142cdcab4f222c1b41ef70c28c8",
+      "android/app/src/main/res/values-ar/career_copy.xml": "110ff3aaef700a4276d4fc570e438ef42f44b577cc9b6e1a1ee69cd2008ae3b2",
+      "android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt": "d5d312f277752d8530ff70ff4813653ca5159b18308104d46c3d328e39286cd0"
+    }
+  }
+}

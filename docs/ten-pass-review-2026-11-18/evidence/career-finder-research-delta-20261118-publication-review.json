@@ -1,0 +1,689 @@
+{
+  "schemaVersion": 1,
+  "title": "Career Finder: targeted audience and competitor research delta",
+  "recordedUTC": "2026-11-18 11:50:50 UTC",
+  "author": "/root/publication_review",
+  "purpose": "Inform the newly authorized ten UI and English/Arabic wording critique and improvement passes, without counting desk research as completed product passes.",
+  "productPassesCompletedByThisResearch": 0,
+  "status": "Research complete; proposed product review protocols require owner execution and evidence.",
+  "boundaries": {
+    "freeResearchOnly": true,
+    "toolsUsed": "Built-in public web search/retrieval and read-only existing project inspection.",
+    "noPaidParallelResearch": true,
+    "noCompetitorAccountOrApplication": true,
+    "noSourceEditsBuildsNativeRunsOrDeployment": true,
+    "noAssetsOrCompetitorCopyReused": true,
+    "navigation": [
+      "Search",
+      "Saved",
+      "Apply",
+      "Profile",
+      "Settings"
+    ],
+    "cost": "Keep Career Finder core use free; recommendations require no paid provider, purchase, inbox connection or new cloud dependency.",
+    "audience": "Worldwide English/Arabic job seekers; regional sources do not establish universal job coverage or eligibility."
+  },
+  "recoveredResearch": [
+    {
+      "path": "/Users/saleh/Developer/career-finder-managed-preview-20261118-ebb3eed5/docs/Product-Review-Research-2026-11-17.md",
+      "sha256": "26e347e43498e52e629b152e277454f4b44b47a4ef19c0167b0c4cb7f1f985b5",
+      "bytes": 28391,
+      "reviewedSections": "Method, competitor capability matrix, selected qualitative reports, recurring needs and bounded improvement recommendations.",
+      "preservation": "Existing 30 primary sources and 24 selected qualitative reviews remain historical research; not re-counted as new research or new product acceptance."
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-managed-preview-20261118-ebb3eed5/docs/continuation-evidence/2026-11-17-account-competitors-4b851/competitor-capability-and-quality-review-20261117.md",
+      "sha256": "7174a8b02afadfd3a9eb238497cf37cda310504d3db0aa0a3cd7aef3b0a31dfb",
+      "bytes": 38370,
+      "reviewedSections": "Decision, method, capability matrix, current source boundaries, acceptance recommendations, ownership and source register.",
+      "preservation": "Notes, stages, saved-note search, CSV and ICS must not be proposed as absent. Hosted CSV/ICS do not establish native parity or consumer acceptance."
+    }
+  ],
+  "currentBaseline": {
+    "candidate": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+    "siteCommit": "22b0f6911fba9c40701a8675fa84b671edfdab31",
+    "hostedTree": "4f05b80e9624b1958dacb49ba0b45b8bb69a6a54",
+    "sourceInspected": [
+      {
+        "path": "hosted/app/phone/PhoneApp.tsx",
+        "sha256": "c104af3be9a734953bc80cf48a4021e43569dc091b20442002258c06c5bd12ed"
+      },
+      {
+        "path": "hosted/app/phone/components.tsx",
+        "sha256": "c18753ee7c8b342831864cecc2694708f09fee6019a76c530b2c2ae743446424"
+      },
+      {
+        "path": "hosted/app/phone/model.ts",
+        "sha256": "955d5afcede6b8f7eb901394f9ae3e00d1bbffa57bf1e457c5436f23541577bf"
+      }
+    ],
+    "observations": [
+      {
+        "id": "CF1",
+        "evidenceType": "source_inspected",
+        "observation": "Hosted Apply chooses the sign-in card for guests before reaching its manual employer-site fallback; the fallback is inside the existing-workspace branch.",
+        "location": "PhoneApp.tsx 808–809",
+        "qualification": "Guest job details already expose the employer-page action and explain that opening does not submit (848). The gap is discoverability and the Apply path, not the complete absence of guest external application.",
+        "nativeStatus": "No fresh iOS/Android parity claim from this research. Recovery-review owner is independently auditing native behavior."
+      },
+      {
+        "id": "CF2",
+        "evidenceType": "source_inspected",
+        "observation": "Selected employer-board names are inside collapsed Search options; its summary shows only a board count. Source-error rows later show names.",
+        "location": "PhoneApp.tsx 765–767, 782",
+        "qualification": "Source/freshness data already exists. Improve visibility and tie displayed names to the results actually shown; do not add a second provenance system.",
+        "nativeStatus": "Requires current per-client owner inspection."
+      },
+      {
+        "id": "CF3",
+        "evidenceType": "source_inspected",
+        "observation": "Hosted search builds its request from explicit search filters and sources. Profile target roles, countries, work modes and experience are collected separately and are not consumed by searchJobs.",
+        "location": "PhoneApp.tsx 324–331; components.tsx 89–93",
+        "qualification": "A profile preference is not currently a ranking signal or eligibility decision. A future reuse action must select compatible search values explicitly.",
+        "nativeStatus": "Retained native Saudi relevance surfaces are distinct from newer public discovery; do not generalize this hosted finding to all native search."
+      },
+      {
+        "id": "CF4",
+        "evidenceType": "source_inspected",
+        "observation": "Hosted Profile already displays the active PDF filename and size, with Change PDF/Remove controls. Provider review already shows the exact selected CV. The model binds review to document name, size and SHA.",
+        "location": "components.tsx 78–80, 136; model.ts 157",
+        "qualification": "The real limitation is one active document and limited job-specific document context, not a missing filename feature. Do not duplicate existing controls or imply a per-job document library.",
+        "nativeStatus": "Per-job native document/version behavior remains owner-audit work."
+      }
+    ]
+  },
+  "evidenceRules": [
+    "Official help and store descriptions establish provider-documented capabilities, not measured reliability or successful hands-on execution.",
+    "Vendor survey findings are self-reported and commercially published. Sampling, geography and fieldwork dates constrain interpretation.",
+    "Our proposals and ranking are product inferences, not causal predictions of more interviews or employment.",
+    "Absence from a selected page is not proof that a competitor lacks a feature.",
+    "No star-rating league table, scraped private data, unsupported universal-superiority claim or copied visual asset is used.",
+    "A source inspection does not establish deployed, native runtime, physical-device or assistive-technology acceptance."
+  ],
+  "sources": [
+    {
+      "id": "S01",
+      "kind": "primary_vendor_research_and_product_announcement",
+      "publisher": "LinkedIn",
+      "title": "LinkedIn Research: Nearly 80% of people feel unprepared to find a job in 2026",
+      "url": "https://news.linkedin.com/en-us/2026/LinkedIn-Research-Talent-2026",
+      "refs": [
+        "turn856789235view0",
+        "turn307077190view5",
+        "turn728641147view1"
+      ],
+      "published": "2026-01-07",
+      "accessed": "2026-11-18",
+      "facts": "The release reports 65% finding job search more challenging and identifies uncertainty about fit/skills among concerns. It describes natural-language search and job-match assistance.",
+      "methodology": {
+        "provider": "Censuswide",
+        "consumerN": 19113,
+        "consumerFieldwork": "2025-11-13 through 2025-11-28",
+        "hrN": 6554,
+        "hrFieldwork": "2025-11-10 through 2025-11-27",
+        "geography": "Listed markets include the UK, US, several European markets, Brazil, India, Singapore, Australia, Saudi Arabia and UAE."
+      },
+      "limitations": "Consumer and HR samples are distinct. Pooled findings are not Saudi/UAE estimates; this page supplies no usable country split or complete questionnaire. January product rollout details do not prove November language/entitlement scope. Vendor outcome statistics are not adopted as causal evidence."
+    },
+    {
+      "id": "S02",
+      "kind": "primary_vendor_commissioned_survey",
+      "publisher": "Indeed",
+      "title": "What 1,500 Workers Revealed About Job Search Burnout",
+      "url": "https://www.indeed.com/news/releases/state-of-the-job-seeker-survey?co=US",
+      "refs": [
+        "turn856789235view1",
+        "turn323458897view1"
+      ],
+      "published": "2026-09-29",
+      "accessed": "2026-11-18",
+      "facts": "Reported 46% abandoning an application because of length or tedium and 47% pausing their search because of overwhelm.",
+      "methodology": {
+        "provider": "YouGov on behalf of Indeed",
+        "sampleN": 1501,
+        "mode": "Online",
+        "fieldwork": "2026-08-06 through 2026-08-15",
+        "population": "US full- or part-time workers or temporarily unemployed people open to a new US job",
+        "weighting": "Weighted to the US working population"
+      },
+      "limitations": "US-only, self-reported, active and passive search population. No basis for applying the percentages worldwide or to Gulf job seekers. Does not prove a specific interface change improves hiring outcomes."
+    },
+    {
+      "id": "S03",
+      "kind": "primary_help",
+      "publisher": "Indeed",
+      "title": "My Jobs: Managing Applied Jobs",
+      "url": "https://www.indeed.com/help/job-seekers/articles/4412589551757-my-jobs-managing-applied-jobs?co=US&hl=en",
+      "refs": [
+        "turn323458897view2"
+      ],
+      "published": null,
+      "accessed": "2026-11-18",
+      "facts": "The help distinguishes user-edited stages from employer/Indeed updates. External-site applications may lack these updates; application details and withdrawal are restricted to jobs posted directly on Indeed.",
+      "limitations": "Product help documents scope, not a reliability benchmark. Do not infer employer rejection from silence or treat a personal status as employer confirmation."
+    },
+    {
+      "id": "S04",
+      "kind": "primary_product",
+      "publisher": "Teal",
+      "title": "Job Application Tracker",
+      "url": "https://www.tealhq.com/tools/job-tracker",
+      "refs": [
+        "turn856789235view2"
+      ],
+      "published": null,
+      "accessed": "2026-11-18",
+      "facts": "Documents job bookmarking, stages, notes, contacts, checklists and a free unlimited-job tracker; advanced analysis and broader writing tools are premium.",
+      "limitations": "Vendor-described workflow. No independent causal evidence for faster hiring. Existing Career Finder tracking and export work should be reused, not rebuilt."
+    },
+    {
+      "id": "S05",
+      "kind": "primary_help",
+      "publisher": "Huntr",
+      "title": "The Huntr Chrome Extension",
+      "url": "https://help.huntr.co/en/articles/9859408-the-huntr-chrome-extension",
+      "refs": [
+        "turn856789235view3"
+      ],
+      "published": "2025-11-12",
+      "accessed": "2026-11-18",
+      "facts": "Supported pages can populate saved-job fields and application forms. Unsupported saved-job pages remain manually editable. Autofill needs a visible application form and may not work where a site disallows the extension.",
+      "limitations": "This source does not establish pricing, every supported page or mobile parity. Support constraints make manual correction/fallback a core requirement."
+    },
+    {
+      "id": "S06",
+      "kind": "primary_help",
+      "publisher": "Simplify",
+      "title": "Use Copilot to autofill applications",
+      "url": "https://help.simplify.jobs/en/help/articles/2415391-use-copilot-to-autofill-applications",
+      "refs": [
+        "turn323458897view3"
+      ],
+      "published": "Page showed a relative update approximately 25 days earlier; no exact date inferred",
+      "accessed": "2026-11-18",
+      "facts": "Copilot fills supported fields; the user reviews and submits. Saving or filling is separate from employer confirmation. The guide provides manual copying/tracking fallback, document selection and warns that its resume feedback is not an employer screening result.",
+      "limitations": "Copilot guidance must not be generalized to the separate Autopilot service. Per-form support varies; this is not a claim that all competitors require manual final submission."
+    },
+    {
+      "id": "S07",
+      "kind": "publisher_store_listing",
+      "publisher": "Bayt.com",
+      "title": "Bayt.com Jobs: MENA Job Search",
+      "url": "https://apps.apple.com/sa/app/bayt-com-jobs-mena-job-search/id510893233",
+      "refs": [
+        "turn728641147view0"
+      ],
+      "published": null,
+      "accessed": "2026-11-18",
+      "facts": "Advertises MENA discovery with industry, salary, location and experience filters. States CV creation, search and applying are free, with optional premium features.",
+      "limitations": "Marketing claims of verified jobs, scale or superiority are not independent evidence. Store listing was used because the older mobile-promo page redirects inconsistently. Prior recovered research already documents bilingual support."
+    },
+    {
+      "id": "S08",
+      "kind": "publisher_store_listing",
+      "publisher": "GulfTalent",
+      "title": "GulfTalent - Job Search App",
+      "url": "https://play.google.com/store/apps/details?hl=en&id=com.gulftalent.android.mobile",
+      "refs": [
+        "turn307077190view0"
+      ],
+      "published": "Listing updated 2026-11-05",
+      "accessed": "2026-11-18",
+      "facts": "Describes title/location search, role/industry/seniority filters, shortlists, alerts, application tracking and employer activity for Gulf/Middle East roles.",
+      "limitations": "Vendor description, not tested experience. Regional inventory is not worldwide coverage; Arabic UI and exact free/paid entitlement were not established by this selected page."
+    },
+    {
+      "id": "S09",
+      "kind": "publisher_store_listing",
+      "publisher": "Info Edge / Naukrigulf",
+      "title": "Naukrigulf Job Search App",
+      "url": "https://apps.apple.com/sa/app/naukrigulf-job-search-app/id724241430",
+      "refs": [
+        "turn307077190view1",
+        "turn560254082view2",
+        "turn560254082view4"
+      ],
+      "published": null,
+      "accessed": "2026-11-18",
+      "facts": "Lists English and Arabic, Gulf location/industry/experience/freshness filters, saved jobs and recruiter-related application indicators. It distinguishes the free app from paid career services.",
+      "limitations": "Publisher metadata does not establish localization quality, employer response rates or accessibility. Missing declared accessibility features is not proof of inaccessibility."
+    },
+    {
+      "id": "S10",
+      "kind": "official_public_service",
+      "publisher": "European Labour Authority / EURES",
+      "title": "EURES services",
+      "url": "https://eures.europa.eu/eures-services_en",
+      "refs": [
+        "turn307077190view2"
+      ],
+      "published": null,
+      "accessed": "2026-11-18",
+      "facts": "Offers European job mobility information and support, including living/working conditions and advisers. It directs CV creation to Europass rather than claiming its own CV builder.",
+      "limitations": "Useful regional alternative, not a worldwide board or an immigration eligibility decision. Linking to an official destination is not a Career Finder integration."
+    },
+    {
+      "id": "S11",
+      "kind": "primary_accessibility_guidance",
+      "publisher": "W3C WAI",
+      "title": "Writing for Web Accessibility",
+      "url": "https://www.w3.org/WAI/tips/writing/",
+      "refs": [
+        "turn307077190view3"
+      ],
+      "published": null,
+      "accessed": "2026-11-18",
+      "facts": "Recommends meaningful headings and links, clear input/error instructions, concise sentences and ordinary language.",
+      "limitations": "Guidance is not a conformance audit. Apply natural English and Arabic independently; removing hype must preserve precise permissions, data scope and recovery instructions."
+    },
+    {
+      "id": "S12",
+      "kind": "primary_standard",
+      "publisher": "W3C",
+      "title": "Web Content Accessibility Guidelines 2.2",
+      "url": "https://www.w3.org/TR/WCAG22/",
+      "refs": [
+        "turn560254082view0",
+        "turn573585460view1",
+        "turn573585460view2",
+        "turn573585460view3",
+        "turn728641147view2"
+      ],
+      "published": "2024-12-12",
+      "accessed": "2026-11-18",
+      "facts": "Relevant web criteria include keyboard operation, reflow, programmatic language, visible/unobscured focus, minimum pointer targets and avoiding redundant entry. AA target size is 24 CSS pixels with specified exceptions; reflow addresses 320 CSS-pixel width.",
+      "limitations": "Apply the actual criterion and exceptions. Web checks are not a claim of native accessibility conformance, and reading the standard is not an executed accessibility pass."
+    }
+  ],
+  "audienceSynthesis": [
+    {
+      "need": "Reduce avoidable effort before an applicant reaches the employer form.",
+      "basis": [
+        "S02",
+        "S12"
+      ],
+      "inference": "Make guest manual application and retained drafts easy to find; do not require an account solely to discover an already available external route."
+    },
+    {
+      "need": "Understand why results are relevant and what was actually searched.",
+      "basis": [
+        "S01",
+        "S07",
+        "S08",
+        "S09"
+      ],
+      "inference": "Visible sources and explicit filter reuse are more credible immediate improvements than a decorative match percentage."
+    },
+    {
+      "need": "Know whether an application was merely prepared, personally recorded or received by an employer.",
+      "basis": [
+        "S03",
+        "S06"
+      ],
+      "inference": "Retain evidence-specific status language and reachable manual records; a successful link opening must not become a submitted state."
+    },
+    {
+      "need": "Move between regions and languages without false eligibility assumptions.",
+      "basis": [
+        "S01",
+        "S09",
+        "S10"
+      ],
+      "inference": "Keep search location, interface language, remote restrictions and work authorization separate. Gulf support is not synonymous with worldwide inventory."
+    }
+  ],
+  "comparisonMatrix": [
+    {
+      "service": "LinkedIn",
+      "documentedLesson": "Role exploration and fit explanations address uncertainty.",
+      "materialBoundary": "January announcement and vendor evidence; current rollout must not be inferred.",
+      "careerFinderDelta": "Use inspectable search inputs and job requirements. Do not imply profile matching that is not performed.",
+      "sources": [
+        "S01"
+      ],
+      "baselineAlreadyCovered": "Tracker/network context"
+    },
+    {
+      "service": "Indeed",
+      "documentedLesson": "Status comes from different actors and external applications can lack feedback.",
+      "materialBoundary": "Direct-posting and client-specific capabilities.",
+      "careerFinderDelta": "Make guest handoff visible while preserving the distinction between own record and employer evidence.",
+      "sources": [
+        "S02",
+        "S03"
+      ],
+      "baselineAlreadyCovered": "Saved/Applied organization and history limits"
+    },
+    {
+      "service": "Teal",
+      "documentedLesson": "A job-centered tracker combines notes, stages and relevant documents.",
+      "materialBoundary": "Broader assistance may be premium.",
+      "careerFinderDelta": "Reuse existing Saved, notes, dates and exports; prioritize clearer context over a new dashboard.",
+      "sources": [
+        "S04"
+      ],
+      "baselineAlreadyCovered": "Tracker, report export, per-job documents"
+    },
+    {
+      "service": "Huntr",
+      "documentedLesson": "Unsupported extraction/form pages still need editable fallback.",
+      "materialBoundary": "Extension compatibility is per-page.",
+      "careerFinderDelta": "Keep manual preparation and external employer routes fully usable when automation is unavailable.",
+      "sources": [
+        "S05"
+      ],
+      "baselineAlreadyCovered": "Packets and free-tier limits"
+    },
+    {
+      "service": "Simplify",
+      "documentedLesson": "Filled fields and saved records are distinct from employer submission confirmation.",
+      "materialBoundary": "Copilot differs from separate Autopilot; form coverage varies.",
+      "careerFinderDelta": "Preserve the confirmation contract and document identity; do not market future integration as active.",
+      "sources": [
+        "S06"
+      ],
+      "baselineAlreadyCovered": "Mobile Safari, tracker, paid/autopilot boundaries"
+    },
+    {
+      "service": "Bayt",
+      "documentedLesson": "Regional search exposes location, experience and salary constraints.",
+      "materialBoundary": "Publisher claims do not establish perfect relevance or verified inventory.",
+      "careerFinderDelta": "A stored seniority preference must not suggest it filters results when it does not.",
+      "sources": [
+        "S07"
+      ],
+      "baselineAlreadyCovered": "EN/AR support, candidate tiers, qualitative review scenarios"
+    },
+    {
+      "service": "GulfTalent",
+      "documentedLesson": "Role, industry and seniority distinctions matter alongside city.",
+      "materialBoundary": "Middle East focus; selected source does not establish Arabic UI.",
+      "careerFinderDelta": "Use explicit known fields and honest unknowns; no automatic Gulf eligibility inference.",
+      "sources": [
+        "S08"
+      ],
+      "baselineAlreadyCovered": "New comparison in this delta"
+    },
+    {
+      "service": "Naukrigulf",
+      "documentedLesson": "EN/AR and experience/freshness filtering are regional expectations.",
+      "materialBoundary": "Listing languages are not evidence of task-level quality.",
+      "careerFinderDelta": "Test actual Arabic input, return flows and stale-data wording; localization alone is not differentiation.",
+      "sources": [
+        "S09"
+      ],
+      "baselineAlreadyCovered": "Gulf inventory, recruiter signals and paid services"
+    },
+    {
+      "service": "EURES / Europass",
+      "documentedLesson": "Job discovery benefits from links to official mobility and document resources.",
+      "materialBoundary": "European scope; no visa/work-permission determination.",
+      "careerFinderDelta": "Contextual official outbound resources may help selected regions without adding a new tab or claiming integration.",
+      "sources": [
+        "S10"
+      ],
+      "baselineAlreadyCovered": "New official alternative in this delta"
+    }
+  ],
+  "rankedOpportunities": [
+    {
+      "rank": 1,
+      "priority": "P0 usability",
+      "title": "Expose the existing manual route in guest Apply",
+      "evidence": [
+        "CF1",
+        "S02",
+        "S03",
+        "S06"
+      ],
+      "findingStatus": "Validated hosted source structure; root also reported browser observation.",
+      "ui": "Place employer-site/manual preparation guidance before the guest/account branch. Offer Choose a saved job, or Search jobs when none exist. Keep optional online-account functions separate and precise.",
+      "copy": {
+        "enHeading": "Apply on the employer’s website",
+        "arHeading": "التقديم عبر موقع جهة العمل",
+        "enAction": "Choose a saved job",
+        "arAction": "اختر وظيفة محفوظة",
+        "enBody": "Open a saved job, complete the employer’s form, then update your application record.",
+        "arBody": "افتح وظيفة محفوظة، وأكمل الطلب على موقع جهة العمل، ثم حدّث سجل طلبك."
+      },
+      "constraints": "Do not remove auth checks from private/provider operations, bypass locked-account quarantine, imply employer sites never need accounts, or mark link-opening as applied.",
+      "acceptance": "Guest with zero and nonzero jobs reaches the external-route guidance in both languages; returning preserves the job and record; native owners verify their own equivalent route."
+    },
+    {
+      "rank": 2,
+      "priority": "P1 clarity",
+      "title": "Show the boards behind the current search",
+      "evidence": [
+        "CF2",
+        "S01",
+        "S08",
+        "S09"
+      ],
+      "findingStatus": "Validated hosted visibility gap; source and freshness values already exist.",
+      "ui": "Show a compact list of selected board names outside the collapsed options. After a search, bind source names and checked time to returned searchPage/actual searched filters, not unsubmitted edits.",
+      "copy": {
+        "enLabel": "Search sources",
+        "arLabel": "مصادر البحث",
+        "enScope": "Results from the selected employer boards.",
+        "arScope": "نتائج من صفحات التوظيف المحددة.",
+        "enFreshness": "Last checked",
+        "arFreshness": "آخر تحقق"
+      },
+      "constraints": "Do not relabel checked time as posting date; do not imply worldwide exhaustive coverage or add a second source-status system.",
+      "acceptance": "A person can name which boards produced results without expanding options. Changing options before resubmitting cannot relabel existing results. Partial/stale/failed boards remain distinguishable."
+    },
+    {
+      "rank": 3,
+      "priority": "P1 relevance and honesty",
+      "title": "Make profile preference use explicit and compatible with search",
+      "evidence": [
+        "CF3",
+        "S01",
+        "S07",
+        "S08"
+      ],
+      "findingStatus": "Validated hosted preferences are not consumed by search.",
+      "ui": "At minimum state their current purpose plainly. If adding reuse, offer an explicit action that lets the person choose one target role and one target location compatible with existing filters, with visible editable resulting values.",
+      "copy": {
+        "enAction": "Use profile preferences",
+        "arAction": "استخدم تفضيلات ملفك",
+        "enLimitIfUnchanged": "These preferences are saved in your profile. They do not change search results.",
+        "arLimitIfUnchanged": "تُحفظ هذه التفضيلات في ملفك، ولا تغيّر نتائج البحث."
+      },
+      "constraints": "Do not concatenate all target roles/countries into the existing keyword query. Do not turn mixed remote/hybrid choices into remote-only. Experience level must not appear applied unless the data/filter actually supports it. Do not silently overwrite an explicit search.",
+      "acceptance": "Capture request parameters and visible filters for one-role, multiple-role, mixed-mode, no-preference and edited-search cases. Empty/unknown values remain understandable. No CV payload is sent for discovery."
+    },
+    {
+      "rank": 4,
+      "priority": "P1 precision; larger capability deferred",
+      "title": "Clarify the one-active-CV boundary at the point it matters",
+      "evidence": [
+        "CF4",
+        "S04",
+        "S06"
+      ],
+      "findingStatus": "Existing filename/change/review UI already implemented; per-job document management is the remaining capability distinction.",
+      "ui": "Reuse existing Profile filename/size/change controls and exact review document summary. Add context only where the external Apply journey otherwise makes the chosen document unclear.",
+      "copy": {
+        "enLabel": "Current CV",
+        "arLabel": "السيرة الذاتية الحالية",
+        "enHelper": "To use another CV, change the PDF in Profile before preparing an application.",
+        "arHelper": "لاستخدام سيرة ذاتية أخرى، غيّر ملف PDF في ملفك الشخصي قبل إعداد الطلب."
+      },
+      "constraints": "Do not add a decorative version picker, imply per-job storage, overwrite historical receipt identity, or require full multi-document/AI authoring work for this immediate correction.",
+      "acceptance": "Changing a CV invalidates stale prepared review as already required; filename and selected document agree. Test cancel/replacement/return without losing the previous valid file."
+    },
+    {
+      "rank": 5,
+      "priority": "P1 quality",
+      "title": "Use the existing workflow to remove uncertainty and awkward language",
+      "evidence": [
+        "S03",
+        "S06",
+        "S11",
+        "S12"
+      ],
+      "findingStatus": "Review opportunity, not a newly proven product defect.",
+      "ui": "Review current Saved stages, notes, follow-up, exports and recovery in context. Retain one obvious next action and contextual secondary controls inside the current five tabs.",
+      "copy": {
+        "enManualStatus": "Marked as applied by you",
+        "arManualStatus": "سجّلت أنك قدّمت الطلب",
+        "enUnknown": "Submission not confirmed",
+        "arUnknown": "لم يتأكد إرسال الطلب"
+      },
+      "constraints": "Examples are proposals; reuse existing accurate localized strings where already present. Preserve no-replay, account boundaries, privacy scope, provider-disabled messages and factual uncertainty.",
+      "acceptance": "A reviewer can distinguish personal tracking, a provider receipt, an uncertain result and a stopped unsent item, in English and Arabic, without reading implementation jargon."
+    }
+  ],
+  "tenPassProtocols": [
+    {
+      "pass": 1,
+      "title": "First-use guest journey",
+      "status": "proposed_not_executed",
+      "uiTask": "Start signed out; search, save a role, enter Apply, reach the employer route, then return.",
+      "wordingTask": "Check both languages for a clear next action, optional account purpose and accurate external-site explanation.",
+      "evidence": [
+        "CF1",
+        "S02",
+        "S06"
+      ],
+      "requiredArtifact": "Commit-bound before/after screenshots plus actual route/state observations for guest zero-job and saved-job states.",
+      "completionRule": "A heading or source diff alone is insufficient. Record the observed UI problem, correction or justified no-change decision, and actual recheck."
+    },
+    {
+      "pass": 2,
+      "title": "Search coverage and source visibility",
+      "status": "proposed_not_executed",
+      "uiTask": "Inspect default sources, change the selected boards, search, then change selection without resubmitting.",
+      "wordingTask": "Distinguish selected sources, results already shown, limited coverage and checked time in EN/AR.",
+      "evidence": [
+        "CF2",
+        "S08",
+        "S09"
+      ],
+      "requiredArtifact": "Source-state captures and request/result binding; show that labels cannot describe unsubmitted filters."
+    },
+    {
+      "pass": 3,
+      "title": "Preferences and explicit intent",
+      "status": "proposed_not_executed",
+      "uiTask": "Use one/multiple target roles and countries, mixed work modes and an existing manual search.",
+      "wordingTask": "Verify the exact meaning of saved preferences versus applied filters; no implied personalized ranking.",
+      "evidence": [
+        "CF3",
+        "S01",
+        "S07"
+      ],
+      "requiredArtifact": "Actual controls and request parameters, with privacy-safe synthetic EN/AR values."
+    },
+    {
+      "pass": 4,
+      "title": "Result relevance and regional unknowns",
+      "status": "proposed_not_executed",
+      "uiTask": "Review a junior role, senior role, remote job with location restrictions, missing salary and unknown location.",
+      "wordingTask": "Separate known source fields, missing information and eligibility uncertainty; never substitute optimism for data.",
+      "evidence": [
+        "S01",
+        "S07",
+        "S08",
+        "S09",
+        "S10"
+      ],
+      "requiredArtifact": "Matched result cards/details and evidence for each displayed field. A geographic label must not imply work permission."
+    },
+    {
+      "pass": 5,
+      "title": "Saved context and return continuity",
+      "status": "proposed_not_executed",
+      "uiTask": "Use existing notes/stages/search, open an employer page, return, and find the same saved role.",
+      "wordingTask": "Check Save, bookmark removal, personal stage and follow-up labels in both languages without adding new tracker terminology.",
+      "evidence": [
+        "S03",
+        "S04",
+        "S05"
+      ],
+      "requiredArtifact": "Actual state continuity and contextual UI captures; reuse existing notes/CSV/ICS functionality rather than count it as new."
+    },
+    {
+      "pass": 6,
+      "title": "Document choice and application preparation",
+      "status": "proposed_not_executed",
+      "uiTask": "Choose/replace/cancel a PDF, inspect the existing filename and prepared document summary, then return from the external route.",
+      "wordingTask": "Make the current CV and any replacement effect clear; avoid suggesting nonexistent per-job versions or automatic extraction.",
+      "evidence": [
+        "CF4",
+        "S06"
+      ],
+      "requiredArtifact": "Document identity and unchanged last-valid-file checks with synthetic PDFs; platform and runtime recorded separately."
+    },
+    {
+      "pass": 7,
+      "title": "Application truth and manual progress",
+      "status": "proposed_not_executed",
+      "uiTask": "Compare manual applied record, confirmed provider receipt, uncertain result and stopped-unsent work.",
+      "wordingTask": "Review every status, action and sentence for who supplied the information and what has actually happened.",
+      "evidence": [
+        "S03",
+        "S06"
+      ],
+      "requiredArtifact": "Observed states and preserved assertions. Opening or filling must never create a submission claim."
+    },
+    {
+      "pass": 8,
+      "title": "Interruption, partial data and recovery",
+      "status": "proposed_not_executed",
+      "uiTask": "Exercise existing source failure, empty result, stale cache, account lock and interrupted draft recovery states.",
+      "wordingTask": "State the problem, what remains safe and the next valid action plainly in both languages; keep necessary boundary details.",
+      "evidence": [
+        "S05",
+        "S11"
+      ],
+      "requiredArtifact": "Specific current failure-state evidence and recheck after any fix; no generic 'works offline' or security claim."
+    },
+    {
+      "pass": 9,
+      "title": "Natural Arabic and English in real layouts",
+      "status": "proposed_not_executed",
+      "uiTask": "Read and interact with core flows in Arabic and English, including mixed Latin company names, URLs, dates and long titles.",
+      "wordingTask": "Remove promotional filler and awkward full sentences; use consistent practical verbs and natural Arabic without unnecessary vocalization.",
+      "evidence": [
+        "S09",
+        "S11"
+      ],
+      "requiredArtifact": "Full rendered strings in context, localization lookup checks and actual interaction. Existing copy cleanup does not automatically pass new UI states."
+    },
+    {
+      "pass": 10,
+      "title": "Accessible and restrained end-to-end UI",
+      "status": "proposed_not_executed",
+      "uiTask": "Complete the core journey with large text, keyboard/screen-reader navigation and small screens; inspect final publication claims against actual behavior.",
+      "wordingTask": "Check accessible names, headings, errors and store/web/native terminology for EN/AR consistency and factual precision.",
+      "evidence": [
+        "S11",
+        "S12"
+      ],
+      "requiredArtifact": "Device/browser/AT and exact tasks, captures and results; measured target/focus/reflow observations where relevant. No full accessibility certification inferred."
+    }
+  ],
+  "passLedgerRequirements": [
+    "Each real pass needs its own scope, starting commit/tree, timestamp, actual observed UI evidence and wording evidence in both languages.",
+    "Record concrete findings and severity, responsible owner, changes or explicit justified no-change decisions, ending commit, and executed recheck.",
+    "Research sources, static checks, prior passes and unexecuted scenarios are not substitutes for those records.",
+    "Do not count ten headings, ten screenshots of one state, ten source citations or ten unexecuted test plans as ten completed passes.",
+    "Respect current ownership: root hosted/integration; existing native owner for iPhone/Android source and execution. Never assume hosted/native feature parity.",
+    "Acceptance applies only to the tested source and platform; merge, deployment, signed installation and store availability remain separate states."
+  ],
+  "deferredWork": [
+    "Full application autofill/browser extension, inbox ingestion, bulk auto-application or employer-network integration.",
+    "Multiple editable job-specific CV packets, generative resume authoring, interview coaching or an invented ATS score.",
+    "Extra dashboards, permanent navigation tabs, noisy default notifications or paid upsells.",
+    "New CSV/ICS/tracking implementations duplicating existing work."
+  ],
+  "researchLimitations": [
+    "No new representative Career Finder usability study was conducted; user review themes in the recovered reports remain qualitative hypothesis sources.",
+    "The current primary audience evidence is US-only or pooled multi-market, not a complete worldwide/Gulf demand estimate.",
+    "Competitor features were documented, not exercised in signed-in accounts; pricing and supported forms may change.",
+    "Only the hosted baseline was freshly inspected for these specific product gaps. Native differences are deliberately unclaimed until the assigned owner audit.",
+    "Ten product passes remain execution work. This research handoff does not establish a new engineering, deployment or release pass."
+  ]
+}

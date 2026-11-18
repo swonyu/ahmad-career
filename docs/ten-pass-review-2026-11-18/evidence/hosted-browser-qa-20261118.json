@@ -1,0 +1,285 @@
+{
+  "schema": 1,
+  "preparedAt": "2026-11-18T12:58:06.302571+00:00",
+  "kind": "actual_browser_qa_receipt",
+  "source": {
+    "combinedCommit": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+    "hostedTree": "e955a63e843e7035ea8ce71b2b37504c78577c9d",
+    "cloudGitBase": "22b0f6911fba9c40701a8675fa84b671edfdab31",
+    "workingSourceTransferredAndCommittedOnMac": true,
+    "changedFiles": [
+      {
+        "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/globals.css",
+        "bytes": 23287,
+        "sha256": "6e21fa544251301c2ea47359b53c67872edd92b1918cb120f360ef285ce1e807"
+      },
+      {
+        "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/i18n/core.ts",
+        "bytes": 6217,
+        "sha256": "900241f78b9ccd6f1c68e349c08dce6a53c298ca646cf18ee6111230b4729cbb"
+      },
+      {
+        "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/i18n/messages.ar.json",
+        "bytes": 236621,
+        "sha256": "65d12db690c4d3c45f0416c4e594866c897d44f6a825412d16d4471931a0e034"
+      },
+      {
+        "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/ApplicationGuide.tsx",
+        "bytes": 2232,
+        "sha256": "afd76ba3823daa694145b391172f75c695d293442dc423fb1b03ef953bc48c3c"
+      },
+      {
+        "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/PhoneApp.tsx",
+        "bytes": 126373,
+        "sha256": "c64a589056152f4676974c8b54ecabc23a1df1167d8c8f31804e5fbbce29db7e"
+      },
+      {
+        "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/ProfileReuse.tsx",
+        "bytes": 1961,
+        "sha256": "e99c1f8c6ad92b3c4152cfea343a615effca20083a970e4da5b3da34496908fd"
+      },
+      {
+        "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/components.tsx",
+        "bytes": 22090,
+        "sha256": "e9da530152fa26be1fad0fcce583f80ae0534f860321baee792f5c08fcace354"
+      },
+      {
+        "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/model.ts",
+        "bytes": 22718,
+        "sha256": "1341caf46b9a65ef140ae976d3a757088fedd711ed49f556f7ab34be3686e48b"
+      },
+      {
+        "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/phone.css",
+        "bytes": 36234,
+        "sha256": "0b4685bedf6c527d02bbb0c1d233222e80d13b7402d0c50a4095ca53a767cf79"
+      },
+      {
+        "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/record-tools.ts",
+        "bytes": 6573,
+        "sha256": "028703d0288c9f855a3531c7c9ca89597da52fd1bf1999e594d954f086ddeabc"
+      },
+      {
+        "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/support/page.tsx",
+        "bytes": 11512,
+        "sha256": "69d3725bcb07268fc1316638846fa038c21b30abd3cc8caff6684d6111ba0332"
+      },
+      {
+        "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/package.json",
+        "bytes": 3471,
+        "sha256": "860c907c529ded123cc591d1d4141276a3a4505044e2be76b8e8b55d66909f7c"
+      },
+      {
+        "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/tests/i18n.mjs",
+        "bytes": 7398,
+        "sha256": "f0b5f5c332800cbc440f57877af33f32e00c7fb322aa52b47374a401b3038c5b"
+      },
+      {
+        "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/tests/phone-record-tools.mjs",
+        "bytes": 46538,
+        "sha256": "3286cb9a83130eed9b43370f37e7edc2775b091ce69b31107ef163177d7046df"
+      },
+      {
+        "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/tests/phone-task-guidance.mjs",
+        "bytes": 12332,
+        "sha256": "34cb84a9a50a7b2014e5dfe91078f1149950a7f2198bf627172e876c2238a429"
+      }
+    ]
+  },
+  "environment": {
+    "browser": "Chrome cloud cdp tab35",
+    "url": "http://127.0.0.1:4173/phone",
+    "managedSitesPreview": true,
+    "syntheticDataOnly": true,
+    "productionDeployment": false,
+    "nativeAcceptance": false
+  },
+  "observations": [
+    {
+      "id": "B01",
+      "surface": "Apply",
+      "languages": [
+        "en",
+        "ar"
+      ],
+      "result": "passed",
+      "observation": "Guest manual employer-website guide is primary; optional online-profile/sign-in disclosure stays collapsed; saved-job CTA routes correctly and clears stale Saved filters."
+    },
+    {
+      "id": "B02",
+      "surface": "Apply",
+      "languages": [
+        "en",
+        "ar"
+      ],
+      "result": "passed",
+      "observation": "Final first step instructs saving the job before visiting employer page; own record is explicitly separate from employer confirmation. Arabic uses natural save-first wording."
+    },
+    {
+      "id": "B03",
+      "surface": "Saved / job details",
+      "languages": [
+        "en",
+        "ar"
+      ],
+      "result": "passed",
+      "observation": "Synthetic public job URL was added through actual form. Mixed Arabic/English title and Riyadh location retained; actual example.com hostname exposed. No employer page was opened and no application was submitted."
+    },
+    {
+      "id": "B04",
+      "surface": "Record editor / Saved",
+      "languages": [
+        "en",
+        "ar"
+      ],
+      "result": "passed",
+      "observation": "Applied stage, applied date, follow-up date and synthetic Arabic private note persisted after save/reload. Arabic note search finds the record; unmatched query has clear-filter recovery."
+    },
+    {
+      "id": "B05",
+      "surface": "Profile",
+      "languages": [
+        "ar"
+      ],
+      "result": "fixed_runtime_verified",
+      "observation": "Profile save originally lost focus to BODY. Final source restores focus to Save after completion without stealing another chosen control; observed BUTTON focus."
+    },
+    {
+      "id": "B06",
+      "surface": "Profile contact copy",
+      "languages": [
+        "ar"
+      ],
+      "result": "passed_with_interaction_limit",
+      "observation": "AX-triggered copy first received permission denial and displayed selectable-text fallback. Real Playwright pointer click then succeeded; clipboard matched exactly maya@example.invalid. No other user clipboard data read; synthetic value only."
+    },
+    {
+      "id": "B07",
+      "surface": "Search",
+      "languages": [
+        "ar"
+      ],
+      "result": "passed",
+      "observation": "Saved-profile role chip fills query only, retains entered Riyadh location and remote checkbox, and does not initiate search. Final heading reads اختر مسمى وظيفيًا من ملفك المحفوظ; explicit Search instruction remains visible."
+    },
+    {
+      "id": "B08",
+      "surface": "Search / provider availability",
+      "languages": [
+        "en",
+        "ar"
+      ],
+      "result": "environment_limited",
+      "observation": "Managed local preview is HTTP; existing HTTPS-only discovery and provider checks correctly do not succeed here. Not counted as real search/OAuth runtime acceptance. HTTPS protection was not weakened."
+    },
+    {
+      "id": "B09",
+      "surface": "Apply layout / themes",
+      "languages": [
+        "en",
+        "ar"
+      ],
+      "result": "fixed_runtime_verified",
+      "observation": "Desktop Apply guide and optional-account disclosure share aligned width. Navy/periwinkle dark palette follows actual app icon and supersedes rejected warm Nulaya-inspired palette. Final EN and AR screenshots saved."
+    },
+    {
+      "id": "B10",
+      "surface": "Arabic responsive navigation / keyboard",
+      "languages": [
+        "ar"
+      ],
+      "result": "passed",
+      "observation": "At actual Chrome500percent zoom, viewport269 CSSpx and scrollWidth269; no horizontal overflow. After normal focus-scroll animation settled, primary CTA and account summary focus were above fixed navigation. Immediate transition measurements were not classified as defects. Primary top36.61,bottom85.73, navTop114.2; summary top36.53,bottom85.68."
+    },
+    {
+      "id": "B11",
+      "surface": "Help / wording",
+      "languages": [
+        "en",
+        "ar"
+      ],
+      "result": "fixed_source_verified",
+      "observation": "Actual help inspection exposed repeated conjunction in English section list and stale stage label. Corrected one localized sentence and Saved for later / exact clear-mark labels. Final localization and source tests passed; not every help accordion rerun after edit."
+    },
+    {
+      "id": "B12",
+      "surface": "Record correction / focus",
+      "languages": [
+        "en",
+        "ar"
+      ],
+      "result": "fixed_runtime_verified",
+      "observation": "Selecting Saved for later from Applied opens explicit personal-mark correction confirmation. Keep application record originally removed focused button leaving BODY inside open modal; final code returns focus to SELECT in same open dialog, value applied, in actual EN and AR flows. Notes/dates/applied mark preserved. Cancel returns to record action."
+    },
+    {
+      "id": "B13",
+      "surface": "Arabic correction copy",
+      "languages": [
+        "ar"
+      ],
+      "result": "passed",
+      "observation": "Rendered confirmation هل تريد إلغاء علامة التقديم؟ and action إلغاء علامة التقديم clearly describe personal marker removal, with explicit no-employer-withdrawal sentence."
+    },
+    {
+      "id": "B14",
+      "surface": "Settings export",
+      "languages": [
+        "en"
+      ],
+      "result": "passed",
+      "observation": "Actual Export phone data downloaded version2 JSON with saved and recovery data; synthetic email, example.com job and Arabic private note all present. No account, CV, or real personal data used; no transmission to employer."
+    },
+    {
+      "id": "B15",
+      "surface": "Light theme / RTL Search",
+      "languages": [
+        "ar"
+      ],
+      "result": "passed",
+      "observation": "Actual light appearance switched through Settings; Arabic RTL search, role chips, labels and navigation rendered without visible clipping at desktop viewport. Screenshot saved. This is not all-device WCAG certification."
+    },
+    {
+      "id": "B16",
+      "surface": "Record recovery lifecycle",
+      "languages": [
+        "en",
+        "ar"
+      ],
+      "result": "investigating",
+      "observation": "Recovery count increased1to2 following change-stage, Save correction prompt, Keep original applied stage, then Cancel. Earlier exported draft retained intermediate saved stage despite original applied stage. Independent reviewer checking whether stale reverted recovery is intentional; no data loss or duplicate exact payload claimed."
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "/workspace/shared/career-finder-icon-dark-en-apply-20261118.jpg",
+      "bytes": 71993,
+      "sha256": "6d5137d92c199daa3349815ac72252c97983381641c494b308672d6bfd715c15"
+    },
+    {
+      "path": "/workspace/shared/career-finder-icon-dark-ar-apply-20261118.jpg",
+      "bytes": 68067,
+      "sha256": "3b3218d98b0955b54fe338e6f98dd058f01497f1bf405d731e1624509a856dd6"
+    },
+    {
+      "path": "/workspace/shared/career-finder-light-ar-search-20261118.jpg",
+      "bytes": 73837,
+      "sha256": "e29eb5bd217c9310e5b6b38a61be688be532cf40c25dd50cea00583a5a215417"
+    },
+    {
+      "path": "/workspace/shared/career-finder-ar-269px-focus-20261118.jpg",
+      "bytes": 8132,
+      "sha256": "44c45080eb526c9fd690f2da463e6f3166cc04c08180b9e8f5a461b04e71fbcd"
+    },
+    {
+      "path": "/workspace/shared/career-finder-synthetic-qa-export-20261118.json",
+      "bytes": 4243,
+      "sha256": "150678d5ead7eb9ef81d0e19e7178ee0435c781e3295c2fecfd17470f778ce28"
+    }
+  ],
+  "limits": [
+    "No live OAuth consent or employer submission executed.",
+    "Local HTTP preview cannot validate HTTPS-required discovery/provider endpoints.",
+    "Native focused/full acceptance pending.",
+    "Date field automation fill did not commit React value; real arrow-key editing did. Not classified as product failure.",
+    "Web-source-only reports do not prove native rendering."
+  ]
+}
