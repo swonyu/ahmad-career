@@ -235,10 +235,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - name: Select an iPhone on this disposable hosted runner
+      - name: Verify fresh simulator selection fixtures
+        run: python3 apple/Checks/test-simulator-selection.py
+      - name: Create a fresh iPhone on this disposable hosted runner
         shell: python
         run: |
-          import json, os, platform, re, subprocess
+          import json, os, pathlib, platform, re, subprocess
           inventory = json.loads(subprocess.check_output(['xcrun', 'simctl', 'list', 'devices', 'available', '--json']))
           candidates = []
           for runtime, devices in inventory['devices'].items():
@@ -250,16 +252,40 @@ jobs:
               for device in devices:
                   if device.get('isAvailable') and device['name'].startswith('iPhone'):
                       compact = not any(word in device['name'] for word in ['Max', 'Plus'])
-                      candidates.append((version, compact, device['name'], device['udid']))
+                      candidates.append((version, compact, device['name'], device['udid'], runtime, device.get('deviceTypeIdentifier')))
           assert candidates, 'This runner has no available iPhone Simulator with iOS 16 or later.'
-          version, compact, name, identifier = sorted(candidates, reverse=True)[0]
-          assert re.fullmatch(r'[A-Fa-f0-9-]{36}', identifier)
+          version, compact, name, source_identifier, runtime, device_type = sorted(candidates, reverse=True)[0]
+          uuid = r'[A-Fa-f0-9]{8}(?:-[A-Fa-f0-9]{4}){3}-[A-Fa-f0-9]{12}'
+          assert re.fullmatch(uuid, source_identifier), source_identifier
+          assert isinstance(device_type, str) and device_type.startswith('com.apple.CoreSimulator.SimDeviceType.iPhone-'), device_type
           architecture = platform.machine()
           assert architecture in {'arm64', 'x86_64'}, architecture
+          # Use the verified type/runtime, without inheriting the runner image's device data.
+          fresh_name = 'CareerFinder-CI-' + os.environ['GITHUB_RUN_ID'] + '-' + os.environ['GITHUB_RUN_ATTEMPT']
+          identifier = subprocess.check_output(['xcrun', 'simctl', 'create', fresh_name, device_type, runtime], text=True).strip()
+          assert re.fullmatch(uuid, identifier), 'simctl create did not return one valid device UUID.'
+          prior_identifiers = {device['udid'].upper() for devices in inventory['devices'].values() for device in devices}
+          assert identifier.upper() not in prior_identifiers, 'simctl create returned an existing device.'
+          created_inventory = json.loads(subprocess.check_output(['xcrun', 'simctl', 'list', 'devices', 'available', '--json']))
+          matches = [{'runtime': key, **device} for key, devices in created_inventory['devices'].items()
+                     for device in devices if device['udid'].upper() == identifier.upper()]
+          assert len(matches) == 1, 'The newly created device must occur exactly once in the available inventory.'
+          created = matches[0]
+          assert (created['runtime'], created.get('deviceTypeIdentifier'), created['name']) == (runtime, device_type, fresh_name), created
+          assert created.get('isAvailable') is True and not created.get('availabilityError') and created.get('state') == 'Shutdown', created
+          receipt = {
+              'schemaVersion': 1, 'runID': os.environ['GITHUB_RUN_ID'], 'runAttempt': os.environ['GITHUB_RUN_ATTEMPT'],
+              'checkoutSHA': os.environ['GITHUB_SHA'], 'architecture': architecture,
+              'sourceDevice': {'udid': source_identifier, 'name': name, 'runtime': runtime, 'deviceTypeIdentifier': device_type},
+              'createdDevice': {key: created.get(key) for key in ('udid', 'name', 'runtime', 'deviceTypeIdentifier', 'state', 'isAvailable')},
+              'scope': 'Fresh device selection only; boot readiness and all native journeys remain separate required gates.',
+          }
+          (pathlib.Path(os.environ['RUNNER_TEMP']) / 'career-iphone-selection.json').write_text(json.dumps(receipt, indent=2) + '\n')
           with open(os.environ['GITHUB_ENV'], 'a') as output:
               output.write('CAREER_UI_DEVICE=' + identifier + '\n')
               output.write('CAREER_UI_ARCH=' + architecture + '\n')
           print('Selected', name, 'on iOS', '.'.join(map(str, version)), 'architecture', architecture)
+          print('Created fresh CI device', fresh_name, identifier, 'using', device_type, runtime)
       - name: Verify simulator boot evidence parser fixtures
         run: python3 apple/Checks/test-simulator-boot.py
       - name: Boot selected iPhone and wait for readiness
@@ -328,6 +354,7 @@ jobs:
         with:
           name: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-connection' && 'PARTIAL-iphone-connection-regression' || 'iphone-ui-acceptance' }}-${{ github.run_id }}
           path: |
+            ${{ runner.temp }}/career-iphone-selection.json
             ${{ runner.temp }}/career-iphone-boot.log
             ${{ runner.temp }}/career-iphone-boot-devices.json
             ${{ runner.temp }}/career-iphone-boot-devices.stderr
