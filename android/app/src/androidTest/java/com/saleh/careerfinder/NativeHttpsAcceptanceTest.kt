@@ -5,6 +5,18 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Base64
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.click
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
@@ -127,7 +139,9 @@ class NativeHttpsAcceptanceTest {
             step("profile-content-reachable") {
                 compose.onNodeWithTag("profile-list").assertHeightIsAtLeast(120.dp).assertIsDisplayed()
             }
+            step("profile-content-notice-ending-visible") { revealNoticeEnding(model) }
             step("profile-content-capture") { capture("acceptance-profile-large-text.png") }
+            step("profile-content-notice-dismiss") { dismissVisibleNotice(model) }
             step("profile-save-scroll") { compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("Save profile to workspace"))) }
             step("profile-save-prerequisites") {
                 val state = model.state.value
@@ -192,7 +206,9 @@ class NativeHttpsAcceptanceTest {
                 compose.onNodeWithTag("apply-list").performScrollToNode(hasText(reviewSummary))
                 compose.onNodeWithText(reviewSummary).assertIsDisplayed()
             }
+            step("review-notice-ending-visible") { revealNoticeEnding(model) }
             step("review-capture") { capture("acceptance-prepared.png") }
+            step("review-notice-dismiss") { dismissVisibleNotice(model) }
             step("initial-approval") { approve() }
             step("initial-outcomes") { await(30_000) {
                 model.state.value.receipts.any { it.state == "uncertain" } &&
@@ -213,7 +229,9 @@ class NativeHttpsAcceptanceTest {
             step("receipts-tab") { compose.onNodeWithTag("navigation-receipts").revealNavigationTab().performClick() }
             step("receipt-count-scroll") { compose.onNodeWithTag("receipts-list").performScrollToNode(hasText(strings("verified application receipts"))) }
             step("receipt-count-visible") { compose.onNodeWithText(strings("verified application receipts")).assertIsDisplayed() }
+            step("receipts-notice-ending-visible") { revealNoticeEnding(model) }
             step("receipts-capture") { capture("acceptance-receipts.png") }
+            step("receipts-notice-dismiss") { dismissVisibleNotice(model) }
 
             val timeout = model.state.value.jobs.first { it.url == urls[1] }
             step("uncertain-job-select") { compose.runOnIdle { model.state.value.selected.filter { it != timeout.id }.forEach(model::toggleJob) } }
@@ -294,6 +312,71 @@ class NativeHttpsAcceptanceTest {
         // No Compose idle wait: the failing operation may itself leave Compose busy.
         runCatching { capture("acceptance-native-failure.png", waitForIdle = false) }
             .onFailure { android.util.Log.w("CareerPhoneAcceptance", "HTTPS live failure screenshot unavailable") }
+    }
+
+    private fun scrollNoticeToEnd(node: SemanticsNodeInteraction) {
+        repeat(8) {
+            val axis = node.fetchSemanticsNode().config.getOrNull(SemanticsProperties.VerticalScrollAxisRange) ?: return
+            if (axis.value() >= axis.maxValue() - 1f) return
+            node.performTouchInput { swipeUp() }
+            compose.waitForIdle()
+        }
+        val axis = node.fetchSemanticsNode().config.getOrNull(SemanticsProperties.VerticalScrollAxisRange)
+        assertTrue("The notice scroll must reach its end within eight real swipes",
+            axis == null || axis.value() >= axis.maxValue() - 1f)
+    }
+
+    private fun revealNoticeEnding(model: CareerViewModel) {
+        val notice = requireNotNull(model.state.value.notice) { "A completed action must supply its actual notice." }
+        assertNull("This check must not conceal a service error", model.state.value.error)
+        val expected = strings(notice)
+        val viewport = compose.onNodeWithTag("workspace-messages")
+        val message = compose.onNodeWithText(expected, useUnmergedTree = true)
+        scrollNoticeToEnd(viewport)
+        scrollNoticeToEnd(message)
+        val layouts = mutableListOf<TextLayoutResult>()
+        message.performSemanticsAction(SemanticsActions.GetTextLayoutResult) { action ->
+            assertTrue("The actual notice must expose its rendered text layout", action(layouts))
+        }
+        val layout = layouts.single()
+        assertEquals(expected, layout.layoutInput.text.text)
+        val last = expected.indexOfLast { !it.isWhitespace() }
+        assertTrue("The notice must contain a visible ending", last >= 0)
+        val line = layout.getLineForOffset(last)
+        assertEquals("The last rendered line must reach the complete localized notice",
+            last + 1, layout.getLineEnd(line, visibleEnd = true))
+        assertFalse("The notice ending must not be replaced by an ellipsis", layout.isLineEllipsized(line))
+        val textNode = message.fetchSemanticsNode()
+        val viewportNode = viewport.fetchSemanticsNode()
+        compose.runOnIdle {
+            // LayoutInfo.coordinates is the inner content coordinate space after modifiers.
+            // positionInRoot alone would ignore this Text's own vertical-scroll placement.
+            val coordinates = textNode.layoutInfo.coordinates
+            assertTrue(textNode.layoutInfo.isPlaced && coordinates.isAttached)
+            val clipped = textNode.boundsInRoot.intersect(viewportNode.boundsInRoot)
+            var checked = 0
+            for (offset in layout.getLineStart(line)..last) {
+                if (expected[offset].isWhitespace()) continue
+                val glyph = layout.getBoundingBox(offset)
+                if (glyph.width <= 0f || glyph.height <= 0f) continue
+                val topLeft = coordinates.localToRoot(glyph.topLeft)
+                val bottomRight = coordinates.localToRoot(glyph.bottomRight)
+                assertTrue("Every glyph of the notice's final line must be fully inside the visible message viewport",
+                    containsVisibleRect(clipped, Rect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y)))
+                checked++
+            }
+            assertTrue("At least one complete ending glyph must be visible", checked > 0)
+        }
+    }
+
+    private fun dismissVisibleNotice(model: CareerViewModel) {
+        val expected = strings(requireNotNull(model.state.value.notice))
+        val dismiss = compose.onNodeWithContentDescription(strings("Dismiss message"))
+        dismiss.performScrollTo()
+        assertFullyVisible(dismiss)
+        dismiss.performTouchInput { click() }
+        await { model.state.value.notice == null }
+        compose.onNodeWithText(expected, useUnmergedTree = true).assertDoesNotExist()
     }
 
     private fun closeSoftKeyboard() {

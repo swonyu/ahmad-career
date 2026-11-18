@@ -3,6 +3,8 @@ package com.saleh.careerfinder
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.click
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasContentDescription
@@ -18,6 +20,7 @@ import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTouchInput
 import androidx.lifecycle.ViewModelStore
 import androidx.test.platform.app.InstrumentationRegistry
 import org.json.JSONObject
@@ -59,6 +62,14 @@ class PhonePolishAcceptanceTest {
                 .hideSoftInputFromWindow(activity.window.decorView.windowToken, 0)
         }
         compose.waitForIdle()
+    }
+
+    private fun assertDraftChoicesVisible(windows: PhoneWindowObservation) {
+        compose.waitUntil(5_000) { !windows.imeVisible() }
+        for (label in listOf("Keep editing", "Keep draft", "Discard")) {
+            val action = compose.onNodeWithText(strings(label)).assertIsEnabled()
+            assertFullyVisible(action)
+        }
     }
 
     private fun captureConfirmation(name: String) {
@@ -200,36 +211,42 @@ class PhonePolishAcceptanceTest {
     }
 
     @Test fun unfinishedOpportunity_closeChoicesKeepAndDiscardOnlyTheDraft() {
-        compose.onNodeWithTag("jobs-saved-tab").performClick()
-        compose.onNodeWithTag("jobs-list").performScrollToNode(hasText(strings("Add opportunity")))
-        compose.onNodeWithText(strings("Add opportunity")).performClick()
-        compose.onNodeWithTag("opportunity-editor").performScrollToNode(hasText(strings("Employer job link")) and hasSetTextAction())
-        compose.onNode(hasText(strings("Employer job link")) and hasSetTextAction()).performTextInput("https://example.invalid/later")
-        closeSoftKeyboard()
-        compose.onNodeWithTag("opportunity-editor").performScrollToNode(hasText(strings("Role title")) and hasSetTextAction())
-        compose.onNode(hasText(strings("Role title")) and hasSetTextAction()).performTextInput("Unfinished role")
-        closeSoftKeyboard()
-        compose.onNodeWithContentDescription(strings("Close ") + strings("Add opportunity")).performClick()
-        captureConfirmation("unfinished-opportunity-choices")
-        compose.onNodeWithText(strings("Keep editing")).performClick()
-        compose.onNodeWithTag("opportunity-editor").performScrollToNode(hasText(strings("Role title")) and hasSetTextAction())
-        compose.onNode(hasText(strings("Role title")) and hasSetTextAction()).assertTextContains("Unfinished role")
+        PhoneWindowObservation().use { windows ->
+            compose.onNodeWithTag("jobs-saved-tab").performClick()
+            compose.onNodeWithTag("jobs-list").performScrollToNode(hasText(strings("Add opportunity")))
+            compose.onNodeWithText(strings("Add opportunity")).performClick()
+            compose.onNodeWithTag("opportunity-editor").performScrollToNode(hasText(strings("Employer job link")) and hasSetTextAction())
+            compose.onNode(hasText(strings("Employer job link")) and hasSetTextAction()).performTextInput("https://example.invalid/later")
+            compose.onNodeWithTag("opportunity-editor").performScrollToNode(hasText(strings("Role title")) and hasSetTextAction())
+            val roleField = compose.onNode(hasText(strings("Role title")) and hasSetTextAction())
+            roleField.performTouchInput { click() }
+            roleField.performTextInput("Unfinished role")
+            compose.waitUntil(5_000) { windows.imeVisible() }
+            compose.onNodeWithContentDescription(strings("Close ") + strings("Add opportunity")).performClick()
+            assertDraftChoicesVisible(windows)
+            captureConfirmation("unfinished-opportunity-choices")
+            compose.onNodeWithText(strings("Keep editing")).performTouchInput { click() }
+            compose.onNodeWithTag("opportunity-editor").performScrollToNode(hasText(strings("Role title")) and hasSetTextAction())
+            compose.onNode(hasText(strings("Role title")) and hasSetTextAction()).assertTextContains("Unfinished role")
 
-        compose.onNodeWithContentDescription(strings("Close ") + strings("Add opportunity")).performClick()
-        compose.onNodeWithText(strings("Keep draft")).performClick()
-        compose.waitUntil(5_000) { !model.state.value.busy && store.read("workspace-unpaired")?.has("opportunityDraft") == true }
-        compose.onNodeWithTag("jobs-list").performScrollToNode(hasText(strings("Continue job draft")))
-        compose.onNodeWithText(strings("Continue job draft")).performClick()
-        compose.onNodeWithTag("opportunity-editor").performScrollToNode(hasText(strings("Role title")) and hasSetTextAction())
-        compose.onNode(hasText(strings("Role title")) and hasSetTextAction()).assertTextContains("Unfinished role")
-        compose.onNodeWithContentDescription(strings("Close ") + strings("Add opportunity")).performClick()
-        compose.onNodeWithText(strings("Discard")).performClick()
-        compose.waitUntil(5_000) { !model.state.value.busy && !model.state.value.opportunityDraft.hasContent }
-        compose.onNodeWithTag("jobs-list").performScrollToNode(hasText(strings("Add opportunity")))
-        compose.onNodeWithText(strings("Add opportunity")).assertIsDisplayed()
-        assertTrue(model.state.value.jobs.isEmpty())
-        assertFalse(OpportunityDraft.fromJson(store.read("workspace-unpaired")!!.getJSONObject("opportunityDraft")).hasContent)
-        assertEquals(0, service.requests)
+            compose.onNodeWithContentDescription(strings("Close ") + strings("Add opportunity")).performClick()
+            assertDraftChoicesVisible(windows)
+            compose.onNodeWithText(strings("Keep draft")).performTouchInput { click() }
+            compose.waitUntil(5_000) { !model.state.value.busy && store.read("workspace-unpaired")?.has("opportunityDraft") == true }
+            compose.onNodeWithTag("jobs-list").performScrollToNode(hasText(strings("Continue job draft")))
+            compose.onNodeWithText(strings("Continue job draft")).performClick()
+            compose.onNodeWithTag("opportunity-editor").performScrollToNode(hasText(strings("Role title")) and hasSetTextAction())
+            compose.onNode(hasText(strings("Role title")) and hasSetTextAction()).assertTextContains("Unfinished role")
+            compose.onNodeWithContentDescription(strings("Close ") + strings("Add opportunity")).performClick()
+            assertDraftChoicesVisible(windows)
+            compose.onNodeWithText(strings("Discard")).performTouchInput { click() }
+            compose.waitUntil(5_000) { !model.state.value.busy && !model.state.value.opportunityDraft.hasContent }
+            compose.onNodeWithTag("jobs-list").performScrollToNode(hasText(strings("Add opportunity")))
+            compose.onNodeWithText(strings("Add opportunity")).assertIsDisplayed()
+            assertTrue(model.state.value.jobs.isEmpty())
+            assertFalse(OpportunityDraft.fromJson(store.read("workspace-unpaired")!!.getJSONObject("opportunityDraft")).hasContent)
+            assertEquals(0, service.requests)
+        }
     }
 
     @Test fun localOpportunityRemoval_requiresConfirmation_andPreservesOtherSavedRoles() {
