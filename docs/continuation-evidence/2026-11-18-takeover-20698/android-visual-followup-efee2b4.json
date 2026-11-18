@@ -1,0 +1,65 @@
+{
+  "observedAt": "2026-11-18T15:34:08.202956+00:00",
+  "worktree": "/Users/saleh/Developer/career-finder-android-visual-20261118-20698",
+  "branch": "fix/android-visible-actions-20261118-20698",
+  "commit": "efee2b4df3512ba17cfcbcd6b9c8fc46611a0677",
+  "parentCollectorCommit": "7d032f78d013740befa0f022ce6429b7a24f40f6",
+  "worktreeClean": true,
+  "files": [
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeLocalizationAcceptanceTest.kt",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/PhoneWindowObservation.kt",
+    "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+    "android/checks/screenshot-evidence.md",
+    "android/checks/screenshot-evidence.mjs",
+    "android/checks/screenshot-evidence.test.mjs"
+  ],
+  "sha256": {
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt": "86081fd63c64f8966eed759c8c884ca5249ad8db43015cbd3ee77e238a65fdd9",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeLocalizationAcceptanceTest.kt": "d326ffe18eb59aadc482699c0bb55495ff452e732557c67f23a6a89e3da9d59e",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt": "fe1fba9cda38e95514737b9c13da06a1fea986ef0a05573a665db39b4ffa8b67",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/PhoneWindowObservation.kt": "71af918dca3a8e2248c7d4b0aca723e24f897ff9c6af176d7420cdd006f3617e",
+    "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "d81ef3fd2f03682e48d31d567d9f53e38332119d52a3dec4faf41dca94eb4ef4",
+    "android/checks/screenshot-evidence.md": "9e1a2af093aaeb855bd0e81cba32de9f97864dc1eb35159633724f43a711d9b2",
+    "android/checks/screenshot-evidence.mjs": "fdd952befd65471d573eaf109b43c06e7c97b3a881346e76e0e10a35ca68b23d",
+    "android/checks/screenshot-evidence.test.mjs": "91e60997f8e0a821a4c4ceb82244921bfefed5c2f4ec6488774ea97eab0f81cc"
+  },
+  "observedInputs": {
+    "dd78Run": 44326554344,
+    "dd78ActualCompletedCases": 116,
+    "dd78RetainedPngs": 0,
+    "b661Run": 44328888955,
+    "b661ActualCompletedCases": 116,
+    "b661RetainedPngs": 22,
+    "b661PngsViewed": 22,
+    "b661VisualFindings": [
+      "Dialog confirmation actions obstructed by the visible IME in unfinished-opportunity capture.",
+      "Blue notice ending clipped in three acceptance captures; intentional scrolling lacked full-ending/dismiss evidence.",
+      "All22 current captures are Arabic UI; English fixture data does not count as English display coverage."
+    ]
+  },
+  "changes": [
+    "Clear focus and hide the IME from FullScreenForm own Dialog composition before closing or opening a confirmation.",
+    "Existing draft test begins with observed real IME, requires its absence and full action bounds before capture, and physically taps Keep editing/Keep draft/Discard while preserving original data/no-request assertions.",
+    "Existing HTTPS case uses bounded real scrolling, complete localized final-line glyph containment via pinned public inner layout coordinates, and fully visible physical Dismiss taps.",
+    "Existing English/LTR selection state now produces one required English screenshot; next capture inventory is23.",
+    "Collector requires exact source/current PNG evidence, preserves earlier phases, validates actual bounded PNG data/CRC/scanlines/hashes, and fails missing capture evidence separately from completed tests."
+  ],
+  "verification": {
+    "collectorHostFixtures": "13 passed,0 failed,0 skipped",
+    "nativeMethodIdentityLists": "Exactly116 unchanged",
+    "independentSourceReview": "native_prepared_review approved visibility files; this agent independently reviewed English capture/inventory files. Header-only PNG and invalid assertDoesNotExist import findings were fixed before commit.",
+    "actualB661PngCompatibility": "All22 original PNGs passed strengthened validator and original dimensions/byte lengths/SHA-256 checks by two agents.",
+    "diffCheckPassed": true,
+    "nativeCompilationOrRuntimeClaimed": false,
+    "newRequiredNativeRuntime": "Exact integrated source:114 ordinary +1 TLS +1 HTTPS, no skipped cases, and23 valid required PNGs with visual review of modal decisions, notice ending/dismiss and English state."
+  },
+  "workflowDispatchOptions": [
+    "full",
+    "iphone-connection",
+    "iphone-ui"
+  ],
+  "workflowChanged": false,
+  "pushDispatchDeployPerformed": false
+}

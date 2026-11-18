@@ -24,9 +24,10 @@
       "Android compile, lint and 116 completed native cases"
     ],
     "pending": [
-      "iPhone native UI suite at b661",
-      "Android visual acceptance for visible IME/notice concerns",
-      "Exact-source CI for integrated collector"
+      "Full exact-source CI for integrated Android collector and dialog visibility changes",
+      "23-image native visual acceptance including the new English state",
+      "Final iPhone artifact visual review",
+      "Existing PR update and merge after the complete gate"
     ],
     "failedEarlierRunsPreserved": [
       44316849501,
@@ -48,14 +49,24 @@
       "valid": 22,
       "dimensions": "1080x1920",
       "totalBytes": 3755471,
-      "visualReview": "All22 viewed; IME draft-dialog visibility and full notice/dismiss reachability under source review"
-    }
+      "visualReview": "All22 viewed; IME draft-dialog visibility and full notice/dismiss reachability under source review",
+      "followupCandidate": "7ae3c141d05b31195ec73a390de719a3951df684",
+      "candidateRequiredPNG": 23
+    },
+    "baselineFullRun": {
+      "id": 44328888955,
+      "source": "b6614346cb4f0e72b9bde0e96ab083ea7df72371",
+      "allFiveJobs": "passed",
+      "iPhoneUI17": "passed",
+      "Android116": "passed",
+      "AndroidOriginalPNG22": "all retained, validated and viewed"
+    },
+    "integratedProductSource": "7ae3c141d05b31195ec73a390de719a3951df684"
   },
   "nextActions": [
-    "Preserve earlier PR history with normal merge and keep verified current source",
-    "Resolve Android visual findings and prove large-text notice reachability",
-    "Finish current iPhone UI acceptance; run final exact-source CI after integration",
-    "Update existing PR and delivery evidence"
+    "Push the final combined candidate to the preserved existing PR branch",
+    "Complete all current-source CI gates and image review",
+    "Merge authorized combined work and record final delivery states"
   ],
   "release": {
     "hosted": {
@@ -77,5 +88,5 @@
       "native": "No store/signing release by this owner"
     }
   },
-  "updatedAtUTC": "2026-11-18T15:17:10Z"
+  "updatedAtUTC": "2026-11-18T15:36:30.171576+00:00"
 }

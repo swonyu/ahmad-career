@@ -1,0 +1,49 @@
+{
+  "observedAtUTC": "2026-11-18T15:36:30.171576+00:00",
+  "productSourceCommit": "7ae3c141d05b31195ec73a390de719a3951df684",
+  "integrations": {
+    "collector": "c9223be0011bbacfab233917ff23f5267416aaea",
+    "dialogVisibilityAndNoticeAcceptance": "7ae3c141d05b31195ec73a390de719a3951df684",
+    "priorHistoryMerge": "477b60aa6a0fc60db8caa33aa6be377205cba325"
+  },
+  "unchangedSinceFullPassingB661": {
+    "apple": "69da92dea4c85a014db4ca4c7bbff2461d275b3f",
+    "hosted": "b81ea81ad4af36b5a6e285b1480d52d48ea740aa",
+    "website": "d59e906124734ccd2f6862108e39b2fb195c5b04",
+    ".github/workflows/phone-quality.yml": "fcc9f5876a40b939a189bd697eb075f6a3bc9620"
+  },
+  "baseline": {
+    "source": "b6614346cb4f0e72b9bde0e96ab083ea7df72371",
+    "run": 44328888955,
+    "url": "https://github.com/swonyu/ahmad-career/actions/runs/44328888955",
+    "jobs": "All five succeeded",
+    "iPhoneUI": {
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "duplicateOrMissingMethods": 0,
+      "suiteSeconds": 1980.226,
+      "artifactReview": "Pending final artifact visual verification"
+    },
+    "Android": {
+      "passed": 116,
+      "originalRetainedPNG": 22,
+      "allPNGViewed": true,
+      "followups": "Observed modal IME obstruction corrected in candidate; intended notice scrolling receives explicit reachability checks."
+    }
+  },
+  "candidateChecks": {
+    "collectorFixturesPassed": 13,
+    "nativeMethodIdentities": 116,
+    "identitiesMatchBaseline": true,
+    "requiredPNG": 23,
+    "review": "Mutual independent source review completed; one actual English display capture added in an existing test state."
+  },
+  "candidateRuntime": "Pending complete exact-source CI; baseline successes are not relabeled as this modified Android candidate passing.",
+  "hostedRelease": {
+    "version": 11,
+    "source": "7fd3f81ff727769934f6e265c8ca2287cf1691f3",
+    "url": "https://career-finder-service.jazzy-drake-8323.chatgpt.site/phone",
+    "state": "Published and live interface/search verified"
+  }
+}
