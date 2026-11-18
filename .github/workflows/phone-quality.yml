@@ -260,7 +260,8 @@ jobs:
   iphone-ui:
     name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-connection' && 'PARTIAL iPhone connection regression' || github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-ui' && 'PARTIAL iPhone UI acceptance (all 17 journeys)' || 'iPhone native interface acceptance' }}
     runs-on: macos-26
-    timeout-minutes: 50
+    # Budget 5m readiness, 45m native flows, and 5m for setup and evidence.
+    timeout-minutes: 55
     env:
       CAREER_UI_ACCEPTANCE_SCOPE: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope || 'full' }}
     steps:
@@ -337,7 +338,8 @@ jobs:
         run: python3 apple/Checks/test-simulator-boot.py
       - name: Boot selected iPhone and wait for readiness
         shell: bash
-        timeout-minutes: 3
+        # Strict readiness took 187s in run 44368339432, including UUID inventory.
+        timeout-minutes: 5
         run: |
           set -o pipefail
           boot_results=(0 0)

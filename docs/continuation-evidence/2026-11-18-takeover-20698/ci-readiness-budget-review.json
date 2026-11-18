@@ -1,0 +1,120 @@
+{
+  "observedAt": "2026-11-18T18:30:11.975499+00:00",
+  "reviewer": "native_prepared_review",
+  "scope": "Independent read-only source, completed own log, strict readiness evidence, and retained prior timing review. No tests or native actions.",
+  "run": 44368339432,
+  "attempt": 1,
+  "job": 135028031585,
+  "apiHead": "4d45d5e2097f49c0fc0aef6a0a00c49f88f1c70c",
+  "actualCheckout": "7139dccef126380faa64d2bded5b911a293edc8a",
+  "classification": "The shared readiness-step deadline expired after both native commands and strict verification succeeded; the native UI step was skipped. This is a budget-composition failure, not an observed app assertion or migration failure.",
+  "workflowSHA256": "72912b857c9a5b24f45140da956ac32d1b5c18e4915cda8ed0ed488b55b936f5",
+  "workflowByteIdenticalTo09c": true,
+  "currentBudgets": {
+    "jobMinutes": 50,
+    "readinessStepMinutes": 3,
+    "nativeUiStepMinutes": 45,
+    "remainingForSetupAndEvidenceMinutesAtBothStepCeilings": 2,
+    "individualBootCommandTimeout": "None in workflow; command shares readiness-step ceiling.",
+    "individualInventoryCommandTimeout": "None in workflow; command shares readiness-step ceiling.",
+    "selectionExportUploadIndividualTimeouts": "None declared; governed by job ceiling."
+  },
+  "observations": {
+    "stepStartedAt": "2026-11-18T18:19:15Z",
+    "stepCompletedAt": "2026-11-18T18:22:22Z",
+    "stepApiDurationSeconds": 187.0,
+    "events": {
+      "bootProcessExit": "2026-11-18T18:21:38.328344+00:00",
+      "inventoryExit": "2026-11-18T18:22:21.613614+00:00",
+      "strictVerifierPass": "2026-11-18T18:22:22.420804+00:00",
+      "outerDeadlineError": "2026-11-18T18:22:22.499346+00:00"
+    },
+    "inventoryObservedSeconds": 43.28527,
+    "verifierAfterInventorySeconds": 0.80719,
+    "passToDeadlineErrorSeconds": 0.078542,
+    "selectedUuid": "5FB84988-339B-40AB-B4AA-E85863DD4793",
+    "selectedDeviceState": "Booted",
+    "bootLogAndInventoryHashMatchReceipt": true,
+    "strictVerifierSourceHashMatchesExactHead": true,
+    "strictVerifierPassed": true,
+    "processResults": {
+      "boot": 0,
+      "log": 0,
+      "inventory": 0
+    },
+    "uiStepConclusion": "skipped",
+    "uiMethodsStarted": 0,
+    "uiMethodsCompleted": 0
+  },
+  "retainedComparisonTimings": [
+    {
+      "run": 44341452115,
+      "attempt": 1,
+      "job": 134933684229,
+      "sourceFile": "/tmp/career-finder-iphone-failure-44341452115-20698/terminal-results.json",
+      "sourceSHA256": "b4c4061dfec7cc38265a661603dc0773f4685e062dc5ceb1ae83a0a902463ab1",
+      "startReference": "first setup step started_at; excludes any earlier job startup",
+      "preReadinessSeconds": 16.0,
+      "readinessSeconds": 166.0,
+      "uiSeconds": 2585.0,
+      "postUiThroughJobCompletedSeconds": 72.0,
+      "setupAndPostUiSeconds": 88.0
+    },
+    {
+      "run": 44341452115,
+      "attempt": 2,
+      "job": 134987358820,
+      "sourceFile": "/tmp/career-finder-iphone-rerun-44341452115-attempt2-20698/terminal-results.json",
+      "sourceSHA256": "723fabe0e9adf3cecded01ff6ee974c84876b5536d0a47fce02007e1433a2d78",
+      "startReference": "job startedAt",
+      "preReadinessSeconds": 17.0,
+      "readinessSeconds": 175.0,
+      "uiSeconds": 2533.0,
+      "postUiThroughJobCompletedSeconds": 47.0,
+      "setupAndPostUiSeconds": 64.0
+    }
+  ],
+  "recommendation": {
+    "scope": "Only two workflow ceiling values; leave all commands, validators, source, test identities and assertions intact.",
+    "readinessStepMinutes": 5,
+    "nativeUiStepMinutes": 45,
+    "jobMinutes": 55,
+    "setupAndEvidenceReserveMinutesAtBothStepCeilings": 5,
+    "reason": "The observed readiness sequence needs about 187 seconds, exceeding 180. A five-minute combined readiness ceiling allows the same strict boot, selected-UUID inventory, and parser to complete with bounded margin. Raising only readiness to five minutes would consume the entire existing 50-minute job together with the unchanged 45-minute UI ceiling. A 55-minute job leaves five minutes for setup and evidence; observed prior overhead is 64 seconds and at least 88 seconds from first setup.",
+    "constraints": [
+      "Keep the exact selected UUID query and fresh-device selection.",
+      "Keep all boot/log/inventory exit checks, terminal Finished, exact unique Booted/available device validation and retained input hashes.",
+      "Keep the 45-minute UI step, full 17-test list and every native assertion unchanged.",
+      "Do not count this failed readiness job as native acceptance.",
+      "Obtain a new-source full run after any workflow correction; no dispatch or change performed by this reviewer."
+    ],
+    "limit": "This is a source and observed-timing alignment, not a guarantee of future runner speed or UI success. Four minutes would cover this one observed 187-second sequence, but five minutes provides a bounded reserve for the already variable serial inventory without adding retries or weakening readiness semantics."
+  },
+  "inputProvenance": [
+    {
+      "path": "/tmp/career-finder-iphone-run-44368339432-20698/completed-job.log",
+      "bytes": 70744,
+      "sha256": "fe0ce499ac471f9c01022bf5cbd5f5daa607b2c12996845fe6d7b329f332d237"
+    },
+    {
+      "path": "/tmp/career-finder-iphone-run-44368339432-20698/terminal-results.json",
+      "bytes": 7155,
+      "sha256": "800ab75b49f9958bbae43aad7a2c6451619430842596dcf61f4ce860c4ebe7bd"
+    },
+    {
+      "path": "/tmp/career-finder-iphone-run-44368339432-20698/boot-deadline-diagnosis.json",
+      "bytes": 6064,
+      "sha256": "0cbef1f5c3d08c2c85cd1dc3808f3be3871ba19f1c9cb8513577c2790e1084fe"
+    },
+    {
+      "path": "/tmp/career-finder-iphone-run-44368339432-20698/original-artifact.zip",
+      "bytes": 3923,
+      "sha256": "817ebac0e724d0bbdc231e0ca43c74af5830e3ca36e320143575074c273cb6a6"
+    },
+    {
+      "path": "/tmp/career-finder-iphone-run-44368339432-20698/artifact/career-iphone-boot-verification.json",
+      "bytes": 1535,
+      "sha256": "c295673375602d64e6db3607d66d8be438c62967d03f307d14fa6832494d6032"
+    }
+  ]
+}
