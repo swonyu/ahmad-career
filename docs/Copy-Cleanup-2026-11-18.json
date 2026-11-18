@@ -1,5 +1,5 @@
 {
-  "recordedAt": "2026-11-18T11:13:09.938202+00:00",
+  "recordedAt": "2026-11-18T11:20:06.546583+00:00",
   "product": "Career Finder",
   "copyParentCommit": "49f08537086e33ff578c65815676efe55f4e0d15",
   "runtimeCandidateBase": "2854daa8db9e9aa59b80df4a215f0909f376bce2",
@@ -462,6 +462,24 @@
       "revisedEnglish": "Search selected employer boards, save jobs and prepare applications on iPhone and Android.",
       "previousArabic": "اعثر على وظائف، واحتفظ بقائمة مختصرة، وأدر خطوتك المهنية التالية على iPhone وAndroid.",
       "revisedArabic": "ابحث في صفحات جهات العمل المختارة، واحفظ الوظائف، وجهّز طلبات التوظيف على iPhone وAndroid."
+    },
+    {
+      "previousEnglish": "A FEW PLACES TO BEGIN",
+      "revisedEnglish": "EXAMPLE SEARCHES",
+      "previousArabic": "أماكن يمكنك البدء منها",
+      "revisedArabic": "أمثلة للبحث"
+    },
+    {
+      "previousEnglish": "Start with what interests you.",
+      "revisedEnglish": "Search by job field",
+      "previousArabic": "ابدأ بما يهمك.",
+      "revisedArabic": "البحث حسب المجال"
+    },
+    {
+      "previousEnglish": "Choose a direction, or search for something entirely your own.",
+      "revisedEnglish": "Choose an example below or enter a job title above.",
+      "previousArabic": "اختر مجالًا، أو ابحث عما يناسبك أنت.",
+      "revisedArabic": "اختر أحد الأمثلة أدناه، أو اكتب المسمى الوظيفي في الأعلى."
     }
   ],
   "storeEnglishPairs": [
@@ -742,7 +760,7 @@
   "acceptance": {
     "sourceResourceChecks": "passed",
     "graphicVisualInspection": "passed",
-    "independentReview": "Draft reviewed with findings corrected; final commit-bound review pending with publication_review.",
+    "independentReview": "Copy commit 1194ded6c5610fee5979e853059cc8de026ac906 approved; this browser-found three-pair follow-up awaits commit-bound review.",
     "hostedTypecheckAndTests": "root pending",
     "managedBrowserAcceptance": "root pending",
     "fullNativeCI": "Root pending for this changed source; no native test or build run by this copy task.",
@@ -860,7 +878,7 @@
     },
     {
       "path": "hosted/app/i18n/messages.ar.json",
-      "sha256": "14a8854c2ca88fa9ebbe8e052264107261dfa0d1a809395d752d9fd2f660c248"
+      "sha256": "f60cb387496538f69ce9612f3dc7caf194091666b6c1149585eee82e25909d1d"
     },
     {
       "path": "hosted/app/layout.tsx",
@@ -868,7 +886,7 @@
     },
     {
       "path": "hosted/app/phone/PhoneApp.tsx",
-      "sha256": "a86611255be43e47e6ff35efcd1ed2b61f1667819c7fa3fa0d943f3ff6ee4e0e"
+      "sha256": "c104af3be9a734953bc80cf48a4021e43569dc091b20442002258c06c5bd12ed"
     },
     {
       "path": "hosted/app/phone/page.tsx",
@@ -911,7 +929,25 @@
       "finding": "JSON serialization changed two historical escaped ellipsis lines.",
       "correction": "Restored both exact original raw historical lines.",
       "verification": "Parsed data unchanged; original raw historical lines retained."
+    },
+    {
+      "finding": "Actual browser review found A FEW PLACES TO BEGIN and two adjacent promotional sentences in the hosted quick-search card.",
+      "correction": "Replaced with EXAMPLE SEARCHES, Search by job field, and Choose an example below or enter a job title above., with requested Arabic translations.",
+      "verification": "JSON parsed; source differs only at three exact string literals; superseded catalog keys removed only after confirming no remaining TypeScript callsites; runtime review remains with root."
     }
   ],
-  "changedFilesHashScope": "All modified tracked content except this self-referential receipt; hashes recorded after source checks and review corrections."
+  "changedFilesHashScope": "All copy-content files from the initial cleanup, refreshed after the three-pair hosted follow-up; excludes this self-referential receipt and the separately reviewed workflow-only commit.",
+  "browserReviewFollowUp": {
+    "parentCommit": "9d1d8f1c1fc4bc6b03b7c7ecb5fd69f86ebb4e54",
+    "finding": "Root actual browser review found promotional filler in the hosted example-search card.",
+    "scope": "Three English/Arabic display strings and superseded catalog keys; no controls, layout, handlers, native copy or generated resources changed.",
+    "checks": {
+      "jsonParsing": "passed",
+      "exactThreeSourceLiteralChanges": "passed",
+      "canonicalArabicKeys": "passed",
+      "supersededKeysHaveNoRemainingTypeScriptCallsites": "passed",
+      "otherCatalogEntriesUnchanged": "passed"
+    },
+    "runtimeAcceptance": "Root pending for updated English/Arabic hosted preview."
+  }
 }
