@@ -2,7 +2,7 @@
 
 Native SwiftUI phone app for iOS 16 and newer. This candidate preserves the existing `com.ahmadalayed.career` app identity and existing local saved roles/application records, adds a native **Apply** workspace, and changes the project target to iPhone/iPhone Simulator only.
 
-The tab bar contains Start, Search, Apply, Saved and Profile. Start opens with direct actions to find jobs, add a job link, create the actual application profile and continue an application review. That applicant profile is shared by Start, Profile and Apply. Optional local planning notes remain separate, and the preparation checklist is accessible from Start. Earlier professional research is never silently converted into an application.
+The tab bar contains Start, Search, Apply, Saved and Settings. Start opens with direct actions to find jobs, add a job link, create an application profile and continue an application review. The same applicant profile is available from Start, Apply and Profile in Settings. Optional local planning notes remain separate, and the preparation checklist is accessible from Start. Earlier professional research is never silently converted into an application.
 
 ## Career Finder for every new user
 
@@ -26,12 +26,20 @@ Every result keeps employer/source attribution, the provider's location evidence
 
 ## Phone application flow
 
-1. Find an opportunity on selected employer boards, or add a public HTTPS job link and role details.
-2. Create your application profile and select a PDF résumé of at most 5 MiB when ready.
-3. Open **Set up Auto Apply**. New connections suggest the hosted HTTPS service. Open connection setup in the browser, sign in with ChatGPT, obtain a one-time code, and enter it on the phone. Existing custom service addresses are preserved.
-4. Select opportunities, review the authoritative applicant fields/CV summary, and provide any required employer-specific message or explicit data choices.
-5. Approve Auto Apply for eligible jobs. The service owns approval, submission and verification. Keep Career Finder open while the hosted queue advances; any request already sent may still complete after the app closes.
-6. Inspect activity and receipt details. Unknown outcomes remain unconfirmed; a known rate-limit rejection can be reviewed again after its cooldown.
+### Apply on an employer’s website
+
+1. Find a role on the selected employer boards, or add a public HTTPS job link and its details. Save the job before opening the employer’s page so you can return to its record.
+2. Review your profile and select a PDF résumé of at most 5 MiB when ready. **Reuse your contact details** lets you copy one chosen field, then paste and check it yourself in the employer’s form. It does not fill or submit that form.
+3. Open the saved job’s employer link and check the requirements, location and deadline there. The employer manages its own sign-in and application process. No Career Finder application-service connection is required for this manual path.
+4. Return to **Saved** to record your application stage, dates, follow-up and private notes. These are your own records; saving a link or changing a stage does not submit an application or create a provider receipt.
+
+For a guest, the primary action in **Apply** opens saved jobs. If there are none, it opens **Search**. Saved roles from earlier local records remain reachable.
+
+### Optional connected application service
+
+1. In **Apply**, choose **Connect application workspace**. New connections suggest the hosted HTTPS service. Open connection setup in the browser, sign in with ChatGPT, obtain a one-time code, and enter it on the phone. Existing custom service addresses are preserved.
+2. For a supported, activated integration, select opportunities and review the authoritative applicant fields/CV summary. Provide any required employer-specific message and explicit data choices before approving an eligible application. Connecting alone does not activate automatic submission; the hosted preview currently has live automatic submissions disabled.
+3. The service owns approval, submission and verification. Keep Career Finder open while a supported hosted queue advances; a request already sent may still complete after the app closes. Inspect activity and provider receipts for the outcome. Unknown outcomes remain unconfirmed, and a known rate-limit rejection needs a fresh review after its cooldown.
 
 Phone credentials use Keychain with device-only accessibility. Draft files are atomically written with iOS file protection. Unsupported service origins, redirects, private job URLs, invalid PDF contents and uncertain receipt evidence are rejected. Genuine single-name applicants can use the first/single-name field without inventing a surname. Future-role contact can be explicitly declined.
 
