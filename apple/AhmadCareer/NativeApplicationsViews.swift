@@ -1102,7 +1102,7 @@ private struct NativeHostedServicePresenter: UIViewControllerRepresentable {
     }
 
     @MainActor
-    final class Presenter: UIViewController, SFSafariViewControllerDelegate, UIAdaptivePresentationControllerDelegate {
+    final class Presenter: UIViewController, @MainActor SFSafariViewControllerDelegate, UIAdaptivePresentationControllerDelegate {
         private var requestedURL: URL?
         private var browser: SFSafariViewController?
         private var onDismiss: (() -> Void)?
