@@ -1,0 +1,452 @@
+{
+  "format": "Career Finder browser records",
+  "version": 2,
+  "scope": "guest",
+  "exportedAt": "2026-11-18T05:03:00.679Z",
+  "saved": {
+    "schema": 1,
+    "scope": "guest",
+    "profile": {
+      "firstName": "",
+      "lastName": "",
+      "email": "",
+      "phone": "",
+      "city": "",
+      "country": "",
+      "headline": "",
+      "skills": [],
+      "targetRoles": [],
+      "targetCountries": [],
+      "workModes": [],
+      "experienceLevel": "any",
+      "website": "",
+      "linkedin": "",
+      "resume": null,
+      "revision": 0
+    },
+    "profileDirty": false,
+    "jobs": [
+      {
+        "id": "job-1",
+        "title": "Role saved 0",
+        "company": "Synthetic Employer",
+        "url": "https://employer.example/jobs/1",
+        "location": "الرياض",
+        "country": "SA"
+      },
+      {
+        "id": "job-2",
+        "title": "Role saved 1",
+        "company": "Synthetic Employer",
+        "url": "https://employer.example/jobs/2",
+        "location": "الرياض",
+        "country": "SA"
+      },
+      {
+        "id": "job-4",
+        "title": "Role saved 3",
+        "company": "Synthetic Employer",
+        "url": "https://employer.example/jobs/4",
+        "location": "الرياض",
+        "country": "SA"
+      },
+      {
+        "id": "job-5",
+        "title": "Role applied 0",
+        "company": "Synthetic Employer",
+        "url": "https://employer.example/jobs/5",
+        "location": "الرياض",
+        "country": "SA"
+      },
+      {
+        "id": "job-6",
+        "title": "Role applied 1",
+        "company": "Synthetic Employer",
+        "url": "https://employer.example/jobs/6",
+        "location": "الرياض",
+        "country": "SA"
+      },
+      {
+        "id": "job-8",
+        "title": "Role applied 3",
+        "company": "Synthetic Employer",
+        "url": "https://employer.example/jobs/8",
+        "location": "الرياض",
+        "country": "SA"
+      },
+      {
+        "id": "job-9",
+        "title": "Role interview 0",
+        "company": "Synthetic Employer",
+        "url": "https://employer.example/jobs/9",
+        "location": "الرياض",
+        "country": "SA"
+      },
+      {
+        "id": "job-10",
+        "title": "Nurse clinic",
+        "company": "Synthetic Employer",
+        "url": "https://employer.example/jobs/10",
+        "location": "الرياض",
+        "country": "SA"
+      },
+      {
+        "id": "job-12",
+        "title": "Role interview 3",
+        "company": "Synthetic Employer",
+        "url": "https://employer.example/jobs/12",
+        "location": "الرياض",
+        "country": "SA"
+      },
+      {
+        "id": "job-13",
+        "title": "Role offer 0",
+        "company": "Synthetic Employer",
+        "url": "https://employer.example/jobs/13",
+        "location": "الرياض",
+        "country": "SA"
+      },
+      {
+        "id": "job-14",
+        "title": "Role offer 1",
+        "company": "Synthetic Employer",
+        "url": "https://employer.example/jobs/14",
+        "location": "الرياض",
+        "country": "SA"
+      },
+      {
+        "id": "job-16",
+        "title": "Role offer 3",
+        "company": "Synthetic Employer",
+        "url": "https://employer.example/jobs/16",
+        "location": "الرياض",
+        "country": "SA"
+      },
+      {
+        "id": "job-17",
+        "title": "Role closed 0",
+        "company": "Synthetic Employer",
+        "url": "https://employer.example/jobs/17",
+        "location": "الرياض",
+        "country": "SA"
+      },
+      {
+        "id": "job-18",
+        "title": "Role closed 1",
+        "company": "Synthetic Employer",
+        "url": "https://employer.example/jobs/18",
+        "location": "الرياض",
+        "country": "SA"
+      },
+      {
+        "id": "job-20",
+        "title": "Role closed 3",
+        "company": "Synthetic Employer",
+        "url": "https://employer.example/jobs/20",
+        "location": "الرياض",
+        "country": "SA"
+      },
+      {
+        "id": "bare-21",
+        "title": "Bare 21",
+        "company": "Synthetic Employer",
+        "url": "https://employer.example/jobs/bare-21",
+        "location": "Riyadh",
+        "country": "SA"
+      },
+      {
+        "id": "bare-22",
+        "title": "Bare 22",
+        "company": "Synthetic Employer",
+        "url": "https://employer.example/jobs/bare-22",
+        "location": "Riyadh",
+        "country": "SA"
+      }
+    ],
+    "records": [
+      {
+        "identity": "https://employer.example/jobs/10",
+        "title": "Nurse clinic",
+        "company": "Synthetic Employer",
+        "location": "الرياض",
+        "stage": "offer",
+        "appliedElsewhere": true,
+        "appliedDate": "",
+        "followUpDate": "",
+        "note": "=SYNTHETIC(\"مرحبا، عالم\")\nLine two, \"quoted\"; follow-up",
+        "updatedAt": "2026-11-18T03:38:11.256Z"
+      },
+      {
+        "identity": "https://employer.example/jobs/1",
+        "title": "Role saved 0",
+        "company": "Synthetic Employer",
+        "location": "الرياض",
+        "stage": "saved",
+        "appliedElsewhere": false,
+        "appliedDate": "",
+        "followUpDate": "2026-11-02",
+        "note": "note saved 0",
+        "updatedAt": "2026-11-17T18:00:00.000Z"
+      },
+      {
+        "identity": "https://employer.example/jobs/2",
+        "title": "Role saved 1",
+        "company": "Synthetic Employer",
+        "location": "الرياض",
+        "stage": "saved",
+        "appliedElsewhere": false,
+        "appliedDate": "",
+        "followUpDate": "",
+        "note": "note saved 1",
+        "updatedAt": "2026-11-17T18:00:00.000Z"
+      },
+      {
+        "identity": "https://employer.example/jobs/3",
+        "title": "Role saved 2",
+        "company": "Synthetic Employer",
+        "location": "الرياض",
+        "stage": "saved",
+        "appliedElsewhere": false,
+        "appliedDate": "",
+        "followUpDate": "",
+        "note": "note saved 2",
+        "updatedAt": "2026-11-17T18:00:00.000Z"
+      },
+      {
+        "identity": "https://employer.example/jobs/4",
+        "title": "Role saved 3",
+        "company": "Synthetic Employer",
+        "location": "الرياض",
+        "stage": "saved",
+        "appliedElsewhere": false,
+        "appliedDate": "",
+        "followUpDate": "",
+        "note": "note saved 3",
+        "updatedAt": "2026-11-17T18:00:00.000Z"
+      },
+      {
+        "identity": "https://employer.example/jobs/5",
+        "title": "Role applied 0",
+        "company": "Synthetic Employer",
+        "location": "الرياض",
+        "stage": "applied",
+        "appliedElsewhere": true,
+        "appliedDate": "",
+        "followUpDate": "2026-11-20",
+        "note": "note applied 0",
+        "updatedAt": "2026-11-17T18:00:00.000Z"
+      },
+      {
+        "identity": "https://employer.example/jobs/6",
+        "title": "Role applied 1",
+        "company": "Synthetic Employer",
+        "location": "الرياض",
+        "stage": "applied",
+        "appliedElsewhere": true,
+        "appliedDate": "",
+        "followUpDate": "",
+        "note": "note applied 1",
+        "updatedAt": "2026-11-17T18:00:00.000Z"
+      },
+      {
+        "identity": "https://employer.example/jobs/7",
+        "title": "Role applied 2",
+        "company": "Synthetic Employer",
+        "location": "الرياض",
+        "stage": "applied",
+        "appliedElsewhere": true,
+        "appliedDate": "",
+        "followUpDate": "",
+        "note": "note applied 2",
+        "updatedAt": "2026-11-17T18:00:00.000Z"
+      },
+      {
+        "identity": "https://employer.example/jobs/8",
+        "title": "Role applied 3",
+        "company": "Synthetic Employer",
+        "location": "الرياض",
+        "stage": "applied",
+        "appliedElsewhere": true,
+        "appliedDate": "",
+        "followUpDate": "",
+        "note": "note applied 3",
+        "updatedAt": "2026-11-17T18:00:00.000Z"
+      },
+      {
+        "identity": "https://employer.example/jobs/9",
+        "title": "Role interview 0",
+        "company": "Synthetic Employer",
+        "location": "الرياض",
+        "stage": "interview",
+        "appliedElsewhere": true,
+        "appliedDate": "",
+        "followUpDate": "2026-12-02",
+        "note": "note interview 0",
+        "updatedAt": "2026-11-17T18:00:00.000Z"
+      },
+      {
+        "identity": "https://employer.example/jobs/11",
+        "title": "Role interview 2",
+        "company": "Synthetic Employer",
+        "location": "الرياض",
+        "stage": "interview",
+        "appliedElsewhere": true,
+        "appliedDate": "",
+        "followUpDate": "",
+        "note": "متابعة خاصة",
+        "updatedAt": "2026-11-17T18:00:00.000Z"
+      },
+      {
+        "identity": "https://employer.example/jobs/12",
+        "title": "Role interview 3",
+        "company": "Synthetic Employer",
+        "location": "الرياض",
+        "stage": "interview",
+        "appliedElsewhere": true,
+        "appliedDate": "",
+        "followUpDate": "",
+        "note": "note interview 3",
+        "updatedAt": "2026-11-17T18:00:00.000Z"
+      },
+      {
+        "identity": "https://employer.example/jobs/13",
+        "title": "Role offer 0",
+        "company": "Synthetic Employer",
+        "location": "الرياض",
+        "stage": "offer",
+        "appliedElsewhere": true,
+        "appliedDate": "",
+        "followUpDate": "2026-11-18",
+        "note": "note offer 0",
+        "updatedAt": "2026-11-17T18:00:00.000Z"
+      },
+      {
+        "identity": "https://employer.example/jobs/14",
+        "title": "Role offer 1",
+        "company": "Synthetic Employer",
+        "location": "الرياض",
+        "stage": "offer",
+        "appliedElsewhere": true,
+        "appliedDate": "",
+        "followUpDate": "",
+        "note": "note offer 1",
+        "updatedAt": "2026-11-17T18:00:00.000Z"
+      },
+      {
+        "identity": "https://employer.example/jobs/15",
+        "title": "Role offer 2",
+        "company": "Synthetic Employer",
+        "location": "الرياض",
+        "stage": "offer",
+        "appliedElsewhere": true,
+        "appliedDate": "",
+        "followUpDate": "",
+        "note": "note offer 2",
+        "updatedAt": "2026-11-17T18:00:00.000Z"
+      },
+      {
+        "identity": "https://employer.example/jobs/16",
+        "title": "Role offer 3",
+        "company": "Synthetic Employer",
+        "location": "الرياض",
+        "stage": "offer",
+        "appliedElsewhere": true,
+        "appliedDate": "",
+        "followUpDate": "",
+        "note": "note offer 3",
+        "updatedAt": "2026-11-17T18:00:00.000Z"
+      },
+      {
+        "identity": "https://employer.example/jobs/17",
+        "title": "Role closed 0",
+        "company": "Synthetic Employer",
+        "location": "الرياض",
+        "stage": "closed",
+        "appliedElsewhere": true,
+        "appliedDate": "",
+        "followUpDate": "2026-01-01",
+        "note": "note closed 0",
+        "updatedAt": "2026-11-17T18:00:00.000Z"
+      },
+      {
+        "identity": "https://employer.example/jobs/18",
+        "title": "Role closed 1",
+        "company": "Synthetic Employer",
+        "location": "الرياض",
+        "stage": "closed",
+        "appliedElsewhere": false,
+        "appliedDate": "",
+        "followUpDate": "",
+        "note": "note closed 1",
+        "updatedAt": "2026-11-17T18:00:00.000Z"
+      },
+      {
+        "identity": "https://employer.example/jobs/19",
+        "title": "Role closed 2",
+        "company": "Synthetic Employer",
+        "location": "الرياض",
+        "stage": "closed",
+        "appliedElsewhere": true,
+        "appliedDate": "",
+        "followUpDate": "",
+        "note": "note closed 2",
+        "updatedAt": "2026-11-17T18:00:00.000Z"
+      },
+      {
+        "identity": "https://employer.example/jobs/20",
+        "title": "Role closed 3",
+        "company": "Synthetic Employer",
+        "location": "الرياض",
+        "stage": "closed",
+        "appliedElsewhere": true,
+        "appliedDate": "",
+        "followUpDate": "",
+        "note": "note closed 3",
+        "updatedAt": "2026-11-17T18:00:00.000Z"
+      }
+    ],
+    "filters": {
+      "query": "",
+      "location": "",
+      "remoteOnly": false,
+      "sources": []
+    },
+    "lastSearch": null
+  },
+  "recovery": {
+    "schema": 1,
+    "scope": "guest",
+    "profile": {
+      "firstName": "",
+      "lastName": "",
+      "email": "",
+      "phone": "",
+      "city": "",
+      "country": "",
+      "headline": "",
+      "skills": [],
+      "targetRoles": [],
+      "targetCountries": [],
+      "workModes": [],
+      "experienceLevel": "any",
+      "website": "",
+      "linkedin": "",
+      "resume": null,
+      "revision": 0
+    },
+    "profileDirty": false,
+    "jobs": [],
+    "records": [],
+    "filters": {
+      "query": "",
+      "location": "",
+      "remoteOnly": false,
+      "sources": []
+    },
+    "lastSearch": null,
+    "safety": {
+      "holds": [],
+      "recovery": []
+    }
+  }
+}

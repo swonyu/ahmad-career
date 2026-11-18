@@ -1,0 +1,31 @@
+{
+  "accessDate": "2026-11-18",
+  "scope": "Bayt, GulfTalent, Naukrigulf primary documented jobseeker/mobile capabilities",
+  "careerBaselineReportedByRoot": "3fb5d97ec6f3568f2c8b27f148281926272a92fe",
+  "artifactAndInputHashes": [
+    {
+      "path": "Career-Finder-Competitive-Review-0435/regional-20261118/REVIEW.md",
+      "bytes": 11953,
+      "sha256": "c39863b9f66488dbf982f1c6b7fbcde9dc066f7bab33a4d190d945eee548a20f"
+    },
+    {
+      "path": "Career-Finder-Competitive-Review-0435/regional-20261118/sources.json",
+      "bytes": 7955,
+      "sha256": "592ee3e2bf0b986d8000c6a5fc01ec70479c25c4885a5b1eac87a6ca692d0fbf"
+    },
+    {
+      "path": "Career-Finder-Competitive-Review-0435/REVIEW.md",
+      "bytes": 15756,
+      "sha256": "137f34f46e830c1c7439c3a0a1de1181b9ef1f8c5df3f39fe1ea438e84c1302d"
+    },
+    {
+      "path": "grok-heavy-result-0443.txt",
+      "bytes": 8266,
+      "sha256": "5bea5fc4af43d1085ebd137bfdd06e27bdc9c1b73d444d0878ac4de3416e72b5"
+    }
+  ],
+  "limitations": "Documentation/source retrieval only; no hands-on journey measurement; root reopens primary URLs before citing.",
+  "browserOrAccountActions": false,
+  "productOrMacEdits": false,
+  "buildsTestsInstallsOrSubmissions": false
+}

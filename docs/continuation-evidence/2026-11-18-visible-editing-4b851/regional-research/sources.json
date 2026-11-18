@@ -1,0 +1,117 @@
+{
+  "accessDate": "2026-11-18",
+  "method": "Primary public pages and official product store listings opened through web retrieval; no hands-on browser, account or installed-app measurement.",
+  "rootCitationRequirement": "Root must reopen each cited URL before using this helper's web references.",
+  "careerBaseline": {
+    "rootReportedCommit": "3fb5d97ec6f3568f2c8b27f148281926272a92fe",
+    "reviewedStagePhoneAppSHA256": "77b3f3bd43f7a7fab19b68807118fba41bb95409701d054ed8232bc139a7dcba",
+    "laterRootBrowserFixes": "Independent, not measured in this research task."
+  },
+  "sources": [
+    {
+      "id": "bayt_android",
+      "url": "https://play.google.com/store/apps/details?hl=en_US&id=com.bayt",
+      "refs": ["turn313190634view1", "turn909603242view5"],
+      "locators": ["About this app; initially lines96–112", "App support; later lines262–274"],
+      "evidence": "MENA search, matching alerts, industry/salary/location/experience filters; FAQ explicitly describes search/apply/CV creation as free with optional Premium. Official Bayt domain and developer shown.",
+      "status": "Publisher-documented; not tested."
+    },
+    {
+      "id": "bayt_ios",
+      "url": "https://apps.apple.com/sa/app/bayt-com-jobs-mena-job-search/id510893233",
+      "refs": ["turn313190634view0", "turn909603242view0"],
+      "locators": ["Description; lines53–55", "Languages; lines387–390", "Provider and Developer Website"],
+      "evidence": "Core CV creation/search/apply free; optional Premium; English, Arabic and French declared; Bayt.com, Inc. publisher.",
+      "status": "Official listing/metadata, not feature-completeness or device acceptance."
+    },
+    {
+      "id": "bayt_save_alert_guide",
+      "url": "https://www.bayt.com/en/blog/31274/risetothechallenge-apply-for-jobs/",
+      "refs": ["turn200459974view3"],
+      "locators": ["Steps16–19; lines98–132", "Last updated; line139"],
+      "evidence": "Mobile/web saving, job filter use, alert creation/management, return via Saved Jobs and Apply instructions.",
+      "publishedOrUpdated": "Last updated 2024-07-19",
+      "status": "Older official how-to still accessible; current workflow not tested."
+    },
+    {
+      "id": "gulf_android",
+      "url": "https://play.google.com/store/apps/details?hl=en-GB&id=com.gulftalent.android.mobile",
+      "refs": ["turn313190634view3", "turn909603242view4"],
+      "locators": ["App's Main Features; initially lines114–135", "App support"],
+      "evidence": "Search/filter/shortlist, profile preferences, recommendations/alerts, application tracking, recruiter messages after shortlisting. Official GulfTalent domain and Gulf Talent FZ-LLC developer.",
+      "status": "Publisher-documented. General free wording is qualified by iOS Premium disclosure."
+    },
+    {
+      "id": "gulf_ios",
+      "url": "https://apps.apple.com/sa/app/gulftalent-job-search-app/id1093457564",
+      "refs": ["turn313190634view2", "turn909603242view1", "turn264350024view2"],
+      "locators": ["App's Main Features; lines57–59", "Using the App; lines62–64", "Languages; lines315–316"],
+      "evidence": "Optional Premium covers standing out, profile-viewer identity and applicant comparison. English is the only declared language in inspected iOS metadata; publisher Gulf Talent FZ-LLC.",
+      "status": "Documented entitlement distinction; enforcement and other-platform language support not tested."
+    },
+    {
+      "id": "gulf_app_page",
+      "url": "https://www.gulftalent.com/app",
+      "refs": ["turn200459974view1"],
+      "locators": ["GulfTalent Jobs app; lines13–18"],
+      "evidence": "Mobile search/apply and coverage of UAE, Saudi Arabia, Qatar, Oman, Bahrain and Kuwait.",
+      "status": "Official product description; coverage quality not measured."
+    },
+    {
+      "id": "gulf_free_registration",
+      "url": "https://www.gulftalent.com/register/apply",
+      "refs": ["turn200459974view4"],
+      "locators": ["Sign up for free; lines8–13"],
+      "evidence": "Free signup advertises professional online CV, applications, email alerts, optional recruiter discoverability.",
+      "status": "Published signup benefits; not proof that every route/enhancement is free."
+    },
+    {
+      "id": "gulf_easy_apply_label_1",
+      "url": "https://www.gulftalent.com/uae/jobs/education-outreach-manager_655394",
+      "refs": ["turn933273796view3"],
+      "locators": ["Easy Apply; lines113–115 and186–188"],
+      "evidence": "Retrieved official job-page text places a Premium-only label beside Easy Apply.",
+      "status": "Published-page text only. Logged-in enforcement, rendering conditions and alternate application routes remain unverified."
+    },
+    {
+      "id": "gulf_easy_apply_label_2",
+      "url": "https://www.gulftalent.com/uae/jobs/membership-sales-executive_618163",
+      "refs": ["turn945851798view0"],
+      "locators": ["Easy Apply; lines113–115 and191–193"],
+      "evidence": "Second official job-page extract repeats the Premium-only Easy Apply label.",
+      "status": "Same extraction/entitlement limitations as first example."
+    },
+    {
+      "id": "naukri_android",
+      "url": "https://play.google.com/store/apps/details?hl=en_US&id=com.naukriGulf.app",
+      "refs": ["turn313190634view5", "turn264350024view1", "turn909603242view3"],
+      "locators": ["Key Features; current lines86–119", "AI-Powered Features; lines120–128", "Additional Career Services; lines135–143", "App support"],
+      "evidence": "Search/freshness, recommendations, saving, CV/profile editing, alerts, recruiter application activity; CV and interview AI descriptions; paid additional services acknowledged. Official Naukrigulf links and Info Edge developer.",
+      "status": "Publisher-documented; no numeric inventory, ratings or effectiveness claims adopted."
+    },
+    {
+      "id": "naukri_ios",
+      "url": "https://apps.apple.com/sa/app/naukrigulf-job-search-app/id724241430",
+      "refs": ["turn313190634view4", "turn909603242view2"],
+      "locators": ["Shortlist & Apply; line59", "Monitor Profile Performance; line60", "Languages; lines382–383", "Provider; lines365–366"],
+      "evidence": "Free listing, saved jobs and application/activity descriptions; iOS description claims one-click apply without registration; English and Arabic declared; Info Edge (India) Ltd publisher.",
+      "status": "Registration claim confined to this description; not generalized to Android or actual employer forms."
+    },
+    {
+      "id": "naukri_ai_boundary",
+      "url": "https://www.naukrigulf.com/terms-and-conditions",
+      "refs": ["turn933273796view1", "turn264350024view0"],
+      "locators": ["Jobseeker Solutions / CV Maker, Interview Q&As Pro, CV Analyser; lines371–377"],
+      "evidence": "Describes potentially limited free functionality and additional paid features for those AI tools; exact current plan allowance is not specified here.",
+      "status": "Feature-entitlement qualification only, not legal advice or a purchase recommendation."
+    }
+  ],
+  "notUsedForCapabilityProof": [
+    {"url":"https://www.bayt.com/en/mobile-promo/","result":"Direct open returned410; search snippet not substituted as current proof."},
+    {"url":"https://www.naukrigulf.com/mobile-apps","result":"Direct open returned502."},
+    {"url":"https://mobile.naukrigulf.com/","result":"Direct open timed out."},
+    {"url":"https://www.naukrigulf.com/jobseeker/faq?locale=en","ref":"turn933273796view0","result":"Fee question visible without answer; no inferred fee answer."},
+    {"url":"https://www.naukrigulf.com/register/?keySource=expc&source=nav_c","ref":"turn933273796view2","result":"Direct extract only JavaScript-disabled notice; search snippet not elevated to proof."}
+  ],
+  "actions": {"browserUsed":false,"accountUsed":false,"macEdited":false,"productEdited":false,"newServices":false,"installs":false,"builds":false,"tests":false,"submissions":false}
+}

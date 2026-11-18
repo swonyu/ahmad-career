@@ -586,7 +586,7 @@ test("actual Keep editing restores a preserved record control after removal with
     h.removeAlert(); h.flush();
     assert.equal(h.document.activeElement, h[opener], "The removed Keep control must not leave focus on BODY");
     assert.deepEqual(h.focusCalls.map(call => call.target), [h[opener]]);
-    assert.equal(h.focusCalls[0].options.preventScroll, true);
+    assert.equal(h.focusCalls[0].options.preventScroll, false, "Keep recovery must allow the open dialog to scroll its focused control into view");
     assert.equal(h.document.editorQueries, 0, "A usable opener does not fall through to another field");
     h.unchanged();
   }
@@ -600,6 +600,7 @@ test("actual Keep editing restores dirty Delete or a surviving editor field, wit
   fallback.disconnect(fallback.cancel); fallback.document.activeElement = fallback.dialog;
   fallback.activate(); fallback.removeAlert(); fallback.flush();
   assert.equal(fallback.document.activeElement, fallback.stage); fallback.unchanged();
+  assert.equal(fallback.focusCalls[0].options.preventScroll, false, "Editor fallback must also allow native focus scrolling");
   const textarea = keepFocusHarness("none");
   textarea.disconnect(textarea.stage); textarea.activate(); textarea.removeAlert(); textarea.flush();
   assert.equal(textarea.document.activeElement, textarea.notes, "DOM order exposes the remaining textarea when Stage disappears");
@@ -615,6 +616,7 @@ test("actual Keep editing restores the add-job form and preserves all unfinished
     const h = keepFocusHarness(opener, "add");
     h.activate(); h.removeAlert(); h.flush();
     assert.equal(h.document.activeElement, opener === "close" ? h.close : h.url);
+    assert.equal(h.focusCalls[0].options.preventScroll, false, "Add-job recovery must keep its focused control reachable in the dialog");
     assert.equal(h.focusCalls.some(call => call.target === h.heading), false); h.unchanged();
   }
 });

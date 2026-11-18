@@ -1,0 +1,8 @@
+{
+  "observedUTC": "2026-11-18T05:36:35.225797+00:00",
+  "pid": 72871,
+  "verifiedCommand": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/stage-browser-fixture-20261118-cad85c4/server.mjs --port 4182",
+  "port": 4182,
+  "action": "SIGTERM self-owned cad85 fixture",
+  "portReleased": true
+}

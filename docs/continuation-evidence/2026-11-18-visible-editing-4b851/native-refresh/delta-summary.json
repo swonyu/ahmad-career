@@ -1,0 +1,251 @@
+{
+  "createdAt": "2026-11-18T05:48:33.290459+00:00",
+  "snapshotObservedUTC": "2026-11-18T05:42:50.715607+00:00",
+  "baselineObservedUTC": "2026-11-18T05:02:28.978846+00:00",
+  "baselinePath": "/workspace/scratch/4b851318da2d/Native-Owner-Refresh-0500/state-observation.json",
+  "baselineSHA256": "128aa102a5dc2098287d41927789c82383e911cd6852d89c1eb2b9c5498b26d9",
+  "sixCheckoutComparison": {
+    "Search": {
+      "headChanged": false,
+      "branchChanged": false,
+      "statusChanged": false,
+      "selectedHashChanges": {},
+      "stableDuringRead": true
+    },
+    "Recovery": {
+      "headChanged": false,
+      "branchChanged": false,
+      "statusChanged": false,
+      "selectedHashChanges": {},
+      "stableDuringRead": true
+    },
+    "Accessibility": {
+      "headChanged": false,
+      "branchChanged": false,
+      "statusChanged": false,
+      "selectedHashChanges": {},
+      "stableDuringRead": true
+    },
+    "PublisherCombined": {
+      "headChanged": false,
+      "branchChanged": false,
+      "statusChanged": false,
+      "selectedHashChanges": {},
+      "stableDuringRead": true
+    },
+    "PublisherAssertion": {
+      "headChanged": false,
+      "branchChanged": false,
+      "statusChanged": false,
+      "selectedHashChanges": {},
+      "stableDuringRead": true
+    },
+    "PublisherSSR": {
+      "headChanged": false,
+      "branchChanged": false,
+      "statusChanged": false,
+      "selectedHashChanges": {},
+      "stableDuringRead": true
+    }
+  },
+  "allSixComparedStatesUnchanged": true,
+  "allSixStableDuringRead": true,
+  "rootRemote": {
+    "before": "578d99c8f225a72ca7cc0cf10ff474bb19aaaebc",
+    "after": "cad85c495bc03853cc2258d093e79d8d1fb52ae3"
+  },
+  "ci": {
+    "totalRuns": 46,
+    "latestRun": {
+      "id": 44194197445,
+      "run_number": 44,
+      "head_sha": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+      "head_branch": "recovery/empty-state-ui-expectation-20261117-d57",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445",
+      "created_at": "2026-11-17T22:52:21Z",
+      "updated_at": "2026-11-17T23:27:52Z"
+    },
+    "latestJobsUnchanged": true,
+    "historicalVerifiedIPhoneJourneyResult": "17 passed, zero failed at exact a179/run44194197445, previously established from original log; no rerun or new log execution in this refresh.",
+    "fourOtherJobs": "skipped"
+  },
+  "comments": {
+    "querySince": "2026-11-18T02:58:00Z",
+    "returnedIDs": [
+      6967653645,
+      6970074066
+    ],
+    "newComments": [
+      {
+        "id": 6970074066,
+        "created_at": "2026-11-18T05:33:07Z",
+        "roleFromBody": "root coordinator foreground checkpoint and integration request",
+        "ownerAcknowledgement": false
+      }
+    ],
+    "newPublisherOrDevelopmentAcknowledgementObserved": false,
+    "limit": "Checked PR1 window only; no other inboxes searched. Root integration request is not an acknowledgement."
+  },
+  "processes": {
+    "sameGrokPIDs": [
+      3169,
+      3592,
+      3964,
+      4355,
+      4777,
+      5231
+    ],
+    "added": [
+      {
+        "pid": 74716,
+        "ppid": 7949,
+        "executable": "node"
+      }
+    ],
+    "removed": [
+      {
+        "pid": 47475,
+        "ppid": 7949,
+        "executable": "node"
+      }
+    ],
+    "nativeBuildExecutablesObserved": [],
+    "progressConclusion": "Not established by process presence; no terminal output or process arguments queried."
+  },
+  "locks": {
+    "checkedGitPaths": 24,
+    "present": [],
+    "knownNativeBuildLock": {
+      "path": "/tmp/dot-ios-build.lock",
+      "present": false
+    },
+    "ownershipTransfer": false
+  },
+  "additionalPublisherCandidate": {
+    "remoteBranch": "recovery/in-app-service-browser-20261118-d57",
+    "commit": "c0c865eea250019ee21fbd6110c9fe4446c3c8f1",
+    "parent": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+    "commitUTC": "2026-11-18T00:58:49Z",
+    "newlyObservedInComparedRefInventory": true,
+    "newSinceBaselineNotEstablished": true,
+    "publisherRecordedRemoteVerificationUTC": "2026-11-18T00:58:52.493095+00:00",
+    "committedFiles": [
+      {
+        "filename": "apple/AhmadCareer/NativeApplicationsViews.swift",
+        "status": "modified",
+        "additions": 133,
+        "deletions": 3,
+        "changes": 136
+      },
+      {
+        "filename": "apple/UITests/CareerFinderUITests.swift",
+        "status": "modified",
+        "additions": 88,
+        "deletions": 0,
+        "changes": 88
+      }
+    ],
+    "committedIntent": "Present existing hosted connect/recovery/account actions in an owned SFSafariViewController with direct default UIKit presentation and dismissal/reopen guards; manual pairing-code flow remains. UI assertions were added for English normal/reopen, English accessibility text and Arabic-device accessibility text presentation/return.",
+    "sourceOnlyCheckpointReceipt": {
+      "status": "PUSHED_REMOTE_VERIFIED_SOURCE_ONLY",
+      "native_status": "UNRUN",
+      "native_invoked": false,
+      "CI_invoked": false,
+      "sha256": "6618858562c25ca4e41325c6e9f743bbfe15bfbe95fc888f6da566be38a4a31c",
+      "sourcePinsIndependentlyMatchedCommittedBlobs": true
+    },
+    "currentCheckout": {
+      "observedUTC": "2026-11-18T05:46:22.726994+00:00",
+      "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-InApp-ServiceBrowser-a179",
+      "head": "c0c865eea250019ee21fbd6110c9fe4446c3c8f1",
+      "branch": "recovery/in-app-service-browser-20261118-d57",
+      "status": "M apple/AhmadCareer/CareerAppEnvironment.swift\n M apple/AhmadCareer/NativeApplicationsViews.swift\n M apple/AhmadCareer/NativeDiscoveryViews.swift\n M apple/UITests/CareerFinderUITests.swift",
+      "dirtyHashes": {
+        "apple/AhmadCareer/CareerAppEnvironment.swift": {
+          "bytes": 9843,
+          "sha256": "e9d7a2589c6298808c210513f3f3056adbcf382f2525e52a4c0f524af0b1e276"
+        },
+        "apple/AhmadCareer/NativeApplicationsViews.swift": {
+          "bytes": 91437,
+          "sha256": "3b4e8a695fa20cc2bcc1003a85eaeb63473d272d26c6d40b238bb96f9f0e9821"
+        },
+        "apple/AhmadCareer/NativeDiscoveryViews.swift": {
+          "bytes": 20312,
+          "sha256": "afecf8bebd8ef9d8db0705a54c4f6b5d7ca6b6953822bbbedc859982b60dacb4"
+        },
+        "apple/UITests/CareerFinderUITests.swift": {
+          "bytes": 64921,
+          "sha256": "c4990faf6e446dd3cc849f83124578fcb1ae68c99a26da3b9eb547577f24930a"
+        }
+      },
+      "diffStat": "apple/AhmadCareer/CareerAppEnvironment.swift    |   8 ++\n apple/AhmadCareer/NativeApplicationsViews.swift |  24 +++--\n apple/AhmadCareer/NativeDiscoveryViews.swift    |   4 +-\n apple/UITests/CareerFinderUITests.swift         | 113 +++++++++++++++++++++++-\n 4 files changed, 141 insertions(+), 8 deletions(-)",
+      "headAfter": "c0c865eea250019ee21fbd6110c9fe4446c3c8f1",
+      "statusAfter": "M apple/AhmadCareer/CareerAppEnvironment.swift\n M apple/AhmadCareer/NativeApplicationsViews.swift\n M apple/AhmadCareer/NativeDiscoveryViews.swift\n M apple/UITests/CareerFinderUITests.swift",
+      "dirtyHashesAfter": {
+        "apple/AhmadCareer/CareerAppEnvironment.swift": {
+          "bytes": 9843,
+          "sha256": "e9d7a2589c6298808c210513f3f3056adbcf382f2525e52a4c0f524af0b1e276"
+        },
+        "apple/AhmadCareer/NativeApplicationsViews.swift": {
+          "bytes": 91437,
+          "sha256": "3b4e8a695fa20cc2bcc1003a85eaeb63473d272d26c6d40b238bb96f9f0e9821"
+        },
+        "apple/AhmadCareer/NativeDiscoveryViews.swift": {
+          "bytes": 20312,
+          "sha256": "afecf8bebd8ef9d8db0705a54c4f6b5d7ca6b6953822bbbedc859982b60dacb4"
+        },
+        "apple/UITests/CareerFinderUITests.swift": {
+          "bytes": 64921,
+          "sha256": "c4990faf6e446dd3cc849f83124578fcb1ae68c99a26da3b9eb547577f24930a"
+        }
+      },
+      "stableDuringRead": true,
+      "scope": "Additional newly observed publisher candidate; no baseline delta or execution acceptance is inferred."
+    },
+    "githubExactCommitReceipts": {
+      "observedUTC": "2026-11-18T05:44:56.287250+00:00",
+      "sha": "c0c865eea250019ee21fbd6110c9fe4446c3c8f1",
+      "workflowRuns": {
+        "total_count": 0,
+        "runs": []
+      },
+      "checkRuns": {
+        "total_count": 0,
+        "checks": []
+      },
+      "combinedStatus": {
+        "state": "pending",
+        "total_count": 0,
+        "statuses": []
+      },
+      "commentQuery": {
+        "since": "2026-11-18T00:55:00Z",
+        "returnedCount": 5,
+        "per_page": 100,
+        "matchingTerms": [
+          "c0c865",
+          "in-app-service-browser",
+          "native safari",
+          "safari view",
+          "service browser"
+        ],
+        "matchingComments": []
+      },
+      "limits": [
+        "A zero GitHub check/status count is absence of submitted receipts, not a test result. Combined state pending with zero statuses is not an in-progress build.",
+        "Commit-dated00:58 predates baseline05:02. Branch creation/push time was not obtained."
+      ]
+    },
+    "integrationOrNativeAcceptanceEstablished": false,
+    "ownerAckOfNewRootWorkEstablished": false,
+    "newlyObservedDirtySuccessor": "Four dirty files beyond c0; first observed here, with no earlier comparable hash baseline. NativeApplicationsViews and UI tests overlap the committed c0 files. Preserve current publisher ownership and bytes."
+  },
+  "boundaries": [
+    "No source edits, browser or terminal input, builds, tests, installs, process or lock changes, posts or workflow dispatches.",
+    "No actual native execution receipt found in the explicitly checked c0 GitHub endpoints, PR comment window and native-browser evidence directory; local checkpoint explicitly says native UNRUN.",
+    "Current source-only candidate and dirty successor are not integrated or accepted. No store state was refreshed."
+  ]
+}

@@ -1,0 +1,537 @@
+{
+  "startedUTC": "2026-11-18T05:42:49.494143+00:00",
+  "observedUTC": "2026-11-18T05:42:50.715607+00:00",
+  "scope": "One bounded read-only owner/process-name/lock/CI refresh. No source changes, builds, tests, installs, terminal input, browser actions, posts, workflow dispatches or process control. Process arguments and environment were not queried.",
+  "baseline": "Native-Owner-Refresh-0500/state-observation.json",
+  "baselineObservedUTC": "2026-11-18T05:02:28.978846+00:00",
+  "repos": {
+    "Search": {
+      "path": "/Users/saleh/Developer/career-finder-native-search-20261117-01a1ea9d107f",
+      "head": "0beff68a6906968f282dca292dc547daad85684f",
+      "branch": "continuation/native-search-20261117-01a1ea9d107f",
+      "status": "",
+      "dirtyHashes": {},
+      "gitLocks": {
+        "index.lock": {
+          "present": false
+        },
+        "HEAD.lock": {
+          "present": false
+        },
+        "config.lock": {
+          "present": false
+        },
+        "packed-refs.lock": {
+          "present": false
+        }
+      },
+      "headAfter": "0beff68a6906968f282dca292dc547daad85684f",
+      "statusAfter": "",
+      "dirtyHashesAfter": {},
+      "stableDuringRead": true,
+      "hashScope": "Only the same previously selected source files; no new unselected dirty contents read."
+    },
+    "Recovery": {
+      "path": "/Users/saleh/Developer/career-finder-native-recovery-20261117-01a1ea9cfd25",
+      "head": "11cb3d4d8c15e9b16719b6e7091597f43633cda6",
+      "branch": "continuation/native-recovery-20261117-01a1ea9cfd25",
+      "status": "M android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt\n M android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt\n M android/app/src/main/java/com/saleh/careerfinder/Models.kt\n M android/app/src/main/java/com/saleh/careerfinder/WorkspaceTransfer.kt\n M apple/AhmadCareer/MobileApplicationState.swift\n M apple/AhmadCareer/NativeApplicationsStore.swift\n M apple/AhmadCareer/NativeApplicationsViews.swift\n?? apple/Checks/NativeRecoveryCheck.swift",
+      "dirtyHashes": {
+        "android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt": {
+          "bytes": 101360,
+          "sha256": "faf6035abd43f695996feff608b0cf2cd6a844c50a8c2c3305b0104cb524388f"
+        },
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt": {
+          "bytes": 95724,
+          "sha256": "1a01a32a739d8f62f4639f52012b37d06a498a36db9db6988034617c24ea92a5"
+        },
+        "android/app/src/main/java/com/saleh/careerfinder/Models.kt": {
+          "bytes": 18470,
+          "sha256": "716fe6ff51f9dd614cc0532e353dd0b16319cef2de39b39a2f906107eec0032c"
+        },
+        "android/app/src/main/java/com/saleh/careerfinder/WorkspaceTransfer.kt": {
+          "bytes": 16740,
+          "sha256": "fa5e64e4ac918b712dcadce2144aacf012da1d25a6d7ad8f931b245ad580b6c7"
+        },
+        "apple/AhmadCareer/MobileApplicationState.swift": {
+          "bytes": 44039,
+          "sha256": "74af420b46db2ca75355eda9f97716a0e5e12d45a41a204145c277f33838a404"
+        },
+        "apple/AhmadCareer/NativeApplicationsStore.swift": {
+          "bytes": 86806,
+          "sha256": "1f04fe20db91f6a893ecc990757eebf881d93287de3b491cef6641cabeee7c48"
+        },
+        "apple/AhmadCareer/NativeApplicationsViews.swift": {
+          "bytes": 88938,
+          "sha256": "0a831b8f25668e4bd9985885ade653ce71a23720cd172be53f5e8874231c896a"
+        },
+        "apple/Checks/NativeRecoveryCheck.swift": {
+          "bytes": 80641,
+          "sha256": "ec8e6c0098c16bb08cb3d3a3207bfe6db023fbbf1387a23e192ec754b12f7c51"
+        }
+      },
+      "gitLocks": {
+        "index.lock": {
+          "present": false
+        },
+        "HEAD.lock": {
+          "present": false
+        },
+        "config.lock": {
+          "present": false
+        },
+        "packed-refs.lock": {
+          "present": false
+        }
+      },
+      "headAfter": "11cb3d4d8c15e9b16719b6e7091597f43633cda6",
+      "statusAfter": "M android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt\n M android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt\n M android/app/src/main/java/com/saleh/careerfinder/Models.kt\n M android/app/src/main/java/com/saleh/careerfinder/WorkspaceTransfer.kt\n M apple/AhmadCareer/MobileApplicationState.swift\n M apple/AhmadCareer/NativeApplicationsStore.swift\n M apple/AhmadCareer/NativeApplicationsViews.swift\n?? apple/Checks/NativeRecoveryCheck.swift",
+      "dirtyHashesAfter": {
+        "android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt": "faf6035abd43f695996feff608b0cf2cd6a844c50a8c2c3305b0104cb524388f",
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "1a01a32a739d8f62f4639f52012b37d06a498a36db9db6988034617c24ea92a5",
+        "android/app/src/main/java/com/saleh/careerfinder/Models.kt": "716fe6ff51f9dd614cc0532e353dd0b16319cef2de39b39a2f906107eec0032c",
+        "android/app/src/main/java/com/saleh/careerfinder/WorkspaceTransfer.kt": "fa5e64e4ac918b712dcadce2144aacf012da1d25a6d7ad8f931b245ad580b6c7",
+        "apple/AhmadCareer/MobileApplicationState.swift": "74af420b46db2ca75355eda9f97716a0e5e12d45a41a204145c277f33838a404",
+        "apple/AhmadCareer/NativeApplicationsStore.swift": "1f04fe20db91f6a893ecc990757eebf881d93287de3b491cef6641cabeee7c48",
+        "apple/AhmadCareer/NativeApplicationsViews.swift": "0a831b8f25668e4bd9985885ade653ce71a23720cd172be53f5e8874231c896a",
+        "apple/Checks/NativeRecoveryCheck.swift": "ec8e6c0098c16bb08cb3d3a3207bfe6db023fbbf1387a23e192ec754b12f7c51"
+      },
+      "stableDuringRead": true,
+      "hashScope": "Only the same previously selected source files; no new unselected dirty contents read."
+    },
+    "Accessibility": {
+      "path": "/Users/saleh/Library/Caches/Career-Account-A11y-Lane-20261117-01a1ea56",
+      "head": "b37fe51fa2e03868efb0ad3c830be5801defe913",
+      "branch": "lane/account-search-a11y-20261117",
+      "status": "",
+      "dirtyHashes": {},
+      "gitLocks": {
+        "index.lock": {
+          "present": false
+        },
+        "HEAD.lock": {
+          "present": false
+        },
+        "config.lock": {
+          "present": false
+        },
+        "packed-refs.lock": {
+          "present": false
+        }
+      },
+      "headAfter": "b37fe51fa2e03868efb0ad3c830be5801defe913",
+      "statusAfter": "",
+      "dirtyHashesAfter": {},
+      "stableDuringRead": true,
+      "hashScope": "Only the same previously selected source files; no new unselected dirty contents read.",
+      "commitsSince243": "34"
+    },
+    "PublisherCombined": {
+      "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-CombinedR2",
+      "head": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+      "branch": "recovery/publishing-reconciled-20261117-d57",
+      "status": "",
+      "dirtyHashes": {},
+      "gitLocks": {
+        "index.lock": {
+          "present": false
+        },
+        "HEAD.lock": {
+          "present": false
+        },
+        "config.lock": {
+          "present": false
+        },
+        "packed-refs.lock": {
+          "present": false
+        }
+      },
+      "headAfter": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+      "statusAfter": "",
+      "dirtyHashesAfter": {},
+      "stableDuringRead": true,
+      "hashScope": "Only the same previously selected source files; no new unselected dirty contents read."
+    },
+    "PublisherAssertion": {
+      "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-EmptyState-UI288",
+      "head": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+      "branch": "recovery/empty-state-ui-expectation-20261117-d57",
+      "status": "",
+      "dirtyHashes": {},
+      "gitLocks": {
+        "index.lock": {
+          "present": false
+        },
+        "HEAD.lock": {
+          "present": false
+        },
+        "config.lock": {
+          "present": false
+        },
+        "packed-refs.lock": {
+          "present": false
+        }
+      },
+      "headAfter": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+      "statusAfter": "",
+      "dirtyHashesAfter": {},
+      "stableDuringRead": true,
+      "hashScope": "Only the same previously selected source files; no new unselected dirty contents read."
+    },
+    "PublisherSSR": {
+      "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-SSR-Phase2-a179",
+      "head": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+      "branch": "recovery/ssr-phase2-a179-20261117-d57",
+      "status": "M .github/workflows/phone-quality.yml\n M hosted/app/account/page.tsx\n M hosted/app/chatgpt-auth.ts\n M hosted/app/components/GoogleSignInArtwork.tsx\n M hosted/app/components/SiteFrame.tsx\n M hosted/app/connect/page.tsx\n M hosted/app/i18n/server.ts\n M hosted/app/layout.tsx\n M hosted/app/page.tsx\n M hosted/app/phone/PhoneApp.tsx\n M hosted/app/phone/page.tsx\n M hosted/app/phone/pdf.ts\n M hosted/app/privacy/page.tsx\n M hosted/app/support/page.tsx\n D hosted/eslint.config.mjs\n D hosted/next.config.ts\n M hosted/package-lock.json\n M hosted/package.json\n M hosted/scripts/build-verified.sh\n M hosted/scripts/install-ci.mjs\n M hosted/scripts/install-ci.sh\n M hosted/scripts/run-framework.mjs\n M hosted/scripts/vite/sites-vite-plugin.ts\n M hosted/tsconfig.json\n D hosted/vite.config.ts\n M hosted/worker/index.ts\n?? hosted/.oxlintrc.json\n?? hosted/app/request-context.ts\n?? hosted/docs/\n?? hosted/renderer/\n?? hosted/scripts/build-site.mjs\n?? hosted/scripts/preview-site.mjs\n?? hosted/tests/build-pdf-browser-esbuild.mjs\n?? hosted/tests/ssr-runtime.mjs",
+      "dirtyHashes": {
+        "hosted/app/phone/PhoneApp.tsx": {
+          "bytes": 121084,
+          "sha256": "54f4d49dc17c8e1fb96dcceaf8e2f7aa1703dc8a255837515a229be5734b4f00"
+        },
+        "hosted/package-lock.json": {
+          "bytes": 361294,
+          "sha256": "4d85b9d5290351367e48fdb1fd54e3786344423434a16aef6b8b9381a250d685"
+        },
+        "hosted/package.json": {
+          "bytes": 3410,
+          "sha256": "77b0016647cb32b712569c6d36710fad2f710a0748fd70096542cd0acad220eb"
+        },
+        "hosted/scripts/build-site.mjs": {
+          "bytes": 9729,
+          "sha256": "069cff27a155a4e6b4e05a24a97c0ad0329b48913823a7a837931a531317d517"
+        },
+        "hosted/tests/ssr-runtime.mjs": {
+          "bytes": 14156,
+          "sha256": "4692be0181aebed8dca2d91f3530b86b94d8c5f74e385a3053e4131a1ce3e529"
+        }
+      },
+      "gitLocks": {
+        "index.lock": {
+          "present": false
+        },
+        "HEAD.lock": {
+          "present": false
+        },
+        "config.lock": {
+          "present": false
+        },
+        "packed-refs.lock": {
+          "present": false
+        }
+      },
+      "headAfter": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+      "statusAfter": "M .github/workflows/phone-quality.yml\n M hosted/app/account/page.tsx\n M hosted/app/chatgpt-auth.ts\n M hosted/app/components/GoogleSignInArtwork.tsx\n M hosted/app/components/SiteFrame.tsx\n M hosted/app/connect/page.tsx\n M hosted/app/i18n/server.ts\n M hosted/app/layout.tsx\n M hosted/app/page.tsx\n M hosted/app/phone/PhoneApp.tsx\n M hosted/app/phone/page.tsx\n M hosted/app/phone/pdf.ts\n M hosted/app/privacy/page.tsx\n M hosted/app/support/page.tsx\n D hosted/eslint.config.mjs\n D hosted/next.config.ts\n M hosted/package-lock.json\n M hosted/package.json\n M hosted/scripts/build-verified.sh\n M hosted/scripts/install-ci.mjs\n M hosted/scripts/install-ci.sh\n M hosted/scripts/run-framework.mjs\n M hosted/scripts/vite/sites-vite-plugin.ts\n M hosted/tsconfig.json\n D hosted/vite.config.ts\n M hosted/worker/index.ts\n?? hosted/.oxlintrc.json\n?? hosted/app/request-context.ts\n?? hosted/docs/\n?? hosted/renderer/\n?? hosted/scripts/build-site.mjs\n?? hosted/scripts/preview-site.mjs\n?? hosted/tests/build-pdf-browser-esbuild.mjs\n?? hosted/tests/ssr-runtime.mjs",
+      "dirtyHashesAfter": {
+        "hosted/app/phone/PhoneApp.tsx": "54f4d49dc17c8e1fb96dcceaf8e2f7aa1703dc8a255837515a229be5734b4f00",
+        "hosted/package-lock.json": "4d85b9d5290351367e48fdb1fd54e3786344423434a16aef6b8b9381a250d685",
+        "hosted/package.json": "77b0016647cb32b712569c6d36710fad2f710a0748fd70096542cd0acad220eb",
+        "hosted/scripts/build-site.mjs": "069cff27a155a4e6b4e05a24a97c0ad0329b48913823a7a837931a531317d517",
+        "hosted/tests/ssr-runtime.mjs": "4692be0181aebed8dca2d91f3530b86b94d8c5f74e385a3053e4131a1ce3e529"
+      },
+      "stableDuringRead": true,
+      "hashScope": "Only the same previously selected source files; no new unselected dirty contents read."
+    }
+  },
+  "changesSinceBaseline": {
+    "Search": {
+      "headChanged": false,
+      "branchChanged": false,
+      "statusChanged": false,
+      "selectedHashChanges": {},
+      "stableDuringRead": true
+    },
+    "Recovery": {
+      "headChanged": false,
+      "branchChanged": false,
+      "statusChanged": false,
+      "selectedHashChanges": {},
+      "stableDuringRead": true
+    },
+    "Accessibility": {
+      "headChanged": false,
+      "branchChanged": false,
+      "statusChanged": false,
+      "selectedHashChanges": {},
+      "stableDuringRead": true
+    },
+    "PublisherCombined": {
+      "headChanged": false,
+      "branchChanged": false,
+      "statusChanged": false,
+      "selectedHashChanges": {},
+      "stableDuringRead": true
+    },
+    "PublisherAssertion": {
+      "headChanged": false,
+      "branchChanged": false,
+      "statusChanged": false,
+      "selectedHashChanges": {},
+      "stableDuringRead": true
+    },
+    "PublisherSSR": {
+      "headChanged": false,
+      "branchChanged": false,
+      "statusChanged": false,
+      "selectedHashChanges": {},
+      "stableDuringRead": true
+    }
+  },
+  "processes": {
+    "query": "pid,ppid,elapsed,comm only; filtered executable basenames",
+    "exit": 0,
+    "matching": [
+      {
+        "pid": 1182,
+        "ppid": 1178,
+        "elapsed": "04:19:35",
+        "executable": "node"
+      },
+      {
+        "pid": 1183,
+        "ppid": 1181,
+        "elapsed": "04:19:35",
+        "executable": "node"
+      },
+      {
+        "pid": 1184,
+        "ppid": 1180,
+        "elapsed": "04:19:35",
+        "executable": "node"
+      },
+      {
+        "pid": 1185,
+        "ppid": 1179,
+        "elapsed": "04:19:35",
+        "executable": "node"
+      },
+      {
+        "pid": 1615,
+        "ppid": 1590,
+        "elapsed": "04:19:28",
+        "executable": "node"
+      },
+      {
+        "pid": 2920,
+        "ppid": 2790,
+        "elapsed": "03:58:08",
+        "executable": "node"
+      },
+      {
+        "pid": 24355,
+        "ppid": 1,
+        "elapsed": "03:19:13",
+        "executable": "node"
+      },
+      {
+        "pid": 24364,
+        "ppid": 24355,
+        "elapsed": "03:19:12",
+        "executable": "node"
+      },
+      {
+        "pid": 3169,
+        "ppid": 1220,
+        "elapsed": "03:56:40",
+        "executable": "grok"
+      },
+      {
+        "pid": 4355,
+        "ppid": 1275,
+        "elapsed": "03:56:31",
+        "executable": "grok"
+      },
+      {
+        "pid": 3592,
+        "ppid": 1278,
+        "elapsed": "03:56:37",
+        "executable": "grok"
+      },
+      {
+        "pid": 3964,
+        "ppid": 1279,
+        "elapsed": "03:56:34",
+        "executable": "grok"
+      },
+      {
+        "pid": 5231,
+        "ppid": 1277,
+        "elapsed": "03:56:25",
+        "executable": "grok"
+      },
+      {
+        "pid": 4777,
+        "ppid": 1347,
+        "elapsed": "03:56:28",
+        "executable": "grok"
+      },
+      {
+        "pid": 7930,
+        "ppid": 7908,
+        "elapsed": "03:51:57",
+        "executable": "node"
+      },
+      {
+        "pid": 7949,
+        "ppid": 7930,
+        "elapsed": "03:51:57",
+        "executable": "node"
+      },
+      {
+        "pid": 74716,
+        "ppid": 7949,
+        "elapsed": "06:00",
+        "executable": "node"
+      }
+    ]
+  },
+  "knownNativeBuildLock": {
+    "path": "/tmp/dot-ios-build.lock",
+    "present": false
+  },
+  "github": {
+    "totalRuns": 46,
+    "latestRuns": [
+      {
+        "id": 44194197445,
+        "run_number": 44,
+        "head_sha": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+        "head_branch": "recovery/empty-state-ui-expectation-20261117-d57",
+        "event": "workflow_dispatch",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445",
+        "created_at": "2026-11-17T22:52:21Z",
+        "updated_at": "2026-11-17T23:27:52Z"
+      },
+      {
+        "id": 44185640786,
+        "run_number": 43,
+        "head_sha": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+        "head_branch": "recovery/publishing-reconciled-20261117-d57",
+        "event": "workflow_dispatch",
+        "status": "completed",
+        "conclusion": "failure",
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44185640786",
+        "created_at": "2026-11-17T22:00:19Z",
+        "updated_at": "2026-11-17T22:23:13Z"
+      },
+      {
+        "id": 44172535044,
+        "run_number": 42,
+        "head_sha": "363ae84aaaf9032b040ee60b16a3c023ec1c1cf2",
+        "head_branch": "recovery/publishing-integrated-20261117-d57f4",
+        "event": "workflow_dispatch",
+        "status": "completed",
+        "conclusion": "failure",
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44172535044",
+        "created_at": "2026-11-17T20:44:50Z",
+        "updated_at": "2026-11-17T21:15:15Z"
+      },
+      {
+        "id": 44147056599,
+        "run_number": 41,
+        "head_sha": "243031d3f35040985c5b274e8ddf4a90adb0eda8",
+        "head_branch": "recovery/publishing-integrated-20261117-d57f4",
+        "event": "workflow_dispatch",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44147056599",
+        "created_at": "2026-11-17T18:22:03Z",
+        "updated_at": "2026-11-17T18:50:00Z"
+      },
+      {
+        "id": 44139018005,
+        "run_number": 40,
+        "head_sha": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+        "head_branch": "continuation/account-acceptance-20261117",
+        "event": "pull_request",
+        "status": "completed",
+        "conclusion": "failure",
+        "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44139018005",
+        "created_at": "2026-11-17T17:37:23Z",
+        "updated_at": "2026-11-17T18:06:31Z"
+      }
+    ],
+    "latestRunJobs": {
+      "44194197445": [
+        {
+          "id": 134431174905,
+          "name": "PARTIAL iPhone UI acceptance (all 17 journeys)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-17T22:52:30Z",
+          "completed_at": "2026-11-17T23:27:52Z",
+          "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/job/134431174905"
+        },
+        {
+          "id": 134431176866,
+          "name": "Android compile, lint and native acceptance",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-11-17T22:52:22Z",
+          "completed_at": "2026-11-17T22:52:22Z",
+          "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/job/134431176866"
+        },
+        {
+          "id": 134431177187,
+          "name": "Service and synthetic HTTPS",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-11-17T22:52:22Z",
+          "completed_at": "2026-11-17T22:52:22Z",
+          "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/job/134431177187"
+        },
+        {
+          "id": 134431177737,
+          "name": "Hosted HTTPS service and durable storage",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-11-17T22:52:22Z",
+          "completed_at": "2026-11-17T22:52:22Z",
+          "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/job/134431177737"
+        },
+        {
+          "id": 134431177800,
+          "name": "iPhone logic and unsigned build",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-11-17T22:52:22Z",
+          "completed_at": "2026-11-17T22:52:22Z",
+          "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/job/134431177800"
+        }
+      ]
+    },
+    "commentsSince": "2026-11-18T02:58:00Z",
+    "comments": [
+      {
+        "id": 6967653645,
+        "html_url": "https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6967653645",
+        "created_at": "2026-11-18T02:58:00Z",
+        "updated_at": "2026-11-18T02:58:00Z",
+        "body": "### Hosted stage-filter checkpoint pushed; browser corrections remain with root\n\nRoot coordinator **4b851318da2d** pushed and verified clean, remote-equal **3fb5d97ec6f3568f2c8b27f148281926272a92fe** at 18 November 02:39:58 UTC.\n\n[Reviewed source, patches, independent critiques and raw pinned receipts](https://github.com/swonyu/ahmad-career/tree/3fb5d97ec6f3568f2c8b27f148281926272a92fe/docs/continuation-evidence/2026-11-18-stage-filter-4b851)\n\nThe bounded feature adds an English/Arabic Application stage selector to Saved, intersecting with the existing search and All/Applied/Follow-ups views. It preserves appliedElsewhere, Closed behavior, follow-up ordering, bare bookmarks, private storage and exports. Root fixed the independently found hidden Clear button after deleting the last record-only item and strengthened the regression to require actual rendered buttons.\n\n**Actual final pinned result:** Node 24.22.3 / npm 11.20.0; original candidate with the strengthened regression 42 pass / 1 fail; corrected full **301 main + 6 PDF**, typecheck, lint and hosted build all exit 0. The 43 record-tools cases are a subset. All implementation and test hashes stayed stable; the three existing test-generated verification reports refreshed only observedAt, with all other fields equal. The dependency graph remains unchanged; root audit 19 high is still separate from the publisher's SSR candidate audit 0.\n\n**Actual browser progress, 390 × 844 CSS pixels:** keyboard selection of Interview works; deleting the last synthetic record-only item keeps Clear visible; Clear restores the default Explore state. This is a real Chrome run against the current production PhoneApp in an isolated synthetic guest fixture, not native/device acceptance.\n\nThat run also exposed misleading bookmark-retention text for record-only items and lost keyboard focus when the invoking record or Clear button disappears. **Root is correcting and retesting those bounded hosted findings now.** Please avoid competing edits to the root-owned PhoneApp deletion/Clear hunks, Modal focus handling, associated existing tests and two Arabic messages. Root will supply the next exact checkpoint and acceptance evidence. Native integration and migration builds remain with their existing owners.\n\nFresh native source observation at 02:37–02:38 UTC: accessibility is clean **b37fe51fa2e03868efb0ad3c830be5801defe913**, 34 commits / 21 paths; its new unit translates built-in Riyadh/Saudi Arabia labels. Recovery remains at **11cb3d4d8c15e9b16719b6e7091597f43633cda6** with eight dirty paths, including newer CareerViewModel.kt (SHA faf6035abd43f695996feff608b0cf2cd6a844c50a8c2c3305b0104cb524388f) and NativeRecoveryCheck.swift (SHA ec8e6c0098c16bb08cb3d3a3207bfe6db023fbbf1387a23e192ec754b12f7c51). The shared three-file map remains unchanged. No native execution receipt for those newest bytes was established. Preserve all current work.\n\nLatest checked CI remains **44194197445 / a179**, 17/17 iPhone simulator UI tests, four other jobs skipped. No newer combined-source or store release pass was observed. Publisher d57 retains migration/native integration, builds, CI, signing and stores; development 5bc retains dependency remediation. The f6 SSR guard proposal and ordinary lifecycle-install gate remain pending owner integration.\n\nGrok's same three browser conversations remain Build / Build / Heavy; Build 2 now owns only the bounded Arabic wording proposal, and Heavy critiques the observed focus remedies. No full source packages or 39 images were resent.\n\nForeground root claim remains active, including its owned synthetic listener on port 4182. Scheduled passes should remain read-only. Seven streams, original 18 November 22:26:12 UTC cutoff, free costs and Good Spender exclusion are unchanged.",
+        "login": "swonyu"
+      },
+      {
+        "id": 6970074066,
+        "html_url": "https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6970074066",
+        "created_at": "2026-11-18T05:33:07Z",
+        "updated_at": "2026-11-18T05:33:07Z",
+        "body": "## Career Finder foreground checkpoint — 18 November, 08:30 Riyadh\nRoot coordinator `4b851318da2d` remains ACTIVE on hosted source and browser acceptance. Existing native/publishing/dependency owners and the exact seven streams remain unchanged. This is progress coordination, not a foreground release or a native build reservation.\n\n### Pushed source and actual pinned gates\n[`cad85c495bc03853cc2258d093e79d8d1fb52ae3`](https://github.com/swonyu/ahmad-career/commit/cad85c495bc03853cc2258d093e79d8d1fb52ae3) is pushed on `continuation/feed-reliability-20261117-4b851`, parent `578d99c`. Clean and remote equality were verified at 05:24:05 UTC.\n\nIt fixes Keep editing leaving BODY focused in the still-open record/add dialog. Root reviewed Grok Build 1's exact patch and stdout, corrected weak baseline/fallback test oracles, and added bounded same-form/confirmation/eligibility guards. The existing Modal/Clear helper and Arabic catalog are unchanged.\n\nActual Node **24.22.3**, npm **11.20.0** gates ended **05:20:11 UTC**:\n- Unchanged 578 with final regression assertions: **3 pass / 7 fail** in ten groups. The first failure is actual BODY focus, not missing code.\n- Corrected focused recovery + record files: **98/98**, overlapping the full suite.\n- Full required chain: **321 main + 6 separate PDF tests**, typecheck, strict lint, build and diff-check pass.\n- Implementation/test hashes stayed stable. Three generated reports changed only `observedAt`.\n- Earlier strict-lint failure in a test port is preserved; the test was corrected without disabling the rule.\n\n[Checkpoint evidence](https://github.com/swonyu/ahmad-career/tree/cad85c495bc03853cc2258d093e79d8d1fb52ae3/docs/continuation-evidence/2026-11-18-keep-editing-4b851) explicitly leaves corrected-source browser acceptance pending.\n\n### New actual browser finding — root is correcting it\nThe cad85 browser retest restored Cancel focus and preserved the draft, but the button was entirely clipped below the long dialog. Measured target top/bottom **832.15/881.15**, dialog bottom **828**, scrollTop **0**, scrollHeight/clientHeight **976/811**. Screenshot preserved.\n\nRoot owns the small follow-up: permit native scrolling in the two Keep-only focus calls, with existing guards and draft semantics preserved. Independent review and the same Grok Build/Heavy sessions are reviewing it. **Do not duplicate this fix or treat cad85 as a complete browser pass.** Actual English/Arabic record and add-form retests follow the correction.\n\n### Parent-source browser and export acceptance\nAt served source578, EN/AR stage/query/view composition, conditional deletion copy, retained/removed-invoker focus and Clear recovery were observed. Ordinary navigation retained query/stage; reload reset filters and retained the committed record. Native select arrow-key delivery remains inconclusive.\n\nActual synthetic downloads were independently checked: full20-record CSV export despite one visible filtered job; JSON payload preservation; Arabic/English fields; formula-like multiline note kept with the intended CSV Text marker. Installed LibreOffice26.8.1.1 text import, ODS reopen and CSV roundtrip preserved **189 cells per locale**, zero formulas/mismatches. Three ICS downloads preserve one UID, saved day2026-11-30 and one-day duration, with private notes absent. **87/87 file/consumer assertions** are a separate scope, not app/native test counts. Calendar import, mobile file handoff and physical assistive technology remain unverified. Initial test-date entry was corrected and its first exports retained; no final export defect was found.\n\n### Owner gates\n05:02:28 UTC read-only refresh found no compared owner-source or CI movement: search0be clean; recovery11cb with the same8 dirty hashes; accessibilityb37 clean; publisher combined288/assertiona179 unchanged. Latest run44194197445 remains17/17 iPhone simulator UI with four jobs skipped; no newer combined-source acceptance or owner acknowledgement was observed.\n\nPublisher `d57f4cd77813` retains integration/native builds/CI/signing/stores and its SSR candidate; development `5bc6158967e8` retains dependency remediation. The candidate's ordinary lifecycle install and integrated current-source audit/build/runtime gates remain required; prior `ci --ignore-scripts` proof does not establish them. Root's newer hosted changes must be retained during integration. Please acknowledge the eventual integration point after the pending root browser follow-up; no competing native build is requested here.\n\nOriginal cutoff remains **19 November 01:26:12 Riyadh**. No signed/store submission/release or 100%/competitor-superiority claim.",
+        "login": "swonyu"
+      }
+    ],
+    "selectedRefs": {
+      "refs/heads/recovery/empty-state-ui-expectation-20261117-d57": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+      "refs/heads/recovery/in-app-service-browser-20261118-d57": "c0c865eea250019ee21fbd6110c9fe4446c3c8f1",
+      "refs/heads/recovery/publishing-integrated-20261117-d57f4": "363ae84aaaf9032b040ee60b16a3c023ec1c1cf2",
+      "refs/heads/recovery/publishing-reconciled-20261117-d57": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+      "refs/heads/continuation/feed-reliability-20261117-4b851": "cad85c495bc03853cc2258d093e79d8d1fb52ae3"
+    }
+  },
+  "limits": [
+    "Process presence and elapsed time do not establish output progress or ownership.",
+    "Lock absence does not transfer ownership or authorize builds.",
+    "Only checked PR1 comments and selected refs were observed; an unanswered request is not an owner acknowledgement.",
+    "Selected dirty-file hashes preserve the baseline scope; unchanged status does not establish unchanged unselected bytes."
+  ]
+}

@@ -1,0 +1,211 @@
+{
+  "version": "LibreOffice 26.8.1.1 bf6ef2662401c7d6dce671ab4deb26ee0af3a7c1",
+  "processesBefore": [],
+  "jobs": [
+    {
+      "name": "quoted-text-import",
+      "startedAt": "2026-11-18T05:21:33.488191+00:00",
+      "completedAt": "2026-11-18T05:21:34.666050+00:00",
+      "command": [
+        "/Applications/LibreOffice.app/Contents/MacOS/soffice",
+        "-env:UserInstallation=file:///Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/profile-quoted-text-import",
+        "--headless",
+        "--nologo",
+        "--nodefault",
+        "--nofirststartwizard",
+        "--infilter=Text - txt - csv (StarCalc):44,34,76,1,,1033,true,false,true,false,false,0,true,false,false",
+        "--convert-to",
+        "fods",
+        "--outdir",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/quoted-text-import",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/originals/final-records-en.csv",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/originals/final-records-ar.csv"
+      ],
+      "exitCode": 0,
+      "stdout": "convert /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/originals/final-records-en.csv as a Calc document -> /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/quoted-text-import/final-records-en.fods using filter : OpenDocument Spreadsheet Flat XML\nconvert /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/originals/final-records-ar.csv as a Calc document -> /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/quoted-text-import/final-records-ar.fods using filter : OpenDocument Spreadsheet Flat XML\n",
+      "stderr": "Fontconfig warning: no <cachedir> elements found. Check configuration.\nFontconfig warning: adding <cachedir>/usr/local/var/cache/fontconfig</cachedir>\nFontconfig warning: adding <cachedir prefix=\"xdg\">fontconfig</cachedir>\nFontconfig warning: no <cachedir> elements found. Check configuration.\nFontconfig warning: adding <cachedir>/usr/local/var/cache/fontconfig</cachedir>\nFontconfig warning: adding <cachedir prefix=\"xdg\">fontconfig</cachedir>\n",
+      "files": [
+        {
+          "path": "consumer/quoted-text-import/final-records-ar.fods",
+          "bytes": 49346,
+          "sha256": "90448d3ab28ff33143174d82669b78f85117208dd80ae832605a712903735925"
+        },
+        {
+          "path": "consumer/quoted-text-import/final-records-en.fods",
+          "bytes": 48557,
+          "sha256": "c2bc5b035ae825aa95a003eee9c68fa2b67562403091c8d213bb5b967ee39ff1"
+        }
+      ]
+    },
+    {
+      "name": "save-native-ods",
+      "startedAt": "2026-11-18T05:21:34.666287+00:00",
+      "completedAt": "2026-11-18T05:21:35.825657+00:00",
+      "command": [
+        "/Applications/LibreOffice.app/Contents/MacOS/soffice",
+        "-env:UserInstallation=file:///Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/profile-save-native-ods",
+        "--headless",
+        "--nologo",
+        "--nodefault",
+        "--nofirststartwizard",
+        "--convert-to",
+        "ods",
+        "--outdir",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/save-native-ods",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/quoted-text-import/final-records-en.fods",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/quoted-text-import/final-records-ar.fods"
+      ],
+      "exitCode": 0,
+      "stdout": "convert /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/quoted-text-import/final-records-en.fods as a Calc document -> /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/save-native-ods/final-records-en.ods using filter : calc8\nconvert /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/quoted-text-import/final-records-ar.fods as a Calc document -> /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/save-native-ods/final-records-ar.ods using filter : calc8\n",
+      "stderr": "Fontconfig warning: no <cachedir> elements found. Check configuration.\nFontconfig warning: adding <cachedir>/usr/local/var/cache/fontconfig</cachedir>\nFontconfig warning: adding <cachedir prefix=\"xdg\">fontconfig</cachedir>\nFontconfig warning: no <cachedir> elements found. Check configuration.\nFontconfig warning: adding <cachedir>/usr/local/var/cache/fontconfig</cachedir>\nFontconfig warning: adding <cachedir prefix=\"xdg\">fontconfig</cachedir>\n",
+      "files": [
+        {
+          "path": "consumer/save-native-ods/final-records-ar.ods",
+          "bytes": 17835,
+          "sha256": "8b46e01f72c1691512ea6ba44c84a28f93632794d6efe930dd09497c8d6806f2"
+        },
+        {
+          "path": "consumer/save-native-ods/final-records-en.ods",
+          "bytes": 18122,
+          "sha256": "233964821f21809fa25297aa878b98cbe9b1bfb2a0a6dea9822b44baeedc7154"
+        }
+      ]
+    },
+    {
+      "name": "reopen-native-ods",
+      "startedAt": "2026-11-18T05:21:35.825931+00:00",
+      "completedAt": "2026-11-18T05:21:36.950661+00:00",
+      "command": [
+        "/Applications/LibreOffice.app/Contents/MacOS/soffice",
+        "-env:UserInstallation=file:///Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/profile-reopen-native-ods",
+        "--headless",
+        "--nologo",
+        "--nodefault",
+        "--nofirststartwizard",
+        "--convert-to",
+        "fods",
+        "--outdir",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/reopen-native-ods",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/save-native-ods/final-records-en.ods",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/save-native-ods/final-records-ar.ods"
+      ],
+      "exitCode": 0,
+      "stdout": "convert /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/save-native-ods/final-records-en.ods as a Calc document -> /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/reopen-native-ods/final-records-en.fods using filter : OpenDocument Spreadsheet Flat XML\nconvert /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/save-native-ods/final-records-ar.ods as a Calc document -> /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/reopen-native-ods/final-records-ar.fods using filter : OpenDocument Spreadsheet Flat XML\n",
+      "stderr": "Fontconfig warning: no <cachedir> elements found. Check configuration.\nFontconfig warning: adding <cachedir>/usr/local/var/cache/fontconfig</cachedir>\nFontconfig warning: adding <cachedir prefix=\"xdg\">fontconfig</cachedir>\nFontconfig warning: no <cachedir> elements found. Check configuration.\nFontconfig warning: adding <cachedir>/usr/local/var/cache/fontconfig</cachedir>\nFontconfig warning: adding <cachedir prefix=\"xdg\">fontconfig</cachedir>\n",
+      "files": [
+        {
+          "path": "consumer/reopen-native-ods/final-records-ar.fods",
+          "bytes": 50074,
+          "sha256": "37ade68448d0ea9baf4ba31785a9aaaeb1a0af3f7eaea8667b1032d0cb1bd434"
+        },
+        {
+          "path": "consumer/reopen-native-ods/final-records-en.fods",
+          "bytes": 49089,
+          "sha256": "01fd1d4f2624ee1a62279bafe932b826c2cb06ce6fad0ad84b5e577adec318b0"
+        }
+      ]
+    },
+    {
+      "name": "save-csv-again",
+      "startedAt": "2026-11-18T05:21:36.950932+00:00",
+      "completedAt": "2026-11-18T05:21:38.021670+00:00",
+      "command": [
+        "/Applications/LibreOffice.app/Contents/MacOS/soffice",
+        "-env:UserInstallation=file:///Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/profile-save-csv-again",
+        "--headless",
+        "--nologo",
+        "--nodefault",
+        "--nofirststartwizard",
+        "--convert-to",
+        "csv:Text - txt - csv (StarCalc):44,34,76,1,,1033,true,false,false,false,false,0,false,true,false",
+        "--outdir",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/save-csv-again",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/save-native-ods/final-records-en.ods",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/save-native-ods/final-records-ar.ods"
+      ],
+      "exitCode": 0,
+      "stdout": "convert /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/save-native-ods/final-records-en.ods as a Calc document -> /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/save-csv-again/final-records-en.csv using filter : Text - txt - csv (StarCalc):44,34,76,1,,1033,true,false,false,false,false,0,false,true,false\nconvert /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/save-native-ods/final-records-ar.ods as a Calc document -> /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/save-csv-again/final-records-ar.csv using filter : Text - txt - csv (StarCalc):44,34,76,1,,1033,true,false,false,false,false,0,false,true,false\n",
+      "stderr": "Fontconfig warning: no <cachedir> elements found. Check configuration.\nFontconfig warning: adding <cachedir>/usr/local/var/cache/fontconfig</cachedir>\nFontconfig warning: adding <cachedir prefix=\"xdg\">fontconfig</cachedir>\nFontconfig warning: no <cachedir> elements found. Check configuration.\nFontconfig warning: adding <cachedir>/usr/local/var/cache/fontconfig</cachedir>\nFontconfig warning: adding <cachedir prefix=\"xdg\">fontconfig</cachedir>\n",
+      "files": [
+        {
+          "path": "consumer/save-csv-again/final-records-ar.csv",
+          "bytes": 3382,
+          "sha256": "cff0bbe519f4a8e83e8ac131c30a8056453d5f251316af6be30b0db2b8ea4b4a"
+        },
+        {
+          "path": "consumer/save-csv-again/final-records-en.csv",
+          "bytes": 2984,
+          "sha256": "aabe7be255b147061c0502cc3c65dc2a583d5e6f69cbabf2ed6cca9bc0b18b46"
+        }
+      ]
+    },
+    {
+      "name": "reimport-saved-csv",
+      "startedAt": "2026-11-18T05:21:38.021990+00:00",
+      "completedAt": "2026-11-18T05:21:39.049528+00:00",
+      "command": [
+        "/Applications/LibreOffice.app/Contents/MacOS/soffice",
+        "-env:UserInstallation=file:///Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/profile-reimport-saved-csv",
+        "--headless",
+        "--nologo",
+        "--nodefault",
+        "--nofirststartwizard",
+        "--infilter=Text - txt - csv (StarCalc):44,34,76,1,,1033,true,false,true,false,false,0,true,false,false",
+        "--convert-to",
+        "fods",
+        "--outdir",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/reimport-saved-csv",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/save-csv-again/final-records-en.csv",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/save-csv-again/final-records-ar.csv"
+      ],
+      "exitCode": 0,
+      "stdout": "convert /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/save-csv-again/final-records-en.csv as a Calc document -> /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/reimport-saved-csv/final-records-en.fods using filter : OpenDocument Spreadsheet Flat XML\nconvert /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/save-csv-again/final-records-ar.csv as a Calc document -> /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/reimport-saved-csv/final-records-ar.fods using filter : OpenDocument Spreadsheet Flat XML\n",
+      "stderr": "Fontconfig warning: no <cachedir> elements found. Check configuration.\nFontconfig warning: adding <cachedir>/usr/local/var/cache/fontconfig</cachedir>\nFontconfig warning: adding <cachedir prefix=\"xdg\">fontconfig</cachedir>\nFontconfig warning: no <cachedir> elements found. Check configuration.\nFontconfig warning: adding <cachedir>/usr/local/var/cache/fontconfig</cachedir>\nFontconfig warning: adding <cachedir prefix=\"xdg\">fontconfig</cachedir>\n",
+      "files": [
+        {
+          "path": "consumer/reimport-saved-csv/final-records-ar.fods",
+          "bytes": 49346,
+          "sha256": "90448d3ab28ff33143174d82669b78f85117208dd80ae832605a712903735925"
+        },
+        {
+          "path": "consumer/reimport-saved-csv/final-records-en.fods",
+          "bytes": 48557,
+          "sha256": "c2bc5b035ae825aa95a003eee9c68fa2b67562403091c8d213bb5b967ee39ff1"
+        }
+      ]
+    },
+    {
+      "name": "formula-positive-control",
+      "startedAt": "2026-11-18T05:21:39.049899+00:00",
+      "completedAt": "2026-11-18T05:21:40.099360+00:00",
+      "command": [
+        "/Applications/LibreOffice.app/Contents/MacOS/soffice",
+        "-env:UserInstallation=file:///Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/profile-formula-positive-control",
+        "--headless",
+        "--nologo",
+        "--nodefault",
+        "--nofirststartwizard",
+        "--infilter=Text - txt - csv (StarCalc):44,34,76,1,,1033,false,false,true,false,false,0,true",
+        "--convert-to",
+        "fods",
+        "--outdir",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/formula-positive-control",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/reference/arithmetic-positive-control.csv"
+      ],
+      "exitCode": 0,
+      "stdout": "convert /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/reference/arithmetic-positive-control.csv as a Calc document -> /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521/consumer/formula-positive-control/arithmetic-positive-control.fods using filter : OpenDocument Spreadsheet Flat XML\n",
+      "stderr": "Fontconfig warning: no <cachedir> elements found. Check configuration.\nFontconfig warning: adding <cachedir>/usr/local/var/cache/fontconfig</cachedir>\nFontconfig warning: adding <cachedir prefix=\"xdg\">fontconfig</cachedir>\nFontconfig warning: no <cachedir> elements found. Check configuration.\nFontconfig warning: adding <cachedir>/usr/local/var/cache/fontconfig</cachedir>\nFontconfig warning: adding <cachedir prefix=\"xdg\">fontconfig</cachedir>\n",
+      "files": [
+        {
+          "path": "consumer/formula-positive-control/arithmetic-positive-control.fods",
+          "bytes": 22253,
+          "sha256": "849689f5eb313acecedc7801ff6031a4b4137917f7b4a3ba4f03e99d2ede38ad"
+        }
+      ]
+    }
+  ],
+  "completedAt": "2026-11-18T05:21:40.141622+00:00",
+  "processesAfter": [],
+  "scope": "Exact downloaded EN and AR CSVs in new isolated profiles; no GUI, Calendar or native app actions.",
+  "originalsUnchanged": true
+}

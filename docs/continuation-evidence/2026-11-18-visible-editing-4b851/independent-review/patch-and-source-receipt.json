@@ -1,0 +1,195 @@
+{
+  "base_commit": "cad85c495bc03853cc2258d093e79d8d1fb52ae3",
+  "authority": "root provided pushed commit and exact source hashes; source copied from prior frozen candidate with these exact hashes",
+  "production_change": "Only the two Keep editing focus calls change preventScroll true to false. All guards and components unchanged.",
+  "test_change": "One corrected opener option assertion and two additional fallback/add option assertions; all draft/no-steal and other assertions preserved.",
+  "patch_path": "keep-editing-visibility.patch",
+  "patch_bytes": 3045,
+  "patch_sha256": "05488c32dab09136a62b1d20938ec2c7a1eae27c0cb2a91c44630a98406219ea",
+  "checks": [
+    {
+      "command": [
+        "git",
+        "init",
+        "-q"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "/workspace/scratch/4b851318da2d/Keep-Editing-Visibility-cad85c4/keep-editing-visibility.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "/workspace/scratch/4b851318da2d/Keep-Editing-Visibility-cad85c4/keep-editing-visibility.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "files": [
+    {
+      "path": "hosted/app/i18n/messages.ar.json",
+      "before_bytes": 231739,
+      "before_sha256": "46ec9674ec1186d8bc3016c78739eda38542a7beca033a0f0617256b6cc154e9",
+      "after_bytes": 231739,
+      "after_sha256": "46ec9674ec1186d8bc3016c78739eda38542a7beca033a0f0617256b6cc154e9",
+      "changed": false
+    },
+    {
+      "path": "hosted/app/phone/PhoneApp.tsx",
+      "before_bytes": 123170,
+      "before_sha256": "57543cdbc0fbcb7a51cab725d65907e76af2a29ecf9f2022bffe6caaadc9da02",
+      "after_bytes": 123172,
+      "after_sha256": "e3454df4c4a4189475097d5bcc0ac2e2bf1fe53447d3046513c6eb780a9cd998",
+      "changed": true
+    },
+    {
+      "path": "hosted/app/phone/components.tsx",
+      "before_bytes": 20472,
+      "before_sha256": "c18753ee7c8b342831864cecc2694708f09fee6019a76c530b2c2ae743446424",
+      "after_bytes": 20472,
+      "after_sha256": "c18753ee7c8b342831864cecc2694708f09fee6019a76c530b2c2ae743446424",
+      "changed": false
+    },
+    {
+      "path": "hosted/tests/phone-record-tools.mjs",
+      "before_bytes": 46409,
+      "before_sha256": "965af62fc693ed788bd487ea9f18aea8d2af2e54a4242d70331569d16632feb2",
+      "after_bytes": 46409,
+      "after_sha256": "965af62fc693ed788bd487ea9f18aea8d2af2e54a4242d70331569d16632feb2",
+      "changed": false
+    },
+    {
+      "path": "hosted/tests/phone-recovery-isolation.mjs",
+      "before_bytes": 50136,
+      "before_sha256": "be04a91f285aa9556e593af871e1b360e6e34ec2ce963d6528a63a32b0652206",
+      "after_bytes": 50486,
+      "after_sha256": "671f0cc26fa35a8df399a85332902b1226b537115fd7321a40c1a04c6ddc9c4b",
+      "changed": true
+    }
+  ],
+  "root_reported_browser_finding": {
+    "base_commit": "cad85c495bc03853cc2258d093e79d8d1fb52ae3",
+    "language": "en",
+    "flow": "dirty record Stage/note -> Cancel -> Keep editing via Enter",
+    "active_target": "Cancel",
+    "draft_preserved": true,
+    "target_top": 832.1459,
+    "target_bottom": 881.1459,
+    "dialog_top": 16,
+    "dialog_bottom": 828,
+    "dialog_client_height": 811,
+    "dialog_scroll_height": 976,
+    "dialog_scroll_top": 0,
+    "viewport_height": 844,
+    "overflow_y": "auto",
+    "source": "root actual-browser measurement and screenshot report; no browser operation by child"
+  },
+  "focused_results": {
+    "baseline": {
+      "variant": "baseline",
+      "started_at": "2026-11-18T05:33:05.825085+00:00",
+      "ended_at": "2026-11-18T05:33:06.291124+00:00",
+      "command": [
+        "node",
+        "/workspace/scratch/4b851318da2d/Keep-Editing-Visibility-cad85c4/focused-source-runner.mjs",
+        "/workspace/scratch/4b851318da2d/Keep-Editing-Visibility-cad85c4/baseline"
+      ],
+      "runtime": "v24.22.1",
+      "required_project_runtime": "v24.22.3",
+      "scope": "preliminary actual-source-slice runner with identical added harness/assertions; not full TypeScript-AST project execution",
+      "exit_code": 1,
+      "summary": {
+        "tests": "10",
+        "pass": "7",
+        "fail": "3",
+        "cancelled": "0",
+        "skipped": "0",
+        "todo": "0",
+        "duration_ms": "246.877889"
+      },
+      "stdout": {
+        "path": "/workspace/scratch/4b851318da2d/Keep-Editing-Visibility-cad85c4/baseline.focused.stdout.log",
+        "bytes": 4378,
+        "sha256": "e5d47effc0b2b83af61102cb70fd60a5c704b92e423426dc8bf684ccdd35a7d9"
+      },
+      "stderr": {
+        "path": "/workspace/scratch/4b851318da2d/Keep-Editing-Visibility-cad85c4/baseline.focused.stderr.log",
+        "bytes": 179,
+        "sha256": "58b48f972129947fff715a80102df723ff4398934ef2760944f855bf71a9fe3a"
+      },
+      "phone_sha256": "57543cdbc0fbcb7a51cab725d65907e76af2a29ecf9f2022bffe6caaadc9da02",
+      "runner_sha256": "886a5205cd7cb6772e17e34d7ce364261a226c41101b69821f6dc256bbef9e4e"
+    },
+    "candidate": {
+      "variant": "candidate",
+      "started_at": "2026-11-18T05:33:05.834473+00:00",
+      "ended_at": "2026-11-18T05:33:06.303086+00:00",
+      "command": [
+        "node",
+        "/workspace/scratch/4b851318da2d/Keep-Editing-Visibility-cad85c4/focused-source-runner.mjs",
+        "/workspace/scratch/4b851318da2d/Keep-Editing-Visibility-cad85c4/candidate"
+      ],
+      "runtime": "v24.22.1",
+      "required_project_runtime": "v24.22.3",
+      "scope": "preliminary actual-source-slice runner with identical added harness/assertions; not full TypeScript-AST project execution",
+      "exit_code": 0,
+      "summary": {
+        "tests": "10",
+        "pass": "10",
+        "fail": "0",
+        "cancelled": "0",
+        "skipped": "0",
+        "todo": "0",
+        "duration_ms": "250.126958"
+      },
+      "stdout": {
+        "path": "/workspace/scratch/4b851318da2d/Keep-Editing-Visibility-cad85c4/candidate.focused.stdout.log",
+        "bytes": 1521,
+        "sha256": "945065bec9ed344b3af0cf3c368d3f552aa0d7eddd2917098f3adcea5065a5b1"
+      },
+      "stderr": {
+        "path": "/workspace/scratch/4b851318da2d/Keep-Editing-Visibility-cad85c4/candidate.focused.stderr.log",
+        "bytes": 179,
+        "sha256": "58b48f972129947fff715a80102df723ff4398934ef2760944f855bf71a9fe3a"
+      },
+      "phone_sha256": "e3454df4c4a4189475097d5bcc0ac2e2bf1fe53447d3046513c6eb780a9cd998",
+      "runner_sha256": "886a5205cd7cb6772e17e34d7ce364261a226c41101b69821f6dc256bbef9e4e"
+    }
+  },
+  "focused_provenance": {
+    "harness_and_assertion_bytes": 16005,
+    "harness_and_assertion_sha256": "678338264ea16fe117641df3839ac5f5117a429ed73b57bf1e38836c935b23b4",
+    "runner_sha256": "886a5205cd7cb6772e17e34d7ce364261a226c41101b69821f6dc256bbef9e4e",
+    "runtime": "v24.22.1",
+    "adapter": "Bounded actual source slices and Node type stripping; identical project harness/assertion body. The focus options are the regression contract; no viewport/scroll/layout simulation or proof.",
+    "syntax": {
+      "command": [
+        "node",
+        "--check",
+        "/workspace/scratch/4b851318da2d/Keep-Editing-Visibility-cad85c4/candidate/hosted/tests/phone-recovery-isolation.mjs"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  },
+  "limitations": [
+    "Cloud24.22.1 is unpinned relative to project24.22.3.",
+    "Actual-source focus option regression only; no layout simulation or browser visibility pass.",
+    "No Mac/browser/native/install/package/build/CI mutation or run by child."
+  ]
+}

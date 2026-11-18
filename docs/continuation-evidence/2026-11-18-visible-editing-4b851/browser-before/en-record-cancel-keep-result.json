@@ -1,0 +1,22 @@
+{
+  "completedUTC": "2026-11-18 05:29:12 UTC",
+  "sourceCommit": "cad85c495bc03853cc2258d093e79d8d1fb52ae3",
+  "toolResult": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Application record\n\nNurse clinic\nSynthetic Employer\n\nYour record on this phone. It does not change the employer’s records or create a verified receipt.\n\nStage\nSaved\nApplied\nInterview\nOffer\nClosed\nApplied date optional\nFollow-up date optional\nPrivate notes\nCompare with the saved record\nCancel\nSave record\nExport unfinished recordDelete this private record"
+      },
+      {
+        "type": "text",
+        "text": "{\"active\":{\"tag\":\"H3\",\"text\":\"Discard these unsaved changes?\"},\"inside\":true,\"phase\":\"EN discard prompt\"}"
+      },
+      {
+        "type": "text",
+        "text": "{\"active\":{\"tag\":\"BUTTON\",\"text\":\"Cancel\"},\"activeRect\":{\"bottom\":881.1458740234375,\"left\":36.66666793823242,\"right\":190.0000114440918,\"top\":832.1458740234375},\"confirmationPresent\":false,\"fields\":[{\"tag\":\"SELECT\",\"type\":\"select-one\",\"value\":\"interview\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"2026-11-30\"},{\"tag\":\"TEXTAREA\",\"type\":\"textarea\",\"value\":\"UNSAVED_CAD85_EN متابعة\"}],\"inside\":true,\"phase\":\"EN record Keep after Cancel\",\"viewport\":{\"height\":844,\"width\":390}}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  }
+}

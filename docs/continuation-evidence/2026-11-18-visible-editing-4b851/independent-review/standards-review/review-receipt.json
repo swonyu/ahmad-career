@@ -1,0 +1,67 @@
+{
+  "completed_at_utc": "2026-11-18T05:51:09.638498+00:00",
+  "reviewer": "/root/dependency_state_0410",
+  "scope": "Bounded independent primary-source critique; no new app defect established from root-reported current e345 evidence",
+  "current_phone_sha256": "e3454df4c4a4189475097d5bcc0ac2e2bf1fe53447d3046513c6eb780a9cd998",
+  "root_reported_browser_results": {
+    "viewport": [
+      390,
+      844
+    ],
+    "dialog_vertical_bounds": [
+      16,
+      828
+    ],
+    "dialog_scroll_top": 166,
+    "cancel_vertical_bounds": [
+      666.1459,
+      715.1459
+    ],
+    "dirty_delete_vertical_bounds": [
+      759.1459,
+      803.1459
+    ],
+    "draft_stage_note_date_preserved": true,
+    "no_intervening_revealing_action": true,
+    "independently_observed_by_this_reviewer": false
+  },
+  "decision": "Keep current focus scrolling; explicit scrollIntoView not required by retrieved guidance; remaining layout/engine claims are hypotheses until reproduced.",
+  "attribution_corrections": [
+    "APG visible-keyboard-focus short quotation belongs to example explanation, not normative WCAG text.",
+    "SC2.4.7 indicator visibility, SC2.4.11 AA minimum component visibility, SC2.4.12 AAA enhanced component visibility are distinct.",
+    "APG is informative; CSSOM source is an Editors Draft; neither provides universal browser/physical-AT acceptance.",
+    "Zero document/main movement or short-form offset change is not a cited universal requirement."
+  ],
+  "remaining_bounded_evidence": [
+    "Continue already-owned EN/AR supported-engine checks with immediate focus/bounds/draft observations.",
+    "Inspect actual keyboard focus indication in existing screenshots if not already recorded.",
+    "Record document/main offsets only when investigating a concrete disruptive jump; do not demand fixed scrollTop.",
+    "Physical assistive technology remains a separate existing acceptance lane."
+  ],
+  "app_or_test_source_edits": false,
+  "app_test_or_native_builds_executed": false,
+  "mac_or_browser_control_actions": false,
+  "web_primary_source_reads": true,
+  "files": [
+    {
+      "path": "wcag-and-focus-review.md",
+      "bytes": 5513,
+      "sha256": "49a742faedbd1342200d4c811e2cb8ae8a22184be482e85ce8236df0867e40f6"
+    },
+    {
+      "path": "source-refs.json",
+      "bytes": 4830,
+      "sha256": "f477df97ddfe24d538fbb448b256d4e81b449cb35792023f0e2a225e99f6b7d1"
+    },
+    {
+      "path": "peer-native-focus-standards.md",
+      "bytes": 5923,
+      "sha256": "be7a40fec607406856e169addc578762a8761cb8e72fdad025465407b53f6d8c"
+    },
+    {
+      "path": "peer-native-focus-standards.json",
+      "bytes": 2707,
+      "sha256": "d8d4f943e1cdfaab3db2e3974c02dca17f1d9101cf35c3be9e51e0f2e145c1f0"
+    }
+  ]
+}

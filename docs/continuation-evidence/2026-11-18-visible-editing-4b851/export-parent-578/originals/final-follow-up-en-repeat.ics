@@ -1,0 +1,18 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Career Finder//Follow-up reminder//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:career-finder-follow-up-43bc11855b96a1325c9d07fad65a180bc4ddfcfe72fef5f
+ 5733892f8425bdaac
+DTSTAMP:20261118T051244Z
+DTSTART;VALUE=DATE:20261130
+DURATION:P1D
+SUMMARY:Follow up: Nurse clinic · Synthetic Employer
+DESCRIPTION:Personal follow-up reminder. Check the employer’s current pos
+ ting before contacting them.
+URL:https://employer.example/jobs/10
+CLASS:PRIVATE
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR

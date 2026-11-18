@@ -1,0 +1,16 @@
+{
+  "completedUTC": "2026-11-18 05:28:32 UTC",
+  "sourceCommit": "cad85c495bc03853cc2258d093e79d8d1fb52ae3",
+  "toolResult": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Error: Playwright selector deadline exceeded\nlocator.fill failed for selector internal:label=\"Private notes\"s\nLocator diagnostics: {\"kind\":\"no_matches\",\"action\":\"fill\",\"locator\":\"internal:label=\\\"Private notes\\\"s\",\"matchCount\":0,\"matches\":[],\"visibleCount\":0,\"truncated\":false}"
+      }
+    ],
+    "structuredContent": {
+      "error_code": "INVALID_ARGUMENT"
+    },
+    "isError": true
+  }
+}

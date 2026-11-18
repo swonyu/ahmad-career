@@ -1,0 +1,249 @@
+{
+  "createdAt": "2026-11-18T05:24:30.587160+00:00",
+  "sourceCommit": "578d99c8f225a72ca7cc0cf10ff474bb19aaaebc",
+  "macDirectory": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/export-acceptance-578d99c-0521",
+  "cloudDirectory": "/workspace/scratch/4b851318da2d/Export-Acceptance-578d99c",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 8311,
+      "sha256": "02cdb755aeda1506b24e41951850ff5ce7cba1667a2d61d75cc5414e52e8b7b9"
+    },
+    {
+      "path": "consumer/formula-positive-control/arithmetic-positive-control.fods",
+      "bytes": 22253,
+      "sha256": "849689f5eb313acecedc7801ff6031a4b4137917f7b4a3ba4f03e99d2ede38ad"
+    },
+    {
+      "path": "consumer/quoted-text-import/final-records-ar.fods",
+      "bytes": 49346,
+      "sha256": "90448d3ab28ff33143174d82669b78f85117208dd80ae832605a712903735925"
+    },
+    {
+      "path": "consumer/quoted-text-import/final-records-en.fods",
+      "bytes": 48557,
+      "sha256": "c2bc5b035ae825aa95a003eee9c68fa2b67562403091c8d213bb5b967ee39ff1"
+    },
+    {
+      "path": "consumer/reimport-saved-csv/final-records-ar.fods",
+      "bytes": 49346,
+      "sha256": "90448d3ab28ff33143174d82669b78f85117208dd80ae832605a712903735925"
+    },
+    {
+      "path": "consumer/reimport-saved-csv/final-records-en.fods",
+      "bytes": 48557,
+      "sha256": "c2bc5b035ae825aa95a003eee9c68fa2b67562403091c8d213bb5b967ee39ff1"
+    },
+    {
+      "path": "consumer/reopen-native-ods/final-records-ar.fods",
+      "bytes": 50074,
+      "sha256": "37ade68448d0ea9baf4ba31785a9aaaeb1a0af3f7eaea8667b1032d0cb1bd434"
+    },
+    {
+      "path": "consumer/reopen-native-ods/final-records-en.fods",
+      "bytes": 49089,
+      "sha256": "01fd1d4f2624ee1a62279bafe932b826c2cb06ce6fad0ad84b5e577adec318b0"
+    },
+    {
+      "path": "consumer/save-csv-again/final-records-ar.csv",
+      "bytes": 3382,
+      "sha256": "cff0bbe519f4a8e83e8ac131c30a8056453d5f251316af6be30b0db2b8ea4b4a"
+    },
+    {
+      "path": "consumer/save-csv-again/final-records-en.csv",
+      "bytes": 2984,
+      "sha256": "aabe7be255b147061c0502cc3c65dc2a583d5e6f69cbabf2ed6cca9bc0b18b46"
+    },
+    {
+      "path": "consumer/save-native-ods/final-records-ar.ods",
+      "bytes": 17835,
+      "sha256": "8b46e01f72c1691512ea6ba44c84a28f93632794d6efe930dd09497c8d6806f2"
+    },
+    {
+      "path": "consumer/save-native-ods/final-records-en.ods",
+      "bytes": 18122,
+      "sha256": "233964821f21809fa25297aa878b98cbe9b1bfb2a0a6dea9822b44baeedc7154"
+    },
+    {
+      "path": "consumer-invocations.json",
+      "bytes": 17588,
+      "sha256": "422f61397c76765660a3108c899433dbcb1b7132d2f0b743b4a962c70e97e852"
+    },
+    {
+      "path": "originals/final-follow-up-ar.ics",
+      "bytes": 580,
+      "sha256": "8fc32f4e7867865bc57e42c529c009af0ee6f8a54c127b07dd3b36cbf5dc4909"
+    },
+    {
+      "path": "originals/final-follow-up-en-repeat.ics",
+      "bytes": 542,
+      "sha256": "864be0ba972adeb37feff5c424322a5ae92d8b5c5b2a1917367be694d3f79126"
+    },
+    {
+      "path": "originals/final-follow-up-en.ics",
+      "bytes": 542,
+      "sha256": "d8386a43a3da7e451c0bbc3c640a417e7e01e97898695d51190fab03059b02ed"
+    },
+    {
+      "path": "originals/final-phone-data-ar.json",
+      "bytes": 13059,
+      "sha256": "8d11f3c388a1190817bb8bf0c5772b5e8480a4bf40d91bbbfdb739b8dbd56fe1"
+    },
+    {
+      "path": "originals/final-phone-data-en.json",
+      "bytes": 13059,
+      "sha256": "bd22ab685d9fb92739337605d0583423d2bf6a9c906abd66dfdf1d4d7c3441e1"
+    },
+    {
+      "path": "originals/final-records-ar.csv",
+      "bytes": 3471,
+      "sha256": "46f691bdb8a9d4bf4aa6b23045fb3ba222daa91707f3b42ed318ca250f994c68"
+    },
+    {
+      "path": "originals/final-records-en-repeat.csv",
+      "bytes": 3073,
+      "sha256": "419c024b8907e6e0eed3867b507c97d79f56d7e224b852b90a97004027a3f935"
+    },
+    {
+      "path": "originals/final-records-en.csv",
+      "bytes": 3073,
+      "sha256": "419c024b8907e6e0eed3867b507c97d79f56d7e224b852b90a97004027a3f935"
+    },
+    {
+      "path": "originals/initial-phone-data.json",
+      "bytes": 13049,
+      "sha256": "835c60d2068db57fc2a7c32f3f3730c11ab5bf57788816f4c4ffc36a5f817874"
+    },
+    {
+      "path": "originals/initial-records-en.csv",
+      "bytes": 3063,
+      "sha256": "c514f506160bd3108b25d17b9c2ef81a14845900b8872898f89b8426c76f9028"
+    },
+    {
+      "path": "receipts/formula-positive-control.stderr.log",
+      "bytes": 446,
+      "sha256": "9835899306d9b912cefd1791953ca5daff8467a8b99678252f4ebd2e47da030d"
+    },
+    {
+      "path": "receipts/formula-positive-control.stdout.log",
+      "bytes": 438,
+      "sha256": "ed619d8764c0c5888efd28b1fc4cc7487838c1f77b3c9de7e173ceb12bbc0f89"
+    },
+    {
+      "path": "receipts/originals-preserved.json",
+      "bytes": 3716,
+      "sha256": "d902a42b1c118a2e2dfd1d7395c5fe3fc6a3621457764e032c5358ef4ea62bae"
+    },
+    {
+      "path": "receipts/quoted-text-import.stderr.log",
+      "bytes": 446,
+      "sha256": "9835899306d9b912cefd1791953ca5daff8467a8b99678252f4ebd2e47da030d"
+    },
+    {
+      "path": "receipts/quoted-text-import.stdout.log",
+      "bytes": 820,
+      "sha256": "c05cb2ac05f31448c37c4f1d951eed34e224cd345f824c43c350b8bbd582e35a"
+    },
+    {
+      "path": "receipts/reimport-saved-csv.stderr.log",
+      "bytes": 446,
+      "sha256": "9835899306d9b912cefd1791953ca5daff8467a8b99678252f4ebd2e47da030d"
+    },
+    {
+      "path": "receipts/reimport-saved-csv.stdout.log",
+      "bytes": 848,
+      "sha256": "c73900df37bb9ef86808b03e88235a2046b77fdcaadac775ab687fb162babd19"
+    },
+    {
+      "path": "receipts/reopen-native-ods.stderr.log",
+      "bytes": 446,
+      "sha256": "9835899306d9b912cefd1791953ca5daff8467a8b99678252f4ebd2e47da030d"
+    },
+    {
+      "path": "receipts/reopen-native-ods.stdout.log",
+      "bytes": 848,
+      "sha256": "14b7ba28815f8eec225c42b1dea2e220e0ae083b58b208726b063c50ddef9a2e"
+    },
+    {
+      "path": "receipts/save-csv-again.stderr.log",
+      "bytes": 446,
+      "sha256": "9835899306d9b912cefd1791953ca5daff8467a8b99678252f4ebd2e47da030d"
+    },
+    {
+      "path": "receipts/save-csv-again.stdout.log",
+      "bytes": 958,
+      "sha256": "4f3ea42c8fdd05eaaa8e24efd0cd0f3be690cbbcbe3ea89b04dbb4fb88eecd30"
+    },
+    {
+      "path": "receipts/save-native-ods.stderr.log",
+      "bytes": 446,
+      "sha256": "9835899306d9b912cefd1791953ca5daff8467a8b99678252f4ebd2e47da030d"
+    },
+    {
+      "path": "receipts/save-native-ods.stdout.log",
+      "bytes": 794,
+      "sha256": "f49752941c46ad143f84023da5109ab2da7d7171f9edfce7876a4a58948dd80f"
+    },
+    {
+      "path": "receipts/verification.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "receipts/verification.stdout.json",
+      "bytes": 3552,
+      "sha256": "822433435e56a362c5359668fe67f206229e5c6e2063ca3f8a3db2366c8e68a2"
+    },
+    {
+      "path": "reference/HANDOFF.md",
+      "bytes": 11329,
+      "sha256": "02f85d168c0de58efa2e1edfc04e8247d68412fc3533795174989bc0a5dbd1cd"
+    },
+    {
+      "path": "reference/arithmetic-positive-control.csv",
+      "bytes": 13,
+      "sha256": "db4d0270bb3dcde97ff65c9783184da1417c51fd1a000bb9f2d1101daa5e7ac0"
+    },
+    {
+      "path": "reference/fixture-build-metadata.json",
+      "bytes": 6831,
+      "sha256": "1ac3499b344d286fa1f90acdea5ffe17007c20eaaacedfcd7c80645014ed1a8b"
+    },
+    {
+      "path": "reference/run-consumer.py",
+      "bytes": 2530,
+      "sha256": "29dbd090aee0ecacdddc03e866cac600db5439919d666532d538e97a85f21ec3"
+    },
+    {
+      "path": "reference/verify-consumer.py",
+      "bytes": 10841,
+      "sha256": "e914bd43f95b4d5c5153e47dbd0cbd8e7c0674a65828e7ac3246bde4faed4781"
+    },
+    {
+      "path": "run-consumer.py",
+      "bytes": 3502,
+      "sha256": "e2b43da032788471f49cca6780408bf85359e4302a29378e11df6c4f59594b4c"
+    },
+    {
+      "path": "source-manifest.json",
+      "bytes": 5803,
+      "sha256": "c3dca88788e65158c44537e45ebe1781735eead21832caf708b21a69917041b9"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 21218,
+      "sha256": "909613a7640bbc6ca4839ab9e615b0b4c1e0e58c644bdcb9414acd9bf9950653"
+    },
+    {
+      "path": "verify-downloads.py",
+      "bytes": 15622,
+      "sha256": "f583f437385f2c4accedcc67b4574932bcfdf2aa18dc80bbb6ee89db4c785aea"
+    }
+  ],
+  "excludedFromPortableArchive": "Isolated LibreOffice user profile directories; retained on Mac. Archive and manifest are not recursively listed.",
+  "verificationSummary": {
+    "checks": 87,
+    "passed": 87,
+    "failed": 0
+  }
+}

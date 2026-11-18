@@ -1,0 +1,74 @@
+{
+  "createdUTC": "2026-11-18T05:48:34.227549+00:00",
+  "scope": "Read-only native coordination refresh and source-only candidate recovery",
+  "observedUTC": "2026-11-18T05:42:50.715607+00:00",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 7137,
+      "sha256": "afd90279a6153f6536757907f033c4345bb48f81f014d136957d7b58bc739328"
+    },
+    {
+      "path": "c0c865ee-CHECKPOINT-RECEIPT.json",
+      "bytes": 1766,
+      "sha256": "6618858562c25ca4e41325c6e9f743bbfe15bfbe95fc888f6da566be38a4a31c"
+    },
+    {
+      "path": "c0c865ee-checkpoint-receipt-provenance.json",
+      "bytes": 420,
+      "sha256": "4c78dc2754ac0bf2c20cd3dc8ec94d1e627a170ef3513713fb8c68b9681e3292"
+    },
+    {
+      "path": "c0c865ee-local-candidate-state.json",
+      "bytes": 2666,
+      "sha256": "ca596de7a25311768bf14d22c8755131ae3b8c08c14f7c2490868d13506c4498"
+    },
+    {
+      "path": "c0c865ee-local-evidence-inventory.json",
+      "bytes": 1661,
+      "sha256": "bf19b686b8006e4f0e529b5ea229f4ed0495721efd98841f14470503ddd90e33"
+    },
+    {
+      "path": "c0c865ee-local-receipt-search.json",
+      "bytes": 610,
+      "sha256": "5e017607e2da8322403768563f970f491de434829d8ad56a6ca9f1d0e70c1941"
+    },
+    {
+      "path": "c0c865ee-owner-state-excerpt.json",
+      "bytes": 2512,
+      "sha256": "e975f8607d4b9e8c3c2f6887d43f041f561c39563a670daf884f02d57ed973ed"
+    },
+    {
+      "path": "c0c865ee-remote-patch.json",
+      "bytes": 16916,
+      "sha256": "c6f93c93532f1dc0872df9c64db0be5dc89a3e7fda5f38e8cf6a4709c347dc4d"
+    },
+    {
+      "path": "c0c865ee-remote-receipts.json",
+      "bytes": 879,
+      "sha256": "ed79c3a1b80ee5c3d31b287ed521175243071bf6ff2aa3f5c8bd939d18bd96ed"
+    },
+    {
+      "path": "delta-summary.json",
+      "bytes": 9989,
+      "sha256": "d4dbabc0e6c2c6087e22a675a781459baaa3874f7d42bcb9c5f04ed4a5018c45"
+    },
+    {
+      "path": "native-owner-refresh-0545-raw.tar.gz",
+      "bytes": 16173,
+      "sha256": "df26b339182bf05e2ba5a44a5ed10f6e07231f88c2c023d576b1415b69a429d9"
+    },
+    {
+      "path": "newly-observed-publisher-ref.json",
+      "bytes": 1117,
+      "sha256": "37e5612e714d83f1f88c4d6d56d3a18f2658626999d001e79dbad230fbc60d89"
+    },
+    {
+      "path": "state-observation.json",
+      "bytes": 30741,
+      "sha256": "da8067c042a822511f4360dba68b72aecd428b943700c0c9aaa8adbd01559906"
+    }
+  ],
+  "rawMacArchiveTransferVerified": true,
+  "rawArchiveJsonFiles": 10
+}

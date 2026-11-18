@@ -1,0 +1,164 @@
+{
+  "generatedAt": "2026-11-18T05:36:23.085Z",
+  "node": "v24.22.3",
+  "repository": "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d",
+  "commit": "cad85c495bc03853cc2258d093e79d8d1fb52ae3",
+  "phoneAppSHA256": "e3454df4c4a4189475097d5bcc0ac2e2bf1fe53447d3046513c6eb780a9cd998",
+  "trackedHostedStable": true,
+  "pinnedInputs": {
+    "app/phone/components.tsx": "c18753ee7c8b342831864cecc2694708f09fee6019a76c530b2c2ae743446424",
+    "app/i18n/messages.ar.json": "46ec9674ec1186d8bc3016c78739eda38542a7beca033a0f0617256b6cc154e9",
+    "app/phone/phone.css": "786f03f7e8e30f85ecc38917d999f0fce9f81a6879d997ff5738d7ea740df915",
+    "app/phone/model.ts": "955d5afcede6b8f7eb901394f9ae3e00d1bbffa57bf1e457c5436f23541577bf",
+    "app/phone/vault.ts": "1c45092458fe9f56ee84925091342f3c5f920800409965a7a99ab32b07138c95",
+    "app/phone/safety.ts": "8571c8e0f1625e50fd2d1749ab7cd10aca57f8b24c16107e6179437154eb4c4f",
+    "app/phone/record-tools.ts": "7394ea75959f766053f4b6373a4c1687fa0e095c5cec7c0d887571ffb9908494"
+  },
+  "dependencies": {
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "esbuild": "0.28.2",
+    "postcss": "8.5.23",
+    "@tailwindcss/postcss": "4.2.1",
+    "zod": "4.6.7"
+  },
+  "sources": [
+    {
+      "path": "hosted/app/components/GoogleSignInArtwork.tsx",
+      "sha256": "670d2db7e92bb3fbac2f8b15448ba02594c5ecf326bfec4d223c8ee7f0f2f0d5"
+    },
+    {
+      "path": "hosted/app/components/LanguageSettings.tsx",
+      "sha256": "8e981621da9e144e2a4e33543f953fabfc464a28d2aa8f4060f47229d7ab60b3"
+    },
+    {
+      "path": "hosted/app/components/OAuthFeedback.tsx",
+      "sha256": "57a9be7cc19eb2c4cfafc34e3266e511a5a6a824b99776c8302460f4f9aff464"
+    },
+    {
+      "path": "hosted/app/components/ProviderConnections.tsx",
+      "sha256": "03c766b5bfe7b04f30ca545e78dac63225a1b371f8ae35d96a1a80dfaf6047c8"
+    },
+    {
+      "path": "hosted/app/components/SessionRecovery.tsx",
+      "sha256": "e5e5fe25fdd435bb2674f07ed36278281924e33906a3bc816fad22523546f917"
+    },
+    {
+      "path": "hosted/app/components/SignInOptions.tsx",
+      "sha256": "fa9818300bdd6c0316befcd04c9fb53ec1aa02282f5acfdbeffb611ac0e731fc"
+    },
+    {
+      "path": "hosted/app/components/SignOutButton.tsx",
+      "sha256": "a54e2389f4538de2d7b7b36dcf40d6eab1989b07b340d1bac63230a95c1abae0"
+    },
+    {
+      "path": "hosted/app/components/SiteFrame.tsx",
+      "sha256": "2489463823ca4208b8be44aec663a8edcb0a467cd3fb386876c6099c5067d0e5"
+    },
+    {
+      "path": "hosted/app/components/ThemeSettings.tsx",
+      "sha256": "679fa8912ca59c33518781c32f062fd8c9e1b42cb07b5602251a595ccf8edbe9"
+    },
+    {
+      "path": "hosted/app/components/api.ts",
+      "sha256": "a890b5f1ffcd3d792221a1078edc9db5fdf41dd51b0b067fe7bbea6be93e28f1"
+    },
+    {
+      "path": "hosted/app/components/appearance.ts",
+      "sha256": "45e2ba8ef7ceff6af7565018c7afee5d8f1517872ed54f714675fe6d465444d4"
+    },
+    {
+      "path": "hosted/app/components/provider-auth.ts",
+      "sha256": "0ba0fd4a2718cf32cc8c9f5f23e7b2ab271918009435a3aac38bdf805db651e9"
+    },
+    {
+      "path": "hosted/app/components/provider-change.ts",
+      "sha256": "586e572c2a84f11eace92150d3f0d249128cb509cc59847b380e500223327fcc"
+    },
+    {
+      "path": "hosted/app/globals.css",
+      "sha256": "5f3ff2d03d7877d07bd05d537f196a83f1341b15f3aebbe1d9afb8f4ed954acf"
+    },
+    {
+      "path": "hosted/app/i18n/LocaleProvider.tsx",
+      "sha256": "69830ee14b8b7b4e57310238cc12477fe349851a7d542c6544a3e1c30368453a"
+    },
+    {
+      "path": "hosted/app/i18n/core.ts",
+      "sha256": "47485ac0ce826dd1dde553d645869f2e272e59639680bd507a9978beb128c030"
+    },
+    {
+      "path": "hosted/app/i18n/i18n.css",
+      "sha256": "c08d6ed5604b8f479c47e4a8f984bd61926a9c8271928754b8777a7d8c7b4e8e"
+    },
+    {
+      "path": "hosted/app/i18n/messages.ar.json",
+      "sha256": "46ec9674ec1186d8bc3016c78739eda38542a7beca033a0f0617256b6cc154e9"
+    },
+    {
+      "path": "hosted/app/phone/PhoneApp.tsx",
+      "sha256": "e3454df4c4a4189475097d5bcc0ac2e2bf1fe53447d3046513c6eb780a9cd998"
+    },
+    {
+      "path": "hosted/app/phone/api.ts",
+      "sha256": "d66d6262a9507f03c29e66252202007d93462eb6fcb01bcb190b8770a4a8f070"
+    },
+    {
+      "path": "hosted/app/phone/batch-stop.ts",
+      "sha256": "124c30bd93e51c3c66874f530947ec02c3dda9379010588e72d15efc5b24e62c"
+    },
+    {
+      "path": "hosted/app/phone/components.tsx",
+      "sha256": "c18753ee7c8b342831864cecc2694708f09fee6019a76c530b2c2ae743446424"
+    },
+    {
+      "path": "hosted/app/phone/dispatch.ts",
+      "sha256": "da885e77dcac471bed44b72780fd391054ef46b7701faac4b43a50138b10c64d"
+    },
+    {
+      "path": "hosted/app/phone/model.ts",
+      "sha256": "955d5afcede6b8f7eb901394f9ae3e00d1bbffa57bf1e457c5436f23541577bf"
+    },
+    {
+      "path": "hosted/app/phone/navigation-inset.ts",
+      "sha256": "f7d92f4bf6889ba528d976b77266d0757aca781bb5c93474fc5fe7569f5973aa"
+    },
+    {
+      "path": "hosted/app/phone/pdf.ts",
+      "sha256": "66a2b4b4f95e0154f80acbc55003e00d811d06326a0d7487e68e1d81c2fe1935"
+    },
+    {
+      "path": "hosted/app/phone/phone.css",
+      "sha256": "786f03f7e8e30f85ecc38917d999f0fce9f81a6879d997ff5738d7ea740df915"
+    },
+    {
+      "path": "hosted/app/phone/record-tools.ts",
+      "sha256": "7394ea75959f766053f4b6373a4c1687fa0e095c5cec7c0d887571ffb9908494"
+    },
+    {
+      "path": "hosted/app/phone/safety.ts",
+      "sha256": "8571c8e0f1625e50fd2d1749ab7cd10aca57f8b24c16107e6179437154eb4c4f"
+    },
+    {
+      "path": "hosted/app/phone/vault.ts",
+      "sha256": "1c45092458fe9f56ee84925091342f3c5f920800409965a7a99ab32b07138c95"
+    },
+    {
+      "path": "hosted/package-lock.json",
+      "sha256": "2512e3bd6aebfc4377bbe036d3cf606c27e33613b35c8c58d28f0f3a0d596c99"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/stage-browser-fixture-20261118-e3454df/ImageStub.tsx",
+      "sha256": "96516fb416450e89138ce35c03987f4332f27383fd3b04e19286da744095b85c"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/stage-browser-fixture-20261118-e3454df/fixture.tsx",
+      "sha256": "7c3c237ced9c86773a3283e78e97dc7d763cd7784a0ede3018ae937b16c6db4c"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/stage-browser-fixture-20261118-e3454df/seed-fixtures.ts",
+      "sha256": "dfd4730824a7d7c1f0fca24a77993709ad3c55ba07a31c7e8d5d0583a5f148f7"
+    }
+  ],
+  "note": "Current working-tree PhoneApp and dependencies/CSS; real React and guest storage. Only Next Image is adapted. Explicit synthetic Saved seeds use production model/vault/safety APIs; empty guest scope and origin guards apply. Synthetic discovery GET service; no native/hosted/provider or screen-reader acceptance is implied."
+}

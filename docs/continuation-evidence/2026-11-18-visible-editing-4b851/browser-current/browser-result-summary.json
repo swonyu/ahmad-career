@@ -1,0 +1,785 @@
+{
+  "keepCases": [
+    {
+      "case": "cf_e345_en_cancel_keep",
+      "observedAt": "2026-11-18T05:42:40.836Z",
+      "active": "BUTTON Cancel",
+      "insideDialog": true,
+      "fullyVisible": true,
+      "scrollTop": 166,
+      "activeTop": 666.1458740234375,
+      "activeBottom": 715.1458740234375,
+      "dialogTop": 16,
+      "dialogBottom": 828,
+      "rtl": false,
+      "fields": [
+        {
+          "tag": "SELECT",
+          "type": "select-one",
+          "value": "interview"
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": ""
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": "2026-11-30"
+        },
+        {
+          "tag": "TEXTAREA",
+          "type": "textarea",
+          "value": "UNSAVED_E345_EN\nمرحبا، \"draft\""
+        }
+      ]
+    },
+    {
+      "case": "cf_e345_en_delete_keep",
+      "observedAt": "2026-11-18T05:43:18.195Z",
+      "active": "BUTTON Delete this private record",
+      "insideDialog": true,
+      "fullyVisible": true,
+      "scrollTop": 166,
+      "activeTop": 759.1458740234375,
+      "activeBottom": 803.1458740234375,
+      "dialogTop": 16,
+      "dialogBottom": 828,
+      "rtl": false,
+      "fields": [
+        {
+          "tag": "SELECT",
+          "type": "select-one",
+          "value": "interview"
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": ""
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": "2026-11-30"
+        },
+        {
+          "tag": "TEXTAREA",
+          "type": "textarea",
+          "value": "UNSAVED_E345_EN\nمرحبا، \"draft\""
+        }
+      ]
+    },
+    {
+      "case": "cf_e345_en_close_keep",
+      "observedAt": "2026-11-18T05:44:31.232Z",
+      "active": "BUTTON Close dialog",
+      "insideDialog": true,
+      "fullyVisible": true,
+      "scrollTop": 0,
+      "activeTop": 37.66666793823242,
+      "activeBottom": 81.66666793823242,
+      "dialogTop": 16,
+      "dialogBottom": 828,
+      "outerScroll": {
+        "documentLeft": 0,
+        "documentTop": 1414.6666259765625,
+        "mainLeft": 0,
+        "mainTop": 0
+      },
+      "rtl": false,
+      "fields": [
+        {
+          "tag": "SELECT",
+          "type": "select-one",
+          "value": "interview"
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": ""
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": "2026-11-30"
+        },
+        {
+          "tag": "TEXTAREA",
+          "type": "textarea",
+          "value": "UNSAVED_E345_EN\nمرحبا، \"draft\""
+        }
+      ]
+    },
+    {
+      "case": "cf_e345_en_escape_keep",
+      "observedAt": "2026-11-18T05:44:52.088Z",
+      "active": "TEXTAREA UNSAVED_E345_EN\nمرحبا، \"draft\"",
+      "insideDialog": true,
+      "fullyVisible": true,
+      "scrollTop": 0,
+      "activeTop": 602.8125,
+      "activeBottom": 748.1458435058594,
+      "dialogTop": 16,
+      "dialogBottom": 828,
+      "outerScroll": {
+        "documentLeft": 0,
+        "documentTop": 1414.6666259765625,
+        "mainLeft": 0,
+        "mainTop": 0
+      },
+      "rtl": false,
+      "fields": [
+        {
+          "tag": "SELECT",
+          "type": "select-one",
+          "value": "interview"
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": ""
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": "2026-11-30"
+        },
+        {
+          "tag": "TEXTAREA",
+          "type": "textarea",
+          "value": "UNSAVED_E345_EN\nمرحبا، \"draft\""
+        }
+      ]
+    },
+    {
+      "case": "cf_e345_en_add_escape_keep",
+      "observedAt": "2026-11-18T05:46:08.549Z",
+      "active": "INPUT input",
+      "insideDialog": true,
+      "fullyVisible": true,
+      "scrollTop": 0,
+      "activeTop": 499.32293701171875,
+      "activeBottom": 548.6562728881836,
+      "dialogTop": 114.98958587646484,
+      "dialogBottom": 729.0000228881836,
+      "outerScroll": {
+        "documentLeft": 0,
+        "documentTop": 1118.6666259765625,
+        "mainLeft": 0,
+        "mainTop": 0
+      },
+      "rtl": false,
+      "fields": [
+        {
+          "tag": "INPUT",
+          "type": "url",
+          "value": "https://employer.example/jobs/unsaved-e345-en"
+        },
+        {
+          "tag": "INPUT",
+          "type": "text",
+          "value": "Unsaved English test role"
+        },
+        {
+          "tag": "INPUT",
+          "type": "text",
+          "value": "Synthetic employer draft"
+        },
+        {
+          "tag": "INPUT",
+          "type": "text",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "case": "cf_e345_en_add_close_keep",
+      "observedAt": "2026-11-18T05:46:43.200Z",
+      "active": "BUTTON Close dialog",
+      "insideDialog": true,
+      "fullyVisible": true,
+      "scrollTop": 0,
+      "activeTop": 136.65625,
+      "activeBottom": 180.65625,
+      "dialogTop": 114.98958587646484,
+      "dialogBottom": 729.0000228881836,
+      "outerScroll": {
+        "documentLeft": 0,
+        "documentTop": 1118.6666259765625,
+        "mainLeft": 0,
+        "mainTop": 0
+      },
+      "rtl": false,
+      "fields": [
+        {
+          "tag": "INPUT",
+          "type": "url",
+          "value": "https://employer.example/jobs/unsaved-e345-en"
+        },
+        {
+          "tag": "INPUT",
+          "type": "text",
+          "value": "Unsaved English test role"
+        },
+        {
+          "tag": "INPUT",
+          "type": "text",
+          "value": "Synthetic employer draft"
+        },
+        {
+          "tag": "INPUT",
+          "type": "text",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "case": "cf_e345_ar_cancel_keep",
+      "observedAt": "2026-11-18T05:47:45.364Z",
+      "active": "BUTTON إلغاء",
+      "insideDialog": true,
+      "fullyVisible": true,
+      "scrollTop": 147.3333282470703,
+      "activeTop": 710.5416870117188,
+      "activeBottom": 759.5416870117188,
+      "dialogTop": 16,
+      "dialogBottom": 828,
+      "outerScroll": {
+        "documentLeft": 0,
+        "documentTop": 1544,
+        "mainLeft": 0,
+        "mainTop": 0
+      },
+      "rtl": true,
+      "horizontalOverflow": false,
+      "fields": [
+        {
+          "tag": "SELECT",
+          "type": "select-one",
+          "value": "interview"
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": ""
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": "2026-11-30"
+        },
+        {
+          "tag": "TEXTAREA",
+          "type": "textarea",
+          "value": "مسودة غير محفوظة E345\nمرحبا، \"تجربة\""
+        }
+      ]
+    },
+    {
+      "case": "cf_e345_ar_delete_keep",
+      "observedAt": "2026-11-18T05:48:21.662Z",
+      "active": "BUTTON حذف هذا السجل الخاص",
+      "insideDialog": true,
+      "fullyVisible": true,
+      "scrollTop": 147.3333282470703,
+      "activeTop": 759.5416870117188,
+      "activeBottom": 803.5416870117188,
+      "dialogTop": 16,
+      "dialogBottom": 828,
+      "outerScroll": {
+        "documentLeft": 0,
+        "documentTop": 1544,
+        "mainLeft": 0,
+        "mainTop": 0
+      },
+      "rtl": true,
+      "horizontalOverflow": false,
+      "fields": [
+        {
+          "tag": "SELECT",
+          "type": "select-one",
+          "value": "interview"
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": ""
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": "2026-11-30"
+        },
+        {
+          "tag": "TEXTAREA",
+          "type": "textarea",
+          "value": "مسودة غير محفوظة E345\nمرحبا، \"تجربة\""
+        }
+      ]
+    },
+    {
+      "case": "cf_e345_ar_close_keep",
+      "observedAt": "2026-11-18T05:49:54.620Z",
+      "active": "BUTTON إغلاق النافذة",
+      "insideDialog": true,
+      "fullyVisible": true,
+      "scrollTop": 0,
+      "activeTop": 37.66666793823242,
+      "activeBottom": 81.66666793823242,
+      "dialogTop": 16,
+      "dialogBottom": 828,
+      "outerScroll": {
+        "documentLeft": 0,
+        "documentTop": 1544,
+        "mainLeft": 0,
+        "mainTop": 0
+      },
+      "rtl": true,
+      "horizontalOverflow": false,
+      "fields": [
+        {
+          "tag": "SELECT",
+          "type": "select-one",
+          "value": "interview"
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": ""
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": "2026-11-30"
+        },
+        {
+          "tag": "TEXTAREA",
+          "type": "textarea",
+          "value": "مسودة غير محفوظة E345\nمرحبا، \"تجربة\""
+        }
+      ]
+    },
+    {
+      "case": "cf_e345_ar_escape_keep",
+      "observedAt": "2026-11-18T05:50:06.479Z",
+      "active": "TEXTAREA مسودة غير محفوظة E345\nمرحبا، \"تجربة\"",
+      "insideDialog": true,
+      "fullyVisible": true,
+      "scrollTop": 0,
+      "activeTop": 628.5416870117188,
+      "activeBottom": 773.8750305175781,
+      "dialogTop": 16,
+      "dialogBottom": 828,
+      "outerScroll": {
+        "documentLeft": 0,
+        "documentTop": 1544,
+        "mainLeft": 0,
+        "mainTop": 0
+      },
+      "rtl": true,
+      "horizontalOverflow": false,
+      "fields": [
+        {
+          "tag": "SELECT",
+          "type": "select-one",
+          "value": "interview"
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": ""
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": "2026-11-30"
+        },
+        {
+          "tag": "TEXTAREA",
+          "type": "textarea",
+          "value": "مسودة غير محفوظة E345\nمرحبا، \"تجربة\""
+        }
+      ]
+    },
+    {
+      "case": "cf_e345_ar_add_escape_keep",
+      "observedAt": "2026-11-18T05:54:53.439Z",
+      "active": "INPUT input",
+      "insideDialog": true,
+      "fullyVisible": true,
+      "scrollTop": 0,
+      "activeTop": 486.8333435058594,
+      "activeBottom": 536.1666793823242,
+      "dialogTop": 124.15625,
+      "dialogBottom": 719.84375,
+      "outerScroll": {
+        "documentLeft": 0,
+        "documentTop": 1232.6666259765625,
+        "mainLeft": 0,
+        "mainTop": 0
+      },
+      "rtl": true,
+      "horizontalOverflow": false,
+      "fields": [
+        {
+          "tag": "INPUT",
+          "type": "url",
+          "value": "https://employer.example/jobs/unsaved-e345-ar"
+        },
+        {
+          "tag": "INPUT",
+          "type": "text",
+          "value": "وظيفة تجربة غير محفوظة"
+        },
+        {
+          "tag": "INPUT",
+          "type": "text",
+          "value": "جهة عمل تجريبية"
+        },
+        {
+          "tag": "INPUT",
+          "type": "text",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "case": "cf_e345_ar_add_close_keep",
+      "observedAt": "2026-11-18T05:55:15.043Z",
+      "active": "BUTTON إغلاق النافذة",
+      "insideDialog": true,
+      "fullyVisible": true,
+      "scrollTop": 0,
+      "activeTop": 145.8229217529297,
+      "activeBottom": 189.8229217529297,
+      "dialogTop": 124.15625,
+      "dialogBottom": 719.84375,
+      "outerScroll": {
+        "documentLeft": 0,
+        "documentTop": 1232.6666259765625,
+        "mainLeft": 0,
+        "mainTop": 0
+      },
+      "rtl": true,
+      "horizontalOverflow": false,
+      "fields": [
+        {
+          "tag": "INPUT",
+          "type": "url",
+          "value": "https://employer.example/jobs/unsaved-e345-ar"
+        },
+        {
+          "tag": "INPUT",
+          "type": "text",
+          "value": "وظيفة تجربة غير محفوظة"
+        },
+        {
+          "tag": "INPUT",
+          "type": "text",
+          "value": "جهة عمل تجريبية"
+        },
+        {
+          "tag": "INPUT",
+          "type": "text",
+          "value": ""
+        }
+      ]
+    }
+  ],
+  "keepCasesPassed": 12,
+  "keyboardTraversalCases": [
+    {
+      "case": "cf_e345_en_tab_after_keep",
+      "active": {
+        "ariaLabel": null,
+        "id": "",
+        "insideDialog": true,
+        "rect": {
+          "bottom": 642.1458740234375,
+          "height": 44,
+          "left": 36.66666793823242,
+          "right": 353.3333549499512,
+          "top": 598.1458740234375,
+          "width": 316.66668701171875,
+          "x": 36.66666793823242,
+          "y": 598.1458740234375
+        },
+        "tag": "SUMMARY",
+        "text": "Compare with the saved record"
+      },
+      "dialog": {
+        "clientHeight": 811,
+        "open": true,
+        "rect": {
+          "bottom": 828,
+          "height": 812,
+          "left": 12,
+          "right": 378,
+          "top": 16,
+          "width": 366,
+          "x": 12,
+          "y": 16
+        },
+        "scrollHeight": 976,
+        "scrollTop": 166
+      },
+      "discardHeadings": [],
+      "fields": [
+        {
+          "tag": "SELECT",
+          "type": "select-one",
+          "value": "interview"
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": ""
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": "2026-11-30"
+        },
+        {
+          "tag": "TEXTAREA",
+          "type": "textarea",
+          "value": "UNSAVED_E345_EN\nمرحبا، \"draft\""
+        }
+      ],
+      "fullyVisible": true,
+      "observedAt": "2026-11-18T05:45:19.690Z",
+      "outerScroll": {
+        "documentLeft": 0,
+        "documentTop": 1414.6666259765625,
+        "mainLeft": 0,
+        "mainTop": 0
+      },
+      "viewport": {
+        "height": 844,
+        "width": 390
+      }
+    },
+    {
+      "case": "cf_e345_en_shift_tab_after_keep",
+      "active": {
+        "ariaLabel": null,
+        "id": "",
+        "insideDialog": true,
+        "rect": {
+          "bottom": 582.1458435058594,
+          "height": 145.33334350585938,
+          "left": 36.66666793823242,
+          "right": 353.3333549499512,
+          "top": 436.8125,
+          "width": 316.66668701171875,
+          "x": 36.66666793823242,
+          "y": 436.8125
+        },
+        "tag": "TEXTAREA",
+        "text": "UNSAVED_E345_EN\nمرحبا، \"draft\""
+      },
+      "dialog": {
+        "clientHeight": 811,
+        "open": true,
+        "rect": {
+          "bottom": 828,
+          "height": 812,
+          "left": 12,
+          "right": 378,
+          "top": 16,
+          "width": 366,
+          "x": 12,
+          "y": 16
+        },
+        "scrollHeight": 976,
+        "scrollTop": 166
+      },
+      "discardHeadings": [],
+      "fields": [
+        {
+          "tag": "SELECT",
+          "type": "select-one",
+          "value": "interview"
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": ""
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": "2026-11-30"
+        },
+        {
+          "tag": "TEXTAREA",
+          "type": "textarea",
+          "value": "UNSAVED_E345_EN\nمرحبا، \"draft\""
+        }
+      ],
+      "fullyVisible": true,
+      "observedAt": "2026-11-18T05:45:26.301Z",
+      "outerScroll": {
+        "documentLeft": 0,
+        "documentTop": 1414.6666259765625,
+        "mainLeft": 0,
+        "mainTop": 0
+      },
+      "viewport": {
+        "height": 844,
+        "width": 390
+      }
+    },
+    {
+      "case": "cf_e345_ar_tab_after_keep",
+      "active": {
+        "ariaLabel": null,
+        "id": "",
+        "insideDialog": true,
+        "rect": {
+          "bottom": 686.5416870117188,
+          "height": 44,
+          "left": 36.66666793823242,
+          "right": 353.3333549499512,
+          "top": 642.5416870117188,
+          "width": 316.66668701171875,
+          "x": 36.66666793823242,
+          "y": 642.5416870117188
+        },
+        "tag": "SUMMARY",
+        "text": "مقارنة بالسجل المحفوظ"
+      },
+      "dialog": {
+        "clientHeight": 811,
+        "open": true,
+        "rect": {
+          "bottom": 828,
+          "height": 812,
+          "left": 12,
+          "right": 378,
+          "top": 16,
+          "width": 366,
+          "x": 12,
+          "y": 16
+        },
+        "scrollHeight": 958,
+        "scrollTop": 147.3333282470703
+      },
+      "direction": "rtl",
+      "discardHeadings": [],
+      "fields": [
+        {
+          "tag": "SELECT",
+          "type": "select-one",
+          "value": "interview"
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": ""
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": "2026-11-30"
+        },
+        {
+          "tag": "TEXTAREA",
+          "type": "textarea",
+          "value": "مسودة غير محفوظة E345\nمرحبا، \"تجربة\""
+        }
+      ],
+      "fullyVisible": true,
+      "horizontalOverflow": false,
+      "observedAt": "2026-11-18T05:50:22.895Z",
+      "outerScroll": {
+        "documentLeft": 0,
+        "documentTop": 1544,
+        "mainLeft": 0,
+        "mainTop": 0
+      },
+      "viewport": {
+        "height": 844,
+        "width": 390
+      }
+    },
+    {
+      "case": "cf_e345_ar_shift_tab_after_keep",
+      "active": {
+        "ariaLabel": null,
+        "id": "",
+        "insideDialog": true,
+        "rect": {
+          "bottom": 626.5416870117188,
+          "height": 145.33334350585938,
+          "left": 36.66666793823242,
+          "right": 353.3333549499512,
+          "top": 481.2083435058594,
+          "width": 316.66668701171875,
+          "x": 36.66666793823242,
+          "y": 481.2083435058594
+        },
+        "tag": "TEXTAREA",
+        "text": "مسودة غير محفوظة E345\nمرحبا، \"تجربة\""
+      },
+      "dialog": {
+        "clientHeight": 811,
+        "open": true,
+        "rect": {
+          "bottom": 828,
+          "height": 812,
+          "left": 12,
+          "right": 378,
+          "top": 16,
+          "width": 366,
+          "x": 12,
+          "y": 16
+        },
+        "scrollHeight": 958,
+        "scrollTop": 147.3333282470703
+      },
+      "direction": "rtl",
+      "discardHeadings": [],
+      "fields": [
+        {
+          "tag": "SELECT",
+          "type": "select-one",
+          "value": "interview"
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": ""
+        },
+        {
+          "tag": "INPUT",
+          "type": "date",
+          "value": "2026-11-30"
+        },
+        {
+          "tag": "TEXTAREA",
+          "type": "textarea",
+          "value": "مسودة غير محفوظة E345\nمرحبا، \"تجربة\""
+        }
+      ],
+      "fullyVisible": true,
+      "horizontalOverflow": false,
+      "observedAt": "2026-11-18T05:50:28.892Z",
+      "outerScroll": {
+        "documentLeft": 0,
+        "documentTop": 1544,
+        "mainLeft": 0,
+        "mainTop": 0
+      },
+      "viewport": {
+        "height": 844,
+        "width": 390
+      }
+    }
+  ],
+  "interruptedCall": "cf_e345_ar_discard_reopen_add",
+  "interruptionResolution": "The combined transition timed out and browser bindings reset. No missing output is counted as a pass. Fresh DOM showed the saved record reopened; independent read verified original Offer stage, follow-up 2026-11-30 and note, and subsequent normal Cancel returned to Edit application record. Arabic add cases were then executed from fresh observed state.",
+  "newFinding": "Arabic Export unfinished record and Delete this private record were adjacent inline-flex buttons with exactly zero gap; distinct action labels visually join. Assigned Build2 a bounded proposal. Not a claim of WCAG target-size failure.",
+  "scope": "Chrome synthetic guest fixture at390x844; actual source and styles. No real accounts/employer submissions, native/physical AT or release acceptance."
+}

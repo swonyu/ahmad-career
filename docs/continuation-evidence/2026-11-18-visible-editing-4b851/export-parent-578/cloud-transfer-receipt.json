@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-11-18T05:25:48.374008+00:00",
+  "archiveSha256": "acc467ee30130812939711216ba645466d3644ce14bc08d8ca41596f8af60f9d",
+  "archiveBytes": 102448,
+  "manifestSha256": "3dd929e1605e65008d821b094e6ba54cf0e19d970b688f2aa84082a0a6fcefe6",
+  "verifiedFiles": 47,
+  "cloudDirectory": "/workspace/scratch/4b851318da2d/Export-Acceptance-578d99c",
+  "verificationSummary": {
+    "checks": 87,
+    "passed": 87,
+    "failed": 0
+  },
+  "exactMacArchiveTransfer": true
+}

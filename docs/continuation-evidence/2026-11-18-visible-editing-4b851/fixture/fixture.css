@@ -1,0 +1,13 @@
+.fixture-panel{margin:12px;padding:16px;border:2px solid #6860bb;border-radius:14px;background:var(--surface);color:var(--ink);font-family:ui-sans-serif,system-ui,sans-serif;line-height:1.5;min-width:0}
+.fixture-panel h1{font-size:1.2rem;letter-spacing:normal;margin:0 0 8px}
+.fixture-panel p{font-size:.88rem;margin:8px 0}
+.fixture-panel summary{cursor:pointer;font-weight:650;margin:8px 0}
+.fixture-control-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);gap:12px}
+.fixture-panel label{font-size:.8rem}
+.fixture-panel select,.fixture-panel input{display:block;max-width:100%;width:100%;min-height:40px;padding:8px;border:1px solid var(--field-border);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit}
+.fixture-actions{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.fixture-actions button{padding:8px 12px;min-height:40px;border:1px solid var(--field-border);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit}
+.fixture-panel pre{font-size:.74rem;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;max-height:40vh;overflow:auto;border:1px solid var(--line);padding:8px}
+.fixture-problem{color:var(--danger)}
+.fixture-destination{border:1px solid var(--accent);padding:8px}
+@media(max-width:600px){.fixture-control-grid{grid-template-columns:minmax(0,1fr)}.fixture-panel{margin:8px;padding:12px}}

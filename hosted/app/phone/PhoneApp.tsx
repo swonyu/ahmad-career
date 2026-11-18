@@ -423,10 +423,10 @@ export default function PhoneApp({ account }: { account: Account }) {
       if (!lost()) return;
       const usable = (node: EventTarget | null): node is HTMLElement => node instanceof HTMLElement && node.isConnected && dialogElement.contains(node) && node !== dialogElement &&
         !node.matches(":disabled") && !node.closest("[hidden], [inert]");
-      if (usable(opener)) opener.focus({ preventScroll: true });
+      if (usable(opener)) opener.focus({ preventScroll: false });
       if (!lost()) return;
       const editor = Array.from(form.querySelectorAll<HTMLElement>("select, textarea, input:not([type='hidden'])")).find(usable);
-      if (editor) editor.focus({ preventScroll: true });
+      if (editor) editor.focus({ preventScroll: false });
     });
   };
   const editRecord = (job: Job) => { const data = local(), existing = data.records.find(record => record.identity === jobIdentity(job.url)); setDialogDirty(false); setConfirmDialogDiscard(false); const record = existing ?? blankRecord(job); recordRecoveryId.current = crypto.randomUUID(); setEditorDraft(record); setDialog({ kind: "record", job, record, existed: Boolean(existing), scope: data.scope, editorId: recordRecoveryId.current }); };

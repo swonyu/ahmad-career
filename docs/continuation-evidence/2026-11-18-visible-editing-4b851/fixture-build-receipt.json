@@ -1,0 +1,39 @@
+{
+  "startedUTC": "2026-11-18T05:36:22.781180+00:00",
+  "fixture": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/stage-browser-fixture-20261118-e3454df",
+  "baseCommit": "cad85c495bc03853cc2258d093e79d8d1fb52ae3",
+  "candidateNotCommittedAtBuild": true,
+  "pinnedGateReceiptSHA256": "3d90dc6163ab029de8fc7b5d3ba0b51657e1d828de471bbdfd2513ac2e7bf5e1",
+  "unchangedFixtureInputs": {
+    "index.html": "0c086365c22826078d268c233e06479a80a93e6a43d9fd49d545439a26ff75d1",
+    "scenarios.mjs": "b60b395bbbfb6d3aee436452d6d40b34a98f56c4a67db708dc4872a3fdb55a50",
+    "seed-fixtures.ts": "dfd4730824a7d7c1f0fca24a77993709ad3c55ba07a31c7e8d5d0583a5f148f7",
+    "preflight.mjs": "9a335eaba3f4ff13df2b5933ca2ee23532cff56820d409174f01096a0304b70f",
+    "fixture.tsx": "7c3c237ced9c86773a3283e78e97dc7d763cd7784a0ede3018ae937b16c6db4c",
+    "server.mjs": "3567e4e8d669a9aab1ac0eaf8d22ae95108d4e3a5bef5e6e6dd7f66f24a12184",
+    "ImageStub.tsx": "96516fb416450e89138ce35c03987f4332f27383fd3b04e19286da744095b85c",
+    "fixture.css": "dc3a9c914ba20c4e84f326a585887aadf099d7555853ac41f4277dd3243a250b"
+  },
+  "builderSHA256": "f95f6449991c9d5529bc81b6e3bff6b9434fe33364fb59fa1628f9134f0954e6",
+  "steps": [
+    {
+      "name": "build",
+      "exit": 0,
+      "finishedUTC": "2026-11-18T05:36:23.102790+00:00",
+      "stdoutSHA256": "c5bb502bfdfb55ca376490757f8f815b034675315e22a938c499fe830c399da2",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "preflight",
+      "exit": 0,
+      "finishedUTC": "2026-11-18T05:36:23.188643+00:00",
+      "stdoutSHA256": "bb7beb43cc38af41e646a8f151b7c1335f1898f6a8261860b3f742d45f21119f",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "status": "passed",
+  "finishedUTC": "2026-11-18T05:36:23.188869+00:00",
+  "metadataSHA256": "9a409a5ed2b7ec0a613dd8273d57dd82beb06326aedc8f0a4797b23ec3a79ffd",
+  "phoneAppSHA256": "e3454df4c4a4189475097d5bcc0ac2e2bf1fe53447d3046513c6eb780a9cd998",
+  "listenerStarted": false
+}

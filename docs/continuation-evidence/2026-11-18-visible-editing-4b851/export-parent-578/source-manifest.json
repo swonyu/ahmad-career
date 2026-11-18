@@ -1,0 +1,134 @@
+{
+  "capturedAt": "2026-11-18T05:20:26.318718+00:00",
+  "owner": "/root/current_native_coordination",
+  "sourceClaim": {
+    "fixtureCommitFromRoot": "578d99c8f225a72ca7cc0cf10ff474bb19aaaebc",
+    "currentContinuationHead": "578d99c8f225a72ca7cc0cf10ff474bb19aaaebc",
+    "currentPhoneAppSha256": "57543cdbc0fbcb7a51cab725d65907e76af2a29ecf9f2022bffe6caaadc9da02",
+    "browserActions": "Performed by root; this helper read downloaded files only",
+    "syntheticGuestOnly": true
+  },
+  "files": [
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-phone-data.json",
+      "copy": "originals/initial-phone-data.json",
+      "role": "initial-before-date-commit",
+      "bytes": 13049,
+      "sha256": "835c60d2068db57fc2a7c32f3f3730c11ab5bf57788816f4c4ffc36a5f817874",
+      "mtimeUTC": "2026-11-18T05:03:00.680944+00:00",
+      "mtimeNs": 1794978180680943673,
+      "sourceStableDuringRead": true
+    },
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-application-records (4).csv",
+      "copy": "originals/initial-records-en.csv",
+      "role": "initial-before-date-commit",
+      "bytes": 3063,
+      "sha256": "c514f506160bd3108b25d17b9c2ef81a14845900b8872898f89b8426c76f9028",
+      "mtimeUTC": "2026-11-18T05:05:40.392781+00:00",
+      "mtimeNs": 1794978340392780750,
+      "sourceStableDuringRead": true
+    },
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-phone-data (1).json",
+      "copy": "originals/final-phone-data-en.json",
+      "role": "final",
+      "bytes": 13059,
+      "sha256": "bd22ab685d9fb92739337605d0583423d2bf6a9c906abd66dfdf1d4d7c3441e1",
+      "mtimeUTC": "2026-11-18T05:13:28.969946+00:00",
+      "mtimeNs": 1794978808969946274,
+      "sourceStableDuringRead": true
+    },
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-phone-data (2).json",
+      "copy": "originals/final-phone-data-ar.json",
+      "role": "final-repeat-after-language-change",
+      "bytes": 13059,
+      "sha256": "8d11f3c388a1190817bb8bf0c5772b5e8480a4bf40d91bbbfdb739b8dbd56fe1",
+      "mtimeUTC": "2026-11-18T05:14:20.792658+00:00",
+      "mtimeNs": 1794978860792658391,
+      "sourceStableDuringRead": true
+    },
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-application-records (5).csv",
+      "copy": "originals/final-records-en.csv",
+      "role": "final",
+      "bytes": 3073,
+      "sha256": "419c024b8907e6e0eed3867b507c97d79f56d7e224b852b90a97004027a3f935",
+      "mtimeUTC": "2026-11-18T05:13:31.402551+00:00",
+      "mtimeNs": 1794978811402551412,
+      "sourceStableDuringRead": true
+    },
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-application-records (6).csv",
+      "copy": "originals/final-records-en-repeat.csv",
+      "role": "final-repeat",
+      "bytes": 3073,
+      "sha256": "419c024b8907e6e0eed3867b507c97d79f56d7e224b852b90a97004027a3f935",
+      "mtimeUTC": "2026-11-18T05:13:44.206409+00:00",
+      "mtimeNs": 1794978824206409204,
+      "sourceStableDuringRead": true
+    },
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-application-records (7).csv",
+      "copy": "originals/final-records-ar.csv",
+      "role": "final-arabic",
+      "bytes": 3471,
+      "sha256": "46f691bdb8a9d4bf4aa6b23045fb3ba222daa91707f3b42ed318ca250f994c68",
+      "mtimeUTC": "2026-11-18T05:14:19.072360+00:00",
+      "mtimeNs": 1794978859072360272,
+      "sourceStableDuringRead": true
+    },
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-follow-up (3).ics",
+      "copy": "originals/final-follow-up-en.ics",
+      "role": "final",
+      "bytes": 542,
+      "sha256": "d8386a43a3da7e451c0bbc3c640a417e7e01e97898695d51190fab03059b02ed",
+      "mtimeUTC": "2026-11-18T05:11:38.568269+00:00",
+      "mtimeNs": 1794978698568268477,
+      "sourceStableDuringRead": true
+    },
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-follow-up (4).ics",
+      "copy": "originals/final-follow-up-en-repeat.ics",
+      "role": "final-repeat",
+      "bytes": 542,
+      "sha256": "864be0ba972adeb37feff5c424322a5ae92d8b5c5b2a1917367be694d3f79126",
+      "mtimeUTC": "2026-11-18T05:12:44.005138+00:00",
+      "mtimeNs": 1794978764005138069,
+      "sourceStableDuringRead": true
+    },
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-follow-up (5).ics",
+      "copy": "originals/final-follow-up-ar.ics",
+      "role": "final-arabic",
+      "bytes": 580,
+      "sha256": "8fc32f4e7867865bc57e42c529c009af0ee6f8a54c127b07dd3b36cbf5dc4909",
+      "mtimeUTC": "2026-11-18T05:15:33.457841+00:00",
+      "mtimeNs": 1794978933457840739,
+      "sourceStableDuringRead": true
+    }
+  ],
+  "procedureReferences": [
+    {
+      "original": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-export-consumer-20261118/HANDOFF.md",
+      "copy": "reference/HANDOFF.md",
+      "sha256": "02f85d168c0de58efa2e1edfc04e8247d68412fc3533795174989bc0a5dbd1cd"
+    },
+    {
+      "original": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-export-consumer-20261118/run-consumer.py",
+      "copy": "reference/run-consumer.py",
+      "sha256": "29dbd090aee0ecacdddc03e866cac600db5439919d666532d538e97a85f21ec3"
+    },
+    {
+      "original": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-export-consumer-20261118/verify-consumer.py",
+      "copy": "reference/verify-consumer.py",
+      "sha256": "e914bd43f95b4d5c5153e47dbd0cbd8e7c0674a65828e7ac3246bde4faed4781"
+    }
+  ],
+  "notes": [
+    "Initial JSON and CSV were taken before date committed. They are provenance, not failed final exports.",
+    "No source changes, browser actions, personal Calendar import, installation, native build, account API, commit or external post by this helper."
+  ]
+}

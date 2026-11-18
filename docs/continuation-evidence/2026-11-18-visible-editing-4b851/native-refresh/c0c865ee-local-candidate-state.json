@@ -1,0 +1,48 @@
+{
+  "observedUTC": "2026-11-18T05:46:22.726994+00:00",
+  "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-InApp-ServiceBrowser-a179",
+  "head": "c0c865eea250019ee21fbd6110c9fe4446c3c8f1",
+  "branch": "recovery/in-app-service-browser-20261118-d57",
+  "status": "M apple/AhmadCareer/CareerAppEnvironment.swift\n M apple/AhmadCareer/NativeApplicationsViews.swift\n M apple/AhmadCareer/NativeDiscoveryViews.swift\n M apple/UITests/CareerFinderUITests.swift",
+  "dirtyHashes": {
+    "apple/AhmadCareer/CareerAppEnvironment.swift": {
+      "bytes": 9843,
+      "sha256": "e9d7a2589c6298808c210513f3f3056adbcf382f2525e52a4c0f524af0b1e276"
+    },
+    "apple/AhmadCareer/NativeApplicationsViews.swift": {
+      "bytes": 91437,
+      "sha256": "3b4e8a695fa20cc2bcc1003a85eaeb63473d272d26c6d40b238bb96f9f0e9821"
+    },
+    "apple/AhmadCareer/NativeDiscoveryViews.swift": {
+      "bytes": 20312,
+      "sha256": "afecf8bebd8ef9d8db0705a54c4f6b5d7ca6b6953822bbbedc859982b60dacb4"
+    },
+    "apple/UITests/CareerFinderUITests.swift": {
+      "bytes": 64921,
+      "sha256": "c4990faf6e446dd3cc849f83124578fcb1ae68c99a26da3b9eb547577f24930a"
+    }
+  },
+  "diffStat": "apple/AhmadCareer/CareerAppEnvironment.swift    |   8 ++\n apple/AhmadCareer/NativeApplicationsViews.swift |  24 +++--\n apple/AhmadCareer/NativeDiscoveryViews.swift    |   4 +-\n apple/UITests/CareerFinderUITests.swift         | 113 +++++++++++++++++++++++-\n 4 files changed, 141 insertions(+), 8 deletions(-)",
+  "headAfter": "c0c865eea250019ee21fbd6110c9fe4446c3c8f1",
+  "statusAfter": "M apple/AhmadCareer/CareerAppEnvironment.swift\n M apple/AhmadCareer/NativeApplicationsViews.swift\n M apple/AhmadCareer/NativeDiscoveryViews.swift\n M apple/UITests/CareerFinderUITests.swift",
+  "dirtyHashesAfter": {
+    "apple/AhmadCareer/CareerAppEnvironment.swift": {
+      "bytes": 9843,
+      "sha256": "e9d7a2589c6298808c210513f3f3056adbcf382f2525e52a4c0f524af0b1e276"
+    },
+    "apple/AhmadCareer/NativeApplicationsViews.swift": {
+      "bytes": 91437,
+      "sha256": "3b4e8a695fa20cc2bcc1003a85eaeb63473d272d26c6d40b238bb96f9f0e9821"
+    },
+    "apple/AhmadCareer/NativeDiscoveryViews.swift": {
+      "bytes": 20312,
+      "sha256": "afecf8bebd8ef9d8db0705a54c4f6b5d7ca6b6953822bbbedc859982b60dacb4"
+    },
+    "apple/UITests/CareerFinderUITests.swift": {
+      "bytes": 64921,
+      "sha256": "c4990faf6e446dd3cc849f83124578fcb1ae68c99a26da3b9eb547577f24930a"
+    }
+  },
+  "stableDuringRead": true,
+  "scope": "Additional newly observed publisher candidate; no baseline delta or execution acceptance is inferred."
+}

@@ -1,0 +1,105 @@
+{
+  "retrieved_on": "2026-11-18",
+  "reviewer": "/root/dependency_state_0410",
+  "root_must_reopen_before_citing": true,
+  "sources": [
+    {
+      "key": "wcag22",
+      "title": "WCAG 2.2 Recommendation",
+      "url": "https://www.w3.org/TR/WCAG22/",
+      "ref": "turn496494854view0",
+      "verified_focus_ref": "turn525254927view0",
+      "status": "W3C Recommendation 12 December 2024; retrieved current latest-published URL",
+      "anchors": [
+        "#focus-visible",
+        "#focus-not-obscured-minimum",
+        "#focus-not-obscured-enhanced"
+      ],
+      "supports": "Normative criterion levels and distinction; no universal full-app conclusion from one case."
+    },
+    {
+      "key": "focus_visible",
+      "title": "Understanding SC 2.4.7 Focus Visible",
+      "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html",
+      "ref": "turn514139028view1",
+      "status": "Informative W3C Understanding document; Level AA criterion",
+      "supports": "Visible indicator is distinct from merely visible component bounds."
+    },
+    {
+      "key": "focus_not_obscured_minimum",
+      "title": "Understanding SC 2.4.11 Focus Not Obscured Minimum",
+      "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html",
+      "ref": "turn514139028view2",
+      "status": "Informative W3C Understanding document; Level AA criterion",
+      "supports": "Partial component visibility can satisfy minimum; focus indicator evaluated separately."
+    },
+    {
+      "key": "focus_not_obscured_enhanced",
+      "title": "Understanding SC 2.4.12 Focus Not Obscured Enhanced",
+      "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-enhanced.html",
+      "ref": "turn514139028view3",
+      "status": "Informative W3C Understanding document; Level AAA criterion",
+      "supports": "No author-created obscuring of focused component; not a whole-app certification."
+    },
+    {
+      "key": "apg_pattern",
+      "title": "APG Modal Dialog Pattern",
+      "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+      "ref": "turn514139028view0",
+      "status": "Informative guidance",
+      "supports": "Focus inside modal; initial focus depends on content; return on modal close."
+    },
+    {
+      "key": "apg_status",
+      "title": "APG Introduction",
+      "url": "https://www.w3.org/WAI/ARIA/apg/about/introduction/",
+      "ref": "turn523298797view0",
+      "status": "Explains APG is informative and examples illustrative",
+      "supports": "APG has no normative conformance model."
+    },
+    {
+      "key": "apg_example",
+      "title": "APG Modal Dialog Example",
+      "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/dialog/",
+      "ref": "turn117103120view1",
+      "status": "Illustrative example, not production-ready certification",
+      "short_quote": "The keyboard focus always remains visible.",
+      "quote_location": "Explanatory example text, retrieved line71",
+      "supports": "Correct attribution of short quote; mobile background movement and AT-support considerations."
+    },
+    {
+      "key": "html_focus",
+      "title": "WHATWG HTML focus method",
+      "url": "https://html.spec.whatwg.org/multipage/interaction.html#dom-focus",
+      "ref": "turn972994906view0",
+      "page_ref": "turn139244798view0",
+      "status": "Living Standard; retrieved page last updated 17 November 2026",
+      "supports": "Step 4 invokes scrolling with auto/center/center when preventScroll=false; no partly-visible exemption in that step."
+    },
+    {
+      "key": "cssom_view",
+      "title": "CSSOM View scroll-target-into-view algorithm",
+      "url": "https://drafts.csswg.org/cssom-view/#scroll-a-target-into-view",
+      "ref": "turn972994906view2",
+      "page_ref": "turn139244798view1",
+      "status": "Editor's Draft 5 November 2026; work in progress, not final Recommendation",
+      "supports": "Ancestor scrolling boxes/viewport considered inner-to-outer; no inherently dialog-only offset guarantee."
+    },
+    {
+      "key": "mdn_focus",
+      "title": "MDN HTMLElement.focus()",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/focus",
+      "ref": "turn139244798view2",
+      "status": "API reference; corroboration, not browser acceptance",
+      "supports": "Default scrolling into view; focus indicator behavior is separately controlled."
+    },
+    {
+      "key": "mdn_scroll_into_view",
+      "title": "MDN Element.scrollIntoView()",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView",
+      "ref": "turn241970200view0",
+      "status": "API reference; some options have varying support",
+      "supports": "Default scope includes all scrollable containers; explicit call is not intrinsically document-preserving."
+    }
+  ]
+}
