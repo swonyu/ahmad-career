@@ -265,7 +265,7 @@ private struct NativeSavedScreen: View {
                                 Text(row.value["title"]?.string ?? l10n("Opportunity")).font(.headline).fixedSize(horizontal: false, vertical: true)
                                 Text(row.value["company"]?.string ?? "").font(.subheadline).foregroundStyle(.secondary)
                                 if let location = row.value["location"]?.string, !location.isEmpty {
-                                    Text(location).font(.caption).foregroundStyle(.secondary)
+                                    Text(spokenListingLocation(location, l10n)).font(.caption).foregroundStyle(.secondary)
                                 }
                                 Label(l10n(row.value["recordOnly"]?.bool == true ? "Your application record" : row.value["localOnly"]?.bool == true ? "Saved on this phone" : "Saved with application service"), systemImage: "bookmark")
                                     .font(.caption).foregroundStyle(.secondary)
@@ -323,7 +323,7 @@ struct NativeSavedApplicationDetail: View {
                 Section {
                     Text(job["title"]?.string ?? l10n("Opportunity")).font(.title2.weight(.bold)).fixedSize(horizontal: false, vertical: true)
                     Text(job["company"]?.string ?? "").font(.headline)
-                    if let location = job["location"]?.string, !location.isEmpty { Label(location, systemImage: "mappin") }
+                    if let location = job["location"]?.string, !location.isEmpty { Label(spokenListingLocation(location, l10n), systemImage: "mappin") }
                 }
                 Section {
                     if let url = job["url"]?.string.flatMap(MobileApplicationPolicy.jobURL) {
@@ -579,6 +579,14 @@ private func spokenListingSummary(_ summary: String, _ copy: NativeCopy) -> Stri
     summary == "New employer listing. Review full requirements before applying." ? copy(summary) : summary
 }
 
+/// Built-in place names only. Employer wording stays as stored.
+private func spokenListingLocation(_ location: String, _ copy: NativeCopy) -> String {
+    switch location {
+    case "Riyadh", "Saudi Arabia": return copy(location)
+    default: return location
+    }
+}
+
 /// Built-in preparation steps use catalog phrases. Research and employer wording stays as stored.
 private func spokenPreparationStep(_ text: String, _ copy: NativeCopy) -> String {
     switch text {
@@ -606,7 +614,7 @@ private struct NativeJobLink: View {
                 VStack(alignment: .leading, spacing: 7) {
                     if store.isCurrentResearch(job), let rank = job.rank { Text(l10n.format("PRIORITY {0}", [String(format: "%02d", rank)])).font(.caption2.weight(.semibold)).foregroundStyle(.secondary) }
                     Text(job.title).font(.headline).fixedSize(horizontal: false, vertical: true)
-                    Text(l10n.format("{0} · {1}", [String(describing: job.company), String(describing: job.location)])).font(.subheadline).foregroundStyle(.secondary)
+                    Text(l10n.format("{0} · {1}", [String(describing: job.company), String(describing: spokenListingLocation(job.location, l10n))])).font(.subheadline).foregroundStyle(.secondary)
                     Text(job.kind == "archived" ? l10n.format("Earlier assessment: {0}", [spokenListingFit(job.fit, l10n)]) : spokenListingFit(job.fit, l10n)).font(.caption.weight(.medium)).foregroundStyle(job.isExpired ? Color.primary : Color.careerAccent)
                     ForEach(store.workspace.profile.criteriaMessages(for: job), id: \.self) { message in
                         Label(l10n(message), systemImage: "questionmark.circle").font(.caption).foregroundStyle(.secondary)
@@ -661,7 +669,7 @@ private struct NativeJobDetail: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(job.company).font(.caption.weight(.semibold)).foregroundStyle(Color.careerAccent)
                     Text(job.title).font(.title.weight(.bold)).fixedSize(horizontal: false, vertical: true)
-                    Text(job.location).foregroundStyle(.secondary)
+                    Text(spokenListingLocation(job.location, l10n)).foregroundStyle(.secondary)
                     if let subtitle = job.subtitle, !subtitle.isEmpty { Text(l10n(subtitle)).font(.subheadline).foregroundStyle(.secondary) }
                 }.padding(.vertical, 10)
                 if job.isExpired { NativeNotice(title: "Past listed deadline", message: "Check the employer's current status before spending time on this application.", warning: true) }
