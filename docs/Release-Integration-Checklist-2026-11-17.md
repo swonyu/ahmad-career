@@ -1,5 +1,7 @@
 # Career Finder — release integration checklist
 
+> **Historical snapshot — 17 November 2026.** The source, counts, deployment and ownership observations below describe that earlier checkpoint. See [the 18 November integrated candidate](Release-Candidate-2026-11-18.md) and [PR #1](https://github.com/swonyu/ahmad-career/pull/1) for the current integration and its exact acceptance state.
+
 **Status: integration is prepared for review, not performed.** This document was prepared in an isolated continuation. No release branch was changed, no shared Mac build was started, and no signing or store action was performed. A fresh acknowledgment from the publishing owner is still required before shared release work. New isolated source changes are not certified by the baseline CI or deployed v7 receipts.
 
 ## Keep the source and deployment identities separate

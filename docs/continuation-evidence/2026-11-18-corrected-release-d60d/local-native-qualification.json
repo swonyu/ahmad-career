@@ -1,0 +1,180 @@
+{
+  "scope": "Source-bound focused native qualification; not the final combined 17-journey gate",
+  "sourceRelationship": "Browser child is merged into1fe9; four-case run uses1fe9; geometry child descends from1fe9 and corrects only assertProfileLabel positioning. Final combined source requires complete CI.",
+  "originalFourCaseFailurePreserved": true,
+  "runs": [
+    {
+      "evidenceDirectory": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-correction-003",
+      "receipt": {
+        "started": "2026-11-18T09:00:08.525623+00:00",
+        "parent": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2",
+        "simulator": "3E94E3AA-C0A4-4A71-A282-03F1214A2003",
+        "runtime": "iOS26.5",
+        "device": "iPhone Air",
+        "scope": "two failed journeys only; not release gate",
+        "sources": {
+          "apple/UITests/CareerFinderUITests.swift": "f858947d1e25cfe23ade6850d901c8a425e0c41ef56a6c9384aaf9871bed6885",
+          "apple/AhmadCareer/NativeApplicationsViews.swift": "33f965c24a795ff7c79fc1fc53cbe7ba3cf5cbd22c7b0e2e79fca916f26fbf49"
+        },
+        "command": [
+          "xcodebuild",
+          "-project",
+          "apple/AhmadCareer.xcodeproj",
+          "-scheme",
+          "CareerFinderAcceptance",
+          "-configuration",
+          "Debug",
+          "-destination",
+          "platform=iOS Simulator,id=3E94E3AA-C0A4-4A71-A282-03F1214A2003,arch=arm64",
+          "-derivedDataPath",
+          "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-001/derived",
+          "-resultBundlePath",
+          "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-correction-003/CareerFinderUI.xcresult",
+          "-parallel-testing-enabled",
+          "NO",
+          "-maximum-concurrent-test-simulator-destinations",
+          "1",
+          "ONLY_ACTIVE_ARCH=YES",
+          "CODE_SIGNING_ALLOWED=NO",
+          "CODE_SIGNING_REQUIRED=NO",
+          "-only-testing:CareerFinderUITests/CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup",
+          "-only-testing:CareerFinderUITests/CareerFinderUITests/testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+          "test"
+        ],
+        "exit": 0,
+        "finished": "2026-11-18T09:03:39.204765+00:00"
+      },
+      "xcodebuildLogSHA256": "dc5bce375e2b9cbbcd29fb721dbf7e4b0c0f08974d696abd3e68fda3373897f5",
+      "observedTestCaseEvents": [
+        {
+          "method": "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+          "result": "passed",
+          "seconds": 77.313
+        },
+        {
+          "method": "testProfileReadinessAndSimpleConnectionSetup",
+          "result": "passed",
+          "seconds": 85.301
+        }
+      ]
+    },
+    {
+      "evidenceDirectory": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/corrected-candidate-local-four",
+      "receipt": {
+        "started": "2026-11-18T09:10:51.894837+00:00",
+        "head": "1fe9b7543be68ec9343e0fcbc6ca3bc52d58ef62",
+        "tree": "217ceded564eaa45555627baad9c77cb6bf35c8f",
+        "simulator": "3E94E3AA-C0A4-4A71-A282-03F1214A2003",
+        "runtime": "iOS26.5",
+        "device": "iPhone Air",
+        "scope": "four previously failing non-Safari journeys; parallel feedback while separate full cloud gate runs",
+        "cases": [
+          "testAccessibilityTextKeepsCoreControlsReachable",
+          "testApplicationDraftSurvivesCancelAndRelaunch",
+          "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+          "testSearchEmptyAndFailurePreservesPreviousResults"
+        ],
+        "command": [
+          "xcodebuild",
+          "-project",
+          "apple/AhmadCareer.xcodeproj",
+          "-scheme",
+          "CareerFinderAcceptance",
+          "-configuration",
+          "Debug",
+          "-destination",
+          "platform=iOS Simulator,id=3E94E3AA-C0A4-4A71-A282-03F1214A2003,arch=arm64",
+          "-derivedDataPath",
+          "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-001/derived",
+          "-resultBundlePath",
+          "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/corrected-candidate-local-four/CareerFinderUI.xcresult",
+          "-parallel-testing-enabled",
+          "NO",
+          "-maximum-concurrent-test-simulator-destinations",
+          "1",
+          "ONLY_ACTIVE_ARCH=YES",
+          "CODE_SIGNING_ALLOWED=NO",
+          "CODE_SIGNING_REQUIRED=NO",
+          "-only-testing:CareerFinderUITests/CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable",
+          "-only-testing:CareerFinderUITests/CareerFinderUITests/testApplicationDraftSurvivesCancelAndRelaunch",
+          "-only-testing:CareerFinderUITests/CareerFinderUITests/testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+          "-only-testing:CareerFinderUITests/CareerFinderUITests/testSearchEmptyAndFailurePreservesPreviousResults",
+          "test"
+        ],
+        "exit": 65,
+        "finished": "2026-11-18T09:18:32.492113+00:00"
+      },
+      "xcodebuildLogSHA256": "4375017f434fa88717d5709560209ea04eda80b703167091329cf0247a35bf4c",
+      "observedTestCaseEvents": [
+        {
+          "method": "testAccessibilityTextKeepsCoreControlsReachable",
+          "result": "failed",
+          "seconds": 94.301
+        },
+        {
+          "method": "testApplicationDraftSurvivesCancelAndRelaunch",
+          "result": "passed",
+          "seconds": 31.98
+        },
+        {
+          "method": "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+          "result": "passed",
+          "seconds": 80.125
+        },
+        {
+          "method": "testSearchEmptyAndFailurePreservesPreviousResults",
+          "result": "passed",
+          "seconds": 202.153
+        }
+      ]
+    },
+    {
+      "evidenceDirectory": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/profile-geometry-native-002",
+      "receipt": {
+        "started": "2026-11-18T09:30:30.434301+00:00",
+        "parent": "1fe9b7543be68ec9343e0fcbc6ca3bc52d58ef62",
+        "testSourceSHA256": "c4644ab9b28a1ec55cb284b5633e8d80bff07de3084472ae3798ded063736e3f",
+        "productUnchanged": true,
+        "simulator": "3E94E3AA-C0A4-4A71-A282-03F1214A2003",
+        "runtime": "iOS26.5",
+        "device": "iPhone Air",
+        "scope": "one previously failing full large-text journey; not full release gate",
+        "command": [
+          "xcodebuild",
+          "-project",
+          "apple/AhmadCareer.xcodeproj",
+          "-scheme",
+          "CareerFinderAcceptance",
+          "-configuration",
+          "Debug",
+          "-destination",
+          "platform=iOS Simulator,id=3E94E3AA-C0A4-4A71-A282-03F1214A2003,arch=arm64",
+          "-derivedDataPath",
+          "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-001/derived",
+          "-resultBundlePath",
+          "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/profile-geometry-native-002/CareerFinderUI.xcresult",
+          "-parallel-testing-enabled",
+          "NO",
+          "-maximum-concurrent-test-simulator-destinations",
+          "1",
+          "ONLY_ACTIVE_ARCH=YES",
+          "CODE_SIGNING_ALLOWED=NO",
+          "CODE_SIGNING_REQUIRED=NO",
+          "-only-testing:CareerFinderUITests/CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable",
+          "test"
+        ],
+        "exit": 0,
+        "finished": "2026-11-18T09:32:58.962480+00:00",
+        "sourceStillMatches": true
+      },
+      "xcodebuildLogSHA256": "796bca5eb757d740354c4c13432d3016effeea333c75adbe75fe516efc2fe63f",
+      "observedTestCaseEvents": [
+        {
+          "method": "testAccessibilityTextKeepsCoreControlsReachable",
+          "result": "passed",
+          "seconds": 112.424
+        }
+      ]
+    }
+  ]
+}

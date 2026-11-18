@@ -1,0 +1,427 @@
+{
+  "schema": 1,
+  "observedUTC": "2026-11-18T09:18:38.722617+00:00",
+  "auditStatus": "NO_PRESERVATION_OR_INTEGRATION_GAP_FOUND_IN_REVIEWED_SCOPE",
+  "root": "/Users/saleh/Developer/career-finder-integrated-20261118-d60d62a70f26",
+  "targetHEAD": "1fe9b7543be68ec9343e0fcbc6ca3bc52d58ef62",
+  "rootBranch": "integration/career-finder-20261118-d60d",
+  "rootStatusBefore": "",
+  "rootStatusAfter": "",
+  "actualAncestry": {
+    "hosted": {
+      "commit": "28f1f11614beb9739d89df9e733a232adcc3e0bd",
+      "isActualAncestor": true,
+      "ancestorCheckExit": 0,
+      "tree": "a83000086199752bf92f5ee2cea7b832e6ca126f",
+      "parents": [
+        "ac6a0b8651c8f5348f7976ee8a84d8a10890a082"
+      ],
+      "subject": "Keep record actions visible and recover export focus"
+    },
+    "native": {
+      "commit": "0991272b57387effb81af231ac22e4e0f739e809",
+      "isActualAncestor": true,
+      "ancestorCheckExit": 0,
+      "tree": "6720479325a8fdfdec8439da86faebf4156b4081",
+      "parents": [
+        "15d476b853c2bfdbec52538f03f68d59bfb3ffa5"
+      ],
+      "subject": "Record native merge provenance and fresh combined host evidence"
+    },
+    "SSR": {
+      "commit": "963e871446b73c05c3be742f0b19cac91b7218d3",
+      "isActualAncestor": true,
+      "ancestorCheckExit": 0,
+      "tree": "24e12ca8fc3ee6f41afbe8e36e21e5432a5dd41f",
+      "parents": [
+        "28f1f11614beb9739d89df9e733a232adcc3e0bd"
+      ],
+      "subject": "Integrate esbuild SSR with current hosted recovery and dependency gates"
+    },
+    "originalSearch": {
+      "commit": "0beff68a6906968f282dca292dc547daad85684f",
+      "isActualAncestor": true,
+      "ancestorCheckExit": 0,
+      "tree": "79aab0384eb2da1b92ae62d8c222d5024f1d498a",
+      "parents": [
+        "11cb3d4d8c15e9b16719b6e7091597f43633cda6"
+      ],
+      "subject": "Distinguish incomplete searches, restored checks, and equivalent boards."
+    },
+    "recovery": {
+      "commit": "53c7341d8e0d28137089522a2ffc542e4d780299",
+      "isActualAncestor": true,
+      "ancestorCheckExit": 0,
+      "tree": "e21a2dd11667061d914f6d8ddc3a5c404e52ffe5",
+      "parents": [
+        "11cb3d4d8c15e9b16719b6e7091597f43633cda6"
+      ],
+      "subject": "Preserve completed native recovery lane for integration"
+    },
+    "accessibility": {
+      "commit": "b37fe51fa2e03868efb0ad3c830be5801defe913",
+      "isActualAncestor": true,
+      "ancestorCheckExit": 0,
+      "tree": "343ce706c1ad36414d934e1d786ac822968f6b94",
+      "parents": [
+        "a6a8951e672da29392c858c2317c364d9d2cbc92"
+      ],
+      "subject": "Speak the built-in place names"
+    },
+    "publisherPreservation": {
+      "commit": "4b96161c82b596e96f655ddfcb14001479a5060e",
+      "isActualAncestor": true,
+      "ancestorCheckExit": 0,
+      "tree": "65077df2b742a04864191288e057e4fa41acfd7f",
+      "parents": [
+        "c0c865eea250019ee21fbd6110c9fe4446c3c8f1"
+      ],
+      "subject": "Preserve publisher native browser and acceptance work before integration"
+    }
+  },
+  "sourceReceiptInputs": [
+    {
+      "path": "docs/continuation-evidence/2026-11-18-record-actions-d60d/gates/receipt.json",
+      "sha256": "38e15f260c6a336d1c263edee92553018ddf80ee3a6e21c26c48a20e598c7940"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-hosted-ssr-integration-d60d/source-final.json",
+      "sha256": "2780eb1a3935e298a5c1cd53be4c9873efa06aa36072dd64c785fee6c3a951a5"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-native-integration-d60d/corrected-discovery-and-recovery-retest/verification.json",
+      "sha256": "58b84ec497fc83c76d7738505a79ef0115c35b495ceae1c7436fee6cf08dc6ec"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-native-integration-d60d/initial-host-checks/verification.json",
+      "sha256": "f6f208d517fa6cc1b069b12b49e978509a6ac419482b88a37f070c0941ecf992"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-native-integration-d60d/combined-source-binding.json",
+      "sha256": "b2803d600cd0c274631d6abda281ab34758b1916575f45d6431b0b17f236d903"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-native-integration-d60d/native-integration-publisher-preservation.json",
+      "sha256": "a8c2414c3382e1302ec7456bd2523354bada12f835b5534b7028ec73f7887549"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-record-actions-d60d/integration/native-accessibility-b37f-push-receipt.json",
+      "sha256": "17e80238262f0c9e00e4436be44ccab14259074172d3dad39bd619bb44f0e982"
+    }
+  ],
+  "sourceReceiptChecks": {
+    "hostedSeal": {
+      "commit": "28f1f11614beb9739d89df9e733a232adcc3e0bd",
+      "entries": 249,
+      "matching": 249,
+      "differences": []
+    },
+    "SSRSeal": {
+      "commit": "963e871446b73c05c3be742f0b19cac91b7218d3",
+      "entries": 261,
+      "matching": 261,
+      "differences": []
+    },
+    "nativeSeal": {
+      "commit": "0991272b57387effb81af231ac22e4e0f739e809",
+      "entries": 221,
+      "matching": 221,
+      "differences": []
+    },
+    "SSRCurrent": {
+      "commit": "1fe9b7543be68ec9343e0fcbc6ca3bc52d58ef62",
+      "entries": 261,
+      "matching": 260,
+      "differences": [
+        {
+          "path": ".github/workflows/phone-quality.yml",
+          "expected": "8a98c1d7bcf44a9fbab3064d64d0251c7078a7cfb96787ee7ba067025762911c",
+          "actual": "0ee8eb8b1504ce04958f7aaabf72f6a8e78810480100f3ef8044afb16fb28bac"
+        }
+      ]
+    },
+    "nativeCurrent": {
+      "commit": "1fe9b7543be68ec9343e0fcbc6ca3bc52d58ef62",
+      "entries": 221,
+      "matching": 211,
+      "differences": [
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+          "expected": "d8f36bf5075d7180af407c6e7ece4e72fcb0d944bb8346d98ad1e56d58628898",
+          "actual": "d447432fee132d6c55808d1228459d84cfc07b802feed5379e8d3437f4d414f0"
+        },
+        {
+          "path": "apple/AhmadCareer/CareerAppEnvironment.swift",
+          "expected": "e9d7a2589c6298808c210513f3f3056adbcf382f2525e52a4c0f524af0b1e276",
+          "actual": "41c3a9a3f846ab0d06a7e2b1b22e22d470bec938030e844856809786f80fa665"
+        },
+        {
+          "path": "apple/AhmadCareer/CareerDiscovery.swift",
+          "expected": "58d217cbfe63375dcb0958ccd9b4ae3a29cf49388c57eae7bbc4d10ff62ff81e",
+          "actual": "f9b3b60faaf0d0b5f1a2b69369e826c4c6b2b8e6b96ea0916e3ccd71bcdc813e"
+        },
+        {
+          "path": "apple/AhmadCareer/NativeApplicationsStore.swift",
+          "expected": "1f04fe20db91f6a893ecc990757eebf881d93287de3b491cef6641cabeee7c48",
+          "actual": "f53902ac34c5855e1033b918a7660653e5d31a171ccd5d588867177a0f9a5e30"
+        },
+        {
+          "path": "apple/AhmadCareer/NativeApplicationsViews.swift",
+          "expected": "d2c0a7ab49292ffc736ff50368d947ea610e496b37a1d53b02ff21bb182a8ea0",
+          "actual": "d758205a78e00a86f3baf0f38bbc28e864a597e6c6b26ec078531f77b02b7723"
+        },
+        {
+          "path": "apple/AhmadCareer/NativeDiscoveryViews.swift",
+          "expected": "6ff2544a826ecccaeb59eec8c44299a86b1cd5ad4eb2da81b881eeb81e3bf7fd",
+          "actual": "f2d3f6b76690eb26a803a0e721ea07f85c817d0f6c54060e8e712ea9f3d6fe9d"
+        },
+        {
+          "path": "apple/Checks/DiscoveryCheck.swift",
+          "expected": "c01f56d04bdc8d931e50b47be3353c408922428745e0beff9fb8eca99aa79466",
+          "actual": "0146fe063a9fef9fb3e733e1f5ac16f84bedfd6fda104c38e4443c96effd2adb"
+        },
+        {
+          "path": "apple/Checks/NativeRecoveryCheck.swift",
+          "expected": "ec8e6c0098c16bb08cb3d3a3207bfe6db023fbbf1387a23e192ec754b12f7c51",
+          "actual": "7d2512edc24a1ab692a9c0c817ed0f563fe557bbc94de543cfba47cc64272d2e"
+        },
+        {
+          "path": "apple/Checks/check-mobile.sh",
+          "expected": "8f7e533fe92b7df477b83d03d533357a6c624a11622f19a788698c9a4e1181ef",
+          "actual": "39a752d3312b3e82370e45b86c77fd80fd016f0ba17e34a868d5e3d693c4ebd8"
+        },
+        {
+          "path": "apple/UITests/CareerFinderUITests.swift",
+          "expected": "c4990faf6e446dd3cc849f83124578fcb1ae68c99a26da3b9eb547577f24930a",
+          "actual": "e09c5cacbc01160a145b0379cded962ca46e77abbf32b36a84e79a824cc3ab33"
+        }
+      ]
+    },
+    "nativeInitialHistorical": {
+      "commit": "15d476b853c2bfdbec52538f03f68d59bfb3ffa5",
+      "entries": 222,
+      "matching": 220,
+      "differences": [
+        {
+          "path": "apple/Checks/DiscoveryCheck.swift",
+          "expected": "ea463450d93e5d1a3547a1e85dd841608e26700525df14319af6cfc77be56c86",
+          "actual": "c01f56d04bdc8d931e50b47be3353c408922428745e0beff9fb8eca99aa79466"
+        },
+        {
+          "path": "apple/Checks/check-mobile.sh",
+          "expected": "56895bbfe51f0b374ec2a78cd0ac24f2d97dd23e510e75a900b7f4977441b63d",
+          "actual": "8f7e533fe92b7df477b83d03d533357a6c624a11622f19a788698c9a4e1181ef"
+        }
+      ]
+    }
+  },
+  "nativeMergeParentChecks": [
+    {
+      "commit": "4b96161c82b596e96f655ddfcb14001479a5060e",
+      "parents": [
+        "c0c865eea250019ee21fbd6110c9fe4446c3c8f1"
+      ],
+      "receiptMatchesActualGit": true
+    },
+    {
+      "commit": "4da0d30b70100c1c9310ca839774d481bbbe501c",
+      "parents": [
+        "4b96161c82b596e96f655ddfcb14001479a5060e",
+        "9531a4be09c459e15573667c67b695dc6040874d"
+      ],
+      "receiptMatchesActualGit": true
+    },
+    {
+      "commit": "501a05c0cd4b87704d6c16a327d6f848ce190e4a",
+      "parents": [
+        "4da0d30b70100c1c9310ca839774d481bbbe501c",
+        "53c7341d8e0d28137089522a2ffc542e4d780299"
+      ],
+      "receiptMatchesActualGit": true
+    },
+    {
+      "commit": "15d476b853c2bfdbec52538f03f68d59bfb3ffa5",
+      "parents": [
+        "501a05c0cd4b87704d6c16a327d6f848ce190e4a",
+        "b37fe51fa2e03868efb0ad3c830be5801defe913"
+      ],
+      "receiptMatchesActualGit": true
+    }
+  ],
+  "originalWorktrees": {
+    "search": {
+      "path": "/Users/saleh/Developer/career-finder-native-search-20261117-01a1ea9d107f",
+      "HEAD": "0beff68a6906968f282dca292dc547daad85684f",
+      "branch": "continuation/native-search-20261117-01a1ea9d107f",
+      "status": "",
+      "stagedStatus": "",
+      "sourceComparisonCommit": "0beff68a6906968f282dca292dc547daad85684f",
+      "trackedNativeWorkflowSourceFilesChecked": 264,
+      "sourceMismatches": []
+    },
+    "recovery": {
+      "path": "/Users/saleh/Developer/career-finder-native-recovery-20261117-01a1ea9cfd25",
+      "HEAD": "53c7341d8e0d28137089522a2ffc542e4d780299",
+      "branch": "continuation/native-recovery-20261117-01a1ea9cfd25",
+      "status": "",
+      "stagedStatus": "",
+      "sourceComparisonCommit": "53c7341d8e0d28137089522a2ffc542e4d780299",
+      "trackedNativeWorkflowSourceFilesChecked": 265,
+      "sourceMismatches": []
+    },
+    "accessibility": {
+      "path": "/Users/saleh/Library/Caches/Career-Account-A11y-Lane-20261117-01a1ea56",
+      "HEAD": "b37fe51fa2e03868efb0ad3c830be5801defe913",
+      "branch": "lane/account-search-a11y-20261117",
+      "status": "",
+      "stagedStatus": "",
+      "sourceComparisonCommit": "b37fe51fa2e03868efb0ad3c830be5801defe913",
+      "trackedNativeWorkflowSourceFilesChecked": 264,
+      "sourceMismatches": [],
+      "matchesAllRecordedLaneHashes": 21,
+      "commitsSinceRecordedBase": 34
+    },
+    "publisher": {
+      "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-InApp-ServiceBrowser-a179",
+      "HEAD": "c0c865eea250019ee21fbd6110c9fe4446c3c8f1",
+      "branch": "recovery/in-app-service-browser-20261118-d57",
+      "status": "M apple/AhmadCareer/CareerAppEnvironment.swift\n M apple/AhmadCareer/NativeApplicationsViews.swift\n M apple/AhmadCareer/NativeDiscoveryViews.swift\n M apple/UITests/CareerFinderUITests.swift",
+      "stagedStatus": "",
+      "sourceComparisonCommit": "4b96161c82b596e96f655ddfcb14001479a5060e",
+      "trackedNativeWorkflowSourceFilesChecked": 264,
+      "sourceMismatches": [],
+      "pendingDirtyFileHashes": {
+        "apple/AhmadCareer/CareerAppEnvironment.swift": "e9d7a2589c6298808c210513f3f3056adbcf382f2525e52a4c0f524af0b1e276",
+        "apple/AhmadCareer/NativeApplicationsViews.swift": "3b4e8a695fa20cc2bcc1003a85eaeb63473d272d26c6d40b238bb96f9f0e9821",
+        "apple/AhmadCareer/NativeDiscoveryViews.swift": "afecf8bebd8ef9d8db0705a54c4f6b5d7ca6b6953822bbbedc859982b60dacb4",
+        "apple/UITests/CareerFinderUITests.swift": "c4990faf6e446dd3cc849f83124578fcb1ae68c99a26da3b9eb547577f24930a"
+      },
+      "exactMatchToCommittedBeforeAndAfterReceipts": true,
+      "pendingFilesAlsoMatchPreservationCommit": true
+    }
+  },
+  "latestHostedFeaturePreservation": {
+    "PhoneApp": "Exact latest sealed body retained; only three lint directive namespaces changed for SSR migration",
+    "phoneCssExact": true,
+    "recoveryTestExact": true,
+    "hostedTreeCurrentEqualsSSR": true
+  },
+  "nativeSourceChangesAfterSeal": [
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/DiscoveryPersistenceRegressionTest.kt",
+      "currentSHA256": "dce01dbb2a9f4c2fb71f21a3688dd23ac54527e25bfb7530bb59a9acf82ceeb1",
+      "laterOrdinaryCommits": [
+        "07c9034ff7a450cc48b800db287ddadadf00474a Preserve live searches when saved recovery cannot be read"
+      ]
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+      "currentSHA256": "d447432fee132d6c55808d1228459d84cfc07b802feed5379e8d3437f4d414f0",
+      "laterOrdinaryCommits": [
+        "07c9034ff7a450cc48b800db287ddadadf00474a Preserve live searches when saved recovery cannot be read"
+      ]
+    },
+    {
+      "path": "apple/AhmadCareer/CareerAppEnvironment.swift",
+      "currentSHA256": "41c3a9a3f846ab0d06a7e2b1b22e22d470bec938030e844856809786f80fa665",
+      "laterOrdinaryCommits": [
+        "b4aa53a0430f4d51fd6ff1d99b7b8569d1be735b Observe native cooldown controls before acceptance deadline expires",
+        "4ca13f74395d3f7b041c44f75182155fc6e82c8e Fix native search retry controls during cooldown"
+      ]
+    },
+    {
+      "path": "apple/AhmadCareer/CareerDiscovery.swift",
+      "currentSHA256": "f9b3b60faaf0d0b5f1a2b69369e826c4c6b2b8e6b96ea0916e3ccd71bcdc813e",
+      "laterOrdinaryCommits": [
+        "07c9034ff7a450cc48b800db287ddadadf00474a Preserve live searches when saved recovery cannot be read"
+      ]
+    },
+    {
+      "path": "apple/AhmadCareer/NativeApplicationsStore.swift",
+      "currentSHA256": "f53902ac34c5855e1033b918a7660653e5d31a171ccd5d588867177a0f9a5e30",
+      "laterOrdinaryCommits": [
+        "21c9fcf1a70fe542baa250867f63b287c1bd321f Preserve and review recovered record drafts against current revisions"
+      ]
+    },
+    {
+      "path": "apple/AhmadCareer/NativeApplicationsViews.swift",
+      "currentSHA256": "d758205a78e00a86f3baf0f38bbc28e864a597e6c6b26ec078531f77b02b7723",
+      "laterOrdinaryCommits": [
+        "4b65707739b2ff8f33e02dee8b87e9be99f6f992 Support ASCII connection codes and qualify real Safari return controls",
+        "872bfb047ef22322732e873c4d0684fe76823c43 Restore native profile field names and stage keyboard readiness"
+      ]
+    },
+    {
+      "path": "apple/AhmadCareer/NativeDiscoveryViews.swift",
+      "currentSHA256": "f2d3f6b76690eb26a803a0e721ea07f85c817d0f6c54060e8e712ea9f3d6fe9d",
+      "laterOrdinaryCommits": [
+        "4ca13f74395d3f7b041c44f75182155fc6e82c8e Fix native search retry controls during cooldown"
+      ]
+    },
+    {
+      "path": "apple/Checks/DiscoveryCheck.swift",
+      "currentSHA256": "0146fe063a9fef9fb3e733e1f5ac16f84bedfd6fda104c38e4443c96effd2adb",
+      "laterOrdinaryCommits": [
+        "07c9034ff7a450cc48b800db287ddadadf00474a Preserve live searches when saved recovery cannot be read"
+      ]
+    },
+    {
+      "path": "apple/Checks/NativeRecoveryCheck.swift",
+      "currentSHA256": "7d2512edc24a1ab692a9c0c817ed0f563fe557bbc94de543cfba47cc64272d2e",
+      "laterOrdinaryCommits": [
+        "21c9fcf1a70fe542baa250867f63b287c1bd321f Preserve and review recovered record drafts against current revisions"
+      ]
+    },
+    {
+      "path": "apple/Checks/check-discovery-cooldown.py",
+      "currentSHA256": "5a24e66232da086dc7582e7b67720dfbfa23dd547daae2d1776d0c95f6364528",
+      "laterOrdinaryCommits": [
+        "4ca13f74395d3f7b041c44f75182155fc6e82c8e Fix native search retry controls during cooldown"
+      ]
+    },
+    {
+      "path": "apple/Checks/check-mobile.sh",
+      "currentSHA256": "39a752d3312b3e82370e45b86c77fd80fd016f0ba17e34a868d5e3d693c4ebd8",
+      "laterOrdinaryCommits": [
+        "4ca13f74395d3f7b041c44f75182155fc6e82c8e Fix native search retry controls during cooldown"
+      ]
+    },
+    {
+      "path": "apple/UITests/CareerFinderUITests.swift",
+      "currentSHA256": "e09c5cacbc01160a145b0379cded962ca46e77abbf32b36a84e79a824cc3ab33",
+      "laterOrdinaryCommits": [
+        "4b65707739b2ff8f33e02dee8b87e9be99f6f992 Support ASCII connection codes and qualify real Safari return controls",
+        "b4aa53a0430f4d51fd6ff1d99b7b8569d1be735b Observe native cooldown controls before acceptance deadline expires",
+        "872bfb047ef22322732e873c4d0684fe76823c43 Restore native profile field names and stage keyboard readiness",
+        "4ca13f74395d3f7b041c44f75182155fc6e82c8e Fix native search retry controls during cooldown"
+      ]
+    }
+  ],
+  "workflowChangeAfterSSR": {
+    "description": "Only the iPhone job bound changed from 40 to 50 minutes and its native-test step from 35 to 45 minutes; no gate was removed.",
+    "sha256": "0efcbd7c585530c28922e99f5bce4eabad65ded1ff750210b8a90313ad48b274",
+    "diff": "diff --git a/.github/workflows/phone-quality.yml b/.github/workflows/phone-quality.yml\nindex 57098b1..60d057a 100644\n--- a/.github/workflows/phone-quality.yml\n+++ b/.github/workflows/phone-quality.yml\n@@ -228,7 +228,7 @@ jobs:\n   iphone-ui:\n     name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-connection' && 'PARTIAL iPhone connection regression' || github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-ui' && 'PARTIAL iPhone UI acceptance (all 17 journeys)' || 'iPhone native interface acceptance' }}\n     runs-on: macos-26\n-    timeout-minutes: 40\n+    timeout-minutes: 50\n     env:\n       CAREER_UI_ACCEPTANCE_SCOPE: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope || 'full' }}\n     steps:\n@@ -263,7 +263,7 @@ jobs:\n       - name: Exercise native phone flows with isolated synthetic data\n         shell: bash\n         # Bound simulator work while leaving time to retain failure evidence.\n-        timeout-minutes: 35\n+        timeout-minutes: 45\n         run: |\n           set -o pipefail\n           selection=()\n"
+  },
+  "historicalReceiptDisposition": "The two differences against the initial native map are precisely the two before/final hashes declared in combined-source-binding. The corrected native map matches all 221 final source entries. Later ten changed mapped native paths plus two additional native test/runner paths are traced to named corrective commits. Historical passes are not automatically asserted for newer bytes.",
+  "readOnlyOperations": [
+    "git rev-parse/show/status/merge-base/log/ls-files/cat-file/diff/rev-list",
+    "Read source, localization, committed receipts and existing dirty publisher files",
+    "Write only this bounded receipt and summary under the assigned evidence directory"
+  ],
+  "notPerformed": [
+    "repository edits",
+    "commits",
+    "stashes",
+    "resets",
+    "fetch",
+    "push",
+    "builds",
+    "tests",
+    "CI dispatch"
+  ],
+  "limits": [
+    "This verifies ancestry, source bindings and original working-state preservation; it is not a new functional or release pass.",
+    "No claim is made about unseen transient history; currently preserved heads, statuses and recorded source bytes are exact.",
+    "The coordinator owns ongoing full CI and final release acceptance."
+  ]
+}

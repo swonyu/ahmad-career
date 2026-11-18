@@ -1,5 +1,7 @@
 # Career Finder — publishing and owner-acceptance handoff
 
+> **Historical snapshot — 17 November 2026.** The source, counts, deployment and ownership observations below describe that earlier checkpoint. See [the 18 November integrated candidate](Release-Candidate-2026-11-18.md) and [PR #1](https://github.com/swonyu/ahmad-career/pull/1) for the current integration and its exact acceptance state.
+
 **Status: all five automated engineering gates passed; real provider/account/device and store gates remain open.** This document separates exact-source acceptance, hosted availability, provider activation and store distribution.
 
 ## Source and ownership
