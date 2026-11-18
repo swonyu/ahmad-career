@@ -13,7 +13,7 @@ internal fun boundedApplicationNote(value: String): String {
 }
 
 enum class ApplicationStage(val stored: String, val label: String) {
-    SAVED("saved", "Saved"), APPLIED("applied", "Applied"), INTERVIEW("interview", "Interview"), OFFER("offer", "Offer"), CLOSED("closed", "Closed");
+    SAVED("saved", "Saved for later"), APPLIED("applied", "Applied"), INTERVIEW("interview", "Interview"), OFFER("offer", "Offer"), CLOSED("closed", "Closed");
     companion object {
         fun decode(value: String) = entries.firstOrNull { it.stored == value }
             ?: throw IllegalArgumentException("This application record needs a newer app. Its saved file is preserved.")

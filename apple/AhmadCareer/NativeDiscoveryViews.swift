@@ -4,20 +4,39 @@ import SwiftUI
 struct NativeDiscoveryScreen: View {
     @NativeLocalization private var l10n
     @EnvironmentObject private var discovery: CareerDiscoveryStore
+    @EnvironmentObject private var applications: NativeApplicationsStore
     @State private var choosingBoards = false
+    @State private var profileRolesExpanded = false
     @State private var searchClock = Date()
     @State private var linkedInOpenable = true
     private enum SearchField: Hashable { case keywords, location }
     @FocusState private var focusedField: SearchField?
     var body: some View {
-        List {
+        NativeList {
             Section {
                 Text(l10n("Search jobs")).font(.title2.weight(.bold)).fixedSize(horizontal: false, vertical: true)
                 Text(l10n("Search selected public employer boards across locations and professions. You choose which boards and search words to use."))
                     .font(.subheadline).foregroundStyle(.secondary)
-                TextField(l10n("Role, skill or keyword"), text: $discovery.query.keywords)
+                TextField(l10n("Job title or keyword"), text: $discovery.query.keywords)
                     .focused($focusedField, equals: .keywords).submitLabel(.search).onSubmit { beginSearch() }
                     .accessibilityIdentifier("discovery.keywords")
+                Text(l10n("Searches titles, employers and available summaries."))
+                    .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                if !profileRoleShortcuts.isEmpty {
+                    Button { focusedField = nil; profileRolesExpanded.toggle() } label: {
+                        Label(l10n("Search a role from your saved profile"), systemImage: profileRolesExpanded ? "chevron.up" : "chevron.down")
+                            .fixedSize(horizontal: false, vertical: true).frame(minHeight: 44)
+                    }.accessibilityIdentifier("discovery.profileRoles")
+                        .accessibilityValue(l10n(profileRolesExpanded ? "Expanded" : "Collapsed"))
+                    if profileRolesExpanded {
+                        ForEach(Array(profileRoleShortcuts.enumerated()), id: \.offset) { index, role in
+                            Button(role) { discovery.query.keywords = role; focusedField = nil }
+                                .frame(minHeight: 44).accessibilityIdentifier("discovery.profileRole.\(index)")
+                        }
+                        Text(l10n("This fills the job title only. Choose Search jobs to run the search."))
+                            .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                    }
+                }
                 TextField(l10n("Location text (optional)"), text: $discovery.query.location)
                     .focused($focusedField, equals: .location).submitLabel(.search).onSubmit { beginSearch() }
                     .accessibilityIdentifier("discovery.location")
@@ -44,7 +63,7 @@ struct NativeDiscoveryScreen: View {
                         .accessibilityIdentifier("discovery.linkedin")
                 } else {
                     Text(l10n("Shorten your search to 120 characters and location to 100 characters to open LinkedIn."))
-                        .font(.footnote).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+                        .font(.footnote).foregroundStyle(NativeDesign.danger).fixedSize(horizontal: false, vertical: true)
                         .accessibilityIdentifier("discovery.linkedinIssue")
                 }
             } footer: {
@@ -81,7 +100,7 @@ struct NativeDiscoveryScreen: View {
             if let issue = discovery.catalogError {
                 Section {
                     Label(l10n(issue), systemImage: "exclamationmark.circle")
-                        .font(.subheadline).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+                        .font(.subheadline).foregroundStyle(NativeDesign.danger).fixedSize(horizontal: false, vertical: true)
                         .accessibilityIdentifier("discovery.catalogError")
                     Button(l10n("Retry employer directory")) { Task { await discovery.loadCatalog() } }
                         .frame(minHeight: 44)
@@ -188,6 +207,12 @@ struct NativeDiscoveryScreen: View {
             searchClock = retry
         }
     }
+    private var profileRoleShortcuts: [String] {
+        var seen = Set<String>()
+        return applications.profile.targetRoles.split(separator: ",")
+            .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty && seen.insert($0).inserted }
+    }
     private var waitingForRetry: Bool {
         (discovery.retryAfter ?? .distantPast) > searchClock
     }
@@ -245,7 +270,7 @@ private struct NativeDiscoveryBoards: View {
     @State private var boardURL = ""
     var body: some View {
         NavigationStack {
-            Form {
+            NativeForm {
                 Section {
                     Button { discovery.useDefaultSources() } label: {
                         Label(l10n("Use suggested boards"), systemImage: discovery.query.sources.isEmpty ? "checkmark.circle.fill" : "circle")
@@ -291,7 +316,7 @@ private struct NativeDiscoveryBoards: View {
                 }
                 if let issue = discovery.catalogError, discovery.catalog == nil {
                     Section {
-                        Text(l10n(issue)).font(.footnote).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+                        Text(l10n(issue)).font(.footnote).foregroundStyle(NativeDesign.danger).fixedSize(horizontal: false, vertical: true)
                             .accessibilityIdentifier("discovery.catalogError")
                         Button(l10n("Retry employer directory")) { Task { await discovery.loadCatalog() } }
                             .frame(minHeight: 44)
@@ -301,7 +326,7 @@ private struct NativeDiscoveryBoards: View {
                 }
                 if let issue = discovery.error {
                     Section {
-                        Text(l10n.message(issue)).font(.footnote).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+                        Text(l10n.message(issue)).font(.footnote).foregroundStyle(NativeDesign.danger).fixedSize(horizontal: false, vertical: true)
                             .accessibilityIdentifier("discovery.boardIssue")
                     }
                 }
@@ -319,7 +344,7 @@ private struct NativeDiscoveryJobDetail: View {
     @State private var saveMessage: String?
     private var saved: Bool { applications.containsOpportunity(url: job.url) }
     var body: some View {
-        List {
+        NativeList {
             Section {
                 Text(job.title).font(.title2.weight(.bold)).fixedSize(horizontal: false, vertical: true)
                 Text(job.company).font(.headline)

@@ -58,6 +58,8 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
     val context = LocalContext.current
     val keyboard = LocalSoftwareKeyboardController.current
     var chooseSources by remember { mutableStateOf(false) }
+    var profileRolesExpanded by rememberSaveable(workspace.privateScope) { mutableStateOf(false) }
+    val profileRoleShortcuts = workspace.profile.targetRoles.parts()
     val search: () -> Unit = { keyboard?.hide(); controller.search() }
     val outcomeStatus = when {
         state.status != null -> state.status
@@ -95,7 +97,28 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
             }
         }
         item {
-            DiscoveryInput("Role, skill or keyword", state.filters.query, { value -> controller.editFilters { it.copy(query = value) } }, search)
+            DiscoveryInput("Job title or keyword", state.filters.query, { value -> controller.editFilters { it.copy(query = value) } }, search)
+            Text(l10n("Searches titles, employers and available summaries."), style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        if (profileRoleShortcuts.isNotEmpty()) item {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = { keyboard?.hide(); profileRolesExpanded = !profileRolesExpanded },
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("discovery.profileRoles")
+                        .semantics { stateDescription = l10n(if (profileRolesExpanded) "Expanded" else "Collapsed") }) {
+                    Text(l10n("Search a role from your saved profile"))
+                }
+                if (profileRolesExpanded) {
+                    profileRoleShortcuts.forEachIndexed { index, role ->
+                        OutlinedButton(onClick = { keyboard?.hide(); controller.editFilters { it.copy(query = role) } },
+                            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("discovery.profileRole." + index)) {
+                            Text(role)
+                        }
+                    }
+                    Text(l10n("This fills the job title only. Choose Search jobs to run the search."),
+                        style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
         }
         item {
             DiscoveryInput("Location (optional)", state.filters.location, { value -> controller.editFilters { it.copy(location = value) } }, search)

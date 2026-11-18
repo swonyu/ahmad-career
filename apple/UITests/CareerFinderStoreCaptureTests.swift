@@ -86,9 +86,9 @@ final class CareerFinderStoreCaptureTests: XCTestCase {
         XCTAssertEqual(XCTWaiter.wait(for: [selectedApply], timeout: 5), .completed)
         let localRecord = app.staticTexts["Saved on this phone"]
         reveal(localRecord, app: app)
-        let setup = app.buttons["applications.review"]
-        XCTAssertTrue(setup.isHittable)
-        XCTAssertEqual(setup.label, "Set up Auto Apply", "The phone must remain disconnected throughout capture")
+        let manual = app.buttons["applications.manual"]
+        XCTAssertTrue(manual.isHittable)
+        XCTAssertEqual(manual.label, "Open saved jobs", "The phone must remain disconnected throughout capture")
         capture("store-04-application-workspace", app: app)
     }
 }
