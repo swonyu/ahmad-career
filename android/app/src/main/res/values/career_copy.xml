@@ -50,7 +50,6 @@
     <string name="c_a7740284ec86" formatted="false">"A LinkedIn profile link is optional. It is saved with your application profile and appears in the details you review before sharing with an employer. Saving a link does not connect or verify a LinkedIn account, import its content or grant account access."</string>
     <string name="c_e0d94a160a99" formatted="false">"A confirmed application includes a provider receipt. Opening a job link or preparing a draft never counts as a submission."</string>
     <string name="c_ba8187cc5358" formatted="false">"A draft contains an incomplete character. Correct it before saving; the earlier file is kept."</string>
-    <string name="c_e0fe4a37778a" formatted="false">"A fresh search starts with you."</string>
     <string name="c_4a604c631c51" formatted="false">"A new private workspace is ready. Earlier encrypted files and service records were preserved."</string>
     <string name="c_b1d13f842d4e" formatted="false">"A newer profile was saved elsewhere. Your edits are safe. Compare the versions below before choosing what to keep."</string>
     <string name="c_b0935dd37f79" formatted="false">"A newer saved profile is available"</string>
@@ -62,7 +61,6 @@
     <string name="c_f9ab8a5542ae" formatted="false">"A stop request cancels jobs that have not been dispatched. Receipts show the actual outcome for anything already sent."</string>
     <string name="c_2af956e60498" formatted="false">"A supported employer board or individual posting URL can be used. Other job links can still be added in Saved."</string>
     <string name="c_e3846d0f7c86" formatted="false">"A temporary device or storage problem may recover. Retrying does not resend an application."</string>
-    <string name="c_7830d25cd712" formatted="false">"A workspace for every career"</string>
     <string name="c_5e4f8ed97214" formatted="false">"APPLICATION PREPARATION — {0}\n{1} · {2}\n{3}{4}\n\nEmployer checked: {5}\nListed deadline: {6}\nDate-only deadlines use Riyadh calendar days. Past checks and listed deadlines do not establish current availability; recheck with the employer.\n\nFit: {7}\n{8}\n\nConfirm first:\n"</string>
     <string name="c_fa3dec2685d7" formatted="false">"APPLICATIONS"</string>
     <string name="c_428f4d00b7ff" formatted="false">"About you"</string>
@@ -92,8 +90,10 @@
     <string name="c_fc1f33cd32de" formatted="false">"Add this board"</string>
     <string name="c_40583275e35a" formatted="false">"Add your application record"</string>
     <string name="c_fcdcc9c0caf0" formatted="false">"Add your email"</string>
+    <string name="c_9523b7e114eb" formatted="false">"Add your experience and job preferences."</string>
     <string name="c_bf219c3883a7" formatted="false">"Add your first opportunity"</string>
     <string name="c_cf9cefb16ffb" formatted="false">"Add your name"</string>
+    <string name="c_65749c2c9ede" formatted="false">"Add your profile"</string>
     <string name="c_00fcfc375119" formatted="false">"Additional details"</string>
     <string name="c_c1fb60d86eca" formatted="false">"Additions restored locally. Nothing was sent."</string>
     <string name="c_fa9891726fe6" formatted="false">"Advanced · use another service"</string>
@@ -125,6 +125,7 @@
     <string name="c_3907fa7f8072" formatted="false">"Appearance"</string>
     <string name="c_85c3f434819b" formatted="false">"Apple privacy policy"</string>
     <string name="c_e7ad522ea327" formatted="false">"Application"</string>
+    <string name="c_38c532631067" formatted="false">"Application checklist"</string>
     <string name="c_e681a682a177" formatted="false">"Application choices"</string>
     <string name="c_54ca5ce429ed" formatted="false">"Application connection"</string>
     <string name="c_415afd51d2e0" formatted="false">"Application data permission"</string>
@@ -199,9 +200,7 @@
     <string name="c_6a2a48b9350b" formatted="false">"Before your application review"</string>
     <string name="c_e9ae78f0a515" formatted="false">"Blank individual profile"</string>
     <string name="c_50327f25fd5b" formatted="false">"Blank means no minimum"</string>
-    <string name="c_a243dd63347f" formatted="false">"Bring your work with you."</string>
     <string name="c_62a9dba4ddff" formatted="false">"Browse public employer boards without an account, or save a public job link from any country or profession."</string>
-    <string name="c_7819c4108432" formatted="false">"Build your evidence, then focus on a small number of well-matched roles."</string>
     <string name="c_d9ddb46fcac2" formatted="false">"CAREER FINDER — APPLICATION NOTES\nLegacy research reference date (retained records only): {0}\n\n"</string>
     <string name="c_0f5fed1791e0" formatted="false">"CV"</string>
     <string name="c_c55adff0356e" formatted="false">"CV fingerprint"</string>
@@ -287,6 +286,7 @@
     <string name="c_c426fe3ab096" formatted="false">"Choose which saved version to use before editing this record."</string>
     <string name="c_2d3c879f36fc" formatted="false">"Choose your PDF CV"</string>
     <string name="c_c48af771e64f" formatted="false">"Choose your PDF again before saving this draft."</string>
+    <string name="c_284c9d8305b6" formatted="false">"Choose your language and appearance, and manage saved data."</string>
     <string name="c_56df07eaa9ed" formatted="false">"Choose your opportunities."</string>
     <string name="c_415a83928dd9" formatted="false">"Choose your own PDF. No personal information is prefilled."</string>
     <string name="c_3b653968d5a6" formatted="false">"Choose {0}"</string>
@@ -315,7 +315,7 @@
     <string name="c_d34f597093df" formatted="false">"Closing date"</string>
     <string name="c_5dea0491e782" formatted="false">"Closing keeps your earlier application on record."</string>
     <string name="c_b322b65227bc" formatted="false">"Collapsed"</string>
-    <string name="c_a20e221c9960" formatted="false">"Compare an offer in your own terms."</string>
+    <string name="c_b6d1a98b4cd3" formatted="false">"Compare a job offer"</string>
     <string name="c_3e6d1349c68d" formatted="false">"Compare both profiles"</string>
     <string name="c_ee59ba66e956" formatted="false">"Compare records"</string>
     <string name="c_09663a17dc95" formatted="false">"Compare the saved record versions before editing this opportunity."</string>
@@ -334,6 +334,7 @@
     <string name="c_ada40d134b0a" formatted="false">"Confirmed by provider"</string>
     <string name="c_a6c66425fa8c" formatted="false">"Confirmed means the provider accepted the application. It does not mean recruiter review, an interview or an offer."</string>
     <string name="c_56b3daee73c8" formatted="false">"Confirmed receipts, pending outcomes and stopped applications stay separate."</string>
+    <string name="c_19e69696a67d" formatted="false">"Confirmed submissions include a provider receipt."</string>
     <string name="c_c13cc950913c" formatted="false">"Conflicting active records include an earlier application. Their saved file is preserved for recovery."</string>
     <string name="c_fa67a6715711" formatted="false">"Conflicting workspace drafts were preserved without choosing or replacing either version."</string>
     <string name="c_06cd0d6eeb24" formatted="false">"Connect a workspace (optional)"</string>
@@ -341,7 +342,6 @@
     <string name="c_060f6ceddf98" formatted="false">"Connect application workspace"</string>
     <string name="c_7c4c793a8747" formatted="false">"Connect this phone"</string>
     <string name="c_e9a2bf3edea4" formatted="false">"Connect to export the current service receipts."</string>
-    <string name="c_6f2976814ee9" formatted="false">"Connect when you’re ready."</string>
     <string name="c_ca40ee0a5e87" formatted="false">"Connect your application service to review automatic submissions."</string>
     <string name="c_1d3326aa87c2" formatted="false">"Connect your phone"</string>
     <string name="c_efa7986c2297" formatted="false">"Connect your phone in two steps."</string>
@@ -380,6 +380,7 @@
     <string name="c_5e2049d55795" formatted="false">"Copy selected drafts"</string>
     <string name="c_0706d86db439" formatted="false">"Copy this profile into the workspace draft"</string>
     <string name="c_14e5bbfdf086" formatted="false">"Copy to application workspace"</string>
+    <string name="c_08b677355878" formatted="false">"Copy your phone draft"</string>
     <string name="c_e8ca8011f575" formatted="false">"Copy your unpaired draft here?"</string>
     <string name="c_3462476741de" formatted="false">"Copying never applies to an employer. Your application review and approval are still required."</string>
     <string name="c_45233e05791b" formatted="false">"Could not be reached"</string>
@@ -504,7 +505,6 @@
     <string name="c_8a30217e2b1c" formatted="false">"Enter the one-time pairing code from your service."</string>
     <string name="c_2649e082d9a2" formatted="false">"Entry"</string>
     <string name="c_35d0cff7a4e5" formatted="false">"Entry level"</string>
-    <string name="c_e9b89db6f110" formatted="false">"Every application, accounted for."</string>
     <string name="c_34bec57ecd41" formatted="false">"Every attempt, accounted for."</string>
     <string name="c_eecefc8fd209" formatted="false">"Every space-separated word must occur in a returned role title or subtitle. This does not establish eligibility."</string>
     <string name="c_bd0b1f1eed33" formatted="false">"Evidence and freshness"</string>
@@ -519,7 +519,6 @@
     <string name="c_f6628f944955" formatted="false">"Experience level: "</string>
     <string name="c_f412bea0531d" formatted="false">"Experience level: {0}"</string>
     <string name="c_424a2551d356" formatted="false">"Expired"</string>
-    <string name="c_d3e06eb78f2d" formatted="false">"Explore employer boards, keep the roles you like and prepare your applications."</string>
     <string name="c_d24e7e24ba08" formatted="false">"Export a phone backup"</string>
     <string name="c_735122b7326a" formatted="false">"Export and recovery"</string>
     <string name="c_6835fb2ed50a" formatted="false">"Export application receipts"</string>
@@ -534,9 +533,6 @@
     <string name="c_07545e91b899" formatted="false">"Filters changed · search to update results"</string>
     <string name="c_4f5af4200fcb" formatted="false">"Find an employer in the catalog"</string>
     <string name="c_4622feb5d8e0" formatted="false">"Find opportunities"</string>
-    <string name="c_aa5ec45f5433" formatted="false">"Find work that fits your life."</string>
-    <string name="c_fa76a37996bd" formatted="false">"Find your next opportunity."</string>
-    <string name="c_6ee54e85d5cf" formatted="false">"Find your next role."</string>
     <string name="c_a39024eeb019" formatted="false">"Finish or stop this opportunity\'s application review before removing the saved link."</string>
     <string name="c_551d6bdb4270" formatted="false">"First or single name"</string>
     <string name="c_6d3c6cfe87e6" formatted="false">"Fixed allowances for chosen period"</string>
@@ -613,6 +609,7 @@
     <string name="c_d998f8291ca7" formatted="false">"Invalid private record name."</string>
     <string name="c_e61136029d34" formatted="false">"Invalid recovery area."</string>
     <string name="c_cdcf2e42a160" formatted="false">"Job link"</string>
+    <string name="c_0566beae4451" formatted="false">"Job links and applications"</string>
     <string name="c_9e89263cb9bb" formatted="false">"Job results could not be verified. Earlier results are still available."</string>
     <string name="c_2f17a0f8d518" formatted="false">"Jobs"</string>
     <string name="c_33186308849d" formatted="false">"Jobs saved from Search and your own links are ready in the application workspace. Earlier planning records remain available below."</string>
@@ -643,7 +640,6 @@
     <string name="c_b41b6a4d587d" formatted="false">"Keep the confirmation"</string>
     <string name="c_5d22a7a78ab9" formatted="false">"Keep the link under 4,096 characters and each opportunity detail under 500 characters."</string>
     <string name="c_067f965687c3" formatted="false">"Keep the note to 2,000 characters and use readable plain text. Your draft is kept."</string>
-    <string name="c_bab1c09fca58" formatted="false">"Keep the possibilities close."</string>
     <string name="c_3a8c40785d60" formatted="false">"Keep the roles you want to come back to, and track the applications you complete yourself."</string>
     <string name="c_af28f62aac59" formatted="false">"Keep the unfinished form on this phone, or discard it."</string>
     <string name="c_ccfccb0560ac" formatted="false">"Keep this draft?"</string>
@@ -657,7 +653,6 @@
     <string name="c_5ed03f224664" formatted="false">"Keep working"</string>
     <string name="c_fc3a7878238b" formatted="false">"Keep workspace"</string>
     <string name="c_c94b75f0f698" formatted="false">"Keep your edits for review?"</string>
-    <string name="c_04a51cf8bc7d" formatted="false">"Keep your next move close."</string>
     <string name="c_6d089c3ece4c" formatted="false">"Keep your profile changes?"</string>
     <string name="c_bf45a8d9e031" formatted="false">"Keep your unfinished record?"</string>
     <string name="c_299011c08600" formatted="false">"Keeping your draft does not upload it. Review the CV and then tap Save. An unchanged CV will use the current service file."</string>
@@ -703,12 +698,6 @@
     <string name="c_847dcf42c3be" formatted="false">"Location not specified"</string>
     <string name="c_d42632b97d99" formatted="false">"Location or remote"</string>
     <string name="c_eed1dd4b7576" formatted="false">"Location text (optional)"</string>
-    <string name="c_b541c755e4e2" formatted="false">"Make a shortlist of your own."</string>
-    <string name="c_95493630c5f9" formatted="false">"Make every application count."</string>
-    <string name="c_34ca8a4540f5" formatted="false">"Make it yours"</string>
-    <string name="c_e8ad078a633f" formatted="false">"Make the next step easier."</string>
-    <string name="c_dbc5bc0a0674" formatted="false">"Make this workspace feel like yours."</string>
-    <string name="c_4dcc1c8d3f43" formatted="false">"Make your next step easier"</string>
     <string name="c_ddb585602c09" formatted="false">"Manage account"</string>
     <string name="c_23319967b91f" formatted="false">"Manage account and delete hosted data"</string>
     <string name="c_2b1cc2e6a3b3" formatted="false">"Manage application connection"</string>
@@ -748,6 +737,7 @@
     <string name="c_b5b531e9dedd" formatted="false">"No applications marked yet."</string>
     <string name="c_e103b447e4b6" formatted="false">"No attention prompts from your saved records."</string>
     <string name="c_96b2d734a7e2" formatted="false">"No catalog employers match. You can add a supported board link below."</string>
+    <string name="c_93eb69ae40fb" formatted="false">"No connected workspace"</string>
     <string name="c_79a73b1b16ad" formatted="false">"No countries match this search."</string>
     <string name="c_3d48475048ef" formatted="false">"No country preference"</string>
     <string name="c_d0892c5270f5" formatted="false">"No email entered"</string>
@@ -758,8 +748,10 @@
     <string name="c_196bc395c3ad" formatted="false">"No pay floor"</string>
     <string name="c_22142ba328eb" formatted="false">"No private note"</string>
     <string name="c_185e34f87d3d" formatted="false">"No receipts match these filters."</string>
+    <string name="c_3b7e971c4d92" formatted="false">"No receipts yet"</string>
     <string name="c_864fc63bc631" formatted="false">"No roles match this search."</string>
     <string name="c_8e30f88ebfa4" formatted="false">"No résumé in backup"</string>
+    <string name="c_8f1592f00857" formatted="false">"No saved jobs yet"</string>
     <string name="c_978d53a3aa4a" formatted="false">"No saved opportunities match."</string>
     <string name="c_887350081840" formatted="false">"No saved roles match this view."</string>
     <string name="c_8ba391628be0" formatted="false">"Not accepted"</string>
@@ -854,6 +846,7 @@
     <string name="c_39473ff27813" formatted="false">"PDF readability checks are unavailable on this platform. Choose this file in the iPhone app before using it for an application."</string>
     <string name="c_1d38e649fd1a" formatted="false">"PDF résumé"</string>
     <string name="c_dac76a5b3b45" formatted="false">"PDF · up to 5 MB. A copied snapshot of the selected file is retained; changes to the original file do not change your saved selection."</string>
+    <string name="c_a76d15d99b02" formatted="false">"PREPARATION"</string>
     <string name="c_e42514c30643" formatted="false">"PRIORITY {0}"</string>
     <string name="c_fa70032ea9d5" formatted="false">"Pair a workspace before copying a phone draft."</string>
     <string name="c_e7a6f37657cc" formatted="false">"Pair this phone with your service to prepare an application."</string>
@@ -896,6 +889,7 @@
     <string name="c_f495d3c6a874" formatted="false">"Prepare three achievement stories"</string>
     <string name="c_22faff3681e6" formatted="false">"Prepare your CV materials"</string>
     <string name="c_f83cdc9b9ace" formatted="false">"Prepare your details, choose a role and review your application options."</string>
+    <string name="c_2600748f8e8c" formatted="false">"Prepare your profile"</string>
     <string name="c_37932e60421e" formatted="false">"Prepared"</string>
     <string name="c_2048589e31ad" formatted="false">"Prepared and waiting; not yet dispatched."</string>
     <string name="c_cf1aa6cc5951" formatted="false">"Preparing"</string>
@@ -959,7 +953,6 @@
     <string name="c_e9345906eaba" formatted="false">"Receipt export saved. It contains application evidence, not your PDF or connection token."</string>
     <string name="c_6ee720ad79f5" formatted="false">"Receipt or record note"</string>
     <string name="c_60a627df404a" formatted="false">"Receipts"</string>
-    <string name="c_0f1300551a65" formatted="false">"Receipts will live here."</string>
     <string name="c_74e7944be56e" formatted="false">"Recent cached result"</string>
     <string name="c_747c08035327" formatted="false">"Recent cached results"</string>
     <string name="c_7aea02df41e4" formatted="false">"Recheck listed deadline"</string>
@@ -1084,6 +1077,7 @@
     <string name="c_1308c6069438" formatted="false">"Review up to 20 opportunities in one batch."</string>
     <string name="c_a0de7bb16481" formatted="false">"Review what will be shared."</string>
     <string name="c_7bef09af94a5" formatted="false">"Review your application profile"</string>
+    <string name="c_8ac37b6e6411" formatted="false">"Review your preparation steps and record what you have completed."</string>
     <string name="c_b79b3a411c29" formatted="false">"Riyadh"</string>
     <string name="c_730e4a0fc92b" formatted="false">"Role keywords"</string>
     <string name="c_f0765482bd41" formatted="false">"Role keywords, optional"</string>
@@ -1107,15 +1101,16 @@
     <string name="c_52832b67d35b" formatted="false">"Salary was not disclosed in the research checked {0}."</string>
     <string name="c_ed9ad13611d7" formatted="false">"Saudi Arabia"</string>
     <string name="c_1509f561f241" formatted="false">"Save"</string>
-    <string name="c_a647025bb321" formatted="false">"Save a job link from any industry or country. You decide which opportunities belong in your next chapter."</string>
+    <string name="c_282b56f1d33e" formatted="false">"Save a job link"</string>
+    <string name="c_5e8485174bec" formatted="false">"Save a job link from any industry or country to review it later."</string>
     <string name="c_007c43a4a04c" formatted="false">"Save a role from Discover, or add an employer link from anywhere. Saving never sends an application."</string>
     <string name="c_b63b2eb2746e" formatted="false">"Save a role from Search or add a job link. Saving keeps it for review; it does not apply."</string>
     <string name="c_0abef8f5e627" formatted="false">"Save a role from any country or profession. Use the employer’s HTTPS page."</string>
     <string name="c_f86854a6bc0f" formatted="false">"Save application record"</string>
     <string name="c_c6b86a6c32b1" formatted="false">"Save draft on this phone"</string>
+    <string name="c_1ec45498ec6e" formatted="false">"Save job links from any country or profession and prepare applications. Open employer links to apply manually."</string>
+    <string name="c_c9649b584d00" formatted="false">"Save jobs, prepare your profile and review application details. Open employer links to apply manually."</string>
     <string name="c_bfa8c1b3c32c" formatted="false">"Save next action"</string>
-    <string name="c_492e9a0bc454" formatted="false">"Save opportunities from any country or profession and prepare your next application. Open employer links to apply manually."</string>
-    <string name="c_4cd6409c84e4" formatted="false">"Save opportunities, prepare your profile and review your next step. Employer links let you apply manually."</string>
     <string name="c_bd01d7e99246" formatted="false">"Save opportunity"</string>
     <string name="c_733467264f8b" formatted="false">"Save opportunity again"</string>
     <string name="c_2183eb42bacb" formatted="false">"Save or close your profile draft before continuing a review."</string>
@@ -1142,6 +1137,7 @@
     <string name="c_6845d24f9053" formatted="false">"Saved for application review"</string>
     <string name="c_877f83719c96" formatted="false">"Saved in your application workspace"</string>
     <string name="c_18eff33b2140" formatted="false">"Saved job details in this backup exceed the common 500-character limit."</string>
+    <string name="c_d17ee414245c" formatted="false">"Saved jobs"</string>
     <string name="c_9a172015ae6f" formatted="false">"Saved link removed."</string>
     <string name="c_432d88dd0c92" formatted="false">"Saved link removed. Your application record is kept on this phone."</string>
     <string name="c_f9bb3aa434ec" formatted="false">"Saved link removed. Your private application record, connected records and receipts are kept."</string>
@@ -1171,6 +1167,7 @@
     <string name="c_7a625c43920c" formatted="false">"Search LinkedIn opens its public job search with only the keyword and location text you entered. No application profile, CV or Career Finder connection token is included in that link. Applications completed on LinkedIn remain manual records in Career Finder unless a supported employer provider independently returns a receipt."</string>
     <string name="c_998195e4aaa2" formatted="false">"Search again"</string>
     <string name="c_2b35472d0b02" formatted="false">"Search again for current openings."</string>
+    <string name="c_a787e1d986d3" formatted="false">"Search and save jobs"</string>
     <string name="c_97136c30953e" formatted="false">"Search could not finish. Check your connection and try again; previous results are kept."</string>
     <string name="c_320113ee29d0" formatted="false">"Search countries"</string>
     <string name="c_84f88ea6f84d" formatted="false">"Search is temporarily busy. Wait before trying again."</string>
@@ -1178,6 +1175,7 @@
     <string name="c_3e55dd3eacec" formatted="false">"Search privacy and data use"</string>
     <string name="c_7ea99524fc86" formatted="false">"Search receipts by role, employer or reference"</string>
     <string name="c_a4d7f523fc25" formatted="false">"Search saved opportunities"</string>
+    <string name="c_13c39b7376ca" formatted="false">"Search selected employer boards, save jobs and prepare applications."</string>
     <string name="c_583857a31675" formatted="false">"Search selected public employer boards across locations and professions. You choose which boards and search words to use."</string>
     <string name="c_afb91d20810e" formatted="false">"Search selected public employer boards. No account or résumé upload is needed."</string>
     <string name="c_b7073b841284" formatted="false">"Search sends only these words and board choices to the public discovery service. No account, application profile or CV is sent. Remote wording does not establish where you can legally work."</string>
@@ -1249,11 +1247,10 @@
     <string name="c_e4bb9f1ece9a" formatted="false">"Start"</string>
     <string name="c_6c40a98bf2f2" formatted="false">"Start a fresh search"</string>
     <string name="c_c964acc33ae2" formatted="false">"Start a fresh search to continue."</string>
+    <string name="c_a54b70bf12de" formatted="false">"Start a job search"</string>
     <string name="c_07595e0d7d72" formatted="false">"Start a separate phone workspace"</string>
     <string name="c_2d00f171174a" formatted="false">"Start with an opportunity"</string>
-    <string name="c_ebc18a272307" formatted="false">"Start with one good opportunity."</string>
     <string name="c_e5f625beda4f" formatted="false">"Start with the essentials. Everything else is optional, and you can save an unfinished draft."</string>
-    <string name="c_d3de1a25a881" formatted="false">"Start with what is true."</string>
     <string name="c_920e413c7d41" formatted="false">"Status"</string>
     <string name="c_7eb5af92e49c" formatted="false">"Status unavailable"</string>
     <string name="c_cae7d57bc067" formatted="false">"Stop"</string>
@@ -1672,7 +1669,6 @@
     <string name="c_d0a9fd643f5c" formatted="false">"Work preferences"</string>
     <string name="c_87bb59ba2f92" formatted="false">"Workspace"</string>
     <string name="c_df16aac567e2" formatted="false">"YOUR CAREER WORKSPACE"</string>
-    <string name="c_28bc0245874d" formatted="false">"YOUR NEXT MOVE"</string>
     <string name="c_75a89c0d0e8d" formatted="false">"YOUR OWN SHORTLIST"</string>
     <string name="c_bd3f4c532b1b" formatted="false">"YOUR PROFILE"</string>
     <string name="c_e951f4e802f1" formatted="false">"YYYY-MM-DD, or leave blank"</string>
@@ -1711,7 +1707,6 @@
     <string name="c_d1063fb5b950" formatted="false">"Your custom service"</string>
     <string name="c_dd9d8159c0e6" formatted="false">"Your details changed while preparing. Prepare a new review before applying."</string>
     <string name="c_b57a3f7a537a" formatted="false">"Your details, résumé and preferences"</string>
-    <string name="c_d362e8aa0d64" formatted="false">"Your details. Your choice. A receipt for every confirmed submission."</string>
     <string name="c_8af8ad3a1331" formatted="false">"Your draft fields will be kept against saved version "</string>
     <string name="c_b1cc1aaa7e6f" formatted="false">"Your draft fields will be kept against saved version {0}"</string>
     <string name="c_829703c310ee" formatted="false">"Your draft fields will be kept against saved version {0}. You can review everything before saving."</string>
@@ -1724,16 +1719,12 @@
     <string name="c_7e2a2df2ab89" formatted="false">"Your edited fields are safe on this phone. Compare them with saved version {0}"</string>
     <string name="c_028f3e0d3e50" formatted="false">"Your edited fields are safe on this phone. Compare them with saved version {0} before choosing what to keep."</string>
     <string name="c_52aae266a739" formatted="false">"Your experience"</string>
-    <string name="c_a95498457cb7" formatted="false">"Your experience gives every application its foundation."</string>
-    <string name="c_2849241f6331" formatted="false">"Your first receipt belongs here."</string>
     <string name="c_be943ba51b7b" formatted="false">"Your keywords and filters are ready."</string>
     <string name="c_ef674acafee2" formatted="false">"Your local profile, selected PDF, saved links, private records, their history and unfinished record drafts are kept separately for each workspace."</string>
     <string name="c_b745a67efa84" formatted="false">"Your new profile starts blank. Add your own details and CV when you are ready. An account is needed only for the connected application service."</string>
     <string name="c_88a44118b130" formatted="false">"Your newly selected PDF is kept: "</string>
     <string name="c_6dc583b0911f" formatted="false">"Your newly selected PDF is kept: {0}"</string>
     <string name="c_8d9409b0a6ca" formatted="false">"Your next action"</string>
-    <string name="c_4c673ac3ec6f" formatted="false">"Your next move starts here."</string>
-    <string name="c_5effd2c4af94" formatted="false">"Your next step, ready."</string>
     <string name="c_8fbe41d88b16" formatted="false">"Your opportunities"</string>
     <string name="c_519be8b72bdb" formatted="false">"Your opportunities are still here. Try another term or show all records."</string>
     <string name="c_6e7c9352fbc9" formatted="false">"Your other application records are still available."</string>
@@ -1756,7 +1747,6 @@
     <string name="c_528d89ad72cb" formatted="false">"Your profile"</string>
     <string name="c_a8872706ab42" formatted="false">"Your profile changed in another window"</string>
     <string name="c_c77b0f966aa1" formatted="false">"Your profile, application records and appearance preference remain separate. Connecting never submits an application."</string>
-    <string name="c_f9d12191c815" formatted="false">"Your profile."</string>
     <string name="c_433a720b7e1d" formatted="false">"Your progress"</string>
     <string name="c_f2719592360e" formatted="false">"Your record stays on this phone. Saving it does not send an application or a message."</string>
     <string name="c_bd85bc5af88c" formatted="false">"Your record versions"</string>
@@ -1768,7 +1758,6 @@
     <string name="c_86bb11a14a61" formatted="false">"Your saved application draft could not be read. It has been preserved and will not be overwritten."</string>
     <string name="c_7e7fe020655d" formatted="false">"Your saved roles are still here. Clear the search to see them again."</string>
     <string name="c_291d6b97d167" formatted="false">"Your search changed. Search again to use the current fields; previous results are kept."</string>
-    <string name="c_32af10e26d3b" formatted="false">"Your shortlist."</string>
     <string name="c_535e7dc1d850" formatted="false">"Your stage, dates and notes are private. Marking Applied helps avoid duplicate applications; it does not create a provider receipt or contact an employer."</string>
     <string name="c_4d0260e6c3e7" formatted="false">"Your workspace"</string>
     <string name="c_b7573d5106c3" formatted="false">"Your workspace is connected, but the service has not confirmed that live submission is available. Keep preparing your profile and checking employer links."</string>

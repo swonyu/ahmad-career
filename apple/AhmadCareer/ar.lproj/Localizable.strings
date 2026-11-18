@@ -48,7 +48,6 @@
 "A LinkedIn profile link is optional. It is saved with your application profile and appears in the details you review before sharing with an employer. Saving a link does not connect or verify a LinkedIn account, import its content or grant account access." = "رابط الملف الشخصي على LinkedIn اختياري. يُحفَظ مع ملف التقديم الخاص بك، ويظهر ضمن التفاصيل التي تراجعها قبل مشاركتها مع جهة العمل. لا يؤدي حفظ الرابط إلى ربط حساب LinkedIn أو التحقق منه أو استيراد محتواه أو منح حق الوصول إليه.";
 "A confirmed application includes a provider receipt. Opening a job link or preparing a draft never counts as a submission." = "يتضمن الإرسال المؤكد إيصالًا من المزوّد. فتح رابط وظيفة أو إعداد مسودة لا يُعد إرسالًا لطلب.";
 "A draft contains an incomplete character. Correct it before saving; the earlier file is kept." = "تحتوي مسودة على حرف غير مكتمل. صححه قبل الحفظ؛ الملف السابق محفوظ.";
-"A fresh search starts with you." = "أنت تبدأ كل بحث جديد.";
 "A new private workspace is ready. Earlier encrypted files and service records were preserved." = "مساحة عمل خاصة جديدة جاهزة. تم الاحتفاظ بالملفات المشفرة السابقة وسجلات الخدمة.";
 "A newer profile was saved elsewhere. Your edits are safe. Compare the versions below before choosing what to keep." = "تم حفظ ملف شخصي أحدث في مكان آخر. تعديلاتك محفوظة. قارن النسخ أدناه قبل اختيار ما تريد الاحتفاظ به.";
 "A newer saved profile is available" = "يتوفر ملف شخصي محفوظ أحدث";
@@ -60,7 +59,6 @@
 "A stop request cancels jobs that have not been dispatched. Receipts show the actual outcome for anything already sent." = "يلغي طلب الإيقاف الطلبات التي لم تُرسل بعد. تعرض إيصالات الإرسال النتيجة الفعلية لأي طلب أُرسل بالفعل.";
 "A supported employer board or individual posting URL can be used. Other job links can still be added in Saved." = "يمكن استخدام رابط صفحة وظائف مدعومة لجهة عمل أو رابط إعلان وظيفة منفرد. ويمكن إضافة روابط الوظائف الأخرى في «المحفوظات».";
 "A temporary device or storage problem may recover. Retrying does not resend an application." = "قد تُحل مشكلة مؤقتة في الجهاز أو التخزين. إعادة المحاولة لا تعيد إرسال طلب تقديم.";
-"A workspace for every career" = "مساحة عمل لكل مسار مهني";
 "APPLICATION PREPARATION — {0}\n{1} · {2}\n{3}{4}\n\nEmployer checked: {5}\nListed deadline: {6}\nDate-only deadlines use Riyadh calendar days. Past checks and listed deadlines do not establish current availability; recheck with the employer.\n\nFit: {7}\n{8}\n\nConfirm first:\n" = "إعداد طلب التقديم — {0}\n{1} · {2}\n{3}{4}\n\nتاريخ التحقق لدى جهة العمل: {5}\nالموعد النهائي المنشور: {6}\nتستخدم المواعيد النهائية التي تتضمن التاريخ فقط أيام التقويم حسب توقيت الرياض. لا تثبت عمليات التحقق السابقة أو المواعيد النهائية المنشورة التوفر الحالي؛ تحقق مجددًا لدى جهة العمل.\n\nالملاءمة: {7}\n{8}\n\nتأكد أولًا من:\n";
 "APPLICATIONS" = "الطلبات";
 "About you" = "نبذة عنك";
@@ -90,8 +88,10 @@
 "Add this board" = "إضافة هذه الصفحة";
 "Add your application record" = "إضافة سجل تقديمك";
 "Add your email" = "أضف بريدك الإلكتروني";
+"Add your experience and job preferences." = "أضف خبرتك وتفضيلاتك الوظيفية.";
 "Add your first opportunity" = "أضف فرصتك الأولى";
 "Add your name" = "أضف اسمك";
+"Add your profile" = "أضف ملفك الشخصي";
 "Additional details" = "تفاصيل إضافية";
 "Additions restored locally. Nothing was sent." = "استُعيدت الإضافات محليًا. لم يُرسَل شيء.";
 "Advanced · use another service" = "متقدم · استخدام خدمة أخرى";
@@ -123,6 +123,7 @@
 "Appearance" = "المظهر";
 "Apple privacy policy" = "سياسة خصوصية Apple";
 "Application" = "طلب توظيف";
+"Application checklist" = "قائمة الاستعداد للتقديم";
 "Application choices" = "خيارات التقديم";
 "Application connection" = "اتصال التقديم";
 "Application data permission" = "إذن استخدام بيانات التقديم";
@@ -147,7 +148,7 @@
 "Application record" = "سجل التقديم";
 "Application record for {0} at {1}" = "سجل التقديم لوظيفة {0} لدى {1}";
 "Application record · saved link removed" = "سجل التقديم · تمت إزالة الرابط المحفوظ";
-"Application records" = "سجلات التقديم";
+"Application records" = "سجلات طلبات التوظيف";
 "Application review" = "مراجعة طلب التوظيف";
 "Application service HTTPS address" = "عنوان خدمة التقديم بصيغة HTTPS";
 "Application stage" = "مرحلة الطلب";
@@ -197,9 +198,7 @@
 "Before your application review" = "قبل مراجعة طلبك";
 "Blank individual profile" = "ملف شخصي فردي فارغ";
 "Blank means no minimum" = "اتركه فارغًا لعدم تحديد حد أدنى";
-"Bring your work with you." = "اصطحب عملك معك.";
 "Browse public employer boards without an account, or save a public job link from any country or profession." = "تصفح صفحات وظائف عامة لجهات العمل دون حساب، أو احفظ رابط وظيفة عامًا من أي بلد أو مهنة.";
-"Build your evidence, then focus on a small number of well-matched roles." = "اجمع ما يثبت خبراتك ومؤهلاتك، ثم ركّز على عدد قليل من الوظائف الملائمة لك.";
 "CAREER FINDER — APPLICATION NOTES\nLegacy research reference date (retained records only): {0}\n\n" = "CAREER FINDER — ملاحظات التقديم\nالتاريخ المرجعي للبحث السابق (للسجلات المحتفظ بها فقط): {0}\n\n";
 "CV" = "السيرة الذاتية";
 "CV fingerprint" = "بصمة السيرة الذاتية";
@@ -285,6 +284,7 @@
 "Choose which saved version to use before editing this record." = "اختر النسخة المحفوظة التي تريد استخدامها قبل تعديل هذا السجل.";
 "Choose your PDF CV" = "اختيار سيرتك الذاتية بصيغة PDF";
 "Choose your PDF again before saving this draft." = "اختر ملف PDF مجددًا قبل حفظ هذه المسودة.";
+"Choose your language and appearance, and manage saved data." = "اختر اللغة والمظهر، وأدر البيانات المحفوظة.";
 "Choose your opportunities." = "اختر فرصك.";
 "Choose your own PDF. No personal information is prefilled." = "اختر ملف PDF الخاص بك. لا تُملأ أي معلومات شخصية مسبقًا.";
 "Choose {0}" = "اختر {0}";
@@ -313,7 +313,7 @@
 "Closing date" = "آخر موعد للتقديم";
 "Closing keeps your earlier application on record." = "يبقى تقديمك السابق مسجّلًا عند الإغلاق.";
 "Collapsed" = "مطوي";
-"Compare an offer in your own terms." = "قارن العرض وفق معاييرك.";
+"Compare a job offer" = "قارن عرض عمل";
 "Compare both profiles" = "مقارنة الملفين الشخصيين";
 "Compare records" = "مقارنة السجلات";
 "Compare the saved record versions before editing this opportunity." = "قارن نسخ السجل المحفوظة قبل تعديل هذه الفرصة.";
@@ -332,6 +332,7 @@
 "Confirmed by provider" = "مؤكد من مزوّد الخدمة";
 "Confirmed means the provider accepted the application. It does not mean recruiter review, an interview or an offer." = "تعني «مؤكد» أن مزوّد الخدمة قَبِل الطلب. لا يعني ذلك أن مسؤول التوظيف راجعه أو أنك حصلت على مقابلة أو عرض.";
 "Confirmed receipts, pending outcomes and stopped applications stay separate." = "تبقى إيصالات الإرسال المؤكدة والنتائج المعلّقة والطلبات المتوقفة منفصلة.";
+"Confirmed submissions include a provider receipt." = "تتضمن طلبات التقديم المؤكدة إيصالًا من مزوّد الخدمة.";
 "Conflicting active records include an earlier application. Their saved file is preserved for recovery." = "تتضمن السجلات النشطة المتعارضة تقديمًا سابقًا. تم الاحتفاظ بملفها المحفوظ للاسترجاع.";
 "Conflicting workspace drafts were preserved without choosing or replacing either version." = "احتُفظ بمسودات مساحة العمل المتعارضة من دون اختيار أي نسخة أو استبدالها.";
 "Connect a workspace (optional)" = "ربط مساحة عمل (اختياري)";
@@ -339,7 +340,6 @@
 "Connect application workspace" = "ربط مساحة التقديم";
 "Connect this phone" = "ربط هذا الهاتف";
 "Connect to export the current service receipts." = "اتصل لتصدير إيصالات الإرسال الحالية من الخدمة.";
-"Connect when you’re ready." = "اتصل عندما تكون مستعدًا.";
 "Connect your application service to review automatic submissions." = "اربط خدمة التقديم لمراجعة الطلبات التلقائية.";
 "Connect your phone" = "ربط هاتفك";
 "Connect your phone in two steps." = "اربط هاتفك بخطوتين.";
@@ -378,6 +378,7 @@
 "Copy selected drafts" = "نسخ المسودات المختارة";
 "Copy this profile into the workspace draft" = "نسخ هذا الملف الشخصي إلى مسودة مساحة العمل";
 "Copy to application workspace" = "نسخ إلى مساحة عمل التقديم";
+"Copy your phone draft" = "نسخ مسودة الهاتف";
 "Copy your unpaired draft here?" = "هل تريد نسخ مسودتك غير المرتبطة إلى هنا؟";
 "Copying never applies to an employer. Your application review and approval are still required." = "النسخ لا يقدّم طلبًا إلى جهة عمل. ما تزال مراجعتك للطلب وموافقتك عليه مطلوبة.";
 "Could not be reached" = "تعذّر الوصول";
@@ -502,7 +503,6 @@
 "Enter the one-time pairing code from your service." = "أدخل رمز الربط لمرة واحدة من خدمتك.";
 "Entry" = "مبتدئ";
 "Entry level" = "مبتدئ";
-"Every application, accounted for." = "كل طلب، ونتيجته واضحة.";
 "Every attempt, accounted for." = "سجل واضح لكل محاولة.";
 "Every space-separated word must occur in a returned role title or subtitle. This does not establish eligibility." = "يجب أن تظهر كل كلمة مفصولة بمسافة في عنوان وظيفة أو عنوان فرعي تعيده النتائج. وهذا لا يُثبت استيفاء شروط الأهلية.";
 "Evidence and freshness" = "المصادر وحداثة المعلومات";
@@ -517,7 +517,6 @@
 "Experience level: " = "مستوى الخبرة: ";
 "Experience level: {0}" = "مستوى الخبرة: {0}";
 "Expired" = "منتهية الصلاحية";
-"Explore employer boards, keep the roles you like and prepare your applications." = "استكشف صفحات وظائف جهات العمل، واحتفظ بالأدوار التي تعجبك، وأعدّ طلباتك.";
 "Export a phone backup" = "تصدير نسخة احتياطية للهاتف";
 "Export and recovery" = "التصدير والاسترجاع";
 "Export application receipts" = "تصدير إيصالات التقديم";
@@ -532,9 +531,6 @@
 "Filters changed · search to update results" = "تغيرت المرشحات · ابحث لتحديث النتائج";
 "Find an employer in the catalog" = "البحث عن جهة عمل في الدليل";
 "Find opportunities" = "البحث عن فرص";
-"Find work that fits your life." = "اعثر على عمل يناسب حياتك.";
-"Find your next opportunity." = "اعثر على فرصتك التالية.";
-"Find your next role." = "اعثر على وظيفتك التالية.";
 "Finish or stop this opportunity's application review before removing the saved link." = "أكمل مراجعة التقديم لهذه الفرصة أو أوقفها قبل إزالة الرابط المحفوظ.";
 "First or single name" = "الاسم الأول أو الاسم الوحيد";
 "Fixed allowances for chosen period" = "البدلات الثابتة للفترة المختارة";
@@ -611,6 +607,7 @@
 "Invalid private record name." = "اسم السجل الخاص غير صالح.";
 "Invalid recovery area." = "منطقة الاسترجاع غير صالحة.";
 "Job link" = "رابط الوظيفة";
+"Job links and applications" = "روابط الوظائف وطلبات التوظيف";
 "Job results could not be verified. Earlier results are still available." = "تعذّر التحقق من نتائج الوظائف. النتائج السابقة ما تزال متاحة.";
 "Jobs" = "الوظائف";
 "Jobs saved from Search and your own links are ready in the application workspace. Earlier planning records remain available below." = "الوظائف المحفوظة من «البحث» وروابطك جاهزة في مساحة عمل التقديم. تبقى سجلات التخطيط السابقة متاحة أدناه.";
@@ -641,7 +638,6 @@
 "Keep the confirmation" = "احتفظ بالتأكيد";
 "Keep the link under 4,096 characters and each opportunity detail under 500 characters." = "اجعل الرابط أقصر من 4,096 حرفًا، وكل تفصيل للفرصة أقصر من 500 حرف.";
 "Keep the note to 2,000 characters and use readable plain text. Your draft is kept." = "اجعل الملاحظة في حدود 2,000 حرف، واستخدم نصًا عاديًا قابلًا للقراءة. احتُفظ بمسودتك.";
-"Keep the possibilities close." = "أبقِ الفرص قريبة منك.";
 "Keep the roles you want to come back to, and track the applications you complete yourself." = "احتفظ بالأدوار التي تريد العودة إليها، وتابع الطلبات التي تكملها بنفسك.";
 "Keep the unfinished form on this phone, or discard it." = "احتفظ بالنموذج غير المكتمل على هذا الهاتف، أو تجاهله.";
 "Keep this draft?" = "هل تريد الاحتفاظ بهذه المسودة؟";
@@ -655,7 +651,6 @@
 "Keep working" = "متابعة العمل";
 "Keep workspace" = "الاحتفاظ بمساحة العمل";
 "Keep your edits for review?" = "هل تريد الاحتفاظ بتعديلاتك للمراجعة؟";
-"Keep your next move close." = "أبقِ خطوتك التالية قريبة.";
 "Keep your profile changes?" = "هل تريد الاحتفاظ بتغييرات ملفك الشخصي؟";
 "Keep your unfinished record?" = "هل تريد الاحتفاظ بسجلك غير المكتمل؟";
 "Keeping your draft does not upload it. Review the CV and then tap Save. An unchanged CV will use the current service file." = "الاحتفاظ بمسودتك لا يرفعها. راجع السيرة الذاتية ثم اضغط «حفظ». إذا لم تتغير السيرة الذاتية، فسيُستخدم ملف الخدمة الحالي.";
@@ -701,12 +696,6 @@
 "Location not specified" = "الموقع غير محدد";
 "Location or remote" = "الموقع أو العمل عن بُعد";
 "Location text (optional)" = "نص الموقع (اختياري)";
-"Make a shortlist of your own." = "أنشئ قائمتك المختصرة الخاصة.";
-"Make every application count." = "امنح كل طلب توظيف ما يستحقه.";
-"Make it yours" = "اجعله يعكس خبرتك";
-"Make the next step easier." = "اجعل الخطوة التالية أسهل.";
-"Make this workspace feel like yours." = "اجعل مساحة العمل ملائمة لك.";
-"Make your next step easier" = "اجعل خطوتك التالية أسهل";
 "Manage account" = "إدارة الحساب";
 "Manage account and delete hosted data" = "إدارة الحساب وحذف البيانات المستضافة";
 "Manage application connection" = "إدارة اتصال التقديم";
@@ -746,6 +735,7 @@
 "No applications marked yet." = "لم تُحدَّد أي طلبات توظيف بعد.";
 "No attention prompts from your saved records." = "لا توجد تنبيهات تستدعي الانتباه في سجلاتك المحفوظة.";
 "No catalog employers match. You can add a supported board link below." = "لا توجد جهات عمل مطابقة في الدليل. يمكنك إضافة رابط صفحة مدعومة أدناه.";
+"No connected workspace" = "لا توجد مساحة عمل مرتبطة";
 "No countries match this search." = "لا توجد بلدان تطابق هذا البحث.";
 "No country preference" = "لا توجد أفضلية لبلد";
 "No email entered" = "لم يُدخل بريد إلكتروني";
@@ -756,8 +746,10 @@
 "No pay floor" = "لا يوجد حد أدنى للراتب";
 "No private note" = "لا توجد ملاحظة خاصة";
 "No receipts match these filters." = "لا توجد إيصالات إرسال تطابق هذه المرشحات.";
+"No receipts yet" = "لا توجد إيصالات بعد";
 "No roles match this search." = "لا توجد وظائف تطابق هذا البحث.";
 "No résumé in backup" = "لا توجد سيرة ذاتية في النسخة الاحتياطية";
+"No saved jobs yet" = "لا توجد وظائف محفوظة بعد";
 "No saved opportunities match." = "لا توجد فرص محفوظة مطابقة.";
 "No saved roles match this view." = "لا توجد أدوار محفوظة تطابق هذا العرض.";
 "Not accepted" = "لم يُقبل الإرسال";
@@ -852,6 +844,7 @@
 "PDF readability checks are unavailable on this platform. Choose this file in the iPhone app before using it for an application." = "التحقق من قابلية قراءة PDF غير متاح على هذه المنصة. اختر الملف في تطبيق iPhone قبل استخدامه في طلب توظيف.";
 "PDF résumé" = "السيرة الذاتية بصيغة PDF";
 "PDF · up to 5 MB. A copied snapshot of the selected file is retained; changes to the original file do not change your saved selection." = "PDF · حتى 5 ميغابايت. تُحفظ نسخة من الملف المختار؛ تغيير الملف الأصلي لا يغيّر النسخة التي حفظتها.";
+"PREPARATION" = "الاستعداد للتقديم";
 "PRIORITY {0}" = "الأولوية {0}";
 "Pair a workspace before copying a phone draft." = "اربط مساحة عمل قبل نسخ مسودة الهاتف.";
 "Pair this phone with your service to prepare an application." = "اربط هذا الهاتف بخدمتك لإعداد طلب تقديم.";
@@ -894,6 +887,7 @@
 "Prepare three achievement stories" = "جهّز ثلاثة أمثلة على إنجازاتك";
 "Prepare your CV materials" = "إعداد مواد سيرتك الذاتية";
 "Prepare your details, choose a role and review your application options." = "جهّز تفاصيلك، واختر وظيفة، وراجع خيارات التقديم.";
+"Prepare your profile" = "جهّز ملفك الشخصي";
 "Prepared" = "مُعَدّ";
 "Prepared and waiting; not yet dispatched." = "تم الإعداد وهو بانتظار الإرسال؛ لم يُرسل بعد.";
 "Preparing" = "قيد الإعداد";
@@ -957,7 +951,6 @@
 "Receipt export saved. It contains application evidence, not your PDF or connection token." = "تم حفظ تصدير إيصالات الإرسال. يحتوي على أدلة التقديم، ولا يتضمن ملف PDF أو رمز الاتصال.";
 "Receipt or record note" = "ملاحظة الإيصال أو السجل";
 "Receipts" = "إيصالات الإرسال";
-"Receipts will live here." = "ستظهر إيصالاتك هنا.";
 "Recent cached result" = "نتيجة حديثة محفوظة مؤقتًا";
 "Recent cached results" = "نتائج حديثة محفوظة مؤقتًا";
 "Recheck listed deadline" = "أعد التحقق من الموعد المذكور";
@@ -1082,6 +1075,7 @@
 "Review up to 20 opportunities in one batch." = "راجع ما يصل إلى 20 فرصة في دفعة واحدة.";
 "Review what will be shared." = "راجع ما ستتم مشاركته.";
 "Review your application profile" = "راجع ملف التقديم";
+"Review your preparation steps and record what you have completed." = "راجع خطوات الاستعداد للتقديم وسجّل ما أنجزته.";
 "Riyadh" = "الرياض";
 "Role keywords" = "الكلمات المفتاحية للوظيفة";
 "Role keywords, optional" = "الكلمات المفتاحية للوظيفة، اختياري";
@@ -1105,15 +1099,16 @@
 "Salary was not disclosed in the research checked {0}." = "لم يُكشف عن الراتب في البحث الذي جرت مراجعته في {0}.";
 "Saudi Arabia" = "المملكة العربية السعودية";
 "Save" = "حفظ";
-"Save a job link from any industry or country. You decide which opportunities belong in your next chapter." = "احفظ رابط وظيفة من أي قطاع أو بلد. أنت تختار الفرص التي تناسب خطوتك المقبلة.";
+"Save a job link" = "حفظ رابط وظيفة";
+"Save a job link from any industry or country to review it later." = "احفظ رابط وظيفة من أي قطاع أو بلد للرجوع إليه لاحقًا.";
 "Save a role from Discover, or add an employer link from anywhere. Saving never sends an application." = "احفظ وظيفة من «استكشاف»، أو أضف رابط جهة عمل من أي مكان. الحفظ لا يرسل أي طلب تقديم.";
 "Save a role from Search or add a job link. Saving keeps it for review; it does not apply." = "احفظ دورًا من «البحث» أو أضف رابط وظيفة. يحتفظ الحفظ به للمراجعة؛ ولا يقدّم طلبًا.";
 "Save a role from any country or profession. Use the employer’s HTTPS page." = "احفظ دورًا من أي بلد أو مهنة. استخدم صفحة جهة العمل ببروتوكول HTTPS.";
 "Save application record" = "حفظ سجل التقديم";
 "Save draft on this phone" = "حفظ المسودة على هذا الهاتف";
+"Save job links from any country or profession and prepare applications. Open employer links to apply manually." = "احفظ روابط وظائف من أي بلد أو مجال، وجهّز طلبات التوظيف. افتح روابط جهات العمل للتقديم يدويًا.";
+"Save jobs, prepare your profile and review application details. Open employer links to apply manually." = "احفظ الوظائف وجهّز ملفك الشخصي وراجع بيانات التقديم. افتح روابط جهات العمل للتقديم يدويًا.";
 "Save next action" = "حفظ الخطوة التالية";
-"Save opportunities from any country or profession and prepare your next application. Open employer links to apply manually." = "احفظ فرصًا من أي بلد أو مهنة وجهّز طلبك التالي. افتح روابط جهات العمل للتقديم يدويًا.";
-"Save opportunities, prepare your profile and review your next step. Employer links let you apply manually." = "احفظ الفرص، وجهّز ملفك الشخصي، وراجع خطوتك المقبلة. تتيح لك روابط جهات العمل التقديم يدويًا.";
 "Save opportunity" = "حفظ الفرصة";
 "Save opportunity again" = "حفظ الفرصة مجددًا";
 "Save or close your profile draft before continuing a review." = "احفظ مسودة ملفك الشخصي أو أغلقها قبل متابعة المراجعة.";
@@ -1140,6 +1135,7 @@
 "Saved for application review" = "محفوظة لمراجعة التقديم";
 "Saved in your application workspace" = "محفوظ في مساحة عمل التقديم";
 "Saved job details in this backup exceed the common 500-character limit." = "تتجاوز تفاصيل الوظائف المحفوظة في هذه النسخة الاحتياطية الحد المشترك البالغ 500 حرف.";
+"Saved jobs" = "الوظائف المحفوظة";
 "Saved link removed." = "أُزيل الرابط المحفوظ.";
 "Saved link removed. Your application record is kept on this phone." = "أُزيل الرابط المحفوظ. احتُفظ بسجل التقديم على هذا الهاتف.";
 "Saved link removed. Your private application record, connected records and receipts are kept." = "تمت إزالة الرابط المحفوظ. سجل تقديمك الخاص والسجلات المتصلة وإيصالات الإرسال محفوظة.";
@@ -1169,6 +1165,7 @@
 "Search LinkedIn opens its public job search with only the keyword and location text you entered. No application profile, CV or Career Finder connection token is included in that link. Applications completed on LinkedIn remain manual records in Career Finder unless a supported employer provider independently returns a receipt." = "يفتح «البحث في LinkedIn» البحث العام عن الوظائف فيه مستخدمًا فقط الكلمة المفتاحية ونص الموقع اللذين أدخلتهما. ولا يُضمَّن في الرابط ملف تقديم أو سيرة ذاتية أو رمز اتصال Career Finder. تبقى الطلبات المكتملة على LinkedIn سجلات يدوية في Career Finder ما لم يُعِد مزوّد مدعوم لجهة العمل إيصالًا بشكل مستقل.";
 "Search again" = "البحث مجددًا";
 "Search again for current openings." = "ابحث مجددًا عن الوظائف المتاحة حاليًا.";
+"Search and save jobs" = "ابحث عن وظائف واحفظها";
 "Search could not finish. Check your connection and try again; previous results are kept." = "تعذر إكمال البحث. تحقق من اتصالك ثم أعد المحاولة؛ احتُفظ بالنتائج السابقة.";
 "Search countries" = "البحث عن بلدان";
 "Search is temporarily busy. Wait before trying again." = "خدمة البحث مشغولة مؤقتًا. انتظر قبل إعادة المحاولة.";
@@ -1176,6 +1173,7 @@
 "Search privacy and data use" = "خصوصية البحث واستخدام البيانات";
 "Search receipts by role, employer or reference" = "البحث في إيصالات الإرسال حسب الدور أو جهة العمل أو الرقم المرجعي";
 "Search saved opportunities" = "البحث في الفرص المحفوظة";
+"Search selected employer boards, save jobs and prepare applications." = "ابحث في صفحات جهات العمل المختارة، واحفظ الوظائف، وجهّز طلباتك.";
 "Search selected public employer boards across locations and professions. You choose which boards and search words to use." = "ابحث في صفحات وظائف عامة مختارة لجهات العمل، عبر مواقع ومهن مختلفة. أنت تختار الصفحات وكلمات البحث.";
 "Search selected public employer boards. No account or résumé upload is needed." = "ابحث في صفحات وظائف عامة مختارة لجهات العمل. لا تحتاج إلى حساب أو رفع سيرة ذاتية.";
 "Search sends only these words and board choices to the public discovery service. No account, application profile or CV is sent. Remote wording does not establish where you can legally work." = "يرسل البحث هذه الكلمات والصفحات المختارة فقط إلى خدمة البحث العامة. لا يُرسل أي حساب أو ملف للتقديم أو سيرة ذاتية. ورود عبارة «عن بُعد» لا يحدد الأماكن التي يمكنك العمل منها قانونيًا.";
@@ -1247,11 +1245,10 @@
 "Start" = "البداية";
 "Start a fresh search" = "بدء بحث جديد";
 "Start a fresh search to continue." = "ابدأ بحثًا جديدًا للمتابعة.";
+"Start a job search" = "ابدأ البحث عن وظائف";
 "Start a separate phone workspace" = "بدء مساحة عمل منفصلة على الهاتف";
 "Start with an opportunity" = "ابدأ بفرصة";
-"Start with one good opportunity." = "ابدأ بفرصة جيدة واحدة.";
 "Start with the essentials. Everything else is optional, and you can save an unfinished draft." = "ابدأ بالأساسيات. كل ما عداها اختياري، ويمكنك حفظ مسودة غير مكتملة.";
-"Start with what is true." = "ابدأ بمعلومات صادقة.";
 "Status" = "الحالة";
 "Status unavailable" = "الحالة غير متاحة";
 "Stop" = "إيقاف";
@@ -1670,7 +1667,6 @@
 "Work preferences" = "تفضيلات العمل";
 "Workspace" = "مساحة العمل";
 "YOUR CAREER WORKSPACE" = "مساحة عملك المهنية";
-"YOUR NEXT MOVE" = "خطوتك المقبلة";
 "YOUR OWN SHORTLIST" = "قائمتك المختصرة الخاصة";
 "YOUR PROFILE" = "ملفك الشخصي";
 "YYYY-MM-DD, or leave blank" = "YYYY-MM-DD، أو اتركه فارغًا";
@@ -1709,7 +1705,6 @@
 "Your custom service" = "خدمتك المخصصة";
 "Your details changed while preparing. Prepare a new review before applying." = "تغيرت تفاصيلك أثناء الإعداد. أعدّ مراجعة جديدة قبل التقديم.";
 "Your details, résumé and preferences" = "تفاصيلك وسيرتك الذاتية وتفضيلاتك";
-"Your details. Your choice. A receipt for every confirmed submission." = "تفاصيلك وقرارك. إيصال لكل إرسال مؤكد.";
 "Your draft fields will be kept against saved version " = "سيُحتفظ بحقول مسودتك في مقابل النسخة المحفوظة ";
 "Your draft fields will be kept against saved version {0}" = "سيُحتفظ بحقول مسودتك في مقابل النسخة المحفوظة {0}";
 "Your draft fields will be kept against saved version {0}. You can review everything before saving." = "سيُحتفظ بحقول مسودتك في مقابل النسخة المحفوظة {0}. يمكنك مراجعة كل شيء قبل الحفظ.";
@@ -1722,16 +1717,12 @@
 "Your edited fields are safe on this phone. Compare them with saved version {0}" = "الحقول التي عدّلتها محفوظة على هذا الهاتف. قارنها بالنسخة المحفوظة {0}";
 "Your edited fields are safe on this phone. Compare them with saved version {0} before choosing what to keep." = "الحقول التي عدّلتها محفوظة على هذا الهاتف. قارنها بالنسخة المحفوظة {0} قبل اختيار ما تريد الاحتفاظ به.";
 "Your experience" = "خبرتك";
-"Your experience gives every application its foundation." = "خبراتك هي أساس كل طلب توظيف.";
-"Your first receipt belongs here." = "مكان إيصال إرسالك الأول هنا.";
 "Your keywords and filters are ready." = "كلماتك المفتاحية ومرشحاتك جاهزة.";
 "Your local profile, selected PDF, saved links, private records, their history and unfinished record drafts are kept separately for each workspace." = "يُحفظ ملفك الشخصي المحلي وملف PDF المختار والروابط والسجلات الخاصة وتاريخها ومسودات السجلات غير المكتملة بشكل منفصل لكل مساحة عمل.";
 "Your new profile starts blank. Add your own details and CV when you are ready. An account is needed only for the connected application service." = "يبدأ ملفك الشخصي الجديد فارغًا. أضف تفاصيلك وسيرتك الذاتية عندما تكون مستعدًا. تحتاج إلى حساب فقط لخدمة التقديم المتصلة.";
 "Your newly selected PDF is kept: " = "تم الاحتفاظ بملف PDF الذي اخترته حديثًا: ";
 "Your newly selected PDF is kept: {0}" = "تم الاحتفاظ بملف PDF الذي اخترته حديثًا: {0}";
 "Your next action" = "خطوتك التالية";
-"Your next move starts here." = "خطوتك التالية تبدأ هنا.";
-"Your next step, ready." = "خطوتك التالية جاهزة.";
 "Your opportunities" = "فرصك";
 "Your opportunities are still here. Try another term or show all records." = "فرصك ما تزال هنا. جرّب كلمة أخرى أو اعرض جميع السجلات.";
 "Your other application records are still available." = "سجلات تقديمك الأخرى ما تزال متاحة.";
@@ -1754,7 +1745,6 @@
 "Your profile" = "ملفك الشخصي";
 "Your profile changed in another window" = "تغيّر ملفك الشخصي في نافذة أخرى";
 "Your profile, application records and appearance preference remain separate. Connecting never submits an application." = "يبقى ملفك الشخصي وسجلات التقديم وتفضيل المظهر منفصلة. الاتصال لا يقدّم أي طلب.";
-"Your profile." = "ملفك الشخصي.";
 "Your progress" = "تقدّمك";
 "Your record stays on this phone. Saving it does not send an application or a message." = "يبقى سجلك على هذا الهاتف. حفظه لا يرسل طلبًا أو رسالة.";
 "Your record versions" = "نسخ سجلك";
@@ -1766,7 +1756,6 @@
 "Your saved application draft could not be read. It has been preserved and will not be overwritten." = "تعذرت قراءة مسودة التقديم المحفوظة. احتُفظ بها ولن تُستبدل.";
 "Your saved roles are still here. Clear the search to see them again." = "وظائفك المحفوظة ما تزال هنا. امسح البحث لرؤيتها مجددًا.";
 "Your search changed. Search again to use the current fields; previous results are kept." = "تغيرت معايير البحث. ابحث مجددًا باستخدام الحقول الحالية؛ احتُفظ بالنتائج السابقة.";
-"Your shortlist." = "قائمتك المختصرة.";
 "Your stage, dates and notes are private. Marking Applied helps avoid duplicate applications; it does not create a provider receipt or contact an employer." = "المرحلة والتواريخ والملاحظات خاصة بك. تساعد علامة «تم التقديم» في تجنب الطلبات المكررة؛ ولا تنشئ إيصال إرسال من مزوّد الخدمة ولا تتواصل مع جهة العمل.";
 "Your workspace" = "مساحة عملك";
 "Your workspace is connected, but the service has not confirmed that live submission is available. Keep preparing your profile and checking employer links." = "مساحة عملك متصلة، لكن الخدمة لم تؤكد إتاحة الإرسال الفعلي. واصل إعداد ملفك الشخصي والتحقق من روابط جهات العمل.";

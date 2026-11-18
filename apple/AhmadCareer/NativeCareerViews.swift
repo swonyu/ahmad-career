@@ -150,8 +150,8 @@ private struct NativeShortlistScreen: View {
     var body: some View {
         List {
             Section {
-                NativeIntro(eyebrow: "YOUR CAREER WORKSPACE", title: "Find work that fits your life.",
-                            message: "Explore employer boards, keep the roles you like and prepare your applications.")
+                NativeIntro(eyebrow: "YOUR CAREER WORKSPACE", title: "Search and save jobs",
+                            message: "Search selected employer boards, save jobs and prepare applications.")
             }.listRowBackground(Color.clear).listRowSeparator(.hidden)
             Section(l10n("Start with an opportunity")) {
                 Button { navigation.selectedTab = 1 } label: {
@@ -164,7 +164,7 @@ private struct NativeShortlistScreen: View {
                 Text(l10n("Browse public employer boards without an account, or save a public job link from any country or profession."))
                     .font(.footnote).foregroundStyle(.secondary)
             }
-            Section(l10n("Make your next step easier")) {
+            Section(l10n("Prepare your profile")) {
                 Button {
                     sheet = .profile
                     #if DEBUG
@@ -256,7 +256,7 @@ private struct NativeSavedScreen: View {
         List {
             if query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             Section {
-                NativeIntro(eyebrow: "YOUR OWN SHORTLIST", title: "Keep your next move close.", message: "Jobs saved from Search and your own links are ready in the application workspace. Earlier planning records remain available below.")
+                NativeIntro(eyebrow: "YOUR OWN SHORTLIST", title: "Saved jobs", message: "Jobs saved from Search and your own links are ready in the application workspace. Earlier planning records remain available below.")
             }.listRowBackground(Color.clear)
             }
             Section {
@@ -266,7 +266,7 @@ private struct NativeSavedScreen: View {
             }
             if applications.savedOpportunities.isEmpty && store.savedJobs.isEmpty {
                 Section {
-                    NativeEmpty(title: "Make a shortlist of your own.", message: "Save a role from Search or add a job link. Saving keeps it for review; it does not apply.", icon: "heart")
+                    NativeEmpty(title: "No saved jobs yet", message: "Save a role from Search or add a job link. Saving keeps it for review; it does not apply.", icon: "heart")
                     Button(l10n("Find opportunities")) { navigation.selectedTab = 1 }
                     Button(l10n("Add a job link")) { adding = true }
                 }
@@ -978,7 +978,7 @@ private struct NativePlanScreen: View {
     var body: some View {
         List {
             Section {
-                NativeIntro(eyebrow: "YOUR NEXT MOVE", title: "Make every application count.", message: "Build your evidence, then focus on a small number of well-matched roles.")
+                NativeIntro(eyebrow: "PREPARATION", title: "Application checklist", message: "Review your preparation steps and record what you have completed.")
                 ProgressView(value: Double(nativePlanItems.filter { store.workspace.completed.contains($0.id) }.count), total: Double(nativePlanItems.count)) {
                     Text(l10n.format("{0} of {1} preparation steps complete", [String(describing: nativePlanItems.filter { store.workspace.completed.contains($0.id) }.count), String(describing: nativePlanItems.count)])).font(.footnote)
                 }.padding(.vertical, 5)
@@ -1103,7 +1103,7 @@ private struct NativeSettingsScreen: View {
             Section(l10n("Career Finder")) {
                 LabeledContent(l10n("Version"), value: (Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—")
                     + " (" + (Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "—") + ")")
-                Text(l10n("Save opportunities, prepare your profile and review your next step. Employer links let you apply manually."))
+                Text(l10n("Save jobs, prepare your profile and review application details. Open employer links to apply manually."))
                     .font(.footnote).foregroundStyle(.secondary)
             }
         }.nativeList().navigationTitle(l10n("Settings")).navigationBarTitleDisplayMode(.inline)
@@ -1130,7 +1130,7 @@ private struct NativeProfileScreen: View {
     var body: some View {
         List {
             Section {
-                NativeIntro(eyebrow: "YOUR PROFILE", title: "Start with what is true.", message: "Your experience gives every application its foundation.")
+                NativeIntro(eyebrow: "YOUR PROFILE", title: "Profile", message: "Add your experience and job preferences.")
             }.listRowBackground(Color.clear)
             Section(l10n("Application profile")) {
                 Button { applicationEditing = true } label: {
@@ -1440,7 +1440,7 @@ private struct NativeSalaryScreen: View {
     var body: some View {
         Form {
             Section {
-                NativeNotice(title: "Compare an offer in your own terms.", message: "Choose the currency and pay period, then enter your own amounts. The calculator makes no assumptions about your profession, location, current pay or seniority.")
+                NativeNotice(title: "Compare a job offer", message: "Choose the currency and pay period, then enter your own amounts. The calculator makes no assumptions about your profession, location, current pay or seniority.")
             }.listRowBackground(Color.clear)
             Section {
                 Picker(l10n("Currency"), selection: $currency) {

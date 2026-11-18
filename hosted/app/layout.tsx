@@ -5,7 +5,7 @@ import { serializeBootstrap, type PageBootstrap } from "../renderer/bootstrap";
 
 export const metadata = {
   title: { default: "Career Finder", template: "%s · Career Finder" },
-  description: "Find jobs, keep a shortlist, and manage your next career step on iPhone and Android.",
+  description: "Search selected employer boards, save jobs and prepare applications on iPhone and Android.",
   robots: { index: false, follow: false },
   manifest: "/phone.webmanifest",
   appleWebApp: { capable: true, title: "Career Finder", statusBarStyle: "default" },

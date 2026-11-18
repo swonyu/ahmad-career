@@ -219,7 +219,7 @@ private fun SettingsScreen(state: CareerUiState, connect: () -> Unit, phoneData:
     val workspaceAvailable = state.loaded && !state.storageBlocked
     LazyColumn(Modifier.fillMaxSize().testTag("settings-list"), contentPadding = PaddingValues(20.dp),
         verticalArrangement = Arrangement.spacedBy(18.dp)) {
-        item { Heading("Settings", "Make this workspace feel like yours.") }
+        item { Heading("Settings", "Choose your language and appearance, and manage saved data.") }
         item {
             Panel {
                 Text(l10n("Language"), style = MaterialTheme.typography.titleMedium, modifier = Modifier.semantics { heading() })
@@ -417,7 +417,7 @@ private fun PhoneImportDialog(state: CareerUiState, model: CareerViewModel) {
     FullScreenForm("Review phone draft", model::closePhoneImport) {
         LazyColumn(Modifier.fillMaxSize().testTag("phone-import"), contentPadding = PaddingValues(20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            item { Heading("Bring your work with you.", "Choose what to copy into a private draft for this connected workspace. The original phone draft stays intact.") }
+            item { Heading("Copy your phone draft", "Choose what to copy into a private draft for this connected workspace. The original phone draft stays intact.") }
             item {
                 Panel {
                     Text(l10n("Saved phone profile"), style = MaterialTheme.typography.titleLarge)
@@ -534,7 +534,7 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
     val hasRecords = state.jobs.isNotEmpty() || state.applicationRecords.isNotEmpty()
     val context = LocalContext.current
     LazyColumn(Modifier.fillMaxSize().testTag("jobs-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        item { Heading("Your shortlist.", "Keep the roles you want to come back to, and track the applications you complete yourself.") }
+        item { Heading("Saved jobs", "Keep the roles you want to come back to, and track the applications you complete yourself.") }
         item {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
                 OutlinedButton(onClick = add, modifier = Modifier.weight(1f).heightIn(min = 52.dp)) {
@@ -556,7 +556,7 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
                 if (filter == SavedOpportunityFilter.FOLLOW_UP) Text(l10n("Dates you set in your private records. Closed applications are hidden here."), style = MaterialTheme.typography.bodySmall)
             }
         }
-        if (!hasRecords) item { EmptyState("Start with one good opportunity.", "Save a role from Discover, or add an employer link from anywhere. Saving never sends an application.", action = "Discover jobs", onClick = discover) }
+        if (!hasRecords) item { EmptyState("No saved jobs yet", "Save a role from Discover, or add an employer link from anywhere. Saving never sends an application.", action = "Discover jobs", onClick = discover) }
         else if (filtered.isEmpty() && orphaned.isEmpty()) item { EmptyState(if (filter == SavedOpportunityFilter.FOLLOW_UP) "No follow-ups match." else "No saved opportunities match.",
             if (filter == SavedOpportunityFilter.FOLLOW_UP) "Add a follow-up date in an application record to see it here." else "Your saved roles are still here. Clear the search to see them again.",
             action = "Show all saved opportunities", onClick = { query = ""; filter = SavedOpportunityFilter.ALL }) }
@@ -623,9 +623,9 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
     var approved by remember(plan?.id, plan?.digest) { mutableStateOf(false) }
     val selectedJobs = state.jobs.filter { it.id in state.selected && !it.localOnly }
     LazyColumn(Modifier.fillMaxSize().imePadding().testTag("apply-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        item { Heading("Your next step, ready.", "Prepare your details, choose a role and review your application options.") }
+        item { Heading("Applications", "Prepare your details, choose a role and review your application options.") }
         if (state.connection == null || state.requiresPairing) item {
-            EmptyState("Connect when you’re ready.", "Keep building your profile and saved roles on this phone. The hosted preview has live automatic submissions disabled. Use employer links to apply manually.", Icons.Default.Lock, "Connect application workspace", connect)
+            EmptyState("No connected workspace", "Keep building your profile and saved roles on this phone. The hosted preview has live automatic submissions disabled. Use employer links to apply manually.", Icons.Default.Lock, "Connect application workspace", connect)
         }
         if (state.connection != null && !state.requiresPairing && !state.liveEnabled && !state.testService) item {
             Panel {
@@ -763,7 +763,7 @@ private fun ReceiptsScreen(state: CareerUiState, model: CareerViewModel, browse:
     val visible = state.receipts.filter { filter.includes(it) &&
         (it.title + " " + it.company + " " + it.applicationId + " " + it.id).contains(query.trim(), ignoreCase = true) }
     LazyColumn(Modifier.fillMaxSize().testTag("receipts-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        item { Heading("Every application, accounted for.", "Confirmed receipts, pending outcomes and stopped applications stay separate.") }
+        item { Heading("Application records", "Confirmed receipts, pending outcomes and stopped applications stay separate.") }
         item {
             Panel {
                 Text(l10n(real.toString()), style = MaterialTheme.typography.displayMedium, color = MaterialTheme.colorScheme.primary)
@@ -787,7 +787,7 @@ private fun ReceiptsScreen(state: CareerUiState, model: CareerViewModel, browse:
             }
             item { Text(l10n.format("Showing {0} of {1} records", listOf((visible.size).toString(), (state.receipts.size).toString())), style = MaterialTheme.typography.labelLarge) }
         }
-        if (state.receipts.isEmpty()) item { EmptyState("Your first receipt belongs here.", "A saved job, self-reported application or opened employer link does not create a receipt. An approved application’s actual outcome appears here.", Icons.AutoMirrored.Filled.List, "Discover opportunities", browse) }
+        if (state.receipts.isEmpty()) item { EmptyState("No receipts yet", "A saved job, self-reported application or opened employer link does not create a receipt. An approved application’s actual outcome appears here.", Icons.AutoMirrored.Filled.List, "Discover opportunities", browse) }
         else if (visible.isEmpty()) item { EmptyState("No receipts match these filters.", "Your other application records are still available.", action = "Show all receipts", onClick = { query = ""; filter = ReceiptFilter.ALL }) }
         items(visible, key = ApplicationReceipt::id) { receipt ->
             Panel {
@@ -843,7 +843,7 @@ internal fun GettingStartedPanel(state: CareerUiState, profile: () -> Unit, conn
     val l10n = rememberCareerStrings()
     if (state.profile.essentialsComplete && state.connection != null) return
     Panel {
-        Text(l10n("Make the next step easier."), style = MaterialTheme.typography.titleMedium)
+        Text(l10n("Prepare your profile"), style = MaterialTheme.typography.titleMedium)
         Text(l10n("You can search without an account. Add your own profile when you’re ready to prepare applications."), style = MaterialTheme.typography.bodyMedium)
         ProfileEssentials(state.profile)
         OutlinedButton(onClick = profile, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Set up my profile")) }
@@ -862,7 +862,7 @@ private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePD
     var details by rememberSaveable { mutableStateOf(false) }
     var choosingTargetCountries by rememberSaveable(state.privateScope) { mutableStateOf(false) }
     LazyColumn(Modifier.fillMaxSize().imePadding().testTag("profile-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        item { Heading("Your profile.", "Start with the essentials. Everything else is optional, and you can save an unfinished draft.") }
+        item { Heading("Profile", "Start with the essentials. Everything else is optional, and you can save an unfinished draft.") }
         item {
             Panel {
                 ProfileEssentials(profile)
@@ -1230,7 +1230,7 @@ private fun AddOpportunityDialog(state: CareerUiState, model: CareerViewModel, c
     }
     FullScreenForm("Add opportunity", requestClose) {
         LazyColumn(Modifier.fillMaxSize().testTag("opportunity-editor"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            item { Heading("Keep the possibilities close.", "Save a role from any country or profession. Use the employer’s HTTPS page.") }
+            item { Heading("Save a job link", "Save a role from any country or profession. Use the employer’s HTTPS page.") }
             item { Field("Employer job link", draft.url, { value -> model.editOpportunityDraft { it.copy(url = value) } }, KeyboardType.Uri, enabled = !state.busy) }
             item { Field("Role title", draft.title, { value -> model.editOpportunityDraft { it.copy(title = value.take(200)) } }, enabled = !state.busy) }
             item { Field("Employer", draft.company, { value -> model.editOpportunityDraft { it.copy(company = value.take(200)) } }, enabled = !state.busy) }

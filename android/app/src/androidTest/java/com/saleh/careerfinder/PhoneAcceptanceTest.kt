@@ -1,5 +1,7 @@
 package com.saleh.careerfinder
 
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.hasTestTag
@@ -38,17 +40,18 @@ class PhoneAcceptanceTest {
     }
 
     @Test fun blankWorkspace_hasHonestEmptyState_andConnectionRequirement() {
-        compose.onNodeWithTag("discovery-list").performScrollToNode(hasText(strings("Find your next role.")))
-        compose.onNodeWithText(strings("Find your next role.")).assertIsDisplayed()
+        val searchHeading = hasText(strings("Search jobs")) and SemanticsMatcher.keyIsDefined(SemanticsProperties.Heading)
+        compose.onNodeWithTag("discovery-list").performScrollToNode(searchHeading)
+        compose.onNode(searchHeading).assertIsDisplayed()
         compose.onNodeWithTag("jobs-saved-tab").performClick()
-        compose.onNodeWithTag("jobs-list").performScrollToNode(hasText(strings("Start with one good opportunity.")))
-        compose.onNodeWithText(strings("Start with one good opportunity.")).assertIsDisplayed()
+        compose.onNodeWithTag("jobs-list").performScrollToNode(hasText(strings("No saved jobs yet")))
+        compose.onNodeWithText(strings("No saved jobs yet")).assertIsDisplayed()
         compose.onNodeWithTag("navigation-apply").revealNavigationTab().performClick()
-        compose.onNodeWithTag("apply-list").performScrollToNode(hasText(strings("Connect when you’re ready.")))
-        compose.onNodeWithText(strings("Connect when you’re ready.")).assertIsDisplayed()
+        compose.onNodeWithTag("apply-list").performScrollToNode(hasText(strings("No connected workspace")))
+        compose.onNodeWithText(strings("No connected workspace")).assertIsDisplayed()
         compose.onNodeWithTag("navigation-receipts").revealNavigationTab().performClick()
-        compose.onNodeWithTag("receipts-list").performScrollToNode(hasText(strings("Your first receipt belongs here.")))
-        compose.onNodeWithText(strings("Your first receipt belongs here.")).assertIsDisplayed()
+        compose.onNodeWithTag("receipts-list").performScrollToNode(hasText(strings("No receipts yet")))
+        compose.onNodeWithText(strings("No receipts yet")).assertIsDisplayed()
     }
 
     @Test fun phoneProfile_survivesActivityRecreation_withoutAnyService() {

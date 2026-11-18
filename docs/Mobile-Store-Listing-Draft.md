@@ -1,6 +1,6 @@
 # Career Finder — mobile store listing draft
 
-Updated 17 November 2026 against integrated source `918cfaa455b76f217b21c6c01fe862ea95ebe920`. Publisher draft only; no store submission, approval or availability is claimed. Copy reflects implemented behavior, including disabled live submission on the hosted preview. Historical review material remains dated evidence.
+Original 17 November 2026 source baseline `918cfaa455b76f217b21c6c01fe862ea95ebe920`. Publisher draft only; no store submission, approval or availability is claimed. Copy reflects implemented behavior, including disabled live submission on the hosted preview. Historical review material remains dated evidence. Wording revised on 18 November 2026 against continuation candidate `2854daa8db9e9aa59b80df4a215f0909f376bce2`; this copy update does not establish new runtime or release acceptance.
 
 | Platform | Current source configuration | Source |
 | --- | --- | --- |
@@ -16,10 +16,10 @@ Counts include spaces, punctuation and internal LF line breaks; exclude headings
 | Field | Draft count | Official limit |
 | --- | --- | --- |
 | App name (both stores) | 13 characters | 30 characters |
-| iPhone subtitle | 30 characters | 30 characters |
-| iPhone promotional text | 155 characters | 170 characters |
+| iPhone subtitle | 29 characters | 30 characters |
+| iPhone promotional text | 136 characters | 170 characters |
 | iPhone keywords | 96 characters / 96 bytes | 100 bytes |
-| iPhone full description | 1715 characters | 4000 characters |
+| iPhone full description | 1692 characters | 4000 characters |
 | Google Play short description | 70 characters | 80 characters |
 | Google Play full description | 1826 characters | 4000 characters |
 
@@ -34,13 +34,13 @@ Career Finder
 ### iPhone subtitle
 
 ```text
-Find jobs. Plan your next move
+Search jobs. Save and prepare
 ```
 
 ### iPhone promotional text
 
 ```text
-Search selected employer boards, save opportunities and prepare your next application. Start without an account and connect a workspace when you are ready.
+Search selected employer boards, save jobs and prepare applications. Search without an account, and sign in to save your profile online.
 ```
 
 ### iPhone keywords
@@ -52,21 +52,21 @@ jobs,employment,resume,applications,shortlist,opportunities,job search,work,job 
 ### iPhone full description
 
 ```text
-Career Finder helps you discover opportunities, save a shortlist and prepare your next application around your own profile.
+Search jobs on selected employer boards, save job links and prepare applications with Career Finder.
 
-Explore selected employer boards
-Search public Greenhouse and Lever boards by role, location or remote-work evidence. Choose up to four supported boards, see sources and check times, and open the original posting. Coverage is limited to the selected boards. Check location restrictions and work eligibility with the employer.
+Search selected employer boards
+Search public Greenhouse and Lever boards by role, location or remote-work information. Choose up to four supported boards, see sources and check times, and open the original posting. Coverage is limited to the selected boards. Check location restrictions and work eligibility with the employer.
 
-Build your own workspace
+Save jobs and prepare your profile
 Save opportunities or add an employer link. Start with a blank profile, add your experience and preferences, and select your PDF resume. Search does not require an account or use your profile or resume.
 
-Connect when you choose
+Connect a phone
 Connect a hosted workspace through browser sign-in and a one-use code. Saving a connected profile sends its fields and selected PDF to that service. Phone drafts and hosted records have separate controls.
 
 Review before applying
 Review applicant details, the selected PDF and employer-specific answers before approving a supported application. Auto Apply requires an authorized employer integration and your explicit approval. Live submissions are currently disabled on the hosted preview; employer links remain available for manual applications.
 
-Understand your records
+Application records
 Saving a job or recording a manual application does not prove employer receipt. A confirmed live receipt means a supported provider accepted the application, not that an interview or offer is guaranteed. Test and uncertain outcomes are identified separately.
 
 Choose English, Arabic or your device language in Settings. Job postings and personal text stay in their original language. Job availability and employer requirements can change.
@@ -81,15 +81,15 @@ Discover jobs on selected boards, save roles and prepare applications.
 ### Google Play full description
 
 ```text
-Career Finder brings job discovery, your shortlist and application preparation together on your phone.
+Search jobs on selected employer boards, save job links and prepare applications with Career Finder.
 
-Explore selected employer boards
-Search public Greenhouse and Lever boards by role, location or remote-work evidence. Choose up to four supported boards and see each result's source and check time. Coverage is limited to those boards. Confirm location restrictions and work eligibility with the employer.
+Search selected employer boards
+Search public Greenhouse and Lever boards by role, location or remote-work information. Choose up to four supported boards and see each result's source and check time. Coverage is limited to those boards. Confirm location restrictions and work eligibility with the employer.
 
-Keep your next steps organized
+Saved jobs and application records
 Save a discovered role or add an employer link. Mark applications made on an employer's website as self-reported. Search your saved roles and filter receipt records by outcome. Saving or marking a role never creates a verified application receipt.
 
-Prepare your own profile
+Application profile
 Start with a blank profile, choose your preferences and select a PDF resume. Keep a draft on your phone. Public search does not require an account or use your profile or resume.
 
 Connect and review
@@ -97,7 +97,7 @@ An optional hosted workspace connects through browser sign-in and a one-use code
 
 Auto Apply requires an authorized employer integration and your explicit approval. Live submissions are currently disabled on the hosted preview. Use employer links to apply manually where needed.
 
-Keep outcomes clear
+Application outcomes
 A confirmed live receipt means a supported provider accepted the application, not that an interview or offer is guaranteed. Test and uncertain results remain separate. Review available account controls for recovery, export and cloud deletion.
 
 Choose English, Arabic or your device language in Settings. Job postings and personal text stay in their original language. Job availability and employer requirements can change.

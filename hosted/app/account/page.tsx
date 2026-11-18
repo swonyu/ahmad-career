@@ -9,5 +9,5 @@ export const metadata = { title: "Your account" };
 export default function AccountPage({ context }: PageProps) {
   const { t } = serverI18n(context);
   const user = getChatGPTUser(context);
-  return <SiteFrame active="account" narrow><section className="intro compact"><p className="eyebrow">{t("ACCOUNT & PRIVACY")}</p><h1>{t("Your workspace. Your choices.")}</h1><p className="lede">{t("Manage your connected phones, download your records, and choose what stays online.")}</p></section>{user ? <AccountPanel expectedAccountId={user.userId} /> : <section className="card"><h2>{t("Sign in to manage your workspace")}</h2><p className="muted">{t("Use the same account you used when connecting your phone.")}</p><SignInOptions destination="account" /></section>}</SiteFrame>;
+  return <SiteFrame active="account" narrow><section className="intro compact"><p className="eyebrow">{t("ACCOUNT & PRIVACY")}</p><h1>{t("Your account")}</h1><p className="lede">{t("Manage connected phones, download records and delete cloud data.")}</p></section>{user ? <AccountPanel expectedAccountId={user.userId} /> : <section className="card"><h2>{t("Sign in to manage your workspace")}</h2><p className="muted">{t("Use the same account you used when connecting your phone.")}</p><SignInOptions destination="account" /></section>}</SiteFrame>;
 }

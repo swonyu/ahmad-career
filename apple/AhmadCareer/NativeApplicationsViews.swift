@@ -226,7 +226,7 @@ struct NativeApplicationsScreen: View {
                     .disabled(model.busy || model.connected && model.selected.isEmpty)
                     .opacity(model.busy || model.connected && model.selected.isEmpty ? 0.65 : 1)
                     if !dynamicTypeSize.isAccessibilitySize {
-                        Text(l10n("Your details. Your choice. A receipt for every confirmed submission."))
+                        Text(l10n("Confirmed submissions include a provider receipt."))
                             .font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
                     }
                 }.padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 10).background(.regularMaterial)
@@ -253,7 +253,7 @@ struct NativeApplicationsScreen: View {
                         .font(.caption.weight(.semibold)).tracking(1.8)
                 }.foregroundStyle(ApplyDesign.accent)
             }
-            Text(l10n(dynamicTypeSize.isAccessibilitySize ? "Applications" : "Your next step, ready."))
+            Text(l10n("Applications"))
                 .font(.system(.title, design: .default, weight: .semibold))
                 .fixedSize(horizontal: false, vertical: true)
             if !dynamicTypeSize.isAccessibilitySize {
@@ -271,7 +271,7 @@ struct NativeApplicationsScreen: View {
                     .font(.title2).foregroundStyle(ApplyDesign.accent)
                     .frame(width: 48, height: 56).background(ApplyDesign.accentSurface, in: RoundedRectangle(cornerRadius: 13))
                 VStack(alignment: .leading, spacing: 5) {
-                    Text(model.profile.firstName.isEmpty ? l10n("Make it yours") : l10n.format("{0}'s application profile", [model.profile.firstName]))
+                    Text(model.profile.firstName.isEmpty ? l10n("Add your profile") : l10n.format("{0}'s application profile", [model.profile.firstName]))
                         .font(.headline).foregroundStyle(.primary)
                     Text(l10n(model.profileHasConflict ? "Phone draft · resolve profile changes" : model.profileNeedsSync ? "Phone draft · save before applying" : model.profileReadiness.nextAction))
                         .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
@@ -307,8 +307,8 @@ struct NativeApplicationsScreen: View {
                     .disabled(model.busy).accessibilityLabel(l10n("Add an opportunity")).accessibilityIdentifier("applications.addOpportunity")
             }
             if model.jobs.isEmpty {
-                empty(icon: "square.stack.3d.up", title: "Your next move starts here.",
-                      detail: "Save a job link from any industry or country. You decide which opportunities belong in your next chapter.")
+                empty(icon: "square.stack.3d.up", title: "No saved jobs yet",
+                      detail: "Save a job link from any industry or country to review it later.")
                 Button { addSheet = true } label: { Label(l10n("Add your first opportunity"), systemImage: "plus").frame(maxWidth: .infinity).padding(14) }
                     .buttonStyle(.bordered).tint(ApplyDesign.accent)
             }
@@ -377,7 +377,7 @@ struct NativeApplicationsScreen: View {
                 }
             }
             if model.attempts.isEmpty {
-                empty(icon: "checkmark.seal", title: "Receipts will live here.",
+                empty(icon: "checkmark.seal", title: "No receipts yet",
                       detail: "A confirmed application includes a provider receipt. Opening a job link or preparing a draft never counts as a submission.")
             }
             ForEach(model.attempts.reversed().compactMap { NativeApplicationRow($0) }) { row in
@@ -389,13 +389,13 @@ struct NativeApplicationsScreen: View {
     }
     private var coverage: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label(l10n("A workspace for every career"), systemImage: "globe").font(.subheadline.weight(.semibold))
-            Text(l10n("Save opportunities from any country or profession and prepare your next application. Open employer links to apply manually."))
+            Label(l10n("Job links and applications"), systemImage: "globe").font(.subheadline.weight(.semibold))
+            Text(l10n("Save job links from any country or profession and prepare applications. Open employer links to apply manually."))
                 .font(.caption).foregroundStyle(.secondary).lineSpacing(3)
             Text(l10n("Live automatic submissions are currently disabled on the hosted preview. A custom application service requires an activated, authorized employer integration and your approval of the reviewed details."))
                 .font(.caption).foregroundStyle(.secondary).lineSpacing(3)
             if dynamicTypeSize.isAccessibilitySize {
-                Text(l10n("Your details. Your choice. A receipt for every confirmed submission."))
+                Text(l10n("Confirmed submissions include a provider receipt."))
                     .font(.caption2).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             }
             if !model.connected {

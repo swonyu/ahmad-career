@@ -110,7 +110,7 @@ enum DiscoveryPresentation {
         case "unavailable": return "Current openings could not be checked."
         case "partial": return "No matches in the results we could check."
         case "complete": return "No matching jobs in these boards."
-        case nil: return "A fresh search starts with you."
+        case nil: return "Start a job search"
         default: return "No roles match this search."
         }
     }

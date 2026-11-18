@@ -1,6 +1,6 @@
 # Career Finder — phone store assets
 
-Prepared 16 November 2026. This folder supplies Google Play artwork, preserves the historical phone evidence, and records separately authorized ordinary phone captures. **The artwork, four Android screenshot candidates and four iPhone screenshot candidates are ready for publisher review.** Nothing in this folder establishes store submission or approval.
+Prepared 16 November 2026; feature-graphic wording revised 18 November 2026. This folder supplies Google Play artwork, preserves the historical phone evidence, and records separately authorized ordinary phone captures. **The artwork, four Android screenshot candidates and four iPhone screenshot candidates are ready for publisher review.** Nothing in this folder establishes store submission or approval.
 
 Use the existing [mobile store listing draft](../Mobile-Store-Listing-Draft.md) for the name, descriptions, keywords and review notes. The initial artwork review changed no app or runtime state. The dated Android follow-up below used the existing published preview APK on an isolated emulator; it did not rebuild the app or change source, signing or hosted service behavior. Use the [publishing handoff](../Publishing-Handoff-2026-11-17.md) and [release integration checklist](../Release-Integration-Checklist-2026-11-17.md) for current release prerequisites. The earlier [v6 handoff](../HOSTED-RELEASE-HANDOFF.md) is historical evidence.
 
@@ -8,15 +8,15 @@ Use the existing [mobile store listing draft](../Mobile-Store-Listing-Draft.md) 
 
 | File | Verified output | Purpose |
 | --- | --- | --- |
-| [feature-graphic.png](feature-graphic.png) | 1024 × 500; 8-bit RGB / 24-bit PNG; no alpha; 49,434 bytes | Google Play feature graphic. Accurate discovery, saving and preparation wording. |
+| [feature-graphic.png](feature-graphic.png) | 1024 × 500; 8-bit RGB / 24-bit PNG; no alpha; 45,956 bytes | Google Play feature graphic. Accurate discovery, saving and preparation wording. |
 | [feature-graphic.svg](feature-graphic.svg) | Editable vector, 1024 × 500 | Source for the feature graphic. Uses the established green document/check identity; contains no app screenshot or invented interface. |
 | [play-icon.png](play-icon.png) | 512 × 512; 8-bit RGBA / 32-bit PNG; 5,373 bytes; alpha is 255 throughout | Google Play icon exported directly from the unchanged current [brand vector](../../apple/Branding/career-finder.svg). Full square, without an added corner mask or outer shadow. |
 
-The feature graphic reads “Your next chapter.” and “Discover jobs. Keep opportunities close.” Its three supporting labels are “Explore”, “Save” and “Prepare”. It makes no live submission or guaranteed outcome claim. The small brand mark supports the wordmark without dominating the composition.
+The feature graphic reads “Search jobs.” and “Save jobs and prepare applications.” Its three supporting labels are “Search”, “Save” and “Prepare”. It makes no live submission or guaranteed outcome claim. The small brand mark supports the wordmark without dominating the composition.
 
-Suggested feature-graphic alt text: **Career Finder: discover jobs, save opportunities and prepare your next step.**
+Suggested feature-graphic alt text: **Career Finder: search jobs, save job links and prepare applications.**
 
-Both PNGs were visually inspected at their original size. They use the existing brand colors `#173E2D`, `#D5ECD9` and `#A7CA87`; the feature graphic adds cream text and a subtle dark green background pattern. ImageMagick identifies the outputs as sRGB; Inkscape exports do not embed an ICC profile. The source vector and all screenshot originals were preserved byte for byte. Exact hashes, source paths, renderer version and export commands are in [manifest.json](manifest.json).
+Both PNGs were visually inspected at their original size. They use the existing brand colors `#173E2D`, `#D5ECD9` and `#A7CA87`; the feature graphic adds cream text and a subtle dark green background pattern. ImageMagick identifies the outputs as sRGB; Inkscape exports do not embed an ICC profile. All phone screenshot originals remain byte for byte unchanged. The 18 November feature-graphic revision changes text only; the earlier vector and PNG remain recorded in the manifest and Git history. Exact hashes, source paths, renderer version and export commands are in [manifest.json](manifest.json).
 
 ### Reproduce the exports
 

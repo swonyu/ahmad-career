@@ -4,12 +4,16 @@ Prepared on 17 November 2026 for App Store Connect record `6820749119`. The root
 
 The source reviewed here is `918cfaa455b76f217b21c6c01fe862ea95ebe920`, followed only by docs correction `eb4c883f3c5a4bfe1dfd683bd9c2d25a6d482711`. Its iPhone configuration is **1.1/build 7**, bundle identifier `com.ahmadalayed.career`, targeted device family **iPhone**. Android has its own version **0.6.0/code 7** and is not the source for this iPhone record.
 
+## Copy revision — 18 November 2026
+
+The English and Arabic descriptions below now use functional wording. The app behavior, provider limitations and submission disclosures are preserved. [Current copy receipt](../Copy-Cleanup-2026-11-18.json) records the revised payload counts and hashes. The original 17 November verification remains historical evidence; no store fields or release state changed.
+
 ## Reviewable payloads
 
 - [English review notes](review-notes-en.txt) describe the actual native tabs, optional hosted account, local data, manual versus confirmed applications, and the current disabled live-submission state.
 - [English description](description-en.txt) matches the corrected mobile listing draft.
 - [Arabic description](description-ar.txt) carries the same behavior and limits. It is prepared copy, not an uploaded App Store localization.
-- [Verification receipt](verification.json) records exact UTF-8 byte and character counts.
+- [Historical verification receipt](verification.json) records the original 17 November payload counts; use the current copy receipt above for the revised descriptions.
 
 The notes replace the stale iPhone/iPad, Start/Search/Saved/Plan/Profile, no-account/cloud-sync and fixed-six-Saudi-sources assumptions. The native iPhone tabs are Start/Search/Apply/Saved/Settings, with Profile reachable from Settings. The candidate supports Arabic and English. Search uses the person's selected public Greenhouse/Lever boards; it does not promise exhaustive country or profession coverage.
 

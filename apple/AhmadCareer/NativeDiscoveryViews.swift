@@ -12,7 +12,7 @@ struct NativeDiscoveryScreen: View {
     var body: some View {
         List {
             Section {
-                Text(l10n("Find your next opportunity.")).font(.title2.weight(.bold)).fixedSize(horizontal: false, vertical: true)
+                Text(l10n("Search jobs")).font(.title2.weight(.bold)).fixedSize(horizontal: false, vertical: true)
                 Text(l10n("Search selected public employer boards across locations and professions. You choose which boards and search words to use."))
                     .font(.subheadline).foregroundStyle(.secondary)
                 TextField(l10n("Role, skill or keyword"), text: $discovery.query.keywords)

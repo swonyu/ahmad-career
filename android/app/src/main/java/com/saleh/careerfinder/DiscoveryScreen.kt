@@ -84,7 +84,7 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
                 OutlinedButton(onClick = search, enabled = !state.loading && !state.restoringSearch, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Search again")) }
             }
         }
-        item { Heading("Find your next role.", "Search selected public employer boards. No account or résumé upload is needed.") }
+        item { Heading("Search jobs", "Search selected public employer boards. No account or résumé upload is needed.") }
         if (state.searchStorageError != null) item {
             Panel {
                 Text(l10n.message(state.searchStorageError.orEmpty()), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error,

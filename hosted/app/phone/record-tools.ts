@@ -31,9 +31,9 @@ export function savedListEmptyMessage(input: { query: string; view: SavedView; s
   if (input.stage !== "all" && (query || input.view !== "all")) return { title: "No jobs match these filters.", detail: "Nothing matches this search, view, and application stage together. Clear search and filters to see every saved job and record.", clear: true };
   if (input.stage !== "all") return { title: "No jobs at this stage.", detail: "No bookmark or application record is in this stage. A bookmark without a record counts as Saved. Clear search and filters to see everything again.", clear: true };
   if (query) return { title: "No matching saved jobs.", detail: "Try another word, or clear the search and filters to see your saved jobs and notes.", clear: true };
-  if (input.view === "followups") return { title: "A clear next step.", detail: "Open a saved job, choose Edit application record, and add a follow-up date. Closed records stay out of this list.", clear: true };
-  if (input.view === "applied") return { title: "Your applications will go here.", detail: "When you apply on an employer’s website, mark it in your application record.", clear: true };
-  return { title: "Make room for possibility.", detail: "Save a job from Search or add a job link from any public employer page.", clear: false };
+  if (input.view === "followups") return { title: "No follow-ups scheduled", detail: "Open a saved job, choose Edit application record, and add a follow-up date. Closed records stay out of this list.", clear: true };
+  if (input.view === "applied") return { title: "No applications recorded", detail: "When you apply on an employer’s website, mark it in your application record.", clear: true };
+  return { title: "No saved jobs yet", detail: "Save a job from Search or add a job link from any public employer page.", clear: false };
 }
 
 function csvCell(value: string): string {

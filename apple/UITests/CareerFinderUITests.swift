@@ -467,7 +467,7 @@ final class CareerFinderUITests: XCTestCase {
         XCTAssertTrue(app.buttons["discovery.search"].exists)
         capture("02-discovery-empty", app: app)
         tab("Saved", in: app)
-        XCTAssertTrue(app.staticTexts["Make a shortlist of your own."].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["No saved jobs yet"].waitForExistence(timeout: 5))
         tab("Settings", in: app)
         XCTAssertTrue(app.buttons["settings.profile"].waitForExistence(timeout: 5))
         app.buttons["settings.profile"].tap()
