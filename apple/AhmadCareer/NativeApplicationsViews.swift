@@ -478,7 +478,9 @@ struct NativeApplicationProfileEditor: View {
     @State private var emailFieldFocused = false
     @State private var reuseExpanded = false
     @State private var contactCopied = false
-    @Environment(\.layoutDirection) private var layoutDirection
+    private var layoutDirection: LayoutDirection {
+        l10n.locale.language.languageCode?.identifier == "ar" ? .rightToLeft : .leftToRight
+    }
 
     init(model: NativeApplicationsStore) {
         self.model = model
@@ -678,6 +680,7 @@ struct NativeApplicationProfileEditor: View {
                 Button(l10n("Keep editing")) { replaceChoice = false }
             } message: { Text(l10n("This replaces the phone draft and any PDF selected only on this phone.")) }
         }
+        .environment(\.layoutDirection, layoutDirection)
         .tint(ApplyDesign.accent).interactiveDismissDisabled(occupied || changed)
         .onAppear {
             model.profileEditing = true
