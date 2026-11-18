@@ -7,6 +7,7 @@ import android.provider.MediaStore
 import android.util.Base64
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
@@ -29,6 +30,8 @@ import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.File
 import javax.net.ssl.SSLException
 
@@ -49,6 +52,11 @@ class TlsBoundaryAcceptanceTest {
 class NativeHttpsAcceptanceTest {
     private val compose = createAndroidComposeRule<MainActivity>()
     private lateinit var strings: CareerStrings
+    private var diagnosticModel: CareerViewModel? = null
+    private var expectedResumeHash: String? = null
+    private var fixtureDiagnosticsAllowed = false
+    private var lastPhase = "not-started"
+    private var failedStep: String? = null
     @get:Rule val acceptanceRules: TestRule = RuleChain.outerRule(object : TestWatcher() {
         override fun starting(description: Description) { phase("activity-rule:starting") }
         override fun failed(error: Throwable, description: Description) { phase("activity-rule:failed") }
@@ -62,8 +70,10 @@ class NativeHttpsAcceptanceTest {
             exerciseNativeReviewAndApproval()
             phase("test-body:completed")
         } catch (error: Throwable) {
-            // Record a body failure before Compose's rule cleanup can block.
+            // Preserve the live app before Compose's rule disposes the activity.
+            val failedPhase = failedStep ?: lastPhase
             phase("test-body:failed:${error.javaClass.simpleName}")
+            captureFailureEvidence(error, failedPhase)
             throw error
         }
     }
@@ -73,15 +83,18 @@ class NativeHttpsAcceptanceTest {
         val args = InstrumentationRegistry.getArguments()
         val origin = args.getString("fixtureOrigin")
         assumeTrue(origin != null && instrumentation.targetContext.packageName == "com.saleh.careerfinder.acceptance")
+        fixtureDiagnosticsAllowed = true
         val code = requireNotNull(args.getString("pairingCode"))
         val bytes = Base64.decode(requireNotNull(args.getString("fixtureResumeBase64")), Base64.DEFAULT)
         val expectedHash = BoundaryPolicy.sha256(bytes)
+        expectedResumeHash = expectedHash
         val urls = listOf(requireNotNull(args.getString("successUrl")), requireNotNull(args.getString("timeoutUrl")),
             requireNotNull(args.getString("cooldownUrl")))
         lateinit var model: CareerViewModel
         step("activity-model") { compose.activityRule.scenario.onActivity {
             strings = phoneAcceptanceStrings(it)
             model = ViewModelProvider(it)[CareerViewModel::class.java]
+            diagnosticModel = model
         } }
         step("workspace-readiness") { await { model.state.value.loaded && !model.state.value.busy } }
         step("pair-request") { compose.runOnIdle { model.pair(origin!!, code) {} } }
@@ -116,7 +129,20 @@ class NativeHttpsAcceptanceTest {
             }
             step("profile-content-capture") { capture("acceptance-profile-large-text.png") }
             step("profile-save-scroll") { compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("Save profile to workspace"))) }
-            step("profile-save-click") { compose.onNodeWithText(strings("Save profile to workspace")).performClick() }
+            step("profile-save-prerequisites") {
+                val state = model.state.value
+                assertTrue("The isolated fixture must remain connected and ready", state.loaded && !state.busy && state.connection != null && state.testService)
+                assertFalse("Private storage must remain available before saving", state.storageBlocked)
+                assertTrue("No request error or profile conflict may precede saving", state.error == null && state.profileConflict == null)
+                assertTrue("The typed synthetic first name must reach the model", state.profile.firstName == "Single")
+                assertTrue("The single-name fixture must keep the last name empty", state.profile.lastName.isEmpty())
+                assertTrue("The typed synthetic email must reach the model", state.profile.email == "native-fixture@example.invalid")
+                assertTrue("The exact synthetic PDF must remain selected",
+                    state.profile.resume?.let { it.sha256 == expectedHash && it.size == bytes.size.toLong() && it.dataBase64 != null } == true)
+                assertTrue("The synthetic profile must pass the real validation contract", ProfileValidation.errors(state.profile).isEmpty())
+                assertTrue("The edited synthetic profile must still be an unsaved draft", state.profileDirty)
+            }
+            step("profile-save-click") { compose.onNodeWithText(strings("Save profile to workspace")).assertIsEnabled().performClick() }
             step("profile-saved") { await { !model.state.value.busy && !model.state.value.profileDirty && model.state.value.profile.revision > 0 } }
             assertEquals("", model.state.value.profile.lastName)
             assertEquals(expectedHash, model.state.value.profile.resume?.sha256)
@@ -202,6 +228,7 @@ class NativeHttpsAcceptanceTest {
 
     // Fixed phase names only: no pairing arguments, profile values, PDF bytes or tokens.
     private fun phase(name: String) {
+        lastPhase = name
         android.util.Log.i("CareerPhoneAcceptance", "HTTPS phase: $name")
         runCatching {
             InstrumentationRegistry.getInstrumentation().sendStatus(2, Bundle().apply {
@@ -212,9 +239,61 @@ class NativeHttpsAcceptanceTest {
 
     private fun <T> step(name: String, action: () -> T): T {
         phase("$name:before")
-        val result = action()
-        phase("$name:after")
-        return result
+        try {
+            val result = action()
+            phase("$name:after")
+            return result
+        } catch (error: Throwable) {
+            // Finally-block cleanup has its own phases; retain the first failed operation.
+            if (failedStep == null) failedStep = name
+            throw error
+        }
+    }
+
+    // Fixed flags and codes only. Never log profile text, connection data, PDF bytes,
+    // raw service errors, or a semantics tree. A diagnostic failure cannot replace the test failure.
+    private fun captureFailureEvidence(error: Throwable, failedPhase: String) {
+        if (!fixtureDiagnosticsAllowed) return
+        runCatching {
+            val state = diagnosticModel?.state?.value
+            val snapshot = JSONObject().put("schemaVersion", 1).put("phase", failedPhase)
+                .put("failureClass", error.javaClass.simpleName.take(80)).put("modelAvailable", state != null)
+            state?.let {
+                val validation = ProfileValidation.errors(it.profile)
+                val errorCode = when {
+                    it.error == null -> "none"
+                    validation.isNotEmpty() && it.error == validation.values.joinToString(" ") -> "profile-validation"
+                    it.error == "This connection has expired. Pair this phone again to reconnect to your workspace." -> "connection-expired"
+                    it.error == "A newer profile was saved elsewhere. Your edits are safe. Compare the versions below before choosing what to keep." -> "stale-profile"
+                    it.error == "The service returned incomplete or invalid data. Your phone draft was kept. Refresh before trying again." -> "invalid-service-data"
+                    else -> "other"
+                }
+                val noticeCode = when (it.notice) {
+                    null -> "none"
+                    "Profile saved to your connected workspace." -> "profile-saved"
+                    "The earlier profile was saved. Your newer edits are still a draft." -> "newer-draft"
+                    else -> "other"
+                }
+                snapshot.put("loaded", it.loaded).put("busy", it.busy).put("profileDirty", it.profileDirty)
+                    .put("profileRevision", it.profile.revision).put("storageBlocked", it.storageBlocked)
+                    .put("requiresPairing", it.requiresPairing).put("connected", it.connection != null)
+                    .put("testService", it.testService).put("profileConflict", it.profileConflict != null)
+                    .put("errorCode", errorCode).put("noticeCode", noticeCode)
+                    .put("validationFields", JSONArray(validation.keys.sorted()))
+                    .put("fixtureFirstNameMatches", it.profile.firstName == "Single")
+                    .put("fixtureEmailMatches", it.profile.email == "native-fixture@example.invalid")
+                    .put("fixturePdfMatches", expectedResumeHash != null && it.profile.resume?.sha256 == expectedResumeHash)
+                    .put("pdfBytesPresent", it.profile.resume?.dataBase64 != null)
+            }
+            val message = "HTTPS failure state: $snapshot"
+            android.util.Log.e("CareerPhoneAcceptance", message)
+            InstrumentationRegistry.getInstrumentation().sendStatus(2, Bundle().apply {
+                putString("stream", "\n$message\n")
+            })
+        }.onFailure { android.util.Log.w("CareerPhoneAcceptance", "HTTPS failure state unavailable") }
+        // No Compose idle wait: the failing operation may itself leave Compose busy.
+        runCatching { capture("acceptance-native-failure.png", waitForIdle = false) }
+            .onFailure { android.util.Log.w("CareerPhoneAcceptance", "HTTPS live failure screenshot unavailable") }
     }
 
     private fun closeSoftKeyboard() {
@@ -236,11 +315,11 @@ class NativeHttpsAcceptanceTest {
         clickInApply("Run approved test applications")
     }
     private fun await(timeout: Long = 10_000, check: () -> Boolean) = compose.waitUntil(timeoutMillis = timeout, condition = check)
-    private fun capture(name: String) {
-        compose.waitForIdle()
+    private fun capture(name: String, waitForIdle: Boolean = true) {
+        if (waitForIdle) compose.waitForIdle()
         val instrumentation = InstrumentationRegistry.getInstrumentation()
         val image = requireNotNull(instrumentation.uiAutomation.takeScreenshot())
-        File(instrumentation.targetContext.filesDir, name).outputStream().use { image.compress(Bitmap.CompressFormat.PNG, 100, it) }
-        image.recycle()
+        try { File(instrumentation.targetContext.filesDir, name).outputStream().use { image.compress(Bitmap.CompressFormat.PNG, 100, it) } }
+        finally { image.recycle() }
     }
 }
