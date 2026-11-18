@@ -1,0 +1,127 @@
+{
+  "recordedUTC": "2026-11-18T01:57:39.467156+00:00",
+  "directory": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/public-bundle-boundary-pinned-20261118T0158Z",
+  "node": "v24.22.3",
+  "npm": "11.20.0",
+  "checks": [
+    {
+      "label": "baseline",
+      "command": [
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+        "--test",
+        "hosted/tests/public-bundle-inputs.mjs"
+      ],
+      "cwd": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/public-bundle-boundary-pinned-20261118T0158Z/baseline",
+      "startedUTC": "2026-11-18T01:57:39.277805+00:00",
+      "completedUTC": "2026-11-18T01:57:39.352691+00:00",
+      "exit": 1,
+      "expectedExit": 1,
+      "counts": {
+        "tests": 6,
+        "pass": 3,
+        "fail": 3
+      },
+      "stdoutSHA256": "526af5fbf7537954943f056befcc4f36f9e45a745b4697c6ad3d9b13664ed9c9",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "candidate",
+      "command": [
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+        "--test",
+        "hosted/tests/public-bundle-inputs.mjs"
+      ],
+      "cwd": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/public-bundle-boundary-pinned-20261118T0158Z/candidate",
+      "startedUTC": "2026-11-18T01:57:39.352714+00:00",
+      "completedUTC": "2026-11-18T01:57:39.418929+00:00",
+      "exit": 0,
+      "expectedExit": 0,
+      "counts": {
+        "tests": 6,
+        "pass": 6,
+        "fail": 0
+      },
+      "stdoutSHA256": "2e334a70646d1c76fa755eec1cf097f32eec52bd1762992ec1f5e4ae3bf8ff79",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "builder-syntax",
+      "command": [
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+        "--check",
+        "hosted/scripts/build-site.mjs"
+      ],
+      "cwd": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/public-bundle-boundary-pinned-20261118T0158Z/candidate",
+      "startedUTC": "2026-11-18T01:57:39.418950+00:00",
+      "completedUTC": "2026-11-18T01:57:39.443113+00:00",
+      "exit": 0,
+      "expectedExit": 0,
+      "counts": {},
+      "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "ssr-syntax",
+      "command": [
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+        "--check",
+        "hosted/tests/ssr-runtime.mjs"
+      ],
+      "cwd": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/public-bundle-boundary-pinned-20261118T0158Z/candidate",
+      "startedUTC": "2026-11-18T01:57:39.443142+00:00",
+      "completedUTC": "2026-11-18T01:57:39.467133+00:00",
+      "exit": 0,
+      "expectedExit": 0,
+      "counts": {},
+      "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "files": {
+    "candidate/hosted/scripts/build-site.mjs": {
+      "bytes": 9781,
+      "sha256": "dac48beab0b78af431d3905ab148fa69ddb21024fa73e4587ae09265200d3e2e"
+    },
+    "candidate/hosted/scripts/public-bundle-inputs.mjs": {
+      "bytes": 465,
+      "sha256": "8ae6ce7356ff9c9cab6375041f8ea544adb0150242975908edf4c4ec6fc5a106"
+    },
+    "candidate/hosted/tests/public-bundle-inputs.mjs": {
+      "bytes": 2122,
+      "sha256": "077235ebbc8112a9a8c2cfa157c803abe7001a84ed0db92aa71935d36092f266"
+    },
+    "candidate/hosted/tests/ssr-runtime.mjs": {
+      "bytes": 14241,
+      "sha256": "751993f33837320c1989a2a527946395500df7b11c8a60c67a4b947dee8bc951"
+    },
+    "candidate/hosted/package.json": {
+      "bytes": 3441,
+      "sha256": "d89611d185e336efbbfd1a0bbb533c53178e1b7a43d468bbf2707c60e0e844df"
+    },
+    "baseline/hosted/scripts/public-bundle-inputs.mjs": {
+      "bytes": 427,
+      "sha256": "815b5ea65d6e3188e9f7745d52440668c66518ab2abf2803d9e1c1aa73f6ab30"
+    },
+    "baseline/hosted/tests/public-bundle-inputs.mjs": {
+      "bytes": 2122,
+      "sha256": "077235ebbc8112a9a8c2cfa157c803abe7001a84ed0db92aa71935d36092f266"
+    },
+    "public-bundle-boundary-complete.patch": {
+      "bytes": 7696,
+      "sha256": "a6e1a875128172f9f7a57bb5155b8b1a6f7fd481ed4ec8941ed6a1a04ece3b57"
+    },
+    "complete-patch-receipt.json": {
+      "bytes": 1782,
+      "sha256": "197ea02d056eddd0acc29dee72a6f1b568b8f115b0116eee15e770752dfc2477"
+    },
+    "focused-check-receipt.json": {
+      "bytes": 1870,
+      "sha256": "5323896bf61c36718f5cf3757c77decfc781c92d08ec0fe3b60729cf965d887b"
+    },
+    "README.md": {
+      "bytes": 6241,
+      "sha256": "e15df7a6859b92dc57f49f2689c9947ef99a8c5a1b57182a1d62be68d782ce9c"
+    }
+  },
+  "scope": "Isolated pure guard red/green and builder/SSR syntax only; no full build, SSR runtime, install, audit, browser or native execution; publisher and root product source not edited."
+}

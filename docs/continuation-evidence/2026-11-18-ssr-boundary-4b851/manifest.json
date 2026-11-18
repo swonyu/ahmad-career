@@ -1,0 +1,82 @@
+{
+  "README.md": {
+    "bytes": 5061,
+    "sha256": "0402e633ab9c9fc80b59d745bff40935a60f5306b8f3713d82612322777aa9b6"
+  },
+  "baseline/hosted/scripts/public-bundle-inputs.mjs": {
+    "bytes": 427,
+    "sha256": "815b5ea65d6e3188e9f7745d52440668c66518ab2abf2803d9e1c1aa73f6ab30"
+  },
+  "baseline/hosted/tests/public-bundle-inputs.mjs": {
+    "bytes": 2122,
+    "sha256": "077235ebbc8112a9a8c2cfa157c803abe7001a84ed0db92aa71935d36092f266"
+  },
+  "baseline.stderr.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "baseline.stdout.log": {
+    "bytes": 3489,
+    "sha256": "526af5fbf7537954943f056befcc4f36f9e45a745b4697c6ad3d9b13664ed9c9"
+  },
+  "builder-syntax.stderr.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "builder-syntax.stdout.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "candidate.stderr.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "candidate.stdout.log": {
+    "bytes": 550,
+    "sha256": "2e334a70646d1c76fa755eec1cf097f32eec52bd1762992ec1f5e4ae3bf8ff79"
+  },
+  "complete-patch-receipt.json": {
+    "bytes": 1782,
+    "sha256": "197ea02d056eddd0acc29dee72a6f1b568b8f115b0116eee15e770752dfc2477"
+  },
+  "pinned-check-receipt.json": {
+    "bytes": 5428,
+    "sha256": "01f7945622720e381852410611ce7f2fb4416ce43d56362e95cfbbf0bef6a6bd"
+  },
+  "proposal/hosted/package.json": {
+    "bytes": 3441,
+    "sha256": "d89611d185e336efbbfd1a0bbb533c53178e1b7a43d468bbf2707c60e0e844df"
+  },
+  "proposal/hosted/scripts/build-site.mjs": {
+    "bytes": 9781,
+    "sha256": "dac48beab0b78af431d3905ab148fa69ddb21024fa73e4587ae09265200d3e2e"
+  },
+  "proposal/hosted/scripts/public-bundle-inputs.mjs": {
+    "bytes": 465,
+    "sha256": "8ae6ce7356ff9c9cab6375041f8ea544adb0150242975908edf4c4ec6fc5a106"
+  },
+  "proposal/hosted/tests/public-bundle-inputs.mjs": {
+    "bytes": 2122,
+    "sha256": "077235ebbc8112a9a8c2cfa157c803abe7001a84ed0db92aa71935d36092f266"
+  },
+  "proposal/hosted/tests/ssr-runtime.mjs": {
+    "bytes": 14241,
+    "sha256": "751993f33837320c1989a2a527946395500df7b11c8a60c67a4b947dee8bc951"
+  },
+  "public-bundle-boundary-complete.patch": {
+    "bytes": 7696,
+    "sha256": "a6e1a875128172f9f7a57bb5155b8b1a6f7fd481ed4ec8941ed6a1a04ece3b57"
+  },
+  "public-input-inspection.json": {
+    "bytes": 438,
+    "sha256": "b8ca04ea920d1f75aa6976018146af4086ad6cbe05ce300b4288b2dea2a1f1cd"
+  },
+  "ssr-syntax.stderr.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "ssr-syntax.stdout.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

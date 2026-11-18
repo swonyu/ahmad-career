@@ -1,0 +1,68 @@
+✖ rejects the actual connector filename convention (0.732167ms)
+✔ retains all existing private directory boundaries (0.178416ms)
+✔ permits public application and package input names (0.363166ms)
+✔ does not confuse similar names or nested words with root private paths (0.046542ms)
+✖ rejects a private input anywhere in a public bundle and reports its target (0.066458ms)
+✖ keeps the caller input list unchanged (0.057708ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 3
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 40.008416
+
+✖ failing tests:
+
+test at hosted/tests/public-bundle-inputs.mjs:5:1
+✖ rejects the actual connector filename convention (0.732167ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/public-bundle-boundary-pinned-20261118T0158Z/baseline/hosted/tests/public-bundle-inputs.mjs:7:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { message: 'Server-only module entered browser build: lib/connector-context.ts' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at hosted/tests/public-bundle-inputs.mjs:33:1
+✖ rejects a private input anywhere in a public bundle and reports its target (0.066458ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/public-bundle-boundary-pinned-20261118T0158Z/baseline/hosted/tests/public-bundle-inputs.mjs:34:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { message: 'Server-only module entered PDF worker build: lib/connector-context.ts' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at hosted/tests/public-bundle-inputs.mjs:39:1
+✖ keeps the caller input list unchanged (0.057708ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/public-bundle-boundary-pinned-20261118T0158Z/baseline/hosted/tests/public-bundle-inputs.mjs:42:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /Server-only module/,
+    operator: 'throws',
+    diff: 'simple'
+  }
