@@ -101,6 +101,10 @@ final class CareerFinderUITests: XCTestCase {
         XCTAssertTrue(field.waitForExistence(timeout: 5))
         // tap() can scroll a native Form field into view; keep that behavior.
         field.tap()
+        // A cold system keyboard can still be opening after the field is focused.
+        // Wait for that presentation before starting the unchanged real-key gate.
+        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5),
+                      "The native keyboard must appear before checking its typing key")
         let deleteKey = app.keyboards.keys.matching(identifier: "delete").firstMatch
         let keyboardReady = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
             self.typingKeyIsVisible(deleteKey)
@@ -168,6 +172,8 @@ final class CareerFinderUITests: XCTestCase {
                                "The native editing action must clear the whole field before replacement")
                 if clearButton != nil {
                     field.tap()
+                    XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5),
+                                  "The native keyboard must reappear after clearing before checking its typing key")
                     let reopenedDeleteKey = app.keyboards.keys.matching(identifier: "delete").firstMatch
                     let keyboardAfterClear = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
                         self.typingKeyIsVisible(reopenedDeleteKey)
