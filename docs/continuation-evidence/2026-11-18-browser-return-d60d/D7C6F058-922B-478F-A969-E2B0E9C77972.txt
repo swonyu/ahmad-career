@@ -1,0 +1,293 @@
+Unsent code AX value: "•••••••••"; placeholder: Optional("One-time connection code"); connect enabled: true
+
+Attributes: Application, 0x106592e40, pid: 54141, label: 'Career Finder'
+Element subtree:
+ →Application, 0x106592e40, pid: 54141, label: 'Career Finder'
+    Window (Main), 0x106592080, {{0.0, 0.0}, {420.0, 912.0}}
+      Other, 0x106590a00, {{0.0, 0.0}, {420.0, 912.0}}
+        Other, 0x106590b40, {{0.0, 0.0}, {420.0, 912.0}}
+          Other, 0x106590c80, {{-420.0, -912.0}, {1260.0, 2736.0}}
+          Other, 0x106593ac0, {{0.0, 0.0}, {420.0, 912.0}}
+            Other, 0x106593c00, {{0.0, 0.0}, {420.0, 912.0}}
+              StaticText, 0x106593700, {{0.0, 0.0}, {420.0, 89.3}}, identifier: 'acceptance.offline', label: 'Offline UI acceptance · synthetic data'
+              Other, 0x106593340, {{0.0, 89.3}, {420.0, 822.7}}
+                Other, 0x106593480, {{0.0, 89.3}, {420.0, 822.7}}
+                  Other, 0x106592d00, {{0.0, 89.3}, {420.0, 822.7}}
+                    Other, 0x106590500, {{0.0, 89.3}, {420.0, 822.7}}
+                      Other, 0x106592f80, {{0.0, 89.3}, {420.0, 822.7}}
+                        Other, 0x106592bc0, {{0.0, 89.3}, {420.0, 822.7}}
+                          Other, 0x1065926c0, {{0.0, 89.3}, {420.0, 822.7}}
+                            NavigationBar, 0x106590780, {{0.0, 99.3}, {420.0, 54.0}}, identifier: 'Career Finder'
+                              StaticText, 0x106592800, {{20.0, 111.0}, {108.3, 20.7}}, label: 'Career Finder'
+                              Other, 0x106590f00, {{280.0, 103.3}, {58.0, 36.0}}, identifier: 'navigation.settings', label: 'Settings'
+                                Other, 0x106590640, {{280.0, 103.3}, {58.0, 36.0}}
+                                  Button, 0x102e230c0, {{280.0, 103.3}, {58.0, 36.0}}, identifier: 'navigation.settings', label: 'Settings'
+                              Other, 0x102e23340, {{354.0, 103.3}, {42.0, 36.0}}, identifier: 'link', label: 'Connect application service'
+                                Other, 0x102e22f80, {{354.0, 103.3}, {42.0, 36.0}}
+                                  Button, 0x102e23c00, {{354.0, 103.3}, {42.0, 36.0}}, identifier: 'link', label: 'Connect application service'
+                            Other, 0x102e23d40, {{0.0, 89.3}, {420.0, 822.7}}
+                              Other, 0x102e23480, {{0.0, 89.3}, {420.0, 822.7}}
+                                Other, 0x102e23ac0, {{0.0, 89.3}, {420.0, 822.7}}
+                                  Other, 0x102e23200, {{0.0, 89.3}, {420.0, 822.7}}
+                                    ScrollView, 0x102e23700, {{0.0, 89.3}, {420.3, 822.7}}, identifier: 'applications.content'
+                                      Other, 0x102e23840, {{0.0, 89.3}, {420.3, 822.7}}
+                                        Other, 0x102e23980, {{0.0, 89.3}, {420.3, 118.8}}
+                                        Other, 0x1156e4000, {{0.0, 764.2}, {420.3, 147.8}}
+                                      Other, 0x1156e4140, {{0.0, 89.3}, {420.3, 822.7}}
+                                        Other, 0x1156e4280, {{0.0, 764.2}, {420.3, 147.8}}
+                                          Image, 0x1156e43c0, {{-120.0, 769.0}, {660.3, 286.0}}, identifier: 'AdditionalDimmingOverlay'
+                                          Other, 0x1156e4500, {{0.0, 764.2}, {420.3, 147.8}}
+                                            Other, 0x1156e4640, {{0.0, 764.2}, {420.3, 147.8}}
+                                          Other, 0x1156e4780, {{0.0, 764.2}, {420.3, 147.8}}
+                                            Other, 0x1156e48c0, {{0.0, 764.2}, {420.3, 147.8}}
+                                            Other, 0x1156e4a00, {{0.0, 764.2}, {420.3, 147.8}}
+                                      Other, 0x1156e4b40, {{0.0, 153.3}, {420.2, 1195.0}}
+                                        Image, 0x1156e4c80, {{21.8, 166.3}, {16.3, 16.3}}, identifier: 'sparkle', label: 'sparkle'
+                                        StaticText, 0x1156e4dc0, {{45.7, 167.3}, {110.7, 14.3}}, label: 'APPLICATIONS'
+                                        StaticText, 0x1156e4f00, {{20.0, 195.7}, {268.7, 33.7}}, label: 'Your next step, ready.'
+                                        StaticText, 0x1156e5040, {{20.0, 241.3}, {353.3, 39.0}}, label: 'Prepare your details, choose a role and review your application options.'
+                                        Other, 0x1156e5180, {{20.2, 302.3}, {380.3, 68.0}}
+                                          Image, 0x1156e52c0, {{36.5, 318.3}, {17.0, 17.0}}, identifier: 'info.circle', label: 'Info'
+                                          StaticText, 0x1156e5400, {{64.7, 317.3}, {231.3, 38.0}}, label: 'Your application draft is saved on this phone.'
+                                          Button, 0x1156e5540, {{352.2, 317.3}, {33.3, 31.3}}, identifier: 'xmark', label: 'Dismiss message'
+                                        Button, 0x1156e5680, {{37.2, 409.3}, {345.7, 56.0}}, identifier: 'applications.profile', label: 'Alex's application profile, Phone draft · save before applying'
+                                          Image, 0x1156e57c0, {{48.5, 427.3}, {25.3, 20.0}}, identifier: 'person.crop.rectangle', label: 'person.crop.rectangle'
+                                          StaticText, 0x1156e5900, {{99.0, 417.5}, {195.3, 20.3}}, label: 'Alex's application profile'
+                                          StaticText, 0x1156e5a40, {{99.0, 442.8}, {194.0, 14.3}}, label: 'Phone draft · save before applying'
+                                          Image, 0x1156e5b80, {{376.2, 432.0}, {6.7, 11.0}}, identifier: 'chevron.right', label: 'Forward'
+                                        StaticText, 0x1156e5cc0, {{38.5, 481.3}, {111.8, 18.0}}, identifier: 'profile.essential.name', label: 'Name added'
+                                          Image, 0x1156e5e00, {{38.5, 483.0}, {15.0, 15.0}}, identifier: 'checkmark.circle', label: 'Selected', Selected
+                                          StaticText, 0x1156e5f40, {{38.5, 481.3}, {111.8, 18.0}}, label: 'Name added'
+                                        StaticText, 0x1156e6080, {{38.5, 507.3}, {142.2, 18.0}}, identifier: 'profile.essential.email', label: 'Check your email'
+                                          Image, 0x1156e61c0, {{38.5, 509.0}, {15.0, 15.0}}, identifier: 'circle', label: 'circle'
+                                          StaticText, 0x1156e6300, {{38.5, 507.3}, {142.2, 18.0}}, label: 'Check your email'
+                                        StaticText, 0x1156e6440, {{38.5, 533.3}, {132.5, 18.0}}, identifier: 'profile.essential.resume', label: 'PDF CV needed'
+                                          Image, 0x1156e6580, {{38.5, 535.0}, {15.0, 15.0}}, identifier: 'circle', label: 'circle'
+                                          StaticText, 0x1156e66c0, {{38.5, 533.3}, {132.5, 18.0}}, label: 'PDF CV needed'
+                                        StaticText, 0x1156e6800, {{20.2, 590.3}, {120.0, 104.0}}, label: '0, Opportunities'
+                                          Image, 0x1156e6940, {{34.8, 605.3}, {15.3, 18.3}}, identifier: 'square.stack', label: 'square.stack'
+                                          StaticText, 0x1156e6a80, {{34.0, 632.7}, {14.3, 26.3}}, label: '0'
+                                          StaticText, 0x1156e6bc0, {{34.0, 667.0}, {72.0, 13.3}}, label: 'Opportunities'
+                                        StaticText, 0x1156e6d00, {{150.2, 591.0}, {120.0, 103.0}}, label: '0, Confirmed', Selected
+                                          Image, 0x1156e6e40, {{165.2, 606.0}, {17.3, 17.3}}, identifier: 'checkmark.seal', label: 'Verified', Selected
+                                          StaticText, 0x1156e6f80, {{164.1, 632.2}, {14.3, 26.3}}, label: '0'
+                                          StaticText, 0x1156e70c0, {{164.1, 666.5}, {55.0, 13.3}}, label: 'Confirmed'
+                                        StaticText, 0x1156e7200, {{280.2, 591.3}, {120.3, 102.0}}, label: '0, To verify'
+                                          Image, 0x1156e7340, {{295.5, 606.3}, {19.0, 16.3}}, identifier: 'clock.badge.questionmark', label: 'clock.badge.questionmark'
+                                          StaticText, 0x1156e7480, {{294.2, 631.7}, {14.3, 26.3}}, label: '0'
+                                          StaticText, 0x1156e75c0, {{294.2, 666.0}, {45.0, 13.3}}, label: 'To verify'
+                                        SegmentedControl, 0x1156e7700, {{20.2, 716.3}, {380.3, 31.0}}, identifier: 'applications.viewPicker'
+                                          Button, 0x1156e7840, {{20.0, 716.3}, {190.0, 32.0}}, label: 'Opportunities', Selected
+                                          Button, 0x1156e7980, {{210.0, 716.3}, {191.0, 32.0}}, label: 'Activity'
+                                        StaticText, 0x1156e7ac0, {{20.0, 776.3}, {169.7, 24.0}}, label: 'Your opportunities'
+                                        Button, 0x1156e7c00, {{347.2, 769.3}, {53.3, 38.0}}, identifier: 'applications.addOpportunity', label: 'Add an opportunity'
+                                          Image, 0x1156e7d40, {{349.2, 782.0}, {12.7, 12.7}}, identifier: 'plus', label: 'Add'
+                                          StaticText, 0x1156e7e80, {{347.2, 769.3}, {53.3, 38.0}}, label: 'Add'
+                                        Image, 0x113e60000, {{190.8, 866.7}, {38.7, 37.3}}, identifier: 'square.stack.3d.up', label: 'Hdr'
+                                        StaticText, 0x113e60140, {{101.3, 936.3}, {217.7, 20.3}}, label: 'Your next move starts here.'
+                                        StaticText, 0x113e60280, {{44.0, 971.7}, {332.3, 60.0}}, label: 'Save a job link from any industry or country. You decide which opportunities belong in your next chapter.'
+                                        Button, 0x113e603c0, {{20.2, 1073.7}, {380.3, 62.3}}, label: 'Add your first opportunity'
+                                          Image, 0x113e60500, {{101.5, 1098.0}, {14.0, 14.0}}, identifier: 'plus', label: 'Add'
+                                          StaticText, 0x113e60640, {{20.2, 1073.7}, {380.3, 62.3}}, label: 'Add your first opportunity'
+                                        StaticText, 0x113e60780, {{21.5, 1164.0}, {233.2, 18.0}}, label: 'A workspace for every career'
+                                        StaticText, 0x113e608c0, {{20.0, 1190.0}, {358.0, 31.7}}, label: 'Save opportunities from any country or profession and prepare your next application. Open employer links to apply manually.'
+                                        StaticText, 0x113e60a00, {{20.0, 1229.7}, {378.7, 66.3}}, label: 'Live automatic submissions are currently disabled on the hosted preview. A custom application service requires an activated, authorized employer integration and your approval of the reviewed details.'
+                                        StaticText, 0x113e60b40, {{20.0, 1304.0}, {368.3, 14.3}}, label: 'Your phone workspace remains available while it is disconnected.'
+                                      Other, 0x113e60c80, {{387.0, 153.3}, {30.0, 572.7}}, label: 'Vertical scroll bar, 3 pages', value: 0%
+                                        Other, 0x113e60dc0, {{414.0, 156.3}, {3.0, 322.7}}
+                                      Other, 0x113e60f00, {{387.0, 153.3}, {30.0, 572.7}}, label: 'Vertical scroll bar, 3 pages', value: 0%
+                                        Other, 0x113e61040, {{414.0, 156.3}, {3.0, 322.7}}
+                                    Button, 0x113e61180, {{20.0, 746.0}, {380.0, 51.7}}, identifier: 'applications.review', label: 'Connect application workspace'
+                                      Image, 0x113e612c0, {{37.3, 763.0}, {17.7, 17.7}}, identifier: 'paperplane.fill', label: 'Send'
+                                      StaticText, 0x113e61400, {{65.0, 762.8}, {224.7, 18.0}}, label: 'Connect application workspace'
+                                      Image, 0x113e61540, {{366.3, 765.3}, {15.7, 12.7}}, identifier: 'arrow.right', label: 'Right'
+                                    StaticText, 0x113e61680, {{32.5, 805.7}, {355.0, 13.3}}, label: 'Your details. Your choice. A receipt for every confirmed submission.'
+                            Other, 0x113e617c0, {{0.0, 89.3}, {420.0, 822.7}}
+                              Other, 0x113e61900, {{0.0, 89.3}, {420.0, 822.7}}
+                Other, 0x113e61a40, {{0.0, 829.0}, {420.0, 83.0}}
+                  Other, 0x113e61b80, {{0.0, 89.3}, {420.0, 822.7}}
+                    TabBar, 0x113e61cc0, {{0.0, 829.0}, {420.0, 83.0}}, label: 'Tab Bar'
+                      Other, 0x113e61e00, {{21.0, 829.0}, {378.0, 62.0}}
+                        Other, 0x113e61f40, {{21.0, 829.0}, {80.6, 54.0}}
+                        Other, 0x113e62080, {{21.0, 829.0}, {378.0, 62.0}}
+                          Button, 0x113e621c0, {{25.0, 833.0}, {80.6, 54.0}}, identifier: 'square.stack', label: 'Start'
+                            Image, 0x113e62300, {{52.0, 837.7}, {26.0, 32.3}}, identifier: 'square.stack.fill', label: 'square.stack.fill'
+                          Button, 0x113e62440, {{97.3, 833.0}, {80.6, 54.0}}, identifier: 'magnifyingglass', label: 'Search'
+                            Image, 0x113e62580, {{123.3, 839.7}, {27.7, 26.7}}, identifier: 'magnifyingglass', label: 'Search'
+                          Button, 0x113e626c0, {{169.7, 833.0}, {80.6, 54.0}}, identifier: 'paperplane', label: 'Apply', Selected
+                            Image, 0x113e62800, {{195.7, 839.3}, {28.7, 28.0}}, identifier: 'paperplane.fill', label: 'send'
+                          Button, 0x113e62940, {{242.0, 833.0}, {80.6, 54.0}}, identifier: 'heart', label: 'Saved'
+                            Image, 0x113e62a80, {{268.0, 840.7}, {28.7, 25.0}}, identifier: 'heart.fill', label: 'love'
+                          Button, 0x113e62bc0, {{314.4, 833.0}, {80.6, 54.0}}, identifier: 'gearshape', label: 'Settings'
+                            Image, 0x113e62d00, {{340.4, 839.0}, {28.0, 28.0}}, identifier: 'gearshape.fill', label: 'gearshape.fill'
+                        Other, 0x113e62e40, {{169.7, 833.0}, {80.6, 54.0}}
+                          Other, 0x113e62f80, {{169.7, 833.0}, {80.3, 54.0}}
+                            Other, 0x113e630c0, {{169.7, 833.0}, {80.3, 54.0}}
+                            Other, 0x113e63200, {{169.7, 833.0}, {80.3, 54.0}}
+                              Other, 0x113e63340, {{169.7, 833.0}, {80.3, 54.0}}
+                                Other, 0x113e63480, {{169.7, 833.0}, {80.3, 54.0}}
+                                  Other, 0x113e635c0, {{169.7, 833.0}, {80.3, 54.0}}
+                                Other, 0x113e63700, {{169.7, 833.0}, {80.3, 54.0}}
+                              Other, 0x113e63840, {{169.7, 833.0}, {80.3, 54.0}}
+                  Other, 0x113e63980, {{0.0, 829.0}, {420.0, 83.0}}
+                    Other, 0x113e63ac0, {{0.0, 829.0}, {420.0, 83.0}}
+                      Other, 0x113e63c00, {{0.0, 829.0}, {420.0, 83.0}}
+                        Other, 0x113e63d40, {{0.0, 829.0}, {420.0, 83.0}}
+                          Other, 0x113e63e80, {{0.0, 829.0}, {420.0, 83.0}}
+                            Other, 0x112618000, {{0.0, 829.0}, {420.0, 83.0}}
+      Other, 0x112618140, {{0.0, 0.0}, {420.0, 912.0}}
+        Other, 0x112618280, {{-420.0, -912.0}, {1260.0, 2736.0}}
+        Other, 0x1126183c0, {{0.0, 68.0}, {420.0, 844.0}}
+          Other, 0x112618500, {{0.0, 68.0}, {420.0, 844.0}}
+            Other, 0x112618640, {{0.0, 68.0}, {420.0, 844.0}}
+              Other, 0x112618780, {{0.0, 68.0}, {420.0, 844.0}}
+                Other, 0x1126188c0, {{0.0, 68.0}, {420.0, 844.0}}
+                  Other, 0x112618a00, {{0.0, 68.0}, {420.0, 844.0}}
+                    NavigationBar, 0x112618b40, {{0.0, 88.0}, {420.0, 54.0}}, identifier: 'Application connection'
+                      Other, 0x112618c80, {{24.0, 92.0}, {64.3, 36.0}}, label: 'Done'
+                        Other, 0x112618dc0, {{24.0, 92.0}, {64.3, 36.0}}
+                          Button, 0x112618f00, {{24.0, 92.0}, {64.3, 36.0}}, label: 'Done'
+                      StaticText, 0x112619040, {{118.3, 99.7}, {183.0, 20.7}}, label: 'Application connection'
+                    Other, 0x112619180, {{0.0, 68.0}, {420.0, 844.0}}
+                      Other, 0x1126192c0, {{0.0, 68.0}, {420.0, 844.0}}
+                        Other, 0x112619400, {{0.0, 68.0}, {420.0, 844.0}}
+                          Other, 0x112619540, {{0.0, 68.0}, {420.0, 844.0}}
+                            CollectionView, 0x112619680, {{0.0, 68.0}, {420.0, 844.0}}
+                              Other, 0x1126197c0, {{-20.0, -1766.7}, {460.0, 1947.3}}
+                              Cell, 0x112619900, {{20.0, 41.0}, {380.0, 54.0}}
+                                Other, 0x112619a40, {{20.0, 41.0}, {380.0, 54.0}}
+                                  Other, 0x112619b80, {{20.0, 41.0}, {380.0, 54.0}}
+                                Other, 0x112619cc0, {{20.0, 41.0}, {380.0, 54.0}}
+                                  Other, 0x112619e00, {{20.0, 41.0}, {380.0, 54.0}}
+                                    Other, 0x112619f40, {{20.0, 41.0}, {380.0, 54.0}}
+                                      StaticText, 0x11261a080, {{20.0, 41.0}, {380.0, 54.0}}, label: 'Connect your phone in two steps.'
+                              Other, 0x11261a1c0, {{0.0, 68.0}, {420.0, 844.0}}
+                              Other, 0x11261a300, {{0.0, 68.0}, {420.0, 844.0}}
+                                Other, 0x11261a440, {{0.0, 68.0}, {420.0, 128.8}}
+                                  Image, 0x11261a580, {{-120.0, -56.0}, {660.0, 248.0}}, identifier: 'AdditionalDimmingOverlay'
+                                  Other, 0x11261a6c0, {{0.0, 68.0}, {420.0, 64.0}}
+                                  Other, 0x11261a800, {{0.0, 68.0}, {420.0, 128.8}}
+                                    Other, 0x11261a940, {{0.0, 68.0}, {420.0, 128.8}}
+                                  Other, 0x11261aa80, {{0.0, 68.0}, {420.0, 128.8}}
+                                    Other, 0x11261abc0, {{0.0, 68.0}, {420.0, 128.8}}
+                                  Other, 0x11261ad00, {{0.0, 68.0}, {420.0, 128.8}}
+                                    Other, 0x11261ae40, {{0.0, 68.0}, {420.0, 128.8}}
+                                    Other, 0x11261af80, {{0.0, 68.0}, {420.0, 128.8}}
+                              Cell, 0x11261b0c0, {{20.0, 95.0}, {380.0, 68.0}}
+                                Other, 0x11261b200, {{20.0, 95.0}, {380.0, 68.0}}
+                                  Other, 0x11261b340, {{20.0, 95.0}, {380.0, 68.0}}
+                                Other, 0x11261b480, {{20.0, 95.0}, {380.0, 68.0}}
+                                  Other, 0x11261b5c0, {{20.0, 95.0}, {380.0, 68.0}}
+                                    Other, 0x11261b700, {{20.0, 95.0}, {380.0, 68.0}}
+                                      StaticText, 0x11261b840, {{20.0, 95.0}, {380.0, 68.0}}, label: 'Your phone draft is uploaded only when you choose to save it to the connected service.'
+                              Other, 0x11261b980, {{40.0, 94.0}, {340.0, 1.0}}
+                              Other, 0x11261bac0, {{-20.0, 180.7}, {460.0, 261.7}}
+                              Cell, 0x11261bc00, {{20.0, 180.7}, {380.0, 40.3}}
+                                Other, 0x11261bd40, {{20.0, 180.7}, {380.0, 40.3}}
+                                Other, 0x11261be80, {{20.0, 180.7}, {380.0, 40.3}}
+                                  Other, 0x11263c000, {{20.0, 180.7}, {380.0, 40.3}}
+                                    Other, 0x11263c140, {{20.0, 180.7}, {380.0, 40.3}}
+                                      StaticText, 0x11263c280, {{20.0, 180.7}, {380.0, 40.3}}, label: '1. Sign in and get a code'
+                              Cell, 0x11263c3c0, {{20.0, 221.0}, {380.0, 52.0}}
+                                Other, 0x11263c500, {{20.0, 221.0}, {380.0, 52.0}}
+                                  Other, 0x11263c640, {{20.0, 221.0}, {380.0, 52.0}}
+                                Other, 0x11263c780, {{20.0, 221.0}, {380.0, 52.0}}
+                                  Other, 0x11263c8c0, {{20.0, 221.0}, {380.0, 52.0}}
+                                    Other, 0x11263ca00, {{20.0, 221.0}, {380.0, 52.0}}
+                                      StaticText, 0x11263cb40, {{20.0, 221.0}, {380.0, 52.0}}, label: 'Career Finder'
+                              Cell, 0x11263cc80, {{20.0, 273.0}, {380.0, 52.0}}
+                                Other, 0x11263cdc0, {{20.0, 273.0}, {380.0, 52.0}}
+                                  Other, 0x11263cf00, {{20.0, 273.0}, {380.0, 52.0}}
+                                Other, 0x11263d040, {{20.0, 273.0}, {380.0, 52.0}}
+                                  Other, 0x11263d180, {{20.0, 273.0}, {380.0, 52.0}}
+                                    Other, 0x11263d2c0, {{20.0, 273.0}, {380.0, 52.0}}
+                                      Other, 0x11263d400, {{144.7, 299.0}, {0.0, 0.0}}, identifier: 'connection.signIn'
+                                      Button, 0x11263d540, {{41.3, 288.3}, {207.7, 21.7}}, identifier: 'connection.signIn', label: 'Sign in and get a code'
+                                        Image, 0x11263d680, {{41.3, 288.3}, {21.7, 21.7}}, identifier: 'safari', label: 'Safari'
+                                        StaticText, 0x11263d7c0, {{41.3, 288.3}, {207.7, 21.7}}, label: 'Sign in and get a code'
+                              Other, 0x11263d900, {{40.0, 272.0}, {340.0, 1.0}}
+                              Cell, 0x11263da40, {{20.0, 325.0}, {380.0, 99.7}}
+                                Other, 0x11263db80, {{20.0, 325.0}, {380.0, 99.7}}
+                                  Other, 0x11263dcc0, {{20.0, 325.0}, {380.0, 99.7}}
+                                Other, 0x11263de00, {{20.0, 325.0}, {380.0, 99.7}}
+                                  Other, 0x11263df40, {{20.0, 325.0}, {380.0, 99.7}}
+                                    Other, 0x11263e080, {{20.0, 325.0}, {380.0, 99.7}}
+                                      StaticText, 0x11263e1c0, {{20.0, 325.0}, {380.0, 99.7}}, label: 'Choose an available sign-in method, or use Google through ChatGPT. Return to your existing account before connecting another provider; matching emails do not merge workspaces. Create a code, then return here.'
+                              Other, 0x11263e300, {{80.0, 324.0}, {300.0, 1.0}}
+                              Other, 0x11263e440, {{-20.0, 442.0}, {460.0, 190.0}}
+                              Cell, 0x11263e580, {{20.0, 442.0}, {380.0, 40.3}}
+                                Other, 0x11263e6c0, {{20.0, 442.0}, {380.0, 40.3}}
+                                Other, 0x11263e800, {{20.0, 442.0}, {380.0, 40.3}}
+                                  Other, 0x11263e940, {{20.0, 442.0}, {380.0, 40.3}}
+                                    Other, 0x11263ea80, {{20.0, 442.0}, {380.0, 40.3}}
+                                      StaticText, 0x11263ebc0, {{20.0, 442.0}, {380.0, 40.3}}, label: '2. Paste your code'
+                              Cell, 0x11263ed00, {{20.0, 482.3}, {380.0, 52.0}}
+                                Other, 0x11263ee40, {{20.0, 482.3}, {380.0, 52.0}}
+                                  Other, 0x11263ef80, {{20.0, 482.3}, {380.0, 52.0}}
+                                Other, 0x11263f0c0, {{20.0, 482.3}, {380.0, 52.0}}
+                                  Other, 0x11263f200, {{20.0, 482.3}, {380.0, 52.0}}
+                                    Other, 0x11263f340, {{20.0, 482.3}, {380.0, 52.0}}
+                                      SecureTextField, 0x11263f480, {{40.0, 497.3}, {340.0, 22.0}}, identifier: 'connection.code', placeholderValue: 'One-time connection code', value: •••••••••
+                              Cell, 0x11263f5c0, {{20.0, 534.3}, {380.0, 52.0}}
+                                Other, 0x11263f700, {{20.0, 534.3}, {380.0, 52.0}}
+                                  Other, 0x11263f840, {{20.0, 534.3}, {380.0, 52.0}}
+                                Other, 0x11263f980, {{20.0, 534.3}, {380.0, 52.0}}
+                                  Other, 0x11263fac0, {{20.0, 534.3}, {380.0, 52.0}}
+                                    Other, 0x11263fc00, {{20.0, 534.3}, {380.0, 52.0}}
+                                      Button, 0x11263fd40, {{20.0, 534.3}, {380.0, 52.0}}, identifier: 'connection.connect', label: 'Connect this phone'
+                              Other, 0x11263fe80, {{40.0, 533.3}, {340.0, 1.0}}
+                              Cell, 0x113e68000, {{20.0, 586.3}, {380.0, 45.7}}
+                                Other, 0x113e68140, {{20.0, 586.3}, {380.0, 45.7}}
+                                Other, 0x113e68280, {{20.0, 586.3}, {380.0, 45.7}}
+                                  Other, 0x113e683c0, {{20.0, 586.3}, {380.0, 45.7}}
+                                    Other, 0x113e68500, {{20.0, 586.3}, {380.0, 45.7}}
+                                      StaticText, 0x113e68640, {{20.0, 586.3}, {380.0, 45.7}}, label: 'Enter the code you just created. Connecting alone does not upload your profile or apply for a job.'
+                              Other, 0x113e68780, {{-20.0, 632.0}, {460.0, 87.0}}
+                              Cell, 0x113e688c0, {{20.0, 649.7}, {380.0, 52.0}}
+                                Other, 0x113e68a00, {{20.0, 649.7}, {380.0, 52.0}}
+                                  Other, 0x113e68b40, {{20.0, 649.7}, {380.0, 52.0}}
+                                Other, 0x113e68c80, {{20.0, 649.7}, {380.0, 52.0}}
+                                  Other, 0x113e68dc0, {{20.0, 649.7}, {380.0, 52.0}}
+                                    Other, 0x113e68f00, {{20.0, 649.7}, {380.0, 52.0}}
+                                      Button, 0x113e69040, {{20.0, 649.7}, {380.0, 52.0}}, label: 'Use another service'
+                                        StaticText, 0x113e69180, {{40.0, 665.5}, {152.3, 20.3}}, label: 'Use another service'
+                                        Button, 0x113e692c0, {{369.7, 668.7}, {10.3, 14.0}}
+                                          Image, 0x113e69400, {{369.7, 668.7}, {10.3, 14.0}}, identifier: 'collapsed'
+                              Other, 0x113e69540, {{-20.0, 719.0}, {460.0, 107.3}}
+                              Cell, 0x113e69680, {{20.0, 736.7}, {380.0, 72.3}}
+                                Other, 0x113e697c0, {{20.0, 736.7}, {380.0, 72.3}}
+                                  Other, 0x113e69900, {{20.0, 736.7}, {380.0, 72.3}}
+                                Other, 0x113e69a40, {{20.0, 736.7}, {380.0, 72.3}}
+                                  Other, 0x113e69b80, {{20.0, 736.7}, {380.0, 72.3}}
+                                    Other, 0x113e69cc0, {{20.0, 736.7}, {380.0, 72.3}}
+                                      StaticText, 0x113e69e00, {{20.0, 736.7}, {380.0, 72.3}}, label: 'Your application draft is saved on this phone.'
+                              Other, 0x113e69f40, {{-20.0, 826.3}, {460.0, 1956.3}}
+                              Cell, 0x113e6a080, {{20.0, 826.3}, {380.0, 40.3}}
+                                Other, 0x113e6a1c0, {{20.0, 826.3}, {380.0, 40.3}}
+                                Other, 0x113e6a300, {{20.0, 826.3}, {380.0, 40.3}}
+                                  Other, 0x113e6a440, {{20.0, 826.3}, {380.0, 40.3}}
+                                    Other, 0x113e6a580, {{20.0, 826.3}, {380.0, 40.3}}
+                                      StaticText, 0x113e6a6c0, {{20.0, 826.3}, {380.0, 40.3}}, label: 'Account and privacy'
+                              Cell, 0x113e6a800, {{20.0, 866.7}, {380.0, 52.0}}
+                                Other, 0x113e6a940, {{20.0, 866.7}, {380.0, 52.0}}
+                                  Other, 0x113e6aa80, {{20.0, 866.7}, {380.0, 52.0}}
+                                Other, 0x113e6abc0, {{20.0, 866.7}, {380.0, 52.0}}
+                                  Other, 0x113e6ad00, {{20.0, 866.7}, {380.0, 52.0}}
+                                    Other, 0x113e6ae40, {{20.0, 866.7}, {380.0, 52.0}}
+                                      Button, 0x113e6af80, {{20.0, 866.7}, {380.0, 52.0}}, label: 'Hosted service privacy policy'
+                              Other, 0x113e6b0c0, {{387.0, 142.0}, {30.0, 708.0}}, label: 'Vertical scroll bar, 2 pages', value: 50%
+                                Other, 0x113e6b200, {{414.0, 266.0}, {3.0, 462.3}}
+                              Other, 0x113e6b340, {{387.0, 142.0}, {30.0, 708.0}}, label: 'Vertical scroll bar, 2 pages', value: 50%
+                                Other, 0x113e6b480, {{414.0, 266.0}, {3.0, 462.3}}
+                    Other, 0x113e6b5c0, {{0.0, 68.0}, {420.0, 844.0}}
+                      Other, 0x113e6b700, {{0.0, 68.0}, {420.0, 844.0}}
+    Window, 0x113e6b840, {{0.0, 0.0}, {420.0, 912.0}}
+      Other, 0x113e6b980, {{0.0, 0.0}, {420.0, 912.0}}
+        Other, 0x113e6bac0, {{0.0, 0.0}, {420.0, 912.0}}
+Path to element:
+ →Application, 0x106592e40, pid: 54141, label: 'Career Finder'
+Query chain:
+ →Find: Target Application 'com.ahmadalayed.career'
+  Output: {
+    Application, 0x113e6bc00, pid: 54141, label: 'Career Finder'
+  }

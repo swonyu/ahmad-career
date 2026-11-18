@@ -1,0 +1,206 @@
+{
+  "reviewer": "expert_engineering; independent archive/source review",
+  "created_utc": "2026-11-18T09:02:44.652186+00:00",
+  "run_receipt": {
+    "started": "2026-11-18T08:55:18.095658+00:00",
+    "parent": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2",
+    "simulator": "3E94E3AA-C0A4-4A71-A282-03F1214A2003",
+    "runtime": "iOS26.5",
+    "device": "iPhone Air",
+    "scope": "two failed journeys only; not release gate",
+    "sources": {
+      "apple/UITests/CareerFinderUITests.swift": "1e88437c898d00380d84019ff660562624a4bacdbefc5f73b2797394afd4da7a",
+      "apple/AhmadCareer/NativeApplicationsViews.swift": "8e50e72530504221c27c04fde233dce2271f596777eda274a3b4744268691eaf"
+    },
+    "command": [
+      "xcodebuild",
+      "-project",
+      "apple/AhmadCareer.xcodeproj",
+      "-scheme",
+      "CareerFinderAcceptance",
+      "-configuration",
+      "Debug",
+      "-destination",
+      "platform=iOS Simulator,id=3E94E3AA-C0A4-4A71-A282-03F1214A2003,arch=arm64",
+      "-derivedDataPath",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-001/derived",
+      "-resultBundlePath",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-002/CareerFinderUI.xcresult",
+      "-parallel-testing-enabled",
+      "NO",
+      "-maximum-concurrent-test-simulator-destinations",
+      "1",
+      "ONLY_ACTIVE_ARCH=YES",
+      "CODE_SIGNING_ALLOWED=NO",
+      "CODE_SIGNING_REQUIRED=NO",
+      "-only-testing:CareerFinderUITests/CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup",
+      "-only-testing:CareerFinderUITests/CareerFinderUITests/testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "test"
+    ],
+    "exit": 65,
+    "finished": "2026-11-18T08:58:19.426862+00:00"
+  },
+  "method": {
+    "xcresult_export": [
+      "xcrun",
+      "xcresulttool",
+      "export",
+      "diagnostics",
+      "--path",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-002/CareerFinderUI.xcresult",
+      "--output-path",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-review/diagnosis002-diagnostics"
+    ],
+    "offline_log_query": [
+      "/usr/bin/log",
+      "show",
+      "--archive",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-review/diagnosis002-diagnostics/0_Test_CareerFinder-browser-return-d60d_Diagnostics/simctl_diagnostics/3E94E3AA-C0A4-4A71-A282-03F1214A2003/system.logarchive",
+      "--style",
+      "compact",
+      "--info",
+      "--debug",
+      "--predicate",
+      "eventMessage CONTAINS \"CareerBrowserTrace\""
+    ],
+    "exit": 0,
+    "stderr": "",
+    "trace_record_count": 0,
+    "time_filter": "None; searched entire preserved archive to avoid time-zone/window exclusions."
+  },
+  "log_coverage": {
+    "english_app_pid": 51974,
+    "english_app_timestamped_records": 30299,
+    "english_first_record": "2026-11-18 11:57:15.321",
+    "english_last_record": "2026-11-18 11:57:59.473",
+    "safari_first_record": "2026-11-18 11:56:47.178",
+    "safari_last_record": "2026-11-18 11:58:00.786",
+    "process_counts": [
+      {
+        "process": "Career Finder",
+        "pid": "51974",
+        "timestamped_records": 30299
+      },
+      {
+        "process": "Career Finder",
+        "pid": "51618",
+        "timestamped_records": 13495
+      },
+      {
+        "process": "Career Finder",
+        "pid": "51559",
+        "timestamped_records": 4742
+      },
+      {
+        "process": "SafariViewService",
+        "pid": "51829",
+        "timestamped_records": 3191
+      },
+      {
+        "process": "Career Finder",
+        "pid": "51605",
+        "timestamped_records": 341
+      },
+      {
+        "process": "CareerFinderUITests-Runner",
+        "pid": "51529",
+        "timestamped_records": 139
+      }
+    ]
+  },
+  "english_tap": {
+    "raw_attachment": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-002/attachments/65DBF46D-79B9-4A64-B2B5-24BCED0059D7",
+    "target_process_id": 51974,
+    "pointer_events": [
+      {
+        "eventType": 1,
+        "coordinate.x": 20.40000006556511,
+        "coordinate.y": 72.40000006556511,
+        "offset": 0.0
+      },
+      {
+        "eventType": 3,
+        "coordinate.x": 20.40000006556511,
+        "coordinate.y": 72.40000006556511,
+        "offset": 0.05
+      }
+    ],
+    "original_close_AX": "Button, 0x119ab6800, {{16.0, 68.0}, {44.0, 44.0}}, identifier: 'Close', label: 'Done'",
+    "frame_center_points": [
+      38,
+      90
+    ],
+    "visible_circle_radius_points": 22,
+    "touch_distance_from_center_points": 24.890158605043407,
+    "result": "Same approximately 10%-inset upper-left corner point as diagnosis001; Safari remains visible in return AX."
+  },
+  "near_tap_observations": [
+    "11:57:53.173 SafariViewService records accessibility hit-test forwarding to remote view.",
+    "11:57:53.182 and 11:57:53.268 app UIKit logs dispatch down/up UIEvents.",
+    "No CareerBrowserTrace safariDone, presentationDidDismiss, reportDismissal or dismantle record recovered before failure or anywhere in archive."
+  ],
+  "conclusion": "No recovered evidence of finish callback delivery. Repeated corner touch and broad app/service log coverage support exact qualified real-control center replay before changing presenter behavior.",
+  "limits": [
+    "Zero trace records are an absence result, not proof that logging could never drop records or that callback was definitively not invoked. Instrumentation has no positive-control trace in this run.",
+    "No presenter root cause, passing correction, global Arabic device coverage, or release acceptance established by this review.",
+    "Only preserved artifacts were read/exported and derived review receipts written. No simulator boot, app action, build, test, CI, product/test-source edit, or screenshot edit."
+  ],
+  "sources": [
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-002/receipt.json",
+      "sha256": "ebc8ca20f903b7f577ed16fc06d992b5497b68ef6ab332edf3bbe5f340a7088b"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-002/source.patch",
+      "sha256": "68d97264df6bf34e689d8e1baf997dd9d280c6f580b2250f33e26006d3578897"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-002/xcodebuild.log",
+      "sha256": "f05eead84cbf4d1dcc083edf81712d01431d145d875f862c9d1727ec121dcd17"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-002/CareerFinderUI.xcresult/Info.plist",
+      "sha256": "da58c45d9f39e61a16f5c44226e26a9f7aa2b7b8bed512eb6258d5ca906a5ca3"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-002/CareerFinderUI.xcresult/database.sqlite3",
+      "sha256": "42398e0218e77972ba1260cdd47bb293bf5c4390692e3f764b029a47a7200b3c"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-002/attachments/manifest.json",
+      "sha256": "36dafc061a49a39577adcdcccd6c71b64f243b4b801ae849991f1c832d353298"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-002/attachments/65DBF46D-79B9-4A64-B2B5-24BCED0059D7",
+      "sha256": "815f69a2e19bfc20c88c6b3b2906f35762be57757708401b752c6b83206cc976"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-002/attachments/CDD8513F-D3C2-4C94-B294-6A011EA8F0B6.txt",
+      "sha256": "ce0dcba1df48a091b3b23ba70d836ceb0ce7e87dce233544b4e1272244133647"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-002/attachments/8D7CBB4B-8313-4EB5-A6E0-C383D62C9C8C.txt",
+      "sha256": "e7a6aeccd36b29c537781c1b4904302dfc39415c24194a16a6fdd40119024c1a"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-review/diagnosis002-career-browser-trace.log",
+      "sha256": "9f56fca152030dba9e8ee76dee4fc8967ab667507b5878f0f9ab819d55b6b9a6"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-review/diagnosis002-career-browser-trace.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-review/diagnosis002-app-safari-coverage.log",
+      "sha256": "59eb8b9b811f89b18c4c9b4c59badd66a07ec4862832e77f81f990a160cd19f4"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-review/diagnosis002-english-app.log",
+      "sha256": "71ad6eb2e3610cf877a96e508edb31710c5b0434149f06fe02889aa0b3479f7b"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-review/diagnosis002-english-tap-window.log",
+      "sha256": "6f80cc082d08b135a9bc8e7954200601dff89f3461b839a98b8e65322d8508c7"
+    }
+  ]
+}

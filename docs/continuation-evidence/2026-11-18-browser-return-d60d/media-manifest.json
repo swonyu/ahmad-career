@@ -1,0 +1,51 @@
+[
+  {
+    "test": "CareerFinderUITests/testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride()",
+    "name": "29a-arabic-hosted-browser-accessibility-text-returned_0_5C928727-5F82-4747-8D2F-F619C93FB28D.png",
+    "file": "47C94057-F5E7-4264-BEC4-84C65C0A4E3F.png",
+    "bytes": 371122,
+    "sha256": "45ab0c86b726c328cb12584af0b09669d7411e1fdd947f06b71df35ec0cc6f63"
+  },
+  {
+    "test": "CareerFinderUITests/testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride()",
+    "name": "29a-arabic-hosted-browser-accessibility-text-before-browser-geometry-and-original-AX_0_359FF243-9631-41AB-9755-2053BB409D9D.txt",
+    "file": "898793B7-3D52-4746-9130-2C88D37933C9.txt",
+    "bytes": 21825,
+    "sha256": "74a61eb214187f51e3c4d88bbf958bd1e52547fbe0d0844e2afdee789f49b405"
+  },
+  {
+    "test": "CareerFinderUITests/testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride()",
+    "name": "29a-arabic-code-before-blur-geometry-and-original-AX_0_40E26C4F-1FBC-4DEE-AB3C-28484DE7B781.txt",
+    "file": "435E5674-E7E9-4E34-ABA4-145F6912FE3C.txt",
+    "bytes": 28163,
+    "sha256": "ec7a19f958027e7d9c834a4ce09d3b190fad9160c13045fcbe94f4310e227f76"
+  },
+  {
+    "test": "CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup()",
+    "name": "23a-in-app-hosted-connection-reopened-returned_0_0938058F-49EB-4651-9197-019A9F8A02DC.png",
+    "file": "47CC9F50-50FF-4D14-AE7C-59263AA9CE57.png",
+    "bytes": 237705,
+    "sha256": "beab8e3fd1b65c9a21857b3f313066efaccbadaa33b114ec61ed71852ff09191"
+  },
+  {
+    "test": "CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup()",
+    "name": "23a-in-app-hosted-connection-reopened-before-browser-geometry-and-original-AX_0_591EF2BC-6F26-4CC4-ACB0-48ED42F6FAB6.txt",
+    "file": "EADDC4A9-3834-433F-921B-D53BF5AAD23D.txt",
+    "bytes": 27029,
+    "sha256": "b5445dff734cbd887791d4d4229176f642c726a7298db31a95f24de44ece7bde"
+  },
+  {
+    "test": "CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup()",
+    "name": "23-in-app-hosted-connection-browser-returned_0_0A4B4C6C-BC83-43A7-9A2F-CA87B40B7F4C.png",
+    "file": "33E3B216-FD93-480E-A441-D1C6DC73982E.png",
+    "bytes": 237705,
+    "sha256": "beab8e3fd1b65c9a21857b3f313066efaccbadaa33b114ec61ed71852ff09191"
+  },
+  {
+    "test": "CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup()",
+    "name": "23-in-app-hosted-connection-browser-before-browser-geometry-and-original-AX_0_841612B5-3E9A-404D-AD33-8903AAFF3007.txt",
+    "file": "D7C6F058-922B-478F-A969-E2B0E9C77972.txt",
+    "bytes": 29180,
+    "sha256": "5497e7985ed32083332c3c2f137f3206295eaf8d2ba51b67889a3f8cf3e22285"
+  }
+]

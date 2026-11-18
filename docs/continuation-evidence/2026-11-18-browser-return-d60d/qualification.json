@@ -1,0 +1,25 @@
+{
+  "created": "2026-11-18T09:06:12.174589+00:00",
+  "parent": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2",
+  "sources": {
+    "apple/UITests/CareerFinderUITests.swift": "f858947d1e25cfe23ade6850d901c8a425e0c41ef56a6c9384aaf9871bed6885",
+    "apple/AhmadCareer/NativeApplicationsViews.swift": "33f965c24a795ff7c79fc1fc53cbe7ba3cf5cbd22c7b0e2e79fca916f26fbf49"
+  },
+  "observed": [
+    [
+      "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "passed",
+      "77.313"
+    ],
+    [
+      "testProfileReadinessAndSimpleConnectionSetup",
+      "passed",
+      "85.301"
+    ]
+  ],
+  "all17MethodNamesRetained": true,
+  "originalAssertionFirstLinesRetained": 187,
+  "productDeltaExactlyASCIICodeKeyboard": true,
+  "presenterBytePreserved": true,
+  "scope": "focused native qualification; complete CI pending"
+}

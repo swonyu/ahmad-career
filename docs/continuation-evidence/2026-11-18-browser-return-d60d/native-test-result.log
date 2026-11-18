@@ -1,0 +1,14 @@
+Test Suite 'Selected tests' started at 2026-11-18 12:00:37.305.
+Test Suite 'CareerFinderUITests.xctest' started at 2026-11-18 12:00:37.306.
+Test Suite 'CareerFinderUITests' started at 2026-11-18 12:00:37.306.
+Test Case '-[CareerFinderUITests.CareerFinderUITests testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride]' started.
+Test Case '-[CareerFinderUITests.CareerFinderUITests testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride]' passed (77.313 seconds).
+Test Case '-[CareerFinderUITests.CareerFinderUITests testProfileReadinessAndSimpleConnectionSetup]' started.
+Test Case '-[CareerFinderUITests.CareerFinderUITests testProfileReadinessAndSimpleConnectionSetup]' passed (85.301 seconds).
+Test Suite 'CareerFinderUITests' passed at 2026-11-18 12:03:19.922.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 162.614 (162.616) seconds
+Test Suite 'CareerFinderUITests.xctest' passed at 2026-11-18 12:03:19.922.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 162.614 (162.616) seconds
+Test Suite 'Selected tests' passed at 2026-11-18 12:03:19.922.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 162.614 (162.617) seconds
+** TEST SUCCEEDED **

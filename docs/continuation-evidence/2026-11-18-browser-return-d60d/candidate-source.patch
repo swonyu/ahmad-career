@@ -1,0 +1,90 @@
+diff --git a/apple/AhmadCareer/NativeApplicationsViews.swift b/apple/AhmadCareer/NativeApplicationsViews.swift
+index 5dad0ba..f398283 100644
+--- a/apple/AhmadCareer/NativeApplicationsViews.swift
++++ b/apple/AhmadCareer/NativeApplicationsViews.swift
+@@ -870,7 +870,8 @@ struct NativeApplicationConnection: View {
+                         }
+                     }
+                     Section {
+-                        SecureField(l10n("One-time connection code"), text: $code).textInputAutocapitalization(.characters).autocorrectionDisabled()
++                        SecureField(l10n("One-time connection code"), text: $code).keyboardType(.asciiCapable)
++                            .textInputAutocapitalization(.characters).autocorrectionDisabled()
+                             .focused($focusedField, equals: "code").submitLabel(.done).onSubmit { focusedField = nil }
+                             .accessibilityIdentifier("connection.code")
+                         Button {
+diff --git a/apple/UITests/CareerFinderUITests.swift b/apple/UITests/CareerFinderUITests.swift
+index 4fd99e5..e202cb2 100644
+--- a/apple/UITests/CareerFinderUITests.swift
++++ b/apple/UITests/CareerFinderUITests.swift
+@@ -278,8 +278,11 @@ final class CareerFinderUITests: XCTestCase {
+     }
+     @MainActor
+     private func assertHostedBrowserReturn(_ app: XCUIApplication, code: XCUIElement,
+-                                           connectionTitle: String, doneTitle: String, screenshot: String) {
++                                           connectionTitle: String, doneTitle: String,
++                                           browserDoneTitle: String = "Done", screenshot: String) {
+         let enteredCode = code.value as? String ?? ""
++        captureObservation(screenshot + "-before-browser", app: app,
++                           details: "Unsent code AX value: \(String(reflecting: enteredCode)); placeholder: \(String(reflecting: code.placeholderValue)); connect enabled: \(app.buttons["connection.connect"].isEnabled)")
+         XCTAssertFalse(enteredCode.isEmpty || enteredCode == code.placeholderValue,
+                        "The return check requires an existing unsent synthetic code")
+         let signIn = app.buttons["connection.signIn"]; top(app); reveal(signIn, in: app)
+@@ -287,11 +290,16 @@ final class CareerFinderUITests: XCTestCase {
+         signIn.tap()
+         let browser = app.otherElements["hostedService.browser"]
+         let appeared = browser.waitForExistence(timeout: 10)
+-        let doneQuery = app.buttons.matching(NSPredicate(format: "label == %@", doneTitle))
++        // App launch-language overrides do not change the separately hosted
++        // Safari service's system language. Keep its expected label explicit.
++        let doneQuery = app.buttons.matching(NSPredicate(format: "label == %@", browserDoneTitle))
+         let uniqueVisibleDone = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+             doneQuery.allElementsBoundByIndex.filter { $0.exists && $0.isHittable }.count == 1
+         }, object: nil)
+-        let toolbarReady = XCTWaiter.wait(for: [uniqueVisibleDone], timeout: 5)
++        // A cold Safari remote service took over 14 seconds to expose controls
++        // in the retained runner recording. Keep checking the real unique,
++        // localized Done action through service startup.
++        let toolbarReady = XCTWaiter.wait(for: [uniqueVisibleDone], timeout: 20)
+         // Keep original screen and AX evidence even when a remote Safari
+         // accessibility hierarchy differs from this expected lookup.
+         capture(screenshot, app: app)
+@@ -309,7 +317,10 @@ final class CareerFinderUITests: XCTestCase {
+                        "The underlying connection Done must not be the browser's visible action")
+         // Presentation and return only: never sign in, create a code, pair the
+         // phone, mutate an account, or submit an employer application here.
+-        browserDone.tap()
++        // Safari's circular Done control overlaps the address AX frame.
++        // XCTest chose an outside corner in the retained event; touch the
++        // verified control's center while preserving the actual Done action.
++        browserDone.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+         let returned = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+             !browser.exists && connection.exists && connection.buttons[doneTitle].isHittable
+         }, object: nil)
+@@ -942,8 +953,9 @@ final class CareerFinderUITests: XCTestCase {
+         app = launch(id: id, languages: "(fr, ar)")
+         XCTAssertTrue(app.tabBars.buttons["Settings"].waitForExistence(timeout: 5), "Explicit English remains separate from device-language fallback")
+ 
+-        // Use a fresh isolated Arabic-device workspace for the system Safari
+-        // toolbar as well as the app, at the largest accessibility text size.
++        // Use a fresh isolated Arabic-app workspace at the largest text size.
++        // This launch override does not change the simulator's English system
++        // Safari service; verify its real label separately from the Arabic form.
+         app.terminate()
+         app = launch(largeText: true, languages: "(ar)")
+         tab("التقديم", in: app)
+@@ -954,11 +966,14 @@ final class CareerFinderUITests: XCTestCase {
+         XCTAssertTrue(connection.waitForExistence(timeout: 5))
+         let code = app.secureTextFields["connection.code"]; reveal(code, in: app)
+         replace(code, with: "SYNTHETIC", in: app)
++        captureObservation("29a-arabic-code-before-blur", app: app,
++                           details: "Secure field value: \(String(reflecting: code.value)); connect enabled: \(app.buttons["connection.connect"].isEnabled)")
+         let typingDone = app.buttons["انتهيت من الكتابة"]
+         XCTAssertTrue(typingDone.waitForExistence(timeout: 5) && typingDone.isHittable)
+         typingDone.tap()
+         assertHostedBrowserReturn(app, code: code, connectionTitle: "اتصال التقديم",
+-                                  doneTitle: "تم", screenshot: "29a-arabic-hosted-browser-accessibility-text")
++                                  doneTitle: "تم", browserDoneTitle: "Done",
++                                  screenshot: "29a-arabic-hosted-browser-accessibility-text")
+         XCTAssertTrue(connection.buttons["تم"].isHittable)
+         connection.buttons["تم"].tap()
+         XCTAssertTrue(review.isHittable, "Arabic browser and connection dismissal must return to the application action")
