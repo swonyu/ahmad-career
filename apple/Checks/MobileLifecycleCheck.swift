@@ -145,6 +145,53 @@ private final class LifecycleSuite {
     }
 
     func run() async throws {
+        // Both keyboard commas describe the same lists in sharing, shortcuts and portable backups.
+        do {
+            func backupData(_ profile: PhoneApplicationProfile) throws -> Data {
+                var state = PhoneApplicationState(); state.profile = profile
+                return try JSONEncoder().encode(PhoneWorkspaceBackup(draft: state.activeDraft, records: [], recordDrafts: [], submissionHolds: []))
+            }
+            var profile = PhoneApplicationProfile()
+            profile.skills = " Swift، Kotlin, العربية ، Swift "
+            profile.targetRoles = "محاسب، محلل بيانات,,\u{00a0}مصمم\u{00a0}، محاسب"
+            profile.targetCountries = " sa ، US, ae "
+            let encoded = try backupData(profile)
+            let document = try JSONSerialization.jsonObject(with: encoded) as! [String: Any]
+            let data = document["data"] as! [String: Any]
+            let savedProfile = data["profile"] as! [String: Any]
+            try check(savedProfile["skills"] as? [String] == ["Swift", "Kotlin", "العربية", "Swift"],
+                      "Portable export splits both commas without dropping duplicate skills")
+            try check(savedProfile["targetRoles"] as? [String] == ["محاسب", "محلل بيانات", "مصمم", "محاسب"],
+                      "Portable export preserves separate Arabic target roles and their order")
+            try check(savedProfile["targetCountries"] as? [String] == ["sa", "US", "ae"],
+                      "Portable export retains existing country spelling while separating either comma")
+            let restored = try JSONDecoder().decode(PhoneWorkspaceBackup.self, from: encoded).draft.profile
+            try check(restored.payload() == profile.payload() && restored.targetRoleShortcuts == profile.targetRoleShortcuts,
+                      "Portable restore keeps the same shared profile and distinct search shortcuts")
+            profile.targetRoles = (0..<30).map { "وظيفة \($0)" }.joined(separator: "،")
+            let atLimit = try JSONDecoder().decode(PhoneWorkspaceBackup.self, from: backupData(profile))
+            try check(atLimit.draft.profile.targetRoleShortcuts.count == 30, "All 30 Arabic-delimited roles survive the existing portable backup limit")
+            profile.targetRoles += "،وظيفة 30"
+            let aboveLimit = try backupData(profile)
+            try check((try? JSONDecoder().decode(PhoneWorkspaceBackup.self, from: aboveLimit)) == nil,
+                      "Arabic delimiters cannot evade the portable backup's 30-item limit")
+            try check(profile.payload()["targetRoles"]?.array.count == 31,
+                      "An over-limit draft is not silently truncated before service validation")
+            profile.targetRoles = Array(repeating: "محاسب", count: 31).joined(separator: "،")
+            let duplicateLimit = try backupData(profile)
+            try check((try? JSONDecoder().decode(PhoneWorkspaceBackup.self, from: duplicateLimit)) == nil,
+                      "Portable backup limits continue counting duplicate iPhone entries")
+            profile.targetRoles = "محاسب"
+            profile.skills = "Swift،" + String(repeating: "م", count: 1_000)
+            let maximumEntry = try JSONDecoder().decode(PhoneWorkspaceBackup.self, from: backupData(profile))
+            try check(maximumEntry.draft.profile.payload()["skills"]?.array.count == 2,
+                      "Portable backups retain the existing 1000-unit per-entry draft allowance")
+            profile.skills += "م"
+            let oversizedEntry = try backupData(profile)
+            try check((try? JSONDecoder().decode(PhoneWorkspaceBackup.self, from: oversizedEntry)) == nil,
+                      "Arabic-delimited oversized entries still fail portable backup validation")
+            scenarios += 1
+        }
         // Cross-account switches preserve the exact A draft, and never display or upload it as B.
         do {
             var state = try initial(), draft = PhoneApplicationProfile()
