@@ -1,0 +1,8 @@
+{
+  "observedAt": "2026-11-18T07:55:55.723158+00:00",
+  "childBase": "4f72947dbda76ca5176fa42645337c6c739e6a2a",
+  "originalCurrentHead": "4368a29f6fb53c1feb2fb62b96f9cc96742ca842",
+  "originalCurrentStatus": "",
+  "protectedChildHashesMatchFork": true,
+  "originalHeadAdvancedByCoordinator": "Original owner may advance independently; this lane wrote only its isolated child and evidence."
+}

@@ -213,6 +213,97 @@ private final class DiscoverySuite {
                       "Retry leaves an unreadable search file untouched")
             scenarios += 1
         }
+        for hasPreviousResults in [false, true] {
+            for cooldownPending in [false, true] {
+                let service = DiscoveryStub(fixture); let (_, file) = store(service)
+                try FileManager.default.createDirectory(at: file.deletingLastPathComponent(), withIntermediateDirectories: true)
+                let original = Data("unrecognized prior discovery data".utf8); try original.write(to: file)
+                let model = CareerDiscoveryStore(file: file, service: service)
+                if hasPreviousResults {
+                    model.query = DiscoveryQuery(sources: ["greenhouse:earlier-board"], keywords: "Earlier complete results")
+                    service.handle = { _, _ in self.page(status: "complete") }; await model.search()
+                }
+                let submitted = DiscoveryQuery(sources: ["lever:eu:submitted-board"], keywords: "Failed query A", location: "Riyadh", remoteOnly: true)
+                model.query = submitted
+                let deadline = Date().addingTimeInterval(cooldownPending ? 300 : -1)
+                let originalError = "Synthetic failed search A; previous results are kept."
+                service.handle = { _, _ in throw DiscoveryFailure(message: originalError, code: "discovery_changed", retryAfter: deadline) }
+                await model.search()
+                let newerDraft = DiscoveryQuery(sources: ["greenhouse:draft-board"], keywords: "Unsubmitted query B", location: "Tokyo")
+                model.query = newerDraft
+                let retainedJobs = model.jobs, retainedQuery = model.lastQuery
+                let retainedRestored = model.restoredResults, retainedNeedsSearch = model.needsNewSearch
+                let encoder = JSONEncoder(); encoder.outputFormatting = .sortedKeys
+                let retainedPage = try model.page.map { try encoder.encode($0) }
+                let callsBeforeRecovery = service.calls.count
+                for _ in 0..<2 {
+                    model.retrySavedSearch()
+                    try check(model.canRetrySubmittedSearch,
+                              "Repeated failed saved-search reads preserve the failed query A retry, with or without earlier complete results")
+                    try check(model.recoveryBoardFallbacks.map(\.id) == (hasPreviousResults ? [] : ["lever:eu:submitted-board"]),
+                              "A failed saved-search read retains A's safe employer-board fallback instead of newer draft B")
+                    let currentPage = try model.page.map { try encoder.encode($0) }
+                    try check(model.query == newerDraft && model.jobs == retainedJobs && model.lastQuery == retainedQuery
+                        && currentPage == retainedPage && model.restoredResults == retainedRestored && model.needsNewSearch == retainedNeedsSearch,
+                              "Failed recovery keeps the editable draft and all attributed live result metadata")
+                    try check(model.error == originalError && model.retryAfter == deadline && !model.isSearching
+                        && service.calls.count == callsBeforeRecovery && model.savedSearchRestoreBlocked && model.storageNotice != nil,
+                              "Failed recovery preserves the original service error and retry deadline without starting a request")
+                    let preserved = try Data(contentsOf: file)
+                    try check(preserved == original, "Repeated failed recovery never overwrites the unreadable saved file")
+                }
+                service.handle = { _, _ in self.page(status: "complete") }
+                await model.retrySubmittedSearch()
+                if cooldownPending {
+                    try check(service.calls.count == callsBeforeRecovery && model.error == originalError && model.retryAfter == deadline
+                        && model.canRetrySubmittedSearch && model.query == newerDraft,
+                              "An active Retry-After still blocks A's retry after failed file recovery without losing draft B")
+                } else {
+                    try check(service.calls.count == callsBeforeRecovery + 1 && service.calls.last?.0 == submitted && service.calls.last?.1 == nil,
+                              "After failed file recovery the explicit retry sends A, not earlier results or newer draft B")
+                    try check(model.query == newerDraft && model.lastQuery == submitted && model.jobs == fixture.jobs
+                        && model.error == nil && model.retryAfter == nil && !model.canRetrySubmittedSearch,
+                              "A successful recovered retry updates its own attribution while keeping the unsubmitted B draft")
+                }
+                let preserved = try Data(contentsOf: file)
+                try check(preserved == original && model.savedSearchRestoreBlocked,
+                          "Submitted retry does not grant permission to replace an unreadable saved file")
+                scenarios += 1
+            }
+        }
+        for hasPreviousResults in [false, true] {
+            let service = DiscoveryStub(fixture); let (_, file) = store(service)
+            try FileManager.default.createDirectory(at: file.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try Data("unrecognized prior discovery data".utf8).write(to: file)
+            let model = CareerDiscoveryStore(file: file, service: service)
+            if hasPreviousResults {
+                model.query.keywords = "Earlier complete results"
+                service.handle = { _, _ in self.page(status: "complete") }; await model.search()
+            }
+            let submitted = DiscoveryQuery(sources: ["lever:eu:submitted-board"], keywords: "Failed query A")
+            model.query = submitted
+            let deadline = Date().addingTimeInterval(-1), originalError = "Synthetic failed query A"
+            service.handle = { _, _ in throw DiscoveryFailure(message: originalError, retryAfter: deadline) }; await model.search()
+            let newerDraft = DiscoveryQuery(sources: ["greenhouse:draft-board"], keywords: "Unsubmitted query B")
+            model.query = newerDraft
+            let retainedJobs = model.jobs, retainedQuery = model.lastQuery, callsBeforeRecovery = service.calls.count
+            try FileManager.default.removeItem(at: file)
+            model.retrySavedSearch(); model.retrySavedSearch()
+            try check(model.canRetrySubmittedSearch && model.query == newerDraft && model.jobs == retainedJobs && model.lastQuery == retainedQuery
+                && model.error == originalError && model.retryAfter == deadline && service.calls.count == callsBeforeRecovery,
+                      "A missing same-scope recovery file preserves failed A and newer B while retrying the save")
+            try check(model.recoveryBoardFallbacks.map(\.id) == (hasPreviousResults ? [] : ["lever:eu:submitted-board"])
+                && !model.savedSearchRestoreBlocked && model.storageNotice == nil,
+                      "Missing-file recovery retains A's fallback and resumes saving the current memory state")
+            let saved = try JSONSerialization.jsonObject(with: Data(contentsOf: file)) as! [String: Any]
+            try check((saved["query"] as? [String: Any])?["keywords"] as? String == "Unsubmitted query B",
+                      "Recovery after file removal saves the existing B draft instead of a reset default")
+            service.handle = { _, _ in self.page(status: "complete") }; await model.retrySubmittedSearch()
+            try check(service.calls.count == callsBeforeRecovery + 1 && service.calls.last?.0 == submitted
+                && model.query == newerDraft && model.lastQuery == submitted,
+                      "Missing-file recovery keeps the exact A retry target until its explicit successful retry")
+            scenarios += 1
+        }
         do {
             let service = DiscoveryStub(fixture); let (healthy, file) = store(service)
             healthy.query.keywords = "Nurse"

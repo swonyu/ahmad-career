@@ -1,0 +1,15 @@
+{
+  "observedAt": "2026-11-18T07:54:25.640879+00:00",
+  "independentlyVerifiedAndroidLogAndInputHashBindings": 34,
+  "androidSupportingProductionSourcesExact": true,
+  "protectedFilesMatchBase": true,
+  "onlyFourAuthorizedSourceTestFilesChanged": true,
+  "sourceHashes": {
+    "apple/AhmadCareer/CareerDiscovery.swift": "f9b3b60faaf0d0b5f1a2b69369e826c4c6b2b8e6b96ea0916e3ccd71bcdc813e",
+    "apple/Checks/DiscoveryCheck.swift": "0146fe063a9fef9fb3e733e1f5ac16f84bedfd6fda104c38e4443c96effd2adb",
+    "android/app/src/main/java/com/saleh/careerfinder/Discovery.kt": "d447432fee132d6c55808d1228459d84cfc07b802feed5379e8d3437f4d414f0",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/DiscoveryPersistenceRegressionTest.kt": "dce01dbb2a9f4c2fb71f21a3688dd23ac54527e25bfb7530bb59a9acf82ceeb1"
+  },
+  "base": "4f72947dbda76ca5176fa42645337c6c739e6a2a",
+  "sourceDiffCheckExit": 0
+}

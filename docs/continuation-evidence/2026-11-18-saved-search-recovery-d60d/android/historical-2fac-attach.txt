@@ -1,0 +1,26 @@
+    suspend fun attachPrivateSession(store: PrivateStore, key: String) {
+        stopPrivateSession(flush = true)
+        privateStore = store; privateKey = key
+        val request = storageGeneration
+        mutable.value = DiscoveryUiState(restoringSearch = true)
+        try {
+            val saved = withContext(Dispatchers.IO) { store.read(key) }
+            if (request != storageGeneration || privateKey != key) return
+            val snapshot = saved?.let(DiscoverySnapshotCodec::decode)
+            lastPage = snapshot?.page; lastDisplayedFilters = snapshot?.displayedFilters
+            val page = snapshot?.page
+            mutable.value = DiscoveryUiState(filters = snapshot?.filters ?: DiscoveryFilters(), displayedFilters = snapshot?.displayedFilters,
+                jobs = page?.jobs.orEmpty(), sources = page?.sources.orEmpty(), status = page?.status, generatedAt = page?.generatedAt,
+                totalMatches = page?.totalMatches ?: 0, limited = page?.limited ?: false, notice = page?.notice.orEmpty(),
+                nextCursor = null, restoredSearch = snapshot != null && (snapshot.page != null || snapshot.filters != DiscoveryFilters()))
+            maySaveSearch = true
+        } catch (cancel: CancellationException) { throw cancel }
+        catch (_: Exception) {
+            if (request == storageGeneration && privateKey == key) {
+                maySaveSearch = false
+                mutable.update { it.copy(restoringSearch = false, searchRestoreBlocked = true,
+                    searchStorageError = "Your previous search could not be opened. Its saved file is preserved. You can search now; new results stay in this session until saved-search recovery succeeds.") }
+            }
+        }
+    }
+

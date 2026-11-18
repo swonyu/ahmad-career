@@ -1,0 +1,86 @@
+{
+  "startedUTC": "2026-11-18T07:41:38.728537+00:00",
+  "compiler": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+  "sdk": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk",
+  "compilerVersion": "Apple Swift version 6.4.2 (swiftlang-6.4.2.1.9 clang-2100.4.1.1)\nTarget: arm64-apple-macosx27.3.0\n",
+  "steps": [
+    {
+      "variant": "baseline",
+      "step": "compile",
+      "argv": [
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+        "-swift-version",
+        "5",
+        "-Onone",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk",
+        "-module-cache-path",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/ios/module-cache",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/ios/baseline/apple/AhmadCareer/MobileApplicationClient.swift",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/ios/baseline/apple/AhmadCareer/MobileApplicationState.swift",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/ios/baseline/apple/AhmadCareer/CareerDiscovery.swift",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/ios/baseline/apple/Checks/DiscoveryCheck.swift",
+        "-o",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/ios/baseline/discovery-check"
+      ],
+      "startedUTC": "2026-11-18T07:41:38.819930+00:00",
+      "finishedUTC": "2026-11-18T07:41:43.575951+00:00",
+      "exit": 0,
+      "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "variant": "baseline",
+      "step": "run",
+      "argv": [
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/ios/baseline/discovery-check",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/ios/baseline/apple/Checks/Fixtures/discovery-search-v1.json"
+      ],
+      "startedUTC": "2026-11-18T07:41:43.576116+00:00",
+      "finishedUTC": "2026-11-18T07:41:43.878214+00:00",
+      "exit": 1,
+      "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSHA256": "1556e8383adbe07a707e9f92d9a32d0f2bcc03aee79c1dadecc149e89b522652"
+    },
+    {
+      "variant": "candidate",
+      "step": "compile",
+      "argv": [
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+        "-swift-version",
+        "5",
+        "-Onone",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk",
+        "-module-cache-path",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/ios/module-cache",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/ios/candidate/apple/AhmadCareer/MobileApplicationClient.swift",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/ios/candidate/apple/AhmadCareer/MobileApplicationState.swift",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/ios/candidate/apple/AhmadCareer/CareerDiscovery.swift",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/ios/candidate/apple/Checks/DiscoveryCheck.swift",
+        "-o",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/ios/candidate/discovery-check"
+      ],
+      "startedUTC": "2026-11-18T07:41:43.878512+00:00",
+      "finishedUTC": "2026-11-18T07:41:46.559150+00:00",
+      "exit": 0,
+      "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "variant": "candidate",
+      "step": "run",
+      "argv": [
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/ios/candidate/discovery-check",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/ios/candidate/apple/Checks/Fixtures/discovery-search-v1.json"
+      ],
+      "startedUTC": "2026-11-18T07:41:46.559406+00:00",
+      "finishedUTC": "2026-11-18T07:41:46.910078+00:00",
+      "exit": 0,
+      "stdoutSHA256": "68cce387f59c71fbbaecb1c964244ad772e88db2fb5bf05478036c6b9b08c1a7",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "finishedUTC": "2026-11-18T07:41:46.910294+00:00",
+  "baselineRedCandidateGreen": true
+}
