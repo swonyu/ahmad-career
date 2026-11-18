@@ -6,6 +6,7 @@ import SafariServices
 
 private enum ApplyDesign {
     static let actionFill = NativeDesign.actionFill
+    static let actionText = NativeDesign.actionText
     static let accent = NativeDesign.accent
     static let canvas = NativeDesign.canvas
     static let card = NativeDesign.surface
@@ -34,7 +35,7 @@ struct NativeProfileEssentials: View {
     }
     private func essential(_ label: String, ready: Bool, id: String) -> some View {
         Label(l10n(label), systemImage: ready ? "checkmark.circle" : "circle")
-            .font(.subheadline).foregroundStyle(ready ? ApplyDesign.accent : Color.secondary)
+            .font(.subheadline).foregroundStyle(ready ? ApplyDesign.accent : NativeDesign.muted)
             .fixedSize(horizontal: false, vertical: true).accessibilityElement(children: .combine)
             .accessibilityIdentifier("profile.essential." + id)
     }
@@ -48,14 +49,14 @@ struct NativeSavedLinkRemoval: View {
     @State private var issue: String?
     var body: some View {
         NavigationStack {
-            List {
+            NativeList {
                 Section {
                     Text(context.title).font(.headline).fixedSize(horizontal: false, vertical: true)
                     Text(context.company).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                     Text(l10n(context.keepsRecord ? "The saved link will be removed. Your private application record and its notes will stay on this phone." : "This removes the link saved on this phone."))
                     Text(l10n("Applications already sent and provider receipts are kept.")).font(.footnote).foregroundStyle(.secondary)
                 }
-                if let issue { Section { Text(l10n.message(issue)).foregroundStyle(.red) } }
+                if let issue { Section { Text(l10n.message(issue)).foregroundStyle(NativeDesign.danger) } }
                 Section {
                     Button(l10n("Remove saved link"), role: .destructive) {
                         if model.removeLocalJob(context) { dismiss() } else { issue = model.message }
@@ -76,6 +77,7 @@ struct NativeApplicationsScreen: View {
     @NativeLocalization private var l10n
     @EnvironmentObject private var model: NativeApplicationsStore
     @EnvironmentObject private var career: NativeCareerStore
+    @EnvironmentObject private var navigation: NativeCareerNavigation
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var profileSheet = false
     @State private var connectionSheet = false
@@ -94,8 +96,9 @@ struct NativeApplicationsScreen: View {
         UIAccessibility.post(notification: .announcement, argument: l10n(value))
     }
 
+    private var hasSavedOpportunities: Bool { !model.jobs.isEmpty || !career.savedJobs.isEmpty }
     private var reviewActionTitle: String {
-        guard model.connected else { return "Connect application workspace" }
+        guard model.connected else { return hasSavedOpportunities ? "Open saved jobs" : "Search jobs" }
         if model.mode != "test" && model.liveSubmissionEnabled != true {
             return model.selected.isEmpty ? "Select opportunities to check" : "Check application options"
         }
@@ -126,6 +129,7 @@ struct NativeApplicationsScreen: View {
                     .padding(15).background(ApplyDesign.card, in: RoundedRectangle(cornerRadius: 16))
                     .accessibilityElement(children: .contain)
                 }
+                if !model.connected { manualApplicationGuide }
                 profileCard
                 if model.connected && model.mode != "test" && model.liveSubmissionEnabled != true {
                     submissionAvailability
@@ -180,6 +184,7 @@ struct NativeApplicationsScreen: View {
                 coverage
             }.padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 24)
         }
+        .modifier(NativeScrollPalette())
         .accessibilityIdentifier("applications.content")
         .background(ApplyDesign.canvas)
         .navigationTitle(l10n("Career Finder"))
@@ -195,13 +200,13 @@ struct NativeApplicationsScreen: View {
             if !activity {
                 VStack(spacing: 8) {
                     Button {
-                        if !model.connected { connectionSheet = true }
+                        if !model.connected { navigation.selectedTab = hasSavedOpportunities ? 3 : 1 }
                         else { Task { await model.prepare(manualAppliedURLs: appliedURLs); reviewSheet = model.plan != nil } }
                     } label: {
                         Group {
                             if dynamicTypeSize.isAccessibilitySize {
                                 VStack(alignment: .leading, spacing: 8) {
-                                    if model.busy { ProgressView().tint(.white) }
+                                    if model.busy { ProgressView().tint(ApplyDesign.actionText) }
                                     Text(l10n(reviewActionTitle))
                                         .font(.subheadline.weight(.semibold))
                                         .multilineTextAlignment(.leading).lineLimit(nil)
@@ -210,7 +215,7 @@ struct NativeApplicationsScreen: View {
                                 }
                             } else {
                                 HStack {
-                                    if model.busy { ProgressView().tint(.white) }
+                                    if model.busy { ProgressView().tint(ApplyDesign.actionText) }
                                     Image(systemName: "paperplane.fill")
                                     Text(l10n(reviewActionTitle)).font(.subheadline.weight(.semibold))
                                     Spacer(minLength: 4)
@@ -219,9 +224,9 @@ struct NativeApplicationsScreen: View {
                             }
                         }.padding(16).frame(maxWidth: .infinity).contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain).foregroundStyle(.white)
+                    .buttonStyle(.plain).foregroundStyle(ApplyDesign.actionText)
                     .background(ApplyDesign.actionFill, in: RoundedRectangle(cornerRadius: 16))
-                    .accessibilityIdentifier("applications.review")
+                    .accessibilityIdentifier(model.connected ? "applications.review" : "applications.manual")
                     .accessibilityLabel(l10n(reviewActionTitle))
                     .disabled(model.busy || model.connected && model.selected.isEmpty)
                     .opacity(model.busy || model.connected && model.selected.isEmpty ? 0.65 : 1)
@@ -262,6 +267,18 @@ struct NativeApplicationsScreen: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         }.frame(maxWidth: .infinity, alignment: .leading)
+    }
+    private var manualApplicationGuide: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(l10n("Apply on the employer’s website")).font(.headline)
+                .fixedSize(horizontal: false, vertical: true)
+            Text(l10n("Save the job before opening the employer’s page. Check its requirements, location and deadline there."))
+                .font(.subheadline).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            Button(l10n("Connect application workspace")) { connectionSheet = true }
+                .font(.subheadline).frame(minHeight: 44).disabled(model.busy)
+                .accessibilityIdentifier("applications.connect")
+        }.padding(16).frame(maxWidth: .infinity, alignment: .leading)
+            .background(ApplyDesign.card, in: RoundedRectangle(cornerRadius: 16))
     }
     private var profileCard: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -333,19 +350,22 @@ struct NativeApplicationsScreen: View {
                                 }
                             }.frame(maxWidth: .infinity, alignment: .leading)
                             Image(systemName: model.selected.contains(id) ? "checkmark.circle.fill" : "circle")
-                                .font(.title2).foregroundStyle(model.selected.contains(id) ? ApplyDesign.accent : Color.secondary)
+                                .font(.title2).foregroundStyle(model.selected.contains(id) ? ApplyDesign.accent : NativeDesign.muted)
                                 .frame(minWidth: 30, minHeight: 44)
                         }
                     }.buttonStyle(.plain).disabled(model.busy)
                         .accessibilityLabel(l10n.format("{0} at {1}", [String(describing: job["title"]?.string ?? l10n("Opportunity")), String(describing: job["company"]?.string ?? "")]))
                         .accessibilityValue(l10n(model.selected.contains(id) ? "Selected" : "Not selected"))
                         .accessibilityHint(l10n("Select for application review"))
-                    HStack(spacing: 8) {
+                    VStack(alignment: .leading, spacing: 8) {
                         Text(l10n(job["provider"]?.string == "lever" ? "Lever · eligibility checked at review" : "Employer website"))
                             .font(.caption2).foregroundStyle(.secondary)
-                        Spacer()
                         if let raw = job["url"]?.string, let url = MobileApplicationPolicy.jobURL(raw) {
-                            Link(destination: url) { Label(l10n("View"), systemImage: "arrow.up.right").font(.caption.weight(.semibold)).padding(.vertical, 8) }
+                            Link(destination: url) {
+                                Label(l10n("Apply on the employer’s website"), systemImage: "arrow.up.right")
+                                    .font(.subheadline.weight(.semibold)).fixedSize(horizontal: false, vertical: true)
+                                    .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                            }
                         }
                     }
                     if model.isMarkedApplied(job) {
@@ -368,7 +388,7 @@ struct NativeApplicationsScreen: View {
     private var activityList: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text(l10n("Every attempt, accounted for.")).font(.headline)
+                Text(l10n("Application receipts")).font(.headline)
                 Spacer()
                 if !model.attempts.isEmpty {
                     Button { Task { exported = await model.exportReceipts(); exportSheet = exported != nil } } label: {
@@ -456,6 +476,9 @@ struct NativeApplicationProfileEditor: View {
     @State private var closingIntentionally = false
     @FocusState private var focusedField: String?
     @State private var emailFieldFocused = false
+    @State private var reuseExpanded = false
+    @State private var contactCopied = false
+    @Environment(\.layoutDirection) private var layoutDirection
 
     init(model: NativeApplicationsStore) {
         self.model = model
@@ -467,12 +490,12 @@ struct NativeApplicationProfileEditor: View {
     private var occupied: Bool { model.busy || readingPDF }
     var body: some View {
         NavigationStack {
-            Form {
+            NativeForm {
                 Section {
                     Text(l10n("Use your own experience and the CV you want employers to receive. Saving this profile does not submit an application."))
                         .font(.subheadline).foregroundStyle(.secondary)
                 }
-                if let issue { Section { Text(l10n.message(issue)).foregroundStyle(.red).accessibilityAddTraits(.updatesFrequently) } }
+                if let issue { Section { Text(l10n.message(issue)).foregroundStyle(NativeDesign.danger).accessibilityAddTraits(.updatesFrequently) } }
                 if conflicts {
                     Section {
                         Text(l10n("Your phone draft is kept. The service has a different version, so choose which details to keep before saving."))
@@ -515,7 +538,7 @@ struct NativeApplicationProfileEditor: View {
                     }
                     if ApplicationProfileReadiness(profile: draft).emailNeedsCorrection {
                         Text(l10n("Enter an email address employers can reply to."))
-                            .font(.footnote).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+                            .font(.footnote).foregroundStyle(NativeDesign.danger).fixedSize(horizontal: false, vertical: true)
                             .accessibilityIdentifier("application.email.issue")
                     }
                     TextField(l10n("Phone (optional)"), text: $draft.phone).textContentType(.telephoneNumber).keyboardType(.phonePad)
@@ -529,6 +552,7 @@ struct NativeApplicationProfileEditor: View {
                         }
                     }
                 }
+                if !contactReuseFields.isEmpty { contactReuseSection }
                 Section {
                     Button { pickingPDF = true } label: {
                         Label(draft.resumeName.isEmpty ? l10n("Choose your PDF CV") : draft.resumeName, systemImage: "doc.badge.plus")
@@ -577,17 +601,17 @@ struct NativeApplicationProfileEditor: View {
                 }
                 Section {
                     TextField(l10n("Target roles, separated by commas"), text: $draft.targetRoles, axis: .vertical)
-                        .focused($focusedField, equals: "roles")
+                        .focused($focusedField, equals: "roles").accessibilityIdentifier("application.targetRoles")
                     TextField(l10n("Target country codes (optional)"), text: $draft.targetCountries)
                         .textInputAutocapitalization(.characters).autocorrectionDisabled()
                         .focused($focusedField, equals: "countries")
                     Toggle(l10n("Remote"), isOn: $draft.remote); Toggle(l10n("Hybrid"), isOn: $draft.hybrid); Toggle(l10n("On site"), isOn: $draft.onsite)
-                } header: { Text(l10n("What comes next")) } footer: {
-                    Text(l10n("Leave countries blank for any country, or enter two-letter country codes separated by commas. These preferences describe your goals; they do not establish work authorization or qualify you for a role."))
+                } header: { Text(l10n("Job preferences")) } footer: {
+                    Text(l10n("Enter two-letter country codes separated by commas, or leave them blank. Only a role you choose on Search fills the job-title field. Other preferences do not filter results or establish work authorization."))
                 }
                 Section {
                     Text(l10n(model.connected ? "Save synchronizes these details with your connected application service." :
-                            "Your draft is stored privately on this phone. Connect an application service when you are ready to submit."))
+                            "Your draft is stored privately on this phone. You can copy these details when applying on an employer’s website."))
                         .font(.caption).foregroundStyle(.secondary)
                     if changed {
                         Text(l10n("Use Cancel to save a phone draft, keep editing, or discard changes. Backgrounding the app keeps a local draft without uploading it."))
@@ -596,6 +620,7 @@ struct NativeApplicationProfileEditor: View {
                 }
             }
             .disabled(occupied)
+            .onChange(of: draft) { _ in contactCopied = false }
             .navigationTitle(l10n("Application profile")).navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -687,6 +712,52 @@ struct NativeApplicationProfileEditor: View {
             if let value { UIAccessibility.post(notification: .announcement, argument: l10n.message(value)) }
         }
     }
+    private var contactReuseFields: [(id: String, label: String, value: String, leftToRight: Bool)] {
+        [
+            ("firstName", "First or single name", draft.firstName, false),
+            ("lastName", "Last name", draft.lastName, false),
+            ("email", "Email", draft.email, true),
+            ("phone", "Phone", draft.phone, true),
+            ("city", "City", draft.city, false),
+            ("website", "Website or portfolio", draft.website, true),
+            ("linkedin", "LinkedIn profile", draft.linkedin, true)
+        ].filter { !$0.2.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    }
+    private var contactReuseSection: some View {
+        Section {
+            Button { focusedField = nil; reuseExpanded.toggle() } label: {
+                Label(l10n("Reuse your contact details"), systemImage: reuseExpanded ? "chevron.up" : "chevron.down")
+                    .fixedSize(horizontal: false, vertical: true).frame(minHeight: 44)
+            }.accessibilityIdentifier("profile.reuse")
+                .accessibilityValue(l10n(reuseExpanded ? "Expanded" : "Collapsed"))
+            if reuseExpanded {
+                ForEach(contactReuseFields, id: \.id) { field in
+                    Button {
+                        // The chosen field only; no account, form or network operation.
+                        UIPasteboard.general.setItems([[UTType.utf8PlainText.identifier: field.value]],
+                            options: [.localOnly: true, .expirationDate: Date().addingTimeInterval(300)])
+                        contactCopied = true
+                        UIAccessibility.post(notification: .announcement,
+                            argument: l10n("Copied. Paste it into the employer’s form and check it before submitting."))
+                    } label: {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(l10n.format("Copy {0}", [l10n(field.label)]))
+                            Text(field.value).font(.caption).foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .environment(\.layoutDirection, field.leftToRight ? .leftToRight : layoutDirection)
+                        }.frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                    }.accessibilityIdentifier("profile.copy.\(field.id)")
+                        .accessibilityLabel(l10n.format("Copy {0}", [l10n(field.label)]))
+                        .accessibilityValue(field.value)
+                }
+                if contactCopied {
+                    Text(l10n("Copied. Paste it into the employer’s form and check it before submitting."))
+                        .font(.footnote).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                        .accessibilityIdentifier("profile.copy.confirmation")
+                }
+            }
+        }
+    }
     private func resetFromModel() {
         draft = model.profile; original = draft; originallyDirty = model.profileNeedsSync
         context = model.editContext; checkpointed = false; issue = nil
@@ -741,7 +812,7 @@ struct NativeOpportunityEditor: View {
     private var changed: Bool { draft != original }
     var body: some View {
         NavigationStack {
-            Form {
+            NativeForm {
                 Section {
                     TextField("https://…", text: $draft.url).keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
                         .accessibilityLabel(l10n("Public HTTPS job link")).accessibilityIdentifier("opportunity.url")
@@ -764,7 +835,7 @@ struct NativeOpportunityEditor: View {
                         }
                     }
                 }
-                if let issue { Section { Text(l10n.message(issue)).foregroundStyle(.red).accessibilityIdentifier("opportunity.error") } }
+                if let issue { Section { Text(l10n.message(issue)).foregroundStyle(NativeDesign.danger).accessibilityIdentifier("opportunity.error") } }
                 Section {
                     Text(l10n("Saving a job does not apply to it. Automatic submission eligibility is checked when you review your selection."))
                         .font(.caption).foregroundStyle(.secondary)
@@ -833,7 +904,7 @@ struct NativeApplicationConnection: View {
     }
     var body: some View {
         NavigationStack {
-            Form {
+            NativeForm {
                 Section {
                     Image(systemName: "lock.shield").font(.largeTitle).foregroundStyle(ApplyDesign.accent).padding(.vertical, 8)
                     Text(l10n(model.connected ? "Your application workspace is connected." : "Connect your phone in two steps."))
@@ -917,7 +988,7 @@ struct NativeApplicationConnection: View {
                 }
                 if let issue {
                     Section {
-                        Text(l10n.message(issue)).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+                        Text(l10n.message(issue)).foregroundStyle(NativeDesign.danger).fixedSize(horizontal: false, vertical: true)
                             .accessibilityIdentifier("connection.issue")
                     }
                 } else if let notice = model.message {
@@ -1122,9 +1193,9 @@ private struct NativeApplicationReview: View {
                                "consentStore": "Application data permission", "consentMarketing": "Future opportunities"]
     var body: some View {
         NavigationStack {
-            List {
+            NativeList {
                 Section {
-                    Text(l10n("One final look.")).font(.largeTitle.weight(.bold))
+                    Text(l10n("Review application details")).font(.largeTitle.weight(.bold))
                     Text(l10n("Review the exact details below. Only eligible applications in this review will be sent."))
                         .font(.subheadline).foregroundStyle(.secondary)
                     if model.mode == "test" {
@@ -1310,7 +1381,7 @@ private struct NativeApplicationReceipt: View {
                 }
                 Spacer(minLength: 8)
                 Image(systemName: verified ? "checkmark.seal.fill" : state == "uncertain" ? "clock.badge.questionmark" : "paperplane")
-                    .foregroundStyle(verified && !test ? ApplyDesign.accent : Color.secondary)
+                    .foregroundStyle(verified && !test ? ApplyDesign.accent : NativeDesign.muted)
             }
             Text(l10n(MobileApplicationPolicy.stateTitle(state, test: test))).font(.caption.weight(.semibold))
                 .padding(.horizontal, 10).padding(.vertical, 6)
@@ -1369,13 +1440,13 @@ struct NativePhoneDataScreen: View {
         model.workspaceScope.isLocal ? l10n("Unpaired phone workspace") : model.workspaceScope.origin + " · " + String(model.workspaceScope.workspaceID.suffix(8))
     }
     var body: some View {
-        List {
+        NativeList {
             Section(l10n("Current phone workspace")) {
                 Text(target).font(.subheadline).textSelection(.enabled)
                 Text(l10n("Your local profile, selected PDF, saved links, private records, their history and unfinished record drafts are kept separately for each workspace."))
                     .font(.footnote).foregroundStyle(.secondary)
             }
-            if let issue { Section { Text(l10n.message(issue)).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true) } }
+            if let issue { Section { Text(l10n.message(issue)).foregroundStyle(NativeDesign.danger).fixedSize(horizontal: false, vertical: true) } }
             if let notice = model.message { Section { Text(l10n(notice)).font(.footnote).fixedSize(horizontal: false, vertical: true) } }
             Section(l10n("Export and recovery")) {
                 Button(l10n("Export this phone workspace")) {

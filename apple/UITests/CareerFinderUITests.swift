@@ -68,7 +68,8 @@ final class CareerFinderUITests: XCTestCase {
             let navigation = app.navigationBars.firstMatch, tabs = app.tabBars.firstMatch
             let top = max(viewport.minY, navigation.exists ? navigation.frame.maxY + 8 : viewport.minY + 8)
             var bottom = min(viewport.maxY, tabs.exists ? tabs.frame.minY - 8 : viewport.maxY - 8)
-            let action = app.buttons["applications.review"]
+            let reviewAction = app.buttons["applications.review"]
+            let action = reviewAction.exists ? reviewAction : app.buttons["applications.manual"]
             if action.exists && action.isHittable { bottom = min(bottom, action.frame.minY - 12) }
             viewport = CGRect(x: viewport.minX + 12, y: top, width: viewport.width - 24, height: bottom - top)
             XCTAssertGreaterThan(viewport.height, 120, "Application content must have a usable touch viewport")
@@ -474,7 +475,13 @@ final class CareerFinderUITests: XCTestCase {
         XCTAssertTrue(app.buttons["profile.applicationProfile"].waitForExistence(timeout: 5))
         tab("Apply", in: app)
         XCTAssertTrue(app.buttons["applications.profile"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.buttons["applications.review"].exists)
+        let manual = app.buttons["applications.manual"]
+        XCTAssertTrue(manual.exists && manual.isEnabled && manual.isHittable)
+        XCTAssertEqual(manual.label, "Search jobs")
+        manual.tap()
+        XCTAssertTrue(app.textFields["discovery.keywords"].waitForExistence(timeout: 5),
+                      "A guest can search for a job without connecting an application service")
+        tab("Apply", in: app)
         capture("03-application-workspace-empty", app: app)
     }
 
@@ -518,6 +525,9 @@ final class CareerFinderUITests: XCTestCase {
         app.buttons["Done typing"].tap()
         XCTAssertTrue(app.buttons["application.openLinkedIn"].exists || app.links["application.openLinkedIn"].exists,
                       "A valid saved profile offers an explicit external open action")
+        let roles = element("application.targetRoles", app: app); reveal(roles, in: app)
+        replace(roles, with: "Research", in: app)
+        finishTyping(in: app)
         app.navigationBars.buttons["Save"].tap()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 5))
         app.terminate(); app = launch(id: id)
@@ -527,6 +537,13 @@ final class CareerFinderUITests: XCTestCase {
         capture("16-linkedin-profile-link", app: app)
         app.navigationBars.buttons["Cancel"].tap()
         tab("Search", in: app)
+        let profileRoles = app.buttons["discovery.profileRoles"]; reveal(profileRoles, in: app); profileRoles.tap()
+        let role = app.buttons["discovery.profileRole.0"]; reveal(role, in: app); role.tap()
+        XCTAssertEqual(app.textFields["discovery.keywords"].value as? String, "Research")
+        XCTAssertTrue(["", "Location text (optional)"].contains(app.textFields["discovery.location"].value as? String ?? ""))
+        XCTAssertEqual(app.switches["discovery.remote"].value as? String, "0", "Choosing a role must not infer remote eligibility")
+        capture("30-profile-role-shortcut", app: app)
+        reveal(profileRoles, in: app); profileRoles.tap()
         let search = element("discovery.linkedin", app: app); reveal(search, in: app)
         XCTAssertTrue(search.isHittable, "LinkedIn search must be a deliberate external action")
         capture("17-linkedin-search-choice", app: app)
@@ -560,7 +577,7 @@ final class CareerFinderUITests: XCTestCase {
                       "The selected follow-up date must survive relaunch")
         capture("18-private-record-restored", app: app)
         let reopen = app.buttons["record.edit"]; reveal(reopen, in: app); reopen.tap()
-        element("record.stage", app: app).tap(); chooseMenu("Saved", in: app)
+        element("record.stage", app: app).tap(); chooseMenu("Saved for later", in: app)
         XCTAssertTrue(element("record.stage", app: app).label.contains("Saved"))
         app.buttons["record.save"].tap()
         XCTAssertTrue(app.buttons["Keep application record"].waitForExistence(timeout: 5))
@@ -568,10 +585,10 @@ final class CareerFinderUITests: XCTestCase {
         app.navigationBars.buttons["Cancel"].tap(); app.buttons["Discard changes"].tap()
         XCTAssertEqual(element("record.stageSummary", app: app).label, "You marked: Applied", "Canceling a correction preserves the saved applied record")
         let again = app.buttons["record.edit"]; reveal(again, in: app); again.tap()
-        element("record.stage", app: app).tap(); chooseMenu("Saved", in: app); app.buttons["record.save"].tap()
+        element("record.stage", app: app).tap(); chooseMenu("Saved for later", in: app); app.buttons["record.save"].tap()
         app.buttons["Mark not applied"].tap()
         XCTAssertTrue(app.buttons["record.edit"].waitForExistence(timeout: 5))
-        XCTAssertEqual(element("record.stageSummary", app: app).label, "You marked: Saved")
+        XCTAssertEqual(element("record.stageSummary", app: app).label, "You marked: Saved for later")
         app.navigationBars.buttons.element(boundBy: 0).tap()
         element("saved.filter", app: app).tap(); chooseMenu("Follow-ups", in: app)
         XCTAssertTrue(app.staticTexts[title].waitForExistence(timeout: 5), "The private follow-up remains available after an explicit applied-mark correction")
@@ -604,6 +621,15 @@ final class CareerFinderUITests: XCTestCase {
         let profile = app.buttons["home.applicationProfile"]; reveal(profile, in: app); profile.tap()
         replace(app.textFields["application.firstName"], with: "Alex", in: app)
         replace(app.textFields["application.email"], with: "invalid-email", in: app)
+        finishTyping(in: app)
+        let reuse = app.buttons["profile.reuse"]; reveal(reuse, in: app); reuse.tap()
+        let copyName = app.buttons["profile.copy.firstName"]; reveal(copyName, in: app)
+        XCTAssertEqual(copyName.value as? String, "Alex", "Only the chosen visible field is offered for copying")
+        copyName.tap()
+        let copied = app.staticTexts["profile.copy.confirmation"]
+        XCTAssertTrue(copied.waitForExistence(timeout: 5))
+        reveal(copied, in: app)
+        capture("31-profile-contact-reuse", app: app)
         app.navigationBars.buttons["Save"].tap()
         tab("Apply", in: app)
         let email = element("profile.essential.email", app: app); reveal(email, in: app)
@@ -611,7 +637,8 @@ final class CareerFinderUITests: XCTestCase {
         XCTAssertEqual(element("profile.essential.name", app: app).label, "Name added")
         XCTAssertEqual(element("profile.essential.resume", app: app).label, "PDF CV needed")
         capture("21-profile-readiness", app: app)
-        let setup = app.buttons["applications.review"]
+        let setup = app.buttons["applications.connect"]
+        revealInApplicationContent(setup, app: app)
         XCTAssertTrue(setup.isEnabled && setup.isHittable, "The visible setup action must be enabled")
         setup.tap()
         let opened = app.navigationBars["Application connection"].waitForExistence(timeout: 5)
@@ -836,7 +863,11 @@ final class CareerFinderUITests: XCTestCase {
         capture("11-employer-boards-accessibility-text", app: app)
         app.navigationBars.buttons["Done"].tap()
         tab("Apply", in: app)
-        let review = app.buttons["applications.review"]
+        let manual = app.buttons["applications.manual"]
+        XCTAssertTrue(manual.isHittable && manual.isEnabled)
+        XCTAssertEqual(manual.label, "Search jobs")
+        let review = app.buttons["applications.connect"]
+        revealInApplicationContent(review, app: app)
         XCTAssertTrue(review.isHittable)
         XCTAssertEqual(review.label, "Connect application workspace")
         capture("12-application-workspace-accessibility-text", app: app)
@@ -1007,7 +1038,8 @@ final class CareerFinderUITests: XCTestCase {
         app.terminate()
         app = launch(largeText: true, languages: "(ar)")
         tab("التقديم", in: app)
-        let review = app.buttons["applications.review"]
+        let review = app.buttons["applications.connect"]
+        revealInApplicationContent(review, app: app)
         XCTAssertTrue(review.waitForExistence(timeout: 5) && review.isEnabled && review.isHittable)
         review.tap()
         let connection = app.navigationBars["اتصال التقديم"]

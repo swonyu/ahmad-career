@@ -145,6 +145,7 @@
 "Application plan" = "Application plan";
 "Application preparation checklist" = "Application preparation checklist";
 "Application profile" = "Application profile";
+"Application receipts" = "Application receipts";
 "Application record" = "Application record";
 "Application record for {0} at {1}" = "Application record for {0} at {1}";
 "Application record · saved link removed" = "Application record · saved link removed";
@@ -168,6 +169,7 @@
 "Applied on" = "Applied on";
 "Applied, Interview and Offer mark this role as already applied. Closed keeps any earlier applied mark." = "Applied, Interview and Offer mark this role as already applied. Closed keeps any earlier applied mark.";
 "Apply" = "Apply";
+"Apply on the employer’s website" = "Apply on the employer’s website";
 "Apply personally" = "Apply personally";
 "Approve and Auto Apply" = "Approve and Auto Apply";
 "Approved" = "Approved";
@@ -372,6 +374,7 @@
 "Copied into a private workspace draft. Save the profile and sync each opportunity when ready. Nothing was sent to employers." = "Copied into a private workspace draft. Save the profile and sync each opportunity when ready. Nothing was sent to employers.";
 "Copied on this phone. Review the saved record versions in Saved; all were kept." = "Copied on this phone. Review the saved record versions in Saved; all were kept.";
 "Copied record" = "Copied record";
+"Copied. Paste it into the employer’s form and check it before submitting." = "Copied. Paste it into the employer’s form and check it before submitting.";
 "Copies this public job link and role details. Your original notes and status stay here. Saving does not apply." = "Copies this public job link and role details. Your original notes and status stay here. Saving does not apply.";
 "Copy draft and merge records" = "Copy draft and merge records";
 "Copy saved links and private records" = "Copy saved links and private records";
@@ -380,6 +383,7 @@
 "Copy to application workspace" = "Copy to application workspace";
 "Copy your phone draft" = "Copy your phone draft";
 "Copy your unpaired draft here?" = "Copy your unpaired draft here?";
+"Copy {0}" = "Copy {0}";
 "Copying never applies to an employer. Your application review and approval are still required." = "Copying never applies to an employer. Your application review and approval are still required.";
 "Could not be reached" = "Could not be reached";
 "Country" = "Country";
@@ -501,6 +505,7 @@
 "Enter the HTTPS address from your application-service invitation." = "Enter the HTTPS address from your application-service invitation.";
 "Enter the code you just created. Connecting alone does not upload your profile or apply for a job." = "Enter the code you just created. Connecting alone does not upload your profile or apply for a job.";
 "Enter the one-time pairing code from your service." = "Enter the one-time pairing code from your service.";
+"Enter two-letter country codes separated by commas, or leave them blank. Only a role you choose on Search fills the job-title field. Other preferences do not filter results or establish work authorization." = "Enter two-letter country codes separated by commas, or leave them blank. Only a role you choose on Search fills the job-title field. Other preferences do not filter results or establish work authorization.";
 "Entry" = "Entry";
 "Entry level" = "Entry level";
 "Every attempt, accounted for." = "Every attempt, accounted for.";
@@ -608,7 +613,9 @@
 "Invalid recovery area." = "Invalid recovery area.";
 "Job link" = "Job link";
 "Job links and applications" = "Job links and applications";
+"Job preferences" = "Job preferences";
 "Job results could not be verified. Earlier results are still available." = "Job results could not be verified. Earlier results are still available.";
+"Job title or keyword" = "Job title or keyword";
 "Jobs" = "Jobs";
 "Jobs saved from Search and your own links are ready in the application workspace. Earlier planning records remain available below." = "Jobs saved from Search and your own links are ready in the application workspace. Earlier planning records remain available below.";
 "Keep Career Finder open to continue the approved batch. Leaving the app pauses the next request; an application already sent may still finish." = "Keep Career Finder open to continue the approved batch. Leaving the app pauses the next request; an application already sent may still finish.";
@@ -784,6 +791,7 @@
 "One-time connection code" = "One-time connection code";
 "Only a default for your local offer calculator. Existing SAR criteria and source evidence stay SAR; no conversion is performed." = "Only a default for your local offer calculator. Existing SAR criteria and source evidence stay SAR; no conversion is performed.";
 "Only a link saved on this phone can be removed here. Connected records are preserved." = "Only a link saved on this phone can be removed here. Connected records are preserved.";
+"Only a role you choose on Search fills the job-title field. Other preferences do not filter results or establish work authorization." = "Only a role you choose on Search fills the job-title field. Other preferences do not filter results or establish work authorization.";
 "Only change this if you use another Career Finder service. Get a new code from that service’s own setup page." = "Only change this if you use another Career Finder service. Get a new code from that service’s own setup page.";
 "Only live provider acceptance with a receipt ID is counted. Test results and uncertain requests are excluded." = "Only live provider acceptance with a receipt ID is counted. Test results and uncertain requests are excluded.";
 "Only part of this board was included." = "Only part of this board was included.";
@@ -800,6 +808,7 @@
 "Open employer posting" = "Open employer posting";
 "Open official application" = "Open official application";
 "Open original employer board" = "Open original employer board";
+"Open saved jobs" = "Open saved jobs";
 "Open saved opportunities" = "Open saved opportunities";
 "Open saved workspace · " = "Open saved workspace · ";
 "Open saved workspace · {0}" = "Open saved workspace · {0}";
@@ -1040,9 +1049,11 @@
 "Retry saving search" = "Retry saving search";
 "Retry this search" = "Retry this search";
 "Return to Saved to see your current opportunities." = "Return to Saved to see your current opportunities.";
+"Reuse your contact details" = "Reuse your contact details";
 "Review a Career Finder iPhone or Android backup before merging it here. You choose whether to replace profile fields or the last search. Existing notes and conflicting history versions are kept." = "Review a Career Finder iPhone or Android backup before merging it here. You choose whether to replace profile fields or the last search. Existing notes and conflicting history versions are kept.";
 "Review all incoming details" = "Review all incoming details";
 "Review and rewrite every draft before using it. Recheck salary, deadlines and qualifications directly with the employer." = "Review and rewrite every draft before using it. Recheck salary, deadlines and qualifications directly with the employer.";
+"Review application details" = "Review application details";
 "Review application records" = "Review application records";
 "Review applications" = "Review applications";
 "Review applications: {0}" = "Review applications: {0}";
@@ -1057,6 +1068,7 @@
 "Review preparation note" = "Review preparation note";
 "Review prepared. Nothing has been submitted." = "Review prepared. Nothing has been submitted.";
 "Review preserved copy" = "Review preserved copy";
+"Review profile and CV" = "Review profile and CV";
 "Review profile and résumé" = "Review profile and résumé";
 "Review remaining applications" = "Review remaining applications";
 "Review saved phone draft" = "Review saved phone draft";
@@ -1119,6 +1131,7 @@
 "Save record on this phone" = "Save record on this phone";
 "Save synchronizes these details with your connected application service." = "Save synchronizes these details with your connected application service.";
 "Save the acknowledgement and update your application status." = "Save the acknowledgement and update your application status.";
+"Save the job before opening the employer’s page. Check its requirements, location and deadline there." = "Save the job before opening the employer’s page. Check its requirements, location and deadline there.";
 "Save your current application details before approving a submission." = "Save your current application details before approving a submission.";
 "Save your current application details before approving this review." = "Save your current application details before approving this review.";
 "Save your latest profile draft before preparing a review." = "Save your latest profile draft before preparing a review.";
@@ -1133,6 +1146,7 @@
 "Saved data could not be read or written safely. Nothing was restored." = "Saved data could not be read or written safely. Nothing was restored.";
 "Saved employer lead. Its current availability is not established by the latest search. Recheck the official page before applying." = "Saved employer lead. Its current availability is not established by the latest search. Recheck the official page before applying.";
 "Saved for application review" = "Saved for application review";
+"Saved for later" = "Saved for later";
 "Saved in your application workspace" = "Saved in your application workspace";
 "Saved job details in this backup exceed the common 500-character limit." = "Saved job details in this backup exceed the common 500-character limit.";
 "Saved jobs" = "Saved jobs";
@@ -1163,6 +1177,7 @@
 "Search" = "Search";
 "Search LinkedIn" = "Search LinkedIn";
 "Search LinkedIn opens its public job search with only the keyword and location text you entered. No application profile, CV or Career Finder connection token is included in that link. Applications completed on LinkedIn remain manual records in Career Finder unless a supported employer provider independently returns a receipt." = "Search LinkedIn opens its public job search with only the keyword and location text you entered. No application profile, CV or Career Finder connection token is included in that link. Applications completed on LinkedIn remain manual records in Career Finder unless a supported employer provider independently returns a receipt.";
+"Search a role from your saved profile" = "Search a role from your saved profile";
 "Search again" = "Search again";
 "Search again for current openings." = "Search again for current openings.";
 "Search and save jobs" = "Search and save jobs";
@@ -1184,6 +1199,7 @@
 "Search the public employer board for " = "Search the public employer board for ";
 "Search the public employer board for {0}" = "Search the public employer board for {0}";
 "Search uses the public Career Finder discovery service to retrieve postings from your selected Greenhouse and Lever employer boards. It receives the role words, location text and board choices you enter, along with normal connection information. No application token, account cookie, email, applicant profile or CV is sent. Public board metadata is cached by the service; search words are not forwarded to employers but may appear in ordinary hosting request logs." = "Search uses the public Career Finder discovery service to retrieve postings from your selected Greenhouse and Lever employer boards. It receives the role words, location text and board choices you enter, along with normal connection information. No application token, account cookie, email, applicant profile or CV is sent. Public board metadata is cached by the service; search words are not forwarded to employers but may appear in ordinary hosting request logs.";
+"Searches titles, employers and available summaries." = "Searches titles, employers and available summaries.";
 "Searching employer boards…" = "Searching employer boards…";
 "Select at least one synced opportunity." = "Select at least one synced opportunity.";
 "Select for Auto Apply review" = "Select for Auto Apply review";
@@ -1497,6 +1513,7 @@
 "This file is damaged or uses an unsupported backup version. Existing phone data is unchanged." = "This file is damaged or uses an unsupported backup version. Existing phone data is unchanged.";
 "This file is not a readable PDF. Choose your CV as a PDF." = "This file is not a readable PDF. Choose your CV as a PDF.";
 "This file is too large. Choose a PDF up to 5 MB." = "This file is too large. Choose a PDF up to 5 MB.";
+"This fills the job title only. Choose Search jobs to run the search." = "This fills the job title only. Choose Search jobs to run the search.";
 "This filter stays monthly SAR regardless of planning currency. Use whole SAR; blank or zero means no minimum. Confirm basic salary versus fixed package. This retained preference does not filter the new public board search. It stays on this device and is excluded from discovery requests and application notes." = "This filter stays monthly SAR regardless of planning currency. Use whole SAR; blank or zero means no minimum. Confirm basic salary versus fixed package. This retained preference does not filter the new public board search. It stays on this device and is excluded from discovery requests and application notes.";
 "This hosted workspace is being deleted. New submissions are stopped. Open account management for its current status; your phone draft is kept." = "This hosted workspace is being deleted. New submissions are stopped. Open account management for its current status; your phone draft is kept.";
 "This is a public lead, not a verified personal fit score. A listing may change or close after it was checked." = "This is a public lead, not a verified personal fit score. A listing may change or close after it was checked.";
@@ -1660,6 +1677,7 @@
 "Waiting for provider" = "Waiting for provider";
 "Waiting to retry" = "Waiting to retry";
 "Website" = "Website";
+"Website or portfolio" = "Website or portfolio";
 "Website or portfolio (optional)" = "Website or portfolio (optional)";
 "Weekly" = "Weekly";
 "What comes next" = "What comes next";
@@ -1712,6 +1730,7 @@
 "Your draft is kept. Before sharing it: " = "Your draft is kept. Before sharing it: ";
 "Your draft is kept. Before sharing it: {0}" = "Your draft is kept. Before sharing it: {0}";
 "Your draft is stored privately on this phone. Connect an application service when you are ready to submit." = "Your draft is stored privately on this phone. Connect an application service when you are ready to submit.";
+"Your draft is stored privately on this phone. You can copy these details when applying on an employer’s website." = "Your draft is stored privately on this phone. You can copy these details when applying on an employer’s website.";
 "Your edited fields are kept as a private draft. Review the résumé, then save when ready." = "Your edited fields are kept as a private draft. Review the résumé, then save when ready.";
 "Your edited fields are safe on this phone. Compare them with saved version " = "Your edited fields are safe on this phone. Compare them with saved version ";
 "Your edited fields are safe on this phone. Compare them with saved version {0}" = "Your edited fields are safe on this phone. Compare them with saved version {0}";

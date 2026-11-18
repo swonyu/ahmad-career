@@ -110,7 +110,7 @@ enum PhoneApplicationStage: String, Codable, CaseIterable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .saved: return "Saved"
+        case .saved: return "Saved for later"
         case .applied: return "Applied"
         case .interview: return "Interview"
         case .offer: return "Offer"

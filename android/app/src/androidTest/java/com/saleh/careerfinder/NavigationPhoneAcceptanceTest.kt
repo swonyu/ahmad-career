@@ -161,7 +161,7 @@ class NavigationPhoneAcceptanceTest {
         val job = addJob()
         compose.runOnIdle { model.markAppliedElsewhere(job.id, true) }
         compose.waitUntil(5_000) { !model.state.value.busy && job.id in model.state.value.manualApplied }
-        openRecord(job); stage("Saved")
+        openRecord(job); stage("Saved for later")
         val original = store.records.getValue("workspace-unpaired")
         save()
         compose.onNodeWithText(strings("Mark as not applied?")).assertIsDisplayed()
@@ -170,7 +170,7 @@ class NavigationPhoneAcceptanceTest {
         compose.onNodeWithText(strings("Keep application record")).performClick()
         assertTrue(job.id in model.state.value.manualApplied)
         assertEquals(JSONObject(original).getJSONObject("applicationRecords").toString(), store.read("workspace-unpaired")!!.getJSONObject("applicationRecords").toString())
-        stage("Saved"); save()
+        stage("Saved for later"); save()
         compose.onNodeWithText(strings("Mark not applied")).performClick()
         compose.waitUntil(5_000) { !model.state.value.busy && model.state.value.applicationRecordEditor == null }
         assertFalse(job.id in model.state.value.manualApplied)
@@ -269,8 +269,26 @@ class NavigationPhoneAcceptanceTest {
     }
 
     @Test fun recreatedPhone_showsPreviousResults_andSearchAgainIsAnExplicitFreshRequest() {
-        compose.onNodeWithTag("discovery-list").performScrollToNode(hasText(strings("Role, skill or keyword")) and hasSetTextAction())
-        compose.onNode(hasText(strings("Role, skill or keyword")) and hasSetTextAction()).performTextInput("care")
+        compose.runOnIdle {
+            model.editProfile { it.copy(targetRoles = "research, care", targetCountries = "JP", workModes = setOf("remote")) }
+        }
+        val filtersBeforeShortcut = model.discovery.state.value.filters
+        compose.onNodeWithTag("discovery-list").performScrollToNode(hasTestTag("discovery.profileRoles"))
+        compose.onNodeWithTag("discovery.profileRoles").performClick()
+        compose.onNodeWithTag("discovery-list").performScrollToNode(hasTestTag("discovery.profileRole.0"))
+        compose.onNodeWithTag("discovery.profileRole.0").performClick()
+        compose.runOnIdle {
+            assertEquals(filtersBeforeShortcut.copy(query = "research"), model.discovery.state.value.filters)
+            assertTrue("Choosing a saved role must not run a search", searches.isEmpty())
+            assertEquals(0, catalogCalls)
+        }
+        capture("profile-role-shortcut")
+        compose.onNodeWithTag("discovery-list").performScrollToNode(hasTestTag("discovery.profileRoles"))
+        compose.onNodeWithTag("discovery.profileRoles").performClick()
+        compose.onNodeWithTag("discovery-list").performScrollToNode(hasText(strings("Job title or keyword")) and hasSetTextAction())
+        compose.onNode(hasText(strings("Job title or keyword")) and hasSetTextAction()).performTextClearance()
+        compose.onNodeWithTag("discovery-list").performScrollToNode(hasText(strings("Job title or keyword")) and hasSetTextAction())
+        compose.onNode(hasText(strings("Job title or keyword")) and hasSetTextAction()).performTextInput("care")
         hideKeyboard()
         val searchAction = hasText(strings("Search jobs")) and hasClickAction()
         compose.onNodeWithTag("discovery-list").performScrollToNode(searchAction)

@@ -1,9 +1,12 @@
 package com.saleh.careerfinder
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -625,7 +628,19 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
     LazyColumn(Modifier.fillMaxSize().imePadding().testTag("apply-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         item { Heading("Applications", "Prepare your details, choose a role and review your application options.") }
         if (state.connection == null || state.requiresPairing) item {
-            EmptyState("No connected workspace", "Keep building your profile and saved roles on this phone. The hosted preview has live automatic submissions disabled. Use employer links to apply manually.", Icons.Default.Lock, "Connect application workspace", connect)
+            Panel {
+                Text(l10n("Apply on the employer’s website"), style = MaterialTheme.typography.titleLarge)
+                Text(l10n("Save the job before opening the employer’s page. Check its requirements, location and deadline there."))
+                Button(onClick = jobs, modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp).testTag("apply.manual")) {
+                    Text(l10n("Open saved jobs"))
+                }
+                TextButton(onClick = profile, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                    Text(l10n("Review profile and CV"))
+                }
+                TextButton(onClick = connect, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("apply.connect")) {
+                    Text(l10n("Connect application workspace"))
+                }
+            }
         }
         if (state.connection != null && !state.requiresPairing && !state.liveEnabled && !state.testService) item {
             Panel {
@@ -857,6 +872,7 @@ internal fun GettingStartedPanel(state: CareerUiState, profile: () -> Unit, conn
 private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePDF: () -> Unit) {
     val l10n = rememberCareerStrings()
     val profile = state.profile
+    val reusableContact = contactReuseFields(profile)
     val errors = ProfileValidation.errors(profile)
     var reload by remember { mutableStateOf(false) }
     var details by rememberSaveable { mutableStateOf(false) }
@@ -878,6 +894,9 @@ private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePD
         item { Field("Last name (optional)", profile.lastName, { model.editProfile { p -> p.copy(lastName = it) } }, enabled = !state.busy, error = errors["lastName"]) }
         item { Field("Email", profile.email, { model.editProfile { p -> p.copy(email = it) } }, KeyboardType.Email, enabled = !state.busy,
             error = errors["email"]) }
+        if (reusableContact.isNotEmpty()) item {
+            ProfileContactReuse(reusableContact, !state.busy, state.privateScope)
+        }
         item {
             Panel {
                 Text(l10n("Your résumé"), style = MaterialTheme.typography.titleLarge)
@@ -928,7 +947,7 @@ private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePD
                                 modifier = Modifier.heightIn(min = 48.dp).semantics { role = Role.RadioButton; contentDescription = l10n.format("Experience level: {0}", listOf(l10n(label)))})
                         }
                     }
-                    Text(l10n("Preferences help describe your search. They do not confirm work authorization or employer eligibility."), style = MaterialTheme.typography.bodySmall)
+                    Text(l10n("Only a role you choose on Search fills the job-title field. Other preferences do not filter results or establish work authorization."), style = MaterialTheme.typography.bodySmall)
                 }
             }
         }
@@ -956,6 +975,56 @@ private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePD
         text = { Text(l10n("This replaces the edits currently shown with the saved version.")) },
         confirmButton = { TextButton(onClick = { reload = false; model.reloadProfile() }) { Text(l10n("Reload")) } },
         dismissButton = { TextButton(onClick = { reload = false }) { Text(l10n("Keep editing")) } })
+}
+
+private data class ContactReuseField(val id: String, val label: String, val value: String, val leftToRight: Boolean = false)
+
+private fun contactReuseFields(profile: ProfileDraft): List<ContactReuseField> = listOf(
+    ContactReuseField("firstName", "First or single name", profile.firstName),
+    ContactReuseField("lastName", "Last name", profile.lastName),
+    ContactReuseField("email", "Email", profile.email, true),
+    ContactReuseField("phone", "Phone", profile.phone, true),
+    ContactReuseField("city", "City", profile.city),
+    ContactReuseField("website", "Website or portfolio", profile.website, true),
+    ContactReuseField("linkedin", "LinkedIn profile", profile.linkedin, true)
+).filter { it.value.isNotBlank() }
+
+@Composable
+private fun ProfileContactReuse(fields: List<ContactReuseField>, enabled: Boolean, scope: String) {
+    val l10n = rememberCareerStrings()
+    val clipboard = LocalContext.current.getSystemService(ClipboardManager::class.java)
+    var expanded by rememberSaveable(scope) { mutableStateOf(false) }
+    var copied by remember(scope, fields) { mutableStateOf(false) }
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        OutlinedButton(onClick = { expanded = !expanded }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
+            .testTag("profile.reuse").semantics { stateDescription = l10n(if (expanded) "Expanded" else "Collapsed") }) {
+            Text(l10n("Reuse your contact details"))
+        }
+        if (expanded) {
+            fields.forEach { field ->
+                OutlinedButton(onClick = {
+                    // Only this chosen field is written to the device clipboard.
+                    val clip = ClipData.newPlainText(l10n(field.label), field.value)
+                    clip.description.extras = PersistableBundle().apply {
+                        putBoolean("android.content.extra.IS_SENSITIVE", true)
+                    }
+                    clipboard?.setPrimaryClip(clip)
+                    copied = clipboard != null
+                }, enabled = enabled && clipboard != null,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("profile.copy." + field.id)) {
+                    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(l10n.format("Copy {0}", listOf(l10n(field.label))))
+                        Text(field.value, style = MaterialTheme.typography.bodySmall.copy(
+                            textDirection = if (field.leftToRight) TextDirection.Ltr else TextDirection.Content),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+            }
+            if (copied) Text(l10n("Copied. Paste it into the employer’s form and check it before submitting."),
+                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.testTag("profile.copy.confirmation").semantics { liveRegion = LiveRegionMode.Polite })
+        }
+    }
 }
 
 @Composable

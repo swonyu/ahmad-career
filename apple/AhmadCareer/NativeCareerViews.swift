@@ -28,11 +28,64 @@ enum NativeDesign {
                            blue: CGFloat(hex & 0xff) / 255, alpha: 1)
         })
     }
-    static let accent = adaptive(light: 0x5B50CE, dark: 0xB6B0FF)
-    static let actionFill = Color(red: 91 / 255.0, green: 80 / 255.0, blue: 206 / 255.0)
-    static let canvas = adaptive(light: 0xF4F5FA, dark: 0x10121B)
-    static let surface = adaptive(light: 0xFFFFFF, dark: 0x1B1E2B)
-    static let accentSurface = adaptive(light: 0xECEAFF, dark: 0x29253F)
+    private static func adaptive(light: UIColor, dark: UInt32) -> Color {
+        Color(uiColor: UIColor { traits in
+            guard traits.userInterfaceStyle == .dark else { return light.resolvedColor(with: traits) }
+            return UIColor(red: CGFloat((dark >> 16) & 0xff) / 255,
+                           green: CGFloat((dark >> 8) & 0xff) / 255,
+                           blue: CGFloat(dark & 0xff) / 255, alpha: 1)
+        })
+    }
+    static let accent = adaptive(light: 0x5B50CE, dark: 0xA5ACFF)
+    static let actionFill = adaptive(light: 0x5B50CE, dark: 0xA5ACFF)
+    static let actionText = adaptive(light: 0xFFFFFF, dark: 0x151936)
+    static let canvas = adaptive(light: 0xF4F5FA, dark: 0x101322)
+    static let surface = adaptive(light: 0xFFFFFF, dark: 0x191E33)
+    static let accentSurface = adaptive(light: 0xECEAFF, dark: 0x2A3153)
+    static let text = adaptive(light: .label, dark: 0xF3F0E9)
+    static let muted = adaptive(light: .secondaryLabel, dark: 0xBBC3DD)
+    static let border = adaptive(light: .separator, dark: 0x3B4563)
+    static let danger = adaptive(light: .systemRed, dark: 0xFFB5C2)
+}
+
+// These wrappers style only Career Finder's SwiftUI lists and forms.
+// No UIKit appearance proxy or browser controller is changed.
+struct NativeScrollPalette: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
+    @ViewBuilder func body(content: Content) -> some View {
+        if colorScheme == .dark {
+            content.scrollContentBackground(.hidden).background(NativeDesign.canvas)
+                .foregroundStyle(NativeDesign.text, NativeDesign.muted)
+                .toolbarBackground(NativeDesign.canvas, for: .navigationBar, .tabBar)
+                .toolbarBackground(.visible, for: .navigationBar, .tabBar)
+        } else {
+            content
+        }
+    }
+}
+
+struct NativeList<Content: View>: View {
+    @Environment(\.colorScheme) private var colorScheme
+    private let content: Content
+    init(@ViewBuilder content: () -> Content) { self.content = content() }
+    var body: some View {
+        List {
+            content.listRowBackground(colorScheme == .dark ? NativeDesign.surface : nil)
+                .listRowSeparatorTint(colorScheme == .dark ? NativeDesign.border : nil)
+        }.modifier(NativeScrollPalette())
+    }
+}
+
+struct NativeForm<Content: View>: View {
+    @Environment(\.colorScheme) private var colorScheme
+    private let content: Content
+    init(@ViewBuilder content: () -> Content) { self.content = content() }
+    var body: some View {
+        Form {
+            content.listRowBackground(colorScheme == .dark ? NativeDesign.surface : nil)
+                .listRowSeparatorTint(colorScheme == .dark ? NativeDesign.border : nil)
+        }.modifier(NativeScrollPalette())
+    }
 }
 
 @MainActor
@@ -148,7 +201,7 @@ private struct NativeShortlistScreen: View {
     @State private var sheet: NativeStartSheet?
 
     var body: some View {
-        List {
+        NativeList {
             Section {
                 NativeIntro(eyebrow: "YOUR CAREER WORKSPACE", title: "Search and save jobs",
                             message: "Search selected employer boards, save jobs and prepare applications.")
@@ -253,7 +306,7 @@ private struct NativeSavedScreen: View {
         }
     }
     var body: some View {
-        List {
+        NativeList {
             if query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             Section {
                 NativeIntro(eyebrow: "YOUR OWN SHORTLIST", title: "Saved jobs", message: "Jobs saved from Search and your own links are ready in the application workspace. Earlier planning records remain available below.")
@@ -337,7 +390,7 @@ struct NativeSavedApplicationDetail: View {
         }
     }
     var body: some View {
-        List {
+        NativeList {
             if let job {
                 Section {
                     Text(job["title"]?.string ?? l10n("Opportunity")).font(.title2.weight(.bold)).fixedSize(horizontal: false, vertical: true)
@@ -442,7 +495,7 @@ private struct NativeModernRecordEditor: View {
     private var changed: Bool { draft != original }
     var body: some View {
         NavigationStack {
-            Form {
+            NativeForm {
                 Section {
                     Text(job["title"]?.string ?? l10n("Opportunity")).font(.headline)
                     Text(l10n("Your record stays on this phone. Saving it does not send an application or a message."))
@@ -451,11 +504,11 @@ private struct NativeModernRecordEditor: View {
                 if context == nil {
                     Section {
                         Text(l10n("Compare the saved record versions before editing this opportunity."))
-                            .foregroundStyle(.red)
+                            .foregroundStyle(NativeDesign.danger)
                             .accessibilityIdentifier("record.compareVersions")
                     }
                 }
-                if let issue { Section { Text(l10n.message(issue)).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true) } }
+                if let issue { Section { Text(l10n.message(issue)).foregroundStyle(NativeDesign.danger).fixedSize(horizontal: false, vertical: true) } }
                 Section {
                     Picker(l10n("Stage"), selection: $draft.stage) { ForEach(PhoneApplicationStage.allCases) { Text(l10n($0.title)).tag($0) } }
                         .pickerStyle(.menu).accessibilityIdentifier("record.stage")
@@ -554,13 +607,13 @@ private struct NativeModernRecordVersions: View {
     @State private var issue: String?
     var body: some View {
         NavigationStack {
-            List {
+            NativeList {
                 Section {
                     Text(l10n("Choose the details you want to keep. Other versions stay on this phone."))
                     Text(l10n("Choosing a version keeps your current applied mark. If you marked this role as not applied, an older version restores its notes and dates without marking it applied again. You can change the stage in your current record."))
                         .font(.footnote).foregroundStyle(.secondary)
                 }
-                if let issue { Section { Text(l10n.message(issue)).foregroundStyle(.red) } }
+                if let issue { Section { Text(l10n.message(issue)).foregroundStyle(NativeDesign.danger) } }
                 ForEach(model.recordVersions(for: job)) { record in
                     Section {
                         NativeModernRecordSummary(record: record)
@@ -683,7 +736,7 @@ private struct NativeJobDetail: View {
     }
 
     var body: some View {
-        List {
+        NativeList {
             Section {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(job.company).font(.caption.weight(.semibold)).foregroundStyle(Color.careerAccent)
@@ -804,7 +857,7 @@ private struct NativeLegacyNextActionEditor: View {
         }
     }
     var body:some View {
-        Form {
+        NativeForm {
             Section {
                 Text(job.title).font(.headline)
                 Text(l10n("This private plan stays with the earlier local record. It is not an application receipt and is not copied into a connected account.")).font(.footnote)
@@ -821,7 +874,7 @@ private struct NativeLegacyNextActionEditor: View {
             }
             Section {
                 if draft.dirty {Text(l10n("Unsaved draft. Kept for this session; export your notes before closing the app.")).foregroundStyle(.secondary)}
-                if let error=store.nextActionErrors[job.id] {Text(l10n.message(error)).foregroundStyle(.red).accessibilityAddTraits(.updatesFrequently)}
+                if let error=store.nextActionErrors[job.id] {Text(l10n.message(error)).foregroundStyle(NativeDesign.danger).accessibilityAddTraits(.updatesFrequently)}
                 if !notice.isEmpty {Text(l10n(notice)).accessibilityAddTraits(.updatesFrequently)}
                 Button(l10n("Save next action")) {
                     notice=store.saveNextAction(job) ? "Next action saved on this phone." : ""
@@ -857,7 +910,7 @@ struct NativeLegacyBackupScreen:View {
     @State private var confirming=false
     @State private var notice=""
     var body:some View {
-        Form {
+        NativeForm {
             Section {
                 Text(l10n("These records are separate from every connected account. A backup includes saved roles, self-entered receipt notes, next actions and the saved planning profile. It contains no account credentials or application approvals."))
                 Button(l10n("Export earlier planning records")) {
@@ -930,7 +983,7 @@ private struct NativeApplicationRecordEditor: View {
         }
     }
     var body:some View {
-        Form {
+        NativeForm {
             Section {
                 Text(job.title).font(.headline)
                 Text(l10n("Optional, self-entered tracking details. Leave the date blank if unknown. The latest allowed date uses the Riyadh day; your display time zone does not shift recorded dates. Saving does not change status or contact anyone.")).font(.footnote)
@@ -944,7 +997,7 @@ private struct NativeApplicationRecordEditor: View {
             Section {
                 if draft.dirty {Text(l10n("Unsaved draft. Kept for this session; export your notes before closing the app.")).foregroundStyle(.secondary)}
                 if let base=draft.base {Text(l10n.format("Record last edited: {0} (not the application time).", [String(describing: ApplicationReviewPolicy.date(base.updatedAt).map { l10n.date($0, includeTime: true) } ?? base.updatedAt)])).font(.footnote)}
-                if let error=store.recordErrors[job.id] {Text(l10n.message(error)).foregroundStyle(.red).accessibilityAddTraits(.updatesFrequently)}
+                if let error=store.recordErrors[job.id] {Text(l10n.message(error)).foregroundStyle(NativeDesign.danger).accessibilityAddTraits(.updatesFrequently)}
                 if !savedMessage.isEmpty {Text(l10n(savedMessage)).foregroundStyle(Color.careerAccent).accessibilityAddTraits(.updatesFrequently)}
                 Button(l10n("Save application record")) {
                     savedMessage=store.saveApplicationRecord(job) ? "Application date and note saved on this device. Status is unchanged." : ""
@@ -976,7 +1029,7 @@ private struct NativePlanScreen: View {
     @EnvironmentObject private var store: NativeCareerStore
     @Environment(\.scenePhase) private var scenePhase
     var body: some View {
-        List {
+        NativeList {
             Section {
                 NativeIntro(eyebrow: "PREPARATION", title: "Application checklist", message: "Review your preparation steps and record what you have completed.")
                 ProgressView(value: Double(nativePlanItems.filter { store.workspace.completed.contains($0.id) }.count), total: Double(nativePlanItems.count)) {
@@ -1035,7 +1088,7 @@ private struct NativeSettingsScreen: View {
     @State private var connectionSheet = false
     private var selectedAppearance: NativeAppearance { NativeAppearance(rawValue: appearance) ?? .system }
     var body: some View {
-        List {
+        NativeList {
             Section {
                 ForEach(NativeLanguage.allCases) { option in
                     Button {
@@ -1128,7 +1181,7 @@ private struct NativeProfileScreen: View {
     @State private var editing = false
     @State private var applicationEditing = false
     var body: some View {
-        List {
+        NativeList {
             Section {
                 NativeIntro(eyebrow: "YOUR PROFILE", title: "Profile", message: "Add your experience and job preferences.")
             }.listRowBackground(Color.clear)
@@ -1163,7 +1216,7 @@ private struct NativeNotesPreview: View {
     @State var text: String
     let includesProfile: Bool
     var body: some View {
-        Form {
+        NativeForm {
             Section {
                 Text(l10n(includesProfile ? "These notes include your self-entered profile, application records, receipt notes and any unsaved record drafts. Remove anything you do not want to share." : "This role note excludes your profile fields. Review the requirements and your local application status before sharing."))
                     .font(.footnote)
@@ -1180,7 +1233,7 @@ private struct NativePrivacyScreen: View {
     @NativeLocalization private var l10n
     @EnvironmentObject private var applications: NativeApplicationsStore
     var body: some View {
-        List {
+        NativeList {
             Section(l10n("Information on this phone")) {
                 Text(l10n("Planning notes, earlier self-entered tracking records and preparation steps stay on this device. Search keeps your board choices, search fields and public results locally. Saved shows both your application opportunities and any earlier local records."))
                 Text(l10n("Your application workspace keeps a phone draft and your selected PDF. The same application profile is reachable from Start, Apply and Profile in Settings. Connecting does not upload that draft. Saving to a connected service sends the applicant fields and selected CV; adding opportunities and preparing reviews sends the links and choices you provide. The phone connection token is stored in Keychain."))
@@ -1282,7 +1335,7 @@ private struct NativeProfileEditor: View {
     }
     var body: some View {
         NavigationStack {
-            Form {
+            NativeForm {
                 if hasConflict {
                     Section {
                         NativeNotice(title: "Your profile changed in another window", message: "Keep a copy of any draft text you need, then cancel and reopen this editor to use the latest profile. Your draft has not been saved.", warning: true)
@@ -1438,7 +1491,7 @@ private struct NativeSalaryScreen: View {
     private func amount(_ value: Double) -> String { currency + " " + value.formatted(.number.precision(.fractionLength(0...2)).locale(l10n.locale)) }
     private func clearAmounts() { basic = ""; allowances = ""; bonus = "" }
     var body: some View {
-        Form {
+        NativeForm {
             Section {
                 NativeNotice(title: "Compare a job offer", message: "Choose the currency and pay period, then enter your own amounts. The calculator makes no assumptions about your profession, location, current pay or seniority.")
             }.listRowBackground(Color.clear)

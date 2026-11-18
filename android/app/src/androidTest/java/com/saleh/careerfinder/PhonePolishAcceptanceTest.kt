@@ -7,6 +7,7 @@ import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -107,6 +108,22 @@ class PhonePolishAcceptanceTest {
         compose.onNodeWithText(strings("Choose PDF résumé")).assertIsDisplayed()
         assertEquals("", model.state.value.profile.lastName)
         assertNull(model.state.value.profile.resume)
+        compose.onNodeWithTag("profile-list").performScrollToNode(hasTestTag("profile.reuse"))
+        compose.onNodeWithTag("profile.reuse").performClick()
+        compose.onNodeWithTag("profile-list").performScrollToNode(hasTestTag("profile.copy.firstName"))
+        compose.onNodeWithTag("profile.copy.firstName").performClick()
+        compose.runOnIdle {
+            val clipboard = compose.activity.getSystemService(android.content.ClipboardManager::class.java)
+            assertEquals("Single", clipboard.primaryClip?.getItemAt(0)?.text?.toString())
+            assertTrue(clipboard.primaryClip?.description?.extras?.getBoolean("android.content.extra.IS_SENSITIVE") == true)
+            assertEquals("single@example.invalid", model.state.value.profile.email)
+            assertEquals(0, service.requests)
+        }
+        compose.onNodeWithTag("profile-list").performScrollToNode(hasTestTag("profile.copy.confirmation"))
+        compose.onNodeWithTag("profile.copy.confirmation").assertIsDisplayed()
+        captureConfirmation("profile-contact-copy")
+        compose.onNodeWithTag("profile-list").performScrollToNode(hasTestTag("profile.reuse"))
+        compose.onNodeWithTag("profile.reuse").performClick()
         compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("Add experience and preferences")))
         compose.onNodeWithText(strings("Add experience and preferences")).performClick()
         compose.onNodeWithTag("profile-list").performScrollToNode(hasContentDescription(strings("Choose target countries")))
