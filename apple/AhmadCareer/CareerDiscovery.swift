@@ -542,9 +542,8 @@ final class CareerDiscoveryStore: ObservableObject {
         await execute(captured: captured, more: false, ignoreDraftEdits: true)
     }
     func search(more: Bool = false) async {
-        if let retryAfter, retryAfter > Date() {
-            error = "Try again after " + retryAfter.formatted(date: .omitted, time: .shortened) + "."; return
-        }
+        // Preserve the provider error; the view presents a separate localized deadline.
+        if let retryAfter, retryAfter > Date() { return }
         if more {
             guard !isSearching, canLoadMore else { return }
             await execute(captured: query, more: true, ignoreDraftEdits: false)
@@ -557,9 +556,7 @@ final class CareerDiscoveryStore: ObservableObject {
         await execute(captured: query, more: false, ignoreDraftEdits: false)
     }
     private func execute(captured: DiscoveryQuery, more: Bool, ignoreDraftEdits: Bool) async {
-        if let retryAfter, retryAfter > Date() {
-            error = "Try again after " + retryAfter.formatted(date: .omitted, time: .shortened) + "."; return
-        }
+        if let retryAfter, retryAfter > Date() { return }
         if let issue = captured.validationError { error = issue; return }
         let cursor = more ? page?.nextCursor : nil, ticket = UUID()
         requestID = ticket; isSearching = true; error = nil; retryAfter = nil; submittedSearchFailed = false
