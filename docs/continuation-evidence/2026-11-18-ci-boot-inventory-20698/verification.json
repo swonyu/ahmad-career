@@ -1,0 +1,64 @@
+{
+  "recordedAtUTC": "2026-11-18T14:49:16.052537+00:00",
+  "base": "d24b659a8bd1bcb11490dde4c717c1a2e3825cb7",
+  "observedRun": {
+    "runID": 44326554344,
+    "jobID": 134879291229,
+    "source": "dd78b0f7b259ad7394694aa24a264727dc746402",
+    "artifactID": 14436583398,
+    "artifactSHA256": "502bc63eb0fa90e1c974d48b1bc036a4f6709a5386b08598e568732e8dc849c1",
+    "image": "macos-26-arm64/20261112.0504.1",
+    "os": "macOS26.7.2 (25G332)",
+    "runtime": "iOS26.5",
+    "deviceType": "iPhone17Pro",
+    "deviceUUID": "B2F27B52-5EBF-43FD-BB4F-F7A1EA18B1E9",
+    "bootFinalStatus": {
+      "line": 272,
+      "status": 4294967295,
+      "terminal": true,
+      "elapsed": "01:45"
+    },
+    "stepOutcome": "Timed out after3minutes; no verifier receipt and no native UI run"
+  },
+  "artifactFiles": [
+    {
+      "name": "career-iphone-selection.json",
+      "bytes": 841,
+      "modifiedUTC": "2026-11-18T14:39:50Z"
+    },
+    {
+      "name": "career-iphone-boot-devices.json",
+      "bytes": 33533,
+      "modifiedUTC": "2026-11-18T14:43:00Z"
+    },
+    {
+      "name": "career-iphone-boot-devices.stderr",
+      "bytes": 0,
+      "modifiedUTC": "2026-11-18T14:41:40Z"
+    },
+    {
+      "name": "career-iphone-boot.log",
+      "bytes": 16060,
+      "modifiedUTC": "2026-11-18T14:41:38Z"
+    }
+  ],
+  "interpretation": "Finished observed14:41:38Z; inventory stderr file created14:41:40Z and61-device inventory completed14:43:00Z; timeout14:43:01Z. This implicates the broad inventory phase rather than a migration failure. It does not establish process exit results or CI readiness pass.",
+  "change": "Query only the owned device UUID with the documented simctl list search filter. Retain exit captures, exact-device strict parser, current image/runtime/model, and all time limits.",
+  "validation": {
+    "selectionMethods": 12,
+    "selectionPassed": 12,
+    "strictParserMethods": 11,
+    "strictParserPassed": 11,
+    "actionlint": "passed",
+    "diffCheck": "passed",
+    "sourceAssertions": "Verifier and UI suite byte-identical to base;3/45/50minute limits retained",
+    "filteredFixture": {
+      "scope": "Parser-only use of retained log/inventory; process exits are synthetic for this check, not recovered CI evidence",
+      "zeroExitInputs": true,
+      "nonzeroInventoryExitRejected": true,
+      "missingProcessEvidenceRejected": true
+    },
+    "localReadOnlyCLI": "Documented UUID filter returned exactly the requested pre-existing device. No boot/create/shutdown/erase/build performed."
+  },
+  "remainingGate": "Actual full hosted CI on the exact combined candidate; this receipt is not a boot or journey acceptance pass."
+}
