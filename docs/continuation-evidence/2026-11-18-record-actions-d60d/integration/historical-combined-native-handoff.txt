@@ -1,0 +1,109 @@
+CAREER FINDER — COMBINED NATIVE INTEGRATION HANDOFF
+18 November 2026 — coordinator d60d62a70f26; terminal-recovery reviewer
+
+Purpose and boundaries
+Continue Career Finder only. Preserve the five-tab worldwide Arabic/English product and existing work; exclude Good Spender. Use free dependencies/services unless separately authorized. Fix every validated in-scope finding and retest. Keep one native integration/build owner. Do not restart the three finished terminal lanes, open a competing native run, replace production, or infer release readiness from host checks. Preserve the recorded shared cutoff of 19 November 2026 01:26:12 Riyadh; it does not restart the stopped terminal lanes or establish a new 18-hour clock.
+
+Evidence labels
+OBSERVED: this reviewer inspected the completed terminal transcripts, source, Git state and original remote refs.
+COORDINATOR: newer facts supplied by root; this reviewer did not independently re-read those commits or rerun their tests.
+This handoff itself introduces no source edit, test run, native build, deployment or external message.
+Reference shorthand: android/.../FILE means android/app/src/main/java/com/saleh/careerfinder/FILE in the stated tree; bare Native*.swift filenames mean apple/AhmadCareer/FILE. Source line numbers are from the personally inspected pre-preservation source and must be re-resolved after integration.
+
+Checkpoints
+1. OBSERVED original search: continuation/native-search-20261117-01a1ea9d107f, 0beff68a6906968f282dca292dc547daad85684f, parent 11cb3d4d8c15e9b16719b6e7091597f43633cda6. Clean when inspected; fresh ls-remote then confirmed the same search SHA. Worktree /Users/saleh/Developer/career-finder-native-search-20261117-01a1ea9d107f.
+2. COORDINATOR search cooldown child: continuation/native-search-retry-cooldown-20261118-d60d, tip 9531a4be09c459e15573667c67b695dc6040874d, immediate parent supplied as ffc038, based on original search 0beff68. Reported host result 79 assertions / 19 scenarios, with baseline failures reproduced. Final cooldown guard returns without replacing the original 429 error; the localized retryAfter footnote remains. This is not native UI/device acceptance.
+3. COORDINATOR recovery preservation: 53c7341d8e0d28137089522a2ffc542e4d780299. Existing branch continuation/native-recovery-20261117-01a1ea9cfd25, isolated repository /Users/saleh/Developer/career-finder-native-recovery-20261117-01a1ea9cfd25. This reviewer previously observed seven modified source files and untracked apple/Checks/NativeRecoveryCheck.swift at base 11cb3d4; root subsequently supplied the preservation commit.
+4. OBSERVED accessibility source: lane/account-search-a11y-20261117, b37fe51fa2e03868efb0ad3c830be5801defe913, clean when inspected, 34 ordered local commits based on 243031d3f35040985c5b274e8ddf4a90adb0eda8. Worktree /Users/saleh/Library/Caches/Career-Account-A11y-Lane-20261117-01a1ea56. It was not remote at that earlier inspection; check any newer push receipt separately.
+5. COORDINATOR publisher: latest reported source-only checkpoint c0c865ee, with four dirty files preserved as of 18 November 2026 09:44 Riyadh. This reviewer was not given those four filenames or a full SHA and does not invent them. Re-read current publisher status and ownership before integration.
+6. COORDINATOR hosted work: root's final UI fix is a separate commit. Reported checks passed: 326 main + 6 PDF tests, typecheck, lint and build. No hosted commit SHA is supplied here. Hosted checks do not validate the combined native tree.
+
+Ownership and integration sequence
+- Publishing retains native integration, CI/build scheduling, signing and store ownership. Recheck its actual lease/processes/locks/current branch and four dirty files immediately before acting. A historically released lock is not a new grant.
+- Recovery is an independent repository: its own .git directory and only one worktree were observed. Preservation/checkpointing there does not edit the publisher checkout. Do not discard the standalone NativeRecoveryCheck.swift or add it to Xcode/check.sh/check-mobile.sh merely to preserve it.
+- Inventory exact commits/merge bases and already-integrated changes before replaying anything. Preserve all original branch tips and patches.
+- Search order is original 0beff68, then its cooldown-child chain ending 9531a4b; inspect the intervening ffc038 commit. Do not apply only the final guard patch to an unrelated base.
+- Recovery 53c7341 is a preservation checkpoint, not evidence of combined compilation. Preserve all eight files and review its diff against the actual integration base.
+- Accessibility's ordered series is below. Its final b37fe51 patch alone failed apply-check on historical publisher tip 363ae84 at NativeCareerViews.swift:579. It applied onto its real parent a6a8951. Do not blindly apply the final patch or an unreviewed 34-patch loop to the new publisher.
+- Search/accessibility overlap: CareerDiscovery.swift, NativeDiscoveryViews.swift, Discovery.kt, DiscoveryScreen.kt, discovery checks and localization source/generated outputs.
+- Recovery/accessibility overlap: MainActivity.kt, MobileApplicationState.swift, NativeApplicationsViews.swift.
+- Reconcile overlapping behavior deliberately, retain the publisher's acceptance-banner/native-helper work, and regenerate localization once from the final canonical source. Confirm Arabic/English parity rather than selecting one lane's generated IDs wholesale.
+- After integration, execute focused regressions and the required complete pipeline once under the existing build owner; keep host, simulator, emulator, real-device, provider and store evidence separate.
+
+Five high-value combined acceptance cases (expected outcomes, not fresh passes)
+
+1. Unreadable LOCAL workspace EXPORT
+iPhone fixture: seed existing phone-draft.json with 201 unfinished checkpoints or 201 parked opportunity drafts; record its bytes and current exports. Load the store, then activate phoneData.export. Decode must preserve the original file and mark it unreadable. exportWorkspace must return nil before encoding/writing: no new Career-Finder-Phone-Workspace-*.json, no sharing of an empty fallback, original bytes unchanged after relaunch. Exactly 200 unfinished checkpoints is the positive control.
+This is EXPORT refusal from an unreadable stored workspace, not IMPORT of an invalid selected file.
+Refs in recovery tree: apple/AhmadCareer/MobileApplicationState.swift:579; NativeApplicationsStore.swift:376 and :1135; NativeApplicationsViews.swift:1166; apple/Checks/NativeRecoveryCheck.swift:540.
+
+2. Whole-update note-control refusal and repair
+Android: start with clean note text, attempt to add U+0007 or U+007F. The complete proposed editor change is rejected before replacing the editor/checkpoint or queuing private save; previous text stays exact. No escaping, silent stripping, or salvage of a safe substring. A legacy unfinished checkpoint containing a control can remain loaded and be edited without increasing disallowed-control occurrences; final saved-record save stays refused while a control remains. Remove it, then save. Tab/newline/carriage return remain allowed. Saved history is not silently rewritten.
+iPhone boundary: refuse a control-bearing saved-record save before persistence; preserve prior clean record. Unfinished checkpoint notes containing controls deliberately remain importable/exportable so repair remains possible. Do not conflate unfinished drafts with valid saved records.
+Refs in recovery tree: android/.../CareerViewModel.kt:594, :605, :624, :705, :1264; apple/AhmadCareer/MobileApplicationState.swift:212; NativeApplicationsStore.swift:280; apple/Checks/NativeRecoveryCheck.swift:1030 and :1047.
+
+3. Duplicate identities INSIDE an incoming backup
+Both platforms: import a backup containing two saved rows with different titles but identical job identity, including URL versus same URL plus utm_source. Refuse the backup before profile or record replacement; keep destination and original backup unchanged. Do not silently pick one title. Two genuinely distinct incoming links is the positive control. A valid single incoming link already in the destination is a different normal merge case.
+Refs in recovery tree: apple/AhmadCareer/NativeApplicationsStore.swift:1221 and :1228; android/.../WorkspaceTransfer.kt:131; CareerViewModel.kt:1278; apple/Checks/NativeRecoveryCheck.swift:609.
+
+4. Submitted query A, newer draft B, and server cooldown
+Both platforms: submit A; obtain a retryable incomplete response or 429 with a future Retry-After; edit the visible valid criteria to B without submitting B. During the future cooldown, Retry this search must issue no request and leave B intact. On iPhone preserve the original 429 error and localized retryAfter footnote, as the coordinator's final guard specifies. After expiry, retry must submit A (including A's sources), preserve editable B, and associate successful results with A. After persistence/relaunch retain current draft B and last displayed criteria A.
+For the incomplete-empty variant use status partial and zero jobs: show incomplete coverage, not definitive absence of jobs. Original iOS 0beff68 bypassed the cooldown via retrySubmittedSearch; exercise the integrated 9531a4b fix, not just ordinary Search.
+Original source refs: search apple/AhmadCareer/CareerDiscovery.swift:107, :519, :538, :578; android/.../Discovery.kt:73, :506, :563. Exact line numbers for the new guard must be resolved against 9531a4b after integration.
+
+5. Restored result provenance, lifecycle and assistive reading
+Both platforms: persist a successful search with a fresh-source job and already-canonical source IDs; terminate/relaunch the test app using the same workspace without issuing a new search. Retain job and draft criteria, display Saved result from an earlier check, and do not imply a current fetch. iPhone must disable loading more from the restored cursor; Android restores with no next cursor. Exercise English and Arabic RTL, large text, VoiceOver/TalkBack reading of provenance and retry/error labels; verify wording remains intelligible and no newer draft is lost on background/foreground. A source review or host replica is not assistive-technology acceptance.
+Refs in original search tree: apple/AhmadCareer/CareerDiscovery.swift:99, :436, :462; NativeDiscoveryViews.swift:114; android/.../Discovery.kt:67, :408; DiscoveryScreen.kt:72.
+
+Evidence boundaries and remaining gates
+OBSERVED historical recovery tool result: exit 0, PASS 179 native recovery assertions across 56 scenarios. It compiled selected Swift source with the macOS SDK; not an iOS app or device run. Earlier lifecycle 503/77 was not rerun against final recovery edits. Android recovery additions were source-reviewed, not Gradle/device accepted.
+OBSERVED search historical host checks: iOS stub 67/16, desktop Android discovery 13, persistence 9, Compose typecheck exit 0. COORDINATOR cooldown child raises its own host result to 79/19; do not sum unrelated counts.
+OBSERVED accessibility final location probe 57 assertions and earlier summary probe 94; host replicas, not VoiceOver/TalkBack. Earlier note/step probes 477/398 were not rerun on final slice.
+Combined native integration, complete required CI, Android instrumentation/emulator, installed iPhone and Android journeys, real account/provider/search/application behavior, lifecycle/assistive-technology checks and applicable signing/store gates remain unrun or unverified for this combined tree. Do not label it fully passed, release-ready, submitted or released.
+
+Ordered accessibility series (relative to 243031d3; inspect against actual target)
+25524465c2979bd71f8f377a53151d981381a571
+fa759f0d9e50d9ee0e0102ba33d83d2529c50aa5
+b6d5fcaccbd5809fb74db182a39e221a4b2f192e
+c4bf5dbde438a66d99e2ab0ef9c747144614fac8
+b5f8dff005d647f1e5b5babfe8787bb35355ef69
+720fce53e0be528346e657ff6178cf6f0cd4d4f7
+1c4458145b8804eefaa1bbd6b7e1a2a494e5d1ce
+9700d0e078716f40bf17fad9c7fd7362e1549336
+f139c0499830ec71411a2686d86d546ef50126c7
+0ed8f50c9946de4d8eeb5d6eabc17ea8cc4ea0de
+f6ec0cd1b479f759bef9055ef15c86f071424d74
+47fdfb23877295faf3687b7b4bd81491ecc45bd6
+0ca27c899a96cbaecb8bfd93852b448f1b4af843
+6411a10bbbe5c348900b570426d72fa3a670c347
+594da38cb84c03156aecc5cf3463b492d0077deb
+08f25cc015fab2606838c162328224463f91812b
+7e97e09316e616ba64954ef1a417aabb55700ce3
+87d7238804393557ad00ae0d20f3aad465f8173e
+842358e7983f5aee12e570c0a25f07f9917d643e
+e33accb6a610dcd408943bc57f294a85c8f61521
+a4f06c1625180352ffa8c3c7f82030ed2249bc8a
+c04ea874990e1f0416c0c55f626fd3ed91b14cab
+ee3bac20b48022c6b110de043eaabe3e38c7f496
+6054d0bcfcd2d84aa5d4701c982d4feb256d9980
+1838e0aaf97664a5a4a67e9affb5fdc60a24ade9
+910369f7f5ee09242762d6ea27c804a03fb4f489
+00e4257e519dec88b2b532ef606fbe0633966314
+2230499e48104c7380d150e010d1859ff42b0c6a
+bb14bd01bc2dbcac7c5e2118fa04e0b85c2771f1
+0432e2061c037e25ce13f8f2afb80f5cbc33c217
+d13374da8f76e18f34380a3c2e06c0a3bc5e65d8
+2d6c874ff5b470ff464895002e5ed13cd395a5cc
+a6a8951e672da29392c858c2317c364d9d2cbc92
+b37fe51fa2e03868efb0ad3c830be5801defe913
+
+Primary evidence locations
+Accessibility exact series/patch notice:
+/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/COORDINATION-account-search-a11y-01a1ea56-to-01a49fa7c28e-20261118T0211Z.txt
+Recovery stopped-session/tool-result transcript:
+/Users/saleh/.grok/sessions/%2FUsers%2Fsaleh/01a1ec55-66d2-7062-a7e8-5cf86cb350af/chat_history.jsonl
+Accessibility stopped-session transcript:
+/Users/saleh/.grok/sessions/%2FUsers%2Fsaleh/01a1ec55-5b02-7ef0-9571-46288485d19d/chat_history.jsonl
+
+Next action
+The current native owner resolves current ownership and target HEAD, preserves the four reported dirty files, integrates the checkpointed lanes with explicit overlap review, runs focused regressions and the complete required gate, then exercises the five real native journeys above. Root's hosted checkpoint is reviewed/integrated separately. Do not restart terminal owners or add a parallel native build.

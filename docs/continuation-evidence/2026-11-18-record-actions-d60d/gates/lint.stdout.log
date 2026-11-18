@@ -1,0 +1,4 @@
+
+> career-finder-phone-service@0.6.0 lint
+> eslint . --ignore-pattern dist --ignore-pattern .next
+

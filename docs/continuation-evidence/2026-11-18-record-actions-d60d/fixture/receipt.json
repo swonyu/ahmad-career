@@ -1,0 +1,10 @@
+{
+  "finishedUTC": "2026-11-18T06:58:57.489630+00:00",
+  "exit": 0,
+  "scope": "Corrected fixture-only action font stress; actual rendered font size must be measured before acceptance.",
+  "metadataSHA256": "36e01a872545399c9c1790441382a397509ab8e2f7ce6cafb94462d42a4df5e3",
+  "fixtureCSSSHA256": "76e5380b2d42bd075fc314e799328b16d085f5bb2c82555f558a8d74d1499988",
+  "fixtureTSXSHA256": "22be902b25e7746d9612c2f7b241e42332a74387a2bc10a9dd8a9c7ab0a0d9a5",
+  "stdoutSHA256": "ae677a93142864f3b61e4ddfe2cef1b7f8faff4b2b8616bf7d9cede30d94d2ab",
+  "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

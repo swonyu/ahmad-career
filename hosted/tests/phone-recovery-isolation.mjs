@@ -731,3 +731,138 @@ test("actual discard entry handlers remember Cancel or Delete and preserve clean
   context.deletePrivate({ currentTarget: deleteButton });
   assert.equal(state.dialog.kind, "delete-record"); assert.equal(state.confirm, false);
 });
+
+
+// Execute the real export button, run(), and exportUnfinished() against a DOM
+// port that models the observed blur when busy disables the focused fieldset.
+// The download boundary captures synthetic JSON only; browser download/scroll
+// acceptance remains separate from these handler and ownership regressions.
+function recordExportFocusHarness({ failDownload = false } = {}) {
+  const h = keepFocusHarness(); h.removeAlert();
+  const exportButton = new h.deleteButton.constructor("Export unfinished record");
+  const actions = new h.deleteButton.constructor("record actions", "div");
+  actions.parent = h.fieldset; exportButton.parent = actions; h.deleteButton.parent = actions;
+  let windowFocused = true;
+  h.document.hasFocus = () => windowFocused;
+  h.document.activeElement = exportButton;
+  const saved = savedSnapshot(), editorId = "synthetic-record-editor";
+  const recordDialog = { kind: "record", editorId, job: saved.jobs[0], record: saved.records[0], existed: true, scope };
+  const draft = { ...saved.records[0], stage: "interview", note: "Unfinished note متابعة", followUpDate: "2026-11-30" };
+  const initialDraft = JSON.stringify(draft), downloads = [], running = [];
+  const forbidMutation = () => { throw new Error("Record export must preserve its editor, draft, recovery identity and saved data"); };
+  class APIError extends Error {}
+  const context = vm.createContext({
+    Error, DOMException, APIError, crypto: webcrypto, z: production.z,
+    document: h.document, dialog: recordDialog, editorDraft: draft, dialogDirty: true,
+    profile: saved.profile, formChanged: false, profileRecoveryId: { current: null },
+    recordRecoveryId: { current: editorId }, snapshotRef: { current: saved },
+    locked: false, identityUnverified: { current: false }, identityCheckPending: { current: false },
+    busyRef: { current: false }, epoch: { current: 7 }, discardHeading: h.discardHeading,
+    notice: null, busy: "", identityChecks: 0,
+    requestAnimationFrame(callback) { h.frames.push(callback); return h.frames.length; },
+    setBusy(value) {
+      context.busy = value; h.fieldset.disabled = Boolean(value); exportButton.disabled = Boolean(value);
+      const active = h.document.activeElement;
+      if (value && h.dialog.contains(active) && active?.matches?.(":disabled")) h.document.activeElement = h.body;
+    },
+    setNotice(value) { context.notice = value; },
+    download(value, filename) {
+      if (failDownload) throw Error("Synthetic download failed");
+      downloads.push({ value, filename });
+    },
+    setDialog: forbidMutation, setDialogDirty: forbidMutation, setEditorDraft: forbidMutation,
+    persist: forbidMutation, discardRecovery: forbidMutation, savePhoneSnapshot: forbidMutation,
+    lock() { context.identityUnverified.current = true; context.epoch.current++; },
+  });
+  context.identityCheckRef = { current() {
+    context.identityChecks++; context.identityCheckPending.current = false; context.identityUnverified.current = true;
+    h.fieldset.hidden = true; h.fieldset.disabled = true; h.document.activeElement = h.recheck;
+  } };
+  for (const name of ["same", "message", "unfinished", "exportUnfinished", "run"]) install(context, name);
+  const productionRun = context.run;
+  context.run = (...args) => { const task = productionRun(...args); running.push(task); return task; };
+  const handler = buttonClick("Export unfinished record");
+  if (/^[A-Za-z_$][\w$]*$/.test(handler)) install(context, handler);
+  install(context, "activateExport", handler);
+  const activate = async () => {
+    const completion = context.activateExport({ currentTarget: exportButton });
+    await Promise.all([completion, ...running]);
+  };
+  const unchanged = () => {
+    assert.equal(context.dialog, recordDialog); assert.equal(context.dialogDirty, true); assert.equal(context.editorDraft, draft);
+    assert.equal(JSON.stringify(draft), initialDraft); assert.deepEqual(plain(context.snapshotRef.current), saved);
+  };
+  return { ...h, context, exportButton, actions, downloads, activate, unchanged, setWindowFocused(value) { windowFocused = value; } };
+}
+
+test("actual record export recovers its enabled action after busy blurs focus and preserves the exported draft", async () => {
+  const h = recordExportFocusHarness();
+  await h.activate();
+  assert.equal(h.document.activeElement, h.body, "Busy can remove focus before deferred recovery");
+  assert.equal(h.context.busyRef.current, false); assert.equal(h.exportButton.matches(":disabled"), false);
+  assert.equal(h.focusCalls.length, 0, "Focus waits until run has settled and the controls have re-enabled");
+  h.flush();
+  assert.equal(h.document.activeElement, h.exportButton, "Export must not leave BODY focused while its editor remains open");
+  assert.deepEqual(h.focusCalls.map(call => call.target), [h.exportButton]);
+  assert.equal(h.focusCalls[0].options.preventScroll, false, "Restored export focus must be allowed to scroll into view");
+  assert.equal(h.downloads.length, 1); assert.equal(h.downloads[0].filename, "Career-Finder-unfinished-edits.json");
+  const exported = JSON.parse(h.downloads[0].value);
+  assert.equal(exported.format, "Career Finder unfinished edits"); assert.equal(exported.scope, scope);
+  assert.equal(exported.drafts.length, 1); assert.deepEqual(exported.drafts[0].record.draft, plain(h.context.editorDraft));
+  assert.equal(h.context.notice.error, undefined); assert.match(h.context.notice.text, /unfinished edits/);
+  h.unchanged();
+});
+
+test("actual record export preserves run error reporting and restores only its still-usable action", async () => {
+  const h = recordExportFocusHarness({ failDownload: true });
+  await h.activate(); h.flush();
+  assert.equal(h.downloads.length, 0); assert.equal(h.context.notice.error, true); assert.equal(h.context.notice.text, "Synthetic download failed");
+  assert.equal(h.context.busyRef.current, false); assert.equal(h.document.activeElement, h.exportButton);
+  assert.deepEqual(h.focusCalls.map(call => call.target), [h.exportButton]); h.unchanged();
+});
+
+test("actual record export leaves intentional focus, redirected focus and an inactive window alone", async () => {
+  for (const next of ["notes", "outside", "recheck", "exportButton"]) {
+    const h = recordExportFocusHarness(); await h.activate(); h.document.activeElement = h[next];
+    h.flush(); assert.equal(h.document.activeElement, h[next]); assert.equal(h.focusCalls.length, 0); h.unchanged();
+  }
+  const inactive = recordExportFocusHarness(); await inactive.activate(); inactive.setWindowFocused(false);
+  inactive.flush(); assert.equal(inactive.document.activeElement, inactive.body); assert.equal(inactive.focusCalls.length, 0); inactive.unchanged();
+  const redirected = recordExportFocusHarness(); await redirected.activate();
+  redirected.exportButton.onFocus = () => { redirected.document.activeElement = redirected.notes; };
+  redirected.flush(); assert.equal(redirected.document.activeElement, redirected.notes);
+  assert.deepEqual(redirected.focusCalls.map(call => call.target), [redirected.exportButton]); redirected.unchanged();
+});
+
+test("actual record export cannot cross an account, record, dialog or form replacement", async () => {
+  for (const next of ["epoch", "record", "closed", "dialog-unmounted", "form-unmounted", "form-replaced", "button-unmounted", "button-moved"]) {
+    const h = recordExportFocusHarness(); await h.activate();
+    if (next === "epoch") h.context.epoch.current++;
+    else if (next === "record") h.context.recordRecoveryId.current = "replacement-record";
+    else if (next === "closed") h.dialog.open = false;
+    else if (next === "dialog-unmounted") h.dialog.isConnected = false;
+    else if (next === "form-unmounted") h.disconnect(h.form);
+    else if (next === "form-replaced") h.dialog.form = { isConnected: true, parent: h.fieldset };
+    else if (next === "button-unmounted") h.disconnect(h.exportButton);
+    else h.exportButton.parent = { tag: "dialog", isConnected: true, open: true };
+    h.flush(); assert.equal(h.document.activeElement, h.body, next); assert.equal(h.focusCalls.length, 0, next); h.unchanged();
+  }
+});
+
+test("actual record export respects newer busy, identity, discard and inherited availability state", async () => {
+  for (const next of ["busy", "identity", "pending-identity", "discard", "disabled", "hidden", "inert", "button-disabled", "form-hidden"]) {
+    const h = recordExportFocusHarness(); await h.activate();
+    if (next === "busy") h.context.busyRef.current = true;
+    else if (next === "identity") h.context.identityUnverified.current = true;
+    else if (next === "pending-identity") h.context.identityCheckPending.current = true;
+    else if (next === "discard") h.discardHeading.current = { isConnected: true };
+    else if (next === "button-disabled") h.exportButton.disabled = true;
+    else if (next === "form-hidden") h.form.hidden = true;
+    else h.fieldset[next] = true;
+    h.flush(); assert.equal(h.document.activeElement, h.body, next); assert.equal(h.focusCalls.length, 0, next); h.unchanged();
+  }
+  const pending = recordExportFocusHarness(); pending.context.identityCheckPending.current = true;
+  await pending.activate(); pending.flush();
+  assert.equal(pending.context.identityChecks, 1); assert.equal(pending.document.activeElement, pending.recheck);
+  assert.equal(pending.focusCalls.length, 0); pending.unchanged();
+});

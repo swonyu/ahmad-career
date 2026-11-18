@@ -1,0 +1,362 @@
+{
+  "createdUTC": "2026-11-18T07:11:49.092187+00:00",
+  "files": [
+    {
+      "source": "record-actions-final-gates/build.stderr.log",
+      "path": "gates/build.stderr.log",
+      "bytes": 5257,
+      "sha256": "d9b630d0259b2b12a4d7e03ff3f92908ce6a935370fe8e75952a94059c09221b"
+    },
+    {
+      "source": "record-actions-final-gates/build.stdout.log",
+      "path": "gates/build.stdout.log",
+      "bytes": 18656,
+      "sha256": "69fa1d1fc3acf27804aaa0d536d6e0e2ece9fc4d554c57fe18560a2dc57d6ebd"
+    },
+    {
+      "source": "record-actions-final-gates/lint.stderr.log",
+      "path": "gates/lint.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "record-actions-final-gates/lint.stdout.log",
+      "path": "gates/lint.stdout.log",
+      "bytes": 99,
+      "sha256": "94d50bd6cdb7f9c6b561a796165fea75579acfee150dd6edae05018d32a43d5f"
+    },
+    {
+      "source": "record-actions-final-gates/receipt.json",
+      "path": "gates/receipt.json",
+      "bytes": 59385,
+      "sha256": "38e15f260c6a336d1c263edee92553018ddf80ee3a6e21c26c48a20e598c7940"
+    },
+    {
+      "source": "record-actions-final-gates/test.stderr.log",
+      "path": "gates/test.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "record-actions-final-gates/test.stdout.log",
+      "path": "gates/test.stdout.log",
+      "bytes": 56132,
+      "sha256": "c7735f0aa544953b49f5a1a4d9a0237a8109dd2fb121f380edad18cfd990eff7"
+    },
+    {
+      "source": "record-actions-final-gates/typecheck.stderr.log",
+      "path": "gates/typecheck.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "record-actions-final-gates/typecheck.stdout.log",
+      "path": "gates/typecheck.stdout.log",
+      "bytes": 63,
+      "sha256": "443da1dddfcff0734c532ffcd1dd9daefa801a87f310fd265557c8d92204a47b"
+    },
+    {
+      "source": "export-focus-candidate/source-receipt.json",
+      "path": "regression/source-receipt.json",
+      "bytes": 2064,
+      "sha256": "3aec19904ce014f10ab74755db9b9058ce2cd27d1159916a67d6185b065f6057"
+    },
+    {
+      "source": "export-focus-candidate/verification-receipt.json",
+      "path": "regression/verification-receipt.json",
+      "bytes": 3350,
+      "sha256": "8bfe666cd4de8d559c656845bebf16eaea7cc612a983c68d0f11a643c8bcf281"
+    },
+    {
+      "source": "export-focus-candidate/HANDOFF.md",
+      "path": "regression/HANDOFF.md",
+      "bytes": 3184,
+      "sha256": "9e391d7cd00fcf984ea7eabffc634e0f84ccf8e4ae35ee0e10c4497c7ca990ff"
+    },
+    {
+      "source": "export-focus-candidate/baseline.stdout.log",
+      "path": "regression/baseline.stdout.log",
+      "bytes": 33624,
+      "sha256": "9d2b910ff2d24db1d8d48ac43672b61edf2901437fd5e4433d2911e946935986"
+    },
+    {
+      "source": "export-focus-candidate/baseline.stderr.log",
+      "path": "regression/baseline.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "export-focus-candidate/candidate.stdout.log",
+      "path": "regression/candidate.stdout.log",
+      "bytes": 5714,
+      "sha256": "edcf75ae6870731887ac003a3bd8267a22b709776dfaa8c9cb3b73d82b12b88d"
+    },
+    {
+      "source": "export-focus-candidate/candidate.stderr.log",
+      "path": "regression/candidate.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "export-focus-candidate/baseline/hosted/app/phone/PhoneApp.tsx",
+      "path": "regression/baseline-PhoneApp.tsx.txt",
+      "bytes": 123270,
+      "sha256": "0deaf9a6a9423ba5753cef6e0e2acfc670a161c423bd0a6d2db105803d7fc1b0"
+    },
+    {
+      "source": "record-actions-browser-final-observations.json",
+      "path": "browser/final-observations.json",
+      "bytes": 91186,
+      "sha256": "9319a32c127cf576cc90b706bf7b1d61c4b9108b3c546ccb9c0c40cfac269a27"
+    },
+    {
+      "source": "record-actions-browser-observations-before-focus-fix.json",
+      "path": "browser/before-focus-fix-observations.json",
+      "bytes": 49830,
+      "sha256": "de858a50096e0c97643dc73cf772be926893343ca72237630bacffddc7f18b9a"
+    },
+    {
+      "source": "record-actions-text-stress-observations.json",
+      "path": "browser/action-text-stress-observations.json",
+      "bytes": 13659,
+      "sha256": "cd7ad1c31ced268ad1c393ec87863529244e8ad7e95d21f5e17fd45021e0242f"
+    },
+    {
+      "source": "final-export-downloads/Career-Finder-unfinished-edits_3.json",
+      "path": "browser/downloads/Career-Finder-unfinished-edits_3.json",
+      "bytes": 1440,
+      "sha256": "9abc9f682c31b2862a5bf662250bb3e9214e2b864e18e19a1a8ae4a04191c0f5"
+    },
+    {
+      "source": "final-export-downloads/Career-Finder-unfinished-edits_4.json",
+      "path": "browser/downloads/Career-Finder-unfinished-edits_4.json",
+      "bytes": 1440,
+      "sha256": "df0e54eebe8c3e738a601a5e0ecfc1f918acbc4a249123e0cde8a1d17eba940d"
+    },
+    {
+      "source": "final-export-downloads/Career-Finder-unfinished-edits_5.json",
+      "path": "browser/downloads/Career-Finder-unfinished-edits_5.json",
+      "bytes": 1420,
+      "sha256": "5c3682b9c398712ce4af1abe2176efd13ec514957ae3d18549823984a828cd02"
+    },
+    {
+      "source": "final-export-downloads/Career-Finder-unfinished-edits_6.json",
+      "path": "browser/downloads/Career-Finder-unfinished-edits_6.json",
+      "bytes": 1420,
+      "sha256": "252035fe74eeaa0ae3c8f98158f97f5c7a6171d293412a5f95fc5d7817ec546b"
+    },
+    {
+      "source": "final-export-downloads/Career-Finder-unfinished-edits_7.json",
+      "path": "browser/downloads/Career-Finder-unfinished-edits_7.json",
+      "bytes": 1388,
+      "sha256": "358cda376e69a6aacbcf8680e2dff3b92e264320f427d92fb48a4c3b24f374fc"
+    },
+    {
+      "source": "final-export-downloads/Career-Finder-unfinished-edits_8.json",
+      "path": "browser/downloads/Career-Finder-unfinished-edits_8.json",
+      "bytes": 1465,
+      "sha256": "e8ad38610842488cd055be6a5c0fd19f06c7cd77ac2f6203ee90ef84d1b57ee7"
+    },
+    {
+      "source": "final-export-downloads/receipt.json",
+      "path": "browser/downloads/receipt.json",
+      "bytes": 9241,
+      "sha256": "b4c10d0eba0b7d9d2f7b88ec8f33cef1a5b85084a0ee1d3c8f892a08b5c47ca1"
+    },
+    {
+      "source": "career_finder_en_export_focus_390.png.b64",
+      "path": "browser/screenshots/career_finder_en_export_focus_390.jpg",
+      "bytes": 29722,
+      "sha256": "e88622c3a51464b558e1ccedc1b207dabac171c1f10445d29c3ec9d8c6d0aaa0",
+      "decodedFromBase64": true,
+      "format": "JPEG",
+      "description": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 390x844, components 3",
+      "note": "Original png filename was a label mismatch; exact decoded bytes preserved without transcoding."
+    },
+    {
+      "source": "career_finder_ar_export_focus_320.png.b64",
+      "path": "browser/screenshots/career_finder_ar_export_focus_320.jpg",
+      "bytes": 23956,
+      "sha256": "c354f601bfe17855ae0aa1cf0fd7e7d5540bbc4b069a3f177ed37fe8d55f4554",
+      "decodedFromBase64": true,
+      "format": "JPEG",
+      "description": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 320x844, components 3",
+      "note": "Original png filename was a label mismatch; exact decoded bytes preserved without transcoding."
+    },
+    {
+      "source": "career_finder_ar_actions_text200_320.png.b64",
+      "path": "browser/screenshots/career_finder_ar_actions_text200_320.jpg",
+      "bytes": 24124,
+      "sha256": "8488ae6315dafe0e3437279b14b12b27e2c56b4cee81fd6aec15be2dfb654f28",
+      "decodedFromBase64": true,
+      "format": "JPEG",
+      "description": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 320x844, components 3",
+      "note": "Original png filename was a label mismatch; exact decoded bytes preserved without transcoding."
+    },
+    {
+      "source": "large-action-text-browser-corrected/fixture.tsx",
+      "path": "fixture/fixture.tsx",
+      "bytes": 16673,
+      "sha256": "22be902b25e7746d9612c2f7b241e42332a74387a2bc10a9dd8a9c7ab0a0d9a5"
+    },
+    {
+      "source": "large-action-text-browser-corrected/fixture.css",
+      "path": "fixture/fixture.css",
+      "bytes": 1577,
+      "sha256": "76e5380b2d42bd075fc314e799328b16d085f5bb2c82555f558a8d74d1499988"
+    },
+    {
+      "source": "large-action-text-browser-corrected/ImageStub.tsx",
+      "path": "fixture/ImageStub.tsx",
+      "bytes": 342,
+      "sha256": "96516fb416450e89138ce35c03987f4332f27383fd3b04e19286da744095b85c"
+    },
+    {
+      "source": "large-action-text-browser-corrected/server.mjs",
+      "path": "fixture/server.mjs",
+      "bytes": 5953,
+      "sha256": "3567e4e8d669a9aab1ac0eaf8d22ae95108d4e3a5bef5e6e6dd7f66f24a12184"
+    },
+    {
+      "source": "large-action-text-browser-corrected/build.mjs",
+      "path": "fixture/build.mjs",
+      "bytes": 6177,
+      "sha256": "7fefb4834c5e00e3f3bc76da669f829761ef246526e94903b37861d7dac29828"
+    },
+    {
+      "source": "large-action-text-browser-corrected/preflight.mjs",
+      "path": "fixture/preflight.mjs",
+      "bytes": 3854,
+      "sha256": "9a335eaba3f4ff13df2b5933ca2ee23532cff56820d409174f01096a0304b70f"
+    },
+    {
+      "source": "large-action-text-browser-corrected/seed-fixtures.ts",
+      "path": "fixture/seed-fixtures.ts",
+      "bytes": 9736,
+      "sha256": "7ce699f334c9259541eac280daada6a1528085f9334b53c22605232f19a4fbbe"
+    },
+    {
+      "source": "large-action-text-browser-corrected/scenarios.mjs",
+      "path": "fixture/scenarios.mjs",
+      "bytes": 6974,
+      "sha256": "b60b395bbbfb6d3aee436452d6d40b34a98f56c4a67db708dc4872a3fdb55a50"
+    },
+    {
+      "source": "large-action-text-browser-corrected/index.html",
+      "path": "fixture/index.html",
+      "bytes": 524,
+      "sha256": "0c086365c22826078d268c233e06479a80a93e6a43d9fd49d545439a26ff75d1"
+    },
+    {
+      "source": "large-action-text-browser-corrected/build-metadata.json",
+      "path": "fixture/build-metadata.json",
+      "bytes": 6849,
+      "sha256": "36e01a872545399c9c1790441382a397509ab8e2f7ce6cafb94462d42a4df5e3"
+    },
+    {
+      "source": "large-action-text-browser-corrected/receipt.json",
+      "path": "fixture/receipt.json",
+      "bytes": 628,
+      "sha256": "dc99be2667d11f9e026981d493ef9c1475c128abccea8c69a390d1b762084ad6"
+    },
+    {
+      "source": "large-action-text-browser-corrected/build.stdout.log",
+      "path": "fixture/build.stdout.log",
+      "bytes": 419,
+      "sha256": "ae677a93142864f3b61e4ddfe2cef1b7f8faff4b2b8616bf7d9cede30d94d2ab"
+    },
+    {
+      "source": "large-action-text-browser-corrected/build.stderr.log",
+      "path": "fixture/build.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "large-action-text-fixture-candidate/source-receipt.json",
+      "path": "fixture/initial-activation-source-receipt.json",
+      "bytes": 2468,
+      "sha256": "383cbd80437aef393e32cd8505e9814dfcc7fb65dfee691bc2cc9bb646f4bec0"
+    },
+    {
+      "source": "large-action-text-fixture-candidate/candidate/fixture.css",
+      "path": "fixture/initial-nonactivating-fixture.css.txt",
+      "bytes": 1567,
+      "sha256": "849cdd21a7dae6e47d9a2010146f0a74c20897706d4766c009168b8ae09051e8"
+    },
+    {
+      "source": "large-action-text-fixture-candidate/important-correction/source-receipt.json",
+      "path": "fixture/important-correction-receipt.json",
+      "bytes": 4987,
+      "sha256": "61731852148032bf953271ac6aa4ec5fe88d231c3f40552519dd5e1c452354ed"
+    },
+    {
+      "source": "merge-authorization-update.txt",
+      "path": "integration/merge-authorization-update.txt",
+      "bytes": 738,
+      "sha256": "abdbfa7a44812e7d84b432ad314fd92d540db86a2d8eeef6be75c4cbb8616cc4"
+    },
+    {
+      "source": "combined-native-integration-handoff.txt",
+      "path": "integration/historical-combined-native-handoff.txt",
+      "bytes": 13957,
+      "sha256": "29aeb927ee1e346eea843370799235f273f987d00288582fbf13f271c0dd535a"
+    },
+    {
+      "source": "native-retry-localization-candidate/followup-push-receipt.json",
+      "path": "integration/native-search-9531-push-receipt.json",
+      "bytes": 4101,
+      "sha256": "5d1471e4b949dc979209736fd260871e9f52d888f3d5d77c74ab1d279731173e"
+    },
+    {
+      "source": "terminal-preservation/recovery-push-receipt.json",
+      "path": "integration/native-recovery-53c7-push-receipt.json",
+      "bytes": 649,
+      "sha256": "556f36fb6fdd9032b6551375a204c4b02306c0512949b455414f47069b75fdad"
+    },
+    {
+      "source": "terminal-preservation/accessibility-push-receipt.json",
+      "path": "integration/native-accessibility-b37f-push-receipt.json",
+      "bytes": 6730,
+      "sha256": "17e80238262f0c9e00e4436be44ccab14259074172d3dad39bd619bb44f0e982"
+    },
+    {
+      "source": "latest-actions-before-final.json",
+      "path": "integration/latest-actions-observed.json",
+      "bytes": 57686,
+      "sha256": "2588604ee6cf738177923a3fcd5328bddbc011ee68f78611eefd99722bf68ee3"
+    },
+    {
+      "source": "grok-bounded-reviews.json",
+      "path": "integration/grok-bounded-reviews.json",
+      "bytes": 38739,
+      "sha256": "4f87f39ad29e1cc355eb457055086f811f962d6ed5a492d2b21cfb89270de533"
+    },
+    {
+      "source": "authored checkpoint context/current read-only verification",
+      "path": "README.md",
+      "bytes": 10559,
+      "sha256": "42d17281bfa8ff2e26c3151b4b50de1f5cf094cabd625a1499b9f5bd66803735"
+    },
+    {
+      "source": "authored checkpoint context/current read-only verification",
+      "path": "seal-preflight.json",
+      "bytes": 1180,
+      "sha256": "acf47ae25984b5915430edeece4429b7bc0669c38721c357eb23a8f67c7cb64c"
+    },
+    {
+      "source": "staged whitespace check; raw log preservation decision",
+      "path": "artifact-whitespace-diagnostic.json",
+      "bytes": 2300,
+      "sha256": "d09332b430e3ef91db71d64a1b281999cb4be461159942b7f610534834115f97"
+    }
+  ],
+  "exclusions": [
+    "compiled bundles",
+    "node_modules",
+    "module caches",
+    "raw patch artifacts",
+    "base64 duplicates",
+    "unrelated baseline trees"
+  ],
+  "sourcePreservation": true
+}
