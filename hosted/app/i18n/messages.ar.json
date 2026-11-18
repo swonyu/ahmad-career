@@ -1349,5 +1349,6 @@
   "Save the job before opening the employer’s page. Check its requirements, location and deadline there.": "احفظ الوظيفة أولًا، ثم افتح صفحة جهة العمل لمراجعة المتطلبات والموقع وآخر موعد للتقديم.",
   "in your phone browser. Its five sections are Search, Saved, Apply, Profile and Settings.": "في متصفح هاتفك. أقسام التطبيق الخمسة هي: البحث، المحفوظات، التقديم، الملف الشخصي والإعدادات.",
   "Removing a bookmark keeps its application record. Closing an application keeps the applied mark. To correct that mark, choose Saved for later in the record and confirm Mark not applied. This does not withdraw the application you sent to the employer.": "إزالة الوظيفة من المحفوظات لا تمحو سجل التقديم. وإغلاق الطلب لا يزيل علامة التقديم. لتصحيح العلامة، اختر «محفوظة للرجوع إليها» في السجل، ثم أكّد «إلغاء علامة التقديم». هذا لا يسحب الطلب الذي أرسلته إلى جهة العمل.",
-  "No jobs are at this stage. A saved job without an application record is listed under Saved for later. Clear search and filters to see all jobs.": "لا توجد وظائف في هذه المرحلة. تظهر الوظائف المحفوظة بلا سجل تقديم ضمن «محفوظة للرجوع إليها». امسح البحث وعوامل التصفية لرؤية جميع الوظائف."
+  "No jobs are at this stage. A saved job without an application record is listed under Saved for later. Clear search and filters to see all jobs.": "لا توجد وظائف في هذه المرحلة. تظهر الوظائف المحفوظة بلا سجل تقديم ضمن «محفوظة للرجوع إليها». امسح البحث وعوامل التصفية لرؤية جميع الوظائف.",
+  "Choose a job title from your saved profile": "اختر مسمى وظيفيًا من ملفك المحفوظ"
 }

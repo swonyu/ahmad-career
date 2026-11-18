@@ -90,3 +90,44 @@ test('job link accessible names retain the visible label, exact title and exact 
     assert.equal(anchor.props.rel,'noopener noreferrer');
   }
 });
+
+// Exercise the real correction handler and edit function. The DOM port models
+// removal of the focused confirmation button, as observed in the live browser.
+function correctionFocusFixture(){
+  const code=read('app/phone/components.tsx'),ast=ts.createSourceFile('components.tsx',code,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
+  const component=nodes(ast,node=>ts.isFunctionDeclaration(node)&&node.name?.text==='RecordEditor')[0];
+  const initializer=name=>nodes(component,node=>ts.isVariableDeclaration(node)&&node.name.getText(ast)===name)[0].initializer.getText(ast);
+  const frames=[],focusCalls=[];
+  const body={isConnected:true},html={isConnected:true},other={isConnected:true};
+  const document={body,documentElement:html,activeElement:null,focused:true,hasFocus(){return this.focused;}};
+  const dialog={open:true},form={isConnected:true,closest(selector){assert.equal(selector,'dialog');return dialog;},contains(node){return node.ownerForm===form;}};
+  const field={isConnected:true,ownerForm:form,disabled:false,hidden:false,matches(selector){assert.equal(selector,':disabled');return this.disabled;},closest(selector){assert.equal(selector,'[hidden], [inert]');return this.hidden?form:null;},focus(options){focusCalls.push(options);document.activeElement=this;}};
+  const button={isConnected:true,form,ownerDocument:document};document.activeElement=button;
+  const record=Object.freeze({stage:'applied',note:'Saved note',followUpDate:'2026-11-30',appliedElsewhere:true});
+  const ctx={record,draft:{...record,stage:'saved',note:'Unfinished note متابعة'},stageInput:{current:field},requestAnimationFrame:callback=>frames.push(callback),setDraft:value=>ctx.draft=value,onDraftChange:value=>ctx.reported=value,setConfirmClear:value=>ctx.confirm=value};
+  compile('globalThis.edit='+initializer('edit')+';globalThis.keepAppliedRecord='+initializer('keepAppliedRecord')+';',ctx);
+  const activate=()=>{ctx.keepAppliedRecord(button);button.isConnected=false;document.activeElement=body;};
+  const flush=()=>{assert.equal(frames.length,1);frames.shift()();};
+  return {document,body,html,other,dialog,form,field,button,record,ctx,focusCalls,activate,flush};
+}
+
+test('cancelling an applied-mark correction restores Stage after removal and preserves other draft fields',()=>{
+  const h=correctionFocusFixture();h.activate();assert.equal(h.document.activeElement,h.body);assert.equal(h.focusCalls.length,0);
+  assert.equal(h.ctx.draft.stage,'applied');assert.equal(h.ctx.draft.note,'Unfinished note متابعة');assert.equal(h.ctx.draft.followUpDate,'2026-11-30');assert.equal(h.ctx.draft.appliedElsewhere,true);assert.equal(h.ctx.confirm,false);
+  h.flush();assert.equal(h.document.activeElement,h.field);assert.equal(h.focusCalls[0].preventScroll,false);assert.equal(h.record.note,'Saved note');
+});
+
+test('correction focus recovery leaves another chosen control, an inactive window and closed or replaced editors alone',()=>{
+  for(const mode of ['other-focus','inactive','closed','removed-form','removed-field','moved-field','disabled','hidden']){
+    const h=correctionFocusFixture();h.activate();
+    if(mode==='other-focus')h.document.activeElement=h.other;
+    if(mode==='inactive')h.document.focused=false;
+    if(mode==='closed')h.dialog.open=false;
+    if(mode==='removed-form')h.form.isConnected=false;
+    if(mode==='removed-field')h.field.isConnected=false;
+    if(mode==='moved-field')h.field.ownerForm={};
+    if(mode==='disabled')h.field.disabled=true;
+    if(mode==='hidden')h.field.hidden=true;
+    const before=h.document.activeElement;h.flush();assert.equal(h.document.activeElement,before,mode);assert.equal(h.focusCalls.length,0,mode);
+  }
+});

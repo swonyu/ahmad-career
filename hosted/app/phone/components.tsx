@@ -116,17 +116,28 @@ export function ProfileEditor({ profile, onChange, onPDF, onSaveLocal, onSaveOnl
 
 export function RecordEditor({ record, initialDraft, onDraftChange, onSave, onCancel, onDirtyChange, busy }: { record: ApplicationRecord; initialDraft?: ApplicationRecord; onDraftChange: (draft: ApplicationRecord) => void; onSave: (draft: ApplicationRecord, clearApplied: boolean) => void; onCancel: () => void; onDirtyChange: (changed: boolean) => void; busy: boolean }) {
   const { t } = useI18n();
+  const stageInput = useRef<HTMLSelectElement>(null);
   const [draft, setDraft] = useState(initialDraft ?? record), [confirmClear, setConfirmClear] = useState(false);
   const changed = JSON.stringify(draft) !== JSON.stringify(record);
   useEffect(() => { onDirtyChange(changed); }, [changed, onDirtyChange]);
   const edit = (value: Partial<ApplicationRecord>) => { const next = { ...draft, ...value }; setDraft(next); onDraftChange(next); setConfirmClear(false); };
+  const keepAppliedRecord = (button: HTMLButtonElement) => {
+    const form = button.form, field = stageInput.current, dialog = form?.closest("dialog"), document = button.ownerDocument;
+    edit({ stage: record.stage });
+    requestAnimationFrame(() => {
+      const active = document.activeElement;
+      if (!document.hasFocus() || !form?.isConnected || !dialog?.open || !field?.isConnected ||
+          !form.contains(field) || field.matches(":disabled") || field.closest("[hidden], [inert]")) return;
+      if (!active?.isConnected || active === document.body || active === document.documentElement) field.focus({ preventScroll: false });
+    });
+  };
   return <form onSubmit={event => { event.preventDefault(); if (record.appliedElsewhere && draft.stage === "saved" && !confirmClear) setConfirmClear(true); else onSave(draft, confirmClear); }}>
     <p className="phone-note">{t("Your record on this phone. It does not change the employer’s records or create a verified receipt.")}</p>
-    <label>{t("Stage")}<select value={draft.stage} onChange={e => edit({ stage: e.target.value as ApplicationRecord["stage"] })}>{stages.map(stage => <option key={stage} value={stage}>{t(stageNames[stage])}</option>)}</select></label>
+    <label>{t("Stage")}<select ref={stageInput} value={draft.stage} onChange={e => edit({ stage: e.target.value as ApplicationRecord["stage"] })}>{stages.map(stage => <option key={stage} value={stage}>{t(stageNames[stage])}</option>)}</select></label>
     <div className="phone-field-pair"><label>{t("Applied date ")}<span className="optional">{t("optional")}</span><input type="date" min="1900-01-01" max="9999-12-31" value={draft.appliedDate} onChange={e => edit({ appliedDate: e.target.value })} /></label><label>{t("Follow-up date ")}<span className="optional">{t("optional")}</span><input type="date" min="1900-01-01" max="9999-12-31" value={draft.followUpDate} onChange={e => edit({ followUpDate: e.target.value })} /></label></div>
     <label>{t("Private notes")}<textarea dir="auto" maxLength={5000} rows={5} value={draft.note} placeholder={t("People to contact, interview details, or your next step")} onChange={e => edit({ note: e.target.value })} /></label>
     {changed && <details className="phone-disclosure"><summary>{t("Compare with the saved record")}</summary><RecordSummary record={record} /><p className="preserve-lines" dir="auto">{record.note || t("No saved private note.")}</p></details>}
-    {confirmClear && <div className="phone-warning" role="alert"><h3>{t("Mark as not applied?")}</h3><p>{t("This removes your own applied mark and allows a new application review. It does not withdraw an application from an employer.")}</p><button type="button" className="button secondary full" onClick={() => edit({ stage: record.stage })}>{t("Keep application record")}</button></div>}
+    {confirmClear && <div className="phone-warning" role="alert"><h3>{t("Mark as not applied?")}</h3><p>{t("This removes your own applied mark and allows a new application review. It does not withdraw an application from an employer.")}</p><button type="button" className="button secondary full" onClick={event => keepAppliedRecord(event.currentTarget)}>{t("Keep application record")}</button></div>}
     <div className="phone-dialog-actions"><button type="button" className="button secondary" disabled={busy} onClick={onCancel}>{t("Cancel")}</button><button type="submit" className="button primary" disabled={busy}>{confirmClear ? t("Mark not applied") : t("Save record")}</button></div>
   </form>;
 }
