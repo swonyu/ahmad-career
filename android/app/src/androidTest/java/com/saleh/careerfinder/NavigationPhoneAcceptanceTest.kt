@@ -272,8 +272,9 @@ class NavigationPhoneAcceptanceTest {
         compose.onNodeWithTag("discovery-list").performScrollToNode(hasText(strings("Role, skill or keyword")) and hasSetTextAction())
         compose.onNode(hasText(strings("Role, skill or keyword")) and hasSetTextAction()).performTextInput("care")
         hideKeyboard()
-        compose.onNodeWithTag("discovery-list").performScrollToNode(hasText(strings("Search jobs")))
-        compose.onNodeWithText(strings("Search jobs")).performClick()
+        val searchAction = hasText(strings("Search jobs")) and hasClickAction()
+        compose.onNodeWithTag("discovery-list").performScrollToNode(searchAction)
+        compose.onNode(searchAction).performClick()
         compose.waitUntil(5_000) { !model.discovery.state.value.loading && model.discovery.state.value.jobs.size == 2 }
         runBlocking { withContext(Dispatchers.Main) { model.discovery.saveSearchNow(); model.discovery.stopPrivateSession(flush = true) } }
         compose.runOnIdle { owner.clear(); owner = ViewModelStore() }
