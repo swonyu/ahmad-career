@@ -260,12 +260,24 @@ jobs:
               output.write('CAREER_UI_DEVICE=' + identifier + '\n')
               output.write('CAREER_UI_ARCH=' + architecture + '\n')
           print('Selected', name, 'on iOS', '.'.join(map(str, version)), 'architecture', architecture)
+      - name: Verify simulator boot evidence parser fixtures
+        run: python3 apple/Checks/test-simulator-boot.py
       - name: Boot selected iPhone and wait for readiness
         shell: bash
         timeout-minutes: 3
         run: |
           set -o pipefail
-          xcrun simctl bootstatus "$CAREER_UI_DEVICE" -b 2>&1 | tee "$RUNNER_TEMP/career-iphone-boot.log"
+          boot_results=(0 0)
+          xcrun simctl bootstatus "$CAREER_UI_DEVICE" -b 2>&1 | tee "$RUNNER_TEMP/career-iphone-boot.log" || boot_results=("${PIPESTATUS[@]}")
+          inventory_result=0
+          xcrun simctl list devices --json > "$RUNNER_TEMP/career-iphone-boot-devices.json" 2> "$RUNNER_TEMP/career-iphone-boot-devices.stderr" || inventory_result=$?
+          python3 apple/Checks/verify-simulator-boot.py \
+            --device "$CAREER_UI_DEVICE" \
+            --boot-log "$RUNNER_TEMP/career-iphone-boot.log" \
+            --inventory "$RUNNER_TEMP/career-iphone-boot-devices.json" \
+            --boot-exit "${boot_results[0]}" --log-exit "${boot_results[1]}" \
+            --inventory-exit "$inventory_result" \
+            --output "$RUNNER_TEMP/career-iphone-boot-verification.json"
       - name: Exercise native phone flows with isolated synthetic data
         shell: bash
         # Bound simulator work while leaving time to retain failure evidence.
@@ -317,6 +329,9 @@ jobs:
           name: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-connection' && 'PARTIAL-iphone-connection-regression' || 'iphone-ui-acceptance' }}-${{ github.run_id }}
           path: |
             ${{ runner.temp }}/career-iphone-boot.log
+            ${{ runner.temp }}/career-iphone-boot-devices.json
+            ${{ runner.temp }}/career-iphone-boot-devices.stderr
+            ${{ runner.temp }}/career-iphone-boot-verification.json
             ${{ runner.temp }}/career-iphone-ui.log
             ${{ runner.temp }}/CareerFinderUI.xcresult
             ${{ runner.temp }}/career-ui-screenshots

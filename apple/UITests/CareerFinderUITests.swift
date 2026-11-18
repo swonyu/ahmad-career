@@ -20,8 +20,17 @@ final class CareerFinderUITests: XCTestCase {
     @MainActor
     private func tab(_ name: String, in app: XCUIApplication) {
         let button = app.tabBars.buttons[name]
-        XCTAssertTrue(button.waitForExistence(timeout: 5), "Missing tab: \(name)")
-        XCTAssertTrue(button.isHittable, "Tab must be reachable: \(name)")
+        // A tab may exist behind a dismissing sheet. Use the existing wait for
+        // both requirements before the same real navigation tap.
+        let reachable = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            button.exists && button.isHittable
+        }, object: nil)
+        let readiness = XCTWaiter.wait(for: [reachable], timeout: 5)
+        if readiness != .completed {
+            captureObservation("tab-not-reachable", app: app, details: "Tab: \(name)")
+        }
+        XCTAssertTrue(button.exists, "Missing tab: \(name)")
+        XCTAssertTrue(readiness == .completed && button.isHittable, "Tab must be reachable: \(name)")
         button.tap()
     }
     @MainActor
@@ -91,10 +100,26 @@ final class CareerFinderUITests: XCTestCase {
         XCTFail("Expected an application control inside the visible scroll area: \(target)")
     }
     @MainActor
-    private func typingKeyIsVisible(_ deleteKey: XCUIElement) -> Bool {
+    private func hasVisibleHittableFrame(_ element: XCUIElement, in app: XCUIApplication) -> Bool {
+        guard element.exists else { return false }
+        let frame = element.frame
+        // XCTest can retain keyboard keys with an infinite, empty frame during
+        // dismissal. Do not ask that non-visible element for a hit point.
+        guard frame.origin.x.isFinite, frame.origin.y.isFinite,
+              frame.width.isFinite, frame.height.isFinite,
+              frame.width > 0, frame.height > 0 else { return false }
+        let viewport = app.frame
+        guard viewport.origin.x.isFinite, viewport.origin.y.isFinite,
+              viewport.width.isFinite, viewport.height.isFinite,
+              viewport.width > 0, viewport.height > 0,
+              frame.intersects(viewport) else { return false }
+        return element.isHittable
+    }
+    @MainActor
+    private func typingKeyIsVisible(_ deleteKey: XCUIElement, in app: XCUIApplication) -> Bool {
         // Reuse the exact system-key query for this keyboard presentation.
         // Each poll still resolves its real existence and hit-testable state.
-        deleteKey.exists && deleteKey.isHittable
+        hasVisibleHittableFrame(deleteKey, in: app)
     }
     @MainActor
     private func replace(_ field: XCUIElement, with text: String, in app: XCUIApplication, clearWith clearButton: XCUIElement? = nil) {
@@ -107,7 +132,7 @@ final class CareerFinderUITests: XCTestCase {
                       "The native keyboard must appear before checking its typing key")
         let deleteKey = app.keyboards.keys.matching(identifier: "delete").firstMatch
         let keyboardReady = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-            self.typingKeyIsVisible(deleteKey)
+            self.typingKeyIsVisible(deleteKey, in: app)
         }, object: nil)
         let readiness = XCTWaiter.wait(for: [keyboardReady], timeout: 5)
         if readiness != .completed { print(app.debugDescription) }
@@ -176,7 +201,7 @@ final class CareerFinderUITests: XCTestCase {
                                   "The native keyboard must reappear after clearing before checking its typing key")
                     let reopenedDeleteKey = app.keyboards.keys.matching(identifier: "delete").firstMatch
                     let keyboardAfterClear = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-                        self.typingKeyIsVisible(reopenedDeleteKey)
+                        self.typingKeyIsVisible(reopenedDeleteKey, in: app)
                     }, object: nil)
                     XCTAssertEqual(XCTWaiter.wait(for: [keyboardAfterClear], timeout: 5), .completed,
                                    "A real keyboard key must be visible after clearing before replacement")
@@ -209,11 +234,11 @@ final class CareerFinderUITests: XCTestCase {
     private func finishTyping(in app: XCUIApplication) {
         let done = app.buttons["Done typing"]
         guard done.exists else {
-            XCTAssertFalse(app.keyboards.keys.allElementsBoundByIndex.contains { $0.isHittable },
+            XCTAssertFalse(app.keyboards.keys.allElementsBoundByIndex.contains { self.hasVisibleHittableFrame($0, in: app) },
                            "An open editor keyboard must expose its Done action")
             return
         }
-        XCTAssertTrue(done.isHittable, "Done typing must be reachable")
+        XCTAssertTrue(hasVisibleHittableFrame(done, in: app), "Done typing must be reachable")
         done.tap()
         let keyboard = app.keyboards.firstMatch
         let keys = app.keyboards.keys
@@ -222,9 +247,9 @@ final class CareerFinderUITests: XCTestCase {
         // Observe the three original requirements serially so one expensive
         // collection lookup cannot consume another condition's entire wait.
         let observations: [(String, () -> Bool)] = [
-            ("keyboard container", { !keyboard.exists || !keyboard.isHittable }),
-            ("typing keys", { !keys.allElementsBoundByIndex.contains { $0.isHittable } }),
-            ("Done actions", { !actions.allElementsBoundByIndex.contains { $0.exists && $0.isHittable } })
+            ("keyboard container", { !self.hasVisibleHittableFrame(keyboard, in: app) }),
+            ("typing keys", { !keys.allElementsBoundByIndex.contains { self.hasVisibleHittableFrame($0, in: app) } }),
+            ("Done actions", { !actions.allElementsBoundByIndex.contains { self.hasVisibleHittableFrame($0, in: app) } })
         ]
         for (stage, isDismissed) in observations {
             var lastObserved = false
@@ -426,18 +451,18 @@ final class CareerFinderUITests: XCTestCase {
         XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5))
         let deleteKey = app.keyboards.keys.matching(identifier: "delete").firstMatch
         let keyReady = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-            self.typingKeyIsVisible(deleteKey)
+            self.typingKeyIsVisible(deleteKey, in: app)
         }, object: nil)
         let keyReadiness = XCTWaiter.wait(for: [keyReady], timeout: 5)
         if keyReadiness != .completed { print(app.debugDescription) }
         XCTAssertEqual(keyReadiness, .completed, "A real keyboard key must be visible before submitting")
-        guard typingKeyIsVisible(deleteKey) else {
+        guard typingKeyIsVisible(deleteKey, in: app) else {
             print(app.debugDescription)
             XCTFail("No reachable keyboard key was presented"); return
         }
         let search = app.buttons["discovery.keyboardSearch"]
         XCTAssertTrue(search.waitForExistence(timeout: 5))
-        XCTAssertTrue(search.isHittable, "Search must be reachable while the keyboard is open")
+        XCTAssertTrue(hasVisibleHittableFrame(search, in: app), "Search must be reachable while the keyboard is open")
         if usingReturnKey {
             app.textFields["discovery.keywords"].typeText("\n")
         } else {
@@ -445,13 +470,20 @@ final class CareerFinderUITests: XCTestCase {
         }
         // Query the current collections: resolving a retained, vanished element retries
         // internally and can consume the wait before the absence has been reported.
+        var lastVisibleTypingKey: Bool?
+        var lastVisibleSearchAction: Bool?
         let dismissed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
             let keys = app.keyboards.keys.allElementsBoundByIndex
             let toolbarActions = app.buttons.matching(identifier: "discovery.keyboardSearch").allElementsBoundByIndex
-            return !keys.contains(where: { $0.isHittable }) && !toolbarActions.contains(where: { $0.isHittable })
+            lastVisibleTypingKey = keys.contains { self.hasVisibleHittableFrame($0, in: app) }
+            lastVisibleSearchAction = toolbarActions.contains { self.hasVisibleHittableFrame($0, in: app) }
+            return lastVisibleTypingKey == false && lastVisibleSearchAction == false
         }, object: nil)
         let dismissal = XCTWaiter.wait(for: [dismissed], timeout: 5)
-        if dismissal != .completed { print(app.debugDescription) }
+        if dismissal != .completed {
+            captureObservation("search-keyboard-dismissal-incomplete", app: app,
+                               details: "Visible typing key: \(String(describing: lastVisibleTypingKey)); visible search action: \(String(describing: lastVisibleSearchAction))")
+        }
         XCTAssertEqual(dismissal, .completed, "Submitting a search must dismiss the visible keyboard and its toolbar")
     }
 
