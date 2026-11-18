@@ -249,6 +249,7 @@
     <string name="c_b59a4c443ea2" formatted="false">"اختر بلدًا أو منطقة من القائمة."</string>
     <string name="c_fc3e3a368687" formatted="false">"اختيار العملة"</string>
     <string name="c_f0cf7f3b3a43" formatted="false">"اختر عملة وصحّح أي مبلغ غير صالح قبل الحساب."</string>
+    <string name="c_4237fa12eff6" formatted="false">"اختر مسمى وظيفيًا من ملفك المحفوظ"</string>
     <string name="c_29fbc6443929" formatted="false">"اختر نسخة احتياطية لمساحة عمل الهاتف لا تتجاوز 24 MiB."</string>
     <string name="c_5ff5e5847c9a" formatted="false">"اختر عملة التخطيط من القائمة."</string>
     <string name="c_c2c28971aafc" formatted="false">"اختر سيرة ذاتية بصيغة PDF قابلة للقراءة، تتراوح بين صفحة واحدة و200 صفحة."</string>
@@ -378,6 +379,7 @@
     <string name="c_cad8740b12b1" formatted="false">"السجل المنسوخ"</string>
     <string name="c_360566f34e75" formatted="false">"تم النسخ. الصق البيانات في نموذج جهة العمل وراجعها قبل الإرسال."</string>
     <string name="c_9e3506fd9f0a" formatted="false">"ينسخ رابط الوظيفة العام وتفاصيلها. وتبقى ملاحظاتك وحالتك الأصليتان هنا. الحفظ لا يقدّم طلب توظيف."</string>
+    <string name="c_dc1487913c9c" formatted="false">"تعذّر تأكيد النسخ. انسخ القيمة من حقلها في الملف الشخصي."</string>
     <string name="c_524a10cd6465" formatted="false">"نسخ المسودة ودمج السجلات"</string>
     <string name="c_55463e516a11" formatted="false">"نسخ الروابط المحفوظة والسجلات الخاصة"</string>
     <string name="c_5e2049d55795" formatted="false">"نسخ المسودات المختارة"</string>

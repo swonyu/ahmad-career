@@ -247,6 +247,7 @@
 "Choose a country or region from the list." = "Choose a country or region from the list.";
 "Choose a currency" = "Choose a currency";
 "Choose a currency and correct any invalid amount before calculating." = "Choose a currency and correct any invalid amount before calculating.";
+"Choose a job title from your saved profile" = "Choose a job title from your saved profile";
 "Choose a phone workspace backup no larger than 24 MiB." = "Choose a phone workspace backup no larger than 24 MiB.";
 "Choose a planning currency from the list." = "Choose a planning currency from the list.";
 "Choose a readable PDF CV with between 1 and 200 pages." = "Choose a readable PDF CV with between 1 and 200 pages.";
@@ -376,6 +377,7 @@
 "Copied record" = "Copied record";
 "Copied. Paste it into the employer’s form and check it before submitting." = "Copied. Paste it into the employer’s form and check it before submitting.";
 "Copies this public job link and role details. Your original notes and status stay here. Saving does not apply." = "Copies this public job link and role details. Your original notes and status stay here. Saving does not apply.";
+"Copy could not be confirmed. Copy the value from its profile field instead." = "Copy could not be confirmed. Copy the value from its profile field instead.";
 "Copy draft and merge records" = "Copy draft and merge records";
 "Copy saved links and private records" = "Copy saved links and private records";
 "Copy selected drafts" = "Copy selected drafts";

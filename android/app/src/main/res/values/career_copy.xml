@@ -249,6 +249,7 @@
     <string name="c_b59a4c443ea2" formatted="false">"Choose a country or region from the list."</string>
     <string name="c_fc3e3a368687" formatted="false">"Choose a currency"</string>
     <string name="c_f0cf7f3b3a43" formatted="false">"Choose a currency and correct any invalid amount before calculating."</string>
+    <string name="c_4237fa12eff6" formatted="false">"Choose a job title from your saved profile"</string>
     <string name="c_29fbc6443929" formatted="false">"Choose a phone workspace backup no larger than 24 MiB."</string>
     <string name="c_5ff5e5847c9a" formatted="false">"Choose a planning currency from the list."</string>
     <string name="c_c2c28971aafc" formatted="false">"Choose a readable PDF CV with between 1 and 200 pages."</string>
@@ -378,6 +379,7 @@
     <string name="c_cad8740b12b1" formatted="false">"Copied record"</string>
     <string name="c_360566f34e75" formatted="false">"Copied. Paste it into the employer’s form and check it before submitting."</string>
     <string name="c_9e3506fd9f0a" formatted="false">"Copies this public job link and role details. Your original notes and status stay here. Saving does not apply."</string>
+    <string name="c_dc1487913c9c" formatted="false">"Copy could not be confirmed. Copy the value from its profile field instead."</string>
     <string name="c_524a10cd6465" formatted="false">"Copy draft and merge records"</string>
     <string name="c_55463e516a11" formatted="false">"Copy saved links and private records"</string>
     <string name="c_5e2049d55795" formatted="false">"Copy selected drafts"</string>

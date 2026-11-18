@@ -625,6 +625,22 @@ final class CareerFinderUITests: XCTestCase {
         element("saved.filter", app: app).tap(); chooseMenu("Follow-ups", in: app)
         XCTAssertTrue(app.staticTexts[title].waitForExistence(timeout: 5), "The private follow-up remains available after an explicit applied-mark correction")
         capture("19-private-follow-up-filter", app: app)
+        let retainedRow = app.staticTexts[title]; reveal(retainedRow, in: app); retainedRow.tap()
+        let remove = app.buttons["saved.removeLink"]; reveal(remove, in: app); remove.tap()
+        let confirm = app.buttons["opportunity.confirmRemove"]; reveal(confirm, in: app); confirm.tap()
+        let removalClosed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            !app.buttons["opportunity.confirmRemove"].exists
+        }, object: nil)
+        XCTAssertEqual(XCTWaiter.wait(for: [removalClosed], timeout: 5), .completed)
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        tab("Apply", in: app)
+        let manual = app.buttons["applications.manual"]
+        XCTAssertTrue(manual.waitForExistence(timeout: 5) && manual.isEnabled && manual.isHittable)
+        XCTAssertEqual(manual.label, "Open saved jobs", "A meaningful retained record remains reachable without its bookmark")
+        manual.tap()
+        let kept = app.staticTexts[title]; reveal(kept, in: app); kept.tap()
+        XCTAssertTrue(app.staticTexts["Prepare a thoughtful follow-up."].exists)
+        XCTAssertFalse(app.buttons["saved.removeLink"].exists, "Manual navigation must not restore a removed bookmark")
     }
 
     @MainActor
