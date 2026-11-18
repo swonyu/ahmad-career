@@ -87,6 +87,10 @@ export function profileRequest(profile: Profile) {
 
 export const jobSchema = z.object({ id: z.string().min(1).max(250), title: boundedText(500), company: boundedText(250), url: https, location: boundedText(500).default(""), country: z.string().max(2).default(""), remoteId: z.string().uuid().optional(), checkedAt: timestamp.optional(), sourceName: boundedText(150).optional(), summary: boundedText(1000).optional() });
 export type Job = z.infer<typeof jobSchema>;
+// Preserve partially entered links locally; public-URL validation still runs on Save.
+export const jobLinkDraftSchema = z.object({ url: boundedText(2048), title: boundedText(500), company: boundedText(250), location: boundedText(500) });
+export type JobLinkDraft = z.infer<typeof jobLinkDraftSchema>;
+export function blankJobLinkDraft(): JobLinkDraft { return { url: "", title: "", company: "", location: "" }; }
 export const recordSchema = z.object({ identity: https.refine(value => { try { return value === jobIdentity(value); } catch { return false; } }, "Application identity must be canonical"), title: boundedText(500), company: boundedText(250), location: boundedText(500).optional(), stage: z.enum(stages), appliedElsewhere: z.boolean(), appliedDate: date, followUpDate: date, note: boundedText(5000), updatedAt: timestamp }).refine(value => !["applied", "interview", "offer"].includes(value.stage) || value.appliedElsewhere, "An applied stage must preserve its applied mark");
 export type ApplicationRecord = z.infer<typeof recordSchema>;
 export function blankRecord(job: Job): ApplicationRecord { return { identity: jobIdentity(job.url), title: job.title, company: job.company, location: job.location, stage: "saved", appliedElsewhere: false, appliedDate: "", followUpDate: "", note: "", updatedAt: new Date().toISOString() }; }
@@ -161,7 +165,7 @@ export function checkReview(plan: Plan, profile: Profile, jobs: Job[], records: 
 // Recovery drafts may contain an unfinished stage change. Only an explicit save
 // passes through updateRecord and the applied-mark confirmation.
 export const recordDraftSchema = z.object(recordSchema.shape);
-export const recoveryDraftSchema = z.object({ id: z.string().uuid(), savedAt: timestamp, profile: draftProfileSchema.optional(), record: z.object({ job: jobSchema, original: recordSchema, draft: recordDraftSchema, existed: z.boolean() }).optional() }).refine(value => Boolean(value.profile) !== Boolean(value.record), "Choose one recovery draft type");
+export const recoveryDraftSchema = z.object({ id: z.string().uuid(), savedAt: timestamp, profile: draftProfileSchema.optional(), record: z.object({ job: jobSchema, original: recordSchema, draft: recordDraftSchema, existed: z.boolean() }).optional(), jobLink: jobLinkDraftSchema.optional() }).refine(value => [value.profile, value.record, value.jobLink].filter(Boolean).length === 1, "Choose one recovery draft type");
 export type RecoveryDraft = z.infer<typeof recoveryDraftSchema>;
 export const stopHoldSchema = z.object({ planId: z.string().uuid(), requestedAt: timestamp, confirmed: z.boolean() });
 export type StopHold = z.infer<typeof stopHoldSchema>;

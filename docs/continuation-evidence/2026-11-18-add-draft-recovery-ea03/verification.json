@@ -1,0 +1,74 @@
+{
+  "project": "Career Finder",
+  "owner": "ChatGPT hosted_review / ea03",
+  "scope": "Saved > Add job link interruption recovery",
+  "baseHead": "ead12355246f1889f53f3d7bc3ff71cd42da4d92",
+  "branch": "fix/saved-add-draft-recovery-20261118-ea03",
+  "observedAtUTC": "2026-11-18T12:54:46.743781+00:00",
+  "nodeVersion": "v24.22.3",
+  "packageLockSha256": "4d85b9d5290351367e48fdb1fd54e3786344423434a16aef6b8b9381a250d685",
+  "sourceSha256": {
+    "hosted/app/phone/PhoneApp.tsx": "508264342d57d115430c1cf179d84a14b9f02d6ddcf75293ff51ae3f07709d9b",
+    "hosted/app/phone/model.ts": "a04cf9c544245dffd26eab6e78f9497bd7431d1dc5100d659ccfa167e4e00481",
+    "hosted/app/i18n/messages.ar.json": "6c1160c2d4e4378e928e5e62d2e0378a4f4ef32e6c0509a0915e2aafa2f50faa",
+    "hosted/tests/phone-recovery-isolation.mjs": "456b97c262478059d0f7fe315b69b4f3a3043e93011f739c6a23d9e6c1307fac",
+    "hosted/tests/phone-private-async.mjs": "3eac025e12660accfb162616014365ac5f06915e94c1a2e3439f0f120b729586",
+    "hosted/tests/phone-record-tools.mjs": "90ec92da6598144ba3df51a6b4ab407d449817933fedaf2a3974bb6c436bda1a"
+  },
+  "verification": [
+    {
+      "command": "node --test tests/phone-recovery-isolation.mjs tests/phone-private-async.mjs tests/i18n.mjs tests/phone-localization.mjs tests/phone-task-guidance.mjs tests/phone-model.mjs tests/phone-record-tools.mjs",
+      "cwd": "hosted",
+      "exitCode": 0,
+      "tests": 190,
+      "passed": 190,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "log": "targeted-tests.log",
+      "evidenceType": "synthetic real-handler and encrypted-vault regression, including JSX control/render checks; not browser/device acceptance"
+    },
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "cwd": "hosted",
+      "exitCode": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "command": "node node_modules/oxlint/bin/oxlint --config .oxlintrc.json",
+      "cwd": "hosted",
+      "exitCode": 0,
+      "errors": 0,
+      "warnings": 0,
+      "log": "lint.log"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  ],
+  "initialAttempts": [
+    {
+      "log": "targeted-tests-initial.log",
+      "exitCode": 1,
+      "reason": "Two regression harness adapters needed updating: bind the newly extracted real discard handler; await lock's own recovery queue before cross-instance reads. Assertions retained."
+    },
+    {
+      "log": "eslint-unconfigured.log",
+      "exitCode": 2,
+      "reason": "Direct ESLint invocation was not the configured lint gate. Replaced with package's pinned Oxlint command; no configuration was weakened."
+    }
+  ],
+  "remainingGates": [
+    "Root independent review and integrated regression",
+    "Actual browser return/session-expiry verification on the integrated candidate",
+    "Full release gates and deployment remain root-owned"
+  ],
+  "externalActions": {
+    "uploads": false,
+    "submissions": false,
+    "push": false,
+    "deployment": false,
+    "nativeBuild": false
+  }
+}
