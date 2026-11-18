@@ -374,6 +374,32 @@ final class CareerFinderUITests: XCTestCase {
         }
     }
     @MainActor
+    private func assertProfileReadingDirection(_ app: XCUIApplication, fieldID: String, rightToLeft: Bool) {
+        // Observe the already-captured label pose without moving focus or scrolling.
+        // The caller supplies the expected language direction independently of the app.
+        let labelFrame = app.staticTexts[fieldID + ".label"].frame
+        let fieldFrame = app.textFields[fieldID].frame
+        let navigation = app.navigationBars[rightToLeft ? "ملف التقديم" : "Application profile"]
+        let cancelFrame = navigation.buttons[rightToLeft ? "إلغاء" : "Cancel"].frame
+        let saveFrame = navigation.buttons[rightToLeft ? "حفظ" : "Save"].frame
+        let frames = [labelFrame, fieldFrame, cancelFrame, saveFrame]
+        XCTAssertTrue(frames.allSatisfy { frame in
+            !frame.isNull && !frame.isEmpty && frame.minX.isFinite && frame.minY.isFinite
+                && frame.width.isFinite && frame.height.isFinite
+        }, "Profile direction must be checked against real, finite label, field and navigation frames")
+        if rightToLeft {
+            XCTAssertEqual(labelFrame.maxX, fieldFrame.maxX, accuracy: 2,
+                           "The Arabic persistent label must align with the field's right edge")
+            XCTAssertGreaterThan(cancelFrame.midX, saveFrame.midX,
+                                 "Arabic profile cancellation must appear to the right of Save")
+        } else {
+            XCTAssertEqual(labelFrame.minX, fieldFrame.minX, accuracy: 2,
+                           "The English persistent label must align with the field's left edge")
+            XCTAssertLessThan(cancelFrame.midX, saveFrame.midX,
+                              "English profile cancellation must appear to the left of Save")
+        }
+    }
+    @MainActor
     private func assertHostedBrowserReturn(_ app: XCUIApplication, code: XCUIElement,
                                            connectionTitle: String, doneTitle: String,
                                            browserDoneTitle: String = "Done", screenshot: String) {
@@ -574,6 +600,7 @@ final class CareerFinderUITests: XCTestCase {
         capture("04-restored-phone-profile-draft", app: app)
         assertProfileLabel(app, fieldID: "application.firstName", title: "First or single name",
                            value: "Taylor", screenshot: "04a-restored-first-name-label")
+        assertProfileReadingDirection(app, fieldID: "application.firstName", rightToLeft: false)
         assertProfileLabel(app, fieldID: "application.email", title: "Email",
                            value: "taylor@example.com", screenshot: "04b-restored-email-label")
     }
@@ -933,6 +960,7 @@ final class CareerFinderUITests: XCTestCase {
         capture("10-profile-accessibility-keyboard", app: app)
         assertProfileLabel(app, fieldID: "application.firstName", title: "First or single name",
                            value: "Alex", screenshot: "10a-first-name-label-accessibility-keyboard", keyboardExpected: true)
+        assertProfileReadingDirection(app, fieldID: "application.firstName", rightToLeft: false)
         finishTyping(in: app)
         let profileEmail = app.textFields["application.email"]; reveal(profileEmail, in: app)
         replace(profileEmail, with: "alex@example.invalid", in: app)
@@ -1079,16 +1107,10 @@ final class CareerFinderUITests: XCTestCase {
         capture("28-arabic-profile-original-values", app: app)
         assertProfileLabel(app, fieldID: "application.firstName", title: "الاسم الأول أو الاسم الوحيد",
                            value: "Saved", screenshot: "28a-arabic-first-name-label-accessibility")
+        assertProfileReadingDirection(app, fieldID: "application.firstName", rightToLeft: true)
         assertProfileLabel(app, fieldID: "application.email", title: "البريد الإلكتروني",
                            value: "saved@example.invalid", screenshot: "28b-arabic-email-label-accessibility")
-        app.navigationBars.buttons["إلغاء"].tap()
-        app.terminate()
-        app = launch(id: id, availability: "disabled")
-        let normalArabicProfile = app.buttons["home.applicationProfile"]; reveal(normalArabicProfile, in: app); normalArabicProfile.tap()
-        assertProfileLabel(app, fieldID: "application.firstName", title: "الاسم الأول أو الاسم الوحيد",
-                           value: "Saved", screenshot: "28c-arabic-first-name-label-normal")
-        assertProfileLabel(app, fieldID: "application.email", title: "البريد الإلكتروني",
-                           value: "saved@example.invalid", screenshot: "28d-arabic-email-label-normal")
+        assertProfileReadingDirection(app, fieldID: "application.email", rightToLeft: true)
         app.navigationBars.buttons["إلغاء"].tap()
         tab("الإعدادات", in: app)
         let english = app.buttons["settings.language.en"]; reveal(english, in: app); english.tap()
@@ -1099,6 +1121,21 @@ final class CareerFinderUITests: XCTestCase {
         revealInApplicationContent(availability, app: app)
         XCTAssertEqual(availability.label, "Auto Apply is not activated")
         capture("29-english-restored-submission-disabled", app: app)
+
+        // Complete the existing Arabic-to-English and Apply availability journey
+        // at AX5 before observing the separate normal-size Arabic label poses.
+        tab("Settings", in: app)
+        let normalArabic = app.buttons["settings.language.ar"]; reveal(normalArabic, in: app); normalArabic.tap()
+        app.terminate()
+        app = launch(id: id, availability: "disabled")
+        let normalArabicProfile = app.buttons["home.applicationProfile"]; reveal(normalArabicProfile, in: app); normalArabicProfile.tap()
+        assertProfileLabel(app, fieldID: "application.firstName", title: "الاسم الأول أو الاسم الوحيد",
+                           value: "Saved", screenshot: "28c-arabic-first-name-label-normal")
+        assertProfileReadingDirection(app, fieldID: "application.firstName", rightToLeft: true)
+        assertProfileLabel(app, fieldID: "application.email", title: "البريد الإلكتروني",
+                           value: "saved@example.invalid", screenshot: "28d-arabic-email-label-normal")
+        assertProfileReadingDirection(app, fieldID: "application.email", rightToLeft: true)
+        app.navigationBars.buttons["إلغاء"].tap()
     }
 
     @MainActor
