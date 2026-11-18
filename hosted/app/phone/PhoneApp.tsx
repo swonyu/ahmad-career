@@ -114,6 +114,7 @@ export default function PhoneApp({ account }: { account: Account }) {
   const [safetyState, setSafetyState] = useState<PhoneSafety>({ holds: [], recovery: [] });
   const [safetyError, setSafetyError] = useState(""), [storageCode, setStorageCode] = useState(""), [recoveryStatus, setRecoveryStatus] = useState("");
   const profileRecoveryId = useRef<string | null>(null), recordRecoveryId = useRef<string | null>(null);
+  const recordRecoveryLifecycle = useRef({ retired: new Map<string, Set<string>>(), editorVersion: 0 });
   const clearingRecovery = useRef<{ scope: string } | null>(null);
   const holdPromises = useRef(new Map<string, Promise<void>>()), stopHoldsInMemory = useRef(new Set<string>());
   const quarantine = useRef<{ snapshot: PhoneSnapshot; profile: Profile; formChanged: boolean; dialog: Dialog; editorDraft: ApplicationRecord | null } | null>(null);
@@ -139,15 +140,20 @@ export default function PhoneApp({ account }: { account: Account }) {
   function unfinished(): RecoveryDraft[] {
     const drafts: RecoveryDraft[] = [], savedAt = new Date().toISOString();
     if (formChanged) { profileRecoveryId.current ??= crypto.randomUUID(); drafts.push({ id: profileRecoveryId.current, savedAt, profile }); }
-    if (dialog?.kind === "record" && editorDraft && !same(editorDraft, dialog.record)) { recordRecoveryId.current ??= crypto.randomUUID(); drafts.push({ id: recordRecoveryId.current, savedAt, record: { job: dialog.job, original: dialog.record, draft: editorDraft, existed: dialog.existed } }); }
+    if (dialog?.kind === "record" && editorDraft && !same(editorDraft, dialog.record) && recordRecoveryId.current === dialog.editorId && !recordRecoveryLifecycle.current.retired.get(dialog.scope)?.has(dialog.editorId)) { drafts.push({ id: dialog.editorId, savedAt, record: { job: dialog.job, original: dialog.record, draft: editorDraft, existed: dialog.existed } }); }
     return drafts;
   }
   function adoptSafety(scope: string, value: PhoneSafety) { if (snapshotRef.current?.scope === scope && !identityUnverified.current) { setSafetyState(value); setSafetyError(""); } }
   async function preserveUnfinished(scope: string, drafts: RecoveryDraft[]) {
     for (const draft of drafts) {
+      // A resolved editor cannot be recreated by a delayed autosave callback.
+      if (draft.record && recordRecoveryLifecycle.current.retired.get(scope)?.has(draft.id)) continue;
       // A delayed autosave must not recreate data after the recovery reset.
       if (clearingRecovery.current?.scope === scope) throw new PhoneVaultError("reset_pending", "This save was cancelled because the browser draft is being removed. Your previous data was not restored.");
-      adoptSafety(scope, await phoneSafety.recover(scope, draft));
+      let value: PhoneSafety;
+      try { value = await phoneSafety.recover(scope, draft); }
+      catch (error) { if (draft.record && recordRecoveryLifecycle.current.retired.get(scope)?.has(draft.id)) continue; throw error; }
+      if (!draft.record || !recordRecoveryLifecycle.current.retired.get(scope)?.has(draft.id)) adoptSafety(scope, value);
     }
   }
   function storageFailure(error: unknown) {
@@ -368,10 +374,10 @@ export default function PhoneApp({ account }: { account: Account }) {
       if (!active?.isConnected || active === owner.body || active === owner.documentElement || active === dialogElement) invoker.focus({ preventScroll: false });
     });
   };
-  async function discardRecovery(scope: string, id: string | null) {
+  async function discardRecovery(scope: string, id: string | null, publish: () => boolean = () => true) {
     if (!id) return;
-    try { adoptSafety(scope, await phoneSafety.discard(scope, id)); }
-    catch (error) { setSafetyError("Your saved change was kept, but its recovery copy could not be removed. " + message(error)); }
+    try { const value = await phoneSafety.discard(scope, id); if (publish()) adoptSafety(scope, value); }
+    catch (error) { if (publish()) setSafetyError("Your saved change was kept, but its recovery copy could not be removed. " + message(error)); }
   }
   const retryStorage = () => run("Checking saved browser data", async generation => {
     const current = snapshotRef.current; if (!current) throw Error("Reload this account before opening its saved browser data.");
@@ -422,7 +428,25 @@ export default function PhoneApp({ account }: { account: Account }) {
     await persist({ ...data, jobs: [job, ...data.jobs] }, generation); setNotice({ text: "Saved on this phone. Find it in Saved whenever you need it." }); setDialog(null);
   });
   const rememberDiscardOpener = (opener: HTMLElement | null) => { discardReturn.current = opener; setConfirmDialogDiscard(true); };
-  const requestDialogClose = () => { if (!dialogDirty) { setDialog(null); return; } const active = document.activeElement; rememberDiscardOpener(active instanceof HTMLElement ? active : null); };
+  const requestDialogClose = () => {
+    if (dialog?.kind === "record") {
+      const { scope, editorId } = dialog;
+      if (busyRef.current || locked || checkingIdentity || identityUnverified.current || snapshotRef.current?.scope !== scope || recordRecoveryId.current !== editorId) return;
+      // The dirty flag follows an effect; the actual draft decides whether this
+      // editor has returned to its original saved value.
+      if (editorDraft && same(editorDraft, dialog.record)) {
+        const generation = epoch.current, version = ++recordRecoveryLifecycle.current.editorVersion;
+        let retired = recordRecoveryLifecycle.current.retired.get(scope);
+        if (!retired) { retired = new Set<string>(); recordRecoveryLifecycle.current.retired.set(scope, retired); }
+        retired.add(editorId);
+        recordRecoveryId.current = null; setEditorDraft(null); setDialogDirty(false); setConfirmDialogDiscard(false); setDialog(null);
+        // Close immediately. A failed cleanup keeps its recovery copy available;
+        // an older completion must not update a replacement editor or account.
+        return discardRecovery(scope, editorId, () => generation === epoch.current && version === recordRecoveryLifecycle.current.editorVersion && snapshotRef.current?.scope === scope && !identityUnverified.current && recordRecoveryId.current === null);
+      }
+    } else if (!dialogDirty) { setDialog(null); return; }
+    const active = document.activeElement; rememberDiscardOpener(active instanceof HTMLElement ? active : null);
+  };
   const keepEditing = (event: { currentTarget: HTMLButtonElement }) => {
     const opener = discardReturn.current, removed = event.currentTarget, dialogElement = removed.closest("dialog");
     const form = dialogElement?.querySelector("form");
@@ -446,7 +470,7 @@ export default function PhoneApp({ account }: { account: Account }) {
       if (editor) editor.focus({ preventScroll: false });
     });
   };
-  const editRecord = (job: Job) => { const data = local(), existing = data.records.find(record => record.identity === jobIdentity(job.url)); setDialogDirty(false); setConfirmDialogDiscard(false); const record = existing ?? blankRecord(job); recordRecoveryId.current = crypto.randomUUID(); setEditorDraft(record); setDialog({ kind: "record", job, record, existed: Boolean(existing), scope: data.scope, editorId: recordRecoveryId.current }); };
+  const editRecord = (job: Job) => { const data = local(), existing = data.records.find(record => record.identity === jobIdentity(job.url)); recordRecoveryLifecycle.current.editorVersion++; setDialogDirty(false); setConfirmDialogDiscard(false); const record = existing ?? blankRecord(job); recordRecoveryId.current = crypto.randomUUID(); setEditorDraft(record); setDialog({ kind: "record", job, record, existed: Boolean(existing), scope: data.scope, editorId: recordRecoveryId.current }); };
   const saveRecord = (draft: ApplicationRecord, clearApplied: boolean) => run("Saving application record", async generation => {
     if (dialog?.kind !== "record") return;
     const data = local(); if (data.scope !== dialog.scope) throw Error("This record belongs to a different workspace. Open it again.");
@@ -712,6 +736,7 @@ export default function PhoneApp({ account }: { account: Account }) {
     // so its later save/discard cannot remove another tab's unfinished edits.
     const recovered = { ...draft, id: crypto.randomUUID(), savedAt: new Date().toISOString() };
     const safety = await phoneSafety.recover(data.scope, recovered); assertCurrent(generation, data.scope); adoptSafety(data.scope, safety);
+    recordRecoveryLifecycle.current.editorVersion++;
     if (recovered.profile) { profileRecoveryId.current = recovered.id; setProfile(recovered.profile); setFormChanged(true); setDialog(null); navigate("profile"); }
     else if (recovered.record) { const saved = data.records.find(value => value.identity === recovered.record!.original.identity); recordRecoveryId.current = recovered.id; setEditorDraft(recovered.record.draft); setDialog({ kind: "record", job: recovered.record.job, record: saved ?? blankRecord(recovered.record.job), existed: Boolean(saved), scope: data.scope, editorId: recovered.id, initialDraft: recovered.record.draft }); }
     setReviewAccepted(false); setNotice({ text: "Recovered edits are open. Your saved information is unchanged until you choose Save. Compare the saved version first." });

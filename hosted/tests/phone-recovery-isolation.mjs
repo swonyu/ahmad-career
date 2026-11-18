@@ -71,11 +71,13 @@ class MemoryPort {
   writeFailure = null;
   failWriteAt = null;
   removeFailure = null;
+  beforeWrite = null;
   afterWrite = null;
   afterRemove = null;
   async read(owner) { return this.rows.has(owner) ? { exists: true, value: plain(this.rows.get(owner)) } : { exists: false }; }
   async compareAndSet(owner, expectedId, value) {
     this.writeCalls++;
+    if (this.beforeWrite) await this.beforeWrite(owner);
     if (this.writeFailure || this.failWriteAt === this.writeCalls) throw this.writeFailure ?? new DOMException("Synthetic full storage", "QuotaExceededError");
     const exists = this.rows.has(owner), saved = this.rows.get(owner);
     if (expectedId === null ? exists : !exists || saved.envelopeId !== expectedId) return false;
@@ -108,12 +110,15 @@ async function harness({ mainPort = new MemoryPort(), recoveryPort = new MemoryP
   const main = vault(mainPort), safety = createPhoneSafety(vault(recoveryPort));
   let saved = await main.loadPhoneSnapshot(scope);
   if (!saved) { saved = savedSnapshot(); await main.savePhoneSnapshot(scope, saved); }
+  class HTMLElement {}
   const context = {
-    ...production, crypto: webcrypto, DOMException, Error,
+    ...production, crypto: webcrypto, DOMException, Error, HTMLElement, document: { activeElement: null },
     account: { id: "synthetic-a" }, epoch: { current: 1 }, identityUnverified: { current: false },
+    busyRef: { current: false }, discardReturn: { current: null },
     snapshotRef: { current: saved }, workspaceRef: { current: { workspaceId: uuid(1), activePlanIds: [] } },
     locked: false, checkingIdentity: false, storageProblem: "", profile: plain(saved.profile), formChanged: false,
     editorDraft: null, dialog: null, dialogDirty: false, profileRecoveryId: { current: null }, recordRecoveryId: { current: null }, clearingRecovery: { current: null },
+    recordRecoveryLifecycle: { current: { retired: new Map(), editorVersion: 0 } },
     safetyState: await safety.load(scope), safetyError: "", notice: null, reloads: 0, navigation: [],
     phoneSafety: safety, savePhoneSnapshot: main.savePhoneSnapshot, removePhoneSnapshot: main.removePhoneSnapshot,
     run: (_label, callback) => callback(context.epoch.current),
@@ -124,7 +129,7 @@ async function harness({ mainPort = new MemoryPort(), recoveryPort = new MemoryP
     context[setter] = value => { context[field] = typeof value === "function" ? value(context[field]) : value; };
   }
   vm.createContext(context);
-  for (const name of ["same", "message", "local", "assertCurrent", "putSnapshot", "storageFailure", "persist", "unfinished", "adoptSafety", "preserveUnfinished", "discardRecovery", "restoreRecovery", "saveLocalProfile", "saveRecord"]) install(context, name);
+  for (const name of ["same", "message", "local", "assertCurrent", "putSnapshot", "storageFailure", "persist", "unfinished", "adoptSafety", "preserveUnfinished", "discardRecovery", "restoreRecovery", "saveLocalProfile", "saveRecord", "rememberDiscardOpener", "requestDialogClose", "editRecord"]) install(context, name);
   install(context, "openClear", buttonClick("Clear this phone’s saved data"));
   install(context, "openReset", buttonClick("Reset this phone’s data"));
   install(context, "clear", action("Clearing phone data"));
@@ -700,36 +705,30 @@ test("actual Keep editing recovers absent, root, disconnected and dialog-root fo
   }
 });
 
-test("actual discard entry handlers remember Cancel or Delete and preserve clean close behavior", () => {
-  class HTMLElement {}
-  const opener = new HTMLElement(); opener.name = "Cancel";
-  const state = { confirm: false, dialog: { kind: "record", record: { identity: "synthetic" }, scope: "guest" } };
-  const context = vm.createContext({
-    discardReturn: { current: null }, HTMLElement, document: { activeElement: { name: "not an element" } },
-    dialogDirty: true, dialog: state.dialog,
-    setConfirmDialogDiscard(value) { state.confirm = value; },
-    setDialog(value) { state.dialog = value; },
-  });
-  if (phoneDeclarationExists("rememberDiscardOpener")) install(context, "rememberDiscardOpener");
-  install(context, "requestDialogClose");
+test("actual discard entry handlers remember Cancel or Delete and preserve clean close behavior", async () => {
+  const h = await harness(), context = h.context;
+  const opener = new context.HTMLElement(); opener.name = "Cancel";
+  context.editRecord(context.snapshotRef.current.jobs[0]);
+  context.editorDraft = { ...context.editorDraft, note: "Unfinished note" }; context.dialogDirty = true;
+  context.document.activeElement = { name: "not an element" };
   install(context, "deletePrivate", buttonClick("Delete this private record"));
   context.requestDialogClose();
-  assert.equal(context.discardReturn.current, null); assert.equal(state.confirm, true); assert.equal(state.dialog.kind, "record");
-  context.document.activeElement = opener; state.confirm = false;
+  assert.equal(context.discardReturn.current, null); assert.equal(context.confirmDialogDiscard, true); assert.equal(context.dialog.kind, "record");
+  context.document.activeElement = opener; context.confirmDialogDiscard = false;
   context.requestDialogClose();
   assert.equal(context.discardReturn.current, opener, "The actual opener must be retained for the later Keep interaction");
-  assert.equal(state.confirm, true); assert.equal(state.dialog.kind, "record");
-  context.dialogDirty = false; context.discardReturn.current = null; state.confirm = false;
-  context.requestDialogClose();
-  assert.equal(state.dialog, null); assert.equal(state.confirm, false); assert.equal(context.discardReturn.current, null);
-  context.dialogDirty = true; state.dialog = { kind: "record", record: { identity: "synthetic" }, scope: "guest" }; context.dialog = state.dialog;
-  const deleteButton = new HTMLElement();
+  assert.equal(context.confirmDialogDiscard, true); assert.equal(context.dialog.kind, "record");
+  context.editorDraft = plain(context.dialog.record); context.dialogDirty = false; context.discardReturn.current = null; context.confirmDialogDiscard = false;
+  await context.requestDialogClose();
+  assert.equal(context.dialog, null); assert.equal(context.confirmDialogDiscard, false); assert.equal(context.discardReturn.current, null);
+  context.editRecord(context.snapshotRef.current.jobs[0]); context.dialogDirty = true;
+  const deleteButton = new context.HTMLElement();
   context.deletePrivate({ currentTarget: deleteButton });
   assert.equal(context.discardReturn.current, deleteButton);
-  assert.equal(state.confirm, true); assert.equal(state.dialog.kind, "record", "Dirty Delete only asks about unfinished changes");
-  context.dialogDirty = false; state.confirm = false;
+  assert.equal(context.confirmDialogDiscard, true); assert.equal(context.dialog.kind, "record", "Dirty Delete only asks about unfinished changes");
+  context.dialogDirty = false; context.confirmDialogDiscard = false;
   context.deletePrivate({ currentTarget: deleteButton });
-  assert.equal(state.dialog.kind, "delete-record"); assert.equal(state.confirm, false);
+  assert.equal(context.dialog.kind, "delete-record"); assert.equal(context.confirmDialogDiscard, false);
 });
 
 
@@ -756,6 +755,7 @@ function recordExportFocusHarness({ failDownload = false } = {}) {
     document: h.document, dialog: recordDialog, editorDraft: draft, dialogDirty: true,
     profile: saved.profile, formChanged: false, profileRecoveryId: { current: null },
     recordRecoveryId: { current: editorId }, snapshotRef: { current: saved },
+    recordRecoveryLifecycle: { current: { retired: new Map(), editorVersion: 0 } },
     locked: false, identityUnverified: { current: false }, identityCheckPending: { current: false },
     busyRef: { current: false }, epoch: { current: 7 }, discardHeading: h.discardHeading,
     notice: null, busy: "", identityChecks: 0,
@@ -865,4 +865,210 @@ test("actual record export respects newer busy, identity, discard and inherited 
   await pending.activate(); pending.flush();
   assert.equal(pending.context.identityChecks, 1); assert.equal(pending.document.activeElement, pending.recheck);
   assert.equal(pending.focusCalls.length, 0); pending.unchanged();
+});
+
+// Couple the actual record editor's edit, submit and Keep handlers to PhoneApp's
+// real draft callback. Storage remains the production authenticated vault and
+// serialized safety queue; only DOM focus and the atomic persistence port vary.
+function recordControls(h) {
+  const editor = componentTree.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === "RecordEditor");
+  assert(editor?.body, "The actual RecordEditor is required");
+  const variables = editor.body.statements.filter(ts.isVariableStatement).flatMap(node => [...node.declarationList.declarations]);
+  const control = vm.createContext({
+    record: h.context.dialog.record, draft: h.context.editorDraft, confirmClear: false,
+    stageInput: { current: null }, frames: [],
+    setDraft(value) { control.draft = value; },
+    onDraftChange(value) { h.context.setEditorDraft(value); },
+    setConfirmClear(value) { control.confirmClear = value; },
+    onSave() { assert.fail("An unconfirmed applied-mark change must not save"); },
+    requestAnimationFrame(callback) { control.frames.push(callback); },
+  });
+  for (const name of ["edit", "keepAppliedRecord"]) {
+    const node = variables.find(node => node.name.getText(componentTree) === name);
+    assert(node?.initializer, "The actual editor handler " + name + " is required");
+    install(control, name, node.initializer.getText(componentTree));
+  }
+  const form = editor.body.statements.find(ts.isReturnStatement).expression;
+  const submit = form.openingElement.attributes.properties.find(prop => ts.isJsxAttribute(prop) && prop.name.text === "onSubmit");
+  install(control, "submit", submit.initializer.expression.getText(componentTree));
+  return control;
+}
+async function setAppliedBaseline(h) {
+  const saved = plain(h.context.snapshotRef.current);
+  saved.records[0] = production.updateRecord(saved.records[0], { ...saved.records[0], stage: "applied" });
+  await h.main.savePhoneSnapshot(scope, saved); h.context.putSnapshot(saved);
+}
+async function seedNeighbors(h) {
+  const profile = recovery("profile"), job = { ...savedSnapshot().jobs[0], id: "other-job", url: "https://example.com/job/2" };
+  const original = blankRecord(job), record = { id: uuid(12), savedAt: fixedNow().toISOString(), record: { job, original, draft: { ...original, note: "Another record's unfinished note" }, existed: false } };
+  await h.safety.hold(scope, holdId); await h.safety.recover(scope, profile); await h.safety.recover(scope, record);
+  h.context.safetyState = await h.safety.load(scope);
+  return plain(h.context.safetyState);
+}
+async function dirtyRecord(h, note = "Recoverable private note متابعة") {
+  const c = h.context; c.editRecord(c.snapshotRef.current.jobs[0]);
+  c.editorDraft = { ...c.editorDraft, note }; c.dialogDirty = true;
+  const captured = c.unfinished(); await c.preserveUnfinished(scope, captured);
+  return { id: c.dialog.editorId, baseline: plain(c.dialog.record), captured };
+}
+
+test("actual Keep then clean Cancel retires only this editor across repeated applied-stage cycles", async () => {
+  const h = await harness(); await setAppliedBaseline(h); const neighbors = await seedNeighbors(h);
+  const mainBefore = plain(h.mainPort.rows.get(scope)), mainWrites = h.mainPort.writes.length, ids = [];
+  for (let cycle = 0; cycle < 4; cycle++) {
+    const c = h.context; c.editRecord(c.snapshotRef.current.jobs[0]); ids.push(c.dialog.editorId);
+    const control = recordControls(h); control.edit({ stage: "saved" });
+    control.submit({ preventDefault() {} }); assert.equal(control.confirmClear, true);
+    const captured = c.unfinished(); assert.equal(captured.length, 1);
+    await c.preserveUnfinished(scope, captured);
+    control.keepAppliedRecord({ form: null, ownerDocument: {} });
+    assert.equal(control.confirmClear, false); assert.deepEqual(plain(c.editorDraft), plain(c.dialog.record));
+    assert((await recoveryRows(h)).recovery.some(row => row.id === ids.at(-1)), "Keep alone must not delete a recovery copy");
+    c.dialogDirty = true; // The child effect may still hold the previous flag.
+    const closing = c.requestDialogClose();
+    assert.equal(c.dialog, null, "A clean editor closes before asynchronous storage completes");
+    assert.equal(c.recordRecoveryId.current, null); assert.equal(c.editorDraft, null); assert.equal(c.confirmDialogDiscard, false);
+    await closing;
+    await c.preserveUnfinished(scope, captured); // Delayed timer from the rejected stage.
+    assert.deepEqual(await recoveryRows(h), neighbors, "Only this cycle's owned record copy is retired");
+  }
+  assert.equal(new Set(ids).size, 4); assert.equal(h.mainPort.writes.length, mainWrites);
+  assert.deepEqual(h.mainPort.rows.get(scope), mainBefore, "Closing clean editors must not rewrite the saved application");
+  assert.equal(h.context.notice, null); assert.equal(h.context.safetyError, "");
+});
+
+test("actual Keep preserves another dirty field and clean-close checks the draft instead of a lagging flag", async () => {
+  const h = await harness(); await setAppliedBaseline(h); h.context.editRecord(h.context.snapshotRef.current.jobs[0]);
+  const c = h.context, control = recordControls(h), id = c.dialog.editorId;
+  control.edit({ stage: "saved", note: "Keep this private change متابعة" }); control.submit({ preventDefault() {} });
+  await c.preserveUnfinished(scope, c.unfinished());
+  control.keepAppliedRecord({ form: null, ownerDocument: {} });
+  c.dialogDirty = false; const before = plain(h.recoveryPort.rows.get(scope)), opener = new c.HTMLElement(); c.document.activeElement = opener;
+  await c.requestDialogClose();
+  assert.equal(c.dialog.kind, "record"); assert.equal(c.dialog.editorId, id); assert.equal(c.confirmDialogDiscard, true);
+  assert.equal(c.discardReturn.current, opener); assert.equal(c.editorDraft.stage, "applied"); assert.equal(c.editorDraft.note, "Keep this private change متابعة");
+  assert(!c.recordRecoveryLifecycle.current.retired.get(scope)?.has(id));
+  assert.deepEqual(h.recoveryPort.rows.get(scope), before, "A dirty field still requires explicit save or discard");
+  await c.preserveUnfinished(scope, c.unfinished());
+  assert.equal((await recoveryRows(h)).recovery.find(row => row.id === id).record.draft.note, c.editorDraft.note);
+});
+
+test("clean close follows queued and in-flight encrypted autosaves and fences their delayed publication", async () => {
+  const h = await harness(), neighbors = await seedNeighbors(h), c = h.context;
+  c.editRecord(c.snapshotRef.current.jobs[0]); c.editorDraft = { ...c.editorDraft, note: "In-flight original" };
+  const captured = c.unfinished(), id = c.dialog.editorId, entered = deferred(), gate = deferred(), cleanupEntered = deferred(), cleanupGate = deferred();
+  let writes = 0;
+  h.recoveryPort.afterWrite = async () => {
+    writes++;
+    if (writes === 1) { entered.resolve(); await gate.promise; }
+    if (writes === 3) { cleanupEntered.resolve(); await cleanupGate.promise; }
+  };
+  const inFlight = c.preserveUnfinished(scope, captured); await entered.promise;
+  const queued = c.preserveUnfinished(scope, [{ ...captured[0], record: { ...captured[0].record, draft: { ...captured[0].record.draft, note: "Already queued successor" } } }]);
+  c.editorDraft = plain(c.dialog.record); const closing = c.requestDialogClose();
+  assert.equal(c.dialog, null);
+  const delayed = c.preserveUnfinished(scope, captured), displayed = c.safetyState;
+  try {
+    gate.resolve(); await Promise.all([inFlight, queued, delayed]); await cleanupEntered.promise;
+    assert.equal(c.safetyState, displayed, "Retired in-flight and queued writes must not publish an obsolete recovery list");
+  } finally { gate.resolve(); cleanupGate.resolve(); await closing; }
+  assert.deepEqual(await recoveryRows(h), neighbors); assert.equal(writes, 3);
+  await c.preserveUnfinished(scope, captured); assert.equal(writes, 3, "A timer after cleanup must not recreate its retired identity");
+  assert(!h.context.safetyState.recovery.some(row => row.id === id));
+});
+
+test("clean close of a recovered fork preserves its source, another tab's fork, other records and Stop holds", async () => {
+  const a = await harness(), neighbors = await seedNeighbors(a), original = recovery("record", uuid(13));
+  await a.safety.recover(scope, original);
+  const b = await harness({ mainPort: a.mainPort, recoveryPort: a.recoveryPort });
+  await a.context.restoreRecovery(original); await b.context.restoreRecovery(original);
+  b.context.editorDraft = { ...b.context.editorDraft, note: "Other tab's newer record" };
+  await b.context.preserveUnfinished(scope, b.context.unfinished());
+  const aId = a.context.recordRecoveryId.current, bId = b.context.recordRecoveryId.current;
+  a.context.editorDraft = plain(a.context.dialog.record); await a.context.requestDialogClose();
+  const after = await recoveryRows(a);
+  assert(!after.recovery.some(row => row.id === aId)); assert.notEqual(aId, original.id); assert.notEqual(aId, bId);
+  assert.deepEqual(after.recovery.find(row => row.id === original.id), original);
+  assert.equal(after.recovery.find(row => row.id === bId).record.draft.note, "Other tab's newer record");
+  for (const row of neighbors.recovery) assert.deepEqual(after.recovery.find(value => value.id === row.id), row);
+  assert.deepEqual(after.holds, neighbors.holds); assert.equal(after.recovery.length, 4);
+  assert.equal((await vault(a.mainPort).loadPhoneSnapshot(scope)).records[0].note, "Earlier saved note");
+});
+
+test("a retired in-flight autosave failure cannot surface an obsolete error in a replacement editor", async () => {
+  const h = await harness(), { baseline, captured } = await dirtyRecord(h), c = h.context, entered = deferred(), gate = deferred();
+  let first = true;
+  h.recoveryPort.beforeWrite = async () => { if (first) { first = false; entered.resolve(); await gate.promise; } };
+  h.recoveryPort.failWriteAt = h.recoveryPort.writeCalls + 1;
+  const saving = c.preserveUnfinished(scope, captured); await entered.promise;
+  c.editorDraft = baseline; const closing = c.requestDialogClose(); c.editRecord(c.snapshotRef.current.jobs[0]);
+  const replacement = c.dialog, displayed = c.safetyState; c.safetyError = "Replacement editor's message";
+  gate.resolve(); await assert.doesNotReject(saving); await closing;
+  assert.equal(c.dialog, replacement); assert.equal(c.safetyState, displayed); assert.equal(c.safetyError, "Replacement editor's message");
+  assert.equal((await recoveryRows(h)).recovery.length, 0);
+  h.recoveryPort.writeFailure = new DOMException("Synthetic full storage", "QuotaExceededError");
+  c.editorDraft = { ...c.editorDraft, note: "Still-active unfinished note" };
+  await assert.rejects(c.preserveUnfinished(scope, c.unfinished()), hasCode("storage_full"), "An active editor's failure must still be reported");
+});
+
+test("a failed clean-close cleanup preserves encrypted recovery and keeps clean close usable", async () => {
+  const h = await harness(), neighbors = await seedNeighbors(h), { id, baseline, captured } = await dirtyRecord(h), c = h.context;
+  const before = plain(h.recoveryPort.rows.get(scope)), mainBefore = plain(h.mainPort.rows.get(scope));
+  h.recoveryPort.writeFailure = new DOMException("Synthetic full storage", "QuotaExceededError");
+  c.editorDraft = baseline; const closing = c.requestDialogClose(); assert.equal(c.dialog, null); await closing;
+  assert.match(c.safetyError, /^Your saved change was kept, but its recovery copy could not be removed\./);
+  assert.equal(c.notice, null); assert.deepEqual(h.recoveryPort.rows.get(scope), before);
+  await c.preserveUnfinished(scope, captured); assert.deepEqual(h.recoveryPort.rows.get(scope), before);
+  const retained = await recoveryRows(h); assert(retained.recovery.some(row => row.id === id)); assert.deepEqual(retained.holds, neighbors.holds);
+  c.editRecord(c.snapshotRef.current.jobs[0]); const anotherClose = c.requestDialogClose(); assert.equal(c.dialog, null); await anotherClose;
+  assert.deepEqual(h.mainPort.rows.get(scope), mainBefore); assert.deepEqual(h.recoveryPort.rows.get(scope), before);
+});
+
+test("clean-close cleanup cannot publish success or errors into a newer scope, generation, identity or editor", async t => {
+  for (const outcome of ["success", "failure"]) for (const changed of ["scope", "generation", "identity", "editor"]) await t.test(outcome + ":" + changed, async () => {
+    const h = await harness(), { baseline } = await dirtyRecord(h), c = h.context, entered = deferred(), gate = deferred();
+    h.recoveryPort.beforeWrite = async () => { entered.resolve(); await gate.promise; };
+    if (outcome === "failure") h.recoveryPort.writeFailure = new DOMException("Synthetic full storage", "QuotaExceededError");
+    c.editorDraft = baseline; const closing = c.requestDialogClose(); await entered.promise;
+    if (changed === "scope") c.snapshotRef.current = savedSnapshot(otherScope);
+    else if (changed === "generation") c.epoch.current++;
+    else if (changed === "identity") c.identityUnverified.current = true;
+    else c.editRecord(c.snapshotRef.current.jobs[0]);
+    const dialog = c.dialog, displayed = { holds: [], recovery: [] }; c.safetyState = displayed; c.safetyError = "Newer view's message";
+    gate.resolve(); await closing;
+    assert.equal(c.safetyState, displayed); assert.equal(c.safetyError, "Newer view's message"); assert.equal(c.dialog, dialog);
+    assert(!h.recoveryPort.rows.has(otherScope)); assert(!h.mainPort.rows.has(otherScope));
+  });
+});
+
+test("an earlier cleanup stays fenced when another editor opens and closes before it finishes", async () => {
+  const h = await harness(), { baseline } = await dirtyRecord(h), c = h.context;
+  const firstEntered = deferred(), firstGate = deferred(), secondEntered = deferred(), secondGate = deferred(); let writes = 0;
+  h.recoveryPort.beforeWrite = async () => { writes++; if (writes === 1) { firstEntered.resolve(); await firstGate.promise; } else if (writes === 2) { secondEntered.resolve(); await secondGate.promise; } };
+  c.editorDraft = baseline; const firstClose = c.requestDialogClose(); await firstEntered.promise;
+  c.editRecord(c.snapshotRef.current.jobs[0]); const secondClose = c.requestDialogClose();
+  assert.equal(c.recordRecoveryId.current, null); const displayed = c.safetyState; c.safetyError = "Current editor's status";
+  try {
+    firstGate.resolve(); await firstClose; await secondEntered.promise;
+    assert.equal(c.safetyState, displayed); assert.equal(c.safetyError, "Current editor's status", "A null editor ID alone must not authorize an obsolete completion");
+  } finally { firstGate.resolve(); secondGate.resolve(); await Promise.all([firstClose, secondClose]); }
+  assert.equal(c.safetyError, ""); assert.equal((await recoveryRows(h)).recovery.length, 0);
+});
+
+test("clean close requires the current owner and exact editor and refuses an unavailable draft", async t => {
+  for (const changed of ["busy", "locked", "checking", "identity", "scope", "editor", "missing-draft"]) await t.test(changed, async () => {
+    const h = await harness(), { baseline } = await dirtyRecord(h), c = h.context;
+    c.editorDraft = baseline; c.dialogDirty = false;
+    if (changed === "busy") c.busyRef.current = true;
+    else if (changed === "locked") c.locked = true;
+    else if (changed === "checking") c.checkingIdentity = true;
+    else if (changed === "identity") c.identityUnverified.current = true;
+    else if (changed === "scope") c.snapshotRef.current = savedSnapshot(otherScope);
+    else if (changed === "editor") c.recordRecoveryId.current = uuid(91);
+    else c.editorDraft = null;
+    const dialog = c.dialog, before = plain(h.recoveryPort.rows.get(scope)), writes = h.recoveryPort.writes.length;
+    await c.requestDialogClose(); assert.equal(c.dialog, dialog); assert.equal(h.recoveryPort.writes.length, writes);
+    assert.deepEqual(h.recoveryPort.rows.get(scope), before); assert.equal(c.recordRecoveryLifecycle.current.retired.size, 0);
+    if (changed === "missing-draft") assert.equal(c.confirmDialogDiscard, true);
+  });
 });
