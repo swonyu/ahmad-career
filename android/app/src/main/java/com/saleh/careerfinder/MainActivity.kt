@@ -761,7 +761,7 @@ internal fun ReviewCard(item: ReviewItem) {
         HorizontalDivider()
         Text(item.resume?.name ?: l10n("No PDF selected"), fontWeight = FontWeight.SemiBold)
         if (item.resume != null) {
-            Text(l10n.format("{0} · PDF résumé", listOf((fileSize(item.resume.size)).toString())), style = MaterialTheme.typography.bodySmall)
+            Text(l10n.format("{0} · PDF résumé", listOf((fileSize(item.resume.size, l10n.locale)).toString())), style = MaterialTheme.typography.bodySmall)
             TextButton(onClick = { fingerprint = !fingerprint }, modifier = Modifier.heightIn(min = 48.dp)) { Text(l10n(if (fingerprint) "Hide file fingerprint" else "Check file fingerprint")) }
             if (fingerprint) Text(item.resume.sha256, style = MaterialTheme.typography.bodySmall)
         }
@@ -902,7 +902,7 @@ private fun ProfileScreen(state: CareerUiState, model: CareerViewModel, choosePD
             Panel {
                 Text(l10n("Your résumé"), style = MaterialTheme.typography.titleLarge)
                 Text(profile.resume?.name ?: l10n("Choose your own PDF. No personal information is prefilled."))
-                if (profile.resume != null) Text(l10n.format("{0} · PDF", listOf((fileSize(profile.resume.size)).toString())), style = MaterialTheme.typography.bodySmall)
+                if (profile.resume != null) Text(l10n.format("{0} · PDF", listOf((fileSize(profile.resume.size, l10n.locale)).toString())), style = MaterialTheme.typography.bodySmall)
                 Action(if (profile.resume == null) "Choose PDF résumé" else "Replace PDF résumé", !state.busy, choosePDF)
                 if (profile.resume != null) TextButton(onClick = model::removePDF, enabled = !state.busy, modifier = Modifier.heightIn(min = 48.dp)) { Text(l10n("Remove selected résumé")) }
                 Text(l10n("Up to 5 MiB. The exact file and fingerprint appear in the application review."), style = MaterialTheme.typography.bodySmall)
@@ -1353,7 +1353,11 @@ internal fun openLink(context: Context, url: String) {
     try { context.startActivity(Intent(Intent.ACTION_VIEW, BoundaryPolicy.opportunityURL(url).toUri())) }
     catch (_: Exception) { Toast.makeText(context, CareerStrings(context)("This HTTPS link could not be opened."), Toast.LENGTH_LONG).show() }
 }
-private fun fileSize(bytes: Long): String = String.format(Locale.getDefault(), "%.1f MiB", bytes / (1024.0 * 1024.0))
+private fun fileSize(bytes: Long, locale: Locale): String = when {
+    bytes < 1024L -> String.format(locale, "%d B", bytes)
+    bytes < 1024L * 1024L -> String.format(locale, "%.1f KiB", bytes / 1024.0)
+    else -> String.format(locale, "%.1f MiB", bytes / (1024.0 * 1024.0))
+}
 internal fun dateLabel(value: String): String = try { DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.getDefault()).withZone(ZoneId.systemDefault()).format(Instant.parse(value)) } catch (_: Exception) { "Time not recorded" }
 private fun consentLabel(value: Any?): String = when (value) { true -> "Yes"; false -> "No"; else -> "Not provided" }
 private fun receiptLabel(receipt: ApplicationReceipt): String {
