@@ -574,6 +574,11 @@ private func spokenListingFit(_ fit: String, _ copy: NativeCopy) -> String {
     fit == "Needs review" ? copy(fit) : fit
 }
 
+/// The built-in live-listing sentence only. Research and employer wording stays as stored.
+private func spokenListingSummary(_ summary: String, _ copy: NativeCopy) -> String {
+    summary == "New employer listing. Review full requirements before applying." ? copy(summary) : summary
+}
+
 /// Built-in preparation steps use catalog phrases. Research and employer wording stays as stored.
 private func spokenPreparationStep(_ text: String, _ copy: NativeCopy) -> String {
     switch text {
@@ -688,7 +693,7 @@ private struct NativeJobDetail: View {
             }
             Section(l10n(job.kind == "archived" ? "Preserved earlier assessment" : "Listing information to review")) {
                 Text(spokenListingFit(job.fit, l10n)).font(.headline).foregroundStyle(Color.careerAccent)
-                Text(job.summary)
+                Text(spokenListingSummary(job.summary, l10n))
                 Text(l10n("This is not a verified personal fit score. Compare the employer requirements with your own evidence."))
                     .font(.footnote).foregroundStyle(.secondary)
                 if experienceGap {
