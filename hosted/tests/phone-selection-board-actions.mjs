@@ -88,7 +88,8 @@ function recordHarness({ applied = false } = {}) {
     snapshotRef: { current: saved }, snapshot: saved, profile: saved.profile, selected: [identityA, identityB], employerAnswers: {},
     workspaceRef: { current: { accountId: "synthetic-action-owner", workspaceId: uuid(1), profile: saved.profile,
       activePlanIds: [], recoverablePlans: [], capabilities: { liveEnabled: true }, jobs: saved.jobs, deleting: false, emailUpdateRequired: false } },
-    dialog: { kind: "record", record: plain(saved.records[0]), scope: owner, existed: true, job: saved.jobs[0] },
+    dialog: { kind: "record", editorId: uuid(20), record: plain(saved.records[0]), scope: owner, existed: true, job: saved.jobs[0] },
+    recordRecoveryLifecycle: { current: { retired: new Map(), editorVersion: 0 } },
     editorDraft: plain(saved.records[0]), recordRecoveryId: { current: uuid(20) }, notice: null, safetyError: "",
     phoneSafety: { async discard(scope, id) { discarded.push({ scope, id }); return { holds: [], recovery: [] }; } },
     async savePhoneSnapshot(scope, value) {
@@ -112,7 +113,7 @@ function recordHarness({ applied = false } = {}) {
     context[setter] = value => { context[field] = typeof value === "function" ? value(context[field]) : value; };
   }
   vm.createContext(context);
-  for (const name of ["same", "message", "assertCurrent", "storageFailure", "putSnapshot", "persist", "run", "local", "online", "adoptSafety", "discardRecovery", "saveRecord", "prepare"]) install(context, name);
+  for (const name of ["same", "message", "assertCurrent", "storageFailure", "putSnapshot", "persist", "run", "local", "online", "adoptSafety", "retireRecordRecovery", "discardRecovery", "saveRecord", "prepare"]) install(context, name);
   return { context, writes, network, discarded, writeHook, draft: stage => ({ ...context.dialog.record, stage }) };
 }
 function renderCheckbox(h, identity = identityA) {

@@ -1,0 +1,9 @@
+# B16: retire completed record editors
+
+Recovered the previous coordinator’s prepared B16 patch and integrated it with newer saved-job-link draft recovery. A record editor that has returned to its saved value now closes immediately and removes only its owned recovery copy. Captured autosaves cannot recreate a retired copy, and pending results cannot publish into a newer account, record editor, or Add-job editor. A still-dirty note continues to require explicit save or discard. Cleanup failure keeps encrypted recovery data and reports the existing localized error when its originating view remains current.
+
+The focused baseline reproduced the leftover clean-closed recovery ID. Follow-up checks also reproduced delayed autosaves recreating explicitly saved or discarded records. The same exact-ID lifecycle now covers those actions: a record is retired only after main persistence succeeds, while a failed main save keeps its live editor and recovery. An account lock during cleanup does not restore a resolved editor. Independent source copies, other tab forks, profile/record drafts and Stop holds remain preserved.
+
+Final verification: 198 targeted tests, zero skipped, and TypeScript checking passed on Node 24.22.3. The tests use actual handlers with the production encrypted vault and serialized safety queue, using synthetic storage/browser ports. Two older action fixtures were updated to provide actual editor identities/lifecycle without removing their assertions; the interrupted intermediate log is retained. Earlier prepared-patch results are historical. Fresh evidence is bound to combined base `2bfefa0195f448ac0068f4fcc8fef3e6c7fc0f6c` and exact source hashes in verification.json.
+
+Root owns the rendered English/Arabic browser cycle and full-candidate acceptance. No native build, deployment, external account, or real applicant data was touched by this repair.
