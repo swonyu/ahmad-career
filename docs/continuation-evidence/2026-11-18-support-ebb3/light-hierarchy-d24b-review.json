@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "root/recovery_review",
+  "reviewedAtUTC": "2026-11-18T14:47:20.102518+00:00",
+  "sourceReviewOnly": true,
+  "patchBase": "d24b659a8bd1bcb11490dde4c717c1a2e3825cb7",
+  "observedOwnerHEAD": "d24b659a8bd1bcb11490dde4c717c1a2e3825cb7",
+  "patch": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-identity-focus-20261118T143349Z-69fd65/light-hierarchy-d24b-review.patch",
+  "patchBytes": 1101,
+  "patchSHA256": "d5197cb1fd0cd61612f5c32fef97ece083817c40c63552b386a569d857de8b11",
+  "productPath": "apple/AhmadCareer/NativeCareerViews.swift",
+  "beforeSHA256": "0b1869bd6ff8664b74bec5f9ae48b435cc78cc054b93dfceb2a6214657aef1d0",
+  "proposedAfterSHA256": "38667dee7bf347acbccb0769a4e8479a09045406786719ade8e7c3c3ee4ead66",
+  "uiTestPath": "apple/UITests/CareerFinderUITests.swift",
+  "uiTestSHA256": "dcf0bf950033cc13d64ea7c092f46fa1e577c12586e5cfc21b4d6571436c7d2f",
+  "checks": {
+    "exact17MethodBodiesEqual": true,
+    "timeoutTokenSequenceEqual": true,
+    "onlyTwoForegroundValueLinesChanged": true,
+    "unrelatedProductBytesExactlyPreserved": true,
+    "ownerWorkingFileUntouched": true,
+    "ownerWorkingUITestUntouched": true
+  },
+  "assertionTokenCounts": {
+    "baseline87": 204,
+    "ownerD24b": 203
+  },
+  "assertionCountExplanation": "The original field.waitForExistence(timeout:5) XCTAssertTrue is replaced with guard field.waitForExistence(timeout:5), then XCTFail and return false. The failure gate remains. All17 method bodies are byte-identical, including every method-body assertion/postcondition.",
+  "rationale": "NativeScrollPalette is applied to NativeList and NativeForm. Its old light branch inherited native foreground hierarchy; d24b explicitly applies Color.primary/secondary while setting .bar as the light toolbar material. Using hierarchical light styles retains hierarchy/material-vibrancy semantics within the stable modifier chain. The dark colors remain the same; type erasure gives the light and dark ternary values the same ShapeStyle type.",
+  "primaryReferences": [
+    {
+      "url": "https://developer.apple.com/documentation/swiftui/material.md",
+      "retrievedRef": "turn517232012view0",
+      "relevantLines": "93–97",
+      "support": "Apple distinguishes custom foreground styles from hierarchical styles for material vibrancy."
+    },
+    {
+      "url": "https://developer.apple.com/documentation/swiftui/hierarchicalshapestyle.md",
+      "retrievedRef": "turn517232012view1",
+      "relevantLines": "35–45",
+      "support": "Primary and secondary map to levels of the current content style."
+    }
+  ],
+  "limitations": [
+    "No visible light-mode regression has been established from a render.",
+    "The proposed patch was generated from committed bytes only; no owner file was edited or committed.",
+    "No compilation, simulator boot, native UI execution, CI dispatch, push or deployment was performed.",
+    "Active owner must integrate and verify its exact successor source."
+  ],
+  "priorDraftPreservedSeparately": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-identity-focus-20261118T143349Z-69fd65/preserved-draft-receipt.json"
+}

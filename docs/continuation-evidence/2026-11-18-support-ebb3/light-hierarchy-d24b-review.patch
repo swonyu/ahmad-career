@@ -1,0 +1,14 @@
+diff --git a/apple/AhmadCareer/NativeCareerViews.swift b/apple/AhmadCareer/NativeCareerViews.swift
+--- a/apple/AhmadCareer/NativeCareerViews.swift
++++ b/apple/AhmadCareer/NativeCareerViews.swift
+@@ -59,8 +59,8 @@
+         content
+             .scrollContentBackground(colorScheme == .dark ? .hidden : .automatic)
+             .background(colorScheme == .dark ? NativeDesign.canvas : Color.clear)
+-            .foregroundStyle(colorScheme == .dark ? NativeDesign.text : Color.primary,
+-                             colorScheme == .dark ? NativeDesign.muted : Color.secondary)
++            .foregroundStyle(colorScheme == .dark ? AnyShapeStyle(NativeDesign.text) : AnyShapeStyle(HierarchicalShapeStyle.primary),
++                             colorScheme == .dark ? AnyShapeStyle(NativeDesign.muted) : AnyShapeStyle(HierarchicalShapeStyle.secondary))
+             .toolbarBackground(colorScheme == .dark ? AnyShapeStyle(NativeDesign.canvas) : AnyShapeStyle(.bar),
+                                for: .navigationBar, .tabBar)
+             .toolbarBackground(colorScheme == .dark ? .visible : .automatic,
