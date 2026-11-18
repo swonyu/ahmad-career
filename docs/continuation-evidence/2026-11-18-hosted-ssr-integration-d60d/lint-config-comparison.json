@@ -1,0 +1,52 @@
+{
+  "observedAt": "2026-11-18T07:22:14.388481+00:00",
+  "method": "Read-only ESLint calculateConfigForFile against sealed original checkout; normalized rule namespace mapping into actual integrated Oxlint configuration. Coverage of configuration, not universal equivalence of parsers or rule implementations.",
+  "candidateConfigSHA256": "81f5e7a43f24b5806fd01812ba906e89fe56e2ccf01679bc534e024edcc32a5c",
+  "profiles": [
+    {
+      "file": "app/phone/PhoneApp.tsx",
+      "originalActiveRuleCount": 86,
+      "globalCount": 1174,
+      "globalDefinitionsIdentical": true,
+      "missing": [
+        "obsolete Next router requirement: @next/next/no-html-link-for-pages",
+        "obsolete Next router requirement: @next/next/no-location-assign-relative-destination"
+      ],
+      "severityDifferences": []
+    },
+    {
+      "file": "worker/index.ts",
+      "originalActiveRuleCount": 86,
+      "globalCount": 1174,
+      "globalDefinitionsIdentical": true,
+      "missing": [
+        "obsolete Next router requirement: @next/next/no-html-link-for-pages",
+        "obsolete Next router requirement: @next/next/no-location-assign-relative-destination"
+      ],
+      "severityDifferences": []
+    },
+    {
+      "file": "server/auth.mjs",
+      "originalActiveRuleCount": 82,
+      "globalCount": 1174,
+      "globalDefinitionsIdentical": true,
+      "missing": [
+        "obsolete Next router requirement: @next/next/no-html-link-for-pages",
+        "obsolete Next router requirement: @next/next/no-location-assign-relative-destination"
+      ],
+      "severityDifferences": []
+    },
+    {
+      "file": "components/ui/button.tsx",
+      "originalActiveRuleCount": 83,
+      "globalCount": 1174,
+      "globalDefinitionsIdentical": true,
+      "missing": [
+        "obsolete Next router requirement: @next/next/no-html-link-for-pages",
+        "obsolete Next router requirement: @next/next/no-location-assign-relative-destination"
+      ],
+      "severityDifferences": []
+    }
+  ],
+  "negativeCases": "lint-compatibility/results.json"
+}

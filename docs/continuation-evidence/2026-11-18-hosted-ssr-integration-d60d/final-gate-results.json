@@ -1,0 +1,164 @@
+[
+  {
+    "name": "16-typecheck",
+    "command": [
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+      "/opt/homebrew/lib/node_modules/npm/bin/npm-cli.js",
+      "run",
+      "typecheck"
+    ],
+    "cwd": "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted",
+    "startedAt": "2026-11-18T07:21:08.088228+00:00",
+    "sourceBefore": "16-typecheck.source-before.json",
+    "pid": 4004,
+    "exitCode": 0,
+    "finishedAt": "2026-11-18T07:21:09.216073+00:00",
+    "sourceAfter": "16-typecheck.source-after.json",
+    "sourceChanges": [],
+    "stdoutSHA256": "443da1dddfcff0734c532ffcd1dd9daefa801a87f310fd265557c8d92204a47b",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "17-lint",
+    "command": [
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+      "/opt/homebrew/lib/node_modules/npm/bin/npm-cli.js",
+      "run",
+      "lint"
+    ],
+    "cwd": "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted",
+    "startedAt": "2026-11-18T07:21:09.246778+00:00",
+    "sourceBefore": "17-lint.source-before.json",
+    "pid": 4024,
+    "exitCode": 0,
+    "finishedAt": "2026-11-18T07:21:12.271333+00:00",
+    "sourceAfter": "17-lint.source-after.json",
+    "sourceChanges": [],
+    "stdoutSHA256": "aafecf27131df5ae6056c1f4260a683a2a7cbe3a4e4904283e2effae466c23c3",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "18-tests",
+    "command": [
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+      "/opt/homebrew/lib/node_modules/npm/bin/npm-cli.js",
+      "test"
+    ],
+    "cwd": "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted",
+    "startedAt": "2026-11-18T07:21:12.301757+00:00",
+    "sourceBefore": "18-tests.source-before.json",
+    "pid": 4075,
+    "exitCode": 0,
+    "finishedAt": "2026-11-18T07:21:51.344752+00:00",
+    "sourceAfter": "18-tests.source-after.json",
+    "sourceChanges": [
+      "hosted/tests/hosted-discovery-verification.json",
+      "hosted/tests/hosted-phone-verification.json",
+      "hosted/tests/hosted-verification.json"
+    ],
+    "stdoutSHA256": "263a355200206e00eb99e65817c2fc661684d2238c2e8e3a12b7aad7d55bea92",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "19-hosted-worker",
+    "command": [
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+      "tests/hosted-worker.mjs"
+    ],
+    "cwd": "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted",
+    "startedAt": "2026-11-18T07:21:51.375150+00:00",
+    "sourceBefore": "19-hosted-worker.source-before.json",
+    "pid": 4690,
+    "exitCode": 0,
+    "finishedAt": "2026-11-18T07:21:51.961574+00:00",
+    "sourceAfter": "19-hosted-worker.source-after.json",
+    "sourceChanges": [
+      "hosted/tests/hosted-worker-verification.json"
+    ],
+    "stdoutSHA256": "27ad97fa3c7bef2b87634959ef80935976221a7c97a7aa8a6531c6accb493d41",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "20-browser-api-pairing",
+    "command": [
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+      "--test",
+      "tests/browser-api.mjs",
+      "tests/browser-pairing.mjs"
+    ],
+    "cwd": "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted",
+    "startedAt": "2026-11-18T07:21:51.991210+00:00",
+    "sourceBefore": "20-browser-api-pairing.source-before.json",
+    "pid": 4697,
+    "exitCode": 0,
+    "finishedAt": "2026-11-18T07:21:52.150826+00:00",
+    "sourceAfter": "20-browser-api-pairing.source-after.json",
+    "sourceChanges": [],
+    "stdoutSHA256": "10ce1ece3a484e973a1374f738cb03bdcc69c19cf364b5518815ff07ec366f61",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "21-build",
+    "command": [
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+      "/opt/homebrew/lib/node_modules/npm/bin/npm-cli.js",
+      "run",
+      "build"
+    ],
+    "cwd": "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted",
+    "startedAt": "2026-11-18T07:21:52.181041+00:00",
+    "sourceBefore": "21-build.source-before.json",
+    "pid": 4704,
+    "exitCode": 0,
+    "finishedAt": "2026-11-18T07:21:52.764496+00:00",
+    "sourceAfter": "21-build.source-after.json",
+    "sourceChanges": [],
+    "stdoutSHA256": "cf6d0f5d7c1f12b7a80fa8f1a0f92ade5aab67df6ec7cd8486cd2d4fd96aa0dc",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "22-ssr",
+    "command": [
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+      "/opt/homebrew/lib/node_modules/npm/bin/npm-cli.js",
+      "run",
+      "test:ssr"
+    ],
+    "cwd": "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted",
+    "startedAt": "2026-11-18T07:21:52.793731+00:00",
+    "sourceBefore": "22-ssr.source-before.json",
+    "pid": 4727,
+    "exitCode": 0,
+    "finishedAt": "2026-11-18T07:21:53.602130+00:00",
+    "sourceAfter": "22-ssr.source-after.json",
+    "sourceChanges": [],
+    "stdoutSHA256": "770f0b59616e3731cd31b63616e8c4b9ea6f8af658b3170226bb638245642802",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "23-pdf-browser-builder",
+    "command": [
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+      "/opt/homebrew/lib/node_modules/npm/bin/npm-cli.js",
+      "run",
+      "test:pdf:browser:build",
+      "--",
+      "--source-root",
+      "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted",
+      "--output-dir",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/hosted-ssr-integration/pdf-browser-dist",
+      "--fixtures-dir",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/hosted-ssr-integration/pdf-browser-fixtures"
+    ],
+    "cwd": "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted",
+    "startedAt": "2026-11-18T07:21:53.637751+00:00",
+    "sourceBefore": "23-pdf-browser-builder.source-before.json",
+    "pid": 4773,
+    "exitCode": 0,
+    "finishedAt": "2026-11-18T07:21:53.952869+00:00",
+    "sourceAfter": "23-pdf-browser-builder.source-after.json",
+    "sourceChanges": [],
+    "stdoutSHA256": "c16fa129efbd63cc5be548ea4652b2baf620a14356951ffd7765c7cbe5c522e1",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

@@ -1,0 +1,130 @@
+--- a/hosted/scripts/build-site.mjs
++++ b/hosted/scripts/build-site.mjs
+@@ -6,6 +6,7 @@
+ import path from "node:path";
+ import { fileURLToPath } from "node:url";
+ import { projectRoot } from "./sites-env.mjs";
++import { assertPublicBundleInputs } from "./public-bundle-inputs.mjs";
+ 
+ const digest = bytes => createHash("sha256").update(bytes).digest("hex");
+ const publicFiles = [
+@@ -58,15 +59,14 @@
+       target: "es2022", minify: true, sourcemap: false, legalComments: "eof", logLevel: "warning",
+     };
+     const worker = await build({ ...common, platform: "browser", entryPoints: ["app/phone/pdf-validation.worker.ts"] });
++    assertPublicBundleInputs(Object.keys(worker.metafile.inputs), "PDF worker");
+     const workerBytes = Buffer.from(worker.outputFiles[0].contents);
+     const pdfURL = await addAsset("/_career/pdf-" + digest(workerBytes).slice(0, 20) + ".js", workerBytes);
+     const browser = await build({
+       ...common, platform: "browser", entryPoints: ["renderer/client.tsx"],
+       define: { "process.env.NODE_ENV": '"production"', __CAREER_PDF_WORKER_URL__: JSON.stringify(pdfURL) },
+     });
+-    for (const name of Object.keys(browser.metafile.inputs)) {
+-      if (/^(?:server|worker|lib\/connector-|scripts)\//.test(name)) throw Error("Server-only module entered browser build: " + name);
+-    }
++    assertPublicBundleInputs(Object.keys(browser.metafile.inputs));
+     const clientBytes = Buffer.from(browser.outputFiles[0].contents);
+     const client = await addAsset("/_career/client-" + digest(clientBytes).slice(0, 20) + ".js", clientBytes);
+     const globalCSS = await sourceBytes("app/globals.css");
+@@ -115,7 +115,7 @@
+     for (const meta of [worker.metafile, browser.metafile, server.metafile]) {
+       for (const input of Object.keys(meta.inputs)) if (!input.startsWith("node_modules/") && !input.startsWith("<define:")) await sourceBytes(input);
+     }
+-    for (const input of ["package.json", "package-lock.json", "tsconfig.json", "scripts/build-site.mjs"]) await sourceBytes(input);
++    for (const input of ["package.json", "package-lock.json", "tsconfig.json", "scripts/build-site.mjs", "scripts/public-bundle-inputs.mjs"]) await sourceBytes(input);
+     for (const [name, hash] of Object.entries(sourceHashes)) if (digest(await readFile(path.join(projectRoot, name))) !== hash) throw Error("Source changed during build: " + name);
+     await writeFile(path.join(stage, "build-manifest.json"), JSON.stringify({
+       schema: 1, generatedAt: new Date().toISOString(), preview, entrypoint: "server/index.js",
+--- /dev/null
++++ b/hosted/scripts/public-bundle-inputs.mjs
+@@ -0,0 +1,11 @@
++// These are project-relative esbuild metafile input names. Package dependency
++// paths are permitted; project connector, server and build code stays private.
++const privateInput = /^(?:(?:server|worker|scripts)\/|lib\/connector-)/;
++
++export function assertPublicBundleInputs(inputs, target = "browser") {
++  for (const name of inputs) {
++    if (privateInput.test(name)) {
++      throw new Error("Server-only module entered " + target + " build: " + name);
++    }
++  }
++}
+--- /dev/null
++++ b/hosted/tests/public-bundle-inputs.mjs
+@@ -0,0 +1,45 @@
++import assert from "node:assert/strict";
++import test from "node:test";
++import { assertPublicBundleInputs } from "../scripts/public-bundle-inputs.mjs";
++
++test("rejects the actual connector filename convention", () => {
++  for (const name of ["lib/connector-context.ts", "lib/connector-contract.mjs", "lib/connector-client.ts"]) {
++    assert.throws(() => assertPublicBundleInputs([name]), {
++      message: "Server-only module entered browser build: " + name,
++    });
++  }
++});
++
++test("retains all existing private directory boundaries", () => {
++  for (const name of ["server/auth.mjs", "server/nested/phone.mjs", "worker/index.ts", "scripts/build-site.mjs"]) {
++    assert.throws(() => assertPublicBundleInputs([name]), /Server-only module entered browser build:/);
++  }
++});
++
++test("permits public application and package input names", () => {
++  assert.doesNotThrow(() => assertPublicBundleInputs([
++    "renderer/client.tsx", "app/phone/PhoneApp.tsx", "app/phone/pdf-validation.worker.ts",
++    "lib/phone-schema.mjs", "node_modules/react/index.js", "node_modules/pdfjs-dist/build/pdf.mjs",
++  ]));
++});
++
++test("does not confuse similar names or nested words with root private paths", () => {
++  assert.doesNotThrow(() => assertPublicBundleInputs([
++    "serverless/client.ts", "workers/client.ts", "scripts-client.mjs", "lib/connectors.ts",
++    "app/scripts/help.ts", "node_modules/example/server/index.js", "app/worker/status.ts",
++  ]));
++});
++
++test("rejects a private input anywhere in a public bundle and reports its target", () => {
++  assert.throws(() => assertPublicBundleInputs([
++    "app/phone/pdf-validation.worker.ts", "node_modules/pdfjs-dist/build/pdf.mjs", "lib/connector-context.ts",
++  ], "PDF worker"), { message: "Server-only module entered PDF worker build: lib/connector-context.ts" });
++});
++
++test("keeps the caller input list unchanged", () => {
++  const names = ["renderer/client.tsx", "lib/connector-contract.mjs"];
++  const before = [...names];
++  assert.throws(() => assertPublicBundleInputs(names), /Server-only module/);
++  assert.deepEqual(names, before);
++  assert.doesNotThrow(() => assertPublicBundleInputs([]));
++});
+--- a/hosted/tests/ssr-runtime.mjs
++++ b/hosted/tests/ssr-runtime.mjs
+@@ -8,6 +8,7 @@
+ import { build } from "esbuild";
+ import { Miniflare, convertV4MiniflareOptions } from "miniflare";
+ import { configureToolEnvironment } from "../scripts/tool-environment.mjs";
++import { assertPublicBundleInputs } from "../scripts/public-bundle-inputs.mjs";
+ 
+ const root = fileURLToPath(new URL("../", import.meta.url));
+ configureToolEnvironment(root);
+@@ -170,7 +171,8 @@
+   assert(phoneCSS.includes(".phone-bottom-nav"));
+   assert(manifest.pdfInputs.some(value => value.endsWith("app/phone/pdf-validation.worker.ts")));
+   assert(manifest.pdfInputs.some(value => value.endsWith("shared/pdf-readability.mjs")));
+-  assert(!manifest.browserInputs.some(value => /^(?:server|worker|lib\/connector-|scripts)\//.test(value)));
++  assertPublicBundleInputs(manifest.browserInputs);
++  assertPublicBundleInputs(manifest.pdfInputs, "PDF worker");
+   assert(manifest.assets[manifest.pdfWorker]);
+ });
+ test("routing preserves HEAD, explicit 404/405, canonical paths and no source-file serving", async () => {
+--- a/hosted/package.json
++++ b/hosted/package.json
+@@ -14,7 +14,7 @@
+     "db:generate": "drizzle-kit generate",
+     "test": "node tests/linkedin-profile.mjs && node --test tests/pdf-readability.mjs && node tests/hosted-auth.mjs && node tests/hosted-auth-worker.mjs && node tests/hosted-applications.mjs && node tests/hosted-discovery.mjs && node tests/hosted-phone.mjs && node --test tests/provider-body-cleanup.mjs tests/frontend-body-cleanup.mjs tests/phone-model.mjs tests/phone-api.mjs tests/phone-dispatch.mjs tests/phone-batch-stop.mjs tests/provider-connections.mjs tests/phone-private-async.mjs tests/web-experience.mjs tests/phone-settings-privacy.mjs tests/phone-navigation-inset.mjs tests/i18n.mjs tests/phone-localization.mjs tests/phone-record-tools.mjs tests/phone-search-workflows.mjs tests/phone-search-cap.mjs tests/phone-recovery-isolation.mjs tests/phone-selection-board-actions.mjs tests/account-recovery-lifecycle.mjs && node tests/phone-vault.mjs",
+     "typecheck": "tsc --noEmit",
+-    "test:ssr": "node --test tests/ssr-runtime.mjs",
++    "test:ssr": "node --test tests/public-bundle-inputs.mjs tests/ssr-runtime.mjs",
+     "test:pdf:browser:build": "node tests/build-pdf-browser-esbuild.mjs"
+   },
+   "dependencies": {

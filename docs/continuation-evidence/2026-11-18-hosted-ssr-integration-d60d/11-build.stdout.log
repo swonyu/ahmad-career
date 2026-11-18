@@ -1,0 +1,12 @@
+
+> career-finder-phone-service@0.6.0 build
+> node scripts/run-framework.mjs build
+
+{
+  "outputDir": "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted/dist",
+  "preview": false,
+  "assetCount": 21,
+  "workerBytes": 5768585,
+  "workerSHA256": "9a09b95840c669de91e365e289a465e44d585c8cbbb23d89f0a1173661f83633",
+  "pdfWorker": "/_career/pdf-4cd9c516c8ecdaa72918.js"
+}

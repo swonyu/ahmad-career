@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-11-18T06:37:43.200Z",
+  "observedAt": "2026-11-18T07:21:49.024Z",
   "status": "passed",
   "groups": 47,
   "checks": [
@@ -61,7 +61,7 @@
     "server/discovery-contract.json": "b92075bc91feb0a677ccbe28101fc31245730318373e3974ed18dff408967b06",
     "app/phone/model.ts": "955d5afcede6b8f7eb901394f9ae3e00d1bbffa57bf1e457c5436f23541577bf",
     "tests/fixtures/discovery-search-v1.json": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7",
-    "worker/index.ts": "c82a674ffc6fcebef3b1c48d577f0ec5b28a4a4c2b17462c50a7c0d1708ac09e",
+    "worker/index.ts": "f5d914ba412bbb604a73ef63cbb4519e41cd423c278cd3fed588509fa88a000f",
     "db/schema.ts": "0bc620bceb7b8548d69d07c823c2bc20623ad4d0de7c28678163892f9ac0fa15",
     "tests/hosted-discovery.mjs": "f015682cb00e32e906f88f8b0dd453a7d78cae3c07a13e3e7330b28bf6517317",
     "drizzle/0000_busy_plazm.sql": "5b1e4c5a7ddb05c71a53c112a57daaf9b4a15f58fa38e4b12df8d551bd9e7118",

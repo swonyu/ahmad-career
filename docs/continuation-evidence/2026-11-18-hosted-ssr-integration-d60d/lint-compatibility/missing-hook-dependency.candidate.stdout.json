@@ -1,0 +1,7 @@
+{ "diagnostics": [{"message": "React Hook useEffect has a missing dependency: 'value'. Either include it or remove the dependency array.","code": "original-hooks(exhaustive-deps)","severity": "warning","filename": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/hosted-ssr-integration/lint-compatibility/missing-hook-dependency.tsx","labels": [{"span": {"offset": 132,"length": 2,"line": 1,"column": 133}}]}],
+              "number_of_files": 1,
+              "number_of_rules": 85,
+              "threads_count": 18,
+              "start_time": 0.372545667
+            }
+            

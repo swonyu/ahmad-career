@@ -36,14 +36,14 @@ if (installed.signal) process.kill(process.pid, installed.signal);
 if (installed.code !== 0 || installed.signal) process.exit(installed.code || 1);
 
 try {
-  accessSync(
+  for (const executable of ["esbuild", "oxlint"]) accessSync(
     path.join(
       projectRoot, "node_modules", ".bin",
-      process.platform === "win32" ? "vinext.cmd" : "vinext",
+      process.platform === "win32" ? executable + ".cmd" : executable,
     ),
     process.platform === "win32" ? constants.F_OK : constants.X_OK,
   );
 } catch {
-  console.error("npm ci exited successfully but the local vinext executable is unavailable.");
+  console.error("npm ci exited successfully but the local esbuild/oxlint executable is unavailable.");
   process.exitCode = 69;
 }

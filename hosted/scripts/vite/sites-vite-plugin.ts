@@ -3,7 +3,18 @@
 import { access, cp, mkdir, rm } from "node:fs/promises";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { resolve } from "node:path";
-import type { Plugin } from "vite";
+// A narrow host adapter retains the reviewed middleware without a Vite dependency.
+type PreviewMiddleware = (request: IncomingMessage, response: ServerResponse, next: () => void) => void;
+type PreviewServer = {
+  config: { server: { https?: boolean }; logger: { info: (message: string) => void } };
+  middlewares: { use: (handler: PreviewMiddleware) => void };
+};
+type PreviewAdapter = {
+  name: string;
+  configResolved: (config: { root: string; command: "build" | "serve" }) => void;
+  configureServer: (server: PreviewServer) => void;
+  closeBundle: () => Promise<void>;
+};
 
 const localUserId = "local_seedy";
 const localEmail = "seedy@sites.test";
@@ -29,7 +40,7 @@ async function exists(path: string): Promise<boolean> {
   }
 }
 
-export function sites({ mockAuth = true } = {}): Plugin {
+export function sites({ mockAuth = true } = {}): PreviewAdapter {
   let root = process.cwd();
   let command: "build" | "serve" = "build";
 

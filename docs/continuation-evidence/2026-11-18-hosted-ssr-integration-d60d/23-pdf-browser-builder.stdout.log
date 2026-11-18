@@ -1,0 +1,65 @@
+
+> career-finder-phone-service@0.6.0 test:pdf:browser:build
+> node tests/build-pdf-browser-esbuild.mjs --source-root /Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted --output-dir /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/hosted-ssr-integration/pdf-browser-dist --fixtures-dir /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/hosted-ssr-integration/pdf-browser-fixtures
+
+{
+  "output": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/hosted-ssr-integration/pdf-browser-dist",
+  "uploadFolder": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/hosted-ssr-integration/pdf-browser-fixtures",
+  "workers": [
+    "pdf-validation.worker-6a49a3ebd12f688a6a50.js"
+  ],
+  "fixtures": [
+    {
+      "file": "valid.pdf",
+      "expected": "valid",
+      "pages": 1,
+      "description": "Exact copy of the existing synthetic readable-resume.pdf fixture.",
+      "sha256": "149f96a4dc6ed08b2adf0ae75c9d00f8fba75fcd777ea790d9a27e622fa38a61",
+      "size": 1311
+    },
+    {
+      "file": "object-stream.pdf",
+      "expected": "valid",
+      "pages": 2,
+      "description": "Two synthetic pages using Flate-compressed PDF object streams.",
+      "sha256": "663e061943e69a794c318ef99e1b7f2b9eef4ac3a0347fcea76894969df356c6",
+      "size": 602
+    },
+    {
+      "file": "malformed.pdf",
+      "expected": "invalid_resume",
+      "description": "PDF prefix and EOF marker without a readable PDF document.",
+      "sha256": "6cbc0f193b083ea427ae388f25267a941d7a2fa5cbd2812af96dcbdb8e28e9fa",
+      "size": 364
+    },
+    {
+      "file": "truncated.pdf",
+      "expected": "invalid_resume",
+      "description": "First half of the existing synthetic PDF.",
+      "sha256": "11b0e28e659a547e897a88ddadf9d8bd4927108d547fb60a6159f1f37f72fa66",
+      "size": 655
+    },
+    {
+      "file": "encrypted.pdf",
+      "expected": "unsupported_resume",
+      "description": "Actual password-encrypted synthetic PDF; fixture password is qa-only.",
+      "sha256": "6515c8dbd4a1507e0298623f3cbef15a2eaaadb2c5518702a779a360402fc66e",
+      "size": 1385
+    },
+    {
+      "file": "cyclic.pdf",
+      "expected": "invalid_resume",
+      "description": "Synthetic cyclic page tree for bounded rejection.",
+      "sha256": "b790a1dbb8ae8d473c7aee1856db182e3e7ea121f79a72287a8442e9994e0f56",
+      "size": 232
+    }
+  ],
+  "productionRoutesAdded": 0,
+  "sourceHashes": {
+    "app/phone/PhoneApp.tsx": "b058d7cfd8dc5d57d9479e6c8339c1f72682cbc14bcf0fda806f95901442f11b",
+    "app/phone/pdf.ts": "5203b462af0e7ad56e4f24bc9ffe2e639da909bf401a99a6d1e65d1f6aec9c8c",
+    "app/phone/pdf-validation.worker.ts": "6565199b38469d62d473099c99ad602cf4822822838e30fed5f540a83befdb32",
+    "shared/pdf-readability.mjs": "65183fe408b4cda8434d2ed064d645f471227db75de7fade416e090feec068a1",
+    "app/phone/model.ts": "955d5afcede6b8f7eb901394f9ae3e00d1bbffa57bf1e457c5436f23541577bf"
+  }
+}

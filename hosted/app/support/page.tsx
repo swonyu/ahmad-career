@@ -1,10 +1,11 @@
+import type { PageProps } from "../request-context";
 import { serverI18n } from "../i18n/server";
 import SiteFrame from "../components/SiteFrame";
 
 export const metadata = { title: "Help and support" };
 
-export default async function SupportPage() {
-  const { t } = await serverI18n();
+export default function SupportPage({ context }: PageProps) {
+  const { t } = serverI18n(context);
   return <SiteFrame active="support" narrow>
     <section className="intro compact"><p className="eyebrow">{t("HELP AND SUPPORT")}</p><h1>{t("Find your")}<br /><em>{t("next step.")}</em></h1><p className="lede">{t("Start with a job search. Connect your phone when you want to save your application profile online.")}</p></section>
     <nav className="help-topics" aria-label={t("Help topics")}><a href="#getting-started">{t("Get started")}</a><a href="#connection">{t("Sign in")}</a><a href="#linkedin">{t("LinkedIn")}</a><a href="#applications">{t("Applications")}</a><a href="#your-data">{t("Your data")}</a><a href="#troubleshooting">{t("Get help")}</a></nav>
