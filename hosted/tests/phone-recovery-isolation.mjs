@@ -4,6 +4,8 @@ import { readFile } from "node:fs/promises";
 import { webcrypto } from "node:crypto";
 import vm from "node:vm";
 import ts from "typescript";
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { build } from "esbuild";
 
 // Run the real PhoneApp handlers and production encrypted vault/safety modules.
@@ -51,11 +53,12 @@ function install(context, name, value = declaration(name)) {
   vm.runInContext(compiled.get(key), context); return context[name];
 }
 const bundle = await build({
-  stdin: { contents: 'export * from "./app/phone/vault.ts"; export * from "./app/phone/model.ts"; export * from "./app/phone/safety.ts"; export { z } from "zod";', resolveDir: process.cwd(), sourcefile: "phone-recovery-production.ts" },
+  stdin: { contents: 'export * from "./app/phone/vault.ts"; export * from "./app/phone/model.ts"; export * from "./app/phone/safety.ts"; export * from "./app/i18n/core.ts"; export { z } from "zod";', resolveDir: process.cwd(), sourcefile: "phone-recovery-production.ts" },
   bundle: true, write: false, platform: "node", format: "esm", target: "node24", logLevel: "silent",
 });
 const production = await import("data:text/javascript;base64," + Buffer.from(bundle.outputFiles[0].text + "\n//# sourceURL=phone-recovery-production.mjs").toString("base64"));
 const { createPhoneVault, createPhoneSafety, blankSnapshot, blankRecord, PhoneVaultError } = production;
+const validWorkspace = () => ({ ok: true, accountId: "synthetic-a", accountEmail: "applicant@example.invalid", confirmedEmail: "applicant@example.invalid", emailUpdateRequired: false, deleting: false, workspaceId: uuid(1), mode: "local", profile: savedSnapshot().profile, jobs: [], attempts: [], capabilities: { liveEnabled: false, mode: "local", coverage: "Synthetic only" }, recoverablePlans: [], activePlanIds: [] });
 const uuid = n => "00000000-0000-4000-8000-" + String(n).padStart(12, "0");
 const scope = "account:synthetic-a:" + uuid(1), otherScope = "account:synthetic-b:" + uuid(2);
 const originalId = uuid(10), holdId = uuid(11);
@@ -113,18 +116,20 @@ async function harness({ mainPort = new MemoryPort(), recoveryPort = new MemoryP
     account: { id: "synthetic-a" }, epoch: { current: 1 }, identityUnverified: { current: false },
     snapshotRef: { current: saved }, workspaceRef: { current: { workspaceId: uuid(1), activePlanIds: [] } },
     locked: false, checkingIdentity: false, storageProblem: "", profile: plain(saved.profile), formChanged: false,
-    editorDraft: null, dialog: null, dialogDirty: false, profileRecoveryId: { current: null }, recordRecoveryId: { current: null }, clearingRecovery: { current: null },
+    editorDraft: null, dialog: null, dialogDirty: false, closedJobDrafts: { current: new Set() }, quarantine: { current: null }, pdfCheck: { current: null }, discardReturn: { current: null }, profileRecoveryId: { current: null }, recordRecoveryId: { current: null }, clearingRecovery: { current: null },
     safetyState: await safety.load(scope), safetyError: "", notice: null, reloads: 0, navigation: [],
-    phoneSafety: safety, savePhoneSnapshot: main.savePhoneSnapshot, removePhoneSnapshot: main.removePhoneSnapshot,
+    phoneSafety: safety, savePhoneSnapshot: main.savePhoneSnapshot, loadPhoneSnapshot: main.loadPhoneSnapshot, removePhoneSnapshot: main.removePhoneSnapshot,
+    responseWorkspace: validWorkspace(), phoneAPI: async () => context.responseWorkspace, downloads: [], download: value => context.downloads.push(JSON.parse(value)),
+    document: { visibilityState: "visible", activeElement: null }, HTMLElement: class {}, setFilters: value => { context.filters = value; },
     run: (_label, callback) => callback(context.epoch.current),
     navigate: tab => context.navigation.push(tab),
     window: { location: { reload() { context.reloads++; } } },
   };
-  for (const [setter, field] of Object.entries({ setProfile: "profile", setFormChanged: "formChanged", setEditorDraft: "editorDraft", setDialog: "dialog", setDialogDirty: "dialogDirty", setSafetyState: "safetyState", setSafetyError: "safetyError", setNotice: "notice", setStorageProblem: "storageProblem", setStorageCode: "storageCode", setPlan: "plan", setReviewAccepted: "reviewAccepted", setConfirmDialogDiscard: "confirmDialogDiscard", setSnapshot: "snapshot" })) {
+  for (const [setter, field] of Object.entries({ setProfile: "profile", setFormChanged: "formChanged", setEditorDraft: "editorDraft", setDialog: "dialog", setDialogDirty: "dialogDirty", setSafetyState: "safetyState", setSafetyError: "safetyError", setNotice: "notice", setStorageProblem: "storageProblem", setStorageCode: "storageCode", setPlan: "plan", setReviewAccepted: "reviewAccepted", setConfirmDialogDiscard: "confirmDialogDiscard", setSnapshot: "snapshot", setWorkspace: "workspace", setHasQuarantinedEdits: "hasQuarantinedEdits", setRecoveryStatus: "recoveryStatus", setSelected: "selected", setOlderDrafts: "olderDrafts", setSearchPage: "searchPage", setSearchedFilters: "searchedFilters", setEmployerAnswers: "employerAnswers", setCheckingIdentity: "checkingIdentity", setLocked: "locked" })) {
     context[setter] = value => { context[field] = typeof value === "function" ? value(context[field]) : value; };
   }
   vm.createContext(context);
-  for (const name of ["same", "message", "local", "assertCurrent", "putSnapshot", "storageFailure", "persist", "unfinished", "adoptSafety", "preserveUnfinished", "discardRecovery", "restoreRecovery", "saveLocalProfile", "saveRecord"]) install(context, name);
+  for (const name of ["same", "message", "local", "assertCurrent", "putSnapshot", "putWorkspace", "storageFailure", "persist", "unfinished", "adoptSafety", "preserveUnfinished", "discardRecovery", "restoreRecovery", "saveLocalProfile", "saveRecord", "openAddJob", "editAddedJob", "saveJob", "saveAddedJob", "discardDialogEdits", "rememberDiscardOpener", "requestDialogClose", "exportUnfinished", "lock", "recoverLocked"]) install(context, name);
   install(context, "openClear", buttonClick("Clear this phone’s saved data"));
   install(context, "openReset", buttonClick("Reset this phone’s data"));
   install(context, "clear", action("Clearing phone data"));
@@ -865,4 +870,185 @@ test("actual record export respects newer busy, identity, discard and inherited 
   await pending.activate(); pending.flush();
   assert.equal(pending.context.identityChecks, 1); assert.equal(pending.document.activeElement, pending.recheck);
   assert.equal(pending.focusCalls.length, 0); pending.unchanged();
+});
+
+// Job-link drafts use the same encrypted owner/workspace recovery as profiles,
+// while incomplete URLs remain plain draft text until explicit validation on Save.
+const jobLinkFields = { url: "https://example.com/jobs/recovery", title: "Engineer / مهندس", company: "Synthetic private employer العربية", location: "Riyadh / الرياض" };
+const addFormSource = findNode(node => ts.isJsxElement(node) && node.openingElement.tagName.getText(tree) === "form" && node.openingElement.attributes.properties.some(prop => ts.isJsxAttribute(prop) && prop.name.text === "onSubmit" && prop.getText(tree).includes("saveAddedJob()"))).getText(tree);
+const addFormCode = ts.transpileModule("globalThis.addForm = (" + addFormSource + ");", { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None, jsx: ts.JsxEmit.React } }).outputText;
+function renderAddForm(context, language = "en") {
+  Object.assign(context, { React, t: (text, values) => production.translate(text, language, values), cannotSave: false });
+  vm.runInContext(addFormCode, context); return context.addForm;
+}
+function descendants(node) { return node && typeof node === "object" ? [node, ...React.Children.toArray(node.props?.children).flatMap(descendants)] : []; }
+function beginJobLink(h, fields = jobLinkFields) { h.context.openAddJob(); h.context.editAddedJob(plain(fields)); return h.context.dialog.editorId; }
+
+test("actual Add job form controls retain each exact field in English and Arabic", async () => {
+  for (const language of ["en", "ar"]) {
+    const h = await harness(); h.context.openAddJob();
+    for (const [name, value] of Object.entries(jobLinkFields)) {
+      const input = descendants(renderAddForm(h.context, language)).find(node => node.type === "input" && node.props.name === name);
+      assert(input, name); assert.equal(input.props.value, "");
+      input.props.onChange({ target: { value } });
+      assert.equal(h.context.dialog.draft[name], value); assert.equal(h.context.dialogDirty, true);
+      const rerendered = descendants(renderAddForm(h.context, language)).find(node => node.type === "input" && node.props.name === name);
+      assert.equal(rerendered.props.value, value);
+    }
+    const html = renderToStaticMarkup(renderAddForm(h.context, language));
+    assert(html.includes(language === "ar" ? "المسمى الوظيفي" : "Job title"));
+    assert(html.includes(jobLinkFields.company));
+  }
+});
+
+test("partial job links survive encrypted storage and a new page without becoming bookmarks", async () => {
+  const h = await harness(), fields = { ...jobLinkFields, url: "https://", title: "", location: "  الرياض  " }, id = beginJobLink(h, fields);
+  await h.context.preserveUnfinished(scope, h.context.unfinished());
+  const serialized = JSON.stringify([...h.recoveryPort.rows]);
+  assert(!serialized.includes(fields.company)); assert(!serialized.includes(fields.location));
+  const fresh = await harness({ mainPort: h.mainPort, recoveryPort: h.recoveryPort });
+  const draft = fresh.context.safetyState.recovery.find(row => row.id === id);
+  assert.deepEqual(draft.jobLink, fields);
+  const priorJobs = plain(fresh.context.snapshotRef.current.jobs);
+  await fresh.context.restoreRecovery(draft);
+  assert.equal(fresh.context.dialog.kind, "add"); assert.equal(fresh.context.dialog.scope, scope);
+  assert.notEqual(fresh.context.dialog.editorId, id); assert.deepEqual(plain(fresh.context.dialog.draft), fields);
+  assert.equal(fresh.context.dialogDirty, true); assert.deepEqual(plain(fresh.context.snapshotRef.current.jobs), priorJobs);
+  await fresh.context.saveAddedJob();
+  assert.equal(fresh.context.notice.error, true); assert.deepEqual(plain(fresh.context.dialog.draft), fields);
+  assert.deepEqual((await vault(h.mainPort).loadPhoneSnapshot(scope)).jobs, priorJobs);
+  assert.equal(production.recoveryDraftSchema.safeParse({ ...draft, profile: savedSnapshot().profile }).success, false, "Recovery cannot combine unrelated draft types");
+});
+
+test("account lock hides Add fields and restores or exports them only after the original account returns", async () => {
+  const h = await harness(), id = beginJobLink(h);
+  h.context.lock();
+  await h.safety.load(scope); // Wait for the same recovery queue used by lock.
+  assert.equal(h.context.dialog, null); assert.equal(h.context.locked, true);
+  assert.deepEqual(plain(h.context.quarantine.current.dialog.draft), jobLinkFields);
+  assert.equal((await recoveryRows(h)).recovery.find(row => row.id === id).jobLink.company, jobLinkFields.company);
+  await h.context.recoverLocked(true);
+  assert.deepEqual(h.context.downloads[0].jobLink, jobLinkFields); assert.equal(h.context.dialog, null);
+  await h.context.recoverLocked();
+  assert.equal(h.context.locked, false); assert.equal(h.context.dialog.kind, "add");
+  assert.equal(h.context.dialog.editorId, id); assert.equal(h.context.dialogDirty, true);
+  assert.deepEqual(plain(h.context.dialog.draft), jobLinkFields);
+  assert.equal(h.context.snapshotRef.current.jobs.length, 1, "Recovery does not save a bookmark");
+});
+
+test("locked job-link recovery cannot expose fields to another account, workspace or late identity check", async t => {
+  for (const change of ["account", "workspace", "identity", "hidden"]) await t.test(change, async () => {
+    const h = await harness(); beginJobLink(h); h.context.lock(); await h.safety.load(scope);
+    if (change === "account") h.context.responseWorkspace = { ...validWorkspace(), accountId: "synthetic-b", workspaceId: uuid(2) };
+    if (change === "workspace") h.context.responseWorkspace = { ...validWorkspace(), workspaceId: uuid(2) };
+    if (["identity", "hidden"].includes(change)) h.context.phoneAPI = async () => {
+      if (change === "identity") h.context.identityUnverified.current = true; else h.context.document.visibilityState = "hidden";
+      return validWorkspace();
+    };
+    await assert.rejects(h.context.recoverLocked(), /original account|different workspace|confirmed|no longer current/);
+    assert.equal(h.context.dialog, null); assert.equal(h.context.downloads.length, 0);
+    assert.deepEqual(plain(h.context.quarantine.current.dialog.draft), jobLinkFields);
+    assert(!h.recoveryPort.rows.has(otherScope));
+    if (change !== "workspace") await assert.rejects(h.context.recoverLocked(true), /original account|confirmed|no longer current/);
+    assert.equal(h.context.downloads.length, 0);
+  });
+});
+
+test("job-link save removes only this editor's recovery copy and preserves another tab and the source draft", async () => {
+  const a = await harness(), sourceId = beginJobLink(a);
+  await a.context.preserveUnfinished(scope, a.context.unfinished());
+  const original = (await recoveryRows(a)).recovery.find(row => row.id === sourceId);
+  const b = await harness({ mainPort: a.mainPort, recoveryPort: a.recoveryPort });
+  a.context.dialog = null; a.context.dialogDirty = false;
+  await a.context.restoreRecovery(original); await b.context.restoreRecovery(original);
+  const aId = a.context.dialog.editorId, bId = b.context.dialog.editorId;
+  b.context.editAddedJob({ title: "Newer tab B title العربية" });
+  await b.context.preserveUnfinished(scope, b.context.unfinished());
+  const captured = a.context.unfinished();
+  await a.context.saveAddedJob();
+  await a.context.preserveUnfinished(scope, captured); // a delayed pre-save autosave cannot recreate the finished copy
+  const state = await recoveryRows(a);
+  assert(!state.recovery.some(row => row.id === aId));
+  assert.deepEqual(state.recovery.find(row => row.id === sourceId), original);
+  assert.equal(state.recovery.find(row => row.id === bId).jobLink.title, "Newer tab B title العربية");
+  const saved = await vault(a.mainPort).loadPhoneSnapshot(scope);
+  assert.equal(saved.jobs.filter(job => job.url === jobLinkFields.url).length, 1);
+  assert.equal(saved.jobs[0].title, jobLinkFields.title); assert.equal(a.context.dialog, null); assert.equal(a.context.dialogDirty, false);
+});
+
+test("Add cancellation preserves typed fields until confirmation and discards only its own draft", async () => {
+  const h = await harness(), id = beginJobLink(h);
+  await h.safety.hold(scope, holdId); await h.safety.recover(scope, recovery("record"));
+  const captured = h.context.unfinished(); await h.context.preserveUnfinished(scope, captured);
+  h.context.requestDialogClose();
+  assert.equal(h.context.confirmDialogDiscard, true); assert.deepEqual(plain(h.context.dialog.draft), jobLinkFields);
+  const before = plain(h.context.snapshotRef.current);
+  await h.context.discardDialogEdits(); await h.context.preserveUnfinished(scope, captured);
+  const state = await recoveryRows(h);
+  assert(!state.recovery.some(row => row.id === id)); assert.equal(state.recovery[0].id, originalId);
+  assert.equal(state.holds[0].planId, holdId); assert.deepEqual(plain(h.context.snapshotRef.current), before);
+  assert.equal(h.context.dialog, null); assert.equal(h.context.dialogDirty, false);
+});
+
+test("a failed or duplicate job save retains every entered field and its recovery copy", async t => {
+  for (const failure of ["storage", "duplicate", "scope"]) await t.test(failure, async () => {
+    const h = await harness(), fields = failure === "duplicate" ? { ...jobLinkFields, url: savedSnapshot().jobs[0].url } : jobLinkFields;
+    const id = beginJobLink(h, fields); await h.context.preserveUnfinished(scope, h.context.unfinished());
+    if (failure === "storage") h.mainPort.writeFailure = new DOMException("Synthetic full storage", "QuotaExceededError");
+    if (failure === "scope") h.context.dialog.scope = otherScope;
+    if (failure === "duplicate") { await h.context.saveAddedJob(); assert.match(h.context.notice.text, /already in Saved/); }
+    else await assert.rejects(h.context.saveAddedJob(), /storage|space|different workspace/i);
+    assert.equal(h.context.dialog.kind, "add"); assert.deepEqual(plain(h.context.dialog.draft), fields);
+    assert.equal(h.context.dialogDirty, true); assert.equal(h.context.closedJobDrafts.current.has(id), false);
+    assert((await recoveryRows(h)).recovery.some(row => row.id === id));
+  });
+});
+
+test("unfinished job-link export includes all four fields and does not create or upload a job", async () => {
+  const h = await harness(), id = beginJobLink(h, { ...jobLinkFields, url: "unfinished link" });
+  const before = h.mainPort.writes.length;
+  h.context.exportUnfinished();
+  const exported = h.context.downloads[0];
+  assert.equal(exported.scope, scope); assert.equal(exported.drafts[0].id, id);
+  assert.deepEqual(exported.drafts[0].jobLink, { ...jobLinkFields, url: "unfinished link" });
+  assert.equal(h.mainPort.writes.length, before);
+  h.context.identityUnverified.current = true;
+  assert.throws(() => h.context.exportUnfinished(), /Confirm this account/);
+  assert.equal(h.context.downloads.length, 1);
+});
+
+test("in-flight recovery saving is removed after Add save and cannot reappear afterward", async () => {
+  const h = await harness(), id = beginJobLink(h), entered = deferred(), gate = deferred();
+  const captured = h.context.unfinished();
+  h.recoveryPort.afterWrite = async () => { entered.resolve(); await gate.promise; };
+  const preserving = h.context.preserveUnfinished(scope, captured);
+  await entered.promise;
+  const cleanupEntered = deferred();
+  h.context.phoneSafety = { ...h.safety, discard: (...args) => { cleanupEntered.resolve(); return h.safety.discard(...args); } };
+  const saving = h.context.saveAddedJob();
+  await cleanupEntered.promise;
+  await h.context.preserveUnfinished(scope, captured);
+  gate.resolve(); await preserving; await saving;
+  h.recoveryPort.afterWrite = null;
+  assert(!(await recoveryRows(h)).recovery.some(row => row.id === id));
+  assert.equal((await vault(h.mainPort).loadPhoneSnapshot(scope)).jobs.filter(job => job.url === jobLinkFields.url).length, 1);
+});
+
+test("account lock during recovery cleanup cannot reopen an already saved or discarded job-link draft", async t => {
+  for (const action of ["save", "discard"]) await t.test(action, async () => {
+    const h = await harness(), id = beginJobLink(h);
+    await h.context.preserveUnfinished(scope, h.context.unfinished());
+    const entered = deferred(), gate = deferred();
+    h.context.phoneSafety = { ...h.safety, discard: async (...args) => { entered.resolve(); await gate.promise; return h.safety.discard(...args); } };
+    const pending = action === "save" ? h.context.saveAddedJob() : h.context.discardDialogEdits();
+    await entered.promise;
+    assert.equal(h.context.closedJobDrafts.current.has(id), true);
+    h.context.lock();
+    assert.equal(h.context.quarantine.current.dialog, null);
+    gate.resolve(); await assert.rejects(pending, /page changed/);
+    await h.context.recoverLocked();
+    assert.equal(h.context.dialog, null); assert.equal(h.context.dialogDirty, false);
+    assert.equal(h.context.snapshotRef.current.jobs.filter(job => job.url === jobLinkFields.url).length, action === "save" ? 1 : 0);
+    assert(!(await recoveryRows(h)).recovery.some(row => row.id === id));
+  });
 });
