@@ -156,6 +156,13 @@ struct PhoneRecordScope: Codable, Equatable {
     }
 }
 
+/// A parked unfinished opportunity. Scope stops it appearing in another workspace.
+struct PhoneRecoveredOpportunity: Codable, Equatable {
+    var scope: PhoneRecordScope
+    var draft: PhoneOpportunityDraft
+    var valid: Bool { scope.valid && draft.hasContent && draft.storageError == nil }
+}
+
 struct PhoneRecordJob: Codable, Equatable {
     var url: String
     var title: String
@@ -276,10 +283,13 @@ struct PhoneWorkspaceBackup: Codable {
     var recordDrafts: [PhoneRecordDraftCheckpoint]
     var submissionHolds: [PhoneSubmissionHold]
     var discoverySnapshot: Data?
+    /// Unfinished opportunities parked beside the current draft. Empty stays off the wire.
+    var recoveredOpportunityDrafts: [PhoneOpportunityDraft] = []
     init(draft: PhoneWorkspaceDraft, records: [PhoneOpportunityRecord], recordDrafts: [PhoneRecordDraftCheckpoint],
-         submissionHolds: [PhoneSubmissionHold], discoverySnapshot: Data? = nil) {
+         submissionHolds: [PhoneSubmissionHold], discoverySnapshot: Data? = nil, recoveredOpportunityDrafts: [PhoneOpportunityDraft] = []) {
         self.draft = draft; self.records = records; self.recordDrafts = recordDrafts
         self.submissionHolds = submissionHolds; self.discoverySnapshot = discoverySnapshot
+        self.recoveredOpportunityDrafts = recoveredOpportunityDrafts
     }
     var valid: Bool {
         schemaVersion == 1 && ApplicationReviewPolicy.date(exportedAt) != nil && draft.valid
@@ -287,6 +297,8 @@ struct PhoneWorkspaceBackup: Codable {
             && Set(records.map(\.id)).count == records.count
             && recordDrafts.count <= 200 && recordDrafts.allSatisfy { $0.valid && $0.scope == draft.scope }
             && submissionHolds.count <= 500 && submissionHolds.allSatisfy { $0.valid && $0.scope == draft.scope }
+            && recoveredOpportunityDrafts.count <= 200
+            && recoveredOpportunityDrafts.allSatisfy { $0.hasContent && $0.storageError == nil }
             && (discoverySnapshot?.count ?? 0) <= 12 * 1_024 * 1_024
     }
     /// Common iPhone/Android wire format. Platform extensions contain no reusable authentication or approval.
@@ -386,7 +398,31 @@ struct PhoneWorkspaceBackup: Codable {
         var continuationHolds: [String]
     }
     private struct IOS: Codable { var discoverySnapshotBase64: String? }
-    private struct Extensions: Codable { var ios: IOS? }
+    private struct AndroidExtension: Codable {
+        var recoveredOpportunityDrafts: [PhoneOpportunityDraft] = []
+        init(recoveredOpportunityDrafts: [PhoneOpportunityDraft] = []) { self.recoveredOpportunityDrafts = recoveredOpportunityDrafts }
+        init(from decoder: Decoder) throws {
+            let c = try decoder.container(keyedBy: CodingKeys.self)
+            recoveredOpportunityDrafts = try c.decodeIfPresent([PhoneOpportunityDraft].self, forKey: .recoveredOpportunityDrafts) ?? []
+        }
+        private enum CodingKeys: String, CodingKey { case recoveredOpportunityDrafts }
+    }
+    private struct Extensions: Codable {
+        var ios: IOS?
+        var android: AndroidExtension?
+        init(ios: IOS?, android: AndroidExtension?) { self.ios = ios; self.android = android }
+        init(from decoder: Decoder) throws {
+            let c = try decoder.container(keyedBy: CodingKeys.self)
+            ios = try c.decodeIfPresent(IOS.self, forKey: .ios)
+            android = try c.decodeIfPresent(AndroidExtension.self, forKey: .android)
+        }
+        func encode(to encoder: Encoder) throws {
+            var c = encoder.container(keyedBy: CodingKeys.self)
+            try c.encodeIfPresent(ios, forKey: .ios)
+            try c.encodeIfPresent(android, forKey: .android)
+        }
+        private enum CodingKeys: String, CodingKey { case ios, android }
+    }
     private struct Envelope: Codable {
         var format: String; var version: Int; var platform: String; var exportedAt: String; var source: Source; var data: Contents; var extensions: Extensions?
     }
@@ -405,6 +441,7 @@ struct PhoneWorkspaceBackup: Codable {
         recordDrafts = contents.recordDrafts.map { PhoneRecordDraftCheckpoint(scope: scope, identity: $0.job.identity, job: $0.job,
             recordID: $0.recordID, revision: $0.revision, draft: $0.draft) }
         submissionHolds = contents.continuationHolds.map { PhoneSubmissionHold(scope: scope, planID: $0) }
+        recoveredOpportunityDrafts = envelope.extensions?.android?.recoveredOpportunityDrafts ?? []
         if let encoded = envelope.extensions?.ios?.discoverySnapshotBase64 {
             guard let data = Data(base64Encoded: encoded), data.base64EncodedString() == encoded else {
                 throw MobileApplicationError(message: "The saved search in this backup is unreadable.")
@@ -421,8 +458,9 @@ struct PhoneWorkspaceBackup: Codable {
             applicationRecords: records.map(Record.init),
             recordDrafts: recordDrafts.map { RecordDraft(job: $0.job, recordID: $0.recordID, revision: $0.revision, draft: $0.draft) },
             opportunityDraft: draft.opportunityDraft, continuationHolds: submissionHolds.map(\.planID))
+        let android = recoveredOpportunityDrafts.isEmpty ? nil : AndroidExtension(recoveredOpportunityDrafts: recoveredOpportunityDrafts)
         try Envelope(format: "career-finder-phone-workspace", version: schemaVersion, platform: "ios", exportedAt: exportedAt,
-            source: source, data: contents, extensions: Extensions(ios: IOS(discoverySnapshotBase64: discoverySnapshot?.base64EncodedString()))).encode(to: encoder)
+            source: source, data: contents, extensions: Extensions(ios: IOS(discoverySnapshotBase64: discoverySnapshot?.base64EncodedString()), android: android)).encode(to: encoder)
     }
 }
 
@@ -489,7 +527,7 @@ struct ApplicationProfileReadiness {
 
 /// The draft's base revision is deliberately independent of the latest server revision.
 /// Old files without a revision migrate to an unknown base, which requires an explicit conflict choice.
-struct PhoneApplicationState: Codable {
+struct PhoneApplicationState: Codable, Equatable {
     var profile = PhoneApplicationProfile()
     var profileNeedsSync = false
     var jobs: [[String: ApplicationValue]] = []
@@ -506,6 +544,10 @@ struct PhoneApplicationState: Codable {
     var workspaceDraftSchema = 1
     var workspaceDrafts: [PhoneWorkspaceDraft] = []
     var recordDrafts: [PhoneRecordDraftCheckpoint] = []
+    /// Distinct unfinished edits for a job already holding a current draft. Never an applied mark.
+    var recordDraftAlternatives: [PhoneRecordDraftCheckpoint] = []
+    /// Unfinished opportunities that differ from the current draft. Filtered by workspace scope.
+    var recoveredOpportunityDrafts: [PhoneRecoveredOpportunity] = []
     var submissionHolds: [PhoneSubmissionHold] = []
 
     init() {}
@@ -513,7 +555,7 @@ struct PhoneApplicationState: Codable {
         case profile, profileNeedsSync, jobs, opportunityDraft, serviceAddress, workspaceID, profileRevision
         case latestServerRevision, latestServerProfile, connectionEnabled, credentialAccount
         case applicationRecordSchema, applicationRecords
-        case workspaceDraftSchema, workspaceDrafts, recordDrafts, submissionHolds
+        case workspaceDraftSchema, workspaceDrafts, recordDrafts, recordDraftAlternatives, recoveredOpportunityDrafts, submissionHolds
     }
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -531,9 +573,13 @@ struct PhoneApplicationState: Codable {
         workspaceDraftSchema = try c.decodeIfPresent(Int.self, forKey: .workspaceDraftSchema) ?? 1
         workspaceDrafts = try c.decodeIfPresent([PhoneWorkspaceDraft].self, forKey: .workspaceDrafts) ?? []
         recordDrafts = try c.decodeIfPresent([PhoneRecordDraftCheckpoint].self, forKey: .recordDrafts) ?? []
+        recordDraftAlternatives = try c.decodeIfPresent([PhoneRecordDraftCheckpoint].self, forKey: .recordDraftAlternatives) ?? []
+        recoveredOpportunityDrafts = try c.decodeIfPresent([PhoneRecoveredOpportunity].self, forKey: .recoveredOpportunityDrafts) ?? []
         submissionHolds = try c.decodeIfPresent([PhoneSubmissionHold].self, forKey: .submissionHolds) ?? []
         guard workspaceDraftSchema == 1, workspaceDrafts.count <= 32, workspaceDrafts.allSatisfy(\.valid),
-              recordDrafts.count <= 200, recordDrafts.allSatisfy(\.valid),
+              recordDrafts.count + recordDraftAlternatives.count <= 200,
+              recordDrafts.allSatisfy(\.valid), recordDraftAlternatives.allSatisfy(\.valid),
+              recoveredOpportunityDrafts.count <= 200, recoveredOpportunityDrafts.allSatisfy(\.valid),
               submissionHolds.count <= 500, submissionHolds.allSatisfy(\.valid) else {
             throw MobileApplicationError(message: "These workspace drafts need a compatible app version. The original phone data has been preserved.")
         }
@@ -613,6 +659,26 @@ struct PhoneApplicationState: Codable {
         if !profile.resumeChanged && !profile.resumeRemoved { profile.adoptResumeMetadata(from: latestServerProfile) }
         profileRevision = revision
         return true
+    }
+}
+
+/// Display labels for app-owned career-stage and work-mode values. Unknown text stays raw.
+enum PhoneProfileDisplay {
+    static func experienceLabel(for stored: String) -> String? {
+        switch stored {
+        case "any", "Any / not specified": return "Any / not specified"
+        case "entry", "Entry level": return "Entry level"
+        case "mid", "Mid level": return "Mid level"
+        case "senior", "Senior": return "Senior"
+        default: return nil
+        }
+    }
+    static func workPreferenceLabels(remote: Bool, hybrid: Bool, onsite: Bool) -> [String] {
+        var labels: [String] = []
+        if remote { labels.append("Remote") }
+        if hybrid { labels.append("Hybrid") }
+        if onsite { labels.append("On site") }
+        return labels
     }
 }
 
