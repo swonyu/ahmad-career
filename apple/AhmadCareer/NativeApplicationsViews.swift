@@ -498,6 +498,7 @@ struct NativeApplicationProfileEditor: View {
                             .fixedSize(horizontal: false, vertical: true)
                             .accessibilityIdentifier("application.firstName.label")
                         TextField(l10n("First or single name"), text: $draft.firstName).textContentType(.givenName)
+                            .accessibilityLabel(l10n("First or single name"))
                             .accessibilityIdentifier("application.firstName").focused($focusedField, equals: "firstName")
                     }
                     TextField(l10n("Last name (optional)"), text: $draft.lastName).textContentType(.familyName)
@@ -509,6 +510,7 @@ struct NativeApplicationProfileEditor: View {
                             .accessibilityIdentifier("application.email.label")
                         TextField(l10n("Email"), text: $draft.email).textContentType(.emailAddress).keyboardType(.emailAddress)
                             .textInputAutocapitalization(.never).autocorrectionDisabled()
+                            .accessibilityLabel(l10n("Email"))
                             .accessibilityIdentifier("application.email").focused($focusedField, equals: "email")
                     }
                     if ApplicationProfileReadiness(profile: draft).emailNeedsCorrection {
