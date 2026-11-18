@@ -153,6 +153,22 @@ final class CareerFinderUITests: XCTestCase {
         return false
     }
     @MainActor
+    private func waitForObservation(timeout: TimeInterval, _ observation: () -> Bool) -> XCTWaiter.Result {
+        // Observe immediately without an outer XCTest waiter cancelling nested
+        // accessibility reads. Keep the caller's admission and acceptance window:
+        // an in-flight read may finish later, but a late result never passes.
+        let deadline = ProcessInfo.processInfo.systemUptime + timeout
+        while ProcessInfo.processInfo.systemUptime < deadline {
+            let ready = observation()
+            let observedAt = ProcessInfo.processInfo.systemUptime
+            if ready && observedAt <= deadline { return .completed }
+            let remaining = deadline - observedAt
+            guard remaining > 0 else { break }
+            RunLoop.current.run(until: Date(timeIntervalSinceNow: min(0.05, remaining)))
+        }
+        return .timedOut
+    }
+    @MainActor
     private func replace(_ field: XCUIElement, with text: String, in app: XCUIApplication, clearWith clearButton: XCUIElement? = nil) {
         guard revealForTyping(field, in: app) else { return }
         field.tap()
@@ -253,7 +269,7 @@ final class CareerFinderUITests: XCTestCase {
         }
         if !isSecure {
             var lastEditedValue = "No value observation completed"
-            let edited = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            let editResult = waitForObservation(timeout: 5) {
                 // Each evaluation reads the real AX value once. Placeholder/type
                 // queries can consume this bounded wait after a keyboard change.
                 let observed = field.value
@@ -261,8 +277,7 @@ final class CareerFinderUITests: XCTestCase {
                 guard let value = observed as? String else { return false }
                 // Entered text may legitimately equal the placeholder itself.
                 return text.isEmpty ? (value.isEmpty || value == placeholder) : value == text
-            }, object: nil)
-            let editResult = XCTWaiter.wait(for: [edited], timeout: 5)
+            }
             if editResult != .completed {
                 capture("replacement-did-not-match-exact-value", app: app)
                 print("Expected exact field value: \(String(reflecting: text)); last observed: \(lastEditedValue)")
@@ -428,13 +443,12 @@ final class CareerFinderUITests: XCTestCase {
         // App launch-language overrides do not change the separately hosted
         // Safari service's system language. Keep its expected label explicit.
         let doneQuery = app.buttons.matching(NSPredicate(format: "label == %@", browserDoneTitle))
-        let uniqueVisibleDone = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-            doneQuery.allElementsBoundByIndex.filter { $0.exists && $0.isHittable }.count == 1
-        }, object: nil)
         // A cold Safari remote service took over 14 seconds to expose controls
         // in the retained runner recording. Keep checking the real unique,
         // localized Done action through service startup.
-        let toolbarReady = XCTWaiter.wait(for: [uniqueVisibleDone], timeout: 20)
+        let toolbarReady = waitForObservation(timeout: 20) {
+            doneQuery.allElementsBoundByIndex.filter { $0.exists && $0.isHittable }.count == 1
+        }
         // Keep original screen and AX evidence even when a remote Safari
         // accessibility hierarchy differs from this expected lookup.
         capture(screenshot, app: app)
@@ -946,10 +960,10 @@ final class CareerFinderUITests: XCTestCase {
             let action = delay == "0" ? again : exactRetry
             reveal(action, in: limited); action.tap()
             let result = element("discovery.job.fixture-design", app: limited)
-            let recoveredRateLimit = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            let recoveredRateLimit = waitForObservation(timeout: 5) {
                 !rateIssue.exists && result.exists
-            }, object: nil)
-            XCTAssertEqual(XCTWaiter.wait(for: [recoveredRateLimit], timeout: 5), .completed,
+            }
+            XCTAssertEqual(recoveredRateLimit, .completed,
                            "The enabled retry must recover matching results, not only change the control state")
             limited.terminate()
         }
