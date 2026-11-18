@@ -14,10 +14,15 @@ import { connectorPreview } from "./vite/connector-preview-plugin.mjs";
 
 export async function startPreview(args = []) {
   const options = { host: "127.0.0.1", port: 5173 };
-  for (let i = 0; i < args.length; i += 2) {
-    if (!["--host", "--port"].includes(args[i]) || !args[i + 1]) throw Error("Preview accepts --host and --port pairs.");
-    if (args[i] === "--host") options.host = args[i + 1];
-    else options.port = Number(args[i + 1]);
+  for (let i = 0; i < args.length;) {
+    const option = args[i++];
+    // The managed Sites launcher passes this flag. listen() already fails on
+    // an occupied port; this preview never falls back to a different one.
+    if (option === "--strictPort") continue;
+    const value = args[i++];
+    if (!["--host", "--port"].includes(option) || !value || value.startsWith("--")) throw Error("Preview accepts --host and --port pairs, plus --strictPort.");
+    if (option === "--host") options.host = value;
+    else options.port = Number(value);
   }
   const managed = readExecutionProfile() === "managed-linux";
   if (!(options.host === "127.0.0.1" || managed && options.host === "0.0.0.0") ||
