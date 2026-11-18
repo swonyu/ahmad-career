@@ -1,5 +1,4 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import type { AppRequestContext } from "./request-context";
 
 export type ChatGPTUser = {
   userId: string;
@@ -9,45 +8,23 @@ export type ChatGPTUser = {
   method: "chatgpt" | "google" | "linkedin";
 };
 
-// Worker strips inbound x-career-* headers, resolves the current browser identity
-// and supplies these fields for this request only. Never read raw OAI headers here.
-const USER_ID_HEADER = "x-career-user-id";
-const USER_EMAIL_HEADER = "x-career-user-email";
-const USER_FULL_NAME_HEADER = "x-career-user-name";
-const USER_METHOD_HEADER = "x-career-user-method";
 const SIGN_IN_PATH = "/signin-with-chatgpt";
 const SIGN_OUT_PATH = "/signout-with-chatgpt";
 const CALLBACK_PATH = "/callback";
 
-export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
-  const requestHeaders = await headers();
-  const userId = safeDecodeURIComponent(requestHeaders.get(USER_ID_HEADER) ?? "");
-  const email = safeDecodeURIComponent(requestHeaders.get(USER_EMAIL_HEADER) ?? "");
-  const method = requestHeaders.get(USER_METHOD_HEADER);
-  if (!userId || !email || (method !== "chatgpt" && method !== "google" && method !== "linkedin")) return null;
-
-  const encodedFullName = requestHeaders.get(USER_FULL_NAME_HEADER);
-  const fullName =
-    encodedFullName
-      ? safeDecodeURIComponent(encodedFullName)
-      : null;
-
-  return {
-    userId,
-    displayName: fullName ?? email,
-    email,
-    fullName,
-    method,
-  };
+/** The Worker has already resolved this request; page code has no header authority. */
+export function getChatGPTUser(context: AppRequestContext): ChatGPTUser | null {
+  return context.user;
 }
 
-export async function requireChatGPTUser(
-  returnTo: string,
-): Promise<ChatGPTUser> {
-  const user = await getChatGPTUser();
-  if (user) return user;
+export class PageRedirect extends Error {
+  constructor(readonly location: string) { super("Page sign-in is required."); }
+}
 
-  redirect(chatGPTSignInPath(returnTo));
+export function requireChatGPTUser(returnTo: string, context: AppRequestContext): ChatGPTUser {
+  const user = getChatGPTUser(context);
+  if (user) return user;
+  throw new PageRedirect(chatGPTSignInPath(returnTo));
 }
 
 export function chatGPTSignInPath(returnTo: string): string {
@@ -81,12 +58,4 @@ function isReservedAuthPath(pathname: string): boolean {
     pathname === SIGN_OUT_PATH ||
     pathname === CALLBACK_PATH
   );
-}
-
-function safeDecodeURIComponent(value: string): string | null {
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return null;
-  }
 }

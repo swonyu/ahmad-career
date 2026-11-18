@@ -1,11 +1,10 @@
 "use client";
 import { useI18n } from "../i18n/LocaleProvider";
 import type { ReactNode } from "react";
-import Image from "next/image";
 import { Settings2 } from "lucide-react";
 import OAuthFeedback from "./OAuthFeedback";
 export function BrandMark() {
-  return <Image className="brand-mark" src="/phone-icon-192.png" width={42} height={42} alt="" unoptimized />;
+  return <img className="brand-mark" src="/phone-icon-192.png" width={42} height={42} alt="" loading="lazy" decoding="async" />;
 }
 export default function SiteFrame({ children, active = "", narrow = false }: { children: ReactNode; active?: string; narrow?: boolean }) {
   const { t } = useI18n();

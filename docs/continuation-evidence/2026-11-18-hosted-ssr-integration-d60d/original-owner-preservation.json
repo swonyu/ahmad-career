@@ -1,0 +1,16 @@
+{
+  "observedAt": "2026-11-18T07:25:41.956832+00:00",
+  "latestHostedOwner": {
+    "path": "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d",
+    "head": "28f1f11614beb9739d89df9e733a232adcc3e0bd",
+    "status": "clean"
+  },
+  "publisherSSR": {
+    "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-SSR-Phase2-a179",
+    "head": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+    "statusUnchanged": true,
+    "frozenChangedEntries": 38,
+    "allFrozenFileHashesUnchanged": true
+  },
+  "writes": "Only isolated integration worktree and assigned evidence directory; original source checkouts preserved."
+}

@@ -1,0 +1,25 @@
+{
+  "observedAt": "2026-11-18T07:15:00.827829+00:00",
+  "path": "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26",
+  "branch": "integration/hosted-ssr-20261118-d60d",
+  "base": "28f1f11614beb9739d89df9e733a232adcc3e0bd",
+  "publisherBase": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+  "reviewCommit": "f6f10f9581116b613fc2ed2f45653daa7dacb788",
+  "newFilesFromPublisher": [
+    "hosted/.oxlintrc.json",
+    "hosted/app/request-context.ts",
+    "hosted/docs/ssr-toolchain.md",
+    "hosted/renderer/assets.ts",
+    "hosted/renderer/bootstrap.ts",
+    "hosted/renderer/client.tsx",
+    "hosted/renderer/routes.tsx",
+    "hosted/renderer/server.tsx",
+    "hosted/scripts/build-site.mjs",
+    "hosted/scripts/preview-site.mjs",
+    "hosted/tests/build-pdf-browser-esbuild.mjs",
+    "hosted/tests/ssr-runtime.mjs"
+  ],
+  "preservation": "Latest sealed PhoneApp altered only three existing hook directive namespaces; latest phone.css and recovery test byte-identical.",
+  "status": " M .github/workflows/phone-quality.yml\n M hosted/app/account/page.tsx\n M hosted/app/chatgpt-auth.ts\n M hosted/app/components/GoogleSignInArtwork.tsx\n M hosted/app/components/SiteFrame.tsx\n M hosted/app/connect/page.tsx\n M hosted/app/i18n/server.ts\n M hosted/app/layout.tsx\n M hosted/app/page.tsx\n M hosted/app/phone/PhoneApp.tsx\n M hosted/app/phone/page.tsx\n M hosted/app/phone/pdf.ts\n M hosted/app/privacy/page.tsx\n M hosted/app/support/page.tsx\n D hosted/eslint.config.mjs\n D hosted/next.config.ts\n M hosted/package-lock.json\n M hosted/package.json\n M hosted/scripts/build-verified.sh\n M hosted/scripts/install-ci.mjs\n M hosted/scripts/install-ci.sh\n M hosted/scripts/run-framework.mjs\n M hosted/scripts/vite/sites-vite-plugin.ts\n M hosted/tsconfig.json\n D hosted/vite.config.ts\n M hosted/worker/index.ts\n?? hosted/.oxlintrc.json\n?? hosted/app/request-context.ts\n?? hosted/docs/\n?? hosted/renderer/\n?? hosted/scripts/build-site.mjs\n?? hosted/scripts/preview-site.mjs\n?? hosted/scripts/public-bundle-inputs.mjs\n?? hosted/tests/build-pdf-browser-esbuild.mjs\n?? hosted/tests/public-bundle-inputs.mjs\n?? hosted/tests/ssr-runtime.mjs\n",
+  "phoneSHA256": "b058d7cfd8dc5d57d9479e6c8339c1f72682cbc14bcf0fda806f95901442f11b"
+}

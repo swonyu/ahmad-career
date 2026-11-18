@@ -1,0 +1,9 @@
+{
+  "conditional-hook": "import { useState } from \"react\"; export function Example({ enabled }: { enabled: boolean }) { if (enabled) useState(0); return null; }\n",
+  "missing-hook-dependency": "import { useEffect } from \"react\"; export function Example({ value }: { value: string }) { useEffect(() => { console.log(value); }, []); return null; }\n",
+  "invalid-aria": "export function Example() { return <input aria-invalid=\"bogus\" />; }\n",
+  "unused-typescript": "const forgotten = 1; export const retained = 2;\n",
+  "missing-jsx-key": "export function Example() { return [1,2].map(value => <span>{value}</span>); }\n",
+  "unused-directive": "// eslint-disable-next-line no-debugger\nexport const retained = 2;\n",
+  "valid": "export function Example({ text }: { text: string }) { return <span>{text}</span>; }\n"
+}

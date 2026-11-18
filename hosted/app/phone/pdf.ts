@@ -1,11 +1,20 @@
 import { MAX_PDF_BYTES, type Profile } from "./model";
 
+declare const __CAREER_PDF_WORKER_URL__: string;
+
 type WorkerPort = Pick<Worker, "postMessage" | "terminate" | "addEventListener" | "removeEventListener">;
 type Options = { signal?: AbortSignal; createWorker?: () => WorkerPort; timeoutMs?: number };
 const MAX_CHECK_MILLISECONDS = 6000;
 const unavailable = () => Error("This browser cannot safely check PDFs right now. Use an updated browser and choose the file again. Your previous CV was kept.");
 const cancelled = () => new DOMException("PDF check cancelled. Your previous CV was kept.", "AbortError");
 const invalid = () => Error("This file could not be read as a supported PDF CV. Export a new, unencrypted PDF and try again. Your previous CV was kept.");
+
+function createBrowserWorker(): WorkerPort {
+  if (typeof __CAREER_PDF_WORKER_URL__ !== "string") throw unavailable();
+  const address = new URL(__CAREER_PDF_WORKER_URL__, import.meta.url);
+  if (address.origin !== new URL(import.meta.url).origin) throw unavailable();
+  return new Worker(address, { type: "module", name: "career-finder-pdf-check" });
+}
 
 /** Worker injection is an executable-test port, never a browser/request setting. */
 export function validatePDFBytes(bytes: Uint8Array, { signal, createWorker, timeoutMs = MAX_CHECK_MILLISECONDS }: Options = {}): Promise<number> {
@@ -16,7 +25,7 @@ export function validatePDFBytes(bytes: Uint8Array, { signal, createWorker, time
     let worker: WorkerPort;
     try {
       if (!createWorker && typeof Worker !== "function") throw unavailable();
-      worker = createWorker ? createWorker() : new Worker(new URL("./pdf-validation.worker.ts", import.meta.url), { type: "module", name: "career-finder-pdf-check" });
+      worker = createWorker ? createWorker() : createBrowserWorker();
     } catch { reject(unavailable()); return; }
     let settled = false;
     const finish = (error: Error | null, pages = 0) => {

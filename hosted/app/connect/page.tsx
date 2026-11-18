@@ -1,11 +1,12 @@
+import type { PageProps } from "../request-context";
 import { serverI18n } from "../i18n/server";
 import SiteFrame from "../components/SiteFrame";
 import { getChatGPTUser } from "../chatgpt-auth";
 import ConnectionPanel from "./ConnectionPanel";
 export const dynamic = "force-dynamic";
-export default async function ConnectPage() {
-  const { t } = await serverI18n();
-  const user = await getChatGPTUser();
+export default function ConnectPage({ context }: PageProps) {
+  const { t } = serverI18n(context);
+  const user = getChatGPTUser(context);
   return <SiteFrame active="connect"><section className="intro"><span className="eyebrow"><span className="status-dot" /> {t(" CONNECTED, ON YOUR TERMS")}</span><h1>{t("One workspace.")}<br /><span className="accent-text">{t("Every next step.")}</span></h1><p className="lede">{t("Save your Career Finder profile online and recover it on another phone. You can browse jobs without signing in.")}</p></section>
     <div className="connect-grid"><ConnectionPanel signedIn={Boolean(user)} displayName={user?.displayName ?? ""} accountId={user?.userId ?? ""} />
       <aside className="setup-guide" aria-labelledby="setup-heading"><p className="eyebrow">{t("A SIMPLE START")}</p><h2 id="setup-heading">{t("Your work, wherever")}<br />{t("you pick it up.")}</h2><ol className="steps"><li><span className="step-number">1</span><div><h3>{t("Sign in securely")}</h3><p>{t("Choose an available sign-in method. Return to the same account to recover your workspace, and connect additional sign-in methods from Account.")}</p></div></li><li><span className="step-number">2</span><div><h3>{t("Get a connection code")}</h3><p>{t("Generate a private code, then enter it in the phone app. It works once and expires in five minutes.")}</p></div></li><li><span className="step-number">3</span><div><h3>{t("Choose what to save")}</h3><p>{t("Review your phone draft before saving it online. Connecting alone does not upload your existing CV.")}</p></div></li></ol><div className="quiet-note"><span aria-hidden="true">✓</span><p>{t("You review each application before approving Auto Apply. A verified receipt requires confirmation from the supported provider.")}</p></div></aside>

@@ -85,7 +85,7 @@ jobs:
         working-directory: hosted
         run: |
           npm run typecheck
-          npx eslint app worker --max-warnings 0
+          npm run lint
       - name: Exercise the production handler with real local D1 and R2
         working-directory: hosted
         run: |
@@ -94,7 +94,9 @@ jobs:
           node --test tests/browser-api.mjs tests/browser-pairing.mjs
       - name: Build the deployable Worker and phone setup pages
         working-directory: hosted
-        run: npm run build
+        run: |
+          npm run build
+          npm run test:ssr
       - name: Audit the locked dependencies
         working-directory: hosted
         timeout-minutes: 3

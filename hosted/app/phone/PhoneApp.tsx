@@ -205,7 +205,7 @@ export default function PhoneApp({ account }: { account: Account }) {
     void phoneAPI("/api/discovery/sources").then(value => { if (!cancelled) setCatalog(catalogSchema.parse(value)); }).catch(error => { if (!cancelled) setCatalogError(message(error)); });
     return () => { cancelled = true; epoch.current = generation + 1; searchAbort.current?.abort(); pdfCheck.current?.abort(); };
     // The platform identity is fixed for this server-rendered page. A changed account requires a fresh page.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line original-hooks/exhaustive-deps
   }, [account?.id]);
 
   useEffect(() => {
@@ -215,7 +215,7 @@ export default function PhoneApp({ account }: { account: Account }) {
     const timer = setTimeout(() => { void preserveUnfinished(scope, drafts).catch(error => { if (snapshotRef.current?.scope === scope) setSafetyError("Unfinished edits could not be saved for recovery. Keep this page open or export them. " + message(error)); }); }, 600);
     return () => clearTimeout(timer);
     // The captured draft is saved only to its original owner and workspace.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line original-hooks/exhaustive-deps
   }, [profile, formChanged, dialog, editorDraft, snapshot?.scope, locked, loading]);
   useEffect(() => {
     const nav = navRef.current; if (!nav) return;
@@ -273,7 +273,7 @@ export default function PhoneApp({ account }: { account: Account }) {
     identityCheckRef.current = check;
     document.addEventListener("visibilitychange", check); window.addEventListener("pageshow", check); window.addEventListener("focus", check);
     return () => { disposed = true; identityCheckRef.current = () => {}; identityCheckPending.current = false; document.removeEventListener("visibilitychange", check); window.removeEventListener("pageshow", check); window.removeEventListener("focus", check); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line original-hooks/exhaustive-deps
   }, [account?.id]);
 
   function assertCurrent(generation: number, scope?: string) {

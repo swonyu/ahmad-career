@@ -1,0 +1,14 @@
+7 verbose title npm ci
+8 verbose argv "ci"
+558 info run esbuild@0.28.2 postinstall node_modules/esbuild node install.js
+559 info run workerd@1.20261110.1 postinstall node_modules/workerd node install.js
+560 info run esbuild@0.28.2 postinstall { code: 0, signal: null }
+561 info run workerd@1.20261110.1 postinstall { code: 0, signal: null }
+1095 warn install-scripts 3 packages have install scripts not yet covered by allowScripts:
+1095 warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+1095 warn install-scripts   fsevents@2.3.3 (install: (install scripts present))
+1095 warn install-scripts   workerd@1.20261110.1 (postinstall: node install.js)
+1095 warn install-scripts
+1095 warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+1096 verbose cwd /Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted
+1100 verbose exit 0
