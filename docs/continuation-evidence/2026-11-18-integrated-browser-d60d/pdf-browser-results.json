@@ -1,0 +1,421 @@
+{
+  "scope": "Synthetic PDF selection only; no persistence, auth or external requests",
+  "sourceHashes": {
+    "app/phone/PhoneApp.tsx": "b058d7cfd8dc5d57d9479e6c8339c1f72682cbc14bcf0fda806f95901442f11b",
+    "app/phone/pdf.ts": "5203b462af0e7ad56e4f24bc9ffe2e639da909bf401a99a6d1e65d1f6aec9c8c",
+    "app/phone/pdf-validation.worker.ts": "6565199b38469d62d473099c99ad602cf4822822838e30fed5f540a83befdb32",
+    "shared/pdf-readability.mjs": "65183fe408b4cda8434d2ed064d645f471227db75de7fade416e090feec068a1",
+    "app/phone/model.ts": "955d5afcede6b8f7eb901394f9ae3e00d1bbffa57bf1e457c5436f23541577bf"
+  },
+  "handlerHashes": {
+    "readPDF": "7926b3586318794a3b5217f8df51b183dbacea043a90e9b1959cd5e5979132a1",
+    "assertCurrent": "852e8f77ed267ae6c0766a960c6017ed68fe3fb96ec223a958f2adfd40c64142"
+  },
+  "sourceRoot": "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted",
+  "picked": "valid.pdf",
+  "activeMode": "account-change",
+  "busy": false,
+  "changed": false,
+  "previousPreserved": true,
+  "currentCV": {
+    "name": "Earlier-valid.pdf",
+    "size": 1311,
+    "sha256": "149f96a4dc6ed08b2adf0ae75c9d00f8fba75fcd777ea790d9a27e622fa38a61"
+  },
+  "syntheticOwner": "qa:synthetic-owner-b",
+  "ownerNeedsConfirmation": true,
+  "workerStarts": 8,
+  "workerTerminations": 8,
+  "results": [
+    {
+      "file": "valid.pdf",
+      "mode": "normal",
+      "previousPreserved": false,
+      "currentName": "valid.pdf",
+      "currentSha256": "149f96a4dc6ed08b2adf0ae75c9d00f8fba75fcd777ea790d9a27e622fa38a61",
+      "notice": {
+        "text": "PDF checked: 1 page. Save on this phone to keep it, or Save profile online to upload it to your private workspace."
+      },
+      "workersActive": 0
+    },
+    {
+      "file": "object-stream.pdf",
+      "mode": "normal",
+      "previousPreserved": false,
+      "currentName": "object-stream.pdf",
+      "currentSha256": "663e061943e69a794c318ef99e1b7f2b9eef4ac3a0347fcea76894969df356c6",
+      "notice": {
+        "text": "PDF checked: 2 pages. Save on this phone to keep it, or Save profile online to upload it to your private workspace."
+      },
+      "workersActive": 0
+    },
+    {
+      "file": "malformed.pdf",
+      "mode": "normal",
+      "previousPreserved": true,
+      "currentName": "Earlier-valid.pdf",
+      "currentSha256": "149f96a4dc6ed08b2adf0ae75c9d00f8fba75fcd777ea790d9a27e622fa38a61",
+      "notice": {
+        "text": "This file could not be read as a supported PDF CV. Export a new, unencrypted PDF and try again. Your previous CV was kept.",
+        "error": true
+      },
+      "workersActive": 0
+    },
+    {
+      "file": "truncated.pdf",
+      "mode": "normal",
+      "previousPreserved": true,
+      "currentName": "Earlier-valid.pdf",
+      "currentSha256": "149f96a4dc6ed08b2adf0ae75c9d00f8fba75fcd777ea790d9a27e622fa38a61",
+      "notice": {
+        "text": "This file could not be read as a supported PDF CV. Export a new, unencrypted PDF and try again. Your previous CV was kept.",
+        "error": true
+      },
+      "workersActive": 0
+    },
+    {
+      "file": "encrypted.pdf",
+      "mode": "normal",
+      "previousPreserved": true,
+      "currentName": "Earlier-valid.pdf",
+      "currentSha256": "149f96a4dc6ed08b2adf0ae75c9d00f8fba75fcd777ea790d9a27e622fa38a61",
+      "notice": {
+        "text": "Choose a PDF without password protection. Your previous CV was kept.",
+        "error": true
+      },
+      "workersActive": 0
+    },
+    {
+      "file": "cyclic.pdf",
+      "mode": "normal",
+      "previousPreserved": true,
+      "currentName": "Earlier-valid.pdf",
+      "currentSha256": "149f96a4dc6ed08b2adf0ae75c9d00f8fba75fcd777ea790d9a27e622fa38a61",
+      "notice": {
+        "text": "This file could not be read as a supported PDF CV. Export a new, unencrypted PDF and try again. Your previous CV was kept.",
+        "error": true
+      },
+      "workersActive": 0
+    },
+    {
+      "file": "valid.pdf",
+      "mode": "cancel",
+      "previousPreserved": true,
+      "currentName": "Earlier-valid.pdf",
+      "currentSha256": "149f96a4dc6ed08b2adf0ae75c9d00f8fba75fcd777ea790d9a27e622fa38a61",
+      "notice": {
+        "text": "PDF check cancelled while your account was being confirmed. Your previous CV was kept. Choose the file again once your account is confirmed.",
+        "error": true
+      },
+      "workersActive": 0
+    },
+    {
+      "file": "valid.pdf",
+      "mode": "account-change",
+      "previousPreserved": true,
+      "currentName": "Earlier-valid.pdf",
+      "currentSha256": "149f96a4dc6ed08b2adf0ae75c9d00f8fba75fcd777ea790d9a27e622fa38a61",
+      "notice": {
+        "text": "Your account needs to be confirmed before this result can be shown. Your saved information is still here.",
+        "error": true
+      },
+      "workersActive": 0
+    }
+  ],
+  "events": [
+    {
+      "name": "csp-violation",
+      "directive": "script-src",
+      "blockedURI": "eval"
+    },
+    {
+      "name": "selection-started",
+      "label": "Checking PDF",
+      "file": "valid.pdf",
+      "mode": "normal"
+    },
+    {
+      "name": "worker-created",
+      "id": 1,
+      "pathname": "/pdf-validation.worker-6a49a3ebd12f688a6a50.js",
+      "sameOrigin": true,
+      "type": "module"
+    },
+    {
+      "name": "worker-payload-posted",
+      "id": 1
+    },
+    {
+      "name": "worker-result",
+      "id": 1,
+      "result": {
+        "ok": true,
+        "pageCount": 1
+      }
+    },
+    {
+      "name": "worker-terminate-called",
+      "id": 1
+    },
+    {
+      "name": "actual-handler-replaced-profile"
+    },
+    {
+      "name": "selection-finished",
+      "previousPreserved": false
+    },
+    {
+      "name": "restored-synthetic-prior-cv"
+    },
+    {
+      "name": "selection-started",
+      "label": "Checking PDF",
+      "file": "object-stream.pdf",
+      "mode": "normal"
+    },
+    {
+      "name": "worker-created",
+      "id": 2,
+      "pathname": "/pdf-validation.worker-6a49a3ebd12f688a6a50.js",
+      "sameOrigin": true,
+      "type": "module"
+    },
+    {
+      "name": "worker-payload-posted",
+      "id": 2
+    },
+    {
+      "name": "worker-result",
+      "id": 2,
+      "result": {
+        "ok": true,
+        "pageCount": 2
+      }
+    },
+    {
+      "name": "worker-terminate-called",
+      "id": 2
+    },
+    {
+      "name": "actual-handler-replaced-profile"
+    },
+    {
+      "name": "selection-finished",
+      "previousPreserved": false
+    },
+    {
+      "name": "restored-synthetic-prior-cv"
+    },
+    {
+      "name": "selection-started",
+      "label": "Checking PDF",
+      "file": "malformed.pdf",
+      "mode": "normal"
+    },
+    {
+      "name": "worker-created",
+      "id": 3,
+      "pathname": "/pdf-validation.worker-6a49a3ebd12f688a6a50.js",
+      "sameOrigin": true,
+      "type": "module"
+    },
+    {
+      "name": "worker-payload-posted",
+      "id": 3
+    },
+    {
+      "name": "worker-result",
+      "id": 3,
+      "result": {
+        "ok": false,
+        "code": "invalid_resume"
+      }
+    },
+    {
+      "name": "worker-terminate-called",
+      "id": 3
+    },
+    {
+      "name": "selection-finished",
+      "previousPreserved": true
+    },
+    {
+      "name": "restored-synthetic-prior-cv"
+    },
+    {
+      "name": "selection-started",
+      "label": "Checking PDF",
+      "file": "truncated.pdf",
+      "mode": "normal"
+    },
+    {
+      "name": "worker-created",
+      "id": 4,
+      "pathname": "/pdf-validation.worker-6a49a3ebd12f688a6a50.js",
+      "sameOrigin": true,
+      "type": "module"
+    },
+    {
+      "name": "worker-payload-posted",
+      "id": 4
+    },
+    {
+      "name": "worker-result",
+      "id": 4,
+      "result": {
+        "ok": false,
+        "code": "invalid_resume"
+      }
+    },
+    {
+      "name": "worker-terminate-called",
+      "id": 4
+    },
+    {
+      "name": "selection-finished",
+      "previousPreserved": true
+    },
+    {
+      "name": "restored-synthetic-prior-cv"
+    },
+    {
+      "name": "selection-started",
+      "label": "Checking PDF",
+      "file": "encrypted.pdf",
+      "mode": "normal"
+    },
+    {
+      "name": "worker-created",
+      "id": 5,
+      "pathname": "/pdf-validation.worker-6a49a3ebd12f688a6a50.js",
+      "sameOrigin": true,
+      "type": "module"
+    },
+    {
+      "name": "worker-payload-posted",
+      "id": 5
+    },
+    {
+      "name": "worker-result",
+      "id": 5,
+      "result": {
+        "ok": false,
+        "code": "unsupported_resume"
+      }
+    },
+    {
+      "name": "worker-terminate-called",
+      "id": 5
+    },
+    {
+      "name": "selection-finished",
+      "previousPreserved": true
+    },
+    {
+      "name": "restored-synthetic-prior-cv"
+    },
+    {
+      "name": "selection-started",
+      "label": "Checking PDF",
+      "file": "cyclic.pdf",
+      "mode": "normal"
+    },
+    {
+      "name": "worker-created",
+      "id": 6,
+      "pathname": "/pdf-validation.worker-6a49a3ebd12f688a6a50.js",
+      "sameOrigin": true,
+      "type": "module"
+    },
+    {
+      "name": "worker-payload-posted",
+      "id": 6
+    },
+    {
+      "name": "worker-result",
+      "id": 6,
+      "result": {
+        "ok": false,
+        "code": "invalid_resume"
+      }
+    },
+    {
+      "name": "worker-terminate-called",
+      "id": 6
+    },
+    {
+      "name": "selection-finished",
+      "previousPreserved": true
+    },
+    {
+      "name": "restored-synthetic-prior-cv"
+    },
+    {
+      "name": "selection-started",
+      "label": "Checking PDF",
+      "file": "valid.pdf",
+      "mode": "cancel"
+    },
+    {
+      "name": "worker-created",
+      "id": 7,
+      "pathname": "/pdf-validation.worker-6a49a3ebd12f688a6a50.js",
+      "sameOrigin": true,
+      "type": "module"
+    },
+    {
+      "name": "worker-payload-posted",
+      "id": 7
+    },
+    {
+      "name": "synthetic-cancel-after-postMessage"
+    },
+    {
+      "name": "worker-terminate-called",
+      "id": 7
+    },
+    {
+      "name": "selection-finished",
+      "previousPreserved": true
+    },
+    {
+      "name": "restored-synthetic-prior-cv"
+    },
+    {
+      "name": "selection-started",
+      "label": "Checking PDF",
+      "file": "valid.pdf",
+      "mode": "account-change"
+    },
+    {
+      "name": "worker-created",
+      "id": 8,
+      "pathname": "/pdf-validation.worker-6a49a3ebd12f688a6a50.js",
+      "sameOrigin": true,
+      "type": "module"
+    },
+    {
+      "name": "worker-payload-posted",
+      "id": 8
+    },
+    {
+      "name": "worker-result",
+      "id": 8,
+      "result": {
+        "ok": true,
+        "pageCount": 1
+      }
+    },
+    {
+      "name": "worker-terminate-called",
+      "id": 8
+    },
+    {
+      "name": "synthetic-account-invalidated-after-valid-worker-result"
+    },
+    {
+      "name": "selection-finished",
+      "previousPreserved": true
+    }
+  ]
+}

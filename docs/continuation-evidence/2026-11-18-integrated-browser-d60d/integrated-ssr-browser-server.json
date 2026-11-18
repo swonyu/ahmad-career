@@ -1,0 +1,17 @@
+{
+  "atUTC": "2026-11-18T07:42:46.898Z",
+  "pid": 13817,
+  "node": "v24.22.3",
+  "url": "http://127.0.0.1:4184/phone",
+  "sourceRoot": "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted",
+  "combinedRoot": "/Users/saleh/Developer/career-finder-integrated-20261118-d60d62a70f26/hosted",
+  "sourceInputs": 93,
+  "server": {
+    "bytes": 5768585,
+    "sha256": "9a09b95840c669de91e365e289a465e44d585c8cbbb23d89f0a1173661f83633"
+  },
+  "production": true,
+  "outboundPolicy": "blocked",
+  "identity": "anonymous synthetic guest",
+  "persistentServerStorage": false
+}
