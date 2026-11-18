@@ -406,14 +406,28 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
     }
 
     suspend fun attachPrivateSession(store: PrivateStore, key: String) {
-        stopPrivateSession(flush = true)
-        privateStore = store; privateKey = key
+        val sameSession = privateStore === store && privateKey == key
+        if (sameSession && state.value.restoringSearch) return
+        if (!sameSession) {
+            stopPrivateSession(flush = true)
+            privateStore = store; privateKey = key
+        }
         val request = storageGeneration
-        mutable.value = DiscoveryUiState(restoringSearch = true)
+        mutable.update { it.copy(restoringSearch = true) }
         try {
             val saved = withContext(Dispatchers.IO) { store.read(key) }
-            if (request != storageGeneration || privateKey != key) return
+            if (request != storageGeneration || privateStore !== store || privateKey != key) return
             val snapshot = saved?.let(DiscoverySnapshotCodec::decode)
+            // Disappearance makes storage writable again without erasing this session's work.
+            if (sameSession && snapshot == null) {
+                mutable.update { it.copy(restoringSearch = false, searchRestoreBlocked = false, searchStorageError = null) }
+                maySaveSearch = true
+                scheduleSearchSave()
+                return
+            }
+            if (sameSession) {
+                generation++; searchJob?.cancel(); catalogJob?.cancel()
+            }
             val repairedFilters = snapshot?.filters?.let(::repairSources) ?: DiscoveryFilters()
             val repairedDisplayed = snapshot?.displayedFilters?.let(::repairSources)
             lastPage = snapshot?.page; lastDisplayedFilters = repairedDisplayed
@@ -428,7 +442,7 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
             if (sourcesChanged) scheduleSearchSave()
         } catch (cancel: CancellationException) { throw cancel }
         catch (_: Exception) {
-            if (request == storageGeneration && privateKey == key) {
+            if (request == storageGeneration && privateStore === store && privateKey == key) {
                 maySaveSearch = false
                 mutable.update { it.copy(restoringSearch = false, searchRestoreBlocked = true,
                     searchStorageError = "Your previous search could not be opened. Its saved file is preserved. You can search now; new results stay in this session until saved-search recovery succeeds.") }

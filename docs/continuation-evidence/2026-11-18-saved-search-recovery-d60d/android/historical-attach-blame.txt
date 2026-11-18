@@ -1,0 +1,23 @@
+^2fac36f (Codex 2026-11-17 19:16:42 +0300 408)     suspend fun attachPrivateSession(store: PrivateStore, key: String) {
+^2fac36f (Codex 2026-11-17 19:16:42 +0300 409)         stopPrivateSession(flush = true)
+^2fac36f (Codex 2026-11-17 19:16:42 +0300 410)         privateStore = store; privateKey = key
+^2fac36f (Codex 2026-11-17 19:16:42 +0300 411)         val request = storageGeneration
+^2fac36f (Codex 2026-11-17 19:16:42 +0300 412)         mutable.value = DiscoveryUiState(restoringSearch = true)
+^2fac36f (Codex 2026-11-17 19:16:42 +0300 413)         try {
+^2fac36f (Codex 2026-11-17 19:16:42 +0300 414)             val saved = withContext(Dispatchers.IO) { store.read(key) }
+^2fac36f (Codex 2026-11-17 19:16:42 +0300 415)             if (request != storageGeneration || privateKey != key) return
+^2fac36f (Codex 2026-11-17 19:16:42 +0300 416)             val snapshot = saved?.let(DiscoverySnapshotCodec::decode)
+0beff68a (saleh 2026-11-17 23:38:42 +0300 417)             val repairedFilters = snapshot?.filters?.let(::repairSources) ?: DiscoveryFilters()
+0beff68a (saleh 2026-11-17 23:38:42 +0300 418)             val repairedDisplayed = snapshot?.displayedFilters?.let(::repairSources)
+0beff68a (saleh 2026-11-17 23:38:42 +0300 419)             lastPage = snapshot?.page; lastDisplayedFilters = repairedDisplayed
+^2fac36f (Codex 2026-11-17 19:16:42 +0300 420)             val page = snapshot?.page
+0beff68a (saleh 2026-11-17 23:38:42 +0300 421)             mutable.value = DiscoveryUiState(filters = repairedFilters, displayedFilters = repairedDisplayed,
+^2fac36f (Codex 2026-11-17 19:16:42 +0300 422)                 jobs = page?.jobs.orEmpty(), sources = page?.sources.orEmpty(), status = page?.status, generatedAt = page?.generatedAt,
+^2fac36f (Codex 2026-11-17 19:16:42 +0300 423)                 totalMatches = page?.totalMatches ?: 0, limited = page?.limited ?: false, notice = page?.notice.orEmpty(),
+^2fac36f (Codex 2026-11-17 19:16:42 +0300 424)                 nextCursor = null, restoredSearch = snapshot != null && (snapshot.page != null || snapshot.filters != DiscoveryFilters()))
+^2fac36f (Codex 2026-11-17 19:16:42 +0300 425)             maySaveSearch = true
+0beff68a (saleh 2026-11-17 23:38:42 +0300 426)             val sourcesChanged = snapshot != null && (repairedFilters.sources != snapshot.filters.sources ||
+0beff68a (saleh 2026-11-17 23:38:42 +0300 427)                 repairedDisplayed?.sources != snapshot.displayedFilters?.sources)
+0beff68a (saleh 2026-11-17 23:38:42 +0300 428)             if (sourcesChanged) scheduleSearchSave()
+^2fac36f (Codex 2026-11-17 19:16:42 +0300 429)         } catch (cancel: CancellationException) { throw cancel }
+^2fac36f (Codex 2026-11-17 19:16:42 +0300 430)         catch (_: Exception) {

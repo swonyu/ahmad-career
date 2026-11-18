@@ -401,7 +401,7 @@ final class CareerDiscoveryStore: ObservableObject {
         let key = SHA256.hash(data: Data((target.origin + "\u{0}" + target.workspaceID).utf8)).map { String(format: "%02x", $0) }.joined()
         file = target.isLocal ? baseFile : baseFile.deletingLastPathComponent().appendingPathComponent("discovery-" + key + ".json")
         restoring = true; query = DiscoveryQuery(); lastQuery = nil; page = nil; jobs = []; restoredResults = false
-        needsNewSearch = false; retryAfter = nil; error = nil; storageNotice = nil; storageReadable = true; submittedQuery = nil; restoring = false
+        needsNewSearch = false; retryAfter = nil; error = nil; storageNotice = nil; storageReadable = true; submittedQuery = nil; submittedSearchFailed = false; restoring = false
         restore()
     }
     func saveDraft() { persist() }
@@ -422,12 +422,12 @@ final class CareerDiscoveryStore: ObservableObject {
     func importSnapshot(_ bytes: Data) throws {
         try Self.validateBackup(bytes)
         guard storageReadable else { throw DiscoveryFailure(message: "The earlier search file is unreadable and was preserved. It was not replaced by the backup.") }
-        try write(bytes); requestID = nil; requestTask?.cancel(); requestTask = nil; isSearching = false; submittedQuery = nil
+        try write(bytes); requestID = nil; requestTask?.cancel(); requestTask = nil; isSearching = false; submittedQuery = nil; submittedSearchFailed = false
         restore(); needsNewSearch = true; retryAfter = nil
     }
     func clearCurrentScope() throws {
         let bytes = try JSONEncoder().encode(DiscoverySavedState())
-        try write(bytes); requestID = nil; requestTask?.cancel(); requestTask = nil; isSearching = false; submittedQuery = nil
+        try write(bytes); requestID = nil; requestTask?.cancel(); requestTask = nil; isSearching = false; submittedQuery = nil; submittedSearchFailed = false
         storageReadable = true; storageNotice = nil; error = nil; needsNewSearch = false; retryAfter = nil
         restore()
     }
@@ -437,7 +437,6 @@ final class CareerDiscoveryStore: ObservableObject {
         return copy
     }
     private func restore() {
-        submittedQuery = nil; submittedSearchFailed = false
         guard FileManager.default.fileExists(atPath: file.path) else { return }
         restoring = true
         var persistRepair = false
@@ -450,6 +449,8 @@ final class CareerDiscoveryStore: ObservableObject {
                   saved.jobs.allSatisfy({ MobileApplicationPolicy.jobURL($0.url) != nil }),
                   Set(saved.jobs.map(\.id)).count == saved.jobs.count else { throw CocoaError(.coderReadCorrupt) }
             if let page = saved.page { try DiscoveryPolicy.validate(page) }
+            // A failed same-scope read must keep the live submitted search and its retry state.
+            submittedQuery = nil; submittedSearchFailed = false
             storageReadable = true; storageNotice = nil
             let repairedQuery = repaired(saved.query)
             let repairedLast = saved.lastQuery.map(repaired)

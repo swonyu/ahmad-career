@@ -1,0 +1,158 @@
+[
+  {
+    "name": "host-java-version",
+    "command": [
+      "/Library/Java/JavaVirtualMachines/temurin-25.jdk/Contents/Home/bin/java",
+      "-version"
+    ],
+    "startedAt": "2026-11-18T07:50:20.501194+00:00",
+    "exitCode": 0,
+    "finishedAt": "2026-11-18T07:50:22.957577+00:00",
+    "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrSHA256": "949f4fcb31a2d7b0eb5186e78203a3fc5dc26b8ba6be4df75e2916f057fb512e"
+  },
+  {
+    "name": "host-kotlin-version",
+    "command": [
+      "/Library/Java/JavaVirtualMachines/temurin-25.jdk/Contents/Home/bin/java",
+      "-Xmx512m",
+      "-cp",
+      "/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlin-compiler-embeddable-2.3.0.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlin-stdlib-2.3.0.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlin-reflect-2.3.0.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlin-script-runtime-2.3.0.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlinx-coroutines-core-jvm-1.10.2.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/annotations-24.0.1.jar:/Users/saleh/.gradle/wrapper/dists/gradle-8.14.3-all/10utluxaxniiv4wxiphsi49nj/gradle-8.14.3/lib/trove4j-1.0.20200330.jar",
+      "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler",
+      "-version"
+    ],
+    "startedAt": "2026-11-18T07:50:22.958003+00:00",
+    "exitCode": 0,
+    "finishedAt": "2026-11-18T07:50:25.570734+00:00",
+    "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrSHA256": "46cb920e3b741b71361c0d22b35ddfd59f4e20ff464f887e2e837d075395d2fe"
+  },
+  {
+    "name": "baseline-java-compile",
+    "command": [
+      "/Library/Java/JavaVirtualMachines/temurin-25.jdk/Contents/Home/bin/javac",
+      "--release",
+      "17",
+      "-d",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/baseline/classes",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/baseline/BoundaryPolicy.java"
+    ],
+    "startedAt": "2026-11-18T07:50:25.572708+00:00",
+    "exitCode": 0,
+    "finishedAt": "2026-11-18T07:50:27.319304+00:00",
+    "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "baseline-kotlin-compile",
+    "command": [
+      "/Library/Java/JavaVirtualMachines/temurin-25.jdk/Contents/Home/bin/java",
+      "-Xmx512m",
+      "-cp",
+      "/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlin-compiler-embeddable-2.3.0.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlin-stdlib-2.3.0.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlin-reflect-2.3.0.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlin-script-runtime-2.3.0.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlinx-coroutines-core-jvm-1.10.2.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/annotations-24.0.1.jar:/Users/saleh/.gradle/wrapper/dists/gradle-8.14.3-all/10utluxaxniiv4wxiphsi49nj/gradle-8.14.3/lib/trove4j-1.0.20200330.jar",
+      "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler",
+      "-no-stdlib",
+      "-no-reflect",
+      "-jvm-target",
+      "17",
+      "-classpath",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/baseline/classes:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlin-stdlib-2.3.0.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlinx-coroutines-core-jvm-1.10.2.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/annotations-24.0.1.jar:/Users/saleh/.gradle/wrapper/dists/gradle-8.14.3-all/10utluxaxniiv4wxiphsi49nj/gradle-8.14.3/lib/junit-4.13.2.jar:/Users/saleh/.gradle/wrapper/dists/gradle-8.14.3-all/10utluxaxniiv4wxiphsi49nj/gradle-8.14.3/lib/hamcrest-core-1.3.jar:/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/host-deps/json-20240303.jar",
+      "-d",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/baseline/classes",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/host-shared/ModelHelpers.kt",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/host-shared/PrivateStorePort.kt",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/host-shared/ServicePagesOrigin.kt",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/host-shared/HostMain.kt",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/host-shared/InstrumentationRegistry.kt",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/baseline/Discovery.kt",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/baseline/DiscoverySnapshot.kt",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/baseline/DiscoveryPersistenceRegressionTest.kt"
+    ],
+    "startedAt": "2026-11-18T07:50:27.319854+00:00",
+    "exitCode": 0,
+    "finishedAt": "2026-11-18T07:50:45.667941+00:00",
+    "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrSHA256": "f4abf9a8a87e53f5214e83d0c2dbeb815b27c1d820af2968b45229eec705c703"
+  },
+  {
+    "name": "baseline-tests",
+    "command": [
+      "/Library/Java/JavaVirtualMachines/temurin-25.jdk/Contents/Home/bin/java",
+      "-Xmx512m",
+      "-Dcareer.host.assets=/Users/saleh/Developer/career-finder-saved-search-recovery-20261118-d60d62a70f26/android/app/src/androidTest/assets",
+      "-cp",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/baseline/classes:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlin-stdlib-2.3.0.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlinx-coroutines-core-jvm-1.10.2.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/annotations-24.0.1.jar:/Users/saleh/.gradle/wrapper/dists/gradle-8.14.3-all/10utluxaxniiv4wxiphsi49nj/gradle-8.14.3/lib/junit-4.13.2.jar:/Users/saleh/.gradle/wrapper/dists/gradle-8.14.3-all/10utluxaxniiv4wxiphsi49nj/gradle-8.14.3/lib/hamcrest-core-1.3.jar:/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/host-deps/json-20240303.jar",
+      "org.junit.runner.JUnitCore",
+      "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest"
+    ],
+    "startedAt": "2026-11-18T07:50:45.668786+00:00",
+    "exitCode": 1,
+    "finishedAt": "2026-11-18T07:50:47.311231+00:00",
+    "stdoutSHA256": "6125f08f0913f6fb41f4840d8e33b0cd7441c7f970fa3f705a475b16f661b622",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "candidate-java-compile",
+    "command": [
+      "/Library/Java/JavaVirtualMachines/temurin-25.jdk/Contents/Home/bin/javac",
+      "--release",
+      "17",
+      "-d",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/candidate/classes",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/candidate/BoundaryPolicy.java"
+    ],
+    "startedAt": "2026-11-18T07:50:47.312879+00:00",
+    "exitCode": 0,
+    "finishedAt": "2026-11-18T07:50:49.169095+00:00",
+    "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "candidate-kotlin-compile",
+    "command": [
+      "/Library/Java/JavaVirtualMachines/temurin-25.jdk/Contents/Home/bin/java",
+      "-Xmx512m",
+      "-cp",
+      "/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlin-compiler-embeddable-2.3.0.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlin-stdlib-2.3.0.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlin-reflect-2.3.0.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlin-script-runtime-2.3.0.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlinx-coroutines-core-jvm-1.10.2.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/annotations-24.0.1.jar:/Users/saleh/.gradle/wrapper/dists/gradle-8.14.3-all/10utluxaxniiv4wxiphsi49nj/gradle-8.14.3/lib/trove4j-1.0.20200330.jar",
+      "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler",
+      "-no-stdlib",
+      "-no-reflect",
+      "-jvm-target",
+      "17",
+      "-classpath",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/candidate/classes:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlin-stdlib-2.3.0.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlinx-coroutines-core-jvm-1.10.2.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/annotations-24.0.1.jar:/Users/saleh/.gradle/wrapper/dists/gradle-8.14.3-all/10utluxaxniiv4wxiphsi49nj/gradle-8.14.3/lib/junit-4.13.2.jar:/Users/saleh/.gradle/wrapper/dists/gradle-8.14.3-all/10utluxaxniiv4wxiphsi49nj/gradle-8.14.3/lib/hamcrest-core-1.3.jar:/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/host-deps/json-20240303.jar",
+      "-d",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/candidate/classes",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/host-shared/ModelHelpers.kt",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/host-shared/PrivateStorePort.kt",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/host-shared/ServicePagesOrigin.kt",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/host-shared/HostMain.kt",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/host-shared/InstrumentationRegistry.kt",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/candidate/Discovery.kt",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/candidate/DiscoverySnapshot.kt",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/candidate/DiscoveryPersistenceRegressionTest.kt"
+    ],
+    "startedAt": "2026-11-18T07:50:49.169605+00:00",
+    "exitCode": 0,
+    "finishedAt": "2026-11-18T07:51:09.486892+00:00",
+    "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrSHA256": "e10effa6eadbfea895b86b9eef037867a043de46d83e948aca512212b9aeb076"
+  },
+  {
+    "name": "candidate-tests",
+    "command": [
+      "/Library/Java/JavaVirtualMachines/temurin-25.jdk/Contents/Home/bin/java",
+      "-Xmx512m",
+      "-Dcareer.host.assets=/Users/saleh/Developer/career-finder-saved-search-recovery-20261118-d60d62a70f26/android/app/src/androidTest/assets",
+      "-cp",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/candidate/classes:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlin-stdlib-2.3.0.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlinx-coroutines-core-jvm-1.10.2.jar:/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/annotations-24.0.1.jar:/Users/saleh/.gradle/wrapper/dists/gradle-8.14.3-all/10utluxaxniiv4wxiphsi49nj/gradle-8.14.3/lib/junit-4.13.2.jar:/Users/saleh/.gradle/wrapper/dists/gradle-8.14.3-all/10utluxaxniiv4wxiphsi49nj/gradle-8.14.3/lib/hamcrest-core-1.3.jar:/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/host-deps/json-20240303.jar",
+      "org.junit.runner.JUnitCore",
+      "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest"
+    ],
+    "startedAt": "2026-11-18T07:51:09.487996+00:00",
+    "exitCode": 0,
+    "finishedAt": "2026-11-18T07:51:11.659559+00:00",
+    "stdoutSHA256": "0ab20cc3db1f471ff4abe952446746d84f81a6f1cf6a83485c5751cb6dced060",
+    "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

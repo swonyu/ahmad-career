@@ -1,0 +1,16 @@
+{
+  "observedAt": "2026-11-18T07:36:47.037034+00:00",
+  "source": "/Users/saleh/Developer/career-finder-integrated-20261118-d60d62a70f26",
+  "head": "4f72947dbda76ca5176fa42645337c6c739e6a2a",
+  "status": "",
+  "child": "/Users/saleh/Developer/career-finder-saved-search-recovery-20261118-d60d62a70f26",
+  "branch": "fix/saved-search-recovery-20261118-d60d",
+  "protectedHashes": {
+    "apple/AhmadCareer/NativeDiscoveryViews.swift": "6ff2544a826ecccaeb59eec8c44299a86b1cd5ad4eb2da81b881eeb81e3bf7fd",
+    "apple/AhmadCareer/CareerAppEnvironment.swift": "e9d7a2589c6298808c210513f3f3056adbcf382f2525e52a4c0f524af0b1e276",
+    "apple/AhmadCareer/NativeApplicationsStore.swift": "1f04fe20db91f6a893ecc990757eebf881d93287de3b491cef6641cabeee7c48",
+    "apple/Checks/NativeRecoveryCheck.swift": "ec8e6c0098c16bb08cb3d3a3207bfe6db023fbbf1387a23e192ec754b12f7c51",
+    "apple/UITests/CareerFinderUITests.swift": "c4990faf6e446dd3cc849f83124578fcb1ae68c99a26da3b9eb547577f24930a",
+    ".github/workflows/phone-quality.yml": "8a98c1d7bcf44a9fbab3064d64d0251c7078a7cfb96787ee7ba067025762911c"
+  }
+}

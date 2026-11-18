@@ -1,0 +1,17 @@
+{
+  "compiler": "Kotlin 2.3.0 JVM (project Kotlin is 2.3.10; this is focused host evidence, not Android compilation)",
+  "java": "/Library/Java/JavaVirtualMachines/temurin-25.jdk/Contents/Home/bin/java",
+  "jvmTarget": "17",
+  "dependencies": {
+    "/Users/saleh/.gradle/wrapper/dists/gradle-8.14.3-all/10utluxaxniiv4wxiphsi49nj/gradle-8.14.3/lib/hamcrest-core-1.3.jar": "66fdef91e9739348df7a096aa384a5685f4e875584cce89386a7a47251c4d8e9",
+    "/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlin-reflect-2.3.0.jar": "714df4be819545ff4de1f36aa2183e0dea94b4c8cdf7ca29e9c89919baf36362",
+    "/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlin-compiler-embeddable-2.3.0.jar": "8dbd882fa58c3d17e683a27390288315f8b490f8e3e3b1be4dc3e280d37e285a",
+    "/Users/saleh/.gradle/wrapper/dists/gradle-8.14.3-all/10utluxaxniiv4wxiphsi49nj/gradle-8.14.3/lib/junit-4.13.2.jar": "8e495b634469d64fb8acfa3495a065cbacc8a0fff55ce1e31007be4c16dc57d3",
+    "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-saved-search-recovery/android/host-deps/json-20240303.jar": "3cf6cd6892e32e2b4c1c39e0f52f5248a2f5b37646fdfbb79a66b46b618414ed",
+    "/Users/saleh/.gradle/wrapper/dists/gradle-8.14.3-all/10utluxaxniiv4wxiphsi49nj/gradle-8.14.3/lib/trove4j-1.0.20200330.jar": "c5fd725bffab51846bf3c77db1383c60aaaebfe1b7fe2f00d23fe1b7df0a439d",
+    "/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlin-stdlib-2.3.0.jar": "887587c91713250ad52fe14ad9166d042c33835049890e9437f355ffc5a195b1",
+    "/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlinx-coroutines-core-jvm-1.10.2.jar": "5ca175b38df331fd64155b35cd8cae1251fa9ee369709b36d42e0a288ccce3fd",
+    "/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/annotations-24.0.1.jar": "61666dbce7e42e6c85b43c04fcfb8293a21dcb55b3c80e869270ce42c01a6b35",
+    "/Users/saleh/Developer/dithar/.local/gradle/wrapper/dists/gradle-9.4.1-bin/arn2x92ynaizyzdaamcbpbhtj/gradle-9.4.1/lib/kotlin-script-runtime-2.3.0.jar": "db826961371d6605318d9c4e4bfcdbfac94c3a0892cdcabd55224870fead57f1"
+  }
+}

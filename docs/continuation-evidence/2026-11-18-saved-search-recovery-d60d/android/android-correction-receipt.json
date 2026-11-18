@@ -1,0 +1,28 @@
+{
+  "observedAt": "2026-11-18T07:53:26.738487+00:00",
+  "base": "4f72947dbda76ca5176fa42645337c6c739e6a2a",
+  "candidateSourceHashes": {
+    "android/app/src/main/java/com/saleh/careerfinder/Discovery.kt": "d447432fee132d6c55808d1228459d84cfc07b802feed5379e8d3437f4d414f0",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/DiscoveryPersistenceRegressionTest.kt": "dce01dbb2a9f4c2fb71f21a3688dd23ac54527e25bfb7530bb59a9acf82ceeb1"
+  },
+  "baselineDiscoverySHA256": "d8f36bf5075d7180af407c6e7ece4e72fcb0d944bb8346d98ad1e56d58628898",
+  "identicalTestAndSupportingSourceBytes": true,
+  "baseline": {
+    "javaCompileExit": 0,
+    "kotlinCompileExit": 0,
+    "testExit": 1,
+    "tests": 11,
+    "failures": 3
+  },
+  "candidate": {
+    "javaCompileExit": 0,
+    "kotlinCompileExit": 0,
+    "testExit": 0,
+    "tests": 11,
+    "failures": 0
+  },
+  "patchSHA256": "9877ad1991fc12298568c86c5f6193b94c0aaccd9fcf93e372425312e6348005",
+  "patchBytes": 13467,
+  "historicalProvenance": "Reset-before-read exists at available repository history boundary 2fac36f321005d9a2703e6db92acd7d7c14886c5; this is not an introduced-by claim. It predates current SSR/native integration.",
+  "scope": "Focused standalone JVM execution of actual controller, codec, BoundaryPolicy and existing persistence regression class. Host instrumentation/assets/main-loop adapters and exact extracted PrivateStore interface; no actual Android encryption, Looper/device, SDK compile, Gradle, native UI or CI pass."
+}
