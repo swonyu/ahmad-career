@@ -77,7 +77,9 @@ struct NativeDiscoveryScreen: View {
                 Section {
                     if discovery.restoredResults || discovery.criteriaChanged {
                         Label(l10n(discovery.criteriaChanged ? "Previous search — update the search to use your current fields." : "Previous results — search again to check availability."), systemImage: "clock.arrow.circlepath")
-                            .font(.footnote).foregroundStyle(.secondary)
+                            .font(.footnote).foregroundStyle(Color.primary)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("discovery.previousSearchScope")
                     }
                     if let criteria = discovery.lastQuery { Text(l10n(criteria.summary)).font(.subheadline).fixedSize(horizontal: false, vertical: true) }
                     DisclosureGroup(l10n("Employer coverage and freshness")) {

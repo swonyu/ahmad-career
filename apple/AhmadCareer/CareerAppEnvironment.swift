@@ -115,6 +115,10 @@ private final class AcceptanceApplicationAvailability: MobileApplicationServing 
 
 @MainActor
 private final class AcceptanceDiscovery: CareerDiscoveryServing {
+    // A separately enabled offline journey fails this matching search once,
+    // then returns real matching fixture results on the user's Retry action.
+    // The existing permanent-failure fixture and Release service are unchanged.
+    private var recoveryFailurePending = ProcessInfo.processInfo.environment["CAREER_UI_DISCOVERY_RETRY_ONCE"] == "1"
     private let source = DiscoverySource(id: "lever:global:career-fixture", name: "Synthetic employer", provider: "lever",
         region: "global", board: "career-fixture", boardUrl: "https://jobs.lever.co/career-fixture")
     func catalog() async throws -> DiscoveryCatalog {
@@ -123,6 +127,10 @@ private final class AcceptanceDiscovery: CareerDiscoveryServing {
     }
     func search(_ query: DiscoveryQuery, cursor: String?) async throws -> DiscoveryPage {
         if query.keywords == "offline error" { throw URLError(.notConnectedToInternet) }
+        if recoveryFailurePending && query.keywords == "Interface designer" && cursor == nil {
+            recoveryFailurePending = false
+            throw URLError(.notConnectedToInternet)
+        }
         let checked = ISO8601DateFormatter().string(from: Date())
         let all = [
             DiscoveryJob(id: "fixture-design", sourceId: source.id, sourceName: source.name, provider: "lever",

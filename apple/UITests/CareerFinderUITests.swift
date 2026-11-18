@@ -4,12 +4,13 @@ final class CareerFinderUITests: XCTestCase {
     override func setUpWithError() throws { continueAfterFailure = false }
 
     @MainActor
-    private func launch(id: String = UUID().uuidString, largeText: Bool = false, availability: String? = nil, orphanRecord: Bool = false, languages: String = "(en)") -> XCUIApplication {
+    private func launch(id: String = UUID().uuidString, largeText: Bool = false, availability: String? = nil, orphanRecord: Bool = false, languages: String = "(en)", recoverableRetry: Bool = false) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = ["-career-ui-acceptance", "-AppleLanguages", languages, "-AppleLocale", "en_US"]
         app.launchEnvironment["CAREER_UI_TEST_ID"] = id
         if let availability { app.launchEnvironment["CAREER_UI_APPLICATION_AVAILABILITY"] = availability }
         if orphanRecord { app.launchEnvironment["CAREER_UI_ORPHAN_RECORD"] = "1" }
+        if recoverableRetry { app.launchEnvironment["CAREER_UI_DISCOVERY_RETRY_ONCE"] = "1" }
         if largeText { app.launchArguments += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"] }
         app.launch()
         XCTAssertTrue(app.staticTexts["acceptance.offline"].waitForExistence(timeout: 10), "Acceptance must use an isolated offline workspace")
@@ -224,6 +225,57 @@ final class CareerFinderUITests: XCTestCase {
         attachment.name = name; attachment.lifetime = .keepAlways; add(attachment)
     }
     @MainActor
+    private func captureObservation(_ name: String, app: XCUIApplication, details: String) {
+        capture(name, app: app)
+        let evidence = XCTAttachment(string: details + "\n\n" + app.debugDescription)
+        evidence.name = "\(name)-geometry-and-original-AX"; evidence.lifetime = .keepAlways; add(evidence)
+    }
+    @MainActor
+    private func profileViewport(in app: XCUIApplication) -> CGRect {
+        var viewport = contentViewport(in: app)
+        let keyboard = app.keyboards.firstMatch
+        var bottom = viewport.maxY
+        if keyboard.exists && keyboard.isHittable { bottom = min(bottom, keyboard.frame.minY - 8) }
+        for title in ["Done typing", "انتهيت من الكتابة"] {
+            let done = app.buttons[title]
+            if done.exists && done.isHittable { bottom = min(bottom, done.frame.minY - 8) }
+        }
+        viewport.size.height = max(0, bottom - viewport.minY)
+        return viewport
+    }
+    @MainActor
+    private func assertProfileLabel(_ app: XCUIApplication, fieldID: String, title: String,
+                                    value: String, screenshot: String, keyboardExpected: Bool = false) {
+        let field = app.textFields[fieldID], label = app.staticTexts[fieldID + ".label"]
+        // Scroll the actual label/field pair together, including the real keyboard
+        // boundary. Retain the original pose/AX before any final failure.
+        for _ in 0..<20 {
+            let viewport = profileViewport(in: app)
+            let pair = label.exists && field.exists ? label.frame.union(field.frame) : CGRect.null
+            if !pair.isNull && pair.width > 0 && pair.height > 0 && viewport.contains(pair) && field.isHittable { break }
+            if viewport.height <= 120 { break }
+            let downward = !pair.isNull && pair.midY < viewport.midY
+            let distance = min(150, viewport.height * 0.3)
+            let origin = app.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0))
+            let from = origin.withOffset(CGVector(dx: viewport.midX, dy: viewport.midY + (downward ? -distance / 2 : distance / 2)))
+            let to = origin.withOffset(CGVector(dx: viewport.midX, dy: viewport.midY + (downward ? distance / 2 : -distance / 2)))
+            from.press(forDuration: 0.05, thenDragTo: to)
+        }
+        let viewport = profileViewport(in: app)
+        captureObservation(screenshot, app: app,
+                           details: "field=\(fieldID)\nlabel=\(label.frame)\nfieldFrame=\(field.frame)\nviewport=\(viewport)\nkeyboardExpected=\(keyboardExpected)")
+        XCTAssertTrue(label.exists && field.exists && field.isHittable, "Both visible field name and editable value must be reachable")
+        XCTAssertEqual(label.label, title, "The persistent field label must use the selected language")
+        XCTAssertEqual(field.label, title, "The native field keeps its original accessible name")
+        XCTAssertEqual(field.value as? String, value, "Adding a visible label must not alter the user's exact value")
+        XCTAssertGreaterThan(label.frame.height, 0)
+        XCTAssertTrue(viewport.contains(label.frame) && viewport.contains(field.frame), "The full label and value must fit above navigation/keyboard boundaries")
+        XCTAssertLessThanOrEqual(label.frame.maxY, field.frame.minY + 1, "The separate label must not overlap the editable value")
+        if keyboardExpected {
+            XCTAssertTrue(app.keyboards.firstMatch.exists && app.keyboards.firstMatch.isHittable, "The retained pose must include the actual editing keyboard")
+        }
+    }
+    @MainActor
     private func assertHostedBrowserReturn(_ app: XCUIApplication, code: XCUIElement,
                                            connectionTitle: String, doneTitle: String, screenshot: String) {
         let enteredCode = code.value as? String ?? ""
@@ -398,6 +450,10 @@ final class CareerFinderUITests: XCTestCase {
         XCTAssertEqual(app.textFields["application.firstName"].value as? String, "Taylor")
         XCTAssertEqual(app.textFields["application.email"].value as? String, "taylor@example.com")
         capture("04-restored-phone-profile-draft", app: app)
+        assertProfileLabel(app, fieldID: "application.firstName", title: "First or single name",
+                           value: "Taylor", screenshot: "04a-restored-first-name-label")
+        assertProfileLabel(app, fieldID: "application.email", title: "Email",
+                           value: "taylor@example.com", screenshot: "04b-restored-email-label")
     }
 
     @MainActor
@@ -607,7 +663,7 @@ final class CareerFinderUITests: XCTestCase {
 
     @MainActor
     func testSearchEmptyAndFailurePreservesPreviousResults() {
-        let app = launch(); tab("Search", in: app)
+        let app = launch(recoverableRetry: true); tab("Search", in: app)
         replace(app.textFields["discovery.keywords"], with: "nothing matches", in: app)
         searchFromKeyboard(in: app)
         let empty = element("discovery.empty", app: app)
@@ -628,6 +684,31 @@ final class CareerFinderUITests: XCTestCase {
         XCTAssertTrue(issue.label.contains("previous results are kept."))
         reveal(role, in: app); XCTAssertTrue(role.exists)
         capture("08-offline-search-keeps-results", app: app)
+        // Keep the permanent-failure checks above. This independent recovery
+        // fixture proves the visible Retry action uses the failed submitted
+        // search while preserving a newer, deliberately different field draft.
+        top(app)
+        replace(app.textFields["discovery.keywords"], with: "Interface designer", in: app)
+        searchFromKeyboard(in: app)
+        reveal(issue, in: app)
+        XCTAssertTrue(issue.exists && issue.label.contains("Search could not finish."))
+        top(app)
+        replace(app.textFields["discovery.keywords"], with: "nothing matches", in: app)
+        finishTyping(in: app)
+        let retry = app.buttons["discovery.retry"]; reveal(retry, in: app)
+        XCTAssertTrue(retry.isEnabled && retry.isHittable)
+        captureObservation("08a-retry-before-newer-draft", app: app, details: "submitted=Interface designer\nnewerDraft=nothing matches")
+        retry.tap()
+        let recovered = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            !issue.exists && role.exists
+        }, object: nil)
+        let retryResult = XCTWaiter.wait(for: [recovered], timeout: 5)
+        captureObservation("08b-retry-recovered-submitted-search", app: app, details: "retryWait=\(retryResult)")
+        XCTAssertEqual(retryResult, .completed, "Retry must actually replace the failure with the matching submitted search result")
+        XCTAssertFalse(app.buttons["discovery.retry"].exists)
+        XCTAssertFalse(element("discovery.job.fixture-engineer", app: app).exists, "Retry must use the submitted matching query, not the earlier broad result set")
+        top(app)
+        XCTAssertEqual(app.textFields["discovery.keywords"].value as? String, "nothing matches", "Successful Retry must not replace the newer input draft")
     }
 
     @MainActor
@@ -645,6 +726,13 @@ final class CareerFinderUITests: XCTestCase {
         let name = app.textFields["application.firstName"]; reveal(name, in: app); replace(name, with: "Alex", in: app)
         XCTAssertTrue(app.navigationBars.buttons["Cancel"].isHittable)
         capture("10-profile-accessibility-keyboard", app: app)
+        assertProfileLabel(app, fieldID: "application.firstName", title: "First or single name",
+                           value: "Alex", screenshot: "10a-first-name-label-accessibility-keyboard", keyboardExpected: true)
+        finishTyping(in: app)
+        let profileEmail = app.textFields["application.email"]; reveal(profileEmail, in: app)
+        replace(profileEmail, with: "alex@example.invalid", in: app)
+        assertProfileLabel(app, fieldID: "application.email", title: "Email",
+                           value: "alex@example.invalid", screenshot: "10b-email-label-accessibility-keyboard", keyboardExpected: true)
         app.navigationBars.buttons["Cancel"].tap()
         app.buttons["Save draft on this phone"].tap()
         tab("Search", in: app)
@@ -730,6 +818,15 @@ final class CareerFinderUITests: XCTestCase {
         let restored = app.buttons["settings.appearance.dark"]
         reveal(restored, in: app)
         XCTAssertTrue(restored.isSelected, "Appearance must survive an app relaunch")
+        let restoredTabs = ["Start", "Search", "Apply", "Saved", "Settings"].map { app.tabBars.buttons[$0] }
+        let tabsReady = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            restoredTabs.allSatisfy { $0.exists && $0.isHittable && !$0.frame.isEmpty && app.frame.contains($0.frame) }
+                && app.tabBars.buttons["Settings"].isSelected && restored.isSelected
+        }, object: nil)
+        let settled = XCTWaiter.wait(for: [tabsReady], timeout: 5)
+        captureObservation("24a-settings-dark-restored-large-text", app: app,
+                           details: "post-relaunch=true\nselectedDark=\(restored.isSelected)\nwindow=\(app.frame)\ntabs=\(restoredTabs.map { "\($0.label):\($0.frame)" })")
+        XCTAssertEqual(settled, .completed, "Retain a post-relaunch dark pose with every actual tab visible before changing appearance")
         let light = app.buttons["settings.appearance.light"]
         reveal(light, in: app); light.tap()
         XCTAssertTrue(light.isSelected)
@@ -771,6 +868,18 @@ final class CareerFinderUITests: XCTestCase {
         reveal(app.textFields["application.email"], in: app)
         XCTAssertEqual(app.textFields["application.email"].value as? String, "saved@example.invalid")
         capture("28-arabic-profile-original-values", app: app)
+        assertProfileLabel(app, fieldID: "application.firstName", title: "الاسم الأول أو الاسم الوحيد",
+                           value: "Saved", screenshot: "28a-arabic-first-name-label-accessibility")
+        assertProfileLabel(app, fieldID: "application.email", title: "البريد الإلكتروني",
+                           value: "saved@example.invalid", screenshot: "28b-arabic-email-label-accessibility")
+        app.navigationBars.buttons["إلغاء"].tap()
+        app.terminate()
+        app = launch(id: id, availability: "disabled")
+        let normalArabicProfile = app.buttons["home.applicationProfile"]; reveal(normalArabicProfile, in: app); normalArabicProfile.tap()
+        assertProfileLabel(app, fieldID: "application.firstName", title: "الاسم الأول أو الاسم الوحيد",
+                           value: "Saved", screenshot: "28c-arabic-first-name-label-normal")
+        assertProfileLabel(app, fieldID: "application.email", title: "البريد الإلكتروني",
+                           value: "saved@example.invalid", screenshot: "28d-arabic-email-label-normal")
         app.navigationBars.buttons["إلغاء"].tap()
         tab("الإعدادات", in: app)
         let english = app.buttons["settings.language.en"]; reveal(english, in: app); english.tap()

@@ -472,13 +472,25 @@ struct NativeApplicationProfileEditor: View {
                     }
                 }
                 Section(l10n("About you")) {
-                    TextField(l10n("First or single name"), text: $draft.firstName).textContentType(.givenName)
-                        .accessibilityIdentifier("application.firstName").focused($focusedField, equals: "firstName")
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(l10n("First or single name"))
+                            .font(.subheadline.weight(.semibold)).foregroundStyle(Color.primary)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("application.firstName.label")
+                        TextField(l10n("First or single name"), text: $draft.firstName).textContentType(.givenName)
+                            .accessibilityIdentifier("application.firstName").focused($focusedField, equals: "firstName")
+                    }
                     TextField(l10n("Last name (optional)"), text: $draft.lastName).textContentType(.familyName)
                         .focused($focusedField, equals: "lastName")
-                    TextField(l10n("Email"), text: $draft.email).textContentType(.emailAddress).keyboardType(.emailAddress)
-                        .textInputAutocapitalization(.never).autocorrectionDisabled()
-                        .accessibilityIdentifier("application.email").focused($focusedField, equals: "email")
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(l10n("Email"))
+                            .font(.subheadline.weight(.semibold)).foregroundStyle(Color.primary)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("application.email.label")
+                        TextField(l10n("Email"), text: $draft.email).textContentType(.emailAddress).keyboardType(.emailAddress)
+                            .textInputAutocapitalization(.never).autocorrectionDisabled()
+                            .accessibilityIdentifier("application.email").focused($focusedField, equals: "email")
+                    }
                     TextField(l10n("Phone (optional)"), text: $draft.phone).textContentType(.telephoneNumber).keyboardType(.phonePad)
                         .focused($focusedField, equals: "phone")
                     TextField(l10n("City (optional)"), text: $draft.city).textContentType(.addressCity)
@@ -533,6 +545,8 @@ struct NativeApplicationProfileEditor: View {
                     }
                 } header: { Text(l10n("LinkedIn")) } footer: {
                     Text(l10n("Save your public profile link and review it before sharing it with an employer. This does not connect or verify your LinkedIn account. Opening LinkedIn uses its website or app."))
+                        .foregroundStyle(Color.primary).fixedSize(horizontal: false, vertical: true)
+                        .accessibilityIdentifier("application.linkedinExplanation")
                 }
                 Section {
                     TextField(l10n("Target roles, separated by commas"), text: $draft.targetRoles, axis: .vertical)
