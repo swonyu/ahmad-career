@@ -1,0 +1,95 @@
+{
+  "atUTC": "2026-11-18T09:30:58.740955+00:00",
+  "baseCommit": "1fe9b7543be68ec9343e0fcbc6ca3bc52d58ef62",
+  "branch": "fix/native-profile-geometry-20261118-d60d",
+  "worktree": "/Users/saleh/Developer/career-finder-profile-geometry-20261118-d60d62a70f26",
+  "changedFile": "apple/UITests/CareerFinderUITests.swift",
+  "candidateSHA256": "c4644ab9b28a1ec55cb284b5633e8d80bff07de3084472ae3798ded063736e3f",
+  "previousCandidateSHA256": "d7a6bf22b0c88feee8fee52f6653d37b6102494927eeedd33c6835433cdc7a23",
+  "scopeProof": {
+    "allBytesOutsideAssertProfileLabelPositioningBlockIdenticalToBase": true,
+    "onlyDeltaFrom001": "32-point minimum travel within unchanged 80-point / 25%-surface cap, plus explanatory comment",
+    "twentyAttemptBoundUnchanged": true,
+    "allFinalAssertionsAndOriginalAXCaptureUnchanged": true,
+    "productFilesChanged": false
+  },
+  "retained001Failure": {
+    "source": "profile-geometry-native-001",
+    "result": "Failed email full containment after first-name portion passed (root report and retained email evidence).",
+    "actualLogResult": [
+      "/Users/saleh/Developer/career-finder-profile-geometry-20261118-d60d62a70f26/apple/UITests/CareerFinderUITests.swift:293: error: -[CareerFinderUITests.CareerFinderUITests testAccessibilityTextKeepsCoreControlsReachable] : XCTAssertTrue failed - The full label and value must fit above navigation/keyboard boundaries",
+      "Test Case '-[CareerFinderUITests.CareerFinderUITests testAccessibilityTextKeepsCoreControlsReachable]' failed (108.178 seconds)."
+    ],
+    "attachments": [
+      {
+        "file": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/profile-geometry-native-001/attachments/B7F1C34B-033E-49B5-BBA3-350B95CEF6BE.txt",
+        "sha256": "0422151cce3d735feb6396f587a9461ef0af7d914bdeaf0df16b8bb6efa7a8c5"
+      },
+      {
+        "file": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/profile-geometry-native-001/attachments/FBF6EBDC-3294-4FA6-A74C-CD6B97BB6055.png",
+        "sha256": "e1fb9b8a89b66e81ee54f089075ddfe4df6ac388a78175e403fe22fd145ebbb7"
+      }
+    ],
+    "label": [
+      40,
+      416.3333333333333,
+      119,
+      58.666666666666686
+    ],
+    "field": [
+      40,
+      481,
+      340,
+      65
+    ],
+    "viewport": [
+      12,
+      150,
+      396,
+      394
+    ],
+    "pairHeight": 129.66666666666669,
+    "bottomOverflow": 2,
+    "actualGestures": "20 repeated 10-point upward drags (32,352) to (32,342), .slow 250 points/second, end hold 0.2 seconds; pair did not move",
+    "diagnosis": "Actual small-drag no-motion case; minimum travel is a bounded candidate correction, not a claim of a universal UIKit pan threshold."
+  },
+  "candidateGestureAtRetainedEmailPose": {
+    "surface": [
+      16,
+      154,
+      388,
+      386
+    ],
+    "measuredCorrection": -10,
+    "boundedDistance": 32,
+    "from": [
+      32,
+      363
+    ],
+    "to": [
+      32,
+      331
+    ],
+    "velocity": "XCUIGestureVelocity.slow",
+    "endHoldSeconds": 0.2,
+    "strictViewportUnchanged": true,
+    "theoreticalRemainingTopSlackAfter32PointTranslation": 234.33333333333331
+  },
+  "qualification": {
+    "syntaxParseExit": 0,
+    "diffCheckExit": 0,
+    "newSyntheticGeometrySuite": false,
+    "nativeBuildOrTestByThisLane": false,
+    "runtimeStatus": "Root-owned actual full affected journey002 passed112.424 seconds,1test0failures, xcodebuild exit0, sourceStillMatches true; not full release gate.",
+    "nativeReceipt": "native-replay-002.json"
+  },
+  "commitStatus": "Qualified source; commit identifier is the enclosing git history.",
+  "nativeReplay002": {
+    "durationSeconds": 112.424,
+    "tests": 1,
+    "failures": 0,
+    "exit": 0,
+    "sourceStillMatches": true,
+    "finished": "2026-11-18T09:32:58.962480+00:00"
+  }
+}

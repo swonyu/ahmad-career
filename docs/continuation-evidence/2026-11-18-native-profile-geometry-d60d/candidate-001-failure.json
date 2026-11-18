@@ -1,0 +1,44 @@
+{
+  "testSourceSHA256": "d7a6bf22b0c88feee8fee52f6653d37b6102494927eeedd33c6835433cdc7a23",
+  "retainedFailure": {
+    "source": "profile-geometry-native-001",
+    "result": "Failed email full containment after first-name portion passed (root report and retained email evidence).",
+    "actualLogResult": [
+      "/Users/saleh/Developer/career-finder-profile-geometry-20261118-d60d62a70f26/apple/UITests/CareerFinderUITests.swift:293: error: -[CareerFinderUITests.CareerFinderUITests testAccessibilityTextKeepsCoreControlsReachable] : XCTAssertTrue failed - The full label and value must fit above navigation/keyboard boundaries",
+      "Test Case '-[CareerFinderUITests.CareerFinderUITests testAccessibilityTextKeepsCoreControlsReachable]' failed (108.178 seconds)."
+    ],
+    "attachments": [
+      {
+        "file": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/profile-geometry-native-001/attachments/B7F1C34B-033E-49B5-BBA3-350B95CEF6BE.txt",
+        "sha256": "0422151cce3d735feb6396f587a9461ef0af7d914bdeaf0df16b8bb6efa7a8c5"
+      },
+      {
+        "file": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/profile-geometry-native-001/attachments/FBF6EBDC-3294-4FA6-A74C-CD6B97BB6055.png",
+        "sha256": "e1fb9b8a89b66e81ee54f089075ddfe4df6ac388a78175e403fe22fd145ebbb7"
+      }
+    ],
+    "label": [
+      40,
+      416.3333333333333,
+      119,
+      58.666666666666686
+    ],
+    "field": [
+      40,
+      481,
+      340,
+      65
+    ],
+    "viewport": [
+      12,
+      150,
+      396,
+      394
+    ],
+    "pairHeight": 129.66666666666669,
+    "bottomOverflow": 2,
+    "actualGestures": "20 repeated 10-point upward drags (32,352) to (32,342), .slow 250 points/second, end hold 0.2 seconds; pair did not move",
+    "diagnosis": "Actual small-drag no-motion case; minimum travel is a bounded candidate correction, not a claim of a universal UIKit pan threshold."
+  },
+  "result": "Email containment failed; first-name portion passed; candidate superseded by002."
+}

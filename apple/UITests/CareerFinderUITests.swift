@@ -261,12 +261,28 @@ final class CareerFinderUITests: XCTestCase {
             let pair = label.exists && field.exists ? label.frame.union(field.frame) : CGRect.null
             if !pair.isNull && pair.width > 0 && pair.height > 0 && viewport.contains(pair) && field.isHittable { break }
             if viewport.height <= 120 { break }
-            let downward = !pair.isNull && pair.midY < viewport.midY
-            let distance = min(150, viewport.height * 0.3)
+            guard !pair.isNull, pair.width > 0, pair.height > 0 else { break }
+            // Correct only the observed overflow. A fixed large swipe can fling
+            // this already-small pair past the opposite boundary on every attempt.
+            let correction: CGFloat
+            if pair.minY < viewport.minY { correction = viewport.minY - pair.minY + 8 }
+            else if pair.maxY > viewport.maxY { correction = viewport.maxY - pair.maxY - 8 }
+            else { break }
+            let scroll = app.collectionViews.containing(.textField, identifier: fieldID).firstMatch
+            guard scroll.exists else { break }
+            let surface = scroll.frame.intersection(viewport).insetBy(dx: 4, dy: 4)
+            guard !surface.isNull, surface.width > 16, surface.height > 40 else { break }
+            // The recorded 10-point drag did not pan; keep near-edge corrections
+            // above that observed dead zone while retaining the surface-based cap.
+            let distance = min(max(32, abs(correction)), min(80, surface.height * 0.25))
+            // Stay on this Form's visible padding, outside the editable value,
+            // and hold the end of the real drag so it does not become a fling.
+            let x = max(surface.minX + 8, min(pair.minX - 8, surface.maxX - 8))
+            let downward = correction > 0
             let origin = app.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0))
-            let from = origin.withOffset(CGVector(dx: viewport.midX, dy: viewport.midY + (downward ? -distance / 2 : distance / 2)))
-            let to = origin.withOffset(CGVector(dx: viewport.midX, dy: viewport.midY + (downward ? distance / 2 : -distance / 2)))
-            from.press(forDuration: 0.05, thenDragTo: to)
+            let from = origin.withOffset(CGVector(dx: x, dy: surface.midY + (downward ? -distance / 2 : distance / 2)))
+            let to = origin.withOffset(CGVector(dx: x, dy: surface.midY + (downward ? distance / 2 : -distance / 2)))
+            from.press(forDuration: 0.05, thenDragTo: to, withVelocity: .slow, thenHoldForDuration: 0.2)
         }
         let viewport = profileViewport(in: app)
         captureObservation(screenshot, app: app,

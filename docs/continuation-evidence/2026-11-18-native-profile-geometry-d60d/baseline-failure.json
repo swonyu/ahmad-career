@@ -1,0 +1,39 @@
+{
+  "baseCommit": "1fe9b7543be68ec9343e0fcbc6ca3bc52d58ef62",
+  "testSourceSHA256": "e09c5cacbc01160a145b0379cded962ca46e77abbf32b36a84e79a824cc3ab33",
+  "retainedFailure": {
+    "source": "corrected-candidate-local-four",
+    "attachments": [
+      {
+        "file": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/corrected-candidate-local-four/attachments/0D7E1454-2917-4E40-8EE9-40F0382A4C5B.txt",
+        "sha256": "34d63501d9608fd938dd9d3901a0084eb4a1f9696cdc1dd4d69d7c167250d3f3"
+      },
+      {
+        "file": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/corrected-candidate-local-four/attachments/26A131F1-6988-41FC-8FA2-C09F7506D9C3.png",
+        "sha256": "a33081dfb892877b1b8c789bd488aa1b8458a4ae616e39ff748b12ee50b04a7b"
+      }
+    ],
+    "label": [
+      40,
+      107.33333333333326,
+      263.3333333333333,
+      116.66666666666666
+    ],
+    "field": [
+      40,
+      229.99999999999991,
+      340,
+      64.99999999999997
+    ],
+    "viewport": [
+      12,
+      150,
+      396,
+      367
+    ],
+    "pairHeight": 187.66666666666663,
+    "topOverflow": 42.66666666666674,
+    "originalGestures": "20 alternating110.2pt drags at default500px/s; final first-name label under navigation, actual Alex value and keyboard retained"
+  },
+  "result": "Original full-label containment failed; not a passing release result."
+}
