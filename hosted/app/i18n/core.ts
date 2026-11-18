@@ -113,5 +113,5 @@ export function jobsLabel(count: number, language: Language): string {
   if (form === "zero") return "لا توجد وظائف";
   if (form === "one") return "وظيفة واحدة";
   if (form === "two") return "وظيفتان";
-  return form === "few" ? `${n} وظائف` : `${n} وظائفة`;
+  return form === "few" ? `${n} وظائف` : `${n} وظيفة`;
 }

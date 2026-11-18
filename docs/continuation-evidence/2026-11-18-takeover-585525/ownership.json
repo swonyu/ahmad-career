@@ -1,0 +1,33 @@
+{
+  "project": "Career Finder",
+  "owner": "ChatGPT coordinator 585525b87de6",
+  "authorization": "User requested continue Career Finder and take ownership because prior session inaccessible",
+  "createdAtUTC": "2026-11-18T13:27:01.081301+00:00",
+  "worktree": "/Users/saleh/Developer/career-finder-takeover-20261118-585525b87de6",
+  "branch": "continuation/career-finder-takeover-20261118-585525",
+  "base": "e90756cfb5d28dc761bbcea2ae3248213f66c18c",
+  "integratedSources": [
+    "d646c4128c55df7ed4d6313f2f5d3aeed2a4bf23",
+    "12e2e5969d5f74dcabb67420de7310f9c0fee9db",
+    "f7d3cb54f927735e954df1b7eb0e8ad56ee9adce"
+  ],
+  "preserved": [
+    "All source worktrees, branch refs, dirty i18n work and generated verification files",
+    "Existing Grok terminal processes and preview servers",
+    "Protected publishing owner branch and native build slot"
+  ],
+  "pending": [
+    "B16 record recovery cleanup independent verification",
+    "Integrated hosted and native CI",
+    "Real device/provider/store gates"
+  ],
+  "nativePolicy": "No shared local native builds; use verified free hosted CI",
+  "constraints": [
+    "Preserve per-platform five-tab contracts",
+    "Arabic/English RTL and plain practical wording",
+    "Approved midnight navy/periwinkle icon-adjacent theme",
+    "Exclude Good Spender; no real employer submissions during tests"
+  ],
+  "inheritedCutoffRiyadh": "2026-11-19T01:26:12+03:00",
+  "release": "Not yet verified or deployed"
+}
