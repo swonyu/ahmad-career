@@ -215,16 +215,31 @@ final class CareerFinderUITests: XCTestCase {
         }
         XCTAssertTrue(done.isHittable, "Done typing must be reachable")
         done.tap()
+        let keyboard = app.keyboards.firstMatch
+        // Wait on the actual keyboard. Enumerating every key and toolbar action
+        // consumed more than this five-second budget on the retained CI runner.
         let dismissed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-            let keys = app.keyboards.keys.allElementsBoundByIndex
-            let actions = app.buttons.matching(identifier: "Done typing").allElementsBoundByIndex
-            let keyboard = app.keyboards.firstMatch
-            return (!keyboard.exists || !keyboard.isHittable)
-                && !keys.contains(where: { $0.isHittable })
-                && !actions.contains(where: { $0.exists && $0.isHittable })
+            !keyboard.exists || !keyboard.isHittable
         }, object: nil)
-        XCTAssertEqual(XCTWaiter.wait(for: [dismissed], timeout: 5), .completed,
+        let dismissalResult = XCTWaiter.wait(for: [dismissed], timeout: 5)
+        // Preserve all dismissal postconditions after the transition wait, without
+        // repeatedly charging full-tree queries to that wait's deadline.
+        let keys = app.keyboards.keys.allElementsBoundByIndex
+        let hasHittableKeys = keys.contains { $0.isHittable }
+        let actions = app.buttons.matching(identifier: "Done typing").allElementsBoundByIndex
+        let hasReachableDone = actions.contains { $0.exists && $0.isHittable }
+        // Recheck the actual keyboard after the independent key/action observations.
+        let keyboardExists = keyboard.exists
+        let keyboardIsHittable = keyboardExists && keyboard.isHittable
+        if dismissalResult != .completed || hasHittableKeys || hasReachableDone || keyboardIsHittable {
+            captureObservation("keyboard-dismissal-failed", app: app,
+                               details: "waitResult=\(dismissalResult.rawValue)\nkeyboardExists=\(keyboardExists)\nkeyboardIsHittable=\(keyboardIsHittable)\nobservedKeyCount=\(keys.count)\nhasHittableKeys=\(hasHittableKeys)\nobservedDoneCount=\(actions.count)\nhasReachableDone=\(hasReachableDone)")
+        }
+        XCTAssertEqual(dismissalResult, .completed,
                        "Finish the keyboard dismissal before moving to the next field")
+        XCTAssertFalse(hasHittableKeys, "Dismissed keyboard keys must not remain hittable")
+        XCTAssertFalse(hasReachableDone, "The keyboard Done action must no longer be reachable")
+        XCTAssertFalse(keyboardIsHittable, "The actual keyboard must remain dismissed after all postconditions")
     }
     @MainActor
     private func capture(_ name: String, app: XCUIApplication) {

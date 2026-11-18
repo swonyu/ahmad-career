@@ -1,0 +1,25 @@
+{
+  "snapshot_utc": "2026-11-18T10:31:49.908229+00:00",
+  "base_commit": "0db94c651d37cde774410915dbdd346cc743a458",
+  "test_source_sha256": "567f688796d08e655d6c47cb0e43874481b76dd5afaff235ffb1fd6cd3b434a3",
+  "product_unchanged": true,
+  "independent_review": "accepted bounded source delta; original recorded dismissal observed before expensive poll",
+  "focused_native": {
+    "status": "passed",
+    "owner": "root",
+    "test": "testAccessibilityTextKeepsCoreControlsReachable",
+    "duration_seconds": 114.137,
+    "passed": 1,
+    "failed": 0,
+    "unexpected_failures": 0,
+    "evidence_path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/keyboard-dismissal-native-001",
+    "receipt_file": "focused-native-receipt.json",
+    "receipt_sha256": "ce92cd385bdef8f10c23f80f7e66a27781bff3efd15e8bc49407bc44c519f87a",
+    "log_sha256": "50a0dff37da8cd28b2dae4c755c6fad9c234a35486b98571358ecf979957fa82",
+    "source_still_matches": true,
+    "scope": "one full previously failing large-text method; not complete release acceptance"
+  },
+  "full_combined_acceptance": "pending on final integrated source",
+  "release_accepted": false,
+  "author_actions": "Only isolated helper/source-evidence preparation and static diff inspection. No compile, build, test, native action, CI, artifact download, commit or push by this author."
+}
