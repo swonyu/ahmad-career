@@ -497,13 +497,6 @@ test("actual Saved Clear does not steal later focus or cross a dialog/phone unmo
 // Execute the actual Keep JSX handler on both the inline baseline and the
 // candidate. DOM ports model field order, inherited disabling and unmounts;
 // they do not supply a replacement focus algorithm.
-function phoneDeclarationExists(name) {
-  const app = tree.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === "PhoneApp");
-  const matches = app.body.statements.filter(ts.isVariableStatement).flatMap(node => [...node.declarationList.declarations]).filter(node => node.name.getText(tree) === name);
-  assert(matches.length <= 1, "Production declaration must be unique: " + name);
-  return matches.length === 1;
-}
-
 function keepFocusHarness(opener = "cancel", kind = "record") {
   const frames = [], focusCalls = [];
   const document = { activeElement: null, body: null, documentElement: null, editorQueries: 0, querySelector() { assert.fail("Keep editing must stay in its originating dialog"); } };

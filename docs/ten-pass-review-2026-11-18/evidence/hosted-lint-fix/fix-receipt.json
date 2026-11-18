@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "owner": "root/recovery_review",
+  "completedAtUTC": "2026-11-18T13:55:38.058785+00:00",
+  "failure": {
+    "ciRun": 44317593106,
+    "classification": "Lint only; TypeScript command passed",
+    "rule": "no-unused-vars",
+    "symbol": "phoneDeclarationExists",
+    "reportedLine": 500,
+    "rawLog": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/successor-ci-collector-20261118/initial-observations/job-134847720501.log",
+    "rawLogSHA256": "fc6277a61b6d14222ce197243eed4ebf08e3a4dfd15ace756d7f49c8632aabdc"
+  },
+  "source": {
+    "worktree": "/workspace/scratch/ebb3eed5ee2b/career-finder-site-lint-fix-20261118-ebb3eed5",
+    "branch": "fix/unused-recovery-helper-20261118-ebb3",
+    "base": "9ac5b3ab0c8d97c814c756571cf8e1da5f2d180c",
+    "head": "18c8f537963a056098f90c7c9e8ec826f090c55c",
+    "tree": "6345c0ea85841c480ef4f5afbc5ce2102c2a8a48",
+    "clean": true,
+    "frozenCheckout": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout",
+    "frozenHeadUnchanged": "9ac5b3ab0c8d97c814c756571cf8e1da5f2d180c",
+    "frozenTreeUnchanged": "572b2383bcae4f01371ef5238085f969f8bed09e",
+    "frozenClean": true,
+    "cloudRelativePath": "tests/phone-recovery-isolation.mjs",
+    "macRelativePath": "hosted/tests/phone-recovery-isolation.mjs",
+    "beforeSHA256": "aee76ff448ee1dfb53dfb6418c90f85b67fd575707e3127aa511b0bd20c2ed93",
+    "afterSHA256": "da0d93796edc1d49403d9da2385d2c50c6c73e06cebd8f1b34eb612f6ad1e5a2",
+    "change": "Delete the unique unused helper declaration and its trailing blank line only.",
+    "allTestBodiesAndBehavioralAssertionsUnchanged": true,
+    "qualification": "The dead helper contained an internal uniqueness assert; the helper had no callsites, so no executed test assertion was removed.",
+    "allOtherTrackedFilesUnchanged": true,
+    "dependencySymlinkRemoved": true,
+    "dependenciesInstalled": false
+  },
+  "validation": {
+    "lint": {
+      "command": [
+        "npm",
+        "run",
+        "lint"
+      ],
+      "startedAtUTC": "2026-11-18T13:54:32.836124+00:00",
+      "finishedAtUTC": "2026-11-18T13:54:48.036116+00:00",
+      "exit": 0,
+      "log": "/workspace/scratch/ebb3eed5ee2b/hosted-lint-fix-20261118-ebb3eed5/lint.log",
+      "sha256": "13826c4834577f634537c5210b7d816d8d8eab5339d9e8a40aa4d27509f0befd"
+    },
+    "targetedTests": {
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "tests/phone-recovery-isolation.mjs",
+        "tests/phone-record-tools.mjs",
+        "tests/phone-selection-board-actions.mjs"
+      ],
+      "startedAtUTC": "2026-11-18T13:54:32.902151+00:00",
+      "finishedAtUTC": "2026-11-18T13:54:36.358512+00:00",
+      "exit": 0,
+      "log": "/workspace/scratch/ebb3eed5ee2b/hosted-lint-fix-20261118-ebb3eed5/targeted-tests.tap",
+      "sha256": "0367e268a52fd661d9b5994a8afef778e66ff8703f4d954de5d34b8da3f0f389",
+      "counts": {
+        "tests": 136,
+        "pass": 136,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    "diffCheckPassed": true,
+    "onlyExactHelperDeletion": true,
+    "typecheckRerun": false,
+    "typecheckQualification": "CI tsc --noEmit had already passed; authorized repair removes unused JavaScript helper only.",
+    "incidentalNpmEnvironmentWarning": "Unknown env config http-proxy; npm/oxlint exit0; no lint finding."
+  },
+  "patch": {
+    "path": "/workspace/scratch/ebb3eed5ee2b/hosted-lint-fix-20261118-ebb3eed5/remove-unused-recovery-helper.patch",
+    "bytes": 1270,
+    "sha256": "6510fb67eaa2cf60ee32606c5baae1119c2f5ed08c239630371ed7a7741ad7f2"
+  },
+  "priorAcceptanceUnchanged": {
+    "nativeCIStillRequiresFreshSuccess": true,
+    "nativeExecutionByThisTask": false,
+    "ciPushOrDispatch": false,
+    "macRootMutation": false
+  },
+  "files": [
+    {
+      "path": "/workspace/scratch/ebb3eed5ee2b/hosted-lint-fix-20261118-ebb3eed5/phone-recovery-isolation.mjs.before",
+      "bytes": 76179,
+      "sha256": "aee76ff448ee1dfb53dfb6418c90f85b67fd575707e3127aa511b0bd20c2ed93"
+    },
+    {
+      "path": "/workspace/scratch/ebb3eed5ee2b/hosted-lint-fix-20261118-ebb3eed5/phone-recovery-isolation.mjs.after",
+      "bytes": 75739,
+      "sha256": "da0d93796edc1d49403d9da2385d2c50c6c73e06cebd8f1b34eb612f6ad1e5a2"
+    },
+    {
+      "path": "/workspace/scratch/ebb3eed5ee2b/hosted-lint-fix-20261118-ebb3eed5/lint.log",
+      "bytes": 175,
+      "sha256": "13826c4834577f634537c5210b7d816d8d8eab5339d9e8a40aa4d27509f0befd"
+    },
+    {
+      "path": "/workspace/scratch/ebb3eed5ee2b/hosted-lint-fix-20261118-ebb3eed5/targeted-tests.tap",
+      "bytes": 28261,
+      "sha256": "0367e268a52fd661d9b5994a8afef778e66ff8703f4d954de5d34b8da3f0f389"
+    }
+  ]
+}
