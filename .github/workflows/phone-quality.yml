@@ -343,7 +343,11 @@ jobs:
           boot_results=(0 0)
           xcrun simctl bootstatus "$CAREER_UI_DEVICE" -b 2>&1 | tee "$RUNNER_TEMP/career-iphone-boot.log" || boot_results=("${PIPESTATUS[@]}")
           inventory_result=0
-          xcrun simctl list devices --json > "$RUNNER_TEMP/career-iphone-boot-devices.json" 2> "$RUNNER_TEMP/career-iphone-boot-devices.stderr" || inventory_result=$?
+          printf 'Boot command exited %s; collecting inventory for selected device %s\n' "${boot_results[0]}" "$CAREER_UI_DEVICE"
+          # The all-device listing took about 80s after Finished in run 44326554344.
+          # Scope this read to the owned UUID; the strict verifier still requires exactly one match.
+          xcrun simctl list devices "$CAREER_UI_DEVICE" --json > "$RUNNER_TEMP/career-iphone-boot-devices.json" 2> "$RUNNER_TEMP/career-iphone-boot-devices.stderr" || inventory_result=$?
+          printf 'Selected-device inventory exited %s; verifying retained boot evidence\n' "$inventory_result"
           python3 apple/Checks/verify-simulator-boot.py \
             --device "$CAREER_UI_DEVICE" \
             --boot-log "$RUNNER_TEMP/career-iphone-boot.log" \
