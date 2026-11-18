@@ -1,0 +1,17 @@
+{
+  "observedAt": "2026-11-18T18:51:49Z",
+  "site": {
+    "projectId": "appgprj_6afb13851fb4819193358d5db54e73b7",
+    "version": 11,
+    "sourceCommit": "7fd3f81ff727769934f6e265c8ca2287cf1691f3",
+    "deploymentId": "appgdep_6afdbf075de88191a65374623c561dad",
+    "status": "succeeded",
+    "url": "https://career-finder-service.jazzy-drake-8323.chatgpt.site/phone"
+  },
+  "applicationSource": "b78b83b09739fefe69a6c8b72d7d1a60a4feb22a",
+  "trackedHostedFiles": 263,
+  "allBlobHashesAndModesMatch": true,
+  "method": "Authoritative Site source opened with normal fast-forward; compared all 263 Git tracked blob hashes and modes to application HEAD hosted subtree.",
+  "browserVerification": "Earlier synthetic English/Arabic recovery journey verified; no fresh live browser check in this phase because originating browser context was unavailable. Existing version11 live verification retained from publishing continuation.",
+  "publishedAgain": false
+}

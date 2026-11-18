@@ -1,0 +1,89 @@
+{
+  "project": "Career Finder",
+  "sourceHEAD": "92266631b5eba3eb7d66810e6553535fe42cce86",
+  "finishedAtUTC": "2026-11-18T13:42:16.264184+00:00",
+  "environment": "Mac portable hosted checks; synthetic data only; Node24.22.3 npm11.20.0",
+  "steps": [
+    {
+      "name": "hosted-typecheck",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "seconds": 1.02,
+      "log": "docs/continuation-evidence/2026-11-18-takeover-585525/hosted-typecheck.log"
+    },
+    {
+      "name": "hosted-lint",
+      "command": [
+        "npm",
+        "run",
+        "lint"
+      ],
+      "exitCode": 0,
+      "seconds": 3.45,
+      "log": "docs/continuation-evidence/2026-11-18-takeover-585525/hosted-lint.log"
+    },
+    {
+      "name": "hosted-full-tests",
+      "command": [
+        "npm",
+        "test"
+      ],
+      "exitCode": 0,
+      "seconds": 40.76,
+      "log": "docs/continuation-evidence/2026-11-18-takeover-585525/hosted-full-tests.log"
+    },
+    {
+      "name": "hosted-worker",
+      "command": [
+        "node",
+        "tests/hosted-worker.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.55,
+      "log": "docs/continuation-evidence/2026-11-18-takeover-585525/hosted-worker.log"
+    },
+    {
+      "name": "hosted-browser-api",
+      "command": [
+        "node",
+        "--test",
+        "tests/browser-api.mjs",
+        "tests/browser-pairing.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.12,
+      "log": "docs/continuation-evidence/2026-11-18-takeover-585525/hosted-browser-api.log"
+    },
+    {
+      "name": "hosted-build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "exitCode": 0,
+      "seconds": 0.51,
+      "log": "docs/continuation-evidence/2026-11-18-takeover-585525/hosted-build.log"
+    },
+    {
+      "name": "hosted-ssr",
+      "command": [
+        "npm",
+        "run",
+        "test:ssr"
+      ],
+      "exitCode": 0,
+      "seconds": 0.8,
+      "log": "docs/continuation-evidence/2026-11-18-takeover-585525/hosted-ssr.log"
+    }
+  ],
+  "allPassed": true,
+  "limits": [
+    "Native device and live provider acceptance is separate",
+    "Dependency audit separately retained"
+  ]
+}

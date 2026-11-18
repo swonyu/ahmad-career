@@ -1,0 +1,35 @@
+{
+  "project": "Career Finder",
+  "sourceHEAD": "d924d69d2d75e0772a435951a7e821d57d56eaca",
+  "finishedAtUTC": "2026-11-18T13:38:52.947725+00:00",
+  "environment": "Mac portable hosted checks; synthetic data only; Node24.22.3 npm11.20.0",
+  "steps": [
+    {
+      "name": "hosted-typecheck",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "seconds": 3.3,
+      "log": "docs/continuation-evidence/2026-11-18-takeover-585525/hosted-typecheck.log"
+    },
+    {
+      "name": "hosted-lint",
+      "command": [
+        "npm",
+        "run",
+        "lint"
+      ],
+      "exitCode": 1,
+      "seconds": 4.14,
+      "log": "docs/continuation-evidence/2026-11-18-takeover-585525/hosted-lint.log"
+    }
+  ],
+  "allPassed": false,
+  "limits": [
+    "Native device and live provider acceptance is separate",
+    "Dependency audit separately retained"
+  ]
+}

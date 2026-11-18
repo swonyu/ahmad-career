@@ -1,0 +1,37 @@
+{
+  "checkedAt": "2026-11-18T18:50:21.987266+00:00",
+  "priorHead": "92266631b5eba3eb7d66810e6553535fe42cce86",
+  "reconciledHead": "b78b83b09739fefe69a6c8b72d7d1a60a4feb22a",
+  "method": "fast-forward only; newer continuation is a descendant containing all root changes",
+  "sourceTree": "d147964f9698055c6dedc6329311aeb02ae0932f",
+  "preservedGeneratedEvidence": [
+    {
+      "file": "docs/continuation-evidence/2026-11-18-takeover-585525/candidate-hosted-discovery-verification.json",
+      "sha256": "314d4ec0be9c4763699e9147950f948170469f3d7117ae9956fd10e4f1ba009e"
+    },
+    {
+      "file": "docs/continuation-evidence/2026-11-18-takeover-585525/candidate-hosted-phone-verification.json",
+      "sha256": "73590300c3162d2c23dbd430e5f7f133e305cd19621a7682e90c7421f168706c"
+    },
+    {
+      "file": "docs/continuation-evidence/2026-11-18-takeover-585525/candidate-hosted-verification.json",
+      "sha256": "a2faaac0279eff828b149e9398019a17e92523d961ce1c4f81df906046d30734"
+    },
+    {
+      "file": "docs/continuation-evidence/2026-11-18-takeover-585525/candidate-hosted-worker-verification.json",
+      "sha256": "d5eb30bf8cf54b3741cd1a2229f67786446c05db4eade4de8e0ce027efaf3e3d"
+    }
+  ],
+  "liveSite": {
+    "version": 11,
+    "source": "7fd3f81ff727769934f6e265c8ca2287cf1691f3",
+    "deployment": "appgdep_6afdbf075de88191a65374623c561dad",
+    "status": "succeeded"
+  },
+  "currentCi": {
+    "run": 44372262687,
+    "url": "https://github.com/swonyu/ahmad-career/actions/runs/44372262687",
+    "status": "native iPhone UI still running; not final acceptance"
+  },
+  "otherWorktreesModified": false
+}
