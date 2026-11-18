@@ -1,0 +1,42 @@
+{
+  "observedAtUTC": "2026-11-18T15:12:00Z",
+  "siteVersion": 11,
+  "source": "7fd3f81ff727769934f6e265c8ca2287cf1691f3",
+  "deployment": "appgdep_6afdbf075de88191a65374623c561dad",
+  "environmentRevision": 1,
+  "url": "https://career-finder-service.jazzy-drake-8323.chatgpt.site/phone",
+  "browser": "Google Chrome through Saleh Mac Control 2",
+  "account": "Guest UI; 0 saved jobs and empty profile observed; no account authentication or applications submitted",
+  "search": {
+    "query": "iOS",
+    "selectedBoards": [
+      "Canonical",
+      "DoorDash",
+      "Spotify",
+      "Freenome"
+    ],
+    "resultCount": 5,
+    "outcome": "Search complete",
+    "postingCheckLabel": "Nov 18, 2026, 6:08 PM",
+    "observedTitles": [
+      "Ubuntu Linux Kernel Engineer - BIOS/Firmware",
+      "Senior Software Engineer, iOS",
+      "Senior C++/iOS Engineer - User Platform",
+      "Senior Biostatistician",
+      "Software Engineer, iOS"
+    ]
+  },
+  "appearance": {
+    "original": "System",
+    "observedPalette": "midnight navy and periwinkle; production DOM rasterizer viewport"
+  },
+  "language": {
+    "original": "Match your device (English)",
+    "arabic": "Confirmed labels and RTL layout through live UI; then restored Match your device"
+  },
+  "providers": {
+    "google": "Sign-in action now visible; runtime revision 1 applied; no real provider login completed",
+    "linkedin": "Awaiting service setup; disabled action"
+  },
+  "scope": "Published interface, English/Arabic and public discovery verified; native acceptance and signed-device/store readiness reported separately"
+}

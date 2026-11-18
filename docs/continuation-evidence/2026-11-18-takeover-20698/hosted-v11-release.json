@@ -1,0 +1,60 @@
+{
+  "project": "Career Finder",
+  "source": {
+    "project_id": "appgprj_6afb13851fb4819193358d5db54e73b7",
+    "checkout_path": "/workspace/scratch/20698f1e14d3/career-finder-site/.sites-checkout",
+    "commit_sha": "7fd3f81ff727769934f6e265c8ca2287cf1691f3",
+    "archive": "/workspace/scratch/20698f1e14d3/career-finder-site-release.tar"
+  },
+  "version": {
+    "id": "appgprj_6afb13851fb4819193358d5db54e73b7~appgver_62369e548b208191b9c66f3f5baeb39e",
+    "number": 11,
+    "source": {
+      "commit_sha": "7fd3f81ff727769934f6e265c8ca2287cf1691f3"
+    },
+    "archiveStorage": {
+      "archive_format": "tar",
+      "sediment_file_id": "file_000000001f3082119d1a25410adc1faf",
+      "content_hash": "sha256:cd2d8ad74c0b34e6d82194261146c16becdbd3b529064e19ca390b9ab4d2c867",
+      "size_bytes": 11264000,
+      "file_count": 37
+    }
+  },
+  "deployment": {
+    "id": "appgdep_6afdbf075de88191a65374623c561dad",
+    "project_id": "appgprj_6afb13851fb4819193358d5db54e73b7",
+    "title": "Career Finder",
+    "version_id": "appgprj_6afb13851fb4819193358d5db54e73b7~appgver_62369e548b208191b9c66f3f5baeb39e",
+    "type": "publish",
+    "status": "succeeded",
+    "url": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
+    "has_mcp": false,
+    "screenshot_asset_pointer": null,
+    "provider_deployment_id": "release---6afb19c7dcb081918f1c6b1c2785c3c0",
+    "failure_message": null,
+    "env_set_revision": 1,
+    "updated_at": "2026-11-18T15:07:14.588928+00:00"
+  },
+  "sourceParity": {
+    "trackedFiles": 263,
+    "comparison": "All tracked hosted working files were Git-blob-identical to b6614346cb4f0e72b9bde0e96ab083ea7df72371:hosted before packaging"
+  },
+  "checks": {
+    "recoveryTests": {
+      "passed": 129,
+      "failed": 0
+    },
+    "typecheck": "passed",
+    "lint": "passed",
+    "productionBuild": "passed",
+    "ssrAndAssetTests": {
+      "passed": 17,
+      "failed": 0
+    }
+  },
+  "localPackage": {
+    "filename": "career-finder-site-release.tar",
+    "sha256": "c95ed05b01816cb22f5864f9882e3f5a7d354c94757c95ce3e9b5004c6b11cd8",
+    "note": "Local archive digest and backend archive_storage.content_hash are recorded separately; no assumption that the two fields use identical serialization."
+  }
+}
