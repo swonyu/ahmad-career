@@ -1,0 +1,179 @@
+{
+  "format": "Career Finder browser records",
+  "version": 2,
+  "scope": "guest",
+  "exportedAt": "2026-11-18T13:22:18.534Z",
+  "saved": {
+    "schema": 1,
+    "scope": "guest",
+    "profile": {
+      "firstName": "مايا",
+      "lastName": "فارس",
+      "email": "maya@example.invalid",
+      "phone": "",
+      "city": "",
+      "country": "",
+      "headline": "",
+      "skills": [],
+      "targetRoles": [
+        "Customer service",
+        "ممثل خدمة عملاء",
+        "Operations"
+      ],
+      "targetCountries": [],
+      "workModes": [],
+      "experienceLevel": "any",
+      "website": "",
+      "linkedin": "",
+      "resume": null,
+      "revision": 0
+    },
+    "profileDirty": true,
+    "jobs": [
+      {
+        "id": "a73c9a04-acc6-4f4f-8598-b4f7da9a6122",
+        "title": "ممثل خدمة عملاء / Customer Service",
+        "company": "Example employer QA",
+        "url": "https://example.com/careers/qa-customer-service",
+        "location": "الرياض / Riyadh",
+        "country": ""
+      }
+    ],
+    "records": [
+      {
+        "identity": "https://example.com/careers/qa-customer-service",
+        "title": "ممثل خدمة عملاء / Customer Service",
+        "company": "Example employer QA",
+        "location": "الرياض / Riyadh",
+        "stage": "applied",
+        "appliedElsewhere": true,
+        "appliedDate": "2026-11-18",
+        "followUpDate": "2026-11-17",
+        "note": "تواصل مع أحمد بشأن موعد المقابلة. QA only — phone draft.",
+        "updatedAt": "2026-11-18T11:56:24.716Z"
+      }
+    ],
+    "filters": {
+      "query": "",
+      "location": "",
+      "remoteOnly": false,
+      "sources": []
+    },
+    "lastSearch": null
+  },
+  "recovery": {
+    "schema": 1,
+    "scope": "guest",
+    "profile": {
+      "firstName": "",
+      "lastName": "",
+      "email": "",
+      "phone": "",
+      "city": "",
+      "country": "",
+      "headline": "",
+      "skills": [],
+      "targetRoles": [],
+      "targetCountries": [],
+      "workModes": [],
+      "experienceLevel": "any",
+      "website": "",
+      "linkedin": "",
+      "resume": null,
+      "revision": 0
+    },
+    "profileDirty": false,
+    "jobs": [],
+    "records": [],
+    "filters": {
+      "query": "",
+      "location": "",
+      "remoteOnly": false,
+      "sources": []
+    },
+    "lastSearch": null,
+    "safety": {
+      "holds": [],
+      "recovery": [
+        {
+          "id": "23a95cfa-9914-4e63-a926-19bf09023895",
+          "savedAt": "2026-11-18T12:37:29.618Z",
+          "record": {
+            "job": {
+              "id": "a73c9a04-acc6-4f4f-8598-b4f7da9a6122",
+              "title": "ممثل خدمة عملاء / Customer Service",
+              "company": "Example employer QA",
+              "url": "https://example.com/careers/qa-customer-service",
+              "location": "الرياض / Riyadh",
+              "country": ""
+            },
+            "original": {
+              "identity": "https://example.com/careers/qa-customer-service",
+              "title": "ممثل خدمة عملاء / Customer Service",
+              "company": "Example employer QA",
+              "location": "الرياض / Riyadh",
+              "stage": "applied",
+              "appliedElsewhere": true,
+              "appliedDate": "2026-11-18",
+              "followUpDate": "2026-11-17",
+              "note": "تواصل مع أحمد بشأن موعد المقابلة. QA only — phone draft.",
+              "updatedAt": "2026-11-18T11:56:24.716Z"
+            },
+            "draft": {
+              "identity": "https://example.com/careers/qa-customer-service",
+              "title": "ممثل خدمة عملاء / Customer Service",
+              "company": "Example employer QA",
+              "location": "الرياض / Riyadh",
+              "stage": "saved",
+              "appliedElsewhere": true,
+              "appliedDate": "2026-11-18",
+              "followUpDate": "2026-11-17",
+              "note": "تواصل مع أحمد بشأن موعد المقابلة. QA only — phone draft.",
+              "updatedAt": "2026-11-18T11:56:24.716Z"
+            },
+            "existed": true
+          }
+        },
+        {
+          "id": "7acb0835-31bc-4b70-8e4b-1c8d9a9e0124",
+          "savedAt": "2026-11-18T12:56:06.712Z",
+          "record": {
+            "job": {
+              "id": "a73c9a04-acc6-4f4f-8598-b4f7da9a6122",
+              "title": "ممثل خدمة عملاء / Customer Service",
+              "company": "Example employer QA",
+              "url": "https://example.com/careers/qa-customer-service",
+              "location": "الرياض / Riyadh",
+              "country": ""
+            },
+            "original": {
+              "identity": "https://example.com/careers/qa-customer-service",
+              "title": "ممثل خدمة عملاء / Customer Service",
+              "company": "Example employer QA",
+              "location": "الرياض / Riyadh",
+              "stage": "applied",
+              "appliedElsewhere": true,
+              "appliedDate": "2026-11-18",
+              "followUpDate": "2026-11-17",
+              "note": "تواصل مع أحمد بشأن موعد المقابلة. QA only — phone draft.",
+              "updatedAt": "2026-11-18T11:56:24.716Z"
+            },
+            "draft": {
+              "identity": "https://example.com/careers/qa-customer-service",
+              "title": "ممثل خدمة عملاء / Customer Service",
+              "company": "Example employer QA",
+              "location": "الرياض / Riyadh",
+              "stage": "saved",
+              "appliedElsewhere": true,
+              "appliedDate": "2026-11-18",
+              "followUpDate": "2026-11-17",
+              "note": "تواصل مع أحمد بشأن موعد المقابلة. QA only — phone draft.",
+              "updatedAt": "2026-11-18T11:56:24.716Z"
+            },
+            "existed": true
+          }
+        }
+      ]
+    }
+  }
+}

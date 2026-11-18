@@ -1,0 +1,110 @@
+{
+  "schema": 1,
+  "reviewedUTC": "2026-11-18T13:36:38.071108+00:00",
+  "reviewer": "root",
+  "status": "local_packaged_source_verified_saved_not_deployed",
+  "combinedSourceCommit": "c791b64bc94ad9b5dce118d851dcada45a59ec2e",
+  "siteCommit": "9ac5b3ab0c8d97c814c756571cf8e1da5f2d180c",
+  "sourceTree": "572b2383bcae4f01371ef5238085f969f8bed09e",
+  "archive": {
+    "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site-c791b64.tar.gz",
+    "gzipBytes": 3382415,
+    "gzipSHA256": "d9dd7f26e43e7efc63ab4b09e50d3c90c22ac78847f7b4d7f79c593eeec18d72",
+    "rawTarBytes": 11253760,
+    "rawTarSHA256": "c9af3399882e3ad4de18873311ad23a72fd71de1d8fe0d07e2e56ac4a3e55802",
+    "regularFiles": 37,
+    "safeMembers": true
+  },
+  "savedVersion": {
+    "id": "appgprj_6afb13851fb4819193358d5db54e73b7~appgver_a6a558d2bb04819199cf35cf1af3e3d9",
+    "number": 10,
+    "deploymentId": null,
+    "serverReturnedArchiveDigest": "sha256:1ecb6e30c58be050e7452eeec0f5814123820eee910e16b676f97008ef61df13",
+    "serverReturnedArchiveBytes": 11243520,
+    "serverReturnedRegularFiles": 37
+  },
+  "storedArchiveReadback": "NOT ESTABLISHED. Native saved-version metadata exposes server digest/size/count, but not stored bytes. Local decompressed TAR digest and size differ. Both retained separately; neither normalization nor corruption claimed. Same distinction existed in prior retained package review.",
+  "hosting": {
+    "d1": "DB",
+    "r2": "BUCKET",
+    "project_id": "appgprj_6afb13851fb4819193358d5db54e73b7"
+  },
+  "sourceHashesVerified": 95,
+  "publicAssetsVerified": 21,
+  "worker": {
+    "bytes": 5812033,
+    "sha256": "e8a56ddac399dcb847e7be5f78c9e132f2120ae5e3fde9adcac06f3d9d83e089"
+  },
+  "migrationIntegrity": {
+    "unchangedFromRetained7bArchive": true,
+    "sqlCount": 5,
+    "metadataCount": 6,
+    "members": [
+      {
+        "path": "dist/.openai/drizzle/0000_busy_plazm.sql",
+        "sha256": "5b1e4c5a7ddb05c71a53c112a57daaf9b4a15f58fa38e4b12df8d551bd9e7118"
+      },
+      {
+        "path": "dist/.openai/drizzle/0001_smiling_maelstrom.sql",
+        "sha256": "d0e1b4cbea14b7dca1c1078911fa94c39db7960778bea637341d7bbee4ef9ef6"
+      },
+      {
+        "path": "dist/.openai/drizzle/0002_concerned_inhumans.sql",
+        "sha256": "78823cf83e72da525ffd44e8ec76c524a813ff6eb278cbf6465e8a63fbc05fed"
+      },
+      {
+        "path": "dist/.openai/drizzle/0003_provider_identity.sql",
+        "sha256": "6060ba69e1ca5fb418e79ae91f0d76b5e89e7e1d28740b2df15a74fe727b4930"
+      },
+      {
+        "path": "dist/.openai/drizzle/0004_provider_connection_generation.sql",
+        "sha256": "5e2d86cb79b44e8101f743836a7a7ec58b901b87b96a79159bf30bcbf77f9439"
+      },
+      {
+        "path": "dist/.openai/drizzle/meta/0000_snapshot.json",
+        "sha256": "3bb772f85e39920dfa2194ce9a0a107f4c68ea779411ca358ce418467158a69f"
+      },
+      {
+        "path": "dist/.openai/drizzle/meta/0001_snapshot.json",
+        "sha256": "1daf4bf103553f5e15dcb2d2bb5eed4cbbcf63b4e1d40c4642fa8cd9b945ac6c"
+      },
+      {
+        "path": "dist/.openai/drizzle/meta/0002_snapshot.json",
+        "sha256": "8f0d227be96419e1a9020dd17ed2f0e67a7445dd3b5ea8de1ca5db2cffcb8aca"
+      },
+      {
+        "path": "dist/.openai/drizzle/meta/0003_snapshot.json",
+        "sha256": "695f18398af18500b55dc24dc4a8b2eaf2f7b6d0c09f157a0f63e3b4c702b639"
+      },
+      {
+        "path": "dist/.openai/drizzle/meta/0004_snapshot.json",
+        "sha256": "7ee12d558c161d136f5e6634cb202d987b30a26366ed08ba5439221a97c69ee8"
+      },
+      {
+        "path": "dist/.openai/drizzle/meta/_journal.json",
+        "sha256": "888e37f5620af113a096995286330ac450bd19fab80ac195db4cad0d328b6639"
+      }
+    ]
+  },
+  "checks": [
+    {
+      "path": "/workspace/scratch/ebb3eed5ee2b/hosted-ssr-c791b64.log",
+      "sha256": "1d7aa8fdbd689ff333f7aefcb460ea148f9124db996218e763cf64fb02864eca",
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "path": "/workspace/scratch/ebb3eed5ee2b/hosted-public-bundle-c791b64.log",
+      "sha256": "7e1a155664abc1332c82413674f54bf257aa645929ede61633fabb6502f4e1e3",
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "limits": [
+    "The11Worker runtime tests and6bundle-boundary tests are disjoint; no count from overlapping fullnpmtest is added.",
+    "No production deployment, provider OAuth consent, native execution, physical-device or store acceptance claimed.",
+    "FinalcombinedCI and real native media review remain required before merge and publication."
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "finding": "B16 clean-record-close stale recovery copy",
+  "completedAtUTC": "2026-11-18T13:19:02.247341+00:00",
+  "status": "source_fixed_targeted_checks_passed_browser_and_full_CI_pending",
+  "scope": "Only two authorized hosted files changed by this repair; prior root changes preserved through exact per-file preimages. No native, CI, browser, merge, deployment, credentials or production data operations.",
+  "files": [
+    {
+      "cloudPath": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/PhoneApp.tsx",
+      "macRelativePath": "hosted/app/phone/PhoneApp.tsx",
+      "beforeSHA256": "c64a589056152f4676974c8b54ecabc23a1df1167d8c8f31804e5fbbce29db7e",
+      "afterSHA256": "99ed45680e0bff019ff14a32885db3fabfca0e3a260e8b16670e8809fe713e76",
+      "preimage": "/workspace/scratch/ebb3eed5ee2b/clean-record-recovery-fix-20261118/PhoneApp.tsx.before",
+      "afterImage": "/workspace/scratch/ebb3eed5ee2b/clean-record-recovery-fix-20261118/PhoneApp.tsx.after"
+    },
+    {
+      "cloudPath": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/tests/phone-recovery-isolation.mjs",
+      "macRelativePath": "hosted/tests/phone-recovery-isolation.mjs",
+      "beforeSHA256": "e66f9e302499772bdb7e1e1b0793da64f5b809c59f5c7706ba01c62f38eb1229",
+      "afterSHA256": "aee76ff448ee1dfb53dfb6418c90f85b67fd575707e3127aa511b0bd20c2ed93",
+      "preimage": "/workspace/scratch/ebb3eed5ee2b/clean-record-recovery-fix-20261118/phone-recovery-isolation.mjs.before",
+      "afterImage": "/workspace/scratch/ebb3eed5ee2b/clean-record-recovery-fix-20261118/phone-recovery-isolation.mjs.after"
+    }
+  ],
+  "patch": {
+    "path": "/workspace/scratch/ebb3eed5ee2b/clean-record-recovery-fix-20261118/clean-record-recovery.patch",
+    "sha256": "c3ce176e37d32199c4ea51bcd6ef289b956b89e4afead528304c5dae64d65c25",
+    "format": "Mac repository relative hosted paths; apply only after both before hashes match",
+    "reverseCheckOnCurrentCloudSource": {
+      "command": [
+        "git",
+        "apply",
+        "--reverse",
+        "--check",
+        "-p2",
+        "/workspace/scratch/ebb3eed5ee2b/clean-record-recovery-fix-20261118/clean-record-recovery.patch"
+      ],
+      "exitCode": 0
+    }
+  },
+  "targetedTests": {
+    "command": "node --test --test-reporter=tap tests/phone-recovery-isolation.mjs tests/phone-record-tools.mjs tests/phone-selection-board-actions.mjs",
+    "exitCode": 0,
+    "counts": {
+      "tests": 136,
+      "pass": 136,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "path": "/workspace/scratch/ebb3eed5ee2b/clean-record-recovery-fix-20261118/targeted-tests.tap",
+    "sha256": "ecc22aa6642db93783d436a74abc595f2b28d63a4d273a0adf456eb56e5ea70b"
+  },
+  "typecheck": {
+    "command": "npm run typecheck",
+    "exitCode": 0,
+    "path": "/workspace/scratch/ebb3eed5ee2b/clean-record-recovery-fix-20261118/typecheck.log",
+    "sha256": "c9014ba170f2161ecee9b3ba8984934aa5bf66e685e29ed495d14ac261d546e9"
+  },
+  "sourceBindings": [
+    {
+      "path": "app/phone/PhoneApp.tsx",
+      "sha256": "99ed45680e0bff019ff14a32885db3fabfca0e3a260e8b16670e8809fe713e76"
+    },
+    {
+      "path": "app/phone/components.tsx",
+      "sha256": "e9da530152fa26be1fad0fcce583f80ae0534f860321baee792f5c08fcace354"
+    },
+    {
+      "path": "app/phone/safety.ts",
+      "sha256": "8571c8e0f1625e50fd2d1749ab7cd10aca57f8b24c16107e6179437154eb4c4f"
+    },
+    {
+      "path": "app/phone/vault.ts",
+      "sha256": "1c45092458fe9f56ee84925091342f3c5f920800409965a7a99ab32b07138c95"
+    },
+    {
+      "path": "app/phone/model.ts",
+      "sha256": "1341caf46b9a65ef140ae976d3a757088fedd711ed49f556f7ab34be3686e48b"
+    },
+    {
+      "path": "tests/phone-recovery-isolation.mjs",
+      "sha256": "aee76ff448ee1dfb53dfb6418c90f85b67fd575707e3127aa511b0bd20c2ed93"
+    },
+    {
+      "path": "tests/phone-record-tools.mjs",
+      "sha256": "3286cb9a83130eed9b43370f37e7edc2775b091ce69b31107ef163177d7046df"
+    },
+    {
+      "path": "tests/phone-selection-board-actions.mjs",
+      "sha256": "355fb91981afafd799f2bb1f361a347fa33869eb7e45566d71b027da3d419424"
+    },
+    {
+      "path": "package.json",
+      "sha256": "860c907c529ded123cc591d1d4141276a3a4505044e2be76b8e8b55d66909f7c"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "4d85b9d5290351367e48fdb1fd54e3786344423434a16aef6b8b9381a250d685"
+    }
+  ],
+  "harnessChanges": [
+    "Recovery harness receives the actual lifecycle ref, browser/opening refs and real close/edit handlers.",
+    "Existing Cancel/Delete entry regression now uses a valid real record editor and encrypted safety, preserving its behavioral assertions.",
+    "Existing export-focus harness receives the new lifecycle ref consumed by the real unfinished() handler.",
+    "The synthetic atomic persistence port adds a bounded beforeWrite hook to exercise pending failures and editor/scope drift."
+  ],
+  "newCoverage": [
+    "Four repeated real Applied -> Saved -> Save confirmation -> Keep -> clean Cancel cycles, with actual editor handlers and encrypted safety",
+    "No cleanup on Keep alone; changed notes continue to require explicit save/discard even with a lagging dirty flag",
+    "Queued/in-flight/delayed recovery autosaves cannot recreate or publish retired editor data",
+    "Retired in-flight errors cannot surface in a replacement editor; active-editor errors still reject",
+    "Recovered source identity, independent tab fork, another record, profile draft and Stop holds remain",
+    "Quota failure keeps encrypted bytes unchanged, displays existing localized error and permits immediate clean close",
+    "Success/failure publication blocked by owner scope, generation, identity or replacement editor changes",
+    "ABA editor open-close sequence does not authorize an obsolete cleanup completion",
+    "Busy/locked/checking/owner/editor/missing-draft entry guards prevent unsafe cleanup"
+  ],
+  "limitations": [
+    "Synthetic handler/storage checks establish source behavior; root owns actual browser repeated EN/AR cycle and focus verification.",
+    "Full exact-source CI acceptance remains pending; historical failed native runs cannot accept this repair."
+  ],
+  "independentReview": "Requested from /root/publication_review; pending at receipt creation"
+}

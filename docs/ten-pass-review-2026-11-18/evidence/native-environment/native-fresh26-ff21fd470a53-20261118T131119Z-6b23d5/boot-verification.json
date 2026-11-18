@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "checkedUTC": "2026-11-18T13:12:31.935105+00:00",
+  "runID": null,
+  "runAttempt": null,
+  "checkoutSHA": null,
+  "passed": false,
+  "reasons": [
+    "The boot log reports a failure.",
+    "The boot log contains a failed or unknown status.",
+    "The final boot status must be terminal Finished."
+  ],
+  "selectedDeviceID": "DD40DE53-211D-41C7-8B9E-58BB5D347528",
+  "selectedDevice": {
+    "udid": "DD40DE53-211D-41C7-8B9E-58BB5D347528",
+    "name": "CareerFinder-ebb3-fresh26",
+    "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-5",
+    "state": "Booted",
+    "isAvailable": true,
+    "availabilityError": null
+  },
+  "processResults": {
+    "boot": 0,
+    "log": 0,
+    "inventory": 0
+  },
+  "bootObservation": {
+    "monitoredDeviceIDs": [
+      "DD40DE53-211D-41C7-8B9E-58BB5D347528"
+    ],
+    "statusRecordCount": 17,
+    "terminalStatusCount": 1,
+    "finalStatus": {
+      "line": 64,
+      "status": 3,
+      "terminal": true,
+      "elapsed": "00:16"
+    },
+    "explicitFinished": false
+  },
+  "inputs": {
+    "bootLog": {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-fresh26-ff21fd470a53-20261118T131119Z-6b23d5/boot.log",
+      "bytes": 3757,
+      "sha256": "38898be7ac2c1171f767d79f214d353297dc6077ed752f0d9f1dc91b146922e9"
+    },
+    "deviceInventory": {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-fresh26-ff21fd470a53-20261118T131119Z-6b23d5/boot-devices.json",
+      "bytes": 64983,
+      "sha256": "7b677faa68b3c00414ff395162f8754bdd84d123e058b3564f5c2dc0e603e67e"
+    }
+  },
+  "verifierSHA256": "5c2233107dfcaddd7273846e3d77aca7902976d34ac73bae6eb4a016647102bf",
+  "scope": "Simulator boot evidence only; this is not native journey acceptance."
+}
