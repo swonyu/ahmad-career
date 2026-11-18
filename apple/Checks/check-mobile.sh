@@ -22,6 +22,8 @@ bash "$task_root/Checks/check-native-recovery.sh"
   "$task_root/AhmadCareer/MobileApplicationState.swift" "$task_root/AhmadCareer/CareerDiscovery.swift" \
   "$task_root/Checks/DiscoveryCheck.swift" -o "$check_dir/discovery-check"
 "$check_dir/discovery-check" "$task_root/Checks/Fixtures/discovery-search-v1.json"
+# Execute the view's actual retry clock and all three retry modifiers on the host.
+python3 "$task_root/Checks/check-discovery-cooldown.py"
 "$compiler" "${common[@]}" "$task_root/AhmadCareer/CareerFeed.swift" \
   "$task_root/AhmadCareer/NativeCareerStore.swift" "$task_root/Checks/NativeStoreCheck.swift" -o "$check_dir/legacy-store-check"
 "$check_dir/legacy-store-check" "$task_root/AhmadCareer/CareerResearch.json"

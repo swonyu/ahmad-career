@@ -1,0 +1,11 @@
+{
+  "at": "2026-11-18T07:40:48.248408+00:00",
+  "command": [
+    "python3",
+    "/Users/saleh/Developer/career-finder-native-cooldown-ui-20261118-d60d62a70f26/apple/Checks/check-discovery-cooldown.py",
+    "--generated",
+    "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-cooldown-ui/candidate-final-generated.swift"
+  ],
+  "exit_code": 0,
+  "source_sha256": "f2d3f6b76690eb26a803a0e721ea07f85c817d0f6c54060e8e712ea9f3d6fe9d"
+}

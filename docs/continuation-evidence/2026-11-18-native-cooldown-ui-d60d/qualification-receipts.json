@@ -1,0 +1,64 @@
+[
+  {
+    "name": "fixture-compile",
+    "command": [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-swift-version",
+      "5",
+      "-Onone",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk",
+      "-module-cache-path",
+      "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-cooldown-qualification-q28kob3y/module-cache",
+      "-D",
+      "DEBUG",
+      "/Users/saleh/Developer/career-finder-native-cooldown-ui-20261118-d60d62a70f26/apple/AhmadCareer/MobileApplicationClient.swift",
+      "/Users/saleh/Developer/career-finder-native-cooldown-ui-20261118-d60d62a70f26/apple/AhmadCareer/MobileApplicationState.swift",
+      "/Users/saleh/Developer/career-finder-native-cooldown-ui-20261118-d60d62a70f26/apple/AhmadCareer/NativeApplicationsStore.swift",
+      "/Users/saleh/Developer/career-finder-native-cooldown-ui-20261118-d60d62a70f26/apple/AhmadCareer/CareerFeed.swift",
+      "/Users/saleh/Developer/career-finder-native-cooldown-ui-20261118-d60d62a70f26/apple/AhmadCareer/NativeCareerStore.swift",
+      "/Users/saleh/Developer/career-finder-native-cooldown-ui-20261118-d60d62a70f26/apple/AhmadCareer/CareerDiscovery.swift",
+      "/Users/saleh/Developer/career-finder-native-cooldown-ui-20261118-d60d62a70f26/apple/AhmadCareer/CareerAppEnvironment.swift",
+      "/Users/saleh/Developer/career-finder-native-cooldown-ui-20261118-d60d62a70f26/apple/Checks/SyntheticPDF.swift",
+      "/Users/saleh/Developer/career-finder-native-cooldown-ui-20261118-d60d62a70f26/apple/Checks/AcceptanceFixtureCheck.swift",
+      "-o",
+      "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-cooldown-qualification-q28kob3y/acceptance-fixture-check"
+    ],
+    "exit_code": 0,
+    "at": "2026-11-18T07:37:03.111908+00:00"
+  },
+  {
+    "name": "fixture-host",
+    "command": [
+      "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-cooldown-qualification-q28kob3y/acceptance-fixture-check"
+    ],
+    "exit_code": 0,
+    "at": "2026-11-18T07:37:03.590568+00:00"
+  },
+  {
+    "name": "ios-source-parse",
+    "command": [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-frontend",
+      "-parse",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS27.2.sdk",
+      "-target",
+      "arm64-apple-ios16.0",
+      "/Users/saleh/Developer/career-finder-native-cooldown-ui-20261118-d60d62a70f26/apple/AhmadCareer/NativeDiscoveryViews.swift",
+      "/Users/saleh/Developer/career-finder-native-cooldown-ui-20261118-d60d62a70f26/apple/UITests/CareerFinderUITests.swift"
+    ],
+    "exit_code": 0,
+    "at": "2026-11-18T07:37:03.636574+00:00"
+  },
+  {
+    "name": "shell-syntax",
+    "command": [
+      "bash",
+      "-n",
+      "/Users/saleh/Developer/career-finder-native-cooldown-ui-20261118-d60d62a70f26/apple/Checks/check-mobile.sh"
+    ],
+    "exit_code": 0,
+    "at": "2026-11-18T07:37:03.641397+00:00"
+  }
+]

@@ -4,13 +4,14 @@ final class CareerFinderUITests: XCTestCase {
     override func setUpWithError() throws { continueAfterFailure = false }
 
     @MainActor
-    private func launch(id: String = UUID().uuidString, largeText: Bool = false, availability: String? = nil, orphanRecord: Bool = false, languages: String = "(en)", recoverableRetry: Bool = false) -> XCUIApplication {
+    private func launch(id: String = UUID().uuidString, largeText: Bool = false, availability: String? = nil, orphanRecord: Bool = false, languages: String = "(en)", recoverableRetry: Bool = false, rateLimitDelay: String? = nil) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = ["-career-ui-acceptance", "-AppleLanguages", languages, "-AppleLocale", "en_US"]
         app.launchEnvironment["CAREER_UI_TEST_ID"] = id
         if let availability { app.launchEnvironment["CAREER_UI_APPLICATION_AVAILABILITY"] = availability }
         if orphanRecord { app.launchEnvironment["CAREER_UI_ORPHAN_RECORD"] = "1" }
         if recoverableRetry { app.launchEnvironment["CAREER_UI_DISCOVERY_RETRY_ONCE"] = "1" }
+        if let rateLimitDelay { app.launchEnvironment["CAREER_UI_DISCOVERY_RATE_LIMIT_ONCE"] = rateLimitDelay }
         if largeText { app.launchArguments += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"] }
         app.launch()
         XCTAssertTrue(app.staticTexts["acceptance.offline"].waitForExistence(timeout: 10), "Acceptance must use an isolated offline workspace")
@@ -709,6 +710,41 @@ final class CareerFinderUITests: XCTestCase {
         XCTAssertFalse(element("discovery.job.fixture-engineer", app: app).exists, "Retry must use the submitted matching query, not the earlier broad result set")
         top(app)
         XCTAssertEqual(app.textFields["discovery.keywords"].value as? String, "nothing matches", "Successful Retry must not replace the newer input draft")
+        app.terminate()
+
+        // Extend this existing search journey (17 journeys remain) with actual
+        // controls backed by zero-second and short future structured failures.
+        for delay in ["0", "10"] {
+            let limited = launch(rateLimitDelay: delay); tab("Search", in: limited)
+            replace(limited.textFields["discovery.keywords"], with: "Interface designer", in: limited)
+            searchFromKeyboard(in: limited)
+            let rateIssue = element("discovery.error", app: limited)
+            reveal(rateIssue, in: limited)
+            XCTAssertTrue(rateIssue.label.contains("Search is temporarily busy."))
+            let again = limited.buttons["discovery.retrySearch"]
+            let exactRetry = limited.buttons["discovery.retry"]
+            if !exactRetry.exists { limited.swipeUp() }
+            XCTAssertTrue(again.waitForExistence(timeout: 5) && exactRetry.waitForExistence(timeout: 5))
+            if delay == "10" {
+                XCTAssertFalse(again.isEnabled, "Search again must wait for the active deadline")
+                XCTAssertFalse(exactRetry.isEnabled, "Exact retry must visibly wait, rather than accept a no-op tap")
+            }
+            let released = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+                again.exists && exactRetry.exists && again.isEnabled && exactRetry.isEnabled
+            }, object: nil)
+            XCTAssertEqual(XCTWaiter.wait(for: [released], timeout: 15), .completed,
+                           "Both retry actions must become enabled after a zero or elapsed deadline")
+            captureObservation("08c-rate-limit-" + delay, app: limited, details: "syntheticRetryAfterSeconds=" + delay)
+            let action = delay == "0" ? again : exactRetry
+            reveal(action, in: limited); action.tap()
+            let result = element("discovery.job.fixture-design", app: limited)
+            let recoveredRateLimit = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+                !rateIssue.exists && result.exists
+            }, object: nil)
+            XCTAssertEqual(XCTWaiter.wait(for: [recoveredRateLimit], timeout: 5), .completed,
+                           "The enabled retry must recover matching results, not only change the control state")
+            limited.terminate()
+        }
     }
 
     @MainActor
