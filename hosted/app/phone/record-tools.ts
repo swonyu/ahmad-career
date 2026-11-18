@@ -16,6 +16,26 @@ export function matchesSavedSearch(job: Pick<Job, "title" | "company" | "locatio
   return terms.every(term => fields.some(value => value.includes(term)));
 }
 
+export type SavedView = "all" | "applied" | "followups";
+export type SavedStage = "all" | ApplicationRecord["stage"];
+
+/** View state only. A bookmark with no record counts as Saved and is not stored. */
+export function matchesSavedList(job: Pick<Job, "title" | "company" | "location">, record: Pick<ApplicationRecord, "note" | "stage" | "appliedElsewhere" | "followUpDate"> | undefined, query: string, view: SavedView, stage: SavedStage): boolean {
+  const viewMatch = view === "all" || view === "applied" && Boolean(record?.appliedElsewhere) || view === "followups" && Boolean(record?.followUpDate) && record?.stage !== "closed";
+  const stageMatch = stage === "all" || (record?.stage ?? "saved") === stage;
+  return matchesSavedSearch(job, record, query) && viewMatch && stageMatch;
+}
+
+export function savedListEmptyMessage(input: { query: string; view: SavedView; stage: SavedStage }): { title: string; detail: string; clear: boolean } {
+  const query = input.query.trim();
+  if (input.stage !== "all" && (query || input.view !== "all")) return { title: "No jobs match these filters.", detail: "Nothing matches this search, view, and application stage together. Clear search and filters to see every saved job and record.", clear: true };
+  if (input.stage !== "all") return { title: "No jobs at this stage.", detail: "No bookmark or application record is in this stage. A bookmark without a record counts as Saved. Clear search and filters to see everything again.", clear: true };
+  if (query) return { title: "No matching saved jobs.", detail: "Try another word, or clear the search and filters to see your saved jobs and notes.", clear: true };
+  if (input.view === "followups") return { title: "A clear next step.", detail: "Open a saved job, choose Edit application record, and add a follow-up date. Closed records stay out of this list.", clear: true };
+  if (input.view === "applied") return { title: "Your applications will go here.", detail: "When you apply on an employer’s website, mark it in your application record.", clear: true };
+  return { title: "Make room for possibility.", detail: "Save a job from Search or add a job link from any public employer page.", clear: false };
+}
+
 function csvCell(value: string): string {
   // Inspect compatibility forms, leading controls and text-quote prefixes too.
   // A visible literal marker survives more import paths than apostrophe-only

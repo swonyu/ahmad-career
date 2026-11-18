@@ -1,0 +1,52 @@
+✔ Saved search finds every term across visible metadata and the active saved note (2.261399ms)
+✔ Saved comparison removes only the agreed Arabic vowel marks and tatweel while preserving distinct letters (0.353351ms)
+✔ CSV is UTF-8 BOM, quoted CRLF data with original Arabic, quotes and multiline notes (4.467532ms)
+✔ CSV visibly neutralizes formula-like text including compatibility characters and leading controls (2.755687ms)
+✔ CSV selects only record fields and translates app labels without translating private content (0.804919ms)
+✔ calendar uses civil DATE and one day even on leap days and the maximum supported year (133.314258ms)
+✔ calendar escapes injected properties and folds long Arabic and emoji by UTF-8 octets (1.620519ms)
+✔ calendar UID is stable for the public job and date without private fields or provider state (3.50107ms)
+✔ record locations are optional for legacy snapshots and bounded for new records (7.670451ms)
+✔ removing a bookmark retains its latest nonblank location for current, legacy and re-bookmarked records (166.104431ms)
+✔ bookmark metadata preservation fails with account mismatch or rejected persistence (28.927208ms)
+✔ actual CSV action exports only the current guest or confirmed account records (18.032833ms)
+▶ actual record exports fail closed before reading unconfirmed, locked, wrong-owner or earlier-workspace data
+  ✔ identity (8.17245ms)
+  ✔ checking (8.097816ms)
+  ✔ locked (7.965968ms)
+  ✔ owner (27.482113ms)
+  ✔ missingOwner (7.961255ms)
+  ✔ olderWorkspace (8.432348ms)
+  ✔ earlierScope (12.02415ms)
+✔ actual record exports fail closed before reading unconfirmed, locked, wrong-owner or earlier-workspace data (81.23126ms)
+▶ actual calendar action rechecks identity, generation, workspace and record after asynchronous hashing
+  ✔ revalidation (18.773572ms)
+  ✔ generation (30.455575ms)
+  ✔ owner (9.20982ms)
+  ✔ workspace (7.899267ms)
+  ✔ snapshot (10.367737ms)
+  ✔ date (7.853169ms)
+  ✔ removal (9.754086ms)
+✔ actual calendar action rechecks identity, generation, workspace and record after asynchronous hashing (95.635433ms)
+✔ actual calendar action accepts a saved record and rejects unsaved editor copies or missing dates (13.386032ms)
+✔ actual Saved selector searches active notes and keeps the existing applied/follow-up filters (8.007259ms)
+✔ new controls stay inside existing disclosures and require a saved valid follow-up day (33.021359ms)
+✔ actual download helper preserves content and delays successful URL release for the browser (4.353748ms)
+✔ actual download helper attaches no DOM resource when URL allocation fails (2.604496ms)
+✔ actual download helper releases its URL after a synchronous create failure (2.585475ms)
+✔ actual download helper releases its URL after a synchronous append failure (2.395967ms)
+✔ actual download helper releases its URL after a synchronous click failure (2.441478ms)
+✔ actual download helper still releases the URL if post-click link removal throws (2.323051ms)
+✔ actual exportRecordsCSV preserves the snapshot and withholds success when download activation throws (13.700917ms)
+✔ actual exportFollowUp preserves the snapshot and withholds success when download activation throws (26.246369ms)
+✔ application stage composes with search and the existing saved views without changing stored records (100.381553ms)
+✔ Clear and the follow-up shortcut reset the stage select without persisting it (23.68411ms)
+✔ a saved stage change updates the filtered list and unsaved, cancelled, failed, or stale edits do not (42.935077ms)
+ℹ tests 42
+ℹ suites 0
+ℹ pass 42
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1412.798191

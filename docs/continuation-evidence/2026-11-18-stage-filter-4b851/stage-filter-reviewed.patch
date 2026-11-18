@@ -1,0 +1,375 @@
+diff --git a/hosted/app/i18n/messages.ar.json b/hosted/app/i18n/messages.ar.json
+index 6effec2..a727597 100644
+--- a/hosted/app/i18n/messages.ar.json
++++ b/hosted/app/i18n/messages.ar.json
+@@ -63,6 +63,7 @@
+   "After a file is erased or an upload is retired, the service keeps an empty object at a random storage key so a delayed upload cannot restore deleted content. These empty markers contain no CV bytes, account identifier, filename, or document fingerprint.": "بعد محو ملف أو إيقاف عملية رفع، تحتفظ الخدمة بعنصر فارغ بمفتاح تخزين عشوائي لمنع عملية رفع متأخرة من استعادة المحتوى المحذوف. لا تتضمن هذه العلامات الفارغة أي بيانات للسيرة الذاتية، أو معرّف حساب، أو اسم ملف، أو بصمة مستند.",
+   "All": "الكل",
+   "All profile details": "جميع تفاصيل الملف الشخصي",
++  "All stages": "كل المراحل",
+   "Allow this employer to contact me about future opportunities when it asks for that permission.": "أسمح لجهة العمل هذه بالتواصل معي بشأن فرص مستقبلية عندما تطلب هذا الإذن.",
+   "Allow this employer to process my application data when it asks for consent.": "أسمح لجهة العمل هذه بمعالجة بيانات طلبي عندما تطلب الموافقة.",
+   "An application request already in progress may need to finish first. If deletion is interrupted, retry here until removal is confirmed.": "قد يحتاج طلب توظيف قيد الإرسال إلى الانتهاء أولًا. إذا انقطع الحذف، فأعد المحاولة هنا حتى يتأكد اكتمال الإزالة.",
+@@ -84,6 +85,7 @@
+   "Application record · bookmark removed": "سجل تقديم · أُزيلت العلامة المرجعية",
+   "Application record saved on this phone. Your private notes were not uploaded.": "حُفظ سجل التقديم على هذا الهاتف. لم تُرفع ملاحظاتك الخاصة.",
+   "Application records": "سجلات التقديم",
++  "Application stage": "مرحلة التقديم",
+   "Applications": "طلبات التوظيف",
+   "Applied": "تم التقديم",
+   "Applied date": "تاريخ التقديم",
+@@ -413,6 +415,7 @@
+   "No": "لا",
+   "No account needed to search or keep a shortlist.": "لا تحتاج إلى حساب للبحث أو حفظ قائمة مختارة من الوظائف.",
+   "No active phone connections. Your saved workspace is still here.": "لا توجد اتصالات نشطة بالهاتف. مساحة عملك المحفوظة لا تزال هنا.",
++  "No bookmark or application record is in this stage. A bookmark without a record counts as Saved. Clear search and filters to see everything again.": "لا توجد علامة مرجعية أو سجل تقديم في هذه المرحلة. تُحتسب العلامة المرجعية بلا سجل ضمن المحفوظات. امسح البحث وعوامل التصفية لرؤية كل شيء مرة أخرى.",
+   "No CV uploaded. Choose a PDF in the phone app when you are ready.": "لم تُرفع سيرة ذاتية. اختر ملف PDF في تطبيق الهاتف عندما تكون مستعدًا.",
+   "No matching jobs in these boards.": "لا توجد وظائف مطابقة في لوحات الوظائف هذه.",
+   "No matching saved jobs.": "لا توجد وظائف محفوظة مطابقة.",
+@@ -424,6 +427,7 @@
+   "None": "لا يوجد",
+   "Not added": "غير مضاف",
+   "Not provided": "غير مقدَّم",
++  "Nothing matches this search, view, and application stage together. Clear search and filters to see every saved job and record.": "لا يوجد ما يطابق البحث والعرض ومرحلة التقديم معًا. امسح البحث وعوامل التصفية لرؤية كل الوظائف وسجلات التقديم المحفوظة.",
+   "of": "من",
+   "On iPhone, open Career Finder in Safari, tap Share, then Add to Home Screen. On Android, open the browser menu and choose Add to Home screen or Install app if offered. An internet connection is needed to open this web app and confirm an account. Clearing browser data can remove its local drafts.": "على iPhone، افتح Career Finder في Safari، واضغط على «مشاركة» ثم «إضافة إلى الشاشة الرئيسية». على Android، افتح قائمة المتصفح واختر «إضافة إلى الشاشة الرئيسية» أو «تثبيت التطبيق» إذا ظهر الخيار. يلزم اتصال بالإنترنت لفتح تطبيق الويب هذا والتحقق من الحساب. وقد يؤدي مسح بيانات المتصفح إلى إزالة مسوداته المحلية.",
+   "On site": "في مقر العمل",
+@@ -1317,6 +1321,8 @@
+   "Retry this search": "إعادة البحث نفسه",
+   "Some boards could not provide current results. This search may be incomplete.": "تعذّر جلب نتائج حديثة من بعض مواقع التوظيف. قد تكون نتائج هذا البحث غير مكتملة.",
+   "No current matches could be confirmed.": "تعذّر التأكد من وجود فرص مطابقة حاليًا.",
++  "No jobs at this stage.": "لا توجد وظائف في هذه المرحلة.",
++  "No jobs match these filters.": "لا توجد وظائف تطابق عوامل التصفية هذه.",
+   "Retry this search or open an employer’s website to check its current openings.": "أعِد محاولة هذا البحث أو افتح موقع صاحب العمل للاطلاع على الفرص المتاحة حاليًا.",
+   "To keep leading zeros and number-like text, import quoted fields as text or set text columns to Text. Use JSON for original values.": "للحفاظ على الأصفار في البداية والنصوص التي تشبه الأرقام، استورد الحقول المحاطة بعلامات اقتباس كنص أو اضبط نوع الأعمدة النصية على «نص». استخدم JSON للاحتفاظ بالقيم الأصلية."
+ }
+diff --git a/hosted/app/phone/PhoneApp.tsx b/hosted/app/phone/PhoneApp.tsx
+index 86d6e90..d9c213f 100644
+--- a/hosted/app/phone/PhoneApp.tsx
++++ b/hosted/app/phone/PhoneApp.tsx
+@@ -16,12 +16,12 @@ import OAuthFeedback from "../components/OAuthFeedback";
+ import { phoneSafety, heldPlan } from "./safety";
+ import { phoneAPI } from "./api";
+ import { readCheckedPDF } from "./pdf";
+-import { applicationRecordsCSV, followUpCalendar, matchesSavedSearch } from "./record-tools";
++import { applicationRecordsCSV, followUpCalendar, matchesSavedList, savedListEmptyMessage, type SavedStage } from "./record-tools";
+ import { observeNavigationInset } from "./navigation-inset";
+ import { continueApprovedPlan } from "./dispatch";
+ import { stopBatchOnce as stopCapturedBatch, type BatchContext } from "./batch-stop";
+ import { JobCard, Modal, ProfileEditor, Readiness, RecordEditor, RecordSummary, ReviewDetails } from "./components";
+-import { blankEmployerAnswer, receiptLabel, blankProfile, blankRecord, blankSnapshot, catalogSchema, civilDate, checkReview, discoveryPageSchema, discoveryPath, draftProfileSchema, emptyFilters, jobIdentity, jobSchema, linkedInSearch, parseSnapshot, planSchema, profileEssentials, profileRequest, profileSchema, publicURL, reviewRequest, today, updateRecord, workspaceSchema, type ApplicationRecord, type EmployerAnswer, type PhoneSafety, type RecoveryDraft, type Catalog, type DiscoveryPage, type Filters, type Job, type PhoneSnapshot, type Plan, type Profile, type Workspace } from "./model";
++import { blankEmployerAnswer, receiptLabel, blankProfile, blankRecord, blankSnapshot, catalogSchema, civilDate, stageNames, stages, checkReview, discoveryPageSchema, discoveryPath, draftProfileSchema, emptyFilters, jobIdentity, jobSchema, linkedInSearch, parseSnapshot, planSchema, profileEssentials, profileRequest, profileSchema, publicURL, reviewRequest, today, updateRecord, workspaceSchema, type ApplicationRecord, type EmployerAnswer, type PhoneSafety, type RecoveryDraft, type Catalog, type DiscoveryPage, type Filters, type Job, type PhoneSnapshot, type Plan, type Profile, type Workspace } from "./model";
+ import { PhoneVaultError, exportPhoneSnapshot, listPhoneSnapshots, loadPhoneSnapshot, removePhoneSnapshot, savePhoneSnapshot } from "./vault";
+ 
+ type Account = { id: string; email: string; name: string } | null;
+@@ -104,7 +104,7 @@ export default function PhoneApp({ account }: { account: Account }) {
+   const [boardsTouched, setBoardsTouched] = useState(false), [customBoard, setCustomBoard] = useState("");
+   const [filters, setFiltersState] = useState<Filters>({ ...emptyFilters }), [searchPage, setSearchPage] = useState<DiscoveryPage | null>(null), [searchedFilters, setSearchedFilters] = useState<Filters | null>(null), [restored, setRestored] = useState(false);
+   const filterDraftRef = useRef<Filters>({ ...emptyFilters });
+-  const [savedFilter, setSavedFilter] = useState<"all" | "applied" | "followups">("all"), [savedQuery, setSavedQuery] = useState("");
++  const [savedFilter, setSavedFilter] = useState<"all" | "applied" | "followups">("all"), [savedQuery, setSavedQuery] = useState(""), [savedStage, setSavedStage] = useState<SavedStage>("all");
+   const [dialog, setDialog] = useState<Dialog>(null), [selected, setSelected] = useState<string[]>([]), [plan, setPlan] = useState<Plan | null>(null);
+   const [employerAnswers, setEmployerAnswers] = useState<Record<string, EmployerAnswer>>({}), [reviewAccepted, setReviewAccepted] = useState(false);
+   const [batchPlanId, setBatchPlanId] = useState<string | null>(null), [stopRequested, setStopRequested] = useState(false);
+@@ -681,8 +681,9 @@ export default function PhoneApp({ account }: { account: Account }) {
+   const recordJobs = records.filter(record => !jobs.some(job => jobIdentity(job.url) === record.identity)).map(record => ({ id: record.identity, title: record.title, company: record.company, url: record.identity, location: record.location ?? "", country: "" }));
+   const shownJobs = [...jobs, ...recordJobs].filter(job => {
+     const record = recordsByID.get(jobIdentity(job.url));
+-    return matchesSavedSearch(job, record, savedQuery) && (savedFilter === "all" || savedFilter === "applied" && record?.appliedElsewhere || savedFilter === "followups" && record?.followUpDate && record.stage !== "closed");
++    return matchesSavedList(job, record, savedQuery, savedFilter, savedStage);
+   }).sort((a,b) => savedFilter === "followups" ? (recordsByID.get(jobIdentity(a.url))?.followUpDate ?? "").localeCompare(recordsByID.get(jobIdentity(b.url))?.followUpDate ?? "") : 0);
++  const savedEmpty = savedListEmptyMessage({ query: savedQuery, view: savedFilter, stage: savedStage });
+   const detailRecord = dialog?.kind === "details" ? recordsByID.get(jobIdentity(dialog.job.url)) : undefined;
+   const onlineOnlyJobs = workspace?.jobs.filter(job => !jobs.some(localJob => jobIdentity(localJob.url) === jobIdentity(job.url))) ?? [];
+   const recoverableDrafts = safetyState.recovery;
+@@ -730,7 +731,7 @@ export default function PhoneApp({ account }: { account: Account }) {
+         {catalogError && <p className="phone-inline-note">{t(catalogError)} {t(" You can still add an employer board link under Search options.")}</p>}
+         </div><aside className={`phone-search-aside${searchPage ? " has-results" : ""}`} aria-label={t("Your search workspace")}><section className="search-companion"><span className="search-companion-icon"><Bookmark size={23} aria-hidden="true" /></span><h2>{t("A place for every next move.")}</h2><p>{t("Save the openings you like. Keep notes and follow-ups together. Bring your best details when it’s time to apply.")}</p><div className="workspace-shortcuts"><button onClick={() => navigate("saved")}><span><strong>{formatNumber(jobs.length, language)}</strong>{t(jobs.length === 1 ? "Saved job" : "Saved jobs")}</span><ArrowRight size={18} aria-hidden="true" /></button><button onClick={() => navigate("profile")}><span>{t("Your profile")}<strong>{ready ? t("Essentials ready") : t("Add your essentials")}</strong></span><ArrowRight size={18} aria-hidden="true" /></button></div></section>
+         <a className="phone-link-card" href={linkedInSearch(filters)} target="_blank" rel="noopener noreferrer"><div><strong>{t("Search on LinkedIn")}</strong><span>{t("Open the same title and location on LinkedIn")}</span></div><ArrowUpRight size={21} aria-hidden="true" /></a>
+-        {due > 0 && <button className="phone-link-card phone-followup-link" onClick={() => { setSavedQuery(""); setSavedFilter("followups"); navigate("saved"); }}><div><strong>{t("Follow-ups due: {0}", [formatNumber(due, language)])}</strong><span>{t("Make time for your next small step")}</span></div><ChevronRight size={21} aria-hidden="true" /></button>}
++        {due > 0 && <button className="phone-link-card phone-followup-link" onClick={() => { setSavedQuery(""); setSavedFilter("followups"); setSavedStage("all"); navigate("saved"); }}><div><strong>{t("Follow-ups due: {0}", [formatNumber(due, language)])}</strong><span>{t("Make time for your next small step")}</span></div><ChevronRight size={21} aria-hidden="true" /></button>}
+         </aside></div>
+         {!searchPage ? <section className="phone-empty"><p className="phone-kicker">{t("A FEW PLACES TO BEGIN")}</p><h2>{t("Start with what interests you.")}</h2><p>{t("Choose a direction, or search for something entirely your own.")}</p><div className="phone-suggestions">{["Customer service", "Software", "Healthcare"].map(value => <button key={value} onClick={() => setFilters({ ...filters, query: value })}>{t(value)}</button>)}</div></section> : <section aria-label={t("Job search results")} className="phone-results">
+           <div className="phone-section-heading"><h2>{restored ? t("Previous results") : t("Search results")}</h2><span>{t("{0} shown", [formatNumber(searchPage.jobs.length, language)])}</span></div>
+@@ -752,8 +753,9 @@ export default function PhoneApp({ account }: { account: Account }) {
+ 
+         <div className="phone-toolbar"><span>{savedJobsLabel(jobs.length, language)}</span><button className="text-button" disabled={cannotSave} onClick={() => { setDialogDirty(false); setConfirmDialogDiscard(false); setDialog({ kind: "add" }); }}><Plus size={18} aria-hidden="true" />{t("Add job link")}</button></div>
+         <div className="phone-segmented" aria-label={t("Filter saved jobs")}>{([ ["all","All"], ["applied","Applied"], ["followups","Follow-ups"] ] as const).map(([value,label]) => <button key={value} aria-pressed={savedFilter === value} onClick={() => setSavedFilter(value)}>{t(label)}</button>)}</div>
++        {(jobs.length > 0 || records.length > 0) && <label className="phone-saved-stage">{t("Application stage")}<select value={savedStage} onChange={event => { const value = event.target.value; if (value === "all" || (stages as readonly string[]).includes(value)) setSavedStage(value as SavedStage); }}><option value="all">{t("All stages")}</option>{stages.map(stage => <option key={stage} value={stage}>{t(stageNames[stage])}</option>)}</select></label>}
+         {(jobs.length > 0 || records.length > 0) && <label className="phone-saved-search"><span className="visually-hidden">{t("Find a saved job, employer or note")}</span><input type="search" dir="auto" maxLength={200} value={savedQuery} onChange={event => setSavedQuery(event.target.value)} placeholder={t("Find a job, employer or note")} /></label>}
+-        {!shownJobs.length ? <section className="phone-empty"><span className="empty-symbol"><Bookmark size={28} aria-hidden="true" /></span><h2>{savedQuery.trim() ? t("No matching saved jobs.") : savedFilter === "followups" ? t("A clear next step.") : savedFilter === "applied" ? t("Your applications will go here.") : t("Make room for possibility.")}</h2><p>{savedQuery.trim() ? t("Try another word, or clear the search and filters to see your saved jobs and notes.") : savedFilter === "followups" ? t("Open a saved job, choose Edit application record, and add a follow-up date. Closed records stay out of this list.") : savedFilter === "applied" ? t("When you apply on an employer’s website, mark it in your application record.") : t("Save a job from Search or add a job link from any public employer page.")}</p>{(jobs.length > 0 || records.length > 0) && (savedQuery.trim() || savedFilter !== "all") && <button className="button secondary" onClick={() => { setSavedQuery(""); setSavedFilter("all"); }}>{t("Clear search and filters")}</button>}{savedFilter === "all" && !savedQuery && <button className="button primary" onClick={() => navigate("search")}>{t("Explore jobs ")}<ArrowRight size={18} aria-hidden="true" /></button>}</section> : <div className="phone-saved-list">{shownJobs.map(job => {
++        {!shownJobs.length ? <section className="phone-empty"><span className="empty-symbol"><Bookmark size={28} aria-hidden="true" /></span><h2>{t(savedEmpty.title)}</h2><p>{t(savedEmpty.detail)}</p>{savedEmpty.clear && <button className="button secondary" onClick={() => { setSavedQuery(""); setSavedFilter("all"); setSavedStage("all"); }}>{t("Clear search and filters")}</button>}{!savedEmpty.clear && <button className="button primary" onClick={() => navigate("search")}>{t("Explore jobs ")}<ArrowRight size={18} aria-hidden="true" /></button>}</section> : <div className="phone-saved-list">{shownJobs.map(job => {
+           const identity = jobIdentity(job.url), record = recordsByID.get(identity), bookmarked = jobs.some(saved => jobIdentity(saved.url) === identity);
+           return <article className="phone-card phone-saved-card" key={identity}><p className="phone-company" dir="auto">{job.company}</p><h2 dir="auto"><button className="job-title-button" onClick={() => setDialog({ kind: "details", job })}>{job.title}</button></h2>{!bookmarked && <p className="phone-note">{t("Application record · bookmark removed")}</p>}<RecordSummary record={record} />{record?.followUpDate && record.followUpDate <= today() && record.stage !== "closed" && <p className="phone-due">{t("Follow-up due")}</p>}<div className="phone-actions"><button className="button secondary" disabled={cannotSave} onClick={() => editRecord(job)}>{t("Edit application record")}</button><a className="text-button" href={job.url} target="_blank" rel="noopener noreferrer">{t("Open job ")}<ArrowUpRight size={16} aria-hidden="true" /></a></div></article>;
+         })}</div>}
+diff --git a/hosted/app/phone/phone.css b/hosted/app/phone/phone.css
+index c298148..d35375d 100644
+--- a/hosted/app/phone/phone.css
++++ b/hosted/app/phone/phone.css
+@@ -3,7 +3,7 @@
+ .phone-shell h1,.phone-shell h2,.phone-shell h3,.phone-dialog h2,.phone-dialog h3{overflow-wrap:anywhere;letter-spacing:-.035em}.phone-shell h1{font-size:clamp(2.1rem,8vw,2.85rem);font-weight:680;line-height:1.12;max-width:13ch}.phone-shell h2,.phone-dialog h2{font-size:1.28rem;line-height:1.3}.phone-shell h3,.phone-dialog h3{font-size:1.04rem;line-height:1.4}.phone-shell p,.phone-dialog p{overflow-wrap:anywhere}.phone-shell button,.phone-shell a,.phone-dialog button,.phone-dialog a{touch-action:manipulation}.phone-shell button,.phone-dialog button{font:inherit}.phone-shell svg,.phone-dialog svg{flex-shrink:0}.phone-shell input,.phone-shell select,.phone-shell textarea,.phone-dialog input,.phone-dialog select,.phone-dialog textarea{font:inherit;font-size:1rem;min-height:48px;min-width:0;width:100%;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);padding:12px;line-height:1.5;appearance:auto}.phone-shell input[type=checkbox],.phone-dialog input[type=checkbox]{appearance:auto;width:20px;height:20px;min-height:20px;flex-shrink:0;accent-color:var(--accent);margin:3px 0}.phone-shell textarea,.phone-dialog textarea{resize:vertical;min-height:90px}.phone-shell label,.phone-dialog label{display:block;font-size:.9rem;font-weight:600;line-height:1.6;margin:15px 0}.phone-shell label>input,.phone-shell label>select,.phone-shell label>textarea,.phone-dialog label>input,.phone-dialog label>select,.phone-dialog label>textarea{display:block;margin-top:7px}.phone-shell label:first-child,.phone-dialog label:first-child{margin-top:0}.phone-shell fieldset,.phone-dialog fieldset{padding:0;margin:0;border:0;min-width:0}.phone-shell :focus-visible,.phone-dialog :focus-visible{outline:3px solid var(--accent);outline-offset:3px}.phone-shell h1:focus{outline:none}.phone-shell .button,.phone-dialog .button{min-height:50px;font-size:.94rem;gap:10px;padding:13px 16px;line-height:1.5;text-align:center;border-radius:13px;overflow-wrap:anywhere}.phone-shell .button:hover,.phone-dialog .button:hover{transform:none}.phone-shell .button:disabled,.phone-dialog .button:disabled{opacity:.55}.phone-shell .optional,.phone-dialog .optional{font-weight:400;color:var(--muted);font-size:.8rem}.visually-hidden{position:absolute!important;width:1px!important;height:1px!important;min-height:0!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+ .phone-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:21px 22px 17px;border-bottom:1px solid var(--line);background:var(--surface)}.phone-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-size:1.1rem;line-height:1.2;font-weight:720;letter-spacing:-.035em}.phone-brand:hover{text-decoration:none}.phone-brand .brand-icon{width:35px;height:35px;border-radius:11px}.phone-brand .brand-icon svg{width:25px;height:25px}.icon-button{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;min-width:44px;min-height:44px;padding:10px;border:0;background:transparent;color:var(--muted);border-radius:50%;text-decoration:none}.icon-button:hover{background:var(--soft);color:var(--accent)}.icon-button.is-saved{color:var(--accent);opacity:1}.phone-main{padding:28px 20px calc(var(--phone-nav-height, 7rem) + 1.5rem);min-height:calc(100dvh - 80px)}.phone-page-heading{margin-bottom:25px}.phone-kicker{font-size:.65rem;line-height:1.8;letter-spacing:.15em;font-weight:750;color:var(--accent);margin-bottom:10px}.phone-page-heading>p:last-child{font-size:.94rem;color:var(--muted);line-height:1.65;margin-top:13px;max-width:36ch}.phone-card,.phone-search-card{background:var(--surface);border:1px solid var(--line);border-radius:21px;padding:21px;margin-bottom:17px;min-width:0}.phone-search-card{box-shadow:0 8px 28px #191d2e08}.phone-card>p{font-size:.92rem;color:var(--muted);margin:11px 0 16px;line-height:1.65}.phone-note{font-size:.82rem!important;line-height:1.65!important;color:var(--muted);margin:10px 0 16px}.phone-card>p:last-child{margin-bottom:0}.phone-inline-note,.phone-warning{border-radius:16px;border:1px solid var(--line);background:var(--soft);padding:17px;margin:17px 0;font-size:.88rem;line-height:1.65;overflow-wrap:anywhere}.phone-inline-note>p,.phone-warning>p{margin:8px 0 14px}.phone-inline-note>p:last-child,.phone-warning>p:last-child{margin-bottom:0}.phone-warning{background:var(--surface)}.phone-warning h2{font-size:1.12rem}.phone-warning .button{margin-top:10px}.phone-notice{display:flex;align-items:flex-start;gap:4px;border:1px solid var(--line);border-radius:15px;padding:13px 9px 13px 16px;margin:0 0 18px;background:var(--soft);font-size:.88rem;line-height:1.6}.phone-notice>p{flex:1;padding-top:5px}.phone-notice.is-error{background:var(--danger-bg);color:var(--danger);border-color:color-mix(in srgb,var(--danger),transparent 70%)}.phone-notice .icon-button{color:inherit}.phone-progress{display:flex;align-items:center;gap:10px;font-size:.84rem;color:var(--accent);padding:2px 4px 18px}.phone-progress>span{flex:1}.spin{animation:phone-spin 1.2s linear infinite}@keyframes phone-spin{to{transform:rotate(360deg)}}
+ .phone-input-icon{position:relative;margin-top:7px}.phone-input-icon>svg{position:absolute;left:13px;top:15px;color:var(--muted)}.phone-input-icon>input{padding-left:41px}.phone-check{display:flex!important;align-items:flex-start;gap:11px;min-height:44px;padding:7px 0;line-height:1.6!important;font-weight:450!important}.phone-check>span{min-width:0;flex:1;overflow-wrap:anywhere}.phone-search-options{margin:5px 0 17px;border-top:1px solid var(--line)}.phone-search-options>summary{display:flex;align-items:center;gap:9px;min-height:48px;padding:12px 0;cursor:pointer;font-size:.85rem;font-weight:600}.phone-search-options>summary>span{margin-left:auto;font-size:.75rem;color:var(--muted);font-weight:400}.phone-search-options .phone-check{margin:0}.phone-link-card{display:flex;align-items:center;justify-content:space-between;gap:15px;width:100%;min-height:72px;border:1px solid var(--line);border-radius:18px;background:var(--surface);padding:17px 18px;margin:16px 0;text-decoration:none;color:var(--ink);text-align:left;font-size:.9rem;line-height:1.45}.phone-link-card:hover{text-decoration:none;background:var(--soft)}.phone-link-card>div{min-width:0;flex:1}.phone-link-card strong,.phone-link-card span{display:block;overflow-wrap:anywhere}.phone-link-card strong{font-weight:650}.phone-link-card span{font-size:.78rem;color:var(--muted);margin-top:5px;line-height:1.5}.phone-followup-link{background:var(--soft)}.phone-empty{text-align:center;padding:35px 13px 25px}.phone-empty h2{font-size:1.25rem;margin:18px auto 10px;max-width:24ch}.phone-empty p{font-size:.9rem;line-height:1.75;max-width:38ch;margin:0 auto;color:var(--muted)}.phone-empty .button{margin-top:22px}.phone-empty.compact{padding:18px 12px 24px}.phone-empty.compact h2{margin-top:0}.empty-symbol{display:inline-grid;place-items:center;width:70px;height:70px;border-radius:25px;background:var(--soft);color:var(--accent)}.phone-suggestions{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:21px}.phone-suggestions>button{border:1px solid var(--line);border-radius:30px;background:var(--surface);color:var(--accent);min-height:44px;padding:9px 13px;font-size:.77rem}.phone-section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:28px 0 9px}.phone-section-heading h2{font-size:1.23rem}.phone-section-heading>span{font-size:.77rem;color:var(--muted);flex-shrink:0}.phone-job-card{background:var(--surface);border:1px solid var(--line);border-radius:19px;padding:18px;margin:13px 0}.phone-job-top{display:flex;align-items:flex-start;gap:11px}.phone-job-top>div{flex:1;min-width:0}.company-avatar{display:grid;place-items:center;width:40px;height:40px;border-radius:13px;background:var(--soft);color:var(--accent);font-size:1.05rem;font-weight:700;flex-shrink:0}.phone-company{font-size:.8rem;color:var(--muted);line-height:1.6;overflow-wrap:anywhere}.phone-job-top h3{font-size:1.04rem;line-height:1.4;letter-spacing:-.02em;margin-top:3px}.phone-job-top>.icon-button{margin:-4px -7px 0 0}.job-title-button{display:block;background:none;border:0;color:inherit;padding:4px 0;text-align:left;font:inherit!important;font-weight:650!important;line-height:inherit;letter-spacing:inherit;overflow-wrap:anywhere;min-height:44px;width:100%}.job-title-button:hover{color:var(--accent)}.phone-job-location{font-size:.8rem;color:var(--muted);margin:12px 0}.phone-job-summary{font-size:.83rem;line-height:1.65;color:var(--muted);margin:9px 0 13px}.phone-job-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 16px;padding-top:9px;border-top:1px solid var(--line);font-size:.76rem}.phone-job-footer>span{color:var(--muted)}.phone-job-footer a{display:inline-flex;align-items:center;gap:5px;min-height:44px;margin-left:auto;font-weight:600}.phone-source-note{padding:13px 15px;border-left:3px solid var(--accent);background:var(--soft);border-radius:0 12px 12px 0;margin:12px 0;font-size:.8rem}.phone-source-note p{color:var(--muted);margin-top:5px}
+-.phone-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;font-size:.83rem;color:var(--muted)}.text-button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:9px 0;border:0;background:none;color:var(--accent);font-size:.85rem!important;font-weight:600!important;text-align:left;line-height:1.5;overflow-wrap:anywhere}.text-button:hover{text-decoration:underline;text-underline-offset:4px}.danger-text{color:var(--danger)!important}.phone-segmented{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:5px;background:var(--soft);border:1px solid var(--line);border-radius:15px;margin-bottom:20px}.phone-segmented>button{min-height:44px;background:none;color:var(--muted);border:0;border-radius:10px;font-size:.83rem;font-weight:550;padding:10px 6px;overflow-wrap:anywhere}.phone-segmented>button[aria-pressed=true]{background:var(--surface);color:var(--ink);box-shadow:0 2px 6px #171d3908}.phone-saved-search{margin:0 0 21px!important}.phone-saved-card h2{font-size:1.1rem}.phone-record-summary{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;color:var(--muted);font-size:.76rem;line-height:1.5;margin:12px 0}.phone-record-summary>span{overflow-wrap:anywhere}.phone-stage{display:inline-flex;padding:5px 10px;background:var(--soft);color:var(--accent);border:1px solid var(--line);border-radius:20px;font-weight:600}.phone-due{font-size:.79rem!important;font-weight:650;color:var(--accent)!important}.phone-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px;margin-top:15px}.phone-saved-card .phone-actions{border-top:1px solid var(--line);padding-top:14px}.phone-saved-card .phone-actions>.button{flex:1}.phone-apply-intro>svg{color:var(--accent);margin:2px 0 16px}.phone-apply-intro>h2{max-width:24ch}.phone-readiness{list-style:none;display:flex;flex-wrap:wrap;gap:7px;margin:17px 0;padding:0}.phone-readiness>li{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:25px;padding:7px 10px;font-size:.72rem;line-height:1.4;color:var(--muted);background:var(--bg)}.phone-readiness>li.is-ready{color:var(--accent);background:var(--soft)}.readiness-dot{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--muted);margin:0 3px}.phone-job-choice{border-bottom:1px solid var(--line);padding:13px 0}.phone-job-choice small{display:block;color:var(--muted);font-size:.78rem;margin-top:4px}.phone-review-data{font-size:.85rem;margin:16px 0}.phone-review-data dt{font-size:.74rem;color:var(--muted);margin-top:12px}.phone-review-data dd{margin:4px 0 0;overflow-wrap:anywhere;line-height:1.65}.preserve-lines{white-space:pre-wrap}.phone-review-items .phone-card{margin-top:17px}.phone-recoverable{border-top:1px solid var(--line);padding-top:16px;margin-top:18px}.phone-recoverable>p{font-size:.86rem}.phone-recoverable>p>span{display:block;font-size:.77rem;color:var(--muted);margin-top:5px}.phone-receipt-status{display:flex;align-items:center;gap:7px;color:var(--accent)!important;font-size:.8rem!important;font-weight:650}.phone-receipt>p{margin:7px 0}.phone-receipt>a{font-size:.81rem;display:inline-flex;align-items:center;gap:5px;min-height:44px;margin-top:4px}.phone-receipt.needs-attention{border-color:var(--danger)}
++.phone-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;font-size:.83rem;color:var(--muted)}.text-button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:9px 0;border:0;background:none;color:var(--accent);font-size:.85rem!important;font-weight:600!important;text-align:left;line-height:1.5;overflow-wrap:anywhere}.text-button:hover{text-decoration:underline;text-underline-offset:4px}.danger-text{color:var(--danger)!important}.phone-segmented{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:5px;background:var(--soft);border:1px solid var(--line);border-radius:15px;margin-bottom:20px}.phone-segmented>button{min-height:44px;background:none;color:var(--muted);border:0;border-radius:10px;font-size:.83rem;font-weight:550;padding:10px 6px;overflow-wrap:anywhere}.phone-segmented>button[aria-pressed=true]{background:var(--surface);color:var(--ink);box-shadow:0 2px 6px #171d3908}.phone-saved-search{margin:0 0 21px!important}.phone-saved-stage{display:block;margin:0 0 16px}.phone-saved-card h2{font-size:1.1rem}.phone-record-summary{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;color:var(--muted);font-size:.76rem;line-height:1.5;margin:12px 0}.phone-record-summary>span{overflow-wrap:anywhere}.phone-stage{display:inline-flex;padding:5px 10px;background:var(--soft);color:var(--accent);border:1px solid var(--line);border-radius:20px;font-weight:600}.phone-due{font-size:.79rem!important;font-weight:650;color:var(--accent)!important}.phone-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px;margin-top:15px}.phone-saved-card .phone-actions{border-top:1px solid var(--line);padding-top:14px}.phone-saved-card .phone-actions>.button{flex:1}.phone-apply-intro>svg{color:var(--accent);margin:2px 0 16px}.phone-apply-intro>h2{max-width:24ch}.phone-readiness{list-style:none;display:flex;flex-wrap:wrap;gap:7px;margin:17px 0;padding:0}.phone-readiness>li{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:25px;padding:7px 10px;font-size:.72rem;line-height:1.4;color:var(--muted);background:var(--bg)}.phone-readiness>li.is-ready{color:var(--accent);background:var(--soft)}.readiness-dot{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--muted);margin:0 3px}.phone-job-choice{border-bottom:1px solid var(--line);padding:13px 0}.phone-job-choice small{display:block;color:var(--muted);font-size:.78rem;margin-top:4px}.phone-review-data{font-size:.85rem;margin:16px 0}.phone-review-data dt{font-size:.74rem;color:var(--muted);margin-top:12px}.phone-review-data dd{margin:4px 0 0;overflow-wrap:anywhere;line-height:1.65}.preserve-lines{white-space:pre-wrap}.phone-review-items .phone-card{margin-top:17px}.phone-recoverable{border-top:1px solid var(--line);padding-top:16px;margin-top:18px}.phone-recoverable>p{font-size:.86rem}.phone-recoverable>p>span{display:block;font-size:.77rem;color:var(--muted);margin-top:5px}.phone-receipt-status{display:flex;align-items:center;gap:7px;color:var(--accent)!important;font-size:.8rem!important;font-weight:650}.phone-receipt>p{margin:7px 0}.phone-receipt>a{font-size:.81rem;display:inline-flex;align-items:center;gap:5px;min-height:44px;margin-top:4px}.phone-receipt.needs-attention{border-color:var(--danger)}
+ .phone-account-card{display:flex;align-items:center;gap:12px;background:var(--soft);border:1px solid var(--line);border-radius:19px;padding:17px;margin-bottom:20px}.phone-account-card>div{min-width:0;flex:1}.phone-account-card strong{font-size:.9rem}.phone-account-card p{font-size:.78rem;line-height:1.5;color:var(--muted);margin-top:4px}.phone-account-icon{display:grid;place-items:center;background:var(--surface);width:44px;height:44px;border-radius:50%;color:var(--accent);flex-shrink:0}.section-label{display:flex;align-items:center;gap:10px;margin-bottom:18px}.section-label>span{font-size:.66rem;font-weight:700;border:1px solid var(--line);border-radius:50%;width:26px;height:26px;display:grid;place-items:center;color:var(--accent);flex-shrink:0}.section-label>h2{font-size:1.14rem}.phone-field-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}.phone-field-pair>label{margin-top:15px!important}.phone-cv{display:flex;align-items:center;gap:12px;padding:16px;background:var(--soft);border-radius:15px;border:1px dashed var(--line);margin-top:21px;color:var(--accent)}.phone-cv>div{min-width:0;flex:1}.phone-cv strong{display:block;font-size:.85rem;overflow-wrap:anywhere}.phone-cv span{display:block;font-size:.73rem;color:var(--muted);margin-top:5px}.phone-external{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;min-height:44px;margin:0 0 10px}.phone-disclosure>summary{font-size:.96rem;font-weight:600;min-height:44px;line-height:1.6;cursor:pointer;overflow-wrap:anywhere}.phone-disclosure>summary>span{display:block;color:var(--muted);font-size:.78rem;font-weight:400;margin-top:4px}.phone-disclosure[open]>summary{margin-bottom:18px}.phone-save-area{padding:0 0 18px;margin-bottom:20px;border-bottom:1px solid var(--line)}.phone-save-area>.button+.button{margin-top:10px}.phone-settings-link{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:54px;width:100%;border:0;border-top:1px solid var(--line);background:transparent;color:var(--ink);padding:14px 0;text-decoration:none;font-size:.84rem!important;line-height:1.6;text-align:left}.phone-settings-link>span{min-width:0;overflow-wrap:anywhere}.phone-data-tools>.button{margin:17px 0}.phone-data-tools .phone-settings-link:last-child{padding-bottom:0}.phone-old-drafts{border-top:1px solid var(--line);padding:12px 0}.phone-old-drafts>summary{font-size:.87rem;font-weight:600;min-height:44px;cursor:pointer}.phone-install-help p{font-size:.84rem}.phone-footer-links{display:flex;justify-content:center;flex-wrap:wrap;gap:5px 20px;margin:20px 0}.phone-footer-links>a{display:inline-flex;align-items:center;min-height:44px;color:var(--muted);font-size:.76rem}.phone-bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);z-index:10;width:min(560px,100%);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;border-top:1px solid var(--line);padding:9px max(10px,env(safe-area-inset-left)) calc(9px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-right));background:var(--surface);box-shadow:0 -5px 20px #1518240a}.phone-bottom-nav>button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:58px;border:0;border-radius:13px;padding:6px 4px;background:transparent;color:var(--muted);font-size:.7rem;line-height:1.5;overflow-wrap:anywhere}.phone-bottom-nav>button[aria-current=page]{background:var(--soft);color:var(--accent);font-weight:700}.phone-nav-dot{position:absolute;top:9px;left:calc(50% + 13px);width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px var(--surface)}
+ .phone-dialog{width:min(520px,calc(100vw - 24px));max-height:calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));margin:auto;border:1px solid var(--line);border-radius:23px;background:var(--surface);color:var(--ink);padding:22px;overflow-y:auto;overscroll-behavior:contain;box-shadow:0 18px 80px #00000030;line-height:1.65}.phone-dialog::backdrop{background:#0a0d1cb3;backdrop-filter:blur(3px)}.phone-dialog-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:0 0 17px}.phone-dialog-head h2{padding-top:8px;font-size:1.35rem;line-height:1.3}.phone-dialog-head>.icon-button{margin:-3px -5px 0 0}.phone-dialog>p{font-size:.92rem}.phone-dialog-actions{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px;margin-top:24px}.phone-dialog-actions>.button{flex:1 1 140px}.phone-dialog-stack{display:grid;gap:10px;margin-top:19px}.phone-detail-summary{margin:13px 0 21px;color:var(--muted)}.phone-version-grid{display:grid;grid-template-columns:1fr;gap:15px;margin-top:20px}.phone-version-grid>section{background:var(--bg);border:1px solid var(--line);padding:16px;border-radius:16px;min-width:0}.phone-version-grid dl{font-size:.8rem;margin:12px 0}.phone-version-grid dt{color:var(--muted);font-size:.74rem;margin-top:10px}.phone-version-grid dd{margin:2px 0 0;overflow-wrap:anywhere}.phone-version-grid summary{min-height:44px;font-size:.8rem;cursor:pointer;padding:10px 0}.phone-version-grid pre{font-size:.7rem;white-space:pre-wrap;overflow-wrap:anywhere;max-height:240px;overflow:auto}.phone-dialog .phone-notice{margin-top:16px}.phone-shell .sign-in-options .small,.phone-dialog .sign-in-options .small{font-size:.8rem}.phone-shell .sign-in-choice h3,.phone-dialog .sign-in-choice h3{font-size:1rem}.phone-shell .sign-in-choice p,.phone-dialog .sign-in-choice p{font-size:.85rem}
+ @media(min-width:561px){.phone-shell{border-left:1px solid var(--line);border-right:1px solid var(--line);box-shadow:0 0 70px #15182407}.phone-main{padding-left:28px;padding-right:28px}.phone-header{padding-left:28px;padding-right:28px}.phone-bottom-nav{border-left:1px solid var(--line);border-right:1px solid var(--line)}}
+diff --git a/hosted/app/phone/record-tools.ts b/hosted/app/phone/record-tools.ts
+index 7a7650a..85656d1 100644
+--- a/hosted/app/phone/record-tools.ts
++++ b/hosted/app/phone/record-tools.ts
+@@ -16,6 +16,26 @@ export function matchesSavedSearch(job: Pick<Job, "title" | "company" | "locatio
+   return terms.every(term => fields.some(value => value.includes(term)));
+ }
+ 
++export type SavedView = "all" | "applied" | "followups";
++export type SavedStage = "all" | ApplicationRecord["stage"];
++
++/** View state only. A bookmark with no record counts as Saved and is not stored. */
++export function matchesSavedList(job: Pick<Job, "title" | "company" | "location">, record: Pick<ApplicationRecord, "note" | "stage" | "appliedElsewhere" | "followUpDate"> | undefined, query: string, view: SavedView, stage: SavedStage): boolean {
++  const viewMatch = view === "all" || view === "applied" && Boolean(record?.appliedElsewhere) || view === "followups" && Boolean(record?.followUpDate) && record?.stage !== "closed";
++  const stageMatch = stage === "all" || (record?.stage ?? "saved") === stage;
++  return matchesSavedSearch(job, record, query) && viewMatch && stageMatch;
++}
++
++export function savedListEmptyMessage(input: { query: string; view: SavedView; stage: SavedStage }): { title: string; detail: string; clear: boolean } {
++  const query = input.query.trim();
++  if (input.stage !== "all" && (query || input.view !== "all")) return { title: "No jobs match these filters.", detail: "Nothing matches this search, view, and application stage together. Clear search and filters to see every saved job and record.", clear: true };
++  if (input.stage !== "all") return { title: "No jobs at this stage.", detail: "No bookmark or application record is in this stage. A bookmark without a record counts as Saved. Clear search and filters to see everything again.", clear: true };
++  if (query) return { title: "No matching saved jobs.", detail: "Try another word, or clear the search and filters to see your saved jobs and notes.", clear: true };
++  if (input.view === "followups") return { title: "A clear next step.", detail: "Open a saved job, choose Edit application record, and add a follow-up date. Closed records stay out of this list.", clear: true };
++  if (input.view === "applied") return { title: "Your applications will go here.", detail: "When you apply on an employer’s website, mark it in your application record.", clear: true };
++  return { title: "Make room for possibility.", detail: "Save a job from Search or add a job link from any public employer page.", clear: false };
++}
++
+ function csvCell(value: string): string {
+   // Inspect compatibility forms, leading controls and text-quote prefixes too.
+   // A visible literal marker survives more import paths than apostrophe-only
+diff --git a/hosted/tests/phone-record-tools.mjs b/hosted/tests/phone-record-tools.mjs
+index 1b11115..2f5faca 100644
+--- a/hosted/tests/phone-record-tools.mjs
++++ b/hosted/tests/phone-record-tools.mjs
+@@ -8,6 +8,7 @@ import vm from 'node:vm';
+ import { createRequire } from 'node:module';
+ import ts from 'typescript';
+ import { build } from 'esbuild';
++import { z } from 'zod';
+ import React from 'react';
+ import { renderToStaticMarkup } from 'react-dom/server';
+ 
+@@ -307,7 +308,7 @@ test('actual calendar action accepts a saved record and rejects unsaved editor c
+ 
+ test('actual Saved selector searches active notes and keeps the existing applied/follow-up filters', () => {
+   const current = record({ note: 'call recruiter' }), other = { ...job, id: 'other', url: 'https://employer.example/careers/other', title: 'Designer' };
+-  const context = { jobs: [job, other], recordJobs: [], recordsByID: new Map([[current.identity, current]]), savedQuery: 'engineer recruiter', savedFilter: 'all', matchesSavedSearch: tools.matchesSavedSearch, jobIdentity: model.jobIdentity };
++  const context = { jobs: [job, other], recordJobs: [], recordsByID: new Map([[current.identity, current]]), savedQuery: 'engineer recruiter', savedFilter: 'all', savedStage: 'all', matchesSavedList: tools.matchesSavedList, jobIdentity: model.jobIdentity };
+   const select = () => install('shownJobs', context);
+   assert.deepEqual(Array.from(select(), value => value.id), [job.id]);
+   context.savedFilter = 'applied'; assert.equal(select().length, 0);
+@@ -450,3 +451,180 @@ for (const action of ['exportRecordsCSV', 'exportFollowUp']) {
+     retry.timers[0].callback(); assert.equal(retry.allocated.size, 0);
+   });
+ }
++
++function savedContext(entries, bookmarks, query = '', view = 'all', stage = 'all') {
++  const records = entries.map(entry => entry.record);
++  const jobs = [...entries.filter(entry => entry.bookmarked).map(entry => entry.job), ...bookmarks];
++  const context = { jobs, records, recordsByID: new Map(records.map(record => [record.identity, record])), savedQuery: query, savedFilter: view, savedStage: stage, matchesSavedList: tools.matchesSavedList, jobIdentity: model.jobIdentity };
++  context.recordJobs = install('recordJobs', context);
++  context.shownJobs = install('shownJobs', context);
++  return context;
++}
++function findJsx(tag, snippet) {
++  let found;
++  function visit(node) {
++    if (ts.isJsxElement(node) || ts.isJsxSelfClosingElement(node)) {
++      const opening = ts.isJsxElement(node) ? node.openingElement : node;
++      if (ts.isIdentifier(opening.tagName) && opening.tagName.text === tag && node.getText(tree).includes(snippet)) {
++        assert(!found, snippet); found = node;
++      }
++    }
++    ts.forEachChild(node, visit);
++  }
++  visit(tree); assert(found, snippet); return found;
++}
++function clickExpression(node) {
++  const opening = ts.isJsxElement(node) ? node.openingElement : node;
++  const attr = opening.attributes.properties.find(item => ts.isJsxAttribute(item) && item.name.getText(tree) === 'onClick');
++  assert(ts.isJsxExpression(attr.initializer));
++  return attr.initializer.expression.getText(tree);
++}
++function invoke(expression, context) {
++  const compiled = ts.transpileModule('exports.invoke = ' + expression, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText;
++  const sandbox = { exports: {}, require: createRequire(import.meta.url), ...context };
++  vm.runInNewContext(compiled, sandbox);
++  return sandbox.exports.invoke();
++}
++
++test('application stage composes with search and the existing saved views without changing stored records', () => {
++  const entries = [];
++  for (const stage of model.stages) for (let variant = 0; variant < 4; variant++) {
++    const number = entries.length + 1;
++    const job = { id: `job-${number}`, title: stage === 'interview' && variant === 1 ? 'Nurse clinic' : `Role ${stage} ${variant}`, company: 'Synthetic Employer', location: 'الرياض', country: 'SA', url: `https://employer.example/jobs/${number}` };
++    const followUpDate = variant === 0 ? { saved: '2026-11-02', applied: '2026-11-20', interview: '2026-12-02', offer: '2026-11-18', closed: '2026-01-01' }[stage] : '';
++    const note = stage === 'interview' && variant === 2 ? 'متابعة خاصة' : `note ${stage} ${variant}`;
++    const base = { ...model.blankRecord(job), updatedAt: '2026-11-17T18:00:00.000Z', note, followUpDate };
++    let record = base;
++    if (stage === 'closed' && variant === 1) record = model.recordSchema.parse({ ...base, stage: 'closed', appliedElsewhere: false });
++    else if (stage === 'closed') {
++      const applied = model.updateRecord(base, { ...base, stage: 'applied' });
++      record = model.updateRecord(applied, { ...applied, stage: 'closed', followUpDate, note });
++    } else if (stage !== 'saved') record = model.updateRecord(base, { ...base, stage, followUpDate, note });
++    entries.push({ job, record, bookmarked: variant !== 2 });
++  }
++  const bookmarks = [21, 22].map(number => ({ id: `bare-${number}`, title: `Bare ${number}`, company: 'Synthetic Employer', location: 'Riyadh', country: 'SA', url: `https://employer.example/jobs/bare-${number}` }));
++  assert.equal(entries.length + bookmarks.length, 22);
++  for (const stage of model.stages) assert.equal(entries.filter(entry => entry.record.stage === stage).length, 4);
++  const before = JSON.stringify({ entries, bookmarks });
++  const ids = context => Array.from(context.shownJobs, job => job.id);
++  const listId = entry => entry.bookmarked ? entry.job.id : entry.record.identity;
++  const all = savedContext(entries, bookmarks);
++  assert.equal(all.shownJobs.length, 22);
++  assert.deepEqual(ids(savedContext(entries, bookmarks, '', 'all', 'saved')).sort(), [...entries.filter(entry => entry.record.stage === 'saved').map(listId), ...bookmarks.map(job => job.id)].sort());
++  for (const stage of ['applied', 'interview', 'offer', 'closed']) assert.deepEqual(ids(savedContext(entries, bookmarks, '', 'all', stage)).sort(), entries.filter(entry => entry.record.stage === stage).map(listId).sort());
++  const applied = savedContext(entries, bookmarks, '', 'applied', 'all');
++  assert(applied.shownJobs.every(job => entries.find(entry => entry.job.id === job.id || entry.record.identity === job.id).record.appliedElsewhere));
++  assert(!ids(applied).some(id => bookmarks.some(job => job.id === id) || entries.some(entry => entry.job.id === id && entry.record.stage === 'saved')));
++  assert.deepEqual(ids(savedContext(entries, bookmarks, '', 'applied', 'closed')).sort(), entries.filter(entry => entry.record.stage === 'closed' && entry.record.appliedElsewhere).map(listId).sort());
++  assert.equal(savedContext(entries, bookmarks, '', 'applied', 'saved').shownJobs.length, 0);
++  const followups = ids(savedContext(entries, bookmarks, '', 'followups', 'all'));
++  assert.deepEqual(followups.map(id => entries.find(entry => entry.job.id === id).record.followUpDate), ['2026-11-02', '2026-11-18', '2026-11-20', '2026-12-02']);
++  assert.equal(savedContext(entries, bookmarks, '', 'followups', 'closed').shownJobs.length, 0);
++  assert.deepEqual(ids(savedContext(entries, bookmarks, 'Nurse', 'all', 'interview')), [entries.find(entry => entry.job.title === 'Nurse clinic').job.id]);
++  assert.equal(savedContext(entries, bookmarks, 'Nurse', 'all', 'offer').shownJobs.length, 0);
++  assert.deepEqual(ids(savedContext(entries, bookmarks, 'متابعة', 'all', 'all')), [listId(entries.find(entry => entry.record.note === 'متابعة خاصة'))]);
++  assert(entries.some(entry => !entry.bookmarked && ids(savedContext(entries, bookmarks, '', 'all', entry.record.stage)).includes(listId(entry))));
++  assert.equal(JSON.stringify({ entries, bookmarks }), before);
++  const hidden = tools.savedListEmptyMessage({ query: 'Nurse', view: 'all', stage: 'offer' });
++  assert.equal(hidden.clear, true);
++  assert.equal(t('ar')(hidden.title), 'لا توجد وظائف تطابق عوامل التصفية هذه.');
++  assert.equal(t('en')('Application stage'), 'Application stage');
++  assert.equal(t('ar')('Application stage'), 'مرحلة التقديم');
++  assert.equal(t('ar')('All stages'), 'كل المراحل');
++});
++
++test('Clear and the follow-up shortcut reset the stage select without persisting it', () => {
++  const controls = { savedQuery: 'Nurse', savedFilter: 'applied', savedStage: 'closed', tab: 'search' };
++  const bindings = { setSavedQuery: value => { controls.savedQuery = value; }, setSavedFilter: value => { controls.savedFilter = value; }, setSavedStage: value => { controls.savedStage = value; }, navigate: value => { controls.tab = value; } };
++  invoke(clickExpression(findJsx('button', 'Clear search and filters')), bindings);
++  assert.deepEqual(controls, { savedQuery: '', savedFilter: 'all', savedStage: 'all', tab: 'search' });
++  controls.savedQuery = 'Nurse'; controls.savedFilter = 'applied'; controls.savedStage = 'offer';
++  invoke(clickExpression(findJsx('button', 'Follow-ups due: {0}')), bindings);
++  assert.deepEqual(controls, { savedQuery: '', savedFilter: 'followups', savedStage: 'all', tab: 'saved' });
++  const select = findJsx('select', 'All stages');
++  assert.equal(select.openingElement.tagName.getText(tree), 'select');
++  const compiled = ts.transpileModule('exports.render = () => (' + select.parent.getText(tree) + ');', { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText;
++  for (const language of ['en', 'ar']) {
++    const sandbox = { exports: {}, require: createRequire(import.meta.url), t: t(language), savedStage: 'all', stages: model.stages, stageNames: model.stageNames };
++    vm.runInNewContext(compiled, sandbox);
++    const html = renderToStaticMarkup(React.createElement(sandbox.exports.render));
++    assert.match(html, /^<label /);
++    assert.equal([...html.matchAll(/<option[^>]*value="([^"]+)"/g)].map(match => match[1]).join(','), 'all,saved,applied,interview,offer,closed');
++    assert(html.includes(t(language)('Application stage')));
++    assert(html.includes(t(language)('All stages')));
++    assert(html.includes(t(language)(model.stageNames.interview)));
++  }
++});
++
++test('a saved stage change updates the filtered list and unsaved, cancelled, failed, or stale edits do not', async () => {
++  const job = { id: 'stage-job', title: 'Role', company: 'Synthetic Employer', location: 'Riyadh', country: 'SA', url: 'https://employer.example/jobs/stage' };
++  const opened = { ...model.blankRecord(job), updatedAt: '2026-11-17T18:00:00.000Z', note: 'Earlier note' };
++  const saved = { ...model.blankSnapshot('guest'), jobs: [job], records: [opened] };
++  const context = { z, DOMException, updateRecord: model.updateRecord, jobIdentity: model.jobIdentity, parseSnapshot: model.parseSnapshot, same: (a, b) => JSON.stringify(a) === JSON.stringify(b), snapshotRef: { current: saved }, epoch: { current: 3 }, identityUnverified: { current: false }, locked: false, checkingIdentity: false, storageProblem: '', account: null, workspaceRef: { current: null }, busyRef: { current: false }, recordRecoveryId: { current: 'synthetic-recovery' }, dialog: { kind: 'record', job, record: opened, existed: true, scope: saved.scope }, selected: [], notice: null, writes: 0, setBusy() {}, setNotice: value => { context.notice = value; }, setSelected: value => { context.selected = typeof value === 'function' ? value(context.selected) : value; }, setEditorDraft() {}, setPlan() {}, setReviewAccepted() {}, setDialog: value => { context.dialog = value; }, setDialogDirty() {}, setConfirmDialogDiscard() {}, discardRecovery: async () => { context.discarded = true; }, savePhoneSnapshot: async () => { context.writes += 1; }, storageFailure() {}, putSnapshot: value => { context.snapshotRef.current = value; }, identityCheckPending: { current: false }, identityCheckRef: { current() {} }, lock() { throw Error('stage save must not lock the account'); }, APIError: class APIError extends Error {} };
++  for (const name of ['message', 'assertCurrent', 'persist', 'local', 'run', 'saveRecord']) install(name, context);
++  const visible = stage => Array.from(savedContext([{ job, record: context.snapshotRef.current.records[0], bookmarked: true }], [], '', 'all', stage).shownJobs, item => item.id);
++  assert.deepEqual(visible('saved'), [job.id]); assert.deepEqual(visible('interview'), []);
++  assert.deepEqual(visible('offer'), [], 'An unsaved editor stage is not part of the stored list');
++  assert.equal(context.snapshotRef.current.records[0].stage, 'saved');
++  const cancelled = JSON.stringify(context.snapshotRef.current);
++  invoke(clickExpression(findJsx('button', 'Discard changes')), context);
++  await new Promise(resolve => setImmediate(resolve));
++  assert.equal(context.busyRef.current, false);
++  assert.equal(JSON.stringify(context.snapshotRef.current), cancelled); assert.equal(context.discarded, true);
++  context.dialog = { kind: 'record', job, record: opened, existed: true, scope: saved.scope };
++  context.savePhoneSnapshot = async () => { throw Error('This browser could not save the record.'); };
++  await context.saveRecord({ ...opened, stage: 'interview' }, false);
++  assert.equal(context.snapshotRef.current.records[0].stage, 'saved'); assert.equal(context.notice.error, true);
++  context.savePhoneSnapshot = async () => { context.writes += 1; }; context.notice = null;
++  const newer = { ...opened, note: 'Stored newer note' };
++  context.snapshotRef.current = { ...saved, records: [newer] }; context.dialog = { ...context.dialog, record: opened };
++  await context.saveRecord({ ...opened, stage: 'offer' }, false);
++  assert.equal(context.snapshotRef.current.records[0].note, 'Stored newer note'); assert.equal(context.snapshotRef.current.records[0].stage, 'saved');
++  assert.match(context.notice.text, /Close it and reopen/);
++  context.snapshotRef.current = { ...saved, records: [{ ...opened }] }; context.dialog = { ...context.dialog, record: context.snapshotRef.current.records[0] }; context.notice = null;
++  await context.saveRecord({ ...context.dialog.record, stage: 'interview', note: 'Saved interview' }, false);
++  assert.equal(context.snapshotRef.current.records[0].stage, 'interview'); assert.equal(context.snapshotRef.current.records[0].appliedElsewhere, true); assert.equal(context.writes > 0, true);
++  assert.deepEqual(visible('interview'), [job.id]); assert.deepEqual(visible('saved'), []);
++  const exported = exportHarness();
++  exported.saved.records.push({ ...exported.saved.records[0], identity: 'https://employer.example/jobs/other', title: 'Other role' });
++  exported.context.savedStage = 'closed';
++  await exported.context.exportRecordsCSV();
++  assert.match(exported.downloads[0].value, /Software Engineer/); assert.match(exported.downloads[0].value, /Other role/);
++});
++
++test('zero-item Saved filters keep recovery visible and return to the default empty view', () => {
++  const section = findJsx('section', 'savedEmpty.title');
++  const compiled = ts.transpileModule('exports.render = () => (' + section.getText(tree) + ');', { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText;
++  const clear = clickExpression(findJsx('button', 'Clear search and filters'));
++  const buttonLabels = markup => Array.from(markup.matchAll(/<button\b[^>]*>([\s\S]*?)<\/button>/g), match => match[1].replace(/<[^>]*>/g, ''));
++  for (const language of ['en', 'ar']) for (const initial of [
++    { query: '', view: 'all', stage: 'interview' },
++    { query: 'Nurse', view: 'all', stage: 'all' },
++    { query: '', view: 'applied', stage: 'all' },
++    { query: '', view: 'followups', stage: 'closed' },
++  ]) {
++    const filters = { ...initial };
++    const bindings = {
++      setSavedQuery: value => { filters.query = value; },
++      setSavedFilter: value => { filters.view = value; },
++      setSavedStage: value => { filters.stage = value; },
++    };
++    const render = () => {
++      const sandbox = {
++        exports: {}, require: createRequire(import.meta.url), t: t(language),
++        jobs: [], records: [], savedEmpty: tools.savedListEmptyMessage(filters),
++        Bookmark: () => null, ArrowRight: () => null, navigate() {}, ...bindings,
++      };
++      vm.runInNewContext(compiled, sandbox);
++      return renderToStaticMarkup(React.createElement(sandbox.exports.render));
++    };
++    const filtered = render();
++    assert(buttonLabels(filtered).includes(t(language)('Clear search and filters')), 'An actual Clear button is required for ' + language + ' ' + initial.view + '/' + initial.stage + ' after the final record disappears');
++    assert(!buttonLabels(filtered).includes(t(language)('Explore jobs ')));
++    invoke(clear, bindings);
++    assert.deepEqual(filters, { query: '', view: 'all', stage: 'all' });
++    const cleared = render();
++    assert(!buttonLabels(cleared).includes(t(language)('Clear search and filters')));
++    assert(buttonLabels(cleared).includes(t(language)('Explore jobs ')));
++  }
++});
+diff --git a/hosted/tests/phone-search-workflows.mjs b/hosted/tests/phone-search-workflows.mjs
+index e3f59f2..39f6471 100644
+--- a/hosted/tests/phone-search-workflows.mjs
++++ b/hosted/tests/phone-search-workflows.mjs
+@@ -313,16 +313,16 @@ test('due shortcut reveals the promised record after an unrelated Saved search',
+   findFollowups(tree); assert(onFollowups, 'The actual due shortcut handler is required');
+   const savedJob = { id: 'synthetic-due', title: 'Designer', company: 'Synthetic Employer', location: 'Riyadh', country: 'SA', url: 'https://employer.example/role/1' };
+   const snapshot = { ...model.blankSnapshot('guest'), jobs: [savedJob], records: [{ ...model.blankRecord(savedJob), followUpDate: '2020-01-01', note: 'Call the recruiter' }] };
+-  const state = { savedQuery: 'portfolio', savedFilter: 'all', tab: 'search' };
++  const state = { savedQuery: 'portfolio', savedFilter: 'all', savedStage: 'closed', tab: 'search' };
+   const select = () => execute(['jobs', 'records', 'recordsByID', 'recordJobs', 'shownJobs'].map(name => `const ${name} = ${declaration(name)};`).join('\n') + '\nexports.rows = shownJobs;', {
+-    snapshot, ...state, jobIdentity: model.jobIdentity, matchesSavedSearch: records.matchesSavedSearch,
++    snapshot, ...state, jobIdentity: model.jobIdentity, matchesSavedList: records.matchesSavedList,
+   }).rows;
+   assert.equal(select().length, 0);
+   const before = JSON.stringify(snapshot);
+   execute(`(${onFollowups})();`, {
+-    setSavedQuery: value => { state.savedQuery = value; }, setSavedFilter: value => { state.savedFilter = value; }, navigate: value => { state.tab = value; },
++    setSavedQuery: value => { state.savedQuery = value; }, setSavedFilter: value => { state.savedFilter = value; }, setSavedStage: value => { state.savedStage = value; }, navigate: value => { state.tab = value; },
+   });
+-  assert.equal(state.tab, 'saved');
++  assert.deepEqual(state, { savedQuery: '', savedFilter: 'followups', savedStage: 'all', tab: 'saved' });
+   assert.equal(select().length, 1); assert.equal(select()[0].url, savedJob.url);
+   assert.equal(JSON.stringify(snapshot), before, 'navigation must not edit private records');
+   state.savedQuery = 'recruiter'; assert.equal(select().length, 1);

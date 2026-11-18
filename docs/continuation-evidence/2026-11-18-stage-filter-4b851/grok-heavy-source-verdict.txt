@@ -1,0 +1,52 @@
+Grok
+Thought for 24s
+
+Bounded Verdict on Exact Stage-Filter Candidate (STAGE-EMPTY-001 corrected)
+Heavy session. Access date: 18 November 2026. Current exact root referenced: f8 / clean f6 product. Corrected PhoneApp SHA256: 77b3f3bd43f7a7fab19b68807118fba41bb95409701d054ed8232bc139a7dcba. Read-only. No implementation, no dependency/native/store edits, no duplication of Build1 or Build2. Original cutoff unchanged. Good Spender excluded.
+
+Prior Overstatements Corrected
+Applied means appliedElsewhere (includes marked Closed records). No fixed Applied count without fixture flags.
+Actual Build1 fixture has 15 marked records.
+Follow-ups already sort by date and exclude Closed. No updatedAt tie-break added; no reset on ordinary tab leave/return. Existing semantics preserved.
+Nonpersistent means reload defaults to All.
+A new contact field is not cross-job contact reuse.
+Simplify primary pages document free status filtering; unlimited cap remains unverified.
+STAGE-EMPTY-001 Remedy Confirmation
+
+Source-confirmed bug (original candidate): After selecting Interview on the last record-only job and deleting the private record, jobs+records become empty while savedStage remains Interview. The original condition {(jobs.length > 0 || records.length > 0) && savedEmpty.clear && hid Clear. Combined with !savedEmpty.clear gating Explore, the empty section offered neither recovery nor Explore.
+
+Root’s minimal correction: {savedEmpty.clear && (Clear always when the empty-message function requests it).
+
+Does the remedy introduce a new issue? No new issue is supported by the provided diffs and regression.
+
+When items exist, behavior is unchanged.
+When zero items and no active filter (savedEmpty.clear === false), Explore still appears and Clear does not.
+When zero items and an active filter (savedEmpty.clear === true), Clear appears and Explore does not. After Clear, state resets to query='', view='all', stage='all'; the subsequent render shows Explore.
+
+The regression test (zero-item cases for stage=interview, query present, view=applied, view=followups+stage=closed) asserts exactly this: Clear present and Explore absent while filtered; after Clear, Clear absent and Explore present. The test is not yet run, but the logic matches the stated correction.
+
+Stage select and search input remain gated by item count. That is consistent with the original design (filters shown only when there is something to filter). Once the last item is deleted under an active stage, Clear is the recovery path; the user does not need the select while the list is empty. No contradiction with the empty-message contract.
+
+Other Concrete Issues Supported by the Diffs
+
+None additional that are source-confirmed as reachable defects in the corrected candidate.
+
+matchesSavedList correctly treats bare bookmarks as Saved (record?.stage ?? "saved") and composes with the existing view predicates.
+savedListEmptyMessage distinguishes true-empty (clear:false, Explore) from filter-empty (clear:true).
+Follow-ups shortcut explicitly sets stage to "all".
+Arabic keys for the new strings are present.
+Local marks remain distinct from employer confirmation; exports are untouched.
+
+Hypotheses only (not defects):
+
+Keyboard and RTL acceptance of the new <select> (labelled, dir handling, focus order on narrow view) still require actual browser checks.
+Privacy: empty-state copy does not leak record content; confirmed by the message function.
+Competitor Task Usefulness
+
+Simplify documents free status filtering. The added Stage select enables the analogous local task (restrict the current view by exact stage) without a new model or API. On a small fixture the value is the ability to isolate Interview (or any stage) inside Applied or Follow-ups without visual scanning. No superiority claim is made; usefulness is bounded to that filtering task and remains subject to the pending browser checks.
+
+Verdict
+
+The STAGE-EMPTY-001 correction is sound. It restores recovery on the zero-item + active-filter path without introducing a supported new issue. No other concrete defect is identified in the provided diffs. Actual browser checks, red/green on the regression, and full pinned gates remain pending and are outside this lane.
+
+Review finished. Available for the next evidence-based question. Heavy session remains Heavy.

@@ -1,0 +1,24 @@
+{
+  "stage-filter.patch": {
+    "bytes": 57714,
+    "sha256": "ecc8b6a6c306cb57051d6cd504a0d9978cceaeb8e6c8df02447b1cec6cfcd245",
+    "newlines": 304
+  },
+  "phone-record-tools.log": {
+    "bytes": 3728,
+    "sha256": "e462f561dda422b5dba281f61eadcda7a155c91838a0c6154d0c623972df9482",
+    "newlines": 52
+  },
+  "normalizedPatch": {
+    "bytes": 57209,
+    "sha256": "40715c2e2cdc7fe60433a200876bbddd6323213793b962663a450226f9004c3d",
+    "change": "Only old/new header paths and timestamps replaced; every hunk retained",
+    "paths": [
+      "hosted/app/phone/record-tools.ts",
+      "hosted/app/phone/PhoneApp.tsx",
+      "hosted/app/phone/phone.css",
+      "hosted/app/i18n/messages.ar.json",
+      "hosted/tests/phone-record-tools.mjs"
+    ]
+  }
+}

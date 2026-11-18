@@ -8,6 +8,7 @@ import vm from 'node:vm';
 import { createRequire } from 'node:module';
 import ts from 'typescript';
 import { build } from 'esbuild';
+import { z } from 'zod';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
@@ -307,7 +308,7 @@ test('actual calendar action accepts a saved record and rejects unsaved editor c
 
 test('actual Saved selector searches active notes and keeps the existing applied/follow-up filters', () => {
   const current = record({ note: 'call recruiter' }), other = { ...job, id: 'other', url: 'https://employer.example/careers/other', title: 'Designer' };
-  const context = { jobs: [job, other], recordJobs: [], recordsByID: new Map([[current.identity, current]]), savedQuery: 'engineer recruiter', savedFilter: 'all', matchesSavedSearch: tools.matchesSavedSearch, jobIdentity: model.jobIdentity };
+  const context = { jobs: [job, other], recordJobs: [], recordsByID: new Map([[current.identity, current]]), savedQuery: 'engineer recruiter', savedFilter: 'all', savedStage: 'all', matchesSavedList: tools.matchesSavedList, jobIdentity: model.jobIdentity };
   const select = () => install('shownJobs', context);
   assert.deepEqual(Array.from(select(), value => value.id), [job.id]);
   context.savedFilter = 'applied'; assert.equal(select().length, 0);
@@ -450,3 +451,180 @@ for (const action of ['exportRecordsCSV', 'exportFollowUp']) {
     retry.timers[0].callback(); assert.equal(retry.allocated.size, 0);
   });
 }
+
+function savedContext(entries, bookmarks, query = '', view = 'all', stage = 'all') {
+  const records = entries.map(entry => entry.record);
+  const jobs = [...entries.filter(entry => entry.bookmarked).map(entry => entry.job), ...bookmarks];
+  const context = { jobs, records, recordsByID: new Map(records.map(record => [record.identity, record])), savedQuery: query, savedFilter: view, savedStage: stage, matchesSavedList: tools.matchesSavedList, jobIdentity: model.jobIdentity };
+  context.recordJobs = install('recordJobs', context);
+  context.shownJobs = install('shownJobs', context);
+  return context;
+}
+function findJsx(tag, snippet) {
+  let found;
+  function visit(node) {
+    if (ts.isJsxElement(node) || ts.isJsxSelfClosingElement(node)) {
+      const opening = ts.isJsxElement(node) ? node.openingElement : node;
+      if (ts.isIdentifier(opening.tagName) && opening.tagName.text === tag && node.getText(tree).includes(snippet)) {
+        assert(!found, snippet); found = node;
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+  visit(tree); assert(found, snippet); return found;
+}
+function clickExpression(node) {
+  const opening = ts.isJsxElement(node) ? node.openingElement : node;
+  const attr = opening.attributes.properties.find(item => ts.isJsxAttribute(item) && item.name.getText(tree) === 'onClick');
+  assert(ts.isJsxExpression(attr.initializer));
+  return attr.initializer.expression.getText(tree);
+}
+function invoke(expression, context) {
+  const compiled = ts.transpileModule('exports.invoke = ' + expression, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText;
+  const sandbox = { exports: {}, require: createRequire(import.meta.url), ...context };
+  vm.runInNewContext(compiled, sandbox);
+  return sandbox.exports.invoke();
+}
+
+test('application stage composes with search and the existing saved views without changing stored records', () => {
+  const entries = [];
+  for (const stage of model.stages) for (let variant = 0; variant < 4; variant++) {
+    const number = entries.length + 1;
+    const job = { id: `job-${number}`, title: stage === 'interview' && variant === 1 ? 'Nurse clinic' : `Role ${stage} ${variant}`, company: 'Synthetic Employer', location: 'الرياض', country: 'SA', url: `https://employer.example/jobs/${number}` };
+    const followUpDate = variant === 0 ? { saved: '2026-11-02', applied: '2026-11-20', interview: '2026-12-02', offer: '2026-11-18', closed: '2026-01-01' }[stage] : '';
+    const note = stage === 'interview' && variant === 2 ? 'متابعة خاصة' : `note ${stage} ${variant}`;
+    const base = { ...model.blankRecord(job), updatedAt: '2026-11-17T18:00:00.000Z', note, followUpDate };
+    let record = base;
+    if (stage === 'closed' && variant === 1) record = model.recordSchema.parse({ ...base, stage: 'closed', appliedElsewhere: false });
+    else if (stage === 'closed') {
+      const applied = model.updateRecord(base, { ...base, stage: 'applied' });
+      record = model.updateRecord(applied, { ...applied, stage: 'closed', followUpDate, note });
+    } else if (stage !== 'saved') record = model.updateRecord(base, { ...base, stage, followUpDate, note });
+    entries.push({ job, record, bookmarked: variant !== 2 });
+  }
+  const bookmarks = [21, 22].map(number => ({ id: `bare-${number}`, title: `Bare ${number}`, company: 'Synthetic Employer', location: 'Riyadh', country: 'SA', url: `https://employer.example/jobs/bare-${number}` }));
+  assert.equal(entries.length + bookmarks.length, 22);
+  for (const stage of model.stages) assert.equal(entries.filter(entry => entry.record.stage === stage).length, 4);
+  const before = JSON.stringify({ entries, bookmarks });
+  const ids = context => Array.from(context.shownJobs, job => job.id);
+  const listId = entry => entry.bookmarked ? entry.job.id : entry.record.identity;
+  const all = savedContext(entries, bookmarks);
+  assert.equal(all.shownJobs.length, 22);
+  assert.deepEqual(ids(savedContext(entries, bookmarks, '', 'all', 'saved')).sort(), [...entries.filter(entry => entry.record.stage === 'saved').map(listId), ...bookmarks.map(job => job.id)].sort());
+  for (const stage of ['applied', 'interview', 'offer', 'closed']) assert.deepEqual(ids(savedContext(entries, bookmarks, '', 'all', stage)).sort(), entries.filter(entry => entry.record.stage === stage).map(listId).sort());
+  const applied = savedContext(entries, bookmarks, '', 'applied', 'all');
+  assert(applied.shownJobs.every(job => entries.find(entry => entry.job.id === job.id || entry.record.identity === job.id).record.appliedElsewhere));
+  assert(!ids(applied).some(id => bookmarks.some(job => job.id === id) || entries.some(entry => entry.job.id === id && entry.record.stage === 'saved')));
+  assert.deepEqual(ids(savedContext(entries, bookmarks, '', 'applied', 'closed')).sort(), entries.filter(entry => entry.record.stage === 'closed' && entry.record.appliedElsewhere).map(listId).sort());
+  assert.equal(savedContext(entries, bookmarks, '', 'applied', 'saved').shownJobs.length, 0);
+  const followups = ids(savedContext(entries, bookmarks, '', 'followups', 'all'));
+  assert.deepEqual(followups.map(id => entries.find(entry => entry.job.id === id).record.followUpDate), ['2026-11-02', '2026-11-18', '2026-11-20', '2026-12-02']);
+  assert.equal(savedContext(entries, bookmarks, '', 'followups', 'closed').shownJobs.length, 0);
+  assert.deepEqual(ids(savedContext(entries, bookmarks, 'Nurse', 'all', 'interview')), [entries.find(entry => entry.job.title === 'Nurse clinic').job.id]);
+  assert.equal(savedContext(entries, bookmarks, 'Nurse', 'all', 'offer').shownJobs.length, 0);
+  assert.deepEqual(ids(savedContext(entries, bookmarks, 'متابعة', 'all', 'all')), [listId(entries.find(entry => entry.record.note === 'متابعة خاصة'))]);
+  assert(entries.some(entry => !entry.bookmarked && ids(savedContext(entries, bookmarks, '', 'all', entry.record.stage)).includes(listId(entry))));
+  assert.equal(JSON.stringify({ entries, bookmarks }), before);
+  const hidden = tools.savedListEmptyMessage({ query: 'Nurse', view: 'all', stage: 'offer' });
+  assert.equal(hidden.clear, true);
+  assert.equal(t('ar')(hidden.title), 'لا توجد وظائف تطابق عوامل التصفية هذه.');
+  assert.equal(t('en')('Application stage'), 'Application stage');
+  assert.equal(t('ar')('Application stage'), 'مرحلة التقديم');
+  assert.equal(t('ar')('All stages'), 'كل المراحل');
+});
+
+test('Clear and the follow-up shortcut reset the stage select without persisting it', () => {
+  const controls = { savedQuery: 'Nurse', savedFilter: 'applied', savedStage: 'closed', tab: 'search' };
+  const bindings = { setSavedQuery: value => { controls.savedQuery = value; }, setSavedFilter: value => { controls.savedFilter = value; }, setSavedStage: value => { controls.savedStage = value; }, navigate: value => { controls.tab = value; } };
+  invoke(clickExpression(findJsx('button', 'Clear search and filters')), bindings);
+  assert.deepEqual(controls, { savedQuery: '', savedFilter: 'all', savedStage: 'all', tab: 'search' });
+  controls.savedQuery = 'Nurse'; controls.savedFilter = 'applied'; controls.savedStage = 'offer';
+  invoke(clickExpression(findJsx('button', 'Follow-ups due: {0}')), bindings);
+  assert.deepEqual(controls, { savedQuery: '', savedFilter: 'followups', savedStage: 'all', tab: 'saved' });
+  const select = findJsx('select', 'All stages');
+  assert.equal(select.openingElement.tagName.getText(tree), 'select');
+  const compiled = ts.transpileModule('exports.render = () => (' + select.parent.getText(tree) + ');', { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText;
+  for (const language of ['en', 'ar']) {
+    const sandbox = { exports: {}, require: createRequire(import.meta.url), t: t(language), savedStage: 'all', stages: model.stages, stageNames: model.stageNames };
+    vm.runInNewContext(compiled, sandbox);
+    const html = renderToStaticMarkup(React.createElement(sandbox.exports.render));
+    assert.match(html, /^<label /);
+    assert.equal([...html.matchAll(/<option[^>]*value="([^"]+)"/g)].map(match => match[1]).join(','), 'all,saved,applied,interview,offer,closed');
+    assert(html.includes(t(language)('Application stage')));
+    assert(html.includes(t(language)('All stages')));
+    assert(html.includes(t(language)(model.stageNames.interview)));
+  }
+});
+
+test('a saved stage change updates the filtered list and unsaved, cancelled, failed, or stale edits do not', async () => {
+  const job = { id: 'stage-job', title: 'Role', company: 'Synthetic Employer', location: 'Riyadh', country: 'SA', url: 'https://employer.example/jobs/stage' };
+  const opened = { ...model.blankRecord(job), updatedAt: '2026-11-17T18:00:00.000Z', note: 'Earlier note' };
+  const saved = { ...model.blankSnapshot('guest'), jobs: [job], records: [opened] };
+  const context = { z, DOMException, updateRecord: model.updateRecord, jobIdentity: model.jobIdentity, parseSnapshot: model.parseSnapshot, same: (a, b) => JSON.stringify(a) === JSON.stringify(b), snapshotRef: { current: saved }, epoch: { current: 3 }, identityUnverified: { current: false }, locked: false, checkingIdentity: false, storageProblem: '', account: null, workspaceRef: { current: null }, busyRef: { current: false }, recordRecoveryId: { current: 'synthetic-recovery' }, dialog: { kind: 'record', job, record: opened, existed: true, scope: saved.scope }, selected: [], notice: null, writes: 0, setBusy() {}, setNotice: value => { context.notice = value; }, setSelected: value => { context.selected = typeof value === 'function' ? value(context.selected) : value; }, setEditorDraft() {}, setPlan() {}, setReviewAccepted() {}, setDialog: value => { context.dialog = value; }, setDialogDirty() {}, setConfirmDialogDiscard() {}, discardRecovery: async () => { context.discarded = true; }, savePhoneSnapshot: async () => { context.writes += 1; }, storageFailure() {}, putSnapshot: value => { context.snapshotRef.current = value; }, identityCheckPending: { current: false }, identityCheckRef: { current() {} }, lock() { throw Error('stage save must not lock the account'); }, APIError: class APIError extends Error {} };
+  for (const name of ['message', 'assertCurrent', 'persist', 'local', 'run', 'saveRecord']) install(name, context);
+  const visible = stage => Array.from(savedContext([{ job, record: context.snapshotRef.current.records[0], bookmarked: true }], [], '', 'all', stage).shownJobs, item => item.id);
+  assert.deepEqual(visible('saved'), [job.id]); assert.deepEqual(visible('interview'), []);
+  assert.deepEqual(visible('offer'), [], 'An unsaved editor stage is not part of the stored list');
+  assert.equal(context.snapshotRef.current.records[0].stage, 'saved');
+  const cancelled = JSON.stringify(context.snapshotRef.current);
+  invoke(clickExpression(findJsx('button', 'Discard changes')), context);
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(context.busyRef.current, false);
+  assert.equal(JSON.stringify(context.snapshotRef.current), cancelled); assert.equal(context.discarded, true);
+  context.dialog = { kind: 'record', job, record: opened, existed: true, scope: saved.scope };
+  context.savePhoneSnapshot = async () => { throw Error('This browser could not save the record.'); };
+  await context.saveRecord({ ...opened, stage: 'interview' }, false);
+  assert.equal(context.snapshotRef.current.records[0].stage, 'saved'); assert.equal(context.notice.error, true);
+  context.savePhoneSnapshot = async () => { context.writes += 1; }; context.notice = null;
+  const newer = { ...opened, note: 'Stored newer note' };
+  context.snapshotRef.current = { ...saved, records: [newer] }; context.dialog = { ...context.dialog, record: opened };
+  await context.saveRecord({ ...opened, stage: 'offer' }, false);
+  assert.equal(context.snapshotRef.current.records[0].note, 'Stored newer note'); assert.equal(context.snapshotRef.current.records[0].stage, 'saved');
+  assert.match(context.notice.text, /Close it and reopen/);
+  context.snapshotRef.current = { ...saved, records: [{ ...opened }] }; context.dialog = { ...context.dialog, record: context.snapshotRef.current.records[0] }; context.notice = null;
+  await context.saveRecord({ ...context.dialog.record, stage: 'interview', note: 'Saved interview' }, false);
+  assert.equal(context.snapshotRef.current.records[0].stage, 'interview'); assert.equal(context.snapshotRef.current.records[0].appliedElsewhere, true); assert.equal(context.writes > 0, true);
+  assert.deepEqual(visible('interview'), [job.id]); assert.deepEqual(visible('saved'), []);
+  const exported = exportHarness();
+  exported.saved.records.push({ ...exported.saved.records[0], identity: 'https://employer.example/jobs/other', title: 'Other role' });
+  exported.context.savedStage = 'closed';
+  await exported.context.exportRecordsCSV();
+  assert.match(exported.downloads[0].value, /Software Engineer/); assert.match(exported.downloads[0].value, /Other role/);
+});
+
+test('zero-item Saved filters keep recovery visible and return to the default empty view', () => {
+  const section = findJsx('section', 'savedEmpty.title');
+  const compiled = ts.transpileModule('exports.render = () => (' + section.getText(tree) + ');', { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText;
+  const clear = clickExpression(findJsx('button', 'Clear search and filters'));
+  const buttonLabels = markup => Array.from(markup.matchAll(/<button\b[^>]*>([\s\S]*?)<\/button>/g), match => match[1].replace(/<[^>]*>/g, ''));
+  for (const language of ['en', 'ar']) for (const initial of [
+    { query: '', view: 'all', stage: 'interview' },
+    { query: 'Nurse', view: 'all', stage: 'all' },
+    { query: '', view: 'applied', stage: 'all' },
+    { query: '', view: 'followups', stage: 'closed' },
+  ]) {
+    const filters = { ...initial };
+    const bindings = {
+      setSavedQuery: value => { filters.query = value; },
+      setSavedFilter: value => { filters.view = value; },
+      setSavedStage: value => { filters.stage = value; },
+    };
+    const render = () => {
+      const sandbox = {
+        exports: {}, require: createRequire(import.meta.url), t: t(language),
+        jobs: [], records: [], savedEmpty: tools.savedListEmptyMessage(filters),
+        Bookmark: () => null, ArrowRight: () => null, navigate() {}, ...bindings,
+      };
+      vm.runInNewContext(compiled, sandbox);
+      return renderToStaticMarkup(React.createElement(sandbox.exports.render));
+    };
+    const filtered = render();
+    assert(buttonLabels(filtered).includes(t(language)('Clear search and filters')), 'An actual Clear button is required for ' + language + ' ' + initial.view + '/' + initial.stage + ' after the final record disappears');
+    assert(!buttonLabels(filtered).includes(t(language)('Explore jobs ')));
+    invoke(clear, bindings);
+    assert.deepEqual(filters, { query: '', view: 'all', stage: 'all' });
+    const cleared = render();
+    assert(!buttonLabels(cleared).includes(t(language)('Clear search and filters')));
+    assert(buttonLabels(cleared).includes(t(language)('Explore jobs ')));
+  }
+});

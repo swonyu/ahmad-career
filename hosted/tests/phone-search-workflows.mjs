@@ -313,16 +313,16 @@ test('due shortcut reveals the promised record after an unrelated Saved search',
   findFollowups(tree); assert(onFollowups, 'The actual due shortcut handler is required');
   const savedJob = { id: 'synthetic-due', title: 'Designer', company: 'Synthetic Employer', location: 'Riyadh', country: 'SA', url: 'https://employer.example/role/1' };
   const snapshot = { ...model.blankSnapshot('guest'), jobs: [savedJob], records: [{ ...model.blankRecord(savedJob), followUpDate: '2020-01-01', note: 'Call the recruiter' }] };
-  const state = { savedQuery: 'portfolio', savedFilter: 'all', tab: 'search' };
+  const state = { savedQuery: 'portfolio', savedFilter: 'all', savedStage: 'closed', tab: 'search' };
   const select = () => execute(['jobs', 'records', 'recordsByID', 'recordJobs', 'shownJobs'].map(name => `const ${name} = ${declaration(name)};`).join('\n') + '\nexports.rows = shownJobs;', {
-    snapshot, ...state, jobIdentity: model.jobIdentity, matchesSavedSearch: records.matchesSavedSearch,
+    snapshot, ...state, jobIdentity: model.jobIdentity, matchesSavedList: records.matchesSavedList,
   }).rows;
   assert.equal(select().length, 0);
   const before = JSON.stringify(snapshot);
   execute(`(${onFollowups})();`, {
-    setSavedQuery: value => { state.savedQuery = value; }, setSavedFilter: value => { state.savedFilter = value; }, navigate: value => { state.tab = value; },
+    setSavedQuery: value => { state.savedQuery = value; }, setSavedFilter: value => { state.savedFilter = value; }, setSavedStage: value => { state.savedStage = value; }, navigate: value => { state.tab = value; },
   });
-  assert.equal(state.tab, 'saved');
+  assert.deepEqual(state, { savedQuery: '', savedFilter: 'followups', savedStage: 'all', tab: 'saved' });
   assert.equal(select().length, 1); assert.equal(select()[0].url, savedJob.url);
   assert.equal(JSON.stringify(snapshot), before, 'navigation must not edit private records');
   state.savedQuery = 'recruiter'; assert.equal(select().length, 1);
