@@ -1,0 +1,15 @@
+{
+  "atUTC": "2026-11-18T08:03:24.821803+00:00",
+  "sourceCommit": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2",
+  "flow": "Actual Profile UI: valid.pdf accepted, encrypted.pdf replacement rejected, Save on this phone, reload, Settings export",
+  "downloadSHA256": "078972e271ac0d74442af62f11f2dcb1a42f292cadf53a700935304b52e7df27",
+  "downloadBytes": 4183,
+  "resumeName": "valid.pdf",
+  "resumeBytes": 1311,
+  "resumeSHA256": "149f96a4dc6ed08b2adf0ae75c9d00f8fba75fcd777ea790d9a27e622fa38a61",
+  "byteEqualToOriginalValidFixture": true,
+  "profileDirty": true,
+  "scope": "guest",
+  "syntheticFirstName": "SSR Synthetic",
+  "recordsRetained": 1
+}

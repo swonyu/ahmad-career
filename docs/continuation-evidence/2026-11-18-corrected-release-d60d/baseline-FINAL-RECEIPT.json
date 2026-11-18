@@ -1,0 +1,133 @@
+{
+  "checkedUTC": "2026-11-18T08:57:11.910544+00:00",
+  "runId": 44262971576,
+  "head": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2",
+  "actualCheckout": "9325832a180104c13738e7836bfb4cb2e3c80c8f",
+  "tree": "16510c0751b3036b7dc434c8c08bfdc79edf1d3b",
+  "headTreeEqualsCheckoutTree": true,
+  "runConclusion": "failure",
+  "fiveJobsSelected": true,
+  "successfulJobs": 4,
+  "failedJobs": 1,
+  "iphone": {
+    "total": 17,
+    "passed": 11,
+    "failed": 6,
+    "skipped": 0
+  },
+  "android": {
+    "passed": 116,
+    "classes": 18,
+    "screenshots": 20
+  },
+  "artifacts": [
+    {
+      "id": 14408548064,
+      "name": "hosted-storage-checks-44262971576",
+      "apiDigest": "sha256:8f40d0771e0c87048badf232587d5f8c45962714faa845ae7ffb1c416e57bcbb",
+      "downloaded": true,
+      "extracted": true,
+      "archiveSHA256": "8f40d0771e0c87048badf232587d5f8c45962714faa845ae7ffb1c416e57bcbb",
+      "archiveBytes": 9348,
+      "digestMatches": true,
+      "runBinding": {
+        "id": 44262971576,
+        "repository_id": 1411027050,
+        "head_repository_id": 1411027050,
+        "head_branch": "continuation/account-acceptance-20261117",
+        "head_sha": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2"
+      },
+      "archivePath": "artifacts/hosted-storage-checks-44262971576.zip"
+    },
+    {
+      "id": 14408728902,
+      "name": "android-lint-44262971576",
+      "apiDigest": "sha256:f2640247b5bff7bbbe324ac8420fafbb3d84fc7512e677fb47d21ed64041ccb2",
+      "downloaded": true,
+      "extracted": true,
+      "archiveSHA256": "f2640247b5bff7bbbe324ac8420fafbb3d84fc7512e677fb47d21ed64041ccb2",
+      "archiveBytes": 3132867,
+      "digestMatches": true,
+      "runBinding": {
+        "id": 44262971576,
+        "repository_id": 1411027050,
+        "head_repository_id": 1411027050,
+        "head_branch": "continuation/account-acceptance-20261117",
+        "head_sha": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2"
+      },
+      "archivePath": "artifacts/android-lint-44262971576.zip"
+    },
+    {
+      "id": 14408947338,
+      "name": "iphone-build-log-44262971576",
+      "apiDigest": "sha256:6c7466c060f6a404c9d75bf41ebf8da2b0afdd8bcede14112016028750bae1b1",
+      "downloaded": true,
+      "extracted": true,
+      "archiveSHA256": "6c7466c060f6a404c9d75bf41ebf8da2b0afdd8bcede14112016028750bae1b1",
+      "archiveBytes": 8847,
+      "digestMatches": true,
+      "runBinding": {
+        "id": 44262971576,
+        "repository_id": 1411027050,
+        "head_repository_id": 1411027050,
+        "head_branch": "continuation/account-acceptance-20261117",
+        "head_sha": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2"
+      },
+      "archivePath": "artifacts/iphone-build-log-44262971576.zip"
+    },
+    {
+      "id": 14411345941,
+      "name": "iphone-ui-acceptance-44262971576",
+      "apiDigest": "sha256:835ec92b028a463c9f61b0bb7953edbbaf80cd06e217a85b950ace249bf55df3",
+      "downloaded": true,
+      "extracted": true,
+      "archiveSHA256": "835ec92b028a463c9f61b0bb7953edbbaf80cd06e217a85b950ace249bf55df3",
+      "archiveBytes": 526142384,
+      "digestMatches": true,
+      "runBinding": {
+        "id": 44262971576,
+        "repository_id": 1411027050,
+        "head_repository_id": 1411027050,
+        "head_branch": "continuation/account-acceptance-20261117",
+        "head_sha": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2"
+      },
+      "archivePath": "artifacts/iphone-ui-acceptance-44262971576.zip"
+    }
+  ],
+  "iphoneMediaCounts": {
+    "png": 37,
+    "mp4": 6,
+    "txt": 7
+  },
+  "mergeGateReady": false,
+  "documents": [
+    {
+      "path": "README.md",
+      "sha256": "9b051af0e4bac3813af4039ef9100164c04b1778bd7cfc05189a37046459e86a"
+    },
+    {
+      "path": "CURRENT-STATUS.json",
+      "sha256": "5f63f548e35b5ca78a5bff8f2aa829d1206f3a84fa89a172ed66de3aee625878"
+    },
+    {
+      "path": "iphone-final-failure-verification.json",
+      "sha256": "d1b470a14022931b77e1b97f8d192adec08b406a3593b1d5dd7ac3ae220a4955"
+    },
+    {
+      "path": "iphone-media-index.json",
+      "sha256": "a84c4c884c613bb8018ad16e50c9aa1a49e7000a86443a4a42b68480a511b0fa"
+    },
+    {
+      "path": "xcresult-summary.json",
+      "sha256": "b4040c444eb55c8c7563580a4cb7a9aa2d5c866c30f25665cca02e09533f4219"
+    },
+    {
+      "path": "xcresult-tests.json",
+      "sha256": "b4909fb11e70b7cc9c93d50ae6730c5008239875e234cd7bf5e36f2f790f4541"
+    },
+    {
+      "path": "priority-video-frames/receipt.json",
+      "sha256": "c5f43606c8a74764991b7b3efe6b953af9f4e81638fd9c9d5929eba446f5376b"
+    }
+  ]
+}

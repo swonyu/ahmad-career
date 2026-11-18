@@ -1,0 +1,14 @@
+{
+  "android-current-visual-lint-review.json": {
+    "bytes": 2027,
+    "sha256": "d9abb65939e2b4f8ef977cbc52dfe7d25d8cb4e5c0e0c5a2e677333903b67acf"
+  },
+  "README.md": {
+    "bytes": 5534,
+    "sha256": "40f61e420864d5c604c1f1336b189b665166e796007054e751b5551ddd7dbb54"
+  },
+  "source-bindings.json": {
+    "bytes": 1368,
+    "sha256": "bc4736a96e0bc1324e504234927f1a44b0beb32a8665cfcf27eb6fb9dbc00753"
+  }
+}

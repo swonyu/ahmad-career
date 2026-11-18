@@ -1,0 +1,16 @@
+{
+  "reviewedCombinedCommit": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2",
+  "observedAtUTC": "2026-11-18T08:07:32.857133+00:00",
+  "sha256": {
+    "apple/AhmadCareer/CareerDiscovery.swift": "f9b3b60faaf0d0b5f1a2b69369e826c4c6b2b8e6b96ea0916e3ccd71bcdc813e",
+    "apple/Checks/DiscoveryCheck.swift": "0146fe063a9fef9fb3e733e1f5ac16f84bedfd6fda104c38e4443c96effd2adb",
+    "apple/AhmadCareer/NativeDiscoveryViews.swift": "f2d3f6b76690eb26a803a0e721ea07f85c817d0f6c54060e8e712ea9f3d6fe9d",
+    "apple/AhmadCareer/NativeApplicationsStore.swift": "f53902ac34c5855e1033b918a7660653e5d31a171ccd5d588867177a0f9a5e30",
+    "apple/Checks/NativeRecoveryCheck.swift": "7d2512edc24a1ab692a9c0c817ed0f563fe557bbc94de543cfba47cc64272d2e",
+    "apple/AhmadCareer/NativeCareerViews.swift": "8ec5b73cdb2d80c6dd856e196f1ed3f39ad746739dadea9359fbf394e9e5347d",
+    "android/app/src/main/java/com/saleh/careerfinder/Discovery.kt": "d447432fee132d6c55808d1228459d84cfc07b802feed5379e8d3437f4d414f0",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/DiscoveryPersistenceRegressionTest.kt": "dce01dbb2a9f4c2fb71f21a3688dd23ac54527e25bfb7530bb59a9acf82ceeb1",
+    "hosted/app/phone/PhoneApp.tsx": "b058d7cfd8dc5d57d9479e6c8339c1f72682cbc14bcf0fda806f95901442f11b",
+    ".github/workflows/phone-quality.yml": "8a98c1d7bcf44a9fbab3064d64d0251c7078a7cfb96787ee7ba067025762911c"
+  }
+}

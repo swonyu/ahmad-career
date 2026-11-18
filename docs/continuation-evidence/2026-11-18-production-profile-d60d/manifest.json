@@ -1,0 +1,22 @@
+{
+  "browser-observations.json": {
+    "bytes": 31204,
+    "sha256": "8e7578c36e57fa51ef89fb613731f252e5c301295629b802761b838f4e96805f"
+  },
+  "actual-phone-profile-export.json": {
+    "bytes": 4183,
+    "sha256": "078972e271ac0d74442af62f11f2dcb1a42f292cadf53a700935304b52e7df27"
+  },
+  "integrated_profile_final-2.jpg": {
+    "bytes": 34553,
+    "sha256": "4fa058e63258d55086cb08f2cb96d2bbd373d8f4952b85a3d8663efc30267c40"
+  },
+  "README.md": {
+    "bytes": 1722,
+    "sha256": "0998498bc1866444a8f9c9c4ba03e7964114bfd1ff34185ca536b699a7f8e279"
+  },
+  "verification.json": {
+    "bytes": 647,
+    "sha256": "92b9dff3bfc41f98cf6f19b13ad18360a4cf10bb71d1bb5f222b6ab3d2dbc7ef"
+  }
+}

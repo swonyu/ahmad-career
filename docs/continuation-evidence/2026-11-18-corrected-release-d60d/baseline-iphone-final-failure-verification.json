@@ -1,0 +1,115 @@
+{
+  "checkedUTC": "2026-11-18T08:56:06.484445+00:00",
+  "runId": 44262971576,
+  "head": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2",
+  "actualCheckout": "9325832a180104c13738e7836bfb4cb2e3c80c8f",
+  "result": "failed",
+  "total": 17,
+  "passed": 11,
+  "failed": 6,
+  "skipped": 0,
+  "expectedFailures": 0,
+  "eachExecutedOnce": true,
+  "xcresultConfirmsRawLogAndSourceNames": true,
+  "device": {
+    "architecture": "arm64",
+    "deviceId": "C80D0661-53A9-4743-B864-FAEAFF9E08F6",
+    "deviceName": "iPhone Air",
+    "modelName": "iPhone Air",
+    "osBuildNumber": "23F77",
+    "osVersion": "26.5",
+    "platform": "iOS Simulator"
+  },
+  "failures": [
+    {
+      "failureText": "XCTAssertEqual failed: (\"XCTWaiterResult(rawValue: 2)\") is not equal to (\"XCTWaiterResult(rawValue: 1)\") - A real keyboard key must be visible before typing",
+      "targetName": "CareerFinderUITests",
+      "testIdentifier": 1,
+      "testIdentifierString": "CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable()",
+      "testIdentifierURL": "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable",
+      "testName": "testAccessibilityTextKeepsCoreControlsReachable()"
+    },
+    {
+      "failureText": "XCTAssertEqual failed: (\"\") is not equal to (\"First or single name\") - The native field keeps its original accessible name",
+      "targetName": "CareerFinderUITests",
+      "testIdentifier": 2,
+      "testIdentifierString": "CareerFinderUITests/testApplicationDraftSurvivesCancelAndRelaunch()",
+      "testIdentifierURL": "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testApplicationDraftSurvivesCancelAndRelaunch",
+      "testName": "testApplicationDraftSurvivesCancelAndRelaunch()"
+    },
+    {
+      "failureText": "XCTAssertEqual failed: (\"\") is not equal to (\"الاسم الأول أو الاسم الوحيد\") - The native field keeps its original accessible name",
+      "targetName": "CareerFinderUITests",
+      "testIdentifier": 3,
+      "testIdentifierString": "CareerFinderUITests/testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText()",
+      "testIdentifierURL": "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+      "testName": "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText()"
+    },
+    {
+      "failureText": "XCTAssertFalse failed - The return check requires an existing unsent synthetic code",
+      "targetName": "CareerFinderUITests",
+      "testIdentifier": 5,
+      "testIdentifierString": "CareerFinderUITests/testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride()",
+      "testIdentifierURL": "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "testName": "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride()"
+    },
+    {
+      "failureText": "XCTAssertEqual failed: (\"XCTWaiterResult(rawValue: 2)\") is not equal to (\"XCTWaiterResult(rawValue: 1)\") - Safari needs one reachable standard localized Done action",
+      "targetName": "CareerFinderUITests",
+      "testIdentifier": 12,
+      "testIdentifierString": "CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup()",
+      "testIdentifierURL": "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup",
+      "testName": "testProfileReadinessAndSimpleConnectionSetup()"
+    },
+    {
+      "failureText": "XCTAssertFalse failed - Search again must wait for the active deadline",
+      "targetName": "CareerFinderUITests",
+      "testIdentifier": 16,
+      "testIdentifierString": "CareerFinderUITests/testSearchEmptyAndFailurePreservesPreviousResults()",
+      "testIdentifierURL": "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testSearchEmptyAndFailurePreservesPreviousResults",
+      "testName": "testSearchEmptyAndFailurePreservesPreviousResults()"
+    }
+  ],
+  "runtimeWarnings": {
+    "count": 12,
+    "message": "Invalid frame dimension (negative or non-finite).",
+    "alsoOccursInPassedTests": true,
+    "causality": "Not established. Safari warning was at firstName tap; Arabic warning at connection-form swipe, before the respective failing assertions."
+  },
+  "safariFacts": {
+    "donePredicatePollsUTC": [
+      "08:19:40.769",
+      "08:19:41.783",
+      "08:19:42.732",
+      "08:19:43.764",
+      "08:19:44.717"
+    ],
+    "remoteViewRequestedUTC": "08:19:38.259",
+    "readyCallbackUTC": "08:19:46.319",
+    "didAppearUTC": "08:19:47.745",
+    "explicitScreenshotUTC": "08:19:46.123",
+    "explicitScreenshotObservation": "Blank white area below normal status bar; no native controls",
+    "axAttachmentAddedUTC": "08:19:51.192",
+    "failureRecordedUTC": "08:19:51.216",
+    "laterVideoFrame": "priority-video-frames/safari-78s.png",
+    "laterVideoObservation": "Full native Safari chrome including top-left checkmark Done is visible in the same original recording.",
+    "inference": "Every original Done predicate poll preceded the service-ready callback. The test records a startup/readiness miss; the blank screenshot alone does not establish persistent browser failure. A bounded real-UI retest is required.",
+    "diagnostics": "safari-service-startup-sequence.txt",
+    "crashReports": "Exported DiagnosticReports contains only two searchd reports; no Safari crash report was observed.",
+    "readToolLimit": "xcresulttool console log unavailable. Unified archive reader output included entries outside requested bounds; safari-original-system-window-081820-082000.txt enforces timestamp filtering in a separate derived file."
+  },
+  "arabicCodeFacts": {
+    "typingAttemptStartUTC": "08:11:44.303",
+    "typingSynthesizedEventUTC": "08:11:45.057",
+    "doneTypingSynthesizedEventUTC": "08:11:47.436",
+    "preconditionFailureUTC": "08:11:48.207",
+    "videoFrames": [
+      "priority-video-frames/language-58s.png",
+      "priority-video-frames/language-60s.png"
+    ],
+    "observation": "The original recording shows the placeholder after attempted typing, both while focused with an Arabic keyboard and after Done typing. No masked code is visible. The failure precedes Safari opening; this is not evidence of browser-return data loss.",
+    "explicitNamedScreenshotOrAX": "None captured before the failed precondition.",
+    "automaticSnapshots": "BF4DC9DB-313C-4675-9DCC-103EC892185E and 633DD916-DD9F-4B76-8027-A48D38A05BC3 are root-only binary plists with no child tree."
+  },
+  "limits": "Original-run diagnostic recovery only. No new native build/test/rerun/source edit. No fix is accepted by these failing-run artifacts."
+}

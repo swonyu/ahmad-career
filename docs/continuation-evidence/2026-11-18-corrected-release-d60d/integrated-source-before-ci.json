@@ -1,0 +1,19 @@
+{
+  "at": "2026-11-18T09:08:38.334083+00:00",
+  "mergeHead": "7b12d4a4586d12da67beb3ec4e9c05072915303d",
+  "children": [
+    "872bfb047ef22322732e873c4d0684fe76823c43",
+    "b4aa53a0430f4d51fd6ff1d99b7b8569d1be735b",
+    "4b65707739b2ff8f33e02dee8b87e9be99f6f992"
+  ],
+  "sources": {
+    "apple/AhmadCareer/NativeApplicationsViews.swift": "d758205a78e00a86f3baf0f38bbc28e864a597e6c6b26ec078531f77b02b7723",
+    "apple/AhmadCareer/CareerAppEnvironment.swift": "41c3a9a3f846ab0d06a7e2b1b22e22d470bec938030e844856809786f80fa665",
+    "apple/UITests/CareerFinderUITests.swift": "e09c5cacbc01160a145b0379cded962ca46e77abbf32b36a84e79a824cc3ab33",
+    ".github/workflows/phone-quality.yml": "0ee8eb8b1504ce04958f7aaabf72f6a8e78810480100f3ef8044afb16fb28bac"
+  },
+  "full17MethodsRetained": true,
+  "nextFullGate": "pending",
+  "earlierFullRun": "44262971576",
+  "earlierResult": "4jobs passed; iPhone11passed6failed0skipped; all17 ran"
+}

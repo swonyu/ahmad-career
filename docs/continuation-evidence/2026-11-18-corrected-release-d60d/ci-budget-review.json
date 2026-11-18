@@ -1,0 +1,17 @@
+{
+  "reviewedSource": "4eced90e053fc633a161fd5d1f1f8ee2412240d7",
+  "priorSuccessfulAll17NativeStepSeconds": 2070,
+  "failedFullRun": "44262971576",
+  "failedNativeStepStart": "2026-11-18T07:58:09Z",
+  "failedNativeStepEnd": "2026-11-18T08:32:00Z",
+  "failedNativeStepSeconds": 2031,
+  "failedTestSeconds": 1674.637,
+  "failedJourneys": 6,
+  "originalStepSeconds": 2100,
+  "newStepSeconds": 2700,
+  "originalJobSeconds": 2400,
+  "newJobSeconds": 3000,
+  "rationale": "Prior complete run had 30 seconds margin; failed full native step had 69 seconds margin despite six early exits. Completed browser paths and bounded readiness/cooldown checks need execution time. No tests, assertions, selection, dispatch mode, parallelization or artifact steps changed.",
+  "independentReviewer": "expert_release",
+  "scope": "Execution ceiling only; actual runtime and all17 passing outcomes still required"
+}
