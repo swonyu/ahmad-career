@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
@@ -140,8 +141,9 @@ class PhonePolishAcceptanceTest {
 
     @Test fun discoveredRole_savesPrivately_andManualApplicationRemainsSelfReported() {
         val job = discovery.jobs.first()
-        compose.onNodeWithTag("discovery-list").performScrollToNode(hasText(strings("Search jobs")))
-        compose.onNodeWithText(strings("Search jobs")).performClick()
+        val searchAction = hasText(strings("Search jobs")) and hasClickAction()
+        compose.onNodeWithTag("discovery-list").performScrollToNode(searchAction)
+        compose.onNode(searchAction).performClick()
         compose.waitUntil(5_000) { model.discovery.state.value.jobs.size == 2 && !model.discovery.state.value.loading }
         compose.onNodeWithTag("discovery-list").performScrollToNode(hasContentDescription(strings.format("Save {0} at {1}", listOf(job.title, job.company))))
         compose.onNodeWithContentDescription(strings.format("Save {0} at {1}", listOf(job.title, job.company))).performClick()
