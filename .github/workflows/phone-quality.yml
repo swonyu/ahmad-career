@@ -245,13 +245,13 @@ jobs:
               if '.iOS-' not in runtime:
                   continue
               version = tuple(map(int, re.findall(r'\d+', runtime.split('.iOS-', 1)[1])))
-              if not version or version[0] < 16:
+              if not version or version[0] < 17:
                   continue
               for device in devices:
                   if device.get('isAvailable') and device['name'].startswith('iPhone'):
                       compact = not any(word in device['name'] for word in ['Max', 'Plus'])
                       candidates.append((version, compact, device['name'], device['udid']))
-          assert candidates, 'This runner has no available iPhone Simulator with iOS 16 or later.'
+          assert candidates, 'This runner has no available iPhone Simulator with iOS 17 or later.'
           version, compact, name, identifier = sorted(candidates, reverse=True)[0]
           assert re.fullmatch(r'[A-Fa-f0-9-]{36}', identifier)
           architecture = platform.machine()
