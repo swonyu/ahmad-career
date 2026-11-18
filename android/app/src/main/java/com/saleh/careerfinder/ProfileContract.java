@@ -28,6 +28,11 @@ public final class ProfileContract {
             return "Enter an email address employers can reply to.";
         return null;
     }
+    /** Apply-tab status. Empty stays needed; a typed invalid address stays a check. Saving is not blocked. */
+    public static String emailEssentialLabel(String value) {
+        if (emailError(value) == null && !value.trim().isEmpty()) return "Email added";
+        return value.isEmpty() ? "Email needed" : "Check your email";
+    }
     public static String countryError(String value) {
         String country = value.trim().toUpperCase(Locale.ROOT);
         return country.isEmpty() || COUNTRIES.contains(country) ? null : "Choose a recognized country or region.";

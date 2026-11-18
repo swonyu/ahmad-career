@@ -2,6 +2,7 @@
 import SwiftUI
 import UniformTypeIdentifiers
 import UIKit
+import SafariServices
 
 private enum ApplyDesign {
     static let actionFill = NativeDesign.actionFill
@@ -27,7 +28,7 @@ struct NativeProfileEssentials: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             essential(readiness.nameReady ? "Name added" : "Name needed", ready: readiness.nameReady, id: "name")
-            essential(readiness.emailReady ? "Email added" : profile.email.isEmpty ? "Email needed" : "Check your email", ready: readiness.emailReady, id: "email")
+            essential(readiness.emailEssentialLabel, ready: readiness.emailReady, id: "email")
             essential(readiness.resumeReady ? "PDF CV added" : "PDF CV needed", ready: readiness.resumeReady, id: "resume")
         }
     }
@@ -65,6 +66,9 @@ struct NativeSavedLinkRemoval: View {
             }.navigationTitle(l10n("Remove link")).navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button(l10n("Keep opportunity")) { dismiss() } } }
         }.tint(ApplyDesign.accent)
+            .onChange(of: issue) { value in
+                if let value { UIAccessibility.post(notification: .announcement, argument: l10n.message(value)) }
+            }
     }
 }
 
@@ -81,6 +85,14 @@ struct NativeApplicationsScreen: View {
     @State private var exported: URL?
     @State private var exportSheet = false
     @State private var removing: PhoneLocalRemovalContext?
+    @State private var announcedMessage: String?
+
+    private func speakVisibleMessage(_ value: String?) {
+        guard let value else { announcedMessage = nil; return }
+        guard value != announcedMessage else { return }
+        announcedMessage = value
+        UIAccessibility.post(notification: .announcement, argument: l10n(value))
+    }
 
     private var reviewActionTitle: String {
         guard model.connected else { return "Connect application workspace" }
@@ -229,9 +241,8 @@ struct NativeApplicationsScreen: View {
             if let exported { NativeApplicationShare(items: [exported]) }
         }
         .refreshable { await model.refresh() }
-        .onChange(of: model.message) { value in
-            if let value { UIAccessibility.post(notification: .announcement, argument: l10n(value)) }
-        }
+        .onAppear { speakVisibleMessage(model.message) }
+        .onChange(of: model.message) { value in speakVisibleMessage(value) }
     }
     private var header: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -370,7 +381,9 @@ struct NativeApplicationsScreen: View {
                       detail: "A confirmed application includes a provider receipt. Opening a job link or preparing a draft never counts as a submission.")
             }
             ForEach(model.attempts.reversed().compactMap { NativeApplicationRow($0) }) { row in
-                NativeApplicationReceipt(attempt: row.value)
+                NativeApplicationReceipt(attempt: row.value, onStop: { planID, attemptID in
+                    Task { await model.stopAndCheckReceipt(planID: planID, attemptID: attemptID) }
+                })
             }
         }
     }
@@ -392,9 +405,9 @@ struct NativeApplicationsScreen: View {
         }.padding(.vertical, 6)
     }
     private var submissionAvailability: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Label(l10n(model.liveSubmissionEnabled == false ? "Auto Apply is not activated" : "Submission availability is unverified"),
-                  systemImage: "info.circle").font(.subheadline.weight(.semibold))
+        let heading = model.liveSubmissionEnabled == false ? "Auto Apply is not activated" : "Submission availability is unverified"
+        return VStack(alignment: .leading, spacing: 10) {
+            Label(l10n(heading), systemImage: "info.circle").font(.subheadline.weight(.semibold))
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityIdentifier("applications.availability.heading")
             Button(l10n("Refresh availability")) { Task { await model.refresh() } }
@@ -406,6 +419,13 @@ struct NativeApplicationsScreen: View {
                 .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
         }.padding(16).frame(maxWidth: .infinity, alignment: .leading)
             .background(ApplyDesign.card, in: RoundedRectangle(cornerRadius: 16))
+            .onAppear {
+                UIAccessibility.post(notification: .announcement, argument: l10n(heading))
+            }
+            .onChange(of: model.liveSubmissionEnabled) { enabled in
+                guard enabled != true else { return }
+                UIAccessibility.post(notification: .announcement, argument: l10n(enabled == false ? "Auto Apply is not activated" : "Submission availability is unverified"))
+            }
     }
     private func empty(icon: String, title: String, detail: String) -> some View {
         VStack(spacing: 15) {
@@ -435,6 +455,7 @@ struct NativeApplicationProfileEditor: View {
     @State private var checkpointed = false
     @State private var closingIntentionally = false
     @FocusState private var focusedField: String?
+    @State private var emailFieldFocused = false
 
     init(model: NativeApplicationsStore) {
         self.model = model
@@ -471,13 +492,30 @@ struct NativeApplicationProfileEditor: View {
                     }
                 }
                 Section(l10n("About you")) {
-                    TextField(l10n("First or single name"), text: $draft.firstName).textContentType(.givenName)
-                        .accessibilityIdentifier("application.firstName").focused($focusedField, equals: "firstName")
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(l10n("First or single name"))
+                            .font(.subheadline.weight(.semibold)).foregroundStyle(Color.primary)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("application.firstName.label")
+                        TextField(l10n("First or single name"), text: $draft.firstName).textContentType(.givenName)
+                            .accessibilityIdentifier("application.firstName").focused($focusedField, equals: "firstName")
+                    }
                     TextField(l10n("Last name (optional)"), text: $draft.lastName).textContentType(.familyName)
                         .focused($focusedField, equals: "lastName")
-                    TextField(l10n("Email"), text: $draft.email).textContentType(.emailAddress).keyboardType(.emailAddress)
-                        .textInputAutocapitalization(.never).autocorrectionDisabled()
-                        .accessibilityIdentifier("application.email").focused($focusedField, equals: "email")
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(l10n("Email"))
+                            .font(.subheadline.weight(.semibold)).foregroundStyle(Color.primary)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("application.email.label")
+                        TextField(l10n("Email"), text: $draft.email).textContentType(.emailAddress).keyboardType(.emailAddress)
+                            .textInputAutocapitalization(.never).autocorrectionDisabled()
+                            .accessibilityIdentifier("application.email").focused($focusedField, equals: "email")
+                    }
+                    if ApplicationProfileReadiness(profile: draft).emailNeedsCorrection {
+                        Text(l10n("Enter an email address employers can reply to."))
+                            .font(.footnote).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("application.email.issue")
+                    }
                     TextField(l10n("Phone (optional)"), text: $draft.phone).textContentType(.telephoneNumber).keyboardType(.phonePad)
                         .focused($focusedField, equals: "phone")
                     TextField(l10n("City (optional)"), text: $draft.city).textContentType(.addressCity)
@@ -532,6 +570,8 @@ struct NativeApplicationProfileEditor: View {
                     }
                 } header: { Text(l10n("LinkedIn")) } footer: {
                     Text(l10n("Save your public profile link and review it before sharing it with an employer. This does not connect or verify your LinkedIn account. Opening LinkedIn uses its website or app."))
+                        .foregroundStyle(Color.primary).fixedSize(horizontal: false, vertical: true)
+                        .accessibilityIdentifier("application.linkedinExplanation")
                 }
                 Section {
                     TextField(l10n("Target roles, separated by commas"), text: $draft.targetRoles, axis: .vertical)
@@ -612,7 +652,17 @@ struct NativeApplicationProfileEditor: View {
             } message: { Text(l10n("This replaces the phone draft and any PDF selected only on this phone.")) }
         }
         .tint(ApplyDesign.accent).interactiveDismissDisabled(occupied || changed)
-        .onAppear { model.profileEditing = true }
+        .onAppear {
+            model.profileEditing = true
+            if conflicts {
+                UIAccessibility.post(notification: .announcement, argument: l10n("Your phone draft is kept. The service has a different version, so choose which details to keep before saving."))
+            }
+        }
+        .onChange(of: conflicts) { value in
+            if value {
+                UIAccessibility.post(notification: .announcement, argument: l10n("Your phone draft is kept. The service has a different version, so choose which details to keep before saving."))
+            }
+        }
         .onDisappear {
             model.profileEditing = false
             if changed && !closingIntentionally && !model.busy {
@@ -624,6 +674,15 @@ struct NativeApplicationProfileEditor: View {
                 if model.keepProfileDraft(draft, context: context) { checkpointed = true }
                 else { issue = model.message }
             }
+        }
+        .onChange(of: focusedField) { field in
+            if emailFieldFocused, field != "email", ApplicationProfileReadiness(profile: draft).emailNeedsCorrection {
+                UIAccessibility.post(notification: .announcement, argument: l10n("Enter an email address employers can reply to."))
+            }
+            emailFieldFocused = field == "email"
+        }
+        .onChange(of: issue) { value in
+            if let value { UIAccessibility.post(notification: .announcement, argument: l10n.message(value)) }
         }
     }
     private func resetFromModel() {
@@ -637,9 +696,9 @@ struct NativeApplicationProfileEditor: View {
             profileField("Location", [profile.city, profile.country].filter { !$0.isEmpty }.joined(separator: ", "))
             profileField("Headline", profile.headline); profileField("Skills", profile.skills)
             profileField("Portfolio", profile.website); profileField("LinkedIn profile", profile.linkedin)
-            profileField("Career stage", profile.experienceLevel)
+            profileField("Career stage", displayedExperience(profile.experienceLevel))
             profileField("Target roles", profile.targetRoles); profileField("Target countries", profile.targetCountries)
-            profileField("Work preferences", [profile.remote ? "Remote" : nil, profile.hybrid ? "Hybrid" : nil, profile.onsite ? "On site" : nil].compactMap { $0 }.joined(separator: ", "))
+            profileField("Work preferences", displayedWorkPreferences(profile))
             profileField("CV", profile.resumeName)
             if let hash = profile.resumeSHA256 { profileField("CV fingerprint", hash) }
         }.padding(.vertical, 8)
@@ -649,6 +708,14 @@ struct NativeApplicationProfileEditor: View {
             Text(l10n(title)).font(.caption).foregroundStyle(.secondary)
             Text(value.isEmpty ? l10n("Not provided") : value).font(.subheadline).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
         }.accessibilityElement(children: .combine)
+    }
+    private func displayedExperience(_ stored: String) -> String {
+        if let label = PhoneProfileDisplay.experienceLabel(for: stored) { return l10n(label) }
+        return stored
+    }
+    private func displayedWorkPreferences(_ profile: PhoneApplicationProfile) -> String {
+        PhoneProfileDisplay.workPreferenceLabels(remote: profile.remote, hybrid: profile.hybrid, onsite: profile.onsite)
+            .map { l10n($0) }.joined(separator: ", ")
     }
     private func countryName(_ code: String) -> String { l10n.locale.localizedString(forRegionCode: code) ?? code }
 }
@@ -740,6 +807,9 @@ struct NativeOpportunityEditor: View {
             .onDisappear {
                 if changed && !closingIntentionally { model.keepOpportunityDraft(draft) }
             }
+            .onChange(of: issue) { value in
+                if let value { UIAccessibility.post(notification: .announcement, argument: l10n.message(value)) }
+            }
     }
 }
 
@@ -785,8 +855,11 @@ struct NativeApplicationConnection: View {
                        let setup = MobileApplicationPolicy.servicePageURL(.connect, address: address) {
                         Section(l10n("1. Sign in and get a code")) {
                             Text(l10n("Career Finder")).font(.headline)
-                            Link(destination: setup) { Label(l10n("Sign in and get a code"), systemImage: "safari") }
+                            NativeHostedServiceLink(url: setup, prepare: { focusedField = nil }) {
+                                Label(l10n("Sign in and get a code"), systemImage: "safari")
+                            }
                                 .accessibilityIdentifier("connection.signIn")
+                                .disabled(model.busy)
                             Text(l10n("Choose an available sign-in method, or use Google through ChatGPT. Return to your existing account before connecting another provider; matching emails do not merge workspaces. Create a code, then return here."))
                                 .font(.footnote).foregroundStyle(.secondary)
                         }
@@ -840,7 +913,10 @@ struct NativeApplicationConnection: View {
                     }
                 }
                 if let issue {
-                    Section { Text(l10n.message(issue)).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true) }
+                    Section {
+                        Text(l10n.message(issue)).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("connection.issue")
+                    }
                 } else if let notice = model.message {
                     Section { Text(l10n(notice)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true) }
                 }
@@ -859,6 +935,9 @@ struct NativeApplicationConnection: View {
                 }
         }.tint(ApplyDesign.accent).interactiveDismissDisabled(model.busy)
             .onChange(of: address) { _ in code = ""; issue = nil }
+            .onChange(of: issue) { value in
+                if let value { UIAccessibility.post(notification: .announcement, argument: l10n.message(value)) }
+            }
             .confirmationDialog(l10n("Disconnect this phone?"), isPresented: $disconnecting, titleVisibility: .visible) {
                 Button(l10n("Disconnect this phone"), role: .destructive) {
                     guard let captured = disconnectContext,
@@ -878,7 +957,7 @@ struct NativeApplicationServiceLinks: View {
     var body: some View {
         if MobileApplicationPolicy.isHostedService(address) {
             if includeConnection, let url = MobileApplicationPolicy.servicePageURL(.connect, address: address) {
-                Link(l10n("Set up or recover workspace access"), destination: url)
+                NativeHostedServiceLink(url: url) { Text(l10n("Set up or recover workspace access")) }
             }
             if let url = MobileApplicationPolicy.servicePageURL(.privacy, address: address) {
                 Link(l10n("Hosted service privacy policy"), destination: url)
@@ -887,11 +966,137 @@ struct NativeApplicationServiceLinks: View {
                 Link(l10n("Get application-service support"), destination: url)
             }
             if let url = MobileApplicationPolicy.servicePageURL(.account, address: address) {
-                Link(l10n("Manage account and delete hosted data"), destination: url)
+                NativeHostedServiceLink(url: url) { Text(l10n("Manage account and delete hosted data")) }
             }
         } else {
             Text(l10n("For this custom service, ask its operator for a new workspace invitation, its privacy policy, support and account deletion. Its connection and data practices are separate from the hosted Career Finder service."))
                 .font(.footnote).foregroundStyle(.secondary)
+        }
+    }
+}
+
+/// The hosted service still creates a code that the person copies and pastes.
+/// This presentation does not receive an authentication callback or read web data.
+@MainActor
+private struct NativeHostedServiceLink<Label: View>: View {
+    let url: URL
+    private let prepare: () -> Void
+    private let label: Label
+    @State private var presented = false
+
+    init(url: URL, prepare: @escaping () -> Void = {}, @ViewBuilder label: () -> Label) {
+        self.url = url
+        self.prepare = prepare
+        self.label = label()
+    }
+
+    var body: some View {
+        Button {
+            prepare()
+            presented = true
+        } label: {
+            label
+        }
+        .disabled(presented)
+        .background {
+            NativeHostedServicePresenter(url: url, isPresented: $presented)
+                .frame(width: 0, height: 0)
+        }
+    }
+}
+
+/// An empty, attached presentation anchor. Safari is presented directly with
+/// UIKit's default Safari transition; it is never embedded as a child controller.
+@MainActor
+private struct NativeHostedServicePresenter: UIViewControllerRepresentable {
+    let url: URL
+    @Binding var isPresented: Bool
+
+    func makeUIViewController(context: Context) -> Presenter {
+        let controller = Presenter()
+        controller.view.backgroundColor = .clear
+        controller.view.isUserInteractionEnabled = false
+        return controller
+    }
+
+    func updateUIViewController(_ controller: Presenter, context: Context) {
+        controller.update(requestedURL: isPresented ? url : nil) { isPresented = false }
+    }
+
+    static func dismantleUIViewController(_ controller: Presenter, coordinator: ()) {
+        controller.dismantle()
+    }
+
+    @MainActor
+    final class Presenter: UIViewController, SFSafariViewControllerDelegate, UIAdaptivePresentationControllerDelegate {
+        private var requestedURL: URL?
+        private var browser: SFSafariViewController?
+        private var onDismiss: (() -> Void)?
+        private var dismissalReported = false
+        private var dismantled = false
+
+        func update(requestedURL: URL?, onDismiss: @escaping () -> Void) {
+            self.requestedURL = requestedURL
+            self.onDismiss = onDismiss
+            presentIfReady()
+        }
+
+        override func viewDidAppear(_ animated: Bool) {
+            super.viewDidAppear(animated)
+            presentIfReady()
+        }
+
+        private func presentIfReady() {
+            // UIKit can retain a dismissed controller briefly. Reopening is
+            // allowed only once that exact controller has left presentation.
+            if let current = browser, current.presentingViewController == nil,
+               !current.isBeingPresented, !current.isBeingDismissed {
+                reportDismissal(of: current)
+                browser = nil
+            }
+            guard !dismantled, let url = requestedURL, viewIfLoaded?.window != nil,
+                  browser == nil, presentedViewController == nil,
+                  !isBeingPresented, !isBeingDismissed else { return }
+            let controller = SFSafariViewController(url: url)
+            controller.delegate = self
+            controller.dismissButtonStyle = .done
+            controller.view.accessibilityIdentifier = "hostedService.browser"
+            browser = controller
+            dismissalReported = false
+            // Keep Safari's default modal presentation and transitioning delegate.
+            present(controller, animated: true)
+            controller.presentationController?.delegate = self
+        }
+
+        func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+            reportDismissal(of: controller)
+            // Safari dismisses itself after this callback. Do not begin a
+            // competing dismiss transition when the binding becomes false.
+        }
+
+        func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+            guard let controller = presentationController.presentedViewController as? SFSafariViewController else { return }
+            reportDismissal(of: controller)
+        }
+
+        private func reportDismissal(of controller: SFSafariViewController) {
+            guard browser === controller, !dismissalReported else { return }
+            dismissalReported = true
+            requestedURL = nil
+            onDismiss?()
+        }
+
+        func dismantle() {
+            dismantled = true
+            requestedURL = nil
+            onDismiss = nil
+            // Teardown only the exact browser this anchor created. Never
+            // dismiss a different controller or a parent connection sheet.
+            if let current = browser, current.presentingViewController != nil,
+               !current.isBeingDismissed {
+                current.dismiss(animated: false)
+            }
+            browser = nil
         }
     }
 }
@@ -1053,6 +1258,23 @@ private struct NativeApplicationReview: View {
             .onChange(of: model.plan?["digest"]?.string) { _ in approved = false }
             .onChange(of: model.plan?["approvedAt"]?.string) { _ in approved = false; changed = false }
             .onChange(of: model.plan?["id"]?.string) { id in if id == nil { dismiss() } }
+            .onAppear {
+                if !model.submissionAvailable {
+                    UIAccessibility.post(notification: .announcement, argument: l10n("Automatic submission is unavailable for this connection. Return to the application workspace to refresh availability, or use the employer's website."))
+                } else if model.profileNeedsSync {
+                    UIAccessibility.post(notification: .announcement, argument: l10n("Save your current application details before approving this review."))
+                }
+            }
+            .onChange(of: model.submissionAvailable) { available in
+                if !available {
+                    UIAccessibility.post(notification: .announcement, argument: l10n("Automatic submission is unavailable for this connection. Return to the application workspace to refresh availability, or use the employer's website."))
+                }
+            }
+            .onChange(of: model.profileNeedsSync) { needsSync in
+                if needsSync, model.submissionAvailable {
+                    UIAccessibility.post(notification: .announcement, argument: l10n("Save your current application details before approving this review."))
+                }
+            }
     }
     private func consentBinding(_ jobID: String, _ field: String) -> Binding<String> {
         Binding(get: {
@@ -1069,6 +1291,7 @@ private struct NativeApplicationReview: View {
 private struct NativeApplicationReceipt: View {
     @NativeLocalization private var l10n
     let attempt: [String: ApplicationValue]
+    var onStop: ((_ planID: String, _ attemptID: String) -> Void)? = nil
     private var test: Bool { attempt["evidenceMode"]?.string == "test" }
     private var verified: Bool { MobileApplicationPolicy.isVerified(attempt) }
     private var state: String {
@@ -1092,6 +1315,11 @@ private struct NativeApplicationReceipt: View {
             if state == "uncertain" {
                 Text(l10n("The service could not establish whether the employer accepted this application. It will not be sent again automatically."))
                     .font(.caption).foregroundStyle(.secondary)
+            }
+            if state == "dispatching", let onStop,
+               let planID = attempt["planId"]?.string, !planID.isEmpty, planID.utf16.count <= 200,
+               let attemptID = attempt["attemptId"]?.string ?? attempt["id"]?.string, !attemptID.isEmpty, attemptID.utf16.count <= 200 {
+                Button(l10n("Stop")) { onStop(planID, attemptID) }.frame(minHeight: 44)
             }
             if let message = attempt["error"]?.object["message"]?.string ?? attempt["reason"]?.string, !message.isEmpty {
                 Text(l10n(message)).font(.caption).foregroundStyle(.secondary)
@@ -1160,6 +1388,44 @@ struct NativePhoneDataScreen: View {
                     .font(.footnote).foregroundStyle(.secondary)
                 Text(l10n("Import replaces this phone's profile draft and merges saved links and private record history. Existing record versions are retained for comparison. It does not upload data or approve applications."))
                     .font(.footnote).foregroundStyle(.secondary)
+            }
+            if !model.unfinishedRecordDrafts.isEmpty || !model.recoveredRecordDrafts.isEmpty {
+                Section(l10n("Unfinished record edits")) {
+                    ForEach(Array(model.unfinishedRecordDrafts.enumerated()), id: \.offset) { _, draft in
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(draft.job.title).font(.subheadline)
+                            Text(draft.draft.note.isEmpty ? l10n("No private note") : draft.draft.note)
+                                .font(.footnote).foregroundStyle(.secondary)
+                        }
+                    }
+                    if !model.recoveredRecordDrafts.isEmpty {
+                        Text(l10n("Other recovered edit versions")).font(.subheadline.weight(.semibold))
+                        ForEach(Array(model.recoveredRecordDrafts.enumerated()), id: \.offset) { _, draft in
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(draft.job.title).font(.subheadline)
+                                Text(draft.draft.note.isEmpty ? l10n("No private note") : draft.draft.note)
+                                    .font(.footnote).foregroundStyle(.secondary)
+                                Button(l10n("Use this unfinished edit")) {
+                                    if model.useRecoveredRecordDraft(draft) { issue = nil } else { issue = model.message }
+                                }.frame(minHeight: 44)
+                            }
+                        }
+                    }
+                }
+            }
+            if !model.recoveredOpportunityDrafts.isEmpty {
+                Section(l10n("Recovered opportunity drafts")) {
+                    ForEach(Array(model.recoveredOpportunityDrafts.enumerated()), id: \.offset) { _, draft in
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(draft.title.isEmpty ? l10n("Unfinished opportunity") : draft.title).font(.subheadline)
+                            if !draft.company.isEmpty { Text(draft.company).font(.footnote).foregroundStyle(.secondary) }
+                            if !draft.url.isEmpty { Text(draft.url).font(.footnote).foregroundStyle(.secondary).textSelection(.enabled) }
+                            Button(l10n("Continue this opportunity")) {
+                                if model.restoreRecoveredOpportunityDraft(draft) { issue = nil } else { issue = model.message }
+                            }.frame(minHeight: 44)
+                        }
+                    }
+                }
             }
             Section(l10n("Earlier local planning records")) {
                 NavigationLink { NativeLegacyBackupScreen() } label: {
@@ -1244,6 +1510,9 @@ struct NativePhoneDataScreen: View {
                 }
                 Button(l10n("Keep phone data"), role: .cancel) {}
             } message: { Text(l10n.format("This removes the local profile, PDF, links, search and private notes/history for {0}. An exported backup can restore them. Cloud/employer records and safety holds remain.", [String(describing: target)])) }
+            .onChange(of: issue) { value in
+                if let value { UIAccessibility.post(notification: .announcement, argument: l10n.message(value)) }
+            }
     }
 }
 

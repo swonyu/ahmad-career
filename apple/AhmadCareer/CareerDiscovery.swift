@@ -370,7 +370,9 @@ final class CareerDiscoveryStore: ObservableObject {
     @Published private(set) var loadingCatalog = false
     @Published private(set) var restoredResults = false
     @Published private(set) var error: String?
+    @Published private(set) var catalogError: String?
     @Published private(set) var storageNotice: String?
+    var savedSearchRestoreBlocked: Bool { !storageReadable }
     @Published private(set) var retryAfter: Date?
     @Published private(set) var needsNewSearch = false
     private let service: any CareerDiscoveryServing
@@ -448,6 +450,7 @@ final class CareerDiscoveryStore: ObservableObject {
                   saved.jobs.allSatisfy({ MobileApplicationPolicy.jobURL($0.url) != nil }),
                   Set(saved.jobs.map(\.id)).count == saved.jobs.count else { throw CocoaError(.coderReadCorrupt) }
             if let page = saved.page { try DiscoveryPolicy.validate(page) }
+            storageReadable = true; storageNotice = nil
             let repairedQuery = repaired(saved.query)
             let repairedLast = saved.lastQuery.map(repaired)
             query = repairedQuery; lastQuery = repairedLast; page = saved.page; jobs = saved.jobs
@@ -461,14 +464,27 @@ final class CareerDiscoveryStore: ObservableObject {
             storageReadable = false; storageNotice = "The previous search file could not be read. It is preserved; new searches will stay in memory."
         }
     }
+    /// Try the failed read or save again. An unreadable file is left in place until it can be read.
+    func retrySavedSearch() {
+        if !storageReadable {
+            restore()
+            if !storageReadable && !FileManager.default.fileExists(atPath: file.path) {
+                storageReadable = true; storageNotice = nil
+            }
+        }
+        guard storageReadable else { return }
+        persist()
+    }
     var canLoadMore: Bool { page?.nextCursor != nil && lastQuery == query && !isSearching && !restoredResults && !needsNewSearch }
     var criteriaChanged: Bool { lastQuery != nil && lastQuery != query }
     func loadCatalog() async {
         guard catalog == nil, !loadingCatalog else { return }
-        loadingCatalog = true; defer { loadingCatalog = false }
+        loadingCatalog = true; catalogError = nil; defer { loadingCatalog = false }
         do {
             let result = try await service.catalog(); try DiscoveryPolicy.validate(result); catalog = result
-        } catch { self.error = error.localizedDescription }
+        } catch {
+            catalogError = "Employer boards could not be loaded. You can retry or search the recommended boards."
+        }
     }
     func boardSelected(_ raw: String) -> Bool {
         if let id = DiscoveryPolicy.canonicalBoard(raw)?.id {
@@ -521,6 +537,7 @@ final class CareerDiscoveryStore: ObservableObject {
     }
     func retrySubmittedSearch() async {
         guard canRetrySubmittedSearch, let captured = submittedQuery ?? lastQuery else { return }
+        if let retryAfter, retryAfter > Date() { return }
         await execute(captured: captured, more: false, ignoreDraftEdits: true)
     }
     func search(more: Bool = false) async {

@@ -1,0 +1,83 @@
+{
+  "createdUTC": "2026-11-18T06:29:20.488357+00:00",
+  "branch": "continuation/native-search-retry-cooldown-20261118-d60d",
+  "parent": "0beff68a6906968f282dca292dc547daad85684f",
+  "appliedPatchSHA256": "a36265359b859d61f22dae2cde7c8d55b0e21dcb9148798efca470311e891a14",
+  "changedSourceFiles": [
+    "apple/AhmadCareer/CareerDiscovery.swift",
+    "apple/Checks/DiscoveryCheck.swift"
+  ],
+  "candidateHashes": {
+    "apple/AhmadCareer/MobileApplicationClient.swift": "379b187ad17ddce0b8c13536052db8bab364f70dad4eb313071aaeb0b15b4588",
+    "apple/AhmadCareer/MobileApplicationState.swift": "1858795ccf563e9802c5cabc0367b402eadba2c9e978a5092c2e70a232d1a489",
+    "apple/AhmadCareer/CareerDiscovery.swift": "883837031fbb90158c440899871a3b89720c0ec16ee6873dac5a5e26682ea09e",
+    "apple/Checks/DiscoveryCheck.swift": "a0c802e55c1c636b93112934e42af542cdd354aa4598785a88ce787caa3f8902",
+    "apple/Checks/Fixtures/discovery-search-v1.json": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7"
+  },
+  "allOtherTrackedNativeSourceUnchanged": true,
+  "originalSearchHEAD": "0beff68a6906968f282dca292dc547daad85684f",
+  "originalSearchStatus": "",
+  "originalSearchHashesUnchanged": true,
+  "copiedEvidence": {
+    "native-submitted-retry-cooldown.patch": {
+      "bytes": 4289,
+      "sha256": "a36265359b859d61f22dae2cde7c8d55b0e21dcb9148798efca470311e891a14"
+    },
+    "source-receipt.json": {
+      "bytes": 1700,
+      "sha256": "7579e0c3723ad4201c702ca17051c40999b18e740f9648b6d1510b56faf629eb"
+    },
+    "verification-receipt.json": {
+      "bytes": 5598,
+      "sha256": "876e196ed4ecc4b8a1b175626c266cbd7997a53ed7ca9a634f0281a100b57db1"
+    },
+    "final-preservation-receipt.json": {
+      "bytes": 569,
+      "sha256": "cd280069f30e78aaacde128f7eb72650d24e7c0f657bf374f3787260de29484f"
+    },
+    "HANDOFF.md": {
+      "bytes": 2416,
+      "sha256": "52657a26e4e7cf7597d5606261bb7af297bf2d2baf2476425a2c78420003be0a"
+    },
+    "baseline-compile.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "baseline-compile.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "baseline-run.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "baseline-run.stderr.log": {
+      "bytes": 105,
+      "sha256": "692810ef85e78d3393978d5d395466a9c8d7fc7326cb170b61d9d6daeeb96532"
+    },
+    "candidate-compile.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "candidate-compile.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "candidate-run.stdout.log": {
+      "bytes": 56,
+      "sha256": "0b65ae0bd2bab58ac7e693df86209bf954a989b34caf2554c157ce5715f383f4"
+    },
+    "candidate-run.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "newCompileTestNativeBuildCIDispatchDeployStore": false,
+  "acceptance": "Prior exact-hash host regression only; device/live-provider/full combined/native gates remain unrun",
+  "whitespaceInspection": {
+    "wholeCheckpointExit": 2,
+    "diagnostics": "docs/continuation-evidence/2026-11-18-native-retry-d60d/native-submitted-retry-cooldown.patch:62: trailing whitespace.\n+ \ndocs/continuation-evidence/2026-11-18-native-retry-d60d/native-submitted-retry-cooldown.patch:62: new blank line at EOF.\n",
+    "sourceFilesExit": 0,
+    "disposition": "Exact patch context marker preserved; artifact-only diagnostic, no source whitespace defect and no rule disabled"
+  }
+}

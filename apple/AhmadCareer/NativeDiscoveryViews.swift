@@ -5,6 +5,8 @@ struct NativeDiscoveryScreen: View {
     @NativeLocalization private var l10n
     @EnvironmentObject private var discovery: CareerDiscoveryStore
     @State private var choosingBoards = false
+    @State private var searchClock = Date()
+    @State private var linkedInOpenable = true
     private enum SearchField: Hashable { case keywords, location }
     @FocusState private var focusedField: SearchField?
     var body: some View {
@@ -42,7 +44,8 @@ struct NativeDiscoveryScreen: View {
                         .accessibilityIdentifier("discovery.linkedin")
                 } else {
                     Text(l10n("Shorten your search to 120 characters and location to 100 characters to open LinkedIn."))
-                        .font(.footnote).foregroundStyle(.secondary)
+                        .font(.footnote).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+                        .accessibilityIdentifier("discovery.linkedinIssue")
                 }
             } footer: {
                 Text(l10n("Opens LinkedIn with only your keyword and location text. LinkedIn manages its own sign-in and applications. Career Finder does not read your LinkedIn account or verify applications submitted there."))
@@ -53,10 +56,14 @@ struct NativeDiscoveryScreen: View {
                         .font(.subheadline).fixedSize(horizontal: false, vertical: true)
                         .accessibilityElement(children: .ignore).accessibilityLabel(l10n.message(error))
                         .accessibilityAddTraits(.isStaticText).accessibilityIdentifier("discovery.error")
+                    Button(l10n("Search again"), action: beginSearch)
+                        .frame(minHeight: 44)
+                        .disabled((discovery.retryAfter ?? .distantPast) > searchClock)
+                        .accessibilityIdentifier("discovery.retrySearch")
                     if let retry = discovery.retryAfter {
                         Text(l10n.format("Try again after {0}.", [String(describing: l10n.time(retry))])).font(.footnote)
                     }
-                    if discovery.catalog == nil && !discovery.loadingCatalog {
+                    if discovery.catalog == nil && !discovery.loadingCatalog && discovery.catalogError == nil {
                         Button(l10n("Retry employer directory")) { Task { await discovery.loadCatalog() } }
                     }
                     if discovery.canRetrySubmittedSearch {
@@ -70,14 +77,35 @@ struct NativeDiscoveryScreen: View {
                     }
                 }
             }
+            if let issue = discovery.catalogError {
+                Section {
+                    Label(l10n(issue), systemImage: "exclamationmark.circle")
+                        .font(.subheadline).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+                        .accessibilityIdentifier("discovery.catalogError")
+                    Button(l10n("Retry employer directory")) { Task { await discovery.loadCatalog() } }
+                        .frame(minHeight: 44)
+                        .disabled(discovery.loadingCatalog)
+                        .accessibilityIdentifier("discovery.retryCatalog")
+                }
+            }
             if let notice = discovery.storageNotice {
-                Section { Label(l10n(notice), systemImage: "exclamationmark.triangle").font(.footnote) }
+                Section {
+                    Label(l10n(notice), systemImage: "exclamationmark.triangle")
+                        .font(.footnote).fixedSize(horizontal: false, vertical: true)
+                        .accessibilityIdentifier("discovery.storageNotice")
+                    Button(l10n(discovery.savedSearchRestoreBlocked ? "Retry previous search" : "Retry saving search"),
+                           action: discovery.retrySavedSearch)
+                        .frame(minHeight: 44)
+                        .accessibilityIdentifier("discovery.retrySavedSearch")
+                }
             }
             if let page = discovery.page {
                 Section {
                     if discovery.restoredResults || discovery.criteriaChanged {
                         Label(l10n(discovery.criteriaChanged ? "Previous search — update the search to use your current fields." : "Previous results — search again to check availability."), systemImage: "clock.arrow.circlepath")
-                            .font(.footnote).foregroundStyle(.secondary)
+                            .font(.footnote).foregroundStyle(Color.primary)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("discovery.previousSearchScope")
                     }
                     if let criteria = discovery.lastQuery { Text(l10n(criteria.summary)).font(.subheadline).fixedSize(horizontal: false, vertical: true) }
                     DisclosureGroup(l10n("Employer coverage and freshness")) {
@@ -137,6 +165,25 @@ struct NativeDiscoveryScreen: View {
         .onChange(of: discovery.error) { issue in
             if let issue { UIAccessibility.post(notification: .announcement, argument: l10n.message(issue)) }
         }
+        .onChange(of: discovery.storageNotice) { notice in
+            if let notice { UIAccessibility.post(notification: .announcement, argument: l10n(notice)) }
+        }
+        .onChange(of: discovery.catalogError) { issue in
+            if let issue { UIAccessibility.post(notification: .announcement, argument: l10n(issue)) }
+        }
+        .onChange(of: discovery.query.keywords) { _ in announceLinkedInLimit() }
+        .onChange(of: discovery.query.location) { _ in announceLinkedInLimit() }
+        .onAppear {
+            linkedInOpenable = MobileApplicationPolicy.linkedInJobSearchURL(keywords: discovery.query.keywords, location: discovery.query.location) != nil
+        }
+        .task(id: discovery.retryAfter) {
+            guard let retry = discovery.retryAfter else { return }
+            let remaining = retry.timeIntervalSinceNow
+            guard remaining > 0 else { return }
+            do { try await Task.sleep(nanoseconds: UInt64(remaining * 1_000_000_000)) }
+            catch { return }
+            searchClock = retry
+        }
     }
     private var boardLabel: String {
         discovery.query.sources.isEmpty ? "Employer boards · suggested selection" : "Employer boards · \(discovery.query.sources.count) selected"
@@ -166,6 +213,13 @@ struct NativeDiscoveryScreen: View {
             Text(l10n("Opening this public board in your browser does not submit an application or confirm the listings are still open."))
                 .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
         }
+    }
+    private func announceLinkedInLimit() {
+        let openable = MobileApplicationPolicy.linkedInJobSearchURL(keywords: discovery.query.keywords, location: discovery.query.location) != nil
+        if linkedInOpenable && !openable {
+            UIAccessibility.post(notification: .announcement, argument: l10n("Shorten your search to 120 characters and location to 100 characters to open LinkedIn."))
+        }
+        linkedInOpenable = openable
     }
     private var emptyState: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -229,7 +283,22 @@ private struct NativeDiscoveryBoards: View {
                 } header: { Text(l10n("Add an employer board")) } footer: {
                     Text(l10n("Supports boards.greenhouse.io, job-boards.greenhouse.io, jobs.lever.co and jobs.eu.lever.co. You can paste a board or a posting on one of those hosts. Adding it does not search until you tap Search jobs."))
                 }
-                if let issue = discovery.error { Section { Text(l10n.message(issue)).font(.footnote) } }
+                if let issue = discovery.catalogError, discovery.catalog == nil {
+                    Section {
+                        Text(l10n(issue)).font(.footnote).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("discovery.catalogError")
+                        Button(l10n("Retry employer directory")) { Task { await discovery.loadCatalog() } }
+                            .frame(minHeight: 44)
+                            .disabled(discovery.loadingCatalog)
+                            .accessibilityIdentifier("discovery.retryCatalog")
+                    }
+                }
+                if let issue = discovery.error {
+                    Section {
+                        Text(l10n.message(issue)).font(.footnote).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("discovery.boardIssue")
+                    }
+                }
             }.navigationTitle(l10n("Employer boards")).navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .confirmationAction) { Button(l10n("Done")) { dismiss() } } }
         }

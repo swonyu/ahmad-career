@@ -1,0 +1,82 @@
+{
+  "verified_at": "2026-11-18T07:17:39.371676+00:00",
+  "source_commit": "15d476b853c2bfdbec52538f03f68d59bfb3ffa5",
+  "branch": "integration/native-lanes-20261118-d60d",
+  "merge_commits": [
+    {
+      "commit": "4b96161c82b596e96f655ddfcb14001479a5060e",
+      "parents": [
+        "c0c865eea250019ee21fbd6110c9fe4446c3c8f1"
+      ],
+      "subject": "Preserve publisher native browser and acceptance work before integration"
+    },
+    {
+      "commit": "4da0d30b70100c1c9310ca839774d481bbbe501c",
+      "parents": [
+        "4b96161c82b596e96f655ddfcb14001479a5060e",
+        "9531a4be09c459e15573667c67b695dc6040874d"
+      ],
+      "subject": "Merge verified submitted-search cooldown into preserved publisher native source"
+    },
+    {
+      "commit": "501a05c0cd4b87704d6c16a327d6f848ce190e4a",
+      "parents": [
+        "4da0d30b70100c1c9310ca839774d481bbbe501c",
+        "53c7341d8e0d28137089522a2ffc542e4d780299"
+      ],
+      "subject": "Merge preserved native recovery and backup safeguards"
+    },
+    {
+      "commit": "15d476b853c2bfdbec52538f03f68d59bfb3ffa5",
+      "parents": [
+        "501a05c0cd4b87704d6c16a327d6f848ce190e4a",
+        "b37fe51fa2e03868efb0ad3c830be5801defe913"
+      ],
+      "subject": "Integrate all native accessibility and recovery lanes with publisher browser work"
+    }
+  ],
+  "required_ancestors": [
+    "c0c865eea250019ee21fbd6110c9fe4446c3c8f1",
+    "9531a4be09c459e15573667c67b695dc6040874d",
+    "53c7341d8e0d28137089522a2ffc542e4d780299",
+    "b37fe51fa2e03868efb0ad3c830be5801defe913"
+  ],
+  "all_required_ancestors_present": true,
+  "changed_after_initial_checks": {
+    "apple/Checks/DiscoveryCheck.swift": {
+      "before": "ea463450d93e5d1a3547a1e85dd841608e26700525df14319af6cfc77be56c86",
+      "final": "c01f56d04bdc8d931e50b47be3353c408922428745e0beff9fb8eca99aa79466"
+    },
+    "apple/Checks/check-mobile.sh": {
+      "before": "56895bbfe51f0b374ec2a78cd0ac24f2d97dd23e510e75a900b7f4977441b63d",
+      "final": "8f7e533fe92b7df477b83d03d533357a6c624a11622f19a788698c9a4e1181ef"
+    }
+  },
+  "retest_all_recorded_hashes_match_final_source": true,
+  "new_host_runner": "apple/Checks/check-native-recovery.sh",
+  "host_wiring": "apple/Checks/check-mobile.sh invokes the dedicated recovery runner; Xcode app target unchanged",
+  "focused_results": {
+    "discovery": "109 assertions / 26 scenarios, fresh final retest",
+    "native_recovery": "179 assertions / 56 scenarios, fresh final dedicated-runner pass",
+    "lifecycle": "508 assertions / 77 scenarios, all compiled product input hashes unchanged at final source",
+    "saved_search_localization": "21 cases; typed-display contract passed",
+    "acceptance_fixture": "38 assertions, actual DEBUG fixture initialization",
+    "android_policy": "127 executable Java boundary-policy checks",
+    "swift_ui": "syntax parse only; not UIKit/SwiftUI typecheck or native runtime",
+    "localization": "1814 strings per language; generated files match; eight generator contract tests passed"
+  },
+  "first_run_failure": {
+    "test": "A blocked retry explains the existing service wait",
+    "cause": "Earlier publisher assertion required replacing the service error with English Try again after; accepted cooldown child preserves the original error and separate localized retry deadline.",
+    "resolution": "Only the incompatible error-text assertion changed to exact original Synthetic service wait. Request-count, deadline, query, prior-result and newer-draft assertions remain. Final discovery suite passed."
+  },
+  "not_run": [
+    "Xcode app build",
+    "Gradle app build/Kotlin compilation",
+    "iPhone or Android UI/instrumentation/device runs",
+    "VoiceOver/TalkBack",
+    "full five-job CI",
+    "production/provider/store acceptance"
+  ],
+  "external_state": "No deployment, CI dispatch, PR or original owner edit performed by this lane."
+}

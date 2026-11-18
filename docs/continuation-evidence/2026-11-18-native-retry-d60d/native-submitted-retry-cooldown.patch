@@ -1,0 +1,62 @@
+--- a/apple/AhmadCareer/CareerDiscovery.swift
++++ b/apple/AhmadCareer/CareerDiscovery.swift
+@@ -518,6 +518,9 @@
+     }
+     func retrySubmittedSearch() async {
+         guard canRetrySubmittedSearch, let captured = submittedQuery ?? lastQuery else { return }
++        if let retryAfter, retryAfter > Date() {
++            error = "Try again after " + retryAfter.formatted(date: .omitted, time: .shortened) + "."; return
++        }
+         await execute(captured: captured, more: false, ignoreDraftEdits: true)
+     }
+     func search(more: Bool = false) async {
+--- a/apple/Checks/DiscoveryCheck.swift
++++ b/apple/Checks/DiscoveryCheck.swift
+@@ -266,6 +266,47 @@
+             try check(model.query.keywords == "explicit" && model.jobs == self.fixture.jobs && service.calls.last?.0.keywords == "explicit", "A newer explicit search wins over a late submitted retry")
+             scenarios += 1
+         }
++        for hasPreviousResults in [false, true] {
++            let service = DiscoveryStub(fixture); let (model, file) = store(service)
++            let submitted = DiscoveryQuery(sources: ["lever:eu:example-board"], keywords: "submitted role", location: "Riyadh", remoteOnly: true)
++            model.query = submitted
++            if hasPreviousResults { await model.search() }
++            let retryTime = Date().addingTimeInterval(60)
++            service.handle = { _, _ in throw DiscoveryFailure(message: "Wait", retryAfter: retryTime) }
++            await model.search()
++            let retainedJobs = model.jobs, retainedQuery = model.lastQuery, retainedStatus = model.page?.status
++            let callCount = service.calls.count
++            let newerDraft = DiscoveryQuery(sources: ["greenhouse:draft-board"], keywords: "newer draft", location: "Tokyo", remoteOnly: false)
++            model.query = newerDraft
++            let savedBeforeRetry = try Data(contentsOf: file)
++            try check(model.canRetrySubmittedSearch, "A failed or partial submitted search has an explicit retry action")
++            service.handle = { _, _ in self.page(status: "complete") }
++            await model.retrySubmittedSearch()
++            try check(service.calls.count == callCount, "Submitted retry must not contact the service before Retry-After, including a failed first search")
++            try check(model.retryAfter == retryTime && model.error?.hasPrefix("Try again after ") == true && !model.isSearching,
++                      "An early submitted retry keeps the cooldown and reports the waiting state")
++            try check(model.query == newerDraft && model.jobs == retainedJobs && model.lastQuery == retainedQuery && model.page?.status == retainedStatus,
++                      "Blocked retry preserves newer draft fields and prior result attribution")
++            let savedAfterRetry = try Data(contentsOf: file)
++            try check(savedAfterRetry == savedBeforeRetry, "Blocked retry does not rewrite saved search data")
++            scenarios += 1
++        }
++        do {
++            let service = DiscoveryStub(fixture); let (model, _) = store(service)
++            let submitted = DiscoveryQuery(sources: ["lever:eu:example-board"], keywords: "submitted role", location: "Riyadh", remoteOnly: true)
++            model.query = submitted
++            service.handle = { _, _ in throw DiscoveryFailure(message: "Wait", retryAfter: Date().addingTimeInterval(-1)) }
++            await model.search()
++            let newerDraft = DiscoveryQuery(sources: ["greenhouse:draft-board"], keywords: "newer draft", location: "Tokyo", remoteOnly: false)
++            model.query = newerDraft
++            service.handle = { _, _ in self.fixture }
++            await model.retrySubmittedSearch()
++            try check(service.calls.count == 2 && service.calls.last?.0 == submitted && service.calls.last?.1 == nil,
++                      "An expired cooldown allows retry of the exact submitted filters, not the newer form draft")
++            try check(model.query == newerDraft && model.lastQuery == submitted && model.jobs == fixture.jobs && model.retryAfter == nil && model.error == nil,
++                      "Successful retry after cooldown preserves draft edits and attributes results to the submitted search")
++            scenarios += 1
++        }
+     }
+ }
+ 

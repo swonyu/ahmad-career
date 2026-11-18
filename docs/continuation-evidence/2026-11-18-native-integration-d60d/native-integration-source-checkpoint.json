@@ -1,0 +1,11 @@
+{
+  "commit": "15d476b853c2bfdbec52538f03f68d59bfb3ffa5",
+  "parents": [
+    "501a05c0cd4b87704d6c16a327d6f848ce190e4a",
+    "b37fe51fa2e03868efb0ad3c830be5801defe913"
+  ],
+  "branch": "integration/native-lanes-20261118-d60d",
+  "worktree": "/Users/saleh/Developer/career-finder-native-integrated-20261118-d60d62a70f26",
+  "conflicts": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-integration-conflict-resolutions.json",
+  "publisher_preserved": true
+}

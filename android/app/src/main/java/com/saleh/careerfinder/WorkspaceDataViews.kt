@@ -16,6 +16,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import java.time.LocalDate
+import java.util.Locale
 
 @Composable
 internal fun WorkspaceDataDialog(state: CareerUiState, model: CareerViewModel, editOpportunity: () -> Unit, close: () -> Unit) {
@@ -116,7 +117,8 @@ internal fun WorkspaceDataDialog(state: CareerUiState, model: CareerViewModel, e
                 Text(l10n("Delete this workspace from this phone"), style = MaterialTheme.typography.titleLarge)
                 Text(l10n("Deletes this scope's phone profile, résumé, saved jobs, notes, drafts, local receipt copies, search and known equivalent-address copies. Export a backup first if you want to keep them."))
                 Text(l10n("Other phone workspaces, older preserved recovery areas, exported files, cloud records and employer applications are separate. Manage cloud account deletion in the account page."), style = MaterialTheme.typography.bodySmall)
-                if (state.activePlans.isNotEmpty()) Text(l10n("Stop active Auto Apply work and refresh receipts before deleting this phone workspace."), color = MaterialTheme.colorScheme.error)
+                if (state.activePlans.isNotEmpty()) Text(l10n("Stop active Auto Apply work and refresh receipts before deleting this phone workspace."), color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
                 OutlinedButton(onClick = { deletingScope = scope }, enabled = !state.busy && state.activePlans.isEmpty(),
                     modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Delete this phone workspace…")) }
             } }
@@ -140,6 +142,11 @@ internal fun WorkspaceDataDialog(state: CareerUiState, model: CareerViewModel, e
 internal fun WorkspaceImportDialog(state: CareerUiState, model: CareerViewModel) {
     val l10n = rememberCareerStrings()
     val preview = state.workspaceImport ?: return
+    val countryNames = remember(l10n.locale.toLanguageTag()) {
+        ProfileContract.COUNTRIES.associateWith { code ->
+            Locale.Builder().setRegion(code).build().getDisplayCountry(l10n.locale).ifBlank { code }
+        }
+    }
     val incoming = preview.snapshot
     var profile by remember(preview.token) { mutableStateOf(false) }
     var pdf by remember(preview.token) { mutableStateOf(false) }
@@ -148,7 +155,7 @@ internal fun WorkspaceImportDialog(state: CareerUiState, model: CareerViewModel)
     var details by remember(preview.token) { mutableStateOf(false) }
     FullScreenForm("Review phone backup", model::closeWorkspaceImport) {
         LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            item { Heading("Merge into this workspace?", "From ${preview.sourceLabel} · ${preview.sourcePlatform}") }
+            item { Heading("Merge into this workspace?", spokenBackupOrigin(preview.sourceLabel, preview.sourcePlatform, l10n)) }
             item { Text(l10n.format("Destination: {0}", listOf(((state.connection?.origin ?: l10n("Separate phone draft"))).toString()))) }
             item { Text(l10n.format("{0} saved jobs · {1} application records · {2} unfinished record edits. No employer application will be submitted.", listOf((incoming.jobs.size).toString(), (incoming.applicationRecords.size).toString(), (incoming.recordDrafts.size + incoming.recordDraftAlternatives.size).toString()))) }
             item { Panel {
@@ -157,7 +164,9 @@ internal fun WorkspaceImportDialog(state: CareerUiState, model: CareerViewModel)
                 CheckLine("Replace profile fields with this private draft", profile, { profile = it; if (!it) pdf = false }, !state.busy)
                 Text(l10n("The current résumé stays selected unless you also choose to replace its bytes. Cloud profiles are not changed until you explicitly save."), style = MaterialTheme.typography.bodySmall)
                 CheckLine("Replace résumé with the backup PDF", pdf, { pdf = it }, !state.busy && profile && incoming.profile.resume?.dataBase64 != null && preview.pdfProblem == null)
-                preview.pdfProblem?.let { Text(l10n(it), color = MaterialTheme.colorScheme.error) }
+                preview.pdfProblem?.let { problem ->
+                    Text(l10n(problem), color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+                }
                 if (incoming.profile.resume != null && incoming.profile.resume.dataBase64 == null) Text(l10n("The backup has résumé metadata only. Choose the actual PDF again if needed."))
                 if (preview.search != null) CheckLine("Replace this workspace's last search", search, { search = it }, !state.busy)
             } }
@@ -168,10 +177,12 @@ internal fun WorkspaceImportDialog(state: CareerUiState, model: CareerViewModel)
                 Text(incoming.profile.resume?.name ?: l10n("No résumé in backup"))
                 TextButton(onClick = { details = !details }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n(if (details) "Hide incoming details" else "Review all incoming details")) }
                 if (details) {
-                    listOf("Phone" to incoming.profile.phone, "City" to incoming.profile.city, "Country" to incoming.profile.country,
+                    listOf("Phone" to incoming.profile.phone, "City" to incoming.profile.city, "Country" to spokenRegion(incoming.profile.country, countryNames),
                         "Headline" to incoming.profile.headline, "Skills" to incoming.profile.skills, "Roles" to incoming.profile.targetRoles,
-                        "Target countries" to incoming.profile.targetCountries, "Work preferences" to incoming.profile.workModes.joinToString(", "),
-                        "Experience" to incoming.profile.experienceLevel, "Website" to incoming.profile.website, "LinkedIn profile link" to incoming.profile.linkedin)
+                        "Target countries" to spokenRegions(incoming.profile.targetCountries, countryNames),
+                        "Work preferences" to spokenWorkModes(incoming.profile.workModes, l10n),
+                        "Experience" to spokenExperience(incoming.profile.experienceLevel, l10n),
+                        "Website" to incoming.profile.website, "LinkedIn profile link" to incoming.profile.linkedin)
                         .forEach { (label, value) -> Text(l10n(label) + ": " + value.ifBlank { l10n("Not entered") }) }
                 }
             } }
@@ -181,12 +192,49 @@ internal fun WorkspaceImportDialog(state: CareerUiState, model: CareerViewModel)
                 Text(record.current.record.note.ifBlank { l10n("No private note") })
                 Text(l10n.format("{0} conflicting versions · {1} history versions", listOf((record.alternatives.size).toString(), (record.history.size).toString())))
             } }
-            if (state.error != null) item { Text(l10n.message(state.error), color = MaterialTheme.colorScheme.error) }
-            item { Action("Merge selected data on this phone", !state.busy && (profile || records || search)) {
-                model.importWorkspace(preview.token, profile, pdf, records, search)
-            } }
+            if (state.error != null) item {
+                Text(l10n.message(state.error), color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+            }
+            item {
+                if (!profile && !records && !search) Text(l10n("Choose what to import."), color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+                Action("Merge selected data on this phone", !state.busy && (profile || records || search)) {
+                    model.importWorkspace(preview.token, profile, pdf, records, search)
+                }
+            }
             item { TextButton(onClick = model::closeWorkspaceImport, enabled = !state.busy,
                 modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Keep current workspace")) } }
         }
     }
+}
+
+/** Closed profile choices use the same words as the profile editor. Free text stays as entered. */
+private fun spokenExperience(level: String, l10n: CareerStrings): String {
+    val label = when (level) {
+        "any" -> "Any"
+        "entry" -> "Entry"
+        "mid" -> "Mid"
+        "senior" -> "Senior"
+        else -> return level
+    }
+    return l10n(label)
+}
+
+private fun spokenWorkModes(modes: Set<String>, l10n: CareerStrings): String = modes.joinToString(", ") { token ->
+    when (token) {
+        "on-site" -> l10n("On site")
+        "hybrid" -> l10n("Hybrid")
+        "remote" -> l10n("Remote")
+        else -> token
+    }
+}
+
+private fun spokenRegion(code: String, names: Map<String, String>): String = names[code] ?: code
+
+private fun spokenRegions(codes: String, names: Map<String, String>): String =
+    codes.parts().joinToString(", ") { names[it] ?: it }
+
+/** The private-draft name is a catalog phrase. A service address and the platform token stay as stored. */
+private fun spokenBackupOrigin(label: String, platform: String, l10n: CareerStrings): String {
+    val named = if (label == "Private phone draft") l10n(label) else label
+    return l10n.format("From {0} · {1}", listOf(named, platform))
 }
