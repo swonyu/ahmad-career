@@ -333,6 +333,98 @@ private final class RecoverySuite {
         scenarios += 1
     }
 
+
+    func recoveredDraftRebase() throws {
+        let service = TestService()
+        let role = jobMap("older-base")
+        var record = PhoneOpportunityRecord(scope: scope(), job: PhoneRecordJob(role))
+        record.revision = 2; record.note = "Saved revision two"
+        let current = checkpoint("older-base", note: "Current unfinished edit", revision: 2, recordID: record.id)
+        let older = checkpoint("older-base", note: "النص المختار من نسخة قديمة\nChosen older text", revision: 1, recordID: record.id)
+        var initialState = try initial()
+        initialState.applicationRecords = [record]
+        initialState.recordDrafts = [current]; initialState.recordDraftAlternatives = [older]
+        let (store, folder, tokens) = try fixture(initialState, service: service)
+        try check(store.useRecoveredRecordDraft(older), "An explicit selection accepts an older-base recovered edit")
+        let job = store.savedOpportunities.first { MobileApplicationPolicy.jobIdentity($0["url"]?.string ?? "") == older.identity }!
+        let edit = store.recordEditContext(for: job)!
+        try check(store.restoredRecordDraft(for: edit) == older.draft,
+                  "Opening the current record restores the explicitly chosen older text, not the saved note")
+        let selected = try savedState(folder)
+        try check(selected.applicationRecords == [record], "Choosing an unfinished edit does not change the saved record")
+        try check(selected.recordDrafts.count == 1 && selected.recordDrafts[0].recordID == record.id
+                  && selected.recordDrafts[0].revision == 2 && selected.recordDrafts[0].draft == older.draft,
+                  "The selected draft is based on the current record for deliberate review")
+        try check(selected.recordDraftAlternatives.contains(older) && selected.recordDraftAlternatives.contains(current),
+                  "Both the original recovered base and the displaced current edit remain available")
+        let reopened = NativeApplicationsStore(folder: folder, credentials: tokens,
+            clientFactory: { _, token in service.token = token; return service })
+        let reopenedEdit = reopened.recordEditContext(for: job)!
+        try check(reopened.restoredRecordDraft(for: reopenedEdit) == older.draft,
+                  "Restart keeps the selected older text available in the current editor context")
+        let exported = reopened.exportWorkspace(context: reopened.workspaceActionContext)!
+        let exportedBackup = try NativeApplicationsStore.readWorkspaceBackup(at: exported)
+        try check(exportedBackup.recordDrafts.contains(older) && exportedBackup.recordDrafts.contains(current)
+                  && exportedBackup.recordDrafts.contains { $0.recordID == record.id && $0.revision == 2 && $0.draft == older.draft },
+                  "Backup preserves the review draft and both original unfinished versions")
+        try check(reopened.saveRecord(reopened.restoredRecordDraft(for: reopenedEdit)!, context: reopenedEdit),
+                  "The deliberately reviewed recovered text saves against the current record")
+        let saved = try savedState(folder)
+        try check(saved.applicationRecords.count == 1 && saved.applicationRecords[0].revision == 3
+                  && saved.applicationRecords[0].note == older.draft.note && !saved.applicationRecords[0].appliedElsewhere,
+                  "Saving writes the chosen note at the next revision without inventing an applied mark")
+        try check(saved.recordDrafts.isEmpty && saved.recordDraftAlternatives.contains(older)
+                  && saved.recordDraftAlternatives.contains(current),
+                  "Saving consumes only the reviewed draft and preserves the earlier unfinished versions")
+        try check(service.calls.isEmpty, "Selecting, reviewing and saving recovered phone text sends no service request")
+        scenarios += 1
+
+        try check(reopened.useRecoveredRecordDraft(older), "A retained original can be selected again for review")
+        let staleEdit = reopened.recordEditContext(for: job)!
+        var newer = PhoneRecordDraft(); newer.note = "An intentional newer save"
+        try check(reopened.saveRecord(newer, context: staleEdit), "The current record can advance after an editor opened")
+        let beforeStale = try Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))
+        try check(!reopened.saveRecord(older.draft, context: staleEdit),
+                  "A stale editor cannot overwrite the newer saved revision after recovered selection")
+        try check(try Data(contentsOf: folder.appendingPathComponent("phone-draft.json")) == beforeStale,
+                  "The stale save leaves the newer record and retained alternatives unchanged")
+        scenarios += 1
+
+        var conflicting = initialState
+        var competing = record; competing.id = UUID().uuidString; competing.note = "Competing saved version"
+        conflicting.applicationRecords.append(competing)
+        let (conflictStore, conflictFolder, _) = try fixture(conflicting, service: TestService())
+        let conflictBefore = try Data(contentsOf: conflictFolder.appendingPathComponent("phone-draft.json"))
+        try check(!conflictStore.useRecoveredRecordDraft(older),
+                  "Selection waits for comparison when more than one saved record is active")
+        try check(try Data(contentsOf: conflictFolder.appendingPathComponent("phone-draft.json")) == conflictBefore
+                  && conflictStore.recoveredRecordDrafts.contains(older),
+                  "Ambiguous selection preserves every saved and unfinished version")
+        scenarios += 1
+
+        var full = initialState
+        full.recordDrafts += (0..<198).map { checkpoint("capacity-\($0)", note: "kept \($0)") }
+        let (fullStore, fullFolder, _) = try fixture(full, service: TestService())
+        let fullBefore = try Data(contentsOf: fullFolder.appendingPathComponent("phone-draft.json"))
+        try check(!fullStore.useRecoveredRecordDraft(older) && fullStore.message == draftLimit,
+                  "Rebasing refuses when retaining all original versions would exceed 200 unfinished edits")
+        try check(try Data(contentsOf: fullFolder.appendingPathComponent("phone-draft.json")) == fullBefore
+                  && fullStore.unfinishedRecordDrafts.contains(current) && fullStore.recoveredRecordDrafts.contains(older),
+                  "Capacity refusal leaves the current draft and original recovered text unchanged")
+        scenarios += 1
+
+        var foreign = older
+        foreign.scope = PhoneRecordScope(origin: "https://second.example", workspaceID: "workspace-b")
+        var scoped = initialState
+        scoped.recordDraftAlternatives = [foreign]
+        let (scopedStore, scopedFolder, _) = try fixture(scoped, service: TestService())
+        let scopedBefore = try Data(contentsOf: scopedFolder.appendingPathComponent("phone-draft.json"))
+        try check(!scopedStore.useRecoveredRecordDraft(foreign), "Recovered selection cannot cross a private workspace scope")
+        try check(try Data(contentsOf: scopedFolder.appendingPathComponent("phone-draft.json")) == scopedBefore,
+                  "A foreign-workspace selection leaves the phone file unchanged")
+        scenarios += 1
+    }
+
     func drafts() throws {
         let service = TestService()
         let (store, folder, tokens) = try fixture(try initial(), service: service)
@@ -355,10 +447,13 @@ private final class RecoverySuite {
         let alternative = reopened.recoveredRecordDrafts[0]
         try check(reopened.useRecoveredRecordDraft(alternative) && reopened.message == recoveredEdit, "Selecting a recovered edit reports that earlier versions stay")
         try check(reopened.unfinishedRecordDrafts.map(\.draft.note) == [other.draft.note]
-                  && reopened.recoveredRecordDrafts.map(\.draft.note) == [applied.draft.note],
-                  "Selection swaps the current draft and keeps the earlier one")
+                  && reopened.unfinishedRecordDrafts[0].revision == nil
+                  && reopened.recoveredRecordDrafts.contains(applied) && reopened.recoveredRecordDrafts.contains(other),
+                  "Selection rebases a new-record edit and keeps both original unfinished versions")
         let job = reopened.savedOpportunities.first { MobileApplicationPolicy.jobIdentity($0["url"]?.string ?? "") == applied.identity }
         let edit = job.flatMap { reopened.recordEditContext(for: $0) }
+        try check(edit != nil && reopened.restoredRecordDraft(for: edit!) == other.draft,
+                  "A recovered edit without a saved record opens with the selected text")
         var saving = PhoneRecordDraft(); saving.stage = .saved; saving.note = "حفظ متعمد"
         try check(edit != nil && reopened.saveRecord(saving, context: edit!), "A deliberate save of the selected draft succeeds")
         let saved = try savedState(folder)
@@ -897,6 +992,7 @@ private final class RecoverySuite {
     }
 
     func run() async throws {
+        try recoveredDraftRebase()
         try profileLabels()
         try await receipts()
         try drafts()

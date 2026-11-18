@@ -1050,20 +1050,31 @@ final class NativeApplicationsStore: ObservableObject {
     }
     @discardableResult
     func useRecoveredRecordDraft(_ checkpoint: PhoneRecordDraftCheckpoint) -> Bool {
-        guard checkpoint.valid, checkpoint.scope == state.recordScope,
+        guard !busy, checkpoint.valid, checkpoint.scope == state.recordScope,
               state.recordDraftAlternatives.contains(checkpoint) else { return false }
+        let active = state.applicationRecords.filter {
+            $0.scope == checkpoint.scope && $0.identity == checkpoint.identity && !$0.archived
+        }
+        guard active.count <= 1 else {
+            message = "Compare the saved record versions before editing this opportunity."
+            return false
+        }
+        // Explicit selection prepares these values for review against the current record.
+        // Keep the original base as an alternative; ordinary editor/save revision guards stay strict.
+        var selected = checkpoint
+        selected.recordID = active.first?.id
+        selected.revision = active.first?.revision
         do {
             var next = state
-            next.recordDraftAlternatives.removeAll { $0 == checkpoint }
+            next.recordDraftAlternatives.removeAll { $0 == checkpoint || draftVersionMatches($0, selected) }
             if let index = next.recordDrafts.firstIndex(where: { $0.scope == checkpoint.scope && $0.identity == checkpoint.identity }) {
                 let current = next.recordDrafts[index]
-                next.recordDrafts[index] = checkpoint
-                if !draftVersionMatches(current, checkpoint) && !next.recordDraftAlternatives.contains(where: { draftVersionMatches($0, current) }) {
-                    next.recordDraftAlternatives.append(current)
-                }
+                next.recordDrafts[index] = selected
+                retainDistinctDraft(current, into: &next)
             } else {
-                next.recordDrafts.append(checkpoint)
+                next.recordDrafts.append(selected)
             }
+            retainDistinctDraft(checkpoint, into: &next)
             guard next.recordDrafts.count + next.recordDraftAlternatives.count <= 200 else {
                 throw MobileApplicationError(message: "This phone already keeps 200 unfinished edits. Existing drafts were kept.")
             }
