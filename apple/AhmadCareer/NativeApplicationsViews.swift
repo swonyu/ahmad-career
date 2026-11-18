@@ -2,6 +2,7 @@
 import SwiftUI
 import UniformTypeIdentifiers
 import UIKit
+import SafariServices
 
 private enum ApplyDesign {
     static let actionFill = NativeDesign.actionFill
@@ -785,8 +786,11 @@ struct NativeApplicationConnection: View {
                        let setup = MobileApplicationPolicy.servicePageURL(.connect, address: address) {
                         Section(l10n("1. Sign in and get a code")) {
                             Text(l10n("Career Finder")).font(.headline)
-                            Link(destination: setup) { Label(l10n("Sign in and get a code"), systemImage: "safari") }
+                            NativeHostedServiceLink(url: setup, prepare: { focusedField = nil }) {
+                                Label(l10n("Sign in and get a code"), systemImage: "safari")
+                            }
                                 .accessibilityIdentifier("connection.signIn")
+                                .disabled(model.busy)
                             Text(l10n("Choose an available sign-in method, or use Google through ChatGPT. Return to your existing account before connecting another provider; matching emails do not merge workspaces. Create a code, then return here."))
                                 .font(.footnote).foregroundStyle(.secondary)
                         }
@@ -878,7 +882,7 @@ struct NativeApplicationServiceLinks: View {
     var body: some View {
         if MobileApplicationPolicy.isHostedService(address) {
             if includeConnection, let url = MobileApplicationPolicy.servicePageURL(.connect, address: address) {
-                Link(l10n("Set up or recover workspace access"), destination: url)
+                NativeHostedServiceLink(url: url) { Text(l10n("Set up or recover workspace access")) }
             }
             if let url = MobileApplicationPolicy.servicePageURL(.privacy, address: address) {
                 Link(l10n("Hosted service privacy policy"), destination: url)
@@ -887,11 +891,137 @@ struct NativeApplicationServiceLinks: View {
                 Link(l10n("Get application-service support"), destination: url)
             }
             if let url = MobileApplicationPolicy.servicePageURL(.account, address: address) {
-                Link(l10n("Manage account and delete hosted data"), destination: url)
+                NativeHostedServiceLink(url: url) { Text(l10n("Manage account and delete hosted data")) }
             }
         } else {
             Text(l10n("For this custom service, ask its operator for a new workspace invitation, its privacy policy, support and account deletion. Its connection and data practices are separate from the hosted Career Finder service."))
                 .font(.footnote).foregroundStyle(.secondary)
+        }
+    }
+}
+
+/// The hosted service still creates a code that the person copies and pastes.
+/// This presentation does not receive an authentication callback or read web data.
+@MainActor
+private struct NativeHostedServiceLink<Label: View>: View {
+    let url: URL
+    private let prepare: () -> Void
+    private let label: Label
+    @State private var presented = false
+
+    init(url: URL, prepare: @escaping () -> Void = {}, @ViewBuilder label: () -> Label) {
+        self.url = url
+        self.prepare = prepare
+        self.label = label()
+    }
+
+    var body: some View {
+        Button {
+            prepare()
+            presented = true
+        } label: {
+            label
+        }
+        .disabled(presented)
+        .background {
+            NativeHostedServicePresenter(url: url, isPresented: $presented)
+                .frame(width: 0, height: 0)
+        }
+    }
+}
+
+/// An empty, attached presentation anchor. Safari is presented directly with
+/// UIKit's default Safari transition; it is never embedded as a child controller.
+@MainActor
+private struct NativeHostedServicePresenter: UIViewControllerRepresentable {
+    let url: URL
+    @Binding var isPresented: Bool
+
+    func makeUIViewController(context: Context) -> Presenter {
+        let controller = Presenter()
+        controller.view.backgroundColor = .clear
+        controller.view.isUserInteractionEnabled = false
+        return controller
+    }
+
+    func updateUIViewController(_ controller: Presenter, context: Context) {
+        controller.update(requestedURL: isPresented ? url : nil) { isPresented = false }
+    }
+
+    static func dismantleUIViewController(_ controller: Presenter, coordinator: ()) {
+        controller.dismantle()
+    }
+
+    @MainActor
+    final class Presenter: UIViewController, SFSafariViewControllerDelegate, UIAdaptivePresentationControllerDelegate {
+        private var requestedURL: URL?
+        private var browser: SFSafariViewController?
+        private var onDismiss: (() -> Void)?
+        private var dismissalReported = false
+        private var dismantled = false
+
+        func update(requestedURL: URL?, onDismiss: @escaping () -> Void) {
+            self.requestedURL = requestedURL
+            self.onDismiss = onDismiss
+            presentIfReady()
+        }
+
+        override func viewDidAppear(_ animated: Bool) {
+            super.viewDidAppear(animated)
+            presentIfReady()
+        }
+
+        private func presentIfReady() {
+            // UIKit can retain a dismissed controller briefly. Reopening is
+            // allowed only once that exact controller has left presentation.
+            if let current = browser, current.presentingViewController == nil,
+               !current.isBeingPresented, !current.isBeingDismissed {
+                reportDismissal(of: current)
+                browser = nil
+            }
+            guard !dismantled, let url = requestedURL, viewIfLoaded?.window != nil,
+                  browser == nil, presentedViewController == nil,
+                  !isBeingPresented, !isBeingDismissed else { return }
+            let controller = SFSafariViewController(url: url)
+            controller.delegate = self
+            controller.dismissButtonStyle = .done
+            controller.view.accessibilityIdentifier = "hostedService.browser"
+            browser = controller
+            dismissalReported = false
+            // Keep Safari's default modal presentation and transitioning delegate.
+            present(controller, animated: true)
+            controller.presentationController?.delegate = self
+        }
+
+        func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+            reportDismissal(of: controller)
+            // Safari dismisses itself after this callback. Do not begin a
+            // competing dismiss transition when the binding becomes false.
+        }
+
+        func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+            guard let controller = presentationController.presentedViewController as? SFSafariViewController else { return }
+            reportDismissal(of: controller)
+        }
+
+        private func reportDismissal(of controller: SFSafariViewController) {
+            guard browser === controller, !dismissalReported else { return }
+            dismissalReported = true
+            requestedURL = nil
+            onDismiss?()
+        }
+
+        func dismantle() {
+            dismantled = true
+            requestedURL = nil
+            onDismiss = nil
+            // Teardown only the exact browser this anchor created. Never
+            // dismiss a different controller or a parent connection sheet.
+            if let current = browser, current.presentingViewController != nil,
+               !current.isBeingDismissed {
+                current.dismiss(animated: false)
+            }
+            browser = nil
         }
     }
 }

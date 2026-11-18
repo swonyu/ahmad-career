@@ -224,6 +224,62 @@ final class CareerFinderUITests: XCTestCase {
         attachment.name = name; attachment.lifetime = .keepAlways; add(attachment)
     }
     @MainActor
+    private func assertHostedBrowserReturn(_ app: XCUIApplication, code: XCUIElement,
+                                           connectionTitle: String, doneTitle: String, screenshot: String) {
+        let enteredCode = code.value as? String ?? ""
+        XCTAssertFalse(enteredCode.isEmpty || enteredCode == code.placeholderValue,
+                       "The return check requires an existing unsent synthetic code")
+        let signIn = app.buttons["connection.signIn"]; top(app); reveal(signIn, in: app)
+        XCTAssertTrue(signIn.isEnabled && signIn.isHittable)
+        signIn.tap()
+        let browser = app.otherElements["hostedService.browser"]
+        let appeared = browser.waitForExistence(timeout: 10)
+        let doneQuery = app.buttons.matching(NSPredicate(format: "label == %@", doneTitle))
+        let uniqueVisibleDone = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            doneQuery.allElementsBoundByIndex.filter { $0.exists && $0.isHittable }.count == 1
+        }, object: nil)
+        let toolbarReady = XCTWaiter.wait(for: [uniqueVisibleDone], timeout: 5)
+        // Keep original screen and AX evidence even when a remote Safari
+        // accessibility hierarchy differs from this expected lookup.
+        capture(screenshot, app: app)
+        let observed = XCTAttachment(string: app.debugDescription)
+        observed.name = "\(screenshot)-original-AX"; observed.lifetime = .keepAlways; add(observed)
+        XCTAssertTrue(appeared, "Observe the actual visible Safari controller, not its empty presentation anchor")
+        XCTAssertEqual(app.state, .runningForeground, "Hosted setup must keep this app in the foreground")
+        XCTAssertEqual(toolbarReady, .completed, "Safari needs one reachable standard localized Done action")
+        let choices = doneQuery.allElementsBoundByIndex.filter { $0.exists && $0.isHittable }
+        XCTAssertEqual(choices.count, 1)
+        guard let browserDone = choices.first, choices.count == 1 else { return }
+        XCTAssertTrue(app.frame.contains(browserDone.frame), "Safari's complete Done control must fit in the app window")
+        let connection = app.navigationBars[connectionTitle]
+        XCTAssertFalse(connection.buttons[doneTitle].isHittable,
+                       "The underlying connection Done must not be the browser's visible action")
+        // Presentation and return only: never sign in, create a code, pair the
+        // phone, mutate an account, or submit an employer application here.
+        browserDone.tap()
+        let returned = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            !browser.exists && connection.exists && connection.buttons[doneTitle].isHittable
+        }, object: nil)
+        let returnedState = XCTWaiter.wait(for: [returned], timeout: 5)
+        if returnedState != .completed {
+            capture("\(screenshot)-return-failed", app: app)
+            let failure = XCTAttachment(string: app.debugDescription)
+            failure.name = "\(screenshot)-return-original-AX"; failure.lifetime = .keepAlways; add(failure)
+        }
+        XCTAssertEqual(returnedState, .completed, "Safari must disappear before the connection form is considered restored")
+        XCTAssertEqual(app.state, .runningForeground)
+        reveal(code, in: app)
+        XCTAssertTrue(code.exists && code.isHittable)
+        // SecureField may expose a mask. This proves visible pending-code
+        // retention; it does not expose or claim to compare plaintext secrets.
+        XCTAssertEqual(code.value as? String, enteredCode, "The visible pending-code representation must remain unchanged")
+        XCTAssertFalse(app.textFields["connection.address"].exists, "Returning must preserve the default hosted destination")
+        let connect = app.buttons["connection.connect"]; reveal(connect, in: app)
+        XCTAssertTrue(connect.isEnabled && connect.isHittable, "The retained code must keep the connection action available")
+        capture("\(screenshot)-returned", app: app)
+    }
+
+    @MainActor
     private func element(_ id: String, app: XCUIApplication) -> XCUIElement {
         app.descendants(matching: .any).matching(identifier: id).firstMatch
     }
@@ -458,6 +514,12 @@ final class CareerFinderUITests: XCTestCase {
         XCTAssertFalse(app.textFields["connection.address"].exists, "Default setup needs no service-address editing")
         let code = app.secureTextFields["connection.code"]; reveal(code, in: app); replace(code, with: "SYNTHETIC", in: app)
         app.buttons["Done typing"].tap()
+        assertHostedBrowserReturn(app, code: code, connectionTitle: "Application connection",
+                                  doneTitle: "Done", screenshot: "23-in-app-hosted-connection-browser")
+        // Reopen the same browser after complete dismissal to exercise the
+        // presentation state reset without signing in or sending the code.
+        assertHostedBrowserReturn(app, code: code, connectionTitle: "Application connection",
+                                  doneTitle: "Done", screenshot: "23a-in-app-hosted-connection-reopened")
         let advanced = app.buttons["Use another service"]; reveal(advanced, in: app); advanced.tap()
         let address = app.textFields["connection.address"]; reveal(address, in: app)
         replace(address, with: "https://custom.example.com", in: app, clearWith: app.buttons["connection.clearAddress"])
@@ -601,6 +663,11 @@ final class CareerFinderUITests: XCTestCase {
         let done = connection.buttons["Done"]
         XCTAssertTrue(done.isHittable, "Connection setup must have a reachable dismiss control at accessibility text sizes")
         capture("13-application-connection-accessibility-text", app: app)
+        let code = app.secureTextFields["connection.code"]; reveal(code, in: app)
+        replace(code, with: "SYNTHETIC", in: app)
+        finishTyping(in: app)
+        assertHostedBrowserReturn(app, code: code, connectionTitle: "Application connection",
+                                  doneTitle: "Done", screenshot: "13a-hosted-browser-accessibility-text")
         done.tap()
         let dismissed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
             !connection.exists && review.isHittable
@@ -729,6 +796,27 @@ final class CareerFinderUITests: XCTestCase {
         app.terminate()
         app = launch(id: id, languages: "(fr, ar)")
         XCTAssertTrue(app.tabBars.buttons["Settings"].waitForExistence(timeout: 5), "Explicit English remains separate from device-language fallback")
+
+        // Use a fresh isolated Arabic-device workspace for the system Safari
+        // toolbar as well as the app, at the largest accessibility text size.
+        app.terminate()
+        app = launch(largeText: true, languages: "(ar)")
+        tab("التقديم", in: app)
+        let review = app.buttons["applications.review"]
+        XCTAssertTrue(review.waitForExistence(timeout: 5) && review.isEnabled && review.isHittable)
+        review.tap()
+        let connection = app.navigationBars["اتصال التقديم"]
+        XCTAssertTrue(connection.waitForExistence(timeout: 5))
+        let code = app.secureTextFields["connection.code"]; reveal(code, in: app)
+        replace(code, with: "SYNTHETIC", in: app)
+        let typingDone = app.buttons["انتهيت من الكتابة"]
+        XCTAssertTrue(typingDone.waitForExistence(timeout: 5) && typingDone.isHittable)
+        typingDone.tap()
+        assertHostedBrowserReturn(app, code: code, connectionTitle: "اتصال التقديم",
+                                  doneTitle: "تم", screenshot: "29a-arabic-hosted-browser-accessibility-text")
+        XCTAssertTrue(connection.buttons["تم"].isHittable)
+        connection.buttons["تم"].tap()
+        XCTAssertTrue(review.isHittable, "Arabic browser and connection dismissal must return to the application action")
     }
 
     @MainActor
