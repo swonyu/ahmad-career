@@ -106,7 +106,7 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
                 OutlinedButton(onClick = { keyboard?.hide(); profileRolesExpanded = !profileRolesExpanded },
                     modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("discovery.profileRoles")
                         .semantics { stateDescription = l10n(if (profileRolesExpanded) "Expanded" else "Collapsed") }) {
-                    Text(l10n("Search a role from your saved profile"))
+                    Text(l10n("Choose a job title from your saved profile"))
                 }
                 if (profileRolesExpanded) {
                     profileRoleShortcuts.forEachIndexed { index, role ->

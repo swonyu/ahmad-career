@@ -24,7 +24,7 @@ struct NativeDiscoveryScreen: View {
                     .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                 if !profileRoleShortcuts.isEmpty {
                     Button { focusedField = nil; profileRolesExpanded.toggle() } label: {
-                        Label(l10n("Search a role from your saved profile"), systemImage: profileRolesExpanded ? "chevron.up" : "chevron.down")
+                        Label(l10n("Choose a job title from your saved profile"), systemImage: profileRolesExpanded ? "chevron.up" : "chevron.down")
                             .fixedSize(horizontal: false, vertical: true).frame(minHeight: 44)
                     }.accessibilityIdentifier("discovery.profileRoles")
                         .accessibilityValue(l10n(profileRolesExpanded ? "Expanded" : "Collapsed"))

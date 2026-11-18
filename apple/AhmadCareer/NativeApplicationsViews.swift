@@ -96,7 +96,7 @@ struct NativeApplicationsScreen: View {
         UIAccessibility.post(notification: .announcement, argument: l10n(value))
     }
 
-    private var hasSavedOpportunities: Bool { !model.jobs.isEmpty || !career.savedJobs.isEmpty }
+    private var hasSavedOpportunities: Bool { !model.savedOpportunities.isEmpty || !career.savedJobs.isEmpty }
     private var reviewActionTitle: String {
         guard model.connected else { return hasSavedOpportunities ? "Open saved jobs" : "Search jobs" }
         if model.mode != "test" && model.liveSubmissionEnabled != true {

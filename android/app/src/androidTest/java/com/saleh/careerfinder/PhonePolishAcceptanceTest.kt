@@ -95,6 +95,21 @@ class PhonePolishAcceptanceTest {
     @After fun clearPhone() { compose.runOnIdle { owner.clear() } }
 
     @Test fun profileEssentials_andCountrySelection_preserveSingleNamesAndCancelledChoices() {
+        var ownedClip: android.content.ClipData? = null
+        assertTrue(copyContactField("Name", "Exact chosen field", { ownedClip = it }, { ownedClip?.description }))
+        assertEquals("Exact chosen field", ownedClip?.getItemAt(0)?.text?.toString())
+        val previousClip = ownedClip
+        assertFalse("A void setter returning without writing must not report copied",
+            copyContactField("Name", "Denied replacement", {}, { ownedClip?.description }))
+        assertSame(previousClip, ownedClip)
+        assertFalse("Missing description cannot confirm a copy",
+            copyContactField("Name", "Unconfirmed replacement", {}, { null }))
+        var readAfterDeniedWrite = false
+        assertFalse(copyContactField("Name", "Denied field", { throw SecurityException("Synthetic write denial") },
+            { readAfterDeniedWrite = true; ownedClip?.description }))
+        assertFalse(readAfterDeniedWrite)
+        assertFalse("A description read exception must stay unconfirmed",
+            copyContactField("Name", "Unconfirmed field", {}, { throw SecurityException("Synthetic read denial") }))
         compose.onNodeWithTag("navigation-profile").revealNavigationTab().performClick()
         compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("First or single name")) and hasSetTextAction())
         compose.onNode(hasText(strings("First or single name")) and hasSetTextAction()).performTextInput("Single")

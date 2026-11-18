@@ -1,6 +1,7 @@
 package com.saleh.careerfinder
 
 import android.content.ClipData
+import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
@@ -989,12 +990,27 @@ private fun contactReuseFields(profile: ProfileDraft): List<ContactReuseField> =
     ContactReuseField("linkedin", "LinkedIn profile", profile.linkedin, true)
 ).filter { it.value.isNotBlank() }
 
+private const val CONTACT_COPY_OPERATION = "com.saleh.careerfinder.contact-copy-operation"
+
+internal fun copyContactField(label: String, value: String, writeClip: (ClipData) -> Unit,
+    readDescription: () -> ClipDescription?): Boolean = runCatching {
+    val operation = java.util.UUID.randomUUID().toString()
+    val clip = ClipData.newPlainText(label, value)
+    clip.description.extras = PersistableBundle().apply {
+        putBoolean("android.content.extra.IS_SENSITIVE", true)
+        putString(CONTACT_COPY_OPERATION, operation)
+    }
+    writeClip(clip)
+    // Check only our fresh operation marker, never clipboard text or other metadata.
+    readDescription()?.extras?.getString(CONTACT_COPY_OPERATION) == operation
+}.getOrDefault(false)
+
 @Composable
 private fun ProfileContactReuse(fields: List<ContactReuseField>, enabled: Boolean, scope: String) {
     val l10n = rememberCareerStrings()
     val clipboard = LocalContext.current.getSystemService(ClipboardManager::class.java)
     var expanded by rememberSaveable(scope) { mutableStateOf(false) }
-    var copied by remember(scope, fields) { mutableStateOf(false) }
+    var copySucceeded by remember(scope, fields) { mutableStateOf<Boolean?>(null) }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedButton(onClick = { expanded = !expanded }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
             .testTag("profile.reuse").semantics { stateDescription = l10n(if (expanded) "Expanded" else "Collapsed") }) {
@@ -1003,13 +1019,12 @@ private fun ProfileContactReuse(fields: List<ContactReuseField>, enabled: Boolea
         if (expanded) {
             fields.forEach { field ->
                 OutlinedButton(onClick = {
-                    // Only this chosen field is written to the device clipboard.
-                    val clip = ClipData.newPlainText(l10n(field.label), field.value)
-                    clip.description.extras = PersistableBundle().apply {
-                        putBoolean("android.content.extra.IS_SENSITIVE", true)
-                    }
-                    clipboard?.setPrimaryClip(clip)
-                    copied = clipboard != null
+                    // The chosen field only; no account, form or network operation.
+                    copySucceeded = clipboard?.let { manager ->
+                        copyContactField(l10n(field.label), field.value, manager::setPrimaryClip) {
+                            manager.primaryClipDescription
+                        }
+                    } ?: false
                 }, enabled = enabled && clipboard != null,
                     modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("profile.copy." + field.id)) {
                     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -1020,9 +1035,14 @@ private fun ProfileContactReuse(fields: List<ContactReuseField>, enabled: Boolea
                     }
                 }
             }
-            if (copied) Text(l10n("Copied. Paste it into the employer’s form and check it before submitting."),
-                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.testTag("profile.copy.confirmation").semantics { liveRegion = LiveRegionMode.Polite })
+            copySucceeded?.let { succeeded ->
+                Text(l10n(if (succeeded) "Copied. Paste it into the employer’s form and check it before submitting."
+                    else "Copy could not be confirmed. Copy the value from its profile field instead."),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (succeeded) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error,
+                    modifier = Modifier.testTag(if (succeeded) "profile.copy.confirmation" else "profile.copy.unavailable")
+                        .semantics { liveRegion = LiveRegionMode.Polite })
+            }
         }
     }
 }

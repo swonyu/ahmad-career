@@ -1823,6 +1823,8 @@
     "Job title or keyword": "المسمى الوظيفي أو كلمة مفتاحية",
     "Searches titles, employers and available summaries.": "يشمل البحث المسميات وجهات العمل والملخصات المتاحة.",
     "Saved for later": "محفوظة للرجوع إليها",
-    "Review application details": "مراجعة بيانات التقديم"
+    "Review application details": "مراجعة بيانات التقديم",
+    "Choose a job title from your saved profile": "اختر مسمى وظيفيًا من ملفك المحفوظ",
+    "Copy could not be confirmed. Copy the value from its profile field instead.": "تعذّر تأكيد النسخ. انسخ القيمة من حقلها في الملف الشخصي."
   }
 }

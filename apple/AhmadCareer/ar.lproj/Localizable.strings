@@ -247,6 +247,7 @@
 "Choose a country or region from the list." = "اختر بلدًا أو منطقة من القائمة.";
 "Choose a currency" = "اختيار العملة";
 "Choose a currency and correct any invalid amount before calculating." = "اختر عملة وصحّح أي مبلغ غير صالح قبل الحساب.";
+"Choose a job title from your saved profile" = "اختر مسمى وظيفيًا من ملفك المحفوظ";
 "Choose a phone workspace backup no larger than 24 MiB." = "اختر نسخة احتياطية لمساحة عمل الهاتف لا تتجاوز 24 MiB.";
 "Choose a planning currency from the list." = "اختر عملة التخطيط من القائمة.";
 "Choose a readable PDF CV with between 1 and 200 pages." = "اختر سيرة ذاتية بصيغة PDF قابلة للقراءة، تتراوح بين صفحة واحدة و200 صفحة.";
@@ -376,6 +377,7 @@
 "Copied record" = "السجل المنسوخ";
 "Copied. Paste it into the employer’s form and check it before submitting." = "تم النسخ. الصق البيانات في نموذج جهة العمل وراجعها قبل الإرسال.";
 "Copies this public job link and role details. Your original notes and status stay here. Saving does not apply." = "ينسخ رابط الوظيفة العام وتفاصيلها. وتبقى ملاحظاتك وحالتك الأصليتان هنا. الحفظ لا يقدّم طلب توظيف.";
+"Copy could not be confirmed. Copy the value from its profile field instead." = "تعذّر تأكيد النسخ. انسخ القيمة من حقلها في الملف الشخصي.";
 "Copy draft and merge records" = "نسخ المسودة ودمج السجلات";
 "Copy saved links and private records" = "نسخ الروابط المحفوظة والسجلات الخاصة";
 "Copy selected drafts" = "نسخ المسودات المختارة";
