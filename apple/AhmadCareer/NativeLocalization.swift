@@ -46,11 +46,11 @@ enum NativeLanguage: String, CaseIterable, Identifiable {
     var title: String { switch self { case .system: "Device language"; case .en: "English"; case .ar: "العربية" } }
     var locale: Locale {
         if self != .system { return Locale(identifier: rawValue) }
-        let supported = Locale.preferredLanguages.compactMap { Locale(identifier: $0).languageCode }
+        let supported = Locale.preferredLanguages.compactMap { Locale(identifier: $0).language.languageCode?.identifier }
             .first { $0 == "ar" || $0 == "en" } ?? "en"
         return Locale(identifier: supported)
     }
-    var direction: LayoutDirection { locale.languageCode == "ar" ? .rightToLeft : .leftToRight }
+    var direction: LayoutDirection { locale.language.languageCode?.identifier == "ar" ? .rightToLeft : .leftToRight }
     @MainActor static var storageKey: String {
         #if DEBUG
         if CareerAppEnvironment.isUIAcceptance {
@@ -70,7 +70,7 @@ struct NativeLocalization: DynamicProperty {
 
 struct NativeCopy {
     let locale: Locale
-    private var isArabic: Bool { locale.languageCode == "ar" }
+    private var isArabic: Bool { locale.language.languageCode?.identifier == "ar" }
     private var bundle: Bundle {
         guard let path = Bundle.main.path(forResource: isArabic ? "ar" : "en", ofType: "lproj"),
               let localized = Bundle(path: path) else { return .main }
