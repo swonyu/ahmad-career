@@ -107,6 +107,23 @@ struct MobileApplicationCheck {
         check(payload["firstName"]?.string == "Example", "Trim applicant names")
         check(payload["skills"]?.array.count == 2, "Explicit skills carried")
         check(payload["resume"]?.object["dataBase64"]?.string == pdf.base64EncodedString(), "Exact CV bytes retained")
+        var multilingual = PhoneApplicationProfile()
+        multilingual.skills = " Swift، Kotlin, العربية ، Swift "
+        multilingual.targetRoles = "محاسب، محلل بيانات,,\u{00a0}مصمم\u{00a0}، محاسب"
+        multilingual.targetCountries = " sa ، US, ae "
+        let multilingualPayload = multilingual.payload()
+        check(multilingualPayload["skills"]?.array.compactMap(\.string) == ["Swift", "Kotlin", "العربية", "Swift"],
+              "Mixed comma skills preserve order and existing duplicate semantics")
+        check(multilingualPayload["targetRoles"]?.array.compactMap(\.string) == ["محاسب", "محلل بيانات", "مصمم", "محاسب"],
+              "Arabic target roles trim whitespace and skip empty items without merging roles")
+        check(multilingualPayload["targetCountries"]?.array.compactMap(\.string) == ["SA", "US", "AE"],
+              "Either comma separates normalized target countries")
+        check(multilingual.targetRoleShortcuts == ["محاسب", "محلل بيانات", "مصمم"],
+              "Search shortcuts split either comma and deduplicate in first-seen order")
+        check(MobileApplicationPolicy.profileListItems(" ، , \u{00a0}، ").isEmpty,
+              "Whitespace and either comma alone do not create profile entries")
+        let multilingualDraft = try JSONDecoder().decode(PhoneApplicationProfile.self, from: JSONEncoder().encode(multilingual))
+        check(multilingualDraft == multilingual, "Parsing for sharing leaves the original phone draft spelling unchanged")
         profile.resumeChanged = false
         check(profile.payload()["resume"] == nil, "Unchanged CV metadata cannot substitute bytes")
         profile.resumeRemoved = true

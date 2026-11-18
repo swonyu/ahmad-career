@@ -208,10 +208,7 @@ struct NativeDiscoveryScreen: View {
         }
     }
     private var profileRoleShortcuts: [String] {
-        var seen = Set<String>()
-        return applications.profile.targetRoles.split(separator: ",")
-            .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { !$0.isEmpty && seen.insert($0).inserted }
+        applications.profile.targetRoleShortcuts
     }
     private var waitingForRetry: Bool {
         (discovery.retryAfter ?? .distantPast) > searchClock
