@@ -215,16 +215,32 @@ final class CareerFinderUITests: XCTestCase {
         }
         XCTAssertTrue(done.isHittable, "Done typing must be reachable")
         done.tap()
-        let dismissed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-            let keys = app.keyboards.keys.allElementsBoundByIndex
-            let actions = app.buttons.matching(identifier: "Done typing").allElementsBoundByIndex
-            let keyboard = app.keyboards.firstMatch
-            return (!keyboard.exists || !keyboard.isHittable)
-                && !keys.contains(where: { $0.isHittable })
-                && !actions.contains(where: { $0.exists && $0.isHittable })
-        }, object: nil)
-        XCTAssertEqual(XCTWaiter.wait(for: [dismissed], timeout: 5), .completed,
-                       "Finish the keyboard dismissal before moving to the next field")
+        let keyboard = app.keyboards.firstMatch
+        let keys = app.keyboards.keys
+        let actions = app.buttons.matching(identifier: "Done typing")
+        // Each remote accessibility query can take seconds on the CI simulator.
+        // Observe the three original requirements serially so one expensive
+        // collection lookup cannot consume another condition's entire wait.
+        let observations: [(String, () -> Bool)] = [
+            ("keyboard container", { !keyboard.exists || !keyboard.isHittable }),
+            ("typing keys", { !keys.allElementsBoundByIndex.contains { $0.isHittable } }),
+            ("Done actions", { !actions.allElementsBoundByIndex.contains { $0.exists && $0.isHittable } })
+        ]
+        for (stage, isDismissed) in observations {
+            var lastObserved = false
+            let dismissed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+                lastObserved = isDismissed()
+                return lastObserved
+            }, object: nil)
+            let result = XCTWaiter.wait(for: [dismissed], timeout: 5)
+            if result != .completed {
+                captureObservation("keyboard-dismissal-incomplete", app: app,
+                                   details: "Dismissal stage: \(stage); last observed dismissed: \(lastObserved)")
+            }
+            XCTAssertEqual(result, .completed,
+                           "Finish dismissing \(stage) before moving to the next field")
+            guard result == .completed else { return }
+        }
     }
     @MainActor
     private func capture(_ name: String, app: XCUIApplication) {

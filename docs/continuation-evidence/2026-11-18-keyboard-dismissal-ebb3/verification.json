@@ -1,0 +1,41 @@
+{
+  "observedUTC": "2026-11-18T10:29:25.971534+00:00",
+  "parent": "0db94c651d37cde774410915dbdd346cc743a458",
+  "testSourceSHA256": "823f312ccb10822fd536cc2cb6ef6cc102fe6a2dcb03fb8361c1de89f38cfa18",
+  "productHostedAndroidWorkflowUnchanged": true,
+  "sourceDefinedUIMethodCount": 17,
+  "priorFullRun": {
+    "id": 44277443136,
+    "result": "failure",
+    "iphonePassed": 16,
+    "iphoneFailed": 1,
+    "failure": "testAccessibilityTextKeepsCoreControlsReachable: finishTyping composite predicate timeout",
+    "rawLogSHA256": "58ee9764d6b040826bec15df425192889ebb903d33ec7bf1e1ddd03a8f564c6b",
+    "uiArchiveSHA256": "0fe4881c1ee30dd1e87fe43e761a1c40c51bafada2c3ca98ca527745c3f4b4b9",
+    "visualObservation": "Final recovered video frame shows keyboard absent; no success is inferred for the failed full test."
+  },
+  "correction": "The same actual keyboard-container, typing-key and Done-action conditions now receive serial five-second waits; actual taps and typing-key checks remain.",
+  "review": {
+    "reviewer": "independent recovery_review agent",
+    "scope": "Actual diff and resulting method",
+    "result": "No in-scope defect found; source-only review; native rerun required"
+  },
+  "focusedResult": {
+    "startedUTC": "2026-11-18T10:24:21.140055+00:00",
+    "finishedUTC": "2026-11-18T10:27:29.732128+00:00",
+    "xcode": "27.2 build27B52",
+    "runtime": "iOS26.5",
+    "device": "isolated iPhone Air simulator",
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "case": "testAccessibilityTextKeepsCoreControlsReachable",
+    "durationSeconds": 127.392,
+    "logSHA256": "dc236737a14f2cf2e0e141944fa7997bb463ecbbf50741ac983d1dc3ede65d9f",
+    "sourceStillMatches": true
+  },
+  "fullCandidateAcceptance": "pending new full five-job run on updated candidate",
+  "mergePerformed": false,
+  "deploymentClaimed": false,
+  "signedOrStoreReleaseClaimed": false
+}

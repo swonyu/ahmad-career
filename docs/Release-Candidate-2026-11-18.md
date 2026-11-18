@@ -70,3 +70,8 @@ No paid API, subscription, domain purchase, new developer enrollment payment or 
 The original cutoff remains **19 November 2026, 01:26:12 Riyadh**. This continuation does not restart the clock. Engineering estimates remain conditional on the observed run and any newly exposed failure; they do not promise external-provider or store approval.
 
 The coordinating ChatGPT continuation owns integration through the authorized merge and records the result in the PR and exact-source receipts. The existing publishing context and original work remain preserved for subsequent deployment and distribution. No unattended post-release monitoring is claimed.
+
+
+## Interrupted-coordinator recovery — 18 November 2026
+
+Full run 44277443136 on 0db94c6 completed with four jobs successful and iPhone UI 16/17. The keyboard-dismissal predicate in the large-text journey exhausted its shared observation budget; the final recording shows the keyboard absent. The isolated correction retains all original conditions and all 17 methods, and its focused native journey passed. See [the source-bound recovery evidence](continuation-evidence/2026-11-18-keyboard-dismissal-ebb3/README.md). Full five-job acceptance of this successor remains required before merge; no prior pending statement should be read as a pass.
