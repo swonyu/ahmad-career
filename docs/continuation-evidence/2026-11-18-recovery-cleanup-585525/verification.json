@@ -1,0 +1,100 @@
+{
+  "finding": "B16 / I01 clean record closure leaves intermediate recovery copies",
+  "status": "implemented_and_198_component_checks_passed_browser_replay_pending",
+  "verifiedAtUTC": "2026-11-18T13:37:04.087537+00:00",
+  "owner": "ChatGPT takeover 585525 hosted_recovery",
+  "baseCommit": "2bfefa0195f448ac0068f4fcc8fef3e6c7fc0f6c",
+  "worktree": "/Users/saleh/Developer/career-finder-recovery-cleanup-20261118-585525",
+  "recoveredPatch": {
+    "source": "/workspace/scratch/ebb3eed5ee2b/clean-record-recovery-fix-20261118/clean-record-recovery.patch",
+    "sha256": "c3ce176e37d32199c4ea51bcd6ef289b956b89e4afead528304c5dae64d65c25",
+    "priorReceiptUTC": "2026-11-18T13:19:02Z",
+    "adaptation": "Preserved the later add-job draft model and owner-scoped recovery; added lifecycle invalidation for opening a new Add editor."
+  },
+  "verification": {
+    "node": "v24.22.3",
+    "baselineRed": {
+      "command": "node --test --test-reporter=tap --test-name-pattern=\"clean close of a recovered fork\" tests/phone-recovery-isolation.mjs",
+      "exitCode": 1,
+      "observedFailure": "The closed editor recovery ID remained in encrypted storage.",
+      "file": "red-recovered-fork.tap.gz"
+    },
+    "targeted": {
+      "command": "node --test --test-timeout=15000 --test-reporter=tap tests/phone-recovery-isolation.mjs tests/phone-record-tools.mjs tests/phone-selection-board-actions.mjs tests/phone-private-async.mjs",
+      "exitCode": 0,
+      "tests": 198,
+      "pass": 198,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "file": "targeted-tests.tap"
+    },
+    "typecheck": {
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "exitCode": 0,
+      "file": "typecheck.log"
+    },
+    "dependencyProvenance": "Read-only symlink to installed resume-worktree node_modules; package-lock SHA256 matches exactly. No package install or dependency mutation.",
+    "intermediateRun": {
+      "file": "targeted-first-integration-interrupted.tap.gz",
+      "result": "Interrupted. New explicit-lifecycle cases had passed; pre-existing selection fixture omitted editorId, causing the new correct guard to reject before the test synthetic write signal. Record-tools fixture also omitted editorId. Both fixture setups were corrected to match actual editor creation; original behavioral assertions were retained. This run is not counted as passed."
+    }
+  },
+  "coverage": [
+    "Real RecordEditor change-stage / Save confirmation / Keep handlers and actual PhoneApp closure; four repeated cycles",
+    "Queued, in-flight and delayed record recovery writes and errors",
+    "Unchanged saved record, source recovery copy, independent tab fork, other profile/record drafts and Stop holds",
+    "Still-dirty private notes and stale dirty flag",
+    "Quota failure, account/scope/generation/identity/replacement editor and open-close ABA",
+    "Later Add-job editor: success/failure cleanup completion cannot replace its status or typed fields, even after an open-close cycle",
+    "Explicit save/discard captured and in-flight autosaves cannot recreate a completed editor",
+    "Failed main save preserves the active editor and recovery before a successful retry",
+    "Account lock during explicit record cleanup cannot reopen a saved/discarded editor",
+    "Deferred explicit cleanup cannot replace an Add editor or its status"
+  ],
+  "sourceSHA256": {
+    "hosted/app/phone/PhoneApp.tsx": "353a749f640085f2f2cfa040a4a982182df1f117bf1afe60eb1134a69e5745ce",
+    "hosted/tests/phone-recovery-isolation.mjs": "2a0220356da2c8db2e4327e417c8b07ef542069d76205a156771413f226f3b85",
+    "hosted/app/phone/components.tsx": "e9da530152fa26be1fad0fcce583f80ae0534f860321baee792f5c08fcace354",
+    "hosted/app/phone/model.ts": "a04cf9c544245dffd26eab6e78f9497bd7431d1dc5100d659ccfa167e4e00481",
+    "hosted/app/phone/safety.ts": "8571c8e0f1625e50fd2d1749ab7cd10aca57f8b24c16107e6179437154eb4c4f",
+    "hosted/app/phone/vault.ts": "1c45092458fe9f56ee84925091342f3c5f920800409965a7a99ab32b07138c95",
+    "hosted/package-lock.json": "4d85b9d5290351367e48fdb1fd54e3786344423434a16aef6b8b9381a250d685",
+    "hosted/tests/phone-record-tools.mjs": "0de3e07e37e80982a2be1d187735e242674156cd1b3ba732c3ecf3dc8dac0b29",
+    "hosted/tests/phone-selection-board-actions.mjs": "e78d425d182bf4ec439d30116fa85692b1adcd0b82faa8fe307c8e7cf7b5f31f"
+  },
+  "limits": [
+    "Tests use actual handlers and production encryption/safety queue with synthetic atomic storage and DOM ports.",
+    "Actual rendered English/Arabic repeated cycle, focus behavior and export evidence remain root acceptance work.",
+    "Full exact-candidate CI, native and deployed acceptance are not established by these checks."
+  ],
+  "additionalValidatedFinding": {
+    "observation": "Successful record save and explicit discard initially removed their recovery copy, but a captured delayed autosave recreated that exact ID.",
+    "baselineRed": {
+      "file": "red-explicit-record-close.tap.gz",
+      "exitCode": 1,
+      "failedActionSubcases": [
+        "save",
+        "discard"
+      ]
+    },
+    "repair": "Retire exact record editor IDs after successful main persistence, or after authorized explicit discard. Preserve source/other-tab recovery IDs and FIFO order. Exclude retired record dialogs from account-lock quarantine. Recheck owner/epoch/identity/editor before publishing cleanup or closing its UI."
+  },
+  "harnessIntegration": "Existing record-tools and selection-board-action fixtures now include actual record editor IDs, lifecycle ref and real retirement helper; no behavioral assertions were removed.",
+  "rawLogSHA256": {
+    "red-recovered-fork.tap": "2f0bde7df36120b295affdfb689aead9eb173862ad76a2a9be4f127b7ac2ff67",
+    "red-explicit-record-close.tap": "c3fd49e0c067350159971cfae8f531acedf74025ec49da01426bb1d6d90488a9",
+    "targeted-first-integration-interrupted.tap": "11ae5919c247f4db41d859e3140429f5589c463df5465a7f47fc7c38c4dbee9f"
+  },
+  "rawLogs": "Failed/interrupted TAP logs are gzip-compressed without changing raw bytes. Original uncompressed copies remain in this isolated worktree b16-evidence.",
+  "independentReview": {
+    "reviewer": "/root/review_recovery",
+    "status": "accepted_within_source_review_scope",
+    "sourceSHA256": {
+      "hosted/app/phone/PhoneApp.tsx": "353a749f640085f2f2cfa040a4a982182df1f117bf1afe60eb1134a69e5745ce",
+      "hosted/tests/phone-recovery-isolation.mjs": "2a0220356da2c8db2e4327e417c8b07ef542069d76205a156771413f226f3b85"
+    },
+    "retestedByReviewer": false,
+    "observed": "Reviewer inspected exact changes, red baseline and late-save/discard failures, 198-test green TAP, preserved fixture assertions, FIFO/owner/editor guards, failure preservation and lock quarantine. No supported additional source blocker."
+  }
+}
