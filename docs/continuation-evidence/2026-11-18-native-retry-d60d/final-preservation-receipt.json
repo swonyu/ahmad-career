@@ -1,0 +1,13 @@
+{
+  "checkedUTC": "2026-11-18T06:21:34.052460+00:00",
+  "HEAD": "0beff68a6906968f282dca292dc547daad85684f",
+  "gitStatus": "",
+  "originalFilesUnchanged": true,
+  "readOnlyApplyCheckExit": 0,
+  "applyCheckStdout": "",
+  "applyCheckStderr": "",
+  "baselineProductionHash": "ce6e8e051ba73411846a9ebedc10b240beab4d132c5f5193dc3ba7fbad270013",
+  "candidateProductionHash": "883837031fbb90158c440899871a3b89720c0ec16ee6873dac5a5e26682ea09e",
+  "candidateTestHash": "a0c802e55c1c636b93112934e42af542cdd354aa4598785a88ce787caa3f8902",
+  "sameAssertionsForRedAndGreen": true
+}

@@ -341,6 +341,48 @@ private final class DiscoverySuite {
             try check(model.query.keywords == "explicit" && model.jobs == self.fixture.jobs && service.calls.last?.0.keywords == "explicit", "A newer explicit search wins over a late submitted retry")
             scenarios += 1
         }
+        for hasPreviousResults in [false, true] {
+            let service = DiscoveryStub(fixture); let (model, file) = store(service)
+            let submitted = DiscoveryQuery(sources: ["lever:eu:example-board"], keywords: "submitted role", location: "Riyadh", remoteOnly: true)
+            model.query = submitted
+            if hasPreviousResults { await model.search() }
+            let retryTime = Date().addingTimeInterval(60)
+            let originalError = "Search is temporarily busy. Wait before trying again."
+            service.handle = { _, _ in throw DiscoveryFailure(message: originalError, retryAfter: retryTime) }
+            await model.search()
+            let retainedJobs = model.jobs, retainedQuery = model.lastQuery, retainedStatus = model.page?.status
+            let callCount = service.calls.count
+            let newerDraft = DiscoveryQuery(sources: ["greenhouse:draft-board"], keywords: "newer draft", location: "Tokyo", remoteOnly: false)
+            model.query = newerDraft
+            let savedBeforeRetry = try Data(contentsOf: file)
+            try check(model.canRetrySubmittedSearch, "A failed or partial submitted search has an explicit retry action")
+            service.handle = { _, _ in self.page(status: "complete") }
+            await model.retrySubmittedSearch()
+            try check(service.calls.count == callCount, "Submitted retry must not contact the service before Retry-After, including a failed first search")
+            try check(model.retryAfter == retryTime && model.error == originalError && !model.isSearching,
+                      "An early submitted retry preserves the original service error and separate retry hint for localized presentation")
+            try check(model.query == newerDraft && model.jobs == retainedJobs && model.lastQuery == retainedQuery && model.page?.status == retainedStatus,
+                      "Blocked retry preserves newer draft fields and prior result attribution")
+            let savedAfterRetry = try Data(contentsOf: file)
+            try check(savedAfterRetry == savedBeforeRetry, "Blocked retry does not rewrite saved search data")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(fixture); let (model, _) = store(service)
+            let submitted = DiscoveryQuery(sources: ["lever:eu:example-board"], keywords: "submitted role", location: "Riyadh", remoteOnly: true)
+            model.query = submitted
+            service.handle = { _, _ in throw DiscoveryFailure(message: "Wait", retryAfter: Date().addingTimeInterval(-1)) }
+            await model.search()
+            let newerDraft = DiscoveryQuery(sources: ["greenhouse:draft-board"], keywords: "newer draft", location: "Tokyo", remoteOnly: false)
+            model.query = newerDraft
+            service.handle = { _, _ in self.fixture }
+            await model.retrySubmittedSearch()
+            try check(service.calls.count == 2 && service.calls.last?.0 == submitted && service.calls.last?.1 == nil,
+                      "An expired cooldown allows retry of the exact submitted filters, not the newer form draft")
+            try check(model.query == newerDraft && model.lastQuery == submitted && model.jobs == fixture.jobs && model.retryAfter == nil && model.error == nil,
+                      "Successful retry after cooldown preserves draft edits and attributes results to the submitted search")
+            scenarios += 1
+        }
     }
 }
 

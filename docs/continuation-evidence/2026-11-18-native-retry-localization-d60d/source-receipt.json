@@ -1,0 +1,29 @@
+{
+  "baseCommit": "ffc038cd2bfcbc6006dfc23dee87e34ee55a7a00",
+  "createdUTC": "2026-11-18T06:36:57.541261+00:00",
+  "sourceRepository": "/Users/saleh/Developer/career-finder-native-retry-20261118-d60d62a70f26",
+  "sourceHashes": {
+    "apple/AhmadCareer/MobileApplicationClient.swift": "379b187ad17ddce0b8c13536052db8bab364f70dad4eb313071aaeb0b15b4588",
+    "apple/AhmadCareer/MobileApplicationState.swift": "1858795ccf563e9802c5cabc0367b402eadba2c9e978a5092c2e70a232d1a489",
+    "apple/AhmadCareer/CareerDiscovery.swift": "883837031fbb90158c440899871a3b89720c0ec16ee6873dac5a5e26682ea09e",
+    "apple/Checks/DiscoveryCheck.swift": "a0c802e55c1c636b93112934e42af542cdd354aa4598785a88ce787caa3f8902",
+    "apple/Checks/Fixtures/discovery-search-v1.json": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7"
+  },
+  "reviewedPresentationHashes": {
+    "apple/AhmadCareer/NativeDiscoveryViews.swift": "fdcbb3591bd2e207b8651488fdc94a6e21abe09721a03a21851f663fa00e6030",
+    "apple/AhmadCareer/NativeLocalization.swift": "f7756d3ac9d12921b524c0e426000fcfb42c00690649420b5135f2adb8d95a77",
+    "apple/AhmadCareer/NativeCopyTemplates.json": "de82c30d2ff28a7127a9a6c10efff0bd910ee205b9916caf90e67d97319da6ac",
+    "apple/AhmadCareer/en.lproj/Localizable.strings": "d416c93cbb25223847c4d097dfb4842f7a64e400d4b5806186cc1350b9b9ff1a",
+    "apple/AhmadCareer/ar.lproj/Localizable.strings": "0f924d061971faab2ad6f3b47a89947be0aa33caabbc72973080748f8a1e9de0"
+  },
+  "candidateHashes": {
+    "apple/AhmadCareer/MobileApplicationClient.swift": "379b187ad17ddce0b8c13536052db8bab364f70dad4eb313071aaeb0b15b4588",
+    "apple/AhmadCareer/MobileApplicationState.swift": "1858795ccf563e9802c5cabc0367b402eadba2c9e978a5092c2e70a232d1a489",
+    "apple/AhmadCareer/CareerDiscovery.swift": "fa20d36593ca2d5fce872bba9759dc299aa22d1725483777b10d75ac7af420e4",
+    "apple/Checks/DiscoveryCheck.swift": "dc1ab73393d5c3ab5d389422fcc2d8024b4bd0df7d7f3f6eed4f5fbce0973d65",
+    "apple/Checks/Fixtures/discovery-search-v1.json": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7"
+  },
+  "patchSHA256": "7e73f15d74263a204c1a2fa6817f2af6eab7a564b436f2695824428f16dacf99",
+  "patchBytes": 2470,
+  "scope": "Only new submitted-search retry guard; existing search guard and UI/localization source unchanged; host stub harness only."
+}
