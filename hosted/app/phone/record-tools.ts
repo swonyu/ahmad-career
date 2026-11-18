@@ -29,7 +29,7 @@ export function matchesSavedList(job: Pick<Job, "title" | "company" | "location"
 export function savedListEmptyMessage(input: { query: string; view: SavedView; stage: SavedStage }): { title: string; detail: string; clear: boolean } {
   const query = input.query.trim();
   if (input.stage !== "all" && (query || input.view !== "all")) return { title: "No jobs match these filters.", detail: "Nothing matches this search, view, and application stage together. Clear search and filters to see every saved job and record.", clear: true };
-  if (input.stage !== "all") return { title: "No jobs at this stage.", detail: "No bookmark or application record is in this stage. A bookmark without a record counts as Saved. Clear search and filters to see everything again.", clear: true };
+  if (input.stage !== "all") return { title: "No jobs at this stage.", detail: "No jobs are at this stage. A saved job without an application record is listed under Saved for later. Clear search and filters to see all jobs.", clear: true };
   if (query) return { title: "No matching saved jobs.", detail: "Try another word, or clear the search and filters to see your saved jobs and notes.", clear: true };
   if (input.view === "followups") return { title: "No follow-ups scheduled", detail: "Open a saved job, choose Edit application record, and add a follow-up date. Closed records stay out of this list.", clear: true };
   if (input.view === "applied") return { title: "No applications recorded", detail: "When you apply on an employer’s website, mark it in your application record.", clear: true };

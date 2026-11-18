@@ -103,7 +103,7 @@ test('CSV selects only record fields and translates app labels without translati
   const csv = tools.applicationRecordsCSV([input], t('ar')), rows = parseCSV(csv);
   assert(rows[0].every(value => /[\u0600-\u06ff]/u.test(value)));
   assert.equal(rows[1][0], 'Saved'); assert.equal(rows[1][1], 'Interview'); assert.equal(rows[1][7], 'Closed');
-  assert.equal(rows[1][3], t('ar')('Saved')); assert.equal(rows[1][4], t('ar')('No'));
+  assert.equal(rows[1][3], t('ar')('Saved for later')); assert.equal(rows[1][4], t('ar')('No'));
   for (const secret of ['SYNTHETIC_PROFILE_EMAIL', 'SYNTHETIC_SECRET', 'SYNTHETIC_CV', 'SYNTHETIC_OTHER_SCOPE', 'SYNTHETIC_TOKEN']) assert(!csv.includes(secret));
 });
 
@@ -545,7 +545,9 @@ test('Clear and the follow-up shortcut reset the stage select without persisting
   invoke(clickExpression(findJsx('button', 'Clear search and filters')), bindings);
   assert.deepEqual(controls, { savedQuery: '', savedFilter: 'all', savedStage: 'all', tab: 'search' });
   controls.savedQuery = 'Nurse'; controls.savedFilter = 'applied'; controls.savedStage = 'offer';
-  invoke(clickExpression(findJsx('button', 'Follow-ups due: {0}')), bindings);
+  const followUpShortcut = findJsx('button', 'phone-followup-link');
+  assert(followUpShortcut.getText(tree).includes('Follow-ups due: {0}'));
+  invoke(clickExpression(followUpShortcut), bindings);
   assert.deepEqual(controls, { savedQuery: '', savedFilter: 'followups', savedStage: 'all', tab: 'saved' });
   const select = findJsx('select', 'All stages');
   assert.equal(select.openingElement.tagName.getText(tree), 'select');

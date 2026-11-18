@@ -54,10 +54,10 @@ test('unknown and prototype-looking keys remain safe, while specific templates p
 });
 
 test('Arabic counts have zero, one, dual, few, many forms and display Gregorian dates',()=>{
- assert.equal(core.savedJobsLabel(0,'ar'),'لا توجد فرص محفوظة');
- assert.equal(core.savedJobsLabel(1,'ar'),'فرصة محفوظة واحدة');
- assert.equal(core.savedJobsLabel(2,'ar'),'فرصتان محفوظتان');
- assert.match(core.savedJobsLabel(3,'ar'),/٣ فرص/);assert.match(core.savedJobsLabel(11,'ar'),/١١ فرصة/);
+ assert.equal(core.savedJobsLabel(0,'ar'),'لا توجد وظائف محفوظة');
+ assert.equal(core.savedJobsLabel(1,'ar'),'وظيفة محفوظة واحدة');
+ assert.equal(core.savedJobsLabel(2,'ar'),'وظيفتان محفوظتان');
+ assert.match(core.savedJobsLabel(3,'ar'),/٣ وظائف/);assert.match(core.savedJobsLabel(11,'ar'),/١١ وظيفة/);
  assert.equal(core.savedJobsLabel(1,'en'),'1 saved job');assert.equal(core.savedJobsLabel(2,'en'),'2 saved jobs');
  assert.match(core.formatDateTime('2026-11-17T12:00:00Z','ar'),/٢٠٢٦/);
  assert.equal(core.formatDateTime('invalid','ar'),catalog['Date unavailable']);

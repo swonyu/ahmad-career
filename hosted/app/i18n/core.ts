@@ -100,18 +100,18 @@ export function formatDateTime(value: string, language: Language): string {
 export function savedJobsLabel(count: number, language: Language): string {
   if (language === "en") return `${count} saved ${count === 1 ? "job" : "jobs"}`;
   const form = new Intl.PluralRules("ar").select(count), n = formatNumber(count, language);
-  if (form === "zero") return "لا توجد فرص محفوظة";
-  if (form === "one") return "فرصة محفوظة واحدة";
-  if (form === "two") return "فرصتان محفوظتان";
-  if (form === "few") return `${n} فرص محفوظة`;
-  return `${n} فرصة محفوظة`;
+  if (form === "zero") return "لا توجد وظائف محفوظة";
+  if (form === "one") return "وظيفة محفوظة واحدة";
+  if (form === "two") return "وظيفتان محفوظتان";
+  if (form === "few") return `${n} وظائف محفوظة`;
+  return `${n} وظيفة محفوظة`;
 }
 
 export function jobsLabel(count: number, language: Language): string {
   if (language === "en") return `${count} ${count === 1 ? "job" : "jobs"}`;
   const form = new Intl.PluralRules("ar").select(count), n = formatNumber(count, language);
-  if (form === "zero") return "لا توجد فرص";
-  if (form === "one") return "فرصة واحدة";
-  if (form === "two") return "فرصتان";
-  return form === "few" ? `${n} فرص` : `${n} فرصة`;
+  if (form === "zero") return "لا توجد وظائف";
+  if (form === "one") return "وظيفة واحدة";
+  if (form === "two") return "وظيفتان";
+  return form === "few" ? `${n} وظائف` : `${n} وظائفة`;
 }

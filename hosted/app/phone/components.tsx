@@ -4,6 +4,7 @@ import { formatDateTime, formatNumber } from "../i18n/core";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ArrowUpRight, Bookmark, Check, FileText, X } from "lucide-react";
 import { countryCodes, friendlyDate, linkedInURL, profileEssentials, stageNames, stages, type ApplicationRecord, type Job, type Plan, type Profile } from "./model";
+import { ProfileReuse } from "./ProfileReuse";
 
 /** Recover only lost focus, after removed controls and dialogs finish unmounting. */
 export const recoverPhoneFocus = (shell: Element | null, invoker: Element | null = null, closingDialog: HTMLDialogElement | null = null) => {
@@ -56,21 +57,30 @@ export function JobCard({ job, saved, onSave, onDetails, busy = false }: { job: 
     <div className="phone-job-top"><span className="company-avatar" aria-hidden="true">{Array.from(job.company.trim())[0]?.toUpperCase() || "•"}</span><div><p className="phone-company"><bdi>{job.company}</bdi></p><h3 dir="auto">{onDetails ? <button className="job-title-button" onClick={onDetails}>{job.title}</button> : job.title}</h3></div>{onSave && <button className={`icon-button bookmark ${saved ? "is-saved" : ""}`} aria-label={saved ? t("{0} is saved", [job.title]) : t("Save {0}", [job.title])} aria-pressed={saved} disabled={busy || saved} onClick={onSave}><Bookmark size={21} fill={saved ? "currentColor" : "none"} aria-hidden="true" /></button>}</div>
     {job.location && <p className="phone-job-location"><bdi>{job.location}</bdi></p>}{job.checkedAt && <p className="phone-note">{t("Posting checked ")}<time dir="auto" dateTime={job.checkedAt}>{formatDateTime(job.checkedAt, language)}</time></p>}
     {job.summary && <p className="phone-job-summary" dir="auto">{job.summary}</p>}
-    <div className="phone-job-footer">{job.sourceName && <span dir="auto">{job.sourceName}</span>}<a href={job.url} target="_blank" rel="noopener noreferrer">{t("View job ")}<ArrowUpRight size={16} aria-hidden="true" /></a></div>
+    <div className="phone-job-footer">{job.sourceName && <span dir="auto">{job.sourceName}</span>}{onDetails && <button className="text-button" aria-label={t("Job details for {0}", [job.title])} onClick={onDetails}>{t("Job details")}</button>}<a href={job.url} aria-label={t("View job: {0}", [job.title])} target="_blank" rel="noopener noreferrer">{t("View job ")}<ArrowUpRight size={16} aria-hidden="true" /></a></div>
   </article>;
 }
 
 export function ProfileEditor({ profile, onChange, onPDF, onSaveLocal, onSaveOnline, accountEmail, hasWorkspace, busy, changed }: {
-  profile: Profile; onChange: (value: Partial<Profile>) => void; onPDF: (file: File) => Promise<void>; onSaveLocal: () => void; onSaveOnline: () => void;
+  profile: Profile; onChange: (value: Partial<Profile>) => void; onPDF: (file: File) => Promise<void>; onSaveLocal: () => Promise<void>; onSaveOnline: () => Promise<void>;
   accountEmail?: string; hasWorkspace: boolean; busy: boolean; changed: boolean;
 }) {
   const { t, language } = useI18n();
   const countries = useMemo(() => { const names = new Intl.DisplayNames([language], { type: "region" }); return countryCodes.map(code => ({ code, name: names.of(code) || code })).sort((a,b) => a.name.localeCompare(b.name, language)); }, [language]);
   const fileInput = useRef<HTMLInputElement>(null);
+  const saveProfile = async (button: HTMLButtonElement, action: () => Promise<void>) => {
+    const shell = button.closest(".phone-shell");
+    try { await action(); }
+    finally {
+      // Busy temporarily disables the focused button. Recover only lost focus,
+      // after the save settles; a dialog or another focused control takes precedence.
+      if (button.ownerDocument.hasFocus()) recoverPhoneFocus(shell, button);
+    }
+  };
   const [targetCountry, setTargetCountry] = useState("");
   const validLinkedIn = useMemo(() => { try { return profile.linkedin ? linkedInURL(profile.linkedin) : ""; } catch { return ""; } }, [profile.linkedin]);
   return <div className="phone-profile-form">
-    <section className="phone-card"><div className="section-label"><span>01</span><h2>{t("Your essentials")}</h2></div><Readiness profile={profile} />
+    <section className="phone-card"><div className="section-label"><span>01</span><h2>{t("Contact details and CV")}</h2></div><Readiness profile={profile} />
       <p className="phone-note">{t("Start with a name, email, and CV. You can save an unfinished draft on this phone.")}</p>
       <div className="phone-field-pair"><label>{t("First or single name")}<input dir="auto" autoComplete="given-name" maxLength={150} value={profile.firstName} onChange={e => onChange({ firstName: e.target.value })} /></label><label>{t("Last name ")}<span className="optional">{t("optional")}</span><input dir="auto" autoComplete="family-name" maxLength={150} value={profile.lastName} onChange={e => onChange({ lastName: e.target.value })} /></label></div>
       <label>{t("Email address")}<input type="email" dir="ltr" autoComplete="email" inputMode="email" maxLength={254} value={profile.email} onChange={e => onChange({ email: e.target.value })} /></label>
@@ -79,13 +89,14 @@ export function ProfileEditor({ profile, onChange, onPDF, onSaveLocal, onSaveOnl
       <input ref={fileInput} type="file" accept="application/pdf,.pdf" className="visually-hidden" tabIndex={-1} aria-label={t("Choose PDF CV")} onChange={e => { const file = e.target.files?.[0]; if (file) void onPDF(file); e.currentTarget.value = ""; }} />
       <div className="phone-actions"><button className="button secondary" disabled={busy} onClick={() => fileInput.current?.click()}>{profile.resume ? t("Change PDF") : t("Choose PDF")}</button>{profile.resume && <button className="text-button danger-text" disabled={busy} onClick={() => onChange({ resume: null })}>{t("Remove from profile")}</button>}</div>
     </section>
-    <section className="phone-card"><div className="section-label"><span>02</span><h2>{t("Your professional links")}</h2></div>
+    <ProfileReuse profile={profile} />
+    <section className="phone-card"><div className="section-label"><span>02</span><h2>{t("Professional links")}</h2></div>
       <label>{t("LinkedIn profile ")}<span className="optional">{t("optional")}</span><input type="url" dir="ltr" inputMode="url" autoCapitalize="none" autoCorrect="off" spellCheck={false} placeholder="https://www.linkedin.com/in/your-name" maxLength={2048} value={profile.linkedin} onChange={e => onChange({ linkedin: e.target.value })} /></label>
       <p className="phone-note">{t("A saved link doesn’t connect or verify your LinkedIn account. You will see the exact link before an application is sent.")}</p>
       {validLinkedIn && <a className="phone-external" href={validLinkedIn} target="_blank" rel="noopener noreferrer">{t("Open LinkedIn profile ")}<ArrowUpRight size={16} aria-hidden="true" /></a>}
       <label>{t("Portfolio or website ")}<span className="optional">{t("optional")}</span><input type="url" dir="ltr" inputMode="url" autoCapitalize="none" autoCorrect="off" spellCheck={false} placeholder="https://example.com" maxLength={2048} value={profile.website} onChange={e => onChange({ website: e.target.value })} /></label>
     </section>
-    <section className="phone-card"><div className="section-label"><span>03</span><h2>{t("Your career preferences")}</h2></div><p className="phone-note">{t("Choose what suits you. These preferences stay blank until you add them.")}</p>
+    <section className="phone-card"><div className="section-label"><span>03</span><h2>{t("Job preferences")}</h2></div><p className="phone-note">{t("Choose roles and locations you are interested in. Role shortcuts are available in Search; other preferences do not filter results.")}</p>
       <label>{t("Target roles ")}<span className="optional">{t("up to 30, one per line")}</span><textarea dir="auto" rows={3} maxLength={3029} value={profile.targetRoles.join("\n")} onChange={e => onChange({ targetRoles: e.target.value ? e.target.value.split("\n") : [] })} /></label>
       <label>{t("Target country or region")}<select value={targetCountry} onChange={e => setTargetCountry(e.target.value)}><option value="">{t("Choose a country to add")}</option>{countries.filter(country => !profile.targetCountries.includes(country.code)).map(country => <option key={country.code} value={country.code}>{country.name}</option>)}</select></label>
       <button type="button" className="button secondary" disabled={busy || !targetCountry || profile.targetCountries.length >= 30} onClick={() => { if (targetCountry && !profile.targetCountries.includes(targetCountry)) onChange({ targetCountries: [...profile.targetCountries, targetCountry] }); setTargetCountry(""); }}>{t("Add target country")}</button>
@@ -95,11 +106,11 @@ export function ProfileEditor({ profile, onChange, onPDF, onSaveLocal, onSaveOnl
     <details className="phone-card phone-disclosure"><summary>{t("More profile details ")}<span>{t("Optional")}</span></summary>
       <label>{t("Phone number")}<input type="tel" dir="ltr" autoComplete="tel" maxLength={150} value={profile.phone} onChange={e => onChange({ phone: e.target.value })} /></label>
       <div className="phone-field-pair"><label>{t("City")}<input dir="auto" autoComplete="address-level2" maxLength={150} value={profile.city} onChange={e => onChange({ city: e.target.value })} /></label><label>{t("Country or region")}<select value={profile.country} onChange={e => onChange({ country: e.target.value })}><option value="">{t("Choose a country")}</option>{countries.map(c => <option value={c.code} key={c.code}>{c.name}</option>)}</select></label></div>
-      <label>{t("Professional headline")}<textarea dir="auto" rows={2} maxLength={500} value={profile.headline} onChange={e => onChange({ headline: e.target.value })} placeholder={t("Your work and the strengths you bring")} /></label>
+      <label>{t("Professional headline")}<textarea dir="auto" rows={2} maxLength={500} value={profile.headline} onChange={e => onChange({ headline: e.target.value })} placeholder={t("e.g. Customer service representative")} /></label>
       <label>{t("Skills ")}<span className="optional">{t("up to 30, separated by commas")}</span><input dir="auto" maxLength={3000} value={profile.skills.join(",")} onChange={e => onChange({ skills: e.target.value.split(/[,،]/) })} /></label>
       <label>{t("Experience level")}<select value={profile.experienceLevel} onChange={e => onChange({ experienceLevel: e.target.value as Profile["experienceLevel"] })}><option value="any">{t("Any level")}</option><option value="entry">{t("Entry level")}</option><option value="mid">{t("Mid level")}</option><option value="senior">{t("Senior level")}</option></select></label>
     </details>
-    <div className="phone-save-area"><p className="phone-note">{changed ? t("You have unsaved changes in this form.") : t("Your saved profile is shown above.")} {t(" Saving on this phone does not upload your CV.")}</p><button className={`button ${hasWorkspace ? "secondary" : "primary"} full`} disabled={busy} onClick={onSaveLocal}>{t("Save on this phone")}</button>{hasWorkspace && <button className="button primary full" disabled={busy} onClick={onSaveOnline}>{t("Save profile online")}</button>}</div>
+    <div className="phone-save-area"><p className="phone-note">{changed ? t("You have unsaved changes in this form.") : t("Your saved profile is shown above.")} {t(" Saving on this phone does not upload your CV.")}</p><button className={`button ${hasWorkspace ? "secondary" : "primary"} full`} disabled={busy} onClick={event => void saveProfile(event.currentTarget, onSaveLocal)}>{t("Save on this phone")}</button>{hasWorkspace && <button className="button primary full" disabled={busy} onClick={event => void saveProfile(event.currentTarget, onSaveOnline)}>{t("Save profile online")}</button>}</div>
   </div>;
 }
 

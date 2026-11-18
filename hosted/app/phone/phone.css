@@ -38,3 +38,29 @@
 
 /* Keep the native dialog's default em-based max-width from narrowing enlarged text. */
 .phone-dialog{max-width:calc(100vw - 24px)}
+
+/* Task guidance stays in the existing five destinations and grows with text. */
+.phone-guide-heading{display:flex;align-items:center;gap:12px;color:var(--accent)}
+.phone-guide-heading h2{color:var(--ink)}
+.phone-application-steps{list-style:none;padding:0;margin:24px 0;display:grid;gap:20px}
+.phone-application-steps>li{display:flex;gap:14px;align-items:flex-start}
+.phone-step-number{display:grid;place-items:center;min-width:30px;min-height:30px;border-radius:9px;background:var(--soft);color:var(--accent);font-size:.88rem;font-weight:650;flex-shrink:0}
+.phone-application-steps>li>div{min-width:0;flex:1}
+.phone-application-steps strong{display:block;font-size:.94rem;line-height:1.5}
+.phone-application-steps p{font-size:.88rem;color:var(--muted);line-height:1.65;margin:5px 0 0}
+.phone-selected-cv{display:flex;gap:8px;align-items:center;min-width:0;padding:10px 12px;background:var(--soft);border-radius:9px;margin:12px 0;font-size:.84rem;color:var(--ink)}
+.phone-selected-cv bdi{overflow-wrap:anywhere;min-width:0}
+.phone-profile-search{padding:0 0 10px}
+.phone-profile-search>.phone-note{margin:8px 0;font-size:.78rem!important}
+.phone-profile-search .phone-suggestions{justify-content:flex-start;margin-top:8px}
+.phone-search-coverage{font-size:.8rem;line-height:1.6;color:var(--muted);margin:10px 0 14px;overflow-wrap:anywhere}
+.phone-profile-reuse dl{margin-top:14px}
+.phone-copy-field{padding:10px 0;border-top:1px solid var(--line)}
+.phone-copy-field dt{font-size:.78rem;color:var(--muted);font-weight:600}
+.phone-copy-field dd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0;font-size:.92rem}
+.phone-copy-field dd>span{min-width:0;overflow-wrap:anywhere;user-select:text}
+.phone-job-card:has(.job-title-button) .phone-job-summary{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.phone-job-footer .text-button{font-size:.78rem!important;padding:8px 0}
+.phone-source-domain bdi{color:var(--ink);font-weight:550}
+@media(min-width:980px){.phone-tab-apply>.phone-card{max-width:740px}.phone-application-steps{gap:22px}.phone-application-guide>.button{width:auto;min-width:220px}}
+@media(prefers-reduced-motion:reduce){.phone-shell *,.phone-dialog *{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
