@@ -52,15 +52,19 @@ enum NativeDesign {
 // No UIKit appearance proxy or browser controller is changed.
 struct NativeScrollPalette: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
-    @ViewBuilder func body(content: Content) -> some View {
-        if colorScheme == .dark {
-            content.scrollContentBackground(.hidden).background(NativeDesign.canvas)
-                .foregroundStyle(NativeDesign.text, NativeDesign.muted)
-                .toolbarBackground(NativeDesign.canvas, for: .navigationBar, .tabBar)
-                .toolbarBackground(.visible, for: .navigationBar, .tabBar)
-        } else {
-            content
-        }
+    func body(content: Content) -> some View {
+        // Keep the List/Form in one structural position when appearance changes.
+        // Branching around content recreates its scroll state while the user is
+        // still choosing an appearance. Only the style values change here.
+        content
+            .scrollContentBackground(colorScheme == .dark ? .hidden : .automatic)
+            .background(colorScheme == .dark ? NativeDesign.canvas : Color.clear)
+            .foregroundStyle(colorScheme == .dark ? NativeDesign.text : Color.primary,
+                             colorScheme == .dark ? NativeDesign.muted : Color.secondary)
+            .toolbarBackground(colorScheme == .dark ? AnyShapeStyle(NativeDesign.canvas) : AnyShapeStyle(.bar),
+                               for: .navigationBar, .tabBar)
+            .toolbarBackground(colorScheme == .dark ? .visible : .automatic,
+                               for: .navigationBar, .tabBar)
     }
 }
 

@@ -1,0 +1,103 @@
+{
+  "recordedAtUTC": "2026-11-18T14:34:07.020538+00:00",
+  "base": "92266631b5eba3eb7d66810e6553535fe42cce86",
+  "owner": "/root/native_prepared_review 20698",
+  "writeSet": [
+    "apple/AhmadCareer/NativeCareerViews.swift",
+    "apple/UITests/CareerFinderUITests.swift"
+  ],
+  "checks": [
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/generate-native-localization.py",
+        "--check"
+      ],
+      "exit": 0,
+      "stdout": "{\n  \"ok\": true,\n  \"mode\": \"check\",\n  \"strings_per_language\": 1824,\n  \"bounded_templates\": 149,\n  \"files\": [\n    \"apple/AhmadCareer/en.lproj/Localizable.strings\",\n    \"android/app/src/main/res/values/career_copy.xml\",\n    \"apple/AhmadCareer/ar.lproj/Localizable.strings\",\n    \"android/app/src/main/res/values-ar/career_copy.xml\",\n    \"apple/AhmadCareer/NativeCopyTemplates.json\",\n    \"android/app/src/main/res/raw/native_copy_templates.json\",\n    \"android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt\"\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/test-native-localization.py"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "........\n----------------------------------------------------------------------\nRan 8 tests in 0.018s\n\nOK\n"
+    },
+    {
+      "command": [
+        "xcrun",
+        "swiftc",
+        "-frontend",
+        "-parse",
+        "-target",
+        "arm64-apple-ios16.0-simulator",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk",
+        "apple/AhmadCareer/NativeCareerViews.swift"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "scope": "Syntax parsing only, no typechecking, linking, build, simulator or UI run."
+    },
+    {
+      "command": [
+        "xcrun",
+        "swiftc",
+        "-frontend",
+        "-parse",
+        "-target",
+        "arm64-apple-ios16.0-simulator",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk",
+        "apple/UITests/CareerFinderUITests.swift"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "scope": "Syntax parsing only, no typechecking, linking, build, simulator or UI run."
+    },
+    {
+      "scope": "Native test method list retained",
+      "methods": [
+        "testFreshStartAndFiveTabs",
+        "testApplicationDraftSurvivesCancelAndRelaunch",
+        "testLinkedInProfileDraftAndExternalSearchChoice",
+        "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+        "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+        "testProfileReadinessAndSimpleConnectionSetup",
+        "testOpportunityDraftKeepSaveAndRestore",
+        "testOpportunityDiscardRequiresExplicitChoice",
+        "testDiscoverySaveFlowsIntoSavedAndApply",
+        "testSearchEmptyAndFailurePreservesPreviousResults",
+        "testAccessibilityTextKeepsCoreControlsReachable",
+        "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+        "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+        "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+        "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+        "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+        "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark"
+      ],
+      "count": 17
+    }
+  ],
+  "runtimeAcceptance": "Pending exact integrated hosted iPhone compile and all17 UI methods. Source/syntax/localization checks do not prove theme scroll or focus at runtime.",
+  "fileHashes": {
+    "apple/AhmadCareer/NativeCareerViews.swift": "0b1869bd6ff8664b74bec5f9ae48b435cc78cc054b93dfceb2a6214657aef1d0",
+    "apple/UITests/CareerFinderUITests.swift": "6fcd3752885123cba2c623726b00598b766d3d9e6ea6ef81a79a532f24a7303e"
+  },
+  "diagnosticAffectedSourceMatchesBase": true
+}
