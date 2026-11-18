@@ -17,7 +17,14 @@
     "pr": 1,
     "head": "b78b83b09739fefe69a6c8b72d7d1a60a4feb22a",
     "tree": "d147964f9698055c6dedc6329311aeb02ae0932f",
-    "mergeCheckout": "29ecd9cbe2bccf694e57bf1df32d706a1f86f321"
+    "mergeCheckout": "29ecd9cbe2bccf694e57bf1df32d706a1f86f321",
+    "prState": {
+      "url": "https://github.com/swonyu/ahmad-career/pull/1",
+      "head": "b78b83b09739fefe69a6c8b72d7d1a60a4feb22a",
+      "state": "open",
+      "draft": true,
+      "merged": false
+    }
   },
   "integrationReview": {
     "reviewer": "Independent agent reconcile_new_owner",
@@ -56,12 +63,15 @@
     "status": "succeeded",
     "url": "https://career-finder-service.jazzy-drake-8323.chatgpt.site/phone",
     "parity": "Other owner receipt confirms263 hosted Git blobs and modes match current application source",
-    "thisSessionPublishedAgain": false
+    "thisSessionPublishedAgain": false,
+    "platformRecheckedAtUTC": "2026-11-18 19:11:00 UTC",
+    "platformStatus": "active",
+    "deploymentStatus": "succeeded"
   },
   "currentCI": {
     "run": 44372262687,
     "url": "https://github.com/swonyu/ahmad-career/actions/runs/44372262687",
-    "lastDirectCheckUTC": "2026-11-18T18:58:00Z",
+    "lastDirectCheckUTC": "2026-11-18 19:11:00 UTC",
     "passedJobs": [
       "Hosted HTTPS service and durable storage",
       "Service and synthetic HTTPS",
@@ -77,7 +87,39 @@
       "reviewSource": "2026-11-18-takeover-585525/android-current-evidence-review-44372262687.json",
       "personalVisualReviewByThisRoot": false
     },
-    "finalFullAcceptance": false
+    "finalFullAcceptance": false,
+    "jobs": [
+      {
+        "id": 135041936640,
+        "name": "iPhone logic and unsigned build",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135041937089,
+        "name": "Hosted HTTPS service and durable storage",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135041937122,
+        "name": "Service and synthetic HTTPS",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135041937172,
+        "name": "iPhone native interface acceptance",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 135041937275,
+        "name": "Android compile, lint and native acceptance",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
   },
   "earlierBrowserReview": {
     "source": "Own local production build before newer integration; synthetic guest fixtures",
@@ -153,5 +195,47 @@
     "inheritedCutoffRiyadh": "2026-11-19T01:26:12+03:00",
     "clockRestarted": false
   },
-  "checkpointPolicy": "Preserve this own branch locally. Do not push it over the newer PR branch or replace current files with older copies."
+  "checkpointPolicy": "Preserve this own branch locally. Do not push it over the newer PR branch or replace current files with older copies.",
+  "updatedAtUTC": "2026-11-18 19:11:00 UTC",
+  "csvConsumer": {
+    "source": "b78b83b09739fefe69a6c8b72d7d1a60a4feb22a",
+    "scope": "Additional partial WF-04 evidence using actual production export functions and native LibreOffice Calc imports",
+    "engine": {
+      "command": "/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override/soffice",
+      "version": "LibreOfficeDev 26.8.0.0.alpha0 2c87e51eeaa2b413ff4ae097b2705eea1995d8e5",
+      "mode": "headless native Calc CSV import to native ODS"
+    },
+    "recordsPerLanguage": 18,
+    "columns": 9,
+    "languages": [
+      "en",
+      "ar"
+    ],
+    "formulaLikeStringsPreservedPerLanguage": 51,
+    "formulaEvaluationControl": "Bare and quoted=1+1 became native formulas with value2; Text: control stayed a string",
+    "strictInitialResult": "Failed: three lone-CR to LF changes per language, retained without relabeling",
+    "disposition": "Only consumer line-ending normalization was observed; no other text or civil date differences; no validated app defect under existing CSV viewing contract",
+    "civilDatesPreservedPerLanguage": 36,
+    "secretsLeakage": false,
+    "formulasInProductExports": 0,
+    "externalLinksInProductExports": 0,
+    "newAppSourceChange": false,
+    "evidence": "csv-consumer/consumer-evidence.json",
+    "dispositionEvidence": "csv-consumer/consumer-disposition.json",
+    "nativeArchive": "csv-consumer/native-consumer-evidence.zip",
+    "archiveSHA256": "5202b25852ce647d194bd35431312a8715b28c1fa1b7e2d31bab52de38adadef",
+    "remaining": [
+      "Real browser download",
+      "Calendar consumer and repeated import",
+      "Excel/Numbers and visual UI acceptance",
+      "No new original-value JSON acceptance performed here"
+    ]
+  },
+  "independentIPhoneReview": {
+    "source": "b78b83b",
+    "result": "No concrete defect in bounded readiness and reachability changes",
+    "unchangedJourneyMethods": 17,
+    "unchangedUIBudgetMinutes": 45,
+    "runtimeConclusion": "Current exact17/17 and artifact visual acceptance still pending"
+  }
 }

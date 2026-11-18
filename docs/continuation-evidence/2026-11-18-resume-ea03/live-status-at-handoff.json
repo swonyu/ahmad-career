@@ -1,0 +1,54 @@
+{
+  "observedAtUTC": "2026-11-18 19:11:00 UTC",
+  "pr": {
+    "url": "https://github.com/swonyu/ahmad-career/pull/1",
+    "head": "b78b83b09739fefe69a6c8b72d7d1a60a4feb22a",
+    "state": "open",
+    "draft": true,
+    "merged": false
+  },
+  "ci": {
+    "run": 44372262687,
+    "url": "https://github.com/swonyu/ahmad-career/actions/runs/44372262687",
+    "jobs": [
+      {
+        "id": 135041936640,
+        "name": "iPhone logic and unsigned build",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135041937089,
+        "name": "Hosted HTTPS service and durable storage",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135041937122,
+        "name": "Service and synthetic HTTPS",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135041937172,
+        "name": "iPhone native interface acceptance",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 135041937275,
+        "name": "Android compile, lint and native acceptance",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "site": {
+    "project": "appgprj_6afb13851fb4819193358d5db54e73b7",
+    "version": 11,
+    "status": "active",
+    "url": "https://career-finder-service.jazzy-drake-8323.chatgpt.site/phone",
+    "deployment": "appgdep_6afdbf075de88191a65374623c561dad",
+    "deploymentStatus": "succeeded"
+  }
+}
