@@ -1,0 +1,45 @@
+{
+  "observedAt": "2026-11-18T19:36:05.643812+00:00",
+  "baseHead": "e279d00d5004c9f0a984e91958fbadf6c83beea3",
+  "applicationCodeBase": "b78b83b09739fefe69a6c8b72d7d1a60a4feb22a",
+  "workflowSha256": "40984c51bcb5216ba46268c323eceee1cc61b69f91b66f4ad461370c4a5cf9e9",
+  "results": [
+    {
+      "name": "workflow-lint",
+      "command": [
+        "/opt/homebrew/bin/actionlint",
+        ".github/workflows/phone-quality.yml"
+      ],
+      "exit": 0,
+      "output": ""
+    },
+    {
+      "name": "simulator-selection",
+      "command": [
+        "python3",
+        "apple/Checks/test-simulator-selection.py"
+      ],
+      "exit": 0,
+      "output": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.014s\n\nOK\n"
+    },
+    {
+      "name": "strict-boot-parser",
+      "command": [
+        "python3",
+        "apple/Checks/test-simulator-boot.py"
+      ],
+      "exit": 0,
+      "output": "...........\n----------------------------------------------------------------------\nRan 11 tests in 0.128s\n\nOK\n"
+    },
+    {
+      "name": "authored-whitespace",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "output": ""
+    }
+  ]
+}

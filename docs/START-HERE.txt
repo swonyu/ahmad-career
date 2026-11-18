@@ -1,75 +1,72 @@
-CAREER FINDER — PHONES
-17 November 2026
+CAREER FINDER — START HERE
+18 November 2026 · continuation entrypoint
 
-CURRENT CHECKPOINT
-Version 0.6 source adds application records, follow-up dates, clearer connection
-setup and preserved drafts. The phone browser app is deployed as hosted version 6.
-Final native CI/publication and live browser acceptance are still in progress.
-Check the current release handoff before choosing a native download.
+OPEN THE APP
+https://career-finder-service.jazzy-drake-8323.chatgpt.site/phone
 
-PUBLIC SERVICE
-https://career-finder-service.jazzy-drake-8323.chatgpt.site
-Current deployed version: 6, observed 17 November 2026 at 00:05:24 UTC.
-Open the phone interface at the public address above or at /phone.
-Its hosted GitHub CI gate passed with zero complete dependency-audit findings.
-Live browser acceptance is in progress; deployment success is recorded separately.
-Search requires no account. Google is available through the secure ChatGPT sign-in
-screen. Native apps use a single-use connection code; the browser app uses the
-signed-in account directly.
+Hosted version 11 is live in English and Arabic with RTL support and the approved
+midnight navy/periwinkle appearance. Publication completed on 18 November at
+15:07:14 UTC. Live public-board search and both language interfaces were verified.
+The browser app is available now; no signed native download for this candidate
+has been published.
 
-PHONE FLOW
-Search: find a role on selected public employer boards.
-Saved: keep jobs, application stages, private notes and follow-up dates.
-Apply: review exact details when an authorized employer integration is available.
-Profile: choose between a phone draft and an explicit online save.
+WHAT YOU CAN DO
+Find opportunities on selected supported employer boards, save public job links,
+keep a reusable profile and PDF, and manage private notes, application stages,
+follow-ups and exports. New profiles start blank. The product has no country or
+profession whitelist, but search does not cover every worldwide vacancy.
+Results can include partial-word matches. Use more specific keywords to narrow
+them. Uploaded PDFs are not automatically converted into profile fields.
 
-New people start with a blank profile. There is no country or profession whitelist.
-The current interface is English. Search covers selected Greenhouse/Lever boards,
-not every worldwide vacancy. LinkedIn support saves a personal-profile link and
-opens an explicit search; it is not an OAuth account connection or profile import.
+The existing five tabs remain specific to each platform:
+Browser: Search · Saved · Apply · Profile · Settings
+iPhone:  Start · Search · Apply · Saved · Settings
+Android: Jobs · Apply · Receipts · Profile · Settings
 
-REAL APPLICATIONS
-Live Auto Apply is disabled until an authorized employer integration is configured.
-A verified live receipt requires documented provider acceptance and an application
-ID. Saving a job, opening a form, a self-reported stage or a synthetic test cannot
-produce live confirmation. Uncertain requests are not automatically resent.
-Stop prevents unsent work; a request already sent may still finish.
+Saving a job, opening an employer link and recording a stage do not confirm an
+employer submission. Live Auto Apply requires an authorized employer integration
+and explicit approval of the reviewed application. A genuine receipt requires
+provider acceptance and an application ID. Uncertain requests are not
+automatically resent. Stop prevents unsent work; a sent request may still finish.
 
-PLATFORMS AND DOWNLOADS
-Native iPhone: iOS 16+, existing app identity preserved.
-Native Android: Android 8+, ordinary preview is separately debug-signed.
-The latest published historical APK remains version 0.4 until the new release
-is observed and the current handoff is updated.
-https://github.com/swonyu/ahmad-career/releases
-A browser home-screen installation is separate from App Store/Google Play.
-Unsigned iPhone CI and Android previews do not establish store publication.
+CURRENT SOURCE AND VERIFICATION
+PR #1 combines the preserved work under the owner's existing merge authorization:
+https://github.com/swonyu/ahmad-career/pull/1
+Application-code baseline: b78b83b09739fefe69a6c8b72d7d1a60a4feb22a
+Interrupted full run retained as history:
+https://github.com/swonyu/ahmad-career/actions/runs/44372262687
 
-NATIVE VERIFICATION
-Android 0.6: 91 policy checks and all 83 native tests passed, with zero lint issues.
-Its new APK is not yet published. The latest completed iPhone UI run passed 9 of 13
-cases. Corrections for the four failures are frozen and independently reviewed;
-a fresh 13-case run is pending. The earlier failed run remains preserved. A hosted
-CI pass does not replace the five-gate requirement for the final native candidate.
+That run passed four jobs. Its iPhone deadline interrupted journey 16 after 15
+completed passes; journey 17 never started. It is not full native acceptance.
+The subsequent workflow budget permits 60 minutes for combined build/UI work
+and 70 minutes for the job, keeping all 17 journeys and assertions unchanged.
+The complete gate requires all five jobs, 17 iPhone journeys and 116 Android
+cases, source-bound results and reviewed evidence. Use PR #1 for the latest
+source and full-run result; a source merge also requires matching tree evidence.
 
-READ FIRST
-../README.md — current features, setup, coverage and limits
-Strict-Review-2026-11-17.md — strict findings and current exact evidence
-HOSTED-RELEASE-HANDOFF.md — publication state and remaining release gates
-Verified-Applications-Contract.md — account, review, submission and receipt rules
-strict-review-evidence/phone-web-hosted-deployment-v6.json — observed live release
-../hosted/README.md — browser storage, API, build and deployment details
-../android/README.md — Android source and native checks
-../apple/README.md — iPhone source, checks and distribution identity
+The preceding full run 44328888955 at b661434 passed all five jobs, including
+17/17 iPhone UI journeys and 116/116 Android cases. It is retained as evidence
+for that source and does not automatically certify later candidates.
 
-SOURCE
-https://github.com/swonyu/ahmad-career
-Source work uses branch career-finder-phones-verified-apply-20261116.
-No real employer application was sent during development. Current CI and release
-receipts identify what has actually passed and been published. Earlier failed
-attempts and immutable preview releases remain preserved.
+Hosted v11 source is 7fd3f81ff727769934f6e265c8ca2287cf1691f3. Its 263 tracked
+hosted files matched b661434 before packaging, and hosted source is unchanged
+through b78b83b. Publication and native acceptance are recorded separately.
 
-HISTORY
-Hosted-Release-Handoff-0.4-History.md preserves the previous preview handoff.
-Phone-Polish-Review-2026-11-16.md and Phone-Quality-Review-2026-11-16.md retain
-their original evidence. October and earlier platform/store records remain dated;
-they do not verify this source candidate.
+REMAINING RELEASE ITEMS
+Google sign-in is exposed in v11; real consent, callback, linking, disconnect and
+recovery acceptance remain open. LinkedIn setup remains open. Physical-device
+accessibility, signed installation/upgrade, TestFlight/App Store and Google Play
+distribution require their own observed results. No real employer application
+was sent during testing, and no new paid service is authorized.
+
+CONTINUE FROM THE EVIDENCE
+Release-Candidate-2026-11-18.md — integration contract and delivery boundaries
+continuation-evidence/2026-11-18-takeover-20698/hosted-v11-release.json
+continuation-evidence/2026-11-18-takeover-20698/hosted-v11-live-verification.json
+continuation-evidence/2026-11-18-takeover-20698/ci-readiness-budget-review.json
+continuation-evidence/2026-11-18-takeover-585525/README.md
+Verified-Applications-Contract.md — account, approval and receipt rules
+Use PR #1 and the linked current run for the latest acceptance outcome.
+Earlier dated handoffs and failed attempts remain preserved as history.
+
+The original cutoff remains 19 November 2026, 01:26:12 Riyadh.

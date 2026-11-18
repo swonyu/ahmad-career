@@ -1,0 +1,316 @@
+{
+  "recordedAt": "2026-11-18T19:55:05.532211+00:00",
+  "state": "source integration only; complete acceptance pending",
+  "owner": "20698f1e14d3",
+  "normalMergeParents": [
+    "a8f9c8e8d5e34fcdcec80d97d76d3da465ae0e1f",
+    "f53a917e75085f40e5967b7b5812e3221063de1d"
+  ],
+  "baseApplicationAndTestSource": "b78b83b09739fefe69a6c8b72d7d1a60a4feb22a",
+  "incomingHistory": [
+    "e279d00d5004c9f0a984e91958fbadf6c83beea3",
+    "f53a917e75085f40e5967b7b5812e3221063de1d"
+  ],
+  "selectedBudgetMinutes": {
+    "strictReadiness": 5,
+    "combinedBuildAndUI": 60,
+    "wholeJob": 70,
+    "sharedSetupAndEvidenceHeadroom": 5
+  },
+  "selectedWorkflowSha256": "0afe2ff5addf25366bcb1f04e22832a40eeb6527991b5d4ab9e89ef6e4a223c1",
+  "decision": "Retained measured passing-case envelope plus build/startup/finalization projects about 51 minutes. Select the separately reviewed 60-minute combined step, with all 17 journeys, commands, assertions and individual waits unchanged. This is scheduling evidence, not acceptance or a guaranteed runtime.",
+  "rationale": "ci-full-ui-budget-review.json",
+  "historicalEvidenceScope": "All 35 incoming evidence-directory files remain byte-for-byte preserved, including the 33 additions and README.md. Their 55/65-minute budget is the source-qualified f53 assessment and is superseded for this integration by the selected 60/70 budget. The reconciled-owner-state.json is its recorded earlier checkpoint, not a current result.",
+  "failedRun": 44372262687,
+  "failedRunOutcome": {
+    "passedMethods": 15,
+    "unfinished": "testSearchEmptyAndFailurePreservesPreviousResults",
+    "notStarted": "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+    "fullAcceptance": false
+  },
+  "imageEvidenceDistinction": "Zero named PNG archive entries and zero official export manifest in the interrupted bundle do not exclude embedded PNG payloads. The incoming review reports 49 raw PNG-format payloads; payload associations are partial diagnostic evidence, not a completed gate.",
+  "incomingRunObserved": 44383691833,
+  "guides": "Current budget wording in START-HERE.txt and Release-Candidate-2026-11-18.md is reconciled to 60/70. Other incoming content and source history are preserved.",
+  "importedFiles": [
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/README.md",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "558440d62f737f9b6dba2a76b39f4ad174ce50b7",
+      "bytes": 4599,
+      "sha256": "7cb595f93d4002248b6c3b65f28a2b2762f986dfd4b3d1f21633c302527898d4"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/android-current-evidence-review-44372262687.json",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "5ec97f0f5ca919f4f1d21707ea9cbbdc0a4b8a20",
+      "bytes": 19076,
+      "sha256": "869f6b13b4663f56abbd9f8b88c93b1594dbfcba9a978a036cacbb1fe3406542"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/attempt-d924d69/ci-dispatch.json",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "6c8eb3c5727a8e0a5d1b49c744fbaa59701f55c1",
+      "bytes": 375,
+      "sha256": "79d1eef54500c139d23bf4486b8ecd19076c03afe0231734c8e2fd63dd8e140d"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/attempt-d924d69/hosted-lint.log",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "762045b6e2e9df3ec5df2e3e657fa8cc7a592868",
+      "bytes": 1009,
+      "sha256": "7100cbfe7f5533dad46ede7ea2df654ac8941b8366eb4eb881de11de74370217"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/attempt-d924d69/hosted-typecheck.log",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "9f6697a2cc751a5eb804c5792f627e4970def9fe",
+      "bytes": 63,
+      "sha256": "443da1dddfcff0734c532ffcd1dd9daefa801a87f310fd265557c8d92204a47b"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/attempt-d924d69/hosted-verification-summary.json",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "c141b9bc0d187ee81116d4debca8b96092c6d35c",
+      "bytes": 905,
+      "sha256": "d4b2a3db7b5360ec3e10a77876bb24a34e8a24faedb4b609cfc1f65abe6885ff"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/budget-authored-whitespace.log",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/budget-independent-review.json",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "22609ec1ef9389d1d1780e315d50b3f89815f468",
+      "bytes": 2011,
+      "sha256": "bb03d3fc8d8fbf234a8000232f8a5124a5138945ae36e0d814570bf07704efd7"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/budget-simulator-selection.log",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "0d851145230dac05e3b8f74369185e7ce523b604",
+      "bytes": 111,
+      "sha256": "7552bd12ae276340729a65d44a110f392bc7234a9105e01401a941279fa79dfd"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/budget-source-validation.json",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "0c36993d0baa78c94d54d7632083ed2ed5c39e48",
+      "bytes": 1239,
+      "sha256": "ef02f2d97a0f2039e766f3d21eb4c886a64be9d67ef74a04ca60ca6bc3b200cf"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/budget-strict-boot-parser.log",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "83a185b32c4ca8a695f4c157e88595d8563ef5b8",
+      "bytes": 110,
+      "sha256": "156005328e332c2e1adb4d9a0a7899bd2cb619aa59b3deec3ee6f6c6ab723779"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/budget-workflow-lint.log",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/candidate-hosted-discovery-verification.json",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "771ce1f31bc75f3ab61ee6aa4a234f327eacf524",
+      "bytes": 6086,
+      "sha256": "314d4ec0be9c4763699e9147950f948170469f3d7117ae9956fd10e4f1ba009e"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/candidate-hosted-phone-verification.json",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "e46dab6b5c209d6a815ef628d42bfd98af1c0bf8",
+      "bytes": 3609,
+      "sha256": "73590300c3162d2c23dbd430e5f7f133e305cd19621a7682e90c7421f168706c"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/candidate-hosted-verification.json",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "40996fdf5a58987f34dab07528409670504f54ed",
+      "bytes": 8232,
+      "sha256": "a2faaac0279eff828b149e9398019a17e92523d961ce1c4f81df906046d30734"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/candidate-hosted-worker-verification.json",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "02b390f63eba049667e59027056b7349fb827ac8",
+      "bytes": 672,
+      "sha256": "d5eb30bf8cf54b3741cd1a2229f67786446c05db4eade4de8e0ce027efaf3e3d"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/ci-44372262687-deadline-excerpt.log",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "d89dbc38443f0adc03337d379976b843a13d3940",
+      "bytes": 12720,
+      "sha256": "1b6583761ae11f14f0d83caff31049029ae1646d87d3095135da9f34682d5575"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/ci-44372262687-ui.log.gz",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "f4795a84e9c0ff91a4dfc1d984964d00b9f99eb8",
+      "bytes": 54770,
+      "sha256": "b78d058900b3a768588528ee8529e5cf3a26885ec569c6f6f51d606feb4c78c6"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/ci-dispatch.json",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "7e37fa77d694e78cfb95329bcfe5aaa4dd784965",
+      "bytes": 476,
+      "sha256": "8f01878f997bf75eb698aae68614a9a04ac85cf2e8adb26da5b5330589de9e28"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/dependency-audit.json",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "848abe01989e3f7b77505e6a1bbca09a57b0ed15",
+      "bytes": 366,
+      "sha256": "e39fc7e295bccb5f46f1b1302c7928f3cbc0256c0b3d1de56eb78980cc372e23"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/historical-ci-44316849501.json",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "1f647840e1aa088f07a40d281991dc2b453a5a20",
+      "bytes": 16817,
+      "sha256": "f0b5c5fea29c82cadae6d90772abd54bab63b69321062ebd0227ad52bad683aa"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/hosted-browser-api.log",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "18457077f81047801f9040747853ec21c79fcd5c",
+      "bytes": 1388,
+      "sha256": "c03a600ada0044d999ba9af33694aa70b58dc1a6b4f9ce87b6bf617e75b1fbf4"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/hosted-build.log",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "65ba419400bd7d62930da5c80db21442ede0d16f",
+      "bytes": 391,
+      "sha256": "207f7292667418296c7ba993c8670b0be859a974ffb3ae744c8d36ffbcf4fc1e"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/hosted-full-tests.log",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "884693a1e664a0adbe68c85c2482ff27bcd5a812",
+      "bytes": 61983,
+      "sha256": "f9e73c8a6fa1b155ebcc065ca24147d77e90f1a97f267da7b1c9960ecfea6708"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/hosted-lint.log",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "cc9fdb36b80f242d3432c1008303e208a8308a6f",
+      "bytes": 169,
+      "sha256": "d9c8911000d7e0399cacbaa75d212ab979a6ff68a29d5f43389aa1778a6fc7fd"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/hosted-ssr.log",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "7732e0ad624ba5b925040da37b3e1cfe11ad0956",
+      "bytes": 1770,
+      "sha256": "66aab3ac2196086536f29656002a16b0263b2f52d10b117a9106ee2adaf2e06c"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/hosted-typecheck.log",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "9f6697a2cc751a5eb804c5792f627e4970def9fe",
+      "bytes": 63,
+      "sha256": "443da1dddfcff0734c532ffcd1dd9daefa801a87f310fd265557c8d92204a47b"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/hosted-verification-summary.json",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "eeebdd8793c4d3219d9b91f0aab9035ba9723d6f",
+      "bytes": 2208,
+      "sha256": "96b86c7a7cef2536804d676cb058db0ab019e2bce2d50fb7714609240efa305d"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/hosted-worker.log",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "f471d44bfa7cfe0a5924bbcc6d6a2d43f11b9c1a",
+      "bytes": 70,
+      "sha256": "27ad97fa3c7bef2b87634959ef80935976221a7c97a7aa8a6531c6accb493d41"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/iphone-ui-failure-44372262687.json",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "26df4e7d591536c09539ef1401eca7894df8e50e",
+      "bytes": 13608,
+      "sha256": "9ab8db86ba75a1eba40ca358da5034a82ab76810bd0c0149b0915b1a3b4caad7"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/live-v11-source-parity.json",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "7f17ed21e4ecbda3dd8a3e07c165ff3e9c44509e",
+      "bytes": 955,
+      "sha256": "90c8aab91037b9573c1c4cdb7f39263e98ff93069faec2d1e696d8f736190c03"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/ownership.json",
+      "newInIncoming": false,
+      "mode": "100644",
+      "blob": "f93bd597e8f644a6832ccfaa0cf696ce8b289de5",
+      "bytes": 1458,
+      "sha256": "b2a2f1e4cd452ac6204b32963a5bae6b99222bb6a26e38a8f361b27a47eecfec"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/preserved-i18n.patch",
+      "newInIncoming": false,
+      "mode": "100644",
+      "blob": "a11471ea1e9c7d65f74a63d645939ac8ce64fd00",
+      "bytes": 1661,
+      "sha256": "07080f6fa7c47fc55a943bd5d304c90762b068bbe3948fa9c0561fdf1c455d5f"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/reconciled-owner-state.json",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "93b33242ff2d2c9fca00013599af139ddda22649",
+      "bytes": 1617,
+      "sha256": "99cf014ee1754bded47e0569f447b60afd0e0ede6098d4cc84043a7259a064e8"
+    },
+    {
+      "path": "docs/continuation-evidence/2026-11-18-takeover-585525/search-precision-disposition.md",
+      "newInIncoming": true,
+      "mode": "100644",
+      "blob": "edbc20c8627907c98e81c13e3529d375154d3e37",
+      "bytes": 1933,
+      "sha256": "7f6888e60aa97df7c042f6f5e9a782f8fa6946a171d9a8d7d7654f3f398b4d03"
+    }
+  ]
+}

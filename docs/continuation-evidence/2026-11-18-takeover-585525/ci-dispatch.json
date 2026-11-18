@@ -1,0 +1,11 @@
+{
+  "createdAtUTC": "2026-11-18T13:44:51.799785+00:00",
+  "head": "92266631b5eba3eb7d66810e6553535fe42cce86",
+  "branch": "continuation/career-finder-takeover-20261118-585525",
+  "scope": "full",
+  "exit": 0,
+  "stdout": "https://github.com/swonyu/ahmad-career/actions/runs/44316849501\n",
+  "stderr": "",
+  "supersedesRun": 44315940264,
+  "supersededReason": "Full lint caught an unused test helper; helper removed, local full pipeline now passed; old owned run cancelled"
+}

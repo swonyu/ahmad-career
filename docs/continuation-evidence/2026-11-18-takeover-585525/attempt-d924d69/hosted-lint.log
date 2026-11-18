@@ -1,0 +1,18 @@
+
+> career-finder-phone-service@0.6.0 lint
+> oxlint --config .oxlintrc.json
+
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(no-unused-vars): Function 'phoneDeclarationExists' is declared but never used.[0m
+     ╭─[[38;2;92;157;255;1mtests/phone-recovery-isolation.mjs[0m:503:10]
+ [2m502[0m │ // they do not supply a replacement focus algorithm.
+ [2m503[0m │ function phoneDeclarationExists(name) {
+     · [38;2;246;87;248m         ───────────┬──────────[0m
+     ·                     [38;2;246;87;248m╰── [38;2;246;87;248m'phoneDeclarationExists' is declared here[0m[0m
+ [2m504[0m │   const app = tree.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === "PhoneApp");
+     ╰────
+[38;2;106;159;181m  help: [0mConsider removing this declaration.
+
+Found 1 warning and 0 errors.
+Exceeded maximum number of warnings. Found 1.
+Finished in 3.6s on 191 files with 85 rules using 18 threads.
