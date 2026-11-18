@@ -147,7 +147,7 @@ struct NativeDiscoveryScreen: View {
                         }
                         Text(l10n(page.notice)).font(.footnote).foregroundStyle(.secondary)
                     }
-                } header: { Text(l10n.format("{0} opportunities to review", [String(describing: discovery.jobs.count)])) }
+                } header: { Text(l10n.format("Opportunities to review · {0}", [String(describing: discovery.jobs.count)])) }
             }
             Section {
                 if discovery.jobs.isEmpty {

@@ -626,6 +626,14 @@
     "arguments": 2
   },
   {
+    "key": "Opportunities to review · {0}",
+    "parts": [
+      "Opportunities to review · ",
+      ""
+    ],
+    "arguments": 1
+  },
+  {
     "key": "Remove saved link for {0} at {1}",
     "parts": [
       "Remove saved link for ",
@@ -647,14 +655,6 @@
     "parts": [
       "Open employer board for ",
       ""
-    ],
-    "arguments": 1
-  },
-  {
-    "key": "{0} opportunities to review",
-    "parts": [
-      "",
-      " opportunities to review"
     ],
     "arguments": 1
   },

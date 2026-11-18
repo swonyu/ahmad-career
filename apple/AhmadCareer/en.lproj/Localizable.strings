@@ -829,6 +829,7 @@
 "Opens LinkedIn with only your keyword and location text. LinkedIn manages its own sign-in and applications. Career Finder does not read your LinkedIn account or verify applications submitted there." = "Opens LinkedIn with only your keyword and location text. LinkedIn manages its own sign-in and applications. Career Finder does not read your LinkedIn account or verify applications submitted there.";
 "Opens LinkedIn with your keywords and location. LinkedIn manages its own sign-in and applications; opening a search does not submit an application." = "Opens LinkedIn with your keywords and location. LinkedIn manages its own sign-in and applications; opening a search does not submit an application.";
 "Opportunities" = "Opportunities";
+"Opportunities to review · {0}" = "Opportunities to review · {0}";
 "Opportunity" = "Opportunity";
 "Opportunity details" = "Opportunity details";
 "Opportunity saved on this phone." = "Opportunity saved on this phone.";
@@ -1805,7 +1806,6 @@
 "{0} of 30 selected · Leave empty for no preference." = "{0} of 30 selected · Leave empty for no preference.";
 "{0} of {1} preparation steps complete" = "{0} of {1} preparation steps complete";
 "{0} of {1} selected" = "{0} of {1} selected";
-"{0} opportunities to review" = "{0} opportunities to review";
 "{0} private records" = "{0} private records";
 "{0} saved jobs · {1} application records · {2} unfinished record edits. No employer application will be submitted." = "{0} saved jobs · {1} application records · {2} unfinished record edits. No employer application will be submitted.";
 "{0} saved jobs · {1} private application records · {2} unfinished record edits" = "{0} saved jobs · {1} private application records · {2} unfinished record edits";

@@ -829,6 +829,7 @@
 "Opens LinkedIn with only your keyword and location text. LinkedIn manages its own sign-in and applications. Career Finder does not read your LinkedIn account or verify applications submitted there." = "يفتح LinkedIn باستخدام كلماتك المفتاحية ونص الموقع فقط. يدير LinkedIn تسجيل الدخول وطلبات التقديم الخاصة به. لا يقرأ Career Finder حسابك على LinkedIn ولا يتحقق من الطلبات التي تقدمها هناك.";
 "Opens LinkedIn with your keywords and location. LinkedIn manages its own sign-in and applications; opening a search does not submit an application." = "يفتح LinkedIn بكلماتك المفتاحية وموقعك. يدير LinkedIn تسجيل الدخول وطلبات التقديم الخاصة به؛ فتح البحث لا يقدّم طلبًا.";
 "Opportunities" = "الفرص";
+"Opportunities to review · {0}" = "فرص للمراجعة · {0}";
 "Opportunity" = "فرصة";
 "Opportunity details" = "تفاصيل الفرصة";
 "Opportunity saved on this phone." = "حُفظت الفرصة على هذا الهاتف.";
@@ -1805,7 +1806,6 @@
 "{0} of 30 selected · Leave empty for no preference." = "{0} من 30 محددة · اتركها فارغة لعدم تحديد أفضلية.";
 "{0} of {1} preparation steps complete" = "اكتملت {0} من أصل {1} خطوات التحضير";
 "{0} of {1} selected" = "تم اختيار {0} من {1}";
-"{0} opportunities to review" = "{0} فرصة للمراجعة";
 "{0} private records" = "{0} سجل خاص";
 "{0} saved jobs · {1} application records · {2} unfinished record edits. No employer application will be submitted." = "الوظائف المحفوظة: {0} · سجلات التقديم: {1} · تعديلات السجلات غير المكتملة: {2}. لن يُقدَّم أي طلب إلى جهة عمل.";
 "{0} saved jobs · {1} private application records · {2} unfinished record edits" = "الوظائف المحفوظة: {0} · سجلات التقديم الخاصة: {1} · تعديلات السجلات غير المكتملة: {2}";

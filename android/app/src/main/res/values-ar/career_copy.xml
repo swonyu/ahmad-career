@@ -831,6 +831,7 @@
     <string name="c_ffc2c370d9b5" formatted="false">"يفتح LinkedIn باستخدام كلماتك المفتاحية ونص الموقع فقط. يدير LinkedIn تسجيل الدخول وطلبات التقديم الخاصة به. لا يقرأ Career Finder حسابك على LinkedIn ولا يتحقق من الطلبات التي تقدمها هناك."</string>
     <string name="c_9d15c1079310" formatted="false">"يفتح LinkedIn بكلماتك المفتاحية وموقعك. يدير LinkedIn تسجيل الدخول وطلبات التقديم الخاصة به؛ فتح البحث لا يقدّم طلبًا."</string>
     <string name="c_1e6e878c9dc9" formatted="false">"الفرص"</string>
+    <string name="c_d7c7de5b56bb" formatted="false">"فرص للمراجعة · {0}"</string>
     <string name="c_e969f85c47ca" formatted="false">"فرصة"</string>
     <string name="c_cf3d01f4c53e" formatted="false">"تفاصيل الفرصة"</string>
     <string name="c_db677aa5908f" formatted="false">"حُفظت الفرصة على هذا الهاتف."</string>
@@ -1807,7 +1808,6 @@
     <string name="c_e9af4fe9ef47" formatted="false">"{0} من 30 محددة · اتركها فارغة لعدم تحديد أفضلية."</string>
     <string name="c_cf446aa7787a" formatted="false">"اكتملت {0} من أصل {1} خطوات التحضير"</string>
     <string name="c_d06c59a5a557" formatted="false">"تم اختيار {0} من {1}"</string>
-    <string name="c_f1ca1507897e" formatted="false">"{0} فرصة للمراجعة"</string>
     <string name="c_5afa9d80a0d9" formatted="false">"{0} سجل خاص"</string>
     <string name="c_b7db51a6bf1c" formatted="false">"الوظائف المحفوظة: {0} · سجلات التقديم: {1} · تعديلات السجلات غير المكتملة: {2}. لن يُقدَّم أي طلب إلى جهة عمل."</string>
     <string name="c_0f65d8b990e8" formatted="false">"الوظائف المحفوظة: {0} · سجلات التقديم الخاصة: {1} · تعديلات السجلات غير المكتملة: {2}"</string>
