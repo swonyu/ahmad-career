@@ -518,6 +518,9 @@ final class CareerDiscoveryStore: ObservableObject {
     }
     func retrySubmittedSearch() async {
         guard canRetrySubmittedSearch, let captured = submittedQuery ?? lastQuery else { return }
+        if let retryAfter, retryAfter > Date() {
+            error = "Try again after " + retryAfter.formatted(date: .omitted, time: .shortened) + "."; return
+        }
         await execute(captured: captured, more: false, ignoreDraftEdits: true)
     }
     func search(more: Bool = false) async {

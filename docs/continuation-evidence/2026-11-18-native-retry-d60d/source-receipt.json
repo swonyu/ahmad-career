@@ -1,0 +1,22 @@
+{
+  "sourceRepository": "/Users/saleh/Developer/career-finder-native-search-20261117-01a1ea9d107f",
+  "baseCommit": "0beff68a6906968f282dca292dc547daad85684f",
+  "createdUTC": "2026-11-18T06:20:30.316862+00:00",
+  "scope": "Isolated copied source only; existing host discovery harness; no original repo write, app/native build, Gradle, CI, commit or push",
+  "originalHashes": {
+    "apple/AhmadCareer/MobileApplicationClient.swift": "379b187ad17ddce0b8c13536052db8bab364f70dad4eb313071aaeb0b15b4588",
+    "apple/AhmadCareer/MobileApplicationState.swift": "1858795ccf563e9802c5cabc0367b402eadba2c9e978a5092c2e70a232d1a489",
+    "apple/AhmadCareer/CareerDiscovery.swift": "ce6e8e051ba73411846a9ebedc10b240beab4d132c5f5193dc3ba7fbad270013",
+    "apple/Checks/DiscoveryCheck.swift": "1b94a6410e6225234cfd0fe1f047a5e2bd530b786548e265f6224e4392675318",
+    "apple/Checks/Fixtures/discovery-search-v1.json": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7"
+  },
+  "candidateHashes": {
+    "apple/AhmadCareer/MobileApplicationClient.swift": "379b187ad17ddce0b8c13536052db8bab364f70dad4eb313071aaeb0b15b4588",
+    "apple/AhmadCareer/MobileApplicationState.swift": "1858795ccf563e9802c5cabc0367b402eadba2c9e978a5092c2e70a232d1a489",
+    "apple/AhmadCareer/CareerDiscovery.swift": "883837031fbb90158c440899871a3b89720c0ec16ee6873dac5a5e26682ea09e",
+    "apple/Checks/DiscoveryCheck.swift": "a0c802e55c1c636b93112934e42af542cdd354aa4598785a88ce787caa3f8902",
+    "apple/Checks/Fixtures/discovery-search-v1.json": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7"
+  },
+  "patchSHA256": "a36265359b859d61f22dae2cde7c8d55b0e21dcb9148798efca470311e891a14",
+  "patchBytes": 4289
+}
