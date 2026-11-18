@@ -1,0 +1,36 @@
+{
+  "ci_run": "44262971576",
+  "base": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2",
+  "events": {
+    "tap_command": {
+      "line": 5318,
+      "raw": "2026-11-18T08:29:10.0018280Z     t =   242.36s Tap \"discovery.keyboardSearch\" Button",
+      "test_elapsed_seconds": 242.36
+    },
+    "tap_event": {
+      "line": 5322,
+      "raw": "2026-11-18T08:29:10.7530940Z     t =   243.14s     Synthesize event",
+      "test_elapsed_seconds": 243.14
+    },
+    "first_error_query": {
+      "line": 5326,
+      "raw": "2026-11-18T08:29:13.1131330Z     t =   245.51s Checking existence of `\"discovery.error\" Any`",
+      "test_elapsed_seconds": 245.51
+    },
+    "disabled_assertion_query": {
+      "line": 5346,
+      "raw": "2026-11-18T08:29:29.9138450Z     t =   262.27s Find the \"discovery.retrySearch\" Button",
+      "test_elapsed_seconds": 262.27
+    }
+  },
+  "tap_to_assertion_seconds": 19.13,
+  "first_error_query_to_assertion_seconds": 16.76,
+  "baseline_fixture_seconds": 10,
+  "candidate_fixture_seconds": 30,
+  "failure_line": {
+    "line": 5347,
+    "raw": "2026-11-18T08:29:30.0963750Z /Users/runner/work/ahmad-career/ahmad-career/apple/UITests/CareerFinderUITests.swift:729: error: -[CareerFinderUITests.CareerFinderUITests testSearchEmptyAndFailurePreservesPreviousResults] : XCTAssertFalse failed - Search again must wait for the active deadline"
+  },
+  "interpretation": "The test observed the control after its ten-second fixture window; these logs do not establish early product re-enablement.",
+  "ci_ui_source_sha256": "e83b063b5f36a213fa2bb2a95e6f085728ce186968635321715175646044d0ff"
+}

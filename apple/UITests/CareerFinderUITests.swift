@@ -712,29 +712,39 @@ final class CareerFinderUITests: XCTestCase {
         XCTAssertEqual(app.textFields["discovery.keywords"].value as? String, "nothing matches", "Successful Retry must not replace the newer input draft")
         app.terminate()
 
-        // Extend this existing search journey (17 journeys remain) with actual
-        // controls backed by zero-second and short future structured failures.
-        for delay in ["0", "10"] {
+        // Observe the active controls before slow accessibility traversal. The
+        // hosted run took 19 seconds from tap to its old 10-second assertion.
+        // A 30-second fixture leaves a bounded observation window while still
+        // proving real expiry and successful retry in this existing journey.
+        for delay in ["0", "30"] {
             let limited = launch(rateLimitDelay: delay); tab("Search", in: limited)
             replace(limited.textFields["discovery.keywords"], with: "Interface designer", in: limited)
+            let searchHelperStarted = Date()
             searchFromKeyboard(in: limited)
-            let rateIssue = element("discovery.error", app: limited)
-            reveal(rateIssue, in: limited)
-            XCTAssertTrue(rateIssue.label.contains("Search is temporarily busy."))
+            let searchHelperReturned = Date()
             let again = limited.buttons["discovery.retrySearch"]
             let exactRetry = limited.buttons["discovery.retry"]
-            if !exactRetry.exists { limited.swipeUp() }
+            if !again.exists || !exactRetry.exists { limited.swipeUp() }
             XCTAssertTrue(again.waitForExistence(timeout: 5) && exactRetry.waitForExistence(timeout: 5))
-            if delay == "10" {
-                XCTAssertFalse(again.isEnabled, "Search again must wait for the active deadline")
-                XCTAssertFalse(exactRetry.isEnabled, "Exact retry must visibly wait, rather than accept a no-op tap")
+            let againInitiallyEnabled = again.isEnabled
+            let exactInitiallyEnabled = exactRetry.isEnabled
+            let controlsObserved = Date()
+            let timing = "syntheticRetryAfterSeconds=\(delay)\nsearchHelperSeconds=\(searchHelperReturned.timeIntervalSince(searchHelperStarted))\ncontrolLookupSeconds=\(controlsObserved.timeIntervalSince(searchHelperReturned))"
+            if delay == "30" {
+                XCTAssertFalse(againInitiallyEnabled, "Search again must wait for the active deadline; " + timing)
+                XCTAssertFalse(exactInitiallyEnabled, "Exact retry must visibly wait, rather than accept a no-op tap; " + timing)
             }
             let released = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
                 again.exists && exactRetry.exists && again.isEnabled && exactRetry.isEnabled
             }, object: nil)
-            XCTAssertEqual(XCTWaiter.wait(for: [released], timeout: 15), .completed,
+            let releaseWait: TimeInterval = delay == "0" ? 15 : 35
+            XCTAssertEqual(XCTWaiter.wait(for: [released], timeout: releaseWait), .completed,
                            "Both retry actions must become enabled after a zero or elapsed deadline")
-            captureObservation("08c-rate-limit-" + delay, app: limited, details: "syntheticRetryAfterSeconds=" + delay)
+            let rateIssue = element("discovery.error", app: limited)
+            XCTAssertTrue(rateIssue.waitForExistence(timeout: 5))
+            XCTAssertTrue(rateIssue.label.contains("Search is temporarily busy."),
+                          "The original failure must remain visible until a real retry succeeds")
+            captureObservation("08c-rate-limit-" + delay, app: limited, details: timing)
             let action = delay == "0" ? again : exactRetry
             reveal(action, in: limited); action.tap()
             let result = element("discovery.job.fixture-design", app: limited)
