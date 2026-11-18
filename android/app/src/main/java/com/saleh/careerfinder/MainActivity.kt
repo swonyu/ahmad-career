@@ -329,7 +329,8 @@ private fun ProfileSummary(profile: ProfileDraft) {
         "Location" to listOf(profile.city, profile.country).filter(String::isNotBlank).joinToString(" · "),
         "Headline" to profile.headline, "Website" to profile.website, "LinkedIn profile" to profile.linkedin, "Skills" to profile.skills,
         "Target roles" to profile.targetRoles, "Target countries" to profile.targetCountries,
-        "Work preferences" to profile.workModes.sorted().joinToString(", "), "Experience" to profile.experienceLevel
+        "Work preferences" to profile.workModes.sorted().joinToString(", ") { displayedWorkMode(it, l10n) },
+        "Experience" to displayedExperience(profile.experienceLevel, l10n)
     ).forEach { (label, value) ->
         Column {
             Text(l10n(label), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -338,6 +339,27 @@ private fun ProfileSummary(profile: ProfileDraft) {
     }
     Text(l10n.format("Résumé: {0}", listOf(((profile.resume?.name ?: l10n("No PDF"))).toString())), fontWeight = FontWeight.SemiBold)
     profile.resume?.let { Text(it.sha256, style = MaterialTheme.typography.bodySmall) }
+}
+
+private fun displayedExperience(stored: String, l10n: CareerStrings): String {
+    val label = when (stored) {
+        "any", "Any", "Any / not specified" -> "Any / not specified"
+        "entry", "Entry", "Entry level" -> "Entry level"
+        "mid", "Mid", "Mid level" -> "Mid level"
+        "senior", "Senior" -> "Senior"
+        else -> null
+    } ?: return stored
+    return l10n(label)
+}
+
+private fun displayedWorkMode(stored: String, l10n: CareerStrings): String {
+    val label = when (stored) {
+        "remote", "Remote" -> "Remote"
+        "hybrid", "Hybrid" -> "Hybrid"
+        "on-site", "On site" -> "On site"
+        else -> null
+    } ?: return stored
+    return l10n(label)
 }
 
 @Composable
@@ -398,6 +420,24 @@ private fun PhoneImportDialog(state: CareerUiState, model: CareerViewModel) {
                     Text(l10n("This replaces the profile draft currently shown. It is shared with the service only when you save the connected profile."), style = MaterialTheme.typography.bodySmall)
                 }
             }
+            val unfinishedCurrent = phone.opportunityDraft.takeIf { it.hasContent }
+            val unfinishedParked = phone.recoveredOpportunityDrafts.filter { it.hasContent }
+            if (unfinishedCurrent != null) item {
+                Panel {
+                    Text(l10n("Unfinished opportunity"), style = MaterialTheme.typography.titleLarge)
+                    Text(unfinishedCurrent.title.ifBlank { l10n("Unfinished opportunity") }, style = MaterialTheme.typography.bodyMedium)
+                    if (unfinishedCurrent.company.isNotBlank()) Text(unfinishedCurrent.company, style = MaterialTheme.typography.bodySmall)
+                }
+            }
+            if (unfinishedParked.isNotEmpty()) item {
+                Panel {
+                    Text(l10n("Recovered opportunity drafts"), style = MaterialTheme.typography.titleLarge)
+                    unfinishedParked.forEach { draft ->
+                        Text(draft.title.ifBlank { l10n("Unfinished opportunity") }, style = MaterialTheme.typography.bodyMedium)
+                        if (draft.company.isNotBlank()) Text(draft.company, style = MaterialTheme.typography.bodySmall)
+                    }
+                }
+            }
             if (phone.jobs.isNotEmpty() || phone.applicationRecords.isNotEmpty()) item {
                 Panel {
                     Text(l10n("Saved links and private records"), style = MaterialTheme.typography.titleLarge)
@@ -415,7 +455,7 @@ private fun PhoneImportDialog(state: CareerUiState, model: CareerViewModel) {
                 }
             }
             if (state.profileConflict != null) item { Text(l10n("Resolve the current profile conflict before copying this draft."), color = MaterialTheme.colorScheme.error) }
-            item { Action("Copy selected drafts", (profile || jobs) && !state.busy && state.profileConflict == null) { model.importPhoneDraft(profile, jobs) } }
+            item { Action("Copy selected drafts", (profile || jobs || unfinishedCurrent != null || unfinishedParked.isNotEmpty()) && !state.busy && state.profileConflict == null) { model.importPhoneDraft(profile, jobs) } }
             item { Text(l10n("Copying never applies to an employer. Your application review and approval are still required."), style = MaterialTheme.typography.bodySmall) }
         }
     }
@@ -748,6 +788,10 @@ private fun ReceiptsScreen(state: CareerUiState, model: CareerViewModel, browse:
                     receipt.state == "confirmed" -> "This record lacks verified live evidence and is not counted as a live application."
                     else -> "Review the recorded outcome before preparing another application."
                 }))
+                if (receipt.state == "dispatching" && receipt.planId.isNotBlank() && receipt.planId.length <= 200 && receipt.id.length <= 200) {
+                    OutlinedButton(onClick = { model.stopAndCheckReceipt(receipt.id, receipt.planId) },
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(l10n("Stop")) }
+                }
                 if (receipt.error.isNotBlank()) Text(l10n.message(receipt.error), color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }

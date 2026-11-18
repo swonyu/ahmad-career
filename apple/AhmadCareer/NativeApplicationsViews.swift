@@ -371,7 +371,9 @@ struct NativeApplicationsScreen: View {
                       detail: "A confirmed application includes a provider receipt. Opening a job link or preparing a draft never counts as a submission.")
             }
             ForEach(model.attempts.reversed().compactMap { NativeApplicationRow($0) }) { row in
-                NativeApplicationReceipt(attempt: row.value)
+                NativeApplicationReceipt(attempt: row.value, onStop: { planID, attemptID in
+                    Task { await model.stopAndCheckReceipt(planID: planID, attemptID: attemptID) }
+                })
             }
         }
     }
@@ -652,9 +654,9 @@ struct NativeApplicationProfileEditor: View {
             profileField("Location", [profile.city, profile.country].filter { !$0.isEmpty }.joined(separator: ", "))
             profileField("Headline", profile.headline); profileField("Skills", profile.skills)
             profileField("Portfolio", profile.website); profileField("LinkedIn profile", profile.linkedin)
-            profileField("Career stage", profile.experienceLevel)
+            profileField("Career stage", displayedExperience(profile.experienceLevel))
             profileField("Target roles", profile.targetRoles); profileField("Target countries", profile.targetCountries)
-            profileField("Work preferences", [profile.remote ? "Remote" : nil, profile.hybrid ? "Hybrid" : nil, profile.onsite ? "On site" : nil].compactMap { $0 }.joined(separator: ", "))
+            profileField("Work preferences", displayedWorkPreferences(profile))
             profileField("CV", profile.resumeName)
             if let hash = profile.resumeSHA256 { profileField("CV fingerprint", hash) }
         }.padding(.vertical, 8)
@@ -664,6 +666,14 @@ struct NativeApplicationProfileEditor: View {
             Text(l10n(title)).font(.caption).foregroundStyle(.secondary)
             Text(value.isEmpty ? l10n("Not provided") : value).font(.subheadline).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
         }.accessibilityElement(children: .combine)
+    }
+    private func displayedExperience(_ stored: String) -> String {
+        if let label = PhoneProfileDisplay.experienceLabel(for: stored) { return l10n(label) }
+        return stored
+    }
+    private func displayedWorkPreferences(_ profile: PhoneApplicationProfile) -> String {
+        PhoneProfileDisplay.workPreferenceLabels(remote: profile.remote, hybrid: profile.hybrid, onsite: profile.onsite)
+            .map { l10n($0) }.joined(separator: ", ")
     }
     private func countryName(_ code: String) -> String { l10n.locale.localizedString(forRegionCode: code) ?? code }
 }
@@ -1213,6 +1223,7 @@ private struct NativeApplicationReview: View {
 private struct NativeApplicationReceipt: View {
     @NativeLocalization private var l10n
     let attempt: [String: ApplicationValue]
+    var onStop: ((_ planID: String, _ attemptID: String) -> Void)? = nil
     private var test: Bool { attempt["evidenceMode"]?.string == "test" }
     private var verified: Bool { MobileApplicationPolicy.isVerified(attempt) }
     private var state: String {
@@ -1236,6 +1247,11 @@ private struct NativeApplicationReceipt: View {
             if state == "uncertain" {
                 Text(l10n("The service could not establish whether the employer accepted this application. It will not be sent again automatically."))
                     .font(.caption).foregroundStyle(.secondary)
+            }
+            if state == "dispatching", let onStop,
+               let planID = attempt["planId"]?.string, !planID.isEmpty, planID.utf16.count <= 200,
+               let attemptID = attempt["attemptId"]?.string ?? attempt["id"]?.string, !attemptID.isEmpty, attemptID.utf16.count <= 200 {
+                Button(l10n("Stop")) { onStop(planID, attemptID) }.frame(minHeight: 44)
             }
             if let message = attempt["error"]?.object["message"]?.string ?? attempt["reason"]?.string, !message.isEmpty {
                 Text(l10n(message)).font(.caption).foregroundStyle(.secondary)
@@ -1304,6 +1320,44 @@ struct NativePhoneDataScreen: View {
                     .font(.footnote).foregroundStyle(.secondary)
                 Text(l10n("Import replaces this phone's profile draft and merges saved links and private record history. Existing record versions are retained for comparison. It does not upload data or approve applications."))
                     .font(.footnote).foregroundStyle(.secondary)
+            }
+            if !model.unfinishedRecordDrafts.isEmpty || !model.recoveredRecordDrafts.isEmpty {
+                Section(l10n("Unfinished record edits")) {
+                    ForEach(Array(model.unfinishedRecordDrafts.enumerated()), id: \.offset) { _, draft in
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(draft.job.title).font(.subheadline)
+                            Text(draft.draft.note.isEmpty ? l10n("No private note") : draft.draft.note)
+                                .font(.footnote).foregroundStyle(.secondary)
+                        }
+                    }
+                    if !model.recoveredRecordDrafts.isEmpty {
+                        Text(l10n("Other recovered edit versions")).font(.subheadline.weight(.semibold))
+                        ForEach(Array(model.recoveredRecordDrafts.enumerated()), id: \.offset) { _, draft in
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(draft.job.title).font(.subheadline)
+                                Text(draft.draft.note.isEmpty ? l10n("No private note") : draft.draft.note)
+                                    .font(.footnote).foregroundStyle(.secondary)
+                                Button(l10n("Use this unfinished edit")) {
+                                    if model.useRecoveredRecordDraft(draft) { issue = nil } else { issue = model.message }
+                                }.frame(minHeight: 44)
+                            }
+                        }
+                    }
+                }
+            }
+            if !model.recoveredOpportunityDrafts.isEmpty {
+                Section(l10n("Recovered opportunity drafts")) {
+                    ForEach(Array(model.recoveredOpportunityDrafts.enumerated()), id: \.offset) { _, draft in
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(draft.title.isEmpty ? l10n("Unfinished opportunity") : draft.title).font(.subheadline)
+                            if !draft.company.isEmpty { Text(draft.company).font(.footnote).foregroundStyle(.secondary) }
+                            if !draft.url.isEmpty { Text(draft.url).font(.footnote).foregroundStyle(.secondary).textSelection(.enabled) }
+                            Button(l10n("Continue this opportunity")) {
+                                if model.restoreRecoveredOpportunityDraft(draft) { issue = nil } else { issue = model.message }
+                            }.frame(minHeight: 44)
+                        }
+                    }
+                }
             }
             Section(l10n("Earlier local planning records")) {
                 NavigationLink { NativeLegacyBackupScreen() } label: {
