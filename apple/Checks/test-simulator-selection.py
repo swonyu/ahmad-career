@@ -17,13 +17,14 @@ BLOCK = WORKFLOW.read_text().split('      - name: Create a fresh iPhone on this 
 SOURCE = textwrap.dedent(BLOCK.split('        run: |\n', 1)[1].split('\n      - name:', 1)[0])
 CODE = compile(SOURCE, str(WORKFLOW), 'exec')
 RUNTIME = 'com.apple.CoreSimulator.SimRuntime.iOS-26-5'
-TYPE = 'com.apple.CoreSimulator.SimDeviceType.iPhone-Air'
+TYPE = 'com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro'
 OLD_ID = 'D26ED71E-9D97-4E79-B376-C104ABB9517A'
 NEW_ID = '7A58BBF8-E79E-46C8-93AA-68987CE75950'
+AIR_ID = '919E71ED-A69E-41D9-BCB1-0A259C2832D4'
 NAME = 'CareerFinder-CI-12345-2'
 
 
-def device(identifier=OLD_ID, name='iPhone Air', **changes):
+def device(identifier=OLD_ID, name='iPhone 17 Pro', **changes):
     return {'udid': identifier, 'name': name, 'deviceTypeIdentifier': TYPE,
             'isAvailable': True, 'state': 'Shutdown', **changes}
 
@@ -31,16 +32,27 @@ def device(identifier=OLD_ID, name='iPhone Air', **changes):
 def inventory():
     return {'devices': {
         'com.apple.CoreSimulator.SimRuntime.iOS-18-0': [device('104D9314-C907-445F-A270-A0FE812F5986')],
-        RUNTIME: [device(), device('583C001B-E00B-4B4C-8BC3-4DE9099838A2', 'iPhone 17 Pro Max')],
-        'com.apple.CoreSimulator.SimRuntime.tvOS-27-0': [device('919E71ED-A69E-41D9-BCB1-0A259C2832D4', 'Apple TV')],
+        RUNTIME: [
+            device(),
+            device('583C001B-E00B-4B4C-8BC3-4DE9099838A2', 'iPhone 17 Pro Max',
+                   deviceTypeIdentifier=TYPE + '-Max'),
+            device(AIR_ID, 'iPhone Air',
+                   deviceTypeIdentifier='com.apple.CoreSimulator.SimDeviceType.iPhone-Air'),
+        ],
+        'com.apple.CoreSimulator.SimRuntime.tvOS-27-0': [
+            device('8FE08898-4FBF-4FD4-B91D-02D829247611', 'Apple TV',
+                   deviceTypeIdentifier='com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K'),
+        ],
     }}
 
 
 class FreshSimulatorSelectionTests(unittest.TestCase):
-    def execute(self, before=None, created=None, output=NEW_ID + '\n', create_error=None, architecture='arm64', error=None):
+    def execute(self, before=None, created=None, output=NEW_ID + '\n', create_error=None,
+                architecture='arm64', error=None, expected_type=TYPE, expected_runtime=RUNTIME):
         before = inventory() if before is None else before
         after = copy.deepcopy(before)
-        after['devices'].setdefault(RUNTIME, []).append(device(NEW_ID, NAME))
+        after['devices'].setdefault(expected_runtime, []).append(
+            device(NEW_ID, NAME, deviceTypeIdentifier=expected_type))
         if created is not None:
             after = created
         calls = []
@@ -49,7 +61,7 @@ class FreshSimulatorSelectionTests(unittest.TestCase):
             calls.append(command)
             if command == ['xcrun', 'simctl', 'list', 'devices', 'available', '--json']:
                 return json.dumps(before if len(calls) == 1 else after).encode()
-            self.assertEqual(command, ['xcrun', 'simctl', 'create', NAME, TYPE, RUNTIME])
+            self.assertEqual(command, ['xcrun', 'simctl', 'create', NAME, expected_type, expected_runtime])
             self.assertTrue(kwargs.get('text'))
             if create_error:
                 raise create_error
@@ -76,7 +88,7 @@ class FreshSimulatorSelectionTests(unittest.TestCase):
                 self.assertIsNone(receipt)
             return calls, environment, receipt, messages.getvalue()
 
-    def test_new_device_preserves_selected_runtime_type_ranking_and_metadata(self):
+    def test_regular_size_numbered_pro_is_selected_before_alphabetically_later_air(self):
         calls, environment, receipt, messages = self.execute()
         self.assertEqual(len(calls), 3)
         self.assertEqual(environment, 'CAREER_UI_DEVICE=' + NEW_ID + '\nCAREER_UI_ARCH=arm64\n')
@@ -86,7 +98,40 @@ class FreshSimulatorSelectionTests(unittest.TestCase):
         self.assertEqual(receipt['createdDevice']['udid'], NEW_ID)
         self.assertEqual(receipt['createdDevice']['state'], 'Shutdown')
         self.assertEqual(receipt['checkoutSHA'], 'fixture-sha')
-        self.assertIn('Selected iPhone Air on iOS 26.5 architecture arm64', messages)
+        self.assertIn('Selected iPhone 17 Pro on iOS 26.5 architecture arm64', messages)
+
+    def test_latest_runtime_still_precedes_hardware_preference(self):
+        before = inventory()
+        latest = 'com.apple.CoreSimulator.SimRuntime.iOS-27-0'
+        air_type = 'com.apple.CoreSimulator.SimDeviceType.iPhone-Air'
+        before['devices'][latest] = [device(AIR_ID, 'iPhone Air', deviceTypeIdentifier=air_type)]
+        _, _, receipt, _ = self.execute(before=before, expected_type=air_type, expected_runtime=latest)
+        self.assertEqual(receipt['sourceDevice']['runtime'], latest)
+        self.assertEqual(receipt['sourceDevice']['deviceTypeIdentifier'], air_type)
+
+    def test_regular_numbered_phone_precedes_air_when_pro_is_absent(self):
+        before = inventory()
+        base_type = 'com.apple.CoreSimulator.SimDeviceType.iPhone-17'
+        before['devices'][RUNTIME][0] = device(name='iPhone 17', deviceTypeIdentifier=base_type)
+        _, _, receipt, _ = self.execute(before=before, expected_type=base_type)
+        self.assertEqual(receipt['sourceDevice']['name'], 'iPhone 17')
+
+    def test_newest_hardware_generation_is_ranked_numerically(self):
+        before = {'devices': {RUNTIME: [
+            device(name='iPhone 9 Pro', deviceTypeIdentifier='com.apple.CoreSimulator.SimDeviceType.iPhone-9-Pro'),
+            device('583C001B-E00B-4B4C-8BC3-4DE9099838A2', 'iPhone 17',
+                   deviceTypeIdentifier='com.apple.CoreSimulator.SimDeviceType.iPhone-17'),
+        ]}}
+        _, _, receipt, _ = self.execute(
+            before=before, expected_type='com.apple.CoreSimulator.SimDeviceType.iPhone-17')
+        self.assertEqual(receipt['sourceDevice']['name'], 'iPhone 17')
+
+    def test_unavailable_preferred_device_does_not_override_available_model(self):
+        before = inventory()
+        before['devices'][RUNTIME][0]['isAvailable'] = False
+        air_type = 'com.apple.CoreSimulator.SimDeviceType.iPhone-Air'
+        _, _, receipt, _ = self.execute(before=before, expected_type=air_type)
+        self.assertEqual(receipt['sourceDevice']['udid'], AIR_ID)
 
     def test_x86_runner_architecture_is_preserved(self):
         _, environment, receipt, _ = self.execute(architecture='x86_64')
@@ -94,7 +139,9 @@ class FreshSimulatorSelectionTests(unittest.TestCase):
         self.assertEqual(receipt['architecture'], 'x86_64')
 
     def test_creation_failure_cannot_fall_back_to_preexisting_device(self):
-        calls, _, _, _ = self.execute(create_error=subprocess.CalledProcessError(1, ['simctl', 'create']), error=subprocess.CalledProcessError)
+        calls, _, _, _ = self.execute(
+            create_error=subprocess.CalledProcessError(1, ['simctl', 'create']),
+            error=subprocess.CalledProcessError)
         self.assertEqual(len(calls), 2)
 
     def test_invalid_or_existing_create_identifier_is_rejected(self):
@@ -120,6 +167,11 @@ class FreshSimulatorSelectionTests(unittest.TestCase):
         calls, _, _, _ = self.execute(before=before, error=AssertionError)
         self.assertEqual(len(calls), 1)
         calls, _, _, _ = self.execute(architecture='unknown', error=AssertionError)
+        self.assertEqual(len(calls), 1)
+
+    def test_runtime_below_ui_test_target_minimum_stops_before_creation(self):
+        before = {'devices': {'com.apple.CoreSimulator.SimRuntime.iOS-16-6': [device()]}}
+        calls, _, _, _ = self.execute(before=before, error=AssertionError)
         self.assertEqual(len(calls), 1)
 
     def test_no_eligible_phone_stops_before_creation(self):

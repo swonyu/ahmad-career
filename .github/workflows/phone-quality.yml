@@ -287,14 +287,21 @@ jobs:
               if '.iOS-' not in runtime:
                   continue
               version = tuple(map(int, re.findall(r'\d+', runtime.split('.iOS-', 1)[1])))
-              if not version or version[0] < 16:
+              if not version or version[0] < 17:
                   continue
               for device in devices:
                   if device.get('isAvailable') and device['name'].startswith('iPhone'):
                       compact = not any(word in device['name'] for word in ['Max', 'Plus'])
-                      candidates.append((version, compact, device['name'], device['udid'], runtime, device.get('deviceTypeIdentifier')))
-          assert candidates, 'This runner has no available iPhone Simulator with iOS 16 or later.'
-          version, compact, name, source_identifier, runtime, device_type = sorted(candidates, reverse=True)[0]
+                      device_type = device.get('deviceTypeIdentifier')
+                      # Alphabetical names put Air before numbered models. Prefer a regular-size
+                      # numbered Pro/standard iPhone within the newest supported runtime instead.
+                      # Fresh 17 Pro/iOS 26.5 passed strict boot in retained recovery evidence;
+                      # a fresh Air on that runtime failed migration. Model causation is unproven.
+                      numbered = re.fullmatch(r'com\.apple\.CoreSimulator\.SimDeviceType\.iPhone-(\d+)(-Pro)?', device_type or '')
+                      hardware_rank = (bool(numbered), int(numbered[1]) if numbered else 0, bool(numbered and numbered[2]))
+                      candidates.append((version, compact, hardware_rank, device['name'], device['udid'], runtime, device_type))
+          assert candidates, 'This runner has no available iPhone Simulator with iOS 17 or later (the UI-test target minimum).'
+          version, compact, hardware_rank, name, source_identifier, runtime, device_type = sorted(candidates, reverse=True)[0]
           uuid = r'[A-Fa-f0-9]{8}(?:-[A-Fa-f0-9]{4}){3}-[A-Fa-f0-9]{12}'
           assert re.fullmatch(uuid, source_identifier), source_identifier
           assert isinstance(device_type, str) and device_type.startswith('com.apple.CoreSimulator.SimDeviceType.iPhone-'), device_type
