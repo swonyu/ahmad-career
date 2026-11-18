@@ -272,7 +272,8 @@ private final class DiscoverySuite {
             model.query = submitted
             if hasPreviousResults { await model.search() }
             let retryTime = Date().addingTimeInterval(60)
-            service.handle = { _, _ in throw DiscoveryFailure(message: "Wait", retryAfter: retryTime) }
+            let originalError = "Search is temporarily busy. Wait before trying again."
+            service.handle = { _, _ in throw DiscoveryFailure(message: originalError, retryAfter: retryTime) }
             await model.search()
             let retainedJobs = model.jobs, retainedQuery = model.lastQuery, retainedStatus = model.page?.status
             let callCount = service.calls.count
@@ -283,8 +284,8 @@ private final class DiscoverySuite {
             service.handle = { _, _ in self.page(status: "complete") }
             await model.retrySubmittedSearch()
             try check(service.calls.count == callCount, "Submitted retry must not contact the service before Retry-After, including a failed first search")
-            try check(model.retryAfter == retryTime && model.error?.hasPrefix("Try again after ") == true && !model.isSearching,
-                      "An early submitted retry keeps the cooldown and reports the waiting state")
+            try check(model.retryAfter == retryTime && model.error == originalError && !model.isSearching,
+                      "An early submitted retry preserves the original service error and separate retry hint for localized presentation")
             try check(model.query == newerDraft && model.jobs == retainedJobs && model.lastQuery == retainedQuery && model.page?.status == retainedStatus,
                       "Blocked retry preserves newer draft fields and prior result attribution")
             let savedAfterRetry = try Data(contentsOf: file)

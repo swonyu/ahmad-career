@@ -1,0 +1,42 @@
+{
+  "createdUTC": "2026-11-18T06:42:24.429199+00:00",
+  "supersedes": "ffc038cd2bfcbc6006dfc23dee87e34ee55a7a00",
+  "scope": "Two tested native files and bounded text evidence; no binaries, module caches, new tests or builds.",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 2194,
+      "sha256": "f6b84973bc236d876db2c7d8d1af369c314093b9457bcde363b0dae59d2b290f"
+    },
+    {
+      "path": "baseline-run.stderr.log",
+      "bytes": 121,
+      "sha256": "909959d9125ae90d5e32507057c6abbfcdf75cf6c6bd0bbb04c184bec4adc592"
+    },
+    {
+      "path": "candidate-run.stdout.log",
+      "bytes": 56,
+      "sha256": "0b65ae0bd2bab58ac7e693df86209bf954a989b34caf2554c157ce5715f383f4"
+    },
+    {
+      "path": "native-retry-preserve-error.patch",
+      "bytes": 2470,
+      "sha256": "7e73f15d74263a204c1a2fa6817f2af6eab7a564b436f2695824428f16dacf99"
+    },
+    {
+      "path": "source-receipt.json",
+      "bytes": 2327,
+      "sha256": "52f37a6b651d53525bcd0cf2aac87e0685ea26411906367c3693298d7b80c73f"
+    },
+    {
+      "path": "verification-receipt.json",
+      "bytes": 5806,
+      "sha256": "4d0be9d6ef1269a74045a9c2e3b85265ebe726df7f4ac3d0892a76eae4e09d82"
+    },
+    {
+      "path": "worktree-application-receipt.json",
+      "bytes": 569,
+      "sha256": "f57357a4d24053c5fedff83289b0f07a329328a9a610dd23f252647e3595b52a"
+    }
+  ]
+}
