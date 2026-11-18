@@ -1,0 +1,26 @@
+{
+  "recordedAtUTC": "2026-11-18T14:32:15.756191+00:00",
+  "base": "92266631b5eba3eb7d66810e6553535fe42cce86",
+  "scope": "Offline workflow selection and unchanged boot validation only; no simulator created or booted",
+  "before": {
+    "exit": 1,
+    "summary": "Ran 12 tests in 0.017s\n\nFAILED (failures=6)"
+  },
+  "after": {
+    "exit": 0,
+    "summary": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.013s\n\nOK"
+  },
+  "unchangedBootParser": {
+    "exit": 0,
+    "summary": "...........\n----------------------------------------------------------------------\nRan 11 tests in 0.090s\n\nOK",
+    "sha256": "5c2233107dfcaddd7273846e3d77aca7902976d34ac73bae6eb4a016647102bf"
+  },
+  "actionlint": {
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "bootAndUITailUnchangedFromBase": true,
+  "independentReview": "root/native_prepared_review: static diff reviewed, no new blocker; actual hosted native rerun remains required",
+  "remainingGate": "Exact combined-candidate hosted strict boot and all17 iPhone native journeys; no claim of model causation or release readiness"
+}
