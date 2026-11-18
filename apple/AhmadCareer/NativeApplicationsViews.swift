@@ -872,7 +872,8 @@ struct NativeApplicationConnection: View {
                         }
                     }
                     Section {
-                        SecureField(l10n("One-time connection code"), text: $code).textInputAutocapitalization(.characters).autocorrectionDisabled()
+                        SecureField(l10n("One-time connection code"), text: $code).keyboardType(.asciiCapable)
+                            .textInputAutocapitalization(.characters).autocorrectionDisabled()
                             .focused($focusedField, equals: "code").submitLabel(.done).onSubmit { focusedField = nil }
                             .accessibilityIdentifier("connection.code")
                         Button {
