@@ -708,8 +708,10 @@ final class CareerFinderUITests: XCTestCase {
         XCTAssertEqual(copyName.value as? String, "Alex", "Only the chosen visible field is offered for copying")
         copyName.tap()
         let copied = app.staticTexts["profile.copy.confirmation"]
-        XCTAssertTrue(copied.waitForExistence(timeout: 5))
+        // Form feedback below the copied fields may not exist in the accessibility
+        // tree until real scrolling brings that row into view.
         reveal(copied, in: app)
+        XCTAssertTrue(copied.waitForExistence(timeout: 5))
         capture("31-profile-contact-reuse", app: app)
         app.navigationBars.buttons["Save"].tap()
         tab("Apply", in: app)
