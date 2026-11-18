@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "project": "Career Finder",
+  "recordedAtUTC": "2026-11-18T19:00:34.868005+00:00",
+  "request": "continue career finder the other session interrupted",
+  "session": "ea03ff43",
+  "state": "Reconciled with newer owner; no unintegrated product fix remains from this branch",
+  "interruption": {
+    "toolWaitSeconds": 21290.3,
+    "outcome": "Tool execution was aborted after a long wait; continuity was recovered from current GitHub and local owner evidence. Do not infer successful CSV download or uninterrupted background work."
+  },
+  "ownWorktree": "/Users/saleh/Developer/career-finder-resume-20261118-ea03ff43",
+  "ownBranch": "continuation/career-finder-resume-20261118-ea03",
+  "ownBaseBeforeCheckpoint": "12e2e5969d5f74dcabb67420de7310f9c0fee9db",
+  "currentAuthoritativeSource": {
+    "repository": "swonyu/ahmad-career",
+    "pr": 1,
+    "head": "b78b83b09739fefe69a6c8b72d7d1a60a4feb22a",
+    "tree": "d147964f9698055c6dedc6329311aeb02ae0932f",
+    "mergeCheckout": "29ecd9cbe2bccf694e57bf1df32d706a1f86f321"
+  },
+  "integrationReview": {
+    "reviewer": "Independent agent reconcile_new_owner",
+    "method": "Stable patch IDs, range-diff and byte comparisons against current owner",
+    "result": "All product fixes retained; newer recovery fencing and simulator selection must be preserved",
+    "contributions": [
+      {
+        "finding": "Arabic list separators treated as one profile entry",
+        "sourceCommit": "61134b3cbe31e2f1d541fa5529eabb7ff6a4adce",
+        "integratedCommit": "5c98eaab5c2b1d2afc8b8572915b2fbee373c9d3",
+        "verification": "Matching patch IDs; parser, serialization, backup and evidence byte-identical"
+      },
+      {
+        "finding": "Unfinished Add job link fields were not recovered through account lock",
+        "sourceCommit": "e2eeb5ffcbeaa2b8521843757fcf6344011fcddd",
+        "integratedCommit": "b8946b4baa235a1451e16ddfd3d169d72e6063af",
+        "verification": "All43 original recovery tests retained; later owner added17 cases and stronger retirement/generation fencing"
+      },
+      {
+        "finding": "Arabic many/other job count wording was malformed",
+        "integratedCommit": "2bfefa0195f448ac0068f4fcc8fef3e6c7fc0f6c",
+        "verification": "Current implementation and exact plural regressions byte-identical to our dirty copies"
+      },
+      {
+        "finding": "iPhone CI reused a pre-existing simulator",
+        "sourceCommit": "f7d3cb54f927735e954df1b7eb0e8ad56ee9adce",
+        "integratedCommit": "37b5096a199e3afb94d917e5e022829a17bb7f8a",
+        "verification": "Matching patch IDs; later numbered-model selection, UUID-scoped inventory and strict5-minute boot readiness preserved"
+      }
+    ]
+  },
+  "hostedRelease": {
+    "version": 11,
+    "source": "7fd3f81ff727769934f6e265c8ca2287cf1691f3",
+    "deployment": "appgdep_6afdbf075de88191a65374623c561dad",
+    "status": "succeeded",
+    "url": "https://career-finder-service.jazzy-drake-8323.chatgpt.site/phone",
+    "parity": "Other owner receipt confirms263 hosted Git blobs and modes match current application source",
+    "thisSessionPublishedAgain": false
+  },
+  "currentCI": {
+    "run": 44372262687,
+    "url": "https://github.com/swonyu/ahmad-career/actions/runs/44372262687",
+    "lastDirectCheckUTC": "2026-11-18T18:58:00Z",
+    "passedJobs": [
+      "Hosted HTTPS service and durable storage",
+      "Service and synthetic HTTPS",
+      "iPhone logic and unsigned build",
+      "Android compile, lint and native acceptance"
+    ],
+    "pendingJobs": [
+      "iPhone native interface acceptance"
+    ],
+    "android": {
+      "cases": 116,
+      "screenshots": 23,
+      "reviewSource": "2026-11-18-takeover-585525/android-current-evidence-review-44372262687.json",
+      "personalVisualReviewByThisRoot": false
+    },
+    "finalFullAcceptance": false
+  },
+  "earlierBrowserReview": {
+    "source": "Own local production build before newer integration; synthetic guest fixtures",
+    "verified": [
+      "Dark appearance persisted after reload",
+      "Two multiline target roles remained after reload and selected keyword without auto-search",
+      "Saved synthetic job and manual applied record",
+      "Notes and follow-up date retained; due filter and badge worked",
+      "Arabic RTL and export privacy disclosure rendered",
+      "Measured390px layout had no horizontal overflow"
+    ],
+    "limitations": [
+      "No real provider consent or employer submission",
+      "CSV download outcome unknown after interrupted tool call",
+      "Browser originating context unavailable at recovery; no new live browser check or viewport cleanup could be performed"
+    ],
+    "browserCompletion": "Recorded partial Career Finder review"
+  },
+  "verificationEvidence": [
+    {
+      "file": "docs/continuation-evidence/2026-11-18-resume-ea03/earlier-hosted-discovery-verification.json",
+      "sha256": "cac5fb15d66c59767f8df95268aabdf5d82f25d8060a73a40c3e056ed50a4e4f",
+      "scope": "Earlier local hosted test run; not current b78b83 acceptance"
+    },
+    {
+      "file": "docs/continuation-evidence/2026-11-18-resume-ea03/earlier-hosted-phone-verification.json",
+      "sha256": "27567b9de28db7616e2d8c240f39acad7a99fd791007d7c792af29a38e5ca9d6",
+      "scope": "Earlier local hosted test run; not current b78b83 acceptance"
+    },
+    {
+      "file": "docs/continuation-evidence/2026-11-18-resume-ea03/earlier-hosted-verification.json",
+      "sha256": "536edbfd228ef3a0f8f271b1346faac482b06268c63c3a535f541917bed65935",
+      "scope": "Earlier local hosted test run; not current b78b83 acceptance"
+    },
+    {
+      "file": "docs/continuation-evidence/2026-11-18-resume-ea03/earlier-hosted-worker-verification.json",
+      "sha256": "9010ab1057411a9e0d8c1c10630c747627fc4ddb11f59ec80b60b52562b172b9",
+      "scope": "Earlier local hosted test run; not current b78b83 acceptance"
+    },
+    {
+      "file": "docs/continuation-evidence/2026-11-18-resume-ea03/career-ea03-focused.log",
+      "sha256": "b094780c6b0738e8ee6ec8a0ab5696d56d7b827e9baf2efe07291b212e741eed",
+      "scope": "Historical local test/build execution before newer integration"
+    },
+    {
+      "file": "docs/continuation-evidence/2026-11-18-resume-ea03/career-ea03-build.log",
+      "sha256": "93a3368670cb2e77f079e11a17a58f5629973555ba64b82c7a75d5531927b6f3",
+      "scope": "Historical local test/build execution before newer integration"
+    },
+    {
+      "file": "docs/continuation-evidence/2026-11-18-resume-ea03/career-ea03-hosted-full.log",
+      "sha256": "0016d33583ffe73fbda8b5635b079f1f1df0125f49872dc69a5f641f46fe1de0",
+      "scope": "Historical local test/build execution before newer integration"
+    }
+  ],
+  "reviewLedger": "Existing ten-pass ledger is preserved as an incomplete draft; no ten-pass completion claim",
+  "ownership": {
+    "sourceAndHostedRelease": "20698f1e14d3 per ownership.json",
+    "currentReconciliationAndAndroidEvidence": "585525b87de6",
+    "nativeSigningAndStores": "Separate owner; not claimed here",
+    "thisSession": "Retrospective evidence only after detecting newer continuation; no shared-tree edits, source push, CI dispatch or repeated publication"
+  },
+  "nextAcceptance": [
+    "Current iPhone run must finish with all17 expected identities, no skips/retries, retained artifacts and visual review",
+    "Current integration owner handles PR finalization after acceptance",
+    "Actual provider callback/denial/unlink/relink, physical-device and signing/store gates retain separate pending status"
+  ],
+  "constraints": {
+    "freeOnly": true,
+    "excludeGoodSpender": true,
+    "bilingual": "English and natural Arabic/RTL",
+    "originalBudget": "24 active engineering hours from2026-11-16T22:26:12Z; consumed balance unknown",
+    "inheritedCutoffRiyadh": "2026-11-19T01:26:12+03:00",
+    "clockRestarted": false
+  },
+  "checkpointPolicy": "Preserve this own branch locally. Do not push it over the newer PR branch or replace current files with older copies."
+}

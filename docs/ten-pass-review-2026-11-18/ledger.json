@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "project": "Career Finder",
+  "owner": "ea03ff43",
+  "base": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+  "createdAtUTC": "2026-11-18T11:42:32.362287+00:00",
+  "userScope": "Ten distinct deep critique and improvement passes; UI and wording in English and Arabic in every pass; research competitors and job seekers; implement validated in-scope findings and verify; keep navigation simple.",
+  "constraints": {
+    "navigation": {
+      "hosted": [
+        "Search",
+        "Saved",
+        "Apply",
+        "Profile",
+        "Settings"
+      ],
+      "iPhone": [
+        "Start",
+        "Search",
+        "Apply",
+        "Saved",
+        "Settings"
+      ],
+      "Android": [
+        "Jobs",
+        "Apply",
+        "Receipts",
+        "Profile",
+        "Settings"
+      ]
+    },
+    "spending": "No paid services authorized",
+    "deadlineRiyadh": "2026-11-19T01:26:12+03:00",
+    "release": "No merge or deployment of failed candidate",
+    "Nulaya": "Lulu-specific abaya guidance remains with existing Nulaya owner; Career Finder follows plain bilingual language.",
+    "deadlineQualification": "Inherited record; not evidence of remaining active hours"
+  },
+  "evidencePolicy": "A pass is complete only after source/visual/task observations, an explicit findings disposition and relevant retest evidence; planned work is not a passed check.",
+  "passes": [
+    {
+      "number": 1,
+      "focus": "Job-seeker goals, competitor evidence and navigation",
+      "status": "in_progress",
+      "uiAndWording": "Required in English and Arabic",
+      "observations": [],
+      "findings": [],
+      "fixes": [],
+      "verification": []
+    },
+    {
+      "number": 2,
+      "focus": "First use, search setup and source coverage",
+      "status": "planned",
+      "uiAndWording": "Required in English and Arabic",
+      "observations": [],
+      "findings": [],
+      "fixes": [],
+      "verification": []
+    },
+    {
+      "number": 3,
+      "focus": "Search results, job details and decision clarity",
+      "status": "planned",
+      "uiAndWording": "Required in English and Arabic",
+      "observations": [],
+      "findings": [],
+      "fixes": [],
+      "verification": []
+    },
+    {
+      "number": 4,
+      "focus": "Saved jobs, stages, follow-ups and return journeys",
+      "status": "planned",
+      "uiAndWording": "Required in English and Arabic",
+      "observations": [],
+      "findings": [],
+      "fixes": [],
+      "verification": []
+    },
+    {
+      "number": 5,
+      "focus": "Profile, CV handling and repeated application entry",
+      "status": "planned",
+      "uiAndWording": "Required in English and Arabic",
+      "observations": [],
+      "findings": [],
+      "fixes": [],
+      "verification": []
+    },
+    {
+      "number": 6,
+      "focus": "Manual application and supported submission evidence",
+      "status": "planned",
+      "uiAndWording": "Required in English and Arabic",
+      "observations": [],
+      "findings": [],
+      "fixes": [],
+      "verification": []
+    },
+    {
+      "number": 7,
+      "focus": "English/Arabic language, RTL and reading effort",
+      "status": "planned",
+      "uiAndWording": "Required in English and Arabic",
+      "observations": [],
+      "findings": [],
+      "fixes": [],
+      "verification": []
+    },
+    {
+      "number": 8,
+      "focus": "Visual consistency, accessibility and responsive layouts",
+      "status": "planned",
+      "uiAndWording": "Required in English and Arabic",
+      "observations": [],
+      "findings": [],
+      "fixes": [],
+      "verification": []
+    },
+    {
+      "number": 9,
+      "focus": "Failure recovery, privacy, data portability and performance",
+      "status": "planned",
+      "uiAndWording": "Required in English and Arabic",
+      "observations": [],
+      "findings": [],
+      "fixes": [],
+      "verification": []
+    },
+    {
+      "number": 10,
+      "focus": "Independent adversarial review and integrated end-to-end regression",
+      "status": "planned",
+      "uiAndWording": "Required in English and Arabic",
+      "observations": [],
+      "findings": [],
+      "fixes": [],
+      "verification": []
+    }
+  ],
+  "baseline": {
+    "ciRun": 44294650087,
+    "android": {
+      "completed": 114,
+      "passed": 112,
+      "failed": 2,
+      "skipped": 0,
+      "unrun": 2,
+      "selectorCollision": "Heading and action both Search jobs; action-scoped selector repair being independently prepared"
+    },
+    "iPhone": "Historical run44294650087 completed14/17;3 failures; ead1235 readiness and interaction corrections await full execution",
+    "source": "7b3f7761d69d5651db08e1ec67289367fb20ff20"
+  },
+  "findings": [],
+  "previousOwner": "ebb3eed5",
+  "recoveredAtUTC": "2026-11-18T12:45:22.746247+00:00"
+}

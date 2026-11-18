@@ -1,0 +1,16 @@
+{
+  "atUTC": "2026-11-18T12:50:16.374Z",
+  "pid": 97206,
+  "node": "v24.22.3",
+  "url": "http://127.0.0.1:4188/phone",
+  "sourceRoot": "/Users/saleh/Developer/career-finder-resume-20261118-ea03ff43/hosted",
+  "server": {
+    "bytes": 5808663,
+    "sha256": "4b3319a3377258189d84107180094f8501c3c57c43de94b81acdf4b50c66c535"
+  },
+  "sourceInputs": 95,
+  "productionBuild": true,
+  "account": "synthetic anonymous guest",
+  "outbound": "blocked",
+  "persistentServerStorage": false
+}

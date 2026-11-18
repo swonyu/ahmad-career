@@ -59,6 +59,8 @@ test('Arabic counts have zero, one, dual, few, many forms and display Gregorian 
  assert.equal(core.savedJobsLabel(2,'ar'),'وظيفتان محفوظتان');
  assert.match(core.savedJobsLabel(3,'ar'),/٣ وظائف/);assert.match(core.savedJobsLabel(11,'ar'),/١١ وظيفة/);
  assert.equal(core.savedJobsLabel(1,'en'),'1 saved job');assert.equal(core.savedJobsLabel(2,'en'),'2 saved jobs');
+ for(const [count,label] of [[0,'لا توجد وظائف'],[1,'وظيفة واحدة'],[2,'وظيفتان'],[3,'٣ وظائف'],[10,'١٠ وظائف'],[11,'١١ وظيفة'],[99,'٩٩ وظيفة'],[100,'١٠٠ وظيفة'],[102,'١٠٢ وظيفة']]) assert.equal(core.jobsLabel(count,'ar'),label);
+ assert.equal(core.jobsLabel(1,'en'),'1 job');assert.equal(core.jobsLabel(2,'en'),'2 jobs');
  assert.match(core.formatDateTime('2026-11-17T12:00:00Z','ar'),/٢٠٢٦/);
  assert.equal(core.formatDateTime('invalid','ar'),catalog['Date unavailable']);
 });
