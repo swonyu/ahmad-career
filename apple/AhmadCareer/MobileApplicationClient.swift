@@ -15,6 +15,12 @@ enum ApplicationServicePage: String, CaseIterable {
 enum MobileApplicationPolicy {
     static let maximumResumeBytes = 5 * 1024 * 1024
     static let hostedServiceOrigin = "https://career-finder-service.jazzy-drake-8323.chatgpt.site"
+    /// English and Arabic keyboards use different commas for the same profile lists.
+    static func profileListItems(_ text: String) -> [String] {
+        text.split(whereSeparator: { $0 == "," || $0 == "،" })
+            .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+    }
     static func connectionSetupAddress(_ existing: String) -> String {
         existing.isEmpty ? hostedServiceOrigin : existing
     }
@@ -356,8 +362,12 @@ struct PhoneApplicationProfile: Codable, Equatable {
         resumeName = other.resumeName; resumeSize = other.resumeSize; resumeSHA256 = other.resumeSHA256
         resumeData = nil; resumeChanged = false; resumeRemoved = false
     }
+    var targetRoleShortcuts: [String] {
+        var seen = Set<String>()
+        return MobileApplicationPolicy.profileListItems(targetRoles).filter { seen.insert($0).inserted }
+    }
     private func words(_ text: String) -> [ApplicationValue] {
-        text.split(separator: ",").map { .string($0.trimmingCharacters(in: .whitespacesAndNewlines)) }.filter { !($0.string ?? "").isEmpty }
+        MobileApplicationPolicy.profileListItems(text).map(ApplicationValue.string)
     }
     func payload(includeLinkedIn: Bool = false) -> [String: ApplicationValue] {
         var fields: [String: ApplicationValue] = [

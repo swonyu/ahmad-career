@@ -321,7 +321,7 @@ struct PhoneWorkspaceBackup: Codable {
         var headline: String; var skills: [String]; var targetRoles: [String]; var targetCountries: [String]; var workModes: [String]
         var experienceLevel: String; var website: String; var linkedin: String; var resume: Resume?
         init(_ p: PhoneApplicationProfile) {
-            func list(_ text: String) -> [String] { text.split(separator: ",").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty } }
+            func list(_ text: String) -> [String] { MobileApplicationPolicy.profileListItems(text) }
             firstName = p.firstName; lastName = p.lastName; email = p.email; phone = p.phone; city = p.city; country = p.country
             headline = p.headline; skills = list(p.skills); targetRoles = list(p.targetRoles); targetCountries = list(p.targetCountries)
             workModes = [(p.remote ? "remote" : nil), (p.hybrid ? "hybrid" : nil), (p.onsite ? "on-site" : nil)].compactMap { $0 }

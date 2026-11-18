@@ -1,8 +1,10 @@
 package com.saleh.careerfinder;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -37,11 +39,23 @@ public final class ProfileContract {
         String country = value.trim().toUpperCase(Locale.ROOT);
         return country.isEmpty() || COUNTRIES.contains(country) ? null : "Choose a recognized country or region.";
     }
+    /** Same comma handling for validation, sharing, backups and profile search shortcuts. */
+    public static List<String> listItems(String value) {
+        List<String> items = new ArrayList<>();
+        for (String part : value.split("[,،]", -1)) {
+            int start = 0, end = part.length();
+            while (start < end && listWhitespace(part.charAt(start))) start++;
+            while (end > start && listWhitespace(part.charAt(end - 1))) end--;
+            if (start < end) items.add(part.substring(start, end));
+        }
+        return items;
+    }
+    private static boolean listWhitespace(char character) {
+        return Character.isWhitespace(character) || Character.isSpaceChar(character);
+    }
     public static String listError(String value, String label, boolean countries) {
         Set<String> seen = new HashSet<>();
-        for (String part : value.split(",", -1)) {
-            String item = part.trim();
-            if (item.isEmpty()) continue;
+        for (String item : listItems(value)) {
             String error = textError(item, "Each " + label.toLowerCase(Locale.ROOT) + " entry", 100);
             if (error != null) return error;
             if (countries && countryError(item) != null) return "Choose recognized target countries or regions.";
