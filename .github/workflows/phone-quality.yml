@@ -48,7 +48,15 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Verify exact workflow commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual_sha=$(git rev-parse --verify HEAD)
+          printf 'Expected source commit: %s\nChecked out source commit: %s\n' "$GITHUB_SHA" "$actual_sha"
+          test "$actual_sha" = "$GITHUB_SHA"
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '24'
@@ -73,7 +81,15 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Verify exact workflow commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual_sha=$(git rev-parse --verify HEAD)
+          printf 'Expected source commit: %s\nChecked out source commit: %s\n' "$GITHUB_SHA" "$actual_sha"
+          test "$actual_sha" = "$GITHUB_SHA"
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '24'
@@ -123,7 +139,15 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Verify exact workflow commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual_sha=$(git rev-parse --verify HEAD)
+          printf 'Expected source commit: %s\nChecked out source commit: %s\n' "$GITHUB_SHA" "$actual_sha"
+          test "$actual_sha" = "$GITHUB_SHA"
       - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6
         with:
           distribution: temurin
@@ -190,7 +214,15 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Verify exact workflow commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual_sha=$(git rev-parse --verify HEAD)
+          printf 'Expected source commit: %s\nChecked out source commit: %s\n' "$GITHUB_SHA" "$actual_sha"
+          test "$actual_sha" = "$GITHUB_SHA"
       - name: Execute the production client and store checks
         run: bash apple/Checks/check-mobile.sh
       - name: Build the production iPhone configuration on this isolated runner
@@ -234,7 +266,15 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Verify exact workflow commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual_sha=$(git rev-parse --verify HEAD)
+          printf 'Expected source commit: %s\nChecked out source commit: %s\n' "$GITHUB_SHA" "$actual_sha"
+          test "$actual_sha" = "$GITHUB_SHA"
       - name: Verify fresh simulator selection fixtures
         run: python3 apple/Checks/test-simulator-selection.py
       - name: Create a fresh iPhone on this disposable hosted runner
