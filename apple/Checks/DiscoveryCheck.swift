@@ -530,6 +530,19 @@ private final class DiscoverySuite {
                       "Blocked retry preserves newer draft fields and prior result attribution")
             let savedAfterRetry = try Data(contentsOf: file)
             try check(savedAfterRetry == savedBeforeRetry, "Blocked retry does not rewrite saved search data")
+            // The ordinary and keyboard Search actions can also be invoked while
+            // waiting. Keep the service cause separate from the localized deadline.
+            for more in [false, true] {
+                await model.search(more: more)
+                try check(service.calls.count == callCount && !model.isSearching,
+                          "An early ordinary or paginated search makes no request during Retry-After")
+                try check(model.error == originalError && model.retryAfter == retryTime && model.canRetrySubmittedSearch,
+                          "Every blocked search preserves the provider error, exact deadline and submitted retry")
+                try check(model.query == newerDraft && model.jobs == retainedJobs && model.lastQuery == retainedQuery && model.page?.status == retainedStatus,
+                          "An early ordinary or paginated search preserves draft fields and earlier result attribution")
+                let savedAfterSearch = try Data(contentsOf: file)
+                try check(savedAfterSearch == savedBeforeRetry, "An early ordinary or paginated search does not rewrite saved data")
+            }
             scenarios += 1
         }
         do {
