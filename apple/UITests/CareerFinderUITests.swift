@@ -61,10 +61,10 @@ final class CareerFinderUITests: XCTestCase {
         XCTFail("Expected a reachable control inside the visible content: \(element)")
     }
     @MainActor
-    private func contentViewport(in app: XCUIApplication) -> CGRect {
+    private func contentViewport(in app: XCUIApplication, includingNavigation: Bool = false) -> CGRect {
         var top = app.frame.minY + 12, bottom = app.frame.maxY - 12
         let navigation = app.navigationBars.firstMatch, tabs = app.tabBars.firstMatch
-        if navigation.exists && navigation.isHittable { top = max(top, navigation.frame.maxY + 8) }
+        if !includingNavigation && navigation.exists && navigation.isHittable { top = max(top, navigation.frame.maxY + 8) }
         if tabs.exists && tabs.isHittable { bottom = min(bottom, tabs.frame.minY - 12) }
         return CGRect(x: app.frame.minX + 12, y: top, width: app.frame.width - 24, height: bottom - top)
     }
@@ -127,8 +127,12 @@ final class CareerFinderUITests: XCTestCase {
         guard field.waitForExistence(timeout: 5) else {
             XCTFail("The field must exist before a real typing interaction"); return false
         }
+        // SwiftUI searchable fields occupy the navigation bar, unlike Form fields.
+        // Include that region only for an actual search field; keyboard/accessory
+        // exclusion still applies through the same viewport calculation.
+        let includingNavigation = field.elementType == .searchField
         for attempt in 0...10 {
-            let viewport = profileViewport(in: app)
+            let viewport = profileViewport(in: app, includingNavigation: includingNavigation)
             let frame = field.frame
             let finite = frame.minX.isFinite && frame.minY.isFinite
                 && frame.width.isFinite && frame.height.isFinite
@@ -144,7 +148,7 @@ final class CareerFinderUITests: XCTestCase {
             from.press(forDuration: 0.05, thenDragTo: to)
         }
         captureObservation("typing-target-obscured", app: app,
-                           details: "Field=\(field.frame); typing viewport=\(profileViewport(in: app))")
+                           details: "Field=\(field.frame); typing viewport=\(profileViewport(in: app, includingNavigation: includingNavigation))")
         XCTFail("The whole field must be reachable above the keyboard and its accessory before tapping")
         return false
     }
@@ -305,8 +309,8 @@ final class CareerFinderUITests: XCTestCase {
         evidence.name = "\(name)-geometry-and-original-AX"; evidence.lifetime = .keepAlways; add(evidence)
     }
     @MainActor
-    private func profileViewport(in app: XCUIApplication) -> CGRect {
-        var viewport = contentViewport(in: app)
+    private func profileViewport(in app: XCUIApplication, includingNavigation: Bool = false) -> CGRect {
+        var viewport = contentViewport(in: app, includingNavigation: includingNavigation)
         let keyboard = app.keyboards.firstMatch
         var bottom = viewport.maxY
         if keyboard.exists && keyboard.isHittable { bottom = min(bottom, keyboard.frame.minY - 8) }

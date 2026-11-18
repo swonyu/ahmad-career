@@ -1,0 +1,60 @@
+{
+  "recordedAtUTC": "2026-11-18T14:40:47.432394+00:00",
+  "base": "cfa0d1858b020fa3e62c6645407b581779bbc3c2",
+  "finding": "Native searchable field belongs to navigation while normal Form fields belong below it; the new typing viewport wrongly excluded the navigation field used by the existing saved-notes search journey.",
+  "independentSource": "native-identity-focus-20261118T143349Z-69fd65/native-identity-focus.patch",
+  "change": "Opt into navigation inclusion only for XCUI searchField; continue using the same keyboard/accessory clipping and actual full-frame visibility check. No wholesale peer patch merge.",
+  "checks": [
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "xcrun",
+        "swiftc",
+        "-frontend",
+        "-parse",
+        "-target",
+        "arm64-apple-ios16.0-simulator",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk",
+        "apple/UITests/CareerFinderUITests.swift"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/generate-native-localization.py",
+        "--check"
+      ],
+      "exit": 0,
+      "stdout": "{\n  \"ok\": true,\n  \"mode\": \"check\",\n  \"strings_per_language\": 1824,\n  \"bounded_templates\": 149,\n  \"files\": [\n    \"apple/AhmadCareer/en.lproj/Localizable.strings\",\n    \"android/app/src/main/res/values/career_copy.xml\",\n    \"apple/AhmadCareer/ar.lproj/Localizable.strings\",\n    \"android/app/src/main/res/values-ar/career_copy.xml\",\n    \"apple/AhmadCareer/NativeCopyTemplates.json\",\n    \"android/app/src/main/res/raw/native_copy_templates.json\",\n    \"android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt\"\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/test-native-localization.py"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "........\n----------------------------------------------------------------------\nRan 8 tests in 0.023s\n\nOK\n"
+    }
+  ],
+  "testMethods": 17,
+  "allExistingTestBodiesUnchanged": true,
+  "allExistingAssertionCallsUnchanged": true,
+  "themeSourceUnchanged": true,
+  "currentFileSHA256": "dcf0bf950033cc13d64ea7c092f46fa1e577c12586e5cfc21b4d6571436c7d2f",
+  "nativeAcceptance": "Pending exact integrated iPhone CI. No simulator, native build, CI, process or publication action performed."
+}
