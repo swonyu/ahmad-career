@@ -123,9 +123,34 @@ final class CareerFinderUITests: XCTestCase {
         hasVisibleHittableFrame(deleteKey, in: app)
     }
     @MainActor
+    private func revealForTyping(_ field: XCUIElement, in app: XCUIApplication) -> Bool {
+        guard field.waitForExistence(timeout: 5) else {
+            XCTFail("The field must exist before a real typing interaction"); return false
+        }
+        for attempt in 0...10 {
+            let viewport = profileViewport(in: app)
+            let frame = field.frame
+            let finite = frame.minX.isFinite && frame.minY.isFinite
+                && frame.width.isFinite && frame.height.isFinite
+            if finite && !frame.isEmpty && viewport.contains(frame) && field.isHittable { return true }
+            guard attempt < 10, viewport.height > 120 else { break }
+            // A field can be hittable while its tap center is under the keyboard
+            // accessory. Scroll inside the actual content viewport before tapping.
+            let downward = finite && frame.midY < viewport.midY
+            let distance = min(180, viewport.height * 0.36)
+            let origin = app.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0))
+            let from = origin.withOffset(CGVector(dx: viewport.midX, dy: viewport.midY + (downward ? -distance / 2 : distance / 2)))
+            let to = origin.withOffset(CGVector(dx: viewport.midX, dy: viewport.midY + (downward ? distance / 2 : -distance / 2)))
+            from.press(forDuration: 0.05, thenDragTo: to)
+        }
+        captureObservation("typing-target-obscured", app: app,
+                           details: "Field=\(field.frame); typing viewport=\(profileViewport(in: app))")
+        XCTFail("The whole field must be reachable above the keyboard and its accessory before tapping")
+        return false
+    }
+    @MainActor
     private func replace(_ field: XCUIElement, with text: String, in app: XCUIApplication, clearWith clearButton: XCUIElement? = nil) {
-        XCTAssertTrue(field.waitForExistence(timeout: 5))
-        // tap() can scroll a native Form field into view; keep that behavior.
+        guard revealForTyping(field, in: app) else { return }
         field.tap()
         // A cold system keyboard can still be opening after the field is focused.
         // Wait for that presentation before starting the unchanged real-key gate.
@@ -286,8 +311,12 @@ final class CareerFinderUITests: XCTestCase {
         var bottom = viewport.maxY
         if keyboard.exists && keyboard.isHittable { bottom = min(bottom, keyboard.frame.minY - 8) }
         for title in ["Done typing", "انتهيت من الكتابة"] {
+            let accessory = app.toolbars.containing(.button, identifier: title).firstMatch
+            if hasVisibleHittableFrame(accessory, in: app) {
+                bottom = min(bottom, accessory.frame.minY - 8)
+            }
             let done = app.buttons[title]
-            if done.exists && done.isHittable { bottom = min(bottom, done.frame.minY - 8) }
+            if hasVisibleHittableFrame(done, in: app) { bottom = min(bottom, done.frame.minY - 8) }
         }
         viewport.size.height = max(0, bottom - viewport.minY)
         return viewport
