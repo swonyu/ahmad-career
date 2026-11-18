@@ -574,6 +574,20 @@ private func spokenListingFit(_ fit: String, _ copy: NativeCopy) -> String {
     fit == "Needs review" ? copy(fit) : fit
 }
 
+/// Built-in preparation steps use catalog phrases. Research and employer wording stays as stored.
+private func spokenPreparationStep(_ text: String, _ copy: NativeCopy) -> String {
+    switch text {
+    case "Read the official description", "Tailor your evidence", "Apply personally", "Keep the confirmation", "Review this step",
+         "Check that the position is open and compare all mandatory requirements.",
+         "Use two actual achievements relevant to the responsibilities.",
+         "Open the employer application, review your answers and attachments, then submit when ready.",
+         "Save the acknowledgement and update your application status.":
+        return copy(text)
+    default:
+        return text
+    }
+}
+
 private struct NativeJobLink: View {
     @NativeLocalization private var l10n
     @EnvironmentObject private var store: NativeCareerStore
@@ -687,8 +701,8 @@ private struct NativeJobDetail: View {
             Section(l10n("Your application, step by step")) {
                 ForEach(Array(job.applicationSteps.enumerated()), id: \.offset) { index, step in
                     VStack(alignment: .leading, spacing: 7) {
-                        Text(l10n.format("{0}. {1}", [String(describing: index + 1), String(describing: step.first ?? "Review this step")])).font(.headline)
-                        Text(step.dropFirst().joined(separator: " ")).font(.subheadline).foregroundStyle(.secondary)
+                        Text(l10n.format("{0}. {1}", [String(describing: index + 1), spokenPreparationStep(step.first ?? "Review this step", l10n)])).font(.headline)
+                        Text(spokenPreparationStep(step.dropFirst().joined(separator: " "), l10n)).font(.subheadline).foregroundStyle(.secondary)
                     }.padding(.vertical, 4)
                 }
             }
