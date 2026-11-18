@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "checkedUTC": "2026-11-18T13:38:53.771079+00:00",
+  "base": "c791b64bc94ad9b5dce118d851dcada45a59ec2e",
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "scripts/generate-native-localization.py",
+        "--check"
+      ],
+      "exit": 0,
+      "stdout": "{\n  \"ok\": true,\n  \"mode\": \"check\",\n  \"strings_per_language\": 1824,\n  \"bounded_templates\": 149,\n  \"files\": [\n    \"apple/AhmadCareer/en.lproj/Localizable.strings\",\n    \"android/app/src/main/res/values/career_copy.xml\",\n    \"apple/AhmadCareer/ar.lproj/Localizable.strings\",\n    \"android/app/src/main/res/values-ar/career_copy.xml\",\n    \"apple/AhmadCareer/NativeCopyTemplates.json\",\n    \"android/app/src/main/res/raw/native_copy_templates.json\",\n    \"android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt\"\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/test-native-localization.py"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "........\n----------------------------------------------------------------------\nRan 8 tests in 0.020s\n\nOK\n"
+    },
+    {
+      "command": [
+        "plutil",
+        "-lint",
+        "apple/AhmadCareer.xcodeproj/project.pbxproj"
+      ],
+      "exit": 0,
+      "stdout": "apple/AhmadCareer.xcodeproj/project.pbxproj: OK\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "allCommandsPassed": true,
+  "onlyExpectedPaths": [
+    "apple/AhmadCareer.xcodeproj/project.pbxproj",
+    "apple/AhmadCareer/NativeApplicationsViews.swift",
+    "apple/AhmadCareer/NativeLocalization.swift"
+  ],
+  "uiTestSourceUnchanged": true,
+  "uiTestSourceSHA256": "5e55d1024d75b14d9b0e48271224825af4d031c12cd2e4aea5635c52298aefe3",
+  "uiMethodsDeclared": 17,
+  "presenterUnchangedApartFromConformance": true,
+  "localeExactlyThreeSubstitutions": true,
+  "targets": [
+    {
+      "target": "CareerFinderUITests",
+      "configs": [
+        {
+          "configuration": "Debug",
+          "minimum": "17.0"
+        },
+        {
+          "configuration": "Release",
+          "minimum": "17.0"
+        }
+      ]
+    },
+    {
+      "target": "AhmadCareer",
+      "configs": [
+        {
+          "configuration": "Debug",
+          "minimum": "16.0"
+        },
+        {
+          "configuration": "Release",
+          "minimum": "16.0"
+        }
+      ]
+    }
+  ],
+  "workflowAndExistingTestSourceUnchanged": true,
+  "nativeRuntimeExecution": false
+}

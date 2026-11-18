@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "owner": "root/recovery_review",
+  "candidate": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+  "tree": "65991d4de50966da1de85c6dc8cc7355fbee0af3",
+  "appleTree": "c8080a217d0348ea738677619be5a3586d6887a2",
+  "worktree": "/Users/saleh/Developer/career-finder-native-focused-20261118-ebb3eed5",
+  "simulator": "DD40DE53-211D-41C7-8B9E-58BB5D347528",
+  "derivedDataCache": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/focused-native/derived",
+  "methods": [
+    "testAccessibilityTextKeepsCoreControlsReachable",
+    "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+    "testSearchEmptyAndFailurePreservesPreviousResults",
+    "testLinkedInProfileDraftAndExternalSearchChoice",
+    "testProfileReadinessAndSimpleConnectionSetup",
+    "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+    "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable"
+  ],
+  "runnerPID": 12358,
+  "steps": [
+    {
+      "name": "boot-readiness",
+      "command": [
+        "/bin/bash",
+        "-c",
+        "set -o pipefail\nboot_results=(0 0)\nxcrun simctl bootstatus \"$CAREER_FOCUSED_DEVICE\" -b 2>&1 | tee \"$CAREER_FOCUSED_OUT/boot.log\" || boot_results=(\"${PIPESTATUS[@]}\")\ninventory_result=0\nxcrun simctl list devices --json > \"$CAREER_FOCUSED_OUT/boot-devices.json\" 2> \"$CAREER_FOCUSED_OUT/boot-devices.stderr\" || inventory_result=$?\npython3 apple/Checks/verify-simulator-boot.py \\\n --device \"$CAREER_FOCUSED_DEVICE\" --boot-log \"$CAREER_FOCUSED_OUT/boot.log\" \\\n --inventory \"$CAREER_FOCUSED_OUT/boot-devices.json\" \\\n --boot-exit \"${boot_results[0]}\" --log-exit \"${boot_results[1]}\" \\\n --inventory-exit \"$inventory_result\" --output \"$CAREER_FOCUSED_OUT/boot-verification.json\"\n"
+      ],
+      "startedUTC": "2026-11-18T13:12:14.488067+00:00",
+      "limitSeconds": 180,
+      "stdout": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-fresh26-ff21fd470a53-20261118T131119Z-6b23d5/boot-driver.log",
+      "pid": 12398,
+      "pgid": 12398,
+      "exit": 1,
+      "timedOut": false,
+      "finishedUTC": "2026-11-18T13:12:31.940345+00:00",
+      "logSHA256": "0864771d850da72b7fad2db3b6757d5b76c53f163b8a02d3d00bd59268abc5b6"
+    },
+    {
+      "name": "shutdown-owned-simulator",
+      "command": [
+        "xcrun",
+        "simctl",
+        "shutdown",
+        "DD40DE53-211D-41C7-8B9E-58BB5D347528"
+      ],
+      "startedUTC": "2026-11-18T13:12:31.955982+00:00",
+      "limitSeconds": 30,
+      "stdout": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-fresh26-ff21fd470a53-20261118T131119Z-6b23d5/shutdown.log",
+      "pid": 12666,
+      "pgid": 12666,
+      "exit": 0,
+      "timedOut": false,
+      "finishedUTC": "2026-11-18T13:12:35.308121+00:00",
+      "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "fullReleaseAcceptance": false,
+  "nativeResultReviewRequired": true,
+  "state": "stopped_with_failure",
+  "startedUTC": "2026-11-18T13:12:14.021979+00:00",
+  "updatedUTC": "2026-11-18T13:12:35.400984+00:00",
+  "creationReceipt": {
+    "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-fresh26-ff21fd470a53-20261118T131119Z-6b23d5/creation.json",
+    "sha256": "6948ba040c3925f63fa54b362a9e95fe4c4aae11bf792ab095d2149d24a9d00b"
+  },
+  "preflight": {
+    "device": {
+      "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-5",
+      "dataPath": "/Users/saleh/Library/Developer/CoreSimulator/Devices/DD40DE53-211D-41C7-8B9E-58BB5D347528/data",
+      "dataPathSize": 18337792,
+      "logPath": "/Users/saleh/Library/Logs/CoreSimulator/DD40DE53-211D-41C7-8B9E-58BB5D347528",
+      "udid": "DD40DE53-211D-41C7-8B9E-58BB5D347528",
+      "isAvailable": true,
+      "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-Air",
+      "state": "Shutdown",
+      "name": "CareerFinder-ebb3-fresh26"
+    },
+    "freeBytes": 26413559808,
+    "competingNativeJobs": [],
+    "priorOwnershipReceipt": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/focused-native/receipt.json",
+    "priorOwnershipReceiptSHA256": "3b921738effc7f7c9133547f30caa13a735c6356cbb0387935ae3ae43c920584",
+    "xcodeVersion": "Xcode 27.2\nBuild version 27B52",
+    "sdkVersion": "27.2",
+    "cacheOnly": true,
+    "derivedInfoBefore": {
+      "LastAccessedDate": "2026-11-18 10:24:22",
+      "WorkspacePath": "/Users/saleh/Developer/career-finder-keyboard-dismissal-20261118-ebb3eed5/apple/AhmadCareer.xcodeproj"
+    }
+  },
+  "error": {
+    "type": "RuntimeError",
+    "message": "Boot preparation failed or exceeded its bound."
+  },
+  "sourceAfter": {
+    "head": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+    "tree": "65991d4de50966da1de85c6dc8cc7355fbee0af3",
+    "appleTree": "c8080a217d0348ea738677619be5a3586d6887a2",
+    "status": ""
+  },
+  "sourceUnchanged": true,
+  "retainedFilesSHA256": "7c40e558f11fd354994d78c811c8d292955e331b31efa6815d35049b5f7ec6fc",
+  "finishedUTC": "2026-11-18T13:12:35.400976+00:00"
+}

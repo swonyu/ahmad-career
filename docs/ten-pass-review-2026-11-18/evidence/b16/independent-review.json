@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "/root/publication_review",
+  "reviewedUTC": "2026-11-18T13:21:17.446214+00:00",
+  "finding": "B16 clean-record-close stale recovery copy",
+  "scope": "Independent read-only review of the exact two-file delta against retained preimages, related unmodified safety queue semantics and the author’s regression source/log receipts.",
+  "disposition": "accepted_within_source_review_scope",
+  "newBlockingFindings": [],
+  "source": {
+    "commit": "not yet supplied; bind integration commit separately",
+    "files": [
+      {
+        "cloudPath": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/PhoneApp.tsx",
+        "macRelativePath": "hosted/app/phone/PhoneApp.tsx",
+        "beforeSHA256": "c64a589056152f4676974c8b54ecabc23a1df1167d8c8f31804e5fbbce29db7e",
+        "afterSHA256": "99ed45680e0bff019ff14a32885db3fabfca0e3a260e8b16670e8809fe713e76",
+        "preimage": "/workspace/scratch/ebb3eed5ee2b/clean-record-recovery-fix-20261118/PhoneApp.tsx.before",
+        "afterImage": "/workspace/scratch/ebb3eed5ee2b/clean-record-recovery-fix-20261118/PhoneApp.tsx.after"
+      },
+      {
+        "cloudPath": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/tests/phone-recovery-isolation.mjs",
+        "macRelativePath": "hosted/tests/phone-recovery-isolation.mjs",
+        "beforeSHA256": "e66f9e302499772bdb7e1e1b0793da64f5b809c59f5c7706ba01c62f38eb1229",
+        "afterSHA256": "aee76ff448ee1dfb53dfb6418c90f85b67fd575707e3127aa511b0bd20c2ed93",
+        "preimage": "/workspace/scratch/ebb3eed5ee2b/clean-record-recovery-fix-20261118/phone-recovery-isolation.mjs.before",
+        "afterImage": "/workspace/scratch/ebb3eed5ee2b/clean-record-recovery-fix-20261118/phone-recovery-isolation.mjs.after"
+      }
+    ],
+    "patch": {
+      "path": "/workspace/scratch/ebb3eed5ee2b/clean-record-recovery-fix-20261118/clean-record-recovery.patch",
+      "sha256": "c3ce176e37d32199c4ea51bcd6ef289b956b89e4afead528304c5dae64d65c25",
+      "format": "Mac repository relative hosted paths; apply only after both before hashes match",
+      "reverseCheckOnCurrentCloudSource": {
+        "command": [
+          "git",
+          "apply",
+          "--reverse",
+          "--check",
+          "-p2",
+          "/workspace/scratch/ebb3eed5ee2b/clean-record-recovery-fix-20261118/clean-record-recovery.patch"
+        ],
+        "exitCode": 0
+      }
+    },
+    "authorReceipt": {
+      "path": "/workspace/scratch/ebb3eed5ee2b/clean-record-recovery-fix-20261118/fix-receipt-reviewed-snapshot.json",
+      "sha256": "5bfe4d8542ae2bf8d2cb3fe7d600c11dd9e98651987897e21f1a77a2dd173731"
+    }
+  },
+  "reviewedInvariants": [
+    {
+      "topic": "Exact owner/editor and actual draft equality",
+      "evidence": "PhoneApp.tsx:431–445",
+      "conclusion": "Requires current scope and editor ID, available identity and no busy/locked/checking state; compares actual editorDraft with original record instead of trusting the effect-driven dirty flag."
+    },
+    {
+      "topic": "Stale autosave retirement",
+      "evidence": "PhoneApp.tsx:140–156,438–445",
+      "conclusion": "The owned editor ID is retired before asynchronous cleanup. Captured record drafts are fenced before storage, after the await and on failure, preventing late republish/error or new writes from a retired editor."
+    },
+    {
+      "topic": "Ordered deletion and preservation",
+      "evidence": "safety.ts:15–21,23–38,50–55 (unchanged)",
+      "conclusion": "The shared per-scope FIFO queue places discard after existing queued writes; discard filters only the exact owned recovery ID and retains Stop holds and other recovery entries. Cross-tab source/fork IDs remain distinct."
+    },
+    {
+      "topic": "UI generation and ABA guards",
+      "evidence": "PhoneApp.tsx:377–381,438–445,473,734–741",
+      "conclusion": "Optional publication predicate scopes cleanup results/errors to the original epoch, owner, identity and monotonically changing editorVersion; a replacement editor that opens and closes cannot authorize an earlier completion merely because current ID is null."
+    },
+    {
+      "topic": "Failure and dirty-data semantics",
+      "evidence": "PhoneApp.tsx:434–449; new encrypted-state regression cases",
+      "conclusion": "Clean close stays immediate; failed cleanup keeps its encrypted recovery copy and reports the existing localized error. A still-dirty note requires explicit confirmation even if dialogDirty lags; active editor storage failures remain visible."
+    },
+    {
+      "topic": "Bounded source and wording",
+      "evidence": "Exact preimage diff",
+      "conclusion": "Only PhoneApp lifecycle logic and the existing regression file changed. Existing English/Arabic strings, focus-restoration component, storage schemas, account/provider behavior and native source were not rewritten by this patch."
+    }
+  ],
+  "verificationEvidence": {
+    "executedByAuthor": {
+      "command": "node --test --test-reporter=tap tests/phone-recovery-isolation.mjs tests/phone-record-tools.mjs tests/phone-selection-board-actions.mjs",
+      "exitCode": 0,
+      "counts": {
+        "tests": 136,
+        "pass": 136,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "path": "/workspace/scratch/ebb3eed5ee2b/clean-record-recovery-fix-20261118/targeted-tests.tap",
+      "sha256": "ecc22aa6642db93783d436a74abc595f2b28d63a4d273a0adf456eb56e5ea70b"
+    },
+    "retainedTAPHashAndCountsIndependentlyChecked": true,
+    "typecheck": {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "path": "/workspace/scratch/ebb3eed5ee2b/clean-record-recovery-fix-20261118/typecheck.log",
+      "sha256": "c9014ba170f2161ecee9b3ba8984934aa5bf66e685e29ed495d14ac261d546e9"
+    },
+    "testSourceQuality": "Actual PhoneApp and RecordEditor edit/submit/Keep handlers are extracted; production encrypted vault and serialized safety implementation are used with synthetic atomic storage ports. Assertions cover four repeated cycles, queued/in-flight/delayed writes, retired errors, dirty fields, other-tab forks/other records/profile/Stop holds, quota failure, owner/epoch/identity/editor drift and ABA. Existing behavioral assertions remain.",
+    "testsExecutedByThisReviewer": false
+  },
+  "limits": [
+    "Source acceptance is not a browser runtime pass. The harness does not replace actual React rendering/effect scheduling and focus checks.",
+    "Root must replay the exact repeated change-stage / Save confirmation / Keep / clean Cancel sequence in English and Arabic on the corrected preview and retain main-record/recovery/export evidence.",
+    "No final whole-tree commit, full CI, native or deployment acceptance is claimed.",
+    "No proof of pre-existing data loss or identical duplicate payloads is introduced."
+  ],
+  "actions": {
+    "productSourceEdited": false,
+    "testsRun": false,
+    "buildsRun": false,
+    "browserActions": false,
+    "nativeActions": false,
+    "externalMessages": false,
+    "deployments": false
+  }
+}

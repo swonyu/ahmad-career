@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 1,
+  "reviewedUTC": "2026-11-18T13:16:43.241032+00:00",
+  "reviewer": "root/recovery_review",
+  "candidate": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+  "tree": "65991d4de50966da1de85c6dc8cc7355fbee0af3",
+  "appleTree": "c8080a217d0348ea738677619be5a3586d6887a2",
+  "activeXcode": "27.2 (27B52)",
+  "simulatorSDK": "27.2",
+  "attempts": [
+    {
+      "directory": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-focused-ff21fd470a53-20261118T125807Z-e7fed7",
+      "candidate": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+      "tree": "65991d4de50966da1de85c6dc8cc7355fbee0af3",
+      "simulator": "51B42BE5-3356-4937-8993-5C4E22E80D8D",
+      "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-5",
+      "finalDeviceState": "Shutdown",
+      "runnerPID": 7728,
+      "startedUTC": "2026-11-18T13:06:05.310346+00:00",
+      "finishedUTC": "2026-11-18T13:06:13.221042+00:00",
+      "terminal": {
+        "line": 8,
+        "status": 3,
+        "terminal": true,
+        "elapsed": "00:02"
+      },
+      "processResults": {
+        "boot": 0,
+        "log": 0,
+        "inventory": 0
+      },
+      "readinessPassed": false,
+      "nativeExecutionStarted": false,
+      "sourceUnchanged": true,
+      "files": [
+        {
+          "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-focused-ff21fd470a53-20261118T125807Z-e7fed7/receipt.json",
+          "bytes": 5014,
+          "sha256": "aae67a4570175189fed8bf0081868bb16c9762a854804b2d9fffa44f5a88766e"
+        },
+        {
+          "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-focused-ff21fd470a53-20261118T125807Z-e7fed7/boot.log",
+          "bytes": 433,
+          "sha256": "5483ba601b60c09db12e4667a63d6176cd47aa217b0b3a29a05af047891c99af"
+        },
+        {
+          "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-focused-ff21fd470a53-20261118T125807Z-e7fed7/boot-verification.json",
+          "bytes": 1854,
+          "sha256": "90be03299ebf7f591e89e229180895c6961fa90ddfb15ceda2430b88288f5852"
+        },
+        {
+          "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-focused-ff21fd470a53-20261118T125807Z-e7fed7/run-focused.py",
+          "bytes": 11556,
+          "sha256": "74c1ef288d405450cfe8fe0f47d35483ed2c6b2971e640f64085120f4672d4c5"
+        },
+        {
+          "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-focused-ff21fd470a53-20261118T125807Z-e7fed7/source-manifest.json",
+          "bytes": 17932,
+          "sha256": "30858b18b22040db94ad0a376d3371f94fb5fab53bc61efe60efa8d5becf6e8c"
+        }
+      ]
+    },
+    {
+      "directory": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-fresh26-ff21fd470a53-20261118T131119Z-6b23d5",
+      "candidate": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+      "tree": "65991d4de50966da1de85c6dc8cc7355fbee0af3",
+      "simulator": "DD40DE53-211D-41C7-8B9E-58BB5D347528",
+      "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-5",
+      "finalDeviceState": "Shutdown",
+      "runnerPID": 12358,
+      "startedUTC": "2026-11-18T13:12:14.021979+00:00",
+      "finishedUTC": "2026-11-18T13:12:35.400976+00:00",
+      "terminal": {
+        "line": 64,
+        "status": 3,
+        "terminal": true,
+        "elapsed": "00:16"
+      },
+      "processResults": {
+        "boot": 0,
+        "log": 0,
+        "inventory": 0
+      },
+      "readinessPassed": false,
+      "nativeExecutionStarted": false,
+      "sourceUnchanged": true,
+      "files": [
+        {
+          "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-fresh26-ff21fd470a53-20261118T131119Z-6b23d5/receipt.json",
+          "bytes": 5227,
+          "sha256": "3cd40e0693b081fee2faa9f392f9c6729b91d79f04abb0d7457fb50579cb9d4f"
+        },
+        {
+          "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-fresh26-ff21fd470a53-20261118T131119Z-6b23d5/boot.log",
+          "bytes": 3757,
+          "sha256": "38898be7ac2c1171f767d79f214d353297dc6077ed752f0d9f1dc91b146922e9"
+        },
+        {
+          "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-fresh26-ff21fd470a53-20261118T131119Z-6b23d5/boot-verification.json",
+          "bytes": 1852,
+          "sha256": "3419b156af710c728208a72d2507c27424add6f1701997c744f17cd1fba2b5a5"
+        },
+        {
+          "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-fresh26-ff21fd470a53-20261118T131119Z-6b23d5/run-focused.py",
+          "bytes": 12136,
+          "sha256": "0a2a89f5807cbcc81b2278c729ba40f2b0a0fcbfd535b94d97328a201acf2220"
+        },
+        {
+          "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-fresh26-ff21fd470a53-20261118T131119Z-6b23d5/source-manifest.json",
+          "bytes": 17932,
+          "sha256": "30858b18b22040db94ad0a376d3371f94fb5fab53bc61efe60efa8d5becf6e8c"
+        }
+      ]
+    },
+    {
+      "directory": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-fresh27-ff21fd470a53-20261118T131401Z-a8fb8b",
+      "candidate": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+      "tree": "65991d4de50966da1de85c6dc8cc7355fbee0af3",
+      "simulator": "7CF7AF74-3951-4A20-A89E-6EFE745ADED2",
+      "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
+      "finalDeviceState": "Shutdown",
+      "runnerPID": 13944,
+      "startedUTC": "2026-11-18T13:14:42.350923+00:00",
+      "finishedUTC": "2026-11-18T13:15:08.426338+00:00",
+      "terminal": {
+        "line": 78,
+        "status": 3,
+        "terminal": true,
+        "elapsed": "00:20"
+      },
+      "processResults": {
+        "boot": 0,
+        "log": 0,
+        "inventory": 0
+      },
+      "readinessPassed": false,
+      "nativeExecutionStarted": false,
+      "sourceUnchanged": true,
+      "files": [
+        {
+          "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-fresh27-ff21fd470a53-20261118T131401Z-a8fb8b/receipt.json",
+          "bytes": 5227,
+          "sha256": "bd1b4dccbf9c5566d688c04e30df9cc5fa1c9c2d782544b9357fe50019ae7eb7"
+        },
+        {
+          "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-fresh27-ff21fd470a53-20261118T131401Z-a8fb8b/boot.log",
+          "bytes": 4736,
+          "sha256": "e35c01b45e9834d7d1d8cecb7651c8d37b2d93086a1625897353688ae91317d0"
+        },
+        {
+          "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-fresh27-ff21fd470a53-20261118T131401Z-a8fb8b/boot-verification.json",
+          "bytes": 1852,
+          "sha256": "6736ef26dc7e71417635b0271388db0b7b97f317c5b8a79998a5d19932fccd26"
+        },
+        {
+          "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-fresh27-ff21fd470a53-20261118T131401Z-a8fb8b/run-focused.py",
+          "bytes": 12136,
+          "sha256": "5f429ddb50a7329c8dcbf857d9f3f91d1f0b6f1af253c2bed92966f6512bb9f7"
+        },
+        {
+          "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-fresh27-ff21fd470a53-20261118T131401Z-a8fb8b/source-manifest.json",
+          "bytes": 17932,
+          "sha256": "30858b18b22040db94ad0a376d3371f94fb5fab53bc61efe60efa8d5becf6e8c"
+        }
+      ]
+    }
+  ],
+  "nativeBuildsStarted": 0,
+  "nativeMethodsRun": 0,
+  "findings": [
+    "All three authorized readiness attempts reported terminal Data Migration Failed and were rejected.",
+    "The original device's existing data is not a necessary condition: a new device on the same runtime also failed.",
+    "The failure is not confined to iOS26.5: a separate new device on installed iOS27.0 also failed.",
+    "A common host/CoreSimulator environment issue remains a hypothesis, not a proved cause.",
+    "The last printed migrator progress label does not identify the failed component.",
+    "All three owned devices are Shutdown. No retry, erase, runtime installation, or change to another owner's device occurred.",
+    "The frozen app source is unchanged, and the selected seven journeys remain unrun."
+  ],
+  "fullReleaseAcceptance": false,
+  "productFailureEstablishedByTheseAttempts": false,
+  "pending": [
+    "Native compilation",
+    "Seven selected journey results",
+    "Full final candidate CI and real visual review"
+  ],
+  "recommendation": "Stop boot probes. Retain failures; pursue narrowly filtered migration diagnostics or a separately authorized compile-only validation while identifying a healthy simulator environment."
+}

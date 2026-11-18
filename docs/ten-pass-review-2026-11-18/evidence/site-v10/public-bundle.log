@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: rejects the actual connector filename convention
+ok 1 - rejects the actual connector filename convention
+  ---
+  duration_ms: 3.047912
+  type: 'test'
+  ...
+# Subtest: retains all existing private directory boundaries
+ok 2 - retains all existing private directory boundaries
+  ---
+  duration_ms: 0.485341
+  type: 'test'
+  ...
+# Subtest: permits public application and package input names
+ok 3 - permits public application and package input names
+  ---
+  duration_ms: 0.464061
+  type: 'test'
+  ...
+# Subtest: does not confuse similar names or nested words with root private paths
+ok 4 - does not confuse similar names or nested words with root private paths
+  ---
+  duration_ms: 0.321273
+  type: 'test'
+  ...
+# Subtest: rejects a private input anywhere in a public bundle and reports its target
+ok 5 - rejects a private input anywhere in a public bundle and reports its target
+  ---
+  duration_ms: 0.498716
+  type: 'test'
+  ...
+# Subtest: keeps the caller input list unchanged
+ok 6 - keeps the caller input list unchanged
+  ---
+  duration_ms: 0.872758
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 220.360494

@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "status": "prepared_spec_only_not_acceptance",
+  "reviewer": "/root/publication_review",
+  "preparedAtUTC": "2026-11-18T13:28:54.251508+00:00",
+  "purpose": "Narrow successor requirements for the existing guarded normal merge; no new executable script and no execution authorization is inferred from this document.",
+  "oldGuard": {
+    "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/merge-final-7b3f776.py",
+    "bytes": 26460,
+    "lines": 473,
+    "sha256": "ea285de1581713b149e720bec379951ca5853ffd28ed924b3792f23b55deed7d",
+    "executed": false,
+    "modified": false
+  },
+  "invariants": {
+    "repository": "swonyu/ahmad-career",
+    "pullRequest": 1,
+    "baseBranch": "career-finder-phones-verified-apply-20261116",
+    "headBranch": "continuation/account-acceptance-20261117",
+    "normalMergeOnly": true,
+    "allFiveJobsRequired": true,
+    "iphoneMethods": 17,
+    "androidClasses": 18,
+    "androidMethods": 116,
+    "noSkippedFailedIgnoredAssumptionOrUnrunOutcomes": true,
+    "originalCutoff": "2026-11-19T01:26:12+03:00"
+  },
+  "finalFreeze": {
+    "candidate": null,
+    "runId": null,
+    "actualPRCheckout": null,
+    "expectedBaseSHA": null,
+    "reason": "Root must freeze after B16 integration and current documentation. Observed e90756cf/ff21fd47 and historical run44294650087 are not an accepted successor.",
+    "ownerWorktree": "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5",
+    "requiredValues": [
+      "candidate commit and expected PR head ref",
+      "whole tree plus hosted/apple/android subtree IDs",
+      "actual checked-out PR merge commit and ordered parents [frozen base, candidate]",
+      "workflow SHA-256",
+      "iPhone UITest source SHA-256 and exact17-method identity set",
+      "all Android instrumentation source hashes and exact116 class.method identities",
+      "acceptance scheme hash and full test selection",
+      "boot verifier SHA-256 and parser/fixture source hashes",
+      "final receipt paths, source-bound visual coverage and immutable evidence hashes"
+    ],
+    "rule": "All five raw job checkouts must agree; their complete merge tree must equal the frozen candidate. Do not silently adopt a newer base/head or accept subtree equality as whole-tree equality."
+  },
+  "requiredUpdates": [
+    {
+      "id": "G1-final-source",
+      "oldLines": "19–38,143–150,169–193,254–273",
+      "action": "Replace old path/source/run/base/hash constants only after final freeze; validate apple/android subtree fields as well as whole/hosted trees. Refresh source manifest after B16 and docs. Extend its narrow allowed paths for the actual boot verifier/parser/fixtures if recorded. Keep the exact clean-owner check and all-five actual-checkout equality.",
+      "doNot": "Do not use the existing failed receipt, current generic native compile or focused attempts as full acceptance."
+    },
+    {
+      "id": "G2-complete-native-set",
+      "oldLines": "194–218",
+      "action": "Change Android captureCount20 to22 and require the exact source-defined capture set. Reconcile114 ordinary cases plus1 preview TLS-boundary plus1 HTTPS case; the runner floor105 is not acceptance. Preserve17 exact-once iPhone methods and reconcile raw logs with xcresult. No changed subset, skips or assumption outcomes.",
+      "evidence": "CI checklist android/iphone/sourceReview sections; source reads at ff21fd47 confirm the two new capture callsites."
+    },
+    {
+      "id": "G3-strict-boot-proof",
+      "oldLines": "49–55,274–286,355–359",
+      "action": "Keep schema1 collector wrapper but additionally require and semantically validate the actual runner boot JSON and its verified archive-member inputs. Require the fixture, boot and full UI steps to pass. Re-evaluate the exact-source strict parser on retained raw inputs offline when implementing/running the later guard. A green step, exits0 or Booted alone is insufficient.",
+      "detailsRef": "runnerBootRequirements"
+    },
+    {
+      "id": "G4-visual-member-binding",
+      "oldLines": "227–253,296–332",
+      "action": "Require a root visual row to join a source-bound media index and exact member bytes of the accepted CI archive. Current verify_file(path,sha) only proves an arbitrary local file under CI; it does not prove artifact membership or test association.",
+      "detailsRef": "visualMemberContract"
+    },
+    {
+      "id": "G5-fresh-remote-and-base",
+      "oldLines": "336–377,413–430",
+      "action": "Immediately before readiness transition and again before merge, recheck live run/attempt/jobs/artifact IDs/digests/unexpired state, PR head/base/repository and base ref against the frozen values. Do not auto-update expectedBaseSHA. Invoke only normal gh pr merge with --merge and --match-head-commit candidate, existing authorized PR1 and explicit repo.",
+      "limitation": "Installed gh help confirms match-head-commit binds the PR head, not an atomic expected-base comparison. A base advance between read and merge is a residual race; post-merge checks detect it after mutation. Do not claim atomic prevention."
+    },
+    {
+      "id": "G6-mutation-boundary-and-postconditions",
+      "oldLines": "384–468",
+      "action": "Keep inert default and explicit --merge-now; all source/CI/visual guards pass before any gh pr ready/merge mutation. Record mutation intent and command exit/stdout/stderr even if the CLI fails or times out, then reconcile live PR state read-only without automatic retry. Verify merged/closed PR, exact accepted head/target base, merge commit ordered parents[frozen base,candidate] and whole tree==accepted tree; only then write the final receipt exclusively.",
+      "doNot": "No admin, force, squash, rebase, branch deletion, auto-merge flag, repeated mutation or automatic revert. Unexpected post-mutation state is a recorded inspection requirement, not an earlier preflight rejection."
+    }
+  ],
+  "androidCaptures": {
+    "requiredCount": 22,
+    "names": [
+      "acceptance-prepared.png",
+      "acceptance-profile-large-text.png",
+      "acceptance-receipts.png",
+      "custom-connection-address.png",
+      "expanded-private-note-large-text.png",
+      "linkedin-exact-review.png",
+      "linkedin-profile-guidance.png",
+      "linkedin-search-handoff.png",
+      "previous-search-results.png",
+      "private-follow-up-list.png",
+      "private-record-correction.png",
+      "private-record-date-picker.png",
+      "private-record-editor.png",
+      "profile-contact-copy.png",
+      "profile-role-shortcut.png",
+      "record-only-phone-import.png",
+      "remove-local-opportunity-confirmation.png",
+      "settings-dark.png",
+      "settings-light.png",
+      "target-country-jp-draft-after-ime.png",
+      "two-step-connection.png",
+      "unfinished-opportunity-choices.png"
+    ],
+    "newPaths": [
+      "navigation-review-evidence/profile-role-shortcut.png",
+      "strict-review-evidence/profile-contact-copy.png"
+    ],
+    "rule": "Every expected image must have actual readable PNG bytes, recorded dimensions/size/hash, a unique source callsite/test association and a matching verified artifact member. Some capture helpers log optional failure without failing the test; missing captures still block this acceptance gate. Extra diagnostic media must not substitute for a missing expected capture."
+  },
+  "runnerBootRequirements": {
+    "runnerMember": "career-iphone-boot-verification.json",
+    "requiredArchiveMembers": [
+      "career-iphone-boot.log",
+      "career-iphone-boot-devices.json",
+      "career-iphone-boot-devices.stderr",
+      "career-iphone-boot-verification.json"
+    ],
+    "exactFieldChecks": {
+      "schemaVersion": 1,
+      "runID": "String(actual run id)",
+      "runAttempt": "String(actual attempt;1 under this gate)",
+      "checkoutSHA": "actual tested PR merge commit, not run.head_sha by assumption",
+      "verifierSHA256": "exact frozen source; current reviewed value5c2233107dfcaddd7273846e3d77aca7902976d34ac73bae6eb4a016647102bf",
+      "passed": true,
+      "reasons": [],
+      "processResults": {
+        "boot": 0,
+        "log": 0,
+        "inventory": 0
+      },
+      "selectedDeviceID": "exact selected/monitored/inventory/xcodebuild destination/xcresult UUID",
+      "selectedDevice": "unique matching available Booted device; no availabilityError",
+      "bootObservation.monitoredDeviceIDs": "one exact UUID",
+      "bootObservation.terminalStatusCount": 1,
+      "bootObservation.finalStatus.status": 4294967295,
+      "bootObservation.finalStatus.terminal": true,
+      "bootObservation.explicitFinished": true
+    },
+    "rawReconciliation": "Raw log has exactly one terminal Finished record, no failed/unknown/malformed statuses and no trailing result other than Finished. Cross-check inventory contents and source-selected/runtime device; unproved clone substitution is not accepted.",
+    "inputBinding": "Runner inputs.bootLog and inputs.deviceInventory byte counts/SHA-256 must equal the actual accepted archive members and local extracted bytes. Runner absolute paths are provenance strings, not local file paths to follow.",
+    "emptyDiagnosticException": "career-iphone-boot-devices.stderr may legitimately be0bytes. Allow that exact diagnostic member to be empty with the empty-file digest; do not relax nonempty boot log, inventory or verification JSON checks.",
+    "collectorCompatibility": "bootReadiness.verification remains a relative path string plus verificationSHA256. Its wrapper binds run/job/head/actualCheckout, raw job digest, strict runner receipt/member digest, verifier source and actual invocation. Do not replace artifacts[].workflowRun object with a string.",
+    "sourceEvidence": "apple/Checks/verify-simulator-boot.py:85–100,138–147; workflow:263–280,325–337. Current negative local proof rejected Status3 despite exits0/Booted before any test."
+  },
+  "visualMemberContract": {
+    "schema": "Keep root-owned visual schema1; require a new explicit memberBindingVersion:1 and actual member/index fields so old path-only receipts cannot satisfy the successor.",
+    "index": "Collector supplies a hash-bound artifact-member/media index for the members relied on by acceptance. Each row records runId, jobId, artifactId, archiveSHA256, exact normalized archive member path, local extracted path, bytes, SHA-256, dimensions/type and actual test/capture identity.",
+    "rootRowFields": [
+      "platform",
+      "artifactId",
+      "archiveSHA256",
+      "mediaIndexPath",
+      "mediaIndexSHA256",
+      "memberPath or immutable memberId",
+      "capture name/attachment UUID",
+      "actual testIdentifier",
+      "original bytes/SHA-256/dimensions",
+      "reviewer",
+      "observation",
+      "reviewedAtUTC"
+    ],
+    "requiredJoin": "Exactly one reviewed row -> exactly one index row -> exactly one regular member in the accepted archive. Recomputed SHA-256(member bytes) == index SHA == extracted-file SHA == root visual SHA; byte count and image dimensions also agree. The artifact ID/archive digest/run/job and passing actual test association agree with complete-source-acceptance.json.",
+    "safePathRule": "Reject absolute/traversal/duplicate-normalized member names and symlink substitution. The extracted path must resolve to its indexed member under that artifact extraction directory, not merely anywhere beneath CI.",
+    "coverage": "Artifact completeness requires all22Android captures and current iPhone attachment/source-set reconciliation, including30-profile-role-shortcut and31-profile-contact-reuse. Root must explicitly declare and satisfy its current visual coverage set for both platforms; two arbitrary files are not a sufficient coverage declaration. This spec does not invent a new universal requirement that every optional diagnostic attachment receive human review.",
+    "derivedImages": "Contact sheets, crops or video frames may supplement review with declared source/transform evidence. Their hashes are not the original archive-member hashes and must not impersonate exact member captures.",
+    "reviewOutcome": "Require root status passed, no unresolved blocking findings and current exact candidate/tree/run. Independent review files remain supplemental, separately hashed, and cannot replace root visual ownership."
+  },
+  "normalMergeCommand": [
+    "gh",
+    "pr",
+    "merge",
+    "1",
+    "--repo",
+    "swonyu/ahmad-career",
+    "--merge",
+    "--match-head-commit",
+    "FINAL_CANDIDATE",
+    "--subject",
+    "Merge verified Career Finder candidate",
+    "--body-file",
+    "REVIEWED_BODY_FILE"
+  ],
+  "normalMergeLimit": "Installed gh pr merge --help also documents special merge-queue behavior. Confirm the target still supports the intended direct normal merge before mutation. If queue/pending state intervenes, do not call it merged, bypass rules with --admin, or silently treat it as accepted automatic completion.",
+  "evidenceReferences": [
+    {
+      "id": "old-guard",
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/merge-final-7b3f776.py",
+      "sha256": "ea285de1581713b149e720bec379951ca5853ffd28ed924b3792f23b55deed7d"
+    },
+    {
+      "id": "next-ci-checklist",
+      "path": "/workspace/scratch/ebb3eed5ee2b/next-full-ci-evidence-checklist-20261118.json",
+      "sha256": "ffa1d2ee9909be01ef113aeea63bb7b1ac6376a68af55a744a6b5cceb107a616"
+    },
+    {
+      "id": "readiness-source",
+      "commit": "ead12355246f1889f53f3d7bc3ff71cd42da4d92",
+      "originalReviewedCommit": "fc5cc80e001836cc8da28649a26799f0eb6a08d5",
+      "verifierSHA256": "5c2233107dfcaddd7273846e3d77aca7902976d34ac73bae6eb4a016647102bf"
+    },
+    {
+      "id": "actual-negative-gate",
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-focused-ff21fd470a53-20261118T125807Z-e7fed7/readiness-blocker-review.json",
+      "sha256": "68abe08d065e5c5e2439e9baf42872dba3263e028b19215789e0d2887f2e1109"
+    },
+    {
+      "id": "merge-cli-help",
+      "source": "Read-only installed gh pr merge --help in this review",
+      "claim": "match-head-commit binds the head; no expected-base flag shown; queue behavior is separately documented."
+    }
+  ],
+  "reviewLimits": [
+    "No old/new guard executed and no old guard mutated. No CI/native/build/UI/deployment actions by this reviewer.",
+    "No current full success receipt or final run/candidate freeze exists in this specification.",
+    "Final artifact/index/visual schemas must be reconciled against actual collected files; conceptual field mappings are proposed here, not fabricated completed receipts.",
+    "The verifier and B16 source reviews do not imply a healthy runtime or current UI acceptance.",
+    "Normal GitHub head binding does not provide an atomic base compare-and-swap; post-merge mismatch handling is observational and cannot undo a mutation."
+  ]
+}

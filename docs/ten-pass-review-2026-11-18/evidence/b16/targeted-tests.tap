@@ -1,0 +1,835 @@
+TAP version 13
+# Subtest: Saved search finds every term across visible metadata and the active saved note
+ok 1 - Saved search finds every term across visible metadata and the active saved note
+  ---
+  duration_ms: 4.315292
+  type: 'test'
+  ...
+# Subtest: Saved comparison removes only the agreed Arabic vowel marks and tatweel while preserving distinct letters
+ok 2 - Saved comparison removes only the agreed Arabic vowel marks and tatweel while preserving distinct letters
+  ---
+  duration_ms: 0.665038
+  type: 'test'
+  ...
+# Subtest: CSV is UTF-8 BOM, quoted CRLF data with original Arabic, quotes and multiline notes
+ok 3 - CSV is UTF-8 BOM, quoted CRLF data with original Arabic, quotes and multiline notes
+  ---
+  duration_ms: 8.453179
+  type: 'test'
+  ...
+# Subtest: CSV visibly neutralizes formula-like text including compatibility characters and leading controls
+ok 4 - CSV visibly neutralizes formula-like text including compatibility characters and leading controls
+  ---
+  duration_ms: 5.555438
+  type: 'test'
+  ...
+# Subtest: CSV selects only record fields and translates app labels without translating private content
+ok 5 - CSV selects only record fields and translates app labels without translating private content
+  ---
+  duration_ms: 1.554167
+  type: 'test'
+  ...
+# Subtest: calendar uses civil DATE and one day even on leap days and the maximum supported year
+ok 6 - calendar uses civil DATE and one day even on leap days and the maximum supported year
+  ---
+  duration_ms: 236.334087
+  type: 'test'
+  ...
+# Subtest: calendar escapes injected properties and folds long Arabic and emoji by UTF-8 octets
+ok 7 - calendar escapes injected properties and folds long Arabic and emoji by UTF-8 octets
+  ---
+  duration_ms: 5.224046
+  type: 'test'
+  ...
+# Subtest: calendar UID is stable for the public job and date without private fields or provider state
+ok 8 - calendar UID is stable for the public job and date without private fields or provider state
+  ---
+  duration_ms: 105.742971
+  type: 'test'
+  ...
+# Subtest: record locations are optional for legacy snapshots and bounded for new records
+ok 9 - record locations are optional for legacy snapshots and bounded for new records
+  ---
+  duration_ms: 18.097272
+  type: 'test'
+  ...
+# Subtest: removing a bookmark retains its latest nonblank location for current, legacy and re-bookmarked records
+ok 10 - removing a bookmark retains its latest nonblank location for current, legacy and re-bookmarked records
+  ---
+  duration_ms: 268.166139
+  type: 'test'
+  ...
+# Subtest: bookmark metadata preservation fails with account mismatch or rejected persistence
+ok 11 - bookmark metadata preservation fails with account mismatch or rejected persistence
+  ---
+  duration_ms: 49.614268
+  type: 'test'
+  ...
+# Subtest: actual CSV action exports only the current guest or confirmed account records
+ok 12 - actual CSV action exports only the current guest or confirmed account records
+  ---
+  duration_ms: 60.2209
+  type: 'test'
+  ...
+# Subtest: actual record exports fail closed before reading unconfirmed, locked, wrong-owner or earlier-workspace data
+    # Subtest: identity
+    ok 1 - identity
+      ---
+      duration_ms: 30.056443
+      type: 'test'
+      ...
+    # Subtest: checking
+    ok 2 - checking
+      ---
+      duration_ms: 26.014967
+      type: 'test'
+      ...
+    # Subtest: locked
+    ok 3 - locked
+      ---
+      duration_ms: 26.558727
+      type: 'test'
+      ...
+    # Subtest: owner
+    ok 4 - owner
+      ---
+      duration_ms: 28.448304
+      type: 'test'
+      ...
+    # Subtest: missingOwner
+    ok 5 - missingOwner
+      ---
+      duration_ms: 75.1245
+      type: 'test'
+      ...
+    # Subtest: olderWorkspace
+    ok 6 - olderWorkspace
+      ---
+      duration_ms: 20.847347
+      type: 'test'
+      ...
+    # Subtest: earlierScope
+    ok 7 - earlierScope
+      ---
+      duration_ms: 38.976749
+      type: 'test'
+      ...
+    1..7
+ok 13 - actual record exports fail closed before reading unconfirmed, locked, wrong-owner or earlier-workspace data
+  ---
+  duration_ms: 250.339673
+  type: 'test'
+  ...
+# Subtest: actual calendar action rechecks identity, generation, workspace and record after asynchronous hashing
+    # Subtest: revalidation
+    ok 1 - revalidation
+      ---
+      duration_ms: 43.429988
+      type: 'test'
+      ...
+    # Subtest: generation
+    ok 2 - generation
+      ---
+      duration_ms: 32.169089
+      type: 'test'
+      ...
+    # Subtest: owner
+    ok 3 - owner
+      ---
+      duration_ms: 19.54993
+      type: 'test'
+      ...
+    # Subtest: workspace
+    ok 4 - workspace
+      ---
+      duration_ms: 8.611755
+      type: 'test'
+      ...
+    # Subtest: snapshot
+    ok 5 - snapshot
+      ---
+      duration_ms: 9.936293
+      type: 'test'
+      ...
+    # Subtest: date
+    ok 6 - date
+      ---
+      duration_ms: 11.945444
+      type: 'test'
+      ...
+    # Subtest: removal
+    ok 7 - removal
+      ---
+      duration_ms: 14.359807
+      type: 'test'
+      ...
+    1..7
+ok 14 - actual calendar action rechecks identity, generation, workspace and record after asynchronous hashing
+  ---
+  duration_ms: 142.47051
+  type: 'test'
+  ...
+# Subtest: actual calendar action accepts a saved record and rejects unsaved editor copies or missing dates
+ok 15 - actual calendar action accepts a saved record and rejects unsaved editor copies or missing dates
+  ---
+  duration_ms: 24.771351
+  type: 'test'
+  ...
+# Subtest: actual Saved selector searches active notes and keeps the existing applied/follow-up filters
+ok 16 - actual Saved selector searches active notes and keeps the existing applied/follow-up filters
+  ---
+  duration_ms: 12.329256
+  type: 'test'
+  ...
+# Subtest: new controls stay inside existing disclosures and require a saved valid follow-up day
+ok 17 - new controls stay inside existing disclosures and require a saved valid follow-up day
+  ---
+  duration_ms: 61.883902
+  type: 'test'
+  ...
+# Subtest: actual download helper preserves content and delays successful URL release for the browser
+ok 18 - actual download helper preserves content and delays successful URL release for the browser
+  ---
+  duration_ms: 7.84157
+  type: 'test'
+  ...
+# Subtest: actual download helper attaches no DOM resource when URL allocation fails
+ok 19 - actual download helper attaches no DOM resource when URL allocation fails
+  ---
+  duration_ms: 4.332193
+  type: 'test'
+  ...
+# Subtest: actual download helper releases its URL after a synchronous create failure
+ok 20 - actual download helper releases its URL after a synchronous create failure
+  ---
+  duration_ms: 3.747034
+  type: 'test'
+  ...
+# Subtest: actual download helper releases its URL after a synchronous append failure
+ok 21 - actual download helper releases its URL after a synchronous append failure
+  ---
+  duration_ms: 4.423003
+  type: 'test'
+  ...
+# Subtest: actual download helper releases its URL after a synchronous click failure
+ok 22 - actual download helper releases its URL after a synchronous click failure
+  ---
+  duration_ms: 2.767105
+  type: 'test'
+  ...
+# Subtest: actual download helper still releases the URL if post-click link removal throws
+ok 23 - actual download helper still releases the URL if post-click link removal throws
+  ---
+  duration_ms: 2.741706
+  type: 'test'
+  ...
+# Subtest: actual exportRecordsCSV preserves the snapshot and withholds success when download activation throws
+ok 24 - actual exportRecordsCSV preserves the snapshot and withholds success when download activation throws
+  ---
+  duration_ms: 25.661321
+  type: 'test'
+  ...
+# Subtest: actual exportFollowUp preserves the snapshot and withholds success when download activation throws
+ok 25 - actual exportFollowUp preserves the snapshot and withholds success when download activation throws
+  ---
+  duration_ms: 61.783624
+  type: 'test'
+  ...
+# Subtest: application stage composes with search and the existing saved views without changing stored records
+ok 26 - application stage composes with search and the existing saved views without changing stored records
+  ---
+  duration_ms: 180.208894
+  type: 'test'
+  ...
+# Subtest: Clear and the follow-up shortcut reset the stage select without persisting it
+ok 27 - Clear and the follow-up shortcut reset the stage select without persisting it
+  ---
+  duration_ms: 59.58667
+  type: 'test'
+  ...
+# Subtest: a saved stage change updates the filtered list and unsaved, cancelled, failed, or stale edits do not
+ok 28 - a saved stage change updates the filtered list and unsaved, cancelled, failed, or stale edits do not
+  ---
+  duration_ms: 104.47336
+  type: 'test'
+  ...
+# Subtest: zero-item Saved filters keep recovery visible and return to the default empty view
+ok 29 - zero-item Saved filters keep recovery visible and return to the default empty view
+  ---
+  duration_ms: 70.452246
+  type: 'test'
+  ...
+# Subtest: actual profile restore forks ownership so one tab's successful save keeps the other's newer recovery
+ok 30 - actual profile restore forks ownership so one tab's successful save keeps the other's newer recovery
+  ---
+  duration_ms: 495.658892
+  type: 'test'
+  ...
+# Subtest: actual profile restore preserves current form and both identities when fork storage hits quota
+ok 31 - actual profile restore preserves current form and both identities when fork storage hits quota
+  ---
+  duration_ms: 26.494831
+  type: 'test'
+  ...
+# Subtest: actual profile restore rejects the recovery-cap edge without replacing the current form or source copy
+ok 32 - actual profile restore rejects the recovery-cap edge without replacing the current form or source copy
+  ---
+  duration_ms: 106.723508
+  type: 'test'
+  ...
+# Subtest: actual profile restore adopts nothing after scope or identity changes during fork persistence
+    # Subtest: scope
+    ok 1 - scope
+      ---
+      duration_ms: 24.741958
+      type: 'test'
+      ...
+    # Subtest: generation
+    ok 2 - generation
+      ---
+      duration_ms: 23.848931
+      type: 'test'
+      ...
+    # Subtest: identity
+    ok 3 - identity
+      ---
+      duration_ms: 23.257583
+      type: 'test'
+      ...
+    1..3
+ok 33 - actual profile restore adopts nothing after scope or identity changes during fork persistence
+  ---
+  duration_ms: 76.120855
+  type: 'test'
+  ...
+# Subtest: actual explicit profile discard refuses a stale confirmation and keeps a newer shared source
+ok 34 - actual explicit profile discard refuses a stale confirmation and keeps a newer shared source
+  ---
+  duration_ms: 24.975996
+  type: 'test'
+  ...
+# Subtest: actual record restore forks ownership so one tab's successful save keeps the other's newer recovery
+ok 35 - actual record restore forks ownership so one tab's successful save keeps the other's newer recovery
+  ---
+  duration_ms: 49.207385
+  type: 'test'
+  ...
+# Subtest: actual record restore preserves current form and both identities when fork storage hits quota
+ok 36 - actual record restore preserves current form and both identities when fork storage hits quota
+  ---
+  duration_ms: 49.546342
+  type: 'test'
+  ...
+# Subtest: actual record restore rejects the recovery-cap edge without replacing the current form or source copy
+ok 37 - actual record restore rejects the recovery-cap edge without replacing the current form or source copy
+  ---
+  duration_ms: 62.298286
+  type: 'test'
+  ...
+# Subtest: actual record restore adopts nothing after scope or identity changes during fork persistence
+    # Subtest: scope
+    ok 1 - scope
+      ---
+      duration_ms: 13.497939
+      type: 'test'
+      ...
+    # Subtest: generation
+    ok 2 - generation
+      ---
+      duration_ms: 12.815998
+      type: 'test'
+      ...
+    # Subtest: identity
+    ok 3 - identity
+      ---
+      duration_ms: 16.910635
+      type: 'test'
+      ...
+    1..3
+ok 38 - actual record restore adopts nothing after scope or identity changes during fork persistence
+  ---
+  duration_ms: 44.745468
+  type: 'test'
+  ...
+# Subtest: actual explicit record discard refuses a stale confirmation and keeps a newer shared source
+ok 39 - actual explicit record discard refuses a stale confirmation and keeps a newer shared source
+  ---
+  duration_ms: 40.955623
+  type: 'test'
+  ...
+# Subtest: actual Clear preserves unsaved fields and dirty tracking when the recovery vault write fails
+ok 40 - actual Clear preserves unsaved fields and dirty tracking when the recovery vault write fails
+  ---
+  duration_ms: 16.372235
+  type: 'test'
+  ...
+# Subtest: actual partial Clear updates removed recovery entries while preserving main data and unsaved editors
+ok 41 - actual partial Clear updates removed recovery entries while preserving main data and unsaved editors
+  ---
+  duration_ms: 22.813633
+  type: 'test'
+  ...
+# Subtest: actual Clear retains dirty state while either storage operation is still pending
+    # Subtest: recovery
+    ok 1 - recovery
+      ---
+      duration_ms: 23.373132
+      type: 'test'
+      ...
+    # Subtest: main
+    ok 2 - main
+      ---
+      duration_ms: 19.707226
+      type: 'test'
+      ...
+    1..2
+ok 42 - actual Clear retains dirty state while either storage operation is still pending
+  ---
+  duration_ms: 44.414562
+  type: 'test'
+  ...
+# Subtest: actual successful Clear removes only its confirmed scope and keeps Stop holds
+ok 43 - actual successful Clear removes only its confirmed scope and keeps Stop holds
+  ---
+  duration_ms: 23.964467
+  type: 'test'
+  ...
+# Subtest: actual Clear rejects a confirmation from another scope or generation before changing storage
+    # Subtest: scope
+    ok 1 - scope
+      ---
+      duration_ms: 9.327831
+      type: 'test'
+      ...
+    # Subtest: generation
+    ok 2 - generation
+      ---
+      duration_ms: 11.945205
+      type: 'test'
+      ...
+    # Subtest: identity
+    ok 3 - identity
+      ---
+      duration_ms: 15.188795
+      type: 'test'
+      ...
+    1..3
+ok 44 - actual Clear rejects a confirmation from another scope or generation before changing storage
+  ---
+  duration_ms: 37.982475
+  type: 'test'
+  ...
+# Subtest: actual Clear rechecks owner and generation after each storage await before proceeding or reloading
+    # Subtest: recovery:scope
+    ok 1 - recovery:scope
+      ---
+      duration_ms: 17.387909
+      type: 'test'
+      ...
+    # Subtest: recovery:generation
+    ok 2 - recovery:generation
+      ---
+      duration_ms: 14.924015
+      type: 'test'
+      ...
+    # Subtest: recovery:identity
+    ok 3 - recovery:identity
+      ---
+      duration_ms: 25.66511
+      type: 'test'
+      ...
+    # Subtest: main:scope
+    ok 4 - main:scope
+      ---
+      duration_ms: 20.551416
+      type: 'test'
+      ...
+    # Subtest: main:generation
+    ok 5 - main:generation
+      ---
+      duration_ms: 12.435394
+      type: 'test'
+      ...
+    # Subtest: main:identity
+    ok 6 - main:identity
+      ---
+      duration_ms: 11.61254
+      type: 'test'
+      ...
+    1..6
+ok 45 - actual Clear rechecks owner and generation after each storage await before proceeding or reloading
+  ---
+  duration_ms: 105.216551
+  type: 'test'
+  ...
+# Subtest: explicitly confirmed Clear remains available when the current main vault is damaged and no snapshot opened
+ok 46 - explicitly confirmed Clear remains available when the current main vault is damaged and no snapshot opened
+  ---
+  duration_ms: 11.675737
+  type: 'test'
+  ...
+# Subtest: a captured recovery autosave cannot recreate personal drafts while Clear waits for the main reset
+ok 47 - a captured recovery autosave cannot recreate personal drafts while Clear waits for the main reset
+  ---
+  duration_ms: 13.803032
+  type: 'test'
+  ...
+# Subtest: actual Modal cleanup preserves native focus return and restores a surviving invoker when needed
+ok 48 - actual Modal cleanup preserves native focus return and restores a surviving invoker when needed
+  ---
+  duration_ms: 5.130732
+  type: 'test'
+  ...
+# Subtest: actual Modal cleanup recovers the owning heading when its invoker disappears before or after cleanup
+ok 49 - actual Modal cleanup recovers the owning heading when its invoker disappears before or after cleanup
+  ---
+  duration_ms: 3.919818
+  type: 'test'
+  ...
+# Subtest: actual Modal cleanup falls back if a connected invoker cannot receive focus
+ok 50 - actual Modal cleanup falls back if a connected invoker cannot receive focus
+  ---
+  duration_ms: 1.917219
+  type: 'test'
+  ...
+# Subtest: actual Modal cleanup leaves other live focus alone before close or before deferred recovery
+ok 51 - actual Modal cleanup leaves other live focus alone before close or before deferred recovery
+  ---
+  duration_ms: 9.009774
+  type: 'test'
+  ...
+# Subtest: actual Modal cleanup respects focus redirected while restoring the invoker
+ok 52 - actual Modal cleanup respects focus redirected while restoring the invoker
+  ---
+  duration_ms: 2.051792
+  type: 'test'
+  ...
+# Subtest: actual Modal cleanup does not override a reopened or replacement dialog
+ok 53 - actual Modal cleanup does not override a reopened or replacement dialog
+  ---
+  duration_ms: 3.774165
+  type: 'test'
+  ...
+# Subtest: actual Modal cleanup does not focus a removed phone shell or heading
+ok 54 - actual Modal cleanup does not focus a removed phone shell or heading
+  ---
+  duration_ms: 3.130476
+  type: 'test'
+  ...
+# Subtest: actual Modal cleanup treats absent, document-root and disconnected focus as lost
+ok 55 - actual Modal cleanup treats absent, document-root and disconnected focus as lost
+  ---
+  duration_ms: 7.487625
+  type: 'test'
+  ...
+# Subtest: actual Saved Clear resets every filter and recovers its heading after its button disappears
+ok 56 - actual Saved Clear resets every filter and recovers its heading after its button disappears
+  ---
+  duration_ms: 12.460853
+  type: 'test'
+  ...
+# Subtest: actual Saved Clear does not steal later focus or cross a dialog/phone unmount boundary
+ok 57 - actual Saved Clear does not steal later focus or cross a dialog/phone unmount boundary
+  ---
+  duration_ms: 5.671367
+  type: 'test'
+  ...
+# Subtest: actual Keep editing restores a preserved record control after removal without changing the draft
+ok 58 - actual Keep editing restores a preserved record control after removal without changing the draft
+  ---
+  duration_ms: 25.277993
+  type: 'test'
+  ...
+# Subtest: actual Keep editing restores dirty Delete or a surviving editor field, with a real no-target case
+ok 59 - actual Keep editing restores dirty Delete or a surviving editor field, with a real no-target case
+  ---
+  duration_ms: 8.554789
+  type: 'test'
+  ...
+# Subtest: actual Keep editing restores the add-job form and preserves all unfinished fields
+ok 60 - actual Keep editing restores the add-job form and preserves all unfinished fields
+  ---
+  duration_ms: 5.434102
+  type: 'test'
+  ...
+# Subtest: actual Keep editing leaves intentional focus and a focus redirect alone
+ok 61 - actual Keep editing leaves intentional focus and a focus redirect alone
+  ---
+  duration_ms: 7.131287
+  type: 'test'
+  ...
+# Subtest: actual Keep editing cannot cross a closed, replaced or unmounted dialog/editor
+ok 62 - actual Keep editing cannot cross a closed, replaced or unmounted dialog/editor
+  ---
+  duration_ms: 6.694336
+  type: 'test'
+  ...
+# Subtest: actual Keep editing waits for its old prompt removal and does not override a reopened prompt
+ok 63 - actual Keep editing waits for its old prompt removal and does not override a reopened prompt
+  ---
+  duration_ms: 3.418308
+  type: 'test'
+  ...
+# Subtest: actual Keep editing rechecks inherited disabling, hidden identity content and inert ancestry
+ok 64 - actual Keep editing rechecks inherited disabling, hidden identity content and inert ancestry
+  ---
+  duration_ms: 7.029296
+  type: 'test'
+  ...
+# Subtest: actual Keep editing skips an unusable opener and selects the first eligible field in its form
+ok 65 - actual Keep editing skips an unusable opener and selects the first eligible field in its form
+  ---
+  duration_ms: 7.994107
+  type: 'test'
+  ...
+# Subtest: actual Keep editing recovers absent, root, disconnected and dialog-root focus
+ok 66 - actual Keep editing recovers absent, root, disconnected and dialog-root focus
+  ---
+  duration_ms: 6.895274
+  type: 'test'
+  ...
+# Subtest: actual discard entry handlers remember Cancel or Delete and preserve clean close behavior
+ok 67 - actual discard entry handlers remember Cancel or Delete and preserve clean close behavior
+  ---
+  duration_ms: 20.622657
+  type: 'test'
+  ...
+# Subtest: actual record export recovers its enabled action after busy blurs focus and preserves the exported draft
+ok 68 - actual record export recovers its enabled action after busy blurs focus and preserves the exported draft
+  ---
+  duration_ms: 31.575221
+  type: 'test'
+  ...
+# Subtest: actual record export preserves run error reporting and restores only its still-usable action
+ok 69 - actual record export preserves run error reporting and restores only its still-usable action
+  ---
+  duration_ms: 4.990639
+  type: 'test'
+  ...
+# Subtest: actual record export leaves intentional focus, redirected focus and an inactive window alone
+ok 70 - actual record export leaves intentional focus, redirected focus and an inactive window alone
+  ---
+  duration_ms: 24.991215
+  type: 'test'
+  ...
+# Subtest: actual record export cannot cross an account, record, dialog or form replacement
+ok 71 - actual record export cannot cross an account, record, dialog or form replacement
+  ---
+  duration_ms: 30.931496
+  type: 'test'
+  ...
+# Subtest: actual record export respects newer busy, identity, discard and inherited availability state
+ok 72 - actual record export respects newer busy, identity, discard and inherited availability state
+  ---
+  duration_ms: 39.80836
+  type: 'test'
+  ...
+# Subtest: actual Keep then clean Cancel retires only this editor across repeated applied-stage cycles
+ok 73 - actual Keep then clean Cancel retires only this editor across repeated applied-stage cycles
+  ---
+  duration_ms: 93.491706
+  type: 'test'
+  ...
+# Subtest: actual Keep preserves another dirty field and clean-close checks the draft instead of a lagging flag
+ok 74 - actual Keep preserves another dirty field and clean-close checks the draft instead of a lagging flag
+  ---
+  duration_ms: 13.96751
+  type: 'test'
+  ...
+# Subtest: clean close follows queued and in-flight encrypted autosaves and fences their delayed publication
+ok 75 - clean close follows queued and in-flight encrypted autosaves and fences their delayed publication
+  ---
+  duration_ms: 14.545466
+  type: 'test'
+  ...
+# Subtest: clean close of a recovered fork preserves its source, another tab's fork, other records and Stop holds
+ok 76 - clean close of a recovered fork preserves its source, another tab's fork, other records and Stop holds
+  ---
+  duration_ms: 28.240815
+  type: 'test'
+  ...
+# Subtest: a retired in-flight autosave failure cannot surface an obsolete error in a replacement editor
+ok 77 - a retired in-flight autosave failure cannot surface an obsolete error in a replacement editor
+  ---
+  duration_ms: 17.821555
+  type: 'test'
+  ...
+# Subtest: a failed clean-close cleanup preserves encrypted recovery and keeps clean close usable
+ok 78 - a failed clean-close cleanup preserves encrypted recovery and keeps clean close usable
+  ---
+  duration_ms: 14.331453
+  type: 'test'
+  ...
+# Subtest: clean-close cleanup cannot publish success or errors into a newer scope, generation, identity or editor
+    # Subtest: success:scope
+    ok 1 - success:scope
+      ---
+      duration_ms: 7.334539
+      type: 'test'
+      ...
+    # Subtest: success:generation
+    ok 2 - success:generation
+      ---
+      duration_ms: 5.046985
+      type: 'test'
+      ...
+    # Subtest: success:identity
+    ok 3 - success:identity
+      ---
+      duration_ms: 5.288116
+      type: 'test'
+      ...
+    # Subtest: success:editor
+    ok 4 - success:editor
+      ---
+      duration_ms: 4.728998
+      type: 'test'
+      ...
+    # Subtest: failure:scope
+    ok 5 - failure:scope
+      ---
+      duration_ms: 9.701413
+      type: 'test'
+      ...
+    # Subtest: failure:generation
+    ok 6 - failure:generation
+      ---
+      duration_ms: 4.797866
+      type: 'test'
+      ...
+    # Subtest: failure:identity
+    ok 7 - failure:identity
+      ---
+      duration_ms: 4.736562
+      type: 'test'
+      ...
+    # Subtest: failure:editor
+    ok 8 - failure:editor
+      ---
+      duration_ms: 4.5812
+      type: 'test'
+      ...
+    1..8
+ok 79 - clean-close cleanup cannot publish success or errors into a newer scope, generation, identity or editor
+  ---
+  duration_ms: 48.173563
+  type: 'test'
+  ...
+# Subtest: an earlier cleanup stays fenced when another editor opens and closes before it finishes
+ok 80 - an earlier cleanup stays fenced when another editor opens and closes before it finishes
+  ---
+  duration_ms: 6.6001
+  type: 'test'
+  ...
+# Subtest: clean close requires the current owner and exact editor and refuses an unavailable draft
+    # Subtest: busy
+    ok 1 - busy
+      ---
+      duration_ms: 5.736408
+      type: 'test'
+      ...
+    # Subtest: locked
+    ok 2 - locked
+      ---
+      duration_ms: 3.471366
+      type: 'test'
+      ...
+    # Subtest: checking
+    ok 3 - checking
+      ---
+      duration_ms: 8.328585
+      type: 'test'
+      ...
+    # Subtest: identity
+    ok 4 - identity
+      ---
+      duration_ms: 3.694145
+      type: 'test'
+      ...
+    # Subtest: scope
+    ok 5 - scope
+      ---
+      duration_ms: 3.69129
+      type: 'test'
+      ...
+    # Subtest: editor
+    ok 6 - editor
+      ---
+      duration_ms: 6.223733
+      type: 'test'
+      ...
+    # Subtest: missing-draft
+    ok 7 - missing-draft
+      ---
+      duration_ms: 14.190921
+      type: 'test'
+      ...
+    1..7
+ok 81 - clean close requires the current owner and exact editor and refuses an unavailable draft
+  ---
+  duration_ms: 46.955276
+  type: 'test'
+  ...
+# Subtest: marking a selected job applied prunes only that identity after its actual storage save completes
+ok 82 - marking a selected job applied prunes only that identity after its actual storage save completes
+  ---
+  duration_ms: 95.686767
+  type: 'test'
+  ...
+# Subtest: selection pruning follows the persisted appliedElsewhere value, preserving ordinary edits and explicit unmarking
+ok 83 - selection pruning follows the persisted appliedElsewhere value, preserving ordinary edits and explicit unmarking
+  ---
+  duration_ms: 413.299527
+  type: 'test'
+  ...
+# Subtest: failed or stale record saves preserve selection and the current editor
+ok 84 - failed or stale record saves preserve selection and the current editor
+  ---
+  duration_ms: 318.526535
+  type: 'test'
+  ...
+# Subtest: active-plan applied-mark and final Prepare guards still reject forbidden changes before transport
+ok 85 - active-plan applied-mark and final Prepare guards still reject forbidden changes before transport
+  ---
+  duration_ms: 167.666756
+  type: 'test'
+  ...
+# Subtest: a stale selected applied job can be unchecked while ineligible new selection stays blocked
+ok 86 - a stale selected applied job can be unchecked while ineligible new selection stays blocked
+  ---
+  duration_ms: 122.743209
+  type: 'test'
+  ...
+# Subtest: Enter in the employer-board field adds exactly one board through the real action and never searches
+ok 87 - Enter in the employer-board field adds exactly one board through the real action and never searches
+  ---
+  duration_ms: 51.253566
+  type: 'test'
+  ...
+# Subtest: board Enter preserves Add validation, input and filters on invalid, unsupported, duplicate or full selections
+ok 88 - board Enter preserves Add validation, input and filters on invalid, unsupported, duplicate or full selections
+  ---
+  duration_ms: 251.32044
+  type: 'test'
+  ...
+# Subtest: composition Enter, legacy composition keycode and ordinary keys do not add or interfere with input
+ok 89 - composition Enter, legacy composition keycode and ordinary keys do not add or interfere with input
+  ---
+  duration_ms: 68.664851
+  type: 'test'
+  ...
+# Subtest: title and location keep ordinary search submission without adding the custom board
+ok 90 - title and location keep ordinary search submission without adding the custom board
+  ---
+  duration_ms: 43.003688
+  type: 'test'
+  ...
+1..90
+# tests 136
+# suites 0
+# pass 136
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3566.428
