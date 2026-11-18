@@ -569,6 +569,11 @@ private struct NativeModernRecordVersions: View {
     }
 }
 
+/// Live listings use the catalog phrase. Research and employer wording stays as stored.
+private func spokenListingFit(_ fit: String, _ copy: NativeCopy) -> String {
+    fit == "Needs review" ? copy(fit) : fit
+}
+
 private struct NativeJobLink: View {
     @NativeLocalization private var l10n
     @EnvironmentObject private var store: NativeCareerStore
@@ -583,7 +588,7 @@ private struct NativeJobLink: View {
                     if store.isCurrentResearch(job), let rank = job.rank { Text(l10n.format("PRIORITY {0}", [String(format: "%02d", rank)])).font(.caption2.weight(.semibold)).foregroundStyle(.secondary) }
                     Text(job.title).font(.headline).fixedSize(horizontal: false, vertical: true)
                     Text(l10n.format("{0} · {1}", [String(describing: job.company), String(describing: job.location)])).font(.subheadline).foregroundStyle(.secondary)
-                    Text(job.kind == "archived" ? l10n.format("Earlier assessment: {0}", [job.fit]) : job.fit).font(.caption.weight(.medium)).foregroundStyle(job.isExpired ? Color.primary : Color.careerAccent)
+                    Text(job.kind == "archived" ? l10n.format("Earlier assessment: {0}", [spokenListingFit(job.fit, l10n)]) : spokenListingFit(job.fit, l10n)).font(.caption.weight(.medium)).foregroundStyle(job.isExpired ? Color.primary : Color.careerAccent)
                     ForEach(store.workspace.profile.criteriaMessages(for: job), id: \.self) { message in
                         Label(l10n(message), systemImage: "questionmark.circle").font(.caption).foregroundStyle(.secondary)
                     }
@@ -668,7 +673,7 @@ private struct NativeJobDetail: View {
                 }
             }
             Section(l10n(job.kind == "archived" ? "Preserved earlier assessment" : "Listing information to review")) {
-                Text(job.fit).font(.headline).foregroundStyle(Color.careerAccent)
+                Text(spokenListingFit(job.fit, l10n)).font(.headline).foregroundStyle(Color.careerAccent)
                 Text(job.summary)
                 Text(l10n("This is not a verified personal fit score. Compare the employer requirements with your own evidence."))
                     .font(.footnote).foregroundStyle(.secondary)
