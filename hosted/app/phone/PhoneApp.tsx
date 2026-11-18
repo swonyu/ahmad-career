@@ -149,14 +149,14 @@ export default function PhoneApp({ account }: { account: Account }) {
   async function preserveUnfinished(scope: string, drafts: RecoveryDraft[]) {
     for (const draft of drafts) {
       // A resolved editor cannot be recreated by a delayed autosave callback.
-      if (draft.record && recordRecoveryLifecycle.current.retired.get(scope)?.has(draft.id)) continue;
-      if (draft.jobLink && closedJobDrafts.current.has(draft.id)) continue;
+      const retired = () => Boolean(draft.record && recordRecoveryLifecycle.current.retired.get(scope)?.has(draft.id) || draft.jobLink && closedJobDrafts.current.has(draft.id));
+      if (retired()) continue;
       // A delayed autosave must not recreate data after the recovery reset.
       if (clearingRecovery.current?.scope === scope) throw new PhoneVaultError("reset_pending", "This save was cancelled because the browser draft is being removed. Your previous data was not restored.");
       let value: PhoneSafety;
       try { value = await phoneSafety.recover(scope, draft); }
-      catch (error) { if (draft.record && recordRecoveryLifecycle.current.retired.get(scope)?.has(draft.id)) continue; throw error; }
-      if (!draft.record || !recordRecoveryLifecycle.current.retired.get(scope)?.has(draft.id)) adoptSafety(scope, value);
+      catch (error) { if (retired()) continue; throw error; }
+      if (!retired()) adoptSafety(scope, value);
     }
   }
   function storageFailure(error: unknown) {

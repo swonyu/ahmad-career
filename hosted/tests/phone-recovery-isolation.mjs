@@ -1346,3 +1346,63 @@ test("record save and discard cleanup cannot overwrite a replacement Add editor"
     assert.equal((await recoveryRows(h)).recovery.some(row => row.id === id), outcome === "failure");
   });
 });
+
+// Autosave starts outside the busy operation. Exercise the production Save /
+// Discard wrapper while the real encrypted safety queue is still completing it.
+function useActualOperationRun(h) {
+  const c = h.context;
+  c.setBusy = value => { c.busy = value; };
+  c.APIError = class extends Error {};
+  c.identityCheckPending = { current: false };
+  c.identityCheckRef = { current() { assert.fail("No identity request is expected in this local operation"); } };
+  install(c, "run");
+}
+
+test("job-link retirement fences an in-flight autosave result while real cleanup remains queued", async t => {
+  for (const action of ["save", "discard"]) await t.test(action, async () => {
+    const h = await harness(), neighbors = await seedNeighbors(h), c = h.context;
+    useActualOperationRun(h);
+    const id = beginJobLink(h), captured = c.unfinished();
+    const entered = deferred(), gate = deferred(), cleanupRequested = deferred(), cleanupEntered = deferred(), cleanupGate = deferred();
+    let writes = 0;
+    h.recoveryPort.afterWrite = async () => {
+      writes++;
+      if (writes === 1) { entered.resolve(); await gate.promise; }
+      if (writes === 2) { cleanupEntered.resolve(); await cleanupGate.promise; }
+    };
+    c.phoneSafety = { ...h.safety, discard: (...args) => { cleanupRequested.resolve(); return h.safety.discard(...args); } };
+    const preserving = c.preserveUnfinished(scope, captured); await entered.promise;
+    const completing = action === "save" ? c.saveAddedJob() : c.discardDialogEdits(); await cleanupRequested.promise;
+    assert(c.closedJobDrafts.current.has(id)); assert.equal(c.busyRef.current, true);
+    const displayed = c.safetyState;
+    try {
+      gate.resolve(); await preserving; await cleanupEntered.promise;
+      assert.equal(c.safetyState, displayed, "A retired job-link autosave must not publish its obsolete recovery list");
+    } finally { gate.resolve(); cleanupGate.resolve(); await completing; }
+    assert.deepEqual(await recoveryRows(h), neighbors);
+    assert.equal(c.dialog, null); assert.equal(c.busyRef.current, false);
+    assert.equal((await h.main.loadPhoneSnapshot(scope)).jobs.filter(job => job.url === jobLinkFields.url).length, action === "save" ? 1 : 0);
+  });
+});
+
+test("job-link retirement silences a late autosave error without hiding an active editor failure", async t => {
+  for (const action of ["save", "discard"]) await t.test(action, async () => {
+    const h = await harness(), neighbors = await seedNeighbors(h), c = h.context;
+    useActualOperationRun(h);
+    const id = beginJobLink(h), captured = c.unfinished(), entered = deferred(), gate = deferred(), cleanupRequested = deferred();
+    let first = true;
+    h.recoveryPort.beforeWrite = async () => { if (first) { first = false; entered.resolve(); await gate.promise; } };
+    h.recoveryPort.failWriteAt = h.recoveryPort.writeCalls + 1;
+    c.phoneSafety = { ...h.safety, discard: (...args) => { cleanupRequested.resolve(); return h.safety.discard(...args); } };
+    const preserving = c.preserveUnfinished(scope, captured).then(() => null, error => error); await entered.promise;
+    const completing = action === "save" ? c.saveAddedJob() : c.discardDialogEdits(); await cleanupRequested.promise;
+    assert(c.closedJobDrafts.current.has(id)); assert.equal(c.busyRef.current, true);
+    gate.resolve(); const oldError = await preserving; await completing;
+    assert.equal(oldError, null, "A retired job-link autosave must not trigger the outer recovery-error notice");
+    assert.deepEqual(await recoveryRows(h), neighbors); assert.equal(c.dialog, null);
+    beginJobLink(h, { ...jobLinkFields, title: "Current unfinished job / وظيفة قيد الإضافة" });
+    h.recoveryPort.writeFailure = new DOMException("Synthetic full storage", "QuotaExceededError");
+    await assert.rejects(c.preserveUnfinished(scope, c.unfinished()), hasCode("storage_full"), "An active Add editor must still report a genuine save failure");
+    assert.equal(c.dialog.kind, "add"); assert.equal(c.dialogDirty, true);
+  });
+});
