@@ -14,7 +14,10 @@ import org.junit.After
 import org.junit.Assert.*
 import org.junit.Test
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.atomic.AtomicInteger
 
 /** Private last-search storage, independent of application APIs and live public boards. */
 class DiscoveryPersistenceRegressionTest {
@@ -24,13 +27,19 @@ class DiscoveryPersistenceRegressionTest {
     private fun page() = DiscoveryCodec.page(JSONObject(instrumentation.context.assets.open("discovery-search-v1.json").bufferedReader().use { it.readText() }))
     private class MemoryStore : PrivateStore {
         val records = ConcurrentHashMap<String, String>()
+        val reads = AtomicInteger()
+        val writes = AtomicInteger()
         @Volatile var failReads = false
+        @Volatile var readGate: CountDownLatch? = null
         @Volatile var failWrites = false
         override fun read(name: String): JSONObject? {
+            reads.incrementAndGet()
+            readGate?.let { check(it.await(5, TimeUnit.SECONDS)) { "Synthetic read gate was not released" } }
             if (failReads) throw java.io.IOException("Synthetic private storage unavailable")
             return records[name]?.let(::JSONObject)
         }
         override fun write(name: String, value: JSONObject) {
+            writes.incrementAndGet()
             if (failWrites) throw java.io.IOException("Synthetic private write unavailable")
             records[name] = value.toString()
         }
@@ -64,6 +73,11 @@ class DiscoveryPersistenceRegressionTest {
     }
     private fun search(controller: DiscoveryController, more: Boolean = false) {
         main { controller.search(more) }; await { !controller.state.value.loading }
+    }
+    private fun retrySavedRead(controller: DiscoveryController, store: MemoryStore) {
+        val before = store.reads.get()
+        main { controller.retrySavedSearch() }
+        await { store.reads.get() > before && !controller.state.value.restoringSearch }
     }
     private fun snapshot(filters: DiscoveryFilters, result: DiscoveryPage = page()) = DiscoverySnapshotCodec.encode(DiscoverySnapshot(filters, filters.cleaned(), result)).toString()
     @After fun clear() { gates.forEach { it.complete(page()) }; scopes.forEach { it.cancel() } }
@@ -123,10 +137,114 @@ class DiscoveryPersistenceRegressionTest {
         suspendMain { controller.saveSearchNow() }
         assertEquals(original, store.records["search-A"])
         assertEquals(page().jobs, controller.state.value.jobs)
-        main { controller.retrySavedSearch() }; await { !controller.state.value.restoringSearch }
-        assertTrue(controller.state.value.searchRestoreBlocked)
-        assertEquals(original, store.records["search-A"])
+        val live = controller.state.value
+        val exported = controller.exportSnapshot().toString()
+        repeat(2) {
+            retrySavedRead(controller, store)
+            assertEquals("A failed saved read must retain the usable search", live, controller.state.value)
+            assertEquals(exported, controller.exportSnapshot().toString())
+            assertEquals(original, store.records["search-A"])
+        }
+        store.records.remove("search-A")
+        retrySavedRead(controller, store)
+        assertEquals("A missing same-session file must not reset usable memory",
+            live.copy(searchRestoreBlocked = false, searchStorageError = null), controller.state.value)
+        assertEquals(exported, controller.exportSnapshot().toString())
+        suspendMain { controller.saveSearchNow() }
+        assertEquals(exported, store.records["search-A"])
+        assertTrue(store.writes.get() > 0)
         assertEquals(1, service.searches.size)
+    }
+
+    @Test fun failedSubmittedSearch_survivesSavedReadRetries_besideANewerDraftAndCooldown() {
+        for (withResults in listOf(false, true)) for (cooldown in listOf(0, 60)) {
+            val store = MemoryStore()
+            val original = JSONObject(snapshot(DiscoveryFilters(query = "saved"))).put("schema", 99).toString()
+            store.records["search-A"] = original
+            val service = Service(page()); val controller = controller(service)
+            suspendMain { controller.attachPrivateSession(store, "search-A") }
+            if (withResults) {
+                main { controller.editFilters { it.copy(query = "earlier results") } }; search(controller)
+            }
+            val submitted = DiscoveryFilters(query = "query A")
+            val draft = DiscoveryFilters(query = "newer draft B", location = "Riyadh")
+            main { controller.editFilters { submitted } }
+            service.failure = java.io.IOException("Synthetic first failure"); search(controller)
+            main { controller.editFilters { draft } }
+            service.failure = DiscoveryFailure(429, "busy", "Synthetic search is temporarily busy.", cooldown)
+            main { controller.retrySubmittedSearch() }; await { !controller.state.value.loading }
+            val live = controller.state.value
+            val exported = controller.exportSnapshot().toString()
+            assertEquals(draft, live.filters); assertEquals(submitted, live.lastAttemptedFilters)
+            assertTrue(live.submittedSearchFailed); assertTrue(live.canRetrySubmittedSearch)
+            assertEquals("Synthetic search is temporarily busy.", live.error)
+            assertEquals(if (withResults) page().jobs else emptyList<DiscoveredJob>(), live.jobs)
+            val calls = service.searches.size
+            repeat(2) {
+                retrySavedRead(controller, store)
+                assertEquals("Repeated invalid reads must retain query A, draft B and result metadata", live, controller.state.value)
+                assertEquals(exported, controller.exportSnapshot().toString())
+                assertEquals(original, store.records["search-A"])
+            }
+            store.failReads = true
+            retrySavedRead(controller, store)
+            assertEquals(live, controller.state.value)
+            assertEquals(original, store.records["search-A"])
+            assertEquals(0, store.writes.get())
+            store.failReads = false; store.records.remove("search-A")
+            retrySavedRead(controller, store)
+            assertEquals(live.copy(searchRestoreBlocked = false, searchStorageError = null), controller.state.value)
+            assertEquals(exported, controller.exportSnapshot().toString())
+            assertEquals(calls, service.searches.size)
+            suspendMain { controller.saveSearchNow() }
+            assertEquals(exported, store.records["search-A"])
+            service.failure = null
+            main { controller.retrySubmittedSearch() }; await { !controller.state.value.loading }
+            assertEquals(draft, controller.state.value.filters)
+            if (cooldown == 0) {
+                assertEquals(calls + 1, service.searches.size)
+                assertEquals(submitted to null, service.searches.last())
+                assertEquals(submitted, controller.state.value.displayedFilters)
+            } else {
+                assertEquals(calls, service.searches.size)
+                assertEquals(live.retryAtMillis, controller.state.value.retryAtMillis)
+                assertEquals(submitted, controller.state.value.lastAttemptedFilters)
+            }
+            suspendMain { controller.saveSearchNow() }
+            assertTrue(store.writes.get() > 0)
+            assertEquals(draft, DiscoverySnapshotCodec.decode(JSONObject(store.records.getValue("search-A"))).filters)
+            store.records["search-B"] = snapshot(DiscoveryFilters(query = "other account"))
+            suspendMain { controller.attachPrivateSession(store, "search-B") }
+            assertEquals("other account", controller.state.value.filters.query)
+            assertNull(controller.state.value.lastAttemptedFilters)
+            assertFalse(controller.state.value.submittedSearchFailed)
+            assertNull(controller.state.value.error); assertEquals(0L, controller.state.value.retryAtMillis)
+            suspendMain { controller.attachPrivateSession(MemoryStore(), "search-B") }
+            assertEquals(DiscoveryUiState(), controller.state.value)
+        }
+    }
+
+    @Test fun sameSessionRecovery_coalescesQueuedRetries_withoutResettingLiveMemory() {
+        val store = MemoryStore()
+        val original = JSONObject(snapshot(DiscoveryFilters(query = "saved"))).put("schema", 99).toString()
+        store.records["search-A"] = original
+        val service = Service(page()); val controller = controller(service)
+        suspendMain { controller.attachPrivateSession(store, "search-A") }
+        main { controller.editFilters { it.copy(query = "temporary") } }; search(controller)
+        val live = controller.state.value
+        val before = store.reads.get()
+        val readGate = CountDownLatch(1); store.readGate = readGate
+        try {
+            main { controller.retrySavedSearch(); controller.retrySavedSearch() }
+            await { store.reads.get() > before }
+            instrumentation.waitForIdleSync()
+            assertEquals("Only one same-session read may own recovery", before + 1, store.reads.get())
+            assertEquals(live.copy(restoringSearch = true), controller.state.value)
+        } finally { store.readGate = null; readGate.countDown() }
+        await { !controller.state.value.restoringSearch }
+        assertEquals(live, controller.state.value)
+        assertEquals(original, store.records["search-A"])
+        assertEquals(0, store.writes.get()); assertEquals(1, service.searches.size)
     }
 
     @Test fun writeFailure_keepsEarlierFile_andExplicitRetrySavesCurrentResult() {
@@ -217,5 +335,32 @@ class DiscoveryPersistenceRegressionTest {
         assertEquals(page().jobs, controller.state.value.jobs)
         assertEquals(original, store.records["search-A"])
         assertEquals(1, service.searches.size)
+    }
+
+    @Test fun restoredEmptyCompletePage_staysRestoredUntilASuccessfulSearch_andRepairsEquivalentBoards() {
+        val empty = page().copy(jobs = emptyList(), status = "complete", totalMatches = 0, nextCursor = null)
+        val filters = DiscoveryFilters("saved", "", false, listOf("https://boards.greenhouse.io/example-board", "greenhouse:example-board"))
+        val store = MemoryStore(); store.records["search-A"] = snapshot(filters, empty)
+        val service = Service(page()); val controller = controller(service)
+        suspendMain { controller.attachPrivateSession(store, "search-A") }
+        assertEquals(listOf("greenhouse:example-board"), controller.state.value.filters.sources)
+        assertEquals(listOf("greenhouse:example-board"), controller.state.value.displayedFilters?.sources)
+        assertTrue(controller.state.value.jobs.isEmpty())
+        assertEquals("complete", controller.state.value.status)
+        assertTrue(controller.state.value.restoredSearch)
+        assertEquals("Saved result from an earlier check", DiscoveryPresentation.sourceAvailabilityKey("fresh", controller.state.value.restoredSearch))
+        assertFalse(controller.state.value.canRetrySubmittedSearch)
+        service.failure = java.io.IOException("Synthetic offline")
+        search(controller)
+        assertTrue(controller.state.value.jobs.isEmpty())
+        assertTrue(controller.state.value.restoredSearch)
+        assertEquals("complete", controller.state.value.status)
+        assertNotNull(controller.state.value.error)
+        assertEquals("saved", controller.state.value.displayedFilters?.query)
+        service.failure = null
+        search(controller)
+        assertFalse(controller.state.value.restoredSearch)
+        assertEquals(page().jobs, controller.state.value.jobs)
+        assertEquals(listOf("greenhouse:example-board"), controller.state.value.filters.sources)
     }
 }

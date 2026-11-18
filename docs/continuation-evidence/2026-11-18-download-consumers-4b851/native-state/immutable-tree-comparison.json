@@ -1,0 +1,239 @@
+{
+  "publisher": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+  "account": [
+    {
+      "path": "hosted/app/components/ProviderConnections.tsx",
+      "publisher_blob": "9b5f0fd2f9d87c6e75c862acb041b1e28c17876f",
+      "e1_blob": "9b5f0fd2f9d87c6e75c862acb041b1e28c17876f",
+      "identical": true
+    },
+    {
+      "path": "hosted/app/components/SignInOptions.tsx",
+      "publisher_blob": "31c822ea87aeca3a126c5570a00d27ebaa2bf044",
+      "e1_blob": "31c822ea87aeca3a126c5570a00d27ebaa2bf044",
+      "identical": true
+    },
+    {
+      "path": "hosted/tests/account-recovery-lifecycle.mjs",
+      "publisher_blob": "d8c0d81616572a716ad8dde4b4176512f9d73917",
+      "e1_blob": "d8c0d81616572a716ad8dde4b4176512f9d73917",
+      "identical": true
+    }
+  ],
+  "search": [
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/DiscoveryPersistenceRegressionTest.kt",
+      "publisher_blob": "55aa52e6d4654f8bae97d127066160e475d6c82e",
+      "search_blob": "55aa52e6d4654f8bae97d127066160e475d6c82e",
+      "identical": true
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/DiscoveryRegressionTest.kt",
+      "publisher_blob": "d081abbc6d85528a47e281b02b0b5fae0af81ed5",
+      "search_blob": "cb8d1751b9f6a571bfaf0b08f501ed84f846832a",
+      "identical": false
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+      "publisher_blob": "807148514f95d678d4fdf2541debc14b266e7259",
+      "search_blob": "30d0399ba9de7beccc03e87e5371af40abb52af8",
+      "identical": false
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+      "publisher_blob": "2923fe58330d420ea22b5fee3d2b960dee97a2fe",
+      "search_blob": "2923fe58330d420ea22b5fee3d2b960dee97a2fe",
+      "identical": true
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt",
+      "publisher_blob": "7e4c998b7b00d0c50b5266e0b518b1b822236559",
+      "search_blob": "7e4c998b7b00d0c50b5266e0b518b1b822236559",
+      "identical": true
+    },
+    {
+      "path": "android/app/src/main/res/values-ar/career_copy.xml",
+      "publisher_blob": "6142146c241dbbebc9a7bf59b54b581cd81eccef",
+      "search_blob": "6142146c241dbbebc9a7bf59b54b581cd81eccef",
+      "identical": true
+    },
+    {
+      "path": "android/app/src/main/res/values/career_copy.xml",
+      "publisher_blob": "18ba00fc4e20b0fa1231c9ab2543fd32dc43e0c3",
+      "search_blob": "18ba00fc4e20b0fa1231c9ab2543fd32dc43e0c3",
+      "identical": true
+    },
+    {
+      "path": "apple/AhmadCareer/CareerDiscovery.swift",
+      "publisher_blob": "7b5934ee9fb975ba8747982c5e604be47fb67a76",
+      "search_blob": "42e96e3fc33c2e837242faba78817268717a3036",
+      "identical": false
+    },
+    {
+      "path": "apple/AhmadCareer/NativeDiscoveryViews.swift",
+      "publisher_blob": "54a4b61f0091bda6d56b25a0cd01ac5a33078c8b",
+      "search_blob": "b0040c6ce521a77293d8cbe624419758e5c8cc54",
+      "identical": false
+    },
+    {
+      "path": "apple/AhmadCareer/ar.lproj/Localizable.strings",
+      "publisher_blob": "6736084c3bc5b657ac8c7afb4c16c931a77884ff",
+      "search_blob": "6736084c3bc5b657ac8c7afb4c16c931a77884ff",
+      "identical": true
+    },
+    {
+      "path": "apple/AhmadCareer/en.lproj/Localizable.strings",
+      "publisher_blob": "f5db9f14f9b0b46a8c46d345cc7dc7ed3f4b82c3",
+      "search_blob": "f5db9f14f9b0b46a8c46d345cc7dc7ed3f4b82c3",
+      "identical": true
+    },
+    {
+      "path": "apple/Checks/DiscoveryCheck.swift",
+      "publisher_blob": "8a226855d654a4fb28dd283ecdd3d6b77ee95cfd",
+      "search_blob": "1e462268940aa0d50eaf95ef3318b2de9f005075",
+      "identical": false
+    },
+    {
+      "path": "localization/native-copy.json",
+      "publisher_blob": "7a6dbb08191e2c8d557ff393e7be94d3b5e651ac",
+      "search_blob": "7a6dbb08191e2c8d557ff393e7be94d3b5e651ac",
+      "identical": true
+    }
+  ],
+  "a11y": [
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt",
+      "publisher_blob": "9a59a4fa77d11801b8dda81f24db7a4371f5a83d",
+      "a11y_blob": "158acc0815dd0fe7015eda65b2a8d0933bd185bc",
+      "identical": false
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+      "publisher_blob": "807148514f95d678d4fdf2541debc14b266e7259",
+      "a11y_blob": "299ea64b81093f06183127958e30ee2b3700035d",
+      "identical": false
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+      "publisher_blob": "2923fe58330d420ea22b5fee3d2b960dee97a2fe",
+      "a11y_blob": "2b305a6107d6af1d76ed5dd10a16779a085b0466",
+      "identical": false
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+      "publisher_blob": "6c229804804a7298adcff288c07d60ddd872d872",
+      "a11y_blob": "0326e57918e0b555a3d43cfe271ac57850ea0aec",
+      "identical": false
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt",
+      "publisher_blob": "7e4c998b7b00d0c50b5266e0b518b1b822236559",
+      "a11y_blob": "efa4e369634c1fad5b1ad3a59ea455b7a0b269ab",
+      "identical": false
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/ProfileContract.java",
+      "publisher_blob": "34b319fa676c61ef24cdc261c4cb87fa0698c66a",
+      "a11y_blob": "9550752c039cdb11e6acdb67db115c284ff1f340",
+      "identical": false
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt",
+      "publisher_blob": "e35875a22a09cc2914ec59765d033103cf3fd956",
+      "a11y_blob": "af337c4b9b2e13fd8bd8472e2cb6bc9240a77c40",
+      "identical": false
+    },
+    {
+      "path": "android/app/src/main/res/values-ar/career_copy.xml",
+      "publisher_blob": "6142146c241dbbebc9a7bf59b54b581cd81eccef",
+      "a11y_blob": "dda6086cbb0f9672c8aa0c4e67f884ba056dbbdd",
+      "identical": false
+    },
+    {
+      "path": "android/app/src/main/res/values/career_copy.xml",
+      "publisher_blob": "18ba00fc4e20b0fa1231c9ab2543fd32dc43e0c3",
+      "a11y_blob": "bb6153e01f0f9208b6bf4246178fbd34903d7d55",
+      "identical": false
+    },
+    {
+      "path": "android/checks/BoundaryPolicyCheck.java",
+      "publisher_blob": "4691062a6aab40c7bcdbf85ce39d967c3728f088",
+      "a11y_blob": "8c85410e3c743f5aa14dc014fecdf92980527a8f",
+      "identical": false
+    },
+    {
+      "path": "apple/AhmadCareer/CareerDiscovery.swift",
+      "publisher_blob": "7b5934ee9fb975ba8747982c5e604be47fb67a76",
+      "a11y_blob": "ccd5c9202ca0c27cb0255c05218c76efea534312",
+      "identical": false
+    },
+    {
+      "path": "apple/AhmadCareer/MobileApplicationState.swift",
+      "publisher_blob": "edc87b8f27699167f7b85b204cb4b825f4db9172",
+      "a11y_blob": "39c0c76714fa2ae1a823319dfe13bae64a86c7c3",
+      "identical": false
+    },
+    {
+      "path": "apple/AhmadCareer/NativeApplicationsViews.swift",
+      "publisher_blob": "308ea58f6507ec78b141231dcb776186e79b8a02",
+      "a11y_blob": "76d19700d1639dbeb26511d63225ca333cc1235e",
+      "identical": false
+    },
+    {
+      "path": "apple/AhmadCareer/NativeCareerViews.swift",
+      "publisher_blob": "1a090958326e6a2fa80da840463ca890af190c10",
+      "a11y_blob": "4c4edd98197a06dd7579db7a054c8d29cc01266e",
+      "identical": false
+    },
+    {
+      "path": "apple/AhmadCareer/NativeDiscoveryViews.swift",
+      "publisher_blob": "54a4b61f0091bda6d56b25a0cd01ac5a33078c8b",
+      "a11y_blob": "097a3295ed6450f81cd0b5c7a79970d4d8b58053",
+      "identical": false
+    },
+    {
+      "path": "apple/AhmadCareer/ar.lproj/Localizable.strings",
+      "publisher_blob": "6736084c3bc5b657ac8c7afb4c16c931a77884ff",
+      "a11y_blob": "f2d9ddbf59f28a667f84460d78d13b7af525c182",
+      "identical": false
+    },
+    {
+      "path": "apple/AhmadCareer/en.lproj/Localizable.strings",
+      "publisher_blob": "f5db9f14f9b0b46a8c46d345cc7dc7ed3f4b82c3",
+      "a11y_blob": "b01cf889cc64a65203defb145966779155679086",
+      "identical": false
+    },
+    {
+      "path": "apple/Checks/DiscoveryCheck.swift",
+      "publisher_blob": "8a226855d654a4fb28dd283ecdd3d6b77ee95cfd",
+      "a11y_blob": "e895be22cc1beeb8f27c0f61efde9e213500be3d",
+      "identical": false
+    },
+    {
+      "path": "apple/Checks/MobileLifecycleCheck.swift",
+      "publisher_blob": "1206110c7d544f789e58c94ba55d2d7613ea3a7b",
+      "a11y_blob": "b084f051686a3c73e185f468c9b507e6e894b756",
+      "identical": false
+    },
+    {
+      "path": "localization/native-copy.json",
+      "publisher_blob": "7a6dbb08191e2c8d557ff393e7be94d3b5e651ac",
+      "a11y_blob": "174a4422bc2918112f880a76cd76aa4a06af9592",
+      "identical": false
+    }
+  ],
+  "a11y_commits_since243": 24,
+  "search_a11y_overlap": [
+    "android/app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+    "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+    "android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt",
+    "android/app/src/main/res/values-ar/career_copy.xml",
+    "android/app/src/main/res/values/career_copy.xml",
+    "apple/AhmadCareer/CareerDiscovery.swift",
+    "apple/AhmadCareer/NativeDiscoveryViews.swift",
+    "apple/AhmadCareer/ar.lproj/Localizable.strings",
+    "apple/AhmadCareer/en.lproj/Localizable.strings",
+    "apple/Checks/DiscoveryCheck.swift",
+    "localization/native-copy.json"
+  ]
+}

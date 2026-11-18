@@ -24,23 +24,10 @@ enum CareerAppEnvironment {
             if let availability = ProcessInfo.processInfo.environment["CAREER_UI_APPLICATION_AVAILABILITY"],
                ["disabled", "unverified"].contains(availability) {
                 let folder = root.appendingPathComponent("applications", isDirectory: true)
-                let service = AcceptanceApplicationAvailability(liveEnabled: availability == "disabled" ? false : nil)
                 do {
-                    try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-                    var state = PhoneApplicationState()
-                    state.connect(address: service.origin.absoluteString, workspace: service.workspaceID,
-                                  account: "offline-acceptance", server: try ApplicationServerProfile(service.profile))
-                    if ProcessInfo.processInfo.environment["CAREER_UI_ORPHAN_RECORD"] == "1" {
-                        let job: [String: ApplicationValue] = ["url": .string("https://jobs.example.com/retained-record"),
-                            "title": .string("Record without a bookmark"), "company": .string("Synthetic employer")]
-                        var record = PhoneOpportunityRecord(scope: PhoneRecordScope(), job: PhoneRecordJob(job))
-                        record.stage = .applied; record.appliedElsewhere = true; record.note = "My private retained note"
-                        state.applicationRecords = [record]
-                    }
-                    try JSONEncoder().encode(state).write(to: folder.appendingPathComponent("phone-draft.json"), options: .atomic)
+                    return try makeAvailabilityAcceptanceStore(folder: folder, liveEnabled: availability == "disabled" ? false : nil,
+                        includeOrphanRecord: ProcessInfo.processInfo.environment["CAREER_UI_ORPHAN_RECORD"] == "1")
                 } catch { preconditionFailure("The isolated availability fixture could not be prepared.") }
-                return NativeApplicationsStore(folder: folder, credentials: AcceptanceCredentials(connected: true),
-                    clientFactory: { _, _ in service })
             }
             return NativeApplicationsStore(folder: root.appendingPathComponent("applications", isDirectory: true),
                 credentials: AcceptanceCredentials(), clientFactory: { _, _ in
@@ -50,6 +37,36 @@ enum CareerAppEnvironment {
         #endif
         return NativeApplicationsStore()
     }
+    #if DEBUG
+    /// Seed a new isolated fixture once. Relaunch must exercise the saved draft,
+    /// including the store's normal fail-closed handling of unreadable files.
+    static func makeAvailabilityAcceptanceStore(folder: URL, liveEnabled: Bool?, includeOrphanRecord: Bool = false) throws -> NativeApplicationsStore {
+        let service = AcceptanceApplicationAvailability(liveEnabled: liveEnabled)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let path = folder.appendingPathComponent("phone-draft.json")
+        if !FileManager.default.fileExists(atPath: path.path) {
+            var state = PhoneApplicationState()
+            state.connect(address: service.origin.absoluteString, workspace: service.workspaceID,
+                          account: "offline-acceptance", server: try ApplicationServerProfile(service.profile))
+            if includeOrphanRecord {
+                let job: [String: ApplicationValue] = ["url": .string("https://jobs.example.com/retained-record"),
+                    "title": .string("Record without a bookmark"), "company": .string("Synthetic employer")]
+                var record = PhoneOpportunityRecord(scope: PhoneRecordScope(), job: PhoneRecordJob(job))
+                record.stage = .applied; record.appliedElsewhere = true; record.note = "My private retained note"
+                state.applicationRecords = [record]
+            }
+            do {
+                // Exclusive creation also protects an existing file that appeared
+                // after the check. Foundation forbids combining this with .atomic.
+                try JSONEncoder().encode(state).write(to: path, options: .withoutOverwriting)
+            } catch let error as CocoaError where error.code == .fileWriteFileExists {
+                // Another initializer owns the existing bytes; the store reads them.
+            }
+        }
+        return NativeApplicationsStore(folder: folder, credentials: AcceptanceCredentials(connected: true),
+            clientFactory: { _, _ in service })
+    }
+    #endif
     static func makeDiscoveryStore() -> CareerDiscoveryStore {
         #if DEBUG
         if let root = acceptanceRoot {
@@ -98,6 +115,13 @@ private final class AcceptanceApplicationAvailability: MobileApplicationServing 
 
 @MainActor
 private final class AcceptanceDiscovery: CareerDiscoveryServing {
+    // A separately enabled offline journey fails this matching search once,
+    // then returns real matching fixture results on the user's Retry action.
+    // The existing permanent-failure fixture and Release service are unchanged.
+    private var recoveryFailurePending = ProcessInfo.processInfo.environment["CAREER_UI_DISCOVERY_RETRY_ONCE"] == "1"
+    // Structured offline failures exercise the same deadline contract as HTTP
+    // Retry-After: 0 and a short future wait; no employer request is made.
+    private var rateLimitDelay: TimeInterval? = ["0": 0, "30": 30][ProcessInfo.processInfo.environment["CAREER_UI_DISCOVERY_RATE_LIMIT_ONCE"] ?? ""]
     private let source = DiscoverySource(id: "lever:global:career-fixture", name: "Synthetic employer", provider: "lever",
         region: "global", board: "career-fixture", boardUrl: "https://jobs.lever.co/career-fixture")
     func catalog() async throws -> DiscoveryCatalog {
@@ -106,6 +130,15 @@ private final class AcceptanceDiscovery: CareerDiscoveryServing {
     }
     func search(_ query: DiscoveryQuery, cursor: String?) async throws -> DiscoveryPage {
         if query.keywords == "offline error" { throw URLError(.notConnectedToInternet) }
+        if let delay = rateLimitDelay, query.keywords == "Interface designer", cursor == nil {
+            rateLimitDelay = nil
+            throw DiscoveryFailure(message: "Search is temporarily busy. Wait before trying again.",
+                retryAfter: Date().addingTimeInterval(delay))
+        }
+        if recoveryFailurePending && query.keywords == "Interface designer" && cursor == nil {
+            recoveryFailurePending = false
+            throw URLError(.notConnectedToInternet)
+        }
         let checked = ISO8601DateFormatter().string(from: Date())
         let all = [
             DiscoveryJob(id: "fixture-design", sourceId: source.id, sourceName: source.name, provider: "lever",

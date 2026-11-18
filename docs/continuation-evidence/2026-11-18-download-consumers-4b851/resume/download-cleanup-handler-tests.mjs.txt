@@ -1,0 +1,22 @@
+
+for (const action of ['exportRecordsCSV', 'exportFollowUp']) {
+  test('actual ' + action + ' preserves the snapshot and withholds success when download activation throws', async () => {
+    const h = exportHarness(), failing = downloadHarness('click');
+    const before = JSON.stringify(h.saved);
+    h.context.download = failing.download;
+    const invoke = () => action === 'exportRecordsCSV'
+      ? h.context.exportRecordsCSV()
+      : h.context.exportFollowUp(h.saved.records[0]);
+    await assert.rejects(invoke(), error => error === failing.injected);
+    assert.equal(JSON.stringify(h.saved), before);
+    assert.equal(h.notices.length, 0, 'A failed handoff must not issue the download-started notice');
+    assert.equal(failing.attached.size, 0); assert.equal(failing.allocated.size, 0);
+    const retry = downloadHarness();
+    h.context.download = retry.download;
+    await invoke();
+    assert.equal(JSON.stringify(h.saved), before);
+    assert.equal(h.notices.length, 1); assert.equal(h.notices[0].error, false);
+    assert.equal(retry.anchors[0].clicked, true); assert.equal(retry.attached.size, 0);
+    retry.timers[0].callback(); assert.equal(retry.allocated.size, 0);
+  });
+}

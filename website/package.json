@@ -5,10 +5,11 @@
   "scripts": {
     "build": "node build.mjs",
     "start": "node dev.mjs",
-    "test": "node check.mjs && node preferences-check.mjs && node record-check.mjs && node feed-check.mjs && node state-check.mjs && node server-check.mjs",
+    "test": "node check.mjs && node preferences-check.mjs && node record-check.mjs && node feed-check.mjs && node state-check.mjs && node server-check.mjs && node followup-check.mjs && node backup-check.mjs && node legacy-compatibility-check.mjs",
     "test:applications": "node applications-check.mjs",
     "applications": "node applications/server.mjs",
-    "pair-phone": "node applications/pair.mjs"
+    "pair-phone": "node applications/pair.mjs",
+    "test:legacy-history": "cd historical/public1.3 && node check.mjs && node record-check.mjs && node feed-check.mjs && node followup-check.mjs && node backup-check.mjs && node role-review-check.mjs && node personalization-check.mjs"
   },
   "dependencies": {
     "pdf-lib": "1.17.1"

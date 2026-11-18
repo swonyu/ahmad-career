@@ -1,0 +1,2 @@
+# Raw command output retains its original whitespace for evidence hashes.
+*.log -text -whitespace

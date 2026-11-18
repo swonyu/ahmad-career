@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "reviewedUTC": "2026-11-18T13:43:47.947308+00:00",
+  "reviewer": "/root/publication_review",
+  "reviewKind": "independent_read_only_bounded_source_review",
+  "disposition": "accepted_for_authorized_compile_verification_no_additional_supported_source_issue",
+  "source": {
+    "base": "c791b64bc94ad9b5dce118d851dcada45a59ec2e",
+    "authorFirstCommit": "30f2722181aeab1c5d8508e495046563c55872b3",
+    "authorFinalCommit": "87c3849bba6e1f03914a7a16943cd50a9b4f6f49",
+    "authorWorktree": "/Users/saleh/Developer/career-finder-native-warnings-20261118-ebb3eed5",
+    "authorFinalWorktreeCleanObserved": true,
+    "rootIntegratedCommit": "8f79a0c4a610ff66ab1f894d2901aa33fc130f27",
+    "tree": "26d7678aabebe2654d000c7cf857c410f968538b",
+    "appleTree": "d84317b2553e6d61ad5996d160f82fdd0b868cf9",
+    "hostedTree": "572b2383bcae4f01371ef5238085f969f8bed09e",
+    "androidTree": "d12086f997f50a9d6f14395e1374ff7e56bccc6f",
+    "rootAndAuthorTreesEqualVerified": true,
+    "rootAndAuthorBinaryDiffEqualVerified": true
+  },
+  "patch": {
+    "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-warning-fixes-20261118T133755Z-c001df/native-warning-complete.patch",
+    "bytes": 4774,
+    "sha256": "d0b21a3839e1a92165fe441f7f23087cc946c8c8645ce6328cb979f797404303",
+    "binding": "Independently recomputed git diff --binary c791..87c3849 equals the reported patch digest; root integrated diff is byte-identical."
+  },
+  "reviewedFiles": [
+    {
+      "path": "apple/AhmadCareer/NativeApplicationsViews.swift",
+      "bytes": 104350,
+      "sha256": "cd0ef28fdf9dc6cbed97d3dfa8842af45034f244f0c2171d12e254d7544bbbd3"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeLocalization.swift",
+      "bytes": 17942,
+      "sha256": "256f554969d2de0eee4f5970445f5544ec378e0e99eaf09876281ad07cf61e82"
+    },
+    {
+      "path": "apple/AhmadCareer.xcodeproj/project.pbxproj",
+      "bytes": 18447,
+      "sha256": "1dd6073b54aa39ca1f330a52541ae748e90e3c111d1726dbadd8de8ac3a501ef"
+    },
+    {
+      "path": ".github/workflows/phone-quality.yml",
+      "bytes": 15842,
+      "sha256": "36de546fcdd9e04c93a4551d2647001bbe4416c303866cb89a6f9028f7228aa4"
+    }
+  ],
+  "checks": [
+    {
+      "id": "W01",
+      "change": "Add @MainActor only to SFSafariViewControllerDelegate conformance on the already @MainActor Presenter.",
+      "evidence": "Exact inverse of the added annotation reproduces the entire original file byte-for-byte.",
+      "finding": "No callback, Task hop, state mutation, focus or dismissal body change. Compiler acceptance must come from the separate build; no causal claim about the old Close failure."
+    },
+    {
+      "id": "W02",
+      "change": "Replace three deprecated languageCode accesses with language.languageCode?.identifier.",
+      "evidence": "Exactly three occurrences; inverse replacement reproduces the entire original file byte-for-byte.",
+      "finding": "Ordered preferred-language filtering, Arabic/English support, English fallback, explicit override and direction branch remain structurally unchanged. Actual rendered-language journey remains unrun."
+    },
+    {
+      "id": "W03",
+      "change": "Set CareerFinderUITests Debug and Release deployment minimum to 17.0.",
+      "evidence": "Only two target-minimum substitutions in the project file. Replacing 17.0 with 16.0 reproduces the whole base file. Author target parser identifies both entries as the test target; app Debug/Release entries remain 16.0.",
+      "finding": "No application minimum increase or reduction of the 17 test methods. This does not establish iOS 16 runtime acceptance."
+    },
+    {
+      "id": "W04",
+      "change": "Align the workflow simulator picker minimum with the test target: 17 rather than 16, plus the matching unavailable-device message.",
+      "evidence": "Exact inverse of those two substitutions reproduces the complete 15,842-byte original workflow.",
+      "finding": "No other picker, architecture, runner, timeout, retry, test selection, strict boot gate, artifact or execution changes. Higher minimum prevents selecting a runtime that cannot host the revised test target."
+    }
+  ],
+  "preserved": {
+    "uiTestSource": "apple/UITests/CareerFinderUITests.swift",
+    "uiTestBytes": 77748,
+    "uiTestSHA256": "5e55d1024d75b14d9b0e48271224825af4d031c12cd2e4aea5635c52298aefe3",
+    "uiTestEntireFileIdenticalToBase": true,
+    "sourceDeclaredMethods": 17,
+    "assertionsAndHelpersUnchanged": true,
+    "hostedAndAndroidTreesIdenticalToBase": true,
+    "noProductCopyChanges": true,
+    "noGeneratedResourceChanges": true,
+    "noNewDependency": true
+  },
+  "authorValidationReceipt": {
+    "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-warning-fixes-20261118T133755Z-c001df/source-validation.json",
+    "bytes": 2608,
+    "sha256": "bfdc016f3f80cb6be149fb73b019931de1d8307dbe61073a080ddb1911795233",
+    "observedResults": "Generator check 1,824 strings per language/149 templates; eight localization tests; project plutil; diff check all exit 0.",
+    "qualification": "Receipt predates the subsequent two-line workflow-only commit. Its workflowUnchanged field describes the earlier three-file stage, not final87. Final workflow was independently reviewed by exact inverse identity here; owner separately reports YAML/Python parse checks."
+  },
+  "limits": [
+    "This reviewer ran no compiler, native application, simulator, UI test, ordinary test suite, browser, CI, push or deployment.",
+    "Fresh generic compile-only result for the final successor remains pending at receipt creation. The prior seven-warning compile belongs to c791 Apple tree, not d84317b2.",
+    "No current native UI pass, no healthy boot, no full CI acceptance and no historical failure reclassification.",
+    "Current c791 ledger/report is intentionally preserved as a separate checkpoint; this receipt supplies the successor source delta."
+  ],
+  "nextApplicableGate": "Author supplies exact successor generic compile outcome; coordinator freezes complete source and obtains healthy-boot 17/116 native/full CI plus required artifact-member visual evidence."
+}

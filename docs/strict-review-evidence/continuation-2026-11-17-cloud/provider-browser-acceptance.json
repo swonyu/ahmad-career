@@ -1,0 +1,27 @@
+{
+  "checkedAt": "2026-11-17T07:54:28.542Z",
+  "surface": "Cloud Chrome at http://127.0.0.1:4173/",
+  "scope": "Actual React ProviderConnections + useAuthStatus with synthetic HTTP only; no real provider or employer requests",
+  "checks": [
+    {
+      "name": "unmount pending Google connect",
+      "result": "PASS",
+      "observed": "aborted true; no navigation; connection card unmounted"
+    },
+    {
+      "name": "revalidation during LinkedIn disconnect",
+      "result": "PASS",
+      "observed": "aborted true; original connection remains; no stale success"
+    },
+    {
+      "name": "replacement link before confirmation",
+      "result": "PASS",
+      "observed": "old confirmation removed; new request carries b repeated 64; observed refreshed disconnected state before success"
+    },
+    {
+      "name": "account switch during pending connect",
+      "result": "PASS",
+      "observed": "aborted true; identity mismatch; both provider controls hidden; no navigation"
+    }
+  ]
+}

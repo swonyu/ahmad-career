@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-11-17T03:49:02.803Z",
+  "observedAt": "2026-11-18T07:21:50.140Z",
   "status": "passed",
   "groups": [
     "A first browser GET returns a blank account view without creating a workspace, salt, throttle or session",
@@ -30,12 +30,12 @@
   "observedR2Writes": 3,
   "realEmployerRequests": 0,
   "sourceHashes": {
-    "server/applications.mjs": "1dad2638f722bbee8a42a6c2af39ed4dec2ec86b4f819ebbf542a67dfa7beab8",
-    "server/provider.mjs": "7e078b63ce3acbe2deb3afa99ac1667e671c58ce56b34075317342ef5ebf7101",
+    "server/applications.mjs": "1c2ccb94215543b9ff537c9657d22b28fc41a942b2e1c9aa2e164ba66e299a7a",
+    "server/provider.mjs": "10d3fa0c116b9e5e5fcecb83bfd3a241428903046fdaf864bf77757dff76870e",
     "server/validation.mjs": "b7b96c7089cbe3c93adcfaed6fd79679b7ea981ca5790ba8b16dc30275825448",
-    "worker/index.ts": "c82a674ffc6fcebef3b1c48d577f0ec5b28a4a4c2b17462c50a7c0d1708ac09e",
+    "worker/index.ts": "f5d914ba412bbb604a73ef63cbb4519e41cd423c278cd3fed588509fa88a000f",
     "tests/hosted-phone.mjs": "f9e528747308354e5e8fbd4c1c7baa0a38e02a9be1a6583619fb77c456b91d00",
-    "tests/fixtures/phone-runtime.mjs": "18ac27f3d82f38d9c718ce0919ed0168eb14e64e4806f404ad3120dab88146ac"
+    "tests/fixtures/phone-runtime.mjs": "9be5ddb7d9fcd5fef67e372c7812d1a30bb8ae0970bf3938d98345144ac59331"
   },
   "scope": "Bundled production application handler inside actual workerd with real local D1 and R2. Provider HTTP is synthetic and all real outbound requests are forbidden.",
   "limits": "The test-only edge strips caller identity headers and injects trusted synthetic owners. Production Sites header stripping, browser UI behavior and production HTTPS require separate live acceptance."

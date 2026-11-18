@@ -1,0 +1,99 @@
+import { readCheckedPDF as actualReadCheckedPDF } from "career-actual-pdf";
+import { createActualReadPDF } from "./actual-handler";
+import fixture from "./fixture-data.json";
+import "./style.css";
+
+type Mode = "normal" | "cancel" | "account-change";
+type Notice = { text: string; error?: boolean } | null;
+type Event = { name: string; [key: string]: unknown };
+const el = <T extends HTMLElement>(id: string) => {
+  const value = document.getElementById(id); if (!value) throw Error("Missing fixture element: " + id); return value as T;
+};
+const input = el<HTMLInputElement>("pdf-file"), modeSelect = el<HTMLSelectElement>("mode");
+const epoch = { current: 1 }, identityUnverified = { current: false }, snapshotRef = { current: { scope: "qa:synthetic-owner-a" } }, pdfCheck = { current: null as AbortController | null };
+const original = { firstName: "SYNTHETIC QA PROFILE", resume: fixture.priorResume };
+let profile = structuredClone(original), busy = false, activeMode: Mode = "normal", notice: Notice = null, changed = false;
+let workerStarts = 0, workerTerminations = 0, preserved: boolean | null = null, picked = "";
+let events: Event[] = [], results: object[] = [];
+const record = (name: string, extra: Record<string, unknown> = {}) => { events.push({ name, ...extra }); render(); };
+
+function render() {
+  input.disabled = busy; modeSelect.disabled = busy; el<HTMLButtonElement>("reset").disabled = busy;
+  el<HTMLButtonElement>("cancel").disabled = !busy || !pdfCheck.current;
+  el("status").textContent = busy ? "Checking the selected PDF in a real browser worker…" : "Ready. All state on this page is synthetic and memory-only.";
+  el("notice").textContent = notice?.text ?? ""; el("notice").classList.toggle("error", Boolean(notice?.error));
+  el("cv-name").textContent = profile.resume.name; el("cv-sha").textContent = profile.resume.sha256;
+  el("preserved").textContent = preserved === null ? "No check yet" : preserved ? "Yes — unchanged" : "No — replaced by a validated selection";
+  el("form-changed").textContent = changed ? "Yes" : "No";
+  el("workers").textContent = `${workerStarts} / ${workerTerminations}`;
+  el("evidence").textContent = JSON.stringify({
+    scope: "Synthetic PDF selection only; no persistence, auth or external requests",
+    sourceHashes: fixture.sourceHashes, handlerHashes: fixture.handlerHashes,
+    sourceRoot: fixture.sourceRoot, picked, activeMode, busy, changed, previousPreserved: preserved,
+    currentCV: { name: profile.resume.name, size: profile.resume.size, sha256: profile.resume.sha256 },
+    syntheticOwner: snapshotRef.current.scope, ownerNeedsConfirmation: identityUnverified.current,
+    workerStarts, workerTerminations, results, events,
+  }, null, 2);
+}
+
+// Observe genuine browser Workers, preserving the production default constructor
+// URL and all ordinary validation. The cancellation test aborts synchronously on
+// the next microtask after the actual postMessage, before a result task can apply.
+const NativeWorker = globalThis.Worker;
+if (typeof NativeWorker === "function") {
+  globalThis.Worker = class ObservedWorker extends NativeWorker {
+    private readonly fixtureWorkerId: number;
+    private terminated = false;
+    constructor(url: string | URL, options?: WorkerOptions) {
+      super(url, options); this.fixtureWorkerId = ++workerStarts;
+      const address = new URL(String(url), window.location.href);
+      record("worker-created", { id: this.fixtureWorkerId, pathname: address.pathname, sameOrigin: address.origin === location.origin, type: options?.type });
+      this.addEventListener("error", () => record("worker-error", { id: this.fixtureWorkerId }));
+      this.addEventListener("message", event => record("worker-result", { id: this.fixtureWorkerId, result: event.data }));
+    }
+    postMessage(message: unknown, transfer: Transferable[] | StructuredSerializeOptions = []) {
+      if (Array.isArray(transfer)) super.postMessage(message, transfer); else super.postMessage(message, transfer);
+      record("worker-payload-posted", { id: this.fixtureWorkerId });
+      if (activeMode === "cancel") queueMicrotask(() => { record("synthetic-cancel-after-postMessage"); pdfCheck.current?.abort(); });
+    }
+    terminate() {
+      super.terminate();
+      if (!this.terminated) { this.terminated = true; workerTerminations++; record("worker-terminate-called", { id: this.fixtureWorkerId }); }
+    }
+  };
+}
+window.addEventListener("securitypolicyviolation", event => record("csp-violation", { directive: event.effectiveDirective, blockedURI: event.blockedURI }));
+
+const readPDF = createActualReadPDF({
+  epoch, identityUnverified, snapshotRef, pdfCheck, locked: false,
+  async run(label: string, action: (generation: number) => Promise<void>) {
+    if (busy) return;
+    busy = true; activeMode = modeSelect.value as Mode; notice = null;
+    const before = JSON.stringify(profile); record("selection-started", { label, file: picked, mode: activeMode });
+    try { await action(epoch.current); }
+    catch (error) { notice = { text: error instanceof Error ? error.message : "PDF validation failed.", error: true }; }
+    finally {
+      preserved = JSON.stringify(profile) === before; busy = false;
+      results.push({ file: picked, mode: activeMode, previousPreserved: preserved, currentName: profile.resume.name, currentSha256: profile.resume.sha256, notice, workersActive: workerStarts - workerTerminations });
+      record("selection-finished", { previousPreserved: preserved });
+    }
+  },
+  async readCheckedPDF(file: File, options: Parameters<typeof actualReadCheckedPDF>[1]) {
+    const checked = await actualReadCheckedPDF(file, options);
+    if (activeMode === "account-change") {
+      identityUnverified.current = true; epoch.current++; snapshotRef.current = { scope: "qa:synthetic-owner-b" };
+      record("synthetic-account-invalidated-after-valid-worker-result");
+    }
+    return checked;
+  },
+  setProfile(update: (value: typeof profile) => typeof profile) { profile = update(profile); record("actual-handler-replaced-profile"); },
+  setFormChanged(value: boolean) { changed = value; render(); },
+  setNotice(value: Notice) { notice = value; render(); },
+});
+input.addEventListener("change", () => { const file = input.files?.[0]; if (!file || busy) return; picked = file.name; void readPDF(file); input.value = ""; });
+el("cancel").addEventListener("click", () => { record("manual-cancel"); pdfCheck.current?.abort(); });
+el("reset").addEventListener("click", () => {
+  if (busy) return; profile = structuredClone(original); identityUnverified.current = false; epoch.current++; snapshotRef.current = { scope: "qa:synthetic-owner-a" };
+  notice = null; changed = false; preserved = null; picked = ""; record("restored-synthetic-prior-cv");
+});
+render();

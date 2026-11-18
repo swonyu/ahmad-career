@@ -1,0 +1,114 @@
+{
+  "checkedUTC": "2026-11-18T08:56:06.484445+00:00",
+  "runId": 44262971576,
+  "jobId": 134660556103,
+  "head": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2",
+  "actualCheckout": "9325832a180104c13738e7836bfb4cb2e3c80c8f",
+  "logSHA256": "8366a5761892fc9217e293f963966726a1bd18eb2c4cfa8c9071d3238696a589",
+  "expectedCount": 17,
+  "startedCount": 17,
+  "completedCount": 17,
+  "resultCounts": {
+    "failed": 6,
+    "passed": 11
+  },
+  "expectedMethodsExactlyEqualCompleted": true,
+  "eachExecutedOnce": true,
+  "skipped": 0,
+  "cases": [
+    {
+      "test": "testAccessibilityTextKeepsCoreControlsReachable",
+      "result": "failed",
+      "seconds": 78.054
+    },
+    {
+      "test": "testApplicationDraftSurvivesCancelAndRelaunch",
+      "result": "failed",
+      "seconds": 73.993
+    },
+    {
+      "test": "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+      "result": "failed",
+      "seconds": 255.566
+    },
+    {
+      "test": "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+      "result": "passed",
+      "seconds": 77.19
+    },
+    {
+      "test": "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "result": "failed",
+      "seconds": 60.881
+    },
+    {
+      "test": "testDiscoverySaveFlowsIntoSavedAndApply",
+      "result": "passed",
+      "seconds": 46.352
+    },
+    {
+      "test": "testFreshStartAndFiveTabs",
+      "result": "passed",
+      "seconds": 32.381
+    },
+    {
+      "test": "testLinkedInProfileDraftAndExternalSearchChoice",
+      "result": "passed",
+      "seconds": 59.841
+    },
+    {
+      "test": "testOpportunityDiscardRequiresExplicitChoice",
+      "result": "passed",
+      "seconds": 28.827
+    },
+    {
+      "test": "testOpportunityDraftKeepSaveAndRestore",
+      "result": "passed",
+      "seconds": 68.182
+    },
+    {
+      "test": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+      "result": "passed",
+      "seconds": 168.035
+    },
+    {
+      "test": "testProfileReadinessAndSimpleConnectionSetup",
+      "result": "failed",
+      "seconds": 85.323
+    },
+    {
+      "test": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+      "result": "passed",
+      "seconds": 38.045
+    },
+    {
+      "test": "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+      "result": "passed",
+      "seconds": 114.824
+    },
+    {
+      "test": "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+      "result": "passed",
+      "seconds": 157.146
+    },
+    {
+      "test": "testSearchEmptyAndFailurePreservesPreviousResults",
+      "result": "failed",
+      "seconds": 263.233
+    },
+    {
+      "test": "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+      "result": "passed",
+      "seconds": 66.764
+    }
+  ],
+  "xcodebuildExit": 65,
+  "unexpectedFailures": 0,
+  "mergeGateReady": false,
+  "currentArtifactRecovery": "complete; archive GitHub digest verified and extracted",
+  "artifactId": 14411345941,
+  "artifactSHA256": "835ec92b028a463c9f61b0bb7953edbbaf80cd06e217a85b950ace249bf55df3",
+  "xcresultSummaryPath": "xcresult-summary.json",
+  "xcresultCountsAgree": true,
+  "mediaIndex": "iphone-media-index.json"
+}

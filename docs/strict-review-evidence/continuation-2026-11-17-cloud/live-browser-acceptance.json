@@ -1,0 +1,96 @@
+{
+  "asOf": "2026-11-17T15:59:37Z",
+  "environment": "separate owner-private acceptance Site",
+  "site": "appgprj_6afc21bd599c8191a0fb7705274d8582",
+  "version1": {
+    "source": "8a31c7db5c761e80d08272d0f7700b4c2dc3ce99",
+    "browser": "Connected local Chrome",
+    "observations": [
+      {
+        "case": "Owner sign-in and current account settings",
+        "result": "observed pass; workspace/status and provider-connect routes returned HTTP200"
+      },
+      {
+        "case": "Discovery catalog",
+        "result": "observed failure: 0 boards and unverified non-JSON response; diagnosed omitted same-origin hosting credentials"
+      },
+      {
+        "case": "Manual synthetic job saved locally",
+        "result": "observed pass",
+        "fixtureURL": "https://example.org/career-finder-acceptance/2026-11-17"
+      },
+      {
+        "case": "Private bilingual note saved and reopened",
+        "result": "observed pass; no upload requested"
+      },
+      {
+        "case": "Arabic Saved-note search without marks/tatweel",
+        "query": "متابعة تجريبية",
+        "result": "Observed matching synthetic record; unrelated query showed no matches; the record reappeared after query recovery."
+      },
+      {
+        "case": "Saved follow-up",
+        "date": "2026-11-21",
+        "result": "observed in Saved and details; calendar disclosure became available",
+        "interactionNote": "Date fill changed DOM value without the controlled form's dirty state. Native keyboard ArrowUp produced the actual changed field and persisted value. No product fix inferred solely from the tool fill behavior."
+      },
+      {
+        "case": "Calendar download",
+        "result": "interrupted before a terminal download/path result; no completed download claim"
+      },
+      {
+        "case": "CSV browser download",
+        "result": "not exercised"
+      },
+      {
+        "case": "Real Google callback",
+        "result": "blocked at Google passkey verification"
+      }
+    ],
+    "realEmployerApplications": 0
+  },
+  "version2": {
+    "source": "17c29bc9708b1634eddc158184cb63f61135675d",
+    "browser": "Cloud Chrome",
+    "signIn": "Existing saved ChatGPT sign-in used for the preview; its identity differs from the Site owner",
+    "result": "Explicit platform 403: You don't have access to this site",
+    "accessBoundary": "hosting owner allowlist, not app-workspace A/B isolation",
+    "searchAfterFix": "not observed",
+    "audienceChanged": false
+  },
+  "notEstablished": [
+    "Real Google consent callback",
+    "Provider denial/unlink/relink",
+    "Disposable app-workspace A/B recovery",
+    "Physical-device VoiceOver/TalkBack",
+    "Browser file import into calendar/spreadsheet",
+    "Release readiness"
+  ],
+  "priorBrowserEvidenceAsOf": "2026-11-17T13:28:42Z",
+  "version3": {
+    "source": "a02ddf951c3ac8f20739799522d7fa000cba2af0",
+    "deploymentReceipt": "private-acceptance-deployment-v3.json",
+    "browserAcceptance": "Not performed; the correct owner browser context remains unavailable.",
+    "changeScope": "Recovery download initiation notice in English/Arabic and lab documentation only.",
+    "audienceChanged": false
+  },
+  "version4": {
+    "source": "8570985f719cbfb374374b0714e74c3d19eeb146",
+    "deploymentReceipt": "private-acceptance-deployment-v4.json",
+    "browserAcceptance": "Not performed; the correct owner browser context remains unavailable.",
+    "changeScope": "Contextual search retry/draft preservation, dynamic bilingual text isolation, CSV guidance, focused tests and lab documentation.",
+    "audienceChanged": false
+  },
+  "latestConnectionAvailabilityCheck": {
+    "observedAt": "2026-11-17T15:19:24Z",
+    "receipt": "browser-connection-recheck.json",
+    "result": "Originating connected-browser context unavailable; no browser code executed or new consent result observed."
+  },
+  "version5": {
+    "source": "7e0ac76792d31b98863c5e9f8f1e1c4821a7f2e7",
+    "deploymentReceipt": "private-acceptance-deployment-v5.json",
+    "browserAcceptance": "Not performed; the correct owner browser context remains unavailable.",
+    "changeScope": "Three source-label direction boundaries, neutral visible/live search summary, limit detection, focused tests and lab history.",
+    "audienceChanged": false
+  }
+}

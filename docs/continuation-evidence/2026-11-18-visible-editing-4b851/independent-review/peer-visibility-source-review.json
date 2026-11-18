@@ -1,0 +1,63 @@
+{
+  "reviewer": "/root/dependency_state_0410/ssr_contract_review",
+  "baseCommit": "cad85c495bc03853cc2258d093e79d8d1fb52ae3",
+  "reviewType": "independent narrow source and option-contract review",
+  "decision": "Two-option correction supported; no weakening or unrelated change found; root browser/full acceptance remains required.",
+  "patch": {
+    "bytes": 3045,
+    "sha256": "05488c32dab09136a62b1d20938ec2c7a1eae27c0cb2a91c44630a98406219ea"
+  },
+  "onlyTwoKeepFocusOptionsChanged": true,
+  "componentsUnchanged": true,
+  "sourceSHA256": {
+    "hosted/app/phone/PhoneApp.tsx": {
+      "baseline": "57543cdbc0fbcb7a51cab725d65907e76af2a29ecf9f2022bffe6caaadc9da02",
+      "candidate": "e3454df4c4a4189475097d5bcc0ac2e2bf1fe53447d3046513c6eb780a9cd998"
+    },
+    "hosted/tests/phone-recovery-isolation.mjs": {
+      "baseline": "be04a91f285aa9556e593af871e1b360e6e34ec2ce963d6528a63a32b0652206",
+      "candidate": "671f0cc26fa35a8df399a85332902b1226b537115fd7321a40c1a04c6ddc9c4b"
+    },
+    "hosted/app/phone/components.tsx": {
+      "baseline": "c18753ee7c8b342831864cecc2694708f09fee6019a76c530b2c2ae743446424",
+      "candidate": "c18753ee7c8b342831864cecc2694708f09fee6019a76c530b2c2ae743446424"
+    },
+    "hosted/tests/phone-record-tools.mjs": {
+      "baseline": "965af62fc693ed788bd487ea9f18aea8d2af2e54a4242d70331569d16632feb2",
+      "candidate": "965af62fc693ed788bd487ea9f18aea8d2af2e54a4242d70331569d16632feb2"
+    },
+    "hosted/app/i18n/messages.ar.json": {
+      "baseline": "46ec9674ec1186d8bc3016c78739eda38542a7beca033a0f0617256b6cc154e9",
+      "candidate": "46ec9674ec1186d8bc3016c78739eda38542a7beca033a0f0617256b6cc154e9"
+    }
+  },
+  "testChanges": [
+    "Keep opener requires preventScroll false",
+    "Editor fallback requires preventScroll false",
+    "Add-job recovery requires preventScroll false"
+  ],
+  "reportedBrowserObservation": {
+    "source": "root report; not independently captured by reviewer",
+    "targetTop": 832.1459,
+    "targetBottom": 881.1459,
+    "dialogTop": 16,
+    "dialogBottom": 828,
+    "dialogClientHeight": 811,
+    "dialogScrollHeight": 976,
+    "dialogScrollTop": 0,
+    "viewportHeight": 844
+  },
+  "requiredBrowserEvidence": [
+    "same intended focused control and open dialog",
+    "draft/dirty state preserved",
+    "target visible within dialog scrollport and viewport before any auto-scrolling locator action",
+    "no fixed pixel-scroll-offset requirement",
+    "existing no-steal behavior retained"
+  ],
+  "layoutVisibilityEstablished": false,
+  "fullGatePassEstablished": false,
+  "optionContractExecutionReviewed": false,
+  "projectTestsOrBuildsExecutedByReviewer": false,
+  "browserOrRemoteActionsByReviewer": false,
+  "productOrTestSourceEditedByReviewer": false
+}

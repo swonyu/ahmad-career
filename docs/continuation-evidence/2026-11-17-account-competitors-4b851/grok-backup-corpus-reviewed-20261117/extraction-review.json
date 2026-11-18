@@ -1,0 +1,188 @@
+{
+  "raw": {
+    "bytes": 31632,
+    "characters": 31225,
+    "lines": 612,
+    "sha256": "1cf2f3d146cc47eefea77c3742493833f732c2ca3eaded9df1c3aedde24add20"
+  },
+  "claimed": {
+    "backup-corpus.zip": {
+      "bytes": 17861,
+      "sha256": "5a9acd42cd96125e31b49fd9583a8490fa156f8b9128b7a0275866767d3ed59d"
+    },
+    "build_corpus.py": {
+      "bytes": 16346,
+      "sha256": "3092402340d2071d59c574cafab84a71fde2e5e44e8905407265999bfea59e08"
+    },
+    "manifest.json": {
+      "bytes": 3602,
+      "sha256": "345252ff401c05dbd0bb23aba64a91f4f8a88c18a5e8075e68bddbff788bf6e9"
+    },
+    "EXPECTED-OUTCOMES.md": {
+      "bytes": 7085,
+      "sha256": "7f8a122c06c08becdb95677388fe86ad6414a2066d04ffcbb6eb7a10143c7b22"
+    },
+    "01-two-unfinished-notes-one-job.json": {
+      "bytes": 1970,
+      "sha256": "609ef2b2bd33c36c577af8cfe9257531a89adbe9411b36dfb5412b3d13c0e5a6"
+    },
+    "02-destination-existing-note.json": {
+      "bytes": 1540,
+      "sha256": "a011a1c60559bf5c1acf8b8da87c4103e6a7ddd1eb23593cb83f9fb6204dae5a"
+    },
+    "02-import-two-alternatives.json": {
+      "bytes": 1953,
+      "sha256": "7d996b908f9057a4d7e75e42c0ab1f33be982f4360ab2b5cc8dd9e562770c3ab"
+    },
+    "03-distinct-lever-global-eu-and-greenhouse-hosts.json": {
+      "bytes": 3873,
+      "sha256": "be6a94d3814691c09197073402cab91eb8055261bb09c56958139f040aee5ca0"
+    },
+    "04-same-greenhouse-link-with-slash-and-utm.json": {
+      "bytes": 1268,
+      "sha256": "49a65365e3c79a482cbcd7b34e0819077e50498f8f27be0f95f0d5623fde39e0"
+    },
+    "05-unknown-root-approval-field.json": {
+      "bytes": 1557,
+      "sha256": "56c0a62cc3ecf19c4792691197dc97308c64dcdd0d5744387a33ea353d5c89b2"
+    },
+    "06-oversized-draft-note.json": {
+      "bytes": 3501,
+      "sha256": "3c300e4cead6e9e0b6bee3823048504b11e82153b613f05af886f00166b8693f"
+    },
+    "07-damaged-truncated.json": {
+      "bytes": 61,
+      "sha256": "786c4841b2ba48dd6fe0df325714f92de2891187605f9eac6fc631f48d114bd7"
+    },
+    "08-self-reported-flag-and-prepared-receipt.json": {
+      "bytes": 3183,
+      "sha256": "ede4156bfb5e801efe6da2b698f589817af5a3c42fcad0f45fcb3f8867b0c369"
+    },
+    "proposed/09-server-expired-dispatch.json": {
+      "bytes": 1263,
+      "sha256": "7dd0268b3ef790a88eef955a89b06b5acc958fa9c33d9467be58c4b444fb6f07"
+    }
+  },
+  "extracted": {
+    "build_corpus.py": {
+      "selected": "exactMarkerSlice",
+      "bytes": 16346,
+      "sha256": "3092402340d2071d59c574cafab84a71fde2e5e44e8905407265999bfea59e08",
+      "variants": {
+        "exactMarkerSlice": {
+          "bytes": 16346,
+          "sha256": "3092402340d2071d59c574cafab84a71fde2e5e44e8905407265999bfea59e08",
+          "matchesClaim": true
+        },
+        "withoutTrailingNewlines": {
+          "bytes": 16345,
+          "sha256": "a7ca93f9a6d98d4e961fea3d2b79709e74a49772da72ff7573b2a02ca7037f10",
+          "matchesClaim": false
+        },
+        "oneFinalNewline": {
+          "bytes": 16346,
+          "sha256": "3092402340d2071d59c574cafab84a71fde2e5e44e8905407265999bfea59e08",
+          "matchesClaim": true
+        }
+      }
+    },
+    "manifest.json": {
+      "selected": "exactMarkerSlice",
+      "bytes": 3602,
+      "sha256": "345252ff401c05dbd0bb23aba64a91f4f8a88c18a5e8075e68bddbff788bf6e9",
+      "variants": {
+        "exactMarkerSlice": {
+          "bytes": 3602,
+          "sha256": "345252ff401c05dbd0bb23aba64a91f4f8a88c18a5e8075e68bddbff788bf6e9",
+          "matchesClaim": true
+        },
+        "withoutTrailingNewlines": {
+          "bytes": 3601,
+          "sha256": "a9837d54d6289eaa8f5cc513d8f30ccc4e5a1dadd3d84218707c526fd9382183",
+          "matchesClaim": false
+        },
+        "oneFinalNewline": {
+          "bytes": 3602,
+          "sha256": "345252ff401c05dbd0bb23aba64a91f4f8a88c18a5e8075e68bddbff788bf6e9",
+          "matchesClaim": true
+        }
+      }
+    },
+    "EXPECTED-OUTCOMES.md": {
+      "selected": "exactMarkerSlice",
+      "bytes": 7085,
+      "sha256": "7f8a122c06c08becdb95677388fe86ad6414a2066d04ffcbb6eb7a10143c7b22",
+      "variants": {
+        "exactMarkerSlice": {
+          "bytes": 7085,
+          "sha256": "7f8a122c06c08becdb95677388fe86ad6414a2066d04ffcbb6eb7a10143c7b22",
+          "matchesClaim": true
+        },
+        "withoutTrailingNewlines": {
+          "bytes": 7084,
+          "sha256": "563f92365005e3a4729a3d968a70f01038ced498729b7555bdad820e3256f37b",
+          "matchesClaim": false
+        },
+        "oneFinalNewline": {
+          "bytes": 7085,
+          "sha256": "7f8a122c06c08becdb95677388fe86ad6414a2066d04ffcbb6eb7a10143c7b22",
+          "matchesClaim": true
+        }
+      }
+    }
+  },
+  "staticAst": {
+    "imports": [
+      "from __future__ import annotations",
+      "import hashlib",
+      "import json",
+      "from pathlib import Path"
+    ],
+    "calls": [
+      "','.join",
+      "Path",
+      "Path(__file__).resolve",
+      "any",
+      "damaged_path.read_bytes",
+      "damaged_path.stat",
+      "data.get",
+      "draft",
+      "draft_body.get",
+      "envelope",
+      "errors.append",
+      "extension['android'].get",
+      "files.items",
+      "hashlib.sha256",
+      "hashlib.sha256(damaged_path.read_bytes()).hexdigest",
+      "hashlib.sha256(proposed_path.read_bytes()).hexdigest",
+      "hashlib.sha256(raw).hexdigest",
+      "isinstance",
+      "item.get",
+      "item['file'].startswith",
+      "job",
+      "json.dumps",
+      "len",
+      "main",
+      "opportunity",
+      "path.parent.mkdir",
+      "path.read_bytes",
+      "path.write_text",
+      "print",
+      "prof.get",
+      "profile",
+      "proposed_path.read_bytes",
+      "proposed_path.stat",
+      "receipt",
+      "record",
+      "set",
+      "shape_errors",
+      "sorted",
+      "source.get",
+      "value.get",
+      "write",
+      "written.append"
+    ],
+    "parseSucceeded": true
+  },
+  "inlineManifestJsonParsed": true
+}

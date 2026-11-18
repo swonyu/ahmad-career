@@ -1,0 +1,16 @@
+{
+  "base": "4f72947dbda76ca5176fa42645337c6c739e6a2a",
+  "sameHarnessAssertions": true,
+  "files": {
+    "baseline/apple/AhmadCareer/MobileApplicationClient.swift": "379b187ad17ddce0b8c13536052db8bab364f70dad4eb313071aaeb0b15b4588",
+    "baseline/apple/AhmadCareer/MobileApplicationState.swift": "63f0106cd6acad4e97a4208475d16c91f5f91d8c53fdb77e603ef29a246f70b9",
+    "baseline/apple/AhmadCareer/CareerDiscovery.swift": "58d217cbfe63375dcb0958ccd9b4ae3a29cf49388c57eae7bbc4d10ff62ff81e",
+    "baseline/apple/Checks/DiscoveryCheck.swift": "0146fe063a9fef9fb3e733e1f5ac16f84bedfd6fda104c38e4443c96effd2adb",
+    "baseline/apple/Checks/Fixtures/discovery-search-v1.json": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7",
+    "candidate/apple/AhmadCareer/MobileApplicationClient.swift": "379b187ad17ddce0b8c13536052db8bab364f70dad4eb313071aaeb0b15b4588",
+    "candidate/apple/AhmadCareer/MobileApplicationState.swift": "63f0106cd6acad4e97a4208475d16c91f5f91d8c53fdb77e603ef29a246f70b9",
+    "candidate/apple/AhmadCareer/CareerDiscovery.swift": "f9b3b60faaf0d0b5f1a2b69369e826c4c6b2b8e6b96ea0916e3ccd71bcdc813e",
+    "candidate/apple/Checks/DiscoveryCheck.swift": "0146fe063a9fef9fb3e733e1f5ac16f84bedfd6fda104c38e4443c96effd2adb",
+    "candidate/apple/Checks/Fixtures/discovery-search-v1.json": "1db518dfb2dfefdfa1c6bad2de9f7b6e27831eaadc3c60e7ae9184fb680b30a7"
+  }
+}

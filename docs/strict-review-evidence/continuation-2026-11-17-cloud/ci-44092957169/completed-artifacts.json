@@ -1,0 +1,23 @@
+{
+  "runId": 44092957169,
+  "partial": true,
+  "artifacts": [
+    {
+      "id": 14333475315,
+      "name": "iphone-build-log-44092957169",
+      "bytes": 8391,
+      "sha256": "e60061d5a76c12b3caae11dff63836242a06fe93ed87469cc53a5debe21d432d",
+      "downloadVerified": true,
+      "safeArchivePaths": true
+    },
+    {
+      "id": 14331754026,
+      "name": "hosted-storage-checks-44092957169",
+      "bytes": 8819,
+      "sha256": "53a6a06266d772c67af50e06759e90f44c77323fde8a8d8e1b89c32282fb6a90",
+      "downloadVerified": true,
+      "safeArchivePaths": true
+    }
+  ]
+}
+

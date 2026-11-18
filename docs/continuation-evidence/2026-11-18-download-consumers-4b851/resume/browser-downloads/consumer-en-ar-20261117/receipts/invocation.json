@@ -1,0 +1,23 @@
+{
+  "command": [
+    "/opt/homebrew/bin/soffice",
+    "-env:UserInstallation=file:///Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/profile",
+    "--headless",
+    "--nologo",
+    "--nodefault",
+    "--nofirststartwizard",
+    "--infilter=Text - txt - csv (StarCalc):44,34,76,1,,1033,true,false,true,false,false,0,true,false,false",
+    "--convert-to",
+    "fods",
+    "--outdir",
+    "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/output",
+    "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/inputs/actual-ui-en.csv",
+    "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/inputs/actual-ui-ar.csv"
+  ],
+  "environmentOverrides": {
+    "XDG_CACHE_HOME": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/cache"
+  },
+  "exit": 0,
+  "stdout": "convert /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/inputs/actual-ui-en.csv as a Calc document -> /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/output/actual-ui-en.fods using filter : OpenDocument Spreadsheet Flat XML\nconvert /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/inputs/actual-ui-ar.csv as a Calc document -> /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/output/actual-ui-ar.fods using filter : OpenDocument Spreadsheet Flat XML\n",
+  "stderr": "Fontconfig warning: no <cachedir> elements found. Check configuration.\nFontconfig warning: adding <cachedir>/usr/local/var/cache/fontconfig</cachedir>\nFontconfig warning: adding <cachedir prefix=\"xdg\">fontconfig</cachedir>\nFontconfig warning: no <cachedir> elements found. Check configuration.\nFontconfig warning: adding <cachedir>/usr/local/var/cache/fontconfig</cachedir>\nFontconfig warning: adding <cachedir prefix=\"xdg\">fontconfig</cachedir>\n"
+}

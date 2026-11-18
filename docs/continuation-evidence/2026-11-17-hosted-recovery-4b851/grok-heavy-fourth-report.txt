@@ -1,0 +1,75 @@
+Grok
+Thought for 41s
+
+Focused Strict Code-Research Pass — Hosted Vault/Recovery and Cross-Tab State
+Commit inspected: d534a6c23bbe81615b8f7a40d3fb4204bb991781. Baseline PhoneApp.tsx at same commit. Research only; no uploads, deployments, or duplicate fixes. Native, dependency, and production-account ownership unchanged. Root’s tested candidate repairs for Clear preservation, cross-tab recovery forks, committed-reset autosave fencing, 200-result guidance, and selected-applied cleanup are not duplicated.
+
+Inspected Source Ranges
+hosted/app/phone/vault.ts (full createPhoneVault, save/load/remove/export, compareAndSet, epochs, reset markers; remaining post-truncation not re-fetched).
+hosted/app/phone/safety.ts (full).
+hosted/app/phone/PhoneApp.tsx (clear/erase handlers, preserveUnfinished/recover/adopt, assertCurrent, selected-applied delete guard, 200-job limits; large file, selective excerpts only).
+Uninspected: full PhoneApp.tsx body beyond quoted handlers, Android discovery/viewmodel, exact picomatch lockfile, physical AT, store console.
+Findings and Counterexample Checks
+
+Existing guards are strong (per-scope queues, epochs, compareAndSet with expected envelopeId, blocked damaged state, assertCurrent generation, scope validation, clearRecovery preserves holds, quarantine on account mismatch). Hypotheses contradicted by these guards are rejected.
+
+1. Quota/error after a committed write
+Source (vault.ts, savePhoneSnapshot):
+
+TypeScript
+let saved: boolean;
+try { saved = await port.compareAndSet(scope, known ?? null, row); }
+catch (error) { throw storageError(error); }
+if (!saved) return changed();
+expected.set(scope, row.envelopeId);
+
+IDB transaction is atomic; QuotaExceededError aborts before expected update. storageError maps it.
+Reproduction (falsifiable): Two concurrent saves on same scope under low quota; second put fails. Expected remains prior ID; no partial write.
+Severity: None (guard present).
+Guard: compareAndSet + post-success expected.set only.
+Minimal repair / workaround: None required.
+Acceptance: Fixture: QuotaExceeded on put leaves expected unchanged and prior envelope intact.
+
+2. Stale identity/account generation
+Source (vault.ts): checkScope requires account:encoded:workspace or guest; epochs increment on remove. PhoneApp lock() + quarantine on accountId mismatch; assertCurrent checks generation and scope.
+Reproduction: Account switch mid-edit → lock quarantines prior snapshot/profile/edits; subsequent save on old epoch fails reset_pending.
+Severity: None for resurrection.
+Guard: Scope validation + epochs + quarantine.
+Acceptance: Fixture: post-switch save on prior epoch throws reset_pending; quarantined edits remain exportable.
+
+3. Two-tab simultaneous restore/save
+Source (vault.ts): Per-scope queue + compareAndSet checks expected envelopeId. safety.ts identical queue/epochs.
+Reproduction: Tab A and Tab B both load same expectedId, both attempt save. One compareAndSet succeeds; other returns changed_elsewhere (“This draft changed in another tab”).
+Severity: None (expected conflict).
+Guard: Queue + compareAndSet.
+Acceptance: Fixture: concurrent saves → exactly one succeeds, other throws changed_elsewhere, data consistent.
+
+4. Cancellation after server mutation
+Source (PhoneApp clear handler):
+
+TSX
+await phoneSafety.clearRecovery(scope);
+await removePhoneSnapshot(scope);
+window.location.reload();
+
+safety.ts clearRecovery increments epoch (holds survive). Local vault independent of server mutations (owned elsewhere).
+Reproduction: Server Stop succeeds; local clear aborts mid-flight. Holds remain; no resurrection of cleared draft.
+Severity: Low residual (timing window between clearRecovery and remove).
+Guard: Epoch fencing + reload.
+Minimal repair / safe workaround: Existing root candidates already address Clear preservation; no new repair proposed.
+Acceptance: Fixture: abort after clearRecovery but before remove leaves holds and does not restore prior content.
+
+5. Export/reimport data integrity
+Source (vault.ts exportPhoneSnapshot): On damaged/unsupported, returns recovery JSON containing encryptedRecord (key remains in browser) or recoveredPayload; never mutates IDB. PhoneApp recovery dialog exports the safety draft JSON itself; no vault reimport path shown.
+Reproduction: Export damaged draft → edit JSON → no import route reloads it into vault.
+Severity: None (absence of import preserves integrity).
+Guard: Export is read-only; recoveryValue bounds size/depth.
+Acceptance: Fixture: exported recovery JSON cannot be loaded back via any existing function; original encrypted row unchanged.
+
+Budget Clarification (prior statement corrected)
+
+Reducing Lever page size from 100 to 50 or 25 increases the page count needed for 500 records (5 → 10 or 20). It does not keep request count constant for the same coverage. A 10-second source deadline is a total budget, not five independent 5-second attempts. Upstream page size (Lever limit=) is distinct from the 50-result UI page. No retry/timeout changes recommended without evidence.
+
+Remaining Uninspected Ranges
+
+Full PhoneApp.tsx (117 kB) beyond the quoted clear/recover/assertCurrent/delete-record handlers; vault.ts post-truncation tail; Android counterparts; exact timing of 200-result UI guidance; physical AT; store console. No invented execution or AT evidence. Research only.

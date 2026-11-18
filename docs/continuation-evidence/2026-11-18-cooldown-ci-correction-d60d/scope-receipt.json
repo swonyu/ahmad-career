@@ -1,0 +1,11 @@
+{
+  "at": "2026-11-18T08:45:42.596586+00:00",
+  "changed_product_or_test_files": [
+    "apple/AhmadCareer/CareerAppEnvironment.swift",
+    "apple/UITests/CareerFinderUITests.swift"
+  ],
+  "shared_helpers_unchanged": true,
+  "product_clock_unchanged": true,
+  "native_journeys": 17,
+  "native_ui_rerun": false
+}

@@ -3,12 +3,13 @@ import { z } from "zod";
 export const MAX_PDF_BYTES = 5 * 1024 * 1024;
 export const PHONE_SCHEMA = 1;
 export const stages = ["saved", "applied", "interview", "offer", "closed"] as const;
-export const stageNames: Record<(typeof stages)[number], string> = { saved: "Saved", applied: "Applied", interview: "Interview", offer: "Offer", closed: "Closed" };
+export const stageNames: Record<(typeof stages)[number], string> = { saved: "Saved for later", applied: "Applied", interview: "Interview", offer: "Offer", closed: "Closed" };
 export const countryCodes = "AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XK YE YT ZA ZM ZW".split(" ");
 
 export function publicURL(input: string): string {
   if (typeof input !== "string" || input.length > 2048 || /[\s\\\x00-\x1f\x7f]/u.test(input)) throw Error("Enter a complete public HTTPS link without spaces.");
-  const url = new URL(input);
+  let url: URL;
+  try { url = new URL(input); } catch { throw Error("Enter a complete public HTTPS link without spaces."); }
   if (url.protocol !== "https:" || url.username || url.password || url.port && url.port !== "443" || !url.hostname.includes(".") || /^[\d.]+$/.test(url.hostname) || url.hostname.startsWith("[") || /(^|\.)(localhost|local|internal|test|invalid)$/.test(url.hostname)) throw Error("Use a public HTTPS link without a password or custom port.");
   url.hash = "";
   return url.href;
@@ -55,10 +56,10 @@ export function today(): string {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 }
-export function friendlyDate(input: string): string {
+export function friendlyDate(input: string, language?: "en" | "ar"): string {
   if (!civilDate(input)) return input;
   const [year, month, day] = input.split("-").map(Number);
-  return new Intl.DateTimeFormat(undefined, { year: "numeric", month: "short", day: "numeric" }).format(new Date(year, month - 1, day, 12));
+  return new Intl.DateTimeFormat(language === "ar" ? "ar-SA-u-ca-gregory-nu-arab" : language, { year: "numeric", month: "short", day: "numeric" }).format(new Date(year, month - 1, day, 12));
 }
 const boundedText = (max: number) => z.string().max(max).refine(v => !/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/.test(v), "Unsupported control characters");
 const https = z.string().max(2048).refine(v => { try { publicURL(v); return true; } catch { return false; } }, "Invalid HTTPS URL");
@@ -86,9 +87,13 @@ export function profileRequest(profile: Profile) {
 
 export const jobSchema = z.object({ id: z.string().min(1).max(250), title: boundedText(500), company: boundedText(250), url: https, location: boundedText(500).default(""), country: z.string().max(2).default(""), remoteId: z.string().uuid().optional(), checkedAt: timestamp.optional(), sourceName: boundedText(150).optional(), summary: boundedText(1000).optional() });
 export type Job = z.infer<typeof jobSchema>;
-export const recordSchema = z.object({ identity: https.refine(value => { try { return value === jobIdentity(value); } catch { return false; } }, "Application identity must be canonical"), title: boundedText(500), company: boundedText(250), stage: z.enum(stages), appliedElsewhere: z.boolean(), appliedDate: date, followUpDate: date, note: boundedText(5000), updatedAt: timestamp }).refine(value => !["applied", "interview", "offer"].includes(value.stage) || value.appliedElsewhere, "An applied stage must preserve its applied mark");
+// Preserve partially entered links locally; public-URL validation still runs on Save.
+export const jobLinkDraftSchema = z.object({ url: boundedText(2048), title: boundedText(500), company: boundedText(250), location: boundedText(500) });
+export type JobLinkDraft = z.infer<typeof jobLinkDraftSchema>;
+export function blankJobLinkDraft(): JobLinkDraft { return { url: "", title: "", company: "", location: "" }; }
+export const recordSchema = z.object({ identity: https.refine(value => { try { return value === jobIdentity(value); } catch { return false; } }, "Application identity must be canonical"), title: boundedText(500), company: boundedText(250), location: boundedText(500).optional(), stage: z.enum(stages), appliedElsewhere: z.boolean(), appliedDate: date, followUpDate: date, note: boundedText(5000), updatedAt: timestamp }).refine(value => !["applied", "interview", "offer"].includes(value.stage) || value.appliedElsewhere, "An applied stage must preserve its applied mark");
 export type ApplicationRecord = z.infer<typeof recordSchema>;
-export function blankRecord(job: Job): ApplicationRecord { return { identity: jobIdentity(job.url), title: job.title, company: job.company, stage: "saved", appliedElsewhere: false, appliedDate: "", followUpDate: "", note: "", updatedAt: new Date().toISOString() }; }
+export function blankRecord(job: Job): ApplicationRecord { return { identity: jobIdentity(job.url), title: job.title, company: job.company, location: job.location, stage: "saved", appliedElsewhere: false, appliedDate: "", followUpDate: "", note: "", updatedAt: new Date().toISOString() }; }
 export function updateRecord(previous: ApplicationRecord, draft: ApplicationRecord, clearApplied = false): ApplicationRecord {
   const value = recordSchema.parse({ ...draft, appliedElsewhere: ["applied", "interview", "offer"].includes(draft.stage) || (previous.appliedElsewhere && !clearApplied) });
   if (value.identity !== previous.identity) throw Error("This application record changed. Open it again before saving.");
@@ -160,7 +165,7 @@ export function checkReview(plan: Plan, profile: Profile, jobs: Job[], records: 
 // Recovery drafts may contain an unfinished stage change. Only an explicit save
 // passes through updateRecord and the applied-mark confirmation.
 export const recordDraftSchema = z.object(recordSchema.shape);
-export const recoveryDraftSchema = z.object({ id: z.string().uuid(), savedAt: timestamp, profile: draftProfileSchema.optional(), record: z.object({ job: jobSchema, original: recordSchema, draft: recordDraftSchema, existed: z.boolean() }).optional() }).refine(value => Boolean(value.profile) !== Boolean(value.record), "Choose one recovery draft type");
+export const recoveryDraftSchema = z.object({ id: z.string().uuid(), savedAt: timestamp, profile: draftProfileSchema.optional(), record: z.object({ job: jobSchema, original: recordSchema, draft: recordDraftSchema, existed: z.boolean() }).optional(), jobLink: jobLinkDraftSchema.optional() }).refine(value => [value.profile, value.record, value.jobLink].filter(Boolean).length === 1, "Choose one recovery draft type");
 export type RecoveryDraft = z.infer<typeof recoveryDraftSchema>;
 export const stopHoldSchema = z.object({ planId: z.string().uuid(), requestedAt: timestamp, confirmed: z.boolean() });
 export type StopHold = z.infer<typeof stopHoldSchema>;

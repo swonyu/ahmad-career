@@ -1,0 +1,78 @@
+{
+  "status": "web code frozen after independent review and shallow-checkout portability correction; native/build/browser evidence pending",
+  "base_commit": "b613ab5a08c757f375591733d3c54e9d27f4cb23",
+  "legacy_commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+  "files": {
+    "website/web/app.js": {
+      "bytes": 87918,
+      "sha256": "83877ac6b6346c4e047ef4bdf1a83b4c2bf99b0b3718ffaa177f76b5d3b4ffa0"
+    },
+    "website/web/core.js": {
+      "bytes": 22860,
+      "sha256": "c2efdaae83418476e6db0553fcc084e3e7edcd48d522effed9db0e7ee1de3840"
+    },
+    "website/web/backup.js": {
+      "bytes": 18252,
+      "sha256": "e7d27010581608eeb3f7357993fa5495aa50a8c6304f0913e9b2298d007b9f75"
+    },
+    "website/web/index.html": {
+      "bytes": 3135,
+      "sha256": "20ed6e4387fefffb976db5202d9425064b7dc8f1d8467c5fbab824a829de3279"
+    },
+    "website/feeds.mjs": {
+      "bytes": 25965,
+      "sha256": "e4ebfe0b86c58d5b65b97d9ed95ec9d543ef08b1e86c122233f3442489a295ec"
+    },
+    "website/state-check.mjs": {
+      "bytes": 76873,
+      "sha256": "5cacb87b37815f053cbf1ff1e66c745d124cad8a761e4860128d6995b7640dde"
+    },
+    "website/backup-check.mjs": {
+      "bytes": 10919,
+      "sha256": "b5e340e75c97a8dd98cf9b17391451401c5e841962fe811c9bb409ccc0fe6cfa"
+    },
+    "website/public-provider-check.mjs": {
+      "bytes": 5320,
+      "sha256": "ad4a9c1185e98f6941da7a2955040ef55836e6db0b9cb2b3a2d0a685b7ce56f2"
+    },
+    "website/legacy-compatibility-check.mjs": {
+      "bytes": 14835,
+      "sha256": "e6bd23d14b1f333dcef55eafd52faac6c7621e4aa96c4c933be5af4abe921962"
+    },
+    "website/package.json": {
+      "bytes": 836,
+      "sha256": "964d74b45dbe62171724b84f89eddc8d84cdcc87b46b90f078b2f2525a57e189"
+    },
+    "website/merge-evidence/compatibility-source-pins.json": {
+      "bytes": 4131,
+      "sha256": "ea4400ca955454f9ad3eab68168d170a685a0b8a27d3d3e3a5d3775469df3f08"
+    },
+    "website/fixtures/compatibility/continuation/core.js": {
+      "bytes": 11312,
+      "sha256": "6bcc33f97cb84eb97c6a8e1519f010f0d2a00b3fc420ec8fbeaf43a815577a64"
+    },
+    "website/fixtures/compatibility/continuation/data.js": {
+      "bytes": 22252,
+      "sha256": "95e8035cf7d1e173b7c9f006c888de5d60a3ad260dd52ee2f254373d2abda2e8"
+    },
+    "website/fixtures/compatibility/continuation/app.js": {
+      "bytes": 69807,
+      "sha256": "ec45e468c70ea1f15c070db39a125a9d2d6e530e6e713a6ec46c4f16765f1267"
+    }
+  },
+  "checks": {
+    "current_state_groups": 77,
+    "current_state_test_bodies_byte_identical_to_base": true,
+    "merged_compatibility_groups": 15,
+    "followup_regressions": "passed",
+    "backup_regressions": "passed",
+    "native_execution": false,
+    "build_execution": false,
+    "external_network": false,
+    "compatibility_ran_without_Git_in_PATH": true,
+    "compatibility_cwd_outside_repository": "/tmp",
+    "pinned_baseline_reproduced_actual_map_loss": true
+  },
+  "passing_integration_log": "offline-integration-attempt4.log",
+  "passing_portability_log": "offline-compatibility-no-git.log"
+}

@@ -1,0 +1,811 @@
+{
+  "createdAt": "2026-11-17T23:46:29.545043+00:00",
+  "scope": "Read-only Android source review of frozen snapshots; no source edits, checkout changes, builds, tests, installs, CI, browser or external messages. No runtime/TalkBack result or owner acknowledgement inferred.",
+  "snapshot": "snapshot.json",
+  "base": "243031d3f35040985c5b274e8ddf4a90adb0eda8",
+  "requestedAccessibility": "6054d0bcfcd2d84aa5d4701c982d4feb256d9980",
+  "currentAccessibility": "00e4257e519dec88b2b532ef606fbe0633966314",
+  "publisher": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+  "recoveryHead": "11cb3d4d8c15e9b16719b6e7091597f43633cda6",
+  "androidCommitCount": 17,
+  "requestedRangeAndroidCommitCount": 14,
+  "commits": [
+    {
+      "commit": "25524465c2979bd71f8f377a53151d981381a571",
+      "parent": "243031d3f35040985c5b274e8ddf4a90adb0eda8",
+      "authoredAt": "2026-11-17T20:15:11+03:00",
+      "subject": "Show a recoverable email check and job-search retry",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+        "android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt",
+        "android/app/src/main/java/com/saleh/careerfinder/ProfileContract.java",
+        "android/app/src/main/res/values-ar/career_copy.xml",
+        "android/app/src/main/res/values/career_copy.xml",
+        "android/checks/BoundaryPolicyCheck.java",
+        "apple/AhmadCareer/MobileApplicationState.swift",
+        "apple/AhmadCareer/NativeApplicationsViews.swift",
+        "apple/AhmadCareer/NativeDiscoveryViews.swift",
+        "apple/AhmadCareer/ar.lproj/Localizable.strings",
+        "apple/AhmadCareer/en.lproj/Localizable.strings",
+        "apple/Checks/MobileLifecycleCheck.swift",
+        "localization/native-copy.json"
+      ],
+      "afterRequested6054": false,
+      "androidDisposition": "Split; email unit distinct; retry intent already covered in a stronger form",
+      "detail": "Email needed/check/added contract and five checks, missing email error translation, cooldown UI and connection.issue tag. Publisher retrySubmittedSearch preserves the submitted filters and newer draft; keep it instead of adding the older search() retry action. Existing connection error already has a live region; that hunk adds a test tag only.",
+      "frozenSourceRefs": "a11y-current/MainActivity.kt:777-794,1125-1128; ProfileContract.java:31-36; publisher288/DiscoveryScreen.kt:117-130; Discovery.kt:566-569",
+      "units": [
+        "U1",
+        "U2"
+      ],
+      "androidHunks": [
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+          "headers": [
+            "@@ -25,6 +25,7 @@ import androidx.compose.ui.text.input.KeyboardType",
+            "@@ -103,9 +104,20 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr"
+          ]
+        },
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+          "headers": [
+            "@@ -759,14 +759,20 @@ private fun ReceiptsScreen(state: CareerUiState, model: CareerViewModel, browse:",
+            "@@ -1097,7 +1103,10 @@ private fun ConnectionDialog(state: CareerUiState, model: CareerViewModel, phone"
+          ]
+        },
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt",
+          "headers": [
+            "@@ -523,6 +523,7 @@ private fun nativeCopyIds3(): Map<String, Int> = mapOf(",
+            "@@ -628,10 +629,10 @@ private fun nativeCopyIds3(): Map<String, Int> = mapOf(",
+            "@@ -781,10 +782,10 @@ private fun nativeCopyIds4(): Map<String, Int> = mapOf(",
+            "@@ -934,10 +935,10 @@ private fun nativeCopyIds5(): Map<String, Int> = mapOf(",
+            "@@ -1087,10 +1088,10 @@ private fun nativeCopyIds6(): Map<String, Int> = mapOf(",
+            "@@ -1240,10 +1241,10 @@ private fun nativeCopyIds7(): Map<String, Int> = mapOf(",
+            "@@ -1393,10 +1394,10 @@ private fun nativeCopyIds8(): Map<String, Int> = mapOf(",
+            "@@ -1546,10 +1547,10 @@ private fun nativeCopyIds9(): Map<String, Int> = mapOf(",
+            "@@ -1699,10 +1700,10 @@ private fun nativeCopyIds10(): Map<String, Int> = mapOf(",
+            "@@ -1852,10 +1853,10 @@ private fun nativeCopyIds11(): Map<String, Int> = mapOf("
+          ]
+        },
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/ProfileContract.java",
+          "headers": [
+            "@@ -28,6 +28,11 @@ public final class ProfileContract {"
+          ]
+        },
+        {
+          "path": "android/app/src/main/res/values-ar/career_copy.xml",
+          "headers": [
+            "@@ -495,6 +495,7 @@"
+          ]
+        },
+        {
+          "path": "android/app/src/main/res/values/career_copy.xml",
+          "headers": [
+            "@@ -495,6 +495,7 @@"
+          ]
+        },
+        {
+          "path": "android/checks/BoundaryPolicyCheck.java",
+          "headers": [
+            "@@ -31,6 +31,11 @@ public final class BoundaryPolicyCheck {"
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "fa759f0d9e50d9ee0e0102ba33d83d2529c50aa5",
+      "parent": "25524465c2979bd71f8f377a53151d981381a571",
+      "authoredAt": "2026-11-17T20:25:24+03:00",
+      "subject": "Recover a saved job search that failed to open or save",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+        "apple/AhmadCareer/CareerDiscovery.swift",
+        "apple/AhmadCareer/NativeDiscoveryViews.swift",
+        "apple/Checks/DiscoveryCheck.swift"
+      ],
+      "afterRequested6054": false,
+      "androidDisposition": "Distinct cooldown explanation; adapt to existing retry",
+      "detail": "Android-only change in this commit adds Try again after {0} while waiting. It does not add Android saved-search recovery; that recovery already exists in base/publisher.",
+      "frozenSourceRefs": "a11y-current/DiscoveryScreen.kt:118-136; publisher288/DiscoveryScreen.kt:84-90",
+      "units": [
+        "U2"
+      ],
+      "androidHunks": [
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+          "headers": [
+            "@@ -116,8 +116,12 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr"
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "b6d5fcaccbd5809fb74db182a39e221a4b2f192e",
+      "parent": "fa759f0d9e50d9ee0e0102ba33d83d2529c50aa5",
+      "authoredAt": "2026-11-17T20:29:56+03:00",
+      "subject": "Keep employer-directory retry separate from job search",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+        "apple/AhmadCareer/CareerDiscovery.swift",
+        "apple/AhmadCareer/NativeDiscoveryViews.swift",
+        "apple/Checks/DiscoveryCheck.swift"
+      ],
+      "afterRequested6054": false,
+      "androidDisposition": "Distinct announcement and test tag",
+      "detail": "Android-only change adds a polite live region and discovery.linkedinIssue to the existing invalid LinkedIn search explanation.",
+      "frozenSourceRefs": "a11y-current/DiscoveryScreen.kt:179-182",
+      "units": [
+        "U3"
+      ],
+      "androidHunks": [
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+          "headers": [
+            "@@ -165,7 +165,9 @@ internal fun LinkedInSearchAction(keywords: String, location: String, open: (Str"
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "c4bf5dbde438a66d99e2ab0ef9c747144614fac8",
+      "parent": "b6d5fcaccbd5809fb74db182a39e221a4b2f192e",
+      "authoredAt": "2026-11-17T20:43:05+03:00",
+      "subject": "Keep long job-search text and speak the recovery failure",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+        "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+        "apple/AhmadCareer/NativeApplicationsViews.swift"
+      ],
+      "afterRequested6054": false,
+      "androidDisposition": "Distinct raw-input retention and announcements; adapt board field hunk",
+      "detail": "Remove query/location truncation in editFilters and add oversized-search-save guard preserving earlier file. Adds board/catalog announcements and opportunity-save error announcement. Preserve publisher canonical/duplicate board validation; do not remove Field(error=customError) when adding live-region output.",
+      "frozenSourceRefs": "a11y-current/Discovery.kt:231-243,278-285; DiscoveryScreen.kt:285-295; MainActivity.kt:1196-1199; publisher288/Discovery.kt:456-473,496-502; MainActivity.kt:940-947",
+      "units": [
+        "U3",
+        "U4",
+        "U5"
+      ],
+      "androidHunks": [
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+          "headers": [
+            "@@ -233,6 +233,13 @@ class DiscoveryController(private val scope: CoroutineScope, private val service",
+            "@@ -270,7 +277,7 @@ class DiscoveryController(private val scope: CoroutineScope, private val service"
+          ]
+        },
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+          "headers": [
+            "@@ -248,8 +248,9 @@ private fun DiscoverySourcesDialog(state: DiscoveryUiState, controller: Discover",
+            "@@ -268,13 +269,17 @@ private fun DiscoverySourcesDialog(state: DiscoveryUiState, controller: Discover"
+          ]
+        },
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+          "headers": [
+            "@@ -1174,7 +1174,10 @@ private fun AddOpportunityDialog(state: CareerUiState, model: CareerViewModel, c"
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "b5f8dff005d647f1e5b5babfe8787bb35355ef69",
+      "parent": "c4bf5dbde438a66d99e2ab0ef9c747144614fac8",
+      "authoredAt": "2026-11-17T20:53:53+03:00",
+      "subject": "Speak recovery failures and keep the catalog retry",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+        "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+        "apple/AhmadCareer/NativeApplicationsViews.swift",
+        "apple/AhmadCareer/NativeCareerViews.swift"
+      ],
+      "afterRequested6054": false,
+      "androidDisposition": "Distinct; retain as refinement of c4 guard",
+      "detail": "Adds state.value.filters==capturedFilters before publishing oversized-save error, restoring-search announcement and catalog retry outside dialog. Dialog local val is a refinement around its announcement.",
+      "frozenSourceRefs": "a11y-current/Discovery.kt:239; DiscoveryScreen.kt:60-63,98-105,261-267",
+      "units": [
+        "U3",
+        "U4"
+      ],
+      "androidHunks": [
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+          "headers": [
+            "@@ -236,7 +236,7 @@ class DiscoveryController(private val scope: CoroutineScope, private val service"
+          ]
+        },
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+          "headers": [
+            "@@ -57,7 +57,10 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr",
+            "@@ -92,6 +95,14 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr",
+            "@@ -247,8 +258,9 @@ private fun DiscoverySourcesDialog(state: DiscoveryUiState, controller: Discover"
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "720fce53e0be528346e657ff6178cf6f0cd4d4f7",
+      "parent": "b5f8dff005d647f1e5b5babfe8787bb35355ef69",
+      "authoredAt": "2026-11-17T20:55:18+03:00",
+      "subject": "Speak backup and review blockers",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+        "android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt"
+      ],
+      "afterRequested6054": false,
+      "androidDisposition": "Distinct backup/apply announcements; discovery tag only",
+      "detail": "Profile-dirty Apply message, deletion blocker, PDF import problem and workspace import error gain polite live regions. Search error already had a live region in publisher; discovery.error adds only a test tag.",
+      "frozenSourceRefs": "a11y-current/MainActivity.kt:655-656; WorkspaceDataViews.kt:119-120,167-169,195-197; DiscoveryScreen.kt:128-129",
+      "units": [
+        "U3",
+        "U5",
+        "U7"
+      ],
+      "androidHunks": [
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+          "headers": [
+            "@@ -125,7 +125,8 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr"
+          ]
+        },
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+          "headers": [
+            "@@ -638,7 +638,8 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: ("
+          ]
+        },
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt",
+          "headers": [
+            "@@ -116,7 +116,8 @@ internal fun WorkspaceDataDialog(state: CareerUiState, model: CareerViewModel, e",
+            "@@ -157,7 +158,9 @@ internal fun WorkspaceImportDialog(state: CareerUiState, model: CareerViewModel)",
+            "@@ -181,7 +184,9 @@ internal fun WorkspaceImportDialog(state: CareerUiState, model: CareerViewModel)"
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "1c4458145b8804eefaa1bbd6b7e1a2a494e5d1ce",
+      "parent": "720fce53e0be528346e657ff6178cf6f0cd4d4f7",
+      "authoredAt": "2026-11-17T21:03:03+03:00",
+      "subject": "Speak blockers that are already on screen",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt",
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+        "apple/AhmadCareer/NativeApplicationsViews.swift",
+        "apple/AhmadCareer/NativeCareerViews.swift"
+      ],
+      "afterRequested6054": false,
+      "androidDisposition": "Distinct; adjacent recovery context requires reconciliation",
+      "detail": "Record restored-draft/conflict messages and phone-import profile-conflict message gain live regions. In MainActivity, a11y replaces base243 line417; recovery changes adjacent line418 and inserts draft previews earlier. No exact changed-base-line intersection observed.",
+      "frozenSourceRefs": "a11y-current/ApplicationRecordViews.kt:93-106; MainActivity.kt:423-427; recovery-working/MainActivity.kt:423-440,457-458",
+      "units": [
+        "U5",
+        "U6"
+      ],
+      "androidHunks": [
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt",
+          "headers": [
+            "@@ -92,14 +92,17 @@ internal fun ApplicationRecordEditor(state: CareerUiState, model: CareerViewMode"
+          ]
+        },
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+          "headers": [
+            "@@ -414,7 +414,10 @@ private fun PhoneImportDialog(state: CareerUiState, model: CareerViewModel) {"
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "9700d0e078716f40bf17fad9c7fd7362e1549336",
+      "parent": "1c4458145b8804eefaa1bbd6b7e1a2a494e5d1ce",
+      "authoredAt": "2026-11-17T21:09:33+03:00",
+      "subject": "Speak the storage pause that replaces the workspace",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt"
+      ],
+      "afterRequested6054": false,
+      "androidDisposition": "Distinct storage announcements",
+      "detail": "Storage-blocked Settings text and StorageRecoveryScreen headline gain polite live regions.",
+      "frozenSourceRefs": "a11y-current/MainActivity.kt:273-277,299-305",
+      "units": [
+        "U5"
+      ],
+      "androidHunks": [
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+          "headers": [
+            "@@ -270,9 +270,11 @@ private fun SettingsScreen(state: CareerUiState, connect: () -> Unit, phoneData:",
+            "@@ -295,7 +297,11 @@ private fun StorageRecoveryScreen(state: CareerUiState, model: CareerViewModel)"
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "f139c0499830ec71411a2686d86d546ef50126c7",
+      "parent": "9700d0e078716f40bf17fad9c7fd7362e1549336",
+      "authoredAt": "2026-11-17T21:13:04+03:00",
+      "subject": "Explain a review that can no longer continue",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt"
+      ],
+      "afterRequested6054": false,
+      "androidDisposition": "Distinct expired-review explanations",
+      "detail": "Adds expired earlier-review and current-plan explanations; only the first expired earlier review is a live region to reduce duplicate announcements. Existing disabled controls alone do not provide this copy.",
+      "frozenSourceRefs": "a11y-current/MainActivity.kt:615-625,674-676",
+      "units": [
+        "U5"
+      ],
+      "androidHunks": [
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+          "headers": [
+            "@@ -612,11 +612,16 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (",
+            "@@ -666,6 +671,9 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: ("
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "f6ec0cd1b479f759bef9055ef15c86f071424d74",
+      "parent": "0ed8f50c9946de4d8eeb5d6eabc17ea8cc4ea0de",
+      "authoredAt": "2026-11-17T21:19:53+03:00",
+      "subject": "Speak when automatic sending is not available",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+        "apple/AhmadCareer/NativeApplicationsViews.swift"
+      ],
+      "afterRequested6054": false,
+      "androidDisposition": "Distinct status announcement and helper dependency",
+      "detail": "Adds optional Modifier parameter to StatusPill and uses it for automatic-sending-unavailable live region. Needed before the 47fdfb2 StatusPill call.",
+      "frozenSourceRefs": "a11y-current/MainActivity.kt:592,1031-1036",
+      "units": [
+        "U5"
+      ],
+      "androidHunks": [
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+          "headers": [
+            "@@ -589,7 +589,7 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (",
+            "@@ -1028,10 +1028,10 @@ private fun CountryChooser(label: String, value: String, enabled: Boolean = true"
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "47fdfb23877295faf3687b7b4bd81491ecc45bd6",
+      "parent": "f6ec0cd1b479f759bef9055ef15c86f071424d74",
+      "authoredAt": "2026-11-17T21:26:07+03:00",
+      "subject": "Speak a profile change that blocks saving",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+        "apple/AhmadCareer/NativeCareerViews.swift"
+      ],
+      "afterRequested6054": false,
+      "androidDisposition": "Distinct; depends on StatusPill modifier support",
+      "detail": "Newer saved profile status gains polite live region; keep recovery ProfileSummary localization helpers in the nearby region.",
+      "frozenSourceRefs": "a11y-current/MainActivity.kt:356; recovery-working/MainActivity.kt:332-362",
+      "units": [
+        "U5"
+      ],
+      "androidHunks": [
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+          "headers": [
+            "@@ -353,7 +353,7 @@ private fun ProfileConflictPanel(state: CareerUiState, model: CareerViewModel) {"
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "6411a10bbbe5c348900b570426d72fa3a670c347",
+      "parent": "0ca27c899a96cbaecb8bfd93852b448f1b4af843",
+      "authoredAt": "2026-11-17T21:38:24+03:00",
+      "subject": "Speak the reconnect title when pairing is required",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt"
+      ],
+      "afterRequested6054": false,
+      "androidDisposition": "Distinct reconnect announcement",
+      "detail": "Reconnect title gains a polite live region only when pairing is required.",
+      "frozenSourceRefs": "a11y-current/MainActivity.kt:1085-1086",
+      "units": [
+        "U5"
+      ],
+      "androidHunks": [
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+          "headers": [
+            "@@ -1082,7 +1082,8 @@ private fun ConnectionDialog(state: CareerUiState, model: CareerViewModel, phone"
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "c04ea874990e1f0416c0c55f626fd3ed91b14cab",
+      "parent": "a4f06c1625180352ffa8c3c7f82030ed2249bc8a",
+      "authoredAt": "2026-11-17T23:55:23+03:00",
+      "subject": "Speak when a private note is cut at 2,000 characters",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt"
+      ],
+      "afterRequested6054": false,
+      "androidDisposition": "Distinct note-limit feedback",
+      "detail": "When boundedApplicationNote truncates, show a polite limit message; reset below 2000 and preserve existing bounded note write.",
+      "frozenSourceRefs": "a11y-current/ApplicationRecordViews.kt:82,132-140",
+      "units": [
+        "U6"
+      ],
+      "androidHunks": [
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt",
+          "headers": [
+            "@@ -79,6 +79,7 @@ internal fun ApplicationRecordEditor(state: CareerUiState, model: CareerViewMode",
+            "@@ -128,8 +129,15 @@ internal fun ApplicationRecordEditor(state: CareerUiState, model: CareerViewMode"
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "ee3bac20b48022c6b110de043eaabe3e38c7f496",
+      "parent": "c04ea874990e1f0416c0c55f626fd3ed91b14cab",
+      "authoredAt": "2026-11-18T00:09:27+03:00",
+      "subject": "Speak when a backup import has no selection",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt"
+      ],
+      "afterRequested6054": false,
+      "androidDisposition": "Distinct no-selection feedback",
+      "detail": "Shows Choose what to import when all three import categories are unselected; retains existing disabled predicate and model call.",
+      "frozenSourceRefs": "a11y-current/WorkspaceDataViews.kt:198-202",
+      "units": [
+        "U7"
+      ],
+      "androidHunks": [
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt",
+          "headers": [
+            "@@ -187,9 +187,12 @@ internal fun WorkspaceImportDialog(state: CareerUiState, model: CareerViewModel)"
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "1838e0aaf97664a5a4a67e9affb5fdc60a24ade9",
+      "parent": "6054d0bcfcd2d84aa5d4701c982d4feb256d9980",
+      "authoredAt": "2026-11-18T02:08:33+03:00",
+      "subject": "Speak the selected application date",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt"
+      ],
+      "afterRequested6054": true,
+      "androidDisposition": "New after6054; distinct selected-date semantics",
+      "detail": "Adds localized selected civil date as stateDescription while preserving the Choose date content description.",
+      "frozenSourceRefs": "a11y-current/ApplicationRecordViews.kt:201-211",
+      "units": [
+        "U6-new"
+      ],
+      "androidHunks": [
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt",
+          "headers": [
+            "@@ -203,7 +203,10 @@ private fun RecordDateField(label: String, date: String, enabled: Boolean, choos"
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "910369f7f5ee09242762d6ea27c804a03fb4f489",
+      "parent": "1838e0aaf97664a5a4a67e9affb5fdc60a24ade9",
+      "authoredAt": "2026-11-18T02:22:37+03:00",
+      "subject": "Speak the Arabic record stage",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt"
+      ],
+      "afterRequested6054": true,
+      "androidDisposition": "New after6054; distinct Arabic stage formatting",
+      "detail": "Replaces interpolated English stage sentence with localized stage plus localized {0} \u00b7 your record template.",
+      "frozenSourceRefs": "a11y-current/ApplicationRecordViews.kt:33",
+      "units": [
+        "U6-new"
+      ],
+      "androidHunks": [
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt",
+          "headers": [
+            "@@ -30,7 +30,7 @@ internal fun ApplicationRecordSummary(record: ApplicationRecordBundle?, open: ()"
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "00e4257e519dec88b2b532ef606fbe0633966314",
+      "parent": "910369f7f5ee09242762d6ea27c804a03fb4f489",
+      "authoredAt": "2026-11-18T02:35:43+03:00",
+      "subject": "Speak backup profile choices",
+      "paths": [
+        "android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt"
+      ],
+      "afterRequested6054": true,
+      "androidDisposition": "New after6054; distinct backup preview localization",
+      "detail": "Localizes backup country/target countries, closed work-mode and experience choices; preserves free text. Similar purpose to recovery ProfileSummary formatters but different file and surface, not an integrated equivalent.",
+      "frozenSourceRefs": "a11y-current/WorkspaceDataViews.kt:145-149,180-186,210-234; recovery-working/MainActivity.kt:332-362",
+      "units": [
+        "U7-new"
+      ],
+      "androidHunks": [
+        {
+          "path": "android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt",
+          "headers": [
+            "@@ -16,6 +16,7 @@ import androidx.compose.ui.semantics.liveRegion",
+            "@@ -141,6 +142,11 @@ internal fun WorkspaceDataDialog(state: CareerUiState, model: CareerViewModel, e",
+            "@@ -171,10 +177,12 @@ internal fun WorkspaceImportDialog(state: CareerUiState, model: CareerViewModel)",
+            "@@ -198,3 +206,29 @@ internal fun WorkspaceImportDialog(state: CareerUiState, model: CareerViewModel)"
+          ]
+        }
+      ]
+    }
+  ],
+  "mainActivityIdentities": {
+    "base243": {
+      "sha256": "3aed8440668070d2c573a739a84956e3e2ab278d4109ea29ba527b7214416f3e",
+      "equalsBase243": true
+    },
+    "publisher288": {
+      "sha256": "3aed8440668070d2c573a739a84956e3e2ab278d4109ea29ba527b7214416f3e",
+      "equalsBase243": true
+    },
+    "recovery-head": {
+      "sha256": "3aed8440668070d2c573a739a84956e3e2ab278d4109ea29ba527b7214416f3e",
+      "equalsBase243": true
+    },
+    "recovery-working": {
+      "sha256": "1a01a32a739d8f62f4639f52012b37d06a498a36db9db6988034617c24ea92a5",
+      "equalsBase243": false
+    },
+    "a11y-current": {
+      "sha256": "d4244c435ec093076035a8c0bacda2253f2260a09cf043e9be4617c367cb3c4c",
+      "equalsBase243": false
+    }
+  },
+  "mainActivityBaseEdits": {
+    "accessibility": [
+      {
+        "kind": "replace",
+        "baseStart": 273,
+        "baseEnd": 275,
+        "resultStart": 273,
+        "resultEnd": 277
+      },
+      {
+        "kind": "replace",
+        "baseStart": 298,
+        "baseEnd": 298,
+        "resultStart": 300,
+        "resultEnd": 304
+      },
+      {
+        "kind": "replace",
+        "baseStart": 350,
+        "baseEnd": 350,
+        "resultStart": 356,
+        "resultEnd": 356
+      },
+      {
+        "kind": "replace",
+        "baseStart": 417,
+        "baseEnd": 417,
+        "resultStart": 423,
+        "resultEnd": 426
+      },
+      {
+        "kind": "replace",
+        "baseStart": 583,
+        "baseEnd": 583,
+        "resultStart": 592,
+        "resultEnd": 592
+      },
+      {
+        "kind": "replace",
+        "baseStart": 606,
+        "baseEnd": 606,
+        "resultStart": 615,
+        "resultEnd": 617
+      },
+      {
+        "kind": "insert",
+        "baseStart": 611,
+        "baseEnd": 610,
+        "resultStart": 622,
+        "resultEnd": 624
+      },
+      {
+        "kind": "replace",
+        "baseStart": 641,
+        "baseEnd": 641,
+        "resultStart": 655,
+        "resultEnd": 656
+      },
+      {
+        "kind": "insert",
+        "baseStart": 659,
+        "baseEnd": 658,
+        "resultStart": 674,
+        "resultEnd": 676
+      },
+      {
+        "kind": "replace",
+        "baseStart": 762,
+        "baseEnd": 769,
+        "resultStart": 780,
+        "resultEnd": 793
+      },
+      {
+        "kind": "replace",
+        "baseStart": 1007,
+        "baseEnd": 1007,
+        "resultStart": 1031,
+        "resultEnd": 1031
+      },
+      {
+        "kind": "replace",
+        "baseStart": 1010,
+        "baseEnd": 1010,
+        "resultStart": 1034,
+        "resultEnd": 1034
+      },
+      {
+        "kind": "replace",
+        "baseStart": 1061,
+        "baseEnd": 1061,
+        "resultStart": 1085,
+        "resultEnd": 1086
+      },
+      {
+        "kind": "replace",
+        "baseStart": 1100,
+        "baseEnd": 1100,
+        "resultStart": 1125,
+        "resultEnd": 1128
+      },
+      {
+        "kind": "replace",
+        "baseStart": 1168,
+        "baseEnd": 1168,
+        "resultStart": 1196,
+        "resultEnd": 1199
+      }
+    ],
+    "recovery": [
+      {
+        "kind": "replace",
+        "baseStart": 332,
+        "baseEnd": 332,
+        "resultStart": 332,
+        "resultEnd": 333
+      },
+      {
+        "kind": "insert",
+        "baseStart": 341,
+        "baseEnd": 340,
+        "resultStart": 342,
+        "resultEnd": 362
+      },
+      {
+        "kind": "insert",
+        "baseStart": 401,
+        "baseEnd": 400,
+        "resultStart": 423,
+        "resultEnd": 440
+      },
+      {
+        "kind": "replace",
+        "baseStart": 418,
+        "baseEnd": 418,
+        "resultStart": 458,
+        "resultEnd": 458
+      },
+      {
+        "kind": "insert",
+        "baseStart": 751,
+        "baseEnd": 750,
+        "resultStart": 791,
+        "resultEnd": 794
+      }
+    ]
+  },
+  "mainActivityOverlapConclusion": "Same base content in243, publisher288 and recoveryHEAD11cb. No exact changed-base-line intersections in frozen diffs; closest changes are a11y base417 versus recovery base418. This is adjacent context and shared ownership, not an asserted textual merge conflict or automatic integration clearance.",
+  "fieldErrorCaveat": {
+    "source": "commits/c4bf5db.patch; source/a11y-current/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt:285-295; source/publisher288/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:940-947",
+    "finding": "c4 removes error=customError from Field and adds a separate live Text. Field derives isError and supportingText from that parameter. Preserve that field error state/message connection when adding the live announcement; retain publisher canonical and duplicate board validation. Source-confirmed integration caveat; no runtime failure claimed."
+  },
+  "units": [
+    {
+      "id": "U1",
+      "name": "Email status and required translations",
+      "paths": [
+        "MainActivity.kt",
+        "ProfileContract.java",
+        "BoundaryPolicyCheck.java",
+        "NativeStringIds.kt",
+        "values/career_copy.xml",
+        "values-ar/career_copy.xml"
+      ],
+      "action": "Take only the email essentials helper/call/checks from255. Route the single missing email translation through the shared localization owner, retaining publisher catalog additions and regenerated chunk layout. Do not copy whole resource files."
+    },
+    {
+      "id": "U2",
+      "name": "Cooldown UI on publisher retry contract",
+      "paths": [
+        "DiscoveryScreen.kt"
+      ],
+      "action": "Review255/fa cooldown state/timer and explanatory copy against existing retrySubmittedSearch. Keep publisher submitted-query retry, draft preservation, partial/unavailable recovery and fresh-search action. No second overlapping search() retry."
+    },
+    {
+      "id": "U3",
+      "name": "Search announcements and catalog retry",
+      "paths": [
+        "DiscoveryScreen.kt"
+      ],
+      "action": "Apply focused restoring, LinkedIn, catalog and error-tag hunks. For custom board error, preserve publisher canonical/duplicate validation and Field(error=customError); add live feedback without dropping field error styling/supporting text."
+    },
+    {
+      "id": "U4",
+      "name": "Untruncated draft plus guarded persistence",
+      "paths": [
+        "Discovery.kt"
+      ],
+      "action": "Integrate c4 editFilters raw-text retention and oversized-save rejection together with b5 captured-filter guard. Preserve publisher canonical board repair, parser, deadline, generation and submitted-search state. Owner should exercise long Unicode input, old-file preservation and edit-during-save before claiming behavior."
+    },
+    {
+      "id": "U5",
+      "name": "MainActivity announcements",
+      "paths": [
+        "MainActivity.kt"
+      ],
+      "action": "Owner-review small function-level hunks. Add StatusPill Modifier support with its new uses. Preserve recovery localized ProfileSummary, unfinished opportunity previews plus widened Copy selected drafts predicate, and dispatching receipt stop action. Adjacent PhoneImport lines need deliberate reconciliation; no same changed base line was observed."
+    },
+    {
+      "id": "U6",
+      "name": "Record editor feedback through6054",
+      "paths": [
+        "ApplicationRecordViews.kt"
+      ],
+      "action": "Apply 1c restored/conflict announcements and c04 note-limit feedback as a single-file presentation unit; no observed recovery dirty-file overlap."
+    },
+    {
+      "id": "U6-new",
+      "name": "Later date and Arabic stage fixes",
+      "paths": [
+        "ApplicationRecordViews.kt"
+      ],
+      "action": "Review1838e0a and910369f as explicit post6054 additions. They touch distinct summary/date regions and need EN/AR semantics verification; do not silently expand the requested 24-commit review scope."
+    },
+    {
+      "id": "U7",
+      "name": "Backup blockers through6054",
+      "paths": [
+        "WorkspaceDataViews.kt"
+      ],
+      "action": "Apply720 deletion/PDF/import announcements andee3 no-selection explanation without changing import action semantics. No observed recovery dirty-file overlap."
+    },
+    {
+      "id": "U7-new",
+      "name": "Later backup profile choice localization",
+      "paths": [
+        "WorkspaceDataViews.kt"
+      ],
+      "action": "Review00e4257 separately. Recovery has similar formatter intent in MainActivity but not this preview. Preserve closed-choice translations and free text; coordinate consistency without overwriting either surface."
+    }
+  ],
+  "sourceMovePolicy": "Only frozen23:40:30 evidence reviewed; parent performs live movement readback before final integration recommendations.",
+  "sourceReferenceConvention": "Source refs abbreviate source/<snapshot>/android/app/src/main/java/com/saleh/careerfinder/<filename>:line. Full paths are in each commit Android hunk entry; checks and resources retain their repository paths in snapshot.json."
+}

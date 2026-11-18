@@ -1,0 +1,30 @@
+{
+  "originalVideo": "8579A769-4150-4C8C-9CCB-085AA819E31D.mp4",
+  "originalVideoSHA256": "1a68a1b1c97b5251b5d2adf3e29be41ca0c5f2e85853deacfff9a70bbd355e4f",
+  "sourceRun": 44124734131,
+  "sourceCommit": "2fac36f321005d9a2703e6db92acd7d7c14886c5",
+  "derivedFrames": [
+    {
+      "seconds": 26,
+      "file": ".git/ci-focused-2fac-44124734131/iphone/derived-video-frames/frame-26s.png",
+      "sha256": "774073eb3781f7a2f498ffe29b14f0ce500c2f5543ddc2b5b1977751b23a22d5"
+    },
+    {
+      "seconds": 38,
+      "file": ".git/ci-focused-2fac-44124734131/iphone/derived-video-frames/frame-38s.png",
+      "sha256": "f26962b5e1c26f45f64fe6d671d0ef435ce155c0e522f9f72ac9b2cded8dab58"
+    },
+    {
+      "seconds": 43,
+      "file": ".git/ci-focused-2fac-44124734131/iphone/derived-video-frames/frame-43s.png",
+      "sha256": "9e2066884f5b48a491f7c0299b38f7abeed609e044dccf0bbfbcab9323025e68"
+    },
+    {
+      "seconds": 52,
+      "file": ".git/ci-focused-2fac-44124734131/iphone/derived-video-frames/frame-52s.png",
+      "sha256": "ab4f7c0356211cf5f228493eb698ec6407781309134a85daf71e0099805b67eb"
+    }
+  ],
+  "originalPNGCaptureCount": 0,
+  "scope": "Frames extracted from actual original test recording; not standalone original screenshot attachments."
+}

@@ -1,0 +1,71 @@
+{
+  "candidate_sha": "880e878f6f528d903c42951f10a8b216094c889c",
+  "run_id": 44101210921,
+  "gate_conclusion": "failure",
+  "phases": {
+    "ordinary_phone": {
+      "started": 104,
+      "passed": 104,
+      "failed_or_error": 0,
+      "ignored": 0,
+      "assumption_failures": 0,
+      "has_terminal_instrumentation_code": true
+    },
+    "ordinary_preview_tls_rejection": {
+      "started": 1,
+      "passed": 1,
+      "failed_or_error": 0,
+      "ignored": 0,
+      "assumption_failures": 0,
+      "has_terminal_instrumentation_code": true
+    },
+    "native_synthetic_https": {
+      "started": 1,
+      "passed": 0,
+      "failed_or_error": 0,
+      "ignored": 0,
+      "assumption_failures": 0,
+      "has_terminal_instrumentation_code": false
+    }
+  },
+  "native_https_completion": "Incomplete; runner watchdog failure after 900000 milliseconds. Do not count this test as an assertion failure, completion, pass or skip.",
+  "last_phase": "profile-save-scroll:before",
+  "all_phase_markers": [
+    "activity-rule:starting",
+    "test-body:entered",
+    "activity-model:before",
+    "activity-model:after",
+    "workspace-readiness:before",
+    "workspace-readiness:after",
+    "pair-request:before",
+    "pair-request:after",
+    "pair-result:before",
+    "pair-result:after",
+    "pdf-document-create:before",
+    "pdf-document-create:after",
+    "pdf-document-write:before",
+    "pdf-document-write:after",
+    "profile-tab:before",
+    "profile-tab:after",
+    "profile-name-scroll:before",
+    "profile-name-scroll:after",
+    "profile-name-edit:before",
+    "profile-name-edit:after",
+    "profile-name-keyboard-dismiss:before",
+    "profile-name-keyboard-dismiss:after",
+    "profile-email-scroll:before",
+    "profile-email-scroll:after",
+    "profile-email-edit:before",
+    "profile-email-edit:after",
+    "profile-email-keyboard-dismiss:before",
+    "profile-email-keyboard-dismiss:after",
+    "pdf-select:before",
+    "pdf-select:after",
+    "pdf-ready:before",
+    "pdf-ready:after",
+    "profile-save-scroll:before"
+  ],
+  "verified_environment": "Arabic RTL and fontScale1.8 retained",
+  "finding": "At the last scroll phase, the captured screen has no visible Profile content: long PDF notice plus synthetic-service warning and three rows of navigation consume the viewport. A product layout repair is required.",
+  "diagnostic_limitation": "Thread backtrace unavailable because debuggerd requires root; no root escalation attempted."
+}

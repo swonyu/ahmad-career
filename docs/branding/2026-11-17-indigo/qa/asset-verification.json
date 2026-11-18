@@ -1,0 +1,365 @@
+{
+  "status": "isolated unpublished asset candidate; static file verification only",
+  "source": {
+    "path": "source/career-finder-generated-source.png",
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGB",
+    "sha256": "71398d4c375254b9063135b0997f637eb60de8cb08ad3ccf44f32ce12e9c77a8"
+  },
+  "derived_image_count": 23,
+  "all_derived_images_opaque": true,
+  "all_pngs_rgb": true,
+  "palette_check": {
+    "method": "count pixels with HSV hue 75 through 185 degrees, saturation > 0.15, value > 0.1",
+    "green_teal_pixels": 0,
+    "source_pixels": 1572516,
+    "pass": true,
+    "padding_background": "#13152B",
+    "note": "Artwork is a generated bitmap with slight tonal variation, not an exact three-color vector."
+  },
+  "apple_catalog": {
+    "unique_expected_filenames": [
+      "AppIcon-iOS-1024.png",
+      "AppIcon-macOS-1024.png",
+      "AppIcon-macOS-128.png",
+      "AppIcon-macOS-16.png",
+      "AppIcon-macOS-256.png",
+      "AppIcon-macOS-32.png",
+      "AppIcon-macOS-512.png",
+      "AppIcon-macOS-64.png"
+    ],
+    "all_files_present": true
+  },
+  "normal": {
+    "foreground_test": "all RGB channels > 70 and any RGB channel > 120",
+    "bounds_pixels": [
+      85,
+      119,
+      426,
+      392
+    ],
+    "max_radius_fraction_of_canvas": 0.42658
+  },
+  "pwa_maskable": {
+    "foreground_test": "all RGB channels > 70 and any RGB channel > 120",
+    "bounds_pixels": [
+      102,
+      132,
+      408,
+      378
+    ],
+    "max_radius_fraction_of_canvas": 0.383572,
+    "safe_radius_limit": 0.4,
+    "pass": true
+  },
+  "android_adaptive": {
+    "foreground_test": "all RGB channels > 70 and any RGB channel > 120",
+    "bounds_pixels": [
+      115,
+      135,
+      316,
+      296
+    ],
+    "max_radius_fraction_of_canvas": 0.298068,
+    "safe_radius_limit": 0.3055555555555556,
+    "pass": true
+  },
+  "xml_parsing": "2/2 prepared Android resource XML files parsed",
+  "images": [
+    {
+      "path": "integration/android/app/src/main/res/drawable-nodpi/career_icon_adaptive.png",
+      "size": [
+        432,
+        432
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 70593,
+      "sha256": "77828dedae56a42a067d32bbc9bd18e91de4b65d47b1d441ec20432860e19a3d"
+    },
+    {
+      "path": "integration/android/app/src/main/res/mipmap-hdpi/ic_launcher.png",
+      "size": [
+        72,
+        72
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 4118,
+      "sha256": "9f9a8c211565c05b8582230aaa19642cd0305b02a27715af64db71150e27418f"
+    },
+    {
+      "path": "integration/android/app/src/main/res/mipmap-mdpi/ic_launcher.png",
+      "size": [
+        48,
+        48
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 2317,
+      "sha256": "cd3f89fdba6375660814ea172a0c7665e4d734f944b3fb0d8155ae2636f6e374"
+    },
+    {
+      "path": "integration/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png",
+      "size": [
+        96,
+        96
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 6575,
+      "sha256": "de05d49051ef4fd762534a8ae9fdd4997faaa5ee8918acd773ecd0d704661a63"
+    },
+    {
+      "path": "integration/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
+      "size": [
+        144,
+        144
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 14016,
+      "sha256": "b5942e51d730a0e86727777056b33e73bef1c6e7125651cd70a66d6e7febae0e"
+    },
+    {
+      "path": "integration/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+      "size": [
+        192,
+        192
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 25233,
+      "sha256": "9e97f53695a61bc4a47fd9b95efbaa96bd5b07b1dec1fc5e1263344c520b9a53"
+    },
+    {
+      "path": "integration/apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-iOS-1024.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 624828,
+      "sha256": "cea39594f407c37d284f7bc48d4b5a49e364e1109e362b7e40faa582baee6667"
+    },
+    {
+      "path": "integration/apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-1024.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 624828,
+      "sha256": "cea39594f407c37d284f7bc48d4b5a49e364e1109e362b7e40faa582baee6667"
+    },
+    {
+      "path": "integration/apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-128.png",
+      "size": [
+        128,
+        128
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 11113,
+      "sha256": "17b865d7c80e73141191d394c652e1d7192883606eea4509642b78baf0d8642e"
+    },
+    {
+      "path": "integration/apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-16.png",
+      "size": [
+        16,
+        16
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 575,
+      "sha256": "e04e95e84409e99d032b26e6b25a42630a03962d8c7b5aa215c3305e48460448"
+    },
+    {
+      "path": "integration/apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-256.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 46758,
+      "sha256": "5b773788be56bf0e19bf272067ce17f2f4bfbe32460e3dc838b34c403a07996d"
+    },
+    {
+      "path": "integration/apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-32.png",
+      "size": [
+        32,
+        32
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 1332,
+      "sha256": "52403d2f1866b5327facb386b24a5dd77ea20fe0a3e10113e9c2cd558b6d6178"
+    },
+    {
+      "path": "integration/apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-512.png",
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 187646,
+      "sha256": "4384067920aa48682d7ee0d1e2d4663f5d917b40bbedc0cfa5e084227c346215"
+    },
+    {
+      "path": "integration/apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-64.png",
+      "size": [
+        64,
+        64
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 3476,
+      "sha256": "b68c98ff77d7efa8ba87e43502e910a35d9f17147c132e2d5a9f5ea5e3af46a5"
+    },
+    {
+      "path": "integration/docs/store-assets/play-icon-2026-11-17.png",
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 187646,
+      "sha256": "4384067920aa48682d7ee0d1e2d4663f5d917b40bbedc0cfa5e084227c346215"
+    },
+    {
+      "path": "integration/hosted/public/apple-touch-icon.png",
+      "size": [
+        180,
+        180
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 22137,
+      "sha256": "ccce516ec2cd0b2f8658dcc4d24374bcd7601319695d23a1c6d8d03b90eca02c"
+    },
+    {
+      "path": "integration/hosted/public/favicon-16.png",
+      "size": [
+        16,
+        16
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 575,
+      "sha256": "e04e95e84409e99d032b26e6b25a42630a03962d8c7b5aa215c3305e48460448"
+    },
+    {
+      "path": "integration/hosted/public/favicon-32.png",
+      "size": [
+        32,
+        32
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 1332,
+      "sha256": "52403d2f1866b5327facb386b24a5dd77ea20fe0a3e10113e9c2cd558b6d6178"
+    },
+    {
+      "path": "integration/hosted/public/favicon.ico",
+      "size": [
+        48,
+        48
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 4397,
+      "sha256": "1b73ea88bb2d33bc8ab0beea071afe082461d7dc4ce3c6383c2e67e128a209c0",
+      "frames": [
+        {
+          "size": [
+            16,
+            16
+          ],
+          "alpha_extrema": [
+            255,
+            255
+          ]
+        },
+        {
+          "size": [
+            32,
+            32
+          ],
+          "alpha_extrema": [
+            255,
+            255
+          ]
+        },
+        {
+          "size": [
+            48,
+            48
+          ],
+          "alpha_extrema": [
+            255,
+            255
+          ]
+        }
+      ]
+    },
+    {
+      "path": "integration/hosted/public/phone-icon-192.png",
+      "size": [
+        192,
+        192
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 25233,
+      "sha256": "9e97f53695a61bc4a47fd9b95efbaa96bd5b07b1dec1fc5e1263344c520b9a53"
+    },
+    {
+      "path": "integration/hosted/public/phone-icon-maskable-192.png",
+      "size": [
+        192,
+        192
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 20935,
+      "sha256": "9840c12d07af25f65e395112e085753270c8d01f09db1cffd8dfe6e8ca96dc03"
+    },
+    {
+      "path": "integration/hosted/public/phone-icon-maskable.png",
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 160580,
+      "sha256": "0fce68358b22f3c73d83d3a5bc53e8372d09d7a0d7bd83932ccb901b32043108"
+    },
+    {
+      "path": "integration/hosted/public/phone-icon.png",
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGB",
+      "opaque": true,
+      "bytes": 187646,
+      "sha256": "4384067920aa48682d7ee0d1e2d4663f5d917b40bbedc0cfa5e084227c346215"
+    }
+  ],
+  "not_verified": [
+    "native compilation",
+    "physical-device launcher rendering",
+    "installed web-app icon refresh",
+    "store upload acceptance",
+    "release branch integration"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "variant": "baseline-578",
+  "started_at": "2026-11-18T05:17:52.153058+00:00",
+  "ended_at": "2026-11-18T05:17:52.739594+00:00",
+  "command": [
+    "node",
+    "/workspace/scratch/4b851318da2d/Grok-Build1-Keep-Editing-Evidence/focused-source-runner.mjs",
+    "/workspace/scratch/4b851318da2d/Grok-Build1-Keep-Editing-Evidence/baseline-578"
+  ],
+  "runtime": "v24.22.1",
+  "required_project_runtime": "v24.22.3",
+  "scope": "preliminary actual-source-slice runner with identical added harness/assertions; not full TypeScript-AST project execution",
+  "exit_code": 1,
+  "summary": {
+    "tests": "10",
+    "pass": "3",
+    "fail": "7",
+    "cancelled": "0",
+    "skipped": "0",
+    "todo": "0",
+    "duration_ms": "259.068034"
+  },
+  "stdout": {
+    "path": "/workspace/scratch/4b851318da2d/Grok-Build1-Keep-Editing-Evidence/baseline-578.focused.stdout.log",
+    "bytes": 48298,
+    "sha256": "4e2bd39bf4c557d81cb615608dbc6cd9e269037552af6d76d225856504017bf5"
+  },
+  "stderr": {
+    "path": "/workspace/scratch/4b851318da2d/Grok-Build1-Keep-Editing-Evidence/baseline-578.focused.stderr.log",
+    "bytes": 179,
+    "sha256": "58b48f972129947fff715a80102df723ff4398934ef2760944f855bf71a9fe3a"
+  },
+  "phone_sha256": "0ee2f855083ad5933dbbca1161372e8e6e3c8b393c1fd6033b2858c59dacfd94",
+  "runner_sha256": "acac3017a8decbbf835d82782ba0254ea10ef503ac4a9f3f76714842e638abac"
+}

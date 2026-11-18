@@ -1,0 +1,32 @@
+{
+  "observedAt": "2026-11-17T13:40:08.784080Z",
+  "method": "Read-only xcrun devicectl list devices with JSON output; no build, boot, install, launch, pairing or settings change",
+  "deviceEntries": 86,
+  "simulatedEntries": 83,
+  "physicalEntries": 3,
+  "physicalDevices": [
+    {
+      "type": "iPad",
+      "osVersion": "27.0",
+      "tunnelState": "unavailable",
+      "transportType": null
+    },
+    {
+      "type": "iPhone",
+      "osVersion": "27.0",
+      "tunnelState": "unavailable",
+      "transportType": null
+    },
+    {
+      "type": "iPhone",
+      "osVersion": "27.2",
+      "tunnelState": "unavailable",
+      "transportType": null
+    }
+  ],
+  "physicalRuntimeAcceptance": false,
+  "screenReaderAcceptance": false,
+  "rawIdentifiersPublished": false,
+  "sharedBuildLockAcquired": false,
+  "limitation": "The inventory identifies paired physical devices, but none had an available tunnel at observation. It does not establish an installed candidate, device accessibility acceptance or physical Android availability."
+}

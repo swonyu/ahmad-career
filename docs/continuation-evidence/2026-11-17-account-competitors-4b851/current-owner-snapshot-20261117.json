@@ -1,0 +1,717 @@
+{
+  "schema": "career-finder-current-owner-snapshot-v1",
+  "observationWindowUtc": {
+    "start": "2026-11-17T20:11:09.705080+00:00",
+    "end": "2026-11-17T20:14:43.811823+00:00"
+  },
+  "observationWindowRiyadh": "17 November 2026, 23:11–23:14",
+  "scope": "Read-only owner, checkout, commit, CI, lock and source comparison. One new evidence artifact written. No source changes, tests, builds, integration, lock/process changes, browser operation, or owner messages performed.",
+  "cutoff": {
+    "utc": "2026-11-18T22:26:12Z",
+    "riyadh": "2026-11-19T01:26:12+03:00"
+  },
+  "excludedProject": "Good Spender",
+  "topology": "3 browser sessions (2 Build + 1 Heavy), 3 actual terminal sessions, root = 7; this reviewer is not a terminal session.",
+  "root": {
+    "repo": "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d",
+    "branch": "continuation/feed-reliability-20261117-4b851",
+    "productCommit": "e1dce0e24ef8d1fe85934578d1ba33bde99f166d",
+    "commitStatus": "Locally verified by git ls-tree and git show; push pending per root. Not asserted pushed by this snapshot.",
+    "latestSourcePaths": [
+      "hosted/app/components/ProviderConnections.tsx",
+      "hosted/app/components/SignInOptions.tsx",
+      "hosted/tests/account-recovery-lifecycle.mjs"
+    ]
+  },
+  "publisher": {
+    "branch": "recovery/publishing-integrated-20261117-d57f4",
+    "registeredOwnerFromParent": "d57f4cd77813",
+    "commit": {
+      "sha": "3a08819d5eae981d62b290f241b58637a2fdd21a",
+      "message": "Merge reviewed feed recovery and account lifecycle improvements\n\nPreserve both publishing243 and sealed feed422 histories. Keep singular\njob wording and bind the real extracted board action in bilingual fixtures.\n\nValidation:223/223 affected regressions; typecheck, required lint, discovery\nand production build pass. Existing unfiltered npm audit still fails with\n19 high findings; this is a source checkpoint, not release acceptance.\nNative source unchanged; no new native or provider acceptance claimed.",
+      "parents": [
+        "243031d3f35040985c5b274e8ddf4a90adb0eda8",
+        "4221871aea33f79b29ee75b4b054502a0eb1add9"
+      ],
+      "url": "https://github.com/swonyu/ahmad-career/commit/3a08819d5eae981d62b290f241b58637a2fdd21a"
+    },
+    "comparisonFrom243": {
+      "status": "ahead",
+      "ahead": 4,
+      "behind": 0,
+      "totalCommits": 4,
+      "commits": [
+        {
+          "sha": "d534a6c23bbe81615b8f7a40d3fb4204bb991781",
+          "subject": "Release rejected response bodies and retain partial feed pages"
+        },
+        {
+          "sha": "9878a7e8d3645952435181763802a91691fda4f9",
+          "subject": "Define two coordinated native continuation handoffs"
+        },
+        {
+          "sha": "4221871aea33f79b29ee75b4b054502a0eb1add9",
+          "subject": "Preserve recovery edits and improve search and account recovery"
+        },
+        {
+          "sha": "3a08819d5eae981d62b290f241b58637a2fdd21a",
+          "subject": "Merge reviewed feed recovery and account lifecycle improvements"
+        }
+      ],
+      "paths": [
+        {
+          "path": "docs/continuation-handoffs/2026-11-17-native-recovery.md",
+          "status": "added"
+        },
+        {
+          "path": "docs/continuation-handoffs/2026-11-17-native-search.md",
+          "status": "added"
+        },
+        {
+          "path": "docs/strict-review-evidence/feed-continuation-20261117-4b851/README.md",
+          "status": "added"
+        },
+        {
+          "path": "docs/strict-review-evidence/feed-continuation-20261117-4b851/gates.json",
+          "status": "added"
+        },
+        {
+          "path": "docs/strict-review-evidence/feed-continuation-20261117-4b851/provider-probes.json",
+          "status": "added"
+        },
+        {
+          "path": "hosted/app/account/AccountPanel.tsx",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/app/components/OAuthFeedback.tsx",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/app/components/ProviderConnections.tsx",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/app/components/SessionRecovery.tsx",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/app/components/SignInOptions.tsx",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/app/components/api.ts",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/app/connect/ConnectionPanel.tsx",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/app/phone/PhoneApp.tsx",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/app/phone/api.ts",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/app/phone/model.ts",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/package.json",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/server/discovery.mjs",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/server/provider.mjs",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/tests/account-recovery-lifecycle.mjs",
+          "status": "added"
+        },
+        {
+          "path": "hosted/tests/frontend-body-cleanup.mjs",
+          "status": "added"
+        },
+        {
+          "path": "hosted/tests/hosted-discovery-verification.json",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/tests/hosted-discovery.mjs",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/tests/hosted-phone-verification.json",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/tests/hosted-verification.json",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/tests/hosted-worker-verification.json",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/tests/phone-localization.mjs",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/tests/phone-model.mjs",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/tests/phone-recovery-isolation.mjs",
+          "status": "added"
+        },
+        {
+          "path": "hosted/tests/phone-search-cap.mjs",
+          "status": "added"
+        },
+        {
+          "path": "hosted/tests/phone-search-workflows.mjs",
+          "status": "modified"
+        },
+        {
+          "path": "hosted/tests/phone-selection-board-actions.mjs",
+          "status": "added"
+        },
+        {
+          "path": "hosted/tests/provider-body-cleanup.mjs",
+          "status": "added"
+        }
+      ]
+    },
+    "nativePathsInDelta": [],
+    "containsEighteenLocalA11yCommits": false,
+    "commitValidationClaims": "The commit message reports 223/223 affected regressions, typecheck, required lint, discovery and production build. Those claims were not rerun by this reviewer; message preserves 19 high audit findings and does not claim native/provider acceptance."
+  },
+  "currentWorktrees": {
+    "search": {
+      "path": "/Users/saleh/Developer/career-finder-native-search-20261117-01a1ea9d107f",
+      "branch": "continuation/native-search-20261117-01a1ea9d107f",
+      "head": "11cb3d4d8c15e9b16719b6e7091597f43633cda6",
+      "status": "M android/app/src/main/java/com/saleh/careerfinder/Discovery.kt\n M android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt\n M android/app/src/main/res/values-ar/career_copy.xml\n M android/app/src/main/res/values/career_copy.xml\n M apple/AhmadCareer/CareerDiscovery.swift\n M apple/AhmadCareer/NativeDiscoveryViews.swift\n M apple/AhmadCareer/ar.lproj/Localizable.strings\n M apple/AhmadCareer/en.lproj/Localizable.strings\n M apple/Checks/DiscoveryCheck.swift\n M localization/native-copy.json",
+      "lastCommit": "11cb3d4d8c15e9b16719b6e7091597f43633cda6\n0f0c6f1f591ff173e51671599cbbb6aeff4a69e4 21f08f5c4509bd1fdbe9112003224bf2316edd2a\n2026-11-17T20:12:48+03:00\nMerge sealed singular-copy and iPhone evidence finalization fixes"
+    },
+    "recovery": {
+      "path": "/Users/saleh/Developer/career-finder-native-recovery-20261117-01a1ea9cfd25",
+      "branch": "continuation/native-recovery-20261117-01a1ea9cfd25",
+      "head": "11cb3d4d8c15e9b16719b6e7091597f43633cda6",
+      "status": "M android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt\n M android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt\n M android/app/src/main/java/com/saleh/careerfinder/Models.kt\n M android/app/src/main/java/com/saleh/careerfinder/WorkspaceTransfer.kt\n M apple/AhmadCareer/MobileApplicationState.swift\n M apple/AhmadCareer/NativeApplicationsStore.swift\n M apple/AhmadCareer/NativeApplicationsViews.swift\n?? apple/Checks/NativeRecoveryCheck.swift",
+      "lastCommit": "11cb3d4d8c15e9b16719b6e7091597f43633cda6\n\n2026-11-17T20:12:48+03:00\nMerge sealed singular-copy and iPhone evidence finalization fixes"
+    },
+    "accessibility": {
+      "path": "/Users/saleh/Library/Caches/Career-Account-A11y-Lane-20261117-01a1ea56",
+      "branch": "lane/account-search-a11y-20261117",
+      "head": "87d7238804393557ad00ae0d20f3aad465f8173e",
+      "status": "M apple/AhmadCareer/NativeCareerViews.swift",
+      "lastCommit": "87d7238804393557ad00ae0d20f3aad465f8173e\n7e97e09316e616ba64954ef1a417aabb55700ce3\n2026-11-17T22:55:01+03:00\nIgnore a canceled planning backup file choice",
+      "since243": "87d7238804393557ad00ae0d20f3aad465f8173e Ignore a canceled planning backup file choice\n7e97e09316e616ba64954ef1a417aabb55700ce3 Speak an Apply message that is already on screen\n08f25cc015fab2606838c162328224463f91812b Speak a record blocker that is already on screen\n594da38cb84c03156aecc5cf3463b492d0077deb Speak a planning backup that failed\n6411a10bbbe5c348900b570426d72fa3a670c347 Speak the reconnect title when pairing is required\n0ca27c899a96cbaecb8bfd93852b448f1b4af843 Speak a job warning that is already on screen\n47fdfb23877295faf3687b7b4bd81491ecc45bd6 Speak a profile change that blocks saving\nf6ec0cd1b479f759bef9055ef15c86f071424d74 Speak when automatic sending is not available\n0ed8f50c9946de4d8eeb5d6eabc17ea8cc4ea0de Speak a review that cannot be approved yet\nf139c0499830ec71411a2686d86d546ef50126c7 Explain a review that can no longer continue\n9700d0e078716f40bf17fad9c7fd7362e1549336 Speak the storage pause that replaces the workspace\n1c4458145b8804eefaa1bbd6b7e1a2a494e5d1ce Speak blockers that are already on screen\n720fce53e0be528346e657ff6178cf6f0cd4d4f7 Speak backup and review blockers\nb5f8dff005d647f1e5b5babfe8787bb35355ef69 Speak recovery failures and keep the catalog retry\nc4bf5dbde438a66d99e2ab0ef9c747144614fac8 Keep long job-search text and speak the recovery failure\nb6d5fcaccbd5809fb74db182a39e221a4b2f192e Keep employer-directory retry separate from job search\nfa759f0d9e50d9ee0e0102ba33d83d2529c50aa5 Recover a saved job search that failed to open or save\n25524465c2979bd71f8f377a53151d981381a571 Show a recoverable email check and job-search retry"
+    }
+  },
+  "terminalEvidence": {
+    "observedAt": "2026-11-17T20:12:55.823656+00:00",
+    "processes": "17201 ttys003  Tue 17 Nov 19:28:36 2026     grok\n61036 ttys011  Tue 17 Nov 20:45:19 2026     grok\n61499 ttys012  Tue 17 Nov 20:45:24 2026     grok\n",
+    "registryEntries": [
+      {
+        "session_id": "01a1ea56-c4d3-7252-9cae-7595ad0e9957",
+        "pid": 17201,
+        "cwd": "/Users/saleh"
+      },
+      {
+        "session_id": "01a1ea9c-fd25-75a3-b146-e39e344cc262",
+        "pid": 61036,
+        "cwd": "/Users/saleh"
+      },
+      {
+        "session_id": "01a1ea9d-107f-7f91-bb26-90cb6f496046",
+        "pid": 61499,
+        "cwd": "/Users/saleh"
+      }
+    ],
+    "interpretation": "All three exact terminal session IDs remain registered and their grok PIDs were present. Search has 10 dirty paths; recovery has 8 including a new NativeRecoveryCheck.swift; accessibility has 18 commits atop 243 and an additional dirty NativeCareerViews.swift. This is observable progress, not a test result."
+  },
+  "nativeOverlap": {
+    "accessibilityCommittedPaths": [
+      "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt",
+      "android/app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+      "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+      "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+      "android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt",
+      "android/app/src/main/java/com/saleh/careerfinder/ProfileContract.java",
+      "android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt",
+      "android/app/src/main/res/values-ar/career_copy.xml",
+      "android/app/src/main/res/values/career_copy.xml",
+      "android/checks/BoundaryPolicyCheck.java",
+      "apple/AhmadCareer/CareerDiscovery.swift",
+      "apple/AhmadCareer/MobileApplicationState.swift",
+      "apple/AhmadCareer/NativeApplicationsViews.swift",
+      "apple/AhmadCareer/NativeCareerViews.swift",
+      "apple/AhmadCareer/NativeDiscoveryViews.swift",
+      "apple/AhmadCareer/ar.lproj/Localizable.strings",
+      "apple/AhmadCareer/en.lproj/Localizable.strings",
+      "apple/Checks/DiscoveryCheck.swift",
+      "apple/Checks/MobileLifecycleCheck.swift",
+      "localization/native-copy.json"
+    ],
+    "dirtyPathIntersectionWithAccessibilitySeries": {
+      "search": [
+        "android/app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+        "android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt",
+        "android/app/src/main/res/values-ar/career_copy.xml",
+        "android/app/src/main/res/values/career_copy.xml",
+        "apple/AhmadCareer/CareerDiscovery.swift",
+        "apple/AhmadCareer/NativeDiscoveryViews.swift",
+        "apple/AhmadCareer/ar.lproj/Localizable.strings",
+        "apple/AhmadCareer/en.lproj/Localizable.strings",
+        "apple/Checks/DiscoveryCheck.swift",
+        "localization/native-copy.json"
+      ],
+      "recovery": [
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+        "apple/AhmadCareer/MobileApplicationState.swift",
+        "apple/AhmadCareer/NativeApplicationsViews.swift"
+      ]
+    },
+    "interpretation": "All 10 search dirty paths overlap the accessibility series. Three recovery dirty paths overlap it. Integrating only by lane label would overwrite or conflict with actual work. Existing owners must serialize file integration; this snapshot grants no ownership transfer."
+  },
+  "locksAndBuildProcesses": {
+    "sharedNativeLock": {
+      "path": "/tmp/dot-ios-build.lock",
+      "observedAt": "2026-11-17T20:11:13.644994+00:00",
+      "exists": false,
+      "isDir": false,
+      "content": null,
+      "children": []
+    },
+    "legacyRelayLock": {
+      "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/CareerFinder-publishing-native-ci-relay.lock",
+      "exists": true,
+      "isDir": false,
+      "parsedContent": {
+        "purpose": "career-publishing-native-ci-relay",
+        "pid": 52595,
+        "acquired_at_utc": "2026-11-17T13:11:19.701049+00:00",
+        "state_directory": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/CareerFinder-CI-5b1493f8-r2-01a49fa7c28e",
+        "released_at_utc": "2026-11-17T13:11:38.514974+00:00"
+      }
+    },
+    "nativeProcessNames": {
+      "observedAt": "2026-11-17T20:12:55.823656+00:00",
+      "names": []
+    },
+    "interpretation": "No shared lock and no matching xcodebuild/gradle process names observed at these times. The legacy relay explicitly records release at 13:11:38 UTC. Absence is a snapshot and does not authorize a competing build."
+  },
+  "latestA11yNotice": {
+    "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/COORDINATION-account-search-a11y-01a1ea56-to-01a49fa7c28e-20261117T1956Z.txt",
+    "mtime": "2026-11-17T19:56:14.660055+00:00",
+    "from": "01a1ea56",
+    "to": "01a49fa7c28e",
+    "status": "PATCHES_READY_FOR_OWNER_REVIEW_NOT_INTEGRATED",
+    "head": "87d7238804393557ad00ae0d20f3aad465f8173e",
+    "publisherTip": "3a08819d5eae981d62b290f241b58637a2fdd21a",
+    "deliveryState": {
+      "committed_local_worktree": true,
+      "pushed": false,
+      "merged": false,
+      "native_built": false,
+      "signed": false,
+      "installed": false,
+      "deployed": false,
+      "uploaded": false,
+      "submitted": false,
+      "approved": false,
+      "released": false
+    },
+    "claimedChecks": {
+      "87d7238_diff_check": "git diff --check on NativeCareerViews.swift before commit. DIFFCHECK=0.",
+      "87d7238_swift_parse": "xcrun --sdk iphonesimulator swiftc -parse -target arm64-apple-ios16.0 on NativeCareerViews.swift. IOS_PARSE_EXIT=0, with a sysroot warning for Simulator iOS 27.2 while targeting arm64-apple-ios16.0. Syntax only. Not a build, not xcodebuild, not typechecked, and not a device or VoiceOver pass.",
+      "87d7238_apply_check": "Single format-patch apply --check onto 7e97e09. APPLY_CHECK_OK. The twelve-patch series was not re-run, and the eighteen-patch series was not applied.",
+      "owner_tip": "Fetched origin/recovery/publishing-integrated-20261117-d57f4 at 3a08819. NativeCareerViews.swift has no diff from 243031d to that tip. This lane did not rebase.",
+      "catalog": "native-copy.json was not edited. No new spoken sentence was added.",
+      "not_run": "No xcodebuild, gradle, kotlinc, device, VoiceOver, or XCUITest run."
+    },
+    "independentReview": "No separate reviewer was spawned. Do not treat this notice as an independent pass.",
+    "interpretation": "The latest notice still targets obsolete continuation 01a49. It reports local-only patches and syntax/apply checks, not native build/device/accessibility acceptance. Current dirty file is newer than the notice's committed head."
+  },
+  "ci": {
+    "observedAt": "2026-11-17T20:11:09.705080+00:00",
+    "runs": [
+      {
+        "id": 44147056599,
+        "number": 41,
+        "head_sha": "243031d3f35040985c5b274e8ddf4a90adb0eda8",
+        "head_branch": "recovery/publishing-integrated-20261117-d57f4",
+        "event": "workflow_dispatch",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/swonyu/ahmad-career/actions/runs/44147056599",
+        "created_at": "2026-11-17T18:22:03Z",
+        "updated_at": "2026-11-17T18:50:00Z"
+      },
+      {
+        "id": 44139018005,
+        "number": 40,
+        "head_sha": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+        "head_branch": "continuation/account-acceptance-20261117",
+        "event": "pull_request",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/swonyu/ahmad-career/actions/runs/44139018005",
+        "created_at": "2026-11-17T17:37:23Z",
+        "updated_at": "2026-11-17T18:06:31Z"
+      },
+      {
+        "id": 44135594938,
+        "number": 39,
+        "head_sha": "11cb3d4d8c15e9b16719b6e7091597f43633cda6",
+        "head_branch": "recovery/publishing-integrated-20261117-d57f4",
+        "event": "workflow_dispatch",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/swonyu/ahmad-career/actions/runs/44135594938",
+        "created_at": "2026-11-17T17:18:52Z",
+        "updated_at": "2026-11-17T17:44:58Z"
+      }
+    ],
+    "interpretation": "Latest visible run remains 41 / 44147056599 at 243031d, completed success. No newer run for publisher 3a is present in the latest five. Prior verified run 41 evidence had iPhone 17/17 and four other jobs skipped; this snapshot did not reread job artifacts. No full hosted/native/store acceptance at 3a or root e1 is inferred."
+  },
+  "coordination": {
+    "pr": "https://github.com/swonyu/ahmad-career/pull/1",
+    "rootOverlapNotice": "https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6958512683",
+    "commentsAfterRootNotice": [
+      {
+        "id": 6959058434,
+        "url": "https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6959058434",
+        "opening": "Dependency owner 5bc6158967e8 — independent Picomatch remedy review (17 November 2026)\n\nCurrent root baseline is ca3d3411d8b5b36fa7093dff782f4a7b931261c7. Lock SHA-256: 2512e3bd6aebfc4377bbe036d3cf606c27e33613b35c8c58d28f0f3a0d596c99. Read-only inspection confirms micromatch4.0.8 → picomatch2.3.2, t"
+      },
+      {
+        "id": 6959368742,
+        "url": "https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6959368742",
+        "opening": "### Independent immutable-tree comparison and scoped CI cancellation guard — 17 Nov 2026 ~20:00 UTC\n\nRead-only check only. No shared-tree edits, build, CI dispatch, browser operation or push.\n\n**Publisher integration:** Remotely fetched full Git blob trees for root product `9971b7f9367e5a8374890f1c6"
+      }
+    ],
+    "latestComment": "https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6959368742",
+    "acknowledgement": "No explicit owner acknowledgement of the root seven-lane overlap notice was found in the retrieved subsequent comments. The latest independent immutable-tree comparison is evidence, not owner acknowledgement."
+  },
+  "immutablePublisherVsRoot": {
+    "observedAt": "2026-11-17T20:14:01.034348+00:00",
+    "publisher": "3a08819d5eae981d62b290f241b58637a2fdd21a",
+    "root": "e1dce0e24ef8d1fe85934578d1ba33bde99f166d",
+    "publisherFileCount": 1412,
+    "rootFileCount": 1449,
+    "apiTreeTruncated": false,
+    "differingPathCount": 47,
+    "differences": [
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/.gitattributes",
+        "publisherBlob": null,
+        "rootBlob": "77597a65e0448d05824e8679de6113a8c8164843"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/README.md",
+        "publisherBlob": null,
+        "rootBlob": "7b2d571e3efb91c3f40effbafc8b9177f86dfe75"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/grok-account-recovery-final.patch",
+        "publisherBlob": null,
+        "rootBlob": "145cc92f8f199e48fd68ec7c6000e8558e1e0718"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/grok-account-recovery-identity-baseline.log",
+        "publisherBlob": null,
+        "rootBlob": "f85c78b5a2672fb8d5afaa603498b80c06111bb3"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/grok-account-recovery-root-integration.json",
+        "publisherBlob": null,
+        "rootBlob": "a13398f9be70d68c910c414da7b320da306124ac"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/grok-account-recovery-strict-candidate.log",
+        "publisherBlob": null,
+        "rootBlob": "2ad122fc91ff1d3bd58f1e08464b61f13fc420be"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/grok-account-recovery-strict-eslint.log",
+        "publisherBlob": null,
+        "rootBlob": "10a02f3c34ad131684dd93016f1b5ec81a2983e1"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/grok-browser-fixture/baseline-focus.jpg",
+        "publisherBlob": null,
+        "rootBlob": "fde4e4cffd3d5bf71b3e77b8e56de94809e40f49"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/grok-browser-fixture/baseline-observations.json",
+        "publisherBlob": null,
+        "rootBlob": "c51d0afaa5f0424a8ce663e9541196b5cf645b23"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/grok-build-independent-report.txt",
+        "publisherBlob": null,
+        "rootBlob": "612a69fe8e7b1622b87df5a56d94812938ee6e2e"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/grok-heavy-first-report.txt",
+        "publisherBlob": null,
+        "rootBlob": "93a9a9f8fd4130ddcdf21f7c298c23afa7477dec"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/grok-heavy-fourth-correction-request.txt",
+        "publisherBlob": null,
+        "rootBlob": "b2aa3874f0d20730d783c450555ac517cb31369b"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/grok-heavy-fourth-report.txt",
+        "publisherBlob": null,
+        "rootBlob": "a233836d1297deda55d6aef931f7222849140531"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/grok-heavy-second-report.txt",
+        "publisherBlob": null,
+        "rootBlob": "2724e753443bf4467e23ed63eb662d991199fb10"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/grok-heavy-third-report.txt",
+        "publisherBlob": null,
+        "rootBlob": "fa906dc6a4c7ef31f1bd7fb8f494e281f382c31a"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/hosted-recovery-search-selection-focused.json",
+        "publisherBlob": null,
+        "rootBlob": "94067b246236cf9187c0c477077f23b6982a1827"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/hosted-recovery-search-selection-focused.log",
+        "publisherBlob": null,
+        "rootBlob": "340457c0303e77eee8f662f908a48c448cb36433"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/integrated-hosted-audit-node24.log",
+        "publisherBlob": null,
+        "rootBlob": "0376b19577bfe7c7b9d261caa2eab8b8d70d8684"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/integrated-hosted-browser-node24.log",
+        "publisherBlob": null,
+        "rootBlob": "6c24d14e10d0d70d8b214e094f3b44ddbce399a8"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/integrated-hosted-build-node24.log",
+        "publisherBlob": null,
+        "rootBlob": "9da6f0a2ee200105132df2f2de9094852fd112e6"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/integrated-hosted-full-gates-node24.json",
+        "publisherBlob": null,
+        "rootBlob": "f1db46e35e4a9483ddc4b90648b40f932573896f"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/integrated-hosted-lint-node24.log",
+        "publisherBlob": null,
+        "rootBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/integrated-hosted-test-node24.log",
+        "publisherBlob": null,
+        "rootBlob": "c34390fd187f0635524412632e17c6fef02d1199"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/integrated-hosted-test-retest-node24.json",
+        "publisherBlob": null,
+        "rootBlob": "bb1a00a17c86645a4efd25603d1ff7feee59f120"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/integrated-hosted-test-retest-node24.log",
+        "publisherBlob": null,
+        "rootBlob": "e153e3b2bd39a6eb717f8425f8fca8d012f9d86d"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/integrated-hosted-typecheck-node24.log",
+        "publisherBlob": null,
+        "rootBlob": "9f6697a2cc751a5eb804c5792f627e4970def9fe"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/integrated-hosted-worker-node24.log",
+        "publisherBlob": null,
+        "rootBlob": "f471d44bfa7cfe0a5924bbcc6d6a2d43f11b9c1a"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/native-run41-terminal-observation.json",
+        "publisherBlob": null,
+        "rootBlob": "b21ed2b78a239c7acfe2dec7b4cc4815e4dd800f"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/phone-url-guidance-baseline.log",
+        "publisherBlob": null,
+        "rootBlob": "49a1f2303d74e068601a78cffb8a297277330bc5"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/phone-url-guidance-candidate.log",
+        "publisherBlob": null,
+        "rootBlob": "f3cf38d988680a05925c4b67f9c4c778d111c29d"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/phone-url-guidance-verification.json",
+        "publisherBlob": null,
+        "rootBlob": "525a260503bd8defe06281e4284d86cf785e086f"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/publisher-root-merge.json",
+        "publisherBlob": null,
+        "rootBlob": "198bb4b0d5d060acb1454517bf6851c7c355329e"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/search-browser-fixture/chrome-board-enter-baseline.json",
+        "publisherBlob": null,
+        "rootBlob": "cbdcb85528243ee987f3d0250aef505b390f94eb"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/search-browser-fixture/chrome-capped-en.json",
+        "publisherBlob": null,
+        "rootBlob": "a5518b6fd1416db60c42da30c429df0601d33e4f"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/search-browser-fixture/chrome-exhausted-en.json",
+        "publisherBlob": null,
+        "rootBlob": "d5cc248acc11cc624f3f7374a7cc86300b1df6f3"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/search-browser-fixture/chrome-reviewed-results.json",
+        "publisherBlob": null,
+        "rootBlob": "05e68f677cd0abe8f7f4fa60aab4f3b6fdeb1c33"
+      },
+      {
+        "path": "docs/continuation-evidence/2026-11-17-hosted-recovery-4b851/verification-summary.json",
+        "publisherBlob": null,
+        "rootBlob": "b8481b42ff321393c3ed6a90e175cfdd2be483c9"
+      },
+      {
+        "path": "docs/continuation-handoffs/2026-11-17-native-recovery.md",
+        "publisherBlob": "26d05af765e309632be7eb92aec14692934eaf14",
+        "rootBlob": "9b8aa4f6b3be73e7fb2f92eb0c148b9f4359c11c"
+      },
+      {
+        "path": "docs/continuation-handoffs/2026-11-17-native-search.md",
+        "publisherBlob": "f4406ae5acc4170fe735470c32ed6c9b9a2d92eb",
+        "rootBlob": "72036ec89c0ecf2475389bf1aaee4cb917e726c7"
+      },
+      {
+        "path": "hosted/app/components/ProviderConnections.tsx",
+        "publisherBlob": "2ea9a9724f5e1729c7bcb290b5518aba8f07f68c",
+        "rootBlob": "9b5f0fd2f9d87c6e75c862acb041b1e28c17876f"
+      },
+      {
+        "path": "hosted/app/components/SignInOptions.tsx",
+        "publisherBlob": "5279be9bf617eca82eabd228e07f37ad0cb554b1",
+        "rootBlob": "31c822ea87aeca3a126c5570a00d27ebaa2bf044"
+      },
+      {
+        "path": "hosted/tests/account-recovery-lifecycle.mjs",
+        "publisherBlob": "121ec1ab35c9f7b6846bbcb262d74fe7830df76c",
+        "rootBlob": "d8c0d81616572a716ad8dde4b4176512f9d73917"
+      },
+      {
+        "path": "hosted/tests/hosted-discovery-verification.json",
+        "publisherBlob": "35313f603e2798e205e17b59d2929c7eb8ad21f8",
+        "rootBlob": "6e71f3491a3501e735005fe54aeb3e47159a7688"
+      },
+      {
+        "path": "hosted/tests/hosted-phone-verification.json",
+        "publisherBlob": "6822d1dc4071721a7eae1fd4c01864fe4a02a699",
+        "rootBlob": "71b3501f08bf3a889e2b4b7b8b801630dba333e4"
+      },
+      {
+        "path": "hosted/tests/hosted-verification.json",
+        "publisherBlob": "c92241a89363f2fe1ae786c9692b8da196f8af89",
+        "rootBlob": "c87ef547fa2343c9cd96016e2fc5ff2b10922f20"
+      },
+      {
+        "path": "hosted/tests/hosted-worker-verification.json",
+        "publisherBlob": "f7ab81958f8a448014f3a254866f099e2ac3afae",
+        "rootBlob": "c78b521e47e7fa3b0127ed38f8a4409ae71a370a"
+      },
+      {
+        "path": "hosted/tests/phone-localization.mjs",
+        "publisherBlob": "512b65a1eeb390e4bef7803ceaa9c52ff60a2703",
+        "rootBlob": "363bfe43183a2b55eff2d9faebb695ce5df7989a"
+      }
+    ],
+    "phoneApp": {
+      "equal": true,
+      "publisherSha256": "cea98d8442f0dcb43cee2b1e3d5d5a2814a89130b7c18793ee50f4a8366d5368",
+      "rootSha256": "cea98d8442f0dcb43cee2b1e3d5d5a2814a89130b7c18793ee50f4a8366d5368"
+    },
+    "phoneLocalization": {
+      "publisherEqualsRoot": false,
+      "rootEquals9971": true,
+      "publisherSha256": "5361be5269b7507caec0f10fff6aaf2b80d5b52c356666b2c52ae107b89caa9c",
+      "rootSha256": "4031519f0153a388acc6dfd037e488ed59a8c37dbac7084475908d826e9453c6"
+    },
+    "interpretation": "No publisher-only paths. PhoneApp bytes match exactly. All native/localization, workflow and package/lock paths match. Differences comprise 37 root-only evidence files, 2 handoffs, root's 3 latest source/test changes, 4 generated verification receipts and phone-localization.mjs. The publisher fixture is a separate binding solution and must be reviewed rather than assumed equivalent by history."
+  },
+  "publisherFixtureBinding": {
+    "observedAt": "2026-11-17T20:14:43.811823+00:00",
+    "blob": "512b65a1eeb390e4bef7803ceaa9c52ff60a2703",
+    "lines": [
+      {
+        "line": 184,
+        "text": "function renderPhoneFragment(fragment, language, additions = {}, setup = '') {"
+      },
+      {
+        "line": 201,
+        "text": "  const View = execute(`${setup}\\nexports.View = () => (${fragment});`, context).View;"
+      },
+      {
+        "line": 283,
+        "text": "  const app = phoneTree.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'PhoneApp');"
+      },
+      {
+        "line": 285,
+        "text": "  const actions = app.body.statements.flatMap(node => ts.isVariableStatement(node)"
+      },
+      {
+        "line": 286,
+        "text": "    ? [...node.declarationList.declarations] : []).filter(node => node.name.getText(phoneTree) === 'addEmployerBoard');"
+      },
+      {
+        "line": 287,
+        "text": "  assert.equal(actions.length, 1, 'Expected one actual addEmployerBoard declaration');"
+      },
+      {
+        "line": 288,
+        "text": "  assert(actions[0].initializer, 'Expected the actual addEmployerBoard initializer');"
+      },
+      {
+        "line": 289,
+        "text": "  const setup = `const addEmployerBoard = ${actions[0].initializer.getText(phoneTree)};`;"
+      },
+      {
+        "line": 293,
+        "text": "  const element = renderPhoneFragment(phoneFragment(node => hasClass(node, 'phone-search-options')), language, {"
+      },
+      {
+        "line": 299,
+        "text": "  }, setup);"
+      }
+    ],
+    "sourceConclusion": "Publisher extracts the actual addEmployerBoard initializer, passes setup to renderPhoneFragment, and executes it before rendering the fragment. The known missing-binding ReferenceErrors cannot be assumed present on this tree. Root e1 remains byte-identical to 9971's non-executing stub fixture. No test was executed; this is source evidence only."
+  },
+  "remainingActionsForOwners": [
+    "Acknowledge the current native path overlaps and serialize integration among the three real terminal lanes.",
+    "Preserve root e1's three follow-up files when reconciling with publisher 3a; review the differing localization fixture intentionally.",
+    "Use the current owner and shared native slot before running native gates, and bind all future results to exact integrated source.",
+    "Retain 19-high audit finding status and unproven hosted/native/store gates unless new evidence establishes otherwise."
+  ],
+  "historicalReport": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/seven-workstreams-native-overlap-review-20261117.md"
+}

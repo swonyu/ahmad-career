@@ -1,0 +1,13 @@
+{
+  "phase": "red against unchanged288 helper",
+  "startedUTC": "2026-11-17T23:33:44.996771+00:00",
+  "completedUTC": "2026-11-17T23:33:45.490044+00:00",
+  "command": [
+    "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+    "--test",
+    "tests/phone-record-tools.mjs"
+  ],
+  "exit": 1,
+  "sourceSHA256": "cea98d8442f0dcb43cee2b1e3d5d5a2814a89130b7c18793ee50f4a8366d5368",
+  "testSHA256": "61fe6cdec6c96dd4a69d22b21531b8b2de44dfe471ce73613e164620a28d1e81"
+}

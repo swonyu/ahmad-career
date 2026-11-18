@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "/root/publication_review",
+  "reviewedUTC": "2026-11-18T12:53:05.093902+00:00",
+  "sourceHead": "927b7c49f5cd5722e5d8fbdb8e5b5b4a11173101",
+  "sourceCleanWhenRead": true,
+  "baseReviewedHead": "b6f499361279a27edec4635735cae97a13c6931b",
+  "scope": "Read-only recovery of navigation decision scope; no product changes, builds, tests or native actions.",
+  "conclusion": "The inspected recovered evidence does not establish an explicit user requirement that all platforms share Search/Saved/Apply/Profile/Settings labels. It explicitly documents intentionally different current platform models and corrects support copy that conflated them. The current request for simple consistent navigation is a new improvement direction, not proof of an older exact-label contract breach.",
+  "models": [
+    {
+      "platform": "Phone browser",
+      "tabs": [
+        "Search",
+        "Saved",
+        "Apply",
+        "Profile",
+        "Settings"
+      ],
+      "sourceEvidence": "docs/Continuation-Implementation-2026-11-17.md:152; docs/public-support-navigation-20261117/README.md:11"
+    },
+    {
+      "platform": "Native iPhone",
+      "tabs": [
+        "Start",
+        "Search",
+        "Apply",
+        "Saved",
+        "Settings"
+      ],
+      "secondaryRoutes": "Profile is accessible from Settings; applicant editor also accessible from Start and Apply.",
+      "sourceEvidence": "apple/AhmadCareer/NativeCareerViews.swift:125-159,1114-1121; docs/public-support-navigation-20261117/README.md:12"
+    },
+    {
+      "platform": "Native Android",
+      "tabs": [
+        "Jobs",
+        "Apply",
+        "Receipts",
+        "Profile",
+        "Settings"
+      ],
+      "secondaryRoutes": "Jobs contains Discover and Saved tabs. Guest Apply routes Jobs with Saved selected.",
+      "sourceEvidence": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt:148-150,196-199; DiscoveryScreen.kt:34-48; docs/public-support-navigation-20261117/README.md:13"
+    }
+  ],
+  "documentaryEvidence": [
+    {
+      "path": "docs/public-support-navigation-20261117/README.md",
+      "sha256": "9278d5891c61c2077641b93ad37106adeb4c32dccffe4e00be81ff245fe7ead1",
+      "lines": "3-15",
+      "finding": "Prepared17November against source918cfaa; expressly identifies applying the browser five-section description to native apps as a support-copy error and records all three actual navigation models."
+    },
+    {
+      "path": "docs/Continuation-Implementation-2026-11-17.md",
+      "sha256": "e9a14cff96c997ee9ff6c2a75c6da1a659d30ab4a9a7e339f19c974a232315c8",
+      "lines": "150-154",
+      "finding": "Search/Saved/Apply/Profile/Settings is explicitly introduced as the candidate browser design; native appearance is discussed separately."
+    },
+    {
+      "path": "docs/General-Audience-Phase-1.md",
+      "sha256": "00b5dd5227f93992b353ebd60fe2f68297a3d839123e9902ec4bdfea6e29338f",
+      "lines": "5-29",
+      "finding": "General-user start, optional profile, blank defaults, preserved records, bounded coverage and validation; no exact tab-label or platform-parity prescription."
+    },
+    {
+      "path": "docs/General-Audience-Phase-2.md",
+      "sha256": "c765f1d8cae1dbcd8b41b6daeb32cb1f62df9d759ba2dd928a5e71de60e87a6f",
+      "lines": "5-51",
+      "finding": "Local preference, coverage, preservation/privacy and runtime requirements; no exact tab-label contract."
+    },
+    {
+      "path": "docs/Release-Candidate-2026-11-18.md",
+      "sha256": "bf1aa09813e8cd135fa23e88efaa69ff1e3ff385b62d9fec8090de16fb718d96",
+      "lines": "19-27",
+      "finding": "Promises five-tab navigation and bilingual phone experiences without naming a shared exact set/order."
+    },
+    {
+      "path": "docs/app-store-draft-20261117/README.md",
+      "sha256": "ce6b6721513a7e9f09eabd2219710007900385df855f20d285ad80db2e9aa9e3",
+      "lines": "18",
+      "finding": "Explicit current native iPhone Start/Search/Apply/Saved/Settings; Profile from Settings. Older Start/Search/Saved/Plan/Profile description superseded."
+    },
+    {
+      "path": "docs/Phone-Update-2026-11-16.md",
+      "lines": "19,49-53",
+      "finding": "Historical16November candidate had Start/Search/Apply/Saved/Profile; the page labels this original section historical. This older state cannot override the later Settings implementation."
+    }
+  ],
+  "boundedRecommendation": "Preserve current route wiring while the coordinator makes an explicit common-navigation design decision under the latest user request. If aligning now, treat it as a new scoped product change: map every Start/receipt/profile/planning route into the common five sections, retain saved/unsaved state and meaningful records, update current explanatory/support copy, and verify actual EN/AR large-text keyboard/native journeys. Do not silently replace tabs based only on an ambiguous continuity summary.",
+  "limitations": [
+    "The inspected repository docs and relevant source do not contain an original user quote prescribing exact shared labels; this is a scoped absence, not a claim that all historical conversations were searched.",
+    "Source-level mapping is not a rendered accessibility or navigation acceptance pass."
+  ]
+}

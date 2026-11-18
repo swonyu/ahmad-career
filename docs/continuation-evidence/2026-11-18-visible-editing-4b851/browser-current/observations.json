@@ -1,0 +1,534 @@
+{
+  "baseCommit": "cad85c495bc03853cc2258d093e79d8d1fb52ae3",
+  "candidatePhoneSha256": "e3454df4c4a4189475097d5bcc0ac2e2bf1fe53447d3046513c6eb780a9cd998",
+  "candidateRecoveryTestSha256": "671f0cc26fa35a8df399a85332902b1226b537115fd7321a04c6ddc9c4b",
+  "fixturePort": 4182,
+  "fixtureListenerPid": 74716,
+  "candidateNotCommittedAtBuild": true,
+  "observations": [
+    {
+      "captureKey": "cf_e345_reload",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "- region \"Synthetic fixture controls\":\n  - heading \"Career Finder synthetic stage verification fixture\" [level=1]\n  - paragraph: Actual current PhoneApp and styles. Synthetic jobs only. No account or employer API. Link clicks record the destination and stay local.\n  - generic \"Fixture controls and evidence\"\n  - text: Scenario\n  - combobox \"Scenario\":\n    - 'option \"250 matches: local 200-result cap\"'\n    - 'option \"Exactly 200 matches: exhausted\" [selected]'\n    - 'option \"50 retained matches: source timeout\"'\n    - 'option \"250 retained matches: source timeout + local cap\"'\n    - 'option \"50 earlier results: stale board\"'\n    - 'option \"No current results: board unavailable\"'\n    - 'option \"50 retained results: provider data-size limit\"'\n  - text: Product language\n  - combobox \"Product language\":\n    - option \"English\" [selected]\n    - option \"العربية\"\n  - text: GET delay (ms)\n  - spinbutton \"GET delay (ms)\": \"250\"\n  - button \"Apply fixture scenario\"\n  - button \"Capture observed evidence\"\n  - region \"Synthetic Saved data controls\":\n    - heading \"Synthetic Saved data\" [level=2]\n    - paragraph: Only the empty guest workspace on this assigned origin can be seeded. No database is cleared. First seed the Interview record-only item, use the normal product UI to delete it, and observe Clear recovery. Only after jobs and records are empty may you seed the 22-item corpus. Do not enter a real profile, CV or note.\n    - button \"Seed synthetic Interview record-only item\"\n    - button \"Seed synthetic 22-item stage corpus\"\n    - status: No synthetic seed has been written by these controls.\n    - generic \"Synthetic seed manifest\"\n  - paragraph: For these Saved checks, open Saved without running a search. Searching saves search state and makes this workspace ineligible for another seed. Scenario controls retain the existing synthetic search service; no storage is cleared.\n  - paragraph:\n    - text: \"Scenario:\"\n    - strong: exhausted\n    - text: \". Viewport:\"\n    - strong: 390 × 844\n    - text: \". Product cards:\"\n    - strong: \"0\"\n    - text: .\n  - generic \"Observed product DOM\"\n  - generic \"Observed live-region history (DOM only)\"\n  - generic \"Captured evidence including GET ledger\"\n- link \"Skip to content\":\n  - /url: \"#phone-main\"\n- banner:\n  - link \"Career Finder Your career workspace\":\n    - /url: /phone\n    - text: Career Finder\n    - generic: Your career workspace\n  - button \"Sign in\"\n  - button \"Open Settings\":\n    - generic: Settings\n- main:\n  - paragraph: YOUR SHORTLIST\n  - heading \"Your next moves.\" [level=1]\n  - paragraph: A clear shortlist, private notes, and a plan for what comes next.\n  - generic: 17 saved jobs\n  - button \"Add job link\":\n    - text: Add job link\n  - generic \"Filter saved jobs\":\n    - button \"All\" [pressed]\n    - button \"Applied\"\n    - button \"Follow-ups\"\n  - text: Application stage\n  - combobox \"Application stage\":\n    - option \"All stages\" [selected]\n    - option \"Saved\"\n    - option \"Applied\"\n    - option \"Interview\"\n    - option \"Offer\"\n    - option \"Closed\"\n  - generic: Find a saved job, employer or note\n  - searchbox \"Find a saved job, employer or note\"\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Role saved 0\" [level=2]:\n      - button \"Role saved 0\"\n    - generic: Saved\n    - generic: Follow up Nov 2, 2026\n    - paragraph: Follow-up due\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/1\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Role saved 1\" [level=2]:\n      - button \"Role saved 1\"\n    - generic: Saved\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/2\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Role saved 3\" [level=2]:\n      - button \"Role saved 3\"\n    - generic: Saved\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/4\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Role applied 0\" [level=2]:\n      - button \"Role applied 0\"\n    - generic: Applied\n    - generic: You marked this as applied\n    - generic: Follow up Nov 20, 2026\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/5\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Role applied 1\" [level=2]:\n      - button \"Role applied 1\"\n    - generic: Applied\n    - generic: You marked this as applied\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/6\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Role applied 3\" [level=2]:\n      - button \"Role applied 3\"\n    - generic: Applied\n    - generic: You marked this as applied\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/8\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Role interview 0\" [level=2]:\n      - button \"Role interview 0\"\n    - generic: Interview\n    - generic: You marked this as applied\n    - generic: Follow up Dec 2, 2026\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/9\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Nurse clinic\" [level=2]:\n      - button \"Nurse clinic\"\n    - generic: Offer\n    - generic: You marked this as applied\n    - generic: Follow up Nov 30, 2026\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/10\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Role interview 3\" [level=2]:\n      - button \"Role interview 3\"\n    - generic: Interview\n    - generic: You marked this as applied\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/12\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Role offer 0\" [level=2]:\n      - button \"Role offer 0\"\n    - generic: Offer\n    - generic: You marked this as applied\n    - generic: Follow up Nov 18, 2026\n    - paragraph: Follow-up due\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/13\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Role offer 1\" [level=2]:\n      - button \"Role offer 1\"\n    - generic: Offer\n    - generic: You marked this as applied\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/14\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Role offer 3\" [level=2]:\n      - button \"Role offer 3\"\n    - generic: Offer\n    - generic: You marked this as applied\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/16\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Role closed 0\" [level=2]:\n      - button \"Role closed 0\"\n    - generic: Closed\n    - generic: You marked this as applied\n    - generic: Follow up Jan 1, 2026\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/17\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Role closed 1\" [level=2]:\n      - button \"Role closed 1\"\n    - generic: Closed\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/18\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Role closed 3\" [level=2]:\n      - button \"Role closed 3\"\n    - generic: Closed\n    - generic: You marked this as applied\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/20\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Bare 21\" [level=2]:\n      - button \"Bare 21\"\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/bare-21\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Bare 22\" [level=2]:\n      - button \"Bare 22\"\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/bare-22\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Role saved 2\" [level=2]:\n      - button \"Role saved 2\"\n    - paragraph: Application record · bookmark removed\n    - generic: Saved\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/3\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Role applied 2\" [level=2]:\n      - button \"Role applied 2\"\n    - paragraph: Application record · bookmark removed\n    - generic: Applied\n    - generic: You marked this as applied\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/7\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Role interview 2\" [level=2]:\n      - button \"Role interview 2\"\n    - paragraph: Application record · bookmark removed\n    - generic: Interview\n    - generic: You marked this as applied\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/11\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Role offer 2\" [level=2]:\n      - button \"Role offer 2\"\n    - paragraph: Application record · bookmark removed\n    - generic: Offer\n    - generic: You marked this as applied\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/15\n      - text: Open job\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Role closed 2\" [level=2]:\n      - button \"Role closed 2\"\n    - paragraph: Application record · bookmark removed\n    - generic: Closed\n    - generic: You marked this as applied\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/19\n      - text: Open job\n  - paragraph: Stages, follow-up dates, and notes stay on this phone. They are your own records; employer-confirmed submissions appear in Apply.\n- navigation \"App sections\":\n  - button \"Search\":\n    - generic: Search\n  - button \"Saved 2 follow-ups due\":\n    - generic: Saved\n    - generic \"2 follow-ups due\"\n  - button \"Apply\":\n    - generic: Apply\n  - button \"Profile\":\n    - generic: Profile\n  - button \"Settings\":\n    - generic: Settings"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_en_record_open",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "- region \"Synthetic fixture controls\":\n  - heading \"Career Finder synthetic stage verification fixture\" [level=1]\n  - paragraph: Actual current PhoneApp and styles. Synthetic jobs only. No account or employer API. Link clicks record the destination and stay local.\n  - generic \"Fixture controls and evidence\"\n  - text: Scenario\n  - combobox \"Scenario\":\n    - 'option \"250 matches: local 200-result cap\"'\n    - 'option \"Exactly 200 matches: exhausted\" [selected]'\n    - 'option \"50 retained matches: source timeout\"'\n    - 'option \"250 retained matches: source timeout + local cap\"'\n    - 'option \"50 earlier results: stale board\"'\n    - 'option \"No current results: board unavailable\"'\n    - 'option \"50 retained results: provider data-size limit\"'\n  - text: Product language\n  - combobox \"Product language\":\n    - option \"English\" [selected]\n    - option \"العربية\"\n  - text: GET delay (ms)\n  - spinbutton \"GET delay (ms)\": \"250\"\n  - button \"Apply fixture scenario\"\n  - button \"Capture observed evidence\"\n  - region \"Synthetic Saved data controls\":\n    - heading \"Synthetic Saved data\" [level=2]\n    - paragraph: Only the empty guest workspace on this assigned origin can be seeded. No database is cleared. First seed the Interview record-only item, use the normal product UI to delete it, and observe Clear recovery. Only after jobs and records are empty may you seed the 22-item corpus. Do not enter a real profile, CV or note.\n    - button \"Seed synthetic Interview record-only item\"\n    - button \"Seed synthetic 22-item stage corpus\"\n    - status: No synthetic seed has been written by these controls.\n    - generic \"Synthetic seed manifest\"\n  - paragraph: For these Saved checks, open Saved without running a search. Searching saves search state and makes this workspace ineligible for another seed. Scenario controls retain the existing synthetic search service; no storage is cleared.\n  - paragraph:\n    - text: \"Scenario:\"\n    - strong: exhausted\n    - text: \". Viewport:\"\n    - strong: 390 × 844\n    - text: \". Product cards:\"\n    - strong: \"0\"\n    - text: .\n  - generic \"Observed product DOM\"\n  - generic \"Observed live-region history (DOM only)\"\n  - generic \"Captured evidence including GET ledger\"\n- link \"Skip to content\":\n  - /url: \"#phone-main\"\n- banner:\n  - link \"Career Finder Your career workspace\":\n    - /url: /phone\n    - text: Career Finder\n    - generic: Your career workspace\n  - button \"Sign in\"\n  - button \"Open Settings\":\n    - generic: Settings\n- main:\n  - paragraph: YOUR SHORTLIST\n  - heading \"Your next moves.\" [level=1]\n  - paragraph: A clear shortlist, private notes, and a plan for what comes next.\n  - generic: 17 saved jobs\n  - button \"Add job link\":\n    - text: Add job link\n  - generic \"Filter saved jobs\":\n    - button \"All\" [pressed]\n    - button \"Applied\"\n    - button \"Follow-ups\"\n  - text: Application stage\n  - combobox \"Application stage\":\n    - option \"All stages\"\n    - option \"Saved\"\n    - option \"Applied\"\n    - option \"Interview\"\n    - option \"Offer\" [selected]\n    - option \"Closed\"\n  - generic: Find a saved job, employer or note\n  - searchbox \"Find a saved job, employer or note\": Nurse\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Nurse clinic\" [level=2]:\n      - button \"Nurse clinic\"\n    - generic: Offer\n    - generic: You marked this as applied\n    - generic: Follow up Nov 30, 2026\n    - button \"Edit application record\"\n    - link \"Open job\":\n      - /url: https://employer.example/jobs/10\n      - text: Open job\n  - paragraph: Stages, follow-up dates, and notes stay on this phone. They are your own records; employer-confirmed submissions appear in Apply.\n- navigation \"App sections\":\n  - button \"Search\":\n    - generic: Search\n  - button \"Saved 2 follow-ups due\":\n    - generic: Saved\n    - generic \"2 follow-ups due\"\n  - button \"Apply\":\n    - generic: Apply\n  - button \"Profile\":\n    - generic: Profile\n  - button \"Settings\":\n    - generic: Settings\n- dialog \"Application record\":\n  - heading \"Application record\" [level=2]\n  - button \"Close dialog\" [active]:\n  - paragraph:\n    - strong: Nurse clinic\n    - text: Synthetic Employer\n  - paragraph: Your record on this phone. It does not change the employer’s records or create a verified receipt.\n  - text: Stage\n  - combobox \"Stage\":\n    - option \"Saved\"\n    - option \"Applied\"\n    - option \"Interview\"\n    - option \"Offer\" [selected]\n    - option \"Closed\"\n  - text: Applied date optional\n  - textbox \"Applied date optional\"\n  - text: Follow-up date optional\n  - textbox \"Follow-up date optional\": 2026-11-30\n  - text: Private notes\n  - textbox \"Private notes\":\n    - /placeholder: People to contact, interview details, or your next step\n    - text: =SYNTHETIC(\"مرحبا، عالم\") Line two, \"quoted\"; follow-up\n  - button \"Cancel\"\n  - button \"Save record\"\n  - button \"Delete this private record\""
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_en_cancel_confirmation",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Application record\nDiscard these unsaved changes?\n\nYour earlier saved information will stay. The unfinished changes in this form will be lost.\n\nKeep editing\nDiscard changes\n\nNurse clinic\nSynthetic Employer\n\nYour record on this phone. It does not change the employer’s records or create a verified receipt.\n\nStage\nSaved\nApplied\nInterview\nOffer\nClosed\nApplied date optional\nFollow-up date optional\nPrivate notes\nCompare with the saved record\nCancel\nSave record\nExport unfinished recordDelete this private record"
+          },
+          {
+            "type": "text",
+            "text": "{\"activeTag\":\"H3\",\"activeText\":\"Discard these unsaved changes?\"}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_en_cancel_keep",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":{\"ariaLabel\":null,\"insideDialog\":true,\"rect\":{\"bottom\":715.1458740234375,\"height\":49,\"left\":36.66666793823242,\"right\":190.0000114440918,\"top\":666.1458740234375,\"width\":153.33334350585938,\"x\":36.66666793823242,\"y\":666.1458740234375},\"tag\":\"BUTTON\",\"text\":\"Cancel\"},\"dialog\":{\"clientHeight\":811,\"open\":true,\"rect\":{\"bottom\":828,\"height\":812,\"left\":12,\"right\":378,\"top\":16,\"width\":366,\"x\":12,\"y\":16},\"scrollHeight\":976,\"scrollTop\":166},\"discardHeadings\":[],\"fields\":[{\"tag\":\"SELECT\",\"type\":\"select-one\",\"value\":\"interview\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"2026-11-30\"},{\"tag\":\"TEXTAREA\",\"type\":\"textarea\",\"value\":\"UNSAVED_E345_EN\\nمرحبا، \\\"draft\\\"\"}],\"fullyVisible\":true,\"observedAt\":\"2026-11-18T05:42:40.836Z\",\"viewport\":{\"height\":844,\"width\":390}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_en_delete_keep",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":{\"ariaLabel\":null,\"insideDialog\":true,\"rect\":{\"bottom\":803.1458740234375,\"height\":44,\"left\":36.66666793823242,\"right\":203.3333396911621,\"top\":759.1458740234375,\"width\":166.6666717529297,\"x\":36.66666793823242,\"y\":759.1458740234375},\"tag\":\"BUTTON\",\"text\":\"Delete this private record\"},\"dialog\":{\"clientHeight\":811,\"open\":true,\"rect\":{\"bottom\":828,\"height\":812,\"left\":12,\"right\":378,\"top\":16,\"width\":366,\"x\":12,\"y\":16},\"scrollHeight\":976,\"scrollTop\":166},\"discardHeadings\":[],\"fields\":[{\"tag\":\"SELECT\",\"type\":\"select-one\",\"value\":\"interview\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"2026-11-30\"},{\"tag\":\"TEXTAREA\",\"type\":\"textarea\",\"value\":\"UNSAVED_E345_EN\\nمرحبا، \\\"draft\\\"\"}],\"fullyVisible\":true,\"observedAt\":\"2026-11-18T05:43:18.195Z\",\"viewport\":{\"height\":844,\"width\":390}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_en_close_before",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":\"Discard these unsaved changes?\",\"confirmation\":[\"Discard these unsaved changes?\"],\"dialogTop\":0,\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1414.6666259765625,\"mainLeft\":0,\"mainTop\":0}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_en_close_keep",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":{\"ariaLabel\":\"Close dialog\",\"id\":\"\",\"insideDialog\":true,\"rect\":{\"bottom\":81.66666793823242,\"height\":44,\"left\":314.3333435058594,\"right\":358.3333435058594,\"top\":37.66666793823242,\"width\":44,\"x\":314.3333435058594,\"y\":37.66666793823242},\"tag\":\"BUTTON\",\"text\":\"\"},\"dialog\":{\"clientHeight\":811,\"open\":true,\"rect\":{\"bottom\":828,\"height\":812,\"left\":12,\"right\":378,\"top\":16,\"width\":366,\"x\":12,\"y\":16},\"scrollHeight\":976,\"scrollTop\":0},\"discardHeadings\":[],\"fields\":[{\"tag\":\"SELECT\",\"type\":\"select-one\",\"value\":\"interview\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"2026-11-30\"},{\"tag\":\"TEXTAREA\",\"type\":\"textarea\",\"value\":\"UNSAVED_E345_EN\\nمرحبا، \\\"draft\\\"\"}],\"fullyVisible\":true,\"observedAt\":\"2026-11-18T05:44:31.232Z\",\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1414.6666259765625,\"mainLeft\":0,\"mainTop\":0},\"viewport\":{\"height\":844,\"width\":390}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_en_escape_before",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":\"Discard these unsaved changes?\",\"confirmation\":[\"Discard these unsaved changes?\"],\"dialogTop\":0,\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1414.6666259765625,\"mainLeft\":0,\"mainTop\":0}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_en_escape_keep",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":{\"ariaLabel\":null,\"id\":\"\",\"insideDialog\":true,\"rect\":{\"bottom\":748.1458435058594,\"height\":145.33334350585938,\"left\":36.66666793823242,\"right\":353.3333549499512,\"top\":602.8125,\"width\":316.66668701171875,\"x\":36.66666793823242,\"y\":602.8125},\"tag\":\"TEXTAREA\",\"text\":\"UNSAVED_E345_EN\\nمرحبا، \\\"draft\\\"\"},\"dialog\":{\"clientHeight\":811,\"open\":true,\"rect\":{\"bottom\":828,\"height\":812,\"left\":12,\"right\":378,\"top\":16,\"width\":366,\"x\":12,\"y\":16},\"scrollHeight\":976,\"scrollTop\":0},\"discardHeadings\":[],\"fields\":[{\"tag\":\"SELECT\",\"type\":\"select-one\",\"value\":\"interview\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"2026-11-30\"},{\"tag\":\"TEXTAREA\",\"type\":\"textarea\",\"value\":\"UNSAVED_E345_EN\\nمرحبا، \\\"draft\\\"\"}],\"fullyVisible\":true,\"observedAt\":\"2026-11-18T05:44:52.088Z\",\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1414.6666259765625,\"mainLeft\":0,\"mainTop\":0},\"viewport\":{\"height\":844,\"width\":390}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_en_tab_after_keep",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":{\"ariaLabel\":null,\"id\":\"\",\"insideDialog\":true,\"rect\":{\"bottom\":642.1458740234375,\"height\":44,\"left\":36.66666793823242,\"right\":353.3333549499512,\"top\":598.1458740234375,\"width\":316.66668701171875,\"x\":36.66666793823242,\"y\":598.1458740234375},\"tag\":\"SUMMARY\",\"text\":\"Compare with the saved record\"},\"dialog\":{\"clientHeight\":811,\"open\":true,\"rect\":{\"bottom\":828,\"height\":812,\"left\":12,\"right\":378,\"top\":16,\"width\":366,\"x\":12,\"y\":16},\"scrollHeight\":976,\"scrollTop\":166},\"discardHeadings\":[],\"fields\":[{\"tag\":\"SELECT\",\"type\":\"select-one\",\"value\":\"interview\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"2026-11-30\"},{\"tag\":\"TEXTAREA\",\"type\":\"textarea\",\"value\":\"UNSAVED_E345_EN\\nمرحبا، \\\"draft\\\"\"}],\"fullyVisible\":true,\"observedAt\":\"2026-11-18T05:45:19.690Z\",\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1414.6666259765625,\"mainLeft\":0,\"mainTop\":0},\"viewport\":{\"height\":844,\"width\":390}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_en_shift_tab_after_keep",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":{\"ariaLabel\":null,\"id\":\"\",\"insideDialog\":true,\"rect\":{\"bottom\":582.1458435058594,\"height\":145.33334350585938,\"left\":36.66666793823242,\"right\":353.3333549499512,\"top\":436.8125,\"width\":316.66668701171875,\"x\":36.66666793823242,\"y\":436.8125},\"tag\":\"TEXTAREA\",\"text\":\"UNSAVED_E345_EN\\nمرحبا، \\\"draft\\\"\"},\"dialog\":{\"clientHeight\":811,\"open\":true,\"rect\":{\"bottom\":828,\"height\":812,\"left\":12,\"right\":378,\"top\":16,\"width\":366,\"x\":12,\"y\":16},\"scrollHeight\":976,\"scrollTop\":166},\"discardHeadings\":[],\"fields\":[{\"tag\":\"SELECT\",\"type\":\"select-one\",\"value\":\"interview\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"2026-11-30\"},{\"tag\":\"TEXTAREA\",\"type\":\"textarea\",\"value\":\"UNSAVED_E345_EN\\nمرحبا، \\\"draft\\\"\"}],\"fullyVisible\":true,\"observedAt\":\"2026-11-18T05:45:26.301Z\",\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1414.6666259765625,\"mainLeft\":0,\"mainTop\":0},\"viewport\":{\"height\":844,\"width\":390}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_en_discard_reopen_add",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"activeText\":\"Edit application record\",\"openDialogs\":0}"
+          },
+          {
+            "type": "text",
+            "text": "{\"fields\":[{\"type\":\"select-one\",\"value\":\"offer\"},{\"type\":\"date\",\"value\":\"\"},{\"type\":\"date\",\"value\":\"2026-11-30\"},{\"type\":\"textarea\",\"value\":\"=SYNTHETIC(\\\"مرحبا، عالم\\\")\\nLine two, \\\"quoted\\\"; follow-up\"}]}"
+          },
+          {
+            "type": "text",
+            "text": "{\"activeText\":\"Edit application record\",\"openDialogs\":0}"
+          },
+          {
+            "type": "text",
+            "text": "Save a job link\n\nSave a public job page from an employer or job board. The link stays on this phone until you prepare an online application.\n\nJob link\nJob title\nEmployer\nLocation optional\nSave on this phone"
+          },
+          {
+            "type": "text",
+            "text": "[{\"ariaLabel\":\"Close dialog\",\"placeholder\":null,\"tag\":\"BUTTON\",\"text\":\"\",\"type\":\"button\",\"value\":\"\"},{\"ariaLabel\":null,\"placeholder\":\"https://…\",\"tag\":\"INPUT\",\"text\":\"\",\"type\":\"url\",\"value\":\"\"},{\"ariaLabel\":null,\"placeholder\":null,\"tag\":\"INPUT\",\"text\":\"\",\"type\":\"text\",\"value\":\"\"},{\"ariaLabel\":null,\"placeholder\":null,\"tag\":\"INPUT\",\"text\":\"\",\"type\":\"text\",\"value\":\"\"},{\"ariaLabel\":null,\"placeholder\":null,\"tag\":\"INPUT\",\"text\":\"\",\"type\":\"text\",\"value\":\"\"},{\"ariaLabel\":null,\"placeholder\":null,\"tag\":\"BUTTON\",\"text\":\"Save on this phone\",\"type\":\"submit\",\"value\":\"\"}]"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_en_add_escape_before",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":\"Discard these unsaved changes?\",\"confirmation\":[\"Discard these unsaved changes?\"],\"dialogTop\":0,\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1118.6666259765625,\"mainLeft\":0,\"mainTop\":0}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_en_add_escape_keep",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":{\"ariaLabel\":null,\"id\":\"\",\"insideDialog\":true,\"rect\":{\"bottom\":548.6562728881836,\"height\":49.333335876464844,\"left\":36.66666793823242,\"right\":353.3333549499512,\"top\":499.32293701171875,\"width\":316.66668701171875,\"x\":36.66666793823242,\"y\":499.32293701171875},\"tag\":\"INPUT\",\"text\":\"\"},\"dialog\":{\"clientHeight\":613,\"open\":true,\"rect\":{\"bottom\":729.0000228881836,\"height\":614.0104370117188,\"left\":12,\"right\":378,\"top\":114.98958587646484,\"width\":366,\"x\":12,\"y\":114.98958587646484},\"scrollHeight\":613,\"scrollTop\":0},\"discardHeadings\":[],\"fields\":[{\"tag\":\"INPUT\",\"type\":\"url\",\"value\":\"https://employer.example/jobs/unsaved-e345-en\"},{\"tag\":\"INPUT\",\"type\":\"text\",\"value\":\"Unsaved English test role\"},{\"tag\":\"INPUT\",\"type\":\"text\",\"value\":\"Synthetic employer draft\"},{\"tag\":\"INPUT\",\"type\":\"text\",\"value\":\"\"}],\"fullyVisible\":true,\"observedAt\":\"2026-11-18T05:46:08.549Z\",\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1118.6666259765625,\"mainLeft\":0,\"mainTop\":0},\"viewport\":{\"height\":844,\"width\":390}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_en_add_close_before",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":\"Discard these unsaved changes?\",\"confirmation\":[\"Discard these unsaved changes?\"],\"dialogTop\":0,\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1118.6666259765625,\"mainLeft\":0,\"mainTop\":0}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_en_add_close_keep",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":{\"ariaLabel\":\"Close dialog\",\"id\":\"\",\"insideDialog\":true,\"rect\":{\"bottom\":180.65625,\"height\":44,\"left\":314.3333435058594,\"right\":358.3333435058594,\"top\":136.65625,\"width\":44,\"x\":314.3333435058594,\"y\":136.65625},\"tag\":\"BUTTON\",\"text\":\"\"},\"dialog\":{\"clientHeight\":613,\"open\":true,\"rect\":{\"bottom\":729.0000228881836,\"height\":614.0104370117188,\"left\":12,\"right\":378,\"top\":114.98958587646484,\"width\":366,\"x\":12,\"y\":114.98958587646484},\"scrollHeight\":613,\"scrollTop\":0},\"discardHeadings\":[],\"fields\":[{\"tag\":\"INPUT\",\"type\":\"url\",\"value\":\"https://employer.example/jobs/unsaved-e345-en\"},{\"tag\":\"INPUT\",\"type\":\"text\",\"value\":\"Unsaved English test role\"},{\"tag\":\"INPUT\",\"type\":\"text\",\"value\":\"Synthetic employer draft\"},{\"tag\":\"INPUT\",\"type\":\"text\",\"value\":\"\"}],\"fullyVisible\":true,\"observedAt\":\"2026-11-18T05:46:43.200Z\",\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1118.6666259765625,\"mainLeft\":0,\"mainTop\":0},\"viewport\":{\"height\":844,\"width\":390}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_en_add_discard_settings",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"activeText\":\"Add job link\",\"openDialogs\":0}"
+          },
+          {
+            "type": "text",
+            "text": "PREFERENCES & PRIVACY\n\nMake it your space.\n\nChoose your look, manage your connections, and stay in control of your data.\n\nAppearance\n\nMake this space feel like yours.\n\nChoose a color theme\nSystem\nMatch your device\nLight\nA lighter workspace\nDark\nA darker workspace\n\nYour preference is saved in this browser. System changes with your device’s theme.\n\nLanguage\n\nChoose the language that feels natural to you.\n\nChoose your app language\nMatch your device\nEnglish\nالعربية\n\nYour language choice is saved in this browser. Job postings, names, and your own writing stay in their original language.\n\nAccount & connections\n\nOne workspace, with the sign-in methods you choose.\n\nStart on this phone\n\nNo account needed to search or keep a shortlist.\n\nSign in with Google\n\nGoogle · Availability could not be confirmed\n\nin\nSign in with LinkedIn\n\nLinkedIn · Availability could not be confirmed\n\nor\nContinue with ChatGPT\n\nProvider availability could not be checked. ChatGPT sign-in remains available.\n\nCheck again\n\nReturn with the same account to recover your workspace. To add another sign-in method, open your existing workspace first and connect it in Settings.\n\nYour provider password stays with the provider. Career Finder does not read your ChatGPT conversations.\n\nYour saved data\n\nPhone drafts, unfinished recovery copies, and private notes are encrypted in this browser. Clearing browser data can remove them. Export a readable JSON copy for your records; it cannot be automatically restored into the app.\n\nExport phone data\nSpreadsheet export\nClear this phone’s saved data\nAdd Career Finder to your phone\n\niPhone: open in Safari, tap Share, then Add to Home Screen. Keep Open as Web App on if offered.\n\nAndroid: open the browser menu and choose Add to Home screen or Install app, if offered.\n\nAn internet connection is needed to open this web app and confirm your account. Native phone app setup is available below.\n\nHere when you need it\n\nClear answers and practical next steps.\n\nHelp & support\nGetting started, saving work, and recovery\nPrivacy & your data\nWhat is saved, where it stays, and your choices\nConnect the native app\nSet up another device with a private connection code"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_ar_saved",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "البحث\nالمحفوظات\nالتقديم\nالملف الشخصي\nالإعدادات"
+          },
+          {
+            "type": "text",
+            "text": "قائمتك المختارة\n\nخطواتك المقبلة.\n\nقائمة مختصرة واضحة، وملاحظات خاصة، وخطة لخطوتك التالية.\n\n١٧ فرصة محفوظة\nإضافة رابط وظيفة\nالكل\nتم التقديم\nالمتابعات\nمرحلة التقديم\nكل المراحل\nالمحفوظات\nتم التقديم\nمقابلة\nعرض وظيفي\nمغلق\nابحث عن وظيفة محفوظة أو جهة عمل أو ملاحظة\n\nSynthetic Employer\n\nNurse clinic\nعرض وظيفي\nوضعتَ علامة بأنك تقدّمت إلى هذه الوظيفة\nالمتابعة ٣٠ نوفمبر ٢٠٢٦\nتعديل سجل التقديم\nفتح الوظيفة\n\nتبقى المراحل ومواعيد المتابعة والملاحظات على هذا الهاتف. وهي سجلاتك الشخصية؛ أما الطلبات التي أكدت جهات العمل استلامها فتظهر في «التقديم»."
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_ar_record_open",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "- region \"Synthetic fixture controls\":\n  - heading \"Career Finder synthetic stage verification fixture\" [level=1]\n  - paragraph: Actual current PhoneApp and styles. Synthetic jobs only. No account or employer API. Link clicks record the destination and stay local.\n  - generic \"Fixture controls and evidence\"\n  - text: Scenario\n  - combobox \"Scenario\":\n    - 'option \"250 matches: local 200-result cap\"'\n    - 'option \"Exactly 200 matches: exhausted\" [selected]'\n    - 'option \"50 retained matches: source timeout\"'\n    - 'option \"250 retained matches: source timeout + local cap\"'\n    - 'option \"50 earlier results: stale board\"'\n    - 'option \"No current results: board unavailable\"'\n    - 'option \"50 retained results: provider data-size limit\"'\n  - text: Product language\n  - combobox \"Product language\":\n    - option \"English\" [selected]\n    - option \"العربية\"\n  - text: GET delay (ms)\n  - spinbutton \"GET delay (ms)\": \"250\"\n  - button \"Apply fixture scenario\"\n  - button \"Capture observed evidence\"\n  - region \"Synthetic Saved data controls\":\n    - heading \"Synthetic Saved data\" [level=2]\n    - paragraph: Only the empty guest workspace on this assigned origin can be seeded. No database is cleared. First seed the Interview record-only item, use the normal product UI to delete it, and observe Clear recovery. Only after jobs and records are empty may you seed the 22-item corpus. Do not enter a real profile, CV or note.\n    - button \"Seed synthetic Interview record-only item\"\n    - button \"Seed synthetic 22-item stage corpus\"\n    - status: No synthetic seed has been written by these controls.\n    - generic \"Synthetic seed manifest\"\n  - paragraph: For these Saved checks, open Saved without running a search. Searching saves search state and makes this workspace ineligible for another seed. Scenario controls retain the existing synthetic search service; no storage is cleared.\n  - paragraph:\n    - text: \"Scenario:\"\n    - strong: exhausted\n    - text: \". Viewport:\"\n    - strong: 390 × 844\n    - text: \". Product cards:\"\n    - strong: \"0\"\n    - text: .\n  - generic \"Observed product DOM\"\n  - generic \"Observed live-region history (DOM only)\"\n  - generic \"Captured evidence including GET ledger\"\n- link \"الانتقال إلى المحتوى\":\n  - /url: \"#phone-main\"\n- banner:\n  - link \"Career Finder مساحة عملك المهنية\":\n    - /url: /phone\n    - text: Career Finder\n    - generic: مساحة عملك المهنية\n  - button \"تسجيل الدخول\"\n  - button \"فتح الإعدادات\":\n    - generic: الإعدادات\n- main:\n  - paragraph: قائمتك المختارة\n  - heading \"خطواتك المقبلة.\" [level=1]\n  - paragraph: قائمة مختصرة واضحة، وملاحظات خاصة، وخطة لخطوتك التالية.\n  - generic: ١٧ فرصة محفوظة\n  - button \"إضافة رابط وظيفة\":\n    - text: إضافة رابط وظيفة\n  - generic \"تصفية الوظائف المحفوظة\":\n    - button \"الكل\" [pressed]\n    - button \"تم التقديم\"\n    - button \"المتابعات\"\n  - text: مرحلة التقديم\n  - combobox \"مرحلة التقديم\":\n    - option \"كل المراحل\"\n    - option \"المحفوظات\"\n    - option \"تم التقديم\"\n    - option \"مقابلة\"\n    - option \"عرض وظيفي\" [selected]\n    - option \"مغلق\"\n  - generic: ابحث عن وظيفة محفوظة أو جهة عمل أو ملاحظة\n  - searchbox \"ابحث عن وظيفة محفوظة أو جهة عمل أو ملاحظة\": Nurse\n  - article:\n    - paragraph: Synthetic Employer\n    - heading \"Nurse clinic\" [level=2]:\n      - button \"Nurse clinic\"\n    - generic: عرض وظيفي\n    - generic: وضعتَ علامة بأنك تقدّمت إلى هذه الوظيفة\n    - generic: المتابعة ٣٠ نوفمبر ٢٠٢٦\n    - button \"تعديل سجل التقديم\"\n    - link \"فتح الوظيفة\":\n      - /url: https://employer.example/jobs/10\n      - text: فتح الوظيفة\n  - paragraph: تبقى المراحل ومواعيد المتابعة والملاحظات على هذا الهاتف. وهي سجلاتك الشخصية؛ أما الطلبات التي أكدت جهات العمل استلامها فتظهر في «التقديم».\n- navigation \"أقسام التطبيق\":\n  - button \"البحث\":\n    - generic: البحث\n  - 'button \"المحفوظات متابعات مستحقة: ⁨2⁩\"':\n    - generic: المحفوظات\n    - 'generic \"متابعات مستحقة: ⁨2⁩\"'\n  - button \"التقديم\":\n    - generic: التقديم\n  - button \"الملف الشخصي\":\n    - generic: الملف الشخصي\n  - button \"الإعدادات\":\n    - generic: الإعدادات\n- dialog \"سجل التقديم\":\n  - heading \"سجل التقديم\" [level=2]\n  - button \"إغلاق النافذة\" [active]:\n  - paragraph:\n    - strong: Nurse clinic\n    - text: Synthetic Employer\n  - paragraph: سجلك على هذا الهاتف. لا يغيّر سجلات جهة العمل ولا يُنشئ إيصال استلام مؤكّدًا.\n  - text: المرحلة\n  - combobox \"المرحلة\":\n    - option \"المحفوظات\"\n    - option \"تم التقديم\"\n    - option \"مقابلة\"\n    - option \"عرض وظيفي\" [selected]\n    - option \"مغلق\"\n  - text: تاريخ التقديم اختياري\n  - textbox \"تاريخ التقديم اختياري\"\n  - text: تاريخ المتابعة اختياري\n  - textbox \"تاريخ المتابعة اختياري\": 2026-11-30\n  - text: ملاحظات خاصة\n  - textbox \"ملاحظات خاصة\":\n    - /placeholder: أشخاص للتواصل معهم، أو تفاصيل مقابلة، أو خطوتك المقبلة\n    - text: =SYNTHETIC(\"مرحبا، عالم\") Line two, \"quoted\"; follow-up\n  - button \"إلغاء\"\n  - button \"حفظ السجل\"\n  - button \"حذف هذا السجل الخاص\""
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_ar_cancel_before",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "سجل التقديم\nهل تريد تجاهل هذه التغييرات غير المحفوظة؟\n\nستبقى معلوماتك المحفوظة سابقًا. وستفقد التغييرات غير المكتملة في هذا النموذج.\n\nمتابعة التحرير\nتجاهل التغييرات\n\nNurse clinic\nSynthetic Employer\n\nسجلك على هذا الهاتف. لا يغيّر سجلات جهة العمل ولا يُنشئ إيصال استلام مؤكّدًا.\n\nالمرحلة\nالمحفوظات\nتم التقديم\nمقابلة\nعرض وظيفي\nمغلق\nتاريخ التقديم اختياري\nتاريخ المتابعة اختياري\nملاحظات خاصة\nمقارنة بالسجل المحفوظ\nإلغاء\nحفظ السجل\nتصدير السجل غير المكتملحذف هذا السجل الخاص"
+          },
+          {
+            "type": "text",
+            "text": "{\"active\":\"هل تريد تجاهل هذه التغييرات غير المحفوظة؟\",\"dialogTop\":116.66666412353516,\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1544,\"mainLeft\":0,\"mainTop\":0}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_ar_cancel_keep",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":{\"ariaLabel\":null,\"id\":\"\",\"insideDialog\":true,\"rect\":{\"bottom\":759.5416870117188,\"height\":49,\"left\":200,\"right\":353.3333435058594,\"top\":710.5416870117188,\"width\":153.33334350585938,\"x\":200,\"y\":710.5416870117188},\"tag\":\"BUTTON\",\"text\":\"إلغاء\"},\"dialog\":{\"clientHeight\":811,\"open\":true,\"rect\":{\"bottom\":828,\"height\":812,\"left\":12,\"right\":378,\"top\":16,\"width\":366,\"x\":12,\"y\":16},\"scrollHeight\":958,\"scrollTop\":147.3333282470703},\"direction\":\"rtl\",\"discardHeadings\":[],\"fields\":[{\"tag\":\"SELECT\",\"type\":\"select-one\",\"value\":\"interview\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"2026-11-30\"},{\"tag\":\"TEXTAREA\",\"type\":\"textarea\",\"value\":\"مسودة غير محفوظة E345\\nمرحبا، \\\"تجربة\\\"\"}],\"fullyVisible\":true,\"horizontalOverflow\":false,\"observedAt\":\"2026-11-18T05:47:45.364Z\",\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1544,\"mainLeft\":0,\"mainTop\":0},\"viewport\":{\"height\":844,\"width\":390}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_ar_delete_before",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":\"هل تريد تجاهل هذه التغييرات غير المحفوظة؟\",\"dialogTop\":116.66666412353516,\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1544,\"mainLeft\":0,\"mainTop\":0}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_ar_delete_keep",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":{\"ariaLabel\":null,\"id\":\"\",\"insideDialog\":true,\"rect\":{\"bottom\":803.5416870117188,\"height\":44,\"left\":63.5625,\"right\":202.03125,\"top\":759.5416870117188,\"width\":138.46875,\"x\":63.5625,\"y\":759.5416870117188},\"tag\":\"BUTTON\",\"text\":\"حذف هذا السجل الخاص\"},\"dialog\":{\"clientHeight\":811,\"open\":true,\"rect\":{\"bottom\":828,\"height\":812,\"left\":12,\"right\":378,\"top\":16,\"width\":366,\"x\":12,\"y\":16},\"scrollHeight\":958,\"scrollTop\":147.3333282470703},\"direction\":\"rtl\",\"discardHeadings\":[],\"fields\":[{\"tag\":\"SELECT\",\"type\":\"select-one\",\"value\":\"interview\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"2026-11-30\"},{\"tag\":\"TEXTAREA\",\"type\":\"textarea\",\"value\":\"مسودة غير محفوظة E345\\nمرحبا، \\\"تجربة\\\"\"}],\"fullyVisible\":true,\"horizontalOverflow\":false,\"observedAt\":\"2026-11-18T05:48:21.662Z\",\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1544,\"mainLeft\":0,\"mainTop\":0},\"viewport\":{\"height\":844,\"width\":390}}"
+          },
+          {
+            "type": "text",
+            "text": "[{\"class\":\"text-button\",\"display\":\"inline-flex\",\"margin\":\"0px\",\"padding\":\"9px 0px\",\"parentClass\":\"\",\"parentDisplay\":\"block\",\"parentGap\":\"normal\",\"rect\":{\"bottom\":803.5416870117188,\"height\":44,\"left\":202.03125,\"right\":353.3333435058594,\"top\":759.5416870117188,\"width\":151.30209350585938,\"x\":202.03125,\"y\":759.5416870117188},\"text\":\"تصدير السجل غير المكتمل\"},{\"class\":\"text-button danger-text\",\"display\":\"inline-flex\",\"margin\":\"0px\",\"padding\":\"9px 0px\",\"parentClass\":\"\",\"parentDisplay\":\"block\",\"parentGap\":\"normal\",\"rect\":{\"bottom\":803.5416870117188,\"height\":44,\"left\":63.5625,\"right\":202.03125,\"top\":759.5416870117188,\"width\":138.46875,\"x\":63.5625,\"y\":759.5416870117188},\"text\":\"حذف هذا السجل الخاص\"}]"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_ar_close_before",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":\"هل تريد تجاهل هذه التغييرات غير المحفوظة؟\",\"dialogTop\":0,\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1544,\"mainLeft\":0,\"mainTop\":0}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_ar_close_keep",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":{\"ariaLabel\":\"إغلاق النافذة\",\"id\":\"\",\"insideDialog\":true,\"rect\":{\"bottom\":81.66666793823242,\"height\":44,\"left\":36.66666793823242,\"right\":80.66666793823242,\"top\":37.66666793823242,\"width\":44,\"x\":36.66666793823242,\"y\":37.66666793823242},\"tag\":\"BUTTON\",\"text\":\"\"},\"dialog\":{\"clientHeight\":811,\"open\":true,\"rect\":{\"bottom\":828,\"height\":812,\"left\":12,\"right\":378,\"top\":16,\"width\":366,\"x\":12,\"y\":16},\"scrollHeight\":958,\"scrollTop\":0},\"direction\":\"rtl\",\"discardHeadings\":[],\"fields\":[{\"tag\":\"SELECT\",\"type\":\"select-one\",\"value\":\"interview\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"2026-11-30\"},{\"tag\":\"TEXTAREA\",\"type\":\"textarea\",\"value\":\"مسودة غير محفوظة E345\\nمرحبا، \\\"تجربة\\\"\"}],\"fullyVisible\":true,\"horizontalOverflow\":false,\"observedAt\":\"2026-11-18T05:49:54.620Z\",\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1544,\"mainLeft\":0,\"mainTop\":0},\"viewport\":{\"height\":844,\"width\":390}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_ar_escape_before",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":\"هل تريد تجاهل هذه التغييرات غير المحفوظة؟\",\"dialogTop\":116.66666412353516,\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1544,\"mainLeft\":0,\"mainTop\":0}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_ar_escape_keep",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":{\"ariaLabel\":null,\"id\":\"\",\"insideDialog\":true,\"rect\":{\"bottom\":773.8750305175781,\"height\":145.33334350585938,\"left\":36.66666793823242,\"right\":353.3333549499512,\"top\":628.5416870117188,\"width\":316.66668701171875,\"x\":36.66666793823242,\"y\":628.5416870117188},\"tag\":\"TEXTAREA\",\"text\":\"مسودة غير محفوظة E345\\nمرحبا، \\\"تجربة\\\"\"},\"dialog\":{\"clientHeight\":811,\"open\":true,\"rect\":{\"bottom\":828,\"height\":812,\"left\":12,\"right\":378,\"top\":16,\"width\":366,\"x\":12,\"y\":16},\"scrollHeight\":958,\"scrollTop\":0},\"direction\":\"rtl\",\"discardHeadings\":[],\"fields\":[{\"tag\":\"SELECT\",\"type\":\"select-one\",\"value\":\"interview\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"2026-11-30\"},{\"tag\":\"TEXTAREA\",\"type\":\"textarea\",\"value\":\"مسودة غير محفوظة E345\\nمرحبا، \\\"تجربة\\\"\"}],\"fullyVisible\":true,\"horizontalOverflow\":false,\"observedAt\":\"2026-11-18T05:50:06.479Z\",\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1544,\"mainLeft\":0,\"mainTop\":0},\"viewport\":{\"height\":844,\"width\":390}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_ar_tab_after_keep",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":{\"ariaLabel\":null,\"id\":\"\",\"insideDialog\":true,\"rect\":{\"bottom\":686.5416870117188,\"height\":44,\"left\":36.66666793823242,\"right\":353.3333549499512,\"top\":642.5416870117188,\"width\":316.66668701171875,\"x\":36.66666793823242,\"y\":642.5416870117188},\"tag\":\"SUMMARY\",\"text\":\"مقارنة بالسجل المحفوظ\"},\"dialog\":{\"clientHeight\":811,\"open\":true,\"rect\":{\"bottom\":828,\"height\":812,\"left\":12,\"right\":378,\"top\":16,\"width\":366,\"x\":12,\"y\":16},\"scrollHeight\":958,\"scrollTop\":147.3333282470703},\"direction\":\"rtl\",\"discardHeadings\":[],\"fields\":[{\"tag\":\"SELECT\",\"type\":\"select-one\",\"value\":\"interview\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"2026-11-30\"},{\"tag\":\"TEXTAREA\",\"type\":\"textarea\",\"value\":\"مسودة غير محفوظة E345\\nمرحبا، \\\"تجربة\\\"\"}],\"fullyVisible\":true,\"horizontalOverflow\":false,\"observedAt\":\"2026-11-18T05:50:22.895Z\",\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1544,\"mainLeft\":0,\"mainTop\":0},\"viewport\":{\"height\":844,\"width\":390}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_ar_shift_tab_after_keep",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":{\"ariaLabel\":null,\"id\":\"\",\"insideDialog\":true,\"rect\":{\"bottom\":626.5416870117188,\"height\":145.33334350585938,\"left\":36.66666793823242,\"right\":353.3333549499512,\"top\":481.2083435058594,\"width\":316.66668701171875,\"x\":36.66666793823242,\"y\":481.2083435058594},\"tag\":\"TEXTAREA\",\"text\":\"مسودة غير محفوظة E345\\nمرحبا، \\\"تجربة\\\"\"},\"dialog\":{\"clientHeight\":811,\"open\":true,\"rect\":{\"bottom\":828,\"height\":812,\"left\":12,\"right\":378,\"top\":16,\"width\":366,\"x\":12,\"y\":16},\"scrollHeight\":958,\"scrollTop\":147.3333282470703},\"direction\":\"rtl\",\"discardHeadings\":[],\"fields\":[{\"tag\":\"SELECT\",\"type\":\"select-one\",\"value\":\"interview\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"2026-11-30\"},{\"tag\":\"TEXTAREA\",\"type\":\"textarea\",\"value\":\"مسودة غير محفوظة E345\\nمرحبا، \\\"تجربة\\\"\"}],\"fullyVisible\":true,\"horizontalOverflow\":false,\"observedAt\":\"2026-11-18T05:50:28.892Z\",\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1544,\"mainLeft\":0,\"mainTop\":0},\"viewport\":{\"height\":844,\"width\":390}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_ar_discard_reopen_add",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "tool call error: tool call failed for `codex_apps/browser.js`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "captureKey": "cf_e345_ar_recovered_discard_reopen",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"fields\":[{\"type\":\"select-one\",\"value\":\"offer\"},{\"type\":\"date\",\"value\":\"\"},{\"type\":\"date\",\"value\":\"2026-11-30\"},{\"type\":\"textarea\",\"value\":\"=SYNTHETIC(\\\"مرحبا، عالم\\\")\\nLine two, \\\"quoted\\\"; follow-up\"}],\"observedAt\":\"2026-11-18T05:54:00.900Z\"}"
+          },
+          {
+            "type": "text",
+            "text": "{\"activeText\":\"تعديل سجل التقديم\",\"openDialogs\":0}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_ar_add_open",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "حفظ رابط وظيفة\n\nاحفظ صفحة وظيفة عامة من جهة عمل أو لوحة وظائف. يبقى الرابط على هذا الهاتف إلى أن تُعِدّ طلب توظيف عبر الإنترنت.\n\nرابط الوظيفة\nالمسمى الوظيفي\nجهة العمل\nالموقع اختياري\nالحفظ على هذا الهاتف"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_ar_add_escape_before",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":\"هل تريد تجاهل هذه التغييرات غير المحفوظة؟\",\"dialogTop\":0,\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1232.6666259765625,\"mainLeft\":0,\"mainTop\":0}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_ar_add_escape_keep",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":{\"ariaLabel\":null,\"id\":\"\",\"insideDialog\":true,\"rect\":{\"bottom\":536.1666793823242,\"height\":49.333335876464844,\"left\":36.66666793823242,\"right\":353.3333549499512,\"top\":486.8333435058594,\"width\":316.66668701171875,\"x\":36.66666793823242,\"y\":486.8333435058594},\"tag\":\"INPUT\",\"text\":\"\"},\"dialog\":{\"clientHeight\":594,\"open\":true,\"rect\":{\"bottom\":719.84375,\"height\":595.6875,\"left\":12,\"right\":378,\"top\":124.15625,\"width\":366,\"x\":12,\"y\":124.15625},\"scrollHeight\":594,\"scrollTop\":0},\"direction\":\"rtl\",\"discardHeadings\":[],\"fields\":[{\"tag\":\"INPUT\",\"type\":\"url\",\"value\":\"https://employer.example/jobs/unsaved-e345-ar\"},{\"tag\":\"INPUT\",\"type\":\"text\",\"value\":\"وظيفة تجربة غير محفوظة\"},{\"tag\":\"INPUT\",\"type\":\"text\",\"value\":\"جهة عمل تجريبية\"},{\"tag\":\"INPUT\",\"type\":\"text\",\"value\":\"\"}],\"fullyVisible\":true,\"horizontalOverflow\":false,\"observedAt\":\"2026-11-18T05:54:53.439Z\",\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1232.6666259765625,\"mainLeft\":0,\"mainTop\":0},\"viewport\":{\"height\":844,\"width\":390}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_ar_add_close_before",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":\"هل تريد تجاهل هذه التغييرات غير المحفوظة؟\",\"dialogTop\":0,\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1232.6666259765625,\"mainLeft\":0,\"mainTop\":0}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_ar_add_close_keep",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"active\":{\"ariaLabel\":\"إغلاق النافذة\",\"id\":\"\",\"insideDialog\":true,\"rect\":{\"bottom\":189.8229217529297,\"height\":44,\"left\":36.66666793823242,\"right\":80.66666793823242,\"top\":145.8229217529297,\"width\":44,\"x\":36.66666793823242,\"y\":145.8229217529297},\"tag\":\"BUTTON\",\"text\":\"\"},\"dialog\":{\"clientHeight\":594,\"open\":true,\"rect\":{\"bottom\":719.84375,\"height\":595.6875,\"left\":12,\"right\":378,\"top\":124.15625,\"width\":366,\"x\":12,\"y\":124.15625},\"scrollHeight\":594,\"scrollTop\":0},\"direction\":\"rtl\",\"discardHeadings\":[],\"fields\":[{\"tag\":\"INPUT\",\"type\":\"url\",\"value\":\"https://employer.example/jobs/unsaved-e345-ar\"},{\"tag\":\"INPUT\",\"type\":\"text\",\"value\":\"وظيفة تجربة غير محفوظة\"},{\"tag\":\"INPUT\",\"type\":\"text\",\"value\":\"جهة عمل تجريبية\"},{\"tag\":\"INPUT\",\"type\":\"text\",\"value\":\"\"}],\"fullyVisible\":true,\"horizontalOverflow\":false,\"observedAt\":\"2026-11-18T05:55:15.043Z\",\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1232.6666259765625,\"mainLeft\":0,\"mainTop\":0},\"viewport\":{\"height\":844,\"width\":390}}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "captureKey": "cf_e345_ar_add_discard_final22",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"activeText\":\"إضافة رابط وظيفة\",\"openDialogs\":0}"
+          },
+          {
+            "type": "text",
+            "text": "{\"cards\":22,\"direction\":\"rtl\",\"horizontalOverflow\":false,\"observedAt\":\"2026-11-18T05:55:24.392Z\",\"query\":\"\",\"stage\":\"all\",\"unexpectedDraftCard\":false}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    }
+  ]
+}

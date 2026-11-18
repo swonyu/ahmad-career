@@ -1,0 +1,14 @@
+{
+  "captureKey": "cf_e345_en_cancel_confirmation",
+  "content": [
+    {
+      "type": "text",
+      "text": "Application record\nDiscard these unsaved changes?\n\nYour earlier saved information will stay. The unfinished changes in this form will be lost.\n\nKeep editing\nDiscard changes\n\nNurse clinic\nSynthetic Employer\n\nYour record on this phone. It does not change the employer’s records or create a verified receipt.\n\nStage\nSaved\nApplied\nInterview\nOffer\nClosed\nApplied date optional\nFollow-up date optional\nPrivate notes\nCompare with the saved record\nCancel\nSave record\nExport unfinished recordDelete this private record"
+    },
+    {
+      "type": "text",
+      "text": "{\"activeTag\":\"H3\",\"activeText\":\"Discard these unsaved changes?\"}"
+    }
+  ],
+  "isError": false
+}

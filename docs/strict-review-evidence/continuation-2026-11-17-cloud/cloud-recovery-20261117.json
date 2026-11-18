@@ -1,0 +1,16 @@
+{
+  "recordedAt": "2026-11-17T14:07:59.381435+00:00",
+  "event": "Cloud command service temporarily disconnected and recovered",
+  "firstFailedCommand": "read-only helper source inspection; failed before process creation",
+  "observedUnavailableBy": "2026-11-17T13:56:25Z",
+  "restorationVerifiedBefore": "2026-11-17T13:58:48Z",
+  "recoveredGitHead": "3a709eb15f1024df78ee03474f511568df2dc3de",
+  "uncommittedWorkPreserved": true,
+  "verifiedRecoveredSources": {
+    "hosted/app/phone/PhoneApp.tsx": "85985eddea0b3b9ed15a985c1b3e8c2b1a0be4e87c95a208373579e06df26183",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt": "f59aa44ee64be4bdcdb1f0de910525ccf4ebd19d191231fffab463f835e7027c"
+  },
+  "sharedMacFallbackBuildStarted": false,
+  "clockRestarted": false,
+  "note": "No active-work minutes were inferred from the interruption; the original active-budget remainder remains unknown."
+}

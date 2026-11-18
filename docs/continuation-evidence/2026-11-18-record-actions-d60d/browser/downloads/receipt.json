@@ -1,0 +1,265 @@
+{
+  "checkedUTC": "2026-11-18T06:46:26.691852+00:00",
+  "sourcePhoneAppSHA256": "fb4b548459f38b42848df3c29ffef9b07d2448b49833a69bcaa04f02c4075ee4",
+  "records": [
+    {
+      "filename": "Career-Finder-unfinished-edits (3).json",
+      "exportedAt": "2026-11-18T06:40:47.018Z",
+      "bytes": 1440,
+      "sha256": "9abc9f682c31b2862a5bf662250bb3e9214e2b864e18e19a1a8ae4a04191c0f5",
+      "records": [
+        {
+          "job": {
+            "id": "job-10",
+            "title": "Nurse clinic",
+            "company": "Synthetic Employer",
+            "url": "https://employer.example/jobs/10",
+            "location": "الرياض",
+            "country": "SA"
+          },
+          "original": {
+            "identity": "https://employer.example/jobs/10",
+            "title": "Nurse clinic",
+            "company": "Synthetic Employer",
+            "location": "الرياض",
+            "stage": "interview",
+            "appliedElsewhere": true,
+            "appliedDate": "",
+            "followUpDate": "",
+            "note": "note interview 1",
+            "updatedAt": "2026-11-17T18:00:00.000Z"
+          },
+          "draft": {
+            "identity": "https://employer.example/jobs/10",
+            "title": "Nurse clinic",
+            "company": "Synthetic Employer",
+            "location": "الرياض",
+            "stage": "offer",
+            "appliedElsewhere": true,
+            "appliedDate": "",
+            "followUpDate": "",
+            "note": "مسودة تصدير بعد الإصلاح\nFINAL_EXPORT_AR_320",
+            "updatedAt": "2026-11-17T18:00:00.000Z"
+          },
+          "existed": true
+        }
+      ]
+    },
+    {
+      "filename": "Career-Finder-unfinished-edits (4).json",
+      "exportedAt": "2026-11-18T06:42:04.453Z",
+      "bytes": 1440,
+      "sha256": "df0e54eebe8c3e738a601a5e0ecfc1f918acbc4a249123e0cde8a1d17eba940d",
+      "records": [
+        {
+          "job": {
+            "id": "job-10",
+            "title": "Nurse clinic",
+            "company": "Synthetic Employer",
+            "url": "https://employer.example/jobs/10",
+            "location": "الرياض",
+            "country": "SA"
+          },
+          "original": {
+            "identity": "https://employer.example/jobs/10",
+            "title": "Nurse clinic",
+            "company": "Synthetic Employer",
+            "location": "الرياض",
+            "stage": "interview",
+            "appliedElsewhere": true,
+            "appliedDate": "",
+            "followUpDate": "",
+            "note": "note interview 1",
+            "updatedAt": "2026-11-17T18:00:00.000Z"
+          },
+          "draft": {
+            "identity": "https://employer.example/jobs/10",
+            "title": "Nurse clinic",
+            "company": "Synthetic Employer",
+            "location": "الرياض",
+            "stage": "offer",
+            "appliedElsewhere": true,
+            "appliedDate": "",
+            "followUpDate": "",
+            "note": "مسودة تصدير بعد الإصلاح\nFINAL_EXPORT_AR_320",
+            "updatedAt": "2026-11-17T18:00:00.000Z"
+          },
+          "existed": true
+        }
+      ]
+    },
+    {
+      "filename": "Career-Finder-unfinished-edits (5).json",
+      "exportedAt": "2026-11-18T06:43:28.855Z",
+      "bytes": 1420,
+      "sha256": "5c3682b9c398712ce4af1abe2176efd13ec514957ae3d18549823984a828cd02",
+      "records": [
+        {
+          "job": {
+            "id": "job-10",
+            "title": "Nurse clinic",
+            "company": "Synthetic Employer",
+            "url": "https://employer.example/jobs/10",
+            "location": "الرياض",
+            "country": "SA"
+          },
+          "original": {
+            "identity": "https://employer.example/jobs/10",
+            "title": "Nurse clinic",
+            "company": "Synthetic Employer",
+            "location": "الرياض",
+            "stage": "interview",
+            "appliedElsewhere": true,
+            "appliedDate": "",
+            "followUpDate": "",
+            "note": "note interview 1",
+            "updatedAt": "2026-11-17T18:00:00.000Z"
+          },
+          "draft": {
+            "identity": "https://employer.example/jobs/10",
+            "title": "Nurse clinic",
+            "company": "Synthetic Employer",
+            "location": "الرياض",
+            "stage": "offer",
+            "appliedElsewhere": true,
+            "appliedDate": "",
+            "followUpDate": "",
+            "note": "FINAL_EXPORT_EN_390\nمرحبا، \"export\"",
+            "updatedAt": "2026-11-17T18:00:00.000Z"
+          },
+          "existed": true
+        }
+      ]
+    },
+    {
+      "filename": "Career-Finder-unfinished-edits (6).json",
+      "exportedAt": "2026-11-18T06:43:31.116Z",
+      "bytes": 1420,
+      "sha256": "252035fe74eeaa0ae3c8f98158f97f5c7a6171d293412a5f95fc5d7817ec546b",
+      "records": [
+        {
+          "job": {
+            "id": "job-10",
+            "title": "Nurse clinic",
+            "company": "Synthetic Employer",
+            "url": "https://employer.example/jobs/10",
+            "location": "الرياض",
+            "country": "SA"
+          },
+          "original": {
+            "identity": "https://employer.example/jobs/10",
+            "title": "Nurse clinic",
+            "company": "Synthetic Employer",
+            "location": "الرياض",
+            "stage": "interview",
+            "appliedElsewhere": true,
+            "appliedDate": "",
+            "followUpDate": "",
+            "note": "note interview 1",
+            "updatedAt": "2026-11-17T18:00:00.000Z"
+          },
+          "draft": {
+            "identity": "https://employer.example/jobs/10",
+            "title": "Nurse clinic",
+            "company": "Synthetic Employer",
+            "location": "الرياض",
+            "stage": "offer",
+            "appliedElsewhere": true,
+            "appliedDate": "",
+            "followUpDate": "",
+            "note": "FINAL_EXPORT_EN_390\nمرحبا، \"export\"",
+            "updatedAt": "2026-11-17T18:00:00.000Z"
+          },
+          "existed": true
+        }
+      ]
+    },
+    {
+      "filename": "Career-Finder-unfinished-edits (7).json",
+      "exportedAt": "2026-11-18T06:45:35.024Z",
+      "bytes": 1388,
+      "sha256": "358cda376e69a6aacbcf8680e2dff3b92e264320f427d92fb48a4c3b24f374fc",
+      "records": [
+        {
+          "job": {
+            "id": "bare-21",
+            "title": "Bare 21",
+            "company": "Synthetic Employer",
+            "url": "https://employer.example/jobs/bare-21",
+            "location": "Riyadh",
+            "country": "SA"
+          },
+          "original": {
+            "identity": "https://employer.example/jobs/bare-21",
+            "title": "Bare 21",
+            "company": "Synthetic Employer",
+            "location": "Riyadh",
+            "stage": "saved",
+            "appliedElsewhere": false,
+            "appliedDate": "",
+            "followUpDate": "",
+            "note": "",
+            "updatedAt": "2026-11-18T06:44:10.815Z"
+          },
+          "draft": {
+            "identity": "https://employer.example/jobs/bare-21",
+            "title": "Bare 21",
+            "company": "Synthetic Employer",
+            "location": "Riyadh",
+            "stage": "saved",
+            "appliedElsewhere": false,
+            "appliedDate": "",
+            "followUpDate": "",
+            "note": "FINAL_NEW_EXPORT_EN_320\nمسودة جديدة",
+            "updatedAt": "2026-11-18T06:44:10.815Z"
+          },
+          "existed": false
+        }
+      ]
+    },
+    {
+      "filename": "Career-Finder-unfinished-edits (8).json",
+      "exportedAt": "2026-11-18T06:45:42.060Z",
+      "bytes": 1465,
+      "sha256": "e8ad38610842488cd055be6a5c0fd19f06c7cd77ac2f6203ee90ef84d1b57ee7",
+      "records": [
+        {
+          "job": {
+            "id": "job-9",
+            "title": "Role interview 0",
+            "company": "Synthetic Employer",
+            "url": "https://employer.example/jobs/9",
+            "location": "الرياض",
+            "country": "SA"
+          },
+          "original": {
+            "identity": "https://employer.example/jobs/9",
+            "title": "Role interview 0",
+            "company": "Synthetic Employer",
+            "location": "الرياض",
+            "stage": "interview",
+            "appliedElsewhere": true,
+            "appliedDate": "",
+            "followUpDate": "2026-12-02",
+            "note": "note interview 0",
+            "updatedAt": "2026-11-17T18:00:00.000Z"
+          },
+          "draft": {
+            "identity": "https://employer.example/jobs/9",
+            "title": "Role interview 0",
+            "company": "Synthetic Employer",
+            "location": "الرياض",
+            "stage": "interview",
+            "appliedElsewhere": true,
+            "appliedDate": "",
+            "followUpDate": "2026-12-02",
+            "note": "FINAL_EXISTING_DATE_EN_320\nKeep the saved follow-up date",
+            "updatedAt": "2026-11-17T18:00:00.000Z"
+          },
+          "existed": true
+        }
+      ]
+    }
+  ],
+  "note": "Only newly downloaded files carrying this synthetic FINAL_ marker were read/copied. Browser observations establish UI behavior separately."
+}

@@ -1,0 +1,63 @@
+{
+  "observedAt": "2026-11-17T16:14:00.845887+00:00",
+  "parents": [
+    "bf8bfb0015d6f64c17f47e8d48e15d152e8491d8",
+    "d97bc209ca84ecb830e6c6bad25808164706409f"
+  ],
+  "hostedFocused": {
+    "command": "node --test tests/phone-search-workflows.mjs tests/phone-localization.mjs tests/i18n.mjs tests/phone-record-tools.mjs",
+    "passed": 79,
+    "failed": 0,
+    "skipped": 0,
+    "includesSubtests": true,
+    "network": "Synthetic request ports only; unexpected network path fails in search workflow harness."
+  },
+  "nativeLocalization": {
+    "generatorCheck": "passed",
+    "stringsPerLanguage": 1801,
+    "boundedTemplates": 148,
+    "generatorTestsPassed": 8,
+    "nativeBuildInvoked": false
+  },
+  "typecheck": {
+    "command": "npm run typecheck",
+    "exitCode": 0
+  },
+  "lint": {
+    "command": "npm run lint -- --max-warnings=0",
+    "exitCode": 0
+  },
+  "productionBuild": {
+    "command": "npm run build",
+    "exitCode": 0,
+    "warnings": "Existing vinext dynamic-import and plugin sourcemap advisories and static route-classification limitation remain visible. No warning suppression added."
+  },
+  "jsonCatalogs": "No duplicate keys after removing one identical neutral-summary Arabic key introduced by automatic textual merge.",
+  "nativeRetention": {
+    "methodsFromBothParents": 17,
+    "unchangedJourneyBodiesFromPublishing": 16,
+    "changedJourney": "testProfileReadinessAndSimpleConnectionSetup",
+    "assertionCalls": 146,
+    "priorPublishingAssertionCalls": 143,
+    "ownerAssertionCalls": 144,
+    "scope": "Static source inspection only. Counts exclude XCTFail."
+  },
+  "workflow": {
+    "sha256": "9d1e606cf4a2e2fce19be48f270129e88793e15c6229890c3374a76b1a5bae74",
+    "identicalToReviewedBf8": true,
+    "focusedMode": "manual acceptance_scope=iphone-connection, one exact journey, explicit PARTIAL job/artifact and exact one-pass log guard",
+    "defaultMode": "full, unchanged five-job release gate; all17 iPhone journeys remain enabled"
+  },
+  "priorCombinedRun": {
+    "id": 44114195156,
+    "sha": "56784d740a25d07d2fbd4616f57e55cf0cb4453f",
+    "conclusion": "failure",
+    "successfulJobs": 4,
+    "totalJobs": 5,
+    "iphonePassed": 16,
+    "iphoneTotal": 17
+  },
+  "currentCandidateRuntime": "Not invoked. Focused native acceptance and subsequent full release gates remain pending.",
+  "writesOutsideIsolatedClone": "Only existing root-authorized private coordination JSON outside original source repository; no owner source/docs edit.",
+  "externalMutations": []
+}

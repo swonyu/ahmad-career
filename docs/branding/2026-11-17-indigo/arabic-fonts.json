@@ -1,0 +1,20 @@
+{
+  "font": "Noto Sans Arabic",
+  "weights": "100\u2013900 variable",
+  "license": "SIL Open Font License 1.1",
+  "runtimeExternalRequests": 0,
+  "assets": [
+    {
+      "file": "noto-sans-arabic-arabic.woff2",
+      "source": "https://fonts.gstatic.com/s/notosansarabic/v33/nwpCtLGrOAZMl5nJ_wfgRg3DrWFZWsnVBJ_sS6tlqHHFlj4wv4r4xA.woff2",
+      "sha256": "ce85091f020920b65762b387b194ef59457ea5b25b760f2dcc35240a94bb8669",
+      "bytes": 165960
+    },
+    {
+      "file": "noto-sans-arabic-latin.woff2",
+      "source": "https://fonts.gstatic.com/s/notosansarabic/v33/nwpCtLGrOAZMl5nJ_wfgRg3DrWFZWsnVBJ_sS6tlqHHFlj41v4o.woff2",
+      "sha256": "fed070abc960c5f214fcb02b7b178cdab751ef7facd79a899f571bc21d38b8f8",
+      "bytes": 31416
+    }
+  ]
+}

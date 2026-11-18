@@ -1,0 +1,350 @@
+{
+  "schema": 1,
+  "title": "Bounded native feature privacy and failure-semantics critique",
+  "reviewer": "/root/ci_evidence",
+  "writtenAtUTC": "2026-11-18T12:45:46.179Z",
+  "scope": "Read-only review of the native feature commit; privacy, explicit copy controls, role shortcuts and manual routes. Native layout and wording review is separately owned by /root/publication_review.",
+  "originalFeatureCommit": "b6f499361279a27edec4635735cae97a13c6931b",
+  "capturedAtUTC": "2026-11-18T12:44:46.816244+00:00",
+  "reviewedCommit": "74b8ab0009f32da85f429d5680fd4b77326fcf2f",
+  "observedHead": "ead12355246f1889f53f3d7bc3ff71cd42da4d92",
+  "files": [
+    {
+      "path": "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+      "relativePath": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+      "reviewedCommitSHA256": "1900d41b1312fc16d740b6d1168a6dd7e0c46dd420364a376c1838f4c8959bca",
+      "currentFileMatchesReviewedCommit": true
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+      "relativePath": "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+      "reviewedCommitSHA256": "5462a522d208b8538bbe83eca2a799339312df1212b6d681a12a53403080f5a2",
+      "currentFileMatchesReviewedCommit": true
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/android/app/src/main/java/com/saleh/careerfinder/CareerTheme.kt",
+      "relativePath": "android/app/src/main/java/com/saleh/careerfinder/CareerTheme.kt",
+      "reviewedCommitSHA256": "02e036796d5ed988233884b3f8cf26072b880e8451c1753cfda227954830b69f",
+      "currentFileMatchesReviewedCommit": true
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/apple/AhmadCareer/NativeApplicationsViews.swift",
+      "relativePath": "apple/AhmadCareer/NativeApplicationsViews.swift",
+      "reviewedCommitSHA256": "10673021bebb3c2724e613fe400c887ed87fcd079571ffebc2e6ff73557edb3e",
+      "currentFileMatchesReviewedCommit": true
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/apple/AhmadCareer/NativeApplicationsStore.swift",
+      "relativePath": "apple/AhmadCareer/NativeApplicationsStore.swift",
+      "reviewedCommitSHA256": "f53902ac34c5855e1033b918a7660653e5d31a171ccd5d588867177a0f9a5e30",
+      "currentFileMatchesReviewedCommit": true
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/apple/AhmadCareer/NativeDiscoveryViews.swift",
+      "relativePath": "apple/AhmadCareer/NativeDiscoveryViews.swift",
+      "reviewedCommitSHA256": "ad2426798b85b84ff692283c24f4ad5e85a7765b80012a653318bdfd92bcc11a",
+      "currentFileMatchesReviewedCommit": true
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/apple/AhmadCareer/NativeCareerViews.swift",
+      "relativePath": "apple/AhmadCareer/NativeCareerViews.swift",
+      "reviewedCommitSHA256": "c090fa4c6c36a7952ee53975136ea56b8819436c80a9dac9daf07c0a0848fb8e",
+      "currentFileMatchesReviewedCommit": true
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt",
+      "relativePath": "android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt",
+      "reviewedCommitSHA256": "3a0582273fac6818ea1465fcbd2bff24e8790ebe58ded5650cc446bf3ffbb29c",
+      "currentFileMatchesReviewedCommit": true
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/android/app/src/androidTest/java/com/saleh/careerfinder/NavigationPhoneAcceptanceTest.kt",
+      "relativePath": "android/app/src/androidTest/java/com/saleh/careerfinder/NavigationPhoneAcceptanceTest.kt",
+      "reviewedCommitSHA256": "608610e4ea3ce03deac30421f108e3101b9bdf7f27defbfb1c02ed0cfb02c9e9",
+      "currentFileMatchesReviewedCommit": true
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/apple/UITests/CareerFinderUITests.swift",
+      "relativePath": "apple/UITests/CareerFinderUITests.swift",
+      "reviewedCommitSHA256": "a0ab66527cfd7e5378523fb8eb9b98222b334c998ae1484a7c178ed7eebea26c",
+      "currentFileMatchesReviewedCommit": false
+    }
+  ],
+  "constraints": {
+    "sourceEditsByReviewer": false,
+    "browserUIByReviewer": false,
+    "nativeExecutionByReviewer": false,
+    "buildsByReviewer": false,
+    "testsByReviewer": false,
+    "ciDispatchRetryCancelByReviewer": false,
+    "pushMergeDeployByReviewer": false,
+    "onlyAuthorizedWrite": "/workspace/scratch/ebb3eed5ee2b/native-feature-privacy-critique-20261118.json",
+    "preserveOtherOwnersAndCredentials": true,
+    "freeCostConstraintPreserved": true,
+    "goodSpenderExcluded": true
+  },
+  "palette": {
+    "current": "midnight navy / lavender, aligned with the Career Finder icon",
+    "warmPaletteSuperseded": true,
+    "visualApprovalByReviewer": false
+  },
+  "findings": [
+    {
+      "id": "ios-record-only-manual-route",
+      "status": "fixed_source_verified",
+      "severity": "minor user-flow mismatch",
+      "sourceValidated": true,
+      "runtimeReproducedByReviewer": false,
+      "observation": "NativeApplicationsScreen.hasSavedOpportunities tests model.jobs plus earlier career.savedJobs. Saved and its badge use model.savedOpportunities, which also adds retained meaningful records without bookmarks. A record-only guest therefore gets Search jobs and the Search destination despite existing entries in Saved.",
+      "evidence": [
+        {
+          "path": "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/apple/AhmadCareer/NativeApplicationsViews.swift",
+          "symbol": "NativeApplicationsScreen.hasSavedOpportunities"
+        },
+        {
+          "path": "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/apple/AhmadCareer/NativeApplicationsStore.swift",
+          "symbol": "savedOpportunities"
+        },
+        {
+          "path": "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/apple/AhmadCareer/NativeCareerViews.swift",
+          "symbol": "NativeSavedScreen / savedCount"
+        }
+      ],
+      "acceptedBy": "/root",
+      "fixOwner": "/root/recovery_review",
+      "proposedFix": "Use model.savedOpportunities plus career.savedJobs for the guest manual-route decision.",
+      "successorVerified": true,
+      "fixCommit": "927b7c49f5cd5722e5d8fbdb8e5b5b4a11173101",
+      "verifiedAtUTC": "2026-11-18T12:50:05.127987+00:00",
+      "successorVerification": "Predicate now uses model.savedOpportunities plus career.savedJobs. Existing iPhone private-record journey adds bookmark removal, Open saved jobs route, retained note and no-bookmark-restoration assertions."
+    },
+    {
+      "id": "android-copy-failure-and-confirmation",
+      "status": "fixed_source_verified",
+      "severity": "conditional resilience and feedback gap",
+      "sourceValidated": true,
+      "runtimeReproducedByReviewer": false,
+      "observation": "The click callback calls ClipboardManager.setPrimaryClip without failure handling, then reports Copied when the manager is non-null. That is not a proof that the expected item was installed.",
+      "apiEvidence": "The AOSP client setter returns void and rethrows RemoteException as a runtime exception. The Android 16 service returns without writing when clipboardAccessAllowed for OP_WRITE_CLIPBOARD is false. These support conditional exceptional-failure and silently-denied-write paths; they do not prove normal copying fails on the current device.",
+      "evidence": [
+        {
+          "path": "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+          "symbol": "ProfileContactReuse copy callback"
+        }
+      ],
+      "primarySourceKeys": [
+        "aosp-clipboard-manager",
+        "aosp-android16-clipboard-service"
+      ],
+      "acceptedBy": "/root",
+      "fixOwner": "/root/recovery_review",
+      "proposedFix": "Handle exceptions and confirm a fresh per-copy opaque marker using primaryClipDescription metadata only before showing Copied. Missing or mismatched metadata should remain unconfirmed with visible fallback; preserve the chosen field and draft. Product code should not read clipboard text or log/store marker contents.",
+      "proposalReviewed": true,
+      "proposalDisposition": "Narrow approach is consistent with the privacy boundary; actual successor source remains to be inspected.",
+      "successorVerified": true,
+      "fixCommit": "927b7c49f5cd5722e5d8fbdb8e5b5b4a11173101",
+      "verifiedAtUTC": "2026-11-18T12:50:05.127987+00:00",
+      "successorVerification": "copyContactField creates a fresh UUID, writes only the chosen field with sensitive flag and operation marker, and confirms only its marker through primaryClipDescription. Stale/missing descriptions and write/read exceptions return false. UI success is conditional; localized failure leaves the profile values intact. No product clipboard-text reads, marker logging, persistence or network operation found in the reviewed patch."
+    }
+  ],
+  "primarySources": [
+    {
+      "key": "aosp-clipboard-manager",
+      "url": "https://android.googlesource.com/platform/frameworks/base/+/HEAD/core/java/android/content/ClipboardManager.java",
+      "retrievalRefs": [
+        "turn611665406search0",
+        "turn610350502view0"
+      ],
+      "kind": "Android Open Source Project primary implementation",
+      "relevantSymbols": [
+        "setPrimaryClip",
+        "getPrimaryClipDescription"
+      ],
+      "reviewedClaim": "setPrimaryClip returns void; RemoteException is rethrown through rethrowFromSystemServer.",
+      "temporality": "HEAD URL as retrieved during this session on 2026-11-18"
+    },
+    {
+      "key": "aosp-android16-clipboard-service",
+      "url": "https://android.googlesource.com/platform/frameworks/base/+/refs/heads/android16-release/services/core/java/com/android/server/clipboard/ClipboardService.java",
+      "retrievalRefs": [
+        "turn135943714search2",
+        "turn611665406view1",
+        "turn610350502view1",
+        "turn610350502view2"
+      ],
+      "gitilesBlob": "40136c3e03ec49116204a17f121d9c5b75c6fe7c",
+      "kind": "Android Open Source Project primary implementation",
+      "relevantSymbols": [
+        "checkAndSetPrimaryClip",
+        "clipboardAccessAllowed",
+        "getPrimaryClipDescription"
+      ],
+      "reviewedClaim": "The write operation returns without changing the clip when the clipboard access check fails. Source distinction between read, write and content-URI ownership paths avoids assuming ordinary text-copy permission denial must throw.",
+      "temporality": "android16-release branch as retrieved during this session on 2026-11-18"
+    }
+  ],
+  "preservedBoundaries": [
+    {
+      "id": "chosen-field-only",
+      "observation": "Both native paths construct the clipboard item from only the selected contact field; they exclude CV bytes, connection credentials and application approval data.",
+      "evidencePaths": [
+        "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+        "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/apple/AhmadCareer/NativeApplicationsViews.swift"
+      ]
+    },
+    {
+      "id": "clipboard-privacy-options",
+      "observation": "Android marks the clip sensitive and keys expansion/confirmation to scope/fields. iPhone requests a local-only pasteboard item with a five-minute expiry and clears its confirmation when the draft changes. These are source settings, not independently observed OS behavior.",
+      "evidencePaths": [
+        "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+        "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/apple/AhmadCareer/NativeApplicationsViews.swift"
+      ]
+    },
+    {
+      "id": "explicit-role-prefill",
+      "observation": "Role buttons change only the query field and do not dispatch a search or infer location, remote eligibility or board choices.",
+      "evidencePaths": [
+        "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+        "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/apple/AhmadCareer/NativeDiscoveryViews.swift"
+      ]
+    },
+    {
+      "id": "environment-injection",
+      "observation": "The new iPhone environment objects are provided at the shared tab root. No missing-injection crash path was established in the reviewed routes.",
+      "evidencePaths": [
+        "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/apple/AhmadCareer/NativeCareerViews.swift"
+      ]
+    },
+    {
+      "id": "manual-route-side-effects",
+      "observation": "Manual actions navigate existing screens; they do not themselves upload a profile or submit an application.",
+      "evidencePaths": [
+        "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+        "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/apple/AhmadCareer/NativeApplicationsViews.swift"
+      ]
+    },
+    {
+      "id": "palette-wrapper-scope",
+      "observation": "The reviewed wrappers apply to the app's SwiftUI lists/forms; no UIKit appearance proxy or Safari controller mutation was introduced in this feature commit. Detailed native layout review remains with publication_review.",
+      "evidencePaths": [
+        "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5/apple/AhmadCareer/NativeCareerViews.swift"
+      ]
+    }
+  ],
+  "testSourceReview": {
+    "executedByReviewer": false,
+    "observedCoverage": [
+      "Android exact synthetic clipboard value and sensitive flag",
+      "Android role shortcut changes query only without dispatching search",
+      "iPhone guest manual navigation",
+      "iPhone profile copy affordance and confirmation",
+      "iPhone role shortcut keeps location and remote state"
+    ],
+    "limitations": [
+      "The original new clipboard test covers the success path, not denied writes or service exceptions.",
+      "All native test methods remain pending actual final-candidate execution for acceptance.",
+      "The current UITest file differs from the feature-commit version because the separate readiness/helper repair has been integrated; this privacy review does not relabel that later file as the original feature source."
+    ],
+    "successorAddedCoverage": [
+      "fresh-marker successful copy",
+      "void setter that silently ignores replacement retains stale marker and cannot report success",
+      "missing description remains unconfirmed",
+      "write exception prevents description read",
+      "description-read exception remains unconfirmed",
+      "existing real system clipboard exact synthetic value and sensitive flag assertions retained",
+      "existing iPhone record journey removes bookmark, navigates back through guest Apply, preserves private note and does not restore bookmark"
+    ],
+    "successorTestsExecutedByReviewer": false
+  },
+  "successorCoordination": {
+    "owner": "/root/recovery_review",
+    "rootAcceptedBothFindings": true,
+    "actualPatchReceived": true,
+    "reviewBeforeFocusedRunRequested": true,
+    "reviewerMayRunNative": false,
+    "reviewBeforeFocusedRunCompleted": true,
+    "reviewedCommit": "927b7c49f5cd5722e5d8fbdb8e5b5b4a11173101",
+    "sourceAcceptance": "accepted within privacy and failure-semantics scope",
+    "runtimeAcceptance": false
+  },
+  "releaseAcceptance": {
+    "accepted": false,
+    "reason": "Both source findings are verified fixed in committed successor; focused native validation and final combined-candidate CI are still pending."
+  },
+  "updatedAtUTC": "2026-11-18T12:50:36.601580+00:00",
+  "revisionHistory": [
+    {
+      "previousSHA256": "f0e715b5e3c4a0d640702731a41ac4905257116b7404dfe3f1b811dd29507d4d",
+      "transition": "Two accepted findings changed from fix pending to fixed in source after independent inspection of committed successor. Runtime acceptance remains pending.",
+      "atUTC": "2026-11-18T12:50:36.601580+00:00"
+    }
+  ],
+  "successorReviewBinding": {
+    "verifiedAtUTC": "2026-11-18T12:50:05.127987+00:00",
+    "worktree": "/Users/saleh/Developer/career-finder-android-action-20261118-ebb3eed5",
+    "commit": "927b7c49f5cd5722e5d8fbdb8e5b5b4a11173101",
+    "parent": "a34e92d3c8daac87e9dbb5b4d239b8569b47aed0",
+    "tree": "ffade5783a155c60a6556c36963f4431ac27a87f",
+    "cleanWorktree": true,
+    "files": [
+      {
+        "path": "/Users/saleh/Developer/career-finder-android-action-20261118-ebb3eed5/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+        "relativePath": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+        "sha256": "16aa3856a3dd2e39574948570765fcaf52bc697c74e92168030bd226d9a2cf0d",
+        "workingFileMatchesCommit": true
+      },
+      {
+        "path": "/Users/saleh/Developer/career-finder-android-action-20261118-ebb3eed5/android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt",
+        "relativePath": "android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt",
+        "sha256": "37023d402d50b267aafe2090db65ea0b8210670f6cc027fd761d3e5d49fc7b60",
+        "workingFileMatchesCommit": true
+      },
+      {
+        "path": "/Users/saleh/Developer/career-finder-android-action-20261118-ebb3eed5/apple/AhmadCareer/NativeApplicationsViews.swift",
+        "relativePath": "apple/AhmadCareer/NativeApplicationsViews.swift",
+        "sha256": "1790f8e0d9eefac7f58059d8a487edd0309442c2a34fa818cd416c76077015cd",
+        "workingFileMatchesCommit": true
+      },
+      {
+        "path": "/Users/saleh/Developer/career-finder-android-action-20261118-ebb3eed5/apple/UITests/CareerFinderUITests.swift",
+        "relativePath": "apple/UITests/CareerFinderUITests.swift",
+        "sha256": "fbfcf32dd3c18811ca8658bd442fa9082e5b545196ad9c665b8f913ce70fa8f1",
+        "workingFileMatchesCommit": true
+      },
+      {
+        "path": "/Users/saleh/Developer/career-finder-android-action-20261118-ebb3eed5/localization/native-copy.json",
+        "relativePath": "localization/native-copy.json",
+        "sha256": "7e1a3460bcba2a74d1a1ecda0b4685e32efbc8f5eb3223b74b2a528242269669",
+        "workingFileMatchesCommit": true
+      },
+      {
+        "path": "/Users/saleh/Developer/career-finder-android-action-20261118-ebb3eed5/android/app/src/main/res/values-ar/career_copy.xml",
+        "relativePath": "android/app/src/main/res/values-ar/career_copy.xml",
+        "sha256": "110ff3aaef700a4276d4fc570e438ef42f44b577cc9b6e1a1ee69cd2008ae3b2",
+        "workingFileMatchesCommit": true
+      },
+      {
+        "path": "/Users/saleh/Developer/career-finder-android-action-20261118-ebb3eed5/android/app/src/main/res/values/career_copy.xml",
+        "relativePath": "android/app/src/main/res/values/career_copy.xml",
+        "sha256": "b62ff474fb5b9c123c4e2af70fe426fa90717142cdcab4f222c1b41ef70c28c8",
+        "workingFileMatchesCommit": true
+      },
+      {
+        "path": "/Users/saleh/Developer/career-finder-android-action-20261118-ebb3eed5/apple/AhmadCareer/ar.lproj/Localizable.strings",
+        "relativePath": "apple/AhmadCareer/ar.lproj/Localizable.strings",
+        "sha256": "88babac93bb211c5121a5b44029a4c42828b521e738ea01cca06a13b8f2757fc",
+        "workingFileMatchesCommit": true
+      },
+      {
+        "path": "/Users/saleh/Developer/career-finder-android-action-20261118-ebb3eed5/apple/AhmadCareer/en.lproj/Localizable.strings",
+        "relativePath": "apple/AhmadCareer/en.lproj/Localizable.strings",
+        "sha256": "52813283bb3d5d42d9a9408c6377e602806a15e4988d38388f0fe231c627cdbd",
+        "workingFileMatchesCommit": true
+      }
+    ],
+    "ownerReceipt": {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-task-improvements/native-resilience-927b7c49.json",
+      "sha256": "4262c40a5593678e7bd03764d69eea670396daf03710a38ac95b9f61ce3bcf86"
+    }
+  }
+}

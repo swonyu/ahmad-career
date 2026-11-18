@@ -21,12 +21,12 @@ function wrapDB(target,fail){
   const statement=(sql,args=[])=>({bind(...values){return statement(sql,values)},async first(...params){if(await fail?.(sql,args))throw Error('synthetic durable failure');return target.prepare(sql).bind(...args).first(...params)},async all(){if(await fail?.(sql,args))throw Error('synthetic durable failure');return target.prepare(sql).bind(...args).all()},async run(){if(await fail?.(sql,args))throw Error('synthetic durable failure');return target.prepare(sql).bind(...args).run()},_sql:sql,_args:args});
   return {prepare:sql=>statement(sql),batch:statements=>target.batch(statements.map(s=>target.prepare(s._sql).bind(...s._args)))};
 }
-async function call(path,{method='GET',body,token,user,headers={},environment=env,useHandler=handler}={}){
+async function call(path,{method='GET',body,token,user,headers={},environment=env,useHandler:requestHandler=handler}={}){
   const requestHeaders={...user,...headers};if(token)requestHeaders.authorization='Bearer '+token;
   if(body!==undefined){requestHeaders['content-type']='application/json';if(user)requestHeaders.origin=SERVICE_ORIGIN}
   environment.CAREER_CONNECTORS_JSON=JSON.stringify(config);
   const request=new Request(SERVICE_ORIGIN+path,{method,headers:requestHeaders,...(body===undefined?{}:{body:JSON.stringify(body)})});
-  const res=await useHandler(request,environment,{waitUntil(){}});
+  const res=await requestHandler(request,environment,{waitUntil(){}});
   const data=res.headers.get('content-type')?.includes('application/json')?await res.json():new Uint8Array(await res.arrayBuffer());
   return {status:res.status,data,headers:res.headers};
 }
@@ -366,16 +366,16 @@ try {
   assert.equal((await call('/api/apply/receipts',{token:cleanup.token})).data.receipts[0].state,'confirmed');
   checkpoint('In-flight provider dispatch retains its exact PDF; a failed later erasure is visible and safely retriable without losing the receipt');
 
-  async function googleIdentity(label){
-    const id='synthetic-google-'+label,generation=randomUUID(),subject='google-subject-'+label,token=digest('synthetic-browser-token-'+label),sessionID=randomUUID();
+  async function browserIdentity(label,provider='google'){
+    const id='synthetic-'+provider+'-'+label,generation=randomUUID(),subject=provider+'-subject-'+label,token=digest('synthetic-browser-token-'+provider+'-'+label),sessionID=randomUUID();
     await db.batch([
-      db.prepare("INSERT INTO auth_accounts(owner_id,origin_method,generation,created_at) VALUES(?,'google',?,?)").bind(id,generation,time),
-      db.prepare("INSERT INTO auth_identities(provider,subject,subject_hash,owner_id,email,display_name,connected_at,updated_at) VALUES('google',?,?,?,?,?,?,?)").bind(subject,digest(subject),id,label+'@example.com','Synthetic '+label,new Date(time).toISOString(),new Date(time).toISOString()),
-      db.prepare("INSERT INTO browser_sessions(token_hash,id,owner_id,account_generation,provider,subject,created_at,expires_at) VALUES(?,?,?,?,'google',?,?,?)").bind(digest(token),sessionID,id,generation,subject,time,time+600000),
+      db.prepare("INSERT INTO auth_accounts(owner_id,origin_method,generation,created_at) VALUES(?,?,?,?)").bind(id,provider,generation,time),
+      db.prepare("INSERT INTO auth_identities(provider,subject,subject_hash,owner_id,email,display_name,connected_at,updated_at) VALUES(?,?,?,?,?,?,?,?)").bind(provider,subject,digest(subject),id,label+'@example.com','Synthetic '+label,new Date(time).toISOString(),new Date(time).toISOString()),
+      db.prepare("INSERT INTO browser_sessions(token_hash,id,owner_id,account_generation,provider,subject,created_at,expires_at) VALUES(?,?,?,?,?,?,?,?)").bind(digest(token),sessionID,id,generation,provider,subject,time,time+600000),
     ]);
     return{id,generation,token,headers:{cookie:'__Host-career-session='+token}};
   }
-  const googleOnly=await googleIdentity('identity-only'),otherBefore=await privateState(b);
+  const googleOnly=await browserIdentity('identity-only'),otherBefore=await privateState(b);
   const googleAccount=await call('/api/account',{user:b.user,headers:googleOnly.headers});assert.equal(googleAccount.status,200);assert.equal(googleAccount.data.accountId,googleOnly.id);assert.equal(googleAccount.data.workspaceId,null);
   const googlePhone=await call('/api/phone/workspace',{user:b.user,headers:googleOnly.headers});assert.equal(googlePhone.data.accountId,googleOnly.id);assert.equal(googlePhone.data.workspaceId,null);
   for(const cookie of ['__Host-career-session=bad','__Host-career-session='+digest('expired')])assert.equal((await call('/api/account',{user:b.user,headers:{cookie}})).status,401);
@@ -389,13 +389,13 @@ try {
   assert.deepEqual(await privateState(b),otherBefore);assert.equal((await call('/api/account',{user:b.user,headers:googleOnly.headers})).status,401);
   checkpoint('Identity-only account erasure revokes its sessions and links without creating a workspace or changing another signed-in account');
 
-  const raceIdentity=await googleIdentity('creation-race'),raceDB=wrapDB(db);let insertedWorkspace=false;
+  const raceIdentity=await browserIdentity('creation-race'),raceDB=wrapDB(db);let insertedWorkspace=false;
   raceDB.batch=async statements=>{if(!insertedWorkspace&&statements[0]?._sql.startsWith('UPDATE account_lifecycles SET generation=')){insertedWorkspace=true;await db.prepare('INSERT INTO workspaces(id,owner_id,owner_email,created_at,profile_json) VALUES(?,?,?,?,?)').bind(randomUUID(),raceIdentity.id,'creation-race@example.com',new Date(time).toISOString(),JSON.stringify(empty.data.profile)).run()}return db.batch(statements.map(s=>db.prepare(s._sql).bind(...s._args)))};
   const raceDelete=await call('/api/account',{method:'DELETE',body:{expectedAccountId:raceIdentity.id,expectedWorkspaceId:null,confirmation:'DELETE'},user:b.user,headers:raceIdentity.headers,environment:{...env,DB:raceDB}});assert.equal(raceDelete.status,409);assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM auth_identities WHERE owner_id=?').bind(raceIdentity.id).first()).n,1);
   checkpoint('A workspace created during identity-only deletion prevents the stale deletion atomically');
 
   for(const [label,path] of [['pair','/api/account/pairing'],['open','/api/phone/workspace']]){
-    const staleIdentity=await googleIdentity('stale-'+label);let deletedBeforeCreate=false;
+    const staleIdentity=await browserIdentity('stale-'+label);let deletedBeforeCreate=false;
     const delayedCreation=wrapDB(db,async sql=>{if(!deletedBeforeCreate&&sql.startsWith('INSERT OR IGNORE INTO workspaces')){deletedBeforeCreate=true;const erased=await call('/api/account',{method:'DELETE',body:{expectedAccountId:staleIdentity.id,expectedWorkspaceId:null,confirmation:'DELETE'},user:b.user,headers:staleIdentity.headers});assert.equal(erased.status,200)}return false});
     const staleRequest=await call(path,{method:'POST',body:{expectedAccountId:staleIdentity.id},user:b.user,headers:staleIdentity.headers,environment:{...env,DB:delayedCreation}});
     assert.equal(deletedBeforeCreate,true);assert.equal(staleRequest.status,401);assert.equal(staleRequest.data.error.code,'invalid_session');
@@ -416,12 +416,30 @@ try {
   }
   checkpoint('Opaque owner generations stop stale Sites pairing/open requests before or after lifecycle capture, while a deliberate later request can start fresh');
 
-  const fullIdentity=await googleIdentity('full-account'),googleOpened=await call('/api/phone/workspace',{method:'POST',body:{expectedAccountId:fullIdentity.id},user:b.user,headers:fullIdentity.headers});assert.equal(googleOpened.status,200);const googleWorkspace=googleOpened.data.workspaceId;
+  const fullIdentity=await browserIdentity('full-account'),googleOpened=await call('/api/phone/workspace',{method:'POST',body:{expectedAccountId:fullIdentity.id},user:b.user,headers:fullIdentity.headers});assert.equal(googleOpened.status,200);const googleWorkspace=googleOpened.data.workspaceId;
   const fullExport=await call('/api/account/export?expectedWorkspaceId='+googleWorkspace,{user:b.user,headers:fullIdentity.headers});assert.equal(fullExport.data.connections[0].provider,'google');assert.equal(fullExport.data.accountId,fullIdentity.id);
   const fullDelete=await call('/api/account',{method:'DELETE',body:{expectedWorkspaceId:googleWorkspace,confirmation:'DELETE'},user:b.user,headers:fullIdentity.headers});assert.equal(fullDelete.status,200);
   for(const table of ['auth_accounts','auth_identities','browser_sessions','workspaces'])assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM '+table+' WHERE owner_id=?').bind(fullIdentity.id).first()).n,0);
   assert.deepEqual(await privateState(b),otherBefore);
   checkpoint('Full Google-owned workspace erasure removes identity and application state together and preserves the other browser account');
+
+  const linkedinIdentity=await browserIdentity('linkedin-lifecycle','linkedin');
+  const linkedinAccount=await call('/api/account',{user:b.user,headers:linkedinIdentity.headers});assert.equal(linkedinAccount.data.accountId,linkedinIdentity.id);assert.equal(linkedinAccount.data.email,'linkedin-lifecycle@example.com');
+  assert.equal((await call('/api/account/export?expectedAccountId='+b.user['oai-authenticated-user-id'],{user:b.user,headers:linkedinIdentity.headers})).status,409);
+  const linkedinOpen=await call('/api/phone/workspace',{method:'POST',body:{expectedAccountId:linkedinIdentity.id},user:b.user,headers:linkedinIdentity.headers});assert.equal(linkedinOpen.status,200);assert.equal(linkedinOpen.data.accountEmail,'linkedin-lifecycle@example.com');
+  const linkedinExport=await call('/api/account/export?expectedWorkspaceId='+linkedinOpen.data.workspaceId,{user:b.user,headers:linkedinIdentity.headers});assert.equal(linkedinExport.data.connections[0].provider,'linkedin');assert.equal(linkedinExport.data.browserSessions[0].method,'linkedin');assert(!JSON.stringify(linkedinExport.data).includes(linkedinIdentity.token));
+  const linkedinDeleted=await call('/api/account',{method:'DELETE',body:{expectedWorkspaceId:linkedinOpen.data.workspaceId,expectedAccountId:linkedinIdentity.id,confirmation:'DELETE'},user:b.user,headers:linkedinIdentity.headers});assert.equal(linkedinDeleted.status,200);
+  assert.equal((await call('/api/account',{user:b.user,headers:linkedinIdentity.headers})).status,401);assert.deepEqual(await privateState(b),otherBefore);
+  checkpoint('LinkedIn session identity owns its verified email, workspace, export and deletion without exposing another browser account');
+
+  for(const [label,path] of [['pair','/api/account/pairing'],['open','/api/phone/workspace']]){
+    const pendingIdentity=await browserIdentity('linkedin-revoked-'+label,'linkedin');let revoked=false;
+    const delayed=wrapDB(db,async sql=>{if(!revoked&&sql.startsWith('INSERT OR IGNORE INTO workspaces')){revoked=true;await db.prepare('DELETE FROM browser_sessions WHERE owner_id=?').bind(pendingIdentity.id).run()}return false});
+    const blocked=await call(path,{method:'POST',body:{expectedAccountId:pendingIdentity.id},user:b.user,headers:pendingIdentity.headers,environment:{...env,DB:delayed}});
+    assert(revoked);assert.equal(blocked.status,401);assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM workspaces WHERE owner_id=?').bind(pendingIdentity.id).first()).n,0);
+  }
+  checkpoint('Revoked LinkedIn sessions cannot finish delayed pairing or workspace creation');
+
 
   }
   const currentAccounts=(await db.prepare('SELECT COUNT(*) AS n FROM workspaces').first()).n,accountSeed=[];for(let i=currentAccounts;i<LIMITS.maxAccounts-1;i++)accountSeed.push(db.prepare('INSERT INTO workspaces(id,owner_id,owner_email,created_at,profile_json) VALUES(?,?,?,?,?)').bind(randomUUID(),'seeded-account-'+i,'synthetic@example.com',new Date(time).toISOString(),'{}'));await db.batch(accountSeed);

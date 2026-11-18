@@ -1,0 +1,10 @@
+{"pattern":"+(*a)","input":"aa","capture":false,"baseline":["aa"],"patched":["aa"],"same":true}
+{"pattern":"+(*a)","input":"aa","capture":true,"baseline":["aa","aa",""],"patched":["aa","aa","a"],"same":false}
+{"pattern":"+(*a)","input":"aba","capture":false,"baseline":["aba"],"patched":["aba"],"same":true}
+{"pattern":"+(*a)","input":"aba","capture":true,"baseline":["aba","aba","b"],"patched":["aba","aba","ab"],"same":false}
+{"pattern":"+(*a|*b)","input":"ba","capture":false,"baseline":["ba"],"patched":["ba"],"same":true}
+{"pattern":"+(*a|*b)","input":"ba","capture":true,"baseline":["ba","ba","b",null],"patched":["ba","ba","b",null],"same":true}
+{"pattern":"*(*a)","input":"aa","capture":false,"baseline":["aa"],"patched":["aa"],"same":true}
+{"pattern":"*(*a)","input":"aa","capture":true,"baseline":["aa","aa",""],"patched":["aa","aa","a"],"same":false}
+{"pattern":"+(*b)","input":"bbb","capture":false,"baseline":["bbb"],"patched":["bbb"],"same":true}
+{"pattern":"+(*b)","input":"bbb","capture":true,"baseline":["bbb","bbb",""],"patched":["bbb","bbb","bb"],"same":false}

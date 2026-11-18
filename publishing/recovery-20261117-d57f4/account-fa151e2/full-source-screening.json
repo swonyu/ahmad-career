@@ -1,0 +1,20 @@
+{
+  "observedAt": "2026-11-17T15:21:55.597727+00:00",
+  "scope": "Complete tracked merged tree including new follow-up receipts; credential signatures and sensitive filenames. No credential values printed.",
+  "patterns": [
+    "private-key",
+    "github-token",
+    "provider-secret",
+    "aws-key-id",
+    "google-api-key",
+    "jwt-like-credential",
+    "slack-token"
+  ],
+  "trackedFiles": 1268,
+  "sensitiveFilenames": [],
+  "hits": [],
+  "limitations": [
+    "A signature scan cannot guarantee detection of every secret.",
+    "Raw historical CI receipts retain their original commit attribution; no parent result is promoted to combined-candidate acceptance."
+  ]
+}

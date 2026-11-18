@@ -1,0 +1,135 @@
+Grok
+Thought for 5m 54s
+
+Independent validation is finished. No product files, branches, builds, accounts, or applications were changed. The other Build task still owns SessionRecovery.tsx, OAuthFeedback.tsx, SignInOptions.tsx, and ProviderConnections.tsx. This pass did not edit those files.
+
+What was actually read
+
+Committed source at 63eecda5c5c57805aeae1f5ba8e22af65e38ceee (development head). Native files below are byte-identical at handoff commit 9878a7e8d3645952435181763802a91691fda4f9. model.ts differs only by an optional saved-record location field.
+
+Area	File
+Hosted truth	hosted/app/phone/model.ts, hosted/app/phone/PhoneApp.tsx, hosted/server/applications.mjs, hosted/server/discovery.mjs
+iPhone	CareerDiscovery.swift, NativeDiscoveryViews.swift, MobileApplicationClient.swift (jobIdentity, stateTitle), MobileApplicationState.swift, NativeApplicationsStore.swift, NativeApplicationsViews.swift
+Android	Discovery.kt, DiscoveryScreen.kt, BoundaryPolicy.java, Models.kt, WorkspaceTransfer.kt, CareerViewModel.kt, MainActivity.kt
+Ownership	Both handoffs in docs/continuation-handoffs/, PR #1 comments, branch heads
+
+Not read: the uncommitted recovery+cap candidate (67 focused tests, not on a remote head), SessionRecovery/OAuth lane, Picomatch repair, and the 17 prior screenshots. No physical device, VoiceOver, or TalkBack pass.
+
+Executed only this transcription fixture (Node v22.23.3, no app imports):
+
+node /workspace/artifacts/evidence/identity-and-source-truth.mjs → 8/8 passed. It runs the hosted board parser and jobIdentity. The last two cases only model the checkbox and ready-versus-approved conditions; they are not a browser run.
+
+Do not treat ready as approval
+
+Source-confirmed, not a UI screenshot.
+
+hosted/server/applications.mjs inserts attempts as 'ready' in the prepare batch, before approved_at is set. Submit later requires approved === true and an exact digest, then bumps approval_generation. activePlanIds additionally require approval_generation > 0.
+
+receiptLabel in hosted/app/phone/model.ts still maps ready → "Approved, waiting to send" at both 63eecda and 9878a7e. That string is false for a prepared attempt. The current receipt list hides state === "ready", so the sentence is latent, not shown. Do not “fix” the list by revealing every ready receipt under that label.
+
+Safer labels already exist elsewhere:
+
+Android receiptLabel: ready → "Prepared"
+iPhone stateTitle: ready → "Ready to review" (not “approved”, but still easy to confuse with user review)
+
+Minimum test (hosted owner, with PhoneApp; not the account-accessibility lane): prepare a plan, do not submit. Assert approvedAt is null, attempt state is ready, and no rendered string says approved or sent. After a real submit, assert approval_generation > 0 before any “waiting to send” wording. A ready row must stay “Prepared” / “Not approved”.
+
+Applied-elsewhere job stays disabled and checked
+
+Source-confirmed in PhoneApp.tsx job-choice checkbox. selected is session state. The box is checked={selected.includes(identity)} and disabled when recordsByID.get(identity)?.appliedElsewhere. saveRecord does not remove that identity from selected. Only bookmark removal does. prepare then throws “A selected job is already marked applied…”.
+
+Consequence: mark a selected job applied elsewhere, return to Apply, and the row is checked, disabled, and unblockable. The whole prepare action fails. This is not persisted across reload.
+
+Owner: hosted PhoneApp lane (4b851), not Terminal 1/2 and not the SessionRecovery task.
+
+Minimum test: select job A, save its record with appliedElsewhere: true, render Apply. Expect the box unchecked or omitted, not disabled-checked. Prepare of the remaining selection must succeed. Prepare that still includes A must fail closed. Raw note text and other drafts stay untouched.
+
+Workaround until that lands: remove the bookmark and save it again, or reload the phone page so selected resets. Do not clear the applied mark to force the checkbox.
+
+Native empty and history truth
+
+Source-confirmed at 63eecda. Not re-run on a simulator.
+
+Partial + zero jobs looks like a healthy empty search. iPhone emptyState uses “No roles match this search.” for every non-unavailable page, including partial. Android DiscoveryScreen.kt does the same when status != "unavailable". Hosted DiscoveryEmptyState already separates complete, partial, and unavailable. Coverage text on Android mentions partial sources, but the empty headline does not.
+
+iPhone empty history is treated as current. CareerDiscovery.swift sets restoredResults = !jobs.isEmpty. A restored page with zero jobs never shows “Previous results”. sourceStatus maps fresh to “Checked now” and does not show checkedAt. Android does mark a restored snapshot (restoredSearch when a page exists), including empty, but still uses the healthy-empty sentence for partial.
+
+Owner: Terminal 1 (CareerDiscovery.swift, NativeDiscoveryViews.swift, Discovery.kt, DiscoveryScreen.kt). Central native strings belong to that session.
+
+Minimum tests: complete-empty, partial-empty (outage, stale, and cap), unavailable, and restored empty. Assert three different headlines in EN and AR. Restored pages, including zero jobs, must show the stored check time and must not say “Checked now”. A newer draft must not be replaced by the old response. Retry uses the submitted filters.
+
+Workaround: open “Employer coverage and freshness” and read the per-board status. Android already has “Open original employer board”. iPhone still has no boardUrl action in the reviewed discovery view.
+
+Same board twice, then the server rejects it
+
+Source-confirmed, and the transcribed parser passed.
+
+parseDiscoverySource maps greenhouse:canonical, https://boards.greenhouse.io/canonical, https://job-boards.greenhouse.io/canonical, trailing slash, case, utm_*, and embed/job_board?for=canonical to greenhouse:canonical. parseQuery rejects duplicate ids. iPhone addBoard / toggleSource only compare raw strings (query.sources.contains(value)). Android DiscoveryFilters.cleaned() only trims and distinct()s raw strings.
+
+Owner: Terminal 1. Do not weaken server validation.
+
+Minimum test: add the id and the URL for one board; expect one stored id. Also old/new Greenhouse hosts, Lever global vs EU, direct job URLs, ports, and credentials. Order of the first form is kept.
+
+Workaround: select each employer once, as a catalog id or as one board URL, not both.
+
+Saved-job URL identity is not one canonical string
+
+Hosted jobIdentity returns a full https://… URL, strips utm_*, gclid, fbclid, lever-source, lever-origin, trailing slash, and Lever /apply, and lowercases Lever board + UUID. Fixture confirmed that.
+
+iPhone MobileApplicationPolicy.jobIdentity returns host/board/uuid with no scheme for Lever postings, and a URL string otherwise. It does not strip lever-source. Android BoundaryPolicy.jobIdentity also returns host/board/uuid for Lever.
+
+So Lever links match across the two native apps and do not match the hosted identity string. That is a source difference. A cross-import duplicate was not executed here.
+
+Owner: do not invent a new shared module in this session. Terminal 2 owns native record identity used at import; hosted model.ts stays with the hosted lane. Any change must keep the original opened URL and must not merge two notes just because the identity string changes.
+
+iPhone import drops distinct unfinished notes
+
+Source-confirmed.
+
+Android export writes recordDrafts and recordDraftAlternatives into one recordDrafts array (WorkspaceTransfer.kt). Android import keeps the first per identity and stores different drafts as alternatives (CareerViewModel.importWorkspace, useRecoveredRecordDraft).
+
+iPhone mergeBackup appends a draft only when no destination draft has that scope and identity (NativeApplicationsStore.swift). The second alternative is skipped. If the destination already has a draft, both are skipped. The original file is not modified. Import does not grant approval. Message says links and history were merged, which over-claims drafts.
+
+Owner: Terminal 2. Do not edit hosted files or Terminal 1 discovery files.
+
+Minimum test: empty destination + two different notes for one job; existing destination draft; restart; re-export; choosing one alternative does not delete the other; damaged JSON leaves current data; applied/approved flags are not adopted.
+
+Supported alternative now: keep the backup file. On the Android phone that created it, use the existing recovered-draft chooser before any iPhone import. Do not import that backup over an iPhone draft you still need.
+
+Expired dispatch has no reachable Stop
+
+Source-confirmed. Not a live provider run.
+
+Server activePlanIds require not stopped, expires_at in the future, current profile revision, and approval_generation > 0. recoverablePlans also require expires_at in the future and a ready or rate_limited attempt. Attempts themselves are still returned after expiry. An expired or revision-stale dispatching row can therefore remain visible while disappearing from both plan lists.
+
+Hosted stopAndCheckReceipt is on the dispatching receipt, sends onlyIfUnapproved: false, and holds Stop before the request.
+iPhone NativeApplicationReceipt is display-only (“Sending”). stop() / stopReview only walk activePlanIDs or an explicit review id.
+Android receipt copy for dispatching has no Stop button. Stop buttons iterate state.activePlans only. ApplicationReceipt has no planId.
+
+Stop must stay explicit. No refresh-time mutation and no automatic resend. A live lease stays dispatching until a durable provider result.
+
+Owner: Terminal 2 (NativeApplicationsStore.swift, NativeApplicationsViews.swift, CareerViewModel.kt, Models.kt, MainActivity.kt receipt path).
+
+Minimum test: one dispatching receipt, empty activePlanIds and recoverablePlans. One explicit Stop, zero submit/advance. Expired lease becomes uncertain with “no automatic resend”. Unexpired lease stays dispatching. A late real result is kept. Lost-response hold survives restart. A second workspace cannot be targeted.
+
+Workaround: if the same workspace is open in the hosted phone app, use Stop unsent work and check on that dispatching receipt. Otherwise leave it uncertain and reconcile with the employer. Do not prepare another application for that posting to “unstick” it.
+
+Arabic profile comparison shows English controlled values
+
+Source-confirmed in iPhone serverProfile: career stage prints raw experienceLevel (entry, mid, senior, any). Work preferences are the English literals “Remote”, “Hybrid”, “On site”. The editor already has localized picker labels. profileField localizes the caption, not those values.
+
+Owner: Terminal 2. Map only those enums through existing labels. Keep wire values and free text unchanged.
+
+Minimum test: Arabic conflict with mid plus remote and hybrid. Both versions show localized labels. Keep-either-version persists mid and the booleans, not the translated words.
+
+Explicitly not defects
+Non-401 identity recheck that hides private data and offers Check account again is an intended safeguard. Do not bypass it.
+Disabled employer integrations are not a bug. No real application was or should be sent to test them.
+21f08f5c / run 44130275991 (5/5, iPhone 17/17) validates that commit only. 63eecda / run 44139018005 hosted Picomatch failure belongs to development 5bc. Publisher 0f0c6f1 is one focused test, not full acceptance. Root d534a6c hosted gates do not cover later audit findings.
+Deeply nested Android JSON and Android search-socket cancellation remain hypotheses. They were not executed.
+Screenshots and assistive-technology behavior were not re-checked.
+Acceptance gates still open
+
+Native UI on integrated 567 / later heads, physical devices, VoiceOver/TalkBack, real provider consent, signing, and stores stay with publisher d57. This session did not dispatch CI. Cutoff remains 19 Nov 2026, 01:26:12 Riyadh.
+
+Finished.

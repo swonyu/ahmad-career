@@ -1,0 +1,17 @@
+[
+  {
+    "path": "android/app/src/main/java/com/saleh/careerfinder/BoundaryPolicy.java",
+    "gitBlob": "6a4964dc5ee9a8a5e39f3ebb3c61f16e9bc4f228",
+    "sha256": "54f162253812226923f0bedf7e80f05a33ac07d40df4ca2943e43ddcd0a53af2"
+  },
+  {
+    "path": "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecords.kt",
+    "gitBlob": "41f70e43cf9f6499bb13c524ef4335d0901d3f47",
+    "sha256": "39c0fcd402fb1a4a694496b88b1f7078962b8cefdddf62a8b1d76125f67b3d88"
+  },
+  {
+    "path": "apple/AhmadCareer/MobileApplicationClient.swift",
+    "gitBlob": "b39bb4da8d7f36ccc13e7c1560a44fe1c34d43f1",
+    "sha256": "379b187ad17ddce0b8c13536052db8bab364f70dad4eb313071aaeb0b15b4588"
+  }
+]

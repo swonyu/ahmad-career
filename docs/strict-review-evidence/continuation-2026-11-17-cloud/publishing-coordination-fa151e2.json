@@ -1,0 +1,25 @@
+{
+  "observedAt": "2026-11-17T15:13:29Z",
+  "repository": "swonyu/ahmad-career",
+  "pullRequest": 1,
+  "url": "https://github.com/swonyu/ahmad-career/pull/1",
+  "candidate": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+  "tree": "3a0333e1c210a89cdb21dfd11b765e24ee70254b",
+  "draft": true,
+  "bodyCharacters": 7522,
+  "bodyUpdatedAt": "2026-11-17T15:10:58Z",
+  "supplementalComment": {
+    "id": 6952079627,
+    "url": "https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6952079627",
+    "createdAt": "2026-11-17T15:12:21Z",
+    "bodyCharacters": 2290,
+    "purpose": "Seal exact candidate/run and explicitly add reviewed test-harness paths to the earlier bounded source declaration",
+    "supplementalPaths": ["hosted/tests/i18n.mjs", "hosted/tests/web-experience.mjs", "hosted/tests/hosted-applications.mjs"]
+  },
+  "discussionEntriesReturned": 7,
+  "latestOtherOwnerCommentAt": "2026-11-17T13:30:17Z",
+  "newCommentIsThisDevelopmentLane": true,
+  "dotReadAcknowledgment": false,
+  "publishingOwnerAcknowledgedFa151e2": false,
+  "limits": "Successful posting and a verified body are delivery evidence for the repository handoff, not proof of human/other-agent receipt or release approval."
+}

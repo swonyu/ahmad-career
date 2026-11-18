@@ -18,15 +18,17 @@ export const OAUTH_PROVIDERS = Object.freeze({
   linkedin:Object.freeze({
     authorization:'https://www.linkedin.com/oauth/v2/authorization', token:'https://www.linkedin.com/oauth/v2/accessToken',
     jwks:'https://www.linkedin.com/oauth/openid/jwks', issuer:'https://www.linkedin.com',
-    scope:'openid profile', prefix:'CAREER_LINKEDIN',
+    userinfo:'https://api.linkedin.com/v2/userinfo', scope:'openid profile', loginScope:'openid profile email', prefix:'CAREER_LINKEDIN',
   }),
 });
 const RETURN_PATHS = new Set(['/phone','/account','/connect']);
-const MAX_JSON_BYTES = 2048, PROVIDER_TIMEOUT = 6000, MAX_TOKEN_BYTES = 65536, MAX_JWKS_BYTES = 131072;
+const MAX_JSON_BYTES = 2048, PROVIDER_TIMEOUT = 6000, MAX_TOKEN_BYTES = 65536, MAX_JWKS_BYTES = 131072, MAX_USERINFO_BYTES = 16384;
 const MAX_PENDING = 1000, MAX_STARTS_PER_MINUTE = 60, MAX_CLIENT_STARTS = 10;
 const iso = milliseconds => new Date(milliseconds).toISOString();
 const providerName = value => { if (!Object.hasOwn(OAUTH_PROVIDERS, value)) fail('invalid_provider','Choose Google or LinkedIn.',400); return value; };
 const safeReturn = (value, fallback) => RETURN_PATHS.has(value) ? value : fallback;
+const verifiedEmail = claims => claims.email_verified === true && typeof claims.email === 'string' && claims.email.length <= 254 && /^[^\s@<>]{1,64}@[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?\.[A-Za-z]{2,63}$/.test(claims.email) ? claims.email.toLowerCase() : null;
+const providerSession = identity => identity?.method === 'google' || identity?.method === 'linkedin';
 function configured(env, provider) {
   const prefix = OAUTH_PROVIDERS[provider].prefix, clientId = env[`${prefix}_CLIENT_ID`], clientSecret = env[`${prefix}_CLIENT_SECRET`];
   if (typeof clientId !== 'string' || !/^[A-Za-z0-9._-]{5,255}$/.test(clientId) || typeof clientSecret !== 'string' || clientSecret.length < 8 || clientSecret.length > 512 || /[\x00-\x20\x7f]/.test(clientSecret)) return null;
@@ -101,24 +103,84 @@ export function createOAuthHandler({fetchImpl = fetch, clock = Date.now} = {}) {
     try {
       try { ({payload} = await jwtVerify(idToken,await keySet(provider),options)); }
       catch (error) { if (error.code !== 'ERR_JWKS_NO_MATCHING_KEY') throw error; ({payload} = await jwtVerify(idToken,await keySet(provider,true),options)); }
-      if (typeof payload.sub !== 'string' || !payload.sub || payload.sub.length > 255 || /[\x00-\x20\x7f]/.test(payload.sub)) throw new Error('subject');
+      // OIDC subjects are bounded ASCII identifiers. Reject before any UTF-8
+      // hashing or D1 binding can coerce distinct malformed Unicode values.
+      if (typeof payload.sub !== 'string' || !payload.sub || payload.sub.length > 255 || /[^\x21-\x7e]/.test(payload.sub)) throw new Error('subject');
       if (typeof payload.nonce !== 'string' || !equalSecret(sha256(payload.nonce),transaction.nonce_hash)) throw new Error('nonce');
       if (payload.azp !== undefined && payload.azp !== config.clientId || Array.isArray(payload.aud) && payload.aud.length > 1 && payload.azp !== config.clientId) throw new Error('authorized-party');
       if (payload.iat * 1000 < transaction.created_at - 30000 || payload.iat * 1000 > clock() + 30000) throw new Error('issued-at');
-      if (provider === 'google' && (payload.email_verified !== true || typeof payload.email !== 'string' || payload.email.length > 254 || !/^[^\s@<>]{1,64}@[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?\.[A-Za-z]{2,63}$/.test(payload.email))) throw new Error('verified-email');
+      if (provider === 'google' && !verifiedEmail(payload)) throw new Error('verified-email');
       if (provider === 'google') encodeURIComponent(payload.email);
     } catch { fail('provider_identity_invalid','The provider identity could not be verified. Start again.',401); }
     let displayName = typeof payload.name === 'string' && payload.name.length <= 500 && !/[\x00-\x1f\x7f]/.test(payload.name) ? payload.name.trim() : '';
     try { encodeURIComponent(displayName); } catch { displayName = ''; }
-    // No profile pictures, access tokens, refresh tokens, ID tokens or LinkedIn
-    // email are retained. LinkedIn is only a basic connection, never a login.
-    return {subject:payload.sub,email:provider === 'google' ? payload.email.toLowerCase() : null,displayName};
+    // Basic LinkedIn linking does not request or collect email. Direct login
+    // requires a fresh verified address before any account/session is written.
+    return {subject:payload.sub,email:provider === 'google' || transaction.intent === 'login' ? verifiedEmail(payload) : null,displayName};
+  }
+  async function linkedInLoginEmail(claims, token) {
+    if (claims.email) { try { encodeURIComponent(claims.email); return claims; } catch { /* Require a usable verified email below. */ } }
+    // The official OIDC contract makes email claims optional. One bounded
+    // userinfo request can supply them; its subject must match the signed token.
+    // This access token exists only for this request and is never persisted.
+    if (typeof token.access_token !== 'string' || !token.access_token || token.access_token.length > 8192 || /[\x00-\x20\x7f]/.test(token.access_token)) fail('provider_email_required','LinkedIn did not provide a verified email address. Use ChatGPT or Google to sign in, then connect your LinkedIn profile from Account.',409);
+    const info = await providerJSON(OAUTH_PROVIDERS.linkedin.userinfo,{method:'GET',headers:{Accept:'application/json',Authorization:'Bearer '+token.access_token}},MAX_USERINFO_BYTES);
+    if (info.sub !== claims.subject) fail('provider_identity_invalid','The provider identity could not be verified. Start again.',401);
+    const email = verifiedEmail(info);
+    if (!email) fail('provider_email_required','LinkedIn did not provide a verified email address. Use ChatGPT or Google to sign in, then connect your LinkedIn profile from Account.',409);
+    try { encodeURIComponent(email); } catch { fail('provider_email_required','LinkedIn did not provide a usable verified email address. Use another sign-in method.',409); }
+    return {...claims,email};
+  }
+
+  async function statusConnections(request, env, identity, startedAt) {
+    if (!identity) return [];
+    if (!env.DB) fail('auth_unavailable','Account sign-in is temporarily unavailable.',503);
+    const db = env.DB, stmt = (sql,...args) => db.prepare(sql).bind(...args);
+    const changed = () => fail('account_changed','Your account or workspace changed. Reload to open the current one.',409);
+    const account = await stmt('SELECT generation FROM auth_accounts WHERE owner_id=?',identity.id).first();
+    if (!account) {
+      if (providerSession(identity)) changed();
+      // A new Sites account needs no lifecycle row or generation write. Confirm
+      // absence atomically, so a racing callback/deletion cannot look unlinked.
+      const result = await db.batch([stmt(`SELECT 1 AS allowed
+        WHERE NOT EXISTS(SELECT 1 FROM auth_accounts WHERE owner_id=?)
+        AND NOT EXISTS(SELECT 1 FROM workspaces WHERE owner_id=? AND deleting_at IS NOT NULL)`,identity.id,identity.id)]);
+      if (result[0].results.length !== 1) changed();
+      return [];
+    }
+    const lifecycle = await captureOwnerLifecycle(env,identity.id,{startedAt,now:clock()});
+    // The unique (owner_id, provider) index and two supported provider names
+    // bound the read and lazy initialization to at most two existing links.
+    const rows = (await stmt(`SELECT provider,subject,connection_id FROM auth_identities
+      WHERE owner_id=? AND provider IN ('google','linkedin') LIMIT 2`,identity.id).all()).results;
+    const missing = rows.filter(row => row.connection_id === '');
+    const browserSession = providerSession(identity) ? sha256(cookieValue(request,BROWSER_SESSION_COOKIE)) : null;
+    const eligible = `EXISTS(SELECT 1 FROM auth_accounts WHERE owner_id=? AND generation=?)
+      AND EXISTS(SELECT 1 FROM account_lifecycles WHERE owner_hash=? AND generation=? AND (deleted_at IS NULL OR deleted_at<?))
+      AND NOT EXISTS(SELECT 1 FROM workspaces WHERE owner_id=? AND deleting_at IS NOT NULL)
+      AND (? IS NULL OR EXISTS(SELECT 1 FROM browser_sessions s
+        JOIN auth_accounts a ON a.owner_id=s.owner_id AND a.generation=s.account_generation
+        JOIN auth_identities i ON i.owner_id=s.owner_id AND i.provider=s.provider AND i.subject=s.subject
+        WHERE s.token_hash=? AND s.owner_id=? AND s.provider=? AND s.expires_at>?))`;
+    const args = [identity.id,account.generation,lifecycle.key,lifecycle.generation,startedAt,identity.id,browserSession,browserSession,identity.id,identity.method,clock()];
+    const result = await db.batch([
+      ...missing.map(row => stmt(`UPDATE auth_identities SET connection_id=?
+        WHERE owner_id=? AND provider=? AND subject=? AND connection_id='' AND ${eligible}`,
+        opaqueToken(),identity.id,row.provider,row.subject,...args)),
+      stmt(`SELECT 1 AS allowed WHERE ${eligible}`,...args),
+      stmt(`SELECT provider,display_name,connection_id FROM auth_identities
+        WHERE owner_id=? AND provider IN ('google','linkedin') AND ${eligible} LIMIT 2`,identity.id,...args),
+    ]);
+    // A concurrent initializer may legitimately win every UPDATE. Authority is
+    // checked separately: revoked access must never become an empty success.
+    if (result[missing.length].results.length !== 1) changed();
+    return result[missing.length + 1].results;
   }
 
   return async function handleOAuth(request, env) {
     const requestStartedAt = clock();
-    const url = new URL(request.url), callback = url.pathname.match(/^\/auth\/(google|linkedin)\/callback$/);
-    if (!/^\/api\/auth(?:\/|$)/.test(url.pathname) && url.pathname !== '/auth/google/start' && !callback) return null;
+    const url = new URL(request.url), callback = url.pathname.match(/^\/auth\/(google|linkedin)\/callback$/), loginStart = url.pathname.match(/^\/auth\/(google|linkedin)\/start$/);
+    if (!/^\/api\/auth(?:\/|$)/.test(url.pathname) && !loginStart && !callback) return null;
     let transaction = null, claimedState = null, callbackProvider = callback?.[1];
     try {
       if (url.origin !== AUTH_ORIGIN || request.headers.get('host') && request.headers.get('host') !== url.host) fail('host_denied','Use the configured Career Finder HTTPS address.',403);
@@ -127,8 +189,8 @@ export function createOAuthHandler({fetchImpl = fetch, clock = Date.now} = {}) {
       if (!callback && (request.headers.get('origin') && request.headers.get('origin') !== AUTH_ORIGIN || request.headers.get('sec-fetch-site') === 'cross-site')) fail('origin_denied','This request did not come from Career Finder.',403);
       if (url.pathname === '/api/auth/status' && request.method === 'GET') {
         const identity = await resolveBrowserIdentity(request,env,{now:clock()});
-        const rows = identity && env.DB ? (await env.DB.prepare('SELECT provider,display_name FROM auth_identities WHERE owner_id=?').bind(identity.id).all()).results : [];
-        const providers = Object.fromEntries(Object.keys(OAUTH_PROVIDERS).map(provider => { const row = rows.find(row => row.provider === provider); return [provider,{configured:Boolean(env.DB && configured(env,provider)),connected:Boolean(row),...(row?.display_name ? {displayName:row.display_name} : {})}]; }));
+        const rows = await statusConnections(request,env,identity,requestStartedAt);
+        const providers = Object.fromEntries(Object.keys(OAUTH_PROVIDERS).map(provider => { const row = rows.find(row => row.provider === provider); return [provider,{configured:Boolean(env.DB && configured(env,provider)),signInSupported:true,connected:Boolean(row),...(row?.connection_id ? {connectionId:row.connection_id} : {}),...(row?.display_name ? {displayName:row.display_name} : {})}]; }));
         return json(200,{ok:true,account:identity,providers});
       }
       if (!env.DB) fail('auth_unavailable','Account sign-in is temporarily unavailable.',503);
@@ -151,21 +213,21 @@ export function createOAuthHandler({fetchImpl = fetch, clock = Date.now} = {}) {
           stmt('DELETE FROM auth_deletion_fences WHERE expires_at<=?',now),
         ]);
         if (rates[1].results[0].count > MAX_STARTS_PER_MINUTE || rates[2].results[0].count > MAX_CLIENT_STARTS) fail('rate_limited','Too many sign-in attempts. Wait one minute and try again.',429);
-        const googleSession = identity?.method === 'google' ? sha256(cookieValue(request,BROWSER_SESSION_COOKIE)) : null;
+        const browserSession = providerSession(identity) ? sha256(cookieValue(request,BROWSER_SESSION_COOKIE)) : null;
         // Identity resolution happens before rate/storage I/O. A delayed link
         // start must not recreate an account after deletion or session revocation.
         const browserAuthority = `(? IS NULL OR EXISTS(SELECT 1 FROM browser_sessions s
           JOIN auth_accounts a ON a.owner_id=s.owner_id AND a.generation=s.account_generation
           JOIN auth_identities i ON i.owner_id=s.owner_id AND i.provider=s.provider AND i.subject=s.subject
-          WHERE s.token_hash=? AND s.owner_id=? AND s.provider='google' AND s.expires_at>?))`;
-        const authorityArgs = () => [googleSession,googleSession,identity?.id ?? null,clock()];
+          WHERE s.token_hash=? AND s.owner_id=? AND s.provider=? AND s.expires_at>?))`;
+        const authorityArgs = () => [browserSession,browserSession,identity?.id ?? null,identity?.method ?? null,clock()];
         let account = null;
         if (identity) {
           if (await first('SELECT 1 AS deleting FROM workspaces WHERE owner_id=? AND deleting_at IS NOT NULL',identity.id)) fail('account_deleting','Finish deleting this account before making a connection.',409);
           await stmt(`INSERT OR IGNORE INTO auth_accounts(owner_id,origin_method,generation,created_at) SELECT ?,?,?,? WHERE (SELECT COUNT(*) FROM auth_accounts)<? AND NOT EXISTS(SELECT 1 FROM workspaces WHERE owner_id=? AND deleting_at IS NOT NULL) AND ${browserAuthority} AND ${lifecycleAuthority}`,identity.id,identity.method,randomUUID(),now,AUTH_LIMITS.maxAccounts,identity.id,...authorityArgs(),...lifecycleArgs).run();
           account = await first('SELECT generation FROM auth_accounts WHERE owner_id=?',identity.id);
           if (!account) {
-            if (googleSession) await resolveBrowserIdentity(request,env,{now:clock()});
+            if (browserSession) await resolveBrowserIdentity(request,env,{now:clock()});
             if (!await first('SELECT 1 AS present FROM account_lifecycles WHERE owner_hash=? AND generation=? AND (deleted_at IS NULL OR deleted_at<?)',lifecycle.key,lifecycle.generation,requestStartedAt)) fail('account_changed','This account was deleted while the connection was starting. Reload before trying again.',409);
             if (await first('SELECT 1 AS deleting FROM workspaces WHERE owner_id=? AND deleting_at IS NOT NULL',identity.id)) fail('account_deleting','Finish deleting this account before making a connection.',409);
             fail('capacity_reached','The current account capacity has been reached.',503);
@@ -177,15 +239,15 @@ export function createOAuthHandler({fetchImpl = fetch, clock = Date.now} = {}) {
           AND NOT EXISTS(SELECT 1 FROM workspaces WHERE owner_id=? AND deleting_at IS NOT NULL) AND ${browserAuthority} AND ${lifecycleAuthority} AND ?>?`,sha256(state),sha256(browser),provider,intent,identity?.id ?? null,account?.generation ?? null,sha256(nonce),verifier,returnTo,requestStartedAt,requestStartedAt + AUTH_LIMITS.transactionMilliseconds,lifecycle?.key ?? null,lifecycle?.generation ?? null,MAX_PENDING,identity?.id ?? null,identity?.id ?? null,account?.generation ?? null,identity?.id ?? null,...authorityArgs(),...lifecycleArgs,requestStartedAt + AUTH_LIMITS.transactionMilliseconds,clock()).run();
         if (saved.meta.changes !== 1) fail('connection_unavailable','This connection could not be started. Reload the page and try again.',409);
         const authorization = new URL(OAUTH_PROVIDERS[provider].authorization);
-        for (const [name,value] of Object.entries({client_id:config.clientId,response_type:'code',redirect_uri:`${AUTH_ORIGIN}/auth/${provider}/callback`,scope:OAUTH_PROVIDERS[provider].scope,state,nonce})) authorization.searchParams.set(name,value);
+        for (const [name,value] of Object.entries({client_id:config.clientId,response_type:'code',redirect_uri:`${AUTH_ORIGIN}/auth/${provider}/callback`,scope:intent === 'login' ? OAUTH_PROVIDERS[provider].loginScope ?? OAUTH_PROVIDERS[provider].scope : OAUTH_PROVIDERS[provider].scope,state,nonce})) authorization.searchParams.set(name,value);
         if (verifier) { authorization.searchParams.set('code_challenge',Buffer.from(sha256(verifier),'hex').toString('base64url')); authorization.searchParams.set('code_challenge_method','S256'); authorization.searchParams.set('access_type','online'); authorization.searchParams.set('prompt','select_account'); }
         return {authorizationUrl:authorization.href,cookie:oauthBrowserCookie(browser)};
       }
 
-      if (url.pathname === '/auth/google/start' && request.method === 'GET') {
-        if (request.headers.has('sec-fetch-mode') && request.headers.get('sec-fetch-mode') !== 'navigate' || request.headers.has('sec-fetch-dest') && request.headers.get('sec-fetch-dest') !== 'document') fail('navigation_required','Open Google sign-in as a full browser page.',400);
-        if (await resolveBrowserIdentity(request,env,{now:clock()})) fail('already_signed_in','You are already signed in. Connect Google from Account.',409);
-        const result = await start('google','login',null,safeReturn(url.searchParams.get('return_to'),'/connect'));
+      if (loginStart && request.method === 'GET') {
+        if (request.headers.has('sec-fetch-mode') && request.headers.get('sec-fetch-mode') !== 'navigate' || request.headers.has('sec-fetch-dest') && request.headers.get('sec-fetch-dest') !== 'document') fail('navigation_required','Open sign-in as a full browser page.',400);
+        if (await resolveBrowserIdentity(request,env,{now:clock()})) fail('already_signed_in','You are already signed in. Connect another sign-in method from Account.',409);
+        const result = await start(loginStart[1],'login',null,safeReturn(url.searchParams.get('return_to'),'/connect'));
         return redirect(result.authorizationUrl,[result.cookie]);
       }
       if (url.pathname === '/api/auth/connect' && request.method === 'POST') {
@@ -195,18 +257,36 @@ export function createOAuthHandler({fetchImpl = fetch, clock = Date.now} = {}) {
         return json(200,{ok:true,authorizationUrl:result.authorizationUrl},{'Set-Cookie':result.cookie});
       }
       if (url.pathname === '/api/auth/disconnect' && request.method === 'POST') {
-        exactOrigin(request); const body = object(await requestJSON(request),['provider','expectedAccountId']), provider = providerName(body.provider);
+        exactOrigin(request); const body = object(await requestJSON(request),['provider','expectedAccountId','expectedConnectionId']), provider = providerName(body.provider);
         const identity = await resolveBrowserIdentity(request,env,{now:clock()}); expectedOwner(body,identity);
+        if (typeof body.expectedConnectionId !== 'string' || !/^[a-f0-9]{64}$/.test(body.expectedConnectionId)) fail('connection_changed','Reload your account connections and confirm the current connection before disconnecting it.',409);
         const account = await first('SELECT origin_method,generation FROM auth_accounts WHERE owner_id=?',identity.id);
-        if (provider === 'google' && (identity.method === 'google' || account?.origin_method === 'google')) fail('login_method_required','Google is your current sign-in method. Keep it connected to retain access. If you originally used ChatGPT, sign in with ChatGPT before disconnecting Google.',409);
-        await db.batch([
+        if (identity.method === provider || account?.origin_method === provider) fail('login_method_required',`${provider === 'google' ? 'Google' : 'LinkedIn'} is an original or current sign-in method. Keep it connected to retain access. If you originally used ChatGPT, sign in with ChatGPT before disconnecting it.`,409);
+        if (!account) fail('connection_changed','This connection is no longer current. Reload your account connections before trying again.',409);
+        const lifecycle = await captureOwnerLifecycle(env,identity.id,{startedAt:requestStartedAt,now:clock()});
+        const browserSession = providerSession(identity) ? sha256(cookieValue(request,BROWSER_SESSION_COOKIE)) : null;
+        // A visible provider name alone cannot identify the user's chosen link.
+        // Fence every write by the displayed link generation and the captured
+        // owner/session authority. Keep the link present until the final write
+        // so all predicates refer to the same target in this atomic D1 batch.
+        const eligible = `EXISTS(SELECT 1 FROM auth_accounts WHERE owner_id=? AND generation=?)
+          AND EXISTS(SELECT 1 FROM account_lifecycles WHERE owner_hash=? AND generation=? AND (deleted_at IS NULL OR deleted_at<?))
+          AND EXISTS(SELECT 1 FROM auth_identities WHERE owner_id=? AND provider=? AND connection_id=?)
+          AND NOT EXISTS(SELECT 1 FROM workspaces WHERE owner_id=? AND deleting_at IS NOT NULL)
+          AND (? IS NULL OR EXISTS(SELECT 1 FROM browser_sessions s
+            JOIN auth_accounts a ON a.owner_id=s.owner_id AND a.generation=s.account_generation
+            JOIN auth_identities i ON i.owner_id=s.owner_id AND i.provider=s.provider AND i.subject=s.subject
+            WHERE s.token_hash=? AND s.owner_id=? AND s.provider=? AND s.expires_at>?))`;
+        const now = clock(), args = [identity.id,account.generation,lifecycle.key,lifecycle.generation,requestStartedAt,identity.id,provider,body.expectedConnectionId,identity.id,browserSession,browserSession,identity.id,identity.method,now];
+        const results = await db.batch([
           stmt(`INSERT INTO auth_deletion_fences(subject_hash,deleted_at,expires_at)
-            SELECT subject_hash,?,? FROM auth_identities WHERE owner_id=? AND provider=?
-            ON CONFLICT(subject_hash) DO UPDATE SET deleted_at=MAX(auth_deletion_fences.deleted_at,excluded.deleted_at),expires_at=MAX(auth_deletion_fences.expires_at,excluded.expires_at)`,clock(),clock() + AUTH_LIMITS.transactionMilliseconds,identity.id,provider),
-          stmt('DELETE FROM oauth_transactions WHERE owner_id=? AND provider=?',identity.id,provider),
-          stmt('DELETE FROM browser_sessions WHERE owner_id=? AND provider=?',identity.id,provider),
-          stmt('DELETE FROM auth_identities WHERE owner_id=? AND provider=?',identity.id,provider),
+            SELECT subject_hash,?,? FROM auth_identities WHERE owner_id=? AND provider=? AND ${eligible}
+            ON CONFLICT(subject_hash) DO UPDATE SET deleted_at=MAX(auth_deletion_fences.deleted_at,excluded.deleted_at),expires_at=MAX(auth_deletion_fences.expires_at,excluded.expires_at)`,now,now + AUTH_LIMITS.transactionMilliseconds,identity.id,provider,...args),
+          stmt(`DELETE FROM oauth_transactions WHERE owner_id=? AND provider=? AND ${eligible}`,identity.id,provider,...args),
+          stmt(`DELETE FROM browser_sessions WHERE owner_id=? AND provider=? AND ${eligible}`,identity.id,provider,...args),
+          stmt(`DELETE FROM auth_identities WHERE owner_id=? AND provider=? AND connection_id=? AND ${eligible}`,identity.id,provider,body.expectedConnectionId,...args),
         ]);
+        if (results[3].meta.changes !== 1) fail('connection_changed','The account, sign-in or connection changed while this request was running. Reload and confirm the current connection before disconnecting it.',409);
         return json(200,{ok:true});
       }
       if (url.pathname === '/api/auth/signout' && request.method === 'POST') {
@@ -221,7 +301,7 @@ export function createOAuthHandler({fetchImpl = fetch, clock = Date.now} = {}) {
         if (token && /^[a-f0-9]{64}$/.test(token)) statements.push(stmt('DELETE FROM browser_sessions WHERE token_hash=?',sha256(token)));
         if (browser && /^[a-f0-9]{64}$/.test(browser)) statements.push(stmt('DELETE FROM oauth_transactions WHERE browser_hash=?',sha256(browser)));
         if (statements.length) await db.batch(statements);
-        // End both browser sign-in layers. Clearing only a Google/invalid own
+        // End both browser sign-in layers. Clearing only a provider/invalid own
         // cookie could otherwise immediately reveal a different Sites account.
         // The reserved platform route is idempotent; no other account data is deleted.
         const response = json(200,{ok:true,redirectTo:'/signout-with-chatgpt?return_to=%2Fconnect'});
@@ -242,15 +322,16 @@ export function createOAuthHandler({fetchImpl = fetch, clock = Date.now} = {}) {
           if (!identity || identity.id !== transaction.owner_id) fail('account_changed','The signed-in account changed. Start the connection again from Account.',409);
           if (!await first('SELECT 1 AS present FROM auth_accounts WHERE owner_id=? AND generation=?',identity.id,transaction.account_generation)) fail('account_changed','This account connection was removed. Start again.',409);
           if (!await first('SELECT 1 AS present FROM account_lifecycles WHERE owner_hash=? AND generation=? AND (deleted_at IS NULL OR deleted_at<?)',transaction.lifecycle_key,transaction.lifecycle_generation,transaction.created_at)) fail('account_changed','This account was deleted while the connection was open. Start again.',409);
-        } else if (identity) fail('account_changed','Another account signed in while Google was open. Return to Account before continuing.',409);
-        if (url.searchParams.has('error')) return feedback(transaction.return_to,provider,url.searchParams.get('error') === 'access_denied' ? 'cancelled' : 'failed',[clearOAuthBrowserCookie()]);
+        } else if (identity) fail('account_changed','Another account signed in while the provider was open. Return to Account before continuing.',409);
+        if (url.searchParams.has('error')) return feedback(transaction.return_to,provider,['access_denied','user_cancelled_login','user_cancelled_authorize'].includes(url.searchParams.get('error')) ? 'cancelled' : 'failed',[clearOAuthBrowserCookie()]);
         const code = url.searchParams.get('code');
         if (!code || code.length > 4096 || /[\x00-\x20\x7f]/.test(code)) fail('invalid_callback','The provider did not return an authorization code. Start again.',400);
         const config = configured(env,provider); if (!config) fail('provider_not_configured','This provider connection is not available yet.',503);
         const form = new URLSearchParams({grant_type:'authorization_code',client_id:config.clientId,client_secret:config.clientSecret,redirect_uri:`${AUTH_ORIGIN}/auth/${provider}/callback`,code});
         if (provider === 'google') form.set('code_verifier',transaction.verifier);
         const token = await providerJSON(OAUTH_PROVIDERS[provider].token,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded',Accept:'application/json'},body:form.toString()},MAX_TOKEN_BYTES);
-        const claims = await verifiedClaims(provider,token.id_token,config,transaction);
+        let claims = await verifiedClaims(provider,token.id_token,config,transaction);
+        if (provider === 'linkedin' && transaction.intent === 'login') claims = await linkedInLoginEmail(claims,token);
         // Recheck a local session after provider I/O; sign-out/deletion in another
         // request must not leave authority alive for this delayed callback.
         identity = await resolveBrowserIdentity(request,env,{now:clock()});
@@ -269,7 +350,7 @@ export function createOAuthHandler({fetchImpl = fetch, clock = Date.now} = {}) {
           AND EXISTS(SELECT 1 FROM account_lifecycles WHERE owner_hash=? AND generation=? AND (deleted_at IS NULL OR deleted_at<?))`,ownerId,generation,lifecycle.key,lifecycle.generation,claimedState,claim,clock(),subjectHash,clock(),ownerId,lifecycle.key,lifecycle.generation,transaction.created_at).run();
         if (bound.meta.changes !== 1) fail('account_changed','This connection was cancelled or the account was deleted. Start again.',409);
         const now = clock(), session = transaction.intent === 'login' ? opaqueToken() : null;
-        const linkingSession = identity?.method === 'google' ? sha256(cookieValue(request,BROWSER_SESSION_COOKIE)) : null;
+        const linkingSession = providerSession(identity) ? sha256(cookieValue(request,BROWSER_SESSION_COOKIE)) : null;
         const eligible = `EXISTS(SELECT 1 FROM oauth_transactions t WHERE t.state_hash=? AND t.claim=? AND t.expires_at>? AND t.owner_id=? AND t.account_generation=?)
           AND NOT EXISTS(SELECT 1 FROM auth_deletion_fences WHERE subject_hash=? AND deleted_at>=? AND expires_at>?)
           AND NOT EXISTS(SELECT 1 FROM workspaces WHERE owner_id=? AND deleting_at IS NOT NULL)
@@ -277,10 +358,10 @@ export function createOAuthHandler({fetchImpl = fetch, clock = Date.now} = {}) {
           AND (? IS NULL OR EXISTS(SELECT 1 FROM browser_sessions WHERE token_hash=? AND owner_id=? AND expires_at>?))`;
         const args = [claimedState,claim,now,ownerId,generation,subjectHash,transaction.created_at,now,ownerId,lifecycle.key,lifecycle.generation,transaction.created_at,linkingSession,linkingSession,ownerId,now];
         const statements = [];
-        if (!existing && transaction.intent === 'login') statements.push(stmt(`INSERT OR IGNORE INTO auth_accounts(owner_id,origin_method,generation,created_at) SELECT ?,'google',?,? WHERE ${eligible} AND (SELECT COUNT(*) FROM auth_accounts)<? AND NOT EXISTS(SELECT 1 FROM auth_identities WHERE provider=? AND subject=?)`,ownerId,generation,now,...args,AUTH_LIMITS.maxAccounts,provider,claims.subject));
-        statements.push(stmt(`INSERT INTO auth_identities(provider,subject,subject_hash,owner_id,email,display_name,connected_at,updated_at)
-          SELECT ?,?,?,?,?,?,?,? WHERE ${eligible} AND EXISTS(SELECT 1 FROM auth_accounts WHERE owner_id=? AND generation=?)
-          ON CONFLICT(provider,subject) DO UPDATE SET email=excluded.email,display_name=excluded.display_name,updated_at=excluded.updated_at WHERE auth_identities.owner_id=excluded.owner_id`,provider,claims.subject,subjectHash,ownerId,claims.email,claims.displayName,iso(now),iso(now),...args,ownerId,generation));
+        if (!existing && transaction.intent === 'login') statements.push(stmt(`INSERT OR IGNORE INTO auth_accounts(owner_id,origin_method,generation,created_at) SELECT ?,?,?,? WHERE ${eligible} AND (SELECT COUNT(*) FROM auth_accounts)<? AND NOT EXISTS(SELECT 1 FROM auth_identities WHERE provider=? AND subject=?)`,ownerId,provider,generation,now,...args,AUTH_LIMITS.maxAccounts,provider,claims.subject));
+        statements.push(stmt(`INSERT INTO auth_identities(provider,subject,subject_hash,owner_id,connection_id,email,display_name,connected_at,updated_at)
+          SELECT ?,?,?,?,?,?,?,?,? WHERE ${eligible} AND EXISTS(SELECT 1 FROM auth_accounts WHERE owner_id=? AND generation=?)
+          ON CONFLICT(provider,subject) DO UPDATE SET email=COALESCE(excluded.email,auth_identities.email),display_name=excluded.display_name,updated_at=excluded.updated_at,connection_id=CASE WHEN auth_identities.connection_id='' THEN excluded.connection_id ELSE auth_identities.connection_id END WHERE auth_identities.owner_id=excluded.owner_id`,provider,claims.subject,subjectHash,ownerId,opaqueToken(),claims.email,claims.displayName,iso(now),iso(now),...args,ownerId,generation));
         const identityIndex = statements.length - 1;
         if (session) statements.push(stmt(`INSERT INTO browser_sessions(token_hash,id,owner_id,account_generation,provider,subject,created_at,expires_at)
           SELECT ?,?,?,?,?,?,?,? WHERE ${eligible} AND EXISTS(SELECT 1 FROM auth_accounts WHERE owner_id=? AND generation=?)
@@ -292,7 +373,7 @@ export function createOAuthHandler({fetchImpl = fetch, clock = Date.now} = {}) {
       }
       return json(404,{ok:false,error:{code:'not_found',message:'This account sign-in route does not exist.'}});
     } catch (error) {
-      if (callback && request.method === 'GET') return feedback(transaction?.return_to ?? '/connect',callbackProvider,'failed',transaction ? [clearOAuthBrowserCookie()] : []);
+      if (callback && request.method === 'GET') return feedback(transaction?.return_to ?? '/connect',callbackProvider,callbackProvider === 'linkedin' && error instanceof ApplicationError && error.code === 'provider_email_required' ? 'email_required' : 'failed',transaction ? [clearOAuthBrowserCookie()] : []);
       if (error instanceof ApplicationError) return json(error.status,{ok:false,error:{code:error.code,message:error.message}},error.status === 429 ? {'Retry-After':'60'} : {});
       // Never log or expose provider responses, authorization codes or secrets.
       return json(503,{ok:false,error:{code:'auth_unavailable',message:'Account sign-in is temporarily unavailable. Try again.'}});

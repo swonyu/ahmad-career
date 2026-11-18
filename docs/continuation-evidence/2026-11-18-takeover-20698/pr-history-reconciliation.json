@@ -1,0 +1,31 @@
+{
+  "project": "Career Finder",
+  "rootOwner": "20698f1e14d3",
+  "oldPR": {
+    "number": 1,
+    "url": "https://github.com/swonyu/ahmad-career/pull/1",
+    "head": "1c253f0503dab1c2739754b6abce10cd33660272",
+    "branch": "continuation/account-acceptance-20261117",
+    "base": "career-finder-phones-verified-apply-20261116"
+  },
+  "merge": {
+    "head": "477b60aa6a0fc60db8caa33aa6be377205cba325",
+    "parents": [
+      "bc18655307f139dbf7744fa0a3eff31038c1d2ac",
+      "1c253f0503dab1c2739754b6abce10cd33660272"
+    ],
+    "strategy": "Normal merge; no force push or history rewrite",
+    "resolvedFiles": [
+      ".github/workflows/phone-quality.yml",
+      "hosted/app/phone/PhoneApp.tsx",
+      "hosted/tests/phone-recovery-isolation.mjs"
+    ],
+    "resolution": "Preserve current reviewed whole files: fresh simulator and exact commit selection, broader retirement fencing, current verified test harness.",
+    "recoveryTestPreservation": "All42 earlier PR regression blocks are present byte-for-byte among60 current blocks; current source includes18 additional blocks.",
+    "historicalDocuments": 52,
+    "historicalDocumentsMatchOriginalBlobs": true,
+    "productAndCIChangesFromMerge": 0,
+    "whitespace": "Existing raw-log and patch whitespace retained unchanged. Product and narrative whitespace checks passed."
+  },
+  "currentGate": "Android visual concerns and current iPhone runtime acceptance still open; this merge does not assert release readiness."
+}

@@ -1,0 +1,14 @@
+{
+  "utc": "2026-11-17T23:39:53.981857+00:00",
+  "branch": "continuation/feed-reliability-20261117-4b851",
+  "commit": "da68bbfbdcc6429d72d1faa28b5809a554142c57",
+  "parent": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+  "files": {
+    "hosted/app/phone/PhoneApp.tsx": "5b1f3db0063b062f21209870274b83a3def83cb6bb056c987fd7dac0653e6352",
+    "hosted/tests/phone-record-tools.mjs": "15ef941aae32725a097e4a88d8d245eb5611738cd41c216eddbd65118c0319a6"
+  },
+  "remainingStatus": " M hosted/tests/hosted-discovery-verification.json\n M hosted/tests/hosted-phone-verification.json\n M hosted/tests/hosted-verification.json\n",
+  "pushed": true,
+  "remoteVerified": "da68bbfbdcc6429d72d1faa28b5809a554142c57",
+  "previousRemote": "9d011492b50185aa74fddbf061a6357b1fb0568f"
+}

@@ -1,0 +1,74 @@
+{
+  "observedAt": "2026-11-17T14:21:02.276681+00:00",
+  "version": "LibreOfficeDev 26.8.0.0.alpha0 2c87e51eeaa2b413ff4ae097b2705eea1995d8e5",
+  "runs": [
+    {
+      "mode": "default",
+      "language": "en",
+      "command": [
+        "soffice",
+        "--headless",
+        "--convert-to",
+        "fods",
+        "--outdir",
+        "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-libreoffice/default",
+        "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-libreoffice/career-records-en.csv"
+      ],
+      "exitCode": 0,
+      "stdout": "convert /workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-libreoffice/career-records-en.csv as a Calc document -> /workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-libreoffice/default/career-records-en.fods using filter : OpenDocument Spreadsheet Flat XML",
+      "stderr": ""
+    },
+    {
+      "mode": "default",
+      "language": "ar",
+      "command": [
+        "soffice",
+        "--headless",
+        "--convert-to",
+        "fods",
+        "--outdir",
+        "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-libreoffice/default",
+        "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-libreoffice/career-records-ar.csv"
+      ],
+      "exitCode": 0,
+      "stdout": "convert /workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-libreoffice/career-records-ar.csv as a Calc document -> /workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-libreoffice/default/career-records-ar.fods using filter : OpenDocument Spreadsheet Flat XML",
+      "stderr": ""
+    },
+    {
+      "mode": "formula-enabled",
+      "language": "en",
+      "command": [
+        "soffice",
+        "--headless",
+        "--infilter=Text - txt - csv (StarCalc):44,34,76,1,,1033,false,false,true,false,false,0,true",
+        "--convert-to",
+        "fods",
+        "--outdir",
+        "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-libreoffice/formula-enabled",
+        "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-libreoffice/career-records-en.csv"
+      ],
+      "exitCode": 0,
+      "stdout": "convert /workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-libreoffice/career-records-en.csv as a Calc document -> /workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-libreoffice/formula-enabled/career-records-en.fods using filter : OpenDocument Spreadsheet Flat XML",
+      "stderr": ""
+    },
+    {
+      "mode": "formula-enabled",
+      "language": "ar",
+      "command": [
+        "soffice",
+        "--headless",
+        "--infilter=Text - txt - csv (StarCalc):44,34,76,1,,1033,false,false,true,false,false,0,true",
+        "--convert-to",
+        "fods",
+        "--outdir",
+        "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-libreoffice/formula-enabled",
+        "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-libreoffice/career-records-ar.csv"
+      ],
+      "exitCode": 0,
+      "stdout": "convert /workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-libreoffice/career-records-ar.csv as a Calc document -> /workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-libreoffice/formula-enabled/career-records-ar.fods using filter : OpenDocument Spreadsheet Flat XML",
+      "stderr": ""
+    }
+  ],
+  "initialFixtureAttempt": "The production public-URL guard rejected example.invalid before file generation. Only the synthetic fixture URL changed to reserved example.org; product validation was retained.",
+  "scope": "Headless LibreOffice import of unchanged product-generated synthetic CSV. No GUI, browser download, account, calendar or real employer operation."
+}

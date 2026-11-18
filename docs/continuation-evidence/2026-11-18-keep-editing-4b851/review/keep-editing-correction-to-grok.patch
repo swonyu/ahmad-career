@@ -1,0 +1,360 @@
+--- a/hosted/app/phone/PhoneApp.tsx
++++ b/hosted/app/phone/PhoneApp.tsx
+@@ -408,22 +408,25 @@
+   const requestDialogClose = () => { if (!dialogDirty) { setDialog(null); return; } const active = document.activeElement; rememberDiscardOpener(active instanceof HTMLElement ? active : null); };
+   const keepEditing = (event: { currentTarget: HTMLButtonElement }) => {
+     const opener = discardReturn.current, removed = event.currentTarget, dialogElement = removed.closest("dialog");
++    const form = dialogElement?.querySelector("form");
+     setConfirmDialogDiscard(false);
+-    // The alert unmounts after this handler, so capture its dialog before React removes the focused control.
++    // The alert unmounts after this handler; retain the same editor and recheck current focus after removal.
+     requestAnimationFrame(() => {
+       const owner = removed.ownerDocument;
+-      if (!owner || !dialogElement?.isConnected || !dialogElement.open) return;
++      if (!owner || !dialogElement || !form) return;
+       const lost = () => {
+-        if (!dialogElement.isConnected || !dialogElement.open) return false;
++        if (!dialogElement.isConnected || !dialogElement.open || !form.isConnected || form.closest("dialog") !== dialogElement ||
++            removed.isConnected || discardHeading.current?.isConnected || form.closest("[hidden], [inert]")) return false;
+         const active = owner.activeElement;
+         return !active?.isConnected || active === owner.body || active === owner.documentElement || active === dialogElement;
+       };
+       if (!lost()) return;
+-      const usable = (node: EventTarget | null): node is HTMLElement => node instanceof HTMLElement && node.isConnected && dialogElement.isConnected && dialogElement.open && dialogElement.contains(node) && node !== dialogElement;
++      const usable = (node: EventTarget | null): node is HTMLElement => node instanceof HTMLElement && node.isConnected && dialogElement.contains(node) && node !== dialogElement &&
++        !node.matches(":disabled") && !node.closest("[hidden], [inert]");
+       if (usable(opener)) opener.focus({ preventScroll: true });
+       if (!lost()) return;
+-      const editor = dialogElement.querySelector<HTMLElement>("fieldset select, fieldset textarea, fieldset input:not([type='hidden'])");
+-      if (usable(editor)) editor.focus({ preventScroll: true });
++      const editor = Array.from(form.querySelectorAll<HTMLElement>("select, textarea, input:not([type='hidden'])")).find(usable);
++      if (editor) editor.focus({ preventScroll: true });
+     });
+   };
+   const editRecord = (job: Job) => { const data = local(), existing = data.records.find(record => record.identity === jobIdentity(job.url)); setDialogDirty(false); setConfirmDialogDiscard(false); const record = existing ?? blankRecord(job); recordRecoveryId.current = crypto.randomUUID(); setEditorDraft(record); setDialog({ kind: "record", job, record, existed: Boolean(existing), scope: data.scope, editorId: recordRecoveryId.current }); };
+--- a/hosted/tests/phone-recovery-isolation.mjs
++++ b/hosted/tests/phone-recovery-isolation.mjs
+@@ -489,97 +489,216 @@
+   }
+ });
+ 
+-function keepFocusHarness(opener) {
++// Execute the actual Keep JSX handler on both the inline baseline and the
++// candidate. DOM ports model field order, inherited disabling and unmounts;
++// they do not supply a replacement focus algorithm.
++function phoneDeclarationExists(name) {
++  const app = tree.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === "PhoneApp");
++  const matches = app.body.statements.filter(ts.isVariableStatement).flatMap(node => [...node.declarationList.declarations]).filter(node => node.name.getText(tree) === name);
++  assert(matches.length <= 1, "Production declaration must be unique: " + name);
++  return matches.length === 1;
++}
++
++function keepFocusHarness(opener = "cancel", kind = "record") {
+   const frames = [], focusCalls = [];
+-  const document = { activeElement: null, body: null, documentElement: null, queried: 0 };
++  const document = { activeElement: null, body: null, documentElement: null, editorQueries: 0, querySelector() { assert.fail("Keep editing must stay in its originating dialog"); } };
++  let dialog;
+   class FocusTarget {
+-    constructor(name) { this.name = name; this.isConnected = true; this.focusable = true; this.ownerDocument = document; this.dialog = null; }
+-    closest(selector) { assert.equal(selector, "dialog"); return this.dialog; }
+-    focus(options) { focusCalls.push({ target: this, options }); if (this.isConnected && this.focusable) { document.activeElement = this; this.onFocus?.(); } }
+-  }
+-  const body = new FocusTarget("body"), html = new FocusTarget("html"), heading = new FocusTarget("page heading"), cancel = new FocusTarget("Cancel"), deleteButton = new FocusTarget("Delete this private record"), stage = new FocusTarget("Stage"), notes = new FocusTarget("Private notes"), keep = new FocusTarget("Keep editing"), outside = new FocusTarget("outside control");
+-  const dialog = {
+-    open: true, isConnected: true,
+-    descendants: new Set([cancel, deleteButton, stage, notes, keep]),
+-    contains(target) { return target === dialog || this.descendants.has(target); },
+-    querySelector(selector) { document.queried++; assert.equal(selector, "fieldset select, fieldset textarea, fieldset input:not([type='hidden'])"); return stage.isConnected ? stage : null; },
++    constructor(name, tag = "button") { this.name = name; this.tag = tag; this.isConnected = true; this.focusable = true; this.ownerDocument = document; this.parent = null; this.disabled = false; this.hidden = false; this.inert = false; }
++    get isConnected() { return Boolean(this.connected && (!this.parent || this.parent.isConnected)); }
++    set isConnected(value) { this.connected = value; }
++    closest(selector) {
++      assert(["dialog", "[hidden], [inert]"].includes(selector), "Unexpected closest selector: " + selector);
++      if (selector === "dialog" ? this.tag === "dialog" : this.hidden || this.inert) return this;
++      for (let node = this.parent; node; node = node.parent) {
++        if (selector === "dialog" ? node.tag === "dialog" : node.hidden || node.inert) return node;
++      }
++      return null;
++    }
++    matches(selector) {
++      assert.equal(selector, ":disabled");
++      if (this.disabled) return true;
++      for (let node = this.parent; node; node = node.parent) if (node.tag === "fieldset" && node.disabled) return true;
++      return false;
++    }
++    focus(options) {
++      focusCalls.push({ target: this, options });
++      if (this.isConnected && this.focusable && !this.matches(":disabled") && !this.closest("[hidden], [inert]")) { document.activeElement = this; this.onFocus?.(); }
++    }
++  }
++  const body = new FocusTarget("body", "body"), html = new FocusTarget("html", "html"), heading = new FocusTarget("page heading", "h1"), outside = new FocusTarget("outside control");
++  const fieldset = new FocusTarget("editor fieldset", "fieldset"), form = new FocusTarget("current editor", "form"), alert = new FocusTarget("discard alert", "section"), alertHeading = new FocusTarget("discard heading", "h3");
++  const cancel = new FocusTarget("Cancel"), close = new FocusTarget("Close dialog"), deleteButton = new FocusTarget("Delete this private record"), keep = new FocusTarget("Keep editing"), recheck = new FocusTarget("Check account again");
++  const stage = new FocusTarget("Stage", "select"), notes = new FocusTarget("Private notes", "textarea"), url = new FocusTarget("Job link", "input"), title = new FocusTarget("Job title", "input"), hiddenInput = new FocusTarget("hidden input", "input");
++  hiddenInput.type = "hidden";
++  form.fields = kind === "record" ? [stage, notes] : [url, title];
++  form.querySelectorAll = selector => {
++    document.editorQueries++;
++    assert.equal(selector, "select, textarea, input:not([type='hidden'])");
++    return form.fields.filter(node => node.isConnected && node.parent === form && node.type !== "hidden");
+   };
+-  for (const node of [cancel, deleteButton, stage, notes, keep]) node.dialog = dialog;
++  dialog = {
++    tag: "dialog", parent: null, open: true, isConnected: true, form,
++    contains(target) { for (let node = target; node; node = node.parent) if (node === this) return true; return false; },
++    querySelector(selector) {
++      if (selector === "form") return this.form?.isConnected ? this.form : null;
++      assert.equal(selector, "fieldset select, fieldset textarea, fieldset input:not([type='hidden'])");
++      document.editorQueries++;
++      return this.form?.fields.find(node => node.isConnected && node.parent === this.form && node.type !== "hidden") ?? null;
++    },
++  };
++  fieldset.parent = dialog; form.parent = fieldset; alert.parent = fieldset; alertHeading.parent = alert; keep.parent = alert;
++  cancel.parent = form; deleteButton.parent = fieldset; close.parent = dialog; recheck.parent = dialog;
++  for (const node of [...form.fields, hiddenInput]) node.parent = form;
+   document.body = body; document.documentElement = html; document.activeElement = keep;
+-  const draft = { note: "متابعة خاصة", stage: "interview" };
+-  const state = { confirm: true, dialogDirty: true, editorDraft: draft, dialogKind: "record" };
+-  const discardReturn = { current: opener === "delete" ? deleteButton : opener === "none" ? null : cancel };
++  const draft = kind === "record" ? { note: "متابعة خاصة", stage: "offer" } : { url: "https://example.com/job", title: "Unfinished job العربية" };
++  const state = { confirm: true, dialogDirty: true, editorDraft: draft, dialogKind: kind, writes: 0, recoveryId: "existing-recovery-id" };
++  const initialDraft = JSON.stringify(draft);
++  const discardReturn = { current: opener === "none" ? null : ({ cancel, close, delete: deleteButton, notes, url })[opener] };
++  const discardHeading = { current: alertHeading };
++  const forbidMutation = () => { throw new Error("Keep editing must preserve the dialog, dirty state, draft and storage"); };
+   const context = vm.createContext({
+-    discardReturn, HTMLElement: FocusTarget, document,
++    discardReturn, discardHeading, HTMLElement: FocusTarget, document,
+     requestAnimationFrame(callback) { frames.push(callback); return frames.length; },
+     setConfirmDialogDiscard(value) { assert.equal(value, false); state.confirm = false; },
+-    setDialog() { throw new Error("Keep editing must leave the open dialog and its draft alone"); },
+-    setDialogDirty() { throw new Error("Keep editing must not change the dirty flag"); },
+-    setEditorDraft() { throw new Error("Keep editing must not change the draft"); },
+-  });
+-  install(context, "keepEditing");
+-  const disconnect = target => { target.isConnected = false; dialog.descendants.delete(target); if (document.activeElement === target) document.activeElement = body; };
+-  const flush = () => { assert.equal(frames.length, 1); frames.shift()(0); assert.equal(frames.length, 0); };
+-  return { document, body, heading, cancel, deleteButton, stage, notes, keepButton: keep, outside, dialog, discardReturn, state, draft, focusCalls, disconnect, flush, activate: () => context.keepEditing({ currentTarget: keep }) };
+-}
+-
+-test("actual Keep editing returns focus to the preserved record control after its alert is removed", () => {
+-  assert.equal(buttonClick("Keep editing"), "keepEditing");
+-  assert.doesNotMatch(declaration("keepEditing"), /recoverPhoneFocus|phone-page-heading/);
+-  const h = keepFocusHarness("cancel");
+-  h.activate();
+-  assert.equal(h.state.confirm, false);
+-  assert.equal(h.document.activeElement, h.keepButton, "Focus waits until the alert control is actually gone");
+-  assert.equal(h.state.dialogDirty, true); assert.equal(h.state.editorDraft, h.draft); assert.equal(h.state.dialogKind, "record");
+-  h.disconnect(h.keepButton); h.flush();
+-  assert.equal(h.document.activeElement, h.cancel);
+-  assert.deepEqual(h.focusCalls.map(call => call.target), [h.cancel]);
+-  assert.equal(h.focusCalls[0].options.preventScroll, true);
+-  assert.equal(h.document.queried, 0, "A usable opener inside the dialog does not fall through to another control");
+-  assert.equal(h.focusCalls.some(call => call.target === h.heading), false);
+-});
+-
+-test("actual Keep editing uses the delete opener or the editor control, never the page heading", () => {
++    setDialog: forbidMutation, setDialogDirty: forbidMutation, setEditorDraft: forbidMutation,
++    persist: forbidMutation, discardRecovery: forbidMutation, savePhoneSnapshot: forbidMutation,
++    recordRecoveryId: { get current() { return state.recoveryId; }, set current(_value) { forbidMutation(); } },
++  });
++  const handler = buttonClick("Keep editing");
++  if (/^[A-Za-z_$][\w$]*$/.test(handler)) install(context, handler);
++  install(context, "activateKeep", handler);
++  const disconnect = target => { target.isConnected = false; target.parent = null; if (document.activeElement === target) document.activeElement = body; };
++  const removeAlert = () => { disconnect(keep); disconnect(alertHeading); disconnect(alert); discardHeading.current = null; };
++  const flush = () => { assert(frames.length <= 1, "One Keep action schedules at most one recovery"); while (frames.length) frames.shift()(0); };
++  const unchanged = (expectedConfirmation = false) => {
++    assert.equal(state.confirm, expectedConfirmation); assert.equal(state.dialogDirty, true); assert.equal(state.editorDraft, draft); assert.equal(state.dialogKind, kind);
++    assert.equal(JSON.stringify(draft), initialDraft); assert.equal(state.writes, 0); assert.equal(state.recoveryId, "existing-recovery-id");
++  };
++  return { document, body, html, heading, outside, fieldset, form, alert, alertHeading, cancel, close, deleteButton, keepButton: keep, recheck, stage, notes, url, title, hiddenInput, dialog, discardReturn, discardHeading, state, draft, focusCalls, frames, disconnect, removeAlert, flush, unchanged, activate: () => context.activateKeep({ currentTarget: keep }) };
++}
++
++test("actual Keep editing restores a preserved record control after removal without changing the draft", () => {
++  for (const opener of ["cancel", "close", "notes"]) {
++    const h = keepFocusHarness(opener);
++    h.activate();
++    assert.equal(h.document.activeElement, h.keepButton, "Focus waits until the alert control is removed");
++    h.removeAlert(); h.flush();
++    assert.equal(h.document.activeElement, h[opener], "The removed Keep control must not leave focus on BODY");
++    assert.deepEqual(h.focusCalls.map(call => call.target), [h[opener]]);
++    assert.equal(h.focusCalls[0].options.preventScroll, true);
++    assert.equal(h.document.editorQueries, 0, "A usable opener does not fall through to another field");
++    h.unchanged();
++  }
++});
++
++test("actual Keep editing restores dirty Delete or a surviving editor field, with a real no-target case", () => {
+   const deleted = keepFocusHarness("delete");
+-  deleted.activate(); deleted.disconnect(deleted.keepButton); deleted.flush();
+-  assert.equal(deleted.document.activeElement, deleted.deleteButton);
+-  assert.equal(deleted.focusCalls.some(call => call.target === deleted.heading), false);
++  deleted.activate(); deleted.removeAlert(); deleted.flush();
++  assert.equal(deleted.document.activeElement, deleted.deleteButton); deleted.unchanged();
+   const fallback = keepFocusHarness("cancel");
+   fallback.disconnect(fallback.cancel); fallback.document.activeElement = fallback.dialog;
+-  fallback.activate(); fallback.disconnect(fallback.keepButton); fallback.flush();
+-  assert.equal(fallback.document.activeElement, fallback.stage, "Body or dialog-root focus is restored to the editor");
+-  assert.equal(fallback.focusCalls.some(call => call.target === fallback.heading), false);
++  fallback.activate(); fallback.removeAlert(); fallback.flush();
++  assert.equal(fallback.document.activeElement, fallback.stage); fallback.unchanged();
++  const textarea = keepFocusHarness("none");
++  textarea.disconnect(textarea.stage); textarea.activate(); textarea.removeAlert(); textarea.flush();
++  assert.equal(textarea.document.activeElement, textarea.notes, "DOM order exposes the remaining textarea when Stage disappears");
+   const nowhere = keepFocusHarness("none");
+-  nowhere.disconnect(nowhere.stage); nowhere.activate(); nowhere.disconnect(nowhere.keepButton); nowhere.flush();
+-  assert.equal(nowhere.document.activeElement, nowhere.body);
+-  assert.equal(nowhere.focusCalls.length, 0);
+-});
+-
+-test("actual Keep editing does not steal intentional focus or cross a closed, replaced, or removed dialog", () => {
+-  for (const next of ["editor", "outside", "closed", "removed"]) {
+-    const h = keepFocusHarness("cancel");
+-    h.activate(); h.disconnect(h.keepButton);
+-    if (next === "editor") h.document.activeElement = h.notes;
+-    else if (next === "outside") h.document.activeElement = h.outside;
+-    else if (next === "closed") h.dialog.open = false;
+-    else h.dialog.isConnected = false;
+-    const active = h.document.activeElement;
+-    h.flush();
+-    assert.equal(h.document.activeElement, active, next);
+-    assert.equal(h.focusCalls.length, 0, next);
+-    assert.equal(h.state.dialogDirty, true); assert.equal(h.state.editorDraft.note, "متابعة خاصة");
+-  }
+-  const redirected = keepFocusHarness("cancel");
++  for (const field of nowhere.form.fields) nowhere.disconnect(field);
++  nowhere.activate(); nowhere.removeAlert(); nowhere.flush();
++  assert.equal(nowhere.document.activeElement, nowhere.body); assert.equal(nowhere.focusCalls.length, 0); nowhere.unchanged();
++  for (const h of [deleted, fallback, textarea, nowhere]) assert.equal(h.focusCalls.some(call => call.target === h.heading), false);
++});
++
++test("actual Keep editing restores the add-job form and preserves all unfinished fields", () => {
++  for (const opener of ["close", "url", "none"]) {
++    const h = keepFocusHarness(opener, "add");
++    h.activate(); h.removeAlert(); h.flush();
++    assert.equal(h.document.activeElement, opener === "close" ? h.close : h.url);
++    assert.equal(h.focusCalls.some(call => call.target === h.heading), false); h.unchanged();
++  }
++});
++
++test("actual Keep editing leaves intentional focus and a focus redirect alone", () => {
++  for (const next of ["notes", "outside", "recheck"]) {
++    const h = keepFocusHarness();
++    h.activate(); h.removeAlert(); h.document.activeElement = h[next];
++    h.flush(); assert.equal(h.document.activeElement, h[next]); assert.equal(h.focusCalls.length, 0); h.unchanged();
++  }
++  const redirected = keepFocusHarness();
+   redirected.cancel.onFocus = () => { redirected.document.activeElement = redirected.notes; };
+-  redirected.activate(); redirected.disconnect(redirected.keepButton); redirected.flush();
++  redirected.activate(); redirected.removeAlert(); redirected.flush();
+   assert.equal(redirected.document.activeElement, redirected.notes);
+   assert.deepEqual(redirected.focusCalls.map(call => call.target), [redirected.cancel]);
+-  assert.equal(redirected.document.queried, 0);
+-});
+-
+-test("actual discard confirmation remembers Cancel or Delete without dropping the draft", () => {
+-  assert.match(declaration("requestDialogClose"), /rememberDiscardOpener\(active instanceof HTMLElement \? active : null\)/);
+-  assert.match(buttonClick("Delete this private record"), /rememberDiscardOpener\(event\.currentTarget\)/);
++  assert.equal(redirected.document.editorQueries, 0); redirected.unchanged();
++});
++
++test("actual Keep editing cannot cross a closed, replaced or unmounted dialog/editor", () => {
++  for (const next of ["closed", "dialog-unmounted", "form-unmounted", "form-replaced"]) {
++    const h = keepFocusHarness("none");
++    h.activate(); h.removeAlert();
++    if (next === "closed") h.dialog.open = false;
++    else if (next === "dialog-unmounted") h.dialog.isConnected = false;
++    else {
++      h.disconnect(h.form);
++      if (next === "form-replaced") {
++        const replacement = { isConnected: true, parent: h.fieldset, fields: [h.stage, h.notes] };
++        for (const field of replacement.fields) field.parent = replacement;
++        h.dialog.form = replacement;
++      }
++    }
++    h.flush(); assert.equal(h.document.activeElement, h.body, next); assert.equal(h.focusCalls.length, 0, next); h.unchanged();
++  }
++});
++
++test("actual Keep editing waits for its old prompt removal and does not override a reopened prompt", () => {
++  const retained = keepFocusHarness();
++  retained.activate(); retained.document.activeElement = retained.body;
++  retained.flush(); assert.equal(retained.document.activeElement, retained.body); assert.equal(retained.focusCalls.length, 0);
++  const reopened = keepFocusHarness();
++  reopened.activate(); reopened.removeAlert();
++  reopened.state.confirm = true;
++  reopened.discardHeading.current = { isConnected: true };
++  reopened.flush(); assert.equal(reopened.document.activeElement, reopened.body); assert.equal(reopened.focusCalls.length, 0); reopened.unchanged(true);
++});
++
++test("actual Keep editing rechecks inherited disabling, hidden identity content and inert ancestry", () => {
++  for (const next of ["disabled", "hidden", "inert"]) {
++    const h = keepFocusHarness("cancel");
++    h.activate(); h.removeAlert(); h.fieldset[next] = true;
++    assert.equal(h.cancel.disabled, false); assert.equal(h.stage.disabled, false, "The controls have no own disabled attribute");
++    h.flush(); assert.equal(h.document.activeElement, h.body, next); assert.equal(h.focusCalls.length, 0, next); h.unchanged();
++  }
++  const identity = keepFocusHarness();
++  identity.activate(); identity.removeAlert(); identity.fieldset.hidden = true; identity.fieldset.disabled = true; identity.document.activeElement = identity.recheck;
++  identity.flush(); assert.equal(identity.document.activeElement, identity.recheck); assert.equal(identity.focusCalls.length, 0); identity.unchanged();
++});
++
++test("actual Keep editing skips an unusable opener and selects the first eligible field in its form", () => {
++  for (const unavailable of ["disabled", "hidden", "inert"]) {
++    const h = keepFocusHarness();
++    h.cancel[unavailable] = true; h.stage[unavailable] = true;
++    h.activate(); h.removeAlert(); h.flush();
++    assert.equal(h.document.activeElement, h.notes, unavailable);
++    assert.deepEqual(h.focusCalls.map(call => call.target), [h.notes]); h.unchanged();
++  }
++  const nonfocusable = keepFocusHarness();
++  nonfocusable.cancel.focusable = false;
++  nonfocusable.activate(); nonfocusable.removeAlert(); nonfocusable.flush();
++  assert.equal(nonfocusable.document.activeElement, nonfocusable.stage);
++  assert.deepEqual(nonfocusable.focusCalls.map(call => call.target), [nonfocusable.cancel, nonfocusable.stage]);
++});
++
++test("actual Keep editing recovers absent, root, disconnected and dialog-root focus", () => {
++  for (const lost of ["absent", "html", "disconnected", "dialog"]) {
++    const h = keepFocusHarness();
++    h.activate(); h.removeAlert();
++    h.document.activeElement = lost === "absent" ? null : lost === "html" ? h.html : lost === "dialog" ? h.dialog : { isConnected: false };
++    h.flush(); assert.equal(h.document.activeElement, h.cancel, lost); h.unchanged();
++  }
++});
++
++test("actual discard entry handlers remember Cancel or Delete and preserve clean close behavior", () => {
+   class HTMLElement {}
+   const opener = new HTMLElement(); opener.name = "Cancel";
+   const state = { confirm: false, dialog: { kind: "record", record: { identity: "synthetic" }, scope: "guest" } };
+@@ -589,24 +708,23 @@
+     setConfirmDialogDiscard(value) { state.confirm = value; },
+     setDialog(value) { state.dialog = value; },
+   });
+-  install(context, "rememberDiscardOpener");
++  if (phoneDeclarationExists("rememberDiscardOpener")) install(context, "rememberDiscardOpener");
+   install(context, "requestDialogClose");
+   install(context, "deletePrivate", buttonClick("Delete this private record"));
+   context.requestDialogClose();
+-  assert.equal(context.discardReturn.current, null, "A non-element active node is not restored later");
+-  assert.equal(state.confirm, true); assert.equal(state.dialog.kind, "record");
++  assert.equal(context.discardReturn.current, null); assert.equal(state.confirm, true); assert.equal(state.dialog.kind, "record");
+   context.document.activeElement = opener; state.confirm = false;
+   context.requestDialogClose();
+-  assert.equal(context.discardReturn.current, opener);
++  assert.equal(context.discardReturn.current, opener, "The actual opener must be retained for the later Keep interaction");
+   assert.equal(state.confirm, true); assert.equal(state.dialog.kind, "record");
+   context.dialogDirty = false; context.discardReturn.current = null; state.confirm = false;
+   context.requestDialogClose();
+   assert.equal(state.dialog, null); assert.equal(state.confirm, false); assert.equal(context.discardReturn.current, null);
+   context.dialogDirty = true; state.dialog = { kind: "record", record: { identity: "synthetic" }, scope: "guest" }; context.dialog = state.dialog;
+-  const deleteButton = { name: "Delete" };
++  const deleteButton = new HTMLElement();
+   context.deletePrivate({ currentTarget: deleteButton });
+   assert.equal(context.discardReturn.current, deleteButton);
+-  assert.equal(state.confirm, true); assert.equal(state.dialog.kind, "record", "Dirty delete only asks to keep editing");
++  assert.equal(state.confirm, true); assert.equal(state.dialog.kind, "record", "Dirty Delete only asks about unfinished changes");
+   context.dialogDirty = false; state.confirm = false;
+   context.deletePrivate({ currentTarget: deleteButton });
+   assert.equal(state.dialog.kind, "delete-record"); assert.equal(state.confirm, false);

@@ -1,0 +1,26 @@
+{
+  "time_utc": "2026-11-17T22:42:44.531719+00:00",
+  "owner": "root4b851318da2d",
+  "state": "foreground active",
+  "previous_head": "9d011492b50185aa74fddbf061a6357b1fb0568f",
+  "head": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+  "method": "Fast-forward own continuation branch to verified publisher reconciliation; no publisher/search worktree edit",
+  "scope": [
+    "hosted account browser acceptance",
+    "Grok Build/Build/Heavy coordination",
+    "synthetic export consumer review"
+  ],
+  "no_native_builds": true,
+  "code_hashes": [
+    {
+      "file": "ProviderConnections.tsx",
+      "sha256": "03c766b5bfe7b04f30ca545e78dac63225a1b371f8ae35d96a1a80dfaf6047c8"
+    },
+    {
+      "file": "SignInOptions.tsx",
+      "sha256": "fa9818300bdd6c0316befcd04c9fb53ec1aa02282f5acfdbeffb611ac0e731fc"
+    }
+  ],
+  "deadline_utc": "2026-11-18T22:26:12Z",
+  "status": ""
+}

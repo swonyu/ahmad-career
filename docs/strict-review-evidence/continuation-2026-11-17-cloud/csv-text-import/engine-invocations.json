@@ -1,0 +1,78 @@
+{
+  "observedAt": "2026-11-17T14:45:05.855059+00:00",
+  "version": "LibreOfficeDev 26.8.0.0.alpha0 2c87e51eeaa2b413ff4ae097b2705eea1995d8e5",
+  "source": "https://help.libreoffice.org/latest/en-US/text/shared/guide/csv_params.html",
+  "runs": [
+    {
+      "mode": "default",
+      "language": "en",
+      "command": [
+        "soffice",
+        "-env:UserInstallation=file:///tmp/career-csv-text-import-tgsn2567/default-en",
+        "--headless",
+        "--convert-to",
+        "fods",
+        "--outdir",
+        "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-text-import/default",
+        "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-text-import/career-records-en.csv"
+      ],
+      "exitCode": 0,
+      "stdout": "convert /workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-text-import/career-records-en.csv as a Calc document -> /workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-text-import/default/career-records-en.fods using filter : OpenDocument Spreadsheet Flat XML",
+      "stderr": ""
+    },
+    {
+      "mode": "default",
+      "language": "ar",
+      "command": [
+        "soffice",
+        "-env:UserInstallation=file:///tmp/career-csv-text-import-tgsn2567/default-ar",
+        "--headless",
+        "--convert-to",
+        "fods",
+        "--outdir",
+        "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-text-import/default",
+        "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-text-import/career-records-ar.csv"
+      ],
+      "exitCode": 0,
+      "stdout": "convert /workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-text-import/career-records-ar.csv as a Calc document -> /workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-text-import/default/career-records-ar.fods using filter : OpenDocument Spreadsheet Flat XML",
+      "stderr": ""
+    },
+    {
+      "mode": "quoted-as-text",
+      "language": "en",
+      "command": [
+        "soffice",
+        "-env:UserInstallation=file:///tmp/career-csv-text-import-tgsn2567/quoted-as-text-en",
+        "--headless",
+        "--infilter=Text - txt - csv (StarCalc):44,34,76,1,,1033,true,false,true,false,false,0,true",
+        "--convert-to",
+        "fods",
+        "--outdir",
+        "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-text-import/quoted-as-text",
+        "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-text-import/career-records-en.csv"
+      ],
+      "exitCode": 0,
+      "stdout": "convert /workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-text-import/career-records-en.csv as a Calc document -> /workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-text-import/quoted-as-text/career-records-en.fods using filter : OpenDocument Spreadsheet Flat XML",
+      "stderr": ""
+    },
+    {
+      "mode": "quoted-as-text",
+      "language": "ar",
+      "command": [
+        "soffice",
+        "-env:UserInstallation=file:///tmp/career-csv-text-import-tgsn2567/quoted-as-text-ar",
+        "--headless",
+        "--infilter=Text - txt - csv (StarCalc):44,34,76,1,,1033,true,false,true,false,false,0,true",
+        "--convert-to",
+        "fods",
+        "--outdir",
+        "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-text-import/quoted-as-text",
+        "/workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-text-import/career-records-ar.csv"
+      ],
+      "exitCode": 0,
+      "stdout": "convert /workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-text-import/career-records-ar.csv as a Calc document -> /workspace/scratch/5bc6158967e8/career-finder/docs/strict-review-evidence/continuation-2026-11-17-cloud/csv-text-import/quoted-as-text/career-records-ar.fods using filter : OpenDocument Spreadsheet Flat XML",
+      "stderr": ""
+    }
+  ],
+  "scope": "Headless content and cell-type import check. Separate temporary profiles; no GUI, browser saving, account or employer request."
+}

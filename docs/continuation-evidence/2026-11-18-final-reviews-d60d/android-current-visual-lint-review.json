@@ -1,0 +1,44 @@
+{
+  "runId": 44262971576,
+  "head": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2",
+  "actualCheckout": "9325832a180104c13738e7836bfb4cb2e3c80c8f",
+  "identicalTree": "16510c0751b3036b7dc434c8c08bfdc79edf1d3b",
+  "visual": {
+    "reviewer": "/root/expert_ux",
+    "imagesViewed": 20,
+    "independentImageSizeHashMatches": 20,
+    "mismatches": 0,
+    "unavailable": [],
+    "indexSHA256": "4b322ac1ece5ffc85471dce2c12ecec458d2564cba3651c0ff36b036522058a0",
+    "verdict": "No material visual regression established in captured states.",
+    "scope": "Arabic app chrome at large text with English synthetic payloads, light/dark themes, recovery, records, profile, search provenance, connection and receipt states.",
+    "scrollBoundaryReview": "Visible edge clipping was checked against verticalScroll and PrimaryScrollableTabRow source. Still images do not establish touch or assistive-technology traversal.",
+    "notEstablished": [
+      "Separate English-interface visual matrix",
+      "TalkBack traversal",
+      "Physical-device behavior",
+      "iPhone visual acceptance"
+    ]
+  },
+  "lint": {
+    "reviewer": "/root/expert_engineering",
+    "errors": 0,
+    "warnings": 20,
+    "xmlSHA256": "d689f232861e933b7fd3ec93fccd4eb18fd26c5849e708b725c77583a0ef7655",
+    "categories": {
+      "OldTargetApi": 1,
+      "UnusedAttribute": 1,
+      "GradleDependency": 3,
+      "NewerVersionAvailable": 1,
+      "Typos": 1,
+      "ObsoleteSdkInt": 1,
+      "UnusedResources": 1,
+      "IconLauncherShape": 5,
+      "MonochromeLauncherIcon": 1,
+      "UseKtx": 5
+    },
+    "verdict": "No material introduced defect or acceptance blocker established by these warnings.",
+    "provenance": "All flagged source and assets equal publisher c0c865eea250019ee21fbd6110c9fe4446c3c8f1 except the generated catalog file; the flagged sentence itself is unchanged.",
+    "limits": "Not warning-free, not a store-policy or complete launcher-visual acceptance claim. Existing icon shape and monochrome theming limitations remain recorded."
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "observedUTC": "2026-11-18T08:43:48.010035+00:00",
+  "baseCommit": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2",
+  "verificationKind": "SOURCE_RETENTION_AND_SWIFT_SYNTAX_ONLY",
+  "nativeAcceptance": "NOT_RERUN; current full CI supplies baseline failures; root owns the successor native run",
+  "syntax": [
+    {
+      "file": "apple/AhmadCareer/NativeApplicationsViews.swift",
+      "command": [
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+        "-frontend",
+        "-parse",
+        "apple/AhmadCareer/NativeApplicationsViews.swift"
+      ],
+      "exitCode": 0,
+      "log": "NativeApplicationsViews-syntax.log",
+      "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "apple/UITests/CareerFinderUITests.swift",
+      "command": [
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+        "-frontend",
+        "-parse",
+        "apple/UITests/CareerFinderUITests.swift"
+      ],
+      "exitCode": 0,
+      "log": "CareerFinderUITests-syntax.log",
+      "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "sourceSHA256": {
+    "apple/AhmadCareer/NativeApplicationsViews.swift": "16c520373d0144202556358619f5aa22748be37df40ee35fa422ede4bc71458a",
+    "apple/UITests/CareerFinderUITests.swift": "f703b50b68fe48b94d40f8dc662a85ef36fb975022e3a869aaaa990e956e727f"
+  },
+  "sourceOnlyAdditions": {
+    "NativeApplicationsViews.swift": "Exactly two explicit localized accessibilityLabel modifiers; all other bytes equal baseline",
+    "CareerFinderUITests.swift": "Exactly two additional five-second native-keyboard appearance assertions, with explanatory comment; all other bytes equal baseline"
+  },
+  "unchangedTestMethods": {
+    "testFreshStartAndFiveTabs": "e3a5f033623d988faeb4eceb2df3fa6d8cbbbfc4b594df3c40a71d94ad0f4351",
+    "testApplicationDraftSurvivesCancelAndRelaunch": "e420d72fdcb6358c9d0f54c185622abbef6a555c1459ee047fd24d7ea35d6a1c",
+    "testLinkedInProfileDraftAndExternalSearchChoice": "a120aa330a9a8de3adeb551665ead4a6d51dd27a857789f556ba985b4457cded",
+    "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit": "60bd285c9695c78187cbb3869ded7ad2e9ed32053a25171ccaa2cfa5a2df8705",
+    "testSavedLinkRemovalAtLargestTextKeepsCancelReachable": "cce2647d7e788f6ebe26dbf3dd79392c80580713980bd96c7ac815a16ca1de21",
+    "testProfileReadinessAndSimpleConnectionSetup": "86c9e506c9dc3f3aabb0fc9915f1555c1a2d65e9af91744547b8ac5fb4becfba",
+    "testOpportunityDraftKeepSaveAndRestore": "f4901da1c2ffde739cf1a6e62b6c47172dd683113508ad3c78f211056cdf1959",
+    "testOpportunityDiscardRequiresExplicitChoice": "b914b4c69b13eb6e6af2f4dbc3d49d78d318f78fa99ee5b8bb769c8a4e7f7486",
+    "testDiscoverySaveFlowsIntoSavedAndApply": "f2fe9854d5051dbfe8cec24602c3af3c32714b659652706c56d1de003aa027a3",
+    "testSearchEmptyAndFailurePreservesPreviousResults": "0c0c6a336be5408557ada906b5784923cd37d79ccc9579f040f3b85814db8b94",
+    "testAccessibilityTextKeepsCoreControlsReachable": "d25fc8fce28fa3508c31a9aba602756675956c9524416797c9dc9bcecbd42743",
+    "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText": "977174d3ae6ce65966074b8d6d6d68be2c73906052c2ef139bacc5f061a7c0c9",
+    "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable": "dd75cec10061e636c60ee47ca16dcf5d24d6a74b2805ce05d1ef298119a0434a",
+    "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText": "6c3c16e4e2e1d355954ca8a44926a8300dfe6a73c1ca5adcb9dbbe9dafa45383",
+    "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride": "4671d1992791d265bad8abbb7d1fa54d91d3aa2356c8c9af57407b85d48b5e6f",
+    "testSavedSearchFindsArabicNotesAndKeepsOriginalText": "1f929f6bc20eeed4bff2e8001db298f6a38e31c1fdb5a349d69f5f2cc8e7079a",
+    "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark": "beaf718f8df3f448335dc64239313ba64aa9028910f16a5fad09e6ff76c111bd"
+  },
+  "originalAssertionCalls": 187,
+  "candidateAssertionCalls": 189,
+  "localizedLabels": {
+    "en": {
+      "First or single name": "First or single name",
+      "Email": "Email"
+    },
+    "ar": {
+      "First or single name": "الاسم الأول أو الاسم الوحيد",
+      "Email": "البريد الإلكتروني"
+    }
+  },
+  "retainedChecks": [
+    "Unique firstMatch delete key; actual exists && isHittable",
+    "Every original five-second key wait and all17 test bodies",
+    "Actual native typing, exact clearing and replacement values",
+    "Field bindings, identity, text content type, focus chain, layout, persistent labels",
+    "Safari return helper and all test08 fixture contents unchanged"
+  ],
+  "keyboardHypothesis": "The first cold keyboard appearance consumed the key readiness lookup. Stage actual native-keyboard existence first, as searchFromKeyboard already does. This does not prove an XCTest snapshot/hit-test fix until native rerun.",
+  "historicalAlternativeRejected": "243031d3 replaced exact-key indexed enumeration after the same prior failure; do not reintroduce that failed approach."
+}

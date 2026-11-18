@@ -1,0 +1,89 @@
+✔ Saved search finds every term across visible metadata and the active saved note (1.302167ms)
+✔ Saved comparison removes only the agreed Arabic vowel marks and tatweel while preserving distinct letters (0.136084ms)
+✔ CSV is UTF-8 BOM, quoted CRLF data with original Arabic, quotes and multiline notes (1.604459ms)
+✔ CSV visibly neutralizes formula-like text including compatibility characters and leading controls (1.119708ms)
+✔ CSV selects only record fields and translates app labels without translating private content (0.32375ms)
+✔ calendar uses civil DATE and one day even on leap days and the maximum supported year (26.351834ms)
+✔ calendar escapes injected properties and folds long Arabic and emoji by UTF-8 octets (0.474375ms)
+✔ calendar UID is stable for the public job and date without private fields or provider state (0.862625ms)
+✔ record locations are optional for legacy snapshots and bounded for new records (2.698833ms)
+✔ removing a bookmark retains its latest nonblank location for current, legacy and re-bookmarked records (47.612583ms)
+✔ bookmark metadata preservation fails with account mismatch or rejected persistence (5.494791ms)
+✔ actual CSV action exports only the current guest or confirmed account records (4.305208ms)
+▶ actual record exports fail closed before reading unconfirmed, locked, wrong-owner or earlier-workspace data
+  ✔ identity (1.964292ms)
+  ✔ checking (2.151875ms)
+  ✔ locked (1.950208ms)
+  ✔ owner (4.845917ms)
+  ✔ missingOwner (2.115208ms)
+  ✔ olderWorkspace (2.410834ms)
+  ✔ earlierScope (2.152792ms)
+✔ actual record exports fail closed before reading unconfirmed, locked, wrong-owner or earlier-workspace data (18.076833ms)
+▶ actual calendar action rechecks identity, generation, workspace and record after asynchronous hashing
+  ✔ revalidation (9.252542ms)
+  ✔ generation (3.094792ms)
+  ✔ owner (4.4355ms)
+  ✔ workspace (2.46875ms)
+  ✔ snapshot (1.960375ms)
+  ✔ date (2.388208ms)
+  ✔ removal (1.829417ms)
+✔ actual calendar action rechecks identity, generation, workspace and record after asynchronous hashing (25.884709ms)
+✔ actual calendar action accepts a saved record and rejects unsaved editor copies or missing dates (4.886125ms)
+✔ actual Saved selector searches active notes and keeps the existing applied/follow-up filters (2.812583ms)
+✔ new controls stay inside existing disclosures and require a saved valid follow-up day (12.064042ms)
+✔ actual download helper preserves content and delays successful URL release for the browser (1.334333ms)
+✔ actual download helper attaches no DOM resource when URL allocation fails (0.807083ms)
+✔ actual download helper releases its URL after a synchronous create failure (0.741625ms)
+✔ actual download helper releases its URL after a synchronous append failure (0.601125ms)
+✔ actual download helper releases its URL after a synchronous click failure (0.590541ms)
+✔ actual download helper still releases the URL if post-click link removal throws (0.576667ms)
+✖ actual exportRecordsCSV preserves the snapshot and withholds success when download activation throws (3.634792ms)
+✖ actual exportFollowUp preserves the snapshot and withholds success when download activation throws (4.277583ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 37
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 361.447958
+
+✖ failing tests:
+
+test at tests/phone-record-tools.mjs:433:3
+✖ actual exportRecordsCSV preserves the snapshot and withholds success when download activation throws (3.634792ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - false
+  
+      at TestContext.<anonymous> (file:///Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/tests/phone-record-tools.mjs:448:47)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/phone-record-tools.mjs:433:3
+✖ actual exportFollowUp preserves the snapshot and withholds success when download activation throws (4.277583ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - false
+  
+      at TestContext.<anonymous> (file:///Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/tests/phone-record-tools.mjs:448:47)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

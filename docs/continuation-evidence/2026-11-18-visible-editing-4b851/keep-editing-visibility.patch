@@ -1,0 +1,42 @@
+--- a/hosted/app/phone/PhoneApp.tsx
++++ b/hosted/app/phone/PhoneApp.tsx
+@@ -423,10 +423,10 @@
+       if (!lost()) return;
+       const usable = (node: EventTarget | null): node is HTMLElement => node instanceof HTMLElement && node.isConnected && dialogElement.contains(node) && node !== dialogElement &&
+         !node.matches(":disabled") && !node.closest("[hidden], [inert]");
+-      if (usable(opener)) opener.focus({ preventScroll: true });
++      if (usable(opener)) opener.focus({ preventScroll: false });
+       if (!lost()) return;
+       const editor = Array.from(form.querySelectorAll<HTMLElement>("select, textarea, input:not([type='hidden'])")).find(usable);
+-      if (editor) editor.focus({ preventScroll: true });
++      if (editor) editor.focus({ preventScroll: false });
+     });
+   };
+   const editRecord = (job: Job) => { const data = local(), existing = data.records.find(record => record.identity === jobIdentity(job.url)); setDialogDirty(false); setConfirmDialogDiscard(false); const record = existing ?? blankRecord(job); recordRecoveryId.current = crypto.randomUUID(); setEditorDraft(record); setDialog({ kind: "record", job, record, existed: Boolean(existing), scope: data.scope, editorId: recordRecoveryId.current }); };
+--- a/hosted/tests/phone-recovery-isolation.mjs
++++ b/hosted/tests/phone-recovery-isolation.mjs
+@@ -586,7 +586,7 @@
+     h.removeAlert(); h.flush();
+     assert.equal(h.document.activeElement, h[opener], "The removed Keep control must not leave focus on BODY");
+     assert.deepEqual(h.focusCalls.map(call => call.target), [h[opener]]);
+-    assert.equal(h.focusCalls[0].options.preventScroll, true);
++    assert.equal(h.focusCalls[0].options.preventScroll, false, "Keep recovery must allow the open dialog to scroll its focused control into view");
+     assert.equal(h.document.editorQueries, 0, "A usable opener does not fall through to another field");
+     h.unchanged();
+   }
+@@ -600,6 +600,7 @@
+   fallback.disconnect(fallback.cancel); fallback.document.activeElement = fallback.dialog;
+   fallback.activate(); fallback.removeAlert(); fallback.flush();
+   assert.equal(fallback.document.activeElement, fallback.stage); fallback.unchanged();
++  assert.equal(fallback.focusCalls[0].options.preventScroll, false, "Editor fallback must also allow native focus scrolling");
+   const textarea = keepFocusHarness("none");
+   textarea.disconnect(textarea.stage); textarea.activate(); textarea.removeAlert(); textarea.flush();
+   assert.equal(textarea.document.activeElement, textarea.notes, "DOM order exposes the remaining textarea when Stage disappears");
+@@ -615,6 +616,7 @@
+     const h = keepFocusHarness(opener, "add");
+     h.activate(); h.removeAlert(); h.flush();
+     assert.equal(h.document.activeElement, opener === "close" ? h.close : h.url);
++    assert.equal(h.focusCalls[0].options.preventScroll, false, "Add-job recovery must keep its focused control reachable in the dialog");
+     assert.equal(h.focusCalls.some(call => call.target === h.heading), false); h.unchanged();
+   }
+ });

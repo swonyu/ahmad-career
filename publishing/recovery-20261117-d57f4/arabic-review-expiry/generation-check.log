@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "mode": "check",
+  "strings_per_language": 1802,
+  "bounded_templates": 149,
+  "files": [
+    "apple/AhmadCareer/en.lproj/Localizable.strings",
+    "android/app/src/main/res/values/career_copy.xml",
+    "apple/AhmadCareer/ar.lproj/Localizable.strings",
+    "android/app/src/main/res/values-ar/career_copy.xml",
+    "apple/AhmadCareer/NativeCopyTemplates.json",
+    "android/app/src/main/res/raw/native_copy_templates.json",
+    "android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt"
+  ]
+}

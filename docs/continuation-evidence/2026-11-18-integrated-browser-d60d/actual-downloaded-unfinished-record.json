@@ -1,0 +1,47 @@
+{
+  "format": "Career Finder unfinished edits",
+  "version": 1,
+  "scope": "guest",
+  "exportedAt": "2026-11-18T07:45:53.038Z",
+  "drafts": [
+    {
+      "id": "1c6a19c7-342e-498f-bbe2-719e48979ebb",
+      "savedAt": "2026-11-18T07:45:53.038Z",
+      "record": {
+        "job": {
+          "id": "4bb9d915-a346-4a0c-9959-3feee11bfe9f",
+          "title": "Integrated SSR proof",
+          "company": "Synthetic Test",
+          "url": "https://jobs.example.com/integrated-ssr-d60d",
+          "location": "Riyadh",
+          "country": ""
+        },
+        "original": {
+          "identity": "https://jobs.example.com/integrated-ssr-d60d",
+          "title": "Integrated SSR proof",
+          "company": "Synthetic Test",
+          "location": "Riyadh",
+          "stage": "saved",
+          "appliedElsewhere": false,
+          "appliedDate": "",
+          "followUpDate": "",
+          "note": "SSR saved note — ملاحظة محفوظة\nSecond line: \"quoted\" {braces}",
+          "updatedAt": "2026-11-18T07:45:03.805Z"
+        },
+        "draft": {
+          "identity": "https://jobs.example.com/integrated-ssr-d60d",
+          "title": "Integrated SSR proof",
+          "company": "Synthetic Test",
+          "location": "Riyadh",
+          "stage": "saved",
+          "appliedElsewhere": false,
+          "appliedDate": "",
+          "followUpDate": "",
+          "note": "SSR unfinished note — مسودة غير محفوظة\nExact draft before download",
+          "updatedAt": "2026-11-18T07:45:03.805Z"
+        },
+        "existed": true
+      }
+    }
+  ]
+}

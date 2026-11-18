@@ -1,0 +1,11 @@
+{
+  "candidate/Discovery.kt": "d447432fee132d6c55808d1228459d84cfc07b802feed5379e8d3437f4d414f0",
+  "candidate/DiscoverySnapshot.kt": "176599cc8d2e7f49a678f974f2119e108c974649150c3f816ee3dbb52e67f7f9",
+  "candidate/DiscoveryPersistenceRegressionTest.kt": "dce01dbb2a9f4c2fb71f21a3688dd23ac54527e25bfb7530bb59a9acf82ceeb1",
+  "candidate/BoundaryPolicy.java": "54f162253812226923f0bedf7e80f05a33ac07d40df4ca2943e43ddcd0a53af2",
+  "host-shared/ModelHelpers.kt": "bbd203ef8d44cce9739e5b4041b0ce28d4b58162239a509de1671793313a79f4",
+  "host-shared/PrivateStorePort.kt": "5931a61aa230cf1af11e408102a66956a9263c5dcc3191bd2b2c1826c7e9a2be",
+  "host-shared/ServicePagesOrigin.kt": "5349812c09e67353e64edf495c13a89826af209f290516383df2c1ddcaca8041",
+  "host-shared/HostMain.kt": "0d05d3416f8622a4850fa3962601d6a9123fa2e44c316666d1bd7866ad2807cc",
+  "host-shared/InstrumentationRegistry.kt": "1cde0626d51ba2bc657aa992bface13075a544a5727bd75dc45b4a0ed66c59bc"
+}

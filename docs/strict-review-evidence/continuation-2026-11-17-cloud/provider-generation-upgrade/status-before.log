@@ -1,0 +1,23 @@
+PASS Provider connection-generation migration preserves existing links, accounts and active browser sessions
+PASS Previous-worker callbacks after migration receive a stable connection generation; recreating the link rotates it
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: google revoke
+
+200 !== 409
+
+    at file:///workspace/scratch/5bc6158967e8/auth-migration-candidate/hosted/tests/status-before-isolated.mjs:184:14
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async check (file:///workspace/scratch/5bc6158967e8/auth-migration-candidate/hosted/tests/status-before-isolated.mjs:83:52)
+    at async file:///workspace/scratch/5bc6158967e8/auth-migration-candidate/hosted/tests/status-before-isolated.mjs:172:3 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 200,
+  expected: 409,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.22.1

@@ -1,0 +1,131 @@
+{
+  "recordedUTC": "2026-11-17T14:34:16.813039+00:00",
+  "sourceManifest": "source-under-test.json",
+  "hosted": {
+    "startedUTC": "2026-11-17T14:28:45.912416+00:00",
+    "updatedUTC": "2026-11-17T14:31:47.700420+00:00",
+    "results": [
+      {
+        "name": "hosted-typecheck",
+        "argv": [
+          "npm",
+          "run",
+          "typecheck"
+        ],
+        "cwd": "hosted",
+        "exitCode": 0,
+        "seconds": 14.65
+      },
+      {
+        "name": "hosted-eslint",
+        "argv": [
+          "./node_modules/.bin/eslint",
+          "app",
+          "worker",
+          "--max-warnings",
+          "0"
+        ],
+        "cwd": "hosted",
+        "exitCode": 0,
+        "seconds": 9.086
+      },
+      {
+        "name": "hosted-regressions",
+        "argv": [
+          "npm",
+          "test"
+        ],
+        "cwd": "hosted",
+        "exitCode": 0,
+        "seconds": 136.041
+      },
+      {
+        "name": "hosted-workerd",
+        "argv": [
+          "node",
+          "tests/hosted-worker.mjs"
+        ],
+        "cwd": "hosted",
+        "exitCode": 0,
+        "seconds": 7.018
+      },
+      {
+        "name": "hosted-browser-transport",
+        "argv": [
+          "node",
+          "--test",
+          "tests/browser-api.mjs",
+          "tests/browser-pairing.mjs"
+        ],
+        "cwd": "hosted",
+        "exitCode": 0,
+        "seconds": 0.414
+      },
+      {
+        "name": "hosted-production-build",
+        "argv": [
+          "npm",
+          "run",
+          "build"
+        ],
+        "cwd": "hosted",
+        "exitCode": 0,
+        "seconds": 14.572
+      }
+    ]
+  },
+  "service": {
+    "startedUTC": "2026-11-17T14:28:47.469300+00:00",
+    "updatedUTC": "2026-11-17T14:29:08.679683+00:00",
+    "results": [
+      {
+        "name": "website-regressions",
+        "argv": [
+          "npm",
+          "test"
+        ],
+        "cwd": "website",
+        "exitCode": 0,
+        "seconds": 14.899
+      },
+      {
+        "name": "website-applications",
+        "argv": [
+          "npm",
+          "run",
+          "test:applications"
+        ],
+        "cwd": "website",
+        "exitCode": 0,
+        "seconds": 2.45
+      },
+      {
+        "name": "website-synthetic-tls",
+        "argv": [
+          "node",
+          "website/applications/fixtures/tls-check.mjs"
+        ],
+        "cwd": ".",
+        "exitCode": 0,
+        "seconds": 3.859
+      }
+    ]
+  },
+  "nativeLocalizationContracts": {
+    "command": "python3 scripts/test-native-localization.py",
+    "passed": 8,
+    "failed": 0,
+    "log": "native-localization-contracts.log"
+  },
+  "independentReview": "peer-review.json",
+  "nativeMethodInventory": "native-method-retention.json",
+  "nativeBuildOrRuntime": "not_run",
+  "liveProviderAccountAcceptance": "not_run",
+  "push": "not_attempted_by_integration_agent",
+  "store": "not_attempted",
+  "limits": [
+    "Local synthetic tests do not prove live provider/account acceptance.",
+    "Historical UI captures remain bound to their earlier recorded source.",
+    "Both native runtime gates remain necessary for the exact combined commit."
+  ]
+}

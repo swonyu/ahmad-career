@@ -1,0 +1,134 @@
+{
+  "status": "passed",
+  "parent": "3fb5d97ec6f3568f2c8b27f148281926272a92fe",
+  "startedUTC": "2026-11-18T03:13:57.832171+00:00",
+  "finishedUTC": "2026-11-18T03:14:47.929413+00:00",
+  "node": "v24.22.3",
+  "npm": "11.20.0",
+  "redCounts": {
+    "tests": 10,
+    "pass": 4,
+    "fail": 6,
+    "skipped": 0
+  },
+  "implementationAndTestsStable": true,
+  "generatedReportChanges": [
+    {
+      "path": "hosted/tests/hosted-discovery-verification.json",
+      "oldObservedAt": "2026-11-18T02:33:51.506Z",
+      "newObservedAt": "2026-11-18T03:14:42.735Z",
+      "allOtherFieldsEqual": true
+    },
+    {
+      "path": "hosted/tests/hosted-phone-verification.json",
+      "oldObservedAt": "2026-11-18T02:33:53.609Z",
+      "newObservedAt": "2026-11-18T03:14:43.908Z",
+      "allOtherFieldsEqual": true
+    },
+    {
+      "path": "hosted/tests/hosted-verification.json",
+      "oldObservedAt": "2026-11-18T02:33:26.416Z",
+      "newObservedAt": "2026-11-18T03:14:23.831Z",
+      "allOtherFieldsEqual": true
+    }
+  ],
+  "gitStatus": "M hosted/app/i18n/messages.ar.json\n M hosted/app/phone/PhoneApp.tsx\n M hosted/app/phone/components.tsx\n M hosted/tests/hosted-discovery-verification.json\n M hosted/tests/hosted-phone-verification.json\n M hosted/tests/hosted-verification.json\n M hosted/tests/phone-record-tools.mjs\n M hosted/tests/phone-recovery-isolation.mjs",
+  "steps": [
+    {
+      "name": "apply-check",
+      "exit": 0
+    },
+    {
+      "name": "red-test-hunks",
+      "exit": 0
+    },
+    {
+      "name": "original-focus-regression",
+      "exit": 1
+    },
+    {
+      "name": "apply",
+      "exit": 0
+    },
+    {
+      "name": "diff-check",
+      "exit": 0
+    },
+    {
+      "name": "focus-and-record-regression",
+      "exit": 0
+    },
+    {
+      "name": "typecheck",
+      "exit": 0
+    },
+    {
+      "name": "lint",
+      "exit": 0
+    },
+    {
+      "name": "test",
+      "exit": 0
+    },
+    {
+      "name": "build",
+      "exit": 0
+    }
+  ],
+  "counts": {
+    "focus-and-record-regression": [
+      [
+        "tests",
+        "88"
+      ],
+      [
+        "pass",
+        "88"
+      ],
+      [
+        "fail",
+        "0"
+      ],
+      [
+        "skipped",
+        "0"
+      ]
+    ],
+    "test": [
+      [
+        "tests",
+        "6"
+      ],
+      [
+        "pass",
+        "6"
+      ],
+      [
+        "fail",
+        "0"
+      ],
+      [
+        "skipped",
+        "0"
+      ],
+      [
+        "tests",
+        "311"
+      ],
+      [
+        "pass",
+        "311"
+      ],
+      [
+        "fail",
+        "0"
+      ],
+      [
+        "skipped",
+        "0"
+      ]
+    ]
+  },
+  "receiptSHA256": "c0ea9f034bc75fd42b6d4d3be84b13a8513c5e402e0995b3a5c4c330be88f2b1",
+  "buildWarnings": "[vinext] Tip: migrate from `vinext build` to `vite build`.\n(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:\n  - JSON import \"./.openai/hosting.json\" without import attributes (vite.config.ts:3:27). Add `with { type: 'json' }`\n  - import \"./scripts/vite/sites-vite-plugin\" without a file extension (vite.config.ts:6:23). Add the file extension\nSet `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.\n[plugin rsc:virtual:vite-rsc/assets-manifest] \u001b[33m[SOURCEMAP_BROKEN] \u001b[0mSourcemap is likely to be incorrect: a plugin (rsc:virtual:vite-rsc/assets-manifest) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect\n\n[plugin rsc:virtual:vite-rsc/assets-manifest] \u001b[33m[SOURCEMAP_BROKEN] \u001b[0mSourcemap is likely to be incorrect: a plugin (rsc:virtual:vite-rsc/assets-manifest) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect\n\n\u001b[33m[INEFFECTIVE_DYNAMIC_IMPORT] \u001b[0mapp/layout.tsx is dynamically imported by \\0virtual:vinext-rsc-entry but also statically imported by \\0virtual:vinext-rsc-entry, dynamic import will not move module into another chunk.\n\n[plugin rsc:inject-async-local-storage] \u001b[33m[SOURCEMAP_BROKEN] \u001b[0mSourcemap is likely to be incorrect: a plugin (rsc:inject-async-local-storage) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect\n\n[plugin rsc:inject-async-local-storage] \u001b[33m[SOURCEMAP_BROKEN] \u001b[0mSourcemap is likely to be incorrect: a plugin (rsc:inject-async-local-storage) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect\n\n[plugin rsc:virtual:vite-rsc/assets-manifest] \u001b[33m[SOURCEMAP_BROKEN] \u001b[0mSourcemap is likely to be incorrect: a plugin (rsc:virtual:vite-rsc/assets-manifest) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect\n\n[plugin rsc:virtual:vite-rsc/assets-manifest] \u001b[33m[SOURCEMAP_BROKEN] \u001b[0mSourcemap is likely to be incorrect: a plugin (rsc:virtual:vite-rsc/assets-manifest) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect\n\n`output.codeSplitting.groups[0].name` is a function. Set `output.codeSplitting.groups[0].debugName` so the bundler timing report can identify this group.\n`output.codeSplitting.groups[1].name` is a function. Set `output.codeSplitting.groups[1].debugName` so the bundler timing report can identify this group.\n`output.codeSplitting.groups[2].name` is a function. Set `output.codeSplitting.groups[2].debugName` so the bundler timing report can identify this group.\n\u001b[33m[INEFFECTIVE_DYNAMIC_IMPORT] \u001b[0mnode_modules/vinext/dist/shims/slot.js is dynamically imported by \\0virtual:vite-rsc/client-references but also statically imported by node_modules/vinext/dist/server/app-route-tree.js, node_modules/vinext/dist/server/app-ssr-entry.js, node_modules/vinext/dist/shims/client-page-root.js, dynamic import will not move module into another chunk.\n\n\u001b[33m[INEFFECTIVE_DYNAMIC_IMPORT] \u001b[0mnode_modules/vinext/dist/shims/default-global-error.js is dynamically imported by \\0virtual:vite-rsc/client-references but also statically imported by node_modules/vinext/dist/server/app-ssr-entry.js, node_modules/vinext/dist/shims/error-boundary.js, dynamic import will not move module into another chunk.\n\n[plugin rsc:inject-async-local-storage] \u001b[33m[SOURCEMAP_BROKEN] \u001b[0mSourcemap is likely to be incorrect: a plugin (rsc:inject-async-local-storage) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect\n\n[plugin rsc:inject-async-local-storage] \u001b[33m[SOURCEMAP_BROKEN] \u001b[0mSourcemap is likely to be incorrect: a plugin (rsc:inject-async-local-storage) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect\n\n[plugin rsc:virtual:vite-rsc/assets-manifest] \u001b[33m[SOURCEMAP_BROKEN] \u001b[0mSourcemap is likely to be incorrect: a plugin (rsc:virtual:vite-rsc/assets-manifest) was used to transform files, but didn't generate a sourcemap for the transformation. Consult the plugin documentation for help: https://rolldown.rs/guide/troubleshooting#warning-sourcemap-is-likely-to-be-incorrect\n\n"
+}

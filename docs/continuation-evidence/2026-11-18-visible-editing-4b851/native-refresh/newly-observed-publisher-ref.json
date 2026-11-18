@@ -1,0 +1,33 @@
+{
+  "observedUTC": "2026-11-18T05:43:18.697911+00:00",
+  "sha": "c0c865eea250019ee21fbd6110c9fe4446c3c8f1",
+  "html_url": "https://github.com/swonyu/ahmad-career/commit/c0c865eea250019ee21fbd6110c9fe4446c3c8f1",
+  "message": "Keep hosted connection and account handoff inside native Safari",
+  "authorDate": "2026-11-18T00:58:49Z",
+  "committerDate": "2026-11-18T00:58:49Z",
+  "parents": [
+    "a17999ce9f24d1e8c94a38c03dcda68101db4507"
+  ],
+  "files": [
+    {
+      "filename": "apple/AhmadCareer/NativeApplicationsViews.swift",
+      "status": "modified",
+      "additions": 133,
+      "deletions": 3,
+      "changes": 136
+    },
+    {
+      "filename": "apple/UITests/CareerFinderUITests.swift",
+      "status": "modified",
+      "additions": 88,
+      "deletions": 0,
+      "changes": 88
+    }
+  ],
+  "stats": {
+    "total": 224,
+    "additions": 221,
+    "deletions": 3
+  },
+  "note": "Newly observed selected recovery ref relative to baseline. The selected-ref inventory differs from the prior bounded selection; commit time is not ref creation time, and branch suffix is not explicit owner acknowledgement."
+}

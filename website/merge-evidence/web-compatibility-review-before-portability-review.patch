@@ -1,0 +1,1079 @@
+--- a/website/web/app.js
++++ b/website/web/app.js
+@@ -60,22 +60,26 @@
+ })();
+ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+-const statusValues=['Not started','Preparing','Applied','Interviewing','Offer received','Closed / not pursuing'];
++const statusValues=['Not started','Preparing','Submission uncertain','Applied','Interviewing','Offer received','Closed / not pursuing'];
+ let storageOK=true;const blockedKeys=new Set(),failedKeys=new Set();let storageNotice='';
+ function storageWarning(message){storageNotice=message;if($('.footer'))$('.footer').textContent=message}
+ function unreadable(key){blockedKeys.add(key);storageWarning('Saved records could not be read. The original data is preserved; changes to those records cannot be saved.')}
+ function read(key,fallback){try{const raw=localStorage.getItem('ahmad-'+key);return raw===null?fallback:JSON.parse(raw)}catch{unreadable(key);return fallback}}
+ function persist(key,value){if(blockedKeys.has(key)){toast(storageNotice);return false}try{localStorage.setItem('ahmad-'+key,JSON.stringify(value));failedKeys.delete(key);if(!failedKeys.size&&!blockedKeys.size){storageOK=true;storageNotice='';$('.footer').textContent='Built around your experience. Every next step stays yours.'}return true}catch{storageOK=false;failedKeys.add(key);storageWarning('Storage unavailable. Unsaved changes last only for this session.');toast('Device storage unavailable. Changes will last only for this session.');return false}}
+ const record=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
+-function validWorkspace(w){return record(w)&&Array.isArray(w.saved)&&w.saved.every(x=>typeof x==='string')&&record(w.states)&&Object.values(w.states).every(x=>statusValues.includes(x))&&record(w.savedDetails)&&Object.entries(w.savedDetails).every(([id,j])=>C.normalizeJob(j)&&j.id===id)}
+-let saved=[],states={},savedDetails={};
+-function applyWorkspace(w){saved=[...w.saved];states={...w.states};savedDetails=Object.fromEntries(Object.entries(w.savedDetails).map(([id,j])=>[id,C.normalizeJob(j)]))}
++function validWorkspace(w){
++ const fields=['saved','states','savedDetails','importedApplicationRecords','importedNextActions'];
++ return record(w)&&Object.keys(w).every(k=>fields.includes(k))&&Array.isArray(w.saved)&&w.saved.every(Backup.id)&&record(w.states)&&Object.keys(w.states).every(Backup.id)&&Object.values(w.states).every(x=>statusValues.includes(x))&&record(w.savedDetails)&&Object.entries(w.savedDetails).every(([id,j])=>Backup.id(id)&&C.normalizeJob(j)&&j.id===id&&['applyUrl','sourceUrl'].every(k=>j[k]==null||C.safeJobURL(j[k])!=='#'))&&Backup.validImported(w);
++}
++let saved=[],states={},savedDetails={},importedApplicationRecords={},importedNextActions={};
++function applyWorkspace(w){importedApplicationRecords={...(w.importedApplicationRecords||{})};importedNextActions={...(w.importedNextActions||{})};saved=[...w.saved];states={...w.states};savedDetails=Object.fromEntries(Object.entries(w.savedDetails).map(([id,j])=>[id,C.normalizeJob(j)]))}
+ const workspace=read('workspace',null);
+ if(workspace!==null){if(validWorkspace(workspace))applyWorkspace(workspace);else unreadable('workspace')}
+ else{const legacy={saved:read('saved',[]),states:read('states',{}),savedDetails:read('saved-details',{})};if(validWorkspace(legacy))applyWorkspace(legacy);else unreadable('workspace');if(['saved','states','saved-details'].some(k=>blockedKeys.has(k)))unreadable('workspace')}
+ const profileFields=['years','degree','skills','achievements','preferredCity','minimumMonthlySAR','unknownSalary','preferencesVersion','targetCountry','targetCity','roleKeywords','planningCurrency','planningPayPeriod','displayTimeZone'];
+ const profileValue=(p,k)=>{const oldDefaults={targetCountry:'SA',targetCity:p.preferredCity==='riyadh'?'Riyadh':'',roleKeywords:'',planningCurrency:'SAR',planningPayPeriod:'monthly',displayTimeZone:'Asia/Riyadh'};return String(p[k]??oldDefaults[k]??(k==='unknownSalary'?'show':''))};
+-const validProfile=p=>record(p)&&!P.preferenceError(p)&&!Object.entries(p).some(([k,v])=>k==='years'?v!==''&&(!Number.isFinite(Number(v))||Number(v)<0||Number(v)>60):k==='preferredCity'?!['','riyadh'].includes(v):k==='unknownSalary'?!['show','hide'].includes(v):k==='minimumMonthlySAR'?typeof v!=='string'||C.canonicalMinimumSAR(v)!==v:typeof v!=='string');
++const validProfile=p=>record(p)&&Object.keys(p).every(k=>profileFields.includes(k))&&!P.preferenceError(p)&&!Object.entries(p).some(([k,v])=>k==='years'?v!==''&&(!Number.isFinite(Number(v))||Number(v)<0||Number(v)>60):k==='preferredCity'?!['','riyadh'].includes(v):k==='unknownSalary'?!['show','hide'].includes(v):k==='minimumMonthlySAR'?typeof v!=='string'||C.canonicalMinimumSAR(v)!==v:typeof v!=='string');
++globalThis.CareerPreferenceValidation=p=>!P.preferenceError(p);
+ const defaultProfile=P.freshProfile();
+ let profile=read('profile',defaultProfile);if(!validProfile(profile)){unreadable('profile');profile={}}
+ let profileDraft={...profile},profileBase={...profile};
+@@ -92,7 +96,7 @@
+  }
+  workspaceBase=JSON.stringify(latest);if(latest!==null)applyWorkspace(latest);return true;
+ }
+-function persistWorkspace(){const value={saved,states,savedDetails};if(!persist('workspace',value))return false;workspaceBase=JSON.stringify(value);return true}
++function persistWorkspace(){const value={saved,states,savedDetails,...(Object.keys(importedApplicationRecords).length?{importedApplicationRecords}:{}),...(Object.keys(importedNextActions).length?{importedNextActions}:{})};if(!persist('workspace',value))return false;workspaceBase=JSON.stringify(value);return true}
+ function storedAction(key,change){return navigator.locks?.request?navigator.locks.request('ahmad-career-'+key,change).catch(()=>toast('This change could not be saved. Please try again.')):change()}
+ function workspaceAction(change){return storedAction('workspace',()=>{if(syncWorkspace())return change()})}
+ function saveProfile(next){const submittedDraft={...next};profileDraft={...next};return storedAction('profile',()=>{
+@@ -118,7 +122,8 @@
+ function unrefreshed(job,snapshot=live){return Boolean(snapshot?.sources.some(s=>s.name===job.company&&C.sourceIncomplete(s))&&C.parsedDate(job.lastCheckedAt)?.time<C.parsedDate(snapshot.checkedAt)?.time)}
+ function coverageMessage(snapshot){const incomplete=(snapshot?.sources||[]).filter(C.sourceIncomplete);let message=incomplete.length?incomplete.map(s=>s.name+': '+(s.error||'Some checks failed')).join(' · ')+'. Results may be incomplete.':'';if(snapshot?.jobs.some(j=>unrefreshed(j,snapshot)))message+=' Previous results for unavailable employers are retained and marked Not refreshed.';if(snapshot?.invalidJobs)message+=(message?' ':'')+snapshot.invalidJobs+' malformed listings were excluded.';return message}
+ let view='shortlist',query='',filter='all',sort='title',busy=false,liveError='',coverageWarning=coverageMessage(live),failedSources=[],nativeTimer;
+-const views={shortlist:'Your shortlist',live:'Live search',saved:'Saved opportunities',profile:'Your profile',salary:'Salary & negotiation',plan:'Application plan'};
++const views={shortlist:'Your shortlist',live:'Live search',saved:'Saved opportunities',profile:'Your profile',salary:'Salary & negotiation',plan:'Application plan',applications:'Application records',backups:'Backup & restore'};
++let applicationFilter='all';
+ if(read('dark',false))document.body.classList.add('dark');
+ function syncTheme(){ $('[data-action="theme"]').setAttribute('aria-pressed',String(document.body.classList.contains('dark'))) }
+ syncTheme();
+@@ -138,7 +143,15 @@
+ function retainKnownJobs(acceptedLive=live?.jobs||[]){let updated=false;for(const job of C.mergeJobs(D.jobs,[...Object.values(savedDetails),...legacySavedJobs()],acceptedLive)){if(!(savedDetails[job.id]||saved.includes(job.id)||states[job.id]&&states[job.id]!=='Not started'||D.jobs.some(j=>j.id===job.id)&&acceptedLive.some(j=>j.id===job.id)))continue;if(JSON.stringify(savedDetails[job.id])!==JSON.stringify(job)){savedDetails[job.id]=job;updated=true}}if(updated)persistWorkspace()}
+ function jobById(id){return allJobs().find(j=>j.id===id)||(dialogJob?.id===id?dialogJob:undefined)}
+ const recordDrafts=Object.create(null),recordKey=id=>'application-record-v1:'+encodeURIComponent(id);
+-function readApplicationRecord(id){const key=recordKey(id),value=read(key,null);if(value!==null&&!C.validApplicationRecord(value,id)){unreadable(key);return null}return value}
++let importedCacheRaw,importedCacheValue;
++function readImportedRecord(map,id){
++ try {
++  const raw=localStorage.getItem('ahmad-workspace');if(raw===null){importedCacheRaw=null;importedCacheValue=null;return null}
++  if(raw!==importedCacheRaw){const latest=JSON.parse(raw);if(!validWorkspace(latest)){unreadable('workspace');return null}importedCacheValue=latest;importedCacheRaw=raw}
++  return importedCacheValue?.[map]?.[id]??null;
++ } catch {unreadable('workspace');return null}
++}
++function readApplicationRecord(id){const key=recordKey(id);try{const raw=localStorage.getItem('ahmad-'+key);const value=raw===null?readImportedRecord('importedApplicationRecords',id):JSON.parse(raw);if(raw===null&&value===null)return null;if(C.validApplicationRecord(value,id))return value}catch{}unreadable(key);return null}
+ function recordDirty(d){return d&&(d.appliedAt!==(d.base?.appliedAt||'')||d.receiptNote!==(d.base?.receiptNote||''))}
+ function editApplicationRecord(id){
+  const prior=recordDrafts[id];if(recordDirty(prior))return prior;
+@@ -156,25 +169,70 @@
+   if(!retained){toast('The opportunity could not be saved. Your application record draft is preserved.');return false}
+   if(!persist(recordKey(id),value))return false;
+   // Keep edits made while waiting for the lock as an unsaved draft.
+-  recordDrafts[id].base=value;updateRecordEditor(id);if(view==='plan')render();toast('Application date and note saved on this device. Status is unchanged.');return true;
++  recordDrafts[id].base=value;updateRecordEditor(id);updateDialogApplication();if(['plan','applications','compare'].includes(view))render();toast('Application date and note saved on this device. Status is unchanged.');return true;
+  })}catch{toast('This record could not be saved. Your draft is preserved.');return false}
+ }
++// Private planning records are independent of application receipts and stages.
++const actionDrafts=Object.create(null),actionKey=id=>'next-action-v1:'+encodeURIComponent(id);
++function readNextAction(id){const key=actionKey(id);try{const raw=localStorage.getItem('ahmad-'+key);const value=raw===null?readImportedRecord('importedNextActions',id):JSON.parse(raw);if(raw===null&&value===null)return null;if(C.validNextAction(value,id))return value}catch{}unreadable(key);return null}
++function actionDirty(d){return Boolean(d&&(d.dueOn!==(d.base?.dueOn||'')||d.actionNote!==(d.base?.actionNote||'')||d.completed!==(d.base?.completed||false)))}
++function editNextAction(id){const prior=actionDrafts[id];if(actionDirty(prior)||prior?.saving)return prior;const base=readNextAction(id);return actionDrafts[id]={job:jobById(id),base,dueOn:base?.dueOn||'',actionNote:base?.actionNote||'',completed:base?.completed||false}}
++function meaningfulAction(id){const value=readNextAction(id);return Boolean(value?.actionNote.trim()||blockedKeys.has(actionKey(id)))}
++function actionEditLabel(d){return (actionDirty(d)?'Unsaved next action. ':'')+(d.base?'Last saved: '+d.base.updatedAt:'No next action saved.')}
++function updateActionEditor(id){const form=$('#next-action-form');if(form?.dataset.record!==id)return;$('#action-edited').textContent=actionEditLabel(actionDrafts[id])}
++function captureActionInput(target){const form=target.closest?.('#next-action-form');if(form&&['dueOn','actionNote'].includes(target.name)){const d=actionDrafts[form.dataset.record];if(d){d[target.name]=target.value;updateActionEditor(form.dataset.record)}}}
++async function saveNextAction(id,completed){
++ const d=actionDrafts[id];if(!d||d.saving)return false;
++ // Completion applies only to the saved record, never silently saves a draft.
++ if(typeof completed==='boolean'&&(actionDirty(d)||!d.base?.actionNote.trim())){toast('Save or reload your next action before marking it done or reopening it.');return false}
++ const value={schema:1,jobId:id,dueOn:d.dueOn,actionNote:d.actionNote,completed:typeof completed==='boolean'?completed:d.completed,updatedAt:new Date().toISOString()};
++ if(!value.actionNote.trim()&&!value.dueOn)value.completed=false;
++ if(!C.validNextAction(value,id)){toast('Enter a next action of at most 500 characters and an optional real date. A date needs an action note.');return false}
++ if(!navigator.locks?.request){toast('Safe record saving is unavailable in this browser. Your draft is kept; export it before closing.');return false}
++ d.saving=true;
++ try{return await navigator.locks.request('ahmad-career-'+actionKey(id),async()=>{
++  const latest=readNextAction(id);if(blockedKeys.has(actionKey(id))){toast(storageNotice);return false}
++  if(JSON.stringify(latest)!==JSON.stringify(d.base)){toast('Another tab changed this next action. Your draft is preserved. Export it before choosing Reload saved next action.');return false}
++  const retained=await workspaceAction(()=>{const job=jobById(id)||d.job;if(blockedKeys.has('workspace')||!job)return false;savedDetails[id]=job;return persistWorkspace()});
++  if(!retained){toast('The opportunity could not be retained. Your next action draft is preserved.');return false}
++  if(!persist(actionKey(id),value))return false;
++  d.base=value;d.completed=value.completed;updateActionEditor(id);updateActionCompletion(id);if(['plan','applications','compare'].includes(view))render();toast('Next action saved privately on this device. No notification or message is sent.');return true;
++ })}catch{toast('The next action could not be saved. Your draft is preserved.');return false}finally{d.saving=false}
++}
++function actionEditor(j){const d=editNextAction(j.id);return `<form id="next-action-form" data-record="${esc(j.id)}"><h3>Your next action</h3><p class="notice">A private, self-entered task on this device. No notifications, background monitoring or messages. Planning does not mean you have applied. Leave both fields blank to clear. Avoid passwords or confidential details.</p><label class="field">Next action<textarea id="action-note" name="actionNote" aria-describedby="action-limit">${esc(d.actionNote)}</textarea><small id="action-limit">Up to 500 Unicode characters. Included in tracking exports, never preparation drafts.</small></label><label class="field">Optional due date (Riyadh)<input id="action-date" name="dueOn" type="date" value="${esc(d.dueOn)}"></label><p id="action-edited" class="notice">${esc(actionEditLabel(d))}</p><div class="dialog-buttons"><button class="secondary" type="submit">Save next action</button><button class="secondary" type="button" data-action="reload-action" data-record="${esc(j.id)}">Reload saved next action</button><button id="action-completion" class="secondary" type="button" data-action="complete-action" data-record="${esc(j.id)}" ${d.base?.actionNote.trim()?'':'disabled'}>${d.base?.completed?'Reopen saved action':'Mark saved action done'}</button></div></form>`}
++function updateActionCompletion(id){const b=$('#action-completion');if(b?.dataset.record!==id)return;const r=actionDrafts[id]?.base;b.disabled=!r?.actionNote.trim();b.textContent=r?.completed?'Reopen saved action':'Mark saved action done'}
++function actionText(id){const r=readNextAction(id),d=actionDrafts[id];return `\nPRIVATE NEXT ACTION (SELF-ENTERED)\nSaved action: ${r?.actionNote||'Not recorded'}\nSaved due date (Riyadh): ${r?.dueOn||'No date'}\nSaved completion: ${r?.completed?'Done':'Not done'}${r?'\nAction last saved: '+r.updatedAt:''}${blockedKeys.has(actionKey(id))?'\nNext action is unreadable; original bytes preserved.':''}${actionDirty(d)?'\nUNSAVED next action draft\nAction: '+(d.actionNote||'[blank]')+'\nDue date (Riyadh): '+(d.dueOn||'No date')+'\nCompletion: '+(d.completed?'Done':'Not done'):''}`}
++function nextActionsSection(){
++ const all=allJobs().map(job=>({job,value:readNextAction(job.id)})),entries=all.filter(x=>x.value?.actionNote.trim()),unreadableActions=all.filter(x=>blockedKeys.has(actionKey(x.job.id)));
++ const groups=[['overdue','Overdue'],['today','Today'],['next7days','Next 7 days'],['upcoming','Upcoming'],['undated','No due date'],['completed','Completed']];
++ return `<section class="card next-actions"><h2>Your next actions</h2><p>Private tasks, grouped by Riyadh calendar day. No notifications or messages. Completed tasks stay visible.</p>${unreadableActions.map(({job})=>`<p class="notice"><button class="link" data-job="${esc(job.id)}">${esc(job.title)} · ${esc(job.company)}</button>: saved next action is unreadable. Original bytes are preserved; it cannot be overwritten.</p>`).join('')}${groups.map(([key,label])=>{const rows=entries.filter(x=>C.nextActionBucket(x.value)===key).sort((a,b)=>a.value.dueOn.localeCompare(b.value.dueOn)||a.job.title.localeCompare(b.job.title));return rows.length?`<h3>${label} <span class="muted">(${rows.length})</span></h3>${rows.map(({job,value})=>`<div class="next-action-row"><button class="link" data-job="${esc(job.id)}">${esc(job.title)} · ${esc(job.company)}</button><p class="action-note">${esc(value.actionNote)}</p><p class="notice">${value.dueOn?'Due '+esc(value.dueOn)+' · Riyadh':'No due date'} · ${value.completed?'Completed':'Unfinished'}${states[job.id]==='Closed / not pursuing'?' · Closed / not pursuing'+(!value.completed?' — reminder still unfinished':''):''}${job.kind==='archived'?' · Archived role':''}</p></div>`).join('')}`:''}).join('')||'<p>No next actions yet. Open a role to add a private task.</p>'}</section>`;
++}
++function closeRoleDialog(){const d=dialogJob&&actionDrafts[dialogJob.id];if(d?.saving){toast('Please wait for the next action save to finish.');return false}if(actionDirty(d)&&!confirm('Close with an unsaved next action? Your draft stays in this session; export or save it before leaving the app.'))return false;$('#job-dialog').close();return true}
+ function meaningfulRecord(id){const value=readApplicationRecord(id);return Boolean(value&&(value.appliedAt||value.receiptNote.trim()))}
+-function retainedJobs(includeDrafts=false){const current=allJobs(),extras=includeDrafts?Object.values(recordDrafts).filter(d=>recordDirty(d)&&d.job&&!current.some(j=>j.id===d.job.id)).map(d=>d.job):[];return [...current,...extras].filter(j=>saved.includes(j.id)||states[j.id]&&states[j.id]!=='Not started'||meaningfulRecord(j.id)||includeDrafts&&recordDirty(recordDrafts[j.id]))}
++function retainedJobs(includeDrafts=false){const current=allJobs(),drafts=[...Object.values(recordDrafts).filter(recordDirty),...Object.values(actionDrafts).filter(actionDirty)],extras=includeDrafts?drafts.filter(d=>d.job&&!current.some(j=>j.id===d.job.id)).map(d=>d.job):[];return C.dedupe([...current,...extras]).filter(j=>saved.includes(j.id)||states[j.id]&&states[j.id]!=='Not started'||meaningfulRecord(j.id)||meaningfulAction(j.id)||includeDrafts&&(recordDirty(recordDrafts[j.id])||actionDirty(actionDrafts[j.id])))}
+ function recordEditor(j){const d=editApplicationRecord(j.id);return `<form id="application-record-form" data-record="${esc(j.id)}"><h3>Application date and receipt note</h3><p class="notice">Optional, self-entered tracking details. Leave the date blank if unknown. The latest allowed date uses the Riyadh day; your display time zone does not shift recorded dates. Notes stay on this device and appear in downloaded tracking notes, never in preparation drafts. Avoid passwords, codes or confidential employer data.</p><label class="field">Application date, if known<input id="application-date" name="appliedAt" type="date" max="${C.saudiDay(new Date())}" value="${esc(d.appliedAt)}"></label><label class="field">Receipt / record note<textarea id="application-receipt" name="receiptNote" aria-describedby="record-limit">${esc(d.receiptNote)}</textarea><small id="record-limit">Up to 2,000 characters. Plain text only; no attachments.</small></label><p id="record-edited" class="notice">${esc(recordEditLabel(d))}</p><div class="dialog-buttons"><button class="secondary" type="submit">Save application record</button><button class="secondary" type="button" data-action="reload-record" data-record="${esc(j.id)}">Reload saved record</button></div></form>`}
+ function recordEditLabel(d){return (recordDirty(d)?'Unsaved draft. ':'')+(d.base?'Record last edited: '+d.base.updatedAt+' (not the application time).':'Application date not recorded unless you enter it.');}
+ function updateRecordEditor(id){const form=$('#application-record-form');if(!form||form.dataset.record!==id)return;const d=recordDrafts[id];$('#record-edited').textContent=recordEditLabel(d)}
+ function captureRecordInput(target){const form=target.closest?.('#application-record-form');if(form&&['appliedAt','receiptNote'].includes(target.name)){const d=recordDrafts[form.dataset.record];if(d){d[target.name]=target.value;updateRecordEditor(form.dataset.record)}}}
+ function recordText(id){const r=readApplicationRecord(id),d=recordDrafts[id];return `\nApplication date (self-entered): ${r?.appliedAt||'Not recorded'}\nReceipt / record note (self-entered): ${r?.receiptNote||'Not recorded'}${r?'\nRecord last edited (not application time): '+r.updatedAt:''}${blockedKeys.has(recordKey(id))?'\nStored metadata is unreadable; original bytes preserved.':''}${recordDirty(d)?'\nUNSAVED application record draft\nApplication date: '+(d.appliedAt||'Not recorded')+'\nReceipt / record note: '+d.receiptNote:''}`}
+-function attentionSection(){const jobs=retainedJobs(),records=Object.fromEntries(jobs.map(j=>[j.id,readApplicationRecord(j.id)])),tasks=C.attentionFor(jobs,states,records);return `<section class="card" style="margin-bottom:24px"><h2>Needs attention</h2><p>Prompts from your saved records. Recheck employer information; these are not eligibility decisions or automatic applications.</p>${tasks.map(t=>{const j=jobs.find(j=>j.id===t.jobId),label=t.kind==='requirements'?'Review the role requirements':t.kind==='applied-date'?'Application date not recorded — add it if known':t.past?'Past listed deadline — verify employer status':'Recheck listed deadline';return `<div class="source-row"><div><button class="link" data-job="${esc(j.id)}">${esc(label)} — ${esc(j.title)}, ${esc(j.company)}</button><p class="notice">${t.kind==='requirements'?esc((j.gaps||['Read the complete employer requirements and confirm your evidence.']).join(' · ')):t.kind==='deadline'?'Listed deadline: '+esc(deadline(j.closes)):'Optional record detail; an unknown date is allowed.'}<br>Research checked: ${esc(j.researchCheckedAt||'Not researched')} · Employer checked: ${esc(j.lastCheckedAt||'Not recorded')}. Past checks do not establish current availability.</p></div></div>`}).join('')||'<p>No attention prompts from your saved records.</p>'}</section>`}
++function attentionSection(){const jobs=retainedJobs(),records=Object.fromEntries(jobs.map(j=>[j.id,readApplicationRecord(j.id)])),tasks=C.attentionFor(jobs,states,records);return `<section class="card" style="margin-bottom:24px"><h2>Needs attention</h2><p>Prompts from your saved records. Recheck employer information; these are not eligibility decisions or automatic applications.</p>${tasks.map(t=>{const j=jobs.find(j=>j.id===t.jobId),label=t.kind==='confirm-submission'?'Confirm the previous submission before retrying':t.kind==='requirements'?'Review the role requirements':t.kind==='applied-date'?'Application date not recorded — add it if known':t.past?'Past listed deadline — verify employer status':'Recheck listed deadline';return `<div class="source-row"><div><button class="link" data-job="${esc(j.id)}">${esc(label)} — ${esc(j.title)}, ${esc(j.company)}</button><p class="notice">${t.kind==='confirm-submission'?'An uncertain submission is not confirmed. Check your employer account and acknowledgement before retrying.':t.kind==='requirements'?esc((j.gaps||['Read the complete employer requirements and confirm your evidence.']).join(' · ')):t.kind==='deadline'?'Listed deadline: '+esc(deadline(j.closes)):'Optional record detail; an unknown date is allowed.'}<br>Research checked: ${esc(j.researchCheckedAt||'Not researched')} · Employer checked: ${esc(j.lastCheckedAt||'Not recorded')}. Past checks do not establish current availability.</p></div></div>`}).join('')||'<p>No attention prompts from your saved records.</p>'}</section>`}
+ function setMenu(open){$('#sidebar').classList.toggle('open',open);const button=$('[data-action=menu]');button?.setAttribute?.('aria-expanded',String(open));const shade=$('.nav-backdrop');if(shade)shade.hidden=!open;const narrow=globalThis.matchMedia?.('(max-width:760px)').matches;$('.main-shell').inert=Boolean(open&&narrow);if(open&&narrow)$('#sidebar [data-action=close-menu]')?.focus?.();else if(!open)button?.focus?.()}
+ function go(next){if(!views[next])return;view=next;query='';filter='all';sort='title';setMenu(false);render();$('#main').focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'})}
+ function intro(title,subtitle,eyebrow='YOUR CAREER, CONSIDERED'){return `<div class="eyebrow">${esc(eyebrow)}</div><div class="intro"><div><h1>${esc(title)}</h1><p>${subtitle}</p></div></div>`}
++let dayRolloverTimer=null;
++function scheduleDayRollover(){
++ clearTimeout(dayRolloverTimer);dayRolloverTimer=null;
++ if(document.visibilityState==='hidden'||!['plan','applications','compare'].includes(view))return;
++ const now=new Date(),next=Date.parse(C.saudiDay(now)+'T00:00:00+03:00')+86400000;
++ dayRolloverTimer=setTimeout(()=>{dayRolloverTimer=null;if(document.visibilityState!=='hidden'&&['plan','applications','compare'].includes(view))render()},Math.max(1,next-now.getTime()));
++}
++function resumeDayGroups(){if(document.visibilityState!=='hidden'&&['plan','applications','compare'].includes(view))render();else scheduleDayRollover()}
+ function render(){
++ scheduleDayRollover();
+  const active=document.activeElement,insideMain=$('#main').contains?.(active),focusName=insideMain?active?.name:null,focusNodeID=insideMain?active?.id:null,selection=insideMain&&typeof active?.selectionStart==='number'?[active.selectionStart,active.selectionEnd]:null,focusKey=active?.dataset?.save?'save':active?.dataset?.job?'job':null,focusID=focusKey?active.dataset[focusKey]:null;
+  $('#view-name').textContent=views[view];$('#saved-count').textContent=saved.length;$('#top-count').textContent=D.jobs.length;
+  $$('.nav-item').forEach(b=>{b.classList.toggle('active',b.dataset.view===view);if(b.dataset.view===view)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
+- const pages={shortlist:shortlistPage,live:livePage,saved:savedPage,profile:profilePage,salary:salaryPage,plan:planPage};
++ const pages={shortlist:shortlistPage,live:livePage,saved:savedPage,profile:profilePage,salary:salaryPage,plan:planPage,applications:applicationsPage,backups:backupsPage};
+  $('#main').innerHTML=pages[view](); if(['shortlist','live','saved'].includes(view))renderList();
+  updateSearchButtons();if(insideMain&&(focusNodeID||focusName)){const next=focusNodeID?document.getElementById(focusNodeID):$$('[name]').find(x=>x.name===focusName);next?.focus?.({preventScroll:true});if(selection)next?.setSelectionRange?.(...selection)}else if(insideMain&&focusID){const next=$$('[data-'+focusKey+']').find(x=>x.dataset[focusKey]===focusID);(next||$('#main')).focus({preventScroll:true})}
+ }
+@@ -194,16 +252,29 @@
+  if($('#job-list')&&busy&&view==='live'&&!list.length){$('#job-list').innerHTML='<div class="empty"><span class="spinner"></span><h2>Searching employer boards…</h2><p>Checking published roles, Saudi locations and application status.</p></div>';return}if($('#job-list'))$('#job-list').innerHTML=list.length?list.map(row).join(''):`<div class="empty"><h2>${salaryHidden?'Monthly pay is not verified':query||filter!=='all'?'No matching opportunities':view==='saved'?'Make a shortlist of your own.':'No matching openings yet.'}</h2><p>${salaryHidden?'Current listings have no verified comparable monthly pay, and your criteria hide unverified salaries. This does not mean there are no vacancies. Edit your profile to review these leads while confirming your minimum.':query||filter!=='all'?'Try a broader search or choose all opportunities.':view==='saved'?'Tap the heart on any role to keep it here. Saved roles and progress stay on this device.':'These local filters apply only to the six limited Saudi-oriented sources and their supported role families. Adjust your city or role words, or search those sources. Empty results do not establish that no jobs exist elsewhere; errors are shown separately.'}</p>${salaryHidden?'<button class="secondary" data-view="profile">Edit profile</button>':view==='live'?'<button class="primary" data-action="refresh">Search employers</button>':''}</div>`;
+ }
+ function livePage(){return `${intro('Find the next opportunity.','Search bounded samples from six selected Saudi-oriented employer sources for supply-chain, procurement and performance roles. Other countries and role families are not covered.','LIVE EMPLOYER SEARCH')}<button class="primary" data-action="refresh" ${busy||!P.countrySupported(profile)?'disabled':''}>${busy?'<span class="spinner"></span> Searching…':'Find new openings'}</button><p class="notice">Alcon · J&J · Roche · Novartis · GSK · BD. No sign-in or CV is sent to search. Results are new leads, not a new researched shortlist.</p>${liveError?`<div class="callout"><div><strong>Search could not finish</strong><p>${esc(liveError)} Your saved records and previous results are preserved.</p>${failedSources.map(s=>`<p>${esc(s.name)}: ${esc(s.error||'Unavailable')}</p>`).join('')}</div></div>`:''}${coverageWarning?`<div class="callout"><div><strong>Search coverage is incomplete</strong><p>${esc(coverageWarning)}</p></div></div>`:''}${live?`<div class="section-line"><h2>${liveError?'Previous successful search':'Latest search'}</h2><span>${esc(P.displayDate(live.checkedAt,profile,true))}</span></div><details class="disclosure"><summary>${live.sources.filter(s=>s.ok).length} of ${live.sources.length} employers responded · view search coverage</summary>${live.sources.map(s=>`<div class="source-row"><strong>${esc(s.name)}</strong><span class="${s.ok?'':'error'}">${s.ok?`${esc(s.count??0)} matching · ${esc(s.scanned??'—')} scanned${s.limited?' · bounded sample':''}${s.error?' · '+esc(s.error):s.detailErrors?' · '+esc(s.detailErrors)+' details unavailable':''}`:esc(s.error||'Unavailable')}</span></div>`).join('')}<p>Searches a bounded sample of selected boards. Title filtering can miss suitable roles; multiple-location and missing-detail jobs may be excluded. Source failures never mean an employer has no jobs. No coverage of the entire Saudi market or other countries is implied. Unsupported coverage is not evidence that there are no jobs there.</p></details>`:''}${criteriaSummary()}${toolbar()}<div class="section-line"><h2>New leads to review</h2><span id="result-count" role="status" aria-live="polite"></span></div><div class="job-list" id="job-list"></div>`}
+-function savedPage(){return `${intro('The ones worth pursuing.','Your selected opportunities, with application progress in one place.','SAVED OPPORTUNITIES')}<p class="notice">Saved on this device only. Website, iPhone and Mac progress do not sync.</p>${toolbar()}<div class="section-line"><h2>Your shortlist</h2><span id="result-count" role="status" aria-live="polite"></span></div><div class="job-list" id="job-list"></div>`}
++function applicationAdvisory(j){const records=allJobs().filter(x=>meaningfulRecord(x.id)).map(x=>x.id),messages=C.applicationWarnings(j,allJobs(),states,records);return messages.length?`<div class="callout"><div><strong>Check your existing applications</strong>${messages.map(x=>`<p>${esc(x)}</p>`).join('')}</div></div>`:''}
++function applicationLinkLabel(j){return C.isExpired(j.closes)?'Check employer status':states[j.id]&&states[j.id]!=='Not started'||meaningfulRecord(j.id)?'View employer / existing application':'Open official application'}
++function updateDialogApplication(){if(!dialogJob||!$('#job-dialog').open)return;const j=jobById(dialogJob.id)||dialogJob;const advisory=$('#application-advisory'),open=$('#application-open-link');if(advisory)advisory.innerHTML=applicationAdvisory(j);if(open)open.textContent=applicationLinkLabel(j)}
++function applicationJobs(){return retainedJobs().filter(j=>states[j.id]&&states[j.id]!=='Not started'||meaningfulRecord(j.id)||meaningfulAction(j.id))}
++function applicationsPage(){
++ const jobs=applicationJobs(),search=query.trim().toLowerCase(),visible=jobs.filter(j=>(applicationFilter==='all'||(states[j.id]||'Not started')===applicationFilter)&&(!search||[j.title,j.company].join(' ').toLowerCase().includes(search)));
++ const groups=statusValues.filter(status=>visible.some(j=>(states[j.id]||'Not started')===status));
++ return `${intro('Keep every application clear.','Separate preparation, uncertain submissions and confirmed outcomes. Updating a stage only changes your local record.','APPLICATIONS')}${nextActionsSection()}<div class="metric-grid"><div><strong>${jobs.length}</strong><span>Tracked roles</span></div><div><strong>${jobs.filter(j=>states[j.id]==='Submission uncertain').length}</strong><span>Need confirmation</span></div><div><strong>${jobs.filter(j=>['Applied','Interviewing','Offer received'].includes(states[j.id])).length}</strong><span>Marked submitted or later</span></div></div><div class="callout"><div><strong>A local stage is not a submission receipt.</strong><p>Use Submission uncertain when a form may have been sent but confirmation is missing. Verify the employer account or acknowledgement before retrying. No messages or applications are sent here.</p></div></div><div class="toolbar"><label class="searchbox"><span aria-hidden="true">⌕</span><input id="application-search" type="search" placeholder="Search tracked roles" aria-label="Search applications" value="${esc(query)}"></label><select id="application-filter" aria-label="Application stage"><option value="all">All stages</option>${statusValues.map(status=>`<option value="${esc(status)}" ${status===applicationFilter?'selected':''}>${status==='Not started'?'Record only':esc(status)}</option>`).join('')}</select><button class="secondary" data-action="export">Review tracking notes</button></div>${visible.length?groups.map(status=>{const rows=visible.filter(j=>(states[j.id]||'Not started')===status);return `<section class="application-group"><div class="section-line"><h2>${status==='Not started'?'Record only':esc(status)}</h2><span>${rows.length} role${rows.length===1?'':'s'}</span></div><div class="job-list">${rows.map(row).join('')}</div></section>`}).join(''):'<div class="empty"><h2>No application records match.</h2><p>Open a role and set its stage or save a receipt note. Existing records are never deleted by these filters.</p><button class="secondary" data-view="live">Review discovered roles</button></div>'}`;
++}
++function evidenceSection(j){
++ const notes=j.requirementNotes||[],level=j.experienceLevel;
++ return `<section class="evidence-panel"><h3>Employer evidence to review</h3>${level?`<p><strong>Employer experience label:</strong> ${esc(level)}. A label does not establish your eligibility.</p>`:''}<p><strong>Employment type:</strong> ${esc(j.employmentType||'Not stated')} · <strong>Arrangement:</strong> ${esc(j.mode||'Not stated')}</p>${notes.length?`<ul>${notes.map(n=>`<li>${esc(n)}</li>`).join('')}</ul><p class="notice">Selected employer excerpts, not a complete requirements assessment. Required versus preferred wording and equivalent-experience alternatives still need your review.</p>`:'<p class="notice">Detailed requirements were not captured from this public feed. Read the official description before deciding to apply.</p>'}<p class="notice">Personal projects do not count automatically as professional employment. No degree, student status, work authorization or paid status is assumed.</p>${link(j.sourceUrl||j.url,'Read the full employer description')}</section>`;
++}
++function savedPage(){return `${intro('The ones worth pursuing.','Your selected opportunities, with application progress in one place.','SAVED OPPORTUNITIES')}<p class="notice">Saved on this device only. Website, iPhone and Mac progress do not sync.</p><div class="dialog-buttons"><button class="secondary" data-view="applications">Review application records</button><button class="secondary" data-view="backups">Backup &amp; restore</button></div>${toolbar()}<div class="section-line"><h2>Your shortlist</h2><span id="result-count" role="status" aria-live="polite"></span></div><div class="job-list" id="job-list"></div>`}
+ function profilePage(){const p=P.preferences(profileDraft);return `${intro('Start with what is true.','No biography or qualifications are assumed. Every field is optional.','YOUR PROFILE')}<section class="card" style="margin-top:20px"><h2>Add your own details</h2><p>These stay in this browser or app on this device. Your professional details support application notes and experience warnings. Preferences filter only the available rows; no personal preferences are sent to employers or the search service.</p><form id="profile-form"><fieldset class="criteria-fields"><legend>Country, city and role preferences</legend><p>Live search covers bounded samples from six selected Saudi-oriented employer sources for supply-chain, procurement and performance roles. Choosing another country or role does not add source coverage. Saved records are never hidden by these preferences.</p><label class="field">Country or region<select name="targetCountry">${countryOptions(p.country)}</select></label><label class="field">City text, if relevant<input name="targetCity" maxlength="100" value="${esc(p.city)}" placeholder="Any city in the selected scope"><small>Filters the location text of returned listings. Confirm the worksite with the employer; locations and spellings may be incomplete.</small></label><label class="field">Role keywords<input name="roleKeywords" maxlength="200" value="${esc(p.role)}" placeholder="Any role in current source coverage"><small>Every space-separated word must appear in a returned role title or subtitle. This local text filter does not establish eligibility or add role families.</small></label></fieldset><fieldset class="criteria-fields"><legend>Planning and display</legend><label class="field">Planning currency<select name="planningCurrency">${currencyOptions(p.currency)}</select><small>Default for your local offer calculator only. Existing SAR salary criteria and source evidence stay SAR. No currency conversion is performed.</small></label><label class="field">Planning amount period<select name="planningPayPeriod">${option('monthly','Monthly fixed amounts',p.period)}${option('annual','Annual fixed amounts',p.period)}</select></label><label class="field">Display time zone<select name="displayTimeZone">${zoneOptions(profileValue(profileDraft,'displayTimeZone'))}</select><small>Applies to timestamps with an explicit offset. Published date-only deadlines keep their source date. Existing application-date validation still uses the Riyadh day; dates are never shifted.</small></label></fieldset><fieldset class="criteria-fields"><legend>Salary filter for current Saudi sources</legend><label class="field">Minimum monthly pay, SAR<input name="minimumMonthlySAR" type="text" inputmode="decimal" maxlength="32" placeholder="No minimum set" value="${esc(profileDraft.minimumMonthlySAR??'')}" aria-describedby="minimum-pay-help"><small id="minimum-pay-help">Whole SAR from 0 to 1,000,000; blank or zero means no minimum. This existing filter stays monthly SAR regardless of planning currency. Confirm basic salary versus fixed package; current listings have no verified comparable pay.</small></label><label class="field">Listings with unverified pay<select id="unknown-salary" name="unknownSalary" ${Number(C.canonicalMinimumSAR(profileDraft.minimumMonthlySAR??''))>0?'':'disabled'}><option value="show" ${profileDraft.unknownSalary!=='hide'?'selected':''}>Show and confirm my minimum</option><option value="hide" ${profileDraft.unknownSalary==='hide'?'selected':''}>Hide from discovery</option></select></label></fieldset><div class="inline-fields"><label class="field">Relevant years of experience<input name="years" type="number" min="0" max="60" step="0.5" placeholder="Not yet provided" value="${esc(profileDraft.years??'')}"></label><label class="field">Degree and certifications<input name="degree" maxlength="300" placeholder="Your exact qualification" value="${esc(profileDraft.degree||'')}"></label></div><label class="field">Tools and responsibilities<textarea name="skills" maxlength="3000" placeholder="Your own experience">${esc(profileDraft.skills||'')}</textarea></label><label class="field">Achievements you can substantiate<textarea name="achievements" maxlength="5000" placeholder="What changed, over what period, and your contribution. Avoid confidential employer data.">${esc(profileDraft.achievements||'')}</textarea></label><p class="notice">Country, city, role, planning and display preferences are excluded from exported application notes and search requests.</p><button class="primary" type="submit">Save on this device</button></form></section>`}
+ function salaryPage(){return `${intro('Negotiate the whole package.','Salary was not disclosed in the researched listings when checked. Compare scope and a written offer before deciding that a role pays more.','SALARY & NEGOTIATION')}<div class="callout"><span class="symbol">▥</span><div><strong>Salary potential is not an offer.</strong><p>The figures below are historical Saudi market benchmarks, not job-specific estimates or guaranteed pay. The ${link('https://www.hays.ae/salary-guide/saudi-arabia-salary-guide','Hays 2026 guide')} exists; its detailed tables were not available without a contact form.</p></div></div><div class="grid-two"><section class="card"><div class="card-label">HISTORICAL 2025 · SUPPLY CHAIN MANAGER</div><div class="salary-value">SAR 30,000–45,000</div><p>Total fixed monthly package.<br>Hays data as of Q4 2024.</p></section><section class="card"><div class="card-label">HISTORICAL 2025 · PROCUREMENT MANAGER</div><div class="salary-value">SAR 30,000–50,000</div><p>Total fixed monthly package.<br>Hays data as of Q4 2024.</p></section></div><p class="notice">${link(D.benchmarks[0].url,'Hays Saudi Arabia Salary Guide 2025, p.38')}. Broad market, not healthcare-specific. Fixed allowances are included; these are not basic-salary ranges. Director ranges are not a target unless your leadership experience supports that level.</p><details class="disclosure"><summary>Cross-check with another salary guide</summary><p>${link(D.benchmarks[1].url,'The Professionals Salary Guide 2025')} reports Supply & Demand Manager at SAR 30,220 / 42,866 / 53,710 monthly for the 25th percentile / median / 75th percentile (p.49). Methodology (p.15): basic salary + housing + transportation. Different role definitions and samples mean the guides are context, not interchangeable quotes.</p></details><section class="card" style="margin-top:24px"><h2>Compare your entered package</h2><p>Choose the currency and period for your own amounts. Changing either clears the calculator, so amounts are never silently relabeled. No exchange rates, taxes or deductions are applied; historical Saudi evidence above stays SAR.</p><form id="package-form"><div class="inline-fields"><label class="field">Currency<select name="currency">${currencyOptions(P.preferences(profile).currency)}</select></label><label class="field">Fixed amount period<select name="period">${option('monthly','Monthly',P.preferences(profile).period)}${option('annual','Annual',P.preferences(profile).period)}</select></label></div><div class="inline-fields"><label class="field">Basic pay for chosen period<input name="base" type="text" inputmode="decimal" maxlength="32" value=""></label><label class="field">Fixed allowances for chosen period<input name="allowances" type="text" inputmode="decimal" maxlength="32" value=""></label></div><label class="field">Target annual bonus (not guaranteed)<input name="bonus" type="text" inputmode="decimal" maxlength="32" value=""></label><p class="notice">Blank amounts count as zero. Up to two decimal places; use a comma to group thousands and a dot for decimals. Arabic digits and separators are accepted. Limits: 1,000,000 per fixed component and 10,000,000 for annual bonus, in the selected currency. Values with more precision are rejected rather than rounded.</p><div class="highlight-note" id="package-result" role="status" aria-live="polite" aria-atomic="true"><p>Choose a currency and enter your own amounts to calculate. These temporary entries are not saved.</p></div></form></section><section class="card" style="margin-top:20px"><h2>The conversation to have</h2><ol class="steps"><li><strong>Get the budgeted range early.</strong><span>“What is the approved grade and total fixed monthly package for this position?”</span></li><li><strong>Price the responsibility.</strong><span>Clarify direct reports, procurement authority, spend responsibility, KPI ownership and delivery expectations.</span></li><li><strong>Separate each component.</strong><span>Ask for basic, fixed allowances, target bonus and payout conditions, medical coverage, leave and any relocation support in writing.</span></li><li><strong>Negotiate with evidence.</strong><span>Use verified service, waste, stockout, cost or supplier outcomes. Do not invent your current salary or competing offers.</span></li><li><strong>Compare the full move.</strong><span>Account for commute, city costs, hours, probation, notice period and progression. Obtain the final written terms before making a commitment.</span></li></ol></section>`}
+ const planItems=[['profile','Confirm your professional record','Your work dates, responsibilities, relevant experience and any qualifications you choose to include.'],['evidence','Prepare credible achievement examples','Describe your own actions and outcomes with accurate, shareable information.'],['cv','Prepare your CV materials','For each application, tailor a version using your own experience and qualifications.'],['priority','Review selected role requirements','Before each application, check that role’s experience, location, work eligibility and other requirements.'],['deadline','Check selected deadlines','Before each application, check that role’s listed deadline and current vacancy status directly with the employer.'],['review','Review each application yourself','Verify all fields, uploaded files and claims. Applications are never automatically submitted by this app.']];
+-function planPage(){return `${intro('A thoughtful application beats ten generic ones.','Focus first on evidence, then on a small number of well-matched roles.','YOUR APPLICATION PLAN')}${attentionSection()}<div class="grid-two"><section class="card"><h2>Your preparation checklist</h2><p>Checked items record your preparation on this device. Recheck the requirements, dates and materials for each application.</p>${planItems.map(([id,t,s])=>`<label class="check-row"><input type="checkbox" id="check-${id}" data-check="${id}" ${checklist[id]?'checked':''}><span>${esc(t)}<small>${esc(s)}</small></span></label>`).join('')}</section><section class="card"><div class="card-label">POSITIONING TO TEST</div><h2>Explain your contribution.</h2><p>Choose an example from your own work, study or projects. Explain what you did, the outcome and what evidence supports it. Do not inherit another person’s career history or claim responsibility you did not have.</p><div class="highlight-note"><p>“In [context], I contributed [specific action]. The result was [supported outcome] over [period]. My responsibility was [actual scope].”</p></div><p>Replace every bracket with facts you can substantiate. If you only reported the result, say so.</p><button class="secondary" data-action="export" style="margin-top:18px">Download my application notes</button></section></div><div class="section-line"><h2>Application records</h2><span>Manually maintained</span></div>${retainedJobs().filter(j=>states[j.id]&&states[j.id]!=='Not started'||meaningfulRecord(j.id)).map((j,i)=>row(j,i)).join('')||'<div class="empty"><h2>No applications marked yet.</h2><p>Open a role and update its application status after you complete a step.</p><button class="secondary" data-view="shortlist">Review your opportunities</button></div>'}`}
++function planPage(){return `${intro('A thoughtful application beats ten generic ones.','Focus first on evidence, then on a small number of well-matched roles.','YOUR APPLICATION PLAN')}${nextActionsSection()}${attentionSection()}<div class="grid-two"><section class="card"><h2>Your preparation checklist</h2><p>Checked items record your preparation on this device. Recheck the requirements, dates and materials for each application.</p>${planItems.map(([id,t,s])=>`<label class="check-row"><input type="checkbox" id="check-${id}" data-check="${id}" ${checklist[id]?'checked':''}><span>${esc(t)}<small>${esc(s)}</small></span></label>`).join('')}</section><section class="card"><div class="card-label">POSITIONING TO TEST</div><h2>Explain your contribution.</h2><p>Choose an example from your own work, study or projects. Explain what you did, the outcome and what evidence supports it. Do not inherit another person’s career history or claim responsibility you did not have.</p><div class="highlight-note"><p>“In [context], I contributed [specific action]. The result was [supported outcome] over [period]. My responsibility was [actual scope].”</p></div><p>Replace every bracket with facts you can substantiate. If you only reported the result, say so.</p><button class="secondary" data-action="export" style="margin-top:18px">Download my application notes</button></section></div><div class="section-line"><h2>Application records</h2><span>Manually maintained</span></div>${retainedJobs().filter(j=>states[j.id]&&states[j.id]!=='Not started'||meaningfulRecord(j.id)).map((j,i)=>row(j,i)).join('')||'<div class="empty"><h2>No applications marked yet.</h2><p>Open a role and update its application status after you complete a step.</p><button class="secondary" data-view="shortlist">Review your opportunities</button></div>'}`}
+ let dialogReturn=null,dialogJob=null;
+ function rememberDialogOpener(){if(!$('#job-dialog').open){const e=document.activeElement;dialogReturn={element:e,job:e?.dataset?.job,save:e?.dataset?.save}}}
+ const dialogNotice=()=>`<p id="dialog-notice" class="dialog-notice" role="status" aria-live="polite" ${storageNotice?'':'hidden'}>${esc(storageNotice)}</p>`;
+ function openJob(id){rememberDialogOpener();const j=jobById(id);if(!j)return;dialogJob=j;const exp=C.isExpired(j.closes);const years=profile.years;const gap=years!==undefined&&years!==''&&j.minYears&&Number(years)<j.minYears;
+- $('#job-dialog').innerHTML=`<div class="dialog-top"><span class="muted" style="font-size:.8rem">${j.rank?'PRIORITY '+String(j.rank).padStart(2,'0'):j.kind==='archived'?'ARCHIVED ROLE':'NEW EMPLOYER LEAD'} · ${esc(j.company)}</span><button class="icon-button" data-action="close" aria-label="Close role details">×</button></div><div class="dialog-body"><span class="tag ${exp?'warn':'good'}">${exp?'Past listed deadline':j.kind==='archived'?'Archived research':j.kind==='live'?'Live search result':'Research '+date(j.researchCheckedAt||D.checkedAt)}</span><h2 id="dialog-title">${esc(j.title)}</h2><p class="muted">${esc(j.company)} · ${esc(j.location)}${j.mode&&j.mode!=='Not stated'?' · '+esc(j.mode):''}<br>${esc(j.subtitle||'')}</p><div class="tags">${criteriaTags(j)}<span class="tag">Posted ${date(j.posted)}</span><span class="tag">${j.closes?'Closes '+deadline(j.closes):'No closing date published'}</span><span class="tag">${j.kind==='archived'?'Archived salary evidence':j.rank?'Salary undisclosed in research':'Salary not checked'}</span></div>${gap?`<div class="callout"><div><strong>Your entered experience is below this requirement.</strong><p>You entered ${esc(years)} relevant years. This listing asks for ${j.minYears}+; review eligibility before applying.</p></div></div>`:''}${unrefreshed(j)?'<p class="notice">Not refreshed in the latest attempt. This previous result is retained because its employer search was unavailable.</p>':''}${j.lastCheckedAt?`<p class="notice">Employer listing last checked ${date(j.lastCheckedAt)}. A past search does not guarantee the vacancy is still open.</p>`:''}${j.kind==='archived'?`<p class="notice">This role and its earlier assessment are preserved from your records. The assessment is historical evidence, not personalized advice for your current profile. Original research date: ${j.researchCheckedAt?date(j.researchCheckedAt):'unavailable'}. Recheck all requirements and availability.</p>`:''}<h3>${j.kind==='archived'?'Preserved earlier assessment':'Listing information to review'}</h3><p>${esc(j.summary)}</p><p class="notice">${esc(j.fit)}. This is not a verified personal fit score. Compare the employer requirements with your own evidence.</p><h3>What to establish first</h3><ul>${(j.gaps||['Read the complete employer requirements and confirm experience, degree, location, work eligibility and seniority.','This lead was found by title and location. It has not received the full research review of the shortlist.']).map(x=>`<li>${esc(x)}</li>`).join('')}</ul><h3>Your application, step by step</h3><ol class="steps">${(j.steps||[['Read the official description','Confirm the position is still open and compare every mandatory requirement with your experience.'],['Tailor your evidence','Select two actual achievements that demonstrate the responsibilities. Do not invent credentials or outcomes.'],['Apply personally','Use the employer’s application route, review the form and attachments, then submit only when you are ready.'],['Keep the receipt','Save the acknowledgement and update the status below.']]).map(([t,s])=>`<li><strong>${esc(t)}</strong><span>${esc(s)}</span></li>`).join('')}</ol><h3>Application status</h3><select class="status-select" data-status="${esc(j.id)}" aria-label="Application status">${['Not started','Preparing','Applied','Interviewing','Offer received','Closed / not pursuing'].map(x=>`<option ${states[j.id]===x?'selected':''}>${x}</option>`).join('')}</select><p class="notice">This is your own tracking record. Changing it does not submit an application or contact anyone.</p>${recordEditor(j)}<div class="dialog-buttons">${link(j.applyUrl||j.url,exp?'Check employer status':states[j.id]&&states[j.id]!=='Not started'?'View employer / existing application':'Open official application','primary')}<button class="secondary" data-save="${esc(j.id)}">${saved.includes(j.id)?'Remove from saved':'Save opportunity'}</button><button class="secondary" data-draft="${esc(j.id)}">Prepare application note</button></div><p class="notice">${link(j.sourceUrl||j.url,'View source and full requirements')} · Recheck salary, deadline and eligibility directly with the employer. Application forms may change.</p></div>`;
++ $('#job-dialog').innerHTML=`<div class="dialog-top"><span class="muted" style="font-size:.8rem">${j.rank?'PRIORITY '+String(j.rank).padStart(2,'0'):j.kind==='archived'?'ARCHIVED ROLE':'NEW EMPLOYER LEAD'} · ${esc(j.company)}</span><button class="icon-button" data-action="close" aria-label="Close role details">×</button></div><div class="dialog-body"><span class="tag ${exp?'warn':'good'}">${exp?'Past listed deadline':j.kind==='archived'?'Archived research':j.kind==='live'?'Live search result':'Research '+date(j.researchCheckedAt||D.checkedAt)}</span><h2 id="dialog-title">${esc(j.title)}</h2><p class="muted">${esc(j.company)} · ${esc(j.location)}${j.mode&&j.mode!=='Not stated'?' · '+esc(j.mode):''}<br>${esc(j.subtitle||'')}</p><div class="tags">${criteriaTags(j)}<span class="tag">Posted ${date(j.posted)}</span><span class="tag">${j.closes?'Closes '+deadline(j.closes):'No closing date published'}</span><span class="tag">${j.kind==='archived'?'Archived salary evidence':j.rank?'Salary undisclosed in research':'Salary not checked'}</span></div>${gap?`<div class="callout"><div><strong>Your entered experience is below this requirement.</strong><p>You entered ${esc(years)} relevant years. This listing asks for ${j.minYears}+; review eligibility before applying.</p></div></div>`:''}${unrefreshed(j)?'<p class="notice">Not refreshed in the latest attempt. This previous result is retained because its employer search was unavailable.</p>':''}${j.lastCheckedAt?`<p class="notice">Employer listing last checked ${date(j.lastCheckedAt)}. A past search does not guarantee the vacancy is still open.</p>`:''}${j.kind==='archived'?`<p class="notice">This role and its earlier assessment are preserved from your records. The assessment is historical evidence, not personalized advice for your current profile. Original research date: ${j.researchCheckedAt?date(j.researchCheckedAt):'unavailable'}. Recheck all requirements and availability.</p>`:''}<h3>${j.kind==='archived'?'Preserved earlier assessment':'Listing information to review'}</h3><p>${esc(j.summary)}</p><p class="notice">${esc(j.fit)}. This is not a verified personal fit score. Compare the employer requirements with your own evidence.</p>${j.requirementNotes?.length||j.employmentType||j.experienceLevel?`<details><summary>Preserved employer evidence</summary>${evidenceSection(j)}</details>`:''}<h3>What to establish first</h3><ul>${(j.gaps||['Read the complete employer requirements and confirm experience, degree, location, work eligibility and seniority.','This lead was found by title and location. It has not received the full research review of the shortlist.']).map(x=>`<li>${esc(x)}</li>`).join('')}</ul><h3>Your application, step by step</h3><ol class="steps">${(j.steps||[['Read the official description','Confirm the position is still open and compare every mandatory requirement with your experience.'],['Tailor your evidence','Select two actual achievements that demonstrate the responsibilities. Do not invent credentials or outcomes.'],['Apply personally','Use the employer’s application route, review the form and attachments, then submit only when you are ready.'],['Keep the receipt','Save the acknowledgement and update the status below.']]).map(([t,s])=>`<li><strong>${esc(t)}</strong><span>${esc(s)}</span></li>`).join('')}</ol><h3>Application status</h3><select class="status-select" data-status="${esc(j.id)}" aria-label="Application status">${statusValues.map(x=>`<option ${states[j.id]===x?'selected':''}>${x}</option>`).join('')}</select><p class="notice">This is your own tracking record. Changing it does not submit an application or contact anyone.</p>${recordEditor(j)}<details${meaningfulAction(j.id)||actionDirty(actionDrafts[j.id])?' open':''}><summary>Your next action</summary>${actionEditor(j)}</details><div id="application-advisory">${applicationAdvisory(j)}</div><div class="dialog-buttons">${link(j.applyUrl||j.url,exp?'Check employer status':states[j.id]&&states[j.id]!=='Not started'?'View employer / existing application':'Open official application','primary')}<button class="secondary" data-save="${esc(j.id)}">${saved.includes(j.id)?'Remove from saved':'Save opportunity'}</button><button class="secondary" data-draft="${esc(j.id)}">Prepare application note</button></div><p class="notice">${link(j.sourceUrl||j.url,'View source and full requirements')} · Recheck salary, deadline and eligibility directly with the employer. Application forms may change.</p></div>`;
+  $('#job-dialog').insertAdjacentHTML?.('beforeend',dialogNotice());if(!$('#job-dialog').open)$('#job-dialog').showModal();
+ }
+ function toggleSaved(id){return workspaceAction(()=>{const j=jobById(id);if(!j)return;if(saved.includes(id))saved=saved.filter(x=>x!==id);else saved.push(id);savedDetails[id]=j;const savedOK=persistWorkspace();render();if($('#job-dialog').open){openJob(id);$('#job-dialog [data-save]')?.focus?.()}if(savedOK)toast(saved.includes(id)?'Saved on this device.':'Removed from saved opportunities.')})}
+@@ -213,8 +284,8 @@
+  if(!valid(latest)){unreadable(key);return current}return latest;
+ }
+ function draft(j){const p=noteValue('profile',profile,validProfile);return `Application preparation note — ${j.title}, ${j.company}\n\nI am interested in this opportunity. I will compare the requirements with my own experience and add only claims I can substantiate.\n\nBefore using this draft, add only verified experience and results that meet these requirements:\n${(j.gaps||['Review the employer requirements.']).map(x=>'• '+x).join('\n')}\n\nMy evidence (self-entered, review for accuracy):\n${p.achievements||'[Add two accurate achievements, their measurement period and your own contribution.]'}\n\nOfficial vacancy: ${j.url}\n\nThis is an unsent preparation draft. Review and rewrite it before using it in an application.`}
+-function exportNotes(){if(!failedKeys.has('workspace'))syncWorkspace();const p=noteValue('profile',profile,validProfile),checks=noteValue('checklist',checklist,validChecklist);const text=`CAREER FINDER — APPLICATION NOTES\nLegacy research reference date: ${D.checkedAt}\nExported: ${new Date().toISOString()}\nLive search scope: selected Saudi employer sources and role families. Saved locally; this app does not submit applications.\n\nPROFILE (SELF-ENTERED)\nRelevant years: ${p.years??'Not provided'}\nQualifications: ${p.degree||'Not provided'}\nTools and scope: ${p.skills||'Not provided'}\nAchievements: ${p.achievements||'Not provided'}\n\n${retainedJobs(true).map(j=>`${j.title} — ${j.company}\n${j.url}\n${j.location}\n${j.kind==='archived'?'Archived research — outside the current shortlist.\n':''}Research checked: ${j.researchCheckedAt||'Not researched'}\nEmployer checked: ${j.lastCheckedAt||'Not recorded'}\nListed deadline: ${j.closes||'Not stated'}\nStatus: ${states[j.id]||'Not started'}${recordText(j.id)}\n${j.summary}\n${(j.gaps||[]).join('\n')}`).join('\n\n')}\n\nPREPARATION\n${planItems.map(([id,t])=>(checks[id]?'[x] ':'[ ] ')+t).join('\n')}\n\nChecked items record your preparation on this device. Recheck the requirements, dates and materials for each application.`;if(window.webkit?.messageHandlers?.careerSearch){showNotes(text,true);return}const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'}));a.download='Career-Finder-application-notes.txt';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+-function showNotes(text,tracking=false){rememberDialogOpener();const dialog=$('#job-dialog');dialog.innerHTML=`<div class="dialog-top"><strong id="dialog-title">Your application notes</strong><button class="icon-button" data-action="close" aria-label="Close notes">×</button></div><div class="dialog-body"><p class="notice">${tracking?'Tracking export includes your self-entered profile, receipt notes and any unsaved record drafts. Review before sharing.':'Unsent preparation draft. Review all claims before using.'}</p><label class="field">Notes<textarea id="note-text" readonly style="min-height:340px">${esc(text)}</textarea></label><button class="primary" data-action="copy-notes">Copy notes</button></div>`;dialog.insertAdjacentHTML?.('beforeend',dialogNotice());if(!dialog.open)dialog.showModal();$('#note-text')?.focus?.()}
++function exportNotes(){if(!failedKeys.has('workspace'))syncWorkspace();const p=noteValue('profile',profile,validProfile),checks=noteValue('checklist',checklist,validChecklist);const text=`CAREER FINDER — APPLICATION NOTES\nLegacy research reference date: ${D.checkedAt}\nExported: ${new Date().toISOString()}\nLive search scope: selected Saudi employer sources and role families. Saved locally; this app does not submit applications.\n\nPROFILE (SELF-ENTERED)\nRelevant years: ${p.years??'Not provided'}\nQualifications: ${p.degree||'Not provided'}\nTools and scope: ${p.skills||'Not provided'}\nAchievements: ${p.achievements||'Not provided'}\n\n${retainedJobs(true).map(j=>`${j.title} — ${j.company}\n${j.url}\n${j.location}\n${j.kind==='archived'?'Archived research — outside the current shortlist.\n':''}Research checked: ${j.researchCheckedAt||'Not researched'}\nEmployer checked: ${j.lastCheckedAt||'Not recorded'}\nListed deadline: ${j.closes||'Not stated'}\nStatus: ${states[j.id]||'Not started'}${recordText(j.id)}${actionText(j.id)}\n${j.summary}\n${(j.gaps||[]).join('\n')}`).join('\n\n')}\n\nPREPARATION\n${planItems.map(([id,t])=>(checks[id]?'[x] ':'[ ] ')+t).join('\n')}\n\nChecked items record your preparation on this device. Recheck the requirements, dates and materials for each application.`;if(window.webkit?.messageHandlers?.careerSearch){showNotes(text,true);return}const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'}));a.download='Career-Finder-application-notes.txt';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
++function showNotes(text,tracking=false){rememberDialogOpener();const dialog=$('#job-dialog');dialog.innerHTML=`<div class="dialog-top"><strong id="dialog-title">Your application notes</strong><button class="icon-button" data-action="close" aria-label="Close notes">×</button></div><div class="dialog-body"><p class="notice">${tracking?'Tracking export includes your self-entered profile, receipt notes, private next actions and any unsaved record drafts. Review before sharing.':'Unsent preparation draft. Review all claims before using.'}</p><label class="field">Notes<textarea id="note-text" readonly style="min-height:340px">${esc(text)}</textarea></label><button class="primary" data-action="copy-notes">Copy notes</button></div>`;dialog.insertAdjacentHTML?.('beforeend',dialogNotice());if(!dialog.open)dialog.showModal();$('#note-text')?.focus?.()}
+ function receiveLive(payload){return storedAction('live',()=>{
+  const latest=C.normalizeLive(read('live',null));if(latest&&(!live||C.parsedDate(latest.checkedAt).time>C.parsedDate(live.checkedAt).time))live=latest;
+  acceptLive(payload);
+@@ -233,18 +304,47 @@
+  try{const response=await fetch('/api/live',{headers:{Accept:'application/json'},signal:AbortSignal.timeout(65000)});if(!response.ok)throw Error('Search service returned '+response.status);receiveLive(await response.json())}catch(e){receiveLive({error:location.protocol==='file:'?'Open this website through its local server, or use the iPhone/Mac app to search live sources.':e.message||'Search is unavailable.'})}
+ }
+ document.addEventListener('click',async e=>{const b=e.target.closest('button,a[data-view]');if(!b)return;if(b.dataset.view){go(b.dataset.view);return}if(b.dataset.job){openJob(b.dataset.job);return}if(b.dataset.save){toggleSaved(b.dataset.save);return}if(b.dataset.draft){const j=jobById(b.dataset.draft);if(j)showNotes(draft(j));return}
+- switch(b.dataset.action){case'refresh':refresh();break;case'menu':setMenu(!$('#sidebar').classList.contains('open'));break;case'close-menu':setMenu(false);break;case'theme':document.body.classList.toggle('dark');syncTheme();persist('dark',document.body.classList.contains('dark'));break;case'close':$('#job-dialog').close();break;case'copy-notes':{const area=$('#note-text');try{if(navigator.clipboard)await navigator.clipboard.writeText(area.value);else{area.select();if(!document.execCommand('copy'))throw Error('copy')}toast('Notes copied. Review before using.')}catch{area.focus();area.select();toast('Select and copy the notes manually.')}break}case'reload-record':{const id=b.dataset.record;if(!recordDirty(recordDrafts[id])||confirm('Discard this unsaved application record draft and load the saved version?')){delete recordDrafts[id];openJob(id)}break}case'export':exportNotes();break}});
++ switch(b.dataset.action){case'refresh':refresh();break;case'menu':setMenu(!$('#sidebar').classList.contains('open'));break;case'close-menu':setMenu(false);break;case'theme':document.body.classList.toggle('dark');syncTheme();persist('dark',document.body.classList.contains('dark'));break;case'close':closeRoleDialog();break;case'copy-notes':{const area=$('#note-text');try{if(navigator.clipboard)await navigator.clipboard.writeText(area.value);else{area.select();if(!document.execCommand('copy'))throw Error('copy')}toast('Notes copied. Review before using.')}catch{area.focus();area.select();toast('Select and copy the notes manually.')}break}case'reload-record':{const id=b.dataset.record;if(!recordDirty(recordDrafts[id])||confirm('Discard this unsaved application record draft and load the saved version?')){delete recordDrafts[id];openJob(id)}break}case'export':exportNotes();break}});
+ function captureProfileInput(target){if(target.closest?.('#profile-form')&&profileFields.includes(target.name)){profileDraft[target.name]=target.value;if(target.name==='minimumMonthlySAR')$('#unknown-salary').disabled=!(Number(C.canonicalMinimumSAR(target.value))>0)}}
+ function updatePackage(form){const f=new FormData(form),currency=String(f.get('currency')||''),period=String(f.get('period')||'');if(!P.currencyCodes.includes(currency)){$('#package-result').textContent='Choose a currency before calculating.';return}const result=P.packageTotals(String(f.get('base')||''),String(f.get('allowances')||''),String(f.get('bonus')||''),period);if(!result){$('#package-result').textContent='Check the amounts and period. Values must be non-negative, within the stated limits and use at most two decimal places; invalid input is not calculated.';return}$('#package-result').innerHTML=`<p>${period==='annual'?'Monthly equivalent (annual ÷ 12)':'Fixed monthly'}: <strong>${esc(amountLabel(result.monthly,currency))}</strong><br>Fixed annual: <strong>${esc(amountLabel(result.annual,currency))}</strong><br>Including target annual bonus: <strong>${esc(amountLabel(result.includingBonus,currency))}</strong></p><p class="notice">Arithmetic from your entries only. Bonus is not guaranteed. Monthly equivalents are displayed to two decimal places.</p>`}
+-document.addEventListener('input',e=>{captureProfileInput(e.target);captureRecordInput(e.target);if(e.target.id==='search'){query=e.target.value;renderList()}if(e.target.closest('#package-form'))updatePackage($('#package-form'))});
++document.addEventListener('input',e=>{captureProfileInput(e.target);captureRecordInput(e.target);if(e.target.id==='search'){query=e.target.value;renderList()}if(e.target.closest?.('#package-form'))updatePackage($('#package-form'))});
+ document.addEventListener('change',e=>{if(e.target.closest?.('#package-form')&&['currency','period'].includes(e.target.name)){for(const field of $$('#package-form input'))field.value='';$('#package-result').textContent='Calculator amounts cleared. Enter amounts in the selected currency and period.';return}captureProfileInput(e.target);captureRecordInput(e.target);if(e.target.id==='filter'){filter=e.target.value;renderList()}if(e.target.id==='sort'){sort=e.target.value;renderList()}if(e.target.dataset.check)return saveChecklist(e.target.dataset.check,e.target.checked);if(e.target.dataset.status){return workspaceAction(()=>{const id=e.target.dataset.status;if(!statusValues.includes(e.target.value))return;const j=jobById(id);if(!j)return;states[id]=e.target.value;savedDetails[id]=j;const stateOK=persistWorkspace();render();if(stateOK)toast('Application status saved on this device.')})}});
+-document.addEventListener('submit',e=>{if(e.target.id==='application-record-form'){e.preventDefault();return saveApplicationRecord(e.target.dataset.record)}if(e.target.id==='package-form'){e.preventDefault();return}if(e.target.id!=='profile-form')return;e.preventDefault();const f=new FormData(e.target);const next={...profileDraft,years:f.get('years')===''?'':Math.max(0,Math.min(60,Number(f.get('years')))),degree:String(f.get('degree')).slice(0,300),skills:String(f.get('skills')).slice(0,3000),achievements:String(f.get('achievements')).slice(0,5000),minimumMonthlySAR:String(f.get('minimumMonthlySAR')||''),unknownSalary:String(f.get('unknownSalary')||profileDraft.unknownSalary||'show'),preferencesVersion:'2',targetCountry:String(f.get('targetCountry')??profileValue(profileDraft,'targetCountry')),targetCity:String(f.get('targetCity')??profileValue(profileDraft,'targetCity')),roleKeywords:String(f.get('roleKeywords')??profileValue(profileDraft,'roleKeywords')),planningCurrency:String(f.get('planningCurrency')??profileValue(profileDraft,'planningCurrency')),planningPayPeriod:String(f.get('planningPayPeriod')??profileValue(profileDraft,'planningPayPeriod')),displayTimeZone:String(f.get('displayTimeZone')??profileValue(profileDraft,'displayTimeZone'))};return saveProfile(next)});
++document.addEventListener('submit',e=>{if(e.target.id==='next-action-form'){e.preventDefault();return saveNextAction(e.target.dataset.record)}if(e.target.id==='application-record-form'){e.preventDefault();return saveApplicationRecord(e.target.dataset.record)}if(e.target.id==='package-form'){e.preventDefault();return}if(e.target.id!=='profile-form')return;e.preventDefault();const f=new FormData(e.target);const next={...profileDraft,years:f.get('years')===''?'':Math.max(0,Math.min(60,Number(f.get('years')))),degree:String(f.get('degree')).slice(0,300),skills:String(f.get('skills')).slice(0,3000),achievements:String(f.get('achievements')).slice(0,5000),minimumMonthlySAR:String(f.get('minimumMonthlySAR')||''),unknownSalary:String(f.get('unknownSalary')||profileDraft.unknownSalary||'show'),preferencesVersion:'2',targetCountry:String(f.get('targetCountry')??profileValue(profileDraft,'targetCountry')),targetCity:String(f.get('targetCity')??profileValue(profileDraft,'targetCity')),roleKeywords:String(f.get('roleKeywords')??profileValue(profileDraft,'roleKeywords')),planningCurrency:String(f.get('planningCurrency')??profileValue(profileDraft,'planningCurrency')),planningPayPeriod:String(f.get('planningPayPeriod')??profileValue(profileDraft,'planningPayPeriod')),displayTimeZone:String(f.get('displayTimeZone')??profileValue(profileDraft,'displayTimeZone'))};return saveProfile(next)});
+ $('#job-dialog').addEventListener('close',()=>{const opener=dialogReturn;const target=opener?.element?.isConnected?opener.element:opener?.job?$$('[data-job]').find(e=>e.dataset.job===opener.job):opener?.save?$$('[data-save]').find(e=>e.dataset.save===opener.save):null;(target?.getClientRects?.().length?target:$('#main')).focus({preventScroll:true});dialogReturn=null;dialogJob=null});
+-$('#job-dialog').addEventListener('click',e=>{if(e.target===$('#job-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close()}});
++$('#job-dialog').addEventListener('click',e=>{if(e.target===$('#job-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeRoleDialog()}});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#sidebar').classList.contains('open'))setMenu(false)});
+ window.addEventListener?.('resize',()=>{if(!globalThis.matchMedia?.('(max-width:760px)').matches)setMenu(false)});
+ window.addEventListener?.('storage',e=>{if(e.key?.startsWith('ahmad-application-record-v1:')){if(dialogJob&&$('#job-dialog').open){const id=dialogJob.id,d=recordDrafts[id];if(d&&!recordDirty(d)){editApplicationRecord(id);const form=$('#application-record-form');if(form?.dataset.record===id){$('#application-date').value=recordDrafts[id].appliedAt;$('#application-receipt').value=recordDrafts[id].receiptNote;updateRecordEditor(id)}}}if(view==='plan'&&!$('#job-dialog').open)render()}if(e.key==='ahmad-workspace'&&!failedKeys.has('workspace')){syncWorkspace();if($('#job-dialog').open&&dialogJob){const button=$('#job-dialog [data-save]'),status=$('#job-dialog [data-status]');if(button)button.textContent=saved.includes(dialogJob.id)?'Remove from saved':'Save opportunity';if(status)status.value=states[dialogJob.id]||'Not started'}if(['saved','plan','shortlist','live'].includes(view)&&!$('#job-dialog').open)render()}});
+ if(document.modelContext?.registerTool){try{document.modelContext.registerTool({name:'search_researched_opportunities',title:'Search current researched opportunities',description:'Read the existing researched shortlist by text. Does not fetch, apply or send data.',inputSchema:{type:'object',properties:{query:{type:'string',maxLength:200}},required:['query'],additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:true},execute(input){if(!input||typeof input.query!=='string'||input.query.length>200||Object.keys(input).some(k=>k!=='query'))throw Error('Provide only a query of at most 200 characters.');const q=input.query.toLowerCase();return D.jobs.filter(j=>[j.title,j.company,j.summary].join(' ').toLowerCase().includes(q)).map(({title,company,location,rank,url,fit,closes,posted,researchCheckedAt})=>({title,company,location,rank,url,fit,closes,posted,researchCheckedAt:researchCheckedAt||D.checkedAt,evidenceNotice:'Dated research; confirm worksite, requirements and current availability with the employer.'}))}})}catch{}}
+-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&view==='plan'&&!$('#job-dialog').open)render()});
++document.addEventListener('visibilitychange',resumeDayGroups);
++window.addEventListener?.('pageshow',resumeDayGroups);
++// Contextual recovery and private tasks reuse the existing saved-role navigation.
++document.addEventListener('input',e=>{
++ if(e.target.id==='backup-input'){backupInput=e.target.value;backupFileSequence++;backupPreview=null;const preview=$('#backup-preview-panel');if(preview)preview.innerHTML='';const notice=$('#backup-notice');if(notice)notice.textContent='Input changed. Review again before restoring.';return}
++ captureActionInput(e.target);if(e.target.id==='application-search'){query=e.target.value;render()}
++});
++document.addEventListener('change',e=>{
++ if(e.target.id==='backup-file')return readBackupFile(e.target.files?.[0]);
++ captureActionInput(e.target);if(e.target.id==='application-filter'){applicationFilter=e.target.value;render()}
++});
++document.addEventListener('click',e=>{
++ const b=e.target.closest?.('[data-action]');if(!b)return;const id=b.dataset.record;
++ switch(b.dataset.action){
++ case'backup-export':return prepareBackup();case'backup-recovery':return prepareRecoveryBackup();case'backup-preview':return previewBackup();case'backup-apply':return applyBackup();
++ case'backup-cancel':backupPreview=null;backupResult('Restore preview cancelled. Nothing was changed.');break;
++ case'backup-copy':return copyBackup();case'backup-download':return saveBackupFile();
++ case'reload-action':if(!actionDrafts[id]?.saving&&(!actionDirty(actionDrafts[id])||confirm('Discard this unsaved next action and reload the saved value?'))){delete actionDrafts[id];openJob(id)}break;
++ case'complete-action':return saveNextAction(id,!actionDrafts[id]?.base?.completed);
++ }
++});
++$('#job-dialog').addEventListener('cancel',e=>{e.preventDefault();closeRoleDialog()});
++window.addEventListener?.('beforeunload',e=>{if(Object.values(actionDrafts).some(d=>actionDirty(d)||d.saving)){e.preventDefault();e.returnValue=''}});
++window.addEventListener?.('storage',e=>{
++ if(e.key?.startsWith('ahmad-next-action-v1:')){
++  if(dialogJob&&$('#job-dialog').open){const id=dialogJob.id,d=actionDrafts[id];if(d&&!actionDirty(d)&&!d.saving){editNextAction(id);const form=$('#next-action-form');if(form?.dataset.record===id){$('#action-date').value=actionDrafts[id].dueOn;$('#action-note').value=actionDrafts[id].actionNote;updateActionEditor(id);updateActionCompletion(id)}}}
++  if(['plan','applications'].includes(view)&&!$('#job-dialog').open)render();
++ }
++ if(e.key==='ahmad-workspace'||e.key?.startsWith('ahmad-application-record-v1:')){updateDialogApplication();if(view==='applications'&&!$('#job-dialog').open)render()}
++});
+ workspaceAction(retainKnownJobs);
+ render();
+--- a/website/web/core.js
++++ b/website/web/core.js
+@@ -28,9 +28,60 @@
+     if(/business[ -]value[ -]partner/i.test(title||''))return 65;
+     return 0;
+   }
++  function plainEmployerText(value){
++    if(typeof value!=='string'||value.length>120000)return '';
++    const entities={amp:'&',lt:'<',gt:'>',quot:'"',apos:"'",nbsp:' '};
++    const decoded=value.replace(/&(#x[0-9a-f]+|#[0-9]+|amp|lt|gt|quot|apos|nbsp);/gi,(_,v)=>{if(v[0]!=='#')return entities[v.toLowerCase()]||' ';const n=v[1].toLowerCase()==='x'?parseInt(v.slice(2),16):Number(v.slice(1));return Number.isInteger(n)&&n>=32&&n<=0x10ffff&&!(n>=0xd800&&n<=0xdfff)?String.fromCodePoint(n):' '});
++    return decoded.replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi,' ').replace(/<\/?(?:p|li|div|br|h[1-6]|ul|ol)[^>]*>/gi,'\n').replace(/<[^>]*>/g,' ').replace(/[\t \r]+/g,' ').replace(/\n\s*/g,'\n').trim();
++  }
++  function requirementNotes(value){
++    const text=plainEmployerText(value);if(!text)return [];
++    const relevant=/bachelor|master.?s|degree|\bph\.?d\b|university|student|graduat|\d+\+?\s*(?:-\s*\d+\s*)?years?|\bpaid\b|unpaid|work authori[sz]ation|saudi nationals?|citizenship|\b(?:tamheer|eligible|eligibility|GPA)\b|تخرج|بكالوريوس|سنوات|طالب|تمهير/i;
++    const lines=[...new Set(text.split(/\n+|(?<=[.!?])\s+/).map(x=>x.trim()).filter(x=>x.length>12&&!(/\bpaid\s+(?:leave|holidays?|time off|vacation)\b/i.test(x)&&!/(?:degree|experience|internship|salary)/i.test(x))&&!(/\b(?:we serve|our company|founded in|we have served)\b/i.test(x)&&!/\b(?:required|minimum|must|candidate|you have)\b/i.test(x))))];
++    const primary=lines.filter(x=>relevant.test(x)).slice(0,4),technology=lines.filter(x=>!primary.includes(x)&&skillPatterns.some(([,pattern])=>pattern.test(x))).slice(0,2);
++    return [...primary,...technology].map(x=>x.length>260?x.slice(0,257)+'…':x);
++  }
++  function employerMode(type,row){
++    if(type==='recruitee'){const modes=[['on_site','On-site'],['hybrid','Hybrid'],['remote','Remote']].filter(([key])=>row[key]===true).map(([,label])=>label);return modes.length?modes.join(' / '):'Not stated';}
++    if(type==='ashby'){const modes={Remote:'Remote',Hybrid:'Hybrid',OnSite:'On-site'};return (typeof row.workplaceType==='string'&&Object.hasOwn(modes,row.workplaceType)?modes[row.workplaceType]:null)||(row.isRemote===true?'Remote or hybrid':'Not stated');}
++    return row.telecommuting===true?'Remote arrangement: confirm details':'Not stated';
++  }
++  function employmentLabel(value){const labels={fulltime:'Full time',parttime:'Part time',internship:'Internship',contract:'Contract',temporary:'Temporary'};const key=typeof value==='string'?value.toLowerCase().replace(/[\s_-]/g,''):'';return Object.hasOwn(labels,key)?labels[key]:value;}
++  const publicationLabel=j=>j.postedKind==='last-published'?'Last published':'Published';
++  function ageInSaudiDays(value,now=new Date()){
++    const parsed=parsedDate(value);if(!parsed)return null;
++    const day=parsed.dateOnly?parsed.day:saudiDay(new Date(parsed.time));
++    return Math.floor((Date.parse(saudiDay(now)+'T00:00:00Z')-Date.parse(day+'T00:00:00Z'))/86400000);
++  }
++  function discoveryMatches(job,options={},now=new Date()){
++    if(options.company&&job.company!==options.company)return false;
++    if(options.days){const age=ageInSaudiDays(job.posted,now);if(age===null||age<0||age>=options.days)return false;}
++    if(options.employmentType&&job.employmentType!==options.employmentType)return false;
++    return true;
++  }
++  function applicationWarnings(job,jobs,states={},recordIDs=[]){
++    const tracked=j=>states[j.id]&&states[j.id]!=='Not started'||recordIDs.includes(j.id);
++    const messages=[];
++    if(tracked(job))messages.push(states[job.id]==='Submission uncertain'?'Submission is uncertain. Check the employer account or receipt before trying again.':'This role already has a local application record. Review it before applying again.');
++    const others=dedupe(jobs).filter(j=>j.id!==job.id&&j.company.toLowerCase()===job.company.toLowerCase()&&tracked(j));
++    if(others.length)messages.push('You are tracking '+others.length+' other role'+(others.length===1?'':'s')+' at '+job.company+'. Check any company or program application rules. Different roles are not automatically duplicates.');
++    return messages;
++  }
+   const safeURL=value=>{try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&(!u.port||u.port==='443')?u.href:'#'}catch{return '#'}};
+-  const jobHosts=new Set(['apply.workable.com','alcon.wd5.myworkdayjobs.com','jj.wd5.myworkdayjobs.com','roche.wd3.myworkdayjobs.com','novartis.wd3.myworkdayjobs.com','gsk.wd5.myworkdayjobs.com','bdx.wd1.myworkdayjobs.com','www.careers.jnj.com','eenp.fa.em3.oraclecloud.com','efan.fa.em3.oraclecloud.com','careers.al-dawaa.com','sa.linkedin.com','www.linkedin.com']);
+-  const safeJobURL=value=>{const safe=safeURL(value);if(safe==='#')return '#';const u=new URL(safe);if(u.hostname.endsWith('.oraclecloud.com')&&!/^\/hcmUI\/CandidateExperience\/en\/sites\/CX_1\/job\/\d+\/?$/.test(u.pathname))return '#';if(u.hostname.endsWith('linkedin.com')&&!/^\/jobs\/view\/(?:[a-z0-9-]+-)?\d+\/?$/i.test(u.pathname))return '#';if(u.hostname==='careers.al-dawaa.com'&&!u.pathname.startsWith('/en/saudi-arabia/jobs/'))return '#';return jobHosts.has(u.hostname)&&(u.hostname!=='apply.workable.com'||u.pathname.startsWith('/qiddiya-investment-company-1/j/'))?safe:'#'};
++  const jobHosts=new Set(['apply.workable.com','alcon.wd5.myworkdayjobs.com','jj.wd5.myworkdayjobs.com','roche.wd3.myworkdayjobs.com','novartis.wd3.myworkdayjobs.com','gsk.wd5.myworkdayjobs.com','bdx.wd1.myworkdayjobs.com','www.careers.jnj.com','eenp.fa.em3.oraclecloud.com','efan.fa.em3.oraclecloud.com','careers.al-dawaa.com','sa.linkedin.com','www.linkedin.com','jobs.ashbyhq.com','job-boards.eu.greenhouse.io','jobs.unifonic.com','jobs.smartrecruiters.com']);
++  const safeJobURL=value=>{
++    const safe=safeURL(value);if(safe==='#')return '#';const u=new URL(safe);
++    if(!jobHosts.has(u.hostname))return '#';
++    if(u.hostname==='apply.workable.com'&&!/^\/(qiddiya-investment-company-1|mozn-ai|lucidya|foodics|salla)\/j\/[A-Za-z0-9]{1,64}(?:\/apply)?\/?$/.test(u.pathname))return '#';
++    if(u.hostname==='jobs.ashbyhq.com'&&!/^\/LeanTech\/[a-f0-9-]{36}(?:\/application)?\/?$/i.test(u.pathname))return '#';
++    if(u.hostname==='jobs.smartrecruiters.com'&&(!/^\/(Devoteam|DeliveryHero)\/\d{1,20}-[a-z0-9-]{1,240}\/?$/.test(u.pathname)||safe.includes('?')||safe.includes('#')))return '#';
++    if(u.hostname==='jobs.unifonic.com'&&!/^\/o\/[a-z0-9][a-z0-9-]{0,199}\/?$/i.test(u.pathname))return '#';
++    if(u.hostname==='job-boards.eu.greenhouse.io'&&!/^\/tamara\/jobs\/\d{1,20}\/?$/.test(u.pathname))return '#';
++    if(u.hostname.endsWith('.oraclecloud.com')&&!/^\/hcmUI\/CandidateExperience\/en\/sites\/CX_1\/job\/\d+\/?$/.test(u.pathname))return '#';
++    if(u.hostname.endsWith('linkedin.com')&&!/^\/jobs\/view\/(?:[a-z0-9-]+-)?\d+\/?$/i.test(u.pathname))return '#';
++    if(u.hostname==='careers.al-dawaa.com'&&!u.pathname.startsWith('/en/saudi-arabia/jobs/'))return '#';
++    return safe;
++  };
+   const saudiDay=now=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Riyadh',year:'numeric',month:'2-digit',day:'2-digit'}).format(now);
+   function parsedDate(value){
+     if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}(?:T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d))?$/.test(value))return null;
+@@ -47,19 +98,37 @@
+     if(!j||typeof j!=='object'||Array.isArray(j)||!['id','title','company','location','url'].every(k=>typeof j[k]==='string'&&j[k].trim()&&j[k].length<=2000)||j.id.length>256||['__proto__','constructor','prototype'].includes(j.id)||safeJobURL(j.url)==='#'||!isSaudi(j.location))return null;
+     if(j.closes!=null&&j.closes!==''&&!parsedDate(j.closes)||j.posted!=null&&j.posted!==''&&!parsedDate(j.posted))return null;
+     if(j.gaps!=null&&(!Array.isArray(j.gaps)||j.gaps.some(x=>typeof x!=='string'))||j.steps!=null&&(!Array.isArray(j.steps)||j.steps.some(x=>!Array.isArray(x)||x.length<2||x.some(s=>typeof s!=='string'))))return null;
++    if(j.requirementNotes!=null&&(!Array.isArray(j.requirementNotes)||j.requirementNotes.length>6||j.requirementNotes.some(x=>typeof x!=='string'||x.length>300)))return null;
++    for(const k of ['experienceLevel','employmentType'])if(j[k]!=null&&(typeof j[k]!=='string'||j[k].length>100))return null;
++    if(j.postedKind!=null&&!['published','last-published'].includes(j.postedKind))return null;
+     const job={...j,url:safeJobURL(j.url),posted:j.posted||'',fit:typeof j.fit==='string'?j.fit:'Needs review',summary:typeof j.summary==='string'?j.summary:'Review the employer requirements.'};
+     for(const key of ['applyUrl','sourceUrl'])if(job[key]&&safeJobURL(job[key])==='#')delete job[key];
+     if(job.rank!=null&&(!Number.isInteger(job.rank)||job.rank<1))delete job.rank;
+     return job;
+   }
+-  const sourceIncomplete=s=>!s.ok||Boolean(s.error)||Boolean(s.detailErrors)||Boolean(s.queryErrors);
++  const sourceIncomplete=s=>!s.ok||s.limited===true||Boolean(s.error)||Boolean(s.detailErrors)||Boolean(s.queryErrors);
+   function normalizeLive(payload){
+     if(!payload||typeof payload!=='object'||!parsedDate(payload.checkedAt)||isFuture(payload.checkedAt,new Date(Date.now()+60000))||!Array.isArray(payload.jobs)||payload.jobs.length>1000||!Array.isArray(payload.sources)||payload.sources.length>20)return null;
+-    if(payload.sources.some(s=>!s||typeof s.name!=='string'||typeof s.ok!=='boolean'||s.excludedIds!=null&&(!Array.isArray(s.excludedIds)||s.excludedIds.length>20||s.excludedIds.some(id=>typeof id!=='string'||!id.trim()||id.length>256))||['count','scanned','detailErrors'].some(k=>s[k]!=null&&(!Number.isInteger(s[k])||s[k]<0))))return null;
++    if(payload.sources.some(s=>!s||typeof s.name!=='string'||typeof s.ok!=='boolean'||s.limited!=null&&typeof s.limited!=='boolean'||s.excludedIds!=null&&(!Array.isArray(s.excludedIds)||s.excludedIds.length>(['Mozn','Lucidya','Foodics','Salla','Lean Technologies','Tamara','Unifonic','Devoteam','Delivery Hero'].includes(s.name)?500:20)||s.excludedIds.some(id=>typeof id!=='string'||!id.trim()||id.length>256))||['count','scanned','detailErrors'].some(k=>s[k]!=null&&(!Number.isInteger(s[k])||s[k]<0))))return null;
+     const jobs=payload.jobs.map(normalizeJob).filter(Boolean),rejected=payload.jobs.length-jobs.length;
+     if(rejected&&!jobs.length)return null;
+     const invalidJobs=Math.max(rejected,Number.isInteger(payload.invalidJobs)&&payload.invalidJobs>=0&&payload.invalidJobs<=1000?payload.invalidJobs:0);
+-    return{checkedAt:payload.checkedAt,jobs:dedupe(jobs).filter(j=>j.company!=='Qiddiya'&&j.healthcare!==false).map(j=>{const failed=payload.sources.some(s=>s.name===j.company&&sourceIncomplete(s)),prior=parsedDate(j.lastCheckedAt);if(failed&&j.lastCheckedAt!=null&&(!prior||prior.time>parsedDate(payload.checkedAt).time))return null;return {...j,lastCheckedAt:failed&&prior?j.lastCheckedAt:payload.checkedAt}}).filter(Boolean),invalidJobs,sources:payload.sources.map(s=>({...s,error:typeof s.error==='string'?s.error:''}))};
++    const normalized={checkedAt:payload.checkedAt,jobs:dedupe(jobs).filter(j=>j.company!=='Qiddiya'&&j.healthcare!==false).map(j=>{const failed=payload.sources.some(s=>s.name===j.company&&sourceIncomplete(s)),prior=parsedDate(j.lastCheckedAt);if(failed&&j.lastCheckedAt!=null&&(!prior||prior.time>parsedDate(payload.checkedAt).time))return null;return {...j,lastCheckedAt:failed&&prior?j.lastCheckedAt:payload.checkedAt}}).filter(Boolean),invalidJobs,sources:payload.sources.map(s=>({...s,error:typeof s.error==='string'?s.error:''}))};
++    const comparison=normalizeSearchComparison(payload.searchComparison,normalized);
++    if(comparison)normalized.searchComparison=comparison;
++    return normalized;
++  }
++  function normalizeSearchComparison(value,snapshot){
++    if(!value||typeof value!=='object'||Array.isArray(value)||value.schema!==1)return null;
++    const checked=parsedDate(value.checkedAt),previous=parsedDate(value.previousCheckedAt);
++    if(!checked||checked.time!==parsedDate(snapshot.checkedAt)?.time||value.previousCheckedAt!==null&&(!previous||previous.time>=checked.time))return null;
++    const ids=value.addedIds,current=new Set(snapshot.jobs.map(j=>j.id));
++    if(!Array.isArray(ids)||ids.length>1000||new Set(ids).size!==ids.length||ids.some(id=>typeof id!=='string'||!id.trim()||id.length>256||!current.has(id))||value.previousCheckedAt===null&&ids.length)return null;
++    return {schema:1,previousCheckedAt:value.previousCheckedAt,checkedAt:value.checkedAt,addedIds:[...ids]};
++  }
++  function compareSearches(previous,current){
++    const ids=new Set((previous?.jobs||[]).map(j=>j.id));
++    return {schema:1,previousCheckedAt:previous?.checkedAt??null,checkedAt:current.checkedAt,addedIds:previous?current.jobs.filter(j=>!ids.has(j.id)).map(j=>j.id):[]};
+   }
+   const factsTime=job=>Math.max(parsedDate(job?.lastCheckedAt)?.time??-Infinity,parsedDate(job?.researchCheckedAt)?.time??-Infinity);
+   function mergeJobs(researched,snapshots,live){
+@@ -86,11 +155,27 @@
+     const edited=parsedDate(value.updatedAt);
+     return Boolean(edited&&!edited.dateOnly&&new Date(edited.time).toISOString()===value.updatedAt);
+   }
++  function validNextAction(value,id){
++    if(!value||typeof value!=='object'||Array.isArray(value)||value.schema!==1||value.jobId!==id||typeof id!=='string'||!id.trim()||id.length>256||['__proto__','constructor','prototype'].includes(id))return false;
++    if(Object.keys(value).some(k=>!['schema','jobId','dueOn','actionNote','completed','updatedAt'].includes(k)))return false;
++    if(typeof value.dueOn!=='string'||typeof value.actionNote!=='string'||typeof value.completed!=='boolean'||[...value.actionNote].length>500||/[\uD800-\uDFFF]/u.test(value.actionNote))return false;
++    if(value.dueOn&&(value.dueOn.length!==10||!parsedDate(value.dueOn)))return false;
++    if(!value.actionNote.trim()&&(value.dueOn||value.completed))return false;
++    const edited=parsedDate(value.updatedAt);
++    return Boolean(edited&&!edited.dateOnly&&new Date(edited.time).toISOString()===value.updatedAt);
++  }
++  function nextActionBucket(value,now=new Date()){
++    if(value.completed)return 'completed';
++    if(!value.dueOn)return 'undated';
++    const days=(Date.parse(value.dueOn+'T00:00:00Z')-Date.parse(saudiDay(now)+'T00:00:00Z'))/86400000;
++    return days<0?'overdue':days===0?'today':days<=7?'next7days':'upcoming';
++  }
+   function attentionFor(jobs,states={},records={},now=new Date()){
+     const tasks=[],today=saudiDay(now),last=new Date(Date.parse(today+'T00:00:00Z')+7*86400000).toISOString().slice(0,10);
+     for(const job of dedupe(jobs)){
+       const status=states[job.id]??'Not started',record=records[job.id];
+-      if(['Applied','Interviewing','Offer received'].includes(status)){
++      if(status==='Submission uncertain'){tasks.push({jobId:job.id,kind:'confirm-submission',order:0});}
++      else if(['Applied','Interviewing','Offer received'].includes(status)){
+         if(!validApplicationRecord(record,job.id,now)||!record.appliedAt)tasks.push({jobId:job.id,kind:'applied-date',order:2});
+       }else if(['Not started','Preparing'].includes(status)){
+         const closing=parsedDate(job.closes),past=Boolean(closing&&isExpired(job.closes,now));
+@@ -101,5 +186,25 @@
+     }
+     return tasks.sort((a,b)=>a.order-b.order||(a.order===1?a.time-b.time:0)||a.jobId.localeCompare(b.jobId));
+   }
+-  root.CareerCore={isSaudi,canonicalMinimumSAR,riyadhCity,criteriaFor,relevance,safeURL,safeJobURL,saudiDay,parsedDate,dateSortTime,isExpired,isFuture,dedupe,normalizeJob,sourceIncomplete,normalizeLive,mergeJobs,validApplicationRecord,attentionFor};
++  // Review aids use bounded available text, never eligibility inference or a match percentage.
++  const roleFocuses=[['software','Software & web'],['data-ai','Data & AI'],['platform','Cloud & platform'],['mobile','Mobile'],['quality','Quality & testing']];
++  const boundedPattern=body=>new RegExp('(?<![\\p{L}\\p{N}_])(?:'+body+')(?![\\p{L}\\p{N}_])','iu');
++  const rolePatterns=[
++    ['software',boundedPattern('software|developers?|front[ -]?end|back[ -]?end|full[ -]?stack|web|مطور|برمجيات')],
++    ['data-ai',boundedPattern('AI|machine[ -]learning|artificial[ -]intelligence|data|analytics|NLP|ذكاء اصطناعي|بيانات')],
++    ['platform',boundedPattern('cloud|devops|site[ -]reliability|techops|databases?')],
++    ['mobile',boundedPattern('ios|swift(?:ui)?|android|mobile')],
++    ['quality',boundedPattern('QA|quality[ -]assurance|test[ -]automation')]
++  ];
++  const skillPatterns=[['Python','python'],['JavaScript','javascript'],['TypeScript','typescript'],['Swift','swift(?:ui)?'],['SQL','sql'],['React','react(?:\\.js|js)?'],['Node.js','node(?:\\.js|js)'],['Docker','docker'],['Kubernetes','kubernetes|k8s'],['AWS','aws|amazon web services'],['Azure','azure'],['Git','git'],['Machine learning','machine[ -]learning|ML']].map(([label,body])=>[label,boundedPattern(body)]);
++  const reviewPatterns=[['degree','Education wording','degree|bachelor|master.?s|ph\\.?d|بكالوريوس'],['student','Student / graduation wording','students?|university|graduat[\\p{L}]*|enroll[\\p{L}]*|تخرج|طالب'],['program','Program eligibility wording','tamheer|eligible|eligibility|GPA|تمهير'],['experience','Experience wording','experience|years?|سنوات'],['authorization','Work authorization / nationality wording','work authori[sz]ation|visa|citizen(?:ship|s)?|nationality|nationals?'],['unpaid','Unpaid wording','unpaid']].map(([id,label,body])=>[id,label,boundedPattern(body)]);
++  function boundedReviewText(value,max=2000){return typeof value==='string'&&value.length<=max&&!/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]|<\/?[A-Za-z][^>]*>/iu.test(value)?value:'';}
++  function roleReview(job={},profile={}){
++    const title=boundedReviewText(job?.title),notes=Array.isArray(job?.requirementNotes)?job.requirementNotes.slice(0,6).map(x=>boundedReviewText(x,300)).filter(x=>x.trim()):[];
++    const available=[title,...notes].join('\n'),skills=skillPatterns.filter(([,pattern])=>pattern.test(available)).map(([label])=>label),profileText=boundedReviewText(profile?.skills,3000);
++    const own=new Set(skillPatterns.filter(([,pattern])=>pattern.test(profileText)).map(([label])=>label));
++    return {categories:rolePatterns.filter(([,pattern])=>pattern.test(title)).map(([id])=>id),skills,overlap:skills.filter(label=>own.has(label)),topics:reviewPatterns.map(([id,label,pattern])=>({id,label,excerpts:notes.filter(note=>pattern.test(note))})).filter(topic=>topic.excerpts.length),hasExcerpts:notes.length>0};
++  }
++  function searchableText(job={}){return [job.title,job.company,job.location,job.summary,job.mode,job.employmentType,job.experienceLevel,...(Array.isArray(job.requirementNotes)?job.requirementNotes:[]),...(Array.isArray(job.gaps)?job.gaps:[])].filter(x=>typeof x==='string').map(x=>x.slice(0,4000)).join(' ').toLowerCase();}
++  root.CareerCore={roleFocuses,roleReview,searchableText,employmentLabel,plainEmployerText,requirementNotes,employerMode,publicationLabel,ageInSaudiDays,discoveryMatches,applicationWarnings,isSaudi,canonicalMinimumSAR,riyadhCity,criteriaFor,relevance,safeURL,safeJobURL,saudiDay,parsedDate,dateSortTime,isExpired,isFuture,dedupe,normalizeJob,sourceIncomplete,normalizeLive,normalizeSearchComparison,compareSearches,mergeJobs,validApplicationRecord,validNextAction,nextActionBucket,attentionFor};
+ })(globalThis);
+--- /dev/null
++++ b/website/web/backup.js
+@@ -0,0 +1,124 @@
++// Portable saved-record backups. No network, inferred applications, or cache restoration.
++const Backup = (() => {
++ const maxBytes=4*1024*1024,maxItems=1000;
++ const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
++ const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
++ const id=v=>typeof v==='string'&&v.trim()&&v.length<=256&&!['__proto__','constructor','prototype'].includes(v);
++ const keys=(v,allowed)=>object(v)&&Object.keys(v).every(k=>allowed.includes(k));
++ const statuses=['Not started','Preparing','Submission uncertain','Applied','Interviewing','Offer received','Closed / not pursuing'];
++ const boundedMap=v=>object(v)&&Object.keys(v).length<=maxItems&&Object.keys(v).every(id);
++ function validate(value,now=new Date()) {
++  const C=globalThis.CareerCore;
++  const fail=()=>{throw Error('This is not a supported, valid workspace backup. Nothing was changed.');};
++  if(!keys(value,['format','schema','exportedAt','platform','workspace','profile','checklist','applicationRecords','nextActions'])||value.format!=='saleh-career-workspace'||![1,2].includes(value.schema)||!['web','native'].includes(value.platform))fail();
++  const time=C.parsedDate(value.exportedAt);
++  if(!time||time.dateOnly||time.time>now.getTime())fail();
++  const w=value.workspace;
++  if(!keys(w,['saved','states','savedDetails'])||!Array.isArray(w.saved)||w.saved.length>maxItems||new Set(w.saved).size!==w.saved.length||!w.saved.every(id)||!boundedMap(w.states)||!boundedMap(w.savedDetails))fail();
++  const jobKeys=['id','title','company','location','url','posted','fit','summary','rank','relevance','subtitle','mode','postedKind','experienceLevel','employmentType','requirementNotes','closes','applyUrl','sourceUrl','gaps','steps','minYears','healthcare','leadership','kind','lastCheckedAt','researchCheckedAt'];
++  for(const [key,job] of Object.entries(w.savedDetails)){
++   if(!keys(job,jobKeys)||job.id!==key||!C.normalizeJob(job)||['applyUrl','sourceUrl'].some(k=>job[k]!=null&&C.safeJobURL(job[k])==='#'))fail();
++  }
++  if(w.saved.some(k=>!own(w.savedDetails,k))||Object.entries(w.states).some(([k,v])=>!own(w.savedDetails,k)||!statuses.includes(v)))fail();
++  const legacyProfileFields=['years','degree','skills','achievements','preferredCity','minimumMonthlySAR','unknownSalary'];
++  const preferenceFields=['preferencesVersion','targetCountry','targetCity','roleKeywords','planningCurrency','planningPayPeriod','displayTimeZone'];
++  if(!keys(value.profile,value.schema===1?legacyProfileFields:[...legacyProfileFields,...preferenceFields]))fail();
++  if(value.schema===2&&(typeof globalThis.CareerPreferenceValidation!=='function'||!globalThis.CareerPreferenceValidation(value.profile)))fail();
++  // Profile values are reference-only and never applied. The envelope byte bound
++  // accommodates existing native grapheme-based limits without truncation.
++  if(Object.values(value.profile).some(v=>typeof v!=='string'||/[\uD800-\uDFFF]/u.test(v)))fail();
++  if(!boundedMap(value.checklist)||Object.keys(value.checklist).length>100||Object.keys(value.checklist).some(k=>k.length>=80)||Object.values(value.checklist).some(v=>typeof v!=='boolean'))fail();
++  for(const [name,valid] of [['applicationRecords',C.validApplicationRecord],['nextActions',C.validNextAction]]){
++   const rows=value[name];if(!Array.isArray(rows)||rows.length>maxItems||new Set(rows.map(r=>r?.jobId)).size!==rows.length)fail();
++   if(rows.some(r=>!id(r?.jobId)||!own(w.savedDetails,r.jobId)||!valid(r,r.jobId,now)||C.parsedDate(r.updatedAt).time>now.getTime()))fail();
++  }
++  return value;
++ }
++ function parse(text,now=new Date()){
++  if(typeof text!=='string'||text.length>maxBytes||new Blob([text]).size>maxBytes)throw Error('Backups are limited to 4 MiB. Nothing was changed.');
++  let value;try{value=JSON.parse(text)}catch{throw Error('The backup is not valid JSON. Nothing was changed.');}
++  return validate(value,now);
++ }
++ function validImported(w){
++  const C=globalThis.CareerCore;
++  return [['importedApplicationRecords',C.validApplicationRecord],['importedNextActions',C.validNextAction]].every(([key,valid])=>w[key]===undefined||boundedMap(w[key])&&Object.entries(w[key]).every(([k,v])=>own(w.savedDetails,k)&&valid(v,k)));
++ }
++ const portableJob=job=>Object.fromEntries(Object.entries(job).filter(([key])=>!['initials','status','salary'].includes(key)));
++ return {maxBytes,maxItems,own,id,parse,validate,validImported,portableJob};
++})();
++let backupFileSequence=0;
++let backupInput='',backupPreview=null,backupNotice='',backupExport='',backupWorking=false;
++function backupsPage(){
++ return `${intro('Keep a recoverable copy.','Private, portable saved records. Nothing is uploaded, sent or treated as a new application.','BACKUP & RESTORE')}<section class="card"><h2>Export saved records</h2><p>Includes saved roles, stages, receipt notes, next actions, your saved profile and checklist. Excludes unsaved drafts, live-search cache and search comparisons. Save drafts first if you want them included.</p><p class="notice">This JSON contains private information. Store it somewhere you trust. It is not encrypted. This local legacy workspace does not sync with phone or signed-in application workspaces. Import never grants permission to submit an application.</p><button class="primary" data-action="backup-export" ${backupWorking?'disabled':''}>Prepare backup</button> <button class="secondary" data-action="backup-recovery">Review last pre-restore copy</button>${backupExport?`<label class="field">Backup JSON<textarea id="backup-export-text" readonly style="min-height:140px">${esc(backupExport)}</textarea></label><div class="dialog-buttons"><button class="secondary" data-action="backup-copy">Copy backup</button><button class="secondary" data-action="backup-download">Save backup file</button></div>`:''}</section><section class="card" style="margin-top:20px"><h2>Restore missing records</h2><p>Paste a backup or choose a JSON file (maximum 4 MiB), then review. Existing values always win. Close other tabs and older app versions before restoring. Do not downgrade after restoring imported receipts or tasks; older builds do not understand them. Profile and checklist are included for reference only and are never restored. Import does not verify whether an application was submitted or a role is still open.</p><label class="field">Choose backup file<input id="backup-file" type="file" accept=".json,application/json"></label><label class="field">Backup JSON<textarea id="backup-input" style="min-height:160px" placeholder="Paste your saved backup here">${esc(backupInput)}</textarea></label><button class="secondary" data-action="backup-preview" ${backupWorking?'disabled':''}>Review restore</button><div id="backup-preview-panel">${backupPreview?backupPreviewHTML():''}</div><p id="backup-notice" role="status" aria-live="polite">${esc(backupNotice)}</p></section>`;
++}
++function backupPreviewHTML(){const p=backupPreview;return `<div class="highlight-note"><h3>Restore preview</h3><p>Backup exported ${esc(date(p.data.exportedAt))} from ${esc(p.data.platform)}.</p><ul><li>${p.count.jobs} missing role records</li><li>${p.count.saved} additional saved roles</li><li>${p.count.states} missing stages</li><li>${p.count.receipts} missing application records</li><li>${p.count.actions} missing next actions</li><li>${p.count.conflicts} differing existing values preserved</li></ul><p>All ${Object.keys(p.data.profile).length} profile fields and ${Object.keys(p.data.checklist).length} checklist entries are skipped. No existing role, stage, receipt or task will be overwritten. A local pre-restore recovery copy is saved before applying.</p><button class="primary" data-action="backup-apply" ${backupWorking||!p.changed?'disabled':''}>Confirm restore of missing records</button><button class="text-button" data-action="backup-cancel">Cancel preview</button></div>`}
++function currentBackupState(){
++ if(blockedKeys.size||failedKeys.size||!storageOK)throw Error('Resolve unreadable or unsaved storage first. Your existing data is preserved.');
++ const raw=localStorage.getItem('ahmad-workspace'),w=raw===null?{saved:[...saved],states:{...states},savedDetails:{...savedDetails}}:JSON.parse(raw);
++ if(!validWorkspace(w))throw Error('Existing saved records could not be read. Nothing was changed.');
++ const profileRaw=localStorage.getItem('ahmad-profile'),p=profileRaw===null?defaultProfile:JSON.parse(profileRaw);
++ const checklistRaw=localStorage.getItem('ahmad-checklist'),c=checklistRaw===null?{}:JSON.parse(checklistRaw);
++ if(!validProfile(p)||!validChecklist(c))throw Error('The saved profile or checklist is unreadable. Nothing was changed.');
++ const applicationRecords=[],nextActions=[],signature=[raw,profileRaw,checklistRaw];
++ for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);for(const prefix of ['ahmad-application-record-v1:','ahmad-next-action-v1:'])if(key?.startsWith(prefix)){const jobId=decodeURIComponent(key.slice(prefix.length));if(!Backup.own(w.savedDetails,jobId)||prefix+encodeURIComponent(jobId)!==key)throw Error('An orphaned saved receipt or task needs recovery before backup. Nothing was changed.');}}
++ // Retained jobs are the canonical record index. Normal saving retains a job before its sidecar.
++ for(const jobId of Object.keys(w.savedDetails).sort()){
++  for(const [rows,key,fallback,valid] of [[applicationRecords,recordKey(jobId),w.importedApplicationRecords, C.validApplicationRecord],[nextActions,actionKey(jobId),w.importedNextActions,C.validNextAction]]){
++   const raw=localStorage.getItem('ahmad-'+key);signature.push(key,raw);const value=raw===null?(fallback?.[jobId]??null):JSON.parse(raw);
++   if(raw!==null||value!==null){if(!valid(value,jobId))throw Error('A saved receipt or task is unreadable. Nothing was changed.');rows.push(value)}
++  }
++ }
++ return {w,raw,signature:JSON.stringify(signature),data:{format:'saleh-career-workspace',schema:profileFields.some(k=>!['years','degree','skills','achievements','preferredCity','minimumMonthlySAR','unknownSalary'].includes(k)&&p[k]!=null)?2:1,exportedAt:new Date().toISOString(),platform:'web',workspace:{saved:[...w.saved],states:{...w.states},savedDetails:Object.fromEntries(Object.entries(w.savedDetails).map(([id,job])=>[id,Backup.portableJob(job)]))},profile:Object.fromEntries(profileFields.filter(k=>p[k]!=null).map(k=>[k,String(p[k])])),checklist:{...c},applicationRecords,nextActions}};
++}
++function buildRestorePreview(data,current){
++ Backup.parse(JSON.stringify(current.data,null,2));
++ const w=current.w,next={...w,saved:[...w.saved],states:{...w.states},savedDetails:{...w.savedDetails},importedApplicationRecords:{...(w.importedApplicationRecords||{})},importedNextActions:{...(w.importedNextActions||{})}};
++ const count={jobs:0,saved:0,states:0,receipts:0,actions:0,conflicts:0};
++ for(const [id,job] of Object.entries(data.workspace.savedDetails))if(!Backup.own(next.savedDetails,id)){next.savedDetails[id]=C.normalizeJob(job);count.jobs++}else if(JSON.stringify(next.savedDetails[id])!==JSON.stringify(job))count.conflicts++;
++ for(const id of data.workspace.saved)if(!next.saved.includes(id)){next.saved.push(id);count.saved++}
++ for(const [id,value] of Object.entries(data.workspace.states))if(!Backup.own(next.states,id)){next.states[id]=value;count.states++}else if(next.states[id]!==value)count.conflicts++;
++ const extraSignature=[];
++ for(const [rows,map,key,valid,label] of [[data.applicationRecords,next.importedApplicationRecords,recordKey,C.validApplicationRecord,'receipts'],[data.nextActions,next.importedNextActions,actionKey,C.validNextAction,'actions']])for(const value of rows){
++  const raw=localStorage.getItem('ahmad-'+key(value.jobId));extraSignature.push(key(value.jobId),raw);
++  const existing=raw===null?(map[value.jobId]??null):JSON.parse(raw);
++  if((raw!==null||existing!==null)&&!valid(existing,value.jobId))throw Error('An existing receipt or task is unreadable. Nothing was changed.');
++  if(existing===null){map[value.jobId]=value;count[label]++}else if(JSON.stringify(existing)!==JSON.stringify(value))count.conflicts++;
++ }
++ if(Object.keys(next.savedDetails).length>Backup.maxItems||next.saved.length>Backup.maxItems)throw Error('The combined workspace would exceed 1,000 retained roles. Nothing was changed.');
++ const merged={...current.data,workspace:{saved:next.saved,states:next.states,savedDetails:Object.fromEntries(Object.entries(next.savedDetails).map(([id,job])=>[id,Backup.portableJob(job)]))},applicationRecords:[],nextActions:[]};
++ for(const name of ['applicationRecords','nextActions']){const rows=new Map(current.data[name].map(r=>[r.jobId,r]));for(const row of data[name])if(!rows.has(row.jobId))rows.set(row.jobId,row);merged[name]=[...rows.values()];}
++ Backup.parse(JSON.stringify(merged,null,2));
++ const changed=count.jobs+count.saved+count.states+count.receipts+count.actions>0;
++ return {data,next,count,changed,signature:current.signature+'|'+JSON.stringify(extraSignature)};
++}
++function backupDraftsPending(){return Object.values(recordDrafts).some(recordDirty)||Object.values(actionDrafts).some(d=>actionDirty(d)||d.saving)||profileFields.some(k=>profileValue(profileDraft,k)!==profileValue(profileBase,k))||Object.keys(checklistPending).length>0}
++function backupResult(message){backupNotice=message;if(view==='backups')render();else toast(message)}
++function prepareRecoveryBackup(){try{const raw=localStorage.getItem('ahmad-pre-restore-v1');if(!raw)throw Error('No pre-restore copy is available yet.');const text=JSON.stringify(JSON.parse(raw).backup,null,2);Backup.parse(text);backupExport=text;backupResult('Last pre-restore copy prepared for saving. This is an older snapshot, not an undo action.')}catch(e){backupResult(e.message||'The recovery copy could not be read.')}}
++async function prepareBackup(){try{const current=currentBackupState();const text=JSON.stringify(current.data,null,2);Backup.parse(text);backupExport=text;backupResult('Backup prepared from saved records only. Private information is included; nothing has been uploaded.')}catch(e){backupResult(e.message||'Backup could not be prepared. Nothing was changed.')}}
++function previewBackup(){backupPreview=null;try{if(backupDraftsPending())throw Error('Save or discard your unsaved profile, receipt and task drafts before restoring.');const data=Backup.parse(backupInput);backupPreview=buildRestorePreview(data,currentBackupState());backupResult(backupPreview.changed?'Review the additions, then confirm below.':'No missing records to restore. Existing records are preserved.')}catch(e){backupResult(e.message||'Backup could not be reviewed. Nothing was changed.')}}
++async function withBackupLocks(keys,fn,index=0){return index===keys.length?fn():navigator.locks.request('ahmad-career-'+keys[index],()=>withBackupLocks(keys,fn,index+1))}
++async function applyBackup(){
++ if(backupWorking||!backupPreview?.changed)return false;
++ if(!navigator.locks?.request){backupResult('Safe restore is unavailable in this browser. Your existing records are unchanged.');return false}
++ const preview=backupPreview;backupWorking=true;
++ try{
++  const keys=[...new Set([...preview.data.applicationRecords.map(r=>recordKey(r.jobId)),...preview.data.nextActions.map(r=>actionKey(r.jobId))])].sort();keys.push('workspace','profile','checklist');
++  return await withBackupLocks(keys,()=>{
++   if(backupPreview!==preview)throw Error('Restore canceled or the input changed. Review it again before restoring.');
++   if(backupDraftsPending())throw Error('A draft changed. Save or discard it, then review the backup again.');
++   Backup.validate(preview.data);const current=currentBackupState(),fresh=buildRestorePreview(preview.data,current);
++   if(fresh.signature!==preview.signature)throw Error('Saved records changed after this preview. Review the backup again before restoring.');
++   const text=JSON.stringify(fresh.next);if(new Blob([text]).size>Backup.maxBytes)throw Error('The combined workspace exceeds 4 MiB. Nothing was changed.');
++   // A recovery copy precedes the only record-changing write. localStorage setItem is atomic.
++   localStorage.setItem('ahmad-pre-restore-v1',JSON.stringify({savedAt:new Date().toISOString(),backup:current.data}));
++   localStorage.setItem('ahmad-workspace',text);
++   applyWorkspace(fresh.next);workspaceBase=text;backupPreview=null;
++   backupResult('Missing records restored. Existing values, profile and checklist were preserved. No applications or messages were sent.');return true;
++  });
++ }catch(e){backupResult(e.message||'Restore could not be saved. Existing records are unchanged.');return false}
++ finally{backupWorking=false;if(view==='backups')render()}
++}
++async function saveBackupFile(){if(!backupExport)return;try{Backup.parse(backupExport);if(window.webkit?.messageHandlers?.careerBackup){window.webkit.messageHandlers.careerBackup.postMessage({action:'save',text:backupExport});return}const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([backupExport],{type:'application/json;charset=utf-8'}));a.download='Career-Finder-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);backupResult('Backup download requested. Check that the file was saved.')}catch(e){backupResult(e.message||'The file could not be saved. You can still copy the backup.')}}
++async function copyBackup(){try{await navigator.clipboard.writeText(backupExport);backupResult('Private backup copied. Store it somewhere you trust.')}catch{$('#backup-export-text')?.focus?.();$('#backup-export-text')?.select?.();backupResult('Select and copy the backup text manually.')}}
++async function readBackupFile(file){const sequence=++backupFileSequence;backupPreview=null;if(!file)return;if(file.size>Backup.maxBytes){backupResult('Backups are limited to 4 MiB. Nothing was changed.');return}try{const text=await file.text();if(sequence!==backupFileSequence)return;Backup.parse(text);backupInput=text;backupResult('File loaded for review. Nothing has been restored.')}catch(e){backupResult(e.message||'The file could not be read. Nothing was changed.')}}
++window.receiveBackupSave=function(payload){backupResult(payload?.ok?'Backup file saved. Keep it private.':payload?.cancelled?'Save canceled. Your prepared backup is still available.':'The file could not be saved. Copy the backup text instead.')};
+--- a/website/web/index.html
++++ b/website/web/index.html
+@@ -1,2 +1,2 @@
+ <!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#fafafa"><meta name="description" content="Career Finder: your local profile and application records, with clearly limited employer-source coverage."><title>Career Finder</title><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="style.css"></head><body>
+-<a class="skip-link" href="#main">Skip to opportunities</a><div class="shell"><aside class="sidebar" id="sidebar"><button class="mobile-close icon-button" data-action="close-menu" aria-label="Close navigation">×</button><a class="brand" href="#shortlist" data-view="shortlist"><span class="brand-mark">c<span>·</span></span><span>Career Finder<span class="brand-sub">Career workspace</span></span></a><button class="new-search" data-action="refresh"><span aria-hidden="true">✧</span> Find new openings</button><nav aria-label="Workspace"><button class="nav-item active" data-view="shortlist"><span class="nav-icon">◈</span> Start here <span class="nav-count" id="top-count">0</span></button><button class="nav-item" data-view="live"><span class="nav-icon">⌕</span> Live search</button><button class="nav-item" data-view="saved"><span class="nav-icon">♡</span> Saved opportunities <span class="nav-count" id="saved-count">0</span></button><div class="nav-divider"></div><span class="nav-label">YOUR NEXT MOVE</span><button class="nav-item" data-view="profile"><span class="nav-icon">◎</span> Your profile</button><button class="nav-item" data-view="salary"><span class="nav-icon">▥</span> Salary & negotiation</button><button class="nav-item" data-view="plan"><span class="nav-icon">☷</span> Application plan</button></nav><div class="sidebar-bottom"><div class="local-note"><span class="tiny-dot"></span> A workspace just for you</div><button class="profile-button" data-view="profile"><span class="avatar">CF</span><span><strong>Your profile</strong><small>Optional · stored on this device</small></span></button></div></aside><button class="nav-backdrop" data-action="close-menu" aria-label="Close navigation" hidden></button><div class="main-shell"><header class="topbar"><button class="mobile-menu icon-button" data-action="menu" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">☰</button><span id="view-name" role="status" aria-live="polite">Your shortlist</span><div class="topbar-right"><span class="scope-label">Limited live coverage</span><button class="icon-button" data-action="theme" aria-label="Toggle dark mode" aria-pressed="false">◐</button></div></header><main id="main" tabindex="-1"></main><footer class="footer">Built around your experience. Every next step stays yours.</footer></div></div><dialog id="job-dialog" aria-labelledby="dialog-title"></dialog><div id="toast" role="status" aria-live="polite"></div><script src="core.js"></script><script src="data.js"></script><script src="app.js"></script></body></html>
++<a class="skip-link" href="#main">Skip to opportunities</a><div class="shell"><aside class="sidebar" id="sidebar"><button class="mobile-close icon-button" data-action="close-menu" aria-label="Close navigation">×</button><a class="brand" href="#shortlist" data-view="shortlist"><span class="brand-mark">c<span>·</span></span><span>Career Finder<span class="brand-sub">Career workspace</span></span></a><button class="new-search" data-action="refresh"><span aria-hidden="true">✧</span> Find new openings</button><nav aria-label="Workspace"><button class="nav-item active" data-view="shortlist"><span class="nav-icon">◈</span> Start here <span class="nav-count" id="top-count">0</span></button><button class="nav-item" data-view="live"><span class="nav-icon">⌕</span> Live search</button><button class="nav-item" data-view="saved"><span class="nav-icon">♡</span> Saved opportunities <span class="nav-count" id="saved-count">0</span></button><div class="nav-divider"></div><span class="nav-label">YOUR NEXT MOVE</span><button class="nav-item" data-view="profile"><span class="nav-icon">◎</span> Your profile</button><button class="nav-item" data-view="salary"><span class="nav-icon">▥</span> Salary & negotiation</button><button class="nav-item" data-view="plan"><span class="nav-icon">☷</span> Application plan</button></nav><div class="sidebar-bottom"><div class="local-note"><span class="tiny-dot"></span> A workspace just for you</div><button class="profile-button" data-view="profile"><span class="avatar">CF</span><span><strong>Your profile</strong><small>Optional · stored on this device</small></span></button></div></aside><button class="nav-backdrop" data-action="close-menu" aria-label="Close navigation" hidden></button><div class="main-shell"><header class="topbar"><button class="mobile-menu icon-button" data-action="menu" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">☰</button><span id="view-name" role="status" aria-live="polite">Your shortlist</span><div class="topbar-right"><span class="scope-label">Limited live coverage</span><button class="icon-button" data-action="theme" aria-label="Toggle dark mode" aria-pressed="false">◐</button></div></header><main id="main" tabindex="-1"></main><footer class="footer">Built around your experience. Every next step stays yours.</footer></div></div><dialog id="job-dialog" aria-labelledby="dialog-title"></dialog><div id="toast" role="status" aria-live="polite"></div><script src="core.js"></script><script src="data.js"></script><script src="backup.js"></script><script src="app.js"></script></body></html>
+--- a/website/feeds.mjs
++++ b/website/feeds.mjs
+@@ -1,5 +1,5 @@
+ import './web/core.js';
+-const {isSaudi,relevance,safeJobURL,isExpired,isFuture,parsedDate,dateSortTime,dedupe}=globalThis.CareerCore;
++const {isSaudi,relevance,safeJobURL,requirementNotes,employerMode,employmentLabel,isExpired,isFuture,parsedDate,dateSortTime,dedupe}=globalThis.CareerCore;
+ export const SOURCES=[
+  {name:'Alcon',host:'alcon.wd5.myworkdayjobs.com',tenant:'alcon',board:'careers_alcon'},
+  {name:'Johnson & Johnson',host:'jj.wd5.myworkdayjobs.com',tenant:'jj',board:'JJ'},
+@@ -8,10 +8,21 @@
+  {name:'GSK',host:'gsk.wd5.myworkdayjobs.com',tenant:'gsk',board:'GSKCareers'},
+  {name:'BD',host:'bdx.wd1.myworkdayjobs.com',tenant:'bdx',board:'EXTERNAL_CAREER_SITE_SAUDI_ARABIA'}
+ ];
+-async function jsonFetch(url,body,fetcher=fetch){
+- const r=await fetcher(url,{method:body?'POST':'GET',redirect:'manual',headers:{'Content-Type':'application/json','Accept':'application/json'},...(body?{body:JSON.stringify(body)}:{}),signal:AbortSignal.timeout(14000)});
+- if(!r.ok)throw new Error('Employer returned '+r.status);
+- const text=await r.text();if(text.length>8000000)throw Error('Employer response was too large');return JSON.parse(text);
++async function jsonFetch(url,body,fetcher=fetch,signal){
++ signal?.throwIfAborted();
++ const r=await fetcher(url,{method:body?'POST':'GET',redirect:'manual',headers:{'Content-Type':'application/json','Accept':'application/json'},...(body?{body:JSON.stringify(body)}:{}),signal:signal?AbortSignal.any([signal,AbortSignal.timeout(14000)]):AbortSignal.timeout(14000)});
++ if(!r.ok){await r.body?.cancel?.().catch(()=>{});throw new Error('Employer returned '+r.status);}
++ const limit=8_000_000,declared=r.headers?.get?.('content-length');
++ const oversized=()=>Error('Employer response was too large');
++ if(declared&&/^\d+$/.test(declared)&&Number(declared)>limit){await r.body?.cancel?.().catch(()=>{});throw oversized();}
++ // Bound decoded transport bytes before accumulating or parsing an employer payload.
++ if(r.body?.getReader){
++  const reader=r.body.getReader(),decoder=new TextDecoder('utf-8',{fatal:true}),parts=[];let size=0;
++  try{while(true){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>limit)throw oversized();parts.push(decoder.decode(value,{stream:true}));}parts.push(decoder.decode());return JSON.parse(parts.join(''));}
++  catch(error){await reader.cancel().catch(()=>{});throw error}finally{reader.releaseLock();}
++ }
++ // Compatibility path for injected adapters without a WHATWG response stream.
++ const text=await r.text();if(new TextEncoder().encode(text).byteLength>limit)throw oversized();return JSON.parse(text);
+ }
+ function detailPath(path){
+  if(typeof path!=='string'||!path.startsWith('/job/'))return false;
+@@ -63,8 +74,153 @@
+  const jobs=dedupe(rows.map(j=>({id:'qiddiya-'+j.shortcode,title:j.title,company:'Qiddiya',location:(j.location.city||'Qiddiya')+', Saudi Arabia',url:'https://apply.workable.com/qiddiya-investment-company-1/j/'+j.shortcode+'/',posted:j.published,closes:null,status:'live',salary:null,kind:'live',fit:'Needs review',healthcare:/healthcare|medical/i.test(j.title),leadership:/\b(manager|director|head|lead)\b/i.test(j.title),summary:'Published on the employer board. Sector and experience requirements need review.',relevance:relevance(j.title)})));
+  return{jobs,source:{name:'Qiddiya',ok:successfulQueries>0,count:jobs.length,scanned,limited,queryErrors:failures,...(failures?{error:`${failures} searches failed; results may be incomplete.`}:{})}};
+ }
++// Historical read-only adapters are retained for compatibility and fixture checks.
++// They are not enabled by the production six-source selector below.
++export function legacyTechnologyRelevance(title){
++    const t=title||'';
++    if(/\b(senior|sr\.?|lead|principal|staff|manager|director|head|chief|vp|vice[ -]president|sales|pre[ -]?sales|clinical)\b/i.test(t))return 0;
++    if(/software|developer|python|machine[ -]learning|artificial[ -]intelligence|\bAI\b|full[ -]?stack|front[ -]?end|back[ -]?end|\bios\b|\bswift(?:ui)?\b|\bandroid\b|\bmobile[ -](engineer|developer)\b|automation|devops|site[ -]reliability|cloud[ -](platform|native|engineer)|database[ -]administrator|techops|data[ -](analyst|engineer|scientist)|builders[ -]program.*data|quality[ -]assurance|\bQA\b|مطور|برمجيات|ذكاء اصطناعي|محلل بيانات/i.test(t))return /junior|entry[ -]level|graduate|intern|trainee|associate|himmah|tamheer|builders[ -]program/i.test(t)?95:80;
++    return 0;
++  }
++// Public, read-only employer boards. No profile, CV or application data is sent.
++export const PUBLIC_SOURCES = [
++  {name:'Mozn', type:'workable', board:'mozn-ai'},
++  {name:'Lucidya', type:'workable', board:'lucidya'},
++  {name:'Foodics', type:'workable', board:'foodics'},
++  {name:'Salla', type:'workable', board:'salla'},
++  {name:'Lean Technologies', type:'ashby', board:'LeanTech'},
++  {name:'Tamara', type:'greenhouse', board:'tamara'},
++  {name:'Unifonic', type:'recruitee', board:'unifonic'}
++];
++const textValue=(v,max=2000)=>typeof v==='string'&&v.trim()&&v.length<=max?v.trim():null;
++const mappedText=(mapping,key)=>typeof key==='string'&&Object.hasOwn(mapping,key)?mapping[key]:null;
++const saCountry=v=>typeof v==='string'&&/^(Saudi Arabia|Kingdom of Saudi Arabia|SA|SAU|السعودية|المملكة العربية السعودية)$/i.test(v.trim());
++function sourceURL(s){
++  if(s.type==='recruitee')return 'https://unifonic.recruitee.com/api/offers/';
++  if(s.type==='workable')return 'https://apply.workable.com/api/v1/widget/accounts/'+s.board;
++  if(s.type==='ashby')return 'https://api.ashbyhq.com/posting-api/job-board/'+s.board;
++  return 'https://boards-api.greenhouse.io/v1/boards/'+s.board+'/jobs?content=true';
++}
++function locationsFor(s,j){
++  if(s.type==='recruitee')return j.locations.filter(l=>saCountry(l.country_code != null ? l.country_code : l.country)).map(l=>textValue(l.city)||'Saudi Arabia');
++  if(s.type==='workable'){
++    const locations=Array.isArray(j.locations)&&j.locations.length?j.locations:[{country:j.country,city:j.city}];
++    return locations.filter(l=>l&&l.hidden!==true&&(l.countryCode?saCountry(l.countryCode):saCountry(l.country))).map(l=>textValue(l.city)||'Saudi Arabia');
++  }
++  if(s.type==='ashby'){
++    return [{location:j.location,address:j.address},...(Array.isArray(j.secondaryLocations)?j.secondaryLocations:[])].filter(l=>{
++      const country=l?.address?.postalAddress?.addressCountry??l?.address?.addressCountry;
++      return country?saCountry(country):typeof l?.location==='string'&&isSaudi(l.location);
++    }).map(l=>textValue(l.location)).filter(Boolean);
++  }
++  const location=textValue(j.location?.name);
++  return location&&isSaudi(location)?[location]:[];
++}
++function parsePublicRow(s,j){
++  if(!j||typeof j!=='object'||Array.isArray(j)||!textValue(j.title))throw Error('Malformed listing');
++  const id=s.type==='workable'?j.shortcode:s.type==='ashby'?j.id:String(j.id??'');
++  const idOK=s.type==='workable'?typeof id==='string'&&/^[A-Za-z0-9]{1,64}$/.test(id):s.type==='ashby'?typeof id==='string'&&/^[a-f0-9-]{36}$/i.test(id):typeof j.id==='number'&&Number.isSafeInteger(j.id)&&j.id>=0;
++  if(!idOK)throw Error('Malformed job identifier');
++  if(s.type==='ashby'&&typeof j.isListed!=='boolean')throw Error('Missing listing state');
++  if(s.type==='workable'){
++    if(j.locations!=null&&(!Array.isArray(j.locations)||j.locations.some(l=>!l||typeof l!=='object'||Array.isArray(l)||['country','countryCode','city'].some(k=>l[k]!=null&&typeof l[k]!=='string')||l.hidden!=null&&typeof l.hidden!=='boolean')))throw Error('Malformed locations');
++    if(['country','city'].some(k=>j[k]!=null&&typeof j[k]!=='string'))throw Error('Malformed location');
++    if(!j.locations?.length&&!textValue(j.country))throw Error('Missing country');
++  }
++  if(s.type==='ashby'){
++    if(typeof j.location!=='string'||j.secondaryLocations!=null&&!Array.isArray(j.secondaryLocations))throw Error('Malformed locations');
++    for(const l of [{location:j.location,address:j.address},...(j.secondaryLocations||[])]){
++      if(!l||typeof l!=='object'||typeof l.location!=='string'||l.address!=null&&(typeof l.address!=='object'||Array.isArray(l.address))||l.address?.postalAddress!=null&&(typeof l.address.postalAddress!=='object'||Array.isArray(l.address.postalAddress))||l.address?.postalAddress?.addressCountry!=null&&typeof l.address.postalAddress.addressCountry!=='string'||l.address?.addressCountry!=null&&typeof l.address.addressCountry!=='string')throw Error('Malformed locations');
++    }
++  }
++  if(s.type==='recruitee'){
++    if(typeof j.status!=='string'||typeof j.slug!=='string'||!(/^[a-z0-9][a-z0-9-]{0,199}$/i.test(j.slug))||!Array.isArray(j.locations)||j.locations.some(l=>!l||typeof l!=='object'||Array.isArray(l)||['country_code','country','city'].some(k=>l[k]!=null&&typeof l[k]!=='string'))||['remote','on_site','hybrid'].some(k=>j[k]!=null&&typeof j[k]!=='boolean'))throw Error('Malformed Recruitee listing');
++  }
++  if(s.type==='greenhouse'&&typeof j.location?.name!=='string')throw Error('Malformed location');
++  const title=j.title.trim(),score=legacyTechnologyRelevance(title),locs=locationsFor(s,j);
++  // Only publication dates are labeled Posted. Greenhouse updated_at is not publication.
++  const sourceDate=v=>v==null||v===''?'':typeof v==='string'&&/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} UTC$/.test(v)?v.replace(' ','T').replace(' UTC','Z'):null;
++  const posted=s.type==='workable'?(j.published_on??''):s.type==='ashby'?(j.publishedAt??''):s.type==='recruitee'?sourceDate(j.published_at):(j.first_published??'');
++  const closes=s.type==='recruitee'?sourceDate(j.close_at):'';
++  if(closes!==''&&(typeof closes!=='string'||!parsedDate(closes)))throw Error('Malformed deadline');
++  if(posted!==''&&(typeof posted!=='string'||!parsedDate(posted)))throw Error('Malformed publication date');
++  if(!score||!locs.length||isFuture(posted)||s.type==='ashby'&&!j.isListed||s.type==='recruitee'&&j.status!=='published'||isExpired(closes))return {_excludedId:`${s.board.toLowerCase()}-${id}`};
++  const level=typeof j.experience==='string'?j.experience.trim():'';
++  if(/^(director|executive)$/i.test(level))return {_excludedId:`${s.board.toLowerCase()}-${id}`};
++  const url=s.type==='workable'?`https://apply.workable.com/${s.board}/j/${id}/`:s.type==='ashby'?j.jobUrl:s.type==='recruitee'?j.careers_url:j.absolute_url;
++  if(typeof url!=='string'||safeJobURL(url)==='#')throw Error('Unsafe employer URL');
++  const u=new URL(url),expectedHost=s.type==='ashby'?'jobs.ashbyhq.com':s.type==='greenhouse'?'job-boards.eu.greenhouse.io':s.type==='recruitee'?'jobs.unifonic.com':'apply.workable.com',expected=s.type==='ashby'?`/${s.board}/${id}`:s.type==='greenhouse'?`/${s.board}/jobs/${id}`:s.type==='recruitee'?`/o/${j.slug}`:null;
++  if(u.hostname!==expectedHost)throw Error('Mismatched employer host');
++  if(expected&&u.pathname.replace(/\/$/,'').toLowerCase()!==expected.toLowerCase())throw Error('Mismatched employer URL');
++  const early=/junior|entry[ -]level|graduate|intern|trainee|associate|himmah|tamheer|builders[ -]program/i.test(title+' '+level);
++  return {id:`${s.board.toLowerCase()}-${id}`,title,company:s.name,location:[...new Set(locs)].map(l=>s.type!=='greenhouse'&&!isSaudi(l)?l+', Saudi Arabia':l).join(' / '),url:safeJobURL(url),posted,closes:closes||null,status:'live',salary:null,kind:'live',fit:'Needs review',healthcare:false,leadership:false,relevance:early?95:score,mode:employerMode(s.type,j),postedKind:['ashby','recruitee'].includes(s.type)?'last-published':'published',experienceLevel:level.slice(0,100),employmentType:employmentLabel(mappedText({FullTime:'Full time',PartTime:'Part time',Intern:'Internship',Contract:'Contract',Temporary:'Temporary'},j.employmentType)||textValue(j.employment_type,100)||mappedText({fulltime_permanent:'Full time (permanent)',fulltime_fixed_term:'Full time (fixed term)',parttime_permanent:'Part time (permanent)',parttime_fixed_term:'Part time (fixed term)',internship:'Internship'},j.employment_type_code)||(s.type==='recruitee'&&textValue(j.employment_type_code,100)?'Employer code: '+j.employment_type_code.slice(0,80):'Not stated')),requirementNotes:requirementNotes(s.type==='ashby'?(j.descriptionPlain||j.descriptionHtml):s.type==='greenhouse'?j.content:s.type==='recruitee'?[j.requirements,j.description].filter(v=>typeof v==='string').join('\n'):''),
++    summary:'Currently listed on the employer board. Confirm paid status, degree, professional experience and work location before applying.',
++    gaps:[...(level?['Employer-listed experience level: '+level+'. Check the full requirements.']:[]),'Personal projects are not formal employment. Confirm any degree, student-status or minimum professional-experience requirement.','Salary and paid status are not verified. Review the current official job description.']};
++}
++export function parsePublicBoard(s,data){
++  if(s.type==='recruitee'){if(!data||typeof data!=='object'||!Array.isArray(data.offers))throw Error('Unexpected employer response');data={jobs:data.offers};}
++  if(!data||typeof data!=='object'||!Array.isArray(data.jobs)||data.jobs.length>5000)throw Error('Unexpected employer response');
++  const sampled=data.jobs.slice(0,500),byID=new Map(),excluded=new Set();let failures=0,valid=0;
++  for(const row of sampled){try{
++    const job=parsePublicRow(s,row);valid++;if(!job)continue;if(job._excludedId){excluded.add(job._excludedId);continue;}
++    const prior=byID.get(job.id);
++    if(prior){const locations=[...new Set([...prior.location.split(' / '),...job.location.split(' / ')])];prior.location=locations.join(' / ');prior.relevance=Math.max(prior.relevance,job.relevance)}else byID.set(job.id,job);
++  }catch{failures++}}
++  const jobs=[...byID.values()],limited=data.jobs.length>500;
++  return {jobs,source:{name:s.name,ok:valid>0||sampled.length===0,count:jobs.length,scanned:sampled.length,total:data.jobs.length,limited,detailErrors:failures,excludedIds:[...excluded].filter(id=>!byID.has(id)),...(failures?{error:`${failures} malformed listings were skipped; results may be incomplete.`}:{})}};
++}
++export async function publicBoardSource(s,fetcher=fetch){
++  if(!PUBLIC_SOURCES.some(x=>x.name===s.name&&x.type===s.type&&x.board===s.board))throw Error('Unknown employer board');
++  return parsePublicBoard(s,await jsonFetch(sourceURL(s),null,fetcher));
++}
++export const SMART_SOURCES=[{name:'Devoteam',type:'smartrecruiters',board:'Devoteam'},{name:'Delivery Hero',type:'smartrecruiters',board:'DeliveryHero'}];
++function smartSourceKnown(s){if(!SMART_SOURCES.some(x=>x.name===s.name&&x.type===s.type&&x.board===s.board))throw Error('Unknown employer board');}
++function smartIdentity(s,row){
++ if(!row||typeof row!=='object'||Array.isArray(row)||typeof row.id!=='string'||!/^\d{1,20}$/.test(row.id)||!textValue(row.name)||row.company?.identifier!==s.board||!textValue(row.location?.country,100)||row.location.city!=null&&(typeof row.location.city!=='string'||row.location.city.length>2000)||!textValue(row.visibility,40)||typeof row.releasedDate!=='string'||!parsedDate(row.releasedDate))throw Error('Malformed employer listing');
++ const id=s.board.toLowerCase()+'-'+row.id,excluded=row.visibility!=='PUBLIC'||!saCountry(row.location.country)||!legacyTechnologyRelevance(row.name)||isFuture(row.releasedDate);
++ return {id,excluded};
++}
++export function smartCandidates(s,data){
++ smartSourceKnown(s);
++ if(!data||!Array.isArray(data.content)||data.content.length>5000||data.offset!==0||!Number.isInteger(data.limit)||data.limit<1||data.limit>100||!Number.isInteger(data.totalFound)||data.totalFound<data.content.length||data.totalFound>0&&!data.content.length)throw Error('Unexpected employer response');
++ const candidates=new Map(),excluded=new Set();let valid=0,failures=0;
++ for(const row of data.content.slice(0,100)){try{const item=smartIdentity(s,row);valid++;if(item.excluded)excluded.add(item.id);else candidates.set(row.id,row);}catch{failures++}}
++ return {rows:[...candidates.values()].slice(0,20),excludedIds:[...excluded].filter(id=>![...candidates.keys()].some(key=>s.board.toLowerCase()+'-'+key===id)),scanned:Math.min(100,data.content.length),total:data.totalFound,limited:data.totalFound>data.content.length||data.content.length>100||candidates.size>20,valid,failures};
++}
++export function parseSmartDetail(s,listing,detail){
++ smartSourceKnown(s);const identity=smartIdentity(s,detail);
++ if(detail.id!==listing.id||typeof detail.active!=='boolean')throw Error('Mismatched employer detail');
++ if(identity.excluded||!detail.active)return {_excludedId:identity.id};
++ for(const key of ['remote','hybrid'])if(detail.location[key]!=null&&typeof detail.location[key]!=='boolean')throw Error('Malformed work arrangement');
++ const url=safeJobURL(detail.postingUrl);if(url==='#')throw Error('Unsafe employer URL');
++ const u=new URL(url),expected=new RegExp('^/'+s.board+'/'+listing.id+'-[a-z0-9-]{1,240}/?$');
++ if(u.hostname!=='jobs.smartrecruiters.com'||!expected.test(u.pathname)||u.search||u.hash)throw Error('Mismatched employer URL');
++ const label=(obj)=>{if(obj==null)return '';if(typeof obj!=='object'||Array.isArray(obj)||obj.label!=null&&(typeof obj.label!=='string'||obj.label.length>100))throw Error('Malformed employer metadata');return obj.label||''};
++ const level=label(detail.experienceLevel),type=label(detail.typeOfEmployment),sections=detail.jobAd?.sections;
++ if(detail.jobAd!=null&&(typeof detail.jobAd!=='object'||Array.isArray(detail.jobAd))||sections!=null&&(typeof sections!=='object'||Array.isArray(sections)))throw Error('Malformed employer requirements');
++ const descriptions=['qualifications','jobDescription','additionalInformation'].map(key=>{const section=sections?.[key];if(section==null)return '';if(typeof section!=='object'||Array.isArray(section)||section.text!=null&&(typeof section.text!=='string'||section.text.length>120000))throw Error('Malformed employer requirements');return section.text||''});
++ // Each section is bounded, and total input is bounded before text normalization.
++ if(descriptions.reduce((sum,x)=>sum+x.length,0)>120000)throw Error('Oversized employer requirements');
++ const title=detail.name.trim(),early=/junior|entry[ -]level|graduate|intern|trainee|associate|tamheer/i.test(title+' '+level);
++ return {id:identity.id,title,company:s.name,location:(textValue(detail.location.city)||'Saudi Arabia')+(textValue(detail.location.city)?', Saudi Arabia':''),url,posted:detail.releasedDate,postedKind:'last-published',closes:null,status:'live',salary:null,kind:'live',fit:'Needs review',healthcare:false,leadership:false,relevance:early?95:legacyTechnologyRelevance(title),mode:detail.location.remote===true?(detail.location.hybrid===true?'Remote / Hybrid':'Remote'):detail.location.hybrid===true?'Hybrid':detail.location.remote===false&&detail.location.hybrid===false?'On-site':'Not stated',experienceLevel:level,employmentType:type==='Intern'?'Internship':employmentLabel(type||'Not stated'),requirementNotes:requirementNotes(descriptions.join('\n')),summary:'Currently listed on the employer board. Confirm eligibility, paid status, professional experience and work location.',gaps:['Confirm mandatory qualifications and any program eligibility directly with the employer.','Personal projects are not formal employment. Salary and paid status are not verified.']};
++}
++export async function smartBoardSource(s,fetcher=fetch){
++ smartSourceKnown(s);const deadline=AbortSignal.timeout(40000),base='https://api.smartrecruiters.com/v1/companies/'+s.board+'/postings';
++ const data=await jsonFetch(base+'?country=sa&limit=100&offset=0',null,fetcher,deadline),sample=smartCandidates(s,data),excluded=new Set(sample.excludedIds),byID=new Map();let failures=sample.failures,details=0;
++ // At most four detail requests in flight per board; all URLs are constructed from validated numeric IDs.
++ for(let offset=0;offset<sample.rows.length;offset+=4){await Promise.all(sample.rows.slice(offset,offset+4).map(async row=>{try{const j=parseSmartDetail(s,row,await jsonFetch(base+'/'+row.id,null,fetcher,deadline));details++;if(j._excludedId)excluded.add(j._excludedId);else byID.set(j.id,j)}catch{failures++}}))}
++ const jobs=[...byID.values()];
++ return {jobs,source:{name:s.name,ok:details>0||sample.excludedIds.length>0||sample.rows.length===0&&(sample.valid>0||sample.scanned===0),count:jobs.length,scanned:sample.scanned,total:sample.total,limited:sample.limited,detailErrors:failures,excludedIds:[...excluded].filter(id=>!byID.has(id)),...(failures?{error:`${failures} listing checks failed; results may be incomplete.`}:{})}};
++}
++
+ export async function getLiveJobs(fetcher=fetch){
+  const tasks=[...SOURCES.map(s=>({name:s.name,run:()=>workdaySource(s,fetcher)}))];
+  const results=await Promise.all(tasks.map(async s=>{try{return await s.run()}catch(e){return{jobs:[],source:{name:s.name,ok:false,count:0,error:String(e.message||'Unable to reach employer').slice(0,140)}}}}));
+  return{checkedAt:new Date().toISOString(),jobs:dedupe(results.flatMap(r=>r.jobs)).sort((a,b)=>b.relevance-a.relevance||(dateSortTime(b.posted)??-Infinity)-(dateSortTime(a.posted)??-Infinity)),sources:results.map(r=>r.source)};
+ }
++
++// Historical fixture/compatibility entry point; the app and Worker call getLiveJobs only.
++export async function getLegacyPublicJobs(fetcher=fetch){
++  const results=await Promise.all([...PUBLIC_SOURCES,...SMART_SOURCES].map(async s=>{try{return await (s.type==='smartrecruiters'?smartBoardSource(s,fetcher):publicBoardSource(s,fetcher))}catch(e){return{jobs:[],source:{name:s.name,ok:false,count:0,scanned:0,error:String(e.message||'Unable to reach employer').slice(0,140)}}}}));
++  return {checkedAt:new Date().toISOString(),jobs:dedupe(results.flatMap(r=>r.jobs)).sort((a,b)=>b.relevance-a.relevance||(dateSortTime(b.posted)??-Infinity)-(dateSortTime(a.posted)??-Infinity)),sources:results.map(r=>r.source)};
++}
+--- a/website/state-check.mjs
++++ b/website/state-check.mjs
+@@ -5,12 +5,12 @@
+ import { readFileSync } from 'node:fs';
+ import vm from 'node:vm';
+ 
+-const scripts = ['core.js', 'data.js', 'app.js'].map(name => ({
++const scripts = ['core.js', 'data.js', 'backup.js', 'app.js'].map(name => ({
+   name,
+   source: readFileSync(new URL(`./web/${name}`, import.meta.url), 'utf8'),
+ }));
+ 
+-function createApp(initialStorage = new Map(), options = {}) {
++export function createApp(initialStorage = new Map(), options = {}) {
+   const appIntl = options.timeZone ? Object.create(Intl) : Intl;
+   if (options.timeZone) {
+     // Intl.DateTimeFormat supports both function and constructor invocation.
+@@ -66,10 +66,10 @@
+   }
+ 
+   const context = vm.createContext({
+-    console, URL: TestURL, Blob, Intl: appIntl, Date, AbortSignal,
++    console, URL: TestURL, Blob, Intl: appIntl, Date: options.Date || Date, AbortSignal,
+     FormData: class { constructor(form) { this.values=form.values; } get(key) { return this.values[key]??null; } },
+     confirm: () => false,
+-    setTimeout: () => 1, clearTimeout() {},
++    setTimeout: options.setTimeout || (() => 1), clearTimeout: options.clearTimeout || (() => {}),
+     scrollTo() {}, navigator: {locks: options.locks}, location: { protocol: 'https:' },
+     fetch: options.fetch || (() => { throw new Error('Unexpected network request in state regression checks'); }),
+     document: {
+@@ -83,6 +83,7 @@
+       },
+     },
+     localStorage: {
++      get length(){return storage.size;}, key:index=>[...storage.keys()][index]??null,
+       getItem: key => { const value=storage.get(key) ?? null; options.afterRead?.(key); return value; },
+       setItem(key, value) {
+         if (writesFail || failKeys.has(key)) throw new Error('Simulated storage quota failure');
+@@ -91,13 +92,15 @@
+     },
+   });
+   context.window = context;
++  context.addEventListener=(type,callback)=>{const key='window:'+type;if(!listeners.has(key))listeners.set(key,[]);listeners.get(key).push(callback)};
+   for (const { name, source } of scripts) {
+-    vm.runInContext(source, context, { filename: name });
++    vm.runInContext(options.sourceOverrides?.[name] ?? source, context, { filename: name });
+     if(name==='data.js'){if(options.bundle)vm.runInContext('globalThis.CAREER_DATA='+JSON.stringify(options.bundle),context);else if(!options.productionBundle)vm.runInContext('CAREER_DATA.jobs=CAREER_DATA.legacyJobs;CAREER_DATA.legacyJobs=[]',context);}
+   }
+   const evaluate = source => vm.runInContext(source, context);
+   return {
+     storage, toasts, downloads, failKeys, evaluate,
++    async windowEvent(type,event){for(const fn of listeners.get('window:'+type)||[])await fn(event)},
+     async dispatch(type, target) { for (const fn of listeners.get(type) || []) await fn({target, preventDefault(){}}); },
+     failAllWrites() { writesFail = true; },
+     json(source) { return JSON.parse(evaluate(`JSON.stringify(${source})`)); },
+--- /dev/null
++++ b/website/backup-check.mjs
+@@ -0,0 +1,76 @@
++// Schema2 is now supported for explicit v2 preferences; the original schema2 rejection remains in historical/public1.3/backup-check.mjs.
++import assert from 'node:assert/strict';
++import {writeFileSync,existsSync,readFileSync} from 'node:fs';
++import {createApp} from './state-check.mjs';
++const locks={request:async(_key,fn)=>fn()};
++const create=(storage=new Map(),options={})=>createApp(storage,{locks,...options});
++const source=create();
++const job={...source.json('Backup.portableJob(D.jobs[0])'),id:'backup-web-test'},id=job.id,q=JSON.stringify(id),stamp=new Date(Date.now()-1000).toISOString();
++const receipt={schema:1,jobId:id,appliedAt:'',receiptNote:'SYNTHETIC receipt, not a submission',updatedAt:stamp};
++const action={schema:1,jobId:id,dueOn:'2030-01-01',actionNote:'SYNTHETIC task',completed:false,updatedAt:stamp};
++const data={format:'saleh-career-workspace',schema:1,exportedAt:stamp,platform:'web',workspace:{saved:[id],states:{[id]:'Submission uncertain'},savedDetails:{[id]:job}},profile:{years:'',degree:'Synthetic coursework',preferredCity:'riyadh',minimumMonthlySAR:'',unknownSalary:'show'},checklist:{profile:true},applicationRecords:[receipt],nextActions:[action]};
++const parse=(app,value)=>app.evaluate(`Backup.parse(${JSON.stringify(typeof value==='string'?value:JSON.stringify(value))})`);
++const review=(app,value=data)=>{app.evaluate(`backupInput=${JSON.stringify(JSON.stringify(value))};previewBackup()`);return app.json('backupPreview?.count??null')};
++const blank=()=>new Map([['ahmad-workspace',JSON.stringify({saved:[],states:{},savedDetails:{}})]]);
++assert(parse(source,data));
++for(const patch of [{schema:3},{format:'other'},{platform:'random'},{exportedAt:'2039-01-01T00:00:00.000Z'},{unexpected:1},{workspace:{...data.workspace,saved:[id,id]}},{workspace:{...data.workspace,states:{bad:'Applied'}}},{profile:{years:61}},{profile:{skills:null}},{checklist:{x:1}},{applicationRecords:[receipt,receipt]},{nextActions:[{...action,unexpected:1}]},{applicationRecords:[{...receipt,updatedAt:'2039-01-01T00:00:00.000Z'}]}])assert.throws(()=>parse(source,{...data,...patch}),JSON.stringify(patch));
++assert.throws(()=>parse(source,'{"oops":'));
++assert.throws(()=>parse(source,' '.repeat(4*1024*1024+1)));
++assert.throws(()=>parse(source,JSON.stringify(data).replace('SYNTHETIC task','🌷'.repeat(500000))));
++assert.throws(()=>parse(source,{...data,workspace:{...data.workspace,savedDetails:{[id]:{...job,applyUrl:'https://attacker.invalid/apply'}}}}));
++assert.throws(()=>parse(source,JSON.stringify(data).replace('"savedDetails":{','"savedDetails":{"__proto__":{},')));
++{
++ const app=create(blank());const before=[...app.storage];const c=review(app);assert.deepEqual(c,{jobs:1,saved:1,states:1,receipts:1,actions:1,conflicts:0});assert.deepEqual([...app.storage],before,'preview wrote storage');
++ assert.equal(await app.evaluate('applyBackup()'),true);assert.equal(app.evaluate(`states[${q}]`),'Submission uncertain');assert.equal(app.evaluate(`readApplicationRecord(${q}).receiptNote`),receipt.receiptNote);assert.equal(app.evaluate(`readNextAction(${q}).actionNote`),action.actionNote);assert.equal(app.evaluate('profile.degree'),undefined);
++ assert(!app.storage.has('ahmad-application-record-v1:'+encodeURIComponent(id)));assert(!app.storage.has('ahmad-next-action-v1:'+encodeURIComponent(id)));
++ const recovery=JSON.parse(app.storage.get('ahmad-pre-restore-v1'));assert.deepEqual(recovery.backup.workspace.saved,[]);
++ app.evaluate('prepareRecoveryBackup()');assert.deepEqual(JSON.parse(app.evaluate('backupExport')).workspace.saved,[]);
++ const reloaded=create(app.storage);assert.equal(reloaded.evaluate(`readNextAction(${q}).actionNote`),action.actionNote);
++ review(reloaded);assert.equal(reloaded.evaluate('backupPreview.changed'),false);const snapshot=[...reloaded.storage];assert.equal(await reloaded.evaluate('applyBackup()'),false);assert.deepEqual([...reloaded.storage],snapshot);
++ reloaded.evaluate(`openJob(${q});recordDrafts[${q}].receiptNote='Changed after import'`);assert.equal(await reloaded.evaluate(`saveApplicationRecord(${q})`),true);assert.equal(reloaded.evaluate(`readApplicationRecord(${q}).receiptNote`),'Changed after import');assert.equal(create(reloaded.storage).evaluate(`readApplicationRecord(${q}).receiptNote`),'Changed after import');
++ reloaded.evaluate(`openJob(${q});actionDrafts[${q}].actionNote='';actionDrafts[${q}].dueOn='';actionDrafts[${q}].completed=false`);assert.equal(await reloaded.evaluate(`saveNextAction(${q})`),true);assert.equal(create(reloaded.storage).evaluate(`readNextAction(${q}).actionNote`),'');
++ await reloaded.evaluate('prepareBackup()');const out=JSON.parse(reloaded.evaluate('backupExport'));assert.equal(out.applicationRecords[0].receiptNote,'Changed after import');assert.equal(out.nextActions[0].actionNote,'');assert.equal(out.platform,'web');assert.equal(out.workspace.states[id],'Submission uncertain');assert(!JSON.stringify(out).includes('searchComparison'));
++ if(process.argv.includes('--write-fixture'))writeFileSync(new URL('./fixtures/web-backup.json',import.meta.url),JSON.stringify(out,null,2)+'\n');
++}
++{
++ const existing={saved:[],states:{[id]:'Not started'},savedDetails:{[id]:{...job,summary:'Preserved summary'}}};const app=create(new Map([['ahmad-workspace',JSON.stringify(existing)],['ahmad-application-record-v1:'+encodeURIComponent(id),JSON.stringify({...receipt,receiptNote:'Preserved receipt'})],['ahmad-next-action-v1:'+encodeURIComponent(id),JSON.stringify({...action,actionNote:'Preserved task'})]]));review(app);assert.equal(app.evaluate('backupPreview.count.conflicts'),4);assert(await app.evaluate('applyBackup()'));assert.equal(app.evaluate(`states[${q}]`),'Not started');assert.equal(app.evaluate(`savedDetails[${q}].summary`),'Preserved summary');assert.equal(app.evaluate(`readApplicationRecord(${q}).receiptNote`),'Preserved receipt');
++}
++for(const key of ['ahmad-workspace','ahmad-pre-restore-v1']){
++ const app=create(blank());review(app);const before=app.storage.get('ahmad-workspace');app.failKeys.add(key);assert.equal(await app.evaluate('applyBackup()'),false);assert.equal(app.storage.get('ahmad-workspace'),before);assert.deepEqual(app.json('saved'),[]);assert.equal(app.evaluate(`readNextAction(${q})`),null);
++}
++for(const key of ['ahmad-workspace','ahmad-profile','ahmad-checklist','ahmad-application-record-v1:'+encodeURIComponent(id),'ahmad-next-action-v1:'+encodeURIComponent(id)]){
++ const app=create(blank());review(app);const changed=key.endsWith('workspace')?{saved:[],states:{},savedDetails:{[id]:job}}:key.endsWith('profile')?{years:'1'}:key.endsWith('checklist')?{profile:true}:key.includes('application-record')?receipt:action;app.storage.set(key,JSON.stringify(changed));const before=app.storage.get('ahmad-workspace');assert.equal(await app.evaluate('applyBackup()'),false,key);assert.equal(app.storage.get('ahmad-workspace'),before);assert.match(app.evaluate('backupNotice'),/changed after this preview|orphaned/);
++}
++{
++ const app=create(blank(),{locks:null});review(app);assert.equal(await app.evaluate('applyBackup()'),false);assert.match(app.evaluate('backupNotice'),/unavailable/);
++ const orphan=create(blank());orphan.storage.set('ahmad-next-action-v1:'+encodeURIComponent(id),JSON.stringify(action));await orphan.evaluate('prepareBackup()');assert.match(orphan.evaluate('backupNotice'),/orphaned/);assert.equal(orphan.evaluate('backupExport'),'');
++ const unreadable=create(blank());unreadable.storage.set('ahmad-next-action-v1:'+encodeURIComponent(id),'null');assert.equal(review(unreadable),null);assert.match(unreadable.evaluate('backupNotice'),/orphaned|unreadable/);
++ const draft=create(blank());draft.evaluate("profileDraft.skills='Unfinished edit'");assert.equal(review(draft),null);assert.match(draft.evaluate('backupNotice'),/unsaved/);
++ const quota=create(blank());quota.failAllWrites();assert(review(quota));assert.equal(await quota.evaluate('applyBackup()'),false);
++}
++{
++ const app=create(blank());review(app);await app.dispatch('input',{id:'backup-input',value:'{}'});assert.equal(app.evaluate('backupPreview'),null);assert.equal(await app.evaluate('applyBackup()'),false);
++}
++if(existsSync(new URL('./fixtures/native-backup.json',import.meta.url))){const app=create(blank());const native=JSON.parse(readFileSync(new URL('./fixtures/native-backup.json',import.meta.url),'utf8'));assert(parse(app,native));assert(review(app,native));assert(await app.evaluate('applyBackup()'));assert.equal(app.json('saved').length,native.workspace.saved.length);}
++{
++ const initial=new Map([['ahmad-workspace',JSON.stringify({saved:[],states:{},savedDetails:{[id]:job}})]]);
++ const a=create(initial,{shared:true}),b=create(initial,{shared:true});
++ a.evaluate(`openJob(${q});recordDrafts[${q}].receiptNote='STALE draft';actionDrafts[${q}].actionNote='STALE task'`);
++ review(b);assert(await b.evaluate('applyBackup()'));
++ assert.equal(a.evaluate(`readApplicationRecord(${q}).receiptNote`),receipt.receiptNote);
++ assert.equal(a.evaluate(`readNextAction(${q}).actionNote`),action.actionNote);
++ assert.equal(await a.evaluate(`saveApplicationRecord(${q})`),false);
++ assert.equal(await a.evaluate(`saveNextAction(${q})`),false);
++ assert.equal(create(initial).evaluate(`readApplicationRecord(${q}).receiptNote`),receipt.receiptNote);
++ assert.equal(create(initial).evaluate(`readNextAction(${q}).actionNote`),action.actionNote);
++}
++{
++ const bulk=(prefix,count)=>{const rows=Array.from({length:count},(_,i)=>({...job,id:prefix+i,title:'Synthetic software role',gaps:[],steps:[],summary:'Synthetic backup capacity check'}));return {...data,workspace:{saved:[],states:{},savedDetails:Object.fromEntries(rows.map(j=>[j.id,j]))},applicationRecords:rows.map(j=>({...receipt,jobId:j.id,receiptNote:'🌷'.repeat(2000)})),nextActions:[]};};
++ const existing=bulk('existing-cap-',300),incoming=bulk('incoming-cap-',300);
++ assert(parse(source,JSON.stringify(existing,null,2)));assert(parse(source,JSON.stringify(incoming,null,2)));
++ const records=new Map([['ahmad-workspace',JSON.stringify(existing.workspace)],...existing.applicationRecords.map(r=>['ahmad-application-record-v1:'+encodeURIComponent(r.jobId),JSON.stringify(r)])]);
++ const app=create(records),before=[...app.storage];assert.equal(review(app,incoming),null);assert.match(app.evaluate('backupNotice'),/4 MiB/);assert.deepEqual([...app.storage],before,'oversized merged portable export changed storage');
++ const tooLarge=bulk('existing-large-',600),huge=new Map([['ahmad-workspace',JSON.stringify(tooLarge.workspace)],...tooLarge.applicationRecords.map(r=>['ahmad-application-record-v1:'+encodeURIComponent(r.jobId),JSON.stringify(r)])]);
++ const recover=create(huge);assert.equal(review(recover),null);assert.match(recover.evaluate('backupNotice'),/4 MiB/);assert(!recover.storage.has('ahmad-pre-restore-v1'));
++}
++console.log('Backup validation, atomic additive restore, failure, duplicate, stale preview, fallback and export checks passed.');
+--- /dev/null
++++ b/website/public-provider-check.mjs
+@@ -0,0 +1,46 @@
++// Tests the retained historical nine-board adapter explicitly. The current six-source production selector is checked separately.
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import {PUBLIC_SOURCES,parsePublicBoard,publicBoardSource,getLegacyPublicJobs as getLiveJobs,legacyTechnologyRelevance} from './feeds.mjs';
++const C=globalThis.CareerCore,fixtures=JSON.parse(fs.readFileSync(new URL('./fixtures/public-boards.json',import.meta.url)));
++const clone=v=>structuredClone(v);
++for(const [i,f] of fixtures.slice(0,6).entries()){
++ const source=PUBLIC_SOURCES[i],row=f.data.jobs[0];
++ assert.deepEqual(source,f.source);
++ let p=parsePublicBoard(source,f.data);assert.equal(p.jobs.length,1);assert(p.source.ok);assert.equal(p.source.detailErrors,0);assert(C.normalizeJob(p.jobs[0]));
++ assert.equal(parsePublicBoard(source,{jobs:[]}).source.ok,true,'Valid zero is a success');
++ p=parsePublicBoard(source,{jobs:[row,{},null]});assert.equal(p.jobs.length,1);assert.equal(p.source.detailErrors,2);assert(p.source.ok);
++ p=parsePublicBoard(source,{jobs:[{}]});assert.equal(p.source.ok,false);
++ assert.throws(()=>parsePublicBoard(source,{results:[]}));assert.throws(()=>parsePublicBoard(source,{jobs:Array(5001).fill(row)}));
++ p=parsePublicBoard(source,{jobs:Array(501).fill(row)});assert.equal(p.source.scanned,500);assert.equal(p.source.limited,true);assert.equal(p.jobs.length,1);
++ for(const title of ['Senior Software Engineer','Bioscience Technician','Biosafety Officer','Presales Consultant, Applied AI'])assert.equal(parsePublicBoard(source,{jobs:[{...row,title}]}).jobs.length,0,title);
++ const malformed=clone(row);malformed[source.type==='workable'?'published_on':source.type==='ashby'?'publishedAt':'first_published']='2026-02-30';assert.equal(parsePublicBoard(source,{jobs:[malformed]}).source.ok,false);
++ const future=clone(row);future[source.type==='workable'?'published_on':source.type==='ashby'?'publishedAt':'first_published']='2099-01-01';assert.equal(parsePublicBoard(source,{jobs:[future]}).jobs.length,0);
++ if(source.type==='workable'){
++  const second=clone(row);second.city='Jeddah';second.locations[0].city='Jeddah';
++  p=parsePublicBoard(source,{jobs:[second,row,second,row]});assert.equal(p.jobs.length,1);assert.match(p.jobs[0].location,/Riyadh/);assert.match(p.jobs[0].location,/Jeddah/);assert.equal((p.jobs[0].location.match(/Riyadh/g)||[]).length,1);assert.equal(C.riyadhCity(p.jobs[0].location),'conditional');
++  const foreign=clone(row);foreign.locations[0].countryCode='JO';assert.equal(parsePublicBoard(source,{jobs:[foreign]}).jobs.length,0,'Foreign country overrides city');
++  const hidden=clone(row);hidden.locations[0].hidden=true;assert.equal(parsePublicBoard(source,{jobs:[hidden]}).jobs.length,0);
++  const bad=clone(row);bad.locations=[42];assert.equal(parsePublicBoard(source,{jobs:[bad]}).source.ok,false);
++  assert.equal(parsePublicBoard(source,{jobs:[{...row,experience:'Director'}]}).jobs.length,0);
++ }else if(source.type==='ashby'){
++  for(const isListed of [false])assert.equal(parsePublicBoard(source,{jobs:[{...row,isListed}]}).jobs.length,0);
++  for(const isListed of [1,'true',null])assert.equal(parsePublicBoard(source,{jobs:[{...row,isListed}]}).source.ok,false);
++  const foreign=clone(row);foreign.address.postalAddress.addressCountry='US';assert.equal(parsePublicBoard(source,{jobs:[foreign]}).jobs.length,0);
++  for(const jobUrl of ['https://evil.example/job',row.jobUrl.replace('11111111','22222222'),'http://jobs.ashbyhq.com/LeanTech/'+row.id])assert.equal(parsePublicBoard(source,{jobs:[{...row,jobUrl}]}).source.ok,false);
++  assert.equal(parsePublicBoard(source,{jobs:[{...row,secondaryLocations:[null]}]}).source.ok,false);
++ }else{
++  assert.equal(parsePublicBoard(source,f.data).jobs[0].posted,'','updated_at is not a publication date');
++  for(const id of [true,1.2,'123',null])assert.equal(parsePublicBoard(source,{jobs:[{...row,id}]}).source.ok,false);
++  assert.equal(parsePublicBoard(source,{jobs:[{...row,absolute_url:row.absolute_url+'4'}]}).source.ok,false);
++ }
++}
++for(const title of ['iOS Engineer','Swift Developer','Software Engineering Intern','Tamara Builders Program - Data'])assert(legacyTechnologyRelevance(title)>0,title);
++const requests=[];
++const payload=await getLiveJobs(async(url,options)=>{requests.push({url,options});assert.equal(options.method,'GET');assert.equal(options.body,undefined);assert.equal(options.redirect,'manual');const f=fixtures[requests.length-1];return new Response(JSON.stringify(url.includes('api.smartrecruiters.com')?{offset:0,limit:100,totalFound:0,content:[]}:f.data),{status:200})});
++assert.equal(requests.length,9);assert.equal(payload.jobs.length,7);assert(C.normalizeLive(payload));
++await assert.rejects(publicBoardSource({name:'Unknown',type:'workable',board:'malicious'}));
++for(const source of PUBLIC_SOURCES)await assert.rejects(publicBoardSource(source,async()=>new Response('{}',{status:302})));
++assert.equal(parsePublicBoard(PUBLIC_SOURCES[6],fixtures[6].data).jobs.length,1);
++if(process.argv[2])fs.writeFileSync(process.argv[2],JSON.stringify(payload,null,2));
++console.log('Public board checks passed: three ATS schemas, six fixed sources, strict URLs/countries/states/dates, multi-city union, duplicates, partial/empty failures, title boundaries, transport request scope and native UI fixture.');
+--- /dev/null
++++ b/website/legacy-compatibility-check.mjs
+@@ -0,0 +1,151 @@
++// Runs only the real local scripts in isolated DOM/storage stubs and injected
++// employer transports. No network, build, native process or account mutation.
++import assert from 'node:assert/strict';
++import {readFileSync} from 'node:fs';
++import {execFileSync} from 'node:child_process';
++import {createApp} from './state-check.mjs';
++import {getLiveJobs,SOURCES} from './feeds.mjs';
++
++const base='b613ab5a08c757f375591733d3c54e9d27f4cb23';
++const locks={request:async(_name,fn)=>fn()};
++const create=(storage=new Map(),options={})=>createApp(storage,{productionBundle:true,locks,...options});
++const stamp='2026-01-01T00:00:00.000Z',id='legacy-compatibility-fixture',q=JSON.stringify(id);
++const job={id,title:'Supply Chain Manager',company:'Alcon',location:'Riyadh, Saudi Arabia',url:'https://alcon.wd5.myworkdayjobs.com/careers_alcon/job/Riyadh/Legacy_REQ1',posted:'2026-01-01',fit:'Needs review',summary:'Synthetic saved record',kind:'archived',healthcare:true,mode:'Hybrid',postedKind:'last-published',employmentType:'Full time',experienceLevel:'Professional',requirementNotes:['Degree or equivalent experience preferred.','Confirm the complete requirements on the employer website.']};
++const receipt={schema:1,jobId:id,appliedAt:'',receiptNote:'Imported receipt; not employer verification',updatedAt:stamp};
++const action={schema:1,jobId:id,dueOn:'2026-11-18',actionNote:'Review the role requirements',completed:false,updatedAt:stamp};
++const workspace=()=>({saved:[id],states:{[id]:'Preparing'},savedDetails:{[id]:job},importedApplicationRecords:{[id]:receipt},importedNextActions:{[id]:action}});
++const storageFor=(value=workspace())=>new Map([['ahmad-workspace',JSON.stringify(value)]]);
++const receiptKey='ahmad-application-record-v1:'+encodeURIComponent(id),actionKey='ahmad-next-action-v1:'+encodeURIComponent(id);
++const persisted=app=>JSON.parse(app.storage.get('ahmad-workspace'));
++const envelope=(schema=1,profile={})=>({format:'saleh-career-workspace',schema,exportedAt:stamp,platform:'web',workspace:{saved:[id],states:{[id]:'Submission uncertain'},savedDetails:{[id]:job}},profile,checklist:{profile:true},applicationRecords:[receipt],nextActions:[action]});
++const parse=(app,data)=>app.evaluate(`Backup.parse(${JSON.stringify(JSON.stringify(data))})`);
++const evaluateJSON=(app,expression)=>app.json(expression);
++let groups=0;
++async function check(name,run){await run();groups++;console.log('PASS COMPAT '+name)}
++
++await check('Original continuation actually loses imported-only maps on a regular save',async()=>{
++ const sourceOverrides=Object.fromEntries(['core.js','data.js','app.js'].map(name=>[name,execFileSync('git',['show',base+':website/web/'+name],{cwd:new URL('..',import.meta.url),encoding:'utf8'})]));
++ sourceOverrides['backup.js']='';
++ const app=create(storageFor(),{sourceOverrides});
++ assert.equal(app.evaluate(`readApplicationRecord(${q})`),null,'Original source must reproduce the invisible imported receipt');
++ await app.dispatch('change',{id:'',dataset:{status:id},value:'Applied'});
++ assert.equal(persisted(app).importedApplicationRecords,undefined);
++ assert.equal(persisted(app).importedNextActions,undefined);
++});
++
++await check('Imported receipt, task and employer metadata survive save and relaunch',async()=>{
++ const app=create(storageFor());
++ assert.deepEqual(evaluateJSON(app,`readApplicationRecord(${q})`),receipt);
++ assert.deepEqual(evaluateJSON(app,`readNextAction(${q})`),action);
++ await app.dispatch('change',{id:'',dataset:{status:id},value:'Applied'});
++ assert.deepEqual(persisted(app).importedApplicationRecords,{[id]:receipt});
++ assert.deepEqual(persisted(app).importedNextActions,{[id]:action});
++ const reload=create(app.storage);assert.deepEqual(evaluateJSON(reload,`readApplicationRecord(${q})`),receipt);assert.deepEqual(evaluateJSON(reload,`readNextAction(${q})`),action);
++ for(const field of ['requirementNotes','employmentType','experienceLevel','postedKind'])assert.deepEqual(persisted(reload).savedDetails[id][field],job[field]);
++});
++
++await check('Explicit empty sidecars override imported fallback through export and reload',async()=>{
++ const emptyReceipt={...receipt,receiptNote:''},emptyAction={...action,actionNote:'',dueOn:'',completed:false};
++ const storage=storageFor();storage.set(receiptKey,JSON.stringify(emptyReceipt));storage.set(actionKey,JSON.stringify(emptyAction));
++ const app=create(storage);assert.equal(app.evaluate(`readApplicationRecord(${q}).receiptNote`),'');assert.equal(app.evaluate(`readNextAction(${q}).actionNote`),'');
++ await app.toggleSaved(id);const reload=create(app.storage);
++ assert.equal(reload.evaluate(`readApplicationRecord(${q}).receiptNote`),'');assert.equal(reload.evaluate(`readNextAction(${q}).actionNote`),'');
++ await reload.evaluate('prepareBackup()');const out=JSON.parse(reload.evaluate('backupExport'));
++ assert.equal(out.applicationRecords[0].receiptNote,'');assert.equal(out.nextActions[0].actionNote,'');
++ assert.equal(app.storage.get(receiptKey),JSON.stringify(emptyReceipt));assert.equal(app.storage.get(actionKey),JSON.stringify(emptyAction));
++});
++
++await check('Null and future-format sidecars are preserved instead of replaced by fallback',async()=>{
++ for(const [key,map] of [[receiptKey,'recordDrafts'],[actionKey,'actionDrafts']])for(const bytes of ['null',JSON.stringify({...key===receiptKey?receipt:action,schema:2})]){
++  const storage=storageFor();storage.set(key,bytes);const app=create(storage);
++  app.evaluate(`openJob(${q});${map}[${q}].${map==='recordDrafts'?'receiptNote':'actionNote'}='Unsaved replacement'`);
++  assert.equal(await app.evaluate(`${map==='recordDrafts'?'saveApplicationRecord':'saveNextAction'}(${q})`),false);
++  assert.equal(app.storage.get(key),bytes);assert.equal(app.evaluate(`blockedKeys.has(${JSON.stringify(key.slice(6))})`),true);
++ }
++});
++
++await check('Unknown workspace and imported-map formats block writes and preserve exact bytes',async()=>{
++ for(const value of [{...workspace(),futureWorkspace:{private:'preserve'}},{...workspace(),importedNextActions:{[id]:{...action,schema:2}}},{...workspace(),importedApplicationRecords:{[id]:{...receipt,unexpected:'preserve'}}}]){
++  const storage=storageFor(value),before=storage.get('ahmad-workspace');const app=create(storage);
++  await app.toggleSaved(id);assert.equal(app.storage.get('ahmad-workspace'),before);assert.equal(app.evaluate("blockedKeys.has('workspace')"),true);
++  await app.evaluate('prepareBackup()');assert.equal(app.evaluate('backupExport'),'');
++ }
++});
++
++await check('Unsupported or unknown stored profile fields remain intact and block restore',async()=>{
++ for(const profile of [{preferencesVersion:'3',targetCountry:'SA'},{preferencesVersion:'2',futurePreference:'preserve'}]){
++  const storage=storageFor();const bytes=JSON.stringify(profile);storage.set('ahmad-profile',bytes);const app=create(storage);
++  await app.evaluate("saveProfile({...profileDraft,skills:'new draft'})");assert.equal(app.storage.get('ahmad-profile'),bytes);
++  app.evaluate(`backupInput=${JSON.stringify(JSON.stringify(envelope()))};previewBackup()`);assert.equal(app.evaluate('backupPreview'),null);
++ }
++});
++
++await check('Legacy uncertain stage survives current selectors, unrelated writes and export',async()=>{
++ const value=workspace();value.states[id]='Submission uncertain';const app=create(storageFor(value));
++ app.evaluate(`openJob(${q})`);assert.match(app.evaluate("$('#job-dialog').innerHTML"),/<option selected>Submission uncertain<\/option>/);
++ await app.toggleSaved(id);assert.equal(persisted(app).states[id],'Submission uncertain');
++ const text=await app.exportNotes();assert.match(text,/Submission uncertain/);assert.match(text,/Imported receipt/);assert.match(text,/Review the role requirements/);
++ assert(!app.evaluate(`draft(jobById(${q}))`).includes(receipt.receiptNote));assert(!app.evaluate(`draft(jobById(${q}))`).includes(action.actionNote));
++});
++
++await check('Schema1 empty-profile backups retain the original import contract',async()=>{
++ const app=create();const input=envelope(1,{});assert.deepEqual(JSON.parse(JSON.stringify(parse(app,input))).profile,{});
++ app.evaluate(`backupInput=${JSON.stringify(JSON.stringify(input))};previewBackup()`);assert.equal(await app.evaluate('applyBackup()'),true);
++ assert.equal(app.evaluate('profile.preferencesVersion'),'2');assert.equal(app.evaluate('profile.targetCountry'),'');assert.equal(app.evaluate('checklist.profile'),undefined);
++ assert.deepEqual(evaluateJSON(app,`readNextAction(${q})`),action);
++});
++
++const v2Profile={years:'2',degree:'Synthetic degree',skills:'Synthetic skills',achievements:'Synthetic evidence',preferredCity:'',minimumMonthlySAR:'',unknownSalary:'show',preferencesVersion:'2',targetCountry:'GB',targetCity:'London',roleKeywords:'Planner',planningCurrency:'GBP',planningPayPeriod:'annual',displayTimeZone:'Europe/London'};
++await check('Schema2 exports all14 known profile fields without restoring any into destination',async()=>{
++ const storage=storageFor();storage.set('ahmad-profile',JSON.stringify(v2Profile));const source=create(storage);await source.evaluate('prepareBackup()');
++ const bytes=source.evaluate('backupExport'),out=JSON.parse(bytes);assert.equal(out.schema,2);assert.deepEqual(out.profile,v2Profile);assert(parse(source,out));
++ const target=create();target.evaluate(`backupInput=${JSON.stringify(bytes)};previewBackup()`);assert.equal(await target.evaluate('applyBackup()'),true);
++ assert.equal(target.evaluate('profile.targetCountry'),'');assert.equal(target.evaluate('profile.skills'),undefined);assert.equal(target.evaluate('profile.displayTimeZone'),'');
++ assert.equal(target.evaluate(`readApplicationRecord(${q}).receiptNote`),receipt.receiptNote);
++ await source.evaluate('saveBackupFile()');assert.equal(source.downloads.length,1);assert.equal(await source.downloads[0].text(),bytes);
++});
++
++await check('Schema2 rejects unknown fields, versions and malformed preference values without writes',async()=>{
++ const app=create();for(const profile of [{...v2Profile,preferencesVersion:'3'},{...v2Profile,targetCountry:'ZZ'},{...v2Profile,planningCurrency:'INVALID'},{...v2Profile,displayTimeZone:'Mars/Olympus'},{...v2Profile,targetCity:23},{...v2Profile,unrecognized:'future'}]){
++  const before=[...app.storage];assert.throws(()=>parse(app,envelope(2,profile)));assert.deepEqual([...app.storage],before);
++ }
++ assert.throws(()=>parse(app,envelope(3,{})));assert.throws(()=>parse(app,envelope(1,v2Profile)));
++});
++
++await check('A stale editor cannot overwrite maps restored by another tab',async()=>{
++ const empty={saved:[id],states:{},savedDetails:{[id]:job}},shared=storageFor(empty),a=create(shared,{shared:true}),b=create(shared,{shared:true});
++ a.evaluate(`openJob(${q});recordDrafts[${q}].receiptNote='Stale receipt';actionDrafts[${q}].actionNote='Stale action'`);
++ b.evaluate(`backupInput=${JSON.stringify(JSON.stringify(envelope()))};previewBackup()`);assert.equal(await b.evaluate('applyBackup()'),true);
++ assert.equal(await a.evaluate(`saveApplicationRecord(${q})`),false);assert.equal(await a.evaluate(`saveNextAction(${q})`),false);
++ const reload=create(shared);assert.equal(reload.evaluate(`readApplicationRecord(${q}).receiptNote`),receipt.receiptNote);assert.equal(reload.evaluate(`readNextAction(${q}).actionNote`),action.actionNote);
++ assert.equal(a.evaluate(`recordDrafts[${q}].receiptNote`),'Stale receipt');assert.equal(a.evaluate(`actionDrafts[${q}].actionNote`),'Stale action');
++});
++
++await check('Fresh neutral preferences and primary navigation remain the current product',async()=>{
++ const app=create();assert.equal(app.evaluate('profile.targetCountry'),'');assert.equal(app.evaluate('profile.targetCity'),'');assert.equal(app.evaluate('profile.planningCurrency'),'');assert.equal(app.evaluate('profile.displayTimeZone'),'');assert.deepEqual(app.json('saved'),[]);assert.deepEqual(app.json('D.jobs'),[]);
++ const html=readFileSync(new URL('./web/index.html',import.meta.url),'utf8');const nav=html.match(/<nav aria-label="Workspace">([\s\S]*?)<\/nav>/)[1];
++ assert.deepEqual([...nav.matchAll(/data-view="([^"]+)"/g)].map(m=>m[1]),['shortlist','live','saved','profile','salary','plan']);
++ assert(!/Saleh Career Finder|Ahmad Alayed/.test(html));assert(html.includes('src="backup.js"'));
++ assert.match(app.evaluate('savedPage()'),/data-view="backups"/);assert.match(app.evaluate('planPage()'),/Your next actions/);
++});
++
++await check('Production refresh calls exactly the existing six employer sources',async()=>{
++ const requests=[];const result=await getLiveJobs(async(url,options)=>{requests.push({url,options});return {ok:true,status:200,text:async()=>JSON.stringify({jobPostings:[],total:0})}});
++ assert.deepEqual(result.sources.map(s=>s.name),SOURCES.map(s=>s.name));assert.equal(result.sources.length,6);assert.equal(requests.length,6);
++ assert.deepEqual(requests.map(r=>new URL(r.url).hostname),SOURCES.map(s=>s.host));
++ assert(requests.every(r=>r.options.method==='POST'&&!/smartrecruiters|ashby|recruitee|workable/.test(r.url)));
++});
++
++await check('Current source exclusion bounds and legacy metadata acceptance are both explicit',()=>{
++ const app=create();const C=app.evaluate('C');const checkedAt=new Date().toISOString();
++ assert.equal(C.normalizeLive({checkedAt,jobs:[],sources:[{name:'Alcon',ok:true,count:0,excludedIds:Array(21).fill('x')}]}),null);
++ const legacy=C.normalizeLive({checkedAt,jobs:[],sources:[{name:'Lean Technologies',ok:true,count:0,excludedIds:Array.from({length:40},(_,i)=>'legacy-'+i)}]});assert.equal(legacy.sources[0].excludedIds.length,40);
++ assert.equal(C.sourceIncomplete({ok:true,limited:true}),true);
++ assert.deepEqual(JSON.parse(JSON.stringify(C.normalizeJob(job))).requirementNotes,job.requirementNotes);
++});
++
++await check('Bundled web copies and historical source pins remain exact',()=>{
++ for(const name of ['app.js','core.js','backup.js','data.js','icon.svg','index.html','manifest.webmanifest','style.css'])assert.deepEqual(readFileSync(new URL('./web/'+name,import.meta.url)),readFileSync(new URL('../apple/AhmadCareer/Web/'+name,import.meta.url)),name);
++ const old='d12fb82566ce8d3ebb4eded77506f4f01e303450';for(const file of ['check.mjs','state-check.mjs','backup-check.mjs','followup-check.mjs','role-review-check.mjs','web/core.js','web/app.js','web/backup.js'])assert.deepEqual(readFileSync(new URL('./historical/public1.3/'+file,import.meta.url)),execFileSync('git',['show',old+':website/'+file],{cwd:new URL('..',import.meta.url)}),file);
++});
++console.log(`Merged legacy compatibility: ${groups} groups passed. Native/build/network execution: none.`);
+--- a/website/package.json
++++ b/website/package.json
+@@ -5,10 +5,11 @@
+   "scripts": {
+     "build": "node build.mjs",
+     "start": "node dev.mjs",
+-    "test": "node check.mjs && node preferences-check.mjs && node record-check.mjs && node feed-check.mjs && node state-check.mjs && node server-check.mjs",
++    "test": "node check.mjs && node preferences-check.mjs && node record-check.mjs && node feed-check.mjs && node state-check.mjs && node server-check.mjs && node followup-check.mjs && node backup-check.mjs && node legacy-compatibility-check.mjs",
+     "test:applications": "node applications-check.mjs",
+     "applications": "node applications/server.mjs",
+-    "pair-phone": "node applications/pair.mjs"
++    "pair-phone": "node applications/pair.mjs",
++    "test:legacy-history": "cd historical/public1.3 && node check.mjs && node record-check.mjs && node feed-check.mjs && node followup-check.mjs && node backup-check.mjs && node role-review-check.mjs && node personalization-check.mjs"
+   },
+   "dependencies": {
+     "pdf-lib": "1.17.1"

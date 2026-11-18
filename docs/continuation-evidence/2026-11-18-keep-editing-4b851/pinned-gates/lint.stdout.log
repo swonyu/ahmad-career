@@ -1,0 +1,10 @@
+
+> career-finder-phone-service@0.6.0 lint
+> eslint . --ignore-pattern dist --ignore-pattern .next
+
+
+/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/tests/phone-recovery-isolation.mjs
+  512:16  error  Unexpected aliasing of 'this' to local variable  @typescript-eslint/no-this-alias
+
+✖ 1 problem (1 error, 0 warnings)
+

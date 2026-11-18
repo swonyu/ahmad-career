@@ -1,0 +1,140 @@
+INSTRUMENTATION_STATUS: class=com.saleh.careerfinder.NativeHttpsAcceptanceTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stream=
+com.saleh.careerfinder.NativeHttpsAcceptanceTest:
+INSTRUMENTATION_STATUS: test=nativeReviewAndApproval_preserveExactPDFConsent_andUncertainRetryBoundaries
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: activity-rule:starting
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: test-body:entered
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: activity-model:before
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: activity-model:after
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: workspace-readiness:before
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: workspace-readiness:after
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: pair-request:before
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: pair-request:after
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: pair-result:before
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: pair-result:after
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: pdf-document-create:before
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: pdf-document-create:after
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: pdf-document-write:before
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: pdf-document-write:after
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: profile-tab:before
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: profile-tab:after
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: profile-name-scroll:before
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: profile-name-scroll:after
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: profile-name-edit:before
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: profile-name-edit:after
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: profile-name-keyboard-dismiss:before
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: profile-name-keyboard-dismiss:after
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: profile-email-scroll:before
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: profile-email-scroll:after
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: profile-email-edit:before
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: profile-email-edit:after
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: profile-email-keyboard-dismiss:before
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: profile-email-keyboard-dismiss:after
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: pdf-select:before
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: pdf-select:after
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: pdf-ready:before
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: pdf-ready:after
+
+INSTRUMENTATION_STATUS_CODE: 2
+INSTRUMENTATION_STATUS: stream=
+HTTPS phase: profile-save-scroll:before
+
+INSTRUMENTATION_STATUS_CODE: 2

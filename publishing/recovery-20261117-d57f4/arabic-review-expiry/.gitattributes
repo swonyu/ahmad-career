@@ -1,0 +1,2 @@
+# Preserve original command logs byte-for-byte.
+*.log -whitespace

@@ -1,0 +1,112 @@
+{
+  "execution": "Final script completed successfully with explicit --repository and --output against the repository-preserved master.",
+  "script_sha256": "a91919df6c944177ddce5965cab99c58a3cf27691a3b0ad4f2dee7ac3a1e8537",
+  "output_directory": "/workspace/scratch/5bc6158967e8/icon-repackage-final",
+  "integration_file_count": 25,
+  "all_integration_bytes_identical": true,
+  "files": [
+    {
+      "path": "android/app/src/main/res/drawable-nodpi/career_icon_adaptive.png",
+      "match": true
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
+      "match": true
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-hdpi/ic_launcher.png",
+      "match": true
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-mdpi/ic_launcher.png",
+      "match": true
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xhdpi/ic_launcher.png",
+      "match": true
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
+      "match": true
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+      "match": true
+    },
+    {
+      "path": "android/app/src/main/res/values/career_icon_colors.xml",
+      "match": true
+    },
+    {
+      "path": "apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-iOS-1024.png",
+      "match": true
+    },
+    {
+      "path": "apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-1024.png",
+      "match": true
+    },
+    {
+      "path": "apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-128.png",
+      "match": true
+    },
+    {
+      "path": "apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-16.png",
+      "match": true
+    },
+    {
+      "path": "apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-256.png",
+      "match": true
+    },
+    {
+      "path": "apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-32.png",
+      "match": true
+    },
+    {
+      "path": "apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-512.png",
+      "match": true
+    },
+    {
+      "path": "apple/AhmadCareer/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-64.png",
+      "match": true
+    },
+    {
+      "path": "docs/store-assets/play-icon-2026-11-17.png",
+      "match": true
+    },
+    {
+      "path": "hosted/public/apple-touch-icon.png",
+      "match": true
+    },
+    {
+      "path": "hosted/public/favicon-16.png",
+      "match": true
+    },
+    {
+      "path": "hosted/public/favicon-32.png",
+      "match": true
+    },
+    {
+      "path": "hosted/public/favicon.ico",
+      "match": true
+    },
+    {
+      "path": "hosted/public/phone-icon-192.png",
+      "match": true
+    },
+    {
+      "path": "hosted/public/phone-icon-maskable-192.png",
+      "match": true
+    },
+    {
+      "path": "hosted/public/phone-icon-maskable.png",
+      "match": true
+    },
+    {
+      "path": "hosted/public/phone-icon.png",
+      "match": true
+    }
+  ],
+  "production_files_changed": false,
+  "default_output": "A fresh temporary directory outside the repository. Explicit output must be empty or new. Existing work is never cleared.",
+  "master_default": "docs/branding/2026-11-17-indigo/source/career-finder-generated-source.png under --repository (or repository-relative to scripts/)."
+}

@@ -1,0 +1,14 @@
+✔ rejects the actual connector filename convention (0.536625ms)
+✔ retains all existing private directory boundaries (0.065958ms)
+✔ permits public application and package input names (0.068042ms)
+✔ does not confuse similar names or nested words with root private paths (0.040042ms)
+✔ rejects a private input anywhere in a public bundle and reports its target (0.050583ms)
+✔ keeps the caller input list unchanged (0.203708ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 38.096875

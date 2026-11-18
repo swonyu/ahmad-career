@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "source_commit": "11cb3d4d8c15e9b16719b6e7091597f43633cda6",
+  "ci_run": "44135594938",
+  "gate_result": "3/5 jobs passed; iPhone UI16/17. Not release acceptance.",
+  "failed_method": "testAccessibilityTextKeepsCoreControlsReachable",
+  "failure_at_original_source_line": 108,
+  "observed": {
+    "field": "application.firstName",
+    "field_frame": {
+      "x": 40,
+      "y": 488,
+      "width": 340,
+      "height": 65
+    },
+    "field_keyboard_focused": true,
+    "delete_key_count_in_failed_ax": 1,
+    "delete_key_frame": {
+      "x": 363.7,
+      "y": 730,
+      "width": 54,
+      "height": 56
+    },
+    "index_query_at_test_seconds": 74.26,
+    "snapshot_requests_at_test_seconds": [
+      78.69,
+      93.8
+    ],
+    "failure_at_test_seconds": 124.12,
+    "video_frames_actually_viewed": [
+      74,
+      92,
+      116
+    ]
+  },
+  "original_artifacts": [
+    {
+      "bytes": 48747,
+      "sha256": "294ebbc6f6a2347564a2bfd24444bfdfc7e80600fa3ec1e28d1bbd8739230978",
+      "filename": "iphone-failure-job-context.log"
+    },
+    {
+      "bytes": 5386,
+      "sha256": "fc3941a42f21208b512bb7fd39bf192c4a1376627e556cb57469a5073027806d",
+      "filename": "terminal-summary.json"
+    },
+    {
+      "bytes": 9258,
+      "sha256": "871c04d269e43a3f06e234ae2c693501c93ed9319c2d18a5a09bccd56b10f438",
+      "filename": "iphone-artifact-verification.json"
+    },
+    {
+      "bytes": 413755,
+      "sha256": "d29da7dd60867a214617d0ca1f89474d50056bfbc67a07e0762b4e6996c3ddcf",
+      "filename": "original-video-frame-74s.png"
+    },
+    {
+      "bytes": 413106,
+      "sha256": "a2d4075ba372eb7e63957c642dd274045e9732bf005b4ba2d9fabd2ee6cce2fb",
+      "filename": "original-video-frame-92s.png"
+    },
+    {
+      "bytes": 413227,
+      "sha256": "f3bfb2c8a6400a1bfea38f942ceb61ce4f7d4877614b16412bea6c52c85ec262",
+      "filename": "original-video-frame-116s.png"
+    }
+  ],
+  "observed_limit": "Original video frames and failed AX establish a visible unique delete key and focused field; they do not prove why the indexed query stalls.",
+  "repair_hypothesis": "Cache the exact delete-key firstMatch query once per keyboard presentation, then retain actual exists&&isHittable readiness predicates. Recreate the query after Clear reopens the keyboard. Remove only collection materialization from positive typing readiness.",
+  "primary_sources": [
+    {
+      "url": "https://developer.apple.com/documentation/xcuiautomation/xcuielementtypequeryprovider/firstmatch",
+      "basis": "Apple documents short-circuit traversal and recommends firstMatch only for a uniquely known query. This original failed AX has exactly one locale-independent system delete key."
+    },
+    {
+      "url": "https://developer.apple.com/documentation/xcuiautomation/xcuielementquery/allelementsboundbyindex",
+      "basis": "Apple documents immediate query evaluation into an indexed result array. Avoiding that evaluation is a targeted response to the observed stalled call."
+    }
+  ],
+  "owner63_review": {
+    "commit": "63eecda5",
+    "base": "21f08f5",
+    "observed_scope": "Only DEBUG acceptance provenance presentation moves from safeAreaInset to an enclosing VStack; no keyboard-query helper repair.",
+    "merged": false
+  },
+  "native_successor_result": "NOT_RUN"
+}

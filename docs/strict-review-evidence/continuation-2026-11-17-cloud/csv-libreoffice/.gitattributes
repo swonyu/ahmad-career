@@ -1,0 +1,3 @@
+# Keep the exact serialized CRLF/control-character fixtures and engine output bytes.
+*.csv -text -whitespace
+*.fods -text

@@ -1,0 +1,19 @@
+# Native screenshot evidence
+
+Run [44326554344](https://github.com/swonyu/ahmad-career/actions/runs/44326554344) at `dd78b0f7b259ad7394694aa24a264727dc746402` completed 114 ordinary Android cases, one ordinary-preview TLS case, and one native HTTPS case. Its retained Android artifact contained no PNGs: two extraction reads timed out, the next read closed, and later ADB operations reported an offline device. The logs do not establish why the emulator became unavailable. The earlier driver wrote passed verification before its warning-only final screenshot collection, so the successful Android job did not establish visual evidence.
+
+The driver now preserves preview screenshots immediately after the ordinary test phase, before the acceptance build and later device work. It preserves acceptance screenshots immediately after the HTTPS test. Collection reads only the explicit success PNG paths in `screenshot-evidence.mjs`; the acceptance failure PNG is separately optional. Fixture tests compare that list with the actual Kotlin capture declarations, so adding or removing a required screenshot changes an explicit contract instead of silently changing a reported count. The current source declares 20 preview and 3 acceptance success captures.
+
+The added `english-display-selection.png` records the existing localization journey after the user selects English and the test verifies the selected button is visible and layout direction is left to right. It uses the production screen with isolated display preferences while the CI device keeps its Arabic platform locale and 180% text size. This adds one English view to the retained Arabic evidence without adding a test method or changing profile data, service calls, application behavior, or platform locale. The required inventory and source-declaration fixture include this image; it must be present in subsequent source runs. This is bounded English screen coverage, not a claim that every English screen has been visually reviewed.
+
+Each read retains its existing maximum of 15 seconds and 16 MiB. A phase has a 60-second read budget, excluding bounded owned-process startup/cleanup. Transport loss stops that phase without extending its timeout or retrying reads during final cleanup. Already copied images and their SHA-256 fingerprints remain in the manifest, including when a later phase fails. No whole application directory, vault, credential, profile store, or arbitrary file is copied.
+
+The final gate rereads each required local PNG and checks chunk bounds/order/CRC, actual IDAT pixel data, dimensions, byte length, and fingerprint. It accepts the non-interlaced PNG format produced by the native capture path, validates decoded scanline lengths and filter bytes, and limits inflated image data to 64 MiB. A header-only or corrupt compressed image cannot satisfy the gate. Missing or changed bytes cause `verification.json` to record `result: failed` while preserving the separate completed test results and APK fingerprints. `screenshots.json` distinguishes attempted read failures from paths that were not attempted after transport loss or budget exhaustion. Retained image bytes establish availability for visual review; they do not establish that the interface is visually correct.
+
+Run the synthetic collector fixtures without any emulator or application build:
+
+```sh
+node --test android/checks/screenshot-evidence.test.mjs
+```
+
+The CI driver runs the same fixtures before starting its disposable emulator. They cover the source-declared capture inventory, required images across both phases, preservation after later transport loss, one missing image, truncated data, changed/deleted retained files, bounded read budgets, no retries, rejection of unknown packages and stale files, and the optional failure capture. Native rendering and screenshots still require the exact-source CI job and a separate visual review.

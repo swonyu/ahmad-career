@@ -1,0 +1,22 @@
+{
+  "observedUTC": "2026-11-18T05:44:56.528742+00:00",
+  "base": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z",
+  "query": "c0c865ee|in-app-service-browser-20261118-d57",
+  "extensions": [
+    "json",
+    "md",
+    "txt",
+    "log"
+  ],
+  "excluded": [
+    "node_modules",
+    ".git",
+    "DerivedData",
+    "build",
+    "dist"
+  ],
+  "exitCode": 1,
+  "matchingPaths": [],
+  "stderr": "",
+  "scope": "Bounded publisher source-recovery evidence search; no source, logs or process arguments were printed beyond matching paths."
+}

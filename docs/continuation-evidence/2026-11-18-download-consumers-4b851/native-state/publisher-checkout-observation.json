@@ -1,0 +1,30 @@
+{
+  "observed_at": "2026-11-17T22:44:54.153475+00:00",
+  "publisher_checkout": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-Feed422",
+  "exists": true,
+  "head": {
+    "exit": 0,
+    "stdout": "363ae84aaaf9032b040ee60b16a3c023ec1c1cf2\n",
+    "stderr": ""
+  },
+  "branch": {
+    "exit": 0,
+    "stdout": "recovery/sealed-feed-integration-20261117-d57f4\n",
+    "stderr": ""
+  },
+  "dirty": {
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "recent": {
+    "exit": 0,
+    "stdout": "363ae84aaaf9032b040ee60b16a3c023ec1c1cf2 Merge account acceptance banner layout while preserving recovery UI\n3a08819d5eae981d62b290f241b58637a2fdd21a Merge reviewed feed recovery and account lifecycle improvements\n4221871aea33f79b29ee75b4b054502a0eb1add9 Preserve recovery edits and improve search and account recovery\n",
+    "stderr": ""
+  },
+  "pending_ui_workflow": {
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+}

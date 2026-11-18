@@ -1,0 +1,97 @@
+Command: absolute Node path; cwd=/tmp; PATH=/nonexistent-for-git-portability-regression
+PASS Full source outage preserves previous results, timestamp and persisted cache
+PASS Empty source response also preserves the previous successful search
+PASS Unsaved tracked live role survives feed removal, reload and notes export
+PASS Unsaving a tracked role retains its application record and export after reload
+PASS Failed saves and status writes never announce saved-on-device success
+PASS A failed workspace mutation leaves the entire prior durable snapshot intact
+PASS Legacy tracking imports correctly and a successful write migrates it atomically
+PASS Unreadable workspace is preserved and cannot be silently overwritten
+PASS Malformed cached rows cannot crash navigation or overwrite the original workspace
+PASS New employer fields update a researched record without replacing its editorial evidence
+PASS Malformed live sources preserve the cache and do not throw
+PASS Cached facts are not overwritten by an older successful response
+PASS Partially successful sources retain validated new jobs with a visible incomplete warning
+PASS Unsaved profile input survives completion of a background search
+PASS Filter and sort controls keep the active selection after a saved-state render
+PASS Another tab’s saved roles are preserved when this tab next saves
+PASS Fresh tracked facts survive later disappearance from the bounded feed
+PASS A nominal success containing only malformed jobs cannot erase prior valid results
+PASS Interleaved tabs serialize workspace mutations when Web Locks are available
+PASS Legacy profile keeps Riyadh midnight display and sequential live positions
+PASS Fresh profile follows device time zone and a saved explicit zone overrides it
+PASS Profile and checklist changes merge independent fields across tabs
+PASS Conflicting profile edits require an explicit choice and preserve a declined draft
+PASS Failed workspace recovery cannot overwrite another tab and keeps pending work exportable
+PASS A stale tab cannot regress the durable employer snapshot or tracked facts
+PASS Failed checklist recovery preserves a newer explicit choice in another tab
+PASS Legacy live caches use their envelope date when merging a corrected research bundle
+PASS Corrected bundled facts win date-only ties while later live facts still update tracking
+PASS A refreshed archived role preserves dated editorial evidence and tracking
+PASS A newer old-tab cache cannot reintroduce excluded employers after a search failure
+PASS Pre-criteria profiles migrate without losing profile, saved, status or checklist records
+PASS Criteria form canonicalizes Arabic whole amounts and rejects invalid input without clamping
+PASS Malformed stored criteria preserve original storage and cannot be overwritten
+PASS Unsaved criteria survive renders and disabled salary policy preserves the draft
+PASS Independent criteria and professional profile edits merge across tabs using legacy neutral defaults
+PASS Conflicting criteria preserve a declined draft and failed saves never report durable success
+PASS Preferences refine discovery only, preserve freshest saved history and stay out of notes
+PASS Unknown salary produces honest discovery labels and an explicit evidence-gap empty state
+PASS Navigation and both refresh transports retain local criteria without transmitting them
+PASS Partial search warning and original check time survive reload
+PASS Corrected research remains durable after archival and a stale tab status edit
+PASS Unsaving a removed live lead keeps an open detail actionable
+PASS Rejected-listing warning survives repeated reloads without inflation
+PASS Saved theme exposes its current state and toggles accessibly
+PASS A role opened during refresh remains actionable after the new batch omits it
+PASS Unknown status events cannot create orphan application records
+PASS Notes capture current saved profile and checklist without requiring a storage event
+PASS Notes preserve failed saves and valid session data when newer storage is invalid or unreadable
+PASS Application metadata survives legacy workspace writes, status transitions and reload; preparation excludes receipts
+PASS Same-record conflicts and failed writes preserve drafts; metadata-only archived rows export
+PASS Unsupported metadata and no-lock environments never overwrite; status and checklist stay separate
+PASS Old-tab receipt save retains newer employer facts resolved inside the workspace lock
+PASS A completed employer refresh redraws attention on an already open Plan
+PASS Profile saves preserve typing entered while waiting for the profile lock
+PASS Queued live retention keeps corrected facts even when a later batch omits the role
+PASS Tracking export sees another tab workspace save before the storage event arrives
+PASS Accepted employer corrections redraw an open Saved or Shortlist view
+PASS Date sorts use instants and Saudi day boundaries with unknown dates last
+PASS Editorial action prose cannot contradict an accepted amended deadline
+PASS Legacy date-only live checks compare at Saudi midnight for updates and durable-cache adoption
+PASS Fresh neutral discovery defaults survive unrelated saves while explicit and legacy city choices remain
+PASS Partial employer failure retains old eligible discovery evidence without refreshing it
+PASS Incomplete successful detail checks retain earlier jobs and observation dates
+PASS Exact successful employer exclusions survive partial failure without deleting tracked history
+PASS Production bundle starts without a biography, recommendations or an assumed city
+PASS Production conversion recovers only existing legacy IDs and retains profile, checklist and receipts
+PASS Legacy recovery preserves newer stored facts and does not introduce other researched roles
+PASS Failed or corrupt legacy recovery preserves durable originals and can be retried on relaunch
+PASS Carried preparation checks keep their bits without certifying new per-application work
+PASS Local preference upgrade preserves literal legacy profile, SAR units and every tracking record
+PASS Unsupported-country discovery is truthful, sends no requests and never filters saved history
+PASS Supported local preferences never enter either unchanged refresh transport
+PASS Independent worldwide preferences merge across tabs while same-field conflicts retain drafts
+PASS Future and invalid preference schemas preserve their stored bytes
+PASS Default display order is alphabetical, independent of leadership and provider relevance
+PASS Planning currency affects only explicit calculator amounts and resets on unit changes
+PASS Legacy archived assessment stays recognizable without becoming current personal fit advice
+77 application-state regression groups passed.
+PASS COMPAT Original continuation actually loses imported-only maps on a regular save
+PASS COMPAT Imported receipt, task and employer metadata survive save and relaunch
+PASS COMPAT Explicit empty sidecars override imported fallback through export and reload
+PASS COMPAT Null and future-format sidecars are preserved instead of replaced by fallback
+PASS COMPAT Unknown workspace and imported-map formats block writes and preserve exact bytes
+PASS COMPAT Unsupported or unknown stored profile fields remain intact and block restore
+PASS COMPAT Legacy uncertain stage survives current selectors, unrelated writes and export
+PASS COMPAT Schema1 empty-profile backups retain the original import contract
+PASS COMPAT Schema2 exports all14 known profile fields without restoring any into destination
+PASS COMPAT Schema2 rejects unknown fields, versions and malformed preference values without writes
+PASS COMPAT A stale editor cannot overwrite maps restored by another tab
+PASS COMPAT Fresh neutral preferences and primary navigation remain the current product
+PASS COMPAT Production refresh calls exactly the existing six employer sources
+PASS COMPAT Current source exclusion bounds and legacy metadata acceptance are both explicit
+PASS COMPAT Bundled web copies and historical source pins remain exact
+Merged legacy compatibility: 15 groups passed. Native/build/network execution: none.
+
+Exit: 0

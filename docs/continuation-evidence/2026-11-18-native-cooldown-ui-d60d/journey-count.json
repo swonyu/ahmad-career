@@ -1,0 +1,23 @@
+{
+  "count": 17,
+  "journeys": [
+    "testFreshStartAndFiveTabs",
+    "testApplicationDraftSurvivesCancelAndRelaunch",
+    "testLinkedInProfileDraftAndExternalSearchChoice",
+    "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+    "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+    "testProfileReadinessAndSimpleConnectionSetup",
+    "testOpportunityDraftKeepSaveAndRestore",
+    "testOpportunityDiscardRequiresExplicitChoice",
+    "testDiscoverySaveFlowsIntoSavedAndApply",
+    "testSearchEmptyAndFailurePreservesPreviousResults",
+    "testAccessibilityTextKeepsCoreControlsReachable",
+    "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+    "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+    "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+    "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+    "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+    "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark"
+  ],
+  "workflow_unchanged": true
+}

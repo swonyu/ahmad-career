@@ -1,0 +1,16 @@
+{
+  "at": "2026-11-17T16:36:20.516590+00:00",
+  "baseCommit": "2fac36f321005d9a2703e6db92acd7d7c14886c5",
+  "scope": "All staged changed/new content except this metadata-only screening receipt; unchanged base retains full-source screening provenance. Peer/research receipts included.",
+  "scannedFiles": 19,
+  "scannedBytes": 1612048,
+  "scannerSHA256": "6b3e8847c2587e729e23b78fc77c9087ed62bb4d6a1f53af89c0af4e1414ae62",
+  "categoryCounts": {
+    "reserved_domain_example": 2
+  },
+  "unresolvedCandidates": [],
+  "limits": [
+    "Signature scan does not guarantee discovery of every possible private value.",
+    "No image content was altered for this source correction."
+  ]
+}

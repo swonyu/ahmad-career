@@ -1,0 +1,29 @@
+{
+  "recordedAt": "2026-11-17T15:54:51.135409+00:00",
+  "scope": "Integrated source-label-only checkpoint before the later F05 search-status correction",
+  "baseCommit": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+  "sourceHashes": {
+    "hosted/app/phone/PhoneApp.tsx": "5b12352782ae30dbb468b6567a78731a58c9734d25e8b276467edc98a3e15610",
+    "hosted/app/phone/components.tsx": "c7614e923223d427e3a218f9c8d1038e4d90f244de9da8707bb92bf8dce90c52",
+    "hosted/tests/phone-localization.mjs": "877fa8eaf10d723b57c05016f1cef36d4a9a824971f64932cccbe37051fe6f63"
+  },
+  "focusedTests": {
+    "executed": 72,
+    "passed": 72,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "durationMs": 3866.023558
+  },
+  "fullLintExitCode": 0,
+  "typecheckExitCode": 0,
+  "logs": {
+    "root-focused.tap": "e227428a4862fae81df43076f8280b955418e92870eda87dc901cc809dc0ac65",
+    "root-lint.log": "8175ec8b8af7e252d6892f4dd64f4ba928eb172e85d4e13e8e1bfa8df6eac7e9",
+    "root-typecheck.log": "c9014ba170f2161ecee9b3ba8984934aa5bf66e685e29ed495d14ac261d546e9"
+  },
+  "limits": [
+    "Source executes with synthetic transport/render fixtures; not a browser, assistive-technology, or physical-device pass.",
+    "Later F05 source is recorded and tested separately; these72 cases do not certify later changed bytes."
+  ]
+}

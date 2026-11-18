@@ -1,0 +1,5 @@
+{
+  "old": "function download(value: string, filename: string, mime = \"application/json\") {\n  const url = URL.createObjectURL(new Blob([value], { type: mime }));\n  const link = document.createElement(\"a\"); link.href = url; link.download = filename; document.body.appendChild(link); link.click(); link.remove();\n  setTimeout(() => URL.revokeObjectURL(url), 30_000);\n}",
+  "replacement": "function download(value: string, filename: string, mime = \"application/json\") {\n  const link = document.createElement(\"a\");\n  const url = URL.createObjectURL(new Blob([value], { type: mime }));\n  let clickReturned = false;\n  try {\n    link.href = url;\n    link.download = filename;\n    document.body.appendChild(link);\n    link.click();\n    clickReturned = true;\n  } finally {\n    try {\n      link.remove();\n    } finally {\n      // A normal click return needs time for the browser to consume the URL.\n      if (clickReturned) setTimeout(() => URL.revokeObjectURL(url), 30_000);\n      else URL.revokeObjectURL(url);\n    }\n  }\n}",
+  "expectedPhoneSHA256": "cea98d8442f0dcb43cee2b1e3d5d5a2814a89130b7c18793ee50f4a8366d5368"
+}

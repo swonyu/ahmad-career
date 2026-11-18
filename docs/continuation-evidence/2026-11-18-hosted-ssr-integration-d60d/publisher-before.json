@@ -1,0 +1,158 @@
+{
+  "observedAt": "2026-11-18T07:09:32.129045+00:00",
+  "source": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-SSR-Phase2-a179",
+  "head": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+  "branch": "recovery/ssr-phase2-a179-20261117-d57",
+  "status": " M .github/workflows/phone-quality.yml\n M hosted/app/account/page.tsx\n M hosted/app/chatgpt-auth.ts\n M hosted/app/components/GoogleSignInArtwork.tsx\n M hosted/app/components/SiteFrame.tsx\n M hosted/app/connect/page.tsx\n M hosted/app/i18n/server.ts\n M hosted/app/layout.tsx\n M hosted/app/page.tsx\n M hosted/app/phone/PhoneApp.tsx\n M hosted/app/phone/page.tsx\n M hosted/app/phone/pdf.ts\n M hosted/app/privacy/page.tsx\n M hosted/app/support/page.tsx\n D hosted/eslint.config.mjs\n D hosted/next.config.ts\n M hosted/package-lock.json\n M hosted/package.json\n M hosted/scripts/build-verified.sh\n M hosted/scripts/install-ci.mjs\n M hosted/scripts/install-ci.sh\n M hosted/scripts/run-framework.mjs\n M hosted/scripts/vite/sites-vite-plugin.ts\n M hosted/tsconfig.json\n D hosted/vite.config.ts\n M hosted/worker/index.ts\n?? hosted/.oxlintrc.json\n?? hosted/app/request-context.ts\n?? hosted/docs/\n?? hosted/renderer/\n?? hosted/scripts/build-site.mjs\n?? hosted/scripts/preview-site.mjs\n?? hosted/tests/build-pdf-browser-esbuild.mjs\n?? hosted/tests/ssr-runtime.mjs\n",
+  "files": {
+    ".github/workflows/phone-quality.yml": {
+      "sha256": "8a98c1d7bcf44a9fbab3064d64d0251c7078a7cfb96787ee7ba067025762911c",
+      "bytes": 14520
+    },
+    "hosted/.oxlintrc.json": {
+      "sha256": "81f5e7a43f24b5806fd01812ba906e89fe56e2ccf01679bc534e024edcc32a5c",
+      "bytes": 42519
+    },
+    "hosted/app/account/page.tsx": {
+      "sha256": "5530f62eb3a73c0861f195446fe02c0b75dc2be774af1109056c770e14f5144f",
+      "bytes": 1113
+    },
+    "hosted/app/chatgpt-auth.ts": {
+      "sha256": "18176a2d432174dbb00cefa85316610bcafdb4977b74d87bc4e2f666e4e5fb50",
+      "bytes": 1848
+    },
+    "hosted/app/components/GoogleSignInArtwork.tsx": {
+      "sha256": "d0eafd566b768a92866ebf872e985d944940c5d9305985e586d573103bdb8fad",
+      "bytes": 771
+    },
+    "hosted/app/components/SiteFrame.tsx": {
+      "sha256": "7306829f8a08d1b7072a53f48dc415c6bb872c7fc35dbefb5d87c213687f2216",
+      "bytes": 2038
+    },
+    "hosted/app/connect/page.tsx": {
+      "sha256": "8df29eff9c82bfaa2943ef80d6544836f3b971395d73deabf9a0e44576ea0ed4",
+      "bytes": 3424
+    },
+    "hosted/app/i18n/server.ts": {
+      "sha256": "7cf28f18522c943479d04606f4ca73b91ad53e69f505f216cfad72b607c214d6",
+      "bytes": 403
+    },
+    "hosted/app/layout.tsx": {
+      "sha256": "ceb91a7783ff16940ffda58c10355ae3bd552ae0f2e1334755fce3b1a717188d",
+      "bytes": 3232
+    },
+    "hosted/app/page.tsx": {
+      "sha256": "d409fb495255afc05460a91b5a748414b2188a0fc1833be9d80ca173cbe316a0",
+      "bytes": 286
+    },
+    "hosted/app/phone/PhoneApp.tsx": {
+      "sha256": "54f4d49dc17c8e1fb96dcceaf8e2f7aa1703dc8a255837515a229be5734b4f00",
+      "bytes": 121084
+    },
+    "hosted/app/phone/page.tsx": {
+      "sha256": "2763a9d05177d722a051d91f4133c422ba2745babfbd4eaf77d1e6ccaffc34c0",
+      "bytes": 1054
+    },
+    "hosted/app/phone/pdf.ts": {
+      "sha256": "5203b462af0e7ad56e4f24bc9ffe2e639da909bf401a99a6d1e65d1f6aec9c8c",
+      "bytes": 5051
+    },
+    "hosted/app/privacy/page.tsx": {
+      "sha256": "116c0d107959e352140a40643b01fe9378f2704675f3b9d5d7940f87153aed77",
+      "bytes": 13804
+    },
+    "hosted/app/request-context.ts": {
+      "sha256": "fa7c86704fb23b1692e4353040777936e45440961020ac4f162880e8ce71ee59",
+      "bytes": 408
+    },
+    "hosted/app/support/page.tsx": {
+      "sha256": "db4069229982fa97e43db9b8b142d9d23e3aaa695450d7988b54905015b29b79",
+      "bytes": 11629
+    },
+    "hosted/docs/ssr-toolchain.md": {
+      "sha256": "d65b0ffa81bcefe702836b24346c77f81cdb71f4372a9da8aaaef31c78670891",
+      "bytes": 5236
+    },
+    "hosted/eslint.config.mjs": {
+      "deleted": true
+    },
+    "hosted/next.config.ts": {
+      "deleted": true
+    },
+    "hosted/package-lock.json": {
+      "sha256": "4d85b9d5290351367e48fdb1fd54e3786344423434a16aef6b8b9381a250d685",
+      "bytes": 361294
+    },
+    "hosted/package.json": {
+      "sha256": "77b0016647cb32b712569c6d36710fad2f710a0748fd70096542cd0acad220eb",
+      "bytes": 3410
+    },
+    "hosted/renderer/assets.ts": {
+      "sha256": "8600aceac5a413dee4c55cdb6699105b4e88aea6bb3220fa119b4ba1b92d72a7",
+      "bytes": 1155
+    },
+    "hosted/renderer/bootstrap.ts": {
+      "sha256": "7a37717db2964f35f1cd45958a0c371bb95b646ea650ab7863b610370b23cfed",
+      "bytes": 3004
+    },
+    "hosted/renderer/client.tsx": {
+      "sha256": "5b48876d2096726a02fbd9d23419a5088deea227078eab4bb150ff9ce03108e5",
+      "bytes": 493
+    },
+    "hosted/renderer/routes.tsx": {
+      "sha256": "76e85b31904e6386bc9b512606f27ac55ee4454803e9bc06bb151a8336d5d8a2",
+      "bytes": 1326
+    },
+    "hosted/renderer/server.tsx": {
+      "sha256": "80a577a0a0b20fa9f643ea83b3610332b0f062761a0e845dda345d6cfd4596c6",
+      "bytes": 3060
+    },
+    "hosted/scripts/build-site.mjs": {
+      "sha256": "069cff27a155a4e6b4e05a24a97c0ad0329b48913823a7a837931a531317d517",
+      "bytes": 9729
+    },
+    "hosted/scripts/build-verified.sh": {
+      "sha256": "3ac0476933192d3865a59adf0b8d34672c95fffa647e60489614292d5a56e27f",
+      "bytes": 249
+    },
+    "hosted/scripts/install-ci.mjs": {
+      "sha256": "09c1739fdd5e5e2b1f4c3f70667c1ef93fb9a62d752d5f2752f2d069b7a644af",
+      "bytes": 1750
+    },
+    "hosted/scripts/install-ci.sh": {
+      "sha256": "2937e5b0bc3310f888448d9666b54c787185b0d9bccd9aad9391870530670c85",
+      "bytes": 6807
+    },
+    "hosted/scripts/preview-site.mjs": {
+      "sha256": "32d0ea68ded860086011fd6d57aa7cd6c9a878d7526e1ba236d837b53300bbb9",
+      "bytes": 8516
+    },
+    "hosted/scripts/run-framework.mjs": {
+      "sha256": "988d2d5942698de80d0a464915b69e7546fec620d0bc9f22a45d54b56b361698",
+      "bytes": 1033
+    },
+    "hosted/scripts/vite/sites-vite-plugin.ts": {
+      "sha256": "352c51efb1d7708d718eca9efce66a4a69df83da29e6b482bd787f8807e5f96a",
+      "bytes": 7735
+    },
+    "hosted/tests/build-pdf-browser-esbuild.mjs": {
+      "sha256": "73831e80cb55790da5cdee32466aa9e65ac05007a88f8ffcf33204016f45a934",
+      "bytes": 10486
+    },
+    "hosted/tests/ssr-runtime.mjs": {
+      "sha256": "4692be0181aebed8dca2d91f3530b86b94d8c5f74e385a3053e4131a1ce3e529",
+      "bytes": 14156
+    },
+    "hosted/tsconfig.json": {
+      "sha256": "0dff878db93f67ad13116c5b3588370653c9f5e21f61fa009717fccd2e700773",
+      "bytes": 767
+    },
+    "hosted/vite.config.ts": {
+      "deleted": true
+    },
+    "hosted/worker/index.ts": {
+      "sha256": "f5d914ba412bbb604a73ef63cbb4519e41cd423c278cd3fed588509fa88a000f",
+      "bytes": 3395
+    }
+  }
+}

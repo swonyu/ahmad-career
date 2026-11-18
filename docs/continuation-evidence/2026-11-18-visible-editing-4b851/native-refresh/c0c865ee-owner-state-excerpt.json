@@ -1,0 +1,32 @@
+{
+  "recorded_utc": "2026-11-18T01:05:27.148001+00:00",
+  "owner": "four-app-publishing-recovery-d57f4cd77813",
+  "native_signin_handoff_review": {
+    "status": "V3_REVIEWED_COMMITTED_PUSHED_NATIVE_UNRUN",
+    "source": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-InApp-ServiceBrowser-a179",
+    "branch": "recovery/in-app-service-browser-20261118-d57",
+    "commit": "c0c865eea250019ee21fbd6110c9fe4446c3c8f1",
+    "tree": "44fc6bdf253fae238d98577ba47c72efd96c0eb5",
+    "parent": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+    "checkpoint_receipt": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-InApp-ServiceBrowser-a179/.git/recovery/native-browser/checkpoint-v3/CHECKPOINT-RECEIPT.json",
+    "checkpoint_receipt_sha256": "6618858562c25ca4e41325c6e9f743bbfe15bfbe95fc888f6da566be38a4a31c",
+    "remote_verified_at": "2026-11-18T00:58:52.493095+00:00",
+    "peer_sha256": "b82b36a1c1849f53950091a3d432dbfe0f3b8751f96e40f6357a87e836a00016",
+    "proposal_sha256": "c8b041c1ca2f9ac0b3d6674c384676b55f9ad4a4bde7d9649f782c435de5ed71",
+    "patch_sha256": "f40856729f33596e01ccb928edb632a97431f00546ce7afec23ad16bd7c952c8",
+    "Grok_source_review_response": "199f0585-d7f7-4d90-bb89-d9e0bb1cd6ba",
+    "v2_rejected": "Embedding Safari in UIViewControllerRepresentable sheet was rejected against Apple direct modal presentation guidance; v2 preserved.",
+    "v3_behavior": "Direct default UIViewController.present of owned Safari from an empty main-actor anchor; no child Safari, callbacks/token interception, competing dismissal or foreign controller cleanup. Same three allowlisted manual-code connect/account actions.",
+    "UI_methods_retained": 17,
+    "old_assertions_retained": 147,
+    "total_assertions": 166,
+    "new_journeys": "EN normal plus reopen, EN AX5, Arabic-device AX5; actual browser identity, standard Done, bounded geometry, dismissal, visible masked code retention.",
+    "native_invoked": false,
+    "CI_invoked": false,
+    "real_provider_or_deletion_verified": false,
+    "Apple_4_8_resolved": false
+  },
+  "latest_native_source_checkpoint": "c0c865eea250019ee21fbd6110c9fe4446c3c8f1",
+  "sourcePath": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/RECOVERY-STATE.json",
+  "sourceSha256": "0752166a1d00da4f53eac84097da9c8a69cd85b4eb08550175be566fc8693318"
+}

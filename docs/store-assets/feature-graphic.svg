@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500" role="img" aria-labelledby="title description">
-  <title id="title">Career Finder — Your next chapter.</title>
-  <desc id="description">Career Finder: discover jobs, save opportunities and prepare your next step.</desc>
+  <title id="title">Career Finder — Search jobs.</title>
+  <desc id="description">Career Finder: search jobs, save job links and prepare applications.</desc>
   <!-- Brand geometry and palette: ../../apple/Branding/career-finder.svg.
        Promotional artwork only. This is not a phone screenshot or a depiction of application UI. -->
   <rect width="1024" height="500" fill="#173E2D"/>
@@ -18,8 +18,8 @@
   </g>
   <text x="158" y="109" fill="#D5ECD9" font-family="Noto Sans, sans-serif" font-size="29" font-weight="700">Career Finder</text>
   <path d="M866 106 C866 118 862 122 850 122 C862 122 866 126 866 138 C866 126 870 122 882 122 C870 122 866 118 866 106Z" fill="#A7CA87"/>
-  <text x="96" y="229" fill="#F6F6E9" font-family="Noto Serif Display, Georgia, serif" font-size="69">Your next chapter.</text>
-  <text x="99" y="289" fill="#D5ECD9" font-family="Noto Sans, sans-serif" font-size="26">Discover jobs. Keep opportunities close.</text>
+  <text x="96" y="229" fill="#F6F6E9" font-family="Noto Serif Display, Georgia, serif" font-size="69">Search jobs.</text>
+  <text x="99" y="289" fill="#D5ECD9" font-family="Noto Sans, sans-serif" font-size="26">Save jobs and prepare applications.</text>
   <path d="M100 345 H897" fill="none" stroke="#4A7259" stroke-width="1"/>
   <g fill="none" stroke="#A7CA87" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="110" cy="383" r="8"/><path d="M116 389l6 6"/>
@@ -27,7 +27,7 @@
     <path d="M625 373h18v23h-18zM630 379h8M630 384h5M635 390l3 3 7-8"/>
   </g>
   <g fill="#D5ECD9" font-family="Noto Sans, sans-serif" font-size="21" font-weight="400">
-    <text x="138" y="392">Explore</text>
+    <text x="138" y="392">Search</text>
     <text x="399" y="392">Save</text>
     <text x="659" y="392">Prepare</text>
   </g>

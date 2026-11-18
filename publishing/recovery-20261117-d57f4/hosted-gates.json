@@ -1,0 +1,73 @@
+{
+  "startedUTC": "2026-11-17T14:28:45.912416+00:00",
+  "updatedUTC": "2026-11-17T14:31:47.700420+00:00",
+  "results": [
+    {
+      "name": "hosted-typecheck",
+      "argv": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "hosted",
+      "exitCode": 0,
+      "seconds": 14.65
+    },
+    {
+      "name": "hosted-eslint",
+      "argv": [
+        "./node_modules/.bin/eslint",
+        "app",
+        "worker",
+        "--max-warnings",
+        "0"
+      ],
+      "cwd": "hosted",
+      "exitCode": 0,
+      "seconds": 9.086
+    },
+    {
+      "name": "hosted-regressions",
+      "argv": [
+        "npm",
+        "test"
+      ],
+      "cwd": "hosted",
+      "exitCode": 0,
+      "seconds": 136.041
+    },
+    {
+      "name": "hosted-workerd",
+      "argv": [
+        "node",
+        "tests/hosted-worker.mjs"
+      ],
+      "cwd": "hosted",
+      "exitCode": 0,
+      "seconds": 7.018
+    },
+    {
+      "name": "hosted-browser-transport",
+      "argv": [
+        "node",
+        "--test",
+        "tests/browser-api.mjs",
+        "tests/browser-pairing.mjs"
+      ],
+      "cwd": "hosted",
+      "exitCode": 0,
+      "seconds": 0.414
+    },
+    {
+      "name": "hosted-production-build",
+      "argv": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "cwd": "hosted",
+      "exitCode": 0,
+      "seconds": 14.572
+    }
+  ]
+}

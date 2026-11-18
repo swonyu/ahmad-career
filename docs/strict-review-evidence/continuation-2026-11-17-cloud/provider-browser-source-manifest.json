@@ -1,0 +1,15 @@
+{
+  "scope": "Local synthetic HTTP; actual ProviderConnections and useAuthStatus; React StrictMode. No live-provider acceptance.",
+  "sourceHashes": {
+    "app/components/ProviderConnections.tsx": "85afe77bb40296660fc18bb9c421235505a85a06523ea6907382b9a4e25f439d",
+    "app/components/provider-auth.ts": "4511465ba6f5dc52af7cd990b49c853ccdbc233c5977a1602c2617bcd80459b0",
+    "app/components/provider-change.ts": "586e572c2a84f11eace92150d3f0d249128cb509cc59847b380e500223327fcc",
+    "app/components/SessionRecovery.tsx": "55dce2cc55b6f9c3e6e28663a2b7355c875f946d8dd207ae4c4b70e90352d255",
+    "app/components/GoogleSignInArtwork.tsx": "10e970d35931ff0b03cbf787f7ceca35a73c7f5c6e11b2d1e0768e507e63e39b",
+    "tests/fixtures/provider-browser/App.tsx": "74c72ab7f4b65b775b0d2be0e570b938321bd09ea14c94290ab14279efc365e2",
+    "tests/fixtures/provider-browser/api.ts": "215f43e1117cd36584fe1d3fd96255bb7a5cd25b5f69ac0c97c677968449b2ab",
+    "tests/fixtures/provider-browser/Image.tsx": "e686a31bf0f24df7f317dfb62c616d2f15e8191be47c5016b6e9eaf733b98785",
+    "tests/build-provider-browser.mjs": "3c76f45bda95d5ce16c7463119838589b06aee7e3449aa7d28202e485eb49b8e"
+  },
+  "htmlSHA256": "aae78d4cab74ef95c6fbad4d19ac175ffc26f9d7e357d1344b2c65a0f7a238a0"
+}

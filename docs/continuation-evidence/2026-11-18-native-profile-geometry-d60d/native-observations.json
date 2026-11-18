@@ -1,0 +1,44 @@
+{
+  "testSourceSHA256": "c4644ab9b28a1ec55cb284b5633e8d80bff07de3084472ae3798ded063736e3f",
+  "receiptSHA256": "2cbfc4e96e1218062528c4d417e63a14f230df01e6d7980839087591da7f0846",
+  "logSHA256": "796bca5eb757d740354c4c13432d3016effeea333c75adbe75fe516efc2fe63f",
+  "actualResultLines": [
+    "Test Case '-[CareerFinderUITests.CareerFinderUITests testAccessibilityTextKeepsCoreControlsReachable]' passed (112.424 seconds).",
+    "\t Executed 1 test, with 0 failures (0 unexpected) in 112.424 (112.425) seconds",
+    "\t Executed 1 test, with 0 failures (0 unexpected) in 112.424 (112.425) seconds",
+    "\t Executed 1 test, with 0 failures (0 unexpected) in 112.424 (112.426) seconds",
+    "** TEST SUCCEEDED **"
+  ],
+  "retainedProfileAttachments": [
+    {
+      "file": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/profile-geometry-native-002/attachments/E8F433CA-17AD-4DF6-A41D-44874F5A042E.txt",
+      "sha256": "1577fe467f15993de743438edde5861bc35cafbd91e33bb07b96720457e92488",
+      "retainedGeometry": [
+        "field=application.firstName",
+        "label=(40.0, 170.0, 263.3333333333333, 116.66666666666663)",
+        "fieldFrame=(40.0, 292.66666666666663, 340.0, 65.00000000000006)",
+        "viewport=(12.0, 150.0, 396.0, 367.0)",
+        "keyboardExpected=true"
+      ]
+    },
+    {
+      "file": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/profile-geometry-native-002/attachments/B65D649D-D5EE-4F67-A9D9-1B027533E9FF.png",
+      "sha256": "5d0b283d63aeb6956d0c064a2d3c986b5a30947d0ca5275713642cda8f32e5b5"
+    },
+    {
+      "file": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/profile-geometry-native-002/attachments/7C1C4EF5-ED54-48EC-A0C3-7FDA552929CA.txt",
+      "sha256": "d7fcbba57310f4edcf07cf9b9e17add0c1b313f3f99e09bba72b5a1703cba535",
+      "retainedGeometry": [
+        "field=application.email",
+        "label=(40.0, 394.3333333333333, 119.0, 58.666666666666686)",
+        "fieldFrame=(40.0, 459.0, 340.0, 65.0)",
+        "viewport=(12.0, 150.0, 396.0, 394.0)",
+        "keyboardExpected=true"
+      ]
+    },
+    {
+      "file": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/profile-geometry-native-002/attachments/59B7D729-0335-4EAB-BA9E-A37BDCAA92B6.png",
+      "sha256": "b11078ac5c1a91055b9b5e635f878249d8e02c345509c5dd43f6e5ed266321ec"
+    }
+  ]
+}

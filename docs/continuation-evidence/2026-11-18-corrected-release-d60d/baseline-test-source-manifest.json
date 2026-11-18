@@ -1,0 +1,159 @@
+{
+  "createdUTC": "2026-11-18T08:12:01.020304+00:00",
+  "head": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2",
+  "files": [
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/ApplicationRecordRegressionTest.kt",
+      "sha256": "eaf5a38ff1b81332c75192d3087dad42d70bf42a6e7d2973b2143f26574dae4a",
+      "gitBlobSHA": "645f49bfd18c42663e861830904cfd89ea36842c",
+      "bytes": 39166,
+      "testAnnotations": 18
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/ContinuationRegressionTest.kt",
+      "sha256": "13cc02ccb8152b3bcf7f5a73612da958d63037965997ada8b07d316dbfc3ff65",
+      "gitBlobSHA": "c570f2dec84de4bc3b4ee640d640acc4626a707d",
+      "bytes": 14948,
+      "testAnnotations": 7
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/DiscoveryPersistenceRegressionTest.kt",
+      "sha256": "dce01dbb2a9f4c2fb71f21a3688dd23ac54527e25bfb7530bb59a9acf82ceeb1",
+      "gitBlobSHA": "a39689b04e8d6e840f5f20acd777a6fd45008bf5",
+      "bytes": 23541,
+      "testAnnotations": 11
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/DiscoveryRegressionTest.kt",
+      "sha256": "ff54c6e84dec20c600d74d62985c6282694a8877e99bf9846d526d686911393a",
+      "gitBlobSHA": "d081abbc6d85528a47e281b02b0b5fae0af81ed5",
+      "bytes": 21374,
+      "testAnnotations": 12
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/ExperienceModelRegressionTest.kt",
+      "sha256": "ce786765af24f83631b3456cc70363ebd21452e67f5c419d136e15f5126f3793",
+      "gitBlobSHA": "56b699955d1b1a91eb55a8180d0166e7de808952",
+      "bytes": 1853,
+      "testAnnotations": 2
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/LinkedInPhoneAcceptanceTest.kt",
+      "sha256": "dc1a833ecfd07143c4de494c5d3f42f6977696480f6ddcfa2b2b2794798e0bb3",
+      "gitBlobSHA": "8a3ef5cc3e0099bdd8fe5731499fee9d85067145",
+      "bytes": 8198,
+      "testAnnotations": 2
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/LinkedInRegressionTest.kt",
+      "sha256": "085ebe7f36af9b2b095e0ed57b94a8a20b22f3c41b22251e5d1d82b16b502d70",
+      "gitBlobSHA": "3bf274f50a07f19d4b4e8edc3a6e18063ef6bf53",
+      "bytes": 17081,
+      "testAnnotations": 9
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt",
+      "sha256": "47d904f87656dbcc5bde0435d00dbd52266bb8df5c11530d0f91b284470f22d7",
+      "gitBlobSHA": "9a7d50942edd0d9538311a60795e4a215c47fe95",
+      "bytes": 15765,
+      "testAnnotations": 2
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/NativeLocalizationAcceptanceTest.kt",
+      "sha256": "ec8acd3fe3b1442ed55abf32c259cf225d5febc59534e1112f4df01c63d253eb",
+      "gitBlobSHA": "dc73311ef2c543193ed60b534744e71c0232dafa",
+      "bytes": 16843,
+      "testAnnotations": 6
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/NavigationPhoneAcceptanceTest.kt",
+      "sha256": "79cad23b244d5240757be27ab9b7c37aa664be93dbf0c54a718a1c0cbd0b6013",
+      "gitBlobSHA": "7de5bbe7ecce5a914e121ef538b0d40caefabfb1",
+      "bytes": 21332,
+      "testAnnotations": 5
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt",
+      "sha256": "163c22b2650c98f8fcfba858e4dd169d1c4eae1c9521799ef41fe950a970b433",
+      "gitBlobSHA": "1df5278ef15f9cd7af71c721f3c34e5f9f618773",
+      "bytes": 4341,
+      "testAnnotations": 2
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt",
+      "sha256": "e79be06178abdff67a98f225e6c155227dede4e48d4b550df156a9b55b23a68c",
+      "gitBlobSHA": "042038732de99fea7939aee9e88ae6e130b039bb",
+      "bytes": 16110,
+      "testAnnotations": 4
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/SavedSearchRegressionTest.kt",
+      "sha256": "237297b8182ba2d97f9166129fa909250ce0090fc4f9dabf3d4dab6d0c523989",
+      "gitBlobSHA": "e3230dbafa1560efe4349e63f1e640c170b65344",
+      "bytes": 2893,
+      "testAnnotations": 2
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/VaultAcceptanceTest.kt",
+      "sha256": "7c3adb6d05e4772c0d04d1286b70149644a7771008bf4ad554309ea1df24085b",
+      "gitBlobSHA": "c37ab3b8ed0ee2b2b42646b3f21705b6af559b83",
+      "bytes": 9368,
+      "testAnnotations": 5
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceAccessibilityRegressionTest.kt",
+      "sha256": "086685c3cbb442e2e2c05e5e2da6cac20ad077cb45111fe67d5ecf8cfd108d20",
+      "gitBlobSHA": "28c8cd0aba1a0a4c2f97443eb63426bc7b561cab",
+      "bytes": 3975,
+      "testAnnotations": 1
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceRegressionTest.kt",
+      "sha256": "84f1cd1dc4d55a416c1fb66620b812d5e472ed2f1670263128e0c5c593557ba6",
+      "gitBlobSHA": "f96fda97b7d75d15b726070beadc9618dd76f8e0",
+      "bytes": 28697,
+      "testAnnotations": 17
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceSafetyRegressionTest.kt",
+      "sha256": "aa0a1e39c5e93ef88d7b40f6af7e8b0d5feee0554a45b87183ea3ef39a2ac349",
+      "gitBlobSHA": "5f801013bb05621d4827c82200f1d8539d6eff5b",
+      "bytes": 20435,
+      "testAnnotations": 11
+    },
+    {
+      "path": "apple/UITests/CareerFinderUITests.swift",
+      "sha256": "e83b063b5f36a213fa2bb2a95e6f085728ce186968635321715175646044d0ff",
+      "gitBlobSHA": "4fd99e55aa0afa5570c57dd92ec5dfdd042693d8",
+      "bytes": 67391,
+      "testAnnotations": null
+    },
+    {
+      "path": "android/checks/run-ci-emulator.mjs",
+      "sha256": "1af74288fb044aa4246912eac7f9f0bef84379aae3f5474ec6923e88a38c732f",
+      "gitBlobSHA": "574d8f305695939e2aac6ca68072704a6e72b668",
+      "bytes": 23472,
+      "testAnnotations": null
+    }
+  ],
+  "iphoneExpectedTestMethods": [
+    "testFreshStartAndFiveTabs",
+    "testApplicationDraftSurvivesCancelAndRelaunch",
+    "testLinkedInProfileDraftAndExternalSearchChoice",
+    "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+    "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+    "testProfileReadinessAndSimpleConnectionSetup",
+    "testOpportunityDraftKeepSaveAndRestore",
+    "testOpportunityDiscardRequiresExplicitChoice",
+    "testDiscoverySaveFlowsIntoSavedAndApply",
+    "testSearchEmptyAndFailurePreservesPreviousResults",
+    "testAccessibilityTextKeepsCoreControlsReachable",
+    "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+    "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+    "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+    "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+    "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+    "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark"
+  ],
+  "iphoneExpectedCount": 17
+}

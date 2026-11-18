@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "writtenUTC": "2026-11-18T12:38:15.449614+00:00",
+  "owner": "/root/publication_review",
+  "worktree": "/Users/saleh/Developer/career-finder-iphone-readiness-20261118-ebb3eed5",
+  "branch": "review/iphone-readiness-20261118-ebb3",
+  "head": "fc5cc80e001836cc8da28649a26799f0eb6a08d5",
+  "parent": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+  "tree": "97777f74d81433c11110bb309b841a1a4295cff4",
+  "clean": true,
+  "files": {
+    ".github/workflows/phone-quality.yml": {
+      "bytes": 15842,
+      "sha256": "0aaf3d3ccb4cebabce74221654586d966d049a7e518c43030194822bddd0e2eb"
+    },
+    "apple/UITests/CareerFinderUITests.swift": {
+      "bytes": 74314,
+      "sha256": "ffc6ea42d075a08c775d65f5140a47b35ff04c74540d357873c504f79dbfd273"
+    },
+    "apple/Checks/verify-simulator-boot.py": {
+      "bytes": 7136,
+      "sha256": "5c2233107dfcaddd7273846e3d77aca7902976d34ac73bae6eb4a016647102bf"
+    },
+    "apple/Checks/test-simulator-boot.py": {
+      "bytes": 7812,
+      "sha256": "808341a6e68353cab11fcb3ae3c783fa2743dacbb39e44e1f28c0537a394ff44"
+    },
+    "apple/Checks/Fixtures/SimulatorBoot/README.md": {
+      "bytes": 2611,
+      "sha256": "df993637d83cc8b6469edda791cca5e3e27302dd27741382a1a6b3bbdeaa7bdd"
+    },
+    "apple/Checks/Fixtures/SimulatorBoot/ci-44294650087-failed.log.gz": {
+      "bytes": 930,
+      "sha256": "034fa613a2dbd01aab9cbdc0799cf5e9522e502a2b8396a69177bf0301881dd0"
+    },
+    "apple/Checks/Fixtures/SimulatorBoot/finished.log": {
+      "bytes": 182,
+      "sha256": "cc29d5b244ae4cba931b13c257fea95f3a177e702704e061639a533c01b9393a"
+    }
+  },
+  "patch": {
+    "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/iphone-readiness-repair/iphone-readiness-fc5cc80e.patch",
+    "bytes": 32115,
+    "sha256": "02804b2eb80f7b235f568a7d8c6c415aa2917da17ffb2a85dc9854ab43cb3652"
+  },
+  "checks": {
+    "offlineParserTests": {
+      "passed": 11,
+      "failed": 0,
+      "lastSeconds": 0.102
+    },
+    "workflowYAMLParsed": true,
+    "bootShellSyntaxPassed": true,
+    "pipelineExitCaptureFor0And7Passed": true,
+    "gitDiffCheckPassed": true,
+    "exactNativeMethods": 17,
+    "nativeMethodBodiesByteIdentical": true,
+    "nativeAssertions": {
+      "XCTAssertCalls": 190,
+      "XCTFailCalls": 7,
+      "countsUnchanged": true
+    },
+    "nativeTapsUnchanged": true,
+    "nativeAndWorkflowTimeoutSequencesUnchanged": true,
+    "nativeExecutionBlockByteIdentical": true,
+    "simulatorSelectionBlockByteIdentical": true,
+    "originalBootStepNamePreserved": true
+  },
+  "independentReview": {
+    "reviewer": "/root/ci_evidence",
+    "verifierAndWorkflowSourceAccepted": true,
+    "validatedFalseGreenFindings": 0,
+    "compressedFixtureFinalBinding": "accepted after independent decompression and byte equality to the retained artifact",
+    "acceptedCommit": "fc5cc80e001836cc8da28649a26799f0eb6a08d5",
+    "acceptedTree": "97777f74d81433c11110bb309b841a1a4295cff4",
+    "decompressedFixtureByteIdentical": true,
+    "finalCommitAndCleanCheckoutIndependentlyVerified": true
+  },
+  "historicalRun": {
+    "id": 44294650087,
+    "passed": 14,
+    "failed": 3,
+    "skipped": 0,
+    "bootReadinessPassed": false,
+    "status": "Original failures remain failed; root owns the next combined native verification."
+  },
+  "limits": {
+    "nativeExecution": false,
+    "build": false,
+    "ciDispatch": false,
+    "push": false,
+    "merge": false,
+    "productSourceChanges": false,
+    "simulatorRetryOrErase": false
+  },
+  "knownLimitations": [
+    "Already-booted shortcut and unknown boot formats fail closed.",
+    "Historical Finished fixture proves a parser format only.",
+    "Invalid-frame guards do not prove the actual keyboard dismissed; preserved assertions and media review must pass.",
+    "Safari callback/source cause remains unresolved; no speculative coordinator change was made."
+  ],
+  "revision": 2,
+  "updatedUTC": "2026-11-18T12:39:59.920591+00:00"
+}

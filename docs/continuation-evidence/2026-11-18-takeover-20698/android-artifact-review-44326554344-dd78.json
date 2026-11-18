@@ -1,0 +1,232 @@
+{
+  "scope": "Independent retained-artifact inspection; tests and image availability are separate gates. No source edits, emulator, CI dispatch, account use, or employer request during this inspection.",
+  "observedAt": "2026-11-18T14:55:21.134901+00:00",
+  "run": {
+    "id": 44326554344,
+    "url": "https://github.com/swonyu/ahmad-career/actions/runs/44326554344",
+    "commit": "dd78b0f7b259ad7394694aa24a264727dc746402",
+    "overallConclusion": "failure",
+    "androidJobId": 134879291057,
+    "androidJobConclusion": "success",
+    "sourceCheckoutLogVerified": true
+  },
+  "comparison": {
+    "commit": "b6614346cb4f0e72b9bde0e96ab083ea7df72371",
+    "androidTreeAtBothCommits": "81618dc20aa160668803cca0a697ec284992d6ec",
+    "androidDiffEmpty": true,
+    "latestRun44328888955ResultNotClaimed": true
+  },
+  "artifact": {
+    "id": 14437473550,
+    "name": "android-lint-44326554344",
+    "bytes": 55183,
+    "sha256": "bda9d217254a2101ae248722f612147478cee2f2380c316fee843b3bc8f7212e",
+    "githubDigestMatches": true,
+    "scratchArchive": "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-android-dd78-20698-ihdndj7c/android-lint-44326554344.zip",
+    "pngCount": 0,
+    "jobLogSha256": "3712ba51de41945d36ba061c876346d7f8affe8b6124c6e231a720e85d586f47"
+  },
+  "instrumentation": [
+    {
+      "log": "ordinary-phone.log",
+      "sha256": "b31d1ef613feba6bb8e43b3b5837e6c999a808cbe70821c2fd9524e370563602",
+      "statusCodes": {
+        "1": 114,
+        "0": 114
+      },
+      "startedCases": 114,
+      "completedCases": 114,
+      "uniqueCompletedCases": 114,
+      "matchedStartCompletionPairs": true,
+      "completedByClass": {
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest": 18,
+        "com.saleh.careerfinder.ContinuationRegressionTest": 7,
+        "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest": 11,
+        "com.saleh.careerfinder.DiscoveryRegressionTest": 12,
+        "com.saleh.careerfinder.ExperienceModelRegressionTest": 2,
+        "com.saleh.careerfinder.LinkedInPhoneAcceptanceTest": 2,
+        "com.saleh.careerfinder.LinkedInRegressionTest": 9,
+        "com.saleh.careerfinder.NativeLocalizationAcceptanceTest": 6,
+        "com.saleh.careerfinder.NavigationPhoneAcceptanceTest": 5,
+        "com.saleh.careerfinder.PhoneAcceptanceTest": 2,
+        "com.saleh.careerfinder.PhonePolishAcceptanceTest": 4,
+        "com.saleh.careerfinder.SavedSearchRegressionTest": 2,
+        "com.saleh.careerfinder.VaultAcceptanceTest": 5,
+        "com.saleh.careerfinder.WorkspaceAccessibilityRegressionTest": 1,
+        "com.saleh.careerfinder.WorkspaceRegressionTest": 17,
+        "com.saleh.careerfinder.WorkspaceSafetyRegressionTest": 11
+      },
+      "runnerSummary": [
+        "OK (114 tests)"
+      ],
+      "skippedOrFailureStatusCodes": []
+    },
+    {
+      "log": "normal-preview-tls-boundary.log",
+      "sha256": "44c3701ce68bce40605cada70062f29faae342eeb1816f2e628a7a242b22da82",
+      "statusCodes": {
+        "1": 1,
+        "0": 1
+      },
+      "startedCases": 1,
+      "completedCases": 1,
+      "uniqueCompletedCases": 1,
+      "matchedStartCompletionPairs": true,
+      "completedByClass": {
+        "com.saleh.careerfinder.TlsBoundaryAcceptanceTest": 1
+      },
+      "runnerSummary": [
+        "OK (1 test)"
+      ],
+      "skippedOrFailureStatusCodes": []
+    },
+    {
+      "log": "native-https-phone.log",
+      "sha256": "bba8f366beeac418df5ef773bd0b96192bc36a335258faa5b39b9c8d87fe5839",
+      "statusCodes": {
+        "1": 1,
+        "2": 140,
+        "0": 1
+      },
+      "startedCases": 1,
+      "completedCases": 1,
+      "uniqueCompletedCases": 1,
+      "matchedStartCompletionPairs": true,
+      "completedByClass": {
+        "com.saleh.careerfinder.NativeHttpsAcceptanceTest": 1
+      },
+      "runnerSummary": [
+        "OK (1 test)"
+      ],
+      "skippedOrFailureStatusCodes": []
+    }
+  ],
+  "actualCompletedCases": 116,
+  "nativeHttpsCompletedPhases": {
+    "profile-content-reachable": true,
+    "profile-save-prerequisites": true,
+    "profile-save-click": true,
+    "profile-saved": true,
+    "review-summary-visible": true,
+    "review-summary-localized": true,
+    "recovered-approval-unchecked": true,
+    "receipt-count-visible": true
+  },
+  "newSavePrerequisites": "Exact synthetic name/email and selected PDF hash/size/bytes, connected ready test service, available private storage, no request error/conflict, real profile validation, dirty draft and enabled save button. Original save-success predicate remains.",
+  "runtimeSettings": {
+    "com.saleh.careerfinder.preview": {
+      "size": "Physical size: 1080x2400\nOverride size: 1080x1920",
+      "density": "Physical density: 420\nOverride density: 480",
+      "fontScale": "1.8",
+      "rtl": "1",
+      "night": "Night mode: yes",
+      "locales": "Locales for com.saleh.careerfinder.preview for user 0 are [ar]"
+    },
+    "com.saleh.careerfinder.acceptance": {
+      "size": "Physical size: 1080x2400\nOverride size: 1080x1920",
+      "density": "Physical density: 420\nOverride density: 480",
+      "fontScale": "1.8",
+      "rtl": "1",
+      "night": "Night mode: yes",
+      "locales": "Locales for com.saleh.careerfinder.acceptance for user 0 are [ar]"
+    }
+  },
+  "sourceSha256": {
+    "android/checks/run-ci-emulator.mjs": "1af74288fb044aa4246912eac7f9f0bef84379aae3f5474ec6923e88a38c732f",
+    ".github/workflows/phone-quality.yml": "269ca81f716971f3e8714645d623c99759596601d0dc1b5c554b319900fdfc21",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt": "4692795d493b78cfcee1643f2a4ec659d5355eac9f96dbf3285ec0962c1b68ed",
+    "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "0a81a2ac785a4e8f143f97dcebbc376db2c01a5b1104af0cb2c8d39afc35c608"
+  },
+  "apkHashesReportedByCI": {
+    "android/app/build/outputs/apk/debug/app-debug.apk": "4fb8e71abfdc1b823ef7e1f2111499beb7efa7e27f5a22a6117cc25f3e58e9ed",
+    "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk": "b9ecd481371e02ffe8b363c3fb69df7c4c6f2346e43f3c63a7b0515109e2a2bc",
+    "android/app/build/outputs/apk/acceptance/app-acceptance.apk": "ea6bd52ee228bd62771f2134668b7ba55affc475d82ef1abdb5abc2cabe6354e",
+    "android/app/build/outputs/apk/androidTest/acceptance/app-acceptance-androidTest.apk": "83ea6f08ff326766f8c9009a089e91a97dad93c1ff85733cc534484344a34109"
+  },
+  "apkHashesIndependentlyRehashed": false,
+  "apkHashLimitation": "The four APKs are not retained in this artifact; only their CI-recorded hashes can be inspected.",
+  "screenshots": {
+    "observedAt": "2026-11-18T14:48:02.152Z",
+    "device": "emulator-5580",
+    "captures": [],
+    "unavailable": [
+      {
+        "packageName": "com.saleh.careerfinder.preview",
+        "remotePath": "cache/navigation-review-evidence/custom-connection-address.png",
+        "reason": "Screenshot read exceeded its fifteen-second limit."
+      },
+      {
+        "packageName": "com.saleh.careerfinder.preview",
+        "remotePath": "cache/navigation-review-evidence/previous-search-results.png",
+        "reason": "Screenshot read exceeded its fifteen-second limit."
+      },
+      {
+        "packageName": "com.saleh.careerfinder.preview",
+        "remotePath": "cache/navigation-review-evidence/private-follow-up-list.png",
+        "reason": "Screenshot read failed: error: closed\n\n255 !== 0\n"
+      },
+      {
+        "packageName": "com.saleh.careerfinder.preview",
+        "remotePath": "cache/navigation-review-evidence/private-record-correction.png",
+        "reason": "Screenshot read failed: error: device offline\n\n255 !== 0\n"
+      },
+      {
+        "packageName": "com.saleh.careerfinder.preview",
+        "remotePath": "cache/navigation-review-evidence/private-record-date-picker.png",
+        "reason": "Screenshot read failed: error: device offline\n\n255 !== 0\n"
+      },
+      {
+        "packageName": "com.saleh.careerfinder.preview",
+        "remotePath": "cache/navigation-review-evidence/private-record-editor.png",
+        "reason": "Screenshot read failed: error: device offline\n\n255 !== 0\n"
+      },
+      {
+        "packageName": "com.saleh.careerfinder.preview",
+        "remotePath": "cache/navigation-review-evidence/profile-role-shortcut.png",
+        "reason": "Screenshot read failed: error: device offline\n\n255 !== 0\n"
+      },
+      {
+        "packageName": "com.saleh.careerfinder.preview",
+        "remotePath": "cache/navigation-review-evidence/record-only-phone-import.png",
+        "reason": "Screenshot read failed: error: device offline\n\n255 !== 0\n"
+      },
+      {
+        "packageName": "com.saleh.careerfinder.preview",
+        "remotePath": "cache/navigation-review-evidence/settings-dark.png",
+        "reason": "Screenshot read failed: error: device offline\n\n255 !== 0\n"
+      },
+      {
+        "packageName": "com.saleh.careerfinder.preview",
+        "remotePath": "cache/navigation-review-evidence/settings-light.png",
+        "reason": "Screenshot read failed: error: device offline\n\n255 !== 0\n"
+      },
+      {
+        "packageName": "com.saleh.careerfinder.preview",
+        "remotePath": "cache/navigation-review-evidence/two-step-connection.png",
+        "reason": "Screenshot read failed: error: device offline\n\n255 !== 0\n"
+      },
+      {
+        "packageName": "com.saleh.careerfinder.preview",
+        "directory": "cache/linkedin-review-evidence",
+        "reason": "adb failed (1); see screenshot-extraction.log. "
+      },
+      {
+        "packageName": "com.saleh.careerfinder.preview",
+        "directory": "cache/strict-review-evidence",
+        "reason": "adb failed (1); see screenshot-extraction.log. "
+      },
+      {
+        "packageName": "com.saleh.careerfinder.acceptance",
+        "directory": "files",
+        "reason": "adb failed (1); see screenshot-extraction.log. "
+      }
+    ]
+  },
+  "visualInspection": {
+    "imagesAvailable": 0,
+    "imagesViewed": 0,
+    "expected22NotVerified": true,
+    "result": "Blocked: no PNG pixels were retained. EN/AR copy, PDF-size rendering, clipping, and large-text visual quality cannot be approved from this artifact. Test reachability assertions are separate evidence."
+  },
+  "collectorFinding": "The first two screenshot reads timed out at 15 seconds, then one read closed and later ADB operations reported device offline. The driver writes passed verification before finally collecting screenshots and only records extraction failures; a successful test job therefore permits zero screenshots. No evidence identifies the emulator termination cause."
+}

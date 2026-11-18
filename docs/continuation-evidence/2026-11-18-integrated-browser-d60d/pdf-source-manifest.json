@@ -1,0 +1,95 @@
+{
+  "scope": "Test-only synthetic memory state. Actual PDF client, browser module worker, shared bounded parser and extracted current PhoneApp readPDF/assertCurrent. Not a full React/vault/account/device acceptance.",
+  "sourceRoot": "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted",
+  "sourceHashes": {
+    "app/phone/PhoneApp.tsx": "b058d7cfd8dc5d57d9479e6c8339c1f72682cbc14bcf0fda806f95901442f11b",
+    "app/phone/pdf.ts": "5203b462af0e7ad56e4f24bc9ffe2e639da909bf401a99a6d1e65d1f6aec9c8c",
+    "app/phone/pdf-validation.worker.ts": "6565199b38469d62d473099c99ad602cf4822822838e30fed5f540a83befdb32",
+    "shared/pdf-readability.mjs": "65183fe408b4cda8434d2ed064d645f471227db75de7fade416e090feec068a1",
+    "app/phone/model.ts": "955d5afcede6b8f7eb901394f9ae3e00d1bbffa57bf1e457c5436f23541577bf"
+  },
+  "handlerHashes": {
+    "readPDF": "7926b3586318794a3b5217f8df51b183dbacea043a90e9b1959cd5e5979132a1",
+    "assertCurrent": "852e8f77ed267ae6c0766a960c6017ed68fe3fb96ec223a958f2adfd40c64142"
+  },
+  "fixtureHashes": {
+    "tests/fixtures/pdf-browser/index.html": "bbbec9a461f31d0a9203e4e480e89026ba067b858cb78942b7f6d953bcf24e2b",
+    "tests/fixtures/pdf-browser/App.template.ts.txt": "a569fe7f77943119852dd50b8a0547fb070f15503bcf1862e6f3f02863ab6496",
+    "tests/fixtures/pdf-browser/style.css": "ba96e5f37bb0d841c5e4f97feca9c6d171b67c0b89f912e1f221f825b310b828",
+    "tests/fixtures/pdf-browser/pdf-fixtures.json": "09b84b3992d9c1abebf27dede564e5fc2b6ea7d48bd6dc3ffa9202abac9c2b0f",
+    "tests/fixtures/pdf-browser/valid.pdf": "149f96a4dc6ed08b2adf0ae75c9d00f8fba75fcd777ea790d9a27e622fa38a61",
+    "tests/fixtures/pdf-browser/object-stream.pdf": "663e061943e69a794c318ef99e1b7f2b9eef4ac3a0347fcea76894969df356c6",
+    "tests/fixtures/pdf-browser/malformed.pdf": "6cbc0f193b083ea427ae388f25267a941d7a2fa5cbd2812af96dcbdb8e28e9fa",
+    "tests/fixtures/pdf-browser/truncated.pdf": "11b0e28e659a547e897a88ddadf9d8bd4927108d547fb60a6159f1f37f72fa66",
+    "tests/fixtures/pdf-browser/encrypted.pdf": "6515c8dbd4a1507e0298623f3cbef15a2eaaadb2c5518702a779a360402fc66e",
+    "tests/fixtures/pdf-browser/cyclic.pdf": "b790a1dbb8ae8d473c7aee1856db182e3e7ea121f79a72287a8442e9994e0f56",
+    "tests/build-pdf-browser-esbuild.mjs": "73831e80cb55790da5cdee32466aa9e65ac05007a88f8ffcf33204016f45a934"
+  },
+  "outputHashes": {
+    "app.css": "5b8d2cd05726eb35eb105fd5f6a4c757c5b61115a36774e33541cacc058a4845",
+    "app.js": "d6e5437c40988e755692d36ccac8560b90125289d8b02c2008929e87f18f88a4",
+    "index.html": "ec14237184004ebec0ddd9e65f9e24b35e3f0e8c2db0c427e955803874b7716d",
+    "pdf-validation.worker-6a49a3ebd12f688a6a50.js": "6a49a3ebd12f688a6a5008aa2c1ddb713eeb6a7ce25d70c488cc5f7dce265c4b"
+  },
+  "workerPaths": [
+    "pdf-validation.worker-6a49a3ebd12f688a6a50.js"
+  ],
+  "bundledProductionModules": [
+    "app/phone/model.ts",
+    "app/phone/pdf-validation.worker.ts",
+    "app/phone/pdf.ts",
+    "shared/pdf-readability.mjs"
+  ],
+  "fixturePreflight": [
+    {
+      "file": "valid.pdf",
+      "expected": "valid",
+      "pages": 1,
+      "description": "Exact copy of the existing synthetic readable-resume.pdf fixture.",
+      "sha256": "149f96a4dc6ed08b2adf0ae75c9d00f8fba75fcd777ea790d9a27e622fa38a61",
+      "size": 1311
+    },
+    {
+      "file": "object-stream.pdf",
+      "expected": "valid",
+      "pages": 2,
+      "description": "Two synthetic pages using Flate-compressed PDF object streams.",
+      "sha256": "663e061943e69a794c318ef99e1b7f2b9eef4ac3a0347fcea76894969df356c6",
+      "size": 602
+    },
+    {
+      "file": "malformed.pdf",
+      "expected": "invalid_resume",
+      "description": "PDF prefix and EOF marker without a readable PDF document.",
+      "sha256": "6cbc0f193b083ea427ae388f25267a941d7a2fa5cbd2812af96dcbdb8e28e9fa",
+      "size": 364
+    },
+    {
+      "file": "truncated.pdf",
+      "expected": "invalid_resume",
+      "description": "First half of the existing synthetic PDF.",
+      "sha256": "11b0e28e659a547e897a88ddadf9d8bd4927108d547fb60a6159f1f37f72fa66",
+      "size": 655
+    },
+    {
+      "file": "encrypted.pdf",
+      "expected": "unsupported_resume",
+      "description": "Actual password-encrypted synthetic PDF; fixture password is qa-only.",
+      "sha256": "6515c8dbd4a1507e0298623f3cbef15a2eaaadb2c5518702a779a360402fc66e",
+      "size": 1385
+    },
+    {
+      "file": "cyclic.pdf",
+      "expected": "invalid_resume",
+      "description": "Synthetic cyclic page tree for bounded rejection.",
+      "sha256": "b790a1dbb8ae8d473c7aee1856db182e3e7ea121f79a72287a8442e9994e0f56",
+      "size": 232
+    }
+  ],
+  "productionRoutesAdded": 0,
+  "apiRequests": 0,
+  "externalRequests": 0,
+  "persistentStorageUsed": false,
+  "builder": "esbuild replacement; original Vite fixture builder retained unchanged as historical evidence",
+  "browserAcceptance": "pending actual file-picker checks"
+}

@@ -1,0 +1,191 @@
+{
+  "schemaVersion": 1,
+  "reviewType": "independent-full-ui-execution-budget-rationale",
+  "observedAt": "2026-11-18T19:42:36.125735+00:00",
+  "reviewer": "native_prepared_review",
+  "status": "source-and-timing-rationale-accepted; implementation-and-new-runtime-pending",
+  "source": {
+    "head": "b78b83b09739fefe69a6c8b72d7d1a60a4feb22a",
+    "actualCheckout": "29ecd9cbe2bccf694e57bf1df32d706a1f86f321",
+    "fullTree": "d147964f9698055c6dedc6329311aeb02ae0932f",
+    "base": "949ce0ad327beab79fa7033423b462ebc7bd98be",
+    "runId": 44372262687,
+    "attempt": 1,
+    "jobId": 135041937172,
+    "workflowSha256": "dc0bc14845aa391394348962777066d8e14602c2502191888038cc2d54ae6479",
+    "uiTestSourceSha256": "d3b6345cc21f109a07bc20bb05c182d719fcfc9bc347012a10fb439b270ebeac",
+    "exactSourceMethods": [
+      "testAccessibilityTextKeepsCoreControlsReachable",
+      "testApplicationDraftSurvivesCancelAndRelaunch",
+      "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+      "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+      "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "testDiscoverySaveFlowsIntoSavedAndApply",
+      "testFreshStartAndFiveTabs",
+      "testLinkedInProfileDraftAndExternalSearchChoice",
+      "testOpportunityDiscardRequiresExplicitChoice",
+      "testOpportunityDraftKeepSaveAndRestore",
+      "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+      "testProfileReadinessAndSimpleConnectionSetup",
+      "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+      "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+      "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+      "testSearchEmptyAndFailurePreservesPreviousResults",
+      "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable"
+    ]
+  },
+  "observedResult": {
+    "gate": "failed-timeout",
+    "completedPassedMethods": 15,
+    "completedFailedMethods": 0,
+    "startedWithoutTerminal": [
+      "testSearchEmptyAndFailurePreservesPreviousResults"
+    ],
+    "notStarted": [
+      "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable"
+    ],
+    "assertionFailureFound": false,
+    "uiStepStartedAt": "2026-11-18T18:43:09Z",
+    "firstSuiteAt": "2026-11-18T18:48:56.184Z",
+    "timeoutLoggedAt": "2026-11-18T19:28:22.609267Z",
+    "jobCompletedAt": "2026-11-18T19:29:27Z",
+    "searchStartedAt": "2026-11-18T19:25:22.131260Z",
+    "searchInterruptedAfterSeconds": 180.478,
+    "exportExitCode": 64,
+    "exportLimit": "The unfinished xcresult lacked Info.plist; no complete current UI screenshot or final result-bundle acceptance is implied."
+  },
+  "measuredTiming": {
+    "current15PassedSeconds": 2185.85,
+    "preSuiteBuildPlusRunnerStartupSeconds": 347.184,
+    "lastBuildTouchToSuiteSeconds": 67.292,
+    "priorPostSuiteToUiStepEndSecondsRounded": [
+      53,
+      65
+    ],
+    "priorPostSuiteSourceRuns": [
+      "44341452115 attempt 1",
+      "44341452115 attempt 2"
+    ],
+    "missingMethodHighestPriorPassingSeconds": {
+      "testSearchEmptyAndFailurePreservesPreviousResults": 366.833,
+      "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable": 64.332
+    },
+    "perMethodHighestPassingSeconds": {
+      "testAccessibilityTextKeepsCoreControlsReachable": 373.339,
+      "testApplicationDraftSurvivesCancelAndRelaunch": 163.768,
+      "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText": 210.214,
+      "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText": 86.768,
+      "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride": 142.534,
+      "testDiscoverySaveFlowsIntoSavedAndApply": 49.815,
+      "testFreshStartAndFiveTabs": 45.73,
+      "testLinkedInProfileDraftAndExternalSearchChoice": 129.225,
+      "testOpportunityDiscardRequiresExplicitChoice": 35.072,
+      "testOpportunityDraftKeepSaveAndRestore": 85.806,
+      "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit": 263.062,
+      "testProfileReadinessAndSimpleConnectionSetup": 254.63,
+      "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark": 43.285,
+      "testSavedLinkRemovalAtLargestTextKeepsCancelReachable": 146.302,
+      "testSavedSearchFindsArabicNotesAndKeepsOriginalText": 196.444,
+      "testSearchEmptyAndFailurePreservesPreviousResults": 366.833,
+      "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable": 64.332
+    }
+  },
+  "projections": {
+    "current15PlusHistoricalMissingTwo": {
+      "suiteSeconds": 2617.015,
+      "combinedCommandSeconds": [
+        3017.199,
+        3029.199
+      ],
+      "55MinuteStepRemainingSeconds": [
+        270.801,
+        282.801
+      ],
+      "60MinuteStepRemainingSeconds": [
+        570.801,
+        582.801
+      ],
+      "55MinuteMinimumHeadroomPercentOfProjectedDuration": 8.94,
+      "60MinuteMinimumHeadroomPercentOfProjectedDuration": 18.843
+    },
+    "All17HighestObservedPassingDurations": {
+      "suiteSeconds": 2657.159,
+      "combinedCommandSeconds": [
+        3057.343,
+        3069.343
+      ],
+      "55MinuteStepRemainingSeconds": [
+        230.657,
+        242.657
+      ],
+      "60MinuteStepRemainingSeconds": [
+        530.657,
+        542.657
+      ],
+      "55MinuteMinimumHeadroomPercentOfProjectedDuration": 7.515,
+      "60MinuteMinimumHeadroomPercentOfProjectedDuration": 17.289
+    }
+  },
+  "projectionLimits": [
+    "Historical passing durations are used only for budgeting. They do not substitute for the two missing current outcomes.",
+    "The per-method maxima combine observations from four source-qualified runs and are not an observed single suite or a statistical upper bound.",
+    "The current build/startup overhead and prior rounded finalization interval may vary on the next runner.",
+    "The active Search method had not yet reached its longest observed passing duration when cancelled; this does not prove it would pass or rule out later failures."
+  ],
+  "recommendation": {
+    "strategy": "retain existing combined build-and-full-test command in the same single job",
+    "strictReadinessStepMinutes": 5,
+    "combinedBuildAndUiStepMinutes": 60,
+    "jobMinutes": 70,
+    "sharedJobHeadroomBeyondMaximumReadinessPlusUiMinutes": 5,
+    "headroomQualification": "Shared headroom for setup and evidence; it is not a reserved cleanup interval.",
+    "whyNot55And65": "The conservative reconstruction leaves about 3m51s to 4m03s within a 55-minute step, versus about 8m51s to 9m03s within a 60-minute step. The latter is preferable under observed runner variability without introducing new test orchestration.",
+    "alternatives": {
+      "separateBuildFromTest": "Supported as an Xcode mechanism, but a 45-minute test window remains marginal after 44m17.159s of per-method maxima plus 67.292s observed runner startup and 53–65s finalization. Splitting alone does not address the demonstrated complete-suite budget.",
+      "twoDisjointShards": "Feasible by whole-method isolation, but would introduce selection manifests, unique artifacts and fresh UUIDs per leg, partial-dispatch handling, fail-fast control, and a fail-closed exact-17 union gate. Those new acceptance paths have higher implementation risk before the existing cutoff."
+    },
+    "cutoffAt": "2026-11-18T22:26:12Z",
+    "runtimeGuarantee": false
+  },
+  "requiredImplementationInvariants": [
+    "Only the full iPhone UI job outer timeout and its combined build/test step outer timeout, plus explanatory comments, may change.",
+    "Keep readiness at 5 minutes and every readiness command, semantic check, owned fresh UUID and inventory verification unchanged.",
+    "Keep the xcodebuild command, full scheme, destination, sequential test settings, signing flags, build configuration and evidence commands unchanged.",
+    "Keep all 17 source method identities, assertions, individual waits, helpers, product source and localization source unchanged.",
+    "Keep all five gate definitions, partial dispatch semantics and existing artifact naming unchanged.",
+    "Require new-source own checkout provenance and actual exact-once completion of all 17 methods before UI acceptance."
+  ],
+  "inputs": {
+    "/tmp/career-finder-iphone-run-44372262687-20698/completed-job.log": {
+      "bytes": 868073,
+      "sha256": "e0ff80e942f64ccd4b1c4616571154a8501c5008639db23e308e4b4cc350e72c"
+    },
+    "/tmp/career-finder-iphone-run-44372262687-20698/terminal-results.json": {
+      "bytes": 8351,
+      "sha256": "c39bde98e87dde08c39f6a5d91d1702646857f3f0ed7084e5ee5bf7430280b64"
+    },
+    "/tmp/career-finder-iphone-run-44372262687-20698/timing-comparison.json": {
+      "bytes": 18731,
+      "sha256": "35f979065640665c8f4b5bd181a4b39fb0ed5567190ea055257001d302eee370"
+    }
+  },
+  "historicalTimingInputs": {
+    "b661": {
+      "path": "/tmp/career-finder-iphone-artifact-44328888955-20698/extracted/career-iphone-ui.log",
+      "sha256": "f224225ab885c870bcf43c8dbb254e1f0ba9ac1b83d816368415157b27cae1c3"
+    },
+    "09c_attempt1": {
+      "path": "/tmp/career-finder-iphone-failure-44341452115-20698/completed-job.log",
+      "sha256": "f8bed2a2c033b7984e2387591602bc13e7206ce79cc42c65e66b16c5d3eef1b9"
+    },
+    "09c_attempt2": {
+      "path": "/tmp/career-finder-iphone-rerun-44341452115-attempt2-20698/completed-job.log",
+      "sha256": "384d8193270975dddc7ab119a32db7a1e72ae813307e7a062725a74d8e182426"
+    },
+    "b78": {
+      "path": "/tmp/career-finder-iphone-run-44372262687-20698/completed-job.log",
+      "sha256": "e0ff80e942f64ccd4b1c4616571154a8501c5008639db23e308e4b4cc350e72c"
+    }
+  },
+  "actionsTaken": "Read retained logs and current source; calculated timing and compared strategies; wrote this external review receipt only. No source edits, tests, native builds, simulator operations, settings changes, dispatches or reruns."
+}

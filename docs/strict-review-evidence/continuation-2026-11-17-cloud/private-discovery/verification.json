@@ -1,0 +1,123 @@
+{
+  "kind": "source-bound private-hosting discovery regression and minimal client fix",
+  "recordedAt": "2026-11-17T10:27:39.475486+00:00",
+  "baseGitHubCandidate": "859b84a4bb184cbc9bb5039be34e35ad4ca17356",
+  "deployedQASourceInvestigated": "8a31c7db5c761e80d08272d0f7700b4c2dc3ce99",
+  "deployedQABeforeClientExactlyMatchesBase": true,
+  "beforeClientSHA256": "81858df76ff0cfc74ca68372125c72a55258f6b6ab56486ebfc51b0466f297ac",
+  "sourcePatchSHA256": "48d89c36131c7409f532b84cbad37ef11a93a33fcdff61f9be18d79736026bff",
+  "sourceSHA256": {
+    "hosted/app/phone/api.ts": "f9847a578595407091c442237b6f736cb7450dc3ba4355c3eb875628f891a2d9",
+    "hosted/tests/phone-api.mjs": "202ccf7507008fd1e727aa31ac2b5e2c07ae1f6ee25aa6e340c1045cd37d5e9a",
+    "hosted/tests/hosted-discovery.mjs": "3048396d376a3c9cae3dd2b3fb197219fe9c805e607dbe7442e4ea094e2b6998",
+    "hosted/README.md": "ef4c19e3000562fbb428615e30747284e8b181927d66dd7d2e1627435544bc9b"
+  },
+  "reportedLiveObservations": {
+    "source": "integration owner browser and purpose-built Worker log observations; not this lane accessing live QA",
+    "phone": "Search options showed0boards and the invalid non-JSON response message after owner sign-in",
+    "workerLogs": "Successful phone/workspace/auth routes present, no discovery route in the observed window; error events empty",
+    "signedInDocumentNavigation": "/api/discovery/sources reached Worker and returned JSON origin_denied; this cross-site document result does not justify weakening origin/fetch-metadata guards"
+  },
+  "reproduction": {
+    "before": {
+      "command": "node --test tests/phone-api.mjs",
+      "exitCode": 1,
+      "log": "client-before.log",
+      "completedAtFromLogMtime": "2026-11-17T10:21:10.209137+00:00",
+      "syntheticHostingDenied": 1,
+      "workerRequests": 0,
+      "providerRequests": 0,
+      "error": "The response could not be verified. Your earlier information is still here.",
+      "note": "One new child regression failed and its parent suite was marked failed; this is expected fail-before evidence."
+    },
+    "after": {
+      "command": "node --test tests/phone-api.mjs",
+      "exitCode": 0,
+      "log": "client-after.log",
+      "completedAtFromLogMtime": "2026-11-17T10:23:45.403005+00:00",
+      "nodeTestCount": 13,
+      "pass": 13,
+      "fail": 0,
+      "syntheticHostingDenied": 0,
+      "workerRequests": 1,
+      "providerRequests": 0,
+      "catalogSources": 7,
+      "defaultSources": 4,
+      "anonymousAndCookieBearingCatalogEqual": true
+    },
+    "discovery": {
+      "command": "node tests/hosted-discovery.mjs",
+      "exitCode": 0,
+      "log": "discovery-after.log",
+      "completedAtFromLogMtime": "2026-11-17T10:22:36.483944+00:00",
+      "groups": 26,
+      "actualWorkerdRequests": 8,
+      "clientSchemaResponses": 63,
+      "realProviderRequests": 0,
+      "employerApplicationPosts": 0
+    },
+    "lint": {
+      "command": "./node_modules/.bin/eslint app/phone/api.ts tests/phone-api.mjs tests/hosted-discovery.mjs",
+      "exitCode": 0,
+      "errors": 0,
+      "warnings": 0
+    },
+    "diffCheck": {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    "patchCheck": {
+      "command": "git apply --check --reverse /workspace/scratch/5bc6158967e8/discovery-private-hosting.patch",
+      "exitCode": 0
+    }
+  },
+  "privacyProof": {
+    "upstreamHeaderKeys": [
+      "Accept",
+      "User-Agent"
+    ],
+    "excludedFromEmployerRequestsCacheAndRateRows": [
+      "synthetic hosting cookie",
+      "synthetic Career Finder cookie",
+      "Authorization bearer value",
+      "OAI owner ID",
+      "OAI owner email",
+      "private search text",
+      "raw client IP"
+    ],
+    "appCredentialsDoNotAlterCatalog": true,
+    "noBrowserCookieReadOrManualCookieHeaderAdded": true,
+    "noAccountOrNativeSessionCreatedByDiscovery": true
+  },
+  "preservedGuards": [
+    "exact relative API path allowlist",
+    "discovery GET-only and no request body",
+    "same-origin URL construction",
+    "redirect:error",
+    "30-second bound",
+    "12MiB response bound",
+    "JSON/type/schema validation",
+    "server host/origin/fetch-metadata rejection",
+    "fixed employer GET hosts and fresh upstream headers"
+  ],
+  "independentReview": {
+    "reviewer": "frontend_critique",
+    "method": "read-only source review; no additional run or browser",
+    "sourceHashMatched": true,
+    "result": "No blocking finding in the reviewed boundary",
+    "scope": "allowlisted relative GET, same-origin credentials, redirects refused, discovery before app identity resolution, no private header forwarding"
+  },
+  "limits": [
+    "The private hosting gate is synthetic in the local reproduction; it does not emulate every platform ingress behavior.",
+    "At handoff the actual private QA redeploy and Search UI confirmation are pending the integration owner.",
+    "A signed-in cross-site document navigation returning origin_denied is not an application fetch success.",
+    "No real employer GET, application submission, provider consent, browser operation or external mutation occurred in this lane.",
+    "No server/auth/migration code changed; applied0004 remains untouched."
+  ],
+  "evidenceSHA256": {
+    "client-before.log": "521f556721c5fae19720e55e4cabadd97400a6478cd9484890aa78866837ca49",
+    "client-after.log": "4c6cbc8cf23a2cbb7f0fc02ff1dcbe173098a35b60d55e9fef9583d02103bc12",
+    "discovery-after.log": "1aab6464e4bbb756c832eb89b52b9a61f937287e08eb551a4ce23651fad33718",
+    "discovery-verification.json": "587b6f73267a138ae2eb4db57608bcce2768371eb5b03599947b526cb222b246"
+  }
+}

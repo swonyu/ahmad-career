@@ -36,3 +36,7 @@ android/local.properties
 android/**/build/
 postman/.dependencies/
 postman/.runs/
+
+# Local Python packaging/localization caches.
+__pycache__/
+*.py[cod]

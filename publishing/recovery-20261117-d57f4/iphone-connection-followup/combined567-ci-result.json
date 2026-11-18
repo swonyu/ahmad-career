@@ -1,0 +1,51 @@
+{
+  "sourceCommit": "56784d740a25d07d2fbd4616f57e55cf0cb4453f",
+  "branch": "recovery/publishing-integrated-20261117-d57f4",
+  "runId": 44114195156,
+  "runURL": "https://github.com/swonyu/ahmad-career/actions/runs/44114195156",
+  "event": "workflow_dispatch",
+  "runAttempt": 1,
+  "status": "completed",
+  "conclusion": "failure",
+  "gates": {
+    "Service and synthetic HTTPS": "success",
+    "Hosted HTTPS service and durable storage": "success",
+    "Android compile, lint and native acceptance": "success",
+    "iPhone logic and unsigned build": "success",
+    "iPhone native interface acceptance": "failure"
+  },
+  "iPhoneTests": {
+    "executed": 17,
+    "passed": 16,
+    "failed": 1,
+    "durationSeconds": 1358.578,
+    "failure": "testProfileReadinessAndSimpleConnectionSetup: native selection and Delete did not clear whole connection.address field"
+  },
+  "androidTests": {
+    "ordinary": 106,
+    "normalPreviewTLSBoundary": 1,
+    "nativeSyntheticHTTPS": 1,
+    "originalPNGs": 20,
+    "realEmployerRequests": 0
+  },
+  "artifacts": [
+    {
+      "id": 14345455271,
+      "name": "iphone-ui-acceptance-44114195156",
+      "bytes": 188725607,
+      "sha256": "a17ff0698c8d7504dca9c64637eec5b00016df3788fa8245ee5155a5db281a5f",
+      "originalPNGs": 37
+    },
+    {
+      "id": 14343465949,
+      "name": "android-lint-44114195156",
+      "bytes": 3083976,
+      "sha256": "1b3c6394511fbb9b9084665772fa595abfa97e71c0e18185220e089bd25b49b0",
+      "originalPNGs": 20
+    }
+  ],
+  "artifactOriginalBytesVerified": true,
+  "overallReleaseGatePassed": false,
+  "storeReleaseEstablished": false,
+  "automaticRetryInvoked": false
+}

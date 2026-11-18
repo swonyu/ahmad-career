@@ -1,0 +1,22 @@
+{
+  "startedUTC": "2026-11-18T06:12:18.435283+00:00",
+  "scope": "Root hosted visibility; no native, migration or store action",
+  "sourceOwner": "4b851318da2d",
+  "continuationOwner": "d60d62a70f26",
+  "parent": "cad85c495bc03853cc2258d093e79d8d1fb52ae3",
+  "branch": "continuation/feed-reliability-20261117-4b851",
+  "phoneSHA256": "e3454df4c4a4189475097d5bcc0ac2e2bf1fe53447d3046513c6eb780a9cd998",
+  "recoveryTestSHA256": "671f0cc26fa35a8df399a85332902b1226b537115fd7321a40c1a04c6ddc9c4b",
+  "allTestedHostedHashesUnchanged": true,
+  "node": "v24.22.3",
+  "npm": "11.20.0",
+  "mainTests": 321,
+  "pdfTests": 6,
+  "focusedTests": 98,
+  "focusedOverlapsMain": true,
+  "browserKeepCases": 12,
+  "browserKeyboardTraversalCases": 4,
+  "evidencePath": "docs/continuation-evidence/2026-11-18-visible-editing-4b851",
+  "archiveSHA256": "fb3cb0fee2a14dfb2ab8c51e0d68a28587c204c1b46fec6238adfa790d266ec2",
+  "fixtureMetadataSHA256": "9a409a5ed2b7ec0a613dd8273d57dd82beb06326aedc8f0a4797b23ec3a79ffd"
+}

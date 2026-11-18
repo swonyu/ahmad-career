@@ -1,0 +1,47 @@
+{
+  "format": "Career Finder unfinished edits",
+  "version": 1,
+  "scope": "guest",
+  "exportedAt": "2026-11-18T06:45:42.060Z",
+  "drafts": [
+    {
+      "id": "1d680064-08db-4934-afc2-8c6278eeb494",
+      "savedAt": "2026-11-18T06:45:42.060Z",
+      "record": {
+        "job": {
+          "id": "job-9",
+          "title": "Role interview 0",
+          "company": "Synthetic Employer",
+          "url": "https://employer.example/jobs/9",
+          "location": "الرياض",
+          "country": "SA"
+        },
+        "original": {
+          "identity": "https://employer.example/jobs/9",
+          "title": "Role interview 0",
+          "company": "Synthetic Employer",
+          "location": "الرياض",
+          "stage": "interview",
+          "appliedElsewhere": true,
+          "appliedDate": "",
+          "followUpDate": "2026-12-02",
+          "note": "note interview 0",
+          "updatedAt": "2026-11-17T18:00:00.000Z"
+        },
+        "draft": {
+          "identity": "https://employer.example/jobs/9",
+          "title": "Role interview 0",
+          "company": "Synthetic Employer",
+          "location": "الرياض",
+          "stage": "interview",
+          "appliedElsewhere": true,
+          "appliedDate": "",
+          "followUpDate": "2026-12-02",
+          "note": "FINAL_EXISTING_DATE_EN_320\nKeep the saved follow-up date",
+          "updatedAt": "2026-11-17T18:00:00.000Z"
+        },
+        "existed": true
+      }
+    }
+  ]
+}

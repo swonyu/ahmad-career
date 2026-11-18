@@ -1,0 +1,313 @@
+{
+  "verifiedAt": "2026-11-17T23:39:47.648341+00:00",
+  "owner": "/root/export_consumer_review",
+  "browserExecutionOwner": "/root (browser actions reported by root; actual delivered files independently hash-verified here)",
+  "fixtureBuildCommit": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+  "consumerVersion": "LibreOffice 26.8.1.1 bf6ef2662401c7d6dce671ab4deb26ee0af3a7c1",
+  "importMode": "Quoted fields as text, existing isolated-profile recipe",
+  "commandReceipt": "receipts/invocation.json",
+  "inputsVerifiedBeforeInterpretationAndCopy": true,
+  "originalDownloadsUnchanged": true,
+  "repeatEnglishDownloadByteIdentical": true,
+  "results": [
+    {
+      "language": "en",
+      "inputOriginal": "/Users/saleh/Downloads/Career-Finder-application-records (1).csv",
+      "inputBytes": 489,
+      "inputSHA256": "6337ab97ad63ddf64bcf6e4cf55a5b176ef1abe99890426f638ff3c17ff44e64",
+      "output": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/output/actual-ui-en.fods",
+      "outputBytes": 26879,
+      "outputSHA256": "3a17e32f2d270cd710ed308078251587056c0c386a1b4a4e7898982fa56d93d0",
+      "rows": [
+        [
+          {
+            "text": "Job title",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "Employer",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "Job link",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "Stage (self-entered)",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "Marked applied (self-entered)",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "Applied date (self-entered)",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "Follow-up date (self-entered)",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "Private note",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "Last edited (not application time)",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          }
+        ],
+        [
+          {
+            "text": "مُهندس, \"أول\" 🧭",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "Synthetic employer / جهة تجريبية",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "https://example.org/career-finder-ui-export-20261117",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "Saved",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "No",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "",
+            "type": null,
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "2026-11-24",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "Text: =1+1\nSYNTHETIC_PRIVATE_NOTE_4b851 — ملاحظة خاصة, \"اختبار\"\n000123",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "2026-11-17T23:22:18.354Z",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          }
+        ]
+      ],
+      "cellsCompared": 18,
+      "exactValueMatches": 18,
+      "formulaCells": 0,
+      "stringCells": 17,
+      "blankCells": 1,
+      "comparisonNormalization": "None; all parsed CSV text matched consumer text exactly.",
+      "followUpDate": "2026-11-24",
+      "multilineFormulaProtectedNotePreserved": true
+    },
+    {
+      "language": "ar",
+      "inputOriginal": "/Users/saleh/Downloads/Career-Finder-application-records (3).csv",
+      "inputBytes": 670,
+      "inputSHA256": "f920db19636bbee85ceb9dfffd4a0045bf8946364f95f8a3a10605786c6542d8",
+      "output": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/output/actual-ui-ar.fods",
+      "outputBytes": 27061,
+      "outputSHA256": "a5e4d9ec3eb95d8ef22c9e0e1be389244084a78ed18b92e50ed2d73ab408523c",
+      "rows": [
+        [
+          {
+            "text": "المسمى الوظيفي",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "جهة العمل",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "رابط الوظيفة",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "المرحلة (أدخلتها بنفسك)",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "علامة تم التقديم (أدخلتها بنفسك)",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "تاريخ التقديم (أدخلته بنفسك)",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "تاريخ المتابعة (أدخلته بنفسك)",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "ملاحظة خاصة",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "آخر تعديل (وليس وقت التقديم)",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          }
+        ],
+        [
+          {
+            "text": "مُهندس, \"أول\" 🧭",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "Synthetic employer / جهة تجريبية",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "https://example.org/career-finder-ui-export-20261117",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "المحفوظات",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "لا",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "",
+            "type": null,
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "2026-11-24",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "Text: =1+1\nSYNTHETIC_PRIVATE_NOTE_4b851 — ملاحظة خاصة, \"اختبار\"\n000123",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          },
+          {
+            "text": "2026-11-17T23:22:18.354Z",
+            "type": "string",
+            "formula": null,
+            "value": null,
+            "date": null
+          }
+        ]
+      ],
+      "cellsCompared": 18,
+      "exactValueMatches": 18,
+      "formulaCells": 0,
+      "stringCells": 17,
+      "blankCells": 1,
+      "comparisonNormalization": "None; all parsed CSV text matched consumer text exactly.",
+      "followUpDate": "2026-11-24",
+      "multilineFormulaProtectedNotePreserved": true
+    }
+  ],
+  "scope": "Actual root-operated browser files consumed by installed headless LibreOffice. No GUI/mobile/Calendar acceptance, default import or broader corpus rerun."
+}

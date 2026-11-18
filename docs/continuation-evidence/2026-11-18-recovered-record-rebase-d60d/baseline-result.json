@@ -1,0 +1,9 @@
+{
+  "atUTC": "2026-11-18T07:38:11.065040+00:00",
+  "base": "4f72947dbda76ca5176fa42645337c6c739e6a2a",
+  "sourceSHA256": "1f04fe20db91f6a893ecc990757eebf881d93287de3b491cef6641cabeee7c48",
+  "testSHA256": "7d2512edc24a1ab692a9c0c817ed0f563fe557bbc94de543cfba47cc64272d2e",
+  "exit": 1,
+  "stderr": "FAILED: Opening the current record restores the explicitly chosen older text, not the saved note\n",
+  "stdout": ""
+}

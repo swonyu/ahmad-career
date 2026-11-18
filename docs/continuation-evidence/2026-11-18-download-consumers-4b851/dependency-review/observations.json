@@ -1,0 +1,879 @@
+{
+  "review": "Career Finder current dependency review",
+  "observed_window_utc": "2026-11-17T22:36:11Z onward",
+  "scope": "Read-only source/release/advisory/caller review; no installs, package edits, tests, probes, native builds, workflow dispatches or external messages",
+  "root_commit": "9d011492b50185aa74fddbf061a6357b1fb0568f",
+  "latest_publisher_reviewed": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+  "owner": "Development 5bc6158967e8 retains production dependency, lock and audit responsibility",
+  "primary_metadata": [
+    {
+      "observed_at": "2026-11-17T22:36:56.510400+00:00",
+      "lock_sha256": "2512e3bd6aebfc4377bbe036d3cf606c27e33613b35c8c58d28f0f3a0d596c99",
+      "picomatch_lock_entries": {
+        "node_modules/picomatch": {
+          "version": "2.3.2",
+          "dev": true,
+          "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.2.tgz",
+          "integrity": "sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA=="
+        },
+        "node_modules/tinyglobby/node_modules/picomatch": {
+          "version": "4.0.4",
+          "dev": true,
+          "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-4.0.4.tgz",
+          "integrity": "sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A=="
+        },
+        "node_modules/vite/node_modules/picomatch": {
+          "version": "4.0.7",
+          "dev": true,
+          "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-4.0.7.tgz",
+          "integrity": "sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA=="
+        }
+      }
+    },
+    {
+      "npm": "picomatch",
+      "dist_tags": {
+        "latest": "4.0.7"
+      },
+      "version": "4.0.7",
+      "dependencies": null,
+      "engines": {
+        "node": ">=12"
+      },
+      "recent_versions": [
+        "4.0.2",
+        "4.0.3",
+        "2.3.2",
+        "3.0.2",
+        "4.0.4",
+        "4.0.5",
+        "4.0.6",
+        "4.0.7"
+      ]
+    },
+    {
+      "npm": "micromatch",
+      "dist_tags": {
+        "latest": "4.0.8"
+      },
+      "version": "4.0.8",
+      "dependencies": {
+        "braces": "^3.0.3",
+        "picomatch": "^2.3.1"
+      },
+      "engines": {
+        "node": ">=8.6"
+      },
+      "recent_versions": [
+        "4.0.1",
+        "4.0.2",
+        "4.0.3",
+        "4.0.4",
+        "4.0.5",
+        "4.0.6",
+        "4.0.7",
+        "4.0.8"
+      ]
+    },
+    {
+      "npm": "tinyglobby",
+      "dist_tags": {
+        "latest": "0.2.17"
+      },
+      "version": "0.2.17",
+      "dependencies": {
+        "fdir": "^6.5.0",
+        "picomatch": "^4.0.4"
+      },
+      "engines": {
+        "node": ">=12.0.0"
+      },
+      "recent_versions": [
+        "0.2.10",
+        "0.2.11",
+        "0.2.12",
+        "0.2.13",
+        "0.2.14",
+        "0.2.15",
+        "0.2.16",
+        "0.2.17"
+      ]
+    },
+    {
+      "npm": "vite",
+      "dist_tags": {
+        "alpha": "6.0.0-alpha.24",
+        "beta": "8.4.0-beta.1",
+        "previous": "6.4.6",
+        "latest": "8.3.8"
+      },
+      "version": "8.3.8",
+      "dependencies": {
+        "postcss": "^8.5.32",
+        "rolldown": "~1.2.18",
+        "picomatch": "^4.0.7",
+        "tinyglobby": "^0.2.17",
+        "lightningcss": "^1.33.0"
+      },
+      "engines": {
+        "node": "^20.19.0 || >=22.12.0"
+      },
+      "recent_versions": [
+        "8.3.6",
+        "8.3.7",
+        "8.2.6",
+        "7.3.8",
+        "8.1.7",
+        "6.4.6",
+        "8.3.8",
+        "8.4.0-beta.1"
+      ]
+    },
+    {
+      "api": "advisories/GHSA-fc5q-39xc-vjpf",
+      "result": {
+        "ghsa_id": "GHSA-fc5q-39xc-vjpf",
+        "summary": "picomatch vulnerable to ReDoS through single-branch repeated extglobs",
+        "severity": "high",
+        "published_at": "2026-10-19T18:32:12Z",
+        "updated_at": "2026-11-17T15:56:44Z",
+        "github_reviewed_at": "2026-11-17T15:56:42Z",
+        "withdrawn_at": null,
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "npm",
+              "name": "picomatch"
+            },
+            "vulnerable_version_range": "<= 4.0.7",
+            "first_patched_version": null,
+            "vulnerable_functions": []
+          }
+        ],
+        "html_url": "https://github.com/advisories/GHSA-fc5q-39xc-vjpf"
+      }
+    },
+    {
+      "api": "repos/micromatch/picomatch/releases?per_page=5",
+      "result": [
+        {
+          "tag_name": "4.0.7",
+          "published_at": "2026-08-24T14:34:48Z",
+          "target_commitish": "master",
+          "html_url": "https://github.com/micromatch/picomatch/releases/tag/4.0.7"
+        },
+        {
+          "tag_name": "4.0.6",
+          "published_at": "2026-08-24T14:20:37Z",
+          "target_commitish": "master",
+          "html_url": "https://github.com/micromatch/picomatch/releases/tag/4.0.6"
+        },
+        {
+          "tag_name": "4.0.5",
+          "published_at": "2026-07-02T16:50:44Z",
+          "target_commitish": "master",
+          "html_url": "https://github.com/micromatch/picomatch/releases/tag/4.0.5"
+        },
+        {
+          "tag_name": "4.0.4",
+          "published_at": "2026-03-23T20:47:33Z",
+          "target_commitish": "master",
+          "html_url": "https://github.com/micromatch/picomatch/releases/tag/4.0.4"
+        },
+        {
+          "tag_name": "3.0.2",
+          "published_at": "2026-03-23T20:45:37Z",
+          "target_commitish": "master",
+          "html_url": "https://github.com/micromatch/picomatch/releases/tag/3.0.2"
+        }
+      ]
+    },
+    {
+      "api": "repos/micromatch/picomatch/pulls/237",
+      "result": {
+        "number": 237,
+        "state": "open",
+        "title": "fix: CVE-2026-112366 prevent ReDoS in single-branch repeated extglobs",
+        "updated_at": "2026-11-17T21:28:12Z",
+        "merged_at": null,
+        "mergeable": true,
+        "html_url": "https://github.com/micromatch/picomatch/pull/237",
+        "head_sha": "1bf0d04563cb9ce568cf36efc5f6b7187d9911d5",
+        "base_sha": "9fab7bf61913ea334c4203ed321c426cfde44a42"
+      }
+    },
+    {
+      "api": "repos/micromatch/picomatch/pulls/238",
+      "result": {
+        "number": 238,
+        "state": "open",
+        "title": "fix: literalize single-branch extglobs with a leading bare quantifier (CVE-2026-112366)",
+        "updated_at": "2026-11-17T21:28:16Z",
+        "merged_at": null,
+        "mergeable": true,
+        "html_url": "https://github.com/micromatch/picomatch/pull/238",
+        "head_sha": "44f192261f312ddf236cb7bdc05d8f22663f98f9",
+        "base_sha": "9fab7bf61913ea334c4203ed321c426cfde44a42"
+      }
+    },
+    {
+      "api": "repos/micromatch/picomatch/pulls/246",
+      "result": {
+        "number": 246,
+        "state": "open",
+        "title": "[v2] Guard single-branch repeated-star extglobs against ReDoS",
+        "updated_at": "2026-11-05T16:35:53Z",
+        "merged_at": null,
+        "mergeable": true,
+        "html_url": "https://github.com/micromatch/picomatch/pull/246",
+        "head_sha": "f03bec2c02e46f063fbfdc161aae1d0f854b2565",
+        "base_sha": "81cba8d4b767cab3cb29d26eb4f691eed75b73b2"
+      }
+    }
+  ],
+  "current_publisher_inputs": [
+    {
+      "publisher": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+      "path": "hosted/package-lock.json",
+      "git_blob_sha": "80e9967ce0d09eeace1744d37ba226ae88d0e536",
+      "sha256": "2512e3bd6aebfc4377bbe036d3cf606c27e33613b35c8c58d28f0f3a0d596c99",
+      "equals_root9d": true,
+      "picomatch_entries": {
+        "node_modules/picomatch": {
+          "version": "2.3.2",
+          "dev": true,
+          "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.2.tgz",
+          "integrity": "sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA=="
+        },
+        "node_modules/tinyglobby/node_modules/picomatch": {
+          "version": "4.0.4",
+          "dev": true,
+          "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-4.0.4.tgz",
+          "integrity": "sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A=="
+        },
+        "node_modules/vite/node_modules/picomatch": {
+          "version": "4.0.7",
+          "dev": true,
+          "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-4.0.7.tgz",
+          "integrity": "sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA=="
+        }
+      }
+    },
+    {
+      "publisher": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+      "path": "hosted/package.json",
+      "git_blob_sha": "55df79425ee27ba2d17f3b76a3a1bf977fc92ba3",
+      "sha256": "7e02d347153988f4e9180e6348ab4fa405ba98cae1cc85abd4c1ea7e5da85e7a",
+      "equals_root9d": true,
+      "engines": {
+        "node": ">=22.13.0"
+      },
+      "scripts": {
+        "install:ci": "node scripts/install-ci.mjs",
+        "dev": "node scripts/run-framework.mjs dev",
+        "build": "node scripts/run-framework.mjs build",
+        "start": "node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js dev --config dist/server/wrangler.json --local --persist-to .wrangler/state --ip 127.0.0.1 --inspector-port 0",
+        "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+        "db:generate": "drizzle-kit generate",
+        "test": "node tests/linkedin-profile.mjs && node --test tests/pdf-readability.mjs && node tests/hosted-auth.mjs && node tests/hosted-auth-worker.mjs && node tests/hosted-applications.mjs && node tests/hosted-discovery.mjs && node tests/hosted-phone.mjs && node --test tests/provider-body-cleanup.mjs tests/frontend-body-cleanup.mjs tests/phone-model.mjs tests/phone-api.mjs tests/phone-dispatch.mjs tests/phone-batch-stop.mjs tests/provider-connections.mjs tests/phone-private-async.mjs tests/web-experience.mjs tests/phone-settings-privacy.mjs tests/phone-navigation-inset.mjs tests/i18n.mjs tests/phone-localization.mjs tests/phone-record-tools.mjs tests/phone-search-workflows.mjs tests/phone-search-cap.mjs tests/phone-recovery-isolation.mjs tests/phone-selection-board-actions.mjs tests/account-recovery-lifecycle.mjs && node tests/phone-vault.mjs",
+        "typecheck": "tsc --noEmit"
+      },
+      "overrides": {
+        "miniflare": {
+          "sharp": "0.35.5"
+        },
+        "baseline-browser-mapping": "2.11.0",
+        "fast-uri": "3.1.9",
+        "source-map-js": "1.2.2",
+        "esbuild": "0.28.2",
+        "fflate": "0.7.5"
+      }
+    },
+    {
+      "publisher": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+      "path": ".github/workflows/phone-quality.yml",
+      "git_blob_sha": "f4a5a102d2f6179e02fa40a684627e06ebfb7ab5",
+      "sha256": "03a9eb0b74efbf33422d734558c14fc13b8b5d26bcfb0d4c2eef716a35ed1581",
+      "equals_root9d": true,
+      "audit_lines": [
+        {
+          "line": 98,
+          "text": "      - name: Audit the locked dependencies"
+        },
+        {
+          "line": 101,
+          "text": "        run: npm audit --json --fetch-retries=0 --fetch-timeout=30000 > tests/dependency-audit-ci.json"
+        },
+        {
+          "line": 112,
+          "text": "            hosted/tests/dependency-audit-ci.json"
+        }
+      ]
+    }
+  ],
+  "upstream_237_238_246": [
+    {
+      "pr": 237,
+      "kind": "comments",
+      "result": [
+        {
+          "created_at": "2026-10-22T15:06:54Z",
+          "updated_at": "2026-10-22T15:06:54Z",
+          "url": "https://github.com/micromatch/picomatch/pull/237#issuecomment-6344064390",
+          "author": "lppedd",
+          "body": "See https://github.com/micromatch/picomatch/pull/235#issuecomment-6315749381."
+        },
+        {
+          "created_at": "2026-11-10T20:58:48Z",
+          "updated_at": "2026-11-10T20:58:48Z",
+          "url": "https://github.com/micromatch/picomatch/pull/237#issuecomment-6779102309",
+          "author": "jlopez2-atl",
+          "body": "Hi, thanks for working on this fix for CVE-2026-112366.\r\n\r\nIs there a rough timeline for merging this and cutting a release? Every published version up to 4.0.7 is still flagged, so for now we’re applying this change as a local patch.\r\n\r\nCould the fix also be released for the 2.x line? anymatch, micromatch, and readdirp still depend on picomatch@^2, so a 4.x release alone won’t reach most installs."
+        },
+        {
+          "created_at": "2026-11-17T21:28:12Z",
+          "updated_at": "2026-11-17T21:28:12Z",
+          "url": "https://github.com/micromatch/picomatch/pull/237#issuecomment-6961508029",
+          "author": "msalaheldincontractor-wsl",
+          "body": "Reviewed from the diff; I did not run this branch. For reference, on master (9fab7bf, Node 22) each of `+(*)`, `+(*a)`, `*(*)`, `*(*a)`, `+(*)a` and the two-branch `+(*a|*b)` takes more than 3 s for `isMatch('a'.repeat(28) + '/', pattern)`.\n\n- The single-branch collapse looks sound: a branch with a star and no `/`, parens, braces, `|`, `!`, `+`, `@` or `**` repeated is matched by one copy. It covers `+(*)`, `+(*a)`, `*(*)`, `*(*a)` and `+(*)a`.\n- It only applies when there is one branch, so the two-branch `+(*a|*b)` still compiles to a nested quantifier. On master the multi-branch check only flags pure `*`/`?` branches. Extending the collapse to the case where every branch is star-led (as #257 does) would close that.\n"
+        }
+      ]
+    },
+    {
+      "pr": 237,
+      "kind": "files",
+      "result": [
+        {
+          "filename": "lib/parse.js",
+          "sha": "04a3425a87ef02baa91ea0be131ae34966879f42",
+          "status": "modified",
+          "patch": "@@ -270,6 +270,49 @@ const getStarExtglobSequenceChars = pattern => {\n   return chars;\n };\n \n+const isSelfRepeatingStarBranch = branch => {\n+  let escaped = false;\n+  let bracket = false;\n+  let star = false;\n+\n+  for (let i = 0; i < branch.length; i++) {\n+    const ch = branch[i];\n+\n+    if (escaped === true) {\n+      escaped = false;\n+      continue;\n+    }\n+\n+    if (ch === '\\\\') {\n+      escaped = true;\n+      continue;\n+    }\n+\n+    if (bracket === true) {\n+      if (ch === ']') bracket = false;\n+      continue;\n+    }\n+\n+    if (ch === '[') {\n+      bracket = true;\n+      continue;\n+    }\n+\n+    if (/[/(){}|!+@]/.test(ch)) {\n+      return false;\n+    }\n+\n+    if (ch === '*') {\n+      if (branch[i + 1] === '*') {\n+        return false;\n+      }\n+      star = true;\n+    }\n+  }\n+\n+  return star && !escaped && !bracket;\n+};\n+\n const repeatedExtglobRecursion = pattern => {\n   let depth = 0;\n   let value = pattern.trim();\n@@ -343,6 +386,10 @@ const analyzeRepeatedExtglob = (body, options) => {\n       : { risky: true };\n   }\n \n+  if (branches.length === 1 && isSelfRepeatingStarBranch(branches[0])) {\n+    return { risky: false, collapse: true };\n+  }\n+\n   return { risky: false };\n };\n \n@@ -565,6 +612,10 @@ const parse = (input, options) => {\n       return;\n     }\n \n+    if (analysis.collapse === true && (token.type === 'plus' || token.type === 'star')) {\n+      token.close = token.type === 'plus' ? ')' : ')?';\n+    }\n+\n     let output = token.close + (opts.capture ? ')' : '');\n     let rest;\n "
+        }
+      ]
+    },
+    {
+      "pr": 238,
+      "kind": "comments",
+      "result": [
+        {
+          "created_at": "2026-11-17T17:42:34Z",
+          "updated_at": "2026-11-17T17:42:34Z",
+          "url": "https://github.com/micromatch/picomatch/pull/238#issuecomment-6956039694",
+          "author": "ajkessel",
+          "body": "Just chiming in -- this is breaking our CI as well. If this PR isn't the solution, is another patch in the works?"
+        },
+        {
+          "created_at": "2026-11-17T17:58:38Z",
+          "updated_at": "2026-11-17T17:59:11Z",
+          "url": "https://github.com/micromatch/picomatch/pull/238#issuecomment-6956423252",
+          "author": "bradleyseanf",
+          "body": "Tons of CIs failing downstream because of this - Github still stating it's necessary at https://github.com/advisories/GHSA-fc5q-39xc-vjpf\r\n\r\n@0x00-sys @fal3n-4ngel you are both listed as Credits on this one. Can you help out? They are saying this advisory as revoked as per https://security.snyk.io/vuln/SNYK-JS-PICOMATCH-21248802"
+        },
+        {
+          "created_at": "2026-11-17T21:28:15Z",
+          "updated_at": "2026-11-17T21:28:15Z",
+          "url": "https://github.com/micromatch/picomatch/pull/238#issuecomment-6961509237",
+          "author": "msalaheldincontractor-wsl",
+          "body": "Reviewed from the diff; I did not run this branch. For reference, on master (9fab7bf, Node 22) each of `+(*)`, `+(*a)`, `*(*)`, `*(*a)`, `+(*)a` and the two-branch `+(*a|*b)` takes more than 3 s for `isMatch('a'.repeat(28) + '/', pattern)`.\n\n- `hasUnsafeLeadingQuantifier` returns false when the branch is only `*` (`i < branch.length` fails), so `+(*)`, the advisory's first example, is left as is. On master that pattern is one of the slow ones above.\n- For `+(*a)` the branch is marked risky, and with no `safeOutput` the extglob is emitted as literal text. The new test pins `makeRe('+(*a)').source` to `^(?:\\+\\(\\*a\\))$`, so `+(*a)` would match only the string `+(*a)`, no longer `xa`. That removes the backtracking by changing what the pattern means. The collapse other PRs use (`+(*a)` → `@(*a)`) keeps the meaning.\n"
+        }
+      ]
+    },
+    {
+      "pr": 238,
+      "kind": "files",
+      "result": [
+        {
+          "filename": "lib/parse.js",
+          "sha": "3ec28c87275a512ece8ea8c29b99fe908946a4a1",
+          "status": "modified",
+          "patch": "@@ -270,6 +270,27 @@ const getStarExtglobSequenceChars = pattern => {\n   return chars;\n };\n \n+// A branch that *starts* with a bare (non-parenthesized) `*`/`?` quantifier\n+// and has further content after it (e.g. `*a`, `?[ab]`) is unsafe to repeat\n+// with an outer `+(...)`/`*(...)`: with no fixed prefix anchoring where the\n+// quantifier ends, it compiles to a nested-quantifier regex (e.g.\n+// `(?:[^/]*?a)+` for `+(*a)`) that is prone to catastrophic backtracking\n+// (CVE-2026-112366). A bare quantifier with nothing else in the branch\n+// (`+(*)`), a `*(...)`/`?(...)` group opener (its contents are analyzed\n+// separately via recursion/char-class reduction above), and a quantifier\n+// that only appears later in the branch behind a literal prefix (`a*`,\n+// `W*, *`) are not ambiguous in the same way and are left alone.\n+const hasUnsafeLeadingQuantifier = branch => {\n+  let i = 0;\n+\n+  while (i < branch.length && (branch[i] === '*' || branch[i] === '?') && branch[i + 1] !== '(') {\n+    i++;\n+  }\n+\n+  // no leading bare quantifier run, or nothing follows it\n+  return i > 0 && i < branch.length;\n+};\n+\n const repeatedExtglobRecursion = pattern => {\n   let depth = 0;\n   let value = pattern.trim();\n@@ -332,6 +353,10 @@ const analyzeRepeatedExtglob = (body, options) => {\n \n     combinable = false;\n \n+    if (hasUnsafeLeadingQuantifier(branch)) {\n+      return { risky: true };\n+    }\n+\n     if (repeatedExtglobRecursion(branch) > max) {\n       return { risky: true };\n     }"
+        }
+      ]
+    },
+    {
+      "pr": 246,
+      "kind": "comments",
+      "result": [
+        {
+          "created_at": "2026-11-05T09:29:03Z",
+          "updated_at": "2026-11-05T09:29:03Z",
+          "url": "https://github.com/micromatch/picomatch/pull/246#issuecomment-6654481257",
+          "author": "pday-kyc360",
+          "body": "Any updates on this?"
+        },
+        {
+          "created_at": "2026-11-05T16:35:53Z",
+          "updated_at": "2026-11-05T16:35:53Z",
+          "url": "https://github.com/micromatch/picomatch/pull/246#issuecomment-6663485059",
+          "author": "sxnistxr",
+          "body": "> Any updates on this?\r\n\r\nstill waiting on approval from a maintainer :("
+        }
+      ]
+    },
+    {
+      "pr": 246,
+      "kind": "files",
+      "result": [
+        {
+          "filename": "lib/parse.js",
+          "sha": "1ee1ef3c9e2e053d641a7525f6353a1ca1e36915",
+          "status": "modified",
+          "patch": "@@ -280,6 +280,15 @@ const repeatedExtglobRecursion = pattern => {\n   return depth;\n };\n \n+// For a single branch of literals and stars, a star can absorb any further\n+// repetitions of that branch. Keep paths, quoting and other glob/regex syntax\n+// out of this rewrite: they need their own analysis.\n+const isSelfRepeatingStarBranch = branch => {\n+  return branch.includes('*') &&\n+    !branch.includes('**') &&\n+    !/[\\\\/\"?()[\\]{}|!+@]/.test(branch);\n+};\n+\n const analyzeRepeatedExtglob = (body, options) => {\n   if (options.maxExtglobRecursion === false) {\n     return { risky: false };\n@@ -313,6 +322,12 @@ const analyzeRepeatedExtglob = (body, options) => {\n     }\n   }\n \n+  if (branches.length === 1 && isSelfRepeatingStarBranch(branches[0])) {\n+    // Collapsing changes repeated captures. Use the existing literal fallback\n+    // instead of exposing a backtracking expression in capture mode.\n+    return options.capture === true ? { risky: true } : { risky: false, collapse: true };\n+  }\n+\n   return { risky: false };\n };\n \n@@ -536,6 +551,10 @@ const parse = (input, options) => {\n       return;\n     }\n \n+    if (analysis.collapse === true && (token.type === 'plus' || token.type === 'star')) {\n+      token.close = token.type === 'plus' ? ')' : ')?';\n+    }\n+\n     let output = token.close + (opts.capture ? ')' : '');\n     let rest;\n "
+        }
+      ]
+    }
+  ],
+  "upstream_257": [
+    {
+      "api": "repos/micromatch/picomatch/pulls/257",
+      "result": {
+        "number": 257,
+        "title": "fix: drop redundant repetition from star-led repeated extglobs",
+        "state": "open",
+        "created_at": "2026-11-17T20:08:47Z",
+        "updated_at": "2026-11-17T21:28:09Z",
+        "merged_at": null,
+        "body": "## Summary\n\nA repeated extglob whose branch starts with a plain `*` (e.g. `+(*a)`, `*(*a)`) compiles to a nested quantifier that backtracks exponentially on non-matching input. This is the issue reported in GHSA-fc5q-39xc-vjpf.\n\n## Reproduction\n\n```js\nconst picomatch = require('picomatch');\n\npicomatch.makeRe('+(*a)').source;\n// => '^(?:(?=.)(?:[^/]*?a)+)$'\n\npicomatch.isMatch('a'.repeat(27) + '!', '+(*a)');\n// => false, after ~4.6s\n```\n\nEvery extra character roughly doubles the time.\n\n## Root cause\n\n`analyzeRepeatedExtglob` only flags branches that are themselves `*(…)` sequences or nested extglobs. A branch such as `*a` is not flagged, so `+(*a)` is emitted as `(?:[^/]*?a)+`. Both the lazy `[^/]*?` and the outer `+` can consume the same run of `a`s, and the engine tries every way of splitting it before failing.\n\n## Fix\n\nA branch led by a plain `*` that cannot match `/` already absorbs any earlier repetition: `*a*a` matches exactly what `*a` matches within a segment. So for such branches the repetition is redundant, and:\n\n- `+(…)` closes like `@(…)`\n- `*(…)` closes like `?(…)`\n\n| pattern     | before                          | after                          |\n| ----------- | ------------------------------- | ------------------------------ |\n| `+(*a)`     | `^(?:(?=.)(?:[^/]*?a)+)$`       | `^(?:(?=.)(?:[^/]*?a))$`       |\n| `*(*a)`     | `^(?:(?=.)(?:[^/]*?a)*)$`       | `^(?:(?=.)(?:[^/]*?a)?)$`      |\n| `+(*a\\|*b)` | `^(?:(?=.)(?:[^/]*?a\\|[^/]*?b)+)$` | `^(?:(?=.)(?:[^/]*?a\\|[^/]*?b))$` |\n\nThe rewrite only applies when **every** branch is star-led and contains no `/`, `**` or brackets (a bracket such as `[[:punct:]]` could match `/`, and then the leading star could not absorb the previous repetition). `+(*/a)` keeps its `+`. Setting `maxExtglobRecursion: false` keeps the old output.\n\nAfter the change, `isMatch('a'.repeat(5000) + '!', '+(*a)')` returns in 0ms.\n\n## Validation\n\n- Differential fuzz of the old regex against the new one: 26.8M comparisons per option set (default, `windows`, `posix`, `dot`, `bash`, `capture`, `nocase`), 0 divergences.\n- Full suite passes (`2000 passing`), plus `npm run lint`.\n- New tests in `test/options.maxExtglobRecursion.js` assert the generated source, match behaviour, the `/` case and the `maxExtglobRecursion: false` opt-out.\n\n## Known limitations\n\n- Mixed branches such as `+(*a|b)` are still exponential. There is no equivalent rewrite for them (dropping the `+` would change what matches), so they are left as they are.\n- `+(?*a)` is currently compiled as a literal because of the leading `?` bug addressed in #194. If #194 is merged, `+(?*a)` would compile to a repeated `[^/][^/]*?a` group, which this change does not cover.\n\nRefs GHSA-fc5q-39xc-vjpf\n",
+        "html_url": "https://github.com/micromatch/picomatch/pull/257",
+        "head_sha": "4e4892e0ac6c374ec3d9e4dc430101da9a20a37b",
+        "base_sha": "9fab7bf61913ea334c4203ed321c426cfde44a42"
+      }
+    },
+    {
+      "api": "repos/micromatch/picomatch/pulls/257/files?per_page=100",
+      "result": [
+        {
+          "filename": "lib/parse.js",
+          "sha": "d54275bce0f2230705d595abb7af8892551e6f30",
+          "status": "modified",
+          "patch": "@@ -284,6 +284,14 @@ const repeatedExtglobRecursion = pattern => {\n   return depth;\n };\n \n+// A branch led by a plain `*` absorbs any prefix within the path segment, so\n+// repeating it adds nothing: `*a*a` is already a `*a`. The branch must not be\n+// able to match `/` (no `/`, `**` or brackets such as `[[:punct:]]`), or the\n+// leading star could not absorb an earlier repetition.\n+const isStarLedBranch = branch => {\n+  return branch[0] === '*' && branch[1] !== '(' && !/\\/|\\*\\*|\\[/.test(branch);\n+};\n+\n const analyzeRepeatedExtglob = (body, options) => {\n   if (options.maxExtglobRecursion === false) {\n     return { risky: false };\n@@ -343,6 +351,14 @@ const analyzeRepeatedExtglob = (body, options) => {\n       : { risky: true };\n   }\n \n+  // `+(*a)` compiles to `(?:[^/]*?a)+`, which backtracks exponentially on\n+  // inputs like `aaaa!`. When every branch is star-led the repetition is\n+  // redundant, so `+(...)` can close like `@(...)` and `*(...)` like `?(...)`\n+  // without changing what the pattern matches.\n+  if (branches.every(isStarLedBranch)) {\n+    return { risky: false, redundantRepeat: true };\n+  }\n+\n   return { risky: false };\n };\n \n@@ -565,6 +581,11 @@ const parse = (input, options) => {\n       return;\n     }\n \n+    if (analysis.redundantRepeat) {\n+      if (token.type === 'plus') token.close = EXTGLOB_CHARS['@'].close;\n+      if (token.type === 'star') token.close = EXTGLOB_CHARS['?'].close;\n+    }\n+\n     let output = token.close + (opts.capture ? ')' : '');\n     let rest;\n "
+        },
+        {
+          "filename": "test/options.maxExtglobRecursion.js",
+          "sha": "0b1243b5d2d2b491877e22628680963b8af098c8",
+          "status": "modified",
+          "patch": "@@ -142,6 +142,30 @@ describe('options.maxExtglobRecursion', () => {\n     assert(isMatch('+(a|aa)x', '+(a|aa)@(x)'));\n     assert(!isMatch('aaax', '+(a|aa)@(x)'));\n   });\n+  it('should drop the redundant repetition from star-led repeated extglobs', () => {\n+    // Regression: `+(*a)` compiled to `(?:[^/]*?a)+`, which backtracks\n+    // exponentially. A star-led branch already absorbs earlier repetitions, so\n+    // `+(...)` closes like `@(...)` and `*(...)` like `?(...)` with the same matches.\n+    assert.strictEqual(makeRe('+(*a)').source, '^(?:(?=.)(?:[^/]*?a))$');\n+    assert.strictEqual(makeRe('*(*a)').source, '^(?:(?=.)(?:[^/]*?a)?)$');\n+    assert.strictEqual(\n+      makeRe('+(*a|*b)').source,\n+      '^(?:(?=.)(?:[^/]*?a|[^/]*?b))$'\n+    );\n+\n+    assert(isMatch('aaa', '+(*a)'));\n+    assert(isMatch('xbxa', '+(*a|*b)'));\n+    assert(isMatch('foo.js', '*(*.js|*.ts)'));\n+    assert(!isMatch('a/a', '+(*a)'));\n+    assert(!isMatch('a'.repeat(64) + '!', '+(*a)'));\n+    assert(!isMatch('a'.repeat(64) + '!', '*(*a)'));\n+  });\n+\n+  it('should keep the repetition when a star-led branch can match a slash', () => {\n+    assert.strictEqual(makeRe('+(*/a)').source, '^(?:(?=.)(?:[^/]*?\\\\/a)+)$');\n+    assert(isMatch('x/ay/a', '+(*/a)'));\n+  });\n+\n   it('should disable the safeguard when maxExtglobRecursion is false', () => {\n     assert(\n       /\\(\\?:a\\|aa\\)\\+/.test(\n@@ -153,5 +177,10 @@ describe('options.maxExtglobRecursion', () => {\n         makeRe('+(+(a))', { maxExtglobRecursion: false }).source\n       )\n     );\n+    assert(\n+      /\\(\\?:\\[\\^\\/\\]\\*\\?a\\)\\+/.test(\n+        makeRe('+(*a)', { maxExtglobRecursion: false }).source\n+      )\n+    );\n   });\n });"
+        }
+      ]
+    },
+    {
+      "api": "repos/micromatch/picomatch/issues/257/comments?per_page=100",
+      "result": [
+        {
+          "created_at": "2026-11-17T20:53:47Z",
+          "url": "https://github.com/micromatch/picomatch/pull/257#issuecomment-6960705177",
+          "author": "DaleMckeown",
+          "body": "See https://github.com/micromatch/picomatch/pull/235#issuecomment-6315749381."
+        },
+        {
+          "created_at": "2026-11-17T21:28:09Z",
+          "url": "https://github.com/micromatch/picomatch/pull/257#issuecomment-6961506736",
+          "author": "msalaheldincontractor-wsl",
+          "body": "Reviewed from the diff; I did not run this branch. For reference, on master (9fab7bf, Node 22) each of `+(*)`, `+(*a)`, `*(*)`, `*(*a)`, `+(*)a` and the two-branch `+(*a|*b)` takes more than 3 s for `isMatch('a'.repeat(28) + '/', pattern)`.\n\n- The rewrite looks sound to me. When every branch starts with a plain `*` and can't match `/`, the leading star absorbs any earlier copy, so `+(…)` ≡ `@(…)` and `*(…)` ≡ `?(…)` with no change in what matches. It covers all six patterns above, including the two-branch case.\n- One gap: `isStarLedBranch` rejects any branch containing `[`, so I'd expect `+(*[ab])` to keep the nested quantifier (`(?:[^/]*?[ab])+`, the same shape as `+(*a)`). A bracket that can't match `/` (not negated, no POSIX class such as `[[:punct:]]`) seems safe to allow, and a timing test for `+(*[ab])` would pin it.\n"
+        }
+      ]
+    }
+  ],
+  "callers": [
+    {
+      "path": "hosted/node_modules/vite/dist",
+      "matches": [
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/vite/dist/node/chunks/node.js:14:import pm from \"picomatch\";",
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/vite/dist/node/chunks/node.js:9092:\tconst picomatch = __require(\"picomatch\");",
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/vite/dist/node/chunks/node.js:9131:\t\t\tconst glob = picomatch(filter.trim());",
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/vite/dist/node/chunks/node.js:9139:\t\t\t\tif (trimmed.charAt(0) === BANG) negative.push(picomatch(trimmed.slice(1)));",
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/vite/dist/node/chunks/node.js:9140:\t\t\t\telse positive.push(picomatch(trimmed));",
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/vite/dist/node/chunks/node.js:9368:\tconst picomatch = __require(\"picomatch\");",
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/vite/dist/node/chunks/node.js:9386:\t\t\tconst glob = picomatch(matcher, options);",
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/vite/dist/node/chunks/node.js:9426:\t\tconst negatedGlobs = mtchers.filter((item) => typeof item === \"string\" && item.charAt(0) === BANG).map((item) => item.slice(1)).map((item) => picomatch(item, opts));",
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/vite/dist/node/chunks/node.js:9705:* to-regex-range <https://github.com/micromatch/to-regex-range>"
+      ]
+    },
+    {
+      "path": "hosted/node_modules/tinyglobby/dist",
+      "matches": [
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/tinyglobby/dist/index.mjs:5:import picomatch from \"picomatch\";",
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/tinyglobby/dist/index.mjs:22:\t\tfor (j = 0; j < partsCount; j++) partMatchers[j] = picomatch(parts[j], options);",
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/tinyglobby/dist/index.mjs:82:\tconst result = picomatch.scan(path, splitPatternOptions);",
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/tinyglobby/dist/index.mjs:123:\tconst scan = picomatch.scan(pattern);",
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/tinyglobby/dist/index.mjs:217:\tconst matcher = picomatch(processed.match, matchOptions);",
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/tinyglobby/dist/index.mjs:218:\tconst ignore = picomatch(processed.ignore, matchOptions);",
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/tinyglobby/dist/index.cjs:28:let picomatch = require(\"picomatch\");",
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/tinyglobby/dist/index.cjs:29:picomatch = __toESM(picomatch, 1);",
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/tinyglobby/dist/index.cjs:46:\t\tfor (j = 0; j < partsCount; j++) partMatchers[j] = (0, picomatch.default)(parts[j], options);",
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/tinyglobby/dist/index.cjs:106:\tconst result = picomatch.default.scan(path$2, splitPatternOptions);",
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/tinyglobby/dist/index.cjs:147:\tconst scan = picomatch.default.scan(pattern);",
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/tinyglobby/dist/index.cjs:241:\tconst matcher = (0, picomatch.default)(processed.match, matchOptions);",
+        "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/tinyglobby/dist/index.cjs:242:\tconst ignore = (0, picomatch.default)(processed.ignore, matchOptions);"
+      ]
+    },
+    {
+      "file": "hosted/node_modules/tinyglobby/dist/index.mjs",
+      "sha256": "fc1bed0d5da56d4638002af7deaf6d179e183a85de648c180839ca36b21b3b50",
+      "lines_190_225": [
+        "190: \t\telse if (pattern[1] !== \"!\" || pattern[2] === \"(\") ignorePatterns.push(normalizePattern(pattern.slice(1), options, props, true));",
+        "191: \t}",
+        "192: \treturn {",
+        "193: \t\tmatch: matchPatterns,",
+        "194: \t\tignore: ignorePatterns",
+        "195: \t};",
+        "196: }",
+        "197: //#endregion",
+        "198: //#region src/crawler.ts",
+        "199: function buildCrawler(options, patterns) {",
+        "200: \tconst cwd = options.cwd;",
+        "201: \tconst props = {",
+        "202: \t\troot: cwd,",
+        "203: \t\tdepthOffset: 0",
+        "204: \t};",
+        "205: \tconst processed = processPatterns(options, patterns, props);",
+        "206: \tif (options.debug) log(\"internal processing patterns:\", processed);",
+        "207: \tconst { absolute, caseSensitiveMatch, debug, dot, followSymbolicLinks, onlyDirectories } = options;",
+        "208: \tconst root = props.root.replace(BACKSLASHES, \"\");",
+        "209: \tconst matchOptions = {",
+        "210: \t\tdot,",
+        "211: \t\tnobrace: options.braceExpansion === false,",
+        "212: \t\tnocase: !caseSensitiveMatch,",
+        "213: \t\tnoextglob: options.extglob === false,",
+        "214: \t\tnoglobstar: options.globstar === false,",
+        "215: \t\tposix: true",
+        "216: \t};",
+        "217: \tconst matcher = picomatch(processed.match, matchOptions);",
+        "218: \tconst ignore = picomatch(processed.ignore, matchOptions);",
+        "219: \tconst partialMatcher = getPartialMatcher(processed.match, matchOptions);",
+        "220: \tconst format = buildFormat(cwd, root, absolute);",
+        "221: \tconst excludeFormatter = absolute ? format : buildFormat(cwd, root, true);",
+        "222: \tconst excludePredicate = (_, p) => {",
+        "223: \t\tconst relativePath = excludeFormatter(p, true);",
+        "224: \t\treturn relativePath !== \".\" && !partialMatcher(relativePath) || ignore(relativePath);",
+        "225: \t};"
+      ]
+    },
+    {
+      "candidate_readme_line": 5,
+      "context": [
+        "## Outcome",
+        "",
+        "**The narrow candidate improved the four covered repeated-star cases across all three installed source versions while preserving the exercised short matching/capture results. It remains an incomplete remediation.**",
+        "",
+        "The candidate deliberately retains existing capture behavior. A candidate 2.3.2 capture-mode probe still exceeded its 750 ms external process deadline. No production integration, package installation, audit, application suite, CI or native build was performed.",
+        ""
+      ]
+    },
+    {
+      "candidate_readme_line": 7,
+      "context": [
+        "**The narrow candidate improved the four covered repeated-star cases across all three installed source versions while preserving the exercised short matching/capture results. It remains an incomplete remediation.**",
+        "",
+        "The candidate deliberately retains existing capture behavior. A candidate 2.3.2 capture-mode probe still exceeded its 750 ms external process deadline. No production integration, package installation, audit, application suite, CI or native build was performed.",
+        "",
+        "This is isolated implementation/research evidence for development owner `5bc6158967e8`. Root owns integration/browser work; publisher `d57f4cd77813` retains native/build/store ownership. No competing production dependency edit was made.",
+        ""
+      ]
+    },
+    {
+      "candidate_readme_line": 43,
+      "context": [
+        "These remain proposals, not verified released fixes. This experiment is an adaptation of their repeated-star collapse idea, not an unmodified cherry-pick. Immutable commit pages were unavailable through the research tool; full IDs were read from the observed commit-link targets and actual PR diff pages were read.",
+        "",
+        "The candidate recognizes exactly one branch containing an ordinary star, excludes consecutive globstars, and excludes backslashes, slashes, both quote characters, question marks, brackets, braces, parentheses, alternation and other extended-glob operators. It additionally declines optimization for truthy capture, contains, flags or prepend options.",
+        "",
+        "For an eligible plus repetition, it removes the outer repetition. For an eligible star repetition, it changes the outer repetition to optionality. Existing parser behavior handles every excluded case unchanged. The explicit `maxExtglobRecursion:false` opt-out remains unchanged.",
+        ""
+      ]
+    },
+    {
+      "candidate_readme_line": 47,
+      "context": [
+        "For an eligible plus repetition, it removes the outer repetition. For an eligible star repetition, it changes the outer repetition to optionality. Existing parser behavior handles every excluded case unchanged. The explicit `maxExtglobRecursion:false` opt-out remains unchanged.",
+        "",
+        "The narrower option guard was selected before executing tests. Capture behavior is preserved by declining optimization, rather than using PR246's literal fallback. Contains/custom flags/prepend are excluded because Boolean language equivalence alone would not prove preservation of observable substring/capture results.",
+        "",
+        "**This optimization is not a general regex safety proof.** Quoted/escaped/complex syntax, captures, explicit opt-outs and excluded option combinations have not been repaired by it.",
+        ""
+      ]
+    },
+    {
+      "candidate_readme_line": 49,
+      "context": [
+        "The narrower option guard was selected before executing tests. Capture behavior is preserved by declining optimization, rather than using PR246's literal fallback. Contains/custom flags/prepend are excluded because Boolean language equivalence alone would not prove preservation of observable substring/capture results.",
+        "",
+        "**This optimization is not a general regex safety proof.** Quoted/escaped/complex syntax, captures, explicit opt-outs and excluded option combinations have not been repaired by it.",
+        "",
+        "## Actual checks and results",
+        ""
+      ]
+    },
+    {
+      "candidate_readme_line": 58,
+      "context": [
+        "- Each version passed seven explicit required matching cases, including `isMatch(\"abc\", \"+(*)c\") === true`.",
+        "- Each version passed **288 short differential case/options comparisons**: 32 fixed handpicked cases × 9 option sets.",
+        "- Each comparison checked the Boolean matching result and the returned regex-match/capture array against that version's untouched baseline.",
+        "- Maximum input length in this short corpus was 8 characters.",
+        "- Option sets exercised: default, dot, Windows, Bash, capture, contains, case-insensitive, noextglob and explicit safeguard opt-out.",
+        "- The corpus includes quoted and escaped stars, paths, dotfiles, classes, nesting, alternation and malformed syntax."
+      ]
+    },
+    {
+      "candidate_readme_line": 60,
+      "context": [
+        "- Each comparison checked the Boolean matching result and the returned regex-match/capture array against that version's untouched baseline.",
+        "- Maximum input length in this short corpus was 8 characters.",
+        "- Option sets exercised: default, dot, Windows, Bash, capture, contains, case-insensitive, noextglob and explicit safeguard opt-out.",
+        "- The corpus includes quoted and escaped stars, paths, dotfiles, classes, nesting, alternation and malformed syntax.",
+        "- These are dependency-specific matrix cells, not application journeys or full upstream/project test suites.",
+        "- Custom flags/prepend combinations were excluded in source but were not separate matrix option sets; their general behavior was not established by execution here."
+      ]
+    },
+    {
+      "candidate_readme_line": 81,
+      "context": [
+        "|Baseline|4.0.7|`+(*a)`, default|Process exceeded 750 ms; SIGTERM; exit -15; termination verified by wait|",
+        "|Candidate|all three|`+(*a)`, `*(*a)`, `+(*)c`, `+(a*)c`, default|All 12 processes exited 0, returned false correctly and completed within deadline|",
+        "|Candidate|2.3.2|`+(*a)`, capture:true|Process exceeded 750 ms; SIGTERM; exit -15; termination verified by wait|",
+        "",
+        "Candidate covered-probe process durations were **27.987–40.460ms**, including Node startup and module loading. The measured matching calls inside those successful processes took **0.169–0.456ms**. These are single observations on this machine, not performance guarantees.",
+        ""
+      ]
+    },
+    {
+      "candidate_readme_line": 85,
+      "context": [
+        "Candidate covered-probe process durations were **27.987–40.460ms**, including Node startup and module loading. The measured matching calls inside those successful processes took **0.169–0.456ms**. These are single observations on this machine, not performance guarantees.",
+        "",
+        "The baseline timeout measures the whole probe process, not a separately instrumented 750 ms matching-only interval. Capture mode was tested on candidate 2.3.2 only after its residual risk was demonstrated; it was not repeated unnecessarily on the other two versions.",
+        "",
+        "### Integrity and process evidence",
+        ""
+      ]
+    },
+    {
+      "candidate_readme_line": 97,
+      "context": [
+        "- No repo/node_modules files were edited. No installation, package-identity change, external publication, native build, CI dispatch or production deployment occurred.",
+        "",
+        "The captured raw JSON records include full argv, working directory, PID, deadline, exit code, termination method, stdout, stderr and result for every child.",
+        "",
+        "## What the result means",
+        ""
+      ]
+    },
+    {
+      "candidate_readme_line": 103,
+      "context": [
+        "**Supported:** On these exact source hashes and pinned Node runtime, the narrow noncapturing candidate preserved the exercised short semantics and removed the observed deadline failure from its four tested default-mode shapes across all three versions.",
+        "",
+        "**Not supported:** Complete CVE remediation, arbitrary-pattern safety, capture-mode repair, all-option compatibility, real application exposure analysis, a clean install of an accepted dependency solution, project regressions, npm audit success, hosted/native journey success or release readiness.",
+        "",
+        "The remaining capture timeout is concrete evidence that this candidate cannot be promoted as a full Picomatch security fix. Silently literalizing the valid capture patterns would change the contract and is not an accepted next step.",
+        ""
+      ]
+    },
+    {
+      "candidate_readme_line": 105,
+      "context": [
+        "**Not supported:** Complete CVE remediation, arbitrary-pattern safety, capture-mode repair, all-option compatibility, real application exposure analysis, a clean install of an accepted dependency solution, project regressions, npm audit success, hosted/native journey success or release readiness.",
+        "",
+        "The remaining capture timeout is concrete evidence that this candidate cannot be promoted as a full Picomatch security fix. Silently literalizing the valid capture patterns would change the contract and is not an accepted next step.",
+        "",
+        "## Earlier rejected guard",
+        ""
+      ]
+    },
+    {
+      "candidate_readme_line": 114,
+      "context": [
+        "",
+        "1. Development owner 5bc should inspect these exact patches and trace actual options used by micromatch, tinyglobby and Vite callers. Determine whether the supported simple noncapturing subset is useful for a real scoped repair and whether any externally influenced matching reaches the uncovered modes.",
+        "2. Preserve capture and quoted/complex syntax semantics. Any extension needs a specific semantic proof and bounded independent tests, not a broad literalization rule.",
+        "3. If uncovered behavior is reachable, evaluate a real execution boundary with external deadlines or an alternative matcher supporting the required contract. Such containment does not itself remove the advisory or produce a successful audit.",
+        "4. Only the production dependency owner should decide on install/override packaging, clean-install verification and required hosted regressions. Publisher retains native verification.",
+        "5. Keep raw scanner status, repaired source behavior and application exposure as distinct evidence. Do not rename a package or weaken the audit threshold to manufacture success."
+      ]
+    },
+    {
+      "candidate_readme_line": 119,
+      "context": [
+        "5. Keep raw scanner status, repaired source behavior and application exposure as distinct evidence. Do not rename a package or weaken the audit threshold to manufacture success.",
+        "",
+        "No additional expensive probes or broad fuzzing were run after the concrete covered-case improvement and capture limitation were established.",
+        "",
+        "## Artifacts and exact execution",
+        ""
+      ]
+    },
+    {
+      "app_server_script_direct_import_matches": [],
+      "exit": 1
+    }
+  ],
+  "caller_followthrough": [
+    {
+      "file": "hosted/node_modules/vite/dist/node/chunks/node.js",
+      "sha256": "b8233c9f8034662d76fd8d05774a0c7437dcd2591b08cb820fffdceecae5e88c",
+      "direct_pm_matches": [
+        "1934:\t\tconst compile = () => pm(getMatcherString$1(id, resolutionBase), { dot: true });",
+        "7852:\t\tconst isMatch = pm(pattern);",
+        "27724:\t\t\t\t\t\tconst affirmedMatcher = pm(affirmed, {",
+        "27730:\t\t\t\t\t\tconst negatedMatcher = pm(negated, {",
+        "28031:\t\tlet { base } = pm.scan(glob);",
+        "32504:\t\t\t\t...makeIdFiltersToMatchWithQuery(config.rawAssetsInclude).map((v) => typeof v === \"string\" ? pm.makeRe(v, { dot: true }) : v)",
+        "33594:\tconst matcher = pm(glob, { dot: true });",
+        "37870:\t\tfsDenyGlob: pm(server.fs.deny.map((pattern) => pattern.includes(\"/\") ? pattern : `**/${pattern}`), {"
+      ]
+    },
+    {
+      "context": "9105-9148",
+      "lines": [
+        "9105: \tconst BANG = \"!\";",
+        "9106: \tconst RECURSIVE_ERROR_CODE = \"READDIRP_RECURSIVE_ERROR\";",
+        "9107: \tconst NORMAL_FLOW_ERRORS = /* @__PURE__ */ new Set([",
+        "9108: \t\t\"ENOENT\",",
+        "9109: \t\t\"EPERM\",",
+        "9110: \t\t\"EACCES\",",
+        "9111: \t\t\"ELOOP\",",
+        "9112: \t\tRECURSIVE_ERROR_CODE",
+        "9113: \t]);",
+        "9114: \tconst FILE_TYPE = \"files\";",
+        "9115: \tconst DIR_TYPE = \"directories\";",
+        "9116: \tconst FILE_DIR_TYPE = \"files_directories\";",
+        "9117: \tconst EVERYTHING_TYPE = \"all\";",
+        "9118: \tconst ALL_TYPES = [",
+        "9119: \t\tFILE_TYPE,",
+        "9120: \t\tDIR_TYPE,",
+        "9121: \t\tFILE_DIR_TYPE,",
+        "9122: \t\tEVERYTHING_TYPE",
+        "9123: \t];",
+        "9124: \tconst isNormalFlowError = (error) => NORMAL_FLOW_ERRORS.has(error.code);",
+        "9125: \tconst [maj, min] = process.versions.node.split(\".\").slice(0, 2).map((n) => Number.parseInt(n, 10));",
+        "9126: \tconst wantBigintFsStats = process.platform === \"win32\" && (maj > 10 || maj === 10 && min >= 5);",
+        "9127: \tconst normalizeFilter = (filter) => {",
+        "9128: \t\tif (filter === void 0) return;",
+        "9129: \t\tif (typeof filter === \"function\") return filter;",
+        "9130: \t\tif (typeof filter === \"string\") {",
+        "9131: \t\t\tconst glob = picomatch(filter.trim());",
+        "9132: \t\t\treturn (entry) => glob(entry.basename);",
+        "9133: \t\t}",
+        "9134: \t\tif (Array.isArray(filter)) {",
+        "9135: \t\t\tconst positive = [];",
+        "9136: \t\t\tconst negative = [];",
+        "9137: \t\t\tfor (const item of filter) {",
+        "9138: \t\t\t\tconst trimmed = item.trim();",
+        "9139: \t\t\t\tif (trimmed.charAt(0) === BANG) negative.push(picomatch(trimmed.slice(1)));",
+        "9140: \t\t\t\telse positive.push(picomatch(trimmed));",
+        "9141: \t\t\t}",
+        "9142: \t\t\tif (negative.length > 0) {",
+        "9143: \t\t\t\tif (positive.length > 0) return (entry) => positive.some((f) => f(entry.basename)) && !negative.some((f) => f(entry.basename));",
+        "9144: \t\t\t\treturn (entry) => !negative.some((f) => f(entry.basename));",
+        "9145: \t\t\t}",
+        "9146: \t\t\treturn (entry) => positive.some((f) => f(entry.basename));",
+        "9147: \t\t}",
+        "9148: \t};"
+      ]
+    },
+    {
+      "context": "9370-9430",
+      "lines": [
+        "9370: \t/**",
+        "9371: \t* @typedef {(testString: string) => boolean} AnymatchFn",
+        "9372: \t* @typedef {string|RegExp|AnymatchFn} AnymatchPattern",
+        "9373: \t* @typedef {AnymatchPattern|AnymatchPattern[]} AnymatchMatcher",
+        "9374: \t*/",
+        "9375: \tconst BANG = \"!\";",
+        "9376: \tconst DEFAULT_OPTIONS = { returnIndex: false };",
+        "9377: \tconst arrify = (item) => Array.isArray(item) ? item : [item];",
+        "9378: \t/**",
+        "9379: \t* @param {AnymatchPattern} matcher",
+        "9380: \t* @param {object} options",
+        "9381: \t* @returns {AnymatchFn}",
+        "9382: \t*/",
+        "9383: \tconst createPattern = (matcher, options) => {",
+        "9384: \t\tif (typeof matcher === \"function\") return matcher;",
+        "9385: \t\tif (typeof matcher === \"string\") {",
+        "9386: \t\t\tconst glob = picomatch(matcher, options);",
+        "9387: \t\t\treturn (string) => matcher === string || glob(string);",
+        "9388: \t\t}",
+        "9389: \t\tif (matcher instanceof RegExp) return (string) => matcher.test(string);",
+        "9390: \t\treturn (string) => false;",
+        "9391: \t};",
+        "9392: \t/**",
+        "9393: \t* @param {Array<Function>} patterns",
+        "9394: \t* @param {Array<Function>} negPatterns",
+        "9395: \t* @param {String|Array} args",
+        "9396: \t* @param {Boolean} returnIndex",
+        "9397: \t* @returns {boolean|number}",
+        "9398: \t*/",
+        "9399: \tconst matchPatterns = (patterns, negPatterns, args, returnIndex) => {",
+        "9400: \t\tconst isList = Array.isArray(args);",
+        "9401: \t\tconst _path = isList ? args[0] : args;",
+        "9402: \t\tif (!isList && typeof _path !== \"string\") throw new TypeError(\"anymatch: second argument must be a string: got \" + Object.prototype.toString.call(_path));",
+        "9403: \t\tconst path = normalizePath(_path, false);",
+        "9404: \t\tfor (let index = 0; index < negPatterns.length; index++) {",
+        "9405: \t\t\tconst nglob = negPatterns[index];",
+        "9406: \t\t\tif (nglob(path)) return returnIndex ? -1 : false;",
+        "9407: \t\t}",
+        "9408: \t\tconst applied = isList && [path].concat(args.slice(1));",
+        "9409: \t\tfor (let index = 0; index < patterns.length; index++) {",
+        "9410: \t\t\tconst pattern = patterns[index];",
+        "9411: \t\t\tif (isList ? pattern(...applied) : pattern(path)) return returnIndex ? index : true;",
+        "9412: \t\t}",
+        "9413: \t\treturn returnIndex ? -1 : false;",
+        "9414: \t};",
+        "9415: \t/**",
+        "9416: \t* @param {AnymatchMatcher} matchers",
+        "9417: \t* @param {Array|string} testString",
+        "9418: \t* @param {object} options",
+        "9419: \t* @returns {boolean|number|Function}",
+        "9420: \t*/",
+        "9421: \tconst anymatch = (matchers, testString, options = DEFAULT_OPTIONS) => {",
+        "9422: \t\tif (matchers == null) throw new TypeError(\"anymatch: specify first argument\");",
+        "9423: \t\tconst opts = typeof options === \"boolean\" ? { returnIndex: options } : options;",
+        "9424: \t\tconst returnIndex = opts.returnIndex || false;",
+        "9425: \t\tconst mtchers = arrify(matchers);",
+        "9426: \t\tconst negatedGlobs = mtchers.filter((item) => typeof item === \"string\" && item.charAt(0) === BANG).map((item) => item.slice(1)).map((item) => picomatch(item, opts));",
+        "9427: \t\tconst patterns = mtchers.filter((item) => typeof item !== \"string\" || typeof item === \"string\" && item.charAt(0) !== BANG).map((matcher) => createPattern(matcher, opts));",
+        "9428: \t\tif (testString == null) return (testString, ri = false) => {",
+        "9429: \t\t\treturn matchPatterns(patterns, negatedGlobs, testString, typeof ri === \"boolean\" ? ri : false);",
+        "9430: \t\t};"
+      ]
+    },
+    {
+      "post_read_path": "hosted/package.json",
+      "sha256": "7e02d347153988f4e9180e6348ab4fa405ba98cae1cc85abd4c1ea7e5da85e7a"
+    },
+    {
+      "post_read_path": "hosted/package-lock.json",
+      "sha256": "2512e3bd6aebfc4377bbe036d3cf606c27e33613b35c8c58d28f0f3a0d596c99"
+    },
+    {
+      "post_read_path": "hosted/node_modules/.package-lock.json",
+      "sha256": "ae260128bd11993284c5b8319ad951027505920c2712ccfdaa38bd276e74b257"
+    },
+    {
+      "git_status": ""
+    }
+  ],
+  "latest_coordination_refs": [
+    {
+      "id": 6959058434,
+      "url": "https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6959058434",
+      "body": "Dependency owner 5bc6158967e8 — independent Picomatch remedy review (17 November 2026)\n\nCurrent root baseline is ca3d3411d8b5b36fa7093dff782f4a7b931261c7. Lock SHA-256: 2512e3bd6aebfc4377bbe036d3cf606c27e33613b35c8c58d28f0f3a0d596c99. Read-only inspection confirms micromatch4.0.8 → picomatch2.3.2, tinyglobby0.2.17 → 4.0.4, and vite8.3.8 → 4.0.7, all dev:true. Negative literal-name source/bundle searches do not prove production nonreachability.\n\nGitHub's reviewed advisory remains High, <=4.0.7, patched=None. Snyk has revoked its corresponding advisory and reports a maintainer dispute. Preserve that disagreement; it does not clear the current npm gate or prove safe usage.\n\nPotential next candidate: upstream PR237 (1bf0d04563cb9ce568cf36efc5f6b7187d9911d5) and narrower v2 adaptation PR246 (f03bec2c02e46f063fbfdc161aae1d0f854b2565). Both are open proposals, not released fixes. PR237 includes the exact valid-match regression isMatch(\"abc\", \"+(*)c\"), but capture/quote behavior needs scrutiny and its inline expensive timing test should not run unsupervised. PR246 uses external deadlines and narrower syntax, but intentionally changes capture:true matching and leaves excluded syntax and explicit safeguard opt-outs unchanged.\n\nRoot's independent research lane is now evaluating a bounded candidate only in disposable evidence copies, with pinned Node24.22.3, sequential externally supervised probes and a30-second expensive-probe budget. No repository/node_modules/package/lock/audit policy changes, installations, CI or native builds. This experiment does not take over your production dependency lane; results will be supplied for review, including rejected alternatives. No audit pass is established.\n\nAcceptance must trace actual caller options, preserve valid matches/captures, verify all three resolutions after reproducible installation, and run relevant hosted gates. Source repair, bounded execution, actual exposure and raw scanner status are separate. A renamed fork's green report or a threshold/omission change cannot substitute for repair evidence.\n\nPrimary sources:\n- https://github.com/advisories/GHSA-fc5q-39xc-vjpf\n- https://security.snyk.io/vuln/SNYK-JS-PICOMATCH-21248802\n- https://github.com/micromatch/picomatch/pull/237/files\n- https://github.com/micromatch/picomatch/pull/246/files\n\nThe full independent review is preserved in root's evidence directory and will join the next checkpoint. Other owners continue their unblocked lanes; no shared native slot is requested."
+    },
+    {
+      "id": 6960074487,
+      "url": "https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6960074487",
+      "body": "### Root final product/evidence checkpoint — e1dce0e / 9d01149\n\nRoot continuation branch **continuation/feed-reliability-20261117-4b851** is clean, pushed and independently remote-verified at **9d011492b50185aa74fddbf061a6357b1fb0568f**. Product follow-up is its parent **e1dce0e24ef8d1fe85934578d1ba33bde99f166d**; the successor contains evidence, research, updated handoffs and three generated verification receipts. No new PR, native build/dispatch, dependency mutation, deployment or store action.\n\n[Complete report and evidence](https://github.com/swonyu/ahmad-career/blob/9d011492b50185aa74fddbf061a6357b1fb0568f/docs/continuation-evidence/2026-11-17-account-competitors-4b851/README.md)\n\n**Product:** ProviderConnections preserves focus synchronously before an explicitly activated control becomes disabled, with no late async focus movement. SignInOptions removes redundant provider-availability captions for known expired sessions. The accepted Grok Build1 OAuth tone/negative-path regression is added after repairing its malformed patch without weakening assertions.\n\n**Pinned Node24.22.3:** final typecheck, full strict lint, complete npm test chain and hosted build each exit0. Main Node group289/289, PDF6/6, account17/17; do not add nested scopes. Final source digest060eda70b37c2125ecb708d8893adbf60eecda6f46976c3b3dc30894c1f4f96e. Full audit remains FAILED19high affected-package entries; build warnings remain. Initial failed lint attempts and final passes are preserved.\n\nActual Chrome exercised production components with synthetic loopback responses: disconnect readback truth, GET-only retry, no replay, confirmation/Keep focus, earlier candidate349 retry focus/no late focus steal, final SignInfa981 recovery copy, SessionRecovery unmount and A→B→A, explicit retry and selected OAuth feedback. **Final Provider03c EN/AR narrow browser retest and one interrupted OAuth case remain pending.** Browser subsequently lost its originating extension context; newest Build1 CSV/ICS and Heavy competitor replies are unread. No bypass. Only verified owned fixture PID36176 was stopped; fixtures and exact hashes remain.\n\n### Current integration and overlap disposition needed\n\nPublisher **d57f4cd77813** remains native/integration/build/CI/signing/store owner. Its latest observed **3a08819d5eae981d62b290f241b58637a2fdd21a** merges243+422. PhoneApp is byte-identical to root e1, and its localization test **separately binds the actual addEmployerBoard initializer**. Do not report the old four unbound fixture errors as current or overwrite this fixture with an older stub. Root's later three e1 files still need coordinated integration.\n\nAll seven requested streams were verified: Build1 adc8cfe9, Build2 abe34c88, Heavy3bf518a8, search terminal01a1ea9d107f, recovery01a1ea9cfd25, accessibility01a1ea56 and root4b851. At20:11–20:14UTC the three exact terminal processes were present. Search had10 dirty paths; recovery8. Accessibility advanced to **87d7238804393557ad00ae0d20f3aad465f8173e**, **18 local commits**, plus dirty NativeCareerViews.swift.\n\nIts20-path series overlaps **all10 search dirty paths** and recovery **MainActivity.kt, MobileApplicationState.swift, NativeApplicationsViews.swift**. Its latest notice still addresses obsolete01a49. **Please explicitly acknowledge current ownership and reconcile exact hunks/commits before integration.** A posted review or absent lock is not a transfer. Search remains sole central localization writer. Root has not interrupted or altered those sessions.\n\nThe source-confirmed workflow concurrency warning in comment6959368742 remains valid at3a: full and partial manual scopes share a cancel-in-progress group. Publisher owns the normalized scope suffix and controlled verification. No cancellation incident is inferred. Latest CI remains run44147056599 at243: iPhone-only17/17, four other jobs skipped, not a current combined-source pass.\n\n### Concrete research/corpus work to use\n\n- **Recovery01a1ea9cfd25:** reviewed Build2 corpus is in the new evidence folder/grok-backup-corpus-reviewed-20261117/. All10 byte lengths/hashes match; no native decoder/device pass or ZIP verification. Follow the corrected README: fixture04 has no notes; iPhone already deduplicates saved links; Stop restoration needs a matching destination workspace; proposed09 is a server view. Test current owned source with destination snapshots, restart/re-export and zero unapproved dispatch.\n- **Development5bc6158967e8:** bounded disposable Picomatch candidate experiment completed.288 short semantic/capture comparisons per version match;12 covered candidate probes complete, but v2 capture:true still times out750ms. Installed files/lock unchanged. Partial candidate only, no production integration or audit waiver; full logs, patches, supervisor and licenses are preserved.\n- **Search/recovery/accessibility/product:** updated nine-competitor report includes Simplify iOS/Safari, Jobscan approval and credit boundary, Teal exports/documents, Naukrigulf Arabic CV/interview tools. Five priority acceptance targets cover truthful source/fallback states, preserved external-application return, no-loss/no-replay recovery, actual export/calendar consumers and bilingual task accessibility. Feature parity and superiority remain unproven. Heavy was challenged on unsupported labels; no source/39-image resend.\n\nBoth requested terminal handoffs are refreshed with exact existing branches, all seven identities and current boundaries under docs/continuation-handoffs. Continue those sessions rather than duplicating them. No current signed upload/submission/release established. Good Spender excluded; original cutoff **18Nov22:26:12UTC /19Nov01:26:12Riyadh** unchanged. Root foreground implementation and gates are complete for this checkpoint; recover current ownership before further edits."
+    },
+    {
+      "id": 6960949059,
+      "url": "https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6960949059",
+      "body": "Independent current-source checkpoint (17 Nov ~21:00 UTC; read-only): publisher remote recovery/publishing-integrated-20261117-d57f4 advanced to 363ae84aaaf9032b040ee60b16a3c023ec1c1cf2. Full five-job run https://github.com/swonyu/ahmad-career/actions/runs/44172535044 (started 20:44:50 UTC) had service, Android and unsigned iPhone build PASS; hosted audit FAIL at locked dependency audit; iPhone UI was still running when checked. No full-green claim. Exact Git blob comparisons show root e1dce0e account follow-up (ProviderConnections, SignInOptions and account-recovery-lifecycle test) NOT yet byte-matched by publisher 363, and newly pushed isolated native-search 0beff68a is not integrated. Preserve native recovery's dirty files and accessibility overlaps; only publisher owns combined integration/build/CI/store. The workflow at 363 still groups all manual acceptance scopes by workflow+ref with cancel-in-progress:true; please avoid dispatching a partial run on the same ref while full run is active, and fix the scope-key concurrency guard before any overlapping dispatch. This is a risk, not a proven cancellation. Browser-origin context still blocked inspection of Grok responses; no bypass. Deadline 18 Nov 22:26:12 UTC unchanged."
+    },
+    {
+      "id": 6962194270,
+      "url": "https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6962194270",
+      "body": "### CI and native integration checkpoint — 17 Nov 2026, ~21:56 UTC (read-only)\n**Full publisher run [44172535044](https://github.com/swonyu/ahmad-career/actions/runs/44172535044) is terminal 4/5 passed** at exact source `363ae84aaaf9032b040ee60b16a3c023ec1c1cf2`. iPhone native UI **17/17 passed, 0 failures** (normal `TEST SUCCEEDED` in the job log at 21:14:32 UTC); Android, synthetic HTTPS/service, and unsigned iPhone build passed. Hosted failed at required `npm audit --json` exit 1 *after* its npm test/build. Picomatch/high audit remains unresolved; a full five-job green run is NOT established.\n\nIndependently checked remotes: publishing `363ae84`, root feed `9d01149`, native search `0beff68`. Root e1's last three account files and isolated native-search work have not been integrated into this publisher revision.\n\nCurrent authorized Mac worktrees (no writes): accessibility is clean at local `6054d0b` (20 changed paths from `243031d`), native search clean at `0beff68` (13 paths), native recovery still has 7 modified source files and 1 new test. **11 accessibility/search file overlaps:** Discovery.kt, DiscoveryScreen.kt, NativeStringIds.kt, both career_copy.xml files, CareerDiscovery.swift, NativeDiscoveryViews.swift, both Localizable.strings files, DiscoveryCheck.swift and localization/native-copy.json. **3 accessibility/recovery overlaps:** MainActivity.kt, MobileApplicationState.swift, NativeApplicationsViews.swift. This is a collision **at file level, not yet proof of conflicting hunks**. Preserve search's sole shared-string writer and reconcile exact hunks before integration. Read-only `git diff --check` was clean on all three owner's change ranges.\n\nThe Mac native lock belongs to another app's authorized HalalTag build; no competing native build, source edit, Git push, CI dispatch, browser workaround or audit suppression. Publisher retains integration, native CI/signing/stores; development retains security remediation. Workflow full/partial cancellation-scope risk remains pending. Extended Career Finder cutoff **18 Nov 22:26:12 UTC** remains unchanged."
+    }
+  ]
+}

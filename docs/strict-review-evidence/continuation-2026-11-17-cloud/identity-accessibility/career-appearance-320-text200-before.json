@@ -1,0 +1,31 @@
+{
+  "choices": [
+    {
+      "clientWidth": 1,
+      "label": "Choose a color theme",
+      "scrollWidth": 313,
+      "width": 1
+    },
+    {
+      "clientWidth": 72,
+      "label": "System\nMatch your device",
+      "scrollWidth": 72,
+      "width": 74.328125
+    },
+    {
+      "clientWidth": 72,
+      "label": "Light\nA lighter workspace",
+      "scrollWidth": 103,
+      "width": 74.328125
+    },
+    {
+      "clientWidth": 70,
+      "label": "Dark\nA darker workspace",
+      "scrollWidth": 102,
+      "width": 74.34375
+    }
+  ],
+  "columns": "repeat(3, minmax(0px, 1fr))",
+  "font": "32px",
+  "width": 237
+}

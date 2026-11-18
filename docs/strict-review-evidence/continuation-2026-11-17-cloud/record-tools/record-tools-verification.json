@@ -1,0 +1,64 @@
+{
+  "kind": "isolated source candidate verification; not release or real device acceptance",
+  "recordedAt": "2026-11-17T09:49:58.501821+00:00",
+  "baseline": "eebe748cb5afca0efcb9389255400a00cf5a480a",
+  "checkout": "/workspace/scratch/5bc6158967e8/record-tools-candidate",
+  "patch": "/workspace/scratch/5bc6158967e8/record-tools-eebe748.patch",
+  "patchSHA256": "bcf599b2fb9ee2add855f161e36869c8992c3c8a8be51810f5669d31c86333f4",
+  "sourceSHA256": {
+    "hosted/app/phone/record-tools.ts": "910dae464cd8504ed225fe5f68fa6b0750c7b7a9c7b18c6454ff4504a772e9a9",
+    "hosted/app/phone/PhoneApp.tsx": "c4852fa70d2305a9227b68a0423aa4366a1b1c20ea1f2255d66c70ea59724345",
+    "hosted/app/i18n/messages.ar.json": "fb952184194ef54551059fcafa2788415429d4a5f16a7fd630dc7d8d95f2567e",
+    "hosted/tests/phone-record-tools.mjs": "55ca944023a41b23d7606cca1b2d404170c79e2ceb9ca03b31cf090f7cd3e5d6",
+    "hosted/package.json": "f856c510331a4dd5767a9004635a87d11aada23fdb2ddd314ce6636961c90e20"
+  },
+  "commands": [
+    {
+      "command": "node --test tests/phone-record-tools.mjs",
+      "exitCode": 0,
+      "passed": 28,
+      "failed": 0,
+      "log": "/workspace/scratch/5bc6158967e8/record-tools-focused.log"
+    },
+    {
+      "command": "node --test tests/phone-settings-privacy.mjs tests/phone-localization.mjs tests/i18n.mjs tests/phone-private-async.mjs",
+      "exitCode": 0,
+      "passed": 37,
+      "failed": 0,
+      "evidence": "observed tool output; run before final download-notice copy-only correction"
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "evidence": "observed tool completion; run before final download-notice copy-only correction"
+    },
+    {
+      "command": "./node_modules/.bin/eslint app/phone/PhoneApp.tsx app/phone/record-tools.ts tests/phone-record-tools.mjs",
+      "exitCode": 0,
+      "evidence": "observed tool completion; run before final download-notice copy-only correction"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "log": "/workspace/scratch/5bc6158967e8/record-tools-build.log",
+      "note": "final build after download-started copy fix; existing Vite/RSC sourcemap and route-classification warnings retained"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  ],
+  "beforeAfter": "/workspace/scratch/5bc6158967e8/record-tools-before-after.json",
+  "independentReview": "/workspace/scratch/5bc6158967e8/record-tools-review/receipt.json",
+  "reviewFix": "Changed English/Arabic notices to download started because anchor click cannot confirm saved file; final focused suite and build rerun.",
+  "arabicCatalogAdditions": 26,
+  "limits": [
+    "No live deployment, provider request, employer submission, calendar integration, or external network call performed.",
+    "No browser download, spreadsheet save/reopen, or calendar import performed; automated formats and actual extracted handlers tested.",
+    "Calendar is a user-imported all-day file. No sync or alert guarantee. Same URL/date gives the same UID; changed date gives a new UID and does not delete an earlier imported event.",
+    "CSV is a human-viewing export with visible Text: prefix for formula-like fields. It is not a universal spreadsheet save/reopen defense. JSON preserves unmodified stored text.",
+    "CSV contains current saved application records and notes, not bookmarks without records, profile/CV/session fields, older account scopes or quarantine.",
+    "ICS includes saved job title, employer, public job link and follow-up day; it does not select profile email, private notes, account IDs, provider tokens, attendees or alarm fields.",
+    "Root integration/full hosted suite/remote CI and physical device acceptance are separate gates."
+  ]
+}

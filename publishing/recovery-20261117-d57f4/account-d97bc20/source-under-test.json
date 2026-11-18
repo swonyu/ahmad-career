@@ -1,0 +1,41 @@
+{
+  "apple/UITests/CareerFinderUITests.swift": {
+    "sha256": "0ce8ca434f415758146b61631f0b4e6b68a3154f1f1ceafef7e3634667c57524",
+    "bf8bfb0015d6f64c17f47e8d48e15d152e8491d8": {
+      "test_methods_retained": 17,
+      "assertion_calls_before": 143,
+      "assertion_calls_after": 146
+    },
+    "d97bc209ca84ecb830e6c6bad25808164706409f": {
+      "test_methods_retained": 17,
+      "assertion_calls_before": 144,
+      "assertion_calls_after": 146
+    }
+  },
+  "apple/AhmadCareer/NativeApplicationsViews.swift": {
+    "sha256": "5315c020aa0f75d0239089cc1d1f0789ca1b90a207203b6e9dd2c61563cca47c"
+  },
+  "hosted/app/phone/PhoneApp.tsx": {
+    "sha256": "98d8a789a416d6eaec8bf803a6f5ba5f8e9c1689150c322ad1d56a612aa784dc"
+  },
+  "hosted/app/phone/components.tsx": {
+    "sha256": "c7614e923223d427e3a218f9c8d1038e4d90f244de9da8707bb92bf8dce90c52"
+  },
+  "hosted/tests/phone-search-workflows.mjs": {
+    "sha256": "e97e177c7abfb29855e1fa611f0d16b9627c188be71512a97bfa695e6e0d3ca9"
+  },
+  ".github/workflows/phone-quality.yml": {
+    "sha256": "9d1e606cf4a2e2fce19be48f270129e88793e15c6229890c3374a76b1a5bae74"
+  },
+  "checks": {
+    "no_skips": true,
+    "initial_keyboard_guard": true,
+    "early_keyboard_guard": true,
+    "whole_field_empty": true,
+    "exact_requested_value": true,
+    "triple_tap_removed": true,
+    "draft_ref_retained": true,
+    "workflow_unchanged": true
+  },
+  "initial_inspection_note": "First ad hoc static check used an inaccurate assertion message literal and stopped before receipt creation. Corrected inspection compares actual source; no source edit was needed."
+}

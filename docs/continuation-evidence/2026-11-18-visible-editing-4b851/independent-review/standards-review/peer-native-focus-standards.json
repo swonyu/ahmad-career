@@ -1,0 +1,59 @@
+{
+  "reviewer": "/root/dependency_state_0410/ssr_contract_review",
+  "reviewedOnUTC": "2026-11-18",
+  "scope": "Read-only primary-source standards cross-check; no application execution",
+  "decision": "Additional scrollIntoView is not required by the reviewed focus contract. Explicit alignment/containment or a reproduced browser workaround is a separate design choice.",
+  "sourceRefsMustBeOpenedByRootBeforeFinalCitation": true,
+  "sources": [
+    {
+      "label": "WHATWG HTML focus management APIs",
+      "url": "https://html.spec.whatwg.org/multipage/interaction.html#dom-focus",
+      "refs": ["turn114131587view0", "turn451645164view0"],
+      "relevantRetrievedLines": [[1561, 1568], [1345, 1350]],
+      "status": "Living Standard; page says last updated 17 November 2026",
+      "shortQuoteRecordedInCompanionMarkdown": true
+    },
+    {
+      "label": "CSSOM View scroll-target-into-view",
+      "url": "https://drafts.csswg.org/cssom-view/#scroll-a-target-into-view",
+      "refs": ["turn194974438view1", "turn194974438view2", "turn194974438view3"],
+      "relevantRetrievedLines": [[1367, 1456]],
+      "status": "CSSWG Editor's Draft dated 5 November 2026; not a final Recommendation",
+      "shortQuoteRecordedInCompanionMarkdown": true
+    },
+    {
+      "label": "MDN HTMLElement.focus",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/focus",
+      "refs": ["turn170042566view1"],
+      "relevantRetrievedLines": [[187, 219]],
+      "shortQuoteRecordedInCompanionMarkdown": true
+    },
+    {
+      "label": "MDN Element.scrollIntoView",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView",
+      "refs": ["turn170042566view3", "turn194974438view4"],
+      "relevantRetrievedLines": [[180, 252]],
+      "shortQuoteRecordedInCompanionMarkdown": true
+    }
+  ],
+  "reportedObservation": {
+    "source": "Root browser result relayed by parent; not independently captured by reviewer",
+    "phoneAppSHA256": "e3454df4c4a4189475097d5bcc0ac2e2bf1fe53447d3046513c6eb780a9cd998",
+    "language": "English",
+    "trigger": "Keep via Enter",
+    "focusedControl": "Cancel",
+    "targetVerticalBounds": [666.1459, 715.1459],
+    "dialogVerticalBounds": [16, 828],
+    "dialogScrollTop": 166,
+    "viewport": [390, 844],
+    "deleteVerticalBounds": [759.1459, 803.1459],
+    "preserved": ["stage", "note", "date"],
+    "interveningRevealingActionReported": false
+  },
+  "newActualApplicationDefectEstablished": false,
+  "crossBrowserOrNativeCompletenessEstablished": false,
+  "applicationTestsOrBuildsExecuted": false,
+  "browserOrMacActionsExecuted": false,
+  "applicationOrTestSourceEdited": false,
+  "evidenceFilesOnlyWritten": true
+}

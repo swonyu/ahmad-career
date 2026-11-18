@@ -1,0 +1,30 @@
+✔ language negotiation respects the dedicated preference, weighted device languages, and unsupported-language fallback (2.582942ms)
+✔ every Arabic entry is nonempty and preserves the exact placeholder multiset (10.955962ms)
+✔ unknown and prototype-looking keys remain safe, while specific templates preserve inserted data byte-for-byte (1.345479ms)
+✔ Arabic counts have zero, one, dual, few, many forms and display Gregorian dates (53.910537ms)
+✔ language persistence writes only the independent preference and cookie, including cross-tab clearing (26.308866ms)
+✔ blocked storage still changes this visit without claiming persistence (39.406471ms)
+✔ the actual language control renders Arabic or English on the server with the correct selected preference (19.85583ms)
+✔ larger navigation and text reflow update both content spacing and viewport focus clearance (1.483595ms)
+✔ desktop rail reserves no bottom inset and returning to mobile restores its measured height (0.354475ms)
+✔ cleanup restores pre-existing inline values and priorities and ignores queued resize callbacks (0.478048ms)
+✔ resize fallback remains usable without ResizeObserver and clears owned styles on unmount (0.296427ms)
+✔ failed initial account check cannot reveal the earlier server-rendered email or account controls (14.20249ms)
+✔ only the confirmed matching account may show private Settings (6.159497ms)
+✔ loading, revalidation and locked Settings retain public appearance and hide private identity (7.194057ms)
+✔ early theme initialization applies only recognized preferences and follows the device when storage is unavailable (13.371114ms)
+✔ appearance is immediately applied, persisted independently of accounts and cleared to System without forcing a color (2.635136ms)
+✔ blocked persistence retains the chosen theme for this visit and reports that it was not saved (1.33856ms)
+✔ another tab changing or clearing appearance updates this page; unrelated storage never changes it (1.206523ms)
+✔ configured Google and supported LinkedIn expose their own real start routes (18.240426ms)
+✔ missing configuration and an older link-only backend cannot expose a fake direct-provider login (7.102531ms)
+✔ unconfirmed or failed provider status keeps provider choices disabled and offers an honest retry (4.329466ms)
+✔ both actual palettes retain normal-text, action-text and input-boundary contrast (4.853751ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1202.442354

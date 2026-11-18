@@ -1,0 +1,44 @@
+{
+  "observedAt": "2026-11-18T07:23:10.118133+00:00",
+  "sourceFileCount": 261,
+  "changedDuringFinalGates": [
+    "hosted/tests/hosted-discovery-verification.json",
+    "hosted/tests/hosted-phone-verification.json",
+    "hosted/tests/hosted-verification.json",
+    "hosted/tests/hosted-worker-verification.json"
+  ],
+  "onlyGeneratedReportsChanged": true,
+  "packageManifestAndLockRootAgree": true,
+  "absentPackages": [
+    "next",
+    "vite",
+    "vinext",
+    "react-server-dom-webpack",
+    "@vitejs/plugin-rsc",
+    "@vitejs/plugin-react",
+    "@cloudflare/vite-plugin",
+    "eslint-config-next"
+  ],
+  "audit": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "dependencies": {
+      "prod": 189,
+      "dev": 444,
+      "optional": 107,
+      "peer": 0,
+      "peerOptional": 0,
+      "total": 632
+    }
+  },
+  "build": {
+    "bytes": 5768585,
+    "sha256": "9a09b95840c669de91e365e289a465e44d585c8cbbb23d89f0a1173661f83633"
+  }
+}

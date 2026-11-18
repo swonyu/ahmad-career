@@ -1,0 +1,161 @@
+{
+  "base": "b613ab5a08c757f375591733d3c54e9d27f4cb23",
+  "merging": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+  "files": {
+    "apple/AhmadCareer/Web/app.js": {
+      "bytes": 136029,
+      "sha256": "57dd6a2610288143ae42e419396d19d17c75ba7fd0071b3b71af38c70e7dd431"
+    },
+    "apple/AhmadCareer/Web/backup.js": {
+      "bytes": 17587,
+      "sha256": "05c75385d0ad5b5fd1f2c30990aac035288522c1557c7aadf41b7ae90659b6b0"
+    },
+    "apple/AhmadCareer/Web/core.js": {
+      "bytes": 22935,
+      "sha256": "9c18d5e79e1fd8475b619c0e9699ddd46d9ae16ea5645dc05d794a3adaabd3d3"
+    },
+    "apple/AhmadCareer/Web/data.js": {
+      "bytes": 22638,
+      "sha256": "b8ed6ee6046c87e6fbd3a35e988abed0b806959750484c8169764d93724b625d"
+    },
+    "apple/AhmadCareer/Web/icon.svg": {
+      "bytes": 867,
+      "sha256": "1b7f15f5857b27f4ed970cfb1b893d67349292cffc904bcadcdf97330d62fcfe"
+    },
+    "apple/AhmadCareer/Web/index.html": {
+      "bytes": 6568,
+      "sha256": "68f2e29d810ec2346f8556868e71c437e2e3bbe03c67d756b4e41bf91b69cefd"
+    },
+    "apple/AhmadCareer/Web/manifest.webmanifest": {
+      "bytes": 540,
+      "sha256": "d92d65f3b23eb5506e891148392979853923cd8bbcc5dc8f9a51ab3f2c87fb2a"
+    },
+    "apple/AhmadCareer/Web/style.css": {
+      "bytes": 18999,
+      "sha256": "438a2a1699d777e7729d7033acb259809b3f4e2919f7e348976305b1f0a925ac"
+    },
+    "website/.openai/hosting.json": {
+      "absent": true
+    },
+    "website/README.txt": {
+      "bytes": 5375,
+      "sha256": "0b745f791067219138aef08b18934e6dacacb91d831b087528a968f0cf3c077e"
+    },
+    "website/backup-check.mjs": {
+      "bytes": 10781,
+      "sha256": "02b6975eea517488c3ae98f81b309729311e661353c8becacf1cb7c7a4305384"
+    },
+    "website/build.mjs": {
+      "bytes": 2513,
+      "sha256": "763621d379d6c7c6339402cf039471245aac8e08c6d3108ead24cd354c147dd8"
+    },
+    "website/check.mjs": {
+      "bytes": 8448,
+      "sha256": "781e6e18c1481285672cacedb1e97ee5343cfd512d83e8cd0455ffd1ce83ff70"
+    },
+    "website/dev.mjs": {
+      "bytes": 1231,
+      "sha256": "a51c1eb236b5c2baab4e303ca50fc76783257fb51da4f51c5f02d6e345683780"
+    },
+    "website/feed-check.mjs": {
+      "bytes": 8649,
+      "sha256": "5b8d61a175acb1c36acee6534e2ab17e105a823580ee50b8cce9e73f0cdbaa82"
+    },
+    "website/feeds.mjs": {
+      "bytes": 24399,
+      "sha256": "06dfedae721a956c2fb7dade4ba5420aa6c649f6d55e46ccc5b681d821a5ab05"
+    },
+    "website/fixtures/native-backup.json": {
+      "bytes": 3225,
+      "sha256": "0e4f7962e8e5d949554e422cc16883b8b54db31a6b91285596cab7a7027c4dca"
+    },
+    "website/fixtures/public-boards.json": {
+      "bytes": 4207,
+      "sha256": "1f3978196f2be7d5a0b83934c502851c7ed75da0b98d9054022bfabf3f1f4485"
+    },
+    "website/fixtures/research.js": {
+      "bytes": 26176,
+      "sha256": "279188fa7039fb2f5f1b704ada853629762cda9c6da8bf3972595b56f06c5e05"
+    },
+    "website/fixtures/smartrecruiters.json": {
+      "bytes": 3562,
+      "sha256": "ea62e8ac666c02a18ccadde619ebc251f4596f7a840a3d9e39649e28bdac5ac0"
+    },
+    "website/fixtures/web-backup.json": {
+      "bytes": 3030,
+      "sha256": "ae5b909e91ea8037a337745a6209d225b50a6d8cc22ebd703fb4990b30816224"
+    },
+    "website/followup-check.mjs": {
+      "bytes": 10445,
+      "sha256": "c4a5fb4b407f56a7e769a41deb977b434c88ae18b64c9d9c920937e6d0b98e15"
+    },
+    "website/package.json": {
+      "bytes": 1022,
+      "sha256": "351c0fe0067a30bd35a92a518d7df209f933ab81b83ef4f9918906aaaa6bb6df"
+    },
+    "website/personalization-check.mjs": {
+      "bytes": 2134,
+      "sha256": "4841420dd013a2a124013682e4e25fa434030686abd506e412d2018526d5b540"
+    },
+    "website/public-provider-check.mjs": {
+      "bytes": 5127,
+      "sha256": "d09c0e2e78d7ac2a17cfcb8db63fdc5b855b0075d6ad6e602e2e48afc3c5bb2b"
+    },
+    "website/role-review-check.mjs": {
+      "bytes": 6681,
+      "sha256": "e1d00e1e9963acaa4af0b7240991c5a2e1c3b5e8d885138288efce468483676a"
+    },
+    "website/server-check.mjs": {
+      "bytes": 5892,
+      "sha256": "fceb43fff0b1c41421ae6fde22033c63d536974ba0897352ce7e665dc49609e6"
+    },
+    "website/smartrecruiters-check.mjs": {
+      "bytes": 6323,
+      "sha256": "bf2fc2696ddab5f37089182f20d94571dbfb210c6d1decc7107952e437d3ba81"
+    },
+    "website/state-check.mjs": {
+      "bytes": 95762,
+      "sha256": "db82fb86a91cfc7f751adacdcb243472acacc355fc6a3749a03d5d2b4f974eb3"
+    },
+    "website/transport-check.mjs": {
+      "bytes": 2567,
+      "sha256": "5ba5e3197365205ee232ac64e7ec9249f8fa9d042b8604b91ff4d4c134e94377"
+    },
+    "website/upgrade-check.mjs": {
+      "bytes": 6061,
+      "sha256": "dacefa1a4cf4f69d9824505ea1d11edcb709ed95171c4146fe18854793add25e"
+    },
+    "website/web/app.js": {
+      "bytes": 136029,
+      "sha256": "57dd6a2610288143ae42e419396d19d17c75ba7fd0071b3b71af38c70e7dd431"
+    },
+    "website/web/backup.js": {
+      "bytes": 17587,
+      "sha256": "05c75385d0ad5b5fd1f2c30990aac035288522c1557c7aadf41b7ae90659b6b0"
+    },
+    "website/web/core.js": {
+      "bytes": 22935,
+      "sha256": "9c18d5e79e1fd8475b619c0e9699ddd46d9ae16ea5645dc05d794a3adaabd3d3"
+    },
+    "website/web/data.js": {
+      "bytes": 22638,
+      "sha256": "b8ed6ee6046c87e6fbd3a35e988abed0b806959750484c8169764d93724b625d"
+    },
+    "website/web/icon.svg": {
+      "bytes": 867,
+      "sha256": "1b7f15f5857b27f4ed970cfb1b893d67349292cffc904bcadcdf97330d62fcfe"
+    },
+    "website/web/index.html": {
+      "bytes": 6568,
+      "sha256": "68f2e29d810ec2346f8556868e71c437e2e3bbe03c67d756b4e41bf91b69cefd"
+    },
+    "website/web/manifest.webmanifest": {
+      "bytes": 540,
+      "sha256": "d92d65f3b23eb5506e891148392979853923cd8bbcc5dc8f9a51ab3f2c87fb2a"
+    },
+    "website/web/style.css": {
+      "bytes": 18999,
+      "sha256": "438a2a1699d777e7729d7033acb259809b3f4e2919f7e348976305b1f0a925ac"
+    }
+  }
+}

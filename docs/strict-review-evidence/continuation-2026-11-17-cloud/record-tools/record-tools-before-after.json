@@ -1,0 +1,21 @@
+{
+  "baseline": "eebe748cb5afca0efcb9389255400a00cf5a480a",
+  "method": "Actual PhoneApp shownJobs selector compiled from git baseline and candidate; synthetic current-scope data only",
+  "results": [
+    {
+      "name": "private-note-only",
+      "baselineMatches": 0,
+      "candidateMatches": 1
+    },
+    {
+      "name": "arabic-marks",
+      "baselineMatches": 0,
+      "candidateMatches": 1
+    },
+    {
+      "name": "all-terms-different-fields",
+      "baselineMatches": 0,
+      "candidateMatches": 1
+    }
+  ]
+}

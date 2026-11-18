@@ -1,0 +1,24 @@
+{
+  "name": "focused-tests",
+  "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "tests/phone-search-workflows.mjs",
+    "tests/phone-localization.mjs",
+    "tests/i18n.mjs",
+    "tests/phone-model.mjs",
+    "tests/phone-record-tools.mjs",
+    "tests/phone-private-async.mjs",
+    "tests/phone-settings-privacy.mjs",
+    "tests/web-experience.mjs",
+    "tests/phone-api.mjs"
+  ],
+  "cwd": "hosted",
+  "startedAt": "2026-11-17T15:16:33.485658+00:00",
+  "finishedAt": "2026-11-17T15:16:39.481053+00:00",
+  "durationSeconds": 5.995,
+  "exitCode": 0,
+  "log": "focused-tests.log",
+  "sourceUnderTest": "source-under-test.json"
+}

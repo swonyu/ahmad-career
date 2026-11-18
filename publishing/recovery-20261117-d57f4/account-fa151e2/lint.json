@@ -1,0 +1,17 @@
+{
+  "name": "lint",
+  "command": [
+    "npm",
+    "run",
+    "lint",
+    "--",
+    "--max-warnings=0"
+  ],
+  "cwd": "hosted",
+  "startedAt": "2026-11-17T15:18:06.301045+00:00",
+  "finishedAt": "2026-11-17T15:18:27.856262+00:00",
+  "durationSeconds": 21.555,
+  "exitCode": 0,
+  "log": "lint.log",
+  "sourceUnderTest": "source-under-test.json"
+}

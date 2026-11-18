@@ -1,0 +1,101 @@
+{
+  "schema": 1,
+  "checked_at_utc": "2026-11-17T09:51:45.090036+00:00",
+  "baseline": "eebe748cb5afca0efcb9389255400a00cf5a480a",
+  "baseline_ci_run": "https://github.com/swonyu/ahmad-career/actions/runs/44057279267",
+  "baseline_ci_status": "Service/Hosted passed; three native gates failed (coordinator logs and lint artifact reviewed)",
+  "isolated_branch": "native-saved-search-followup-20261117",
+  "patch": "/workspace/scratch/5bc6158967e8/native-saved-search-followup.patch",
+  "patch_sha256": "c04d8b31f0536e199bc5161e26529af3a68018aec74473574d7b3f78c1d3791c",
+  "checks": [
+    {
+      "command": "python scripts/generate-native-localization.py --check",
+      "result": "pass",
+      "strings_per_language": 1761,
+      "bounded_templates": 144,
+      "generated_files_unchanged": 7
+    },
+    {
+      "command": "python scripts/test-native-localization.py",
+      "result": "pass",
+      "tests": 8
+    },
+    {
+      "command": "bash -n apple/Checks/check-mobile.sh",
+      "result": "pass"
+    },
+    {
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "command": "git apply --check <patch> (root checkout)",
+      "result": "pass",
+      "mutations": false
+    },
+    {
+      "check": "Android styles XML inheritance/qualifier inspection",
+      "result": "pass",
+      "combinations": 12,
+      "apis": [
+        26,
+        27
+      ],
+      "appearance": [
+        "system",
+        "light",
+        "dark"
+      ],
+      "night": [
+        false,
+        true
+      ],
+      "is_android_lint": false
+    },
+    {
+      "check": "Shared native Saved-search fixture shape/unique IDs",
+      "result": "pass",
+      "cases": 21,
+      "native_execution": false
+    },
+    {
+      "check": "Independent auth lane read-only typed display/Saved-scope review",
+      "result": "no concrete blocker found",
+      "native_execution": false
+    }
+  ],
+  "pending": [
+    "Corrected exact-commit Apple build/policy execution",
+    "Corrected Android lint/instrumentation",
+    "iPhone UI including new Arabic Saved-note keyboard automation",
+    "Physical-device/VoiceOver/TalkBack/RTL and store-delivered language acceptance"
+  ],
+  "boundaries": {
+    "root_source_mutated": false,
+    "shared_mac_build": false,
+    "signing_store_changes": false,
+    "publishing_branch_mutated": false,
+    "network_application_submissions": false,
+    "stored_user_text_rewritten": false
+  },
+  "files": {
+    "android/app/build.gradle.kts": "f1b9718aa704a769af25a2490f456b0947d305dec7eca8fff876b240010e0cb9",
+    "android/app/src/androidTest/assets/native-saved-search-v1.json": "c1939e5e2b4d3d666b04d0b0c07d3bd868f4cc4f9ef20a63ae0b62599a638a08",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/SavedSearchRegressionTest.kt": "237297b8182ba2d97f9166129fa909250ce0090fc4f9dabf3d4dab6d0c523989",
+    "android/app/src/main/java/com/saleh/careerfinder/CareerLocalization.kt": "4df20ee208737266f12a919f247fd93b1037acd0c79a0b29f3add0a5a368f3bb",
+    "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "b7c8fb9e3daa7f1d80dfff73e165223d0e17596095fce576ed97a7515408b6ab",
+    "android/app/src/main/res/values-night/styles.xml": "dc8b6b6b5d2c0cb61b5ef608775673e096638d3652eae71460236aca31266df9",
+    "android/app/src/main/res/values-v27/styles.xml": "f7bb31810621bc2d0ee8ddd9a06d0c83f8b13c488676de9d1bbe07fbbb584387",
+    "android/app/src/main/res/values/strings.xml": "c897abcfdf3e9b89d83242f640ef29c36282ec76e5e167da1f34ca3120fd6dc9",
+    "android/app/src/main/res/values/styles.xml": "3d440f68d45081c9bacfb9132c7b1ecc4feb02281d82a08e25f016db70b200e9",
+    "apple/AhmadCareer/NativeApplicationsViews.swift": "3d2fe61f101280474920c7cef0b98fb79c632249625a2fba2086e5eef4dc7804",
+    "apple/AhmadCareer/NativeCareerStore.swift": "ee5ff94a866ae4a47bfe0cb5452bc92e4b127f7a38759859b8bafd408c04b733",
+    "apple/AhmadCareer/NativeCareerViews.swift": "6ef2dd17277a020cca1d53ae30175443fabe00fb569df35e0e087ca81785616f",
+    "apple/AhmadCareer/NativeLocalization.swift": "cef1520ffdb96b54268bb3789de39c2a2c23b9954dc1e6dee4395a822f21b8c9",
+    "apple/Checks/NativeStoreCheck.swift": "e1726e9f99bd88dbe67fbdc85959e1b3ee996c2472365094b4197fd2fce3b121",
+    "apple/Checks/SavedSearchCheck.swift": "b92c06da590c2912d8c972d3643ad6ef8f0272c1b074fa91d71c2f000987a710",
+    "apple/Checks/check-mobile.sh": "9ce9a43fbb61860da9417b7ddae7f1d45d6d611ebf2bfa2a2327ab4f8dd7aa7b",
+    "apple/UITests/CareerFinderUITests.swift": "05e13037d193dfb27e4781cb75b79fd5a6376901e496d4ab6138dfebf353cfe4",
+    "docs/Native-Compiler-Search-Followup-2026-11-17.md": "21c37c0cef33dfb3cc034dbea802c09fb34570142507af0f1765399e171a9cdb"
+  }
+}

@@ -1,8 +1,10 @@
-# Career Finder release handoff
+# Career Finder — historical v6 release handoff
+
+**Historical evidence, superseded for current release decisions.** The content below records the earlier v6 checkpoint and its then-open gates. Public v7 deployment and the later e66d180 five-gate pass are recorded in [Publishing Handoff — 17 November 2026](Publishing-Handoff-2026-11-17.md). Use that handoff, the [owner acceptance steps](Owner-Acceptance-2026-11-17.md) and the [release integration checklist](Release-Integration-Checklist-2026-11-17.md) for current work. Later isolated candidate changes remain unpublished and need their own matching evidence. This historical file is retained so earlier failures, limitations and deployment receipts are not rewritten as new results.
 
 **Checkpoint: 17 November 2026.** Hosted version 6 is deployed with the phone browser app and reliability/security corrections. Live browser acceptance is in progress. The 0.6 native candidate adds phone navigation and private application tracking; final native CI and publication remain pending. This document records source implementation, executed tests, live deployment and store availability separately.
 
-## Current release state
+## Release state at the historical v6 checkpoint
 
 | Area | Observed status |
 | --- | --- |

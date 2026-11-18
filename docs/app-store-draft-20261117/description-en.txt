@@ -1,0 +1,18 @@
+Search jobs on selected employer boards, save job links and prepare applications with Career Finder.
+
+Search selected employer boards
+Search public Greenhouse and Lever boards by role, location or remote-work information. Choose up to four supported boards, see sources and check times, and open the original posting. Coverage is limited to the selected boards. Check location restrictions and work eligibility with the employer.
+
+Save jobs and prepare your profile
+Save opportunities or add an employer link. Start with a blank profile, add your experience and preferences, and select your PDF resume. Search does not require an account or use your profile or resume.
+
+Connect a phone
+Connect a hosted workspace through browser sign-in and a one-use code. Saving a connected profile sends its fields and selected PDF to that service. Phone drafts and hosted records have separate controls.
+
+Review before applying
+Review applicant details, the selected PDF and employer-specific answers before approving a supported application. Auto Apply requires an authorized employer integration and your explicit approval. Live submissions are currently disabled on the hosted preview; employer links remain available for manual applications.
+
+Application records
+Saving a job or recording a manual application does not prove employer receipt. A confirmed live receipt means a supported provider accepted the application, not that an interview or offer is guaranteed. Test and uncertain outcomes are identified separately.
+
+Choose English, Arabic or your device language in Settings. Job postings and personal text stay in their original language. Job availability and employer requirements can change.

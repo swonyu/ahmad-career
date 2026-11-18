@@ -1,0 +1,24 @@
+{"syntheticPrivateIngress":{"denied":0,"workerRequests":1,"providerRequests":0}}
+▶ phone API keeps authentication, cancellation and verification bounded
+  ✔ private writes carry the exact intent body, same-origin cookies and no native credential (13.663505ms)
+  ✔ the actual source catalog remains readable behind an owner-private same-origin hosting gate (12.182874ms)
+  ✔ discovery preserves same-origin hosting access and encoded search intent without a native credential (1.054584ms)
+  ✔ oversized multi-job review payloads are rejected before an API call begins (7.026719ms)
+  ✔ foreign destinations, non-app routes and writes to discovery are rejected before fetch (1.255624ms)
+  ✔ HTTP and logical failures remain distinguishable and never replay a mutation (4.712594ms)
+  ✔ unverified content, invalid UTF-8, arrays and empty responses are rejected safely (3.896377ms)
+  ✔ the 12 MiB response limit cancels oversized streams before parsing (3.701732ms)
+  ✔ network errors do not retry writes or expose private exception details (0.765529ms)
+  ✔ caller cancellation aborts once and pre-cancelled work never starts (1.505362ms)
+{"populatedWorkspaceBytes":7112730,"attempts":500,"reviews":20,"reviewItems":400}
+  ✔ the timer aborts a stalled mutation and tells the user to reconcile before retrying (20.396478ms)
+  ✔ a populated valid workspace above 4 MiB remains readable within the native 12 MiB budget (383.513304ms)
+✔ phone API keeps authentication, cancellation and verification bounded (459.699468ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 984.897302

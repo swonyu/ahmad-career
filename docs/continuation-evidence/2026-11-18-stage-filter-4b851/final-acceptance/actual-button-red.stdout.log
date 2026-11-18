@@ -1,0 +1,73 @@
+✔ Saved search finds every term across visible metadata and the active saved note (3.206167ms)
+✔ Saved comparison removes only the agreed Arabic vowel marks and tatweel while preserving distinct letters (0.304167ms)
+✔ CSV is UTF-8 BOM, quoted CRLF data with original Arabic, quotes and multiline notes (3.558917ms)
+✔ CSV visibly neutralizes formula-like text including compatibility characters and leading controls (1.523834ms)
+✔ CSV selects only record fields and translates app labels without translating private content (0.494875ms)
+✔ calendar uses civil DATE and one day even on leap days and the maximum supported year (40.503166ms)
+✔ calendar escapes injected properties and folds long Arabic and emoji by UTF-8 octets (0.773084ms)
+✔ calendar UID is stable for the public job and date without private fields or provider state (1.51125ms)
+✔ record locations are optional for legacy snapshots and bounded for new records (4.943916ms)
+✔ removing a bookmark retains its latest nonblank location for current, legacy and re-bookmarked records (73.281417ms)
+✔ bookmark metadata preservation fails with account mismatch or rejected persistence (8.893875ms)
+✔ actual CSV action exports only the current guest or confirmed account records (6.794333ms)
+▶ actual record exports fail closed before reading unconfirmed, locked, wrong-owner or earlier-workspace data
+  ✔ identity (6.256542ms)
+  ✔ checking (3.086625ms)
+  ✔ locked (3.146333ms)
+  ✔ owner (2.906833ms)
+  ✔ missingOwner (3.074625ms)
+  ✔ olderWorkspace (2.9915ms)
+  ✔ earlierScope (11.559625ms)
+✔ actual record exports fail closed before reading unconfirmed, locked, wrong-owner or earlier-workspace data (33.686209ms)
+▶ actual calendar action rechecks identity, generation, workspace and record after asynchronous hashing
+  ✔ revalidation (7.972208ms)
+  ✔ generation (3.879042ms)
+  ✔ owner (3.400583ms)
+  ✔ workspace (3.09225ms)
+  ✔ snapshot (3.231541ms)
+  ✔ date (3.205708ms)
+  ✔ removal (3.079792ms)
+✔ actual calendar action rechecks identity, generation, workspace and record after asynchronous hashing (28.458917ms)
+✔ actual calendar action accepts a saved record and rejects unsaved editor copies or missing dates (5.495542ms)
+✔ actual Saved selector searches active notes and keeps the existing applied/follow-up filters (3.53875ms)
+✔ new controls stay inside existing disclosures and require a saved valid follow-up day (19.417333ms)
+✔ actual download helper preserves content and delays successful URL release for the browser (2.430583ms)
+✔ actual download helper attaches no DOM resource when URL allocation fails (1.5375ms)
+✔ actual download helper releases its URL after a synchronous create failure (1.235541ms)
+✔ actual download helper releases its URL after a synchronous append failure (1.093167ms)
+✔ actual download helper releases its URL after a synchronous click failure (1.062ms)
+✔ actual download helper still releases the URL if post-click link removal throws (1.0245ms)
+✔ actual exportRecordsCSV preserves the snapshot and withholds success when download activation throws (5.565459ms)
+✔ actual exportFollowUp preserves the snapshot and withholds success when download activation throws (6.466ms)
+✔ application stage composes with search and the existing saved views without changing stored records (44.712791ms)
+✔ Clear and the follow-up shortcut reset the stage select without persisting it (11.954833ms)
+✔ a saved stage change updates the filtered list and unsaved, cancelled, failed, or stale edits do not (26.733667ms)
+✖ zero-item Saved filters keep recovery visible and return to the default empty view (6.012833ms)
+ℹ tests 43
+ℹ suites 0
+ℹ pass 42
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 754.110416
+
+✖ failing tests:
+
+test at tests/phone-record-tools.mjs:595:1
+✖ zero-item Saved filters keep recovery visible and return to the default empty view (6.012833ms)
+  AssertionError [ERR_ASSERTION]: An actual Clear button is required for en all/interview after the final record disappears
+      at TestContext.<anonymous> (file:///Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/tests/phone-record-tools.mjs:622:5)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

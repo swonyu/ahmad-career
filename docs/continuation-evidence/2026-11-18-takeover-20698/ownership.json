@@ -1,0 +1,92 @@
+{
+  "project": "Career Finder",
+  "owner": "ChatGPT /root 20698f1e14d3",
+  "recordedAtUTC": "2026-11-18T14:30:14.241041+00:00",
+  "authorization": "User explicitly requested continued app work and ownership, then selected Career Finder in this chat.",
+  "base": "92266631b5eba3eb7d66810e6553535fe42cce86",
+  "worktree": "/Users/saleh/Developer/career-finder-owner-20261118-20698",
+  "branch": "continuation/career-finder-owner-20261118-20698",
+  "scope": "Own source integration, fixes, independent review, free hosted CI, and tested hosted Site publication. Preserve the separate native signing/store owner and other active worker scopes.",
+  "constraints": [
+    "No changes to other worktrees or dirty work",
+    "No shared local native build, simulator shutdown, or process cancellation",
+    "Preserve five tabs, midnight navy/periwinkle theme, natural English/Arabic RTL",
+    "No real employer submissions during tests, no new costs, exclude Good Spender"
+  ],
+  "inheritedCutoffRiyadh": "2026-11-19T01:26:12+03:00",
+  "currentFacts": {
+    "ciRun": 44328888955,
+    "ciSource": "b6614346cb4f0e72b9bde0e96ab083ea7df72371",
+    "passed": [
+      "Hosted HTTPS and durable storage",
+      "Service and synthetic HTTPS",
+      "iPhone logic and unsigned build",
+      "Android compile, lint and 116 completed native cases"
+    ],
+    "pending": [
+      "Full exact-source CI for integrated Android collector and dialog visibility changes",
+      "23-image native visual acceptance including the new English state",
+      "Final iPhone artifact visual review",
+      "Existing PR update and merge after the complete gate"
+    ],
+    "failedEarlierRunsPreserved": [
+      44316849501,
+      44326554344
+    ],
+    "collectorRepair": {
+      "commit": "c9223be0011bbacfab233917ff23f5267416aaea",
+      "independentReview": "approved",
+      "hostFixtures": {
+        "passed": 13,
+        "failed": 0
+      },
+      "runtime": "pending new-source CI"
+    },
+    "androidScreenshots": {
+      "run": 44328888955,
+      "artifact": 14438558141,
+      "retained": 22,
+      "valid": 22,
+      "dimensions": "1080x1920",
+      "totalBytes": 3755471,
+      "visualReview": "All22 viewed; IME draft-dialog visibility and full notice/dismiss reachability under source review",
+      "followupCandidate": "7ae3c141d05b31195ec73a390de719a3951df684",
+      "candidateRequiredPNG": 23
+    },
+    "baselineFullRun": {
+      "id": 44328888955,
+      "source": "b6614346cb4f0e72b9bde0e96ab083ea7df72371",
+      "allFiveJobs": "passed",
+      "iPhoneUI17": "passed",
+      "Android116": "passed",
+      "AndroidOriginalPNG22": "all retained, validated and viewed"
+    },
+    "integratedProductSource": "7ae3c141d05b31195ec73a390de719a3951df684"
+  },
+  "nextActions": [
+    "Push the final combined candidate to the preserved existing PR branch",
+    "Complete all current-source CI gates and image review",
+    "Merge authorized combined work and record final delivery states"
+  ],
+  "release": {
+    "hosted": {
+      "version": 11,
+      "commit": "7fd3f81ff727769934f6e265c8ca2287cf1691f3",
+      "deployment": "appgdep_6afdbf075de88191a65374623c561dad",
+      "status": "succeeded",
+      "deployedAtUTC": "2026-11-18T15:07:14.588928+00:00",
+      "url": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
+      "environmentRevision": 1,
+      "sourceParity": "All 263 tracked hosted files exactly match b661434 source before packaging",
+      "checks": {
+        "recovery": 129,
+        "ssrAndAsset": 17,
+        "typecheck": "passed",
+        "lint": "passed",
+        "productionBuild": "passed"
+      },
+      "native": "No store/signing release by this owner"
+    }
+  },
+  "updatedAtUTC": "2026-11-18T15:36:30.171576+00:00"
+}

@@ -1,0 +1,303 @@
+{
+  "source_manifest_sha256": "8f16af7e20fdccbe335afea4d417f05c22c40ef3a012c74f68239d1ccfe4b80a",
+  "source_artifact_id": 14338112876,
+  "test": {
+    "attachments": [
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "140FDB2A-3968-42C9-A22A-6BA84E5DB08C.png",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "replacement-select-all-unavailable_0_A99C5808-4D9A-41A6-9825-E0ED397DB3A5.png",
+        "timestamp": 1794926232.388
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "0A7E82E1-877B-48C3-8F63-800D6D2EA9E7",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "UI Snapshot 2026-11-17 at 02.37.04 PM",
+        "timestamp": 1794926224.777
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "1338959A-082F-4BF0-88DA-A25110D01335",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "Synthesized Event 2026-11-17 at 02.37.06 PM",
+        "timestamp": 1794926226.154
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "22CC9828-E686-4208-96AD-3FFD9E564E82",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "UI Snapshot 2026-11-17 at 02.37.00 PM",
+        "timestamp": 1794926220.666
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "E4C15805-265E-4672-BB17-A98C829D2ED2",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "Synthesized Event 2026-11-17 at 02.37.01 PM",
+        "timestamp": 1794926221.014
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "D88EF1FB-AD51-4722-A146-C7813D362431",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "UI Snapshot 2026-11-17 at 02.36.56 PM",
+        "timestamp": 1794926216.923
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "95B913A4-7D4B-42C0-BB8C-1226B55E4FB3",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "Synthesized Event 2026-11-17 at 02.36.57 PM",
+        "timestamp": 1794926217.243
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "5C54FA8A-A065-4DF8-BFFD-5B258264D6C5",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "UI Snapshot 2026-11-17 at 02.36.52 PM",
+        "timestamp": 1794926212.824
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "D7692B29-A185-456D-B8AB-11C771365417",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "Synthesized Event 2026-11-17 at 02.36.53 PM",
+        "timestamp": 1794926213.19
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "C1756264-CDB5-451E-AA33-AA63D3E91391",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "UI Snapshot 2026-11-17 at 02.36.51 PM",
+        "timestamp": 1794926211.44
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "57AD8231-7647-4E64-A9CC-385251048E8A",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "Synthesized Event 2026-11-17 at 02.36.51 PM",
+        "timestamp": 1794926211.822
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "72B31CEF-7448-4451-B30F-E6613B3D15DA",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "UI Snapshot 2026-11-17 at 02.36.44 PM",
+        "timestamp": 1794926204.274
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "DC6E5537-5F3E-44AF-AD7D-FB73B1346802",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "Synthesized Event 2026-11-17 at 02.36.44 PM",
+        "timestamp": 1794926204.982
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "B787305E-469D-40EE-862D-A4A55B25ED71",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "UI Snapshot 2026-11-17 at 02.36.38 PM",
+        "timestamp": 1794926198.086
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "A0692244-D712-4AB1-B0DA-8BF108622954",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "Synthesized Event 2026-11-17 at 02.36.38 PM",
+        "timestamp": 1794926198.473
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "969D261E-6022-4591-A44D-D7C319706641.png",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "21-profile-readiness_0_42AAA387-2D6F-474C-A58E-AA6A46D9FB23.png",
+        "timestamp": 1794926197.32
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "4D3E24B4-D58A-48E3-AE38-594FEAEBC12D",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "UI Snapshot 2026-11-17 at 02.36.30 PM",
+        "timestamp": 1794926190.021
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "3B2DABF0-D668-46BB-ADDC-E9D0A5BEFDB6",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "Synthesized Event 2026-11-17 at 02.36.30 PM",
+        "timestamp": 1794926190.35
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "02AF1CDB-DDAE-4329-A72C-EBB260F68684",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "UI Snapshot 2026-11-17 at 02.36.26 PM",
+        "timestamp": 1794926186.555
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "B2D497AD-31A7-429B-9E0C-C637CA3DD322",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "Synthesized Event 2026-11-17 at 02.36.26 PM",
+        "timestamp": 1794926186.892
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "A9D2487D-354C-45EC-B166-E10FC8DE5223",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "UI Snapshot 2026-11-17 at 02.36.23 PM",
+        "timestamp": 1794926183.409
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "A73246E1-99F5-4BC5-B5EF-36E70E8FC462",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "Synthesized Event 2026-11-17 at 02.36.23 PM",
+        "timestamp": 1794926183.848
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "DC6D4204-93F7-4DB0-B348-E479192CF9D4",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "UI Snapshot 2026-11-17 at 02.36.19 PM",
+        "timestamp": 1794926179.402
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "C7BD28D5-B306-4D6E-B1B3-130CD84405A6",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "Synthesized Event 2026-11-17 at 02.36.19 PM",
+        "timestamp": 1794926179.842
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "D8622603-FB31-4639-B198-2F8C4EA513ED",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "UI Snapshot 2026-11-17 at 02.36.14 PM",
+        "timestamp": 1794926174.388
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "AF0D1ABC-E944-4B4C-8875-3D8FAA983219",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "Synthesized Event 2026-11-17 at 02.36.14 PM",
+        "timestamp": 1794926174.677
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "FD90842A-6B84-4D17-93FD-B5786AD2D7D4",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "UI Snapshot 2026-11-17 at 02.36.08 PM",
+        "timestamp": 1794926168.657
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "BAEC9AE4-BAFD-40DF-B487-A6ADAD5EB9D9",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "Synthesized Event 2026-11-17 at 02.36.08 PM",
+        "timestamp": 1794926168.985
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "A759F13F-13C0-438D-B3E2-503F12C04DDD",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "UI Snapshot 2026-11-17 at 02.36.04 PM",
+        "timestamp": 1794926164.733
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "B228BA71-01DA-433D-8A6D-BEB769E636AD",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "Synthesized Event 2026-11-17 at 02.36.05 PM",
+        "timestamp": 1794926165.084
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+        "deviceName": "iPhone Air",
+        "exportedFileName": "CAF6E13A-093B-424A-9AF8-736B9E3C5204.mp4",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "Screen Recording 2026-11-17 at 02.35.52 PM.mp4",
+        "timestamp": 1794926152.707
+      }
+    ],
+    "testIdentifier": "CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup()",
+    "testIdentifierURL": "test://com.apple.xcode/AhmadCareer/CareerFinderUITests/CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup"
+  },
+  "selected_files": [
+    {
+      "artifact_filename": "140FDB2A-3968-42C9-A22A-6BA84E5DB08C.png",
+      "bytes": 467714,
+      "sha256": "d459b4926acf0ebb2c4965420241c7ce59792d1f7fa7f8827ce42c5a5ee29827",
+      "reviewed": true
+    },
+    {
+      "artifact_filename": "CAF6E13A-093B-424A-9AF8-736B9E3C5204.mp4",
+      "bytes": 11369003,
+      "sha256": "afe00caf3236f996a71ac9321443811db107bba0254629f7d00c54f356be80f3",
+      "reviewed": false
+    }
+  ]
+}

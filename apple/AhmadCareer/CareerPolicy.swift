@@ -19,7 +19,8 @@ enum CareerPolicy {
         }
         switch url.scheme?.lowercased() {
         case "https", "http":
-            return url.host?.isEmpty == false ? .external : .blocked
+            // The caller passes linkActivated. WebKit can also classify scripted anchor clicks this way; this is not a trusted-input guarantee.
+            return userInitiated && url.host?.isEmpty == false && url.user == nil && url.password == nil ? .external : .blocked
         case "mailto":
             return userInitiated && !url.path.isEmpty ? .external : .blocked
         default:

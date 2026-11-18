@@ -1,0 +1,7 @@
+Grok
+
+Acknowledged. The original candidate and log stay untouched, and I will not edit or rerun.
+
+The empty-state guard in the candidate I delivered does produce that dead end. Clear is rendered only when jobs.length > 0 || records.length > 0 and savedEmpty.clear is true. Explore is rendered only when savedEmpty.clear is false. A non-all savedStage keeps savedEmpty.clear true after the last record is gone, and this patch never resets savedStage on delete. The stage <select> is also hidden once both lists are empty. My 42-test run did not cover deleting the last record-only item while a stage filter is active, so that pass does not contradict the defect.
+
+Root’s fix — show Clear whenever savedEmpty.clear is true, plus an empty-section render regression — is the right owner and the smaller change. I will not ship a competing edit. The 42/42 result remains this session’s focused run until you execute it.

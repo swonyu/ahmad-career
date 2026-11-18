@@ -1,0 +1,42 @@
+{
+  "observed_at_utc": "2026-11-17T13:51:47Z",
+  "purpose": "Preserve the terminal CI result and two evidence-backed native UI harness corrections before the next full run.",
+  "parent_checkpoint": "842472684b194e993355f632902ccc81366c164c",
+  "tested_ancestor": "5b1493f8584a2d430103bd8a5cf395d53ec111fb",
+  "completed_run": "https://github.com/swonyu/ahmad-career/actions/runs/44090269239",
+  "terminal_jobs": {
+    "iphone_logic_and_unsigned_build": "passed",
+    "service_and_synthetic_https": "passed",
+    "hosted": "failed: the asynchronous i18n fixture cleanup failure is repaired in the parent checkpoint; the existing local 13-file Node group passed 163 of 163 tests",
+    "android": "failed: 104 of 105 ordinary instrumentation methods passed; the four missing tab-reveal actions are repaired in the parent checkpoint; Android TLS phases were not reached",
+    "iphone_native_interface": "failed: all 17 methods ran, 15 passed, 2 failed, 0 unexpected failures, 1298.048 seconds"
+  },
+  "iphone_failure_evidence": [
+    {
+      "test": "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+      "failure": "The exact saved-email assertion queried an unmaterialized field below the visible largest-text Form viewport.",
+      "correction": "Use the existing bounded native reveal helper before the unchanged exact email assertion."
+    },
+    {
+      "test": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+      "failure": "The immediate exact title assertion read Private while the retained recording subsequently showed Private r in the same focused field.",
+      "correction": "After the original single typing action, wait up to five seconds for the exact intended value, fail explicitly on timeout, then execute the original exact-value assertion. No retyping, clearing retry or relaxed comparison is added."
+    }
+  ],
+  "source_preservation": {
+    "ui_methods": 17,
+    "original_assertion_lines_retained": 142,
+    "additional_bounded_readiness_assertion": 1,
+    "changed_file": "apple/UITests/CareerFinderUITests.swift",
+    "change_shape": "12 added lines; removing only those additions restores the parent file byte for byte",
+    "production_code_changes": false,
+    "existing_typing_actions_and_timeout_values_changed": false,
+    "android_inventory_unchanged": "105 ordinary methods plus 2 separately scheduled TLS methods"
+  },
+  "artifact": {
+    "id": 14333811288,
+    "sha256": "d0165880997b8eb75fb9bbae61a9b1011349313d66d4d4f6b3ea3ebb39d7e679"
+  },
+  "successor_native_compile_and_full_workflow": "pending; no new run is established by this checkpoint",
+  "release_evidence": "No signed upload, App Store review or public release is established by this source checkpoint."
+}

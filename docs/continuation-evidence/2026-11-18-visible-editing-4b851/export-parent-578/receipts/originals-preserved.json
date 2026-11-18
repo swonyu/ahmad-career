@@ -1,0 +1,75 @@
+{
+  "checkedAt": "2026-11-18T05:24:30.548987+00:00",
+  "files": [
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-phone-data.json",
+      "copy": "originals/initial-phone-data.json",
+      "originalCurrentSha256": "835c60d2068db57fc2a7c32f3f3730c11ab5bf57788816f4c4ffc36a5f817874",
+      "preservedSha256": "835c60d2068db57fc2a7c32f3f3730c11ab5bf57788816f4c4ffc36a5f817874",
+      "unchanged": true
+    },
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-application-records (4).csv",
+      "copy": "originals/initial-records-en.csv",
+      "originalCurrentSha256": "c514f506160bd3108b25d17b9c2ef81a14845900b8872898f89b8426c76f9028",
+      "preservedSha256": "c514f506160bd3108b25d17b9c2ef81a14845900b8872898f89b8426c76f9028",
+      "unchanged": true
+    },
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-phone-data (1).json",
+      "copy": "originals/final-phone-data-en.json",
+      "originalCurrentSha256": "bd22ab685d9fb92739337605d0583423d2bf6a9c906abd66dfdf1d4d7c3441e1",
+      "preservedSha256": "bd22ab685d9fb92739337605d0583423d2bf6a9c906abd66dfdf1d4d7c3441e1",
+      "unchanged": true
+    },
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-phone-data (2).json",
+      "copy": "originals/final-phone-data-ar.json",
+      "originalCurrentSha256": "8d11f3c388a1190817bb8bf0c5772b5e8480a4bf40d91bbbfdb739b8dbd56fe1",
+      "preservedSha256": "8d11f3c388a1190817bb8bf0c5772b5e8480a4bf40d91bbbfdb739b8dbd56fe1",
+      "unchanged": true
+    },
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-application-records (5).csv",
+      "copy": "originals/final-records-en.csv",
+      "originalCurrentSha256": "419c024b8907e6e0eed3867b507c97d79f56d7e224b852b90a97004027a3f935",
+      "preservedSha256": "419c024b8907e6e0eed3867b507c97d79f56d7e224b852b90a97004027a3f935",
+      "unchanged": true
+    },
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-application-records (6).csv",
+      "copy": "originals/final-records-en-repeat.csv",
+      "originalCurrentSha256": "419c024b8907e6e0eed3867b507c97d79f56d7e224b852b90a97004027a3f935",
+      "preservedSha256": "419c024b8907e6e0eed3867b507c97d79f56d7e224b852b90a97004027a3f935",
+      "unchanged": true
+    },
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-application-records (7).csv",
+      "copy": "originals/final-records-ar.csv",
+      "originalCurrentSha256": "46f691bdb8a9d4bf4aa6b23045fb3ba222daa91707f3b42ed318ca250f994c68",
+      "preservedSha256": "46f691bdb8a9d4bf4aa6b23045fb3ba222daa91707f3b42ed318ca250f994c68",
+      "unchanged": true
+    },
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-follow-up (3).ics",
+      "copy": "originals/final-follow-up-en.ics",
+      "originalCurrentSha256": "d8386a43a3da7e451c0bbc3c640a417e7e01e97898695d51190fab03059b02ed",
+      "preservedSha256": "d8386a43a3da7e451c0bbc3c640a417e7e01e97898695d51190fab03059b02ed",
+      "unchanged": true
+    },
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-follow-up (4).ics",
+      "copy": "originals/final-follow-up-en-repeat.ics",
+      "originalCurrentSha256": "864be0ba972adeb37feff5c424322a5ae92d8b5c5b2a1917367be694d3f79126",
+      "preservedSha256": "864be0ba972adeb37feff5c424322a5ae92d8b5c5b2a1917367be694d3f79126",
+      "unchanged": true
+    },
+    {
+      "originalPath": "/Users/saleh/Downloads/Career-Finder-follow-up (5).ics",
+      "copy": "originals/final-follow-up-ar.ics",
+      "originalCurrentSha256": "8fc32f4e7867865bc57e42c529c009af0ee6f8a54c127b07dd3b36cbf5dc4909",
+      "preservedSha256": "8fc32f4e7867865bc57e42c529c009af0ee6f8a54c127b07dd3b36cbf5dc4909",
+      "unchanged": true
+    }
+  ]
+}

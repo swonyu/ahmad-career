@@ -1,0 +1,3 @@
+# Preserve failure diagnostics, blank terminal lines and recorded byte hashes.
+*.log -text -whitespace
+*.tap -text -whitespace

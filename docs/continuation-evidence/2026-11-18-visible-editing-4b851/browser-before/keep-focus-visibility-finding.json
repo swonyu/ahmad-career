@@ -1,0 +1,8 @@
+{
+  "sourceCommit": "cad85c495bc03853cc2258d093e79d8d1fb52ae3",
+  "observation": [
+    "{\"activeRect\":{\"bottom\":881.1458740234375,\"top\":832.1458740234375},\"activeText\":\"Cancel\",\"dialogClientHeight\":811,\"dialogOverflowY\":\"auto\",\"dialogRect\":{\"bottom\":828,\"top\":16},\"dialogScrollHeight\":976,\"dialogScrollTop\":0,\"viewportHeight\":844}"
+  ],
+  "finding": "Cancel focus is inside the open dialog but its entire rectangle is below the dialog's clipping edge.",
+  "image": "keep-focus-clipped.jpg"
+}

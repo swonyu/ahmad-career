@@ -1,0 +1,78 @@
+{
+  "observed_at": "2026-11-17T22:45:44.137673+00:00",
+  "worktrees": {
+    "Career-CombinedR2": {
+      "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-CombinedR2",
+      "exists": true,
+      "head": {
+        "exit": 0,
+        "stdout": "2884188263f3dad5753da7b2e507f6ba55e30eb0\n",
+        "stderr": ""
+      },
+      "branch": {
+        "exit": 0,
+        "stdout": "recovery/publishing-reconciled-20261117-d57\n",
+        "stderr": ""
+      },
+      "dirty": {
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "last_commit": {
+        "exit": 0,
+        "stdout": "2884188263f3dad5753da7b2e507f6ba55e30eb0 Reconcile native discovery recovery and account acceptance\n",
+        "stderr": ""
+      }
+    },
+    "Career-ToolchainProof288": {
+      "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-ToolchainProof288",
+      "exists": true,
+      "head": {
+        "exit": 0,
+        "stdout": "2884188263f3dad5753da7b2e507f6ba55e30eb0\n",
+        "stderr": ""
+      },
+      "branch": {
+        "exit": 0,
+        "stdout": "recovery/toolchain-proof-20261117-d57\n",
+        "stderr": ""
+      },
+      "dirty": {
+        "exit": 0,
+        "stdout": " M hosted/package-lock.json\n M hosted/package.json\n",
+        "stderr": ""
+      },
+      "last_commit": {
+        "exit": 0,
+        "stdout": "2884188263f3dad5753da7b2e507f6ba55e30eb0 Reconcile native discovery recovery and account acceptance\n",
+        "stderr": ""
+      }
+    },
+    "Career-EmptyState-UI288": {
+      "path": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-EmptyState-UI288",
+      "exists": true,
+      "head": {
+        "exit": 0,
+        "stdout": "a17999ce9f24d1e8c94a38c03dcda68101db4507\n",
+        "stderr": ""
+      },
+      "branch": {
+        "exit": 0,
+        "stdout": "recovery/empty-state-ui-expectation-20261117-d57\n",
+        "stderr": ""
+      },
+      "dirty": {
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "last_commit": {
+        "exit": 0,
+        "stdout": "a17999ce9f24d1e8c94a38c03dcda68101db4507 Align native completed-search assertion with accepted empty-state copy\n",
+        "stderr": ""
+      },
+      "ui_workflow_diff": ""
+    }
+  }
+}

@@ -1,0 +1,120 @@
+TAP version 13
+# Subtest: retry repeats the displayed search without a cursor and preserves newer visible draft filters
+ok 1 - retry repeats the displayed search without a cursor and preserves newer visible draft filters
+  ---
+  duration_ms: 47.774272
+  type: 'test'
+  ...
+# Subtest: a fresh search response does not overwrite text or boards edited while it is pending
+ok 2 - a fresh search response does not overwrite text or boards edited while it is pending
+  ---
+  duration_ms: 32.558283
+  type: 'test'
+  ...
+# Subtest: pagination uses the displayed search and cursor, merges identities, and leaves draft filters alone
+ok 3 - pagination uses the displayed search and cursor, merges identities, and leaves draft filters alone
+  ---
+  duration_ms: 31.915476
+  type: 'test'
+  ...
+# Subtest: failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller
+    # Subtest: failure
+    ok 1 - failure
+      ---
+      duration_ms: 33.748766
+      type: 'test'
+      ...
+    # Subtest: cancel
+    ok 2 - cancel
+      ---
+      duration_ms: 15.675079
+      type: 'test'
+      ...
+    1..2
+ok 4 - failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller
+  ---
+  duration_ms: 50.088799
+  type: 'test'
+  ...
+# Subtest: late search results cannot cross the existing identity or generation boundary
+    # Subtest: identity
+    ok 1 - identity
+      ---
+      duration_ms: 16.233221
+      type: 'test'
+      ...
+    # Subtest: generation
+    ok 2 - generation
+      ---
+      duration_ms: 35.871807
+      type: 'test'
+      ...
+    1..2
+ok 5 - late search results cannot cross the existing identity or generation boundary
+  ---
+  duration_ms: 52.874647
+  type: 'test'
+  ...
+# Subtest: pagination retains the 200-result cap and retry refreshes restored results without a stale cursor
+ok 6 - pagination retains the 200-result cap and retry refreshes restored results without a stale cursor
+  ---
+  duration_ms: 63.045188
+  type: 'test'
+  ...
+# Subtest: actual nonempty partial and stale results show a localized retry that targets the displayed search
+ok 7 - actual nonempty partial and stale results show a localized retry that targets the displayed search
+  ---
+  duration_ms: 130.370987
+  type: 'test'
+  ...
+# Subtest: actual empty unavailable results distinguish missing evidence from a completed zero-match search in both languages
+ok 8 - actual empty unavailable results distinguish missing evidence from a completed zero-match search in both languages
+  ---
+  duration_ms: 68.938351
+  type: 'test'
+  ...
+# Subtest: actual retry control stays disabled during work or identity checks and is absent without a submitted search
+ok 9 - actual retry control stays disabled during work or identity checks and is absent without a submitted search
+  ---
+  duration_ms: 80.155225
+  type: 'test'
+  ...
+# Subtest: empty discovery output distinguishes unavailable, incomplete and healthy empty results in both languages
+ok 10 - empty discovery output distinguishes unavailable, incomplete and healthy empty results in both languages
+  ---
+  duration_ms: 22.55037
+  type: 'test'
+  ...
+# Subtest: due shortcut reveals the promised record after an unrelated Saved search
+ok 11 - due shortcut reveals the promised record after an unrelated Saved search
+  ---
+  duration_ms: 129.28574
+  type: 'test'
+  ...
+# Subtest: retry reuses the submitted filters and boards even when unsubmitted form edits differ
+ok 12 - retry reuses the submitted filters and boards even when unsubmitted form edits differ
+  ---
+  duration_ms: 15.422679
+  type: 'test'
+  ...
+# Subtest: fresh but limited results explain incomplete coverage without inventing a source outage
+ok 13 - fresh but limited results explain incomplete coverage without inventing a source outage
+  ---
+  duration_ms: 39.610844
+  type: 'test'
+  ...
+# Subtest: a stale source with an error keeps both the age warning and the source failure explanation
+ok 14 - a stale source with an error keeps both the age warning and the source failure explanation
+  ---
+  duration_ms: 16.582881
+  type: 'test'
+  ...
+1..14
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2028.46825

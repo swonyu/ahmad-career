@@ -5,12 +5,12 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 
-const scripts = ['core.js', 'data.js', 'app.js'].map(name => ({
+const scripts = ['core.js', 'data.js', 'backup.js', 'app.js'].map(name => ({
   name,
   source: readFileSync(new URL(`./web/${name}`, import.meta.url), 'utf8'),
 }));
 
-function createApp(initialStorage = new Map(), options = {}) {
+export function createApp(initialStorage = new Map(), options = {}) {
   const appIntl = options.timeZone ? Object.create(Intl) : Intl;
   if (options.timeZone) {
     // Intl.DateTimeFormat supports both function and constructor invocation.
@@ -66,10 +66,10 @@ function createApp(initialStorage = new Map(), options = {}) {
   }
 
   const context = vm.createContext({
-    console, URL: TestURL, Blob, Intl: appIntl, Date, AbortSignal,
+    console, URL: TestURL, Blob, Intl: appIntl, Date: options.Date || Date, AbortSignal,
     FormData: class { constructor(form) { this.values=form.values; } get(key) { return this.values[key]??null; } },
     confirm: () => false,
-    setTimeout: () => 1, clearTimeout() {},
+    setTimeout: options.setTimeout || (() => 1), clearTimeout: options.clearTimeout || (() => {}),
     scrollTo() {}, navigator: {locks: options.locks}, location: { protocol: 'https:' },
     fetch: options.fetch || (() => { throw new Error('Unexpected network request in state regression checks'); }),
     document: {
@@ -83,6 +83,7 @@ function createApp(initialStorage = new Map(), options = {}) {
       },
     },
     localStorage: {
+      get length(){return storage.size;}, key:index=>[...storage.keys()][index]??null,
       getItem: key => { const value=storage.get(key) ?? null; options.afterRead?.(key); return value; },
       setItem(key, value) {
         if (writesFail || failKeys.has(key)) throw new Error('Simulated storage quota failure');
@@ -91,13 +92,15 @@ function createApp(initialStorage = new Map(), options = {}) {
     },
   });
   context.window = context;
+  context.addEventListener=(type,callback)=>{const key='window:'+type;if(!listeners.has(key))listeners.set(key,[]);listeners.get(key).push(callback)};
   for (const { name, source } of scripts) {
-    vm.runInContext(source, context, { filename: name });
+    vm.runInContext(options.sourceOverrides?.[name] ?? source, context, { filename: name });
     if(name==='data.js'){if(options.bundle)vm.runInContext('globalThis.CAREER_DATA='+JSON.stringify(options.bundle),context);else if(!options.productionBundle)vm.runInContext('CAREER_DATA.jobs=CAREER_DATA.legacyJobs;CAREER_DATA.legacyJobs=[]',context);}
   }
   const evaluate = source => vm.runInContext(source, context);
   return {
     storage, toasts, downloads, failKeys, evaluate,
+    async windowEvent(type,event){for(const fn of listeners.get('window:'+type)||[])await fn(event)},
     async dispatch(type, target) { for (const fn of listeners.get(type) || []) await fn({target, preventDefault(){}}); },
     failAllWrites() { writesFail = true; },
     json(source) { return JSON.parse(evaluate(`JSON.stringify(${source})`)); },

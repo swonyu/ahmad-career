@@ -1,0 +1,27 @@
+{
+  "choices": [
+    {
+      "clientWidth": 235,
+      "label": "System\nMatch your device",
+      "overflows": false,
+      "scrollWidth": 235,
+      "width": 237
+    },
+    {
+      "clientWidth": 235,
+      "label": "Light\nA lighter workspace",
+      "overflows": false,
+      "scrollWidth": 235,
+      "width": 237
+    },
+    {
+      "clientWidth": 233,
+      "label": "Dark\nA darker workspace",
+      "overflows": false,
+      "scrollWidth": 233,
+      "width": 237
+    }
+  ],
+  "rootText": "32px",
+  "width": 237
+}

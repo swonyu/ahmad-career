@@ -1,0 +1,12 @@
+
+> career-finder-phone-service@0.6.0 build
+> node scripts/run-framework.mjs build
+
+{
+  "outputDir": "/Users/saleh/Developer/career-finder-takeover-20261118-585525b87de6/hosted/dist",
+  "preview": false,
+  "assetCount": 21,
+  "workerBytes": 5821859,
+  "workerSHA256": "6bbf92942f3b478cf945e6f22ce413d03923825adc9c5d48a20499ba06b41722",
+  "pdfWorker": "/_career/pdf-4cd9c516c8ecdaa72918.js"
+}

@@ -1,0 +1,73 @@
+{
+  "recordedAt": "2026-11-17T14:49:31.508882+00:00",
+  "candidateSource": "918cfaa455b76f217b21c6c01fe862ea95ebe920",
+  "publicPagesSource": "156b3363b409c660e88ff2fb96fc02bf0f55baca",
+  "publicSupportFiles": {
+    "support.html": {
+      "originalGitBlob": "8d59baa62c0b7354af7dfdb7ed47409fd265cb9b",
+      "originalSHA256": "5b20ccd03ac01ca6cbe9845e1a8efdaf9f0791ddd3b104948b2c2b82b0a11941",
+      "newSHA256": "1f3f6032fe3328d12667bc1aed7703049f04827bc6499dbe21839aedae65914e",
+      "changedLines": [
+        34
+      ],
+      "onlyNavigationParagraphChanged": true
+    },
+    "support-ar.html": {
+      "originalGitBlob": "9d7cd743197705fab35681264ea545bffccc5db2",
+      "originalSHA256": "de5eac4e6b0a7e5d8ef3cc0fd70fdd8b1c8dddedf9f7395894244a59cfc9aa6c",
+      "newSHA256": "909e54250986eec1e552d928fe0596f67afdf5dc079ee665a81dd5f352839c63",
+      "changedLines": [
+        34
+      ],
+      "onlyNavigationParagraphChanged": true
+    }
+  },
+  "gitApplyCheckExit": 0,
+  "gitApplyToIsolatedFetchedCopyExit": 0,
+  "patchSHA256": "b80c4c702fb76240cb4cca6ace811140652b22fec12bb0bb71f161caf8ec9450",
+  "listingSHA256": "a8165aec368483dc720e9e544b2e66729cae1af95e52529c678e0318401293f7",
+  "listingCounts": {
+    "App name (both stores)": {
+      "characters": 13,
+      "UTF8Bytes": 13,
+      "limit": 30
+    },
+    "iPhone subtitle": {
+      "characters": 30,
+      "UTF8Bytes": 30,
+      "limit": 30
+    },
+    "iPhone promotional text": {
+      "characters": 155,
+      "UTF8Bytes": 155,
+      "limit": 170
+    },
+    "iPhone keywords": {
+      "characters": 96,
+      "UTF8Bytes": 96,
+      "limit": 100
+    },
+    "iPhone full description": {
+      "characters": 1715,
+      "UTF8Bytes": 1715,
+      "limit": 4000
+    },
+    "Google Play short description": {
+      "characters": 70,
+      "UTF8Bytes": 70,
+      "limit": 80
+    },
+    "Google Play full description": {
+      "characters": 1826,
+      "UTF8Bytes": 1826,
+      "limit": 4000
+    }
+  },
+  "publicSiteChanged": false,
+  "nativeOrProviderTestsRun": false,
+  "limits": [
+    "Source and copy verification only; no rendered public-page acceptance.",
+    "No store upload, approval, public availability or provider eligibility established.",
+    "Apple guideline4.8 reviewed from official current source; final configured login equivalence or exception remains open."
+  ]
+}

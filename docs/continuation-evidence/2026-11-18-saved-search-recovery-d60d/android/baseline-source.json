@@ -1,0 +1,9 @@
+{
+  "observedAt": "2026-11-18T07:43:38.990842+00:00",
+  "base": "4f72947dbda76ca5176fa42645337c6c739e6a2a",
+  "files": {
+    "android/app/src/main/java/com/saleh/careerfinder/Discovery.kt": "d8f36bf5075d7180af407c6e7ece4e72fcb0d944bb8346d98ad1e56d58628898",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/DiscoveryPersistenceRegressionTest.kt": "d9a48e2faf2056d58c49ec8266a1d5b8ee405c5a0048eb176332ec25561995b2"
+  },
+  "historicalMechanism": "attachPrivateSession reset-before-read existed before this integrated baseline; see exact line blame, distinct from the reviewed new iOS retry work."
+}

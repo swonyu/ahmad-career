@@ -1,0 +1,13 @@
+{
+  "observed_at": "2026-11-17T22:42:52.643877+00:00",
+  "requested_refs": [
+    "refs/heads/recovery/publishing-reconciled-20261117-d57",
+    "refs/heads/continuation/feed-reliability-20261117-4b851",
+    "refs/heads/continuation/native-search-20261117-01a1ea9d107f",
+    "refs/heads/continuation/native-recovery-20261117-01a1ea9cfd25",
+    "refs/heads/lane/account-search-a11y-20261117"
+  ],
+  "exit": 0,
+  "stdout": "9d011492b50185aa74fddbf061a6357b1fb0568f\trefs/heads/continuation/feed-reliability-20261117-4b851\n0beff68a6906968f282dca292dc547daad85684f\trefs/heads/continuation/native-search-20261117-01a1ea9d107f\n2884188263f3dad5753da7b2e507f6ba55e30eb0\trefs/heads/recovery/publishing-reconciled-20261117-d57\n",
+  "stderr": ""
+}

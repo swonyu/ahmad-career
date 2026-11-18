@@ -1,0 +1,108 @@
+{
+  "at": "2026-11-17T16:27:08.521820+00:00",
+  "baseCommit": "2fac36f321005d9a2703e6db92acd7d7c14886c5",
+  "branch": "recovery/arabic-review-expiry-20261117-d57f4",
+  "frozenBaseModified": false,
+  "observedFailure": {
+    "runId": 44114195156,
+    "sourceCommit": "56784d740a25d07d2fbd4616f57e55cf0cb4453f",
+    "artifactId": 14343465949,
+    "image": {
+      "packageName": "com.saleh.careerfinder.acceptance",
+      "remotePath": "files/acceptance-prepared.png",
+      "file": "captures/com.saleh.careerfinder.acceptance/files/acceptance-prepared.png",
+      "bytes": 206059,
+      "width": 1080,
+      "height": 1920,
+      "sha256": "5f09d5433a780eb01771c4fc2adbcf7f667cd4981439e24ecef9a3691b671a33"
+    },
+    "visuallyInspected": true,
+    "finding": "English Expires remains in the Arabic prepared-review summary."
+  },
+  "rootCause": "Concatenated sentence matched the generic one-argument review prefix; untranslated expiry suffix became opaque argument. Explicit full template now owns both pieces of UI copy.",
+  "localChecks": [
+    {
+      "command": [
+        "python3",
+        "scripts/generate-native-localization.py",
+        "--check"
+      ],
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/test-native-localization.py"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "generatedStringsPerLanguage": 1802,
+  "generatedTemplates": 149,
+  "canonicalCatalogOnlyAddsOneKey": true,
+  "sourceSHA256": {
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt": "47d904f87656dbcc5bde0435d00dbd52266bb8df5c11530d0f91b284470f22d7",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeLocalizationAcceptanceTest.kt": "ec8acd3fe3b1442ed55abf32c259cf225d5febc59534e1112f4df01c63d253eb",
+    "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "3aed8440668070d2c573a739a84956e3e2ab278d4109ea29ba527b7214416f3e",
+    "android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt": "9d70b400b22bbd9276730e4c3439bea37993598f4429d0bb8102f46fe177df95",
+    "android/app/src/main/res/raw/native_copy_templates.json": "de82c30d2ff28a7127a9a6c10efff0bd910ee205b9916caf90e67d97319da6ac",
+    "android/app/src/main/res/values-ar/career_copy.xml": "877190707a0be807927b1dfb41149a946e0ae5514fb1e121d6396139a02c5e3c",
+    "android/app/src/main/res/values/career_copy.xml": "2255d3704be23417d2059054cb8d73f363dc6bc408119ae07ba683e42aa98f09",
+    "apple/AhmadCareer/NativeCopyTemplates.json": "de82c30d2ff28a7127a9a6c10efff0bd910ee205b9916caf90e67d97319da6ac",
+    "apple/AhmadCareer/ar.lproj/Localizable.strings": "30f05cfa8b38ae4e8c11ff6b17e30d25147c8aefcdb04b0479b898be9ba6b7e3",
+    "apple/AhmadCareer/en.lproj/Localizable.strings": "5a8e91d66587e0b608956230b0860a80d09137a7368457bb89144d65350a5fa4",
+    "localization/native-copy.json": "c5ca08a042d89b8291e1d17612d2205becb096df85fcc43141445aababe37fe7"
+  },
+  "testRetention": {
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt": {
+      "methodNamesRetained": [
+        "normalPreview_refusesTheIsolatedFixtureCertificate",
+        "nativeReviewAndApproval_preserveExactPDFConsent_andUncertainRetryBoundaries"
+      ],
+      "allOriginalLinesRetainedInOrder": true,
+      "assertionsBefore": 28,
+      "assertionsAfter": 31
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeLocalizationAcceptanceTest.kt": {
+      "methodNamesRetained": [
+        "arabicDisplay_keepsProfileAndPrivateScope_andPersistsWithoutServiceCalls",
+        "unknownErrorsAndUserTemplateText_arePreserved_andDatesStayGregorian",
+        "selectedLanguage_remainsConsistentInsideAnOpenDialog_withoutLosingItsDraft",
+        "systemLanguage_usesTheFirstSupportedFallback_andDoesNotAliasAramaic",
+        "openDialog_keepsHeadingAndNestedActionsInTheSelectedLanguage",
+        "languageButtons_preserveTheUnfinishedProfileAndPrivateScope"
+      ],
+      "allOriginalLinesRetainedInOrder": true,
+      "assertionsBefore": 65,
+      "assertionsAfter": 69
+    }
+  },
+  "iphoneTestAndWorkflowAndHostedSource": "Byte-identical to sealed2fac.",
+  "nativeExecuted": false,
+  "nativeGateRequired": "Full exact-successor Android compile/lint/native job, including existing NativeLocalizationAcceptanceTest and synthetic HTTPS approval journey. Default full five-job gate remains required before any release claim.",
+  "ciInvoked": false,
+  "pushInvoked": false,
+  "ownerWorkspaceModified": false,
+  "protocolOrApprovalLogicChanged": false,
+  "limits": [
+    "Generator checks establish resource consistency; native runtime assertions are added but not executed here.",
+    "Old567 Android pass did not check this exact text and cannot establish successor acceptance.",
+    "Focused2fac iPhone run terminated in failure before Clear. It is a separate candidate/scope and supplies no runtime acceptance for this successor."
+  ],
+  "peerReview": {
+    "file": "peer-review.json",
+    "sha256": "4e71fe61632f4ed2e343b0f83537c6a7201e6dccb704e0e8e24a33f3ab715fa3",
+    "decision": "No blocking source finding; runtime not executed by peer."
+  },
+  "baseFocusedRun": {
+    "id": 44124734131,
+    "commit": "2fac36f321005d9a2703e6db92acd7d7c14886c5",
+    "conclusion": "failure",
+    "executed": 1,
+    "passed": 0,
+    "failed": 1,
+    "otherJobsSkipped": 4,
+    "failure": "Profile email exact-value assertion; Clear route not reached.",
+    "scope": "PARTIAL one-journey regression, not a release gate."
+  }
+}

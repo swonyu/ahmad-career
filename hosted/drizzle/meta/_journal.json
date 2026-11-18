@@ -29,6 +29,13 @@
       "when": 1794885551886,
       "tag": "0003_provider_identity",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1794900670453,
+      "tag": "0004_provider_connection_generation",
+      "breakpoints": true
     }
   ]
 }

@@ -1,0 +1,35 @@
+{
+  "scope": "Synthetic responsive/privacy fixture; actual React PhoneApp/components/CSS; not live acceptance",
+  "sourceRoot": "/workspace/scratch/5bc6158967e8/career-finder/hosted",
+  "sourceHashes": {
+    "app/phone/model.ts": "7ef8775c42a0786c7766ef9b09ee42a62dbd54ce290a395bda190372e999e112",
+    "app/components/provider-auth.ts": "0ba0fd4a2718cf32cc8c9f5f23e7b2ab271918009435a3aac38bdf805db651e9",
+    "app/components/OAuthFeedback.tsx": "afb6ce08f8014c3d61beb2adf721e719020b81826cbb891d15d6b32a63abc36e",
+    "app/components/SiteFrame.tsx": "721d3e9dcc1d7c9103df0e1bfe5dace6f4e1d60c52010a439ee8a47886ef0470",
+    "app/components/GoogleSignInArtwork.tsx": "10e970d35931ff0b03cbf787f7ceca35a73c7f5c6e11b2d1e0768e507e63e39b",
+    "app/components/SessionRecovery.tsx": "55dce2cc55b6f9c3e6e28663a2b7355c875f946d8dd207ae4c4b70e90352d255",
+    "app/components/SignInOptions.tsx": "39cf58865eb2a67aad2fbabab76e632cc4ad0e31f3799854c19a9695bf8205e3",
+    "app/components/appearance.ts": "45e2ba8ef7ceff6af7565018c7afee5d8f1517872ed54f714675fe6d465444d4",
+    "app/components/ThemeSettings.tsx": "21f88be852762d2f89bf8b0af2166fd903091ae26adfce01f90edc8a106d21ed",
+    "app/components/provider-change.ts": "586e572c2a84f11eace92150d3f0d249128cb509cc59847b380e500223327fcc",
+    "app/components/ProviderConnections.tsx": "85afe77bb40296660fc18bb9c421235505a85a06523ea6907382b9a4e25f439d",
+    "app/components/SignOutButton.tsx": "6726dab2b66720ac02572bfacf686d34e4a17f1d9050c2c1226bd2042240085a",
+    "app/phone/vault.ts": "1c45092458fe9f56ee84925091342f3c5f920800409965a7a99ab32b07138c95",
+    "app/phone/safety.ts": "8571c8e0f1625e50fd2d1749ab7cd10aca57f8b24c16107e6179437154eb4c4f",
+    "app/phone/dispatch.ts": "da885e77dcac471bed44b72780fd391054ef46b7701faac4b43a50138b10c64d",
+    "app/phone/batch-stop.ts": "124c30bd93e51c3c66874f530947ec02c3dda9379010588e72d15efc5b24e62c",
+    "app/phone/components.tsx": "d601728d75366679b1e7aa3d41a0b4b5110e19a5163e18e222a14031176258fd",
+    "app/phone/PhoneApp.tsx": "6c3586b01192e912e1f67d6cd7558aab99061e72b5ede9dddaf87db8fb4672c6",
+    "app/globals.css": "60c44c32cd2f1afb078e9faf0cfe86cd5af1722130dc8ad3d3987bf91b401e4b",
+    "app/phone/phone.css": "d83160c275815d36958c026394907a7cc7f686e3ec8dadd0b715b873ec9a441d",
+    "public/theme-init.js": "ea5a5f149f9221c420fd5165028a18bc177a451435d6ed129d1d6c781e459823"
+  },
+  "storageNames": {
+    "vault": "career-finder-synthetic-responsive-vault",
+    "safety": "career-finder-synthetic-responsive-safety",
+    "appearance": "career-finder:test:responsive:appearance:v1"
+  },
+  "realHTTPAdaptersIncluded": false,
+  "productionRoutesAdded": 0,
+  "bundleSHA256": "d54b979d143042e52c788fb6218c70440a49c9219e6d8576523c79d649bd3a3c"
+}

@@ -1,0 +1,113 @@
+# Auxiliary branch only. Never merge this override into the production branch.
+# This artifact job is separate from, and cannot satisfy, the five-job quality gate.
+name: Ordinary iPhone screenshots (artifact capture only)
+
+"on":
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: career-store-capture-${{ github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    name: Four ordinary Release iPhone screens
+    if: github.event_name == 'workflow_dispatch' && startsWith(github.ref, 'refs/heads/career-finder-store-capture-')
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set disposable evidence paths
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/career-store-capture"
+          printf 'CAPTURE_OUTPUT=%s/career-store-capture\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'CAPTURE_DERIVED=%s/career-store-derived\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - name: Verify exact 0a56340 production inputs and precise test-only project delta
+        shell: bash
+        run: |
+          python3 apple/StoreCapture/capture-evidence.py verify-source \
+            --repo "$GITHUB_WORKSPACE" --output "$CAPTURE_OUTPUT"
+      - name: Create one isolated medium iPhone simulator
+        shell: bash
+        run: |
+          python3 apple/StoreCapture/capture-evidence.py create-simulator --output "$CAPTURE_OUTPUT"
+      - name: Build the ordinary unsigned Release app and UI-test runner
+        shell: bash
+        run: |
+          set -o pipefail
+          xcodebuild -version > "$CAPTURE_OUTPUT/xcode-version.txt"
+          xcodebuild -project apple/AhmadCareer.xcodeproj -scheme AhmadCareer \
+            -configuration Release -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,id=$CAPTURE_DEVICE" \
+            -derivedDataPath "$CAPTURE_DERIVED" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            -showBuildSettings -json > "$CAPTURE_OUTPUT/build-settings.json" \
+            2> "$CAPTURE_OUTPUT/build-settings.log"
+          xcodebuild -project apple/AhmadCareer.xcodeproj -scheme CareerFinderAcceptance \
+            -configuration Release -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,id=$CAPTURE_DEVICE" \
+            -derivedDataPath "$CAPTURE_DERIVED" -jobs 2 \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            build-for-testing 2>&1 | tee "$CAPTURE_OUTPUT/build.log"
+      - name: Verify Release product identity before launch
+        shell: bash
+        run: |
+          python3 apple/StoreCapture/capture-evidence.py verify-product \
+            --output "$CAPTURE_OUTPUT" --derived "$CAPTURE_DERIVED" \
+            --settings "$CAPTURE_OUTPUT/build-settings.json"
+      - name: Capture ordinary UI using public discovery and local save only
+        id: capture
+        shell: bash
+        run: |
+          set -o pipefail
+          set +e
+          xcodebuild -project apple/AhmadCareer.xcodeproj -scheme CareerFinderAcceptance \
+            -configuration Release -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,id=$CAPTURE_DEVICE" \
+            -derivedDataPath "$CAPTURE_DERIVED" \
+            -resultBundlePath "$CAPTURE_OUTPUT/CareerFinderStoreCapture.xcresult" \
+            -only-testing:CareerFinderUITests/CareerFinderStoreCaptureTests/testCaptureOrdinaryScreens \
+            -parallel-testing-enabled NO -maximum-concurrent-test-simulator-destinations 1 \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            test-without-building 2>&1 | tee "$CAPTURE_OUTPUT/capture.log"
+          capture_status=${PIPESTATUS[0]}
+          printf '%s\n' "$capture_status" > "$CAPTURE_OUTPUT/test-exit-code.txt"
+          exit "$capture_status"
+      - name: Export original attachments even after a capture failure
+        id: export
+        if: always()
+        shell: bash
+        run: |
+          if [ -d "$RUNNER_TEMP/career-store-capture/CareerFinderStoreCapture.xcresult" ]; then
+            xcrun xcresulttool export attachments \
+              --path "$RUNNER_TEMP/career-store-capture/CareerFinderStoreCapture.xcresult" \
+              --output-path "$RUNNER_TEMP/career-store-capture/attachments"
+          fi
+      - name: Validate four unchanged RGB screenshots and retain their provenance
+        if: steps.capture.outcome == 'success' && steps.export.outcome == 'success'
+        shell: bash
+        run: |
+          python3 apple/StoreCapture/capture-evidence.py collect-screenshots --output "$CAPTURE_OUTPUT"
+      - name: Keep raw result bundle, logs, images and verification evidence
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: ordinary-iphone-capture-${{ github.run_id }}-attempt-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/career-store-capture
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Remove only this run's disposable simulator
+        if: always()
+        shell: bash
+        run: |
+          if [[ "${CAPTURE_DEVICE:-}" =~ ^[A-Fa-f0-9-]{36}$ ]]; then
+            xcrun simctl shutdown "$CAPTURE_DEVICE" || true
+            xcrun simctl delete "$CAPTURE_DEVICE" || true
+          fi

@@ -1,0 +1,12 @@
+{
+  "recordedUTC": "2026-11-17T23:54:37.900953+00:00",
+  "productHead": "da68bbfbdcc6429d72d1faa28b5809a554142c57",
+  "jsonFilesParsed": 56,
+  "jsonlEntriesParsed": 14,
+  "archiveEntriesScanned": 219,
+  "highConfidenceSecretPatternMatches": [],
+  "relativeLinksChecked": 21,
+  "relativeLinkFailures": [],
+  "status": " M docs/continuation-handoffs/2026-11-17-native-recovery.md\n M docs/continuation-handoffs/2026-11-17-native-search.md\n M hosted/tests/hosted-discovery-verification.json\n M hosted/tests/hosted-phone-verification.json\n M hosted/tests/hosted-verification.json\n?? docs/continuation-evidence/2026-11-18-download-consumers-4b851/\n",
+  "scope": "Documentation/evidence integrity only. No product tests repeated; no native action or external application mutation."
+}

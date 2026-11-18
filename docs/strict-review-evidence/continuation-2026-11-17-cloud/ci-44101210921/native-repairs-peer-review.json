@@ -1,0 +1,100 @@
+{
+  "reviewer": "/root/final_native_peer",
+  "reviewedAt": "2026-11-17T14:55:19.923472+00:00",
+  "baseCommit": "880e878f6f528d903c42951f10a8b216094c889c",
+  "runId": 44101210921,
+  "decision": "Accept narrow Android product viewport and iPhone test-interaction repairs for exact-source CI. Corrected runtime not yet verified.",
+  "blockingFindings": [],
+  "resolvedReviewFinding": {
+    "severity": "low",
+    "finding": "NavigationTestActions.kt had an extra blank line at EOF, causing git diff --check to fail.",
+    "resolution": "Author removed the extra line. Independent final diff check exits0."
+  },
+  "patches": [
+    {
+      "file": "android-viewport-repair-880e878.patch",
+      "sha256": "558157d87ea645eab6cb87026a84f7b2e3773ed7f45efb3e63734f3e3f803f55"
+    },
+    {
+      "file": "iphone-paragraph-selection-880e878.patch",
+      "sha256": "24aa5e46a8d225c6ba18d9ae697e7c9ef5cc8a760463434f6a95547cec693406"
+    }
+  ],
+  "sourceHashes": {
+    "android/app/src/androidTest/java/com/saleh/careerfinder/LinkedInPhoneAcceptanceTest.kt": "dc1a833ecfd07143c4de494c5d3f42f6977696480f6ddcfa2b2b2794798e0bb3",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt": "a01a176c765f0b77c07fb563ba4cf322914a544684a62ecf2939db651880896a",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeLocalizationAcceptanceTest.kt": "be7bcfc0c3610ba78ab25b522719b26a51e39a322ebc580d216f7fcc43fca916",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NavigationPhoneAcceptanceTest.kt": "79cad23b244d5240757be27ab9b7c37aa664be93dbf0c54a718a1c0cbd0b6013",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NavigationTestActions.kt": "a11aecda2d3fe037091687dbe295c75c188c496615392352d13c451538225897",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt": "163c22b2650c98f8fcfba858e4dd169d1c4eae1c9521799ef41fe950a970b433",
+    "android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt": "e79be06178abdff67a98f225e6c155227dede4e48d4b550df156a9b55b23a68c",
+    "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "fea99db3e760c2a99e49de5cd9366a4afe9f159acc79c5b0f96bb43350a8a729",
+    "apple/UITests/CareerFinderUITests.swift": "d3622213d4941b5fae4347c8725d651b7a32bc310a56427b37adf5a351c2acae"
+  },
+  "android": {
+    "observedDefect": "At180% Arabic text in the native HTTPS fixture, success notice, simulated-service banner and three rows of navigation occupied the entire visible phone. The final recorded phase is profile-save-scroll:before and no profile content is visible in the failure screen.",
+    "evidence": {
+      "screenSha256": "68bd70b505becac18fe0d2feec17f629ea1026b4c29ee394233df67e7b9046c5",
+      "phaseLogSha256": "647721976df47dd00296a1457588df64c1d2650c554658ba9dd2b12c251cf854",
+      "screenVisuallyInspected": true,
+      "requiredSettingsRead": {
+        "fontScale": 1.8,
+        "locale": "ar",
+        "rtl": true,
+        "dark": true,
+        "size": "1080x1920",
+        "density": 480
+      }
+    },
+    "repair": "Use horizontally scrollable Material tabs on narrow phones at large text. Bound the combined message area to35% of the remaining viewport while retaining scrolling and all notice text. Preserve a weighted content region.",
+    "checks": [
+      "No font-scale reduction, hidden notice text, removed tabs or identity/storage mutation introduced.",
+      "Only the navigation-row scroll state is keyed to display geometry/language; selected destination and application state remain outside that key.",
+      "Tab reveal helper requires the real semantics node, supported horizontal scrolling when applicable, and actual visibility before each original touch click.",
+      "All existing test methods and behavior assertions in changed Android test files remain, after normalizing added revealNavigationTab calls.",
+      "Native HTTPS test now asserts a displayed profile viewport of at least120dp and captures it before the original Save scrolling and click.",
+      "CI class selection, skipped tests, network boundaries, identity checks and timeouts are unchanged."
+    ],
+    "publisherProvenanceQualification": "Author/root identify selective reuse from842472684b194e993355f632902ccc81366c164c. That object is absent from this reviewer isolated clone, so the reviewer independently assessed the resulting patch, not the remote publisher commit contents."
+  },
+  "iphone": {
+    "observedDefect": "The run32 captured URL field remains focused with a middle caret and its original value; no edit menu is visible after the attempted long press. The Select All assertion fails before deletion.",
+    "evidence": {
+      "screenFile": "140FDB2A-3968-42C9-A22A-6BA84E5DB08C.png",
+      "screenSha256": "d459b4926acf0ebb2c4965420241c7ce59792d1f7fa7f8827ce42c5a5ee29827",
+      "screenVisuallyInspected": true
+    },
+    "repair": "Preserve the successful Select All route. If that action is unavailable, only a nonsecure text/search field whose previous value contains no newline may use the documented3tap/1touch paragraph-selection gesture. Delete once, require exact empty value, then type and require exact final value.",
+    "checks": {
+      "testNamesUnchanged": true,
+      "testCount": 17,
+      "assertCallsBefore": 141,
+      "assertCallsAfter": 141,
+      "keyboardReadinessHelperUnchanged": true,
+      "fullKeyboardDismissalHelperUnchanged": true,
+      "exactEmptyPredicateUnchanged": true,
+      "exactFinalValuePredicateUnchanged": true,
+      "unavailableMenuDiagnosticsRetained": true,
+      "failedClearDiagnosticsAdded": true,
+      "menuAssertionChange": "The interaction-specific assertion now accepts a reachable Select All action or an eligible single-line native field; it does not infer successful selection. The mandatory exact-empty assertion verifies the actual outcome before replacement."
+    },
+    "primarySources": [
+      "https://support.apple.com/en-am/guide/iphone/iph1a9cae52c/26/ios/26",
+      "https://developer.apple.com/documentation/xcuiautomation/xcuielement/tap(withnumberoftaps:numberoftouches:)"
+    ],
+    "inferenceQualification": "Apple documents paragraph selection via triple tap and XCTest supports multiple taps. Applying that gesture to a single-line URL is a bounded implementation inference; it is not corrected-device runtime evidence."
+  },
+  "verification": {
+    "gitDiffCheckExitCode": 0,
+    "nativeBuildsPerformedByReviewer": 0,
+    "runtimeAfterRepairs": "pending"
+  },
+  "remainingAcceptance": [
+    "Rerun all required gates on the exact integrated source, retaining actual counts and source/tree provenance.",
+    "Android ordinary104 and normal TLS1 previously passed, but native HTTPS completed0 tests and timed out; the complete Android gate is still not passed.",
+    "Verify restored Android profile viewport and navigation at180% Arabic text using the new screenshot and existing real flows.",
+    "Verify iPhone whole-field clearing via the new route and all17 UI tests; the next run may expose another concrete interaction failure.",
+    "Physical-device, screen-reader, real-provider callback and publishing acceptance remain separate from simulator CI."
+  ],
+  "ownership": "Reviewer read only source/logs/artifacts, visually inspected screenshots and wrote this separate review receipt. No root/source edits, builds, CI mutations, artifact downloads, shared Mac, signing, store or release operations."
+}

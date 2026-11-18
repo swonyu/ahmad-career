@@ -1,0 +1,88 @@
+Test Case '-[CareerFinderUITests.CareerFinderUITests testProfileReadinessAndSimpleConnectionSetup]' started.
+    t =     0.00s Start Test at 2026-11-17 16:24:46.385
+2026-11-17 16:24:50.061 xcodebuild[1450:7717] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-11-17 16:24:50.061 xcodebuild[1450:7717] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.88s Set Up
+    t =     0.90s Open com.ahmadalayed.career
+    t =     0.90s     Launch com.ahmadalayed.career
+    t =    10.38s         Setting up automation session
+    t =    10.94s         Wait for com.ahmadalayed.career to idle
+    t =    13.64s Waiting 10.0s for "acceptance.offline" StaticText to exist
+    t =    14.67s     Checking `Expect predicate `existsNoRetry == 1` for object "acceptance.offline" StaticText`
+    t =    14.67s         Checking existence of `"acceptance.offline" StaticText`
+    t =    14.85s Checking existence of `"home.applicationProfile" Button`
+    t =    14.95s Find the "home.applicationProfile" Button
+    t =    15.09s Find the "home.applicationProfile" Button
+    t =    15.16s Find the Target Application 'com.ahmadalayed.career'
+    t =    15.22s Find the Target Application 'com.ahmadalayed.career'
+    t =    15.35s Checking existence of `NavigationBar (First Match)`
+    t =    15.51s Find the NavigationBar (First Match)
+    t =    16.00s Find the "Career Finder" NavigationBar
+    t =    16.33s Checking existence of `TabBar (First Match)`
+    t =    16.36s Find the TabBar (First Match)
+    t =    16.48s Find the "Tab Bar" TabBar
+    t =    16.63s Find the Target Application 'com.ahmadalayed.career'
+    t =    16.85s Find the Target Application 'com.ahmadalayed.career'
+    t =    16.93s Find the "home.applicationProfile" Button
+    t =    17.36s Tap "home.applicationProfile" Button
+    t =    17.36s     Wait for com.ahmadalayed.career to idle
+    t =    17.43s     Find the "home.applicationProfile" Button
+    t =    17.98s     Check for interrupting elements affecting "home.applicationProfile" Button
+    t =    18.35s     Synthesize event
+    t =    18.96s     Wait for com.ahmadalayed.career to idle
+    t =    19.92s Waiting 5.0s for "application.firstName" TextField to exist
+    t =    20.95s     Checking `Expect predicate `existsNoRetry == 1` for object "application.firstName" TextField`
+    t =    20.95s         Checking existence of `"application.firstName" TextField`
+    t =    21.41s Tap "application.firstName" TextField
+    t =    21.41s     Wait for com.ahmadalayed.career to idle
+    t =    21.42s     Find the "application.firstName" TextField
+    t =    21.69s     Check for interrupting elements affecting "application.firstName" TextField
+    t =    21.87s     Synthesize event
+    t =    22.28s     Wait for com.ahmadalayed.career to idle
+    t =    24.95s Get all elements bound by index for: Elements matching predicate '"delete" IN identifiers'
+    t =    26.15s Checking existence of `"delete" Key`
+    t =    26.78s Find the "delete" Key
+    t =    27.53s Find the "application.firstName" TextField
+    t =    28.37s Find the "application.firstName" TextField
+    t =    29.01s Find the "application.firstName" TextField
+    t =    30.18s Type 'Alex' into "application.firstName" TextField
+    t =    30.18s     Wait for com.ahmadalayed.career to idle
+    t =    30.22s     Find the "application.firstName" TextField
+    t =    30.65s     Check for interrupting elements affecting "application.firstName" TextField
+    t =    33.73s     Synthesize event
+    t =    34.23s     Wait for com.ahmadalayed.career to idle
+    t =    34.62s Find the "application.firstName" TextField
+    t =    36.02s Find the "application.firstName" TextField
+    t =    36.42s Find the "application.firstName" TextField
+    t =    36.68s Waiting 5.0s for "application.email" TextField to exist
+    t =    37.73s     Checking `Expect predicate `existsNoRetry == 1` for object "application.email" TextField`
+    t =    37.73s         Checking existence of `"application.email" TextField`
+    t =    37.91s Tap "application.email" TextField
+    t =    37.91s     Wait for com.ahmadalayed.career to idle
+    t =    37.92s     Find the "application.email" TextField
+    t =    38.18s     Check for interrupting elements affecting "application.email" TextField
+    t =    38.61s     Synthesize event
+    t =    39.19s     Wait for com.ahmadalayed.career to idle
+    t =    40.32s Get all elements bound by index for: Elements matching predicate '"delete" IN identifiers'
+    t =    40.48s Checking existence of `"delete" Key`
+    t =    40.64s Find the "delete" Key
+    t =    40.86s Find the "application.email" TextField
+    t =    41.01s Find the "application.email" TextField
+    t =    41.21s Find the "application.email" TextField
+    t =    41.38s Type 'invalid-email' into "application.email" TextField
+    t =    41.38s     Wait for com.ahmadalayed.career to idle
+    t =    41.38s     Find the "application.email" TextField
+    t =    41.59s     Check for interrupting elements affecting "application.email" TextField
+    t =    41.82s     Synthesize event
+    t =    42.30s     Wait for com.ahmadalayed.career to idle
+    t =    42.33s Find the "application.email" TextField
+    t =    43.64s Find the "application.email" TextField
+    t =    46.99s Find the "application.email" TextField
+    t =    47.96s     Find the "application.email" TextField (retry 1)
+    t =    47.96s     Find the "application.email" TextField (retry 2)
+    t =    47.97s     Collecting debug information to assist test failure triage
+    t =    47.97s         Requesting snapshot of accessibility hierarchy for app with pid 4380
+    t =    48.14s     Requesting snapshot of accessibility hierarchy for app with pid 4380
+/Users/runner/work/ahmad-career/ahmad-career/apple/UITests/CareerFinderUITests.swift:173: error: -[CareerFinderUITests.CareerFinderUITests testProfileReadinessAndSimpleConnectionSetup] : XCTAssertEqual failed: ("XCTWaiterResult(rawValue: 2)") is not equal to ("XCTWaiterResult(rawValue: 1)") - Typing must update this field to the exact requested value
+    t =    56.27s Tear Down
+Test Case '-[CareerFinderUITests.CareerFinderUITests testProfileReadinessAndSimpleConnectionSetup]' failed (67.214 seconds).

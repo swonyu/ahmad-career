@@ -1,0 +1,100 @@
+{
+  "runId": 44062756461,
+  "artifactId": 14320023688,
+  "artifactBytes": 290340760,
+  "artifactSha256": "f47c75f9b68b145839f82b9252a0fe2f8fbd5e13f4418e97d0e02a1098a2ad51",
+  "logSha256": "32a7506c3339a509966aa8e25c4ff518295fc195af0638e38cb11e42deb07d52",
+  "tests": [
+    {
+      "test": "testAccessibilityTextKeepsCoreControlsReachable",
+      "result": "passed",
+      "seconds": 89.661
+    },
+    {
+      "test": "testApplicationDraftSurvivesCancelAndRelaunch",
+      "result": "passed",
+      "seconds": 50.787
+    },
+    {
+      "test": "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+      "result": "failed",
+      "seconds": 90.313
+    },
+    {
+      "test": "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+      "result": "passed",
+      "seconds": 104.274
+    },
+    {
+      "test": "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "result": "passed",
+      "seconds": 42.339
+    },
+    {
+      "test": "testDiscoverySaveFlowsIntoSavedAndApply",
+      "result": "passed",
+      "seconds": 58.579
+    },
+    {
+      "test": "testFreshStartAndFiveTabs",
+      "result": "passed",
+      "seconds": 38.453
+    },
+    {
+      "test": "testLinkedInProfileDraftAndExternalSearchChoice",
+      "result": "passed",
+      "seconds": 71.864
+    },
+    {
+      "test": "testOpportunityDiscardRequiresExplicitChoice",
+      "result": "passed",
+      "seconds": 28.558
+    },
+    {
+      "test": "testOpportunityDraftKeepSaveAndRestore",
+      "result": "passed",
+      "seconds": 57.766
+    },
+    {
+      "test": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+      "result": "passed",
+      "seconds": 143.392
+    },
+    {
+      "test": "testProfileReadinessAndSimpleConnectionSetup",
+      "result": "passed",
+      "seconds": 60.06
+    },
+    {
+      "test": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+      "result": "passed",
+      "seconds": 39.062
+    },
+    {
+      "test": "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+      "result": "failed",
+      "seconds": 33.738
+    },
+    {
+      "test": "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+      "result": "passed",
+      "seconds": 99.744
+    },
+    {
+      "test": "testSearchEmptyAndFailurePreservesPreviousResults",
+      "result": "failed",
+      "seconds": 91.281
+    },
+    {
+      "test": "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+      "result": "passed",
+      "seconds": 55.376
+    }
+  ],
+  "errors": [
+    "2026-11-17T10:24:19.1507520Z /Users/runner/work/ahmad-career/ahmad-career/apple/UITests/CareerFinderUITests.swift:565: error: -[CareerFinderUITests.CareerFinderUITests testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText] : XCTAssertEqual failed: (\"Optional(\"الاسم الأول أو الاسم الوحيد\")\") is not equal to (\"Optional(\"Saved\")\") - User text equal to an English label stays verbatim",
+    "2026-11-17T10:35:37.3518820Z /Users/runner/work/ahmad-career/ahmad-career/apple/UITests/CareerFinderUITests.swift:96: error: -[CareerFinderUITests.CareerFinderUITests testSavedLinkRemovalAtLargestTextKeepsCancelReachable] : Failed to synthesize event: Neither element nor any descendant has keyboard focus. Event dispatch snapshot: TextField, {{40.0, 351.3}, {340.0, 22.0}}, identifier: 'opportunity.title', placeholderValue: 'Role title', value: Role title",
+    "2026-11-17T10:38:48.2520760Z /Users/runner/work/ahmad-career/ahmad-career/apple/UITests/CareerFinderUITests.swift:140: error: -[CareerFinderUITests.CareerFinderUITests testSearchEmptyAndFailurePreservesPreviousResults] : XCTAssertEqual failed: (\"XCTWaiterResult(rawValue: 2)\") is not equal to (\"XCTWaiterResult(rawValue: 1)\") - A real keyboard key must be visible before submitting"
+  ],
+  "nativeRerunForFollowup": "not_run"
+}

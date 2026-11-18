@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "owner": "root/recovery_review",
+  "candidate": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+  "tree": "65991d4de50966da1de85c6dc8cc7355fbee0af3",
+  "appleTree": "c8080a217d0348ea738677619be5a3586d6887a2",
+  "worktree": "/Users/saleh/Developer/career-finder-native-focused-20261118-ebb3eed5",
+  "derivedDataCache": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/focused-native/derived",
+  "selectedUIJourneysNotExecuted": [
+    "testAccessibilityTextKeepsCoreControlsReachable",
+    "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+    "testSearchEmptyAndFailurePreservesPreviousResults",
+    "testLinkedInProfileDraftAndExternalSearchChoice",
+    "testProfileReadinessAndSimpleConnectionSetup",
+    "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+    "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable"
+  ],
+  "nativeMethodsRun": 0,
+  "runnerPID": 18097,
+  "steps": [
+    {
+      "name": "show-build-settings",
+      "command": [
+        "xcodebuild",
+        "-project",
+        "apple/AhmadCareer.xcodeproj",
+        "-scheme",
+        "CareerFinderAcceptance",
+        "-configuration",
+        "Debug",
+        "-sdk",
+        "iphonesimulator",
+        "-destination",
+        "generic/platform=iOS Simulator",
+        "-derivedDataPath",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/focused-native/derived",
+        "ARCHS=arm64",
+        "ONLY_ACTIVE_ARCH=YES",
+        "CODE_SIGNING_ALLOWED=NO",
+        "CODE_SIGNING_REQUIRED=NO",
+        "-showBuildSettings",
+        "-json",
+        "build-for-testing"
+      ],
+      "startedUTC": "2026-11-18T13:22:29.274531+00:00",
+      "limitSeconds": 60,
+      "stdout": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-compile-ff21fd470a53-20261118T132222Z-e6f31d/build-settings.json",
+      "pid": 18126,
+      "pgid": 18126,
+      "exit": 0,
+      "timedOut": false,
+      "finishedUTC": "2026-11-18T13:22:29.975422+00:00",
+      "logSHA256": "deed63001db451b9dcdb005fc92f633fae38587f43b9794670f8c4a048d6ffce"
+    },
+    {
+      "name": "compile-only-build-for-testing",
+      "command": [
+        "xcodebuild",
+        "-project",
+        "apple/AhmadCareer.xcodeproj",
+        "-scheme",
+        "CareerFinderAcceptance",
+        "-configuration",
+        "Debug",
+        "-sdk",
+        "iphonesimulator",
+        "-destination",
+        "generic/platform=iOS Simulator",
+        "-derivedDataPath",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/focused-native/derived",
+        "ARCHS=arm64",
+        "ONLY_ACTIVE_ARCH=YES",
+        "CODE_SIGNING_ALLOWED=NO",
+        "CODE_SIGNING_REQUIRED=NO",
+        "-resultBundlePath",
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-compile-ff21fd470a53-20261118T132222Z-e6f31d/CompileOnly.xcresult",
+        "build-for-testing"
+      ],
+      "startedUTC": "2026-11-18T13:22:29.976312+00:00",
+      "limitSeconds": 900,
+      "stdout": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-compile-ff21fd470a53-20261118T132222Z-e6f31d/build.log",
+      "pid": 18150,
+      "pgid": 18150,
+      "exit": 0,
+      "timedOut": false,
+      "finishedUTC": "2026-11-18T13:22:38.066986+00:00",
+      "logSHA256": "ec2008bf74d7e44c5aca4dd94aee0545597318cd6953d2898dc9e6e8f03e4fb6"
+    }
+  ],
+  "fullReleaseAcceptance": false,
+  "nativeResultReviewRequired": true,
+  "state": "compile_passed",
+  "startedUTC": "2026-11-18T13:22:28.996389+00:00",
+  "scope": "compile_only_generic_arm64_ios_simulator",
+  "buildLimitSeconds": 900,
+  "updatedUTC": "2026-11-18T13:22:38.267401+00:00",
+  "cacheOwnership": {
+    "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/focused-native/receipt.json",
+    "sha256": "3b921738effc7f7c9133547f30caa13a735c6356cbb0387935ae3ae43c920584",
+    "cacheOnly": true
+  },
+  "freeBytesBefore": 24560582656,
+  "verifiedBuildSettings": [
+    {
+      "target": "AhmadCareer",
+      "PLATFORM_NAME": "iphonesimulator",
+      "ARCHS": "arm64",
+      "CONFIGURATION": "Debug",
+      "SDKROOT": "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk",
+      "SDK_VERSION": "27.2",
+      "SUPPORTED_PLATFORMS": "iphoneos iphonesimulator",
+      "PRODUCT_BUNDLE_IDENTIFIER": "com.ahmadalayed.career",
+      "IPHONEOS_DEPLOYMENT_TARGET": "16.0",
+      "SWIFT_VERSION": "5.0"
+    },
+    {
+      "target": "CareerFinderUITests",
+      "PLATFORM_NAME": "iphonesimulator",
+      "ARCHS": "arm64",
+      "CONFIGURATION": "Debug",
+      "SDKROOT": "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.2.sdk",
+      "SDK_VERSION": "27.2",
+      "SUPPORTED_PLATFORMS": "iphoneos iphonesimulator",
+      "PRODUCT_BUNDLE_IDENTIFIER": "com.ahmadalayed.career.UITests",
+      "IPHONEOS_DEPLOYMENT_TARGET": "16.0",
+      "SWIFT_VERSION": "5.0"
+    }
+  ],
+  "compilerErrors": [],
+  "testCaseEvents": 0,
+  "buildSucceeded": true,
+  "resultBundleExists": true,
+  "xctestrunProducts": [
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/focused-native/derived/Build/Products/CareerFinderAcceptance_iphonesimulator27.2-arm64.xctestrun",
+      "bytes": 4949,
+      "sha256": "142ede2fbf4f1ab530cb14aded366e3cb97883bc9fc584e01ba7a8d2556237a3"
+    }
+  ],
+  "sourceAfter": {
+    "head": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+    "tree": "65991d4de50966da1de85c6dc8cc7355fbee0af3",
+    "appleTree": "c8080a217d0348ea738677619be5a3586d6887a2",
+    "status": ""
+  },
+  "sourceUnchanged": true,
+  "ownedDevicesAfter": [
+    {
+      "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
+      "udid": "7CF7AF74-3951-4A20-A89E-6EFE745ADED2",
+      "state": "Shutdown"
+    },
+    {
+      "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-5",
+      "udid": "DD40DE53-211D-41C7-8B9E-58BB5D347528",
+      "state": "Shutdown"
+    },
+    {
+      "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-5",
+      "udid": "51B42BE5-3356-4937-8993-5C4E22E80D8D",
+      "state": "Shutdown"
+    }
+  ],
+  "allOwnedDevicesRemainShutdown": true,
+  "retainedFilesSHA256": "723a3f1b148bf41231d391d7ff70c78dd0f1b19704fe97aa52070c504014fa80",
+  "finishedUTC": "2026-11-18T13:22:38.267393+00:00"
+}

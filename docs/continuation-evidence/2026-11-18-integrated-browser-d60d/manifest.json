@@ -1,0 +1,42 @@
+{
+  "integrated-ssr-browser-server.mjs": {
+    "bytes": 2421,
+    "sha256": "2e68f511498b2f670f0938c885d8a3dba910d707ae5e8b2720dca43c23b7bc85"
+  },
+  "integrated_browser_ar320_actual-2.jpg": {
+    "bytes": 27985,
+    "sha256": "9014d27ea59708487cc3e4611eee498cba231f1542e031bccdc0eeb34a36960e"
+  },
+  "browser-observations.json": {
+    "bytes": 81000,
+    "sha256": "c7b5e62231fbeb7a74c319a69d30d05efa3a801694d7f7bcf4b904cbfd45c68b"
+  },
+  "integrated_browser_ar_record_final-2.jpg": {
+    "bytes": 27985,
+    "sha256": "9014d27ea59708487cc3e4611eee498cba231f1542e031bccdc0eeb34a36960e"
+  },
+  "pdf-browser-results.json": {
+    "bytes": 10745,
+    "sha256": "cd933bb1c448eca3dd19be028e7db87caf55b1c15b3b99657bbd9451b5a9ed34"
+  },
+  "README.md": {
+    "bytes": 3649,
+    "sha256": "310b1bc716d73390786a61da0369081d4f5e41e649380bf268bf98d0eb8c95fa"
+  },
+  "download-verification.json": {
+    "bytes": 268,
+    "sha256": "e256b93a3684b63eda223996443ebfdd2a741e8c3fdf3c28300498aebe58f785"
+  },
+  "integrated-ssr-browser-server.json": {
+    "bytes": 597,
+    "sha256": "f159a2e9af6d9bb5314c37d449c673c510a81435646a9587fb7230d42cfa3909"
+  },
+  "pdf-source-manifest.json": {
+    "bytes": 4882,
+    "sha256": "0aa0dc367a20bc83781ae9c34043dd41a770b5d261261fee978530a704ee0742"
+  },
+  "actual-downloaded-unfinished-record.json": {
+    "bytes": 1577,
+    "sha256": "ebe5208f61d016570fabe41dbf43b003db83229b9a2090630a9399d5a082bc6c"
+  }
+}

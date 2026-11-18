@@ -1,0 +1,7 @@
+{
+  "utc": "2026-11-17T23:05:52.454467+00:00",
+  "pid": 84965,
+  "verifiedCommand": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/grok-browser-fixture/server.mjs --port 4179",
+  "signal": "SIGTERM",
+  "scope": "root-owned synthetic account fixture only"
+}

@@ -1,0 +1,9 @@
+Initial read-only preflight attempted repository-root package.json.
+Observed HEAD: ca3d3411d8b5b36fa7093dff782f4a7b931261c7
+Observed branch: continuation/feed-reliability-20261117-4b851
+Observed dirty paths:
+ M hosted/app/components/ProviderConnections.tsx
+ M hosted/app/components/SignInOptions.tsx
+ M hosted/tests/account-recovery-lifecycle.mjs
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/package.json'
+Disposition: package.json is under hosted/. No gate executed during this failed discovery. No source change was made.

@@ -1,0 +1,70 @@
+Grok
+Thought for 30s
+
+Bounded Heavy Accessibility Critique — Stage-Filter Candidate + Modal Focus (3fb5d97)
+Heavy session. Access date: 18 November 2026. Exact commit: 3fb5d97ec6f3568f2c8b27f148281926272a92fe. Source verified at 
+github.com/swonyu/ahmad-career/blob/3fb5d97ec6f3568f2c8b27f148281926272a92fe/hosted/app/phone/components.tsx (Git blob SHA 37b5733da9b58c2715eb2eac22521b27b2879683). Read-only. No implementation, no dependency/native edits. Original cutoff unchanged. Good Spender excluded.
+
+Actual Evidence Incorporated
+STAGE-EMPTY-001 actual Chrome 390×844 synthetic guest journey passes: keyboard select Interview → record-only Edit → Delete private record → Clear remains visible with 0 cards and 0 stage controls → Clear restores default Explore.
+Two new actual findings: (a) confirmation and success notice imply the bookmark stays when none exists (root + Build2 fixing wording conditionally); (b) document.activeElement after final deletion is BODY because the invoking row/button vanished.
+Root assigned bounded Modal cleanup: preserve live invoker return, otherwise logical phone-main heading fallback when focus is unset/body, and never steal focus from another already-focused live control.
+No native release claim. Strengthened button-label regression still has one fail on the original candidate; corrected chain passes 301 main + 6 PDF.
+Source-Confirmed State of Modal
+
+components.tsx Modal uses native <dialog>:
+
+TSX
+useLayoutEffect(() => { const element = dialog.current; element?.showModal(); return () => element?.close(); }, []);
+
+No custom invoker tracking or fallback is present in this commit. Native dialog focus restoration is browser-managed and does not guarantee a logical landing point when the invoker has been removed from the DOM.
+
+W3C Primary Guidance
+
+WAI-ARIA Authoring Practices Guide, Dialog (Modal) Pattern:
+“When a dialog closes, focus returns to the element that invoked the dialog unless either:
+
+The invoking element no longer exists. Then, focus is set on another element that provides logical work flow.”
+
+The assigned remedy (live invoker if still in document, else logical phone-main heading, never steal from an already-focused live control) matches this guidance.
+
+Critique of the Two Remedies
+
+(a) Conditional bookmark wording
+Source-confirmed defect: notices that assert a bookmark remains after a record-only deletion are false. Conditional wording that omits the bookmark claim when no bookmark exists is the correct minimal fix. No new issue is introduced provided the condition is evaluated against the post-deletion state and the Arabic strings remain accurate. Privacy boundary is preserved (no record content leaked).
+
+(b) Modal focus cleanup
+Source-confirmed defect: focus falls to BODY after the invoker is removed. The assigned rule set is correct and minimal.
+Potential residual risk (hypothesis only): if the phone-main heading is not focusable or is not announced as a logical workflow landmark, the fallback may still leave the user without a clear next action. Actual keyboard acceptance is required to confirm.
+
+Smallest High-Value Actual Keyboard Acceptance Set
+
+These five cases cover the replaced-dialog transitions without expanding scope:
+
+Removed invoker (record-only delete)
+Keyboard: select stage → open Edit → Delete private record.
+Expect: after dialog closes, focus is on the phone-main heading (or another logical workflow element), not BODY. Clear is reachable by Tab. Arabic and English.
+
+Retained invoker (cancel or save on a still-present card)
+Keyboard: open Edit on a card that remains → Cancel or Save.
+Expect: focus returns to the exact button that opened the dialog.
+
+Current outside focus (never steal)
+While a dialog is open, programmatically or via another path move focus to a live control outside the dialog (if the implementation allows it), then close the dialog.
+Expect: focus stays on that outside control; the cleanup does not pull it back.
+
+Unsaved / cancelled edits
+Open Edit, change a field, Cancel (with or without discard confirmation).
+Expect: focus returns to the invoker if it still exists; no data is committed; Arabic labels remain correct.
+
+Arabic + RTL on the stage select and empty recovery
+Set language to Arabic. Keyboard-navigate to the stage select, choose a stage that empties the list, then Clear.
+Expect: select is operable, empty message and Clear button are announced in Arabic, focus after Clear lands on a logical element (Explore or heading), layout does not overflow on 390×844.
+
+Prioritized Verdict
+Accept the STAGE-EMPTY-001 flow as actually demonstrated.
+The conditional bookmark wording and the Modal focus rule are both evidence-supported and minimal. Implement them; do not expand.
+Run the five-case keyboard acceptance set above before any further stage-filter or dialog changes.
+No new defects are supported beyond the two already identified. Physical AT and signed-store gates remain separate and pending.
+
+Critique finished. Available for the next evidence-based question. Heavy session remains Heavy.

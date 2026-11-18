@@ -1,0 +1,95 @@
+Grok
+Thought for 1m 5s
+
+Career Finder — Source-Corrected Addendum (Third Pass) — Heavy Task
+Corrections to provenance, parser details, and deepened no-cost discovery strategy. Does not duplicate native fixes, builds, or implementation. Research is not product readiness.
+
+Source-Provenance Correction (actual blobs compared)
+
+The retained validated Lever prefixes and improved body cleanup were introduced in root commit d534a6c23bbe81615b8f7a40d3fb4204bb991781 (“Release rejected response bodies and retain partial feed pages”, 17 Nov 2026). They are not present in 63eecda5c5c57805aeae1f5ba8e22af65e38ceee. Do not attribute the retention behavior to 63e. Supplied runtime evidence is not blended into these source-confirmed claims.
+
+Tiny excerpts (exact permalinks):
+
+At d534a6c (
+github.com/swonyu/ahmad-career/blob/d534a6c23bbe81615b8f7a40d3fb4204bb991781/hosted/server/discovery.mjs):
+
+JavaScript
+async function readJSON(response,signal){
+  // A rejected response still owns a transport, including before a reader exists.
+  // Cleanup must not delay or replace the original validation/timeout error.
+  const rejectResponse=error=>{try{void response.body?.cancel().catch(()=>{})}catch{}throw error};
+  // ... content-type / length checks call rejectResponse ...
+}
+// In retrieve Lever loop:
+for(let skip=0;skip<DISCOVERY_LIMITS.maxJobsPerSource;skip+=100){
+  let rows;
+  try{rows=await getJSON(...)}
+  catch(error){
+    // A later transient failure must not erase already validated pages.
+    if(!items.length||!(error instanceof DiscoveryError)||!['source_timeout','source_unavailable','source_rate_limited','discovery_rate_limited'].includes(error.code))throw error;
+    interruption=error;retryAt=...;break;
+  }
+  // ...
+}
+
+At 63eecda (
+github.com/swonyu/ahmad-career/blob/63eecda5c5c57805aeae1f5ba8e22af65e38ceee/hosted/server/discovery.mjs):
+
+JavaScript
+async function readJSON(response,signal){
+  if(!/^application\/json\b/i.test(...))throw sourceError(...);  // direct throw, no rejectResponse wrapper
+  // ... simpler abort listener + finally releaseLock
+}
+// Lever loop:
+for(let skip=0;skip<DISCOVERY_LIMITS.maxJobsPerSource;skip+=100){
+  const rows=await getJSON(...);  // no try/catch retaining prefix
+  if(!Array.isArray(rows)||rows.length>100)throw sourceError(...);
+  accept(rows);...
+}
+
+63e throws on mid-loop error (no prefix retention). d534 retains validated items on later transient failures and improves non-blocking body cancel. Integration of d534 into 63e has not been claimed.
+
+Parser correction (both commits, identical in fetched range):
+parseDiscoverySource does not reject all extra params. It accepts a bounded tracking-parameter allowlist:
+
+JavaScript
+if(url.pathname!=='/embed/job_board'&&[...url.searchParams.keys()].some(k=>!/^utm_[a-z0-9_]+$/i.test(k)&&!['gh_jid','lever-source','lever-origin','source'].includes(k)))invalid('Remove extra parameters...');
+
+url.port rejects only non-default (custom) ports; the URL constructor normalizes default 443 to empty, so HTTPS default is permitted. Distinguish:
+
+Source validation (parser above)
+User-facing canonical selection (board ID / URL matching)
+Actual public employer-page reachability (untested; boardUrl is constructed but not probed)
+Practical No-Cost Reliable-Discovery Strategy (constrained by real limits)
+
+DISCOVERY_LIMITS (identical in both commits): sourceMilliseconds=10000, requestMilliseconds=5000, pageSize=50, maxJobsPerSource=500, maxResponseBytes=4 MiB, maxCacheBytes=512 KiB, plus rate/cooldown budgets. Do not recommend globally raising timeouts.
+
+Compared options (budget consumption + choosing evidence):
+
+Option	Budget consumed	What evidence chooses it	Notes
+Bounded existing pagination + partial retention (d534)	Up to ~5 request slots inside 10 s source budget; retains prefix on later-page timeout	Fixture: later page exceeds 5 s → returns partial with prior validated jobs + error/retryAt; body cancel + releaseLock observed	Already in d534; not in 63e
+Smaller page sizes (Lever limit=25/50)	Same request count if loop continues; higher chance each request fits in 5 s	Fixture shows reduced timeout rate without exceeding 500/source	Still within existing caps
+One controlled GET retry	Only on first-request timeout within remaining source budget; risks ~2× one request’s time	Fixture: single retry recovers known flaky first header without exceeding 10 s total	Not present; do not add without evidence
+Cached/stale (10 min fresh / 24 h stale)	Zero additional upstream if within window	Original checkedAt preserved; stale ≠ filtered-zero	Already implemented
+Explicit employer-board fallback (boardUrl in sourceRecord)	Zero API budget	Tested handoff: boardUrl present, clickable, does not invent completeness	Do not claim the page always works without testing
+
+Smallest meaningful acceptance tests (fixture-driven, no live probing): partial after validated prefix (d534 path), complete-empty vs partial-empty distinct copy, stale checkedAt retained, boardUrl present and opens, resource cleanup (cancel + releaseLock) observed, rate/cooldown respected.
+
+Mature Workflow Patterns (primary product links)
+Indeed My Jobs (
+indeed.com/help/job-seekers/articles/205332490-what-is-my-jobs): four tabs (Saved, Applied, Interviews, Archived). External-site applications are not automatically saved as complete history: “When you fill out an application on another website, it doesn't save on Indeed. You'll have to manually move the jobs from Saved to Applied…”. History lists six months at a time. Matches Career Finder’s existing manual / applied / verified / uncertain distinction. No inferred employer verification or automated sending.
+Huntr Activities (
+help.huntr.co/en/articles/10042702-activities) and Teal tracking (
+help.tealhq.com/en/articles/14435727-how-to-track-your-job-applications): pages did not yield extractable content in this pass. Do not invent details. Useful free pattern across official docs is user-driven stages + notes/follow-ups, not auto-status for external apply or subscriptions.
+
+Avoid feature bloat, inferred verification, or automated sending.
+
+Fresh Coordination
+
+Two terminal lanes REGISTERED in PR1 (publisher 11cb3d4-based, disjoint): native search 01a1ea9d107f, native recovery 01a1ea9cfd25. Newer run 44139018005 at 63e is TERMINAL (3 success / 2 failed): iPhone 15/17 (keyboard visibility and Settings reachability at large text), Hosted audit failed. Connection setup passed. Owner diagnosis is active — do not duplicate native fixes/builds. Earlier 21f17/17 remains exact-source historical evidence only.
+
+Remaining Uninspected Source Ranges
+
+Full Lever error-path body beyond the quoted excerpts in both blobs, vault.ts internals, complete PhoneApp.tsx / model.ts ranges, Android discovery/viewmodel/workspace counterparts, exact picomatch transitive lockfile path, physical AT results, current store console. Research completion is not product readiness. Full integrated acceptance and store status remain pending.
+
+Addendum finished (17 November 2026).

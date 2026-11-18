@@ -1,0 +1,60 @@
+{
+  "reviewer": "/root/lumina_recovery",
+  "reviewed_at_utc": "2026-11-17T16:16:05.964684+00:00",
+  "scope": "INDEPENDENT_READ_ONLY_SOURCE_MERGE_REVIEW_NOT_RUNTIME_ACCEPTANCE",
+  "parents": [
+    "bf8bfb0015d6f64c17f47e8d48e15d152e8491d8",
+    "d97bc209ca84ecb830e6c6bad25808164706409f"
+  ],
+  "decision": "NO_BLOCKING_SOURCE_FINDING_IN_REVIEWED_DELTA",
+  "unmerged_entries": 0,
+  "reviewed_staged_and_worktree_hashes": {
+    "apple/UITests/CareerFinderUITests.swift": "0ce8ca434f415758146b61631f0b4e6b68a3154f1f1ceafef7e3634667c57524",
+    "apple/AhmadCareer/NativeApplicationsViews.swift": "5315c020aa0f75d0239089cc1d1f0789ca1b90a207203b6e9dd2c61563cca47c",
+    "hosted/app/phone/PhoneApp.tsx": "98d8a789a416d6eaec8bf803a6f5ba5f8e9c1689150c322ad1d56a612aa784dc",
+    "hosted/app/phone/components.tsx": "c7614e923223d427e3a218f9c8d1038e4d90f244de9da8707bb92bf8dce90c52",
+    "hosted/tests/phone-search-workflows.mjs": "e97e177c7abfb29855e1fa611f0d16b9627c188be71512a97bfa695e6e0d3ca9",
+    ".github/workflows/phone-quality.yml": "9d1e606cf4a2e2fce19be48f270129e88793e15c6229890c3374a76b1a5bae74"
+  },
+  "verified_native_methods_retained_against_both_parents": 17,
+  "findings": [],
+  "verified_observations": [
+    "The normal production advanced service-address row gains a real conditional Clear button with minimum44 by44 point target, localized English/Arabic accessible label, stable identifier, and busy-state disablement.",
+    "The Clear action changes only local address and focus. Existing address onChange invalidates the unsent connection code and prior issue; network, token, connection and account protocols are unchanged by this delta.",
+    "The service-address test uses real Done, Clear, refocus and typing interactions. It retains the exact-empty predicate before replacement, a fresh real-keyboard-key check, final exact-value equality, destination-change code-clearing and default reset assertions.",
+    "The failed triple-tap fallback is removed. Other ordinary fields still require actual reachable Select All followed by Delete and whole-empty validation. No direct model injection, skip or value weakening was introduced.",
+    "The stronger publishing parent initial keyboard guard, completed keyboard dismissal and exact single-event opportunity-fixture checks remain. continueAfterFailure remains false.",
+    "The synchronous filterDraftRef setter survives merge. Requests clone submitted source/filter values; pending result persistence uses the current edited form draft while lastSearch retains the exact submitted request. Retry uses submitted filters rather than unsubmitted form edits.",
+    "Partial zero results, unavailable zero results and healthy empty results retain distinct truthful copy and retry behavior. Fresh limited coverage receives the neutral incomplete summary rather than a fabricated outage.",
+    "Overall and per-source limit flags remain independently represented. Source age/error details are preserved. Live status remains silent during work and before a page exists.",
+    "The due-followup shortcut clears stale saved search text before selecting followups; saved records and useful location data remain preserved.",
+    "Board/source labels use direction isolation or automatic direction with ordinary escaped React text. No HTML injection or new provider/authorization path was introduced.",
+    "All owner search/localization regression additions remain. The two expected-copy adaptations retain distinct partial/unavailable assertions rather than reverting to weaker generic empty-state copy.",
+    "Canonical Clear-service-address localization is present in generated Apple English/Arabic tables and synchronized Android resources; Kotlin changes are generated map chunk boundaries plus the new key. Android behavioral source remains unchanged from publishing parent."
+  ],
+  "owner_reported_validation_not_repeated": [
+    "79 focused hosted tests passed",
+    "8 native-localization generator tests passed",
+    "lint and typecheck passed",
+    "build passed after identical duplicate Arabic JSON key removal"
+  ],
+  "runtime_limitations": [
+    "The combined source still requires exact-source native CI, including the actual service URL Clear journey, keyboard dismissal, unsent-code clearing, reset and all17 journeys.",
+    "This source review does not establish new control VoiceOver, Arabic/RTL, physical-device, signed install or store acceptance."
+  ],
+  "reviewer_actions": [
+    "Read git status, both parent diffs, current indexed source, relevant helper/product handlers and owner evidence",
+    "Verified current indexed and working bytes against all supplied source pins",
+    "Verified zero unmerged entries and same17 native method names against both parents",
+    "Wrote this separate review receipt outside the source checkout"
+  ],
+  "reviewer_actions_not_performed": [
+    "Source or branch edits",
+    "Test or build invocation",
+    "Native/Mac execution",
+    "CI dispatch",
+    "Push or external message",
+    "Provider/store/deployment action"
+  ],
+  "arabic_messages_byte_identical_to_publishing_parent": true
+}

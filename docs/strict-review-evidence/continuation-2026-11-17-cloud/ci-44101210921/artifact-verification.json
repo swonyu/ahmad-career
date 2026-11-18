@@ -1,0 +1,54 @@
+{
+  "run_id": 44101210921,
+  "verified_at": "2026-11-17T14:55:49.483586+00:00",
+  "artifacts": [
+    {
+      "artifact_id": 14339410537,
+      "name": "android-lint-44101210921",
+      "bytes": 2658817,
+      "sha256": "cc0433ed5e50ef61a4285daf130dfdcb4cf4437c171e0dc08bbaa457a1cc9517",
+      "digest_matches_github": true,
+      "size_matches_github": true,
+      "expired": false,
+      "expires_at": "2026-11-24T14:43:35Z",
+      "download_completed": true,
+      "archive_safety_and_extraction": "Previously verified relative paths, absence of path traversal and symlinks before extraction; extracted successfully."
+    },
+    {
+      "artifact_id": 14338112876,
+      "name": "iphone-ui-acceptance-44101210921",
+      "bytes": 204344602,
+      "sha256": "f429e1eaad7c4eafbf81d3eaf5ec7bbc3de6cb7038cbc149832c6c6f9972759b",
+      "digest_matches_github": true,
+      "size_matches_github": true,
+      "expired": false,
+      "expires_at": "2026-11-24T14:46:21Z",
+      "download_completed": true,
+      "archive_safety_and_extraction": "Previously verified relative paths, absence of path traversal and symlinks before extraction; extracted successfully."
+    },
+    {
+      "artifact_id": 14335414165,
+      "name": "hosted-storage-checks-44101210921",
+      "bytes": 8819,
+      "sha256": "ba12eee5632990a3d8261a4bc4f0d9e1b88915813669467a64a5ad63db17611b",
+      "digest_matches_github": true,
+      "size_matches_github": true,
+      "expired": false,
+      "expires_at": "2026-11-24T14:17:51Z",
+      "download_completed": true,
+      "archive_safety_and_extraction": "Previously verified relative paths, absence of path traversal and symlinks before extraction; extracted successfully."
+    },
+    {
+      "artifact_id": 14335408305,
+      "name": "iphone-build-log-44101210921",
+      "bytes": 8338,
+      "sha256": "80671918b367386434deeb89d1cf5fe9b1dc204f18a043f549e80da7112cf255",
+      "digest_matches_github": true,
+      "size_matches_github": true,
+      "expired": false,
+      "expires_at": "2026-11-24T14:17:32Z",
+      "download_completed": true,
+      "archive_safety_and_extraction": "Previously verified relative paths, absence of path traversal and symlinks before extraction; extracted successfully."
+    }
+  ]
+}

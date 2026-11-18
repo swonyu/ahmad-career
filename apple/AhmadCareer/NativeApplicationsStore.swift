@@ -99,6 +99,15 @@ final class NativeApplicationsStore: ObservableObject {
         !state.recordScope.isLocal && state.workspaceDrafts.contains { $0.scope.isLocal && ($0.profile.hasContent || !$0.jobs.isEmpty || $0.opportunityDraft.hasContent) }
     }
     var savedWorkspaceScopes: [PhoneRecordScope] { state.workspaceDrafts.map(\.scope) }
+    var unfinishedRecordDrafts: [PhoneRecordDraftCheckpoint] {
+        state.recordDrafts.filter { $0.scope == state.recordScope }
+    }
+    var recoveredRecordDrafts: [PhoneRecordDraftCheckpoint] {
+        state.recordDraftAlternatives.filter { $0.scope == state.recordScope }
+    }
+    var recoveredOpportunityDrafts: [PhoneOpportunityDraft] {
+        state.recoveredOpportunityDrafts.filter { $0.scope == state.recordScope }.map(\.draft)
+    }
     var profileReadiness: ApplicationProfileReadiness { ApplicationProfileReadiness(profile: profile) }
     private func recordScope(for job: [String: ApplicationValue]) -> PhoneRecordScope {
         if let id = job["id"]?.string, id.hasPrefix("record-"),
@@ -392,10 +401,14 @@ final class NativeApplicationsStore: ObservableObject {
         guard next.applicationRecordSchema == 1, next.applicationRecords.count <= 1_000,
               next.applicationRecords.allSatisfy(\.valid), Set(next.applicationRecords.map(\.id)).count == next.applicationRecords.count,
               next.workspaceDraftSchema == 1, next.workspaceDrafts.count <= 32, next.workspaceDrafts.allSatisfy(\.valid),
-              next.recordDrafts.count <= 200, next.recordDrafts.allSatisfy(\.valid),
+              next.recordDrafts.count + next.recordDraftAlternatives.count <= 200,
+              next.recordDrafts.allSatisfy(\.valid), next.recordDraftAlternatives.allSatisfy(\.valid),
+              next.recoveredOpportunityDrafts.count <= 200, next.recoveredOpportunityDrafts.allSatisfy(\.valid),
               next.submissionHolds.count <= 500, next.submissionHolds.allSatisfy(\.valid) else {
             throw MobileApplicationError(message: "The saved application records could not be updated. Your existing phone data is preserved.")
         }
+        // Encoder key order is not stable. An unchanged workspace must not rewrite the phone file.
+        if next == state { return }
         let data = try JSONEncoder().encode(next)
         guard data.count <= 64 * 1_024 * 1_024 else {
             throw MobileApplicationError(message: "This phone reached its private workspace storage limit. Existing drafts were kept; export and clear an unused workspace before adding another.")
@@ -407,7 +420,9 @@ final class NativeApplicationsStore: ObservableObject {
         #endif
         if next.profile != state.profile || next.profileRevision != state.profileRevision || next.jobs != state.jobs
             || next.applicationRecords != state.applicationRecords || next.opportunityDraft != state.opportunityDraft
-            || next.recordDrafts != state.recordDrafts || next.workspaceDrafts != state.workspaceDrafts
+            || next.recordDrafts != state.recordDrafts || next.recordDraftAlternatives != state.recordDraftAlternatives
+            || next.recoveredOpportunityDrafts != state.recoveredOpportunityDrafts
+            || next.workspaceDrafts != state.workspaceDrafts
             || next.submissionHolds != state.submissionHolds { workspaceMutation = UUID() }
         state = next
     }
@@ -742,6 +757,10 @@ final class NativeApplicationsStore: ObservableObject {
                     throw MobileApplicationError(message: "Add the role and employer so you can recognize this opportunity offline.")
                 }
             }
+            // Service jobs in the merged list are not part of this phone's backup. Count the draft.
+            guard state.jobs.count < 200 else {
+                throw MobileApplicationError(message: "The merged shortlist exceeds 200 links. Nothing was replaced.")
+            }
             let localID = "local-" + UUID().uuidString
             var local = fields; local["id"] = .string(localID); local["localOnly"] = .bool(true)
             var next = state; next.jobs.append(local)
@@ -934,6 +953,32 @@ final class NativeApplicationsStore: ObservableObject {
             finishOperation(operation); await refresh()
         } catch { acceptError(error, generation: generation) }
     }
+    /// Explicit receipt Stop. The hold is saved first. The receipt state changes only when a later workspace read says so.
+    func stopAndCheckReceipt(planID: String, attemptID: String) async {
+        let serving = client
+        let generation = sessionGeneration
+        let scope = state.recordScope
+        guard !scope.isLocal, !planID.isEmpty, planID.utf16.count <= 200,
+              !attemptID.isEmpty, attemptID.utf16.count <= 200, let serving else { return }
+        guard attempts.contains(where: { row in
+            let id = row["attemptId"]?.string ?? row["id"]?.string ?? ""
+            return id == attemptID && row["state"]?.string == "dispatching" && row["planId"]?.string == planID
+        }) else { return }
+        guard retainStopHolds([planID]) else { return }
+        guard sessionGeneration == generation, (client as AnyObject?) === (serving as AnyObject), state.recordScope == scope else { return }
+        guard let operation = beginOperation() else { return }
+        defer { finishOperation(operation) }
+        do {
+            _ = try await serving.request("stop", method: "POST", body: [
+                "planId": .string(planID), "onlyIfUnapproved": .bool(false)])
+            guard sessionGeneration == generation, (client as AnyObject?) === (serving as AnyObject), state.recordScope == scope else { return }
+            message = "Stop requested. Jobs already dispatched still need a confirmed outcome."
+            finishOperation(operation)
+            if sessionGeneration == generation && !busy { await refresh() }
+        } catch {
+            acceptError(error, generation: generation)
+        }
+    }
     /// Persist intent before networking. A lost response or 401 never restores local permission to send.
     private func retainStopHolds(_ ids: [String], clearReview: Bool = true) -> Bool {
         guard !state.recordScope.isLocal, !ids.isEmpty else { return false }
@@ -956,6 +1001,20 @@ final class NativeApplicationsStore: ObservableObject {
         state.recordDrafts.first { $0.scope == context.scope && $0.identity == context.identity
             && $0.recordID == context.recordID && $0.revision == context.revision }?.draft
     }
+    private func draftVersionMatches(_ left: PhoneRecordDraftCheckpoint, _ right: PhoneRecordDraftCheckpoint) -> Bool {
+        left.scope == right.scope && left.identity == right.identity && left.draft == right.draft && left.revision == right.revision
+    }
+    private func storesDraftVersion(_ state: PhoneApplicationState, _ draft: PhoneRecordDraftCheckpoint) -> Bool {
+        state.recordDrafts.contains { draftVersionMatches($0, draft) } || state.recordDraftAlternatives.contains { draftVersionMatches($0, draft) }
+    }
+    private func retainDistinctDraft(_ draft: PhoneRecordDraftCheckpoint, into next: inout PhoneApplicationState) {
+        guard draft.valid, !storesDraftVersion(next, draft) else { return }
+        if next.recordDrafts.contains(where: { $0.scope == draft.scope && $0.identity == draft.identity }) {
+            next.recordDraftAlternatives.append(draft)
+        } else {
+            next.recordDrafts.append(draft)
+        }
+    }
     @discardableResult
     func keepRecordDraft(_ draft: PhoneRecordDraft, context: PhoneRecordEditContext) -> Bool {
         guard context.connection == sessionGeneration else { return false }
@@ -964,16 +1023,92 @@ final class NativeApplicationsStore: ObservableObject {
         guard checkpoint.valid else { message = "This unfinished record could not be saved. Keep the note within 2,000 characters and use valid dates."; return false }
         do {
             var next = state
-            next.recordDrafts.removeAll { $0.scope == context.scope && $0.identity == context.identity }
-            next.recordDrafts.append(checkpoint); try persist(next); return true
+            next.recordDraftAlternatives.removeAll { draftVersionMatches($0, checkpoint) }
+            if let index = next.recordDrafts.firstIndex(where: { $0.scope == context.scope && $0.identity == context.identity }) {
+                let current = next.recordDrafts[index]
+                if !draftVersionMatches(current, checkpoint) {
+                    next.recordDrafts[index] = checkpoint
+                    if !storesDraftVersion(next, current) { next.recordDraftAlternatives.append(current) }
+                }
+            } else {
+                next.recordDrafts.append(checkpoint)
+            }
+            guard next.recordDrafts.count + next.recordDraftAlternatives.count <= 200 else {
+                throw MobileApplicationError(message: "This phone already keeps 200 unfinished edits. Existing drafts were kept.")
+            }
+            try persist(next); return true
         } catch { message = error.localizedDescription; return false }
     }
     @discardableResult
     func discardRecordDraft(context: PhoneRecordEditContext) -> Bool {
         guard context.connection == sessionGeneration else { return false }
         do {
-            var next = state; next.recordDrafts.removeAll { $0.scope == context.scope && $0.identity == context.identity }
+            var next = state
+            next.recordDrafts.removeAll { $0.scope == context.scope && $0.identity == context.identity }
             try persist(next); return true
+        } catch { message = error.localizedDescription; return false }
+    }
+    @discardableResult
+    func useRecoveredRecordDraft(_ checkpoint: PhoneRecordDraftCheckpoint) -> Bool {
+        guard !busy, checkpoint.valid, checkpoint.scope == state.recordScope,
+              state.recordDraftAlternatives.contains(checkpoint) else { return false }
+        let active = state.applicationRecords.filter {
+            $0.scope == checkpoint.scope && $0.identity == checkpoint.identity && !$0.archived
+        }
+        guard active.count <= 1 else {
+            message = "Compare the saved record versions before editing this opportunity."
+            return false
+        }
+        // Explicit selection prepares these values for review against the current record.
+        // Keep the original base as an alternative; ordinary editor/save revision guards stay strict.
+        var selected = checkpoint
+        selected.recordID = active.first?.id
+        selected.revision = active.first?.revision
+        do {
+            var next = state
+            next.recordDraftAlternatives.removeAll { $0 == checkpoint || draftVersionMatches($0, selected) }
+            if let index = next.recordDrafts.firstIndex(where: { $0.scope == checkpoint.scope && $0.identity == checkpoint.identity }) {
+                let current = next.recordDrafts[index]
+                next.recordDrafts[index] = selected
+                retainDistinctDraft(current, into: &next)
+            } else {
+                next.recordDrafts.append(selected)
+            }
+            retainDistinctDraft(checkpoint, into: &next)
+            guard next.recordDrafts.count + next.recordDraftAlternatives.count <= 200 else {
+                throw MobileApplicationError(message: "This phone already keeps 200 unfinished edits. Existing drafts were kept.")
+            }
+            try persist(next)
+            message = "Recovered edit selected. Open its record to review and save; earlier draft versions are kept."
+            return true
+        } catch { message = error.localizedDescription; return false }
+    }
+    @discardableResult
+    func restoreRecoveredOpportunityDraft(_ draft: PhoneOpportunityDraft) -> Bool {
+        let scope = state.recordScope
+        guard state.recoveredOpportunityDrafts.contains(where: { $0.scope == scope && $0.draft == draft }) else {
+            message = "This unfinished opportunity changed. Reopen the draft list."
+            return false
+        }
+        // An old phone file can still hold an over-limit current link. Parking it would make the next launch unloadable.
+        if state.opportunityDraft.hasContent, state.opportunityDraft != draft, let error = state.opportunityDraft.storageError {
+            message = error
+            return false
+        }
+        do {
+            var next = state
+            next.recoveredOpportunityDrafts.removeAll { $0.scope == scope && $0.draft == draft }
+            if next.opportunityDraft.hasContent && next.opportunityDraft != draft {
+                let parked = PhoneRecoveredOpportunity(scope: scope, draft: next.opportunityDraft)
+                if !next.recoveredOpportunityDrafts.contains(parked) { next.recoveredOpportunityDrafts.append(parked) }
+            }
+            next.opportunityDraft = draft
+            guard next.recoveredOpportunityDrafts.count <= 200 else {
+                throw MobileApplicationError(message: "This phone already keeps 200 unfinished edits. Existing drafts were kept.")
+            }
+            try persist(next)
+            message = "Unfinished opportunity kept on this phone."
+            return true
         } catch { message = error.localizedDescription; return false }
     }
     @discardableResult
@@ -983,7 +1118,8 @@ final class NativeApplicationsStore: ObservableObject {
             message = "The destination or its draft changed. Review the import again."; return false
         }
         let backup = PhoneWorkspaceBackup(draft: source, records: state.applicationRecords.filter { $0.scope.isLocal },
-            recordDrafts: state.recordDrafts.filter { $0.scope.isLocal }, submissionHolds: [])
+            recordDrafts: state.recordDrafts.filter { $0.scope.isLocal } + state.recordDraftAlternatives.filter { $0.scope.isLocal }, submissionHolds: [],
+            recoveredOpportunityDrafts: state.recoveredOpportunityDrafts.filter { $0.scope.isLocal }.map(\.draft))
         return mergeBackup(backup, context: context, replaceProfile: source.profile.hasContent)
     }
     @discardableResult
@@ -1009,12 +1145,42 @@ final class NativeApplicationsStore: ObservableObject {
     /// This export includes only this scope; no tokens, active approvals, or invented provider receipts.
     func exportWorkspace(context: PhoneWorkspaceActionContext, discoverySnapshot: Data? = nil) -> URL? {
         guard actionMatches(context) else { message = "The workspace changed. Review the export target again."; return nil }
+        // An unreadable phone file stays on disk. Do not write a backup of the empty in-memory workspace.
+        guard storageReadable else {
+            if message == nil { message = "The existing phone draft is preserved because it could not be read." }
+            return nil
+        }
         do {
+            guard state.jobs.count <= 200 else {
+                throw MobileApplicationError(message: "The merged shortlist exceeds 200 links. Nothing was replaced.")
+            }
+            // A saved draft can already hold two locals with the same identity.
+            // Import would keep the first title and drop the second. Write nothing and delete nothing.
+            var seenJobIdentities = Set<String>()
+            for (index, job) in state.jobs.enumerated() {
+                let identity = job["url"]?.string.map(MobileApplicationPolicy.jobIdentity) ?? "unidentified-\(index)"
+                guard seenJobIdentities.insert(identity).inserted else {
+                    throw MobileApplicationError(message: "The backup contains duplicate saved links.")
+                }
+            }
             let scope = state.recordScope
+            let scopedDrafts = state.recordDrafts.filter { $0.scope == scope } + state.recordDraftAlternatives.filter { $0.scope == scope }
+            guard scopedDrafts.count <= 200 else {
+                throw MobileApplicationError(message: "This phone already keeps 200 unfinished edits. Existing drafts were kept.")
+            }
+            let scopedRecovered = state.recoveredOpportunityDrafts.filter { $0.scope == scope }
+            guard scopedRecovered.count <= 200 else {
+                throw MobileApplicationError(message: "This phone already keeps 200 unfinished edits. Existing drafts were kept.")
+            }
+            // One over-long unfinished link makes the importer reject the whole file. Write nothing.
+            if let error = state.opportunityDraft.storageError ?? scopedRecovered.compactMap(\.draft.storageError).first {
+                throw MobileApplicationError(message: error)
+            }
             let backup = PhoneWorkspaceBackup(draft: state.activeDraft,
                 records: state.applicationRecords.filter { $0.scope == scope },
-                recordDrafts: state.recordDrafts.filter { $0.scope == scope },
-                submissionHolds: state.submissionHolds.filter { $0.scope == scope }, discoverySnapshot: discoverySnapshot)
+                recordDrafts: scopedDrafts,
+                submissionHolds: state.submissionHolds.filter { $0.scope == scope }, discoverySnapshot: discoverySnapshot,
+                recoveredOpportunityDrafts: scopedRecovered.map(\.draft))
             let encoder = JSONEncoder(); encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
             let bytes = try encoder.encode(backup)
             guard bytes.count <= 64 * 1_024 * 1_024 else { throw MobileApplicationError(message: "This backup exceeds the supported 64 MiB size. Existing phone data is unchanged.") }
@@ -1042,6 +1208,25 @@ final class NativeApplicationsStore: ObservableObject {
         }
         return backup
     }
+    /// Keep this workspace's current opportunity text. Park a different incoming draft here and leave other workspaces alone.
+    private func retainOpportunityDrafts(from backup: PhoneWorkspaceBackup, into next: inout PhoneApplicationState) throws {
+        let scope = next.recordScope
+        let incoming = backup.draft.opportunityDraft
+        var current = next.opportunityDraft
+        if !current.hasContent, incoming.hasContent, incoming.storageError == nil { current = incoming }
+        var parked = next.recoveredOpportunityDrafts
+        for draft in backup.recoveredOpportunityDrafts + (current.hasContent ? [incoming] : []) {
+            guard draft.hasContent, draft.storageError == nil, draft != current else { continue }
+            let recovered = PhoneRecoveredOpportunity(scope: scope, draft: draft)
+            guard !parked.contains(recovered) else { continue }
+            parked.append(recovered)
+        }
+        guard parked.count <= 200, parked.filter({ $0.scope == scope }).count <= 200 else {
+            throw MobileApplicationError(message: "This phone already keeps 200 unfinished edits. Existing drafts were kept.")
+        }
+        next.opportunityDraft = current
+        next.recoveredOpportunityDrafts = parked
+    }
     /// The confirmation explicitly replaces the local profile, merges links/history and uploads nothing.
     @discardableResult
     func mergeBackup(_ backup: PhoneWorkspaceBackup, context: PhoneWorkspaceActionContext, replaceProfile: Bool = true) -> Bool {
@@ -1050,6 +1235,14 @@ final class NativeApplicationsStore: ObservableObject {
         }
         guard activePlanIDs.isEmpty else {
             message = "Stop active applications before replacing this phone's profile with a backup. Existing data is unchanged."; return false
+        }
+        // Skipping a repeated identity would drop that row's title. Reject the file before any edit.
+        var seenIncomingJobs = Set<String>()
+        for job in backup.draft.jobs {
+            let identity = MobileApplicationPolicy.jobIdentity(job["url"]?.string ?? "")
+            guard seenIncomingJobs.insert(identity).inserted else {
+                message = "The backup contains duplicate saved links."; return false
+            }
         }
         do {
             var next = state, imported = backup.draft.profile
@@ -1061,9 +1254,11 @@ final class NativeApplicationsStore: ObservableObject {
                 var local = job.filter { ["url", "title", "company", "location", "country"].contains($0.key) }
                 local["id"] = .string("local-" + UUID().uuidString); local["localOnly"] = .bool(true); next.jobs.append(local)
             }
-            guard next.jobs.count <= 200 else { throw MobileApplicationError(message: "The merged shortlist exceeds 200 links. Nothing was replaced.") }
-            // Keep destination opportunity text; import the source draft only into an empty field set.
-            if !next.opportunityDraft.hasContent { next.opportunityDraft = backup.draft.opportunityDraft }
+            // An already-loaded shortlist can take a profile or a repeated link. A new link past 200 is refused.
+            guard next.jobs.count <= 200 || next.jobs.count <= state.jobs.count else {
+                throw MobileApplicationError(message: "The merged shortlist exceeds 200 links. Nothing was replaced.")
+            }
+            try retainOpportunityDrafts(from: backup, into: &next)
             var importedIDs: [String: String] = [:]
             for original in backup.records {
                 var record = original; record.scope = next.recordScope
@@ -1076,12 +1271,18 @@ final class NativeApplicationsStore: ObservableObject {
             for original in backup.recordDrafts {
                 var draft = original; draft.scope = next.recordScope
                 if let id = draft.recordID, let replacement = importedIDs[id] { draft.recordID = replacement }
-                // A destination draft is never silently overwritten by recovery.
-                if !next.recordDrafts.contains(where: { $0.scope == draft.scope && $0.identity == draft.identity }) { next.recordDrafts.append(draft) }
+                retainDistinctDraft(draft, into: &next)
+            }
+            guard next.recordDrafts.count + next.recordDraftAlternatives.count <= 200 else {
+                throw MobileApplicationError(message: "This phone already keeps 200 unfinished edits. Existing drafts were kept.")
             }
             // Restore only restrictive Stop intent; importing can never authorize dispatch.
             if !next.recordScope.isLocal && backup.draft.scope == next.recordScope {
                 for hold in backup.submissionHolds { next.holdSubmissions([hold.planID]) }
+            }
+            if next == state {
+                message = "Phone data imported. Review the profile before saving online. Saved links and record history were merged; no application was approved or sent."
+                return true
             }
             try persist(next); plan = nil; selected = []; answers = [:]; mergeJobs()
             contentGeneration = UUID(); refreshTicket = nil
@@ -1100,6 +1301,8 @@ final class NativeApplicationsStore: ObservableObject {
             next.latestServerRevision = nil; next.latestServerProfile = nil; next.jobs = []; next.opportunityDraft = PhoneOpportunityDraft()
             next.applicationRecords.removeAll { $0.scope == context.scope }
             next.recordDrafts.removeAll { $0.scope == context.scope }
+            next.recordDraftAlternatives.removeAll { $0.scope == context.scope }
+            next.recoveredOpportunityDrafts.removeAll { $0.scope == context.scope }
             next.workspaceDrafts.removeAll { $0.scope == context.scope }
             next.connectionEnabled = false
             let account = state.tokenAccount, retired = client

@@ -1,0 +1,57 @@
+2026-11-17T16:57:44.6513440Z     t =   226.42s     Find the "Done typing" Button
+2026-11-17T16:57:45.3413470Z     t =   227.15s     Check for interrupting elements affecting "Done typing" Button
+2026-11-17T16:57:45.6986740Z     t =   227.48s     Synthesize event
+2026-11-17T16:57:46.2421720Z     t =   227.88s     Wait for com.ahmadalayed.career to idle
+2026-11-17T16:57:47.6758190Z     t =   229.49s Get all elements bound by index for: Descendants matching type Key
+2026-11-17T16:57:47.9433820Z     t =   229.74s Get all elements bound by index for: Elements matching predicate '"Done typing" IN identifiers'
+2026-11-17T16:57:48.1986110Z     t =   230.01s Checking existence of `Keyboard (First Match)`
+2026-11-17T16:57:49.4392120Z     t =   231.25s Waiting 5.0s for "connection.clearAddress" Button to exist
+2026-11-17T16:57:50.4567780Z     t =   232.28s     Checking `Expect predicate `existsNoRetry == 1` for object "connection.clearAddress" Button`
+2026-11-17T16:57:50.4673480Z     t =   232.28s         Checking existence of `"connection.clearAddress" Button`
+2026-11-17T16:57:50.7893380Z     t =   232.62s Checking existence of `"connection.clearAddress" Button`
+2026-11-17T16:57:51.0405480Z     t =   232.87s Find the "connection.clearAddress" Button
+2026-11-17T16:57:51.5192130Z     t =   233.33s Find the "connection.clearAddress" Button
+2026-11-17T16:57:51.8750990Z     t =   233.70s Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T16:57:52.0571810Z     t =   233.87s Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T16:57:52.2823980Z     t =   234.10s Checking existence of `NavigationBar (First Match)`
+2026-11-17T16:57:52.4686020Z     t =   234.28s Find the NavigationBar (First Match)
+2026-11-17T16:57:52.6424460Z     t =   234.45s Find the "Application connection" NavigationBar
+2026-11-17T16:57:52.7405850Z     t =   234.56s Checking existence of `TabBar (First Match)`
+2026-11-17T16:57:52.7953160Z     t =   234.62s Find the TabBar (First Match)
+2026-11-17T16:57:52.9201040Z     t =   234.73s Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T16:57:53.0885890Z     t =   234.90s Find the Target Application 'com.ahmadalayed.career'
+2026-11-17T16:57:53.2723510Z     t =   235.10s Find the "connection.clearAddress" Button
+2026-11-17T16:57:53.5495480Z     t =   235.37s Find the "connection.clearAddress" Button
+2026-11-17T16:57:53.8029380Z     t =   235.59s Find the "connection.clearAddress" Button
+2026-11-17T16:57:54.0877290Z     t =   235.91s Tap "connection.clearAddress" Button
+2026-11-17T16:57:54.0986610Z     t =   235.91s     Wait for com.ahmadalayed.career to idle
+2026-11-17T16:57:54.1089360Z     t =   235.92s     Find the "connection.clearAddress" Button
+2026-11-17T16:57:54.3556820Z     t =   236.15s     Check for interrupting elements affecting "connection.clearAddress" Button
+2026-11-17T16:57:54.5622930Z     t =   236.36s     Synthesize event
+2026-11-17T16:57:55.1708350Z     t =   236.81s     Wait for com.ahmadalayed.career to idle
+2026-11-17T16:57:56.5317750Z     t =   238.36s Find the "connection.address" TextField
+2026-11-17T16:57:56.8008030Z     t =   238.62s Tap "connection.address" TextField
+2026-11-17T16:57:56.8112640Z     t =   238.62s     Wait for com.ahmadalayed.career to idle
+2026-11-17T16:57:56.8217380Z     t =   238.63s     Find the "connection.address" TextField
+2026-11-17T16:57:57.0142480Z     t =   238.84s     Check for interrupting elements affecting "connection.address" TextField
+2026-11-17T16:57:57.2143390Z     t =   239.04s     Synthesize event
+2026-11-17T16:57:57.5350410Z     t =   239.35s     Wait for com.ahmadalayed.career to idle
+2026-11-17T16:57:58.6059060Z     t =   240.42s Get all elements bound by index for: Elements matching predicate '"delete" IN identifiers'
+2026-11-17T16:57:59.0769990Z     t =   240.88s Checking existence of `"delete" Key`
+2026-11-17T16:57:59.4300840Z     t =   241.25s Find the "delete" Key
+2026-11-17T16:57:59.7950390Z     t =   241.61s Type 'https://custom.exa...' into "connection.address" TextField
+2026-11-17T16:57:59.8064800Z     t =   241.61s     Wait for com.ahmadalayed.career to idle
+2026-11-17T16:57:59.8172400Z     t =   241.62s     Find the "connection.address" TextField
+2026-11-17T16:58:00.2174640Z     t =   242.03s     Check for interrupting elements affecting "connection.address" TextField
+2026-11-17T16:58:00.5802730Z     t =   242.29s     Synthesize event
+2026-11-17T16:58:01.1624220Z     t =   242.95s     Wait for com.ahmadalayed.career to idle
+2026-11-17T16:58:02.2919210Z     t =   244.12s Find the "connection.address" TextField
+2026-11-17T16:58:02.6065240Z     t =   244.43s Checking existence of `"Done typing" Button`
+2026-11-17T16:58:28.0668140Z Test Case '-[CareerFinderUITests.CareerFinderUITests testProfileReadinessAndSimpleConnectionSetup]' passed (269.884 seconds).
+2026-11-17T16:58:28.0868490Z 	 Executed 1 test, with 0 failures (0 unexpected) in 269.884 (269.890) seconds
+2026-11-17T16:58:28.1072250Z 	 Executed 1 test, with 0 failures (0 unexpected) in 269.884 (269.892) seconds
+2026-11-17T16:58:28.1101470Z Test Suite 'Selected tests' passed at 2026-11-17 16:58:28.063.
+2026-11-17T16:58:28.1212070Z 	 Executed 1 test, with 0 failures (0 unexpected) in 269.884 (269.895) seconds
+2026-11-17T17:00:04.0728870Z ** TEST SUCCEEDED **
+2026-11-17T17:00:36.8881940Z SHA256 digest of uploaded artifact zip is 02f5c47dee03ad513e45c508a8235c9b97371db7fed5d0c2e800ee6a58991eed
+2026-11-17T17:00:37.5386550Z Artifact PARTIAL-iphone-connection-regression-44129604009.zip successfully finalized. Artifact ID 14350775996

@@ -1,0 +1,34 @@
+{
+  "observedUTC": "2026-11-18T05:44:56.287250+00:00",
+  "sha": "c0c865eea250019ee21fbd6110c9fe4446c3c8f1",
+  "workflowRuns": {
+    "total_count": 0,
+    "runs": []
+  },
+  "checkRuns": {
+    "total_count": 0,
+    "checks": []
+  },
+  "combinedStatus": {
+    "state": "pending",
+    "total_count": 0,
+    "statuses": []
+  },
+  "commentQuery": {
+    "since": "2026-11-18T00:55:00Z",
+    "returnedCount": 5,
+    "per_page": 100,
+    "matchingTerms": [
+      "c0c865",
+      "in-app-service-browser",
+      "native safari",
+      "safari view",
+      "service browser"
+    ],
+    "matchingComments": []
+  },
+  "limits": [
+    "A zero GitHub check/status count is absence of submitted receipts, not a test result. Combined state pending with zero statuses is not an in-progress build.",
+    "Commit-dated00:58 predates baseline05:02. Branch creation/push time was not obtained."
+  ]
+}

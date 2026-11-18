@@ -1,0 +1,96 @@
+{
+  "recordedUTC": "2026-11-18T03:11:06.314855+00:00",
+  "repository": "swonyu/ahmad-career",
+  "baseCommit": "3fb5d97ec6f3568f2c8b27f148281926272a92fe",
+  "patchSHA256": "282d33d6ca24ea317521a6c3b6fb1aeb97521f922eb451249f3877b7064d29f1",
+  "files": [
+    {
+      "path": "hosted/app/phone/components.tsx",
+      "baseBytes": 19250,
+      "baseSHA256": "c7614e923223d427e3a218f9c8d1038e4d90f244de9da8707bb92bf8dce90c52",
+      "candidateBytes": 20472,
+      "candidateSHA256": "c18753ee7c8b342831864cecc2694708f09fee6019a76c530b2c2ae743446424"
+    },
+    {
+      "path": "hosted/app/phone/PhoneApp.tsx",
+      "baseBytes": 121218,
+      "baseSHA256": "77b3f3bd43f7a7fab19b68807118fba41bb95409701d054ed8232bc139a7dcba",
+      "candidateBytes": 121306,
+      "candidateSHA256": "2e9024fab451f70bff40872e3090b3ab13c07a312fa1c48b999cd43890a33ac4"
+    },
+    {
+      "path": "hosted/tests/phone-recovery-isolation.mjs",
+      "baseBytes": 23643,
+      "baseSHA256": "56114b76ab4db6b5abb964e755bc89773f3043ce0451a020c36bbe4838881e06",
+      "candidateBytes": 33835,
+      "candidateSHA256": "11eb0b7ff330b1b9c40c7dee656ae4968f3e482aed7e8f94a01cf1530739749e"
+    },
+    {
+      "path": "hosted/tests/phone-record-tools.mjs",
+      "baseBytes": 45410,
+      "baseSHA256": "a383e178f53782529ec4ff35a111113a7e13a752ceea22a0e24b351039686015",
+      "candidateBytes": 46409,
+      "candidateSHA256": "965af62fc693ed788bd487ea9f18aea8d2af2e54a4242d70331569d16632feb2"
+    }
+  ],
+  "phoneAppScope": [
+    "components import",
+    "Saved Clear onClick only"
+  ],
+  "deletionMessagesChanged": false,
+  "arabicMessagesChanged": false,
+  "packageChanged": false,
+  "MacTouched": false,
+  "appliedCopyBytesMatchCandidate": true,
+  "checks": [
+    {
+      "argv": [
+        "git",
+        "init",
+        "-q"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "apply",
+        "--check",
+        "/workspace/scratch/4b851318da2d/Modal-Focus-Recovery-3fb5d97/modal-and-clear-focus.patch"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "apply",
+        "/workspace/scratch/4b851318da2d/Modal-Focus-Recovery-3fb5d97/modal-and-clear-focus.patch"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "focusedExecution": {
+    "runtime": "v24.22.1",
+    "projectPinned": false,
+    "sourceExtraction": "actual source slices using builtin stripTypeScriptTypes; identical added assertions and DOM/frame ports",
+    "baseline": {
+      "pass": 4,
+      "fail": 6,
+      "exit": 1
+    },
+    "candidate": {
+      "pass": 10,
+      "fail": 0,
+      "exit": 0
+    },
+    "requiredFullASTProjectTestRun": false,
+    "browserRun": false,
+    "nativeRun": false
+  }
+}

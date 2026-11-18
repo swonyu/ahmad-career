@@ -1,0 +1,125 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> test:applications
+> node applications-check.mjs
+
+PASS test mode is explicit and never claims live enablement
+PASS blank workspace contains no personal defaults
+PASS fresh profile is blank and revision zero
+PASS missing Origin cannot mint a browser session
+PASS foreign Origin is rejected
+PASS DNS rebinding Host is rejected
+PASS wrong CSRF cannot mutate profile
+PASS client-supplied verification field rejected
+PASS résumé saved as bytes but not returned to UI
+PASS unreadable PDF rejection preserves the previous résumé and profile revision
+PASS stale profile revision cannot overwrite newer profile
+PASS canonical Lever URLs share one opportunity identity
+PASS preparation reviews exact fields without sending
+PASS unmatched approval digest cannot dispatch
+PASS two simultaneous approval clicks send exactly once
+PASS only provider receipt becomes confirmed
+PASS real multipart includes exact PDF bytes and key remains server-side
+PASS repeated completed plan returns existing evidence without resending
+PASS receipt export excludes keys, tokens and PDF bytes
+PASS confirmed same-applicant posting is blocked in a new plan
+PASS an unverified matching email cannot reveal another workspace application status
+PASS workspaces expose only their own review and receipt records
+PASS changing email cannot erase same-workspace application history
+PASS separate unverified workspaces return the same review before and after a private confirmed receipt
+PASS independently approved workspaces dispatch without a cross-workspace index or status dependency
+PASS an earlier ready plan still cannot bypass same-workspace dispatch deduplication
+PASS another workspace cannot cancel an expired rate-limited review by copying its email
+PASS only the owning workspace retires its obsolete cooldown review
+PASS no-receipt response has honest outcome
+PASS no-receipt is not blindly retried
+PASS server-error response has honest outcome
+PASS server-error is not blindly retried
+PASS timeout response has honest outcome
+PASS timeout is not blindly retried
+PASS rejected response has honest outcome
+PASS rejected is not blindly retried
+PASS redirect response has honest outcome
+PASS redirect is not blindly retried
+PASS html response has honest outcome
+PASS html is not blindly retried
+PASS false-ok response has honest outcome
+PASS false-ok is not blindly retried
+PASS 429 saves rate-limited state and explicit cooldown
+PASS a reauthenticated phone recovers the exact approved429 review without sending
+PASS recoverable reviews remain private to their workspace
+PASS new plans cannot bypass a provider cooldown
+PASS 429 retry before cooldown is denied
+PASS 429 retry after cooldown uses same approved attempt
+PASS expired rate-limited review can be replaced after its cooldown
+PASS replacement needs a fresh approval and preserves prior rejection evidence
+PASS stopping a429 retry cannot bypass the provider cooldown
+PASS a stopped429 attempt permits a fresh review after cooldown
+PASS malformed Retry-After retains a complete waiting period or explicit reconciliation hold
+PASS malformed cooldown cannot be retried and explains the actual next step
+PASS malformed cooldown Stop retains the provider rejection evidence
+PASS malformed stopped cooldown survives expired review, new requirements and changed profile
+PASS one-year Retry-After retains a complete waiting period or explicit reconciliation hold
+PASS one-year cooldown cannot be retried and explains the actual next step
+PASS one-year cooldown Stop retains the provider rejection evidence
+PASS one-year stopped cooldown survives expired review, new requirements and changed profile
+PASS the full long cooldown must elapse before a new review becomes available
+PASS a stopped long cooldown requires a fresh explicit approval and retains its earlier rejection
+PASS unrepresentable late429 records the rejection and honors Stop without requeueing
+PASS unrepresentable repeated Stop preserves the late provider evidence exactly
+PASS long late429 records the rejection and honors Stop without requeueing
+PASS long repeated Stop preserves the late provider evidence exactly
+PASS Stop during closed posting preflight remains cancelled without a provider POST
+PASS Stop during success posting preflight remains cancelled without a provider POST
+PASS requirements changed during asynchronous preflight are rechecked before any POST
+PASS unsent current reviews are recoverable after reload
+PASS profile changes invalidate existing approval
+PASS outdated profile reviews are excluded from recovery
+PASS stop before dispatch sends nothing
+PASS stopped reviews are excluded from recovery
+PASS conditional stop rejects a nonboolean guard
+PASS guarded review replacement cancels only an unapproved plan
+PASS another phone approval atomically prevents stale guarded stop
+PASS changed employer posting invalidates approval before POST
+PASS any profession/country can be tracked manually
+PASS manual-only employer cannot be mislabeled automatic
+PASS existing manually recorded application requires reconciliation
+PASS phone pairing opens the intended workspace
+PASS new phone workspace starts blank
+PASS valid bearer authorizes profile change without Origin/CSRF
+PASS mobile pairing code is single-use
+PASS native tokens stored only as hashes
+PASS expired mobile token is refused
+PASS invalid Bearer cannot fall back to a browser cookie
+PASS pairing code expires after five minutes
+PASS pairing redemption is rate limited
+PASS mobile token can be revoked without deleting application records
+PASS same ledger refuses a second service owner
+PASS failed durable intent produces zero outbound POSTs
+PASS result-save failure never reports durable confirmation
+PASS custom questions block automatic submission
+PASS expired requirements block automatic submission
+PASS EU posting never uses a global employer key
+PASS required marketing question needs an explicit answer
+PASS required storage consent still needs affirmative permission
+PASS single-name applicants and an explicit marketing No can prepare
+PASS multipart sends the exact reviewed single name and marketing false
+PASS emulator TLS origin requires both explicit fixture flag and test mock mode
+PASS isolated emulator TLS fixture remains explicitly test mode
+PASS invalid résumé paths and content rejected
+PASS private/custom URLs rejected without arbitrary fetch
+PASS manual jobs preserve meaningful query identity
+PASS LinkedIn support is explicitly advertised with a blank fresh profile
+PASS LinkedIn canonicalization keeps portfolio separate
+PASS older profile saves preserve a stored LinkedIn URL
+PASS invalid LinkedIn profile update is rejected before revision changes
+PASS old reviews cannot approve an undisplayed LinkedIn field
+PASS recovered LinkedIn review requires the new approval format
+PASS exact LinkedIn and portfolio URLs are submitted only after current explicit approval
+PASS removing a LinkedIn profile link invalidates the old review
+PASS LinkedIn job handoffs remain manual and never pretend to be submitted
+PASS country selection includes global regions beyond the legacy scope
+PASS all supported test storage is private
+PASS legacy global email index is removed without deleting application records
+PASS restart converts interrupted dispatch to uncertainty without POST
+PASS: 119 verified-application regression groups (real HTTP against synthetic local Lever only).

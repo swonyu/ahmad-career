@@ -1,0 +1,41 @@
+{
+  "observedUTC": "2026-11-18T05:46:56.502620+00:00",
+  "evidenceDirectory": "/Users/saleh/Library/Caches/Publishing-Continuation-20261117-d597fc87411f/Recovery-d57f4cd77813/SourceRecovery-20261117T1920Z/Career-InApp-ServiceBrowser-a179/.git/recovery/native-browser",
+  "textFileInventory": [
+    {
+      "path": "OWNER.json",
+      "bytes": 406
+    },
+    {
+      "path": "PROPOSAL-v1.json",
+      "bytes": 1468
+    },
+    {
+      "path": "PROPOSAL-v2.json",
+      "bytes": 1858
+    },
+    {
+      "path": "checkpoint-v3/CHECKPOINT-RECEIPT.json",
+      "bytes": 1766
+    },
+    {
+      "path": "proposal-v3/PROPOSAL-v3.json",
+      "bytes": 3118
+    }
+  ],
+  "committedSourcePinChecks": {
+    "apple/AhmadCareer/NativeApplicationsViews.swift": {
+      "expectedCommittedSha256": "aee4da2b1df8bebe321a30c54369a726b3eb53bf9ab2f15fe939cbb19d4187b8",
+      "observedCommittedSha256": "aee4da2b1df8bebe321a30c54369a726b3eb53bf9ab2f15fe939cbb19d4187b8",
+      "match": true,
+      "currentDirtySha256": "3b4e8a695fa20cc2bcc1003a85eaeb63473d272d26c6d40b238bb96f9f0e9821"
+    },
+    "apple/UITests/CareerFinderUITests.swift": {
+      "expectedCommittedSha256": "1627a8a699a398548aa2f47e1fe10e66d8be891884aede4a67b8e109d3afa72a",
+      "observedCommittedSha256": "1627a8a699a398548aa2f47e1fe10e66d8be891884aede4a67b8e109d3afa72a",
+      "match": true,
+      "currentDirtySha256": "c4990faf6e446dd3cc849f83124578fcb1ae68c99a26da3b9eb547577f24930a"
+    }
+  },
+  "limits": "Inventory and committed-file hashing only. No local native execution receipt was opened beyond the named source-only checkpoint; do not infer a runtime pass from source review or planned tests."
+}

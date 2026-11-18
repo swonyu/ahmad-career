@@ -1,0 +1,76 @@
+{
+  "created_at": "2026-11-17T22:47:27.744976+00:00",
+  "scope": "Read-only source and CI inspection; evidence files only",
+  "files": [
+    {
+      "name": "CareerAppEnvironment.swift.288-source",
+      "bytes": 9289,
+      "sha256": "2087f29a079d2c129b33a31cd3e12b2cf0c2877edc03d31b05538ca104453c9f"
+    },
+    {
+      "name": "CareerDiscovery.swift.288-source",
+      "bytes": 34279,
+      "sha256": "1d4024853ec5099b029ed9c4304fc49970487e5f3a5cbd5bbdd60aa22c505006"
+    },
+    {
+      "name": "CareerFinderUITests.swift.288-source",
+      "bytes": 49868,
+      "sha256": "163d5698d9e291db53e161e98011fac64174233863063a36efa7ac318fdea84e"
+    },
+    {
+      "name": "NativeDiscoveryViews.swift.288-source",
+      "bytes": 20149,
+      "sha256": "ee1464433f03d5d36d47e6af0f5f837db63c5264f6267e4608130d4b220c7754"
+    },
+    {
+      "name": "README.md",
+      "bytes": 8450,
+      "sha256": "d418fd9b78682b3636f655512d239e700f996c0a26b4476acfc73de393b27bcf"
+    },
+    {
+      "name": "current-native-state.json",
+      "bytes": 72203,
+      "sha256": "9e9291a588a99ed4c6e3ecb30ceddfc8ad38ef8efed7e2789dddef4d91ab4a1f"
+    },
+    {
+      "name": "immutable-tree-comparison.json",
+      "bytes": 9384,
+      "sha256": "7c55c221b48c72d296c6333c9a7e536580326dc27799ea1675a8caa21dff0ed5"
+    },
+    {
+      "name": "publisher-active-lanes.json",
+      "bytes": 2483,
+      "sha256": "df40d40326d40d5cb9fdb453bcf046170559e2fb705da5bab4c8c9cbd866c2f3"
+    },
+    {
+      "name": "publisher-checkout-observation.json",
+      "bytes": 1010,
+      "sha256": "5a40a235a4865b60575a20c9f2ba43488e8162c5034eef34064d735adbf249c4"
+    },
+    {
+      "name": "publisher-empty-state-a17999.patch",
+      "bytes": 1057,
+      "sha256": "dfa8520131780a51f0cb9bc36fd8b839efb28474bb5ddf22d10f21c82f2529d6"
+    },
+    {
+      "name": "remote-ref-readback.json",
+      "bytes": 740,
+      "sha256": "02ae66650bb1575191281ee62da87715329581b73a6bb3604eb531af0e5c2218"
+    },
+    {
+      "name": "run43-android.log",
+      "bytes": 66152,
+      "sha256": "d63c66e55b297b19fd7bb83fd76648b3157f2277363e23d2ce87e4d9a3be9d3e"
+    },
+    {
+      "name": "run43-hosted.log",
+      "bytes": 122213,
+      "sha256": "f4a92ea6abbe598a563be755f474b444e2fe0320c5692653975c5960c6384d84"
+    },
+    {
+      "name": "run43-iphone-ui.log",
+      "bytes": 559962,
+      "sha256": "efac1402c3cae84052d25f971086fd146472bbae38bef4dbb4687d9184ecfe4f"
+    }
+  ]
+}

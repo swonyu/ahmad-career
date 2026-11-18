@@ -65,19 +65,19 @@ function sitesIdentity(request) {
 /**
  * The opaque Career Finder cookie takes precedence. A bad/expired cookie must
  * never fall through into a different Sites account in the same browser.
- * @returns {Promise<null | {id:string,email:string,displayName:string,method:'chatgpt'|'google'}>}
+ * @returns {Promise<null | {id:string,email:string,displayName:string,method:'chatgpt'|'google'|'linkedin'}>}
  */
 export async function resolveBrowserIdentity(request, env, {now = Date.now()} = {}) {
   const token = cookieValue(request, BROWSER_SESSION_COOKIE);
   if (token === null) return sitesIdentity(request);
   if (!/^[a-f0-9]{64}$/.test(token)) fail('invalid_session', 'This browser session has expired. Sign out and sign in again.', 401);
   if (!env.DB) fail('auth_unavailable', 'Account sign-in is temporarily unavailable.', 503);
-  const row = await env.DB.prepare(`SELECT s.owner_id, i.email, i.display_name
+  const row = await env.DB.prepare(`SELECT s.owner_id, i.email, i.display_name, s.provider
     FROM browser_sessions s JOIN auth_accounts a ON a.owner_id=s.owner_id AND a.generation=s.account_generation
     JOIN auth_identities i ON i.owner_id=s.owner_id AND i.provider=s.provider AND i.subject=s.subject
-    WHERE s.token_hash=? AND s.expires_at>? AND s.provider='google'`).bind(sha256(token), now).first();
+    WHERE s.token_hash=? AND s.expires_at>? AND s.provider IN ('google','linkedin')`).bind(sha256(token), now).first();
   if (!row || !row.email) fail('invalid_session', 'This browser session has expired. Sign out and sign in again.', 401);
-  return {id:row.owner_id, email:row.email, displayName:row.display_name || row.email, method:'google'};
+  return {id:row.owner_id, email:row.email, displayName:row.display_name || row.email, method:row.provider};
 }
 
 /** Strip every caller-supplied internal identity field before the Worker injects verified values. */

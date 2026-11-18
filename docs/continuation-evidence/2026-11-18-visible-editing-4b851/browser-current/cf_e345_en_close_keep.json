@@ -1,0 +1,10 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"active\":{\"ariaLabel\":\"Close dialog\",\"id\":\"\",\"insideDialog\":true,\"rect\":{\"bottom\":81.66666793823242,\"height\":44,\"left\":314.3333435058594,\"right\":358.3333435058594,\"top\":37.66666793823242,\"width\":44,\"x\":314.3333435058594,\"y\":37.66666793823242},\"tag\":\"BUTTON\",\"text\":\"\"},\"dialog\":{\"clientHeight\":811,\"open\":true,\"rect\":{\"bottom\":828,\"height\":812,\"left\":12,\"right\":378,\"top\":16,\"width\":366,\"x\":12,\"y\":16},\"scrollHeight\":976,\"scrollTop\":0},\"discardHeadings\":[],\"fields\":[{\"tag\":\"SELECT\",\"type\":\"select-one\",\"value\":\"interview\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"\"},{\"tag\":\"INPUT\",\"type\":\"date\",\"value\":\"2026-11-30\"},{\"tag\":\"TEXTAREA\",\"type\":\"textarea\",\"value\":\"UNSAVED_E345_EN\\nمرحبا، \\\"draft\\\"\"}],\"fullyVisible\":true,\"observedAt\":\"2026-11-18T05:44:31.232Z\",\"outerScroll\":{\"documentLeft\":0,\"documentTop\":1414.6666259765625,\"mainLeft\":0,\"mainTop\":0},\"viewport\":{\"height\":844,\"width\":390}}"
+    }
+  ],
+  "structuredContent": null,
+  "isError": false
+}

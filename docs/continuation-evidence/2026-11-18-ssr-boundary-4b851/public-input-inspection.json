@@ -1,0 +1,17 @@
+{
+  "observedUTC": "2026-11-18T02:04:12.749448+00:00",
+  "manifestSHA256": "760b622e1fc1fc035df157223d681ff43af304467c2b9d21612328c98956abf4",
+  "method": "Independent direct string-prefix check; not the owner regex",
+  "inputs": {
+    "browserInputs": {
+      "count": 1925,
+      "forbidden": [],
+      "nonRelativeNames": []
+    },
+    "pdfInputs": {
+      "count": 207,
+      "forbidden": [],
+      "nonRelativeNames": []
+    }
+  }
+}

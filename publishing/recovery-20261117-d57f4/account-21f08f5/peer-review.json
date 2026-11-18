@@ -1,0 +1,18 @@
+{
+  "reviewer": "Independent Lumina recovery agent",
+  "method": "Read-only staged four-file inspection; no edits, repeated tests, native execution or dispatch.",
+  "publishingParent": "0f0c6f1f591ff173e51671599cbbb6aeff4a69e4",
+  "ownerParent": "21f08f5c4509bd1fdbe9112003224bf2316edd2a",
+  "sourceHashes": "Matched all four hashes in source-under-test.json.",
+  "findings": [],
+  "reviewedInvariants": [
+    "Singular choices depend on the actual count being exactly one.",
+    "The Arabic singular announcement retains both placeholders.",
+    "Search semantics, filters and provenance are unchanged by this delta.",
+    "Existing test assertions remain, with explicit count-one coverage.",
+    "40-minute job and 35-minute xcodebuild step keep a five-minute finalization/export margin.",
+    "Focused/full routing is unchanged.",
+    "All native bytes are unchanged relative to publishing parent 0f; equality to older owner parent 21 is not claimed."
+  ],
+  "limitation": "Source review is not a five-job runtime pass. The separate parent focused run covers one native journey."
+}

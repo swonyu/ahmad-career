@@ -4,6 +4,7 @@ import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import {createScreenshotCollector, inspectPNG} from './screenshot-evidence.mjs';
 
 // This owns one fresh virtual device on a disposable GitHub runner. It must never
 // attach to the user's phones, existing AVDs, shared Mac or release credentials.
@@ -145,11 +146,7 @@ function assertSyntheticObservations(observations,jobs,pdfByteLength) {
 
 // Only extract PNG evidence from the known debuggable test apps. Never archive
 // their private vault, tokens, database, arbitrary files or an entire data directory.
-const screenshotDirectories={
-  'com.saleh.careerfinder.preview':['cache/navigation-review-evidence','cache/linkedin-review-evidence','cache/strict-review-evidence'],
-  'com.saleh.careerfinder.acceptance':['files']
-};
-async function readPNG(args) {
+async function readPNG(args, timeout=15000) {
   const child=own(spawn(adb,['-s',env.ANDROID_SERIAL,...args],{cwd:root,env,detached:true,stdio:['ignore','pipe','pipe']}));
   const chunks=[];let bytes=0,stderr='',oversized=false;
   child.stdout.on('data',part=>{
@@ -159,21 +156,29 @@ async function readPNG(args) {
   child.stderr.on('data',part=>{stderr=(stderr+part.toString()).slice(-2000)});
   try {
     await awaitSpawn(child);
-    const result=await within(lifecycles.get(child).closed,15000);
-    assert.ok(result.completed,'Screenshot read exceeded its fifteen-second limit.');
+    const result=await within(lifecycles.get(child).closed,timeout);
+    if(!result.completed) {
+      const error=Error('Screenshot read exceeded its bounded limit (at most fifteen seconds).');
+      error.code='SCREENSHOT_READ_TIMEOUT';throw error;
+    }
     const {code,error}=result.value;
     if(error)throw error;
-    assert.equal(code,0,`Screenshot read failed${oversized?' (size limit)':''}: ${stderr.trim()}`);
+    if(code!==0) {
+      const failure=Error('Screenshot read failed'+(oversized?' (size limit)':'')+': '+stderr.trim());
+      if(/device offline|device.*not found|error: closed|no devices\/emulators found/i.test(stderr))
+        failure.code='SCREENSHOT_DEVICE_UNAVAILABLE';
+      throw failure;
+    }
     assert.ok(!oversized,'The screenshot exceeded its bounded read.');
     const png=Buffer.concat(chunks);
-    assert.ok(png.length>=45 && png.subarray(0,8).equals(Buffer.from('89504e470d0a1a0a','hex')) && png.subarray(12,16).toString()==='IHDR','The captured file is not a PNG.');
-    assert.ok(png.subarray(-12).equals(Buffer.from('0000000049454e44ae426082','hex')),'The screenshot is incomplete.');
-    const width=png.readUInt32BE(16),height=png.readUInt32BE(20);
-    assert.ok(width>0 && height>0 && width<=8192 && height<=8192,'The screenshot dimensions are invalid.');
-    return {png,width,height};
+    return {png,...inspectPNG(png)};
   } finally {await terminate(child)}
 }
-const readScreenshot=(packageName,remotePath)=>readPNG(['exec-out','run-as',packageName,'cat',remotePath]);
+const screenshotCollector=createScreenshotCollector({
+  evidence,device:env.ANDROID_SERIAL,commit:process.env.GITHUB_SHA,
+  readScreenshot:async(packageName,remotePath,timeout)=>
+    (await readPNG(['exec-out','run-as',packageName,'cat',remotePath],timeout)).png,
+});
 
 async function captureNativeFailure(packageName,signal) {
   assert.equal(packageName,'com.saleh.careerfinder.acceptance');
@@ -221,33 +226,6 @@ async function captureNativeFailure(packageName,signal) {
   if(!signal?.aborted)fs.writeFileSync(path.join(evidence,'native-https-failure-diagnostics.json'),JSON.stringify(report,null,2));
 }
 
-async function collectScreenshots() {
-  const report={observedAt:new Date().toISOString(),device:env.ANDROID_SERIAL,captures:[],unavailable:[]};
-  for(const packageName of installedPackages) {
-    for(const directory of screenshotDirectories[packageName]??[]) {
-      let listing;
-      try {
-        listing=await run(adb,['-s',env.ANDROID_SERIAL,'shell','run-as',packageName,'ls','-1',directory],{log:'screenshot-extraction.log',timeout:15000});
-      } catch(error) {report.unavailable.push({packageName,directory,reason:error.message});continue}
-      const names=listing.split(/\r?\n/).filter(name=>/^[a-z0-9][a-z0-9-]{0,100}\.png$/.test(name))
-        .filter(name=>directory!=='files'||/^acceptance-[a-z0-9-]+\.png$/.test(name)).sort();
-      if(names.length>64){report.unavailable.push({packageName,directory,reason:'More than 64 screenshot files; refusing an unbounded extraction.'});continue}
-      if(names.length===0)report.unavailable.push({packageName,directory,reason:'No completed screenshot was present; a failed test may not have reached its capture.'});
-      for(const name of names) {
-        const remotePath=`${directory}/${name}`;
-        try {
-          const {png,width,height}=await readScreenshot(packageName,remotePath);
-          const relative=path.join('captures',packageName,directory,name);
-          const destination=path.join(evidence,relative);
-          fs.mkdirSync(path.dirname(destination),{recursive:true});fs.writeFileSync(destination,png);
-          report.captures.push({packageName,remotePath,file:relative,bytes:png.length,width,height,sha256:createHash('sha256').update(png).digest('hex')});
-        } catch(error) {report.unavailable.push({packageName,remotePath,reason:error.message})}
-      }
-    }
-  }
-  fs.writeFileSync(path.join(evidence,'screenshots.json'),JSON.stringify(report,null,2));
-  console.log(`Preserved ${report.captures.length} native screenshots; ${report.unavailable.length} paths were unavailable.`);
-}
 async function preserveFailureEvidence() {
   if(fixture) {
     try {
@@ -255,7 +233,16 @@ async function preserveFailureEvidence() {
       fs.writeFileSync(path.join(evidence,'synthetic-provider-observations.json'),JSON.stringify(observations,null,2));
     } catch(error) {console.warn(`Synthetic provider observations could not be preserved: ${error.message}`)}
   }
-  try {await collectScreenshots()} catch(error) {console.warn(`Screenshot extraction could not finish: ${error.message}`)}
+  for(const packageName of installedPackages) {
+    try {
+      await screenshotCollector.collect(packageName,{phase:'failure-or-cleanup',
+        includeFailure:!results.some(result=>result.label==='native-https-phone'&&result.result==='passed')});
+    } catch(error) {console.warn('Screenshot extraction could not finish: '+error.message)}
+  }
+  try {
+    const gate=screenshotCollector.verify();
+    console.log('Preserved '+gate.capturedRequiredCaptures+' of '+gate.expectedRequiredCaptures+' required native screenshots.');
+  } catch(error) {console.warn('Screenshot manifest could not be verified: '+error.message)}
 }
 async function configure(packageName) {
   await device('shell','wm','size','1080x1920');await device('shell','wm','density','480');
@@ -295,6 +282,8 @@ async function instrument(label,packageName,classes,argumentsMap={},minimum=1) {
   }
 }
 try {
+  await run(process.execPath,['--test',path.join(root,'android/checks/screenshot-evidence.test.mjs')],
+    {log:'screenshot-evidence-tests.log',timeout:60000});
   await run(path.join(sdk,'cmdline-tools/latest/bin/avdmanager'),['create','avd','--name','CareerFinderCI','--package','system-images;android-36;google_apis;x86_64','--device','pixel_7'],{stdin:'no\n',log:'avd-create.log'});
   await run(adb,['start-server'],{log:'adb.log'});
   const emulator=await start(path.join(sdk,'emulator/emulator'),['-avd','CareerFinderCI','-port','5580','-no-window','-no-audio','-no-snapshot','-no-boot-anim','-gpu','swiftshader','-memory','2048','-cores','2'],'emulator.log');
@@ -313,7 +302,10 @@ try {
   const testDirectory=path.join(root,'android/app/src/androidTest/java/com/saleh/careerfinder');
   const classes=fs.readdirSync(testDirectory).filter(name=>name.endsWith('.kt')).flatMap(name=>[...fs.readFileSync(path.join(testDirectory,name),'utf8').matchAll(/^class\s+(\w+(?:Test))\b/gm)].map(match=>match[1])).filter(name=>!['NativeHttpsAcceptanceTest','TlsBoundaryAcceptanceTest'].includes(name)).sort().map(name=>'com.saleh.careerfinder.'+name);
   assert.ok(classes.some(name=>name.endsWith('WorkspaceSafetyRegressionTest')),'New safety regressions must be selected.');
-  await instrument('ordinary-phone','com.saleh.careerfinder.preview',classes,{},97);
+  assert.ok(classes.some(name=>name.endsWith('NativeLocalizationAcceptanceTest')),'Bilingual dialog and language-control regressions must be selected.');
+  await instrument('ordinary-phone','com.saleh.careerfinder.preview',classes,{},105);
+  // Preserve completed preview evidence before the acceptance build and later device work.
+  await screenshotCollector.collect('com.saleh.careerfinder.preview',{phase:'ordinary-phone'});
   const {startTLSFixture}=await import('../../website/applications/fixtures/tls-fixture.mjs');
   fixture=await startTLSFixture({runtimeDir:path.join(runtime,'tls'),port:4943,mockPort:4944});
   await instrument('normal-preview-tls-boundary','com.saleh.careerfinder.preview',['com.saleh.careerfinder.TlsBoundaryAcceptanceTest'],{fixtureOrigin:fixture.origin});
@@ -324,11 +316,14 @@ try {
   await configure('com.saleh.careerfinder.acceptance');
   const currentPairingCode=fixture.service.createPairingCode().pairingCode;
   await instrument('native-https-phone','com.saleh.careerfinder.acceptance',['com.saleh.careerfinder.NativeHttpsAcceptanceTest'],{fixtureOrigin:fixture.origin,pairingCode:currentPairingCode,fixtureResumeBase64:fixture.resume.dataBase64,successUrl:fixture.jobs.success,timeoutUrl:fixture.jobs.timeout,cooldownUrl:fixture.jobs.cooldown});
+  await screenshotCollector.collect('com.saleh.careerfinder.acceptance',{phase:'native-https-phone'});
   const observations=await fixture.observations();
   fs.writeFileSync(path.join(evidence,'synthetic-provider-observations.json'),JSON.stringify(observations,null,2));
   const providerPOSTCounts=assertSyntheticObservations(observations,fixture.jobs,Buffer.from(fixture.resume.dataBase64,'base64').length);
   const hashes={};for(const file of ['android/app/build/outputs/apk/debug/app-debug.apk','android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk','android/app/build/outputs/apk/acceptance/app-acceptance.apk','android/app/build/outputs/apk/androidTest/acceptance/app-acceptance-androidTest.apk'])hashes[file]=createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex');
-  fs.writeFileSync(path.join(evidence,'verification.json'),JSON.stringify({commit:process.env.GITHUB_SHA,observedAt:new Date().toISOString(),result:'passed',results,hashes,providerPOSTCounts,screenshotManifest:'screenshots.json',realEmployerRequests:0,productionAccountsUsed:false,environment:'Disposable API36 x86_64 Google APIs phone; 360dp, 180% text, dark appearance, Arabic app locale and forced RTL; system trust for ordinary preview, isolated test CA only in acceptance variant.'},null,2));
+  const screenshotVerification=screenshotCollector.verify();
+  fs.writeFileSync(path.join(evidence,'verification.json'),JSON.stringify({commit:process.env.GITHUB_SHA,observedAt:new Date().toISOString(),result:screenshotVerification.result==='captured'?'passed':'failed',testsResult:'passed',results,hashes,providerPOSTCounts,screenshotVerification,screenshotManifest:'screenshots.json',realEmployerRequests:0,productionAccountsUsed:false,environment:'Disposable API36 x86_64 Google APIs phone; 360dp, 180% text, dark appearance, Arabic app locale and forced RTL; system trust for ordinary preview, isolated test CA only in acceptance variant.'},null,2));
+  assert.equal(screenshotVerification.result,'captured','Required native screenshot evidence is incomplete; inspect screenshots.json. Instrumented test results remain recorded separately.');
 } finally {
   try {await preserveFailureEvidence()} finally {
     try {if(fixture)await fixture.close()} finally {

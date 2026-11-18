@@ -31,12 +31,27 @@ public final class BoundaryPolicyCheck {
         check(ProfileContract.emailError("person+jobs@EXAMPLE.ORG") == null, "service-compatible email accepted");
         check(ProfileContract.emailError("person<name>@example.org") != null, "unsupported email punctuation rejected");
         check(ProfileContract.emailError("x".repeat(65) + "@example.org") != null, "oversized email local part rejected");
+        check("Enter an email address employers can reply to.".equals(ProfileContract.emailError("invalid-email")), "typed invalid email explains the correction");
+        check("Email needed".equals(ProfileContract.emailEssentialLabel("")), "empty email is needed");
+        check("Check your email".equals(ProfileContract.emailEssentialLabel("invalid-email")), "typed invalid email asks for a check");
+        check("Check your email".equals(ProfileContract.emailEssentialLabel("   ")), "whitespace-only email asks for a check");
+        check("Email added".equals(ProfileContract.emailEssentialLabel("person+jobs@example.org")), "usable email is added");
         check(ProfileContract.countryError("XK") == null, "supported region beyond Java ISO list accepted");
         check(ProfileContract.countryError("ZZ") != null, "unknown country rejected");
         check(ProfileContract.listError(java.util.stream.IntStream.range(0,30).mapToObj(i -> "Role " + i).collect(java.util.stream.Collectors.joining(",")), "Roles", false) == null, "30 role entries accepted");
         check(ProfileContract.listError(java.util.stream.IntStream.range(0,31).mapToObj(i -> "Role " + i).collect(java.util.stream.Collectors.joining(",")), "Roles", false) != null, "31 role entries report an error without truncation");
         check(ProfileContract.listError("x".repeat(101), "Skills", false) != null, "oversized list item rejected");
         check(ProfileContract.listError("US, ZZ", "Target countries", true) != null, "invalid target country rejected");
+        check(ProfileContract.listItems(" Swift، Kotlin, العربية ، Swift ").equals(Arrays.asList("Swift", "Kotlin", "العربية", "Swift")), "Shared list parsing preserves order and duplicates until the caller applies its existing policy");
+        check(ProfileContract.listItems("محاسب، محلل بيانات,,\u00a0مصمم\u00a0، محاسب").equals(Arrays.asList("محاسب", "محلل بيانات", "مصمم", "محاسب")), "List parsing trims Unicode whitespace and skips empty entries");
+        check(ProfileContract.listError("\u00a0sa\u00a0، US, AE", "Target countries", true) == null, "Arabic and ASCII commas separate recognized target countries with Unicode whitespace");
+        check(ProfileContract.listError(String.join("،", java.util.Collections.nCopies(31, "محاسب")), "Roles", false) == null, "Repeated roles keep Android's existing distinct-item limit");
+        check(ProfileContract.listError("Swift،" + "x".repeat(100), "Skills", false) == null, "Arabic-delimited entries accept the existing 100-character boundary");
+        check(ProfileContract.listError(" ، , ", "Skills", false) == null, "Empty items between either comma remain empty");
+        check(ProfileContract.listError(java.util.stream.IntStream.range(0,30).mapToObj(i -> "وظيفة " + i).collect(java.util.stream.Collectors.joining("،")), "Roles", false) == null, "30 Arabic-delimited roles retain the existing limit");
+        check(ProfileContract.listError(java.util.stream.IntStream.range(0,31).mapToObj(i -> "وظيفة " + i).collect(java.util.stream.Collectors.joining("،")), "Roles", false) != null, "Arabic delimiters cannot evade the 30-role limit");
+        check(ProfileContract.listError("Swift،" + "x".repeat(101), "Skills", false) != null, "Arabic-delimited items keep the 100-character limit");
+        check(ProfileContract.listError("SA، ZZ", "Target countries", true) != null, "Arabic delimiters do not admit unknown countries");
         check(ProfileContract.websiteError("https://portfolio.example.org/") == null, "public portfolio accepted");
         for (String invalid : new String[]{"https://127.0.0.1/", "https://[::1]/", "https://example.local", "https://example.invalid", "https://example.org:8443/", "http://example.org"})
             check(ProfileContract.websiteError(invalid) != null, "service-incompatible portfolio rejected: " + invalid);

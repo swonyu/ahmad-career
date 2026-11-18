@@ -1,0 +1,23 @@
+diff --git a/android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt b/android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt
+index 5ea876e..ecd1162 100644
+--- a/android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt
++++ b/android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt
+@@ -155,7 +155,7 @@ internal fun WorkspaceImportDialog(state: CareerUiState, model: CareerViewModel)
+     var details by remember(preview.token) { mutableStateOf(false) }
+     FullScreenForm("Review phone backup", model::closeWorkspaceImport) {
+         LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+-            item { Heading("Merge into this workspace?", "From ${preview.sourceLabel} · ${preview.sourcePlatform}") }
++            item { Heading("Merge into this workspace?", spokenBackupOrigin(preview.sourceLabel, preview.sourcePlatform, l10n)) }
+             item { Text(l10n.format("Destination: {0}", listOf(((state.connection?.origin ?: l10n("Separate phone draft"))).toString()))) }
+             item { Text(l10n.format("{0} saved jobs · {1} application records · {2} unfinished record edits. No employer application will be submitted.", listOf((incoming.jobs.size).toString(), (incoming.applicationRecords.size).toString(), (incoming.recordDrafts.size + incoming.recordDraftAlternatives.size).toString()))) }
+             item { Panel {
+@@ -232,3 +232,9 @@ private fun spokenRegion(code: String, names: Map<String, String>): String = nam
+ 
+ private fun spokenRegions(codes: String, names: Map<String, String>): String =
+     codes.parts().joinToString(", ") { names[it] ?: it }
++
++/** The private-draft name is a catalog phrase. A service address and the platform token stay as stored. */
++private fun spokenBackupOrigin(label: String, platform: String, l10n: CareerStrings): String {
++    val named = if (label == "Private phone draft") l10n(label) else label
++    return l10n.format("From {0} · {1}", listOf(named, platform))
++}

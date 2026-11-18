@@ -1,0 +1,142 @@
+{
+  "windowMinutes": 240,
+  "limit": 100,
+  "scope": "Bounded purpose-built Worker log query; identities, headers, query strings and request bodies excluded. No complete traffic-history claim.",
+  "events": [
+    {
+      "at": "2026-11-17T13:25:07.117Z",
+      "route": "/api/phone/workspace",
+      "status": 200,
+      "outcome": "ok",
+      "requestId": "7542af34a05377613d8990ff32493224",
+      "wallTimeMs": 309,
+      "cpuTimeMs": 6
+    },
+    {
+      "at": "2026-11-17T13:25:06.833Z",
+      "route": "/api/discovery/sources",
+      "status": 200,
+      "outcome": "ok",
+      "requestId": "627c3e6ce377f98675db5e055dd2fbab",
+      "wallTimeMs": 2,
+      "cpuTimeMs": 1
+    },
+    {
+      "at": "2026-11-17T13:25:04.364Z",
+      "route": "/",
+      "status": 200,
+      "outcome": "ok",
+      "requestId": "db3ccd847564e9587d770ec8b77197bc",
+      "wallTimeMs": 157,
+      "cpuTimeMs": 148
+    },
+    {
+      "at": "2026-11-17T13:25:02.317Z",
+      "route": "/api/phone/workspace",
+      "status": 200,
+      "outcome": "ok",
+      "requestId": "ee43a8641c3860d82b48c0d5c37c1371",
+      "wallTimeMs": 235,
+      "cpuTimeMs": 8
+    },
+    {
+      "at": "2026-11-17T13:25:02.249Z",
+      "route": "/api/discovery/sources",
+      "status": 200,
+      "outcome": "ok",
+      "requestId": "a13a257b0a60abb716e2808b45881bf1",
+      "wallTimeMs": 1,
+      "cpuTimeMs": 1
+    },
+    {
+      "at": "2026-11-17T13:25:00.566Z",
+      "route": "/phone",
+      "status": 200,
+      "outcome": "ok",
+      "requestId": "5f349a6585313027098e9c0b77d112d1",
+      "wallTimeMs": 131,
+      "cpuTimeMs": 126
+    },
+    {
+      "at": "2026-11-17T13:24:58.551Z",
+      "route": "/api/phone/workspace",
+      "status": 200,
+      "outcome": "ok",
+      "requestId": "75b72bcfea6f9d6bb6a64181d20f10dc",
+      "wallTimeMs": 226,
+      "cpuTimeMs": 4
+    },
+    {
+      "at": "2026-11-17T13:24:58.390Z",
+      "route": "/api/discovery/sources",
+      "status": 200,
+      "outcome": "ok",
+      "requestId": "33b50c9233767d66656945e74a8ea2d9",
+      "wallTimeMs": 1,
+      "cpuTimeMs": 1
+    },
+    {
+      "at": "2026-11-17T13:24:56.211Z",
+      "route": "/",
+      "status": 200,
+      "outcome": "ok",
+      "requestId": "b4920aff7d0cacc8c24d1b9e315e44db",
+      "wallTimeMs": 145,
+      "cpuTimeMs": 139
+    },
+    {
+      "at": "2026-11-17T13:24:47.625Z",
+      "route": "/api/phone/workspace",
+      "outcome": "canceled",
+      "requestId": "11901b5725a7a6fac18a92bd346c3c47",
+      "wallTimeMs": 155,
+      "cpuTimeMs": 7
+    },
+    {
+      "at": "2026-11-17T13:24:47.553Z",
+      "route": "/api/discovery/sources",
+      "status": 200,
+      "outcome": "ok",
+      "requestId": "cfcba327a0022462c791c4c9817992c7",
+      "wallTimeMs": 4,
+      "cpuTimeMs": 2
+    },
+    {
+      "at": "2026-11-17T13:24:45.572Z",
+      "route": "/",
+      "status": 200,
+      "outcome": "ok",
+      "requestId": "9fd1109318c6d3542caffd699a5d7582",
+      "wallTimeMs": 251,
+      "cpuTimeMs": 240
+    },
+    {
+      "at": "2026-11-17T13:24:33.979Z",
+      "route": "/api/phone/workspace",
+      "status": 200,
+      "outcome": "ok",
+      "requestId": "05d2f5d02189ad2723523d931d716112",
+      "wallTimeMs": 206,
+      "cpuTimeMs": 10
+    },
+    {
+      "at": "2026-11-17T13:24:33.816Z",
+      "route": "/api/discovery/sources",
+      "status": 200,
+      "outcome": "ok",
+      "requestId": "931783165bc95ec24ff351b581c80fc2",
+      "wallTimeMs": 3,
+      "cpuTimeMs": 2
+    },
+    {
+      "at": "2026-11-17T13:24:31.581Z",
+      "route": "/",
+      "status": 200,
+      "outcome": "ok",
+      "requestId": "cd391e5926639d801bddcd698bc6d512",
+      "wallTimeMs": 299,
+      "cpuTimeMs": 286
+    }
+  ],
+  "recordedAt": "2026-11-17T13:35:55.043994+00:00"
+}

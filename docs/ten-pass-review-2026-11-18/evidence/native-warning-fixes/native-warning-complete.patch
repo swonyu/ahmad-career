@@ -1,0 +1,82 @@
+diff --git a/.github/workflows/phone-quality.yml b/.github/workflows/phone-quality.yml
+index 25876af..fe51556 100644
+--- a/.github/workflows/phone-quality.yml
++++ b/.github/workflows/phone-quality.yml
+@@ -245,13 +245,13 @@ jobs:
+               if '.iOS-' not in runtime:
+                   continue
+               version = tuple(map(int, re.findall(r'\d+', runtime.split('.iOS-', 1)[1])))
+-              if not version or version[0] < 16:
++              if not version or version[0] < 17:
+                   continue
+               for device in devices:
+                   if device.get('isAvailable') and device['name'].startswith('iPhone'):
+                       compact = not any(word in device['name'] for word in ['Max', 'Plus'])
+                       candidates.append((version, compact, device['name'], device['udid']))
+-          assert candidates, 'This runner has no available iPhone Simulator with iOS 16 or later.'
++          assert candidates, 'This runner has no available iPhone Simulator with iOS 17 or later.'
+           version, compact, name, identifier = sorted(candidates, reverse=True)[0]
+           assert re.fullmatch(r'[A-Fa-f0-9-]{36}', identifier)
+           architecture = platform.machine()
+diff --git a/apple/AhmadCareer.xcodeproj/project.pbxproj b/apple/AhmadCareer.xcodeproj/project.pbxproj
+index 5fab1ea..51147e3 100644
+--- a/apple/AhmadCareer.xcodeproj/project.pbxproj
++++ b/apple/AhmadCareer.xcodeproj/project.pbxproj
+@@ -46,7 +46,7 @@
+                 PRODUCT_BUNDLE_IDENTIFIER = com.ahmadalayed.career.UITests;
+                 PRODUCT_NAME = "$(TARGET_NAME)";
+                 SDKROOT = iphoneos;
+-                IPHONEOS_DEPLOYMENT_TARGET = 16.0;
++                IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+                 SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+                 TARGETED_DEVICE_FAMILY = 1;
+                 TEST_TARGET_NAME = AhmadCareer;
+@@ -62,7 +62,7 @@
+                 PRODUCT_BUNDLE_IDENTIFIER = com.ahmadalayed.career.UITests;
+                 PRODUCT_NAME = "$(TARGET_NAME)";
+                 SDKROOT = iphoneos;
+-                IPHONEOS_DEPLOYMENT_TARGET = 16.0;
++                IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+                 SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+                 TARGETED_DEVICE_FAMILY = 1;
+                 TEST_TARGET_NAME = AhmadCareer;
+diff --git a/apple/AhmadCareer/NativeApplicationsViews.swift b/apple/AhmadCareer/NativeApplicationsViews.swift
+index 9daf2e5..172ef58 100644
+--- a/apple/AhmadCareer/NativeApplicationsViews.swift
++++ b/apple/AhmadCareer/NativeApplicationsViews.swift
+@@ -1102,7 +1102,7 @@ private struct NativeHostedServicePresenter: UIViewControllerRepresentable {
+     }
+ 
+     @MainActor
+-    final class Presenter: UIViewController, SFSafariViewControllerDelegate, UIAdaptivePresentationControllerDelegate {
++    final class Presenter: UIViewController, @MainActor SFSafariViewControllerDelegate, UIAdaptivePresentationControllerDelegate {
+         private var requestedURL: URL?
+         private var browser: SFSafariViewController?
+         private var onDismiss: (() -> Void)?
+diff --git a/apple/AhmadCareer/NativeLocalization.swift b/apple/AhmadCareer/NativeLocalization.swift
+index 754c036..2702ee5 100644
+--- a/apple/AhmadCareer/NativeLocalization.swift
++++ b/apple/AhmadCareer/NativeLocalization.swift
+@@ -46,11 +46,11 @@ enum NativeLanguage: String, CaseIterable, Identifiable {
+     var title: String { switch self { case .system: "Device language"; case .en: "English"; case .ar: "العربية" } }
+     var locale: Locale {
+         if self != .system { return Locale(identifier: rawValue) }
+-        let supported = Locale.preferredLanguages.compactMap { Locale(identifier: $0).languageCode }
++        let supported = Locale.preferredLanguages.compactMap { Locale(identifier: $0).language.languageCode?.identifier }
+             .first { $0 == "ar" || $0 == "en" } ?? "en"
+         return Locale(identifier: supported)
+     }
+-    var direction: LayoutDirection { locale.languageCode == "ar" ? .rightToLeft : .leftToRight }
++    var direction: LayoutDirection { locale.language.languageCode?.identifier == "ar" ? .rightToLeft : .leftToRight }
+     @MainActor static var storageKey: String {
+         #if DEBUG
+         if CareerAppEnvironment.isUIAcceptance {
+@@ -70,7 +70,7 @@ struct NativeLocalization: DynamicProperty {
+ 
+ struct NativeCopy {
+     let locale: Locale
+-    private var isArabic: Bool { locale.languageCode == "ar" }
++    private var isArabic: Bool { locale.language.languageCode?.identifier == "ar" }
+     private var bundle: Bundle {
+         guard let path = Bundle.main.path(forResource: isArabic ? "ar" : "en", ofType: "lproj"),
+               let localized = Bundle(path: path) else { return .main }

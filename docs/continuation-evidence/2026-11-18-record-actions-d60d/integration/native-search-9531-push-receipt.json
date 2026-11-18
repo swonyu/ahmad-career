@@ -1,0 +1,105 @@
+{
+  "startedUTC": "2026-11-18T06:43:18.786535+00:00",
+  "branch": "continuation/native-search-retry-cooldown-20261118-d60d",
+  "supersededCommit": "ffc038cd2bfcbc6006dfc23dee87e34ee55a7a00",
+  "steps": [
+    {
+      "name": "followup-remote-before",
+      "argv": [
+        "git",
+        "ls-remote",
+        "--heads",
+        "origin",
+        "refs/heads/continuation/native-search-retry-cooldown-20261118-d60d"
+      ],
+      "exit": 0,
+      "stdoutSHA256": "ecbdc0852d292bacb4dd8554635f005d399e27f96449af5142fe1a55d976e30d",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "finishedUTC": "2026-11-18T06:43:19.454772+00:00"
+    },
+    {
+      "name": "followup-diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "finishedUTC": "2026-11-18T06:43:19.482011+00:00"
+    },
+    {
+      "name": "followup-stage",
+      "argv": [
+        "git",
+        "add",
+        "--",
+        "apple/AhmadCareer/CareerDiscovery.swift",
+        "apple/Checks/DiscoveryCheck.swift",
+        "docs/continuation-evidence/2026-11-18-native-retry-localization-d60d"
+      ],
+      "exit": 0,
+      "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "finishedUTC": "2026-11-18T06:43:19.511607+00:00"
+    },
+    {
+      "name": "followup-commit",
+      "argv": [
+        "git",
+        "commit",
+        "-m",
+        "Preserve localized guidance during submitted-search cooldown"
+      ],
+      "exit": 0,
+      "stdoutSHA256": "9912dfe27183412f279323e40c8d3063b9fa8cfdb5cbaa7f7a9db0ebbc21f21e",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "finishedUTC": "2026-11-18T06:43:19.573680+00:00"
+    },
+    {
+      "name": "followup-push",
+      "argv": [
+        "git",
+        "push",
+        "origin",
+        "HEAD:refs/heads/continuation/native-search-retry-cooldown-20261118-d60d"
+      ],
+      "exit": 0,
+      "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSHA256": "f7b6ed6ee5e7a56c97cc11631dd51d060f6c1057360d18e78295139d8918d10d",
+      "finishedUTC": "2026-11-18T06:43:21.633133+00:00"
+    },
+    {
+      "name": "followup-remote-readback",
+      "argv": [
+        "git",
+        "ls-remote",
+        "--heads",
+        "origin",
+        "refs/heads/continuation/native-search-retry-cooldown-20261118-d60d"
+      ],
+      "exit": 0,
+      "stdoutSHA256": "1034080500145d5687204bc6c0b8145f369c4db925076df6585dcad2211673c7",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "finishedUTC": "2026-11-18T06:43:22.260838+00:00"
+    }
+  ],
+  "remoteBefore": "ffc038cd2bfcbc6006dfc23dee87e34ee55a7a00\trefs/heads/continuation/native-search-retry-cooldown-20261118-d60d",
+  "commit": "9531a4be09c459e15573667c67b695dc6040874d",
+  "tree": "06d9fc23cc57536d3c1f1427eee84007decda4e1",
+  "parent": "ffc038cd2bfcbc6006dfc23dee87e34ee55a7a00",
+  "remoteAfter": "9531a4be09c459e15573667c67b695dc6040874d\trefs/heads/continuation/native-search-retry-cooldown-20261118-d60d",
+  "remoteEqualsCommit": true,
+  "gitStatus": "",
+  "finishedUTC": "2026-11-18T06:43:22.297576+00:00",
+  "evidenceURL": "https://github.com/swonyu/ahmad-career/tree/9531a4be09c459e15573667c67b695dc6040874d/docs/continuation-evidence/2026-11-18-native-retry-localization-d60d",
+  "committedSourceHashes": {
+    "apple/AhmadCareer/CareerDiscovery.swift": "fa20d36593ca2d5fce872bba9759dc299aa22d1725483777b10d75ac7af420e4",
+    "apple/Checks/DiscoveryCheck.swift": "dc1ab73393d5c3ab5d389422fcc2d8024b4bd0df7d7f3f6eed4f5fbce0973d65"
+  },
+  "originalSearchUnchanged": true,
+  "publisherUnchanged": true,
+  "preservationCheckedUTC": "2026-11-18T06:44:03.545466+00:00",
+  "postPushGitStatus": ""
+}

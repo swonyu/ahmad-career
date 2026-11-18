@@ -1,0 +1,730 @@
+{
+  "verifiedAt": "2026-11-18T05:22:51.198653+00:00",
+  "source": {
+    "fixtureBuildMetadataOriginalPath": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/stage-browser-fixture-20261118-578d99c/public/build-metadata.json",
+    "fixtureBuildMetadataCopy": "reference/fixture-build-metadata.json",
+    "fixtureBuildMetadataSha256": "1ac3499b344d286fa1f90acdea5ffe17007c20eaaacedfcd7c80645014ed1a8b",
+    "fixtureGeneratedAt": "2026-11-18T03:18:30.976Z",
+    "fixtureCommit": "578d99c8f225a72ca7cc0cf10ff474bb19aaaebc",
+    "servedPhoneAppSha256": "0ee2f855083ad5933dbbca1161372e8e6e3c8b393c1fd6033b2858c59dacfd94",
+    "captureTimeWorkingFilePhoneAppSha256": "57543cdbc0fbcb7a51cab725d65907e76af2a29ecf9f2022bffe6caaadc9da02",
+    "workingFileDiffersFromFrozenServedFixture": true,
+    "limits": "Browser interactions and source578 fixture identity provided by root; helper independently read preserved fixture metadata and actual Downloads. Current working file may contain root ongoing correction and is not the exported source."
+  },
+  "json": {
+    "payloadEqualityExcludingExportedAt": true,
+    "savedSectionsEqualAcrossExports": true,
+    "recoverySectionsEqualAcrossExports": true,
+    "savedAndRecoveryAreDistinctSections": true,
+    "coverage": {
+      "savedJobs": 17,
+      "applicationRecords": 20,
+      "recordOnlyIdentities": [
+        "https://employer.example/jobs/11",
+        "https://employer.example/jobs/15",
+        "https://employer.example/jobs/19",
+        "https://employer.example/jobs/3",
+        "https://employer.example/jobs/7"
+      ],
+      "savedJobsWithoutRecord": [
+        "https://employer.example/jobs/bare-21",
+        "https://employer.example/jobs/bare-22"
+      ],
+      "recordStageCounts": {
+        "offer": 5,
+        "saved": 4,
+        "applied": 4,
+        "interview": 3,
+        "closed": 4
+      }
+    },
+    "nurse": {
+      "identity": "https://employer.example/jobs/10",
+      "title": "Nurse clinic",
+      "company": "Synthetic Employer",
+      "location": "الرياض",
+      "stage": "offer",
+      "appliedElsewhere": true,
+      "appliedDate": "",
+      "followUpDate": "2026-11-30",
+      "note": "=SYNTHETIC(\"مرحبا، عالم\")\nLine two, \"quoted\"; follow-up",
+      "updatedAt": "2026-11-18T05:09:19.214Z"
+    },
+    "initialEvidence": {
+      "role": "Initial export before date commit, preserved as provenance rather than treated as a failed final export.",
+      "nurseFollowUpDate": "",
+      "nurseUpdatedAt": "2026-11-18T03:38:11.256Z",
+      "finalFollowUpDate": "2026-11-30",
+      "finalUpdatedAt": "2026-11-18T05:09:19.214Z"
+    },
+    "actualRestoreImport": "NOT RUN"
+  },
+  "csv": [
+    {
+      "language": "en",
+      "path": "originals/final-records-en.csv",
+      "sha256": "419c024b8907e6e0eed3867b507c97d79f56d7e224b852b90a97004027a3f935",
+      "bytes": 3073,
+      "records": 20,
+      "columns": 9,
+      "cellsIncludingHeader": 189,
+      "formulaProtectedCells": 1,
+      "nurseRow": [
+        "Nurse clinic",
+        "Synthetic Employer",
+        "https://employer.example/jobs/10",
+        "Offer",
+        "Yes",
+        "",
+        "2026-11-30",
+        "Text: =SYNTHETIC(\"مرحبا، عالم\")\nLine two, \"quoted\"; follow-up",
+        "2026-11-18T05:09:19.214Z"
+      ],
+      "allRecordsExportedDespiteRootObservedVisibleFilter": true
+    },
+    {
+      "language": "ar",
+      "path": "originals/final-records-ar.csv",
+      "sha256": "46f691bdb8a9d4bf4aa6b23045fb3ba222daa91707f3b42ed318ca250f994c68",
+      "bytes": 3471,
+      "records": 20,
+      "columns": 9,
+      "cellsIncludingHeader": 189,
+      "formulaProtectedCells": 1,
+      "nurseRow": [
+        "Nurse clinic",
+        "Synthetic Employer",
+        "https://employer.example/jobs/10",
+        "عرض وظيفي",
+        "نعم",
+        "",
+        "2026-11-30",
+        "Text: =SYNTHETIC(\"مرحبا، عالم\")\nLine two, \"quoted\"; follow-up",
+        "2026-11-18T05:09:19.214Z"
+      ],
+      "allRecordsExportedDespiteRootObservedVisibleFilter": true
+    }
+  ],
+  "repeatedEnglishCSVByteEqual": true,
+  "ics": [
+    {
+      "path": "originals/final-follow-up-en.ics",
+      "language": "en",
+      "bytes": 542,
+      "sha256": "d8386a43a3da7e451c0bbc3c640a417e7e01e97898695d51190fab03059b02ed",
+      "physicalLines": 18,
+      "foldedContinuationLines": 2,
+      "maximumPhysicalLineOctets": 75,
+      "properties": {
+        "VERSION": "2.0",
+        "PRODID": "-//Career Finder//Follow-up reminder//EN",
+        "CALSCALE": "GREGORIAN",
+        "UID": "career-finder-follow-up-43bc11855b96a1325c9d07fad65a180bc4ddfcfe72fef5f5733892f8425bdaac",
+        "DTSTAMP": "20261118T051138Z",
+        "DTSTART;VALUE=DATE": "20261130",
+        "DURATION": "P1D",
+        "SUMMARY": "Follow up: Nurse clinic · Synthetic Employer",
+        "DESCRIPTION": "Personal follow-up reminder. Check the employer’s current posting before contacting them.",
+        "URL": "https://employer.example/jobs/10",
+        "CLASS": "PRIVATE",
+        "TRANSP": "TRANSPARENT"
+      },
+      "calendarConsumerImport": "NOT RUN"
+    },
+    {
+      "path": "originals/final-follow-up-en-repeat.ics",
+      "language": "en",
+      "bytes": 542,
+      "sha256": "864be0ba972adeb37feff5c424322a5ae92d8b5c5b2a1917367be694d3f79126",
+      "physicalLines": 18,
+      "foldedContinuationLines": 2,
+      "maximumPhysicalLineOctets": 75,
+      "properties": {
+        "VERSION": "2.0",
+        "PRODID": "-//Career Finder//Follow-up reminder//EN",
+        "CALSCALE": "GREGORIAN",
+        "UID": "career-finder-follow-up-43bc11855b96a1325c9d07fad65a180bc4ddfcfe72fef5f5733892f8425bdaac",
+        "DTSTAMP": "20261118T051244Z",
+        "DTSTART;VALUE=DATE": "20261130",
+        "DURATION": "P1D",
+        "SUMMARY": "Follow up: Nurse clinic · Synthetic Employer",
+        "DESCRIPTION": "Personal follow-up reminder. Check the employer’s current posting before contacting them.",
+        "URL": "https://employer.example/jobs/10",
+        "CLASS": "PRIVATE",
+        "TRANSP": "TRANSPARENT"
+      },
+      "calendarConsumerImport": "NOT RUN"
+    },
+    {
+      "path": "originals/final-follow-up-ar.ics",
+      "language": "ar",
+      "bytes": 580,
+      "sha256": "8fc32f4e7867865bc57e42c529c009af0ee6f8a54c127b07dd3b36cbf5dc4909",
+      "physicalLines": 18,
+      "foldedContinuationLines": 2,
+      "maximumPhysicalLineOctets": 75,
+      "properties": {
+        "VERSION": "2.0",
+        "PRODID": "-//Career Finder//Follow-up reminder//EN",
+        "CALSCALE": "GREGORIAN",
+        "UID": "career-finder-follow-up-43bc11855b96a1325c9d07fad65a180bc4ddfcfe72fef5f5733892f8425bdaac",
+        "DTSTAMP": "20261118T051533Z",
+        "DTSTART;VALUE=DATE": "20261130",
+        "DURATION": "P1D",
+        "SUMMARY": "المتابعة: Nurse clinic · Synthetic Employer",
+        "DESCRIPTION": "تذكير شخصي بالمتابعة. راجع إعلان جهة العمل الحالي قبل التواصل معها.",
+        "URL": "https://employer.example/jobs/10",
+        "CLASS": "PRIVATE",
+        "TRANSP": "TRANSPARENT"
+      },
+      "calendarConsumerImport": "NOT RUN"
+    }
+  ],
+  "consumer": [
+    {
+      "mode": "quoted-text-import",
+      "language": "en",
+      "path": "consumer/quoted-text-import/final-records-en.fods",
+      "rowsIncludingHeader": 21,
+      "columns": 9,
+      "cellsIncludingHeader": 189,
+      "valueMismatchCount": 0,
+      "formulaCount": 0,
+      "cellTypes": {
+        "string": 155,
+        "blank": 34
+      }
+    },
+    {
+      "mode": "quoted-text-import",
+      "language": "ar",
+      "path": "consumer/quoted-text-import/final-records-ar.fods",
+      "rowsIncludingHeader": 21,
+      "columns": 9,
+      "cellsIncludingHeader": 189,
+      "valueMismatchCount": 0,
+      "formulaCount": 0,
+      "cellTypes": {
+        "string": 155,
+        "blank": 34
+      }
+    },
+    {
+      "mode": "reopen-native-ods",
+      "language": "en",
+      "path": "consumer/reopen-native-ods/final-records-en.fods",
+      "rowsIncludingHeader": 21,
+      "columns": 9,
+      "cellsIncludingHeader": 189,
+      "valueMismatchCount": 0,
+      "formulaCount": 0,
+      "cellTypes": {
+        "string": 155,
+        "blank": 34
+      }
+    },
+    {
+      "mode": "reopen-native-ods",
+      "language": "ar",
+      "path": "consumer/reopen-native-ods/final-records-ar.fods",
+      "rowsIncludingHeader": 21,
+      "columns": 9,
+      "cellsIncludingHeader": 189,
+      "valueMismatchCount": 0,
+      "formulaCount": 0,
+      "cellTypes": {
+        "string": 155,
+        "blank": 34
+      }
+    },
+    {
+      "mode": "reimport-saved-csv",
+      "language": "en",
+      "path": "consumer/reimport-saved-csv/final-records-en.fods",
+      "rowsIncludingHeader": 21,
+      "columns": 9,
+      "cellsIncludingHeader": 189,
+      "valueMismatchCount": 0,
+      "formulaCount": 0,
+      "cellTypes": {
+        "string": 155,
+        "blank": 34
+      }
+    },
+    {
+      "mode": "reimport-saved-csv",
+      "language": "ar",
+      "path": "consumer/reimport-saved-csv/final-records-ar.fods",
+      "rowsIncludingHeader": 21,
+      "columns": 9,
+      "cellsIncludingHeader": 189,
+      "valueMismatchCount": 0,
+      "formulaCount": 0,
+      "cellTypes": {
+        "string": 155,
+        "blank": 34
+      }
+    }
+  ],
+  "positiveControl": {
+    "text": "2",
+    "type": "float",
+    "formula": "of:=1+1",
+    "value": "2"
+  },
+  "checks": [
+    {
+      "name": "JSON payloads equal except top-level exportedAt",
+      "passed": true
+    },
+    {
+      "name": "JSON export timestamps differ",
+      "passed": true,
+      "details": {
+        "en": "2026-11-18T05:13:28.968Z",
+        "ar": "2026-11-18T05:14:20.791Z"
+      }
+    },
+    {
+      "name": "JSON expected format, version and guest scope",
+      "passed": true
+    },
+    {
+      "name": "JSON en saved jobs and records",
+      "passed": true
+    },
+    {
+      "name": "JSON en recovery empty",
+      "passed": true
+    },
+    {
+      "name": "JSON en section scopes and schemas",
+      "passed": true
+    },
+    {
+      "name": "JSON ar saved jobs and records",
+      "passed": true
+    },
+    {
+      "name": "JSON ar recovery empty",
+      "passed": true
+    },
+    {
+      "name": "JSON ar section scopes and schemas",
+      "passed": true
+    },
+    {
+      "name": "JSON record identities unique",
+      "passed": true
+    },
+    {
+      "name": "JSON final Nurse exact stage, date and raw note",
+      "passed": true
+    },
+    {
+      "name": "JSON preserves record-only and bare saved jobs",
+      "passed": true
+    },
+    {
+      "name": "CSV en UTF-8 BOM",
+      "passed": true
+    },
+    {
+      "name": "CSV en 20 records and 9 fields",
+      "passed": true
+    },
+    {
+      "name": "CSV en exact translated headers",
+      "passed": true
+    },
+    {
+      "name": "CSV en full unique JSON record identities",
+      "passed": true
+    },
+    {
+      "name": "CSV en every field equals JSON with explicit localized fields and formula marker",
+      "passed": true,
+      "details": {
+        "differences": []
+      }
+    },
+    {
+      "name": "CSV en multiline note has enclosing quotes and doubled quotes",
+      "passed": true
+    },
+    {
+      "name": "CSV en one intentional formula-protection marker",
+      "passed": true
+    },
+    {
+      "name": "CSV ar UTF-8 BOM",
+      "passed": true
+    },
+    {
+      "name": "CSV ar 20 records and 9 fields",
+      "passed": true
+    },
+    {
+      "name": "CSV ar exact translated headers",
+      "passed": true
+    },
+    {
+      "name": "CSV ar full unique JSON record identities",
+      "passed": true
+    },
+    {
+      "name": "CSV ar every field equals JSON with explicit localized fields and formula marker",
+      "passed": true,
+      "details": {
+        "differences": []
+      }
+    },
+    {
+      "name": "CSV ar multiline note has enclosing quotes and doubled quotes",
+      "passed": true
+    },
+    {
+      "name": "CSV ar one intentional formula-protection marker",
+      "passed": true
+    },
+    {
+      "name": "Repeated English CSV is byte identical",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-en.ics CRLF only including final line",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-en.ics maximum 75 octets per physical line",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-en.ics UTF-8 intact across folds",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-en.ics single calendar and event structure",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-en.ics exact minimal property allowlist",
+      "passed": true,
+      "details": {
+        "properties": [
+          "CALSCALE",
+          "CLASS",
+          "DESCRIPTION",
+          "DTSTAMP",
+          "DTSTART;VALUE=DATE",
+          "DURATION",
+          "PRODID",
+          "SUMMARY",
+          "TRANSP",
+          "UID",
+          "URL",
+          "VERSION"
+        ]
+      }
+    },
+    {
+      "name": "ICS final-follow-up-en.ics all-day date and duration",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-en.ics parseable UTC DTSTAMP",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-en.ics private and transparent",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-en.ics localized display",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-en.ics public job URL",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-en.ics private note and profile material absent",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-en-repeat.ics CRLF only including final line",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-en-repeat.ics maximum 75 octets per physical line",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-en-repeat.ics UTF-8 intact across folds",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-en-repeat.ics single calendar and event structure",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-en-repeat.ics exact minimal property allowlist",
+      "passed": true,
+      "details": {
+        "properties": [
+          "CALSCALE",
+          "CLASS",
+          "DESCRIPTION",
+          "DTSTAMP",
+          "DTSTART;VALUE=DATE",
+          "DURATION",
+          "PRODID",
+          "SUMMARY",
+          "TRANSP",
+          "UID",
+          "URL",
+          "VERSION"
+        ]
+      }
+    },
+    {
+      "name": "ICS final-follow-up-en-repeat.ics all-day date and duration",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-en-repeat.ics parseable UTC DTSTAMP",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-en-repeat.ics private and transparent",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-en-repeat.ics localized display",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-en-repeat.ics public job URL",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-en-repeat.ics private note and profile material absent",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-ar.ics CRLF only including final line",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-ar.ics maximum 75 octets per physical line",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-ar.ics UTF-8 intact across folds",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-ar.ics single calendar and event structure",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-ar.ics exact minimal property allowlist",
+      "passed": true,
+      "details": {
+        "properties": [
+          "CALSCALE",
+          "CLASS",
+          "DESCRIPTION",
+          "DTSTAMP",
+          "DTSTART;VALUE=DATE",
+          "DURATION",
+          "PRODID",
+          "SUMMARY",
+          "TRANSP",
+          "UID",
+          "URL",
+          "VERSION"
+        ]
+      }
+    },
+    {
+      "name": "ICS final-follow-up-ar.ics all-day date and duration",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-ar.ics parseable UTC DTSTAMP",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-ar.ics private and transparent",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-ar.ics localized display",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-ar.ics public job URL",
+      "passed": true
+    },
+    {
+      "name": "ICS final-follow-up-ar.ics private note and profile material absent",
+      "passed": true
+    },
+    {
+      "name": "ICS repeated English semantic equality except DTSTAMP",
+      "passed": true
+    },
+    {
+      "name": "ICS localized equality except timestamp and display text",
+      "passed": true
+    },
+    {
+      "name": "ICS stable UID across repeated download and locale",
+      "passed": true
+    },
+    {
+      "name": "ICS distinct download timestamps",
+      "passed": true
+    },
+    {
+      "name": "LibreOffice quoted-text-import en complete shape",
+      "passed": true
+    },
+    {
+      "name": "LibreOffice quoted-text-import en all exact displayed cells",
+      "passed": true,
+      "details": {
+        "mismatchCount": 0,
+        "mismatches": []
+      }
+    },
+    {
+      "name": "LibreOffice quoted-text-import en no formulas and all text or blank",
+      "passed": true
+    },
+    {
+      "name": "LibreOffice quoted-text-import ar complete shape",
+      "passed": true
+    },
+    {
+      "name": "LibreOffice quoted-text-import ar all exact displayed cells",
+      "passed": true,
+      "details": {
+        "mismatchCount": 0,
+        "mismatches": []
+      }
+    },
+    {
+      "name": "LibreOffice quoted-text-import ar no formulas and all text or blank",
+      "passed": true
+    },
+    {
+      "name": "LibreOffice reopen-native-ods en complete shape",
+      "passed": true
+    },
+    {
+      "name": "LibreOffice reopen-native-ods en all exact displayed cells",
+      "passed": true,
+      "details": {
+        "mismatchCount": 0,
+        "mismatches": []
+      }
+    },
+    {
+      "name": "LibreOffice reopen-native-ods en no formulas and all text or blank",
+      "passed": true
+    },
+    {
+      "name": "LibreOffice reopen-native-ods ar complete shape",
+      "passed": true
+    },
+    {
+      "name": "LibreOffice reopen-native-ods ar all exact displayed cells",
+      "passed": true,
+      "details": {
+        "mismatchCount": 0,
+        "mismatches": []
+      }
+    },
+    {
+      "name": "LibreOffice reopen-native-ods ar no formulas and all text or blank",
+      "passed": true
+    },
+    {
+      "name": "LibreOffice reimport-saved-csv en complete shape",
+      "passed": true
+    },
+    {
+      "name": "LibreOffice reimport-saved-csv en all exact displayed cells",
+      "passed": true,
+      "details": {
+        "mismatchCount": 0,
+        "mismatches": []
+      }
+    },
+    {
+      "name": "LibreOffice reimport-saved-csv en no formulas and all text or blank",
+      "passed": true
+    },
+    {
+      "name": "LibreOffice reimport-saved-csv ar complete shape",
+      "passed": true
+    },
+    {
+      "name": "LibreOffice reimport-saved-csv ar all exact displayed cells",
+      "passed": true,
+      "details": {
+        "mismatchCount": 0,
+        "mismatches": []
+      }
+    },
+    {
+      "name": "LibreOffice reimport-saved-csv ar no formulas and all text or blank",
+      "passed": true
+    },
+    {
+      "name": "LibreOffice saved CSV en all semantic fields preserved",
+      "passed": true
+    },
+    {
+      "name": "LibreOffice saved CSV ar all semantic fields preserved",
+      "passed": true
+    },
+    {
+      "name": "LibreOffice active formula evaluation positive control",
+      "passed": true,
+      "details": {
+        "text": "2",
+        "type": "float",
+        "formula": "of:=1+1",
+        "value": "2"
+      }
+    },
+    {
+      "name": "Frozen originals still exact",
+      "passed": true
+    },
+    {
+      "name": "Fixture build provenance matches root commit and original PhoneApp",
+      "passed": true
+    }
+  ],
+  "summary": {
+    "checks": 87,
+    "passed": 87,
+    "failed": 0
+  },
+  "normalizations": [
+    "Only consumer paragraph CRLF/CR to LF normalization. No Unicode, whitespace, numeric or identifier normalization. Exact raw CSV and JSON checks use no such normalization."
+  ],
+  "limitations": [
+    "Synthetic guest fixture using production source578; no live account/OAuth acceptance.",
+    "Browser filter and clicks were root observations, not repeated by this helper.",
+    "LibreOffice headless quoted-fields-as-text route only; no GUI/Excel/Numbers/mobile spreadsheet acceptance.",
+    "Default numeric coercion was already reproduced in prior separate evidence and is not retested here.",
+    "ICS checks are independent Python content-line inspection, not real Calendar import, repeated-import, alert, date-change or native handoff acceptance.",
+    "JSON equality is not an actual restore/import journey. Browser reload acceptance remains with root.",
+    "No claim of full release readiness or universal competitor superiority."
+  ]
+}

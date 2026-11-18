@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "kind": "actual_browser_followup_receipt",
+  "preparedAt": "2026-11-18T13:28:46.804716+00:00",
+  "reviewer": "root",
+  "source": {
+    "combinedPreimageCommit": "e90756cfb5d28dc761bbcea2ae3248213f66c18c",
+    "hostedPreimageTree": "e955a63e843e7035ea8ce71b2b37504c78577c9d",
+    "patch": {
+      "path": "/workspace/scratch/ebb3eed5ee2b/clean-record-recovery-fix-20261118/clean-record-recovery.patch",
+      "bytes": 33148,
+      "sha256": "c3ce176e37d32199c4ea51bcd6ef289b956b89e4afead528304c5dae64d65c25"
+    },
+    "reviewedFiles": [
+      {
+        "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/PhoneApp.tsx",
+        "bytes": 128558,
+        "sha256": "99ed45680e0bff019ff14a32885db3fabfca0e3a260e8b16670e8809fe713e76"
+      },
+      {
+        "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/tests/phone-recovery-isolation.mjs",
+        "bytes": 76179,
+        "sha256": "aee76ff448ee1dfb53dfb6418c90f85b67fd575707e3127aa511b0bd20c2ed93"
+      }
+    ],
+    "macIntegrationAtObservation": "pending"
+  },
+  "environment": {
+    "browser": "Chrome cloud cdp tab35",
+    "url": "http://127.0.0.1:4173/phone#apply",
+    "managedSitesPreview": true,
+    "production": false,
+    "syntheticDataOnly": true
+  },
+  "finding": "B16",
+  "result": "fixed_runtime_verified",
+  "observations": [
+    {
+      "id": "B16-R1",
+      "language": "en",
+      "sequence": "Edit applied record; choose Saved for later; Save; Keep application record; Cancel.",
+      "result": "Passed. Stage restored to applied and focus returned to Stage; clean Cancel closed and returned focus to Edit record. Recovery count stayed at baseline2."
+    },
+    {
+      "id": "B16-R2",
+      "language": "ar",
+      "sequence": "Repeat the clean Keep application record then Cancel sequence using Arabic controls.",
+      "result": "Passed. Recovery count stayed2; applied record and follow-up retained."
+    },
+    {
+      "id": "B16-R3",
+      "language": "ar",
+      "sequence": "Change stage and append synthetic note; Save; Keep application record; Cancel; Continue editing.",
+      "result": "Passed. Dirty-note confirmation appeared; Continue editing preserved the modified note. Restoring exact saved note then Cancel closed cleanly with count2."
+    },
+    {
+      "id": "B16-R4",
+      "language": "ar",
+      "sequence": "Reload and inspect original saved record, then clean Cancel.",
+      "result": "Passed. Applied stage,2026-11-18 applied date,2026-11-17 follow-up and original Arabic note persisted; recovery count stayed2."
+    },
+    {
+      "id": "B16-R5",
+      "language": "ar",
+      "sequence": "Export phone data from actual Settings download control; compare exported saved records and complete saved object with previous synthetic export.",
+      "result": "Passed. Both comparisons equal. Recovery count visibly2. Old recovery copies retained deliberately; no bulk deletion."
+    },
+    {
+      "id": "B11-R1",
+      "language": "ar",
+      "sequence": "Open Help and support, inspect five-section sentence and expand application tracking accordion.",
+      "result": "Passed. No repeated conjunction. Current saved-stage label is محفوظة للرجوع إليها and explicit correction is إلغاء علامة التقديم with no-employer-withdrawal distinction."
+    }
+  ],
+  "independentExportComparison": {
+    "savedRecordsEqual": true,
+    "completeSavedObjectEqual": true
+  },
+  "artifacts": [
+    {
+      "path": "/workspace/shared/career-finder-synthetic-qa-export-20261118.json",
+      "bytes": 4243,
+      "sha256": "150678d5ead7eb9ef81d0e19e7178ee0435c781e3295c2fecfd17470f778ce28"
+    },
+    {
+      "path": "/workspace/shared/career-finder-b16-verified-export-20261118.json",
+      "bytes": 6029,
+      "sha256": "46d31f6a55bab603f038f7778f0dd9e6b0e635f2d575ab5b2b4433b1ace33e30"
+    },
+    {
+      "path": "/workspace/shared/career-finder-b16-dark-ar-20261118.png",
+      "bytes": 68072,
+      "sha256": "6c55a3334775b9064b9df479319470df6cbf544fe50c522744abc5030ab67cda"
+    }
+  ],
+  "limits": [
+    "Two old recovery copies predate the fix and remain intentionally available.",
+    "Browser replay covers synthetic data in managed local preview, not native or production acceptance.",
+    "Storage quota/failure races are covered by targeted handler/encrypted-vault tests, not induced in this browser replay.",
+    "No employer submission, OAuth consent or real personal data used."
+  ]
+}

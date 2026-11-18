@@ -1,0 +1,19 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Career Finder//Follow-up reminder//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:career-finder-follow-up-ca7a8498a84278f4f1b8b0ab8046b95983bb17b6656a2d0
+ 5d72132ec530b9a78
+DTSTAMP:20261117T232511Z
+DTSTART;VALUE=DATE:20261124
+DURATION:P1D
+SUMMARY:Follow up: مُهندس\, "أول" 🧭 · Synthetic employer / ج
+ هة تجريبية
+DESCRIPTION:Personal follow-up reminder. Check the employer’s current pos
+ ting before contacting them.
+URL:https://example.org/career-finder-ui-export-20261117
+CLASS:PRIVATE
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR

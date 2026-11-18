@@ -1,0 +1,729 @@
+
+SOURCE android/app/src/main/java/com/saleh/careerfinder/WorkspaceTransfer.kt L1-225
+1: package com.saleh.careerfinder
+2: 
+3: import org.json.JSONArray
+4: import org.json.JSONObject
+5: import java.time.Instant
+6: import java.util.UUID
+7: 
+8: data class WorkspaceImportPreview(val token: String = UUID.randomUUID().toString(), val expectedScope: String,
+9:     val sourceOrigin: String?, val sourceWorkspaceId: String?, val sourcePlatform: String, val snapshot: CareerUiState,
+10:     val search: JSONObject? = null, val pdfProblem: String? = null) {
+11:     val sourceLabel: String get() = sourceOrigin ?: "Private phone draft"
+12:     fun matches(connection: Connection?): Boolean = sourceOrigin != null && connection != null &&
+13:         sourceOrigin == BoundaryPolicy.serviceOrigin(connection.origin) && sourceWorkspaceId == connection.workspaceId
+14: }
+15: 
+16: /** Credential-free iPhone/Android interchange. Files are data, never approval or receipt authority. */
+17: internal object WorkspaceTransfer {
+18:     const val FORMAT = "career-finder-phone-workspace"
+19:     const val MAX_BYTES = 24 * 1024 * 1024
+20:     private fun objectOnly(value: JSONObject, names: Set<String>) {
+21:         require(value.keys().asSequence().all { it in names }) { "This backup contains unsupported fields. Keep the file and use a compatible app version." }
+22:     }
+23:     private fun strings(value: JSONObject, vararg keys: String) {
+24:         keys.forEach { require(value.opt(it) is String) { "The backup contains an invalid $it field." } }
+25:     }
+26:     private fun jobJson(job: Opportunity) = job.inputJson()
+27:     private fun job(value: JSONObject): Opportunity {
+28:         strings(value, "url", "title", "company", "location", "country")
+29:         BoundaryPolicy.opportunityURL(value.getString("url"))
+30:         require(listOf("title", "company", "location").all { value.getString(it).length <= 500 }) { "Saved job details in this backup exceed the common 500-character limit." }
+31:         return Opportunity("local-" + UUID.randomUUID(), value.getString("url"), value.getString("title"), value.getString("company"),
+32:             value.getString("location"), value.getString("country"), true)
+33:     }
+34:     private fun draftJson(checkpoint: RecordDraftCheckpoint, recordID: String?) = JSONObject()
+35:         .put("job", jobJson(checkpoint.job)).apply {
+36:             if (checkpoint.baseRevision > 0) put("revision", checkpoint.baseRevision)
+37:             recordID?.let { put("recordID", it) }
+38:         }
+39:         .put("draft", JSONObject().put("stage", checkpoint.draft.stage.stored).put("appliedOn", checkpoint.draft.appliedDate)
+40:             .put("followUpOn", checkpoint.draft.followUpDate).put("note", checkpoint.draft.note))
+41:     private fun versionJson(job: Opportunity, version: ApplicationRecordVersion, revision: Int, archived: Boolean) = JSONObject()
+42:         .put("id", version.id).put("job", jobJson(job)).put("stage", version.record.stage.stored)
+43:         .put("appliedElsewhere", version.record.appliedElsewhere).put("appliedOn", version.record.appliedDate)
+44:         .put("followUpOn", version.record.followUpDate).put("note", version.record.note).put("revision", revision)
+45:         .put("archived", archived).put("updatedAt", version.savedAt)
+46: 
+47:     fun export(snapshot: CareerUiState, search: JSONObject?, includePDF: Boolean): JSONObject {
+48:         val profile = snapshot.profile.apiJson(includeLinkedIn = false).put("linkedin", snapshot.profile.linkedin)
+49:         // Preserve unfinished fields without turning them into a provider payload.
+50:         for (key in listOf("firstName", "lastName", "email", "phone", "city", "country", "headline", "website"))
+51:             profile.put(key, snapshot.profile.privateJson().get(key))
+52:         profile.put("resume", snapshot.profile.resume?.let { if (includePDF) it.privateJson() else it.metadata() } ?: JSONObject.NULL)
+53:         val versions = snapshot.applicationRecords.values.flatMap { record ->
+54:             listOf(versionJson(record.job, record.current, record.revision, false)) +
+55:                 record.alternatives.map { versionJson(record.job, it, record.revision, false) } +
+56:                 record.history.map { versionJson(record.job, it, record.revision, true) }
+57:         }
+58:         val data = JSONObject().put("profile", profile).put("jobs", JSONArray(snapshot.jobs.map(::jobJson)))
+59:             .put("applicationRecords", JSONArray(versions)).put("opportunityDraft", snapshot.opportunityDraft.privateJson())
+60:             .put("recordDrafts", JSONArray((snapshot.recordDrafts.values + snapshot.recordDraftAlternatives).map {
+61:                 draftJson(it, snapshot.applicationRecords[it.identity]?.current?.id)
+62:             })).put("continuationHolds", JSONArray(snapshot.continuationHolds.toList()))
+63:         val rawProfile = snapshot.profile.privateJson().apply { remove("draftResume"); remove("resume") }
+64:         val extension = JSONObject().put("rawProfile", rawProfile)
+65:             .put("applicationRecords", ApplicationRecordsCodec.encode(snapshot.applicationRecords))
+66:             .put("answers", JSONArray(snapshot.jobs.mapNotNull { job -> snapshot.answers[job.id]?.let { answer ->
+67:                 JSONObject().put("url", job.url).put("value", answer.json())
+68:             } }))
+69:             .put("selectedURLs", JSONArray(snapshot.jobs.filter { it.id in snapshot.selected }.map { it.url }))
+70:             .put("receiptArchive", JSONArray((snapshot.receipts + snapshot.importedReceipts).map(WorkspaceStorage::receiptJson)))
+71:             .put("recoveredOpportunityDrafts", JSONArray(snapshot.recoveredOpportunityDrafts.map(OpportunityDraft::privateJson)))
+72:             .put("search", search ?: JSONObject.NULL)
+73:         val source = JSONObject().put("scope", if (snapshot.connection == null) "unpaired" else "workspace")
+74:         snapshot.connection?.let { source.put("serviceOrigin", BoundaryPolicy.serviceOrigin(it.origin)).put("workspaceId", it.workspaceId) }
+75:         return JSONObject().put("format", FORMAT).put("version", 1).put("platform", "android").put("exportedAt", Instant.now().toString())
+76:             .put("source", source).put("data", data).put("extensions", JSONObject().put("android", extension)).also {
+77:                 require(it.toString().toByteArray(Charsets.UTF_8).size <= MAX_BYTES) { "This export is too large. Export without PDF bytes, then save the PDF separately." }
+78:             }
+79:     }
+80: 
+81:     fun decode(value: JSONObject, destinationScope: String): WorkspaceImportPreview {
+82:         require(value.toString().toByteArray(Charsets.UTF_8).size <= MAX_BYTES) { "Choose a phone workspace backup no larger than 24 MiB." }
+83:         objectOnly(value, setOf("format", "version", "platform", "exportedAt", "source", "data", "extensions"))
+84:         require(value.opt("format") == FORMAT && value.opt("version") == 1) { "Choose a supported Career Finder phone workspace backup." }
+85:         strings(value, "platform", "exportedAt")
+86:         require(value.getString("platform") in setOf("ios", "android")); Instant.parse(value.getString("exportedAt"))
+87:         val source = value.getJSONObject("source")
+88:         objectOnly(source, setOf("scope", "serviceOrigin", "workspaceId"))
+89:         val connected = source.opt("scope") == "workspace"
+90:         require(connected || source.opt("scope") == "unpaired")
+91:         val origin = if (connected) {
+92:             strings(source, "serviceOrigin", "workspaceId")
+93:             require(source.getString("workspaceId").isNotBlank())
+94:             BoundaryPolicy.serviceOrigin(source.getString("serviceOrigin"))
+95:         } else {
+96:             require(!source.has("serviceOrigin") && !source.has("workspaceId")); null
+97:         }
+98:         val data = value.getJSONObject("data")
+99:         objectOnly(data, setOf("profile", "jobs", "applicationRecords", "recordDrafts", "opportunityDraft", "continuationHolds"))
+100:         val profileJson = data.getJSONObject("profile")
+101:         strings(profileJson, "firstName", "lastName", "email", "phone", "city", "country", "headline", "experienceLevel", "website", "linkedin")
+102:         listOf("skills", "targetRoles", "targetCountries", "workModes").forEach { profileJson.requiredStrings(it) }
+103:         require(profileJson.has("resume") && (profileJson.isNull("resume") || profileJson.opt("resume") is JSONObject))
+104:         var profile = WorkspaceStorage.profile(JSONObject(profileJson.toString()).put("draftResume", profileJson.opt("resume") ?: JSONObject.NULL).put("revision", 0))
+105:         val jobs = data.requiredObjects("jobs").map(::job)
+106:         require(jobs.map { BoundaryPolicy.jobIdentity(it.url) }.distinct().size == jobs.size) { "The backup contains duplicate saved links." }
+107:         val byIdentity = jobs.associateBy { BoundaryPolicy.jobIdentity(it.url) }
+108:         val flattened = data.requiredObjects("applicationRecords").map { item ->
+109:             strings(item, "id", "stage", "appliedOn", "followUpOn", "note", "updatedAt")
+110:             require(item.opt("appliedElsewhere") is Boolean && item.opt("archived") is Boolean)
+111:             val revision = item.opt("revision")
+112:             require(revision is Number && revision.toDouble() >= 1 && revision.toDouble() <= Int.MAX_VALUE && revision.toDouble() == revision.toInt().toDouble())
+113:             val importedJob = job(item.getJSONObject("job")); val identity = BoundaryPolicy.jobIdentity(importedJob.url)
+114:             val record = ApplicationRecord.decode(JSONObject().put("stage", item.getString("stage"))
+115:                 .put("appliedDate", item.getString("appliedOn")).put("followUpDate", item.getString("followUpOn"))
+116:                 .put("note", item.getString("note")).put("appliedElsewhere", item.getBoolean("appliedElsewhere")))
+117:             val version = ApplicationRecordVersion.decode(JSONObject().put("id", UUID.fromString(item.getString("id")).toString()).put("record", record.json())
+118:                 .put("savedAt", item.getString("updatedAt")).put("source", "copied"))
+119:             FlatVersion(byIdentity[identity] ?: importedJob, version, (revision as Number).toInt(), item.getBoolean("archived"))
+120:         }
+121:         require(flattened.map { it.version.id }.distinct().size == flattened.size) { "The backup contains repeated record version identifiers." }
+122:         var records = flattened.groupBy { BoundaryPolicy.jobIdentity(it.job.url) }.mapValues { (_, entries) ->
+123:             val active = entries.filterNot { it.archived }
+124:             val current = active.firstOrNull()?.version ?: ApplicationRecordVersion.create(ApplicationRecord(), "copied")
+125:             ApplicationRecordBundle(entries.first().job, current, entries.maxOf { it.revision }, active.drop(1).map { it.version },
+126:                 entries.filter { it.archived }.map { it.version }, active.any { it.version.record.appliedElsewhere }, entries.map { it.job.url }.distinct())
+127:         }
+128:         val checkpoints = data.requiredObjects("recordDrafts").map { entry ->
+129:             val draftJob = job(entry.getJSONObject("job")); val identity = BoundaryPolicy.jobIdentity(draftJob.url)
+130:             if (entry.has("recordID") && !entry.isNull("recordID")) { strings(entry, "recordID"); UUID.fromString(entry.getString("recordID")) }
+131:             val revision = if (entry.has("revision") && !entry.isNull("revision")) entry.opt("revision") else 0
+132:             require(revision is Number && revision.toDouble() >= 0 && revision.toDouble() <= Int.MAX_VALUE && revision.toDouble() == revision.toInt().toDouble())
+133:             val draft = entry.getJSONObject("draft"); strings(draft, "stage", "appliedOn", "followUpOn", "note")
+134:             RecordDraftCheckpoint(destinationScope, identity, byIdentity[identity] ?: records[identity]?.job ?: draftJob, (revision as Number).toInt(),
+135:                 ApplicationRecordDraft(ApplicationStage.decode(draft.getString("stage")), draft.getString("appliedOn"),
+136:                     draft.getString("followUpOn"), draft.getString("note")).validated())
+137:         }
+138:         val opportunityDraft = OpportunityDraft.fromJson(data.getJSONObject("opportunityDraft"))
+139:         val holds = data.requiredStrings("continuationHolds").toSet()
+140:         require(holds.all { it.isNotBlank() && it.length <= 200 })
+141:         val extension = value.optJSONObject("extensions")?.optJSONObject("android")
+142:         var answers = emptyMap<String, JobAnswers>(); var selected = emptySet<String>()
+143:         var receipts = emptyList<ApplicationReceipt>(); var recovered = emptyList<OpportunityDraft>(); var search: JSONObject? = null
+144:         if (extension != null) {
+145:             extension.optJSONObject("rawProfile")?.let { raw ->
+146:                 profile = WorkspaceStorage.profile(JSONObject(raw.toString()).put("draftResume", profile.resume?.privateJson() ?: JSONObject.NULL)).copy(revision = 0)
+147:             }
+148:             extension.optJSONObject("applicationRecords")?.let { exact ->
+149:                 val decoded = ApplicationRecordsCodec.decode(exact)
+150:                 val exactIDs = decoded.values.flatMap { listOf(it.current) + it.alternatives + it.history }.map { it.id }.toSet()
+151:                 require(exactIDs == flattened.map { it.version.id }.toSet()) { "The backup's common and Android record histories disagree." }
+152:                 records = decoded.mapValues { (identity, bundle) -> bundle.copy(job = byIdentity[identity] ?: bundle.job.copy(id = "local-" + UUID.randomUUID(), localOnly = true)) }
+153:             }
+154:             if (extension.has("answers")) answers = extension.requiredObjects("answers").mapNotNull { entry ->
+155:                 strings(entry, "url"); val identity = BoundaryPolicy.jobIdentity(entry.getString("url"))
+156:                 val answer = entry.getJSONObject("value")
+157:                 require(answer.opt("comments") is String)
+158:                 listOf("consentStore", "consentMarketing").forEach { require(!answer.has(it) || answer.opt(it) is Boolean) }
+159:                 byIdentity[identity]?.id?.let { it to JobAnswers.fromJson(answer) }
+160:             }.toMap()
+161:             if (extension.has("selectedURLs")) selected = extension.requiredStrings("selectedURLs").mapNotNull { url -> byIdentity[BoundaryPolicy.jobIdentity(url)]?.id }.toSet()
+162:             if (extension.has("receiptArchive")) {
+163:                 val envelope = JSONObject().put("schema", 1).put("receipts", extension.get("receiptArchive"))
+164:                 receipts = WorkspaceStorage.decode(envelope, null).receipts.map { it.copy(evidenceMode = "imported") }
+165:             }
+166:             if (extension.has("recoveredOpportunityDrafts")) recovered = extension.requiredObjects("recoveredOpportunityDrafts").map(OpportunityDraft::fromJson)
+167:             if (extension.has("search") && !extension.isNull("search")) {
+168:                 search = extension.getJSONObject("search"); DiscoverySnapshotCodec.decode(search)
+169:             }
+170:         }
+171:         val drafts = checkpoints.groupBy { it.identity }
+172:         val snapshot = CareerUiState(loaded = true, profile = profile, profileDirty = true, jobs = jobs, applicationRecords = records,
+173:             opportunityDraft = opportunityDraft, recoveredOpportunityDrafts = recovered,
+174:             recordDrafts = drafts.mapValues { it.value.first() }, recordDraftAlternatives = drafts.values.flatMap { it.drop(1) },
+175:             manualApplied = ApplicationRecordsCodec.appliedIDs(jobs, records, emptySet()), answers = answers, selected = selected,
+176:             continuationHolds = holds, importedReceipts = receipts)
+177:         return WorkspaceImportPreview(expectedScope = destinationScope, sourceOrigin = origin,
+178:             sourceWorkspaceId = if (connected) source.getString("workspaceId") else null, sourcePlatform = value.getString("platform"), snapshot = snapshot, search = search)
+179:     }
+180:     private data class FlatVersion(val job: Opportunity, val version: ApplicationRecordVersion, val revision: Int, val archived: Boolean)
+181: }
+
+SOURCE android/app/src/main/java/com/saleh/careerfinder/WorkspaceStorage.kt L120-175
+120:     fun receiptJson(receipt: ApplicationReceipt) = JSONObject().put("attemptId", receipt.id).put("title", receipt.title)
+121:         .put("employer", receipt.company).put("state", receipt.state).put("applicationId", receipt.applicationId)
+122:         .put("createdAt", receipt.date).put("error", receipt.error).put("evidenceMode", receipt.evidenceMode)
+123:         .put("resumeSHA256", receipt.resumeSHA256).put("provider", receipt.provider)
+124:     fun encode(snapshot: CareerUiState): JSONObject = JSONObject().put("schema", 1)
+125:         .put("profile", snapshot.profile.privateJson()).put("profileDirty", snapshot.profileDirty)
+126:         .put("opportunityDraft", snapshot.opportunityDraft.privateJson())
+127:         .put("recoveredOpportunityDrafts", JSONArray(snapshot.recoveredOpportunityDrafts.map(OpportunityDraft::privateJson)))
+128:         .put("applicationRecords", ApplicationRecordsCodec.encode(snapshot.applicationRecords))
+129:         .put("recordDrafts", JSONArray(snapshot.recordDrafts.values.map(RecordDraftCheckpoint::json)))
+130:         .put("recordDraftAlternatives", JSONArray(snapshot.recordDraftAlternatives.map(RecordDraftCheckpoint::json)))
+131:         .put("jobs", JSONArray(snapshot.jobs.map(Opportunity::privateJson)))
+132:         .put("activePlans", JSONArray(snapshot.activePlans)).put("manualApplied", JSONArray(snapshot.manualApplied.toList()))
+133:         .put("selected", JSONArray(snapshot.selected.toList())).put("obsoleteReviews", JSONArray(snapshot.obsoleteReviews.toList()))
+134:         .put("continuationHolds", JSONArray(snapshot.continuationHolds.toList()))
+135:         .put("serverProfile", snapshot.serverProfile?.privateJson() ?: JSONObject.NULL)
+136:         .put("answers", JSONObject().apply { snapshot.answers.forEach { (id, answer) -> put(id, answer.json()) } })
+137:         .put("receipts", JSONArray(snapshot.receipts.map(::receiptJson)))
+138:         .put("importedReceipts", JSONArray(snapshot.importedReceipts.map(::receiptJson)))
+139: }
+140: 
+141: /** An unfinished edit has no effect on the saved application status or employer approval. */
+142: data class RecordDraftCheckpoint(val scope: String, val identity: String, val job: Opportunity, val baseRevision: Int,
+143:     val draft: ApplicationRecordDraft) {
+144:     fun json(): JSONObject {
+145:         require(applicationNoteLength(draft.note) <= 2_000 && draft.note.toByteArray(Charsets.UTF_8).toString(Charsets.UTF_8) == draft.note) { "Check this unfinished note before saving. The earlier saved file is kept." }
+146:         return JSONObject().put("scope", scope).put("identity", identity).put("job", job.privateJson()).put("baseRevision", baseRevision)
+147:         .put("stage", draft.stage.stored).put("appliedDate", draft.appliedDate).put("followUpDate", draft.followUpDate).put("note", draft.note)
+148:     }
+149:     companion object {
+150:         fun decode(value: JSONObject): RecordDraftCheckpoint {
+151:             listOf("scope", "identity", "stage", "appliedDate", "followUpDate", "note").forEach { require(value.opt(it) is String) }
+152:             val revision = value.opt("baseRevision")
+153:             require(revision is Number && revision.toDouble() >= 0 && revision.toDouble() <= Int.MAX_VALUE && revision.toDouble() == revision.toInt().toDouble())
+154:             val job = WorkspaceStorage.job(value.getJSONObject("job"))
+155:             require(value.getString("identity") == BoundaryPolicy.jobIdentity(job.url))
+156:             val draft = ApplicationRecordDraft(ApplicationStage.decode(value.getString("stage")), value.getString("appliedDate"),
+157:                 value.getString("followUpDate"), value.getString("note"))
+158:             require(applicationNoteLength(draft.note) <= 2_000 && draft.note.toByteArray(Charsets.UTF_8).toString(Charsets.UTF_8) == draft.note)
+159:             return RecordDraftCheckpoint(value.getString("scope"), value.getString("identity"), job, (revision as Number).toInt(), draft)
+160:         }
+161:     }
+162: }
+
+SOURCE android/app/src/main/java/com/saleh/careerfinder/Models.kt L125-205
+125:     companion object {
+126:         fun fromJson(value: JSONObject, local: Boolean = false) = Opportunity(value.safeString("id"), value.safeString("url"), value.safeString("title"), value.safeString("company"), value.safeString("location"), value.safeString("country"), local || value.optBoolean("localOnly"))
+127:         fun fromServer(value: JSONObject): Opportunity {
+128:             listOf("id", "url", "title", "company", "location", "country").forEach { serviceData(value.opt(it) is String) }
+129:             serviceData(value.getString("id").isNotBlank())
+130:             BoundaryPolicy.opportunityURL(value.getString("url"))
+131:             return fromJson(value).copy(localOnly = false)
+132:         }
+133:     }
+134: }
+135: 
+136: data class ReviewItem(val jobId: String, val state: String, val reason: String, val title: String, val company: String,
+137:     val url: String, val payload: JSONObject, val resume: Resume?, val privacyPolicyUrl: String, val retryAt: String) {
+138:     fun canSubmitNow(): Boolean = state == "ready" || state == "rate_limited" &&
+139:         try { !Instant.parse(retryAt).isAfter(Instant.now()) } catch (_: Exception) { false }
+140:     companion object {
+141:         fun fromJson(value: JSONObject): ReviewItem {
+142:             val job = value.optJSONObject("job") ?: JSONObject()
+143:             val payload = value.optJSONObject("payloadSummary")
+144:             serviceData(payload != null)
+145:             listOf("name", "email", "phone", "website", "comments").forEach { serviceData(payload!!.opt(it) is String) }
+146:             payload!!.serviceLinkedIn()
+147:             listOf("consentStore", "consentMarketing").forEach { serviceData(!payload!!.has(it) || payload.opt(it) is Boolean) }
+148:             val resume = Resume.fromJson(value.optJSONObject("resume"))
+149:             if (value.opt("state") == "ready") serviceData(resume != null && resume.size in 8..BoundaryPolicy.MAX_PDF_BYTES &&
+150:                 resume.sha256.matches(Regex("[a-f0-9]{64}")) && value.optJSONObject("resume")?.opt("mime") == "application/pdf" &&
+151:                 payload!!.getString("name").isNotBlank() && payload.getString("email").isNotBlank())
+152:             return ReviewItem(value.safeString("jobId"), value.safeString("state"), value.safeString("reason"),
+153:                 value.safeString("title", job.safeString("title")), value.safeString("company", job.safeString("company")), job.safeString("url"),
+154:                 payload!!, resume, value.safeString("privacyPolicyUrl"), value.safeString("retryAt"))
+155:         }
+156:     }
+157: }
+158: 
+159: data class ReviewPlan(val id: String, val digest: String, val profileRevision: Int, val expiresAt: String, val items: List<ReviewItem>,
+160:     val unapproved: Boolean = false) {
+161:     fun expired(): Boolean = try { !Instant.parse(expiresAt).isAfter(Instant.now()) } catch (_: Exception) { true }
+162:     companion object { fun fromJson(value: JSONObject): ReviewPlan {
+163:         val items = value.requiredObjects("items").map(ReviewItem::fromJson)
+164:         serviceData(items.all { it.jobId.isNotBlank() } && items.map(ReviewItem::jobId).distinct().size == items.size)
+165:         return ReviewPlan(value.getString("id"), value.getString("digest"), value.getInt("profileRevision"), value.getString("expiresAt"), items,
+166:             value.has("approvedAt") && value.isNull("approvedAt"))
+167:     } }
+168: }
+169: 
+170: data class ApplicationReceipt(val id: String, val title: String, val company: String, val state: String, val applicationId: String,
+171:     val date: String, val error: String, val evidenceMode: String, val resumeSHA256: String, val provider: String) {
+172:     val testMode: Boolean get() = evidenceMode == "test"
+173:     val verified: Boolean get() = BoundaryPolicy.isLiveReceipt(evidenceMode, provider, state, applicationId)
+174:     companion object {
+175:         fun fromJson(value: JSONObject): ApplicationReceipt {
+176:             val job = value.optJSONObject("job") ?: JSONObject()
+177:             val error = value.opt("error")
+178:             return ApplicationReceipt(value.safeString("attemptId", value.safeString("id")),
+179:                 value.safeString("title", job.safeString("title", "Application")),
+180:                 value.safeString("employer", value.safeString("company", job.safeString("company"))),
+181:                 value.safeString("state"), value.safeString("applicationId"), value.safeString("confirmedAt", value.safeString("createdAt")),
+182:                 if (error is JSONObject) error.safeString("message") else if (error is String) error else "",
+183:                 value.safeString("evidenceMode", if (value.safeString("mode") == "test") "test" else "unknown"), value.safeString("resumeSHA256"), value.safeString("provider"))
+184:         }
+185:         fun fromServer(value: JSONObject): ApplicationReceipt {
+186:             serviceData((value.opt("id") is String || value.opt("attemptId") is String) &&
+187:                 value.opt("state") is String && value.opt("createdAt") is String)
+188:             val receipt = fromJson(value)
+189:             serviceData(receipt.id.isNotBlank() && receipt.state.isNotBlank())
+190:             return receipt
+191:         }
+192:     }
+193: }
+194: 
+195: enum class ReceiptFilter(val label: String) {
+196:     ALL("All"), CONFIRMED("Verified"), ATTENTION("Needs attention"), PENDING("Pending"), STOPPED("Stopped"), TEST("Test");
+197:     fun includes(receipt: ApplicationReceipt): Boolean = when (this) {
+198:         ALL -> true
+199:         CONFIRMED -> receipt.verified
+200:         ATTENTION -> !receipt.testMode && (receipt.state in setOf("uncertain", "rejected", "rate_limited") || receipt.state == "confirmed" && !receipt.verified)
+201:         PENDING -> !receipt.testMode && receipt.state in setOf("ready", "dispatching")
+202:         STOPPED -> !receipt.testMode && receipt.state == "cancelled"
+203:         TEST -> receipt.testMode
+204:     }
+205: }
+
+SOURCE android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt L1114-1205
+1114:     fun importWorkspace(token: String, includeProfile: Boolean, includePDF: Boolean, includeRecords: Boolean, includeSearch: Boolean) = action {
+1115:         val before = state.value
+1116:         val preview = before.workspaceImport ?: throw IllegalArgumentException("Choose and review a backup first.")
+1117:         require(preview.token == token && preview.expectedScope == before.privateScope) { "The destination changed. Review the backup again." }
+1118:         require(includeProfile || includeRecords || includeSearch) { "Choose what to import." }
+1119:         if (includeSearch) require(preview.search != null) { "This backup has no compatible saved search." }
+1120:         if (includeProfile) require(before.profileConflict == null) { "Resolve the saved profile comparison before importing another draft." }
+1121:         if (includePDF) require(includeProfile && preview.pdfProblem == null && preview.snapshot.profile.resume?.dataBase64 != null) { "Choose a readable PDF before replacing your current résumé." }
+1122:         val incoming = preview.snapshot
+1123:         val jobs = before.jobs.toMutableList()
+1124:         val idMap = mutableMapOf<String, String>()
+1125:         if (includeRecords) for (job in incoming.jobs) {
+1126:             val identity = BoundaryPolicy.jobIdentity(job.url)
+1127:             val destination = jobs.firstOrNull { BoundaryPolicy.jobIdentity(it.url) == identity }
+1128:                 ?: job.copy(id = "local-" + UUID.randomUUID(), localOnly = true).also { jobs.add(it) }
+1129:             idMap[job.id] = destination.id
+1130:         }
+1131:         val records = before.applicationRecords.toMutableMap()
+1132:         if (includeRecords) for ((identity, record) in incoming.applicationRecords) {
+1133:             val destination = jobs.firstOrNull { BoundaryPolicy.jobIdentity(it.url) == identity }
+1134:                 ?: records[identity]?.job ?: record.job.copy(id = "local-" + UUID.randomUUID(), localOnly = true)
+1135:             records[identity] = records[identity]?.merge(record, destination)
+1136:                 ?: record.copy(job = destination, relatedURLs = (record.relatedURLs + destination.url).distinct())
+1137:         }
+1138:         requireApplicationStatusChangesAllowed(before, records)
+1139:         val drafts = before.recordDrafts.toMutableMap()
+1140:         val alternatives = before.recordDraftAlternatives.toMutableList()
+1141:         if (includeRecords) for (checkpoint in incoming.recordDrafts.values + incoming.recordDraftAlternatives) {
+1142:             val destination = jobs.firstOrNull { BoundaryPolicy.jobIdentity(it.url) == checkpoint.identity }
+1143:                 ?: records[checkpoint.identity]?.job ?: checkpoint.job.copy(id = "local-" + UUID.randomUUID(), localOnly = true)
+1144:             val candidate = checkpoint.copy(scope = before.privateScope, job = destination)
+1145:             val existing = drafts[candidate.identity]
+1146:             if (existing == null) drafts[candidate.identity] = candidate
+1147:             else if (existing.draft != candidate.draft || existing.baseRevision != candidate.baseRevision) alternatives += candidate
+1148:         }
+1149:         val incomingOpportunity = incoming.opportunityDraft.takeIf { includeRecords && it.hasContent }
+1150:         val opportunity = if (!before.opportunityDraft.hasContent && incomingOpportunity != null) incomingOpportunity else before.opportunityDraft
+1151:         val recovered = (before.recoveredOpportunityDrafts + if (includeRecords) incoming.recoveredOpportunityDrafts else emptyList()) +
+1152:             listOfNotNull(incomingOpportunity?.takeIf { before.opportunityDraft.hasContent && it != before.opportunityDraft })
+1153:         val answers = before.answers.toMutableMap()
+1154:         if (includeRecords) for ((oldID, answer) in incoming.answers) idMap[oldID]?.let { destination ->
+1155:             // Employer consents are never recovered as fresh authorization.
+1156:             if (destination !in answers) answers[destination] = answer.copy(consentStore = null, consentMarketing = null)
+1157:         }
+1158:         val profile = if (includeProfile) incoming.profile.copy(revision = before.profile.revision,
+1159:             resume = if (includePDF) incoming.profile.resume else before.profile.resume,
+1160:             removeResume = if (includePDF) false else before.profile.removeResume) else before.profile
+1161:         val next = before.copy(profile = profile, profileDirty = includeProfile || before.profileDirty,
+1162:             jobs = jobs, applicationRecords = records, recordDrafts = drafts, recordDraftAlternatives = alternatives.distinct(),
+1163:             opportunityDraft = opportunity, recoveredOpportunityDrafts = recovered.distinct(), answers = answers,
+1164:             selected = before.selected + if (includeRecords) incoming.selected.mapNotNull { idMap[it] } else emptyList(),
+1165:             manualApplied = ApplicationRecordsCodec.appliedIDs(jobs, records, before.manualApplied),
+1166:             importedReceipts = (before.importedReceipts + if (includeRecords) incoming.importedReceipts else emptyList()).distinctBy { it.id + "|" + it.applicationId },
+1167:             continuationHolds = before.continuationHolds + if (preview.matches(before.connection)) incoming.continuationHolds else emptySet(),
+1168:             workspaceImport = null, plan = null, reviewingRecoveredPlan = false, reviewGeneration = before.reviewGeneration + 1,
+1169:             obsoleteReviews = before.obsoleteReviews + listOfNotNull(before.plan?.takeIf(ReviewPlan::unapproved)?.id))
+1170:         val envelope = WorkspaceStorage.encode(next)
+1171:         requirePrivateCapacity(envelope)
+1172:         draftSave?.cancel()
+1173:         diskMutex.withLock { writePrivate(workspaceName(before.connection), envelope) }
+1174:         mutable.value = next.copy(continuationHolds = state.value.continuationHolds + next.continuationHolds, notice = "Backup merged privately. Other workspaces and the original file are kept. Review conflicting notes and drafts in phone data settings. Imported receipt copies are unverified; refresh service receipts to recover evidence.")
+1175:         if (includeSearch) {
+1176:             discovery.stopPrivateSession(flush = true)
+1177:             try { writePrivate(searchName(before.connection), checkNotNull(preview.search)) }
+1178:             catch (cancel: CancellationException) { throw cancel }
+1179:             catch (_: Exception) { mutable.update { it.copy(error = "The selected phone records were merged, but the saved search could not be replaced. Its earlier file is preserved. Retry the search import from your backup.") } }
+1180:             finally { discovery.attachPrivateSession(vault, searchName(before.connection)) }
+1181:         }
+1182:     }
+1183: 
+1184:     fun restoreOpportunityDraft(index: Int, expectedScope: String, done: () -> Unit) = action {
+1185:         val before = state.value
+1186:         require(before.privateScope == expectedScope) { "The workspace changed. Review its drafts again." }
+1187:         val restored = before.recoveredOpportunityDrafts.getOrNull(index) ?: throw IllegalArgumentException("This unfinished opportunity changed. Reopen the draft list.")
+1188:         val kept = before.recoveredOpportunityDrafts.filterIndexed { item, _ -> item != index } + listOfNotNull(before.opportunityDraft.takeIf { it.hasContent && it != restored })
+1189:         val next = before.copy(opportunityDraft = restored, recoveredOpportunityDrafts = kept.distinct())
+1190:         val envelope = WorkspaceStorage.encode(next); requirePrivateCapacity(envelope)
+1191:         diskMutex.withLock { writePrivate(workspaceName(before.connection), envelope) }
+1192:         mutable.value = next.copy(continuationHolds = state.value.continuationHolds + next.continuationHolds); done()
+1193:     }
+1194: 
+1195:     fun useRecoveredRecordDraft(checkpoint: RecordDraftCheckpoint, expectedScope: String) = action {
+1196:         val before = state.value
+1197:         require(before.privateScope == expectedScope && checkpoint in before.recordDraftAlternatives) { "This draft list changed. Open it again." }
+1198:         val previous = before.recordDrafts[checkpoint.identity]
+1199:         val alternatives = before.recordDraftAlternatives - checkpoint + listOfNotNull(previous?.takeIf { it != checkpoint })
+1200:         val next = before.copy(recordDrafts = before.recordDrafts + (checkpoint.identity to checkpoint), recordDraftAlternatives = alternatives.distinct(), applicationRecordEditor = null)
+1201:         val envelope = WorkspaceStorage.encode(next); requirePrivateCapacity(envelope)
+1202:         diskMutex.withLock { writePrivate(workspaceName(before.connection), envelope) }
+1203:         mutable.value = next.copy(continuationHolds = state.value.continuationHolds + next.continuationHolds, notice = "Recovered edit selected. Open its record to review and save; earlier draft versions are kept.")
+1204:     }
+1205: 
+
+SOURCE apple/AhmadCareer/MobileApplicationState.swift L140-360
+140:     }
+141:     static func valid(_ value: String) -> Bool { value.isEmpty || date(value, zone: TimeZone(secondsFromGMT: 0)!) != nil }
+142:     static func string(_ date: Date, zone: TimeZone = .current) -> String {
+143:         let parts = calendar(zone: zone).dateComponents([.year, .month, .day], from: date)
+144:         return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
+145:     }
+146: }
+147: 
+148: struct PhoneRecordScope: Codable, Equatable {
+149:     var origin = ""
+150:     var workspaceID = ""
+151:     var isLocal: Bool { origin.isEmpty && workspaceID.isEmpty }
+152:     var valid: Bool {
+153:         isLocal || (!workspaceID.isEmpty && workspaceID.utf16.count <= 256
+154:             && !workspaceID.unicodeScalars.contains { CharacterSet.controlCharacters.contains($0) }
+155:             && MobileApplicationPolicy.serviceURL(origin)?.absoluteString == origin)
+156:     }
+157: }
+158: 
+159: struct PhoneRecordJob: Codable, Equatable {
+160:     var url: String
+161:     var title: String
+162:     var company: String
+163:     var location: String
+164:     var country: String
+165:     init(_ job: [String: ApplicationValue]) {
+166:         url = job["url"]?.string ?? ""
+167:         title = String((job["title"]?.string ?? "Opportunity").prefix(500))
+168:         company = String((job["company"]?.string ?? "").prefix(500))
+169:         location = String((job["location"]?.string ?? "").prefix(500))
+170:         country = String((job["country"]?.string ?? "").prefix(2))
+171:     }
+172:     var identity: String { MobileApplicationPolicy.jobIdentity(url) }
+173:     var valid: Bool {
+174:         MobileApplicationPolicy.jobURL(url) != nil && url.utf16.count <= 4_096
+175:             && [title, company, location].allSatisfy { $0.count <= 500 }
+176:             && country.count <= 2
+177:     }
+178:     func applicationJob(id: String) -> [String: ApplicationValue] {
+179:         ["id": .string(id), "url": .string(url), "title": .string(title), "company": .string(company),
+180:          "location": .string(location), "country": .string(country), "recordOnly": .bool(true)]
+181:     }
+182: }
+183: 
+184: struct PhoneOpportunityRecord: Codable, Equatable, Identifiable {
+185:     var id = UUID().uuidString
+186:     var scope: PhoneRecordScope
+187:     var job: PhoneRecordJob
+188:     var stage = PhoneApplicationStage.saved
+189:     var appliedElsewhere = false
+190:     var appliedOn = ""
+191:     var followUpOn = ""
+192:     var note = ""
+193:     var revision = 1
+194:     var archived = false
+195:     var updatedAt = ISO8601DateFormatter().string(from: Date())
+196:     var identity: String { job.identity }
+197:     var meaningful: Bool {
+198:         stage != .saved || appliedElsewhere || !appliedOn.isEmpty || !followUpOn.isEmpty
+199:             || !note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+200:     }
+201:     var valid: Bool {
+202:         UUID(uuidString: id) != nil && scope.valid && job.valid && revision > 0 && revision < Int.max
+203:             && PhoneRecordDay.valid(appliedOn) && PhoneRecordDay.valid(followUpOn)
+204:             && note.unicodeScalars.count <= 2_000
+205:             && !note.unicodeScalars.contains { $0.value < 0x20 && ![0x09, 0x0a, 0x0d].contains($0.value) || $0.value == 0x7f }
+206:             && ApplicationReviewPolicy.date(updatedAt) != nil
+207:             && (!stage.marksApplied || appliedElsewhere)
+208:     }
+209: }
+210: 
+211: struct PhoneRecordDraft: Codable, Equatable {
+212:     var stage = PhoneApplicationStage.saved
+213:     var appliedOn = ""
+214:     var followUpOn = ""
+215:     var note = ""
+216:     init(_ record: PhoneOpportunityRecord? = nil) {
+217:         if let record { stage = record.stage; appliedOn = record.appliedOn; followUpOn = record.followUpOn; note = record.note }
+218:     }
+219: }
+220: 
+221: /// A checkpoint is an unfinished edit, never an applied mark or provider receipt.
+222: struct PhoneRecordDraftCheckpoint: Codable, Equatable {
+223:     var scope: PhoneRecordScope
+224:     var identity: String
+225:     var job: PhoneRecordJob
+226:     var recordID: String?
+227:     var revision: Int?
+228:     var draft: PhoneRecordDraft
+229:     var valid: Bool {
+230:         scope.valid && job.valid && identity == job.identity && draft.note.unicodeScalars.count <= 2_000
+231:             && PhoneRecordDay.valid(draft.appliedOn) && PhoneRecordDay.valid(draft.followUpOn)
+232:             && (recordID == nil || UUID(uuidString: recordID!) != nil)
+233:             && (revision == nil || revision! > 0)
+234:     }
+235: }
+236: 
+237: struct PhoneSubmissionHold: Codable, Equatable {
+238:     var scope: PhoneRecordScope
+239:     var planID: String
+240:     var valid: Bool { scope.valid && !scope.isLocal && !planID.isEmpty && planID.utf16.count <= 256 }
+241: }
+242: 
+243: /// Only inactive drafts are archived. Tokens and server approval are never copied here.
+244: struct PhoneWorkspaceDraft: Codable, Equatable {
+245:     var scope: PhoneRecordScope
+246:     var profile: PhoneApplicationProfile
+247:     var profileNeedsSync: Bool
+248:     var profileRevision: Int?
+249:     var latestServerRevision: Int?
+250:     var latestServerProfile: PhoneApplicationProfile?
+251:     var jobs: [[String: ApplicationValue]]
+252:     var opportunityDraft: PhoneOpportunityDraft
+253:     var valid: Bool {
+254:         scope.valid && jobs.count <= 200 && jobs.allSatisfy { job in
+255:             guard let url = job["url"]?.string, MobileApplicationPolicy.jobURL(url) != nil, url.utf16.count <= 4_096 else { return false }
+256:             return ["title", "company", "location"].allSatisfy { (job[$0]?.string?.utf16.count ?? 0) <= 500 }
+257:                 && (job["country"]?.string?.count ?? 0) <= 2
+258:         }
+259:             && opportunityDraft.storageError == nil
+260:             && (profile.resumeData?.count ?? 0) <= MobileApplicationPolicy.maximumResumeBytes
+261:             && (profileRevision == nil || profileRevision! >= 0)
+262:     }
+263: }
+264: 
+265: struct PhoneWorkspaceActionContext: Equatable {
+266:     let scope: PhoneRecordScope
+267:     let connection: UUID
+268:     let content: UUID
+269: }
+270: 
+271: struct PhoneWorkspaceBackup: Codable {
+272:     var schemaVersion = 1
+273:     var exportedAt = ISO8601DateFormatter().string(from: Date())
+274:     var draft: PhoneWorkspaceDraft
+275:     var records: [PhoneOpportunityRecord]
+276:     var recordDrafts: [PhoneRecordDraftCheckpoint]
+277:     var submissionHolds: [PhoneSubmissionHold]
+278:     var discoverySnapshot: Data?
+279:     init(draft: PhoneWorkspaceDraft, records: [PhoneOpportunityRecord], recordDrafts: [PhoneRecordDraftCheckpoint],
+280:          submissionHolds: [PhoneSubmissionHold], discoverySnapshot: Data? = nil) {
+281:         self.draft = draft; self.records = records; self.recordDrafts = recordDrafts
+282:         self.submissionHolds = submissionHolds; self.discoverySnapshot = discoverySnapshot
+283:     }
+284:     var valid: Bool {
+285:         schemaVersion == 1 && ApplicationReviewPolicy.date(exportedAt) != nil && draft.valid
+286:             && records.count <= 1_000 && records.allSatisfy { $0.valid && $0.scope == draft.scope }
+287:             && Set(records.map(\.id)).count == records.count
+288:             && recordDrafts.count <= 200 && recordDrafts.allSatisfy { $0.valid && $0.scope == draft.scope }
+289:             && submissionHolds.count <= 500 && submissionHolds.allSatisfy { $0.valid && $0.scope == draft.scope }
+290:             && (discoverySnapshot?.count ?? 0) <= 12 * 1_024 * 1_024
+291:     }
+292:     /// Common iPhone/Android wire format. Platform extensions contain no reusable authentication or approval.
+293:     private struct Source: Codable {
+294:         var scope: String
+295:         var serviceOrigin: String?
+296:         var workspaceId: String?
+297:         var value: PhoneRecordScope? {
+298:             if scope == "unpaired", serviceOrigin == nil, workspaceId == nil { return PhoneRecordScope() }
+299:             guard scope == "workspace", let serviceOrigin, let workspaceId else { return nil }
+300:             let value = PhoneRecordScope(origin: serviceOrigin, workspaceID: workspaceId)
+301:             return value.valid && !value.isLocal ? value : nil
+302:         }
+303:     }
+304:     private struct Resume: Codable {
+305:         var name: String; var mime: String; var size: Int; var sha256: String; var dataBase64: String?
+306:     }
+307:     private struct Profile: Codable {
+308:         var firstName: String; var lastName: String; var email: String; var phone: String; var city: String; var country: String
+309:         var headline: String; var skills: [String]; var targetRoles: [String]; var targetCountries: [String]; var workModes: [String]
+310:         var experienceLevel: String; var website: String; var linkedin: String; var resume: Resume?
+311:         init(_ p: PhoneApplicationProfile) {
+312:             func list(_ text: String) -> [String] { text.split(separator: ",").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty } }
+313:             firstName = p.firstName; lastName = p.lastName; email = p.email; phone = p.phone; city = p.city; country = p.country
+314:             headline = p.headline; skills = list(p.skills); targetRoles = list(p.targetRoles); targetCountries = list(p.targetCountries)
+315:             workModes = [(p.remote ? "remote" : nil), (p.hybrid ? "hybrid" : nil), (p.onsite ? "on-site" : nil)].compactMap { $0 }
+316:             experienceLevel = p.experienceLevel; website = p.website; linkedin = p.linkedin
+317:             if !p.resumeRemoved, let size = p.resumeSize, let hash = p.resumeSHA256, !p.resumeName.isEmpty {
+318:                 resume = Resume(name: p.resumeName, mime: "application/pdf", size: size, sha256: hash, dataBase64: p.resumeData?.base64EncodedString())
+319:             }
+320:         }
+321:         func decoded() throws -> PhoneApplicationProfile {
+322:             let strings = [firstName, lastName, email, phone, city, country, headline, website, linkedin]
+323:             guard strings.allSatisfy({ $0.utf16.count <= 10_000 }), skills.count <= 30, targetRoles.count <= 30, targetCountries.count <= 30,
+324:                   (skills + targetRoles + targetCountries).allSatisfy({ $0.utf16.count <= 1_000 }),
+325:                   workModes.count <= 3, Set(workModes).count == workModes.count,
+326:                   workModes.allSatisfy({ ["remote", "hybrid", "on-site"].contains($0) }),
+327:                   ["entry", "mid", "senior", "any"].contains(experienceLevel) else {
+328:                 throw MobileApplicationError(message: "The backup profile is outside supported limits. Existing phone data is unchanged.")
+329:             }
+330:             var p = PhoneApplicationProfile()
+331:             p.firstName = firstName; p.lastName = lastName; p.email = email; p.phone = phone; p.city = city; p.country = country
+332:             p.headline = headline; p.skills = skills.joined(separator: ", "); p.targetRoles = targetRoles.joined(separator: ", ")
+333:             p.targetCountries = targetCountries.joined(separator: ", "); p.remote = workModes.contains("remote")
+334:             p.hybrid = workModes.contains("hybrid"); p.onsite = workModes.contains("on-site")
+335:             p.experienceLevel = experienceLevel; p.website = website; p.linkedin = linkedin
+336:             if let resume {
+337:                 guard resume.mime == "application/pdf", (8...MobileApplicationPolicy.maximumResumeBytes).contains(resume.size),
+338:                       resume.sha256.range(of: #"^[a-f0-9]{64}$"#, options: .regularExpression) != nil else {
+339:                     throw MobileApplicationError(message: "The backup contains invalid CV metadata.")
+340:                 }
+341:                 p.resumeName = resume.name; p.resumeSize = resume.size; p.resumeSHA256 = resume.sha256
+342:                 if let encoded = resume.dataBase64 {
+343:                     guard let bytes = Data(base64Encoded: encoded), bytes.base64EncodedString() == encoded else {
+344:                         throw MobileApplicationError(message: "The backup CV encoding is invalid.")
+345:                     }
+346:                     try p.selectResume(bytes, filename: resume.name)
+347:                     guard p.resumeSize == resume.size, p.resumeSHA256 == resume.sha256 else { throw MobileApplicationError(message: "The backup CV does not match its fingerprint.") }
+348:                 }
+349:             }
+350:             return p
+351:         }
+352:     }
+353:     private struct Record: Codable {
+354:         var id: String; var job: PhoneRecordJob; var stage: PhoneApplicationStage; var appliedElsewhere: Bool
+355:         var appliedOn: String; var followUpOn: String; var note: String; var revision: Int; var archived: Bool; var updatedAt: String
+356:         init(_ r: PhoneOpportunityRecord) {
+357:             id = r.id; job = r.job; stage = r.stage; appliedElsewhere = r.appliedElsewhere; appliedOn = r.appliedOn
+358:             followUpOn = r.followUpOn; note = r.note; revision = r.revision; archived = r.archived; updatedAt = r.updatedAt
+359:         }
+360:         func decoded(scope: PhoneRecordScope) -> PhoneOpportunityRecord {
+
+SOURCE apple/AhmadCareer/NativeApplicationsStore.swift L1035-1140
+1035:         guard backup.valid else { throw MobileApplicationError(message: "This file is damaged or uses an unsupported backup version. Existing phone data is unchanged.") }
+1036:         if let pdf = backup.draft.profile.resumeData {
+1037:             var verified = backup.draft.profile
+1038:             try verified.selectResume(pdf, filename: verified.resumeName)
+1039:             guard verified.resumeSHA256 == backup.draft.profile.resumeSHA256, verified.resumeSize == backup.draft.profile.resumeSize else {
+1040:                 throw MobileApplicationError(message: "The backup's CV does not match its recorded fingerprint. Existing phone data is unchanged.")
+1041:             }
+1042:         }
+1043:         return backup
+1044:     }
+1045:     /// The confirmation explicitly replaces the local profile, merges links/history and uploads nothing.
+1046:     @discardableResult
+1047:     func mergeBackup(_ backup: PhoneWorkspaceBackup, context: PhoneWorkspaceActionContext, replaceProfile: Bool = true) -> Bool {
+1048:         guard actionMatches(context), backup.valid else {
+1049:             message = "The destination changed or the backup is not supported. Nothing was imported."; return false
+1050:         }
+1051:         guard activePlanIDs.isEmpty else {
+1052:             message = "Stop active applications before replacing this phone's profile with a backup. Existing data is unchanged."; return false
+1053:         }
+1054:         do {
+1055:             var next = state, imported = backup.draft.profile
+1056:             if imported.resumeData == nil { imported.removeResume() }
+1057:             else { imported.resumeChanged = true; imported.resumeRemoved = false }
+1058:             if replaceProfile { next.retainDraft(imported, basedOn: next.latestServerRevision ?? next.profileRevision) }
+1059:             var existing = Set(next.jobs.compactMap { $0["url"]?.string }.map(MobileApplicationPolicy.jobIdentity))
+1060:             for job in backup.draft.jobs where existing.insert(MobileApplicationPolicy.jobIdentity(job["url"]?.string ?? "")).inserted {
+1061:                 var local = job.filter { ["url", "title", "company", "location", "country"].contains($0.key) }
+1062:                 local["id"] = .string("local-" + UUID().uuidString); local["localOnly"] = .bool(true); next.jobs.append(local)
+1063:             }
+1064:             guard next.jobs.count <= 200 else { throw MobileApplicationError(message: "The merged shortlist exceeds 200 links. Nothing was replaced.") }
+1065:             // Keep destination opportunity text; import the source draft only into an empty field set.
+1066:             if !next.opportunityDraft.hasContent { next.opportunityDraft = backup.draft.opportunityDraft }
+1067:             var importedIDs: [String: String] = [:]
+1068:             for original in backup.records {
+1069:                 var record = original; record.scope = next.recordScope
+1070:                 if let same = next.applicationRecords.first(where: { old in var comparable = old; comparable.id = record.id; return comparable == record }) {
+1071:                     importedIDs[original.id] = same.id; continue
+1072:                 }
+1073:                 if next.applicationRecords.contains(where: { $0.id == record.id }) { record.id = UUID().uuidString }
+1074:                 importedIDs[original.id] = record.id; next.applicationRecords.append(record)
+1075:             }
+1076:             for original in backup.recordDrafts {
+1077:                 var draft = original; draft.scope = next.recordScope
+1078:                 if let id = draft.recordID, let replacement = importedIDs[id] { draft.recordID = replacement }
+1079:                 // A destination draft is never silently overwritten by recovery.
+1080:                 if !next.recordDrafts.contains(where: { $0.scope == draft.scope && $0.identity == draft.identity }) { next.recordDrafts.append(draft) }
+1081:             }
+1082:             // Restore only restrictive Stop intent; importing can never authorize dispatch.
+1083:             if !next.recordScope.isLocal && backup.draft.scope == next.recordScope {
+1084:                 for hold in backup.submissionHolds { next.holdSubmissions([hold.planID]) }
+1085:             }
+1086:             try persist(next); plan = nil; selected = []; answers = [:]; mergeJobs()
+1087:             contentGeneration = UUID(); refreshTicket = nil
+1088:             message = "Phone data imported. Review the profile before saving online. Saved links and record history were merged; no application was approved or sent."
+1089:             return true
+1090:         } catch { message = error.localizedDescription; return false }
+1091:     }
+1092:     @discardableResult
+1093:     func clearWorkspaceOnPhone(context: PhoneWorkspaceActionContext) -> Bool {
+1094:         guard actionMatches(context) else { message = "The workspace changed. Review the clear action again."; return false }
+1095:         do {
+1096:             var next = state
+1097:             // Retain every Stop hold, including active service plans, across a deliberate local clear.
+1098:             if !next.recordScope.isLocal { next.holdSubmissions(activePlanIDs) }
+1099:             next.profile = PhoneApplicationProfile(); next.profileNeedsSync = false; next.profileRevision = nil
+1100:             next.latestServerRevision = nil; next.latestServerProfile = nil; next.jobs = []; next.opportunityDraft = PhoneOpportunityDraft()
+1101:             next.applicationRecords.removeAll { $0.scope == context.scope }
+1102:             next.recordDrafts.removeAll { $0.scope == context.scope }
+1103:             next.workspaceDrafts.removeAll { $0.scope == context.scope }
+1104:             next.connectionEnabled = false
+1105:             let account = state.tokenAccount, retired = client
+1106:             try persist(next)
+1107:             client = nil; connected = false; rotateConnection(); clearRemoteViews()
+1108:             do { try credentials.remove(account: account) }
+1109:             catch { message = "Phone data cleared and reconnect disabled. Secure token removal needs another attempt: " + error.localizedDescription; retired?.invalidate(); return true }
+1110:             if let retired { retireRemotely(retired, reportWhenDisconnected: false) }
+1111:             message = "This workspace's private phone data was cleared and its phone connection disabled. Other workspaces, exported files and employer/cloud records are unchanged. Stop holds were retained."
+1112:             return true
+1113:         } catch { message = error.localizedDescription; return false }
+1114:     }
+1115:     func exportReceipts() async -> URL? {
+1116:         guard let client, let operation = beginOperation() else { return nil }
+1117:         defer { finishOperation(operation) }
+1118:         let generation = sessionGeneration
+1119:         do {
+1120:             let value = try await client.request("receipts")
+1121:             guard generation == sessionGeneration else { return nil }
+1122:             let encoder = JSONEncoder(); encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+1123:             let output = folder.appendingPathComponent("Career-Finder-Application-Receipts.json")
+1124:             #if os(iOS)
+1125:             try encoder.encode(value).write(to: output, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+1126:             #else
+1127:             try encoder.encode(value).write(to: output, options: [.atomic])
+1128:             #endif
+1129:             return output
+1130:         } catch { acceptError(error, generation: generation); return nil }
+1131:     }
+1132: }
+1133: #endif

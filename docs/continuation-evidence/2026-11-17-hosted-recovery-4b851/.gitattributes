@@ -1,0 +1,4 @@
+# Preserve captured log/report/patch bytes and their recorded hashes.
+*.log -whitespace
+*.patch -whitespace
+*.txt -whitespace

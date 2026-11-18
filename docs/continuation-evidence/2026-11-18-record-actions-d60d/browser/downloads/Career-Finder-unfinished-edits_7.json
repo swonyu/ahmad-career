@@ -1,0 +1,47 @@
+{
+  "format": "Career Finder unfinished edits",
+  "version": 1,
+  "scope": "guest",
+  "exportedAt": "2026-11-18T06:45:35.024Z",
+  "drafts": [
+    {
+      "id": "e5000936-db74-4866-8f9b-fed30c27d6a0",
+      "savedAt": "2026-11-18T06:45:35.024Z",
+      "record": {
+        "job": {
+          "id": "bare-21",
+          "title": "Bare 21",
+          "company": "Synthetic Employer",
+          "url": "https://employer.example/jobs/bare-21",
+          "location": "Riyadh",
+          "country": "SA"
+        },
+        "original": {
+          "identity": "https://employer.example/jobs/bare-21",
+          "title": "Bare 21",
+          "company": "Synthetic Employer",
+          "location": "Riyadh",
+          "stage": "saved",
+          "appliedElsewhere": false,
+          "appliedDate": "",
+          "followUpDate": "",
+          "note": "",
+          "updatedAt": "2026-11-18T06:44:10.815Z"
+        },
+        "draft": {
+          "identity": "https://employer.example/jobs/bare-21",
+          "title": "Bare 21",
+          "company": "Synthetic Employer",
+          "location": "Riyadh",
+          "stage": "saved",
+          "appliedElsewhere": false,
+          "appliedDate": "",
+          "followUpDate": "",
+          "note": "FINAL_NEW_EXPORT_EN_320\nمسودة جديدة",
+          "updatedAt": "2026-11-18T06:44:10.815Z"
+        },
+        "existed": false
+      }
+    }
+  ]
+}

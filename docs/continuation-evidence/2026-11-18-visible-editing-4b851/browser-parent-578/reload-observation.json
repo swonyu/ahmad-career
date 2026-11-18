@@ -1,0 +1,19 @@
+{
+  "completedUTC": "2026-11-18 05:16:39 UTC",
+  "sourceCommit": "578d99c8f225a72ca7cc0cf10ff474bb19aaaebc",
+  "scope": "Actual connected-browser UI observations; synthetic guest only",
+  "toolResult": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"cardCount\":1,\"phase\":\"before reload\",\"query\":\"Nurse\",\"stage\":\"offer\"}"
+      },
+      {
+        "type": "text",
+        "text": "{\"cardCount\":22,\"phase\":\"after reload\",\"query\":\"\",\"stage\":\"all\",\"text\":\"YOUR SHORTLIST\\n\\nYour next moves.\\n\\nA clear shortlist, private notes, and a plan for what comes next.\\n\\n17 saved jobs\\nAdd job link\\nAll\\nApplied\\nFollow-ups\\nApplication stage\\nAll stages\\nSaved\\nApplied\\nInterview\\nOffer\\nClosed\\nFind a saved job, employer or note\\n\\nSynthetic Employer\\n\\nRole saved 0\\nSaved\\nFollow up Nov 2, 2026\\n\\nFollow-up due\\n\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nRole saved 1\\nSaved\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nRole saved 3\\nSaved\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nRole applied 0\\nApplied\\nYou marked this as applied\\nFollow up Nov 20, 2026\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nRole applied 1\\nApplied\\nYou marked this as applied\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nRole applied 3\\nApplied\\nYou marked this as applied\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nRole interview 0\\nInterview\\nYou marked this as applied\\nFollow up Dec 2, 2026\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nNurse clinic\\nOffer\\nYou marked this as applied\\nFollow up Nov 30, 2026\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nRole interview 3\\nInterview\\nYou marked this as applied\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nRole offer 0\\nOffer\\nYou marked this as applied\\nFollow up Nov 18, 2026\\n\\nFollow-up due\\n\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nRole offer 1\\nOffer\\nYou marked this as applied\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nRole offer 3\\nOffer\\nYou marked this as applied\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nRole closed 0\\nClosed\\nYou marked this as applied\\nFollow up Jan 1, 2026\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nRole closed 1\\nClosed\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nRole closed 3\\nClosed\\nYou marked this as applied\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nBare 21\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nBare 22\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nRole saved 2\\n\\nApplication record · bookmark removed\\n\\nSaved\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nRole applied 2\\n\\nApplication record · bookmark removed\\n\\nApplied\\nYou marked this as applied\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nRole interview 2\\n\\nApplication record · bookmark removed\\n\\nInterview\\nYou marked this as applied\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nRole offer 2\\n\\nApplication record · bookmark removed\\n\\nOffer\\nYou marked this as applied\\nEdit application record\\nOpen job\\n\\nSynthetic Employer\\n\\nRole closed 2\\n\\nApplication record · bookmark removed\\n\\nClosed\\nYou marked this as applied\\nEdit application record\\nOpen job\\n\\nStages, follow-up dates, and notes stay on this phone. They are your own records; employer-confirmed submissions appear in Apply.\"}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  }
+}

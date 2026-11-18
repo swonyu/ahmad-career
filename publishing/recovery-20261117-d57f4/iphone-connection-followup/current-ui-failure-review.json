@@ -1,0 +1,53 @@
+{
+  "commit": "56784d740a25d07d2fbd4616f57e55cf0cb4453f",
+  "run": 44114195156,
+  "artifactID": 14345455271,
+  "reviewedAt": "2026-11-17T15:58:55.854718+00:00",
+  "test": "CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup",
+  "screenshots": [
+    "AD691182-FC65-4584-9FF6-860662EDD86D.png",
+    "21CE3DB7-5CAB-4B04-865A-B17073202CD8.png"
+  ],
+  "snapshots": [
+    {
+      "file": "1F1599DA-1305-4FB1-A1D8-1845484459B6",
+      "sha256": "a9bdf4f1f49079d43959435ec186b7b2171075b742aecc6e9c84ef02d39a63e6",
+      "elements": [
+        {
+          "identifier": "connection.address",
+          "label": "Application service HTTPS address",
+          "value": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
+          "frame": {
+            "NS.rectval": "{{60, 558}, {320, 22}}",
+            "NS.special": 3
+          },
+          "hasKeyboardFocus": true,
+          "selected": false,
+          "enabled": true,
+          "elementType": 49
+        }
+      ]
+    },
+    {
+      "file": "40526903-6D56-4926-B394-65893F465EBA",
+      "sha256": "a9bdf4f1f49079d43959435ec186b7b2171075b742aecc6e9c84ef02d39a63e6",
+      "elements": [
+        {
+          "identifier": "connection.address",
+          "label": "Application service HTTPS address",
+          "value": "https://career-finder-service.jazzy-drake-8323.chatgpt.site",
+          "frame": {
+            "NS.rectval": "{{60, 558}, {320, 22}}",
+            "NS.special": 3
+          },
+          "hasKeyboardFocus": true,
+          "selected": false,
+          "enabled": true,
+          "elementType": 49
+        }
+      ]
+    }
+  ],
+  "finding": "The original URL remained in the focused field before and after triple tap. No real Select All was present. Actual Delete removed only a single hyphen; whole-empty assertion correctly failed. No clear address control is exposed by the source or inspected tree. Use Career Finder resets a custom address to default and is not a clear action.",
+  "repairHypothesis": "One bounded caret tap then double-tap, querying reachable real Select All after each. Require it before Delete; retain empty and exact replacement assertions. Native focused gate required."
+}

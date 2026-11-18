@@ -1,0 +1,315 @@
+{
+  "schemaVersion": 1,
+  "title": "Independent hosted task guidance source critique",
+  "reviewer": "/root/publication_review",
+  "recordedUTC": "2026-11-18 12:01:31 UTC",
+  "checkout": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout",
+  "baseCommit": "22b0f6911fba9c40701a8675fa84b671edfdab31",
+  "scope": "Read-only review of active uncommitted hosted changes, English/Arabic copy, clipboard semantics, guest navigation, preference reuse, provenance, CSS, test coverage and bounded existing discovery trust boundaries.",
+  "state": "Independent source critique with two accepted findings and source-level corrections observed; not final acceptance.",
+  "activeOwner": "/root",
+  "activeEditing": true,
+  "snapshotQualification": "Hashes identify individual reads during active root editing, not an atomic frozen tree. No reviewed product file was edited by this lane.",
+  "noExecution": {
+    "builds": true,
+    "productTests": true,
+    "browserActions": true,
+    "nativeActions": true,
+    "deployment": true,
+    "externalMessages": true
+  },
+  "sourceSnapshots": [
+    {
+      "path": "app/phone/ApplicationGuide.tsx",
+      "sha256": "4dac2070e401fb3abc6d50947caee48710e7439c53fb6e948b2cef1096991579",
+      "bytes": 2195
+    },
+    {
+      "path": "app/phone/ProfileReuse.tsx",
+      "sha256": "e99c1f8c6ad92b3c4152cfea343a615effca20083a970e4da5b3da34496908fd",
+      "bytes": 1961
+    },
+    {
+      "path": "app/phone/PhoneApp.tsx",
+      "initialReviewedSHA256": "53b3815b4654ede228f58bde9becec25bf9e845d3d2ada4f31121e99ea80e21d",
+      "provenanceCorrectionSHA256": "c7471dbc404f8acee7970f8544e259900a20bf00a8ecca2722f186a4cd1b3a07",
+      "lastReviewedSHA256": "ae32306e54f66c801f40f6a4be5930bd1420ce0c069324b1da2b8792b2886a80",
+      "bytes": 126393
+    },
+    {
+      "path": "app/phone/components.tsx",
+      "findingSHA256": "70355397ac9a25091858b22eee5c974aa3d32fcf65f5e8e3049f3e2faab9ffea",
+      "correctedSHA256": "994176a40a6c226f77446e9dbf27a7c4d0f02017444753b20bd33a6cfb3496b0",
+      "bytes": 20800
+    },
+    {
+      "path": "app/phone/phone.css",
+      "initialReviewedSHA256": "fc25a99a0327802935f3f14dc098fb36eaa2a793eac287c6b37174f55ad1cc3a",
+      "lastObservedSHA256": "0b4685bedf6c527d02bbb0c1d233222e80d13b7402d0c50a4095ca53a767cf79",
+      "bytes": 36234
+    },
+    {
+      "path": "app/i18n/messages.ar.json",
+      "initialReviewedSHA256": "5b4eb2493469759d658a79f7cb7f89a7e83fbf455061d41ad2f51970f090c2cd",
+      "correctedSHA256": "75035e469e921737829551f67677f1578d46159ce4ee744077d82ca46720fd39",
+      "bytes": 234878
+    },
+    {
+      "path": "app/i18n/core.ts",
+      "sha256": "900241f78b9ccd6f1c68e349c08dce6a53c298ca646cf18ee6111230b4729cbb",
+      "bytes": 6217
+    },
+    {
+      "path": "app/i18n/i18n.css",
+      "sha256": "c08d6ed5604b8f479c47e4a8f984bd61926a9c8271928754b8777a7d8c7b4e8e",
+      "bytes": 5762
+    },
+    {
+      "path": "tests/phone-task-guidance.mjs",
+      "initialReviewedSHA256": "cedf56f3f1cce854f4f99ba7659c7338695b23c7cf2987e4bf693f22e90df0bf",
+      "correctedSHA256": "cfe6af689fc868fd0726b997c7120cc1ccad6520e1f177977686afc3046fa533",
+      "bytes": 8501
+    },
+    {
+      "path": "tests/hosted-discovery.mjs",
+      "sha256": "f015682cb00e32e906f88f8b0dd453a7d78cae3c07a13e3e7330b28bf6517317",
+      "bytes": 42625
+    },
+    {
+      "path": "server/discovery.mjs",
+      "sha256": "bc8984b41d9ff1a4c7d69abd4a3e3ee2656120ca8151eb4cd899667acf140887",
+      "bytes": 28727
+    },
+    {
+      "path": "package.json",
+      "sha256": "860c907c529ded123cc591d1d4141276a3a4505044e2be76b8e8b55d66909f7c",
+      "bytes": 3471
+    }
+  ],
+  "findings": [
+    {
+      "id": "HTG-01",
+      "severity": "P2",
+      "evidenceLevel": "source_verified",
+      "introducedByCurrentDelta": true,
+      "title": "Job link accessible name omitted its visible label",
+      "evidence": [
+        {
+          "path": "app/phone/components.tsx",
+          "line": 60,
+          "sha256": "70355397ac9a25091858b22eee5c974aa3d32fcf65f5e8e3049f3e2faab9ffea",
+          "observation": "Visible text was t('View job '), but the newly added aria-label was t('View {0} on the employer’s website', [job.title]). The visible 'View job' label was not contained in the accessible name."
+        },
+        {
+          "path": "app/i18n/core.ts",
+          "lines": [
+            74,
+            80
+          ],
+          "sha256": "900241f78b9ccd6f1c68e349c08dce6a53c298ca646cf18ee6111230b4729cbb",
+          "observation": "Production translation trims/normalizes catalog lookup but reattaches source leading/trailing whitespace. Tests should exercise this implementation."
+        }
+      ],
+      "consequence": "Visible-label voice commands and accessible names diverge. This is an inspectable label-in-name regression, not a claim that an assistive-technology session was executed.",
+      "proposedFix": {
+        "english": "View job: {0}",
+        "arabic": "عرض الوظيفة: {0}",
+        "preserve": "Keep visible 'View job ' key, exact job title, href and external-link attributes."
+      },
+      "ownerDisposition": "Root accepted and implemented.",
+      "correctionObserved": {
+        "componentSHA256": "994176a40a6c226f77446e9dbf27a7c4d0f02017444753b20bd33a6cfb3496b0",
+        "catalogSHA256": "75035e469e921737829551f67677f1578d46159ce4ee744077d82ca46720fd39",
+        "sourceResult": "Current aria-label uses View job: {0}; English and Arabic names retain the visible label."
+      },
+      "retest": "Render actual JobCard with production translate in EN/AR and a mixed-direction synthetic title. Require accessible name to include the trimmed actual visible text and unchanged title; require exact original href and noopener noreferrer. Root added this expectation at tests/phone-task-guidance.mjs 81–91.",
+      "reviewerExecution": "No test or browser run. Runtime and final-source evidence remain root-owned."
+    },
+    {
+      "id": "HTG-02",
+      "severity": "P2",
+      "evidenceLevel": "source_verified",
+      "introducedByCurrentDelta": false,
+      "title": "Search input implied skill search beyond available metadata",
+      "evidence": [
+        {
+          "path": "app/phone/PhoneApp.tsx",
+          "line": 765,
+          "sha256": "c7471dbc404f8acee7970f8544e259900a20bf00a8ecca2722f186a4cd1b3a07",
+          "observation": "Input label was Job title or skill."
+        },
+        {
+          "path": "server/discovery.mjs",
+          "lines": [
+            110,
+            125,
+            208,
+            273
+          ],
+          "sha256": "bc8984b41d9ff1a4c7d69abd4a3e3ee2656120ca8151eb4cd899667acf140887",
+          "observation": "Greenhouse normalization leaves summary empty; its list fetch does not request descriptions. Matching checks title, company and available summary only."
+        },
+        {
+          "path": "tests/hosted-discovery.mjs",
+          "lines": [
+            108,
+            118
+          ],
+          "sha256": "f015682cb00e32e906f88f8b0dd453a7d78cae3c07a13e3e7330b28bf6517317",
+          "observation": "Existing coverage demonstrates metadata normalization and keyword AND/location/remote matching, not full-description skill search."
+        }
+      ],
+      "consequence": "A skill occurring only in a Greenhouse job description cannot match this search. Source-level example: a Backend Engineer posting whose description alone says Python will not match Python. This example was reasoned from code, not represented as an executed live search.",
+      "proposedFix": {
+        "englishLabel": "Job title or keyword",
+        "arabicLabel": "المسمى الوظيفي أو كلمة مفتاحية",
+        "englishScope": "Searches titles, employers and available summaries.",
+        "arabicScope": "يشمل البحث المسميات وجهات العمل والملخصات المتاحة."
+      },
+      "ownerDisposition": "Root accepted clarity mitigation and explicitly declined backend content-fetch expansion in this bounded change.",
+      "correctionObserved": {
+        "phoneAppSHA256": "ae32306e54f66c801f40f6a4be5930bd1420ce0c069324b1da2b8792b2886a80",
+        "catalogSHA256": "75035e469e921737829551f67677f1578d46159ce4ee744077d82ca46720fd39",
+        "sourceResult": "New label and scope sentence are present. Backend hash remains unchanged."
+      },
+      "retest": "Check actual EN/AR rendered search label/scope and existing keyword/filter behavior. No claim of full-description search or changed provider traffic. Preserve existing metadata/filter tests and source-response limits.",
+      "reviewerExecution": "No backend test or browser query was run."
+    }
+  ],
+  "reviewedBoundaries": [
+    {
+      "area": "Clipboard fields and consent",
+      "evidence": [
+        "ProfileReuse.tsx 11–21, 25–27"
+      ],
+      "observation": "Only five displayed contact fields are offered. Clicking a field copies that same displayed value; Name is the displayed composed first/last-name value. No CV bytes, target roles, profile object, background filling, employer submission or network call is included. Success follows resolved writeText; denial gives selectable-text guidance.",
+      "qualification": "Source semantics reviewed. Real clipboard permission, selectable fallback and assistive-technology behavior remain browser checks. This is not a broader clipboard privacy certification."
+    },
+    {
+      "area": "Role chips",
+      "evidence": [
+        "PhoneApp.tsx 738, 766",
+        "tests/phone-task-guidance.mjs saved-role test"
+      ],
+      "observation": "Uses up to three unique trimmed roles from the saved snapshot, changes query only, preserves other filters and performs no automatic search. Copy explicitly says the field is filled and Search jobs must be chosen.",
+      "qualification": "No inference that CV, experience, work modes or target countries influence results."
+    },
+    {
+      "area": "Guest Apply",
+      "evidence": [
+        "PhoneApp.tsx Apply subtree",
+        "ApplicationGuide.tsx 12–20"
+      ],
+      "observation": "Manual guidance precedes optional account functions when live integration is unavailable. Outer identity and lock guards still hide the complete subtree. Routing clears old Saved filters and supports jobs or retained records before choosing Saved versus Search.",
+      "qualification": "Source behavior only. Existing tests include guest zero/nonzero job and identity/lock cases; retained-record-only and browser return flow still belong to actual task review."
+    },
+    {
+      "area": "Source provenance",
+      "evidence": [
+        "PhoneApp.tsx 769–770, 784–785"
+      ],
+      "observation": "During review root replaced the initial active-sounding Searching selected boards label with Selected employer boards, and added a separate Results from line using searchPage.sources. This separates editable selections from the displayed result snapshot.",
+      "qualification": "Initial concern resolved in source. Browser recheck should change selected boards without resubmitting and confirm old results retain their real provenance."
+    },
+    {
+      "area": "RTL and responsive CSS",
+      "evidence": [
+        "phone.css new task-guidance rules and existing button/footer rules",
+        "i18n.css 28–38, 48–55"
+      ],
+      "observation": "New text/URL fields use bidi isolation or LTR as appropriate, wrapping/min-width rules, and flexible layouts. Existing icon/text/button minima remain 44 pixels, and existing RTL rules correct text alignment and footer auto margins.",
+      "qualification": "No additional source-proven overflow or direction defect identified. Small screens, zoom/large text, long Arabic names/URLs and keyboard focus require root’s rendered evidence."
+    },
+    {
+      "area": "Plain bilingual wording",
+      "evidence": [
+        "ApplicationGuide.tsx",
+        "ProfileReuse.tsx",
+        "messages.ar.json current delta"
+      ],
+      "observation": "New wording is practical, gives concrete actions and preserves the distinction between personal records and employer confirmation. No promotional outcome promises, paid-service nudges or fabricated approval state were found in the reviewed delta.",
+      "qualification": "The two precision defects above required correction. This statement is bounded to inspected strings, not the whole product."
+    },
+    {
+      "area": "New test integration",
+      "evidence": [
+        "package.json test script",
+        "tests/phone-task-guidance.mjs 11–13, 21–23, 81–91"
+      ],
+      "observation": "The new test file is present in npm test. The known clipboard timing harness now awaits a noticePromise. Root subsequently switched the test translator to production core.ts and added the actual JobCard label/title/destination regression.",
+      "qualification": "Tests were read, not executed by this reviewer; source inspection is not a passing test result."
+    }
+  ],
+  "backendTrustAudit": {
+    "source": "server/discovery.mjs",
+    "sourceSHA256": "bc8984b41d9ff1a4c7d69abd4a3e3ee2656120ca8151eb4cd899667acf140887",
+    "observedBoundaries": [
+      {
+        "lines": [
+          38,
+          71,
+          183,
+          192
+        ],
+        "observation": "Validated ATS identities construct fixed upstream hosts and reconstructed job URLs; redirects are not followed. Caller-supplied arbitrary fetch URLs are not used."
+      },
+      {
+        "lines": [
+          74,
+          91,
+          134,
+          150,
+          198,
+          229
+        ],
+        "observation": "Input, response bytes, source deadline, job count and cache-size bounds are explicit. Partial source interruptions remain disclosed rather than silently labeled complete."
+      },
+      {
+        "lines": [
+          158,
+          180,
+          191
+        ],
+        "observation": "Discovery is GET-only with host/origin checks. Upstream headers are explicitly constructed without incoming account credentials; query filters are used locally, and the rate identifier is salted/daily rather than a raw persisted IP."
+      },
+      {
+        "lines": [
+          231,
+          283
+        ],
+        "observation": "Fresh, cached, stale and unavailable states remain distinct; snapshot-bound pagination and partial-source status preserve provenance."
+      }
+    ],
+    "existingCoverageRead": [
+      {
+        "path": "tests/hosted-discovery.mjs",
+        "lines": [
+          91,
+          106
+        ],
+        "scope": "Source validation, invalid query rejection and no persisted/forwarded private filters or credentials."
+      },
+      {
+        "path": "tests/hosted-discovery.mjs",
+        "lines": [
+          108,
+          142
+        ],
+        "scope": "Metadata/remote evidence, filters, cache, pagination, stale data and missing-board behavior."
+      }
+    ],
+    "concreteRemainingIssue": "HTG-02: available search metadata did not justify the skill-search label; root implemented truthful copy without widening fetch cost or size.",
+    "conclusion": "No additional backend defect supported strongly enough by this bounded source review to propose another change.",
+    "limitations": "No new provider fetch, product test, database write, browser request or native execution. This is not a security certification or proof of production behavior."
+  },
+  "finalDisposition": {
+    "sourceFindingsRaised": 2,
+    "rootAccepted": 2,
+    "sourceCorrectionsObserved": 2,
+    "additionalSourceProvenBlockers": 0,
+    "runtimeRetestRequired": true,
+    "finalAcceptanceClaim": false,
+    "completedTenPassProgramClaim": false,
+    "caution": "Current root edits may advance after these hashes. Bind final browser/test evidence to the eventual committed candidate."
+  }
+}

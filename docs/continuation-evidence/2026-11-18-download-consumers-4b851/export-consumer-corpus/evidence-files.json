@@ -1,0 +1,392 @@
+[
+  {
+    "path": "HANDOFF.md",
+    "bytes": 11329,
+    "sha256": "02f85d168c0de58efa2e1edfc04e8247d68412fc3533795174989bc0a5dbd1cd"
+  },
+  {
+    "path": "consumer/default-import/career-records-ar.fods",
+    "bytes": 59868,
+    "sha256": "af8eb24b1816c0240df29d1c552dc1b67ebf6b1ebe5fa67f0332fbacbaee027c"
+  },
+  {
+    "path": "consumer/default-import/career-records-en.fods",
+    "bytes": 59518,
+    "sha256": "41cbd6290aac6899c7fef3d1729ffe0dc50659fd779c5f1842679959f246ad1c"
+  },
+  {
+    "path": "consumer/formula-enabled-import/career-records-ar.fods",
+    "bytes": 59868,
+    "sha256": "af8eb24b1816c0240df29d1c552dc1b67ebf6b1ebe5fa67f0332fbacbaee027c"
+  },
+  {
+    "path": "consumer/formula-enabled-import/career-records-en.fods",
+    "bytes": 59518,
+    "sha256": "41cbd6290aac6899c7fef3d1729ffe0dc50659fd779c5f1842679959f246ad1c"
+  },
+  {
+    "path": "consumer/formula-positive-control/positive-control.fods",
+    "bytes": 22233,
+    "sha256": "5db8086c9f812b6fab728734fa6b2a718fdd25bf58aa218dd47b7f9055cb97b6"
+  },
+  {
+    "path": "consumer/quoted-text-import/career-records-ar.fods",
+    "bytes": 58834,
+    "sha256": "ce43f9c869c1089a7fcd114506114ef71e0190e4e82846ec8217e462e1e0a588"
+  },
+  {
+    "path": "consumer/quoted-text-import/career-records-en.fods",
+    "bytes": 58484,
+    "sha256": "1d82a098a9ac9e5505eb1d05332939e08c1bf8e9cabc551e6ee4fa4bb44022c1"
+  },
+  {
+    "path": "consumer/reimport-saved-csv/career-records-ar.fods",
+    "bytes": 58834,
+    "sha256": "ce43f9c869c1089a7fcd114506114ef71e0190e4e82846ec8217e462e1e0a588"
+  },
+  {
+    "path": "consumer/reimport-saved-csv/career-records-en.fods",
+    "bytes": 58484,
+    "sha256": "1d82a098a9ac9e5505eb1d05332939e08c1bf8e9cabc551e6ee4fa4bb44022c1"
+  },
+  {
+    "path": "consumer/reopen-native-ods/career-records-ar.fods",
+    "bytes": 59366,
+    "sha256": "eefef1bf7da0e34b63d1f4b3f57463534ece4e284340174fca1f5de62a1f1dc0"
+  },
+  {
+    "path": "consumer/reopen-native-ods/career-records-en.fods",
+    "bytes": 58821,
+    "sha256": "77298236aaa62270415c51f69f226e486212ceb4f6facb502dff94eaafa67004"
+  },
+  {
+    "path": "consumer/save-csv-again/career-records-ar.csv",
+    "bytes": 14705,
+    "sha256": "6380a74953a886208b9e337167d4a0ab332ee7681821867d89eb7a093360e5a2"
+  },
+  {
+    "path": "consumer/save-csv-again/career-records-en.csv",
+    "bytes": 14356,
+    "sha256": "e94aa0f7563200ee08e1ce1269cb1415c5410cdfbf09fa93c08ae408c718493c"
+  },
+  {
+    "path": "consumer/save-native-ods/career-records-ar.ods",
+    "bytes": 8831,
+    "sha256": "f8e3403b99a4b2d81e2d2db9ca414a47d6d6b2aa5db3de4e9c9cbf1141cebd99"
+  },
+  {
+    "path": "consumer/save-native-ods/career-records-en.ods",
+    "bytes": 8747,
+    "sha256": "541f5a559d7dceaefbefe3f8443e4f369afc6e2ced56caea4c1bf7f2d7325a4e"
+  },
+  {
+    "path": "consumer-invocations.json",
+    "bytes": 20823,
+    "sha256": "85989b3ba595dc815c99be884f96dcafb5c32e247294e7f273e61da7abc2cf68"
+  },
+  {
+    "path": "generate-exports.mjs",
+    "bytes": 7476,
+    "sha256": "1f267c9defead3f4c6917dfe69ae3ac3cb887daaabbbe3c3fcb8700d83245312"
+  },
+  {
+    "path": "generated/calendar-boundaries/Asia_Riyadh-2000-02-29.ics",
+    "bytes": 625,
+    "sha256": "9ee13dfe4ecca5ba2903903a591c93c636f579111de8f225d0c82a9b1f49a8db"
+  },
+  {
+    "path": "generated/calendar-boundaries/Asia_Riyadh-2026-03-08.ics",
+    "bytes": 625,
+    "sha256": "09164d19afe85b1e94716d0edd9a37892bed008b1b00e7ed7905e80f8bab110e"
+  },
+  {
+    "path": "generated/calendar-boundaries/Asia_Riyadh-2026-11-01.ics",
+    "bytes": 625,
+    "sha256": "ac173d26318f0e705ce09a1d63b7ecf3bb5adda3b2c4bf69cec39821e00ef1af"
+  },
+  {
+    "path": "generated/calendar-boundaries/Asia_Riyadh-9999-12-31.ics",
+    "bytes": 625,
+    "sha256": "c9c33d5aa99dd153d65e878f720e20bb9e292a14788453f0e9071b722ea70402"
+  },
+  {
+    "path": "generated/calendar-boundaries/Pacific_Kiritimati-2000-02-29.ics",
+    "bytes": 625,
+    "sha256": "9ee13dfe4ecca5ba2903903a591c93c636f579111de8f225d0c82a9b1f49a8db"
+  },
+  {
+    "path": "generated/calendar-boundaries/Pacific_Kiritimati-2026-03-08.ics",
+    "bytes": 625,
+    "sha256": "09164d19afe85b1e94716d0edd9a37892bed008b1b00e7ed7905e80f8bab110e"
+  },
+  {
+    "path": "generated/calendar-boundaries/Pacific_Kiritimati-2026-11-01.ics",
+    "bytes": 625,
+    "sha256": "ac173d26318f0e705ce09a1d63b7ecf3bb5adda3b2c4bf69cec39821e00ef1af"
+  },
+  {
+    "path": "generated/calendar-boundaries/Pacific_Kiritimati-9999-12-31.ics",
+    "bytes": 625,
+    "sha256": "c9c33d5aa99dd153d65e878f720e20bb9e292a14788453f0e9071b722ea70402"
+  },
+  {
+    "path": "generated/calendar-boundaries/Pacific_Pago_Pago-2000-02-29.ics",
+    "bytes": 625,
+    "sha256": "9ee13dfe4ecca5ba2903903a591c93c636f579111de8f225d0c82a9b1f49a8db"
+  },
+  {
+    "path": "generated/calendar-boundaries/Pacific_Pago_Pago-2026-03-08.ics",
+    "bytes": 625,
+    "sha256": "09164d19afe85b1e94716d0edd9a37892bed008b1b00e7ed7905e80f8bab110e"
+  },
+  {
+    "path": "generated/calendar-boundaries/Pacific_Pago_Pago-2026-11-01.ics",
+    "bytes": 625,
+    "sha256": "ac173d26318f0e705ce09a1d63b7ecf3bb5adda3b2c4bf69cec39821e00ef1af"
+  },
+  {
+    "path": "generated/calendar-boundaries/Pacific_Pago_Pago-9999-12-31.ics",
+    "bytes": 625,
+    "sha256": "c9c33d5aa99dd153d65e878f720e20bb9e292a14788453f0e9071b722ea70402"
+  },
+  {
+    "path": "generated/calendar-boundaries/UTC-2000-02-29.ics",
+    "bytes": 625,
+    "sha256": "9ee13dfe4ecca5ba2903903a591c93c636f579111de8f225d0c82a9b1f49a8db"
+  },
+  {
+    "path": "generated/calendar-boundaries/UTC-2026-03-08.ics",
+    "bytes": 625,
+    "sha256": "09164d19afe85b1e94716d0edd9a37892bed008b1b00e7ed7905e80f8bab110e"
+  },
+  {
+    "path": "generated/calendar-boundaries/UTC-2026-11-01.ics",
+    "bytes": 625,
+    "sha256": "ac173d26318f0e705ce09a1d63b7ecf3bb5adda3b2c4bf69cec39821e00ef1af"
+  },
+  {
+    "path": "generated/calendar-boundaries/UTC-9999-12-31.ics",
+    "bytes": 625,
+    "sha256": "c9c33d5aa99dd153d65e878f720e20bb9e292a14788453f0e9071b722ea70402"
+  },
+  {
+    "path": "generated/calendar-reference.json",
+    "bytes": 2133,
+    "sha256": "499600db0d12c6ac8248c3589b7e9ed04544a220d6fe54e710d08cfda1a4acae"
+  },
+  {
+    "path": "generated/career-records-ar.csv",
+    "bytes": 14750,
+    "sha256": "d269edd1ec50e38b7e0568320bd04fd57d907301b90637401f9fd4ba809b10c6"
+  },
+  {
+    "path": "generated/career-records-en.csv",
+    "bytes": 14401,
+    "sha256": "a105002f4f42c4afc93c03aff83de38733295f68e871344956124db1a2e96a03"
+  },
+  {
+    "path": "generated/changed-day-en.ics",
+    "bytes": 625,
+    "sha256": "189baedee9046e6ed390edb33d749e79d9fa2da81d73606e44855fbd3cfc4879"
+  },
+  {
+    "path": "generated/follow-up-ar.ics",
+    "bytes": 663,
+    "sha256": "6c72390ce3e27f201d27a25ba876cfceb84c053c0427e99cd243a7244a6a6ea5"
+  },
+  {
+    "path": "generated/follow-up-en.ics",
+    "bytes": 625,
+    "sha256": "999d98290cd17751077d5972f20473d2157b22755db1e19dcb3f2ed4561176ab"
+  },
+  {
+    "path": "generated/original-records.json",
+    "bytes": 18341,
+    "sha256": "bbfa83cd774fd52a034e6db20c714422334561180eee1d7942187a87e6a27bc4"
+  },
+  {
+    "path": "generated/positive-control.csv",
+    "bytes": 19,
+    "sha256": "31ac77f719520a62abcd72d2d18016afa8ff4a83034a76abfd0456524ddc6fcd"
+  },
+  {
+    "path": "generated/same-day-updated-caption-en.ics",
+    "bytes": 574,
+    "sha256": "ce1b44d5b49c39f20149e07448fac4ac0a078deba7835e770850058b5c34cb3e"
+  },
+  {
+    "path": "generation-receipt.json",
+    "bytes": 8094,
+    "sha256": "e6fe6b10073077ab946a638496b476cc49aafb970a7975c06311c8289a506a0f"
+  },
+  {
+    "path": "receipts/consumer-binary.json",
+    "bytes": 477,
+    "sha256": "48cc5ed5bd923b898bdf6512366aa315112dadc128f3b955ccf3874708204be0"
+  },
+  {
+    "path": "receipts/consumer-version.json",
+    "bytes": 113,
+    "sha256": "651d6ee34c369f5dbd5bf7dcf98d5fda6fafacd066849e05316538c5bda9ac30"
+  },
+  {
+    "path": "receipts/default-import.stderr.log",
+    "bytes": 446,
+    "sha256": "9835899306d9b912cefd1791953ca5daff8467a8b99678252f4ebd2e47da030d"
+  },
+  {
+    "path": "receipts/default-import.stdout.log",
+    "bytes": 736,
+    "sha256": "be4c5dfa88b6036a251532e01a37d0f0f81844ad31c16050dc4e00a50939072e"
+  },
+  {
+    "path": "receipts/final-inventory.json",
+    "bytes": 2295,
+    "sha256": "fc18e3687e3d1101208d60ef271cdf37c128359a0034d1e2f9b32a1df9593a2c"
+  },
+  {
+    "path": "receipts/formula-enabled-import.stderr.log",
+    "bytes": 446,
+    "sha256": "9835899306d9b912cefd1791953ca5daff8467a8b99678252f4ebd2e47da030d"
+  },
+  {
+    "path": "receipts/formula-enabled-import.stdout.log",
+    "bytes": 752,
+    "sha256": "8328b62590b580cb8ecf40a0eb4f347f990cc830a71b83639fb580f17292bd6b"
+  },
+  {
+    "path": "receipts/formula-positive-control.stderr.log",
+    "bytes": 446,
+    "sha256": "9835899306d9b912cefd1791953ca5daff8467a8b99678252f4ebd2e47da030d"
+  },
+  {
+    "path": "receipts/formula-positive-control.stdout.log",
+    "bytes": 376,
+    "sha256": "ab2cadfc52c9a9d0b1b151e8953b73c904b36f01f5fbe53b7b502cb5656c6e1b"
+  },
+  {
+    "path": "receipts/generation.stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "receipts/generation.stdout.log",
+    "bytes": 3322,
+    "sha256": "451cc287ff66e6d31b87e031275c7f5c133cf81bbc6dc9981f146c61f1e570b4"
+  },
+  {
+    "path": "receipts/quoted-text-import.stderr.log",
+    "bytes": 446,
+    "sha256": "9835899306d9b912cefd1791953ca5daff8467a8b99678252f4ebd2e47da030d"
+  },
+  {
+    "path": "receipts/quoted-text-import.stdout.log",
+    "bytes": 744,
+    "sha256": "455eef1a7188e95ce5b6296f009d8132010e4ac87e424c67ef7993e9e2e26930"
+  },
+  {
+    "path": "receipts/reimport-saved-csv.stderr.log",
+    "bytes": 446,
+    "sha256": "9835899306d9b912cefd1791953ca5daff8467a8b99678252f4ebd2e47da030d"
+  },
+  {
+    "path": "receipts/reimport-saved-csv.stdout.log",
+    "bytes": 772,
+    "sha256": "f64c407bb183be56f63a3d4fc97f9aeac8082020016a79484211fc07334048c5"
+  },
+  {
+    "path": "receipts/reopen-native-ods.stderr.log",
+    "bytes": 446,
+    "sha256": "9835899306d9b912cefd1791953ca5daff8467a8b99678252f4ebd2e47da030d"
+  },
+  {
+    "path": "receipts/reopen-native-ods.stdout.log",
+    "bytes": 772,
+    "sha256": "75dd2d1c60335ae1ca0f4961cec0d69785ad3df635fb22e1417b9f75d11af91b"
+  },
+  {
+    "path": "receipts/save-csv-again.stderr.log",
+    "bytes": 446,
+    "sha256": "9835899306d9b912cefd1791953ca5daff8467a8b99678252f4ebd2e47da030d"
+  },
+  {
+    "path": "receipts/save-csv-again.stdout.log",
+    "bytes": 882,
+    "sha256": "3961a0918bb514c0adb6545d6023c7be47037f3789102058784936b4a0cd2f8e"
+  },
+  {
+    "path": "receipts/save-native-ods.stderr.log",
+    "bytes": 446,
+    "sha256": "9835899306d9b912cefd1791953ca5daff8467a8b99678252f4ebd2e47da030d"
+  },
+  {
+    "path": "receipts/save-native-ods.stdout.log",
+    "bytes": 718,
+    "sha256": "4f18d00f07516324a100c32b9818e24891b99a64f370a0d8d3bf683d8385a17f"
+  },
+  {
+    "path": "receipts/verification-v2.stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "receipts/verification-v2.stdout.log",
+    "bytes": 2832,
+    "sha256": "ee44627f1108af3b49a467d464e67e17ecd6a0718d9e693edb23f2414b24ab6a"
+  },
+  {
+    "path": "receipts/verification.stderr.log",
+    "bytes": 629,
+    "sha256": "ca0dd22e23dd55d403839ddc076621d1db835bdf3bcca10e7eef9205a5f38b91"
+  },
+  {
+    "path": "receipts/verification.stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "run-consumer.py",
+    "bytes": 2530,
+    "sha256": "29dbd090aee0ecacdddc03e866cac600db5439919d666532d538e97a85f21ec3"
+  },
+  {
+    "path": "source/hosted/app/i18n/core.ts",
+    "bytes": 6187,
+    "sha256": "47485ac0ce826dd1dde553d645869f2e272e59639680bd507a9978beb128c030"
+  },
+  {
+    "path": "source/hosted/app/i18n/messages.ar.json",
+    "bytes": 230593,
+    "sha256": "9c7c0c2739ef549af2b11b0cc76f3d3b5d5be0e7e2513d26eedbfb1b88c4cee8"
+  },
+  {
+    "path": "source/hosted/app/phone/model.ts",
+    "bytes": 22708,
+    "sha256": "955d5afcede6b8f7eb901394f9ae3e00d1bbffa57bf1e457c5436f23541577bf"
+  },
+  {
+    "path": "source/hosted/app/phone/record-tools.ts",
+    "bytes": 4384,
+    "sha256": "910dae464cd8504ed225fe5f68fa6b0750c7b7a9c7b18c6454ff4504a772e9a9"
+  },
+  {
+    "path": "source/hosted/tests/phone-record-tools.mjs",
+    "bytes": 24488,
+    "sha256": "29c7c1e987703b7b50360fafdc8f733aa8e34441a150bcd0fde8ecb3dcffe522"
+  },
+  {
+    "path": "source-manifest.json",
+    "bytes": 1263,
+    "sha256": "7cc37a0099f9b61171df264f3ba4d8d829da4db2c42870516a93edf0c01ad0be"
+  },
+  {
+    "path": "verification.json",
+    "bytes": 37002,
+    "sha256": "6427066f75d4dff3100a60c64fb89843418948bdc500b3ed2bb0e185b6b57761"
+  },
+  {
+    "path": "verify-consumer.py",
+    "bytes": 10841,
+    "sha256": "e914bd43f95b4d5c5153e47dbd0cbd8e7c0674a65828e7ac3246bde4faed4781"
+  }
+]

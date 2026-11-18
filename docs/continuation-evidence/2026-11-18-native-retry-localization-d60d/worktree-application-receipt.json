@@ -1,0 +1,18 @@
+{
+  "appliedUTC": "2026-11-18T06:38:07.180742+00:00",
+  "worktree": "/Users/saleh/Developer/career-finder-native-retry-20261118-d60d62a70f26",
+  "HEAD": "ffc038cd2bfcbc6006dfc23dee87e34ee55a7a00",
+  "committed": false,
+  "pushed": false,
+  "changedPaths": [
+    "apple/AhmadCareer/CareerDiscovery.swift",
+    "apple/Checks/DiscoveryCheck.swift"
+  ],
+  "applyCheckExit": 0,
+  "applyExit": 0,
+  "diffCheckExit": 0,
+  "candidateHashesMatch": true,
+  "existingSearchAndExecuteUnchanged": true,
+  "uiLocalizationFilesUnchanged": true,
+  "originalSearchWorktreeStatus": ""
+}

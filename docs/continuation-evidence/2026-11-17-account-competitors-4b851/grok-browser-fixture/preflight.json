@@ -1,0 +1,63 @@
+[
+  {
+    "args": [
+      "--check",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/grok-browser-fixture/server.mjs"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "--check",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/grok-browser-fixture/scenarios.mjs"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "--check",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/grok-browser-fixture/build.mjs"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/grok-browser-fixture/build.mjs"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "node:internal/modules/esm/resolve:315\n  return new ERR_PACKAGE_PATH_NOT_EXPORTED(\n         ^\n\nError [ERR_PACKAGE_PATH_NOT_EXPORTED]: Package subpath './package.json' is not defined by \"exports\" in /Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/node_modules/@tailwindcss/postcss/package.json\n    at exportsNotFound (node:internal/modules/esm/resolve:315:10)\n    at packageExportsResolve (node:internal/modules/esm/resolve:663:9)\n    at resolveExports (node:internal/modules/cjs/loader:754:36)\n    at Module._findPath (node:internal/modules/cjs/loader:821:31)\n    at Module._resolveFilename (node:internal/modules/cjs/loader:1557:27)\n    at wrapResolveFilename (node:internal/modules/cjs/loader:1118:27)\n    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1142:10)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1169:12)\n    at Module._load (node:internal/modules/cjs/loader:1341:5)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19) {\n  code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'\n}\n\nNode.js v24.22.3\n"
+  },
+  {
+    "args": [
+      "--check",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/grok-browser-fixture/build.mjs"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/grok-browser-fixture/build.mjs"
+    ],
+    "exit": 0,
+    "stdout": "{\n  \"built\": \"/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/grok-browser-fixture/public\",\n  \"node\": \"v24.22.3\",\n  \"commit\": \"d534a6c23bbe81615b8f7a40d3fb4204bb991781\",\n  \"sourceFiles\": 16,\n  \"dependencies\": {\n    \"react\": \"19.3.1\",\n    \"react-dom\": \"19.3.1\",\n    \"esbuild\": \"0.28.2\",\n    \"postcss\": \"8.5.23\",\n    \"@tailwindcss/postcss\": \"4.2.1\"\n  },\n  \"listenerStarted\": false\n}\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/grok-browser-fixture/build.mjs"
+    ],
+    "reason": "Refresh observational focus label when production controls are removed or busy text changes; no focus manipulation.",
+    "exit": 0,
+    "stdout": "{\n  \"built\": \"/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/grok-browser-fixture/public\",\n  \"node\": \"v24.22.3\",\n  \"commit\": \"d534a6c23bbe81615b8f7a40d3fb4204bb991781\",\n  \"sourceFiles\": 16,\n  \"dependencies\": {\n    \"react\": \"19.3.1\",\n    \"react-dom\": \"19.3.1\",\n    \"esbuild\": \"0.28.2\",\n    \"postcss\": \"8.5.23\",\n    \"@tailwindcss/postcss\": \"4.2.1\"\n  },\n  \"listenerStarted\": false\n}\n",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "createdUTC": "2026-11-17T23:52:03.793717+00:00",
+  "archive": "native-integration-evidence.tar.gz",
+  "bytes": 2294432,
+  "sha256": "733006bc8d47419a43ab73a3f8319be5f211fbc52857a0dd690dd1f84d00461d",
+  "verifiedSourceFiles": 139,
+  "archiveFilesIncludingManifest": 140,
+  "scope": "Frozen read-only source map and CI receipts. No native builds or integration executed by reviewers."
+}

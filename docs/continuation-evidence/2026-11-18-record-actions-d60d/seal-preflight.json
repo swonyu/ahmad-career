@@ -1,0 +1,32 @@
+{
+  "checkedUTC": "2026-11-18T07:11:49.068065+00:00",
+  "base": "ac6a0b8651c8f5348f7976ee8a84d8a10890a082",
+  "branch": "continuation/feed-reliability-20261117-4b851",
+  "sourceGateReceiptSHA256": "38e15f260c6a336d1c263edee92553018ddf80ee3a6e21c26c48a20e598c7940",
+  "sourceCount": 249,
+  "allCurrentSourceHashesMatchGateAfter": true,
+  "allGateLogHashesMatch": true,
+  "generatedReportsObservedAtOnly": true,
+  "expectedSixChanges": [
+    "hosted/app/phone/PhoneApp.tsx",
+    "hosted/app/phone/phone.css",
+    "hosted/tests/hosted-discovery-verification.json",
+    "hosted/tests/hosted-phone-verification.json",
+    "hosted/tests/hosted-verification.json",
+    "hosted/tests/phone-recovery-isolation.mjs"
+  ],
+  "pr1ObservedHead": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+  "pr1HeadObjectPresent": true,
+  "pr1HeadAncestorOfBase": true,
+  "credentialPatternScan": {
+    "patterns": [
+      "private-key",
+      "github-token",
+      "openai-key",
+      "aws-access-id"
+    ],
+    "findings": 0
+  },
+  "newTestsOrBuildsRun": false,
+  "scope": "Documentation packaging only; source unchanged; new merge authorization supersedes historical sole-publisher integration wording."
+}

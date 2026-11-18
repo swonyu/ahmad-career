@@ -1,0 +1,51 @@
+{
+  "reviewer": "/root/dependency_state_0410/ssr_contract_review",
+  "baseCommit": "3fb5d97ec6f3568f2c8b27f148281926272a92fe",
+  "reviewType": "independent offline source and test validity review",
+  "blockingSourceFindings": [],
+  "assertionWeakeningFound": false,
+  "recommendation": "Proceed to root-owned pinned/full AST and real-browser validation; no further source correction identified.",
+  "baselineRecoveryTestPreservedAsPrefix": true,
+  "addedFocusTestGroups": 10,
+  "recordToolsDiffAssessment": "Only actual helper extraction/load and two existing handler-binding additions; prior assertions unchanged.",
+  "productionAssessment": [
+    "deferred re-read handles post-cleanup removal",
+    "native and other connected focus preserved",
+    "failed invoker focus falls through to owned heading",
+    "focus redirected by an invoker event respected",
+    "reopened/replacement dialogs block recovery",
+    "disconnected shell/heading cannot become cross-page fallback",
+    "PhoneApp Clear retains all three resets and scopes recovery through heading"
+  ],
+  "minorNonBlockingObservation": "New Clear-focus fixture alone starts query/view at defaults; existing unchanged record-tools case covers all three non-default resets.",
+  "independentExecutions": {
+    "tests": 0,
+    "scripts": 0,
+    "builds": 0,
+    "installs": 0,
+    "browserActions": 0,
+    "remoteCalls": 0
+  },
+  "productOrFixtureEdited": false,
+  "fullGatePassEstablished": false,
+  "browserAcceptanceEstablished": false,
+  "reportedParentRunner": "Separate Node 24.22.1 built-in TypeScript-strip bounded runner reported red/green; not independently validated here and not pinned/full AST execution.",
+  "sourceSHA256": {
+    "hosted/app/phone/components.tsx": {
+      "baseline": "c7614e923223d427e3a218f9c8d1038e4d90f244de9da8707bb92bf8dce90c52",
+      "candidate": "c18753ee7c8b342831864cecc2694708f09fee6019a76c530b2c2ae743446424"
+    },
+    "hosted/app/phone/PhoneApp.tsx": {
+      "baseline": "77b3f3bd43f7a7fab19b68807118fba41bb95409701d054ed8232bc139a7dcba",
+      "candidate": "2e9024fab451f70bff40872e3090b3ab13c07a312fa1c48b999cd43890a33ac4"
+    },
+    "hosted/tests/phone-recovery-isolation.mjs": {
+      "baseline": "56114b76ab4db6b5abb964e755bc89773f3043ce0451a020c36bbe4838881e06",
+      "candidate": "11eb0b7ff330b1b9c40c7dee656ae4968f3e482aed7e8f94a01cf1530739749e"
+    },
+    "hosted/tests/phone-record-tools.mjs": {
+      "baseline": "a383e178f53782529ec4ff35a111113a7e13a752ceea22a0e24b351039686015",
+      "candidate": "965af62fc693ed788bd487ea9f18aea8d2af2e54a4242d70331569d16632feb2"
+    }
+  }
+}

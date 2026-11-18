@@ -1,0 +1,559 @@
+{
+  "schemaVersion": 1,
+  "status": "prepared_only_not_acceptance",
+  "preparedFor": "Next exact-source full PR run after root freezes and transfers B16",
+  "sourceReview": {
+    "schemaVersion": 1,
+    "readOnly": true,
+    "candidateObserved": "e90756cfb5d28dc761bbcea2ae3248213f66c18c",
+    "treeObserved": "5f9b5553f793d93e9300de6086deee8728ffaf3a",
+    "appleTree": "c8080a217d0348ea738677619be5a3586d6887a2",
+    "androidTree": "d12086f997f50a9d6f14395e1374ff7e56bccc6f",
+    "iphoneMethods": [
+      "testFreshStartAndFiveTabs",
+      "testApplicationDraftSurvivesCancelAndRelaunch",
+      "testLinkedInProfileDraftAndExternalSearchChoice",
+      "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+      "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+      "testProfileReadinessAndSimpleConnectionSetup",
+      "testOpportunityDraftKeepSaveAndRestore",
+      "testOpportunityDiscardRequiresExplicitChoice",
+      "testDiscoverySaveFlowsIntoSavedAndApply",
+      "testSearchEmptyAndFailurePreservesPreviousResults",
+      "testAccessibilityTextKeepsCoreControlsReachable",
+      "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+      "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+      "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+      "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+      "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark"
+    ],
+    "iphoneSourceSHA256": "5e55d1024d75b14d9b0e48271224825af4d031c12cd2e4aea5635c52298aefe3",
+    "iphoneAssertions": 204,
+    "iphoneSkipMarkers": [],
+    "androidClasses": 18,
+    "androidTests": 116,
+    "androidMethodIdentitySameAs7b": true,
+    "androidSources": [
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/AcceptanceDisplay.kt",
+        "sha256": "0dc53645c53583aa4d7b8bddef9e8cc5c4fd612622cfd7fa3b243f5a6846276b",
+        "classes": {}
+      },
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/ApplicationRecordRegressionTest.kt",
+        "sha256": "eaf5a38ff1b81332c75192d3087dad42d70bf42a6e7d2973b2143f26574dae4a",
+        "classes": {
+          "ApplicationRecordRegressionTest": [
+            "legacyAppliedFlag_migratesWithoutInventedDates_orChangingTheSavedFile",
+            "saveAndCancel_arePrivate_andCivilDatesSurviveRestartAndTimeZoneChange",
+            "closedKeepsAppliedEvidence_andSavedRequiresAnUnchangedExplicitConfirmation",
+            "futureRecordSchema_isPreservedAndNeverReplacedWithAnEmptyWorkspace",
+            "explicitImportKeepsBothConflictingVersions_andAChoiceCannotClearAppliedEvidence",
+            "recordOnlyPhoneDraft_importsWithoutRestoringBookmarks_andKeepsConflicts",
+            "activeReview_allowsNotesButRequiresConfirmedStopBeforeAppliedChanges",
+            "restoredAppliedEvidence_pausesOnlyMatchingContinuation_andUnknownTargetsFailClosed",
+            "activeDestination_blocksAppliedSyncAdoption_withoutLosingEitherRecord",
+            "manuallyAppliedCooldown_cannotBeRecoveredOrPreparedAsAReadyApplication",
+            "activeAlternativeEvidence_mustNotDecodeAsUnapplied_butCorrectedHistoryRemainsValid",
+            "failedAndSuccessfulJobSync_preserveRecordAcrossCanonicalLeverIdentityAndNewID",
+            "syncIdentityCollision_retainsBothVersionsForReview",
+            "removingBookmark_keepsMeaningfulRecordAndRestoringTheLinkKeepsItsApplicationGuard",
+            "failedRecordSave_keepsEarlierFileAndEditorDraft_forRecovery",
+            "invalidDatesAndStaleEditorRevision_doNotOverwriteTheRecord",
+            "closedRecord_reachesManualAppliedPreparationInput_withoutAProviderReceipt",
+            "workspaceSwitch_invalidatesOldCorrectionAndDisconnectIntent"
+          ]
+        }
+      },
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/ContinuationRegressionTest.kt",
+        "sha256": "13cc02ccb8152b3bcf7f5a73612da958d63037965997ada8b07d316dbfc3ff65",
+        "classes": {
+          "ContinuationRegressionTest": [
+            "setupPages_preservePairedOrigin_andNeverAttachTheSession",
+            "freshEligiblePlans_advanceOnePerCycle_withoutAnyImplicitApproval",
+            "absentCapability_andFreshCooldownOrUncertainState_neverAdvance",
+            "lostStopResponse_keepsContinuationHeldAcrossRestart",
+            "unauthorizedReadOrAdvance_stopsAllFurtherAutomaticRequests",
+            "lateEligibilityFromAnotherWorkspace_cannotAdvanceOrReplaceTheCurrentWorkspace",
+            "cancellationDuringDispatch_requiresFreshEligibilityBeforeAnyNextAttempt"
+          ]
+        }
+      },
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/DiscoveryPersistenceRegressionTest.kt",
+        "sha256": "dce01dbb2a9f4c2fb71f21a3688dd23ac54527e25bfb7530bb59a9acf82ceeb1",
+        "classes": {
+          "DiscoveryPersistenceRegressionTest": [
+            "recreatedController_restoresExactFiltersAndEvidence_withoutAnyRequestOrOldCursor",
+            "failedRefresh_keepsEarlierResultEvidence_besideNewUnsavedSearchFilters",
+            "futureSavedSearch_isPreservedAndNewResultsStayInMemory_untilExplicitRecovery",
+            "failedSubmittedSearch_survivesSavedReadRetries_besideANewerDraftAndCooldown",
+            "sameSessionRecovery_coalescesQueuedRetries_withoutResettingLiveMemory",
+            "writeFailure_keepsEarlierFile_andExplicitRetrySavesCurrentResult",
+            "accountChange_cancelsLateSearch_andCannotWriteAcrossPrivateScopes",
+            "paginationHasABoundedRestorableWindow_andDoesNotReuseItsCursor",
+            "oversizedAndMalformedSnapshots_cannotReplaceAnExistingSavedSearch",
+            "transientReadFailure_canBeRetriedWithoutDiscardingEarlierEvidence",
+            "restoredEmptyCompletePage_staysRestoredUntilASuccessfulSearch_andRepairsEquivalentBoards"
+          ]
+        }
+      },
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/DiscoveryRegressionTest.kt",
+        "sha256": "ff54c6e84dec20c600d74d62985c6282694a8877e99bf9846d526d686911393a",
+        "classes": {
+          "DiscoveryRegressionTest": [
+            "sharedContract_preservesUnknownEligibilityAndExplicitStaleEvidence",
+            "searchIsExplicit_andUsesOnlyPublicFiltersAtTheFixedOrigin",
+            "lateCancelledResponse_cannotReplaceNewerSearchResults",
+            "errorsAndUnavailableBoards_preserveEarlierResultsWithoutCallingThemZeroMatches",
+            "paginationDeduplicates_andChangedSnapshotRequiresExplicitRestart",
+            "cancellingSearch_keepsDisplayedResults_andNeverRetriesByItself",
+            "retryAfterPreventsAnImmediateRepeatedRequest",
+            "canonicalBoards_foldEquivalentUrls_andRejectUnsafeSpellings",
+            "duplicateCanonicalBoards_areRejectedBeforeARequest",
+            "retrySubmittedSearch_keepsANewerDraft_andDropsALateRetry",
+            "failedSubmittedSearch_retainsCompleteResults_andRetriesWithoutReplacingTheDraft",
+            "failedSearch_canBeRetriedWithoutReplacingANewerDraft"
+          ]
+        }
+      },
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/ExperienceModelRegressionTest.kt",
+        "sha256": "ce786765af24f83631b3456cc70363ebd21452e67f5c419d136e15f5126f3793",
+        "classes": {
+          "ExperienceModelRegressionTest": [
+            "applicationEssentials_supportSingleNames_andKeepIncompleteDraftsHonest",
+            "receiptFilters_neverTreatTestOrUnknownEvidenceAsVerified"
+          ]
+        }
+      },
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/LinkedInPhoneAcceptanceTest.kt",
+        "sha256": "dc1a833ecfd07143c4de494c5d3f42f6977696480f6ddcfa2b2b2794798e0bb3",
+        "classes": {
+          "LinkedInPhoneAcceptanceTest": [
+            "optionalProfileLink_isHonestEditableAndPrivatelySavedAtLargeText",
+            "exactApprovalLinkAndExternalSearch_areReadableWithoutClaimingSubmission"
+          ]
+        }
+      },
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/LinkedInRegressionTest.kt",
+        "sha256": "085ebe7f36af9b2b095e0ed57b94a8a20b22f3c41b22251e5d1d82b16b502d70",
+        "classes": {
+          "LinkedInRegressionTest": [
+            "olderPrivateProfile_decodesWithoutLosingFields_andFreshProfileHasNoPersonalLink",
+            "localInvalidLink_isPreservedAcrossRecreation_thenCanonicalSaveKeepsWebsiteSeparate",
+            "supportedService_savesCanonicalLink_thenExplicitlyClearsIt",
+            "unknownOrDisabledService_neverDropsNewOrClearedLink_andLegacyBlankOmitsField",
+            "linkedReview_prepareAndVisibleApprovalSendSchema3_blankReviewUsesLegacyProtocol",
+            "malformedProfileReply_keepsPhoneDraftAndOriginalRevision",
+            "missingOrMismatchedReviewLink_cannotPrepareResumeOrSubmit",
+            "malformedOptionalFields_failClosed_andMissingFieldsRemainBackwardCompatible",
+            "supportCapability_isNotPersisted_andMalformedRefreshCannotReplaceProfile"
+          ]
+        }
+      },
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/NativeHttpsAcceptanceTest.kt",
+        "sha256": "47d904f87656dbcc5bde0435d00dbd52266bb8df5c11530d0f91b284470f22d7",
+        "classes": {
+          "TlsBoundaryAcceptanceTest": [
+            "normalPreview_refusesTheIsolatedFixtureCertificate"
+          ],
+          "NativeHttpsAcceptanceTest": [
+            "nativeReviewAndApproval_preserveExactPDFConsent_andUncertainRetryBoundaries"
+          ]
+        }
+      },
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/NativeLocalizationAcceptanceTest.kt",
+        "sha256": "ec8acd3fe3b1442ed55abf32c259cf225d5febc59534e1112f4df01c63d253eb",
+        "classes": {
+          "NativeLocalizationAcceptanceTest": [
+            "arabicDisplay_keepsProfileAndPrivateScope_andPersistsWithoutServiceCalls",
+            "unknownErrorsAndUserTemplateText_arePreserved_andDatesStayGregorian",
+            "selectedLanguage_remainsConsistentInsideAnOpenDialog_withoutLosingItsDraft",
+            "systemLanguage_usesTheFirstSupportedFallback_andDoesNotAliasAramaic",
+            "openDialog_keepsHeadingAndNestedActionsInTheSelectedLanguage",
+            "languageButtons_preserveTheUnfinishedProfileAndPrivateScope"
+          ]
+        }
+      },
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/NavigationPhoneAcceptanceTest.kt",
+        "sha256": "608610e4ea3ce03deac30421f108e3101b9bdf7f27defbfb1c02ed0cfb02c9e9",
+        "classes": {
+          "NavigationPhoneAcceptanceTest": [
+            "privateRecord_datesNotesAndFollowUp_areUsableAtLargeText_withoutCreatingAReceipt",
+            "clearingAnAppliedRecord_requiresASeparateConfirmation_andKeepsEarlierHistory",
+            "connectionUsesTwoSteps_andPreservesTheChosenCustomAddressUnderAdvanced",
+            "settingsAppearance_survivesActivityRecreation_withoutChangingWorkspaceOrCallingService",
+            "recreatedPhone_showsPreviousResults_andSearchAgainIsAnExplicitFreshRequest"
+          ]
+        }
+      },
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/NavigationTestActions.kt",
+        "sha256": "a11aecda2d3fe037091687dbe295c75c188c496615392352d13c451538225897",
+        "classes": {}
+      },
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceEnvironment.kt",
+        "sha256": "08df9d71250f6ca69c50e5c27d228dc25902289a57ca42d317a76126646db4a1",
+        "classes": {}
+      },
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt",
+        "sha256": "8d95f59f6e8a16032080187127448ad9e968625467b6d19975c99fccf6b13655",
+        "classes": {
+          "PhoneAcceptanceTest": [
+            "blankWorkspace_hasHonestEmptyState_andConnectionRequirement",
+            "phoneProfile_survivesActivityRecreation_withoutAnyService"
+          ]
+        }
+      },
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt",
+        "sha256": "37023d402d50b267aafe2090db65ea0b8210670f6cc027fd761d3e5d49fc7b60",
+        "classes": {
+          "PhonePolishAcceptanceTest": [
+            "profileEssentials_andCountrySelection_preserveSingleNamesAndCancelledChoices",
+            "discoveredRole_savesPrivately_andManualApplicationRemainsSelfReported",
+            "unfinishedOpportunity_closeChoicesKeepAndDiscardOnlyTheDraft",
+            "localOpportunityRemoval_requiresConfirmation_andPreservesOtherSavedRoles"
+          ]
+        }
+      },
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/SavedSearchRegressionTest.kt",
+        "sha256": "237297b8182ba2d97f9166129fa909250ce0090fc4f9dabf3d4dab6d0c523989",
+        "classes": {
+          "SavedSearchRegressionTest": [
+            "sharedUnicodeCases_matchAcrossNotesAndMetadata_withoutRewritingOriginals",
+            "savedRow_indexesOnlyItsActiveNotes_keepsOpaqueIdentifiersAndHistoryOut"
+          ]
+        }
+      },
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/VaultAcceptanceTest.kt",
+        "sha256": "7c3adb6d05e4772c0d04d1286b70149644a7771008bf4ad554309ea1df24085b",
+        "classes": {
+          "VaultAcceptanceTest": [
+            "earlierRecoveryCopies_canBeReadAndDeletedIndividually_withoutTouchingTheCurrentArea",
+            "capacityFailure_preservesEncryptedBytes_andDoesNotPreventASmallerSave",
+            "storedToken_isEncrypted_andBoundToItsRecordName",
+            "freshPrivateArea_preservesUnreadableBytes_andUsesANewKeystoreKey",
+            "originalSchemaOneEnvelope_remainsReadableWithoutAStorageAreaPointer"
+          ]
+        }
+      },
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceAccessibilityRegressionTest.kt",
+        "sha256": "086685c3cbb442e2e2c05e5e2da6cac20ad077cb45111fe67d5ecf8cfd108d20",
+        "classes": {
+          "WorkspaceAccessibilityRegressionTest": [
+            "shortMultilineNote_canExpandAtLargeText_withoutClippingItsLastLine"
+          ]
+        }
+      },
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceRegressionTest.kt",
+        "sha256": "84f1cd1dc4d55a416c1fb66620b812d5e472ed2f1670263128e0c5c593557ba6",
+        "classes": {
+          "WorkspaceRegressionTest": [
+            "storageReadAndWriteFailures_canRetry_withoutLosingTheDraft",
+            "profileConflict_keepsOriginalRevision_untilExplicitChoice_andUsesLatestRemotePDF",
+            "copyingPhoneDraft_isPrivate_preservesOriginal_andMigratesManualAppliedIdentityOnSync",
+            "explicitNoAndSelections_surviveModelRecreation_withoutRestoringApproval",
+            "backgroundProfileChange_cannotRestoreAStalePreparedPlan",
+            "oldWorkspaceResponse_cannotRegressAnAcknowledgedProfileSave",
+            "localDisconnect_preservesWorkspaceDraft_andIgnoresItsLateResponse",
+            "malformedSuccessfulResponses_doNotReplaceThePhoneDraftOrJobList",
+            "editedReview_stopsOnlyTheUnapprovedPlan_onDeliberatePrepareUpdate",
+            "concurrentApproval_preventsAutomaticReplacementOfTheOldPlan",
+            "savingTheSameLink_keepsItsIdentity_andManualTrackingInvalidatesAnEarlierReview",
+            "disabledLiveSending_blocksApprovalBeforeAnySubmissionRequest",
+            "unfinishedOpportunity_survivesRestart_andDiscardFailureKeepsTheOriginal",
+            "failedRemoteOpportunitySync_keepsAnUnrelatedDraft_andTheSavedLocalRole",
+            "completingOpportunityDraft_persistsItsRoleBeforeClearing_evenIfRemoteSyncFails",
+            "removingLocalOpportunity_cleansOnlyItsPrivateFlags_andPreservesRemoteActivity",
+            "failedLocalRemoval_restoresTheLinkAndItsFlags_beforeStorageRecovery"
+          ]
+        }
+      },
+      {
+        "path": "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceSafetyRegressionTest.kt",
+        "sha256": "aa0a1e39c5e93ef88d7b40f6af7e8b0d5feee0554a45b87183ea3ef39a2ac349",
+        "classes": {
+          "WorkspaceSafetyRegressionTest": [
+            "malformedNestedLocalValues_preserveOriginalFile_andPreventAnyRewrite",
+            "partialLegacyProfileAndBlankNewProfile_remainSupported",
+            "unreadablePDF_preservesEarlierBytes_andValidRenderedPDFCanReplaceIt",
+            "PDFCapacityFailure_isRecoverable_andNeverReplacesTheEarlierResume",
+            "dirtyRecordDismissal_requiresChoice_andKeepDraftSurvivesRestartWithoutChangingStatus",
+            "equivalentOriginCopies_migrateWithoutOverwritingLegacy_andKeepAccountIsolation",
+            "portableBackup_preservesHistoryUnicodeAndDrafts_withoutCredentialsOrApprovalAuthority",
+            "sharedIPhoneAndroidWireFixture_decodesNewRecordDraftPDFHistoryAndHolds",
+            "importIsAnExplicitLocalMerge_foreignHoldsAndEmployerConsentsAreNotAdopted",
+            "malformedBackupAndStalePickerScope_doNotMutateTheCurrentWorkspace",
+            "localDeletion_isScoped_andStaleConfirmationCannotDeleteAnotherWorkspace"
+          ]
+        }
+      }
+    ],
+    "workflowSHA256": "0aaf3d3ccb4cebabce74221654586d966d049a7e518c43030194822bddd0e2eb",
+    "verifierSHA256": "5c2233107dfcaddd7273846e3d77aca7902976d34ac73bae6eb4a016647102bf",
+    "androidRunnerSHA256": "1af74288fb044aa4246912eac7f9f0bef84379aae3f5474ec6923e88a38c732f",
+    "androidAssumptionGuardDisposition": {
+      "sourceUnchangedFrom7b": true,
+      "guards": [
+        "TlsBoundaryAcceptanceTest requires fixtureOrigin and preview package",
+        "NativeHttpsAcceptanceTest requires fixtureOrigin and acceptance package"
+      ],
+      "workflowProvidesBothContexts": true,
+      "acceptanceRequiresZeroActualAssumptionOutcomes": true
+    }
+  },
+  "singleRun": {
+    "repository": "swonyu/ahmad-career",
+    "pullRequest": 1,
+    "headBranch": "continuation/account-acceptance-20261117",
+    "baseBranch": "career-finder-phones-verified-apply-20261116",
+    "priorRun": {
+      "id": 44294650087,
+      "event": "pull_request",
+      "attempt": 1,
+      "head": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+      "conclusion": "failure"
+    },
+    "instruction": "Root rechecks live base/head and freezes the combined candidate, then updates the existing PR head once. Relevant synchronize event selects all five jobs. Feature branch does not match push branch patterns; no workflow_dispatch needed.",
+    "mustRebindFinalCandidate": true,
+    "automaticPushBranches": [
+      "main",
+      "career-finder-phones-verified-apply-*"
+    ],
+    "workflowScopeOnPR": "full",
+    "concurrencyCancelsInProgressOnSameRef": true
+  },
+  "jobs": [
+    {
+      "key": "service",
+      "name": "Service and synthetic HTTPS",
+      "timeoutMinutes": 10
+    },
+    {
+      "key": "hosted",
+      "name": "Hosted HTTPS service and durable storage",
+      "timeoutMinutes": 15
+    },
+    {
+      "key": "android",
+      "name": "Android compile, lint and native acceptance",
+      "timeoutMinutes": 40
+    },
+    {
+      "key": "iphone-policy",
+      "name": "iPhone logic and unsigned build",
+      "timeoutMinutes": 20
+    },
+    {
+      "key": "iphone-ui",
+      "name": "iPhone native interface acceptance",
+      "timeoutMinutes": 50
+    }
+  ],
+  "sourceBinding": [
+    "Final immutable head, whole tree, hosted/apple/android trees, workflow and native test source hashes; refresh after B16/ledger integration.",
+    "Run API event=pull_request, head_sha exact candidate, run_attempt=1, completed/success; exactly five expected unique successful jobs.",
+    "Extract actual checked-out commit from every raw job log. All five must agree. Resolve actual commit/tree/parents through Git/API, with candidate whole-tree equality and actual base/head ancestry.",
+    "Do not equate run.head_sha with checkout: pull_request jobs normally check out refs/pull/1/merge. Require actual synthetic merge tree equal to candidate and bind its parents to the frozen base and candidate.",
+    "Check actual unfiltered full xcode invocation and acceptance scheme skipped=NO, parallelizable=NO. No only-testing/skip-testing selection; source methods must match actual logs and xcresult exactly once.",
+    "Preserve all raw job logs and API snapshots with SHA-256; do not accept status badges or summary receipts alone."
+  ],
+  "iphone": {
+    "sourceDeclared": 17,
+    "methods": [
+      "testFreshStartAndFiveTabs",
+      "testApplicationDraftSurvivesCancelAndRelaunch",
+      "testLinkedInProfileDraftAndExternalSearchChoice",
+      "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+      "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+      "testProfileReadinessAndSimpleConnectionSetup",
+      "testOpportunityDraftKeepSaveAndRestore",
+      "testOpportunityDiscardRequiresExplicitChoice",
+      "testDiscoverySaveFlowsIntoSavedAndApply",
+      "testSearchEmptyAndFailurePreservesPreviousResults",
+      "testAccessibilityTextKeepsCoreControlsReachable",
+      "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+      "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+      "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+      "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+      "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark"
+    ],
+    "started": 17,
+    "completed": 17,
+    "passed": 17,
+    "failed": 0,
+    "skipped": 0,
+    "unrun": 0,
+    "sourceAndRawAndXcresultMustAgree": true,
+    "uiStep": "Exercise native phone flows with isolated synthetic data",
+    "uiStepTimeoutMinutes": 45,
+    "newRequiredAttachments": [
+      "30-profile-role-shortcut",
+      "31-profile-contact-reuse"
+    ],
+    "media": "Reconcile raw xcresult attachment index, exported files and hashes, actual test membership/status and dimensions. Preserve runtime warnings with honest attribution. Root independently reviews current actual native captures."
+  },
+  "android": {
+    "sourceClasses": 18,
+    "sourceDeclaredTests": 116,
+    "groups": [
+      {
+        "label": "ordinary-phone",
+        "classes": 16,
+        "requiredTests": 114,
+        "package": "com.saleh.careerfinder.preview"
+      },
+      {
+        "label": "normal-preview-tls-boundary",
+        "classes": 1,
+        "requiredTests": 1,
+        "package": "com.saleh.careerfinder.preview"
+      },
+      {
+        "label": "native-https-phone",
+        "classes": 1,
+        "requiredTests": 1,
+        "package": "com.saleh.careerfinder.acceptance"
+      }
+    ],
+    "testIdentitySource": "sourceReview.androidSources[].classes",
+    "actualCompletedAndPassed": 116,
+    "failed": 0,
+    "skipped": 0,
+    "ignored": 0,
+    "assumptionFailures": 0,
+    "unrun": 0,
+    "sourceIdentitiesExactlyOnce": true,
+    "runnerFloorIsNotAcceptance": "The unchanged ordinary runner floor is 105. Collector must require all 114 actual ordinary cases, then both TLS cases, for 116; the permissive floor cannot replace exact reconciliation.",
+    "captureCount": 22,
+    "expectedCaptureNames": [
+      "acceptance-prepared.png",
+      "acceptance-profile-large-text.png",
+      "acceptance-receipts.png",
+      "custom-connection-address.png",
+      "expanded-private-note-large-text.png",
+      "linkedin-exact-review.png",
+      "linkedin-profile-guidance.png",
+      "linkedin-search-handoff.png",
+      "previous-search-results.png",
+      "private-follow-up-list.png",
+      "private-record-correction.png",
+      "private-record-date-picker.png",
+      "private-record-editor.png",
+      "profile-contact-copy.png",
+      "profile-role-shortcut.png",
+      "record-only-phone-import.png",
+      "remove-local-opportunity-confirmation.png",
+      "settings-dark.png",
+      "settings-light.png",
+      "target-country-jp-draft-after-ime.png",
+      "two-step-connection.png",
+      "unfinished-opportunity-choices.png"
+    ],
+    "newCapturePaths": [
+      "navigation-review-evidence/profile-role-shortcut.png",
+      "strict-review-evidence/profile-contact-copy.png"
+    ],
+    "captureRequirement": "Unique exact source-defined names, readable PNG bytes, recorded sizes/dimensions and SHA-256 all match; screenshots.json unavailable=[]; do not accept filenames without bytes.",
+    "environment": "API36 x86_64, 360dp, 180% text, dark, Arabic locale and forced RTL; confirm actual settings evidence.",
+    "verification": "verification.json commit must be actual checked-out commit. Reconcile each raw instrumentation outcome and provider observations. Retain four runner-reported APK hashes with explicit limitation if APK bytes are absent."
+  },
+  "bootReadiness": {
+    "stepName": "Boot selected iPhone and wait for readiness",
+    "timeoutMinutes": 3,
+    "fixtureStepName": "Verify simulator boot evidence parser fixtures",
+    "sourceVerifierSHA256": "5c2233107dfcaddd7273846e3d77aca7902976d34ac73bae6eb4a016647102bf",
+    "requiredFiles": [
+      "career-iphone-boot.log",
+      "career-iphone-boot-devices.json",
+      "career-iphone-boot-devices.stderr",
+      "career-iphone-boot-verification.json"
+    ],
+    "runnerReceiptRequirements": {
+      "schemaVersion": 1,
+      "runID": "decimal string equal to actual run id",
+      "runAttempt": "decimal string equal to actual attempt",
+      "checkoutSHA": "actual PR checkout commit",
+      "verifierSHA256": "5c2233107dfcaddd7273846e3d77aca7902976d34ac73bae6eb4a016647102bf",
+      "passed": true,
+      "reasons": [],
+      "processResults": {
+        "boot": 0,
+        "log": 0,
+        "inventory": 0
+      },
+      "selectedDeviceID": "exact actual xcode destination UUID",
+      "selectedDevice": "unique same UUID, isAvailable=true, state=Booted, no availabilityError",
+      "bootObservation": "one matching monitor UUID; exactly one terminal record; final status=4294967295 and terminal=true; explicitFinished=true; no failure/unknown status; final remaining line exactly Finished",
+      "inputs": "recompute raw boot log and device inventory bytes/SHA-256 from the verified archive; paths in runner receipt are runner provenance, not local read targets"
+    },
+    "collectorReceipt": "boot-readiness-verification.json binds runner receipt, raw inputs, workflow source, actual invocation, run/job/checkout and live step. Recompute strict parser result offline from exact source; zero exits or Booted inventory alone never establish readiness."
+  },
+  "artifacts": {
+    "expectedCount": 4,
+    "expectedNames": [
+      "hosted-storage-checks-RUN",
+      "android-lint-RUN",
+      "iphone-build-log-RUN",
+      "iphone-ui-acceptance-RUN"
+    ],
+    "requirements": [
+      "Each unique live artifact API id/name/workflow_run.id/head_sha/head_branch belongs to current run/candidate.",
+      "Download exact ZIP bytes; complete=true, extracted=true, digestMatches=true; API digest sha256 equals locally computed digest and byte count.",
+      "Rehash extracted members used by receipts and keep all archive/receipt/source bindings.",
+      "Hosted artifact includes hosted-verification.json, hosted-worker-verification.json, hosted-discovery-verification.json, hosted-phone-verification.json, dependency-audit-ci.json; raw logs establish typecheck/lint/build/SSR.",
+      "iPhone build artifact plus raw job log establishes successful unsigned Release build and preserved iPhone-only product identity.",
+      "iPhone UI artifact contains actual xcresult, raw UI log and all readiness files; no prior/focused artifact can contribute counts."
+    ]
+  },
+  "successReceipt": {
+    "path": "ci-RUN/complete-source-acceptance.json",
+    "schemaVersion": 1,
+    "writeOnlyAfterAllChecksPass": true,
+    "compatibility": "Retain previous schema 1 field types. Android captureCount changes from20 to22. Add strict runner boot receipt/input/source bindings while retaining bootReadiness.verification as a relative path string plus verificationSHA256.",
+    "iphoneFields": {
+      "sourceDeclared": 17,
+      "started": 17,
+      "completed": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "methods": "Array of {test:string,result:'passed',seconds:finite nonnegative number}"
+    },
+    "androidFields": {
+      "sourceClasses": 18,
+      "sourceDeclaredTests": 116,
+      "actualCompletedAndPassed": 116,
+      "captureCount": 22,
+      "unavailableCaptures": []
+    },
+    "artifactsWorkflowRun": "Object copied from GitHub artifact API workflow_run, including numeric id and string head_sha/head_branch.",
+    "releaseAcceptanceClaim": false,
+    "acceptsAnyOtherSource": false,
+    "mergePerformedByCollector": false,
+    "visualReceipt": "Separate root-owned current native visual review remains required; this checklist/collector does not authorize merge."
+  },
+  "limitations": [
+    "This is source inspection and a prepared checklist, not a new native run or a success receipt.",
+    "Historical 44294650087 failed: iPhone14/17 and Android112 passed/2 failed/2 unrun. These cannot accept the new candidate.",
+    "Local focused ff21 attempts stopped at strict boot readiness before build/tests; no product cause or native pass established.",
+    "Final candidate and current live run identifiers must be frozen by root; observed e907 source may precede B16 integration."
+  ]
+}

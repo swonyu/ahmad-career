@@ -1,0 +1,173 @@
+TAP version 13
+# Subtest: captured batch Stop survives interruption without a duplicate or stale target
+    # Subtest: one confirmed Stop uses only captured target fields and shares its result
+    ok 1 - one confirmed Stop uses only captured target fields and shares its result
+      ---
+      duration_ms: 17.478138
+      type: 'test'
+      ...
+    # Subtest: an unverified identity curtain does not block the captured Stop or reveal its response
+    ok 2 - an unverified identity curtain does not block the captured Stop or reveal its response
+      ---
+      duration_ms: 1.260345
+      type: 'test'
+      ...
+    # Subtest: a curtain raised during the request defers response adoption
+    ok 3 - a curtain raised during the request defers response adoption
+      ---
+      duration_ms: 0.99541
+      type: 'test'
+      ...
+    # Subtest: stale epochs, missing identity and changed owners are rejected before any POST
+    ok 4 - stale epochs, missing identity and changed owners are rejected before any POST
+      ---
+      duration_ms: 1.661243
+      type: 'test'
+      ...
+    # Subtest: the displayed workspace cannot retarget a captured batch
+    ok 5 - the displayed workspace cannot retarget a captured batch
+      ---
+      duration_ms: 0.992882
+      type: 'test'
+      ...
+    # Subtest: an epoch or owner change while POST is pending never adopts or refreshes stale UI
+    ok 6 - an epoch or owner change while POST is pending never adopts or refreshes stale UI
+      ---
+      duration_ms: 2.305115
+      type: 'test'
+      ...
+    # Subtest: concurrent helper and finalizer calls share one pending POST
+    ok 7 - concurrent helper and finalizer calls share one pending POST
+      ---
+      duration_ms: 4.219907
+      type: 'test'
+      ...
+    # Subtest: durable hold precedes transport and failed persistence never sends a request
+    ok 8 - durable hold precedes transport and failed persistence never sends a request
+      ---
+      duration_ms: 0.761085
+      type: 'test'
+      ...
+    # Subtest: owner change during durable hold prevents a stale Stop request
+    ok 9 - owner change during durable hold prevents a stale Stop request
+      ---
+      duration_ms: 0.429387
+      type: 'test'
+      ...
+    # Subtest: a lost response remains a failed attempt on every later call
+    ok 10 - a lost response remains a failed attempt on every later call
+      ---
+      duration_ms: 3.914884
+      type: 'test'
+      ...
+    # Subtest: synchronous transport failure is also attempted once
+    ok 11 - synchronous transport failure is also attempted once
+      ---
+      duration_ms: 0.518483
+      type: 'test'
+      ...
+    # Subtest: confirmation requires a fully parsed exact plan with stopped=true
+    ok 12 - confirmation requires a fully parsed exact plan with stopped=true
+      ---
+      duration_ms: 2.990979
+      type: 'test'
+      ...
+    # Subtest: a successful Stop followed by failed readback stays confirmed but is never resent
+    ok 13 - a successful Stop followed by failed readback stays confirmed but is never resent
+      ---
+      duration_ms: 0.529419
+      type: 'test'
+      ...
+    # Subtest: a curtain raised during readback prevents returning newly fetched private data
+    ok 14 - a curtain raised during readback prevents returning newly fetched private data
+      ---
+      duration_ms: 0.449851
+      type: 'test'
+      ...
+    # Subtest: stale or foreign readback results cannot be returned as the captured workspace
+    ok 15 - stale or foreign readback results cannot be returned as the captured workspace
+      ---
+      duration_ms: 1.413762
+      type: 'test'
+      ...
+    # Subtest: a previously confirmed cached result cannot be reused after an account change
+    ok 16 - a previously confirmed cached result cannot be reused after an account change
+      ---
+      duration_ms: 0.553512
+      type: 'test'
+      ...
+    # Subtest: an already-attempted context without its promise cannot report false success or resend
+    ok 17 - an already-attempted context without its promise cannot report false success or resend
+      ---
+      duration_ms: 0.344895
+      type: 'test'
+      ...
+    # Subtest: the finalizer can deliver a requested Stop after submission response loss
+    ok 18 - the finalizer can deliver a requested Stop after submission response loss
+      ---
+      duration_ms: 0.536449
+      type: 'test'
+      ...
+    1..18
+ok 1 - captured batch Stop survives interruption without a duplicate or stale target
+  ---
+  duration_ms: 48.591555
+  type: 'test'
+  ...
+# Subtest: early theme initialization applies only recognized preferences and follows the device when storage is unavailable
+ok 2 - early theme initialization applies only recognized preferences and follows the device when storage is unavailable
+  ---
+  duration_ms: 21.59029
+  type: 'test'
+  ...
+# Subtest: appearance is immediately applied, persisted independently of accounts and cleared to System without forcing a color
+ok 3 - appearance is immediately applied, persisted independently of accounts and cleared to System without forcing a color
+  ---
+  duration_ms: 8.787528
+  type: 'test'
+  ...
+# Subtest: blocked persistence retains the chosen theme for this visit and reports that it was not saved
+ok 4 - blocked persistence retains the chosen theme for this visit and reports that it was not saved
+  ---
+  duration_ms: 1.646246
+  type: 'test'
+  ...
+# Subtest: another tab changing or clearing appearance updates this page; unrelated storage never changes it
+ok 5 - another tab changing or clearing appearance updates this page; unrelated storage never changes it
+  ---
+  duration_ms: 2.247158
+  type: 'test'
+  ...
+# Subtest: configured Google and supported LinkedIn expose their own real start routes
+ok 6 - configured Google and supported LinkedIn expose their own real start routes
+  ---
+  duration_ms: 31.495847
+  type: 'test'
+  ...
+# Subtest: missing configuration and an older link-only backend cannot expose a fake direct-provider login
+ok 7 - missing configuration and an older link-only backend cannot expose a fake direct-provider login
+  ---
+  duration_ms: 11.173214
+  type: 'test'
+  ...
+# Subtest: unconfirmed or failed provider status keeps provider choices disabled and offers an honest retry
+ok 8 - unconfirmed or failed provider status keeps provider choices disabled and offers an honest retry
+  ---
+  duration_ms: 7.189291
+  type: 'test'
+  ...
+# Subtest: both actual palettes retain normal-text, action-text and input-boundary contrast
+ok 9 - both actual palettes retain normal-text, action-text and input-boundary contrast
+  ---
+  duration_ms: 8.423883
+  type: 'test'
+  ...
+1..9
+# tests 27
+# suites 0
+# pass 27
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1138.400334

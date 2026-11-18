@@ -1,0 +1,286 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "/root/publication_review",
+  "reviewedUTC": "2026-11-18 12:17:02 UTC",
+  "scope": "Independent source, original artifact and decoded media review; original failures remain failed.",
+  "runID": 44294650087,
+  "head": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+  "actualCheckout": "0f18d29b031451cc5d4ac33373ac76c1af232c1a",
+  "jobID": 134768385899,
+  "evidenceRoot": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/ci-44294650087",
+  "artifact": {
+    "id": 14424058569,
+    "bytes": 316788289,
+    "sha256": "cad20b94e331d1a990d1515edf164a4b9c7e1a08858658af349f86562eac892b",
+    "downloadOwner": "/root/ci_evidence",
+    "duplicateDownload": false
+  },
+  "results": {
+    "expected": 17,
+    "executedExactlyOnce": 17,
+    "passed": 14,
+    "failed": 3,
+    "skipped": 0,
+    "unrun": 0,
+    "rawLogAndXcresultAgree": true
+  },
+  "sourceHashes": {
+    "apple/UITests/CareerFinderUITests.swift": "8dbcca2345440a839dac123a88a2dcc4b3207d5d47e1382bc33fffdd1c440c48",
+    "apple/AhmadCareer/NativeApplicationsViews.swift": "4186279e2491afca66a7d7c30f5e3e92bb4a283219385ececae735923598c838",
+    "apple/AhmadCareer/NativeDiscoveryViews.swift": "da427d2c3edf1159e38f1f45faa6b8e5e351b78a5ef78146e08bf5e1d24b1cdc",
+    ".github/workflows/phone-quality.yml": "a28b7909e4ffbf3461a0d718caa25cf070d19eeac53124ad30606f2d89f7db5e"
+  },
+  "rawLog": {
+    "path": "logs/134768385899.log",
+    "sha256": "4ceb17331c7d7993307da564d70724c5aa601c823a8aa710a8e4048463294c82",
+    "lines": 6367,
+    "bytes": 703116
+  },
+  "boot": {
+    "passed": false,
+    "apiStepConclusion": "success",
+    "terminalStatus": 3,
+    "terminalMessage": "Data Migration Failed",
+    "selectedUUID": "D26ED71E-9D97-4E79-B376-C104ABB9517A",
+    "model": "iPhone Air",
+    "os": "26.5",
+    "osBuild": "23F77",
+    "architecture": "arm64",
+    "logSelectionAndBootAndXcodeDestinationAndAllThreeXcresultDevicesMatch": true,
+    "rawLogBindingLines": [
+      173,
+      180,
+      183,
+      495,
+      499
+    ],
+    "cloneEvidence": "No clone name or different device UUID was found in the retained raw job log; xcresult identifies the same selected UUID.",
+    "causalClaim": "This proves a readiness-verification gap, not the cause of the later UI failures.",
+    "proposedGate": "Require successful boot/log/inventory command exit results, exact monitored UUID, a single final terminal Finished record with no failure or contradictory output, and an exact available Booted inventory match. Retain raw evidence and a hashed receipt. An already-booted shortcut alone is insufficient.",
+    "timeoutsAndRetries": "Keep the existing 3-minute preparation bound and native budgets; no automatic retry, erase, alternate device or changed test selection."
+  },
+  "cases": [
+    {
+      "name": "testAccessibilityTextKeepsCoreControlsReachable",
+      "seconds": 127.361,
+      "helperLine": 24,
+      "callerLine": 833,
+      "rawFailureLine": 1560,
+      "observed": [
+        "Launch succeeded; the real Cancel and Save draft controls were tapped.",
+        "The final decoded recording frame shows the profile sheet and keyboard gone, Start restored, and the full Search tab visible.",
+        "tab() waited for existence, then made an immediate isHittable assertion; a tab exists in accessibility behind a sheet."
+      ],
+      "touch": {
+        "attachment": "B64FE8EA-917C-42A6-B7BB-68D7672B59D8",
+        "x": 210,
+        "y": 567.6666666666665
+      },
+      "diagnosis": "A transition/hittability observation gap is supported. Visibility in a screenshot alone does not establish that the tab was tappable.",
+      "authorizedRepair": "Use the same existing five-second tab wait for exists and isHittable jointly, retain both requirements and the same real tap; capture failure.",
+      "acceptance": "The complete largest-text journey must pass in the next owned run, including real Search, board selection, Apply and connection return. This original result is still failed."
+    },
+    {
+      "name": "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "seconds": 127.177,
+      "helperLine": 371,
+      "callerLine": 1022,
+      "rawFailureLine": 2898,
+      "observed": [
+        "The unique visible Done query resolved Safari's Close control.",
+        "The decoded touch at (42,94) is the exact center of Close frame {{16,68},{52,52}}.",
+        "The explicit failure PNG and original AX both show Safari still open, not merely a retained empty wrapper.",
+        "The same helper passes two normal-text open/close cycles in testProfileReadinessAndSimpleConnectionSetup on this candidate."
+      ],
+      "touch": {
+        "attachment": "1369CEDC-2027-4F05-B3A3-0B6E84E09F0A",
+        "x": 42,
+        "y": 94
+      },
+      "diagnosis": "The failed return is a real observed outcome; callback activation and the underlying cause remain unobserved. A general missing-dismiss implementation is not supported.",
+      "source": "NativeApplicationsViews.swift:1052–1089 presents Safari modally, reports the finish delegate, and leaves Safari's default dismissal transition intact.",
+      "documentation": {
+        "url": "https://developer.apple.com/documentation/safariservices/sfsafariviewcontrollerdelegate/safariviewcontrollerdidfinish(_:)",
+        "ref": "turn539279112search2",
+        "summary": "Current Apple documentation says the controller is dismissed after the delegate callback; no speculative competing dismiss call is justified."
+      },
+      "authorizedRepair": "No product coordinator or focus change. Defer callback instrumentation until a combined run with verified boot evidence demonstrates the need.",
+      "acceptance": "Arabic at largest text must return through the real Safari control, preserve the masked connection code and return to the real application action."
+    },
+    {
+      "name": "testSearchEmptyAndFailurePreservesPreviousResults",
+      "seconds": 35.311,
+      "helperLine": 451,
+      "callerLine": 718,
+      "rawFailureLine": 5664,
+      "observed": [
+        "The actual toolbar action was tapped at (80.667,543), within its visible control.",
+        "The immediate XCTest error comes from Key.isHittable on {{inf,inf},{0,0}}, not a failed toolbar lookup or tap.",
+        "The final original video frame still shows the focused query, keyboard and Search jobs toolbar.",
+        "NativeDiscoveryViews.swift:197 already sets focusedField=nil before starting the async search."
+      ],
+      "touch": {
+        "attachment": "C9024301-BC7E-445D-ACAD-8BE60F07265C",
+        "x": 80.66666666666666,
+        "y": 543
+      },
+      "diagnosis": "There is a confirmed unsafe test hit-test query plus an unresolved visible-keyboard outcome. Filtering the invalid key does not prove dismissal or successful action activation.",
+      "authorizedRepair": "Guard current element frames for finite, nonempty, viewport-intersecting geometry before isHittable; retain real typing/Search/Return actions, keyboard and toolbar disappearance conditions, Done checks and every existing timeout. Capture and report a still-visible keyboard failure.",
+      "acceptance": "The same full journey must reach completed-empty state, Return-key search, retained prior results, exact retry and recovery states without a visible keyboard/toolbar. Original failure remains failed."
+    }
+  ],
+  "mediaReview": {
+    "originalFilesVisuallyInspected": true,
+    "derivedFilesOnlyOutsideProduct": true,
+    "frameDirectory": "publication-diagnosis-frames",
+    "derivedFrames": [
+      {
+        "file": "E7F4BCF0-87C3-4557-8D85-B1B36882BC06-last-frame.png",
+        "sourceFrameIndex": 1631,
+        "ptsSeconds": 125.783333,
+        "bytes": 525184,
+        "sha256": "86080125360fb4dc1d2049acb75997981728e74fd5b6c6da2402e5a577dce355"
+      },
+      {
+        "file": "75A9B239-C523-4998-A789-B23CF1CD9EF8-last-frame.png",
+        "sourceFrameIndex": 477,
+        "ptsSeconds": 34.921667,
+        "bytes": 463685,
+        "sha256": "e2d0340862e6e9944204022fe887c8260a06c06be922907d35a32b3803c6af1f"
+      },
+      {
+        "file": "C55CF295-50E1-4889-8788-6DDB8B3B1E17-last-frame.png",
+        "sourceFrameIndex": 2297,
+        "ptsSeconds": 120.676667,
+        "bytes": 564433,
+        "sha256": "292caedcc01dac9f0e0379c0570dad7a32839c80d6b3128775e474655558af7c"
+      }
+    ],
+    "samplingLimit": "Recordings have variable frame timestamps and gaps. Contact sheets are exploratory resampled views; exact last-frame indices and PTS above bind the conclusions. No continuous callback history is inferred."
+  },
+  "independentlyHashedEvidence": [
+    {
+      "test": "CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable()",
+      "exportedFileName": "9D92FDCE-B1C3-4D24-BDD0-C6B10D8B8104",
+      "capturedAtUTC": "2026-11-18T11:34:07.828000+00:00",
+      "path": "artifacts/iphone-ui-acceptance-44294650087/career-ui-screenshots/9D92FDCE-B1C3-4D24-BDD0-C6B10D8B8104",
+      "bytes": 238899,
+      "sha256": "45167990a0799064c0ab15d599c9b7923549545ff6ed2a0864cdbe4aebfca912"
+    },
+    {
+      "test": "CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable()",
+      "exportedFileName": "B64FE8EA-917C-42A6-B7BB-68D7672B59D8",
+      "capturedAtUTC": "2026-11-18T11:34:08.141000+00:00",
+      "path": "artifacts/iphone-ui-acceptance-44294650087/career-ui-screenshots/B64FE8EA-917C-42A6-B7BB-68D7672B59D8",
+      "bytes": 1891,
+      "sha256": "20c97b3abfe15d3c63797d91ba0bb6193fe05cda279d239f0a5b3e45b9e118ac"
+    },
+    {
+      "test": "CareerFinderUITests/testAccessibilityTextKeepsCoreControlsReachable()",
+      "exportedFileName": "E7F4BCF0-87C3-4557-8D85-B1B36882BC06.mp4",
+      "capturedAtUTC": "2026-11-18T11:32:05.539000+00:00",
+      "path": "artifacts/iphone-ui-acceptance-44294650087/career-ui-screenshots/E7F4BCF0-87C3-4557-8D85-B1B36882BC06.mp4",
+      "bytes": 23771761,
+      "sha256": "47186cc89dee45c9af57e7fd09df3be75aa23b9d37db7b03a610d180b69af2a8"
+    },
+    {
+      "test": "CareerFinderUITests/testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride()",
+      "exportedFileName": "3EBE627D-6A61-44E9-904C-11A95297BCB2.txt",
+      "capturedAtUTC": "2026-11-18T11:41:05.233000+00:00",
+      "path": "artifacts/iphone-ui-acceptance-44294650087/career-ui-screenshots/3EBE627D-6A61-44E9-904C-11A95297BCB2.txt",
+      "bytes": 38675,
+      "sha256": "e6a821d1b2aefabcca7ddcfcfd6ac6a0424fc883c6124b76e91a747597395ade"
+    },
+    {
+      "test": "CareerFinderUITests/testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride()",
+      "exportedFileName": "982E4E30-CC8B-40EC-AACC-28B0FC818B14.png",
+      "capturedAtUTC": "2026-11-18T11:41:02.292000+00:00",
+      "path": "artifacts/iphone-ui-acceptance-44294650087/career-ui-screenshots/982E4E30-CC8B-40EC-AACC-28B0FC818B14.png",
+      "bytes": 375077,
+      "sha256": "34248f747efc4bc31561c138aa92cd10015a8eb312e3d1c990c5482d17880c17"
+    },
+    {
+      "test": "CareerFinderUITests/testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride()",
+      "exportedFileName": "8A5E8741-BF87-447E-B042-EB3183BDC95F",
+      "capturedAtUTC": "2026-11-18T11:40:54.956000+00:00",
+      "path": "artifacts/iphone-ui-acceptance-44294650087/career-ui-screenshots/8A5E8741-BF87-447E-B042-EB3183BDC95F",
+      "bytes": 30778,
+      "sha256": "c1172ccc0409e9ba2137fd618a55b2ad393cca9dbd3cea2fc4366a6d62e7acf2"
+    },
+    {
+      "test": "CareerFinderUITests/testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride()",
+      "exportedFileName": "1369CEDC-2027-4F05-B3A3-0B6E84E09F0A",
+      "capturedAtUTC": "2026-11-18T11:40:56.321000+00:00",
+      "path": "artifacts/iphone-ui-acceptance-44294650087/career-ui-screenshots/1369CEDC-2027-4F05-B3A3-0B6E84E09F0A",
+      "bytes": 1867,
+      "sha256": "f9b46be6974229878746a4822254a8e514a2e82f55ec7f9c3915e8e8c9c2a772"
+    },
+    {
+      "test": "CareerFinderUITests/testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride()",
+      "exportedFileName": "C55CF295-50E1-4889-8788-6DDB8B3B1E17.mp4",
+      "capturedAtUTC": "2026-11-18T11:38:59.391000+00:00",
+      "path": "artifacts/iphone-ui-acceptance-44294650087/career-ui-screenshots/C55CF295-50E1-4889-8788-6DDB8B3B1E17.mp4",
+      "bytes": 27475998,
+      "sha256": "0550e38f244eeef6325a2d012af7a704acd974ee7372b41d99bc75533f6bd090"
+    },
+    {
+      "test": "CareerFinderUITests/testSearchEmptyAndFailurePreservesPreviousResults()",
+      "exportedFileName": "C9024301-BC7E-445D-ACAD-8BE60F07265C",
+      "capturedAtUTC": "2026-11-18T11:57:19.732000+00:00",
+      "path": "artifacts/iphone-ui-acceptance-44294650087/career-ui-screenshots/C9024301-BC7E-445D-ACAD-8BE60F07265C",
+      "bytes": 1891,
+      "sha256": "0c570f17af1ca206e369309e29fb3e109d1c0857151694531d974e08549d54e2"
+    },
+    {
+      "test": "CareerFinderUITests/testSearchEmptyAndFailurePreservesPreviousResults()",
+      "exportedFileName": "75A9B239-C523-4998-A789-B23CF1CD9EF8.mp4",
+      "capturedAtUTC": "2026-11-18T11:56:51.183000+00:00",
+      "path": "artifacts/iphone-ui-acceptance-44294650087/career-ui-screenshots/75A9B239-C523-4998-A789-B23CF1CD9EF8.mp4",
+      "bytes": 5779671,
+      "sha256": "66def94facaecea2949c752c22ccb190ff1981de9defff5613fa87e83fe6439a"
+    }
+  ],
+  "indexes": [
+    {
+      "path": "iphone-attachment-index.json",
+      "bytes": 139761,
+      "sha256": "3bfc579da7815e3142e8353b227cf35293d42cf0587407c4c5524fc33a9b8670"
+    },
+    {
+      "path": "iphone-failure-detail-index.json",
+      "bytes": 2274,
+      "sha256": "1b47055afe29251bedd2757a0203321e49278e97da3b1387f539ecee82c075fd"
+    },
+    {
+      "path": "boot-readiness-verification.json",
+      "bytes": 16239,
+      "sha256": "60c1048fd287547b00569343d3018b985198ca466606554cd62231443367620b"
+    },
+    {
+      "path": "boot-raw-job-excerpt.log",
+      "bytes": 22394,
+      "sha256": "74289b9379a93b93cb3cdee807149ffd9daddb0acbbfccd08821c4b7a1032fd8"
+    },
+    {
+      "path": "xcresult-summary.json",
+      "bytes": 4262,
+      "sha256": "169b228d17ed691a6ebfdeb8c121a4b2ea9459343bf579cfb154c7693a8e7ccb"
+    }
+  ],
+  "runtimeWarnings": "The xcresult summary reports12 runtime warnings; no application-source cause is established by the warning count alone.",
+  "authorizedRepairOwner": {
+    "agent": "/root/publication_review",
+    "worktree": "/Users/saleh/Developer/career-finder-iphone-readiness-20261118-ebb3eed5",
+    "branch": "review/iphone-readiness-20261118-ebb3",
+    "base": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+    "status": "Root-authorized bounded repair in progress; separate commit receipt will record the result."
+  },
+  "limits": {
+    "nativeExecution": false,
+    "sourceRuntimeAcceptance": false,
+    "ciDispatch": false,
+    "push": false,
+    "merge": false,
+    "externalMessages": false
+  }
+}

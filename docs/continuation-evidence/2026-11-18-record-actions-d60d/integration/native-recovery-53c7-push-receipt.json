@@ -1,0 +1,17 @@
+{
+  "started_utc": "2026-11-18T06:23:19.308863+00:00",
+  "finished_utc": "2026-11-18T06:23:22.275736+00:00",
+  "repository": "swonyu/ahmad-career",
+  "branch": "continuation/native-recovery-20261117-01a1ea9cfd25",
+  "local_commit": "53c7341d8e0d28137089522a2ffc542e4d780299",
+  "remote_before": "",
+  "push_exit": 0,
+  "remote_commit": "53c7341d8e0d28137089522a2ffc542e4d780299",
+  "status_after": "",
+  "source_hashes_unchanged": true,
+  "force_push": false,
+  "native_builds_tests_CI_dispatch_deploy_store": false,
+  "historical_swift_host_assertions": 179,
+  "historical_result_not_rerun": true,
+  "android_full_native_combined_gates": "UNRUN"
+}

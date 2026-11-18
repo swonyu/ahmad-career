@@ -1,0 +1,15 @@
+{
+  "checkedUTC": "2026-11-18T07:13:37.152945+00:00",
+  "fullStagedDiffCheckExit": 2,
+  "affectedExactRawLogFiles": [
+    "docs/continuation-evidence/2026-11-18-record-actions-d60d/gates/build.stderr.log",
+    "docs/continuation-evidence/2026-11-18-record-actions-d60d/gates/build.stdout.log",
+    "docs/continuation-evidence/2026-11-18-record-actions-d60d/gates/lint.stdout.log",
+    "docs/continuation-evidence/2026-11-18-record-actions-d60d/gates/typecheck.stdout.log",
+    "docs/continuation-evidence/2026-11-18-record-actions-d60d/regression/baseline.stdout.log"
+  ],
+  "diagnosticText": "docs/continuation-evidence/2026-11-18-record-actions-d60d/gates/build.stderr.log:32: new blank line at EOF.\ndocs/continuation-evidence/2026-11-18-record-actions-d60d/gates/build.stdout.log:156: trailing whitespace.\n+  \u250c \u0192 /       \ndocs/continuation-evidence/2026-11-18-record-actions-d60d/gates/build.stdout.log:159: trailing whitespace.\n+  \u251c \u0192 /phone  \ndocs/continuation-evidence/2026-11-18-record-actions-d60d/gates/build.stdout.log:170: new blank line at EOF.\ndocs/continuation-evidence/2026-11-18-record-actions-d60d/gates/lint.stdout.log:4: new blank line at EOF.\ndocs/continuation-evidence/2026-11-18-record-actions-d60d/gates/typecheck.stdout.log:4: new blank line at EOF.\ndocs/continuation-evidence/2026-11-18-record-actions-d60d/regression/baseline.stdout.log:81: trailing whitespace.\n+  \ndocs/continuation-evidence/2026-11-18-record-actions-d60d/regression/baseline.stdout.log:386: trailing whitespace.\n+  \ndocs/continuation-evidence/2026-11-18-record-actions-d60d/regression/baseline.stdout.log:402: trailing whitespace.\n+  \ndocs/continuation-evidence/2026-11-18-record-actions-d60d/regression/baseline.stdout.log:707: trailing whitespace.\n+  \ndocs/continuation-evidence/2026-11-18-record-actions-d60d/regression/baseline.stdout.log:723: trailing whitespace.\n+  \ndocs/continuation-evidence/2026-11-18-record-actions-d60d/regression/baseline.stdout.log:934: trailing whitespace.\n+  \n",
+  "nonArtifactStagedDiffCheckExit": 0,
+  "sourceDiffCheckExit": 0,
+  "decision": "Preserve exact raw logs and their receipt hashes. No product/source whitespace issue; no rule disabled or broadened exclusion. This diagnostic applies only to the listed evidence logs."
+}

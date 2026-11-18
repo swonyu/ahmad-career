@@ -1,0 +1,17 @@
+{
+  "asset": "Career Finder opaque midnight / periwinkle app icon",
+  "status": "Isolated unpublished candidate. Supersedes the green palette candidate; no release or deployment performed.",
+  "generated_utc_date": "2026-11-17",
+  "tool": "Built-in image_gen.imagegen",
+  "paid_api_fallback_used": false,
+  "transparent_background": false,
+  "reference_image": "/workspace/scratch/5bc6158967e8/icon-candidate/source/career-finder-generated-source.png",
+  "reference_sha256": "d7900b976f38e77f1b59da518a03193dd5f30f3386512309d3da02d1899d634c",
+  "output_image": "/workspace/scratch/5bc6158967e8/generated_images/exec-18c55542-b48c-42c8-bb02-aeeeb72e932e.png",
+  "output_sha256": "71398d4c375254b9063135b0997f637eb60de8cb08ad3ccf44f32ce12e9c77a8",
+  "prompt": "Use case: precise-object-edit. Edit the provided Career Finder icon into a new sophisticated midnight and periwinkle identity. Deliver one production-ready square app icon, not a mockup or contact sheet.\nPreserve the existing bold rising-path silhouette, northeast arrow point, smooth curve, two-plane geometry, optical placement, scale and safe margins. Change its colors and surface finish completely.\nThe entire edge-to-edge background must be fully opaque deep midnight navy, close to #15182B. The principal broad upward path must be warm ivory, close to #F5F3ED. The substantial supporting plane must be luminous but restrained pale periwinkle, close to #A6B3FF. This is a neutral slate and indigo product identity: absolutely no green, mint, teal or turquoise pixels or undertones.\nPremium minimalist geometric identity with clean, smooth, crisp antialiased edges and matte flat surfaces. Remove the mottled texture and grain; use solid fills without light spots, gradients, gloss, shadows, bevels, outlines or decorative details. The strong mark must remain immediately readable at 24 pixels.\nThe image must be completely opaque everywhere, including all four corners, and fill the whole square with perfectly square outside corners. No baked rounded outer corners, no outer border, no transparent canvas, no text, no letters, no watermark. Do not change the shape of the mark or add elements.",
+  "choice": "Keep the clear upward-path geometry; replace all green, mint and teal with midnight, ivory and periwinkle.",
+  "production_transformations": "Copy generated master unchanged; Pillow LANCZOS resize; RGB format packaging; 5% opaque padding on each PWA maskable edge and 15% on each Android adaptive edge. No manual creative editing or recoloring.",
+  "output_limitations": "Slight tonal variation remains in generated bitmap despite flat-fill prompt. It is not a mathematically exact three-color vector.",
+  "historical_candidate": "../icon-candidate remains unchanged and is not the accepted palette."
+}

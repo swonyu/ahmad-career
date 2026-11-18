@@ -1,0 +1,155 @@
+{
+  "reviewer": "expert_engineering (independent read-only review)",
+  "created_utc": "2026-11-18T08:57:36.011914+00:00",
+  "review_scope": "Read source and preserved native artifacts; no native execution, tests, CI, source or image modifications by reviewer.",
+  "observed_run_receipt": {
+    "started": "2026-11-18T08:45:08.540072+00:00",
+    "parent": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2",
+    "diagnosticOnlyDelta": "before-browser screenshot/AX attachment; original assertions retained",
+    "testSourceSHA256": "3c9a8144e7133e94f51125e227a36fc72f5c601bf5bb323ab2e224822c9b85c6",
+    "simulator": "3E94E3AA-C0A4-4A71-A282-03F1214A2003",
+    "runtime": "iOS26.5",
+    "device": "iPhone Air",
+    "scope": "two failed journeys only; not the release gate",
+    "command": [
+      "xcodebuild",
+      "-project",
+      "apple/AhmadCareer.xcodeproj",
+      "-scheme",
+      "CareerFinderAcceptance",
+      "-configuration",
+      "Debug",
+      "-destination",
+      "platform=iOS Simulator,id=3E94E3AA-C0A4-4A71-A282-03F1214A2003,arch=arm64",
+      "-derivedDataPath",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-001/derived",
+      "-resultBundlePath",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-001/CareerFinderUI.xcresult",
+      "-parallel-testing-enabled",
+      "NO",
+      "-maximum-concurrent-test-simulator-destinations",
+      "1",
+      "ONLY_ACTIVE_ARCH=YES",
+      "CODE_SIGNING_ALLOWED=NO",
+      "CODE_SIGNING_REQUIRED=NO",
+      "-only-testing:CareerFinderUITests/CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup",
+      "-only-testing:CareerFinderUITests/CareerFinderUITests/testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "test"
+    ],
+    "exit": 65,
+    "finished": "2026-11-18T08:47:26.866981+00:00"
+  },
+  "source_binding": {
+    "commit": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2",
+    "file": "apple/AhmadCareer/NativeApplicationsViews.swift",
+    "sha256": "d2c0a7ab49292ffc736ff50368d947ea610e496b37a1d53b02ff21bb182a8ea0"
+  },
+  "raw_sources": [
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-001/receipt.json",
+      "sha256": "598793db5e290b70a99a197400ad2bafcba16557efbf58e86edc79e78e3fe1d3"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-001/xcodebuild.log",
+      "sha256": "a2438f8c6908ff593d0f32afe1946f62bc28731be7b4017c45a1d2d7957a663f"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-001/attachments/manifest.json",
+      "sha256": "4f485bf090f7d7b87ef1a23e25e16f20647b168f503a0f3a4fe1ff234b67288b"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-001/attachments/2BC67363-FE6C-4BDF-B3B9-879355A4AC36",
+      "sha256": "a4f8ec566521486a39359570c9e2fff96ea634982c74ca8f83a26a7cd133badb"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-001/attachments/C408BA3D-00C5-4F8E-8DD5-BB7324BAC04B.txt",
+      "sha256": "616f593fa3dc6da0d7b18dc28e8effd5a4c803761f89dbac82080979bbc21953"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-001/attachments/1CAC6D99-758A-42BA-A2D7-3683138F90EC.txt",
+      "sha256": "17c2fe8bed52f8297fba331986c9c0e9952371cb63e079a4d7bb55f34b278248"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-001/attachments/776F97F1-3479-4AF6-A50B-B9C6AFA7EBD8.png",
+      "sha256": "bbfdc6802599bf0e11d4e1878c2758aac1a76e626b7aa64485a1e20154dd7679"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-001/attachments/307AD3E0-FDAA-4C97-9276-F60952C5E874.png",
+      "sha256": "c5036a93cbcac43d0b35cfc3533612fed7b39c29e6185cf13c367f3342abb4ac"
+    }
+  ],
+  "decoded_event": {
+    "attachment": "2BC67363-FE6C-4BDF-B3B9-879355A4AC36",
+    "manifest": {
+      "configurationName": "Test Scheme Action",
+      "deviceId": "3E94E3AA-C0A4-4A71-A282-03F1214A2003",
+      "deviceName": "CareerFinder-browser-return-d60d",
+      "exportedFileName": "2BC67363-FE6C-4BDF-B3B9-879355A4AC36",
+      "isAssociatedWithFailure": false,
+      "suggestedHumanReadableName": "Synthesized Event 2026-11-18 at 11.46.59 AM",
+      "timestamp": 1794991619.377
+    },
+    "name": "tap",
+    "target_process_id": 47798,
+    "pointer_events": [
+      {
+        "eventType": 1,
+        "coordinate.x": 20.40000006556511,
+        "coordinate.y": 72.40000006556511,
+        "offset": 0.0
+      },
+      {
+        "eventType": 3,
+        "coordinate.x": 20.40000006556511,
+        "coordinate.y": 72.40000006556511,
+        "offset": 0.05
+      }
+    ],
+    "window_size_points": {
+      "width": 420,
+      "height": 912
+    }
+  },
+  "observed_geometry": {
+    "raw_close_AX_line": "Button, 0x115f27340, {{16.0, 68.0}, {44.0, 44.0}}, identifier: 'Close', label: 'Done'",
+    "raw_URL_AX_line": "Button, 0x115f27480, {{26.0, 68.0}, {368.0, 44.0}}, identifier: 'URL', label: 'Address', value: ‎career-finder-ser...",
+    "close_AX_frame_points": {
+      "x": 16.0,
+      "y": 68.0,
+      "width": 44.0,
+      "height": 44.0
+    },
+    "close_frame_center_points": {
+      "x": 38.0,
+      "y": 90.0
+    },
+    "tap_distance_from_center_points": 24.890158605043407,
+    "rendered_circle_radius_from_frame_points": 22.0,
+    "tap_normalized_offset": {
+      "dx": 0.10000000149011612,
+      "dy": 0.10000000149011612
+    }
+  },
+  "observed_outcome": "XCTest invoked Close at t=36.80s; the archived tap is approximately (20.4,72.4), not the element center. Screenshot and AX after t=42s still show Safari and its loaded hosted page. Before/after AX have the same WebViewProcessID 48255.",
+  "inference": {
+    "status": "Concrete incorrect-point candidate; delivery/root cause not yet proven by callback telemetry or center-tap replay.",
+    "detail": "The 10%-inset rectangular corner tap is outside the visible circular 44-point control. Address AX overlaps Close AX. XCTest hit-point selection may choose this corner because of overlapping AX geometry. Read-only evidence cannot prove the actual UIKit hit region or whether the callback fired."
+  },
+  "recommended_bounded_replay": "Keep unique localized real Done lookup, existence/hittability, full geometry, app foreground, inaccessible underlying Done, unchanged browser disappearance and connection/code preservation assertions. Tap that qualified element at normalized center (0.5,0.5); inspect DidFinish/presentation lifecycle telemetry. Do not bypass via app dismissal or remove assertions.",
+  "source_lifecycle_assessment": "reportDismissal clears requestedURL and reports binding false; the presenter remains in the stable button background. No source-established re-presentation loop or mandatory explicit-dismiss omission. Apple currently documents dismissal after safariViewControllerDidFinish.",
+  "primary_documentation": [
+    {
+      "url": "https://developer.apple.com/documentation/xcuiautomation/xcuielement/tap()",
+      "supports": "Element tap uses a system-computed hit point."
+    },
+    {
+      "url": "https://developer.apple.com/documentation/xcuiautomation/xcuielement/coordinate(withnormalizedoffset:)",
+      "supports": "Normalized offset maps relative to actual element frame."
+    },
+    {
+      "url": "https://developer.apple.com/documentation/safariservices/sfsafariviewcontrollerdelegate/safariviewcontrollerdidfinish(_:)",
+      "supports": "Controller is documented to dismiss after callback."
+    }
+  ],
+  "acceptance_status": "Open pending root-owned native diagnosis/replay; no passing runtime fix claimed."
+}

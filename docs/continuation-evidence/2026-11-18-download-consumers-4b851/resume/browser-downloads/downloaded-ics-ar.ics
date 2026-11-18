@@ -1,0 +1,19 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Career Finder//Follow-up reminder//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:career-finder-follow-up-ca7a8498a84278f4f1b8b0ab8046b95983bb17b6656a2d0
+ 5d72132ec530b9a78
+DTSTAMP:20261117T232447Z
+DTSTART;VALUE=DATE:20261124
+DURATION:P1D
+SUMMARY:المتابعة: مُهندس\, "أول" 🧭 · Synthetic employe
+ r / جهة تجريبية
+DESCRIPTION:تذكير شخصي بالمتابعة. راجع إعلان ج
+ هة العمل الحالي قبل التواصل معها.
+URL:https://example.org/career-finder-ui-export-20261117
+CLASS:PRIVATE
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR

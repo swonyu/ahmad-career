@@ -1,0 +1,154 @@
+{
+  "startedAt": "2026-11-17T23:25:09.137345+00:00",
+  "capturedAt": "2026-11-17T23:25:09.796783+00:00",
+  "scope": "One bounded read-only run 44 terminal and publisher coordination check; no builds, tests, edits, dispatches or external posts.",
+  "run": {
+    "id": 44194197445,
+    "run_number": 44,
+    "head_branch": "recovery/empty-state-ui-expectation-20261117-d57",
+    "head_sha": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+    "event": "workflow_dispatch",
+    "status": "in_progress",
+    "conclusion": null,
+    "created_at": "2026-11-17T22:52:21Z",
+    "updated_at": "2026-11-17T22:52:31Z",
+    "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445"
+  },
+  "jobs": [
+    {
+      "id": 134431174905,
+      "name": "PARTIAL iPhone UI acceptance (all 17 journeys)",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-17T22:52:30Z",
+      "completed_at": null,
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/job/134431174905",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-17T22:52:32Z",
+          "completed_at": "2026-11-17T22:52:34Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-17T22:52:34Z",
+          "completed_at": "2026-11-17T22:52:41Z"
+        },
+        {
+          "name": "Select an iPhone on this disposable hosted runner",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-17T22:52:41Z",
+          "completed_at": "2026-11-17T22:52:50Z"
+        },
+        {
+          "name": "Exercise native phone flows with isolated synthetic data",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 4,
+          "started_at": "2026-11-17T22:52:50Z",
+          "completed_at": null
+        },
+        {
+          "name": "Verify the partial regression actually ran once",
+          "status": "pending",
+          "conclusion": null,
+          "number": 5,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Export native interface evidence",
+          "status": "pending",
+          "conclusion": null,
+          "number": 6,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Keep the native UI results and screenshots",
+          "status": "pending",
+          "conclusion": null,
+          "number": 7,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "pending",
+          "conclusion": null,
+          "number": 14,
+          "started_at": null,
+          "completed_at": null
+        }
+      ]
+    },
+    {
+      "id": 134431176866,
+      "name": "Android compile, lint and native acceptance",
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-11-17T22:52:22Z",
+      "completed_at": "2026-11-17T22:52:22Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/job/134431176866",
+      "steps": []
+    },
+    {
+      "id": 134431177187,
+      "name": "Service and synthetic HTTPS",
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-11-17T22:52:22Z",
+      "completed_at": "2026-11-17T22:52:22Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/job/134431177187",
+      "steps": []
+    },
+    {
+      "id": 134431177737,
+      "name": "Hosted HTTPS service and durable storage",
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-11-17T22:52:22Z",
+      "completed_at": "2026-11-17T22:52:22Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/job/134431177737",
+      "steps": []
+    },
+    {
+      "id": 134431177800,
+      "name": "iPhone logic and unsigned build",
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-11-17T22:52:22Z",
+      "completed_at": "2026-11-17T22:52:22Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/job/134431177800",
+      "steps": []
+    }
+  ],
+  "artifacts": [],
+  "commentsSince": "2026-11-17T22:58:03Z",
+  "comments": [
+    {
+      "id": 6963580448,
+      "html_url": "https://github.com/swonyu/ahmad-career/pull/1#issuecomment-6963580448",
+      "created_at": "2026-11-17T23:04:18Z",
+      "updated_at": "2026-11-17T23:05:52Z",
+      "body": "Career Finder continuation update \u2014 18 November 2026, 02:04 Riyadh. Root foreground remains ACTIVE; preserve the seven existing streams and no competing native build.\n\nPublisher native correction: independently observed a17999ce9f24d1e8c94a38c03dcda68101db4507 pushed on recovery/empty-state-ui-expectation-20261117-d57. iPhone-only run 44194197445 is running; four other jobs are skipped. Grok Build2 verified the stronger title+hint expectation against the actual combined accessibility element and English launch configuration. This is source review, not a pass. Root has not duplicated the fix.\n\nDependency proof review for publisher d57 and development5bc: existing Career-ToolchainProof288 remains owner-dirty at288, package SHA3a9d133111d0a01b699f8040ee4764d4fdd644c106b65fbb69202634cd24182d and lock SHAa83a723aa9fb56015617ba5c95e972bb2661d9cb9eae9dc5207a5280b1c66fff. Proposed graph genuinely removes all three Picomatch resolutions, but the unchanged installers, Vite/vinext build runner, worker rendering, Next imports/types, ESLint config and PDF fixture still require removed packages. No current proof audit or functionality receipt was found in the bounded review. Please retain this as an unfinished graph-removal proof unless a replacement implementation and current receipts exist; share their exact path if so. Do not treat run43's earlier tests/build or run44's native-only work as validation of these package changes. Root performed no installs, dependency edits or builds in your proof. Full review: root evidence/dependency-current-review-20261118T0136Riyadh/PUBLISHER-TOOLCHAIN-PROOF-REVIEW.md.\n\nNew root verification at integrated288, final ProviderConnections03c source: actual Chrome EN/AR keyboard confirmation -> stable heading during pending disconnect -> failed POST -> Tab to status retry -> GET-only retry, no mutation replay. At observed390 CSS width, moving focus out while POST pending retained that focus after failure, and keyboard re-entry reached retry. Original260 CSS-width narrow tests also passed; no horizontal overflow observed. Failed OAuth shows constant error copy without displaying supplied untrusted error description. These are production-component synthetic loopback checks, not real OAuth/native/physical AT.\n\nActual installed Mac LibreOffice26.8.1.1: current production EN/AR exports preserve all162cells/locale using quoted-fields-as-text import, ODS reopen and CSV reimport; zero formulas with an active arithmetic positive control. Default import reproduces known6value/7free-text type coercions per locale; working Text alternative now executed. Twenty ICS files passed byte/content checks; Calendar/native handoff remains unverified. Evidence: root evidence/resume-export-consumer-20261118/HANDOFF.md. Root is closing actual UI download evidence next.\n\nExisting Grok browser modes remain Build/Build/Heavy. Build1 is handing off actual export-action runner/log; Build2 now reviews hosted employer-page return/persistence/receipt truth, avoiding export/account/native ownership; Heavy is challenging specific current competitor gaps and the dependency remedy decision. No original package/image resends, paid additions or real employer submissions. Owner acknowledgement of unsealed recovery and 24-commit accessibility lane remains unresolved in the latest bounded comments. Original cutoff and Good Spender exclusion unchanged.",
+      "login": "swonyu"
+    }
+  ],
+  "selectedRefs": {
+    "refs/heads/recovery/empty-state-ui-expectation-20261117-d57": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+    "refs/heads/recovery/publishing-integrated-20261117-d57f4": "363ae84aaaf9032b040ee60b16a3c023ec1c1cf2",
+    "refs/heads/recovery/publishing-reconciled-20261117-d57": "2884188263f3dad5753da7b2e507f6ba55e30eb0"
+  },
+  "selectedRefsAbsent": [
+    "refs/heads/recovery/toolchain-proof-20261117-d57"
+  ]
+}

@@ -1,0 +1,176 @@
+{
+  "reviewedAtUTC": "2026-11-17T20:13:59.364299+00:00",
+  "scope": "fresh artifact integrity and exact README readback; no generator or native execution",
+  "originals": {
+    "original/build_corpus.py": {
+      "bytes": 16346,
+      "sha256": "3092402340d2071d59c574cafab84a71fde2e5e44e8905407265999bfea59e08",
+      "matchesRecoveredOriginal": true
+    },
+    "original/manifest.json": {
+      "bytes": 3602,
+      "sha256": "345252ff401c05dbd0bb23aba64a91f4f8a88c18a5e8075e68bddbff788bf6e9",
+      "matchesRecoveredOriginal": true
+    },
+    "original/EXPECTED-OUTCOMES.md": {
+      "bytes": 7085,
+      "sha256": "7f8a122c06c08becdb95677388fe86ad6414a2066d04ffcbb6eb7a10143c7b22",
+      "matchesRecoveredOriginal": true
+    },
+    "original/SELF-REVIEW.txt": {
+      "bytes": 2241,
+      "sha256": "a83247fa7886ce7fee1cbf30404a6ccd8d19b2323b3fee0f250fbd08c3af0f29",
+      "matchesRecoveredOriginal": true
+    },
+    "delivery.txt": {
+      "bytes": 31632,
+      "sha256": "1cf2f3d146cc47eefea77c3742493833f732c2ca3eaded9df1c3aedde24add20",
+      "matchesRecoveredOriginal": true
+    }
+  },
+  "fixtureCount": 10,
+  "fixtures": [
+    {
+      "file": "01-two-unfinished-notes-one-job.json",
+      "bytes": 1970,
+      "sha256": "609ef2b2bd33c36c577af8cfe9257531a89adbe9411b36dfb5412b3d13c0e5a6",
+      "matchesManifest": true,
+      "jsonSyntax": "valid"
+    },
+    {
+      "file": "02-destination-existing-note.json",
+      "bytes": 1540,
+      "sha256": "a011a1c60559bf5c1acf8b8da87c4103e6a7ddd1eb23593cb83f9fb6204dae5a",
+      "matchesManifest": true,
+      "jsonSyntax": "valid"
+    },
+    {
+      "file": "02-import-two-alternatives.json",
+      "bytes": 1953,
+      "sha256": "7d996b908f9057a4d7e75e42c0ab1f33be982f4360ab2b5cc8dd9e562770c3ab",
+      "matchesManifest": true,
+      "jsonSyntax": "valid"
+    },
+    {
+      "file": "03-distinct-lever-global-eu-and-greenhouse-hosts.json",
+      "bytes": 3873,
+      "sha256": "be6a94d3814691c09197073402cab91eb8055261bb09c56958139f040aee5ca0",
+      "matchesManifest": true,
+      "jsonSyntax": "valid"
+    },
+    {
+      "file": "04-same-greenhouse-link-with-slash-and-utm.json",
+      "bytes": 1268,
+      "sha256": "49a65365e3c79a482cbcd7b34e0819077e50498f8f27be0f95f0d5623fde39e0",
+      "matchesManifest": true,
+      "jsonSyntax": "valid"
+    },
+    {
+      "file": "05-unknown-root-approval-field.json",
+      "bytes": 1557,
+      "sha256": "56c0a62cc3ecf19c4792691197dc97308c64dcdd0d5744387a33ea353d5c89b2",
+      "matchesManifest": true,
+      "jsonSyntax": "valid"
+    },
+    {
+      "file": "06-oversized-draft-note.json",
+      "bytes": 3501,
+      "sha256": "3c300e4cead6e9e0b6bee3823048504b11e82153b613f05af886f00166b8693f",
+      "matchesManifest": true,
+      "jsonSyntax": "valid"
+    },
+    {
+      "file": "08-self-reported-flag-and-prepared-receipt.json",
+      "bytes": 3183,
+      "sha256": "ede4156bfb5e801efe6da2b698f589817af5a3c42fcad0f45fcb3f8867b0c369",
+      "matchesManifest": true,
+      "jsonSyntax": "valid"
+    },
+    {
+      "file": "07-damaged-truncated.json",
+      "bytes": 61,
+      "sha256": "786c4841b2ba48dd6fe0df325714f92de2891187605f9eac6fc631f48d114bd7",
+      "matchesManifest": true,
+      "jsonSyntax": "intentionally invalid"
+    },
+    {
+      "file": "proposed/09-server-expired-dispatch.json",
+      "bytes": 1263,
+      "sha256": "7dd0268b3ef790a88eef955a89b06b5acc958fa9c33d9467be58c4b444fb6f07",
+      "matchesManifest": true,
+      "jsonSyntax": "valid"
+    }
+  ],
+  "allFixtureBytesAndHashesMatch": true,
+  "jsonObjectSyntaxCount": 9,
+  "generatedManifestByteIdentical": true,
+  "schemaCopies": [
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/WorkspaceTransfer.kt",
+      "sha256": "766f4101f4164cc434537ef7aac15cddec08c224d22ceb085785c375cf78105e",
+      "matchesSavedReceipt": true
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/Models.kt",
+      "sha256": "e90d89d007cc0679adb03eda4aa71e2c56dab67bebb08a6ec7d28f755ede4464",
+      "matchesSavedReceipt": true
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/WorkspaceStorage.kt",
+      "sha256": "faebf6f1cac2885a6a7b69107a92807411a87b8b3d796e99ca3db9d8f634c05b",
+      "matchesSavedReceipt": true
+    },
+    {
+      "path": "apple/AhmadCareer/MobileApplicationState.swift",
+      "sha256": "1858795ccf563e9802c5cabc0367b402eadba2c9e978a5092c2e70a232d1a489",
+      "matchesSavedReceipt": true
+    },
+    {
+      "path": "apple/AhmadCareer/NativeApplicationsStore.swift",
+      "sha256": "d838a3cd68908656bd7545e63c84db5decfab6bc89e2a93af7779dd16d9c7883",
+      "matchesSavedReceipt": true
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt",
+      "sha256": "90bbf37458cd924fd427710245af580c57329cb3699cd575234c443087d49dce",
+      "matchesSavedReceipt": true
+    },
+    {
+      "path": "hosted/app/phone/model.ts",
+      "sha256": "955d5afcede6b8f7eb901394f9ae3e00d1bbffa57bf1e457c5436f23541577bf",
+      "matchesSavedReceipt": true
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/BoundaryPolicy.java",
+      "sha256": "54f162253812226923f0bedf7e80f05a33ac07d40df4ca2943e43ddcd0a53af2",
+      "matchesSavedReceipt": true
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecords.kt",
+      "sha256": "39c0fcd402fb1a4a694496b88b1f7078962b8cefdddf62a8b1d76125f67b3d88",
+      "matchesSavedReceipt": true
+    },
+    {
+      "path": "apple/AhmadCareer/MobileApplicationClient.swift",
+      "sha256": "379b187ad17ddce0b8c13536052db8bab364f70dad4eb313071aaeb0b15b4588",
+      "matchesSavedReceipt": true
+    }
+  ],
+  "allSchemaCopiesMatchSavedReceipts": true,
+  "onlyOutputRootAdaptation": true,
+  "outputRootAdaptationPatch": {
+    "bytes": 370,
+    "sha256": "b5139f07f8a1d981f87d4975dbdeb9f057d0868b1ce5d414fd622145cdd36907"
+  },
+  "readme": {
+    "path": "README.md",
+    "bytes": 12904,
+    "sha256": "4c75596406d3d96b96398c05ffc142b627c3bc7b4cb51dd54402a0149f77b0a8",
+    "exactContentReadback": true
+  },
+  "generatorRerun": false,
+  "nativeAcceptance": false,
+  "zipClaimVerified": false,
+  "originalCutoffUTC": "2026-11-18T22:26:12Z",
+  "goodSpenderExcluded": true
+}

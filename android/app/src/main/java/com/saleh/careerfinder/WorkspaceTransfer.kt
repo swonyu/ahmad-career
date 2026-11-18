@@ -17,6 +17,31 @@ data class WorkspaceImportPreview(val token: String = UUID.randomUUID().toString
 internal object WorkspaceTransfer {
     const val FORMAT = "career-finder-phone-workspace"
     const val MAX_BYTES = 24 * 1024 * 1024
+    const val MAX_JSON_DEPTH = 32
+
+    /** String-aware bound. Braces and escapes inside notes do not count. Unterminated text is left to the parser. */
+    fun rejectExcessiveNesting(text: String, maxDepth: Int = MAX_JSON_DEPTH) {
+        var depth = 0
+        var inString = false
+        var escaped = false
+        for (ch in text) {
+            if (inString) {
+                if (escaped) { escaped = false; continue }
+                if (ch == '\\') { escaped = true; continue }
+                if (ch == '"') inString = false
+                continue
+            }
+            when (ch) {
+                '"' -> inString = true
+                '{', '[' -> {
+                    depth += 1
+                    if (depth > maxDepth) throw IllegalArgumentException(
+                        "This backup is nested more deeply than Career Finder can import. The file and your saved phone data are unchanged.")
+                }
+                '}', ']' -> if (depth > 0) depth -= 1
+            }
+        }
+    }
     private fun objectOnly(value: JSONObject, names: Set<String>) {
         require(value.keys().asSequence().all { it in names }) { "This backup contains unsupported fields. Keep the file and use a compatible app version." }
     }
@@ -104,6 +129,7 @@ internal object WorkspaceTransfer {
         var profile = WorkspaceStorage.profile(JSONObject(profileJson.toString()).put("draftResume", profileJson.opt("resume") ?: JSONObject.NULL).put("revision", 0))
         val jobs = data.requiredObjects("jobs").map(::job)
         require(jobs.map { BoundaryPolicy.jobIdentity(it.url) }.distinct().size == jobs.size) { "The backup contains duplicate saved links." }
+        require(jobs.size <= 200) { "The destination changed or the backup is not supported. Nothing was imported." }
         val byIdentity = jobs.associateBy { BoundaryPolicy.jobIdentity(it.url) }
         val flattened = data.requiredObjects("applicationRecords").map { item ->
             strings(item, "id", "stage", "appliedOn", "followUpOn", "note", "updatedAt")
@@ -135,6 +161,7 @@ internal object WorkspaceTransfer {
                 ApplicationRecordDraft(ApplicationStage.decode(draft.getString("stage")), draft.getString("appliedOn"),
                     draft.getString("followUpOn"), draft.getString("note")).validated())
         }
+        require(checkpoints.size <= 200) { "The destination changed or the backup is not supported. Nothing was imported." }
         val opportunityDraft = OpportunityDraft.fromJson(data.getJSONObject("opportunityDraft"))
         val holds = data.requiredStrings("continuationHolds").toSet()
         require(holds.all { it.isNotBlank() && it.length <= 200 })
@@ -161,7 +188,7 @@ internal object WorkspaceTransfer {
             if (extension.has("selectedURLs")) selected = extension.requiredStrings("selectedURLs").mapNotNull { url -> byIdentity[BoundaryPolicy.jobIdentity(url)]?.id }.toSet()
             if (extension.has("receiptArchive")) {
                 val envelope = JSONObject().put("schema", 1).put("receipts", extension.get("receiptArchive"))
-                receipts = WorkspaceStorage.decode(envelope, null).receipts.map { it.copy(evidenceMode = "imported") }
+                receipts = WorkspaceStorage.decode(envelope, null).receipts.map { it.copy(evidenceMode = "imported", planId = "") }
             }
             if (extension.has("recoveredOpportunityDrafts")) recovered = extension.requiredObjects("recoveredOpportunityDrafts").map(OpportunityDraft::fromJson)
             if (extension.has("search") && !extension.isNull("search")) {

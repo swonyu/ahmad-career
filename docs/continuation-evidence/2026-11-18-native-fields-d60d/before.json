@@ -1,0 +1,15 @@
+{
+  "observedUTC": "2026-11-18T08:40:00.793232+00:00",
+  "base": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2",
+  "root": "/Users/saleh/Developer/career-finder-integrated-20261118-d60d62a70f26",
+  "worktree": "/Users/saleh/Developer/career-finder-native-fields-20261118-d60d62a70f26",
+  "branch": "fix/native-fields-20261118-d60d",
+  "rootStatus": "?? docs/continuation-evidence/2026-11-18-final-reviews-d60d/\n?? docs/continuation-evidence/2026-11-18-production-profile-d60d/\n",
+  "sourceHashes": {
+    "apple/AhmadCareer/NativeApplicationsViews.swift": "d2c0a7ab49292ffc736ff50368d947ea610e496b37a1d53b02ff21bb182a8ea0",
+    "apple/AhmadCareer/CareerAppEnvironment.swift": "b4bff981e06ecdf02221b3efb7bfe4b3ad1adf56a212ac9de0a6d54bc9059486",
+    "apple/UITests/CareerFinderUITests.swift": "e83b063b5f36a213fa2bb2a95e6f085728ce186968635321715175646044d0ff",
+    "apple/AhmadCareer/NativeDiscoveryViews.swift": "f2d3f6b76690eb26a803a0e721ea07f85c817d0f6c54060e8e712ea9f3d6fe9d",
+    ".github/workflows/phone-quality.yml": "8a98c1d7bcf44a9fbab3064d64d0251c7078a7cfb96787ee7ba067025762911c"
+  }
+}

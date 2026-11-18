@@ -1,0 +1,86 @@
+{
+  "schema": 1,
+  "purpose": "Exact source fixtures for offline compatibility checks; tests require neither Git nor full history.",
+  "files": {
+    "fixtures/compatibility/continuation/core.js": {
+      "source_commit": "b613ab5a08c757f375591733d3c54e9d27f4cb23",
+      "source_path": "website/web/core.js",
+      "bytes": 11312,
+      "sha256": "6bcc33f97cb84eb97c6a8e1519f010f0d2a00b3fc420ec8fbeaf43a815577a64",
+      "git_blob_sha1": "d9167954d157859c973d398679f68905222229a6",
+      "identical_continuation_commit": "eebe748cb5afca0efcb9389255400a00cf5a480a"
+    },
+    "fixtures/compatibility/continuation/data.js": {
+      "source_commit": "b613ab5a08c757f375591733d3c54e9d27f4cb23",
+      "source_path": "website/web/data.js",
+      "bytes": 22252,
+      "sha256": "95e8035cf7d1e173b7c9f006c888de5d60a3ad260dd52ee2f254373d2abda2e8",
+      "git_blob_sha1": "ba7daa6a1480010c47e32fe7f60d407f698237a9",
+      "identical_continuation_commit": "eebe748cb5afca0efcb9389255400a00cf5a480a"
+    },
+    "fixtures/compatibility/continuation/app.js": {
+      "source_commit": "b613ab5a08c757f375591733d3c54e9d27f4cb23",
+      "source_path": "website/web/app.js",
+      "bytes": 69807,
+      "sha256": "ec45e468c70ea1f15c070db39a125a9d2d6e530e6e713a6ec46c4f16765f1267",
+      "git_blob_sha1": "f4520cb0ed7ca1d6f8e65701a0f653be46073c0f",
+      "identical_continuation_commit": "eebe748cb5afca0efcb9389255400a00cf5a480a"
+    },
+    "historical/public1.3/check.mjs": {
+      "source_commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+      "source_path": "website/check.mjs",
+      "bytes": 8448,
+      "sha256": "781e6e18c1481285672cacedb1e97ee5343cfd512d83e8cd0455ffd1ce83ff70",
+      "git_blob_sha1": "8229d077639bb4639efd707965c9ffebd11a9b54"
+    },
+    "historical/public1.3/state-check.mjs": {
+      "source_commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+      "source_path": "website/state-check.mjs",
+      "bytes": 76472,
+      "sha256": "7ae302f81bd303b2e4e9a04ac7e99dd00564938255621cfd9ac60bf187d3b01f",
+      "git_blob_sha1": "52a8509bbbf23d8d76ca595d13912a725a7a4783"
+    },
+    "historical/public1.3/backup-check.mjs": {
+      "source_commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+      "source_path": "website/backup-check.mjs",
+      "bytes": 10781,
+      "sha256": "02b6975eea517488c3ae98f81b309729311e661353c8becacf1cb7c7a4305384",
+      "git_blob_sha1": "060c45b6fee54cb0bb2265d59baa03550b1391cf"
+    },
+    "historical/public1.3/followup-check.mjs": {
+      "source_commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+      "source_path": "website/followup-check.mjs",
+      "bytes": 10445,
+      "sha256": "c4a5fb4b407f56a7e769a41deb977b434c88ae18b64c9d9c920937e6d0b98e15",
+      "git_blob_sha1": "1cc32d4cb4832ea2e6b60326cfe6e2a6304ad8b9"
+    },
+    "historical/public1.3/role-review-check.mjs": {
+      "source_commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+      "source_path": "website/role-review-check.mjs",
+      "bytes": 6681,
+      "sha256": "e1d00e1e9963acaa4af0b7240991c5a2e1c3b5e8d885138288efce468483676a",
+      "git_blob_sha1": "8f954a752e288fe94af846689924698871b2f0db"
+    },
+    "historical/public1.3/web/core.js": {
+      "source_commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+      "source_path": "website/web/core.js",
+      "bytes": 22935,
+      "sha256": "9c18d5e79e1fd8475b619c0e9699ddd46d9ae16ea5645dc05d794a3adaabd3d3",
+      "git_blob_sha1": "9a03e1ed1e51f9bf9aebdf941a3fb22ffc91c1c7"
+    },
+    "historical/public1.3/web/app.js": {
+      "source_commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+      "source_path": "website/web/app.js",
+      "bytes": 87160,
+      "sha256": "f3f0840eec5c78f8e3f52cb4fbbf3734d47970efdc33e27c447f99fd60e85ed3",
+      "git_blob_sha1": "469ab976c1006647897fdbd02577a25071cc7e62"
+    },
+    "historical/public1.3/web/backup.js": {
+      "source_commit": "d12fb82566ce8d3ebb4eded77506f4f01e303450",
+      "source_path": "website/web/backup.js",
+      "bytes": 17587,
+      "sha256": "05c75385d0ad5b5fd1f2c30990aac035288522c1557c7aadf41b7ae90659b6b0",
+      "git_blob_sha1": "1f7440b876cb71731e588a8797453490955b3ce6"
+    }
+  }
+}

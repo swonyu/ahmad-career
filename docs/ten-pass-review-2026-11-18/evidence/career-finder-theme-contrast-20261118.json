@@ -1,0 +1,168 @@
+{
+  "created_at": "2026-11-18T12:16:26.632455+00:00",
+  "status": "current_user_requested_icon_aligned_direction",
+  "reference": {
+    "file": "public/phone-icon.png",
+    "sha256": "4384067920aa48682d7ee0d1e2d4663f5d917b40bbedc0cfa5e084227c346215",
+    "observed_colors": [
+      "#13152B",
+      "#F3F0E9",
+      "periwinkle ribbon"
+    ]
+  },
+  "candidate_file": "app/globals.css",
+  "candidate_sha256": "6e21fa544251301c2ea47359b53c67872edd92b1918cb120f360ef285ce1e807",
+  "colors": {
+    "bg": "#101322",
+    "surface": "#191e33",
+    "surface-raised": "#242b45",
+    "ink": "#f3f0e9",
+    "muted": "#bbc3dd",
+    "accent": "#a5acff",
+    "accent-hover": "#bcc1ff",
+    "accent-ink": "#151936",
+    "soft": "#2a3153",
+    "line": "#3b4563",
+    "field-border": "#8995b8",
+    "danger": "#ffb5c2",
+    "danger-bg": "#3b2231",
+    "danger-ink": "#341522"
+  },
+  "pairs": [
+    {
+      "foreground": "ink",
+      "background": "bg",
+      "ratio": 16.21,
+      "minimum": 4.5,
+      "passed": true
+    },
+    {
+      "foreground": "ink",
+      "background": "surface",
+      "ratio": 14.474,
+      "minimum": 4.5,
+      "passed": true
+    },
+    {
+      "foreground": "ink",
+      "background": "surface-raised",
+      "ratio": 12.248,
+      "minimum": 4.5,
+      "passed": true
+    },
+    {
+      "foreground": "ink",
+      "background": "soft",
+      "ratio": 11.098,
+      "minimum": 4.5,
+      "passed": true
+    },
+    {
+      "foreground": "muted",
+      "background": "bg",
+      "ratio": 10.51,
+      "minimum": 4.5,
+      "passed": true
+    },
+    {
+      "foreground": "muted",
+      "background": "surface",
+      "ratio": 9.384,
+      "minimum": 4.5,
+      "passed": true
+    },
+    {
+      "foreground": "muted",
+      "background": "surface-raised",
+      "ratio": 7.941,
+      "minimum": 4.5,
+      "passed": true
+    },
+    {
+      "foreground": "muted",
+      "background": "soft",
+      "ratio": 7.195,
+      "minimum": 4.5,
+      "passed": true
+    },
+    {
+      "foreground": "accent",
+      "background": "bg",
+      "ratio": 8.737,
+      "minimum": 4.5,
+      "passed": true
+    },
+    {
+      "foreground": "accent",
+      "background": "surface",
+      "ratio": 7.801,
+      "minimum": 4.5,
+      "passed": true
+    },
+    {
+      "foreground": "accent",
+      "background": "surface-raised",
+      "ratio": 6.601,
+      "minimum": 4.5,
+      "passed": true
+    },
+    {
+      "foreground": "accent",
+      "background": "soft",
+      "ratio": 5.981,
+      "minimum": 4.5,
+      "passed": true
+    },
+    {
+      "foreground": "accent-ink",
+      "background": "accent",
+      "ratio": 8.124,
+      "minimum": 4.5,
+      "passed": true
+    },
+    {
+      "foreground": "accent-ink",
+      "background": "accent-hover",
+      "ratio": 9.974,
+      "minimum": 4.5,
+      "passed": true
+    },
+    {
+      "foreground": "danger",
+      "background": "danger-bg",
+      "ratio": 8.663,
+      "minimum": 4.5,
+      "passed": true
+    },
+    {
+      "foreground": "danger-ink",
+      "background": "danger",
+      "ratio": 9.903,
+      "minimum": 4.5,
+      "passed": true
+    },
+    {
+      "foreground": "field-border",
+      "background": "surface",
+      "ratio": 5.534,
+      "minimum": 3,
+      "passed": true
+    },
+    {
+      "foreground": "field-border",
+      "background": "bg",
+      "ratio": 6.198,
+      "minimum": 3,
+      "passed": true
+    },
+    {
+      "foreground": "field-border",
+      "background": "surface-raised",
+      "ratio": 4.683,
+      "minimum": 3,
+      "passed": true
+    }
+  ],
+  "all_pairs_pass": true,
+  "scope": "Opaque solid role-pair relative-luminance measurements only; rendered and native acceptance are separate."
+}

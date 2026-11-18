@@ -1,0 +1,953 @@
+{
+  "recordedAt": "2026-11-18T11:20:06.546583+00:00",
+  "product": "Career Finder",
+  "copyParentCommit": "49f08537086e33ff578c65815676efe55f4e0d15",
+  "runtimeCandidateBase": "2854daa8db9e9aa59b80df4a215f0909f376bce2",
+  "scope": "English and Arabic presentation copy, matching native resource generation, existing heading-semantics and exact-label test selectors, and current store copy/artwork.",
+  "nativePairs": [
+    {
+      "previousEnglish": "Find work that fits your life.",
+      "revisedEnglish": "Search and save jobs",
+      "previousArabic": "اعثر على عمل يناسب حياتك.",
+      "revisedArabic": "ابحث عن وظائف واحفظها"
+    },
+    {
+      "previousEnglish": "Explore employer boards, keep the roles you like and prepare your applications.",
+      "revisedEnglish": "Search selected employer boards, save jobs and prepare applications.",
+      "previousArabic": "استكشف صفحات وظائف جهات العمل، واحتفظ بالأدوار التي تعجبك، وأعدّ طلباتك.",
+      "revisedArabic": "ابحث في صفحات جهات العمل المختارة، واحفظ الوظائف، وجهّز طلباتك."
+    },
+    {
+      "previousEnglish": "Make your next step easier",
+      "revisedEnglish": "Prepare your profile",
+      "previousArabic": "اجعل خطوتك التالية أسهل",
+      "revisedArabic": "جهّز ملفك الشخصي"
+    },
+    {
+      "previousEnglish": "Make the next step easier.",
+      "revisedEnglish": "Prepare your profile",
+      "previousArabic": "اجعل الخطوة التالية أسهل.",
+      "revisedArabic": "جهّز ملفك الشخصي"
+    },
+    {
+      "previousEnglish": "Find your next opportunity.",
+      "revisedEnglish": "Search jobs",
+      "previousArabic": "اعثر على فرصتك التالية.",
+      "revisedArabic": "البحث عن وظائف"
+    },
+    {
+      "previousEnglish": "Find your next role.",
+      "revisedEnglish": "Search jobs",
+      "previousArabic": "اعثر على وظيفتك التالية.",
+      "revisedArabic": "البحث عن وظائف"
+    },
+    {
+      "previousEnglish": "Keep your next move close.",
+      "revisedEnglish": "Saved jobs",
+      "previousArabic": "أبقِ خطوتك التالية قريبة.",
+      "revisedArabic": "الوظائف المحفوظة"
+    },
+    {
+      "previousEnglish": "Your shortlist.",
+      "revisedEnglish": "Saved jobs",
+      "previousArabic": "قائمتك المختصرة.",
+      "revisedArabic": "الوظائف المحفوظة"
+    },
+    {
+      "previousEnglish": "Make a shortlist of your own.",
+      "revisedEnglish": "No saved jobs yet",
+      "previousArabic": "أنشئ قائمتك المختصرة الخاصة.",
+      "revisedArabic": "لا توجد وظائف محفوظة بعد"
+    },
+    {
+      "previousEnglish": "YOUR NEXT MOVE",
+      "revisedEnglish": "PREPARATION",
+      "previousArabic": "خطوتك المقبلة",
+      "revisedArabic": "الاستعداد للتقديم"
+    },
+    {
+      "previousEnglish": "Make every application count.",
+      "revisedEnglish": "Application checklist",
+      "previousArabic": "امنح كل طلب توظيف ما يستحقه.",
+      "revisedArabic": "قائمة الاستعداد للتقديم"
+    },
+    {
+      "previousEnglish": "Build your evidence, then focus on a small number of well-matched roles.",
+      "revisedEnglish": "Review your preparation steps and record what you have completed.",
+      "previousArabic": "اجمع ما يثبت خبراتك ومؤهلاتك، ثم ركّز على عدد قليل من الوظائف الملائمة لك.",
+      "revisedArabic": "راجع خطوات الاستعداد للتقديم وسجّل ما أنجزته."
+    },
+    {
+      "previousEnglish": "Start with what is true.",
+      "revisedEnglish": "Profile",
+      "previousArabic": "ابدأ بمعلومات صادقة.",
+      "revisedArabic": "الملف الشخصي"
+    },
+    {
+      "previousEnglish": "Your profile.",
+      "revisedEnglish": "Profile",
+      "previousArabic": "ملفك الشخصي.",
+      "revisedArabic": "الملف الشخصي"
+    },
+    {
+      "previousEnglish": "Your experience gives every application its foundation.",
+      "revisedEnglish": "Add your experience and job preferences.",
+      "previousArabic": "خبراتك هي أساس كل طلب توظيف.",
+      "revisedArabic": "أضف خبرتك وتفضيلاتك الوظيفية."
+    },
+    {
+      "previousEnglish": "Compare an offer in your own terms.",
+      "revisedEnglish": "Compare a job offer",
+      "previousArabic": "قارن العرض وفق معاييرك.",
+      "revisedArabic": "قارن عرض عمل"
+    },
+    {
+      "previousEnglish": "Your next step, ready.",
+      "revisedEnglish": "Applications",
+      "previousArabic": "خطوتك التالية جاهزة.",
+      "revisedArabic": "طلبات التوظيف"
+    },
+    {
+      "previousEnglish": "Your next move starts here.",
+      "revisedEnglish": "No saved jobs yet",
+      "previousArabic": "خطوتك التالية تبدأ هنا.",
+      "revisedArabic": "لا توجد وظائف محفوظة بعد"
+    },
+    {
+      "previousEnglish": "Save a job link from any industry or country. You decide which opportunities belong in your next chapter.",
+      "revisedEnglish": "Save a job link from any industry or country to review it later.",
+      "previousArabic": "احفظ رابط وظيفة من أي قطاع أو بلد. أنت تختار الفرص التي تناسب خطوتك المقبلة.",
+      "revisedArabic": "احفظ رابط وظيفة من أي قطاع أو بلد للرجوع إليه لاحقًا."
+    },
+    {
+      "previousEnglish": "Receipts will live here.",
+      "revisedEnglish": "No receipts yet",
+      "previousArabic": "ستظهر إيصالاتك هنا.",
+      "revisedArabic": "لا توجد إيصالات بعد"
+    },
+    {
+      "previousEnglish": "Make this workspace feel like yours.",
+      "revisedEnglish": "Choose your language and appearance, and manage saved data.",
+      "previousArabic": "اجعل مساحة العمل ملائمة لك.",
+      "revisedArabic": "اختر اللغة والمظهر، وأدر البيانات المحفوظة."
+    },
+    {
+      "previousEnglish": "Bring your work with you.",
+      "revisedEnglish": "Copy your phone draft",
+      "previousArabic": "اصطحب عملك معك.",
+      "revisedArabic": "نسخ مسودة الهاتف"
+    },
+    {
+      "previousEnglish": "Every application, accounted for.",
+      "revisedEnglish": "Application records",
+      "previousArabic": "كل طلب، ونتيجته واضحة.",
+      "revisedArabic": "سجلات طلبات التوظيف"
+    },
+    {
+      "previousEnglish": "Keep the possibilities close.",
+      "revisedEnglish": "Save a job link",
+      "previousArabic": "أبقِ الفرص قريبة منك.",
+      "revisedArabic": "حفظ رابط وظيفة"
+    },
+    {
+      "previousEnglish": "Connect when you’re ready.",
+      "revisedEnglish": "No connected workspace",
+      "previousArabic": "اتصل عندما تكون مستعدًا.",
+      "revisedArabic": "لا توجد مساحة عمل مرتبطة"
+    },
+    {
+      "previousEnglish": "Start with one good opportunity.",
+      "revisedEnglish": "No saved jobs yet",
+      "previousArabic": "ابدأ بفرصة جيدة واحدة.",
+      "revisedArabic": "لا توجد وظائف محفوظة بعد"
+    },
+    {
+      "previousEnglish": "Your first receipt belongs here.",
+      "revisedEnglish": "No receipts yet",
+      "previousArabic": "مكان إيصال إرسالك الأول هنا.",
+      "revisedArabic": "لا توجد إيصالات بعد"
+    },
+    {
+      "previousEnglish": "A fresh search starts with you.",
+      "revisedEnglish": "Start a job search",
+      "previousArabic": "أنت تبدأ كل بحث جديد.",
+      "revisedArabic": "ابدأ البحث عن وظائف"
+    },
+    {
+      "previousEnglish": "A workspace for every career",
+      "revisedEnglish": "Job links and applications",
+      "previousArabic": "مساحة عمل لكل مسار مهني",
+      "revisedArabic": "روابط الوظائف وطلبات التوظيف"
+    },
+    {
+      "previousEnglish": "Make it yours",
+      "revisedEnglish": "Add your profile",
+      "previousArabic": "اجعله يعكس خبرتك",
+      "revisedArabic": "أضف ملفك الشخصي"
+    },
+    {
+      "previousEnglish": "Your details. Your choice. A receipt for every confirmed submission.",
+      "revisedEnglish": "Confirmed submissions include a provider receipt.",
+      "previousArabic": "تفاصيلك وقرارك. إيصال لكل إرسال مؤكد.",
+      "revisedArabic": "تتضمن طلبات التقديم المؤكدة إيصالًا من مزوّد الخدمة."
+    },
+    {
+      "previousEnglish": "Save opportunities from any country or profession and prepare your next application. Open employer links to apply manually.",
+      "revisedEnglish": "Save job links from any country or profession and prepare applications. Open employer links to apply manually.",
+      "previousArabic": "احفظ فرصًا من أي بلد أو مهنة وجهّز طلبك التالي. افتح روابط جهات العمل للتقديم يدويًا.",
+      "revisedArabic": "احفظ روابط وظائف من أي بلد أو مجال، وجهّز طلبات التوظيف. افتح روابط جهات العمل للتقديم يدويًا."
+    },
+    {
+      "previousEnglish": "Save opportunities, prepare your profile and review your next step. Employer links let you apply manually.",
+      "revisedEnglish": "Save jobs, prepare your profile and review application details. Open employer links to apply manually.",
+      "previousArabic": "احفظ الفرص، وجهّز ملفك الشخصي، وراجع خطوتك المقبلة. تتيح لك روابط جهات العمل التقديم يدويًا.",
+      "revisedArabic": "احفظ الوظائف وجهّز ملفك الشخصي وراجع بيانات التقديم. افتح روابط جهات العمل للتقديم يدويًا."
+    }
+  ],
+  "hostedPairs": [
+    {
+      "previousEnglish": "Find work that fits.",
+      "revisedEnglish": "Search jobs",
+      "previousArabic": "اعثر على عمل يناسبك.",
+      "revisedArabic": "البحث عن وظائف"
+    },
+    {
+      "previousEnglish": "Your next moves.",
+      "revisedEnglish": "Saved jobs",
+      "previousArabic": "خطواتك المقبلة.",
+      "revisedArabic": "الوظائف المحفوظة"
+    },
+    {
+      "previousEnglish": "Ready for your next step.",
+      "revisedEnglish": "Applications",
+      "previousArabic": "جاهز لخطوتك المقبلة.",
+      "revisedArabic": "طلبات التوظيف"
+    },
+    {
+      "previousEnglish": "Your experience, together.",
+      "revisedEnglish": "Profile",
+      "previousArabic": "خبراتك في مكان واحد.",
+      "revisedArabic": "الملف الشخصي"
+    },
+    {
+      "previousEnglish": "Make it your space.",
+      "revisedEnglish": "Settings",
+      "previousArabic": "اجعلها مساحتك الخاصة.",
+      "revisedArabic": "الإعدادات"
+    },
+    {
+      "previousEnglish": "Discover openings. Keep the good ones. Move forward on your terms.",
+      "revisedEnglish": "Search selected employer boards and save jobs to review later.",
+      "previousArabic": "اكتشف الفرص، واحتفظ بما يناسبك، وتقدّم وفق اختيارك.",
+      "revisedArabic": "ابحث في صفحات جهات العمل المختارة واحفظ الوظائف للرجوع إليها لاحقًا."
+    },
+    {
+      "previousEnglish": "A clear shortlist, private notes, and a plan for what comes next.",
+      "revisedEnglish": "View saved jobs, application records and follow-up dates.",
+      "previousArabic": "قائمة مختصرة واضحة، وملاحظات خاصة، وخطة لخطوتك التالية.",
+      "revisedArabic": "اعرض الوظائف المحفوظة وسجلات التقديم ومواعيد المتابعة."
+    },
+    {
+      "previousEnglish": "Your essentials and career preferences, ready when you are.",
+      "revisedEnglish": "Edit your contact details, CV and job preferences.",
+      "previousArabic": "بياناتك الأساسية وتفضيلاتك المهنية، جاهزة عندما تكون مستعدًا.",
+      "revisedArabic": "عدّل بيانات التواصل والسيرة الذاتية وتفضيلات الوظائف."
+    },
+    {
+      "previousEnglish": "Choose your look, manage your connections, and stay in control of your data.",
+      "revisedEnglish": "Manage appearance, language, account connections and saved data.",
+      "previousArabic": "اختر المظهر، وأدر وسائل الربط، وتحكّم في بياناتك.",
+      "revisedArabic": "غيّر المظهر واللغة، وأدر الحسابات المرتبطة والبيانات المحفوظة."
+    },
+    {
+      "previousEnglish": "THE NEXT CHAPTER IS YOURS",
+      "revisedEnglish": "JOB SEARCH",
+      "previousArabic": "الفصل القادم من حياتك لك",
+      "revisedArabic": "البحث عن وظائف"
+    },
+    {
+      "previousEnglish": "Your career workspace",
+      "revisedEnglish": "Job search and applications",
+      "previousArabic": "مساحة عملك المهنية",
+      "revisedArabic": "البحث عن وظائف والتقديم عليها"
+    },
+    {
+      "previousEnglish": "A place for every next move.",
+      "revisedEnglish": "Saved jobs and profile",
+      "previousArabic": "مساحة لكل خطوة قادمة.",
+      "revisedArabic": "الوظائف المحفوظة والملف الشخصي"
+    },
+    {
+      "previousEnglish": "Save the openings you like. Keep notes and follow-ups together. Bring your best details when it’s time to apply.",
+      "revisedEnglish": "Save jobs, add notes and follow-up dates, and prepare your profile.",
+      "previousArabic": "احفظ الفرص التي تعجبك. واجمع الملاحظات والمتابعات في مكان واحد. وقدّم أفضل ما لديك عندما يحين وقت التقديم.",
+      "revisedArabic": "احفظ الوظائف وأضف ملاحظات ومواعيد للمتابعة، وجهّز ملفك الشخصي."
+    },
+    {
+      "previousEnglish": "Make time for your next small step",
+      "revisedEnglish": "Review follow-up dates",
+      "previousArabic": "خصّص وقتًا لخطوتك الصغيرة المقبلة",
+      "revisedArabic": "راجع مواعيد المتابعة"
+    },
+    {
+      "previousEnglish": "Every application starts with you.",
+      "revisedEnglish": "Review before applying",
+      "previousArabic": "كل طلب توظيف يبدأ بك.",
+      "revisedArabic": "راجع بياناتك قبل التقديم"
+    },
+    {
+      "previousEnglish": "Here when you need it",
+      "revisedEnglish": "Help and support",
+      "previousArabic": "متاح عندما تحتاج إليه",
+      "revisedArabic": "المساعدة والدعم"
+    },
+    {
+      "previousEnglish": "Clear answers and practical next steps.",
+      "revisedEnglish": "Read setup instructions, recovery steps and privacy information.",
+      "previousArabic": "إجابات واضحة وخطوات تالية عملية.",
+      "revisedArabic": "اطّلع على إرشادات الإعداد واستعادة البيانات ومعلومات الخصوصية."
+    },
+    {
+      "previousEnglish": "Make this space feel like yours.",
+      "revisedEnglish": "Choose light, dark or your device’s appearance.",
+      "previousArabic": "اجعل هذه المساحة تعبّر عنك.",
+      "revisedArabic": "اختر المظهر الفاتح أو الداكن أو مظهر الجهاز."
+    },
+    {
+      "previousEnglish": "Choose the language that feels natural to you.",
+      "revisedEnglish": "Choose English, Arabic or your device language.",
+      "previousArabic": "اختر اللغة التي ترتاح إليها.",
+      "revisedArabic": "اختر الإنجليزية أو العربية أو لغة الجهاز."
+    },
+    {
+      "previousEnglish": "A clear next step.",
+      "revisedEnglish": "No follow-ups scheduled",
+      "previousArabic": "خطوتك التالية واضحة.",
+      "revisedArabic": "لا توجد مواعيد متابعة"
+    },
+    {
+      "previousEnglish": "Make room for possibility.",
+      "revisedEnglish": "No saved jobs yet",
+      "previousArabic": "افسح المجال لفرص جديدة.",
+      "revisedArabic": "لا توجد وظائف محفوظة بعد"
+    },
+    {
+      "previousEnglish": "Your applications will go here.",
+      "revisedEnglish": "No applications recorded",
+      "previousArabic": "ستظهر طلباتك هنا.",
+      "revisedArabic": "لم تُسجَّل أي طلبات توظيف"
+    },
+    {
+      "previousEnglish": "Your workspace. Your choices.",
+      "revisedEnglish": "Your account",
+      "previousArabic": "مساحة عملك. خياراتك.",
+      "revisedArabic": "حسابك"
+    },
+    {
+      "previousEnglish": "Manage your connected phones, download your records, and choose what stays online.",
+      "revisedEnglish": "Manage connected phones, download records and delete cloud data.",
+      "previousArabic": "أدِر الهواتف المتصلة بحسابك، ونزّل سجلاتك، واختر ما تحتفظ به عبر الإنترنت.",
+      "revisedArabic": "أدر الهواتف المرتبطة ونزّل السجلات واحذف البيانات المحفوظة عبر الإنترنت."
+    },
+    {
+      "previousEnglish": "Leave on your terms.",
+      "revisedEnglish": "Delete cloud workspace",
+      "previousArabic": "غادر بالطريقة التي تختارها.",
+      "revisedArabic": "حذف مساحة العمل عبر الإنترنت"
+    },
+    {
+      "previousEnglish": "A copy for you",
+      "revisedEnglish": "Download your records",
+      "previousArabic": "نسخة لك",
+      "revisedArabic": "تنزيل سجلاتك"
+    },
+    {
+      "previousEnglish": " CONNECTED, ON YOUR TERMS",
+      "revisedEnglish": "PHONE CONNECTION",
+      "previousArabic": "الربط وفق اختيارك",
+      "revisedArabic": "ربط الهاتف"
+    },
+    {
+      "previousEnglish": "One workspace.",
+      "revisedEnglish": "Connect your phone",
+      "previousArabic": "مساحة عمل واحدة.",
+      "revisedArabic": "اربط هاتفك"
+    },
+    {
+      "previousEnglish": "Every next step.",
+      "revisedEnglish": "to your account",
+      "previousArabic": "كل خطوة قادمة.",
+      "revisedArabic": "بحسابك"
+    },
+    {
+      "previousEnglish": "A SIMPLE START",
+      "revisedEnglish": "CONNECTION STEPS",
+      "previousArabic": "بداية بسيطة",
+      "revisedArabic": "خطوات الربط"
+    },
+    {
+      "previousEnglish": "Your work, wherever",
+      "revisedEnglish": "Set up",
+      "previousArabic": "عملك، أينما",
+      "revisedArabic": "إعداد"
+    },
+    {
+      "previousEnglish": "you pick it up.",
+      "revisedEnglish": "the phone connection",
+      "previousArabic": "تابعته.",
+      "revisedArabic": "ربط الهاتف"
+    },
+    {
+      "previousEnglish": "Sign in securely",
+      "revisedEnglish": "Sign in",
+      "previousArabic": "تسجيل الدخول بأمان",
+      "revisedArabic": "تسجيل الدخول"
+    },
+    {
+      "previousEnglish": "Private by default",
+      "revisedEnglish": "Private workspace",
+      "previousArabic": "خاص افتراضيًا",
+      "revisedArabic": "مساحة عمل خاصة"
+    },
+    {
+      "previousEnglish": "Keep control",
+      "revisedEnglish": "Manage your data",
+      "previousArabic": "ابقَ متحكمًا",
+      "revisedArabic": "إدارة بياناتك"
+    },
+    {
+      "previousEnglish": "Made for your next step.",
+      "revisedEnglish": "Career Finder",
+      "previousArabic": "مصمّم لخطوتك المقبلة.",
+      "revisedArabic": "Career Finder"
+    },
+    {
+      "previousEnglish": "Find your",
+      "revisedEnglish": "Help and",
+      "previousArabic": "اعثر على",
+      "revisedArabic": "المساعدة"
+    },
+    {
+      "previousEnglish": "next step.",
+      "revisedEnglish": "support",
+      "previousArabic": "خطوتك المقبلة.",
+      "revisedArabic": "والدعم"
+    },
+    {
+      "previousEnglish": "Privacy with",
+      "revisedEnglish": "Privacy",
+      "previousArabic": "خصوصية تمنحك",
+      "revisedArabic": "الخصوصية"
+    },
+    {
+      "previousEnglish": "clear choices.",
+      "revisedEnglish": "and your data",
+      "previousArabic": "خيارات واضحة.",
+      "revisedArabic": "وبياناتك"
+    },
+    {
+      "previousEnglish": "YOUR DATA, EXPLAINED",
+      "revisedEnglish": "PRIVACY NOTICE",
+      "previousArabic": "بياناتك بوضوح",
+      "revisedArabic": "إشعار الخصوصية"
+    },
+    {
+      "previousEnglish": "Find jobs, build your shortlist and keep track of your next step on iPhone and Android.",
+      "revisedEnglish": "Search selected employer boards, save jobs and prepare applications on iPhone and Android.",
+      "previousArabic": "اعثر على وظائف، وأنشئ قائمتك المختصرة، وتابع خطوتك التالية على iPhone وAndroid.",
+      "revisedArabic": "ابحث في صفحات جهات العمل المختارة، واحفظ الوظائف، وجهّز طلبات التوظيف على iPhone وAndroid."
+    },
+    {
+      "previousEnglish": "Find jobs, keep a shortlist, and manage your next career step on iPhone and Android.",
+      "revisedEnglish": "Search selected employer boards, save jobs and prepare applications on iPhone and Android.",
+      "previousArabic": "اعثر على وظائف، واحتفظ بقائمة مختصرة، وأدر خطوتك المهنية التالية على iPhone وAndroid.",
+      "revisedArabic": "ابحث في صفحات جهات العمل المختارة، واحفظ الوظائف، وجهّز طلبات التوظيف على iPhone وAndroid."
+    },
+    {
+      "previousEnglish": "A FEW PLACES TO BEGIN",
+      "revisedEnglish": "EXAMPLE SEARCHES",
+      "previousArabic": "أماكن يمكنك البدء منها",
+      "revisedArabic": "أمثلة للبحث"
+    },
+    {
+      "previousEnglish": "Start with what interests you.",
+      "revisedEnglish": "Search by job field",
+      "previousArabic": "ابدأ بما يهمك.",
+      "revisedArabic": "البحث حسب المجال"
+    },
+    {
+      "previousEnglish": "Choose a direction, or search for something entirely your own.",
+      "revisedEnglish": "Choose an example below or enter a job title above.",
+      "previousArabic": "اختر مجالًا، أو ابحث عما يناسبك أنت.",
+      "revisedArabic": "اختر أحد الأمثلة أدناه، أو اكتب المسمى الوظيفي في الأعلى."
+    }
+  ],
+  "storeEnglishPairs": [
+    {
+      "before": "Find jobs. Plan your next move",
+      "after": "Search jobs. Save and prepare"
+    },
+    {
+      "before": "Search selected employer boards, save opportunities and prepare your next application. Start without an account and connect a workspace when you are ready.",
+      "after": "Search selected employer boards, save jobs and prepare applications. Search without an account, and sign in to save your profile online."
+    },
+    {
+      "before": "Career Finder helps you discover opportunities, save a shortlist and prepare your next application around your own profile.",
+      "after": "Search jobs on selected employer boards, save job links and prepare applications with Career Finder."
+    },
+    {
+      "before": "Career Finder brings job discovery, your shortlist and application preparation together on your phone.",
+      "after": "Search jobs on selected employer boards, save job links and prepare applications with Career Finder."
+    },
+    {
+      "before": "Explore selected employer boards",
+      "after": "Search selected employer boards"
+    },
+    {
+      "before": "remote-work evidence",
+      "after": "remote-work information"
+    },
+    {
+      "before": "Build your own workspace",
+      "after": "Save jobs and prepare your profile"
+    },
+    {
+      "before": "Connect when you choose",
+      "after": "Connect a phone"
+    },
+    {
+      "before": "Understand your records",
+      "after": "Application records"
+    },
+    {
+      "before": "Keep your next steps organized",
+      "after": "Saved jobs and application records"
+    },
+    {
+      "before": "Prepare your own profile",
+      "after": "Application profile"
+    },
+    {
+      "before": "Keep outcomes clear",
+      "after": "Application outcomes"
+    }
+  ],
+  "storeArabicPairs": [
+    {
+      "before": "يساعدك Career Finder على اكتشاف فرص العمل، وحفظ قائمة مختصرة، والاستعداد لطلبك التالي باستخدام بياناتك أنت.",
+      "after": "ابحث عن وظائف في صفحات جهات عمل مختارة، واحفظ روابط الوظائف، وجهّز طلبات التوظيف باستخدام Career Finder."
+    },
+    {
+      "before": "استكشف مواقع توظيف مختارة",
+      "after": "ابحث في صفحات جهات العمل"
+    },
+    {
+      "before": "دلائل العمل عن بُعد",
+      "after": "معلومات العمل عن بُعد"
+    },
+    {
+      "before": "أنشئ مساحة تناسبك",
+      "after": "احفظ الوظائف وجهّز ملفك الشخصي"
+    },
+    {
+      "before": "اتصل عندما تختار",
+      "after": "اربط هاتفك بالحساب"
+    },
+    {
+      "before": "لمسودات الهاتف والسجلات المستضافة أدوات تحكم منفصلة.",
+      "after": "يمكنك إدارة مسودات الهاتف والبيانات المحفوظة عبر الإنترنت كلًّا على حدة."
+    },
+    {
+      "before": "افهم سجلاتك",
+      "after": "سجلات طلبات التوظيف"
+    }
+  ],
+  "unchangedContracts": [
+    "Native and hosted navigation IDs and tab sets",
+    "Privacy, consent and provider-availability explanations",
+    "Backend/protocol values and actual employer/job data",
+    "Controls, CSS, visual layout and historical screenshot/review evidence"
+  ],
+  "selectorChanges": {
+    "apple/UITests/CareerFinderUITests.swift": [
+      "Saved empty-state text only"
+    ],
+    "android/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt": [
+      "Search heading, saved empty state, disconnected heading and receipt empty state use revised labels.",
+      "Search jobs lookup combines its exact text with the existing Heading semantic to distinguish the title from the search action; scroll and displayed assertions are retained.",
+      "All existing action and assertion counts are unchanged; no arbitrary first-match fallback."
+    ]
+  },
+  "localizationChecks": [
+    {
+      "command": "python3 '/Users/saleh/Developer/career-finder-managed-preview-20261118-ebb3eed5/scripts/generate-native-localization.py' --check",
+      "exitCode": 0,
+      "stdout": "{\n  \"ok\": true,\n  \"mode\": \"check\",\n  \"strings_per_language\": 1803,\n  \"bounded_templates\": 149,\n  \"files\": [\n    \"apple/AhmadCareer/en.lproj/Localizable.strings\",\n    \"android/app/src/main/res/values/career_copy.xml\",\n    \"apple/AhmadCareer/ar.lproj/Localizable.strings\",\n    \"android/app/src/main/res/values-ar/career_copy.xml\",\n    \"apple/AhmadCareer/NativeCopyTemplates.json\",\n    \"android/app/src/main/res/raw/native_copy_templates.json\",\n    \"android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt\"\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": "python3 '/Users/saleh/Developer/career-finder-managed-preview-20261118-ebb3eed5/scripts/test-native-localization.py'",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "........\n----------------------------------------------------------------------\nRan 8 tests in 0.019s\n\nOK\n"
+    },
+    {
+      "command": "plutil -lint '/Users/saleh/Developer/career-finder-managed-preview-20261118-ebb3eed5/apple/AhmadCareer/en.lproj/Localizable.strings' '/Users/saleh/Developer/career-finder-managed-preview-20261118-ebb3eed5/apple/AhmadCareer/ar.lproj/Localizable.strings'",
+      "exitCode": 0,
+      "stdout": "/Users/saleh/Developer/career-finder-managed-preview-20261118-ebb3eed5/apple/AhmadCareer/en.lproj/Localizable.strings: OK\n/Users/saleh/Developer/career-finder-managed-preview-20261118-ebb3eed5/apple/AhmadCareer/ar.lproj/Localizable.strings: OK\n",
+      "stderr": ""
+    },
+    {
+      "command": "python3 - <<'PY_SCOPE'\nfrom pathlib import Path\nimport subprocess,json,re,struct\np=Path('/Users/saleh/Developer/career-finder-managed-preview-20261118-ebb3eed5')\nmaps=json.loads(r'''{\"native\":[[\"Find work that fits your life.\",\"Search and save jobs\",\"ابحث عن وظائف واحفظها\"],[\"Explore employer boards, keep the roles you like and prepare your applications.\",\"Search selected employer boards, save jobs and prepare applications.\",\"ابحث في صفحات جهات العمل المختارة، واحفظ الوظائف، وجهّز طلباتك.\"],[\"Make your next step easier\",\"Prepare your profile\",\"جهّز ملفك الشخصي\"],[\"Make the next step easier.\",\"Prepare your profile\",\"جهّز ملفك الشخصي\"],[\"Find your next opportunity.\",\"Search jobs\",\"البحث عن وظائف\"],[\"Find your next role.\",\"Search jobs\",\"البحث عن وظائف\"],[\"Keep your next move close.\",\"Saved jobs\",\"الوظائف المحفوظة\"],[\"Your shortlist.\",\"Saved jobs\",\"الوظائف المحفوظة\"],[\"Make a shortlist of your own.\",\"No saved jobs yet\",\"لا توجد وظائف محفوظة بعد\"],[\"YOUR NEXT MOVE\",\"PREPARATION\",\"الاستعداد للتقديم\"],[\"Make every application count.\",\"Application checklist\",\"قائمة الاستعداد للتقديم\"],[\"Build your evidence, then focus on a small number of well-matched roles.\",\"Review your preparation steps and record what you have completed.\",\"راجع خطوات الاستعداد للتقديم وسجّل ما أنجزته.\"],[\"Start with what is true.\",\"Profile\",\"الملف الشخصي\"],[\"Your profile.\",\"Profile\",\"الملف الشخصي\"],[\"Your experience gives every application its foundation.\",\"Add your experience and job preferences.\",\"أضف خبرتك وتفضيلاتك الوظيفية.\"],[\"Compare an offer in your own terms.\",\"Compare a job offer\",\"قارن عرض عمل\"],[\"Your next step, ready.\",\"Applications\",\"طلبات التوظيف\"],[\"Your next move starts here.\",\"No saved jobs yet\",\"لا توجد وظائف محفوظة بعد\"],[\"Save a job link from any industry or country. You decide which opportunities belong in your next chapter.\",\"Save a job link from any industry or country to review it later.\",\"احفظ رابط وظيفة من أي قطاع أو بلد للرجوع إليه لاحقًا.\"],[\"Receipts will live here.\",\"No receipts yet\",\"لا توجد إيصالات بعد\"],[\"Make this workspace feel like yours.\",\"Choose your language and appearance, and manage saved data.\",\"اختر اللغة والمظهر، وأدر البيانات المحفوظة.\"],[\"Bring your work with you.\",\"Copy your phone draft\",\"نسخ مسودة الهاتف\"],[\"Every application, accounted for.\",\"Application records\",\"سجلات طلبات التوظيف\"],[\"Keep the possibilities close.\",\"Save a job link\",\"حفظ رابط وظيفة\"],[\"Connect when you’re ready.\",\"No connected workspace\",\"لا توجد مساحة عمل مرتبطة\"],[\"Start with one good opportunity.\",\"No saved jobs yet\",\"لا توجد وظائف محفوظة بعد\"],[\"Your first receipt belongs here.\",\"No receipts yet\",\"لا توجد إيصالات بعد\"],[\"A fresh search starts with you.\",\"Start a job search\",\"ابدأ البحث عن وظائف\"],[\"A workspace for every career\",\"Job links and applications\",\"روابط الوظائف وطلبات التوظيف\"],[\"Make it yours\",\"Add your profile\",\"أضف ملفك الشخصي\"],[\"Your details. Your choice. A receipt for every confirmed submission.\",\"Confirmed submissions include a provider receipt.\",\"تتضمن طلبات التقديم المؤكدة إيصالًا من مزوّد الخدمة.\"],[\"Save opportunities from any country or profession and prepare your next application. Open employer links to apply manually.\",\"Save job links from any country or profession and prepare applications. Open employer links to apply manually.\",\"احفظ روابط وظائف من أي بلد أو مجال، وجهّز طلبات التوظيف. افتح روابط جهات العمل للتقديم يدويًا.\"],[\"Save opportunities, prepare your profile and review your next step. Employer links let you apply manually.\",\"Save jobs, prepare your profile and review application details. Open employer links to apply manually.\",\"احفظ الوظائف وجهّز ملفك الشخصي وراجع بيانات التقديم. افتح روابط جهات العمل للتقديم يدويًا.\"]],\"hosted\":[[\"Find work that fits.\",\"Search jobs\",\"البحث عن وظائف\"],[\"Your next moves.\",\"Saved jobs\",\"الوظائف المحفوظة\"],[\"Ready for your next step.\",\"Applications\",\"طلبات التوظيف\"],[\"Your experience, together.\",\"Profile\",\"الملف الشخصي\"],[\"Make it your space.\",\"Settings\",\"الإعدادات\"],[\"Discover openings. Keep the good ones. Move forward on your terms.\",\"Search selected employer boards and save jobs to review later.\",\"ابحث في صفحات جهات العمل المختارة واحفظ الوظائف للرجوع إليها لاحقًا.\"],[\"A clear shortlist, private notes, and a plan for what comes next.\",\"View saved jobs, application records and follow-up dates.\",\"اعرض الوظائف المحفوظة وسجلات التقديم ومواعيد المتابعة.\"],[\"Your essentials and career preferences, ready when you are.\",\"Edit your contact details, CV and job preferences.\",\"عدّل بيانات التواصل والسيرة الذاتية وتفضيلات الوظائف.\"],[\"Choose your look, manage your connections, and stay in control of your data.\",\"Manage appearance, language, account connections and saved data.\",\"غيّر المظهر واللغة، وأدر الحسابات المرتبطة والبيانات المحفوظة.\"],[\"THE NEXT CHAPTER IS YOURS\",\"JOB SEARCH\",\"البحث عن وظائف\"],[\"Your career workspace\",\"Job search and applications\",\"البحث عن وظائف والتقديم عليها\"],[\"A place for every next move.\",\"Saved jobs and profile\",\"الوظائف المحفوظة والملف الشخصي\"],[\"Save the openings you like. Keep notes and follow-ups together. Bring your best details when it’s time to apply.\",\"Save jobs, add notes and follow-up dates, and prepare your profile.\",\"احفظ الوظائف وأضف ملاحظات ومواعيد للمتابعة، وجهّز ملفك الشخصي.\"],[\"Make time for your next small step\",\"Review follow-up dates\",\"راجع مواعيد المتابعة\"],[\"Every application starts with you.\",\"Review before applying\",\"راجع بياناتك قبل التقديم\"],[\"Here when you need it\",\"Help and support\",\"المساعدة والدعم\"],[\"Clear answers and practical next steps.\",\"Read setup instructions, recovery steps and privacy information.\",\"اطّلع على إرشادات الإعداد واستعادة البيانات ومعلومات الخصوصية.\"],[\"Make this space feel like yours.\",\"Choose light, dark or your device’s appearance.\",\"اختر المظهر الفاتح أو الداكن أو مظهر الجهاز.\"],[\"Choose the language that feels natural to you.\",\"Choose English, Arabic or your device language.\",\"اختر الإنجليزية أو العربية أو لغة الجهاز.\"],[\"A clear next step.\",\"No follow-ups scheduled\",\"لا توجد مواعيد متابعة\"],[\"Make room for possibility.\",\"No saved jobs yet\",\"لا توجد وظائف محفوظة بعد\"],[\"Your applications will go here.\",\"No applications recorded\",\"لم تُسجَّل أي طلبات توظيف\"],[\"Your workspace. Your choices.\",\"Your account\",\"حسابك\"],[\"Manage your connected phones, download your records, and choose what stays online.\",\"Manage connected phones, download records and delete cloud data.\",\"أدر الهواتف المرتبطة ونزّل السجلات واحذف البيانات المحفوظة عبر الإنترنت.\"],[\"Leave on your terms.\",\"Delete cloud workspace\",\"حذف مساحة العمل عبر الإنترنت\"],[\"A copy for you\",\"Download your records\",\"تنزيل سجلاتك\"],[\" CONNECTED, ON YOUR TERMS\",\"PHONE CONNECTION\",\"ربط الهاتف\"],[\"One workspace.\",\"Connect your phone\",\"اربط هاتفك\"],[\"Every next step.\",\"to your account\",\"بحسابك\"],[\"A SIMPLE START\",\"CONNECTION STEPS\",\"خطوات الربط\"],[\"Your work, wherever\",\"Set up\",\"إعداد\"],[\"you pick it up.\",\"the phone connection\",\"ربط الهاتف\"],[\"Sign in securely\",\"Sign in\",\"تسجيل الدخول\"],[\"Private by default\",\"Private workspace\",\"مساحة عمل خاصة\"],[\"Keep control\",\"Manage your data\",\"إدارة بياناتك\"],[\"Made for your next step.\",\"Career Finder\",\"Career Finder\"],[\"Find your\",\"Help and\",\"المساعدة\"],[\"next step.\",\"support\",\"والدعم\"],[\"Privacy with\",\"Privacy\",\"الخصوصية\"],[\"clear choices.\",\"and your data\",\"وبياناتك\"],[\"YOUR DATA, EXPLAINED\",\"PRIVACY NOTICE\",\"إشعار الخصوصية\"],[\"Find jobs, build your shortlist and keep track of your next step on iPhone and Android.\",\"Search selected employer boards, save jobs and prepare applications on iPhone and Android.\",\"ابحث في صفحات جهات العمل المختارة، واحفظ الوظائف، وجهّز طلبات التوظيف على iPhone وAndroid.\"],[\"Find jobs, keep a shortlist, and manage your next career step on iPhone and Android.\",\"Search selected employer boards, save jobs and prepare applications on iPhone and Android.\",\"ابحث في صفحات جهات العمل المختارة، واحفظ الوظائف، وجهّز طلبات التوظيف على iPhone وAndroid.\"]]}''')\nchanged=subprocess.check_output(['git','-C',str(p),'diff','--name-only'],text=True).splitlines()\nchecked=[]\nfor rel in changed:\n if not (rel.startswith('apple/') or rel.startswith('android/') or rel.startswith('hosted/app/')):continue\n if Path(rel).suffix not in ['.swift','.kt','.ts','.tsx'] or rel.endswith('NativeStringIds.kt'):continue\n old=subprocess.check_output(['git','-C',str(p),'show','HEAD:'+rel],text=True);expected=old\n group='hosted' if rel.startswith('hosted/') else 'native'\n for before,after,_ in maps[group]:expected=expected.replace(json.dumps(before,ensure_ascii=False),json.dumps(after,ensure_ascii=False))\n expected=expected.replace('l10n(dynamicTypeSize.isAccessibilitySize ? \"Applications\" : \"Applications\")','l10n(\"Applications\")')\n if rel.endswith('PhoneAcceptanceTest.kt'):\n  expected=expected.replace('import androidx.compose.ui.test.assertIsDisplayed','import androidx.compose.ui.semantics.SemanticsProperties\\nimport androidx.compose.ui.test.SemanticsMatcher\\nimport androidx.compose.ui.test.assertIsDisplayed')\n  expected=expected.replace('        compose.onNodeWithTag(\"discovery-list\").performScrollToNode(hasText(strings(\"Search jobs\")))\\n        compose.onNodeWithText(strings(\"Search jobs\")).assertIsDisplayed()','        val searchHeading = hasText(strings(\"Search jobs\")) and SemanticsMatcher.keyIsDefined(SemanticsProperties.Heading)\\n        compose.onNodeWithTag(\"discovery-list\").performScrollToNode(searchHeading)\\n        compose.onNode(searchHeading).assertIsDisplayed()')\n actual=(p/rel).read_text()\n assert actual==expected,'Unexpected non-copy change: '+rel\n if '/UITests/' in rel or '/androidTest/' in rel:\n  for action in ['assertIsDisplayed','performClick','performScrollToNode','XCTAssertTrue','waitForExistence']:\n   assert old.count(action)==actual.count(action),(rel,action)\n checked.append(rel)\ncatalog=json.loads((p/'hosted/app/i18n/messages.ar.json').read_text())\nfor _,key,translation in maps['hosted']:\n assert catalog.get(key.strip())==translation,(key,translation,catalog.get(key.strip()))\nfor key,value in catalog.items():\n assert isinstance(value,str) and value.strip(),key\n assert sorted(re.findall(r'\\{\\d+\\}',key))==sorted(re.findall(r'\\{\\d+\\}',value)),key\n# Source parser fixture contracts remain unchanged.\nfor rel in ['apple/AhmadCareer/NativeCopyTemplates.json','android/app/src/main/res/raw/native_copy_templates.json']:\n assert (p/rel).read_bytes()==subprocess.check_output(['git','-C',str(p),'show','HEAD:'+rel]),rel\nb=(p/'docs/store-assets/feature-graphic.png').read_bytes()\nassert b[:8]==b'\\x89PNG\\r\\n\\x1a\\n'\nassert struct.unpack('>II',b[16:24])==(1024,500) and b[24]==8 and b[25]==2\nprint(json.dumps({'sourceFilesChecked':len(checked),'onlyApprovedCopyAndHeadingSelectorChanges':True,'testActionsAndAssertionCountsUnchanged':True,'allHostedPlaceholdersPreserved':True,'newHostedKeysUseActualTrimmedLookup':True,'nativeTemplateFilesUnchanged':True,'pngFormat':'1024x500 RGB8 no alpha'},indent=2))\n\nPY_SCOPE",
+      "exitCode": 0,
+      "stdout": "{\n  \"sourceFilesChecked\": 20,\n  \"onlyApprovedCopyAndHeadingSelectorChanges\": true,\n  \"testActionsAndAssertionCountsUnchanged\": true,\n  \"allHostedPlaceholdersPreserved\": true,\n  \"newHostedKeysUseActualTrimmedLookup\": true,\n  \"nativeTemplateFilesUnchanged\": true,\n  \"pngFormat\": \"1024x500 RGB8 no alpha\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": "git -C '/Users/saleh/Developer/career-finder-managed-preview-20261118-ebb3eed5' diff --check",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "storeFields": {
+    "description-en.txt": {
+      "charactersWithoutFinalLF": 1692,
+      "UTF8BytesWithoutFinalLF": 1692,
+      "fileBytesIncludingFinalLF": 1693,
+      "sha256": "4a07e36cbdd7c436acfb3058c50ffd51c678449af2967e3be95d3b3210d2b2b2"
+    },
+    "description-ar.txt": {
+      "charactersWithoutFinalLF": 1506,
+      "UTF8BytesWithoutFinalLF": 2703,
+      "fileBytesIncludingFinalLF": 2704,
+      "sha256": "ce36f53079fe3f1286501fd19b111bd308645fae5cf326a5564152db875a5471"
+    },
+    "review-notes-en.txt": {
+      "charactersWithoutFinalLF": 2247,
+      "UTF8BytesWithoutFinalLF": 2247,
+      "fileBytesIncludingFinalLF": 2248,
+      "sha256": "38477be19e8186f4f08e26e0cad6cb6ceca735bd1872cb163171e2cb9d065ecd"
+    }
+  },
+  "listingLimits": {
+    "App name (both stores)": {
+      "characters": 13,
+      "limit": 30
+    },
+    "iPhone subtitle": {
+      "characters": 29,
+      "limit": 30
+    },
+    "iPhone promotional text": {
+      "characters": 136,
+      "limit": 170
+    },
+    "iPhone keywords": {
+      "characters": 96,
+      "limit": 100
+    },
+    "iPhone full description": {
+      "characters": 1692,
+      "limit": 4000
+    },
+    "Google Play short description": {
+      "characters": 70,
+      "limit": 80
+    },
+    "Google Play full description": {
+      "characters": 1826,
+      "limit": 4000
+    }
+  },
+  "featureGraphic": {
+    "recordedAt": "2026-11-18T11:05:40.489370+00:00",
+    "sourceBase": "49f08537086e33ff578c65815676efe55f4e0d15",
+    "scope": "Feature graphic text only; geometry, colors, fonts, icons and all phone screenshot originals unchanged.",
+    "previousFeatureGraphicAssets": [
+      {
+        "path": "docs/store-assets/feature-graphic.svg",
+        "kind": "editable_promotional_vector",
+        "properties": {
+          "bytes": 2254,
+          "sha256": "2a77fd371069860fc320c97c635a3f8246212d0e997472ea17df3a1c7300944b"
+        },
+        "canvas": {
+          "width": 1024,
+          "height": 500
+        },
+        "brandSource": "apple/Branding/career-finder.svg",
+        "brandSourceSha256": "71ea33dff259584332d4d8ac6bc1eadc4d2c2aed53c9bf91404ec663a4cbcc9b",
+        "fontFiles": [
+          {
+            "fileName": "NotoSans-Regular.ttf",
+            "sha256": "89c3c497f618fdaa0b2d1e98fef93582f28c71debd2c4a8cdf41f190ced2909d"
+          },
+          {
+            "fileName": "NotoSans-Bold.ttf",
+            "sha256": "e83493c945848ecd4a9ad0f6d19164541a0d3e23a9c952304a00a46e00272ac5"
+          },
+          {
+            "fileName": "NotoSerifDisplay-Regular.ttf",
+            "sha256": "bcdc596729c24044e28c54815ecbe6004f83b10169a49a51160b22f59116249f"
+          }
+        ],
+        "containsAppScreenshot": false,
+        "containsInventedAppUi": false,
+        "claimsLiveAutoApply": false,
+        "altText": "Career Finder: discover jobs, save opportunities and prepare your next step."
+      },
+      {
+        "path": "docs/store-assets/feature-graphic.png",
+        "kind": "google_play_feature_graphic",
+        "properties": {
+          "bytes": 49434,
+          "sha256": "9cf066b26b88e2ca4a21f00f4cff2725faad02c23381987f3e149b3f4655b826",
+          "format": "PNG",
+          "width": 1024,
+          "height": 500,
+          "channels": "RGB",
+          "bitsPerChannel": 8,
+          "pngColorType": 2,
+          "alphaChannelPresent": false
+        },
+        "source": "docs/store-assets/feature-graphic.svg",
+        "sourceSha256": "2a77fd371069860fc320c97c635a3f8246212d0e997472ea17df3a1c7300944b",
+        "exportArguments": [
+          "docs/store-assets/feature-graphic.svg",
+          "--export-type=png",
+          "--export-png-color-mode=RGB_8",
+          "--export-background=#173E2D",
+          "--export-background-opacity=255",
+          "--export-filename=docs/store-assets/feature-graphic.png"
+        ],
+        "technicalFormatChecksPassed": true,
+        "visuallyReviewed": true,
+        "storeApprovalClaimed": false,
+        "altText": "Career Finder: discover jobs, save opportunities and prepare your next step."
+      }
+    ],
+    "currentHeading": "Search jobs.",
+    "currentDetail": "Save jobs and prepare applications.",
+    "currentLabels": [
+      "Search",
+      "Save",
+      "Prepare"
+    ],
+    "renderer": "Inkscape 1.4 (e7c3feb100, 2024-10-09)",
+    "originalFontHashesMatched": true,
+    "renderedIn": "isolated cloud scratch directory",
+    "actualPngInspected": true,
+    "clippingObserved": false,
+    "png": {
+      "bytes": 45956,
+      "sha256": "3b0b33c3b2b40285d6076f379e167f6821f52a6001309718a93adf811b1b42c4",
+      "format": "PNG",
+      "width": 1024,
+      "height": 500,
+      "channels": "RGB",
+      "bitsPerChannel": 8,
+      "pngColorType": 2,
+      "alphaChannelPresent": false
+    },
+    "storeUploadPerformed": false,
+    "renderWarnings": [
+      "PangoFT2FontMap wrapper warning",
+      "GtkRecentManager wrapper warning"
+    ],
+    "warningDisposition": "Renderer exited 0; resulting RGB PNG was decoded, dimensions checked, visually inspected and hash-verified after transfer."
+  },
+  "acceptance": {
+    "sourceResourceChecks": "passed",
+    "graphicVisualInspection": "passed",
+    "independentReview": "Copy commit 1194ded6c5610fee5979e853059cc8de026ac906 approved; this browser-found three-pair follow-up awaits commit-bound review.",
+    "hostedTypecheckAndTests": "root pending",
+    "managedBrowserAcceptance": "root pending",
+    "fullNativeCI": "Root pending for this changed source; no native test or build run by this copy task.",
+    "deployed": false,
+    "storeUploaded": false
+  },
+  "changedFiles": [
+    {
+      "path": "android/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt",
+      "sha256": "9900a3027fb10f53ebe276496819b8fff275489797a68e71ce40ee4fe59b9565"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+      "sha256": "bd7dae7b1cc5e334977c4f25e302609991daa9afdcb3893916eb281e158662ea"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+      "sha256": "a622d105c529b3d60df6e77c8601445ea0c6cd5903e85dfcb349675de7672e7a"
+    },
+    {
+      "path": "android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt",
+      "sha256": "cb3dc5c000355ca86a0bd2a67317ee61df69b3b87cfe5fccf0540a75af9cae1e"
+    },
+    {
+      "path": "android/app/src/main/res/values-ar/career_copy.xml",
+      "sha256": "8a20ed589a84aec6f73348450ba0a3864c3d2f4c781923a892f6768218a93305"
+    },
+    {
+      "path": "android/app/src/main/res/values/career_copy.xml",
+      "sha256": "d831095afe6dc33c244a102d1496f6c5a72f8050e2933a4c8e8ae56a9fa3ea65"
+    },
+    {
+      "path": "apple/AhmadCareer/CareerDiscovery.swift",
+      "sha256": "891075030518428fe47456538828ce3173550da61ec45d1e735fcacf51ff70ce"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeApplicationsViews.swift",
+      "sha256": "4186279e2491afca66a7d7c30f5e3e92bb4a283219385ececae735923598c838"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeCareerViews.swift",
+      "sha256": "0a0e7fc6deee450b39ba9415f32f92929b6b6bd1ed4650749f45fef711f9c186"
+    },
+    {
+      "path": "apple/AhmadCareer/NativeDiscoveryViews.swift",
+      "sha256": "da427d2c3edf1159e38f1f45faa6b8e5e351b78a5ef78146e08bf5e1d24b1cdc"
+    },
+    {
+      "path": "apple/AhmadCareer/ar.lproj/Localizable.strings",
+      "sha256": "d51388de40dcc8b1c93bd393ca7b681237eb2e23c687d8f2c7a5f577a0ff2f88"
+    },
+    {
+      "path": "apple/AhmadCareer/en.lproj/Localizable.strings",
+      "sha256": "76cae9f074084602f99253dc8d102d870c99dd8b942b799eda13b54ea8ad90bd"
+    },
+    {
+      "path": "apple/UITests/CareerFinderUITests.swift",
+      "sha256": "8dbcca2345440a839dac123a88a2dcc4b3207d5d47e1382bc33fffdd1c440c48"
+    },
+    {
+      "path": "docs/Mobile-Store-Listing-Draft.md",
+      "sha256": "69f57af937bdaf9d1f109a150f486bfe90403404925858769252facc9e9bd977"
+    },
+    {
+      "path": "docs/app-store-draft-20261117/README.md",
+      "sha256": "ce6b6721513a7e9f09eabd2219710007900385df855f20d285ad80db2e9aa9e3"
+    },
+    {
+      "path": "docs/app-store-draft-20261117/description-ar.txt",
+      "sha256": "ce36f53079fe3f1286501fd19b111bd308645fae5cf326a5564152db875a5471"
+    },
+    {
+      "path": "docs/app-store-draft-20261117/description-en.txt",
+      "sha256": "4a07e36cbdd7c436acfb3058c50ffd51c678449af2967e3be95d3b3210d2b2b2"
+    },
+    {
+      "path": "docs/store-assets/README.md",
+      "sha256": "f67fc830097655c1d55e57cb8b40c9dd05e69fbf0e258e7d81147b593f5ca1e6"
+    },
+    {
+      "path": "docs/store-assets/feature-graphic.png",
+      "sha256": "3b0b33c3b2b40285d6076f379e167f6821f52a6001309718a93adf811b1b42c4"
+    },
+    {
+      "path": "docs/store-assets/feature-graphic.svg",
+      "sha256": "77db361e9e6ec7e249bce5ca2d19e2bf916c649d44154d66e7cd31bc6f1efa95"
+    },
+    {
+      "path": "docs/store-assets/manifest.json",
+      "sha256": "6011dc53ff78e38bc978ebc61667c6e13ec22055afc49d5ea22534ebc38755d0"
+    },
+    {
+      "path": "hosted/app/account/AccountPanel.tsx",
+      "sha256": "3a567f8068d9877c5366d2ae83458a5c084bbb31e8addd0963167a38505da968"
+    },
+    {
+      "path": "hosted/app/account/page.tsx",
+      "sha256": "9a661c9c4388e9c9499a96b264b4bacf4a571b323e60b119277a85c787e0e620"
+    },
+    {
+      "path": "hosted/app/components/LanguageSettings.tsx",
+      "sha256": "05241459a72e0e8236dcef7d211fdbd48bcc8409758cba40ef7fa74655d021d7"
+    },
+    {
+      "path": "hosted/app/components/SiteFrame.tsx",
+      "sha256": "55c172282d1636787b9116fd69530a3a69efadb483474a2635c1190c270c13d3"
+    },
+    {
+      "path": "hosted/app/components/ThemeSettings.tsx",
+      "sha256": "80fb8fffba5fdf665cdadf61f8184f289afe3506b90ba32680b93d5adcdcfaf0"
+    },
+    {
+      "path": "hosted/app/connect/page.tsx",
+      "sha256": "4dc6f6b68d5ec09350e3a4def9e4d99854d4ec1dc72b7e97dc8478e7cf3b738d"
+    },
+    {
+      "path": "hosted/app/i18n/messages.ar.json",
+      "sha256": "f60cb387496538f69ce9612f3dc7caf194091666b6c1149585eee82e25909d1d"
+    },
+    {
+      "path": "hosted/app/layout.tsx",
+      "sha256": "2625e000953995454194b67d34c58b1ee3d7536c6b028d9fc7ea196f8ade356a"
+    },
+    {
+      "path": "hosted/app/phone/PhoneApp.tsx",
+      "sha256": "c104af3be9a734953bc80cf48a4021e43569dc091b20442002258c06c5bd12ed"
+    },
+    {
+      "path": "hosted/app/phone/page.tsx",
+      "sha256": "9f22b52a029df8023203bcc14b8f0833cab63f8605a5f39a1b606a14c72a1352"
+    },
+    {
+      "path": "hosted/app/phone/record-tools.ts",
+      "sha256": "74e0db881c22c73d35ff0140e7c5e5079a84b5a063a2b8234cc4d8f54b5f5af2"
+    },
+    {
+      "path": "hosted/app/privacy/page.tsx",
+      "sha256": "a62c9c7bd4b139676e201cb21b4a608d502b12c93b83caf343a6c6e02baa98de"
+    },
+    {
+      "path": "hosted/app/support/page.tsx",
+      "sha256": "5f4f5409f6848f643d379ad50691ae807de98130aa0b1787beeeca49fa5fe411"
+    },
+    {
+      "path": "localization/native-copy.json",
+      "sha256": "f17e9fa1fdd08a8a479edd52e73ac33481fa6e851777e56730644f067a5961e2"
+    }
+  ],
+  "reviewFindingDispositions": [
+    {
+      "finding": "Leading whitespace prevented the PHONE CONNECTION Arabic catalog lookup.",
+      "correction": "Canonical source and catalog key use PHONE CONNECTION; Arabic value is ربط الهاتف.",
+      "verification": "Actual trimmed-key lookup checked for every new hosted source key."
+    },
+    {
+      "finding": "Initial native search prompt and application-workspace title retained slogans.",
+      "correction": "Changed to Start a job search and Job links and applications; reviewed related introductory descriptions.",
+      "verification": "Canonical resources regenerated and reconciled across all generated native tables."
+    },
+    {
+      "finding": "Search jobs appears as both heading and action in Android discovery.",
+      "correction": "Exact text selector additionally requires the existing Heading semantic.",
+      "verification": "Retained scroll and displayed checks; all action/assertion counts unchanged."
+    },
+    {
+      "finding": "JSON serialization changed two historical escaped ellipsis lines.",
+      "correction": "Restored both exact original raw historical lines.",
+      "verification": "Parsed data unchanged; original raw historical lines retained."
+    },
+    {
+      "finding": "Actual browser review found A FEW PLACES TO BEGIN and two adjacent promotional sentences in the hosted quick-search card.",
+      "correction": "Replaced with EXAMPLE SEARCHES, Search by job field, and Choose an example below or enter a job title above., with requested Arabic translations.",
+      "verification": "JSON parsed; source differs only at three exact string literals; superseded catalog keys removed only after confirming no remaining TypeScript callsites; runtime review remains with root."
+    }
+  ],
+  "changedFilesHashScope": "All copy-content files from the initial cleanup, refreshed after the three-pair hosted follow-up; excludes this self-referential receipt and the separately reviewed workflow-only commit.",
+  "browserReviewFollowUp": {
+    "parentCommit": "9d1d8f1c1fc4bc6b03b7c7ecb5fd69f86ebb4e54",
+    "finding": "Root actual browser review found promotional filler in the hosted example-search card.",
+    "scope": "Three English/Arabic display strings and superseded catalog keys; no controls, layout, handlers, native copy or generated resources changed.",
+    "checks": {
+      "jsonParsing": "passed",
+      "exactThreeSourceLiteralChanges": "passed",
+      "canonicalArabicKeys": "passed",
+      "supersededKeysHaveNoRemainingTypeScriptCallsites": "passed",
+      "otherCatalogEntriesUnchanged": "passed"
+    },
+    "runtimeAcceptance": "Root pending for updated English/Arabic hosted preview."
+  }
+}

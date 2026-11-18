@@ -1,0 +1,206 @@
+{
+  "createdAt": "2026-11-18T07:55:55.865986+00:00",
+  "files": {
+    "README.md": {
+      "bytes": 5653,
+      "sha256": "2f03a2fdc6e0d4dbb57a32c9cc39117925e890a5490a6669c73af502eb89be4d"
+    },
+    "android/README.md": {
+      "bytes": 4047,
+      "sha256": "55e35b442d1ad5ab9f8a4c3a7795ca6d92b25526739ae7b8b9a97c5ae02370d4"
+    },
+    "android/android-correction-receipt.json": {
+      "bytes": 1491,
+      "sha256": "0626c8185db38aa96813226ab6ff77808c2d3e595d02164152ac808deec7ca2d"
+    },
+    "android/android-saved-search-recovery.patch": {
+      "bytes": 13467,
+      "sha256": "9877ad1991fc12298568c86c5f6193b94c0aaccd9fcf93e372425312e6348005"
+    },
+    "android/baseline-host-sources.json": {
+      "bytes": 945,
+      "sha256": "3d527d22570b8b4acddfacfde728ef10e91d46a81ca69702d07d3ddba3eedd72"
+    },
+    "android/baseline-java-compile.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "android/baseline-java-compile.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "android/baseline-kotlin-compile.stderr.log": {
+      "bytes": 1319,
+      "sha256": "f4abf9a8a87e53f5214e83d0c2dbeb815b27c1d820af2968b45229eec705c703"
+    },
+    "android/baseline-kotlin-compile.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "android/baseline-source.json": {
+      "bytes": 609,
+      "sha256": "ba6ce9506c66bf541d7149a48550e8aae76488f8ecc4356cf0cdfc361a1782d3"
+    },
+    "android/baseline-tests.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "android/baseline-tests.stdout.log": {
+      "bytes": 9750,
+      "sha256": "6125f08f0913f6fb41f4840d8e33b0cd7441c7f970fa3f705a475b16f661b622"
+    },
+    "android/candidate-host-sources.json": {
+      "bytes": 949,
+      "sha256": "5dff7578bcc6a90b3f3f4ebc1ce4c2f8b0e5d179b46204f67f1270978fc89eda"
+    },
+    "android/candidate-java-compile.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "android/candidate-java-compile.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "android/candidate-kotlin-compile.stderr.log": {
+      "bytes": 1320,
+      "sha256": "e10effa6eadbfea895b86b9eef037867a043de46d83e948aca512212b9aeb076"
+    },
+    "android/candidate-kotlin-compile.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "android/candidate-tests.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "android/candidate-tests.stdout.log": {
+      "bytes": 61,
+      "sha256": "0ab20cc3db1f471ff4abe952446746d84f81a6f1cf6a83485c5751cb6dced060"
+    },
+    "android/historical-2fac-attach.txt": {
+      "bytes": 1734,
+      "sha256": "39c763036edcaf4aad6efcc10f8d5a04846b7369ae3238fdbd81bb43e8a090ff"
+    },
+    "android/historical-attach-blame.txt": {
+      "bytes": 2757,
+      "sha256": "4fab274bfb4f71dd306f1fee039d9f45a5e438617a3537e122a9dff0d93905f7"
+    },
+    "android/host-deps/org-json-receipt.json": {
+      "bytes": 525,
+      "sha256": "47d6c2a5fb213e0c78fa96495c12b0cb25da2978698d77c9d669d3edd52dc024"
+    },
+    "android/host-java-version.stderr.log": {
+      "bytes": 181,
+      "sha256": "949f4fcb31a2d7b0eb5186e78203a3fc5dc26b8ba6be4df75e2916f057fb512e"
+    },
+    "android/host-java-version.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "android/host-kotlin-version.stderr.log": {
+      "bytes": 1682,
+      "sha256": "46cb920e3b741b71361c0d22b35ddfd59f4e20ff464f887e2e837d075395d2fe"
+    },
+    "android/host-kotlin-version.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "android/host-results.json": {
+      "bytes": 15722,
+      "sha256": "b686162373304531f2f04b28930ca7b31ea12f3b68ed3ec9eae4b71717dd44dd"
+    },
+    "android/host-shared/HostMain.kt": {
+      "bytes": 1348,
+      "sha256": "0d05d3416f8622a4850fa3962601d6a9123fa2e44c316666d1bd7866ad2807cc"
+    },
+    "android/host-shared/InstrumentationRegistry.kt": {
+      "bytes": 746,
+      "sha256": "1cde0626d51ba2bc657aa992bface13075a544a5727bd75dc45b4a0ed66c59bc"
+    },
+    "android/host-shared/ModelHelpers.kt": {
+      "bytes": 1761,
+      "sha256": "bbd203ef8d44cce9739e5b4041b0ce28d4b58162239a509de1671793313a79f4"
+    },
+    "android/host-shared/PrivateStorePort.kt": {
+      "bytes": 786,
+      "sha256": "5931a61aa230cf1af11e408102a66956a9263c5dcc3191bd2b2c1826c7e9a2be"
+    },
+    "android/host-shared/ServicePagesOrigin.kt": {
+      "bytes": 144,
+      "sha256": "5349812c09e67353e64edf495c13a89826af209f290516383df2c1ddcaca8041"
+    },
+    "android/host-toolchain.json": {
+      "bytes": 2410,
+      "sha256": "1e1101422e2c6ea89a59fabae8923fa304ab9c3a02098cc311686a2b403b6cb0"
+    },
+    "android/run-host-regression.py": {
+      "bytes": 5058,
+      "sha256": "99d5e223dfaadac19895411c86184e114eced1b3c15644a62df79bb915ea410f"
+    },
+    "combined-review.json": {
+      "bytes": 890,
+      "sha256": "bd13e07bacdeab0c951472211981cc2049a415dff10ac987d0e4205da1efccaf"
+    },
+    "ios/baseline-compile.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ios/baseline-compile.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ios/baseline-run.stderr.log": {
+      "bytes": 119,
+      "sha256": "1556e8383adbe07a707e9f92d9a32d0f2bcc03aee79c1dadecc149e89b522652"
+    },
+    "ios/baseline-run.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ios/candidate-compile.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ios/candidate-compile.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ios/candidate-run.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ios/candidate-run.stdout.log": {
+      "bytes": 57,
+      "sha256": "68cce387f59c71fbbaecb1c964244ad772e88db2fb5bf05478036c6b9b08c1a7"
+    },
+    "ios/ios-fix.patch": {
+      "bytes": 11784,
+      "sha256": "6525ca20223b3e5fd41aca897dcc201363ec5d2def8a62f2970b84028dabe242"
+    },
+    "ios/review-receipt.json": {
+      "bytes": 713,
+      "sha256": "5c6102c6219b6d5f91719d6829c5a68cf9fe9bd92908a44e32aba2ecb8ba3339"
+    },
+    "ios/run-host-regression.py": {
+      "bytes": 2675,
+      "sha256": "bee63d8f0f25cbf4c958b3402307bafbecc609f61d92d4d011f238a3d895f2fa"
+    },
+    "ios/source-receipt.json": {
+      "bytes": 1384,
+      "sha256": "7f38e75931bf4c19d4d482025d631efd7c39c372464c227e1452a41273a81e66"
+    },
+    "ios/verification-receipt.json": {
+      "bytes": 5758,
+      "sha256": "243e24587057bd79a5bd2e6e6b9e151403dcb5a7d209906764d53cc4d5d25bd4"
+    },
+    "original-before.json": {
+      "bytes": 1090,
+      "sha256": "0cccd0e32d99d37972bb0f0969447d87acd49199231de3a15b7758d45fffece5"
+    },
+    "preservation-after.json": {
+      "bytes": 393,
+      "sha256": "cca65fbc9b654d03fb4671decdeca79e86d74f77afd17ffacca440ff96b6c343"
+    }
+  },
+  "totalBytes": 99328
+}

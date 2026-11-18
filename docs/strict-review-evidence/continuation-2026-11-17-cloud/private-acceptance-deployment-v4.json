@@ -1,0 +1,70 @@
+{
+  "recordedAt": "2026-11-17T15:00:26Z",
+  "projectId": "appgprj_6afc21bd599c8191a0fb7705274d8582",
+  "version": 4,
+  "sourceCommit": "8570985f719cbfb374374b0714e74c3d19eeb146",
+  "sourceTree": "92f6a1d122665e98bbdf154d70df8c34a4a47ad8",
+  "sourceParent": "a02ddf951c3ac8f20739799522d7fa000cba2af0",
+  "versionId": "appgprj_6afc21bd599c8191a0fb7705274d8582~appgver_826c3b6ce1f881919f22c6859133dc55",
+  "deploymentId": "appgdep_6afc6bd3030c8191ad196f706df07153",
+  "deploymentStatus": "succeeded",
+  "deployedAt": "2026-11-17T14:59:54.280126+00:00",
+  "environmentRevision": 1,
+  "url": "https://career-finder-acceptance-20261117.jazzy-drake-8323.chatgpt.site/phone",
+  "audience": {
+    "mode": "custom",
+    "policyRevision": 1,
+    "ownerRole": "owner",
+    "allowedAccountUsers": 1,
+    "externalVisitors": 0,
+    "groups": 0,
+    "audienceChanged": false
+  },
+  "sourceChanges": [
+    "Contextual partial/stale retry reuses last submitted filters and preserves newer visible draft edits.",
+    "Dynamic English/Arabic values receive individual direction boundaries; unavailable empty results use accurate copy.",
+    "Existing Spreadsheet export disclosure explains importing numeric-looking values as text.",
+    "Test-only naming/setup-order corrections and new targeted actual-handler/markup regressions.",
+    "Lab documentation preserves deployment history and acceptance limits."
+  ],
+  "verification": {
+    "typecheck": "passed",
+    "focusedTests": {
+      "executed": 66,
+      "passed": 66,
+      "failed": 0,
+      "skipped": 0
+    },
+    "fullLint": "passed",
+    "productionBuild": "passed with existing nonfatal framework sourcemap/import-classification warnings",
+    "sourcePush": "exact commit confirmed by Site workflow helper",
+    "archive": "career-finder-private-acceptance-v4.tar.gz",
+    "archiveBytes": 4031587,
+    "archiveSHA256": "6f14c7db77ee9d8a29aad3dbfcf8166ab43e887e02be769918dfb7bb8c2a871b",
+    "changedPaths": [
+      "ACCEPTANCE-LAB.md",
+      "app/i18n/messages.ar.json",
+      "app/phone/PhoneApp.tsx",
+      "app/phone/components.tsx",
+      "package.json",
+      "tests/phone-search-workflows.mjs",
+      "tests/phone-localization.mjs",
+      "tests/i18n.mjs",
+      "tests/web-experience.mjs",
+      "tests/hosted-applications.mjs"
+    ],
+    "matchingRootHostedEvidence": "hosted-search-followup/verification.json"
+  },
+  "boundaries": {
+    "publicHostedVersion": 7,
+    "publicSiteChanged": false,
+    "providerConfigurationChanged": false,
+    "migrationChanged": false,
+    "realGoogleCallbackVerified": false,
+    "ownerBrowserV4Acceptance": "not performed; correct owner browser context unavailable",
+    "browserDownloadCompletionOrCalendarImportVerified": false,
+    "csvEngineEvidence": "Separate scoped headless consumer checks are recorded under csv-libreoffice and csv-text-import; they do not establish browser saving.",
+    "liveAutoApplyEnabled": false,
+    "realEmployerApplicationsSent": 0
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "node": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+  "nodeVersion": "v24.22.3",
+  "startedUTC": "2026-11-18T06:32:15.231612+00:00",
+  "steps": [
+    {
+      "variant": "baseline",
+      "argv": [
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+        "--test",
+        "tests/phone-recovery-isolation.mjs"
+      ],
+      "cwd": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/export-focus-candidate/baseline/hosted",
+      "startedUTC": "2026-11-18T06:32:15.231837+00:00",
+      "finishedUTC": "2026-11-18T06:32:15.736983+00:00",
+      "exit": 1,
+      "counts": [
+        "ℹ tests 60",
+        "ℹ suites 0",
+        "ℹ pass 57",
+        "ℹ fail 3",
+        "ℹ cancelled 0",
+        "ℹ skipped 0",
+        "ℹ todo 0",
+        "ℹ duration_ms 466.221583"
+      ],
+      "failures": [
+        "✖ actual record export recovers its enabled action after busy blurs focus and preserves the exported draft (6.382ms)",
+        "✖ actual record export preserves run error reporting and restores only its still-usable action (1.9615ms)",
+        "✖ actual record export leaves intentional focus, redirected focus and an inactive window alone (4.414292ms)",
+        "✖ failing tests:",
+        "✖ actual record export recovers its enabled action after busy blurs focus and preserves the exported draft (6.382ms)",
+        "  AssertionError [ERR_ASSERTION]: Export must not leave BODY focused while its editor remains open",
+        "✖ actual record export preserves run error reporting and restores only its still-usable action (1.9615ms)",
+        "  AssertionError [ERR_ASSERTION]: Expected \"actual\" to be reference-equal to \"expected\":",
+        "✖ actual record export leaves intentional focus, redirected focus and an inactive window alone (4.414292ms)",
+        "  AssertionError [ERR_ASSERTION]: Expected \"actual\" to be reference-equal to \"expected\":"
+      ],
+      "stdoutSHA256": "9d2b910ff2d24db1d8d48ac43672b61edf2901437fd5e4433d2911e946935986",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "variant": "candidate",
+      "argv": [
+        "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+        "--test",
+        "tests/phone-recovery-isolation.mjs"
+      ],
+      "cwd": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/export-focus-candidate/candidate/hosted",
+      "startedUTC": "2026-11-18T06:32:15.737492+00:00",
+      "finishedUTC": "2026-11-18T06:32:16.192142+00:00",
+      "exit": 0,
+      "counts": [
+        "ℹ tests 60",
+        "ℹ suites 0",
+        "ℹ pass 60",
+        "ℹ fail 0",
+        "ℹ cancelled 0",
+        "ℹ skipped 0",
+        "ℹ todo 0",
+        "ℹ duration_ms 422.883667"
+      ],
+      "failures": [],
+      "stdoutSHA256": "edcf75ae6870731887ac003a3bd8267a22b709776dfaa8c9cb3b73d82b12b88d",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "finishedUTC": "2026-11-18T06:32:16.192322+00:00",
+  "baselineRedCandidateGreen": true
+}

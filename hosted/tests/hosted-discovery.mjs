@@ -47,6 +47,29 @@ function validateClientResponse(path,status,data){
 }
 async function cached(source='greenhouse:synthetic'){return db.prepare('SELECT * FROM discovery_cache WHERE id=?').bind(source).first()}
 
+
+async function rejectedBody({headers,oversized=false,cleanup='resolve',code}){
+  let cancelled=0,release=()=>{},timer;
+  const pendingCleanup=cleanup==='pending'?new Promise(resolve=>{release=resolve}):null;
+  const response=new Response(new ReadableStream({
+    start(controller){controller.enqueue(oversized?new Uint8Array(DISCOVERY_LIMITS.maxResponseBytes+1):new TextEncoder().encode('{"jobs":[]}'))},
+    cancel(){cancelled++;if(cleanup==='reject')return Promise.reject(new Error('Synthetic cleanup failure'));return pendingCleanup}
+  }),{headers});
+  behavior=()=>response;
+  const pending=call();
+  try{
+    const result=await Promise.race([pending,new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('Rejected source waited for transport cleanup')),2000)})]);
+    assert.equal(result.status,200);assert.equal(result.data.status,'unavailable');assert.deepEqual(result.data.jobs,[]);
+    assert.equal(result.data.sources[0].error.code,code);assert.equal(result.data.sources[0].checkedAt,null);
+    assert.equal(cancelled,1);assert.equal(response.body.locked,false);assert.equal((await cached()).lease_until,0);
+    await new Promise(resolve=>setImmediate(resolve));
+    return result;
+  }finally{
+    clearTimeout(timer);release();await pending.catch(()=>{});
+    if(!response.body.locked)await response.body.cancel().catch(()=>{});
+  }
+}
+
 try{
   await build({entryPoints:['app/phone/model.ts'],outfile:join(directory,'model.mjs'),bundle:true,platform:'node',format:'esm'});
   phoneModel=await import(pathToFileURL(join(directory,'model.mjs')).href);
@@ -76,10 +99,10 @@ try{
     assert.equal((await call({q:'x'.repeat(121)})).status,400);assert.equal((await call({location:'x'.repeat(101)})).status,400);assert.equal((await call({remote:'maybe'})).status,400);assert.equal((await call({sources:['greenhouse:a','greenhouse:a']})).status,400);assert.equal((await call({sources:['greenhouse:a','greenhouse:b','greenhouse:c','greenhouse:d','greenhouse:e']})).status,400);assert.equal((await call({cursor:'not-a-cursor'})).status,400);assert.equal(calls.length,0);
   });
   await check('Public requests ignore account credentials and never persist or forward personal search terms',async()=>{
-    const result=await call({q:'private-filter-987',location:'private-city-654',headers:{authorization:'Bearer synthetic-private-token',cookie:'session=synthetic-private-cookie','oai-authenticated-user-id':'synthetic-owner'}});
+    const result=await call({q:'private-filter-987',location:'private-city-654',headers:{authorization:'Bearer synthetic-private-token',cookie:'__Host-sites-session=synthetic-hosting-cookie; __Host-career-session=synthetic-private-cookie','oai-authenticated-user-id':'synthetic-owner','oai-authenticated-user-email':'synthetic-private-email@example.invalid'}});
     assert.equal(result.status,200);assert.equal(result.data.status,'complete');assert.equal(result.data.jobs.length,0);assert.equal(calls.length,1);
     const all=JSON.stringify({cache:(await db.prepare('SELECT * FROM discovery_cache').all()).results,rates:(await db.prepare('SELECT * FROM discovery_rates').all()).results,calls});
-    for(const secret of ['private-filter-987','private-city-654','synthetic-private-token','synthetic-private-cookie','synthetic-owner','192.0.2.4'])assert(!all.includes(secret),secret);
+    for(const secret of ['private-filter-987','private-city-654','synthetic-private-token','synthetic-hosting-cookie','synthetic-private-cookie','synthetic-owner','synthetic-private-email@example.invalid','192.0.2.4'])assert(!all.includes(secret),secret);
     assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM workspaces').first()).n,0);assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM native_sessions').first()).n,0);
   });
   await check('Provider identities, plain text, unknown country and remote evidence remain distinct',async()=>{
@@ -140,13 +163,141 @@ try{
     records.set('greenhouse:synthetic',Array.from({length:600},(_,i)=>gh(i+1)));const count=await call();assert.equal(count.data.sources[0].availableCount,500);assert.equal(count.data.limited,true);assert.match(count.data.notice,/retained subset/);
     await reset();records.set('greenhouse:synthetic',Array.from({length:500},(_,i)=>gh(i+1,'漢'.repeat(250),'界'.repeat(500))));const bytes=await call();assert(bytes.data.sources[0].availableCount<500);assert(bytes.data.sources[0].availableCount>0);assert.equal(bytes.data.limited,true);assert(Buffer.byteLength((await cached()).jobs_json)<=DISCOVERY_LIMITS.maxCacheBytes);
   });
+
+  await check('A later temporary Lever failure preserves validated pages as partial and recovers after cooldown',async()=>{
+    const source='lever:global:synthetic';records.set(source,Array.from({length:170},(_,i)=>lever(i+1)));
+    behavior=url=>url.searchParams.get('skip')==='100'?new Response('temporarily unavailable',{status:503}):null;
+    const partial=await call({sources:[source]});assert.equal(partial.data.status,'partial');assert.equal(partial.data.totalMatches,100);
+    assert.equal(partial.data.sources[0].status,'fresh');assert.equal(partial.data.sources[0].error.code,'source_unavailable');assert.equal(partial.data.limited,false);
+    const row=await cached(source);assert.equal(row.retry_at,time+60000);assert.equal(row.expires_at,time+60000);assert.equal(row.lease_until,0);
+    time+=30000;assert.equal((await call({sources:[source]})).data.status,'partial');assert.equal(calls.length,2);
+    time+=31000;behavior=null;const recovered=await call({sources:[source]});
+    assert.equal(recovered.data.status,'complete');assert.equal(recovered.data.totalMatches,170);assert.equal(recovered.data.limited,false);
+    assert.equal(recovered.data.sources[0].error,null);assert.equal((await cached(source)).retry_at,0);assert.equal(calls.length,4);
+  });
+  await check('The unchanged source deadline keeps completed Lever pages and starts no over-budget page',async()=>{
+    const source='lever:global:synthetic';records.set(source,Array.from({length:250},(_,i)=>lever(i+1)));
+    behavior=url=>{if(url.searchParams.get('skip')==='100')time+=DISCOVERY_LIMITS.sourceMilliseconds+1;return null};
+    const partial=await call({sources:[source]});assert.equal(partial.data.status,'partial');assert.equal(partial.data.totalMatches,200);
+    assert.equal(partial.data.sources[0].error.code,'source_timeout');assert.equal(partial.data.limited,false);assert.equal(calls.length,2);
+  });
+  await check('A later Lever rate limit keeps validated jobs while honoring the complete Retry-After interval',async()=>{
+    const source='lever:global:synthetic';records.set(source,Array.from({length:170},(_,i)=>lever(i+1)));
+    behavior=url=>url.searchParams.get('skip')==='100'?new Response('{}',{status:429,headers:{'content-type':'application/json','retry-after':'120'}}):null;
+    const partial=await call({sources:[source]});assert.equal(partial.data.status,'partial');assert.equal(partial.data.sources[0].error.code,'source_rate_limited');
+    assert.equal((await cached(source)).retry_at,time+120000);assert.equal((await cached(source)).expires_at,time+120000);
+    time+=61000;assert.equal((await call({sources:[source]})).data.totalMatches,100);assert.equal(calls.length,2);
+    time+=60000;behavior=null;assert.equal((await call({sources:[source]})).data.status,'complete');assert.equal(calls.length,4);
+  });
+  await check('A removed Lever board never keeps an earlier page as a partial current result',async()=>{
+    const source='lever:global:synthetic';records.set(source,Array.from({length:170},(_,i)=>lever(i+1)));
+    behavior=url=>url.searchParams.get('skip')==='100'?new Response('gone',{status:410}):null;
+    const removed=await call({sources:[source]});assert.equal(removed.data.status,'unavailable');assert.deepEqual(removed.data.jobs,[]);
+    assert.equal(removed.data.sources[0].error.code,'board_missing');assert.equal((await cached(source)).jobs_json,'[]');assert.equal((await cached(source)).checked_at,null);
+  });
+
+
+  await check('A later Lever body disconnect keeps validated jobs and permits a later complete refresh',async()=>{
+    const source='lever:global:synthetic';records.set(source,Array.from({length:170},(_,i)=>lever(i+1)));let failedResponse;
+    behavior=url=>{if(url.searchParams.get('skip')!=='100')return null;failedResponse=new Response(new ReadableStream({
+      start(controller){controller.enqueue(new TextEncoder().encode('['))},
+      pull(controller){controller.error(new TypeError('Synthetic private transport disconnect'))}
+    }),{headers:{'content-type':'application/json'}});return failedResponse};
+    const partial=await call({sources:[source]});assert.equal(partial.data.status,'partial');assert.equal(partial.data.totalMatches,100);
+    assert.equal(partial.data.sources[0].error.code,'source_unavailable');assert.equal(partial.data.limited,false);
+    assert.doesNotMatch(partial.data.sources[0].error.message,/Synthetic private/);assert.equal(failedResponse.body.locked,false);
+    assert.equal((await cached(source)).retry_at,time+60000);assert.equal(calls.length,2);
+    time+=61000;behavior=null;const recovered=await call({sources:[source]});assert.equal(recovered.data.status,'complete');
+    assert.equal(recovered.data.totalMatches,170);assert.equal(recovered.data.sources[0].error,null);assert.equal((await cached(source)).retry_at,0);assert.equal(calls.length,4);
+  });
+  await check('A real later-page body timeout cancels the reader while preserving completed Lever pages',async()=>{
+    const source='lever:global:synthetic';records.set(source,Array.from({length:170},(_,i)=>lever(i+1)));let response,cancellations=0;
+    behavior=url=>{if(url.searchParams.get('skip')!=='100')return null;response=new Response(new ReadableStream({cancel(){cancellations++}}),{headers:{'content-type':'application/json'}});return response};
+    const started=Date.now(),partial=await call({sources:[source]});assert.equal(partial.data.status,'partial');assert.equal(partial.data.totalMatches,100);
+    assert.equal(partial.data.sources[0].error.code,'source_timeout');assert.equal(partial.data.limited,false);assert(Date.now()-started<10000);
+    await new Promise(resolve=>setImmediate(resolve));assert.equal(cancellations,1);assert.equal(response.body.locked,false);assert.equal(calls.length,2);
+  });
+  await check('A later-page shared budget denial preserves jobs without an extra GET or early retry',async()=>{
+    const source='lever:global:synthetic';records.set(source,Array.from({length:170},(_,i)=>lever(i+1)));time=Math.floor(base/60000)*60000+15000;
+    await db.prepare('INSERT INTO discovery_rates(key,window,count) VALUES(?,?,?)').bind('upstream:custom',Math.floor(time/60000),DISCOVERY_LIMITS.customUpstreamRequestsPerMinute-1).run();
+    const partial=await call({sources:[source]});assert.equal(partial.data.status,'partial');assert.equal(partial.data.totalMatches,100);
+    assert.equal(partial.data.sources[0].error.code,'discovery_rate_limited');assert.equal(partial.data.limited,false);assert.equal(calls.length,1);
+    const retryAt=time+45000;assert.equal((await cached(source)).retry_at,retryAt);
+    time+=30000;assert.equal((await call({sources:[source]})).data.status,'partial');assert.equal(calls.length,1);assert.equal((await cached(source)).retry_at,retryAt);
+    time=retryAt+1;assert.equal((await call({sources:[source]})).data.status,'complete');assert.equal(calls.length,3);
+  });
+  for(const [label,response,code] of [
+    ['malformed',()=>Response.json({unexpected:[]}), 'source_response_invalid'],
+    ['redirected',()=>new Response('',{status:302,headers:{location:'https://unexpected.example/private'}}),'source_redirected']
+  ])await check('A '+label+' later Lever page is not salvaged as a fresh prefix',async()=>{
+    const source='lever:global:synthetic';records.set(source,Array.from({length:170},(_,i)=>lever(i+1)));
+    behavior=url=>url.searchParams.get('skip')==='100'?response():null;
+    const result=await call({sources:[source]});assert.equal(result.data.status,'unavailable');assert.deepEqual(result.data.jobs,[]);
+    assert.equal(result.data.sources[0].error.code,code);assert.equal((await cached(source)).checked_at,null);assert.equal(calls.length,2);
+  });
+  await check('A new partial snapshot invalidates old cursors and never mixes an old cached tail',async()=>{
+    const source='lever:global:synthetic';records.set(source,Array.from({length:170},(_,i)=>lever(i+1,'Old role '+i)));
+    const previous=await call({sources:[source]});assert.equal(previous.data.status,'complete');assert(previous.data.nextCursor);
+    time+=DISCOVERY_LIMITS.freshMilliseconds+1;records.set(source,Array.from({length:170},(_,i)=>lever(i+1001,'New role '+i)));
+    behavior=url=>url.searchParams.get('skip')==='100'?new Response('temporary outage',{status:503}):null;
+    const outdated=await call({sources:[source],cursor:previous.data.nextCursor});assert.equal(outdated.status,409);assert.equal(outdated.data.error.code,'discovery_changed');
+    const partial=await call({sources:[source]});assert.equal(partial.data.status,'partial');assert.equal(partial.data.totalMatches,100);
+    assert(partial.data.jobs.every(job=>job.title.startsWith('New role ')));assert(JSON.parse((await cached(source)).jobs_json).every(job=>job.title.startsWith('New role ')));assert.equal(calls.length,4);
+  });
+  await check('A long provider cooldown outlives freshness and stale retention without sliding or new traffic',async()=>{
+    const source='lever:global:synthetic';records.set(source,Array.from({length:170},(_,i)=>lever(i+1)));const started=time,retryAt=time+172800000;
+    behavior=url=>url.searchParams.get('skip')==='100'?new Response('{}',{status:429,headers:{'content-type':'application/json','retry-after':'172800'}}):null;
+    const partial=await call({sources:[source]});assert.equal(partial.data.status,'partial');assert.equal(partial.data.sources[0].status,'fresh');
+    assert.equal((await cached(source)).retry_at,retryAt);assert.equal((await cached(source)).expires_at,started+DISCOVERY_LIMITS.freshMilliseconds);
+    time=started+DISCOVERY_LIMITS.freshMilliseconds+1;const stale=await call({sources:[source]});assert.equal(stale.data.status,'partial');
+    assert.equal(stale.data.sources[0].status,'stale');assert(stale.data.jobs.every(job=>job.stale));assert.equal(stale.data.sources[0].checkedAt,partial.data.sources[0].checkedAt);
+    assert.equal((await cached(source)).retry_at,retryAt);assert.equal(calls.length,2);
+    time=started+DISCOVERY_LIMITS.staleMilliseconds+1;const expired=await call({sources:[source]});assert.equal(expired.data.status,'unavailable');
+    assert.deepEqual(expired.data.jobs,[]);assert.equal((await cached(source)).retry_at,retryAt);assert.equal(calls.length,2);
+    time=retryAt+1;behavior=null;const recovered=await call({sources:[source]});assert.equal(recovered.data.status,'complete');
+    assert.equal(recovered.data.totalMatches,170);assert.equal(recovered.data.sources[0].error,null);assert.equal((await cached(source)).retry_at,0);assert.equal(calls.length,4);
+  });
+
   await check('Lever pages are bounded to five public GETs and 500 normalized postings',async()=>{
     records.set('lever:global:synthetic',Array.from({length:700},(_,i)=>lever(i+1)));const r=await call({sources:['lever:global:synthetic']});assert.equal(calls.length,5);assert.equal(r.data.sources[0].availableCount,500);assert.equal(r.data.limited,true);assert(calls.every(c=>!c.url.includes('key=')));
   });
+
+  for(const [name,headers,code] of [
+    ['Wrong MIME type',{'content-type':'text/html'},'source_response_invalid'],
+    ['Oversized declared body',{'content-type':'application/json','content-length':String(DISCOVERY_LIMITS.maxResponseBytes+1)},'source_response_large'],
+    ['Invalid declared body length',{'content-type':'application/json','content-length':'Infinity'},'source_response_large']
+  ])await check(name+' releases its unread transport and remains an unavailable source',async()=>{
+    await rejectedBody({headers,code});
+  });
+  for(const cleanup of ['reject','pending'])await check('Header rejection preserves its error when transport cleanup is '+cleanup,async()=>{
+    await rejectedBody({headers:{'content-type':'text/html'},cleanup,code:'source_response_invalid'});
+  });
+  for(const cleanup of ['resolve','reject','pending'])await check('Streamed overflow releases its reader without waiting for '+cleanup+' cleanup',async()=>{
+    await rejectedBody({headers:{'content-type':'application/json'},oversized:true,cleanup,code:'source_response_large'});
+  });
+  await check('A body-rejection cooldown permits a clean successful refresh without false empty-cache success',async()=>{
+    await rejectedBody({headers:{'content-type':'text/html'},code:'source_response_invalid'});
+    assert.equal(calls.length,1);const cooldown=await call();assert.equal(cooldown.data.status,'unavailable');assert.equal(calls.length,1);
+    time+=61000;behavior=null;records.set('greenhouse:synthetic',[gh(22,'Recovered employer role')]);
+    const recovered=await call();assert.equal(recovered.data.status,'complete');assert.equal(recovered.data.jobs[0].title,'Recovered employer role');
+    assert.equal(recovered.data.sources[0].status,'fresh');assert.equal(calls.length,2);assert.equal((await cached()).error_code,null);
+  });
+
   await check('Redirects and oversized responses are refused without following untrusted destinations',async()=>{
     behavior=()=>new Response('',{status:302,headers:{Location:'http://127.0.0.1/private'}});assert.equal((await call()).data.sources[0].error.code,'source_redirected');assert.equal(calls.length,1);
     await reset();behavior=()=>new Response('{}',{headers:{'content-type':'application/json','content-length':String(DISCOVERY_LIMITS.maxResponseBytes+1)}});assert.equal((await call()).data.sources[0].error.code,'source_response_large');
     await reset();behavior=()=>new Response(' '.repeat(DISCOVERY_LIMITS.maxResponseBytes+1),{headers:{'content-type':'application/json'}});assert.equal((await call()).data.sources[0].error.code,'source_response_large');
+  });
+  await check('A response arriving after timeout releases its unread body without changing the timeout outcome',async()=>{
+    let cancelled=0,response;
+    behavior=(_url,options)=>new Promise(resolve=>{
+      options.signal.addEventListener('abort',()=>{
+        response=new Response(new ReadableStream({cancel(){cancelled++}}),{headers:{'content-type':'application/json'}});
+        resolve(response);
+      },{once:true});
+    });
+    const result=await call();assert.equal(result.data.status,'unavailable');assert.equal(result.data.sources[0].error.code,'source_timeout');
+    await new Promise(resolve=>setImmediate(resolve));assert.equal(cancelled,1);assert.equal(response.body.locked,false);
   });
   await check('A stalled response body is cancelled within the bounded provider timeout',async()=>{
     let cancelled=false;behavior=()=>new Response(new ReadableStream({cancel(){cancelled=true}}),{headers:{'content-type':'application/json'}});const start=Date.now(),r=await call();assert.equal(r.data.sources[0].error.code,'source_timeout');assert(cancelled);assert(Date.now()-start<10000);

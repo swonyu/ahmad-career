@@ -1,0 +1,12 @@
+✔ real review rendering localizes every state and preserves user and employer content (73.631253ms)
+✔ recovery notices render full sentences and locale-specific counts from the same stored data (46.638597ms)
+✔ actual copy handler stores translatable notices and copies the exact value on success or refusal (54.449206ms)
+✔ discovery notice translates only the known service composition and keeps unknown text opaque (49.778859ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 794.642416

@@ -1,0 +1,31 @@
+2026-11-18T08:29:10.0018280Z     t =   242.36s Tap "discovery.keyboardSearch" Button
+2026-11-18T08:29:10.0189230Z     t =   242.36s     Wait for com.ahmadalayed.career to idle
+2026-11-18T08:29:10.0291500Z     t =   242.37s     Find the "discovery.keyboardSearch" Button
+2026-11-18T08:29:10.3066610Z     t =   242.70s     Check for interrupting elements affecting "discovery.keyboardSearch" Button
+2026-11-18T08:29:10.7530940Z     t =   243.14s     Synthesize event
+2026-11-18T08:29:11.8030010Z     t =   243.60s     Wait for com.ahmadalayed.career to idle
+2026-11-18T08:29:12.9339170Z     t =   245.33s Get all elements bound by index for: Descendants matching type Key
+2026-11-18T08:29:13.0197190Z     t =   245.41s Get all elements bound by index for: Elements matching predicate '"discovery.keyboardSearch" IN identifiers'
+2026-11-18T08:29:13.1131330Z     t =   245.51s Checking existence of `"discovery.error" Any`
+2026-11-18T08:29:13.5953470Z     t =   245.99s Find the "discovery.error" Any
+2026-11-18T08:29:16.0516430Z     t =   248.42s Find the "discovery.error" StaticText
+2026-11-18T08:29:17.1357390Z     t =   249.49s Swipe up Target Application 'com.ahmadalayed.career'
+2026-11-18T08:29:17.1380480Z     t =   249.49s     Wait for com.ahmadalayed.career to idle
+2026-11-18T08:29:17.1387290Z     t =   249.50s     Find the Target Application 'com.ahmadalayed.career'
+2026-11-18T08:29:17.2180510Z     t =   249.59s     Check for interrupting elements affecting "Career Finder" Application
+2026-11-18T08:29:17.2918880Z     t =   249.68s     Synthesize event
+2026-11-18T08:29:17.7789740Z     t =   250.14s     Wait for com.ahmadalayed.career to idle
+2026-11-18T08:29:19.0384610Z     t =   251.41s Checking existence of `"discovery.error" StaticText`
+2026-11-18T08:29:20.7799150Z     t =   253.14s Find the "discovery.error" StaticText
+2026-11-18T08:29:23.5664930Z     t =   255.95s Find the "discovery.error" StaticText
+2026-11-18T08:29:25.0173440Z     t =   257.39s Find the "discovery.error" StaticText
+2026-11-18T08:29:27.3008780Z     t =   259.62s Checking existence of `"discovery.retry" Button`
+2026-11-18T08:29:27.3873050Z     t =   259.78s Waiting 5.0s for "discovery.retrySearch" Button to exist
+2026-11-18T08:29:28.4335620Z     t =   260.83s     Checking `Expect predicate `existsNoRetry == 1` for object "discovery.retrySearch" Button`
+2026-11-18T08:29:28.4604010Z     t =   260.83s         Checking existence of `"discovery.retrySearch" Button`
+2026-11-18T08:29:28.5257560Z     t =   260.92s Waiting 5.0s for "discovery.retry" Button to exist
+2026-11-18T08:29:29.7153560Z     t =   261.93s     Checking `Expect predicate `existsNoRetry == 1` for object "discovery.retry" Button`
+2026-11-18T08:29:29.7403340Z     t =   261.94s         Checking existence of `"discovery.retry" Button`
+2026-11-18T08:29:29.9138450Z     t =   262.27s Find the "discovery.retrySearch" Button
+2026-11-18T08:29:30.0963750Z /Users/runner/work/ahmad-career/ahmad-career/apple/UITests/CareerFinderUITests.swift:729: error: -[CareerFinderUITests.CareerFinderUITests testSearchEmptyAndFailurePreservesPreviousResults] : XCTAssertFalse failed - Search again must wait for the active deadline
+2026-11-18T08:29:30.1068900Z     t =   262.47s Tear Down

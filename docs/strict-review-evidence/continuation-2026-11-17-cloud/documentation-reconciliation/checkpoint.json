@@ -1,0 +1,14 @@
+{
+  "recordedAt": "2026-11-17T15:45:56.115826+00:00",
+  "scope": "13-document reconciliation at fa151e2, before later terminal run33 and source-label follow-ups",
+  "originalPatchResult": "Applied with three injected terminal header suffixes; original check-only receipt was insufficient and is superseded by the failure note.",
+  "correctivePatchResult": "Actually applied; all13 intended final bytes checked in root, clean whitespace, terminal newlines; all305 local link occurrences resolve.",
+  "artifacts": {
+    "docs-fa151e2-reconciled.patch": "db144fd60e48e323dbf9f0c1a75edbe5fff8005210118388ae0299097d31c7b5",
+    "docs-fa151e2-reconciled.validation.txt": "83a0985701dc05274ac86b31a92f04616ec45dccdb49919277ffc35c44750f61",
+    "docs-fa151e2-reconciled.validation-failure.txt": "aea803b842c878de7047a5aa1b75f460f0212cf1d4f1f56ceb2fa2511940c9a2",
+    "docs-merge-fa151e2-safe.patch": "fae0ad24d6f3b8be89077d42a2bd581f794db3e226112382df4bc5382dd9df6f",
+    "docs-merge-fa151e2-safe.validation.txt": "b4ac14d7cd9a8e50f209b386d740f9c31d39f8aa66fe8cfd746222484f5f14e8",
+    "docs-merge-fa151e2-final.sha256": "48f2b6e0b5f1e70b3e11e227d3c08c1c6ac9175c10103af9f159fb05cbbf39c0"
+  }
+}

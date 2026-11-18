@@ -1,0 +1,478 @@
+{
+  "startedAt": "2026-11-17T23:47:26.691732+00:00",
+  "capturedAt": "2026-11-17T23:47:29.879323+00:00",
+  "scope": "Final bounded read-only state receipt for frozen source review; no tests, native builds, dispatches, source edits or external messages.",
+  "run44": {
+    "id": 44194197445,
+    "run_number": 44,
+    "head_branch": "recovery/empty-state-ui-expectation-20261117-d57",
+    "head_sha": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+    "event": "workflow_dispatch",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-17T22:52:21Z",
+    "updated_at": "2026-11-17T23:27:52Z",
+    "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445"
+  },
+  "run44Jobs": [
+    {
+      "id": 134431174905,
+      "name": "PARTIAL iPhone UI acceptance (all 17 journeys)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-17T22:52:30Z",
+      "completed_at": "2026-11-17T23:27:52Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/job/134431174905",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-17T22:52:32Z",
+          "completed_at": "2026-11-17T22:52:34Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-17T22:52:34Z",
+          "completed_at": "2026-11-17T22:52:41Z"
+        },
+        {
+          "name": "Select an iPhone on this disposable hosted runner",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-17T22:52:41Z",
+          "completed_at": "2026-11-17T22:52:50Z"
+        },
+        {
+          "name": "Exercise native phone flows with isolated synthetic data",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-17T22:52:50Z",
+          "completed_at": "2026-11-17T23:27:20Z"
+        },
+        {
+          "name": "Verify the partial regression actually ran once",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-11-17T23:27:20Z",
+          "completed_at": "2026-11-17T23:27:20Z"
+        },
+        {
+          "name": "Export native interface evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-17T23:27:20Z",
+          "completed_at": "2026-11-17T23:27:27Z"
+        },
+        {
+          "name": "Keep the native UI results and screenshots",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-17T23:27:27Z",
+          "completed_at": "2026-11-17T23:27:39Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-17T23:27:39Z",
+          "completed_at": "2026-11-17T23:27:41Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-17T23:27:41Z",
+          "completed_at": "2026-11-17T23:27:48Z"
+        }
+      ]
+    },
+    {
+      "id": 134431176866,
+      "name": "Android compile, lint and native acceptance",
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-11-17T22:52:22Z",
+      "completed_at": "2026-11-17T22:52:22Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/job/134431176866",
+      "steps": []
+    },
+    {
+      "id": 134431177187,
+      "name": "Service and synthetic HTTPS",
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-11-17T22:52:22Z",
+      "completed_at": "2026-11-17T22:52:22Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/job/134431177187",
+      "steps": []
+    },
+    {
+      "id": 134431177737,
+      "name": "Hosted HTTPS service and durable storage",
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-11-17T22:52:22Z",
+      "completed_at": "2026-11-17T22:52:22Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/job/134431177737",
+      "steps": []
+    },
+    {
+      "id": 134431177800,
+      "name": "iPhone logic and unsigned build",
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-11-17T22:52:22Z",
+      "completed_at": "2026-11-17T22:52:22Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445/job/134431177800",
+      "steps": []
+    }
+  ],
+  "run44Artifacts": [
+    {
+      "id": 14378904630,
+      "name": "iphone-ui-acceptance-44194197445",
+      "size_in_bytes": 191254748,
+      "expired": false,
+      "created_at": "2026-11-17T23:27:40Z",
+      "updated_at": "2026-11-17T23:27:40Z",
+      "archive_download_url": "https://api.github.com/repos/swonyu/ahmad-career/actions/artifacts/14378904630/zip"
+    }
+  ],
+  "run44Logs": [
+    {
+      "job": 134431174905,
+      "file": "run44-job-134431174905.log",
+      "bytes": 580763,
+      "sha256": "8e6a0e5ad754a4e3bf0e0c15f5f8fd6f7d5fc039a344042adb2f2781ac2f602a",
+      "totalLines": 5108,
+      "matchingLines": [
+        {
+          "line": 196,
+          "text": "2026-11-17T22:52:50.5761300Z \u001b[36;1m  -resultBundlePath \"$RUNNER_TEMP/CareerFinderUI.xcresult\" \\\u001b[0m"
+        },
+        {
+          "line": 208,
+          "text": "2026-11-17T22:52:53.2014440Z     /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild -project apple/AhmadCareer.xcodeproj -scheme CareerFinderAcceptance -configuration Debug -destination \"platform=iOS Simulator,id=D26ED71E-9D97-4E79-B376-C104ABB9517A,arch=arm64\" -derivedDataPath /Users/runner/work/_temp/career-ui-derived -resultBundlePath /Users/runner/work/_temp/CareerFinderUI.xcresult -parallel-testing-enabled NO -maximum-concurrent-test-simulator-destinations 1 ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO test"
+        },
+        {
+          "line": 215,
+          "text": "2026-11-17T22:53:00.5100140Z Writing result bundle at path:"
+        },
+        {
+          "line": 216,
+          "text": "2026-11-17T22:53:00.5101970Z \t/Users/runner/work/_temp/CareerFinderUI.xcresult"
+        },
+        {
+          "line": 929,
+          "text": "2026-11-17T23:01:22.0839220Z Test Suite 'All tests' started at 2026-11-17 23:01:18.541."
+        },
+        {
+          "line": 930,
+          "text": "2026-11-17T23:01:22.0858030Z Test Suite 'CareerFinderUITests.xctest' started at 2026-11-17 23:01:18.546."
+        },
+        {
+          "line": 931,
+          "text": "2026-11-17T23:01:22.1097160Z Test Suite 'CareerFinderUITests' started at 2026-11-17 23:01:18.547."
+        },
+        {
+          "line": 932,
+          "text": "2026-11-17T23:01:22.1203970Z Test Case '-[CareerFinderUITests.CareerFinderUITests testAccessibilityTextKeepsCoreControlsReachable]' started."
+        },
+        {
+          "line": 1183,
+          "text": "2026-11-17T23:04:08.3816620Z Test Case '-[CareerFinderUITests.CareerFinderUITests testAccessibilityTextKeepsCoreControlsReachable]' passed (169.805 seconds)."
+        },
+        {
+          "line": 1184,
+          "text": "2026-11-17T23:04:08.3919600Z Test Case '-[CareerFinderUITests.CareerFinderUITests testApplicationDraftSurvivesCancelAndRelaunch]' started."
+        },
+        {
+          "line": 1319,
+          "text": "2026-11-17T23:05:05.3575060Z Test Case '-[CareerFinderUITests.CareerFinderUITests testApplicationDraftSurvivesCancelAndRelaunch]' passed (56.818 seconds)."
+        },
+        {
+          "line": 1320,
+          "text": "2026-11-17T23:05:05.3685150Z Test Case '-[CareerFinderUITests.CareerFinderUITests testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText]' started."
+        },
+        {
+          "line": 1682,
+          "text": "2026-11-17T23:07:14.6330760Z Test Case '-[CareerFinderUITests.CareerFinderUITests testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText]' passed (129.358 seconds)."
+        },
+        {
+          "line": 1683,
+          "text": "2026-11-17T23:07:14.6443560Z Test Case '-[CareerFinderUITests.CareerFinderUITests testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText]' started."
+        },
+        {
+          "line": 1960,
+          "text": "2026-11-17T23:09:01.6991110Z Test Case '-[CareerFinderUITests.CareerFinderUITests testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText]' passed (107.074 seconds)."
+        },
+        {
+          "line": 1961,
+          "text": "2026-11-17T23:09:01.7243060Z Test Case '-[CareerFinderUITests.CareerFinderUITests testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride]' started."
+        },
+        {
+          "line": 2038,
+          "text": "2026-11-17T23:09:30.6720670Z Test Case '-[CareerFinderUITests.CareerFinderUITests testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride]' passed (29.035 seconds)."
+        },
+        {
+          "line": 2039,
+          "text": "2026-11-17T23:09:30.6721940Z Test Case '-[CareerFinderUITests.CareerFinderUITests testDiscoverySaveFlowsIntoSavedAndApply]' started."
+        },
+        {
+          "line": 2192,
+          "text": "2026-11-17T23:10:16.0041370Z Test Case '-[CareerFinderUITests.CareerFinderUITests testDiscoverySaveFlowsIntoSavedAndApply]' passed (45.315 seconds)."
+        },
+        {
+          "line": 2193,
+          "text": "2026-11-17T23:10:16.0143730Z Test Case '-[CareerFinderUITests.CareerFinderUITests testFreshStartAndFiveTabs]' started."
+        },
+        {
+          "line": 2279,
+          "text": "2026-11-17T23:10:47.2523520Z Test Case '-[CareerFinderUITests.CareerFinderUITests testFreshStartAndFiveTabs]' passed (31.243 seconds)."
+        },
+        {
+          "line": 2280,
+          "text": "2026-11-17T23:10:47.2578090Z Test Case '-[CareerFinderUITests.CareerFinderUITests testLinkedInProfileDraftAndExternalSearchChoice]' started."
+        },
+        {
+          "line": 2438,
+          "text": "2026-11-17T23:12:04.8927600Z Test Case '-[CareerFinderUITests.CareerFinderUITests testLinkedInProfileDraftAndExternalSearchChoice]' passed (77.669 seconds)."
+        },
+        {
+          "line": 2439,
+          "text": "2026-11-17T23:12:04.9029590Z Test Case '-[CareerFinderUITests.CareerFinderUITests testOpportunityDiscardRequiresExplicitChoice]' started."
+        },
+        {
+          "line": 2503,
+          "text": "2026-11-17T23:12:30.5217280Z Test Case '-[CareerFinderUITests.CareerFinderUITests testOpportunityDiscardRequiresExplicitChoice]' passed (25.623 seconds)."
+        },
+        {
+          "line": 2504,
+          "text": "2026-11-17T23:12:30.5335050Z Test Case '-[CareerFinderUITests.CareerFinderUITests testOpportunityDraftKeepSaveAndRestore]' started."
+        },
+        {
+          "line": 2680,
+          "text": "2026-11-17T23:13:36.4744290Z Test Case '-[CareerFinderUITests.CareerFinderUITests testOpportunityDraftKeepSaveAndRestore]' passed (65.948 seconds)."
+        },
+        {
+          "line": 2681,
+          "text": "2026-11-17T23:13:36.4750260Z Test Case '-[CareerFinderUITests.CareerFinderUITests testPrivateApplicationRecordPersistsAndCorrectionIsExplicit]' started."
+        },
+        {
+          "line": 3138,
+          "text": "2026-11-17T23:16:19.6543860Z Test Case '-[CareerFinderUITests.CareerFinderUITests testPrivateApplicationRecordPersistsAndCorrectionIsExplicit]' passed (163.187 seconds)."
+        },
+        {
+          "line": 3139,
+          "text": "2026-11-17T23:16:19.6682800Z Test Case '-[CareerFinderUITests.CareerFinderUITests testProfileReadinessAndSimpleConnectionSetup]' started."
+        },
+        {
+          "line": 3441,
+          "text": "2026-11-17T23:17:51.8285740Z Test Case '-[CareerFinderUITests.CareerFinderUITests testProfileReadinessAndSimpleConnectionSetup]' passed (92.157 seconds)."
+        },
+        {
+          "line": 3442,
+          "text": "2026-11-17T23:17:51.8286960Z Test Case '-[CareerFinderUITests.CareerFinderUITests testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark]' started."
+        },
+        {
+          "line": 3605,
+          "text": "2026-11-17T23:18:27.4177120Z Test Case '-[CareerFinderUITests.CareerFinderUITests testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark]' passed (35.604 seconds)."
+        },
+        {
+          "line": 3606,
+          "text": "2026-11-17T23:18:27.4294650Z Test Case '-[CareerFinderUITests.CareerFinderUITests testSavedLinkRemovalAtLargestTextKeepsCancelReachable]' started."
+        },
+        {
+          "line": 3970,
+          "text": "2026-11-17T23:20:31.7589730Z Test Case '-[CareerFinderUITests.CareerFinderUITests testSavedLinkRemovalAtLargestTextKeepsCancelReachable]' passed (124.346 seconds)."
+        },
+        {
+          "line": 3971,
+          "text": "2026-11-17T23:20:31.7697770Z Test Case '-[CareerFinderUITests.CareerFinderUITests testSavedSearchFindsArabicNotesAndKeepsOriginalText]' started."
+        },
+        {
+          "line": 4390,
+          "text": "2026-11-17T23:23:03.2904130Z Test Case '-[CareerFinderUITests.CareerFinderUITests testSavedSearchFindsArabicNotesAndKeepsOriginalText]' passed (151.534 seconds)."
+        },
+        {
+          "line": 4391,
+          "text": "2026-11-17T23:23:03.3006790Z Test Case '-[CareerFinderUITests.CareerFinderUITests testSearchEmptyAndFailurePreservesPreviousResults]' started."
+        },
+        {
+          "line": 4671,
+          "text": "2026-11-17T23:24:50.8160780Z Test Case '-[CareerFinderUITests.CareerFinderUITests testSearchEmptyAndFailurePreservesPreviousResults]' passed (107.517 seconds)."
+        },
+        {
+          "line": 4672,
+          "text": "2026-11-17T23:24:50.8164380Z Test Case '-[CareerFinderUITests.CareerFinderUITests testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable]' started."
+        },
+        {
+          "line": 4940,
+          "text": "2026-11-17T23:25:57.3689370Z Test Case '-[CareerFinderUITests.CareerFinderUITests testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable]' passed (66.567 seconds)."
+        },
+        {
+          "line": 4941,
+          "text": "2026-11-17T23:25:57.3839470Z Test Suite 'CareerFinderUITests' passed at 2026-11-17 23:25:57.369."
+        },
+        {
+          "line": 4942,
+          "text": "2026-11-17T23:25:57.3848840Z \t Executed 17 tests, with 0 failures (0 unexpected) in 1478.798 (1478.822) seconds"
+        },
+        {
+          "line": 4943,
+          "text": "2026-11-17T23:25:57.5729020Z Test Suite 'CareerFinderUITests.xctest' passed at 2026-11-17 23:25:57.374."
+        },
+        {
+          "line": 4944,
+          "text": "2026-11-17T23:25:57.5729700Z \t Executed 17 tests, with 0 failures (0 unexpected) in 1478.798 (1478.828) seconds"
+        },
+        {
+          "line": 4945,
+          "text": "2026-11-17T23:25:57.5730170Z Test Suite 'All tests' passed at 2026-11-17 23:25:57.375."
+        },
+        {
+          "line": 4946,
+          "text": "2026-11-17T23:25:57.5730660Z \t Executed 17 tests, with 0 failures (0 unexpected) in 1478.798 (1478.833) seconds"
+        },
+        {
+          "line": 4951,
+          "text": "2026-11-17T23:27:04.8830970Z Test session results, code coverage, and logs:"
+        },
+        {
+          "line": 4952,
+          "text": "2026-11-17T23:27:04.8836920Z \t/Users/runner/work/_temp/CareerFinderUI.xcresult"
+        },
+        {
+          "line": 4954,
+          "text": "2026-11-17T23:27:04.8837530Z ** TEST SUCCEEDED **"
+        },
+        {
+          "line": 4957,
+          "text": "2026-11-17T23:27:20.4403430Z ##[group]Run if [ -d \"$RUNNER_TEMP/CareerFinderUI.xcresult\" ]; then"
+        },
+        {
+          "line": 4958,
+          "text": "2026-11-17T23:27:20.4403980Z \u001b[36;1mif [ -d \"$RUNNER_TEMP/CareerFinderUI.xcresult\" ]; then\u001b[0m"
+        },
+        {
+          "line": 4959,
+          "text": "2026-11-17T23:27:20.4404370Z \u001b[36;1m  xcrun xcresulttool export attachments \\\u001b[0m"
+        },
+        {
+          "line": 4960,
+          "text": "2026-11-17T23:27:20.4404810Z \u001b[36;1m    --path \"$RUNNER_TEMP/CareerFinderUI.xcresult\" \\\u001b[0m"
+        },
+        {
+          "line": 5044,
+          "text": "/Users/runner/work/_temp/CareerFinderUI.xcresult"
+        }
+      ]
+    }
+  ],
+  "commentsSince": "2026-11-17T23:25:09Z",
+  "comments": [],
+  "publisherRefs": {
+    "refs/heads/recovery/empty-state-ui-expectation-20261117-d57": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+    "refs/heads/recovery/publishing-integrated-20261117-d57f4": "363ae84aaaf9032b040ee60b16a3c023ec1c1cf2",
+    "refs/heads/recovery/publishing-reconciled-20261117-d57": "2884188263f3dad5753da7b2e507f6ba55e30eb0"
+  },
+  "latestRuns": [
+    {
+      "id": 44194197445,
+      "run_number": 44,
+      "head_branch": "recovery/empty-state-ui-expectation-20261117-d57",
+      "head_sha": "a17999ce9f24d1e8c94a38c03dcda68101db4507",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-17T22:52:21Z",
+      "updated_at": "2026-11-17T23:27:52Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44194197445"
+    },
+    {
+      "id": 44185640786,
+      "run_number": 43,
+      "head_branch": "recovery/publishing-reconciled-20261117-d57",
+      "head_sha": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-17T22:00:19Z",
+      "updated_at": "2026-11-17T22:23:13Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44185640786"
+    },
+    {
+      "id": 44172535044,
+      "run_number": 42,
+      "head_branch": "recovery/publishing-integrated-20261117-d57f4",
+      "head_sha": "363ae84aaaf9032b040ee60b16a3c023ec1c1cf2",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-17T20:44:50Z",
+      "updated_at": "2026-11-17T21:15:15Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44172535044"
+    },
+    {
+      "id": 44147056599,
+      "run_number": 41,
+      "head_branch": "recovery/publishing-integrated-20261117-d57f4",
+      "head_sha": "243031d3f35040985c5b274e8ddf4a90adb0eda8",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-17T18:22:03Z",
+      "updated_at": "2026-11-17T18:50:00Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44147056599"
+    },
+    {
+      "id": 44139018005,
+      "run_number": 40,
+      "head_branch": "continuation/account-acceptance-20261117",
+      "head_sha": "63eecda5c5c57805aeae1f5ba8e22af65e38ceee",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-17T17:37:23Z",
+      "updated_at": "2026-11-17T18:06:31Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44139018005"
+    }
+  ],
+  "localState": {
+    "accessibility": {
+      "head": "2230499e48104c7380d150e010d1859ff42b0c6a",
+      "branch": "lane/account-search-a11y-20261117",
+      "status": "",
+      "dirtySHA256": {}
+    },
+    "publisher": {
+      "head": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+      "branch": "recovery/publishing-reconciled-20261117-d57",
+      "status": "",
+      "dirtySHA256": {}
+    },
+    "recovery": {
+      "head": "11cb3d4d8c15e9b16719b6e7091597f43633cda6",
+      "branch": "continuation/native-recovery-20261117-01a1ea9cfd25",
+      "status": "M android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt\n M android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt\n M android/app/src/main/java/com/saleh/careerfinder/Models.kt\n M android/app/src/main/java/com/saleh/careerfinder/WorkspaceTransfer.kt\n M apple/AhmadCareer/MobileApplicationState.swift\n M apple/AhmadCareer/NativeApplicationsStore.swift\n M apple/AhmadCareer/NativeApplicationsViews.swift\n?? apple/Checks/NativeRecoveryCheck.swift",
+      "dirtySHA256": {
+        "android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt": "f6427a0030e13f2738b115dd406ae0b0cbd77b43b5959fc7407a7fc99c932fb8",
+        "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt": "1a01a32a739d8f62f4639f52012b37d06a498a36db9db6988034617c24ea92a5",
+        "android/app/src/main/java/com/saleh/careerfinder/Models.kt": "716fe6ff51f9dd614cc0532e353dd0b16319cef2de39b39a2f906107eec0032c",
+        "android/app/src/main/java/com/saleh/careerfinder/WorkspaceTransfer.kt": "fa5e64e4ac918b712dcadce2144aacf012da1d25a6d7ad8f931b245ad580b6c7",
+        "apple/AhmadCareer/MobileApplicationState.swift": "74af420b46db2ca75355eda9f97716a0e5e12d45a41a204145c277f33838a404",
+        "apple/AhmadCareer/NativeApplicationsStore.swift": "2b77bb0d0aa075c7568fbabd784eced430a568ebb59f792ec2ba566fc949cd6f",
+        "apple/AhmadCareer/NativeApplicationsViews.swift": "0a831b8f25668e4bd9985885ade653ce71a23720cd172be53f5e8874231c896a",
+        "apple/Checks/NativeRecoveryCheck.swift": "97a9f308d0b31a461ae0adda08687b79ce9bf9fb6e40fb3c792064688cc24117"
+      },
+      "frozenDirtyHashesUnchanged": true
+    }
+  }
+}

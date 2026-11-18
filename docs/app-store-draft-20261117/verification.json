@@ -1,0 +1,50 @@
+{
+  "recordedAt": "2026-11-17T15:00:39.350677+00:00",
+  "appStoreRecord": "6820749119",
+  "runtimeSource": "918cfaa455b76f217b21c6c01fe862ea95ebe920",
+  "priorDocsCommit": "eb4c883f3c5a4bfe1dfd683bd9c2d25a6d482711",
+  "consoleStateReportedByParent": {
+    "version": "1.0",
+    "state": "Prepare for Submission",
+    "selectedBuild": null,
+    "existingIPhoneScreenshots": 3,
+    "screenshotSourceVersionsVerified": false,
+    "reviewContactPresent": false
+  },
+  "sourceConfiguration": {
+    "iPhoneVersion": "1.1",
+    "build": 7,
+    "bundleIdentifier": "com.ahmadalayed.career",
+    "targetDeviceFamily": "iPhone"
+  },
+  "fields": {
+    "review-notes-en.txt": {
+      "charactersWithoutFinalLF": 2247,
+      "UTF8BytesWithoutFinalLF": 2247,
+      "fileBytesIncludingFinalLF": 2248,
+      "sha256": "38477be19e8186f4f08e26e0cad6cb6ceca735bd1872cb163171e2cb9d065ecd"
+    },
+    "description-en.txt": {
+      "charactersWithoutFinalLF": 1715,
+      "UTF8BytesWithoutFinalLF": 1715,
+      "fileBytesIncludingFinalLF": 1716,
+      "sha256": "6319ce5b0da110f4c8aef36aa036c6ce21b3c93b81458a6db2cfc0dfbc9ebf10"
+    },
+    "description-ar.txt": {
+      "charactersWithoutFinalLF": 1465,
+      "UTF8BytesWithoutFinalLF": 2630,
+      "fileBytesIncludingFinalLF": 2631,
+      "sha256": "f2e4693022f7c51834605a203443c7bcc7ed0aa05e1e0d87cb3d3e98d174cee9"
+    }
+  },
+  "allPayloadFilesBelow4000BytesIncludingFinalLF": true,
+  "sourceHashes": {
+    "apple/AhmadCareer/NativeCareerViews.swift": "b6a65190c55cd2e86cbdeead6a7a4eee2857bf2da93365c6e95bd8d0f5d986cc",
+    "apple/AhmadCareer/NativeApplicationsViews.swift": "d0a2dd335b4ddcd51fb2b989532bffd0777c82c54a69a0ef60862679145cc8f7",
+    "apple/AhmadCareer/NativeDiscoveryViews.swift": "173e1d9934d7ecd461dd1cb0bde6368a66d3d7200cf985a0b512dddebcd826da",
+    "apple/AhmadCareer.xcodeproj/project.pbxproj": "57b8425ca04306ad7f00b829f7195cbb1b9f1c04141a9a77b86d19599668a126"
+  },
+  "consoleWritten": false,
+  "newRuntimeAcceptancePerformed": false,
+  "status": "Prepared, source-reviewed draft. Requires final source and actual release gates before submission."
+}

@@ -1,0 +1,703 @@
+{
+  "createdAt": "2026-11-17T23:50:04.191309+00:00",
+  "scope": "Evidence artifacts only; source review and read-only CI results",
+  "files": [
+    {
+      "path": "ANDROID-HUNK-REVIEW.json",
+      "bytes": 35551,
+      "sha256": "7bbe04b7d3b0e99a297eb85a48e9c890b35c99b5b67a4b0a76ac5f1770763ecc"
+    },
+    {
+      "path": "ANDROID-HUNK-REVIEW.md",
+      "bytes": 12548,
+      "sha256": "c4965c956c88e22a80a8e48f509b232b251ac8ec7575f89d9cdba441c5c5d29a"
+    },
+    {
+      "path": "INTEGRATION-MAP.md",
+      "bytes": 26385,
+      "sha256": "17923491b000756a1786aa87e759a70e0b2559cd846f0758768893c172d15b34"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3090,
+      "sha256": "816b56dea08990407598295676f7cc8a938c1faca719a62593914c216045234a"
+    },
+    {
+      "path": "a11y-6054-from-243.patch",
+      "bytes": 113799,
+      "sha256": "843601a644b74ab73c2ed8559e51fa8d02bf79fa8b10fb8ec33d055d29cf5096"
+    },
+    {
+      "path": "a11y-after-frozen-review.json",
+      "bytes": 594,
+      "sha256": "1bf435b186cd53c2c5eb3bc5132a15543ce34aceca9171a6ddfb1382e16816b0"
+    },
+    {
+      "path": "a11y-after-frozen-review.patch",
+      "bytes": 2066,
+      "sha256": "a16f15ed18ad7fc821ca9e20bb4a178a320957d0143199e94a62c85221035b95"
+    },
+    {
+      "path": "a11y-current-after-6054.patch",
+      "bytes": 6561,
+      "sha256": "6c103a1f5313e960de3c5073276b7b539463f76e6d6d8da99a5ea9114e69fe74"
+    },
+    {
+      "path": "commits/00e4257.patch",
+      "bytes": 4583,
+      "sha256": "144c7c68df35d4c180d44e15bf8704aa9ea22436de686c4bb4b8046b0f44623b"
+    },
+    {
+      "path": "commits/08f25cc.patch",
+      "bytes": 5557,
+      "sha256": "4f40be3e7b6e5e356d928aee1103f532d7589293bea69562519a28e6dde5aa0b"
+    },
+    {
+      "path": "commits/0ca27c8.patch",
+      "bytes": 2227,
+      "sha256": "e25dfe8e12b6f2d20273cd6e3dfcf7a46a018961bc481351790947b798c0f69b"
+    },
+    {
+      "path": "commits/0ed8f50.patch",
+      "bytes": 2439,
+      "sha256": "29bf08b5f0fdda6130c5a90628637252a0b386d3d78cbd79ad2314f42eb7f26b"
+    },
+    {
+      "path": "commits/1838e0a.patch",
+      "bytes": 1857,
+      "sha256": "24866e4b70adfd123ae2e6d3f46e377016807a650a8c26ac202d5acb4ad17e22"
+    },
+    {
+      "path": "commits/1c44581.patch",
+      "bytes": 7411,
+      "sha256": "abdda351b4919f9eba9a28b18316304e7a1d46453a5be10d09070b775b34c857"
+    },
+    {
+      "path": "commits/2552446.patch",
+      "bytes": 34088,
+      "sha256": "3e740678e7e285aa895ce64bafc8010c979849d00e28b47700fdc0ab385fb62a"
+    },
+    {
+      "path": "commits/47fdfb2.patch",
+      "bytes": 2889,
+      "sha256": "8363fd62caae38c9a9221ea7c2b72e389a6fd6de99afbebc5ac21a9140f37513"
+    },
+    {
+      "path": "commits/594da38.patch",
+      "bytes": 1160,
+      "sha256": "278768f576349d43b722bcfbc395f6b5921a8a4f74879eb9574fd291551aa2aa"
+    },
+    {
+      "path": "commits/6054d0b.patch",
+      "bytes": 1535,
+      "sha256": "eec88ef4a52a56379bb174c92a91392747aecaf23ac17bbc989a5de93d47595f"
+    },
+    {
+      "path": "commits/6411a10.patch",
+      "bytes": 1884,
+      "sha256": "ef2dbb4787c3ad0588208fcf45d84b10baa372b179ffc3ae6da3487f649d4427"
+    },
+    {
+      "path": "commits/720fce5.patch",
+      "bytes": 7209,
+      "sha256": "544dfce44d759455b32a7ff0bf43623953f69dd3e83ce86cd982268c60322343"
+    },
+    {
+      "path": "commits/7e97e09.patch",
+      "bytes": 2022,
+      "sha256": "e672bba9e0392dbff9aeb68dda5eebad4aa3cf6241a277623e82cc775c635d3e"
+    },
+    {
+      "path": "commits/842358e.patch",
+      "bytes": 10755,
+      "sha256": "0ccd761c3986fa0ed5818c85b18212a1cf37a27987515d1406d288f420484e17"
+    },
+    {
+      "path": "commits/87d7238.patch",
+      "bytes": 2218,
+      "sha256": "9d11fc6f0fdca4d740cf58615016c6aeb1946bbfb5c18817b1c524f4a1666a46"
+    },
+    {
+      "path": "commits/910369f.patch",
+      "bytes": 1725,
+      "sha256": "44f4e3af52ade0bb50b718ef8ed28388ac7740230afd300d2512ae6d88b9aa68"
+    },
+    {
+      "path": "commits/9700d0e.patch",
+      "bytes": 2982,
+      "sha256": "d8246378abe006539adcb19cb6fd7773cad3b9686f564f3d8631ab99f45c9e5f"
+    },
+    {
+      "path": "commits/a4f06c1.patch",
+      "bytes": 7173,
+      "sha256": "8d95f03326bac91b33fd536f2844699ade02240e31a2635037a5092353c8a4b7"
+    },
+    {
+      "path": "commits/b5f8dff.patch",
+      "bytes": 8597,
+      "sha256": "42ba3fea28ca2f7b9ee14a0c9e4097a15d3f05ac44f73713aa729363805c31ea"
+    },
+    {
+      "path": "commits/b6d5fca.patch",
+      "bytes": 12344,
+      "sha256": "7ee33afe0370d517b2e9c095ff9bcc855ced07f9bfdf89aad24d5c9262485525"
+    },
+    {
+      "path": "commits/c04ea87.patch",
+      "bytes": 3328,
+      "sha256": "9275cd170cba3ed58d7e0964c2349c4cd6cbd2f6016d3f0276a59e7425fb7257"
+    },
+    {
+      "path": "commits/c4bf5db.patch",
+      "bytes": 8011,
+      "sha256": "645810a13a7292b5df0febf4983d2a305c62658b71bece6c025a74914449a451"
+    },
+    {
+      "path": "commits/e33accb.patch",
+      "bytes": 2712,
+      "sha256": "da973b1ab57d6fdbd62c49128399a8d38d43d82292a98abe81a2c68d4b7431cf"
+    },
+    {
+      "path": "commits/ee3bac2.patch",
+      "bytes": 2014,
+      "sha256": "b02d061e15e07c115065f45e377c4510a17db6151d1d2787a0ba69b875ba15fd"
+    },
+    {
+      "path": "commits/f139c04.patch",
+      "bytes": 4017,
+      "sha256": "cb51a10c3234a21e14c6afd09d3d2feb78cddb5fff4eb017c9fd7fddd56e473c"
+    },
+    {
+      "path": "commits/f6ec0cd.patch",
+      "bytes": 4613,
+      "sha256": "fc0f20532fa9da1a28cd585bac83d95b4f92a430a22a217c3630c7661e8e9b19"
+    },
+    {
+      "path": "commits/fa759f0.patch",
+      "bytes": 9873,
+      "sha256": "5be656b3d417e4eb2886c787be61865cc02149cf7f5ba8d40a09ae36a313d5b5"
+    },
+    {
+      "path": "final-state-receipt.json",
+      "bytes": 21581,
+      "sha256": "a59e4b6d49f3edb5535479b3319f24b2f900586a4b6569cb91b2d3783a6c39ba"
+    },
+    {
+      "path": "integration-map.json",
+      "bytes": 38729,
+      "sha256": "d0be2f8d8315f1acc343ba3e74e85274d6bf717bef9b8a0833217b958c3f1a68"
+    },
+    {
+      "path": "path-hunk-index.json",
+      "bytes": 16134,
+      "sha256": "ad75dedde61be4d401be9bd7cd0917c9397ec73151cc9ecbc8f7bc106ba22100"
+    },
+    {
+      "path": "publisher-288-from-243-scoped.patch",
+      "bytes": 149118,
+      "sha256": "2faccd61f6d34ab49dfaff15497b107745a6d66f84ef7067aca4db3198189cda"
+    },
+    {
+      "path": "recovery-dirty.patch",
+      "bytes": 82516,
+      "sha256": "ca6a72ede7274c4551d5e448f810f5e9cdf97946d89162103cabde8735e4f684"
+    },
+    {
+      "path": "run44-job-134431174905.log",
+      "bytes": 580763,
+      "sha256": "8e6a0e5ad754a4e3bf0e0c15f5f8fd6f7d5fc039a344042adb2f2781ac2f602a"
+    },
+    {
+      "path": "run44-result-summary.json",
+      "bytes": 4649,
+      "sha256": "8c4f72b65c9e6c83f4a8c9989e638742d57d432195ddc6284b9be6bf7ba61e95"
+    },
+    {
+      "path": "snapshot.json",
+      "bytes": 60191,
+      "sha256": "d503f9306daaa72a4cc7fe8aaaf60a5bceff55c323709329aec725acb6c1ec4c"
+    },
+    {
+      "path": "source/a11y-current/android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt",
+      "bytes": 17000,
+      "sha256": "c6bbfe714540c5d93ced32975201729b8b3ee6e39fa5e25fab93813b7e7f6b94"
+    },
+    {
+      "path": "source/a11y-current/android/app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+      "bytes": 22548,
+      "sha256": "3b77a23f782462e0673b3226cb55c879602e8811d867548f2a2b2b82bcaa514d"
+    },
+    {
+      "path": "source/a11y-current/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+      "bytes": 23480,
+      "sha256": "4a31e58bc327d6a6879a80ba519f058a06f0f1caeb71128984f03b4dd6e4fba4"
+    },
+    {
+      "path": "source/a11y-current/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+      "bytes": 95396,
+      "sha256": "d4244c435ec093076035a8c0bacda2253f2260a09cf043e9be4617c367cb3c4c"
+    },
+    {
+      "path": "source/a11y-current/android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt",
+      "bytes": 160302,
+      "sha256": "389044d4fa2ba1a4ce26591fe9bf8a276fc597208a89b8491c95511536ca3371"
+    },
+    {
+      "path": "source/a11y-current/android/app/src/main/java/com/saleh/careerfinder/ProfileContract.java",
+      "bytes": 4471,
+      "sha256": "16464272bfffde62dd7d58a2525a39c231d3770e7d4bfb474242dc99b88aa993"
+    },
+    {
+      "path": "source/a11y-current/android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt",
+      "bytes": 19755,
+      "sha256": "f61dd104308c94133ccde8d4242a43ff747af485bd80c50905292ac0a499985f"
+    },
+    {
+      "path": "source/a11y-current/android/app/src/main/res/values/career_copy.xml",
+      "bytes": 211355,
+      "sha256": "4f37061380a64af03af233719ea37e8e22a27ff14beb1b412e172196d60352e9"
+    },
+    {
+      "path": "source/a11y-current/android/app/src/main/res/values-ar/career_copy.xml",
+      "bytes": 273567,
+      "sha256": "7c39b859d7ef12666245c3d4f2c7ae21c1bc79863c85b84e8f4fcf81bfbdfd65"
+    },
+    {
+      "path": "source/a11y-current/android/checks/BoundaryPolicyCheck.java",
+      "bytes": 15629,
+      "sha256": "d725c6d0096939f70f19adc81d231bbe193ce55da17f5df639227d2d13923061"
+    },
+    {
+      "path": "source/a11y-current/apple/AhmadCareer/CareerDiscovery.swift",
+      "bytes": 22149,
+      "sha256": "3515849732dbef0df226c526c14d70fa882c6260422812e5e9ac8d4251205429"
+    },
+    {
+      "path": "source/a11y-current/apple/AhmadCareer/MobileApplicationState.swift",
+      "bytes": 40297,
+      "sha256": "bfc9d7f699f070629c16b49c8b28a19dc31ef3c7215144e598e4bc47c48ab46f"
+    },
+    {
+      "path": "source/a11y-current/apple/AhmadCareer/NativeApplicationsViews.swift",
+      "bytes": 89607,
+      "sha256": "780f49b5ecfe0218e7d1225e5738bca3a2eed58a3577148b4abd71e03e826868"
+    },
+    {
+      "path": "source/a11y-current/apple/AhmadCareer/NativeCareerViews.swift",
+      "bytes": 110808,
+      "sha256": "343e99210584e565cbf429e1ebd187c715c1834cfb3a48ac97ab24f81c6831d5"
+    },
+    {
+      "path": "source/a11y-current/apple/AhmadCareer/NativeDiscoveryViews.swift",
+      "bytes": 22313,
+      "sha256": "7587cec2fed629616a2c016ba203b7be2b758bc6fcc58c8123eef69f07e2d3f0"
+    },
+    {
+      "path": "source/a11y-current/apple/AhmadCareer/ar.lproj/Localizable.strings",
+      "bytes": 270140,
+      "sha256": "b4c39e6eab3c879161dbd46701c1f8632736c8fe8a4f8d277c23ea19d23365ac"
+    },
+    {
+      "path": "source/a11y-current/apple/AhmadCareer/en.lproj/Localizable.strings",
+      "bytes": 207887,
+      "sha256": "231536879fb0319884f2f53b5b73afcc3d504a65703678be9c7560d8c4cef19c"
+    },
+    {
+      "path": "source/a11y-current/apple/Checks/DiscoveryCheck.swift",
+      "bytes": 21111,
+      "sha256": "3a03474da2fd48e6c759e33b9df58912b82ece47868283894421d4a9c138be7d"
+    },
+    {
+      "path": "source/a11y-current/apple/Checks/MobileLifecycleCheck.swift",
+      "bytes": 131938,
+      "sha256": "d124dab6de2d3797c78b950494e2054765e5452ce43d3660793a3367dd6ec754"
+    },
+    {
+      "path": "source/a11y-current/localization/native-copy.json",
+      "bytes": 275529,
+      "sha256": "9de2d90fadd88cf6587904a0d1e36c1cca3371e3b5127b7effe03345a4a1f5b3"
+    },
+    {
+      "path": "source/a11y6054/android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt",
+      "bytes": 16857,
+      "sha256": "f20d76e044de5a44b0243a73aec9077491891eeee374bfd9096cc6c013c19b36"
+    },
+    {
+      "path": "source/a11y6054/android/app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+      "bytes": 22548,
+      "sha256": "3b77a23f782462e0673b3226cb55c879602e8811d867548f2a2b2b82bcaa514d"
+    },
+    {
+      "path": "source/a11y6054/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+      "bytes": 23480,
+      "sha256": "4a31e58bc327d6a6879a80ba519f058a06f0f1caeb71128984f03b4dd6e4fba4"
+    },
+    {
+      "path": "source/a11y6054/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+      "bytes": 95396,
+      "sha256": "d4244c435ec093076035a8c0bacda2253f2260a09cf043e9be4617c367cb3c4c"
+    },
+    {
+      "path": "source/a11y6054/android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt",
+      "bytes": 160302,
+      "sha256": "389044d4fa2ba1a4ce26591fe9bf8a276fc597208a89b8491c95511536ca3371"
+    },
+    {
+      "path": "source/a11y6054/android/app/src/main/java/com/saleh/careerfinder/ProfileContract.java",
+      "bytes": 4471,
+      "sha256": "16464272bfffde62dd7d58a2525a39c231d3770e7d4bfb474242dc99b88aa993"
+    },
+    {
+      "path": "source/a11y6054/android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt",
+      "bytes": 18484,
+      "sha256": "656a9ea42c5a452a70d840faee84af8229eae7e0b9455eb0cea83c1dccafb71d"
+    },
+    {
+      "path": "source/a11y6054/android/app/src/main/res/values/career_copy.xml",
+      "bytes": 211355,
+      "sha256": "4f37061380a64af03af233719ea37e8e22a27ff14beb1b412e172196d60352e9"
+    },
+    {
+      "path": "source/a11y6054/android/app/src/main/res/values-ar/career_copy.xml",
+      "bytes": 273567,
+      "sha256": "7c39b859d7ef12666245c3d4f2c7ae21c1bc79863c85b84e8f4fcf81bfbdfd65"
+    },
+    {
+      "path": "source/a11y6054/android/checks/BoundaryPolicyCheck.java",
+      "bytes": 15629,
+      "sha256": "d725c6d0096939f70f19adc81d231bbe193ce55da17f5df639227d2d13923061"
+    },
+    {
+      "path": "source/a11y6054/apple/AhmadCareer/CareerDiscovery.swift",
+      "bytes": 22149,
+      "sha256": "3515849732dbef0df226c526c14d70fa882c6260422812e5e9ac8d4251205429"
+    },
+    {
+      "path": "source/a11y6054/apple/AhmadCareer/MobileApplicationState.swift",
+      "bytes": 40297,
+      "sha256": "bfc9d7f699f070629c16b49c8b28a19dc31ef3c7215144e598e4bc47c48ab46f"
+    },
+    {
+      "path": "source/a11y6054/apple/AhmadCareer/NativeApplicationsViews.swift",
+      "bytes": 89607,
+      "sha256": "780f49b5ecfe0218e7d1225e5738bca3a2eed58a3577148b4abd71e03e826868"
+    },
+    {
+      "path": "source/a11y6054/apple/AhmadCareer/NativeCareerViews.swift",
+      "bytes": 110808,
+      "sha256": "343e99210584e565cbf429e1ebd187c715c1834cfb3a48ac97ab24f81c6831d5"
+    },
+    {
+      "path": "source/a11y6054/apple/AhmadCareer/NativeDiscoveryViews.swift",
+      "bytes": 22313,
+      "sha256": "7587cec2fed629616a2c016ba203b7be2b758bc6fcc58c8123eef69f07e2d3f0"
+    },
+    {
+      "path": "source/a11y6054/apple/AhmadCareer/ar.lproj/Localizable.strings",
+      "bytes": 270140,
+      "sha256": "b4c39e6eab3c879161dbd46701c1f8632736c8fe8a4f8d277c23ea19d23365ac"
+    },
+    {
+      "path": "source/a11y6054/apple/AhmadCareer/en.lproj/Localizable.strings",
+      "bytes": 207887,
+      "sha256": "231536879fb0319884f2f53b5b73afcc3d504a65703678be9c7560d8c4cef19c"
+    },
+    {
+      "path": "source/a11y6054/apple/Checks/DiscoveryCheck.swift",
+      "bytes": 21111,
+      "sha256": "3a03474da2fd48e6c759e33b9df58912b82ece47868283894421d4a9c138be7d"
+    },
+    {
+      "path": "source/a11y6054/apple/Checks/MobileLifecycleCheck.swift",
+      "bytes": 131938,
+      "sha256": "d124dab6de2d3797c78b950494e2054765e5452ce43d3660793a3367dd6ec754"
+    },
+    {
+      "path": "source/a11y6054/localization/native-copy.json",
+      "bytes": 275529,
+      "sha256": "9de2d90fadd88cf6587904a0d1e36c1cca3371e3b5127b7effe03345a4a1f5b3"
+    },
+    {
+      "path": "source/base243/android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt",
+      "bytes": 15981,
+      "sha256": "fae61e472fb03d90f9ab268fce705a0a3f586816ee06330b00025fab255043e6"
+    },
+    {
+      "path": "source/base243/android/app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+      "bytes": 22111,
+      "sha256": "d6c0800915ea2b2435487bc0b1946e1714e39796b36cf17ee1c112eb9b8168b4"
+    },
+    {
+      "path": "source/base243/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+      "bytes": 21153,
+      "sha256": "4ccb8f5f4cbeebbaebe53dd138b91aaae5b9d0708c58dc181c42fbb5eb93aa66"
+    },
+    {
+      "path": "source/base243/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+      "bytes": 93320,
+      "sha256": "3aed8440668070d2c573a739a84956e3e2ab278d4109ea29ba527b7214416f3e"
+    },
+    {
+      "path": "source/base243/android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt",
+      "bytes": 160221,
+      "sha256": "9d70b400b22bbd9276730e4c3439bea37993598f4429d0bb8102f46fe177df95"
+    },
+    {
+      "path": "source/base243/android/app/src/main/java/com/saleh/careerfinder/ProfileContract.java",
+      "bytes": 4135,
+      "sha256": "4cced3e879ccb3197376c13ebfde19fadd52ade5318d99636910b597937a88cc"
+    },
+    {
+      "path": "source/base243/android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt",
+      "bytes": 17937,
+      "sha256": "a3d450e447d8923a275e3a498bed7e88281001c958bb52938afabd340f54dad2"
+    },
+    {
+      "path": "source/base243/android/app/src/main/res/values/career_copy.xml",
+      "bytes": 211245,
+      "sha256": "2255d3704be23417d2059054cb8d73f363dc6bc408119ae07ba683e42aa98f09"
+    },
+    {
+      "path": "source/base243/android/app/src/main/res/values-ar/career_copy.xml",
+      "bytes": 273411,
+      "sha256": "877190707a0be807927b1dfb41149a946e0ae5514fb1e121d6396139a02c5e3c"
+    },
+    {
+      "path": "source/base243/android/checks/BoundaryPolicyCheck.java",
+      "bytes": 14971,
+      "sha256": "de8fc36a3769c5a493c304562741add84511ccd1f3790d2eb1452667aaecbb29"
+    },
+    {
+      "path": "source/base243/apple/AhmadCareer/CareerDiscovery.swift",
+      "bytes": 21451,
+      "sha256": "d786be47bae9316e2548b325c121aef5322986ab222e7ea924f7f158d6655739"
+    },
+    {
+      "path": "source/base243/apple/AhmadCareer/MobileApplicationState.swift",
+      "bytes": 40079,
+      "sha256": "1858795ccf563e9802c5cabc0367b402eadba2c9e978a5092c2e70a232d1a489"
+    },
+    {
+      "path": "source/base243/apple/AhmadCareer/NativeApplicationsViews.swift",
+      "bytes": 85349,
+      "sha256": "5315c020aa0f75d0239089cc1d1f0789ca1b90a207203b6e9dd2c61563cca47c"
+    },
+    {
+      "path": "source/base243/apple/AhmadCareer/NativeCareerViews.swift",
+      "bytes": 101191,
+      "sha256": "b6a65190c55cd2e86cbdeead6a7a4eee2857bf2da93365c6e95bd8d0f5d986cc"
+    },
+    {
+      "path": "source/base243/apple/AhmadCareer/NativeDiscoveryViews.swift",
+      "bytes": 18253,
+      "sha256": "173e1d9934d7ecd461dd1cb0bde6368a66d3d7200cf985a0b512dddebcd826da"
+    },
+    {
+      "path": "source/base243/apple/AhmadCareer/ar.lproj/Localizable.strings",
+      "bytes": 269993,
+      "sha256": "30f05cfa8b38ae4e8c11ff6b17e30d25147c8aefcdb04b0479b898be9ba6b7e3"
+    },
+    {
+      "path": "source/base243/apple/AhmadCareer/en.lproj/Localizable.strings",
+      "bytes": 207786,
+      "sha256": "5a8e91d66587e0b608956230b0860a80d09137a7368457bb89144d65350a5fa4"
+    },
+    {
+      "path": "source/base243/apple/Checks/DiscoveryCheck.swift",
+      "bytes": 16426,
+      "sha256": "9fa19b0235affc8f30c654d824c3d67d119e27add6042536eec6854304e5de50"
+    },
+    {
+      "path": "source/base243/apple/Checks/MobileLifecycleCheck.swift",
+      "bytes": 130346,
+      "sha256": "52fd4d4fba216a37a020b496b03c6bbb9ee2a23378b3f58de8220785ff5333a2"
+    },
+    {
+      "path": "source/base243/localization/native-copy.json",
+      "bytes": 275379,
+      "sha256": "c5ca08a042d89b8291e1d17612d2205becb096df85fcc43141445aababe37fe7"
+    },
+    {
+      "path": "source/publisher288/android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt",
+      "bytes": 15981,
+      "sha256": "fae61e472fb03d90f9ab268fce705a0a3f586816ee06330b00025fab255043e6"
+    },
+    {
+      "path": "source/publisher288/android/app/src/main/java/com/saleh/careerfinder/Discovery.kt",
+      "bytes": 34196,
+      "sha256": "ec747a9a9320aa3f12a587b5c465d5fc064c79782f2771b37fc1de30c78db1cb"
+    },
+    {
+      "path": "source/publisher288/android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+      "bytes": 24401,
+      "sha256": "884cac8643dd8fcc62c59dbb01ae7b510060f58bfafb8af36737fe70bd5f6209"
+    },
+    {
+      "path": "source/publisher288/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+      "bytes": 93320,
+      "sha256": "3aed8440668070d2c573a739a84956e3e2ab278d4109ea29ba527b7214416f3e"
+    },
+    {
+      "path": "source/publisher288/android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt",
+      "bytes": 161189,
+      "sha256": "9b7638932ea679ea1e046730a62ab6b89ea937907318254cc0d49a2ca946ffdc"
+    },
+    {
+      "path": "source/publisher288/android/app/src/main/java/com/saleh/careerfinder/ProfileContract.java",
+      "bytes": 4135,
+      "sha256": "4cced3e879ccb3197376c13ebfde19fadd52ade5318d99636910b597937a88cc"
+    },
+    {
+      "path": "source/publisher288/android/app/src/main/java/com/saleh/careerfinder/WorkspaceDataViews.kt",
+      "bytes": 17937,
+      "sha256": "a3d450e447d8923a275e3a498bed7e88281001c958bb52938afabd340f54dad2"
+    },
+    {
+      "path": "source/publisher288/android/app/src/main/res/values/career_copy.xml",
+      "bytes": 212532,
+      "sha256": "24bc19c15a71791b1762a55f5e44fc549b49268d5e848bbb61da3e32b344ad9d"
+    },
+    {
+      "path": "source/publisher288/android/app/src/main/res/values-ar/career_copy.xml",
+      "bytes": 275079,
+      "sha256": "5aee2b3480b1de0da2f890b811fb561b62eee0fe9b152692af108853940100c1"
+    },
+    {
+      "path": "source/publisher288/android/checks/BoundaryPolicyCheck.java",
+      "bytes": 14971,
+      "sha256": "de8fc36a3769c5a493c304562741add84511ccd1f3790d2eb1452667aaecbb29"
+    },
+    {
+      "path": "source/publisher288/apple/AhmadCareer/CareerDiscovery.swift",
+      "bytes": 34279,
+      "sha256": "1d4024853ec5099b029ed9c4304fc49970487e5f3a5cbd5bbdd60aa22c505006"
+    },
+    {
+      "path": "source/publisher288/apple/AhmadCareer/MobileApplicationState.swift",
+      "bytes": 40079,
+      "sha256": "1858795ccf563e9802c5cabc0367b402eadba2c9e978a5092c2e70a232d1a489"
+    },
+    {
+      "path": "source/publisher288/apple/AhmadCareer/NativeApplicationsViews.swift",
+      "bytes": 85349,
+      "sha256": "5315c020aa0f75d0239089cc1d1f0789ca1b90a207203b6e9dd2c61563cca47c"
+    },
+    {
+      "path": "source/publisher288/apple/AhmadCareer/NativeCareerViews.swift",
+      "bytes": 101571,
+      "sha256": "65d00dbcdc3932787a807bb7201e022109deb6ff03d8198bf19508f9ad9f6954"
+    },
+    {
+      "path": "source/publisher288/apple/AhmadCareer/NativeDiscoveryViews.swift",
+      "bytes": 20149,
+      "sha256": "ee1464433f03d5d36d47e6af0f5f837db63c5264f6267e4608130d4b220c7754"
+    },
+    {
+      "path": "source/publisher288/apple/AhmadCareer/ar.lproj/Localizable.strings",
+      "bytes": 271639,
+      "sha256": "0f924d061971faab2ad6f3b47a89947be0aa33caabbc72973080748f8a1e9de0"
+    },
+    {
+      "path": "source/publisher288/apple/AhmadCareer/en.lproj/Localizable.strings",
+      "bytes": 209051,
+      "sha256": "d416c93cbb25223847c4d097dfb4842f7a64e400d4b5806186cc1350b9b9ff1a"
+    },
+    {
+      "path": "source/publisher288/apple/Checks/DiscoveryCheck.swift",
+      "bytes": 29109,
+      "sha256": "8a227e82e92daee32ff929303fe68e53612c35bdf75692006c68eda56b6bfe03"
+    },
+    {
+      "path": "source/publisher288/apple/Checks/MobileLifecycleCheck.swift",
+      "bytes": 130346,
+      "sha256": "52fd4d4fba216a37a020b496b03c6bbb9ee2a23378b3f58de8220785ff5333a2"
+    },
+    {
+      "path": "source/publisher288/localization/native-copy.json",
+      "bytes": 277058,
+      "sha256": "daf72e3594a8a341a0e433e25d1eb44d544c5ac22951e77a8705cf1b66f9441b"
+    },
+    {
+      "path": "source/recovery-head/android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt",
+      "bytes": 85418,
+      "sha256": "90bbf37458cd924fd427710245af580c57329cb3699cd575234c443087d49dce"
+    },
+    {
+      "path": "source/recovery-head/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+      "bytes": 93320,
+      "sha256": "3aed8440668070d2c573a739a84956e3e2ab278d4109ea29ba527b7214416f3e"
+    },
+    {
+      "path": "source/recovery-head/android/app/src/main/java/com/saleh/careerfinder/Models.kt",
+      "bytes": 18102,
+      "sha256": "e90d89d007cc0679adb03eda4aa71e2c56dab67bebb08a6ec7d28f755ede4464"
+    },
+    {
+      "path": "source/recovery-head/android/app/src/main/java/com/saleh/careerfinder/WorkspaceTransfer.kt",
+      "bytes": 15469,
+      "sha256": "766f4101f4164cc434537ef7aac15cddec08c224d22ceb085785c375cf78105e"
+    },
+    {
+      "path": "source/recovery-head/apple/AhmadCareer/MobileApplicationState.swift",
+      "bytes": 40079,
+      "sha256": "1858795ccf563e9802c5cabc0367b402eadba2c9e978a5092c2e70a232d1a489"
+    },
+    {
+      "path": "source/recovery-head/apple/AhmadCareer/NativeApplicationsStore.swift",
+      "bytes": 74753,
+      "sha256": "d838a3cd68908656bd7545e63c84db5decfab6bc89e2a93af7779dd16d9c7883"
+    },
+    {
+      "path": "source/recovery-head/apple/AhmadCareer/NativeApplicationsViews.swift",
+      "bytes": 85349,
+      "sha256": "5315c020aa0f75d0239089cc1d1f0789ca1b90a207203b6e9dd2c61563cca47c"
+    },
+    {
+      "path": "source/recovery-head/apple/Checks/NativeRecoveryCheck.swift",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "source/recovery-working/android/app/src/main/java/com/saleh/careerfinder/CareerViewModel.kt",
+      "bytes": 96628,
+      "sha256": "f6427a0030e13f2738b115dd406ae0b0cbd77b43b5959fc7407a7fc99c932fb8"
+    },
+    {
+      "path": "source/recovery-working/android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+      "bytes": 95724,
+      "sha256": "1a01a32a739d8f62f4639f52012b37d06a498a36db9db6988034617c24ea92a5"
+    },
+    {
+      "path": "source/recovery-working/android/app/src/main/java/com/saleh/careerfinder/Models.kt",
+      "bytes": 18470,
+      "sha256": "716fe6ff51f9dd614cc0532e353dd0b16319cef2de39b39a2f906107eec0032c"
+    },
+    {
+      "path": "source/recovery-working/android/app/src/main/java/com/saleh/careerfinder/WorkspaceTransfer.kt",
+      "bytes": 16740,
+      "sha256": "fa5e64e4ac918b712dcadce2144aacf012da1d25a6d7ad8f931b245ad580b6c7"
+    },
+    {
+      "path": "source/recovery-working/apple/AhmadCareer/MobileApplicationState.swift",
+      "bytes": 44039,
+      "sha256": "74af420b46db2ca75355eda9f97716a0e5e12d45a41a204145c277f33838a404"
+    },
+    {
+      "path": "source/recovery-working/apple/AhmadCareer/NativeApplicationsStore.swift",
+      "bytes": 86011,
+      "sha256": "2b77bb0d0aa075c7568fbabd784eced430a568ebb59f792ec2ba566fc949cd6f"
+    },
+    {
+      "path": "source/recovery-working/apple/AhmadCareer/NativeApplicationsViews.swift",
+      "bytes": 88938,
+      "sha256": "0a831b8f25668e4bd9985885ade653ce71a23720cd172be53f5e8874231c896a"
+    },
+    {
+      "path": "source/recovery-working/apple/Checks/NativeRecoveryCheck.swift",
+      "bytes": 64516,
+      "sha256": "97a9f308d0b31a461ae0adda08687b79ce9bf9fb6e40fb3c792064688cc24117"
+    }
+  ],
+  "fileCount": 139,
+  "totalBytes": 10355313
+}

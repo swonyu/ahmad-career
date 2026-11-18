@@ -71,6 +71,35 @@ class CareerViewModel internal constructor(application: Application, private val
 
     private fun holdsName(connection: Connection?) = connection?.let { "holds-" + BoundaryPolicy.workspaceKey(it.origin, it.workspaceId) } ?: "holds-unpaired"
 
+    private fun holdsJournal(planIds: Collection<String>, receiptPlanIds: Map<String, String>): JSONObject {
+        val plans = JSONObject()
+        for ((id, plan) in receiptPlanIds) {
+            if (id.isNotBlank() && id.length <= 200 && plan.isNotBlank() && plan.length <= 200) plans.put(id, plan)
+        }
+        return JSONObject().put("schema", 1).put("planIds", JSONArray(planIds.toList())).put("receiptPlanIds", plans)
+    }
+
+    private fun readableReceiptPlanIds(journal: JSONObject?): Map<String, String> {
+        val raw = journal?.opt("receiptPlanIds")
+        if (raw !is JSONObject) return emptyMap()
+        val plans = mutableMapOf<String, String>()
+        val keys = raw.keys()
+        while (keys.hasNext()) {
+            val id = keys.next()
+            val plan = raw.opt(id)
+            if (id.isNotBlank() && id.length <= 200 && plan is String && plan.isNotBlank() && plan.length <= 200) plans[id] = plan
+        }
+        return plans
+    }
+
+    /** Caller already holds diskMutex. A missing or unreadable journal does not block the Stop write. */
+    private suspend fun replaceHoldsJournal(connection: Connection?, planIds: Collection<String>, extraReceiptPlans: Map<String, String> = emptyMap()) {
+        val cached = try { readableReceiptPlanIds(readPrivate(holdsName(connection))) }
+        catch (cancel: CancellationException) { throw cancel }
+        catch (_: Exception) { emptyMap() }
+        writePrivate(holdsName(connection), holdsJournal(planIds, cached + extraReceiptPlans))
+    }
+
     private suspend fun savedWorkspace(connection: Connection?): CareerUiState {
         val name = workspaceName(connection)
         var stored = readPrivate(name)
@@ -106,7 +135,12 @@ class CareerViewModel internal constructor(application: Application, private val
                 require(journal.opt("schema") == 1)
                 journal.requiredStrings("planIds").toSet()
             }
-            saved.copy(continuationHolds = saved.continuationHolds + holds,
+            val cachedPlans = readableReceiptPlanIds(journal)
+            val receipts = saved.receipts.map { receipt ->
+                val cached = cachedPlans[receipt.id]
+                if (receipt.planId.isBlank() && cached != null && receipt.id.length <= 200) receipt.copy(planId = cached) else receipt
+            }
+            saved.copy(receipts = receipts, continuationHolds = saved.continuationHolds + holds,
                 preservedWorkspaceCopies = preserved.distinct(),
                 preservedRecoveryWorkspaces = withContext(Dispatchers.IO) { vault.preservedWorkspaces() },
                 notice = if (stored == null && preserved.isNotEmpty()) "Earlier connection copies were preserved. Open phone data settings to review and merge the copy you want." else null)
@@ -362,12 +396,28 @@ class CareerViewModel internal constructor(application: Application, private val
         persist()
     }
 
+    /** Keep the destination's current opportunity text. Park a different incoming draft, and do not grow past 200. */
+    private fun mergeOpportunityDrafts(current: OpportunityDraft, recovered: List<OpportunityDraft>,
+        incoming: OpportunityDraft, incomingRecovered: List<OpportunityDraft>): Pair<OpportunityDraft, List<OpportunityDraft>> {
+        if (!incoming.hasContent && incomingRecovered.none { it.hasContent }) return current to recovered
+        val adopted = if (!current.hasContent && incoming.hasContent) incoming else current
+        val parkedIncoming = incomingRecovered.filter { it.hasContent && it != adopted } +
+            listOfNotNull(incoming.takeIf { current.hasContent && incoming.hasContent && incoming != adopted })
+        val stored = (recovered + parkedIncoming).distinct().let { merged ->
+            if (adopted.hasContent) merged.filter { it != adopted } else merged
+        }
+        require(stored.size <= 200 || stored.size <= recovered.distinct().size) { unfinishedEditLimitMessage }
+        return adopted to stored
+    }
+
     fun inspectPhoneDraft() = action {
         require(state.value.connection != null) { "Pair a workspace before copying a phone draft." }
         val phone = savedWorkspace(null)
-        if (phone.profile == ProfileDraft() && phone.jobs.isEmpty() && phone.applicationRecords.isEmpty()) {
+        val hasOpportunity = phone.opportunityDraft.hasContent || phone.recoveredOpportunityDrafts.any { it.hasContent }
+        if (phone.profile == ProfileDraft() && phone.jobs.isEmpty() && phone.applicationRecords.isEmpty() && !hasOpportunity) {
             mutable.update { it.copy(notice = "There is no saved phone draft to copy.") }
-        } else mutable.update { it.copy(phoneImport = PhoneImport(phone.profile, phone.jobs, phone.manualApplied, phone.applicationRecords)) }
+        } else mutable.update { it.copy(phoneImport = PhoneImport(phone.profile, phone.jobs, phone.manualApplied, phone.applicationRecords,
+            phone.opportunityDraft, phone.recoveredOpportunityDrafts)) }
     }
 
     fun closePhoneImport() { mutable.update { it.copy(phoneImport = null) } }
@@ -376,15 +426,28 @@ class CareerViewModel internal constructor(application: Application, private val
         val current = state.value
         require(current.connection != null) { "Reconnect before copying this draft." }
         require(current.profileConflict == null) { "Resolve the profile conflict before copying a phone draft." }
-        require(includeProfile || includeJobs) { "Choose what to copy." }
         val phone = current.phoneImport ?: throw IllegalArgumentException("Review the saved phone draft first.")
-        val existing = current.jobs.map { BoundaryPolicy.jobIdentity(it.url) }.toMutableSet()
-        val jobs = if (includeJobs) phone.jobs.filter { existing.add(BoundaryPolicy.jobIdentity(it.url)) }
-            .map { source -> source to source.copy(id = "local-" + UUID.randomUUID(), localOnly = true) } else emptyList()
+        val hasOpportunity = phone.opportunityDraft.hasContent || phone.recoveredOpportunityDrafts.any { it.hasContent }
+        require(includeProfile || includeJobs || hasOpportunity) { "Choose what to copy." }
+        val jobs = if (includeJobs) {
+            // Copying would keep the first title and drop the second. Refuse before the destination changes.
+            val incomingIdentities = phone.jobs.mapIndexed { index, job ->
+                runCatching { BoundaryPolicy.jobIdentity(job.url) }.getOrElse { "unidentified-$index" }
+            }
+            require(incomingIdentities.distinct().size == incomingIdentities.size) { "The backup contains duplicate saved links." }
+            val existing = current.jobs.map { BoundaryPolicy.jobIdentity(it.url) }.toMutableSet()
+            phone.jobs.filter { existing.add(BoundaryPolicy.jobIdentity(it.url)) }
+                .map { source -> source to source.copy(id = "local-" + UUID.randomUUID(), localOnly = true) }
+        } else emptyList()
         val profile = if (includeProfile) phone.profile.copy(revision = current.profile.revision,
             removeResume = phone.profile.resume == null) else current.profile
         if (includeProfile && profile.resume != null) require(profile.resume.dataBase64 != null) { "Choose the PDF again before copying this profile." }
         val allJobs = jobs.map { pair -> pair.second } + current.jobs
+        // An existing over-200 list is not shrunk. A profile-only copy adds no links.
+        // Copying links is refused only when the merged list would grow past 200.
+        if (includeJobs) require(allJobs.size <= 200 || allJobs.size <= current.jobs.size) {
+            "The merged shortlist exceeds 200 links. Nothing was replaced."
+        }
         val records = current.applicationRecords.toMutableMap()
         if (includeJobs) for ((identity, incoming) in phone.applicationRecords) {
             // Removed bookmarks can still have meaningful notes/history. Copy those records
@@ -395,9 +458,12 @@ class CareerViewModel internal constructor(application: Application, private val
                 ?: incoming.copy(job = destination, relatedURLs = (incoming.relatedURLs + destination.url).distinct())
         }
         requireApplicationStatusChangesAllowed(current, records)
+        val (opportunity, recovered) = mergeOpportunityDrafts(current.opportunityDraft, current.recoveredOpportunityDrafts,
+            phone.opportunityDraft, phone.recoveredOpportunityDrafts)
         val legacyApplied = current.manualApplied + jobs.filter { pair -> pair.first.id in phone.manualApplied }.map { pair -> pair.second.id }
         val next = current.copy(profile = profile, profileDirty = includeProfile || current.profileDirty,
             jobs = allJobs, applicationRecords = records,
+            opportunityDraft = opportunity, recoveredOpportunityDrafts = recovered,
             manualApplied = ApplicationRecordsCodec.appliedIDs(allJobs, records, legacyApplied),
             phoneImport = null, plan = null, reviewingRecoveredPlan = false, reviewGeneration = current.reviewGeneration + 1)
         val envelope = WorkspaceStorage.encode(next); requirePrivateCapacity(envelope)
@@ -415,6 +481,9 @@ class CareerViewModel internal constructor(application: Application, private val
         plan = null, reviewingRecoveredPlan = false, reviewGeneration = current.reviewGeneration + 1,
         obsoleteReviews = current.obsoleteReviews + listOfNotNull(current.plan?.takeIf(ReviewPlan::unapproved)?.id))
 
+    private val unfinishedEditLimitMessage = "This phone already keeps 200 unfinished edits. Existing drafts were kept."
+    private val opportunityDraftLimitMessage = "Keep the link under 4,096 characters and each opportunity detail under 500 characters."
+    private val readableNoteMessage = "Keep the note to 2,000 characters and use readable plain text. Your draft is kept."
     private val activeApplicationStatusMessage = "Stop active Auto Apply work and refresh receipts before changing whether this job is marked as applied. Your note and date edits are kept."
     private val alreadyAppliedReviewMessage = "This review includes a job marked as applied on this phone. Stop the earlier review and prepare a new one, or explicitly correct your private record first."
 
@@ -490,13 +559,84 @@ class CareerViewModel internal constructor(application: Application, private val
             restoredOlderRevision = checkpoint != null && checkpoint.baseRevision != (record?.revision ?: 0))) }
     }
 
+    /** A new job identity is another unfinished edit. Replacing the draft already counted for that job does not grow the list. */
+    private fun canStoreNewRecordDraft(identity: String): Boolean {
+        val current = state.value
+        if (identity in current.recordDrafts) return true
+        return current.recordDrafts.size + current.recordDraftAlternatives.size < 200
+    }
+
+    private fun clearEditLimit(current: CareerUiState) = if (current.error == unfinishedEditLimitMessage) null else current.error
+
+    /** A kept plain note drops a stale control refusal. A note that still contains a control keeps that sentence. */
+    private fun clearKeptDraftStatus(current: CareerUiState, note: String): String? {
+        val cleared = clearEditLimit(current)
+        return if (cleared == readableNoteMessage && readablePlainNote(note)) null else cleared
+    }
+
+    private fun withinPhoneDraftLimits(draft: OpportunityDraft) = draft.url.length <= 4_096 && draft.title.length <= 500 &&
+        draft.company.length <= 500 && draft.location.length <= 500 && draft.country.length <= 2
+
+    /** A shorter field may repair a draft that is already over the shared limit. A longer field may not cross it. */
+    private fun canReplacePhoneDraft(next: OpportunityDraft, previous: OpportunityDraft): Boolean {
+        fun field(updated: String, prior: String, limit: Int) = updated.length <= limit || updated.length <= prior.length
+        return field(next.url, previous.url, 4_096) && field(next.title, previous.title, 500) &&
+            field(next.company, previous.company, 500) && field(next.location, previous.location, 500) &&
+            field(next.country, previous.country, 2)
+    }
+
+    private fun opportunityDraftError(current: String?, draft: OpportunityDraft) = when {
+        withinPhoneDraftLimits(draft) -> if (current == opportunityDraftLimitMessage) null else current
+        current == null || current == opportunityDraftLimitMessage -> opportunityDraftLimitMessage
+        else -> current
+    }
+
+    /** iPhone rejects these scalars in a saved note. Tab, newline, and return stay allowed. */
+    private fun disallowedNoteCodes(note: String): List<Int> = buildList {
+        for (character in note) {
+            val code = character.code
+            if ((code < 0x20 && code != 0x09 && code != 0x0A && code != 0x0D) || code == 0x7F) add(code)
+        }
+    }
+
+    private fun readablePlainNote(note: String) = disallowedNoteCodes(note).isEmpty()
+
+    /** Deleting a control, or text around one, is a repair. Inserting a new control is not. */
+    private fun canRepairNote(next: String, previous: String): Boolean {
+        val prior = disallowedNoteCodes(previous).groupingBy { it }.eachCount().toMutableMap()
+        for (code in disallowedNoteCodes(next)) {
+            val remaining = prior[code] ?: return false
+            if (remaining == 0) return false
+            prior[code] = remaining - 1
+        }
+        return true
+    }
+
+    private fun noteEditorError(current: String?, note: String): String? {
+        val cleared = if (current == unfinishedEditLimitMessage) null else current
+        return when {
+            readablePlainNote(note) -> if (cleared == readableNoteMessage) null else cleared
+            cleared == null || cleared == readableNoteMessage -> readableNoteMessage
+            else -> cleared
+        }
+    }
+
     fun editApplicationRecordDraft(change: (ApplicationRecordDraft) -> ApplicationRecordDraft, expectedToken: String? = null) {
         if (state.value.busy || state.value.storageBlocked) return
         val editor = state.value.applicationRecordEditor ?: return
         if (editor.scope != state.value.privateScope || expectedToken != null && editor.token != expectedToken) return
         val updated = editor.copy(draft = change(editor.draft), pendingNotApplied = null, confirmClose = false)
+        if (!canStoreNewRecordDraft(updated.identity)) {
+            mutable.update { it.copy(error = unfinishedEditLimitMessage) }
+            return
+        }
+        if (!canRepairNote(updated.draft.note, editor.draft.note)) {
+            mutable.update { it.copy(error = readableNoteMessage) }
+            return
+        }
         val checkpoint = RecordDraftCheckpoint(updated.scope, updated.identity, updated.job, updated.expectedRevision, updated.draft)
-        mutable.update { it.copy(applicationRecordEditor = updated, recordDrafts = it.recordDrafts + (updated.identity to checkpoint)) }
+        mutable.update { it.copy(error = noteEditorError(it.error, updated.draft.note), applicationRecordEditor = updated,
+            recordDrafts = it.recordDrafts + (updated.identity to checkpoint)) }
         queuePrivateSave()
     }
 
@@ -516,6 +656,7 @@ class CareerViewModel internal constructor(application: Application, private val
         val editor = state.value.applicationRecordEditor ?: return@action
         require(editor.token == expectedToken && editor.scope == state.value.privateScope) { "The workspace changed. Reopen this record." }
         draftSave?.cancel()
+        require(canStoreNewRecordDraft(editor.identity)) { unfinishedEditLimitMessage }
         val checkpoint = RecordDraftCheckpoint(editor.scope, editor.identity, editor.job, editor.expectedRevision, editor.draft)
         mutable.update { it.copy(recordDrafts = it.recordDrafts + (editor.identity to checkpoint)) }
         persist()
@@ -539,7 +680,11 @@ class CareerViewModel internal constructor(application: Application, private val
         val record = state.value.applicationRecords[editor.identity]
         val updated = editor.copy(expectedRevision = record?.revision ?: 0, initialDraft = record?.activeDraft ?: ApplicationRecordDraft(),
             restoredOlderRevision = false, pendingNotApplied = null)
-        mutable.update { it.copy(applicationRecordEditor = updated, recordDrafts = it.recordDrafts + (editor.identity to
+        if (!canStoreNewRecordDraft(editor.identity)) {
+            mutable.update { it.copy(error = unfinishedEditLimitMessage) }
+            return
+        }
+        mutable.update { it.copy(error = clearKeptDraftStatus(it, updated.draft.note), applicationRecordEditor = updated, recordDrafts = it.recordDrafts + (editor.identity to
             RecordDraftCheckpoint(editor.scope, editor.identity, editor.job, updated.expectedRevision, updated.draft))) }
         queuePrivateSave()
     }
@@ -559,6 +704,7 @@ class CareerViewModel internal constructor(application: Application, private val
 
     fun saveApplicationRecord(confirmedNotApplied: Boolean = false, expectedToken: String? = null) = action {
         val (editor, existing) = checkedRecordEditor(expectedToken)
+        require(readablePlainNote(editor.draft.note)) { readableNoteMessage }
         val draft = editor.draft.validated()
         require(existing?.needsReview != true) { "Choose which saved version to use before editing this record." }
         val wasApplied = trackedApplied(state.value, editor.identity)
@@ -585,8 +731,12 @@ class CareerViewModel internal constructor(application: Application, private val
         if (current.quickCorrection) { mutable.update { it.copy(applicationRecordEditor = null) }; return }
         val updated = current.copy(pendingNotApplied = null,
             draft = current.draft.copy(stage = state.value.applicationRecords[current.identity]?.displayStage ?: current.draft.stage))
+        if (!canStoreNewRecordDraft(updated.identity)) {
+            mutable.update { it.copy(error = unfinishedEditLimitMessage) }
+            return
+        }
         val checkpoint = RecordDraftCheckpoint(updated.scope, updated.identity, updated.job, updated.expectedRevision, updated.draft)
-        mutable.update { it.copy(applicationRecordEditor = updated, recordDrafts = it.recordDrafts + (updated.identity to checkpoint)) }
+        mutable.update { it.copy(error = clearKeptDraftStatus(it, updated.draft.note), applicationRecordEditor = updated, recordDrafts = it.recordDrafts + (updated.identity to checkpoint)) }
         queuePrivateSave()
     }
 
@@ -608,7 +758,13 @@ class CareerViewModel internal constructor(application: Application, private val
 
     fun editOpportunityDraft(change: (OpportunityDraft) -> OpportunityDraft) {
         if (!state.value.loaded || state.value.storageBlocked || state.value.busy) return
-        mutable.update { it.copy(opportunityDraft = change(it.opportunityDraft)) }
+        val previous = state.value.opportunityDraft
+        val next = change(previous)
+        if (!canReplacePhoneDraft(next, previous)) {
+            mutable.update { it.copy(error = opportunityDraftLimitMessage) }
+            return
+        }
+        mutable.update { it.copy(opportunityDraft = next, error = opportunityDraftError(it.error, next)) }
         queuePrivateSave()
     }
 
@@ -655,6 +811,7 @@ class CareerViewModel internal constructor(application: Application, private val
             done()
             return
         }
+        require(state.value.jobs.size < 200) { "The merged shortlist exceeds 200 links. Nothing was replaced." }
         val job = Opportunity("local-" + UUID.randomUUID(), normalized, title.trim(), company.trim(), location.trim(), country.trim().uppercase(), true)
         draftSave?.cancel()
         val previousDraft = state.value.opportunityDraft
@@ -836,7 +993,7 @@ class CareerViewModel internal constructor(application: Application, private val
         // Only a new visible approval can supersede this phone's earlier stop intent.
         // Do this before the request so a simultaneous Stop always wins locally.
         mutable.update { it.copy(continuationHolds = it.continuationHolds - plan.id) }
-        diskMutex.withLock { writePrivate(holdsName(connection), JSONObject().put("schema", 1).put("planIds", JSONArray(state.value.continuationHolds.toList()))) }
+        diskMutex.withLock { replaceHoldsJournal(connection, state.value.continuationHolds) }
         persist()
         require(plan.id !in state.value.continuationHolds) { "Stop was requested while preparing to send. Review receipts before approving again." }
         val incoming = try {
@@ -864,12 +1021,14 @@ class CareerViewModel internal constructor(application: Application, private val
         // Stop is a local safety decision even after a 401 or while another operation is busy.
         // A small independent journal keeps this decision durable even when the main draft is full.
         val holds = captured.continuationHolds + planId
-        mutable.update { it.copy(continuationHolds = it.continuationHolds + planId) }
+        mutable.update { current ->
+            if (current.privateScope == captured.privateScope) current.copy(continuationHolds = current.continuationHolds + planId) else current
+        }
         viewModelScope.launch {
             try {
                 diskMutex.withLock {
                     val retained = if (state.value.privateScope == captured.privateScope) state.value.continuationHolds + holds else holds
-                    writePrivate(holdsName(connection), JSONObject().put("schema", 1).put("planIds", JSONArray(retained.toList())))
+                    replaceHoldsJournal(connection, retained)
                 }
                 if (state.value.connection != connection) return@launch
                 if (state.value.requiresPairing) {
@@ -879,6 +1038,38 @@ class CareerViewModel internal constructor(application: Application, private val
                 service.request(connection, "POST", "stop", JSONObject().put("planId", planId))
                 if (state.value.connection != connection) return@launch
                 mutable.update { it.copy(plan = null, obsoleteReviews = it.obsoleteReviews - planId,
+                    notice = "Stop requested. Jobs already dispatched still need a confirmed outcome.") }
+                refreshInternal()
+            } catch (cancel: CancellationException) { throw cancel }
+            catch (error: Exception) { if (state.value.connection == connection) report(error) }
+        }
+    }
+
+    /** Explicit Stop for one dispatching receipt. Does not submit, advance, or invent an uncertain outcome. */
+    fun stopAndCheckReceipt(attemptId: String, planId: String) {
+        val captured = state.value
+        val connection = captured.connection ?: return
+        if (!captured.loaded || planId.isBlank() || planId.length > 200 || attemptId.isBlank() || attemptId.length > 200) return
+        if (captured.receipts.none { it.id == attemptId && it.state == "dispatching" && it.planId == planId }) return
+        val holds = captured.continuationHolds + planId
+        mutable.update { current ->
+            if (current.privateScope == captured.privateScope) current.copy(continuationHolds = current.continuationHolds + planId) else current
+        }
+        viewModelScope.launch {
+            try {
+                diskMutex.withLock {
+                    val sameWorkspace = state.value.connection == connection && state.value.privateScope == captured.privateScope
+                    val retained = if (sameWorkspace) state.value.continuationHolds + holds else holds
+                    replaceHoldsJournal(connection, retained, mapOf(attemptId to planId))
+                }
+                if (state.value.connection != connection || state.value.privateScope != captured.privateScope) return@launch
+                if (state.value.requiresPairing) {
+                    mutable.update { it.copy(notice = "Stop is saved on this phone. Reconnect to request the server stop and recover receipts. An already dispatched application can still finish.") }
+                    return@launch
+                }
+                service.request(connection, "POST", "stop", JSONObject().put("planId", planId).put("onlyIfUnapproved", false))
+                if (state.value.connection != connection || state.value.privateScope != captured.privateScope) return@launch
+                mutable.update { it.copy(plan = it.plan?.takeIf { plan -> plan.id != planId }, obsoleteReviews = it.obsoleteReviews - planId,
                     notice = "Stop requested. Jobs already dispatched still need a confirmed outcome.") }
                 refreshInternal()
             } catch (cancel: CancellationException) { throw cancel }
@@ -934,8 +1125,36 @@ class CareerViewModel internal constructor(application: Application, private val
             plan = it.plan?.takeIf { plan -> plan.profileRevision == serverProfile.revision && !plan.expired() }
         ) }
         persist()
+        rememberObservedReceiptPlans(connection)
         startPolling()
         return true
+    }
+
+    /** Remembers dispatching plan ids beside the Stop holds. A failed journal write leaves the receipt snapshot in place. */
+    private suspend fun rememberObservedReceiptPlans(connection: Connection) {
+        val observed = state.value.receipts.mapNotNull { receipt ->
+            if (receipt.state == "dispatching" && receipt.id.isNotBlank() && receipt.id.length <= 200 &&
+                receipt.planId.isNotBlank() && receipt.planId.length <= 200) receipt.id to receipt.planId else null
+        }.toMap()
+        try {
+            diskMutex.withLock {
+                if (state.value.connection != connection) return@withLock
+                val name = holdsName(connection)
+                val journal = try { readPrivate(name) }
+                catch (cancel: CancellationException) { throw cancel }
+                catch (_: Exception) { null }
+                if (journal == null && observed.isEmpty()) return@withLock
+                val cached = readableReceiptPlanIds(journal)
+                val merged = cached + observed
+                val planIds = try {
+                    if (journal != null && journal.opt("schema") == 1) journal.requiredStrings("planIds").toSet() else state.value.continuationHolds
+                } catch (cancel: CancellationException) { throw cancel }
+                catch (_: Exception) { state.value.continuationHolds }
+                if (journal != null && merged == cached && journal.opt("receiptPlanIds") is JSONObject) return@withLock
+                writePrivate(name, holdsJournal(planIds, merged))
+            }
+        } catch (cancel: CancellationException) { throw cancel }
+        catch (_: Exception) { }
     }
 
     fun setForeground(active: Boolean) {
@@ -1028,6 +1247,24 @@ class CareerViewModel internal constructor(application: Application, private val
     fun exportWorkspace(uri: Uri, expectedScope: String, includePDF: Boolean) = action {
         require(state.value.privateScope == expectedScope) { "The workspace changed while choosing the export destination. Open export again for the workspace you want." }
         val snapshot = state.value
+        require(snapshot.jobs.size <= 200) { "The merged shortlist exceeds 200 links. Nothing was replaced." }
+        // Refresh keeps a phone-only row beside the same service link. The count stays legal,
+        // but import rejects the pair. Write nothing and delete nothing.
+        val identities = snapshot.jobs.mapIndexed { index, job ->
+            runCatching { BoundaryPolicy.jobIdentity(job.url) }.getOrElse { "unidentified-$index" }
+        }
+        require(identities.distinct().size == identities.size) { "The backup contains duplicate saved links." }
+        // Decode rejects the whole file when unfinished edits exceed 200. Write nothing.
+        require(snapshot.recordDrafts.size + snapshot.recordDraftAlternatives.size <= 200) { unfinishedEditLimitMessage }
+        require(snapshot.recoveredOpportunityDrafts.size <= 200) { unfinishedEditLimitMessage }
+        // iPhone rejects the whole backup when an unfinished link is past these limits. Write nothing.
+        require(withinPhoneDraftLimits(snapshot.opportunityDraft) && snapshot.recoveredOpportunityDrafts.all { withinPhoneDraftLimits(it) }) {
+            opportunityDraftLimitMessage
+        }
+        // A saved note with a disallowed control makes iPhone reject the whole backup. Checkpoints may still export. Write nothing.
+        require(snapshot.applicationRecords.values.all { bundle ->
+            (listOf(bundle.current) + bundle.alternatives + bundle.history).all { readablePlainNote(it.record.note) }
+        }) { readableNoteMessage }
         val data = WorkspaceTransfer.export(snapshot, discovery.exportSnapshot(), includePDF).toString().toByteArray(Charsets.UTF_8)
         withContext(Dispatchers.IO) {
             try {
@@ -1047,6 +1284,7 @@ class CareerViewModel internal constructor(application: Application, private val
                 val decoder = Charsets.UTF_8.newDecoder().onMalformedInput(java.nio.charset.CodingErrorAction.REPORT)
                     .onUnmappableCharacter(java.nio.charset.CodingErrorAction.REPORT)
                 val text = decoder.decode(java.nio.ByteBuffer.wrap(bytes)).toString()
+                WorkspaceTransfer.rejectExcessiveNesting(text)
                 val parser = org.json.JSONTokener(text)
                 val value = parser.nextValue()
                 require(value is JSONObject && parser.nextClean() == '\u0000') { "Choose a complete JSON phone workspace backup." }
@@ -1128,6 +1366,9 @@ class CareerViewModel internal constructor(application: Application, private val
                 ?: job.copy(id = "local-" + UUID.randomUUID(), localOnly = true).also { jobs.add(it) }
             idMap[job.id] = destination.id
         }
+        // Refresh can already hold 200 service links plus phone-only rows. Keep that list.
+        // Refuse only a merge that grows it past 200, and write nothing when this require fails.
+        require(jobs.size <= 200 || jobs.size <= before.jobs.size) { "The merged shortlist exceeds 200 links. Nothing was replaced." }
         val records = before.applicationRecords.toMutableMap()
         if (includeRecords) for ((identity, record) in incoming.applicationRecords) {
             val destination = jobs.firstOrNull { BoundaryPolicy.jobIdentity(it.url) == identity }
@@ -1146,10 +1387,13 @@ class CareerViewModel internal constructor(application: Application, private val
             if (existing == null) drafts[candidate.identity] = candidate
             else if (existing.draft != candidate.draft || existing.baseRevision != candidate.baseRevision) alternatives += candidate
         }
-        val incomingOpportunity = incoming.opportunityDraft.takeIf { includeRecords && it.hasContent }
-        val opportunity = if (!before.opportunityDraft.hasContent && incomingOpportunity != null) incomingOpportunity else before.opportunityDraft
-        val recovered = (before.recoveredOpportunityDrafts + if (includeRecords) incoming.recoveredOpportunityDrafts else emptyList()) +
-            listOfNotNull(incomingOpportunity?.takeIf { before.opportunityDraft.hasContent && it != before.opportunityDraft })
+        val storedAlternatives = if (includeRecords) alternatives.distinct() else alternatives
+        val beforeEdits = before.recordDrafts.size + before.recordDraftAlternatives.distinct().size
+        val storedEdits = drafts.size + storedAlternatives.size
+        require(!includeRecords || storedEdits <= 200 || storedEdits <= beforeEdits) { unfinishedEditLimitMessage }
+        val (opportunity, recovered) = if (includeRecords) mergeOpportunityDrafts(before.opportunityDraft, before.recoveredOpportunityDrafts,
+            incoming.opportunityDraft, incoming.recoveredOpportunityDrafts)
+            else before.opportunityDraft to before.recoveredOpportunityDrafts
         val answers = before.answers.toMutableMap()
         if (includeRecords) for ((oldID, answer) in incoming.answers) idMap[oldID]?.let { destination ->
             // Employer consents are never recovered as fresh authorization.
@@ -1159,8 +1403,8 @@ class CareerViewModel internal constructor(application: Application, private val
             resume = if (includePDF) incoming.profile.resume else before.profile.resume,
             removeResume = if (includePDF) false else before.profile.removeResume) else before.profile
         val next = before.copy(profile = profile, profileDirty = includeProfile || before.profileDirty,
-            jobs = jobs, applicationRecords = records, recordDrafts = drafts, recordDraftAlternatives = alternatives.distinct(),
-            opportunityDraft = opportunity, recoveredOpportunityDrafts = recovered.distinct(), answers = answers,
+            jobs = jobs, applicationRecords = records, recordDrafts = drafts, recordDraftAlternatives = storedAlternatives,
+            opportunityDraft = opportunity, recoveredOpportunityDrafts = recovered, answers = answers,
             selected = before.selected + if (includeRecords) incoming.selected.mapNotNull { idMap[it] } else emptyList(),
             manualApplied = ApplicationRecordsCodec.appliedIDs(jobs, records, before.manualApplied),
             importedReceipts = (before.importedReceipts + if (includeRecords) incoming.importedReceipts else emptyList()).distinctBy { it.id + "|" + it.applicationId },
@@ -1185,6 +1429,10 @@ class CareerViewModel internal constructor(application: Application, private val
         val before = state.value
         require(before.privateScope == expectedScope) { "The workspace changed. Review its drafts again." }
         val restored = before.recoveredOpportunityDrafts.getOrNull(index) ?: throw IllegalArgumentException("This unfinished opportunity changed. Reopen the draft list.")
+        // Parking an over-limit current draft would make the next export unreadable on iPhone. Shorten it in the editor first. Write nothing.
+        if (before.opportunityDraft.hasContent && before.opportunityDraft != restored && !withinPhoneDraftLimits(before.opportunityDraft)) {
+            throw IllegalArgumentException(opportunityDraftLimitMessage)
+        }
         val kept = before.recoveredOpportunityDrafts.filterIndexed { item, _ -> item != index } + listOfNotNull(before.opportunityDraft.takeIf { it.hasContent && it != restored })
         val next = before.copy(opportunityDraft = restored, recoveredOpportunityDrafts = kept.distinct())
         val envelope = WorkspaceStorage.encode(next); requirePrivateCapacity(envelope)

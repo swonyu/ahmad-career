@@ -1,0 +1,10 @@
+# Preserve exact raw review/terminal evidence and upstream copies.
+*.log -whitespace
+*.txt -whitespace
+*.patch -whitespace
+picomatch-candidate-review-20261117/baseline/** -whitespace
+picomatch-candidate-review-20261117/candidate/** -whitespace
+
+# Preserve immutable research receipt formatting.
+research-originals/** -whitespace
+seven-workstreams-native-overlap-review-20261117.md -whitespace

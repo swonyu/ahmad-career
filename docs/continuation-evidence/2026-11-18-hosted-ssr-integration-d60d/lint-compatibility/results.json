@@ -1,0 +1,114 @@
+[
+  {
+    "name": "conditional-hook",
+    "sourceSHA256": "7a4dd1910209dbafaf5903953170aa5a2037021166fc8da805f7baa18c5a3919",
+    "expectedFailure": true,
+    "originalStrictFailure": true,
+    "candidateExit": 1,
+    "command": [
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+      "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted/node_modules/oxlint/bin/oxlint",
+      "--config",
+      "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted/.oxlintrc.json",
+      "--format",
+      "json",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/hosted-ssr-integration/lint-compatibility/conditional-hook.tsx"
+    ]
+  },
+  {
+    "name": "missing-hook-dependency",
+    "sourceSHA256": "fc1030d045f4fadc756e775f5d4414c1955c8f13d77eca24105915c2bd4fac10",
+    "expectedFailure": true,
+    "originalStrictFailure": true,
+    "candidateExit": 1,
+    "command": [
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+      "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted/node_modules/oxlint/bin/oxlint",
+      "--config",
+      "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted/.oxlintrc.json",
+      "--format",
+      "json",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/hosted-ssr-integration/lint-compatibility/missing-hook-dependency.tsx"
+    ]
+  },
+  {
+    "name": "invalid-aria",
+    "sourceSHA256": "01fae0ae73fa14b2b21a5dacbf6fb37d5b0e719e549e5318ed022c209ef15edf",
+    "expectedFailure": true,
+    "originalStrictFailure": true,
+    "candidateExit": 1,
+    "command": [
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+      "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted/node_modules/oxlint/bin/oxlint",
+      "--config",
+      "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted/.oxlintrc.json",
+      "--format",
+      "json",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/hosted-ssr-integration/lint-compatibility/invalid-aria.tsx"
+    ]
+  },
+  {
+    "name": "unused-typescript",
+    "sourceSHA256": "c262aea7ce01fb0769128cab75da46a81c7f823ebdb4a049a7a7160da791d9e4",
+    "expectedFailure": true,
+    "originalStrictFailure": true,
+    "candidateExit": 1,
+    "command": [
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+      "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted/node_modules/oxlint/bin/oxlint",
+      "--config",
+      "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted/.oxlintrc.json",
+      "--format",
+      "json",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/hosted-ssr-integration/lint-compatibility/unused-typescript.tsx"
+    ]
+  },
+  {
+    "name": "missing-jsx-key",
+    "sourceSHA256": "f7fb3199d23ac078e4027c095b281e527352ec20de1e62a63709f6ea07ee84c3",
+    "expectedFailure": true,
+    "originalStrictFailure": true,
+    "candidateExit": 1,
+    "command": [
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+      "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted/node_modules/oxlint/bin/oxlint",
+      "--config",
+      "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted/.oxlintrc.json",
+      "--format",
+      "json",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/hosted-ssr-integration/lint-compatibility/missing-jsx-key.tsx"
+    ]
+  },
+  {
+    "name": "unused-directive",
+    "sourceSHA256": "b346dd9fe07d6c391829571799068ac3f64e2902324b388684e2b669785af5e2",
+    "expectedFailure": true,
+    "originalStrictFailure": true,
+    "candidateExit": 1,
+    "command": [
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+      "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted/node_modules/oxlint/bin/oxlint",
+      "--config",
+      "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted/.oxlintrc.json",
+      "--format",
+      "json",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/hosted-ssr-integration/lint-compatibility/unused-directive.tsx"
+    ]
+  },
+  {
+    "name": "valid",
+    "sourceSHA256": "6a02b5805641683d4b423c47c5689cecea55556ed05d00b9f6f3aaca61d53d24",
+    "expectedFailure": false,
+    "originalStrictFailure": false,
+    "candidateExit": 0,
+    "command": [
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/toolchain/node_modules/node/bin/node",
+      "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted/node_modules/oxlint/bin/oxlint",
+      "--config",
+      "/Users/saleh/Developer/career-finder-hosted-integrated-20261118-d60d62a70f26/hosted/.oxlintrc.json",
+      "--format",
+      "json",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/hosted-ssr-integration/lint-compatibility/valid.tsx"
+    ]
+  }
+]

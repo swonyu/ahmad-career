@@ -7,7 +7,7 @@ import java.time.Instant
 fun JSONObject.safeString(key: String, fallback: String = ""): String = if (isNull(key)) fallback else optString(key, fallback)
 fun JSONArray?.objects(): List<JSONObject> = if (this == null) emptyList() else (0 until length()).mapNotNull { optJSONObject(it) }
 fun JSONArray?.strings(): List<String> = if (this == null) emptyList() else (0 until length()).mapNotNull { optString(it).takeIf(String::isNotBlank) }
-fun String.parts(): List<String> = split(',').map(String::trim).filter(String::isNotBlank).distinct()
+fun String.parts(): List<String> = ProfileContract.listItems(this).distinct()
 private const val INVALID_SERVICE_DATA = "The service returned incomplete or invalid data. Your phone draft was kept. Refresh before trying again."
 fun serviceData(check: Boolean) { require(check) { INVALID_SERVICE_DATA } }
 private fun JSONObject.serviceLinkedIn(): String {
@@ -168,23 +168,27 @@ data class ReviewPlan(val id: String, val digest: String, val profileRevision: I
 }
 
 data class ApplicationReceipt(val id: String, val title: String, val company: String, val state: String, val applicationId: String,
-    val date: String, val error: String, val evidenceMode: String, val resumeSHA256: String, val provider: String) {
+    val date: String, val error: String, val evidenceMode: String, val resumeSHA256: String, val provider: String,
+    val planId: String = "") {
     val testMode: Boolean get() = evidenceMode == "test"
     val verified: Boolean get() = BoundaryPolicy.isLiveReceipt(evidenceMode, provider, state, applicationId)
     companion object {
         fun fromJson(value: JSONObject): ApplicationReceipt {
             val job = value.optJSONObject("job") ?: JSONObject()
             val error = value.opt("error")
+            val plan = value.opt("planId")
             return ApplicationReceipt(value.safeString("attemptId", value.safeString("id")),
                 value.safeString("title", job.safeString("title", "Application")),
                 value.safeString("employer", value.safeString("company", job.safeString("company"))),
                 value.safeString("state"), value.safeString("applicationId"), value.safeString("confirmedAt", value.safeString("createdAt")),
                 if (error is JSONObject) error.safeString("message") else if (error is String) error else "",
-                value.safeString("evidenceMode", if (value.safeString("mode") == "test") "test" else "unknown"), value.safeString("resumeSHA256"), value.safeString("provider"))
+                value.safeString("evidenceMode", if (value.safeString("mode") == "test") "test" else "unknown"), value.safeString("resumeSHA256"), value.safeString("provider"),
+                if (plan is String) plan else "")
         }
         fun fromServer(value: JSONObject): ApplicationReceipt {
             serviceData((value.opt("id") is String || value.opt("attemptId") is String) &&
                 value.opt("state") is String && value.opt("createdAt") is String)
+            if (value.has("planId") && !value.isNull("planId")) serviceData(value.opt("planId") is String)
             val receipt = fromJson(value)
             serviceData(receipt.id.isNotBlank() && receipt.state.isNotBlank())
             return receipt
@@ -217,7 +221,9 @@ data class JobAnswers(val comments: String = "", val consentStore: Boolean? = nu
 
 data class StorageProblem(val record: String, val writing: Boolean)
 data class PhoneImport(val profile: ProfileDraft, val jobs: List<Opportunity>, val manualApplied: Set<String>,
-    val applicationRecords: Map<String, ApplicationRecordBundle> = emptyMap())
+    val applicationRecords: Map<String, ApplicationRecordBundle> = emptyMap(),
+    val opportunityDraft: OpportunityDraft = OpportunityDraft(),
+    val recoveredOpportunityDrafts: List<OpportunityDraft> = emptyList())
 
 data class CareerUiState(
     val loaded: Boolean = false, val connection: Connection? = null, val requiresPairing: Boolean = false,

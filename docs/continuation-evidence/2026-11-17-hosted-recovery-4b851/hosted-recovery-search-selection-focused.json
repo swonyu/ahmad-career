@@ -1,0 +1,20 @@
+{
+  "node": "v24.22.3",
+  "phoneSHA256": "82bf0db2af4364093cc1670d88a7eab3f5e1c374212125358f0f51a71ec2d3dd",
+  "checks": [
+    {
+      "name": "hosted-recovery-search-selection-focused",
+      "code": 0,
+      "start": "2026-11-17T18:35:47.840399+00:00",
+      "end": "2026-11-17T18:35:49.079143+00:00",
+      "log": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/hosted-recovery-search-selection-focused.log"
+    },
+    {
+      "name": "search-browser-fixture-build-reviewed",
+      "code": 0,
+      "start": "2026-11-17T18:35:49.079577+00:00",
+      "end": "2026-11-17T18:35:49.889758+00:00",
+      "log": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/search-browser-fixture-build-reviewed.log"
+    }
+  ]
+}

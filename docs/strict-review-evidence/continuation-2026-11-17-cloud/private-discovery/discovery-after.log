@@ -1,0 +1,27 @@
+PASS Public catalog has seven verified sources, four mixed defaults and no account dependency
+PASS Phone client accepts actual default-board and EU search responses without a catalog-only region field
+PASS Strict source normalization accepts board and direct-posting links without arbitrary fetch URLs
+PASS Invalid filters, source counts and cursor parameters are rejected before provider traffic
+PASS Public requests ignore account credentials and never persist or forward personal search terms
+PASS Provider identities, plain text, unknown country and remote evidence remain distinct
+PASS Keyword AND, location text and remote-only filters operate on public metadata
+PASS Shared board caching survives handler recreation and preserves original observation time
+PASS Stable cursors page a fair multi-source result without duplicates and bind the original filters
+PASS Refreshing a source invalidates old cursors instead of silently mixing snapshots
+PASS A failed source retains visibly stale facts while successful sources remain current
+PASS Expired stale data and complete source failures are unavailable rather than an empty successful search
+PASS A missing board clears cached vacancies and the negative cooldown suppresses repeated requests
+PASS Provider Retry-After is honored while cached timestamps remain unchanged
+PASS D1 leases coalesce concurrent isolates without process-local queues
+PASS Expired claims recover and late completions cannot overwrite a newer successful snapshot
+PASS Malformed provider data is attributed and never becomes a successful empty board
+PASS Job-count and UTF-8 cache-byte limits remain below a D1 row and disclose partial coverage
+PASS Lever pages are bounded to five public GETs and 500 normalized postings
+PASS Redirects and oversized responses are refused without following untrusted destinations
+PASS A stalled response body is cancelled within the bounded provider timeout
+PASS Client and missing-IP request budgets are shared, atomic and return Retry-After
+PASS Custom negative cache capacity and fetch budgets reserve service for the catalog
+PASS Concurrent custom source admission cannot exceed the durable cache quota
+PASS Security counters expire without storing raw IPs or requiring an applicant account
+PASS Actual bundled workerd runs eight public discovery requests with real D1 and no account or R2
+{"result":"PASS","groups":26,"actualWorkerdRequests":8,"clientSchemaResponses":63,"employerApplicationPosts":0}

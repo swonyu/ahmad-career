@@ -1,0 +1,71 @@
+{
+  "createdUTC": "2026-11-18T06:57:19.330876+00:00",
+  "sourceFixture": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/record-actions-fixture-20261118-d60d62a70f26",
+  "beforeCSSSHA256": "849cdd21a7dae6e47d9a2010146f0a74c20897706d4766c009168b8ae09051e8",
+  "afterCSSSHA256": "76e5380b2d42bd075fc314e799328b16d085f5bb2c82555f558a8d74d1499988",
+  "patchSHA256": "12f49fe953bad5eb54984f6a0355ef33b66264b395e8a32b263e93b94ca87ae1",
+  "changedLine": 16,
+  "beforeLine": "#fixture-product.fixture-action-text-200 .phone-record-actions button{font-size:1.7rem}",
+  "afterLine": "#fixture-product.fixture-action-text-200 .phone-record-actions button{font-size:1.7rem!important}",
+  "sourceRules": [
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/app/phone/phone.css",
+      "line": 6,
+      "selector": ".text-button",
+      "rule": ".text-button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:9px 0;border:0;background:none;color:var(--accent);font-size:.85rem!important;font-weight:600!important;text-align:left;line-height:1.5;overflow-wrap:anywhere}",
+      "sourceSHA256": "97f4611f8eb9c8a6ab845b600771210f3a6ae56eae83f6f4434eefc81438481a"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/app/phone/phone.css",
+      "line": 22,
+      "selector": ".profile-context>.text-button",
+      "rule": ".profile-context>.text-button{font-size:.76rem!important;min-height:30px;padding:1px 0}",
+      "sourceSHA256": "97f4611f8eb9c8a6ab845b600771210f3a6ae56eae83f6f4434eefc81438481a"
+    }
+  ],
+  "initialAttempt": {
+    "status": "failure-to-activate",
+    "observedBy": "root actual browser",
+    "selectedScale": "200%",
+    "renderedContainerClass": "fixture-action-text-200",
+    "dialogInsideFixture": true,
+    "computedActionFontPx": [
+      13.6,
+      13.6
+    ],
+    "actionHeightPx": 44,
+    "productFailure": false,
+    "enlargedTextPass": false
+  },
+  "diagnosis": "Existing product .text-button font-size:.85rem!important wins over the normal fixture font-size:1.7rem even though the selector matches. No portal or selector ancestor correction is needed.",
+  "deliveryEvidence": {
+    "sharedAndPublicFixtureCSSSHA256": "849cdd21a7dae6e47d9a2010146f0a74c20897706d4766c009168b8ae09051e8",
+    "indexStylesheetOrder": [
+      "/production.css",
+      "/fixture.css"
+    ],
+    "serverCacheControl": "no-store",
+    "serverAssetRead": "readFile from public for each GET",
+    "productionCSSSHA256": "995842c488897dc1a2c021f93ccaeab3da98078543799bcb9214ea376793daa7"
+  },
+  "scope": "Only the isolated fixture CSS font-size declaration gains !important; same selector, state, product actions, guards and source. Original candidate remains immutable as failed-activation evidence.",
+  "sharedAndProductBeforeSHA256": {
+    "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/record-actions-fixture-20261118-d60d62a70f26/fixture.tsx": "22be902b25e7746d9612c2f7b241e42332a74387a2bc10a9dd8a9c7ab0a0d9a5",
+    "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/record-actions-fixture-20261118-d60d62a70f26/fixture.css": "849cdd21a7dae6e47d9a2010146f0a74c20897706d4766c009168b8ae09051e8",
+    "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/record-actions-fixture-20261118-d60d62a70f26/public/fixture.css": "849cdd21a7dae6e47d9a2010146f0a74c20897706d4766c009168b8ae09051e8",
+    "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/record-actions-fixture-20261118-d60d62a70f26/seed-fixtures.ts": "7ce699f334c9259541eac280daada6a1528085f9334b53c22605232f19a4fbbe",
+    "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/record-actions-fixture-20261118-d60d62a70f26/server.mjs": "3567e4e8d669a9aab1ac0eaf8d22ae95108d4e3a5bef5e6e6dd7f66f24a12184",
+    "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/record-actions-fixture-20261118-d60d62a70f26/build.mjs": "7fefb4834c5e00e3f3bc76da669f829761ef246526e94903b37861d7dac29828",
+    "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/app/phone/PhoneApp.tsx": "fb4b548459f38b42848df3c29ffef9b07d2448b49833a69bcaa04f02c4075ee4",
+    "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/app/phone/components.tsx": "c18753ee7c8b342831864cecc2694708f09fee6019a76c530b2c2ae743446424",
+    "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d/hosted/app/phone/phone.css": "97f4611f8eb9c8a6ab845b600771210f3a6ae56eae83f6f4434eefc81438481a"
+  },
+  "sharedAndProductUnchanged": true,
+  "notRun": [
+    "build",
+    "tests",
+    "server mutation",
+    "browser acceptance"
+  ],
+  "next": "Root applies CSS-only correction and verifies computed 27.2px with actual Arabic wrapping at 390/320. No enlarged-text success until measured."
+}

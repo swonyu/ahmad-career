@@ -1,0 +1,276 @@
+{
+  "schema": 1,
+  "title": "Bounded hosted recovery, privacy and portability critique",
+  "reviewer": "/root/ci_evidence",
+  "writtenAtUTC": "2026-11-18T12:24:08.200195+00:00",
+  "reviewMode": "source-only; bounded independent review of active working-tree changes",
+  "workspace": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout",
+  "headAtVerification": "22b0f6911fba9c40701a8675fa84b671edfdab31",
+  "sourceState": "Active working tree with uncommitted changes; hashes identify observed files, not an accepted release.",
+  "initialSourceObservationAtUTC": "2026-11-18T12:20:25.978529+00:00",
+  "guideCorrectionVerifiedAtUTC": "2026-11-18T12:24:08.200195+00:00",
+  "constraints": {
+    "reviewerMayEditSource": false,
+    "browserUsedByReviewer": false,
+    "buildsOrTestsExecutedByReviewer": false,
+    "nativeToolsRunByReviewer": false,
+    "ciTriggeredRetriedCancelledByReviewer": false,
+    "pushMergeDeployByReviewer": false,
+    "writeScope": "/workspace/scratch/ebb3eed5ee2b/hosted-recovery-privacy-critique-20261118.json",
+    "existingOwnersWorkAndCredentialsPreserved": true,
+    "freeCostConstraintPreserved": true,
+    "goodSpenderExcluded": true,
+    "existingNotesStagesICSCSVNotReproposed": true
+  },
+  "palette": {
+    "currentDirection": "midnight navy / lavender, closer to the Career Finder icon",
+    "authority": "Latest user direction relayed by /root",
+    "supersededDirection": "warm Nulaya palette",
+    "visualApprovalByReviewer": false,
+    "note": "No final palette contrast or appearance claim is made by this source review."
+  },
+  "findings": [
+    {
+      "id": "manual-guide-save-before-external-apply",
+      "severity": "task-guidance gap",
+      "status": "fixed_source_verified",
+      "originalFinding": "The no-jobs Apply route navigated to Search; Step 1 told the user to choose/check a job while Step 3 assumed it would already be in Saved. The external View job anchor does not bookmark it, so a guest could follow the instructions and return to an empty Saved list.",
+      "acceptedBy": "/root",
+      "implementedBy": "/root",
+      "verification": "Exact revised English translation calls and exact Arabic values are present; obsolete guide calls are absent. This verifies source wording only.",
+      "evidencePaths": [
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/ApplicationGuide.tsx",
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/PhoneApp.tsx",
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/components.tsx",
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/i18n/messages.ar.json"
+      ],
+      "stringChecks": [
+        {
+          "english": "Choose and save a job",
+          "englishCallPresent": true,
+          "arabic": "اختر وظيفة واحفظها",
+          "arabicExact": true
+        },
+        {
+          "english": "Save the job before opening the employer’s page. Check its requirements, location and deadline there.",
+          "englishCallPresent": true,
+          "arabic": "احفظ الوظيفة أولًا، ثم افتح صفحة جهة العمل لمراجعة المتطلبات والموقع وآخر موعد للتقديم.",
+          "arabicExact": true
+        }
+      ],
+      "obsoleteCallsPresent": {
+        "chooseJobCall": false,
+        "requirementsOnlyCall": false
+      }
+    }
+  ],
+  "reviewedBoundaries": [
+    {
+      "id": "guest-manual-route",
+      "disposition": "preserved_in_reviewed_source",
+      "observation": "The guide navigates existing tabs and clears stale Saved filters. It does not create a workspace, upload a profile or submit. The Saved destination also considers records without remaining bookmarks.",
+      "evidencePaths": [
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/PhoneApp.tsx",
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/ApplicationGuide.tsx"
+      ]
+    },
+    {
+      "id": "owner-privacy",
+      "disposition": "preserved_in_reviewed_source",
+      "observation": "Apply and Profile are guarded by !checkingIdentity && !locked. CV metadata remains inside that guard; ProfileReuse is inside the existing disabled profile fieldset.",
+      "evidencePaths": [
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/PhoneApp.tsx",
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/components.tsx",
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/tests/phone-task-guidance.mjs"
+      ]
+    },
+    {
+      "id": "explicit-contact-copy",
+      "disposition": "preserved_in_reviewed_source",
+      "observation": "Each explicit copy action copies only its chosen contact value. No CV bytes, CV filename, target roles or other profile fields are included. Clipboard failure keeps the displayed text; CSS makes it selectable.",
+      "evidencePaths": [
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/ProfileReuse.tsx",
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/phone.css",
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/tests/phone-task-guidance.mjs"
+      ]
+    },
+    {
+      "id": "unfinished-profile-navigation",
+      "disposition": "preserved_in_reviewed_source",
+      "observation": "Profile state remains in PhoneApp across tab navigation. The guide does not replace it. Existing recovery tracks changed profiles, owner scopes and explicit export/recovery paths.",
+      "evidencePaths": [
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/PhoneApp.tsx",
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/tests/phone-recovery-isolation.mjs"
+      ]
+    },
+    {
+      "id": "role-shortcuts",
+      "disposition": "preserved_in_reviewed_source",
+      "observation": "Saved profile suggestions trim and deduplicate, show at most three and change only the query. They do not dispatch a search or change location, remote or sources. Saved role text is bounded to 100 characters, within the query input limit of 120.",
+      "evidencePaths": [
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/PhoneApp.tsx",
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/model.ts",
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/tests/phone-task-guidance.mjs"
+      ]
+    },
+    {
+      "id": "honest-portability",
+      "disposition": "preserved_in_reviewed_source",
+      "observation": "The UI states that readable JSON is not an automatic restore file and can contain private notes/CV copies. It warns that encrypted recovery exports can still require the browser key. Existing owner and generation checks remain in export paths.",
+      "evidencePaths": [
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/PhoneApp.tsx"
+      ]
+    },
+    {
+      "id": "english-arabic-direction",
+      "disposition": "supported_in_reviewed_source",
+      "observation": "New reviewed strings have Arabic values; contact direction and isolated filenames/role names are explicit. Existing RTL CSS mirrors navigation arrows. Job-link accessible names retain visible wording and exact titles in both languages.",
+      "evidencePaths": [
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/i18n/messages.ar.json",
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/i18n/i18n.css",
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/ProfileReuse.tsx",
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/ApplicationGuide.tsx",
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/components.tsx",
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/tests/phone-task-guidance.mjs"
+      ]
+    },
+    {
+      "id": "save-focus",
+      "disposition": "source_guard_reviewed_runtime_report_separate",
+      "observation": "The new save wrapper awaits the existing action and invokes the existing guarded focus-recovery helper without changing persistence semantics. Reviewer did not run a browser.",
+      "evidencePaths": [
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/components.tsx",
+        "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/PhoneApp.tsx"
+      ]
+    }
+  ],
+  "testSourceReview": {
+    "executedByReviewer": false,
+    "newTestsIncludedInNpmTest": "tests/phone-task-guidance.mjs",
+    "coveredInTestSource": [
+      "guest routing and reset of stale Saved filters",
+      "Apply subtree hidden during account checks and lock",
+      "saved-role query-only prefill",
+      "explicit field copy without CV or role data",
+      "clipboard-denial text recovery",
+      "localized job-link names and exact destination"
+    ],
+    "limits": [
+      "Source/SSR and mocked clipboard checks do not alone establish browser permission behavior or visual layout.",
+      "The source test covers the guide route with bookmarked jobs and no jobs; the records-only branch was reviewed directly in implementation.",
+      "This review does not replace acceptance of the final combined candidate."
+    ]
+  },
+  "rootReportedRuntimeChecks": {
+    "reporter": "/root",
+    "receivedAtUTC": "2026-11-18T12:24:08.200195+00:00",
+    "independentlyReplayedByReviewer": false,
+    "evidenceType": "Parent message; underlying browser evidence remains owned by /root",
+    "reportedPassed": [
+      "actual focus restoration",
+      "exact synthetic clipboard copy",
+      "clipboard-denial fallback",
+      "role prefill preserving location and remote choice",
+      "269px Arabic no overflow",
+      "settled keyboard focus clearance"
+    ]
+  },
+  "sourceFiles": [
+    {
+      "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/ApplicationGuide.tsx",
+      "relativePath": "app/phone/ApplicationGuide.tsx",
+      "sha256": "afd76ba3823daa694145b391172f75c695d293442dc423fb1b03ef953bc48c3c"
+    },
+    {
+      "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/PhoneApp.tsx",
+      "relativePath": "app/phone/PhoneApp.tsx",
+      "sha256": "cd53f30e6f4b618873ad3fe12d34f24a7c8b01c9db625e979b288e8546a22009"
+    },
+    {
+      "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/ProfileReuse.tsx",
+      "relativePath": "app/phone/ProfileReuse.tsx",
+      "sha256": "e99c1f8c6ad92b3c4152cfea343a615effca20083a970e4da5b3da34496908fd"
+    },
+    {
+      "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/components.tsx",
+      "relativePath": "app/phone/components.tsx",
+      "sha256": "e3f0f630e818cfe663cbe9e119cb91bdbe294c25f0dd88fcf031eb753924b5f7"
+    },
+    {
+      "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/model.ts",
+      "relativePath": "app/phone/model.ts",
+      "sha256": "1341caf46b9a65ef140ae976d3a757088fedd711ed49f556f7ab34be3686e48b"
+    },
+    {
+      "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/phone/phone.css",
+      "relativePath": "app/phone/phone.css",
+      "sha256": "0b4685bedf6c527d02bbb0c1d233222e80d13b7402d0c50a4095ca53a767cf79"
+    },
+    {
+      "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/i18n/messages.ar.json",
+      "relativePath": "app/i18n/messages.ar.json",
+      "sha256": "c0d870a2b8222e236ed0275ae8b96df109205058ac1ac7d9739ae59e3391a6e2"
+    },
+    {
+      "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/i18n/core.ts",
+      "relativePath": "app/i18n/core.ts",
+      "sha256": "900241f78b9ccd6f1c68e349c08dce6a53c298ca646cf18ee6111230b4729cbb"
+    },
+    {
+      "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/app/i18n/i18n.css",
+      "relativePath": "app/i18n/i18n.css",
+      "sha256": "c08d6ed5604b8f479c47e4a8f984bd61926a9c8271928754b8777a7d8c7b4e8e"
+    },
+    {
+      "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/tests/phone-task-guidance.mjs",
+      "relativePath": "tests/phone-task-guidance.mjs",
+      "sha256": "cfe6af689fc868fd0726b997c7120cc1ccad6520e1f177977686afc3046fa533"
+    },
+    {
+      "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/tests/phone-recovery-isolation.mjs",
+      "relativePath": "tests/phone-recovery-isolation.mjs",
+      "sha256": "e66f9e302499772bdb7e1e1b0793da64f5b809c59f5c7706ba01c62f38eb1229"
+    },
+    {
+      "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/tests/account-recovery-lifecycle.mjs",
+      "relativePath": "tests/account-recovery-lifecycle.mjs",
+      "sha256": "60a2fd94573de75046060e1b7f9e2be600d9875094c21705340191f90351df9b"
+    },
+    {
+      "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-site/.sites-checkout/package.json",
+      "relativePath": "package.json",
+      "sha256": "860c907c529ded123cc591d1d4141276a3a4505044e2be76b8e8b55d66909f7c"
+    }
+  ],
+  "result": {
+    "findingCount": 1,
+    "acceptedFindingsSourceFixed": 1,
+    "additionalSourceSupportedPrivacyRecoveryPortabilityBlockers": 0,
+    "scopeQualifier": "No additional blocker established within this bounded source review; this is not whole-product runtime or security certification.",
+    "finalCombinedCandidateAcceptance": false
+  },
+  "historicalCI": {
+    "runId": 44294650087,
+    "candidate": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+    "conclusion": "failure",
+    "gatesPassed": 3,
+    "gatesTotal": 5,
+    "iphone": {
+      "passed": 14,
+      "failed": 3,
+      "skipped": 0,
+      "unrun": 0
+    },
+    "android": {
+      "passed": 112,
+      "failed": 2,
+      "skipped": 0,
+      "unrun": 2
+    },
+    "bootReadiness": "unproven: API success contradicts Data Migration Failed in raw and artifact log",
+    "receiptPath": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/ci-44294650087/run-recovery-complete.json",
+    "receiptSHA256": "bf720bf0329358e73ad478e3665d988722343d274c2f6b412335390d1f03beb4",
+    "acceptsCurrentWorkingTree": false
+  },
+  "nextAssignment": "Available for combined final CI evidence recovery after parent supplies the frozen candidate and run; no CI dispatch authorized to reviewer."
+}

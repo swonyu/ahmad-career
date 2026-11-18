@@ -1,0 +1,1415 @@
+{
+  "schemaVersion": 2,
+  "artifactStatus": "draft_for_coordinator_integration",
+  "project": "Career Finder",
+  "owner": "ebb3eed5",
+  "author": "/root/publication_review",
+  "preparedAtUTC": "2026-11-18T12:59:27.682398+00:00",
+  "userScope": "Ten distinct deep critique/improvement passes; UI and plain natural English/Arabic wording in every pass; evidence-backed competitor/job-seeker research; implement validated in-scope findings and verify; simple consistent navigation; no paid research or services.",
+  "sourceSnapshot": {
+    "combinedCommit": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+    "tree": "65991d4de50966da1de85c6dc8cc7355fbee0af3",
+    "hostedTree": "e955a63e843e7035ea8ce71b2b37504c78577c9d",
+    "appleTree": "c8080a217d0348ea738677619be5a3586d6887a2",
+    "macWorktree": "/Users/saleh/Developer/career-finder-improvement-20261118-ebb3eed5",
+    "trackedSourceDirty": false,
+    "untrackedCoordinatorLedgerObserved": "docs/ten-pass-review-2026-11-18/",
+    "qualification": "Exact source inspected read-only. Untracked coordinator documentation exists; do not call the entire worktree clean."
+  },
+  "constraints": {
+    "spending": "Free built-in research and existing infrastructure only; no paid APIs, upgrades, purchases or automatic overages.",
+    "deadlineRiyadh": "2026-11-19T01:26:12+03:00",
+    "privacy": "No real employer contact/application or real personal acceptance data; explicit profile/document/submission choices and existing owner boundaries retained.",
+    "ownerBoundaries": "Root owns hosted/integration and browser work; recovery_review owns the authorized native run; ci_evidence owns evidence collection and B16 diagnosis; this author only prepares these scratch documents.",
+    "Nulaya": "Lulu-specific abaya category/no-extra-kasra guidance remains with Nulaya's sole owner. Natural EN/AR wording preference applies here; do not copy product-specific terms.",
+    "navigation": {
+      "browser": [
+        "Search",
+        "Saved",
+        "Apply",
+        "Profile",
+        "Settings"
+      ],
+      "iPhone": [
+        "Start",
+        "Search",
+        "Apply",
+        "Saved",
+        "Settings"
+      ],
+      "android": [
+        "Jobs",
+        "Apply",
+        "Receipts",
+        "Profile",
+        "Settings"
+      ],
+      "androidSecondary": [
+        "Discover",
+        "Saved"
+      ],
+      "decision": "Preserve routes. Exact shared labels were not established as an older user requirement; broader alignment is a new optional architecture change.",
+      "evidence": "E06"
+    },
+    "palette": "Current user-directed icon-aligned midnight navy/periwinkle; warm trial superseded."
+  },
+  "completionAccounting": {
+    "status": "in_progress",
+    "passSlots": 10,
+    "closedPasses": [],
+    "claim": "Ten distinct review scopes are populated with executed source/research/browser activities and explicit findings. This draft does not certify ten completed end-to-end passes.",
+    "notCountedAsNewExecution": [
+      "The earlier ten research protocols.",
+      "Historical1194ded/7b3f776copy cleanup or older test results as current-source acceptance.",
+      "Ten headings, ten source references, repeated use of one browser receipt or screenshots as ten independent full cycles.",
+      "Authorized/preflight native work as an executed or passed run."
+    ],
+    "closureRule": "For each scope, retain starting/ending source, actual UI and EN/AR wording evidence, finding disposition, relevant recheck and explicit remaining platform limits. Full-program engineering acceptance additionally requires current complete CI and review of native artifacts."
+  },
+  "commitMap": {
+    "baseline": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+    "copy": "1194ded6c5610fee5979e853059cc8de026ac906",
+    "exampleCopy": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+    "androidAction": "56304712d8b4d37da823973752e80a6649d5b6ff",
+    "androidActionIntegrated": "e63b0dbb8abb8018e9dbc9fa366a39cc8e982d05",
+    "nativeFeature": "b6f499361279a27edec4635735cae97a13c6931b",
+    "nativeFeatureIntegrated": "74b8ab0009f32da85f429d5680fd4b77326fcf2f",
+    "hostedFeature": "246e246bd0da5c3305ffc00a90720afd29a6d3d6",
+    "readiness": "fc5cc80e001836cc8da28649a26799f0eb6a08d5",
+    "readinessIntegrated": "ead12355246f1889f53f3d7bc3ff71cd42da4d92",
+    "hostedFocus": "6b21e2355feeb62a20fdb0f616b854cd52ca16c7",
+    "nativeDocs": "a34e92d3c8daac87e9dbb5b4d239b8569b47aed0",
+    "nativeDocsIntegrated": "b74245c87dc0f695d49a60e6936910c931e79c2e",
+    "nativeCorrection": "927b7c49f5cd5722e5d8fbdb8e5b5b4a11173101",
+    "combined": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f"
+  },
+  "evidence": [
+    {
+      "id": "E01",
+      "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-research-delta-20261118-publication-review.json",
+      "bytes": 37699,
+      "sha256": "86d5144636d98600b4df23f7410fa380bd05ea6111b0e387dc92cbc6b11079ff"
+    },
+    {
+      "id": "E02",
+      "path": "/workspace/scratch/ebb3eed5ee2b/hosted-task-guidance-source-critique-20261118.json",
+      "bytes": 15753,
+      "sha256": "942edc8eeeacdbcfeb245b79962050be997317f648831e7e0520ddbe4ea2df8e"
+    },
+    {
+      "id": "E03",
+      "path": "/workspace/scratch/ebb3eed5ee2b/hosted-recovery-privacy-critique-20261118.json",
+      "bytes": 14688,
+      "sha256": "50a876b3a022f4528f5f09ada7efb98badcc457365edc71594ea183dd1f1acdb"
+    },
+    {
+      "id": "E04",
+      "path": "/workspace/scratch/ebb3eed5ee2b/native-ui-wording-review-b6f4993.json",
+      "bytes": 12247,
+      "sha256": "e21635cfdd1cd8b5ad6cc536fc8891ce7d88cda658b4be09299bea80643ceb83"
+    },
+    {
+      "id": "E05",
+      "path": "/workspace/scratch/ebb3eed5ee2b/native-feature-privacy-critique-20261118.json",
+      "bytes": 20594,
+      "sha256": "4afb16fa5c10a96c762dda5405a87903fa3ef73bd87366548d993b53d695f68d"
+    },
+    {
+      "id": "E06",
+      "path": "/workspace/scratch/ebb3eed5ee2b/navigation-scope-review-927b7c49.json",
+      "bytes": 5225,
+      "sha256": "e6e88655ce9b27ecbb9857be331ff118c58c6b8f31de769fd7d186c1a0dee315"
+    },
+    {
+      "id": "E07",
+      "path": "/workspace/scratch/ebb3eed5ee2b/hosted-browser-qa-20261118.json",
+      "bytes": 12204,
+      "sha256": "9a4272f54f631cc02c749a6b1f5b375eb560231cd3e9abfdfcfddf38fb971163"
+    },
+    {
+      "id": "E08",
+      "path": "/workspace/scratch/ebb3eed5ee2b/career-finder-theme-contrast-20261118.json",
+      "bytes": 3684,
+      "sha256": "6a5a335db7a07470f2dc09a37756e7cdc5e948edf2508b2d7167fb90669cd6ba"
+    },
+    {
+      "id": "E09",
+      "path": "/workspace/scratch/ebb3eed5ee2b/hosted-tenpass-final-full-tests.log",
+      "bytes": 57294,
+      "sha256": "2b7ae3b67c7709003cd28424fe67cefdd234420b57ecac71017cbd4637fb0ba7"
+    },
+    {
+      "id": "E10",
+      "path": "/workspace/scratch/ebb3eed5ee2b/hosted-record-focus-tests.log",
+      "bytes": 10504,
+      "sha256": "80d5c625c5040692300b62f2809efa952972f960449a88f9e01cd0084b387865"
+    },
+    {
+      "id": "E11",
+      "path": "/workspace/scratch/ebb3eed5ee2b/hosted-tenpass-final-copy-tests.log",
+      "bytes": 7679,
+      "sha256": "c41b740a2de0253bcff5a8e2bae3ead142d6c473e78334597b4e8ad7087bc88d"
+    },
+    {
+      "id": "E12",
+      "path": "/workspace/scratch/ebb3eed5ee2b/iphone-readiness-repair-fc5cc80e.json",
+      "bytes": 3981,
+      "sha256": "b0b1136397354c5a56d57d6c5e1d3ae96010bd53d107e2db6485e3508e37c9cf"
+    },
+    {
+      "id": "E13",
+      "path": "/workspace/scratch/ebb3eed5ee2b/iphone-failure-diagnosis-publication-review-44294650087.json",
+      "bytes": 14885,
+      "sha256": "893e8cf90f70df5cdab9d591b2673e88cfc6d488c4f2081345caf41e77943feb"
+    },
+    {
+      "id": "E14",
+      "path": "/workspace/scratch/ebb3eed5ee2b/hosted-tenpass-improvements.json",
+      "bytes": 3540,
+      "sha256": "709d9c10af60ae8bf2db708e9764abca9b8fd8bf775873288b13c45536414aed"
+    },
+    {
+      "id": "E15",
+      "kind": "git_backed_historical_copy_receipt",
+      "path": "docs/Copy-Cleanup-2026-11-18.json",
+      "commit": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+      "sha256": "d6a61e54243ece41d3436ae888609208ca8304fbea27b29d45d26db683e7a2c6",
+      "qualification": "Historical copy-only checkpoint; its pending fields and counts do not represent the later feature/source snapshot."
+    },
+    {
+      "id": "E16",
+      "kind": "native_author_handoff",
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-task-improvements/native-task-handoff-b6f4993.json",
+      "commit": "b6f499361279a27edec4635735cae97a13c6931b",
+      "sha256": "b229b9aca66b322222cb0a48234b980e992a7231212faf3c3e0158b9a09935b8",
+      "qualification": "Author handoff and static-check record; not native runtime acceptance."
+    },
+    {
+      "id": "E17",
+      "kind": "native_author_correction_receipt",
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-task-improvements/native-resilience-927b7c49.json",
+      "commit": "927b7c49f5cd5722e5d8fbdb8e5b5b4a11173101",
+      "sha256": "4262c40a5593678e7bd03764d69eea670396daf03710a38ac95b9f61ce3bcf86",
+      "qualification": "Independent source acceptance is separately retained in E04/E05; native runtime pending."
+    },
+    {
+      "id": "E18",
+      "kind": "historical_complete_failed_ci_receipt",
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/ci-44294650087/run-recovery-complete.json",
+      "commit": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+      "sha256": "bf720bf0329358e73ad478e3665d988722343d274c2f6b412335390d1f03beb4",
+      "qualification": "Historical FAILED run. It must not be turned into acceptance of the successor."
+    },
+    {
+      "id": "E19",
+      "kind": "parent_coordination_update",
+      "source": "/root message to /root/publication_review after E07 was written",
+      "subject": "B16 independent diagnosis accepted and narrow correction assigned",
+      "recordedBy": "/root/publication_review",
+      "content": "Root reports CI review validated intermediate record autosave retention after Keep restores equality and clean close; new editor IDs accumulate old copies. CI owner is implementing narrow PhoneApp plus real encrypted safety regression tests. Root will rerun exact browser cycle. Original synthetic export SHA150678d5ead7eb9ef81d0e19e7178ee0435c781e3295c2fecfd17470f778ce28.",
+      "fileReceiptPending": true
+    },
+    {
+      "id": "E20",
+      "kind": "native_owner_execution_update",
+      "source": "/root/recovery_review message",
+      "startedAtUTC": "2026-11-18T13:06:06Z",
+      "commit": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+      "evidenceDirectory": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-focused-ff21fd470a53-20261118T125807Z-e7fed7",
+      "state": "boot_gate_running_no_test_result",
+      "qualification": "Attempt initiation is not native case execution or acceptance; final receipt pending.",
+      "supersededBy": "E21"
+    },
+    {
+      "id": "E21",
+      "kind": "current_focused_readiness_blocker",
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-focused-ff21fd470a53-20261118T125807Z-e7fed7/readiness-blocker-review.json",
+      "sha256": "68abe08d065e5c5e2439e9baf42872dba3263e028b19215789e0d2887f2e1109",
+      "commit": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+      "bootLogSHA256": "5483ba601b60c09db12e4667a63d6176cd47aa217b0b3a29a05af047891c99af",
+      "verifierReceiptSHA256": "90be03299ebf7f591e89e229180895c6961fa90ddfb15ceda2430b88288f5852",
+      "outcome": "blocked_before_compile_and_tests",
+      "caseOutcomes": {
+        "selected": 7,
+        "executed": 0,
+        "unrun": 7
+      },
+      "bootObservation": "Terminal Status3 Data Migration Failed at2026-11-18T13:06:08Z despite exits0 and inventoryBooted; verifier failed closed.",
+      "cleanup": "Owned simulator Shutdown confirmed.",
+      "qualification": "No retry, native pass or product-cause claim. Receipt reported by native owner and independently relayed by CI evidence owner."
+    }
+  ],
+  "primarySources": [
+    {
+      "id": "S01",
+      "kind": "primary_vendor_research_and_product_announcement",
+      "publisher": "LinkedIn",
+      "title": "LinkedIn Research: Nearly 80% of people feel unprepared to find a job in 2026",
+      "url": "https://news.linkedin.com/en-us/2026/LinkedIn-Research-Talent-2026",
+      "refs": [
+        "turn856789235view0",
+        "turn307077190view5",
+        "turn728641147view1"
+      ],
+      "published": "2026-01-07",
+      "accessed": "2026-11-18",
+      "facts": "The release reports 65% finding job search more challenging and identifies uncertainty about fit/skills among concerns. It describes natural-language search and job-match assistance.",
+      "methodology": {
+        "provider": "Censuswide",
+        "consumerN": 19113,
+        "consumerFieldwork": "2025-11-13 through 2025-11-28",
+        "hrN": 6554,
+        "hrFieldwork": "2025-11-10 through 2025-11-27",
+        "geography": "Listed markets include the UK, US, several European markets, Brazil, India, Singapore, Australia, Saudi Arabia and UAE."
+      },
+      "limitations": "Consumer and HR samples are distinct. Pooled findings are not Saudi/UAE estimates; this page supplies no usable country split or complete questionnaire. January product rollout details do not prove November language/entitlement scope. Vendor outcome statistics are not adopted as causal evidence."
+    },
+    {
+      "id": "S02",
+      "kind": "primary_vendor_commissioned_survey",
+      "publisher": "Indeed",
+      "title": "What 1,500 Workers Revealed About Job Search Burnout",
+      "url": "https://www.indeed.com/news/releases/state-of-the-job-seeker-survey?co=US",
+      "refs": [
+        "turn856789235view1",
+        "turn323458897view1"
+      ],
+      "published": "2026-09-29",
+      "accessed": "2026-11-18",
+      "facts": "Reported 46% abandoning an application because of length or tedium and 47% pausing their search because of overwhelm.",
+      "methodology": {
+        "provider": "YouGov on behalf of Indeed",
+        "sampleN": 1501,
+        "mode": "Online",
+        "fieldwork": "2026-08-06 through 2026-08-15",
+        "population": "US full- or part-time workers or temporarily unemployed people open to a new US job",
+        "weighting": "Weighted to the US working population"
+      },
+      "limitations": "US-only, self-reported, active and passive search population. No basis for applying the percentages worldwide or to Gulf job seekers. Does not prove a specific interface change improves hiring outcomes."
+    },
+    {
+      "id": "S03",
+      "kind": "primary_help",
+      "publisher": "Indeed",
+      "title": "My Jobs: Managing Applied Jobs",
+      "url": "https://www.indeed.com/help/job-seekers/articles/4412589551757-my-jobs-managing-applied-jobs?co=US&hl=en",
+      "refs": [
+        "turn323458897view2"
+      ],
+      "published": null,
+      "accessed": "2026-11-18",
+      "facts": "The help distinguishes user-edited stages from employer/Indeed updates. External-site applications may lack these updates; application details and withdrawal are restricted to jobs posted directly on Indeed.",
+      "limitations": "Product help documents scope, not a reliability benchmark. Do not infer employer rejection from silence or treat a personal status as employer confirmation."
+    },
+    {
+      "id": "S04",
+      "kind": "primary_product",
+      "publisher": "Teal",
+      "title": "Job Application Tracker",
+      "url": "https://www.tealhq.com/tools/job-tracker",
+      "refs": [
+        "turn856789235view2"
+      ],
+      "published": null,
+      "accessed": "2026-11-18",
+      "facts": "Documents job bookmarking, stages, notes, contacts, checklists and a free unlimited-job tracker; advanced analysis and broader writing tools are premium.",
+      "limitations": "Vendor-described workflow. No independent causal evidence for faster hiring. Existing Career Finder tracking and export work should be reused, not rebuilt."
+    },
+    {
+      "id": "S05",
+      "kind": "primary_help",
+      "publisher": "Huntr",
+      "title": "The Huntr Chrome Extension",
+      "url": "https://help.huntr.co/en/articles/9859408-the-huntr-chrome-extension",
+      "refs": [
+        "turn856789235view3"
+      ],
+      "published": "2025-11-12",
+      "accessed": "2026-11-18",
+      "facts": "Supported pages can populate saved-job fields and application forms. Unsupported saved-job pages remain manually editable. Autofill needs a visible application form and may not work where a site disallows the extension.",
+      "limitations": "This source does not establish pricing, every supported page or mobile parity. Support constraints make manual correction/fallback a core requirement."
+    },
+    {
+      "id": "S06",
+      "kind": "primary_help",
+      "publisher": "Simplify",
+      "title": "Use Copilot to autofill applications",
+      "url": "https://help.simplify.jobs/en/help/articles/2415391-use-copilot-to-autofill-applications",
+      "refs": [
+        "turn323458897view3"
+      ],
+      "published": "Page showed a relative update approximately 25 days earlier; no exact date inferred",
+      "accessed": "2026-11-18",
+      "facts": "Copilot fills supported fields; the user reviews and submits. Saving or filling is separate from employer confirmation. The guide provides manual copying/tracking fallback, document selection and warns that its resume feedback is not an employer screening result.",
+      "limitations": "Copilot guidance must not be generalized to the separate Autopilot service. Per-form support varies; this is not a claim that all competitors require manual final submission."
+    },
+    {
+      "id": "S07",
+      "kind": "publisher_store_listing",
+      "publisher": "Bayt.com",
+      "title": "Bayt.com Jobs: MENA Job Search",
+      "url": "https://apps.apple.com/sa/app/bayt-com-jobs-mena-job-search/id510893233",
+      "refs": [
+        "turn728641147view0"
+      ],
+      "published": null,
+      "accessed": "2026-11-18",
+      "facts": "Advertises MENA discovery with industry, salary, location and experience filters. States CV creation, search and applying are free, with optional premium features.",
+      "limitations": "Marketing claims of verified jobs, scale or superiority are not independent evidence. Store listing was used because the older mobile-promo page redirects inconsistently. Prior recovered research already documents bilingual support."
+    },
+    {
+      "id": "S08",
+      "kind": "publisher_store_listing",
+      "publisher": "GulfTalent",
+      "title": "GulfTalent - Job Search App",
+      "url": "https://play.google.com/store/apps/details?hl=en&id=com.gulftalent.android.mobile",
+      "refs": [
+        "turn307077190view0"
+      ],
+      "published": "Listing updated 2026-11-05",
+      "accessed": "2026-11-18",
+      "facts": "Describes title/location search, role/industry/seniority filters, shortlists, alerts, application tracking and employer activity for Gulf/Middle East roles.",
+      "limitations": "Vendor description, not tested experience. Regional inventory is not worldwide coverage; Arabic UI and exact free/paid entitlement were not established by this selected page."
+    },
+    {
+      "id": "S09",
+      "kind": "publisher_store_listing",
+      "publisher": "Info Edge / Naukrigulf",
+      "title": "Naukrigulf Job Search App",
+      "url": "https://apps.apple.com/sa/app/naukrigulf-job-search-app/id724241430",
+      "refs": [
+        "turn307077190view1",
+        "turn560254082view2",
+        "turn560254082view4"
+      ],
+      "published": null,
+      "accessed": "2026-11-18",
+      "facts": "Lists English and Arabic, Gulf location/industry/experience/freshness filters, saved jobs and recruiter-related application indicators. It distinguishes the free app from paid career services.",
+      "limitations": "Publisher metadata does not establish localization quality, employer response rates or accessibility. Missing declared accessibility features is not proof of inaccessibility."
+    },
+    {
+      "id": "S10",
+      "kind": "official_public_service",
+      "publisher": "European Labour Authority / EURES",
+      "title": "EURES services",
+      "url": "https://eures.europa.eu/eures-services_en",
+      "refs": [
+        "turn307077190view2"
+      ],
+      "published": null,
+      "accessed": "2026-11-18",
+      "facts": "Offers European job mobility information and support, including living/working conditions and advisers. It directs CV creation to Europass rather than claiming its own CV builder.",
+      "limitations": "Useful regional alternative, not a worldwide board or an immigration eligibility decision. Linking to an official destination is not a Career Finder integration."
+    },
+    {
+      "id": "S11",
+      "kind": "primary_accessibility_guidance",
+      "publisher": "W3C WAI",
+      "title": "Writing for Web Accessibility",
+      "url": "https://www.w3.org/WAI/tips/writing/",
+      "refs": [
+        "turn307077190view3"
+      ],
+      "published": null,
+      "accessed": "2026-11-18",
+      "facts": "Recommends meaningful headings and links, clear input/error instructions, concise sentences and ordinary language.",
+      "limitations": "Guidance is not a conformance audit. Apply natural English and Arabic independently; removing hype must preserve precise permissions, data scope and recovery instructions."
+    },
+    {
+      "id": "S12",
+      "kind": "primary_standard",
+      "publisher": "W3C",
+      "title": "Web Content Accessibility Guidelines 2.2",
+      "url": "https://www.w3.org/TR/WCAG22/",
+      "refs": [
+        "turn560254082view0",
+        "turn573585460view1",
+        "turn573585460view2",
+        "turn573585460view3",
+        "turn728641147view2"
+      ],
+      "published": "2024-12-12",
+      "accessed": "2026-11-18",
+      "facts": "Relevant web criteria include keyboard operation, reflow, programmatic language, visible/unobscured focus, minimum pointer targets and avoiding redundant entry. AA target size is 24 CSS pixels with specified exceptions; reflow addresses 320 CSS-pixel width.",
+      "limitations": "Apply the actual criterion and exceptions. Web checks are not a claim of native accessibility conformance, and reading the standard is not an executed accessibility pass."
+    }
+  ],
+  "surveyLimits": [
+    "Indeed S02:1,501 US workers/job-open respondents, online YouGov6–15 August 2026, weighted to US working population;46% application abandonment and47% pause figures are self-reported, not worldwide/Gulf estimates.",
+    "LinkedIn S01:Censuswide 19,113 consumer respondents13–28 November 2025 and6,554 HR respondents10–27 November 2025 across listed markets including Saudi Arabia/UAE; pooled results are not country estimates and questionnaire/country splits are not established.",
+    "No representative Career Finder usability study or comparative hands-on benchmark was run; no universal-best-app or causal hiring-outcome claim is made."
+  ],
+  "findings": [
+    {
+      "id": "F01",
+      "kind": "task_discoverability_gap",
+      "title": "Guest Apply put optional sign-in before the available manual employer route",
+      "evidence": [
+        "E01:CF1",
+        "E03:guest-manual-route",
+        "E07:B01"
+      ],
+      "fix": "Place the manual guide first; navigate to Search or Saved and clear stale Saved filters without creating an account, uploading a profile or submitting.",
+      "commits": [
+        "246e246bd0da5c3305ffc00a90720afd29a6d3d6",
+        "b6f499361279a27edec4635735cae97a13c6931b",
+        "74b8ab0009f32da85f429d5680fd4b77326fcf2f"
+      ],
+      "status": "hosted_actual_browser_verified_native_runtime_pending"
+    },
+    {
+      "id": "F02",
+      "kind": "clarity_gap",
+      "title": "Employer-board names were hidden inside Search options",
+      "evidence": [
+        "E01:CF2",
+        "E14"
+      ],
+      "fix": "Expose selected board names and separately identify sources of the displayed results; retain bounded selected-board coverage.",
+      "commits": [
+        "246e246bd0da5c3305ffc00a90720afd29a6d3d6"
+      ],
+      "status": "source_verified_live_https_result_binding_pending"
+    },
+    {
+      "id": "F03",
+      "kind": "validated_wording_mismatch",
+      "title": "Job title or skill overstated the searchable metadata",
+      "evidence": [
+        "E02:HTG-02"
+      ],
+      "fix": "Use Job title or keyword and state that titles, employers and available summaries are searched. No full-description fetch expansion.",
+      "commits": [
+        "246e246bd0da5c3305ffc00a90720afd29a6d3d6",
+        "b6f499361279a27edec4635735cae97a13c6931b"
+      ],
+      "status": "source_verified_fixture_coverage_retained_actual_https_search_pending"
+    },
+    {
+      "id": "F04",
+      "kind": "validated_accessible_name_regression",
+      "title": "The job link's accessible name omitted its visible View job label",
+      "evidence": [
+        "E02:HTG-01",
+        "E10"
+      ],
+      "fix": "Use View job: {0} / عرض الوظيفة: {0}; preserve exact title, href and external-link attributes.",
+      "commits": [
+        "246e246bd0da5c3305ffc00a90720afd29a6d3d6"
+      ],
+      "status": "actual_component_regression_check_passed_assistive_technology_session_not_run"
+    },
+    {
+      "id": "F05",
+      "kind": "validated_wording_mismatch",
+      "title": "Role chooser wording implied a search before the explicit Search action",
+      "evidence": [
+        "E04:native-profile-role-chooser-label",
+        "E07:B07"
+      ],
+      "fix": "Choose a job title from your saved profile / اختر مسمى وظيفيًا من ملفك المحفوظ; explain query-only reuse and keep other filters unchanged.",
+      "commits": [
+        "6b21e2355feeb62a20fdb0f616b854cd52ca16c7",
+        "927b7c49f5cd5722e5d8fbdb8e5b5b4a11173101",
+        "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f"
+      ],
+      "status": "hosted_arabic_actual_task_verified_native_source_bindings_verified"
+    },
+    {
+      "id": "F06",
+      "kind": "bounded_product_improvement",
+      "title": "Repeated contact entry lacked a small explicit reuse action",
+      "evidence": [
+        "E01:audienceSynthesis",
+        "E03:explicit-contact-copy",
+        "E04",
+        "E07:B06"
+      ],
+      "fix": "Add explicit per-field copying from the visible profile; exclude CV bytes, role preferences, credentials and automatic form submission.",
+      "commits": [
+        "246e246bd0da5c3305ffc00a90720afd29a6d3d6",
+        "b6f499361279a27edec4635735cae97a13c6931b"
+      ],
+      "status": "hosted_synthetic_pointer_copy_and_denial_fallback_observed_native_runtime_pending"
+    },
+    {
+      "id": "F07",
+      "kind": "conditional_resilience_gap",
+      "title": "Android reported Copied without proof of the expected write",
+      "evidence": [
+        "E05:android-copy-failure-and-confirmation",
+        "E17"
+      ],
+      "fix": "Handle exceptions and confirm only a fresh per-copy opaque marker through clipboard-description metadata; otherwise show localized unconfirmed-copy guidance without reading clipboard text.",
+      "commits": [
+        "927b7c49f5cd5722e5d8fbdb8e5b5b4a11173101",
+        "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f"
+      ],
+      "status": "independently_source_verified_native_tests_not_yet_executed"
+    },
+    {
+      "id": "F08",
+      "kind": "validated_instruction_gap",
+      "title": "The manual guide assumed a job was saved without telling the user to save it",
+      "evidence": [
+        "E03:manual-guide-save-before-external-apply",
+        "E07:B02"
+      ],
+      "fix": "Choose and save a job / اختر وظيفة واحفظها, followed by the explicit save-before-employer-page sentence.",
+      "commits": [
+        "246e246bd0da5c3305ffc00a90720afd29a6d3d6",
+        "b6f499361279a27edec4635735cae97a13c6931b"
+      ],
+      "status": "hosted_en_ar_actual_browser_verified_native_runtime_pending"
+    },
+    {
+      "id": "F09",
+      "kind": "validated_navigation_predicate_mismatch",
+      "title": "iOS record-only guest Apply routed to Search despite retained Saved records",
+      "evidence": [
+        "E05:ios-record-only-manual-route",
+        "E04:successorReview",
+        "E17"
+      ],
+      "fix": "Use savedOpportunities, matching Saved and its badge; retain meaningful records without recreating a bookmark.",
+      "commits": [
+        "927b7c49f5cd5722e5d8fbdb8e5b5b4a11173101",
+        "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f"
+      ],
+      "status": "source_verified_new_assertions_present_native_runtime_pending"
+    },
+    {
+      "id": "F10",
+      "kind": "actual_browser_focus_defect",
+      "title": "Profile save lost focus to BODY",
+      "evidence": [
+        "E07:B05",
+        "E03:save-focus"
+      ],
+      "fix": "After the existing save action, restore only its still-valid action when focus was lost; respect intentional alternative focus and unchanged persistence semantics.",
+      "commits": [
+        "246e246bd0da5c3305ffc00a90720afd29a6d3d6"
+      ],
+      "status": "actual_arabic_browser_recheck_passed"
+    },
+    {
+      "id": "F11",
+      "kind": "actual_browser_focus_defect",
+      "title": "Keeping the original applied stage removed the focused button inside an open editor",
+      "evidence": [
+        "E07:B12",
+        "E10"
+      ],
+      "fix": "Restore Stage only if focus is lost and the same visible enabled dialog remains; preserve applied stage, dates and notes.",
+      "commits": [
+        "6b21e2355feeb62a20fdb0f616b854cd52ca16c7"
+      ],
+      "status": "actual_en_ar_browser_recheck_passed"
+    },
+    {
+      "id": "F12",
+      "kind": "validated_wording_consistency_gap",
+      "title": "Help/stage/correction wording was stale or ambiguous",
+      "evidence": [
+        "E07:B11",
+        "E07:B13",
+        "E04"
+      ],
+      "fix": "Use Saved for later / محفوظة للرجوع إليها, exact personal-mark correction wording, and a plain help section list; retain no-employer-withdrawal explanation.",
+      "commits": [
+        "246e246bd0da5c3305ffc00a90720afd29a6d3d6",
+        "6b21e2355feeb62a20fdb0f616b854cd52ca16c7",
+        "b6f499361279a27edec4635735cae97a13c6931b"
+      ],
+      "status": "source_and_localization_checks_passed_correction_rendered_ar_verified_not_every_help_accordion_replayed"
+    },
+    {
+      "id": "F13",
+      "kind": "historical_and_current_copy_cleanup",
+      "title": "Promotional sentences and an Arabic lookup mismatch obscured practical tasks",
+      "evidence": [
+        "E15",
+        "E07:B11",
+        "E04"
+      ],
+      "fix": "Historical cleanup replaced slogans with task labels, fixed PHONE CONNECTION lookup and three example-search strings; current pass reviews new guide/profile/search/status wording in context.",
+      "commits": [
+        "1194ded6c5610fee5979e853059cc8de026ac906",
+        "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+        "246e246bd0da5c3305ffc00a90720afd29a6d3d6",
+        "b6f499361279a27edec4635735cae97a13c6931b",
+        "927b7c49f5cd5722e5d8fbdb8e5b5b4a11173101"
+      ],
+      "status": "historical_cleanup_retained_new_copy_source_reviewed_with_bounded_hosted_rendering"
+    },
+    {
+      "id": "D01",
+      "kind": "user_directed_design_decision",
+      "title": "Use the Career Finder icon's midnight navy/periwinkle palette",
+      "evidence": [
+        "E07:B09",
+        "E07:B15",
+        "E08",
+        "E04"
+      ],
+      "decision": "The explicit latest preference supersedes the warm Nulaya-inspired trial. Keep semantic color roles, large controls and app-owned wrappers; this is not a claim that the rejected palette was inaccessible.",
+      "commits": [
+        "246e246bd0da5c3305ffc00a90720afd29a6d3d6",
+        "b6f499361279a27edec4635735cae97a13c6931b"
+      ],
+      "status": "hosted_rendered_dark_en_ar_light_ar_verified_native_rendering_pending"
+    },
+    {
+      "id": "D02",
+      "kind": "grounded_no_redesign_decision",
+      "title": "Preserve existing platform routes while clarifying the navigation contract",
+      "evidence": [
+        "E06"
+      ],
+      "decision": "The browser and native apps deliberately have different five-tab models. No recovered exact-label parity requirement was established. Common labels would be a new architecture decision; avoid silent tab replacement or loss of Start, receipts, planning and profile routes.",
+      "commits": [
+        "a34e92d3c8daac87e9dbb5b4d239b8569b47aed0",
+        "b74245c87dc0f695d49a60e6936910c931e79c2e"
+      ],
+      "status": "documented_no_product_navigation_rewrite"
+    },
+    {
+      "id": "I01",
+      "kind": "validated_recovery_cleanup_gap",
+      "title": "Canceled intermediate stage autosaves remain in recovery",
+      "evidence": [
+        "E07:B16",
+        "E19"
+      ],
+      "observation": "The independent CI reviewer validated that an intermediate record autosave persists after Keep restores equality with the original record and the editor closes cleanly. Opening new editor IDs can accumulate older copies. The original browser/export evidence retains the stage-only difference.",
+      "status": "validated_fix_pending",
+      "owner": "/root/ci_evidence",
+      "fixCommit": null,
+      "qualification": "The cleanup gap is validated; no completed fix, data loss, identical duplicate payload or automatic restore is claimed.",
+      "fixProposal": "Owner is implementing a narrow PhoneApp cleanup correction with real encrypted safety regression coverage. Root will replay the exact change-stage / Save prompt / Keep / Cancel cycle in the actual preview after the fix."
+    },
+    {
+      "id": "G01",
+      "kind": "acceptance_integrity_repair",
+      "title": "Green boot step hid Data Migration Failed",
+      "evidence": [
+        "E12",
+        "E13",
+        "E18"
+      ],
+      "fix": "Fail closed on raw boot output, exact UUID, exits and available Booted inventory; retain logs and parser receipts. Keep original user-journey actions and existing wait budgets.",
+      "commits": [
+        "fc5cc80e001836cc8da28649a26799f0eb6a08d5",
+        "ead12355246f1889f53f3d7bc3ff71cd42da4d92"
+      ],
+      "status": "offline_checks_source_review_and_actual_negative_boot_gate_verified_native_tests_unrun"
+    },
+    {
+      "id": "G02",
+      "kind": "test_selector_repair",
+      "title": "Simpler Search jobs copy made two Android action selectors ambiguous",
+      "evidence": [
+        "E18"
+      ],
+      "fix": "Match the actual clickable Search jobs control using hasClickAction; retain heading checks, all116 methods, actions and assertions.",
+      "commits": [
+        "56304712d8b4d37da823973752e80a6649d5b6ff",
+        "e63b0dbb8abb8018e9dbc9fa366a39cc8e982d05"
+      ],
+      "status": "source_reviewed_final_android_runtime_pending"
+    }
+  ],
+  "passes": [
+    {
+      "number": 1,
+      "focus": "Job-seeker goals, competitor evidence and navigation",
+      "status": "review_executed_with_open_verification",
+      "closed": false,
+      "startingSource": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+      "endingSource": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+      "uiObservations": [
+        "Inspected the guest Apply branch and retained navigation routes. The browser hid the manual option behind its guest sign-in branch; the final guide now appears first in the actual EN/AR browser flow (B01).",
+        "Recovered the three actual navigation models. The17 November support correction explicitly distinguishes browser, iPhone and Android; no exact shared-label user contract was established."
+      ],
+      "wordingObservations": {
+        "english": "Task names and instructions are preferred over success promises. The manual heading explains the actual employer-site route, and account purpose remains optional and specific.",
+        "arabic": "The guide uses التقديم على موقع جهة العمل and practical instructions. Natural Arabic does not import Nulaya's abaya vocabulary or imply that language/location proves work eligibility.",
+        "evidenceLevel": "Primary-source research plus repository/source inspection and B01/B02 rendered EN/AR observations."
+      },
+      "findingIds": [
+        "F01",
+        "D02"
+      ],
+      "fixesOrDecisions": [
+        "Prioritized discoverability, source honesty, explicit profile reuse and records over new dashboards or AI scores.",
+        "Retained current platform routes; current iPhone README corrected its outdated Profile-tab description."
+      ],
+      "actualVerification": [
+        "Reviewed12 primary sources and the two existing research reports; vendor claims, survey samples and product inference are separated (E01).",
+        "Verified the navigation scope against exact repo documents/source (E06).",
+        "B01/B02 establish the hosted manual-first UI and EN/AR instruction wording; this is not proof of a new representative usability study."
+      ],
+      "remainingVerification": [
+        "Keep any future cross-platform tab alignment as an explicit design decision with route/state mapping and actual native checks.",
+        "No ten-pass completion count is derived from desk research or the earlier protocol list."
+      ],
+      "evidenceRefs": [
+        "E01",
+        "E06",
+        "E07:B01",
+        "E07:B02"
+      ],
+      "acceptanceLimits": {
+        "native": "The current seven-method focused attempt was blocked by the fail-closed readiness gate before compilation or tests. All seven methods remain unrun; no retry or native pass is claimed.",
+        "fullCI": "No full five-job acceptance exists for the current combined source. Historical run44294650087 remains failed.",
+        "publication": "No new deployment, signed-device or store acceptance follows from this review."
+      },
+      "researchSources": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05",
+        "S06",
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12"
+      ]
+    },
+    {
+      "number": 2,
+      "focus": "First use, search setup and source coverage",
+      "status": "review_executed_with_open_verification",
+      "closed": false,
+      "startingSource": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+      "endingSource": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+      "uiObservations": [
+        "Added visible selected employer-board names outside the collapsed options and a separate Results from line for displayed results.",
+        "Saved-profile role choices prefill only the query. B07 observed that Riyadh and remote-only choice remain and no search starts automatically.",
+        "Default choices continue to represent a bounded selection of public boards, not all jobs or a geographic eligibility promise."
+      ],
+      "wordingObservations": {
+        "english": "Selected employer boards:, Results from:, Job title or keyword, and Choose a job title from your saved profile describe their exact scope. The user still chooses Search jobs.",
+        "arabic": "صفحات التوظيف المختارة: and مصادر هذه النتائج: distinguish selection from result provenance. اختر مسمى وظيفيًا من ملفك المحفوظ is the verified chooser label; the helper says the title is only added to the search field.",
+        "evidenceLevel": "Committed source and exact catalog pairs; actual Arabic role-prefill task B07; B08 explicitly limits live search acceptance."
+      },
+      "findingIds": [
+        "F02",
+        "F05"
+      ],
+      "fixesOrDecisions": [
+        "Expose existing source data without a second provenance system.",
+        "Change only the explicit keyword field when a saved role is selected; clarify chooser action in both languages."
+      ],
+      "actualVerification": [
+        "Source checks cover query-only prefill, no dispatched search and preservation of location/remote filters; final local log includes this case (E10).",
+        "B07 is an actual Arabic browser observation; native callsites and generated bindings were independently read at927b7c49 (E04).",
+        "Existing discovery fixture group reports47 groups passed; it is modeled/Workerd evidence, not a live-source browser pass."
+      ],
+      "remainingVerification": [
+        "B08: local HTTP preview cannot validate the HTTPS-required discovery endpoints; preserve HTTPS protection.",
+        "Verify changing sources without resubmitting cannot relabel old displayed results in the actual HTTPS client.",
+        "Execute current native role-selection tasks in both languages."
+      ],
+      "evidenceRefs": [
+        "E01:CF2",
+        "E01:CF3",
+        "E04",
+        "E07:B07",
+        "E07:B08",
+        "E09",
+        "E10",
+        "E14"
+      ],
+      "acceptanceLimits": {
+        "native": "The current seven-method focused attempt was blocked by the fail-closed readiness gate before compilation or tests. All seven methods remain unrun; no retry or native pass is claimed.",
+        "fullCI": "No full five-job acceptance exists for the current combined source. Historical run44294650087 remains failed.",
+        "publication": "No new deployment, signed-device or store acceptance follows from this review."
+      },
+      "researchSources": [
+        "S01",
+        "S07",
+        "S08",
+        "S09"
+      ]
+    },
+    {
+      "number": 3,
+      "focus": "Search results, job details and decision clarity",
+      "status": "review_executed_with_open_verification",
+      "closed": false,
+      "startingSource": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+      "endingSource": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+      "uiObservations": [
+        "The new job-link accessible name initially omitted its visible label; corrected name includes View job and exact job title while preserving href.",
+        "Backend inspection established search matches titles, employers and available summaries; Greenhouse summaries are empty in the bounded listing response, so a description-only skill is not a supported match.",
+        "B03 retained a mixed Arabic/English synthetic title, Riyadh and exact example.com hostname through the actual form. No employer page was opened."
+      ],
+      "wordingObservations": {
+        "english": "Job title or keyword replaces Job title or skill. Searches titles, employers and available summaries. makes the limit visible. View job: {0} retains the visible action.",
+        "arabic": "المسمى الوظيفي أو كلمة مفتاحية; يشمل البحث المسميات وجهات العمل والملخصات المتاحة.; عرض الوظيفة: {0}. These retain action meaning and avoid an unsupported full-description search claim.",
+        "evidenceLevel": "Two exact source findings with corrected source; actual rendered-component regression test; synthetic browser details task in EN/AR."
+      },
+      "findingIds": [
+        "F03",
+        "F04"
+      ],
+      "fixesOrDecisions": [
+        "Correct the searchable-scope promise without adding provider traffic, unbounded descriptions or new costs.",
+        "Preserve visible-label/accessible-name agreement and exact destination."
+      ],
+      "actualVerification": [
+        "The actual JobCard regression with production translation passed in the local focused set and checks EN/AR label inclusion, title, href and noopener noreferrer (E10).",
+        "E02 inspected fixed upstream hosts, URL reconstruction, bounded responses/deadlines, no incoming credential forwarding, and separate stale/partial/unavailable states.",
+        "B03 verified the synthetic record's title/location/hostname; it is not live job validation."
+      ],
+      "remainingVerification": [
+        "No live junior/senior/remote-restriction/salary scenario sweep has been established by these checks.",
+        "Actual HTTPS search and current native result cards remain to verify.",
+        "No screen-reader/voice-control session was executed by the source reviewers."
+      ],
+      "evidenceRefs": [
+        "E02",
+        "E07:B03",
+        "E07:B08",
+        "E10"
+      ],
+      "acceptanceLimits": {
+        "native": "The current seven-method focused attempt was blocked by the fail-closed readiness gate before compilation or tests. All seven methods remain unrun; no retry or native pass is claimed.",
+        "fullCI": "No full five-job acceptance exists for the current combined source. Historical run44294650087 remains failed.",
+        "publication": "No new deployment, signed-device or store acceptance follows from this review."
+      },
+      "researchSources": [
+        "S01",
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12"
+      ]
+    },
+    {
+      "number": 4,
+      "focus": "Saved jobs, stages, follow-ups and return journeys",
+      "status": "review_executed_with_open_verification",
+      "closed": false,
+      "startingSource": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+      "endingSource": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+      "uiObservations": [
+        "B04 exercised actual stage/date/follow-up/private-note save and reload, Arabic note search and unmatched-query recovery.",
+        "B12 found and rechecked a real focus loss: keeping the original applied stage removed the focused confirmation button inside an open modal. The corrected flow returns to Stage and retains applied state, dates and note.",
+        "Independent iOS source review found that record-only users had Saved records but the guest Apply predicate sent them to Search; successor uses savedOpportunities."
+      ],
+      "wordingObservations": {
+        "english": "Saved for later and Keep application record name the record action. The correction explicitly says it removes only the personal applied mark and does not withdraw an employer application.",
+        "arabic": "محفوظة للرجوع إليها; الاحتفاظ بسجل التقديم; هل تريد إلغاء علامة التقديم؟; إلغاء علامة التقديم. B13 confirmed the no-employer-withdrawal explanation in the rendered dialog.",
+        "evidenceLevel": "Actual EN/AR browser task/correction outcomes plus independent native predicate/source review."
+      },
+      "findingIds": [
+        "F09",
+        "F11",
+        "F12"
+      ],
+      "fixesOrDecisions": [
+        "Scope focus restoration to the same still-open enabled editor and lost focus only; do not change record persistence.",
+        "Use Saved's real collection for the native guest route, including retained meaningful unbookmarked records."
+      ],
+      "actualVerification": [
+        "B04/B12/B13 are actual browser observations; final Keep returns to SELECT with value applied in EN and AR.",
+        "E10 retained112 passing tests, including cancellation preservation and not stealing chosen focus/inactive/replaced editors.",
+        "The existing iPhone private-record method now includes bookmark removal, guest navigation, retained note and no bookmark resurrection assertions; source verified but not yet run."
+      ],
+      "remainingVerification": [
+        "B16 is a validated cleanup gap awaiting correction: recovery retains the reverted intermediate stage after Keep/clean close. The main record was preserved; root will replay the exact cycle after the owner's fix.",
+        "Current native record-only and large-text journeys must pass.",
+        "Existing CSV/ICS/notes/stages are retained features, not counted as new implementations."
+      ],
+      "evidenceRefs": [
+        "E04",
+        "E05",
+        "E07:B03",
+        "E07:B04",
+        "E07:B12",
+        "E07:B13",
+        "E07:B16",
+        "E10",
+        "E17"
+      ],
+      "acceptanceLimits": {
+        "native": "The current seven-method focused attempt was blocked by the fail-closed readiness gate before compilation or tests. All seven methods remain unrun; no retry or native pass is claimed.",
+        "fullCI": "No full five-job acceptance exists for the current combined source. Historical run44294650087 remains failed.",
+        "publication": "No new deployment, signed-device or store acceptance follows from this review."
+      },
+      "researchSources": [
+        "S03",
+        "S04",
+        "S05"
+      ]
+    },
+    {
+      "number": 5,
+      "focus": "Profile, CV handling and repeated application entry",
+      "status": "review_executed_with_open_verification",
+      "closed": false,
+      "startingSource": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+      "endingSource": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+      "uiObservations": [
+        "The active PDF filename/size and exact prepared document identity already existed; the review did not invent a missing filename feature or a multi-CV library.",
+        "Added expandable, user-triggered copying of one displayed contact field. Values remain available after clipboard denial.",
+        "B06 first observed a denied automation-triggered request and the fallback, then a real pointer click copied exactly the synthetic email. Native source uses vertical wrapping rows and explicit direction for email/phone/URLs.",
+        "Android's unconditional Copied feedback was corrected to require its own fresh metadata marker, with exception/unconfirmed handling."
+      ],
+      "wordingObservations": {
+        "english": "Reuse your contact details and Copy {0} describe a single chosen field. Native failure now says: Copy could not be confirmed. Copy the value from its profile field instead. No automatic extraction or submission is promised.",
+        "arabic": "Web uses استخدام بيانات التواصل في الطلبات and نسخ {0}; native failure is تعذّر تأكيد النسخ. انسخ القيمة من حقلها في الملف الشخصي. Instructions retain review before pasting/submission.",
+        "evidenceLevel": "Actual Arabic synthetic clipboard task plus exact EN/AR catalog/source review; native behavior still pending."
+      },
+      "findingIds": [
+        "F06",
+        "F07"
+      ],
+      "fixesOrDecisions": [
+        "Reduce repeated typing using an explicit per-field action without external form access, automatic clipboard reads or broader profile transfer.",
+        "Keep one active CV and existing document-review identity; defer multi-document packets and automated extraction.",
+        "Confirm Android write using opaque operation metadata only, not clipboard text."
+      ],
+      "actualVerification": [
+        "B06 records actual permission-denial fallback and successful synthetic pointer copy; no other user clipboard content was read.",
+        "Source/test checks cover exact chosen value, exclusion of CV/roles, unchanged profile and selectable fallback (E03/E10).",
+        "E05 independently accepted the native correction; added source cases cover silent ignored write, missing description and write/read exceptions. Author reports generator1,824 strings/149 templates,8 localization tests, plutil/diff and Swift syntax checks passed; these are not native builds."
+      ],
+      "remainingVerification": [
+        "Execute current native clipboard success/failure and profile-role journeys.",
+        "Actual current PDF replace/cancel/last-valid-file/browser download cycle was not newly re-executed for this ten-pass scope; do not inherit an older run as current acceptance.",
+        "No full autofill or automatic CV-to-profile parsing is implemented."
+      ],
+      "evidenceRefs": [
+        "E01:CF4",
+        "E03",
+        "E04",
+        "E05",
+        "E07:B06",
+        "E10",
+        "E16",
+        "E17"
+      ],
+      "acceptanceLimits": {
+        "native": "The current seven-method focused attempt was blocked by the fail-closed readiness gate before compilation or tests. All seven methods remain unrun; no retry or native pass is claimed.",
+        "fullCI": "No full five-job acceptance exists for the current combined source. Historical run44294650087 remains failed.",
+        "publication": "No new deployment, signed-device or store acceptance follows from this review."
+      },
+      "researchSources": [
+        "S02",
+        "S05",
+        "S06",
+        "S12"
+      ]
+    },
+    {
+      "number": 6,
+      "focus": "Manual application and supported submission evidence",
+      "status": "review_executed_with_open_verification",
+      "closed": false,
+      "startingSource": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+      "endingSource": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+      "uiObservations": [
+        "The final Apply guide presents the manual employer route before optional online-account features in EN and AR.",
+        "Review found a task gap: Step3 assumed the job was saved, although opening View job does not bookmark it. The guide now explicitly tells the user to save first.",
+        "Native manual actions route existing screens; connected review/submission remains a separate permissioned path."
+      ],
+      "wordingObservations": {
+        "english": "Choose and save a job; Save the job before opening the employer’s page. Check its requirements, location and deadline there.; Record what happened. The record is explicitly separate from employer confirmation.",
+        "arabic": "اختر وظيفة واحفظها; احفظ الوظيفة أولًا، ثم افتح صفحة جهة العمل لمراجعة المتطلبات والموقع وآخر موعد للتقديم.; سجّل ما أنجزته. The final sentence says the record is not employer confirmation.",
+        "evidenceLevel": "Independent before/after source review and B01/B02 actual EN/AR guide observations."
+      },
+      "findingIds": [
+        "F01",
+        "F08"
+      ],
+      "fixesOrDecisions": [
+        "Keep the free manual route reachable for guests while preserving account/identity guards around private/provider work.",
+        "Do not infer application success from opening a job, copying data, saving a record or connecting a workspace."
+      ],
+      "actualVerification": [
+        "B01/B02 verify the manual-first order, collapsed optional-account disclosure, appropriate Saved navigation and save-first wording.",
+        "E03 inspected locked/revalidating identity guards, CV metadata containment and unchanged navigation-only side effects.",
+        "Existing local service/phone fixture groups preserve approval, no replay, uncertainty and Stop boundaries; no real employer application was sent."
+      ],
+      "remainingVerification": [
+        "Native guest flows need actual execution for zero jobs, bookmarked jobs and retained unbookmarked records.",
+        "Live OAuth/provider submission acceptance remains an external gate; HTTP preview provider checks are explicitly not a pass.",
+        "Employer sites may require their own account; no no-account promise is made about external forms."
+      ],
+      "evidenceRefs": [
+        "E03",
+        "E04",
+        "E05",
+        "E07:B01",
+        "E07:B02",
+        "E07:B08",
+        "E09"
+      ],
+      "acceptanceLimits": {
+        "native": "The current seven-method focused attempt was blocked by the fail-closed readiness gate before compilation or tests. All seven methods remain unrun; no retry or native pass is claimed.",
+        "fullCI": "No full five-job acceptance exists for the current combined source. Historical run44294650087 remains failed.",
+        "publication": "No new deployment, signed-device or store acceptance follows from this review."
+      },
+      "researchSources": [
+        "S02",
+        "S03",
+        "S05",
+        "S06"
+      ]
+    },
+    {
+      "number": 7,
+      "focus": "English/Arabic language, RTL and reading effort",
+      "status": "review_executed_with_open_verification",
+      "closed": false,
+      "startingSource": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+      "endingSource": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+      "uiObservations": [
+        "Read the new instructions in their actual hosted Apply, Search, Profile and correction context, and independently reviewed native source plus generated localization.",
+        "B11 exposed a repeated English conjunction and stale stage label in help; corrected source and localization checks are retained, but every accordion was not replayed.",
+        "Earlier copy cleanup at1194ded/7b3f776 is supporting history:33 native pairs and46 hosted pairs plus store copy/artwork. It is not re-counted as a newly executed ten-pass cycle."
+      ],
+      "wordingObservations": {
+        "english": "Use task headings such as Search jobs, Saved jobs, Application receipts, Review application details and EXAMPLE SEARCHES. Remove vague next-step/success slogans while retaining factual privacy and submission limits.",
+        "arabic": "Use natural functional Arabic such as البحث عن وظائف, الوظائف المحفوظة, إيصالات التقديم, مراجعة بيانات التقديم and أمثلة للبحث. Fix the chooser wording and preserve the specific local applied-mark meaning. Nulaya-only Lulu terms remain out of Career Finder.",
+        "evidenceLevel": "Exact EN/AR strings/resources, rendered B02/B07/B11/B13/B15 observations with the per-observation language limits preserved."
+      },
+      "findingIds": [
+        "F05",
+        "F12",
+        "F13"
+      ],
+      "fixesOrDecisions": [
+        "Correct full sentences as well as headings; preserve placeholders, whitespace-aware lookup and existing controls.",
+        "Use the canonical native catalog and regenerated resource tables, not divergent hand edits.",
+        "Keep current listing copy factual; no store upload or updated installed screenshots is inferred."
+      ],
+      "actualVerification": [
+        "E04 verified final chooser pair in both native callsites, all generated Apple/Android resources and lookup IDs at927b7c49.",
+        "E11 contains78 passing language/task/theme checks; E10 includes the EN/AR rendered JobCard regression.",
+        "B13 checks rendered Arabic correction copy; B15 checks final Arabic role/search wording in light theme. Historical feature artwork was rendered and visually inspected with matching fonts at the copy checkpoint."
+      ],
+      "remainingVerification": [
+        "Complete current native EN/AR rendered checks; source resource parity is insufficient.",
+        "Replay any changed help accordion needed for final delivery; B11 only establishes source fix and relevant tests after edit.",
+        "Bind current store screenshots/metadata to the eventual accepted native release; historical copy counts do not certify a later store state."
+      ],
+      "evidenceRefs": [
+        "E04",
+        "E07:B02",
+        "E07:B07",
+        "E07:B11",
+        "E07:B13",
+        "E07:B15",
+        "E10",
+        "E11",
+        "E15",
+        "E17"
+      ],
+      "acceptanceLimits": {
+        "native": "The current seven-method focused attempt was blocked by the fail-closed readiness gate before compilation or tests. All seven methods remain unrun; no retry or native pass is claimed.",
+        "fullCI": "No full five-job acceptance exists for the current combined source. Historical run44294650087 remains failed.",
+        "publication": "No new deployment, signed-device or store acceptance follows from this review."
+      },
+      "researchSources": [
+        "S09",
+        "S11",
+        "S12"
+      ]
+    },
+    {
+      "number": 8,
+      "focus": "Visual consistency, accessibility and responsive layouts",
+      "status": "review_executed_with_open_verification",
+      "closed": false,
+      "startingSource": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+      "endingSource": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+      "uiObservations": [
+        "The latest user-directed palette uses midnight navy/periwinkle from the existing icon. The earlier warm trial is explicitly superseded.",
+        "B09 checked aligned guide/disclosure widths and final dark EN/AR screenshots; B15 checked Arabic light appearance.",
+        "B10 measured actual Chrome 500% zoom at269 CSS px: scrollWidth269 and focused actions above fixed navigation after the normal scroll settled.",
+        "Native source retains44 pt iPhone and48/56 dp Android minimum actions, vertical wrapping, explicit structured-value direction and app-owned dark-mode List/Form styling."
+      ],
+      "wordingObservations": {
+        "english": "Meaningful action labels remain attached to the visible controls; View job is included in its accessible name. Account disclosure, save action and record correction use concrete words rather than decorative headings.",
+        "arabic": "Long Arabic guide/chooser/correction text is allowed to wrap. Structured email/phone/URL values use left-to-right presentation while natural Arabic labels remain RTL. The actual269px and light/dark checks preserve their Arabic scope.",
+        "evidenceLevel": "Actual bounded hosted rendering/focus measurements, nominal color calculations and source-only native layout inspection."
+      },
+      "findingIds": [
+        "D01",
+        "F04",
+        "F10",
+        "F11"
+      ],
+      "fixesOrDecisions": [
+        "Apply semantic surface/text/action/error/outline roles; align the desktop guide and optional-account disclosure.",
+        "Keep focus restorations narrow and responsive controls reachable; preserve intentional focus choices.",
+        "Do not change UIKit appearance proxies or Safari controller behavior through the SwiftUI palette wrappers."
+      ],
+      "actualVerification": [
+        "E08 measured19 opaque web color-role pairs above their declared text/outline thresholds; source values only, not composited pixels.",
+        "B09/B10/B15 are actual rendered observations, with screenshot hashes retained in E07.",
+        "E04 inspected native wrappers and calculated nominal ratios; no additional supported wrapper/layout defect was found."
+      ],
+      "remainingVerification": [
+        "Native dark/light, largest text and EN/AR rendering remains pending.",
+        "No full screen-reader or physical-device accessibility audit was executed; no blanket WCAG/native certification.",
+        "Current iPhone historical large-text/Safari/keyboard failures remain failures until the current source demonstrates the required outcomes."
+      ],
+      "evidenceRefs": [
+        "E04",
+        "E07:B05",
+        "E07:B09",
+        "E07:B10",
+        "E07:B12",
+        "E07:B15",
+        "E08",
+        "E13"
+      ],
+      "acceptanceLimits": {
+        "native": "The current seven-method focused attempt was blocked by the fail-closed readiness gate before compilation or tests. All seven methods remain unrun; no retry or native pass is claimed.",
+        "fullCI": "No full five-job acceptance exists for the current combined source. Historical run44294650087 remains failed.",
+        "publication": "No new deployment, signed-device or store acceptance follows from this review."
+      },
+      "researchSources": [
+        "S11",
+        "S12"
+      ]
+    },
+    {
+      "number": 9,
+      "focus": "Failure recovery, privacy, data portability and performance",
+      "status": "review_executed_with_open_verification",
+      "closed": false,
+      "startingSource": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+      "endingSource": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+      "uiObservations": [
+        "Independent source review retained identity quarantine, owner-specific drafts, stale/partial search distinctions and no automatic replay.",
+        "B05 rechecked profile-save focus recovery; B14 downloaded actual synthetic version 2 JSON containing the expected saved/recovery data, email/job/note.",
+        "B16 is now independently validated: an intermediate stage autosave remains after Keep restores the original record and clean close; new editor IDs accumulate older copies. The main record preservation and successful export do not settle recovery cleanup.",
+        "No new performance benchmark or expanded provider-fetch work was conducted; existing bounded requests/cache/deadlines remain."
+      ],
+      "wordingObservations": {
+        "english": "Export phone data is described as a readable record, not an automatic restore file. Clipboard errors leave explicit fallback; clearing browser data can remove local drafts; private records and employer-held applications remain distinct.",
+        "arabic": "تصدير بيانات الهاتف and the existing explicit sentence ولا يمكن استعادتها تلقائيًا داخل التطبيق preserve the portability limit. Error/recovery wording must say what remains and the next valid action, without presenting old recovery state as a confirmed employer outcome.",
+        "evidenceLevel": "Independent source privacy/recovery review; actual English synthetic export and Arabic focus/copy checks; B16 EN/AR investigation remains open."
+      },
+      "findingIds": [
+        "F10",
+        "F07",
+        "I01"
+      ],
+      "fixesOrDecisions": [
+        "Preserve existing data boundaries and bounded backend behavior; do not broaden fetches or add paid dependencies.",
+        "Keep B16 open while the assigned owner implements the narrow PhoneApp cleanup correction and real encrypted safety regression tests; then root replays the exact browser cycle."
+      ],
+      "actualVerification": [
+        "E03 reviewed identity/CV guards, recovery/export boundaries and role/copy scope; no additional source-supported privacy blocker was found within that bounded review.",
+        "B14 verifies the actual synthetic JSON download and content; file hash is in E07.",
+        "E09 preserves passing local service/discovery/phone/vault groups, while source binding to later changes must remain explicit."
+      ],
+      "remainingVerification": [
+        "Bind B16's actual fix, encrypted-state regression and browser replay before closing this pass. Do not infer data loss or identical duplicate payloads.",
+        "Final combined recovery and ownership tests/native journeys remain required.",
+        "No whole-product security certification, live-provider acceptance or new performance claim follows from this review."
+      ],
+      "evidenceRefs": [
+        "E02:backendTrustAudit",
+        "E03",
+        "E05",
+        "E07:B05",
+        "E07:B06",
+        "E07:B14",
+        "E07:B16",
+        "E09",
+        "E19"
+      ],
+      "acceptanceLimits": {
+        "native": "The current seven-method focused attempt was blocked by the fail-closed readiness gate before compilation or tests. All seven methods remain unrun; no retry or native pass is claimed.",
+        "fullCI": "No full five-job acceptance exists for the current combined source. Historical run44294650087 remains failed.",
+        "publication": "No new deployment, signed-device or store acceptance follows from this review."
+      },
+      "researchSources": [
+        "S03",
+        "S05",
+        "S11"
+      ]
+    },
+    {
+      "number": 10,
+      "focus": "Independent adversarial review and integrated end-to-end regression",
+      "status": "review_executed_with_open_verification",
+      "closed": false,
+      "startingSource": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+      "endingSource": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+      "uiObservations": [
+        "Three independent review lanes cover product/copy/layout, privacy/recovery and current integration/browser behavior. Findings are linked to exact files/commits, not just accepted verbally.",
+        "Actual failed iPhone media/logs were reviewed: the first launch worked, the large-text Search tab failed immediate hittability, Safari remained visible after a Close tap, and keyboard-key hit-testing encountered an invalid frame while the keyboard still appeared.",
+        "The raw boot log ended Data Migration Failed despite a green setup step, so the acceptance path now requires explicit boot evidence. Android action selectors now disambiguate a real clickable Search jobs control."
+      ],
+      "wordingObservations": {
+        "english": "Plain labels can repeat as a heading and action; tests must use the correct existing semantics without weakening the user journey. Search jobs, Save draft and Safari Close remain real actions, not replaced by arbitrary first-match selectors.",
+        "arabic": "The same Arabic action meaning and current generated resources are retained. The failed Arabic large-text browser-return path is still failed until a new actual run shows return; translation presence alone cannot certify it.",
+        "evidenceLevel": "Independent source acceptance, actual historical artifacts and local offline parser/fixture evidence; current focused/full native results absent."
+      },
+      "findingIds": [
+        "G01",
+        "G02",
+        "F04",
+        "F05",
+        "F07",
+        "F09",
+        "F11",
+        "I01"
+      ],
+      "fixesOrDecisions": [
+        "Use a fail-closed boot verifier bound to selected UUID, raw terminal output, exits and available Booted inventory.",
+        "Within the original5 second wait, require tab exists and is hittable together; filter nonfinite/empty/offscreen keyboard frames before querying hittability while retaining real dismissal assertions.",
+        "Keep all17 iPhone and116 Android methods, assertions, selection, runtime ceilings and failed historical evidence; no retry/erase/skip/budget weakening.",
+        "Defer Safari/coordinator instrumentation until a healthy-boot run demonstrates the need; no speculative product rewrite."
+      ],
+      "actualVerification": [
+        "E12 records11 meaningful offline verifier tests, static syntax/YAML checks and independent CI-agent source acceptance bound tofc5cc80e.",
+        "All17 iPhone method bodies and action/assertion counts were retained in the helper repair; native execution block and selection were unchanged.",
+        "E18 remains FAILED:3/5 gates; iPhone14 pass / 3 fail / 0 skip / 0 unrun; Android112 pass / 2 fail / 0 skip / 2 unrun.",
+        "The focused attempt on ff21fd47 began at 13:06:06Z and stopped before compilation/tests. Terminal Data Migration Failed was correctly rejected despite exits0 and Booted inventory; all seven selected methods are unrun. Shutdown was confirmed. This is gate verification, not native product acceptance (E21)."
+      ],
+      "remainingVerification": [
+        "Resolve the simulator readiness blocker through the owned coordination route, then obtain actual focused results and current native UI artifacts without weakening the gate or user journeys.",
+        "Freeze and verify the final combined five-job CI, all17 iPhone and116 Android outcomes, artifact hashes and visual review.",
+        "Finish and verify B16; retain separate merge, deployment, signing and store gates."
+      ],
+      "evidenceRefs": [
+        "E04",
+        "E05",
+        "E07",
+        "E10",
+        "E12",
+        "E13",
+        "E17",
+        "E18",
+        "E19",
+        "E20",
+        "E21"
+      ],
+      "acceptanceLimits": {
+        "native": "The current seven-method focused attempt was blocked by the fail-closed readiness gate before compilation or tests. All seven methods remain unrun; no retry or native pass is claimed.",
+        "fullCI": "No full five-job acceptance exists for the current combined source. Historical run44294650087 remains failed.",
+        "publication": "No new deployment, signed-device or store acceptance follows from this review."
+      },
+      "researchSources": [
+        "S11",
+        "S12"
+      ]
+    }
+  ],
+  "verificationSummary": {
+    "hostedActualBrowser": {
+      "receipt": "E07",
+      "observations": 16,
+      "passedOrBoundedlyVerified": 14,
+      "environmentLimited": [
+        "B08"
+      ],
+      "investigating": [],
+      "qualification": "The14 other observations have heterogeneous labels (passed, fixed_runtime_verified, passed_with_interaction_limit or fixed_source_verified); do not turn them into14 identical end-to-end passes.",
+      "validatedOpenFinding": [
+        "B16 / I01"
+      ]
+    },
+    "localLogs": {
+      "fullNpm": "E09:6 PDF source tests,63 service groups,47 discovery groups,19 phone groups,333 Node tests and34 vault groups reported passing. These are heterogeneous nested groups, not an additive total; some run before later focus changes.",
+      "laterFocused": "E10:112 tests passed,0 failed/0 skipped; includes current focus/task/record checks. E11:78 language/task/theme checks passed. Do not sum overlapping suites.",
+      "sourceBinding": "Browser E07 binds its exact hosted files toff21fd47. Local log contents alone do not prove every test ran against every subsequent commit; coordinator must retain command/source receipts and final CI."
+    },
+    "nativeStatic": "Author receipts and independent source checks only:1,824 strings/language,149 templates,8 localization tests, plutil/diff/Swift syntax. No native build/runtime result yet for this snapshot.",
+    "nativeFocused": {
+      "state": "blocked_before_build_or_test",
+      "receipt": "E21",
+      "source": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+      "selectedMethods": 7,
+      "executedMethods": 0,
+      "unrunMethods": 7,
+      "bootFailure": "Data Migration Failed",
+      "verifier": "Correctly rejected exit0/Booted false-green combination",
+      "shutdownConfirmed": true,
+      "retry": false,
+      "productCauseEstablished": false
+    },
+    "fullCI": {
+      "currentAccepted": false,
+      "historicalRun": 44294650087,
+      "candidate": "7b3f7761d69d5651db08e1ec67289367fb20ff20",
+      "conclusion": "failure",
+      "gatesPassed": 3,
+      "gatesTotal": 5,
+      "iPhone": {
+        "passed": 14,
+        "failed": 3,
+        "skipped": 0,
+        "unrun": 0
+      },
+      "android": {
+        "passed": 112,
+        "failed": 2,
+        "skipped": 0,
+        "unrun": 2
+      },
+      "bootReadiness": "API step success contradicted by terminal Data Migration Failed; not accepted."
+    }
+  },
+  "openItems": [
+    {
+      "id": "OPEN-B16",
+      "owner": "/root/ci_evidence",
+      "state": "validated_fix_pending",
+      "detail": "Narrow PhoneApp cleanup plus real encrypted safety regression tests assigned to CI owner; root will rerun exact reverted-stage cycle. Do not close until source/test/browser evidence is retained."
+    },
+    {
+      "id": "OPEN-NATIVE",
+      "owner": "/root/recovery_review",
+      "state": "blocked_at_simulator_readiness",
+      "detail": "Actual attempt stopped before compilation/tests; all seven selected methods unrun. Boot log and failure receipt retained, Shutdown confirmed. Need owned readiness resolution before current native acceptance.",
+      "nextAction": "Fresh owned iOS26.5 diagnostic authorized; result pending. Keep the readiness gate unchanged."
+    },
+    {
+      "id": "OPEN-FINAL-CI",
+      "owner": "/root",
+      "state": "pending",
+      "detail": "Final frozen combined five-job run, exact17+116 cases, no unexplained omissions/skips, artifacts and visual review."
+    },
+    {
+      "id": "OPEN-HTTPS",
+      "owner": "/root",
+      "state": "not_established_by_http_preview",
+      "detail": "Actual compatible HTTPS search/provider checks; preserve live-provider/signing/store boundaries."
+    }
+  ],
+  "handoff": {
+    "rootWorktreeEditedByThisAuthor": false,
+    "artifactsWrittenOnlyInScratch": true,
+    "newResearchCalls": false,
+    "paidTools": false,
+    "newUIActions": false,
+    "newTests": false,
+    "newBuilds": false,
+    "newDeployment": false,
+    "rootToAdd": "Final B16 fix/retest/browser receipt, native focused result/artifacts, final freeze/CI receipts, current hosted test source binding, and any additional browser recheck after fixes.",
+    "reportFile": "Career-Finder-Ten-Pass-Review-Draft-2026-11-18.md",
+    "evidencePreservation": "Root reports13 current evidence files, final darkEN/AR/lightAR/269px screenshots and synthetic export copied into docs/ten-pass-review-2026-11-18/evidence on the Mac; not committed at this draft. This author did not recopy them."
+  },
+  "updatedAtUTC": "2026-11-18 13:12:00 UTC",
+  "nextEnvironmentAction": {
+    "state": "authorized_result_pending",
+    "owner": "/root",
+    "instruction": "After the first focused attempt was blocked, root authorized a fresh owned iOS26.5 simulator diagnostic. No relaxed readiness gate, native journey pass or later environment result is established in this draft."
+  }
+}

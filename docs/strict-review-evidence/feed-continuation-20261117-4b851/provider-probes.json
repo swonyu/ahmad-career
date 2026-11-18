@@ -1,0 +1,293 @@
+{
+  "initial": {
+    "observedAt": "2026-11-17T16:58:39.627Z",
+    "runtime": "v24.22.3",
+    "baseCommit": "2fac36f321005d9a2703e6db92acd7d7c14886c5",
+    "candidateDiscoverySHA256": "db8d660384601109a9be549b6ec36c858713eed8e5dfe65fb90758bf96bcbce1",
+    "scope": "Local production handler + isolated D1 + real public employer GETs. No deployed, account, application submission, or native acceptance claim.",
+    "requests": [
+      {
+        "url": "https://boards-api.greenhouse.io/v1/boards/canonical/jobs",
+        "status": 200,
+        "contentType": "application/json",
+        "declaredBytes": null,
+        "cacheControl": "max-age=0, private, must-revalidate",
+        "headersElapsedMilliseconds": 2041
+      },
+      {
+        "url": "https://boards-api.greenhouse.io/v1/boards/doordashusa/jobs",
+        "status": 200,
+        "contentType": "application/json",
+        "declaredBytes": null,
+        "cacheControl": "max-age=0, private, must-revalidate",
+        "headersElapsedMilliseconds": 973
+      },
+      {
+        "url": "https://api.lever.co/v0/postings/spotify?mode=json&limit=100&skip=0",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "declaredBytes": "825247",
+        "cacheControl": null,
+        "headersElapsedMilliseconds": 2870
+      },
+      {
+        "url": "https://boards-api.greenhouse.io/v1/boards/freenome/jobs",
+        "status": 200,
+        "contentType": "application/json",
+        "declaredBytes": null,
+        "cacheControl": "max-age=0, private, must-revalidate",
+        "headersElapsedMilliseconds": 319
+      },
+      {
+        "url": "https://boards-api.greenhouse.io/v1/boards/duolingo/jobs",
+        "status": 200,
+        "contentType": "application/json",
+        "declaredBytes": null,
+        "cacheControl": "max-age=0, private, must-revalidate",
+        "headersElapsedMilliseconds": 291
+      },
+      {
+        "url": "https://api.lever.co/v0/postings/lyrahealth?mode=json&limit=100&skip=0",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "declaredBytes": "1518981",
+        "cacheControl": null,
+        "headersElapsedMilliseconds": 417
+      },
+      {
+        "url": "https://api.lever.co/v0/postings/lyrahealth?mode=json&limit=100&skip=100",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "declaredBytes": "1628543",
+        "cacheControl": null,
+        "headersElapsedMilliseconds": 2265
+      },
+      {
+        "url": "https://api.lever.co/v0/postings/lyrahealth?mode=json&limit=100&skip=200",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "declaredBytes": "1563600",
+        "cacheControl": null,
+        "headersElapsedMilliseconds": 351
+      },
+      {
+        "url": "https://api.lever.co/v0/postings/lyrahealth?mode=json&limit=100&skip=300",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "declaredBytes": "1457905",
+        "cacheControl": null,
+        "headersElapsedMilliseconds": 4789
+      },
+      {
+        "url": "https://api.lever.co/v0/postings/zoox?mode=json&limit=100&skip=0",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "declaredBytes": "1013080",
+        "cacheControl": null,
+        "headersElapsedMilliseconds": 1560
+      },
+      {
+        "url": "https://api.lever.co/v0/postings/zoox?mode=json&limit=100&skip=100",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "declaredBytes": "1027829",
+        "cacheControl": null,
+        "headersElapsedMilliseconds": 258
+      },
+      {
+        "url": "https://api.lever.co/v0/postings/zoox?mode=json&limit=100&skip=200",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "declaredBytes": "403774",
+        "cacheControl": null,
+        "headersElapsedMilliseconds": 628
+      }
+    ],
+    "results": [
+      {
+        "id": "greenhouse:canonical",
+        "name": "Canonical",
+        "httpStatus": 200,
+        "status": "complete",
+        "displayedJobs": 50,
+        "totalMatches": 315,
+        "source": {
+          "id": "greenhouse:canonical",
+          "name": "Canonical",
+          "provider": "greenhouse",
+          "boardUrl": "https://job-boards.greenhouse.io/canonical",
+          "status": "fresh",
+          "checkedAt": "2026-11-17T16:58:18.489Z",
+          "availableCount": 315,
+          "matchedCount": 315,
+          "limited": false,
+          "error": null
+        },
+        "elapsedMilliseconds": 2527
+      },
+      {
+        "id": "greenhouse:doordashusa",
+        "name": "DoorDash",
+        "httpStatus": 200,
+        "status": "complete",
+        "displayedJobs": 50,
+        "totalMatches": 426,
+        "source": {
+          "id": "greenhouse:doordashusa",
+          "name": "DoorDash",
+          "provider": "greenhouse",
+          "boardUrl": "https://job-boards.greenhouse.io/doordashusa",
+          "status": "fresh",
+          "checkedAt": "2026-11-17T16:58:20.145Z",
+          "availableCount": 426,
+          "matchedCount": 426,
+          "limited": false,
+          "error": null
+        },
+        "elapsedMilliseconds": 1684
+      },
+      {
+        "id": "lever:global:spotify",
+        "name": "Spotify",
+        "httpStatus": 200,
+        "status": "complete",
+        "displayedJobs": 50,
+        "totalMatches": 87,
+        "source": {
+          "id": "lever:global:spotify",
+          "name": "Spotify",
+          "provider": "lever",
+          "boardUrl": "https://jobs.lever.co/spotify",
+          "status": "fresh",
+          "checkedAt": "2026-11-17T16:58:24.369Z",
+          "availableCount": 87,
+          "matchedCount": 87,
+          "limited": false,
+          "error": null
+        },
+        "elapsedMilliseconds": 4187
+      },
+      {
+        "id": "greenhouse:freenome",
+        "name": "Freenome",
+        "httpStatus": 200,
+        "status": "complete",
+        "displayedJobs": 26,
+        "totalMatches": 26,
+        "source": {
+          "id": "greenhouse:freenome",
+          "name": "Freenome",
+          "provider": "greenhouse",
+          "boardUrl": "https://job-boards.greenhouse.io/freenome",
+          "status": "fresh",
+          "checkedAt": "2026-11-17T16:58:24.965Z",
+          "availableCount": 26,
+          "matchedCount": 26,
+          "limited": false,
+          "error": null
+        },
+        "elapsedMilliseconds": 580
+      },
+      {
+        "id": "greenhouse:duolingo",
+        "name": "Duolingo",
+        "httpStatus": 200,
+        "status": "complete",
+        "displayedJobs": 50,
+        "totalMatches": 59,
+        "source": {
+          "id": "greenhouse:duolingo",
+          "name": "Duolingo",
+          "provider": "greenhouse",
+          "boardUrl": "https://job-boards.greenhouse.io/duolingo",
+          "status": "fresh",
+          "checkedAt": "2026-11-17T16:58:25.450Z",
+          "availableCount": 59,
+          "matchedCount": 59,
+          "limited": false,
+          "error": null
+        },
+        "elapsedMilliseconds": 492
+      },
+      {
+        "id": "lever:global:lyrahealth",
+        "name": "Lyra Health",
+        "httpStatus": 200,
+        "status": "unavailable",
+        "displayedJobs": 0,
+        "totalMatches": 0,
+        "source": {
+          "id": "lever:global:lyrahealth",
+          "name": "Lyra Health",
+          "provider": "lever",
+          "boardUrl": "https://jobs.lever.co/lyrahealth",
+          "status": "unavailable",
+          "checkedAt": null,
+          "availableCount": 0,
+          "matchedCount": 0,
+          "limited": false,
+          "error": {
+            "code": "source_timeout",
+            "message": "The employer board did not respond in time."
+          }
+        },
+        "elapsedMilliseconds": 10208
+      },
+      {
+        "id": "lever:global:zoox",
+        "name": "Zoox",
+        "httpStatus": 200,
+        "status": "complete",
+        "displayedJobs": 50,
+        "totalMatches": 238,
+        "source": {
+          "id": "lever:global:zoox",
+          "name": "Zoox",
+          "provider": "lever",
+          "boardUrl": "https://jobs.lever.co/zoox",
+          "status": "fresh",
+          "checkedAt": "2026-11-17T16:58:39.594Z",
+          "availableCount": 238,
+          "matchedCount": 238,
+          "limited": false,
+          "error": null
+        },
+        "elapsedMilliseconds": 3937
+      }
+    ]
+  },
+  "candidateRecheck": {
+    "observedAt": "2026-11-17T17:16:13.977Z",
+    "runtime": "v24.22.3",
+    "baseCommit": "0f0c6f1f591ff173e51671599cbbb6aeff4a69e4",
+    "candidateDiscoverySHA256": "7be81e9156275622f82d18934f9d04b4aa83bdc2ae91c1ba0450002d0a2f859b",
+    "scope": "Local production handler + isolated D1 + real public employer GETs. No deployed, account, application submission, or native acceptance claim.",
+    "requests": [],
+    "results": [
+      {
+        "id": "lever:global:lyrahealth",
+        "name": "Lyra Health",
+        "httpStatus": 200,
+        "status": "unavailable",
+        "displayedJobs": 0,
+        "totalMatches": 0,
+        "source": {
+          "id": "lever:global:lyrahealth",
+          "name": "Lyra Health",
+          "provider": "lever",
+          "boardUrl": "https://jobs.lever.co/lyrahealth",
+          "status": "unavailable",
+          "checkedAt": null,
+          "availableCount": 0,
+          "matchedCount": 0,
+          "limited": false,
+          "error": {
+            "code": "source_timeout",
+            "message": "The employer board did not respond in time."
+          }
+        },
+        "elapsedMilliseconds": 5064
+      }
+    ]
+  }
+}

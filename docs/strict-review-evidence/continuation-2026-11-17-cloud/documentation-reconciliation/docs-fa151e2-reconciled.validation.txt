@@ -1,0 +1,34 @@
+Career Finder documentation-only incremental patch validation
+Checked at: 2026-11-17T15:33:27.820014+00:00
+Root HEAD: fa151e219ad4e8d9f0d3337eec10a60ed5223d47
+Isolated checkout: /workspace/scratch/5bc6158967e8/docs-resume-fa151e2
+Preserved working baseline: /workspace/scratch/5bc6158967e8/docs-resume-880e878-baseline
+Patch: /workspace/scratch/5bc6158967e8/docs-fa151e2-reconciled.patch
+Patch bytes: 183061
+Patch SHA-256: db144fd60e48e323dbf9f0c1a75edbe5fff8005210118388ae0299097d31c7b5
+Reserved Markdown files: 13
+Changed Markdown files: 13
+Root reserved bytes still equal baseline: PASS
+isolated git diff --check: PASS
+root git apply --check: PASS
+Relative Markdown link occurrences resolved: 303
+Missing relative link targets: 0
+Root-only receipt references resolved: 7
+Independent review: docs_peer_880; one narrow ownership-scope wording finding corrected verbatim.
+Application/JSON/native source edits, root mutation, builds, commits, pushes: NONE by this documentation agent.
+CI scope: run 44111164968 has four passed gates and iPhone UI pending; no full-five-gate claim.
+
+Patch numstat:
+5	3	README.md
+79	31	docs/Continuation-Implementation-2026-11-17.md
+2	2	docs/Continuation-Review-2026-11-17.md
+13	3	docs/Native-Compiler-Search-Followup-2026-11-17.md
+19	6	docs/Open-Source-and-Interoperability-Research-2026-11-17.md
+13	8	docs/Owner-Acceptance-2026-11-17.md
+14	4	docs/Product-Review-Research-2026-11-17.md
+3	1	docs/Provider-Generation-Upgrade-2026-11-17.md
+4	4	docs/Publishing-Handoff-2026-11-17.md
+17	12	docs/Release-Integration-Checklist-2026-11-17.md
+16	2	docs/strict-review-evidence/continuation-2026-11-17-cloud/record-tools-peer/README.md
+15	1	docs/strict-review-evidence/continuation-2026-11-17-cloud/record-tools/record-tools-handoff.md
+10	6	hosted/README.md

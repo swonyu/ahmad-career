@@ -21,6 +21,16 @@ on:
       - 'android/**'
       - 'apple/**'
   workflow_dispatch:
+    inputs:
+      acceptance_scope:
+        description: Full five gates, all iPhone UI only, or one iPhone connection regression
+        required: true
+        default: full
+        type: choice
+        options:
+          - full
+          - iphone-connection
+          - iphone-ui
 
 permissions:
   contents: read
@@ -32,12 +42,21 @@ concurrency:
 jobs:
   service:
     name: Service and synthetic HTTPS
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.acceptance_scope != 'iphone-connection' && inputs.acceptance_scope != 'iphone-ui') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Verify exact workflow commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual_sha=$(git rev-parse --verify HEAD)
+          printf 'Expected source commit: %s\nChecked out source commit: %s\n' "$GITHUB_SHA" "$actual_sha"
+          test "$actual_sha" = "$GITHUB_SHA"
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '24'
@@ -56,12 +75,21 @@ jobs:
 
   hosted:
     name: Hosted HTTPS service and durable storage
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.acceptance_scope != 'iphone-connection' && inputs.acceptance_scope != 'iphone-ui') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Verify exact workflow commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual_sha=$(git rev-parse --verify HEAD)
+          printf 'Expected source commit: %s\nChecked out source commit: %s\n' "$GITHUB_SHA" "$actual_sha"
+          test "$actual_sha" = "$GITHUB_SHA"
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '24'
@@ -73,7 +101,7 @@ jobs:
         working-directory: hosted
         run: |
           npm run typecheck
-          npx eslint app worker --max-warnings 0
+          npm run lint
       - name: Exercise the production handler with real local D1 and R2
         working-directory: hosted
         run: |
@@ -82,7 +110,9 @@ jobs:
           node --test tests/browser-api.mjs tests/browser-pairing.mjs
       - name: Build the deployable Worker and phone setup pages
         working-directory: hosted
-        run: npm run build
+        run: |
+          npm run build
+          npm run test:ssr
       - name: Audit the locked dependencies
         working-directory: hosted
         timeout-minutes: 3
@@ -103,12 +133,21 @@ jobs:
 
   android:
     name: Android compile, lint and native acceptance
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.acceptance_scope != 'iphone-connection' && inputs.acceptance_scope != 'iphone-ui') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Verify exact workflow commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual_sha=$(git rev-parse --verify HEAD)
+          printf 'Expected source commit: %s\nChecked out source commit: %s\n' "$GITHUB_SHA" "$actual_sha"
+          test "$actual_sha" = "$GITHUB_SHA"
       - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6
         with:
           distribution: temurin
@@ -169,12 +208,21 @@ jobs:
 
   iphone-policy:
     name: iPhone logic and unsigned build
+    if: ${{ github.event_name != 'workflow_dispatch' || (inputs.acceptance_scope != 'iphone-connection' && inputs.acceptance_scope != 'iphone-ui') }}
     runs-on: macos-26
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Verify exact workflow commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual_sha=$(git rev-parse --verify HEAD)
+          printf 'Expected source commit: %s\nChecked out source commit: %s\n' "$GITHUB_SHA" "$actual_sha"
+          test "$actual_sha" = "$GITHUB_SHA"
       - name: Execute the production client and store checks
         run: bash apple/Checks/check-mobile.sh
       - name: Build the production iPhone configuration on this isolated runner
@@ -210,51 +258,141 @@ jobs:
           retention-days: 7
 
   iphone-ui:
-    name: iPhone native interface acceptance
+    name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-connection' && 'PARTIAL iPhone connection regression' || github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-ui' && 'PARTIAL iPhone UI acceptance (all 17 journeys)' || 'iPhone native interface acceptance' }}
     runs-on: macos-26
-    timeout-minutes: 35
+    # Budget 5m readiness, 60m combined build/UI, and 5m for setup and evidence.
+    timeout-minutes: 70
+    env:
+      CAREER_UI_ACCEPTANCE_SCOPE: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope || 'full' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          ref: ${{ github.sha }}
           persist-credentials: false
-      - name: Select an iPhone on this disposable hosted runner
+      - name: Verify exact workflow commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual_sha=$(git rev-parse --verify HEAD)
+          printf 'Expected source commit: %s\nChecked out source commit: %s\n' "$GITHUB_SHA" "$actual_sha"
+          test "$actual_sha" = "$GITHUB_SHA"
+      - name: Verify fresh simulator selection fixtures
+        run: python3 apple/Checks/test-simulator-selection.py
+      - name: Create a fresh iPhone on this disposable hosted runner
         shell: python
         run: |
-          import json, os, platform, re, subprocess
+          import json, os, pathlib, platform, re, subprocess
           inventory = json.loads(subprocess.check_output(['xcrun', 'simctl', 'list', 'devices', 'available', '--json']))
           candidates = []
           for runtime, devices in inventory['devices'].items():
               if '.iOS-' not in runtime:
                   continue
               version = tuple(map(int, re.findall(r'\d+', runtime.split('.iOS-', 1)[1])))
-              if not version or version[0] < 16:
+              if not version or version[0] < 17:
                   continue
               for device in devices:
                   if device.get('isAvailable') and device['name'].startswith('iPhone'):
                       compact = not any(word in device['name'] for word in ['Max', 'Plus'])
-                      candidates.append((version, compact, device['name'], device['udid']))
-          assert candidates, 'This runner has no available iPhone Simulator with iOS 16 or later.'
-          version, compact, name, identifier = sorted(candidates, reverse=True)[0]
-          assert re.fullmatch(r'[A-Fa-f0-9-]{36}', identifier)
+                      device_type = device.get('deviceTypeIdentifier')
+                      # Alphabetical names put Air before numbered models. Prefer a regular-size
+                      # numbered Pro/standard iPhone within the newest supported runtime instead.
+                      # Fresh 17 Pro/iOS 26.5 passed strict boot in retained recovery evidence;
+                      # a fresh Air on that runtime failed migration. Model causation is unproven.
+                      numbered = re.fullmatch(r'com\.apple\.CoreSimulator\.SimDeviceType\.iPhone-(\d+)(-Pro)?', device_type or '')
+                      hardware_rank = (bool(numbered), int(numbered[1]) if numbered else 0, bool(numbered and numbered[2]))
+                      candidates.append((version, compact, hardware_rank, device['name'], device['udid'], runtime, device_type))
+          assert candidates, 'This runner has no available iPhone Simulator with iOS 17 or later (the UI-test target minimum).'
+          version, compact, hardware_rank, name, source_identifier, runtime, device_type = sorted(candidates, reverse=True)[0]
+          uuid = r'[A-Fa-f0-9]{8}(?:-[A-Fa-f0-9]{4}){3}-[A-Fa-f0-9]{12}'
+          assert re.fullmatch(uuid, source_identifier), source_identifier
+          assert isinstance(device_type, str) and device_type.startswith('com.apple.CoreSimulator.SimDeviceType.iPhone-'), device_type
           architecture = platform.machine()
           assert architecture in {'arm64', 'x86_64'}, architecture
+          # Use the verified type/runtime, without inheriting the runner image's device data.
+          fresh_name = 'CareerFinder-CI-' + os.environ['GITHUB_RUN_ID'] + '-' + os.environ['GITHUB_RUN_ATTEMPT']
+          identifier = subprocess.check_output(['xcrun', 'simctl', 'create', fresh_name, device_type, runtime], text=True).strip()
+          assert re.fullmatch(uuid, identifier), 'simctl create did not return one valid device UUID.'
+          prior_identifiers = {device['udid'].upper() for devices in inventory['devices'].values() for device in devices}
+          assert identifier.upper() not in prior_identifiers, 'simctl create returned an existing device.'
+          created_inventory = json.loads(subprocess.check_output(['xcrun', 'simctl', 'list', 'devices', 'available', '--json']))
+          matches = [{'runtime': key, **device} for key, devices in created_inventory['devices'].items()
+                     for device in devices if device['udid'].upper() == identifier.upper()]
+          assert len(matches) == 1, 'The newly created device must occur exactly once in the available inventory.'
+          created = matches[0]
+          assert (created['runtime'], created.get('deviceTypeIdentifier'), created['name']) == (runtime, device_type, fresh_name), created
+          assert created.get('isAvailable') is True and not created.get('availabilityError') and created.get('state') == 'Shutdown', created
+          receipt = {
+              'schemaVersion': 1, 'runID': os.environ['GITHUB_RUN_ID'], 'runAttempt': os.environ['GITHUB_RUN_ATTEMPT'],
+              'checkoutSHA': os.environ['GITHUB_SHA'], 'architecture': architecture,
+              'sourceDevice': {'udid': source_identifier, 'name': name, 'runtime': runtime, 'deviceTypeIdentifier': device_type},
+              'createdDevice': {key: created.get(key) for key in ('udid', 'name', 'runtime', 'deviceTypeIdentifier', 'state', 'isAvailable')},
+              'scope': 'Fresh device selection only; boot readiness and all native journeys remain separate required gates.',
+          }
+          (pathlib.Path(os.environ['RUNNER_TEMP']) / 'career-iphone-selection.json').write_text(json.dumps(receipt, indent=2) + '\n')
           with open(os.environ['GITHUB_ENV'], 'a') as output:
               output.write('CAREER_UI_DEVICE=' + identifier + '\n')
               output.write('CAREER_UI_ARCH=' + architecture + '\n')
           print('Selected', name, 'on iOS', '.'.join(map(str, version)), 'architecture', architecture)
-      - name: Exercise native phone flows with isolated synthetic data
+          print('Created fresh CI device', fresh_name, identifier, 'using', device_type, runtime)
+      - name: Verify simulator boot evidence parser fixtures
+        run: python3 apple/Checks/test-simulator-boot.py
+      - name: Boot selected iPhone and wait for readiness
         shell: bash
-        # Bound simulator work while leaving time to retain failure evidence.
-        timeout-minutes: 30
+        # Strict readiness took 187s in run 44368339432, including UUID inventory.
+        timeout-minutes: 5
         run: |
           set -o pipefail
+          boot_results=(0 0)
+          xcrun simctl bootstatus "$CAREER_UI_DEVICE" -b 2>&1 | tee "$RUNNER_TEMP/career-iphone-boot.log" || boot_results=("${PIPESTATUS[@]}")
+          inventory_result=0
+          printf 'Boot command exited %s; collecting inventory for selected device %s\n' "${boot_results[0]}" "$CAREER_UI_DEVICE"
+          # The all-device listing took about 80s after Finished in run 44326554344.
+          # Scope this read to the owned UUID; the strict verifier still requires exactly one match.
+          xcrun simctl list devices "$CAREER_UI_DEVICE" --json > "$RUNNER_TEMP/career-iphone-boot-devices.json" 2> "$RUNNER_TEMP/career-iphone-boot-devices.stderr" || inventory_result=$?
+          printf 'Selected-device inventory exited %s; verifying retained boot evidence\n' "$inventory_result"
+          python3 apple/Checks/verify-simulator-boot.py \
+            --device "$CAREER_UI_DEVICE" \
+            --boot-log "$RUNNER_TEMP/career-iphone-boot.log" \
+            --inventory "$RUNNER_TEMP/career-iphone-boot-devices.json" \
+            --boot-exit "${boot_results[0]}" --log-exit "${boot_results[1]}" \
+            --inventory-exit "$inventory_result" \
+            --output "$RUNNER_TEMP/career-iphone-boot-verification.json"
+      - name: Exercise native phone flows with isolated synthetic data
+        shell: bash
+        # Retained passing-case timings plus build/startup/finalization project about 51m.
+        # Keep all 17 journeys under a bounded combined build/test limit.
+        timeout-minutes: 60
+        run: |
+          set -o pipefail
+          selection=()
+          case "$CAREER_UI_ACCEPTANCE_SCOPE" in
+            full) ;;
+            iphone-ui)
+              echo 'PARTIAL CI scope: all 17 iPhone UI journeys; the other four release gates are not run.'
+              ;;
+            iphone-connection)
+              selection=(-only-testing:CareerFinderUITests/CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup)
+              echo 'PARTIAL regression: this one journey cannot establish the full release gate.'
+              ;;
+            *) echo 'Unsupported acceptance scope'; exit 1 ;;
+          esac
           xcodebuild -project apple/AhmadCareer.xcodeproj -scheme CareerFinderAcceptance \
             -configuration Debug -destination "platform=iOS Simulator,id=$CAREER_UI_DEVICE,arch=$CAREER_UI_ARCH" \
             -derivedDataPath "$RUNNER_TEMP/career-ui-derived" \
             -resultBundlePath "$RUNNER_TEMP/CareerFinderUI.xcresult" \
             -parallel-testing-enabled NO -maximum-concurrent-test-simulator-destinations 1 \
             ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
-            test 2>&1 | tee "$RUNNER_TEMP/career-iphone-ui.log"
+            "${selection[@]}" test 2>&1 | tee "$RUNNER_TEMP/career-iphone-ui.log"
+      - name: Verify the partial regression actually ran once
+        if: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-connection' }}
+        shell: python
+        run: |
+          import os, pathlib, re
+          log = (pathlib.Path(os.environ['RUNNER_TEMP']) / 'career-iphone-ui.log').read_text()
+          observed = re.findall(r"Test Case '-\[CareerFinderUITests\.CareerFinderUITests (test\w+)\]' (passed|failed) \(", log)
+          expected = [('testProfileReadinessAndSimpleConnectionSetup', 'passed')]
+          assert observed == expected, observed
+          print('PARTIAL: one connection journey passed. The full five-job gate remains required.')
       - name: Export native interface evidence
         if: always()
         shell: bash
@@ -268,8 +406,13 @@ jobs:
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
-          name: iphone-ui-acceptance-${{ github.run_id }}
+          name: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-connection' && 'PARTIAL-iphone-connection-regression' || 'iphone-ui-acceptance' }}-${{ github.run_id }}
           path: |
+            ${{ runner.temp }}/career-iphone-selection.json
+            ${{ runner.temp }}/career-iphone-boot.log
+            ${{ runner.temp }}/career-iphone-boot-devices.json
+            ${{ runner.temp }}/career-iphone-boot-devices.stderr
+            ${{ runner.temp }}/career-iphone-boot-verification.json
             ${{ runner.temp }}/career-iphone-ui.log
             ${{ runner.temp }}/CareerFinderUI.xcresult
             ${{ runner.temp }}/career-ui-screenshots

@@ -1,0 +1,34 @@
+{
+  "base": "501a05c",
+  "incoming": "b37fe51fa2e03868efb0ad3c830be5801defe913",
+  "resolutions": [
+    {
+      "file": "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+      "resolution": "Retain canonical board identity, duplicate and four-board guards; add the accessible inline board issue instead of replacing validation with raw string insertion."
+    },
+    {
+      "file": "android/app/src/main/java/com/saleh/careerfinder/DiscoveryScreen.kt",
+      "resolution": "Keep exact submitted-search retry and employer fallbacks; add accessible error tag, retry wait presentation, cooldown-disabled actions, and fresh search only when no submitted retry is available."
+    },
+    {
+      "file": "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt",
+      "resolution": "Keep recovery copy enabled for unfinished/parked drafts and preserve polite announcement of profile conflict."
+    },
+    {
+      "file": "apple/AhmadCareer/CareerDiscovery.swift",
+      "resolution": "Retain saved-result validation, canonical repair, empty restored-page provenance and long-field preservation; clear unreadable state only after successful validated read so saved-search retry can recover."
+    },
+    {
+      "file": "apple/AhmadCareer/NativeApplicationsViews.swift",
+      "resolution": "Keep publisher persistent visible Email label and field; add inline localized email-readiness error below the labeled field."
+    },
+    {
+      "file": "apple/AhmadCareer/NativeDiscoveryViews.swift",
+      "resolution": "Keep truthful restored sourceLine, partial-empty classification and canonical employer fallback; insert LinkedIn limit accessibility announcement as a separate helper below."
+    },
+    {
+      "file": "android/app/src/main/java/com/saleh/careerfinder/NativeStringIds.kt",
+      "resolution": "Regenerated all locale outputs from merged canonical localization/native-copy.json, preserving both source additions and collision-checked stable IDs."
+    }
+  ]
+}

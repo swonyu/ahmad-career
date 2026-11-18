@@ -1,0 +1,37 @@
+{
+  "recordedAt": "2026-11-17T15:57:19.585251+00:00",
+  "baseCommit": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+  "scope": "Integrated source-label and F05 search-status working follow-up",
+  "sourceHashes": {
+    "hosted/app/phone/PhoneApp.tsx": "a8c60e30d5ab70ba341df3369846fe85e35c5fa28c633557742b704974cddd3c",
+    "hosted/app/phone/components.tsx": "c7614e923223d427e3a218f9c8d1038e4d90f244de9da8707bb92bf8dce90c52",
+    "hosted/app/i18n/messages.ar.json": "d9b18a3505fe07b7a215c1708bb17e407b40c502cd9c3af930946736a477413b",
+    "hosted/tests/phone-localization.mjs": "877fa8eaf10d723b57c05016f1cef36d4a9a824971f64932cccbe37051fe6f63",
+    "hosted/tests/phone-search-workflows.mjs": "522a4930a4efc2597f6ba28f2934109d4e89ef2e02569f61f3be9198615b304b",
+    "hosted/tests/i18n.mjs": "54405800a50bfaf3073d52ec8ac5ffedf8cc94f44733c35e0f4ab318e345465b",
+    "hosted/tests/web-experience.mjs": "bbe13c844bab3ddc86701cd2642a2ce88966ee789e3177b43b75dba0bc0a0623",
+    "hosted/tests/hosted-applications.mjs": "722ca3c60540ddc82f5a8f52e4aa19a625963efc2b9fffb13448035ef7b0026d",
+    "hosted/package.json": "a9c4e380d5a6268f1472a039f51c2b47f22a2bfb9558cfb8a97310a7b803a613"
+  },
+  "arabicCatalogEntries": 1315,
+  "focusedTests": {
+    "executed": 82,
+    "passed": 82,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "durationMs": 3665.402777
+  },
+  "fullLintExitCode": 0,
+  "typecheckExitCode": 0,
+  "logs": {
+    "root-focused.tap": "726d00a5f23b3319faedc20320c655147a1cc5c84b67edcdeb4a0a0dfcb4b10c",
+    "root-lint.log": "8175ec8b8af7e252d6892f4dd64f4ba928eb172e85d4e13e8e1bfa8df6eac7e9",
+    "root-typecheck.log": "c9014ba170f2161ecee9b3ba8984934aa5bf66e685e29ed495d14ac261d546e9"
+  },
+  "limits": [
+    "The82-test set overlaps earlier source-label and F05 subsets; do not add them into an independent pass total.",
+    "Actual production handlers and markup with synthetic transport/state fixtures; no new browser, assistive-technology, physical-device or provider acceptance.",
+    "The separate native clear-address repair requires its next runtime CI gate."
+  ]
+}

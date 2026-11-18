@@ -1,0 +1,162 @@
+--- a/hosted/app/components/OAuthFeedback.tsx
++++ b/hosted/app/components/OAuthFeedback.tsx
+@@ -4,29 +4,32 @@
+ import { requestAPI } from "./api";
+ import { authStatusSchema, oauthReturn } from "./provider-auth";
+ 
++type Feedback = { text: string; tone: "alert" | "status" };
++
+ export default function OAuthFeedback() {
+   const { t } = useI18n();
+-  const [message, setMessage] = useState("");
++  const [feedback, setFeedback] = useState<Feedback | null>(null);
+   useEffect(() => {
+-    const url = new URL(window.location.href), feedback = oauthReturn(url.search);
+-    if (!feedback) return;
+-    const { provider, result } = feedback;
++    const url = new URL(window.location.href), returned = oauthReturn(url.search);
++    if (!returned) return;
++    const { provider, result } = returned;
+     // URL feedback never establishes identity or a successful connection. Verify
+     // successful returns with the service, and never render provider error text.
+     url.searchParams.delete("oauth_provider"); url.searchParams.delete("oauth_result"); window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
+     const controller = new AbortController(), label = provider === "google" ? "Google" : "LinkedIn";
+     void (async () => {
+       await Promise.resolve(); if (controller.signal.aborted) return;
+-      if (result === "email_required") { setMessage("LinkedIn did not provide a verified email address. Sign in with ChatGPT or Google, then connect your LinkedIn profile from Account. No new account or session was created."); return; }
+-      if (result === "cancelled" || result === "failed") { setMessage(result === "cancelled" ? `${label} connection was cancelled. You can try again when you are ready.` : `${label} sign-in or connection could not be completed. Check Account before trying again.`); return; }
++      if (result === "email_required") { setFeedback({ tone: "alert", text: "LinkedIn did not provide a verified email address. Sign in with ChatGPT or Google, then connect your LinkedIn profile from Account. No new account or session was created." }); return; }
++      if (result === "cancelled" || result === "failed") { setFeedback({ tone: result === "cancelled" ? "status" : "alert", text: result === "cancelled" ? `${label} connection was cancelled. You can try again when you are ready.` : `${label} sign-in or connection could not be completed. Check Account before trying again.` }); return; }
+       try {
+         const current = authStatusSchema.parse(await requestAPI("/api/auth/status", { signal: controller.signal }));
+         if (controller.signal.aborted) return;
+         const confirmed = current.account && (result === "connected" ? current.providers[provider].connected : current.account.method === provider && current.providers[provider].connected);
+-        setMessage(confirmed ? result === "connected" ? `${label} is connected to your current Career Finder account.` : `${label} sign-in is confirmed. You can open your Career Finder workspace.` : `${label} returned to Career Finder. Open Account to check which connection is active.`);
+-      } catch { if (!controller.signal.aborted) setMessage(`${label} returned, but the current account could not be checked. Open Account or retry when the service is available.`); }
++        setFeedback(confirmed ? { tone: "status", text: result === "connected" ? `${label} is connected to your current Career Finder account.` : `${label} sign-in is confirmed. You can open your Career Finder workspace.` } : { tone: "alert", text: `${label} returned to Career Finder. Open Account to check which connection is active.` });
++      } catch { if (!controller.signal.aborted) setFeedback({ tone: "alert", text: `${label} returned, but the current account could not be checked. Open Account or retry when the service is available.` }); }
+     })();
+     return () => controller.abort();
+   }, []);
+-  return message ? <div className="oauth-feedback alert" role="status"><p>{t(message)} <a href="/account">{t("Open Account")}</a></p><button className="text-link" onClick={() => setMessage("")} aria-label={t("Dismiss sign-in update")}>{t("Dismiss")}</button></div> : null;
++  if (!feedback) return null;
++  return <div className={`oauth-feedback alert${feedback.tone === "alert" ? " error" : ""}`} role={feedback.tone}><p>{t(feedback.text)} <a href="/account">{t("Open Account")}</a></p><button type="button" className="text-link" onClick={() => setFeedback(null)} aria-label={t("Dismiss sign-in update")}>{t("Dismiss")}</button></div>;
+ }
+--- a/hosted/app/components/ProviderConnections.tsx
++++ b/hosted/app/components/ProviderConnections.tsx
+@@ -1,6 +1,6 @@
+ "use client";
+ import { useI18n } from "../i18n/LocaleProvider";
+-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
++import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+ import GoogleSignInArtwork from "./GoogleSignInArtwork";
+ import SessionRecovery from "./SessionRecovery";
+ import { requestAPI } from "./api";
+@@ -13,6 +13,9 @@
+   const [busy, setBusy] = useState<Provider | null>(null);
+   const [notice, setNotice] = useState<{ revision: number; text: string; error?: boolean } | null>(null);
+   const [disconnect, setDisconnect] = useState<DisconnectTarget | null>(null);
++  const confirmPromptRef = useRef<HTMLParagraphElement>(null);
++  const restoreDisconnect = useRef<Provider | null>(null);
++  const disconnectButtonRef = useRef<Partial<Record<Provider, HTMLButtonElement | null>>>({});
+   const view = useMemo(() => ({ accountId, revision, verified: Boolean(status?.account?.id === accountId && !checking), connections: { google: status?.providers.google.connectionId ?? null, linkedin: status?.providers.linkedin.connectionId ?? null } }), [accountId, revision, status, checking]);
+   const [changes] = useState(() => createProviderChanges(view, requestAPI, { currentRevision, visible: () => document.visibilityState === "visible" }));
+   useLayoutEffect(() => { changes.update(view); }, [changes, view]);
+@@ -46,11 +49,18 @@
+     } finally { if (!changes.isClosed()) setBusy(changes.busyProvider()); }
+   }
+   const activeDisconnect = disconnect && matchesDisconnect(view, disconnect) ? disconnect : null;
++  useLayoutEffect(() => {
++    if (activeDisconnect) { confirmPromptRef.current?.focus(); return; }
++    const provider = restoreDisconnect.current;
++    if (!provider) return;
++    restoreDisconnect.current = null;
++    disconnectButtonRef.current[provider]?.focus();
++  }, [activeDisconnect]);
+   return <section className="card"><h2>{t("Sign-in and professional connections")}</h2><p className="muted">{t("Connect only accounts you own. Connections never merge workspaces just because their email addresses match.")}</p>
+-    {checking && <p role="status">{t("Checking your account connections…")}</p>}{error && <div className="alert error" role="alert">{t(error)}{errorCode === "invalid_session" && <SessionRecovery accountId={accountId} />}<button className="text-link" disabled={Boolean(busy)} onClick={() => { changes.cancel(); setDisconnect(null); setNotice(null); void refresh(); }}>{t("Check again")}</button></div>}
+-    {notice && notice.revision === revision && !checking && status?.account?.id === accountId && <p className={`alert${notice.error ? " error" : ""}`} role={notice.error ? "alert" : "status"}>{t(notice.text)}{notice.error && <button className="text-link" disabled={Boolean(busy)} onClick={() => { changes.cancel(); setDisconnect(null); setNotice(null); void refresh(); }}>{t("Check current connection")}</button>}</p>}
++    {checking && <p role="status">{t("Checking your account connections…")}</p>}{error && <div><p className="alert error" role="alert">{t(error)}</p>{errorCode === "invalid_session" && <SessionRecovery accountId={accountId} />}<button type="button" className="text-link" disabled={Boolean(busy)} onClick={() => { changes.cancel(); setDisconnect(null); setNotice(null); void refresh(); }}>{t("Check again")}</button></div>}
++    {notice && notice.revision === revision && !checking && status?.account?.id === accountId && <p className={`alert${notice.error ? " error" : ""}`} role={notice.error ? "alert" : "status"}>{t(notice.text)}{notice.error && <button type="button" className="text-link" disabled={Boolean(busy)} onClick={() => { changes.cancel(); setDisconnect(null); setNotice(null); void refresh(); }}>{t("Check current connection")}</button>}</p>}
+     {status && (["google", "linkedin"] as const).map(provider => { const value = status.providers[provider], label = provider === "google" ? "Google" : "LinkedIn"; return <div className="provider-row" key={provider}><h3>{t(label)}</h3><p className="small muted">{provider === "google" ? t("Use Google to sign in to this same Career Finder workspace.") : t("Connect your basic LinkedIn profile. This does not import your CV, search private LinkedIn data, verify your identity, or allow job applications through LinkedIn.")}</p>
+-      {value.connected ? <><p className="small">{t("Connected")}{value.displayName ? t(" as {0}", [value.displayName]) : ""}.</p>{activeDisconnect?.provider === provider ? <div className="inline-confirm"><p>{t("Disconnect ")}{t(label)} {t(" from this workspace? Your saved profile and application history stay in Career Finder. Your only sign-in method cannot be removed.")}</p><div className="action-row"><button className="button danger-outline" disabled={Boolean(busy)} onClick={() => void change(provider, activeDisconnect)}>{t("Confirm disconnect")}</button><button className="button secondary" disabled={Boolean(busy)} onClick={() => setDisconnect(null)}>{t("Keep connected")}</button></div></div> : <button className="button secondary" disabled={Boolean(busy)} onClick={() => setDisconnect(captureDisconnect(view, provider))}>{t("Disconnect ")}{t(label)}</button>}</> : value.configured ? <button className={provider === "google" ? "google-sign-in-button" : "button secondary"} aria-label={t("Connect {0} to this Career Finder account", [label])} disabled={Boolean(busy)} onClick={() => void change(provider)}>{busy === provider ? t("Opening secure sign-in…") : provider === "google" ? <GoogleSignInArtwork decorative /> : t("Connect {0}", [label])}</button> : <p className="small muted">{t(label)} {t(" connection is not available on this service yet. The service owner must finish provider setup before it can be offered here.")}</p>}
++      {value.connected ? <><p className="small">{t("Connected")}{value.displayName ? t(" as {0}", [value.displayName]) : ""}.</p>{activeDisconnect?.provider === provider ? <div className="inline-confirm"><p ref={confirmPromptRef} tabIndex={-1}>{t("Disconnect ")}{t(label)} {t(" from this workspace? Your saved profile and application history stay in Career Finder. Your only sign-in method cannot be removed.")}</p><div className="action-row"><button type="button" className="button danger-outline" disabled={Boolean(busy)} onClick={() => void change(provider, activeDisconnect)}>{t("Confirm disconnect")}</button><button type="button" className="button secondary" disabled={Boolean(busy)} onClick={() => { restoreDisconnect.current = provider; setDisconnect(null); }}>{t("Keep connected")}</button></div></div> : <button type="button" className="button secondary" ref={(node) => { disconnectButtonRef.current[provider] = node; }} disabled={Boolean(busy)} onClick={() => setDisconnect(captureDisconnect(view, provider))}>{t("Disconnect ")}{t(label)}</button>}</> : value.configured ? <button type="button" className={provider === "google" ? "google-sign-in-button" : "button secondary"} aria-label={busy === provider ? undefined : t("Connect {0} to this Career Finder account", [label])} disabled={Boolean(busy)} onClick={() => void change(provider)}>{busy === provider ? t("Opening secure sign-in…") : provider === "google" ? <GoogleSignInArtwork decorative /> : t("Connect {0}", [label])}</button> : <p className="small muted">{t(label)} {t(" connection is not available on this service yet. The service owner must finish provider setup before it can be offered here.")}</p>}
+     </div>; })}
+   </section>;
+ }
+--- a/hosted/app/components/SessionRecovery.tsx
++++ b/hosted/app/components/SessionRecovery.tsx
+@@ -1,11 +1,51 @@
+ "use client";
+ import { useI18n } from "../i18n/LocaleProvider";
+-import { useState } from "react";
++import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+ import { requestAPI } from "./api";
+ import { internalAuthRedirect } from "./provider-auth";
+ 
+ export default function SessionRecovery({ accountId = "" }: { accountId?: string }) {
++  return <SessionRecoveryAction key={accountId} accountId={accountId} />;
++}
++
++function SessionRecoveryAction({ accountId }: { accountId: string }) {
+   const { t } = useI18n();
+-  const [busy, setBusy] = useState(false), [error, setError] = useState("");
+-  return <div className="session-recovery"><p className="small muted">{t("Clear the expired Career Finder sign-in to choose your account again. Saved workspace records are not deleted.")}</p><button className="button secondary" disabled={busy} onClick={async () => { setBusy(true); setError(""); try { const result = await requestAPI("/api/auth/signout", { method: "POST", body: { expectedAccountId: accountId } }); window.location.assign(internalAuthRedirect(result.redirectTo, window.location.origin)); } catch (failure) { setError(failure instanceof Error ? failure.message : "Sign-in recovery could not be completed."); setBusy(false); } }}>{busy ? t("Clearing expired sign-in…") : t("Clear expired sign-in")}</button>{error && <p className="small" role="alert">{t(error)}</p>}</div>;
++  const [state, setState] = useState({ accountId, busy: false, error: "" });
++  const busy = state.accountId === accountId && state.busy, error = state.accountId === accountId ? state.error : "";
++  const generation = useRef(0);
++  const pending = useRef<{ controller: AbortController; generation: number } | null>(null);
++  const descriptionId = useId();
++  const actionRef = useRef<HTMLButtonElement>(null);
++  useLayoutEffect(() => {
++    const revision = ++generation.current;
++    return () => {
++      if (generation.current === revision) generation.current = revision + 1;
++      const operation = pending.current;
++      if (operation?.generation === revision) { operation.controller.abort(); pending.current = null; }
++    };
++  }, [accountId]);
++  useEffect(() => {
++    const active = document.activeElement;
++    if (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement || active instanceof HTMLSelectElement) return;
++    if (active && active !== document.body && active !== document.documentElement) return;
++    actionRef.current?.focus();
++  }, []);
++  return <div className="session-recovery">
++    <p className="small muted" id={descriptionId}>{t("Clear the expired Career Finder sign-in to choose your account again. Saved workspace records are not deleted.")}</p>
++    <button ref={actionRef} type="button" className="button secondary" aria-describedby={descriptionId} disabled={busy} onClick={async () => {
++      if (pending.current) return;
++      const operation = { controller: new AbortController(), generation: generation.current };
++      pending.current = operation;
++      const current = () => pending.current === operation && generation.current === operation.generation && !operation.controller.signal.aborted;
++      setState({ accountId, busy: true, error: "" });
++      try {
++        const result = await requestAPI("/api/auth/signout", { method: "POST", body: { expectedAccountId: accountId }, signal: operation.controller.signal });
++        if (!current()) return;
++        window.location.assign(internalAuthRedirect(result.redirectTo, window.location.origin));
++      } catch (failure) {
++        if (current()) setState({ accountId, busy: false, error: failure instanceof Error ? failure.message : "Sign-in recovery could not be completed." });
++      } finally { if (pending.current === operation) pending.current = null; }
++    }}>{busy ? t("Clearing expired sign-in…") : t("Clear expired sign-in")}</button>
++    {error && <p className="small alert error" role="alert">{t(error)}</p>}
++  </div>;
+ }
+--- a/hosted/app/components/SignInOptions.tsx
++++ b/hosted/app/components/SignInOptions.tsx
+@@ -16,13 +16,13 @@
+   return <div className="sign-in-options">
+     {errorCode === "invalid_session" && <SessionRecovery />}
+     <div className="provider-sign-in-grid">
+-      <div className="provider-sign-in-choice">{google ? <a className="google-sign-in-button" href={`/auth/google/start?return_to=%2F${destination}`} target="_top"><GoogleSignInArtwork /></a> : <><button className="google-sign-in-button" disabled aria-label={t("Google sign-in unavailable")}><GoogleSignInArtwork decorative /></button><p className="provider-availability">{t("Google · ")}{t(unavailable)}</p></>}</div>
+-      <div className="provider-sign-in-choice">{linkedin ? <a className="button linkedin-sign-in full" href={`/auth/linkedin/start?return_to=%2F${destination}`} target="_top"><span className="linkedin-monogram" lang="en" dir="ltr" aria-hidden="true">in</span>{t("Sign in with LinkedIn")}<ArrowUpRight size={16} aria-hidden="true" /></a> : <><button className="button linkedin-sign-in full" disabled><span className="linkedin-monogram" lang="en" dir="ltr" aria-hidden="true">in</span>{t("Sign in with LinkedIn")}</button><p className="provider-availability">{t("LinkedIn · ")}{t(unavailable)}</p></>}</div>
++      <div className="provider-sign-in-choice">{google ? <a className="google-sign-in-button" href={`/auth/google/start?return_to=%2F${destination}`} target="_top"><GoogleSignInArtwork /></a> : <><button type="button" className="google-sign-in-button" disabled aria-label={t("Google sign-in unavailable")}><GoogleSignInArtwork decorative /></button><p className="provider-availability">{t("Google · ")}{t(unavailable)}</p></>}</div>
++      <div className="provider-sign-in-choice">{linkedin ? <a className="button linkedin-sign-in full" href={`/auth/linkedin/start?return_to=%2F${destination}`} target="_top"><span className="linkedin-monogram" lang="en" dir="ltr" aria-hidden="true">in</span>{t("Sign in with LinkedIn")}<ArrowUpRight size={16} aria-hidden="true" /></a> : <><button type="button" className="button linkedin-sign-in full" disabled><span className="linkedin-monogram" lang="en" dir="ltr" aria-hidden="true">in</span>{t("Sign in with LinkedIn")}</button><p className="provider-availability">{t("LinkedIn · ")}{t(unavailable)}</p></>}</div>
+     </div>
+     <div className="sign-in-divider"><span>{t("or")}</span></div>
+     <a className="button secondary full chatgpt-sign-in" href={`/signin-with-chatgpt?return_to=%2F${destination}`} target="_top">{t("Continue with ChatGPT")}<ArrowUpRight size={17} aria-hidden="true" /></a>
+     {checking && <p className="small muted" role="status">{t("Checking available sign-in methods…")}</p>}
+-    {error && <p className="small muted" role="status">{t("Provider availability could not be checked. ChatGPT sign-in remains available. ")}<button className="text-link" onClick={() => void refresh()}>{t("Check again")}</button></p>}
++    {error && errorCode !== "invalid_session" && <p className="alert error" role="alert">{t("Provider availability could not be checked. ChatGPT sign-in remains available. ")}<button type="button" className="text-link" onClick={() => void refresh()}>{t("Check again")}</button></p>}
+     <p className="small muted">{t("Return with the same account to recover your workspace. To add another sign-in method, open your existing workspace first and connect it in Settings.")}</p>
+     <p className="sign-in-privacy"><ShieldCheck size={17} aria-hidden="true" /><span>{t("Your provider password stays with the provider. Career Finder does not read your ChatGPT conversations.")}</span></p>
+   </div>;

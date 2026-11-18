@@ -1,0 +1,21 @@
+{
+  "candidate": "3a709eb15f1024df78ee03474f511568df2dc3de",
+  "publishing": "fd9c5399f2b7001b234b3b86bf72e2b36b5114c1",
+  "mergeBase": "303ee73e0e6389593f6cb08eba285405d60f19cb",
+  "method": "git merge-tree --write-tree --name-only in isolated object-only relay",
+  "exitCode": 1,
+  "conflictedPaths": [
+    "apple/AhmadCareer/NativeApplicationsViews.swift",
+    "apple/AhmadCareer/NativeCareerViews.swift"
+  ],
+  "automaticallyMergedButUnvalidated": [
+    "apple/UITests/CareerFinderUITests.swift"
+  ],
+  "sourceBranchChanged": false,
+  "worktreeChanged": false,
+  "sharedBuildRun": false,
+  "mergePerformed": false,
+  "publishingAcknowledgment": false,
+  "note": "Conflict-bearing tree is not a runnable or releasable candidate. Publishing owner must reconcile current code with its two copy commits and test the integrated revision.",
+  "recordedAt": "2026-11-17T13:35:55.044888+00:00"
+}

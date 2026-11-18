@@ -1,0 +1,42 @@
+{
+  "observedAt": "2026-11-18T05:20:06.766Z",
+  "status": "passed",
+  "groups": [
+    "A first browser GET returns a blank account view without creating a workspace, salt, throttle or session",
+    "Anonymous requests and caller-forged authentication headers fail behind the modeled trusted Sites edge",
+    "Explicit account-bound creation and reopening create no native credential or pairing code",
+    "Browser PDF/profile writes use shared validation and actual private R2; valid native tokens never choose the browser owner",
+    "No browser mutation or receipt export accepts a native token or forged caller identity in place of Sites authentication",
+    "Every browser mutation rejects stale or missing account/workspace intent before any write, cleanup, throttle, PDF access or provider request",
+    "Workspace and bound receipt GETs remain read-only, including changed email and expired dispatch/session rows",
+    "All browser writes require the exact Origin and reject cross-site, same-site and navigation Fetch Metadata",
+    "The browser allowlist excludes native credential routes, rejects unknown fields, and applies bounded single-pass JSON parsing",
+    "Explicit same-account email refresh advances the revision once and invalidates old approval without creating or rotating phone credentials",
+    "Stale profile replay and unapproved, changed-digest or old-schema reviews cannot replace data or authorize a send",
+    "Explicit approval and continuation submit the exact reviewed PDF/LinkedIn payload once; repeat requests and duplicate reviews do not resend",
+    "An ambiguous browser dispatch remains durably uncertain and cannot be automatically retried or duplicated",
+    "Stop and provider-unavailable continuation preserve the existing fail-closed submission rules",
+    "Browser GETs, expired-plan advance and denied guarded Stop cannot reconcile or change expired dispatch claims",
+    "Browser Stop reconciles only the exact stopped plan’s expired claims, preserves live/other-owner claims and never resends",
+    "Manual LinkedIn jobs cause no fetch or receipt; receipt exports remain account-bound and contain no PDF bytes",
+    "A deleted and recreated workspace rejects stale requests even when the signed-in account is unchanged",
+    "A pending deletion remains visible and read-only while browser creation, mutations and receipt downloads stay locked without cleanup"
+  ],
+  "groupCount": 19,
+  "actualWorkerdRequests": 164,
+  "syntheticProviderPosts": 2,
+  "syntheticProviderGets": 10,
+  "observedR2Reads": 10,
+  "observedR2Writes": 3,
+  "realEmployerRequests": 0,
+  "sourceHashes": {
+    "server/applications.mjs": "1c2ccb94215543b9ff537c9657d22b28fc41a942b2e1c9aa2e164ba66e299a7a",
+    "server/provider.mjs": "10d3fa0c116b9e5e5fcecb83bfd3a241428903046fdaf864bf77757dff76870e",
+    "server/validation.mjs": "b7b96c7089cbe3c93adcfaed6fd79679b7ea981ca5790ba8b16dc30275825448",
+    "worker/index.ts": "c82a674ffc6fcebef3b1c48d577f0ec5b28a4a4c2b17462c50a7c0d1708ac09e",
+    "tests/hosted-phone.mjs": "f9e528747308354e5e8fbd4c1c7baa0a38e02a9be1a6583619fb77c456b91d00",
+    "tests/fixtures/phone-runtime.mjs": "9be5ddb7d9fcd5fef67e372c7812d1a30bb8ae0970bf3938d98345144ac59331"
+  },
+  "scope": "Bundled production application handler inside actual workerd with real local D1 and R2. Provider HTTP is synthetic and all real outbound requests are forbidden.",
+  "limits": "The test-only edge strips caller identity headers and injects trusted synthetic owners. Production Sites header stripping, browser UI behavior and production HTTPS require separate live acceptance."
+}

@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "verified_at_utc": "2026-11-17T18:16:34.013095+00:00",
+  "base_commit": "11cb3d4d8c15e9b16719b6e7091597f43633cda6",
+  "source_path": "apple/UITests/CareerFinderUITests.swift",
+  "base_source_sha256": "74e747dbe6824a5c700fc458aa5fb1b08fe14edeb8c50b655573617038aa5aef",
+  "candidate_source_sha256": "163d5698d9e291db53e161e98011fac64174233863063a36efa7ac318fdea84e",
+  "all_original_test_method_bodies_byte_identical": true,
+  "method_count": 17,
+  "methods": [
+    {
+      "name": "testFreshStartAndFiveTabs",
+      "sha256": "e3a5f033623d988faeb4eceb2df3fa6d8cbbbfc4b594df3c40a71d94ad0f4351"
+    },
+    {
+      "name": "testApplicationDraftSurvivesCancelAndRelaunch",
+      "sha256": "6d8c59ddee22a290c391eb02087e999f075b3abb1d58ae280a89388956c7d0a0"
+    },
+    {
+      "name": "testLinkedInProfileDraftAndExternalSearchChoice",
+      "sha256": "a120aa330a9a8de3adeb551665ead4a6d51dd27a857789f556ba985b4457cded"
+    },
+    {
+      "name": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+      "sha256": "60bd285c9695c78187cbb3869ded7ad2e9ed32053a25171ccaa2cfa5a2df8705"
+    },
+    {
+      "name": "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+      "sha256": "cce2647d7e788f6ebe26dbf3dd79392c80580713980bd96c7ac815a16ca1de21"
+    },
+    {
+      "name": "testProfileReadinessAndSimpleConnectionSetup",
+      "sha256": "8c242bee2c4d1f434f93154c6b297c7d2e7ebc171b45a565a33b801241addde1"
+    },
+    {
+      "name": "testOpportunityDraftKeepSaveAndRestore",
+      "sha256": "f4901da1c2ffde739cf1a6e62b6c47172dd683113508ad3c78f211056cdf1959"
+    },
+    {
+      "name": "testOpportunityDiscardRequiresExplicitChoice",
+      "sha256": "b914b4c69b13eb6e6af2f4dbc3d49d78d318f78fa99ee5b8bb769c8a4e7f7486"
+    },
+    {
+      "name": "testDiscoverySaveFlowsIntoSavedAndApply",
+      "sha256": "f2fe9854d5051dbfe8cec24602c3af3c32714b659652706c56d1de003aa027a3"
+    },
+    {
+      "name": "testSearchEmptyAndFailurePreservesPreviousResults",
+      "sha256": "db0509009ee1f919c78d058023777d8f50dc86830e5718e92a5ac3feb12a1305"
+    },
+    {
+      "name": "testAccessibilityTextKeepsCoreControlsReachable",
+      "sha256": "6767a147f613763cd351adafee9de4f4f834c50c5175ef72922cfb9e219610db"
+    },
+    {
+      "name": "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+      "sha256": "977174d3ae6ce65966074b8d6d6d68be2c73906052c2ef139bacc5f061a7c0c9"
+    },
+    {
+      "name": "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+      "sha256": "6250430f6ac04a1899991f9283cfd689eaf8414f27d622c4829ef10b3fee4339"
+    },
+    {
+      "name": "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+      "sha256": "b87cd35018f61e752189c65edb8db91126a6a3659906f4f8857dfaf4df59fe53"
+    },
+    {
+      "name": "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "sha256": "1bf807ae073d96fb9c6d000b185b056401d03c3a76b7a70dcc1336939603927b"
+    },
+    {
+      "name": "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+      "sha256": "1f929f6bc20eeed4bff2e8001db298f6a38e31c1fdb5a349d69f5f2cc8e7079a"
+    },
+    {
+      "name": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+      "sha256": "beaf718f8df3f448335dc64239313ba64aa9028910f16a5fad09e6ff76c111bd"
+    }
+  ],
+  "all_original_assertion_call_expressions_byte_identical": true,
+  "assertion_call_count": 153,
+  "all_original_waiter_call_expressions_byte_identical": true,
+  "waiter_call_count": 12,
+  "five_second_readiness_configuration_unchanged": true,
+  "keyboard_dismissal_helper_byte_identical": true,
+  "changed_helpers": [
+    "replace",
+    "searchFromKeyboard",
+    "typingKeyIsVisible"
+  ],
+  "shipping_files_unchanged": true,
+  "native_invoked": false,
+  "tests_run": false,
+  "scope": "Static source preservation check, not a native compilation/performance or UI acceptance pass."
+}

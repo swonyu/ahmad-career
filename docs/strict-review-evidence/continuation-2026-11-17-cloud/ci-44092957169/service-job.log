@@ -1,0 +1,452 @@
+﻿2026-11-17T13:27:51.7967544Z Current runner version: '2.338.2'
+2026-11-17T13:27:51.7989203Z ##[group]Runner Image Provisioner
+2026-11-17T13:27:51.7989928Z Hosted Compute Agent
+2026-11-17T13:27:51.7990541Z Version: 20261103.629
+2026-11-17T13:27:51.7991095Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+2026-11-17T13:27:51.7991770Z Build Date: 2026-11-03T17:26:59Z
+2026-11-17T13:27:51.7992363Z Worker ID: {d84a2169-8863-40b6-b30d-a1ec76cda760}
+2026-11-17T13:27:51.7992948Z Region: westus2
+2026-11-17T13:27:51.7993487Z Cloud: Azure
+2026-11-17T13:27:51.7993991Z ##[endgroup]
+2026-11-17T13:27:51.7995339Z ##[group]Operating System
+2026-11-17T13:27:51.7996231Z Ubuntu
+2026-11-17T13:27:51.7996708Z 24.04.5
+2026-11-17T13:27:51.7997222Z LTS
+2026-11-17T13:27:51.7997691Z ##[endgroup]
+2026-11-17T13:27:51.7998177Z ##[group]Runner Image
+2026-11-17T13:27:51.7998777Z Image: ubuntu-24.04
+2026-11-17T13:27:51.7999268Z Version: 20261111.370.1
+2026-11-17T13:27:51.8000416Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261111.370/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-17T13:27:51.8001655Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261111.370
+2026-11-17T13:27:51.8002520Z ##[endgroup]
+2026-11-17T13:27:51.8003467Z ##[group]GITHUB_TOKEN Permissions
+2026-11-17T13:27:51.8005069Z Contents: read
+2026-11-17T13:27:51.8005590Z Metadata: read
+2026-11-17T13:27:51.8006331Z ##[endgroup]
+2026-11-17T13:27:51.8008129Z Secret source: Actions
+2026-11-17T13:27:51.8009019Z Cache mode: write
+2026-11-17T13:27:51.8009625Z Prepare workflow directory
+2026-11-17T13:27:51.8273547Z Prepare all required actions
+2026-11-17T13:27:51.8312827Z Getting action download info
+2026-11-17T13:27:52.1668454Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-17T13:27:52.4632893Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-17T13:27:52.7608822Z Complete job name: Service and synthetic HTTPS
+2026-11-17T13:27:52.8370130Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-17T13:27:52.8371422Z with:
+2026-11-17T13:27:52.8371945Z   persist-credentials: false
+2026-11-17T13:27:52.8372396Z   repository: swonyu/ahmad-career
+2026-11-17T13:27:52.8375524Z   token: ***
+2026-11-17T13:27:52.8376074Z   ssh-strict: true
+2026-11-17T13:27:52.8376444Z   ssh-user: git
+2026-11-17T13:27:52.8376799Z   clean: true
+2026-11-17T13:27:52.8377165Z   sparse-checkout-cone-mode: true
+2026-11-17T13:27:52.8377588Z   fetch-depth: 1
+2026-11-17T13:27:52.8377942Z   fetch-tags: false
+2026-11-17T13:27:52.8378313Z   show-progress: true
+2026-11-17T13:27:52.8378676Z   lfs: false
+2026-11-17T13:27:52.8379023Z   submodules: false
+2026-11-17T13:27:52.8379401Z   set-safe-directory: true
+2026-11-17T13:27:52.8379811Z   allow-unsafe-pr-checkout: false
+2026-11-17T13:27:52.8380530Z ##[endgroup]
+2026-11-17T13:27:53.3331830Z Syncing repository: swonyu/ahmad-career
+2026-11-17T13:27:53.3333911Z ##[group]Getting Git version info
+2026-11-17T13:27:53.3334975Z Working directory is '/home/runner/work/ahmad-career/ahmad-career'
+2026-11-17T13:27:53.3336786Z [command]/usr/bin/git version
+2026-11-17T13:27:53.3374140Z git version 2.56.1
+2026-11-17T13:27:53.3422846Z ##[endgroup]
+2026-11-17T13:27:53.3432300Z Temporarily overriding HOME='/home/runner/work/_temp/6e877560-d50c-4290-b38b-e87497518e2c' before making global git config changes
+2026-11-17T13:27:53.3435757Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-17T13:27:53.3439000Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/ahmad-career/ahmad-career
+2026-11-17T13:27:53.3475124Z Deleting the contents of '/home/runner/work/ahmad-career/ahmad-career'
+2026-11-17T13:27:53.3478676Z ##[group]Determining repository object format
+2026-11-17T13:27:53.3481028Z ##[endgroup]
+2026-11-17T13:27:53.3483097Z ##[group]Initializing the repository
+2026-11-17T13:27:53.3484843Z [command]/usr/bin/git init /home/runner/work/ahmad-career/ahmad-career
+2026-11-17T13:27:53.3551736Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-17T13:27:53.3553836Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-17T13:27:53.3555966Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-17T13:27:53.3557645Z hint: call:
+2026-11-17T13:27:53.3558575Z hint:
+2026-11-17T13:27:53.3559959Z hint: 	git config --global init.defaultBranch <name>
+2026-11-17T13:27:53.3561678Z hint:
+2026-11-17T13:27:53.3563081Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-17T13:27:53.3565407Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-17T13:27:53.3567276Z hint:
+2026-11-17T13:27:53.3568253Z hint: 	git branch -m <name>
+2026-11-17T13:27:53.3569381Z hint:
+2026-11-17T13:27:53.3571013Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-17T13:27:53.3573280Z Initialized empty Git repository in /home/runner/work/ahmad-career/ahmad-career/.git/
+2026-11-17T13:27:53.3577029Z [command]/usr/bin/git remote add origin https://github.com/swonyu/ahmad-career
+2026-11-17T13:27:53.3605213Z ##[endgroup]
+2026-11-17T13:27:53.3607513Z ##[group]Disabling automatic garbage collection
+2026-11-17T13:27:53.3608899Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-17T13:27:53.3636592Z ##[endgroup]
+2026-11-17T13:27:53.3638513Z ##[group]Setting up auth
+2026-11-17T13:27:53.3639784Z Removing SSH command configuration
+2026-11-17T13:27:53.3641450Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T13:27:53.3670658Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-17T13:27:53.3940783Z Removing HTTP extra header
+2026-11-17T13:27:53.3944516Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T13:27:53.3973341Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-17T13:27:53.4165127Z Removing includeIf entries pointing to credentials config files
+2026-11-17T13:27:53.4169300Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T13:27:53.4198582Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-17T13:27:53.4393667Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-a77c0f88-ce96-45d7-9496-c83a832b8cf7.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-17T13:27:53.4426350Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git.path /home/runner/work/_temp/git-credentials-a77c0f88-ce96-45d7-9496-c83a832b8cf7.config
+2026-11-17T13:27:53.4454211Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-a77c0f88-ce96-45d7-9496-c83a832b8cf7.config
+2026-11-17T13:27:53.4482062Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-a77c0f88-ce96-45d7-9496-c83a832b8cf7.config
+2026-11-17T13:27:53.4509204Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-a77c0f88-ce96-45d7-9496-c83a832b8cf7.config
+2026-11-17T13:27:53.4534114Z ##[endgroup]
+2026-11-17T13:27:53.4535499Z ##[group]Fetching the repository
+2026-11-17T13:27:53.4539433Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +55adcb006d1e439ea2fdfb9e12702506f60dcdb9:refs/remotes/pull/1/merge
+2026-11-17T13:27:55.2626629Z From https://github.com/swonyu/ahmad-career
+2026-11-17T13:27:55.2627147Z  * [new ref]         55adcb006d1e439ea2fdfb9e12702506f60dcdb9 -> pull/1/merge
+2026-11-17T13:27:55.2629426Z ##[endgroup]
+2026-11-17T13:27:55.2629898Z ##[group]Determining the checkout info
+2026-11-17T13:27:55.2630553Z ##[endgroup]
+2026-11-17T13:27:55.2634349Z [command]/usr/bin/git sparse-checkout disable
+2026-11-17T13:27:55.2680696Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-17T13:27:55.2706790Z ##[group]Checking out the ref
+2026-11-17T13:27:55.2709475Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/1/merge
+2026-11-17T13:27:55.3865424Z Note: switching to 'refs/remotes/pull/1/merge'.
+2026-11-17T13:27:55.3865993Z 
+2026-11-17T13:27:55.3866249Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-17T13:27:55.3866819Z changes and commit them, and you can discard any commits you make in this
+2026-11-17T13:27:55.3867699Z state without impacting any branches by switching back to a branch.
+2026-11-17T13:27:55.3868144Z 
+2026-11-17T13:27:55.3868452Z If you want to create a new branch to retain commits you create, you may
+2026-11-17T13:27:55.3868965Z do so (now or later) by using -c with the switch command. Example:
+2026-11-17T13:27:55.3869182Z 
+2026-11-17T13:27:55.3869298Z   git switch -c <new-branch-name>
+2026-11-17T13:27:55.3869455Z 
+2026-11-17T13:27:55.3869570Z Or undo this operation with:
+2026-11-17T13:27:55.3869723Z 
+2026-11-17T13:27:55.3869813Z   git switch -
+2026-11-17T13:27:55.3869971Z 
+2026-11-17T13:27:55.3870261Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-17T13:27:55.3870682Z 
+2026-11-17T13:27:55.3871146Z HEAD is now at 55adcb0 Merge 3a709eb15f1024df78ee03474f511568df2dc3de into 949ce0ad327beab79fa7033423b462ebc7bd98be
+2026-11-17T13:27:55.3883290Z ##[endgroup]
+2026-11-17T13:27:55.3922542Z [command]/usr/bin/git log -1 --format=%H
+2026-11-17T13:27:55.3944710Z 55adcb006d1e439ea2fdfb9e12702506f60dcdb9
+2026-11-17T13:27:55.3952669Z ##[group]Removing auth
+2026-11-17T13:27:55.3953060Z Removing SSH command configuration
+2026-11-17T13:27:55.3955488Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T13:27:55.3981524Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-17T13:27:55.4177035Z Removing HTTP extra header
+2026-11-17T13:27:55.4179425Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T13:27:55.4206578Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-17T13:27:55.4400900Z Removing includeIf entries pointing to credentials config files
+2026-11-17T13:27:55.4403480Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T13:27:55.4426672Z includeif.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git.path
+2026-11-17T13:27:55.4427345Z includeif.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git/worktrees/*.path
+2026-11-17T13:27:55.4427782Z includeif.gitdir:/github/workspace/.git.path
+2026-11-17T13:27:55.4428129Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-17T13:27:55.4434986Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git.path
+2026-11-17T13:27:55.4454944Z /home/runner/work/_temp/git-credentials-a77c0f88-ce96-45d7-9496-c83a832b8cf7.config
+2026-11-17T13:27:55.4464009Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-a77c0f88\-ce96\-45d7\-9496\-c83a832b8cf7\.config
+2026-11-17T13:27:55.4497003Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git/worktrees/*.path
+2026-11-17T13:27:55.4517840Z /home/runner/work/_temp/git-credentials-a77c0f88-ce96-45d7-9496-c83a832b8cf7.config
+2026-11-17T13:27:55.4524466Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/ahmad-career/ahmad-career/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-a77c0f88\-ce96\-45d7\-9496\-c83a832b8cf7\.config
+2026-11-17T13:27:55.4552759Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-17T13:27:55.4572563Z /github/runner_temp/git-credentials-a77c0f88-ce96-45d7-9496-c83a832b8cf7.config
+2026-11-17T13:27:55.4578706Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-a77c0f88\-ce96\-45d7\-9496\-c83a832b8cf7\.config
+2026-11-17T13:27:55.4610180Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-17T13:27:55.4630870Z /github/runner_temp/git-credentials-a77c0f88-ce96-45d7-9496-c83a832b8cf7.config
+2026-11-17T13:27:55.4637439Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-a77c0f88\-ce96\-45d7\-9496\-c83a832b8cf7\.config
+2026-11-17T13:27:55.4665823Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-17T13:27:55.4864480Z Removing credentials config '/home/runner/work/_temp/git-credentials-a77c0f88-ce96-45d7-9496-c83a832b8cf7.config'
+2026-11-17T13:27:55.4865657Z ##[endgroup]
+2026-11-17T13:27:55.5171075Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-17T13:27:55.5171455Z with:
+2026-11-17T13:27:55.5171673Z   node-version: 24
+2026-11-17T13:27:55.5171911Z   package-manager-cache: false
+2026-11-17T13:27:55.5172166Z   check-latest: false
+2026-11-17T13:27:55.5174155Z   token: ***
+2026-11-17T13:27:55.5174374Z ##[endgroup]
+2026-11-17T13:27:55.6221179Z Found in cache @ /opt/hostedtoolcache/node/24.22.2/x64
+2026-11-17T13:27:55.6782113Z ##[group]Environment details
+2026-11-17T13:27:55.9590634Z node: v24.22.2
+2026-11-17T13:27:55.9590873Z npm: 11.19.1
+2026-11-17T13:27:55.9591050Z yarn: 1.22.22
+2026-11-17T13:27:55.9591875Z ##[endgroup]
+2026-11-17T13:27:55.9710593Z ##[group]Run npm ci
+2026-11-17T13:27:55.9710831Z [36;1mnpm ci[0m
+2026-11-17T13:27:55.9736950Z shell: /usr/bin/bash -e {0}
+2026-11-17T13:27:55.9737169Z ##[endgroup]
+2026-11-17T13:27:57.0506266Z 
+2026-11-17T13:27:57.0514831Z added 5 packages, and audited 6 packages in 1s
+2026-11-17T13:27:57.0515214Z 
+2026-11-17T13:27:57.0515437Z found 0 vulnerabilities
+2026-11-17T13:27:57.0879032Z ##[group]Run npm test
+2026-11-17T13:27:57.0879267Z [36;1mnpm test[0m
+2026-11-17T13:27:57.0897205Z shell: /usr/bin/bash -e {0}
+2026-11-17T13:27:57.0897409Z ##[endgroup]
+2026-11-17T13:27:57.1758000Z 
+2026-11-17T13:27:57.1758611Z > test
+2026-11-17T13:27:57.1759704Z > node check.mjs && node preferences-check.mjs && node record-check.mjs && node feed-check.mjs && node state-check.mjs && node server-check.mjs
+2026-11-17T13:27:57.1760425Z 
+2026-11-17T13:27:57.2351759Z Core checks passed: Saudi scope, relevance, URLs, closing dates and deduplication.
+2026-11-17T13:27:57.2381882Z Criteria matrix passed: neutral defaults, strict city evidence, Arabic amounts and unverified salary.
+2026-11-17T13:27:57.2388720Z Evidence chronology passed: Saudi midnight, equivalent offsets, exact ties and archived snapshots.
+2026-11-17T13:27:57.2389572Z Region names alone do not establish Riyadh city.
+2026-11-17T13:27:57.2390541Z Archived merging is idempotent across mixed evidence dates.
+2026-11-17T13:27:57.2393674Z Employer observations survive editorial precedence and retained-cache turnover.
+2026-11-17T13:27:57.2878276Z Local preference checks passed: legacy/fresh defaults, country/city/role filtering, schema validation, DST offsets, unchanged civil dates, independent units, strict arithmetic.
+2026-11-17T13:27:57.3286058Z Application record and Riyadh attention fixtures passed.
+2026-11-17T13:27:57.3678323Z PASS Riyadh midnight and exact timestamp deadlines
+2026-11-17T13:27:57.3695420Z PASS Saudi country retains a city outside the short city list
+2026-11-17T13:27:57.3704965Z PASS Employer requests use the edge-supported manual redirect mode
+2026-11-17T13:27:57.3938053Z PASS Employer redirects fail closed at listing and detail boundaries
+2026-11-17T13:27:57.3939141Z PASS All failed or malformed Workday details are an incomplete source
+2026-11-17T13:27:57.3941258Z PASS Final Workday detail must have an ID and a relevant title
+2026-11-17T13:27:57.3966775Z PASS Malformed Workday detail fields report incomplete coverage, not zero matches
+2026-11-17T13:27:57.3967576Z PASS Conflicting structured country cannot be overridden by a Saudi label
+2026-11-17T13:27:57.3968351Z PASS An expired timestamp is removed and today's published timestamp is accepted
+2026-11-17T13:27:57.3969111Z PASS One failed Qiddiya query retains validated results from the other queries
+2026-11-17T13:27:57.3969748Z PASS Future Qiddiya publication and malformed codes are rejected
+2026-11-17T13:27:57.3976651Z PASS Malformed listing rows are failures while genuine empty boards succeed
+2026-11-17T13:27:57.3977520Z PASS Contradictory first-page totals fail while genuine empty and unknown totals remain valid
+2026-11-17T13:27:57.3978184Z All feed-boundary regression groups passed.
+2026-11-17T13:27:57.4615279Z PASS Full source outage preserves previous results, timestamp and persisted cache
+2026-11-17T13:27:57.4745707Z PASS Empty source response also preserves the previous successful search
+2026-11-17T13:27:57.4992241Z PASS Unsaved tracked live role survives feed removal, reload and notes export
+2026-11-17T13:27:57.5304256Z PASS Unsaving a tracked role retains its application record and export after reload
+2026-11-17T13:27:57.5899230Z PASS Failed saves and status writes never announce saved-on-device success
+2026-11-17T13:27:57.6853553Z PASS A failed workspace mutation leaves the entire prior durable snapshot intact
+2026-11-17T13:27:57.7016969Z PASS Legacy tracking imports correctly and a successful write migrates it atomically
+2026-11-17T13:27:57.7111035Z PASS Unreadable workspace is preserved and cannot be silently overwritten
+2026-11-17T13:27:57.7162422Z PASS Malformed cached rows cannot crash navigation or overwrite the original workspace
+2026-11-17T13:27:57.7260190Z PASS New employer fields update a researched record without replacing its editorial evidence
+2026-11-17T13:27:57.7376588Z PASS Malformed live sources preserve the cache and do not throw
+2026-11-17T13:27:57.7556940Z PASS Cached facts are not overwritten by an older successful response
+2026-11-17T13:27:57.7629929Z PASS Partially successful sources retain validated new jobs with a visible incomplete warning
+2026-11-17T13:27:57.7799083Z PASS Unsaved profile input survives completion of a background search
+2026-11-17T13:27:57.7862426Z PASS Filter and sort controls keep the active selection after a saved-state render
+2026-11-17T13:27:57.8066513Z PASS Another tab’s saved roles are preserved when this tab next saves
+2026-11-17T13:27:57.8244225Z PASS Fresh tracked facts survive later disappearance from the bounded feed
+2026-11-17T13:27:57.8338044Z PASS A nominal success containing only malformed jobs cannot erase prior valid results
+2026-11-17T13:27:57.8576199Z PASS Interleaved tabs serialize workspace mutations when Web Locks are available
+2026-11-17T13:27:57.8602239Z PASS Legacy profile keeps Riyadh midnight display and sequential live positions
+2026-11-17T13:27:57.8794818Z PASS Fresh profile follows device time zone and a saved explicit zone overrides it
+2026-11-17T13:27:57.8955726Z PASS Profile and checklist changes merge independent fields across tabs
+2026-11-17T13:27:57.9085992Z PASS Conflicting profile edits require an explicit choice and preserve a declined draft
+2026-11-17T13:27:57.9766273Z PASS Failed workspace recovery cannot overwrite another tab and keeps pending work exportable
+2026-11-17T13:27:57.9974971Z PASS A stale tab cannot regress the durable employer snapshot or tracked facts
+2026-11-17T13:27:58.0053053Z PASS Failed checklist recovery preserves a newer explicit choice in another tab
+2026-11-17T13:27:58.0266022Z PASS Legacy live caches use their envelope date when merging a corrected research bundle
+2026-11-17T13:27:58.0430202Z PASS Corrected bundled facts win date-only ties while later live facts still update tracking
+2026-11-17T13:27:58.0589344Z PASS A refreshed archived role preserves dated editorial evidence and tracking
+2026-11-17T13:27:58.0694624Z PASS A newer old-tab cache cannot reintroduce excluded employers after a search failure
+2026-11-17T13:27:58.0778903Z PASS Pre-criteria profiles migrate without losing profile, saved, status or checklist records
+2026-11-17T13:27:58.0856831Z PASS Criteria form canonicalizes Arabic whole amounts and rejects invalid input without clamping
+2026-11-17T13:27:58.1139993Z PASS Malformed stored criteria preserve original storage and cannot be overwritten
+2026-11-17T13:27:58.1422180Z PASS Unsaved criteria survive renders and disabled salary policy preserves the draft
+2026-11-17T13:27:58.1541737Z PASS Independent criteria and professional profile edits merge across tabs using legacy neutral defaults
+2026-11-17T13:27:58.1657745Z PASS Conflicting criteria preserve a declined draft and failed saves never report durable success
+2026-11-17T13:27:58.1815724Z PASS Preferences refine discovery only, preserve freshest saved history and stay out of notes
+2026-11-17T13:27:58.1880431Z PASS Unknown salary produces honest discovery labels and an explicit evidence-gap empty state
+2026-11-17T13:27:58.1973720Z PASS Navigation and both refresh transports retain local criteria without transmitting them
+2026-11-17T13:27:58.2089887Z PASS Partial search warning and original check time survive reload
+2026-11-17T13:27:58.2349713Z PASS Corrected research remains durable after archival and a stale tab status edit
+2026-11-17T13:27:58.2589575Z PASS Unsaving a removed live lead keeps an open detail actionable
+2026-11-17T13:27:58.2745720Z PASS Rejected-listing warning survives repeated reloads without inflation
+2026-11-17T13:27:58.2840891Z PASS Saved theme exposes its current state and toggles accessibly
+2026-11-17T13:27:58.2953684Z PASS A role opened during refresh remains actionable after the new batch omits it
+2026-11-17T13:27:58.2999556Z PASS Unknown status events cannot create orphan application records
+2026-11-17T13:27:58.3136589Z PASS Notes capture current saved profile and checklist without requiring a storage event
+2026-11-17T13:27:58.3233259Z PASS Notes preserve failed saves and valid session data when newer storage is invalid or unreadable
+2026-11-17T13:27:58.3461970Z PASS Application metadata survives legacy workspace writes, status transitions and reload; preparation excludes receipts
+2026-11-17T13:27:58.3746537Z PASS Same-record conflicts and failed writes preserve drafts; metadata-only archived rows export
+2026-11-17T13:27:58.3875087Z PASS Unsupported metadata and no-lock environments never overwrite; status and checklist stay separate
+2026-11-17T13:27:58.4208395Z PASS Old-tab receipt save retains newer employer facts resolved inside the workspace lock
+2026-11-17T13:27:58.4309801Z PASS A completed employer refresh redraws attention on an already open Plan
+2026-11-17T13:27:58.4375392Z PASS Profile saves preserve typing entered while waiting for the profile lock
+2026-11-17T13:27:58.4566113Z PASS Queued live retention keeps corrected facts even when a later batch omits the role
+2026-11-17T13:27:58.4705771Z PASS Tracking export sees another tab workspace save before the storage event arrives
+2026-11-17T13:27:58.5033614Z PASS Accepted employer corrections redraw an open Saved or Shortlist view
+2026-11-17T13:27:58.5289094Z PASS Date sorts use instants and Saudi day boundaries with unknown dates last
+2026-11-17T13:27:58.5389852Z PASS Editorial action prose cannot contradict an accepted amended deadline
+2026-11-17T13:27:58.5621435Z PASS Legacy date-only live checks compare at Saudi midnight for updates and durable-cache adoption
+2026-11-17T13:27:58.5784645Z PASS Fresh neutral discovery defaults survive unrelated saves while explicit and legacy city choices remain
+2026-11-17T13:27:58.6063797Z PASS Partial employer failure retains old eligible discovery evidence without refreshing it
+2026-11-17T13:27:58.6226901Z PASS Incomplete successful detail checks retain earlier jobs and observation dates
+2026-11-17T13:27:58.6761694Z PASS Exact successful employer exclusions survive partial failure without deleting tracked history
+2026-11-17T13:27:58.6815146Z PASS Production bundle starts without a biography, recommendations or an assumed city
+2026-11-17T13:27:58.6852307Z PASS Production conversion recovers only existing legacy IDs and retains profile, checklist and receipts
+2026-11-17T13:27:58.6875160Z PASS Legacy recovery preserves newer stored facts and does not introduce other researched roles
+2026-11-17T13:27:58.6916078Z PASS Failed or corrupt legacy recovery preserves durable originals and can be retried on relaunch
+2026-11-17T13:27:58.6929641Z PASS Carried preparation checks keep their bits without certifying new per-application work
+2026-11-17T13:27:58.7002662Z PASS Local preference upgrade preserves literal legacy profile, SAR units and every tracking record
+2026-11-17T13:27:58.7057622Z PASS Unsupported-country discovery is truthful, sends no requests and never filters saved history
+2026-11-17T13:27:58.7083458Z PASS Supported local preferences never enter either unchanged refresh transport
+2026-11-17T13:27:58.7124114Z PASS Independent worldwide preferences merge across tabs while same-field conflicts retain drafts
+2026-11-17T13:27:58.7158525Z PASS Future and invalid preference schemas preserve their stored bytes
+2026-11-17T13:27:58.7185103Z PASS Default display order is alphabetical, independent of leadership and provider relevance
+2026-11-17T13:27:58.7213443Z PASS Planning currency affects only explicit calculator amounts and resets on unit changes
+2026-11-17T13:27:58.7243851Z PASS Legacy archived assessment stays recognizable without becoming current personal fit advice
+2026-11-17T13:27:58.7244953Z 77 application-state regression groups passed.
+2026-11-17T13:27:58.8622360Z Server checks passed: denied cache API resilience, bounded in-memory cooldown, request coalescing, partial/outage coverage, read-only methods and static CSP.
+2026-11-17T13:27:58.8768341Z ##[group]Run npm run test:applications
+2026-11-17T13:27:58.8768625Z [36;1mnpm run test:applications[0m
+2026-11-17T13:27:58.8785823Z shell: /usr/bin/bash -e {0}
+2026-11-17T13:27:58.8786204Z ##[endgroup]
+2026-11-17T13:27:58.9560370Z 
+2026-11-17T13:27:58.9561002Z > test:applications
+2026-11-17T13:27:58.9561433Z > node applications-check.mjs
+2026-11-17T13:27:58.9561672Z 
+2026-11-17T13:27:59.1384555Z PASS test mode is explicit and never claims live enablement
+2026-11-17T13:27:59.1385790Z PASS blank workspace contains no personal defaults
+2026-11-17T13:27:59.1416001Z PASS fresh profile is blank and revision zero
+2026-11-17T13:27:59.1435430Z PASS missing Origin cannot mint a browser session
+2026-11-17T13:27:59.1450078Z PASS foreign Origin is rejected
+2026-11-17T13:27:59.1481195Z PASS DNS rebinding Host is rejected
+2026-11-17T13:27:59.1509737Z PASS wrong CSRF cannot mutate profile
+2026-11-17T13:27:59.1526964Z PASS client-supplied verification field rejected
+2026-11-17T13:27:59.1593269Z PASS résumé saved as bytes but not returned to UI
+2026-11-17T13:27:59.1661572Z PASS unreadable PDF rejection preserves the previous résumé and profile revision
+2026-11-17T13:27:59.1727146Z PASS stale profile revision cannot overwrite newer profile
+2026-11-17T13:27:59.1815590Z PASS canonical Lever URLs share one opportunity identity
+2026-11-17T13:27:59.1845775Z PASS preparation reviews exact fields without sending
+2026-11-17T13:27:59.1856493Z PASS unmatched approval digest cannot dispatch
+2026-11-17T13:27:59.2179282Z PASS two simultaneous approval clicks send exactly once
+2026-11-17T13:27:59.2196439Z PASS only provider receipt becomes confirmed
+2026-11-17T13:27:59.2198661Z PASS real multipart includes exact PDF bytes and key remains server-side
+2026-11-17T13:27:59.2209635Z PASS repeated completed plan returns existing evidence without resending
+2026-11-17T13:27:59.2217765Z PASS receipt export excludes keys, tokens and PDF bytes
+2026-11-17T13:27:59.2239278Z PASS confirmed same-applicant posting is blocked in a new plan
+2026-11-17T13:27:59.2312397Z PASS an unverified matching email cannot reveal another workspace application status
+2026-11-17T13:27:59.2332198Z PASS workspaces expose only their own review and receipt records
+2026-11-17T13:27:59.2375794Z PASS changing email cannot erase same-workspace application history
+2026-11-17T13:27:59.3348887Z PASS separate unverified workspaces return the same review before and after a private confirmed receipt
+2026-11-17T13:27:59.3663172Z PASS independently approved workspaces dispatch without a cross-workspace index or status dependency
+2026-11-17T13:27:59.3744654Z PASS an earlier ready plan still cannot bypass same-workspace dispatch deduplication
+2026-11-17T13:27:59.4152318Z PASS another workspace cannot cancel an expired rate-limited review by copying its email
+2026-11-17T13:27:59.4189661Z PASS only the owning workspace retires its obsolete cooldown review
+2026-11-17T13:27:59.4520176Z PASS no-receipt response has honest outcome
+2026-11-17T13:27:59.4530671Z PASS no-receipt is not blindly retried
+2026-11-17T13:27:59.4843597Z PASS server-error response has honest outcome
+2026-11-17T13:27:59.4851616Z PASS server-error is not blindly retried
+2026-11-17T13:27:59.6710236Z PASS timeout response has honest outcome
+2026-11-17T13:27:59.6721588Z PASS timeout is not blindly retried
+2026-11-17T13:27:59.7048771Z PASS rejected response has honest outcome
+2026-11-17T13:27:59.7058601Z PASS rejected is not blindly retried
+2026-11-17T13:27:59.7387531Z PASS redirect response has honest outcome
+2026-11-17T13:27:59.7397245Z PASS redirect is not blindly retried
+2026-11-17T13:27:59.7757173Z PASS html response has honest outcome
+2026-11-17T13:27:59.7765676Z PASS html is not blindly retried
+2026-11-17T13:27:59.8097925Z PASS false-ok response has honest outcome
+2026-11-17T13:27:59.8109645Z PASS false-ok is not blindly retried
+2026-11-17T13:27:59.8583279Z PASS 429 saves rate-limited state and explicit cooldown
+2026-11-17T13:27:59.8618952Z PASS a reauthenticated phone recovers the exact approved429 review without sending
+2026-11-17T13:27:59.8648750Z PASS recoverable reviews remain private to their workspace
+2026-11-17T13:27:59.8665241Z PASS new plans cannot bypass a provider cooldown
+2026-11-17T13:27:59.8673395Z PASS 429 retry before cooldown is denied
+2026-11-17T13:27:59.8943201Z PASS 429 retry after cooldown uses same approved attempt
+2026-11-17T13:27:59.9308238Z PASS expired rate-limited review can be replaced after its cooldown
+2026-11-17T13:27:59.9580927Z PASS replacement needs a fresh approval and preserves prior rejection evidence
+2026-11-17T13:28:00.0105548Z PASS stopping a429 retry cannot bypass the provider cooldown
+2026-11-17T13:28:00.0121504Z PASS a stopped429 attempt permits a fresh review after cooldown
+2026-11-17T13:28:00.0532060Z PASS malformed Retry-After retains a complete waiting period or explicit reconciliation hold
+2026-11-17T13:28:00.0542166Z PASS malformed cooldown cannot be retried and explains the actual next step
+2026-11-17T13:28:00.0559934Z PASS malformed cooldown Stop retains the provider rejection evidence
+2026-11-17T13:28:00.0754975Z PASS malformed stopped cooldown survives expired review, new requirements and changed profile
+2026-11-17T13:28:00.1193608Z PASS one-year Retry-After retains a complete waiting period or explicit reconciliation hold
+2026-11-17T13:28:00.1203025Z PASS one-year cooldown cannot be retried and explains the actual next step
+2026-11-17T13:28:00.1217737Z PASS one-year cooldown Stop retains the provider rejection evidence
+2026-11-17T13:28:00.1258030Z PASS one-year stopped cooldown survives expired review, new requirements and changed profile
+2026-11-17T13:28:00.1279775Z PASS the full long cooldown must elapse before a new review becomes available
+2026-11-17T13:28:00.1561216Z PASS a stopped long cooldown requires a fresh explicit approval and retains its earlier rejection
+2026-11-17T13:28:00.2142298Z PASS unrepresentable late429 records the rejection and honors Stop without requeueing
+2026-11-17T13:28:00.2150877Z PASS unrepresentable repeated Stop preserves the late provider evidence exactly
+2026-11-17T13:28:00.2587559Z PASS long late429 records the rejection and honors Stop without requeueing
+2026-11-17T13:28:00.2597066Z PASS long repeated Stop preserves the late provider evidence exactly
+2026-11-17T13:28:00.3041089Z PASS Stop during closed posting preflight remains cancelled without a provider POST
+2026-11-17T13:28:00.3599960Z PASS Stop during success posting preflight remains cancelled without a provider POST
+2026-11-17T13:28:00.4112433Z PASS requirements changed during asynchronous preflight are rechecked before any POST
+2026-11-17T13:28:00.4171241Z PASS unsent current reviews are recoverable after reload
+2026-11-17T13:28:00.4193456Z PASS profile changes invalidate existing approval
+2026-11-17T13:28:00.4209242Z PASS outdated profile reviews are excluded from recovery
+2026-11-17T13:28:00.4467448Z PASS stop before dispatch sends nothing
+2026-11-17T13:28:00.4488264Z PASS stopped reviews are excluded from recovery
+2026-11-17T13:28:00.4654426Z PASS conditional stop rejects a nonboolean guard
+2026-11-17T13:28:00.4667674Z PASS guarded review replacement cancels only an unapproved plan
+2026-11-17T13:28:00.4807010Z PASS another phone approval atomically prevents stale guarded stop
+2026-11-17T13:28:00.4895820Z PASS changed employer posting invalidates approval before POST
+2026-11-17T13:28:00.4933447Z PASS any profession/country can be tracked manually
+2026-11-17T13:28:00.4950710Z PASS manual-only employer cannot be mislabeled automatic
+2026-11-17T13:28:00.4983858Z PASS existing manually recorded application requires reconciliation
+2026-11-17T13:28:00.5014965Z PASS phone pairing opens the intended workspace
+2026-11-17T13:28:00.5043816Z PASS new phone workspace starts blank
+2026-11-17T13:28:00.5059339Z PASS valid bearer authorizes profile change without Origin/CSRF
+2026-11-17T13:28:00.5084846Z PASS mobile pairing code is single-use
+2026-11-17T13:28:00.5087676Z PASS native tokens stored only as hashes
+2026-11-17T13:28:00.5097384Z PASS expired mobile token is refused
+2026-11-17T13:28:00.5153345Z PASS invalid *** fall back to a browser cookie
+2026-11-17T13:28:00.5236339Z PASS pairing code expires after five minutes
+2026-11-17T13:28:00.5270187Z PASS pairing redemption is rate limited
+2026-11-17T13:28:00.5311035Z PASS mobile token can be revoked without deleting application records
+2026-11-17T13:28:00.5316006Z PASS same ledger refuses a second service owner
+2026-11-17T13:28:00.5519037Z PASS failed durable intent produces zero outbound POSTs
+2026-11-17T13:28:00.5915321Z PASS result-save failure never reports durable confirmation
+2026-11-17T13:28:00.6073809Z PASS custom questions block automatic submission
+2026-11-17T13:28:00.6105569Z PASS expired requirements block automatic submission
+2026-11-17T13:28:00.6137890Z PASS EU posting never uses a global employer key
+2026-11-17T13:28:00.6303918Z PASS required marketing question needs an explicit answer
+2026-11-17T13:28:00.6322144Z PASS required storage consent still needs affirmative permission
+2026-11-17T13:28:00.6339065Z PASS single-name applicants and an explicit marketing No can prepare
+2026-11-17T13:28:00.6606715Z PASS multipart sends the exact reviewed single name and marketing false
+2026-11-17T13:28:00.6608893Z PASS emulator TLS origin requires both explicit fixture flag and test mock mode
+2026-11-17T13:28:00.6891951Z PASS isolated emulator TLS fixture remains explicitly test mode
+2026-11-17T13:28:00.6923654Z PASS invalid résumé paths and content rejected
+2026-11-17T13:28:00.6924648Z PASS private/custom URLs rejected without arbitrary fetch
+2026-11-17T13:28:00.6967809Z PASS manual jobs preserve meaningful query identity
+2026-11-17T13:28:00.7097987Z PASS LinkedIn support is explicitly advertised with a blank fresh profile
+2026-11-17T13:28:00.7099174Z PASS LinkedIn canonicalization keeps portfolio separate
+2026-11-17T13:28:00.7108232Z PASS older profile saves preserve a stored LinkedIn URL
+2026-11-17T13:28:00.7115733Z PASS invalid LinkedIn profile update is rejected before revision changes
+2026-11-17T13:28:00.7162374Z PASS old reviews cannot approve an undisplayed LinkedIn field
+2026-11-17T13:28:00.7205636Z PASS recovered LinkedIn review requires the new approval format
+2026-11-17T13:28:00.7486069Z PASS exact LinkedIn and portfolio URLs are submitted only after current explicit approval
+2026-11-17T13:28:00.7541600Z PASS removing a LinkedIn profile link invalidates the old review
+2026-11-17T13:28:00.7570951Z PASS LinkedIn job handoffs remain manual and never pretend to be submitted
+2026-11-17T13:28:00.7571545Z PASS country selection includes global regions beyond the legacy scope
+2026-11-17T13:28:00.7571907Z PASS all supported test storage is private
+2026-11-17T13:28:00.7816881Z PASS legacy global email index is removed without deleting application records
+2026-11-17T13:28:00.7817458Z PASS restart converts interrupted dispatch to uncertainty without POST
+2026-11-17T13:28:00.7949383Z PASS: 119 verified-application regression groups (real HTTP against synthetic local Lever only).
+2026-11-17T13:28:00.8809999Z ##[group]Run node website/applications/fixtures/tls-check.mjs
+2026-11-17T13:28:00.8810604Z [36;1mnode website/applications/fixtures/tls-check.mjs[0m
+2026-11-17T13:28:00.8835361Z shell: /usr/bin/bash -e {0}
+2026-11-17T13:28:00.8835683Z ##[endgroup]
+2026-11-17T13:28:01.8538451Z PASS untrusted fixture certificate is rejected without changing system trust
+2026-11-17T13:28:01.8622379Z PASS TLS does not weaken exact Host checks
+2026-11-17T13:28:01.8677415Z PASS HTTPS cannot mint anonymous browser workspaces
+2026-11-17T13:28:01.8876502Z PASS native bearer profile and actual PDF traverse trusted TLS
+2026-11-17T13:28:01.8977044Z PASS review over TLS contains the single name and explicit marketing No
+2026-11-17T13:28:01.9601230Z PASS real multipart submission returns a visibly synthetic durable receipt
+2026-11-17T13:28:01.9625510Z PASS review replay sends one provider POST and includes actual PDF bytes
+2026-11-17T13:28:02.3392734Z PASS a provider timeout preserves uncertainty without a fabricated receipt
+2026-11-17T13:28:02.3447077Z PASS a newly paired phone recovers uncertain evidence and cannot replay the POST
+2026-11-17T13:28:02.4065196Z PASS approved cooldown review is recoverable with its exact digest
+2026-11-17T13:28:03.4524204Z PASS cooldown needs a new explicit continuation and preserves one attempt
+2026-11-17T13:28:03.4531333Z PASS TLS receipt export remains labeled test and excludes PDF bytes
+2026-11-17T13:28:03.4541316Z {"result":"passed","checks":12,"transport":"HTTPS with explicit isolated CA and normal hostname validation","mode":"test","providerPosts":{"00000000-0000-4000-8000-000000000001":1,"00000000-0000-4000-8000-000000000004":1,"00000000-0000-4000-8000-000000000005":2}}
+2026-11-17T13:28:04.9881918Z Post job cleanup.
+2026-11-17T13:28:05.0967518Z Post job cleanup.
+2026-11-17T13:28:05.1672212Z [command]/usr/bin/git version
+2026-11-17T13:28:05.1706165Z git version 2.56.1
+2026-11-17T13:28:05.1735125Z Temporarily overriding HOME='/home/runner/work/_temp/d2bcdf61-7c23-49ca-9e9b-23d0ddd3edb3' before making global git config changes
+2026-11-17T13:28:05.1736461Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-17T13:28:05.1740088Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/ahmad-career/ahmad-career
+2026-11-17T13:28:05.1769581Z Removing SSH command configuration
+2026-11-17T13:28:05.1774513Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T13:28:05.1830081Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-17T13:28:05.2032500Z Removing HTTP extra header
+2026-11-17T13:28:05.2033317Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T13:28:05.2066431Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-17T13:28:05.2259188Z Removing includeIf entries pointing to credentials config files
+2026-11-17T13:28:05.2264573Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T13:28:05.2293621Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-17T13:28:05.2620785Z Cleaning up orphan processes
+

@@ -1,0 +1,563 @@
+{
+  "recordedUTC": "2026-11-17T23:47:02.415136+00:00",
+  "sourceHead": "da68bbfbdcc6429d72d1faa28b5809a554142c57",
+  "files": [
+    {
+      "path": "resume/account-arabic-retry-focus-288.png",
+      "bytes": 42783,
+      "sha256": "a0f766ce437039246aa18d54cf27567116fcfecb9066c78b5345b2697fd99c73",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/account-arabic-retry-focus-288.png"
+    },
+    {
+      "path": "resume/account-browser-acceptance-20261118.jsonl",
+      "bytes": 47451,
+      "sha256": "239e7a336f4b05190ce59bbaf45b8a3e7d9f7e89c673b0e54117a28d575c0e69",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/account-browser-acceptance-20261118.jsonl"
+    },
+    {
+      "path": "resume/account-fixture-rebuild.log",
+      "bytes": 406,
+      "sha256": "121c24058b10db7f388cc821e37bf764f0a02c7c3a9398331720563e64a07b74",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/account-fixture-rebuild.log"
+    },
+    {
+      "path": "resume/account-fixture-stop-receipt.json",
+      "bytes": 394,
+      "sha256": "9615f3a80d7aa1d7021ac811914ac1cbad2ccdaeac89630d2686b8fd35759a50",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/account-fixture-stop-receipt.json"
+    },
+    {
+      "path": "resume/browser-context-interruption-20261118T0229.json",
+      "bytes": 449,
+      "sha256": "aafdb30a2a5be93731c74c23dda3f868eaa869b0225e294c31d70b9adfd2f6d0",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-context-interruption-20261118T0229.json"
+    },
+    {
+      "path": "resume/browser-download-en-inspection.json",
+      "bytes": 955,
+      "sha256": "e99459d4b477f44a3df103505f0b0a5a1cd96a81edcfaefb46c9773e9e686715",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-download-en-inspection.json"
+    },
+    {
+      "path": "resume/download-cleanup-change.json",
+      "bytes": 1142,
+      "sha256": "75a3519bbe591165df37cc1be8f9f221ed32ff4277e601608589e9318e96d3f1",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/download-cleanup-change.json"
+    },
+    {
+      "path": "resume/download-cleanup-full-audit.log",
+      "bytes": 10250,
+      "sha256": "eadab7764de44b8eb1170f6e31eea26f4e2dddcbbcf72660ce420806bde7ce8d",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/download-cleanup-full-audit.log"
+    },
+    {
+      "path": "resume/download-cleanup-full-build.log",
+      "bytes": 23913,
+      "sha256": "048e568930e1dfedf2430b9c3411dd6812f3501e66f6f2917c30cb025860d979",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/download-cleanup-full-build.log"
+    },
+    {
+      "path": "resume/download-cleanup-full-gates.json",
+      "bytes": 3234,
+      "sha256": "4a191ca7d733fc830123aba017fec7e2b66c8a510efc5656775ed73eb8f67100",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/download-cleanup-full-gates.json"
+    },
+    {
+      "path": "resume/download-cleanup-full-lint.log",
+      "bytes": 116,
+      "sha256": "41f65688ed624a1a23a9eed37116b986a12a7b0c7770203c06cbb522a30e8973",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/download-cleanup-full-lint.log"
+    },
+    {
+      "path": "resume/download-cleanup-full-test.log",
+      "bytes": 53072,
+      "sha256": "72312dc85da74eebaa40f7c03be5f6cde761ba6a185abc0e4b47d84b9b62d1d1",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/download-cleanup-full-test.log"
+    },
+    {
+      "path": "resume/download-cleanup-full-typecheck.log",
+      "bytes": 63,
+      "sha256": "443da1dddfcff0734c532ffcd1dd9daefa801a87f310fd265557c8d92204a47b",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/download-cleanup-full-typecheck.log"
+    },
+    {
+      "path": "resume/download-cleanup-green-initial-harness-notice-receipt.json",
+      "bytes": 466,
+      "sha256": "5f4a6458d95393408f503d404e2f7bab0cbfb6feae4cf90f0ad146c6df475fe4",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/download-cleanup-green-initial-harness-notice-receipt.json"
+    },
+    {
+      "path": "resume/download-cleanup-green-initial-harness-notice.log",
+      "bytes": 4895,
+      "sha256": "55204e0e1a8050a75d4ca563562d9d00ff585946318586a79953d7494f95013d",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/download-cleanup-green-initial-harness-notice.log"
+    },
+    {
+      "path": "resume/download-cleanup-green-receipt.json",
+      "bytes": 662,
+      "sha256": "b8b1f1e4bbe6d037a76321b4670d24d02568d4f81023617d63c283e8402ef8c0",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/download-cleanup-green-receipt.json"
+    },
+    {
+      "path": "resume/download-cleanup-green.log",
+      "bytes": 3375,
+      "sha256": "8325adee0941dcaee1e337e8c8443dbb9c69070d151663c2289d7450d89ccfb4",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/download-cleanup-green.log"
+    },
+    {
+      "path": "resume/download-cleanup-handler-tests.mjs.txt",
+      "bytes": 1194,
+      "sha256": "511c42a53b57de89591dc5282f11159b1389757b7eb11b02c4b23fef778d6041",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/download-cleanup-handler-tests.mjs.txt"
+    },
+    {
+      "path": "resume/download-cleanup-independent-review.md",
+      "bytes": 6041,
+      "sha256": "b239386943586420b11578021fcf1a18ea4176fe1886923256bd026d4f931f49",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/download-cleanup-independent-review.md"
+    },
+    {
+      "path": "resume/download-cleanup-product-commit.json",
+      "bytes": 766,
+      "sha256": "ca55a8d2b92a3bf15ec4bcf63bfc36867db39c796f75af49bde123fc1aa86966",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/download-cleanup-product-commit.json"
+    },
+    {
+      "path": "resume/download-cleanup-red-initial-harness-bom-receipt.json",
+      "bytes": 524,
+      "sha256": "35b7f2e4d98c89b98ef90f5ed1be6040e14ede950e8aa1351e0fb65665971c57",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/download-cleanup-red-initial-harness-bom-receipt.json"
+    },
+    {
+      "path": "resume/download-cleanup-red-initial-harness-bom.log",
+      "bytes": 7877,
+      "sha256": "6198ecec020b93dbbdd5593c8dd7efc4c06d8a69957b6413a5efe797a8209d37",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/download-cleanup-red-initial-harness-bom.log"
+    },
+    {
+      "path": "resume/download-cleanup-red-receipt.json",
+      "bytes": 639,
+      "sha256": "c6cb0f248280a223dd102e9b8e0a27ce3fe2f6c1d0af37dc43fc696effe829d7",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/download-cleanup-red-receipt.json"
+    },
+    {
+      "path": "resume/download-cleanup-red.log",
+      "bytes": 8553,
+      "sha256": "157db9d664c78270a7d1d0851e14ccfb239fcbbb0c6a39cbc543f8b470d77f6e",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/download-cleanup-red.log"
+    },
+    {
+      "path": "resume/download-cleanup-test-plan.json",
+      "bytes": 4519,
+      "sha256": "0cc86c3988acb8eab7df44e907d4cadfe7419d2a857fe13a7877940d7f401b98",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/download-cleanup-test-plan.json"
+    },
+    {
+      "path": "resume/export-browser-observations-20261118.json",
+      "bytes": 4556,
+      "sha256": "3ddbf370b66843c16bdf30b900b6974056aa13648d9d35c08c65fd61a9235b03",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/export-browser-observations-20261118.json"
+    },
+    {
+      "path": "resume/export-browser-raw-buffer-empty.txt",
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/export-browser-raw-buffer-empty.txt"
+    },
+    {
+      "path": "resume/foreground-coordination-body.json",
+      "bytes": 3264,
+      "sha256": "da0425ba5f44df55c445e31b6f5c128f9b9a2b6a8a9b66b1bef0197550fc3bf1",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/foreground-coordination-body.json"
+    },
+    {
+      "path": "resume/foreground-coordination-receipt.json",
+      "bytes": 298,
+      "sha256": "bf6a27dce27b07f9e44c076dff657071550a3a09cfe79fc3255479c3608b6ad7",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/foreground-coordination-receipt.json"
+    },
+    {
+      "path": "resume/foreground-recovery.json",
+      "bytes": 875,
+      "sha256": "ba4e1af75d24e22377d75e80d2bc7c0abf2068708a36ed24f8c771b6572e27de",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/foreground-recovery.json"
+    },
+    {
+      "path": "resume/grok-build1-portability-result-20261118.txt",
+      "bytes": 3329,
+      "sha256": "281b682632c07fed33d394e08a7b690e65dd2682af02ba34dc2e327bb60227fa",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/grok-build1-portability-result-20261118.txt"
+    },
+    {
+      "path": "resume/grok-heavy-competitor-corrections-20261118.txt",
+      "bytes": 6910,
+      "sha256": "c5f9c6b6ae7f4d2a2d38cb41d76601ed58964662df664f214571c327efa6e55f",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/grok-heavy-competitor-corrections-20261118.txt"
+    },
+    {
+      "path": "resume/grok-second-review-responses-20261118.json",
+      "bytes": 13983,
+      "sha256": "ff4b446956098f7d44ccb46ddd3166ccd5299588a23bdc2e03843b85477d7602",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/grok-second-review-responses-20261118.json"
+    },
+    {
+      "path": "resume/grok-third-review-normalized-notes.md",
+      "bytes": 6000,
+      "sha256": "f42390726554ceaea6705859836c48fed67f7ad6c79e23b7bc00cb9038fe0951",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/grok-third-review-normalized-notes.md"
+    },
+    {
+      "path": "resume/run-download-cleanup-gates.py",
+      "bytes": 3268,
+      "sha256": "38d071d2e3767c9a9f8cdee5dc2954e95ec6f04034f6a4127299ddd7165a5297",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/run-download-cleanup-gates.py"
+    },
+    {
+      "path": "resume/search-fixture-preflight.json",
+      "bytes": 1915,
+      "sha256": "9a8837b214f4d280d9934c48bdb1babdca0937b8907b9396e5792608e1c36c75",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/search-fixture-preflight.json"
+    },
+    {
+      "path": "resume/search-fixture-rebuild.json",
+      "bytes": 734,
+      "sha256": "864edc3faba62a33dc2bf619c4a221b1d280de91d00ecb26e954fc5edeb38b08",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/search-fixture-rebuild.json"
+    },
+    {
+      "path": "resume/search-fixture-stop-receipt.json",
+      "bytes": 396,
+      "sha256": "464f6ed1bf1bff23f86a25ea42b4d136382861b3f2f88743049ee1748f9919ae",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/search-fixture-stop-receipt.json"
+    },
+    {
+      "path": "resume/verification-coordination-body.json",
+      "bytes": 3417,
+      "sha256": "e96ba28fedc77da8316e8a4bff5e1fbdc67c40080563f83417ce724a39ba66f4",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/verification-coordination-body.json"
+    },
+    {
+      "path": "resume/verification-coordination-receipt.json",
+      "bytes": 355,
+      "sha256": "c7e9d3210abb4df33b14baba1e431b5969619f9805365164bc4c7a90e9a5e0ae",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/verification-coordination-receipt.json"
+    },
+    {
+      "path": "resume/browser-downloads/downloaded-ics-ar.ics",
+      "bytes": 643,
+      "sha256": "2a6342029c671cbb203b1d330a55cb611bd1f2387e8eb3683e626ae9db50ab67",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/downloaded-ics-ar.ics"
+    },
+    {
+      "path": "resume/browser-downloads/downloaded-ics-en-changed-date.ics",
+      "bytes": 605,
+      "sha256": "70ec8f6509a80bae3b58c0f9a53c03fe2d62f73509cb74e53123470711162597",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/downloaded-ics-en-changed-date.ics"
+    },
+    {
+      "path": "resume/browser-downloads/downloaded-ics-en.ics",
+      "bytes": 605,
+      "sha256": "48c684f06ee7c2948fc43d5531ae26afb539656d639518a8b0952ac094b03ea8",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/downloaded-ics-en.ics"
+    },
+    {
+      "path": "resume/browser-downloads/ics-download-verification.json",
+      "bytes": 3886,
+      "sha256": "11ed86893c04a5f2a770639313ee484a7596e015a5b31db5a4b2cd19c3f4089f",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/ics-download-verification.json"
+    },
+    {
+      "path": "resume/browser-downloads/consumer-en-ar-20261117/README.md",
+      "bytes": 3710,
+      "sha256": "f60a4d348c377a897146e13881112423c61554af9a18334966842abd70fa1aef",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/README.md"
+    },
+    {
+      "path": "resume/browser-downloads/consumer-en-ar-20261117/inputs/actual-ui-ar.csv",
+      "bytes": 670,
+      "sha256": "f920db19636bbee85ceb9dfffd4a0045bf8946364f95f8a3a10605786c6542d8",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/inputs/actual-ui-ar.csv"
+    },
+    {
+      "path": "resume/browser-downloads/consumer-en-ar-20261117/inputs/actual-ui-en.csv",
+      "bytes": 489,
+      "sha256": "6337ab97ad63ddf64bcf6e4cf55a5b176ef1abe99890426f638ff3c17ff44e64",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/inputs/actual-ui-en.csv"
+    },
+    {
+      "path": "resume/browser-downloads/consumer-en-ar-20261117/output/actual-ui-ar.fods",
+      "bytes": 27061,
+      "sha256": "a5e4d9ec3eb95d8ef22c9e0e1be389244084a78ed18b92e50ed2d73ab408523c",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/output/actual-ui-ar.fods"
+    },
+    {
+      "path": "resume/browser-downloads/consumer-en-ar-20261117/output/actual-ui-en.fods",
+      "bytes": 26879,
+      "sha256": "3a17e32f2d270cd710ed308078251587056c0c386a1b4a4e7898982fa56d93d0",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/output/actual-ui-en.fods"
+    },
+    {
+      "path": "resume/browser-downloads/consumer-en-ar-20261117/receipts/browser-fixture-build-metadata.json",
+      "bytes": 5708,
+      "sha256": "e7afccc8ad33343dbe4863395eebc4e2bc32135a37b01269431bc6effc05493d",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/receipts/browser-fixture-build-metadata.json"
+    },
+    {
+      "path": "resume/browser-downloads/consumer-en-ar-20261117/receipts/consumer-version.txt",
+      "bytes": 63,
+      "sha256": "d76acfafe5464152cf52440ece8d46ea64e12897a3c68d191f859d626531abdb",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/receipts/consumer-version.txt"
+    },
+    {
+      "path": "resume/browser-downloads/consumer-en-ar-20261117/receipts/import.stderr.log",
+      "bytes": 446,
+      "sha256": "9835899306d9b912cefd1791953ca5daff8467a8b99678252f4ebd2e47da030d",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/receipts/import.stderr.log"
+    },
+    {
+      "path": "resume/browser-downloads/consumer-en-ar-20261117/receipts/import.stdout.log",
+      "bytes": 800,
+      "sha256": "2c10fe18d3c628e1e42461cf3ebe0bc3ffec5c655ea5d28fca3d4643c3d5a7f4",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/receipts/import.stdout.log"
+    },
+    {
+      "path": "resume/browser-downloads/consumer-en-ar-20261117/receipts/inputs.json",
+      "bytes": 3386,
+      "sha256": "8e849d4fd92a6110139ce49f29df5b2be42bf7870395e68488141e77bbebf898",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/receipts/inputs.json"
+    },
+    {
+      "path": "resume/browser-downloads/consumer-en-ar-20261117/receipts/invocation.json",
+      "bytes": 2460,
+      "sha256": "5ae8f05c86468a8e13f1787a26a72e12e493ead77efc82392067a896c1816209",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/receipts/invocation.json"
+    },
+    {
+      "path": "resume/browser-downloads/consumer-en-ar-20261117/receipts/verification.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/receipts/verification.stderr.log"
+    },
+    {
+      "path": "resume/browser-downloads/consumer-en-ar-20261117/receipts/verification.stdout.log",
+      "bytes": 1064,
+      "sha256": "fb47bc572a11d6a94321583c32201a56547b64ae4745eb52e5ccd244a8c2dda7",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/receipts/verification.stdout.log"
+    },
+    {
+      "path": "resume/browser-downloads/consumer-en-ar-20261117/ui-download-consumer-receipt.json",
+      "bytes": 9458,
+      "sha256": "c7d2e38bea02060d821984bf0e33d2e829ce1bf32e7090698291407516353696",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/ui-download-consumer-receipt.json"
+    },
+    {
+      "path": "resume/browser-downloads/consumer-en-ar-20261117/verify-ui-download-consumer.py",
+      "bytes": 5364,
+      "sha256": "ee9ee74e66230b04337bae55bb7ddcca63ba4feda5c861cbb237c685f1d06d91",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/verify-ui-download-consumer.py"
+    },
+    {
+      "path": "resume/browser-downloads/consumer-en-ar-20261117/files-for-checkpoint.json",
+      "bytes": 2270,
+      "sha256": "949a72703fffad8cea9bf38ff252ea454fc51713f02bdbe8c9a8a8fd94e63eb8",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0136/browser-downloads/consumer-en-ar-20261117/files-for-checkpoint.json"
+    },
+    {
+      "path": "browser-fixtures/account-build-metadata.json",
+      "bytes": 3183,
+      "sha256": "b646c19894ffbdac7f14ca15e79b0c4fce767a394c90619d5e97e80ae8e9b877",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/grok-browser-fixture/public/build-metadata.json"
+    },
+    {
+      "path": "browser-fixtures/export-build-metadata.json",
+      "bytes": 5708,
+      "sha256": "e7afccc8ad33343dbe4863395eebc4e2bc32135a37b01269431bc6effc05493d",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/search-browser-fixture/public/build-metadata.json"
+    },
+    {
+      "path": "export-consumer-corpus/portable-export-consumer-evidence.tar.gz",
+      "bytes": 175531,
+      "sha256": "8852debeedaacba99838f0a1dcc41391c2adee03e5d69ceba5c997f5540b295b",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-export-consumer-20261118/portable-export-consumer-evidence.tar.gz"
+    },
+    {
+      "path": "export-consumer-corpus/HANDOFF.md",
+      "bytes": 11329,
+      "sha256": "02f85d168c0de58efa2e1edfc04e8247d68412fc3533795174989bc0a5dbd1cd",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-export-consumer-20261118/HANDOFF.md"
+    },
+    {
+      "path": "export-consumer-corpus/verification.json",
+      "bytes": 37002,
+      "sha256": "6427066f75d4dff3100a60c64fb89843418948bdc500b3ed2bb0e185b6b57761",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-export-consumer-20261118/verification.json"
+    },
+    {
+      "path": "export-consumer-corpus/consumer-invocations.json",
+      "bytes": 20823,
+      "sha256": "85989b3ba595dc815c99be884f96dcafb5c32e247294e7f273e61da7abc2cf68",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-export-consumer-20261118/consumer-invocations.json"
+    },
+    {
+      "path": "export-consumer-corpus/generation-receipt.json",
+      "bytes": 8094,
+      "sha256": "e6fe6b10073077ab946a638496b476cc49aafb970a7975c06311c8289a506a0f",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-export-consumer-20261118/generation-receipt.json"
+    },
+    {
+      "path": "export-consumer-corpus/source-manifest.json",
+      "bytes": 1263,
+      "sha256": "7cc37a0099f9b61171df264f3ba4d8d829da4db2c42870516a93edf0c01ad0be",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-export-consumer-20261118/source-manifest.json"
+    },
+    {
+      "path": "export-consumer-corpus/evidence-files.json",
+      "bytes": 12871,
+      "sha256": "4ae04cc411d419188515c40dc0fc5f2f4ae555e379021d22db5560e3396386ff",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-export-consumer-20261118/evidence-files.json"
+    },
+    {
+      "path": "export-consumer-corpus/download-path-review.md",
+      "bytes": 8708,
+      "sha256": "4dff71982207f64aedcc97a3ec47408dfbd30d900e97dcaff1b7796a6d00c346",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-export-consumer-20261118/download-path-review.md"
+    },
+    {
+      "path": "export-consumer-corpus/date-input-browser-control-addendum.md",
+      "bytes": 2414,
+      "sha256": "4f1c4447f270be97a034076820c1a516b6ca7378b477b3ea201a039bc0828373",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-export-consumer-20261118/date-input-browser-control-addendum.md"
+    },
+    {
+      "path": "dependency-review/PUBLISHER-TOOLCHAIN-PROOF-REVIEW.md",
+      "bytes": 12522,
+      "sha256": "9b5a7648ed6eca568497b52ad058bc9216a433248bb487c5ad071d3b1d8c1f88",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/dependency-current-review-20261118T0136Riyadh/PUBLISHER-TOOLCHAIN-PROOF-REVIEW.md"
+    },
+    {
+      "path": "dependency-review/README.md",
+      "bytes": 11517,
+      "sha256": "37950915bea71f486845736305e38c4111b9aca9595bbfb2dc3f2f5759284dd8",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/dependency-current-review-20261118T0136Riyadh/README.md"
+    },
+    {
+      "path": "dependency-review/observations.json",
+      "bytes": 68424,
+      "sha256": "80da34c71316832c5185bf4a8793183c33980ee70e1746d14ad77c3d05d24eed",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/dependency-current-review-20261118T0136Riyadh/observations.json"
+    },
+    {
+      "path": "dependency-review/publisher-toolchain-proof-observations.json",
+      "bytes": 88683,
+      "sha256": "7fe7d78670ab31bb8c528124599e0b4b127fca9c8f2f413d283f82be423b97a5",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/dependency-current-review-20261118T0136Riyadh/publisher-toolchain-proof-observations.json"
+    },
+    {
+      "path": "native-state/CareerAppEnvironment.swift.288-source",
+      "bytes": 9289,
+      "sha256": "2087f29a079d2c129b33a31cd3e12b2cf0c2877edc03d31b05538ca104453c9f",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/native-state-followthrough-20261117T2236Z/CareerAppEnvironment.swift.288-source"
+    },
+    {
+      "path": "native-state/CareerDiscovery.swift.288-source",
+      "bytes": 34279,
+      "sha256": "1d4024853ec5099b029ed9c4304fc49970487e5f3a5cbd5bbdd60aa22c505006",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/native-state-followthrough-20261117T2236Z/CareerDiscovery.swift.288-source"
+    },
+    {
+      "path": "native-state/CareerFinderUITests.swift.288-source",
+      "bytes": 49868,
+      "sha256": "163d5698d9e291db53e161e98011fac64174233863063a36efa7ac318fdea84e",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/native-state-followthrough-20261117T2236Z/CareerFinderUITests.swift.288-source"
+    },
+    {
+      "path": "native-state/NativeDiscoveryViews.swift.288-source",
+      "bytes": 20149,
+      "sha256": "ee1464433f03d5d36d47e6af0f5f837db63c5264f6267e4608130d4b220c7754",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/native-state-followthrough-20261117T2236Z/NativeDiscoveryViews.swift.288-source"
+    },
+    {
+      "path": "native-state/README.md",
+      "bytes": 8450,
+      "sha256": "d418fd9b78682b3636f655512d239e700f996c0a26b4476acfc73de393b27bcf",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/native-state-followthrough-20261117T2236Z/README.md"
+    },
+    {
+      "path": "native-state/current-native-state.json",
+      "bytes": 72203,
+      "sha256": "9e9291a588a99ed4c6e3ecb30ceddfc8ad38ef8efed7e2789dddef4d91ab4a1f",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/native-state-followthrough-20261117T2236Z/current-native-state.json"
+    },
+    {
+      "path": "native-state/evidence-manifest.json",
+      "bytes": 2418,
+      "sha256": "7a88a5b3785a64b9fed8509a52a8defba6f872fce61065dfe235575d872f15e5",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/native-state-followthrough-20261117T2236Z/evidence-manifest.json"
+    },
+    {
+      "path": "native-state/immutable-tree-comparison.json",
+      "bytes": 9384,
+      "sha256": "7c55c221b48c72d296c6333c9a7e536580326dc27799ea1675a8caa21dff0ed5",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/native-state-followthrough-20261117T2236Z/immutable-tree-comparison.json"
+    },
+    {
+      "path": "native-state/owner-ci-followup-20261117T225803Z.json",
+      "bytes": 9540,
+      "sha256": "0dfd5710d78853f65146ff4bde23ff991893915750605bdf1c59f2dbe142735b",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/native-state-followthrough-20261117T2236Z/owner-ci-followup-20261117T225803Z.json"
+    },
+    {
+      "path": "native-state/publisher-active-lanes.json",
+      "bytes": 2483,
+      "sha256": "df40d40326d40d5cb9fdb453bcf046170559e2fb705da5bab4c8c9cbd866c2f3",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/native-state-followthrough-20261117T2236Z/publisher-active-lanes.json"
+    },
+    {
+      "path": "native-state/publisher-checkout-observation.json",
+      "bytes": 1010,
+      "sha256": "5a40a235a4865b60575a20c9f2ba43488e8162c5034eef34064d735adbf249c4",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/native-state-followthrough-20261117T2236Z/publisher-checkout-observation.json"
+    },
+    {
+      "path": "native-state/publisher-empty-state-a17999.patch",
+      "bytes": 1057,
+      "sha256": "dfa8520131780a51f0cb9bc36fd8b839efb28474bb5ddf22d10f21c82f2529d6",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/native-state-followthrough-20261117T2236Z/publisher-empty-state-a17999.patch"
+    },
+    {
+      "path": "native-state/remote-ref-readback.json",
+      "bytes": 740,
+      "sha256": "02ae66650bb1575191281ee62da87715329581b73a6bb3604eb531af0e5c2218",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/native-state-followthrough-20261117T2236Z/remote-ref-readback.json"
+    },
+    {
+      "path": "native-state/run43-android.log",
+      "bytes": 66152,
+      "sha256": "d63c66e55b297b19fd7bb83fd76648b3157f2277363e23d2ce87e4d9a3be9d3e",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/native-state-followthrough-20261117T2236Z/run43-android.log"
+    },
+    {
+      "path": "native-state/run43-hosted.log",
+      "bytes": 122213,
+      "sha256": "f4a92ea6abbe598a563be755f474b444e2fe0320c5692653975c5960c6384d84",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/native-state-followthrough-20261117T2236Z/run43-hosted.log"
+    },
+    {
+      "path": "native-state/run43-iphone-ui.log",
+      "bytes": 559962,
+      "sha256": "efac1402c3cae84052d25f971086fd146472bbae38bef4dbb4687d9184ecfe4f",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/native-state-followthrough-20261117T2236Z/run43-iphone-ui.log"
+    },
+    {
+      "path": "native-state/run44-followup-20261117T232509Z.json",
+      "bytes": 8713,
+      "sha256": "d1b0b39aaf18dd026714bc3936e6055afdbed54cf7827729373ec6c6aef78332",
+      "source": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/native-state-followthrough-20261117T2236Z/run44-followup-20261117T232509Z.json"
+    }
+  ],
+  "count": 92,
+  "bytes": 1814589,
+  "scope": "Initial evidence copy; excludes browser profiles, caches, installed dependencies and automation prompt. Native integration map/report and handoffs follow separately.",
+  "highConfidenceSecretPatternMatches": [],
+  "archiveContentsVerified": 79
+}

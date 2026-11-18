@@ -1,0 +1,13 @@
+Monitoring boot status for CareerFinder-keyboard-ebb3eed5 (51B42BE5-3356-4937-8993-5C4E22E80D8D).
+Booting device...
+[2026-11-18 13:06:06 +0000] Status=0, isTerminal=NO, Elapsed=00:00.
+	Booting
+
+[2026-11-18 13:06:07 +0000] Status=2, isTerminal=NO, Elapsed=00:01.
+	Waiting on Data Migration
+		Reason:(null)
+		Migration Elapsed:00:00 seconds
+
+[2026-11-18 13:06:08 +0000] Status=3, isTerminal=YES, Elapsed=00:02.
+	Data Migration Failed
+

@@ -87,7 +87,7 @@ test('captured batch Stop survives interruption without a duplicate or stale tar
     assert.equal(await task,f.current);assert.equal(f.calls.deferrals,1);assert.equal(f.calls.posts.length,1);assert.equal(f.batch.stopConfirmed,true);
   });
   await t.test('stale or foreign readback results cannot be returned as the captured workspace',async()=>{
-    for(const mutate of [f=>{f.state.generation++},f=>{}]){
+    for(const mutate of [f=>{f.state.generation++},()=>{}]){
       const f=fixture();f.controls.accept=async()=>{f.calls.accepts++;mutate(f);return{...f.current,workspaceId:id(99)}};await assert.rejects(stopBatchOnce(f.batch,f.current,f.controls));assert.equal(f.batch.stopConfirmed,true);assert.equal(f.calls.posts.length,1);
     }
   });

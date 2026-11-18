@@ -1,0 +1,186 @@
+{
+  "run_id": 44092957169,
+  "head_sha": "3a709eb15f1024df78ee03474f511568df2dc3de",
+  "checkout_sha": "55adcb006d1e439ea2fdfb9e12702506f60dcdb9",
+  "source_tree": "452759cff642bd4f5657584f27cec58630dbeb9f",
+  "device": "iPhone Air",
+  "os": "iOS 26.5",
+  "architecture": "arm64",
+  "environment": "Disposable GitHub-hosted runner simulator; no shared Mac build",
+  "executed": 17,
+  "passed": 14,
+  "failed": 3,
+  "unexpected_failures": 0,
+  "skipped": 0,
+  "duration_seconds": 1166.314,
+  "test_results": [
+    {
+      "test": "testAccessibilityTextKeepsCoreControlsReachable",
+      "result": "passed",
+      "duration_seconds": 170.409
+    },
+    {
+      "test": "testApplicationDraftSurvivesCancelAndRelaunch",
+      "result": "passed",
+      "duration_seconds": 42.49
+    },
+    {
+      "test": "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+      "result": "failed",
+      "duration_seconds": 88.566
+    },
+    {
+      "test": "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+      "result": "passed",
+      "duration_seconds": 70.665
+    },
+    {
+      "test": "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "result": "passed",
+      "duration_seconds": 32.587
+    },
+    {
+      "test": "testDiscoverySaveFlowsIntoSavedAndApply",
+      "result": "passed",
+      "duration_seconds": 39.62
+    },
+    {
+      "test": "testFreshStartAndFiveTabs",
+      "result": "passed",
+      "duration_seconds": 31.376
+    },
+    {
+      "test": "testLinkedInProfileDraftAndExternalSearchChoice",
+      "result": "passed",
+      "duration_seconds": 50.997
+    },
+    {
+      "test": "testOpportunityDiscardRequiresExplicitChoice",
+      "result": "passed",
+      "duration_seconds": 23.955
+    },
+    {
+      "test": "testOpportunityDraftKeepSaveAndRestore",
+      "result": "passed",
+      "duration_seconds": 59.304
+    },
+    {
+      "test": "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+      "result": "passed",
+      "duration_seconds": 135.525
+    },
+    {
+      "test": "testProfileReadinessAndSimpleConnectionSetup",
+      "result": "failed",
+      "duration_seconds": 56.972
+    },
+    {
+      "test": "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark",
+      "result": "passed",
+      "duration_seconds": 28.808
+    },
+    {
+      "test": "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+      "result": "passed",
+      "duration_seconds": 99.06
+    },
+    {
+      "test": "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+      "result": "failed",
+      "duration_seconds": 94.458
+    },
+    {
+      "test": "testSearchEmptyAndFailurePreservesPreviousResults",
+      "result": "passed",
+      "duration_seconds": 86.629
+    },
+    {
+      "test": "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+      "result": "passed",
+      "duration_seconds": 54.892
+    }
+  ],
+  "findings": [
+    {
+      "test": "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+      "source_line": 605,
+      "observed": "The persisted firstName exact assertion passed with Saved. The email query failed because only firstName at y787.7 and lastName at y882.7 existed in the unscrolled lazy Form hierarchy. The recording confirms the upper Form, with email below the visible screen.",
+      "classification": "Acceptance interaction: reveal lower lazy Form field before reading",
+      "proposed_change": "reveal(application.email) before the unchanged exact saved@example.invalid assertion",
+      "remaining": "The full Arabic persistence test and its later assertions require rerun."
+    },
+    {
+      "test": "testProfileReadinessAndSimpleConnectionSetup",
+      "source_line": 116,
+      "observed": "At recording second55 the field visibly begins https://custom.example.comservice.jazzy- with the caret between new text and old suffix; the complete field value is clipped and is not claimed from this screenshot.",
+      "expected": "https://custom.example.com",
+      "classification": "Acceptance interaction: deletes began from a caret inside existing text",
+      "proposed_change": "Use the reachable native Select All edit action, delete once, assert exact empty, then type and retain exact value assertion."
+    },
+    {
+      "test": "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+      "source_line": 116,
+      "observed": "At recording second92 the search visibly contains private-record plus residual Arabic جهة; the first query casetracker تواصل جهة had passed its exact-value assertion and matched the synthetic saved role.",
+      "expected": "private-record",
+      "classification": "Acceptance interaction: deletes began from a caret inside mixed-language text",
+      "proposed_change": "Use the same native Select All clearing interaction and preserve later URL-exclusion, normalization and original-note assertions."
+    }
+  ],
+  "followup_patch": {
+    "file": "iphone-replacement-and-lazy-form.patch",
+    "sha256": "9e6b0db587df4b44108b28f5a2b548f2e7d5f20a66c5bfc161485af9224cde6b",
+    "original_swift_sha256": "32597b3bfad17d26a7452556d9a5f27c25bc1fe7f44f6a894ad6aaa69c0a5de7",
+    "corrected_swift_sha256": "2fdbd93e86e288621e90ad0807b0d9ad95c8a202e9f8c61aa280fab7b0f39685",
+    "test_names_unchanged": true,
+    "test_methods_before": 17,
+    "test_methods_after": 17,
+    "assertion_calls_before": 139,
+    "assertion_calls_after": 141,
+    "existing_final_exact_value_assertion": "unchanged",
+    "existing_keyboard_readiness_and_all_key_dismissal_assertions": "unchanged",
+    "existing_timeouts": "unchanged",
+    "test_skips_added": 0,
+    "runtime_verification": "not yet run",
+    "independent_source_review": {
+      "result": "accepted with no blocking static finding",
+      "reviewer": "/root/final_native_peer",
+      "receipt_sha256": "0b9b940c85640575878ee2564cc59b79ca77853030938a751d699b18aac49638",
+      "receipt_location": "Parent retains the separate peer receipt; not duplicated by this lane.",
+      "runtime_qualification": "Native Select All reachability is pending CI, including the possible single-word or whole-selection omission edge. The guard fails with diagnostics rather than assuming selection."
+    }
+  },
+  "frame_evidence": [
+    {
+      "frame": "iphone-connection-55s.png",
+      "video_attachment": "02C8A63A-FF1D-407A-84E0-445DF5ACBF16.mp4",
+      "video_sha256": "ada40f551c96ba530cce282b04a36338e40955a9d870372c7f446a08d6017ef3",
+      "timestamp_seconds": 55,
+      "method": "ffmpeg -ss <seconds> -i <recording> -frames:v 1 <frame.png>",
+      "frame_sha256": "164d97c6eeb88b8658714cbb68e7b96fa22587016c25b56428027b0013df64f2",
+      "scope": "A still from the recorded simulator test, not a new run or physical device result."
+    },
+    {
+      "frame": "iphone-saved-search-92s.png",
+      "video_attachment": "C3B86475-AE7C-4851-9C89-2F6630597449.mp4",
+      "video_sha256": "dc6e79e816ac363811fa480331d28b94984c6244ff2e43f1f4352a9e4eeedcef",
+      "timestamp_seconds": 92,
+      "method": "ffmpeg -ss <seconds> -i <recording> -frames:v 1 <frame.png>",
+      "frame_sha256": "3307a252924b65213121fa82b83b26f33c6223c058d305470506706d71a795fb",
+      "scope": "A still from the recorded simulator test, not a new run or physical device result."
+    },
+    {
+      "frame": "iphone-arabic-email-84s.png",
+      "video_attachment": "7F02F0B9-D8C7-4B3A-AE9B-9C54E1E2A9B6.mp4",
+      "video_sha256": "672b4b8db3ca8e0a0f7b22d5724793837a3b6b8d4ccff3308f5e4b30cd9ab682",
+      "timestamp_seconds": 84,
+      "method": "ffmpeg -ss <seconds> -i <recording> -frames:v 1 <frame.png>",
+      "frame_sha256": "23948ce33a250d8a62393a898738196b4520a1772e28d842d2fd274bb6c17def",
+      "scope": "A still from the recorded simulator test, not a new run or physical device result."
+    }
+  ],
+  "limits": [
+    "These are simulator results, not physical-device VoiceOver or TalkBack acceptance.",
+    "No real provider consent/callback or employer application is proven by these offline tests.",
+    "Select All availability and corrected flows remain pending fresh CI; source review is not a pass."
+  ]
+}

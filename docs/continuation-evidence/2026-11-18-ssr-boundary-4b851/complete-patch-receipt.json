@@ -1,0 +1,54 @@
+{
+  "originalSSRAndPackageHashes": {
+    "hosted/tests/ssr-runtime.mjs": "4692be0181aebed8dca2d91f3530b86b94d8c5f74e385a3053e4131a1ce3e529",
+    "hosted/package.json": "77b0016647cb32b712569c6d36710fad2f710a0748fd70096542cd0acad220eb"
+  },
+  "files": {
+    "hosted/scripts/build-site.mjs": {
+      "bytes": 9781,
+      "sha256": "dac48beab0b78af431d3905ab148fa69ddb21024fa73e4587ae09265200d3e2e"
+    },
+    "hosted/scripts/public-bundle-inputs.mjs": {
+      "bytes": 465,
+      "sha256": "8ae6ce7356ff9c9cab6375041f8ea544adb0150242975908edf4c4ec6fc5a106"
+    },
+    "hosted/tests/public-bundle-inputs.mjs": {
+      "bytes": 2122,
+      "sha256": "077235ebbc8112a9a8c2cfa157c803abe7001a84ed0db92aa71935d36092f266"
+    },
+    "hosted/tests/ssr-runtime.mjs": {
+      "bytes": 14241,
+      "sha256": "751993f33837320c1989a2a527946395500df7b11c8a60c67a4b947dee8bc951"
+    },
+    "hosted/package.json": {
+      "bytes": 3441,
+      "sha256": "d89611d185e336efbbfd1a0bbb533c53178e1b7a43d468bbf2707c60e0e844df"
+    }
+  },
+  "patchSHA256": "a6e1a875128172f9f7a57bb5155b8b1a6f7fd481ed4ec8941ed6a1a04ece3b57",
+  "patchChecks": [
+    {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "/workspace/scratch/4b851318da2d/Career-Finder-SSR-Boundary-Review/public-bundle-boundary-complete.patch"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "/workspace/scratch/4b851318da2d/Career-Finder-SSR-Boundary-Review/public-bundle-boundary-complete.patch"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "appliedBytesMatchCandidate": true,
+  "runtimeTests": "Not run by this source-completion step; previous focused runtime receipts retained separately."
+}

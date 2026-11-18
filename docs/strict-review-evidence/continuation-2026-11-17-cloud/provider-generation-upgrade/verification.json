@@ -1,0 +1,76 @@
+{
+  "kind": "isolated schema-only provider-generation upgrade verification",
+  "recordedAt": "2026-11-17T10:07:07.120612+00:00",
+  "baseCommit": "eebe748cb5afca0efcb9389255400a00cf5a480a",
+  "sourcePatchSHA256": "aa48c418870cc4cdcbf63075d8e20a293697b418f64ce7b8cd296628773f88ed",
+  "sourceSHA256": {
+    "hosted/server/oauth.mjs": "00944a1b4bb8288ac7a2c4d1410c885ced2652f9d0aa0b1fe3e4ff01a95dcf83",
+    "hosted/drizzle/0004_provider_connection_generation.sql": "5e2d86cb79b44e8101f743836a7a7ec58b901b87b96a79159bf30bcbf77f9439",
+    "hosted/tests/hosted-auth.mjs": "437acddd2f081b7db0e135a53818e87c1fb57dd09ff8835cdb450dc58673ea7e",
+    "hosted/tests/hosted-auth-worker.mjs": "8bd4e26c20b4c1b03cec88575eac4e8d42e0fdf82c4bb847b91d448aeafc4d9f"
+  },
+  "baselineOAuthSHA256": "13330a48abe895d406025723bafc7ae4debaa02dbb10bde6b1ebeee66a10abff",
+  "commands": [
+    {
+      "command": "node tests/hosted-auth.mjs",
+      "exitCode": 0,
+      "passedGroups": 55,
+      "log": "auth-after.log"
+    },
+    {
+      "command": "node tests/hosted-auth-worker.mjs",
+      "exitCode": 0,
+      "actualWorkerdAuthRequests": 30,
+      "syntheticProviderRequests": 12,
+      "realProviderRequests": 0,
+      "realEmployerRequests": 0,
+      "log": "workerd.json"
+    },
+    {
+      "command": "./node_modules/.bin/eslint server/oauth.mjs tests/hosted-auth.mjs tests/hosted-auth-worker.mjs",
+      "exitCode": 0,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    {
+      "command": "git apply --check --reverse /workspace/scratch/5bc6158967e8/auth-generation-schema-only.patch",
+      "exitCode": 0
+    }
+  ],
+  "failBefore": [
+    {
+      "log": "legacy-before.log",
+      "expectedFailure": "Legacy status returned no valid connectionId before runtime initialization existed"
+    },
+    {
+      "log": "status-before.log",
+      "expectedFailure": "Provider session revoked after initial identity read still returned 200; expected explicit409; not a cross-account exploit proof"
+    }
+  ],
+  "independentReview": {
+    "receipt": "peer-review.json",
+    "passedGroups": 8,
+    "externalRequests": 0
+  },
+  "migrationStateAuthorization": "Integration owner explicitly confirmed 0004 never attempted on live or QA; live v7 unchanged and QA unpublished before this repair. This lane did not access hosted databases.",
+  "schemaChange": "Same constant-default column and insert trigger; removed standalone whole-table data UPDATE; schema snapshot/journal unchanged.",
+  "runtimeBound": "Only authenticated current-owner supported rows; unique(owner_id,provider), two providers, LIMIT2, at most two captured empty-ID updates per guarded atomic status batch.",
+  "limits": [
+    "No Sites publication/hosted-migration acceptance result in this lane.",
+    "No real provider consent, employer submissions, user accounts or external network calls.",
+    "No physical device, browser, signing/store or release readiness claim.",
+    "Deterministic races are not exhaustive concurrency proof; source status response regression is not a demonstrated cross-account exploit.",
+    "Combined-candidate full suite/build/remote CI remains the integration owner gate."
+  ],
+  "evidenceSHA256": {
+    "auth-after.log": "37dd7a6733d28481355b8eb64c05bd21a0e6dd507e07a26372675539c6f50e3b",
+    "legacy-before.log": "6c81f5a5bf0e8e6b97ae842d0b48e07db3859794dbdc76ff5732c653dbe880b4",
+    "peer-review.json": "0bc940cfa2ef3eb3c451afe03103274a3b29ee923c3545eb7519f4c875d2bde2",
+    "status-before.log": "9a7c456f6d02bd4aa2e2b5cb8e9b71df3dde3a2aaf2b9501f734a38788b928fb",
+    "workerd.json": "9ec5be0614109835633c343dd297918ea9778b35e3c7e780412346608a785c33"
+  }
+}

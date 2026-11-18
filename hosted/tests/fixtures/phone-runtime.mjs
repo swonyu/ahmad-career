@@ -32,7 +32,7 @@ async function fixtureFetch(address,options={}){
   return Response.json({ok:true,applicationId:'synthetic-phone-'+id});
 }
 const handle=createHostedApplicationHandler({clock:()=>time,adapterFactory:env=>({...makeAdapter(env,{fetchImpl:fixtureFetch}),mode:'test'})});
-export default {
+const phoneRuntime = {
   async fetch(request,env,ctx){
     const url=new URL(request.url);
     if(url.pathname==='/__fixture/state')return Response.json({posts,providerGets,storageReads,storageWrites});
@@ -57,3 +57,4 @@ export default {
     return await handle(adapted,bindings,ctx)??Response.json({error:'fixture-route-not-found'},{status:404});
   },
 };
+export default phoneRuntime;

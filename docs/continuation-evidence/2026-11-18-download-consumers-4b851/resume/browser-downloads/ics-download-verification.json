@@ -1,0 +1,89 @@
+{
+  "capturedUTC": "2026-11-17T23:28:15.973488+00:00",
+  "sourceCommit": "2884188263f3dad5753da7b2e507f6ba55e30eb0",
+  "phoneAppSHA256": "cea98d8442f0dcb43cee2b1e3d5d5a2814a89130b7c18793ee50f4a8366d5368",
+  "actualBrowserDownloads": true,
+  "sameDateUidAcrossLanguages": true,
+  "changedDateHasDifferentUid": true,
+  "CalendarImported": false,
+  "files": [
+    {
+      "source": "/Users/saleh/Downloads/Career-Finder-follow-up.ics",
+      "copy": "downloaded-ics-ar.ics",
+      "bytes": 643,
+      "sha256": "2a6342029c671cbb203b1d330a55cb611bd1f2387e8eb3683e626ae9db50ab67",
+      "modifiedUTC": "2026-11-17T23:24:47.716438+00:00",
+      "fields": {
+        "BEGIN": "VEVENT",
+        "VERSION": "2.0",
+        "PRODID": "-//Career Finder//Follow-up reminder//EN",
+        "CALSCALE": "GREGORIAN",
+        "UID": "career-finder-follow-up-ca7a8498a84278f4f1b8b0ab8046b95983bb17b6656a2d05d72132ec530b9a78",
+        "DTSTAMP": "20261117T232447Z",
+        "DTSTART;VALUE=DATE": "20261124",
+        "DURATION": "P1D",
+        "SUMMARY": "المتابعة: مُهندس\\, \"أول\" 🧭 · Synthetic employer / جهة تجريبية",
+        "DESCRIPTION": "تذكير شخصي بالمتابعة. راجع إعلان جهة العمل الحالي قبل التواصل معها.",
+        "URL": "https://example.org/career-finder-ui-export-20261117",
+        "CLASS": "PRIVATE",
+        "TRANSP": "TRANSPARENT",
+        "END": "VCALENDAR"
+      },
+      "maxPhysicalLineOctets": 75,
+      "privateNoteAbsent": true,
+      "singleEvent": true
+    },
+    {
+      "source": "/Users/saleh/Downloads/Career-Finder-follow-up (1).ics",
+      "copy": "downloaded-ics-en.ics",
+      "bytes": 605,
+      "sha256": "48c684f06ee7c2948fc43d5531ae26afb539656d639518a8b0952ac094b03ea8",
+      "modifiedUTC": "2026-11-17T23:25:11.753261+00:00",
+      "fields": {
+        "BEGIN": "VEVENT",
+        "VERSION": "2.0",
+        "PRODID": "-//Career Finder//Follow-up reminder//EN",
+        "CALSCALE": "GREGORIAN",
+        "UID": "career-finder-follow-up-ca7a8498a84278f4f1b8b0ab8046b95983bb17b6656a2d05d72132ec530b9a78",
+        "DTSTAMP": "20261117T232511Z",
+        "DTSTART;VALUE=DATE": "20261124",
+        "DURATION": "P1D",
+        "SUMMARY": "Follow up: مُهندس\\, \"أول\" 🧭 · Synthetic employer / جهة تجريبية",
+        "DESCRIPTION": "Personal follow-up reminder. Check the employer’s current posting before contacting them.",
+        "URL": "https://example.org/career-finder-ui-export-20261117",
+        "CLASS": "PRIVATE",
+        "TRANSP": "TRANSPARENT",
+        "END": "VCALENDAR"
+      },
+      "maxPhysicalLineOctets": 75,
+      "privateNoteAbsent": true,
+      "singleEvent": true
+    },
+    {
+      "source": "/Users/saleh/Downloads/Career-Finder-follow-up (2).ics",
+      "copy": "downloaded-ics-en-changed-date.ics",
+      "bytes": 605,
+      "sha256": "70ec8f6509a80bae3b58c0f9a53c03fe2d62f73509cb74e53123470711162597",
+      "modifiedUTC": "2026-11-17T23:25:56.942118+00:00",
+      "fields": {
+        "BEGIN": "VEVENT",
+        "VERSION": "2.0",
+        "PRODID": "-//Career Finder//Follow-up reminder//EN",
+        "CALSCALE": "GREGORIAN",
+        "UID": "career-finder-follow-up-57c04c0fd8983ef6f5e34dd9cb11b186900b44137a603db9b292c858eb474b9c",
+        "DTSTAMP": "20261117T232556Z",
+        "DTSTART;VALUE=DATE": "20261125",
+        "DURATION": "P1D",
+        "SUMMARY": "Follow up: مُهندس\\, \"أول\" 🧭 · Synthetic employer / جهة تجريبية",
+        "DESCRIPTION": "Personal follow-up reminder. Check the employer’s current posting before contacting them.",
+        "URL": "https://example.org/career-finder-ui-export-20261117",
+        "CLASS": "PRIVATE",
+        "TRANSP": "TRANSPARENT",
+        "END": "VCALENDAR"
+      },
+      "maxPhysicalLineOctets": 75,
+      "privateNoteAbsent": true,
+      "singleEvent": true
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "observed_at_utc": "2026-11-17T13:33:43Z",
+  "purpose": "Source checkpoint for two diagnosed CI failures; full successor verification remains pending.",
+  "tested_parent": "5b1493f8584a2d430103bd8a5cf395d53ec111fb",
+  "parent_run": "https://github.com/swonyu/ahmad-career/actions/runs/44090269239",
+  "parent_run_snapshot": {
+    "iphone_logic_and_unsigned_build": "passed",
+    "service_and_synthetic_https": "passed",
+    "iphone_native_interface": "in progress at observation time",
+    "hosted": "failed: 163 test results passed; teardown failed with ENOTEMPTY while later asynchronous fixtures were still being built",
+    "android": "compile and lint passed; ordinary instrumentation passed 104 of 105 methods; PhoneAcceptanceTest.phoneProfile_survivesActivityRecreation_withoutAnyService failed after an unrevealed horizontal Profile tab action",
+    "android_tls_phases": "not reached in this run"
+  },
+  "changes": [
+    "Complete all three asynchronous i18n builds and imports before registering the existing tests and cleanup hook; preserve cleanup and rethrow if preparation fails.",
+    "Reveal the real horizontal tab ancestor before the existing Apply, Receipts and two Profile tap actions, using the unchanged shared revealNavigationTab helper."
+  ],
+  "local_verification": {
+    "hosted_node_regression_group": "163 passed; 0 failed, cancelled or skipped across the existing 13 test files",
+    "hosted_log_sha256": "c20491c6e2205064d0602dbb2d58adc3b602ae5652550a9d25c79745f5d7b060",
+    "hosted_package_lock_sha256": "2512e3bd6aebfc4377bbe036d3cf606c27e33613b35c8c58d28f0f3a0d596c99",
+    "i18n_preservation": "All 7 test registrations and all 32 lines containing assertions are unchanged.",
+    "android_preservation": "Removing only the four revealNavigationTab calls restores PhoneAcceptanceTest.kt byte for byte to the parent. All original assertions, tap actions and timeout values remain.",
+    "retained_native_inventory": "105 ordinary Android methods, 2 separately scheduled TLS methods and 17 iPhone UI methods"
+  },
+  "successor_full_workflow": "not run at checkpoint creation",
+  "successor_native_retest": "pending",
+  "release_evidence": "This source checkpoint does not establish a signed upload, App Store review or public release."
+}

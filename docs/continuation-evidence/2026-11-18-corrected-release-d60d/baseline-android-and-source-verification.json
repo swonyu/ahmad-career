@@ -1,0 +1,111 @@
+{
+  "checkedUTC": "2026-11-18T08:12:49.628140+00:00",
+  "runId": 44262971576,
+  "runHead": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2",
+  "actualCheckout": "9325832a180104c13738e7836bfb4cb2e3c80c8f",
+  "androidInstrumentation": [
+    {
+      "label": "ordinary-phone",
+      "expectedTests": 114,
+      "started": 114,
+      "passed": 114,
+      "uniqueCompleted": 114,
+      "otherStatusCodes": {},
+      "classCounts": {
+        "com.saleh.careerfinder.ApplicationRecordRegressionTest": 18,
+        "com.saleh.careerfinder.ContinuationRegressionTest": 7,
+        "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest": 11,
+        "com.saleh.careerfinder.DiscoveryRegressionTest": 12,
+        "com.saleh.careerfinder.ExperienceModelRegressionTest": 2,
+        "com.saleh.careerfinder.LinkedInPhoneAcceptanceTest": 2,
+        "com.saleh.careerfinder.LinkedInRegressionTest": 9,
+        "com.saleh.careerfinder.NativeLocalizationAcceptanceTest": 6,
+        "com.saleh.careerfinder.NavigationPhoneAcceptanceTest": 5,
+        "com.saleh.careerfinder.PhoneAcceptanceTest": 2,
+        "com.saleh.careerfinder.PhonePolishAcceptanceTest": 4,
+        "com.saleh.careerfinder.SavedSearchRegressionTest": 2,
+        "com.saleh.careerfinder.VaultAcceptanceTest": 5,
+        "com.saleh.careerfinder.WorkspaceAccessibilityRegressionTest": 1,
+        "com.saleh.careerfinder.WorkspaceRegressionTest": 17,
+        "com.saleh.careerfinder.WorkspaceSafetyRegressionTest": 11
+      },
+      "declaredClassesMatchActual": true,
+      "allStartedCompletedOnce": true,
+      "finalInstrumentationCodes": [
+        "-1"
+      ],
+      "logSHA256": "9a506b5f1743916309cc13d5466f6381ffd5df469e9416fd984c35ab5fb22597"
+    },
+    {
+      "label": "normal-preview-tls-boundary",
+      "expectedTests": 1,
+      "started": 1,
+      "passed": 1,
+      "uniqueCompleted": 1,
+      "otherStatusCodes": {},
+      "classCounts": {
+        "com.saleh.careerfinder.TlsBoundaryAcceptanceTest": 1
+      },
+      "declaredClassesMatchActual": true,
+      "allStartedCompletedOnce": true,
+      "finalInstrumentationCodes": [
+        "-1"
+      ],
+      "logSHA256": "3ee0b5c485b078ea419aa5632cb97f4f4b9173d9c725a0fa5fe96f11203b33ad"
+    },
+    {
+      "label": "native-https-phone",
+      "expectedTests": 1,
+      "started": 1,
+      "passed": 1,
+      "uniqueCompleted": 1,
+      "otherStatusCodes": {
+        "2": 138
+      },
+      "classCounts": {
+        "com.saleh.careerfinder.NativeHttpsAcceptanceTest": 1
+      },
+      "declaredClassesMatchActual": true,
+      "allStartedCompletedOnce": true,
+      "finalInstrumentationCodes": [
+        "-1"
+      ],
+      "logSHA256": "cf2c64aae07227b464799ce3d74edbc76c9145d8efb898615df25cc166287c69"
+    }
+  ],
+  "screenshots": {
+    "count": 20,
+    "unavailable": [],
+    "allHashesMatch": true
+  },
+  "lintIssueCounts": {
+    "Warning": 20
+  },
+  "mergeTreeEqualsHeadTree": true,
+  "testedTree": "16510c0751b3036b7dc434c8c08bfdc79edf1d3b",
+  "androidSourceClassTestCounts": {
+    "com.saleh.careerfinder.ApplicationRecordRegressionTest": 18,
+    "com.saleh.careerfinder.ContinuationRegressionTest": 7,
+    "com.saleh.careerfinder.DiscoveryPersistenceRegressionTest": 11,
+    "com.saleh.careerfinder.DiscoveryRegressionTest": 12,
+    "com.saleh.careerfinder.ExperienceModelRegressionTest": 2,
+    "com.saleh.careerfinder.LinkedInPhoneAcceptanceTest": 2,
+    "com.saleh.careerfinder.LinkedInRegressionTest": 9,
+    "com.saleh.careerfinder.TlsBoundaryAcceptanceTest": 1,
+    "com.saleh.careerfinder.NativeHttpsAcceptanceTest": 1,
+    "com.saleh.careerfinder.NativeLocalizationAcceptanceTest": 6,
+    "com.saleh.careerfinder.NavigationPhoneAcceptanceTest": 5,
+    "com.saleh.careerfinder.PhoneAcceptanceTest": 2,
+    "com.saleh.careerfinder.PhonePolishAcceptanceTest": 4,
+    "com.saleh.careerfinder.SavedSearchRegressionTest": 2,
+    "com.saleh.careerfinder.VaultAcceptanceTest": 5,
+    "com.saleh.careerfinder.WorkspaceAccessibilityRegressionTest": 1,
+    "com.saleh.careerfinder.WorkspaceRegressionTest": 17,
+    "com.saleh.careerfinder.WorkspaceSafetyRegressionTest": 11
+  },
+  "sourceClassesEqualActualClasses": true,
+  "sourceDefinedTestCount": 116,
+  "actualCompletedTestCount": 116,
+  "noFailureOrSkipStatusCodes": true,
+  "progressStreamNote": "Native HTTPS instrumentation emits138 code2 stream-only progress bundles with no class/test identity. They are not tests, failures or skips;116 source-defined tests each start and complete once."
+}

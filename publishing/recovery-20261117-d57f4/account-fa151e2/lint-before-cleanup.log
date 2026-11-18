@@ -1,0 +1,25 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> career-finder-phone-service@0.6.0 lint
+> eslint . --ignore-pattern dist --ignore-pattern .next --max-warnings=0
+
+
+/workspace/scratch/d57f4cd77813/career/hosted/public/theme-init.js
+  7:12  warning  '_' is defined but never used  @typescript-eslint/no-unused-vars
+
+/workspace/scratch/d57f4cd77813/career/hosted/tests/build-pdf-browser.mjs
+   97:413  warning  'bytes' is defined but never used  @typescript-eslint/no-unused-vars
+  105:89   warning  'bytes' is defined but never used  @typescript-eslint/no-unused-vars
+
+/workspace/scratch/d57f4cd77813/career/hosted/tests/fixtures/phone-runtime.mjs
+  35:1  warning  Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+
+/workspace/scratch/d57f4cd77813/career/hosted/tests/phone-batch-stop.mjs
+  90:52  warning  'f' is defined but never used  @typescript-eslint/no-unused-vars
+
+/workspace/scratch/d57f4cd77813/career/hosted/tests/web-experience.mjs
+  5:14  warning  'resolve' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 6 problems (0 errors, 6 warnings)
+
+ESLint found too many warnings (maximum: 0).

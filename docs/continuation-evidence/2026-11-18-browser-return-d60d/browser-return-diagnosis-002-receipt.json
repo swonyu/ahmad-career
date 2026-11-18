@@ -1,0 +1,39 @@
+{
+  "started": "2026-11-18T08:55:18.095658+00:00",
+  "parent": "d8d2e999d0348eb07942472a1d9e87d2fc4498a2",
+  "simulator": "3E94E3AA-C0A4-4A71-A282-03F1214A2003",
+  "runtime": "iOS26.5",
+  "device": "iPhone Air",
+  "scope": "two failed journeys only; not release gate",
+  "sources": {
+    "apple/UITests/CareerFinderUITests.swift": "1e88437c898d00380d84019ff660562624a4bacdbefc5f73b2797394afd4da7a",
+    "apple/AhmadCareer/NativeApplicationsViews.swift": "8e50e72530504221c27c04fde233dce2271f596777eda274a3b4744268691eaf"
+  },
+  "command": [
+    "xcodebuild",
+    "-project",
+    "apple/AhmadCareer.xcodeproj",
+    "-scheme",
+    "CareerFinderAcceptance",
+    "-configuration",
+    "Debug",
+    "-destination",
+    "platform=iOS Simulator,id=3E94E3AA-C0A4-4A71-A282-03F1214A2003,arch=arm64",
+    "-derivedDataPath",
+    "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-001/derived",
+    "-resultBundlePath",
+    "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/browser-return-diagnosis-002/CareerFinderUI.xcresult",
+    "-parallel-testing-enabled",
+    "NO",
+    "-maximum-concurrent-test-simulator-destinations",
+    "1",
+    "ONLY_ACTIVE_ARCH=YES",
+    "CODE_SIGNING_ALLOWED=NO",
+    "CODE_SIGNING_REQUIRED=NO",
+    "-only-testing:CareerFinderUITests/CareerFinderUITests/testProfileReadinessAndSimpleConnectionSetup",
+    "-only-testing:CareerFinderUITests/CareerFinderUITests/testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+    "test"
+  ],
+  "exit": 65,
+  "finished": "2026-11-18T08:58:19.426862+00:00"
+}

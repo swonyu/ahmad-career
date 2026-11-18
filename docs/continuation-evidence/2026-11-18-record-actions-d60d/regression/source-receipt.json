@@ -1,0 +1,25 @@
+{
+  "createdUTC": "2026-11-18T06:30:40.256481+00:00",
+  "base": "ac6a0b8651c8f5348f7976ee8a84d8a10890a082 plus root action wrapper candidate",
+  "sourceRepository": "/Users/saleh/Developer/career-finder-feed-continuation-20261117-4b851318da2d",
+  "sourceHashes": {
+    "hosted/app/phone/PhoneApp.tsx": "0deaf9a6a9423ba5753cef6e0e2acfc670a161c423bd0a6d2db105803d7fc1b0",
+    "hosted/app/phone/components.tsx": "c18753ee7c8b342831864cecc2694708f09fee6019a76c530b2c2ae743446424",
+    "hosted/app/phone/model.ts": "955d5afcede6b8f7eb901394f9ae3e00d1bbffa57bf1e457c5436f23541577bf",
+    "hosted/app/phone/vault.ts": "1c45092458fe9f56ee84925091342f3c5f920800409965a7a99ab32b07138c95",
+    "hosted/app/phone/safety.ts": "8571c8e0f1625e50fd2d1749ab7cd10aca57f8b24c16107e6179437154eb4c4f",
+    "hosted/tests/phone-recovery-isolation.mjs": "671f0cc26fa35a8df399a85332902b1226b537115fd7321a40c1a04c6ddc9c4b"
+  },
+  "candidateHashes": {
+    "hosted/app/phone/PhoneApp.tsx": "fb4b548459f38b42848df3c29ffef9b07d2448b49833a69bcaa04f02c4075ee4",
+    "hosted/app/phone/components.tsx": "c18753ee7c8b342831864cecc2694708f09fee6019a76c530b2c2ae743446424",
+    "hosted/app/phone/model.ts": "955d5afcede6b8f7eb901394f9ae3e00d1bbffa57bf1e457c5436f23541577bf",
+    "hosted/app/phone/vault.ts": "1c45092458fe9f56ee84925091342f3c5f920800409965a7a99ab32b07138c95",
+    "hosted/app/phone/safety.ts": "8571c8e0f1625e50fd2d1749ab7cd10aca57f8b24c16107e6179437154eb4c4f",
+    "hosted/tests/phone-recovery-isolation.mjs": "e66f9e302499772bdb7e1e1b0793da64f5b809c59f5c7706ba01c62f38eb1229"
+  },
+  "patchSHA256": "bcf80c3d64943daa5ab4dd8d6bca867330c785c7a80d875e7c15cf5d1f55d00c",
+  "patchBytes": 20790,
+  "scope": "Copied source and existing host harness only; no original worktree edits, package changes, app/native builds, CI or push.",
+  "harnessCorrection": "Initial error-path assertion omitted production z in its VM context. Both baseline and candidate harness copies now receive the same production z export. Initial run preserved under initial-harness; production candidate unchanged."
+}

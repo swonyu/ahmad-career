@@ -1,0 +1,47 @@
+{
+  "observedAt": "2026-11-17T15:43:13.424276+00:00",
+  "recoveryHead": "56784d740a25d07d2fbd4616f57e55cf0cb4453f",
+  "recoveryCommit": {
+    "sha": "56784d740a25d07d2fbd4616f57e55cf0cb4453f",
+    "message": "Integrate sealed account repairs and preserve truthful search drafts",
+    "tree": {
+      "sha": "6bcbd5f218cb4785407892130fee9e9688b768d5",
+      "url": "https://api.github.com/repos/swonyu/ahmad-career/git/trees/6bcbd5f218cb4785407892130fee9e9688b768d5"
+    },
+    "parents": [
+      {
+        "sha": "f47e4280f0e3b341979708acf244d5aa070ba690",
+        "url": "https://api.github.com/repos/swonyu/ahmad-career/git/commits/f47e4280f0e3b341979708acf244d5aa070ba690",
+        "html_url": "https://github.com/swonyu/ahmad-career/commit/f47e4280f0e3b341979708acf244d5aa070ba690"
+      },
+      {
+        "sha": "fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+        "url": "https://api.github.com/repos/swonyu/ahmad-career/git/commits/fa151e219ad4e8d9f0d3337eec10a60ed5223d47",
+        "html_url": "https://github.com/swonyu/ahmad-career/commit/fa151e219ad4e8d9f0d3337eec10a60ed5223d47"
+      }
+    ]
+  },
+  "compare": {
+    "status": "ahead",
+    "ahead_by": 29,
+    "behind_by": 0,
+    "total_commits": 29,
+    "fileListOmitted": true
+  },
+  "workflowRuns": [
+    {
+      "id": 44114195156,
+      "head_sha": "56784d740a25d07d2fbd4616f57e55cf0cb4453f",
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-11-17T15:25:38Z",
+      "updated_at": "2026-11-17T15:25:45Z",
+      "html_url": "https://github.com/swonyu/ahmad-career/actions/runs/44114195156"
+    }
+  ],
+  "limits": [
+    "Read-only metadata observation. A merge parent proves ancestry, not source-review completion or acceptance.",
+    "The fa151e2/842472 object-only conflict preview remains historical to those exact two objects; this later recovery candidate already includes fa151e2 as a merge parent.",
+    "No recovery-branch edits, merge, build or dispatch were performed by this development lane. Its running workflow belongs to that recovery lane."
+  ]
+}

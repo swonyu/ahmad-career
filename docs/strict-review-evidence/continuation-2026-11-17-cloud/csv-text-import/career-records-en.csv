@@ -1,0 +1,7 @@
+﻿"Job title","Employer","Job link","Stage (self-entered)","Marked applied (self-entered)","Applied date (self-entered)","Follow-up date (self-entered)","Private note","Last edited (not application time)"
+"000123","000123","https://example.org/career-finder-csv/0","Saved","No","","2026-11-21","000123","2026-11-17T14:00:00.000Z"
+"123456789012345678901","123456789012345678901","https://example.org/career-finder-csv/1","Interview","Yes","2026-11-17","2026-11-21","123456789012345678901","2026-11-17T14:00:00.000Z"
+"1E10","1E10","https://example.org/career-finder-csv/2","Saved","No","","2026-11-21","1E10","2026-11-17T14:00:00.000Z"
+"2026-11-17","2026-11-17","https://example.org/career-finder-csv/3","Interview","Yes","2026-11-17","2026-11-21","2026-11-17","2026-11-17T14:00:00.000Z"
+"مختلط / Mixed 00123","مختلط / Mixed 00123","https://example.org/career-finder-csv/4","Saved","No","","2026-11-21","مختلط / Mixed 00123","2026-11-17T14:00:00.000Z"
+"Text: =1+1","Text: =1+1","https://example.org/career-finder-csv/5","Interview","Yes","2026-11-17","2026-11-21","Text: =1+1","2026-11-17T14:00:00.000Z"

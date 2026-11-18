@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; worker-src 'self'; style-src 'self'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<title>Career Finder · Synthetic PDF acceptance</title></head>
+<body><main><p class="eyebrow">ISOLATED BROWSER ACCEPTANCE · SYNTHETIC DATA</p><h1>Check a PDF safely</h1>
+<p>This fixture uses the current Career Finder PDF client, real module worker, bounded parser, and extracted <code>PhoneApp.readPDF</code> handler. It does not read or write account data, cookies, or saved browser storage, and makes no API or employer requests. Reloading resets all state.</p>
+<section class="card" aria-labelledby="picker-heading"><h2 id="picker-heading">Choose a synthetic PDF</h2>
+<label for="mode">Check mode</label><select id="mode"><option value="normal">Normal validation</option><option value="cancel">Cancel after real worker receives bytes</option><option value="account-change">Change synthetic account after validation</option></select>
+<p class="hint">Cancellation aborts immediately after the real worker receives its payload. Account-change mode invalidates the synthetic owner after the real parser succeeds, before the actual selection handler can replace the previous CV.</p>
+<label for="pdf-file">Choose PDF fixture</label><input id="pdf-file" type="file" accept=".pdf,application/pdf">
+<div class="actions"><button id="cancel" type="button" disabled>Cancel active PDF check</button><button id="reset" type="button">Restore synthetic prior CV</button></div>
+<p id="status" role="status" aria-live="polite">Starting isolated fixture…</p><p id="notice" class="notice" role="alert"></p></section>
+<section class="card"><h2>Current synthetic CV</h2><dl><dt>Name</dt><dd id="cv-name"></dd><dt>SHA-256</dt><dd id="cv-sha"></dd><dt>Previous CV preserved in last check?</dt><dd id="preserved">No check yet</dd><dt>Unsaved profile changed?</dt><dd id="form-changed">No</dd><dt>Real workers started / terminated</dt><dd id="workers">0 / 0</dd></dl></section>
+<section class="card"><h2>Evidence</h2><p>These are observable fixture events and source hashes, not real-account or physical-device acceptance.</p><pre id="evidence"></pre></section>
+</main><script type="module" src="/App.ts"></script></body></html>

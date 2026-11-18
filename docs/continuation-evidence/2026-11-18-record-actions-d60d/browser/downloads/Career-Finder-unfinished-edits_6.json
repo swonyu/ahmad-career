@@ -1,0 +1,47 @@
+{
+  "format": "Career Finder unfinished edits",
+  "version": 1,
+  "scope": "guest",
+  "exportedAt": "2026-11-18T06:43:31.116Z",
+  "drafts": [
+    {
+      "id": "7f6e190a-99b8-4621-bc7d-ede7fa7a3895",
+      "savedAt": "2026-11-18T06:43:31.116Z",
+      "record": {
+        "job": {
+          "id": "job-10",
+          "title": "Nurse clinic",
+          "company": "Synthetic Employer",
+          "url": "https://employer.example/jobs/10",
+          "location": "الرياض",
+          "country": "SA"
+        },
+        "original": {
+          "identity": "https://employer.example/jobs/10",
+          "title": "Nurse clinic",
+          "company": "Synthetic Employer",
+          "location": "الرياض",
+          "stage": "interview",
+          "appliedElsewhere": true,
+          "appliedDate": "",
+          "followUpDate": "",
+          "note": "note interview 1",
+          "updatedAt": "2026-11-17T18:00:00.000Z"
+        },
+        "draft": {
+          "identity": "https://employer.example/jobs/10",
+          "title": "Nurse clinic",
+          "company": "Synthetic Employer",
+          "location": "الرياض",
+          "stage": "offer",
+          "appliedElsewhere": true,
+          "appliedDate": "",
+          "followUpDate": "",
+          "note": "FINAL_EXPORT_EN_390\nمرحبا، \"export\"",
+          "updatedAt": "2026-11-17T18:00:00.000Z"
+        },
+        "existed": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "observedAt": "2026-11-18T07:49:54.236960+00:00",
+  "base": "4f72947dbda76ca5176fa42645337c6c739e6a2a",
+  "baselineMatchesBase": true,
+  "sameAssertions": true,
+  "baselineCompileExit": 0,
+  "baselineRunExit": 1,
+  "candidateCompileExit": 0,
+  "candidateRunExit": 0,
+  "candidateAssertions": 167,
+  "candidateScenarios": 32,
+  "candidateSourceSHA256": "f9b3b60faaf0d0b5f1a2b69369e826c4c6b2b8e6b96ea0916e3ccd71bcdc813e",
+  "candidateHarnessSHA256": "0146fe063a9fef9fb3e733e1f5ac16f84bedfd6fda104c38e4443c96effd2adb",
+  "currentWorktreeMatchesTestedCopies": true,
+  "scope": "Host Swift DiscoveryCheck against actual store and service stub; no iOS application build, simulator/device, browser, Gradle or CI."
+}

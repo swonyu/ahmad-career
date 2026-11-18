@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "recordedUTC": "2026-11-18T13:47:38.917533+00:00",
+  "rootProductCommit": "8f79a0c4a610ff66ab1f894d2901aa33fc130f27",
+  "equivalentCompiledAuthorCommit": "87c3849bba6e1f03914a7a16943cd50a9b4f6f49",
+  "equivalentWholeTree": "26d7678aabebe2654d000c7cf857c410f968538b",
+  "hostedTree": "572b2383bcae4f01371ef5238085f969f8bed09e",
+  "appleTree": "d84317b2553e6d61ad5996d160f82fdd0b868cf9",
+  "androidTree": "d12086f997f50a9d6f14395e1374ff7e56bccc6f",
+  "warningFixCommits": [
+    "00d4bdc",
+    "8f79a0c"
+  ],
+  "localNativeCompile": {
+    "status": "passed",
+    "compilerErrors": 0,
+    "xcresultWarnings": 0,
+    "analyzerWarnings": 0,
+    "nativeMethodsRun": 0,
+    "genericSimulatorOnly": true,
+    "rawLogNotes": "Two AppIntents metadata extraction skipped notices remain because neither target uses AppIntents. They are not compiler/linker diagnostics or an application feature failure.",
+    "priorSevenCompilerLinkerWarningsResolved": true,
+    "appDeploymentTarget": "16.0",
+    "uiTestDeploymentTarget": "17.0"
+  },
+  "compiledEvidence": [
+    {
+      "path": "evidence/native-warning-fixes/source-validation.json",
+      "bytes": 2608,
+      "sha256": "bfdc016f3f80cb6be149fb73b019931de1d8307dbe61073a080ddb1911795233"
+    },
+    {
+      "path": "evidence/native-warning-fixes/native-warning-complete.patch",
+      "bytes": 4774,
+      "sha256": "d0b21a3839e1a92165fe441f7f23087cc946c8c8645ce6328cb979f797404303"
+    },
+    {
+      "path": "evidence/native-warning-fixes/compile/receipt.json",
+      "bytes": 6797,
+      "sha256": "a500db882972706b3b3cc43d18d1e91634289e19be0e0f39cb9844169abecd0f"
+    },
+    {
+      "path": "evidence/native-warning-fixes/compile/build.log",
+      "bytes": 191619,
+      "sha256": "824f0417793d1eff2371255721b96d1cb12522a1ae7885e371032b341b4243ae"
+    },
+    {
+      "path": "evidence/native-warning-fixes/compile/xcresult-build-results.json",
+      "bytes": 612,
+      "sha256": "e0e1c616f181e78f2aa6591254ecbb917dc602cac2a6bbdb9032179a780b6d31"
+    },
+    {
+      "path": "evidence/native-warning-fixes/compile/source-manifest.json",
+      "bytes": 17932,
+      "sha256": "4424797eb98102d60ed97962682614aa8ca3ce73fb8067a67dcaa3bb68ac353f"
+    },
+    {
+      "path": "evidence/native-warning-fixes/compile/run-compile.py",
+      "bytes": 9922,
+      "sha256": "a9c19f1104a82d1c69fd328a7b8ad6f4592f7f35c1ef66ca8a562406366b98bc"
+    },
+    {
+      "path": "evidence/native-warning-fixes/compile/build-settings.json",
+      "bytes": 93694,
+      "sha256": "2ac4a055a6129a6429e8beac8a3a016ec5e6b0e72c69f3084b6760ca870ccd9f"
+    }
+  ],
+  "independentReview": {
+    "path": "evidence/native-warning-fixes/independent-review.json",
+    "sha256": "e9a777b73426844cae8cf33274f3eed3c8abadb75c9e1ef7ea6a40c30f78d57b"
+  },
+  "sourceSuitePreserved": {
+    "iPhoneMethods": 17,
+    "iPhoneAssertions": 204,
+    "AndroidMethods": 116,
+    "AndroidClasses": 18,
+    "AndroidRequiredCaptures": 22,
+    "strictBootGateUnchanged": true
+  },
+  "site": {
+    "version": 10,
+    "sourceCommit": "9ac5b3ab0c8d97c814c756571cf8e1da5f2d180c",
+    "hostedTreeEqualsSiteTree": true,
+    "saved": true,
+    "deployed": false,
+    "packagedChecks": {
+      "SSR": 11,
+      "publicBundle": 6,
+      "failures": 0,
+      "skips": 0
+    }
+  },
+  "currentLedgerScope": "ledger-current.json and Review-Current-2026-11-18.md preserve the c791 checkpoint. This integration record advances its source-only warning fixes without rewriting historical failed runs or claiming native runtime acceptance.",
+  "fullCombinedCIGate": "pending frozen successor automatic PR synchronize run; five jobs, artifacts, strict boot, exact17/116 no skips and native visual review required",
+  "merge": "not_performed",
+  "productionDeployment": "not_performed",
+  "originalCutoffRiyadh": "2026-11-19T01:26:12+03:00"
+}

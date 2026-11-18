@@ -1,0 +1,17 @@
+{
+  "sourceCommit": "0f0c6f1f591ff173e51671599cbbb6aeff4a69e4",
+  "runId": 44129604009,
+  "artifactId": 14350775996,
+  "artifactName": "PARTIAL-iphone-connection-regression-44129604009",
+  "bytes": 71267800,
+  "sha256": "02f5c47dee03ad513e45c508a8235c9b97371db7fed5d0c2e800ee6a58991eed",
+  "downloadVerified": true,
+  "scope": "one selected native journey; other four jobs intentionally skipped; not a full release gate",
+  "zipEntries": 1472,
+  "extractedEntries": 4,
+  "topLevel": [
+    "CareerFinderUI.xcresult",
+    "career-iphone-ui.log",
+    "career-ui-screenshots"
+  ]
+}

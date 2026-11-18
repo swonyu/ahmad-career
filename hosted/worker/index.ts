@@ -1,10 +1,13 @@
-import handler from "vinext/server/fetch-handler";
+import { renderRequest, type RenderBuild } from "../renderer/server";
+
+declare const __CAREER_BUILD__: RenderBuild;
+declare const __CAREER_PREVIEW__: boolean;
 import { runWithConnectorBinding } from "../lib/connector-context";
 import type { ConnectorBinding } from "../lib/connector-contract.mjs";
 import { handleApplications } from "../server/applications.mjs";
 import { handleDiscovery } from "../server/discovery.mjs";
 import { handleOAuth } from "../server/oauth.mjs";
-import { resolveBrowserIdentity, stripInternalIdentityHeaders, verifiedSSRRequest } from "../server/identity.mjs";
+import { resolveBrowserIdentity, stripInternalIdentityHeaders } from "../server/identity.mjs";
 
 const worker = {
   async fetch(request: Request, env: Cloudflare.Env, ctx: ExecutionContext<{ CONNECTORS?: ConnectorBinding }>) {
@@ -24,7 +27,7 @@ const worker = {
     let binding = ctx.props?.CONNECTORS;
     // Local preview emulates the same request-scoped capability. This branch and
     // the auxiliary service binding are absent from production builds.
-    if (import.meta.env.DEV && !binding && env.CONNECTORS) {
+    if (typeof __CAREER_PREVIEW__ !== "undefined" && __CAREER_PREVIEW__ && !binding && env.CONNECTORS) {
       const preview = env.CONNECTORS;
       const expiresAt = Date.now() + 60_000;
       binding = {
@@ -44,8 +47,8 @@ const worker = {
     // cookies render the signed-out recovery UI, never a fallback Sites account.
     let identity = null;
     try { identity = await resolveBrowserIdentity(request, env); } catch { /* /api/auth/status supplies a safe recovery error. */ }
-    const ssrRequest = verifiedSSRRequest(request, identity);
-    const response = await runWithConnectorBinding(binding, () => handler.fetch(ssrRequest, env, ctx));
+    if (typeof __CAREER_BUILD__ === "undefined") throw Error("The Worker build manifest is missing.");
+    const response = await runWithConnectorBinding(binding, () => renderRequest(request, identity, __CAREER_BUILD__));
     const secured = new Response(response.body, response);
     secured.headers.set("Cache-Control", "no-store");
     secured.headers.set("Referrer-Policy", "no-referrer");

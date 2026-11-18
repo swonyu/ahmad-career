@@ -1,0 +1,175 @@
+{
+  "createdAt": "2026-11-17T10:44:13.208377+00:00",
+  "baseCommit": "6066f23c2289cf1ad7808451b6cce19a90f267eb",
+  "ownerBaseline": "859b84a4bb184cbc9bb5039be34e35ad4ca17356",
+  "ordinaryTestMethods": {
+    "before": 103,
+    "after": 105
+  },
+  "unchangedOriginalBodies": 99,
+  "selectorOnlyChanges": [
+    {
+      "file": "android/app/src/androidTest/java/com/saleh/careerfinder/LinkedInPhoneAcceptanceTest.kt",
+      "method": "exactApprovalLinkAndExternalSearch_areReadableWithoutClaimingSubmission",
+      "change": "UI label selectors localized; LinkedIn disclosure now exact full message; all actions/assertions retained"
+    },
+    {
+      "file": "android/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt",
+      "method": "blankWorkspace_hasHonestEmptyState_andConnectionRequirement",
+      "change": "UI label selectors localized; LinkedIn disclosure now exact full message; all actions/assertions retained"
+    },
+    {
+      "file": "android/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt",
+      "method": "phoneProfile_survivesActivityRecreation_withoutAnyService",
+      "change": "UI label selectors localized; LinkedIn disclosure now exact full message; all actions/assertions retained"
+    },
+    {
+      "file": "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceAccessibilityRegressionTest.kt",
+      "method": "shortMultilineNote_canExpandAtLargeText_withoutClippingItsLastLine",
+      "change": "UI label selectors localized; LinkedIn disclosure now exact full message; all actions/assertions retained"
+    }
+  ],
+  "originalAssertionInvocationsBefore": 722,
+  "originalAssertionInvocationsAfter": 722,
+  "newMethods": [
+    "openDialog_keepsHeadingAndNestedActionsInTheSelectedLanguage",
+    "languageButtons_preserveTheUnfinishedProfileAndPrivateScope"
+  ],
+  "sourceOnly": true,
+  "nativeExecution": false,
+  "files": {
+    "android/app/src/androidTest/java/com/saleh/careerfinder/LinkedInPhoneAcceptanceTest.kt": {
+      "sha256": "1bc72e4df14a983410b0c5b0ec5d349bd53d3b3a19a87f1d16bcc2985df14037",
+      "bytes": 7940
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NativeLocalizationAcceptanceTest.kt": {
+      "sha256": "2fd4ee9097a3175ad9d57e4ec1ab9c0bfc2db3bbf55bb109afe37ffbb2268711",
+      "bytes": 13524
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/NavigationPhoneAcceptanceTest.kt": {
+      "sha256": "120674742b62b4e6775524c7bfe04b3c44b1176e85af366b2919a549930b71aa",
+      "bytes": 20356
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/PhoneAcceptanceTest.kt": {
+      "sha256": "f15f4ee7a0617f84c4d91144875576a41901004c70452b998965bd78c09d3e06",
+      "bytes": 4127
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/PhonePolishAcceptanceTest.kt": {
+      "sha256": "27232175cf87028fd824016ffb046e76b23bea642eda536c1f19c0cf22f2fe12",
+      "bytes": 15178
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/WorkspaceAccessibilityRegressionTest.kt": {
+      "sha256": "5b226e51e92250a7e7fffbd5f99bbcbadc228bab9d05409a38298ead9a6f131a",
+      "bytes": 3991
+    },
+    "android/app/src/main/java/com/saleh/careerfinder/ApplicationRecordViews.kt": {
+      "sha256": "fae61e472fb03d90f9ab268fce705a0a3f586816ee06330b00025fab255043e6",
+      "bytes": 15981
+    },
+    "android/app/src/main/java/com/saleh/careerfinder/CareerLocalization.kt": {
+      "sha256": "be148a9b6c5ad21699c001298c2e0af212b92a2bffb1d2b0da3b6f403e20a1df",
+      "bytes": 14211
+    },
+    "android/app/src/main/java/com/saleh/careerfinder/MainActivity.kt": {
+      "sha256": "e3cf47f1ba551400c42680d1ebc0534dc1261c2dc96b0ab4a4a1528a55614ba6",
+      "bytes": 92408
+    },
+    "android/checks/run-ci-emulator.mjs": {
+      "sha256": "1af74288fb044aa4246912eac7f9f0bef84379aae3f5474ec6923e88a38c732f",
+      "bytes": 23472
+    },
+    "android/app/src/androidTest/java/com/saleh/careerfinder/AcceptanceDisplay.kt": {
+      "sha256": "0dc53645c53583aa4d7b8bddef9e8cc5c4fd612622cfd7fa3b243f5a6846276b",
+      "bytes": 1624
+    }
+  },
+  "patchSHA256": "45b9044720c4a61cdfab9cd555caad68c3f56ead82d583dcc72a7832b753cda0",
+  "retainedFailures": [
+    {
+      "class": "com.saleh.careerfinder.LinkedInPhoneAcceptanceTest",
+      "test": "exactApprovalLinkAndExternalSearch_areReadableWithoutClaimingSubmission",
+      "current": "44",
+      "stack": "java.lang.AssertionError: Action performScrollTo() failed.",
+      "reason": "Reason: Expected exactly '1' node but could not find any node that satisfies: (Text + InputText + EditableText contains 'Search LinkedIn' (ignoreCase: false))"
+    },
+    {
+      "class": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest",
+      "test": "privateRecord_datesNotesAndFollowUp_areUsableAtLargeText_withoutCreatingAReceipt",
+      "current": "59",
+      "stack": "java.lang.AssertionError: No node found that matches ContentDescription = 'Choose Applied date (optional)' (ignoreCase: false) in scrollable container",
+      "reason": ""
+    },
+    {
+      "class": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest",
+      "test": "connectionUsesTwoSteps_andPreservesTheChosenCustomAddressUnderAdvanced",
+      "current": "60",
+      "stack": "java.lang.AssertionError: No node found that matches Text + InputText + EditableText contains 'Sign in and get a code' (ignoreCase: false) in scrollable container",
+      "reason": ""
+    },
+    {
+      "class": "com.saleh.careerfinder.NavigationPhoneAcceptanceTest",
+      "test": "clearingAnAppliedRecord_requiresASeparateConfirmation_andKeepsEarlierHistory",
+      "current": "61",
+      "stack": "java.lang.AssertionError: Failed to inject touch input.",
+      "reason": "Reason: Expected exactly '1' node but could not find any node that satisfies: (Text + InputText + EditableText contains 'Save record on this phone' (ignoreCase: false))"
+    },
+    {
+      "class": "com.saleh.careerfinder.PhoneAcceptanceTest",
+      "test": "phoneProfile_survivesActivityRecreation_withoutAnyService",
+      "current": "62",
+      "stack": "java.lang.AssertionError: Failed to inject touch input.",
+      "reason": "Reason: Expected exactly '1' node but could not find any node that satisfies: (Text + InputText + EditableText contains 'Profile' (ignoreCase: false))"
+    },
+    {
+      "class": "com.saleh.careerfinder.PhoneAcceptanceTest",
+      "test": "blankWorkspace_hasHonestEmptyState_andConnectionRequirement",
+      "current": "63",
+      "stack": "java.lang.AssertionError: Assert failed: The component with Text + InputText + EditableText contains 'Find your next role.' (ignoreCase: false) is not displayed!",
+      "reason": ""
+    },
+    {
+      "class": "com.saleh.careerfinder.PhonePolishAcceptanceTest",
+      "test": "discoveredRole_savesPrivately_andManualApplicationRemainsSelfReported",
+      "current": "64",
+      "stack": "java.lang.AssertionError: No node found that matches Text + InputText + EditableText contains 'Search jobs' (ignoreCase: false) in scrollable container",
+      "reason": ""
+    },
+    {
+      "class": "com.saleh.careerfinder.PhonePolishAcceptanceTest",
+      "test": "unfinishedOpportunity_closeChoicesKeepAndDiscardOnlyTheDraft",
+      "current": "65",
+      "stack": "java.lang.AssertionError: Failed to inject touch input.",
+      "reason": "Reason: Expected exactly '1' node but could not find any node that satisfies: (Text + InputText + EditableText contains 'Add opportunity' (ignoreCase: false))"
+    },
+    {
+      "class": "com.saleh.careerfinder.PhonePolishAcceptanceTest",
+      "test": "profileEssentials_andCountrySelection_preserveSingleNamesAndCancelledChoices",
+      "current": "66",
+      "stack": "java.lang.AssertionError: Failed to inject touch input.",
+      "reason": "Reason: Expected exactly '1' node but could not find any node that satisfies: (Text + InputText + EditableText contains 'Profile' (ignoreCase: false))"
+    },
+    {
+      "class": "com.saleh.careerfinder.PhonePolishAcceptanceTest",
+      "test": "localOpportunityRemoval_requiresConfirmation_andPreservesOtherSavedRoles",
+      "current": "67",
+      "stack": "java.lang.AssertionError: No node found that matches ContentDescription = 'Remove saved link for Remove fixture at Employer' (ignoreCase: false) in scrollable container",
+      "reason": ""
+    },
+    {
+      "class": "com.saleh.careerfinder.WorkspaceAccessibilityRegressionTest",
+      "test": "shortMultilineNote_canExpandAtLargeText_withoutClippingItsLastLine",
+      "current": "75",
+      "stack": "java.lang.AssertionError: Failed: assertExists.",
+      "reason": "Reason: Expected exactly '1' node but could not find any node that satisfies: (Text + InputText + EditableText contains 'Read full note' (ignoreCase: false))"
+    }
+  ],
+  "failedTouchInjectionCount": 4,
+  "acceptanceStillOpen": "No claim that these105 methods compile or pass. A native rerun must confirm fixes and any subsequently reached controls.",
+  "independentReview": {
+    "reviewer": "/root/lumina_review",
+    "result": "source-level PASS, no blocking defect found",
+    "verified": "103 old methods retained;99 bodies exact;4 localized-selector bodies;722 old assertion invocations retained;2 added methods;105 required. Window configuration copied, only locale/direction changed; LocalView/density/theme and data owners retained. AOSP verifies context test override dispatch.",
+    "qualification": "English fixtures cover explicit English/LTR in unchanged Arabic/large-text host. Actual MainActivity, standalone and bilingual cases retain Arabic coverage. All105 runtime results and physical platform picker behavior unverified.",
+    "nativeExecution": false
+  }
+}

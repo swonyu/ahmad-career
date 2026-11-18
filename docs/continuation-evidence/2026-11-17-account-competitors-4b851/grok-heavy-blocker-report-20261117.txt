@@ -1,0 +1,89 @@
+Grok
+Thought for 57s
+
+Career Finder — Heavy Research Report: Remaining Blockers (Picomatch Priority + Acceptance Critique)
+Access date for primary sources: 17 November 2026. All prior report withdrawals and evidence limits are preserved. No packages/locks edited; no implementation duplicated. Distinctions: source fact / inference / hypothesis / proposed test / verified result. No invented executions. Original cutoff unchanged.
+
+1. Picomatch GHSA-fc5q-39xc-vjpf / CVE-2026-112366 (Highest Priority)
+
+Primary source fact (re-verified now):
+
+github.com/advisories/GHSA-fc5q-39xc-vjpf
+
+High severity, GitHub Reviewed (reviewed ~2 hours ago on 17 Nov 2026), published to GitHub Advisory Database 19 Oct 2026, last updated 17 Nov 2026.
+Affected: <= 4.0.7. Patched versions: None.
+Description: ReDoS via single-branch repeated extglob patterns (e.g. +(*) or +(*a)); analyzeRepeatedExtglob in lib/parse.js skips them, producing exponential backtracking on short inputs.
+References: NVD CVE-2026-112366, open PR #194, source at 4.0.7 parse.js L287–L307, VulnCheck advisory.
+Secondary sources (NVD, VulnCheck, OpenCVE) agree on no fixed release. One outlier claimed a fix in an unrelated package version; that is not reflected in the official advisory or picomatch releases (latest 4.0.7 on 24 Aug 2026).
+
+Upstream proposals (open, unmerged as of this access):
+
+PR #194 (opened 13 Aug 2026): focuses on leading-? parsing and adds a mixed-wildcard risky check; related but not a complete fix for the advisory examples.
+PR #237 (opened ~22 Oct 2026): proposes rewriting single-branch +(P) / *(P) to remove nested quantifiers while preserving semantics for patterns like +(*)c. Claims timing drop on malicious input; still open.
+PR #238 (opened ~22–23 Oct 2026): literalizes single-branch extglobs with leading bare quantifier + trailing content; explicitly notes it leaves +(*) and +(a*) unaddressed. Still open; reviewers flagged incompleteness relative to advisory examples.
+
+Installed versions (supplied fact, last check): 2.3.2, 4.0.4, 4.0.7 (all dev: true). This alone does not prove non-reachability. Development rejected a simplistic guard because valid isMatch('abc','+(*)c') changes. No claim is made here that any proposed patch has passed.
+
+Remedies that actually remove risk vs hide the audit (critique):
+
+Remedy	Removes risk?	Hides audit?	Compatibility / residual	Strict acceptance needed
+Official upstream release that eliminates the vulnerable path in all affected lines	Yes (if code path gone)	No (if lockfile updates and audit clean)	Must preserve isMatch('abc','+(*)c') and other valid single-branch cases; 2.x/3.x lines need separate handling	Lockfile pin to patched version + npm audit clean on the exact integrated tree + behavioral fixture suite including the rejected simple-guard case
+Local patch / override / vendored fork based on #237 or #238	Partial (depends on completeness)	Only if the vulnerable code is no longer present in the resolved tree	#238 leaves some advisory examples; #237 claims semantic preservation but unmerged. Behavior change risk on edge cases	Same fixtures + prove no residual backtracking on advisory examples + no regression on valid patterns used by build tooling
+overrides / resolutions to a non-existent patched version	No	No (audit still fails)	Invalid	Rejected
+Document residual + suppress/waive audit	No	Yes	Residual risk remains if untrusted globs reach the matcher	Rejected as acceptance gate
+Isolation (worker/timeout) or input sanitization of globs	Mitigates if reachable	No	Does not remove the advisory; only reduces exploitability	Not a substitute for removing the vulnerable code if the gate requires clean audit
+
+Exposure (inference from prior source reads + supplied facts): No direct dependency in hosted/package.json. Transitive via build/tooling (vite/eslint/wrangler etc.). Discovery and application paths use validated board tokens and fixed hosts, not user-supplied globs. Residual risk is primarily in developer tooling or any config that accepts untrusted patterns. dev: true reduces but does not eliminate risk if a build step or misconfiguration invokes the matcher with attacker-controlled input.
+
+Rejected remedies: Pinning any <=4.0.7 version; simplistic guard that breaks valid +(*)c; audit suppression as the acceptance criterion.
+
+Owner: Development (5bc).
+Smallest decisive next evidence: Exact lockfile resolution showing which package(s) pull 2.3.2/4.0.4/4.0.7; confirmation whether any runtime or build path passes untrusted globs; behavioral result of the candidate patch on isMatch('abc','+(*)c') and on advisory examples.
+Fallback if upstream remains unpatched: Minimal verified override that removes the vulnerable parse path without the rejected behavior change, plus documented residual for any remaining 2.x/3.x transitive, with explicit owner acceptance that the audit stays red until then. Do not claim any patch has passed.
+
+2. Acceptance Strategy Critique (Account/OAuth, Native Search/Recovery, A11y, Store)
+
+Supplied facts (not executions here): Integrating checkpoint ca3d3411d8b5b36fa7093dff782f4a7b931261c7 (publisher 243031d) has final hosted chain pass (main 288/288, PDF 6/6, remaining chains); focused recovery/search 76/76; model 18/18; account lifecycle 16/16; typecheck/strictlint/worker/browserAPI/build passed. Current audit remains 19 high under development 5bc (not waived). Latest iPhone-only 44147056599 at 243031d passed 17/17 (not a final combined pass). Chrome final account acceptance is starting. Actual devices/AT/real OAuth/store gates remain separate. Native terminals own discovery/central strings and import/receipt recovery; third terminal 01a1ea56 has 16 unintegrated native a11y patches being coordinated by root. Native shared slot used by publisher on another app. Root owns final account browser review; Build1 challenges those sources; Build2 prepares portable synthetic fixtures.
+
+Account/OAuth (baseline: prior root evidence on SessionRecovery delayed navigation after unmount, disconnect focus to BODY, busy Connect accessible name idle, rejection of OAuth alert autofocus, preservation of ordinary cancellation as polite status):
+
+Concern: Synthetic browser runs and local fixtures cannot prove real provider consent, token lifetime, or cross-tab identity fencing under real OAuth.
+Ground: WCAG 4.1.3 and APG Alert Pattern (alerts must not move focus; status messages programmatically determinable without focus). Apple privacy / account-deletion requirements and Google Data safety require accurate declaration of any identity data.
+Smallest decisive reproduction: Real OAuth round-trip (or controlled fixture that exactly mirrors the provider’s redirect/cookie/state behavior) on the integrated checkpoint, verifying no delayed post-unmount navigation, correct accessible name during busy state, and polite status on ordinary cancel.
+Owner: Root (final account browser review).
+Success evidence: The above reproduction passes on the integrated tree with zero warnings; identity generation and scope checks reject stale confirmation.
+Safe workaround: Keep current polite-status cancellation and reject autofocus (already directionally set).
+Fallback: Explicit “reconnect required” path that clears only local session state without attempting resubmission.
+
+Native search and application recovery:
+
+Concern: iPhone-only 17/17 does not prove Android, nor that partial/stale/unavailable distinction, canonical board matching, and receipt reconciliation survive the integrating checkpoint on both platforms.
+Ground: Prior source-confirmed discovery limits (10 s source / 5 s request / 50 UI page / 500 per source / 4 MiB / 512 KiB) and Lever/Greenhouse contracts. Native terminals own these areas.
+Smallest decisive: Fixture-driven partial after validated prefix, complete-empty vs partial-empty distinct copy, stale checkedAt preserved, boardUrl handoff present, on both iOS and Android device or emulator against the integrated checkpoint.
+Owner: Native search terminal + native recovery terminal (do not assign conflicting work).
+Success: The fixtures pass without inventing completeness.
+Fallback: Explicit employer-board handoff (zero API budget) when any source returns partial/unavailable.
+
+Arabic/English accessibility:
+
+Concern: Visual text, simulated AT, or iPhone-only runs do not close physical VoiceOver/TalkBack requirements. Large-text keyboard visibility and Settings reachability were prior failure modes.
+Ground: WCAG 2.2 SC 4.1.3; APG Alert Pattern (“it is crucial they do not affect keyboard focus”); Apple and Android accessibility guidelines on live regions and focus.
+Smallest decisive: Physical VoiceOver and TalkBack on the critical journeys (search status, partial notice, save, cancel, large text) on the integrated checkpoint, confirming no focus steal on routine status and usable keyboard order.
+Owner: Coordinated via root with the existing a11y patch terminal; no new conflicting builds.
+Success: Physical AT completes the journeys without focus theft on status.
+Fallback: Ensure all critical status uses polite live region and that every interactive control remains reachable at large text.
+
+Store evidence:
+
+Concern: No current store-console status is established. iPhone-only pass is not Play approval or App Store review.
+Ground: Apple privacy policy URL + in-app account deletion + accurate Nutrition Labels; Google Data safety form + public privacy policy URL.
+Smallest decisive: Publisher confirms the privacy policy URL is live, in-app deletion works on a signed build, and Data safety / Nutrition Labels match the actual data flows (no unlisted collection).
+Owner: Publisher.
+Success: Signed build accepted into TestFlight / internal testing with matching declarations.
+Fallback: Explicit “manual opportunity” path that never claims automatic submission or employer verification.
+
+Rejected approaches: Treating synthetic browser success or iPhone-only 17/17 as sufficient for Android, real OAuth, physical AT, or store approval; assigning additional native implementation while the two terminals and the coordinating a11y terminal are active; waiving the audit without a risk-removing change.
+
+Unverified / unknowns: Exact transitive picomatch path in the current lockfile; whether any build/config input reaches the matcher; physical AT results; real OAuth provider behavior on the integrated checkpoint; current store console; Android results on the integrating checkpoint. Research is not product readiness.
+
+Report finished. Available for the next evidence-based question. Heavy session remains Heavy.

@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "reviewedUTC": "2026-11-18T13:25:20.041848+00:00",
+  "reviewer": "root/recovery_review",
+  "candidate": "ff21fd470a53710a2811ba2e34e5e0ebbfa7916f",
+  "tree": "65991d4de50966da1de85c6dc8cc7355fbee0af3",
+  "appleTree": "c8080a217d0348ea738677619be5a3586d6887a2",
+  "result": "compile_only_passed",
+  "rawExit": 0,
+  "xcresultStatus": "succeeded",
+  "errorCount": 0,
+  "warningCount": 7,
+  "warnings": [
+    {
+      "className": "DVTTextDocumentLocation",
+      "issueType": "ConformanceIsolation",
+      "message": "Conformance of 'NativeHostedServicePresenter.Presenter' to protocol 'SFSafariViewControllerDelegate' crosses into main actor-isolated code and can cause data races; this is an error in the Swift 6 language mode",
+      "sourceURL": "file:///Users/saleh/Developer/career-finder-native-focused-20261118-ebb3eed5/apple/AhmadCareer/NativeApplicationsViews.swift#EndingColumnNumber=45&EndingLineNumber=1104&StartingColumnNumber=45&StartingLineNumber=1104&Timestamp=816700950.523591"
+    },
+    {
+      "className": "DVTTextDocumentLocation",
+      "issueType": "DeprecatedDeclaration",
+      "message": "'languageCode' was deprecated in iOS 16: renamed to 'language.languageCode.identifier'",
+      "sourceURL": "file:///Users/saleh/Developer/career-finder-native-focused-20261118-ebb3eed5/apple/AhmadCareer/NativeLocalization.swift#EndingColumnNumber=86&EndingLineNumber=48&StartingColumnNumber=86&StartingLineNumber=48&Timestamp=816700950.523591"
+    },
+    {
+      "className": "DVTTextDocumentLocation",
+      "issueType": "DeprecatedDeclaration",
+      "message": "'languageCode' was deprecated in iOS 16: renamed to 'language.languageCode.identifier'",
+      "sourceURL": "file:///Users/saleh/Developer/career-finder-native-focused-20261118-ebb3eed5/apple/AhmadCareer/NativeLocalization.swift#EndingColumnNumber=44&EndingLineNumber=52&StartingColumnNumber=44&StartingLineNumber=52&Timestamp=816700950.523591"
+    },
+    {
+      "className": "DVTTextDocumentLocation",
+      "issueType": "DeprecatedDeclaration",
+      "message": "'languageCode' was deprecated in iOS 16: renamed to 'language.languageCode.identifier'",
+      "sourceURL": "file:///Users/saleh/Developer/career-finder-native-focused-20261118-ebb3eed5/apple/AhmadCareer/NativeLocalization.swift#EndingColumnNumber=40&EndingLineNumber=72&StartingColumnNumber=40&StartingLineNumber=72&Timestamp=816700950.523591"
+    },
+    {
+      "className": "Xcode3ProjectDocumentLocation",
+      "issueType": "Warning",
+      "message": "Building for iOS-simulator-16.0, but linking with dylib '@rpath/XCTest.framework/XCTest' which was built for newer version 17.0",
+      "sourceURL": "file:///Users/saleh/Developer/career-finder-native-focused-20261118-ebb3eed5/apple/AhmadCareer.xcodeproj#Timestamp=816700950.523591&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22CareerFinderUITests%22%5D%7D%7D"
+    },
+    {
+      "className": "Xcode3ProjectDocumentLocation",
+      "issueType": "Warning",
+      "message": "Building for iOS-simulator-16.0, but linking with dylib '@rpath/libXCTestSwiftSupport.dylib' which was built for newer version 17.0",
+      "sourceURL": "file:///Users/saleh/Developer/career-finder-native-focused-20261118-ebb3eed5/apple/AhmadCareer.xcodeproj#Timestamp=816700950.523591&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22CareerFinderUITests%22%5D%7D%7D"
+    },
+    {
+      "className": "Xcode3ProjectDocumentLocation",
+      "issueType": "Warning",
+      "message": "Building for iOS-simulator-16.0, but linking with dylib '@rpath/XCUIAutomation.framework/XCUIAutomation' which was built for newer version 17.0",
+      "sourceURL": "file:///Users/saleh/Developer/career-finder-native-focused-20261118-ebb3eed5/apple/AhmadCareer.xcodeproj#Timestamp=816700950.523591&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22CareerFinderUITests%22%5D%7D%7D"
+    }
+  ],
+  "warningKindsObservedInEarlierBuild": [
+    "ConformanceIsolation",
+    "Locale.languageCode deprecated",
+    "UI-test target16 versus XCTest17 linking"
+  ],
+  "compiledChangedSource": [
+    {
+      "path": "/Users/saleh/Developer/career-finder-native-focused-20261118-ebb3eed5/apple/AhmadCareer/NativeCareerViews.swift",
+      "bytes": 115731,
+      "sha256": "c090fa4c6c36a7952ee53975136ea56b8819436c80a9dac9daf07c0a0848fb8e"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-native-focused-20261118-ebb3eed5/apple/AhmadCareer/NativeApplicationsViews.swift",
+      "bytes": 104339,
+      "sha256": "1790f8e0d9eefac7f58059d8a487edd0309442c2a34fa818cd416c76077015cd"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-native-focused-20261118-ebb3eed5/apple/AhmadCareer/NativeDiscoveryViews.swift",
+      "bytes": 26483,
+      "sha256": "1519520588680d784fc13a4bb9fdadd454806371d0f4f39c878d1563af652116"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-native-focused-20261118-ebb3eed5/apple/AhmadCareer/NativeLocalization.swift",
+      "bytes": 17879,
+      "sha256": "5c80809f806c25fb9f92e8ff314878f43c3bf3567f998efb2821b2f508d70a5a"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-native-focused-20261118-ebb3eed5/apple/UITests/CareerFinderUITests.swift",
+      "bytes": 77748,
+      "sha256": "5e55d1024d75b14d9b0e48271224825af4d031c12cd2e4aea5635c52298aefe3"
+    }
+  ],
+  "sourceUnchanged": true,
+  "allOwnedDevicesRemainShutdown": true,
+  "nativeMethodsRun": 0,
+  "nativeUIAcceptance": false,
+  "fullReleaseAcceptance": false,
+  "simulatorEnvironmentAccepted": false,
+  "files": [
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-compile-ff21fd470a53-20261118T132222Z-e6f31d/receipt.json",
+      "bytes": 6646,
+      "sha256": "d78e54cc362e957a1a266eaf69ee2754d835bb7a52103bbd857b5d05c1fc1940"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-compile-ff21fd470a53-20261118T132222Z-e6f31d/build.log",
+      "bytes": 118904,
+      "sha256": "ec2008bf74d7e44c5aca4dd94aee0545597318cd6953d2898dc9e6e8f03e4fb6"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-compile-ff21fd470a53-20261118T132222Z-e6f31d/source-manifest.json",
+      "bytes": 17932,
+      "sha256": "30858b18b22040db94ad0a376d3371f94fb5fab53bc61efe60efa8d5becf6e8c"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-compile-ff21fd470a53-20261118T132222Z-e6f31d/build-settings.json",
+      "bytes": 89196,
+      "sha256": "deed63001db451b9dcdb005fc92f633fae38587f43b9794670f8c4a048d6ffce"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-compile-ff21fd470a53-20261118T132222Z-e6f31d/xcresult-build-results.json",
+      "bytes": 4106,
+      "sha256": "53a2daf370061db4768ac0b92c130a43c9c26a3bf4fb68864136d2fa237ac7ba"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-compile-ff21fd470a53-20261118T132222Z-e6f31d/xcresult-file-manifest.json",
+      "bytes": 1480,
+      "sha256": "d951825321a75424f024c4c93c497a1d5e1a8d87fd0e6b422be7d509810f2c05"
+    },
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-compile-ff21fd470a53-20261118T132222Z-e6f31d/run-compile.py",
+      "bytes": 9975,
+      "sha256": "48835b2b70a4280233a8f4f0d65dfc56b621e8fcc760616a549501a56abe332a"
+    }
+  ],
+  "retainedXctestrunProducts": [
+    {
+      "path": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-ebb3eed5/native-compile-ff21fd470a53-20261118T132222Z-e6f31d/CareerFinderAcceptance_iphonesimulator27.2-arm64.xctestrun",
+      "bytes": 4949,
+      "sha256": "142ede2fbf4f1ab530cb14aded366e3cb97883bc9fc584e01ba7a8d2556237a3"
+    }
+  ],
+  "limits": "App and test sources compiled and linked for generic arm64 simulator. No boot, UI interaction, native capture, or full release gate passed."
+}

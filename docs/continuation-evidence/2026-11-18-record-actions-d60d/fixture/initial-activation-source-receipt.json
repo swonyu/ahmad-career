@@ -1,0 +1,41 @@
+{
+  "createdUTC": "2026-11-18T06:51:12.300792+00:00",
+  "sourceFixture": "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/record-actions-fixture-20261118-d60d62a70f26",
+  "scope": "Fixture-only state, label, product container class and scoped action font-size. No product source changes; no fixture source or public output changes; no builds, tests, server or browser actions.",
+  "beforeSHA256": {
+    "fixture.tsx": "b2d8983e67d0162d872f888f4d06b1e413367dcdbe5d00d4154d4a9c02af0e0f",
+    "fixture.css": "dc3a9c914ba20c4e84f326a585887aadf099d7555853ac41f4277dd3243a250b"
+  },
+  "candidateSHA256": {
+    "fixture.tsx": "22be902b25e7746d9612c2f7b241e42332a74387a2bc10a9dd8a9c7ab0a0d9a5",
+    "fixture.css": "849cdd21a7dae6e47d9a2010146f0a74c20897706d4766c009168b8ae09051e8"
+  },
+  "patchSHA256": "63bfc1ae2507bcd1f7b0f7de4740ad9edb1d1015c72ae412bdae13a2f4d5770e",
+  "unchangedGuardAndBuildSourceSHA256": {
+    "seed-fixtures.ts": "7ce699f334c9259541eac280daada6a1528085f9334b53c22605232f19a4fbbe",
+    "server.mjs": "3567e4e8d669a9aab1ac0eaf8d22ae95108d4e3a5bef5e6e6dd7f66f24a12184",
+    "build.mjs": "7fefb4834c5e00e3f3bc76da669f829761ef246526e94903b37861d7dac29828",
+    "preflight.mjs": "9a335eaba3f4ff13df2b5933ca2ee23532cff56820d409174f01096a0304b70f",
+    "scenarios.mjs": "b60b395bbbfb6d3aee436452d6d40b34a98f56c4a67db708dc4872a3fdb55a50",
+    "index.html": "0c086365c22826078d268c233e06479a80a93e6a43d9fd49d545439a26ff75d1"
+  },
+  "control": {
+    "label": "Action text scale (fixture only)",
+    "default": "100%",
+    "options": [
+      "100%",
+      "200%"
+    ],
+    "classAt200Percent": "fixture-action-text-200",
+    "selector": "#fixture-product.fixture-action-text-200 .phone-record-actions button",
+    "onlyCSSDeclaration": "font-size:1.7rem",
+    "expectedAtMeasured16pxRoot": {
+      "baselineFontPx": 13.6,
+      "candidateFontPx": 27.2
+    },
+    "measurementSource": "Root actual browser measurement; candidate browser measurement still pending"
+  },
+  "remountBehavior": "Control only calls setActionTextScale. Existing mounted state, mountKey, PhoneApp key, LocaleProvider, product handlers and seed/origin/owner safeguards are byte-preserved.",
+  "acceptance": "Root will apply, rebuild and measure actual Arabic action wrapping at 390/320 CSS pixels. This is a fixture-only action-text stress condition, not native large-text, browser zoom, WCAG resize-text or device acceptance.",
+  "originalFilesUnchanged": true
+}

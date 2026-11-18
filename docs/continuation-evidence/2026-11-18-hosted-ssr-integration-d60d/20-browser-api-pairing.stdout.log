@@ -1,0 +1,23 @@
+▶ browser account transport keeps mutations bounded and explicit
+  ✔ successful writes preserve same-origin authentication and never redirect (10.252791ms)
+  ✔ expired sessions remain distinguishable from ordinary network errors (0.30975ms)
+  ✔ a failed deletion is never silently retried or reported successful (0.142166ms)
+  ✔ an unconfirmed 200 response cannot become a successful mutation (0.122125ms)
+  ✔ malformed and non-object responses are rejected without exposing their content (0.670208ms)
+  ✔ a response larger than the browser record budget is cancelled (0.365958ms)
+  ✔ a stalled request times out once without replaying the write (21.513375ms)
+  ✔ leaving a page cancels its pending read without a retry (0.207833ms)
+  ✔ an already cancelled page never starts a request (0.066084ms)
+  ✔ external or non-API destinations are rejected before sending credentials (0.0875ms)
+✔ browser account transport keeps mutations bounded and explicit (34.732125ms)
+✔ pairing validity is relative to the server, independent of the phone wall clock (0.40225ms)
+✔ delayed replies cannot extend validity or revive an expired code (0.161708ms)
+✔ unverified codes, foreign origins, invalid clocks and excessive validity fail closed (0.121084ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 89.122166
