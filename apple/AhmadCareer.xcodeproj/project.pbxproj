@@ -46,7 +46,7 @@
                 PRODUCT_BUNDLE_IDENTIFIER = com.ahmadalayed.career.UITests;
                 PRODUCT_NAME = "$(TARGET_NAME)";
                 SDKROOT = iphoneos;
-                IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+                IPHONEOS_DEPLOYMENT_TARGET = 17.0;
                 SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
                 TARGETED_DEVICE_FAMILY = 1;
                 TEST_TARGET_NAME = AhmadCareer;
@@ -62,7 +62,7 @@
                 PRODUCT_BUNDLE_IDENTIFIER = com.ahmadalayed.career.UITests;
                 PRODUCT_NAME = "$(TARGET_NAME)";
                 SDKROOT = iphoneos;
-                IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+                IPHONEOS_DEPLOYMENT_TARGET = 17.0;
                 SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
                 TARGETED_DEVICE_FAMILY = 1;
                 TEST_TARGET_NAME = AhmadCareer;
