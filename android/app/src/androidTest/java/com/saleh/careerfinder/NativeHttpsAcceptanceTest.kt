@@ -7,6 +7,7 @@ import android.provider.MediaStore
 import android.util.Base64
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
@@ -21,6 +22,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.runBlocking
+import org.json.JSONArray
+import org.json.JSONObject
 import org.junit.Assert.*
 import org.junit.Assume.assumeTrue
 import org.junit.Rule
@@ -115,9 +118,27 @@ class NativeHttpsAcceptanceTest {
                 compose.onNodeWithTag("profile-list").assertHeightIsAtLeast(120.dp).assertIsDisplayed()
             }
             step("profile-content-capture") { capture("acceptance-profile-large-text.png") }
-            step("profile-save-scroll") { compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("Save profile to workspace"))) }
-            step("profile-save-click") { compose.onNodeWithText(strings("Save profile to workspace")).performClick() }
-            step("profile-saved") { await { !model.state.value.busy && !model.state.value.profileDirty && model.state.value.profile.revision > 0 } }
+            try {
+                step("profile-save-scroll") { compose.onNodeWithTag("profile-list").performScrollToNode(hasText(strings("Save profile to workspace"))) }
+                step("profile-save-target") {
+                    val save = compose.onNodeWithText(strings("Save profile to workspace"))
+                    save.assertIsDisplayed().assertIsEnabled()
+                    profileSaveState("before-click", model.state.value, expectedHash,
+                        save.fetchSemanticsNode().boundsInRoot.toString(),
+                        compose.onNodeWithTag("profile-list").fetchSemanticsNode().boundsInRoot.toString())
+                }
+                step("profile-save-action-capture") { capture("acceptance-profile-save-action.png") }
+                step("profile-save-click") { compose.onNodeWithText(strings("Save profile to workspace")).performClick() }
+                step("profile-saved") { await { !model.state.value.busy && !model.state.value.profileDirty && model.state.value.profile.revision > 0 } }
+            } catch (error: Throwable) {
+                // Preserve the live failure before the activity rule tears down the app.
+                // Diagnostics cannot replace the original acceptance failure or wait for idle.
+                runCatching { profileSaveState("failed", model.state.value, expectedHash) }
+                    .onFailure { phase("profile-save-state:unavailable") }
+                runCatching { capture("acceptance-profile-save-failure.png", waitForIdle = false) }
+                    .onFailure { phase("profile-save-screen:unavailable") }
+                throw error
+            }
             assertEquals("", model.state.value.profile.lastName)
             assertEquals(expectedHash, model.state.value.profile.resume?.sha256)
 
@@ -200,6 +221,35 @@ class NativeHttpsAcceptanceTest {
         } finally { step("pdf-document-remove") { resolver.delete(file, null, null) } }
     }
 
+    // Only fixed field names, booleans, revisions, bounds and message fingerprints.
+    // Never publish profile values, pairing arguments, PDF bytes or session tokens.
+    private fun profileSaveState(stage: String, state: CareerUiState, expectedHash: String,
+        saveBounds: String? = null, listBounds: String? = null) {
+        val diagnostic = JSONObject().put("stage", stage)
+            .put("loaded", state.loaded).put("busy", state.busy)
+            .put("storageBlocked", state.storageBlocked).put("requiresPairing", state.requiresPairing)
+            .put("connected", state.connection != null).put("profileDirty", state.profileDirty)
+            .put("profileRevision", state.profile.revision)
+            .put("serverProfileRevision", state.serverProfile?.revision ?: JSONObject.NULL)
+            .put("profileConflict", state.profileConflict != null)
+            .put("fixtureNameMatches", state.profile.firstName == "Single")
+            .put("fixtureEmailMatches", state.profile.email == "native-fixture@example.invalid")
+            .put("fixturePDFMatches", state.profile.resume?.sha256 == expectedHash)
+            .put("validationFields", JSONArray(ProfileValidation.errors(state.profile).keys.sorted()))
+            .put("errorPresent", state.error != null)
+            .put("errorSHA256", state.error?.let { BoundaryPolicy.sha256(it.toByteArray(Charsets.UTF_8)) } ?: JSONObject.NULL)
+            .put("noticeSHA256", state.notice?.let { BoundaryPolicy.sha256(it.toByteArray(Charsets.UTF_8)) } ?: JSONObject.NULL)
+            .put("saveBoundsInRoot", saveBounds ?: JSONObject.NULL)
+            .put("listBoundsInRoot", listBounds ?: JSONObject.NULL)
+        val text = "HTTPS profile-save state: $diagnostic"
+        android.util.Log.i("CareerPhoneAcceptance", text)
+        runCatching {
+            InstrumentationRegistry.getInstrumentation().sendStatus(2, Bundle().apply {
+                putString("stream", "\n$text\n")
+            })
+        }.onFailure { android.util.Log.w("CareerPhoneAcceptance", "HTTPS profile-save state delivery unavailable") }
+    }
+
     // Fixed phase names only: no pairing arguments, profile values, PDF bytes or tokens.
     private fun phase(name: String) {
         android.util.Log.i("CareerPhoneAcceptance", "HTTPS phase: $name")
@@ -236,8 +286,8 @@ class NativeHttpsAcceptanceTest {
         clickInApply("Run approved test applications")
     }
     private fun await(timeout: Long = 10_000, check: () -> Boolean) = compose.waitUntil(timeoutMillis = timeout, condition = check)
-    private fun capture(name: String) {
-        compose.waitForIdle()
+    private fun capture(name: String, waitForIdle: Boolean = true) {
+        if (waitForIdle) compose.waitForIdle()
         val instrumentation = InstrumentationRegistry.getInstrumentation()
         val image = requireNotNull(instrumentation.uiAutomation.takeScreenshot())
         File(instrumentation.targetContext.filesDir, name).outputStream().use { image.compress(Bitmap.CompressFormat.PNG, 100, it) }
