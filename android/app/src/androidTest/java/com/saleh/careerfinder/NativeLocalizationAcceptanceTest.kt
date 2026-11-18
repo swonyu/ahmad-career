@@ -17,6 +17,7 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.ViewModelStore
+import androidx.test.platform.app.InstrumentationRegistry
 import org.json.JSONObject
 import org.junit.After
 import org.junit.Assert.*
@@ -99,6 +100,21 @@ class NativeLocalizationAcceptanceTest {
     private fun strings(language: String): CareerStrings {
         val config = Configuration(context.resources.configuration).apply { setLocales(LocaleList(Locale.forLanguageTag(language))) }
         return CareerStrings(context.createConfigurationContext(config))
+    }
+
+    private fun capture(name: String) {
+        compose.waitForIdle()
+        val instrumentation = InstrumentationRegistry.getInstrumentation()
+        // Wait for the selected language to finish drawing before preserving its actual pixels.
+        instrumentation.uiAutomation.waitForIdle(500, 3_000)
+        val directory = java.io.File(instrumentation.targetContext.cacheDir, "localization-review-evidence")
+        check(directory.isDirectory || directory.mkdirs())
+        val screenshot = checkNotNull(instrumentation.uiAutomation.takeScreenshot())
+        try {
+            java.io.File(directory, "$name.png").outputStream().use {
+                check(screenshot.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it))
+            }
+        } finally { screenshot.recycle() }
     }
 
     @Test fun arabicDisplay_keepsProfileAndPrivateScope_andPersistsWithoutServiceCalls() {
@@ -260,7 +276,8 @@ class NativeLocalizationAcceptanceTest {
         compose.onNodeWithTag("settings-list").performScrollToNode(hasTestTag("language-en"))
         compose.onNodeWithTag("language-en").performClick()
         compose.waitUntil(5_000) { selection == LanguagePreference.ENGLISH && direction == LayoutDirection.Ltr }
-        compose.onNodeWithTag("language-en").assertIsSelected()
+        compose.onNodeWithTag("language-en").assertIsDisplayed().assertIsSelected()
+        capture("english-display-selection")
         compose.onNodeWithTag("navigation-profile").revealNavigationTab().performClick()
         compose.onNodeWithTag("profile-list").performScrollToNode(hasText("First or single name") and hasSetTextAction())
         compose.onNode(hasText("First or single name") and hasSetTextAction()).assertTextContains("Unfinished اسم")

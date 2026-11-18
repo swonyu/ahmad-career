@@ -1172,11 +1172,22 @@ internal fun StatusPill(label: String, caution: Boolean, modifier: Modifier = Mo
 @Composable
 internal fun FullScreenForm(title: String, close: () -> Unit, content: @Composable () -> Unit) {
     val l10n = rememberCareerStrings()
-    Dialog(onDismissRequest = close, properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false)) {
+    val closeFromDialog = remember { arrayOfNulls<() -> Unit>(1) }
+    Dialog(onDismissRequest = { closeFromDialog[0]?.invoke() ?: close() },
+        properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false)) {
         CareerDisplayContent {
             val view = LocalView.current
+            // This form has its own Dialog focus owner and IME window.
+            val focusManager = LocalFocusManager.current
+            val keyboard = LocalSoftwareKeyboardController.current
+            val dismiss: () -> Unit = {
+                focusManager.clearFocus(force = true)
+                keyboard?.hide()
+                close()
+            }
             val lightBackground = MaterialTheme.colorScheme.background.luminance() > 0.5f
             SideEffect {
+                closeFromDialog[0] = dismiss
                 (view.parent as? DialogWindowProvider)?.window?.let { window ->
                     WindowCompat.getInsetsController(window, view).apply {
                         isAppearanceLightStatusBars = lightBackground
@@ -1187,7 +1198,7 @@ internal fun FullScreenForm(title: String, close: () -> Unit, content: @Composab
             Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                 Column(Modifier.safeDrawingPadding().imePadding()) {
                     Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                        IconButton(onClick = close) { Icon(Icons.Default.Close, l10n("Close ") + l10n(title)) }
+                        IconButton(onClick = dismiss) { Icon(Icons.Default.Close, l10n("Close ") + l10n(title)) }
                         Text(l10n(title), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(start = 8.dp))
                     }
                     content()

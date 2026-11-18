@@ -22,6 +22,7 @@ export const REQUIRED_SCREENSHOTS = Object.freeze({
     'cache/linkedin-review-evidence/linkedin-exact-review.png',
     'cache/linkedin-review-evidence/linkedin-profile-guidance.png',
     'cache/linkedin-review-evidence/linkedin-search-handoff.png',
+    'cache/localization-review-evidence/english-display-selection.png',
     'cache/strict-review-evidence/expanded-private-note-large-text.png',
     'cache/strict-review-evidence/profile-contact-copy.png',
     'cache/strict-review-evidence/remove-local-opportunity-confirmation.png',

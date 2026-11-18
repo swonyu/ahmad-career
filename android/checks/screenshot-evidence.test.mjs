@@ -60,6 +60,7 @@ test('required paths match the actual success captures declared by the instrumen
   const declarations = [
     ['NavigationPhoneAcceptanceTest.kt', 'cache/navigation-review-evidence', /\bcapture\("([a-z0-9-]+)"\)/g],
     ['LinkedInPhoneAcceptanceTest.kt', 'cache/linkedin-review-evidence', /\bcapture\("([a-z0-9-]+)"\)/g],
+    ['NativeLocalizationAcceptanceTest.kt', 'cache/localization-review-evidence', /\bcapture\("([a-z0-9-]+)"\)/g],
     ['PhonePolishAcceptanceTest.kt', 'cache/strict-review-evidence', /\bcaptureConfirmation\("([a-z0-9-]+)"\)/g],
   ];
   const previewPaths = declarations.flatMap(([file, directory, pattern]) => {
