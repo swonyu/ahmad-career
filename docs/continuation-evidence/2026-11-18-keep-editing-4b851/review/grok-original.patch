@@ -1,0 +1,187 @@
+--- a/hosted/app/phone/PhoneApp.tsx
++++ b/hosted/app/phone/PhoneApp.tsx
+@@ -120,6 +120,7 @@
+   const [hasQuarantinedEdits, setHasQuarantinedEdits] = useState(false);
+   const [dialogDirty, setDialogDirty] = useState(false), [confirmDialogDiscard, setConfirmDialogDiscard] = useState(false);
+   const discardHeading = useRef<HTMLHeadingElement>(null);
++  const discardReturn = useRef<HTMLElement | null>(null);
+   const [olderDrafts, setOlderDrafts] = useState<Array<{ scope: string; updatedAt: string }>>([]);
+   const [installPrompt, setInstallPrompt] = useState<InstallPrompt | null>(null);
+   const snapshotRef = useRef<PhoneSnapshot | null>(null), workspaceRef = useRef<Workspace | null>(null), busyRef = useRef(false), epoch = useRef(0), searchAbort = useRef<AbortController | null>(null), heading = useRef<HTMLHeadingElement>(null);
+@@ -403,7 +404,28 @@
+     if (data.jobs.length >= 200) throw Error("Your shortlist holds up to 200 jobs. Remove a bookmark to make room; its private application record will stay.");
+     await persist({ ...data, jobs: [job, ...data.jobs] }, generation); setNotice({ text: "Saved on this phone. Find it in Saved whenever you need it." }); setDialog(null);
+   });
+-  const requestDialogClose = () => { if (dialogDirty) setConfirmDialogDiscard(true); else setDialog(null); };
++  const rememberDiscardOpener = (opener: HTMLElement | null) => { discardReturn.current = opener; setConfirmDialogDiscard(true); };
++  const requestDialogClose = () => { if (!dialogDirty) { setDialog(null); return; } const active = document.activeElement; rememberDiscardOpener(active instanceof HTMLElement ? active : null); };
++  const keepEditing = (event: { currentTarget: HTMLButtonElement }) => {
++    const opener = discardReturn.current, removed = event.currentTarget, dialogElement = removed.closest("dialog");
++    setConfirmDialogDiscard(false);
++    // The alert unmounts after this handler, so capture its dialog before React removes the focused control.
++    requestAnimationFrame(() => {
++      const owner = removed.ownerDocument;
++      if (!owner || !dialogElement?.isConnected || !dialogElement.open) return;
++      const lost = () => {
++        if (!dialogElement.isConnected || !dialogElement.open) return false;
++        const active = owner.activeElement;
++        return !active?.isConnected || active === owner.body || active === owner.documentElement || active === dialogElement;
++      };
++      if (!lost()) return;
++      const usable = (node: EventTarget | null): node is HTMLElement => node instanceof HTMLElement && node.isConnected && dialogElement.isConnected && dialogElement.open && dialogElement.contains(node) && node !== dialogElement;
++      if (usable(opener)) opener.focus({ preventScroll: true });
++      if (!lost()) return;
++      const editor = dialogElement.querySelector<HTMLElement>("fieldset select, fieldset textarea, fieldset input:not([type='hidden'])");
++      if (usable(editor)) editor.focus({ preventScroll: true });
++    });
++  };
+   const editRecord = (job: Job) => { const data = local(), existing = data.records.find(record => record.identity === jobIdentity(job.url)); setDialogDirty(false); setConfirmDialogDiscard(false); const record = existing ?? blankRecord(job); recordRecoveryId.current = crypto.randomUUID(); setEditorDraft(record); setDialog({ kind: "record", job, record, existed: Boolean(existing), scope: data.scope, editorId: recordRecoveryId.current }); };
+   const saveRecord = (draft: ApplicationRecord, clearApplied: boolean) => run("Saving application record", async generation => {
+     if (dialog?.kind !== "record") return;
+@@ -675,7 +697,7 @@
+     setReviewAccepted(false); setNotice({ text: "Recovered edits are open. Your saved information is unchanged until you choose Save. Compare the saved version first." });
+   });
+ 
+-  const discardConfirmation = confirmDialogDiscard && <section className="phone-warning" role="alert"><h3 ref={discardHeading} tabIndex={-1}>{t("Discard these unsaved changes?")}</h3><p>{t("Your earlier saved information will stay. The unfinished changes in this form will be lost.")}</p><div className="phone-dialog-actions"><button className="button secondary" onClick={() => setConfirmDialogDiscard(false)}>{t("Keep editing")}</button><button className="button danger" onClick={() => void run("Discarding unfinished record", async () => { if (snapshotRef.current) await discardRecovery(snapshotRef.current.scope, recordRecoveryId.current); recordRecoveryId.current = null; setEditorDraft(null); setDialogDirty(false); setConfirmDialogDiscard(false); setDialog(null); })}>{t("Discard changes")}</button></div></section>;
++  const discardConfirmation = confirmDialogDiscard && <section className="phone-warning" role="alert"><h3 ref={discardHeading} tabIndex={-1}>{t("Discard these unsaved changes?")}</h3><p>{t("Your earlier saved information will stay. The unfinished changes in this form will be lost.")}</p><div className="phone-dialog-actions"><button className="button secondary" onClick={keepEditing}>{t("Keep editing")}</button><button className="button danger" onClick={() => void run("Discarding unfinished record", async () => { if (snapshotRef.current) await discardRecovery(snapshotRef.current.scope, recordRecoveryId.current); recordRecoveryId.current = null; setEditorDraft(null); setDialogDirty(false); setConfirmDialogDiscard(false); setDialog(null); })}>{t("Discard changes")}</button></div></section>;
+ 
+   const jobs = snapshot?.jobs ?? [], records = snapshot?.records ?? [], recordsByID = new Map(records.map(record => [record.identity, record]));
+   const recordJobs = records.filter(record => !jobs.some(job => jobIdentity(job.url) === record.identity)).map(record => ({ id: record.identity, title: record.title, company: record.company, url: record.identity, location: record.location ?? "", country: "" }));
+@@ -805,7 +827,7 @@
+ 
+     {dialog?.kind === "signin" && <Modal notice={notice} checkingIdentity={checkingIdentity} onCheckIdentity={() => identityCheckRef.current()} title={t("Your private workspace")} busy={Boolean(busy)} onClose={() => setDialog(null)}><p>{t("Sign in to save a profile online. Your existing guest shortlist stays on this phone and is not copied into an account automatically.")}</p><SignInOptions destination="phone" /></Modal>}
+     {dialog?.kind === "details" && <Modal notice={notice} checkingIdentity={checkingIdentity} onCheckIdentity={() => identityCheckRef.current()} title={dialog.job.title} busy={Boolean(busy)} onClose={() => setDialog(null)}><p className="phone-company" dir="auto">{dialog.job.company}</p>{dialog.job.location && <p dir="auto">{dialog.job.location}</p>}{dialog.job.summary && <p className="phone-detail-summary" dir="auto">{dialog.job.summary}</p>}{dialog.job.checkedAt && <p className="phone-note">{t("Checked ")}<bdi>{displayTime(dialog.job.checkedAt)}</bdi>{t(". Confirm current details on the employer’s page.")}</p>}<RecordSummary record={detailRecord} /><a className="button primary full" href={dialog.job.url} target="_blank" rel="noopener noreferrer">{t("Open employer page ")}<ArrowUpRight size={18} aria-hidden="true" /></a><p className="phone-note">{t("Opening a page does not submit an application. Complete the employer’s form, then record your progress here.")}</p>{detailRecord && civilDate(detailRecord.followUpDate) && <details className="phone-disclosure"><summary>{t("Calendar reminder")}</summary><p className="phone-note">{t("Download the saved follow-up day for your calendar. No private notes are included. You choose whether to import it; alerts and later changes are managed in your calendar.")}</p><button className="button secondary full" disabled={cannotSave} onClick={() => void exportFollowUp(detailRecord)}><Download size={18} aria-hidden="true" />{t("Download follow-up reminder (.ics)")}</button></details>}<div className="phone-dialog-stack"><button className="button secondary full" disabled={cannotSave} onClick={() => editRecord(dialog.job)}>{t("Edit application record")}</button>{!jobs.some(job => jobIdentity(job.url) === jobIdentity(dialog.job.url)) ? <button className="button secondary full" disabled={cannotSave} onClick={() => void saveJob(dialog.job)}>{t("Save job")}</button> : <button className="text-button danger-text" disabled={cannotSave} onClick={() => setDialog({ kind: "remove", job: dialog.job, scope: local().scope })}>{t("Remove bookmark")}</button>}</div></Modal>}
+-    {dialog?.kind === "record" && <Modal notice={notice} checkingIdentity={checkingIdentity} onCheckIdentity={() => identityCheckRef.current()} title={t("Application record")} busy={Boolean(busy)} onClose={requestDialogClose}>{discardConfirmation}<p className="phone-detail-summary" dir="auto"><strong><bdi>{dialog.job.title}</bdi></strong><br /><bdi>{dialog.job.company}</bdi></p><RecordEditor key={dialog.editorId} record={dialog.record} initialDraft={dialog.initialDraft} onDraftChange={setEditorDraft} onSave={(value, clear) => void saveRecord(value, clear)} onCancel={requestDialogClose} onDirtyChange={setDialogDirty} busy={Boolean(busy)} />{editorDraft && dialogDirty && <button className="text-button" disabled={Boolean(busy)} onClick={() => void run("Exporting unfinished edits", async () => exportUnfinished())}>{t("Export unfinished record")}</button>}{dialog.existed && <button className="text-button danger-text" disabled={Boolean(busy)} onClick={() => { if (dialogDirty) { setConfirmDialogDiscard(true); return; } setDialog({ kind: "delete-record", record: dialog.record, scope: dialog.scope }); }}>{t("Delete this private record")}</button>}</Modal>}
++    {dialog?.kind === "record" && <Modal notice={notice} checkingIdentity={checkingIdentity} onCheckIdentity={() => identityCheckRef.current()} title={t("Application record")} busy={Boolean(busy)} onClose={requestDialogClose}>{discardConfirmation}<p className="phone-detail-summary" dir="auto"><strong><bdi>{dialog.job.title}</bdi></strong><br /><bdi>{dialog.job.company}</bdi></p><RecordEditor key={dialog.editorId} record={dialog.record} initialDraft={dialog.initialDraft} onDraftChange={setEditorDraft} onSave={(value, clear) => void saveRecord(value, clear)} onCancel={requestDialogClose} onDirtyChange={setDialogDirty} busy={Boolean(busy)} />{editorDraft && dialogDirty && <button className="text-button" disabled={Boolean(busy)} onClick={() => void run("Exporting unfinished edits", async () => exportUnfinished())}>{t("Export unfinished record")}</button>}{dialog.existed && <button className="text-button danger-text" disabled={Boolean(busy)} onClick={event => { if (dialogDirty) { rememberDiscardOpener(event.currentTarget); return; } setDialog({ kind: "delete-record", record: dialog.record, scope: dialog.scope }); }}>{t("Delete this private record")}</button>}</Modal>}
+     {dialog?.kind === "remove" && <Modal notice={notice} checkingIdentity={checkingIdentity} onCheckIdentity={() => identityCheckRef.current()} title={t("Remove this bookmark?")} busy={Boolean(busy)} onClose={() => setDialog(null)}><p dir="auto">{dialog.job.title}</p><p className="phone-detail-summary" dir="auto">{t("Your application stage, notes, and follow-up date will stay in Saved as an application record. This does not withdraw an application or delete an online receipt.")}</p><div className="phone-dialog-actions"><button className="button secondary" disabled={Boolean(busy)} onClick={() => setDialog(null)}>{t("Keep bookmark")}</button><button className="button danger" disabled={Boolean(busy)} onClick={() => void removeBookmark()}>{t("Remove bookmark")}</button></div></Modal>}
+     {dialog?.kind === "add" && <Modal notice={notice} checkingIdentity={checkingIdentity} onCheckIdentity={() => identityCheckRef.current()} title={t("Save a job link")} busy={Boolean(busy)} onClose={requestDialogClose}>{discardConfirmation}<form onChange={() => setDialogDirty(true)} onSubmit={event => { event.preventDefault(); const data = new FormData(event.currentTarget); try { const job = jobSchema.parse({ id: crypto.randomUUID(), title: String(data.get("title")).trim(), company: String(data.get("company")).trim(), url: publicURL(String(data.get("url")).trim()), location: String(data.get("location")).trim(), country: "" }); if (!job.title || !job.company) throw Error("Add a job title and employer so you can find this job later."); void saveJob(job); } catch (error) { setNotice({ text: message(error), error: true }); } }}><p className="phone-note">{t("Save a public job page from an employer or job board. The link stays on this phone until you prepare an online application.")}</p><label>{t("Job link")}<input name="url" type="url" dir="ltr" required maxLength={2048} placeholder="https://…" autoCapitalize="none" autoCorrect="off" /></label><label>{t("Job title")}<input name="title" dir="auto" required maxLength={500} /></label><label>{t("Employer")}<input name="company" dir="auto" required maxLength={250} /></label><label>{t("Location ")}<span className="optional">{t("optional")}</span><input name="location" dir="auto" maxLength={500} /></label><button className="button primary full" type="submit" disabled={cannotSave}>{t("Save on this phone")}</button></form></Modal>}
+     {dialog?.kind === "clear" && <Modal notice={notice} checkingIdentity={checkingIdentity} onCheckIdentity={() => identityCheckRef.current()} title={t("Clear this phone’s saved data?")} busy={Boolean(busy)} onClose={() => setDialog(null)}><p>{t("This removes this workspace’s phone draft, saved bookmarks, private records, CV copy, and previous search results from this browser. Unfinished recovery copies are also removed. Small Stop locks remain so an earlier approval cannot resume after you clear personal drafts.")}</p>{storageProblem && <p className="phone-warning">{t("Resetting also removes the browser encryption key. An encrypted recovery export alone cannot restore damaged data afterward. Keep the data here until recovery is complete, or choose Clear only if you accept losing it.")}</p>}<p className="phone-detail-summary" dir="auto">{t("Online data and employer-held applications stay in place. You can manage online deletion from Account. If you can still open your saved data, choose Export phone data first to keep a readable JSON copy of your notes. This export cannot be restored into the app.")}</p><div className="phone-dialog-actions"><button className="button secondary" disabled={Boolean(busy)} onClick={() => setDialog(null)}>{t("Keep my data")}</button><button className="button danger" disabled={Boolean(busy)} onClick={() => void clearPhoneData()}>{t("Clear phone data")}</button></div></Modal>}
+--- a/hosted/tests/phone-recovery-isolation.mjs
++++ b/hosted/tests/phone-recovery-isolation.mjs
+@@ -488,3 +488,126 @@
+     h.flush(); assert.equal(h.document.activeElement, active); assert.equal(h.focusCalls.length, 0);
+   }
+ });
++
++function keepFocusHarness(opener) {
++  const frames = [], focusCalls = [];
++  const document = { activeElement: null, body: null, documentElement: null, queried: 0 };
++  class FocusTarget {
++    constructor(name) { this.name = name; this.isConnected = true; this.focusable = true; this.ownerDocument = document; this.dialog = null; }
++    closest(selector) { assert.equal(selector, "dialog"); return this.dialog; }
++    focus(options) { focusCalls.push({ target: this, options }); if (this.isConnected && this.focusable) { document.activeElement = this; this.onFocus?.(); } }
++  }
++  const body = new FocusTarget("body"), html = new FocusTarget("html"), heading = new FocusTarget("page heading"), cancel = new FocusTarget("Cancel"), deleteButton = new FocusTarget("Delete this private record"), stage = new FocusTarget("Stage"), notes = new FocusTarget("Private notes"), keep = new FocusTarget("Keep editing"), outside = new FocusTarget("outside control");
++  const dialog = {
++    open: true, isConnected: true,
++    descendants: new Set([cancel, deleteButton, stage, notes, keep]),
++    contains(target) { return target === dialog || this.descendants.has(target); },
++    querySelector(selector) { document.queried++; assert.equal(selector, "fieldset select, fieldset textarea, fieldset input:not([type='hidden'])"); return stage.isConnected ? stage : null; },
++  };
++  for (const node of [cancel, deleteButton, stage, notes, keep]) node.dialog = dialog;
++  document.body = body; document.documentElement = html; document.activeElement = keep;
++  const draft = { note: "متابعة خاصة", stage: "interview" };
++  const state = { confirm: true, dialogDirty: true, editorDraft: draft, dialogKind: "record" };
++  const discardReturn = { current: opener === "delete" ? deleteButton : opener === "none" ? null : cancel };
++  const context = vm.createContext({
++    discardReturn, HTMLElement: FocusTarget, document,
++    requestAnimationFrame(callback) { frames.push(callback); return frames.length; },
++    setConfirmDialogDiscard(value) { assert.equal(value, false); state.confirm = false; },
++    setDialog() { throw new Error("Keep editing must leave the open dialog and its draft alone"); },
++    setDialogDirty() { throw new Error("Keep editing must not change the dirty flag"); },
++    setEditorDraft() { throw new Error("Keep editing must not change the draft"); },
++  });
++  install(context, "keepEditing");
++  const disconnect = target => { target.isConnected = false; dialog.descendants.delete(target); if (document.activeElement === target) document.activeElement = body; };
++  const flush = () => { assert.equal(frames.length, 1); frames.shift()(0); assert.equal(frames.length, 0); };
++  return { document, body, heading, cancel, deleteButton, stage, notes, keepButton: keep, outside, dialog, discardReturn, state, draft, focusCalls, disconnect, flush, activate: () => context.keepEditing({ currentTarget: keep }) };
++}
++
++test("actual Keep editing returns focus to the preserved record control after its alert is removed", () => {
++  assert.equal(buttonClick("Keep editing"), "keepEditing");
++  assert.doesNotMatch(declaration("keepEditing"), /recoverPhoneFocus|phone-page-heading/);
++  const h = keepFocusHarness("cancel");
++  h.activate();
++  assert.equal(h.state.confirm, false);
++  assert.equal(h.document.activeElement, h.keepButton, "Focus waits until the alert control is actually gone");
++  assert.equal(h.state.dialogDirty, true); assert.equal(h.state.editorDraft, h.draft); assert.equal(h.state.dialogKind, "record");
++  h.disconnect(h.keepButton); h.flush();
++  assert.equal(h.document.activeElement, h.cancel);
++  assert.deepEqual(h.focusCalls.map(call => call.target), [h.cancel]);
++  assert.equal(h.focusCalls[0].options.preventScroll, true);
++  assert.equal(h.document.queried, 0, "A usable opener inside the dialog does not fall through to another control");
++  assert.equal(h.focusCalls.some(call => call.target === h.heading), false);
++});
++
++test("actual Keep editing uses the delete opener or the editor control, never the page heading", () => {
++  const deleted = keepFocusHarness("delete");
++  deleted.activate(); deleted.disconnect(deleted.keepButton); deleted.flush();
++  assert.equal(deleted.document.activeElement, deleted.deleteButton);
++  assert.equal(deleted.focusCalls.some(call => call.target === deleted.heading), false);
++  const fallback = keepFocusHarness("cancel");
++  fallback.disconnect(fallback.cancel); fallback.document.activeElement = fallback.dialog;
++  fallback.activate(); fallback.disconnect(fallback.keepButton); fallback.flush();
++  assert.equal(fallback.document.activeElement, fallback.stage, "Body or dialog-root focus is restored to the editor");
++  assert.equal(fallback.focusCalls.some(call => call.target === fallback.heading), false);
++  const nowhere = keepFocusHarness("none");
++  nowhere.disconnect(nowhere.stage); nowhere.activate(); nowhere.disconnect(nowhere.keepButton); nowhere.flush();
++  assert.equal(nowhere.document.activeElement, nowhere.body);
++  assert.equal(nowhere.focusCalls.length, 0);
++});
++
++test("actual Keep editing does not steal intentional focus or cross a closed, replaced, or removed dialog", () => {
++  for (const next of ["editor", "outside", "closed", "removed"]) {
++    const h = keepFocusHarness("cancel");
++    h.activate(); h.disconnect(h.keepButton);
++    if (next === "editor") h.document.activeElement = h.notes;
++    else if (next === "outside") h.document.activeElement = h.outside;
++    else if (next === "closed") h.dialog.open = false;
++    else h.dialog.isConnected = false;
++    const active = h.document.activeElement;
++    h.flush();
++    assert.equal(h.document.activeElement, active, next);
++    assert.equal(h.focusCalls.length, 0, next);
++    assert.equal(h.state.dialogDirty, true); assert.equal(h.state.editorDraft.note, "متابعة خاصة");
++  }
++  const redirected = keepFocusHarness("cancel");
++  redirected.cancel.onFocus = () => { redirected.document.activeElement = redirected.notes; };
++  redirected.activate(); redirected.disconnect(redirected.keepButton); redirected.flush();
++  assert.equal(redirected.document.activeElement, redirected.notes);
++  assert.deepEqual(redirected.focusCalls.map(call => call.target), [redirected.cancel]);
++  assert.equal(redirected.document.queried, 0);
++});
++
++test("actual discard confirmation remembers Cancel or Delete without dropping the draft", () => {
++  assert.match(declaration("requestDialogClose"), /rememberDiscardOpener\(active instanceof HTMLElement \? active : null\)/);
++  assert.match(buttonClick("Delete this private record"), /rememberDiscardOpener\(event\.currentTarget\)/);
++  class HTMLElement {}
++  const opener = new HTMLElement(); opener.name = "Cancel";
++  const state = { confirm: false, dialog: { kind: "record", record: { identity: "synthetic" }, scope: "guest" } };
++  const context = vm.createContext({
++    discardReturn: { current: null }, HTMLElement, document: { activeElement: { name: "not an element" } },
++    dialogDirty: true, dialog: state.dialog,
++    setConfirmDialogDiscard(value) { state.confirm = value; },
++    setDialog(value) { state.dialog = value; },
++  });
++  install(context, "rememberDiscardOpener");
++  install(context, "requestDialogClose");
++  install(context, "deletePrivate", buttonClick("Delete this private record"));
++  context.requestDialogClose();
++  assert.equal(context.discardReturn.current, null, "A non-element active node is not restored later");
++  assert.equal(state.confirm, true); assert.equal(state.dialog.kind, "record");
++  context.document.activeElement = opener; state.confirm = false;
++  context.requestDialogClose();
++  assert.equal(context.discardReturn.current, opener);
++  assert.equal(state.confirm, true); assert.equal(state.dialog.kind, "record");
++  context.dialogDirty = false; context.discardReturn.current = null; state.confirm = false;
++  context.requestDialogClose();
++  assert.equal(state.dialog, null); assert.equal(state.confirm, false); assert.equal(context.discardReturn.current, null);
++  context.dialogDirty = true; state.dialog = { kind: "record", record: { identity: "synthetic" }, scope: "guest" }; context.dialog = state.dialog;
++  const deleteButton = { name: "Delete" };
++  context.deletePrivate({ currentTarget: deleteButton });
++  assert.equal(context.discardReturn.current, deleteButton);
++  assert.equal(state.confirm, true); assert.equal(state.dialog.kind, "record", "Dirty delete only asks to keep editing");
++  context.dialogDirty = false; state.confirm = false;
++  context.deletePrivate({ currentTarget: deleteButton });
++  assert.equal(state.dialog.kind, "delete-record"); assert.equal(state.confirm, false);
++});

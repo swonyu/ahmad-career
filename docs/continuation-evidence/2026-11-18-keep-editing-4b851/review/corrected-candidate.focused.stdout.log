@@ -1,0 +1,19 @@
+{"scope":"identical-added-Keep-assertions/actual-source-slices","runtime":"v24.22.1","sourceRoot":"/workspace/scratch/4b851318da2d/Grok-Build1-Keep-Editing-Evidence/corrected-candidate","phoneSHA256":"57543cdbc0fbcb7a51cab725d65907e76af2a29ecf9f2022bffe6caaadc9da02","keepHandler":"keepEditing","requiredProjectRuntime":"v24.22.3","projectPinnedRuntime":false}
+✔ actual Keep editing restores a preserved record control after removal without changing the draft (162.114614ms)
+✔ actual Keep editing restores dirty Delete or a surviving editor field, with a real no-target case (23.483017ms)
+✔ actual Keep editing restores the add-job form and preserves all unfinished fields (20.286544ms)
+✔ actual Keep editing leaves intentional focus and a focus redirect alone (13.013851ms)
+✔ actual Keep editing cannot cross a closed, replaced or unmounted dialog/editor (13.157732ms)
+✔ actual Keep editing waits for its old prompt removal and does not override a reopened prompt (6.183318ms)
+✔ actual Keep editing rechecks inherited disabling, hidden identity content and inert ancestry (23.873674ms)
+✔ actual Keep editing skips an unusable opener and selects the first eligible field in its form (11.667274ms)
+✔ actual Keep editing recovers absent, root, disconnected and dialog-root focus (11.262202ms)
+✔ actual discard entry handlers remember Cancel or Delete and preserve clean close behavior (5.009776ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 311.087282

@@ -1,0 +1,1533 @@
+{"scope":"identical-added-Keep-assertions/actual-source-slices","runtime":"v24.22.1","sourceRoot":"/workspace/scratch/4b851318da2d/Grok-Build1-Keep-Editing-Evidence/baseline-578","phoneSHA256":"0ee2f855083ad5933dbbca1161372e8e6e3c8b393c1fd6033b2858c59dacfd94","keepHandler":"() => setConfirmDialogDiscard(false)","requiredProjectRuntime":"v24.22.3","projectPinnedRuntime":false}
+✖ actual Keep editing restores a preserved record control after removal without changing the draft (149.094852ms)
+✖ actual Keep editing restores dirty Delete or a surviving editor field, with a real no-target case (12.543488ms)
+✖ actual Keep editing restores the add-job form and preserves all unfinished fields (21.24579ms)
+✖ actual Keep editing leaves intentional focus and a focus redirect alone (14.128755ms)
+✔ actual Keep editing cannot cross a closed, replaced or unmounted dialog/editor (9.551491ms)
+✔ actual Keep editing waits for its old prompt removal and does not override a reopened prompt (2.712452ms)
+✔ actual Keep editing rechecks inherited disabling, hidden identity content and inert ancestry (6.237891ms)
+✖ actual Keep editing skips an unusable opener and selects the first eligible field in its form (4.957538ms)
+✖ actual Keep editing recovers absent, root, disconnected and dialog-root focus (6.689128ms)
+✖ actual discard entry handlers remember Cancel or Delete and preserve clean close behavior (10.38661ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 3
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 259.068034
+
+✖ failing tests:
+
+test at Grok-Build1-Keep-Editing-Evidence/focused-source-runner.mjs:127:1
+✖ actual Keep editing restores a preserved record control after removal without changing the draft (149.094852ms)
+  AssertionError [ERR_ASSERTION]: The removed Keep control must not leave focus on BODY
+  + actual - expected
+  
+  + <ref *1> FocusTarget {
+  - FocusTarget {
+      connected: true,
+      disabled: false,
+      focusable: true,
+      hidden: false,
+      inert: false,
+  +   name: 'body',
+  +   ownerDocument: <ref *2> {
+  +     activeElement: [Circular *1],
+  +     body: [Circular *1],
+  -   name: 'Cancel',
+  -   ownerDocument: <ref *1> {
+  -     activeElement: FocusTarget {
+  -       connected: true,
+  -       disabled: false,
+  -       focusable: true,
+  -       hidden: false,
+  -       inert: false,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1],
+  -       parent: null,
+  -       tag: 'body'
+  -     },
+  -     body: FocusTarget {
+  -       connected: true,
+  -       disabled: false,
+  -       focusable: true,
+  -       hidden: false,
+  -       inert: false,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1],
+  -       parent: null,
+  -       tag: 'body'
+  -     },
+        documentElement: FocusTarget {
+          connected: true,
+          disabled: false,
+          focusable: true,
+          hidden: false,
+          inert: false,
+          name: 'html',
+  +       ownerDocument: [Circular *2],
+  -       ownerDocument: [Circular *1],
+          parent: null,
+          tag: 'html'
+        },
+        editorQueries: 0,
+        querySelector: [Function: querySelector]
+      },
+  +   parent: null,
+  +   tag: 'body'
+  -   parent: <ref *2> FocusTarget {
+  -     connected: true,
+  -     disabled: false,
+  -     fields: [
+  -       FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'Stage',
+  -         ownerDocument: <ref *1> {
+  -           activeElement: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'body',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'body'
+  -           },
+  -           body: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'body',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'body'
+  -           },
+  -           documentElement: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'html',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'html'
+  -           },
+  -           editorQueries: 0,
+  -           querySelector: [Function: querySelector]
+  -         },
+  -         parent: [Circular *2],
+  -         tag: 'select'
+  -       },
+  -       FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'Private notes',
+  -         ownerDocument: <ref *1> {
+  -           activeElement: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'body',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'body'
+  -           },
+  -           body: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'body',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'body'
+  -           },
+  -           documentElement: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'html',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'html'
+  -           },
+  -           editorQueries: 0,
+  -           querySelector: [Function: querySelector]
+  -         },
+  -         parent: [Circular *2],
+  -         tag: 'textarea'
+  -       }
+  -     ],
+  -     focusable: true,
+  -     hidden: false,
+  -     inert: false,
+  -     name: 'current editor',
+  -     ownerDocument: <ref *1> {
+  -       activeElement: FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'body',
+  -         ownerDocument: [Circular *1],
+  -         parent: null,
+  -         tag: 'body'
+  -       },
+  -       body: FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'body',
+  -         ownerDocument: [Circular *1],
+  -         parent: null,
+  -         tag: 'body'
+  -       },
+  -       documentElement: FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'html',
+  -         ownerDocument: [Circular *1],
+  -         parent: null,
+  -         tag: 'html'
+  -       },
+  -       editorQueries: 0,
+  -       querySelector: [Function: querySelector]
+  -     },
+  -     parent: FocusTarget {
+  -       connected: true,
+  -       disabled: false,
+  -       focusable: true,
+  -       hidden: false,
+  -       inert: false,
+  -       name: 'editor fieldset',
+  -       ownerDocument: <ref *1> {
+  -         activeElement: FocusTarget {
+  -           connected: true,
+  -           disabled: false,
+  -           focusable: true,
+  -           hidden: false,
+  -           inert: false,
+  -           name: 'body',
+  -           ownerDocument: [Circular *1],
+  -           parent: null,
+  -           tag: 'body'
+  -         },
+  -         body: FocusTarget {
+  -           connected: true,
+  -           disabled: false,
+  -           focusable: true,
+  -           hidden: false,
+  -           inert: false,
+  -           name: 'body',
+  -           ownerDocument: [Circular *1],
+  -           parent: null,
+  -           tag: 'body'
+  -         },
+  -         documentElement: FocusTarget {
+  -           connected: true,
+  -           disabled: false,
+  -           focusable: true,
+  -           hidden: false,
+  -           inert: false,
+  -           name: 'html',
+  -           ownerDocument: [Circular *1],
+  -           parent: null,
+  -           tag: 'html'
+  -         },
+  -         editorQueries: 0,
+  -         querySelector: [Function: querySelector]
+  -       },
+  -       parent: {
+  -         contains: [Function: contains],
+  -         form: [Circular *2],
+  -         isConnected: true,
+  -         open: true,
+  -         parent: null,
+  -         querySelector: [Function: querySelector],
+  -         tag: 'dialog'
+  -       },
+  -       tag: 'fieldset'
+  -     },
+  -     querySelectorAll: [Function (anonymous)],
+  -     tag: 'form'
+  -   },
+  -   tag: 'button'
+    }
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/4b851318da2d/Grok-Build1-Keep-Editing-Evidence/focused-source-runner.mjs:133:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [FocusTarget],
+    expected: [FocusTarget],
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at Grok-Build1-Keep-Editing-Evidence/focused-source-runner.mjs:141:1
+✖ actual Keep editing restores dirty Delete or a surviving editor field, with a real no-target case (12.543488ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" to be reference-equal to "expected":
+  + actual - expected
+  
+  + <ref *1> FocusTarget {
+  - FocusTarget {
+      connected: true,
+      disabled: false,
+      focusable: true,
+      hidden: false,
+      inert: false,
+  +   name: 'body',
+  +   ownerDocument: <ref *2> {
+  +     activeElement: [Circular *1],
+  +     body: [Circular *1],
+  -   name: 'Delete this private record',
+  -   ownerDocument: <ref *1> {
+  -     activeElement: FocusTarget {
+  -       connected: true,
+  -       disabled: false,
+  -       focusable: true,
+  -       hidden: false,
+  -       inert: false,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1],
+  -       parent: null,
+  -       tag: 'body'
+  -     },
+  -     body: FocusTarget {
+  -       connected: true,
+  -       disabled: false,
+  -       focusable: true,
+  -       hidden: false,
+  -       inert: false,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1],
+  -       parent: null,
+  -       tag: 'body'
+  -     },
+        documentElement: FocusTarget {
+          connected: true,
+          disabled: false,
+          focusable: true,
+          hidden: false,
+          inert: false,
+          name: 'html',
+  +       ownerDocument: [Circular *2],
+  -       ownerDocument: [Circular *1],
+          parent: null,
+          tag: 'html'
+        },
+        editorQueries: 0,
+        querySelector: [Function: querySelector]
+      },
+  +   parent: null,
+  +   tag: 'body'
+  -   parent: <ref *2> FocusTarget {
+  -     connected: true,
+  -     disabled: false,
+  -     focusable: true,
+  -     hidden: false,
+  -     inert: false,
+  -     name: 'editor fieldset',
+  -     ownerDocument: <ref *1> {
+  -       activeElement: FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'body',
+  -         ownerDocument: [Circular *1],
+  -         parent: null,
+  -         tag: 'body'
+  -       },
+  -       body: FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'body',
+  -         ownerDocument: [Circular *1],
+  -         parent: null,
+  -         tag: 'body'
+  -       },
+  -       documentElement: FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'html',
+  -         ownerDocument: [Circular *1],
+  -         parent: null,
+  -         tag: 'html'
+  -       },
+  -       editorQueries: 0,
+  -       querySelector: [Function: querySelector]
+  -     },
+  -     parent: {
+  -       contains: [Function: contains],
+  -       form: <ref *3> FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         fields: [
+  -           FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'Stage',
+  -             ownerDocument: <ref *1> {
+  -               activeElement: FocusTarget {
+  -                 connected: true,
+  -                 disabled: false,
+  -                 focusable: true,
+  -                 hidden: false,
+  -                 inert: false,
+  -                 name: 'body',
+  -                 ownerDocument: [Circular *1],
+  -                 parent: null,
+  -                 tag: 'body'
+  -               },
+  -               body: FocusTarget {
+  -                 connected: true,
+  -                 disabled: false,
+  -                 focusable: true,
+  -                 hidden: false,
+  -                 inert: false,
+  -                 name: 'body',
+  -                 ownerDocument: [Circular *1],
+  -                 parent: null,
+  -                 tag: 'body'
+  -               },
+  -               documentElement: FocusTarget {
+  -                 connected: true,
+  -                 disabled: false,
+  -                 focusable: true,
+  -                 hidden: false,
+  -                 inert: false,
+  -                 name: 'html',
+  -                 ownerDocument: [Circular *1],
+  -                 parent: null,
+  -                 tag: 'html'
+  -               },
+  -               editorQueries: 0,
+  -               querySelector: [Function: querySelector]
+  -             },
+  -             parent: [Circular *3],
+  -             tag: 'select'
+  -           },
+  -           FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'Private notes',
+  -             ownerDocument: <ref *1> {
+  -               activeElement: FocusTarget {
+  -                 connected: true,
+  -                 disabled: false,
+  -                 focusable: true,
+  -                 hidden: false,
+  -                 inert: false,
+  -                 name: 'body',
+  -                 ownerDocument: [Circular *1],
+  -                 parent: null,
+  -                 tag: 'body'
+  -               },
+  -               body: FocusTarget {
+  -                 connected: true,
+  -                 disabled: false,
+  -                 focusable: true,
+  -                 hidden: false,
+  -                 inert: false,
+  -                 name: 'body',
+  -                 ownerDocument: [Circular *1],
+  -                 parent: null,
+  -                 tag: 'body'
+  -               },
+  -               documentElement: FocusTarget {
+  -                 connected: true,
+  -                 disabled: false,
+  -                 focusable: true,
+  -                 hidden: false,
+  -                 inert: false,
+  -                 name: 'html',
+  -                 ownerDocument: [Circular *1],
+  -                 parent: null,
+  -                 tag: 'html'
+  -               },
+  -               editorQueries: 0,
+  -               querySelector: [Function: querySelector]
+  -             },
+  -             parent: [Circular *3],
+  -             tag: 'textarea'
+  -           }
+  -         ],
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'current editor',
+  -         ownerDocument: <ref *1> {
+  -           activeElement: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'body',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'body'
+  -           },
+  -           body: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'body',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'body'
+  -           },
+  -           documentElement: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'html',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'html'
+  -           },
+  -           editorQueries: 0,
+  -           querySelector: [Function: querySelector]
+  -         },
+  -         parent: [Circular *2],
+  -         querySelectorAll: [Function (anonymous)],
+  -         tag: 'form'
+  -       },
+  -       isConnected: true,
+  -       open: true,
+  -       parent: null,
+  -       querySelector: [Function: querySelector],
+  -       tag: 'dialog'
+  -     },
+  -     tag: 'fieldset'
+  -   },
+  -   tag: 'button'
+    }
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/4b851318da2d/Grok-Build1-Keep-Editing-Evidence/focused-source-runner.mjs:144:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [FocusTarget],
+    expected: [FocusTarget],
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at Grok-Build1-Keep-Editing-Evidence/focused-source-runner.mjs:159:1
+✖ actual Keep editing restores the add-job form and preserves all unfinished fields (21.24579ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" to be reference-equal to "expected":
+  + actual - expected
+  
+  + <ref *1> FocusTarget {
+  - FocusTarget {
+      connected: true,
+      disabled: false,
+      focusable: true,
+      hidden: false,
+      inert: false,
+  +   name: 'body',
+  +   ownerDocument: <ref *2> {
+  +     activeElement: [Circular *1],
+  +     body: [Circular *1],
+  -   name: 'Close dialog',
+  -   ownerDocument: <ref *1> {
+  -     activeElement: FocusTarget {
+  -       connected: true,
+  -       disabled: false,
+  -       focusable: true,
+  -       hidden: false,
+  -       inert: false,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1],
+  -       parent: null,
+  -       tag: 'body'
+  -     },
+  -     body: FocusTarget {
+  -       connected: true,
+  -       disabled: false,
+  -       focusable: true,
+  -       hidden: false,
+  -       inert: false,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1],
+  -       parent: null,
+  -       tag: 'body'
+  -     },
+        documentElement: FocusTarget {
+          connected: true,
+          disabled: false,
+          focusable: true,
+          hidden: false,
+          inert: false,
+          name: 'html',
+  +       ownerDocument: [Circular *2],
+  -       ownerDocument: [Circular *1],
+          parent: null,
+          tag: 'html'
+        },
+        editorQueries: 0,
+        querySelector: [Function: querySelector]
+      },
+  +   parent: null,
+  +   tag: 'body'
+  -   parent: <ref *2> {
+  -     contains: [Function: contains],
+  -     form: <ref *3> FocusTarget {
+  -       connected: true,
+  -       disabled: false,
+  -       fields: [
+  -         FocusTarget {
+  -           connected: true,
+  -           disabled: false,
+  -           focusable: true,
+  -           hidden: false,
+  -           inert: false,
+  -           name: 'Job link',
+  -           ownerDocument: <ref *1> {
+  -             activeElement: FocusTarget {
+  -               connected: true,
+  -               disabled: false,
+  -               focusable: true,
+  -               hidden: false,
+  -               inert: false,
+  -               name: 'body',
+  -               ownerDocument: [Circular *1],
+  -               parent: null,
+  -               tag: 'body'
+  -             },
+  -             body: FocusTarget {
+  -               connected: true,
+  -               disabled: false,
+  -               focusable: true,
+  -               hidden: false,
+  -               inert: false,
+  -               name: 'body',
+  -               ownerDocument: [Circular *1],
+  -               parent: null,
+  -               tag: 'body'
+  -             },
+  -             documentElement: FocusTarget {
+  -               connected: true,
+  -               disabled: false,
+  -               focusable: true,
+  -               hidden: false,
+  -               inert: false,
+  -               name: 'html',
+  -               ownerDocument: [Circular *1],
+  -               parent: null,
+  -               tag: 'html'
+  -             },
+  -             editorQueries: 0,
+  -             querySelector: [Function: querySelector]
+  -           },
+  -           parent: [Circular *3],
+  -           tag: 'input'
+  -         },
+  -         FocusTarget {
+  -           connected: true,
+  -           disabled: false,
+  -           focusable: true,
+  -           hidden: false,
+  -           inert: false,
+  -           name: 'Job title',
+  -           ownerDocument: <ref *1> {
+  -             activeElement: FocusTarget {
+  -               connected: true,
+  -               disabled: false,
+  -               focusable: true,
+  -               hidden: false,
+  -               inert: false,
+  -               name: 'body',
+  -               ownerDocument: [Circular *1],
+  -               parent: null,
+  -               tag: 'body'
+  -             },
+  -             body: FocusTarget {
+  -               connected: true,
+  -               disabled: false,
+  -               focusable: true,
+  -               hidden: false,
+  -               inert: false,
+  -               name: 'body',
+  -               ownerDocument: [Circular *1],
+  -               parent: null,
+  -               tag: 'body'
+  -             },
+  -             documentElement: FocusTarget {
+  -               connected: true,
+  -               disabled: false,
+  -               focusable: true,
+  -               hidden: false,
+  -               inert: false,
+  -               name: 'html',
+  -               ownerDocument: [Circular *1],
+  -               parent: null,
+  -               tag: 'html'
+  -             },
+  -             editorQueries: 0,
+  -             querySelector: [Function: querySelector]
+  -           },
+  -           parent: [Circular *3],
+  -           tag: 'input'
+  -         }
+  -       ],
+  -       focusable: true,
+  -       hidden: false,
+  -       inert: false,
+  -       name: 'current editor',
+  -       ownerDocument: <ref *1> {
+  -         activeElement: FocusTarget {
+  -           connected: true,
+  -           disabled: false,
+  -           focusable: true,
+  -           hidden: false,
+  -           inert: false,
+  -           name: 'body',
+  -           ownerDocument: [Circular *1],
+  -           parent: null,
+  -           tag: 'body'
+  -         },
+  -         body: FocusTarget {
+  -           connected: true,
+  -           disabled: false,
+  -           focusable: true,
+  -           hidden: false,
+  -           inert: false,
+  -           name: 'body',
+  -           ownerDocument: [Circular *1],
+  -           parent: null,
+  -           tag: 'body'
+  -         },
+  -         documentElement: FocusTarget {
+  -           connected: true,
+  -           disabled: false,
+  -           focusable: true,
+  -           hidden: false,
+  -           inert: false,
+  -           name: 'html',
+  -           ownerDocument: [Circular *1],
+  -           parent: null,
+  -           tag: 'html'
+  -         },
+  -         editorQueries: 0,
+  -         querySelector: [Function: querySelector]
+  -       },
+  -       parent: FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'editor fieldset',
+  -         ownerDocument: <ref *1> {
+  -           activeElement: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'body',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'body'
+  -           },
+  -           body: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'body',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'body'
+  -           },
+  -           documentElement: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'html',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'html'
+  -           },
+  -           editorQueries: 0,
+  -           querySelector: [Function: querySelector]
+  -         },
+  -         parent: [Circular *2],
+  -         tag: 'fieldset'
+  -       },
+  -       querySelectorAll: [Function (anonymous)],
+  -       tag: 'form'
+  -     },
+  -     isConnected: true,
+  -     open: true,
+  -     parent: null,
+  -     querySelector: [Function: querySelector],
+  -     tag: 'dialog'
+  -   },
+  -   tag: 'button'
+    }
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/4b851318da2d/Grok-Build1-Keep-Editing-Evidence/focused-source-runner.mjs:163:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [FocusTarget],
+    expected: [FocusTarget],
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at Grok-Build1-Keep-Editing-Evidence/focused-source-runner.mjs:168:1
+✖ actual Keep editing leaves intentional focus and a focus redirect alone (14.128755ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" to be reference-equal to "expected":
+  + actual - expected
+  
+  + <ref *1> FocusTarget {
+  - <ref *3> FocusTarget {
+      connected: true,
+      disabled: false,
+      focusable: true,
+      hidden: false,
+      inert: false,
+  +   name: 'body',
+  +   ownerDocument: <ref *2> {
+  +     activeElement: [Circular *1],
+  +     body: [Circular *1],
+  -   name: 'Private notes',
+  -   ownerDocument: <ref *1> {
+  -     activeElement: FocusTarget {
+  -       connected: true,
+  -       disabled: false,
+  -       focusable: true,
+  -       hidden: false,
+  -       inert: false,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1],
+  -       parent: null,
+  -       tag: 'body'
+  -     },
+  -     body: FocusTarget {
+  -       connected: true,
+  -       disabled: false,
+  -       focusable: true,
+  -       hidden: false,
+  -       inert: false,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1],
+  -       parent: null,
+  -       tag: 'body'
+  -     },
+        documentElement: FocusTarget {
+          connected: true,
+          disabled: false,
+          focusable: true,
+          hidden: false,
+          inert: false,
+          name: 'html',
+  +       ownerDocument: [Circular *2],
+  -       ownerDocument: [Circular *1],
+          parent: null,
+          tag: 'html'
+        },
+        editorQueries: 0,
+        querySelector: [Function: querySelector]
+      },
+  +   parent: null,
+  +   tag: 'body'
+  -   parent: <ref *2> FocusTarget {
+  -     connected: true,
+  -     disabled: false,
+  -     fields: [
+  -       FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'Stage',
+  -         ownerDocument: <ref *1> {
+  -           activeElement: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'body',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'body'
+  -           },
+  -           body: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'body',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'body'
+  -           },
+  -           documentElement: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'html',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'html'
+  -           },
+  -           editorQueries: 0,
+  -           querySelector: [Function: querySelector]
+  -         },
+  -         parent: [Circular *2],
+  -         tag: 'select'
+  -       },
+  -       [Circular *3]
+  -     ],
+  -     focusable: true,
+  -     hidden: false,
+  -     inert: false,
+  -     name: 'current editor',
+  -     ownerDocument: <ref *1> {
+  -       activeElement: FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'body',
+  -         ownerDocument: [Circular *1],
+  -         parent: null,
+  -         tag: 'body'
+  -       },
+  -       body: FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'body',
+  -         ownerDocument: [Circular *1],
+  -         parent: null,
+  -         tag: 'body'
+  -       },
+  -       documentElement: FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'html',
+  -         ownerDocument: [Circular *1],
+  -         parent: null,
+  -         tag: 'html'
+  -       },
+  -       editorQueries: 0,
+  -       querySelector: [Function: querySelector]
+  -     },
+  -     parent: FocusTarget {
+  -       connected: true,
+  -       disabled: false,
+  -       focusable: true,
+  -       hidden: false,
+  -       inert: false,
+  -       name: 'editor fieldset',
+  -       ownerDocument: <ref *1> {
+  -         activeElement: FocusTarget {
+  -           connected: true,
+  -           disabled: false,
+  -           focusable: true,
+  -           hidden: false,
+  -           inert: false,
+  -           name: 'body',
+  -           ownerDocument: [Circular *1],
+  -           parent: null,
+  -           tag: 'body'
+  -         },
+  -         body: FocusTarget {
+  -           connected: true,
+  -           disabled: false,
+  -           focusable: true,
+  -           hidden: false,
+  -           inert: false,
+  -           name: 'body',
+  -           ownerDocument: [Circular *1],
+  -           parent: null,
+  -           tag: 'body'
+  -         },
+  -         documentElement: FocusTarget {
+  -           connected: true,
+  -           disabled: false,
+  -           focusable: true,
+  -           hidden: false,
+  -           inert: false,
+  -           name: 'html',
+  -           ownerDocument: [Circular *1],
+  -           parent: null,
+  -           tag: 'html'
+  -         },
+  -         editorQueries: 0,
+  -         querySelector: [Function: querySelector]
+  -       },
+  -       parent: {
+  -         contains: [Function: contains],
+  -         form: [Circular *2],
+  -         isConnected: true,
+  -         open: true,
+  -         parent: null,
+  -         querySelector: [Function: querySelector],
+  -         tag: 'dialog'
+  -       },
+  -       tag: 'fieldset'
+  -     },
+  -     querySelectorAll: [Function (anonymous)],
+  -     tag: 'form'
+  -   },
+  -   tag: 'textarea'
+    }
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/4b851318da2d/Grok-Build1-Keep-Editing-Evidence/focused-source-runner.mjs:177:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [FocusTarget],
+    expected: [FocusTarget],
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at Grok-Build1-Keep-Editing-Evidence/focused-source-runner.mjs:223:1
+✖ actual Keep editing skips an unusable opener and selects the first eligible field in its form (4.957538ms)
+  AssertionError [ERR_ASSERTION]: disabled
+  + actual - expected
+  
+  + <ref *1> FocusTarget {
+  - <ref *3> FocusTarget {
+      connected: true,
+      disabled: false,
+      focusable: true,
+      hidden: false,
+      inert: false,
+  +   name: 'body',
+  +   ownerDocument: <ref *2> {
+  +     activeElement: [Circular *1],
+  +     body: [Circular *1],
+  -   name: 'Private notes',
+  -   ownerDocument: <ref *1> {
+  -     activeElement: FocusTarget {
+  -       connected: true,
+  -       disabled: false,
+  -       focusable: true,
+  -       hidden: false,
+  -       inert: false,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1],
+  -       parent: null,
+  -       tag: 'body'
+  -     },
+  -     body: FocusTarget {
+  -       connected: true,
+  -       disabled: false,
+  -       focusable: true,
+  -       hidden: false,
+  -       inert: false,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1],
+  -       parent: null,
+  -       tag: 'body'
+  -     },
+        documentElement: FocusTarget {
+          connected: true,
+          disabled: false,
+          focusable: true,
+          hidden: false,
+          inert: false,
+          name: 'html',
+  +       ownerDocument: [Circular *2],
+  -       ownerDocument: [Circular *1],
+          parent: null,
+          tag: 'html'
+        },
+        editorQueries: 0,
+        querySelector: [Function: querySelector]
+      },
+  +   parent: null,
+  +   tag: 'body'
+  -   parent: <ref *2> FocusTarget {
+  -     connected: true,
+  -     disabled: false,
+  -     fields: [
+  -       FocusTarget {
+  -         connected: true,
+  -         disabled: true,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'Stage',
+  -         ownerDocument: <ref *1> {
+  -           activeElement: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'body',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'body'
+  -           },
+  -           body: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'body',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'body'
+  -           },
+  -           documentElement: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'html',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'html'
+  -           },
+  -           editorQueries: 0,
+  -           querySelector: [Function: querySelector]
+  -         },
+  -         parent: [Circular *2],
+  -         tag: 'select'
+  -       },
+  -       [Circular *3]
+  -     ],
+  -     focusable: true,
+  -     hidden: false,
+  -     inert: false,
+  -     name: 'current editor',
+  -     ownerDocument: <ref *1> {
+  -       activeElement: FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'body',
+  -         ownerDocument: [Circular *1],
+  -         parent: null,
+  -         tag: 'body'
+  -       },
+  -       body: FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'body',
+  -         ownerDocument: [Circular *1],
+  -         parent: null,
+  -         tag: 'body'
+  -       },
+  -       documentElement: FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'html',
+  -         ownerDocument: [Circular *1],
+  -         parent: null,
+  -         tag: 'html'
+  -       },
+  -       editorQueries: 0,
+  -       querySelector: [Function: querySelector]
+  -     },
+  -     parent: FocusTarget {
+  -       connected: true,
+  -       disabled: false,
+  -       focusable: true,
+  -       hidden: false,
+  -       inert: false,
+  -       name: 'editor fieldset',
+  -       ownerDocument: <ref *1> {
+  -         activeElement: FocusTarget {
+  -           connected: true,
+  -           disabled: false,
+  -           focusable: true,
+  -           hidden: false,
+  -           inert: false,
+  -           name: 'body',
+  -           ownerDocument: [Circular *1],
+  -           parent: null,
+  -           tag: 'body'
+  -         },
+  -         body: FocusTarget {
+  -           connected: true,
+  -           disabled: false,
+  -           focusable: true,
+  -           hidden: false,
+  -           inert: false,
+  -           name: 'body',
+  -           ownerDocument: [Circular *1],
+  -           parent: null,
+  -           tag: 'body'
+  -         },
+  -         documentElement: FocusTarget {
+  -           connected: true,
+  -           disabled: false,
+  -           focusable: true,
+  -           hidden: false,
+  -           inert: false,
+  -           name: 'html',
+  -           ownerDocument: [Circular *1],
+  -           parent: null,
+  -           tag: 'html'
+  -         },
+  -         editorQueries: 0,
+  -         querySelector: [Function: querySelector]
+  -       },
+  -       parent: {
+  -         contains: [Function: contains],
+  -         form: [Circular *2],
+  -         isConnected: true,
+  -         open: true,
+  -         parent: null,
+  -         querySelector: [Function: querySelector],
+  -         tag: 'dialog'
+  -       },
+  -       tag: 'fieldset'
+  -     },
+  -     querySelectorAll: [Function (anonymous)],
+  -     tag: 'form'
+  -   },
+  -   tag: 'textarea'
+    }
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/4b851318da2d/Grok-Build1-Keep-Editing-Evidence/focused-source-runner.mjs:228:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [FocusTarget],
+    expected: [FocusTarget],
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at Grok-Build1-Keep-Editing-Evidence/focused-source-runner.mjs:238:1
+✖ actual Keep editing recovers absent, root, disconnected and dialog-root focus (6.689128ms)
+  AssertionError [ERR_ASSERTION]: absent
+  + actual - expected
+  
+  + null
+  - FocusTarget {
+  -   connected: true,
+  -   disabled: false,
+  -   focusable: true,
+  -   hidden: false,
+  -   inert: false,
+  -   name: 'Cancel',
+  -   ownerDocument: <ref *1> {
+  -     activeElement: null,
+  -     body: FocusTarget {
+  -       connected: true,
+  -       disabled: false,
+  -       focusable: true,
+  -       hidden: false,
+  -       inert: false,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1],
+  -       parent: null,
+  -       tag: 'body'
+  -     },
+  -     documentElement: FocusTarget {
+  -       connected: true,
+  -       disabled: false,
+  -       focusable: true,
+  -       hidden: false,
+  -       inert: false,
+  -       name: 'html',
+  -       ownerDocument: [Circular *1],
+  -       parent: null,
+  -       tag: 'html'
+  -     },
+  -     editorQueries: 0,
+  -     querySelector: [Function: querySelector]
+  -   },
+  -   parent: <ref *2> FocusTarget {
+  -     connected: true,
+  -     disabled: false,
+  -     fields: [
+  -       FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'Stage',
+  -         ownerDocument: <ref *1> {
+  -           activeElement: null,
+  -           body: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'body',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'body'
+  -           },
+  -           documentElement: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'html',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'html'
+  -           },
+  -           editorQueries: 0,
+  -           querySelector: [Function: querySelector]
+  -         },
+  -         parent: [Circular *2],
+  -         tag: 'select'
+  -       },
+  -       FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'Private notes',
+  -         ownerDocument: <ref *1> {
+  -           activeElement: null,
+  -           body: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'body',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'body'
+  -           },
+  -           documentElement: FocusTarget {
+  -             connected: true,
+  -             disabled: false,
+  -             focusable: true,
+  -             hidden: false,
+  -             inert: false,
+  -             name: 'html',
+  -             ownerDocument: [Circular *1],
+  -             parent: null,
+  -             tag: 'html'
+  -           },
+  -           editorQueries: 0,
+  -           querySelector: [Function: querySelector]
+  -         },
+  -         parent: [Circular *2],
+  -         tag: 'textarea'
+  -       }
+  -     ],
+  -     focusable: true,
+  -     hidden: false,
+  -     inert: false,
+  -     name: 'current editor',
+  -     ownerDocument: <ref *1> {
+  -       activeElement: null,
+  -       body: FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'body',
+  -         ownerDocument: [Circular *1],
+  -         parent: null,
+  -         tag: 'body'
+  -       },
+  -       documentElement: FocusTarget {
+  -         connected: true,
+  -         disabled: false,
+  -         focusable: true,
+  -         hidden: false,
+  -         inert: false,
+  -         name: 'html',
+  -         ownerDocument: [Circular *1],
+  -         parent: null,
+  -         tag: 'html'
+  -       },
+  -       editorQueries: 0,
+  -       querySelector: [Function: querySelector]
+  -     },
+  -     parent: FocusTarget {
+  -       connected: true,
+  -       disabled: false,
+  -       focusable: true,
+  -       hidden: false,
+  -       inert: false,
+  -       name: 'editor fieldset',
+  -       ownerDocument: <ref *1> {
+  -         activeElement: null,
+  -         body: FocusTarget {
+  -           connected: true,
+  -           disabled: false,
+  -           focusable: true,
+  -           hidden: false,
+  -           inert: false,
+  -           name: 'body',
+  -           ownerDocument: [Circular *1],
+  -           parent: null,
+  -           tag: 'body'
+  -         },
+  -         documentElement: FocusTarget {
+  -           connected: true,
+  -           disabled: false,
+  -           focusable: true,
+  -           hidden: false,
+  -           inert: false,
+  -           name: 'html',
+  -           ownerDocument: [Circular *1],
+  -           parent: null,
+  -           tag: 'html'
+  -         },
+  -         editorQueries: 0,
+  -         querySelector: [Function: querySelector]
+  -       },
+  -       parent: {
+  -         contains: [Function: contains],
+  -         form: [Circular *2],
+  -         isConnected: true,
+  -         open: true,
+  -         parent: null,
+  -         querySelector: [Function: querySelector],
+  -         tag: 'dialog'
+  -       },
+  -       tag: 'fieldset'
+  -     },
+  -     querySelectorAll: [Function (anonymous)],
+  -     tag: 'form'
+  -   },
+  -   tag: 'button'
+  - }
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/4b851318da2d/Grok-Build1-Keep-Editing-Evidence/focused-source-runner.mjs:243:23)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: [FocusTarget],
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at Grok-Build1-Keep-Editing-Evidence/focused-source-runner.mjs:247:1
+✖ actual discard entry handlers remember Cancel or Delete and preserve clean close behavior (10.38661ms)
+  AssertionError [ERR_ASSERTION]: The actual opener must be retained for the later Keep interaction
+  + actual - expected
+  
+  + null
+  - HTMLElement {
+  -   name: 'Cancel'
+  - }
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/4b851318da2d/Grok-Build1-Keep-Editing-Evidence/focused-source-runner.mjs:264:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: [HTMLElement],
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,93 @@
+{
+  "raw_response": {
+    "bytes": 30465,
+    "sha256": "82ad66b4472207fcaaecb975a11eebdae13513c7d139eae770f88fe61f99ba08"
+  },
+  "extracted": [
+    {
+      "path": "grok-original.patch",
+      "bytes": 23540,
+      "sha256": "988817caa669eb47e8f0e54e2838496e4460a83afd58bc148f9d2387daf4a0c8"
+    },
+    {
+      "path": "grok-original.stdout.log",
+      "bytes": 4582,
+      "sha256": "728b71d88ddfdb822f712c9a491b4105f00954880b8d5d3ec7d4d84131012cc0"
+    }
+  ],
+  "git": {
+    "init": {
+      "command": [
+        "git",
+        "init",
+        "-q"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "apply_check": {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "/workspace/scratch/4b851318da2d/Grok-Build1-Keep-Editing-Evidence/grok-original.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "apply": {
+      "command": [
+        "git",
+        "apply",
+        "/workspace/scratch/4b851318da2d/Grok-Build1-Keep-Editing-Evidence/grok-original.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  },
+  "source_files": [
+    {
+      "path": "hosted/app/i18n/messages.ar.json",
+      "before_bytes": 231739,
+      "before_sha256": "46ec9674ec1186d8bc3016c78739eda38542a7beca033a0f0617256b6cc154e9",
+      "after_bytes": 231739,
+      "after_sha256": "46ec9674ec1186d8bc3016c78739eda38542a7beca033a0f0617256b6cc154e9",
+      "changed": false
+    },
+    {
+      "path": "hosted/app/phone/PhoneApp.tsx",
+      "before_bytes": 121350,
+      "before_sha256": "0ee2f855083ad5933dbbca1161372e8e6e3c8b393c1fd6033b2858c59dacfd94",
+      "after_bytes": 122957,
+      "after_sha256": "8747bd433cab5758f091f8ec4ac5ce2185627af3a261b0da8b8181a5737778bd",
+      "changed": true
+    },
+    {
+      "path": "hosted/app/phone/components.tsx",
+      "before_bytes": 20472,
+      "before_sha256": "c18753ee7c8b342831864cecc2694708f09fee6019a76c530b2c2ae743446424",
+      "after_bytes": 20472,
+      "after_sha256": "c18753ee7c8b342831864cecc2694708f09fee6019a76c530b2c2ae743446424",
+      "changed": false
+    },
+    {
+      "path": "hosted/tests/phone-record-tools.mjs",
+      "before_bytes": 46409,
+      "before_sha256": "965af62fc693ed788bd487ea9f18aea8d2af2e54a4242d70331569d16632feb2",
+      "after_bytes": 46409,
+      "after_sha256": "965af62fc693ed788bd487ea9f18aea8d2af2e54a4242d70331569d16632feb2",
+      "changed": false
+    },
+    {
+      "path": "hosted/tests/phone-recovery-isolation.mjs",
+      "before_bytes": 33835,
+      "before_sha256": "11eb0b7ff330b1b9c40c7dee656ae4968f3e482aed7e8f94a01cf1530739749e",
+      "after_bytes": 42416,
+      "after_sha256": "e4c3809501146df23899e2ac037d260c8c31f14f25d93eb812d4fb9679f843aa",
+      "changed": true
+    }
+  ]
+}
