@@ -355,7 +355,7 @@
 "Connected service" = "Connected service";
 "Connected to {0}" = "Connected to {0}";
 "Connected. Your phone draft is kept; review and save it before applying." = "Connected. Your phone draft is kept; review and save it before applying.";
-"Connecting does not upload your phone draft. You choose when to save your profile to the workspace." = "Connecting does not upload your phone draft. You choose when to save your profile to the workspace.";
+"Connecting does not send your draft. You choose when to save your profile to the workspace." = "Connecting does not send your draft. You choose when to save your profile to the workspace.";
 "Connecting kept your earlier phone draft separate. Copy it only if it belongs to the person using this workspace; the original remains available." = "Connecting kept your earlier phone draft separate. Copy it only if it belongs to the person using this workspace; the original remains available.";
 "Connection details" = "Connection details";
 "Connection expires " = "Connection expires ";
@@ -797,7 +797,6 @@
 "Only change this if you use another Career Finder service. Get a new code from that service’s own setup page." = "Only change this if you use another Career Finder service. Get a new code from that service’s own setup page.";
 "Only live provider acceptance with a receipt ID is counted. Test results and uncertain requests are excluded." = "Only live provider acceptance with a receipt ID is counted. Test results and uncertain requests are excluded.";
 "Only part of this board was included." = "Only part of this board was included.";
-"Only your phone record changes. Employer applications and verified receipts stay as they are. Auto Apply can include this job in a new review. Earlier versions stay saved." = "Only your phone record changes. Employer applications and verified receipts stay as they are. Auto Apply can include this job in a new review. Earlier versions stay saved.";
 "Only your search terms and filters are sent. Your profile and PDF are not used for discovery." = "Only your search terms and filters are sent. Your profile and PDF are not used for discovery.";
 "Open LinkedIn profile" = "Open LinkedIn profile";
 "Open a role and update its status after you complete a step." = "Open a role and update its status after you complete a step.";
@@ -1246,7 +1245,7 @@
 "Showing {0} of {1} matches within these boards" = "Showing {0} of {1} matches within these boards";
 "Showing {0} of {1} records" = "Showing {0} of {1} records";
 "Sign in and get a code" = "Sign in and get a code";
-"Sign in in your browser, then return with a one-time code." = "Sign in in your browser, then return with a one-time code.";
+"Sign in using your browser, then enter the one-time code here." = "Sign in using your browser, then enter the one-time code here.";
 "Skills" = "Skills";
 "Skills (separate with commas)" = "Skills (separate with commas)";
 "Skills, separated by commas" = "Skills, separated by commas";
@@ -1505,6 +1504,7 @@
 "This backup exceeds the supported 64 MiB size. Existing phone data is unchanged." = "This backup exceeds the supported 64 MiB size. Existing phone data is unchanged.";
 "This backup has no compatible saved search." = "This backup has no compatible saved search.";
 "This change could not be saved. Your previous records are intact. Check device storage and try again." = "This change could not be saved. Your previous records are intact. Check device storage and try again.";
+"This changes only your record on this phone. Sent applications and confirmed receipts stay unchanged. The job may be included in a new Auto Apply review. Previous record versions are kept." = "This changes only your record on this phone. Sent applications and confirmed receipts stay unchanged. The job may be included in a new Auto Apply review. Previous record versions are kept.";
 "This changes your private record and allows a new application review. It does not withdraw or change anything with an employer. Your earlier versions stay on this phone." = "This changes your private record and allows a new application review. It does not withdraw or change anything with an employer. Your earlier versions stay on this phone.";
 "This connection has expired. Pair this phone again to reconnect to your workspace." = "This connection has expired. Pair this phone again to reconnect to your workspace.";
 "This document could not be opened. Choose it again from Files." = "This document could not be opened. Choose it again from Files.";
@@ -1556,7 +1556,7 @@
 "This removes the selected workspace's local files and connection from this phone. It cannot be undone without an exported backup. Other workspaces, older preserved recovery areas, cloud data and employer applications remain separate." = "This removes the selected workspace's local files and connection from this phone. It cannot be undone without an exported backup. Other workspaces, older preserved recovery areas, cloud data and employer applications remain separate.";
 "This replaces the edits currently shown with the saved version." = "This replaces the edits currently shown with the saved version.";
 "This replaces the phone draft and any PDF selected only on this phone." = "This replaces the phone draft and any PDF selected only on this phone.";
-"This replaces the profile draft currently shown. It is shared with the service only when you save the connected profile." = "This replaces the profile draft currently shown. It is shared with the service only when you save the connected profile.";
+"This replaces the profile draft shown here. It is sent to the service only when you save your profile there." = "This replaces the profile draft shown here. It is sent to the service only when you save your profile there.";
 "This restores the same reviewed details. Stop this review first if you need to change them." = "This restores the same reviewed details. Stop this review first if you need to change them.";
 "This review has already started or changed. Stop it explicitly before creating a different review." = "This review has already started or changed. Stop it explicitly before creating a different review.";
 "This review has expired or your profile changed. Prepare it again." = "This review has expired or your profile changed. Prepare it again.";

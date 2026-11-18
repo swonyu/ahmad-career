@@ -190,7 +190,7 @@ internal fun ApplicationRecordEditor(state: CareerUiState, model: CareerViewMode
     }
     if (editor.pendingNotApplied != null) AlertDialog(onDismissRequest = { model.keepApplicationRecord(editor.token) },
         title = { Text(l10n("Mark as not applied?")) },
-        text = { Text(l10n("Only your phone record changes. Employer applications and verified receipts stay as they are. Auto Apply can include this job in a new review. Earlier versions stay saved."), Modifier.verticalScroll(rememberScrollState())) },
+        text = { Text(l10n("This changes only your record on this phone. Sent applications and confirmed receipts stay unchanged. The job may be included in a new Auto Apply review. Previous record versions are kept."), Modifier.verticalScroll(rememberScrollState())) },
         confirmButton = { TextButton(onClick = { model.saveApplicationRecord(true, editor.token) }, enabled = !state.busy,
             modifier = Modifier.heightIn(min = 48.dp)) { Text(l10n("Mark not applied")) } },
         dismissButton = { TextButton(onClick = { model.keepApplicationRecord(editor.token) }, enabled = !state.busy,

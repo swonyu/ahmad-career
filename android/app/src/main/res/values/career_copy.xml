@@ -357,7 +357,7 @@
     <string name="c_856193de270e" formatted="false">"Connected service"</string>
     <string name="c_8d19792968d8" formatted="false">"Connected to {0}"</string>
     <string name="c_070d648dab1a" formatted="false">"Connected. Your phone draft is kept; review and save it before applying."</string>
-    <string name="c_eb191914cf93" formatted="false">"Connecting does not upload your phone draft. You choose when to save your profile to the workspace."</string>
+    <string name="c_55838af20a90" formatted="false">"Connecting does not send your draft. You choose when to save your profile to the workspace."</string>
     <string name="c_ec3fab21d0eb" formatted="false">"Connecting kept your earlier phone draft separate. Copy it only if it belongs to the person using this workspace; the original remains available."</string>
     <string name="c_51bfffbcdbcf" formatted="false">"Connection details"</string>
     <string name="c_79c5f18ed76a" formatted="false">"Connection expires "</string>
@@ -799,7 +799,6 @@
     <string name="c_7717b108c454" formatted="false">"Only change this if you use another Career Finder service. Get a new code from that service’s own setup page."</string>
     <string name="c_26b16bd7a7a7" formatted="false">"Only live provider acceptance with a receipt ID is counted. Test results and uncertain requests are excluded."</string>
     <string name="c_cbac18f78ee3" formatted="false">"Only part of this board was included."</string>
-    <string name="c_203177a6c0ff" formatted="false">"Only your phone record changes. Employer applications and verified receipts stay as they are. Auto Apply can include this job in a new review. Earlier versions stay saved."</string>
     <string name="c_104913f7fa5c" formatted="false">"Only your search terms and filters are sent. Your profile and PDF are not used for discovery."</string>
     <string name="c_20ada6493009" formatted="false">"Open LinkedIn profile"</string>
     <string name="c_0ce26f6691e3" formatted="false">"Open a role and update its status after you complete a step."</string>
@@ -1248,7 +1247,7 @@
     <string name="c_cb514829e9c1" formatted="false">"Showing {0} of {1} matches within these boards"</string>
     <string name="c_84d32dbb8997" formatted="false">"Showing {0} of {1} records"</string>
     <string name="c_837d4890ab42" formatted="false">"Sign in and get a code"</string>
-    <string name="c_05296b90960e" formatted="false">"Sign in in your browser, then return with a one-time code."</string>
+    <string name="c_5a76cb5951ad" formatted="false">"Sign in using your browser, then enter the one-time code here."</string>
     <string name="c_66d0f523a379" formatted="false">"Skills"</string>
     <string name="c_f0bad40061c9" formatted="false">"Skills (separate with commas)"</string>
     <string name="c_5bc21d65de1f" formatted="false">"Skills, separated by commas"</string>
@@ -1507,6 +1506,7 @@
     <string name="c_72ccc5ca5423" formatted="false">"This backup exceeds the supported 64 MiB size. Existing phone data is unchanged."</string>
     <string name="c_4fe58b75a3c4" formatted="false">"This backup has no compatible saved search."</string>
     <string name="c_325f1000dd9b" formatted="false">"This change could not be saved. Your previous records are intact. Check device storage and try again."</string>
+    <string name="c_95c02245fb17" formatted="false">"This changes only your record on this phone. Sent applications and confirmed receipts stay unchanged. The job may be included in a new Auto Apply review. Previous record versions are kept."</string>
     <string name="c_eb3953fe306f" formatted="false">"This changes your private record and allows a new application review. It does not withdraw or change anything with an employer. Your earlier versions stay on this phone."</string>
     <string name="c_b593f0e8f15b" formatted="false">"This connection has expired. Pair this phone again to reconnect to your workspace."</string>
     <string name="c_f1f6034bd9e7" formatted="false">"This document could not be opened. Choose it again from Files."</string>
@@ -1558,7 +1558,7 @@
     <string name="c_eab37644e7de" formatted="false">"This removes the selected workspace\'s local files and connection from this phone. It cannot be undone without an exported backup. Other workspaces, older preserved recovery areas, cloud data and employer applications remain separate."</string>
     <string name="c_062ef4fba218" formatted="false">"This replaces the edits currently shown with the saved version."</string>
     <string name="c_7cf0df987174" formatted="false">"This replaces the phone draft and any PDF selected only on this phone."</string>
-    <string name="c_e54f7e720b6f" formatted="false">"This replaces the profile draft currently shown. It is shared with the service only when you save the connected profile."</string>
+    <string name="c_110f2ca68532" formatted="false">"This replaces the profile draft shown here. It is sent to the service only when you save your profile there."</string>
     <string name="c_cdc106b6fb34" formatted="false">"This restores the same reviewed details. Stop this review first if you need to change them."</string>
     <string name="c_e459d7736ff4" formatted="false">"This review has already started or changed. Stop it explicitly before creating a different review."</string>
     <string name="c_3c2651f7760a" formatted="false">"This review has expired or your profile changed. Prepare it again."</string>

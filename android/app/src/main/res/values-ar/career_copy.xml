@@ -357,7 +357,7 @@
     <string name="c_856193de270e" formatted="false">"الخدمة المتصلة"</string>
     <string name="c_8d19792968d8" formatted="false">"متصل بـ {0}"</string>
     <string name="c_070d648dab1a" formatted="false">"تم الاتصال. احتُفظ بمسودة هاتفك؛ راجعها واحفظها قبل التقديم."</string>
-    <string name="c_eb191914cf93" formatted="false">"الاتصال لا يرفع مسودة هاتفك. أنت تختار وقت حفظ ملفك الشخصي في مساحة العمل."</string>
+    <string name="c_55838af20a90" formatted="false">"لن تُرسل مسودتك عند ربط الهاتف. يمكنك حفظ ملفك الشخصي في مساحة العمل عندما تختار."</string>
     <string name="c_ec3fab21d0eb" formatted="false">"أبقى الاتصال مسودة هاتفك السابقة منفصلة. انسخها فقط إذا كانت تخص الشخص الذي يستخدم مساحة العمل هذه؛ تبقى النسخة الأصلية متاحة."</string>
     <string name="c_51bfffbcdbcf" formatted="false">"تفاصيل الاتصال"</string>
     <string name="c_79c5f18ed76a" formatted="false">"تنتهي صلاحية الاتصال في "</string>
@@ -558,7 +558,7 @@
     <string name="c_9f37a280bd1b" formatted="false">"تاريخ المتابعة (اختياري)"</string>
     <string name="c_fd4f977bf247" formatted="false">"تاريخ المتابعة · "</string>
     <string name="c_8f595167565b" formatted="false">"تاريخ المتابعة · {0}"</string>
-    <string name="c_0a8163f2829e" formatted="false">"موعد المتابعة المستحق:"</string>
+    <string name="c_0a8163f2829e" formatted="false">"حان موعد المتابعة:"</string>
     <string name="c_73bfd34e62c8" formatted="false">"المتابعة: "</string>
     <string name="c_56bccb4701c3" formatted="false">"المتابعة: {0}"</string>
     <string name="c_d09baf6b5773" formatted="false">"المتابعات"</string>
@@ -799,7 +799,6 @@
     <string name="c_7717b108c454" formatted="false">"غيّر هذا فقط إذا كنت تستخدم خدمة Career Finder أخرى. احصل على رمز جديد من صفحة الإعداد الخاصة بتلك الخدمة."</string>
     <string name="c_26b16bd7a7a7" formatted="false">"لا يُحتسب إلا قبول مزوّد الخدمة الفعلي للطلب مع معرّف إيصال إرسال. تُستبعد نتائج الاختبار والطلبات غير المؤكدة."</string>
     <string name="c_cbac18f78ee3" formatted="false">"تم تضمين جزء من هذه الصفحة فقط."</string>
-    <string name="c_203177a6c0ff" formatted="false">"يتغير سجل الهاتف فقط. تبقى طلباتك لدى جهات العمل وإيصالات الإرسال المتحقق منها كما هي. يمكن أن يشمل التقديم التلقائي هذه الوظيفة في مراجعة جديدة. تبقى النسخ السابقة محفوظة."</string>
     <string name="c_104913f7fa5c" formatted="false">"تُرسل كلمات البحث ومرشحاته فقط. لا يُستخدم ملفك الشخصي أو ملف PDF لاستكشاف الوظائف."</string>
     <string name="c_20ada6493009" formatted="false">"فتح الملف الشخصي على LinkedIn"</string>
     <string name="c_0ce26f6691e3" formatted="false">"افتح وظيفة وحدّث حالتها بعد إكمال خطوة."</string>
@@ -1216,7 +1215,7 @@
     <string name="c_bd05e5848164" formatted="false">"اختيار {0} لدى {1} لمراجعة التقديم التلقائي"</string>
     <string name="c_57fd7a0cf33f" formatted="false">"محدد"</string>
     <string name="c_5f11024b3298" formatted="false">"تم الاحتفاظ بالتفاصيل المختارة على هذا الهاتف. تبقى النسخ الأخرى في سجل التغييرات."</string>
-    <string name="c_72311b85c2c3" formatted="false">"المحدد: {0} / 30 · اتركه فارغًا إذا لم تكن لديك تفضيلات."</string>
+    <string name="c_72311b85c2c3" formatted="false">"الدول المحددة: {0} من 30 · اترك الاختيار فارغًا إذا لم تكن لديك تفضيلات."</string>
     <string name="c_e595f17fac1d" formatted="false">"جارٍ الإرسال"</string>
     <string name="c_4b6bb615dcab" formatted="false">"جارٍ إرسال طلب وافقت عليه"</string>
     <string name="c_616058220b62" formatted="false">"الإرسال معلّق على هذا الهاتف لأنك طلبت الإيقاف. أعد محاولة الإيقاف لتأكيده لدى الخدمة؛ لن يستأنف هذا الهاتف المراجعة المعلّقة."</string>
@@ -1248,7 +1247,7 @@
     <string name="c_cb514829e9c1" formatted="false">"عرض {0} من {1} نتيجة مطابقة ضمن هذه الصفحات"</string>
     <string name="c_84d32dbb8997" formatted="false">"عرض {0} من {1} سجل"</string>
     <string name="c_837d4890ab42" formatted="false">"سجّل الدخول واحصل على رمز"</string>
-    <string name="c_05296b90960e" formatted="false">"سجّل الدخول في متصفحك، ثم ارجع برمز لمرة واحدة."</string>
+    <string name="c_5a76cb5951ad" formatted="false">"سجّل الدخول عبر المتصفح، ثم أدخل رمز ربط الهاتف هنا."</string>
     <string name="c_66d0f523a379" formatted="false">"المهارات"</string>
     <string name="c_f0bad40061c9" formatted="false">"المهارات (افصل بينها بفواصل)"</string>
     <string name="c_5bc21d65de1f" formatted="false">"المهارات، مفصولة بفواصل"</string>
@@ -1507,6 +1506,7 @@
     <string name="c_72ccc5ca5423" formatted="false">"تتجاوز هذه النسخة الاحتياطية الحجم المدعوم البالغ 64 MiB. لم تتغير بيانات الهاتف الحالية."</string>
     <string name="c_4fe58b75a3c4" formatted="false">"لا تحتوي هذه النسخة الاحتياطية على بحث محفوظ متوافق."</string>
     <string name="c_325f1000dd9b" formatted="false">"تعذّر حفظ هذا التغيير. سجلاتك السابقة سليمة. تحقق من مساحة تخزين الجهاز ثم حاول مجددًا."</string>
+    <string name="c_95c02245fb17" formatted="false">"يتغيّر سجلك على هذا الهاتف فقط. تبقى الطلبات المرسلة وإيصالات الإرسال المؤكدة دون تغيير. قد تظهر الوظيفة في مراجعة جديدة للتقديم التلقائي. وتبقى النسخ السابقة من سجلك محفوظة."</string>
     <string name="c_eb3953fe306f" formatted="false">"يغيّر هذا سجلك الخاص ويتيح مراجعة تقديم جديدة. لا يسحب أي طلب لدى جهة العمل أو يغيّر شيئًا لديها. تبقى نسخك السابقة على هذا الهاتف."</string>
     <string name="c_b593f0e8f15b" formatted="false">"انتهت صلاحية هذا الاتصال. اربط هذا الهاتف مجددًا لإعادة الاتصال بمساحة عملك."</string>
     <string name="c_f1f6034bd9e7" formatted="false">"تعذّر فتح هذا المستند. اختره مجددًا من «الملفات»."</string>
@@ -1558,7 +1558,7 @@
     <string name="c_eab37644e7de" formatted="false">"يزيل هذا الملفات المحلية والاتصال لمساحة العمل المختارة من هذا الهاتف. لا يمكن التراجع عن ذلك دون نسخة احتياطية مصدّرة. تبقى مساحات العمل الأخرى ومناطق الاسترجاع السابقة المحتفظ بها والبيانات السحابية وطلباتك لدى جهات العمل منفصلة."</string>
     <string name="c_062ef4fba218" formatted="false">"يستبدل هذا التعديلات المعروضة حاليًا بالنسخة المحفوظة."</string>
     <string name="c_7cf0df987174" formatted="false">"سيستبدل هذا مسودة الهاتف وأي ملف PDF اخترته على هذا الهاتف فقط."</string>
-    <string name="c_e54f7e720b6f" formatted="false">"يستبدل هذا مسودة الملف الشخصي المعروضة حاليًا. لا تُشارك مع الخدمة إلا عندما تحفظ الملف الشخصي المتصل."</string>
+    <string name="c_110f2ca68532" formatted="false">"ستحل هذه النسخة محل مسودة الملف الشخصي المعروضة هنا. ولن تُرسل إلى الخدمة إلا عند حفظ ملفك الشخصي فيها."</string>
     <string name="c_cdc106b6fb34" formatted="false">"يستعيد هذا التفاصيل نفسها التي راجعتها. أوقف هذه المراجعة أولًا إذا كنت بحاجة إلى تغييرها."</string>
     <string name="c_e459d7736ff4" formatted="false">"بدأت هذه المراجعة بالفعل أو تغيرت. أوقفها باختيار صريح قبل إنشاء مراجعة أخرى."</string>
     <string name="c_3c2651f7760a" formatted="false">"انتهت صلاحية هذه المراجعة أو تغير ملفك الشخصي. أعدّها مجددًا."</string>

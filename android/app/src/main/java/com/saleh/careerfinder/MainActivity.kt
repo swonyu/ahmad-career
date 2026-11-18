@@ -427,7 +427,7 @@ private fun PhoneImportDialog(state: CareerUiState, model: CareerViewModel) {
                     Text(l10n("Saved phone profile"), style = MaterialTheme.typography.titleLarge)
                     ProfileSummary(phone.profile)
                     CheckLine("Copy this profile into the workspace draft", profile, { profile = it }, !state.busy)
-                    Text(l10n("This replaces the profile draft currently shown. It is shared with the service only when you save the connected profile."), style = MaterialTheme.typography.bodySmall)
+                    Text(l10n("This replaces the profile draft shown here. It is sent to the service only when you save your profile there."), style = MaterialTheme.typography.bodySmall)
                 }
             }
             val unfinishedCurrent = phone.opportunityDraft.takeIf { it.hasContent }
@@ -1212,7 +1212,7 @@ private fun ConnectionDialog(state: CareerUiState, model: CareerViewModel, phone
     val informationOrigin = state.connection?.origin ?: validOrigin
     FullScreenForm("Connect your phone", { if (!state.busy) close() }) {
         LazyColumn(Modifier.fillMaxSize().imePadding().testTag("phone-connection"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            item { Text(l10n("Sign in in your browser, then return with a one-time code."), style = MaterialTheme.typography.bodyMedium) }
+            item { Text(l10n("Sign in using your browser, then enter the one-time code here."), style = MaterialTheme.typography.bodyMedium) }
             if (state.connection != null) item {
                 Panel {
                     Text(l10n(if (state.requiresPairing) "Reconnect this phone" else "This phone is connected"), style = MaterialTheme.typography.titleMedium,
@@ -1252,7 +1252,7 @@ private fun ConnectionDialog(state: CareerUiState, model: CareerViewModel, phone
                     Action("Connect this phone", !state.busy && validOrigin != null && code.isNotBlank() && !state.storageBlocked) {
                         model.pair(origin, code) { code = ""; close() }
                     }
-                    Text(l10n("Connecting does not upload your phone draft. You choose when to save your profile to the workspace."), style = MaterialTheme.typography.bodySmall)
+                    Text(l10n("Connecting does not send your draft. You choose when to save your profile to the workspace."), style = MaterialTheme.typography.bodySmall)
                 }
             }
             if (state.error != null) item {
