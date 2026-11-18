@@ -260,8 +260,8 @@ jobs:
   iphone-ui:
     name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-connection' && 'PARTIAL iPhone connection regression' || github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-ui' && 'PARTIAL iPhone UI acceptance (all 17 journeys)' || 'iPhone native interface acceptance' }}
     runs-on: macos-26
-    # Budget 5m readiness, 45m native flows, and 5m for setup and evidence.
-    timeout-minutes: 55
+    # Budget 5m readiness, 60m combined build/UI, and 5m for setup and evidence.
+    timeout-minutes: 70
     env:
       CAREER_UI_ACCEPTANCE_SCOPE: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope || 'full' }}
     steps:
@@ -359,8 +359,9 @@ jobs:
             --output "$RUNNER_TEMP/career-iphone-boot-verification.json"
       - name: Exercise native phone flows with isolated synthetic data
         shell: bash
-        # Bound simulator work while leaving time to retain failure evidence.
-        timeout-minutes: 45
+        # Retained passing-case timings plus build/startup/finalization project about 51m.
+        # Keep all 17 journeys under a bounded combined build/test limit.
+        timeout-minutes: 60
         run: |
           set -o pipefail
           selection=()
