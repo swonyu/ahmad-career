@@ -58,7 +58,7 @@ struct NativeDiscoveryScreen: View {
                         .accessibilityAddTraits(.isStaticText).accessibilityIdentifier("discovery.error")
                     Button(l10n("Search again"), action: beginSearch)
                         .frame(minHeight: 44)
-                        .disabled((discovery.retryAfter ?? .distantPast) > searchClock)
+                        .disabled(waitingForRetry)
                         .accessibilityIdentifier("discovery.retrySearch")
                     if let retry = discovery.retryAfter {
                         Text(l10n.format("Try again after {0}.", [String(describing: l10n.time(retry))])).font(.footnote)
@@ -68,6 +68,7 @@ struct NativeDiscoveryScreen: View {
                     }
                     if discovery.canRetrySubmittedSearch {
                         Button(l10n("Retry this search")) { Task { await discovery.retrySubmittedSearch() } }
+                            .disabled(waitingForRetry)
                             .accessibilityIdentifier("discovery.retry")
                     }
                     if discovery.page == nil {
@@ -122,6 +123,7 @@ struct NativeDiscoveryScreen: View {
                         }
                         if discovery.error == nil && discovery.canRetrySubmittedSearch && (page.status == "partial" || page.status == "unavailable") {
                             Button(l10n("Retry this search")) { Task { await discovery.retrySubmittedSearch() } }
+                                .disabled(waitingForRetry)
                                 .accessibilityIdentifier("discovery.retry")
                         }
                         Text(l10n(page.notice)).font(.footnote).foregroundStyle(.secondary)
@@ -177,13 +179,17 @@ struct NativeDiscoveryScreen: View {
             linkedInOpenable = MobileApplicationPolicy.linkedInJobSearchURL(keywords: discovery.query.keywords, location: discovery.query.location) != nil
         }
         .task(id: discovery.retryAfter) {
+            searchClock = Date()
             guard let retry = discovery.retryAfter else { return }
-            let remaining = retry.timeIntervalSinceNow
+            let remaining = retry.timeIntervalSince(searchClock)
             guard remaining > 0 else { return }
             do { try await Task.sleep(nanoseconds: UInt64(remaining * 1_000_000_000)) }
             catch { return }
             searchClock = retry
         }
+    }
+    private var waitingForRetry: Bool {
+        (discovery.retryAfter ?? .distantPast) > searchClock
     }
     private var boardLabel: String {
         discovery.query.sources.isEmpty ? "Employer boards · suggested selection" : "Employer boards · \(discovery.query.sources.count) selected"

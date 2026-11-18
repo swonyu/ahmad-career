@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+    "-frontend",
+    "-parse",
+    "-sdk",
+    "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS27.2.sdk",
+    "-target",
+    "arm64-apple-ios16.0",
+    "/Users/saleh/Developer/career-finder-native-cooldown-ui-20261118-d60d62a70f26/apple/AhmadCareer/NativeDiscoveryViews.swift",
+    "/Users/saleh/Developer/career-finder-native-cooldown-ui-20261118-d60d62a70f26/apple/UITests/CareerFinderUITests.swift"
+  ],
+  "exit_code": 0
+}

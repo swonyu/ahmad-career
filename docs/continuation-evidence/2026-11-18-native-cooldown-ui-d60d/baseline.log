@@ -1,0 +1,10 @@
+UI source: /Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/native-cooldown-ui/NativeDiscoveryViews.baseline.swift
+UI source SHA-256: 6ff2544a826ecccaeb59eec8c44299a86b1cd5ad4eb2da81b881eeb81e3bf7fd
+Gate SHA-256: 5a24e66232da086dc7582e7b67720dfbfa23dd547daae2d1776d0c95f6364528
+FAIL: zero-second deadline / Search again (actual=true, expected=false)
+FAIL: active short cooldown / error-section exact retry (actual=false, expected=true)
+FAIL: active short cooldown / coverage-section exact retry (actual=false, expected=true)
+FAIL: cancelled future task / error-section exact retry (actual=false, expected=true)
+FAIL: cancelled future task / coverage-section exact retry (actual=false, expected=true)
+FAIL: task restarted after expiry / Search again (actual=true, expected=false)
+Discovery cooldown UI host gate: 21 assertions, 5 scenarios, 6 failures.

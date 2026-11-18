@@ -119,6 +119,9 @@ private final class AcceptanceDiscovery: CareerDiscoveryServing {
     // then returns real matching fixture results on the user's Retry action.
     // The existing permanent-failure fixture and Release service are unchanged.
     private var recoveryFailurePending = ProcessInfo.processInfo.environment["CAREER_UI_DISCOVERY_RETRY_ONCE"] == "1"
+    // Structured offline failures exercise the same deadline contract as HTTP
+    // Retry-After: 0 and a short future wait; no employer request is made.
+    private var rateLimitDelay: TimeInterval? = ["0": 0, "10": 10][ProcessInfo.processInfo.environment["CAREER_UI_DISCOVERY_RATE_LIMIT_ONCE"] ?? ""]
     private let source = DiscoverySource(id: "lever:global:career-fixture", name: "Synthetic employer", provider: "lever",
         region: "global", board: "career-fixture", boardUrl: "https://jobs.lever.co/career-fixture")
     func catalog() async throws -> DiscoveryCatalog {
@@ -127,6 +130,11 @@ private final class AcceptanceDiscovery: CareerDiscoveryServing {
     }
     func search(_ query: DiscoveryQuery, cursor: String?) async throws -> DiscoveryPage {
         if query.keywords == "offline error" { throw URLError(.notConnectedToInternet) }
+        if let delay = rateLimitDelay, query.keywords == "Interface designer", cursor == nil {
+            rateLimitDelay = nil
+            throw DiscoveryFailure(message: "Search is temporarily busy. Wait before trying again.",
+                retryAfter: Date().addingTimeInterval(delay))
+        }
         if recoveryFailurePending && query.keywords == "Interface designer" && cursor == nil {
             recoveryFailurePending = false
             throw URLError(.notConnectedToInternet)
