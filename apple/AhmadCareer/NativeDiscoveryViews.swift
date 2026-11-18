@@ -16,12 +16,12 @@ struct NativeDiscoveryScreen: View {
             Section {
                 Text(l10n("Search jobs")).font(.title2.weight(.bold)).fixedSize(horizontal: false, vertical: true)
                 Text(l10n("Search selected public employer boards across locations and professions. You choose which boards and search words to use."))
-                    .font(.subheadline).foregroundStyle(.secondary)
+                    .font(.subheadline).foregroundStyle(.primary)
                 TextField(l10n("Job title or keyword"), text: $discovery.query.keywords)
                     .focused($focusedField, equals: .keywords).submitLabel(.search).onSubmit { beginSearch() }
                     .accessibilityIdentifier("discovery.keywords")
                 Text(l10n("Searches titles, employers and available summaries."))
-                    .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                    .font(.caption).foregroundStyle(.primary).fixedSize(horizontal: false, vertical: true)
                 if !profileRoleShortcuts.isEmpty {
                     Button { focusedField = nil; profileRolesExpanded.toggle() } label: {
                         Label(l10n("Choose a job title from your saved profile"), systemImage: profileRolesExpanded ? "chevron.up" : "chevron.down")

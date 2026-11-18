@@ -495,7 +495,7 @@ struct NativeApplicationProfileEditor: View {
             NativeForm {
                 Section {
                     Text(l10n("Use your own experience and the CV you want employers to receive. Saving this profile does not submit an application."))
-                        .font(.subheadline).foregroundStyle(.secondary)
+                        .font(.subheadline).foregroundStyle(.primary)
                 }
                 if let issue { Section { Text(l10n.message(issue)).foregroundStyle(NativeDesign.danger).accessibilityAddTraits(.updatesFrequently) } }
                 if conflicts {
@@ -937,7 +937,7 @@ struct NativeApplicationConnection: View {
                                 .accessibilityIdentifier("connection.signIn")
                                 .disabled(model.busy)
                             Text(l10n("Choose an available sign-in method, or use Google through ChatGPT. Return to your existing account before connecting another provider; matching emails do not merge workspaces. Create a code, then return here."))
-                                .font(.footnote).foregroundStyle(.secondary)
+                                .font(.footnote).foregroundStyle(.primary)
                         }
                     } else {
                         Section(l10n("1. Get a code")) {
