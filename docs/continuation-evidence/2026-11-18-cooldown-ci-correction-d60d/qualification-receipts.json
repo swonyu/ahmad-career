@@ -1,0 +1,108 @@
+[
+  {
+    "name": "clock-host",
+    "command": [
+      "python3",
+      "/Users/saleh/Developer/career-finder-cooldown-acceptance-20261118-d60d62a70f26/apple/Checks/check-discovery-cooldown.py",
+      "--generated",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/cooldown-ci-correction/clock-product-generated.swift"
+    ],
+    "exit_code": 0,
+    "at": "2026-11-18T08:42:57.962971+00:00"
+  },
+  {
+    "name": "candidate-fixture-compile",
+    "command": [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-swift-version",
+      "5",
+      "-Onone",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk",
+      "-D",
+      "DEBUG",
+      "-module-cache-path",
+      "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-cooldown-replay-candidate-dya7j5rw/module-cache",
+      "/Users/saleh/Developer/career-finder-cooldown-acceptance-20261118-d60d62a70f26/apple/AhmadCareer/MobileApplicationClient.swift",
+      "/Users/saleh/Developer/career-finder-cooldown-acceptance-20261118-d60d62a70f26/apple/AhmadCareer/MobileApplicationState.swift",
+      "/Users/saleh/Developer/career-finder-cooldown-acceptance-20261118-d60d62a70f26/apple/AhmadCareer/NativeApplicationsStore.swift",
+      "/Users/saleh/Developer/career-finder-cooldown-acceptance-20261118-d60d62a70f26/apple/AhmadCareer/CareerFeed.swift",
+      "/Users/saleh/Developer/career-finder-cooldown-acceptance-20261118-d60d62a70f26/apple/AhmadCareer/NativeCareerStore.swift",
+      "/Users/saleh/Developer/career-finder-cooldown-acceptance-20261118-d60d62a70f26/apple/AhmadCareer/CareerDiscovery.swift",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/cooldown-ci-correction/candidate-fixture-replay.swift",
+      "-o",
+      "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-cooldown-replay-candidate-dya7j5rw/replay"
+    ],
+    "exit_code": 0,
+    "at": "2026-11-18T08:43:04.625763+00:00"
+  },
+  {
+    "name": "baseline-fixture-compile",
+    "command": [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-swift-version",
+      "5",
+      "-Onone",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.2.sdk",
+      "-D",
+      "DEBUG",
+      "-module-cache-path",
+      "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-cooldown-replay-baseline-62l5667d/module-cache",
+      "/Users/saleh/Developer/career-finder-cooldown-acceptance-20261118-d60d62a70f26/apple/AhmadCareer/MobileApplicationClient.swift",
+      "/Users/saleh/Developer/career-finder-cooldown-acceptance-20261118-d60d62a70f26/apple/AhmadCareer/MobileApplicationState.swift",
+      "/Users/saleh/Developer/career-finder-cooldown-acceptance-20261118-d60d62a70f26/apple/AhmadCareer/NativeApplicationsStore.swift",
+      "/Users/saleh/Developer/career-finder-cooldown-acceptance-20261118-d60d62a70f26/apple/AhmadCareer/CareerFeed.swift",
+      "/Users/saleh/Developer/career-finder-cooldown-acceptance-20261118-d60d62a70f26/apple/AhmadCareer/NativeCareerStore.swift",
+      "/Users/saleh/Developer/career-finder-cooldown-acceptance-20261118-d60d62a70f26/apple/AhmadCareer/CareerDiscovery.swift",
+      "/Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-d60d62a70f26/cooldown-ci-correction/baseline-fixture-replay.swift",
+      "-o",
+      "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-cooldown-replay-baseline-62l5667d/replay"
+    ],
+    "exit_code": 0,
+    "at": "2026-11-18T08:43:04.627212+00:00"
+  },
+  {
+    "name": "candidate-timing-replay",
+    "command": [
+      "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-cooldown-replay-candidate-dya7j5rw/replay"
+    ],
+    "exit_code": 0,
+    "at": "2026-11-18T08:43:04.907713+00:00"
+  },
+  {
+    "name": "baseline-timing-replay",
+    "command": [
+      "/var/folders/b1/tvm3jn711kq48mcrc1skxdn80000gn/T/career-cooldown-replay-baseline-62l5667d/replay"
+    ],
+    "exit_code": 1,
+    "at": "2026-11-18T08:43:04.907754+00:00"
+  },
+  {
+    "name": "ios-source-parse",
+    "command": [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-frontend",
+      "-parse",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS27.2.sdk",
+      "-target",
+      "arm64-apple-ios16.0",
+      "/Users/saleh/Developer/career-finder-cooldown-acceptance-20261118-d60d62a70f26/apple/UITests/CareerFinderUITests.swift"
+    ],
+    "exit_code": 0,
+    "at": "2026-11-18T08:43:04.964605+00:00"
+  },
+  {
+    "name": "diff-check",
+    "command": [
+      "git",
+      "-C",
+      "/Users/saleh/Developer/career-finder-cooldown-acceptance-20261118-d60d62a70f26",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "at": "2026-11-18T08:43:05.109133+00:00"
+  }
+]

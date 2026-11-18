@@ -121,7 +121,7 @@ private final class AcceptanceDiscovery: CareerDiscoveryServing {
     private var recoveryFailurePending = ProcessInfo.processInfo.environment["CAREER_UI_DISCOVERY_RETRY_ONCE"] == "1"
     // Structured offline failures exercise the same deadline contract as HTTP
     // Retry-After: 0 and a short future wait; no employer request is made.
-    private var rateLimitDelay: TimeInterval? = ["0": 0, "10": 10][ProcessInfo.processInfo.environment["CAREER_UI_DISCOVERY_RATE_LIMIT_ONCE"] ?? ""]
+    private var rateLimitDelay: TimeInterval? = ["0": 0, "30": 30][ProcessInfo.processInfo.environment["CAREER_UI_DISCOVERY_RATE_LIMIT_ONCE"] ?? ""]
     private let source = DiscoverySource(id: "lever:global:career-fixture", name: "Synthetic employer", provider: "lever",
         region: "global", board: "career-fixture", boardUrl: "https://jobs.lever.co/career-fixture")
     func catalog() async throws -> DiscoveryCatalog {

@@ -1,0 +1,6 @@
+Timing replay mode=0, elapsed=5.1975250244140625e-05, remaining=-4.9948692321777344e-05, disabled=[false, false, false]
+Timing replay mode=10, elapsed=19.13, remaining=-9.129999046325683, disabled=[false, false, false]
+FAIL: control 0 must match the intended observation phase for mode 10
+FAIL: control 1 must match the intended observation phase for mode 10
+FAIL: control 2 must match the intended observation phase for mode 10
+Captured-timing replay: 14 assertions, 2 scenarios, 3 failures.
