@@ -206,6 +206,25 @@ extension NativeCopy {
     private func profileNote(_ profile: NativeProfile) -> String {
         format("SELF-ENTERED PROFILE — verify before using\nRelevant years: {0}\nDegree and certifications: {1}\nTools and responsibilities: {2}\nAchievements: {3}", [profile.years.isEmpty ? self("Not provided") : profile.years, profile.degree, profile.skills, profile.achievements])
     }
+    /// The catalog fit phrase only. Research and employer wording stays as stored.
+    private func spokenNoteFit(_ fit: String) -> String {
+        fit == "Needs review" ? self(fit) : fit
+    }
+
+    /// Built-in preparation phrases only. Research and employer wording stays as stored.
+    private func spokenNotePhrase(_ text: String) -> String {
+        switch text {
+        case "Read the official description", "Tailor your evidence", "Apply personally", "Keep the confirmation", "Review this step",
+             "Check that the position is open and compare all mandatory requirements.",
+             "Use two actual achievements relevant to the responsibilities.",
+             "Open the employer application, review your answers and attachments, then submit when ready.",
+             "Save the acknowledgement and update your application status.":
+            return self(text)
+        default:
+            return text
+        }
+    }
+
     @MainActor func note(for job: CareerJob, in store: NativeCareerStore, includeProfile: Bool = false) -> String {
         guard isArabic else { return store.note(for: job, includeProfile: includeProfile) }
         let researchDate = job.researchCheckedAt ?? (store.isCurrentResearch(job) ? store.research.checkedAt : nil)
@@ -215,10 +234,10 @@ extension NativeCopy {
         let history = archived ? self("\nArchived saved research; this role is not in the current shortlist.\n") : ""
         let checked = store.employerObservation(job).lastCheckedAt.map { sourceDate($0, profile: store.workspace.profile) } ?? self("Not recorded")
         let deadline = job.closes.flatMap { $0.isEmpty ? nil : sourceDate($0, profile: store.workspace.profile) } ?? self("Not published")
-        let header = format("APPLICATION PREPARATION — {0}\n{1} · {2}\n{3}{4}\n\nEmployer checked: {5}\nListed deadline: {6}\nDate-only deadlines use Riyadh calendar days. Past checks and listed deadlines do not establish current availability; recheck with the employer.\n\nFit: {7}\n{8}\n\nConfirm first:\n", [job.title, job.company, job.location, job.applicationURL?.absoluteString ?? job.url, history, checked, deadline, job.fit, job.summary])
+        let header = format("APPLICATION PREPARATION — {0}\n{1} · {2}\n{3}{4}\n\nEmployer checked: {5}\nListed deadline: {6}\nDate-only deadlines use Riyadh calendar days. Past checks and listed deadlines do not establish current availability; recheck with the employer.\n\nFit: {7}\n{8}\n\nConfirm first:\n", [job.title, job.company, job.location, job.applicationURL?.absoluteString ?? job.url, history, checked, deadline, spokenNoteFit(job.fit), job.summary])
         let requirements = job.requirements.map { "• " + $0 }.joined(separator: "\n")
         let steps = job.applicationSteps.enumerated().map { item in
-            String(item.offset + 1) + ". " + (item.element.first ?? "") + ": " + (item.element.count > 1 ? item.element[1] : "")
+            String(item.offset + 1) + ". " + spokenNotePhrase(item.element.first ?? "") + ": " + (item.element.count > 1 ? spokenNotePhrase(item.element[1]) : "")
         }.joined(separator: "\n\n")
         return header + requirements + self("\n\nSteps:\n") + steps + (includeProfile ? "\n\n" + profileNote(store.workspace.profile) : "")
             + format("\n\nStatus: {0}\n", [self(store.status(for: job))]) + salary + self(" Review and submit personally on the employer website.")

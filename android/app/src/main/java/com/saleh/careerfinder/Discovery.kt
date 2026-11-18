@@ -458,6 +458,13 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
         val key = privateKey ?: return
         if (!maySaveSearch) return
         val request = storageGeneration
+        val filters = state.value.filters
+        if (filters.query.length > 120 || filters.location.length > 100) {
+            // The snapshot cannot store this text. Leave the earlier file alone and keep what was typed on screen.
+            if (request == storageGeneration && privateKey == key && state.value.filters == filters) mutable.update { it.copy(
+                searchStorageError = "These search fields exceed the supported limits. Earlier saved search data is kept.") }
+            return
+        }
         try {
             val snapshot = DiscoverySnapshotCodec.encode(DiscoverySnapshot(state.value.filters, lastDisplayedFilters, lastPage))
             storageMutex.withLock {
@@ -495,7 +502,7 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
     }
     fun editFilters(change: (DiscoveryFilters) -> DiscoveryFilters) {
         if (state.value.restoringSearch) return
-        val next = change(state.value.filters).let { it.copy(query = it.query.take(120), location = it.location.take(100)) }
+        val next = change(state.value.filters)
         if (next == state.value.filters) return
         generation++; searchJob?.cancel()
         mutable.update { it.copy(filters = next, loading = false, loadingMore = false, error = null) }

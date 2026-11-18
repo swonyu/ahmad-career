@@ -31,6 +31,11 @@ public final class BoundaryPolicyCheck {
         check(ProfileContract.emailError("person+jobs@EXAMPLE.ORG") == null, "service-compatible email accepted");
         check(ProfileContract.emailError("person<name>@example.org") != null, "unsupported email punctuation rejected");
         check(ProfileContract.emailError("x".repeat(65) + "@example.org") != null, "oversized email local part rejected");
+        check("Enter an email address employers can reply to.".equals(ProfileContract.emailError("invalid-email")), "typed invalid email explains the correction");
+        check("Email needed".equals(ProfileContract.emailEssentialLabel("")), "empty email is needed");
+        check("Check your email".equals(ProfileContract.emailEssentialLabel("invalid-email")), "typed invalid email asks for a check");
+        check("Check your email".equals(ProfileContract.emailEssentialLabel("   ")), "whitespace-only email asks for a check");
+        check("Email added".equals(ProfileContract.emailEssentialLabel("person+jobs@example.org")), "usable email is added");
         check(ProfileContract.countryError("XK") == null, "supported region beyond Java ISO list accepted");
         check(ProfileContract.countryError("ZZ") != null, "unknown country rejected");
         check(ProfileContract.listError(java.util.stream.IntStream.range(0,30).mapToObj(i -> "Role " + i).collect(java.util.stream.Collectors.joining(",")), "Roles", false) == null, "30 role entries accepted");

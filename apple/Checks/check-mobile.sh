@@ -16,6 +16,8 @@ common=(-swift-version 5 -Onone -sdk "$mac_sdk" -module-cache-path "$check_dir/m
   "$task_root/AhmadCareer/MobileApplicationState.swift" "$task_root/AhmadCareer/NativeApplicationsStore.swift" \
   "$task_root/Checks/MobileLifecycleCheck.swift" -o "$check_dir/lifecycle-check"
 "$check_dir/lifecycle-check" "$task_root/../android/app/src/androidTest/assets/phone-workspace-v1.json"
+# The preservation/import/export suite runs on the same source without an app target.
+bash "$task_root/Checks/check-native-recovery.sh"
 "$compiler" "${common[@]}" "$task_root/AhmadCareer/MobileApplicationClient.swift" \
   "$task_root/AhmadCareer/MobileApplicationState.swift" "$task_root/AhmadCareer/CareerDiscovery.swift" \
   "$task_root/Checks/DiscoveryCheck.swift" -o "$check_dir/discovery-check"

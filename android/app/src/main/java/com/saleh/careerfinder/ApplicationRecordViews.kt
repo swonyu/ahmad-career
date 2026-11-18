@@ -30,7 +30,7 @@ internal fun ApplicationRecordSummary(record: ApplicationRecordBundle?, open: ()
     val l10n = rememberCareerStrings()
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         if (record != null) {
-            StatusPill(if (record.displayStage == ApplicationStage.APPLIED) "Applied elsewhere · self-reported" else "${record.displayStage.label} · your record", false)
+            StatusPill(if (record.displayStage == ApplicationStage.APPLIED) "Applied elsewhere · self-reported" else l10n.format("{0} · your record", listOf(l10n(record.displayStage.label))), false)
             if (record.current.record.followUpDate.isNotEmpty() && record.displayStage != ApplicationStage.CLOSED) {
                 Text(l10n(if (record.followUpDue()) "Follow-up due:" else "Follow up:"), style = MaterialTheme.typography.labelMedium)
                 // A separate paragraph preserves the native date order in both RTL and LTR.
@@ -79,6 +79,7 @@ internal fun ApplicationRecordEditor(state: CareerUiState, model: CareerViewMode
     val record = state.applicationRecords[editor.identity]
     var dateField by remember(editor.token) { mutableStateOf<String?>(null) }
     var showHistory by remember(editor.token) { mutableStateOf(false) }
+    var noteLimitSpoken by remember(editor.token) { mutableStateOf(false) }
     val change: ((ApplicationRecordDraft) -> ApplicationRecordDraft) -> Unit = { model.editApplicationRecordDraft(it, editor.token) }
     if (!editor.quickCorrection) FullScreenForm("Application record", { model.closeApplicationRecord(editor.token) }) {
         Column(Modifier.fillMaxSize()) {
@@ -92,14 +93,17 @@ internal fun ApplicationRecordEditor(state: CareerUiState, model: CareerViewMode
                 if (editor.restoredOlderRevision) item {
                     Panel {
                         Text(l10n("An unfinished edit was recovered"), style = MaterialTheme.typography.titleMedium)
-                        Text(l10n("The saved record changed after this draft began. Compare the saved details before keeping your edits. No status change has been applied."))
+                        Text(l10n("The saved record changed after this draft began. Compare the saved details before keeping your edits. No status change has been applied."),
+                            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
                         if (record != null) RecordVersionCard(record.current, "Current saved details", null, false) {}
                         Action("Keep draft against latest record", !state.busy) { model.rebaseApplicationRecordDraft(editor.token) }
                     }
                 }
                 if (record?.needsReview == true) {
                     item {
-                        Heading("Choose which details to keep.", "All versions are saved. Choosing notes or dates does not mark an earlier application as not applied.")
+                        Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
+                            Heading("Choose which details to keep.", "All versions are saved. Choosing notes or dates does not mark an earlier application as not applied.")
+                        }
                     }
                     item { RecordVersionCard(record.current, "Current record", "Keep current details", !state.busy) { model.chooseApplicationRecordVersion(record.current.id, editor.token) } }
                     items(record.alternatives, key = { it.id }) { alternative ->
@@ -125,8 +129,15 @@ internal fun ApplicationRecordEditor(state: CareerUiState, model: CareerViewMode
                     item { RecordDateField("Follow-up date (optional)", editor.draft.followUpDate, !state.busy,
                         { dateField = "follow-up" }, { change { it.copy(followUpDate = "") } }) }
                     item {
-                        Field("Private note (optional)", editor.draft.note, { text -> change { it.copy(note = boundedApplicationNote(text)) } }, singleLine = false, enabled = !state.busy)
+                        Field("Private note (optional)", editor.draft.note, { text ->
+                            val bounded = boundedApplicationNote(text)
+                            val cut = applicationNoteLength(text) > applicationNoteLength(bounded)
+                            if (cut) noteLimitSpoken = true
+                            else if (applicationNoteLength(bounded) < 2_000) noteLimitSpoken = false
+                            change { it.copy(note = bounded) }
+                        }, singleLine = false, enabled = !state.busy)
                         Text(l10n.format("{0} of 2,000 characters", listOf((applicationNoteLength(editor.draft.note)).toString())), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        if (noteLimitSpoken) Text(l10n("Keep this private note within 2,000 characters."), color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
                     }
                     if (record?.history?.isNotEmpty() == true) {
                         item { TextButton(onClick = { showHistory = !showHistory }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
@@ -192,7 +203,10 @@ private fun RecordDateField(label: String, date: String, enabled: Boolean, choos
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(l10n(label), style = MaterialTheme.typography.labelLarge)
         OutlinedButton(onClick = choose, enabled = enabled, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
-            .semantics { contentDescription = l10n.format("Choose {0}", listOf(l10n(label)))}) { Text(l10n(if (date.isEmpty()) "Choose date" else l10n.civilDate(date))) }
+            .semantics {
+                contentDescription = l10n.format("Choose {0}", listOf(l10n(label)))
+                if (date.isNotEmpty()) stateDescription = l10n(l10n.civilDate(date))
+            }) { Text(l10n(if (date.isEmpty()) "Choose date" else l10n.civilDate(date))) }
         if (date.isNotEmpty()) TextButton(onClick = clear, enabled = enabled, modifier = Modifier.heightIn(min = 48.dp)
             .semantics { contentDescription = l10n.format("Clear {0}", listOf(l10n(label)))}) { Text(l10n("Clear date")) }
     }

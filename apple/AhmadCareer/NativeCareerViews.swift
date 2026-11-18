@@ -284,7 +284,7 @@ private struct NativeSavedScreen: View {
                                 Text(row.value["title"]?.string ?? l10n("Opportunity")).font(.headline).fixedSize(horizontal: false, vertical: true)
                                 Text(row.value["company"]?.string ?? "").font(.subheadline).foregroundStyle(.secondary)
                                 if let location = row.value["location"]?.string, !location.isEmpty {
-                                    Text(location).font(.caption).foregroundStyle(.secondary)
+                                    Text(spokenListingLocation(location, l10n)).font(.caption).foregroundStyle(.secondary)
                                 }
                                 Label(l10n(row.value["recordOnly"]?.bool == true ? "Your application record" : row.value["localOnly"]?.bool == true ? "Saved on this phone" : "Saved with application service"), systemImage: "bookmark")
                                     .font(.caption).foregroundStyle(.secondary)
@@ -342,7 +342,7 @@ struct NativeSavedApplicationDetail: View {
                 Section {
                     Text(job["title"]?.string ?? l10n("Opportunity")).font(.title2.weight(.bold)).fixedSize(horizontal: false, vertical: true)
                     Text(job["company"]?.string ?? "").font(.headline)
-                    if let location = job["location"]?.string, !location.isEmpty { Label(location, systemImage: "mappin") }
+                    if let location = job["location"]?.string, !location.isEmpty { Label(spokenListingLocation(location, l10n), systemImage: "mappin") }
                 }
                 Section {
                     if let url = job["url"]?.string.flatMap(MobileApplicationPolicy.jobURL) {
@@ -448,7 +448,13 @@ private struct NativeModernRecordEditor: View {
                     Text(l10n("Your record stays on this phone. Saving it does not send an application or a message."))
                         .font(.footnote).foregroundStyle(.secondary)
                 }
-                if context == nil { Section { Text(l10n("Compare the saved record versions before editing this opportunity.")).foregroundStyle(.red) } }
+                if context == nil {
+                    Section {
+                        Text(l10n("Compare the saved record versions before editing this opportunity."))
+                            .foregroundStyle(.red)
+                            .accessibilityIdentifier("record.compareVersions")
+                    }
+                }
                 if let issue { Section { Text(l10n.message(issue)).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true) } }
                 Section {
                     Picker(l10n("Stage"), selection: $draft.stage) { ForEach(PhoneApplicationStage.allCases) { Text(l10n($0.title)).tag($0) } }
@@ -515,6 +521,14 @@ private struct NativeModernRecordEditor: View {
         }.tint(.careerAccent).interactiveDismissDisabled(changed || model.busy)
             .onChange(of: scenePhase) { phase in if phase != .active { checkpoint() } }
             .onDisappear { if !closingIntentionally { checkpoint() } }
+            .onChange(of: issue) { value in
+                if let value { UIAccessibility.post(notification: .announcement, argument: l10n.message(value)) }
+            }
+            .onAppear {
+                if context == nil {
+                    UIAccessibility.post(notification: .announcement, argument: l10n("Compare the saved record versions before editing this opportunity."))
+                }
+            }
     }
     private func checkpoint() {
         if changed, let context, !model.keepRecordDraft(draft, context: context) { issue = model.message }
@@ -568,6 +582,41 @@ private struct NativeModernRecordVersions: View {
                     Button(l10n("Keep current records"), role: .cancel) {}
                 } message: { Text(l10n("Your current applied mark stays unchanged, and other versions remain in your private history. This does not send or change an employer application.")) }
         }.tint(.careerAccent)
+            .onChange(of: issue) { value in
+                if let value { UIAccessibility.post(notification: .announcement, argument: l10n.message(value)) }
+            }
+    }
+}
+
+/// Live listings use the catalog phrase. Research and employer wording stays as stored.
+private func spokenListingFit(_ fit: String, _ copy: NativeCopy) -> String {
+    fit == "Needs review" ? copy(fit) : fit
+}
+
+/// The built-in live-listing sentence only. Research and employer wording stays as stored.
+private func spokenListingSummary(_ summary: String, _ copy: NativeCopy) -> String {
+    summary == "New employer listing. Review full requirements before applying." ? copy(summary) : summary
+}
+
+/// Built-in place names only. Employer wording stays as stored.
+private func spokenListingLocation(_ location: String, _ copy: NativeCopy) -> String {
+    switch location {
+    case "Riyadh", "Saudi Arabia": return copy(location)
+    default: return location
+    }
+}
+
+/// Built-in preparation steps use catalog phrases. Research and employer wording stays as stored.
+private func spokenPreparationStep(_ text: String, _ copy: NativeCopy) -> String {
+    switch text {
+    case "Read the official description", "Tailor your evidence", "Apply personally", "Keep the confirmation", "Review this step",
+         "Check that the position is open and compare all mandatory requirements.",
+         "Use two actual achievements relevant to the responsibilities.",
+         "Open the employer application, review your answers and attachments, then submit when ready.",
+         "Save the acknowledgement and update your application status.":
+        return copy(text)
+    default:
+        return text
     }
 }
 
@@ -584,8 +633,8 @@ private struct NativeJobLink: View {
                 VStack(alignment: .leading, spacing: 7) {
                     if store.isCurrentResearch(job), let rank = job.rank { Text(l10n.format("PRIORITY {0}", [String(format: "%02d", rank)])).font(.caption2.weight(.semibold)).foregroundStyle(.secondary) }
                     Text(job.title).font(.headline).fixedSize(horizontal: false, vertical: true)
-                    Text(l10n.format("{0} · {1}", [String(describing: job.company), String(describing: job.location)])).font(.subheadline).foregroundStyle(.secondary)
-                    Text(job.kind == "archived" ? l10n.format("Earlier assessment: {0}", [job.fit]) : job.fit).font(.caption.weight(.medium)).foregroundStyle(job.isExpired ? Color.primary : Color.careerAccent)
+                    Text(l10n.format("{0} · {1}", [String(describing: job.company), String(describing: spokenListingLocation(job.location, l10n))])).font(.subheadline).foregroundStyle(.secondary)
+                    Text(job.kind == "archived" ? l10n.format("Earlier assessment: {0}", [spokenListingFit(job.fit, l10n)]) : spokenListingFit(job.fit, l10n)).font(.caption.weight(.medium)).foregroundStyle(job.isExpired ? Color.primary : Color.careerAccent)
                     ForEach(store.workspace.profile.criteriaMessages(for: job), id: \.self) { message in
                         Label(l10n(message), systemImage: "questionmark.circle").font(.caption).foregroundStyle(.secondary)
                     }
@@ -612,13 +661,34 @@ private struct NativeJobDetail: View {
         return entered < Double(required)
     }
 
+    private func speakListingWarning(expired: Bool) {
+        if expired {
+            UIAccessibility.post(notification: .announcement, argument: l10n("Check the employer's current status before spending time on this application."))
+        } else if experienceGap {
+            speakExperienceWarning()
+        }
+    }
+
+    private func speakExperienceWarning() {
+        guard let years = job.minYears else { return }
+        UIAccessibility.post(notification: .announcement, argument: l10n("You entered fewer relevant years than the \(years)+ requested. Review eligibility before applying."))
+    }
+
+    /// Profile work-arrangement words already have catalog phrases. Other employer text stays as stored.
+    private func spokenWorkArrangement(_ mode: String) -> String {
+        switch mode {
+        case "On site", "Hybrid", "Remote": return l10n(mode)
+        default: return mode
+        }
+    }
+
     var body: some View {
         List {
             Section {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(job.company).font(.caption.weight(.semibold)).foregroundStyle(Color.careerAccent)
                     Text(job.title).font(.title.weight(.bold)).fixedSize(horizontal: false, vertical: true)
-                    Text(job.location).foregroundStyle(.secondary)
+                    Text(spokenListingLocation(job.location, l10n)).foregroundStyle(.secondary)
                     if let subtitle = job.subtitle, !subtitle.isEmpty { Text(l10n(subtitle)).font(.subheadline).foregroundStyle(.secondary) }
                 }.padding(.vertical, 10)
                 if job.isExpired { NativeNotice(title: "Past listed deadline", message: "Check the employer's current status before spending time on this application.", warning: true) }
@@ -630,7 +700,7 @@ private struct NativeJobDetail: View {
                 ForEach(store.workspace.profile.criteriaMessages(for: job), id: \.self) { message in
                     Label(l10n(message), systemImage: "questionmark.circle").font(.footnote)
                 }
-                if let mode = job.mode, mode != "Not stated" { LabeledContent(l10n("Work arrangement"), value: mode) }
+                if let mode = job.mode, mode != "Not stated" { LabeledContent(l10n("Work arrangement"), value: spokenWorkArrangement(mode)) }
             }
             Section(l10n("Evidence and freshness")) {
                 if store.isCurrentResearch(job) {
@@ -649,8 +719,8 @@ private struct NativeJobDetail: View {
                 }
             }
             Section(l10n(job.kind == "archived" ? "Preserved earlier assessment" : "Listing information to review")) {
-                Text(job.fit).font(.headline).foregroundStyle(Color.careerAccent)
-                Text(job.summary)
+                Text(spokenListingFit(job.fit, l10n)).font(.headline).foregroundStyle(Color.careerAccent)
+                Text(spokenListingSummary(job.summary, l10n))
                 Text(l10n("This is not a verified personal fit score. Compare the employer requirements with your own evidence."))
                     .font(.footnote).foregroundStyle(.secondary)
                 if experienceGap {
@@ -663,8 +733,8 @@ private struct NativeJobDetail: View {
             Section(l10n("Your application, step by step")) {
                 ForEach(Array(job.applicationSteps.enumerated()), id: \.offset) { index, step in
                     VStack(alignment: .leading, spacing: 7) {
-                        Text(l10n.format("{0}. {1}", [String(describing: index + 1), String(describing: step.first ?? "Review this step")])).font(.headline)
-                        Text(step.dropFirst().joined(separator: " ")).font(.subheadline).foregroundStyle(.secondary)
+                        Text(l10n.format("{0}. {1}", [String(describing: index + 1), spokenPreparationStep(step.first ?? "Review this step", l10n)])).font(.headline)
+                        Text(spokenPreparationStep(step.dropFirst().joined(separator: " "), l10n)).font(.subheadline).foregroundStyle(.secondary)
                     }.padding(.vertical, 4)
                 }
             }
@@ -702,6 +772,14 @@ private struct NativeJobDetail: View {
                 Text(l10n("Review and rewrite every draft before using it. Recheck salary, deadlines and qualifications directly with the employer."))
             }
         }.nativeList().navigationTitle(l10n("Opportunity")).navigationBarTitleDisplayMode(.inline)
+        .onAppear { speakListingWarning(expired: job.isExpired) }
+        .onChange(of: job.isExpired) { expired in
+            speakListingWarning(expired: expired)
+        }
+        .onChange(of: experienceGap) { gap in
+            guard gap, !job.isExpired else { return }
+            speakExperienceWarning()
+        }
     }
 }
 
@@ -716,6 +794,14 @@ private struct NativeLegacyNextActionEditor: View {
     private func edit(dueOn:String?=nil,note:String?=nil,completed:Bool?=nil) {
         store.editNextAction(job,dueOn:dueOn ?? draft.dueOn,actionNote:note ?? draft.actionNote,completed:completed ?? draft.completed)
         notice=""
+    }
+    private func reloadNextAction(discardDraft: Bool, announceExisting: Bool) {
+        let before = store.nextActionErrors[job.id]
+        store.beginNextAction(job, discardDraft: discardDraft)
+        guard let error = store.nextActionErrors[job.id] else { return }
+        if announceExisting || error != before {
+            UIAccessibility.post(notification: .announcement, argument: l10n.message(error))
+        }
     }
     var body:some View {
         Form {
@@ -741,13 +827,13 @@ private struct NativeLegacyNextActionEditor: View {
                     notice=store.saveNextAction(job) ? "Next action saved on this phone." : ""
                     UIAccessibility.post(notification:.announcement,argument:l10n.message(store.nextActionErrors[job.id] ?? notice))
                 }.accessibilityIdentifier("legacyAction.save")
-                Button(l10n("Reload saved record")) {if draft.dirty {discard=true} else {store.beginNextAction(job,discardDraft:true);notice=""}}
+                Button(l10n("Reload saved record")) {if draft.dirty {discard=true} else {reloadNextAction(discardDraft:true,announceExisting:true);notice=""}}
             }
         }.navigationTitle(l10n("Your next action")).navigationBarTitleDisplayMode(.inline)
-            .onAppear{store.beginNextAction(job)}
-            .onChange(of:scenePhase){phase in if phase == .active {store.beginNextAction(job)}}
+            .onAppear{reloadNextAction(discardDraft:false,announceExisting:true)}
+            .onChange(of:scenePhase){phase in if phase == .active {reloadNextAction(discardDraft:false,announceExisting:false)}}
             .confirmationDialog(l10n("Discard this unsaved draft and load the saved record?"),isPresented:$discard,titleVisibility:.visible){
-                Button(l10n("Discard draft and reload"),role:.destructive){store.beginNextAction(job,discardDraft:true);notice=""}
+                Button(l10n("Discard draft and reload"),role:.destructive){reloadNextAction(discardDraft:true,announceExisting:true);notice=""}
                 Button(l10n("Keep draft"),role:.cancel){}
             }
     }
@@ -796,7 +882,7 @@ struct NativeLegacyBackupScreen:View {
             if !notice.isEmpty {Section {Text(l10n.message(notice)).fixedSize(horizontal:false,vertical:true).accessibilityAddTraits(.updatesFrequently)}}
         }.navigationTitle(l10n("Earlier records and backups")).navigationBarTitleDisplayMode(.inline)
             .fileExporter(isPresented:$exporting,document:document,contentType:.json,defaultFilename:"Career-Finder-planning-backup") {result in
-                if case .failure(let error)=result {notice=error.localizedDescription}
+                if case .failure(let error)=result,!MobileApplicationPolicy.isFileSelectionCancelled(error) {notice=error.localizedDescription}
             }
             .fileImporter(isPresented:$importing,allowedContentTypes:[.json]) {result in
                 preview=nil
@@ -807,7 +893,7 @@ struct NativeLegacyBackupScreen:View {
                     let data=try handle.read(upToCount:NativeCareerStore.backupLimit+1) ?? Data()
                     guard data.count<=NativeCareerStore.backupLimit else {throw NativeBackupError.invalid}
                     preview=try store.previewBackup(data);notice=""
-                } catch {notice=error.localizedDescription}
+                } catch {if !MobileApplicationPolicy.isFileSelectionCancelled(error) {notice=error.localizedDescription}}
             }
             .confirmationDialog(l10n("Add missing saved data? Existing values will be preserved."),isPresented:$confirming,titleVisibility:.visible) {
                 Button(l10n("Restore additions")) {
@@ -817,6 +903,12 @@ struct NativeLegacyBackupScreen:View {
                     preview=nil
                 }
                 Button(l10n("Cancel"),role:.cancel){preview=nil}
+            }
+            .onChange(of: notice) { text in
+                guard !text.isEmpty,
+                      text != "Preview canceled. Nothing was restored.",
+                      text != "Additions restored locally. Nothing was sent." else { return }
+                UIAccessibility.post(notification: .announcement, argument: l10n.message(text))
             }
     }
 }
@@ -829,6 +921,14 @@ private struct NativeApplicationRecordEditor: View {
     @State private var discard=false
     @State private var savedMessage=""
     private var draft:ApplicationRecordDraft {store.recordDrafts[job.id] ?? ApplicationRecordDraft()}
+    private func reloadRecord(discardDraft: Bool, announceExisting: Bool) {
+        let before = store.recordErrors[job.id]
+        store.beginApplicationRecord(job, discardDraft: discardDraft)
+        guard let error = store.recordErrors[job.id] else { return }
+        if announceExisting || error != before {
+            UIAccessibility.post(notification: .announcement, argument: l10n.message(error))
+        }
+    }
     var body:some View {
         Form {
             Section {
@@ -850,13 +950,13 @@ private struct NativeApplicationRecordEditor: View {
                     savedMessage=store.saveApplicationRecord(job) ? "Application date and note saved on this device. Status is unchanged." : ""
                     UIAccessibility.post(notification:.announcement,argument:l10n.message(store.recordErrors[job.id] ?? savedMessage))
                 }
-                Button(l10n("Reload saved record")) {if draft.dirty {discard=true} else {store.beginApplicationRecord(job,discardDraft:true);savedMessage=""}}
+                Button(l10n("Reload saved record")) {if draft.dirty {discard=true} else {reloadRecord(discardDraft:true,announceExisting:true);savedMessage=""}}
             }
         }.navigationTitle(l10n("Application record")).navigationBarTitleDisplayMode(.inline)
-            .onAppear{store.beginApplicationRecord(job)}
-            .onChange(of:scenePhase){phase in if phase == .active {store.beginApplicationRecord(job)}}
+            .onAppear{reloadRecord(discardDraft:false,announceExisting:true)}
+            .onChange(of:scenePhase){phase in if phase == .active {reloadRecord(discardDraft:false,announceExisting:false)}}
             .confirmationDialog(l10n("Discard this unsaved draft and load the saved record?"),isPresented:$discard,titleVisibility:.visible){
-                Button(l10n("Discard draft and reload"),role:.destructive){store.beginApplicationRecord(job,discardDraft:true);savedMessage=""}
+                Button(l10n("Discard draft and reload"),role:.destructive){reloadRecord(discardDraft:true,announceExisting:true);savedMessage=""}
                 Button(l10n("Keep draft"),role:.cancel){}
             }
     }
@@ -946,10 +1046,12 @@ private struct NativeSettingsScreen: View {
                             Spacer()
                             if language == option.rawValue {
                                 Image(systemName: "checkmark").foregroundStyle(Color.careerAccent)
+                                    .accessibilityHidden(true)
                             }
                         }.frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel(l10n(option.title))
                     .accessibilityAddTraits(language == option.rawValue ? .isSelected : [])
                     .accessibilityIdentifier("settings.language." + option.rawValue)
                 }
@@ -1127,6 +1229,8 @@ private struct NativeProfileEditor: View {
     @State private var original: NativeProfile
     @State private var draft: NativeProfile
     @State private var confirmDiscard = false
+    @State private var announcedValidation: [String] = []
+    @State private var yearsEpisodeSpoken = false
     @FocusState private var focused: Bool
     init(profile: NativeProfile) { _original = State(initialValue: profile); _draft = State(initialValue: profile) }
     private func countryName(_ code: String) -> String { l10n.locale.localizedString(forRegionCode: code) ?? code }
@@ -1134,10 +1238,47 @@ private struct NativeProfileEditor: View {
     private var dirty: Bool { draft != original }
     private var hasConflict: Bool { store.workspace.profile != original }
     private var validLengths: Bool { draft.degree.count <= 300 && draft.skills.count <= 3_000 && draft.achievements.count <= 5_000 }
+    private var yearsSentence: String { "Enter a number from 0 to 60, or leave blank." }
+    private var trimmedYears: String { draft.years.trimmingCharacters(in: .whitespacesAndNewlines) }
     private var validYears: Bool {
-        let years = draft.years.trimmingCharacters(in: .whitespacesAndNewlines)
-        if years.isEmpty { return true }
-        return NativeMoney.parse(years.replacingOccurrences(of: ",", with: "."), limit: 60) != nil
+        if trimmedYears.isEmpty { return true }
+        return NativeMoney.parse(trimmedYears.replacingOccurrences(of: ",", with: "."), limit: 60) != nil
+    }
+    private var yearsPendingDecimal: Bool {
+        trimmedYears.range(of: #"^(?:\p{Nd}*)[.٫,]$"#, options: .regularExpression) != nil
+    }
+    private var salaryCriteriaVisible: Bool { draft.minimumMonthlySAR != nil || draft.unknownSalary != nil }
+    private func planningPreference(_ error: String) -> Bool {
+        error == "Choose a planning currency from the list." || error == "Choose monthly or annual planning amounts." || error == "Choose a recognized display time zone."
+    }
+    private var validationMessages: [String] {
+        var messages = [String]()
+        if let error = draft.preferenceError { messages.append(error) }
+        if let error = draft.criteriaError, error != draft.preferenceError { messages.append(error) }
+        if !validYears { messages.append(yearsSentence) }
+        if draft.degree.count > 300 { messages.append("Qualifications exceed 300 characters. Shorten this field before saving.") }
+        if draft.skills.count > 3_000 { messages.append("Shorten tools and responsibilities before saving.") }
+        if draft.achievements.count > 5_000 { messages.append("Shorten achievements before saving.") }
+        return messages
+    }
+    private func speakValidation(_ text: String) {
+        let spoken = draft.preferenceError == text || draft.criteriaError == text ? l10n.message(text) : l10n(text)
+        UIAccessibility.post(notification: .announcement, argument: spoken)
+    }
+    private func speakFirstFinished(_ messages: [String], skipped: [String]) {
+        guard !hasConflict else { return }
+        let added = messages.filter { message in
+            !skipped.contains(message) && (message != yearsSentence || (!yearsPendingDecimal && !yearsEpisodeSpoken))
+        }
+        guard let text = added.first else { return }
+        if text == yearsSentence { yearsEpisodeSpoken = true }
+        speakValidation(text)
+    }
+    private func speakYearsIfReady(includePending: Bool) {
+        guard !hasConflict, !validYears, !yearsEpisodeSpoken else { return }
+        if yearsPendingDecimal && !includePending { return }
+        yearsEpisodeSpoken = true
+        speakValidation(yearsSentence)
     }
     var body: some View {
         NavigationStack {
@@ -1152,12 +1293,17 @@ private struct NativeProfileEditor: View {
                         Text(l10n("Any country or region")).tag("")
                         ForEach(NativeProfile.countryCodes.sorted { countryName($0) < countryName($1) }, id: \.self) { code in Text(l10n.format("{0} ({1})", [String(describing: countryName(code)), String(describing: code)])).tag(code) }
                     }
+                    if let error = draft.preferenceError, ["Choose a country or region from the list.", "These preferences use an unsupported version. Original data is preserved."].contains(error) { Label(l10n.message(error), systemImage: "exclamationmark.circle").font(.caption) }
                     TextField(l10n("City text, if relevant"), text: Binding(get: { draft.effectiveCity }, set: { draft.targetCity = $0 })).focused($focused)
                         .accessibilityLabel(l10n("Preferred city text, optional"))
+                    if draft.preferenceError == "Use up to 100 characters for the city." { Label(l10n.message("Use up to 100 characters for the city."), systemImage: "exclamationmark.circle").font(.caption) }
                     Text(l10n("Matches returned location text only. Confirm the worksite and spelling with the employer.")).font(.caption).foregroundStyle(.secondary)
                     TextField(l10n("Role keywords"), text: Binding(get: { draft.roleKeywords ?? "" }, set: { draft.roleKeywords = $0 })).focused($focused)
                         .accessibilityLabel(l10n("Role keywords, optional"))
+                    if draft.preferenceError == "Use up to 200 characters for role keywords." { Label(l10n.message("Use up to 200 characters for role keywords."), systemImage: "exclamationmark.circle").font(.caption) }
                     Text(l10n("Every space-separated word must occur in a returned role title or subtitle. This does not establish eligibility.")).font(.caption).foregroundStyle(.secondary)
+                    if let error = draft.preferenceError, !planningPreference(error), !["Choose a country or region from the list.", "These preferences use an unsupported version. Original data is preserved.", "Use up to 100 characters for the city.", "Use up to 200 characters for role keywords."].contains(error) { Label(l10n.message(error), systemImage: "exclamationmark.circle").font(.caption) }
+                    if let error = draft.criteriaError, draft.preferenceError == nil, !salaryCriteriaVisible { Label(l10n.message(error), systemImage: "exclamationmark.circle").font(.caption) }
                 } header: { Text(l10n("Country, city and role preferences")) } footer: {
                     Text(l10n("Preferences for your planning notes and earlier records. The Search tab uses its own explicit role, location and employer-board choices. These notes do not affect saved application records."))
                 }
@@ -1166,19 +1312,22 @@ private struct NativeProfileEditor: View {
                         Text(l10n("Choose a currency")).tag("")
                         ForEach(NativeProfile.currencyCodes, id: \.self) { Text($0).tag($0) }
                     }
+                    if draft.preferenceError == "Choose a planning currency from the list." { Label(l10n.message("Choose a planning currency from the list."), systemImage: "exclamationmark.circle").font(.caption) }
                     Picker(l10n("Planning amount period"), selection: Binding(get: { draft.effectivePayPeriod }, set: { draft.planningPayPeriod = $0 })) {
                         Text(l10n("Monthly fixed amounts")).tag("monthly")
                         Text(l10n("Annual fixed amounts")).tag("annual")
                     }
+                    if draft.preferenceError == "Choose monthly or annual planning amounts." { Label(l10n.message("Choose monthly or annual planning amounts."), systemImage: "exclamationmark.circle").font(.caption) }
                     Text(l10n("Only a default for your local offer calculator. Existing SAR criteria and source evidence stay SAR; no conversion is performed.")).font(.caption).foregroundStyle(.secondary)
                     Picker(l10n("Display time zone"), selection: Binding(get: { draft.displayTimeZone ?? "Asia/Riyadh" }, set: { draft.displayTimeZone = $0 })) {
                         Text(l10n.format("Device time zone ({0})", [String(describing: TimeZone.current.identifier)])).tag("")
                         ForEach(displayZones, id: \.self) { Text(l10n($0)).tag($0) }
                     }
+                    if draft.preferenceError == "Choose a recognized display time zone." { Label(l10n.message("Choose a recognized display time zone."), systemImage: "exclamationmark.circle").font(.caption) }
                 } header: { Text(l10n("Planning and display")) } footer: {
                     Text(l10n("Display zone applies to timestamps with an explicit offset. Source date-only deadlines keep their published date. Existing application-date validation still uses the Riyadh day; dates are never shifted."))
                 }
-                if draft.minimumMonthlySAR != nil || draft.unknownSalary != nil {
+                if salaryCriteriaVisible {
                 Section {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(l10n("Minimum monthly pay, SAR")).font(.caption).foregroundStyle(.secondary)
@@ -1191,14 +1340,14 @@ private struct NativeProfileEditor: View {
                             Text(l10n("Hide unverified earlier leads")).tag("hide")
                         }
                     }
-                    if let error = draft.criteriaError { Label(l10n.message(error), systemImage: "exclamationmark.circle").font(.caption) }
+                    if let error = draft.criteriaError, error != draft.preferenceError { Label(l10n.message(error), systemImage: "exclamationmark.circle").font(.caption) }
                 } header: { Text(l10n("Earlier salary criteria · monthly SAR")) } footer: {
                     Text(l10n("This filter stays monthly SAR regardless of planning currency. Use whole SAR; blank or zero means no minimum. Confirm basic salary versus fixed package. This retained preference does not filter the new public board search. It stays on this device and is excluded from discovery requests and application notes."))
                 }
                 }
                 Section(l10n("Experience and qualifications")) {
                     VStack(alignment: .leading, spacing: 8) { Text(l10n("Relevant years of experience")).font(.caption).foregroundStyle(.secondary); TextField(l10n("Relevant years of experience"), text: $draft.years).keyboardType(.decimalPad).focused($focused) }
-                    if !validYears { Label(l10n("Enter a number from 0 to 60, or leave blank."), systemImage: "exclamationmark.circle").font(.caption) }
+                    if !validYears { Label(l10n(yearsSentence), systemImage: "exclamationmark.circle").font(.caption) }
                     TextField(l10n("Degree and certifications"), text: $draft.degree, axis: .vertical).lineLimit(2...5).focused($focused)
                     if draft.degree.count > 300 { Label(l10n("Qualifications exceed 300 characters. Shorten this field before saving."), systemImage: "exclamationmark.circle").font(.caption) }
                 }
@@ -1233,6 +1382,33 @@ private struct NativeProfileEditor: View {
             }
         }
         .interactiveDismissDisabled(dirty)
+        .onAppear {
+            announcedValidation = validationMessages
+            if hasConflict {
+                UIAccessibility.post(notification: .announcement, argument: l10n("Keep a copy of any draft text you need, then cancel and reopen this editor to use the latest profile. Your draft has not been saved."))
+            } else {
+                speakFirstFinished(validationMessages, skipped: [])
+            }
+        }
+        .onChange(of: hasConflict) { conflict in
+            if conflict {
+                UIAccessibility.post(notification: .announcement, argument: l10n("Keep a copy of any draft text you need, then cancel and reopen this editor to use the latest profile. Your draft has not been saved."))
+            }
+        }
+        .onChange(of: validationMessages) { messages in
+            let skipped = announcedValidation
+            announcedValidation = messages
+            speakFirstFinished(messages, skipped: skipped)
+        }
+        .onChange(of: validYears) { valid in
+            if valid { yearsEpisodeSpoken = false }
+        }
+        .onChange(of: yearsPendingDecimal) { pending in
+            if !pending { speakYearsIfReady(includePending: false) }
+        }
+        .onChange(of: focused) { isFocused in
+            if !isFocused { speakYearsIfReady(includePending: true) }
+        }
         .confirmationDialog(l10n("Discard unsaved profile changes?"), isPresented: $confirmDiscard, titleVisibility: .visible) {
             Button(l10n("Discard changes"), role: .destructive) { dismiss() }
             Button(l10n("Keep editing"), role: .cancel) { }
@@ -1249,10 +1425,16 @@ private struct NativeSalaryScreen: View {
     @State private var basic = ""
     @State private var allowances = ""
     @State private var bonus = ""
+    @State private var announcedSalary: String?
     @FocusState private var focused: Bool
     private var basicAmount: Double? { NativeMoney.parse(basic, limit: 1_000_000) }
     private var allowanceAmount: Double? { NativeMoney.parse(allowances, limit: 1_000_000) }
     private var bonusAmount: Double? { NativeMoney.parse(bonus, limit: 10_000_000) }
+    private var salaryValidation: String? {
+        if basicAmount == nil || allowanceAmount == nil { return "Use 0 to 1,000,000 with at most two decimal places." }
+        if bonusAmount == nil { return "Use 0 to 10,000,000 with at most two decimal places." }
+        return nil
+    }
     private func amount(_ value: Double) -> String { currency + " " + value.formatted(.number.precision(.fractionLength(0...2)).locale(l10n.locale)) }
     private func clearAmounts() { basic = ""; allowances = ""; bonus = "" }
     var body: some View {
@@ -1315,6 +1497,12 @@ private struct NativeSalaryScreen: View {
         .onAppear { if !initialized { currency = store.workspace.profile.effectiveCurrency; period = store.workspace.profile.effectivePayPeriod; initialized = true } }
         .onChange(of: currency) { _ in clearAmounts() }
         .onChange(of: period) { _ in clearAmounts() }
+        .onChange(of: salaryValidation) { text in if text == nil { announcedSalary = nil } }
+        .onChange(of: focused) { isFocused in
+            guard !isFocused, let text = salaryValidation, text != announcedSalary else { return }
+            announcedSalary = text
+            UIAccessibility.post(notification: .announcement, argument: l10n(text))
+        }
         .navigationTitle(l10n("Salary & negotiation")).navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItemGroup(placement: .keyboard) { Spacer(); Button(l10n("Done")) { focused = false } } }
     }

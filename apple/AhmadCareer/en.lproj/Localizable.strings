@@ -495,6 +495,7 @@
 "English" = "English";
 "Enter a number from 0 to 60, or leave blank." = "Enter a number from 0 to 60, or leave blank.";
 "Enter a whole monthly SAR amount from 0 to 1,000,000, or leave blank." = "Enter a whole monthly SAR amount from 0 to 1,000,000, or leave blank.";
+"Enter an email address employers can reply to." = "Enter an email address employers can reply to.";
 "Enter relevant experience between 0 and 60 years." = "Enter relevant experience between 0 and 60 years.";
 "Enter the HTTPS address from your application-service invitation." = "Enter the HTTPS address from your application-service invitation.";
 "Enter the code you just created. Connecting alone does not upload your profile or apply for a job." = "Enter the code you just created. Connecting alone does not upload your profile or apply for a job.";

@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.delay
 
 @Composable
 internal fun JobsScreen(state: CareerUiState, model: CareerViewModel, add: () -> Unit, review: () -> Unit,
@@ -68,7 +69,10 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
     val fallbackBoards = if (state.sources.isEmpty() && state.error != null && state.status == null)
         recoveryBoards(state.lastAttemptedFilters?.sources.orEmpty()) else emptyList()
     LazyColumn(Modifier.fillMaxSize().imePadding().testTag("discovery-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        if (state.restoringSearch) item { LinearProgressIndicator(Modifier.fillMaxWidth()); Text(l10n("Opening your last search…")) }
+        if (state.restoringSearch) item {
+            LinearProgressIndicator(Modifier.fillMaxWidth())
+            Text(l10n("Opening your last search…"), modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+        }
         if (state.restoredSearch) item {
             Panel {
                 Text(l10n(if (state.status == null) "Last search restored" else "Previous results"), style = MaterialTheme.typography.titleMedium)
@@ -103,6 +107,14 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
             CheckLine("Remote listings only", state.filters.remoteOnly, { checked -> controller.editFilters { it.copy(remoteOnly = checked) } })
             Text(l10n("Remote labels describe the posting. Check the employer’s location and work-authorization requirements."), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
+        val catalogIssue = state.catalogError
+        if (catalogIssue != null && !chooseSources) item {
+            Text(l10n.message(catalogIssue), color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }.testTag("discovery.catalogError"))
+            OutlinedButton(onClick = controller::loadSources, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("discovery.retryCatalog")) {
+                Text(l10n("Retry employer catalog"))
+            }
+        }
         item {
             Action(if (state.loading) "Searching employer boards…" else "Search jobs", !state.loading && !state.restoringSearch, search)
             if (state.loading) {
@@ -115,11 +127,27 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
             LinkedInSearchAction(state.filters.query, state.filters.location) { openLink(context, it) }
         }
         if (state.error != null) item {
+            var nowMillis by remember(state.retryAtMillis) { mutableLongStateOf(System.currentTimeMillis()) }
+            LaunchedEffect(state.retryAtMillis) {
+                val remaining = state.retryAtMillis - System.currentTimeMillis()
+                if (remaining > 0) {
+                    delay(remaining)
+                    nowMillis = maxOf(System.currentTimeMillis(), state.retryAtMillis)
+                }
+            }
+            val waiting = nowMillis < state.retryAtMillis
             Panel {
-                Text(l10n.message(state.error.orEmpty()), color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
-                if (state.canRetrySubmittedSearch) OutlinedButton(onClick = controller::retrySubmittedSearch, enabled = !state.loading,
+                Text(l10n.message(state.error.orEmpty()), color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }.testTag("discovery.error"))
+                if (state.canRetrySubmittedSearch) OutlinedButton(onClick = controller::retrySubmittedSearch, enabled = !state.loading && !waiting,
                     modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("discovery-retry")) { Text(l10n("Retry this search")) }
-                if (state.cursorInvalid) OutlinedButton(onClick = search, enabled = !state.loading, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Start a fresh search")) }
+                if (state.cursorInvalid) OutlinedButton(onClick = search, enabled = !state.loading && !waiting, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Start a fresh search")) }
+                else if (!state.canRetrySubmittedSearch) {
+                    OutlinedButton(onClick = search, enabled = !state.loading && !waiting,
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("discovery.retrySearch")) { Text(l10n("Search again")) }
+                }
+                if (waiting) Text(l10n.format("Try again after {0}.", listOf(l10n.dateTime(java.time.Instant.ofEpochMilli(state.retryAtMillis).toString()))),
+                    style = MaterialTheme.typography.bodySmall)
                 fallbackBoards.forEach { identity ->
                     EmployerBoardLink(identity, "Open the employer board", l10n.format("Open employer board for {0}", listOf(identity.board)))
                 }
@@ -169,7 +197,9 @@ internal fun LinkedInSearchAction(keywords: String, location: String, open: (Str
             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Search LinkedIn")) }
         Text(l10n("Opens LinkedIn with your keywords and location. LinkedIn manages its own sign-in and applications; opening a search does not submit an application."),
             style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        if (destination == null) Text(l10n("Shorten the keywords or location to open LinkedIn search."), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+        if (destination == null) Text(l10n("Shorten the keywords or location to open LinkedIn search."),
+            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error,
+            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }.testTag("discovery.linkedinIssue"))
     }
 }
 
@@ -273,9 +303,11 @@ private fun DiscoverySourcesDialog(state: DiscoveryUiState, controller: Discover
                 item { Text(l10n.format("Choose up to {0} public employer boards. This is a starting catalog, not a complete list of employers or professions.", listOf((limit).toString()))) }
                 item { Text(l10n.format("{0} of {1} selected", listOf((draft.size).toString(), (limit).toString())), style = MaterialTheme.typography.labelLarge) }
                 if (state.catalogLoading) item { LinearProgressIndicator(Modifier.fillMaxWidth()) }
-                if (state.catalogError != null) item {
-                    Text(l10n.message(state.catalogError), color = MaterialTheme.colorScheme.error)
-                    OutlinedButton(onClick = controller::loadSources, modifier = Modifier.heightIn(min = 48.dp)) { Text(l10n("Retry employer catalog")) }
+                val catalogIssue = state.catalogError
+                if (catalogIssue != null) item {
+                    Text(l10n.message(catalogIssue), color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }.testTag("discovery.catalogError"))
+                    OutlinedButton(onClick = controller::loadSources, modifier = Modifier.heightIn(min = 48.dp).testTag("discovery.retryCatalog")) { Text(l10n("Retry employer catalog")) }
                 }
                 item { Field("Find an employer in the catalog", query, { query = it }) }
                 val catalog = state.catalog?.sources.orEmpty()
@@ -301,7 +333,7 @@ private fun DiscoverySourcesDialog(state: DiscoveryUiState, controller: Discover
                 item {
                     HorizontalDivider()
                     Text(l10n("Add another employer"), style = MaterialTheme.typography.titleMedium)
-                    Field("Public Lever or Greenhouse board link", custom, { custom = it; customError = null }, KeyboardType.Uri, error = customError)
+                    Field("Public Lever or Greenhouse board link", custom, { custom = it; customError = null }, KeyboardType.Uri)
                     Text(l10n("A supported employer board or individual posting URL can be used. Other job links can still be added in Saved."), style = MaterialTheme.typography.bodySmall)
                     OutlinedButton(onClick = {
                         val identity = PublicDiscoveryService.canonicalBoard(custom.trim())
@@ -315,6 +347,10 @@ private fun DiscoverySourcesDialog(state: DiscoveryUiState, controller: Discover
                             else -> { touched = true; draft = draft + identity.id; custom = ""; customError = null }
                         }
                     }, enabled = custom.isNotBlank(), modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Add employer board")) }
+                    customError?.let { issue ->
+                        Text(l10n.message(issue), color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }.testTag("discovery.boardIssue"))
+                    }
                 }
             }
             Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {

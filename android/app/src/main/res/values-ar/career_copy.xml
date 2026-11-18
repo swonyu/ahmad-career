@@ -497,6 +497,7 @@
     <string name="c_ba118bf7fc9c" formatted="false">"English"</string>
     <string name="c_326f70c7285f" formatted="false">"أدخل عددًا من 0 إلى 60، أو اترك الحقل فارغًا."</string>
     <string name="c_d00d10df7eee" formatted="false">"أدخل مبلغًا شهريًا صحيحًا بالريال السعودي من 0 إلى 1,000,000، أو اتركه فارغًا."</string>
+    <string name="c_3c5168de1403" formatted="false">"أدخل بريدًا إلكترونيًا يمكن لجهات العمل الرد عليه."</string>
     <string name="c_be30c0fbb1f3" formatted="false">"أدخل خبرة ذات صلة من 0 إلى 60 سنة."</string>
     <string name="c_ff8328b287c8" formatted="false">"أدخل عنوان HTTPS الوارد في دعوتك إلى خدمة التقديم."</string>
     <string name="c_f9fe872384b1" formatted="false">"أدخل الرمز الذي أنشأته للتو. الاتصال وحده لا يرفع ملفك الشخصي ولا يقدّم طلب توظيف."</string>

@@ -5,6 +5,7 @@ import Darwin
 private final class DiscoveryStub: CareerDiscoveryServing {
     let directory: DiscoveryCatalog
     var catalogCalls = 0
+    var catalogFailure = false
     var calls: [(DiscoveryQuery, String?)] = []
     var handle: (DiscoveryQuery, String?) async throws -> DiscoveryPage
     init(_ fixture: DiscoveryPage) {
@@ -14,7 +15,11 @@ private final class DiscoveryStub: CareerDiscoveryServing {
             limits: DiscoveryLimits(maxSources: 4, pageSize: 50, maxJobsPerSource: 500), notice: "Synthetic directory")
         handle = { _, _ in fixture }
     }
-    func catalog() async throws -> DiscoveryCatalog { catalogCalls += 1; return directory }
+    func catalog() async throws -> DiscoveryCatalog {
+        catalogCalls += 1
+        if catalogFailure { throw URLError(.cannotConnectToHost) }
+        return directory
+    }
     func search(_ query: DiscoveryQuery, cursor: String?) async throws -> DiscoveryPage {
         calls.append((query, cursor)); return try await handle(query, cursor)
     }
@@ -202,6 +207,75 @@ private final class DiscoverySuite {
             let model = CareerDiscoveryStore(file: file, service: service); await model.search()
             let preserved = try Data(contentsOf: file)
             try check(preserved == original && model.jobs.count == 2, "Unreadable storage is preserved while new results remain usable in memory")
+            model.retrySavedSearch()
+            let retried = try Data(contentsOf: file)
+            try check(retried == original && model.savedSearchRestoreBlocked && model.storageNotice != nil,
+                      "Retry leaves an unreadable search file untouched")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(fixture); let (healthy, file) = store(service)
+            healthy.query.keywords = "Nurse"
+            let recovered = try Data(contentsOf: file)
+            try Data("unrecognized prior discovery data".utf8).write(to: file)
+            let blocked = CareerDiscoveryStore(file: file, service: service)
+            try check(blocked.savedSearchRestoreBlocked && blocked.query.keywords.isEmpty, "A damaged search file is not adopted")
+            try recovered.write(to: file)
+            blocked.retrySavedSearch()
+            try check(!blocked.savedSearchRestoreBlocked && blocked.storageNotice == nil && blocked.query.keywords == "Nurse",
+                      "Retry reads a repaired search file without starting a request")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(fixture); let (model, file) = store(service)
+            model.query.keywords = "Nurse"
+            let preserved = try Data(contentsOf: file)
+            model.query.keywords = String(repeating: "ن", count: 121)
+            try check(model.storageNotice == "These search fields exceed the supported limits. Earlier saved search data is kept."
+                      && !model.savedSearchRestoreBlocked, "Oversized search fields explain why saving stopped")
+            model.retrySavedSearch()
+            let afterRetry = try Data(contentsOf: file)
+            try check(afterRetry == preserved, "Retry does not replace the earlier saved search while fields are too long")
+            model.query.keywords = "Nurse"
+            try check(model.storageNotice == nil, "A corrected search is saved again")
+            let reopened = CareerDiscoveryStore(file: file, service: service)
+            try check(reopened.query.keywords == "Nurse" && reopened.storageNotice == nil, "The corrected search is still there after relaunch")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(fixture); let (model, file) = store(service)
+            model.query.keywords = "Nurse"
+            let parent = file.deletingLastPathComponent()
+            try FileManager.default.removeItem(at: parent)
+            try Data("not a directory".utf8).write(to: parent)
+            model.query.keywords = "Pharmacist"
+            try check(model.storageNotice == "These search results are available now, but could not be saved on this phone."
+                      && !model.savedSearchRestoreBlocked, "A failed save stays on screen without hiding the search")
+            model.retrySavedSearch()
+            try check(model.storageNotice != nil, "Retry reports the save is still unavailable")
+            try FileManager.default.removeItem(at: parent)
+            try FileManager.default.createDirectory(at: parent, withIntermediateDirectories: true)
+            model.retrySavedSearch()
+            try check(model.storageNotice == nil, "Retry saves the search when storage is available again")
+            let reopened = CareerDiscoveryStore(file: file, service: service)
+            try check(reopened.query.keywords == "Pharmacist", "The retried save survives relaunch")
+            scenarios += 1
+        }
+        do {
+            let service = DiscoveryStub(fixture); let (model, _) = store(service)
+            model.query.keywords = "Nurse"
+            service.handle = { _, _ in throw URLError(.cannotConnectToHost) }
+            await model.search()
+            let searchError = model.error
+            service.catalogFailure = true
+            await model.loadCatalog()
+            try check(model.catalog == nil && model.catalogError == "Employer boards could not be loaded. You can retry or search the recommended boards."
+                      && model.error == searchError && service.calls.count == 1,
+                      "A failed employer directory stays separate from the job-search error")
+            service.catalogFailure = false
+            await model.loadCatalog()
+            try check(model.catalog != nil && model.catalogError == nil && model.error == searchError && service.catalogCalls == 2 && service.calls.count == 1,
+                      "Retry loads the employer directory without repeating the job search or clearing its error")
             scenarios += 1
         }
         do {
@@ -325,7 +399,7 @@ private final class DiscoverySuite {
             try check(service.calls.count == callsBeforeWait, "Retry during the service wait makes no new request")
             try check(model.retryAfter == retryDeadline && !model.isSearching, "A blocked retry preserves the original wait deadline")
             try check(model.query == newerDraft && model.lastQuery == submitted && model.jobs == preservedJobs, "Waiting preserves the newer draft, submitted search and earlier results")
-            try check(model.error?.hasPrefix("Try again after ") == true, "A blocked retry explains the existing service wait")
+            try check(model.error == "Synthetic service wait", "A blocked retry preserves the service error; the existing retry deadline supplies the localized wait hint")
             scenarios += 1
         }
         do {

@@ -270,9 +270,11 @@ private fun SettingsScreen(state: CareerUiState, connect: () -> Unit, phoneData:
                     modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp).testTag("settings-phone-data")) {
                     Text(l10n("Phone data, backup and recovery"))
                 }
-                Text(l10n(if (state.storageBlocked) "Your private files are preserved. Return to Jobs to retry storage or review recovery options."
-                    else "Your profile, application records and appearance preference remain separate. Connecting never submits an application."),
-                    style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                val workspaceNote = if (state.storageBlocked) "Your private files are preserved. Return to Jobs to retry storage or review recovery options."
+                    else "Your profile, application records and appearance preference remain separate. Connecting never submits an application."
+                Text(l10n(workspaceNote),
+                    style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = if (state.storageBlocked) Modifier.semantics { liveRegion = LiveRegionMode.Polite } else Modifier)
             }
         }
         item {
@@ -295,7 +297,11 @@ private fun StorageRecoveryScreen(state: CareerUiState, model: CareerViewModel) 
     var confirmFresh by remember { mutableStateOf(false) }
     LazyColumn(Modifier.fillMaxSize().testTag("storage-recovery"), contentPadding = PaddingValues(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        item { Heading("Your private files are preserved.", "Saving is paused while this phone’s encrypted storage is unavailable.") }
+        item {
+            Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
+                Heading("Your private files are preserved.", "Saving is paused while this phone’s encrypted storage is unavailable.")
+            }
+        }
         item {
             Panel {
                 Text(l10n("Try storage again"), style = MaterialTheme.typography.titleLarge)
@@ -369,7 +375,7 @@ private fun ProfileConflictPanel(state: CareerUiState, model: CareerViewModel) {
     var compare by remember { mutableStateOf(false) }
     var confirmation by remember { mutableStateOf<ProfileDraft?>(null) }
     Panel {
-        StatusPill("A newer saved profile is available", true)
+        StatusPill("A newer saved profile is available", true, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
         Text(l10n.format("Your edited fields are safe on this phone. Compare them with saved version {0} before choosing what to keep.", listOf((newer.revision).toString())))
         TextButton(onClick = { compare = !compare }, modifier = Modifier.heightIn(min = 48.dp)) { Text(l10n(if (compare) "Hide comparison" else "Compare both profiles")) }
         if (compare) {
@@ -454,7 +460,10 @@ private fun PhoneImportDialog(state: CareerUiState, model: CareerViewModel) {
                     Text(l10n("Records stay private on this phone. Copied links stay here until you choose Sync."), style = MaterialTheme.typography.bodySmall)
                 }
             }
-            if (state.profileConflict != null) item { Text(l10n("Resolve the current profile conflict before copying this draft."), color = MaterialTheme.colorScheme.error) }
+            if (state.profileConflict != null) item {
+                Text(l10n("Resolve the current profile conflict before copying this draft."), color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+            }
             item { Action("Copy selected drafts", (profile || jobs || unfinishedCurrent != null || unfinishedParked.isNotEmpty()) && !state.busy && state.profileConflict == null) { model.importPhoneDraft(profile, jobs) } }
             item { Text(l10n("Copying never applies to an employer. Your application review and approval are still required."), style = MaterialTheme.typography.bodySmall) }
         }
@@ -620,7 +629,7 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
         }
         if (state.connection != null && !state.requiresPairing && !state.liveEnabled && !state.testService) item {
             Panel {
-                StatusPill("Automatic sending is not enabled", true)
+                StatusPill("Automatic sending is not enabled", true, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
                 Text(l10n("You can discover and save jobs, then apply directly on each employer’s site. A custom service needs an activated, authorized employer integration and your approval of the reviewed details. Preparing a review does not enable automatic sending."))
                 OutlinedButton(onClick = jobs, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Open saved opportunities")) }
             }
@@ -643,11 +652,16 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
                 TextButton(onClick = receipts, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("View receipts")) }
             }
         }
-        items(state.recoverablePlans.filter { it.id != plan?.id && !(it.unapproved && it.id in state.obsoleteReviews) }, key = { "recovery-" + it.id }) { savedPlan ->
+        val earlierReviews = state.recoverablePlans.filter { it.id != plan?.id && !(it.unapproved && it.id in state.obsoleteReviews) }
+        val firstExpiredReview = earlierReviews.firstOrNull { it.expired() }?.id
+        items(earlierReviews, key = { "recovery-" + it.id }) { savedPlan ->
             Panel {
                 Text(l10n("Continue an earlier review"), style = MaterialTheme.typography.titleLarge)
                 Text(l10n("Review the original application details, then approve again. Requests with an uncertain outcome cannot be resumed."))
                 savedPlan.items.filter { it.state == "rate_limited" }.forEach { Text(l10n.format("{0} · Wait until {1}", listOf((it.title).toString(), (l10n.dateTime(it.retryAt)).toString())), style = MaterialTheme.typography.bodySmall) }
+                if (savedPlan.expired()) Text(l10n("This review is out of date. Refresh the workspace before continuing."),
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = if (savedPlan.id == firstExpiredReview) Modifier.semantics { liveRegion = LiveRegionMode.Polite } else Modifier)
                 OutlinedButton(onClick = { model.reviewRecovered(savedPlan) }, enabled = !state.busy && !savedPlan.expired(), modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Review remaining applications")) }
             }
         }
@@ -678,7 +692,8 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
             }
         }
         if (selectedJobs.isNotEmpty() && !state.reviewingRecoveredPlan) item {
-            if (state.profileDirty) Text(l10n("Save your profile before preparing the review."), color = MaterialTheme.colorScheme.error)
+            if (state.profileDirty) Text(l10n("Save your profile before preparing the review."), color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
             Action(if (state.obsoleteReviews.isNotEmpty() || plan?.unapproved == true) "Stop earlier review and prepare update" else "Prepare application review",
                 state.connection != null && !state.busy && !state.profileDirty && !state.requiresPairing && state.profile.essentialsComplete, model::prepare)
             Text(l10n("Preparing sends nothing to employers. Required custom questions or an unavailable connector will be shown clearly."), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -696,6 +711,9 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
                     Action(if (state.testService) "Run approved test applications" else "Approve and Auto Apply",
                         approved && ready > 0 && !state.busy && !plan.expired() && !state.profileDirty && !state.requiresPairing &&
                             (state.liveEnabled || state.testService)) { model.submit(plan) }
+                    if (plan.expired()) Text(l10n("This review has expired or your profile changed. Prepare it again."),
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
                     if (plan.items.any { it.state == "rate_limited" }) TextButton(onClick = model::refresh, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Refresh cooldown availability")) }
                     OutlinedButton(onClick = { model.stop(plan.id) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Stop this batch")) }
                     Text(l10n("Confirmed means the provider accepted the application. It does not mean recruiter review, an interview or an offer."), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -803,14 +821,20 @@ private fun ReceiptsScreen(state: CareerUiState, model: CareerViewModel, browse:
 internal fun ProfileEssentials(profile: ProfileDraft) {
     val l10n = rememberCareerStrings()
     Text(l10n.format("Application essentials ready: {0} / 3", listOf((profile.essentialCount).toString())), style = MaterialTheme.typography.labelLarge)
-    listOf("Name" to profile.hasApplicationName, "Email address" to profile.hasApplicationEmail, "PDF résumé" to profile.hasApplicationPDF).forEach { (label, ready) ->
-        Row(Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}, verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Icon(if (ready) Icons.Default.Check else Icons.Default.Info, contentDescription = null,
-                tint = if (ready) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(20.dp))
-            Text(l10n(label) + l10n(if (ready) " · Ready" else " · Needed"), style = MaterialTheme.typography.bodyMedium)
-        }
+    EssentialStatus(profile.hasApplicationName, l10n("Name") + l10n(if (profile.hasApplicationName) " · Ready" else " · Needed"), null)
+    val emailStatus = ProfileContract.emailEssentialLabel(profile.email)
+    EssentialStatus(emailStatus == "Email added", l10n(emailStatus), "profile.essential.email")
+    EssentialStatus(profile.hasApplicationPDF, l10n("PDF résumé") + l10n(if (profile.hasApplicationPDF) " · Ready" else " · Needed"), null)
+}
+
+@Composable
+private fun EssentialStatus(ready: Boolean, spoken: String, tag: String?) {
+    Row(Modifier.fillMaxWidth().let { if (tag == null) it else it.testTag(tag) }.semantics(mergeDescendants = true) {},
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        Icon(if (ready) Icons.Default.Check else Icons.Default.Info, contentDescription = null,
+            tint = if (ready) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(20.dp))
+        Text(spoken, style = MaterialTheme.typography.bodyMedium)
     }
 }
 
@@ -1048,10 +1072,10 @@ private fun CountryChooser(label: String, value: String, enabled: Boolean = true
 }
 
 @Composable
-internal fun StatusPill(label: String, caution: Boolean) {
+internal fun StatusPill(label: String, caution: Boolean, modifier: Modifier = Modifier) {
     val l10n = rememberCareerStrings()
     Surface(shape = RoundedCornerShape(10.dp), color = if (caution) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.primaryContainer) {
-        Text(l10n(label), Modifier.padding(horizontal = 10.dp, vertical = 7.dp), style = MaterialTheme.typography.labelMedium,
+        Text(l10n(label), modifier.padding(horizontal = 10.dp, vertical = 7.dp), style = MaterialTheme.typography.labelMedium,
             color = if (caution) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onPrimaryContainer)
     }
 }
@@ -1102,7 +1126,8 @@ private fun ConnectionDialog(state: CareerUiState, model: CareerViewModel, phone
             item { Text(l10n("Sign in in your browser, then return with a one-time code."), style = MaterialTheme.typography.bodyMedium) }
             if (state.connection != null) item {
                 Panel {
-                    Text(l10n(if (state.requiresPairing) "Reconnect this phone" else "This phone is connected"), style = MaterialTheme.typography.titleMedium)
+                    Text(l10n(if (state.requiresPairing) "Reconnect this phone" else "This phone is connected"), style = MaterialTheme.typography.titleMedium,
+                        modifier = if (state.requiresPairing) Modifier.semantics { liveRegion = LiveRegionMode.Polite } else Modifier)
                     Text(l10n(if (state.connection.origin == ServicePages.DEFAULT_ORIGIN) "Career Finder" else state.connection.origin))
                     OutlinedButton(onClick = { openLink(context, ServicePages.url(state.connection.origin, "account")) },
                         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Manage account")) }
@@ -1141,7 +1166,10 @@ private fun ConnectionDialog(state: CareerUiState, model: CareerViewModel, phone
                     Text(l10n("Connecting does not upload your phone draft. You choose when to save your profile to the workspace."), style = MaterialTheme.typography.bodySmall)
                 }
             }
-            if (state.error != null) item { Text(l10n.message(state.error), color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }) }
+            if (state.error != null) item {
+                Text(l10n.message(state.error), color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }.testTag("connection.issue"))
+            }
             item {
                 TextButton(onClick = { advanced = !advanced }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
                     Text(l10n(if (advanced) "Hide advanced setup" else "Advanced · use another service"))
@@ -1209,7 +1237,10 @@ private fun AddOpportunityDialog(state: CareerUiState, model: CareerViewModel, c
             item { Field("City or location (optional)", draft.location, { value -> model.editOpportunityDraft { it.copy(location = value.take(200)) } }, enabled = !state.busy) }
             item { CountryChooser("Country (optional)", draft.country, !state.busy) { value -> model.editOpportunityDraft { it.copy(country = value) } } }
             item { Action("Save opportunity", !state.busy && draft.url.isNotBlank() && draft.title.isNotBlank() && draft.company.isNotBlank()) { model.saveOpportunityDraft(close) } }
-            if (state.error != null) item { Text(l10n.message(state.error), color = MaterialTheme.colorScheme.error) }
+            if (state.error != null) item {
+                Text(l10n.message(state.error), color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }.testTag("opportunity.error"))
+            }
             item { Text(l10n("You can close this form and keep an unfinished draft on this phone, even if some fields are blank."), style = MaterialTheme.typography.bodySmall) }
             item { Text(l10n("Saving keeps a private record. It does not verify the vacancy or send an application. Unsupported employers remain available for manual application."), style = MaterialTheme.typography.bodySmall) }
         }

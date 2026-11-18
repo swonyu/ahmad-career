@@ -683,11 +683,21 @@ private final class LifecycleSuite {
         do {
             var profile = PhoneApplicationProfile()
             try check(!ApplicationProfileReadiness(profile: profile).ready && ApplicationProfileReadiness(profile: profile).nextAction == "Add your name", "A fresh applicant sees the first missing essential")
+            try check(ApplicationProfileReadiness(profile: profile).emailEssentialLabel == "Email needed", "A fresh profile still needs an email")
             profile.firstName = "  نور  "; profile.email = "PERSON@EXAMPLE.COM"
-            try check(ApplicationProfileReadiness(profile: profile).nameReady && ApplicationProfileReadiness(profile: profile).emailReady, "Single and Unicode names and a normalizable email are accepted")
+            try check(ApplicationProfileReadiness(profile: profile).nameReady && ApplicationProfileReadiness(profile: profile).emailReady && ApplicationProfileReadiness(profile: profile).emailEssentialLabel == "Email added", "Single and Unicode names and a normalizable email are accepted")
+            profile.email = ""
+            try check(ApplicationProfileReadiness(profile: profile).emailEssentialLabel == "Email needed" && ApplicationProfileReadiness(profile: profile).nextAction == "Add your email", "An empty email asks for an address")
+            profile.email = "invalid-email"
+            try check(ApplicationProfileReadiness(profile: profile).emailEssentialLabel == "Check your email" && ApplicationProfileReadiness(profile: profile).nextAction == "Check your email" && ApplicationProfileReadiness(profile: profile).emailNeedsCorrection, "A typed invalid email asks for a check without blocking the draft")
+            profile.email = " "
+            try check(ApplicationProfileReadiness(profile: profile).emailEssentialLabel == "Check your email" && ApplicationProfileReadiness(profile: profile).emailNeedsCorrection, "Whitespace in the email field is not treated as empty")
+            profile.email = "person+jobs@example.org"
+            try check(ApplicationProfileReadiness(profile: profile).emailEssentialLabel == "Email added" && ApplicationProfileReadiness(profile: profile).emailReady && !ApplicationProfileReadiness(profile: profile).emailNeedsCorrection, "A reply address is marked added")
             for bad in ["person", "a@localhost", "a b@example.com", "a@example.com\n", String(repeating: "a", count: 65) + "@example.com"] {
                 profile.email = bad
-                try check(!ApplicationProfileReadiness(profile: profile).emailReady, "Invalid email is visible before a server review fails")
+                let readiness = ApplicationProfileReadiness(profile: profile)
+                try check(!readiness.emailReady && readiness.emailEssentialLabel == "Check your email" && readiness.emailNeedsCorrection, "Invalid email is visible before a server review fails")
             }
             profile.email = "person@example.com"; try profile.selectResume(pdf, filename: "Resume.pdf")
             try check(ApplicationProfileReadiness(profile: profile).ready, "A valid selected PDF completes the three essentials")
