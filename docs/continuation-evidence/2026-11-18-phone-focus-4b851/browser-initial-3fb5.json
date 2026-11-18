@@ -1,0 +1,58 @@
+{
+  "sourceCommit": "3fb5d97ec6f3568f2c8b27f148281926272a92fe",
+  "phoneAppSHA256": "77b3f3bd43f7a7fab19b68807118fba41bb95409701d054ed8232bc139a7dcba",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "origin": "http://127.0.0.1:4182",
+  "evidence": [
+    {
+      "case": "EN keyboard selects Interview",
+      "observed": {
+        "focused": true,
+        "label": "Interview",
+        "value": "interview"
+      },
+      "passed": true
+    },
+    {
+      "case": "Record-only deletion warning",
+      "observed": "Delete this private application record?\n\nSYNTHETIC — Interview record-only · Synthetic Employer\n\nThis removes its private notes, dates, stage, and your personal applied mark from this browser. The bookmark stays. Employer-held applications and online receipts are unchanged. Removing an applied mark may allow another application review, so check the employer’s outcome before applying again.\n\nKeep record\nDelete private record",
+      "finding": "The warning says the bookmark stays even though this synthetic item has no bookmark; qualify that sentence."
+    },
+    {
+      "case": "Last record-only deletion keeps Clear visible",
+      "observed": {
+        "cards": 0,
+        "clear": true,
+        "stageControls": 0,
+        "focus": {
+          "id": "",
+          "tag": "BODY",
+          "text": "Career Finder synthetic stage verification fixtureActual current PhoneApp and styles. Synthetic jobs only. No account or employer API. Link clicks rec"
+        },
+        "main": "YOUR SHORTLIST\n\nYour next moves.\n\nA clear shortlist, private notes, and a plan for what comes next.\n\nPrivate record deleted. Its bookmark, online receipts, and employer-held application were kept.\n\n0 saved jobs\nAdd job link\nAll\nApplied\nFollow-ups\nNo jobs at this stage.\n\nNo bookmark or application record is in this stage. A bookmark without a record counts as Saved. Clear search and filters to see everything again.\n\nClear search and filters"
+      },
+      "passed": true
+    },
+    {
+      "case": "Clear restores default empty view after last deletion",
+      "observed": {
+        "main": "YOUR SHORTLIST\n\nYour next moves.\n\nA clear shortlist, private notes, and a plan for what comes next.\n\nPrivate record deleted. Its bookmark, online receipts, and employer-held application were kept.\n\n0 saved jobs\nAdd job link\nAll\nApplied\nFollow-ups\nMake room for possibility.\n\nSave a job from Search or add a job link from any public employer page.\n\nExplore jobs",
+        "explore": true,
+        "clearCount": 0
+      },
+      "passed": true
+    },
+    {
+      "case": "Focus after Clear removes its own button",
+      "observed": {
+        "id": "",
+        "tag": "BODY",
+        "text": "Career Finder synthetic stage verification fixtureActual current PhoneApp and styles. Synthetic jobs"
+      },
+      "finding": "Keyboard focus fell to BODY; return to the logical Saved heading without stealing existing outside focus."
+    }
+  ]
+}

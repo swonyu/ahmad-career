@@ -149,6 +149,12 @@ test('calendar UID is stable for the public job and date without private fields 
 // exercises the same generation and account fences as a browser click.
 const source = await readFile(new URL('../app/phone/PhoneApp.tsx', import.meta.url), 'utf8');
 const tree = ts.createSourceFile('PhoneApp.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+const componentSource = await readFile(new URL('../app/phone/components.tsx', import.meta.url), 'utf8');
+const componentTree = ts.createSourceFile('components.tsx', componentSource, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+const focusDefinitions = componentTree.statements.filter(ts.isVariableStatement).flatMap(node => [...node.declarationList.declarations]).filter(node => node.name.getText(componentTree) === 'recoverPhoneFocus');
+assert(focusDefinitions.length <= 1, 'The actual focus recovery must be unique');
+const focusExports = {};
+if (focusDefinitions.length) vm.runInNewContext(ts.transpileModule('exports.recoverPhoneFocus = ' + focusDefinitions[0].initializer.getText(componentTree), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS } }).outputText, { exports: focusExports });
 function extract(name) {
   const top = tree.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === name);
   if (top) return top.getText(tree);
@@ -535,7 +541,7 @@ test('application stage composes with search and the existing saved views withou
 
 test('Clear and the follow-up shortcut reset the stage select without persisting it', () => {
   const controls = { savedQuery: 'Nurse', savedFilter: 'applied', savedStage: 'closed', tab: 'search' };
-  const bindings = { setSavedQuery: value => { controls.savedQuery = value; }, setSavedFilter: value => { controls.savedFilter = value; }, setSavedStage: value => { controls.savedStage = value; }, navigate: value => { controls.tab = value; } };
+  const bindings = { setSavedQuery: value => { controls.savedQuery = value; }, setSavedFilter: value => { controls.savedFilter = value; }, setSavedStage: value => { controls.savedStage = value; }, navigate: value => { controls.tab = value; }, heading: { current: null }, recoverPhoneFocus: focusExports.recoverPhoneFocus };
   invoke(clickExpression(findJsx('button', 'Clear search and filters')), bindings);
   assert.deepEqual(controls, { savedQuery: '', savedFilter: 'all', savedStage: 'all', tab: 'search' });
   controls.savedQuery = 'Nurse'; controls.savedFilter = 'applied'; controls.savedStage = 'offer';
@@ -605,6 +611,7 @@ test('zero-item Saved filters keep recovery visible and return to the default em
   ]) {
     const filters = { ...initial };
     const bindings = {
+      heading: { current: null }, recoverPhoneFocus: focusExports.recoverPhoneFocus,
       setSavedQuery: value => { filters.query = value; },
       setSavedFilter: value => { filters.view = value; },
       setSavedStage: value => { filters.stage = value; },

@@ -1,0 +1,293 @@
+--- a/hosted/app/phone/PhoneApp.tsx
++++ b/hosted/app/phone/PhoneApp.tsx
+@@ -20,7 +20,7 @@
+ import { observeNavigationInset } from "./navigation-inset";
+ import { continueApprovedPlan } from "./dispatch";
+ import { stopBatchOnce as stopCapturedBatch, type BatchContext } from "./batch-stop";
+-import { JobCard, Modal, ProfileEditor, Readiness, RecordEditor, RecordSummary, ReviewDetails } from "./components";
++import { JobCard, Modal, ProfileEditor, Readiness, RecordEditor, RecordSummary, ReviewDetails, recoverPhoneFocus } from "./components";
+ import { blankEmployerAnswer, receiptLabel, blankProfile, blankRecord, blankSnapshot, catalogSchema, civilDate, stageNames, stages, checkReview, discoveryPageSchema, discoveryPath, draftProfileSchema, emptyFilters, jobIdentity, jobSchema, linkedInSearch, parseSnapshot, planSchema, profileEssentials, profileRequest, profileSchema, publicURL, reviewRequest, today, updateRecord, workspaceSchema, type ApplicationRecord, type EmployerAnswer, type PhoneSafety, type RecoveryDraft, type Catalog, type DiscoveryPage, type Filters, type Job, type PhoneSnapshot, type Plan, type Profile, type Workspace } from "./model";
+ import { PhoneVaultError, exportPhoneSnapshot, listPhoneSnapshots, loadPhoneSnapshot, removePhoneSnapshot, savePhoneSnapshot } from "./vault";
+ 
+@@ -755,7 +755,7 @@
+         <div className="phone-segmented" aria-label={t("Filter saved jobs")}>{([ ["all","All"], ["applied","Applied"], ["followups","Follow-ups"] ] as const).map(([value,label]) => <button key={value} aria-pressed={savedFilter === value} onClick={() => setSavedFilter(value)}>{t(label)}</button>)}</div>
+         {(jobs.length > 0 || records.length > 0) && <label className="phone-saved-stage">{t("Application stage")}<select value={savedStage} onChange={event => { const value = event.target.value; if (value === "all" || (stages as readonly string[]).includes(value)) setSavedStage(value as SavedStage); }}><option value="all">{t("All stages")}</option>{stages.map(stage => <option key={stage} value={stage}>{t(stageNames[stage])}</option>)}</select></label>}
+         {(jobs.length > 0 || records.length > 0) && <label className="phone-saved-search"><span className="visually-hidden">{t("Find a saved job, employer or note")}</span><input type="search" dir="auto" maxLength={200} value={savedQuery} onChange={event => setSavedQuery(event.target.value)} placeholder={t("Find a job, employer or note")} /></label>}
+-        {!shownJobs.length ? <section className="phone-empty"><span className="empty-symbol"><Bookmark size={28} aria-hidden="true" /></span><h2>{t(savedEmpty.title)}</h2><p>{t(savedEmpty.detail)}</p>{savedEmpty.clear && <button className="button secondary" onClick={() => { setSavedQuery(""); setSavedFilter("all"); setSavedStage("all"); }}>{t("Clear search and filters")}</button>}{!savedEmpty.clear && <button className="button primary" onClick={() => navigate("search")}>{t("Explore jobs ")}<ArrowRight size={18} aria-hidden="true" /></button>}</section> : <div className="phone-saved-list">{shownJobs.map(job => {
++        {!shownJobs.length ? <section className="phone-empty"><span className="empty-symbol"><Bookmark size={28} aria-hidden="true" /></span><h2>{t(savedEmpty.title)}</h2><p>{t(savedEmpty.detail)}</p>{savedEmpty.clear && <button className="button secondary" onClick={() => { setSavedQuery(""); setSavedFilter("all"); setSavedStage("all"); recoverPhoneFocus(heading.current?.closest(".phone-shell") ?? null); }}>{t("Clear search and filters")}</button>}{!savedEmpty.clear && <button className="button primary" onClick={() => navigate("search")}>{t("Explore jobs ")}<ArrowRight size={18} aria-hidden="true" /></button>}</section> : <div className="phone-saved-list">{shownJobs.map(job => {
+           const identity = jobIdentity(job.url), record = recordsByID.get(identity), bookmarked = jobs.some(saved => jobIdentity(saved.url) === identity);
+           return <article className="phone-card phone-saved-card" key={identity}><p className="phone-company" dir="auto">{job.company}</p><h2 dir="auto"><button className="job-title-button" onClick={() => setDialog({ kind: "details", job })}>{job.title}</button></h2>{!bookmarked && <p className="phone-note">{t("Application record · bookmark removed")}</p>}<RecordSummary record={record} />{record?.followUpDate && record.followUpDate <= today() && record.stage !== "closed" && <p className="phone-due">{t("Follow-up due")}</p>}<div className="phone-actions"><button className="button secondary" disabled={cannotSave} onClick={() => editRecord(job)}>{t("Edit application record")}</button><a className="text-button" href={job.url} target="_blank" rel="noopener noreferrer">{t("Open job ")}<ArrowUpRight size={16} aria-hidden="true" /></a></div></article>;
+         })}</div>}
+@@ -811,7 +811,7 @@
+     {dialog?.kind === "clear" && <Modal notice={notice} checkingIdentity={checkingIdentity} onCheckIdentity={() => identityCheckRef.current()} title={t("Clear this phone’s saved data?")} busy={Boolean(busy)} onClose={() => setDialog(null)}><p>{t("This removes this workspace’s phone draft, saved bookmarks, private records, CV copy, and previous search results from this browser. Unfinished recovery copies are also removed. Small Stop locks remain so an earlier approval cannot resume after you clear personal drafts.")}</p>{storageProblem && <p className="phone-warning">{t("Resetting also removes the browser encryption key. An encrypted recovery export alone cannot restore damaged data afterward. Keep the data here until recovery is complete, or choose Clear only if you accept losing it.")}</p>}<p className="phone-detail-summary" dir="auto">{t("Online data and employer-held applications stay in place. You can manage online deletion from Account. If you can still open your saved data, choose Export phone data first to keep a readable JSON copy of your notes. This export cannot be restored into the app.")}</p><div className="phone-dialog-actions"><button className="button secondary" disabled={Boolean(busy)} onClick={() => setDialog(null)}>{t("Keep my data")}</button><button className="button danger" disabled={Boolean(busy)} onClick={() => void clearPhoneData()}>{t("Clear phone data")}</button></div></Modal>}
+     {dialog?.kind === "clear-old" && <Modal notice={notice} checkingIdentity={checkingIdentity} onCheckIdentity={() => identityCheckRef.current()} title={t("Erase this earlier browser draft?")} busy={Boolean(busy)} onClose={() => setDialog(null)}><p>{t("Draft saved ")}<bdi>{displayTime(dialog.updatedAt)}</bdi>{t(". This removes that earlier workspace’s profile draft, CV copy, bookmarks, private records, and unfinished recovery copies from this browser. Other workspaces and online data stay in place. Stop locks are retained.")}</p><p>{t("Export this draft before erasing it if you want a readable copy.")}</p><div className="phone-dialog-actions"><button className="button secondary" disabled={Boolean(busy)} onClick={() => setDialog(null)}>{t("Keep draft")}</button><button className="button danger" disabled={Boolean(busy)} onClick={() => void run("Erasing earlier browser draft", async generation => { if (dialog?.kind !== "clear-old" || !account || !dialog.scope.startsWith(`account:${encodeURIComponent(account.id)}:`) || dialog.scope === snapshotRef.current?.scope || !olderDrafts.some(row => row.scope === dialog.scope)) throw Error("Confirm this earlier draft’s account before erasing it."); const scope = dialog.scope; assertCurrent(generation); await phoneSafety.clearRecovery(scope); assertCurrent(generation); await removePhoneSnapshot(scope); assertCurrent(generation); setOlderDrafts(previous => previous.filter(row => row.scope !== scope)); setDialog(null); setNotice({ text: "That earlier workspace’s personal browser draft was erased. Other drafts and online data were kept." }); })}>{t("Erase earlier draft")}</button></div></Modal>}
+     {dialog?.kind === "recover" && <Modal notice={notice} checkingIdentity={checkingIdentity} onCheckIdentity={() => identityCheckRef.current()} title={dialog.draft.profile ? t("Recover profile edits") : t("Recover application-record edits")} busy={Boolean(busy)} onClose={() => setDialog(null)}><p>{t("Recovery copy saved ")}<bdi>{displayTime(dialog.draft.savedAt)}</bdi>{t(". Opening it does not overwrite saved records or upload anything. Any other unfinished profile edits on this page will be kept as a separate recovery copy first.")}</p>{dialog.draft.record && <><h3 dir="auto">{dialog.draft.record.job.title}</h3><p dir="auto">{dialog.draft.record.job.company}</p><p className="preserve-lines" dir="auto">{dialog.draft.record.draft.note || t("No private note in this draft.")}</p></>}<div className="phone-dialog-stack"><button className="button primary full" disabled={cannotSave} onClick={() => void restoreRecovery(dialog.draft)}>{t("Open recovered edits")}</button><button className="button secondary full" disabled={Boolean(busy)} onClick={() => download(JSON.stringify(dialog.draft, null, 2), "Career-Finder-recovered-edits.json")}>{t("Export this recovery copy")}</button><button className="text-button danger-text" disabled={Boolean(busy)} onClick={() => void run("Discarding recovery copy", async generation => { const data = local(); const id = dialog.draft.id; adoptSafety(data.scope, await phoneSafety.discard(data.scope, id, dialog.draft.savedAt)); assertCurrent(generation, data.scope); setDialog(null); setNotice({ text: "That unfinished recovery copy was removed. Your saved profile and application records were kept." }); })}>{t("Discard this recovery copy")}</button></div></Modal>}
+-    {dialog?.kind === "delete-record" && <Modal notice={notice} checkingIdentity={checkingIdentity} onCheckIdentity={() => identityCheckRef.current()} title={t("Delete this private application record?")} busy={Boolean(busy)} onClose={() => setDialog(null)}><p><strong><bdi>{dialog.record.title}</bdi></strong> · <bdi>{dialog.record.company}</bdi></p><p>{t("This removes its private notes, dates, stage, and your personal applied mark from this browser. The bookmark stays. Employer-held applications and online receipts are unchanged. Removing an applied mark may allow another application review, so check the employer’s outcome before applying again.")}</p><div className="phone-dialog-actions"><button className="button secondary" disabled={Boolean(busy)} onClick={() => setDialog(null)}>{t("Keep record")}</button><button className="button danger" disabled={cannotSave} onClick={() => void run("Deleting private application record", async generation => { const data = local(); if (dialog?.kind !== "delete-record" || data.scope !== dialog.scope || !same(data.records.find(value => value.identity === dialog.record.identity), dialog.record)) throw Error("This record changed. Open the current version before deleting it."); if (workspaceRef.current?.activePlanIds.some(id => { const review = workspaceRef.current?.recoverablePlans.find(plan => plan.id === id); return !review || review.items.some(item => jobIdentity(item.job.url) === dialog.record.identity); })) throw Error("Stop its approved review before deleting this private applied mark."); const identity = dialog.record.identity; await persist({ ...data, records: data.records.filter(value => value.identity !== identity) }, generation); setDialog(null); setEditorDraft(null); setNotice({ text: "Private record deleted. Its bookmark, online receipts, and employer-held application were kept." }); })}>{t("Delete private record")}</button></div></Modal>}
++    {dialog?.kind === "delete-record" && <Modal notice={notice} checkingIdentity={checkingIdentity} onCheckIdentity={() => identityCheckRef.current()} title={t("Delete this private application record?")} busy={Boolean(busy)} onClose={() => setDialog(null)}><p><strong><bdi>{dialog.record.title}</bdi></strong> · <bdi>{dialog.record.company}</bdi></p><p>{t("This removes its private notes, dates, stage, and your personal applied mark from this browser. If the job is bookmarked, the bookmark stays. Employer-held applications and online receipts are unchanged. Removing an applied mark may allow another application review, so check the employer’s outcome before applying again.")}</p><div className="phone-dialog-actions"><button className="button secondary" disabled={Boolean(busy)} onClick={() => setDialog(null)}>{t("Keep record")}</button><button className="button danger" disabled={cannotSave} onClick={() => void run("Deleting private application record", async generation => { const data = local(); if (dialog?.kind !== "delete-record" || data.scope !== dialog.scope || !same(data.records.find(value => value.identity === dialog.record.identity), dialog.record)) throw Error("This record changed. Open the current version before deleting it."); if (workspaceRef.current?.activePlanIds.some(id => { const review = workspaceRef.current?.recoverablePlans.find(plan => plan.id === id); return !review || review.items.some(item => jobIdentity(item.job.url) === dialog.record.identity); })) throw Error("Stop its approved review before deleting this private applied mark."); const identity = dialog.record.identity; await persist({ ...data, records: data.records.filter(value => value.identity !== identity) }, generation); setDialog(null); setEditorDraft(null); setNotice({ text: "Private record deleted. Any saved bookmark remains. Online receipts and employer-held applications are unchanged." }); })}>{t("Delete private record")}</button></div></Modal>}
+     {dialog?.kind === "versions" && workspace && <Modal notice={notice} checkingIdentity={checkingIdentity} onCheckIdentity={() => identityCheckRef.current()} title={t("Compare profile versions")} busy={Boolean(busy)} onClose={() => setDialog(null)}><p className="phone-note">{t("Compare the essentials, then choose which version to keep editing. Replacing the online profile still requires Save profile online.")}</p><div className="phone-version-grid">{([{ name: "Phone draft", value: profile }, { name: "Online profile", value: workspace.profile }]).map(version => <section key={version.name}><h3>{t(version.name)}</h3><dl><dt>{t("Name")}</dt><dd dir="auto">{[version.value.firstName, version.value.lastName].filter(Boolean).join(" ") || t("Not added")}</dd><dt>{t("Email")}</dt><dd dir="auto">{version.value.email || t("Not added")}</dd><dt>{t("CV")}</dt><dd dir="auto">{version.value.resume?.name || t("Not added")}</dd><dt>{t("LinkedIn")}</dt><dd dir="auto">{version.value.linkedin || t("Not added")}</dd><dt>{t("Portfolio")}</dt><dd dir="auto">{version.value.website || t("Not added")}</dd></dl><details><summary>{t("All profile details")}</summary><dl>{[{ label: "Phone", text: version.value.phone }, { label: "City", text: version.value.city }, { label: "Country or region", text: countryName(version.value.country) }, { label: "Headline", text: version.value.headline }, { label: "Skills", text: version.value.skills.join(", ") }, { label: "Target roles", text: version.value.targetRoles.join(", ") }, { label: "Target countries", text: version.value.targetCountries.map(countryName).join(language === "ar" ? "، " : ", ") }, { label: "Work preferences", text: version.value.workModes.map(workModeLabel).join(language === "ar" ? "، " : ", ") }, { label: "Experience level", text: experienceLabel(version.value.experienceLevel) }, { label: "CV size", text: version.value.resume ? t("{0} bytes", [formatNumber(version.value.resume.size, language)]) : "" }, { label: "CV fingerprint", text: version.value.resume?.sha256 ?? "" }].map(field => <div key={field.label}><dt>{t(field.label)}</dt><dd dir="auto">{field.text || t("Not added")}</dd></div>)}</dl></details></section>)}</div><div className="phone-dialog-stack"><button className="button primary full" disabled={Boolean(busy)} onClick={() => { setProfile(previous => ({ ...previous, revision: workspace.profile.revision })); setFormChanged(true); setDialog(null); setNotice({ text: "Your phone draft is ready to edit. Save profile online only when you want to replace the online version." }); }}>{t("Keep editing phone draft")}</button><button className="button secondary full" disabled={Boolean(busy)} onClick={() => void run("Using online profile", async generation => { const data = local(), value = withPDF(workspace.profile, profile); await persist({ ...data, profile: value, profileDirty: false }, generation); setProfile(value); setFormChanged(false); setPlan(null); setDialog(null); setNotice({ text: "Online profile copied to this phone. Your jobs and private notes were kept." }); })}>{t("Replace phone draft with online profile")}</button></div></Modal>}
+   </div>;
+ }
+--- a/hosted/app/phone/components.tsx
++++ b/hosted/app/phone/components.tsx
+@@ -5,11 +5,35 @@
+ import { ArrowUpRight, Bookmark, Check, FileText, X } from "lucide-react";
+ import { countryCodes, friendlyDate, linkedInURL, profileEssentials, stageNames, stages, type ApplicationRecord, type Job, type Plan, type Profile } from "./model";
+ 
++/** Recover only lost focus, after removed controls and dialogs finish unmounting. */
++export const recoverPhoneFocus = (shell: Element | null, invoker: Element | null = null, closingDialog: HTMLDialogElement | null = null) => {
++  if (!shell) return;
++  requestAnimationFrame(() => {
++    const document = shell.ownerDocument;
++    const canRecover = () => {
++      const active = document.activeElement;
++      return shell.isConnected && !closingDialog?.open && !shell.querySelector("dialog[open]") &&
++        (!active?.isConnected || active === document.body || active === document.documentElement || Boolean(closingDialog?.contains(active)));
++    };
++    if (!canRecover()) return;
++    if (invoker instanceof HTMLElement && invoker.isConnected && !closingDialog?.contains(invoker)) invoker.focus({ preventScroll: true });
++    if (!canRecover()) return;
++    const heading = shell.querySelector<HTMLElement>("#phone-main .phone-page-heading h1[tabindex='-1']");
++    if (heading?.isConnected) heading.focus({ preventScroll: true });
++  });
++};
++
+ export function Modal({ title, children, onClose, busy = false, notice, checkingIdentity = false, onCheckIdentity }: { title: string; children: ReactNode; onClose: () => void; busy?: boolean; notice?: { text: string; error?: boolean } | null; checkingIdentity?: boolean; onCheckIdentity?: () => void }) {
+   const { t } = useI18n();
+   const dialog = useRef<HTMLDialogElement>(null);
+   const recheck = useRef<HTMLButtonElement>(null);
+-  useLayoutEffect(() => { const element = dialog.current; element?.showModal(); return () => element?.close(); }, []);
++  useLayoutEffect(() => {
++    const element = dialog.current;
++    if (!element) return;
++    const invoker = element.ownerDocument.activeElement, shell = element.closest(".phone-shell");
++    element.showModal();
++    return () => { element.close(); recoverPhoneFocus(shell, invoker, element); };
++  }, []);
+   useEffect(() => { if (checkingIdentity) recheck.current?.focus(); }, [checkingIdentity]);
+   return <dialog className="phone-dialog" ref={dialog} onCancel={event => { event.preventDefault(); if (!busy && !checkingIdentity) onClose(); }} aria-labelledby="phone-dialog-title">
+     <div className="phone-dialog-head"><h2 id="phone-dialog-title" dir="auto">{checkingIdentity ? t("Confirming your account") : title}</h2><button type="button" className="icon-button" aria-label={t("Close dialog")} disabled={busy || checkingIdentity} onClick={onClose}><X aria-hidden="true" size={22} /></button></div>
+--- a/hosted/app/i18n/messages.ar.json
++++ b/hosted/app/i18n/messages.ar.json
+@@ -508,7 +508,7 @@
+   "private": "خاص",
+   "Private by default": "خاص افتراضيًا",
+   "Private notes": "ملاحظات خاصة",
+-  "Private record deleted. Its bookmark, online receipts, and employer-held application were kept.": "حُذف السجل الخاص. واحتُفظ بالوظيفة المحفوظة وإيصالات الإرسال عبر الإنترنت والطلب الذي تحتفظ به جهة العمل.",
++  "Private record deleted. Any saved bookmark remains. Online receipts and employer-held applications are unchanged.": "حُذف السجل الخاص. وتبقى أي وظيفة محفوظة. لا تتغير الطلبات التي تحتفظ بها جهات العمل ولا إيصالات الإرسال عبر الإنترنت.",
+   "Private recovery needs attention": "نسخة الاستعادة الخاصة تحتاج إلى انتباهك",
+   "Processing is waiting for an outcome or employer cooldown. Check the receipts before taking another action.": "تنتظر المعالجة نتيجة أو انتهاء فترة الانتظار التي تفرضها جهة العمل. تحقّق من إيصالات الإرسال قبل اتخاذ إجراء آخر.",
+   "Processing paused. Return to Apply, refresh the workspace, and continue the approved review when you are ready.": "أُوقفت المعالجة مؤقتًا. عُد إلى «التقديم»، وحدّث مساحة العمل، ثم تابع المراجعة المعتمدة عندما تكون مستعدًا.",
+@@ -737,7 +737,7 @@
+   "This record belongs to a different workspace. Open it again.": "ينتمي هذا السجل إلى مساحة عمل مختلفة. افتحه مجددًا.",
+   "This record changed. Open the current version before deleting it.": "تغيّر هذا السجل. افتح النسخة الحالية قبل حذفه.",
+   "This recovery request is no longer current. Confirm your original account again; your unfinished edits were kept.": "لم يعد طلب الاستعادة هذا ساريًا. أكّد حسابك الأصلي مجددًا؛ فقد احتُفظ بتعديلاتك غير المكتملة.",
+-  "This removes its private notes, dates, stage, and your personal applied mark from this browser. The bookmark stays. Employer-held applications and online receipts are unchanged. Removing an applied mark may allow another application review, so check the employer’s outcome before applying again.": "يؤدي هذا إلى إزالة الملاحظات الخاصة والتواريخ والمرحلة وعلامة التقديم الشخصية لهذا السجل من المتصفح. وتبقى الوظيفة في المحفوظات. لا تتغير الطلبات التي تحتفظ بها جهات العمل ولا إيصالات الإرسال عبر الإنترنت. قد تسمح إزالة علامة التقديم بمراجعة طلب آخر؛ لذا تحقّق من نتيجة الطلب لدى جهة العمل قبل التقديم مجددًا.",
++  "This removes its private notes, dates, stage, and your personal applied mark from this browser. If the job is bookmarked, the bookmark stays. Employer-held applications and online receipts are unchanged. Removing an applied mark may allow another application review, so check the employer’s outcome before applying again.": "يؤدي هذا إلى إزالة الملاحظات الخاصة والتواريخ والمرحلة وعلامة التقديم الشخصية لهذا السجل من المتصفح. وإذا كانت الوظيفة محفوظة، تبقى في المحفوظات. لا تتغير الطلبات التي تحتفظ بها جهات العمل ولا إيصالات الإرسال عبر الإنترنت. قد تسمح إزالة علامة التقديم بمراجعة طلب آخر؛ لذا تحقّق من نتيجة الطلب لدى جهة العمل قبل التقديم مجددًا.",
+   "This removes this workspace’s phone draft, saved bookmarks, private records, CV copy, and previous search results from this browser. Unfinished recovery copies are also removed. Small Stop locks remain so an earlier approval cannot resume after you clear personal drafts.": "يؤدي هذا إلى إزالة مسودة الهاتف والوظائف المحفوظة والسجلات الخاصة ونسخة السيرة الذاتية ونتائج البحث السابقة لمساحة العمل هذه من المتصفح. وتُزال أيضًا نسخ الاستعادة غير المكتملة. تبقى أقفال إيقاف صغيرة حتى لا تُستأنف موافقة سابقة بعد مسح المسودات الشخصية.",
+   "This removes your own applied mark and allows a new application review. It does not withdraw an application from an employer.": "يؤدي هذا إلى إزالة علامة التقديم الشخصية الخاصة بك والسماح بمراجعة طلب توظيف جديد. ولا يسحب طلبًا من جهة العمل.",
+   "This review needs a new approval. Open it and check the details first.": "تحتاج هذه المراجعة إلى موافقة جديدة. افتحها وتحقّق من التفاصيل أولًا.",
+--- a/hosted/tests/phone-recovery-isolation.mjs
++++ b/hosted/tests/phone-recovery-isolation.mjs
+@@ -321,3 +321,170 @@
+   } finally { gate.resolve(); await pending; }
+   assert.equal((await recoveryRows(h)).recovery.length, 0); assert.equal(h.context.reloads, 1);
+ });
++
++// Exercise the actual Modal layout effect and Clear handler with controlled DOM
++// ports. Only native focus/connection state and animation-frame delivery are fake.
++const componentSource = await readFile(new URL("../app/phone/components.tsx", import.meta.url), "utf8");
++const componentTree = ts.createSourceFile("components.tsx", componentSource, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
++const modalFunction = componentTree.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === "Modal");
++assert(modalFunction?.body, "The actual Modal component is required");
++const modalEffects = [];
++function findModalEffect(node) {
++  if (ts.isCallExpression(node) && node.expression.getText(componentTree) === "useLayoutEffect") modalEffects.push(node.arguments[0]);
++  ts.forEachChild(node, findModalEffect);
++}
++findModalEffect(modalFunction.body);
++assert.equal(modalEffects.length, 1, "The actual Modal layout effect must be unique");
++const focusDefinitions = componentTree.statements.filter(ts.isVariableStatement).flatMap(node => [...node.declarationList.declarations]).filter(node => node.name.getText(componentTree) === "recoverPhoneFocus");
++assert(focusDefinitions.length <= 1, "The production focus recovery must be unique");
++// An absent helper leaves the original native-only cleanup executable for red
++// regression evidence; no replacement recovery implementation is supplied.
++const modalFocusCode = ts.transpileModule([
++  focusDefinitions.length ? "globalThis.recoverPhoneFocus = " + focusDefinitions[0].initializer.getText(componentTree) + ";" : "",
++  "globalThis.mountModal = " + modalEffects[0].getText(componentTree) + ";",
++].join("\n"), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText;
++
++function modalFocusHarness({ nativeReturn = true } = {}) {
++  const frames = [], focusCalls = [];
++  const document = { activeElement: null, body: null, documentElement: null, querySelector() { assert.fail("Focus recovery must stay inside its owning phone shell"); } };
++  let shell;
++  class FocusTarget {
++    constructor(name) { this.name = name; this.isConnected = true; this.focusable = true; this.ownerDocument = document; }
++    closest(selector) { assert.equal(selector, ".phone-shell"); return shell; }
++    focus(options) {
++      focusCalls.push({ target: this, options });
++      if (this.isConnected && this.focusable) { document.activeElement = this; this.onFocus?.(); }
++    }
++  }
++  const body = new FocusTarget("body"), html = new FocusTarget("html"), invoker = new FocusTarget("record button"), heading = new FocusTarget("own Saved heading"), inside = new FocusTarget("dialog control"), clearButton = new FocusTarget("Clear filters"), otherControl = new FocusTarget("other phone control"), outsideControl = new FocusTarget("outside phone control"), unrelatedHeading = new FocusTarget("another phone heading");
++  document.body = body; document.documentElement = html; document.activeElement = invoker;
++  const element = {
++    ownerDocument: document, isConnected: true, open: false, closes: 0,
++    closest(selector) { assert.equal(selector, ".phone-shell"); return shell; },
++    contains(target) { return target === this || target === inside; },
++    showModal() { this.open = true; document.activeElement = inside; },
++    close() {
++      this.open = false; this.closes++;
++      if (this.contains(document.activeElement)) document.activeElement = nativeReturn && invoker.isConnected && invoker.focusable ? invoker : body;
++    },
++  };
++  shell = {
++    isConnected: true, ownerDocument: document, replacementDialog: null,
++    querySelector(selector) {
++      if (selector === "dialog[open]") return element.open ? element : this.replacementDialog;
++      assert.equal(selector, "#phone-main .phone-page-heading h1[tabindex='-1']");
++      return heading.isConnected ? heading : null;
++    },
++  };
++  const context = vm.createContext({ dialog: { current: element }, HTMLElement: FocusTarget, requestAnimationFrame(callback) { frames.push(callback); return frames.length; } });
++  vm.runInContext(modalFocusCode, context);
++  const disconnect = target => { target.isConnected = false; if (document.activeElement === target) document.activeElement = body; };
++  const flush = () => { assert(frames.length <= 1, "One close/action schedules at most one focus check"); while (frames.length) frames.shift()(0); };
++  const clear = () => {
++    const filters = { query: "", view: "all", stage: "interview" };
++    Object.assign(context, {
++      heading: { current: heading },
++      setSavedQuery: value => { filters.query = value; }, setSavedFilter: value => { filters.view = value; }, setSavedStage: value => { filters.stage = value; },
++    });
++    install(context, "clearSavedFilters", buttonClick("Clear search and filters"))();
++    return filters;
++  };
++  return { document, body, html, invoker, heading, inside, element, shell, clearButton, otherControl, outsideControl, unrelatedHeading, frames, focusCalls, disconnect, flush, clear, mount: () => context.mountModal() };
++}
++
++test("actual Modal cleanup preserves native focus return and restores a surviving invoker when needed", () => {
++  for (const nativeReturn of [true, false]) {
++    const h = modalFocusHarness({ nativeReturn }), cleanup = h.mount();
++    assert.equal(h.document.activeElement, h.inside);
++    cleanup(); assert.equal(h.element.closes, 1); h.flush();
++    assert.equal(h.document.activeElement, h.invoker);
++    assert.equal(h.focusCalls.some(call => call.target === h.heading), false);
++    if (nativeReturn) assert.equal(h.focusCalls.length, 0, "Already-restored native focus is not moved again");
++  }
++});
++
++test("actual Modal cleanup recovers the owning heading when its invoker disappears before or after cleanup", () => {
++  for (const removed of ["before", "after"]) {
++    const h = modalFocusHarness(), cleanup = h.mount();
++    if (removed === "before") h.disconnect(h.invoker);
++    cleanup();
++    if (removed === "after") h.disconnect(h.invoker);
++    assert.equal(h.document.activeElement, h.body);
++    h.flush();
++    assert.equal(h.document.activeElement, h.heading, removed);
++    assert.equal(h.focusCalls.filter(call => call.target === h.heading).length, 1);
++    assert.equal(h.focusCalls.some(call => call.target === h.unrelatedHeading), false);
++  }
++});
++
++test("actual Modal cleanup falls back if a connected invoker cannot receive focus", () => {
++  const h = modalFocusHarness(), cleanup = h.mount();
++  h.invoker.focusable = false; cleanup(); h.flush();
++  assert.equal(h.document.activeElement, h.heading);
++});
++
++test("actual Modal cleanup leaves other live focus alone before close or before deferred recovery", () => {
++  for (const timing of ["before close", "before recovery"]) for (const name of ["otherControl", "outsideControl"]) {
++    const h = modalFocusHarness(), cleanup = h.mount();
++    h.disconnect(h.invoker);
++    if (timing === "before close") h.document.activeElement = h[name];
++    cleanup();
++    if (timing === "before recovery") h.document.activeElement = h[name];
++    h.flush(); assert.equal(h.document.activeElement, h[name]); assert.equal(h.focusCalls.length, 0);
++  }
++});
++
++test("actual Modal cleanup respects focus redirected while restoring the invoker", () => {
++  const h = modalFocusHarness({ nativeReturn: false }), cleanup = h.mount();
++  h.invoker.onFocus = () => { h.document.activeElement = h.otherControl; };
++  cleanup(); h.flush();
++  assert.equal(h.document.activeElement, h.otherControl);
++  assert.equal(h.focusCalls.some(call => call.target === h.heading), false);
++});
++
++test("actual Modal cleanup does not override a reopened or replacement dialog", () => {
++  for (const next of ["reopened", "replacement"]) {
++    const h = modalFocusHarness(), cleanup = h.mount(); h.disconnect(h.invoker); cleanup();
++    if (next === "reopened") h.element.showModal();
++    else h.shell.replacementDialog = { open: true, isConnected: true };
++    const active = h.document.activeElement;
++    h.flush(); assert.equal(h.document.activeElement, active); assert.equal(h.focusCalls.length, 0);
++  }
++});
++
++test("actual Modal cleanup does not focus a removed phone shell or heading", () => {
++  for (const removed of ["shell", "heading"]) {
++    const h = modalFocusHarness(), cleanup = h.mount(); h.disconnect(h.invoker); cleanup();
++    h.disconnect(h[removed]); h.flush();
++    assert.equal(h.document.activeElement, h.body); assert.equal(h.focusCalls.length, 0);
++  }
++});
++
++test("actual Modal cleanup treats absent, document-root and disconnected focus as lost", () => {
++  for (const target of ["absent", "root", "disconnected", "closing dialog"]) {
++    const h = modalFocusHarness(), cleanup = h.mount(); h.disconnect(h.invoker); cleanup();
++    h.document.activeElement = target === "absent" ? null : target === "root" ? h.html : target === "closing dialog" ? h.inside : h.invoker;
++    h.flush(); assert.equal(h.document.activeElement, h.heading, target);
++  }
++});
++
++test("actual Saved Clear resets every filter and recovers its heading after its button disappears", () => {
++  const h = modalFocusHarness(); h.document.activeElement = h.clearButton;
++  assert.deepEqual(h.clear(), { query: "", view: "all", stage: "all" });
++  assert.equal(h.document.activeElement, h.clearButton, "Focus waits for the actual render/removal boundary");
++  h.disconnect(h.clearButton); h.flush();
++  assert.equal(h.document.activeElement, h.heading);
++  assert.equal(h.focusCalls.some(call => call.target === h.unrelatedHeading), false);
++});
++
++test("actual Saved Clear does not steal later focus or cross a dialog/phone unmount boundary", () => {
++  for (const next of ["other control", "replacement dialog", "removed phone"]) {
++    const h = modalFocusHarness(); h.document.activeElement = h.clearButton;
++    assert.deepEqual(h.clear(), { query: "", view: "all", stage: "all" }); h.disconnect(h.clearButton);
++    if (next === "other control") h.document.activeElement = h.outsideControl;
++    else if (next === "replacement dialog") h.shell.replacementDialog = { open: true, isConnected: true };
++    else h.disconnect(h.shell);
++    const active = h.document.activeElement;
++    h.flush(); assert.equal(h.document.activeElement, active); assert.equal(h.focusCalls.length, 0);
++  }
++});
+--- a/hosted/tests/phone-record-tools.mjs
++++ b/hosted/tests/phone-record-tools.mjs
+@@ -149,6 +149,12 @@
+ // exercises the same generation and account fences as a browser click.
+ const source = await readFile(new URL('../app/phone/PhoneApp.tsx', import.meta.url), 'utf8');
+ const tree = ts.createSourceFile('PhoneApp.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
++const componentSource = await readFile(new URL('../app/phone/components.tsx', import.meta.url), 'utf8');
++const componentTree = ts.createSourceFile('components.tsx', componentSource, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
++const focusDefinitions = componentTree.statements.filter(ts.isVariableStatement).flatMap(node => [...node.declarationList.declarations]).filter(node => node.name.getText(componentTree) === 'recoverPhoneFocus');
++assert(focusDefinitions.length <= 1, 'The actual focus recovery must be unique');
++const focusExports = {};
++if (focusDefinitions.length) vm.runInNewContext(ts.transpileModule('exports.recoverPhoneFocus = ' + focusDefinitions[0].initializer.getText(componentTree), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS } }).outputText, { exports: focusExports });
+ function extract(name) {
+   const top = tree.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === name);
+   if (top) return top.getText(tree);
+@@ -535,7 +541,7 @@
+ 
+ test('Clear and the follow-up shortcut reset the stage select without persisting it', () => {
+   const controls = { savedQuery: 'Nurse', savedFilter: 'applied', savedStage: 'closed', tab: 'search' };
+-  const bindings = { setSavedQuery: value => { controls.savedQuery = value; }, setSavedFilter: value => { controls.savedFilter = value; }, setSavedStage: value => { controls.savedStage = value; }, navigate: value => { controls.tab = value; } };
++  const bindings = { setSavedQuery: value => { controls.savedQuery = value; }, setSavedFilter: value => { controls.savedFilter = value; }, setSavedStage: value => { controls.savedStage = value; }, navigate: value => { controls.tab = value; }, heading: { current: null }, recoverPhoneFocus: focusExports.recoverPhoneFocus };
+   invoke(clickExpression(findJsx('button', 'Clear search and filters')), bindings);
+   assert.deepEqual(controls, { savedQuery: '', savedFilter: 'all', savedStage: 'all', tab: 'search' });
+   controls.savedQuery = 'Nurse'; controls.savedFilter = 'applied'; controls.savedStage = 'offer';
+@@ -605,6 +611,7 @@
+   ]) {
+     const filters = { ...initial };
+     const bindings = {
++      heading: { current: null }, recoverPhoneFocus: focusExports.recoverPhoneFocus,
+       setSavedQuery: value => { filters.query = value; },
+       setSavedFilter: value => { filters.view = value; },
+       setSavedStage: value => { filters.stage = value; },

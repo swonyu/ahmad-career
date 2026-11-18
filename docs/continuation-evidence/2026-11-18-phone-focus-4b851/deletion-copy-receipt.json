@@ -1,0 +1,12 @@
+{
+  "baseCommit": "3fb5d97ec6f3568f2c8b27f148281926272a92fe",
+  "proposal": "Grok Build2 supplied two Arabic entries; it explicitly lacked the full current catalog and edited no full file. Root applied only these two entries to the verified full catalog and changed the two matching English keys.",
+  "catalogParsed": true,
+  "onlyTwoCatalogEntriesChanged": true,
+  "productTestsRun": false,
+  "candidateHashes": {
+    "hosted/app/phone/PhoneApp.tsx": "e62d1a5c50c0befe967cce05bd12ef788b44170ae07c580aca6bbe363e3df05a",
+    "hosted/app/i18n/messages.ar.json": "46ec9674ec1186d8bc3016c78739eda38542a7beca033a0f0617256b6cc154e9"
+  },
+  "patchSHA256": "ee9aa76ee23d04673dc2178eefca2c609b42af16d709e3799e09f34e0e9689dc"
+}

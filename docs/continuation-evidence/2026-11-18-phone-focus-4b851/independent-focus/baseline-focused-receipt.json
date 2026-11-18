@@ -1,0 +1,16 @@
+{
+  "name": "baseline",
+  "argv": [
+    "node",
+    "/workspace/scratch/4b851318da2d/Modal-Focus-Recovery-3fb5d97/focused-source-runner.mjs",
+    "/workspace/scratch/4b851318da2d/Modal-Focus-Recovery-3fb5d97/baseline"
+  ],
+  "startedUTC": "2026-11-18T03:09:08.938800+00:00",
+  "finishedUTC": "2026-11-18T03:09:09.439398+00:00",
+  "exit": 1,
+  "runtime": "v24.22.1",
+  "scope": "actual source slices; identical added assertion body; synthetic DOM/frame ports; no full project test/build",
+  "projectPinnedRuntime": false,
+  "stdoutSHA256": "bef47cef5cbd7c494b29d2813c9b3d8ec2b59bc64bd77eace7d690870e32b959",
+  "stderrSHA256": "2a72ce8ac2074acb91b2005f675878f8449beb6a58e0a07534ccaca6948cea3c"
+}

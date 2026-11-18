@@ -1,0 +1,25 @@
+Grok
+Thought for 1m 17s
+
+Two Arabic entries only. hosted/app/i18n/messages.ar.json is not in this workspace, so this is a proposal and no file was edited. Line numbers are not claimed. Indentation should follow the existing catalog.
+
+Diff
+--- a/hosted/app/i18n/messages.ar.json
++++ b/hosted/app/i18n/messages.ar.json
+@@
+-"Private record deleted. Its bookmark, online receipts, and employer-held application were kept.": "حُذف السجل الخاص. واحتُفظ بالوظيفة المحفوظة وإيصالات الإرسال عبر الإنترنت والطلب الذي تحتفظ به جهة العمل.",
++"Private record deleted. Any saved bookmark remains. Online receipts and employer-held applications are unchanged.": "حُذف السجل الخاص. وتبقى أي وظيفة محفوظة. لا تتغير الطلبات التي تحتفظ بها جهات العمل ولا إيصالات الإرسال عبر الإنترنت.",
+@@
+-"This removes its private notes, dates, stage, and your personal applied mark from this browser. The bookmark stays. Employer-held applications and online receipts are unchanged. Removing an applied mark may allow another application review, so check the employer’s outcome before applying again.": "يؤدي هذا إلى إزالة الملاحظات الخاصة والتواريخ والمرحلة وعلامة التقديم الشخصية لهذا السجل من المتصفح. وتبقى الوظيفة في المحفوظات. لا تتغير الطلبات التي تحتفظ بها جهات العمل ولا إيصالات الإرسال عبر الإنترنت. قد تسمح إزالة علامة التقديم بمراجعة طلب آخر؛ لذا تحقّق من نتيجة الطلب لدى جهة العمل قبل التقديم مجددًا.",
++"This removes its private notes, dates, stage, and your personal applied mark from this browser. If the job is bookmarked, the bookmark stays. Employer-held applications and online receipts are unchanged. Removing an applied mark may allow another application review, so check the employer’s outcome before applying again.": "يؤدي هذا إلى إزالة الملاحظات الخاصة والتواريخ والمرحلة وعلامة التقديم الشخصية لهذا السجل من المتصفح. وإذا كانت الوظيفة محفوظة، تبقى في المحفوظات. لا تتغير الطلبات التي تحتفظ بها جهات العمل ولا إيصالات الإرسال عبر الإنترنت. قد تسمح إزالة علامة التقديم بمراجعة طلب آخر؛ لذا تحقّق من نتيجة الطلب لدى جهة العمل قبل التقديم مجددًا.",
+
+Exact entries:
+
+JSON
+"Private record deleted. Any saved bookmark remains. Online receipts and employer-held applications are unchanged.": "حُذف السجل الخاص. وتبقى أي وظيفة محفوظة. لا تتغير الطلبات التي تحتفظ بها جهات العمل ولا إيصالات الإرسال عبر الإنترنت."
+JSON
+"This removes its private notes, dates, stage, and your personal applied mark from this browser. If the job is bookmarked, the bookmark stays. Employer-held applications and online receipts are unchanged. Removing an applied mark may allow another application review, so check the employer’s outcome before applying again.": "يؤدي هذا إلى إزالة الملاحظات الخاصة والتواريخ والمرحلة وعلامة التقديم الشخصية لهذا السجل من المتصفح. وإذا كانت الوظيفة محفوظة، تبقى في المحفوظات. لا تتغير الطلبات التي تحتفظ بها جهات العمل ولا إيصالات الإرسال عبر الإنترنت. قد تسمح إزالة علامة التقديم بمراجعة طلب آخر؛ لذا تحقّق من نتيجة الطلب لدى جهة العمل قبل التقديم مجددًا."
+
+The toast no longer says the bookmark was kept. It says any saved bookmark remains. The dialog says the bookmark stays only if the job is bookmarked. Employer-held applications and online receipts stay “unchanged,” using the existing plural wording. The private-notes sentence is unchanged. employer’s keeps U+2019.
+
+Validation: json.loads of these two entries succeeded. The full catalog, app, and native tests were not run.

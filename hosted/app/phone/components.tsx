@@ -5,11 +5,35 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode }
 import { ArrowUpRight, Bookmark, Check, FileText, X } from "lucide-react";
 import { countryCodes, friendlyDate, linkedInURL, profileEssentials, stageNames, stages, type ApplicationRecord, type Job, type Plan, type Profile } from "./model";
 
+/** Recover only lost focus, after removed controls and dialogs finish unmounting. */
+export const recoverPhoneFocus = (shell: Element | null, invoker: Element | null = null, closingDialog: HTMLDialogElement | null = null) => {
+  if (!shell) return;
+  requestAnimationFrame(() => {
+    const document = shell.ownerDocument;
+    const canRecover = () => {
+      const active = document.activeElement;
+      return shell.isConnected && !closingDialog?.open && !shell.querySelector("dialog[open]") &&
+        (!active?.isConnected || active === document.body || active === document.documentElement || Boolean(closingDialog?.contains(active)));
+    };
+    if (!canRecover()) return;
+    if (invoker instanceof HTMLElement && invoker.isConnected && !closingDialog?.contains(invoker)) invoker.focus({ preventScroll: true });
+    if (!canRecover()) return;
+    const heading = shell.querySelector<HTMLElement>("#phone-main .phone-page-heading h1[tabindex='-1']");
+    if (heading?.isConnected) heading.focus({ preventScroll: true });
+  });
+};
+
 export function Modal({ title, children, onClose, busy = false, notice, checkingIdentity = false, onCheckIdentity }: { title: string; children: ReactNode; onClose: () => void; busy?: boolean; notice?: { text: string; error?: boolean } | null; checkingIdentity?: boolean; onCheckIdentity?: () => void }) {
   const { t } = useI18n();
   const dialog = useRef<HTMLDialogElement>(null);
   const recheck = useRef<HTMLButtonElement>(null);
-  useLayoutEffect(() => { const element = dialog.current; element?.showModal(); return () => element?.close(); }, []);
+  useLayoutEffect(() => {
+    const element = dialog.current;
+    if (!element) return;
+    const invoker = element.ownerDocument.activeElement, shell = element.closest(".phone-shell");
+    element.showModal();
+    return () => { element.close(); recoverPhoneFocus(shell, invoker, element); };
+  }, []);
   useEffect(() => { if (checkingIdentity) recheck.current?.focus(); }, [checkingIdentity]);
   return <dialog className="phone-dialog" ref={dialog} onCancel={event => { event.preventDefault(); if (!busy && !checkingIdentity) onClose(); }} aria-labelledby="phone-dialog-title">
     <div className="phone-dialog-head"><h2 id="phone-dialog-title" dir="auto">{checkingIdentity ? t("Confirming your account") : title}</h2><button type="button" className="icon-button" aria-label={t("Close dialog")} disabled={busy || checkingIdentity} onClick={onClose}><X aria-hidden="true" size={22} /></button></div>

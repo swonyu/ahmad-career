@@ -1,0 +1,329 @@
+✖ actual Modal cleanup preserves native focus return and restores a surviving invoker when needed (1.901875ms)
+✖ actual Modal cleanup recovers the owning heading when its invoker disappears before or after cleanup (0.546584ms)
+✖ actual Modal cleanup falls back if a connected invoker cannot receive focus (0.366042ms)
+✔ actual Modal cleanup leaves other live focus alone before close or before deferred recovery (0.89475ms)
+✖ actual Modal cleanup respects focus redirected while restoring the invoker (0.571625ms)
+✔ actual Modal cleanup does not override a reopened or replacement dialog (0.509667ms)
+✔ actual Modal cleanup does not focus a removed phone shell or heading (0.397375ms)
+✖ actual Modal cleanup treats absent, document-root and disconnected focus as lost (0.323875ms)
+✖ actual Saved Clear resets every filter and recovers its heading after its button disappears (4.812667ms)
+✔ actual Saved Clear does not steal later focus or cross a dialog/phone unmount boundary (0.696667ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 4
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 257.6965
+
+✖ failing tests:
+
+test at tests/phone-recovery-isolation.mjs:395:1
+✖ actual Modal cleanup preserves native focus return and restores a surviving invoker when needed (1.901875ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" to be reference-equal to "expected":
+  + actual - expected
+  
+  + <ref *1> FocusTarget {
+  - FocusTarget {
+      focusable: true,
+      isConnected: true,
+  +   name: 'body',
+  +   ownerDocument: <ref *2> {
+  +     activeElement: [Circular *1],
+  +     body: [Circular *1],
+  -   name: 'record button',
+  -   ownerDocument: <ref *1> {
+  -     activeElement: FocusTarget {
+  -       focusable: true,
+  -       isConnected: true,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1]
+  -     },
+  -     body: FocusTarget {
+  -       focusable: true,
+  -       isConnected: true,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1]
+  -     },
+        documentElement: FocusTarget {
+          focusable: true,
+          isConnected: true,
+          name: 'html',
+  +       ownerDocument: [Circular *2]
+  -       ownerDocument: [Circular *1]
+        },
+        querySelector: [Function: querySelector]
+      }
+    }
+  
+      at TestContext.<anonymous> (file:///Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/browser-recovery-20261118T0310Z/pinned-gates/original-with-regressions/hosted/tests/phone-recovery-isolation.mjs:400:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+      at run (node:internal/test_runner/harness:398:12)
+      at test (node:internal/test_runner/harness:407:12)
+      at file:///Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/browser-recovery-20261118T0310Z/pinned-gates/original-with-regressions/hosted/tests/phone-recovery-isolation.mjs:395:1 {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [FocusTarget],
+    expected: [FocusTarget],
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/phone-recovery-isolation.mjs:406:1
+✖ actual Modal cleanup recovers the owning heading when its invoker disappears before or after cleanup (0.546584ms)
+  AssertionError [ERR_ASSERTION]: before
+  + actual - expected
+  
+  + <ref *1> FocusTarget {
+  - FocusTarget {
+      focusable: true,
+      isConnected: true,
+  +   name: 'body',
+  +   ownerDocument: <ref *2> {
+  +     activeElement: [Circular *1],
+  +     body: [Circular *1],
+  -   name: 'own Saved heading',
+  -   ownerDocument: <ref *1> {
+  -     activeElement: FocusTarget {
+  -       focusable: true,
+  -       isConnected: true,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1]
+  -     },
+  -     body: FocusTarget {
+  -       focusable: true,
+  -       isConnected: true,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1]
+  -     },
+        documentElement: FocusTarget {
+          focusable: true,
+          isConnected: true,
+          name: 'html',
+  +       ownerDocument: [Circular *2]
+  -       ownerDocument: [Circular *1]
+        },
+        querySelector: [Function: querySelector]
+      }
+    }
+  
+      at TestContext.<anonymous> (file:///Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/browser-recovery-20261118T0310Z/pinned-gates/original-with-regressions/hosted/tests/phone-recovery-isolation.mjs:414:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [FocusTarget],
+    expected: [FocusTarget],
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/phone-recovery-isolation.mjs:420:1
+✖ actual Modal cleanup falls back if a connected invoker cannot receive focus (0.366042ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" to be reference-equal to "expected":
+  + actual - expected
+  
+  + <ref *1> FocusTarget {
+  - FocusTarget {
+      focusable: true,
+      isConnected: true,
+  +   name: 'body',
+  +   ownerDocument: <ref *2> {
+  +     activeElement: [Circular *1],
+  +     body: [Circular *1],
+  -   name: 'own Saved heading',
+  -   ownerDocument: <ref *1> {
+  -     activeElement: FocusTarget {
+  -       focusable: true,
+  -       isConnected: true,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1]
+  -     },
+  -     body: FocusTarget {
+  -       focusable: true,
+  -       isConnected: true,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1]
+  -     },
+        documentElement: FocusTarget {
+          focusable: true,
+          isConnected: true,
+          name: 'html',
+  +       ownerDocument: [Circular *2]
+  -       ownerDocument: [Circular *1]
+        },
+        querySelector: [Function: querySelector]
+      }
+    }
+  
+      at TestContext.<anonymous> (file:///Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/browser-recovery-20261118T0310Z/pinned-gates/original-with-regressions/hosted/tests/phone-recovery-isolation.mjs:423:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [FocusTarget],
+    expected: [FocusTarget],
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/phone-recovery-isolation.mjs:437:1
+✖ actual Modal cleanup respects focus redirected while restoring the invoker (0.571625ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" to be reference-equal to "expected":
+  + actual - expected
+  
+  + <ref *1> FocusTarget {
+  - FocusTarget {
+      focusable: true,
+      isConnected: true,
+  +   name: 'body',
+  +   ownerDocument: <ref *2> {
+  +     activeElement: [Circular *1],
+  +     body: [Circular *1],
+  -   name: 'other phone control',
+  -   ownerDocument: <ref *1> {
+  -     activeElement: FocusTarget {
+  -       focusable: true,
+  -       isConnected: true,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1]
+  -     },
+  -     body: FocusTarget {
+  -       focusable: true,
+  -       isConnected: true,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1]
+  -     },
+        documentElement: FocusTarget {
+          focusable: true,
+          isConnected: true,
+          name: 'html',
+  +       ownerDocument: [Circular *2]
+  -       ownerDocument: [Circular *1]
+        },
+        querySelector: [Function: querySelector]
+      }
+    }
+  
+      at TestContext.<anonymous> (file:///Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/browser-recovery-20261118T0310Z/pinned-gates/original-with-regressions/hosted/tests/phone-recovery-isolation.mjs:441:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [FocusTarget],
+    expected: [FocusTarget],
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/phone-recovery-isolation.mjs:463:1
+✖ actual Modal cleanup treats absent, document-root and disconnected focus as lost (0.323875ms)
+  AssertionError [ERR_ASSERTION]: absent
+  + actual - expected
+  
+  + null
+  - FocusTarget {
+  -   focusable: true,
+  -   isConnected: true,
+  -   name: 'own Saved heading',
+  -   ownerDocument: <ref *1> {
+  -     activeElement: null,
+  -     body: FocusTarget {
+  -       focusable: true,
+  -       isConnected: true,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1]
+  -     },
+  -     documentElement: FocusTarget {
+  -       focusable: true,
+  -       isConnected: true,
+  -       name: 'html',
+  -       ownerDocument: [Circular *1]
+  -     },
+  -     querySelector: [Function: querySelector]
+  -   }
+  - }
+  
+      at TestContext.<anonymous> (file:///Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/browser-recovery-20261118T0310Z/pinned-gates/original-with-regressions/hosted/tests/phone-recovery-isolation.mjs:467:23)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: [FocusTarget],
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/phone-recovery-isolation.mjs:471:1
+✖ actual Saved Clear resets every filter and recovers its heading after its button disappears (4.812667ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" to be reference-equal to "expected":
+  + actual - expected
+  
+  + <ref *1> FocusTarget {
+  - FocusTarget {
+      focusable: true,
+      isConnected: true,
+  +   name: 'body',
+  +   ownerDocument: <ref *2> {
+  +     activeElement: [Circular *1],
+  +     body: [Circular *1],
+  -   name: 'own Saved heading',
+  -   ownerDocument: <ref *1> {
+  -     activeElement: FocusTarget {
+  -       focusable: true,
+  -       isConnected: true,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1]
+  -     },
+  -     body: FocusTarget {
+  -       focusable: true,
+  -       isConnected: true,
+  -       name: 'body',
+  -       ownerDocument: [Circular *1]
+  -     },
+        documentElement: FocusTarget {
+          focusable: true,
+          isConnected: true,
+          name: 'html',
+  +       ownerDocument: [Circular *2]
+  -       ownerDocument: [Circular *1]
+        },
+        querySelector: [Function: querySelector]
+      }
+    }
+  
+      at TestContext.<anonymous> (file:///Users/saleh/Developer/career-finder-feed-evidence-20261117-4b851318da2d/resume-20261118-0410/browser-recovery-20261118T0310Z/pinned-gates/original-with-regressions/hosted/tests/phone-recovery-isolation.mjs:476:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [FocusTarget],
+    expected: [FocusTarget],
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
