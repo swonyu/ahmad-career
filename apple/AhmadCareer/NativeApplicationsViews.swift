@@ -232,7 +232,7 @@ struct NativeApplicationsScreen: View {
                     .opacity(model.busy || model.connected && model.selected.isEmpty ? 0.65 : 1)
                     if !dynamicTypeSize.isAccessibilitySize {
                         Text(l10n("Confirmed submissions include a provider receipt."))
-                            .font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
+                            .font(.caption2).foregroundStyle(NativeDesign.muted).multilineTextAlignment(.center)
                     }
                 }.padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 10).background(.regularMaterial)
             }
