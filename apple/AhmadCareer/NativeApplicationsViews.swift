@@ -913,7 +913,7 @@ struct NativeApplicationConnection: View {
                     Text(l10n(model.connected ? "Your application workspace is connected." : "Connect your phone in two steps."))
                         .font(.title3.weight(.semibold))
                     Text(l10n("Your phone draft is uploaded only when you choose to save it to the connected service."))
-                        .font(.subheadline).foregroundStyle(.secondary)
+                        .font(.subheadline).foregroundStyle(.primary)
                 }
                 if model.connected {
                     Section(l10n("Connected service")) {
