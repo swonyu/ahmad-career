@@ -733,6 +733,44 @@ try {
     assert.equal((await call('/api/auth/status',{headers:{host:'attacker.example'}})).status,403);
   });
 
+  for (const cleanup of ['pending','rejected','resolved']) {
+    await check(`Oversized account JSON retains its 413 despite ${cleanup} body cleanup`,async()=>{
+      let cancelled=0,release=()=>{},timer;
+      const pendingCleanup=cleanup==='pending'?new Promise(resolve=>{release=resolve}):null;
+      const request=new Request(AUTH_ORIGIN+'/api/auth/connect',{method:'POST',headers:{Origin:AUTH_ORIGIN,'Content-Type':'application/json'},duplex:'half',body:new ReadableStream({
+        start(controller){controller.enqueue(new Uint8Array(2049));},
+        cancel(){cancelled++;if(cleanup==='rejected')return Promise.reject(new Error('Synthetic cancellation failure'));return pendingCleanup;},
+      })});
+      const pending=handler(request,env);
+      try {
+        const response=await Promise.race([pending,new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('Oversized account request waited for transport cleanup')),1500);})]);
+        assert.equal(response.status,413);assert.equal((await response.json()).error.code,'body_too_large');assert.equal(cancelled,1);assert.equal(request.body.locked,false);
+        assert.equal(await count('oauth_transactions'),0);assert.equal(await count('auth_accounts'),0);assert.equal(requests.length,0);
+      } finally { clearTimeout(timer);release();await pending; }
+    });
+  }
+
+  for (const rejection of ['status','content-type','declared-oversize','streamed-oversize']) for (const cleanup of ['pending','rejected','resolved']) {
+    await check(`Rejected OAuth ${rejection} response settles despite ${cleanup} body cleanup`,async()=>{
+      let cancelled=0,release=()=>{},timer;
+      const pendingCleanup=cleanup==='pending'?new Promise(resolve=>{release=resolve}):null;
+      const response=new Response(new ReadableStream({
+        start(controller){controller.enqueue(rejection==='streamed-oversize'?new Uint8Array(65537):new TextEncoder().encode('{}'));},
+        cancel(){cancelled++;if(cleanup==='rejected')return Promise.reject(new Error('Synthetic cancellation failure'));return pendingCleanup;},
+      }),{status:rejection==='status'?503:200,headers:{
+        'Content-Type':rejection==='content-type'?'text/plain':'application/json',
+        ...(rejection==='declared-oversize'?{'Content-Length':'65537'}:{}),
+      }});
+      const flow=await begin(),pending=finish(flow,{behavior:()=>response});
+      try {
+        const result=await Promise.race([pending,new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('Rejected OAuth response waited for transport cleanup')),1500);})]);
+        assert.equal(queryResult(result.response),'failed');assert.equal(cancelled,1);assert.equal(response.body.locked,false);
+        assert.equal(await count('oauth_transactions'),0);assert.equal(await count('browser_sessions'),0);assert.equal(await count('auth_identities'),0);
+        assert.equal(queryResult((await finish(flow)).response),'failed');assert.equal(tokenRequests(),1);
+      } finally { clearTimeout(timer);release();await pending; }
+    });
+  }
+
   await check('Provider redirects and oversized token responses are refused without retry or following any URL',async()=>{
     for (const behavior of [()=>new Response('',{status:302,headers:{Location:'https://attacker.example'}}),()=>new Response('x'.repeat(65537),{headers:{'Content-Type':'application/json'}}),()=>Response.json({id_token:'x'.repeat(16385)})]) {
       const flow=await begin(),before=tokenRequests(),result=await finish(flow,{behavior}); assert.equal(queryResult(result.response),'failed'); assert.equal(await count('browser_sessions'),0);

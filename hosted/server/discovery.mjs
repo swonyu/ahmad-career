@@ -1,6 +1,7 @@
 import {createHmac,randomBytes,randomUUID} from 'node:crypto';
 import {sha256,countryCodes} from './validation.mjs';
 import {SERVICE_ORIGIN} from './applications.mjs';
+import {createDiscoveryKeywordMatcher,DISCOVERY_KEYWORD_MATCHING_VERSION} from './discovery-keywords.mjs';
 
 export const DISCOVERY_LIMITS=Object.freeze({maxSources:4,pageSize:50,maxJobsPerSource:500,maxCachedSources:128,maxCustomCachedSources:96,maxCacheBytes:512*1024,maxResponseBytes:4*1024*1024,freshMilliseconds:10*60000,staleMilliseconds:24*3600000,sourceMilliseconds:10000,requestMilliseconds:5000,leaseMilliseconds:20000,requestsPerMinute:120,customRequestsPerMinute:60,requestsPerClientMinute:20,unknownClientRequestsPerMinute:6,upstreamRequestsPerMinute:60,customUpstreamRequestsPerMinute:30,refreshesPerClientMinute:8});
 export const DISCOVERY_NOTICE='Search covers only the selected public employer boards. Results can change or close; open the employer posting to confirm requirements and location eligibility.';
@@ -269,13 +270,15 @@ export function createDiscoveryHandler({fetchImpl=fetch,clock=Date.now}={}){
         }
       }
       const results=await Promise.all(query.sources.map(sourceJobs));
-      const words=query.q.split(/\s+/u).filter(Boolean),matched=results.map(result=>{
-        const jobs=result.jobs.filter(job=>words.every(word=>fold(job.title+' '+job.company+' '+job.summary).includes(word))&&(!query.location||fold(job.location).includes(query.location))&&(query.remote!=='remote'||job.remote===true)).sort((a,b)=>a.title.localeCompare(b.title,'en')||a.id.localeCompare(b.id,'en'));
+      const matchesKeywords=createDiscoveryKeywordMatcher(query.q),matched=results.map(result=>{
+        const jobs=result.jobs.filter(job=>matchesKeywords(job.title+' '+job.company+' '+job.summary)&&(!query.location||fold(job.location).includes(query.location))&&(query.remote!=='remote'||job.remote===true)).sort((a,b)=>a.title.localeCompare(b.title,'en')||a.id.localeCompare(b.id,'en'));
         result.source.matchedCount=jobs.length;return jobs;
       });
       // Round-robin board results keep a large employer from hiding the other selected sources.
       const jobs=[];for(let i=0;matched.some(rows=>rows.length>i);i++)for(const rows of matched)if(rows[i])jobs.push(rows[i]);
-      const snapshot=sha256(JSON.stringify(results.map(result=>({id:result.source.id,checkedAt:result.source.checkedAt,rows:result.jobs.map(job=>job.id),content:sha256(JSON.stringify(result.jobs.map(job=>({...job,stale:undefined}))))}))));
+      // A matching-rule change invalidates old offsets through the existing
+      // discovery_changed recovery path, even while board metadata stays cached.
+      const snapshot=sha256(JSON.stringify({matching:DISCOVERY_KEYWORD_MATCHING_VERSION,sources:results.map(result=>({id:result.source.id,checkedAt:result.source.checkedAt,rows:result.jobs.map(job=>job.id),content:sha256(JSON.stringify(result.jobs.map(job=>({...job,stale:undefined}))))}))}));
       if(query.page&&query.page.s!==snapshot)throw new DiscoveryError('discovery_changed','These employer results changed. Start a new search before loading another page.',409);
       const offset=query.page?.o??0,next=offset+DISCOVERY_LIMITS.pageSize,nextCursor=next<jobs.length?Buffer.from(JSON.stringify({v:1,o:next,q:query.queryHash,s:snapshot})).toString('base64url'):null;
       const sources=results.map(result=>result.source),status=sources.every(s=>s.status==='unavailable')?'unavailable':sources.some(s=>['stale','unavailable'].includes(s.status)||s.limited||s.error)?'partial':'complete';
