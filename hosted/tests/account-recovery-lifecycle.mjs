@@ -16,8 +16,9 @@ const componentFile = name => process.env.CAREER_ACCOUNT_COMPONENT_SOURCE_DIR
   : new URL("../app/components/" + name, import.meta.url);
 const sessionSource = await readFile(componentFile("SessionRecovery.tsx"), "utf8");
 const oauthSource = await readFile(componentFile("OAuthFeedback.tsx"), "utf8");
+const accountSource = await readFile(process.env.CAREER_ACCOUNT_PANEL_SOURCE_FILE ?? new URL("../app/account/AccountPanel.tsx", import.meta.url), "utf8");
 const sourceTree = source => ts.createSourceFile("component.tsx", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
-const sessionTree = sourceTree(sessionSource), oauthTree = sourceTree(oauthSource);
+const sessionTree = sourceTree(sessionSource), oauthTree = sourceTree(oauthSource), accountTree = sourceTree(accountSource);
 function nodes(tree, predicate) {
   const found = [];
   function visit(node) { if (predicate(node)) found.push(node); ts.forEachChild(node, visit); }
@@ -45,7 +46,7 @@ const identityContext = { React };
 vm.createContext(identityContext);
 vm.runInContext(code("globalThis.SessionRecoveryAction = " + (innerComponent ?? publicComponent).getText(sessionTree).replace(/^export\s+default\s+/, "") + ";\nglobalThis.actionElement = accountId => " + (keyedAction ? "(" + keyedAction.getText(sessionTree) + ")" : "React.createElement(SessionRecoveryAction, { accountId })") + ";"), identityContext);
 const bundle = await build({
-  stdin: { contents: 'export { internalAuthRedirect, authStatusSchema, oauthReturn } from "./app/components/provider-auth.ts";', sourcefile: "account-recovery-real-helpers.ts", resolveDir: process.cwd() },
+  stdin: { contents: 'export { internalAuthRedirect, authStatusSchema, oauthReturn } from "./app/components/provider-auth.ts"; export { APIError } from "./app/components/api.ts";', sourcefile: "account-recovery-real-helpers.ts", resolveDir: process.cwd() },
   bundle: true, write: false, platform: "node", format: "esm", target: "node24", logLevel: "silent",
 });
 const helpers = await import("data:text/javascript;base64," + Buffer.from(bundle.outputFiles[0].text + "\n//# sourceURL=account-recovery-real-helpers.mjs").toString("base64"));
@@ -236,6 +237,7 @@ test("actual OAuth cleanup suppresses a late status result", async () => {
 console.log(JSON.stringify({ sources: {
   SessionRecovery: createHash("sha256").update(sessionSource).digest("hex"),
   OAuthFeedback: createHash("sha256").update(oauthSource).digest("hex"),
+  AccountPanel: createHash("sha256").update(accountSource).digest("hex"),
 }, coverage: "Production handler/effect tones with synthetic status promises; no DOM, cookie jar, live authentication, or assistive-technology result." }));
 
 test("actual keyed action and rendered button recover from A to B to A without clicking a disabled control", async () => {
@@ -269,4 +271,111 @@ test("actual keyed action and rendered button recover from A to B to A without c
   assert.equal(returnedA.h.calls.length, 1); assert.equal(returnedA.h.button().props.disabled, true);
   returnedA.h.calls[0].resolve({ ok: true, redirectTo: "/connect" }); await retry;
   assert.deepEqual(returnedA.h.navigations, [origin + "/connect"]); returnedA.h.unmount();
+});
+
+// Exercise the account panel's actual state defaults, read/mutation callbacks,
+// and recovery JSX. Only the API transport is replaced with synthetic promises.
+const accountComponent = accountTree.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === "AccountPanel");
+const accountVariable = name => nodes(accountTree, node => ts.isVariableDeclaration(node) && node.name.getText(accountTree) === name)[0];
+const accountFunction = name => nodes(accountTree, node => ts.isFunctionDeclaration(node) && node.name?.text === name)[0];
+const accountStates = nodes(accountComponent, node => ts.isVariableDeclaration(node) && ts.isArrayBindingPattern(node.name) && node.initializer && ts.isCallExpression(node.initializer) && node.initializer.expression.getText(accountTree) === "useState");
+const accountRefs = nodes(accountComponent, node => ts.isVariableDeclaration(node) && node.initializer && ts.isCallExpression(node.initializer) && node.initializer.expression.getText(accountTree) === "useRef");
+const accountErrors = nodes(accountComponent, node => ts.isJsxElement(node) && node.openingElement.tagName.getText(accountTree) === "div" && node.openingElement.attributes.properties.some(attribute => ts.isJsxAttribute(attribute) && attribute.name.text === "className" && attribute.initializer?.text === "alert error"));
+assert.equal(accountErrors.length, 1, "Render the production account recovery controls");
+const accountCode = code([
+  ...["record", "count"].map(name => "const " + accountVariable(name).getText(accountTree) + ";"),
+  ...["parseAccount", "loadAccount"].map(name => accountFunction(name).getText(accountTree)),
+  ...accountStates.map(node => "globalThis." + node.name.elements[0].name.getText(accountTree) + " = " + node.initializer.arguments[0].getText(accountTree) + ";"),
+  ...accountRefs.map(node => "globalThis." + node.name.getText(accountTree) + " = { current: " + node.initializer.arguments[0].getText(accountTree) + " };"),
+  "globalThis.refresh = " + accountVariable("refresh").initializer.arguments[0].getText(accountTree) + ";",
+  "globalThis.returned = " + accountVariable("returned").initializer.getText(accountTree) + ";",
+  "globalThis.mutate = " + accountFunction("mutate").getText(accountTree) + ";",
+  "globalThis.recovery = () => error ? (" + accountErrors[0].getText(accountTree) + ") : null;",
+].join("\n"));
+function elementsOfType(element, type) {
+  if (!React.isValidElement(element)) return [];
+  return [...(element.type === type ? [element] : []), ...React.Children.toArray(element.props.children).flatMap(child => elementsOfType(child, type))];
+}
+const workspaceA = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa";
+function accountResponse(accountId = "synthetic-account-a", workspaceId = workspaceA) {
+  return { ok: true, accountId, workspaceId, confirmedEmail: "synthetic@example.com", emailUpdateRequired: false, deleting: false, sessions: [], documents: [],
+    usage: { storedResumeBytes: 0, jobs: 0, plans: 0, attempts: 0 }, limits: { maxStoredResumeBytes: 10485760, maxResumes: 5, maxJobs: 100, maxPlans: 100, maxAttempts: 100 } };
+}
+function accountHarness(expectedAccountId = "synthetic-account-a") {
+  const calls = [], navigations = [];
+  const context = {
+    Error, AbortController, React, expectedAccountId, APIError: helpers.APIError, internalAuthRedirect: helpers.internalAuthRedirect, t: value => value,
+    SignInOptions: () => React.createElement("div", { "data-sign-in": true }),
+    document: { visibilityState: "visible" }, window: { location: { origin, assign: value => navigations.push(value), reload: () => navigations.push("reload") } },
+    requestAPI(path, options) { const gate = deferred(); calls.push({ path, options, ...gate }); return gate.promise; },
+  };
+  for (const node of accountStates) {
+    const [state, setter] = node.name.elements.map(element => element.name.getText(accountTree));
+    context[setter] = value => { context[state] = typeof value === "function" ? value(context[state]) : value; };
+  }
+  vm.createContext(context); vm.runInContext(accountCode, context);
+  return { calls, navigations, context, recovery: () => context.recovery(), buttons: () => elementsOfType(context.recovery(), "button"), links: () => elementsOfType(context.recovery(), "a") };
+}
+function assertAccountReload(h) {
+  const links = h.links();
+  assert.equal(links.length, 1, "An identity change needs an ordinary full-page navigation");
+  assert.equal(links[0].props.href, "/account");
+  assert.equal(links[0].props.children, "Reload sign-in");
+  assert.equal(links[0].props.onClick, undefined, "Do not intercept the link with the stale account callback");
+  assert.equal(h.buttons().length, 0, "Do not offer the same stale-identity status retry");
+  assert.match(renderToStaticMarkup(h.recovery()), /href="\/account"[^>]*>Reload sign-in<\/a>/);
+  assert.deepEqual(h.navigations, [], "The user chooses when to navigate");
+}
+
+test("actual account return hides account A and offers a full reload when the browser changes to B", async () => {
+  const h = accountHarness(), opening = h.context.refresh();
+  h.calls[0].resolve(accountResponse()); await opening;
+  assert.equal(h.context.account.accountId, "synthetic-account-a");
+  h.context.returned();
+  assert.equal(h.context.account, null, "Hide the prior account before its return check finishes");
+  h.calls[1].resolve(accountResponse("synthetic-account-b")); await flush();
+  assert.equal(h.context.account, null); assert.match(h.context.error, /browser account changed/);
+  assert.equal(h.context.loading, false); assertAccountReload(h); assert.equal(h.calls.length, 2);
+  const fresh = accountHarness("synthetic-account-b"), reopened = fresh.context.refresh();
+  fresh.calls[0].resolve(accountResponse("synthetic-account-b")); await reopened;
+  assert.equal(fresh.context.account.accountId, "synthetic-account-b"); assert.equal(fresh.recovery(), null);
+});
+
+test("actual account mutations distinguish an account change from a recoverable workspace change", async t => {
+  for (const failureCode of ["account_changed", "workspace_changed"]) await t.test(failureCode, async () => {
+    const h = accountHarness(), opening = h.context.refresh(); h.calls[0].resolve(accountResponse()); await opening;
+    h.context.deleteOpen = true; h.context.deleteWorkspaceId = workspaceA; h.context.confirmation = "DELETE";
+    const pending = h.context.mutate("recover", "/api/account/uploads/recover", { expectedWorkspaceId: workspaceA });
+    assert.equal(h.calls[1].path, "/api/account/uploads/recover"); assert.equal(h.calls[1].options.method, "POST");
+    assert.deepEqual(structuredClone(h.calls[1].options.body), { expectedWorkspaceId: workspaceA });
+    h.calls[1].reject(new helpers.APIError("Synthetic account or workspace change", 409, failureCode)); await pending;
+    assert.equal(h.context.account, null); assert.equal(h.context.deleteOpen, false); assert.equal(h.context.deleteWorkspaceId, null); assert.equal(h.context.confirmation, "");
+    assert.equal(h.context.busy, ""); assert.equal(h.calls.length, 2, "Do not replay a rejected mutation");
+    if (failureCode === "account_changed") assertAccountReload(h);
+    else { assert.equal(h.links().length, 0); assert.equal(h.buttons()[0].props.children, "Reload current status"); }
+  });
+});
+
+test("actual account status retry still recovers a temporary failure for the same account", async () => {
+  const h = accountHarness(), opening = h.context.refresh();
+  h.calls[0].reject(new helpers.APIError("Synthetic temporary connection failure", 0, "network_unavailable")); await opening;
+  assert.equal(h.links().length, 0); assert.equal(h.buttons().length, 1);
+  const retry = h.buttons()[0]; assert.equal(retry.props.children, "Reload current status"); assert.equal(retry.props.disabled, false);
+  retry.props.onClick(); assert.equal(h.calls.length, 2); assert.equal(h.buttons()[0].props.disabled, true);
+  h.calls[1].resolve(accountResponse()); await flush();
+  assert.equal(h.context.account.accountId, "synthetic-account-a"); assert.equal(h.context.error, ""); assert.equal(h.context.loading, false);
+  assert.equal(h.recovery(), null); assert.deepEqual(h.navigations, []);
+});
+
+test("actual account recovery clears an old identity-change choice after same-account verification or sign-in expiry", async t => {
+  for (const outcome of ["same-account", "expired-sign-in"]) await t.test(outcome, async () => {
+    const h = accountHarness(), changed = h.context.refresh(); h.calls[0].resolve(accountResponse("synthetic-account-b")); await changed;
+    assertAccountReload(h);
+    h.context.returned();
+    if (outcome === "same-account") h.calls[1].resolve(accountResponse());
+    else h.calls[1].reject(new helpers.APIError("Synthetic sign-in expiry", 401, "sign_in_required"));
+    await flush(); assert.equal(h.links().length, 0);
+    if (outcome === "same-account") { assert.equal(h.context.account.accountId, "synthetic-account-a"); assert.equal(h.recovery(), null); }
+    else { assert.equal(h.context.account, null); assert.equal(h.buttons().length, 0); assert.match(renderToStaticMarkup(h.recovery()), /data-sign-in="true"/); }
+  });
 });

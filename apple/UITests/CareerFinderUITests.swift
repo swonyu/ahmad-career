@@ -119,8 +119,21 @@ final class CareerFinderUITests: XCTestCase {
     @MainActor
     private func typingKeyIsVisible(_ deleteKey: XCUIElement, in app: XCUIApplication) -> Bool {
         // Reuse the exact system-key query for this keyboard presentation.
-        // Each poll still resolves its real existence and hit-testable state.
-        hasVisibleHittableFrame(deleteKey, in: app)
+        // One fresh snapshot resolves presence and geometry together, avoiding
+        // separate accessibility round trips inside the unchanged deadline.
+        guard let snapshot = try? deleteKey.snapshot(),
+              snapshot.elementType == .key, snapshot.identifier == "delete" else { return false }
+        let frame = snapshot.frame
+        guard frame.origin.x.isFinite, frame.origin.y.isFinite,
+              frame.width.isFinite, frame.height.isFinite,
+              frame.width > 0, frame.height > 0 else { return false }
+        let viewport = app.frame
+        guard viewport.origin.x.isFinite, viewport.origin.y.isFinite,
+              viewport.width.isFinite, viewport.height.isFinite,
+              viewport.width > 0, viewport.height > 0,
+              frame.intersects(viewport) else { return false }
+        // A snapshot cannot establish current hittability; always ask the live key.
+        return deleteKey.isHittable
     }
     @MainActor
     private func revealForTyping(_ field: XCUIElement, in app: XCUIApplication) -> Bool {
@@ -354,8 +367,9 @@ final class CareerFinderUITests: XCTestCase {
     }
     @MainActor
     private func assertProfileLabel(_ app: XCUIApplication, fieldID: String, title: String,
-                                    value: String, screenshot: String, keyboardExpected: Bool = false) {
-        let field = app.textFields[fieldID], label = app.staticTexts[fieldID + ".label"]
+                                    value: String, screenshot: String, keyboardExpected: Bool = false,
+                                    fieldOverride: XCUIElement? = nil) {
+        let field = fieldOverride ?? app.textFields[fieldID], label = app.staticTexts[fieldID + ".label"]
         // Scroll the actual label/field pair together, including the real keyboard
         // boundary. Retain the original pose/AX before any final failure.
         for _ in 0..<20 {
@@ -370,7 +384,9 @@ final class CareerFinderUITests: XCTestCase {
             if pair.minY < viewport.minY { correction = viewport.minY - pair.minY + 8 }
             else if pair.maxY > viewport.maxY { correction = viewport.maxY - pair.maxY - 8 }
             else { break }
-            let scroll = app.collectionViews.containing(.textField, identifier: fieldID).firstMatch
+            let scroll = fieldOverride == nil
+                ? app.collectionViews.containing(.textField, identifier: fieldID).firstMatch
+                : app.collectionViews.containing(field.elementType, identifier: fieldID).firstMatch
             guard scroll.exists else { break }
             let surface = scroll.frame.intersection(viewport).insetBy(dx: 4, dy: 4)
             guard !surface.isNull, surface.width > 16, surface.height > 40 else { break }
@@ -401,11 +417,12 @@ final class CareerFinderUITests: XCTestCase {
         }
     }
     @MainActor
-    private func assertProfileReadingDirection(_ app: XCUIApplication, fieldID: String, rightToLeft: Bool) {
+    private func assertProfileReadingDirection(_ app: XCUIApplication, fieldID: String, rightToLeft: Bool,
+                                               fieldOverride: XCUIElement? = nil) {
         // Observe the already-captured label pose without moving focus or scrolling.
         // The caller supplies the expected language direction independently of the app.
         let labelFrame = app.staticTexts[fieldID + ".label"].frame
-        let fieldFrame = app.textFields[fieldID].frame
+        let fieldFrame = (fieldOverride ?? app.textFields[fieldID]).frame
         let navigation = app.navigationBars[rightToLeft ? "ملف التقديم" : "Application profile"]
         let cancelFrame = navigation.buttons[rightToLeft ? "إلغاء" : "Cancel"].frame
         let saveFrame = navigation.buttons[rightToLeft ? "حفظ" : "Save"].frame
@@ -614,6 +631,12 @@ final class CareerFinderUITests: XCTestCase {
         XCTAssertTrue(["", "First or single name"].contains(name.value as? String ?? ""), "A fresh profile must not contain another person's name")
         replace(name, with: "Taylor", in: app)
         replace(app.textFields["application.email"], with: "taylor@example.com", in: app)
+        finishTyping(in: app)
+        let city = app.textFields["application.city"]; reveal(city, in: app)
+        replace(city, with: "Riyadh", in: app)
+        finishTyping(in: app)
+        let roles = element("application.targetRoles", app: app); reveal(roles, in: app)
+        replace(roles, with: "Research", in: app)
         app.navigationBars.buttons["Cancel"].tap()
         XCTAssertTrue(app.buttons["Save draft on this phone"].waitForExistence(timeout: 5))
         app.buttons["Save draft on this phone"].tap()
@@ -629,6 +652,15 @@ final class CareerFinderUITests: XCTestCase {
         assertProfileReadingDirection(app, fieldID: "application.firstName", rightToLeft: false)
         assertProfileLabel(app, fieldID: "application.email", title: "Email",
                            value: "taylor@example.com", screenshot: "04b-restored-email-label")
+        let restoredCity = app.textFields["application.city"]; reveal(restoredCity, in: app)
+        assertProfileLabel(app, fieldID: "application.city", title: "City (optional)",
+                           value: "Riyadh", screenshot: "04c-restored-city-label")
+        assertProfileReadingDirection(app, fieldID: "application.city", rightToLeft: false)
+        let restoredRoles = element("application.targetRoles", app: app); reveal(restoredRoles, in: app)
+        assertProfileLabel(app, fieldID: "application.targetRoles", title: "Target roles, separated by commas",
+                           value: "Research", screenshot: "04d-restored-target-roles-label", fieldOverride: restoredRoles)
+        assertProfileReadingDirection(app, fieldID: "application.targetRoles", rightToLeft: false,
+                                      fieldOverride: restoredRoles)
     }
 
     @MainActor
@@ -808,6 +840,12 @@ final class CareerFinderUITests: XCTestCase {
         app.buttons["home.addOpportunity"].tap()
         replace(app.textFields["opportunity.url"], with: "https://careers.example.com/jobs/designer", in: app)
         replace(app.textFields["opportunity.title"], with: "Product designer", in: app)
+        finishTyping(in: app)
+        let company = app.textFields["opportunity.company"]; reveal(company, in: app)
+        replace(company, with: "Draft employer", in: app)
+        finishTyping(in: app)
+        let location = app.textFields["opportunity.location"]; reveal(location, in: app)
+        replace(location, with: "Riyadh", in: app)
         app.navigationBars.buttons["Cancel"].tap()
         let keepButtons = app.buttons.matching(NSPredicate(format: "label == %@", "Keep editing"))
         let ready = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
@@ -822,14 +860,32 @@ final class CareerFinderUITests: XCTestCase {
         }
         capture("05a-explicit-keep-editing-choice", app: app)
         keepEditing.tap()
+        // Editing the last row leaves a lower scroll pose. Return to the top
+        // before reading the earlier fields, then inspect the draft in order.
+        top(app)
         XCTAssertEqual(app.textFields["opportunity.title"].value as? String, "Product designer")
         XCTAssertEqual(app.textFields["opportunity.url"].value as? String, "https://careers.example.com/jobs/designer")
+        reveal(app.textFields["opportunity.company"], in: app)
+        XCTAssertEqual(app.textFields["opportunity.company"].value as? String, "Draft employer")
+        reveal(app.textFields["opportunity.location"], in: app)
+        XCTAssertEqual(app.textFields["opportunity.location"].value as? String, "Riyadh")
         app.navigationBars.buttons["Cancel"].tap()
         app.buttons["Save draft on this phone"].tap()
         app.terminate(); app = launch(id: id)
         app.buttons["home.addOpportunity"].tap()
         XCTAssertEqual(app.textFields["opportunity.title"].value as? String, "Product designer")
         XCTAssertEqual(app.textFields["opportunity.url"].value as? String, "https://careers.example.com/jobs/designer")
+        reveal(app.textFields["opportunity.title"], in: app)
+        assertProfileLabel(app, fieldID: "opportunity.title", title: "Role title",
+                           value: "Product designer", screenshot: "05b-restored-opportunity-title-label")
+        reveal(app.textFields["opportunity.company"], in: app)
+        assertProfileLabel(app, fieldID: "opportunity.company", title: "Employer",
+                           value: "Draft employer", screenshot: "05c-restored-opportunity-employer-label")
+        reveal(app.textFields["opportunity.location"], in: app)
+        assertProfileLabel(app, fieldID: "opportunity.location", title: "Location or remote",
+                           value: "Riyadh", screenshot: "05d-restored-opportunity-location-label")
+        top(app)
+        reveal(app.textFields["opportunity.company"], in: app)
         replace(app.textFields["opportunity.company"], with: "Example employer", in: app)
         app.buttons["opportunity.save"].tap()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 5))
@@ -992,6 +1048,12 @@ final class CareerFinderUITests: XCTestCase {
         replace(profileEmail, with: "alex@example.invalid", in: app)
         assertProfileLabel(app, fieldID: "application.email", title: "Email",
                            value: "alex@example.invalid", screenshot: "10b-email-label-accessibility-keyboard", keyboardExpected: true)
+        finishTyping(in: app)
+        let profileCity = app.textFields["application.city"]; reveal(profileCity, in: app)
+        replace(profileCity, with: "Riyadh", in: app)
+        assertProfileLabel(app, fieldID: "application.city", title: "City (optional)",
+                           value: "Riyadh", screenshot: "10c-city-label-accessibility-keyboard", keyboardExpected: true)
+        assertProfileReadingDirection(app, fieldID: "application.city", rightToLeft: false)
         app.navigationBars.buttons["Cancel"].tap()
         app.buttons["Save draft on this phone"].tap()
         tab("Search", in: app)
@@ -1110,6 +1172,12 @@ final class CareerFinderUITests: XCTestCase {
         let profile = app.buttons["home.applicationProfile"]; reveal(profile, in: app); profile.tap()
         replace(app.textFields["application.firstName"], with: "Saved", in: app)
         replace(app.textFields["application.email"], with: "saved@example.invalid", in: app)
+        finishTyping(in: app)
+        let city = app.textFields["application.city"]; reveal(city, in: app)
+        replace(city, with: "Riyadh", in: app)
+        finishTyping(in: app)
+        let roles = element("application.targetRoles", app: app); reveal(roles, in: app)
+        replace(roles, with: "Research", in: app)
         app.navigationBars.buttons["Cancel"].tap()
         XCTAssertTrue(app.buttons["Save draft on this phone"].waitForExistence(timeout: 5))
         app.buttons["Save draft on this phone"].tap()
@@ -1131,12 +1199,23 @@ final class CareerFinderUITests: XCTestCase {
         reveal(app.textFields["application.email"], in: app)
         XCTAssertEqual(app.textFields["application.email"].value as? String, "saved@example.invalid")
         capture("28-arabic-profile-original-values", app: app)
+        top(app)
+        reveal(app.textFields["application.firstName"], in: app)
         assertProfileLabel(app, fieldID: "application.firstName", title: "الاسم الأول أو الاسم الوحيد",
                            value: "Saved", screenshot: "28a-arabic-first-name-label-accessibility")
         assertProfileReadingDirection(app, fieldID: "application.firstName", rightToLeft: true)
         assertProfileLabel(app, fieldID: "application.email", title: "البريد الإلكتروني",
                            value: "saved@example.invalid", screenshot: "28b-arabic-email-label-accessibility")
         assertProfileReadingDirection(app, fieldID: "application.email", rightToLeft: true)
+        let restoredCity = app.textFields["application.city"]; reveal(restoredCity, in: app)
+        assertProfileLabel(app, fieldID: "application.city", title: "المدينة (اختياري)",
+                           value: "Riyadh", screenshot: "28e-arabic-city-label-accessibility")
+        assertProfileReadingDirection(app, fieldID: "application.city", rightToLeft: true)
+        let restoredRoles = element("application.targetRoles", app: app); reveal(restoredRoles, in: app)
+        assertProfileLabel(app, fieldID: "application.targetRoles", title: "الوظائف المستهدفة، مفصولة بفواصل",
+                           value: "Research", screenshot: "28f-arabic-target-roles-label-accessibility", fieldOverride: restoredRoles)
+        assertProfileReadingDirection(app, fieldID: "application.targetRoles", rightToLeft: true,
+                                      fieldOverride: restoredRoles)
         app.navigationBars.buttons["إلغاء"].tap()
         tab("الإعدادات", in: app)
         let english = app.buttons["settings.language.en"]; reveal(english, in: app); english.tap()
