@@ -232,7 +232,7 @@ struct NativeApplicationsScreen: View {
                     .opacity(model.busy || model.connected && model.selected.isEmpty ? 0.65 : 1)
                     if !dynamicTypeSize.isAccessibilitySize {
                         Text(l10n("Confirmed submissions include a provider receipt."))
-                            .font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
+                            .font(.caption2).foregroundStyle(NativeDesign.muted).multilineTextAlignment(.center)
                     }
                 }.padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 10).background(.regularMaterial)
             }
@@ -495,7 +495,7 @@ struct NativeApplicationProfileEditor: View {
             NativeForm {
                 Section {
                     Text(l10n("Use your own experience and the CV you want employers to receive. Saving this profile does not submit an application."))
-                        .font(.subheadline).foregroundStyle(.secondary)
+                        .font(.subheadline).foregroundStyle(.primary)
                 }
                 if let issue { Section { Text(l10n.message(issue)).foregroundStyle(NativeDesign.danger).accessibilityAddTraits(.updatesFrequently) } }
                 if conflicts {
@@ -913,7 +913,7 @@ struct NativeApplicationConnection: View {
                     Text(l10n(model.connected ? "Your application workspace is connected." : "Connect your phone in two steps."))
                         .font(.title3.weight(.semibold))
                     Text(l10n("Your phone draft is uploaded only when you choose to save it to the connected service."))
-                        .font(.subheadline).foregroundStyle(.secondary)
+                        .font(.subheadline).foregroundStyle(.primary)
                 }
                 if model.connected {
                     Section(l10n("Connected service")) {
@@ -937,7 +937,7 @@ struct NativeApplicationConnection: View {
                                 .accessibilityIdentifier("connection.signIn")
                                 .disabled(model.busy)
                             Text(l10n("Choose an available sign-in method, or use Google through ChatGPT. Return to your existing account before connecting another provider; matching emails do not merge workspaces. Create a code, then return here."))
-                                .font(.footnote).foregroundStyle(.secondary)
+                                .font(.footnote).foregroundStyle(.primary)
                         }
                     } else {
                         Section(l10n("1. Get a code")) {

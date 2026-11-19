@@ -117,6 +117,53 @@ try{
     const result=await call({q:'clinical coordinator',location:'London',remote:'remote'});assert.equal(result.data.jobs.length,1);assert.equal(result.data.jobs[0].id,'greenhouse:synthetic:1');assert.equal(result.data.sources[0].availableCount,4);assert.equal(result.data.sources[0].matchedCount,1);
     assert.equal((await call({location:'.*'})).data.jobs.length,0);
   });
+  await check('Latin keywords start at a word boundary instead of matching inside unrelated titles',async()=>{
+    records.set('greenhouse:synthetic',[
+      gh(1,'iOS Engineer'),gh(2,'Senior iOS Developer'),gh(3,'(iOS) Mobile Engineer'),gh(4,'Android / iOS Developer'),
+      gh(5,'BIOS Engineer'),gh(6,'Biostatistician'),gh(7,'BioSystems Engineer'),gh(8,'Embedded bios technician'),
+      gh(9,'iOS17 Engineer'),gh(10,'BIOS / iOS Engineer'),gh(11,'DébiOS Engineer'),gh(12,'Mobile_iOS Engineer'),
+    ]);
+    const result=await call({q:'iOS'});
+    assert.equal(result.status,200);assert.deepEqual(new Set(result.data.jobs.map(job=>job.id)),new Set([1,2,3,4,9,10,12].map(id=>'greenhouse:synthetic:'+id)));
+    assert.equal(result.data.sources[0].availableCount,12);assert.equal(result.data.sources[0].matchedCount,7);assert.equal(result.data.totalMatches,7);
+  });
+  await check('Keyword prefixes, case, accents and literal skill punctuation remain searchable',async()=>{
+    records.set('greenhouse:synthetic',[
+      gh(1,'C++ Engineer'),gh(2,'C# Engineer'),gh(3,'.NET Developer'),gh(4,'ASP.NET Developer'),gh(5,'NET Developer'),
+      gh(6,'AC++ integration'),gh(7,'ABC# Developer'),gh(8,'Senior CAFÉ Developer'),gh(9,'Décafé Designer'),gh(10,'Cafe Engineering'),
+      gh(11,'Software Engineer'),gh(12,'Engineering Manager'),gh(13,'Reengineering Specialist'),gh(14,'C++.* Specialist'),
+    ]);
+    const matches=async q=>new Set((await call({q})).data.jobs.map(job=>job.id));
+    const ids=values=>new Set(values.map(id=>'greenhouse:synthetic:'+id));
+    assert.deepEqual(await matches('C++'),ids([1,14]));assert.deepEqual(await matches('c#'),ids([2]));
+    assert.deepEqual(await matches('.NET'),ids([3,4]));assert.deepEqual(await matches('C++.*'),ids([14]));
+    assert.deepEqual(await matches('CaFÉ'),ids([8,10]));assert.deepEqual(await matches('engineer'),ids([1,2,10,11,12]));
+  });
+  await check('Arabic and continuous-script searches keep substring matching at mixed-script boundaries',async()=>{
+    records.set('greenhouse:synthetic',[
+      gh(1,'مطور iOS'),gh(2,'iOS开发工程师'),gh(3,'开发iOS工程师'),gh(4,'تطويرiOS'),
+      gh(5,'مهندس برمجيات'),gh(6,'المهندس المدني'),gh(7,'软件工程师'),gh(8,'BIOS工程师'),
+    ]);
+    const matches=async q=>new Set((await call({q})).data.jobs.map(job=>job.id));
+    const ids=values=>new Set(values.map(id=>'greenhouse:synthetic:'+id));
+    assert.deepEqual(await matches('iOS'),ids([1,2,3,4]));assert.deepEqual(await matches('مُهَنْدِس'),ids([5,6]));
+    assert.deepEqual(await matches('工程'),ids([2,3,7,8]));
+  });
+  await check('All keywords can span public metadata while location retains literal substring matching',async()=>{
+    records.set('lever:global:synthetic',[
+      {...lever(1,'iOS Engineer','New York'),descriptionPlain:'Swift apps'},
+      {...lever(2,'iOS Engineer','New York'),descriptionPlain:'Kotlin apps'},
+      {...lever(3,'BIOS Engineer','New York'),descriptionPlain:'Swift apps'},
+      {...lever(4,'Backend Engineer','Yorkshire'),descriptionPlain:'Uses iOS and Swift'},
+      {...lever(5,'iOS Engineer','Paris'),descriptionPlain:'Swift apps'},
+    ]);
+    const result=await call({sources:['lever:global:synthetic'],q:'IOS swift',location:'ork'});
+    assert.deepEqual(new Set(result.data.jobs.map(job=>job.id)),new Set([1,4].map(id=>'lever:global:synthetic:00000000-0000-4000-8000-'+String(id).padStart(12,'0'))));
+    assert.equal(result.data.sources[0].matchedCount,2);assert.equal(result.data.totalMatches,2);
+    records.set('greenhouse:ios-lab',[gh(1,'Platform Engineer'),gh(2,'Accountant')]);
+    const company=await call({sources:['greenhouse:ios-lab'],q:'ios engineer'});
+    assert.deepEqual(company.data.jobs.map(job=>job.id),['greenhouse:ios-lab:1']);
+  });
   await check('Shared board caching survives handler recreation and preserves original observation time',async()=>{
     const initial=await call();time+=120000;handler=createDiscoveryHandler({clock:()=>time,fetchImpl:fixture});const second=await call({q:'opportunity',headers:{'cf-connecting-ip':'192.0.2.8'}});
     assert.equal(calls.length,1);assert.equal(second.data.sources[0].status,'cached');assert.equal(second.data.jobs[0].checkedAt,initial.data.jobs[0].checkedAt);assert.equal(second.data.jobs[0].stale,false);
@@ -126,6 +173,21 @@ try{
     const sources=['greenhouse:alpha','greenhouse:beta'],a=await call({sources}),b=await call({sources,cursor:a.data.nextCursor}),c=await call({sources,cursor:b.data.nextCursor});
     assert.equal(a.data.jobs.length,50);assert.equal(b.data.jobs.length,50);assert.equal(c.data.jobs.length,25);assert.equal(c.data.nextCursor,null);assert.equal(new Set([...a.data.jobs,...b.data.jobs,...c.data.jobs].map(j=>j.id)).size,125);assert.equal(a.data.jobs[0].sourceId,'greenhouse:alpha');assert.equal(a.data.jobs[1].sourceId,'greenhouse:beta');assert.equal(calls.length,2);
     assert.equal((await call({sources,cursor:a.data.nextCursor,q:'changed'})).status,400);
+  });
+  await check('Cursors from the previous substring-matching rule require a fresh search',async()=>{
+    records.set('greenhouse:synthetic',Array.from({length:60},(_,i)=>gh(i+1,'iOS Engineer '+String(i).padStart(3,'0'))));
+    const first=await call({q:'iOS'}),cursor=JSON.parse(Buffer.from(first.data.nextCursor,'base64url').toString('utf8'));
+    // Preserve the actual pre-upgrade cursor's snapshot shape and unchanged
+    // filter hash. Only result-matching semantics changed, not these filters.
+    const row=await cached(),jobs=JSON.parse(row.jobs_json).map(job=>({...job,checkedAt:row.checked_at}));
+    const sha=value=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
+    cursor.s=sha([{id:'greenhouse:synthetic',checkedAt:row.checked_at,rows:jobs.map(job=>job.id),content:sha(jobs)}]);
+    const previous=Buffer.from(JSON.stringify(cursor)).toString('base64url');
+    const rejected=await call({q:'iOS',cursor:previous});assert.equal(rejected.status,409);assert.equal(rejected.data.error.code,'discovery_changed');
+    assert.match(rejected.data.error.message,/Start a new search/);assert.equal(calls.length,1);
+    const changed=await call({q:'BIOS',cursor:previous});assert.equal(changed.status,400);assert.equal(changed.data.error.code,'invalid_query');
+    const next=await call({q:'iOS',cursor:first.data.nextCursor});assert.equal(next.status,200);assert.equal(next.data.jobs.length,10);
+    assert.equal(new Set([...first.data.jobs,...next.data.jobs].map(job=>job.id)).size,60);assert.equal(calls.length,1);
   });
   await check('Refreshing a source invalidates old cursors instead of silently mixing snapshots',async()=>{
     records.set('greenhouse:synthetic',Array.from({length:80},(_,i)=>gh(i+1)));const first=await call();time+=DISCOVERY_LIMITS.freshMilliseconds+1;records.get('greenhouse:synthetic').push(gh(1000));
@@ -334,7 +396,7 @@ try{
     const tokenless=await request('/api/discovery/search?source=greenhouse:runtime',{headers:{Authorization:'Bearer synthetic-not-a-session'}});assert.equal(tokenless.status,'complete');
     assert.equal((await runtimeDB.prepare('SELECT COUNT(*) AS n FROM workspaces').first()).n,0);groups.push('Actual bundled workerd runs eight public discovery requests with real D1 and no account or R2');console.log('PASS',groups.at(-1));
   }finally{await runtime.dispose()}
-  const paths=['server/discovery.mjs','server/discovery-contract.json','app/phone/model.ts','tests/fixtures/discovery-search-v1.json','worker/index.ts','db/schema.ts','tests/hosted-discovery.mjs',...(await readdir(new URL('../drizzle/',import.meta.url))).filter(f=>f.endsWith('.sql')).sort().map(f=>'drizzle/'+f)],sourceHashes={};
+  const paths=['server/discovery.mjs','server/discovery-keywords.mjs','server/discovery-contract.json','app/phone/model.ts','tests/fixtures/discovery-search-v1.json','worker/index.ts','db/schema.ts','tests/hosted-discovery.mjs',...(await readdir(new URL('../drizzle/',import.meta.url))).filter(f=>f.endsWith('.sql')).sort().map(f=>'drizzle/'+f)],sourceHashes={};
   for(const path of paths)sourceHashes[path]=createHash('sha256').update(await readFile(new URL('../'+path,import.meta.url))).digest('hex');
   await writeFile(new URL('./hosted-discovery-verification.json',import.meta.url),JSON.stringify({observedAt:new Date().toISOString(),status:'passed',groups:groups.length,checks:groups,actualWorkerdRequests:workerdRequests,clientSchemaResponses,publicProviderRequests:0,applicationSubmissions:0,scope:'Actual local D1 SQL concurrency/quotas/cache with production discovery handler and synthetic bounded provider GETs; actual bundled workerd public API requests. Every successful response is parsed by the phone client model. Real public source availability is recorded separately.',sourceHashes},null,2)+'\n');
   console.log(JSON.stringify({result:'PASS',groups:groups.length,actualWorkerdRequests:workerdRequests,clientSchemaResponses,employerApplicationPosts:0}));

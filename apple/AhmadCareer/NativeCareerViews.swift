@@ -43,7 +43,8 @@ enum NativeDesign {
     static let surface = adaptive(light: 0xFFFFFF, dark: 0x191E33)
     static let accentSurface = adaptive(light: 0xECEAFF, dark: 0x2A3153)
     static let text = adaptive(light: .label, dark: 0xF3F0E9)
-    static let muted = adaptive(light: .secondaryLabel, dark: 0xBBC3DD)
+    // Opaque secondary ink keeps small instructions legible on light cards.
+    static let muted = adaptive(light: 0x54545A, dark: 0xBBC3DD)
     static let border = adaptive(light: .separator, dark: 0x3B4563)
     static let danger = adaptive(light: .systemRed, dark: 0xFFB5C2)
 }
@@ -60,7 +61,7 @@ struct NativeScrollPalette: ViewModifier {
             .scrollContentBackground(colorScheme == .dark ? .hidden : .automatic)
             .background(colorScheme == .dark ? NativeDesign.canvas : Color.clear)
             .foregroundStyle(colorScheme == .dark ? NativeDesign.text : Color.primary,
-                             colorScheme == .dark ? NativeDesign.muted : Color.secondary)
+                             NativeDesign.muted)
             .toolbarBackground(colorScheme == .dark ? AnyShapeStyle(NativeDesign.canvas) : AnyShapeStyle(.bar),
                                for: .navigationBar, .tabBar)
             .toolbarBackground(colorScheme == .dark ? .visible : .automatic,

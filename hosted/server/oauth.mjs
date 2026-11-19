@@ -60,7 +60,7 @@ async function requestJSON(request) {
   const reader = request.body?.getReader(); if (!reader) fail('invalid_json','A JSON request body is required.',400);
   let bytes = 0; const chunks = [];
   try {
-    for (;;) { const {value,done} = await reader.read(); if (done) break; bytes += value.byteLength; if (bytes > MAX_JSON_BYTES) { await reader.cancel(); fail('body_too_large','This account request is too large.',413); } chunks.push(value); }
+    for (;;) { const {value,done} = await reader.read(); if (done) break; bytes += value.byteLength; if (bytes > MAX_JSON_BYTES) { void reader.cancel().catch(() => {}); fail('body_too_large','This account request is too large.',413); } chunks.push(value); }
   } finally { reader.releaseLock(); }
   try { return JSON.parse(Buffer.concat(chunks).toString('utf8')); } catch { fail('invalid_json','This account request is not valid JSON.',400); }
 }
@@ -73,12 +73,14 @@ export function createOAuthHandler({fetchImpl = fetch, clock = Date.now} = {}) {
     const timeout = setTimeout(() => { controller.abort(); reader?.cancel().catch(() => {}); }, PROVIDER_TIMEOUT);
     try {
       const response = await fetchImpl(address,{...options,redirect:'manual',signal:controller.signal});
-      if (response.status !== 200 || !/^application\/(?:json|jwk-set\+json)(?:\s*;|$)/i.test(response.headers.get('content-type') ?? '')) { await response.body?.cancel(); fail('provider_response_invalid','The provider could not complete this connection. Start again.',502); }
+      // Start cleanup without making a known rejection wait for upstream
+      // cancellation; its promise can reject or remain pending after abort.
+      if (response.status !== 200 || !/^application\/(?:json|jwk-set\+json)(?:\s*;|$)/i.test(response.headers.get('content-type') ?? '')) { void response.body?.cancel().catch(() => {}); fail('provider_response_invalid','The provider could not complete this connection. Start again.',502); }
       const declared = Number(response.headers.get('content-length') ?? 0);
-      if (!Number.isFinite(declared) || declared < 0 || declared > maxBytes) { await response.body?.cancel(); fail('provider_response_invalid','The provider returned an invalid response. Start again.',502); }
+      if (!Number.isFinite(declared) || declared < 0 || declared > maxBytes) { void response.body?.cancel().catch(() => {}); fail('provider_response_invalid','The provider returned an invalid response. Start again.',502); }
       reader = response.body?.getReader(); if (!reader) fail('provider_response_invalid','The provider returned an empty response. Start again.',502);
       const chunks = []; let bytes = 0;
-      for (;;) { const {value,done} = await reader.read(); if (controller.signal.aborted) throw new Error('timeout'); if (done) break; bytes += value.byteLength; if (bytes > maxBytes) { await reader.cancel(); fail('provider_response_invalid','The provider returned an invalid response. Start again.',502); } chunks.push(value); }
+      for (;;) { const {value,done} = await reader.read(); if (controller.signal.aborted) throw new Error('timeout'); if (done) break; bytes += value.byteLength; if (bytes > maxBytes) { void reader.cancel().catch(() => {}); fail('provider_response_invalid','The provider returned an invalid response. Start again.',502); } chunks.push(value); }
       let data; try { data = JSON.parse(Buffer.concat(chunks).toString('utf8')); } catch { fail('provider_response_invalid','The provider returned an invalid response. Start again.',502); }
       if (!data || typeof data !== 'object' || Array.isArray(data)) fail('provider_response_invalid','The provider returned an invalid response. Start again.',502);
       return data;
