@@ -1055,10 +1055,14 @@ final class CareerFinderUITests: XCTestCase {
         XCTAssertTrue(retry.isEnabled && retry.isHittable)
         captureObservation("08a-retry-before-newer-draft", app: app, details: "submitted=Interface designer\nnewerDraft=nothing matches")
         retry.tap()
-        let recovered = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-            !issue.exists && role.exists
-        }, object: nil)
-        let retryResult = XCTWaiter.wait(for: [recovered], timeout: 5)
+        // Retry replaces the error and result rows. Read the current typed
+        // collections and wait until the previous nonmatching row is gone.
+        // Keep the same five-second window and reject a late observation.
+        let retryResult = waitForObservation(timeout: 5) {
+            app.staticTexts.matching(identifier: "discovery.error").count == 0 &&
+                app.buttons.matching(identifier: "discovery.job.fixture-design").count == 1 &&
+                app.buttons.matching(identifier: "discovery.job.fixture-engineer").count == 0
+        }
         captureObservation("08b-retry-recovered-submitted-search", app: app, details: "retryWait=\(retryResult)")
         XCTAssertEqual(retryResult, .completed, "Retry must actually replace the failure with the matching submitted search result")
         XCTAssertFalse(app.buttons["discovery.retry"].exists)
