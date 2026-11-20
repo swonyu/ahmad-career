@@ -175,7 +175,11 @@ final class CareerFinderUITests: XCTestCase {
         // SwiftUI searchable fields occupy the navigation bar, unlike Form fields.
         // Include that region only for an actual search field; keyboard/accessory
         // exclusion still applies through the same viewport calculation.
-        let includingNavigation = field.elementType == .searchField
+        let fieldType = field.elementType
+        let includingNavigation = fieldType == .searchField
+        let scrollableInput = fieldType == .textField || fieldType == .textView || fieldType == .secureTextField
+        var containingScroll: XCUIElement?
+        var resolvedScrollQuery = false
         for attempt in 0...10 {
             let viewport = profileViewport(in: app, includingNavigation: includingNavigation)
             let frame = field.frame
@@ -183,6 +187,47 @@ final class CareerFinderUITests: XCTestCase {
                 && frame.width.isFinite && frame.height.isFinite
             if finite && !frame.isEmpty && viewport.contains(frame) && field.isHittable { return true }
             guard attempt < 10, viewport.height > 120 else { break }
+            // Correct an identified Form/List input's observed overflow on its
+            // own scroll surface. Navigation search fields keep their existing
+            // path because their editor is outside the list's content hierarchy.
+            if scrollableInput && finite && !frame.isEmpty && frame.height <= viewport.height,
+               frame.minX >= viewport.minX && frame.maxX <= viewport.maxX,
+               frame.minY < viewport.minY || frame.maxY > viewport.maxY {
+                if !resolvedScrollQuery {
+                    let identifier = field.identifier
+                    if !identifier.isEmpty {
+                        containingScroll = app.collectionViews.containing(fieldType, identifier: identifier).firstMatch
+                    }
+                    resolvedScrollQuery = true
+                }
+                if let scroll = containingScroll, scroll.exists {
+                    // Cache only the query relationship; resolve current bounds
+                    // again for every admitted drag, never a retained viewport.
+                    let surface = scroll.frame.intersection(viewport).insetBy(dx: 4, dy: 4)
+                    if !surface.isNull, surface.minX.isFinite, surface.minY.isFinite,
+                       surface.width.isFinite, surface.height.isFinite,
+                       surface.width > 16, surface.height > 48,
+                       let x = [surface.minX + 8, surface.maxX - 8].first(where: {
+                           $0 <= frame.minX - 8 || $0 >= frame.maxX + 8
+                       }) {
+                        let downward = frame.minY < viewport.minY
+                        let correction = downward ? viewport.minY - frame.minY + 8 : frame.maxY - viewport.maxY + 8
+                        let containmentRoom = downward ? viewport.maxY - frame.maxY : frame.minY - viewport.minY
+                        // Keep the existing coarse reach for distant inputs.
+                        // Near an edge, use observed overflow with a 32-point
+                        // pan floor; the opposite edge and surface still cap it.
+                        let maximumDistance = min(min(180, viewport.height * 0.36), surface.height - 16)
+                        let distance = min(max(32, correction), min(maximumDistance, containmentRoom))
+                        if distance >= 32 {
+                            let origin = app.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0))
+                            let from = origin.withOffset(CGVector(dx: x, dy: surface.midY + (downward ? -distance / 2 : distance / 2)))
+                            let to = origin.withOffset(CGVector(dx: x, dy: surface.midY + (downward ? distance / 2 : -distance / 2)))
+                            from.press(forDuration: 0.05, thenDragTo: to, withVelocity: .slow, thenHoldForDuration: 0.2)
+                            continue
+                        }
+                    }
+                }
+            }
             // A field can be hittable while its tap center is under the keyboard
             // accessory. Scroll inside the actual content viewport before tapping.
             let downward = finite && frame.midY < viewport.midY
@@ -717,7 +762,7 @@ final class CareerFinderUITests: XCTestCase {
         app.buttons["Done typing"].tap()
         XCTAssertTrue(app.buttons["application.openLinkedIn"].exists || app.links["application.openLinkedIn"].exists,
                       "A valid saved profile offers an explicit external open action")
-        let roles = element("application.targetRoles", app: app); reveal(roles, in: app)
+        let roles = app.textFields["application.targetRoles"]; reveal(roles, in: app)
         replace(roles, with: "Research", in: app)
         finishTyping(in: app)
         app.navigationBars.buttons["Save"].tap()
@@ -1218,7 +1263,7 @@ final class CareerFinderUITests: XCTestCase {
         let city = app.textFields["application.city"]; reveal(city, in: app)
         replace(city, with: "Riyadh", in: app)
         finishTyping(in: app)
-        let roles = element("application.targetRoles", app: app); reveal(roles, in: app)
+        let roles = app.textFields["application.targetRoles"]; reveal(roles, in: app)
         replace(roles, with: "Research", in: app)
         app.navigationBars.buttons["Cancel"].tap()
         XCTAssertTrue(app.buttons["Save draft on this phone"].waitForExistence(timeout: 5))
