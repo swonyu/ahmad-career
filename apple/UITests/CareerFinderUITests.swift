@@ -19,13 +19,14 @@ final class CareerFinderUITests: XCTestCase {
     }
     @MainActor
     private func tab(_ name: String, in app: XCUIApplication) {
-        let button = app.tabBars.buttons[name]
-        // A tab may exist behind a dismissing sheet. Use the existing wait for
-        // both requirements before the same real navigation tap.
-        let reachable = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-            button.exists && button.isHittable
-        }, object: nil)
-        let readiness = XCTWaiter.wait(for: [reachable], timeout: 5)
+        let matchingTabs = app.tabBars.buttons.matching(identifier: name)
+        let button = matchingTabs.element(boundBy: 0)
+        // Check the current matching collection before live hittability.
+        // Keep one unique tab and the same five-second deadline before
+        // the unchanged navigation tap.
+        let readiness = waitForObservation(timeout: 5) {
+            matchingTabs.count == 1 && button.isHittable
+        }
         if readiness != .completed {
             captureObservation("tab-not-reachable", app: app, details: "Tab: \(name)")
         }
@@ -397,24 +398,23 @@ final class CareerFinderUITests: XCTestCase {
         }
         XCTAssertTrue(hasVisibleHittableFrame(done, in: app), "Done typing must be reachable")
         done.tap()
-        let keyboard = app.keyboards.firstMatch
+        let keyboards = app.keyboards
         let keys = app.keyboards.keys
         let actions = app.buttons.matching(identifier: "Done typing")
-        // Each remote accessibility query can take seconds on the CI simulator.
-        // Observe the three original requirements serially so one expensive
-        // collection lookup cannot consume another condition's entire wait.
+        // Resolve current collections inside each bounded observation: an absent
+        // retained firstMatch can retry while the keyboard is already gone.
+        // Keep all three dismissal requirements as separate five-second gates.
         let observations: [(String, () -> Bool)] = [
-            ("keyboard container", { !self.hasVisibleHittableFrame(keyboard, in: app) }),
+            ("keyboard container", { !keyboards.allElementsBoundByIndex.contains { self.hasVisibleHittableFrame($0, in: app) } }),
             ("typing keys", { !keys.allElementsBoundByIndex.contains { self.hasVisibleHittableFrame($0, in: app) } }),
             ("Done actions", { !actions.allElementsBoundByIndex.contains { self.hasVisibleHittableFrame($0, in: app) } })
         ]
         for (stage, isDismissed) in observations {
             var lastObserved = false
-            let dismissed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            let result = waitForObservation(timeout: 5) {
                 lastObserved = isDismissed()
                 return lastObserved
-            }, object: nil)
-            let result = XCTWaiter.wait(for: [dismissed], timeout: 5)
+            }
             if result != .completed {
                 captureObservation("keyboard-dismissal-incomplete", app: app,
                                    details: "Dismissal stage: \(stage); last observed dismissed: \(lastObserved)")
