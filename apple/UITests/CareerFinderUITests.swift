@@ -1235,11 +1235,51 @@ final class CareerFinderUITests: XCTestCase {
         reveal(restored, in: app)
         XCTAssertTrue(restored.isSelected, "Appearance must survive an app relaunch")
         let restoredTabs = ["Start", "Search", "Apply", "Saved", "Settings"].map { app.tabBars.buttons[$0] }
-        let tabsReady = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-            restoredTabs.allSatisfy { $0.exists && $0.isHittable && !$0.frame.isEmpty && app.frame.contains($0.frame) }
-                && app.tabBars.buttons["Settings"].isSelected && restored.isSelected
-        }, object: nil)
-        let settled = XCTWaiter.wait(for: [tabsReady], timeout: 5)
+        @MainActor
+        func snapshotTree(_ root: any XCUIElementSnapshot) -> [any XCUIElementSnapshot] {
+            var elements = [root], index = 0
+            while index < elements.count {
+                elements.append(contentsOf: elements[index].children)
+                index += 1
+            }
+            return elements
+        }
+        let settled = waitForObservation(timeout: 5) {
+            // One fresh hierarchy supplies this probe's geometry and selection;
+            // the same five actual tabs still need independent live hit tests.
+            guard let snapshot = try? app.snapshot() else { return false }
+            let viewport = snapshot.frame
+            guard viewport.origin.x.isFinite, viewport.origin.y.isFinite,
+                  viewport.width.isFinite, viewport.height.isFinite,
+                  viewport.width > 0, viewport.height > 0 else { return false }
+            let elements = snapshotTree(snapshot)
+            let tabBars = elements.filter { $0.elementType == .tabBar }
+            let darkChoices = elements.filter {
+                $0.elementType == .button && $0.identifier == "settings.appearance.dark"
+            }
+            guard tabBars.count == 1, darkChoices.count == 1,
+                  darkChoices[0].isSelected else { return false }
+            let expectedNames = ["Start", "Search", "Apply", "Saved", "Settings"]
+            let currentTabs = snapshotTree(tabBars[0]).filter { $0.elementType == .button }
+            guard currentTabs.count == expectedNames.count,
+                  Set(currentTabs.map { $0.label }) == Set(expectedNames),
+                  currentTabs.first(where: { $0.label == "Settings" })?.isSelected == true else { return false }
+            for name in expectedNames {
+                guard let tab = currentTabs.first(where: { $0.label == name }) else { return false }
+                let frame = tab.frame
+                guard frame.origin.x.isFinite, frame.origin.y.isFinite,
+                      frame.width.isFinite, frame.height.isFinite,
+                      frame.width > 0, frame.height > 0,
+                      viewport.contains(frame) else { return false }
+                // Match label and identity within the typed live tab query. Each
+                // unique result is index-bound without assuming snapshot order.
+                let matches = app.tabBars.buttons.matching(NSPredicate(
+                    format: "label == %@ AND identifier == %@", name, tab.identifier
+                )).allElementsBoundByIndex
+                guard matches.count == 1, matches[0].isHittable else { return false }
+            }
+            return true
+        }
         captureObservation("24a-settings-dark-restored-large-text", app: app,
                            details: "post-relaunch=true\nselectedDark=\(restored.isSelected)\nwindow=\(app.frame)\ntabs=\(restoredTabs.map { "\($0.label):\($0.frame)" })")
         XCTAssertEqual(settled, .completed, "Retain a post-relaunch dark pose with every actual tab visible before changing appearance")
