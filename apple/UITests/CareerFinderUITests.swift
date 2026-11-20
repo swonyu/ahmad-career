@@ -884,8 +884,8 @@ final class CareerFinderUITests: XCTestCase {
         reveal(app.textFields["opportunity.location"], in: app)
         assertProfileLabel(app, fieldID: "opportunity.location", title: "Location or remote",
                            value: "Riyadh", screenshot: "05d-restored-opportunity-location-label")
-        top(app)
-        reveal(app.textFields["opportunity.company"], in: app)
+        // The restored draft is clean, so a whole-sheet downward swipe can dismiss it.
+        // Let replace reveal the field directionally inside the content viewport.
         replace(app.textFields["opportunity.company"], with: "Example employer", in: app)
         app.buttons["opportunity.save"].tap()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 5))
