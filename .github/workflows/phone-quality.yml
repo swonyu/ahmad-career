@@ -336,6 +336,15 @@ jobs:
           print('Created fresh CI device', fresh_name, identifier, 'using', device_type, runtime)
       - name: Verify simulator boot evidence parser fixtures
         run: python3 apple/Checks/test-simulator-boot.py
+      - name: Configure software keyboard preference for the owned CI iPhone
+        shell: bash
+        timeout-minutes: 1
+        run: |
+          set -euo pipefail
+          python3 apple/Checks/configure-simulator-input.py \
+            --selection "$RUNNER_TEMP/career-iphone-selection.json" \
+            --device "$CAREER_UI_DEVICE" \
+            --output "$RUNNER_TEMP/career-iphone-input-configuration.json"
       - name: Boot selected iPhone and wait for readiness
         shell: bash
         # Strict readiness took 187s in run 44368339432, including UUID inventory.
@@ -409,6 +418,7 @@ jobs:
           name: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-connection' && 'PARTIAL-iphone-connection-regression' || 'iphone-ui-acceptance' }}-${{ github.run_id }}
           path: |
             ${{ runner.temp }}/career-iphone-selection.json
+            ${{ runner.temp }}/career-iphone-input-configuration.json
             ${{ runner.temp }}/career-iphone-boot.log
             ${{ runner.temp }}/career-iphone-boot-devices.json
             ${{ runner.temp }}/career-iphone-boot-devices.stderr
