@@ -469,6 +469,7 @@ private struct NativeModernRecordSummary: View {
             if !record.appliedOn.isEmpty { Text(l10n.format("Application date · {0}", [l10n.civilDate(record.appliedOn)])).font(.subheadline) }
             if !record.followUpOn.isEmpty { Text(l10n.format("Follow-up date · {0}", [l10n.civilDate(record.followUpOn)])).font(.subheadline) }
             if !record.note.isEmpty { Text(record.note).font(.subheadline).textSelection(.enabled).fixedSize(horizontal: false, vertical: true) }
+            NativeApplicationDetails(resumeName: record.manualResumeName, profileRevision: nil, contextID: "record." + record.id, manual: true)
             Text(l10n("On this phone")).font(.caption).foregroundStyle(.secondary)
         }.accessibilityElement(children: .contain)
     }
@@ -489,6 +490,7 @@ private struct NativeModernRecordEditor: View {
     @State private var clearApplied = false
     @State private var closingIntentionally = false
     @FocusState private var noteFocused: Bool
+    @FocusState private var filenameFocused: Bool
     init(model: NativeApplicationsStore, job: [String: ApplicationValue]) {
         self.model = model; self.job = job
         let record = model.currentRecord(for: job), original = PhoneRecordDraft(record), context = model.recordEditContext(for: job)
@@ -545,6 +547,16 @@ private struct NativeModernRecordEditor: View {
                     Text(l10n("Leave the application date blank if you do not know it. Dates keep the day you selected when your time zone changes. Follow-ups appear in Saved; no notification or message is sent."))
                 }
                 Section {
+                    TextField(l10n("CV filename (optional)"), text: Binding(
+                        get: { draft.manualResumeName ?? "" },
+                        set: { draft.manualResumeName = $0.isEmpty ? nil : $0 }
+                    ), prompt: Text(verbatim: "CV-A.pdf"))
+                        .textInputAutocapitalization(.never).autocorrectionDisabled().focused($filenameFocused)
+                        .accessibilityIdentifier("record.manualResumeName")
+                } header: { Text(l10n("Application details")) } footer: {
+                    Text(l10n("A filename you record yourself. No PDF is attached."))
+                }
+                Section {
                     TextEditor(text: $draft.note).frame(minHeight: 140).focused($noteFocused)
                         .accessibilityLabel(l10n("Private application note")).accessibilityIdentifier("record.note")
                     Text(l10n.format("{0} / 2,000 characters", [String(describing: draft.note.unicodeScalars.count)])).font(.caption).foregroundStyle(.secondary)
@@ -555,16 +567,16 @@ private struct NativeModernRecordEditor: View {
                 .navigationTitle(l10n("Your application record")).navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        Button(l10n("Cancel")) { noteFocused = false; if changed { discard = true } else { dismiss() } }
+                        Button(l10n("Cancel")) { noteFocused = false; filenameFocused = false; if changed { discard = true } else { dismiss() } }
                     }
                     ToolbarItem(placement: .confirmationAction) {
                         Button(l10n("Save")) {
-                            noteFocused = false
+                            noteFocused = false; filenameFocused = false
                             if baseWasApplied && draft.stage == .saved && original.stage != .saved { clearApplied = true }
                             else { save() }
                         }.disabled(model.busy || context == nil).accessibilityIdentifier("record.save")
                     }
-                    ToolbarItemGroup(placement: .keyboard) { Spacer(); Button(l10n("Done typing")) { noteFocused = false } }
+                    ToolbarItemGroup(placement: .keyboard) { Spacer(); Button(l10n("Done typing")) { noteFocused = false; filenameFocused = false } }
                 }
                 .alert(l10n("Discard your unsaved record changes?"), isPresented: $discard) {
                     Button(l10n("Discard changes"), role: .destructive) {

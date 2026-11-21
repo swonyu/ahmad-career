@@ -91,6 +91,42 @@ struct MobileApplicationCheck {
         check(!MobileApplicationPolicy.isVerified(malformed), "Unknown evidence mode fails closed")
         check(MobileApplicationPolicy.stateTitle("confirmed", test: true) == "Test receipt", "Test receipts stay labeled")
         check(MobileApplicationPolicy.stateTitle("uncertain") == "Needs verification", "Uncertainty is visible")
+        check(MobileApplicationPolicy.stateTitle("ready") == "Prepared draft", "A prepared draft never claims submission")
+        let historicalCV: [String: ApplicationValue] = ["resumeName": .string("CV-A.pdf"), "profileRevision": .number(7)]
+        let historicalDetails = ApplicationCVDetails(attempt: historicalCV)
+        check(historicalDetails.resumeName == "CV-A.pdf" && historicalDetails.profileRevision == 7,
+              "Attempt details use the immutable reviewed filename and profile revision")
+        let reviewedDetails = ApplicationCVDetails(reviewItem: ["resume": .object(["name": .string("سيرة-أ.PDF")])],
+                                                  plan: ["profileRevision": .number(0)])
+        check(reviewedDetails.resumeName == "سيرة-أ.PDF" && reviewedDetails.profileRevision == 0,
+              "Review details preserve an original Unicode filename and an explicit zero revision")
+        let oldDetails = ApplicationCVDetails(attempt: ["profile": .object(["resume": .object(["name": .string("Current-B.pdf")])])])
+        check(oldDetails.resumeName == nil && oldDetails.profileRevision == nil,
+              "Missing historical metadata never falls back to a nested current profile or revision zero")
+        for invalid in [ApplicationValue.null, .bool(true), .number(1), .string(""), .string(" CV-A.pdf"), .string("CV-A.pdf "),
+             .string("../CV-A.pdf"), .string("folder\\CV-A.pdf"), .string("CV:A.pdf"), .string(".CV-A.pdf"),
+             .string("CV-A.txt"), .string("CV\nA.pdf"), .string("CV\u{007f}A.pdf"), .string(String(repeating: "x", count: 177) + ".pdf"),
+             .string(String(repeating: "😀", count: 89) + ".pdf")] {
+            check(ApplicationCVDetails(attempt: ["resumeName": invalid, "profileRevision": .number(7)]).resumeName == nil,
+                  "Unsafe or malformed historical filename is not rendered as a recorded CV")
+        }
+        for invalid in [ApplicationValue.null, .bool(true), .string("7"), .number(-1), .number(1.5), .number(.infinity)] {
+            check(ApplicationCVDetails(attempt: ["resumeName": .string("CV-A.pdf"), "profileRevision": invalid]).profileRevision == nil,
+                  "Only a supplied nonnegative integer becomes a profile version")
+        }
+        check(ApplicationCVDetails(attempt: ["resumeName": .string(String(repeating: "x", count: 176) + ".pdf")]).resumeName != nil,
+              "A recorded PDF filename accepts the exact 180 UTF-16-unit boundary")
+        let validManualNames: [String?] = [nil, "", "سيرة ذاتية.pdf", "CV-A.txt", ".private-note", String(repeating: "x", count: 180)]
+        for name in validManualNames {
+            check(MobileApplicationPolicy.manualResumeNameIsValid(name), "A bounded self-entered filename note does not pretend to validate a PDF")
+        }
+        for name in ["/Users/example/CV.pdf", "folder\\CV.pdf", "CV:copy.pdf", "CV\tcopy.pdf", "CV\u{007f}.pdf", String(repeating: "x", count: 181)] {
+            check(!MobileApplicationPolicy.manualResumeNameIsValid(name), "Manual filename notes reject full paths, controls and overlong values")
+        }
+        for state in ["ready", "dispatching", "uncertain", "rate_limited", "rejected", "blocked", "cancelled"] {
+            var named = good; named["state"] = .string(state); named["resumeName"] = .string("CV-A.pdf"); named["profileRevision"] = .number(7)
+            check(!MobileApplicationPolicy.isVerified(named), "A recorded CV filename cannot turn a non-confirmed state into a receipt")
+        }
         let job = "https://jobs.lever.co/example/00000000-0000-4000-8000-000000000001"
         check(MobileApplicationPolicy.jobIdentity(job) == MobileApplicationPolicy.jobIdentity(job + "/apply?utm_source=link#top"),
               "Application URL variants preserve duplicate identity")

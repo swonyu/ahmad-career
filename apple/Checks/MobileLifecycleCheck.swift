@@ -538,7 +538,8 @@ private final class LifecycleSuite {
             }
             newService.handle = { call in
                 if call.route == "session" { return ["ok": .bool(true), "sessionToken": .string("new-synthetic-token"), "workspaceId": .string("workspace-b"), "profile": .object(self.server(0, name: "Different person", resume: self.metadata(oldPDF)))] }
-                return self.workspace(0, name: "Different person", jobs: [["id": .string("new-job"), "url": .string("https://jobs.example/new"), "title": .string("New role"), "company": .string("New company")]], workspace: "workspace-b")
+                return self.workspace(0, name: "Different person", jobs: [["id": .string("new-job"), "url": .string("https://jobs.example/new"), "title": .string("New role"), "company": .string("New company")]],
+                    attempts: [["id": .string("shared-attempt-id"), "state": .string("ready"), "resumeName": .string("Workspace-B.pdf"), "profileRevision": .number(0)]], workspace: "workspace-b")
             }
             let (store, folder, _) = try fixture(state, service: oldService, factory: { url, token in
                 let service = url.host == "second.example" ? newService : oldService; service.token = token; return service
@@ -547,9 +548,13 @@ private final class LifecycleSuite {
             let connected = await store.connect(address: "https://SECOND.example:443/", code: "SYNTHETIC")
             try check(connected && store.serviceAddress == "https://second.example", "New connection uses a canonical service origin")
             if returnError { gate.fail(MobileApplicationError(message: "Old token expired", statusCode: 401)) }
-            else { gate.finish(workspace(99, name: "Old reply", jobs: [["id": .string("old-job")]])) }
+            else { gate.finish(workspace(99, name: "Old reply", jobs: [["id": .string("old-job")]],
+                attempts: [["id": .string("shared-attempt-id"), "state": .string("ready"), "resumeName": .string("Workspace-A.pdf"), "profileRevision": .number(99)]])) }
             _ = await oldGET.value
             try check(store.connected && store.jobs.first?["id"]?.string == "new-job", "Obsolete connection response/error cannot repopulate or disconnect the new workspace")
+            try check(store.attempts.count == 1 && ApplicationCVDetails(attempt: store.attempts[0]).resumeName == "Workspace-B.pdf"
+                      && ApplicationCVDetails(attempt: store.attempts[0]).profileRevision == 0,
+                      "A delayed old-owner attempt cannot replace the new workspace's filename even when its attempt ID matches")
             try check(!store.profileNeedsSync && store.revision == 0 && store.profile.firstName == "Different person", "A different workspace displays only its own profile without adopting the previous person's draft")
             try check(store.profile.resumeName.isEmpty && store.profile.resumeData == nil
                       && store.profile.resumeSize == nil && store.profile.resumeSHA256 == nil,
@@ -718,7 +723,77 @@ private final class LifecycleSuite {
         }
         try await runLiveSubmissionCapability()
         try await runHostedContinuation()
+        try await runReviewedCVHistory()
         try await runPrivateRecords()
+    }
+
+    func runReviewedCVHistory() async throws {
+        var cvA = PhoneApplicationProfile(); try cvA.selectResume(pdf, filename: "CV-A.pdf")
+        var cvB = PhoneApplicationProfile(); try cvB.selectResume(pdf, filename: "CV-B.pdf")
+        try check(cvA.resumeSHA256 == cvB.resumeSHA256, "The fixture deliberately uses identical PDF bytes under different display filenames")
+        let jobA: [String: ApplicationValue] = ["id": .string("cv-job-a"), "url": .string("https://jobs.example/cv-a"), "title": .string("Designer A"), "company": .string("Synthetic Studio")]
+        let jobB: [String: ApplicationValue] = ["id": .string("cv-job-b"), "url": .string("https://jobs.example/cv-b"), "title": .string("Designer B"), "company": .string("Synthetic Studio")]
+        func cvReview(_ id: String, profile: PhoneApplicationProfile, revision: Int, job: [String: ApplicationValue]) -> [String: ApplicationValue] {
+            var plan = review(id, revision: revision), item = review(id, revision: revision)["items"]!.array[0].object
+            item["jobId"] = job["id"]; item["job"] = .object(job); item["resume"] = metadata(profile)
+            plan["items"] = .array([.object(item)]); return plan
+        }
+        let planA = cvReview("cv-plan-a", profile: cvA, revision: 3, job: jobA)
+        let planB = cvReview("cv-plan-b", profile: cvB, revision: 4, job: jobB)
+        let attemptA: [String: ApplicationValue] = ["id": .string("cv-attempt-a"), "planId": .string("cv-plan-a"), "state": .string("ready"),
+            "jobId": jobA["id"]!, "resumeName": .string("CV-A.pdf"), "profileRevision": .number(3), "evidenceMode": .string("test")]
+        let attemptB: [String: ApplicationValue] = ["id": .string("cv-attempt-b"), "planId": .string("cv-plan-b"), "state": .string("ready"),
+            "jobId": jobB["id"]!, "resumeName": .string("CV-B.pdf"), "profileRevision": .number(4), "evidenceMode": .string("test")]
+        let legacy: [String: ApplicationValue] = ["id": .string("legacy-attempt"), "state": .string("uncertain")]
+        let service = TestService(); var savedB = false, preparedA = false, preparedB = false
+        service.handle = { call in
+            switch call.route {
+            case "profile":
+                guard call.method == "PUT", call.body?["expectedRevision"] == .number(3),
+                      call.body?["profile"]?.object["resume"]?.object["name"]?.string == "CV-B.pdf" else {
+                    throw MobileApplicationError(message: "Unexpected synthetic CV profile update")
+                }
+                savedB = true; return ["ok": .bool(true), "profile": .object(self.server(4, resume: self.metadata(cvB)))]
+            case "prepare":
+                if savedB { preparedB = true } else { preparedA = true }
+                return ["ok": .bool(true), "plan": .object(savedB ? planB : planA)]
+            case "workspace":
+                return self.workspace(savedB ? 4 : 3, jobs: [jobA, jobB],
+                    attempts: (preparedA ? [attemptA] : []) + (preparedB ? [attemptB] : []) + [legacy],
+                    plans: (preparedA ? [planA] : []) + (preparedB ? [planB] : []), resume: self.metadata(savedB ? cvB : cvA))
+            default: throw MobileApplicationError(message: "Unexpected synthetic CV history request")
+            }
+        }
+        let (store, folder, tokens) = try fixture(initial(), service: service)
+        let loaded = await store.refresh(); try check(loaded, "The scoped CV-A fixture loads through the real workspace parser")
+        store.selected = ["cv-job-a"]; await store.prepare()
+        try check(store.plan == planA && ApplicationCVDetails(reviewItem: store.plan!["items"]!.array[0].object, plan: store.plan!).resumeName == "CV-A.pdf",
+                  "The native prepare path retains the CV-A name from its actual review item")
+        var selectedB = store.profile; try selectedB.selectResume(pdf, filename: "CV-B.pdf")
+        let saved = await store.saveProfile(selectedB, context: store.editContext)
+        try check(saved && store.profile.resumeName == "CV-B.pdf" && store.revision == 4, "Changing the selected filename records the new profile revision")
+        await store.refresh()
+        try check(ApplicationCVDetails(attempt: store.attempts.first { $0["id"] == attemptA["id"] }!).resumeName == "CV-A.pdf"
+                  && ApplicationCVDetails(attempt: attemptA).profileRevision == 3,
+                  "The earlier attempt keeps CV-A and its reviewed revision after the current profile becomes CV-B")
+        try check(!store.resumeReview(planA), "Historical filename visibility does not make a stale review approvable")
+        let staleSubmit = await store.submitReviewed()
+        try check(!staleSubmit && !service.calls.contains { $0.route == "submit" }, "The stale review sends no approval request")
+        store.selected = ["cv-job-b"]; await store.prepare()
+        try check(store.plan == planB && ApplicationCVDetails(reviewItem: store.plan!["items"]!.array[0].object, plan: store.plan!).resumeName == "CV-B.pdf",
+                  "A new review uses CV-B without rewriting CV-A's attempt")
+        let reopened = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+        try check(reopened.attempts.isEmpty, "Restart does not invent an unscoped local attempt cache")
+        let reloaded = await reopened.refresh()
+        let details = reopened.attempts.map { ApplicationCVDetails(attempt: $0) }
+        try check(reloaded && details.map(\.resumeName) == ["CV-A.pdf", "CV-B.pdf", nil]
+                  && details.map(\.profileRevision) == [3, 4, nil] && reopened.profile.resumeName == "CV-B.pdf",
+                  "An authenticated reload restores both immutable filenames and leaves missing historical metadata absent")
+        try check(service.calls.filter { $0.route == "prepare" }.count == 2
+                  && service.calls.allSatisfy { ["workspace", "profile", "prepare"].contains($0.route) }
+                  && reopened.attempts.allSatisfy { !MobileApplicationPolicy.isVerified($0) },
+                  "Filename display and reload add no submission, upload, approval or verified receipt")
+        scenarios += 1
     }
 
     func runPrivateRecords() async throws {
@@ -778,6 +853,7 @@ private final class LifecycleSuite {
             let service = TestService(); let (store, folder, tokens) = try fixture(state, service: service)
             let context = store.recordEditContext(for: localJob)!
             var draft = PhoneRecordDraft(); draft.stage = .applied; draft.appliedOn = "2026-11-16"; draft.followUpOn = "2026-11-20"; draft.note = "Private follow-up note"
+            draft.manualResumeName = "Manual-CV-A.pdf"
             let before = try Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))
             let canceled = draft; _ = canceled
             let unchanged = try Data(contentsOf: folder.appendingPathComponent("phone-draft.json"))
@@ -786,6 +862,7 @@ private final class LifecycleSuite {
             try check(store.isMarkedApplied(localJob) && store.attempts.isEmpty && service.calls.isEmpty, "A self-reported application creates no receipt or external request")
             let restored = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
             try check(restored.currentRecord(for: localJob)?.note == draft.note && restored.followUpDay(for: localJob) == "2026-11-20", "Private note and civil follow-up date survive a real disk reload")
+            try check(restored.currentRecord(for: localJob)?.manualResumeName == "Manual-CV-A.pdf", "An applied record retains its self-entered filename on reload")
             try check(restored.opportunityDraft.title == "Unrelated draft", "Saving an application record preserves an unrelated opportunity draft")
             var closed = draft; closed.stage = .closed
             try check(store.saveRecord(closed, context: store.recordEditContext(for: localJob)!, now: now) && store.isMarkedApplied(localJob), "Closing an applied application retains duplicate protection")
@@ -981,6 +1058,7 @@ private final class LifecycleSuite {
             let localID = "local-record-job", remoteID = "service-record-job"
             var state = PhoneApplicationState(); state.jobs = [localJob]
             var record = PhoneOpportunityRecord(scope: PhoneRecordScope(), job: PhoneRecordJob(localJob)); record.stage = .applied; record.appliedElsewhere = true; record.note = "Private local applicant note"
+            record.manualResumeName = "Private-CV-A.pdf"
             state.applicationRecords = [record]
             var remoteJob = localJob; remoteJob["id"] = .string(remoteID); remoteJob.removeValue(forKey: "localOnly")
             let first = TestService(), second = TestService(); var destination = first, imported = false
@@ -1010,6 +1088,7 @@ private final class LifecycleSuite {
             try check(request.body?["manualAppliedJobIds"]?.array == [.string(remoteID)], "Explicit local-to-service import maps the durable manual mark to the actual service job ID")
             let serializedBody = String(data: try JSONEncoder().encode(request.body), encoding: .utf8)!
             try check(!serializedBody.contains(record.note) && !serializedBody.contains("followUp") && !serializedBody.contains("appliedOn"), "Only duplicate-prevention IDs leave the phone; private record contents stay local")
+            try check(!serializedBody.contains("manualResumeName") && !serializedBody.contains(record.manualResumeName!), "The self-entered filename never becomes employer payload or an attachment")
             let afterImport = try JSONDecoder().decode(PhoneApplicationState.self, from: Data(contentsOf: folder.appendingPathComponent("phone-draft.json")))
             try check(afterImport.applicationRecords.contains(where: { $0.scope.workspaceID == "workspace-a" && $0.note == record.note })
                 && afterImport.applicationRecords.contains(where: { $0.scope.isLocal && $0.note == record.note }) && store.isMarkedApplied(remoteJob),
@@ -1020,6 +1099,7 @@ private final class LifecycleSuite {
             try check(!store.saveRecord(PhoneRecordDraft(record), context: oldEditor, now: now), "An editor from the previous workspace cannot write after an account switch")
             destination = first; let returned = await store.connect(address: first.origin.absoluteString, code: "PAIR-A")
             try check(returned && store.currentRecord(for: remoteJob)?.note == record.note && store.isMarkedApplied(remoteJob), "Returning to the original workspace restores its private record without re-creating it")
+            try check(store.currentRecord(for: remoteJob)?.manualResumeName == "Private-CV-A.pdf", "The private filename returns only with its original record scope")
             scenarios += 1
         }
         // Conflicting copies retain both versions and conservatively keep the applied mark until explicit correction.

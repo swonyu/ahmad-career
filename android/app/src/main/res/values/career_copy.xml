@@ -50,6 +50,7 @@
     <string name="c_a7740284ec86" formatted="false">"A LinkedIn profile link is optional. It is saved with your application profile and appears in the details you review before sharing with an employer. Saving a link does not connect or verify a LinkedIn account, import its content or grant account access."</string>
     <string name="c_e0d94a160a99" formatted="false">"A confirmed application includes a provider receipt. Opening a job link or preparing a draft never counts as a submission."</string>
     <string name="c_ba8187cc5358" formatted="false">"A draft contains an incomplete character. Correct it before saving; the earlier file is kept."</string>
+    <string name="c_c748bc4d107e" formatted="false">"A filename you record yourself. No PDF is attached."</string>
     <string name="c_4a604c631c51" formatted="false">"A new private workspace is ready. Earlier encrypted files and service records were preserved."</string>
     <string name="c_b1d13f842d4e" formatted="false">"A newer profile was saved elsewhere. Your edits are safe. Compare the versions below before choosing what to keep."</string>
     <string name="c_b0935dd37f79" formatted="false">"A newer saved profile is available"</string>
@@ -138,6 +139,7 @@
     <string name="c_45a0e52940c3" formatted="false">"Application date · {0}"</string>
     <string name="c_b230d4b37edf" formatted="false">"Application date, if known"</string>
     <string name="c_ad0f483f30d2" formatted="false">"Application date, if known, YYYY-MM-DD"</string>
+    <string name="c_d9094d538a44" formatted="false">"Application details"</string>
     <string name="c_fe114005c070" formatted="false">"Application details saved. Review each application before sending."</string>
     <string name="c_6f03e6f5c51b" formatted="false">"Application essentials ready: {0} / 3"</string>
     <string name="c_a346f1126cb5" formatted="false">"Application fingerprint"</string>
@@ -205,7 +207,9 @@
     <string name="c_62a9dba4ddff" formatted="false">"Browse public employer boards without an account, or save a public job link from any country or profession."</string>
     <string name="c_d9ddb46fcac2" formatted="false">"CAREER FINDER — APPLICATION NOTES\nLegacy research reference date (retained records only): {0}\n\n"</string>
     <string name="c_0f5fed1791e0" formatted="false">"CV"</string>
+    <string name="c_a468d99ab09b" formatted="false">"CV filename (optional)"</string>
     <string name="c_c55adff0356e" formatted="false">"CV fingerprint"</string>
+    <string name="c_02ec5f9a81c0" formatted="false">"CV not recorded"</string>
     <string name="c_923d88251c36" formatted="false">"CV stored in this application workspace."</string>
     <string name="c_19766ed6ccb2" formatted="false">"Cancel"</string>
     <string name="c_f657ed08c403" formatted="false">"Cancel preview"</string>
@@ -537,6 +541,7 @@
     <string name="c_689b0e451cc2" formatted="false">"Exported notes include your entered professional details and tracked roles, and exclude country/city/role, planning and display preferences. They leave the app only when you choose a destination in the system share sheet. Review the content before sharing."</string>
     <string name="c_031a8f0f659d" formatted="false">"Failed"</string>
     <string name="c_0b031f668758" formatted="false">"Fetched for this search"</string>
+    <string name="c_7133f2de832e" formatted="false">"Filename you recorded"</string>
     <string name="c_07545e91b899" formatted="false">"Filters changed · search to update results"</string>
     <string name="c_4f5af4200fcb" formatted="false">"Find an employer in the catalog"</string>
     <string name="c_4622feb5d8e0" formatted="false">"Find opportunities"</string>
@@ -909,6 +914,7 @@
     <string name="c_2600748f8e8c" formatted="false">"Prepare your profile"</string>
     <string name="c_37932e60421e" formatted="false">"Prepared"</string>
     <string name="c_2048589e31ad" formatted="false">"Prepared and waiting; not yet dispatched."</string>
+    <string name="c_0c1795b7a112" formatted="false">"Prepared draft"</string>
     <string name="c_cf1aa6cc5951" formatted="false">"Preparing"</string>
     <string name="c_717d140958a2" formatted="false">"Preparing sends nothing to employers. Required custom questions or an unavailable connector will be shown clearly."</string>
     <string name="c_e8822e7def78" formatted="false">"Preserve files and start fresh"</string>
@@ -939,6 +945,7 @@
     <string name="c_bd87f810cb55" formatted="false">"Profile saved privately on this phone."</string>
     <string name="c_f58abf3d062e" formatted="false">"Profile saved to your connected workspace."</string>
     <string name="c_2c72a7dd21a0" formatted="false">"Profile text exceeds the field limit. Shorten it before saving; your existing profile is unchanged."</string>
+    <string name="c_fbdd0904cfa1" formatted="false">"Profile version"</string>
     <string name="c_9595317bd09b" formatted="false">"Prompts from your saved records. Past checks do not establish current availability. Recheck employer information; these are not eligibility decisions or automatic applications."</string>
     <string name="c_472590ae974d" formatted="false">"Provider"</string>
     <string name="c_af0943658ba4" formatted="false">"Provider application ID"</string>
@@ -1098,6 +1105,7 @@
     <string name="c_a0de7bb16481" formatted="false">"Review what will be shared."</string>
     <string name="c_7bef09af94a5" formatted="false">"Review your application profile"</string>
     <string name="c_8ac37b6e6411" formatted="false">"Review your preparation steps and record what you have completed."</string>
+    <string name="c_dc719d269b13" formatted="false">"Reviewed CV"</string>
     <string name="c_b79b3a411c29" formatted="false">"Riyadh"</string>
     <string name="c_730e4a0fc92b" formatted="false">"Role keywords"</string>
     <string name="c_f0765482bd41" formatted="false">"Role keywords, optional"</string>
@@ -1223,6 +1231,7 @@
     <string name="c_57fd7a0cf33f" formatted="false">"Selected"</string>
     <string name="c_5f11024b3298" formatted="false">"Selected details kept on this phone. Other versions remain in record history."</string>
     <string name="c_72311b85c2c3" formatted="false">"Selected: {0} / 30 · Leave empty for no preference."</string>
+    <string name="c_e865afd98564" formatted="false">"Self-entered information. This is not a submission receipt."</string>
     <string name="c_e595f17fac1d" formatted="false">"Sending"</string>
     <string name="c_4b6bb615dcab" formatted="false">"Sending an approved application"</string>
     <string name="c_616058220b62" formatted="false">"Sending is paused on this phone because you requested Stop. Retry Stop to confirm it with the service; this phone will not resume the held review."</string>
@@ -1647,6 +1656,7 @@
     <string name="c_689ef2a43f25" formatted="false">"Use Cancel to save a phone draft, keep editing, or discard changes. Backgrounding the app keeps a local draft without uploading it."</string>
     <string name="c_c11ceb0fc87c" formatted="false">"Use Career Finder"</string>
     <string name="c_b0532421f357" formatted="false">"Use a complete public HTTPS job link."</string>
+    <string name="c_4c97b72587f2" formatted="false">"Use a filename of up to 180 characters without paths or control characters."</string>
     <string name="c_f76975427995" formatted="false">"Use a public jobs.lever.co, jobs.eu.lever.co, boards.greenhouse.io or job-boards.greenhouse.io link."</string>
     <string name="c_70ee1392fb24" formatted="false">"Use a real YYYY-MM-DD due date or leave it blank, and a note up to 500 Unicode characters. A due date or completed action needs a nonblank note."</string>
     <string name="c_ec7c32263ed8" formatted="false">"Use a real application date no later than today in Riyadh, or leave it blank. Notes allow 2,000 characters."</string>

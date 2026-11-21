@@ -276,6 +276,11 @@ final class NativeApplicationsStore: ObservableObject {
         var record = base ?? PhoneOpportunityRecord(scope: context.scope, job: context.job)
         record.stage = draft.stage; record.appliedElsewhere = applied; record.appliedOn = draft.appliedOn
         record.followUpOn = draft.followUpOn; record.note = draft.note
+        guard MobileApplicationPolicy.manualResumeNameIsValid(draft.manualResumeName) else {
+            message = MobileApplicationPolicy.manualResumeNameError; return false
+        }
+        let manualName = draft.manualResumeName?.trimmingCharacters(in: .whitespacesAndNewlines)
+        record.manualResumeName = manualName?.isEmpty == false ? manualName : nil
         record.revision = (base?.revision ?? 0) + 1; record.updatedAt = ISO8601DateFormatter().string(from: now)
         guard record.valid else { message = "Keep the note to 2,000 characters and use readable plain text. Your draft is kept."; return false }
         do {
@@ -1018,6 +1023,9 @@ final class NativeApplicationsStore: ObservableObject {
     @discardableResult
     func keepRecordDraft(_ draft: PhoneRecordDraft, context: PhoneRecordEditContext) -> Bool {
         guard context.connection == sessionGeneration else { return false }
+        guard MobileApplicationPolicy.manualResumeNameIsValid(draft.manualResumeName) else {
+            message = MobileApplicationPolicy.manualResumeNameError; return false
+        }
         let checkpoint = PhoneRecordDraftCheckpoint(scope: context.scope, identity: context.identity, job: context.job,
             recordID: context.recordID, revision: context.revision, draft: draft)
         guard checkpoint.valid else { message = "This unfinished record could not be saved. Keep the note within 2,000 characters and use valid dates."; return false }

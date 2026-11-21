@@ -1836,6 +1836,16 @@
     "{0} of {1} shown": "المعروض: {0} من {1}",
     "No openings are new in the results compared.": "لا توجد فرص جديدة ضمن النتائج التي تمت مقارنتها.",
     "Show all results": "عرض كل النتائج",
-    "New to this search": "جديدة في هذا البحث"
+    "New to this search": "جديدة في هذا البحث",
+    "Application details": "تفاصيل الطلب",
+    "Reviewed CV": "السيرة الذاتية التي تمت مراجعتها",
+    "CV not recorded": "لم يُسجّل ملف السيرة الذاتية",
+    "Profile version": "نسخة الملف الشخصي",
+    "Prepared draft": "مسودة جاهزة للمراجعة",
+    "Filename you recorded": "اسم الملف الذي سجّلته",
+    "CV filename (optional)": "اسم ملف السيرة الذاتية (اختياري)",
+    "A filename you record yourself. No PDF is attached.": "اسم ملف تسجّله بنفسك. لن يُرفق أي ملف PDF.",
+    "Self-entered information. This is not a submission receipt.": "معلومات سجّلتها بنفسك. ليست إيصال إرسال طلب.",
+    "Use a filename of up to 180 characters without paths or control characters.": "استخدم اسم ملف لا يزيد على 180 حرفًا، دون مسارات أو محارف تحكم."
   }
 }

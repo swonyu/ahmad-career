@@ -992,6 +992,7 @@ private final class RecoverySuite {
     }
 
     func run() async throws {
+        try manualCVNames()
         try recoveredDraftRebase()
         try profileLabels()
         try await receipts()
@@ -1001,6 +1002,96 @@ private final class RecoverySuite {
         try oversizedOpportunityExport()
         try oversizedCurrentRestore()
         try savedNoteControls()
+    }
+
+    /// The optional filename is a private note; every persistence path keeps that meaning.
+    func manualCVNames() throws {
+        var job = jobMap("manual-cv", noteTitle: "Synthetic designer")
+        job["id"] = .string("local-manual-cv"); job["localOnly"] = .bool(true)
+        var initialState = PhoneApplicationState(); initialState.jobs = [job]
+        let service = TestService(), (store, folder, tokens) = try fixture(initialState, service: service)
+        let path = folder.appendingPathComponent("phone-draft.json")
+        var draft = PhoneRecordDraft(); draft.manualResumeName = "  CV-A.pdf  "
+        let edit = store.recordEditContext(for: job)!
+        try check(store.saveRecord(draft, context: edit), "A filename-only private record can be saved without an account or attachment")
+        let original = store.currentRecord(for: job)!
+        try check(original.manualResumeName == "CV-A.pdf" && original.meaningful && !original.appliedElsewhere
+                  && original.stage == .saved && store.attempts.isEmpty && service.calls.isEmpty,
+                  "Saving trims the filename note but creates no application mark, receipt or request")
+        try check(PhoneRecordDraft(original).manualResumeName == "CV-A.pdf", "Opening a saved record retains its own filename note")
+        scenarios += 1
+
+        var edited = PhoneRecordDraft(original); edited.manualResumeName = "سيرة-ب.pdf"
+        let current = store.recordEditContext(for: job)!
+        try check(store.keepRecordDraft(edited, context: current), "An unfinished filename edit is checkpointed separately")
+        try check(store.discardRecordDraft(context: current) && store.currentRecord(for: job)?.manualResumeName == "CV-A.pdf",
+                  "Canceling the checkpoint leaves the saved filename unchanged")
+        try check(store.keepRecordDraft(edited, context: current), "The same filename edit can be checkpointed again")
+        let reopened = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+        let reopenedContext = reopened.recordEditContext(for: job)!
+        try check(reopened.currentRecord(for: job)?.manualResumeName == "CV-A.pdf"
+                  && reopened.restoredRecordDraft(for: reopenedContext)?.manualResumeName == "سيرة-ب.pdf",
+                  "A disk reload keeps saved and unfinished filenames distinct")
+        guard let url = reopened.exportWorkspace(context: reopened.workspaceActionContext) else {
+            throw MobileApplicationError(message: "A filename-bearing workspace could not be exported")
+        }
+        let portable = try NativeApplicationsStore.readWorkspaceBackup(at: url)
+        try check(portable.records.map(\.manualResumeName) == ["CV-A.pdf"]
+                  && portable.recordDrafts.map(\.draft.manualResumeName) == ["سيرة-ب.pdf"],
+                  "The common backup explicitly round-trips the record adapter and unfinished filename")
+        let (imported, importedFolder, _) = try fixture(PhoneApplicationState(), service: service)
+        try check(imported.mergeBackup(portable, context: imported.workspaceActionContext), "An explicit backup import accepts the optional filename")
+        let importedState = try savedState(importedFolder)
+        try check(importedState.applicationRecords.map(\.manualResumeName) == ["CV-A.pdf"]
+                  && importedState.recordDrafts.map(\.draft.manualResumeName) == ["سيرة-ب.pdf"]
+                  && imported.attempts.isEmpty && !imported.connected && service.calls.isEmpty,
+                  "Import retains private filename notes without importing receipt or connection authority")
+        scenarios += 1
+
+        let preserved = try Data(contentsOf: path)
+        for bad in ["/Users/example/CV.pdf", "CV\\copy.pdf", "CV:copy.pdf", "CV\ncopy.pdf", String(repeating: "x", count: 181)] {
+            var invalid = edited; invalid.manualResumeName = bad
+            try check(!reopened.saveRecord(invalid, context: reopenedContext)
+                      && reopened.message == MobileApplicationPolicy.manualResumeNameError,
+                      "An unsafe filename cannot overwrite the saved record")
+            try check(!reopened.keepRecordDraft(invalid, context: reopenedContext)
+                      && (try Data(contentsOf: path)) == preserved,
+                      "Invalid filename checkpoints preserve the preceding saved record and recoverable draft bytes")
+        }
+        try check(reopened.saveRecord(edited, context: reopenedContext)
+                  && reopened.currentRecord(for: job)?.manualResumeName == "سيرة-ب.pdf"
+                  && !reopened.isMarkedApplied(job), "An explicit recovered filename save remains self-entered and unapplied")
+        scenarios += 1
+
+        // Old common-format records/drafts omit the optional key and must remain readable.
+        var object = try JSONSerialization.jsonObject(with: JSONEncoder().encode(portable)) as! [String: Any]
+        var contents = object["data"] as! [String: Any]
+        var records = contents["applicationRecords"] as! [[String: Any]]
+        records[0].removeValue(forKey: "manualResumeName"); contents["applicationRecords"] = records
+        var drafts = contents["recordDrafts"] as! [[String: Any]], oldDraft = drafts[0]["draft"] as! [String: Any]
+        oldDraft.removeValue(forKey: "manualResumeName"); drafts[0]["draft"] = oldDraft; contents["recordDrafts"] = drafts; object["data"] = contents
+        let old = try JSONDecoder().decode(PhoneWorkspaceBackup.self, from: JSONSerialization.data(withJSONObject: object))
+        try check(old.valid && old.records[0].manualResumeName == nil && old.recordDrafts[0].draft.manualResumeName == nil,
+                  "An old backup never fabricates a filename from the current profile")
+        var invalidPortable = portable; invalidPortable.records[0].manualResumeName = "/private/CV.pdf"
+        try check(!invalidPortable.valid, "A path in an imported saved filename fails the existing whole-backup validation")
+        scenarios += 1
+
+        // A filename alone is useful history even after its bookmark is removed.
+        try check(reopened.removeLocalJob(reopened.removalContext("local-manual-cv")!), "Removing a bookmark keeps its filename-only private record")
+        try check(reopened.jobs.isEmpty && reopened.savedOpportunities.count == 1
+                  && reopened.currentRecord(for: reopened.savedOpportunities[0])?.manualResumeName == "سيرة-ب.pdf",
+                  "The retained record still exposes its own filename after bookmark removal")
+        var versionState = try savedState(folder), archived = original
+        archived.id = UUID().uuidString; archived.archived = true; versionState.applicationRecords.append(archived)
+        let (versions, _, _) = try fixture(versionState, service: service)
+        let retained = versions.savedOpportunities[0]
+        try check(versions.useRecordVersion(archived.id, context: versions.recordChoiceContext(for: retained)),
+                  "Selecting an archived private version restores that version's filename")
+        try check(versions.currentRecord(for: retained)?.manualResumeName == "CV-A.pdf"
+                  && !versions.isMarkedApplied(retained) && versions.attempts.isEmpty && service.calls.isEmpty,
+                  "Version selection keeps the filename distinct from applied marks and submission evidence")
+        scenarios += 1
     }
 
     /// An unfinished link past the shared limit must not become a backup iPhone would reject entirely.

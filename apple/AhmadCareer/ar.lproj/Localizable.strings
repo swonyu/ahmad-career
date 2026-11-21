@@ -48,6 +48,7 @@
 "A LinkedIn profile link is optional. It is saved with your application profile and appears in the details you review before sharing with an employer. Saving a link does not connect or verify a LinkedIn account, import its content or grant account access." = "رابط الملف الشخصي على LinkedIn اختياري. يُحفَظ مع ملف التقديم الخاص بك، ويظهر ضمن التفاصيل التي تراجعها قبل مشاركتها مع جهة العمل. لا يؤدي حفظ الرابط إلى ربط حساب LinkedIn أو التحقق منه أو استيراد محتواه أو منح حق الوصول إليه.";
 "A confirmed application includes a provider receipt. Opening a job link or preparing a draft never counts as a submission." = "يتضمن الإرسال المؤكد إيصالًا من المزوّد. فتح رابط وظيفة أو إعداد مسودة لا يُعد إرسالًا لطلب.";
 "A draft contains an incomplete character. Correct it before saving; the earlier file is kept." = "تحتوي مسودة على حرف غير مكتمل. صححه قبل الحفظ؛ الملف السابق محفوظ.";
+"A filename you record yourself. No PDF is attached." = "اسم ملف تسجّله بنفسك. لن يُرفق أي ملف PDF.";
 "A new private workspace is ready. Earlier encrypted files and service records were preserved." = "مساحة عمل خاصة جديدة جاهزة. تم الاحتفاظ بالملفات المشفرة السابقة وسجلات الخدمة.";
 "A newer profile was saved elsewhere. Your edits are safe. Compare the versions below before choosing what to keep." = "تم حفظ ملف شخصي أحدث في مكان آخر. تعديلاتك محفوظة. قارن النسخ أدناه قبل اختيار ما تريد الاحتفاظ به.";
 "A newer saved profile is available" = "يتوفر ملف شخصي محفوظ أحدث";
@@ -136,6 +137,7 @@
 "Application date · {0}" = "تاريخ التقديم · {0}";
 "Application date, if known" = "تاريخ التقديم، إن كنت تعرفه";
 "Application date, if known, YYYY-MM-DD" = "تاريخ التقديم، إن كنت تعرفه، YYYY-MM-DD";
+"Application details" = "تفاصيل الطلب";
 "Application details saved. Review each application before sending." = "حُفظت تفاصيل التقديم. راجع كل طلب قبل إرساله.";
 "Application essentials ready: {0} / 3" = "أساسيات التقديم المكتملة: {0} / 3";
 "Application fingerprint" = "بصمة الطلب";
@@ -203,7 +205,9 @@
 "Browse public employer boards without an account, or save a public job link from any country or profession." = "تصفح صفحات وظائف عامة لجهات العمل دون حساب، أو احفظ رابط وظيفة عامًا من أي بلد أو مهنة.";
 "CAREER FINDER — APPLICATION NOTES\nLegacy research reference date (retained records only): {0}\n\n" = "CAREER FINDER — ملاحظات التقديم\nالتاريخ المرجعي للبحث السابق (للسجلات المحتفظ بها فقط): {0}\n\n";
 "CV" = "السيرة الذاتية";
+"CV filename (optional)" = "اسم ملف السيرة الذاتية (اختياري)";
 "CV fingerprint" = "بصمة السيرة الذاتية";
+"CV not recorded" = "لم يُسجّل ملف السيرة الذاتية";
 "CV stored in this application workspace." = "السيرة الذاتية محفوظة في مساحة التقديم هذه.";
 "Cancel" = "إلغاء";
 "Cancel preview" = "إلغاء المعاينة";
@@ -535,6 +539,7 @@
 "Exported notes include your entered professional details and tracked roles, and exclude country/city/role, planning and display preferences. They leave the app only when you choose a destination in the system share sheet. Review the content before sharing." = "تتضمن الملاحظات المصدّرة التفاصيل المهنية التي أدخلتها والوظائف التي تتبعها، ولا تتضمن تفضيلات الدولة أو المدينة أو الوظيفة أو التخطيط أو العرض. ولا تغادر التطبيق إلا عندما تختار وجهة في قائمة المشاركة الخاصة بالنظام. راجع المحتوى قبل المشاركة.";
 "Failed" = "فشل";
 "Fetched for this search" = "تم جلبها لهذا البحث";
+"Filename you recorded" = "اسم الملف الذي سجّلته";
 "Filters changed · search to update results" = "تغيرت المرشحات · ابحث لتحديث النتائج";
 "Find an employer in the catalog" = "البحث عن جهة عمل في الدليل";
 "Find opportunities" = "البحث عن فرص";
@@ -907,6 +912,7 @@
 "Prepare your profile" = "جهّز ملفك الشخصي";
 "Prepared" = "مُعَدّ";
 "Prepared and waiting; not yet dispatched." = "تم الإعداد وهو بانتظار الإرسال؛ لم يُرسل بعد.";
+"Prepared draft" = "مسودة جاهزة للمراجعة";
 "Preparing" = "قيد الإعداد";
 "Preparing sends nothing to employers. Required custom questions or an unavailable connector will be shown clearly." = "لا يرسل الإعداد شيئًا إلى جهات العمل. ستُعرض الأسئلة المخصصة المطلوبة أو أي موصل غير متاح بوضوح.";
 "Preserve files and start fresh" = "الاحتفاظ بالملفات والبدء من جديد";
@@ -937,6 +943,7 @@
 "Profile saved privately on this phone." = "تم حفظ الملف الشخصي بشكل خاص على هذا الهاتف.";
 "Profile saved to your connected workspace." = "تم حفظ الملف الشخصي في مساحة عملك المتصلة.";
 "Profile text exceeds the field limit. Shorten it before saving; your existing profile is unchanged." = "يتجاوز نص الملف الشخصي حد الحقل. اختصره قبل الحفظ؛ ملفك الشخصي الحالي لم يتغير.";
+"Profile version" = "نسخة الملف الشخصي";
 "Prompts from your saved records. Past checks do not establish current availability. Recheck employer information; these are not eligibility decisions or automatic applications." = "تنبيهات مستمدة من سجلاتك المحفوظة. لا تثبت عمليات التحقق السابقة أن الفرص متاحة حاليًا. تحقّق مجددًا من معلومات جهات العمل؛ فهذه ليست قرارات أهلية أو طلبات تقديم تلقائية.";
 "Provider" = "مزوّد الخدمة";
 "Provider application ID" = "معرّف الطلب لدى المزوّد";
@@ -1096,6 +1103,7 @@
 "Review what will be shared." = "راجع ما ستتم مشاركته.";
 "Review your application profile" = "راجع ملف التقديم";
 "Review your preparation steps and record what you have completed." = "راجع خطوات الاستعداد للتقديم وسجّل ما أنجزته.";
+"Reviewed CV" = "السيرة الذاتية التي تمت مراجعتها";
 "Riyadh" = "الرياض";
 "Role keywords" = "الكلمات المفتاحية للوظيفة";
 "Role keywords, optional" = "الكلمات المفتاحية للوظيفة، اختياري";
@@ -1221,6 +1229,7 @@
 "Selected" = "محدد";
 "Selected details kept on this phone. Other versions remain in record history." = "تم الاحتفاظ بالتفاصيل المختارة على هذا الهاتف. تبقى النسخ الأخرى في سجل التغييرات.";
 "Selected: {0} / 30 · Leave empty for no preference." = "الدول المحددة: {0} من 30 · اترك الاختيار فارغًا إذا لم تكن لديك تفضيلات.";
+"Self-entered information. This is not a submission receipt." = "معلومات سجّلتها بنفسك. ليست إيصال إرسال طلب.";
 "Sending" = "جارٍ الإرسال";
 "Sending an approved application" = "جارٍ إرسال طلب وافقت عليه";
 "Sending is paused on this phone because you requested Stop. Retry Stop to confirm it with the service; this phone will not resume the held review." = "الإرسال معلّق على هذا الهاتف لأنك طلبت الإيقاف. أعد محاولة الإيقاف لتأكيده لدى الخدمة؛ لن يستأنف هذا الهاتف المراجعة المعلّقة.";
@@ -1645,6 +1654,7 @@
 "Use Cancel to save a phone draft, keep editing, or discard changes. Backgrounding the app keeps a local draft without uploading it." = "استخدم «إلغاء» لحفظ مسودة على الهاتف، أو متابعة التحرير، أو تجاهل التغييرات. الانتقال إلى تطبيق آخر يحتفظ بمسودة محلية من دون رفعها.";
 "Use Career Finder" = "استخدام Career Finder";
 "Use a complete public HTTPS job link." = "استخدم رابط HTTPS عامًا وكاملًا للوظيفة.";
+"Use a filename of up to 180 characters without paths or control characters." = "استخدم اسم ملف لا يزيد على 180 حرفًا، دون مسارات أو محارف تحكم.";
 "Use a public jobs.lever.co, jobs.eu.lever.co, boards.greenhouse.io or job-boards.greenhouse.io link." = "استخدم رابطًا عامًا من jobs.lever.co أو jobs.eu.lever.co أو boards.greenhouse.io أو job-boards.greenhouse.io.";
 "Use a real YYYY-MM-DD due date or leave it blank, and a note up to 500 Unicode characters. A due date or completed action needs a nonblank note." = "استخدم تاريخًا صحيحًا بصيغة سنة-شهر-يوم أو اتركه فارغًا، وملاحظة لا تتجاوز 500 محرف. يتطلب تحديد تاريخ أو اكتمال الخطوة وجود ملاحظة غير فارغة.";
 "Use a real application date no later than today in Riyadh, or leave it blank. Notes allow 2,000 characters." = "استخدم تاريخ تقديم حقيقيًا لا يتجاوز اليوم حسب توقيت الرياض، أو اتركه فارغًا. تسمح الملاحظات بـ 2,000 حرف.";

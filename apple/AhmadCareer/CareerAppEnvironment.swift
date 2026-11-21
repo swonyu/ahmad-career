@@ -21,6 +21,14 @@ enum CareerAppEnvironment {
     static func makeApplicationsStore() -> NativeApplicationsStore {
         #if DEBUG
         if let root = acceptanceRoot {
+            if ProcessInfo.processInfo.environment["CAREER_UI_APPLICATION_HISTORY"] == "cv-details" {
+                let folder = root.appendingPathComponent("applications", isDirectory: true)
+                let service = AcceptanceApplicationHistory(root: root)
+                do { try service.seedIfAbsent(folder: folder) }
+                catch { preconditionFailure("The isolated CV-history fixture could not be prepared.") }
+                return NativeApplicationsStore(folder: folder, credentials: AcceptanceCredentials(connected: true),
+                    clientFactory: { _, _ in service })
+            }
             if let availability = ProcessInfo.processInfo.environment["CAREER_UI_APPLICATION_AVAILABILITY"],
                ["disabled", "unverified"].contains(availability) {
                 let folder = root.appendingPathComponent("applications", isDirectory: true)

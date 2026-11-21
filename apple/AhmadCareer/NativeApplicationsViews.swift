@@ -1270,8 +1270,10 @@ private struct NativeApplicationReview: View {
                                     .textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
                             }.accessibilityElement(children: .combine)
                         }
-                        if let name = item["resume"]?.object["name"]?.string {
-                            Label(name, systemImage: "doc.text").font(.subheadline).fixedSize(horizontal: false, vertical: true)
+                        let cvDetails = ApplicationCVDetails(reviewItem: item, plan: model.plan ?? [:])
+                        NativeApplicationDetails(resumeName: cvDetails.resumeName, profileRevision: cvDetails.profileRevision,
+                            contextID: "review." + (model.plan?["id"]?.string ?? "") + "." + jobID)
+                        if cvDetails.resumeName != nil {
                             if let size = item["resume"]?.object["size"]?.integer {
                                 Text(l10n(ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file))).font(.caption).foregroundStyle(.secondary)
                             }
@@ -1355,7 +1357,7 @@ private struct NativeApplicationReview: View {
                         }.disabled(model.busy)
                     }
                 }
-            }.disabled(model.busy).navigationTitle(l10n("Review applications")).navigationBarTitleDisplayMode(.inline)
+            }.accessibilityIdentifier("application.review.content").disabled(model.busy).navigationTitle(l10n("Review applications")).navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button(l10n("Back")) { if changed { discardChoices = true } else { dismiss() } }.disabled(model.busy)
@@ -1409,12 +1411,46 @@ private struct NativeApplicationReview: View {
     }
 }
 
+/// A filename is historical context, not proof that an employer received an application.
+struct NativeApplicationDetails: View {
+    @NativeLocalization private var l10n
+    let resumeName: String?
+    let profileRevision: Int?
+    let contextID: String
+    var manual = false
+    var body: some View {
+        DisclosureGroup {
+            VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(l10n(manual ? "Filename you recorded" : "Reviewed CV")).foregroundStyle(.secondary)
+                    if let name = resumeName, !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        Text(verbatim: "\u{2068}" + name + "\u{2069}")
+                            .textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
+                    } else { Text(l10n("CV not recorded")) }
+                }.accessibilityElement(children: .combine)
+                    .accessibilityIdentifier("application.details." + contextID + ".resume")
+                if !manual, let revision = profileRevision {
+                    LabeledContent(l10n("Profile version"), value: revision.formatted(.number.locale(l10n.locale)))
+                        .accessibilityIdentifier("application.details." + contextID + ".revision")
+                }
+                if manual {
+                    Text(l10n("Self-entered information. This is not a submission receipt."))
+                        .foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                }
+            }.font(.caption).padding(.top, 6)
+        } label: {
+            Text(l10n("Application details")).accessibilityIdentifier("application.details." + contextID)
+        }.font(.subheadline)
+    }
+}
+
 private struct NativeApplicationReceipt: View {
     @NativeLocalization private var l10n
     let attempt: [String: ApplicationValue]
     var onStop: ((_ planID: String, _ attemptID: String) -> Void)? = nil
     private var test: Bool { attempt["evidenceMode"]?.string == "test" }
     private var verified: Bool { MobileApplicationPolicy.isVerified(attempt) }
+    private var contextID: String { "attempt." + (attempt["id"]?.string ?? attempt["attemptId"]?.string ?? "") }
     private var state: String {
         let state = attempt["state"]?.string ?? ""
         return state == "confirmed" && !verified ? "uncertain" : state
@@ -1433,6 +1469,7 @@ private struct NativeApplicationReceipt: View {
             Text(l10n(MobileApplicationPolicy.stateTitle(state, test: test))).font(.caption.weight(.semibold))
                 .padding(.horizontal, 10).padding(.vertical, 6)
                 .background(verified && !test ? ApplyDesign.accentSurface : Color.secondary.opacity(0.09), in: Capsule())
+                .accessibilityIdentifier("application.state." + contextID)
             if state == "uncertain" {
                 Text(l10n("The service could not establish whether the employer accepted this application. It will not be sent again automatically."))
                     .font(.caption).foregroundStyle(.secondary)
@@ -1445,6 +1482,8 @@ private struct NativeApplicationReceipt: View {
             if let message = attempt["error"]?.object["message"]?.string ?? attempt["reason"]?.string, !message.isEmpty {
                 Text(l10n(message)).font(.caption).foregroundStyle(.secondary)
             }
+            let cvDetails = ApplicationCVDetails(attempt: attempt)
+            NativeApplicationDetails(resumeName: cvDetails.resumeName, profileRevision: cvDetails.profileRevision, contextID: contextID)
             DisclosureGroup(l10n("Receipt details")) {
                 VStack(alignment: .leading, spacing: 10) {
                     if let id = attempt["applicationId"]?.string, verified {

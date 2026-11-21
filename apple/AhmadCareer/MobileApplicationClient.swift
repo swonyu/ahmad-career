@@ -159,12 +159,19 @@ enum MobileApplicationPolicy {
         case "uncertain": return "Needs verification"
         case "rate_limited": return "Waiting to retry"
         case "rejected": return "Not accepted"
-        case "ready": return "Ready to review"
+        case "ready": return "Prepared draft"
         case "cancelled": return "Stopped"
         case "blocked": return "Action needed"
         default: return "Status unavailable"
         }
     }
+    /// A self-entered filename is a private note, never a path, attachment or submission receipt.
+    static func manualResumeNameIsValid(_ name: String?) -> Bool {
+        guard let name else { return true }
+        return name.utf16.count <= 180
+            && !name.unicodeScalars.contains { $0.value < 0x20 || $0.value == 0x7f || [0x2f, 0x5c, 0x3a].contains($0.value) }
+    }
+    static let manualResumeNameError = "Use a filename of up to 180 characters without paths or control characters."
 }
 
 /// Small typed JSON boundary shared by the native client and executable contract checks.
@@ -209,6 +216,27 @@ enum ApplicationValue: Codable, Equatable {
         case .array(let v): return v.map(\.display).joined(separator: ", ")
         case .object: return "Additional details"
         }
+    }
+}
+
+/// Historical details come only from the attempt or review being displayed.
+/// In particular, there is no current-profile or document-hash lookup fallback.
+struct ApplicationCVDetails: Equatable {
+    let resumeName: String?
+    let profileRevision: Int?
+    init(attempt: [String: ApplicationValue]) {
+        self.init(name: attempt["resumeName"], revision: attempt["profileRevision"])
+    }
+    init(reviewItem: [String: ApplicationValue], plan: [String: ApplicationValue]) {
+        self.init(name: reviewItem["resume"]?.object["name"], revision: plan["profileRevision"])
+    }
+    private init(name: ApplicationValue?, revision: ApplicationValue?) {
+        if let name = name?.string, !name.isEmpty, name == name.trimmingCharacters(in: .whitespacesAndNewlines),
+           MobileApplicationPolicy.manualResumeNameIsValid(name), name.lowercased().hasSuffix(".pdf"), !name.hasPrefix(".") {
+            resumeName = name
+        } else { resumeName = nil }
+        if let revision = revision?.integer, revision >= 0 { profileRevision = revision }
+        else { profileRevision = nil }
     }
 }
 

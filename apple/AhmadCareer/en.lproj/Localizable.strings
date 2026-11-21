@@ -48,6 +48,7 @@
 "A LinkedIn profile link is optional. It is saved with your application profile and appears in the details you review before sharing with an employer. Saving a link does not connect or verify a LinkedIn account, import its content or grant account access." = "A LinkedIn profile link is optional. It is saved with your application profile and appears in the details you review before sharing with an employer. Saving a link does not connect or verify a LinkedIn account, import its content or grant account access.";
 "A confirmed application includes a provider receipt. Opening a job link or preparing a draft never counts as a submission." = "A confirmed application includes a provider receipt. Opening a job link or preparing a draft never counts as a submission.";
 "A draft contains an incomplete character. Correct it before saving; the earlier file is kept." = "A draft contains an incomplete character. Correct it before saving; the earlier file is kept.";
+"A filename you record yourself. No PDF is attached." = "A filename you record yourself. No PDF is attached.";
 "A new private workspace is ready. Earlier encrypted files and service records were preserved." = "A new private workspace is ready. Earlier encrypted files and service records were preserved.";
 "A newer profile was saved elsewhere. Your edits are safe. Compare the versions below before choosing what to keep." = "A newer profile was saved elsewhere. Your edits are safe. Compare the versions below before choosing what to keep.";
 "A newer saved profile is available" = "A newer saved profile is available";
@@ -136,6 +137,7 @@
 "Application date · {0}" = "Application date · {0}";
 "Application date, if known" = "Application date, if known";
 "Application date, if known, YYYY-MM-DD" = "Application date, if known, YYYY-MM-DD";
+"Application details" = "Application details";
 "Application details saved. Review each application before sending." = "Application details saved. Review each application before sending.";
 "Application essentials ready: {0} / 3" = "Application essentials ready: {0} / 3";
 "Application fingerprint" = "Application fingerprint";
@@ -203,7 +205,9 @@
 "Browse public employer boards without an account, or save a public job link from any country or profession." = "Browse public employer boards without an account, or save a public job link from any country or profession.";
 "CAREER FINDER — APPLICATION NOTES\nLegacy research reference date (retained records only): {0}\n\n" = "CAREER FINDER — APPLICATION NOTES\nLegacy research reference date (retained records only): {0}\n\n";
 "CV" = "CV";
+"CV filename (optional)" = "CV filename (optional)";
 "CV fingerprint" = "CV fingerprint";
+"CV not recorded" = "CV not recorded";
 "CV stored in this application workspace." = "CV stored in this application workspace.";
 "Cancel" = "Cancel";
 "Cancel preview" = "Cancel preview";
@@ -535,6 +539,7 @@
 "Exported notes include your entered professional details and tracked roles, and exclude country/city/role, planning and display preferences. They leave the app only when you choose a destination in the system share sheet. Review the content before sharing." = "Exported notes include your entered professional details and tracked roles, and exclude country/city/role, planning and display preferences. They leave the app only when you choose a destination in the system share sheet. Review the content before sharing.";
 "Failed" = "Failed";
 "Fetched for this search" = "Fetched for this search";
+"Filename you recorded" = "Filename you recorded";
 "Filters changed · search to update results" = "Filters changed · search to update results";
 "Find an employer in the catalog" = "Find an employer in the catalog";
 "Find opportunities" = "Find opportunities";
@@ -907,6 +912,7 @@
 "Prepare your profile" = "Prepare your profile";
 "Prepared" = "Prepared";
 "Prepared and waiting; not yet dispatched." = "Prepared and waiting; not yet dispatched.";
+"Prepared draft" = "Prepared draft";
 "Preparing" = "Preparing";
 "Preparing sends nothing to employers. Required custom questions or an unavailable connector will be shown clearly." = "Preparing sends nothing to employers. Required custom questions or an unavailable connector will be shown clearly.";
 "Preserve files and start fresh" = "Preserve files and start fresh";
@@ -937,6 +943,7 @@
 "Profile saved privately on this phone." = "Profile saved privately on this phone.";
 "Profile saved to your connected workspace." = "Profile saved to your connected workspace.";
 "Profile text exceeds the field limit. Shorten it before saving; your existing profile is unchanged." = "Profile text exceeds the field limit. Shorten it before saving; your existing profile is unchanged.";
+"Profile version" = "Profile version";
 "Prompts from your saved records. Past checks do not establish current availability. Recheck employer information; these are not eligibility decisions or automatic applications." = "Prompts from your saved records. Past checks do not establish current availability. Recheck employer information; these are not eligibility decisions or automatic applications.";
 "Provider" = "Provider";
 "Provider application ID" = "Provider application ID";
@@ -1096,6 +1103,7 @@
 "Review what will be shared." = "Review what will be shared.";
 "Review your application profile" = "Review your application profile";
 "Review your preparation steps and record what you have completed." = "Review your preparation steps and record what you have completed.";
+"Reviewed CV" = "Reviewed CV";
 "Riyadh" = "Riyadh";
 "Role keywords" = "Role keywords";
 "Role keywords, optional" = "Role keywords, optional";
@@ -1221,6 +1229,7 @@
 "Selected" = "Selected";
 "Selected details kept on this phone. Other versions remain in record history." = "Selected details kept on this phone. Other versions remain in record history.";
 "Selected: {0} / 30 · Leave empty for no preference." = "Selected: {0} / 30 · Leave empty for no preference.";
+"Self-entered information. This is not a submission receipt." = "Self-entered information. This is not a submission receipt.";
 "Sending" = "Sending";
 "Sending an approved application" = "Sending an approved application";
 "Sending is paused on this phone because you requested Stop. Retry Stop to confirm it with the service; this phone will not resume the held review." = "Sending is paused on this phone because you requested Stop. Retry Stop to confirm it with the service; this phone will not resume the held review.";
@@ -1645,6 +1654,7 @@
 "Use Cancel to save a phone draft, keep editing, or discard changes. Backgrounding the app keeps a local draft without uploading it." = "Use Cancel to save a phone draft, keep editing, or discard changes. Backgrounding the app keeps a local draft without uploading it.";
 "Use Career Finder" = "Use Career Finder";
 "Use a complete public HTTPS job link." = "Use a complete public HTTPS job link.";
+"Use a filename of up to 180 characters without paths or control characters." = "Use a filename of up to 180 characters without paths or control characters.";
 "Use a public jobs.lever.co, jobs.eu.lever.co, boards.greenhouse.io or job-boards.greenhouse.io link." = "Use a public jobs.lever.co, jobs.eu.lever.co, boards.greenhouse.io or job-boards.greenhouse.io link.";
 "Use a real YYYY-MM-DD due date or leave it blank, and a note up to 500 Unicode characters. A due date or completed action needs a nonblank note." = "Use a real YYYY-MM-DD due date or leave it blank, and a note up to 500 Unicode characters. A due date or completed action needs a nonblank note.";
 "Use a real application date no later than today in Riyadh, or leave it blank. Notes allow 2,000 characters." = "Use a real application date no later than today in Riyadh, or leave it blank. Notes allow 2,000 characters.";

@@ -197,6 +197,7 @@ struct PhoneOpportunityRecord: Codable, Equatable, Identifiable {
     var appliedOn = ""
     var followUpOn = ""
     var note = ""
+    var manualResumeName: String?
     var revision = 1
     var archived = false
     var updatedAt = ISO8601DateFormatter().string(from: Date())
@@ -204,11 +205,13 @@ struct PhoneOpportunityRecord: Codable, Equatable, Identifiable {
     var meaningful: Bool {
         stage != .saved || appliedElsewhere || !appliedOn.isEmpty || !followUpOn.isEmpty
             || !note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            || !(manualResumeName?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
     }
     var valid: Bool {
         UUID(uuidString: id) != nil && scope.valid && job.valid && revision > 0 && revision < Int.max
             && PhoneRecordDay.valid(appliedOn) && PhoneRecordDay.valid(followUpOn)
             && note.unicodeScalars.count <= 2_000
+            && MobileApplicationPolicy.manualResumeNameIsValid(manualResumeName)
             && !note.unicodeScalars.contains { $0.value < 0x20 && ![0x09, 0x0a, 0x0d].contains($0.value) || $0.value == 0x7f }
             && ApplicationReviewPolicy.date(updatedAt) != nil
             && (!stage.marksApplied || appliedElsewhere)
@@ -220,8 +223,12 @@ struct PhoneRecordDraft: Codable, Equatable {
     var appliedOn = ""
     var followUpOn = ""
     var note = ""
+    var manualResumeName: String?
     init(_ record: PhoneOpportunityRecord? = nil) {
-        if let record { stage = record.stage; appliedOn = record.appliedOn; followUpOn = record.followUpOn; note = record.note }
+        if let record {
+            stage = record.stage; appliedOn = record.appliedOn; followUpOn = record.followUpOn; note = record.note
+            manualResumeName = record.manualResumeName
+        }
     }
 }
 
@@ -235,6 +242,7 @@ struct PhoneRecordDraftCheckpoint: Codable, Equatable {
     var draft: PhoneRecordDraft
     var valid: Bool {
         scope.valid && job.valid && identity == job.identity && draft.note.unicodeScalars.count <= 2_000
+            && MobileApplicationPolicy.manualResumeNameIsValid(draft.manualResumeName)
             && PhoneRecordDay.valid(draft.appliedOn) && PhoneRecordDay.valid(draft.followUpOn)
             && (recordID == nil || UUID(uuidString: recordID!) != nil)
             && (revision == nil || revision! > 0)
@@ -365,14 +373,17 @@ struct PhoneWorkspaceBackup: Codable {
     private struct Record: Codable {
         var id: String; var job: PhoneRecordJob; var stage: PhoneApplicationStage; var appliedElsewhere: Bool
         var appliedOn: String; var followUpOn: String; var note: String; var revision: Int; var archived: Bool; var updatedAt: String
+        var manualResumeName: String?
         init(_ r: PhoneOpportunityRecord) {
             id = r.id; job = r.job; stage = r.stage; appliedElsewhere = r.appliedElsewhere; appliedOn = r.appliedOn
             followUpOn = r.followUpOn; note = r.note; revision = r.revision; archived = r.archived; updatedAt = r.updatedAt
+            manualResumeName = r.manualResumeName
         }
         func decoded(scope: PhoneRecordScope) -> PhoneOpportunityRecord {
             var r = PhoneOpportunityRecord(scope: scope, job: job)
             r.id = id; r.stage = stage; r.appliedElsewhere = appliedElsewhere; r.appliedOn = appliedOn; r.followUpOn = followUpOn
-            r.note = note; r.revision = revision; r.archived = archived; r.updatedAt = updatedAt; return r
+            r.note = note; r.revision = revision; r.archived = archived; r.updatedAt = updatedAt
+            r.manualResumeName = manualResumeName; return r
         }
     }
     private struct RecordDraft: Codable {

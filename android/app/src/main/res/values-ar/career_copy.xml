@@ -50,6 +50,7 @@
     <string name="c_a7740284ec86" formatted="false">"رابط الملف الشخصي على LinkedIn اختياري. يُحفَظ مع ملف التقديم الخاص بك، ويظهر ضمن التفاصيل التي تراجعها قبل مشاركتها مع جهة العمل. لا يؤدي حفظ الرابط إلى ربط حساب LinkedIn أو التحقق منه أو استيراد محتواه أو منح حق الوصول إليه."</string>
     <string name="c_e0d94a160a99" formatted="false">"يتضمن الإرسال المؤكد إيصالًا من المزوّد. فتح رابط وظيفة أو إعداد مسودة لا يُعد إرسالًا لطلب."</string>
     <string name="c_ba8187cc5358" formatted="false">"تحتوي مسودة على حرف غير مكتمل. صححه قبل الحفظ؛ الملف السابق محفوظ."</string>
+    <string name="c_c748bc4d107e" formatted="false">"اسم ملف تسجّله بنفسك. لن يُرفق أي ملف PDF."</string>
     <string name="c_4a604c631c51" formatted="false">"مساحة عمل خاصة جديدة جاهزة. تم الاحتفاظ بالملفات المشفرة السابقة وسجلات الخدمة."</string>
     <string name="c_b1d13f842d4e" formatted="false">"تم حفظ ملف شخصي أحدث في مكان آخر. تعديلاتك محفوظة. قارن النسخ أدناه قبل اختيار ما تريد الاحتفاظ به."</string>
     <string name="c_b0935dd37f79" formatted="false">"يتوفر ملف شخصي محفوظ أحدث"</string>
@@ -138,6 +139,7 @@
     <string name="c_45a0e52940c3" formatted="false">"تاريخ التقديم · {0}"</string>
     <string name="c_b230d4b37edf" formatted="false">"تاريخ التقديم، إن كنت تعرفه"</string>
     <string name="c_ad0f483f30d2" formatted="false">"تاريخ التقديم، إن كنت تعرفه، YYYY-MM-DD"</string>
+    <string name="c_d9094d538a44" formatted="false">"تفاصيل الطلب"</string>
     <string name="c_fe114005c070" formatted="false">"حُفظت تفاصيل التقديم. راجع كل طلب قبل إرساله."</string>
     <string name="c_6f03e6f5c51b" formatted="false">"أساسيات التقديم المكتملة: {0} / 3"</string>
     <string name="c_a346f1126cb5" formatted="false">"بصمة الطلب"</string>
@@ -205,7 +207,9 @@
     <string name="c_62a9dba4ddff" formatted="false">"تصفح صفحات وظائف عامة لجهات العمل دون حساب، أو احفظ رابط وظيفة عامًا من أي بلد أو مهنة."</string>
     <string name="c_d9ddb46fcac2" formatted="false">"CAREER FINDER — ملاحظات التقديم\nالتاريخ المرجعي للبحث السابق (للسجلات المحتفظ بها فقط): {0}\n\n"</string>
     <string name="c_0f5fed1791e0" formatted="false">"السيرة الذاتية"</string>
+    <string name="c_a468d99ab09b" formatted="false">"اسم ملف السيرة الذاتية (اختياري)"</string>
     <string name="c_c55adff0356e" formatted="false">"بصمة السيرة الذاتية"</string>
+    <string name="c_02ec5f9a81c0" formatted="false">"لم يُسجّل ملف السيرة الذاتية"</string>
     <string name="c_923d88251c36" formatted="false">"السيرة الذاتية محفوظة في مساحة التقديم هذه."</string>
     <string name="c_19766ed6ccb2" formatted="false">"إلغاء"</string>
     <string name="c_f657ed08c403" formatted="false">"إلغاء المعاينة"</string>
@@ -537,6 +541,7 @@
     <string name="c_689b0e451cc2" formatted="false">"تتضمن الملاحظات المصدّرة التفاصيل المهنية التي أدخلتها والوظائف التي تتبعها، ولا تتضمن تفضيلات الدولة أو المدينة أو الوظيفة أو التخطيط أو العرض. ولا تغادر التطبيق إلا عندما تختار وجهة في قائمة المشاركة الخاصة بالنظام. راجع المحتوى قبل المشاركة."</string>
     <string name="c_031a8f0f659d" formatted="false">"فشل"</string>
     <string name="c_0b031f668758" formatted="false">"تم جلبها لهذا البحث"</string>
+    <string name="c_7133f2de832e" formatted="false">"اسم الملف الذي سجّلته"</string>
     <string name="c_07545e91b899" formatted="false">"تغيرت المرشحات · ابحث لتحديث النتائج"</string>
     <string name="c_4f5af4200fcb" formatted="false">"البحث عن جهة عمل في الدليل"</string>
     <string name="c_4622feb5d8e0" formatted="false">"البحث عن فرص"</string>
@@ -909,6 +914,7 @@
     <string name="c_2600748f8e8c" formatted="false">"جهّز ملفك الشخصي"</string>
     <string name="c_37932e60421e" formatted="false">"مُعَدّ"</string>
     <string name="c_2048589e31ad" formatted="false">"تم الإعداد وهو بانتظار الإرسال؛ لم يُرسل بعد."</string>
+    <string name="c_0c1795b7a112" formatted="false">"مسودة جاهزة للمراجعة"</string>
     <string name="c_cf1aa6cc5951" formatted="false">"قيد الإعداد"</string>
     <string name="c_717d140958a2" formatted="false">"لا يرسل الإعداد شيئًا إلى جهات العمل. ستُعرض الأسئلة المخصصة المطلوبة أو أي موصل غير متاح بوضوح."</string>
     <string name="c_e8822e7def78" formatted="false">"الاحتفاظ بالملفات والبدء من جديد"</string>
@@ -939,6 +945,7 @@
     <string name="c_bd87f810cb55" formatted="false">"تم حفظ الملف الشخصي بشكل خاص على هذا الهاتف."</string>
     <string name="c_f58abf3d062e" formatted="false">"تم حفظ الملف الشخصي في مساحة عملك المتصلة."</string>
     <string name="c_2c72a7dd21a0" formatted="false">"يتجاوز نص الملف الشخصي حد الحقل. اختصره قبل الحفظ؛ ملفك الشخصي الحالي لم يتغير."</string>
+    <string name="c_fbdd0904cfa1" formatted="false">"نسخة الملف الشخصي"</string>
     <string name="c_9595317bd09b" formatted="false">"تنبيهات مستمدة من سجلاتك المحفوظة. لا تثبت عمليات التحقق السابقة أن الفرص متاحة حاليًا. تحقّق مجددًا من معلومات جهات العمل؛ فهذه ليست قرارات أهلية أو طلبات تقديم تلقائية."</string>
     <string name="c_472590ae974d" formatted="false">"مزوّد الخدمة"</string>
     <string name="c_af0943658ba4" formatted="false">"معرّف الطلب لدى المزوّد"</string>
@@ -1098,6 +1105,7 @@
     <string name="c_a0de7bb16481" formatted="false">"راجع ما ستتم مشاركته."</string>
     <string name="c_7bef09af94a5" formatted="false">"راجع ملف التقديم"</string>
     <string name="c_8ac37b6e6411" formatted="false">"راجع خطوات الاستعداد للتقديم وسجّل ما أنجزته."</string>
+    <string name="c_dc719d269b13" formatted="false">"السيرة الذاتية التي تمت مراجعتها"</string>
     <string name="c_b79b3a411c29" formatted="false">"الرياض"</string>
     <string name="c_730e4a0fc92b" formatted="false">"الكلمات المفتاحية للوظيفة"</string>
     <string name="c_f0765482bd41" formatted="false">"الكلمات المفتاحية للوظيفة، اختياري"</string>
@@ -1223,6 +1231,7 @@
     <string name="c_57fd7a0cf33f" formatted="false">"محدد"</string>
     <string name="c_5f11024b3298" formatted="false">"تم الاحتفاظ بالتفاصيل المختارة على هذا الهاتف. تبقى النسخ الأخرى في سجل التغييرات."</string>
     <string name="c_72311b85c2c3" formatted="false">"الدول المحددة: {0} من 30 · اترك الاختيار فارغًا إذا لم تكن لديك تفضيلات."</string>
+    <string name="c_e865afd98564" formatted="false">"معلومات سجّلتها بنفسك. ليست إيصال إرسال طلب."</string>
     <string name="c_e595f17fac1d" formatted="false">"جارٍ الإرسال"</string>
     <string name="c_4b6bb615dcab" formatted="false">"جارٍ إرسال طلب وافقت عليه"</string>
     <string name="c_616058220b62" formatted="false">"الإرسال معلّق على هذا الهاتف لأنك طلبت الإيقاف. أعد محاولة الإيقاف لتأكيده لدى الخدمة؛ لن يستأنف هذا الهاتف المراجعة المعلّقة."</string>
@@ -1647,6 +1656,7 @@
     <string name="c_689ef2a43f25" formatted="false">"استخدم «إلغاء» لحفظ مسودة على الهاتف، أو متابعة التحرير، أو تجاهل التغييرات. الانتقال إلى تطبيق آخر يحتفظ بمسودة محلية من دون رفعها."</string>
     <string name="c_c11ceb0fc87c" formatted="false">"استخدام Career Finder"</string>
     <string name="c_b0532421f357" formatted="false">"استخدم رابط HTTPS عامًا وكاملًا للوظيفة."</string>
+    <string name="c_4c97b72587f2" formatted="false">"استخدم اسم ملف لا يزيد على 180 حرفًا، دون مسارات أو محارف تحكم."</string>
     <string name="c_f76975427995" formatted="false">"استخدم رابطًا عامًا من jobs.lever.co أو jobs.eu.lever.co أو boards.greenhouse.io أو job-boards.greenhouse.io."</string>
     <string name="c_70ee1392fb24" formatted="false">"استخدم تاريخًا صحيحًا بصيغة سنة-شهر-يوم أو اتركه فارغًا، وملاحظة لا تتجاوز 500 محرف. يتطلب تحديد تاريخ أو اكتمال الخطوة وجود ملاحظة غير فارغة."</string>
     <string name="c_ec7c32263ed8" formatted="false">"استخدم تاريخ تقديم حقيقيًا لا يتجاوز اليوم حسب توقيت الرياض، أو اتركه فارغًا. تسمح الملاحظات بـ 2,000 حرف."</string>
