@@ -146,6 +146,7 @@ data class ReviewItem(val jobId: String, val state: String, val reason: String, 
             payload!!.serviceLinkedIn()
             listOf("consentStore", "consentMarketing").forEach { serviceData(!payload!!.has(it) || payload.opt(it) is Boolean) }
             val resume = Resume.fromJson(value.optJSONObject("resume"))
+            serviceData(resume == null || ApplicationCvEvidence.validRecordedName(resume.name))
             if (value.opt("state") == "ready") serviceData(resume != null && resume.size in 8..BoundaryPolicy.MAX_PDF_BYTES &&
                 resume.sha256.matches(Regex("[a-f0-9]{64}")) && value.optJSONObject("resume")?.opt("mime") == "application/pdf" &&
                 payload!!.getString("name").isNotBlank() && payload.getString("email").isNotBlank())
@@ -169,7 +170,7 @@ data class ReviewPlan(val id: String, val digest: String, val profileRevision: I
 
 data class ApplicationReceipt(val id: String, val title: String, val company: String, val state: String, val applicationId: String,
     val date: String, val error: String, val evidenceMode: String, val resumeSHA256: String, val provider: String,
-    val planId: String = "") {
+    val planId: String = "", val resumeName: String? = null, val profileRevision: Int? = null) {
     val testMode: Boolean get() = evidenceMode == "test"
     val verified: Boolean get() = BoundaryPolicy.isLiveReceipt(evidenceMode, provider, state, applicationId)
     companion object {
@@ -183,7 +184,7 @@ data class ApplicationReceipt(val id: String, val title: String, val company: St
                 value.safeString("state"), value.safeString("applicationId"), value.safeString("confirmedAt", value.safeString("createdAt")),
                 if (error is JSONObject) error.safeString("message") else if (error is String) error else "",
                 value.safeString("evidenceMode", if (value.safeString("mode") == "test") "test" else "unknown"), value.safeString("resumeSHA256"), value.safeString("provider"),
-                if (plan is String) plan else "")
+                if (plan is String) plan else "", ApplicationCvEvidence.recordedName(value), ApplicationCvEvidence.profileRevision(value))
         }
         fun fromServer(value: JSONObject): ApplicationReceipt {
             serviceData((value.opt("id") is String || value.opt("attemptId") is String) &&

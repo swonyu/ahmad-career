@@ -112,6 +112,7 @@ internal fun WorkspaceDataDialog(state: CareerUiState, model: CareerViewModel, e
                 Text(l10n.format("Recorded state: {0}", listOf(l10n(when (receipt.state) { "confirmed" -> "Confirmed"; "uncertain" -> "Needs verification"; "dispatching" -> "Sending"; "rate_limited" -> "Provider cooldown"; "cancelled" -> "Stopped"; "ready" -> "Ready"; "rejected" -> "Rejected"; else -> receipt.state }))))
                 if (receipt.applicationId.isNotBlank()) Text(l10n.format("Recorded reference: {0}", listOf((receipt.applicationId).toString())))
                 Text(l10n(l10n.dateTime(receipt.date)))
+                ApplicationCvDetails("imported-${state.privateScope}-${receipt.id}", receipt.resumeName, receipt.profileRevision)
             } }
             item { Panel {
                 Text(l10n("Delete this workspace from this phone"), style = MaterialTheme.typography.titleLarge)

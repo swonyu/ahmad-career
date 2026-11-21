@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import java.time.Instant
 import java.time.LocalDate
@@ -24,6 +25,32 @@ import java.util.Locale
 internal fun civilDateLabel(value: String): String = runCatching {
     LocalDate.parse(BoundaryPolicy.civilDate(value)).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(Locale.getDefault()))
 }.getOrElse { "Date not set" }
+
+/** A disclosure reads only the supplied historical evidence; it has no profile or PDF access. */
+@Composable
+internal fun ApplicationCvDetails(evidenceKey: String, resumeName: String?, profileRevision: Int? = null,
+    selfEntered: Boolean = false, prepared: Boolean = false) {
+    val l10n = rememberCareerStrings()
+    var expanded by remember(evidenceKey, resumeName, profileRevision, selfEntered) { mutableStateOf(false) }
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        OutlinedButton(onClick = { expanded = !expanded }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
+            .testTag("application-cv-details-$evidenceKey").semantics {
+                stateDescription = l10n(if (expanded) "Expanded" else "Collapsed")
+            }) { Text(l10n("Application details")) }
+        if (expanded) {
+            if (prepared) Text(l10n("Prepared draft"), style = MaterialTheme.typography.labelLarge)
+            Text(l10n(if (selfEntered) "Filename you recorded" else "Reviewed CV"), style = MaterialTheme.typography.labelMedium)
+            Text(resumeName?.takeIf(String::isNotBlank) ?: l10n("CV not recorded"), Modifier.fillMaxWidth()
+                .testTag("application-cv-filename-$evidenceKey"), style = MaterialTheme.typography.bodyMedium.copy(textDirection = TextDirection.Content))
+            if (profileRevision != null) {
+                Text(l10n("Profile version"), style = MaterialTheme.typography.labelMedium)
+                Text(profileRevision.toString(), Modifier.testTag("application-cv-revision-$evidenceKey"))
+            }
+            if (selfEntered) Text(l10n("Self-entered information. This is not a submission receipt."),
+                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+    }
+}
 
 @Composable
 internal fun ApplicationRecordSummary(record: ApplicationRecordBundle?, open: () -> Unit, enabled: Boolean, description: String) {
@@ -65,6 +92,7 @@ internal fun RecordVersionCard(version: ApplicationRecordVersion, title: String,
         if (version.record.note.isNotBlank()) TextButton(onClick = { fullNote = !fullNote }, modifier = Modifier.heightIn(min = 48.dp)) {
             Text(l10n(if (fullNote) "Show less" else "Read full note"))
         }
+        ApplicationCvDetails("record-version-${version.id}", version.record.manualResumeName, selfEntered = true)
         Text(l10n("Version saved"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Text(l10n(l10n.dateTime(version.savedAt)), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         if (useLabel != null) OutlinedButton(onClick = choose, enabled = enabled, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n(useLabel)) }
@@ -129,6 +157,16 @@ internal fun ApplicationRecordEditor(state: CareerUiState, model: CareerViewMode
                     item { RecordDateField("Follow-up date (optional)", editor.draft.followUpDate, !state.busy,
                         { dateField = "follow-up" }, { change { it.copy(followUpDate = "") } }) }
                     item {
+                        Field("CV filename (optional)", editor.draft.manualResumeName.orEmpty(),
+                            { text -> change { it.copy(manualResumeName = text.takeIf(String::isNotEmpty)) } }, enabled = !state.busy,
+                            modifier = Modifier.testTag("application-record-manual-cv"))
+                        Text(l10n("A filename you record yourself. No PDF is attached."),
+                            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    if (record != null) item {
+                        ApplicationCvDetails("record-${editor.scope}-${record.current.id}", record.current.record.manualResumeName, selfEntered = true)
+                    }
+                    item {
                         Field("Private note (optional)", editor.draft.note, { text ->
                             val bounded = boundedApplicationNote(text)
                             val cut = applicationNoteLength(text) > applicationNoteLength(bounded)
@@ -153,7 +191,11 @@ internal fun ApplicationRecordEditor(state: CareerUiState, model: CareerViewMode
             Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (state.error != null) Text(l10n.message(state.error), color = MaterialTheme.colorScheme.error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
                 Action("Save record on this phone", !state.busy && record?.needsReview != true && !state.storageBlocked && !editor.restoredOlderRevision) { model.saveApplicationRecord(expectedToken = editor.token) }
-                TextButton(onClick = { model.closeApplicationRecord(editor.token) }, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Close record")) }
+                // The title bar keeps Close available while the keyboard is open.
+                // Release the duplicate footer row so the focused field can fit.
+                if (!WindowInsets.isImeVisible) {
+                    TextButton(onClick = { model.closeApplicationRecord(editor.token) }, enabled = !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Close record")) }
+                }
             }
         }
     }

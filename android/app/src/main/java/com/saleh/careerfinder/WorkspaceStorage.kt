@@ -77,6 +77,7 @@ internal object WorkspaceStorage {
             "evidenceMode", "mode", "resumeSHA256", "provider")
         requireType(value.opt("attemptId") is String || value.opt("id") is String)
         requireType(value.opt("state") is String && (value.opt("createdAt") is String || value.opt("confirmedAt") is String))
+        if (value.has("planId") && !value.isNull("planId")) requireType(value.opt("planId") is String)
         value.optionalObject("job", nullable = true)?.textFields("title", "company", "url")
         if (value.has("error") && !value.isNull("error")) {
             requireType(value.opt("error") is String || value.opt("error") is JSONObject)
@@ -121,6 +122,11 @@ internal object WorkspaceStorage {
         .put("employer", receipt.company).put("state", receipt.state).put("applicationId", receipt.applicationId)
         .put("createdAt", receipt.date).put("error", receipt.error).put("evidenceMode", receipt.evidenceMode)
         .put("resumeSHA256", receipt.resumeSHA256).put("provider", receipt.provider)
+        .apply {
+            if (receipt.planId.isNotEmpty()) put("planId", receipt.planId)
+            receipt.resumeName?.let { serviceData(ApplicationCvEvidence.validRecordedName(it)); put("resumeName", it) }
+            receipt.profileRevision?.let { serviceData(it >= 0); put("profileRevision", it) }
+        }
     fun encode(snapshot: CareerUiState): JSONObject = JSONObject().put("schema", 1)
         .put("profile", snapshot.profile.privateJson()).put("profileDirty", snapshot.profileDirty)
         .put("opportunityDraft", snapshot.opportunityDraft.privateJson())
@@ -145,6 +151,7 @@ data class RecordDraftCheckpoint(val scope: String, val identity: String, val jo
         require(applicationNoteLength(draft.note) <= 2_000 && draft.note.toByteArray(Charsets.UTF_8).toString(Charsets.UTF_8) == draft.note) { "Check this unfinished note before saving. The earlier saved file is kept." }
         return JSONObject().put("scope", scope).put("identity", identity).put("job", job.privateJson()).put("baseRevision", baseRevision)
         .put("stage", draft.stage.stored).put("appliedDate", draft.appliedDate).put("followUpDate", draft.followUpDate).put("note", draft.note)
+        .also { ApplicationCvEvidence.putManualName(it, draft.manualResumeName) }
     }
     companion object {
         fun decode(value: JSONObject): RecordDraftCheckpoint {
@@ -154,7 +161,7 @@ data class RecordDraftCheckpoint(val scope: String, val identity: String, val jo
             val job = WorkspaceStorage.job(value.getJSONObject("job"))
             require(value.getString("identity") == BoundaryPolicy.jobIdentity(job.url))
             val draft = ApplicationRecordDraft(ApplicationStage.decode(value.getString("stage")), value.getString("appliedDate"),
-                value.getString("followUpDate"), value.getString("note"))
+                value.getString("followUpDate"), value.getString("note"), ApplicationCvEvidence.manualName(value))
             require(applicationNoteLength(draft.note) <= 2_000 && draft.note.toByteArray(Charsets.UTF_8).toString(Charsets.UTF_8) == draft.note)
             return RecordDraftCheckpoint(value.getString("scope"), value.getString("identity"), job, (revision as Number).toInt(), draft)
         }

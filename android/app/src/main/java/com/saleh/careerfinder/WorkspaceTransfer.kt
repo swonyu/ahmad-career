@@ -62,12 +62,14 @@ internal object WorkspaceTransfer {
             recordID?.let { put("recordID", it) }
         }
         .put("draft", JSONObject().put("stage", checkpoint.draft.stage.stored).put("appliedOn", checkpoint.draft.appliedDate)
-            .put("followUpOn", checkpoint.draft.followUpDate).put("note", checkpoint.draft.note))
+            .put("followUpOn", checkpoint.draft.followUpDate).put("note", checkpoint.draft.note)
+            .also { ApplicationCvEvidence.putManualName(it, checkpoint.draft.manualResumeName) })
     private fun versionJson(job: Opportunity, version: ApplicationRecordVersion, revision: Int, archived: Boolean) = JSONObject()
         .put("id", version.id).put("job", jobJson(job)).put("stage", version.record.stage.stored)
         .put("appliedElsewhere", version.record.appliedElsewhere).put("appliedOn", version.record.appliedDate)
         .put("followUpOn", version.record.followUpDate).put("note", version.record.note).put("revision", revision)
         .put("archived", archived).put("updatedAt", version.savedAt)
+        .also { ApplicationCvEvidence.putManualName(it, version.record.manualResumeName) }
 
     fun export(snapshot: CareerUiState, search: JSONObject?, includePDF: Boolean): JSONObject {
         val profile = snapshot.profile.apiJson(includeLinkedIn = false).put("linkedin", snapshot.profile.linkedin)
@@ -139,7 +141,8 @@ internal object WorkspaceTransfer {
             val importedJob = job(item.getJSONObject("job")); val identity = BoundaryPolicy.jobIdentity(importedJob.url)
             val record = ApplicationRecord.decode(JSONObject().put("stage", item.getString("stage"))
                 .put("appliedDate", item.getString("appliedOn")).put("followUpDate", item.getString("followUpOn"))
-                .put("note", item.getString("note")).put("appliedElsewhere", item.getBoolean("appliedElsewhere")))
+                .put("note", item.getString("note")).put("appliedElsewhere", item.getBoolean("appliedElsewhere"))
+                .also { ApplicationCvEvidence.putManualName(it, ApplicationCvEvidence.manualName(item)) })
             val version = ApplicationRecordVersion.decode(JSONObject().put("id", UUID.fromString(item.getString("id")).toString()).put("record", record.json())
                 .put("savedAt", item.getString("updatedAt")).put("source", "copied"))
             FlatVersion(byIdentity[identity] ?: importedJob, version, (revision as Number).toInt(), item.getBoolean("archived"))
@@ -159,7 +162,7 @@ internal object WorkspaceTransfer {
             val draft = entry.getJSONObject("draft"); strings(draft, "stage", "appliedOn", "followUpOn", "note")
             RecordDraftCheckpoint(destinationScope, identity, byIdentity[identity] ?: records[identity]?.job ?: draftJob, (revision as Number).toInt(),
                 ApplicationRecordDraft(ApplicationStage.decode(draft.getString("stage")), draft.getString("appliedOn"),
-                    draft.getString("followUpOn"), draft.getString("note")).validated())
+                    draft.getString("followUpOn"), draft.getString("note"), ApplicationCvEvidence.manualName(draft)).validated())
         }
         require(checkpoints.size <= 200) { "The destination changed or the backup is not supported. Nothing was imported." }
         val opportunityDraft = OpportunityDraft.fromJson(data.getJSONObject("opportunityDraft"))
@@ -176,6 +179,11 @@ internal object WorkspaceTransfer {
                 val decoded = ApplicationRecordsCodec.decode(exact)
                 val exactIDs = decoded.values.flatMap { listOf(it.current) + it.alternatives + it.history }.map { it.id }.toSet()
                 require(exactIDs == flattened.map { it.version.id }.toSet()) { "The backup's common and Android record histories disagree." }
+                val exactManualNames = decoded.values.flatMap { listOf(it.current) + it.alternatives + it.history }
+                    .associate { it.id to it.record.manualResumeName }
+                require(exactManualNames == flattened.associate { it.version.id to it.version.record.manualResumeName }) {
+                    "The backup's common and Android record histories disagree."
+                }
                 records = decoded.mapValues { (identity, bundle) -> bundle.copy(job = byIdentity[identity] ?: bundle.job.copy(id = "local-" + UUID.randomUUID(), localOnly = true)) }
             }
             if (extension.has("answers")) answers = extension.requiredObjects("answers").mapNotNull { entry ->

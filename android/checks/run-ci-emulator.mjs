@@ -2,9 +2,12 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
-import { createHash } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import {createScreenshotCollector, inspectPNG} from './screenshot-evidence.mjs';
+import {RESTART_CLASS, RESTART_METHODS, partitionRestartClasses, assertSingleRestartExecution,
+  restartOriginalNames, createRestartEvidenceCollector, requireShellV2Features,
+  parseOwnedPackagePids, parseOwnedProcessTable} from './cv-restart-evidence.mjs';
 
 // This owns one fresh virtual device on a disposable GitHub runner. It must never
 // attach to the user's phones, existing AVDs, shared Mac or release credentials.
@@ -23,6 +26,8 @@ fs.mkdirSync(env.ANDROID_AVD_HOME,{recursive:true});fs.mkdirSync(env.ANDROID_USE
 const adb = path.join(sdk, 'platform-tools/adb');
 const processes = new Set(), lifecycles = new WeakMap(), results = [], installedPackages = new Set();
 let fixture;
+const restartPackage = 'com.saleh.careerfinder.preview';
+const restartNamespace = 'cv-restart-' + randomBytes(16).toString('hex');
 const delay = ms => new Promise(resolve => setTimeout(resolve,ms));
 function own(child) {
   let spawned,spawnFailed,closed;
@@ -89,7 +94,7 @@ async function start(command,args,log,cwd=root) {
   try {await awaitSpawn(child);return child}
   catch(error){try{await terminate(child)}catch(shutdown){console.warn(shutdown.message)}throw error}
 }
-async function run(command,args,{log,stdin,timeout=120000,cwd=root,onTimeout}={}) {
+async function run(command,args,{log,stdin,timeout=120000,cwd=root,onTimeout,exitCodes=[0],withExitCode=false}={}) {
   const child=own(spawn(command,args,{cwd,env,detached:true,stdio:['pipe','pipe','pipe']}));
   const chunks=[];let bytes=0;
   const output=log?fs.createWriteStream(path.join(evidence,log),{flags:'a'}):null;
@@ -112,8 +117,8 @@ async function run(command,args,{log,stdin,timeout=120000,cwd=root,onTimeout}={}
     const {code,error}=result.value;
     if(error)throw error;
     const text=Buffer.concat(chunks).toString();
-    if(code!==0)throw Error(`${path.basename(command)} failed (${code}); see ${log??'runner output'}. ${log?'':text.slice(-1000)}`);
-    return text;
+    if(!exitCodes.includes(code))throw Error(`${path.basename(command)} failed (${code}); see ${log??'runner output'}. ${log?'':text.slice(-1000)}`);
+    return withExitCode?{text,code}:text;
   } finally {
     try {await terminate(child)}finally{if(output)await new Promise(resolve=>output.end(resolve))}
   }
@@ -146,6 +151,8 @@ function assertSyntheticObservations(observations,jobs,pdfByteLength) {
 
 // Only extract PNG evidence from the known debuggable test apps. Never archive
 // their private vault, tokens, database, arbitrary files or an entire data directory.
+// The separately required restart collector also admits only its fixed synthetic
+// geometry/semantics/process markers; encrypted vault bytes never leave the app.
 async function readPNG(args, timeout=15000) {
   const child=own(spawn(adb,['-s',env.ANDROID_SERIAL,...args],{cwd:root,env,detached:true,stdio:['ignore','pipe','pipe']}));
   const chunks=[];let bytes=0,stderr='',oversized=false;
@@ -174,6 +181,88 @@ async function readPNG(args, timeout=15000) {
     return {png,...inspectPNG(png)};
   } finally {await terminate(child)}
 }
+// Each original uses negotiated shell-v2 exit status and separate binary stdout.
+// A lost transport, empty file or changed digest stops the phase without retry.
+async function readRestartOriginal(remotePath, timeout) {
+  assert.ok(installedPackages.has(restartPackage));
+  const allowed=[...restartOriginalNames('seed'),...restartOriginalNames('restore')];
+  const prefix='cache/application-cv-restart-evidence-'+restartNamespace+'/';
+  assert.ok(remotePath.startsWith(prefix)&&allowed.includes(remotePath.slice(prefix.length)));
+  const deadline=performance.now()+timeout;
+  const remaining=()=>{
+    const left=Math.floor(deadline-performance.now());
+    assert.ok(left>0,'The bounded original read expired.');return left;
+  };
+  const remote=async(...args)=>{
+    const child=own(spawn(adb,['-s',env.ANDROID_SERIAL,'shell','-T','-n','run-as',restartPackage,
+      '/system/bin/toybox',...args],{cwd:root,env,detached:true,stdio:['ignore','pipe','pipe']}));
+    const chunks=[];let bytes=0,oversized=false;
+    for(const stream of [child.stdout,child.stderr])stream.on('data',part=>{
+      bytes+=part.length;
+      if(bytes>8192){oversized=true;terminate(child).catch(()=>{})}else chunks.push(part);
+    });
+    try {
+      assert.ok((await within(lifecycles.get(child).spawned,remaining())).completed,'Original metadata spawn timed out.');
+      const result=await within(lifecycles.get(child).closed,remaining());
+      assert.ok(result.completed,'Original metadata read timed out.');
+      if(result.value.error)throw result.value.error;
+      assert.equal(result.value.code,0,'Original metadata read failed.');
+      assert.ok(!oversized);remaining();
+      return Buffer.concat(chunks).toString('utf8');
+    } finally {await terminate(child)}
+  };
+  assert.equal((await remote('stat','-c','%F',remotePath)).trim(),'regular file');
+  const sizeText=(await remote('stat','-c','%s',remotePath)).trim();
+  assert.match(sizeText,/^[1-9][0-9]*$/);
+  const remoteBytes=Number(sizeText);
+  assert.ok(Number.isSafeInteger(remoteBytes)&&remoteBytes<=5*1024*1024,
+    'The original size is outside the 1..5MB bound.');
+  const digest=async()=>{
+    const parts=(await remote('sha256sum',remotePath)).trim().split(/\s+/);
+    assert.equal(parts.length,2);assert.match(parts[0],/^[a-f0-9]{64}$/);
+    assert.equal(parts[1],remotePath);return parts[0];
+  };
+  const remoteSHA256Before=await digest();
+  const child=own(spawn(adb,['-s',env.ANDROID_SERIAL,'shell','-T','-n','run-as',restartPackage,
+    '/system/bin/toybox','cat',remotePath],{cwd:root,env,detached:true,stdio:['ignore','pipe','pipe']}));
+  const chunks=[];let bytes=0,stderr='',oversized=false;
+  child.stdout.on('data',part=>{
+    bytes+=part.length;
+    if(bytes>5*1024*1024){oversized=true;terminate(child).catch(()=>{})}else chunks.push(part);
+  });
+  child.stderr.on('data',part=>{stderr=(stderr+part.toString()).slice(-2000)});
+  const retainPartial=()=>{
+    const partial=path.join(evidence,'cv-restart-partials',path.basename(remotePath)+'.partial');
+    fs.mkdirSync(path.dirname(partial),{recursive:true});
+    const descriptor=fs.openSync(partial,'wx',0o600);
+    try {fs.writeFileSync(descriptor,Buffer.concat(chunks));fs.fsyncSync(descriptor)}
+    finally {fs.closeSync(descriptor)}
+  };
+  let original;
+  try {
+    assert.ok((await within(lifecycles.get(child).spawned,remaining())).completed,'Original binary spawn timed out.');
+    const result=await within(lifecycles.get(child).closed,remaining());
+    assert.ok(result.completed,'The original binary transfer timed out.');
+    if(result.value.error)throw result.value.error;
+    assert.equal(result.value.code,0,'The original transfer failed: '+stderr.trim());
+    assert.ok(!oversized,'The original transfer exceeded its byte limit.');
+    original=Buffer.concat(chunks);
+    assert.equal(original.length,remoteBytes,'The original transfer was truncated or changed size.');
+    assert.equal(createHash('sha256').update(original).digest('hex'),remoteSHA256Before);
+  } catch(error) {
+    retainPartial();throw error;
+  } finally {await terminate(child)}
+  try {
+    const remoteSHA256After=await digest();remaining();
+    assert.equal(remoteSHA256After,remoteSHA256Before,'The guest original changed during transfer.');
+    return {bytes:original,remoteBytes,remoteSHA256Before,remoteSHA256After};
+  } catch(error) {retainPartial();throw error}
+}
+const restartCollector=createRestartEvidenceCollector({
+  evidence,device:env.ANDROID_SERIAL,commit:process.env.GITHUB_SHA,namespace:restartNamespace,
+  readOriginal:readRestartOriginal,
+});
+
 const screenshotCollector=createScreenshotCollector({
   evidence,device:env.ANDROID_SERIAL,commit:process.env.GITHUB_SHA,
   readScreenshot:async(packageName,remotePath,timeout)=>
@@ -239,6 +328,8 @@ async function preserveFailureEvidence() {
         includeFailure:!results.some(result=>result.label==='native-https-phone'&&result.result==='passed')});
     } catch(error) {console.warn('Screenshot extraction could not finish: '+error.message)}
   }
+  const restartVerification=restartCollector.verify();
+  console.log('Verified '+restartVerification.verifiedOriginals+' of 44 required restart originals; '+restartVerification.result+'.');
   try {
     const gate=screenshotCollector.verify();
     console.log('Preserved '+gate.capturedRequiredCaptures+' of '+gate.expectedRequiredCaptures+' required native screenshots.');
@@ -255,7 +346,7 @@ async function configure(packageName) {
   assert.equal(settings.fontScale,'1.8');assert.equal(settings.rtl,'1');assert.match(settings.locales,/ar/);
   fs.writeFileSync(path.join(evidence,`${packageName}-settings.json`),JSON.stringify(settings,null,2));
 }
-async function instrument(label,packageName,classes,argumentsMap={},minimum=1) {
+async function instrument(label,packageName,classes,argumentsMap={},minimum=1,restartPhase) {
   const args=['-s',env.ANDROID_SERIAL,'shell','am','instrument','-w','-r','-e','class',classes.join(',')];
   for(const [name,value] of Object.entries(argumentsMap))args.push('-e',name,String(value));
   args.push(`${packageName}.test/androidx.test.runner.AndroidJUnitRunner`);
@@ -271,8 +362,10 @@ async function instrument(label,packageName,classes,argumentsMap={},minimum=1) {
     const count=Number(output.match(/OK \((\d+) tests?\)/)?.[1]??0);
     assert.ok(count>=minimum,`${label} did not report the required completed test count; inspect its log.`);
     assert.doesNotMatch(output,/FAILURES!!!|INSTRUMENTATION_FAILED|INSTRUMENTATION_STATUS_CODE: -(?:1|2|3|4)\b/);
-    results.push({label,classes,tests:count,result:'passed'});
-    console.log(`${label}: ${count} instrumented tests passed.`);
+    const exactExecution=restartPhase?assertSingleRestartExecution(output,restartPhase):undefined;
+    results.push({label,classes,tests:count,result:'passed',...(exactExecution?{exactExecution}:{})});
+    console.log(label+': '+count+' instrumented tests passed.');
+    return exactExecution;
   } catch(error) {
     if(label==='native-https-phone'&&!diagnosticsAttempted) {
       try {await captureDiagnostics()}
@@ -282,7 +375,7 @@ async function instrument(label,packageName,classes,argumentsMap={},minimum=1) {
   }
 }
 try {
-  await run(process.execPath,['--test',path.join(root,'android/checks/screenshot-evidence.test.mjs')],
+  await run(process.execPath,['--test',path.join(root,'android/checks/screenshot-evidence.test.mjs'),path.join(root,'android/checks/cv-restart-evidence.test.mjs')],
     {log:'screenshot-evidence-tests.log',timeout:60000});
   await run(path.join(sdk,'cmdline-tools/latest/bin/avdmanager'),['create','avd','--name','CareerFinderCI','--package','system-images;android-36;google_apis;x86_64','--device','pixel_7'],{stdin:'no\n',log:'avd-create.log'});
   await run(adb,['start-server'],{log:'adb.log'});
@@ -300,12 +393,58 @@ try {
   await device('install','-r',path.join(root,'android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk'));
   await configure('com.saleh.careerfinder.preview');
   const testDirectory=path.join(root,'android/app/src/androidTest/java/com/saleh/careerfinder');
-  const classes=fs.readdirSync(testDirectory).filter(name=>name.endsWith('.kt')).flatMap(name=>[...fs.readFileSync(path.join(testDirectory,name),'utf8').matchAll(/^class\s+(\w+(?:Test))\b/gm)].map(match=>match[1])).filter(name=>!['NativeHttpsAcceptanceTest','TlsBoundaryAcceptanceTest'].includes(name)).sort().map(name=>'com.saleh.careerfinder.'+name);
+  const discovered=fs.readdirSync(testDirectory).filter(name=>name.endsWith('.kt')).flatMap(name=>[...fs.readFileSync(path.join(testDirectory,name),'utf8').matchAll(/^class\s+(\w+(?:Test))\b/gm)].map(match=>match[1])).filter(name=>!['NativeHttpsAcceptanceTest','TlsBoundaryAcceptanceTest'].includes(name)).sort().map(name=>'com.saleh.careerfinder.'+name);
+  const restartSource=path.join(testDirectory,'ApplicationCvHistoryProcessRestartTest.kt');
+  const selection=partitionRestartClasses(discovered,fs.readFileSync(restartSource,'utf8'));
+  const classes=selection.ordinary;
   assert.ok(classes.some(name=>name.endsWith('WorkspaceSafetyRegressionTest')),'New safety regressions must be selected.');
   assert.ok(classes.some(name=>name.endsWith('NativeLocalizationAcceptanceTest')),'Bilingual dialog and language-control regressions must be selected.');
+  fs.writeFileSync(path.join(evidence,'instrumentation-selection.json'),JSON.stringify({
+    discovered,ordinary:classes,ordinaryMinimum:105,requiredRestartClass:selection.restart,
+    requiredRestartMethods:selection.methods,restartMethodsCountTowardOrdinaryMinimum:false},null,2));
   await instrument('ordinary-phone','com.saleh.careerfinder.preview',classes,{},105);
   // Preserve completed preview evidence before the acceptance build and later device work.
   await screenshotCollector.collect('com.saleh.careerfinder.preview',{phase:'ordinary-phone'});
+  // Restart is an additional required phase, not an excluded or renamed test.
+  const checkout=(await run('git',['rev-parse','HEAD'])).trim();
+  assert.equal(checkout,process.env.GITHUB_SHA);
+  assert.equal((await run('git',['status','--porcelain','--untracked-files=all','--',
+    'android/app/src','shared/localization'])).trim(),'','Restart requires the unchanged checkout sources.');
+  const sourceFiles=['android/app/build/outputs/apk/debug/app-debug.apk',
+    'android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk',
+    'android/app/src/androidTest/java/com/saleh/careerfinder/ApplicationCvHistoryProcessRestartTest.kt'];
+  const restartHashes=Object.fromEntries(sourceFiles.map(file=>[file,createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex')]));
+  fs.writeFileSync(path.join(evidence,'cv-restart-source.json'),JSON.stringify({
+    commit:checkout,namespace:restartNamespace,hashes:restartHashes,packageName:restartPackage},null,2));
+  requireShellV2Features(await device('features'));
+  const restartArguments=phase=>({career_cv_restart_phase:phase,
+    career_cv_restart_namespace:restartNamespace,career_source_sha:checkout});
+  const seedExecution=await instrument('cv-history-restart-seed',restartPackage,
+    [RESTART_CLASS+'#'+RESTART_METHODS.seed],restartArguments('seed'),1,'seed');
+  await device('shell','-T','-n','sync');
+  const seeded=await restartCollector.collect('seed',seedExecution);
+  const packagePids=async()=>{
+    const main=parseOwnedPackagePids(await run(adb,
+      ['-s',env.ANDROID_SERIAL,'shell','-T','-n','/system/bin/toybox','pidof',restartPackage],
+      {timeout:10000,exitCodes:[0,1],withExitCode:true}));
+    const table=await run(adb,['-s',env.ANDROID_SERIAL,'shell','-T','-n',
+      '/system/bin/toybox','ps','-A','-w','-o','PID,NAME'],{timeout:10000});
+    return parseOwnedProcessTable(table,main);
+  };
+  const packagePidsBefore=await packagePids();
+  await device('shell','-T','-n','am','force-stop','--user','0',restartPackage);
+  const packagePidsAfter=await packagePids();
+  assert.deepEqual(packagePidsAfter,[],'The owned target process must be absent before restore.');
+  restartCollector.recordProcessBoundary({packageName:restartPackage,forceStopCompleted:true,
+    packagePidsBefore,packagePidsAfter,observedAt:new Date().toISOString(),
+    seedPID:seeded.processID,reinstallOrDataClearBetweenPhases:false});
+  const restoreExecution=await instrument('cv-history-restart-restore',restartPackage,
+    [RESTART_CLASS+'#'+RESTART_METHODS.restore],restartArguments('restore'),1,'restore');
+  await device('shell','-T','-n','sync');
+  await restartCollector.collect('restore',restoreExecution);
+  for(const [file,digest] of Object.entries(restartHashes))
+    assert.equal(createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex'),digest);
+  assert.equal(restartCollector.verify().result,'passed','The required restart evidence is incomplete.');
   const {startTLSFixture}=await import('../../website/applications/fixtures/tls-fixture.mjs');
   fixture=await startTLSFixture({runtimeDir:path.join(runtime,'tls'),port:4943,mockPort:4944});
   await instrument('normal-preview-tls-boundary','com.saleh.careerfinder.preview',['com.saleh.careerfinder.TlsBoundaryAcceptanceTest'],{fixtureOrigin:fixture.origin});
@@ -322,8 +461,17 @@ try {
   const providerPOSTCounts=assertSyntheticObservations(observations,fixture.jobs,Buffer.from(fixture.resume.dataBase64,'base64').length);
   const hashes={};for(const file of ['android/app/build/outputs/apk/debug/app-debug.apk','android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk','android/app/build/outputs/apk/acceptance/app-acceptance.apk','android/app/build/outputs/apk/androidTest/acceptance/app-acceptance-androidTest.apk'])hashes[file]=createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex');
   const screenshotVerification=screenshotCollector.verify();
-  fs.writeFileSync(path.join(evidence,'verification.json'),JSON.stringify({commit:process.env.GITHUB_SHA,observedAt:new Date().toISOString(),result:screenshotVerification.result==='captured'?'passed':'failed',testsResult:'passed',results,hashes,providerPOSTCounts,screenshotVerification,screenshotManifest:'screenshots.json',realEmployerRequests:0,productionAccountsUsed:false,environment:'Disposable API36 x86_64 Google APIs phone; 360dp, 180% text, dark appearance, Arabic app locale and forced RTL; system trust for ordinary preview, isolated test CA only in acceptance variant.'},null,2));
+  const restartVerification=restartCollector.verify();
+  fs.writeFileSync(path.join(evidence,'verification.json'),JSON.stringify({commit:process.env.GITHUB_SHA,observedAt:new Date().toISOString(),result:screenshotVerification.result==='captured'&&restartVerification.result==='passed'?'passed':'failed',testsResult:'passed',results,hashes,providerPOSTCounts,screenshotVerification,restartVerification,screenshotManifest:'screenshots.json',realEmployerRequests:0,productionAccountsUsed:false,environment:'Disposable API36 x86_64 Google APIs phone; 360dp, 180% text, dark appearance, Arabic app locale and forced RTL; system trust for ordinary preview, isolated test CA only in acceptance variant.'},null,2));
   assert.equal(screenshotVerification.result,'captured','Required native screenshot evidence is incomplete; inspect screenshots.json. Instrumented test results remain recorded separately.');
+  assert.equal(restartVerification.result,'passed','Required two-phase restart acceptance is incomplete; inspect cv-restart.json.');
+} catch(error) {
+  fs.writeFileSync(path.join(evidence,'verification.json'),JSON.stringify({
+    commit:process.env.GITHUB_SHA,observedAt:new Date().toISOString(),result:'failed',
+    testsResult:'incomplete-or-failed',results,reason:String(error.message??error).slice(0,2000),
+    screenshotVerification:screenshotCollector.verify(),restartVerification:restartCollector.verify(),
+    realEmployerRequests:0,productionAccountsUsed:false},null,2));
+  throw error;
 } finally {
   try {await preserveFailureEvidence()} finally {
     try {if(fixture)await fixture.close()} finally {

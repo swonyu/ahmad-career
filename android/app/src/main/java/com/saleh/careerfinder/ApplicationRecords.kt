@@ -21,9 +21,10 @@ enum class ApplicationStage(val stored: String, val label: String) {
 }
 
 data class ApplicationRecordDraft(val stage: ApplicationStage = ApplicationStage.SAVED, val appliedDate: String = "",
-    val followUpDate: String = "", val note: String = "") {
+    val followUpDate: String = "", val note: String = "", val manualResumeName: String? = null) {
     fun validated(): ApplicationRecordDraft {
         BoundaryPolicy.civilDate(appliedDate); BoundaryPolicy.civilDate(followUpDate)
+        require(manualResumeName == null || ApplicationCvEvidence.validManualName(manualResumeName)) { ApplicationCvEvidence.MANUAL_NAME_ERROR }
         require(applicationNoteLength(note) <= 2_000) { "Keep this private note within 2,000 characters." }
         require(note.toByteArray(Charsets.UTF_8).toString(Charsets.UTF_8) == note) { "Check the characters in this private note before saving." }
         return this
@@ -31,21 +32,22 @@ data class ApplicationRecordDraft(val stage: ApplicationStage = ApplicationStage
 }
 
 data class ApplicationRecord(val stage: ApplicationStage = ApplicationStage.SAVED, val appliedDate: String = "",
-    val followUpDate: String = "", val note: String = "", val appliedElsewhere: Boolean = false) {
-    fun draft() = ApplicationRecordDraft(stage, appliedDate, followUpDate, note)
+    val followUpDate: String = "", val note: String = "", val appliedElsewhere: Boolean = false, val manualResumeName: String? = null) {
+    fun draft() = ApplicationRecordDraft(stage, appliedDate, followUpDate, note, manualResumeName)
     fun json() = JSONObject().put("stage", stage.stored).put("appliedDate", appliedDate).put("followUpDate", followUpDate)
         .put("note", note).put("appliedElsewhere", appliedElsewhere)
+        .also { ApplicationCvEvidence.putManualName(it, manualResumeName) }
     companion object {
         fun decode(value: JSONObject): ApplicationRecord {
             for (key in listOf("stage", "appliedDate", "followUpDate", "note")) require(value.opt(key) is String) { "The saved application record could not be read. It is preserved." }
             require(value.opt("appliedElsewhere") is Boolean) { "The saved application status could not be read. It is preserved." }
             val draft = ApplicationRecordDraft(ApplicationStage.decode(value.getString("stage")), value.getString("appliedDate"),
-                value.getString("followUpDate"), value.getString("note")).validated()
+                value.getString("followUpDate"), value.getString("note"), ApplicationCvEvidence.manualName(value)).validated()
             val applied = value.getBoolean("appliedElsewhere")
             require(draft.stage !in setOf(ApplicationStage.APPLIED, ApplicationStage.INTERVIEW, ApplicationStage.OFFER) || applied) {
                 "The saved application status is inconsistent. Its file is preserved."
             }
-            return ApplicationRecord(draft.stage, draft.appliedDate, draft.followUpDate, draft.note, applied)
+            return ApplicationRecord(draft.stage, draft.appliedDate, draft.followUpDate, draft.note, applied, draft.manualResumeName)
         }
     }
 }
@@ -115,7 +117,8 @@ data class ApplicationRecordBundle(val job: Opportunity, val current: Applicatio
             ApplicationStage.CLOSED -> appliedElsewhere
             else -> true
         }
-        val record = ApplicationRecord(draft.stage, draft.appliedDate, draft.followUpDate, draft.note, applied)
+        val record = ApplicationRecord(draft.stage, draft.appliedDate, draft.followUpDate, draft.note, applied,
+            draft.manualResumeName?.trim()?.takeIf(String::isNotEmpty))
         return copy(current = ApplicationRecordVersion.create(record, if (clearing) "corrected" else "edited"),
             history = if (clearing) (history + current).distinctBy { it.id } else history,
             appliedElsewhere = applied, revision = Math.addExact(revision, 1))

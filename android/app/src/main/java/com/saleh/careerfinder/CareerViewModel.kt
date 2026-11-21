@@ -634,8 +634,12 @@ class CareerViewModel internal constructor(application: Application, private val
             mutable.update { it.copy(error = readableNoteMessage) }
             return
         }
+        if (updated.draft.manualResumeName?.let { !ApplicationCvEvidence.validManualName(it) } == true) {
+            mutable.update { it.copy(error = ApplicationCvEvidence.MANUAL_NAME_ERROR) }
+            return
+        }
         val checkpoint = RecordDraftCheckpoint(updated.scope, updated.identity, updated.job, updated.expectedRevision, updated.draft)
-        mutable.update { it.copy(error = noteEditorError(it.error, updated.draft.note), applicationRecordEditor = updated,
+        mutable.update { it.copy(error = noteEditorError(it.error, updated.draft.note)?.takeUnless { message -> message == ApplicationCvEvidence.MANUAL_NAME_ERROR }, applicationRecordEditor = updated,
             recordDrafts = it.recordDrafts + (updated.identity to checkpoint)) }
         queuePrivateSave()
     }

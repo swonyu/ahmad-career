@@ -188,8 +188,8 @@ fun CareerApp(model: CareerViewModel) {
                     // Long notices remain scrollable while the main screen keeps usable height.
                     Column(Modifier.fillMaxWidth().heightIn(max = messageHeightLimit)
                         .verticalScroll(rememberScrollState()).testTag("workspace-messages")) {
-                        if (state.testService) MessageBanner("Test service: applications and receipts are simulated.", true, null)
                         if (state.error != null || state.notice != null) MessageBanner(state.error ?: state.notice.orEmpty(), state.error != null, model::dismissMessage)
+                        if (state.testService) MessageBanner("Test service: applications and receipts are simulated.", true, null)
                     }
                 }
                 Box(Modifier.weight(1f).testTag("workspace-content")) {
@@ -737,7 +737,7 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
         if (plan != null) {
             item { Heading("Review what will be shared.", l10n.format("This review uses profile version {0}. Expires {1}.",
                 listOf(plan.profileRevision.toString(), l10n.dateTime(plan.expiresAt)))) }
-            items(plan.items, key = { "review-" + it.jobId }) { item -> ReviewCard(item) }
+            items(plan.items, key = { "review-" + it.jobId }) { item -> ReviewCard(item, plan.profileRevision, "${state.privateScope}-${plan.id}-${item.jobId}") }
             item {
                 Panel {
                     val ready = plan.items.count(ReviewItem::canSubmitNow)
@@ -760,7 +760,7 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
 }
 
 @Composable
-internal fun ReviewCard(item: ReviewItem) {
+internal fun ReviewCard(item: ReviewItem, profileRevision: Int? = null, evidenceKey: String = item.jobId) {
     val l10n = rememberCareerStrings()
     var fingerprint by remember(item.jobId) { mutableStateOf(false) }
     val context = LocalContext.current
@@ -785,6 +785,7 @@ internal fun ReviewCard(item: ReviewItem) {
             TextButton(onClick = { fingerprint = !fingerprint }, modifier = Modifier.heightIn(min = 48.dp)) { Text(l10n(if (fingerprint) "Hide file fingerprint" else "Check file fingerprint")) }
             if (fingerprint) Text(item.resume.sha256, style = MaterialTheme.typography.bodySmall)
         }
+        ApplicationCvDetails("review-$evidenceKey", item.resume?.name, profileRevision, prepared = true)
         if (item.reason.isNotBlank()) Text(l10n.message(item.reason), color = MaterialTheme.colorScheme.error)
         if (item.state == "rate_limited") Text(l10n.format("Provider cooldown: {0}", listOf((l10n.dateTime(item.retryAt)).toString())), style = MaterialTheme.typography.bodySmall)
     }
@@ -827,7 +828,7 @@ private fun ReceiptsScreen(state: CareerUiState, model: CareerViewModel, browse:
         else if (visible.isEmpty()) item { EmptyState("No receipts match these filters.", "Your other application records are still available.", action = "Show all receipts", onClick = { query = ""; filter = ReceiptFilter.ALL }) }
         items(visible, key = ApplicationReceipt::id) { receipt ->
             Panel {
-                StatusPill(receiptLabel(receipt), receipt.state in setOf("uncertain", "rejected", "rate_limited") || receipt.testMode)
+                StatusPill(receiptLabel(receipt, l10n), receipt.state in setOf("uncertain", "rejected", "rate_limited") || receipt.testMode)
                 Text(receipt.title, style = MaterialTheme.typography.titleLarge)
                 Text(receipt.company, color = MaterialTheme.colorScheme.primary)
                 Text(l10n(l10n.dateTime(receipt.date)), style = MaterialTheme.typography.bodySmall)
@@ -842,6 +843,8 @@ private fun ReceiptsScreen(state: CareerUiState, model: CareerViewModel, browse:
                     receipt.state == "confirmed" -> "This record lacks verified live evidence and is not counted as a live application."
                     else -> "Review the recorded outcome before preparing another application."
                 }))
+                ApplicationCvDetails("receipt-${state.privateScope}-${receipt.id}", receipt.resumeName, receipt.profileRevision,
+                    prepared = receipt.state == "ready")
                 if (receipt.state == "dispatching" && receipt.planId.isNotBlank() && receipt.planId.length <= 200 && receipt.id.length <= 200) {
                     OutlinedButton(onClick = { model.stopAndCheckReceipt(receipt.id, receipt.planId) },
                         modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text(l10n("Stop")) }
@@ -1391,7 +1394,7 @@ private fun fileSize(bytes: Long, locale: Locale): String = when {
 }
 internal fun dateLabel(value: String): String = try { DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.getDefault()).withZone(ZoneId.systemDefault()).format(Instant.parse(value)) } catch (_: Exception) { "Time not recorded" }
 private fun consentLabel(value: Any?): String = when (value) { true -> "Yes"; false -> "No"; else -> "Not provided" }
-private fun receiptLabel(receipt: ApplicationReceipt): String {
+private fun receiptLabel(receipt: ApplicationReceipt, l10n: CareerStrings): String {
     val label = when {
         receipt.verified -> "Confirmed by provider"
         receipt.state == "confirmed" && !receipt.testMode -> "Unverified record"
@@ -1403,5 +1406,6 @@ private fun receiptLabel(receipt: ApplicationReceipt): String {
         receipt.state == "ready" -> "Prepared"
         else -> receipt.state.replaceFirstChar { it.titlecase() }
     }
-    return if (receipt.testMode) "Test receipt · " + label else label
+    val localizedLabel = l10n(label)
+    return if (receipt.testMode) l10n.format("Test receipt · {0}", listOf(localizedLabel)) else localizedLabel
 }
