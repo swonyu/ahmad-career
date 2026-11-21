@@ -419,7 +419,8 @@ export function createOAuthHandler({fetchImpl = fetch, clock = Date.now, diagnos
     } catch (error) {
       if (callback && request.method === 'GET') {
         diagnostic.report(error instanceof ApplicationError ? error.code : 'internal_error');
-        return feedback(transaction?.return_to ?? '/connect',callbackProvider,callbackProvider === 'linkedin' && error instanceof ApplicationError && error.code === 'provider_email_required' ? 'email_required' : 'failed',transaction ? [clearOAuthBrowserCookie()] : []);
+        const result = error instanceof ApplicationError && error.code === 'provider_already_linked' && transaction?.intent === 'link' ? 'already_linked' : callbackProvider === 'linkedin' && error instanceof ApplicationError && error.code === 'provider_email_required' ? 'email_required' : 'failed';
+        return feedback(transaction?.return_to ?? '/connect',callbackProvider,result,transaction ? [clearOAuthBrowserCookie()] : []);
       }
       if (error instanceof ApplicationError) return json(error.status,{ok:false,error:{code:error.code,message:error.message}},error.status === 429 ? {'Retry-After':'60'} : {});
       // Never log or expose provider responses, authorization codes or secrets.

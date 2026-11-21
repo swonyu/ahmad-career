@@ -158,6 +158,8 @@ test('OAuth callback feedback only accepts exact provider and result enums once'
   assert.deepEqual(auth.oauthReturn('?oauth_provider=google&oauth_result=signed_in'),{provider:'google',result:'signed_in'});
   assert.deepEqual(auth.oauthReturn('?oauth_provider=linkedin&oauth_result=cancelled&error_description=untrusted'),{provider:'linkedin',result:'cancelled'});
   assert.deepEqual(auth.oauthReturn('?oauth_provider=linkedin&oauth_result=email_required'),{provider:'linkedin',result:'email_required'});
+  for(const provider of ['google','linkedin'])assert.deepEqual(auth.oauthReturn('?oauth_provider='+provider+'&oauth_result=already_linked&error_description=untrusted'),{provider,result:'already_linked'});
+  for(const query of ['?oauth_provider=google&oauth_result=provider_already_linked','?oauth_provider=google&oauth_result=already_linked&oauth_result=connected','?oauth_provider=unknown&oauth_result=already_linked'])assert.equal(auth.oauthReturn(query),null);
   for(const query of ['','?oauth_provider=google&oauth_result=email_required','?oauth_provider=evil&oauth_result=connected','?oauth_provider=google&oauth_result=<script>','?oauth_provider=google&oauth_provider=linkedin&oauth_result=connected','?oauth_provider=google&oauth_result=connected&oauth_result=failed'])assert.equal(auth.oauthReturn(query),null);
 });
 

@@ -297,6 +297,48 @@ try {
     assert.equal(await count('auth_accounts'),2);
   });
 
+
+  await check('A same-email Google link conflict preserves both owners, sessions and saved data, then normal Google login recovers its original account',async()=>{
+    for(const originalHasWorkspace of [false,true]){
+      await reset();
+      const original=await login('already-linked-google'),user=sites('separate-sites-owner','person@example.com');
+      const linked=await finish(await begin('linkedin',{user}),{claims:{sub:'sites-linkedin-kept'}});
+      assert.equal(queryResult(linked.response),'connected');
+      const flow=await begin('google',{user}),originalConnection=await connectionId(original.identity.id,'google');
+      const owners=[user['oai-authenticated-user-id'],...(originalHasWorkspace?[original.identity.id]:[])];
+      for(const [index,owner] of owners.entries())await db.prepare('INSERT INTO workspaces(id,owner_id,owner_email,created_at,profile_json) VALUES(?,?,?,?,?)')
+        .bind('conflict-workspace-'+index,owner,'person@example.com',new Date(time).toISOString(),JSON.stringify({syntheticPrivateSentinel:'saved-for-'+owner})).run();
+      const before={};
+      for(const table of ['auth_accounts','auth_identities','browser_sessions','workspaces'])before[table]=(await db.prepare('SELECT * FROM '+table+' ORDER BY rowid').all()).results;
+      const result=await finish(flow,{claims:{sub:'already-linked-google'}});
+      assert.equal(result.status,303);assert.equal(result.response.headers.get('location'),'/account?oauth_provider=google&oauth_result=already_linked');
+      assert.equal(cookieFrom(result.response,BROWSER_SESSION_COOKIE),undefined);assert.match(result.response.headers.get('set-cookie'),/Max-Age=0/);
+      assert.deepEqual(diagnostics,[{stage:'identity_lookup',code:'provider_already_linked'}]);
+      for(const [table,rows] of Object.entries(before))assert.deepEqual((await db.prepare('SELECT * FROM '+table+' ORDER BY rowid').all()).results,rows,table);
+      assert.equal(await count('oauth_transactions'),0);
+      const current=await call('/api/auth/status',{headers:user});
+      assert.equal(current.data.account.id,user['oai-authenticated-user-id']);assert.equal(current.data.providers.google.connected,false);assert.equal(current.data.providers.linkedin.connected,true);
+      const signedOut=await call('/api/auth/signout',{method:'POST',headers:user,body:{expectedAccountId:user['oai-authenticated-user-id']}});
+      assert.equal(signedOut.status,200);assert.equal(signedOut.data.redirectTo,'/signout-with-chatgpt?return_to=%2Fconnect');
+      const recovered=await login('already-linked-google');
+      assert.equal(recovered.identity.id,original.identity.id);assert.equal(await connectionId(original.identity.id,'google'),originalConnection);
+      assert.equal(await count('auth_accounts'),2);assert.equal(await count('auth_identities'),2);assert.equal(await count('browser_sessions'),before.browser_sessions.length+1);
+      assert.deepEqual((await db.prepare('SELECT * FROM workspaces ORDER BY rowid').all()).results,before.workspaces);
+      assert.equal((await call('/api/auth/status',{cookie:recovered.cookie,headers:user})).data.account.id,original.identity.id,'The verified Google session, not a background Sites identity, owns the recovered account');
+      assert.equal((await call('/api/auth/status',{headers:user})).data.account.id,user['oai-authenticated-user-id'],'The distinct Sites account remains recoverable');
+    }
+  });
+
+  await check('Provider error text cannot impersonate the verified already-linked recovery result',async()=>{
+    for(const error of ['provider_already_linked','already_linked']){
+      const flow=await begin('google',{user:sites('untrusted-provider-error')}),result=await finish(flow,{error});
+      assert.equal(result.response.headers.get('location'),'/account?oauth_provider=google&oauth_result=failed');
+      assert.equal(cookieFrom(result.response,BROWSER_SESSION_COOKIE),undefined);
+    }
+    assert.deepEqual(diagnostics,[{stage:'provider_response',code:'provider_rejected'},{stage:'provider_response',code:'provider_rejected'}]);
+    assert.equal(tokenRequests(),0);assert.equal(await count('auth_identities'),0);assert.equal(await count('browser_sessions'),0);assert.equal(await count('oauth_transactions'),0);
+  });
+
   await check('Explicit Google linking preserves the exact Sites owner and subsequent Google login returns that owner',async()=>{
     const user=sites('link-owner'),flow=await begin('google',{user}),result=await finish(flow,{claims:{sub:'linked-google',email:'different@example.com'}});
     assert.equal(queryResult(result.response),'connected'); assert.equal(cookieFrom(result.response,BROWSER_SESSION_COOKIE),undefined);
@@ -442,7 +484,7 @@ try {
     const alice=sites('alice'),bob=sites('bob'),flow=await begin('linkedin',{user:alice});
     assert.equal(queryResult((await finish(flow,{headers:bob})).response),'failed'); assert.equal(tokenRequests(),0); assert.equal(await count('auth_identities'),0);
     const own=await begin('linkedin',{user:alice}); assert.equal(queryResult((await finish(own,{claims:{sub:'same-person'}})).response),'connected');
-    const other=await begin('linkedin',{user:bob}); assert.equal(queryResult((await finish(other,{claims:{sub:'same-person'}})).response),'failed');
+    const other=await begin('linkedin',{user:bob}); assert.equal(queryResult((await finish(other,{claims:{sub:'same-person'}})).response),'already_linked');
     const row=await db.prepare('SELECT owner_id FROM auth_identities').first(); assert.equal(row.owner_id,'synthetic-alice');
     const wrong=await call('/api/auth/connect',{method:'POST',headers:bob,body:{provider:'google',expectedAccountId:'synthetic-alice'}}); assert.equal(wrong.status,409);
   });
@@ -450,7 +492,8 @@ try {
   await check('Concurrent links for the same provider subject create one owner association and never merge either account',async()=>{
     const a=await begin('linkedin',{user:sites('a')}),b=await begin('linkedin',{user:sites('b')});
     const results=await Promise.all([a,b].map(flow=>finish(flow,{claims:{sub:'contended-subject'}})));
-    assert.deepEqual(results.map(value=>queryResult(value.response)).sort(),['connected','failed']); assert.equal(await count('auth_identities'),1); assert.equal(await count('auth_accounts'),2);
+    const outcomes=results.map(value=>queryResult(value.response));assert.equal(outcomes.filter(value=>value==='connected').length,1);assert.equal(outcomes.filter(value=>value==='failed'||value==='already_linked').length,1);
+    assert.equal(await count('auth_identities'),1); assert.equal(await count('auth_accounts'),2);
   });
 
   await check('A Google cookie suppresses Sites fallback; mismatched sign-out fails and invalid-cookie recovery clears no Sites account',async()=>{

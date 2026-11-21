@@ -1356,5 +1356,6 @@
   "Discarding unfinished edits": "جارٍ تجاهل التعديلات غير المحفوظة",
   "Export unfinished job link": "تصدير مسودة رابط الوظيفة",
   "Job link draft": "مسودة رابط وظيفة",
-  "Recover job-link edits": "استعادة تعديلات رابط الوظيفة"
+  "Recover job-link edits": "استعادة تعديلات رابط الوظيفة",
+  "This {0} account is already connected to another Career Finder account. To open that account, choose Sign out on Account, then sign in with {0}. Any saved data stays with its original account.": "حساب {0} هذا مرتبط بالفعل بحساب آخر في Career Finder. لفتح ذلك الحساب، اختر «تسجيل الخروج» من صفحة «الحساب»، ثم سجّل الدخول باستخدام {0}. تبقى أي بيانات محفوظة في حسابها الأصلي."
 }

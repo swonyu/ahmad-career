@@ -7,11 +7,11 @@ const providerSchema = z.object({ configured: z.boolean(), signInSupported: z.bo
 export const authStatusSchema = z.object({ ok: z.literal(true), account: z.object({ id: z.string().min(1).max(500), email: z.string().max(320), displayName: z.string().max(500), method: z.enum(["chatgpt", "google", "linkedin"]) }).nullable(), providers: z.object({ google: providerSchema, linkedin: providerSchema }) });
 export type AuthStatus = z.infer<typeof authStatusSchema>;
 export type Provider = "google" | "linkedin";
-export function oauthReturn(search: string): { provider: Provider; result: "connected" | "signed_in" | "cancelled" | "failed" | "email_required" } | null {
+export function oauthReturn(search: string): { provider: Provider; result: "connected" | "signed_in" | "cancelled" | "failed" | "already_linked" | "email_required" } | null {
   const query = new URLSearchParams(search), provider = query.get("oauth_provider"), result = query.get("oauth_result");
-  if (query.getAll("oauth_provider").length !== 1 || query.getAll("oauth_result").length !== 1 || !provider || !["google", "linkedin"].includes(provider) || !result || !["connected", "signed_in", "cancelled", "failed", "email_required"].includes(result)) return null;
+  if (query.getAll("oauth_provider").length !== 1 || query.getAll("oauth_result").length !== 1 || !provider || !["google", "linkedin"].includes(provider) || !result || !["connected", "signed_in", "cancelled", "failed", "already_linked", "email_required"].includes(result)) return null;
   if (result === "email_required" && provider !== "linkedin") return null;
-  return { provider: provider as Provider, result: result as "connected" | "signed_in" | "cancelled" | "failed" | "email_required" };
+  return { provider: provider as Provider, result: result as "connected" | "signed_in" | "cancelled" | "failed" | "already_linked" | "email_required" };
 }
 export function internalAuthRedirect(value: unknown, origin: string): string {
   if (typeof value !== "string" || value.length > 2048 || !value.startsWith("/") || value.startsWith("//") || /[\\\x00-\x20]/.test(value)) throw Error("The sign-in destination could not be verified.");
