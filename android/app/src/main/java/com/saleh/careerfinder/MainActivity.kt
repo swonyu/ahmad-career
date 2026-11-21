@@ -22,6 +22,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
@@ -38,6 +40,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -631,7 +635,9 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
     val plan = state.plan
     var approved by remember(plan?.id, plan?.digest) { mutableStateOf(false) }
     val selectedJobs = state.jobs.filter { it.id in state.selected && !it.localOnly }
-    LazyColumn(Modifier.fillMaxSize().imePadding().testTag("apply-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    var viewportHeight by remember { mutableIntStateOf(0) }
+    LazyColumn(Modifier.fillMaxSize().imePadding().onSizeChanged { viewportHeight = it.height }.testTag("apply-list"),
+        contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         item { Heading("Applications", "Prepare your details, choose a role and review your application options.") }
         if (state.connection == null || state.requiresPairing) item {
             Panel {
@@ -690,6 +696,13 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
         items(if (state.reviewingRecoveredPlan) emptyList() else selectedJobs, key = { "answer-" + it.id }) { job ->
             val answer = state.answers[job.id] ?: JobAnswers()
             val reviewed = plan?.items?.find { it.jobId == job.id }
+            val messageRequester = remember(job.id) { BringIntoViewRequester() }
+            var messageFocused by remember(job.id) { mutableStateOf(false) }
+            // Re-request after the real list viewport shrinks for the IME.
+            // Ordinary scrolling does not retrigger this effect.
+            LaunchedEffect(job.id, messageFocused, viewportHeight) {
+                if (messageFocused && viewportHeight > 0) messageRequester.bringIntoView()
+            }
             Panel {
                 Text(job.company, color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
                 Text(job.title, style = MaterialTheme.typography.titleLarge)
@@ -697,7 +710,9 @@ private fun ApplyScreen(state: CareerUiState, model: CareerViewModel, connect: (
                     { model.markAppliedElsewhere(job.id, it) }, enabled = !state.busy)
                 Field("Message for this employer (optional)", answer.comments, {
                     model.editAnswers(job.id) { value -> value.copy(comments = it.take(5000)) }
-                }, singleLine = false, enabled = !state.busy)
+                }, singleLine = false, enabled = !state.busy,
+                    modifier = Modifier.bringIntoViewRequester(messageRequester)
+                        .onFocusChanged { messageFocused = it.isFocused })
                 ConsentChoice("Allow this employer to store and process my application", answer.consentStore, !state.busy) {
                     model.editAnswers(job.id) { value -> value.copy(consentStore = it) }
                 }
@@ -1100,10 +1115,10 @@ private fun TargetCountryPicker(value: Set<String>, close: () -> Unit, changed: 
 
 @Composable
 internal fun Field(label: String, value: String, changed: (String) -> Unit, type: KeyboardType = KeyboardType.Text, singleLine: Boolean = true,
-    enabled: Boolean = true, error: String? = null) {
+    enabled: Boolean = true, error: String? = null, modifier: Modifier = Modifier) {
     val l10n = rememberCareerStrings()
     OutlinedTextField(value = value, onValueChange = changed, label = { Text(l10n(label)) },
-        modifier = Modifier.fillMaxWidth(), singleLine = singleLine, minLines = if (singleLine) 1 else 3,
+        modifier = modifier.fillMaxWidth(), singleLine = singleLine, minLines = if (singleLine) 1 else 3,
         textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = if (type in setOf(KeyboardType.Email, KeyboardType.Uri, KeyboardType.Phone, KeyboardType.Ascii)) TextDirection.Ltr else TextDirection.Content),
         keyboardOptions = KeyboardOptions(keyboardType = type), enabled = enabled, shape = RoundedCornerShape(14.dp),
         isError = error != null, supportingText = if (error != null) { { Text(l10n.message(error)) } } else null)
