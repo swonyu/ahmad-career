@@ -651,10 +651,26 @@
     "arguments": 1
   },
   {
+    "key": "{0} roles new to this search",
+    "parts": [
+      "",
+      " roles new to this search"
+    ],
+    "arguments": 1
+  },
+  {
     "key": "Open employer board for {0}",
     "parts": [
       "Open employer board for ",
       ""
+    ],
+    "arguments": 1
+  },
+  {
+    "key": "{0} role new to this search",
+    "parts": [
+      "",
+      " role new to this search"
     ],
     "arguments": 1
   },
@@ -1140,6 +1156,15 @@
       "Source: ",
       " · ",
       ""
+    ],
+    "arguments": 2
+  },
+  {
+    "key": "{0} of {1} shown",
+    "parts": [
+      "",
+      " of ",
+      " shown"
     ],
     "arguments": 2
   },

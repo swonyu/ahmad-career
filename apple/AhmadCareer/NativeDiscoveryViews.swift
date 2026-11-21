@@ -1,3 +1,11 @@
+/// Localize app-owned defaults only. Explicit search text is user content, even
+/// when it happens to equal an English label used for an empty field.
+func nativeDiscoverySummary(_ query: DiscoveryQuery, appCopy: (String) -> String) -> String {
+    [query.keywords.isEmpty ? appCopy("All roles") : query.keywords,
+     query.location.isEmpty ? appCopy("Any location") : query.location,
+     appCopy(query.remoteOnly ? "Remote evidence" : "Any work arrangement")].joined(separator: " · ")
+}
+
 #if os(iOS)
 import SwiftUI
 
@@ -127,7 +135,31 @@ struct NativeDiscoveryScreen: View {
                             .fixedSize(horizontal: false, vertical: true)
                             .accessibilityIdentifier("discovery.previousSearchScope")
                     }
-                    if let criteria = discovery.lastQuery { Text(l10n(criteria.summary)).font(.subheadline).fixedSize(horizontal: false, vertical: true) }
+                    if let criteria = discovery.lastQuery {
+                        Text(nativeDiscoverySummary(criteria, appCopy: { l10n($0) }))
+                            .font(.subheadline).fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("discovery.summary")
+                    }
+                    if discovery.hasSearchComparison {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(l10n("New since my last search")).font(.headline)
+                            Text(l10n.format(discovery.newJobCount == 1 ? "{0} role new to this search" : "{0} roles new to this search", [String(discovery.newJobCount)]))
+                                .font(.subheadline.weight(.semibold)).fixedSize(horizontal: false, vertical: true)
+                                .accessibilityIdentifier("discovery.newCount")
+                            Text(l10n("First seen in this search, based on history saved on this phone."))
+                                .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                            Toggle(l10n("New only"), isOn: $discovery.showNewOnly)
+                                .accessibilityIdentifier("discovery.newOnly")
+                            if discovery.searchNewResult?.coverageLimited == true {
+                                Text(l10n("This count covers the boards we could compare. Other results may need a complete check first."))
+                                    .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                    }
+                    if discovery.searchNewResult?.baselineReset == true {
+                        Text(l10n("Older search history reached this phone’s limit. A fresh baseline is kept without marking old openings as new."))
+                            .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                    }
                     DisclosureGroup(l10n("Employer coverage and freshness")) {
                         ForEach(page.sources) { source in
                             VStack(alignment: .leading, spacing: 5) {
@@ -147,15 +179,28 @@ struct NativeDiscoveryScreen: View {
                         }
                         Text(l10n(page.notice)).font(.footnote).foregroundStyle(.secondary)
                     }
-                } header: { Text(l10n.format("Opportunities to review · {0}", [String(describing: discovery.jobs.count)])) }
+                } header: {
+                    Text(discovery.showNewOnly ? l10n.format("{0} of {1} shown", [String(discovery.visibleJobs.count), String(discovery.jobs.count)])
+                         : l10n.format("Opportunities to review · {0}", [String(discovery.jobs.count)]))
+                }
             }
             Section {
                 if discovery.jobs.isEmpty {
                     emptyState
                 } else {
-                    ForEach(discovery.jobs) { job in
+                    if discovery.showNewOnly && discovery.visibleJobs.isEmpty {
+                        Text(l10n("No openings are new in the results compared.")).fixedSize(horizontal: false, vertical: true)
+                        Button(l10n("Show all results")) { discovery.showNewOnly = false }
+                            .frame(minHeight: 44).accessibilityIdentifier("discovery.showAll")
+                    }
+                    ForEach(discovery.visibleJobs) { job in
                         NavigationLink { NativeDiscoveryJobDetail(job: job) } label: {
                             VStack(alignment: .leading, spacing: 7) {
+                                if discovery.newJobIDs.contains(job.id) {
+                                    Label(l10n("New to this search"), systemImage: "sparkle")
+                                        .font(.caption.weight(.semibold)).foregroundStyle(NativeDesign.accent)
+                                        .accessibilityIdentifier("discovery.new.\(job.id)")
+                                }
                                 Text(job.title).font(.headline).fixedSize(horizontal: false, vertical: true)
                                 Text(job.company).font(.subheadline).foregroundStyle(.secondary)
                                 Text(job.location.isEmpty ? l10n("Location not specified") : job.location).font(.caption).foregroundStyle(.secondary)

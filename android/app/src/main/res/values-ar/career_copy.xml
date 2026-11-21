@@ -542,6 +542,7 @@
     <string name="c_4622feb5d8e0" formatted="false">"البحث عن فرص"</string>
     <string name="c_a39024eeb019" formatted="false">"أكمل مراجعة التقديم لهذه الفرصة أو أوقفها قبل إزالة الرابط المحفوظ."</string>
     <string name="c_551d6bdb4270" formatted="false">"الاسم الأول أو الاسم الوحيد"</string>
+    <string name="c_84a808f18ba3" formatted="false">"ظهرت للمرة الأولى في هذا البحث بحسب السجل المحفوظ على هذا الهاتف."</string>
     <string name="c_6d3c6cfe87e6" formatted="false">"البدلات الثابتة للفترة المختارة"</string>
     <string name="c_3572c0d3c2d7" formatted="false">"البدلات الثابتة للفترة المختارة، "</string>
     <string name="c_1a7b3c35f580" formatted="false">"البدلات الثابتة للفترة المختارة، {0}"</string>
@@ -738,6 +739,9 @@
     <string name="c_07297fa94a99" formatted="false">"تحتاج إلى مراجعة"</string>
     <string name="c_3dddf7d417a7" formatted="false">"تحتاج إلى تحقق"</string>
     <string name="c_3dd7e482ff01" formatted="false">"إعلان جديد من جهة عمل. راجع المتطلبات كاملة قبل التقديم."</string>
+    <string name="c_096ced4bd35d" formatted="false">"الجديد فقط"</string>
+    <string name="c_42dd7dd0ccfd" formatted="false">"الجديد منذ بحثي السابق"</string>
+    <string name="c_5b7f0bfa9a4f" formatted="false">"جديدة في هذا البحث"</string>
     <string name="c_47e062aefb36" formatted="false">"تاريخ الخطوة التالية بصيغة سنة-شهر-يوم"</string>
     <string name="c_28e775e77fc6" formatted="false">"حُفظت الخطوة التالية على هذا الهاتف."</string>
     <string name="c_1ea442a134b2" formatted="false">"لا"</string>
@@ -754,6 +758,7 @@
     <string name="c_0e29117dbc58" formatted="false">"لا توجد متابعات لعرضها."</string>
     <string name="c_b04e9a1f8968" formatted="false">"لا توجد مطابقات في النتائج التي أمكن التحقق منها."</string>
     <string name="c_20686db7f8fa" formatted="false">"لا توجد وظائف مطابقة في لوحات التوظيف هذه."</string>
+    <string name="c_8604cc4f3d56" formatted="false">"لا توجد فرص جديدة ضمن النتائج التي تمت مقارنتها."</string>
     <string name="c_196bc395c3ad" formatted="false">"لا يوجد حد أدنى للراتب"</string>
     <string name="c_22142ba328eb" formatted="false">"لا توجد ملاحظة خاصة"</string>
     <string name="c_185e34f87d3d" formatted="false">"لا توجد إيصالات إرسال تطابق هذه المرشحات."</string>
@@ -788,6 +793,7 @@
     <string name="c_6016a1133036" formatted="false">"تم استلام عرض وظيفي"</string>
     <string name="c_e98bf0e26046" formatted="false">"العروض"</string>
     <string name="c_06845b19a273" formatted="false">"قبول واجهة المستخدم دون اتصال · بيانات اصطناعية"</string>
+    <string name="c_dc44601b3092" formatted="false">"بلغ سجل البحث الأقدم حد التخزين على هذا الهاتف. حُفظت نقطة بداية جديدة دون اعتبار الفرص القديمة جديدة."</string>
     <string name="c_8caf315aae89" formatted="false">"في مقر العمل"</string>
     <string name="c_f97da48734b6" formatted="false">"على هذا الهاتف"</string>
     <string name="c_d174badc7ea9" formatted="false">"مراجعة أخيرة."</string>
@@ -1241,6 +1247,7 @@
     <string name="c_0df6f1cad36c" formatted="false">"عرض"</string>
     <string name="c_74c98233cbc7" formatted="false">"عرض جميع الفرص"</string>
     <string name="c_a85bd823f18f" formatted="false">"عرض جميع إيصالات الإرسال"</string>
+    <string name="c_3d48c2f198c3" formatted="false">"عرض كل النتائج"</string>
     <string name="c_0b8b575ab0f0" formatted="false">"عرض جميع الفرص المحفوظة"</string>
     <string name="c_03875a812907" formatted="false">"إظهار للمراجعة"</string>
     <string name="c_94ea9b1d33a0" formatted="false">"عرض أقل"</string>
@@ -1510,6 +1517,7 @@
     <string name="c_95c02245fb17" formatted="false">"يتغيّر سجلك على هذا الهاتف فقط. تبقى الطلبات المرسلة وإيصالات الإرسال المؤكدة دون تغيير. قد تظهر الوظيفة في مراجعة جديدة للتقديم التلقائي. وتبقى النسخ السابقة من سجلك محفوظة."</string>
     <string name="c_eb3953fe306f" formatted="false">"يغيّر هذا سجلك الخاص ويتيح مراجعة تقديم جديدة. لا يسحب أي طلب لدى جهة العمل أو يغيّر شيئًا لديها. تبقى نسخك السابقة على هذا الهاتف."</string>
     <string name="c_b593f0e8f15b" formatted="false">"انتهت صلاحية هذا الاتصال. اربط هذا الهاتف مجددًا لإعادة الاتصال بمساحة عملك."</string>
+    <string name="c_5191cce5b502" formatted="false">"يشمل العدد صفحات جهات العمل التي أمكن مقارنتها. قد تحتاج النتائج الأخرى إلى فحص كامل أولًا."</string>
     <string name="c_f1f6034bd9e7" formatted="false">"تعذّر فتح هذا المستند. اختره مجددًا من «الملفات»."</string>
     <string name="c_d8978f97935d" formatted="false">"تغيرت قائمة المسودات هذه. افتحها مجددًا."</string>
     <string name="c_a1adeacd20ed" formatted="false">"تغيرت هذه المراجعة السابقة. أعدّ الخيارات المحدّثة بدلًا منها."</string>
@@ -1808,7 +1816,10 @@
     <string name="c_e9af4fe9ef47" formatted="false">"{0} من 30 محددة · اتركها فارغة لعدم تحديد أفضلية."</string>
     <string name="c_cf446aa7787a" formatted="false">"اكتملت {0} من أصل {1} خطوات التحضير"</string>
     <string name="c_d06c59a5a557" formatted="false">"تم اختيار {0} من {1}"</string>
+    <string name="c_126813912ddb" formatted="false">"المعروض: {0} من {1}"</string>
     <string name="c_5afa9d80a0d9" formatted="false">"{0} سجل خاص"</string>
+    <string name="c_bb0eaaf4848f" formatted="false">"فرصة جديدة في هذا البحث: {0}"</string>
+    <string name="c_35503b68cfb1" formatted="false">"فرص جديدة في هذا البحث: {0}"</string>
     <string name="c_b7db51a6bf1c" formatted="false">"الوظائف المحفوظة: {0} · سجلات التقديم: {1} · تعديلات السجلات غير المكتملة: {2}. لن يُقدَّم أي طلب إلى جهة عمل."</string>
     <string name="c_0f65d8b990e8" formatted="false">"الوظائف المحفوظة: {0} · سجلات التقديم الخاصة: {1} · تعديلات السجلات غير المكتملة: {2}"</string>
     <string name="c_fa312e6443ff" formatted="false">"{0} رابط محفوظ"</string>

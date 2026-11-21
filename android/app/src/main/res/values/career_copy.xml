@@ -542,6 +542,7 @@
     <string name="c_4622feb5d8e0" formatted="false">"Find opportunities"</string>
     <string name="c_a39024eeb019" formatted="false">"Finish or stop this opportunity\'s application review before removing the saved link."</string>
     <string name="c_551d6bdb4270" formatted="false">"First or single name"</string>
+    <string name="c_84a808f18ba3" formatted="false">"First seen in this search, based on history saved on this phone."</string>
     <string name="c_6d3c6cfe87e6" formatted="false">"Fixed allowances for chosen period"</string>
     <string name="c_3572c0d3c2d7" formatted="false">"Fixed allowances for chosen period, "</string>
     <string name="c_1a7b3c35f580" formatted="false">"Fixed allowances for chosen period, {0}"</string>
@@ -738,6 +739,9 @@
     <string name="c_07297fa94a99" formatted="false">"Needs review"</string>
     <string name="c_3dddf7d417a7" formatted="false">"Needs verification"</string>
     <string name="c_3dd7e482ff01" formatted="false">"New employer listing. Review full requirements before applying."</string>
+    <string name="c_096ced4bd35d" formatted="false">"New only"</string>
+    <string name="c_42dd7dd0ccfd" formatted="false">"New since my last search"</string>
+    <string name="c_5b7f0bfa9a4f" formatted="false">"New to this search"</string>
     <string name="c_47e062aefb36" formatted="false">"Next action due date, YYYY-MM-DD"</string>
     <string name="c_28e775e77fc6" formatted="false">"Next action saved on this phone."</string>
     <string name="c_1ea442a134b2" formatted="false">"No"</string>
@@ -754,6 +758,7 @@
     <string name="c_0e29117dbc58" formatted="false">"No follow-ups to show."</string>
     <string name="c_b04e9a1f8968" formatted="false">"No matches in the results we could check."</string>
     <string name="c_20686db7f8fa" formatted="false">"No matching jobs in these boards."</string>
+    <string name="c_8604cc4f3d56" formatted="false">"No openings are new in the results compared."</string>
     <string name="c_196bc395c3ad" formatted="false">"No pay floor"</string>
     <string name="c_22142ba328eb" formatted="false">"No private note"</string>
     <string name="c_185e34f87d3d" formatted="false">"No receipts match these filters."</string>
@@ -788,6 +793,7 @@
     <string name="c_6016a1133036" formatted="false">"Offer received"</string>
     <string name="c_e98bf0e26046" formatted="false">"Offers"</string>
     <string name="c_06845b19a273" formatted="false">"Offline UI acceptance · synthetic data"</string>
+    <string name="c_dc44601b3092" formatted="false">"Older search history reached this phone’s limit. A fresh baseline is kept without marking old openings as new."</string>
     <string name="c_8caf315aae89" formatted="false">"On site"</string>
     <string name="c_f97da48734b6" formatted="false">"On this phone"</string>
     <string name="c_d174badc7ea9" formatted="false">"One final look."</string>
@@ -1241,6 +1247,7 @@
     <string name="c_0df6f1cad36c" formatted="false">"Show"</string>
     <string name="c_74c98233cbc7" formatted="false">"Show all opportunities"</string>
     <string name="c_a85bd823f18f" formatted="false">"Show all receipts"</string>
+    <string name="c_3d48c2f198c3" formatted="false">"Show all results"</string>
     <string name="c_0b8b575ab0f0" formatted="false">"Show all saved opportunities"</string>
     <string name="c_03875a812907" formatted="false">"Show for review"</string>
     <string name="c_94ea9b1d33a0" formatted="false">"Show less"</string>
@@ -1510,6 +1517,7 @@
     <string name="c_95c02245fb17" formatted="false">"This changes only your record on this phone. Sent applications and confirmed receipts stay unchanged. The job may be included in a new Auto Apply review. Previous record versions are kept."</string>
     <string name="c_eb3953fe306f" formatted="false">"This changes your private record and allows a new application review. It does not withdraw or change anything with an employer. Your earlier versions stay on this phone."</string>
     <string name="c_b593f0e8f15b" formatted="false">"This connection has expired. Pair this phone again to reconnect to your workspace."</string>
+    <string name="c_5191cce5b502" formatted="false">"This count covers the boards we could compare. Other results may need a complete check first."</string>
     <string name="c_f1f6034bd9e7" formatted="false">"This document could not be opened. Choose it again from Files."</string>
     <string name="c_d8978f97935d" formatted="false">"This draft list changed. Open it again."</string>
     <string name="c_a1adeacd20ed" formatted="false">"This earlier review was changed. Prepare the updated choices instead."</string>
@@ -1808,7 +1816,10 @@
     <string name="c_e9af4fe9ef47" formatted="false">"{0} of 30 selected · Leave empty for no preference."</string>
     <string name="c_cf446aa7787a" formatted="false">"{0} of {1} preparation steps complete"</string>
     <string name="c_d06c59a5a557" formatted="false">"{0} of {1} selected"</string>
+    <string name="c_126813912ddb" formatted="false">"{0} of {1} shown"</string>
     <string name="c_5afa9d80a0d9" formatted="false">"{0} private records"</string>
+    <string name="c_bb0eaaf4848f" formatted="false">"{0} role new to this search"</string>
+    <string name="c_35503b68cfb1" formatted="false">"{0} roles new to this search"</string>
     <string name="c_b7db51a6bf1c" formatted="false">"{0} saved jobs · {1} application records · {2} unfinished record edits. No employer application will be submitted."</string>
     <string name="c_0f65d8b990e8" formatted="false">"{0} saved jobs · {1} private application records · {2} unfinished record edits"</string>
     <string name="c_fa312e6443ff" formatted="false">"{0} saved links"</string>

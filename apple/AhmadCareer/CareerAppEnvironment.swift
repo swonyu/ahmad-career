@@ -70,6 +70,11 @@ enum CareerAppEnvironment {
     static func makeDiscoveryStore() -> CareerDiscoveryStore {
         #if DEBUG
         if let root = acceptanceRoot {
+            if let raw = ProcessInfo.processInfo.environment["CAREER_UI_DISCOVERY_SEQUENCE"],
+               let sequence = AcceptanceDiscoveryHistory.Sequence(rawValue: raw) {
+                return CareerDiscoveryStore(file: root.appendingPathComponent("discovery.json"),
+                    service: AcceptanceDiscoveryHistory(root: root, sequence: sequence))
+            }
             return CareerDiscoveryStore(file: root.appendingPathComponent("discovery.json"), service: AcceptanceDiscovery())
         }
         #endif

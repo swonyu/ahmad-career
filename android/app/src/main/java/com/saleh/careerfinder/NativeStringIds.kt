@@ -570,6 +570,7 @@ private fun nativeCopyIds3(): Map<String, Int> = mapOf(
     "Find opportunities" to R.string.c_4622feb5d8e0,
     "Finish or stop this opportunity's application review before removing the saved link." to R.string.c_a39024eeb019,
     "First or single name" to R.string.c_551d6bdb4270,
+    "First seen in this search, based on history saved on this phone." to R.string.c_84a808f18ba3,
     "Fixed allowances for chosen period" to R.string.c_6d3c6cfe87e6,
     "Fixed allowances for chosen period, " to R.string.c_3572c0d3c2d7,
     "Fixed allowances for chosen period, {0}" to R.string.c_1a7b3c35f580,
@@ -628,10 +629,10 @@ private fun nativeCopyIds3(): Map<String, Int> = mapOf(
     "I approve sending these details and my selected CV to the listed eligible employers." to R.string.c_af75fea34b1c,
     "I do not agree" to R.string.c_3edb4b56d09c,
     "I reviewed these details and authorize sending the ready applications to the employers shown above." to R.string.c_4202696d79bf,
-    "If the saved data cannot be opened, you can create a new encrypted workspace. Earlier files and keys stay on this phone; they are not deleted or replaced." to R.string.c_0fb1f3ba4fcc,
 )
 
 private fun nativeCopyIds4(): Map<String, Int> = mapOf(
+    "If the saved data cannot be opened, you can create a new encrypted workspace. Earlier files and keys stay on this phone; they are not deleted or replaced." to R.string.c_0fb1f3ba4fcc,
     "Import a phone workspace backup" to R.string.c_3ce827706eb8,
     "Import into this phone workspace?" to R.string.c_7c1d1d1a6060,
     "Import replaces this phone's profile draft and merges saved links and private record history. Existing record versions are retained for comparison. It does not upload data or approve applications." to R.string.c_54f8195dd37e,
@@ -769,6 +770,9 @@ private fun nativeCopyIds4(): Map<String, Int> = mapOf(
     "Needs review" to R.string.c_07297fa94a99,
     "Needs verification" to R.string.c_3dddf7d417a7,
     "New employer listing. Review full requirements before applying." to R.string.c_3dd7e482ff01,
+    "New only" to R.string.c_096ced4bd35d,
+    "New since my last search" to R.string.c_42dd7dd0ccfd,
+    "New to this search" to R.string.c_5b7f0bfa9a4f,
     "Next action due date, YYYY-MM-DD" to R.string.c_47e062aefb36,
     "Next action saved on this phone." to R.string.c_28e775e77fc6,
     "No" to R.string.c_1ea442a134b2,
@@ -778,16 +782,17 @@ private fun nativeCopyIds4(): Map<String, Int> = mapOf(
     "No attention prompts from your saved records." to R.string.c_e103b447e4b6,
     "No catalog employers match. You can add a supported board link below." to R.string.c_96b2d734a7e2,
     "No connected workspace" to R.string.c_93eb69ae40fb,
+)
+
+private fun nativeCopyIds5(): Map<String, Int> = mapOf(
     "No countries match this search." to R.string.c_79a73b1b16ad,
     "No country preference" to R.string.c_3d48475048ef,
     "No email entered" to R.string.c_d0892c5270f5,
     "No follow-ups match." to R.string.c_bb7c5884a81f,
-)
-
-private fun nativeCopyIds5(): Map<String, Int> = mapOf(
     "No follow-ups to show." to R.string.c_0e29117dbc58,
     "No matches in the results we could check." to R.string.c_b04e9a1f8968,
     "No matching jobs in these boards." to R.string.c_20686db7f8fa,
+    "No openings are new in the results compared." to R.string.c_8604cc4f3d56,
     "No pay floor" to R.string.c_196bc395c3ad,
     "No private note" to R.string.c_22142ba328eb,
     "No receipts match these filters." to R.string.c_185e34f87d3d,
@@ -822,6 +827,7 @@ private fun nativeCopyIds5(): Map<String, Int> = mapOf(
     "Offer received" to R.string.c_6016a1133036,
     "Offers" to R.string.c_e98bf0e26046,
     "Offline UI acceptance · synthetic data" to R.string.c_06845b19a273,
+    "Older search history reached this phone’s limit. A fresh baseline is kept without marking old openings as new." to R.string.c_dc44601b3092,
     "On site" to R.string.c_8caf315aae89,
     "On this phone" to R.string.c_f97da48734b6,
     "One final look." to R.string.c_d174badc7ea9,
@@ -929,15 +935,15 @@ private fun nativeCopyIds5(): Map<String, Int> = mapOf(
     "Preferences for your planning notes and earlier records. The Search tab uses its own explicit role, location and employer-board choices. These notes do not affect saved application records." to R.string.c_728a8a6cc19c,
     "Preferences help describe your search. They do not confirm work authorization or employer eligibility." to R.string.c_7189ae0c996d,
     "Preferred city text, optional" to R.string.c_a212566e6237,
+)
+
+private fun nativeCopyIds6(): Map<String, Int> = mapOf(
     "Prepare a fresh review before applying." to R.string.c_2612d3d490bb,
     "Prepare application review" to R.string.c_c6ddeeaa54e1,
     "Prepare three achievement stories" to R.string.c_f495d3c6a874,
     "Prepare your CV materials" to R.string.c_22faff3681e6,
     "Prepare your details, choose a role and review your application options." to R.string.c_f83cdc9b9ace,
     "Prepare your profile" to R.string.c_2600748f8e8c,
-)
-
-private fun nativeCopyIds6(): Map<String, Int> = mapOf(
     "Prepared" to R.string.c_37932e60421e,
     "Prepared and waiting; not yet dispatched." to R.string.c_2048589e31ad,
     "Preparing" to R.string.c_cf1aa6cc5951,
@@ -1082,15 +1088,15 @@ private fun nativeCopyIds6(): Map<String, Int> = mapOf(
     "Resume record edit" to R.string.c_89dd272e712b,
     "Retention and removal" to R.string.c_f9e860522911,
     "Retry Stop" to R.string.c_b2a8bf9c9108,
+)
+
+private fun nativeCopyIds7(): Map<String, Int> = mapOf(
     "Retry becomes available after {0}. Refresh this review when the waiting period ends." to R.string.c_9a23f8a730f9,
     "Retry employer catalog" to R.string.c_c59807cf2990,
     "Retry employer directory" to R.string.c_460450c1855e,
     "Retry previous search" to R.string.c_61eef6eea09e,
     "Retry private storage" to R.string.c_f55281c12499,
     "Retry saving search" to R.string.c_6b0ed0dbbc9d,
-)
-
-private fun nativeCopyIds7(): Map<String, Int> = mapOf(
     "Retry this search" to R.string.c_de68d74c28a1,
     "Return to Saved to see your current opportunities." to R.string.c_4551cb19614f,
     "Reuse your contact details" to R.string.c_8d783b004b32,
@@ -1235,15 +1241,15 @@ private fun nativeCopyIds7(): Map<String, Int> = mapOf(
     "Search selected employer boards, save jobs and prepare applications." to R.string.c_13c39b7376ca,
     "Search selected public employer boards across locations and professions. You choose which boards and search words to use." to R.string.c_583857a31675,
     "Search selected public employer boards. No account or résumé upload is needed." to R.string.c_afb91d20810e,
+)
+
+private fun nativeCopyIds8(): Map<String, Int> = mapOf(
     "Search sends only these words and board choices to the public discovery service. No account, application profile or CV is sent. Remote wording does not establish where you can legally work." to R.string.c_b7073b841284,
     "Search stopped. Any earlier results are kept." to R.string.c_dcc654620bba,
     "Search stopped. Previous results and saved opportunities are kept." to R.string.c_a7c1329fef98,
     "Search stopped. Previous results are kept." to R.string.c_8d8add39bce6,
     "Search target countries" to R.string.c_1d0e4ca4a3bc,
     "Search the public employer board for " to R.string.c_2a3434a07d45,
-)
-
-private fun nativeCopyIds8(): Map<String, Int> = mapOf(
     "Search the public employer board for {0}" to R.string.c_26b602499c74,
     "Search uses the public Career Finder discovery service to retrieve postings from your selected Greenhouse and Lever employer boards. It receives the role words, location text and board choices you enter, along with normal connection information. No application token, account cookie, email, applicant profile or CV is sent. Public board metadata is cached by the service; search words are not forwarded to employers but may appear in ordinary hosting request logs." to R.string.c_f11a7c602f75,
     "Searches titles, employers and available summaries." to R.string.c_fdc7ef4c67fa,
@@ -1284,6 +1290,7 @@ private fun nativeCopyIds8(): Map<String, Int> = mapOf(
     "Show" to R.string.c_0df6f1cad36c,
     "Show all opportunities" to R.string.c_74c98233cbc7,
     "Show all receipts" to R.string.c_a85bd823f18f,
+    "Show all results" to R.string.c_3d48c2f198c3,
     "Show all saved opportunities" to R.string.c_0b8b575ab0f0,
     "Show for review" to R.string.c_03875a812907,
     "Show less" to R.string.c_94ea9b1d33a0,
@@ -1387,6 +1394,9 @@ private fun nativeCopyIds8(): Map<String, Int> = mapOf(
     "The connection changed. Reopen this record before choosing a version." to R.string.c_5bd45b176777,
     "The connection changed. Review the current phone connection before disconnecting." to R.string.c_6bc389ae271f,
     "The connection changed. Review the current phone connection before removing it." to R.string.c_33a7b1243fbe,
+)
+
+private fun nativeCopyIds9(): Map<String, Int> = mapOf(
     "The connection changed. Your separate phone record is kept; reopen it before choosing a workspace." to R.string.c_457e3fdf49cb,
     "The connection token stays in this phone's Keychain. Disconnecting keeps your phone draft and service history." to R.string.c_a079e44c3923,
     "The conversation to have" to R.string.c_1bd38ae10f81,
@@ -1394,9 +1404,6 @@ private fun nativeCopyIds8(): Map<String, Int> = mapOf(
     "The current résumé stays selected unless you also choose to replace its bytes. Cloud profiles are not changed until you explicitly save." to R.string.c_9cfe475558da,
     "The current unfinished edit is kept as another version." to R.string.c_597bce755f7b,
     "The destination changed or the backup is not supported. Nothing was imported." to R.string.c_0006c36771c4,
-)
-
-private fun nativeCopyIds9(): Map<String, Int> = mapOf(
     "The destination changed. Review the backup again." to R.string.c_fcfddf6017eb,
     "The destination or its draft changed. Review the import again." to R.string.c_16ff6126af2b,
     "The destination workspace changed. Review the backup again." to R.string.c_0ec37d925ac1,
@@ -1540,6 +1547,9 @@ private fun nativeCopyIds9(): Map<String, Int> = mapOf(
     "These workspace drafts need a compatible app version. The original phone data has been preserved." to R.string.c_6b7e16de99c4,
     "This HTTPS link could not be opened." to R.string.c_6072dd2f56f4,
     "This PDF cannot be read without a password. Export an unencrypted PDF CV and choose it again. Your previous CV is kept." to R.string.c_f3048972b8b9,
+)
+
+private fun nativeCopyIds10(): Map<String, Int> = mapOf(
     "This PDF could not be opened as a readable document. Choose an unencrypted PDF with at least one page. Your previous résumé is kept." to R.string.c_201ed7dd64d5,
     "This PDF has an unsupported page size. Export it using a standard paper size." to R.string.c_860b0ff01337,
     "This action could not be completed. Original details:" to R.string.c_67f8e02f6bc9,
@@ -1547,9 +1557,6 @@ private fun nativeCopyIds9(): Map<String, Int> = mapOf(
     "This application needs verification. It will not be sent again automatically." to R.string.c_722424c52806,
     "This application record changed. Close this editor and review the saved version before saving." to R.string.c_a550d7073108,
     "This application record needs a newer app. Its saved file is preserved." to R.string.c_eb98aa8dbc87,
-)
-
-private fun nativeCopyIds10(): Map<String, Int> = mapOf(
     "This backup contains invalid or unsupported phone data. Nothing was replaced." to R.string.c_433b6bb2b3d6,
     "This backup contains unsupported fields. Keep the file and use a compatible app version." to R.string.c_230be72e3ce9,
     "This backup exceeds the 64 MiB import limit. Existing phone data is unchanged." to R.string.c_38b1cd9cbdd9,
@@ -1559,6 +1566,7 @@ private fun nativeCopyIds10(): Map<String, Int> = mapOf(
     "This changes only your record on this phone. Sent applications and confirmed receipts stay unchanged. The job may be included in a new Auto Apply review. Previous record versions are kept." to R.string.c_95c02245fb17,
     "This changes your private record and allows a new application review. It does not withdraw or change anything with an employer. Your earlier versions stay on this phone." to R.string.c_eb3953fe306f,
     "This connection has expired. Pair this phone again to reconnect to your workspace." to R.string.c_b593f0e8f15b,
+    "This count covers the boards we could compare. Other results may need a complete check first." to R.string.c_5191cce5b502,
     "This document could not be opened. Choose it again from Files." to R.string.c_f1f6034bd9e7,
     "This draft list changed. Open it again." to R.string.c_d8978f97935d,
     "This earlier review was changed. Prepare the updated choices instead." to R.string.c_a1adeacd20ed,
@@ -1692,6 +1700,9 @@ private fun nativeCopyIds10(): Map<String, Int> = mapOf(
     "Use a real YYYY-MM-DD due date or leave it blank, and a note up to 500 Unicode characters. A due date or completed action needs a nonblank note." to R.string.c_70ee1392fb24,
     "Use a real application date no later than today in Riyadh, or leave it blank. Notes allow 2,000 characters." to R.string.c_ec7c32263ed8,
     "Use a role or skill, add a location if you want, and choose up to four Greenhouse or Lever employer boards. Tap Search jobs when you are ready." to R.string.c_2d62927540b3,
+)
+
+private fun nativeCopyIds11(): Map<String, Int> = mapOf(
     "Use a short PDF filename without path characters." to R.string.c_a593bbaee8c0,
     "Use a supported employer board or its public board URL." to R.string.c_804f86bb43a3,
     "Use an HTTPS LinkedIn personal profile link, such as https://www.linkedin.com/in/your-name. Your edits are kept in this editor." to R.string.c_b84aa5573341,
@@ -1700,9 +1711,6 @@ private fun nativeCopyIds10(): Map<String, Int> = mapOf(
     "Use date" to R.string.c_020529f036bf,
     "Use recommended boards" to R.string.c_332623790ade,
     "Use selected boards" to R.string.c_f5c515497c7b,
-)
-
-private fun nativeCopyIds11(): Map<String, Int> = mapOf(
     "Use selected countries" to R.string.c_0c80e4ba52e7,
     "Use service version" to R.string.c_2427bf014e93,
     "Use suggested boards" to R.string.c_75d33b5003fb,
@@ -1845,6 +1853,9 @@ private fun nativeCopyIds11(): Map<String, Int> = mapOf(
     "{0} / 5,000 characters" to R.string.c_d49f67065aa8,
     "{0} Qiddiya searches failed; results may be incomplete." to R.string.c_2ac897911621,
     "{0} Review and submit personally on the employer website." to R.string.c_d87b30adbb5f,
+)
+
+private fun nativeCopyIds12(): Map<String, Int> = mapOf(
     "{0} Saved records remain available; this workspace cannot be overwritten." to R.string.c_bf75bd410504,
     "{0} additions; {1} existing values preserved; {2} profile or checklist fields skipped." to R.string.c_32a5f73abad8,
     "{0} and any PDF bytes held on this phone" to R.string.c_f45b74c11909,
@@ -1853,9 +1864,6 @@ private fun nativeCopyIds11(): Map<String, Int> = mapOf(
     "{0} conflicting versions · {1} history versions" to R.string.c_667436702f2d,
     "{0} file records are kept for reference. They are not counted as verified applications. Connect to the original account and refresh service receipts to recover provider evidence." to R.string.c_151d1d80ee3f,
     "{0} invalid listings were excluded." to R.string.c_2588867f5e4e,
-)
-
-private fun nativeCopyIds12(): Map<String, Int> = mapOf(
     "{0} listing checks failed; results may be incomplete." to R.string.c_bb2ea2de0493,
     "{0} must be on one line with no more than 500 characters. Your unfinished draft is kept." to R.string.c_cf8ed2be7c64,
     "{0} of 2,000 characters" to R.string.c_400deb1c839a,
@@ -1863,7 +1871,10 @@ private fun nativeCopyIds12(): Map<String, Int> = mapOf(
     "{0} of 30 selected · Leave empty for no preference." to R.string.c_e9af4fe9ef47,
     "{0} of {1} preparation steps complete" to R.string.c_cf446aa7787a,
     "{0} of {1} selected" to R.string.c_d06c59a5a557,
+    "{0} of {1} shown" to R.string.c_126813912ddb,
     "{0} private records" to R.string.c_5afa9d80a0d9,
+    "{0} role new to this search" to R.string.c_bb0eaaf4848f,
+    "{0} roles new to this search" to R.string.c_35503b68cfb1,
     "{0} saved jobs · {1} application records · {2} unfinished record edits. No employer application will be submitted." to R.string.c_b7db51a6bf1c,
     "{0} saved jobs · {1} private application records · {2} unfinished record edits" to R.string.c_0f65d8b990e8,
     "{0} saved links" to R.string.c_fa312e6443ff,

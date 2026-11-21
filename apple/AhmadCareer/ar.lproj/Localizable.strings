@@ -540,6 +540,7 @@
 "Find opportunities" = "البحث عن فرص";
 "Finish or stop this opportunity's application review before removing the saved link." = "أكمل مراجعة التقديم لهذه الفرصة أو أوقفها قبل إزالة الرابط المحفوظ.";
 "First or single name" = "الاسم الأول أو الاسم الوحيد";
+"First seen in this search, based on history saved on this phone." = "ظهرت للمرة الأولى في هذا البحث بحسب السجل المحفوظ على هذا الهاتف.";
 "Fixed allowances for chosen period" = "البدلات الثابتة للفترة المختارة";
 "Fixed allowances for chosen period, " = "البدلات الثابتة للفترة المختارة، ";
 "Fixed allowances for chosen period, {0}" = "البدلات الثابتة للفترة المختارة، {0}";
@@ -736,6 +737,9 @@
 "Needs review" = "تحتاج إلى مراجعة";
 "Needs verification" = "تحتاج إلى تحقق";
 "New employer listing. Review full requirements before applying." = "إعلان جديد من جهة عمل. راجع المتطلبات كاملة قبل التقديم.";
+"New only" = "الجديد فقط";
+"New since my last search" = "الجديد منذ بحثي السابق";
+"New to this search" = "جديدة في هذا البحث";
 "Next action due date, YYYY-MM-DD" = "تاريخ الخطوة التالية بصيغة سنة-شهر-يوم";
 "Next action saved on this phone." = "حُفظت الخطوة التالية على هذا الهاتف.";
 "No" = "لا";
@@ -752,6 +756,7 @@
 "No follow-ups to show." = "لا توجد متابعات لعرضها.";
 "No matches in the results we could check." = "لا توجد مطابقات في النتائج التي أمكن التحقق منها.";
 "No matching jobs in these boards." = "لا توجد وظائف مطابقة في لوحات التوظيف هذه.";
+"No openings are new in the results compared." = "لا توجد فرص جديدة ضمن النتائج التي تمت مقارنتها.";
 "No pay floor" = "لا يوجد حد أدنى للراتب";
 "No private note" = "لا توجد ملاحظة خاصة";
 "No receipts match these filters." = "لا توجد إيصالات إرسال تطابق هذه المرشحات.";
@@ -786,6 +791,7 @@
 "Offer received" = "تم استلام عرض وظيفي";
 "Offers" = "العروض";
 "Offline UI acceptance · synthetic data" = "قبول واجهة المستخدم دون اتصال · بيانات اصطناعية";
+"Older search history reached this phone’s limit. A fresh baseline is kept without marking old openings as new." = "بلغ سجل البحث الأقدم حد التخزين على هذا الهاتف. حُفظت نقطة بداية جديدة دون اعتبار الفرص القديمة جديدة.";
 "On site" = "في مقر العمل";
 "On this phone" = "على هذا الهاتف";
 "One final look." = "مراجعة أخيرة.";
@@ -1239,6 +1245,7 @@
 "Show" = "عرض";
 "Show all opportunities" = "عرض جميع الفرص";
 "Show all receipts" = "عرض جميع إيصالات الإرسال";
+"Show all results" = "عرض كل النتائج";
 "Show all saved opportunities" = "عرض جميع الفرص المحفوظة";
 "Show for review" = "إظهار للمراجعة";
 "Show less" = "عرض أقل";
@@ -1508,6 +1515,7 @@
 "This changes only your record on this phone. Sent applications and confirmed receipts stay unchanged. The job may be included in a new Auto Apply review. Previous record versions are kept." = "يتغيّر سجلك على هذا الهاتف فقط. تبقى الطلبات المرسلة وإيصالات الإرسال المؤكدة دون تغيير. قد تظهر الوظيفة في مراجعة جديدة للتقديم التلقائي. وتبقى النسخ السابقة من سجلك محفوظة.";
 "This changes your private record and allows a new application review. It does not withdraw or change anything with an employer. Your earlier versions stay on this phone." = "يغيّر هذا سجلك الخاص ويتيح مراجعة تقديم جديدة. لا يسحب أي طلب لدى جهة العمل أو يغيّر شيئًا لديها. تبقى نسخك السابقة على هذا الهاتف.";
 "This connection has expired. Pair this phone again to reconnect to your workspace." = "انتهت صلاحية هذا الاتصال. اربط هذا الهاتف مجددًا لإعادة الاتصال بمساحة عملك.";
+"This count covers the boards we could compare. Other results may need a complete check first." = "يشمل العدد صفحات جهات العمل التي أمكن مقارنتها. قد تحتاج النتائج الأخرى إلى فحص كامل أولًا.";
 "This document could not be opened. Choose it again from Files." = "تعذّر فتح هذا المستند. اختره مجددًا من «الملفات».";
 "This draft list changed. Open it again." = "تغيرت قائمة المسودات هذه. افتحها مجددًا.";
 "This earlier review was changed. Prepare the updated choices instead." = "تغيرت هذه المراجعة السابقة. أعدّ الخيارات المحدّثة بدلًا منها.";
@@ -1806,7 +1814,10 @@
 "{0} of 30 selected · Leave empty for no preference." = "{0} من 30 محددة · اتركها فارغة لعدم تحديد أفضلية.";
 "{0} of {1} preparation steps complete" = "اكتملت {0} من أصل {1} خطوات التحضير";
 "{0} of {1} selected" = "تم اختيار {0} من {1}";
+"{0} of {1} shown" = "المعروض: {0} من {1}";
 "{0} private records" = "{0} سجل خاص";
+"{0} role new to this search" = "فرصة جديدة في هذا البحث: {0}";
+"{0} roles new to this search" = "فرص جديدة في هذا البحث: {0}";
 "{0} saved jobs · {1} application records · {2} unfinished record edits. No employer application will be submitted." = "الوظائف المحفوظة: {0} · سجلات التقديم: {1} · تعديلات السجلات غير المكتملة: {2}. لن يُقدَّم أي طلب إلى جهة عمل.";
 "{0} saved jobs · {1} private application records · {2} unfinished record edits" = "الوظائف المحفوظة: {0} · سجلات التقديم الخاصة: {1} · تعديلات السجلات غير المكتملة: {2}";
 "{0} saved links" = "{0} رابط محفوظ";
