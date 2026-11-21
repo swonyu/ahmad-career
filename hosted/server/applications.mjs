@@ -12,6 +12,15 @@ const stringify=JSON.stringify;
 const idCheck=id=>{if(typeof id!=='string'||!/^[a-f0-9-]{36}$/.test(id))fail('invalid_identifier','The requested identifier is invalid.');return id};
 function equal(a,b){return typeof a==='string'&&typeof b==='string'&&Buffer.byteLength(a)===Buffer.byteLength(b)&&timingSafeEqual(Buffer.from(a),Buffer.from(b))}
 function safeResume(r){return r?{name:r.name,mime:r.mime,size:r.size,sha256:r.sha256}:null}
+function recordedResumeName(resume) {
+  // Historical evidence comes only from this attempt's immutable review snapshot.
+  // A missing or invalid old name must never fall back to today's profile or PDF row.
+  if (typeof resume?.name !== 'string') return null;
+  try {
+    const name = text(resume.name, 'Résumé filename', 180, false);
+    return /\.pdf$/i.test(name) && !/[/\\:]/.test(name) && !name.startsWith('.') ? name : null;
+  } catch { return null; }
+}
 function publicProfile(p,revision){return {...p,linkedin:p.linkedin??'',resume:safeResume(p.resume),revision}}
 function response(status,data,headers={}){return new Response(stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer',...headers}})}
 async function bodyJSON(request,max=32768){
@@ -61,7 +70,7 @@ export function createHostedApplicationHandler({clock=Date.now,adapterFactory=ma
       async function activeIDs(workspace){
         const rows=await all("SELECT p.id FROM plans p JOIN workspaces w ON w.id=p.workspace_id WHERE p.workspace_id=? AND w.deleting_at IS NULL AND p.stopped=0 AND p.expires_at>? AND p.profile_revision=w.revision AND p.approval_generation>0 AND EXISTS(SELECT 1 FROM attempts a WHERE a.plan_id=p.id AND (a.state='ready' OR a.state='dispatching' OR (a.state='rate_limited' AND a.retry_at<=? AND a.approval_generation<p.approval_generation AND p.last_approved_at>=a.retry_at))) ORDER BY p.created_at,p.id LIMIT 100",workspace,iso(),iso());return rows.map(r=>r.id);
       }
-      function attemptView(row){const s=JSON.parse(row.snapshot_json);return{id:row.id,attemptId:row.id,planId:row.plan_id,jobId:row.job_id,provider:s.job.provider,region:s.job.region,employerSite:s.job.site,site:s.job.site,postingId:s.job.postingId,company:s.job.company,title:s.job.title,url:s.job.url,state:row.state,createdAt:row.created_at,dispatchedAt:row.dispatched_at,confirmedAt:row.confirmed_at,...(row.state==='confirmed'?{applicationId:row.application_id}:{}),profileRevision:s.profileRevision,resumeSHA256:s.profile.resume?.sha256??null,payloadSHA256:s.payloadSHA256,requirementsRevision:s.requirements?.revision??null,responseSHA256:row.response_hash,mode:row.mode,evidenceMode:row.mode==='test'?'test':'live',...(row.retry_at?{retryAt:row.retry_at}:{}),dispatchCount:row.dispatch_count,error:row.error_code?{code:row.error_code,message:row.error_message}:null}}
+      function attemptView(row){const s=JSON.parse(row.snapshot_json);return{id:row.id,attemptId:row.id,planId:row.plan_id,jobId:row.job_id,provider:s.job.provider,region:s.job.region,employerSite:s.job.site,site:s.job.site,postingId:s.job.postingId,company:s.job.company,title:s.job.title,url:s.job.url,state:row.state,createdAt:row.created_at,dispatchedAt:row.dispatched_at,confirmedAt:row.confirmed_at,...(row.state==='confirmed'?{applicationId:row.application_id}:{}),profileRevision:s.profileRevision,resumeName:recordedResumeName(s.profile.resume),resumeSHA256:s.profile.resume?.sha256??null,payloadSHA256:s.payloadSHA256,requirementsRevision:s.requirements?.revision??null,responseSHA256:row.response_hash,mode:row.mode,evidenceMode:row.mode==='test'?'test':'live',...(row.retry_at?{retryAt:row.retry_at}:{}),dispatchCount:row.dispatch_count,error:row.error_code?{code:row.error_code,message:row.error_message}:null}}
       async function attemptsFor(workspace,planId){const rows=planId?await all('SELECT * FROM attempts WHERE workspace_id=? AND plan_id=? ORDER BY created_at,id LIMIT 500',workspace,planId):await all('SELECT * FROM attempts WHERE workspace_id=? ORDER BY created_at DESC,id LIMIT 500',workspace);return rows.map(attemptView)}
       async function planView(row,existingRows=null){const rows=existingRows??await all('SELECT * FROM attempts WHERE plan_id=? ORDER BY created_at,id LIMIT 20',row.id),mapped=new Map(rows.map(a=>[a.id,a]));return{id:row.id,digest:row.digest,profileRevision:row.profile_revision,createdAt:row.created_at,expiresAt:row.expires_at,stopped:Boolean(row.stopped),approvedAt:row.approved_at,items:JSON.parse(row.items_json).map(item=>{const a=mapped.get(item.attemptId);return a?{...item,state:a.state,reason:a.error_message??item.reason,applicationId:a.state==='confirmed'?a.application_id:undefined,retryAt:a.retry_at}:item})}}
       async function workspaceView(ws){

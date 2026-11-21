@@ -38,13 +38,23 @@ function assertArabic(text) {
   assert.doesNotMatch(text, /[a-z]/i);
 }
 
+const actualReceiptLabel = execute(declarations(read('app/phone/model.ts'), ['receiptLabel'])
+  + '\nexports.receiptLabel = receiptLabel;').receiptLabel;
+function actualApplicationDetails(language) {
+  return execute(declarations(read('app/phone/components.tsx'), ['ApplicationDetails'])
+    + '\nexports.ApplicationDetails = ApplicationDetails;', {
+      useI18n: () => ({ language, t: translator(language) }), formatNumber,
+      profile: { resume: { name: 'Current-CV-B.pdf' }, revision: 99 },
+    }).ApplicationDetails;
+}
+
 test('real review rendering localizes every state and preserves user and employer content', () => {
   const source = declarations(read('app/phone/components.tsx'), ['reviewStateLabels', 'ReviewDetails']);
   const ReviewDetails = execute(`${source}\nexports.ReviewDetails = ReviewDetails;`, {
-    useI18n: () => ({ language: 'ar', t: translator('ar') }),
+    useI18n: () => ({ language: 'ar', t: translator('ar') }), formatNumber,
   }).ReviewDetails;
   const states = ['ready', 'blocked', 'dispatching', 'confirmed', 'uncertain', 'rate_limited', 'rejected', 'cancelled'];
-  const plan = { items: states.map((state, index) => ({
+  const plan = { profileRevision: 1, items: states.map((state, index) => ({
     jobId: `synthetic-${index}`, state, reason: '',
     title: 'Ready for your review', company: 'English employer title',
     job: { url: 'https://employer.example/posting' },
@@ -195,11 +205,11 @@ function renderPhoneFragment(fragment, language, additions = {}, setup = '') {
     draft: { id: 'synthetic-recovery', savedAt: '2026-11-17T15:00:00Z', record: { job: mixedJob } },
     receipt: { id: 'synthetic-receipt', state: 'uncertain', title: mixedJob.title, company: mixedJob.company,
       createdAt: '2026-11-17T15:00:00Z', url: mixedJob.url },
-    RecordSummary: () => null, today: () => '2026-11-17', formatNumber,
+    RecordSummary: () => null, ApplicationDetails: actualApplicationDetails(language), today: () => '2026-11-17', formatNumber,
     displayTime: () => '17 November 2026', countryName: code => code, workModeLabel: value => value,
-    experienceLabel: value => value, receiptLabel: () => 'Outcome needs checking',
+    experienceLabel: value => value, receiptLabel: actualReceiptLabel,
     ...additions };
-  for (const name of ['ArrowUpRight', 'ChevronRight', 'Check']) context[name] = () => null;
+  for (const name of ['ArrowUpRight', 'ChevronRight', 'Check', 'RefreshCw', 'Download']) context[name] = () => null;
   const View = execute(`${setup}\nexports.View = () => (${fragment});`, context).View;
   return View();
 }
@@ -230,9 +240,9 @@ test('actual profile comparison and application review isolate names and CV file
     assert.equal(assertIsolatedRawValue(element, 'أحمد (Alex) Example-17', `${language} profile comparison name`), 2);
     assert.equal(assertIsolatedRawValue(element, mixedFile, `${language} profile comparison CV`), 2);
     const ReviewDetails = execute(`${reviewSource}\nexports.ReviewDetails = ReviewDetails;`, {
-      useI18n: () => ({ language, t: translator(language) }),
+      useI18n: () => ({ language, t: translator(language) }), formatNumber,
     }).ReviewDetails;
-    const review = React.createElement(ReviewDetails, { plan: { items: [{
+    const review = React.createElement(ReviewDetails, { plan: { profileRevision: 1, items: [{
       jobId: 'synthetic-review-bidi', state: 'ready', reason: '', title: mixedJob.title, company: mixedJob.company,
       job: { url: mixedJob.url }, payloadSummary: { name: 'أحمد (Alex) Example-17', email: 'synthetic+ar@example.org', comments: '' },
       resume: { name: mixedFile }, privacyPolicyUrl: null,
@@ -379,3 +389,92 @@ for (const language of ['en', 'ar']) {
     }
   });
 }
+
+
+test('actual application details keep historical metadata separate from current profile and manual notes', () => {
+  for (const language of ['en', 'ar']) {
+    const Component = actualApplicationDetails(language), t = translator(language);
+    const reviewed = React.createElement(Component, { resumeName: mixedFile, profileRevision: 7 });
+    const reviewedText = allText(reviewed);
+    assertIsolatedRawValue(reviewed, mixedFile, language + ' historical CV');
+    assert(reviewedText.includes(t('Reviewed CV')));
+    assert(reviewedText.includes(t('Profile version')));
+    assert(reviewedText.includes(formatNumber(7, language)));
+    for (const absent of [undefined, null]) {
+      const legacy = React.createElement(Component, { resumeName: absent, profileRevision: absent });
+      const text = allText(legacy);
+      assert(text.includes(t('CV not recorded')));
+      assert(!text.includes(t('Profile version')));
+      assert(!text.includes('Current-CV-B.pdf'));
+    }
+    const versionZero = allText(React.createElement(Component, { profileRevision: 0 }));
+    assert(versionZero.includes(t('Profile version')));
+    assert(versionZero.includes(formatNumber(0, language)));
+    const manualName = 'نسخة شخصية (QA).docx';
+    const manual = React.createElement(Component, { resumeName: manualName, profileRevision: 7, manual: true });
+    assertIsolatedRawValue(manual, manualName, language + ' self-entered filename');
+    assert(allText(manual).includes(t('Filename you recorded')));
+    assert(allText(manual).includes(t('Self-entered information. This is not a submission receipt.')));
+    assert(!allText(manual).includes(t('Profile version')));
+    assert.match(renderToStaticMarkup(reviewed), /^<details\b/);
+    assert.doesNotMatch(renderToStaticMarkup(reviewed), /<details[^>]*\bopen(?:=|[ >])/);
+  }
+});
+
+test('actual Application history retains an unapproved CV-A draft after profile B makes its review stale', () => {
+  const fragment = phoneFragment(node => hasClass(node, 'phone-receipts'));
+  const pending = Object.freeze({ id: '00000000-0000-4000-8000-000000000061',
+    planId: '00000000-0000-4000-8000-000000000062', jobId: mixedJob.id,
+    state: 'ready', title: mixedJob.title, company: mixedJob.company, url: mixedJob.url,
+    createdAt: '2026-11-17T15:00:00Z', resumeName: 'Reviewed-CV-A.pdf', profileRevision: 1,
+    dispatchCount: 0, dispatchedAt: null, mode: 'test', evidenceMode: 'test', error: null });
+  for (const language of ['en', 'ar']) {
+    const t = translator(language);
+    const workspace = { profile: { revision: 2, resume: { name: 'Current-CV-B.pdf' } },
+      attempts: [pending], recoverablePlans: [], activePlanIds: [] };
+    const before = JSON.stringify(workspace);
+    const element = renderPhoneFragment(fragment, language, { workspace });
+    const html = renderToStaticMarkup(element), text = allText(element);
+    assert.equal((html.match(/<article\b/g) || []).length, 1);
+    assert(text.includes(t('Application history')));
+    assert(text.includes(t('Prepared draft')));
+    assert(text.includes(t('Nothing has been submitted from this draft.')));
+    assert(text.includes(t('Your profile has changed since this draft. Prepare a new review before approving.')));
+    assertIsolatedRawValue(element, pending.resumeName, language + ' retained ready draft CV');
+    assert(!text.includes('Current-CV-B.pdf'));
+    assert(!text.includes(t('Continue approved applications')));
+    assert(!text.includes(t('Export receipts')), 'A ready-only history is not a submission receipt export');
+    assert.equal(JSON.stringify(workspace), before);
+    for (const change of [{ dispatchCount: undefined }, { dispatchCount: 1 }, { dispatchedAt: '2026-11-17T15:01:00Z' }]) {
+      const uncertainDispatch = renderPhoneFragment(fragment, language, { workspace: { ...workspace, attempts: [{ ...pending, ...change }] } });
+      assert(!allText(uncertainDispatch).includes(t('Nothing has been submitted from this draft.')));
+    }
+    const legacy = renderPhoneFragment(fragment, language, { workspace: { ...workspace,
+      attempts: [{ ...pending, resumeName: undefined, profileRevision: undefined, dispatchCount: undefined }] } });
+    assert(allText(legacy).includes(t('CV not recorded')));
+    assert(!allText(legacy).includes(t('Your profile has changed since this draft. Prepare a new review before approving.')));
+    assert(!allText(legacy).includes('Current-CV-B.pdf'));
+  }
+});
+
+test('actual history preserves uncertain, live-confirmed and synthetic evidence labels while showing each recorded CV', () => {
+  const fragment = phoneFragment(node => hasClass(node, 'phone-receipts'));
+  for (const language of ['en', 'ar']) {
+    const t = translator(language);
+    const attempts = [
+      { id: 'uncertain', state: 'uncertain', mode: 'local', evidenceMode: 'live', resumeName: 'Uncertain-A.pdf' },
+      { id: 'confirmed', state: 'confirmed', mode: 'local', evidenceMode: 'live', applicationId: 'synthetic-live-contract-id', resumeName: 'Confirmed-A.pdf' },
+      { id: 'test', state: 'confirmed', mode: 'test', evidenceMode: 'test', applicationId: 'synthetic-test-id', resumeName: 'Test-A.pdf' },
+    ].map(value => ({ ...value, title: mixedJob.title, company: mixedJob.company, url: mixedJob.url,
+      createdAt: '2026-11-17T15:00:00Z', profileRevision: 1, dispatchCount: 1, error: null }));
+    const element = renderPhoneFragment(fragment, language, { workspace: { profile: { revision: 2 }, attempts } });
+    assert.equal((renderToStaticMarkup(element).match(/<article\b/g) || []).length, 3);
+    for (const receipt of attempts) {
+      assert(allText(element).includes(t(actualReceiptLabel(receipt))));
+      assertIsolatedRawValue(element, receipt.resumeName, language + ' outcome metadata');
+    }
+    assert(allText(element).includes(t('Check with the employer before applying again. Career Finder will not automatically resend an uncertain application.')));
+    assert(!allText(element).includes(t('Nothing has been submitted from this draft.')));
+    assert(allText(element).includes(t('Export receipts')));
+  }
+});

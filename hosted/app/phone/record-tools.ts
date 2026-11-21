@@ -45,12 +45,12 @@ function csvCell(value: string): string {
   return '"' + text.replace(/"/g, '""') + '"';
 }
 
-/** Only saved application records: no profile, CV, credentials or recovery data. */
+/** Only saved application records: no profile, PDF contents, credentials or recovery data. */
 export function applicationRecordsCSV(records: readonly ApplicationRecord[], copy: Copy = originalCopy): string {
-  const headers = ["Job title", "Employer", "Job link", "Stage (self-entered)", "Marked applied (self-entered)", "Applied date (self-entered)", "Follow-up date (self-entered)", "Private note", "Last edited (not application time)"].map(label => copy(label));
+  const headers = ["Job title", "Employer", "Job link", "Stage (self-entered)", "Marked applied (self-entered)", "Applied date (self-entered)", "Follow-up date (self-entered)", "Private note", "CV filename (self-entered)", "Last edited (not application time)"].map(label => copy(label));
   const rows = records.map(input => {
     const record = recordSchema.parse(input);
-    return [record.title, record.company, record.identity, copy(stageNames[record.stage]), copy(record.appliedElsewhere ? "Yes" : "No"), record.appliedDate, record.followUpDate, record.note, record.updatedAt];
+    return [record.title, record.company, record.identity, copy(stageNames[record.stage]), copy(record.appliedElsewhere ? "Yes" : "No"), record.appliedDate, record.followUpDate, record.note, record.manualResumeName ?? "", record.updatedAt];
   });
   return "\ufeff" + [headers, ...rows].map(row => row.map(csvCell).join(",")).join("\r\n") + "\r\n";
 }

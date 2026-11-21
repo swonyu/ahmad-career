@@ -1373,5 +1373,22 @@
   "No openings are new in the results compared.": "لا توجد فرص جديدة ضمن النتائج التي تمت مقارنتها.",
   "Show all results": "عرض كل النتائج",
   "New to this search": "جديدة في هذا البحث",
-  "{0} of {1} shown": "المعروض: {0} من {1}"
+  "{0} of {1} shown": "المعروض: {0} من {1}",
+  "Application details": "تفاصيل الطلب",
+  "Reviewed CV": "السيرة الذاتية التي تمت مراجعتها",
+  "CV not recorded": "لم يُسجّل ملف السيرة الذاتية",
+  "Profile version": "نسخة الملف الشخصي",
+  "Filename you recorded": "اسم الملف الذي سجّلته",
+  "CV filename ": "اسم ملف السيرة الذاتية ",
+  "A filename you record yourself. No PDF is attached.": "اسم ملف تسجّله بنفسك. لن يُرفق أي ملف PDF.",
+  "Self-entered information. This is not a submission receipt.": "معلومات سجّلتها بنفسك. ليست إيصال إرسال طلب.",
+  "CV filename (self-entered)": "اسم ملف السيرة الذاتية (سجّلته بنفسك)",
+  "Enter only the filename, without a folder path.": "أدخل اسم الملف فقط، دون مسار المجلد.",
+  "Includes saved application stages, dates, private notes and filename notes, without your profile or PDF contents. Formula-like cells get a Text: marker; the JSON export keeps original text.": "يتضمن مراحل الطلبات والتواريخ والملاحظات الخاصة وأسماء الملفات التي سجّلتها، دون ملفك الشخصي أو محتويات PDF. تُضاف علامة Text: إلى الخلايا التي تشبه الصيغ؛ ويحتفظ تصدير JSON بالنص الأصلي.",
+  "Application history": "سجل الطلبات",
+  "Refresh application history": "تحديث سجل الطلبات",
+  "No application records yet.": "لا توجد سجلات طلبات بعد.",
+  "Prepared draft": "مسودة جاهزة للمراجعة",
+  "Nothing has been submitted from this draft.": "لم يُرسل أي طلب من هذه المسودة.",
+  "Your profile has changed since this draft. Prepare a new review before approving.": "تغيّر ملفك الشخصي منذ إعداد هذه المسودة. جهّز مراجعة جديدة قبل الموافقة."
 }

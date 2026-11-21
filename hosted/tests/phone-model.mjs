@@ -175,3 +175,77 @@ test('provider status represents LinkedIn login without treating older basic-lin
   for(const method of ['unknown','LinkedIn',''])assert.throws(()=>auth.authStatusSchema.parse({...base,account:{...current.account,method}}));
   assert.throws(()=>auth.authStatusSchema.parse({...base,providers:{...base.providers,linkedin:{...disconnected,connected:true,signInSupported:true}}}));
 });
+
+
+test('recorded receipt filename and profile version stay optional for legacy data and validated when present', () => {
+  const receipt = { id: jobID, planId: plan().id, jobId: jobID, title: job.title, company: job.company, url: job.url,
+    state: 'ready', createdAt: '2026-11-17T18:00:00Z', mode: 'test', evidenceMode: 'test', dispatchCount: 0, error: null };
+  const before = structuredClone(receipt), legacy = model.receiptSchema.parse(receipt);
+  assert.equal(Object.hasOwn(legacy, 'resumeName'), false);
+  assert.equal(Object.hasOwn(legacy, 'profileRevision'), false);
+  assert.equal(model.receiptLabel(legacy), 'Prepared draft');
+  const nullable = model.receiptSchema.parse({ ...receipt, resumeName: null, profileRevision: null });
+  assert.equal(nullable.resumeName, null); assert.equal(nullable.profileRevision, null);
+  const named = model.receiptSchema.parse({ ...receipt, resumeName: 'CV-اختبار.pdf', profileRevision: 0 });
+  assert.equal(named.resumeName, 'CV-اختبار.pdf'); assert.equal(named.profileRevision, 0);
+  assert.equal(model.receiptSchema.parse({ ...receipt, resumeName: 'a'.repeat(176) + '.pdf' }).resumeName.length, 180);
+  for (const resumeName of ['', ' CV-A.pdf', 'CV-A.pdf ', '../CV-A.pdf', 'folder/CV-A.pdf', 'folder\\CV-A.pdf',
+    'drive:CV-A.pdf', '.CV-A.pdf', 'CV-A.docx', 'CV-\u0000A.pdf', 'CV-\nA.pdf', 'a'.repeat(177) + '.pdf', 1, {}, []]) {
+    assert.throws(() => model.receiptSchema.parse({ ...receipt, resumeName }), 'Invalid recorded filename ' + JSON.stringify(resumeName));
+  }
+  for (const profileRevision of [-1, 1.5, '1', true, {}, Number.NaN, Number.POSITIVE_INFINITY]) {
+    assert.throws(() => model.receiptSchema.parse({ ...receipt, profileRevision }));
+  }
+  assert.deepEqual(receipt, before);
+});
+
+test('a fresh parsed workspace keeps the prepared CV snapshot when the current profile has the same bytes under another name', () => {
+  const prepared = plan();
+  const receipt = { id: jobID, planId: prepared.id, jobId: jobID, title: job.title, company: job.company, url: job.url,
+    state: 'ready', createdAt: prepared.createdAt, mode: 'test', evidenceMode: 'test', dispatchCount: 0, error: null,
+    resumeName: prepared.items[0].resume.name, profileRevision: 1, resumeSHA256: resume.sha256 };
+  const newerProfile = { ...profile, revision: 2, resume: { ...resume, name: 'New-profile-CV-B.pdf' } };
+  const raw = { ok: true, accountId: 'synthetic-owner', accountEmail: profile.email, confirmedEmail: profile.email,
+    emailUpdateRequired: false, deleting: false, workspaceId: '00000000-0000-4000-8000-000000000456',
+    mode: 'test', profile: newerProfile, jobs: [job], attempts: [receipt], recoverablePlans: [], activePlanIds: [],
+    capabilities: { liveEnabled: false, mode: 'test', coverage: 'Synthetic contract only' } };
+  const before = structuredClone(raw), restored = model.workspaceSchema.parse(JSON.parse(JSON.stringify(raw)));
+  assert.equal(restored.profile.resume.name, 'New-profile-CV-B.pdf');
+  assert.equal(restored.attempts[0].resumeName, resume.name);
+  assert.equal(restored.attempts[0].profileRevision, 1);
+  assert.equal(restored.attempts[0].resumeSHA256, restored.profile.resume.sha256);
+  assert.equal(model.receiptLabel(restored.attempts[0]), 'Prepared draft');
+  assert.throws(() => model.checkReview(prepared, newerProfile, [job], []), /changed or expired/);
+  assert.deepEqual(raw, before);
+});
+
+test('manual CV filename notes remain local, optional and exact during recovery until an explicit save trims them', () => {
+  const legacy = model.blankRecord(job), original = structuredClone(legacy);
+  assert.equal(Object.hasOwn(legacy, 'manualResumeName'), false);
+  const snapshot = { ...model.blankSnapshot(scope), profile, records: [legacy] };
+  const restored = model.parseSnapshot(JSON.parse(JSON.stringify(snapshot)), scope);
+  assert.equal(Object.hasOwn(restored.records[0], 'manualResumeName'), false);
+  const rawName = '  نسخة CV (QA).docx  ', draft = { ...legacy, manualResumeName: rawName };
+  assert.equal(model.recordSchema.parse(draft).manualResumeName, rawName);
+  const recovery = model.recoveryDraftSchema.parse({ id: jobID, savedAt: '2026-11-17T18:00:00Z',
+    record: { job, original: legacy, draft, existed: true } });
+  assert.equal(recovery.record.draft.manualResumeName, rawName);
+  assert.equal(Object.hasOwn(recovery.record.original, 'manualResumeName'), false);
+  const saved = model.updateRecord(legacy, draft);
+  assert.equal(saved.manualResumeName, rawName.trim());
+  assert.equal(saved.stage, legacy.stage); assert.equal(saved.appliedElsewhere, legacy.appliedElsewhere);
+  assert.equal(saved.note, legacy.note);
+  const kept = model.parseSnapshot(JSON.parse(JSON.stringify({ ...snapshot, records: [saved] })), scope);
+  assert.equal(kept.records[0].manualResumeName, rawName.trim());
+  assert.throws(() => model.parseSnapshot(kept, 'account:synthetic-other-owner'));
+  assert.equal(model.updateRecord(saved, { ...saved, manualResumeName: '' }).manualResumeName, '');
+  assert.equal(Object.hasOwn(model.updateRecord(legacy, { ...legacy, note: 'Edited note only' }), 'manualResumeName'), false);
+  for (const manualResumeName of ['x'.repeat(181), 'folder/CV.pdf', 'folder\\CV.pdf', 'drive:CV.pdf', 'CV\u0000.pdf', 'CV\n.pdf', null, 1]) {
+    assert.throws(() => model.recordSchema.parse({ ...legacy, manualResumeName }));
+  }
+  assert.equal(model.recordSchema.parse({ ...legacy, manualResumeName: 'x'.repeat(180) }).manualResumeName.length, 180);
+  const request = model.profileRequest({ ...profile, manualResumeName: 'PRIVATE_LOCAL_FILENAME.docx', records: [saved] });
+  assert.equal(Object.hasOwn(request, 'manualResumeName'), false);
+  assert.equal(Object.hasOwn(request, 'records'), false);
+  assert.deepEqual(legacy, original);
+});
