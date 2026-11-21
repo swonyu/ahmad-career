@@ -1,0 +1,70 @@
+{
+  "base": "a7fc83668413d20682ca28c1f7b18ba55e56b867",
+  "completedAtUTC": "2026-11-21T10:04:10.154918+00:00",
+  "scope": "Standalone host behavior tests and XCTest compilation; native runtime acceptance pending",
+  "sourceSHA256": {
+    "apple/AhmadCareer/CareerDiscovery.swift": "ad215c8fb1304b5a1c6681f385925883103720b7c2e6e14021308ef62482fd68",
+    "apple/AhmadCareer/NativeCareerViews.swift": "d3208ae769cc10a754eb98009e0872476b37edcc4205661fc578949790b6534d",
+    "apple/AhmadCareer/NativeDiscoveryViews.swift": "62c9b67cd7faac567b93092f0218dc0f54b9f22f6a6bcf6ee19a02fd8e6f076b",
+    "apple/Checks/DiscoveryCheck.swift": "4e3ad62d69279d0fa2664e5630f7afe0b99201d985eb8ac2063efcb4db39b421",
+    "apple/Checks/check-discovery-cooldown.py": "56c70a8479699bc8003e32e2b444f7634e8878e76e54d8dd064339c6639342e2",
+    "apple/UITests/CareerFinderUITests.swift": "585794da5cb89d71274a8e3a0e2d885d41593352c9ca50dd2973bba2839eb31b"
+  },
+  "mobileHost": {
+    "exitCode": 0,
+    "logSHA256": "0816ae74785660135dc5f4ef40c1ad7883b1d4cf4409da41c0c503217b6cbc84",
+    "counts": {
+      "applicationBoundary": 126,
+      "applicationLifecycleAssertions": 518,
+      "recoveryAssertions": 201,
+      "discoveryAssertions": 221,
+      "cooldownAssertions": 26,
+      "savedSearchCases": 21,
+      "acceptanceInitializerAssertions": 38
+    },
+    "qualification": "Separate suites/scenarios, not a complete product score. Existing compatibility/export/retention/transport suites also completed."
+  },
+  "xctestTypecheck": {
+    "exitCode": 0,
+    "sourceSHA256": "585794da5cb89d71274a8e3a0e2d885d41593352c9ca50dd2973bba2839eb31b",
+    "diagnosticBytes": 0
+  },
+  "uiContract": {
+    "methods": [
+      "testFreshStartAndFiveTabs",
+      "testApplicationDraftSurvivesCancelAndRelaunch",
+      "testLinkedInProfileDraftAndExternalSearchChoice",
+      "testPrivateApplicationRecordPersistsAndCorrectionIsExplicit",
+      "testSavedLinkRemovalAtLargestTextKeepsCancelReachable",
+      "testProfileReadinessAndSimpleConnectionSetup",
+      "testOpportunityDraftKeepSaveAndRestore",
+      "testOpportunityDiscardRequiresExplicitChoice",
+      "testDiscoverySaveFlowsIntoSavedAndApply",
+      "testSearchEmptyAndFailurePreservesPreviousResults",
+      "testAccessibilityTextKeepsCoreControlsReachable",
+      "testConnectedWorkspaceExplainsUnavailableSubmissionAtLargeText",
+      "testSettingsAppearanceSurvivesRelaunchAndKeepsProfileReachable",
+      "testArabicLanguagePersistsAndKeepsSavedProfileValuesAtLargeText",
+      "testDeviceLanguageUsesAnOrderedSupportedFallbackAndAllowsEnglishOverride",
+      "testSavedSearchFindsArabicNotesAndKeepsOriginalText",
+      "testRetainedRecordAssociationNeedsConfirmationWithoutRestoringBookmark"
+    ],
+    "assertionLines": 219,
+    "prescribedPNG": 72,
+    "prescribedAX": 30,
+    "labelGeometryPairs": 16,
+    "strictObservationSeconds": 5,
+    "workflowUnchanged": true
+  },
+  "priorUIEvidence": {
+    "run": 44708372749,
+    "attempt": 2,
+    "job": 136218787824,
+    "passed": 14,
+    "failed": 3,
+    "skipped": 0,
+    "artifact": 14623525916,
+    "artifactBytes": 378821357,
+    "artifactSHA256": "e66af93bb4362c3884a317e152b8d0a16d29eb761fc05ea24e3b12f5c70b1272"
+  }
+}

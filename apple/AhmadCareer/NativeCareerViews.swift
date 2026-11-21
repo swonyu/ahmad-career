@@ -517,6 +517,7 @@ private struct NativeModernRecordEditor: View {
                 Section {
                     Picker(l10n("Stage"), selection: $draft.stage) { ForEach(PhoneApplicationStage.allCases) { Text(l10n($0.title)).tag($0) } }
                         .pickerStyle(.menu).accessibilityIdentifier("record.stage")
+                        .accessibilityLabel(l10n("Stage")).accessibilityValue(l10n(draft.stage.title))
                     if baseWasApplied && draft.stage == .saved {
                         Text(l10n("Your previous record says you applied. Clearing that mark allows a new application review; it does not withdraw an employer application."))
                             .font(.footnote).foregroundStyle(.secondary)

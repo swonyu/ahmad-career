@@ -60,6 +60,65 @@ private final class DiscoverySuite {
     }
     func run() async throws {
         do {
+            let now = Date(timeIntervalSince1970: 1_795_262_400) // 21 Nov 2026, noon UTC
+            for seconds in [0, 60, 3_601, 7_200, 86_400, 20_000_000_000] as [Int64] {
+                try check(DiscoveryPolicy.retryAfterDeadline(String(seconds), now: now) == now.addingTimeInterval(Double(seconds)),
+                          "A numeric Retry-After preserves its entire interval, including waits beyond an hour or one UInt64 nanosecond sleep")
+            }
+            let response = HTTPURLResponse(url: URL(string: "https://retry-fixture.example")!, statusCode: 429,
+                                           httpVersion: "HTTP/1.1", headerFields: ["rEtRy-AfTeR": "\t7200 "])!
+            try check(DiscoveryPolicy.retryAfterDeadline(response.value(forHTTPHeaderField: "Retry-After"), now: now) == now.addingTimeInterval(7_200),
+                      "A response header uses the production parser and excludes HTTP field whitespace")
+            let future = Date(timeIntervalSince1970: 1_795_356_000)
+            for header in ["Sun, 22 Nov 2026 14:00:00 GMT", "Sunday, 22-Nov-26 14:00:00 GMT", "Sun Nov 22 14:00:00 2026"] {
+                try check(DiscoveryPolicy.retryAfterDeadline(header, now: now) == future, "All three HTTP-date formats preserve the same future deadline")
+            }
+            try check(DiscoveryPolicy.retryAfterDeadline("Sun Nov  6 08:49:37 1994", now: now) == Date(timeIntervalSince1970: 784_111_777),
+                      "An expired asctime date with a space-padded day remains expired")
+            try check(DiscoveryPolicy.retryAfterDeadline("Thursday, 21-Nov-75 12:00:00 GMT", now: now) == Date(timeIntervalSince1970: 3_341_563_200),
+                      "An RFC 850 year within fifty future years retains its future deadline")
+            try check(DiscoveryPolicy.retryAfterDeadline("Monday, 21-Nov-77 12:00:00 GMT", now: now) == Date(timeIntervalSince1970: 248_961_600),
+                      "An RFC 850 year more than fifty years ahead denotes the matching past year")
+            try check(DiscoveryPolicy.retryAfterDeadline("Friday, 21-Nov-10 12:00:00 GMT", now: Date(timeIntervalSince1970: 3_814_948_800)) == Date(timeIntervalSince1970: 4_446_014_400),
+                      "RFC 850's fifty-year interpretation also works across a century")
+            let invalid: [String?] = [nil, "", " ", "-1", "+60", "1.5", "1e3", "NaN", "Infinity", "١٢", "60, 120",
+                String(repeating: "x", count: 129), "Sat, 32 Nov 2026 12:00:00 GMT",
+                "Sat, 21 Nov 2026 25:00:00 GMT", "Sat, 21 Nov 2026 12:00:00 GMT\n", "Sat, 21 Nov 2026 12:00:00 GMT trailing"]
+            for header in invalid {
+                try check(DiscoveryPolicy.retryAfterDeadline(header, now: now) == nil, "Missing or malformed Retry-After keeps the existing nil-deadline behavior")
+            }
+            try check(DiscoveryPolicy.retryAfterDeadline("60", now: Date(timeIntervalSince1970: .infinity)) == nil,
+                      "A nonfinite reference clock cannot create an invalid deadline")
+            let lastDate = Date(timeIntervalSince1970: 253_402_300_799)
+            let lastSeconds = Int64(lastDate.timeIntervalSince(now))
+            try check(DiscoveryPolicy.retryAfterDeadline(String(lastSeconds), now: now) == lastDate
+                && DiscoveryPolicy.retryAfterDeadline(String(lastSeconds + 1), now: now) == lastDate,
+                      "The supported date boundary is preserved; larger valid waits saturate instead of enabling an immediate retry")
+            for header in [String(repeating: "9", count: 129), "18446744073709551616", "999999999999999999999999"] {
+                let deadline = DiscoveryPolicy.retryAfterDeadline(header, now: now)
+                try check(deadline == lastDate && deadline! > now,
+                          "A valid integer beyond UInt64 or the header length guard retains the maximum supported hold, not the unrepresentable full remote wait")
+            }
+            try check(DiscoveryPolicy.retryAfterDeadline(String(repeating: "0", count: 200), now: now) == now
+                && DiscoveryPolicy.retryAfterDeadline(String(repeating: "0", count: 200) + "7200", now: now) == now.addingTimeInterval(7_200),
+                      "Long zero padding cannot turn zero into a future hold or a representable wait into overflow")
+            scenarios += 1
+        }
+        for retryHeader in ["7200", String(repeating: "9", count: 129)] {
+            let service = DiscoveryStub(fixture); let (model, _) = store(service)
+            await model.search()
+            let deadline = DiscoveryPolicy.retryAfterDeadline(retryHeader)!
+            service.handle = { _, _ in throw DiscoveryFailure(message: "Synthetic long service wait", retryAfter: deadline) }
+            await model.search()
+            let count = service.calls.count, preservedJobs = model.jobs
+            model.query.keywords = "Unsent newer search"
+            await model.search(); await model.search(more: true); await model.retrySubmittedSearch()
+            try check(service.calls.count == count && model.retryAfter == deadline && model.jobs == preservedJobs
+                && model.query.keywords == "Unsent newer search" && !model.isSearching,
+                      "A parsed long or saturated service deadline blocks every search path without dropping results or draft edits")
+            scenarios += 1
+        }
+        do {
             let service = DiscoveryStub(fixture); let (model, file) = store(service)
             model.query.keywords = "Unsent role"; model.query.location = "Tokyo"; model.query.remoteOnly = true
             let reopened = CareerDiscoveryStore(file: file, service: service)

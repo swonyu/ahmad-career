@@ -134,6 +134,7 @@ final class CareerFinderUITests: XCTestCase {
     }
     @MainActor
     private func typingKeyIsVisible(_ deleteKey: XCUIElement, in app: XCUIApplication,
+                                    deadline: TimeInterval? = nil,
                                     record: ((UIObservationTrace) -> Void)? = nil) -> Bool {
         // Resolve the viewport first, leaving the fresh key snapshot and live
         // hit test adjacent without another element query between them.
@@ -145,6 +146,9 @@ final class CareerFinderUITests: XCTestCase {
         guard viewport.origin.x.isFinite, viewport.origin.y.isFinite,
               viewport.width.isFinite, viewport.height.isFinite,
               viewport.width > 0, viewport.height > 0 else { return false }
+        // Do not admit another synchronous accessibility read after this gate
+        // has already expired. The caller still rejects a late final reply.
+        if let deadline, ProcessInfo.processInfo.systemUptime >= deadline { return false }
         // Reuse the exact system-key query for this keyboard presentation.
         // One fresh snapshot resolves presence and geometry together, avoiding
         // separate accessibility round trips inside the unchanged deadline.
@@ -160,6 +164,7 @@ final class CareerFinderUITests: XCTestCase {
               frame.width.isFinite, frame.height.isFinite,
               frame.width > 0, frame.height > 0,
               frame.intersects(viewport) else { return false }
+        if let deadline, ProcessInfo.processInfo.systemUptime >= deadline { return false }
         // A snapshot cannot establish current hittability; always ask the live key.
         let hitStartedAt = ProcessInfo.processInfo.systemUptime
         let hittable = deleteKey.isHittable
@@ -272,7 +277,7 @@ final class CareerFinderUITests: XCTestCase {
         // Wait for that presentation before starting the unchanged real-key gate.
         XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5),
                       "The native keyboard must appear before checking its typing key")
-        let deleteKey = app.keyboards.firstMatch.keys.matching(identifier: "delete").firstMatch
+        let deleteKey = app.keyboards.keys.matching(identifier: "delete").firstMatch
         // XCUI reads wait for their own accessibility replies. An outer XCTest
         // waiter can time out inside isHittable and interrupt those nested reads.
         // Keep the same five-second acceptance window without cancelling a read.
@@ -281,7 +286,7 @@ final class CareerFinderUITests: XCTestCase {
         var keyboardTraces: [UIObservationTrace] = []
         while ProcessInfo.processInfo.systemUptime < keyboardDeadline {
             let observationStartedAt = ProcessInfo.processInfo.systemUptime
-            let keyIsReady = self.typingKeyIsVisible(deleteKey, in: app) { keyboardTraces.append($0) }
+            let keyIsReady = self.typingKeyIsVisible(deleteKey, in: app, deadline: keyboardDeadline) { keyboardTraces.append($0) }
             let observedAt = ProcessInfo.processInfo.systemUptime
             keyboardTraces.append(UIObservationTrace(stage: "keyboard condition", startedAt: observationStartedAt,
                                                       completedAt: observedAt, matched: keyIsReady))
@@ -358,11 +363,12 @@ final class CareerFinderUITests: XCTestCase {
                     field.tap()
                     XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5),
                                   "The native keyboard must reappear after clearing before checking its typing key")
-                    let reopenedDeleteKey = app.keyboards.firstMatch.keys.matching(identifier: "delete").firstMatch
-                    let keyboardAfterClear = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-                        self.typingKeyIsVisible(reopenedDeleteKey, in: app)
-                    }, object: nil)
-                    XCTAssertEqual(XCTWaiter.wait(for: [keyboardAfterClear], timeout: 5), .completed,
+                    let reopenedDeleteKey = app.keyboards.keys.matching(identifier: "delete").firstMatch
+                    let reopenedDeadline = ProcessInfo.processInfo.systemUptime + 5
+                    let keyboardAfterClear = waitForObservation(timeout: 5) {
+                        self.typingKeyIsVisible(reopenedDeleteKey, in: app, deadline: reopenedDeadline)
+                    }
+                    XCTAssertEqual(keyboardAfterClear, .completed,
                                    "A real keyboard key must be visible after clearing before replacement")
                 }
             }
@@ -815,7 +821,16 @@ final class CareerFinderUITests: XCTestCase {
         capture("18-private-record-restored", app: app)
         let reopen = app.buttons["record.edit"]; reveal(reopen, in: app); reopen.tap()
         element("record.stage", app: app).tap(); chooseMenu("Saved for later", in: app)
-        XCTAssertTrue(element("record.stage", app: app).label.contains("Saved"))
+        let selectedStage = element("record.stage", app: app)
+        let stageChoices = app.buttons.matching(NSPredicate(format: "label == %@", "Saved for later"))
+        let stageSelection = waitForObservation(timeout: 5) {
+            (selectedStage.value as? String) == "Saved for later" && stageChoices.count == 0
+        }
+        if stageSelection != .completed {
+            captureObservation("record-stage-selection-incomplete", app: app,
+                               details: "Expected selected value: Saved for later; label=\(selectedStage.label); value=\(String(describing: selectedStage.value))")
+        }
+        XCTAssertEqual(stageSelection, .completed, "One selection must close the menu and update the actual stage within five seconds")
         app.buttons["record.save"].tap()
         XCTAssertTrue(app.buttons["Keep application record"].waitForExistence(timeout: 5))
         app.buttons["Keep application record"].tap()

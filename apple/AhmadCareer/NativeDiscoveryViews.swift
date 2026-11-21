@@ -200,11 +200,17 @@ struct NativeDiscoveryScreen: View {
         .task(id: discovery.retryAfter) {
             searchClock = Date()
             guard let retry = discovery.retryAfter else { return }
-            let remaining = retry.timeIntervalSince(searchClock)
-            guard remaining > 0 else { return }
-            do { try await Task.sleep(nanoseconds: UInt64(remaining * 1_000_000_000)) }
-            catch { return }
-            searchClock = retry
+            while !Task.isCancelled {
+                let remaining = retry.timeIntervalSince(searchClock)
+                guard remaining > 0 else { return }
+                // Bound each sleep, not the service's deadline. A long valid wait
+                // must never overflow UInt64 or enable retry before it expires.
+                let seconds = min(remaining, 60)
+                do { try await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000)) }
+                catch { return }
+                guard !Task.isCancelled, discovery.retryAfter == retry else { return }
+                searchClock = Date()
+            }
         }
     }
     private var profileRoleShortcuts: [String] {
@@ -365,7 +371,12 @@ private struct NativeDiscoveryJobDetail: View {
                                                          location: job.location, country: job.country ?? "")
                             saveMessage = applications.message
                         }
-                    } label: { Label(l10n("Save opportunity"), systemImage: "bookmark") }
+                    } label: {
+                        Label(l10n("Save opportunity"), systemImage: "bookmark")
+                            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                            .contentShape(Rectangle())
+                    }
+                        .buttonStyle(.plain).foregroundStyle(Color.careerAccent)
                         .disabled(applications.busy).accessibilityIdentifier("discovery.saveOpportunity")
                 }
                 if let saveMessage { Text(l10n(saveMessage)).font(.footnote).foregroundStyle(.secondary) }
