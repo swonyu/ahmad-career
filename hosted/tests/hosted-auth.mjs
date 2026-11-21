@@ -5,7 +5,7 @@ import {generateKeyPair,exportJWK,SignJWT} from 'jose';
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {createOAuthHandler,OAUTH_PROVIDERS} from '../server/oauth.mjs';
 import {AUTH_ORIGIN,AUTH_LIMITS,BROWSER_SESSION_COOKIE,OAUTH_BROWSER_COOKIE,resolveBrowserIdentity,exportBrowserIdentity,identityDeletionStatements,stripInternalIdentityHeaders,verifiedSSRRequest,captureOwnerLifecycle} from '../server/identity.mjs';
-import {sha256} from '../server/validation.mjs';
+import {ApplicationError,sha256} from '../server/validation.mjs';
 
 // Real cryptographic signatures and an isolated actual D1 database. This adapter
 // has no fallback to fetch: no provider account, secret, employer or network is used.
@@ -13,7 +13,7 @@ const mf = new Miniflare(convertV4MiniflareOptions({modules:true,script:'export 
 const key = await generateKeyPair('RS256'), otherKey = await generateKeyPair('RS256');
 const publicKey = {...await exportJWK(key.publicKey),kid:'synthetic-key',alg:'RS256',use:'sig'};
 const secretFixture = 'synthetic-provider-token-never-store';
-let db,env,handler,time = Date.now(),requests = [],codes = new Map(),userInfos = new Map(),fetchBehavior = null;
+let db,env,handler,time = Date.now(),requests = [],codes = new Map(),userInfos = new Map(),fetchBehavior = null,diagnostics = [];
 const groups = [];
 const sites = (id,email = `${id}@example.com`) => ({'oai-authenticated-user-id':'synthetic-'+id,'oai-authenticated-user-email':email,'oai-authenticated-user-full-name':encodeURIComponent('Synthetic '+id),'oai-authenticated-user-full-name-encoding':'percent-encoded-utf-8'});
 const cookieFrom = (response,name) => response.headers.getSetCookie().map(value => value.split(';')[0]).find(value => value.startsWith(name+'='));
@@ -76,9 +76,9 @@ async function fixture(address,options) {
   return Response.json({token_type:'Bearer',access_token:accessToken,refresh_token:secretFixture+'-refresh',id_token:token});
 }
 async function reset() {
-  requests=[]; codes=new Map(); userInfos=new Map(); fetchBehavior=null; time+=61000;
+  requests=[]; codes=new Map(); userInfos=new Map(); fetchBehavior=null; diagnostics=[]; time+=61000;
   await db.batch(['oauth_transactions','browser_sessions','auth_identities','auth_accounts','auth_deletion_fences','auth_rates','workspaces','account_lifecycles'].map(table => db.prepare('DELETE FROM '+table)));
-  handler=createOAuthHandler({fetchImpl:fixture,clock:()=>time});
+  handler=createOAuthHandler({fetchImpl:fixture,clock:()=>time,diagnosticSink:entry=>diagnostics.push(entry)});
 }
 async function check(name,action) { await reset(); await action(); groups.push(name); console.log('PASS',name); }
 const count = async table => (await db.prepare('SELECT COUNT(*) AS n FROM '+table).first()).n;
@@ -784,6 +784,98 @@ try {
     const result=await finish(flow,{behavior:()=>new Response(new ReadableStream({cancel(){cancelled=true}}),{headers:{'Content-Type':'application/json'}})});
     assert.equal(queryResult(result.response),'failed'); assert(cancelled); assert(Date.now()-started<10000); assert.equal(await count('oauth_transactions'),0);
     assert.equal(queryResult((await finish(flow)).response),'failed'); assert.equal(tokenRequests(),1);
+  });
+
+
+  await check('Callback diagnostics disclose only a fixed token-failure label and upstream status',async()=>{
+    const canary='private-diagnostic-canary',user=sites(canary,canary+'@example.com'),flow=await begin('google',{user});
+    const result=await finish(flow,{code:canary+'-authorization-code',behavior:()=>Response.json({error:canary,id_token:canary,access_token:canary},{status:400,headers:{Location:AUTH_ORIGIN+'/'+canary,'Set-Cookie':canary+'='+canary}})});
+    assert.equal(result.status,303);assert.equal(result.response.headers.get('location'),'/account?oauth_provider=google&oauth_result=failed');
+    assert.deepEqual(diagnostics,[{stage:'token_exchange',code:'provider_response_invalid',upstreamStatus:400}]);
+    assert(Object.isFrozen(diagnostics[0]));assert(!JSON.stringify(diagnostics).includes(canary));
+    assert.equal(await result.response.text(),'');assert.equal(await count('oauth_transactions'),0);assert.equal(await count('auth_identities'),0);assert.equal(await count('browser_sessions'),0);
+  });
+
+  await check('The production diagnostic sink excludes arbitrary error codes, messages, stacks and provider data',async()=>{
+    const canary='private-exception-canary',flow=await begin('google',{user:sites(canary)}),logged=[],warn=console.warn;
+    const productionLogger=createOAuthHandler({fetchImpl:fixture,clock:()=>time});
+    console.warn=(...args)=>logged.push(args);
+    try {
+      const result=await finish(flow,{authHandler:productionLogger,behavior:()=>{throw new ApplicationError(canary+'-code',canary+'-message',403)}});
+      assert.equal(result.status,303);assert.equal(queryResult(result.response),'failed');
+    } finally { console.warn=warn; }
+    assert.deepEqual(logged,[['career_oauth_callback_failure',JSON.stringify({stage:'token_exchange',code:'internal_error'})]]);
+    assert(!JSON.stringify(logged).includes(canary));assert.equal(await count('oauth_transactions'),0);assert.equal(await count('auth_identities'),0);assert.equal(await count('browser_sessions'),0);
+  });
+
+  await check('Signed token and claim failures retain distinct safe stages without logging claims or prior HTTP status',async()=>{
+    for(const [claims,stage] of [[{aud:'private-audience-canary'},'identity_verification'],[{nonce:'private-nonce-canary'},'claims_validation']]){
+      await reset();
+      const flow=await begin(),result=await finish(flow,{claims:{sub:'private-subject-canary',email:'private-email-canary@example.com',name:'private-name-canary',...claims}});
+      assert.equal(queryResult(result.response),'failed');
+      assert.deepEqual(diagnostics,[{stage,code:'provider_identity_invalid'}]);
+      assert.equal(await count('oauth_transactions'),0);assert.equal(await count('auth_accounts'),0);assert.equal(await count('auth_identities'),0);assert.equal(await count('browser_sessions'),0);
+    }
+  });
+
+  await check('JWKS transport and key-shape failures survive the public identity-error wrapper with accurate diagnostic stages',async()=>{
+    for(const [response,expected] of [
+      [()=>Response.json({error:'private-jwks-canary'},{status:503}),{stage:'jwks_fetch',code:'provider_response_invalid',upstreamStatus:503}],
+      [()=>Response.json({keys:[],private:'private-jwks-canary'}),{stage:'jwks_validation',code:'provider_keys_invalid'}],
+    ]){
+      await reset();fetchBehavior=address=>address===OAUTH_PROVIDERS.google.jwks?response():null;
+      const flow=await begin(),result=await finish(flow);
+      assert.equal(result.status,303);assert.equal(queryResult(result.response),'failed');assert.deepEqual(diagnostics,[expected]);
+      assert.equal(await count('oauth_transactions'),0);assert.equal(await count('auth_identities'),0);assert.equal(await count('browser_sessions'),0);
+    }
+  });
+
+  await check('Overlapping callback diagnostics never share their stage, failure code or upstream status',async()=>{
+    let reached,release;
+    const waiting=new Promise(resolve=>{reached=resolve}),gate=new Promise(resolve=>{release=resolve});
+    fetchBehavior=async address=>{if(address===OAUTH_PROVIDERS.google.jwks){reached();await gate;return Response.json({error:'private-overlap-key-canary'},{status:503})}return null};
+    const keyFlow=await begin(),tokenFlow=await begin(),pending=finish(keyFlow);
+    try {
+      await waiting;
+      const tokenResult=await finish(tokenFlow,{behavior:()=>Response.json({error:'private-overlap-token-canary'},{status:401})});
+      assert.equal(queryResult(tokenResult.response),'failed');
+      assert.deepEqual(diagnostics,[{stage:'token_exchange',code:'provider_response_invalid',upstreamStatus:401}]);
+    } finally { release(); }
+    assert.equal(queryResult((await pending).response),'failed');
+    assert.deepEqual(diagnostics,[{stage:'token_exchange',code:'provider_response_invalid',upstreamStatus:401},{stage:'jwks_fetch',code:'provider_response_invalid',upstreamStatus:503}]);
+    assert.equal(await count('oauth_transactions'),0);assert.equal(await count('auth_accounts'),0);assert.equal(await count('auth_identities'),0);assert.equal(await count('browser_sessions'),0);
+  });
+
+  await check('Successful and cancelled callbacks stay quiet while other provider errors emit one fixed label',async()=>{
+    const user=sites('diagnostic-success'),success=await finish(await begin('google',{user}));
+    assert.equal(queryResult(success.response),'connected');assert.deepEqual(diagnostics,[]);
+    const cancelled=await finish(await begin('google',{user}),{error:'access_denied'});
+    assert.equal(queryResult(cancelled.response),'cancelled');assert.deepEqual(diagnostics,[]);
+    const rejected=await finish(await begin('google',{user}),{error:'private-provider-error-canary'});
+    assert.equal(queryResult(rejected.response),'failed');
+    assert.deepEqual(diagnostics,[{stage:'provider_response',code:'provider_rejected'}]);
+    assert.equal(tokenRequests(),1);assert.equal(await count('oauth_transactions'),0);assert.equal(await count('auth_identities'),1);
+  });
+
+  for(const mode of ['throwing','rejecting','pending'])await check('A '+mode+' diagnostic sink cannot change or delay the callback failure and cleanup',async()=>{
+    const events=[],unhandled=[],onUnhandled=error=>unhandled.push(error);
+    const isolated=createOAuthHandler({fetchImpl:fixture,clock:()=>time,diagnosticSink:entry=>{
+      events.push(entry);
+      if(mode==='throwing')throw new Error('private-logger-canary');
+      if(mode==='rejecting')return Promise.reject(new Error('private-logger-canary'));
+      return new Promise(()=>{});
+    }});
+    const flow=await begin('google',{user:sites('logger-isolation')}),work=finish(flow,{authHandler:isolated,behavior:()=>{throw new Error('private-network-canary')}});
+    let timer;
+    process.on('unhandledRejection',onUnhandled);
+    try {
+      const result=await Promise.race([work,new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('Callback waited for diagnostics')),1500)})]);
+      assert.equal(result.status,303);assert.equal(result.response.headers.get('location'),'/account?oauth_provider=google&oauth_result=failed');
+      assert.match(result.response.headers.get('set-cookie'),/Max-Age=0/);
+      assert.deepEqual(events,[{stage:'token_exchange',code:'provider_unavailable'}]);assert.deepEqual(diagnostics,[]);
+      assert.equal(await count('oauth_transactions'),0);assert.equal(await count('auth_identities'),0);assert.equal(await count('browser_sessions'),0);
+      await new Promise(resolve=>setImmediate(resolve));assert.deepEqual(unhandled,[]);
+    } finally { clearTimeout(timer);process.removeListener('unhandledRejection',onUnhandled);await work; }
   });
 
   await check('Shared rate budgets reject excess starts and never retain raw network addresses',async()=>{
