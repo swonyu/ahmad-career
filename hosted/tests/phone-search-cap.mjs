@@ -90,6 +90,8 @@ function render(page, language, overrides = {}) {
   const t = (key, values) => i18n.translate(key, language, values);
   const scope = { searchPage: page, searchedFilters: filters, filters, searchSources: filters.sources,
     restored: false, busy: '', loading: false, locked: false, checkingIdentity: false, jobs: [], cannotSave: false,
+    searchResultsHeading: { current: null },
+    searchNewResult: null, showNewOnly: false, setShowNewOnly() { assert.fail('No filter change during rendering'); },
     language, t, formatNumber: i18n.formatNumber, displayTime: value => i18n.formatDateTime(value, language),
     same: (a, b) => JSON.stringify(a) === JSON.stringify(b), jobIdentity: model.jobIdentity,
     JobCard: ({ job }) => React.createElement('article', { 'data-synthetic-job': job.id }, job.title),
@@ -100,7 +102,7 @@ function render(page, language, overrides = {}) {
     .map(name => 'const ' + name + ' = ' + declaration(name) + ';').join('\n');
   // Optional new derived values let this same behavioral test render the
   // unpatched baseline and fail on the missing UI, not a fixture dependency.
-  const derived = ['incompleteSearch', 'localResultLimitReached', 'searchSummary']
+  const derived = ['newSearchIDs', 'shownSearchJobs', 'newSearchCount', 'hasSearchComparison', 'incompleteSearch', 'localResultLimitReached', 'searchSummary']
     .map(name => ({ name, value: declaration(name, true) }))
     .filter(entry => entry.value !== null)
     .map(entry => 'const ' + entry.name + ' = ' + entry.value + ';').join('\n');

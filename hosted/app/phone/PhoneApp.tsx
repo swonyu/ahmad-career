@@ -1,4 +1,5 @@
 "use client";
+import { prepareSearchResultReveal } from "./search-focus";
 import { useI18n } from "../i18n/LocaleProvider";
 
 import { useEffect, useEffectEvent, useRef, useState } from "react";
@@ -110,6 +111,7 @@ export default function PhoneApp({ account }: { account: Account }) {
   const [boardsTouched, setBoardsTouched] = useState(false), [customBoard, setCustomBoard] = useState("");
   const [filters, setFiltersState] = useState<Filters>({ ...emptyFilters }), [searchPage, setSearchPage] = useState<DiscoveryPage | null>(null), [searchedFilters, setSearchedFilters] = useState<Filters | null>(null), [restored, setRestored] = useState(false);
   const filterDraftRef = useRef<Filters>({ ...emptyFilters });
+  const searchForm = useRef<HTMLFormElement>(null), searchResultsHeading = useRef<HTMLHeadingElement>(null);
   const [searchNewResult, setSearchNewResult] = useState<SearchNewResult | null>(null), [showNewOnly, setShowNewOnlyState] = useState(false);
   const showNewOnlyRef = useRef(false);
   const setShowNewOnly = (value: boolean) => { showNewOnlyRef.current = value; setShowNewOnlyState(value); };
@@ -356,7 +358,7 @@ export default function PhoneApp({ account }: { account: Account }) {
     } catch (error) { setNotice({ text: message(error), error: true }); }
   };
 
-  const searchJobs = (mode: "new" | "more" | "retry" = "new") => run(mode === "more" ? "Loading more jobs" : "Searching employer boards", async generation => {
+  const searchJobs = (mode: "new" | "more" | "retry" = "new", revealResults = false) => run(mode === "more" ? "Loading more jobs" : "Searching employer boards", async generation => {
     const more = mode === "more";
     if (mode !== "new" && !searchedFilters) throw Error("Search again to refresh these results.");
     const source = mode !== "new" && searchedFilters ? searchedFilters : { ...filters, sources: searchSources };
@@ -365,6 +367,10 @@ export default function PhoneApp({ account }: { account: Account }) {
     const cursor = more && !restored ? searchPage?.nextCursor : null;
     if (more && !cursor) throw Error("Search again to refresh these results.");
     const controller = new AbortController(); searchAbort.current = controller;
+    const originalDraft = filterDraftRef.current;
+    const reveal = revealResults && mode === "new" ? prepareSearchResultReveal(searchForm.current, () => searchResultsHeading.current,
+      () => generation === epoch.current && !busyRef.current && filterDraftRef.current === originalDraft) : null;
+    let searchCompleted = false;
     const draftScope = snapshotRef.current?.scope;
     const saveFilterDraft = async () => {
       if (!draftScope || storageProblem) return;
@@ -408,7 +414,9 @@ export default function PhoneApp({ account }: { account: Account }) {
         setSearchNewResult(familiarity.result);
         if (keepNewOnly && familiarity.result?.comparedSourceIds.length) setShowNewOnly(true);
       }
+      searchCompleted = true;
     } finally {
+      reveal?.(searchCompleted);
       if (searchAbort.current === controller) searchAbort.current = null;
     }
   });
@@ -906,7 +914,7 @@ export default function PhoneApp({ account }: { account: Account }) {
 
       {!checkingIdentity && !locked && tab === "search" && <>
         <p className="visually-hidden" role="status" aria-live="polite" aria-atomic="true">{!busy && searchPage ? t(shownSearchJobs.length === 1 ? "{0} job shown. {1}" : "{0} jobs shown. {1}", [formatNumber(shownSearchJobs.length, language), searchSummary]) : ""}</p>
-        <div className="phone-discovery-layout"><div className="phone-search-primary"><form className="phone-search-card" onSubmit={event => { event.preventDefault(); void searchJobs(); }}>
+        <div className="phone-discovery-layout"><div className="phone-search-primary"><form ref={searchForm} className="phone-search-card" onSubmit={event => { event.preventDefault(); void searchJobs("new", true); }}>
           <label>{t("Job title or keyword")}<div className="phone-input-icon"><Search size={19} aria-hidden="true" /><input dir="auto" autoComplete="off" maxLength={120} placeholder={t("e.g. Designer, nurse, sales")} value={filters.query} onChange={event => setFilters({ ...filters, query: event.target.value })} /></div></label>
           {savedRoleSuggestions.length > 0 && <div className="phone-profile-search"><p className="phone-note">{t("Choose a job title from your saved profile")}</p><div className="phone-suggestions">{savedRoleSuggestions.map(role => <button type="button" key={role} onClick={() => setFilters({ ...filters, query: role })}><bdi>{role}</bdi></button>)}</div><p className="phone-note">{t("This fills the job title only. Choose Search jobs to run the search.")}</p></div>}
           <label>{t("Location ")}<span className="optional">{t("optional")}</span><input dir="auto" maxLength={100} placeholder={t("City, country, or region")} value={filters.location} onChange={event => setFilters({ ...filters, location: event.target.value })} /></label>
@@ -926,7 +934,7 @@ export default function PhoneApp({ account }: { account: Account }) {
         {due > 0 && <button className="phone-link-card phone-followup-link" onClick={() => { setSavedQuery(""); setSavedFilter("followups"); setSavedStage("all"); navigate("saved"); }}><div><strong>{t("Follow-ups due: {0}", [formatNumber(due, language)])}</strong><span>{t("Review follow-up dates")}</span></div><ChevronRight size={21} aria-hidden="true" /></button>}
         </aside></div>
         {!searchPage ? <section className="phone-empty"><p className="phone-kicker">{t("EXAMPLE SEARCHES")}</p><h2>{t("Search by job field")}</h2><p>{t("Choose an example below or enter a job title above.")}</p><div className="phone-suggestions">{["Customer service", "Software", "Healthcare"].map(value => <button key={value} onClick={() => setFilters({ ...filters, query: value })}>{t(value)}</button>)}</div></section> : <section aria-label={t("Job search results")} className="phone-results">
-          <div className="phone-section-heading"><h2>{restored ? t("Previous results") : t("Search results")}</h2><span>{showNewOnly ? t("{0} of {1} shown", [formatNumber(shownSearchJobs.length, language), formatNumber(searchPage.jobs.length, language)]) : t("{0} shown", [formatNumber(searchPage.jobs.length, language)])}</span></div>
+          <div className="phone-section-heading"><h2 ref={searchResultsHeading} tabIndex={-1}>{restored ? t("Previous results") : t("Search results")}</h2><span>{showNewOnly ? t("{0} of {1} shown", [formatNumber(shownSearchJobs.length, language), formatNumber(searchPage.jobs.length, language)]) : t("{0} shown", [formatNumber(searchPage.jobs.length, language)])}</span></div>
           <p className="phone-search-coverage">{t("Results from:")} {searchPage.sources.map((source, index) => <span key={source.id}>{index > 0 ? language === "ar" ? "، " : ", " : ""}<bdi>{source.name}</bdi></span>)}</p>
           <p className="phone-note">{t("Search from ")}<bdi>{displayTime(searchPage.generatedAt)}</bdi>. {restored ? t("Search again to check current openings.") : t("An employer may close or change a job after this check.")}</p>
           {searchedFilters && !same({ ...filters, sources: searchSources }, searchedFilters) && <p className="phone-inline-note">{t("Search again to use your changed filters.")}</p>}

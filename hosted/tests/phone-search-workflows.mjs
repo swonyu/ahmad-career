@@ -389,6 +389,7 @@ function renderSearchSurface(node, searchPage, language, overrides = {}) {
   const calls = [], t = (key, values) => i18n.translate(key, language, values);
   const scope = { searchPage, searchedFilters: submitted(), filters: draft(), searchSources: draft().sources,
     restored: false, busy: '', loading: false, locked: false, checkingIdentity: false, jobs: [], cannotSave: false,
+    searchResultsHeading: { current: null },
     searchNewResult: null, showNewOnly: false, setShowNewOnly() { assert.fail('A toggle must supply its local setter in the test'); },
     language, t, formatNumber: i18n.formatNumber, displayTime: value => i18n.formatDateTime(value, language),
     same: (a, b) => JSON.stringify(a) === JSON.stringify(b), jobIdentity: model.jobIdentity,

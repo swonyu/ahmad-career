@@ -124,3 +124,6 @@
   .phone-page-heading>p:last-child{margin-top:10px}
   .phone-search-card{padding:18px}
 }
+
+/* A submitted search lands at its result summary without hiding it under chrome. */
+.phone-results>.phone-section-heading>h2{scroll-margin-top:20px}.phone-results>.phone-section-heading>h2:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:3px}
