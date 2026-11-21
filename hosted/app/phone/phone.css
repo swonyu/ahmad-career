@@ -104,3 +104,23 @@
 .phone-comparison-fields dd+dd{border-inline-start:1px solid var(--line);padding-inline-start:12px}
 .phone-comparison-links{margin-top:8px}.phone-comparison-links a{font-size:.78rem;text-align:start;justify-content:flex-start}
 .phone-comparison>.phone-note{margin:10px 0 0}
+
+/* Keep the common search and CV actions visible before secondary guidance. */
+.phone-search-options>summary{display:block;padding:12px 0;min-height:48px}
+.phone-search-options>summary>span{margin:0;font-weight:400}
+.phone-search-options>summary>.phone-search-options-heading{display:flex;align-items:center;gap:9px;color:var(--ink);font-size:.8rem;font-weight:650}
+.phone-search-options-heading>svg{flex-shrink:0}
+.phone-search-options-heading>.phone-search-board-count{margin-inline-start:auto;flex-shrink:0;color:var(--muted);font-size:.7rem;font-weight:400}
+.phone-search-options>summary>.phone-search-coverage{display:block;margin:5px 0 0;padding-inline-start:26px;font-size:.75rem;line-height:1.6;color:var(--muted);overflow-wrap:anywhere}
+.phone-profile-cv .phone-cv{margin-top:16px}
+.phone-profile-cv>.phone-actions{margin:12px 0}
+.phone-profile-quick-save{display:grid;gap:8px;margin-top:12px;padding-top:12px}
+.phone-profile-quick-save>.phone-note{margin:0}
+.phone-contact-fields{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
+.phone-contact-fields .phone-field-pair>label{margin-top:0!important}
+@media(max-width:979px){
+  .phone-main{padding-top:20px}
+  .phone-page-heading{margin-bottom:20px}
+  .phone-page-heading>p:last-child{margin-top:10px}
+  .phone-search-card{padding:18px}
+}

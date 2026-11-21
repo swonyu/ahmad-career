@@ -24,6 +24,7 @@ function execute(source, scope = {}, loader = require) {
 const model = execute(read('app/phone/model.ts'));
 const searchHistory = execute(read('app/phone/search-history.ts'), {}, name => name === '../../server/discovery-source-identity.mjs' ? sourceIdentity : require(name));
 const records = execute(read('app/phone/record-tools.ts'), {}, name => name === './model' ? model : require(name));
+const savedComparison = execute(read('app/phone/saved-comparison.ts'), {}, name => name === './model' ? model : require(name));
 const { APIError } = execute(read('app/components/api.ts'));
 const catalog = JSON.parse(read('app/i18n/messages.ar.json'));
 const i18n = execute(read('app/i18n/core.ts'), {}, name => name === './messages.ar.json' ? catalog : require(name));
@@ -489,7 +490,7 @@ test('due shortcut reveals the promised record after an unrelated Saved search',
   const snapshot = { ...model.blankSnapshot('guest'), jobs: [savedJob], records: [{ ...model.blankRecord(savedJob), followUpDate: '2020-01-01', note: 'Call the recruiter' }] };
   const state = { savedQuery: 'portfolio', savedFilter: 'all', savedStage: 'closed', tab: 'search' };
   const select = () => execute(['jobs', 'records', 'recordsByID', 'recordJobs', 'shownJobs'].map(name => `const ${name} = ${declaration(name)};`).join('\n') + '\nexports.rows = shownJobs;', {
-    snapshot, ...state, jobIdentity: model.jobIdentity, matchesSavedList: records.matchesSavedList,
+    snapshot, ...state, jobIdentity: model.jobIdentity, jobFromRecord: savedComparison.jobFromRecord, matchesSavedList: records.matchesSavedList,
   }).rows;
   assert.equal(select().length, 0);
   const before = JSON.stringify(snapshot);

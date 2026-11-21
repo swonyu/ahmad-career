@@ -69,6 +69,8 @@ export function ProfileEditor({ profile, onChange, onPDF, onSaveLocal, onSaveOnl
   const { t, language } = useI18n();
   const countries = useMemo(() => { const names = new Intl.DisplayNames([language], { type: "region" }); return countryCodes.map(code => ({ code, name: names.of(code) || code })).sort((a,b) => a.name.localeCompare(b.name, language)); }, [language]);
   const fileInput = useRef<HTMLInputElement>(null);
+  const essentials = profileEssentials(profile);
+  const essentialsReady = essentials.name && essentials.email && essentials.resume;
   const saveProfile = async (button: HTMLButtonElement, action: () => Promise<void>) => {
     const shell = button.closest(".phone-shell");
     try { await action(); }
@@ -82,17 +84,22 @@ export function ProfileEditor({ profile, onChange, onPDF, onSaveLocal, onSaveOnl
   const validLinkedIn = useMemo(() => { try { return profile.linkedin ? linkedInURL(profile.linkedin) : ""; } catch { return ""; } }, [profile.linkedin]);
   return <div className="phone-profile-form">
     <section className="phone-card"><div className="section-label"><span>01</span><h2>{t("Contact details and CV")}</h2></div><Readiness profile={profile} />
-      <p className="phone-note">{t("Start with a name, email, and CV. You can save an unfinished draft on this phone.")}</p>
-      <div className="phone-field-pair"><label>{t("First or single name")}<input dir="auto" autoComplete="given-name" maxLength={150} value={profile.firstName} onChange={e => onChange({ firstName: e.target.value })} /></label><label>{t("Last name ")}<span className="optional">{t("optional")}</span><input dir="auto" autoComplete="family-name" maxLength={150} value={profile.lastName} onChange={e => onChange({ lastName: e.target.value })} /></label></div>
-      <label>{t("Email address")}<input type="email" dir="ltr" autoComplete="email" inputMode="email" maxLength={254} value={profile.email} onChange={e => onChange({ email: e.target.value })} /></label>
-      {accountEmail && profile.email.trim().toLowerCase() !== accountEmail.toLowerCase() && <div className="phone-inline-note"><p>{t("Auto Apply uses your connected account email.")}</p><button className="text-button" onClick={() => onChange({ email: accountEmail })}>{t("Use ")}<bdi>{accountEmail}</bdi></button></div>}
+      {!essentialsReady && <p className="phone-note">{t("Start with a name, email, and CV. You can save an unfinished draft on this phone.")}</p>}
+      <div className="phone-profile-cv">
       <div className="phone-cv"><FileText aria-hidden="true" size={28} /><div><strong dir="auto">{profile.resume?.name || t("Choose your PDF CV")}</strong><span>{profile.resume ? t("{0} KB · PDF", [formatNumber(profile.resume.size / 1024, language, { maximumFractionDigits: 0 })]) : t("PDF only · up to 5 MiB")}</span></div></div>
       <input ref={fileInput} type="file" accept="application/pdf,.pdf" className="visually-hidden" tabIndex={-1} aria-label={t("Choose PDF CV")} onChange={e => { const file = e.target.files?.[0]; if (file) void onPDF(file); e.currentTarget.value = ""; }} />
       <div className="phone-actions"><button className="button secondary" disabled={busy} onClick={() => fileInput.current?.click()}>{profile.resume ? t("Change PDF") : t("Choose PDF")}</button>{profile.resume && <button className="text-button danger-text" disabled={busy} onClick={() => onChange({ resume: null })}>{t("Remove from profile")}</button>}</div>
       <div className="phone-profile-quick-save">
         {changed && <p className="phone-note">{t("You have unsaved changes in this form.")}</p>}
-        <button type="button" className="button primary full" disabled={busy} onClick={event => void saveProfile(event.currentTarget, onSaveLocal)}>{t("Save draft on this phone")}</button>
+        <button type="button" className={`button ${hasWorkspace ? "secondary" : "primary"} full`} disabled={busy} onClick={event => void saveProfile(event.currentTarget, onSaveLocal)}>{t("Save draft on this phone")}</button>
         <p className="phone-note">{t(" Saving on this phone does not upload your CV.")}</p>
+        {hasWorkspace && <button type="button" className="button primary full" disabled={busy} onClick={event => void saveProfile(event.currentTarget, onSaveOnline)}>{t("Save profile online")}</button>}
+      </div>
+      </div>
+      <div className="phone-contact-fields">
+      <div className="phone-field-pair"><label>{t("First or single name")}<input dir="auto" autoComplete="given-name" maxLength={150} value={profile.firstName} onChange={e => onChange({ firstName: e.target.value })} /></label><label>{t("Last name ")}<span className="optional">{t("optional")}</span><input dir="auto" autoComplete="family-name" maxLength={150} value={profile.lastName} onChange={e => onChange({ lastName: e.target.value })} /></label></div>
+      <label>{t("Email address")}<input type="email" dir="ltr" autoComplete="email" inputMode="email" maxLength={254} value={profile.email} onChange={e => onChange({ email: e.target.value })} /></label>
+      {accountEmail && profile.email.trim().toLowerCase() !== accountEmail.toLowerCase() && <div className="phone-inline-note"><p>{t("Auto Apply uses your connected account email.")}</p><button className="text-button" onClick={() => onChange({ email: accountEmail })}>{t("Use ")}<bdi>{accountEmail}</bdi></button></div>}
       </div>
     </section>
     <ProfileReuse profile={profile} />

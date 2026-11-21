@@ -310,7 +310,11 @@ function renderBoardOptions(language) {
     ? [...node.declarationList.declarations] : []).filter(node => node.name.getText(phoneTree) === 'addEmployerBoard');
   assert.equal(actions.length, 1, 'Expected one actual addEmployerBoard declaration');
   assert(actions[0].initializer, 'Expected the actual addEmployerBoard initializer');
-  const setup = `const addEmployerBoard = ${actions[0].initializer.getText(phoneTree)};`;
+  const names = app.body.statements.flatMap(node => ts.isVariableStatement(node)
+    ? [...node.declarationList.declarations] : []).filter(node => node.name.getText(phoneTree) === 'searchSourceNames');
+  assert.equal(names.length, 1, 'Expected the actual selected board names declaration');
+  assert(names[0].initializer, 'Expected the actual selected board names initializer');
+  const setup = `const addEmployerBoard = ${actions[0].initializer.getText(phoneTree)}; const searchSourceNames = ${names[0].initializer.getText(phoneTree)};`;
   const searchSources = Object.freeze([catalogBoards[0].id, unknownBoard, customBoardURL]);
   const filters = Object.freeze({ query: mixedJob.title, location: mixedJob.location, remoteOnly: false, sources: searchSources });
   const changes = [], touched = [];
