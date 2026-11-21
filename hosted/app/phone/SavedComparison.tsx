@@ -64,7 +64,7 @@ export function SavedComparison({ jobs, records, disabled, children }: {
     { label: "Follow-up date", value: (row: SavedComparisonRow) => row.record?.followUpDate ? friendlyDate(row.record.followUpDate, language) : t("No follow-up scheduled") },
   ];
   const toolbar = rows.length > 0 && <section className="phone-compare-toolbar" aria-label={t("Compare saved openings")}>
-    <div><strong>{t("Compare openings")}</strong><p aria-live="polite">{chosen.length ? t("{0} of 2 selected", [formatNumber(chosen.length, language)]) : t("Choose two saved openings.")}</p></div>
+    <div><p aria-live="polite">{chosen.length ? t("{0} of 2 selected", [formatNumber(chosen.length, language)]) : t("Choose two saved openings.")}</p></div>
     <div className="phone-compare-actions">{chosen.length > 0 && <button type="button" className="text-button" disabled={disabled || closing} onClick={() => setSelected([])}>{t("Clear selection")}</button>}<button type="button" className="button secondary" disabled={disabled || closing || chosen.length !== 2} onClick={open}><Columns2 size={17} aria-hidden="true" />{t("Compare two")}</button></div>
   </section>;
   const choice = (job: Job) => {
