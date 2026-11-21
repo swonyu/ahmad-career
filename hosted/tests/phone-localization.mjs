@@ -193,6 +193,18 @@ const mixedJob = Object.freeze({ id: 'mixed-direction-synthetic',
   title: 'Data (QA) 2 — العربية', company: 'شركة (Acme) 17', location: 'Riyadh (الرياض) 123',
   url: 'https://example.org/career-finder-bidi/17', country: 'SA', summary: 'Synthetic mixed-script posting', checkedAt: '2026-11-17T15:00:00Z' });
 const mixedFile = 'CV-أحمد-(QA)-2026.pdf';
+function actualComparisonChoice(language) {
+  const source = read('app/phone/SavedComparison.tsx');
+  const tree = ts.createSourceFile('SavedComparison.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const component = tree.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'SavedComparison');
+  const choices = component.body.statements.flatMap(node => ts.isVariableStatement(node) ? [...node.declarationList.declarations] : []).filter(node => node.name.getText(tree) === 'choice');
+  assert.equal(choices.length, 1);
+  const identity = execute(declarations(read('app/phone/model.ts'), ['publicURL', 'jobIdentity']) + '\nexports.jobIdentity = jobIdentity;', { URL }).jobIdentity;
+  return execute('exports.choice = ' + choices[0].initializer.getText(tree), {
+    t: translator(language), jobIdentity: identity, chosen: [], disabled: false, closing: false,
+    setSelected: () => { throw Error('Presentation rendering must not change selection'); },
+  }).choice;
+}
 function renderPhoneFragment(fragment, language, additions = {}, setup = '') {
   const t = translator(language);
   const profile = { firstName: 'أحمد (Alex)', lastName: 'Example-17', email: 'synthetic+ar@example.org',
@@ -205,7 +217,7 @@ function renderPhoneFragment(fragment, language, additions = {}, setup = '') {
     draft: { id: 'synthetic-recovery', savedAt: '2026-11-17T15:00:00Z', record: { job: mixedJob } },
     receipt: { id: 'synthetic-receipt', state: 'uncertain', title: mixedJob.title, company: mixedJob.company,
       createdAt: '2026-11-17T15:00:00Z', url: mixedJob.url },
-    RecordSummary: () => null, ApplicationDetails: actualApplicationDetails(language), today: () => '2026-11-17', formatNumber,
+    choice: actualComparisonChoice(language), RecordSummary: () => null, ApplicationDetails: actualApplicationDetails(language), today: () => '2026-11-17', formatNumber,
     displayTime: () => '17 November 2026', countryName: code => code, workModeLabel: value => value,
     experienceLabel: value => value, receiptLabel: actualReceiptLabel,
     ...additions };

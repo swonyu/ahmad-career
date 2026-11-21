@@ -1390,5 +1390,22 @@
   "No application records yet.": "لا توجد سجلات طلبات بعد.",
   "Prepared draft": "مسودة جاهزة للمراجعة",
   "Nothing has been submitted from this draft.": "لم يُرسل أي طلب من هذه المسودة.",
-  "Your profile has changed since this draft. Prepare a new review before approving.": "تغيّر ملفك الشخصي منذ إعداد هذه المسودة. جهّز مراجعة جديدة قبل الموافقة."
+  "Your profile has changed since this draft. Prepare a new review before approving.": "تغيّر ملفك الشخصي منذ إعداد هذه المسودة. جهّز مراجعة جديدة قبل الموافقة.",
+  "Compare": "قارن",
+  "Compare saved openings": "مقارنة الفرص المحفوظة",
+  "Compare openings": "مقارنة الفرص",
+  "Choose two saved openings.": "اختر فرصتين محفوظتين.",
+  "{0} of 2 selected": "الفرص المحددة: {0} من ٢",
+  "Clear selection": "مسح الاختيار",
+  "Compare two": "قارن فرصتين",
+  "Compare two openings": "مقارنة فرصتين",
+  "Compare {0} at {1} in {2}": "قارن {0} لدى {1} في {2}",
+  "Source": "المصدر",
+  "Last checked": "آخر تحقق",
+  "Not recorded": "غير مسجل",
+  "No follow-up scheduled": "لا توجد متابعة مجدولة",
+  "Open job: {0} in {1}": "افتح وظيفة {0} في {1}",
+  "Stages and follow-up dates are your own records.": "المراحل وتواريخ المتابعة من سجلاتك الشخصية.",
+  "A selected opening is no longer in Saved. Choose the two openings again.": "إحدى الفرص المحددة لم تعد ضمن المحفوظات. اختر الفرصتين مجددًا.",
+  "Back to Saved": "العودة إلى المحفوظات"
 }

@@ -58,7 +58,7 @@ async function control(action: string, value?: string) {
   else if (action === 'release-recheck') {holdRecheck = false; for (const release of [...waiting]) release();}
   else if (action === 'board' && ['open', 'closed', 'empty', 'unavailable'].includes(value ?? '')) return providerControl({board: value!});
   else if (action === 'outcome' && ['by-job', 'confirmed', 'uncertain', 'rate_limited', 'rejected'].includes(value ?? '')) return providerControl({outcome: value!});
-  else if (action === 'sequence' && ['journey', 'ab', 'bc', 'cb'].includes(value ?? '')) return providerControl({sequence: value!});
+  else if (action === 'sequence' && ['journey', 'ab', 'bc', 'cb', 'compare'].includes(value ?? '')) return providerControl({sequence: value!});
   else throw Error('Unknown synthetic control');
 }
 function metrics() {

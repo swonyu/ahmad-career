@@ -34,10 +34,21 @@ export const searchSequencePostings = [
   descriptionPlain: `Fictional ${text} opportunity in ${location}. Synthetic search-history observation only.`,
   additionalPlain: 'No real employer receives requests. This search scenario has no application requirements configuration.',
 }));
+// Same-title roles remain separate by posting identity, never by employer/title.
+export const comparisonPostings = [
+  ['Product Designer', 'Riyadh', 'SA', 'hybrid'],
+  ['Product Designer', 'Jeddah', 'SA', 'on-site'],
+].map(([text, location, country, workplaceType], index) => ({
+  id: postingId(index + 201), text, categories: {location, team: 'Synthetic comparison team', commitment: 'Full-time'},
+  country, workplaceType, hostedUrl: postingURL(index + 201), applyUrl: `${postingURL(index + 201)}/apply`,
+  descriptionPlain: `Fictional ${text} opening in ${location}. Local Saved comparison fixture only.`,
+  additionalPlain: 'Synthetic employer; no application requirements configuration or real submission route.',
+}));
 export const searchSequences = Object.freeze({
   ab: [searchSequencePostings[0], searchSequencePostings[1]],
   bc: [searchSequencePostings[1], searchSequencePostings[2]],
   cb: [searchSequencePostings[2], searchSequencePostings[1]],
+  compare: comparisonPostings,
 });
 export const catalog = {
   ok: true, version: 1, defaultSources: [SOURCE_ID],

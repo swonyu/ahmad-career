@@ -19,13 +19,15 @@ import { parseDiscoverySourceIdentity } from "../../server/discovery-source-iden
 import { discoverySourceKey, distinctDiscoverySources } from "./discovery-sources";
 import { emptySearchHistory, evaluateSearchHistory, searchHistoryKey, type SearchNewResult } from "./search-history";
 import { ApplicationGuide } from "./ApplicationGuide";
+import { SavedComparison } from "./SavedComparison";
+import { jobFromRecord } from "./saved-comparison";
 import { readCheckedPDF } from "./pdf";
 import { applicationRecordsCSV, followUpCalendar, matchesSavedList, savedListEmptyMessage, type SavedStage } from "./record-tools";
 import { observeNavigationInset } from "./navigation-inset";
 import { continueApprovedPlan } from "./dispatch";
 import { stopBatchOnce as stopCapturedBatch, type BatchContext } from "./batch-stop";
 import { ApplicationDetails, JobCard, Modal, ProfileEditor, Readiness, RecordEditor, RecordSummary, ReviewDetails, recoverPhoneFocus } from "./components";
-import { blankEmployerAnswer, blankJobLinkDraft, receiptLabel, blankProfile, blankRecord, blankSnapshot, catalogSchema, civilDate, stageNames, stages, checkReview, discoveryPageSchema, discoveryPath, draftProfileSchema, emptyFilters, jobIdentity, jobSchema, linkedInSearch, parseSnapshot, planSchema, profileEssentials, profileRequest, profileSchema, publicURL, reviewRequest, today, updateRecord, workspaceSchema, type ApplicationRecord, type EmployerAnswer, type PhoneSafety, type RecoveryDraft, type Catalog, type DiscoveryPage, type Filters, type Job, type JobLinkDraft, type PhoneSnapshot, type Plan, type Profile, type Workspace } from "./model";
+import { blankEmployerAnswer, blankJobLinkDraft, receiptLabel, blankProfile, blankRecord, retainRecordJobContext, blankSnapshot, catalogSchema, civilDate, stageNames, stages, checkReview, discoveryPageSchema, discoveryPath, draftProfileSchema, emptyFilters, jobIdentity, jobSchema, linkedInSearch, parseSnapshot, planSchema, profileEssentials, profileRequest, profileSchema, publicURL, reviewRequest, today, updateRecord, workspaceSchema, type ApplicationRecord, type EmployerAnswer, type PhoneSafety, type RecoveryDraft, type Catalog, type DiscoveryPage, type Filters, type Job, type JobLinkDraft, type PhoneSnapshot, type Plan, type Profile, type Workspace } from "./model";
 import { PhoneVaultError, exportPhoneSnapshot, listPhoneSnapshots, loadPhoneSnapshot, removePhoneSnapshot, savePhoneSnapshot } from "./vault";
 
 type Account = { id: string; email: string; name: string } | null;
@@ -603,10 +605,9 @@ export default function PhoneApp({ account }: { account: Account }) {
     if (dialog?.kind !== "remove") return;
     const data = local(); if (data.scope !== dialog.scope) throw Error("Your workspace changed. Open the saved job again.");
     const identity = jobIdentity(dialog.job.url);
-    // Keep the latest displayed location when removing a bookmark, including
-    // re-bookmarked jobs. An empty location must not erase useful record context.
-    const location = data.jobs.find(job => jobIdentity(job.url) === identity)?.location;
-    const records = location?.trim() ? data.records.map(record => record.identity === identity ? { ...record, location } : record) : data.records;
+    // Keep the last observed location/source/check with any retained record.
+    const removedJob = data.jobs.find(job => jobIdentity(job.url) === identity);
+    const records = removedJob ? data.records.map(record => record.identity === identity ? retainRecordJobContext(record, removedJob) : record) : data.records;
     await persist({ ...data, records, jobs: data.jobs.filter(job => jobIdentity(job.url) !== identity) }, generation);
     setSelected(previous => previous.filter(id => id !== identity)); setDialog(null); setNotice({ text: "Bookmark removed. Any application record and follow-up date were kept." });
   });
@@ -860,7 +861,7 @@ export default function PhoneApp({ account }: { account: Account }) {
   const discardConfirmation = confirmDialogDiscard && <section className="phone-warning" role="alert"><h3 ref={discardHeading} tabIndex={-1}>{t("Discard these unsaved changes?")}</h3><p>{t("Your earlier saved information will stay. The unfinished changes in this form will be lost.")}</p><div className="phone-dialog-actions"><button className="button secondary" onClick={keepEditing}>{t("Keep editing")}</button><button className="button danger" onClick={() => void discardDialogEdits()}>{t("Discard changes")}</button></div></section>;
 
   const jobs = snapshot?.jobs ?? [], records = snapshot?.records ?? [], recordsByID = new Map(records.map(record => [record.identity, record]));
-  const recordJobs = records.filter(record => !jobs.some(job => jobIdentity(job.url) === record.identity)).map(record => ({ id: record.identity, title: record.title, company: record.company, url: record.identity, location: record.location ?? "", country: "" }));
+  const recordJobs = records.filter(record => !jobs.some(job => jobIdentity(job.url) === record.identity)).map(jobFromRecord);
   const shownJobs = [...jobs, ...recordJobs].filter(job => {
     const record = recordsByID.get(jobIdentity(job.url));
     return matchesSavedList(job, record, savedQuery, savedFilter, savedStage);
@@ -947,19 +948,20 @@ export default function PhoneApp({ account }: { account: Account }) {
         </section>}
       </>}
 
-      {!checkingIdentity && !locked && tab === "saved" && <>
+      {!checkingIdentity && !locked && tab === "saved" && <SavedComparison key={snapshot?.scope ?? ""} jobs={jobs} records={records} disabled={Boolean(busy || loading || !snapshot)}>{({ toolbar, choice }) => <>
         {onlineOnlyJobs.length > 0 && <details className="phone-card phone-disclosure"><summary>{t("Saved online, not on this phone ")}<span>{onlineOnlyJobs.length} {onlineOnlyJobs.length === 1 ? t("job") : t("jobs")} {t(" available to copy")}</span></summary><p className="phone-note">{t("Jobs added on another device stay available here. Copy only the bookmarks you want on this phone; previously removed bookmarks are not restored automatically.")}</p>{onlineOnlyJobs.map(job => <div className="phone-recoverable" key={job.id}><h3 dir="auto">{job.title}</h3><p className="phone-note"><bdi>{job.company}</bdi> · <bdi>{job.location || t("Location not specified")}</bdi></p><button className="button secondary" disabled={cannotSave} onClick={() => void saveJob({ ...job, remoteId: job.id })}>{t("Copy bookmark to this phone")}</button></div>)}</details>}
 
         <div className="phone-toolbar"><span>{savedJobsLabel(jobs.length, language)}</span><button className="text-button" disabled={cannotSave} onClick={openAddJob}><Plus size={18} aria-hidden="true" />{t("Add job link")}</button></div>
         {(jobs.length > 0 || records.length > 0) && <div className="phone-segmented" aria-label={t("Filter saved jobs")}>{([ ["all","All"], ["applied","Applied"], ["followups","Follow-ups"] ] as const).map(([value,label]) => <button key={value} aria-pressed={savedFilter === value} onClick={() => setSavedFilter(value)}>{t(label)}</button>)}</div>}
         {(jobs.length > 0 || records.length > 0) && <label className="phone-saved-stage">{t("Application stage")}<select value={savedStage} onChange={event => { const value = event.target.value; if (value === "all" || (stages as readonly string[]).includes(value)) setSavedStage(value as SavedStage); }}><option value="all">{t("All stages")}</option>{stages.map(stage => <option key={stage} value={stage}>{t(stageNames[stage])}</option>)}</select></label>}
         {(jobs.length > 0 || records.length > 0) && <label className="phone-saved-search"><span className="visually-hidden">{t("Find a saved job, employer or note")}</span><input type="search" dir="auto" maxLength={200} value={savedQuery} onChange={event => setSavedQuery(event.target.value)} placeholder={t("Find a job, employer or note")} /></label>}
+        {toolbar}
         {!shownJobs.length ? <section className="phone-empty"><span className="empty-symbol"><Bookmark size={28} aria-hidden="true" /></span><h2>{t(savedEmpty.title)}</h2><p>{t(savedEmpty.detail)}</p>{savedEmpty.clear && <button className="button secondary" onClick={() => { setSavedQuery(""); setSavedFilter("all"); setSavedStage("all"); recoverPhoneFocus(heading.current?.closest(".phone-shell") ?? null); }}>{t("Clear search and filters")}</button>}{!savedEmpty.clear && <button className="button primary" onClick={() => navigate("search")}>{t("Explore jobs ")}<ArrowRight size={18} aria-hidden="true" /></button>}</section> : <div className="phone-saved-list">{shownJobs.map(job => {
           const identity = jobIdentity(job.url), record = recordsByID.get(identity), bookmarked = jobs.some(saved => jobIdentity(saved.url) === identity);
-          return <article className="phone-card phone-saved-card" key={identity}><p className="phone-company" dir="auto">{job.company}</p><h2 dir="auto"><button className="job-title-button" onClick={() => setDialog({ kind: "details", job })}>{job.title}</button></h2>{job.location && <p className="phone-job-location"><bdi>{job.location}</bdi></p>}{!bookmarked && <p className="phone-note">{t("Application record · bookmark removed")}</p>}<RecordSummary record={record} />{record?.followUpDate && record.followUpDate <= today() && record.stage !== "closed" && <p className="phone-due">{t("Follow-up due")}</p>}<div className="phone-actions"><button className="button secondary" disabled={cannotSave} onClick={() => editRecord(job)}>{t("Edit application record")}</button><a className="text-button" href={job.url} target="_blank" rel="noopener noreferrer">{t("Open job ")}<ArrowUpRight size={16} aria-hidden="true" /></a></div></article>;
+          return <article className="phone-card phone-saved-card" key={identity}><div className="phone-saved-card-head"><p className="phone-company" dir="auto">{job.company}</p>{choice(job)}</div><h2 dir="auto"><button className="job-title-button" onClick={() => setDialog({ kind: "details", job })}>{job.title}</button></h2>{job.location && <p className="phone-job-location"><bdi>{job.location}</bdi></p>}{!bookmarked && <p className="phone-note">{t("Application record · bookmark removed")}</p>}<RecordSummary record={record} />{record?.followUpDate && record.followUpDate <= today() && record.stage !== "closed" && <p className="phone-due">{t("Follow-up due")}</p>}<div className="phone-actions"><button className="button secondary" disabled={cannotSave} onClick={() => editRecord(job)}>{t("Edit application record")}</button><a className="text-button" href={job.url} target="_blank" rel="noopener noreferrer">{t("Open job ")}<ArrowUpRight size={16} aria-hidden="true" /></a></div></article>;
         })}</div>}
         {records.length > 0 && <p className="phone-note">{t("Stages, follow-up dates, and notes stay on this phone. They are your own records; employer-confirmed submissions appear in Apply.")}</p>}
-      </>}
+      </>}</SavedComparison>}
 
       {!checkingIdentity && !locked && tab === "apply" && <>
         {!workspace?.capabilities.liveEnabled && <ApplicationGuide profile={profile} hasJobs={jobs.length > 0 || records.length > 0} onJobs={() => { setSavedQuery(""); setSavedFilter("all"); setSavedStage("all"); navigate(jobs.length > 0 || records.length > 0 ? "saved" : "search"); }} onProfile={() => navigate("profile")} />}

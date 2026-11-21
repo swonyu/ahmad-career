@@ -93,9 +93,17 @@ export type Job = z.infer<typeof jobSchema>;
 export const jobLinkDraftSchema = z.object({ url: boundedText(2048), title: boundedText(500), company: boundedText(250), location: boundedText(500) });
 export type JobLinkDraft = z.infer<typeof jobLinkDraftSchema>;
 export function blankJobLinkDraft(): JobLinkDraft { return { url: "", title: "", company: "", location: "" }; }
-export const recordSchema = z.object({ identity: https.refine(value => { try { return value === jobIdentity(value); } catch { return false; } }, "Application identity must be canonical"), title: boundedText(500), company: boundedText(250), location: boundedText(500).optional(), stage: z.enum(stages), appliedElsewhere: z.boolean(), appliedDate: date, followUpDate: date, note: boundedText(5000), manualResumeName: manualResumeName.optional(), updatedAt: timestamp }).refine(value => !["applied", "interview", "offer"].includes(value.stage) || value.appliedElsewhere, "An applied stage must preserve its applied mark");
+export const recordSchema = z.object({ identity: https.refine(value => { try { return value === jobIdentity(value); } catch { return false; } }, "Application identity must be canonical"), title: boundedText(500), company: boundedText(250), location: boundedText(500).optional(), sourceName: boundedText(150).optional(), checkedAt: timestamp.optional(), stage: z.enum(stages), appliedElsewhere: z.boolean(), appliedDate: date, followUpDate: date, note: boundedText(5000), manualResumeName: manualResumeName.optional(), updatedAt: timestamp }).refine(value => !["applied", "interview", "offer"].includes(value.stage) || value.appliedElsewhere, "An applied stage must preserve its applied mark");
 export type ApplicationRecord = z.infer<typeof recordSchema>;
-export function blankRecord(job: Job): ApplicationRecord { return { identity: jobIdentity(job.url), title: job.title, company: job.company, location: job.location, stage: "saved", appliedElsewhere: false, appliedDate: "", followUpDate: "", note: "", updatedAt: new Date().toISOString() }; }
+/** Retain observed job context, without treating a record edit as a posting check. */
+export function retainRecordJobContext(record: ApplicationRecord, job: Job): ApplicationRecord {
+  if (record.identity !== jobIdentity(job.url)) throw Error("This application record changed. Open it again before saving.");
+  const sourceName = job.sourceName?.trim() || record.sourceName;
+  const checkedAt = job.checkedAt && (!record.checkedAt || Date.parse(job.checkedAt) > Date.parse(record.checkedAt)) ? job.checkedAt : record.checkedAt;
+  return { ...record, ...(job.location.trim() ? { location: job.location } : {}),
+    ...(sourceName ? { sourceName } : {}), ...(checkedAt ? { checkedAt } : {}) };
+}
+export function blankRecord(job: Job): ApplicationRecord { return { identity: jobIdentity(job.url), title: job.title, company: job.company, location: job.location, ...(job.sourceName?.trim() ? { sourceName: job.sourceName.trim() } : {}), ...(job.checkedAt ? { checkedAt: job.checkedAt } : {}), stage: "saved", appliedElsewhere: false, appliedDate: "", followUpDate: "", note: "", updatedAt: new Date().toISOString() }; }
 export function updateRecord(previous: ApplicationRecord, draft: ApplicationRecord, clearApplied = false): ApplicationRecord {
   const value = recordSchema.parse({ ...draft, ...(draft.manualResumeName === undefined ? {} : { manualResumeName: draft.manualResumeName.trim() }), appliedElsewhere: ["applied", "interview", "offer"].includes(draft.stage) || (previous.appliedElsewhere && !clearApplied) });
   if (value.identity !== previous.identity) throw Error("This application record changed. Open it again before saving.");

@@ -15,10 +15,11 @@ import { renderToStaticMarkup } from 'react-dom/server';
 const directory = await mkdtemp(join(tmpdir(), 'career-record-tools-'));
 after(() => rm(directory, { recursive: true, force: true }));
 await Promise.all([
-  ['app/phone/record-tools.ts', 'tools.mjs'], ['app/phone/model.ts', 'model.mjs'], ['app/i18n/core.ts', 'i18n.mjs'],
+  ['app/phone/record-tools.ts', 'tools.mjs'], ['app/phone/saved-comparison.ts', 'comparison.mjs'], ['app/phone/model.ts', 'model.mjs'], ['app/i18n/core.ts', 'i18n.mjs'],
 ].map(([entry, filename]) => build({ entryPoints: [entry], outfile: join(directory, filename), bundle: true, platform: 'node', format: 'esm', logLevel: 'silent' })));
 const tools = await import(pathToFileURL(join(directory, 'tools.mjs')).href);
 const model = await import(pathToFileURL(join(directory, 'model.mjs')).href);
+const comparison = await import(pathToFileURL(join(directory, 'comparison.mjs')).href);
 const i18n = await import(pathToFileURL(join(directory, 'i18n.mjs')).href);
 const t = language => (key, values) => i18n.translate(key, language, values);
 const job = Object.freeze({ id: 'synthetic-job', title: 'Software Engineer', company: 'Synthetic Employer', location: 'Riyadh', country: 'SA', url: 'https://employer.example/careers/123' });
@@ -169,6 +170,7 @@ function extract(name) {
   assert.fail(`Actual production declaration ${name} must exist`);
 }
 function install(name, context) {
+  Object.assign(context, { retainRecordJobContext: model.retainRecordJobContext, jobFromRecord: comparison.jobFromRecord });
   const js = ts.transpileModule('globalThis.' + name + ' = ' + extract(name), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None } }).outputText;
   vm.runInNewContext(js, context); return context[name];
 }

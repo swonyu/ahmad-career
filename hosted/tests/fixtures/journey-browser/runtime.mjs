@@ -4,7 +4,7 @@ import {createDiscoveryHandler, parseDiscoverySource} from '../../../server/disc
 import {createOAuthHandler} from '../../../server/oauth.mjs';
 import {makeAdapter} from '../../../server/provider.mjs';
 import {sha256} from '../../../server/validation.mjs';
-import {accounts, BOARD, SOURCE_ID, postingId, postings, searchSequencePostings, searchSequences, searchSequenceEpoch, catalog, fidelity} from './data.mjs';
+import {accounts, BOARD, SOURCE_ID, postingId, postings, searchSequencePostings, comparisonPostings, searchSequences, searchSequenceEpoch, catalog, fidelity} from './data.mjs';
 
 let time = 0, board = 'open', outcome = 'by-job', sequence = 'journey', providerGets = 0, unexpectedProviderTargets = 0, capabilityEnvelopes = 0;
 const posts = [], requests = [];
@@ -19,7 +19,7 @@ function configuration(env) {
 async function syntheticProvider(address, options = {}) {
   const url = new URL(address), base = `/v0/postings/${BOARD}`, method = options.method ?? 'GET';
   const id = url.pathname.startsWith(base + '/') ? url.pathname.slice(base.length + 1) : null;
-  const posting = [...postings, ...searchSequencePostings].find(value => value.id === id);
+  const posting = [...postings, ...searchSequencePostings, ...comparisonPostings].find(value => value.id === id);
   if (url.origin !== 'https://api.lever.co' || !['GET', 'POST'].includes(method) || !(url.pathname === base && method === 'GET' || posting) || method === 'POST' && !postings.some(value => value.id === id)) {
     unexpectedProviderTargets++;
     throw Error('Fixture blocked an unexpected provider target');
@@ -58,7 +58,7 @@ export default {
     if (url.pathname === '/__journey/state' && request.method === 'GET') return json({ok: true, board, outcome, sequence, discoveryClock: sequence === 'journey' ? 'real request time' : new Date(searchSequenceEpoch).toISOString(), providerGets, providerPosts: posts.length, posts, unexpectedProviderTargets, capabilityEnvelopes, requests: requests.slice(-100), fidelity});
     if (url.pathname === '/__journey/control' && request.method === 'POST') {
       const body = await request.json();
-      if (!body || typeof body !== 'object' || Object.keys(body).some(key => !['board', 'outcome', 'sequence'].includes(key)) || body.board !== undefined && !['open', 'closed', 'empty', 'unavailable'].includes(body.board) || body.outcome !== undefined && !['by-job', 'confirmed', 'uncertain', 'rate_limited', 'rejected'].includes(body.outcome) || body.sequence !== undefined && !['journey', 'ab', 'bc', 'cb'].includes(body.sequence)) return json({ok: false, error: {code: 'invalid_fixture_control'}}, 400);
+      if (!body || typeof body !== 'object' || Object.keys(body).some(key => !['board', 'outcome', 'sequence'].includes(key)) || body.board !== undefined && !['open', 'closed', 'empty', 'unavailable'].includes(body.board) || body.outcome !== undefined && !['by-job', 'confirmed', 'uncertain', 'rate_limited', 'rejected'].includes(body.outcome) || body.sequence !== undefined && !['journey', 'ab', 'bc', 'cb', 'compare'].includes(body.sequence)) return json({ok: false, error: {code: 'invalid_fixture_control'}}, 400);
       if (body.board !== undefined) board = body.board;
       if (body.sequence !== undefined) sequence = body.sequence;
       if (body.board !== undefined || body.sequence !== undefined) {
