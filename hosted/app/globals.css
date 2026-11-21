@@ -43,3 +43,6 @@ html{scroll-padding-top:1.5rem}body{background:var(--bg)}
 @media(forced-colors:active){.appearance-option:has(input:checked){outline:2px solid Highlight}.brand-icon{border:1px solid CanvasText}.button,.header-settings{border:1px solid ButtonText}}
 
 .linkedin-monogram{display:inline-grid;place-items:center;width:22px;height:22px;border:1px solid currentColor;border-radius:3px;font-family:Arial,sans-serif;font-size:16px;font-weight:700;line-height:1;padding-top:1px}
+
+/* Keep every site-navigation action reachable when phone text is enlarged. */
+@media(max-width:520px){.site-header nav{flex-wrap:wrap}}
