@@ -270,14 +270,8 @@ final class CareerFinderUITests: XCTestCase {
         return .timedOut
     }
     @MainActor
-    private func replace(_ field: XCUIElement, with text: String, in app: XCUIApplication, clearWith clearButton: XCUIElement? = nil) {
-        guard revealForTyping(field, in: app) else { return }
-        field.tap()
-        // A cold system keyboard can still be opening after the field is focused.
-        // Wait for that presentation before starting the unchanged real-key gate.
-        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5),
-                      "The native keyboard must appear before checking its typing key")
-        let deleteKey = app.keyboards.keys.matching(identifier: "delete").firstMatch
+    private func waitForTypingKey(_ deleteKey: XCUIElement, in app: XCUIApplication,
+                                  observationName: String = "keyboard readiness") -> XCTWaiter.Result {
         // XCUI reads wait for their own accessibility replies. An outer XCTest
         // waiter can time out inside isHittable and interrupt those nested reads.
         // Keep the same five-second acceptance window without cancelling a read.
@@ -298,7 +292,19 @@ final class CareerFinderUITests: XCTestCase {
             guard remaining > 0 else { break }
             RunLoop.current.run(until: Date(timeIntervalSinceNow: min(0.05, remaining)))
         }
-        reportObservationTrace("keyboard readiness", deadline: keyboardDeadline, timeout: 5, traces: keyboardTraces)
+        reportObservationTrace(observationName, deadline: keyboardDeadline, timeout: 5, traces: keyboardTraces)
+        return readiness
+    }
+    @MainActor
+    private func replace(_ field: XCUIElement, with text: String, in app: XCUIApplication, clearWith clearButton: XCUIElement? = nil) {
+        guard revealForTyping(field, in: app) else { return }
+        field.tap()
+        // A cold system keyboard can still be opening after the field is focused.
+        // Wait for that presentation before starting the unchanged real-key gate.
+        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5),
+                      "The native keyboard must appear before checking its typing key")
+        let deleteKey = app.keyboards.keys.matching(identifier: "delete").firstMatch
+        let readiness = waitForTypingKey(deleteKey, in: app)
         if readiness != .completed { print(app.debugDescription) }
         XCTAssertEqual(readiness, .completed, "A real keyboard key must be visible before typing")
         guard readiness == .completed else { return }
@@ -645,13 +651,11 @@ final class CareerFinderUITests: XCTestCase {
     @MainActor
     private func searchFromKeyboard(in app: XCUIApplication, usingReturnKey: Bool = false) {
         XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5))
-        let deleteKey = app.keyboards.firstMatch.keys.matching(identifier: "delete").firstMatch
-        let keyReady = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-            self.typingKeyIsVisible(deleteKey, in: app)
-        }, object: nil)
-        let keyReadiness = XCTWaiter.wait(for: [keyReady], timeout: 5)
+        let deleteKey = app.keyboards.keys.matching(identifier: "delete").firstMatch
+        let keyReadiness = waitForTypingKey(deleteKey, in: app, observationName: "search submit keyboard readiness")
         if keyReadiness != .completed { print(app.debugDescription) }
         XCTAssertEqual(keyReadiness, .completed, "A real keyboard key must be visible before submitting")
+        guard keyReadiness == .completed else { return }
         guard typingKeyIsVisible(deleteKey, in: app) else {
             print(app.debugDescription)
             XCTFail("No reachable keyboard key was presented"); return
