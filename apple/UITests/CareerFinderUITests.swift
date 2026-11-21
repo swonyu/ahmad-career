@@ -133,44 +133,89 @@ final class CareerFinderUITests: XCTestCase {
         }
     }
     @MainActor
-    private func typingKeyIsVisible(_ deleteKey: XCUIElement, in app: XCUIApplication,
+    private func typingKeyIsVisible(in app: XCUIApplication,
                                     deadline: TimeInterval? = nil,
                                     record: ((UIObservationTrace) -> Void)? = nil) -> Bool {
-        // Resolve the viewport first, leaving the fresh key snapshot and live
-        // hit test adjacent without another element query between them.
-        let viewportStartedAt = ProcessInfo.processInfo.systemUptime
-        let viewport = app.frame
-        let viewportCompletedAt = ProcessInfo.processInfo.systemUptime
-        record?(UIObservationTrace(stage: "app viewport", startedAt: viewportStartedAt,
-                                   completedAt: viewportCompletedAt, matched: nil))
-        guard viewport.origin.x.isFinite, viewport.origin.y.isFinite,
-              viewport.width.isFinite, viewport.height.isFinite,
-              viewport.width > 0, viewport.height > 0 else { return false }
-        // Do not admit another synchronous accessibility read after this gate
-        // has already expired. The caller still rejects a late final reply.
         if let deadline, ProcessInfo.processInfo.systemUptime >= deadline { return false }
-        // Reuse the exact system-key query for this keyboard presentation.
-        // One fresh snapshot resolves presence and geometry together, avoiding
-        // separate accessibility round trips inside the unchanged deadline.
+        // Obtain the current viewport and keyboard hierarchy in one fresh public
+        // snapshot. No snapshot or attribute is retained between observations.
         let snapshotStartedAt = ProcessInfo.processInfo.systemUptime
-        let currentSnapshot = try? deleteKey.snapshot()
+        let currentSnapshot = try? app.snapshot()
         let snapshotCompletedAt = ProcessInfo.processInfo.systemUptime
-        record?(UIObservationTrace(stage: "key snapshot", startedAt: snapshotStartedAt,
+        record?(UIObservationTrace(stage: "app snapshot", startedAt: snapshotStartedAt,
                                    completedAt: snapshotCompletedAt, matched: currentSnapshot != nil))
-        guard let snapshot = currentSnapshot,
+        if let deadline, snapshotCompletedAt > deadline { return false }
+        guard let appSnapshot = currentSnapshot else { return false }
+
+        let viewportStartedAt = ProcessInfo.processInfo.systemUptime
+        let viewport = appSnapshot.frame
+        let validViewport = viewport.origin.x.isFinite && viewport.origin.y.isFinite &&
+            viewport.width.isFinite && viewport.height.isFinite &&
+            viewport.width > 0 && viewport.height > 0
+        let viewportCompletedAt = ProcessInfo.processInfo.systemUptime
+        record?(UIObservationTrace(stage: "snapshot viewport", startedAt: viewportStartedAt,
+                                   completedAt: viewportCompletedAt, matched: validViewport))
+        guard validViewport else { return false }
+
+        let identityStartedAt = ProcessInfo.processInfo.systemUptime
+        var pending: [(node: any XCUIElementSnapshot, insideKeyboard: Bool)] = [
+            (node: appSnapshot, insideKeyboard: false)
+        ]
+        var matchingKeys: [any XCUIElementSnapshot] = []
+        var traversalExpired = false
+        while let current = pending.popLast() {
+            if let deadline, ProcessInfo.processInfo.systemUptime >= deadline {
+                traversalExpired = true
+                break
+            }
+            let insideKeyboard = current.insideKeyboard || current.node.elementType == .keyboard
+            if insideKeyboard && current.node.elementType == .key && current.node.identifier == "delete" {
+                matchingKeys.append(current.node)
+                // Count identity matches before checking geometry. A second
+                // matching key, including an offscreen one, is ambiguous.
+                if matchingKeys.count > 1 { break }
+            }
+            for child in current.node.children {
+                pending.append((node: child, insideKeyboard: insideKeyboard))
+            }
+        }
+        let uniqueKey = !traversalExpired && matchingKeys.count == 1
+        let identityCompletedAt = ProcessInfo.processInfo.systemUptime
+        record?(UIObservationTrace(stage: "keyboard key identity", startedAt: identityStartedAt,
+                                   completedAt: identityCompletedAt, matched: uniqueKey))
+        guard uniqueKey, let snapshot = matchingKeys.first,
               snapshot.elementType == .key, snapshot.identifier == "delete" else { return false }
+
+        let geometryStartedAt = ProcessInfo.processInfo.systemUptime
         let frame = snapshot.frame
-        guard frame.origin.x.isFinite, frame.origin.y.isFinite,
-              frame.width.isFinite, frame.height.isFinite,
-              frame.width > 0, frame.height > 0,
-              frame.intersects(viewport) else { return false }
+        let validGeometry = frame.origin.x.isFinite && frame.origin.y.isFinite &&
+            frame.width.isFinite && frame.height.isFinite &&
+            frame.width > 0 && frame.height > 0 && frame.intersects(viewport)
+        let geometryCompletedAt = ProcessInfo.processInfo.systemUptime
+        record?(UIObservationTrace(stage: "snapshot key geometry", startedAt: geometryStartedAt,
+                                   completedAt: geometryCompletedAt, matched: validGeometry))
+        guard validGeometry else { return false }
         if let deadline, ProcessInfo.processInfo.systemUptime >= deadline { return false }
-        // A snapshot cannot establish current hittability; always ask the live key.
+
+        // Build the live query from the same app used for the snapshot. Both
+        // observations require the sole .key with the exact accessibility
+        // identifier under that app's keyboards. The live query requires uniqueness;
+        // a new duplicate cannot be silently selected by firstMatch.
+        // Public snapshots and live queries remain separate observations, with
+        // no claim of an atomic accessibility-object identity across them.
+        let bindingStartedAt = ProcessInfo.processInfo.systemUptime
+        let deleteKey = app.keyboards.keys
+            .matching(NSPredicate(format: "identifier == %@", "delete")).element
+        let bindingCompletedAt = ProcessInfo.processInfo.systemUptime
+        record?(UIObservationTrace(stage: "live key binding", startedAt: bindingStartedAt,
+                                   completedAt: bindingCompletedAt, matched: nil))
+        if let deadline, ProcessInfo.processInfo.systemUptime >= deadline { return false }
         let hitStartedAt = ProcessInfo.processInfo.systemUptime
         let hittable = deleteKey.isHittable
         let hitCompletedAt = ProcessInfo.processInfo.systemUptime
         record?(UIObservationTrace(stage: "live key hittability", startedAt: hitStartedAt,
                                    completedAt: hitCompletedAt, matched: hittable))
+        if let deadline, hitCompletedAt > deadline { return false }
         return hittable
     }
     @MainActor
@@ -270,7 +315,7 @@ final class CareerFinderUITests: XCTestCase {
         return .timedOut
     }
     @MainActor
-    private func waitForTypingKey(_ deleteKey: XCUIElement, in app: XCUIApplication,
+    private func waitForTypingKey(in app: XCUIApplication,
                                   observationName: String = "keyboard readiness") -> XCTWaiter.Result {
         // XCUI reads wait for their own accessibility replies. An outer XCTest
         // waiter can time out inside isHittable and interrupt those nested reads.
@@ -280,7 +325,7 @@ final class CareerFinderUITests: XCTestCase {
         var keyboardTraces: [UIObservationTrace] = []
         while ProcessInfo.processInfo.systemUptime < keyboardDeadline {
             let observationStartedAt = ProcessInfo.processInfo.systemUptime
-            let keyIsReady = self.typingKeyIsVisible(deleteKey, in: app, deadline: keyboardDeadline) { keyboardTraces.append($0) }
+            let keyIsReady = self.typingKeyIsVisible(in: app, deadline: keyboardDeadline) { keyboardTraces.append($0) }
             let observedAt = ProcessInfo.processInfo.systemUptime
             keyboardTraces.append(UIObservationTrace(stage: "keyboard condition", startedAt: observationStartedAt,
                                                       completedAt: observedAt, matched: keyIsReady))
@@ -303,8 +348,7 @@ final class CareerFinderUITests: XCTestCase {
         // Wait for that presentation before starting the unchanged real-key gate.
         XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5),
                       "The native keyboard must appear before checking its typing key")
-        let deleteKey = app.keyboards.keys.matching(identifier: "delete").firstMatch
-        let readiness = waitForTypingKey(deleteKey, in: app)
+        let readiness = waitForTypingKey(in: app)
         if readiness != .completed { print(app.debugDescription) }
         XCTAssertEqual(readiness, .completed, "A real keyboard key must be visible before typing")
         guard readiness == .completed else { return }
@@ -369,10 +413,9 @@ final class CareerFinderUITests: XCTestCase {
                     field.tap()
                     XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5),
                                   "The native keyboard must reappear after clearing before checking its typing key")
-                    let reopenedDeleteKey = app.keyboards.keys.matching(identifier: "delete").firstMatch
                     let reopenedDeadline = ProcessInfo.processInfo.systemUptime + 5
                     let keyboardAfterClear = waitForObservation(timeout: 5) {
-                        self.typingKeyIsVisible(reopenedDeleteKey, in: app, deadline: reopenedDeadline)
+                        self.typingKeyIsVisible(in: app, deadline: reopenedDeadline)
                     }
                     XCTAssertEqual(keyboardAfterClear, .completed,
                                    "A real keyboard key must be visible after clearing before replacement")
@@ -651,12 +694,11 @@ final class CareerFinderUITests: XCTestCase {
     @MainActor
     private func searchFromKeyboard(in app: XCUIApplication, usingReturnKey: Bool = false) {
         XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5))
-        let deleteKey = app.keyboards.keys.matching(identifier: "delete").firstMatch
-        let keyReadiness = waitForTypingKey(deleteKey, in: app, observationName: "search submit keyboard readiness")
+        let keyReadiness = waitForTypingKey(in: app, observationName: "search submit keyboard readiness")
         if keyReadiness != .completed { print(app.debugDescription) }
         XCTAssertEqual(keyReadiness, .completed, "A real keyboard key must be visible before submitting")
         guard keyReadiness == .completed else { return }
-        guard typingKeyIsVisible(deleteKey, in: app) else {
+        guard typingKeyIsVisible(in: app) else {
             print(app.debugDescription)
             XCTFail("No reachable keyboard key was presented"); return
         }
