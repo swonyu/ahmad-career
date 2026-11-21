@@ -1,0 +1,31 @@
+{
+  "project": "Career Finder",
+  "owner": "ChatGPT /root f940ff8b025e",
+  "updatedAtUTC": "2026-11-21T09:52:35.278019+00:00",
+  "authorization": "User requested continue working on Career Finder on 21 November 2026. Isolated continuation of current PR3 candidate.",
+  "worktree": "career-finder-continuation-20261121-f940ff",
+  "branch": "continuation/career-finder-20261121-f940ff",
+  "base": "a7fc83668413d20682ca28c1f7b18ba55e56b867",
+  "writeSet": [
+    "apple native defects and acceptance fixes",
+    "focused regression evidence"
+  ],
+  "preserved": [
+    "All earlier worktrees and their branch heads; no reset or stash",
+    "Separate signing/store ownership",
+    "No active Career Finder build observed and no active GitHub run in latest six"
+  ],
+  "releaseState": "Draft PR3 remains unmerged; live Site v12 historical, not reverified this session; iPhone UI previous candidate14/17",
+  "constraints": [
+    "No real applications, employer contact, assessments or interviews during tests",
+    "Free only; no Good Spender",
+    "Preserve existing per-platform five-tab routes, English/Arabic, midnight navy/periwinkle",
+    "No shared simulator shutdown or other-process termination",
+    "Keep existing strict native test deadlines and all required evidence"
+  ],
+  "clock": {
+    "originalCutoffRiyadh": "2026-11-19T01:26:12+03:00",
+    "current": "New explicit continuation; no newly invented duration/deadline"
+  },
+  "nextAction": "Run full current-source CI and inspect native evidence before integration or deployment."
+}

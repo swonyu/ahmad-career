@@ -458,6 +458,25 @@ struct NativeApplicationsScreen: View {
     }
 }
 
+/// Keep a field's purpose visible while its saved value replaces the placeholder.
+private struct NativeLabeledInput<Content: View>: View {
+    let title: String
+    let fieldID: String
+    private let content: Content
+    init(_ title: String, fieldID: String, @ViewBuilder content: () -> Content) {
+        self.title = title; self.fieldID = fieldID; self.content = content()
+    }
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title)
+                .font(.subheadline.weight(.semibold)).foregroundStyle(Color.primary)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityIdentifier(fieldID + ".label")
+            content.accessibilityLabel(title)
+        }
+    }
+}
+
 struct NativeApplicationProfileEditor: View {
     @NativeLocalization private var l10n
     @ObservedObject var model: NativeApplicationsStore
@@ -526,8 +545,10 @@ struct NativeApplicationProfileEditor: View {
                             .accessibilityLabel(l10n("First or single name"))
                             .accessibilityIdentifier("application.firstName").focused($focusedField, equals: "firstName")
                     }
-                    TextField(l10n("Last name (optional)"), text: $draft.lastName).textContentType(.familyName)
-                        .focused($focusedField, equals: "lastName")
+                    NativeLabeledInput(l10n("Last name (optional)"), fieldID: "application.lastName") {
+                        TextField(l10n("Last name (optional)"), text: $draft.lastName).textContentType(.familyName)
+                            .focused($focusedField, equals: "lastName").accessibilityIdentifier("application.lastName")
+                    }
                     VStack(alignment: .leading, spacing: 6) {
                         Text(l10n("Email"))
                             .font(.subheadline.weight(.semibold)).foregroundStyle(Color.primary)
@@ -543,10 +564,14 @@ struct NativeApplicationProfileEditor: View {
                             .font(.footnote).foregroundStyle(NativeDesign.danger).fixedSize(horizontal: false, vertical: true)
                             .accessibilityIdentifier("application.email.issue")
                     }
-                    TextField(l10n("Phone (optional)"), text: $draft.phone).textContentType(.telephoneNumber).keyboardType(.phonePad)
-                        .focused($focusedField, equals: "phone")
-                    TextField(l10n("City (optional)"), text: $draft.city).textContentType(.addressCity)
-                        .focused($focusedField, equals: "city")
+                    NativeLabeledInput(l10n("Phone (optional)"), fieldID: "application.phone") {
+                        TextField(l10n("Phone (optional)"), text: $draft.phone).textContentType(.telephoneNumber).keyboardType(.phonePad)
+                            .focused($focusedField, equals: "phone").accessibilityIdentifier("application.phone")
+                    }
+                    NativeLabeledInput(l10n("City (optional)"), fieldID: "application.city") {
+                        TextField(l10n("City (optional)"), text: $draft.city).textContentType(.addressCity)
+                            .focused($focusedField, equals: "city").accessibilityIdentifier("application.city")
+                    }
                     Picker(l10n("Country or region"), selection: $draft.country) {
                         Text(l10n("Choose (optional)")).tag("")
                         ForEach(Locale.Region.isoRegions.map(\.identifier).sorted { countryName($0) < countryName($1) }, id: \.self) { code in
@@ -576,22 +601,30 @@ struct NativeApplicationProfileEditor: View {
                     Text(l10n("PDF · up to 5 MB. A copied snapshot of the selected file is retained; changes to the original file do not change your saved selection."))
                 }
                 Section(l10n("Your experience")) {
-                    TextField(l10n("Professional headline (optional)"), text: $draft.headline, axis: .vertical)
-                        .focused($focusedField, equals: "headline")
-                    TextField(l10n("Skills, separated by commas"), text: $draft.skills, axis: .vertical)
-                        .focused($focusedField, equals: "skills")
-                    TextField(l10n("Portfolio HTTPS link (optional)"), text: $draft.website)
-                        .keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
-                        .focused($focusedField, equals: "website")
+                    NativeLabeledInput(l10n("Professional headline (optional)"), fieldID: "application.headline") {
+                        TextField(l10n("Professional headline (optional)"), text: $draft.headline, axis: .vertical)
+                            .focused($focusedField, equals: "headline").accessibilityIdentifier("application.headline")
+                    }
+                    NativeLabeledInput(l10n("Skills, separated by commas"), fieldID: "application.skills") {
+                        TextField(l10n("Skills, separated by commas"), text: $draft.skills, axis: .vertical)
+                            .focused($focusedField, equals: "skills").accessibilityIdentifier("application.skills")
+                    }
+                    NativeLabeledInput(l10n("Portfolio HTTPS link (optional)"), fieldID: "application.website") {
+                        TextField(l10n("Portfolio HTTPS link (optional)"), text: $draft.website)
+                            .keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
+                            .focused($focusedField, equals: "website").accessibilityIdentifier("application.website")
+                    }
                     Picker(l10n("Career stage"), selection: $draft.experienceLevel) {
                         Text(l10n("Any / not specified")).tag("any"); Text(l10n("Entry level")).tag("entry")
                         Text(l10n("Mid level")).tag("mid"); Text(l10n("Senior")).tag("senior")
                     }
                 }
                 Section {
-                    TextField(l10n("LinkedIn profile (optional)"), text: $draft.linkedin)
-                        .keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
-                        .focused($focusedField, equals: "linkedin").accessibilityIdentifier("application.linkedin")
+                    NativeLabeledInput(l10n("LinkedIn profile (optional)"), fieldID: "application.linkedin") {
+                        TextField(l10n("LinkedIn profile (optional)"), text: $draft.linkedin)
+                            .keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
+                            .focused($focusedField, equals: "linkedin").accessibilityIdentifier("application.linkedin")
+                    }
                     if let url = MobileApplicationPolicy.linkedInProfileURL(draft.linkedin) {
                         Link(destination: url) { Label(l10n("Open LinkedIn profile"), systemImage: "arrow.up.right.square") }
                             .accessibilityIdentifier("application.openLinkedIn")
@@ -602,11 +635,15 @@ struct NativeApplicationProfileEditor: View {
                         .accessibilityIdentifier("application.linkedinExplanation")
                 }
                 Section {
-                    TextField(l10n("Target roles, separated by commas"), text: $draft.targetRoles, axis: .vertical)
-                        .focused($focusedField, equals: "roles").accessibilityIdentifier("application.targetRoles")
-                    TextField(l10n("Target country codes (optional)"), text: $draft.targetCountries)
-                        .textInputAutocapitalization(.characters).autocorrectionDisabled()
-                        .focused($focusedField, equals: "countries")
+                    NativeLabeledInput(l10n("Target roles, separated by commas"), fieldID: "application.targetRoles") {
+                        TextField(l10n("Target roles, separated by commas"), text: $draft.targetRoles, axis: .vertical)
+                            .focused($focusedField, equals: "roles").accessibilityIdentifier("application.targetRoles")
+                    }
+                    NativeLabeledInput(l10n("Target country codes (optional)"), fieldID: "application.targetCountries") {
+                        TextField(l10n("Target country codes (optional)"), text: $draft.targetCountries)
+                            .textInputAutocapitalization(.characters).autocorrectionDisabled()
+                            .focused($focusedField, equals: "countries").accessibilityIdentifier("application.targetCountries")
+                    }
                     Toggle(l10n("Remote"), isOn: $draft.remote); Toggle(l10n("Hybrid"), isOn: $draft.hybrid); Toggle(l10n("On site"), isOn: $draft.onsite)
                 } header: { Text(l10n("Job preferences")) } footer: {
                     Text(l10n("Enter two-letter country codes separated by commas, or leave them blank. Only a role you choose on Search fills the job-title field. Other preferences do not filter results or establish work authorization."))
@@ -824,11 +861,18 @@ struct NativeOpportunityEditor: View {
                     Text(l10n("Use the employer's public HTTPS posting. Connected Lever postings can import their published details. Drafts stay on this phone until you add the opportunity."))
                 }
                 Section(l10n("Opportunity details")) {
-                    TextField(l10n("Role title"), text: $draft.title).accessibilityIdentifier("opportunity.title")
-                        .focused($focusedField, equals: "title").submitLabel(.next).onSubmit { focusedField = "company" }
-                    TextField(l10n("Employer"), text: $draft.company).accessibilityIdentifier("opportunity.company")
-                        .focused($focusedField, equals: "company").submitLabel(.next).onSubmit { focusedField = "location" }
-                    TextField(l10n("Location or remote"), text: $draft.location).focused($focusedField, equals: "location")
+                    NativeLabeledInput(l10n("Role title"), fieldID: "opportunity.title") {
+                        TextField(l10n("Role title"), text: $draft.title).accessibilityIdentifier("opportunity.title")
+                            .focused($focusedField, equals: "title").submitLabel(.next).onSubmit { focusedField = "company" }
+                    }
+                    NativeLabeledInput(l10n("Employer"), fieldID: "opportunity.company") {
+                        TextField(l10n("Employer"), text: $draft.company).accessibilityIdentifier("opportunity.company")
+                            .focused($focusedField, equals: "company").submitLabel(.next).onSubmit { focusedField = "location" }
+                    }
+                    NativeLabeledInput(l10n("Location or remote"), fieldID: "opportunity.location") {
+                        TextField(l10n("Location or remote"), text: $draft.location).focused($focusedField, equals: "location")
+                            .accessibilityIdentifier("opportunity.location")
+                    }
                     Picker(l10n("Country or region"), selection: $draft.country) {
                         Text(l10n("Not specified")).tag("")
                         ForEach(Locale.Region.isoRegions.map(\.identifier).sorted {

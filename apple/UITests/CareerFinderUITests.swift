@@ -19,13 +19,14 @@ final class CareerFinderUITests: XCTestCase {
     }
     @MainActor
     private func tab(_ name: String, in app: XCUIApplication) {
-        let button = app.tabBars.buttons[name]
-        // A tab may exist behind a dismissing sheet. Use the existing wait for
-        // both requirements before the same real navigation tap.
-        let reachable = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-            button.exists && button.isHittable
-        }, object: nil)
-        let readiness = XCTWaiter.wait(for: [reachable], timeout: 5)
+        let matchingTabs = app.tabBars.buttons.matching(identifier: name)
+        let button = matchingTabs.element(boundBy: 0)
+        // Check the current matching collection before live hittability.
+        // Keep one unique tab and the same five-second deadline before
+        // the unchanged navigation tap.
+        let readiness = waitForObservation(timeout: 5) {
+            matchingTabs.count == 1 && button.isHittable
+        }
         if readiness != .completed {
             captureObservation("tab-not-reachable", app: app, details: "Tab: \(name)")
         }
@@ -116,11 +117,61 @@ final class CareerFinderUITests: XCTestCase {
               frame.intersects(viewport) else { return false }
         return element.isHittable
     }
+    private struct UIObservationTrace {
+        let stage: String
+        let startedAt: TimeInterval
+        let completedAt: TimeInterval
+        let matched: Bool?
+    }
     @MainActor
-    private func typingKeyIsVisible(_ deleteKey: XCUIElement, in app: XCUIApplication) -> Bool {
+    private func reportObservationTrace(_ name: String, deadline: TimeInterval, timeout: TimeInterval,
+                                        traces: [UIObservationTrace]) {
+        let origin = deadline - timeout
+        for (index, trace) in traces.enumerated() {
+            let match = trace.matched.map { $0 ? "true" : "false" } ?? "n/a"
+            print("UI observation \(name) #\(index + 1): stage=\(trace.stage); start=\(trace.startedAt - origin); end=\(trace.completedAt - origin); matched=\(match); late=\(trace.completedAt > deadline)")
+        }
+    }
+    @MainActor
+    private func typingKeyIsVisible(_ deleteKey: XCUIElement, in app: XCUIApplication,
+                                    deadline: TimeInterval? = nil,
+                                    record: ((UIObservationTrace) -> Void)? = nil) -> Bool {
+        // Resolve the viewport first, leaving the fresh key snapshot and live
+        // hit test adjacent without another element query between them.
+        let viewportStartedAt = ProcessInfo.processInfo.systemUptime
+        let viewport = app.frame
+        let viewportCompletedAt = ProcessInfo.processInfo.systemUptime
+        record?(UIObservationTrace(stage: "app viewport", startedAt: viewportStartedAt,
+                                   completedAt: viewportCompletedAt, matched: nil))
+        guard viewport.origin.x.isFinite, viewport.origin.y.isFinite,
+              viewport.width.isFinite, viewport.height.isFinite,
+              viewport.width > 0, viewport.height > 0 else { return false }
+        // Do not admit another synchronous accessibility read after this gate
+        // has already expired. The caller still rejects a late final reply.
+        if let deadline, ProcessInfo.processInfo.systemUptime >= deadline { return false }
         // Reuse the exact system-key query for this keyboard presentation.
-        // Each poll still resolves its real existence and hit-testable state.
-        hasVisibleHittableFrame(deleteKey, in: app)
+        // One fresh snapshot resolves presence and geometry together, avoiding
+        // separate accessibility round trips inside the unchanged deadline.
+        let snapshotStartedAt = ProcessInfo.processInfo.systemUptime
+        let currentSnapshot = try? deleteKey.snapshot()
+        let snapshotCompletedAt = ProcessInfo.processInfo.systemUptime
+        record?(UIObservationTrace(stage: "key snapshot", startedAt: snapshotStartedAt,
+                                   completedAt: snapshotCompletedAt, matched: currentSnapshot != nil))
+        guard let snapshot = currentSnapshot,
+              snapshot.elementType == .key, snapshot.identifier == "delete" else { return false }
+        let frame = snapshot.frame
+        guard frame.origin.x.isFinite, frame.origin.y.isFinite,
+              frame.width.isFinite, frame.height.isFinite,
+              frame.width > 0, frame.height > 0,
+              frame.intersects(viewport) else { return false }
+        if let deadline, ProcessInfo.processInfo.systemUptime >= deadline { return false }
+        // A snapshot cannot establish current hittability; always ask the live key.
+        let hitStartedAt = ProcessInfo.processInfo.systemUptime
+        let hittable = deleteKey.isHittable
+        let hitCompletedAt = ProcessInfo.processInfo.systemUptime
+        record?(UIObservationTrace(stage: "live key hittability", startedAt: hitStartedAt,
+                                   completedAt: hitCompletedAt, matched: hittable))
+        return hittable
     }
     @MainActor
     private func revealForTyping(_ field: XCUIElement, in app: XCUIApplication) -> Bool {
@@ -130,7 +181,11 @@ final class CareerFinderUITests: XCTestCase {
         // SwiftUI searchable fields occupy the navigation bar, unlike Form fields.
         // Include that region only for an actual search field; keyboard/accessory
         // exclusion still applies through the same viewport calculation.
-        let includingNavigation = field.elementType == .searchField
+        let fieldType = field.elementType
+        let includingNavigation = fieldType == .searchField
+        let scrollableInput = fieldType == .textField || fieldType == .textView || fieldType == .secureTextField
+        var containingScroll: XCUIElement?
+        var resolvedScrollQuery = false
         for attempt in 0...10 {
             let viewport = profileViewport(in: app, includingNavigation: includingNavigation)
             let frame = field.frame
@@ -138,6 +193,47 @@ final class CareerFinderUITests: XCTestCase {
                 && frame.width.isFinite && frame.height.isFinite
             if finite && !frame.isEmpty && viewport.contains(frame) && field.isHittable { return true }
             guard attempt < 10, viewport.height > 120 else { break }
+            // Correct an identified Form/List input's observed overflow on its
+            // own scroll surface. Navigation search fields keep their existing
+            // path because their editor is outside the list's content hierarchy.
+            if scrollableInput && finite && !frame.isEmpty && frame.height <= viewport.height,
+               frame.minX >= viewport.minX && frame.maxX <= viewport.maxX,
+               frame.minY < viewport.minY || frame.maxY > viewport.maxY {
+                if !resolvedScrollQuery {
+                    let identifier = field.identifier
+                    if !identifier.isEmpty {
+                        containingScroll = app.collectionViews.containing(fieldType, identifier: identifier).firstMatch
+                    }
+                    resolvedScrollQuery = true
+                }
+                if let scroll = containingScroll, scroll.exists {
+                    // Cache only the query relationship; resolve current bounds
+                    // again for every admitted drag, never a retained viewport.
+                    let surface = scroll.frame.intersection(viewport).insetBy(dx: 4, dy: 4)
+                    if !surface.isNull, surface.minX.isFinite, surface.minY.isFinite,
+                       surface.width.isFinite, surface.height.isFinite,
+                       surface.width > 16, surface.height > 48,
+                       let x = [surface.minX + 8, surface.maxX - 8].first(where: {
+                           $0 <= frame.minX - 8 || $0 >= frame.maxX + 8
+                       }) {
+                        let downward = frame.minY < viewport.minY
+                        let correction = downward ? viewport.minY - frame.minY + 8 : frame.maxY - viewport.maxY + 8
+                        let containmentRoom = downward ? viewport.maxY - frame.maxY : frame.minY - viewport.minY
+                        // Keep the existing coarse reach for distant inputs.
+                        // Near an edge, use observed overflow with a 32-point
+                        // pan floor; the opposite edge and surface still cap it.
+                        let maximumDistance = min(min(180, viewport.height * 0.36), surface.height - 16)
+                        let distance = min(max(32, correction), min(maximumDistance, containmentRoom))
+                        if distance >= 32 {
+                            let origin = app.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0))
+                            let from = origin.withOffset(CGVector(dx: x, dy: surface.midY + (downward ? -distance / 2 : distance / 2)))
+                            let to = origin.withOffset(CGVector(dx: x, dy: surface.midY + (downward ? distance / 2 : -distance / 2)))
+                            from.press(forDuration: 0.05, thenDragTo: to, withVelocity: .slow, thenHoldForDuration: 0.2)
+                            continue
+                        }
+                    }
+                }
+            }
             // A field can be hittable while its tap center is under the keyboard
             // accessory. Scroll inside the actual content viewport before tapping.
             let downward = finite && frame.midY < viewport.midY
@@ -158,9 +254,14 @@ final class CareerFinderUITests: XCTestCase {
         // accessibility reads. Keep the caller's admission and acceptance window:
         // an in-flight read may finish later, but a late result never passes.
         let deadline = ProcessInfo.processInfo.systemUptime + timeout
+        var traces: [UIObservationTrace] = []
+        defer { reportObservationTrace("bounded condition", deadline: deadline, timeout: timeout, traces: traces) }
         while ProcessInfo.processInfo.systemUptime < deadline {
+            let observationStartedAt = ProcessInfo.processInfo.systemUptime
             let ready = observation()
             let observedAt = ProcessInfo.processInfo.systemUptime
+            traces.append(UIObservationTrace(stage: "condition", startedAt: observationStartedAt,
+                                             completedAt: observedAt, matched: ready))
             if ready && observedAt <= deadline { return .completed }
             let remaining = deadline - observedAt
             guard remaining > 0 else { break }
@@ -182,9 +283,13 @@ final class CareerFinderUITests: XCTestCase {
         // Keep the same five-second acceptance window without cancelling a read.
         let keyboardDeadline = ProcessInfo.processInfo.systemUptime + 5
         var readiness = XCTWaiter.Result.timedOut
+        var keyboardTraces: [UIObservationTrace] = []
         while ProcessInfo.processInfo.systemUptime < keyboardDeadline {
-            let keyIsReady = self.typingKeyIsVisible(deleteKey, in: app)
+            let observationStartedAt = ProcessInfo.processInfo.systemUptime
+            let keyIsReady = self.typingKeyIsVisible(deleteKey, in: app, deadline: keyboardDeadline) { keyboardTraces.append($0) }
             let observedAt = ProcessInfo.processInfo.systemUptime
+            keyboardTraces.append(UIObservationTrace(stage: "keyboard condition", startedAt: observationStartedAt,
+                                                      completedAt: observedAt, matched: keyIsReady))
             if keyIsReady && observedAt <= keyboardDeadline {
                 readiness = .completed
                 break
@@ -193,6 +298,7 @@ final class CareerFinderUITests: XCTestCase {
             guard remaining > 0 else { break }
             RunLoop.current.run(until: Date(timeIntervalSinceNow: min(0.05, remaining)))
         }
+        reportObservationTrace("keyboard readiness", deadline: keyboardDeadline, timeout: 5, traces: keyboardTraces)
         if readiness != .completed { print(app.debugDescription) }
         XCTAssertEqual(readiness, .completed, "A real keyboard key must be visible before typing")
         guard readiness == .completed else { return }
@@ -258,10 +364,11 @@ final class CareerFinderUITests: XCTestCase {
                     XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5),
                                   "The native keyboard must reappear after clearing before checking its typing key")
                     let reopenedDeleteKey = app.keyboards.keys.matching(identifier: "delete").firstMatch
-                    let keyboardAfterClear = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-                        self.typingKeyIsVisible(reopenedDeleteKey, in: app)
-                    }, object: nil)
-                    XCTAssertEqual(XCTWaiter.wait(for: [keyboardAfterClear], timeout: 5), .completed,
+                    let reopenedDeadline = ProcessInfo.processInfo.systemUptime + 5
+                    let keyboardAfterClear = waitForObservation(timeout: 5) {
+                        self.typingKeyIsVisible(reopenedDeleteKey, in: app, deadline: reopenedDeadline)
+                    }
+                    XCTAssertEqual(keyboardAfterClear, .completed,
                                    "A real keyboard key must be visible after clearing before replacement")
                 }
             }
@@ -297,24 +404,23 @@ final class CareerFinderUITests: XCTestCase {
         }
         XCTAssertTrue(hasVisibleHittableFrame(done, in: app), "Done typing must be reachable")
         done.tap()
-        let keyboard = app.keyboards.firstMatch
+        let keyboards = app.keyboards
         let keys = app.keyboards.keys
         let actions = app.buttons.matching(identifier: "Done typing")
-        // Each remote accessibility query can take seconds on the CI simulator.
-        // Observe the three original requirements serially so one expensive
-        // collection lookup cannot consume another condition's entire wait.
+        // Resolve current collections inside each bounded observation: an absent
+        // retained firstMatch can retry while the keyboard is already gone.
+        // Keep all three dismissal requirements as separate five-second gates.
         let observations: [(String, () -> Bool)] = [
-            ("keyboard container", { !self.hasVisibleHittableFrame(keyboard, in: app) }),
+            ("keyboard container", { !keyboards.allElementsBoundByIndex.contains { self.hasVisibleHittableFrame($0, in: app) } }),
             ("typing keys", { !keys.allElementsBoundByIndex.contains { self.hasVisibleHittableFrame($0, in: app) } }),
             ("Done actions", { !actions.allElementsBoundByIndex.contains { self.hasVisibleHittableFrame($0, in: app) } })
         ]
         for (stage, isDismissed) in observations {
             var lastObserved = false
-            let dismissed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            let result = waitForObservation(timeout: 5) {
                 lastObserved = isDismissed()
                 return lastObserved
-            }, object: nil)
-            let result = XCTWaiter.wait(for: [dismissed], timeout: 5)
+            }
             if result != .completed {
                 captureObservation("keyboard-dismissal-incomplete", app: app,
                                    details: "Dismissal stage: \(stage); last observed dismissed: \(lastObserved)")
@@ -354,8 +460,9 @@ final class CareerFinderUITests: XCTestCase {
     }
     @MainActor
     private func assertProfileLabel(_ app: XCUIApplication, fieldID: String, title: String,
-                                    value: String, screenshot: String, keyboardExpected: Bool = false) {
-        let field = app.textFields[fieldID], label = app.staticTexts[fieldID + ".label"]
+                                    value: String, screenshot: String, keyboardExpected: Bool = false,
+                                    fieldOverride: XCUIElement? = nil) {
+        let field = fieldOverride ?? app.textFields[fieldID], label = app.staticTexts[fieldID + ".label"]
         // Scroll the actual label/field pair together, including the real keyboard
         // boundary. Retain the original pose/AX before any final failure.
         for _ in 0..<20 {
@@ -370,7 +477,9 @@ final class CareerFinderUITests: XCTestCase {
             if pair.minY < viewport.minY { correction = viewport.minY - pair.minY + 8 }
             else if pair.maxY > viewport.maxY { correction = viewport.maxY - pair.maxY - 8 }
             else { break }
-            let scroll = app.collectionViews.containing(.textField, identifier: fieldID).firstMatch
+            let scroll = fieldOverride == nil
+                ? app.collectionViews.containing(.textField, identifier: fieldID).firstMatch
+                : app.collectionViews.containing(field.elementType, identifier: fieldID).firstMatch
             guard scroll.exists else { break }
             let surface = scroll.frame.intersection(viewport).insetBy(dx: 4, dy: 4)
             guard !surface.isNull, surface.width > 16, surface.height > 40 else { break }
@@ -401,11 +510,12 @@ final class CareerFinderUITests: XCTestCase {
         }
     }
     @MainActor
-    private func assertProfileReadingDirection(_ app: XCUIApplication, fieldID: String, rightToLeft: Bool) {
+    private func assertProfileReadingDirection(_ app: XCUIApplication, fieldID: String, rightToLeft: Bool,
+                                               fieldOverride: XCUIElement? = nil) {
         // Observe the already-captured label pose without moving focus or scrolling.
         // The caller supplies the expected language direction independently of the app.
         let labelFrame = app.staticTexts[fieldID + ".label"].frame
-        let fieldFrame = app.textFields[fieldID].frame
+        let fieldFrame = (fieldOverride ?? app.textFields[fieldID]).frame
         let navigation = app.navigationBars[rightToLeft ? "ملف التقديم" : "Application profile"]
         let cancelFrame = navigation.buttons[rightToLeft ? "إلغاء" : "Cancel"].frame
         let saveFrame = navigation.buttons[rightToLeft ? "حفظ" : "Save"].frame
@@ -535,7 +645,7 @@ final class CareerFinderUITests: XCTestCase {
     @MainActor
     private func searchFromKeyboard(in app: XCUIApplication, usingReturnKey: Bool = false) {
         XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5))
-        let deleteKey = app.keyboards.keys.matching(identifier: "delete").firstMatch
+        let deleteKey = app.keyboards.firstMatch.keys.matching(identifier: "delete").firstMatch
         let keyReady = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
             self.typingKeyIsVisible(deleteKey, in: app)
         }, object: nil)
@@ -614,6 +724,12 @@ final class CareerFinderUITests: XCTestCase {
         XCTAssertTrue(["", "First or single name"].contains(name.value as? String ?? ""), "A fresh profile must not contain another person's name")
         replace(name, with: "Taylor", in: app)
         replace(app.textFields["application.email"], with: "taylor@example.com", in: app)
+        finishTyping(in: app)
+        let city = app.textFields["application.city"]; reveal(city, in: app)
+        replace(city, with: "Riyadh", in: app)
+        finishTyping(in: app)
+        let roles = app.textFields["application.targetRoles"]; reveal(roles, in: app)
+        replace(roles, with: "Research", in: app)
         app.navigationBars.buttons["Cancel"].tap()
         XCTAssertTrue(app.buttons["Save draft on this phone"].waitForExistence(timeout: 5))
         app.buttons["Save draft on this phone"].tap()
@@ -629,6 +745,15 @@ final class CareerFinderUITests: XCTestCase {
         assertProfileReadingDirection(app, fieldID: "application.firstName", rightToLeft: false)
         assertProfileLabel(app, fieldID: "application.email", title: "Email",
                            value: "taylor@example.com", screenshot: "04b-restored-email-label")
+        let restoredCity = app.textFields["application.city"]; reveal(restoredCity, in: app)
+        assertProfileLabel(app, fieldID: "application.city", title: "City (optional)",
+                           value: "Riyadh", screenshot: "04c-restored-city-label")
+        assertProfileReadingDirection(app, fieldID: "application.city", rightToLeft: false)
+        let restoredRoles = element("application.targetRoles", app: app); reveal(restoredRoles, in: app)
+        assertProfileLabel(app, fieldID: "application.targetRoles", title: "Target roles, separated by commas",
+                           value: "Research", screenshot: "04d-restored-target-roles-label", fieldOverride: restoredRoles)
+        assertProfileReadingDirection(app, fieldID: "application.targetRoles", rightToLeft: false,
+                                      fieldOverride: restoredRoles)
     }
 
     @MainActor
@@ -643,7 +768,7 @@ final class CareerFinderUITests: XCTestCase {
         app.buttons["Done typing"].tap()
         XCTAssertTrue(app.buttons["application.openLinkedIn"].exists || app.links["application.openLinkedIn"].exists,
                       "A valid saved profile offers an explicit external open action")
-        let roles = element("application.targetRoles", app: app); reveal(roles, in: app)
+        let roles = app.textFields["application.targetRoles"]; reveal(roles, in: app)
         replace(roles, with: "Research", in: app)
         finishTyping(in: app)
         app.navigationBars.buttons["Save"].tap()
@@ -696,7 +821,16 @@ final class CareerFinderUITests: XCTestCase {
         capture("18-private-record-restored", app: app)
         let reopen = app.buttons["record.edit"]; reveal(reopen, in: app); reopen.tap()
         element("record.stage", app: app).tap(); chooseMenu("Saved for later", in: app)
-        XCTAssertTrue(element("record.stage", app: app).label.contains("Saved"))
+        let selectedStage = element("record.stage", app: app)
+        let stageChoices = app.buttons.matching(NSPredicate(format: "label == %@", "Saved for later"))
+        let stageSelection = waitForObservation(timeout: 5) {
+            (selectedStage.value as? String) == "Saved for later" && stageChoices.count == 0
+        }
+        if stageSelection != .completed {
+            captureObservation("record-stage-selection-incomplete", app: app,
+                               details: "Expected selected value: Saved for later; label=\(selectedStage.label); value=\(String(describing: selectedStage.value))")
+        }
+        XCTAssertEqual(stageSelection, .completed, "One selection must close the menu and update the actual stage within five seconds")
         app.buttons["record.save"].tap()
         XCTAssertTrue(app.buttons["Keep application record"].waitForExistence(timeout: 5))
         app.buttons["Keep application record"].tap()
@@ -808,6 +942,12 @@ final class CareerFinderUITests: XCTestCase {
         app.buttons["home.addOpportunity"].tap()
         replace(app.textFields["opportunity.url"], with: "https://careers.example.com/jobs/designer", in: app)
         replace(app.textFields["opportunity.title"], with: "Product designer", in: app)
+        finishTyping(in: app)
+        let company = app.textFields["opportunity.company"]; reveal(company, in: app)
+        replace(company, with: "Draft employer", in: app)
+        finishTyping(in: app)
+        let location = app.textFields["opportunity.location"]; reveal(location, in: app)
+        replace(location, with: "Riyadh", in: app)
         app.navigationBars.buttons["Cancel"].tap()
         let keepButtons = app.buttons.matching(NSPredicate(format: "label == %@", "Keep editing"))
         let ready = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
@@ -822,14 +962,32 @@ final class CareerFinderUITests: XCTestCase {
         }
         capture("05a-explicit-keep-editing-choice", app: app)
         keepEditing.tap()
+        // Editing the last row leaves a lower scroll pose. Return to the top
+        // before reading the earlier fields, then inspect the draft in order.
+        top(app)
         XCTAssertEqual(app.textFields["opportunity.title"].value as? String, "Product designer")
         XCTAssertEqual(app.textFields["opportunity.url"].value as? String, "https://careers.example.com/jobs/designer")
+        reveal(app.textFields["opportunity.company"], in: app)
+        XCTAssertEqual(app.textFields["opportunity.company"].value as? String, "Draft employer")
+        reveal(app.textFields["opportunity.location"], in: app)
+        XCTAssertEqual(app.textFields["opportunity.location"].value as? String, "Riyadh")
         app.navigationBars.buttons["Cancel"].tap()
         app.buttons["Save draft on this phone"].tap()
         app.terminate(); app = launch(id: id)
         app.buttons["home.addOpportunity"].tap()
         XCTAssertEqual(app.textFields["opportunity.title"].value as? String, "Product designer")
         XCTAssertEqual(app.textFields["opportunity.url"].value as? String, "https://careers.example.com/jobs/designer")
+        reveal(app.textFields["opportunity.title"], in: app)
+        assertProfileLabel(app, fieldID: "opportunity.title", title: "Role title",
+                           value: "Product designer", screenshot: "05b-restored-opportunity-title-label")
+        reveal(app.textFields["opportunity.company"], in: app)
+        assertProfileLabel(app, fieldID: "opportunity.company", title: "Employer",
+                           value: "Draft employer", screenshot: "05c-restored-opportunity-employer-label")
+        reveal(app.textFields["opportunity.location"], in: app)
+        assertProfileLabel(app, fieldID: "opportunity.location", title: "Location or remote",
+                           value: "Riyadh", screenshot: "05d-restored-opportunity-location-label")
+        // The restored draft is clean, so a whole-sheet downward swipe can dismiss it.
+        // Let replace reveal the field directionally inside the content viewport.
         replace(app.textFields["opportunity.company"], with: "Example employer", in: app)
         app.buttons["opportunity.save"].tap()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 5))
@@ -912,10 +1070,14 @@ final class CareerFinderUITests: XCTestCase {
         XCTAssertTrue(retry.isEnabled && retry.isHittable)
         captureObservation("08a-retry-before-newer-draft", app: app, details: "submitted=Interface designer\nnewerDraft=nothing matches")
         retry.tap()
-        let recovered = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-            !issue.exists && role.exists
-        }, object: nil)
-        let retryResult = XCTWaiter.wait(for: [recovered], timeout: 5)
+        // Retry replaces the error and result rows. Read the current typed
+        // collections and wait until the previous nonmatching row is gone.
+        // Keep the same five-second window and reject a late observation.
+        let retryResult = waitForObservation(timeout: 5) {
+            app.staticTexts.matching(identifier: "discovery.error").count == 0 &&
+                app.buttons.matching(identifier: "discovery.job.fixture-design").count == 1 &&
+                app.buttons.matching(identifier: "discovery.job.fixture-engineer").count == 0
+        }
         captureObservation("08b-retry-recovered-submitted-search", app: app, details: "retryWait=\(retryResult)")
         XCTAssertEqual(retryResult, .completed, "Retry must actually replace the failure with the matching submitted search result")
         XCTAssertFalse(app.buttons["discovery.retry"].exists)
@@ -992,6 +1154,12 @@ final class CareerFinderUITests: XCTestCase {
         replace(profileEmail, with: "alex@example.invalid", in: app)
         assertProfileLabel(app, fieldID: "application.email", title: "Email",
                            value: "alex@example.invalid", screenshot: "10b-email-label-accessibility-keyboard", keyboardExpected: true)
+        finishTyping(in: app)
+        let profileCity = app.textFields["application.city"]; reveal(profileCity, in: app)
+        replace(profileCity, with: "Riyadh", in: app)
+        assertProfileLabel(app, fieldID: "application.city", title: "City (optional)",
+                           value: "Riyadh", screenshot: "10c-city-label-accessibility-keyboard", keyboardExpected: true)
+        assertProfileReadingDirection(app, fieldID: "application.city", rightToLeft: false)
         app.navigationBars.buttons["Cancel"].tap()
         app.buttons["Save draft on this phone"].tap()
         tab("Search", in: app)
@@ -1082,11 +1250,51 @@ final class CareerFinderUITests: XCTestCase {
         reveal(restored, in: app)
         XCTAssertTrue(restored.isSelected, "Appearance must survive an app relaunch")
         let restoredTabs = ["Start", "Search", "Apply", "Saved", "Settings"].map { app.tabBars.buttons[$0] }
-        let tabsReady = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-            restoredTabs.allSatisfy { $0.exists && $0.isHittable && !$0.frame.isEmpty && app.frame.contains($0.frame) }
-                && app.tabBars.buttons["Settings"].isSelected && restored.isSelected
-        }, object: nil)
-        let settled = XCTWaiter.wait(for: [tabsReady], timeout: 5)
+        @MainActor
+        func snapshotTree(_ root: any XCUIElementSnapshot) -> [any XCUIElementSnapshot] {
+            var elements = [root], index = 0
+            while index < elements.count {
+                elements.append(contentsOf: elements[index].children)
+                index += 1
+            }
+            return elements
+        }
+        let settled = waitForObservation(timeout: 5) {
+            // One fresh hierarchy supplies this probe's geometry and selection;
+            // the same five actual tabs still need independent live hit tests.
+            guard let snapshot = try? app.snapshot() else { return false }
+            let viewport = snapshot.frame
+            guard viewport.origin.x.isFinite, viewport.origin.y.isFinite,
+                  viewport.width.isFinite, viewport.height.isFinite,
+                  viewport.width > 0, viewport.height > 0 else { return false }
+            let elements = snapshotTree(snapshot)
+            let tabBars = elements.filter { $0.elementType == .tabBar }
+            let darkChoices = elements.filter {
+                $0.elementType == .button && $0.identifier == "settings.appearance.dark"
+            }
+            guard tabBars.count == 1, darkChoices.count == 1,
+                  darkChoices[0].isSelected else { return false }
+            let expectedNames = ["Start", "Search", "Apply", "Saved", "Settings"]
+            let currentTabs = snapshotTree(tabBars[0]).filter { $0.elementType == .button }
+            guard currentTabs.count == expectedNames.count,
+                  Set(currentTabs.map { $0.label }) == Set(expectedNames),
+                  currentTabs.first(where: { $0.label == "Settings" })?.isSelected == true else { return false }
+            for name in expectedNames {
+                guard let tab = currentTabs.first(where: { $0.label == name }) else { return false }
+                let frame = tab.frame
+                guard frame.origin.x.isFinite, frame.origin.y.isFinite,
+                      frame.width.isFinite, frame.height.isFinite,
+                      frame.width > 0, frame.height > 0,
+                      viewport.contains(frame) else { return false }
+                // Match label and identity within the typed live tab query. Each
+                // unique result is index-bound without assuming snapshot order.
+                let matches = app.tabBars.buttons.matching(NSPredicate(
+                    format: "label == %@ AND identifier == %@", name, tab.identifier
+                )).allElementsBoundByIndex
+                guard matches.count == 1, matches[0].isHittable else { return false }
+            }
+            return true
+        }
         captureObservation("24a-settings-dark-restored-large-text", app: app,
                            details: "post-relaunch=true\nselectedDark=\(restored.isSelected)\nwindow=\(app.frame)\ntabs=\(restoredTabs.map { "\($0.label):\($0.frame)" })")
         XCTAssertEqual(settled, .completed, "Retain a post-relaunch dark pose with every actual tab visible before changing appearance")
@@ -1110,6 +1318,12 @@ final class CareerFinderUITests: XCTestCase {
         let profile = app.buttons["home.applicationProfile"]; reveal(profile, in: app); profile.tap()
         replace(app.textFields["application.firstName"], with: "Saved", in: app)
         replace(app.textFields["application.email"], with: "saved@example.invalid", in: app)
+        finishTyping(in: app)
+        let city = app.textFields["application.city"]; reveal(city, in: app)
+        replace(city, with: "Riyadh", in: app)
+        finishTyping(in: app)
+        let roles = app.textFields["application.targetRoles"]; reveal(roles, in: app)
+        replace(roles, with: "Research", in: app)
         app.navigationBars.buttons["Cancel"].tap()
         XCTAssertTrue(app.buttons["Save draft on this phone"].waitForExistence(timeout: 5))
         app.buttons["Save draft on this phone"].tap()
@@ -1131,12 +1345,23 @@ final class CareerFinderUITests: XCTestCase {
         reveal(app.textFields["application.email"], in: app)
         XCTAssertEqual(app.textFields["application.email"].value as? String, "saved@example.invalid")
         capture("28-arabic-profile-original-values", app: app)
+        top(app)
+        reveal(app.textFields["application.firstName"], in: app)
         assertProfileLabel(app, fieldID: "application.firstName", title: "الاسم الأول أو الاسم الوحيد",
                            value: "Saved", screenshot: "28a-arabic-first-name-label-accessibility")
         assertProfileReadingDirection(app, fieldID: "application.firstName", rightToLeft: true)
         assertProfileLabel(app, fieldID: "application.email", title: "البريد الإلكتروني",
                            value: "saved@example.invalid", screenshot: "28b-arabic-email-label-accessibility")
         assertProfileReadingDirection(app, fieldID: "application.email", rightToLeft: true)
+        let restoredCity = app.textFields["application.city"]; reveal(restoredCity, in: app)
+        assertProfileLabel(app, fieldID: "application.city", title: "المدينة (اختياري)",
+                           value: "Riyadh", screenshot: "28e-arabic-city-label-accessibility")
+        assertProfileReadingDirection(app, fieldID: "application.city", rightToLeft: true)
+        let restoredRoles = element("application.targetRoles", app: app); reveal(restoredRoles, in: app)
+        assertProfileLabel(app, fieldID: "application.targetRoles", title: "الوظائف المستهدفة، مفصولة بفواصل",
+                           value: "Research", screenshot: "28f-arabic-target-roles-label-accessibility", fieldOverride: restoredRoles)
+        assertProfileReadingDirection(app, fieldID: "application.targetRoles", rightToLeft: true,
+                                      fieldOverride: restoredRoles)
         app.navigationBars.buttons["إلغاء"].tap()
         tab("الإعدادات", in: app)
         let english = app.buttons["settings.language.en"]; reveal(english, in: app); english.tap()

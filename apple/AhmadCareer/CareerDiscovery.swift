@@ -129,6 +129,57 @@ enum DiscoveryPresentation {
 enum DiscoveryPolicy {
     static let maximumSources = 4
     static let maximumStoredJobs = 2_000
+    /// RFC 9110: Retry-After is whole seconds or an HTTP-date.
+    /// Representable waits are preserved. A valid integer beyond the supported calendar
+    /// saturates to its last date; this is a conservative hold, not the full remote wait.
+    /// Missing or malformed values retain the client's existing nil-deadline behavior.
+    static func retryAfterDeadline(_ header: String?, now: Date = Date()) -> Date? {
+        let firstDate = Date(timeIntervalSince1970: -62_135_596_800) // 0001-01-01
+        let lastDate = Date(timeIntervalSince1970: 253_402_300_799) // 9999-12-31 23:59:59
+        guard let header, now.timeIntervalSince1970.isFinite,
+              now >= firstDate, now <= lastDate else { return nil }
+        let value = header.trimmingCharacters(in: CharacterSet(charactersIn: " \t"))
+        guard !value.isEmpty else { return nil }
+        if value.utf8.allSatisfy({ (48...57).contains($0) }) {
+            let significantDigits = value.drop(while: { $0 == "0" })
+            guard !significantDigits.isEmpty else { return now }
+            guard let seconds = UInt64(significantDigits),
+                  Double(seconds) <= lastDate.timeIntervalSince(now) else { return lastDate }
+            return now.addingTimeInterval(Double(seconds))
+        }
+        guard value.utf8.count <= 128 else { return nil }
+        let day = "(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)"
+        let month = "(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
+        let clock = "[0-9]{2}:[0-9]{2}:[0-9]{2}"
+        let formats = [
+            ("^\(day), [0-9]{2} \(month) [0-9]{4} \(clock) GMT\\z", "EEE, dd MMM yyyy HH:mm:ss 'GMT'", false),
+            ("^(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday), [0-9]{2}-\(month)-[0-9]{2} \(clock) GMT\\z", "EEEE, dd-MMM-yy HH:mm:ss 'GMT'", true),
+            ("^\(day) \(month) (?: [0-9]|[0-9]{2}) \(clock) [0-9]{4}\\z", "EEE MMM d HH:mm:ss yyyy", false)
+        ]
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.isLenient = false
+        var calendar = formatter.calendar!
+        calendar.timeZone = formatter.timeZone!
+        guard let futureLimit = calendar.date(byAdding: .year, value: 50, to: now) else { return nil }
+        // RFC 850's two-digit year uses the latest matching year no more than 50 years ahead.
+        let windowStart = calendar.component(.year, from: futureLimit) - 99
+        for (pattern, format, shortYear) in formats where value.range(of: pattern, options: .regularExpression) != nil {
+            formatter.dateFormat = format
+            if shortYear { formatter.twoDigitStartDate = calendar.date(from: DateComponents(year: windowStart)) }
+            guard var date = formatter.date(from: value) else { return nil }
+            if shortYear, date > futureLimit {
+                formatter.twoDigitStartDate = calendar.date(from: DateComponents(year: windowStart - 100))
+                guard let previous = formatter.date(from: value) else { return nil }
+                date = previous
+            }
+            guard date.timeIntervalSince1970.isFinite, date >= firstDate, date <= lastDate else { return nil }
+            return date
+        }
+        return nil
+    }
     static func supportedBoardURL(_ raw: String) -> URL? {
         guard let url = MobileApplicationPolicy.jobURL(raw),
               ["boards.greenhouse.io", "job-boards.greenhouse.io", "jobs.lever.co", "jobs.eu.lever.co"].contains(url.host?.lowercased() ?? ""),
@@ -318,8 +369,7 @@ final class CareerDiscoveryClient: CareerDiscoveryServing {
             let fields = (try? JSONDecoder().decode([String: ApplicationValue].self, from: data)) ?? [:]
             let error = fields["error"]?.object ?? [:]
             let code = error["code"]?.string ?? fields["code"]?.string
-            let seconds = http.value(forHTTPHeaderField: "Retry-After").flatMap(Double.init)
-            let retry = seconds.flatMap { $0.isFinite && $0 >= 0 ? Date().addingTimeInterval(min($0, 3_600)) : nil }
+            let retry = DiscoveryPolicy.retryAfterDeadline(http.value(forHTTPHeaderField: "Retry-After"))
             let message = http.statusCode == 409 ? "These results changed while you were browsing. Start a new search; the previous results are still here."
                 : http.statusCode == 429 ? "Search is temporarily busy. Wait before trying again."
                 : http.statusCode == 400 ? "Check your board URLs and search fields. Only supported public employer boards can be searched."

@@ -1,0 +1,42 @@
+{
+  "priorCandidate": "94f1b96e0d6141fa2501f7e04950e1bc78986473",
+  "priorRun": 44892634124,
+  "failure": "Product compilation rejected a new Color.careerAccent reference because the alias is private to NativeCareerViews.swift. Standalone host and XCTest-only checks did not compile that view.",
+  "correction": "Use the existing shared NativeDesign.accent value in the discovery save button. No theme values, action logic, test limits or workflow changes.",
+  "verification": {
+    "scope": "All 14 actual app Swift files typechecked for iPhone in Release and Debug conditions, no linked build or native runtime claim",
+    "configurations": [
+      {
+        "configuration": "release",
+        "startedAtUTC": "2026-11-21T10:10:25.716375+00:00",
+        "completedAtUTC": "2026-11-21T10:10:33.932951+00:00",
+        "exitCode": 0,
+        "diagnosticBytes": 0
+      },
+      {
+        "configuration": "debug",
+        "startedAtUTC": "2026-11-21T10:10:33.933059+00:00",
+        "completedAtUTC": "2026-11-21T10:10:39.396853+00:00",
+        "exitCode": 0,
+        "diagnosticBytes": 0
+      }
+    ],
+    "sourceSHA256": {
+      "apple/AhmadCareer/AhmadCareerApp.swift": "bd025363b777b8a37390008a31dec85c97b4688ec7b2b5a958c74bb49430bccf",
+      "apple/AhmadCareer/CareerAppEnvironment.swift": "41c3a9a3f846ab0d06a7e2b1b22e22d470bec938030e844856809786f80fa665",
+      "apple/AhmadCareer/CareerDiscovery.swift": "ad215c8fb1304b5a1c6681f385925883103720b7c2e6e14021308ef62482fd68",
+      "apple/AhmadCareer/CareerFeed.swift": "d02808733193c882ebbd85cc81b15fb61c4b23175efe63ca96a49dd66f797a1f",
+      "apple/AhmadCareer/CareerPolicy.swift": "bf691222911685f3c4a8082d1234d2db281c1f8bda56b952c891b60eb2d41d56",
+      "apple/AhmadCareer/CareerWebView.swift": "19a17ab3dc5da5357f16feee9e77357a695af562c1df1ad50511714cdfeb8ef0",
+      "apple/AhmadCareer/MobileApplicationClient.swift": "45f50f06523c49ad19037440d18b05622597e559412b7d33f1d8070bb54b9fff",
+      "apple/AhmadCareer/MobileApplicationState.swift": "8ff081c131213394980f7200f7ba58a2ff30fb26df00ab822efc3c80f2361ffa",
+      "apple/AhmadCareer/NativeApplicationsStore.swift": "f53902ac34c5855e1033b918a7660653e5d31a171ccd5d588867177a0f9a5e30",
+      "apple/AhmadCareer/NativeApplicationsViews.swift": "1c11f220371de26d2ba15468629de516ca4369f489bd50bd083adac94bc1a2cb",
+      "apple/AhmadCareer/NativeCareerStore.swift": "b5dc5d29b43e17de73ba3d91b567d3bdbc33cc2c2aa6b50fa90b02b18852293e",
+      "apple/AhmadCareer/NativeCareerViews.swift": "d3208ae769cc10a754eb98009e0872476b37edcc4205661fc578949790b6534d",
+      "apple/AhmadCareer/NativeDiscoveryViews.swift": "2790ecc2de8aa2b219546f901a7f05a00de51e02ab7479d26b9ee2fd8c3a965f",
+      "apple/AhmadCareer/NativeLocalization.swift": "256f554969d2de0eee4f5970445f5544ec378e0e99eaf09876281ad07cf61e82"
+    }
+  },
+  "remaining": "New-source full CI; the superseded owned run cannot pass and its unfinished jobs may be canceled by existing workflow concurrency."
+}

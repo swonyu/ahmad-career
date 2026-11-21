@@ -116,6 +116,19 @@ private final class Suite {
         check(cancelled.discovery.retryAfter == cancelledDeadline, true, "UI task leaves model deadline intact")
         controls(cancelled, disabled: true, "cancelled future task")
 
+        // A valid far-future deadline exceeds UInt64 when expressed as one
+        // nanosecond sleep. Production must bound each sleep and stay cancellable,
+        // while preserving the actual deadline and disabled controls.
+        let longDeadline = Date().addingTimeInterval(20_000_000_000)
+        let longWait = ViewClock(clock: Date().addingTimeInterval(-10), deadline: longDeadline)
+        let longTask = Task { await longWait.runDeadlineTask() }
+        for _ in 0..<3 { await Task.yield() }
+        longTask.cancel()
+        await longTask.value
+        check(longWait.discovery.retryAfter == longDeadline, true, "long wait keeps the original service deadline")
+        check(longWait.searchClock < longDeadline, true, "cancelling a long wait never advances the clock to its deadline")
+        controls(longWait, disabled: true, "cancelled long cooldown")
+
         // A view task can restart after the deadline (for example on returning
         // to the screen). An old UI clock must not leave the actions disabled.
         let restarted = ViewClock(clock: Date().addingTimeInterval(-60), deadline: Date().addingTimeInterval(-1))
@@ -126,7 +139,7 @@ private final class Suite {
         cancelled.discovery.retryAfter = nil
         await cancelled.runDeadlineTask()
         controls(cancelled, disabled: false, "deadline cleared")
-        print("Discovery cooldown UI host gate: \(assertions) assertions, 5 scenarios, \(failures) failures.")
+        print("Discovery cooldown UI host gate: \(assertions) assertions, 6 scenarios, \(failures) failures.")
     }
 }
 

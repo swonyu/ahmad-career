@@ -1,0 +1,21 @@
+CoreGraphics PDF has logged an error. Set environment variable "CG_PDF_VERBOSE" to learn more.
+PASS 126 native application boundary checks
+PASS 518 application lifecycle assertions across 78 scenarios
+PASS 201 native recovery assertions across 61 scenarios
+PASS 221 public discovery assertions across 35 scenarios
+UI source: <checkout>/apple/AhmadCareer/NativeDiscoveryViews.swift
+UI source SHA-256: 62c9b67cd7faac567b93092f0218dc0f54b9f22f6a6bcf6ee19a02fd8e6f076b
+Gate SHA-256: 56c70a8479699bc8003e32e2b444f7634e8878e76e54d8dd064339c6639342e2
+Discovery cooldown UI host gate: 26 assertions, 6 scenarios, 0 failures.
+Fresh workspace and compatibility checks passed: blank identity/profile/targets, generic exports, no seeded history, device time zone, preserved saved legacy records.
+Local preference checks passed: backward decoding, independent country/city/role/currency/period/zone, unchanged monthly SAR, record preservation, future-version protection, export privacy and DST/civil-date semantics.
+Full review regression checks passed: fresh local preferences, partial evidence age, exact exclusions, saved history, persisted observation chronology and dated exports.
+Application record checks passed: legacy preservation, metadata-only history, conflicts, export privacy, strict date/scalar limits and derived attention.
+Native store checks passed: 9 researched jobs, atomic saves, pre-criteria migration, city/pay criteria, unfiltered history, export privacy, strict URLs/dates, stale response rejection and input validation.
+Saved-search comparison contract: 21 cases passed
+Nested typed display contract: app labels localized, source strings and payload preserved
+Next-action checks passed: validation, Unicode bounds, Riyadh rollover/leap/year boundaries, isolated storage/reload, snapshot retention, record-only advisories, closed/completed visibility, conflict/corruption/write-failure draft protection, clearing and private export separation.
+Native backup checks passed: empty, saved-only roundtrip, additive conflicts, sidecar tombstones, stale memory/disk, invalid input, oversize, recovery copy and write failure.
+PASS: imported-only receipt/task roundtrip, metadata, uncertain status, schema2 preferences, additive profile isolation, sidecar tombstones, stale writes and six unknown-field cold-load protections
+PASS native streamed byte cap, declared-size rejection, exact boundary, HTTP and malformed/invalid UTF-8 handling
+PASS 38 actual acceptance-initializer preservation assertions

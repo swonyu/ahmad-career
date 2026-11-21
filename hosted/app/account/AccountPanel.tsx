@@ -71,7 +71,7 @@ export default function AccountPanel({ expectedAccountId }: { expectedAccountId:
   const [deleteWorkspaceId, setDeleteWorkspaceId] = useState<string | null>(null);
   const [disconnectTarget, setDisconnectTarget] = useState<{ session: Session; workspaceId: string; number: number } | null>(null);
   const [removeDocument, setRemoveDocument] = useState<{ sha256: string; name: string; workspaceId: string } | null>(null);
-  const [loading, setLoading] = useState(true); const [needsSignIn, setNeedsSignIn] = useState(false);
+  const [loading, setLoading] = useState(true); const [needsSignIn, setNeedsSignIn] = useState(false); const [accountChanged, setAccountChanged] = useState(false);
   const readRequest = useRef<AbortController | null>(null);
   const mutation = useRef<AbortController | null>(null);
   const readGeneration = useRef(0);
@@ -86,16 +86,20 @@ export default function AccountPanel({ expectedAccountId }: { expectedAccountId:
     const generation = ++readGeneration.current;
     return loadAccount(controller.signal).then(data => {
       if (controller.signal.aborted || generation !== readGeneration.current) return;
-      if (data.accountId !== expectedAccountId) throw new Error("Your browser account changed. Reload this page before viewing or changing its workspace.");
+      if (data.accountId !== expectedAccountId) {
+        // A status retry cannot replace this page's server-rendered identity.
+        setAccountChanged(true); setNeedsSignIn(false);
+        throw new Error("Your browser account changed. Reload this page before viewing or changing its workspace.");
+      }
       if (observedWorkspace.current !== data.workspaceId) {
         if (observedWorkspace.current !== undefined) setNotice("Your workspace changed. Review its details before making another change.");
         setDeleteOpen(false); setDeleteWorkspaceId(null); setConfirmation(""); setDisconnectTarget(null);
       }
       observedWorkspace.current = data.workspaceId;
-      setAccount(data); setError(""); setNeedsSignIn(false);
+      setAccount(data); setError(""); setNeedsSignIn(false); setAccountChanged(false);
     }).catch(e => {
       if (controller.signal.aborted || generation !== readGeneration.current) return;
-      if (e instanceof APIError && e.status === 401) { setAccount(null); setNeedsSignIn(true); setNotice(""); setDeleteOpen(false); setDeleteWorkspaceId(null); setConfirmation(""); setDisconnectTarget(null); }
+      if (e instanceof APIError && e.status === 401) { setAccount(null); setNeedsSignIn(true); setAccountChanged(false); setNotice(""); setDeleteOpen(false); setDeleteWorkspaceId(null); setConfirmation(""); setDisconnectTarget(null); }
       setError(e instanceof Error ? e.message : "Your workspace could not be loaded.");
     }).finally(() => {
       if (readRequest.current === controller) { readRequest.current = null; setLoading(false); }
@@ -145,7 +149,8 @@ export default function AccountPanel({ expectedAccountId }: { expectedAccountId:
       }
     } catch (e) {
       if (controller.signal.aborted || mutation.current !== controller || generation !== readGeneration.current) return;
-      if (e instanceof APIError && e.status === 401) { setAccount(null); setNeedsSignIn(true); }
+      if (e instanceof APIError && e.status === 401) { setAccount(null); setNeedsSignIn(true); setAccountChanged(false); }
+      else if (e instanceof APIError && e.code === "account_changed") { setAccountChanged(true); setNeedsSignIn(false); }
       if (e instanceof APIError && (e.status === 401 || e.code === "workspace_changed" || e.code === "account_changed")) {
         setAccount(null); setRemoveDocument(null); setDeleteOpen(false); setDeleteWorkspaceId(null); setConfirmation(""); setDisconnectTarget(null); setNotice("");
       }
@@ -154,7 +159,7 @@ export default function AccountPanel({ expectedAccountId }: { expectedAccountId:
   }
   if (deleted) return <section className="card"><span className="pill">{t("Deletion completed")}</span><h2>{t("Your private service records were deleted.")}</h2><p>{t("Provider connections, browser sessions, and any cloud workspace, phone connections, saved profiles, CV contents, opportunities, and application records were removed from the active service.")}</p><p className="muted">{t("Files saved on your phones and applications received by employers remain in those places. Your provider may retain its own permission grant; you can remove that from Google or LinkedIn settings. The privacy page explains infrastructure recovery copies and empty upload markers.")}</p><a className="button primary" href={deletedRedirect} target="_top">{t("Finish signing out")}</a></section>;
   return <div className="account-sections" aria-busy={loading || Boolean(busy)}>
-    {error && <div className="alert error"><p role="alert">{t(error)}</p>{needsSignIn ? <SignInOptions destination="account" /> : <button className="text-link" onClick={() => { setLoading(true); void refresh(); }} disabled={Boolean(busy) || loading}>{loading ? t("Loading…") : t("Reload current status")}</button>}</div>}
+    {error && <div className="alert error"><p role="alert">{t(error)}</p>{needsSignIn ? <SignInOptions destination="account" /> : accountChanged ? <a className="text-link" href="/account">{t("Reload sign-in")}</a> : <button className="text-link" onClick={() => { setLoading(true); void refresh(); }} disabled={Boolean(busy) || loading}>{loading ? t("Loading…") : t("Reload current status")}</button>}</div>}
     {notice && <div className="alert" role="status">{accountNoticeText(notice, language, t)}</div>}
     {!account && !error && <section className="card" aria-busy="true"><p role="status">{t("Loading your private workspace…")}</p></section>}
     {account && <>
