@@ -176,7 +176,7 @@ fun CareerApp(model: CareerViewModel) {
         },
         bottomBar = { PhoneNavigation(tabs, tab, selectTab) }
     ) { padding ->
-        BoxWithConstraints(Modifier.fillMaxSize().padding(padding)) {
+        BoxWithConstraints(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
             val messageHeightLimit = maxHeight * 0.35f
             Column(Modifier.fillMaxSize()) {
                 if (state.busy || !state.loaded) LinearProgressIndicator(Modifier.fillMaxWidth())
@@ -524,6 +524,10 @@ internal fun EmptyState(title: String, body: String, icon: ImageVector = Icons.D
     }
 }
 
+private data class SavedOpportunityItem(val job: Opportunity, val retainedRecord: ApplicationRecordBundle? = null) {
+    val key: String get() = retainedRecord?.let { "record-" + it.identity } ?: job.id
+}
+
 @Composable
 internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: () -> Unit, review: () -> Unit, discover: () -> Unit) {
     val l10n = rememberCareerStrings()
@@ -532,12 +536,14 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
     var removingID by rememberSaveable(state.privateScope) { mutableStateOf<String?>(null) }
     val searchTerms = remember(query) { SavedSearch.terms(query) }
     val matchingJobs = state.jobs.filter { savedOpportunityMatches(it, state.recordFor(it), searchTerms) && filter.includes(state.recordFor(it)) }
-    val filtered = if (filter == SavedOpportunityFilter.FOLLOW_UP) matchingJobs.sortedBy { state.recordFor(it)?.current?.record?.followUpDate } else matchingJobs
     val orphaned = state.unbookmarkedRecords.filter { savedOpportunityMatches(it.job, it, searchTerms) && filter.includes(it) }
-        .let { if (filter == SavedOpportunityFilter.FOLLOW_UP) it.sortedBy { record -> record.current.record.followUpDate } else it }
+    val matchingItems = matchingJobs.map { SavedOpportunityItem(it) } + orphaned.map { SavedOpportunityItem(it.job, it) }
+    val filtered = if (filter == SavedOpportunityFilter.FOLLOW_UP) matchingItems.sortedBy {
+        (it.retainedRecord ?: state.recordFor(it.job))?.current?.record?.followUpDate
+    } else matchingItems
     val hasRecords = state.jobs.isNotEmpty() || state.applicationRecords.isNotEmpty()
     val context = LocalContext.current
-    LazyColumn(Modifier.fillMaxSize().testTag("jobs-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    LazyColumn(Modifier.fillMaxSize().imePadding().testTag("jobs-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         item { Heading("Saved jobs", "Keep the roles you want to come back to, and track the applications you complete yourself.") }
         item {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -561,11 +567,13 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
             }
         }
         if (!hasRecords) item { EmptyState("No saved jobs yet", "Save a role from Discover, or add an employer link from anywhere. Saving never sends an application.", action = "Discover jobs", onClick = discover) }
-        else if (filtered.isEmpty() && orphaned.isEmpty()) item { EmptyState(if (filter == SavedOpportunityFilter.FOLLOW_UP) "No follow-ups match." else "No saved opportunities match.",
+        else if (filtered.isEmpty()) item { EmptyState(if (filter == SavedOpportunityFilter.FOLLOW_UP) "No follow-ups match." else "No saved opportunities match.",
             if (filter == SavedOpportunityFilter.FOLLOW_UP) "Add a follow-up date in an application record to see it here." else "Your saved roles are still here. Clear the search to see them again.",
             action = "Show all saved opportunities", onClick = { query = ""; filter = SavedOpportunityFilter.ALL }) }
-        items(filtered, key = Opportunity::id) { job ->
-            Panel {
+        items(filtered, key = SavedOpportunityItem::key) { entry ->
+            val job = entry.job
+            val record = entry.retainedRecord
+            if (record == null) Panel {
                 Text(job.company.ifBlank { l10n("Employer") }, color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
                 Text(job.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
                 Text(listOf(job.location, job.country).filter(String::isNotBlank).joinToString(" · ").ifBlank { l10n("Location not recorded") }, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -583,10 +591,7 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
                         accessibilityLabel = "Select ${job.title} at ${job.company} for Auto Apply review")
                     if (job.id in state.selected) TextButton(onClick = review, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Continue to Auto Apply")) }
                 }
-            }
-        }
-        items(orphaned, key = { "record-" + it.identity }) { record ->
-            Panel {
+            } else Panel {
                 Text(record.job.company.ifBlank { l10n("Employer") }, color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
                 Text(record.job.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
                 Text(l10n("Application record · saved link removed"), style = MaterialTheme.typography.labelMedium)
