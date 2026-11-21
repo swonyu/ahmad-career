@@ -185,16 +185,46 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
             Text(l10n.format("Earlier search: {0}{1}", listOf(((state.displayedFilters?.query?.ifBlank { l10n("Any role") } ?: "")).toString(), (state.displayedFilters?.location?.takeIf(String::isNotBlank)?.let { " · " + it }.orEmpty()).toString())), style = MaterialTheme.typography.bodySmall)
         }
         if (state.sources.isNotEmpty()) item { DiscoverySourceSummary(state) }
+        if (state.hasSearchComparison) item {
+            Panel(Modifier.testTag("discovery.newComparison")) {
+                Text(l10n("New since my last search"), style = MaterialTheme.typography.titleMedium)
+                Text(l10n.format(if (state.newJobCount == 1) "{0} role new to this search" else "{0} roles new to this search",
+                    listOf(state.newJobCount.toString())), style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.testTag("discovery.newCount").semantics { liveRegion = LiveRegionMode.Polite })
+                Text(l10n("First seen in this search, based on history saved on this phone."), style = MaterialTheme.typography.bodySmall)
+                CheckLine("New only", state.showNewOnly, controller::setShowNewOnly)
+                if (state.newResult?.coverageLimited == true) Text(
+                    l10n("This count covers the boards we could compare. Other results may need a complete check first."),
+                    style = MaterialTheme.typography.bodySmall)
+            }
+        }
+        if (state.newResult?.baselineReset == true) item {
+            Text(l10n("Older search history reached this phone’s limit. A fresh baseline is kept without marking old openings as new."),
+                style = MaterialTheme.typography.bodySmall, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+        }
         if (state.status != null && state.status != "unavailable") item {
-            Text(l10n.format("Showing {0} of {1} matches within these boards", listOf((state.jobs.size).toString(), (state.totalMatches).toString())), style = MaterialTheme.typography.titleMedium)
+            Text(if (state.showNewOnly) l10n.format("{0} of {1} shown", listOf(state.visibleJobs.size.toString(), state.jobs.size.toString()))
+                else l10n.format("Showing {0} of {1} matches within these boards", listOf((state.jobs.size).toString(), (state.totalMatches).toString())),
+                style = MaterialTheme.typography.titleMedium, modifier = Modifier.testTag("discovery.resultCount"))
             if (state.limited) Text(l10n("Some boards have more openings than this search can include. Narrow your search or open the original board."), style = MaterialTheme.typography.bodySmall)
         }
         if (showEmpty) item {
             EmptyState(DiscoveryPresentation.emptyTitle(outcomeStatus), DiscoveryPresentation.emptyDetail(outcomeStatus))
         }
-        items(state.jobs, key = DiscoveredJob::id) { job ->
-            DiscoveryJobCard(job, workspace.jobs.any { it.url == job.url }, workspace.busy, saved) {
-                model.addOpportunity(job.url, job.title, job.company, job.location, job.country.orEmpty()) {}
+        if (state.showNewOnly && state.jobs.isNotEmpty() && state.visibleJobs.isEmpty()) item {
+            Panel {
+                Text(l10n("No openings are new in the results compared."), style = MaterialTheme.typography.bodyMedium)
+                TextButton(onClick = { controller.setShowNewOnly(false) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                    Text(l10n("Show all results"))
+                }
+            }
+        }
+        items(state.visibleJobs, key = DiscoveredJob::id) { job ->
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (job.id in state.newJobIds) StatusPill("New to this search", false, Modifier.testTag("discovery.new." + job.id))
+                DiscoveryJobCard(job, workspace.jobs.any { it.url == job.url }, workspace.busy, saved) {
+                    model.addOpportunity(job.url, job.title, job.company, job.location, job.country.orEmpty()) {}
+                }
             }
         }
         if (state.nextCursor != null && !state.cursorInvalid) item {

@@ -3,7 +3,9 @@ package com.saleh.careerfinder
 import org.json.JSONArray
 import org.json.JSONObject
 
-data class DiscoverySnapshot(val filters: DiscoveryFilters, val displayedFilters: DiscoveryFilters?, val page: DiscoveryPage?)
+data class DiscoverySnapshot(val filters: DiscoveryFilters, val displayedFilters: DiscoveryFilters?, val page: DiscoveryPage?,
+    val searchHistory: DiscoverySearchHistory? = null, val newResult: DiscoveryNewResult? = null,
+    val lastSearchSourceIds: List<String>? = null)
 
 /** A bounded encrypted last search. There is deliberately no account, profile, PDF or cursor field. */
 object DiscoverySnapshotCodec {
@@ -33,6 +35,9 @@ object DiscoverySnapshotCodec {
         require((value.page?.jobs?.size ?: 0) <= MAX_JOBS)
         val result = JSONObject().put("schema", 1).put("filters", filters(value.filters))
             .put("displayedFilters", value.displayedFilters?.let(::filters) ?: JSONObject.NULL).put("page", value.page?.let(::page) ?: JSONObject.NULL)
+            .put("searchHistory", value.searchHistory?.let(DiscoveryHistoryPolicy::encode) ?: JSONObject.NULL)
+            .put("newResult", value.newResult?.let(DiscoveryHistoryPolicy::encode) ?: JSONObject.NULL)
+            .put("lastSearchSourceIds", value.lastSearchSourceIds?.let(::JSONArray) ?: JSONObject.NULL)
         require(result.toString().toByteArray(Charsets.UTF_8).size <= MAX_BYTES) { "This search is too large to keep on the phone. Narrow the search to save it." }
         // Never replace a valid private file with a snapshot this version cannot reopen.
         decode(result)
@@ -46,6 +51,18 @@ object DiscoverySnapshotCodec {
         val displayed = if (value.isNull("displayedFilters")) null else filters(value.getJSONObject("displayedFilters"))
         val page = if (value.isNull("page")) null else DiscoveryCodec.page(value.getJSONObject("page"), MAX_JOBS).copy(nextCursor = null)
         require((displayed == null) == (page == null))
-        return DiscoverySnapshot(restoredFilters, displayed, page)
+        // Optional metadata keeps schema-1 snapshots backward compatible. If
+        // present, malformed evidence blocks restore instead of inventing badges.
+        val history = if (!value.has("searchHistory") || value.isNull("searchHistory")) null
+            else DiscoveryHistoryPolicy.decodeHistory(value.getJSONObject("searchHistory"))
+        val sources = if (!value.has("lastSearchSourceIds") || value.isNull("lastSearchSourceIds")) null
+            else value.requiredStrings("lastSearchSourceIds").also { require(DiscoveryHistoryPolicy.validSources(it)) }
+        val newResult = if (!value.has("newResult") || value.isNull("newResult")) null
+            else DiscoveryHistoryPolicy.decodeResult(value.getJSONObject("newResult"))
+        if (newResult != null) {
+            require(history != null && displayed != null && page != null && sources != null)
+            require(DiscoveryHistoryPolicy.valid(newResult, displayed, sources, page.jobs, history))
+        }
+        return DiscoverySnapshot(restoredFilters, displayed, page, history, newResult, sources)
     }
 }

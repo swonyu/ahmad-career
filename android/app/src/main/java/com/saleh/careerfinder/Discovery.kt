@@ -52,7 +52,12 @@ data class DiscoveryUiState(val catalog: DiscoveryCatalog? = null, val catalogLo
     val error: String? = null, val retryAtMillis: Long = 0, val cursorInvalid: Boolean = false,
     val restoringSearch: Boolean = false, val restoredSearch: Boolean = false, val searchStorageError: String? = null,
     val searchRestoreBlocked: Boolean = false, val lastAttemptedFilters: DiscoveryFilters? = null,
-    val submittedSearchFailed: Boolean = false) {
+    val submittedSearchFailed: Boolean = false, val newResult: DiscoveryNewResult? = null,
+    val showNewOnly: Boolean = false) {
+    val newJobIds: Set<String> get() = newResult?.newIds.orEmpty().toSet()
+    val newJobCount: Int get() = jobs.count { it.id in newJobIds }
+    val hasSearchComparison: Boolean get() = !newResult?.comparedSourceIds.isNullOrEmpty() && newResult?.baselineReset != true
+    val visibleJobs: List<DiscoveredJob> get() = if (showNewOnly && hasSearchComparison) jobs.filter { it.id in newJobIds } else jobs
     val filtersChanged: Boolean get() = displayedFilters != null && displayedFilters != filters.cleaned()
     val canRetrySubmittedSearch: Boolean get() {
         if (loading || restoringSearch || (lastAttemptedFilters ?: displayedFilters) == null) return false
@@ -384,7 +389,8 @@ object DiscoveryCodec {
 
 class DiscoveryController(private val scope: CoroutineScope, private val service: DiscoveryService = PublicDiscoveryService) {
     private val mutable = MutableStateFlow(DiscoveryUiState())
-    internal fun exportSnapshot(): JSONObject = DiscoverySnapshotCodec.encode(DiscoverySnapshot(state.value.filters, lastDisplayedFilters, lastPage))
+    internal fun exportSnapshot(): JSONObject = DiscoverySnapshotCodec.encode(DiscoverySnapshot(state.value.filters, lastDisplayedFilters, lastPage,
+        searchHistory, lastNewResult, lastSearchSourceIds))
     val state = mutable.asStateFlow()
     private var catalogJob: Job? = null
     private var searchJob: Job? = null
@@ -397,6 +403,18 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
     private var maySaveSearch = false
     private var lastPage: DiscoveryPage? = null
     private var lastDisplayedFilters: DiscoveryFilters? = null
+    private var searchHistory = DiscoverySearchHistory()
+    private var lastNewResult: DiscoveryNewResult? = null
+    private var lastSearchSourceIds: List<String>? = null
+
+    /** Display-only filtering never changes the stored result, baseline or request. */
+    fun setShowNewOnly(value: Boolean) {
+        mutable.update { it.copy(showNewOnly = value && it.hasSearchComparison) }
+    }
+    private fun clearUnsupportedMarkers() {
+        lastNewResult = null; lastSearchSourceIds = null
+        mutable.update { it.copy(newResult = null, showNewOnly = false) }
+    }
 
     /** Canonicalize saved board ids only. A trailing-space query stays as it was saved. */
     private fun repairSources(filters: DiscoveryFilters): DiscoveryFilters {
@@ -431,11 +449,14 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
             val repairedFilters = snapshot?.filters?.let(::repairSources) ?: DiscoveryFilters()
             val repairedDisplayed = snapshot?.displayedFilters?.let(::repairSources)
             lastPage = snapshot?.page; lastDisplayedFilters = repairedDisplayed
+            searchHistory = snapshot?.searchHistory ?: DiscoverySearchHistory()
+            lastNewResult = snapshot?.newResult; lastSearchSourceIds = snapshot?.lastSearchSourceIds
             val page = snapshot?.page
             mutable.value = DiscoveryUiState(filters = repairedFilters, displayedFilters = repairedDisplayed,
                 jobs = page?.jobs.orEmpty(), sources = page?.sources.orEmpty(), status = page?.status, generatedAt = page?.generatedAt,
                 totalMatches = page?.totalMatches ?: 0, limited = page?.limited ?: false, notice = page?.notice.orEmpty(),
-                nextCursor = null, restoredSearch = snapshot != null && (snapshot.page != null || snapshot.filters != DiscoveryFilters()))
+                nextCursor = null, restoredSearch = snapshot != null && (snapshot.page != null || snapshot.filters != DiscoveryFilters()),
+                newResult = lastNewResult)
             maySaveSearch = true
             val sourcesChanged = snapshot != null && (repairedFilters.sources != snapshot.filters.sources ||
                 repairedDisplayed?.sources != snapshot.displayedFilters?.sources)
@@ -458,6 +479,7 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
         searchJob?.cancel(); catalogJob?.cancel()
         storageMutex.withLock { privateStore = null; privateKey = null; maySaveSearch = false }
         lastPage = null; lastDisplayedFilters = null
+        searchHistory = DiscoverySearchHistory(); lastNewResult = null; lastSearchSourceIds = null
         mutable.value = DiscoveryUiState()
     }
 
@@ -467,29 +489,46 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
         saveJob = scope.launch { delay(350); saveSearchNow() }
     }
 
-    suspend fun saveSearchNow() {
-        val store = privateStore ?: return
-        val key = privateKey ?: return
-        if (!maySaveSearch) return
+    suspend fun saveSearchNow() { persistSearchNow() }
+
+    private suspend fun persistSearchNow(): Boolean {
+        val store = privateStore ?: return false
+        val key = privateKey ?: return false
+        if (!maySaveSearch) return false
         val request = storageGeneration
+        val observationGeneration = generation
         val filters = state.value.filters
         if (filters.query.length > 120 || filters.location.length > 100) {
             // The snapshot cannot store this text. Leave the earlier file alone and keep what was typed on screen.
-            if (request == storageGeneration && privateKey == key && state.value.filters == filters) mutable.update { it.copy(
-                searchStorageError = "These search fields exceed the supported limits. Earlier saved search data is kept.") }
-            return
-        }
-        try {
-            val snapshot = DiscoverySnapshotCodec.encode(DiscoverySnapshot(state.value.filters, lastDisplayedFilters, lastPage))
-            storageMutex.withLock {
-                if (request != storageGeneration || privateKey != key) return@withLock
-                withContext(Dispatchers.IO) { store.write(key, snapshot) }
+            if (request == storageGeneration && observationGeneration == generation && privateKey == key && state.value.filters == filters) {
+                clearUnsupportedMarkers()
+                mutable.update { it.copy(
+                    searchStorageError = "These search fields exceed the supported limits. Earlier saved search data is kept.") }
             }
-            if (request == storageGeneration && privateKey == key) mutable.update { it.copy(searchStorageError = null) }
+            return false
+        }
+        return try {
+            var written = false
+            storageMutex.withLock {
+                if (request != storageGeneration || observationGeneration != generation || privateStore !== store || privateKey != key) return@withLock
+                // Capture after acquiring the write lock: a queued save cannot
+                // reinstate metadata that an earlier failed write cleared.
+                val snapshot = DiscoverySnapshotCodec.encode(DiscoverySnapshot(state.value.filters, lastDisplayedFilters, lastPage,
+                    searchHistory, lastNewResult, lastSearchSourceIds))
+                withContext(Dispatchers.IO) { store.write(key, snapshot) }
+                written = true
+            }
+            val currentOwner = request == storageGeneration && observationGeneration == generation && privateStore === store && privateKey == key
+            if (written && currentOwner) mutable.update { it.copy(searchStorageError = null) }
+            written && currentOwner
         } catch (cancel: CancellationException) { throw cancel }
         catch (_: Exception) {
-            if (request == storageGeneration && privateKey == key) mutable.update { it.copy(
-                searchStorageError = "This search is available in this session but could not be saved. The earlier saved search is preserved. Retry saving when private storage is available.") }
+            if (request == storageGeneration && observationGeneration == generation && privateStore === store && privateKey == key) {
+                clearUnsupportedMarkers()
+                mutable.update { it.copy(
+                    searchStorageError = "This search is available in this session but could not be saved. The earlier saved search is preserved. Retry saving when private storage is available.") }
+            }
+            false
         }
     }
 
@@ -561,13 +600,33 @@ class DiscoveryController(private val scope: CoroutineScope, private val service
                     all.size == DiscoverySnapshotCodec.MAX_JOBS && page.nextCursor != null
                 val visible = all.take(DiscoverySnapshotCodec.MAX_JOBS)
                 val notice = page.notice + if (reachedLimit) " Up to ${DiscoverySnapshotCodec.MAX_JOBS} results are kept on this phone. Narrow the search or open an employer board for more." else ""
-                lastDisplayedFilters = filters
-                lastPage = page.copy(jobs = visible, nextCursor = null, limited = page.limited || reachedLimit, notice = notice)
+                val previousHistory = searchHistory
+                val displayedPage = page.copy(jobs = visible, nextCursor = null, limited = page.limited || reachedLimit, notice = notice)
+                val familiarity = DiscoveryHistoryPolicy.evaluate(searchHistory, filters, displayedPage, System.currentTimeMillis(),
+                    previous = if (more) lastNewResult else null,
+                    resolvedSources = if (more) lastSearchSourceIds else null)
+                lastDisplayedFilters = filters; lastPage = displayedPage
+                if (familiarity.result != null) searchHistory = familiarity.history
+                lastNewResult = familiarity.result
+                lastSearchSourceIds = familiarity.sourceIds.takeIf { familiarity.result != null }
                 mutable.update { it.copy(jobs = visible,
                     displayedFilters = filters, sources = page.sources, status = page.status, generatedAt = page.generatedAt,
                     nextCursor = if (reachedLimit) null else page.nextCursor, totalMatches = page.totalMatches, limited = page.limited || reachedLimit, notice = notice,
-                    error = null, retryAtMillis = 0, cursorInvalid = false, restoredSearch = false) }
-                scheduleSearchSave()
+                    error = null, retryAtMillis = 0, cursorInvalid = false, restoredSearch = false,
+                    newResult = if (more && familiarity.result != null) it.newResult else null,
+                    showNewOnly = more && familiarity.result != null && it.showNewOnly) }
+                // Publish new markers only after their history and displayed result
+                // are saved together under this session's existing ownership guard.
+                saveJob?.cancel(); saveJob = null
+                val saved = persistSearchNow()
+                if (request != generation) return@launch
+                if (saved) {
+                    mutable.update { it.copy(newResult = familiarity.result,
+                        showNewOnly = more && it.showNewOnly && !familiarity.result?.comparedSourceIds.isNullOrEmpty() && familiarity.result?.baselineReset != true) }
+                } else {
+                    searchHistory = previousHistory
+                    clearUnsupportedMarkers()
+                }
             } catch (cancel: CancellationException) { throw cancel }
             catch (error: Exception) {
                 if (request != generation) return@launch
