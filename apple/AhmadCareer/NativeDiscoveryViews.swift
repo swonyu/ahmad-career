@@ -376,7 +376,7 @@ private struct NativeDiscoveryJobDetail: View {
                             .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
                             .contentShape(Rectangle())
                     }
-                        .buttonStyle(.plain).foregroundStyle(Color.careerAccent)
+                        .buttonStyle(.plain).foregroundStyle(NativeDesign.accent)
                         .disabled(applications.busy).accessibilityIdentifier("discovery.saveOpportunity")
                 }
                 if let saveMessage { Text(l10n(saveMessage)).font(.footnote).foregroundStyle(.secondary) }

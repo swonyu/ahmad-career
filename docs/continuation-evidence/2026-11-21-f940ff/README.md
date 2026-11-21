@@ -23,6 +23,10 @@ Independent source reviews covered the three UI repairs, deadline preservation, 
 
 The existing test contract remains 17 methods, 219 assertion/failure lines, 72 prescribed PNG states, 30 AX attachments and 16 label-geometry pairs. Required interactions and captures remain. The workflow, runner and its 70-minute job, five-minute boot and 60-minute native-execution bounds are unchanged. No separate keyboard warm-up, repeated selection tap or late-result acceptance was introduced.
 
+## Compile correction after the first integrated run
+
+The first new-source run, `44892634124` at `94f1b96`, failed both iPhone builds because the new save-button styling referenced a file-private color alias. The host and XCTest-only checks above did not compile that SwiftUI product file. The correction uses the existing shared `NativeDesign.accent` value; all 14 app Swift files then passed both Release and Debug iPhone typechecks with zero diagnostic bytes. `compile-correction.json` preserves the failure, exact source hashes and corrective results. No native journeys passed on the failed build. A new full run remains required.
+
 ## Remaining gates
 
 The complete current-source five-job CI run and native artifact inspection are pending at this checkpoint. Do not merge or deploy this candidate before those applicable gates pass. Live Google callback/recovery and supported-provider acceptance, requested advertising readiness, physical-device accessibility, distribution signing and store delivery remain open. The previous live Site version was 12; it was not changed or reverified by these source repairs.
