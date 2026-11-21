@@ -88,6 +88,11 @@ export function ProfileEditor({ profile, onChange, onPDF, onSaveLocal, onSaveOnl
       <div className="phone-cv"><FileText aria-hidden="true" size={28} /><div><strong dir="auto">{profile.resume?.name || t("Choose your PDF CV")}</strong><span>{profile.resume ? t("{0} KB · PDF", [formatNumber(profile.resume.size / 1024, language, { maximumFractionDigits: 0 })]) : t("PDF only · up to 5 MiB")}</span></div></div>
       <input ref={fileInput} type="file" accept="application/pdf,.pdf" className="visually-hidden" tabIndex={-1} aria-label={t("Choose PDF CV")} onChange={e => { const file = e.target.files?.[0]; if (file) void onPDF(file); e.currentTarget.value = ""; }} />
       <div className="phone-actions"><button className="button secondary" disabled={busy} onClick={() => fileInput.current?.click()}>{profile.resume ? t("Change PDF") : t("Choose PDF")}</button>{profile.resume && <button className="text-button danger-text" disabled={busy} onClick={() => onChange({ resume: null })}>{t("Remove from profile")}</button>}</div>
+      <div className="phone-profile-quick-save">
+        {changed && <p className="phone-note">{t("You have unsaved changes in this form.")}</p>}
+        <button type="button" className="button primary full" disabled={busy} onClick={event => void saveProfile(event.currentTarget, onSaveLocal)}>{t("Save draft on this phone")}</button>
+        <p className="phone-note">{t(" Saving on this phone does not upload your CV.")}</p>
+      </div>
     </section>
     <ProfileReuse profile={profile} />
     <section className="phone-card"><div className="section-label"><span>02</span><h2>{t("Professional links")}</h2></div>
@@ -110,7 +115,7 @@ export function ProfileEditor({ profile, onChange, onPDF, onSaveLocal, onSaveOnl
       <label>{t("Skills ")}<span className="optional">{t("up to 30, separated by commas")}</span><input dir="auto" maxLength={3000} value={profile.skills.join(",")} onChange={e => onChange({ skills: e.target.value.split(/[,،]/) })} /></label>
       <label>{t("Experience level")}<select value={profile.experienceLevel} onChange={e => onChange({ experienceLevel: e.target.value as Profile["experienceLevel"] })}><option value="any">{t("Any level")}</option><option value="entry">{t("Entry level")}</option><option value="mid">{t("Mid level")}</option><option value="senior">{t("Senior level")}</option></select></label>
     </details>
-    <div className="phone-save-area"><p className="phone-note">{changed ? t("You have unsaved changes in this form.") : t("Your saved profile is shown above.")} {t(" Saving on this phone does not upload your CV.")}</p><button className={`button ${hasWorkspace ? "secondary" : "primary"} full`} disabled={busy} onClick={event => void saveProfile(event.currentTarget, onSaveLocal)}>{t("Save on this phone")}</button>{hasWorkspace && <button className="button primary full" disabled={busy} onClick={event => void saveProfile(event.currentTarget, onSaveOnline)}>{t("Save profile online")}</button>}</div>
+    <div className="phone-save-area"><p className="phone-note">{changed ? t("You have unsaved changes in this form.") : t("You can save an unfinished draft on this phone.")} {t(" Saving on this phone does not upload your CV.")}</p><button className={`button ${hasWorkspace ? "secondary" : "primary"} full`} disabled={busy} onClick={event => void saveProfile(event.currentTarget, onSaveLocal)}>{t("Save on this phone")}</button>{hasWorkspace && <button className="button primary full" disabled={busy} onClick={event => void saveProfile(event.currentTarget, onSaveOnline)}>{t("Save profile online")}</button>}</div>
   </div>;
 }
 

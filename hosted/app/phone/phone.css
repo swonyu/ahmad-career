@@ -64,3 +64,18 @@
 .phone-source-domain bdi{color:var(--ink);font-weight:550}
 @media(min-width:980px){.phone-tab-apply>.phone-card{max-width:740px}.phone-application-steps{gap:22px}.phone-application-guide>.button{width:auto;min-width:220px}}
 @media(prefers-reduced-motion:reduce){.phone-shell *,.phone-dialog *{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Keep the next profile action beside its essentials, before optional sections. */
+.phone-profile-quick-save{margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.phone-profile-quick-save>.phone-note:first-child{margin-top:0}
+.phone-profile-quick-save>.phone-note:last-child{margin-bottom:0}
+/* Give phone branding and sign-in room; Settings keeps its accessible name. */
+@media(max-width:979px){
+  .phone-header{flex-wrap:wrap}
+  .phone-brand{min-width:0}
+  .phone-brand .brand-icon{flex-shrink:0}
+  .phone-header-actions{flex-shrink:0}
+  .phone-header-actions .header-settings{min-width:44px;min-height:44px;padding:9px}
+  .phone-header-actions .header-settings>span{display:none}
+  .phone-header-actions .header-signin{white-space:nowrap}
+}
