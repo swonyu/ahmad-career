@@ -137,9 +137,10 @@ final class CareerFinderUITests: XCTestCase {
                                     deadline: TimeInterval? = nil,
                                     record: ((UIObservationTrace) -> Void)? = nil) -> Bool {
         if let deadline, ProcessInfo.processInfo.systemUptime >= deadline { return false }
-        // Obtain the current viewport and keyboard hierarchy in one fresh public
-        // snapshot. No snapshot or attribute is retained between observations.
+        // One fresh app snapshot supplies the current viewport and keyboard
+        // hierarchy. No snapshot or attribute survives this observation.
         let snapshotStartedAt = ProcessInfo.processInfo.systemUptime
+        if let deadline, snapshotStartedAt >= deadline { return false }
         let currentSnapshot = try? app.snapshot()
         let snapshotCompletedAt = ProcessInfo.processInfo.systemUptime
         record?(UIObservationTrace(stage: "app snapshot", startedAt: snapshotStartedAt,
@@ -148,6 +149,7 @@ final class CareerFinderUITests: XCTestCase {
         guard let appSnapshot = currentSnapshot else { return false }
 
         let viewportStartedAt = ProcessInfo.processInfo.systemUptime
+        if let deadline, viewportStartedAt >= deadline { return false }
         let viewport = appSnapshot.frame
         let validViewport = viewport.origin.x.isFinite && viewport.origin.y.isFinite &&
             viewport.width.isFinite && viewport.height.isFinite &&
@@ -155,63 +157,97 @@ final class CareerFinderUITests: XCTestCase {
         let viewportCompletedAt = ProcessInfo.processInfo.systemUptime
         record?(UIObservationTrace(stage: "snapshot viewport", startedAt: viewportStartedAt,
                                    completedAt: viewportCompletedAt, matched: validViewport))
+        if let deadline, viewportCompletedAt > deadline { return false }
         guard validViewport else { return false }
 
         let identityStartedAt = ProcessInfo.processInfo.systemUptime
-        var pending: [(node: any XCUIElementSnapshot, insideKeyboard: Bool)] = [
-            (node: appSnapshot, insideKeyboard: false)
-        ]
-        var matchingKeys: [any XCUIElementSnapshot] = []
+        if let deadline, identityStartedAt >= deadline { return false }
+        var pending: [any XCUIElementSnapshot] = [appSnapshot]
+        var keyboards: [any XCUIElementSnapshot] = []
         var traversalExpired = false
         while let current = pending.popLast() {
             if let deadline, ProcessInfo.processInfo.systemUptime >= deadline {
                 traversalExpired = true
                 break
             }
-            let insideKeyboard = current.insideKeyboard || current.node.elementType == .keyboard
-            if insideKeyboard && current.node.elementType == .key && current.node.identifier == "delete" {
-                matchingKeys.append(current.node)
-                // Count identity matches before checking geometry. A second
-                // matching key, including an offscreen one, is ambiguous.
-                if matchingKeys.count > 1 { break }
-            }
-            for child in current.node.children {
-                pending.append((node: child, insideKeyboard: insideKeyboard))
+            if current.elementType == .keyboard { keyboards.append(current) }
+            pending.append(contentsOf: current.children)
+        }
+        var keysByIdentifier: [String: [any XCUIElementSnapshot]] = [:]
+        if !traversalExpired, keyboards.count == 1 {
+            pending = keyboards[0].children
+            while let current = pending.popLast() {
+                if let deadline, ProcessInfo.processInfo.systemUptime >= deadline {
+                    traversalExpired = true
+                    break
+                }
+                // Group every actual key before looking at geometry. Empty
+                // identifiers and duplicated identifiers cannot identify a key.
+                if current.elementType == .key, !current.identifier.isEmpty {
+                    keysByIdentifier[current.identifier, default: []].append(current)
+                }
+                pending.append(contentsOf: current.children)
             }
         }
-        let uniqueKey = !traversalExpired && matchingKeys.count == 1
+        func priority(_ identifier: String) -> Int {
+            identifier == "delete" ? 0 : identifier == "space" ? 1 : 2
+        }
+        let identifiers = keysByIdentifier.keys.filter { keysByIdentifier[$0]?.count == 1 }.sorted {
+            let left = priority($0), right = priority($1)
+            return left == right ? $0 < $1 : left < right
+        }
+        let uniqueIdentity = !traversalExpired && keyboards.count == 1 && !identifiers.isEmpty
         let identityCompletedAt = ProcessInfo.processInfo.systemUptime
         record?(UIObservationTrace(stage: "keyboard key identity", startedAt: identityStartedAt,
-                                   completedAt: identityCompletedAt, matched: uniqueKey))
-        guard uniqueKey, let snapshot = matchingKeys.first,
-              snapshot.elementType == .key, snapshot.identifier == "delete" else { return false }
+                                   completedAt: identityCompletedAt, matched: uniqueIdentity))
+        print("UI keyboard identity: keyboards=\(keyboards.count); delete=\(keysByIdentifier["delete"]?.count ?? 0); space=\(keysByIdentifier["space"]?.count ?? 0); uniqueIdentifiers=\(identifiers.count)")
+        if let deadline, identityCompletedAt > deadline { return false }
+        guard uniqueIdentity else { return false }
 
         let geometryStartedAt = ProcessInfo.processInfo.systemUptime
-        let frame = snapshot.frame
-        let validGeometry = frame.origin.x.isFinite && frame.origin.y.isFinite &&
-            frame.width.isFinite && frame.height.isFinite &&
-            frame.width > 0 && frame.height > 0 && frame.intersects(viewport)
+        if let deadline, geometryStartedAt >= deadline { return false }
+        var candidateIdentifier: String?
+        for identifier in identifiers {
+            if let deadline, ProcessInfo.processInfo.systemUptime >= deadline { break }
+            guard let matches = keysByIdentifier[identifier], matches.count == 1,
+                  let key = matches.first, key.elementType == .key,
+                  key.identifier == identifier else { continue }
+            let frame = key.frame
+            let validGeometry = frame.origin.x.isFinite && frame.origin.y.isFinite &&
+                frame.width.isFinite && frame.height.isFinite &&
+                frame.width > 0 && frame.height > 0 && frame.intersects(viewport)
+            if validGeometry {
+                candidateIdentifier = identifier
+                break
+            }
+        }
         let geometryCompletedAt = ProcessInfo.processInfo.systemUptime
         record?(UIObservationTrace(stage: "snapshot key geometry", startedAt: geometryStartedAt,
-                                   completedAt: geometryCompletedAt, matched: validGeometry))
-        guard validGeometry else { return false }
+                                   completedAt: geometryCompletedAt, matched: candidateIdentifier != nil))
+        if let deadline, geometryCompletedAt > deadline { return false }
+        guard let identifier = candidateIdentifier else { return false }
+        print("UI keyboard candidate: identifier=\(String(reflecting: identifier))")
         if let deadline, ProcessInfo.processInfo.systemUptime >= deadline { return false }
 
-        // Build the live query from the same app used for the snapshot. Both
-        // observations require the sole .key with the exact accessibility
-        // identifier under that app's keyboards. The live query requires uniqueness;
-        // a new duplicate cannot be silently selected by firstMatch.
-        // Public snapshots and live queries remain separate observations, with
-        // no claim of an atomic accessibility-object identity across them.
+        // Resolve the same exact identifier under this app's actual keyboards.
+        // The freshly evaluated result must be unique, and its handle is bound
+        // to that accessibility element rather than to a result index. A
+        // duplicated delete identifier is never coalesced or selected by order.
+        // Snapshot and live reads are separate, not an atomic AX transaction.
         let bindingStartedAt = ProcessInfo.processInfo.systemUptime
-        let deleteKey = app.keyboards.keys
-            .matching(NSPredicate(format: "identifier == %@", "delete")).element
+        if let deadline, bindingStartedAt >= deadline { return false }
+        let liveKeys = app.keyboards.keys
+            .matching(NSPredicate(format: "identifier == %@", identifier))
+            .allElementsBoundByAccessibilityElement
         let bindingCompletedAt = ProcessInfo.processInfo.systemUptime
         record?(UIObservationTrace(stage: "live key binding", startedAt: bindingStartedAt,
-                                   completedAt: bindingCompletedAt, matched: nil))
+                                   completedAt: bindingCompletedAt, matched: liveKeys.count == 1))
+        if let deadline, bindingCompletedAt > deadline { return false }
+        guard liveKeys.count == 1 else { return false }
         if let deadline, ProcessInfo.processInfo.systemUptime >= deadline { return false }
         let hitStartedAt = ProcessInfo.processInfo.systemUptime
-        let hittable = deleteKey.isHittable
+        if let deadline, hitStartedAt >= deadline { return false }
+        let hittable = liveKeys[0].isHittable
         let hitCompletedAt = ProcessInfo.processInfo.systemUptime
         record?(UIObservationTrace(stage: "live key hittability", startedAt: hitStartedAt,
                                    completedAt: hitCompletedAt, matched: hittable))
@@ -315,6 +351,155 @@ final class CareerFinderUITests: XCTestCase {
         return .timedOut
     }
     @MainActor
+    private func waitForObservation(timeout: TimeInterval, name: String,
+                                    _ observation: (TimeInterval, inout [UIObservationTrace]) -> Bool) -> XCTWaiter.Result {
+        let deadline = ProcessInfo.processInfo.systemUptime + timeout
+        var traces: [UIObservationTrace] = []
+        defer { reportObservationTrace(name, deadline: deadline, timeout: timeout, traces: traces) }
+        while ProcessInfo.processInfo.systemUptime < deadline {
+            let observationStartedAt = ProcessInfo.processInfo.systemUptime
+            let ready = observation(deadline, &traces)
+            let observedAt = ProcessInfo.processInfo.systemUptime
+            traces.append(UIObservationTrace(stage: "condition", startedAt: observationStartedAt,
+                                             completedAt: observedAt, matched: ready))
+            if ready && observedAt <= deadline { return .completed }
+            let remaining = deadline - observedAt
+            guard remaining > 0 else { break }
+            RunLoop.current.run(until: Date(timeIntervalSinceNow: min(0.05, remaining)))
+        }
+        return .timedOut
+    }
+    @MainActor
+    private func selectAllChoice(in app: XCUIApplication, deadline: TimeInterval? = nil,
+                                 traces: inout [UIObservationTrace]) -> XCUIElement? {
+        if let deadline, ProcessInfo.processInfo.systemUptime >= deadline { return nil }
+        let names = ["Select All", "تحديد الكل"]
+        let types = [NSNumber(value: XCUIElement.ElementType.menuItem.rawValue),
+                     NSNumber(value: XCUIElement.ElementType.button.rawValue)]
+        let predicate = NSPredicate(format: "elementType IN %@ AND (label IN %@ OR identifier IN %@)", types, names, names)
+        // Evaluate the existing two accepted element types as one query. Each
+        // returned handle is bound to its AX element, not a later result index.
+        let queryStartedAt = ProcessInfo.processInfo.systemUptime
+        if let deadline, queryStartedAt >= deadline { return nil }
+        let choices = app.descendants(matching: .any).matching(predicate).allElementsBoundByAccessibilityElement
+        let queryCompletedAt = ProcessInfo.processInfo.systemUptime
+        traces.append(UIObservationTrace(stage: "Select All candidates", startedAt: queryStartedAt,
+                                         completedAt: queryCompletedAt, matched: !choices.isEmpty))
+        if let deadline, queryCompletedAt > deadline { return nil }
+        for choice in choices {
+            if let deadline, ProcessInfo.processInfo.systemUptime >= deadline { return nil }
+            let existenceStartedAt = ProcessInfo.processInfo.systemUptime
+            if let deadline, existenceStartedAt >= deadline { return nil }
+            let exists = choice.exists
+            let existenceCompletedAt = ProcessInfo.processInfo.systemUptime
+            traces.append(UIObservationTrace(stage: "Select All existence", startedAt: existenceStartedAt,
+                                             completedAt: existenceCompletedAt, matched: exists))
+            if let deadline, existenceCompletedAt > deadline { return nil }
+            guard exists else { continue }
+            if let deadline, ProcessInfo.processInfo.systemUptime >= deadline { return nil }
+            let hitStartedAt = ProcessInfo.processInfo.systemUptime
+            if let deadline, hitStartedAt >= deadline { return nil }
+            let hittable = choice.isHittable
+            let hitCompletedAt = ProcessInfo.processInfo.systemUptime
+            traces.append(UIObservationTrace(stage: "Select All hittability", startedAt: hitStartedAt,
+                                             completedAt: hitCompletedAt, matched: hittable))
+            if let deadline, hitCompletedAt > deadline { return nil }
+            if hittable { return choice }
+        }
+        return nil
+    }
+    @MainActor
+    private func restoredSettingsPoseIsVisible(in app: XCUIApplication, deadline: TimeInterval,
+                                               traces: inout [UIObservationTrace]) -> Bool {
+        guard ProcessInfo.processInfo.systemUptime < deadline else { return false }
+        let snapshotStartedAt = ProcessInfo.processInfo.systemUptime
+        guard snapshotStartedAt < deadline else { return false }
+        let currentSnapshot = try? app.snapshot()
+        let snapshotCompletedAt = ProcessInfo.processInfo.systemUptime
+        traces.append(UIObservationTrace(stage: "Settings app snapshot", startedAt: snapshotStartedAt,
+                                         completedAt: snapshotCompletedAt, matched: currentSnapshot != nil))
+        guard snapshotCompletedAt <= deadline, let snapshot = currentSnapshot else { return false }
+
+        let viewportStartedAt = ProcessInfo.processInfo.systemUptime
+        guard viewportStartedAt < deadline else { return false }
+        let viewport = snapshot.frame
+        let validViewport = viewport.origin.x.isFinite && viewport.origin.y.isFinite &&
+            viewport.width.isFinite && viewport.height.isFinite &&
+            viewport.width > 0 && viewport.height > 0
+        let viewportCompletedAt = ProcessInfo.processInfo.systemUptime
+        traces.append(UIObservationTrace(stage: "Settings viewport", startedAt: viewportStartedAt,
+                                         completedAt: viewportCompletedAt, matched: validViewport))
+        guard viewportCompletedAt <= deadline, validViewport else { return false }
+
+        @MainActor
+        func snapshotTree(_ root: any XCUIElementSnapshot) -> [any XCUIElementSnapshot]? {
+            var elements = [root], index = 0
+            while index < elements.count {
+                guard ProcessInfo.processInfo.systemUptime < deadline else { return nil }
+                elements.append(contentsOf: elements[index].children)
+                index += 1
+            }
+            return elements
+        }
+        let identityStartedAt = ProcessInfo.processInfo.systemUptime
+        guard identityStartedAt < deadline else { return false }
+        let elements = snapshotTree(snapshot) ?? []
+        let tabBars = elements.filter { $0.elementType == .tabBar }
+        let darkChoices = elements.filter {
+            $0.elementType == .button && $0.identifier == "settings.appearance.dark"
+        }
+        let expectedNames = ["Start", "Search", "Apply", "Saved", "Settings"]
+        var currentTabs: [any XCUIElementSnapshot] = []
+        if tabBars.count == 1, let descendants = snapshotTree(tabBars[0]) {
+            currentTabs = descendants.filter { $0.elementType == .button }
+        }
+        let validIdentity = tabBars.count == 1 && darkChoices.count == 1 &&
+            darkChoices[0].isSelected && currentTabs.count == expectedNames.count &&
+            Set(currentTabs.map { $0.label }) == Set(expectedNames) &&
+            currentTabs.first(where: { $0.label == "Settings" })?.isSelected == true
+        let identityCompletedAt = ProcessInfo.processInfo.systemUptime
+        traces.append(UIObservationTrace(stage: "Settings identity and selection", startedAt: identityStartedAt,
+                                         completedAt: identityCompletedAt, matched: validIdentity))
+        guard identityCompletedAt <= deadline, validIdentity else { return false }
+
+        let geometryStartedAt = ProcessInfo.processInfo.systemUptime
+        guard geometryStartedAt < deadline else { return false }
+        let validGeometry = currentTabs.allSatisfy { tab in
+            let frame = tab.frame
+            return frame.origin.x.isFinite && frame.origin.y.isFinite &&
+                frame.width.isFinite && frame.height.isFinite &&
+                frame.width > 0 && frame.height > 0 && viewport.contains(frame)
+        }
+        let geometryCompletedAt = ProcessInfo.processInfo.systemUptime
+        traces.append(UIObservationTrace(stage: "Settings tab geometry", startedAt: geometryStartedAt,
+                                         completedAt: geometryCompletedAt, matched: validGeometry))
+        guard geometryCompletedAt <= deadline, validGeometry else { return false }
+
+        for name in expectedNames {
+            guard ProcessInfo.processInfo.systemUptime < deadline,
+                  let tab = currentTabs.first(where: { $0.label == name }) else { return false }
+            let bindingStartedAt = ProcessInfo.processInfo.systemUptime
+            guard bindingStartedAt < deadline else { return false }
+            // element requires exactly one match when the live query resolves.
+            // Avoid a separate enumeration followed by an index-bound requery.
+            let liveTab = app.tabBars.buttons.matching(NSPredicate(
+                format: "label == %@ AND identifier == %@", name, tab.identifier
+            )).element
+            let bindingCompletedAt = ProcessInfo.processInfo.systemUptime
+            traces.append(UIObservationTrace(stage: "Settings \(name) live binding", startedAt: bindingStartedAt,
+                                             completedAt: bindingCompletedAt, matched: nil))
+            guard bindingCompletedAt <= deadline, ProcessInfo.processInfo.systemUptime < deadline else { return false }
+            let hitStartedAt = ProcessInfo.processInfo.systemUptime
+            guard hitStartedAt < deadline else { return false }
+            let hittable = liveTab.isHittable
+            let hitCompletedAt = ProcessInfo.processInfo.systemUptime
+            traces.append(UIObservationTrace(stage: "Settings \(name) hittability", startedAt: hitStartedAt,
+                                             completedAt: hitCompletedAt, matched: hittable))
+            guard hitCompletedAt <= deadline, hittable else { return false }
+        }
+        return true
+    }
+    @MainActor
     private func waitForTypingKey(in app: XCUIApplication,
                                   observationName: String = "keyboard readiness") -> XCTWaiter.Result {
         // XCUI reads wait for their own accessibility replies. An outer XCTest
@@ -376,19 +561,16 @@ final class CareerFinderUITests: XCTestCase {
                     // A tap can place the caret inside existing text. Use the real
                     // Select All action rather than assuming backward-delete starts at the end.
                     field.press(forDuration: 1.1)
-                    let names = ["Select All", "تحديد الكل"]
-                    let predicate = NSPredicate(format: "label IN %@ OR identifier IN %@", names, names)
-                    let choices = [app.menuItems.matching(predicate), app.buttons.matching(predicate)]
-                    let selectable = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-                        choices.flatMap { $0.allElementsBoundByIndex }.contains { $0.exists && $0.isHittable }
-                    }, object: nil)
-                    let selectionReady = XCTWaiter.wait(for: [selectable], timeout: 5)
+                    let selectionReady = waitForObservation(timeout: 5, name: "Select All readiness") { deadline, traces in
+                        self.selectAllChoice(in: app, deadline: deadline, traces: &traces) != nil
+                    }
                     if selectionReady != .completed {
                         capture("replacement-select-all-unavailable", app: app)
                         print(app.debugDescription)
                     }
                     XCTAssertEqual(selectionReady, .completed, "Existing text must expose a reachable Select All edit action")
-                    guard let selectAll = choices.flatMap({ $0.allElementsBoundByIndex }).first(where: { $0.exists && $0.isHittable }) else {
+                    var selectionTraces: [UIObservationTrace] = []
+                    guard let selectAll = selectAllChoice(in: app, traces: &selectionTraces) else {
                         XCTFail("Missing reachable Select All edit action"); return
                     }
                     selectAll.tap()
@@ -1296,50 +1478,8 @@ final class CareerFinderUITests: XCTestCase {
         reveal(restored, in: app)
         XCTAssertTrue(restored.isSelected, "Appearance must survive an app relaunch")
         let restoredTabs = ["Start", "Search", "Apply", "Saved", "Settings"].map { app.tabBars.buttons[$0] }
-        @MainActor
-        func snapshotTree(_ root: any XCUIElementSnapshot) -> [any XCUIElementSnapshot] {
-            var elements = [root], index = 0
-            while index < elements.count {
-                elements.append(contentsOf: elements[index].children)
-                index += 1
-            }
-            return elements
-        }
-        let settled = waitForObservation(timeout: 5) {
-            // One fresh hierarchy supplies this probe's geometry and selection;
-            // the same five actual tabs still need independent live hit tests.
-            guard let snapshot = try? app.snapshot() else { return false }
-            let viewport = snapshot.frame
-            guard viewport.origin.x.isFinite, viewport.origin.y.isFinite,
-                  viewport.width.isFinite, viewport.height.isFinite,
-                  viewport.width > 0, viewport.height > 0 else { return false }
-            let elements = snapshotTree(snapshot)
-            let tabBars = elements.filter { $0.elementType == .tabBar }
-            let darkChoices = elements.filter {
-                $0.elementType == .button && $0.identifier == "settings.appearance.dark"
-            }
-            guard tabBars.count == 1, darkChoices.count == 1,
-                  darkChoices[0].isSelected else { return false }
-            let expectedNames = ["Start", "Search", "Apply", "Saved", "Settings"]
-            let currentTabs = snapshotTree(tabBars[0]).filter { $0.elementType == .button }
-            guard currentTabs.count == expectedNames.count,
-                  Set(currentTabs.map { $0.label }) == Set(expectedNames),
-                  currentTabs.first(where: { $0.label == "Settings" })?.isSelected == true else { return false }
-            for name in expectedNames {
-                guard let tab = currentTabs.first(where: { $0.label == name }) else { return false }
-                let frame = tab.frame
-                guard frame.origin.x.isFinite, frame.origin.y.isFinite,
-                      frame.width.isFinite, frame.height.isFinite,
-                      frame.width > 0, frame.height > 0,
-                      viewport.contains(frame) else { return false }
-                // Match label and identity within the typed live tab query. Each
-                // unique result is index-bound without assuming snapshot order.
-                let matches = app.tabBars.buttons.matching(NSPredicate(
-                    format: "label == %@ AND identifier == %@", name, tab.identifier
-                )).allElementsBoundByIndex
-                guard matches.count == 1, matches[0].isHittable else { return false }
-            }
-            return true
+        let settled = waitForObservation(timeout: 5, name: "Settings restored pose") { deadline, traces in
+            self.restoredSettingsPoseIsVisible(in: app, deadline: deadline, traces: &traces)
         }
         captureObservation("24a-settings-dark-restored-large-text", app: app,
                            details: "post-relaunch=true\nselectedDark=\(restored.isSelected)\nwindow=\(app.frame)\ntabs=\(restoredTabs.map { "\($0.label):\($0.frame)" })")
