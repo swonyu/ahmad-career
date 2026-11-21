@@ -4,6 +4,15 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {createJourneyHarness, readFixtureBody} from './fixtures/journey-browser/harness.mjs';
 
+// An owned parent closes through its private IPC channel. Miniflare's SIGTERM
+// hook exits synchronously, before our asynchronous state cleanup can finish.
+let shutdownRequested = false, shutdownReady = false;
+process.on('message', message => {
+  if (message !== 'career-finder-owned-preview-stop-v1') return;
+  shutdownRequested = true;
+  if (shutdownReady) void shutdown();
+});
+
 const args = process.argv.slice(2);
 if (![4, 6].includes(args.length) || args[0] !== '--output-dir' || args[2] !== '--state-dir' || !path.isAbsolute(args[1]) || !path.isAbsolute(args[3]) || args.length === 6 && (args[4] !== '--port' || !/^\d{1,5}$/.test(args[5]))) throw Error('Usage: node tests/serve-journey-browser.mjs --output-dir /absolute/bundle --state-dir /absolute/isolated-state [--port PORT]');
 const requestedPort = args.length === 6 ? Number(args[5]) : 0;
@@ -49,5 +58,8 @@ async function shutdown() {
   await new Promise(resolve => server.close(resolve));
   await harness.dispose();
   console.log(JSON.stringify({stoppedAt: new Date().toISOString(), outboundAttempts: harness.outboundAttempts}));
+  if (process.connected) process.disconnect();
 }
 process.once('SIGINT', shutdown); process.once('SIGTERM', shutdown);
+shutdownReady = true;
+if (shutdownRequested) void shutdown();
