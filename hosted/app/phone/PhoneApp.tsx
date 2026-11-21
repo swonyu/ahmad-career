@@ -15,6 +15,8 @@ import SignOutButton from "../components/SignOutButton";
 import OAuthFeedback from "../components/OAuthFeedback";
 import { phoneSafety, heldPlan } from "./safety";
 import { phoneAPI } from "./api";
+import { parseDiscoverySourceIdentity } from "../../server/discovery-source-identity.mjs";
+import { discoverySourceKey, distinctDiscoverySources } from "./discovery-sources";
 import { ApplicationGuide } from "./ApplicationGuide";
 import { readCheckedPDF } from "./pdf";
 import { applicationRecordsCSV, followUpCalendar, matchesSavedList, savedListEmptyMessage, type SavedStage } from "./record-tools";
@@ -328,7 +330,20 @@ export default function PhoneApp({ account }: { account: Account }) {
     requestAnimationFrame(() => { heading.current?.focus(); window.scrollTo({ top: 0, behavior: "instant" }); });
   };
 
-  const addEmployerBoard = () => { try { const value = publicURL(customBoard.trim()); const url = new URL(value); if (!["jobs.lever.co", "jobs.eu.lever.co", "boards.greenhouse.io", "job-boards.greenhouse.io"].includes(url.hostname)) throw Error("Choose a Lever or Greenhouse employer board. Other job links can be added directly in Saved."); if (searchSources.length >= 4) throw Error("Uncheck one board before adding another. You can search four at a time."); if (searchSources.includes(value)) throw Error("This board is already selected."); setBoardsTouched(true); setFilters({ ...filters, sources: [...searchSources, value] }); setCustomBoard(""); } catch (error) { setNotice({ text: message(error), error: true }); } };
+  const addEmployerBoard = () => {
+    try {
+      const input = customBoard.trim();
+      const url = new URL(publicURL(input));
+      if (!["jobs.lever.co", "jobs.eu.lever.co", "boards.greenhouse.io", "job-boards.greenhouse.io"].includes(url.hostname)) throw Error("Choose a Lever or Greenhouse employer board. Other job links can be added directly in Saved.");
+      // Parse the original input: URL normalization must not erase forbidden paths.
+      const source = parseDiscoverySourceIdentity(input);
+      if (searchSources.some(value => discoverySourceKey(value) === source.id)) throw Error("This board is already selected.");
+      if (searchSources.length >= 4) throw Error("Uncheck one board before adding another. You can search four at a time.");
+      setBoardsTouched(true);
+      setFilters({ ...filters, sources: [...searchSources, source.boardUrl] });
+      setCustomBoard("");
+    } catch (error) { setNotice({ text: message(error), error: true }); }
+  };
 
   const searchJobs = (mode: "new" | "more" | "retry" = "new") => run(mode === "more" ? "Loading more jobs" : "Searching employer boards", async generation => {
     const more = mode === "more";
@@ -842,8 +857,8 @@ export default function PhoneApp({ account }: { account: Account }) {
   const ready = Object.values(profileEssentials(profile)).every(Boolean);
   const cannotSave = Boolean(busy || loading || locked || checkingIdentity || storageProblem || !snapshot);
   const profilesDiffer = workspace && (profile.revision !== workspace.profile.revision || snapshot?.profileDirty);
-  const searchSources = boardsTouched ? filters.sources : filters.sources.length ? filters.sources : catalog?.defaults ?? [];
-  const searchSourceNames = searchSources.map(id => catalog?.sources.find(source => source.id === id)?.name ?? id);
+  const searchSources = distinctDiscoverySources(boardsTouched ? filters.sources : filters.sources.length ? filters.sources : catalog?.defaults ?? []);
+  const searchSourceNames = searchSources.map(id => catalog?.sources.find(source => source.id === discoverySourceKey(id))?.name ?? id);
   const savedRoleSuggestions = [...new Set((snapshot?.profile.targetRoles ?? []).map(role => role.trim()).filter(Boolean))].slice(0, 3);
   const incompleteSearch = Boolean(searchPage && (searchPage.status !== "complete" || searchPage.limited || searchPage.sources.some(source => source.limited || source.error || ["stale", "unavailable"].includes(source.status))));
   const localResultLimitReached = Boolean(searchPage?.nextCursor && searchPage.jobs.length >= 200);
@@ -878,8 +893,8 @@ export default function PhoneApp({ account }: { account: Account }) {
           <label className="phone-check"><input type="checkbox" checked={filters.remoteOnly} onChange={event => setFilters({ ...filters, remoteOnly: event.target.checked })} /><span>{t("Remote jobs only")}</span></label>
           {searchSourceNames.length > 0 && <p className="phone-search-coverage">{t("Selected employer boards:")} {searchSourceNames.map((name, index) => <span key={searchSources[index]}>{index > 0 ? language === "ar" ? "، " : ", " : ""}<bdi>{name}</bdi></span>)}</p>}
           <details className="phone-search-options"><summary><SlidersHorizontal size={17} aria-hidden="true" /> {t(" Search options ")}<span>{t("Boards: {0}", [formatNumber(searchSources.length, language)])}</span></summary><p className="phone-note">{t("Search up to four employer boards at a time. These results cover the boards you choose, not every job available.")}</p>
-            {catalog?.sources.map(source => <label className="phone-check" key={source.id}><input type="checkbox" checked={searchSources.includes(source.id)} onChange={event => { const next = event.target.checked ? [...searchSources, source.id] : searchSources.filter(id => id !== source.id); if (next.length <= 4) { setBoardsTouched(true); setFilters({ ...filters, sources: next }); } else setNotice({ text: "Choose up to four employer boards at a time.", error: true }); }} /><span dir="auto">{source.name}</span></label>)}
-            {searchSources.filter(source => !catalog?.sources.some(known => known.id === source)).map(source => <label className="phone-check" key={source}><input type="checkbox" checked onChange={() => { setBoardsTouched(true); setFilters({ ...filters, sources: searchSources.filter(value => value !== source) }); }} /><span dir="auto">{source}</span></label>)}
+            {catalog?.sources.map(source => <label className="phone-check" key={source.id}><input type="checkbox" checked={searchSources.some(value => discoverySourceKey(value) === source.id)} onChange={event => { const next = event.target.checked ? [...searchSources, source.id] : searchSources.filter(id => discoverySourceKey(id) !== source.id); if (next.length <= 4) { setBoardsTouched(true); setFilters({ ...filters, sources: next }); } else setNotice({ text: "Choose up to four employer boards at a time.", error: true }); }} /><span dir="auto">{source.name}</span></label>)}
+            {searchSources.filter(source => !catalog?.sources.some(known => known.id === discoverySourceKey(source))).map(source => <label className="phone-check" key={source}><input type="checkbox" checked onChange={() => { setBoardsTouched(true); setFilters({ ...filters, sources: searchSources.filter(value => value !== source) }); }} /><span dir="auto">{source}</span></label>)}
             <label>{t("Another employer’s board ")}<span className="optional">{t("optional")}</span><input type="url" dir="ltr" maxLength={2048} value={customBoard} onChange={event => setCustomBoard(event.target.value)} onKeyDown={event => { if (event.key !== "Enter" || event.nativeEvent.isComposing || event.keyCode === 229) return; event.preventDefault(); addEmployerBoard(); }} placeholder="https://jobs.lever.co/employer" autoCapitalize="none" autoCorrect="off" /></label><button type="button" className="button secondary full" onClick={addEmployerBoard}>{t("Add employer board")}</button><p className="phone-note">{t("Use a public Lever or Greenhouse employer board link. Other job pages can be added directly in Saved.")}</p>
           </details>
           <button className="button primary full" type="submit" disabled={Boolean(busy)}><Search size={18} aria-hidden="true" />{t("Search jobs")}</button>

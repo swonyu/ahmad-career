@@ -5,6 +5,7 @@ import path from "node:path";
 import vm from "node:vm";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
+import * as sourceIdentity from "../server/discovery-source-identity.mjs";
 
 // Evidence overrides select a source copy without changing the repository.
 // Normal project execution reads the real PhoneApp and installed dependencies.
@@ -23,6 +24,7 @@ function execute(source, scope = {}, loader = require) {
   return context.exports;
 }
 const model = execute(read("app/phone/model.ts"));
+const sourceHelpers = execute(read("app/phone/discovery-sources.ts"), {}, name => name === "../../server/discovery-source-identity.mjs" ? sourceIdentity : require(name));
 const { APIError } = execute(read("app/components/api.ts"));
 const { PhoneVaultError } = execute(read("app/phone/vault.ts"), {}, name => name === "./model" ? model : require(name));
 const source = process.env.CAREER_ACTIONS_SOURCE ? fs.readFileSync(process.env.CAREER_ACTIONS_SOURCE, "utf8") : read("app/phone/PhoneApp.tsx");
@@ -125,7 +127,7 @@ function renderCheckbox(h, identity = identityA) {
 }
 function boardHarness({ url = "https://jobs.lever.co/synthetic-new", sources = ["lever:global:synthetic-old"] } = {}) {
   const searches = [], filterWrites = [], context = {
-    ...model, z: require("zod").z, Error, URL, require, exports: {}, customBoard: url, boardsTouched: true,
+    ...model, ...sourceHelpers, ...sourceIdentity, z: require("zod").z, Error, URL, require, exports: {}, customBoard: url, boardsTouched: true,
     filters: { query: "Engineer مهندس", location: "Riyadh", remoteOnly: true, sources: [...sources] }, catalog: null, notice: null,
     setBoardsTouched(value) { context.boardsTouched = value; },
     setCustomBoard(value) { context.customBoard = value; },
@@ -272,5 +274,44 @@ test("title and location keep ordinary search submission without adding the cust
     assert.equal(h.searches.length, 1); assert.equal(h.filterWrites.length, 0);
     assert.deepEqual(h.searches[0].sources, ["lever:global:synthetic-old"]);
     assert.equal(h.context.customBoard, "https://jobs.lever.co/synthetic-new");
+  }
+});
+
+
+test("equivalent board IDs and URLs remain one restored selection without dropping invalid data", () => {
+  const values = [" lever:global:synthetic-new ", "https://jobs.lever.co/SYNTHETIC-NEW?utm_source=fixture", "greenhouse:synthetic-old", "https://boards.greenhouse.io/embed/job_board?for=synthetic-old", "lever:eu:synthetic-new", "invalid saved board", " "];
+  assert.deepEqual(plain(sourceHelpers.distinctDiscoverySources(values)), ["lever:global:synthetic-new", "greenhouse:synthetic-old", "lever:eu:synthetic-new", "invalid saved board"]);
+  const h = boardHarness({ sources: values.slice(0, 4) });
+  assert.deepEqual(plain(h.context.searchSources), ["lever:global:synthetic-new", "greenhouse:synthetic-old"]);
+  h.context.submitSearch({ preventDefault() {} });
+  assert.equal(h.searches.length, 1);
+  assert.equal(h.filterWrites.length, 0, "rendering a restored selection does not rewrite private storage");
+});
+
+test("an equivalent custom URL is rejected as duplicate even at the four-board limit", () => {
+  for (const action of ["click", "enter"]) {
+    const h = boardHarness({ url: "https://jobs.lever.co/SYNTHETIC-NEW/00000000-0000-4000-8000-000000000001/apply?source=fixture", sources: ["lever:global:synthetic-new", "lever:global:b", "greenhouse:c", "lever:eu:d"] });
+    if (action === "click") h.context.clickAdd(); else enterBoard(h);
+    assert.equal(h.context.notice?.text, "This board is already selected.");
+    assert.equal(h.filterWrites.length, 0); assert.equal(h.searches.length, 0);
+  }
+});
+
+test("Greenhouse host and embed aliases collide while separate providers and regions do not", () => {
+  const duplicate = boardHarness({ url: "https://boards.greenhouse.io/embed/job_board?for=synthetic-old", sources: ["greenhouse:synthetic-old"] });
+  duplicate.context.clickAdd();
+  assert.equal(duplicate.context.notice?.text, "This board is already selected.");
+  for (const sources of [["lever:eu:synthetic-new"], ["greenhouse:synthetic-new"]]) {
+    const h = boardHarness({ sources }); h.context.clickAdd();
+    assert.equal(h.context.notice, null); assert.equal(h.filterWrites.length, 1);
+    assert.deepEqual(plain(h.context.filters.sources), [...sources, "https://jobs.lever.co/synthetic-new"]);
+  }
+});
+
+test("raw traversal and unsupported board paths remain invalid before URL normalization", () => {
+  for (const url of ["https://jobs.lever.co/previous/../synthetic-new", "https://jobs.lever.co/%73ynthetic-new", "https://jobs.lever.co/synthetic-new/unsupported", "https://jobs.lever.co/synthetic-new#fragment"]) {
+    const h = boardHarness({ url }); h.context.clickAdd();
+    assert.equal(h.context.notice?.error, true, url); assert.equal(h.filterWrites.length, 0); assert.equal(h.searches.length, 0);
+    assert.equal(h.context.customBoard, url);
   }
 });
