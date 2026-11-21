@@ -17,6 +17,7 @@ import { phoneSafety, heldPlan } from "./safety";
 import { phoneAPI } from "./api";
 import { parseDiscoverySourceIdentity } from "../../server/discovery-source-identity.mjs";
 import { discoverySourceKey, distinctDiscoverySources } from "./discovery-sources";
+import { emptySearchHistory, evaluateSearchHistory, searchHistoryKey, type SearchNewResult } from "./search-history";
 import { ApplicationGuide } from "./ApplicationGuide";
 import { readCheckedPDF } from "./pdf";
 import { applicationRecordsCSV, followUpCalendar, matchesSavedList, savedListEmptyMessage, type SavedStage } from "./record-tools";
@@ -107,6 +108,9 @@ export default function PhoneApp({ account }: { account: Account }) {
   const [boardsTouched, setBoardsTouched] = useState(false), [customBoard, setCustomBoard] = useState("");
   const [filters, setFiltersState] = useState<Filters>({ ...emptyFilters }), [searchPage, setSearchPage] = useState<DiscoveryPage | null>(null), [searchedFilters, setSearchedFilters] = useState<Filters | null>(null), [restored, setRestored] = useState(false);
   const filterDraftRef = useRef<Filters>({ ...emptyFilters });
+  const [searchNewResult, setSearchNewResult] = useState<SearchNewResult | null>(null), [showNewOnly, setShowNewOnlyState] = useState(false);
+  const showNewOnlyRef = useRef(false);
+  const setShowNewOnly = (value: boolean) => { showNewOnlyRef.current = value; setShowNewOnlyState(value); };
   const [savedFilter, setSavedFilter] = useState<"all" | "applied" | "followups">("all"), [savedQuery, setSavedQuery] = useState(""), [savedStage, setSavedStage] = useState<SavedStage>("all");
   const [dialog, setDialog] = useState<Dialog>(null), [selected, setSelected] = useState<string[]>([]), [plan, setPlan] = useState<Plan | null>(null);
   const [employerAnswers, setEmployerAnswers] = useState<Record<string, EmployerAnswer>>({}), [reviewAccepted, setReviewAccepted] = useState(false);
@@ -173,7 +177,7 @@ export default function PhoneApp({ account }: { account: Account }) {
       quarantine.current = { snapshot: current, profile, formChanged, dialog: recoverableDialog, dialogDirty: Boolean(recoverableDialog && dialogDirty), editorDraft: recoverableDialog?.kind === "record" ? editorDraft : null }; setHasQuarantinedEdits(true);
       if (drafts.length) { setRecoveryStatus("Keeping unfinished edits private for the original account…"); void preserveUnfinished(current.scope, drafts).then(() => setRecoveryStatus("Unfinished edits were saved privately for the original account. Sign in with that account to recover them.")).catch(() => setRecoveryStatus("Unfinished edits are kept on this page. Sign in with the original account and recover or export them before reloading.")); }
     }
-    setSafetyState({ holds: [], recovery: [] }); setSafetyError(""); setEditorDraft(null); setStorageCode(""); epoch.current++; identityUnverified.current = false; snapshotRef.current = null; workspaceRef.current = null; setSnapshot(null); setWorkspace(null); setProfile(blankProfile()); setFormChanged(false); setPlan(null); setSelected([]); setDialog(null); setDialogDirty(false); setConfirmDialogDiscard(false); setOlderDrafts([]); setStorageProblem(""); setSearchPage(null); setSearchedFilters(null); setFilters({ ...emptyFilters }); setEmployerAnswers({}); setReviewAccepted(false); setCheckingIdentity(false); setLocked(true); };
+    setSafetyState({ holds: [], recovery: [] }); setSafetyError(""); setEditorDraft(null); setStorageCode(""); epoch.current++; identityUnverified.current = false; snapshotRef.current = null; workspaceRef.current = null; setSnapshot(null); setWorkspace(null); setProfile(blankProfile()); setFormChanged(false); setPlan(null); setSelected([]); setDialog(null); setDialogDirty(false); setConfirmDialogDiscard(false); setOlderDrafts([]); setStorageProblem(""); setSearchPage(null); setSearchedFilters(null); setSearchNewResult(null); setShowNewOnly(false); setFilters({ ...emptyFilters }); setEmployerAnswers({}); setReviewAccepted(false); setCheckingIdentity(false); setLocked(true); };
   const lockFromEffect = useEffectEvent(() => lock());
 
   useEffect(() => {
@@ -205,7 +209,12 @@ export default function PhoneApp({ account }: { account: Account }) {
         const next = { ...data, profile: savedProfile, jobs: remote ? mergeJobs(local?.jobs ?? null, remote.jobs) : data.jobs };
         putSnapshot(next); setProfile(savedProfile); setFilters(next.filters);
         try { const safety = await phoneSafety.load(scope); if (!cancelled && generation === epoch.current) setSafetyState(safety); } catch (error) { if (!cancelled) setSafetyError(message(error)); }
-        if (next.lastSearch) { setSearchPage({ ...next.lastSearch.page, nextCursor: null }); setSearchedFilters(next.lastSearch.filters); setRestored(true); }
+        if (next.lastSearch) {
+          setSearchPage({ ...next.lastSearch.page, nextCursor: null }); setSearchedFilters(next.lastSearch.filters); setRestored(true);
+          const savedNew = next.lastSearch.newResult;
+          setSearchNewResult(savedNew?.key === searchHistoryKey(next.lastSearch.filters) ? savedNew : null);
+          setShowNewOnly(false);
+        }
         if (account) {
           const prefix = `account:${encodeURIComponent(account.id)}:`;
           const mainRows = await listPhoneSnapshots(prefix), recoveryRows = await phoneSafety.list(prefix);
@@ -388,8 +397,15 @@ export default function PhoneApp({ account }: { account: Account }) {
       }
       // The form remains an editable draft. A response must never replace
       // newer edits, including when retrying or paginating an earlier search.
-      setSearchPage(result); setSearchedFilters(requested); setRestored(false);
-      if (snapshotRef.current && !storageProblem) await persist({ ...local(), filters: filterDraftRef.current, lastSearch: { filters: requested, page: { ...result, nextCursor: null } } }, generation);
+      const keepNewOnly = more && showNewOnlyRef.current;
+      setSearchPage(result); setSearchedFilters(requested); setRestored(false); setSearchNewResult(null); setShowNewOnly(false);
+      if (snapshotRef.current && !storageProblem) {
+        const data = local();
+        const familiarity = evaluateSearchHistory({ history: data.searchHistory ?? emptySearchHistory(), filters: requested, page: result, now: Date.now(), previousResult: more ? searchNewResult ?? undefined : undefined });
+        await persist({ ...data, filters: filterDraftRef.current, ...(familiarity.result ? { searchHistory: familiarity.history } : {}), lastSearch: { filters: requested, page: { ...result, nextCursor: null }, ...(familiarity.result ? { newResult: familiarity.result } : {}) } }, generation);
+        setSearchNewResult(familiarity.result);
+        if (keepNewOnly && familiarity.result?.comparedSourceIds.length) setShowNewOnly(true);
+      }
     } finally {
       if (searchAbort.current === controller) searchAbort.current = null;
     }
@@ -862,6 +878,10 @@ export default function PhoneApp({ account }: { account: Account }) {
   const savedRoleSuggestions = [...new Set((snapshot?.profile.targetRoles ?? []).map(role => role.trim()).filter(Boolean))].slice(0, 3);
   const incompleteSearch = Boolean(searchPage && (searchPage.status !== "complete" || searchPage.limited || searchPage.sources.some(source => source.limited || source.error || ["stale", "unavailable"].includes(source.status))));
   const localResultLimitReached = Boolean(searchPage?.nextCursor && searchPage.jobs.length >= 200);
+  const newSearchIDs = new Set(searchNewResult?.newIds ?? []);
+  const shownSearchJobs = (searchPage?.jobs ?? []).filter(job => !showNewOnly || newSearchIDs.has(job.id));
+  const newSearchCount = (searchPage?.jobs ?? []).filter(job => newSearchIDs.has(job.id)).length;
+  const hasSearchComparison = Boolean(searchNewResult?.comparedSourceIds.length);
   const searchSummary = [
     incompleteSearch ? t("This search is incomplete. Review the source details, or retry the same search.") : localResultLimitReached ? "" : t("Search complete."),
     localResultLimitReached ? t("You have viewed 200 results. Refine the job title, location, or employer boards to narrow your search.") : "",
@@ -884,7 +904,7 @@ export default function PhoneApp({ account }: { account: Account }) {
 
 
       {!checkingIdentity && !locked && tab === "search" && <>
-        <p className="visually-hidden" role="status" aria-live="polite" aria-atomic="true">{!busy && searchPage ? t(searchPage.jobs.length === 1 ? "{0} job shown. {1}" : "{0} jobs shown. {1}", [formatNumber(searchPage.jobs.length, language), searchSummary]) : ""}</p>
+        <p className="visually-hidden" role="status" aria-live="polite" aria-atomic="true">{!busy && searchPage ? t(shownSearchJobs.length === 1 ? "{0} job shown. {1}" : "{0} jobs shown. {1}", [formatNumber(shownSearchJobs.length, language), searchSummary]) : ""}</p>
         <div className="phone-discovery-layout"><div className="phone-search-primary"><form className="phone-search-card" onSubmit={event => { event.preventDefault(); void searchJobs(); }}>
           <label>{t("Job title or keyword")}<div className="phone-input-icon"><Search size={19} aria-hidden="true" /><input dir="auto" autoComplete="off" maxLength={120} placeholder={t("e.g. Designer, nurse, sales")} value={filters.query} onChange={event => setFilters({ ...filters, query: event.target.value })} /></div></label>
           {savedRoleSuggestions.length > 0 && <div className="phone-profile-search"><p className="phone-note">{t("Choose a job title from your saved profile")}</p><div className="phone-suggestions">{savedRoleSuggestions.map(role => <button type="button" key={role} onClick={() => setFilters({ ...filters, query: role })}><bdi>{role}</bdi></button>)}</div><p className="phone-note">{t("This fills the job title only. Choose Search jobs to run the search.")}</p></div>}
@@ -905,14 +925,21 @@ export default function PhoneApp({ account }: { account: Account }) {
         {due > 0 && <button className="phone-link-card phone-followup-link" onClick={() => { setSavedQuery(""); setSavedFilter("followups"); setSavedStage("all"); navigate("saved"); }}><div><strong>{t("Follow-ups due: {0}", [formatNumber(due, language)])}</strong><span>{t("Review follow-up dates")}</span></div><ChevronRight size={21} aria-hidden="true" /></button>}
         </aside></div>
         {!searchPage ? <section className="phone-empty"><p className="phone-kicker">{t("EXAMPLE SEARCHES")}</p><h2>{t("Search by job field")}</h2><p>{t("Choose an example below or enter a job title above.")}</p><div className="phone-suggestions">{["Customer service", "Software", "Healthcare"].map(value => <button key={value} onClick={() => setFilters({ ...filters, query: value })}>{t(value)}</button>)}</div></section> : <section aria-label={t("Job search results")} className="phone-results">
-          <div className="phone-section-heading"><h2>{restored ? t("Previous results") : t("Search results")}</h2><span>{t("{0} shown", [formatNumber(searchPage.jobs.length, language)])}</span></div>
+          <div className="phone-section-heading"><h2>{restored ? t("Previous results") : t("Search results")}</h2><span>{showNewOnly ? t("{0} of {1} shown", [formatNumber(shownSearchJobs.length, language), formatNumber(searchPage.jobs.length, language)]) : t("{0} shown", [formatNumber(searchPage.jobs.length, language)])}</span></div>
           <p className="phone-search-coverage">{t("Results from:")} {searchPage.sources.map((source, index) => <span key={source.id}>{index > 0 ? language === "ar" ? "، " : ", " : ""}<bdi>{source.name}</bdi></span>)}</p>
           <p className="phone-note">{t("Search from ")}<bdi>{displayTime(searchPage.generatedAt)}</bdi>. {restored ? t("Search again to check current openings.") : t("An employer may close or change a job after this check.")}</p>
           {searchedFilters && !same({ ...filters, sources: searchSources }, searchedFilters) && <p className="phone-inline-note">{t("Search again to use your changed filters.")}</p>}
+          {hasSearchComparison && <section className="phone-search-updates" aria-label={t("New since my last search")}>
+            <div><strong>{t(newSearchCount === 1 ? "{0} role new to this search" : "{0} roles new to this search", [formatNumber(newSearchCount, language)])}</strong><p className="phone-note">{t("First seen in this search, based on history saved on this phone.")}</p></div>
+            <div className="phone-segmented" role="group" aria-label={t("Filter search results")}><button type="button" aria-pressed={!showNewOnly} onClick={() => setShowNewOnly(false)}>{t("All results")}</button><button type="button" aria-pressed={showNewOnly} onClick={() => setShowNewOnly(true)}>{t("New only")}</button></div>
+            {searchNewResult?.coverageLimited && <p className="phone-note">{t("This count covers the boards we could compare. Other results may need a complete check first.")}</p>}
+          </section>}
+          {searchNewResult?.baselineReset && <p className="phone-inline-note">{t("Older search history reached this phone’s limit. A fresh baseline is kept without marking old openings as new.")}</p>}
           {incompleteSearch && searchPage.jobs.length > 0 && <div className="phone-inline-note" role="status"><p>{t("This search is incomplete. Review the source details, or retry the same search.")}</p>{searchedFilters && <button className="text-button" disabled={Boolean(busy) || loading || locked || checkingIdentity} onClick={() => void searchJobs("retry")}>{t("Retry this search")}</button>}</div>}
           {searchPage.sources.filter(source => source.error || ["stale", "unavailable"].includes(source.status)).map(source => <div className="phone-source-note" key={source.id}><strong><bdi>{source.name}</bdi></strong><a className="text-button" href={source.boardUrl} target="_blank" rel="noopener noreferrer">{t("Open employer page ")}<span className="visually-hidden"><bdi>{source.name}</bdi></span></a>{source.status === "stale" && <p>{t("Showing an earlier check of this board.")}</p>}{(source.error?.message || source.status !== "stale") && <p>{source.error?.message ? t(source.error.message) : t("This board could not provide current results.")}</p>}</div>)}
           {!searchPage.jobs.length && <DiscoveryEmptyState status={searchPage.status === "complete" && incompleteSearch ? "partial" : searchPage.status} busy={Boolean(busy) || loading || locked || checkingIdentity} onRetry={searchedFilters ? () => void searchJobs("retry") : undefined} />}
-          {searchPage.jobs.map(job => <JobCard key={jobIdentity(job.url)} job={{ ...job, country: job.country ?? "" }} saved={jobs.some(saved => jobIdentity(saved.url) === jobIdentity(job.url))} onSave={() => void saveJob({ ...job, country: job.country ?? "" })} onDetails={() => setDialog({ kind: "details", job: { ...job, country: job.country ?? "" } })} busy={cannotSave} />)}
+          {showNewOnly && !shownSearchJobs.length && searchPage.jobs.length > 0 && <div className="phone-empty compact"><h3>{t("No openings are new in the results compared.")}</h3><button type="button" className="text-button" onClick={() => setShowNewOnly(false)}>{t("Show all results")}</button></div>}
+          {shownSearchJobs.map(job => <JobCard key={jobIdentity(job.url)} newToSearch={newSearchIDs.has(job.id)} job={{ ...job, country: job.country ?? "" }} saved={jobs.some(saved => jobIdentity(saved.url) === jobIdentity(job.url))} onSave={() => void saveJob({ ...job, country: job.country ?? "" })} onDetails={() => setDialog({ kind: "details", job: { ...job, country: job.country ?? "" } })} busy={cannotSave} />)}
           {localResultLimitReached && <p className="phone-inline-note">{t("You have viewed 200 results. Refine the job title, location, or employer boards to narrow your search.")}</p>}
           {searchPage.nextCursor && !restored && !localResultLimitReached && <button className="button secondary full" disabled={Boolean(busy)} onClick={() => void searchJobs("more")}>{t("Load more jobs")}</button>}
           {searchPage.limited && <p className="phone-note">{t("Some boards have more jobs than can be checked at once. Open an employer’s website for its complete list.")}</p>}

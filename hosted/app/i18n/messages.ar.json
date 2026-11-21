@@ -1360,5 +1360,18 @@
   "This {0} account is already connected to another Career Finder account. To open that account, choose Sign out on Account, then sign in with {0}. Any saved data stays with its original account.": "حساب {0} هذا مرتبط بالفعل بحساب آخر في Career Finder. لفتح ذلك الحساب، اختر «تسجيل الخروج» من صفحة «الحساب»، ثم سجّل الدخول باستخدام {0}. تبقى أي بيانات محفوظة في حسابها الأصلي.",
   "Save draft on this phone": "حفظ المسودة على هذا الهاتف",
   "You can save an unfinished draft on this phone.": "يمكنك حفظ مسودة غير مكتملة على هذا الهاتف.",
-  "Boards: {0}": "الصفحات: {0}"
+  "Boards: {0}": "الصفحات: {0}",
+  "New since my last search": "الجديد منذ بحثي السابق",
+  "{0} role new to this search": "فرصة جديدة في هذا البحث: {0}",
+  "{0} roles new to this search": "فرص جديدة في هذا البحث: {0}",
+  "First seen in this search, based on history saved on this phone.": "ظهرت للمرة الأولى في هذا البحث بحسب السجل المحفوظ على هذا الهاتف.",
+  "Filter search results": "تصفية نتائج البحث",
+  "All results": "كل النتائج",
+  "New only": "الجديد فقط",
+  "This count covers the boards we could compare. Other results may need a complete check first.": "يشمل العدد صفحات جهات العمل التي أمكن مقارنتها. قد تحتاج النتائج الأخرى إلى فحص كامل أولًا.",
+  "Older search history reached this phone’s limit. A fresh baseline is kept without marking old openings as new.": "بلغ سجل البحث الأقدم حد التخزين على هذا الهاتف. حُفظت نقطة بداية جديدة دون اعتبار الفرص القديمة جديدة.",
+  "No openings are new in the results compared.": "لا توجد فرص جديدة ضمن النتائج التي تمت مقارنتها.",
+  "Show all results": "عرض كل النتائج",
+  "New to this search": "جديدة في هذا البحث",
+  "{0} of {1} shown": "المعروض: {0} من {1}"
 }

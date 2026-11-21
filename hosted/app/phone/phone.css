@@ -79,3 +79,5 @@
   .phone-header-actions .header-settings>span{display:none}
   .phone-header-actions .header-signin{white-space:nowrap}
 }
+
+.phone-search-updates{display:grid;gap:12px;padding:18px;border:1px solid var(--line);border-radius:18px;background:var(--soft);margin:16px 0}.phone-search-updates strong{font-size:1rem;line-height:1.5}.phone-search-updates .phone-note{margin:6px 0 0}.phone-search-updates .phone-segmented{margin:0}.phone-search-updates .phone-segmented button{min-width:0;flex:1;overflow-wrap:anywhere}.phone-new-opening{display:inline-flex;max-width:100%;align-items:center;padding:5px 10px;margin-bottom:12px;border:1px solid var(--line);border-radius:8px;background:var(--soft);color:var(--accent);font-size:.75rem;font-weight:700;line-height:1.5;overflow-wrap:anywhere}

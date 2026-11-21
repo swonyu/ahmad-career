@@ -171,12 +171,32 @@ export const stopHoldSchema = z.object({ planId: z.string().uuid(), requestedAt:
 export type StopHold = z.infer<typeof stopHoldSchema>;
 export const phoneSafetySchema = z.object({ holds: z.array(stopHoldSchema).max(100), recovery: z.array(recoveryDraftSchema).max(20) });
 export type PhoneSafety = z.infer<typeof phoneSafetySchema>;
-export const phoneSnapshotSchema = z.object({ schema: z.literal(PHONE_SCHEMA), scope: z.string().min(1).max(600), profile: draftProfileSchema, profileDirty: z.boolean(), jobs: z.array(jobSchema).max(200), records: z.array(recordSchema).max(500), filters: filtersSchema, lastSearch: z.object({ filters: filtersSchema, page: discoveryPageSchema.extend({ jobs: z.array(discoveryJobSchema).max(200) }) }).nullable(), safety: phoneSafetySchema.optional() });
+// Search familiarity belongs to this encrypted profile scope. Older snapshots
+// omit these optional fields and establish a new baseline without new-job badges.
+const searchIdentity = boundedText(250).min(1);
+const searchSourceIdentity = z.string().max(150).regex(/^(?:greenhouse:[a-z0-9][a-z0-9_-]{0,79}|lever:(?:global|eu):[a-z0-9][a-z0-9_-]{0,79})$/);
+const distinctStrings = <T extends z.ZodType<string>>(value: T, maximum: number) => z.array(value).max(maximum).refine(items => new Set(items).size === items.length, "Search history contains duplicate identities");
+const searchHistoryBoardSchema = z.object({ sourceId: searchSourceIdentity, seenIds: distinctStrings(searchIdentity, 1000), ready: z.boolean() }).refine(board => board.seenIds.every(id => id.startsWith(board.sourceId + ":")), "Posting history must belong to its employer board");
+export const searchHistorySchema = z.object({ version: z.literal(1), searches: z.array(z.object({
+  key: boundedText(8192).min(1), lastUsedAt: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER),
+  boards: z.array(searchHistoryBoardSchema).max(4).refine(boards => new Set(boards.map(board => board.sourceId)).size === boards.length, "Search history contains duplicate boards"),
+})).max(8) }).refine(value => new Set(value.searches.map(search => search.key)).size === value.searches.length, "Search history contains duplicate searches")
+  .refine(value => value.searches.reduce((total, search) => total + search.boards.reduce((count, board) => count + board.seenIds.length, 0), 0) <= 4000, "Search history exceeds its local limit");
+export const searchNewResultSchema = z.object({
+  key: boundedText(8192).min(1), newIds: distinctStrings(searchIdentity, 200),
+  comparedSourceIds: distinctStrings(searchSourceIdentity, 4), baselinedSourceIds: distinctStrings(searchSourceIdentity, 4), pendingSourceIds: distinctStrings(searchSourceIdentity, 4),
+  coverageLimited: z.boolean(), baselineReset: z.boolean(),
+});
+export type SearchHistory = z.infer<typeof searchHistorySchema>;
+export type SearchNewResult = z.infer<typeof searchNewResultSchema>;
+
+export const phoneSnapshotSchema = z.object({ schema: z.literal(PHONE_SCHEMA), scope: z.string().min(1).max(600), profile: draftProfileSchema, profileDirty: z.boolean(), jobs: z.array(jobSchema).max(200), records: z.array(recordSchema).max(500), filters: filtersSchema, lastSearch: z.object({ filters: filtersSchema, page: discoveryPageSchema.extend({ jobs: z.array(discoveryJobSchema).max(200) }), newResult: searchNewResultSchema.optional() }).nullable(), searchHistory: searchHistorySchema.optional(), safety: phoneSafetySchema.optional() });
 export type PhoneSnapshot = z.infer<typeof phoneSnapshotSchema>;
 export function blankSnapshot(scope: string): PhoneSnapshot { return { schema: PHONE_SCHEMA, scope, profile: blankProfile(), profileDirty: false, jobs: [], records: [], filters: { ...emptyFilters, sources: [] }, lastSearch: null }; }
 export function parseSnapshot(value: unknown, scope: string): PhoneSnapshot {
   const data = phoneSnapshotSchema.parse(value);
   if (data.scope !== scope) throw Error("This saved draft belongs to another account. Your previous data was preserved.");
   if (new Set(data.jobs.map(j => jobIdentity(j.url))).size !== data.jobs.length || new Set(data.records.map(r => r.identity)).size !== data.records.length) throw Error("This saved draft contains conflicting records. Your previous data was preserved.");
+  if (data.lastSearch?.newResult && !data.lastSearch.newResult.newIds.every(id => data.lastSearch?.page.jobs.some(job => job.id === id))) throw Error("This saved search contains conflicting new-opening markers. Your previous data was preserved.");
   return data;
 }

@@ -3,6 +3,7 @@ import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createRequire } from 'node:module';
+import * as sourceIdentity from "../server/discovery-source-identity.mjs";
 
 const require = createRequire(import.meta.url);
 const ts = require('typescript');
@@ -20,6 +21,7 @@ function execute(source, scope = {}, loader = require) {
   vm.runInNewContext(result.outputText, context);
   return context.exports;
 }
+const sourceHelpers = execute(read("app/phone/discovery-sources.ts"), {}, name => name === "../../server/discovery-source-identity.mjs" ? sourceIdentity : require(name));
 const { translate, formatNumber, formatDateTime } = execute(read('app/i18n/core.ts'), {}, name => name === './messages.ar.json' ? catalog : require(name));
 const translator = language => (key, values) => translate(key, language, values);
 
@@ -291,7 +293,7 @@ function renderBoardOptions(language) {
   const filters = Object.freeze({ query: mixedJob.title, location: mixedJob.location, remoteOnly: false, sources: searchSources });
   const changes = [], touched = [];
   const element = renderPhoneFragment(phoneFragment(node => hasClass(node, 'phone-search-options')), language, {
-    catalog: { sources: catalogBoards }, searchSources, filters, customBoard: '',
+    ...sourceHelpers, ...sourceIdentity, catalog: { sources: catalogBoards }, searchSources, filters, customBoard: '',
     SlidersHorizontal: () => null,
     setFilters: value => changes.push(value),
     setBoardsTouched: value => touched.push(value),

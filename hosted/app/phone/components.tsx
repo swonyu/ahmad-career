@@ -51,9 +51,10 @@ export function Readiness({ profile }: { profile: Profile }) {
   return <ul className="phone-readiness" aria-label={t("Application essentials")}>{([ ["name", "Name"], ["email", "Email"], ["resume", "PDF CV"] ] as const).map(([key,label]) => <li key={key} className={ready[key] ? "is-ready" : "needs-detail"}>{ready[key] ? <Check size={15} aria-hidden="true" /> : <span className="readiness-dot" aria-hidden="true" />}<span>{t(label)}<span className="visually-hidden">{ready[key] ? t(": ready") : t(": needed")}</span></span></li>)}</ul>;
 }
 
-export function JobCard({ job, saved, onSave, onDetails, busy = false }: { job: Job; saved: boolean; onSave?: () => void; onDetails?: () => void; busy?: boolean }) {
+export function JobCard({ job, saved, onSave, onDetails, busy = false, newToSearch = false }: { job: Job; saved: boolean; onSave?: () => void; onDetails?: () => void; busy?: boolean; newToSearch?: boolean }) {
   const { t, language } = useI18n();
   return <article className="phone-job-card">
+    {newToSearch && <span className="phone-new-opening">{t("New to this search")}</span>}
     <div className="phone-job-top"><span className="company-avatar" aria-hidden="true">{Array.from(job.company.trim())[0]?.toUpperCase() || "•"}</span><div><p className="phone-company"><bdi>{job.company}</bdi></p><h3 dir="auto">{onDetails ? <button className="job-title-button" onClick={onDetails}>{job.title}</button> : job.title}</h3></div>{onSave && <button className={`icon-button bookmark ${saved ? "is-saved" : ""}`} aria-label={saved ? t("{0} is saved", [job.title]) : t("Save {0}", [job.title])} aria-pressed={saved} disabled={busy || saved} onClick={onSave}><Bookmark size={21} fill={saved ? "currentColor" : "none"} aria-hidden="true" /></button>}</div>
     {job.location && <p className="phone-job-location"><bdi>{job.location}</bdi></p>}{job.checkedAt && <p className="phone-note">{t("Posting checked ")}<time dir="auto" dateTime={job.checkedAt}>{formatDateTime(job.checkedAt, language)}</time></p>}
     {job.summary && <p className="phone-job-summary" dir="auto">{job.summary}</p>}

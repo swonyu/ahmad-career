@@ -7,6 +7,7 @@ import ts from 'typescript';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { setImmediate as yieldEventLoop } from 'node:timers/promises';
+import * as sourceIdentity from '../server/discovery-source-identity.mjs';
 
 const require = createRequire(import.meta.url);
 const read = file => fs.readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
@@ -21,6 +22,7 @@ function execute(source, scope = {}, loader = require) {
   return context.exports;
 }
 const model = execute(read('app/phone/model.ts'));
+const searchHistory = execute(read('app/phone/search-history.ts'), {}, name => name === '../../server/discovery-source-identity.mjs' ? sourceIdentity : require(name));
 const records = execute(read('app/phone/record-tools.ts'), {}, name => name === './model' ? model : require(name));
 const { APIError } = execute(read('app/components/api.ts'));
 const catalog = JSON.parse(read('app/i18n/messages.ar.json'));
@@ -43,7 +45,7 @@ function install(name, scope) {
   const value = name === 'searchJobs'
     // Match a React handler's render-time closure. The later draft edit must
     // reach a pending request through the real ref, not a mutable VM global.
-    ? `((filters, searchSources, searchedFilters, searchPage, restored) => (${declaration(name)}))(filters, searchSources, searchedFilters, searchPage, restored)`
+    ? `((filters, searchSources, searchedFilters, searchPage, restored, searchNewResult, showNewOnly) => (${declaration(name)}))(filters, searchSources, searchedFilters, searchPage, restored, searchNewResult, showNewOnly)`
     : declaration(name);
   const code = ts.transpileModule(`globalThis.${name} = ${value};`, {
     compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None },
@@ -71,8 +73,7 @@ function page({ status = 'complete', jobs = [job(9)], sourceStatus = 'fresh', er
 // Only the transport and encrypted-storage ports are synthetic; any unexpected
 // route or attempted network request fails immediately.
 function deferred() { let resolve; const promise = new Promise(done => { resolve = done; }); return { promise, resolve }; }
-function harness({ initialPage, restored = false, searchedFilters = submitted(), savedFilters = draft(), initialFilters = draft() } = {}) {
-  const scope = 'account:synthetic-search-owner:00000000-0000-4000-8000-000000000001';
+function harness({ initialPage, initialHistory, initialNewResult = null, restored = false, searchedFilters = submitted(), savedFilters = draft(), initialFilters = draft(), scope = 'account:synthetic-search-owner:00000000-0000-4000-8000-000000000001' } = {}) {
   const snapshot = model.blankSnapshot(scope);
   snapshot.profile.firstName = 'SYNTHETIC_PRIVATE_PROFILE';
   snapshot.jobs = [model.jobSchema.parse(job(0))];
@@ -80,6 +81,8 @@ function harness({ initialPage, restored = false, searchedFilters = submitted(),
   snapshot.filters = plain(savedFilters);
   const displayedPage = initialPage ?? page({ status: 'partial', jobs: [job(0)], sourceStatus: 'stale', error: { code: 'source_unavailable', message: 'Synthetic source unavailable.' }, nextCursor: 'synthetic-next-page' });
   snapshot.lastSearch = searchedFilters ? { filters: plain(searchedFilters), page: { ...plain(displayedPage), nextCursor: null } } : null;
+  if (initialHistory) snapshot.searchHistory = plain(initialHistory);
+  if (initialNewResult && snapshot.lastSearch) snapshot.lastSearch.newResult = plain(initialNewResult);
   const calls = [], writes = [], writeAttempts = [], writeHook = { current: null };
   let stored = JSON.stringify(snapshot);
   const context = {
@@ -89,11 +92,12 @@ function harness({ initialPage, restored = false, searchedFilters = submitted(),
     identityUnverified: { current: false }, identityCheckPending: { current: false }, identityCheckRef: { current() {} },
     snapshotRef: { current: snapshot }, filterDraftRef: { current: plain(initialFilters) }, searchAbort: { current: null }, storageProblem: '', locked: false, checkingIdentity: false,
     discoveryPageSchema: model.discoveryPageSchema, discoveryPath: model.discoveryPath, jobIdentity: model.jobIdentity,
-    parseSnapshot: model.parseSnapshot,
+    parseSnapshot: model.parseSnapshot, ...searchHistory, searchNewResult: initialNewResult, showNewOnly: false, showNewOnlyRef: { current: false },
     fetch() { assert.fail('Search workflow tests must never contact a network'); },
     setBusy(value) { context.busy = value; }, setNotice(value) { context.notice = value; },
     setSearchPage(value) { context.searchPage = value; }, setSearchedFilters(value) { context.searchedFilters = value; },
     setRestored(value) { context.restored = value; },
+    setSearchNewResult(value) { context.searchNewResult = value; }, setShowNewOnlyState(value) { context.showNewOnly = value; },
     setFiltersState(value) { context.filters = value; },
     putSnapshot(value) { context.snapshotRef.current = value; },
     async savePhoneSnapshot(owner, value) {
@@ -123,7 +127,7 @@ function harness({ initialPage, restored = false, searchedFilters = submitted(),
   };
   Object.defineProperty(context, 'searchSources', { get: () => context.filters.sources });
   vm.createContext(context);
-  for (const name of ['same', 'message', 'setFilters', 'assertCurrent', 'local', 'persist', 'run', 'searchJobs']) install(name, context);
+  for (const name of ['same', 'message', 'setFilters', 'setShowNewOnly', 'assertCurrent', 'local', 'persist', 'run', 'searchJobs']) install(name, context);
   return { context, calls, writes, writeAttempts, writeHook, scope,
     readSaved() { return plain(model.parseSnapshot(JSON.parse(stored), scope)); },
     edit(value) { context.setFilters(plain(value)); },
@@ -384,12 +388,14 @@ function renderSearchSurface(node, searchPage, language, overrides = {}) {
   const calls = [], t = (key, values) => i18n.translate(key, language, values);
   const scope = { searchPage, searchedFilters: submitted(), filters: draft(), searchSources: draft().sources,
     restored: false, busy: '', loading: false, locked: false, checkingIdentity: false, jobs: [], cannotSave: false,
+    searchNewResult: null, showNewOnly: false, setShowNewOnly() { assert.fail('A toggle must supply its local setter in the test'); },
     language, t, formatNumber: i18n.formatNumber, displayTime: value => i18n.formatDateTime(value, language),
     same: (a, b) => JSON.stringify(a) === JSON.stringify(b), jobIdentity: model.jobIdentity,
-    JobCard: ({ job }) => React.createElement('article', { 'data-synthetic-job': job.id }, job.title),
+    JobCard: ({ job, newToSearch }) => React.createElement('article', { 'data-synthetic-job': job.id, 'data-new-to-search': newToSearch ? 'true' : undefined }, job.title),
     searchJobs: mode => { calls.push(mode); }, saveJob() {}, setDialog() {}, ...overrides };
   const top = ['discoveryCoverageNotice', 'discoveryLimitNotice'].map(name => `const ${name} = ${declaration(name)};`).join('\n');
-  const { Results } = execute(`${top}\n${declaration('discoveryNoticeText')}\n${declaration('DiscoveryEmptyState')}\nconst incompleteSearch = ${declaration('incompleteSearch')};\nconst localResultLimitReached = ${declaration('localResultLimitReached')};\nconst searchSummary = ${declaration('searchSummary')};\nexports.Results = () => (${node.getText(tree)});`, {
+  const newness = ['newSearchIDs', 'shownSearchJobs', 'newSearchCount', 'hasSearchComparison'].map(name => `const ${name} = ${declaration(name)};`).join('\n');
+  const { Results } = execute(`${top}\n${newness}\n${declaration('discoveryNoticeText')}\n${declaration('DiscoveryEmptyState')}\nconst incompleteSearch = ${declaration('incompleteSearch')};\nconst localResultLimitReached = ${declaration('localResultLimitReached')};\nconst searchSummary = ${declaration('searchSummary')};\nexports.Results = () => (${node.getText(tree)});`, {
     ...scope, useI18n: () => ({ t, language }),
   });
   const element = Results();
@@ -627,3 +633,176 @@ for (const language of ['en', 'ar']) {
     }
   });
 }
+
+// These cases use real source-scoped discovery identities, unlike the older
+// transport-only stubs above. The production history algorithm and schemas run.
+const historySource = 'lever:global:synthetic-history';
+const historyFilters = () => ({ query: 'Designer', location: 'Toronto', remoteOnly: false, sources: [historySource] });
+const historyJob = number => ({ ...job(number), id: `${historySource}:20000000-0000-4000-8000-${String(number).padStart(12, '0')}`,
+  url: `https://jobs.lever.co/synthetic-history/20000000-0000-4000-8000-${String(number).padStart(12, '0')}`, location: 'Toronto' });
+function historyPage(numbers, { matchedCount = numbers.length, nextCursor = null, sourceStatus = 'fresh', error = null } = {}) {
+  return { ...page({ jobs: numbers.map(historyJob), nextCursor }), sources: [{ ...page().sources[0], id: historySource,
+    boardUrl: 'https://jobs.lever.co/synthetic-history', matchedCount, availableCount: matchedCount, status: sourceStatus, error }] };
+}
+const historyEvaluation = (history, value, previousResult) => searchHistory.evaluateSearchHistory({ history, filters: historyFilters(), page: value, now: 1000, previousResult });
+function historyHarness(options = {}) {
+  return harness({ searchedFilters: null, savedFilters: historyFilters(), initialFilters: historyFilters(), ...options });
+}
+async function completeHistorySearch(h, value, mode) {
+  const index = h.calls.length, pending = h.search(mode), request = await h.admitted(index);
+  request.resolve(value); await pending;
+  assert.equal(h.context.notice, null, h.context.notice?.text);
+}
+
+test('actual search commits a silent A/B baseline then only C with B/C and reload retains the exact result', async () => {
+  const h = historyHarness(), privateBefore = h.readSaved();
+  await completeHistorySearch(h, historyPage([1, 2]));
+  assert.deepEqual(plain(h.context.searchNewResult.newIds), []);
+  assert.deepEqual(h.readSaved().lastSearch.newResult.newIds, []);
+  assert.equal(h.readSaved().searchHistory.searches[0].boards[0].ready, true);
+  await completeHistorySearch(h, historyPage([2, 3]));
+  const saved = h.readSaved();
+  assert.deepEqual(saved.lastSearch.newResult.newIds, [historyJob(3).id]);
+  assert.deepEqual(plain(h.context.searchNewResult), saved.lastSearch.newResult);
+  assert.deepEqual(saved.lastSearch.page.jobs.map(job => job.id), [historyJob(2).id, historyJob(3).id]);
+  assert.equal(saved.lastSearch.page.nextCursor, null);
+  for (const name of ['profile', 'jobs', 'records']) assert.deepEqual(saved[name], privateBefore[name]);
+  for (const call of h.calls) assert.deepEqual([...new URL(call.path, 'https://synthetic.local').searchParams.keys()].sort(), ['location', 'q', 'remote', 'source']);
+});
+
+test('actual More commits accumulated IDs and carries earlier new markers across the current search', async () => {
+  const baseline = historyEvaluation(undefined, historyPage([1, 2]));
+  const firstPage = historyPage([2, 3], { matchedCount: 3, nextCursor: 'synthetic-history-next' });
+  const compared = historyEvaluation(baseline.history, firstPage);
+  const h = historyHarness({ searchedFilters: historyFilters(), initialPage: firstPage, initialHistory: compared.history, initialNewResult: compared.result });
+  h.context.setShowNewOnly(true);
+  await completeHistorySearch(h, historyPage([4], { matchedCount: 3 }), 'more');
+  assert.deepEqual(h.readSaved().lastSearch.newResult.newIds, [historyJob(3).id, historyJob(4).id]);
+  assert.equal(h.context.showNewOnly, true, 'More retains the local display choice');
+  assert.deepEqual(h.readSaved().lastSearch.page.jobs.map(job => job.id), [2, 3, 4].map(value => historyJob(value).id));
+  const visible = renderResults(h.context.searchPage, 'en', { searchNewResult: h.context.searchNewResult, showNewOnly: h.context.showNewOnly });
+  assert.equal([...visible.html.matchAll(/data-synthetic-job=/g)].length, 2);
+  assert(!visible.html.includes(historyJob(2).id));
+});
+
+for (const [initialOnly, latestOnly] of [[false, true], [true, false]]) {
+  test('More preserves the latest display choice across its frozen render closure: ' + (initialOnly ? 'New' : 'All') + ' to ' + (latestOnly ? 'New' : 'All'), async () => {
+    const baseline = historyEvaluation(undefined, historyPage([1, 2]));
+    const firstPage = historyPage([2, 3], { matchedCount: 3, nextCursor: 'synthetic-history-next' });
+    const compared = historyEvaluation(baseline.history, firstPage);
+    const h = historyHarness({ searchedFilters: historyFilters(), initialPage: firstPage, initialHistory: compared.history, initialNewResult: compared.result });
+    h.context.setShowNewOnly(initialOnly);
+    // search() installs the actual handler with the render's scalar state
+    // captured by value. A later click cannot update that lexical binding.
+    const pending = h.search('more'), request = await h.admitted();
+    const waiting = renderResults(h.context.searchPage, 'en', {
+      searchNewResult: h.context.searchNewResult, showNewOnly: h.context.showNewOnly,
+      setShowNewOnly: h.context.setShowNewOnly, busy: h.context.busy,
+    });
+    const choices = findButtons(waiting.element, waiting.t(latestOnly ? 'New only' : 'All results'));
+    assert.equal(choices.length, 1);
+    assert(!choices[0].props.disabled, 'The local display choice remains reachable while More is pending');
+    choices[0].props.onClick();
+    assert.equal(h.context.showNewOnly, latestOnly);
+    assert.equal(h.context.showNewOnlyRef.current, latestOnly, 'The actual production setter records current intent synchronously');
+    assert.deepEqual(waiting.calls, [], 'Changing the display filter admits no new request');
+    assert.equal(h.calls.length, 1);
+
+    request.resolve(historyPage([4], { matchedCount: 3 })); await pending;
+    assert.equal(h.context.notice, null, h.context.notice?.text);
+    assert.equal(h.context.showNewOnly, latestOnly, 'The completed request must not restore its captured earlier display choice');
+    assert.equal(h.context.showNewOnlyRef.current, latestOnly);
+    assert.deepEqual(h.readSaved().lastSearch.newResult.newIds, [historyJob(3).id, historyJob(4).id]);
+    assert.deepEqual(plain(h.context.searchPage.jobs.map(job => job.id)), [2, 3, 4].map(value => historyJob(value).id));
+    const final = renderResults(h.context.searchPage, 'en', {
+      searchNewResult: h.context.searchNewResult, showNewOnly: h.context.showNewOnly,
+      setShowNewOnly: h.context.setShowNewOnly,
+    });
+    assert.equal([...final.html.matchAll(/data-synthetic-job=/g)].length, latestOnly ? 2 : 3);
+    assert.equal(h.calls.length, 1);
+  });
+}
+
+test('a failed final More save reveals all accumulated jobs instead of keeping an unsupported New-only filter', async () => {
+  const baseline = historyEvaluation(undefined, historyPage([1, 2]));
+  const firstPage = historyPage([2, 3], { matchedCount: 3, nextCursor: 'synthetic-history-next' });
+  const compared = historyEvaluation(baseline.history, firstPage);
+  const h = historyHarness({ searchedFilters: historyFilters(), initialPage: firstPage, initialHistory: compared.history, initialNewResult: compared.result });
+  const before = h.readSaved(); h.context.setShowNewOnly(true);
+  h.writeHook.current = async () => { throw Error('Synthetic More history vault failure'); };
+  const pending = h.search('more'), request = await h.admitted(); request.resolve(historyPage([4], { matchedCount: 3 })); await pending;
+  assert.equal(h.writeAttempts.length, 1); assert.equal(h.writes.length, 0); assert.deepEqual(h.readSaved(), before);
+  assert.equal(h.context.searchNewResult, null); assert.equal(h.context.showNewOnly, false);
+  assert.deepEqual(plain(h.context.searchPage.jobs.map(job => job.id)), [2, 3, 4].map(value => historyJob(value).id));
+  assert.match(h.context.notice.text, /Synthetic More history vault failure/);
+  for (const language of ['en', 'ar']) {
+    const view = renderResults(h.context.searchPage, language, { searchNewResult: h.context.searchNewResult, showNewOnly: h.context.showNewOnly });
+    assert.equal([...view.html.matchAll(/data-synthetic-job=/g)].length, 3);
+    assert.equal(findButtons(view.element, view.t('New only')).length, 0);
+    assert(!view.html.includes(view.t('No openings are new in the results compared.')));
+  }
+});
+
+test('actual failure and cancellation preserve history and frozen new markers while retaining later filter drafts', async t => {
+  const baseline = historyEvaluation(undefined, historyPage([1, 2]));
+  const compared = historyEvaluation(baseline.history, historyPage([2, 3]));
+  for (const cancel of [false, true]) await t.test(cancel ? 'cancel' : 'network failure', async () => {
+    const h = historyHarness({ searchedFilters: historyFilters(), initialPage: historyPage([2, 3]), initialHistory: compared.history, initialNewResult: compared.result });
+    const before = h.readSaved(), pending = h.search(), request = await h.admitted();
+    h.edit({ ...historyFilters(), query: 'Nurse typed while waiting' });
+    if (cancel) h.context.searchAbort.current.abort();
+    else request.reject(new APIError('Synthetic history request failed', 0, 'network_unavailable'));
+    await pending;
+    const saved = h.readSaved();
+    assert.deepEqual(saved.searchHistory, before.searchHistory);
+    assert.deepEqual(saved.lastSearch, before.lastSearch);
+    assert.deepEqual(plain(h.context.searchNewResult), before.lastSearch.newResult);
+    assert.equal(saved.filters.query, 'Nurse typed while waiting');
+  });
+});
+
+test('an identity change during history search cannot commit a baseline to either owner', async () => {
+  const h = historyHarness(), before = h.readSaved(), pending = h.search(), request = await h.admitted();
+  h.context.epoch.current++; h.context.identityUnverified.current = true;
+  h.context.snapshotRef.current = model.blankSnapshot('account:other-synthetic-owner:new');
+  request.resolve(historyPage([1, 2])); await pending;
+  assert.equal(h.writeAttempts.length, 0); assert.deepEqual(h.readSaved(), before);
+  assert.equal(h.context.snapshotRef.current.searchHistory, undefined);
+  assert.equal(h.context.searchNewResult, null);
+});
+
+test('failed final vault save never publishes or commits an unretained newness result', async () => {
+  const baseline = historyEvaluation(undefined, historyPage([1, 2]));
+  const h = historyHarness({ searchedFilters: historyFilters(), initialPage: historyPage([1, 2]), initialHistory: baseline.history, initialNewResult: baseline.result });
+  const before = h.readSaved(); h.writeHook.current = async () => { throw Error('Synthetic history vault failure'); };
+  const pending = h.search(), request = await h.admitted(); request.resolve(historyPage([2, 3])); await pending;
+  assert.equal(h.writeAttempts.length, 1); assert.equal(h.writes.length, 0);
+  assert.deepEqual(h.readSaved(), before); assert.equal(h.context.searchNewResult, null);
+  assert.match(h.context.notice.text, /Synthetic history vault failure/);
+});
+
+for (const language of ['en', 'ar']) test(`actual new-only controls/count and live summary remain local and truthful in ${language}`, () => {
+  const first = historyEvaluation(undefined, historyPage([1, 2])), next = historyEvaluation(first.history, historyPage([2, 3]));
+  const value = historyPage([2, 3]), untouched = JSON.stringify(value);
+  let showNewOnly = false;
+  const options = () => ({ searchNewResult: next.result, showNewOnly, setShowNewOnly: value => { showNewOnly = value; } });
+  const all = renderResults(value, language, options());
+  const label = all.t('{0} role new to this search', [i18n.formatNumber(1, language)]);
+  assert(all.html.includes(label)); assert.equal([...all.html.matchAll(/data-new-to-search="true"/g)].length, 1);
+  const toggle = findButtons(all.element, all.t('New only'));
+  assert.equal(toggle.length, 1); assert.equal(toggle[0].props['aria-pressed'], false);
+  toggle[0].props.onClick(); assert.equal(showNewOnly, true); assert.deepEqual(all.calls, []);
+  const only = renderResults(value, language, options());
+  assert.equal([...only.html.matchAll(/data-synthetic-job=/g)].length, 1);
+  assert(only.html.includes(historyJob(3).id)); assert(!only.html.includes(historyJob(2).id));
+  assert(only.html.includes(only.t('{0} of {1} shown', [i18n.formatNumber(1, language), i18n.formatNumber(2, language)])));
+  assertLiveSummary(renderLiveStatus(value, language, options()), only.t('{0} job shown. {1}', [i18n.formatNumber(1, language), only.t('Search complete.')]));
+  findButtons(only.element, only.t('All results'))[0].props.onClick(); assert.equal(showNewOnly, false);
+  assert.equal([...renderResults(value, language, options()).html.matchAll(/data-synthetic-job=/g)].length, 2);
+  assert.equal(JSON.stringify(value), untouched); assert.deepEqual(only.calls, []);
+  const initial = renderResults(historyPage([1, 2]), language, { searchNewResult: first.result });
+  assert.equal(findButtons(initial.element, initial.t('New only')).length, 0, 'the initial baseline is silent');
+  const zero = historyEvaluation(next.history, value), zeroOnly = renderResults(value, language, { searchNewResult: zero.result, showNewOnly: true, setShowNewOnly() {} });
+  assert(zeroOnly.html.includes(zeroOnly.t('No openings are new in the results compared.')));
+  assert.equal([...zeroOnly.html.matchAll(/data-synthetic-job=/g)].length, 0);
+});
