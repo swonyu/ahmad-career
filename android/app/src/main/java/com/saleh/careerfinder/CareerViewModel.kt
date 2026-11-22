@@ -442,7 +442,9 @@ class CareerViewModel internal constructor(application: Application, private val
         val profile = if (includeProfile) phone.profile.copy(revision = current.profile.revision,
             removeResume = phone.profile.resume == null) else current.profile
         if (includeProfile && profile.resume != null) require(profile.resume.dataBase64 != null) { "Choose the PDF again before copying this profile." }
-        val allJobs = jobs.map { pair -> pair.second } + current.jobs
+        val allJobs = jobs.map { pair -> pair.second } + current.jobs.map { job ->
+            if (includeJobs) SavedJobMetadata.preserving(job, phone.jobs) else job
+        }
         // An existing over-200 list is not shrunk. A profile-only copy adds no links.
         // Copying links is refused only when the merged list would grow past 200.
         if (includeJobs) require(allJobs.size <= 200 || allJobs.size <= current.jobs.size) {
@@ -455,7 +457,7 @@ class CareerViewModel internal constructor(application: Application, private val
             val destination = allJobs.firstOrNull { BoundaryPolicy.jobIdentity(it.url) == identity }
                 ?: records[identity]?.job ?: incoming.job.copy(localOnly = true)
             records[identity] = records[identity]?.merge(incoming, destination)
-                ?: incoming.copy(job = destination, relatedURLs = (incoming.relatedURLs + destination.url).distinct())
+                ?: incoming.copy(job = SavedJobMetadata.preserving(destination, incoming.job), relatedURLs = (incoming.relatedURLs + destination.url).distinct())
         }
         requireApplicationStatusChangesAllowed(current, records)
         val (opportunity, recovered) = mergeOpportunityDrafts(current.opportunityDraft, current.recoveredOpportunityDrafts,
@@ -757,7 +759,8 @@ class CareerViewModel internal constructor(application: Application, private val
     fun restoreRecordedOpportunity(identity: String, expectedScope: String) = action {
         require(state.value.privateScope == expectedScope) { "The workspace changed. Open the correct application record again." }
         val job = state.value.applicationRecords[identity]?.job ?: throw IllegalArgumentException("That application record is no longer available.")
-        addOpportunityInternal(job.url, job.title, job.company, job.location, job.country, null) {}
+        addOpportunityInternal(job.url, job.title, job.company, job.location, job.country, null, {},
+            job.sourceName, job.checkedAt)
     }
 
     fun editOpportunityDraft(change: (OpportunityDraft) -> OpportunityDraft) {
@@ -801,8 +804,15 @@ class CareerViewModel internal constructor(application: Application, private val
         addOpportunityInternal(url, title, company, location, country, null, done)
     }
 
+    fun addDiscoveredOpportunity(job: DiscoveredJob, done: () -> Unit) = action {
+        // These facts came from the actual discovery response, not the save clock.
+        SavedJobMetadata.requireValid(job.sourceName, job.checkedAt)
+        addOpportunityInternal(job.url, job.title, job.company, job.location, job.country.orEmpty(), null, done,
+            job.sourceName, job.checkedAt)
+    }
+
     private suspend fun addOpportunityInternal(url: String, title: String, company: String, location: String, country: String,
-        completingDraft: OpportunityDraft?, done: () -> Unit) {
+        completingDraft: OpportunityDraft?, done: () -> Unit, sourceName: String? = null, checkedAt: String? = null) {
         val normalized = BoundaryPolicy.opportunityURL(url.trim())
         require(title.trim().isNotBlank() && company.trim().isNotBlank()) { "Add the role title and employer so the saved opportunity is clear." }
         require(ProfileContract.countryError(country) == null) { "Choose a recognized country or region, or leave it blank." }
@@ -816,7 +826,9 @@ class CareerViewModel internal constructor(application: Application, private val
             return
         }
         require(state.value.jobs.size < 200) { "The merged shortlist exceeds 200 links. Nothing was replaced." }
-        val job = Opportunity("local-" + UUID.randomUUID(), normalized, title.trim(), company.trim(), location.trim(), country.trim().uppercase(), true)
+        SavedJobMetadata.requireValid(sourceName, checkedAt)
+        val job = Opportunity("local-" + UUID.randomUUID(), normalized, title.trim(), company.trim(), location.trim(), country.trim().uppercase(),
+            true, sourceName, checkedAt)
         draftSave?.cancel()
         val previousDraft = state.value.opportunityDraft
         // Only completing this editor may consume its draft. Saving a discovery result or
@@ -842,13 +854,22 @@ class CareerViewModel internal constructor(application: Application, private val
         require((previous.recoverablePlans + listOfNotNull(previous.plan)).none { plan -> plan.items.any { it.jobId == id } }) {
             "This opportunity is linked to an application review. Its saved record and application activity are preserved."
         }
+        val removed = previous.jobs.single { it.id == id }
+        val records = previous.applicationRecords.toMutableMap()
+        val identity = BoundaryPolicy.jobIdentity(removed.url)
+        records[identity]?.let { record ->
+            val facts = SavedJobMetadata.preserving(removed, record.job)
+            val retained = record.job.copy(sourceName = facts.sourceName, checkedAt = facts.checkedAt)
+            if (retained != record.job) records[identity] = record.copy(job = retained, revision = Math.addExact(record.revision, 1))
+        }
         draftSave?.cancel()
         mutable.update { it.copy(jobs = it.jobs.filterNot { job -> job.id == id }, selected = it.selected - id,
-            answers = it.answers - id, manualApplied = it.manualApplied - id, reviewGeneration = it.reviewGeneration + 1) }
+            applicationRecords = records, answers = it.answers - id, manualApplied = it.manualApplied - id,
+            reviewGeneration = it.reviewGeneration + 1) }
         try { persist() }
         catch (error: Exception) {
             mutable.update { it.copy(jobs = previous.jobs, selected = previous.selected, answers = previous.answers,
-                manualApplied = previous.manualApplied, reviewGeneration = previous.reviewGeneration) }
+                applicationRecords = previous.applicationRecords, manualApplied = previous.manualApplied, reviewGeneration = previous.reviewGeneration) }
             throw error
         }
         mutable.update { it.copy(notice = "Saved link removed. Your private application record, connected records and receipts are kept.") }
@@ -864,14 +885,14 @@ class CareerViewModel internal constructor(application: Application, private val
         if (job.localOnly && state.value.applicationRecords[sourceIdentity]?.appliedElsewhere == true)
             requireApplicationStatusChangesAllowed(state.value, setOf(sourceIdentity))
         val response = service.request(connection, "POST", "jobs", job.inputJson())
-        val synced = Opportunity.fromServer(response.getJSONObject("job"))
+        val synced = SavedJobMetadata.preserving(Opportunity.fromServer(response.getJSONObject("job")), job)
         require(synced.id.isNotBlank()) { "The service did not return the saved opportunity identity." }
         val destinationIdentity = BoundaryPolicy.jobIdentity(synced.url)
         val records = state.value.applicationRecords.toMutableMap()
         records[sourceIdentity]?.let { source ->
             records[destinationIdentity] = if (sourceIdentity != destinationIdentity && records[destinationIdentity] != null)
                 records.getValue(destinationIdentity).merge(source, synced)
-            else source.copy(job = synced, relatedURLs = (source.relatedURLs + synced.url).distinct())
+            else source.copy(job = SavedJobMetadata.preserving(synced, source.job), relatedURLs = (source.relatedURLs + synced.url).distinct())
             if (sourceIdentity != destinationIdentity) records.remove(sourceIdentity)
         }
         requireApplicationStatusChangesAllowed(state.value, records)
@@ -1099,6 +1120,7 @@ class CareerViewModel internal constructor(application: Application, private val
         val serverProfile = ProfileDraft.fromServer(response.getJSONObject("profile"))
         if (serverProfile.revision < (state.value.serverProfile?.revision ?: 0)) return false
         val serverJobs = response.requiredObjects("jobs").map(Opportunity::fromServer)
+            .map { SavedJobMetadata.preserving(it, state.value.jobs) }
         val receipts = response.requiredObjects("attempts").map(ApplicationReceipt::fromServer)
         val activePlans = response.requiredStrings("activePlanIds")
         val recovered = response.requiredObjects("recoverablePlans").map(ReviewPlan::fromJson)
@@ -1366,8 +1388,9 @@ class CareerViewModel internal constructor(application: Application, private val
         val idMap = mutableMapOf<String, String>()
         if (includeRecords) for (job in incoming.jobs) {
             val identity = BoundaryPolicy.jobIdentity(job.url)
-            val destination = jobs.firstOrNull { BoundaryPolicy.jobIdentity(it.url) == identity }
-                ?: job.copy(id = "local-" + UUID.randomUUID(), localOnly = true).also { jobs.add(it) }
+            val existingIndex = jobs.indexOfFirst { BoundaryPolicy.jobIdentity(it.url) == identity }
+            val destination = if (existingIndex >= 0) SavedJobMetadata.preserving(jobs[existingIndex], job).also { jobs[existingIndex] = it }
+                else job.copy(id = "local-" + UUID.randomUUID(), localOnly = true).also { jobs.add(it) }
             idMap[job.id] = destination.id
         }
         // Refresh can already hold 200 service links plus phone-only rows. Keep that list.
@@ -1378,7 +1401,7 @@ class CareerViewModel internal constructor(application: Application, private val
             val destination = jobs.firstOrNull { BoundaryPolicy.jobIdentity(it.url) == identity }
                 ?: records[identity]?.job ?: record.job.copy(id = "local-" + UUID.randomUUID(), localOnly = true)
             records[identity] = records[identity]?.merge(record, destination)
-                ?: record.copy(job = destination, relatedURLs = (record.relatedURLs + destination.url).distinct())
+                ?: record.copy(job = SavedJobMetadata.preserving(destination, record.job), relatedURLs = (record.relatedURLs + destination.url).distinct())
         }
         requireApplicationStatusChangesAllowed(before, records)
         val drafts = before.recordDrafts.toMutableMap()
@@ -1386,7 +1409,7 @@ class CareerViewModel internal constructor(application: Application, private val
         if (includeRecords) for (checkpoint in incoming.recordDrafts.values + incoming.recordDraftAlternatives) {
             val destination = jobs.firstOrNull { BoundaryPolicy.jobIdentity(it.url) == checkpoint.identity }
                 ?: records[checkpoint.identity]?.job ?: checkpoint.job.copy(id = "local-" + UUID.randomUUID(), localOnly = true)
-            val candidate = checkpoint.copy(scope = before.privateScope, job = destination)
+            val candidate = checkpoint.copy(scope = before.privateScope, job = SavedJobMetadata.preserving(destination, checkpoint.job))
             val existing = drafts[candidate.identity]
             if (existing == null) drafts[candidate.identity] = candidate
             else if (existing.draft != candidate.draft || existing.baseRevision != candidate.baseRevision) alternatives += candidate

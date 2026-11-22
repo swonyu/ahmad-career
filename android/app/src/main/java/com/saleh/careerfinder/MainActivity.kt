@@ -20,6 +20,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.relocation.BringIntoViewRequester
@@ -180,7 +181,7 @@ fun CareerApp(model: CareerViewModel) {
         },
         bottomBar = { PhoneNavigation(tabs, tab, selectTab) }
     ) { padding ->
-        BoxWithConstraints(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
+        BoxWithConstraints(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding).imePadding()) {
             val messageHeightLimit = maxHeight * 0.35f
             Column(Modifier.fillMaxSize()) {
                 if (state.busy || !state.loaded) LinearProgressIndicator(Modifier.fillMaxWidth())
@@ -546,9 +547,17 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
         (it.retainedRecord ?: state.recordFor(it.job))?.current?.record?.followUpDate
     } else matchingItems
     val hasRecords = state.jobs.isNotEmpty() || state.applicationRecords.isNotEmpty()
+    val savedCount = state.jobs.size + state.unbookmarkedRecords.size
     val context = LocalContext.current
-    LazyColumn(Modifier.fillMaxSize().imePadding().testTag("jobs-list"), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        item { Heading("Saved jobs", "Keep the roles you want to come back to, and track the applications you complete yourself.") }
+    val focusManager = LocalFocusManager.current
+    val keyboard = LocalSoftwareKeyboardController.current
+    val comparison = rememberSavedComparisonSelection(state)
+    val listState = rememberSaveable(state.privateScope, saver = LazyListState.Saver) { LazyListState() }
+    Column(Modifier.fillMaxSize()) {
+    if (comparison.choosing) SavedComparisonBar(state, comparison) { model.state.value }
+    LazyColumn(Modifier.fillMaxWidth().weight(1f).imePadding().testTag("jobs-list"), state = listState,
+        contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        item { Heading(if (savedCount == 0) "Saved jobs" else "Saved ($savedCount)", "Keep the roles you want to come back to, and track the applications you complete yourself.") }
         item {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
                 OutlinedButton(onClick = add, modifier = Modifier.weight(1f).heightIn(min = 52.dp)) {
@@ -559,6 +568,16 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
             }
         }
         if (hasRecords) {
+            if (!comparison.choosing) item(key = "compare-launch") {
+                OutlinedButton(onClick = {
+                    if (comparison.owner == SavedComparisonPolicy.owner(model.state.value)) {
+                        focusManager.clearFocus(force = true); keyboard?.hide(); comparison.choosing = true
+                    }
+                }, enabled = state.loaded && !state.busy && !state.storageBlocked,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("saved-comparison-start")) {
+                    Text(l10n("Compare saved openings"))
+                }
+            }
             item { Field("Search saved opportunities", query, { query = it }, type = KeyboardType.Text) }
             item {
                 Row(Modifier.fillMaxWidth().selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -582,6 +601,7 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
                 Text(job.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
                 Text(listOf(job.location, job.country).filter(String::isNotBlank).joinToString(" · ").ifBlank { l10n("Location not recorded") }, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(l10n(if (job.localOnly) "Saved on this phone" else "Saved to your workspace"), style = MaterialTheme.typography.labelMedium)
+                SavedComparisonToggle(state, comparison, job, false) { model.state.value }
                 OutlinedButton(onClick = { openLink(context, job.url) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
                     .semantics { contentDescription = l10n.format("Open employer page for {0} at {1}", listOf((job.title).toString(), (job.company).toString()))}) { Text(l10n("Open employer page")) }
                 ApplicationRecordSummary(state.recordFor(job), { model.openApplicationRecord(job, state.privateScope) }, !state.busy,
@@ -599,6 +619,7 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
                 Text(record.job.company.ifBlank { l10n("Employer") }, color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
                 Text(record.job.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
                 Text(l10n("Application record · saved link removed"), style = MaterialTheme.typography.labelMedium)
+                SavedComparisonToggle(state, comparison, record.job, true) { model.state.value }
                 ApplicationRecordSummary(record, { model.openApplicationRecord(record.job, state.privateScope) }, !state.busy,
                     "Application record for ${record.job.title} at ${record.job.company}")
                 OutlinedButton(onClick = { openLink(context, record.job.url) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(l10n("Open employer page")) }
@@ -607,6 +628,10 @@ internal fun SavedJobsScreen(state: CareerUiState, model: CareerViewModel, add: 
             }
         }
         item { Text(l10n("Saving a link does not verify its availability or submit an application. Automatic applications depend on a supported employer integration."), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+    }
+    }
+    comparison.presented?.let { keys ->
+        SavedComparisonDialog(state, keys, { model.state.value }) { comparison.presented = null }
     }
     state.jobs.firstOrNull { it.id == removingID && it.localOnly }?.let { job ->
         AlertDialog(onDismissRequest = { if (!state.busy) removingID = null },

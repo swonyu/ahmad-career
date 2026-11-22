@@ -86,7 +86,8 @@ data class ApplicationRecordBundle(val job: Opportunity, val current: Applicatio
         val candidates = (alternatives + incoming.current + incoming.alternatives)
             .filterNot { it.record == current.record }.distinctBy { it.record }
         val candidateIDs = candidates.map { it.id }.toSet()
-        return copy(job = destinationJob, alternatives = candidates,
+        val facts = SavedJobMetadata.preserving(SavedJobMetadata.preserving(destinationJob, job), incoming.job)
+        return copy(job = facts, alternatives = candidates,
             history = (history + incoming.history + alternatives + incoming.current + incoming.alternatives)
                 .filterNot { it.id == current.id || it.id in candidateIDs }.distinctBy { it.id },
             appliedElsewhere = appliedElsewhere || incoming.appliedElsewhere,

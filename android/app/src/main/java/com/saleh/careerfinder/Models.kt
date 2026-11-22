@@ -119,16 +119,29 @@ data class OpportunityDraft(val url: String = "", val title: String = "", val co
     }
 }
 
-data class Opportunity(val id: String, val url: String, val title: String, val company: String, val location: String, val country: String, val localOnly: Boolean = false) {
+data class Opportunity(val id: String, val url: String, val title: String, val company: String, val location: String, val country: String,
+    val localOnly: Boolean = false, val sourceName: String? = null, val checkedAt: String? = null) {
+    // The connected service still receives exactly its existing five public fields.
     fun inputJson() = JSONObject().put("url", url).put("title", title).put("company", company).put("location", location).put("country", country)
-    fun privateJson() = inputJson().put("id", id).put("localOnly", localOnly)
+    fun privateJson() = inputJson().put("id", id).put("localOnly", localOnly).apply {
+        SavedJobMetadata.requireValid(sourceName, checkedAt)
+        sourceName?.let { put("sourceName", it) }; checkedAt?.let { put("checkedAt", it) }
+    }
     companion object {
-        fun fromJson(value: JSONObject, local: Boolean = false) = Opportunity(value.safeString("id"), value.safeString("url"), value.safeString("title"), value.safeString("company"), value.safeString("location"), value.safeString("country"), local || value.optBoolean("localOnly"))
+        fun fromJson(value: JSONObject, local: Boolean = false): Opportunity {
+            val sourceName = SavedJobMetadata.optional(value, "sourceName")
+            val checkedAt = SavedJobMetadata.optional(value, "checkedAt")
+            SavedJobMetadata.requireValid(sourceName, checkedAt)
+            return Opportunity(value.safeString("id"), value.safeString("url"), value.safeString("title"), value.safeString("company"),
+                value.safeString("location"), value.safeString("country"), local || value.optBoolean("localOnly"), sourceName, checkedAt)
+        }
         fun fromServer(value: JSONObject): Opportunity {
             listOf("id", "url", "title", "company", "location", "country").forEach { serviceData(value.opt(it) is String) }
             serviceData(value.getString("id").isNotBlank())
             BoundaryPolicy.opportunityURL(value.getString("url"))
-            return fromJson(value).copy(localOnly = false)
+            // The five-field workspace response does not establish discovery observations.
+            return Opportunity(value.getString("id"), value.getString("url"), value.getString("title"), value.getString("company"),
+                value.getString("location"), value.getString("country"))
         }
     }
 }
@@ -247,7 +260,9 @@ data class CareerUiState(
     val recoveredOpportunityDrafts: List<OpportunityDraft> = emptyList(),
     val preservedWorkspaceCopies: List<String> = emptyList(),
     val preservedRecoveryWorkspaces: List<PreservedWorkspace> = emptyList(),
-    val workspaceImport: WorkspaceImportPreview? = null
+    val workspaceImport: WorkspaceImportPreview? = null,
+    // Transient ownership token: not encoded in a workspace or portable backup.
+    val comparisonSession: String = java.util.UUID.randomUUID().toString()
 ) {
     val profileConflict: ProfileDraft? get() = serverProfile?.takeIf { profileDirty && it.revision != profile.revision }
     val privateScope: String get() = connection?.let { "workspace-" + BoundaryPolicy.workspaceKey(it.origin, it.workspaceId) } ?: "workspace-unpaired"

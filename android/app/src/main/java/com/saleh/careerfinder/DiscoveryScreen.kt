@@ -36,8 +36,7 @@ internal fun JobsScreen(state: CareerUiState, model: CareerViewModel, add: () ->
     val l10n = rememberCareerStrings()
     Column(Modifier.fillMaxSize()) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp).selectableGroup(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            val savedCount = state.jobs.size + state.unbookmarkedRecords.size
-            listOf("Discover", if (savedCount == 0) "Saved" else "Saved ($savedCount)").forEachIndexed { index, title ->
+            listOf("Discover", "Saved").forEachIndexed { index, title ->
                 FilterChip(section == index, { selectSection(index) }, label = { Text(l10n(title)) },
                     modifier = Modifier.weight(1f).heightIn(min = 48.dp).testTag(if (index == 0) "jobs-discover-tab" else "jobs-saved-tab")
                         .semantics { role = Role.Tab })
@@ -223,7 +222,7 @@ private fun DiscoveryScreen(workspace: CareerUiState, model: CareerViewModel, pr
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (job.id in state.newJobIds) StatusPill("New to this search", false, Modifier.testTag("discovery.new." + job.id))
                 DiscoveryJobCard(job, workspace.jobs.any { it.url == job.url }, workspace.busy, saved) {
-                    model.addOpportunity(job.url, job.title, job.company, job.location, job.country.orEmpty()) {}
+                    model.addDiscoveredOpportunity(job) {}
                 }
             }
         }
