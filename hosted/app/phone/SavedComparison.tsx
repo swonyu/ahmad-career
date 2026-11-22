@@ -65,7 +65,7 @@ export function SavedComparison({ jobs, records, disabled, children }: {
   ];
   const toolbar = rows.length > 0 && <section className="phone-compare-toolbar" aria-label={t("Compare saved openings")}>
     <div><p aria-live="polite">{chosen.length ? t("{0} of 2 selected", [formatNumber(chosen.length, language)]) : t("Choose two saved openings.")}</p></div>
-    <div className="phone-compare-actions">{chosen.length > 0 && <button type="button" className="text-button" disabled={disabled || closing} onClick={() => setSelected([])}>{t("Clear selection")}</button>}<button type="button" className="button secondary" disabled={disabled || closing || chosen.length !== 2} onClick={open}><Columns2 size={17} aria-hidden="true" />{t("Compare two")}</button></div>
+    <div className="phone-compare-actions">{chosen.length > 0 && <button type="button" className="text-button" disabled={disabled || closing} onClick={() => setSelected([])}>{t("Clear selection")}</button>}<button type="button" className="button secondary" disabled={disabled || chosen.length !== 2} aria-disabled={closing || undefined} onClick={open}><Columns2 size={17} aria-hidden="true" />{t("Compare two")}</button></div>
   </section>;
   const choice = (job: Job) => {
     const identity = jobIdentity(job.url), checked = chosen.includes(identity);
