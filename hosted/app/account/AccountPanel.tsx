@@ -63,7 +63,13 @@ async function loadAccount(signal?: AbortSignal): Promise<Account> {
 export default function AccountPanel({ expectedAccountId }: { expectedAccountId: string }) {
   const { t, language } = useI18n();
   const date = (value: string) => formatDateTime(value, language);
-  const size = (bytes: number) => t("{0} MiB", [formatNumber(bytes / 1024 / 1024, language, { maximumFractionDigits: 2 })]);
+  const size = (bytes: number) => {
+    // At two fractional MiB digits, a positive size below 0.005 MiB rounds to zero.
+    if (bytes > 0 && bytes < 0.005 * 1024 * 1024) {
+      return t("{0} bytes", [formatNumber(bytes, language)]);
+    }
+    return t("{0} MiB", [formatNumber(bytes / 1024 / 1024, language, { maximumFractionDigits: 2 })]);
+  };
   const [account, setAccount] = useState<Account | null>(null);
   const [error, setError] = useState(""); const [notice, setNotice] = useState<AccountNotice>(""); const [busy, setBusy] = useState("");
   const [deleteOpen, setDeleteOpen] = useState(false); const [confirmation, setConfirmation] = useState(""); const [deleted, setDeleted] = useState(false);
