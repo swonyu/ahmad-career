@@ -141,3 +141,17 @@
 .phone-tab-saved .phone-compare-toolbar{padding:0 0 12px;margin:0 0 12px;gap:8px 12px}
 .phone-tab-saved .phone-compare-toolbar>div:first-child{flex:1 1 9rem;min-width:0}
 .phone-tab-saved .phone-compare-toolbar p{margin:0;line-height:1.6}
+
+/* Apply puts the current CV and next job action before extended guidance. */
+.phone-tab-apply>.phone-page-heading{margin-bottom:14px}
+.phone-tab-apply>.phone-apply-intro{padding:18px;margin-bottom:14px}
+.phone-apply-intro-heading{display:flex;align-items:flex-start;gap:10px}
+.phone-apply-intro-heading>svg{color:var(--accent);flex-shrink:0;margin-top:2px}
+.phone-apply-intro-heading>h2{min-width:0}
+.phone-apply-intro>p,.phone-application-guide>p{font-size:.85rem;line-height:1.65}
+.phone-apply-intro .phone-readiness{margin:12px 0}
+.phone-apply-profile{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin-top:12px;min-width:0}
+.phone-apply-profile>.phone-selected-cv{flex:1 1 auto;min-width:0;margin:0}
+.phone-apply-profile>.text-button{flex:0 1 auto;min-width:0;text-align:start}
+.phone-application-guide>.button{margin-top:14px}
+.phone-application-guide>.phone-application-steps{margin:20px 0 0;padding-top:18px;border-top:1px solid var(--line);gap:16px}
