@@ -102,6 +102,7 @@ test('missing or older observations cannot erase a known check, source or locati
 test('invalid imported observation metadata is rejected while old records remain readable', () => {
   assert.equal(model.recordSchema.safeParse({...records[0], checkedAt: 'not-a-date'}).success, false);
   assert.equal(model.recordSchema.safeParse({...records[0], sourceName: 'x'.repeat(151)}).success, false);
-  const {sourceName, checkedAt, ...legacy} = records[0];
+  const legacy = {...records[0]};
+  delete legacy.sourceName; delete legacy.checkedAt;
   assert.equal(model.recordSchema.safeParse(legacy).success, true);
 });

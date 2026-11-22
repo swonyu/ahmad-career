@@ -51,7 +51,7 @@ const discovery = createDiscoveryHandler({clock: () => sequence === 'journey' ? 
 const oauth = createOAuthHandler({clock: () => time, fetchImpl: () => {throw Error('OAuth requests are forbidden in the synthetic journey');}});
 const phoneRoutes = new Set(['workspace', 'profile', 'jobs', 'prepare', 'submit', 'advance', 'stop', 'receipts']);
 
-export default {
+const journeyBrowserWorker = {
   async fetch(request, env, ctx) {
     time = Date.now();
     const url = new URL(request.url);
@@ -103,3 +103,4 @@ export default {
     return response;
   },
 };
+export default journeyBrowserWorker;

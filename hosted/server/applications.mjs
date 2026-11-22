@@ -15,11 +15,12 @@ function safeResume(r){return r?{name:r.name,mime:r.mime,size:r.size,sha256:r.sh
 function recordedResumeName(resume) {
   // Historical evidence comes only from this attempt's immutable review snapshot.
   // A missing or invalid old name must never fall back to today's profile or PDF row.
-  if (typeof resume?.name !== 'string') return null;
-  try {
-    const name = text(resume.name, 'Résumé filename', 180, false);
-    return /\.pdf$/i.test(name) && !/[/\\:]/.test(name) && !name.startsWith('.') ? name : null;
-  } catch { return null; }
+  // Preserve the original bounded/control-checked legacy filename, including
+  // previously accepted unpaired surrogates. New-write validation is stricter;
+  // applying it here would silently erase historical evidence from the view.
+  if (typeof resume?.name !== 'string' || resume.name.length > 180 || /[\x00-\x1f\x7f]/.test(resume.name)) return null;
+  const name = resume.name.trim();
+  return /\.pdf$/i.test(name) && !/[/\\:]/.test(name) && !name.startsWith('.') ? name : null;
 }
 function publicProfile(p,revision){return {...p,linkedin:p.linkedin??'',resume:safeResume(p.resume),revision}}
 function response(status,data,headers={}){return new Response(stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer',...headers}})}

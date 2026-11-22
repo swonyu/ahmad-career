@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-11-21T19:15:44.610Z",
+  "observedAt": "2026-11-22T20:57:06.725Z",
   "status": "passed",
   "checks": 68,
   "groups": [
@@ -77,9 +77,9 @@
   "mode": "Actual Miniflare D1 and R2 bindings; production handler and provider mapping with injected synthetic HTTP dependency.",
   "fiveMiBPDF": true,
   "sourceHashes": {
-    "server/applications.mjs": "57a41b61a8ae1bd841d67c09ade7944f708251f28ac64bb862b4d4c834c6eb1b",
-    "server/provider.mjs": "10d3fa0c116b9e5e5fcecb83bfd3a241428903046fdaf864bf77757dff76870e",
-    "server/validation.mjs": "b7b96c7089cbe3c93adcfaed6fd79679b7ea981ca5790ba8b16dc30275825448",
+    "server/applications.mjs": "13563c7ab349d7471286a9f6ec3b4f6951c71642cbb2377f4ef5ec2b24fcbf3c",
+    "server/provider.mjs": "7b72125d9d02602c08e4dbcad059d369e8f67ede0bc248f3688728e2bfa7f97a",
+    "server/validation.mjs": "63384f08660582be451a359d88b495cd0bd86dff5082526845923ff110072837",
     "server/identity.mjs": "dc7b5843574d64be97829ce05840e515702e13df6f3652aa8d3cd8c058ff702f",
     "server/pdf-readability.mjs": "f17bdb9db770a3663d067aa6c9ad1cee0fabfd2420bd96ed3e5ce60c960b61b2",
     "server/retry-after.mjs": "ad34cbec76b5096665c1ab8b126043ed6ad35cc13a52233b39bf3475b876a70d",
