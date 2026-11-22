@@ -46,3 +46,6 @@ html{scroll-padding-top:1.5rem}body{background:var(--bg)}
 
 /* Keep every site-navigation action reachable when phone text is enlarged. */
 @media(max-width:520px){.site-header nav{flex-wrap:wrap}}
+
+.account-cv-heading { flex-wrap: wrap; }
+.account-cv-heading > .count { flex-shrink: 0; white-space: nowrap; }
