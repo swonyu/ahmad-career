@@ -288,6 +288,8 @@ private struct NativeSavedScreen: View {
     @State private var query = ""
     @State private var adding = false
     @State private var filter = NativeSavedFilter.all
+    @State private var comparisonSelection: [PhoneSavedComparisonKey] = []
+    @State private var comparisonSheet: NativeSavedComparisonSelection?
     private var jobs: [CareerJob] {
         let requested = NativeSavedSearch.terms(query)
         return store.savedJobs.filter { nativeMatches($0, terms: requested, note: store.applicationRecords[$0.id]?.receiptNote ?? "") && filter != .followUps
@@ -322,6 +324,18 @@ private struct NativeSavedScreen: View {
                     .pickerStyle(.menu).accessibilityIdentifier("saved.filter")
                 if filter == .followUps { Text(l10n("Dates you set on this phone, with overdue follow-ups first. No message or notification is sent.")).font(.footnote).foregroundStyle(.secondary) }
             }
+            if !applications.savedOpportunities.isEmpty {
+                Section {
+                    Text(l10n.format("{0} of 2 selected", [comparisonSelection.count.formatted(.number.locale(l10n.locale))]))
+                        .accessibilityIdentifier("saved.comparison.count")
+                    Button(l10n("Compare two")) { comparisonSheet = NativeSavedComparisonSelection(keys: comparisonSelection) }
+                        .disabled(comparisonSelection.count != 2).accessibilityIdentifier("saved.comparison.open")
+                    if !comparisonSelection.isEmpty {
+                        Button(l10n("Clear selection")) { comparisonSelection = [] }
+                            .accessibilityIdentifier("saved.comparison.clear")
+                    }
+                } header: { Text(l10n("Compare saved openings")) } footer: { Text(l10n("Choose two saved openings.")) }
+            }
             if applications.savedOpportunities.isEmpty && store.savedJobs.isEmpty {
                 Section {
                     NativeEmpty(title: "No saved jobs yet", message: "Save a role from Search or add a job link. Saving keeps it for review; it does not apply.", icon: "heart")
@@ -337,6 +351,7 @@ private struct NativeSavedScreen: View {
             if !applicationJobs.isEmpty {
                 Section(l10n.format("Application opportunities · {0}", [String(describing: applicationJobs.count)])) {
                     ForEach(applicationJobs) { row in
+                        VStack(alignment: .leading, spacing: 6) {
                         NavigationLink { NativeSavedApplicationDetail(id: row.id) } label: {
                             VStack(alignment: .leading, spacing: 6) {
                                 Text(row.value["title"]?.string ?? l10n("Opportunity")).font(.headline).fixedSize(horizontal: false, vertical: true)
@@ -357,6 +372,26 @@ private struct NativeSavedScreen: View {
                                 }
                             }.padding(.vertical, 5)
                         }
+                        if let key = applications.savedComparisonKey(for: row.value) {
+                            let chosen = comparisonSelection.contains(key)
+                            Button {
+                                if chosen { comparisonSelection.removeAll { $0 == key } }
+                                else if comparisonSelection.count < 2 && !comparisonSelection.contains(where: { $0.identity == key.identity }) {
+                                    comparisonSelection.append(key)
+                                }
+                            } label: {
+                                Label(l10n("Compare"), systemImage: chosen ? "checkmark.circle.fill" : "circle")
+                                    .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.borderless)
+                            .disabled(!chosen && (comparisonSelection.count >= 2 || comparisonSelection.contains { $0.identity == key.identity }))
+                            .accessibilityLabel(l10n.format("Compare {0} at {1} in {2}", [row.value["title"]?.string ?? l10n("Opportunity"),
+                                row.value["company"]?.string ?? l10n("Not recorded"), row.value["location"]?.string ?? l10n("Location not specified")]))
+                            .accessibilityAddTraits(chosen ? .isSelected : [])
+                            .accessibilityIdentifier("saved.comparison.select." + row.id)
+                        }
+                        }
                     }
                 }
             }
@@ -374,7 +409,69 @@ private struct NativeSavedScreen: View {
                 Button { adding = true } label: { Label(l10n("Add opportunity"), systemImage: "plus") }.accessibilityIdentifier("saved.addOpportunity")
             } }
             .sheet(isPresented: $adding) { NativeOpportunityEditor(model: applications) }
+            .sheet(item: $comparisonSheet) { NativeSavedComparisonSheet(model: applications, keys: $0.keys) }
+            .onChange(of: applications.savedComparisonOwner) { _ in comparisonSelection = []; comparisonSheet = nil }
             .onChange(of: applications.workspaceScope) { _ in query = ""; filter = .all }
+    }
+}
+
+private struct NativeSavedComparisonSelection: Identifiable {
+    let id = UUID()
+    let keys: [PhoneSavedComparisonKey]
+}
+
+/// A sheet leaves the actual Saved list, filter, search text and scroll position mounted underneath.
+private struct NativeSavedComparisonSheet: View {
+    @NativeLocalization private var l10n
+    @Environment(\.dismiss) private var dismiss
+    @ObservedObject var model: NativeApplicationsStore
+    let keys: [PhoneSavedComparisonKey]
+    var body: some View {
+        NavigationStack {
+            NativeList {
+                if let items = model.savedComparisonItems(keys) {
+                    ForEach(items, id: \.key.rowID) { item in NativeSavedComparisonCard(item: item) }
+                    Section { Text(l10n("Stages and follow-up dates are your own records.")).font(.footnote).foregroundStyle(.secondary) }
+                } else {
+                    Section { Text(l10n("A selected opening is no longer in Saved. Choose the two openings again."))
+                        .accessibilityIdentifier("saved.comparison.unavailable") }
+                }
+            }.nativeList().navigationTitle(l10n("Compare two openings")).navigationBarTitleDisplayMode(.inline)
+                .accessibilityIdentifier("saved.comparison.content")
+                .toolbar { ToolbarItem(placement: .cancellationAction) {
+                    Button(l10n("Back to Saved")) { dismiss() }.accessibilityIdentifier("saved.comparison.close")
+                } }
+        }
+    }
+}
+
+private struct NativeSavedComparisonCard: View {
+    @NativeLocalization private var l10n
+    let item: PhoneSavedComparisonItem
+    private func fact(_ label: String, _ value: String, _ suffix: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(l10n(label)).font(.caption).foregroundStyle(.secondary)
+            Text(value).fixedSize(horizontal: false, vertical: true)
+        }.accessibilityElement(children: .combine).accessibilityIdentifier("saved.comparison." + item.key.rowID + "." + suffix)
+    }
+    var body: some View {
+        Section {
+            Text(item.job.title.isEmpty ? l10n("Opportunity") : item.job.title).font(.title3.weight(.bold))
+                .fixedSize(horizontal: false, vertical: true).accessibilityIdentifier("saved.comparison." + item.key.rowID + ".title")
+            Text(item.job.company.isEmpty ? l10n("Not recorded") : item.job.company).font(.headline)
+            fact("Location", item.job.location.isEmpty ? l10n("Location not specified") : spokenListingLocation(item.job.location, l10n), "location")
+            if item.recordOnly { Text(l10n("Application record · bookmark removed")).font(.caption).foregroundStyle(.secondary) }
+            fact("Source", item.job.sourceName?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false ? item.job.sourceName! : l10n("Not recorded"), "source")
+            fact("Last checked", item.job.checkedAt.flatMap(ApplicationReviewPolicy.date).map { l10n.date($0, includeTime: true) } ?? l10n("Not recorded"), "checkedAt")
+            fact("Stage", item.stage.map { l10n($0.title) } ?? l10n("Not recorded"), "stage")
+            fact("Follow-up date", item.conflictingRecords ? l10n("Not recorded") : item.followUpOn.map(l10n.civilDate) ?? l10n("No follow-up scheduled"), "followUp")
+            if item.conflictingRecords { Text(l10n("Record versions need review.")).font(.footnote).foregroundStyle(.secondary) }
+            if let url = MobileApplicationPolicy.jobURL(item.job.url) {
+                Link(destination: url) { Label(l10n("Open employer posting"), systemImage: "arrow.up.right.square") }
+                    .accessibilityLabel(l10n.format("Open job: {0} in {1}", [item.job.title, item.job.location.isEmpty ? l10n("Location not specified") : item.job.location]))
+                    .accessibilityIdentifier("saved.comparison." + item.key.rowID + ".employer")
+            }
+        }
     }
 }
 

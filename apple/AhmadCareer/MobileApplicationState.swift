@@ -163,28 +163,88 @@ struct PhoneRecoveredOpportunity: Codable, Equatable {
     var valid: Bool { scope.valid && draft.hasContent && draft.storageError == nil }
 }
 
+/// Optional observed listing facts stay local. Saving or comparing never invents a check time.
+enum PhoneSavedJobMetadata {
+    static func valid(sourceName: String?, checkedAt: String?) -> Bool {
+        if let sourceName, sourceName.utf16.count > 150
+            || sourceName.unicodeScalars.contains(where: { CharacterSet.controlCharacters.contains($0) }) { return false }
+        if let checkedAt {
+            guard checkedAt.utf16.count <= 64, let date = ApplicationReviewPolicy.date(checkedAt),
+                  date.timeIntervalSince1970.isFinite else { return false }
+        }
+        return true
+    }
+    static func valid(_ job: [String: ApplicationValue]) -> Bool {
+        for key in ["sourceName", "checkedAt"] {
+            if let value = job[key], value != .null, value.string == nil { return false }
+        }
+        return valid(sourceName: job["sourceName"]?.string, checkedAt: job["checkedAt"]?.string)
+    }
+    /// Public details come from the preferred row; only known facts for this exact posting survive.
+    static func preserving(_ preferred: [String: ApplicationValue], from previous: [String: ApplicationValue]) -> [String: ApplicationValue] {
+        guard valid(preferred), valid(previous),
+              let nextURL = preferred["url"]?.string, let oldURL = previous["url"]?.string,
+              MobileApplicationPolicy.jobURL(nextURL) != nil, MobileApplicationPolicy.jobURL(oldURL) != nil,
+              MobileApplicationPolicy.jobIdentity(nextURL) == MobileApplicationPolicy.jobIdentity(oldURL) else { return preferred }
+        var result = preferred
+        if (result["sourceName"]?.string?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true),
+           let name = previous["sourceName"]?.string { result["sourceName"] = .string(name) }
+        if let old = previous["checkedAt"]?.string, let oldDate = ApplicationReviewPolicy.date(old),
+           result["checkedAt"]?.string.flatMap(ApplicationReviewPolicy.date).map({ $0 < oldDate }) ?? true {
+            result["checkedAt"] = .string(old)
+        }
+        return result
+    }
+}
+
+/// Ephemeral comparison identity is independent of Apply selection and never enters a backup.
+struct PhoneSavedComparisonOwner: Equatable {
+    let scope: PhoneRecordScope
+    let connection: UUID
+}
+struct PhoneSavedComparisonKey: Equatable {
+    let owner: PhoneSavedComparisonOwner
+    let recordScope: PhoneRecordScope
+    let rowID: String
+    let identity: String
+}
+struct PhoneSavedComparisonItem {
+    let key: PhoneSavedComparisonKey
+    let job: PhoneRecordJob
+    let recordOnly: Bool
+    let stage: PhoneApplicationStage?
+    let followUpOn: String?
+    let conflictingRecords: Bool
+}
+
 struct PhoneRecordJob: Codable, Equatable {
     var url: String
     var title: String
     var company: String
     var location: String
     var country: String
+    var sourceName: String?
+    var checkedAt: String?
     init(_ job: [String: ApplicationValue]) {
         url = job["url"]?.string ?? ""
         title = String((job["title"]?.string ?? "Opportunity").prefix(500))
         company = String((job["company"]?.string ?? "").prefix(500))
         location = String((job["location"]?.string ?? "").prefix(500))
         country = String((job["country"]?.string ?? "").prefix(2))
+        sourceName = job["sourceName"]?.string; checkedAt = job["checkedAt"]?.string
     }
     var identity: String { MobileApplicationPolicy.jobIdentity(url) }
     var valid: Bool {
         MobileApplicationPolicy.jobURL(url) != nil && url.utf16.count <= 4_096
             && [title, company, location].allSatisfy { $0.count <= 500 }
-            && country.count <= 2
+            && country.count <= 2 && PhoneSavedJobMetadata.valid(sourceName: sourceName, checkedAt: checkedAt)
     }
     func applicationJob(id: String) -> [String: ApplicationValue] {
-        ["id": .string(id), "url": .string(url), "title": .string(title), "company": .string(company),
-         "location": .string(location), "country": .string(country), "recordOnly": .bool(true)]
+        var value: [String: ApplicationValue] = ["id": .string(id), "url": .string(url), "title": .string(title), "company": .string(company),
+            "location": .string(location), "country": .string(country), "recordOnly": .bool(true)]
+        if let sourceName { value["sourceName"] = .string(sourceName) }
+        if let checkedAt { value["checkedAt"] = .string(checkedAt) }
+        return value
     }
 }
 
@@ -269,7 +329,7 @@ struct PhoneWorkspaceDraft: Codable, Equatable {
         scope.valid && jobs.count <= 200 && jobs.allSatisfy { job in
             guard let url = job["url"]?.string, MobileApplicationPolicy.jobURL(url) != nil, url.utf16.count <= 4_096 else { return false }
             return ["title", "company", "location"].allSatisfy { (job[$0]?.string?.utf16.count ?? 0) <= 500 }
-                && (job["country"]?.string?.count ?? 0) <= 2
+                && (job["country"]?.string?.count ?? 0) <= 2 && PhoneSavedJobMetadata.valid(job)
         }
             && opportunityDraft.storageError == nil
             && (profile.resumeData?.count ?? 0) <= MobileApplicationPolicy.maximumResumeBytes
@@ -391,13 +451,18 @@ struct PhoneWorkspaceBackup: Codable {
     }
     private struct Job: Codable {
         var url: String; var title: String; var company: String; var location: String; var country: String
+        var sourceName: String?; var checkedAt: String?
         init(_ value: [String: ApplicationValue]) {
             url = value["url"]?.string ?? ""; title = value["title"]?.string ?? ""; company = value["company"]?.string ?? ""
             location = value["location"]?.string ?? ""; country = value["country"]?.string ?? ""
+            sourceName = value["sourceName"]?.string; checkedAt = value["checkedAt"]?.string
         }
         func decoded(index: Int) -> [String: ApplicationValue] {
-            ["id": .string("local-import-\(index)"), "localOnly": .bool(true), "url": .string(url), "title": .string(title),
-             "company": .string(company), "location": .string(location), "country": .string(country)]
+            var value: [String: ApplicationValue] = ["id": .string("local-import-\(index)"), "localOnly": .bool(true), "url": .string(url), "title": .string(title),
+                "company": .string(company), "location": .string(location), "country": .string(country)]
+            if let sourceName { value["sourceName"] = .string(sourceName) }
+            if let checkedAt { value["checkedAt"] = .string(checkedAt) }
+            return value
         }
     }
     private struct Contents: Codable {
@@ -591,7 +656,8 @@ struct PhoneApplicationState: Codable, Equatable {
         recordDraftAlternatives = try c.decodeIfPresent([PhoneRecordDraftCheckpoint].self, forKey: .recordDraftAlternatives) ?? []
         recoveredOpportunityDrafts = try c.decodeIfPresent([PhoneRecoveredOpportunity].self, forKey: .recoveredOpportunityDrafts) ?? []
         submissionHolds = try c.decodeIfPresent([PhoneSubmissionHold].self, forKey: .submissionHolds) ?? []
-        guard workspaceDraftSchema == 1, workspaceDrafts.count <= 32, workspaceDrafts.allSatisfy(\.valid),
+        guard jobs.allSatisfy(PhoneSavedJobMetadata.valid),
+              workspaceDraftSchema == 1, workspaceDrafts.count <= 32, workspaceDrafts.allSatisfy(\.valid),
               recordDrafts.count + recordDraftAlternatives.count <= 200,
               recordDrafts.allSatisfy(\.valid), recordDraftAlternatives.allSatisfy(\.valid),
               recoveredOpportunityDrafts.count <= 200, recoveredOpportunityDrafts.allSatisfy(\.valid),
@@ -724,7 +790,11 @@ struct ApplicationJobMerge {
             if ids.remove(old) != nil { ids.insert(replacement) }
             if mappedAnswers[replacement] == nil, let value = mappedAnswers[old] { mappedAnswers[replacement] = value }
         }
-        jobs = remote + local.filter { byIdentity[MobileApplicationPolicy.jobIdentity($0["url"]?.string ?? "")] == nil }
+        let enriched = remote.map { job in
+            let matches = local.filter { MobileApplicationPolicy.jobIdentity($0["url"]?.string ?? "") == MobileApplicationPolicy.jobIdentity(job["url"]?.string ?? "") }
+            return matches.count == 1 ? PhoneSavedJobMetadata.preserving(job, from: matches[0]) : job
+        }
+        jobs = enriched + local.filter { byIdentity[MobileApplicationPolicy.jobIdentity($0["url"]?.string ?? "")] == nil }
         ids.formIntersection(Set(jobs.compactMap { $0["id"]?.string }))
         self.selected = ids; self.answers = mappedAnswers
     }

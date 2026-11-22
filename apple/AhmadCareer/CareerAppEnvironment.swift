@@ -21,6 +21,14 @@ enum CareerAppEnvironment {
     static func makeApplicationsStore() -> NativeApplicationsStore {
         #if DEBUG
         if let root = acceptanceRoot {
+            if ProcessInfo.processInfo.environment["CAREER_UI_SAVED_COMPARISON"] == "two-openings" {
+                let folder = root.appendingPathComponent("applications", isDirectory: true)
+                let service = AcceptanceSavedComparison(root: root)
+                do { try service.seedIfAbsent(folder: folder) }
+                catch { preconditionFailure("The isolated Saved-comparison fixture could not be prepared.") }
+                return NativeApplicationsStore(folder: folder, credentials: AcceptanceCredentials(),
+                    clientFactory: { _, _ in service })
+            }
             if ProcessInfo.processInfo.environment["CAREER_UI_APPLICATION_HISTORY"] == "cv-details" {
                 let folder = root.appendingPathComponent("applications", isDirectory: true)
                 let service = AcceptanceApplicationHistory(root: root)

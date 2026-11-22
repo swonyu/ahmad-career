@@ -57,6 +57,7 @@
 "A saved job, self-reported application or opened employer link does not create a receipt. An approved application’s actual outcome appears here." = "حفظ وظيفة أو تسجيل تقديم حسب إفادتك أو فتح رابط جهة عمل لا ينشئ إيصال إرسال. تظهر هنا النتيجة الفعلية للطلب الموافق عليه.";
 "A saved profile link, not a verified LinkedIn account connection. It is shared with an employer only when it appears in a review you approve." = "رابط ملف شخصي محفوظ، وليس اتصالًا متحققًا منه بحساب LinkedIn. لا يُشارك مع جهة عمل إلا عندما يظهر في مراجعة توافق عليها.";
 "A saved record version could not be read. It is preserved." = "تعذّرت قراءة نسخة محفوظة من السجل. تم الاحتفاظ بها.";
+"A selected opening is no longer in Saved. Choose the two openings again." = "إحدى الفرص المحددة لم تعد ضمن المحفوظات. اختر الفرصتين مجددًا.";
 "A stop request cancels jobs that have not been dispatched. Receipts show the actual outcome for anything already sent." = "يلغي طلب الإيقاف الطلبات التي لم تُرسل بعد. تعرض إيصالات الإرسال النتيجة الفعلية لأي طلب أُرسل بالفعل.";
 "A supported employer board or individual posting URL can be used. Other job links can still be added in Saved." = "يمكن استخدام رابط صفحة وظائف مدعومة لجهة عمل أو رابط إعلان وظيفة منفرد. ويمكن إضافة روابط الوظائف الأخرى في «المحفوظات».";
 "A temporary device or storage problem may recover. Retrying does not resend an application." = "قد تُحل مشكلة مؤقتة في الجهاز أو التخزين. إعادة المحاولة لا تعيد إرسال طلب تقديم.";
@@ -150,6 +151,7 @@
 "Application receipts" = "إيصالات التقديم";
 "Application record" = "سجل التقديم";
 "Application record for {0} at {1}" = "سجل التقديم لوظيفة {0} لدى {1}";
+"Application record · bookmark removed" = "سجل تقديم · أُزيلت العلامة المرجعية";
 "Application record · saved link removed" = "سجل التقديم · تمت إزالة الرابط المحفوظ";
 "Application records" = "سجلات طلبات التوظيف";
 "Application review" = "مراجعة طلب التوظيف";
@@ -193,6 +195,7 @@
 "Available" = "متاح";
 "Awaiting outcome" = "بانتظار النتيجة";
 "Back" = "رجوع";
+"Back to Saved" = "العودة إلى المحفوظات";
 "Backup merged privately. Other workspaces and the original file are kept. Review conflicting notes and drafts in phone data settings. Imported receipt copies are unverified; refresh service receipts to recover evidence." = "تم دمج النسخة الاحتياطية بشكل خاص. مساحات العمل الأخرى والملف الأصلي محفوظة. راجع الملاحظات والمسودات المتعارضة في إعدادات بيانات الهاتف. نسخ إيصالات الإرسال المستوردة غير متحقق منها؛ حدّث إيصالات الخدمة لاسترجاع الأدلة.";
 "Basic pay for chosen period" = "الأجر الأساسي للفترة المختارة";
 "Basic pay for chosen period, " = "الأجر الأساسي للفترة المختارة، ";
@@ -279,6 +282,7 @@
 "Choose the PDF again before copying this profile." = "اختر ملف PDF مجددًا قبل نسخ هذا الملف الشخصي.";
 "Choose the currency and pay period, then enter your own amounts. The calculator makes no assumptions about your profession, location, current pay or seniority." = "اختر العملة وفترة الأجر، ثم أدخل مبالغك. لا تفترض الحاسبة شيئًا عن مهنتك أو موقعك أو أجرك الحالي أو مستواك الوظيفي.";
 "Choose the details you want to keep. Other versions stay on this phone." = "اختر التفاصيل التي تريد الاحتفاظ بها. تبقى النسخ الأخرى على هذا الهاتف.";
+"Choose two saved openings." = "اختر فرصتين محفوظتين.";
 "Choose up to four different employer boards." = "اختر ما يصل إلى أربع لوحات وظائف مختلفة لجهات العمل.";
 "Choose up to four employer boards per search." = "اختر ما يصل إلى أربع لوحات وظائف لكل بحث.";
 "Choose up to four public Lever or Greenhouse employer boards." = "اختر حتى أربع صفحات وظائف عامة لجهات عمل تستخدم Lever أو Greenhouse.";
@@ -320,13 +324,18 @@
 "Closing date" = "آخر موعد للتقديم";
 "Closing keeps your earlier application on record." = "يبقى تقديمك السابق مسجّلًا عند الإغلاق.";
 "Collapsed" = "مطوي";
+"Compare" = "قارن";
 "Compare a job offer" = "قارن عرض عمل";
 "Compare both profiles" = "مقارنة الملفين الشخصيين";
 "Compare records" = "مقارنة السجلات";
+"Compare saved openings" = "مقارنة الفرص المحفوظة";
 "Compare the saved record versions before editing this opportunity." = "قارن نسخ السجل المحفوظة قبل تعديل هذه الفرصة.";
 "Compare the service profile" = "مقارنة الملف الشخصي لدى الخدمة";
+"Compare two" = "قارن فرصتين";
+"Compare two openings" = "مقارنة فرصتين";
 "Compare your entered package" = "قارن إجمالي الأجر الذي أدخلته";
 "Compare your private records" = "مقارنة سجلاتك الخاصة";
+"Compare {0} at {1} in {2}" = "قارن {0} لدى {1} في {2}";
 "Complete on employer site" = "الإكمال على موقع جهة العمل";
 "Complete this application on the employer's website." = "أكمل هذا الطلب على موقع جهة العمل.";
 "Confirm Mark as not applied before clearing your applied record." = "أكّد «إلغاء علامة التقديم» قبل إزالة العلامة من سجلّك.";
@@ -757,6 +766,7 @@
 "No countries match this search." = "لا توجد بلدان تطابق هذا البحث.";
 "No country preference" = "لا توجد أفضلية لبلد";
 "No email entered" = "لم يُدخل بريد إلكتروني";
+"No follow-up scheduled" = "لا توجد متابعة مجدولة";
 "No follow-ups match." = "لا توجد متابعات مطابقة.";
 "No follow-ups to show." = "لا توجد متابعات لعرضها.";
 "No matches in the results we could check." = "لا توجد مطابقات في النتائج التي أمكن التحقق منها.";
@@ -818,6 +828,7 @@
 "Open employer page" = "فتح صفحة جهة العمل";
 "Open employer page for {0} at {1}" = "فتح صفحة جهة العمل لوظيفة {0} لدى {1}";
 "Open employer posting" = "فتح إعلان جهة العمل";
+"Open job: {0} in {1}" = "افتح وظيفة {0} في {1}";
 "Open official application" = "فتح صفحة التقديم الرسمية";
 "Open original employer board" = "فتح صفحة وظائف جهة العمل الأصلية";
 "Open saved jobs" = "فتح الوظائف المحفوظة";
@@ -984,6 +995,7 @@
 "Record last edited: {0} (not the application time)." = "آخر تعديل للسجل: {0} (وليس وقت التقديم).";
 "Record only: {0} · {1}" = "سجل فقط: {0} · {1}";
 "Record saved on this phone." = "تم حفظ السجل على هذا الهاتف.";
+"Record versions need review." = "تحتاج نسخ السجل إلى مراجعة.";
 "Recorded at" = "وقت التسجيل";
 "Recorded reference: " = "الرقم المرجعي المسجّل: ";
 "Recorded reference: {0}" = "الرقم المرجعي المسجّل: {0}";
@@ -1270,12 +1282,14 @@
 "Some employer checks were incomplete: " = "لم تكتمل بعض عمليات التحقق لدى جهات العمل: ";
 "Some employer checks were incomplete: {0}" = "لم تكتمل بعض عمليات التحقق لدى جهات العمل: {0}";
 "Some sources are unavailable, cached or limited. The details below explain the coverage." = "بعض المصادر غير متاحة أو محفوظة مؤقتًا أو محدودة. توضح التفاصيل أدناه نطاق التغطية.";
+"Source" = "المصدر";
 "Source and freshness" = "المصدر وحداثة المعلومات";
 "Source and full requirements" = "المصدر والمتطلبات الكاملة";
 "Source: " = "المصدر: ";
 "Source: {0} · {1}" = "المصدر: {0} · {1}";
 "Sources checked for this search" = "المصادر التي تم التحقق منها لهذا البحث";
 "Stage" = "المرحلة";
+"Stages and follow-up dates are your own records." = "المراحل وتواريخ المتابعة من سجلاتك الشخصية.";
 "Start" = "البداية";
 "Start a fresh search" = "بدء بحث جديد";
 "Start a fresh search to continue." = "ابدأ بحثًا جديدًا للمتابعة.";
@@ -1819,6 +1833,7 @@
 "{0} invalid listings were excluded." = "تم استبعاد إعلانات غير صالحة، وعددها {0}.";
 "{0} listing checks failed; results may be incomplete." = "تعذر التحقق من إعلانات عددها {0}؛ قد تكون النتائج غير مكتملة.";
 "{0} must be on one line with no more than 500 characters. Your unfinished draft is kept." = "يجب أن يكون {0} في سطر واحد وألا يتجاوز 500 حرف. مسودتك غير المكتملة محفوظة.";
+"{0} of 2 selected" = "الفرص المحددة: {0} من ٢";
 "{0} of 2,000 characters" = "{0} من 2,000 حرف";
 "{0} of 3 application essentials ready" = "{0} من 3 متطلبات أساسية للتقديم جاهزة";
 "{0} of 30 selected · Leave empty for no preference." = "{0} من 30 محددة · اتركها فارغة لعدم تحديد أفضلية.";

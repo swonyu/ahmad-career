@@ -413,7 +413,8 @@ private struct NativeDiscoveryJobDetail: View {
                     Button {
                         Task {
                             _ = await applications.addJob(url: job.url, title: job.title, company: job.company,
-                                                         location: job.location, country: job.country ?? "")
+                                                         location: job.location, country: job.country ?? "",
+                                                         sourceName: job.sourceName, checkedAt: job.checkedAt)
                             saveMessage = applications.message
                         }
                     } label: {

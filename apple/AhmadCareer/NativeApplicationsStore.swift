@@ -149,6 +149,40 @@ final class NativeApplicationsStore: ObservableObject {
         return values
     }
     func savedOpportunity(_ id: String) -> [String: ApplicationValue]? { savedOpportunities.first { $0["id"]?.string == id } }
+    var savedComparisonOwner: PhoneSavedComparisonOwner {
+        PhoneSavedComparisonOwner(scope: state.recordScope, connection: sessionGeneration)
+    }
+    func savedComparisonKey(for job: [String: ApplicationValue]) -> PhoneSavedComparisonKey? {
+        guard let id = job["id"]?.string, !id.isEmpty, let url = job["url"]?.string,
+              MobileApplicationPolicy.jobURL(url) != nil else { return nil }
+        let matches = savedOpportunities.filter { $0["id"]?.string == id }
+        guard matches.count == 1, MobileApplicationPolicy.jobIdentity(matches[0]["url"]?.string ?? "") == MobileApplicationPolicy.jobIdentity(url),
+              PhoneSavedJobMetadata.valid(matches[0]) else { return nil }
+        return PhoneSavedComparisonKey(owner: savedComparisonOwner, recordScope: recordScope(for: matches[0]),
+            rowID: id, identity: MobileApplicationPolicy.jobIdentity(url))
+    }
+    func savedComparisonItem(for key: PhoneSavedComparisonKey) -> PhoneSavedComparisonItem? {
+        guard key.owner == savedComparisonOwner else { return nil }
+        let matches = savedOpportunities.filter { $0["id"]?.string == key.rowID }
+        guard matches.count == 1, let row = matches.first,
+              MobileApplicationPolicy.jobIdentity(row["url"]?.string ?? "") == key.identity,
+              recordScope(for: row) == key.recordScope, PhoneSavedJobMetadata.valid(row) else { return nil }
+        let active = recordVersions(for: row).filter { !$0.archived }
+        let record = active.count == 1 ? active[0] : nil
+        let facts = record.map { PhoneSavedJobMetadata.preserving(row, from: $0.job.applicationJob(id: key.rowID)) } ?? row
+        let job = PhoneRecordJob(facts)
+        guard job.valid else { return nil }
+        return PhoneSavedComparisonItem(key: key, job: job, recordOnly: row["recordOnly"]?.bool == true,
+            stage: active.count > 1 ? nil : record?.stage ?? .saved,
+            followUpOn: record?.followUpOn.isEmpty == false ? record?.followUpOn : nil,
+            conflictingRecords: active.count > 1)
+    }
+    /// Reads only: opening a comparison cannot select Apply jobs, write drafts, or contact a service.
+    func savedComparisonItems(_ keys: [PhoneSavedComparisonKey]) -> [PhoneSavedComparisonItem]? {
+        guard keys.count == 2, keys[0].identity != keys[1].identity else { return nil }
+        let items = keys.compactMap(savedComparisonItem)
+        return items.count == 2 ? items : nil
+    }
     private var localAppliedIdentities: Set<String> {
         Set(jobs.filter(isMarkedApplied).compactMap { $0["url"]?.string }.map(MobileApplicationPolicy.jobIdentity))
     }
@@ -274,6 +308,8 @@ final class NativeApplicationsStore: ObservableObject {
             message = "Stop your queued applications in Apply before changing the applied mark. Your notes draft is kept."; return false
         }
         var record = base ?? PhoneOpportunityRecord(scope: context.scope, job: context.job)
+        let facts = PhoneSavedJobMetadata.preserving(context.job.applicationJob(id: "record"), from: record.job.applicationJob(id: "record"))
+        record.job.sourceName = facts["sourceName"]?.string; record.job.checkedAt = facts["checkedAt"]?.string
         record.stage = draft.stage; record.appliedElsewhere = applied; record.appliedOn = draft.appliedOn
         record.followUpOn = draft.followUpOn; record.note = draft.note
         guard MobileApplicationPolicy.manualResumeNameIsValid(draft.manualResumeName) else {
@@ -350,7 +386,22 @@ final class NativeApplicationsStore: ObservableObject {
             message = "This opportunity changed or is part of a review. It was kept; refresh before removing it."; return false
         }
         do {
-            var next = state; next.jobs.removeAll { $0["id"]?.string == context.id }; try persist(next)
+            var next = state
+            if let job = jobs.first(where: { $0["id"]?.string == context.id }) {
+                let scope = recordScope(for: job)
+                for index in next.applicationRecords.indices where next.applicationRecords[index].scope == scope
+                    && next.applicationRecords[index].identity == context.identity && !next.applicationRecords[index].archived {
+                    var snapshot = next.applicationRecords[index].job
+                    let facts = PhoneSavedJobMetadata.preserving(job, from: snapshot.applicationJob(id: context.id))
+                    snapshot.sourceName = facts["sourceName"]?.string; snapshot.checkedAt = facts["checkedAt"]?.string
+                    if snapshot != next.applicationRecords[index].job {
+                        next.applicationRecords[index].job = snapshot
+                        next.applicationRecords[index].revision += 1
+                        next.applicationRecords[index].updatedAt = ISO8601DateFormatter().string(from: Date())
+                    }
+                }
+            }
+            next.jobs.removeAll { $0["id"]?.string == context.id }; try persist(next)
             selected.remove(context.id); answers.removeValue(forKey: context.id); mergeJobs()
             message = current.keepsRecord ? "Saved link removed. Your application record is kept on this phone." : "Saved link removed."
             return true
@@ -403,7 +454,8 @@ final class NativeApplicationsStore: ObservableObject {
     }
     private func persist(_ next: PhoneApplicationState) throws {
         guard storageReadable else { throw MobileApplicationError(message: "The existing phone draft is preserved because it could not be read.") }
-        guard next.applicationRecordSchema == 1, next.applicationRecords.count <= 1_000,
+        guard next.jobs.allSatisfy(PhoneSavedJobMetadata.valid),
+              next.applicationRecordSchema == 1, next.applicationRecords.count <= 1_000,
               next.applicationRecords.allSatisfy(\.valid), Set(next.applicationRecords.map(\.id)).count == next.applicationRecords.count,
               next.workspaceDraftSchema == 1, next.workspaceDrafts.count <= 32, next.workspaceDrafts.allSatisfy(\.valid),
               next.recordDrafts.count + next.recordDraftAlternatives.count <= 200,
@@ -721,6 +773,7 @@ final class NativeApplicationsStore: ObservableObject {
         try checkUnpairedRecordAdoption(MobileApplicationPolicy.jobIdentity(importedURL))
         var next = state
         var backup = imported.filter { ["url", "title", "company", "location", "country", "provider", "workMode"].contains($0.key) }
+        backup = PhoneSavedJobMetadata.preserving(backup, from: state.jobs[index])
         backup["id"] = .string(localID); backup["localOnly"] = .bool(true)
         next.jobs[index] = backup
         // Synchronizing a bookmark never moves a separate person's private records.
@@ -739,7 +792,8 @@ final class NativeApplicationsStore: ObservableObject {
         let identity = MobileApplicationPolicy.jobIdentity(url)
         return jobs.contains { MobileApplicationPolicy.jobIdentity($0["url"]?.string ?? "") == identity }
     }
-    func addJob(url: String, title: String, company: String, location: String, country: String) async -> Bool {
+    func addJob(url: String, title: String, company: String, location: String, country: String,
+                sourceName: String? = nil, checkedAt: String? = nil) async -> Bool {
         guard let valid = MobileApplicationPolicy.jobURL(url), let operation = beginOperation() else {
             message = "Use a complete public HTTPS job link."; return false
         }
@@ -768,6 +822,11 @@ final class NativeApplicationsStore: ObservableObject {
             }
             let localID = "local-" + UUID().uuidString
             var local = fields; local["id"] = .string(localID); local["localOnly"] = .bool(true)
+            if let sourceName { local["sourceName"] = .string(sourceName) }
+            if let checkedAt { local["checkedAt"] = .string(checkedAt) }
+            guard PhoneSavedJobMetadata.valid(local) else {
+                throw MobileApplicationError(message: "The saved application records could not be updated. Your existing phone data is preserved.")
+            }
             var next = state; next.jobs.append(local)
             let submitted = PhoneOpportunityDraft(url: url, title: title, company: company, location: location, country: country)
             if next.opportunityDraft == submitted { next.opportunityDraft = PhoneOpportunityDraft() }
@@ -1259,7 +1318,7 @@ final class NativeApplicationsStore: ObservableObject {
             if replaceProfile { next.retainDraft(imported, basedOn: next.latestServerRevision ?? next.profileRevision) }
             var existing = Set(next.jobs.compactMap { $0["url"]?.string }.map(MobileApplicationPolicy.jobIdentity))
             for job in backup.draft.jobs where existing.insert(MobileApplicationPolicy.jobIdentity(job["url"]?.string ?? "")).inserted {
-                var local = job.filter { ["url", "title", "company", "location", "country"].contains($0.key) }
+                var local = job.filter { ["url", "title", "company", "location", "country", "sourceName", "checkedAt"].contains($0.key) }
                 local["id"] = .string("local-" + UUID().uuidString); local["localOnly"] = .bool(true); next.jobs.append(local)
             }
             // An already-loaded shortlist can take a profile or a repeated link. A new link past 200 is refused.

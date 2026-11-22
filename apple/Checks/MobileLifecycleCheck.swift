@@ -144,7 +144,90 @@ private final class LifecycleSuite {
         scenarios += 1
     }
 
+
+    func savedComparisonLifecycle() async throws {
+        let url = "https://jobs.lever.co/synthetic-harbor/comparison-a"
+        let source = "Synthetic Harbor board", checked = "2026-11-21T18:00:00Z"
+        var remote: [String: ApplicationValue] = ["id": .string("service-compare-a"), "url": .string(url),
+            "title": .string("Canonical Service Designer"), "company": .string("Synthetic Harbor"),
+            "location": .string("Riyadh"), "country": .string("SA")]
+        let service = TestService()
+        service.handle = { call in
+            if call.route == "jobs" && call.method == "POST" { return ["ok": .bool(true), "job": .object(remote)] }
+            if call.route == "workspace" && call.method == "GET" { return self.workspace(3, jobs: [remote]) }
+            throw MobileApplicationError(message: "Unexpected synthetic comparison route")
+        }
+        let (store, folder, tokens) = try fixture(initial(), service: service)
+        let saved = await store.addJob(url: url + "/apply?utm_source=fixture", title: "Service Designer",
+            company: "Synthetic Harbor", location: "Riyadh", country: "SA", sourceName: source, checkedAt: checked)
+        try check(saved && store.jobs.count == 1 && store.jobs[0]["id"]?.string == "service-compare-a",
+                  "Actual save/import/refresh retains one canonical opportunity")
+        let posts = service.calls.filter { $0.method == "POST" }
+        try check(posts.count == 1 && posts[0].route == "jobs"
+                  && Set(posts[0].body!.keys) == ["url", "title", "company", "location", "country"],
+                  "New local source/check metadata never changes the five-field public job POST")
+        try check(store.jobs[0]["sourceName"]?.string == source && store.jobs[0]["checkedAt"]?.string == checked
+                  && store.jobs[0]["title"] == remote["title"], "Service canonical details and local observed facts both survive synchronization")
+        let path = folder.appendingPathComponent("phone-draft.json")
+        let savedState = try JSONDecoder().decode(PhoneApplicationState.self, from: Data(contentsOf: path))
+        try check(savedState.jobs[0]["sourceName"]?.string == source && savedState.jobs[0]["checkedAt"]?.string == checked,
+                  "rememberImported durably retains comparison metadata in the local backup row")
+        let reopened = NativeApplicationsStore(folder: folder, credentials: tokens, clientFactory: { _, _ in service })
+        try check(reopened.jobs[0]["checkedAt"]?.string == checked && reopened.jobs[0]["sourceName"]?.string == source,
+                  "A real store reopen retains the observed facts before any new request")
+        let key = store.savedComparisonKey(for: store.jobs[0])!
+        remote["id"] = .string("service-compare-replacement")
+        let refreshed = await store.refresh()
+        try check(refreshed && store.savedComparisonItem(for: key) == nil
+                  && store.jobs[0]["checkedAt"]?.string == checked,
+                  "A changed row ID invalidates the captured comparison instead of silently substituting a same-posting row")
+        scenarios += 1
+
+        let offline = TestService(); offline.handle = { _ in throw URLError(.notConnectedToInternet) }
+        let (offlineStore, offlineFolder, offlineTokens) = try fixture(initial(), service: offline)
+        let kept = await offlineStore.addJob(url: "https://careers.example.com/offline-comparison", title: "Nurse",
+            company: "Synthetic clinic", location: "Toronto", country: "CA", sourceName: source, checkedAt: checked)
+        let restored = NativeApplicationsStore(folder: offlineFolder, credentials: offlineTokens, clientFactory: { _, _ in offline })
+        try check(kept && restored.jobs.first?["sourceName"]?.string == source && restored.jobs.first?["checkedAt"]?.string == checked,
+                  "A failed network save preserves source/check facts across restart")
+        let before = try Data(contentsOf: offlineFolder.appendingPathComponent("phone-draft.json")), calls = offline.calls.count
+        let invalid = await restored.addJob(url: "https://careers.example.com/invalid-comparison", title: "Nurse",
+            company: "Synthetic clinic", location: "Toronto", country: "CA", sourceName: source, checkedAt: "not-a-date")
+        let after = try Data(contentsOf: offlineFolder.appendingPathComponent("phone-draft.json"))
+        try check(!invalid && before == after && offline.calls.count == calls,
+                  "Invalid new metadata fails before any file mutation or outbound request")
+        scenarios += 1
+
+        let first = TestService(), second = TestService("https://second.example")
+        first.handle = { _ in ["ok": .bool(true)] }
+        var other = remote; other["location"] = .string("Jeddah")
+        second.handle = { call in
+            if call.route == "session" {
+                return ["sessionToken": .string("synthetic-second-token"), "workspaceId": .string("workspace-b"),
+                        "profile": .object(self.server(0, name: "Synthetic B"))]
+            }
+            if call.route == "workspace" { return self.workspace(0, name: "Synthetic B", jobs: [other], workspace: "workspace-b") }
+            throw MobileApplicationError(message: "Unexpected synthetic owner route")
+        }
+        var initialState = try initial()
+        var local = remote; local["localOnly"] = .bool(true); local["sourceName"] = .string(source); local["checkedAt"] = .string(checked)
+        initialState.jobs = [local]
+        let (switching, switchFolder, _) = try fixture(initialState, service: first,
+            factory: { origin, _ in origin.host == "second.example" ? second : first })
+        let captured = switching.savedComparisonKey(for: local)!
+        let connected = await switching.connect(address: "https://second.example", code: "synthetic-fixture-code")
+        try check(connected && switching.workspaceScope.workspaceID == "workspace-b"
+                  && switching.savedComparisonItem(for: captured) == nil, "Actual workspace switching invalidates the old comparison owner")
+        let switched = try JSONDecoder().decode(PhoneApplicationState.self, from: Data(contentsOf: switchFolder.appendingPathComponent("phone-draft.json")))
+        let parked = switched.workspaceDrafts.first { $0.scope.workspaceID == "workspace-a" }
+        try check(parked?.jobs.first?["checkedAt"]?.string == checked && parked?.jobs.first?["sourceName"]?.string == source
+                  && switching.jobs.first?["location"]?.string == "Jeddah" && switching.jobs.first?["sourceName"] == nil,
+                  "Account A's parked facts remain intact and never enrich account B's coincident row ID")
+        scenarios += 1
+    }
+
     func run() async throws {
+        try await savedComparisonLifecycle()
         // Both keyboard commas describe the same lists in sharing, shortcuts and portable backups.
         do {
             func backupData(_ profile: PhoneApplicationProfile) throws -> Data {

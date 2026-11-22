@@ -78,6 +78,7 @@ private fun nativeCopyIds0(): Map<String, Int> = mapOf(
     "A saved job, self-reported application or opened employer link does not create a receipt. An approved application’s actual outcome appears here." to R.string.c_c95319f19de1,
     "A saved profile link, not a verified LinkedIn account connection. It is shared with an employer only when it appears in a review you approve." to R.string.c_044d6a0cbd5a,
     "A saved record version could not be read. It is preserved." to R.string.c_98a433b8a112,
+    "A selected opening is no longer in Saved. Choose the two openings again." to R.string.c_1c8d260c1683,
     "A stop request cancels jobs that have not been dispatched. Receipts show the actual outcome for anything already sent." to R.string.c_f9ab8a5542ae,
     "A supported employer board or individual posting URL can be used. Other job links can still be added in Saved." to R.string.c_2af956e60498,
     "A temporary device or storage problem may recover. Retrying does not resend an application." to R.string.c_e3846d0f7c86,
@@ -169,11 +170,12 @@ private fun nativeCopyIds0(): Map<String, Int> = mapOf(
     "Application preparation checklist" to R.string.c_d204aae01946,
     "Application profile" to R.string.c_57af318d79ea,
     "Application receipts" to R.string.c_a047d5fa6296,
-    "Application record" to R.string.c_f11c8100aeed,
 )
 
 private fun nativeCopyIds1(): Map<String, Int> = mapOf(
+    "Application record" to R.string.c_f11c8100aeed,
     "Application record for {0} at {1}" to R.string.c_7f899ab3518e,
+    "Application record · bookmark removed" to R.string.c_63b001972a44,
     "Application record · saved link removed" to R.string.c_935e9a268abe,
     "Application records" to R.string.c_099e715f8420,
     "Application review" to R.string.c_efce9a1cd596,
@@ -217,6 +219,7 @@ private fun nativeCopyIds1(): Map<String, Int> = mapOf(
     "Available" to R.string.c_e674447337e8,
     "Awaiting outcome" to R.string.c_40e4d88a090b,
     "Back" to R.string.c_76900f1bfd16,
+    "Back to Saved" to R.string.c_b58f8a0c81ec,
     "Backup merged privately. Other workspaces and the original file are kept. Review conflicting notes and drafts in phone data settings. Imported receipt copies are unverified; refresh service receipts to recover evidence." to R.string.c_4260dc24395a,
     "Basic pay for chosen period" to R.string.c_b26283df17bf,
     "Basic pay for chosen period, " to R.string.c_4583faeacd89,
@@ -303,6 +306,7 @@ private fun nativeCopyIds1(): Map<String, Int> = mapOf(
     "Choose the PDF again before copying this profile." to R.string.c_9a072ef93c0e,
     "Choose the currency and pay period, then enter your own amounts. The calculator makes no assumptions about your profession, location, current pay or seniority." to R.string.c_578d3e420c13,
     "Choose the details you want to keep. Other versions stay on this phone." to R.string.c_a93dcccae9ba,
+    "Choose two saved openings." to R.string.c_d2f6a96d8868,
     "Choose up to four different employer boards." to R.string.c_86336eb7e326,
     "Choose up to four employer boards per search." to R.string.c_599e1c9971d7,
     "Choose up to four public Lever or Greenhouse employer boards." to R.string.c_f5f1803989c5,
@@ -319,13 +323,13 @@ private fun nativeCopyIds1(): Map<String, Int> = mapOf(
     "Choose your opportunities." to R.string.c_56df07eaa9ed,
     "Choose your own PDF. No personal information is prefilled." to R.string.c_415a83928dd9,
     "Choose {0}" to R.string.c_3b653968d5a6,
+)
+
+private fun nativeCopyIds2(): Map<String, Int> = mapOf(
     "Choosing a version keeps your current applied mark. If you marked this role as not applied, an older version restores its notes and dates without marking it applied again. You can change the stage in your current record." to R.string.c_ff5bf615fed2,
     "City" to R.string.c_fc33f73246f4,
     "City (optional)" to R.string.c_23d02bb86767,
     "City or location (optional)" to R.string.c_d720a7a71661,
-)
-
-private fun nativeCopyIds2(): Map<String, Int> = mapOf(
     "City text match — confirm worksite" to R.string.c_1d536d329f96,
     "City text, if relevant" to R.string.c_2efc85230c43,
     "Clarify the responsibilities, working hours, decision-making scope and expectations for this role." to R.string.c_ae30a41fd374,
@@ -347,13 +351,18 @@ private fun nativeCopyIds2(): Map<String, Int> = mapOf(
     "Closing date" to R.string.c_d34f597093df,
     "Closing keeps your earlier application on record." to R.string.c_5dea0491e782,
     "Collapsed" to R.string.c_b322b65227bc,
+    "Compare" to R.string.c_e888155d8c7d,
     "Compare a job offer" to R.string.c_b6d1a98b4cd3,
     "Compare both profiles" to R.string.c_3e6d1349c68d,
     "Compare records" to R.string.c_ee59ba66e956,
+    "Compare saved openings" to R.string.c_cfb1eea45aa3,
     "Compare the saved record versions before editing this opportunity." to R.string.c_09663a17dc95,
     "Compare the service profile" to R.string.c_08ac6f3aff67,
+    "Compare two" to R.string.c_37c693e9bca0,
+    "Compare two openings" to R.string.c_751d8cd592c5,
     "Compare your entered package" to R.string.c_ab526ab93629,
     "Compare your private records" to R.string.c_9705e0863f0b,
+    "Compare {0} at {1} in {2}" to R.string.c_5a063a9c4678,
     "Complete on employer site" to R.string.c_89deb8e63004,
     "Complete this application on the employer's website." to R.string.c_b756da9bdf58,
     "Confirm Mark as not applied before clearing your applied record." to R.string.c_8f26f03b491f,
@@ -467,6 +476,9 @@ private fun nativeCopyIds2(): Map<String, Int> = mapOf(
     "Disconnect this phone" to R.string.c_b034af0a3bdf,
     "Disconnect this phone to revoke its application-service connection. Disconnecting, deleting or offloading the app does not delete the hosted workspace. Use Manage account and delete hosted data for the hosted service, or contact your custom service operator. Deleting hosted data does not remove copies already received by employers or saved in exports." to R.string.c_5a33543998d5,
     "Disconnect this phone?" to R.string.c_694553751644,
+)
+
+private fun nativeCopyIds3(): Map<String, Int> = mapOf(
     "Disconnected" to R.string.c_04dfac3671b4,
     "Disconnected for this session. " to R.string.c_a122dba2e7d4,
     "Disconnected for this session. {0}" to R.string.c_ad2dbcac98fa,
@@ -476,9 +488,6 @@ private fun nativeCopyIds2(): Map<String, Int> = mapOf(
     "Discover" to R.string.c_d4a33d5b78bc,
     "Discover jobs" to R.string.c_5a941024076b,
     "Discover opportunities" to R.string.c_6708f47e27f2,
-)
-
-private fun nativeCopyIds3(): Map<String, Int> = mapOf(
     "Discovery covers selected public Lever and Greenhouse employer boards. You can add supported employer boards or save a job link from any other website." to R.string.c_b116001c5877,
     "Dismiss message" to R.string.c_e8722f00fcd5,
     "Display time zone" to R.string.c_9768f7d4f126,
@@ -620,6 +629,9 @@ private fun nativeCopyIds3(): Map<String, Int> = mapOf(
     "Hide file fingerprint" to R.string.c_2666d5385894,
     "Hide incoming details" to R.string.c_b51fef2bfbf0,
     "Hide optional profile details" to R.string.c_316da183f5d4,
+)
+
+private fun nativeCopyIds4(): Map<String, Int> = mapOf(
     "Hide saved versions" to R.string.c_d6abd0b6ef36,
     "Hide source details" to R.string.c_866f1efdcff4,
     "Hide storage details" to R.string.c_bef6d05a7949,
@@ -629,9 +641,6 @@ private fun nativeCopyIds3(): Map<String, Int> = mapOf(
     "How your data is kept" to R.string.c_0ecc2199be73,
     "How your data is stored" to R.string.c_56f3c7d42593,
     "Hybrid" to R.string.c_6c67dc13f839,
-)
-
-private fun nativeCopyIds4(): Map<String, Int> = mapOf(
     "I agree" to R.string.c_99955b75e054,
     "I already applied outside Career Finder" to R.string.c_c91fb343ab89,
     "I approve sending these details and my selected CV to the listed eligible employers." to R.string.c_af75fea34b1c,
@@ -773,6 +782,9 @@ private fun nativeCopyIds4(): Map<String, Int> = mapOf(
     "Name, email and PDF CV added" to R.string.c_cdbe89718fa7,
     "Needs attention" to R.string.c_c1ebc7817870,
     "Needs review" to R.string.c_07297fa94a99,
+)
+
+private fun nativeCopyIds5(): Map<String, Int> = mapOf(
     "Needs verification" to R.string.c_3dddf7d417a7,
     "New employer listing. Review full requirements before applying." to R.string.c_3dd7e482ff01,
     "New only" to R.string.c_096ced4bd35d,
@@ -782,9 +794,6 @@ private fun nativeCopyIds4(): Map<String, Int> = mapOf(
     "Next action saved on this phone." to R.string.c_28e775e77fc6,
     "No" to R.string.c_1ea442a134b2,
     "No PDF" to R.string.c_b0fc9c1c1a36,
-)
-
-private fun nativeCopyIds5(): Map<String, Int> = mapOf(
     "No PDF selected" to R.string.c_7c4dda77ce57,
     "No applications marked yet." to R.string.c_b5b531e9dedd,
     "No attention prompts from your saved records." to R.string.c_e103b447e4b6,
@@ -793,6 +802,7 @@ private fun nativeCopyIds5(): Map<String, Int> = mapOf(
     "No countries match this search." to R.string.c_79a73b1b16ad,
     "No country preference" to R.string.c_3d48475048ef,
     "No email entered" to R.string.c_d0892c5270f5,
+    "No follow-up scheduled" to R.string.c_daf60939bf39,
     "No follow-ups match." to R.string.c_bb7c5884a81f,
     "No follow-ups to show." to R.string.c_0e29117dbc58,
     "No matches in the results we could check." to R.string.c_b04e9a1f8968,
@@ -854,6 +864,7 @@ private fun nativeCopyIds5(): Map<String, Int> = mapOf(
     "Open employer page" to R.string.c_a4ef953b07f0,
     "Open employer page for {0} at {1}" to R.string.c_77a37847d7bf,
     "Open employer posting" to R.string.c_8c400b36e215,
+    "Open job: {0} in {1}" to R.string.c_0ba141dfc200,
     "Open official application" to R.string.c_30eb75ef2add,
     "Open original employer board" to R.string.c_f290c20c44be,
     "Open saved jobs" to R.string.c_9e3c4e8bfc74,
@@ -924,6 +935,9 @@ private fun nativeCopyIds5(): Map<String, Int> = mapOf(
     "Phone draft · resolve profile changes" to R.string.c_2c1de284fd05,
     "Phone draft · save before applying" to R.string.c_750d49d349a8,
     "Phone drafts remain available after disconnection or hosted account deletion. Device backups and shared exports are separate copies that you manage through their own settings and destinations." to R.string.c_0cf08ee0c32b,
+)
+
+private fun nativeCopyIds6(): Map<String, Int> = mapOf(
     "Phone drafts, private records and the last search are encrypted and excluded from device backup. Saving a connected profile uploads its fields and PDF to your selected service. Synced jobs and application receipts are stored there too." to R.string.c_5a21033f0cdd,
     "Phone paired. Review your saved phone draft in Profile to copy it deliberately." to R.string.c_909c1c847b4c,
     "Phone workspace exported. The file contains private data{0}. Keep it somewhere you trust; connection tokens and approval authority are excluded." to R.string.c_14c6ec1c0af1,
@@ -935,9 +949,6 @@ private fun nativeCopyIds5(): Map<String, Int> = mapOf(
     "Please wait before trying this action again." to R.string.c_d80071e63f55,
     "Policy updated 16 November 2026. The connected service's published policy describes its hosted data practices." to R.string.c_8472ff8fb0d9,
     "Portfolio" to R.string.c_1853eb2e9e5e,
-)
-
-private fun nativeCopyIds6(): Map<String, Int> = mapOf(
     "Portfolio HTTPS link (optional)" to R.string.c_bf69509f089d,
     "Posted" to R.string.c_afd80c5a1b84,
     "Preferences for your planning notes and earlier records. The Search tab uses its own explicit role, location and employer-board choices. These notes do not affect saved application records." to R.string.c_728a8a6cc19c,
@@ -1023,6 +1034,7 @@ private fun nativeCopyIds6(): Map<String, Int> = mapOf(
     "Record last edited: {0} (not the application time)." to R.string.c_b4e959335b1c,
     "Record only: {0} · {1}" to R.string.c_8d93939bee53,
     "Record saved on this phone." to R.string.c_e2f8555c0b61,
+    "Record versions need review." to R.string.c_71129070a491,
     "Recorded at" to R.string.c_e4cea0827a11,
     "Recorded reference: " to R.string.c_5dc7ae9d88d3,
     "Recorded reference: {0}" to R.string.c_341e439b4d55,
@@ -1076,6 +1088,9 @@ private fun nativeCopyIds6(): Map<String, Int> = mapOf(
     "Remove selected employer source {0}" to R.string.c_db8b3159383b,
     "Remove selected résumé" to R.string.c_dbe68426ae5a,
     "Remove this phone’s connection?" to R.string.c_69bf7f8b651f,
+)
+
+private fun nativeCopyIds7(): Map<String, Int> = mapOf(
     "Reopen phone data settings for the current workspace." to R.string.c_d22a3edb60b5,
     "Reopen the application record before saving." to R.string.c_940fe3b3c66d,
     "Replace PDF résumé" to R.string.c_7be2828217d6,
@@ -1088,9 +1103,6 @@ private fun nativeCopyIds6(): Map<String, Int> = mapOf(
     "Research checked" to R.string.c_7666b4180d30,
     "Research checked: {0} · Employer checked: {1}" to R.string.c_7eacb63efc3d,
     "Resolve profile changes" to R.string.c_faa89e930429,
-)
-
-private fun nativeCopyIds7(): Map<String, Int> = mapOf(
     "Resolve the current profile conflict before copying this draft." to R.string.c_09faf63eb16f,
     "Resolve the profile conflict before copying a phone draft." to R.string.c_6e38269cc3a2,
     "Resolve the saved profile comparison before importing another draft." to R.string.c_be9001499d09,
@@ -1229,6 +1241,9 @@ private fun nativeCopyIds7(): Map<String, Int> = mapOf(
     "Saving a phone draft does not upload details or submit an application." to R.string.c_8c089867db79,
     "Saving copies this public link and role details into your application workspace. It does not send your profile or submit an application. Confirm qualifications, pay, work authorization and location with the employer." to R.string.c_db440f25ec4a,
     "Saving does not apply or verify that the vacancy is still open." to R.string.c_1796477a0679,
+)
+
+private fun nativeCopyIds8(): Map<String, Int> = mapOf(
     "Saving is paused while this phone’s encrypted storage is unavailable." to R.string.c_368ed3696976,
     "Saving keeps a private record. It does not verify the vacancy or send an application. Unsupported employers remain available for manual application." to R.string.c_bd4320903fe8,
     "Saving this change will ask you to confirm that the job should be marked as not applied." to R.string.c_a39b45b77e6c,
@@ -1241,9 +1256,6 @@ private fun nativeCopyIds7(): Map<String, Int> = mapOf(
     "Search and save jobs" to R.string.c_a787e1d986d3,
     "Search could not finish. Check your connection and try again; previous results are kept." to R.string.c_97136c30953e,
     "Search countries" to R.string.c_320113ee29d0,
-)
-
-private fun nativeCopyIds8(): Map<String, Int> = mapOf(
     "Search is temporarily busy. Wait before trying again." to R.string.c_84f88ea6f84d,
     "Search jobs" to R.string.c_989ecb5d07fd,
     "Search privacy and data use" to R.string.c_3e55dd3eacec,
@@ -1315,12 +1327,14 @@ private fun nativeCopyIds8(): Map<String, Int> = mapOf(
     "Some employer checks were incomplete: " to R.string.c_84b2cc451e6c,
     "Some employer checks were incomplete: {0}" to R.string.c_b2a61242bb56,
     "Some sources are unavailable, cached or limited. The details below explain the coverage." to R.string.c_547169371deb,
+    "Source" to R.string.c_0e570ca6fabe,
     "Source and freshness" to R.string.c_8028d72d67f3,
     "Source and full requirements" to R.string.c_75d4cf8a8850,
     "Source: " to R.string.c_1a5ac0bd0b6b,
     "Source: {0} · {1}" to R.string.c_72ed767cd17d,
     "Sources checked for this search" to R.string.c_e301b9ccd5d6,
     "Stage" to R.string.c_de838855e4a6,
+    "Stages and follow-up dates are your own records." to R.string.c_f76fec719398,
     "Start" to R.string.c_e4bb9f1ece9a,
     "Start a fresh search" to R.string.c_6c40a98bf2f2,
     "Start a fresh search to continue." to R.string.c_c964acc33ae2,
@@ -1380,6 +1394,9 @@ private fun nativeCopyIds8(): Map<String, Int> = mapOf(
     "Test workspace — no real employer application" to R.string.c_6f3f8a774bd1,
     "That application record is no longer available." to R.string.c_efc97d1ebc46,
     "That record version changed. Reopen the record and choose again." to R.string.c_9583892e4d70,
+)
+
+private fun nativeCopyIds9(): Map<String, Int> = mapOf(
     "The JSON backup contains readable personal information, including your selected PDF when it is on this phone and this workspace's search draft/results. Keep it private. It does not contain connection credentials, online application approvals, provider receipts, or the separate planning notes." to R.string.c_d6d8dbda98b8,
     "The Professionals 2025 guide" to R.string.c_ce6054fc9401,
     "The Professionals 2025 reports Supply & Demand Manager at SAR 30,220 / 42,866 / 53,710 monthly for the 25th percentile / median / 75th percentile (p.49), including basic salary, housing and transportation (p.15). Different role definitions and samples are not interchangeable." to R.string.c_f0e3a0e9d7c4,
@@ -1394,9 +1411,6 @@ private fun nativeCopyIds8(): Map<String, Int> = mapOf(
     "The backup contains invalid CV metadata." to R.string.c_a0cdb9dc7b80,
     "The backup contains repeated record version identifiers." to R.string.c_afbab06255f8,
     "The backup could not be opened. Choose it again from Files." to R.string.c_a2e32e430518,
-)
-
-private fun nativeCopyIds9(): Map<String, Int> = mapOf(
     "The backup has résumé metadata only. Choose the actual PDF again if needed." to R.string.c_76c13c203e3f,
     "The backup profile is outside supported limits. Existing phone data is unchanged." to R.string.c_eeb9878918a5,
     "The backup's CV does not match its recorded fingerprint. Existing phone data is unchanged." to R.string.c_337cf2438bfa,
@@ -1533,6 +1547,9 @@ private fun nativeCopyIds9(): Map<String, Int> = mapOf(
     "The workspace changed. Review its drafts again." to R.string.c_d1b99c4a5ca6,
     "The workspace changed. Review the clear action again." to R.string.c_f3a05addb0a2,
     "The workspace changed. Review the deletion choice again." to R.string.c_7f9de28f98d3,
+)
+
+private fun nativeCopyIds10(): Map<String, Int> = mapOf(
     "The workspace changed. Review the export target again." to R.string.c_88323b66d454,
     "There are no applications ready to send. A rate-limited application must finish its cooldown first." to R.string.c_1ea1b0e77bc6,
     "There is no saved phone draft to copy." to R.string.c_3ffdac926510,
@@ -1547,9 +1564,6 @@ private fun nativeCopyIds9(): Map<String, Int> = mapOf(
     "These preferences use an unsupported version. Original data is preserved." to R.string.c_dc0ba80a69a5,
     "These private records changed. They are kept; compare their current versions before choosing a workspace." to R.string.c_10773583b1b1,
     "These records are separate from every connected account. A backup includes saved roles, self-entered receipt notes, next actions and the saved planning profile. It contains no account credentials or application approvals." to R.string.c_0859c7a5d6c7,
-)
-
-private fun nativeCopyIds10(): Map<String, Int> = mapOf(
     "These records changed. Review their latest versions before choosing." to R.string.c_83bd4d412731,
     "These results changed while you were browsing. Start a new search; the previous results are still here." to R.string.c_6238c72f230c,
     "These saved application records need a compatible app version. The original phone data has been preserved." to R.string.c_c8c635191404,
@@ -1686,6 +1700,9 @@ private fun nativeCopyIds10(): Map<String, Int> = mapOf(
     "Unfinished record kept on this phone. Its saved application status is unchanged." to R.string.c_a11be0beac71,
     "Unknown status" to R.string.c_15eebb6f74cc,
     "Unlock this phone to restore its secure application connection." to R.string.c_a9293a3fe05c,
+)
+
+private fun nativeCopyIds11(): Map<String, Int> = mapOf(
     "Unpaired phone workspace" to R.string.c_5fac578e085a,
     "Unsaved draft. Kept for this session; export your notes before closing the app." to R.string.c_c6e8d6ec98f0,
     "Unsaved drafts and changes that failed to save will be lost. Save or export your notes first. Saved records stay on this device." to R.string.c_596e0833e6a8,
@@ -1700,9 +1717,6 @@ private fun nativeCopyIds10(): Map<String, Int> = mapOf(
     "Up to 5 MiB. The exact file and fingerprint appear in the application review." to R.string.c_b64f6fc4a5a3,
     "Update application record" to R.string.c_1d20b9e458e4,
     "Update review with my choices" to R.string.c_2eff5414e244,
-)
-
-private fun nativeCopyIds11(): Map<String, Int> = mapOf(
     "Use 0 to 1,000,000 with at most two decimal places." to R.string.c_ab21975e2b55,
     "Use 0 to 10,000,000 with at most two decimal places." to R.string.c_1c5655861af6,
     "Use Cancel to save a phone draft, keep editing, or discard changes. Backgrounding the app keeps a local draft without uploading it." to R.string.c_689ef2a43f25,
@@ -1839,6 +1853,9 @@ private fun nativeCopyIds11(): Map<String, Int> = mapOf(
     "Your profile" to R.string.c_528d89ad72cb,
     "Your profile changed in another window" to R.string.c_a8872706ab42,
     "Your profile, application records and appearance preference remain separate. Connecting never submits an application." to R.string.c_c77b0f966aa1,
+)
+
+private fun nativeCopyIds12(): Map<String, Int> = mapOf(
     "Your progress" to R.string.c_433a720b7e1d,
     "Your record stays on this phone. Saving it does not send an application or a message." to R.string.c_f2719592360e,
     "Your record versions" to R.string.c_bd85bc5af88c,
@@ -1853,9 +1870,6 @@ private fun nativeCopyIds11(): Map<String, Int> = mapOf(
     "Your stage, dates and notes are private. Marking Applied helps avoid duplicate applications; it does not create a provider receipt or contact an employer." to R.string.c_535e7dc1d850,
     "Your workspace" to R.string.c_4d0260e6c3e7,
     "Your workspace is connected, but the service has not confirmed that live submission is available. Keep preparing your profile and checking employer links." to R.string.c_b7573d5106c3,
-)
-
-private fun nativeCopyIds12(): Map<String, Int> = mapOf(
     "Your workspace is connected. Keep saving opportunities and preparing your profile. Automatic submission needs an activated employer integration; you can apply through employer links." to R.string.c_180e0c13cd48,
     "currency not selected" to R.string.c_13aef79bd1ca,
     "verified application receipt" to R.string.c_a2b9054259ce,
@@ -1876,6 +1890,7 @@ private fun nativeCopyIds12(): Map<String, Int> = mapOf(
     "{0} invalid listings were excluded." to R.string.c_2588867f5e4e,
     "{0} listing checks failed; results may be incomplete." to R.string.c_bb2ea2de0493,
     "{0} must be on one line with no more than 500 characters. Your unfinished draft is kept." to R.string.c_cf8ed2be7c64,
+    "{0} of 2 selected" to R.string.c_1d80d9072e3d,
     "{0} of 2,000 characters" to R.string.c_400deb1c839a,
     "{0} of 3 application essentials ready" to R.string.c_d267a3a4a970,
     "{0} of 30 selected · Leave empty for no preference." to R.string.c_e9af4fe9ef47,

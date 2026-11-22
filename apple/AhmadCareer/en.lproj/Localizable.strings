@@ -57,6 +57,7 @@
 "A saved job, self-reported application or opened employer link does not create a receipt. An approved application’s actual outcome appears here." = "A saved job, self-reported application or opened employer link does not create a receipt. An approved application’s actual outcome appears here.";
 "A saved profile link, not a verified LinkedIn account connection. It is shared with an employer only when it appears in a review you approve." = "A saved profile link, not a verified LinkedIn account connection. It is shared with an employer only when it appears in a review you approve.";
 "A saved record version could not be read. It is preserved." = "A saved record version could not be read. It is preserved.";
+"A selected opening is no longer in Saved. Choose the two openings again." = "A selected opening is no longer in Saved. Choose the two openings again.";
 "A stop request cancels jobs that have not been dispatched. Receipts show the actual outcome for anything already sent." = "A stop request cancels jobs that have not been dispatched. Receipts show the actual outcome for anything already sent.";
 "A supported employer board or individual posting URL can be used. Other job links can still be added in Saved." = "A supported employer board or individual posting URL can be used. Other job links can still be added in Saved.";
 "A temporary device or storage problem may recover. Retrying does not resend an application." = "A temporary device or storage problem may recover. Retrying does not resend an application.";
@@ -150,6 +151,7 @@
 "Application receipts" = "Application receipts";
 "Application record" = "Application record";
 "Application record for {0} at {1}" = "Application record for {0} at {1}";
+"Application record · bookmark removed" = "Application record · bookmark removed";
 "Application record · saved link removed" = "Application record · saved link removed";
 "Application records" = "Application records";
 "Application review" = "Application review";
@@ -193,6 +195,7 @@
 "Available" = "Available";
 "Awaiting outcome" = "Awaiting outcome";
 "Back" = "Back";
+"Back to Saved" = "Back to Saved";
 "Backup merged privately. Other workspaces and the original file are kept. Review conflicting notes and drafts in phone data settings. Imported receipt copies are unverified; refresh service receipts to recover evidence." = "Backup merged privately. Other workspaces and the original file are kept. Review conflicting notes and drafts in phone data settings. Imported receipt copies are unverified; refresh service receipts to recover evidence.";
 "Basic pay for chosen period" = "Basic pay for chosen period";
 "Basic pay for chosen period, " = "Basic pay for chosen period, ";
@@ -279,6 +282,7 @@
 "Choose the PDF again before copying this profile." = "Choose the PDF again before copying this profile.";
 "Choose the currency and pay period, then enter your own amounts. The calculator makes no assumptions about your profession, location, current pay or seniority." = "Choose the currency and pay period, then enter your own amounts. The calculator makes no assumptions about your profession, location, current pay or seniority.";
 "Choose the details you want to keep. Other versions stay on this phone." = "Choose the details you want to keep. Other versions stay on this phone.";
+"Choose two saved openings." = "Choose two saved openings.";
 "Choose up to four different employer boards." = "Choose up to four different employer boards.";
 "Choose up to four employer boards per search." = "Choose up to four employer boards per search.";
 "Choose up to four public Lever or Greenhouse employer boards." = "Choose up to four public Lever or Greenhouse employer boards.";
@@ -320,13 +324,18 @@
 "Closing date" = "Closing date";
 "Closing keeps your earlier application on record." = "Closing keeps your earlier application on record.";
 "Collapsed" = "Collapsed";
+"Compare" = "Compare";
 "Compare a job offer" = "Compare a job offer";
 "Compare both profiles" = "Compare both profiles";
 "Compare records" = "Compare records";
+"Compare saved openings" = "Compare saved openings";
 "Compare the saved record versions before editing this opportunity." = "Compare the saved record versions before editing this opportunity.";
 "Compare the service profile" = "Compare the service profile";
+"Compare two" = "Compare two";
+"Compare two openings" = "Compare two openings";
 "Compare your entered package" = "Compare your entered package";
 "Compare your private records" = "Compare your private records";
+"Compare {0} at {1} in {2}" = "Compare {0} at {1} in {2}";
 "Complete on employer site" = "Complete on employer site";
 "Complete this application on the employer's website." = "Complete this application on the employer's website.";
 "Confirm Mark as not applied before clearing your applied record." = "Confirm Mark as not applied before clearing your applied record.";
@@ -757,6 +766,7 @@
 "No countries match this search." = "No countries match this search.";
 "No country preference" = "No country preference";
 "No email entered" = "No email entered";
+"No follow-up scheduled" = "No follow-up scheduled";
 "No follow-ups match." = "No follow-ups match.";
 "No follow-ups to show." = "No follow-ups to show.";
 "No matches in the results we could check." = "No matches in the results we could check.";
@@ -818,6 +828,7 @@
 "Open employer page" = "Open employer page";
 "Open employer page for {0} at {1}" = "Open employer page for {0} at {1}";
 "Open employer posting" = "Open employer posting";
+"Open job: {0} in {1}" = "Open job: {0} in {1}";
 "Open official application" = "Open official application";
 "Open original employer board" = "Open original employer board";
 "Open saved jobs" = "Open saved jobs";
@@ -984,6 +995,7 @@
 "Record last edited: {0} (not the application time)." = "Record last edited: {0} (not the application time).";
 "Record only: {0} · {1}" = "Record only: {0} · {1}";
 "Record saved on this phone." = "Record saved on this phone.";
+"Record versions need review." = "Record versions need review.";
 "Recorded at" = "Recorded at";
 "Recorded reference: " = "Recorded reference: ";
 "Recorded reference: {0}" = "Recorded reference: {0}";
@@ -1270,12 +1282,14 @@
 "Some employer checks were incomplete: " = "Some employer checks were incomplete: ";
 "Some employer checks were incomplete: {0}" = "Some employer checks were incomplete: {0}";
 "Some sources are unavailable, cached or limited. The details below explain the coverage." = "Some sources are unavailable, cached or limited. The details below explain the coverage.";
+"Source" = "Source";
 "Source and freshness" = "Source and freshness";
 "Source and full requirements" = "Source and full requirements";
 "Source: " = "Source: ";
 "Source: {0} · {1}" = "Source: {0} · {1}";
 "Sources checked for this search" = "Sources checked for this search";
 "Stage" = "Stage";
+"Stages and follow-up dates are your own records." = "Stages and follow-up dates are your own records.";
 "Start" = "Start";
 "Start a fresh search" = "Start a fresh search";
 "Start a fresh search to continue." = "Start a fresh search to continue.";
@@ -1819,6 +1833,7 @@
 "{0} invalid listings were excluded." = "{0} invalid listings were excluded.";
 "{0} listing checks failed; results may be incomplete." = "{0} listing checks failed; results may be incomplete.";
 "{0} must be on one line with no more than 500 characters. Your unfinished draft is kept." = "{0} must be on one line with no more than 500 characters. Your unfinished draft is kept.";
+"{0} of 2 selected" = "{0} of 2 selected";
 "{0} of 2,000 characters" = "{0} of 2,000 characters";
 "{0} of 3 application essentials ready" = "{0} of 3 application essentials ready";
 "{0} of 30 selected · Leave empty for no preference." = "{0} of 30 selected · Leave empty for no preference.";
