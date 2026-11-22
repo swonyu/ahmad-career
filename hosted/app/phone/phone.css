@@ -155,3 +155,7 @@
 .phone-apply-profile>.text-button{flex:0 1 auto;min-width:0;text-align:start}
 .phone-application-guide>.button{margin-top:14px}
 .phone-application-guide>.phone-application-steps{margin:20px 0 0;padding-top:18px;border-top:1px solid var(--line);gap:16px}
+
+/* Keep identically titled openings distinct while editing their private records. */
+.phone-record-location{display:flex;align-items:center;gap:6px;margin-top:4px;color:var(--ink);font-weight:550}
+.phone-record-location>bdi{min-width:0;overflow-wrap:anywhere}

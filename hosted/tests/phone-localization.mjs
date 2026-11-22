@@ -221,7 +221,7 @@ function renderPhoneFragment(fragment, language, additions = {}, setup = '') {
     displayTime: () => '17 November 2026', countryName: code => code, workModeLabel: value => value,
     experienceLabel: value => value, receiptLabel: actualReceiptLabel,
     ...additions };
-  for (const name of ['ArrowUpRight', 'ChevronRight', 'Check', 'RefreshCw', 'Download']) context[name] = () => null;
+  for (const name of ['ArrowUpRight', 'ChevronRight', 'Check', 'RefreshCw', 'Download', 'MapPin']) context[name] = () => null;
   const View = execute(`${setup}\nexports.View = () => (${fragment});`, context).View;
   return View();
 }
@@ -235,7 +235,7 @@ test('actual Saved, Apply, details and recovery values retain separate bidi boun
     ['Submission receipt', phoneFragment((node, text) => tagName(node) === 'article' && text.includes('phone-receipt') && text.includes('receipt.title')), [mixedJob.title, mixedJob.company]],
     ['Details location', phoneFragment(node => tagName(node) === 'p' && node.children.some(child => ts.isJsxExpression(child) && child.expression?.getText(phoneTree) === 'dialog.job.location')), [mixedJob.location]],
     ['Unfinished recovery label', phoneFragment((node, text) => tagName(node) === 'button' && text.includes('draft.record?.job.title')), [mixedJob.title, mixedJob.company]],
-    ['Record-editor summary', phoneFragment((node, text) => tagName(node) === 'p' && text.includes('dialog.job.title') && text.includes('dialog.job.company')), [mixedJob.title, mixedJob.company]],
+    ['Record-editor summary', phoneFragment((node, text) => tagName(node) === 'p' && text.includes('dialog.job.title') && text.includes('dialog.job.company')), [mixedJob.title, mixedJob.company, mixedJob.location]],
     ['Private-record deletion', phoneFragment((node, text) => tagName(node) === 'p' && text.includes('dialog.record.title') && text.includes('dialog.record.company')), [mixedJob.title, mixedJob.company]],
   ];
   for (const language of ['en', 'ar']) for (const [label, fragment, values] of cases) {
