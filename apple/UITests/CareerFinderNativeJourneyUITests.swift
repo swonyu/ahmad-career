@@ -348,9 +348,9 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         browse.element.tap()
         attachPickerHierarchy("native-journey-ar-files-browse-probe", app: app)
     }
-    private func waitForEnglishFilesPresentation(_ app: XCUIApplication) throws {
-        guard language == "en" else { return }
-        let rootID = "DOC.browsingRoot Source: com.apple.DocumentManager.RecentDocuments, Title: Recents"
+    private func waitForFilesPresentation(_ app: XCUIApplication) throws {
+        let rootID = "DOC.browsingRoot Source: com.apple.DocumentManager.RecentDocuments, Title: "
+            + localized("Recents", "الحديثة")
         let navID = "FullDocumentManagerViewControllerNavigationBar"
         let start = ProcessInfo.processInfo.systemUptime, deadline = start + 15
         func exactFilesHierarchy(_ description: String) -> Bool {
@@ -384,13 +384,13 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
             let remaining = deadline - ProcessInfo.processInfo.systemUptime
             if remaining > 0 { RunLoop.current.run(until: Date().addingTimeInterval(min(0.1, remaining))) }
         }
-        try require(presented, "The exact English OS Files Recent root and navigation appear inside fifteen seconds", app: app)
+        try require(presented, "The exact OS Files Recent root and navigation appear inside fifteen seconds", app: app)
     }
     private func cancelPicker(_ app: XCUIApplication) throws {
         try openProfile(app)
         try tap(choosePDFButton(app), app: app)
         modalNavigationTitle = nil
-        try waitForEnglishFilesPresentation(app)
+        try waitForFilesPresentation(app)
         let cancel = app.navigationBars.matching(NSPredicate(format: "identifier == %@", "FullDocumentManagerViewControllerNavigationBar")).buttons.matching(NSPredicate(format: "label == %@", localized("Cancel", "إلغاء"))).element
         let start = ProcessInfo.processInfo.systemUptime, deadline = start + 5
         var cancelReady = false
