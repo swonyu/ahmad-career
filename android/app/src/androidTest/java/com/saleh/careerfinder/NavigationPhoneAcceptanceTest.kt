@@ -1,6 +1,9 @@
 package com.saleh.careerfinder
 
+import android.app.Instrumentation
+import android.content.Intent
 import android.view.KeyEvent
+import android.view.accessibility.AccessibilityWindowInfo
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.ui.test.*
@@ -90,8 +93,8 @@ class NavigationPhoneAcceptanceTest {
             }
         }
     }
-    private fun capture(name: String) {
-        compose.waitForIdle()
+    private fun capture(name: String, awaitComposeIdle: Boolean = true) {
+        if (awaitComposeIdle) compose.waitForIdle()
         val instrumentation = InstrumentationRegistry.getInstrumentation()
         instrumentation.uiAutomation.waitForIdle(500, 3_000)
         val bitmap = checkNotNull(instrumentation.uiAutomation.takeScreenshot())
@@ -99,6 +102,9 @@ class NavigationPhoneAcceptanceTest {
         try { java.io.File(directory, "$name.png").outputStream().use { check(bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it)) } }
         finally { bitmap.recycle() }
     }
+    private fun activeApplicationPackage(): String? = InstrumentationRegistry.getInstrumentation().uiAutomation.windows
+        .firstOrNull { it.type == AccessibilityWindowInfo.TYPE_APPLICATION && it.isActive }
+        ?.root?.packageName?.toString()
     private fun addJob(): Opportunity {
         compose.runOnIdle { model.addOpportunity("https://example.invalid/navigation-role", "Synthetic care role", "Fixture employer", "", "") {} }
         compose.waitUntil(5_000) { !model.state.value.busy && model.state.value.jobs.size == 1 }
@@ -164,6 +170,91 @@ class NavigationPhoneAcceptanceTest {
         assertEquals(JSONObject(saved).getJSONObject("applicationRecords").toString(), store.read("workspace-unpaired")!!.getJSONObject("applicationRecords").toString())
         assertTrue(model.state.value.recordDrafts.isEmpty())
         assertTrue(model.state.value.receipts.isEmpty()); assertTrue(service.routes.isEmpty())
+    }
+
+    @Test fun savedPublicJob_sharePreviewOpensSystemChooser_andCancelKeepsPrivateDetails() {
+        val posting = page.jobs.first()
+        compose.runOnIdle { model.addDiscoveredOpportunity(posting) {} }
+        compose.waitUntil(5_000) { !model.state.value.busy && model.state.value.jobs.size == 1 }
+        val job = model.state.value.jobs.single()
+        assertEquals(posting.sourceName, job.sourceName)
+        openRecord(job)
+        val privateNote = "Private interview note for this phone only"
+        val privateCv = "Private-CV.pdf"
+        compose.runOnIdle { model.editApplicationRecordDraft { it.copy(note = privateNote, manualResumeName = privateCv) } }
+        save()
+        compose.waitUntil(5_000) { model.state.value.applicationRecordEditor == null }
+        assertEquals(privateNote, model.state.value.recordFor(job)!!.current.record.note)
+        assertEquals(privateCv, model.state.value.recordFor(job)!!.current.record.manualResumeName)
+        val storedBeforeShare = store.records.getValue("workspace-unpaired")
+
+        compose.onNodeWithTag("jobs-list").performScrollToNode(hasTestTag("job-share-open"))
+        compose.onNodeWithTag("job-share-open").performClick()
+        val expected = BoundaryPolicy.jobShareText(job.title, job.company, job.sourceName, job.url)
+        compose.onNodeWithTag("job-share-preview").assertTextEquals(expected)
+        assertEquals(listOf(job.title, job.company, posting.sourceName, job.url), expected.lines())
+        assertFalse(expected.contains(privateNote))
+        assertFalse(expected.contains(privateCv))
+        compose.onNodeWithText(strings("Review the job details and link below before sharing. Only share public posting links, not personal invitations. Your application record and CV are not included.")).assertIsDisplayed()
+        capture("saved-job-share-preview")
+
+        val instrumentation = InstrumentationRegistry.getInstrumentation()
+        val ownPackage = instrumentation.targetContext.packageName
+        val chooserMonitor = object : Instrumentation.ActivityMonitor() {
+            @Volatile var startedChooser: Intent? = null
+            override fun onStartActivity(intent: Intent): Instrumentation.ActivityResult? {
+                if (intent.action == Intent.ACTION_CHOOSER) startedChooser = Intent(intent)
+                return null // Observe the real launch without blocking the system chooser.
+            }
+        }
+        instrumentation.addMonitor(chooserMonitor)
+        PhoneWindowObservation().use {
+            try {
+                compose.onNodeWithTag("job-share-chooser").performClick()
+                compose.waitUntil(5_000) { chooserMonitor.startedChooser != null }
+                val chooser = requireNotNull(chooserMonitor.startedChooser)
+                val chooserPackage = requireNotNull(chooser.resolveActivity(instrumentation.targetContext.packageManager)) {
+                    "The Android system chooser must resolve on this emulator"
+                }.packageName
+                assertNotEquals(ownPackage, chooserPackage)
+                compose.waitUntil(5_000) { activeApplicationPackage() == chooserPackage }
+                @Suppress("DEPRECATION")
+                val send = requireNotNull(chooser.getParcelableExtra<Intent>(Intent.EXTRA_INTENT))
+                assertEquals(Intent.ACTION_SEND, send.action)
+                assertEquals("text/plain", send.type)
+                assertEquals(expected, send.getStringExtra(Intent.EXTRA_TEXT))
+                assertEquals(setOf(Intent.EXTRA_TEXT), send.extras?.keySet())
+                assertNull(send.data)
+                send.clipData?.let { clip ->
+                    // Android can migrate EXTRA_TEXT into ClipData while launching a chooser.
+                    assertEquals(1, clip.itemCount)
+                    assertEquals(1, clip.description.mimeTypeCount)
+                    assertEquals("text/plain", clip.description.getMimeType(0))
+                    val item = clip.getItemAt(0)
+                    assertEquals(expected, item.text?.toString())
+                    assertNull(item.htmlText)
+                    assertNull(item.uri)
+                    assertNull(item.intent)
+                }
+                capture("saved-job-system-chooser", awaitComposeIdle = false)
+            } finally {
+                try {
+                    if (activeApplicationPackage()?.let { it != ownPackage } == true) {
+                        instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK)
+                        compose.waitUntil(5_000) { activeApplicationPackage() == ownPackage }
+                    }
+                } finally {
+                    instrumentation.removeMonitor(chooserMonitor)
+                }
+            }
+        }
+        compose.onNodeWithTag("jobs-list").assertIsDisplayed()
+        compose.onNodeWithTag("job-share-preview").assertDoesNotExist()
+        assertEquals(storedBeforeShare, store.records.getValue("workspace-unpaired"))
+        assertEquals(listOf(job), model.state.value.jobs)
+        assertTrue(model.state.value.receipts.isEmpty())
+        assertTrue(service.routes.isEmpty())
+        assertTrue(searches.isEmpty()); assertEquals(0, catalogCalls)
     }
 
     @Test fun clearingAnAppliedRecord_requiresASeparateConfirmation_andKeepsEarlierHistory() {
