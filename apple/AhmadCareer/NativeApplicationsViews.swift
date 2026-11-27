@@ -1158,7 +1158,12 @@ private struct NativeHostedServicePresenter: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ controller: Presenter, context: Context) {
-        controller.update(requestedURL: isPresented ? url : nil) { isPresented = false }
+        controller.update(requestedURL: isPresented ? url : nil) {
+            isPresented = false
+            #if DEBUG
+            CareerAppEnvironment.recordBrowserLifecycle(.bindingAssignedFalse, flags: [.bindingPresented: isPresented])
+            #endif
+        }
     }
 
     static func dismantleUIViewController(_ controller: Presenter, coordinator: ()) {
@@ -1176,11 +1181,17 @@ private struct NativeHostedServicePresenter: UIViewControllerRepresentable {
         func update(requestedURL: URL?, onDismiss: @escaping () -> Void) {
             self.requestedURL = requestedURL
             self.onDismiss = onDismiss
+            #if DEBUG
+            traceBrowserLifecycle(.bindingUpdate)
+            #endif
             presentIfReady()
         }
 
         override func viewDidAppear(_ animated: Bool) {
             super.viewDidAppear(animated)
+            #if DEBUG
+            traceBrowserLifecycle(.presenterDidAppear)
+            #endif
             presentIfReady()
         }
 
@@ -1189,6 +1200,9 @@ private struct NativeHostedServicePresenter: UIViewControllerRepresentable {
             // allowed only once that exact controller has left presentation.
             if let current = browser, current.presentingViewController == nil,
                !current.isBeingPresented, !current.isBeingDismissed {
+                #if DEBUG
+                traceBrowserLifecycle(.detachedBrowserObserved, controller: current)
+                #endif
                 reportDismissal(of: current)
                 browser = nil
             }
@@ -1202,11 +1216,22 @@ private struct NativeHostedServicePresenter: UIViewControllerRepresentable {
             browser = controller
             dismissalReported = false
             // Keep Safari's default modal presentation and transitioning delegate.
+            #if DEBUG
+            traceBrowserLifecycle(.presentRequested, controller: controller)
+            present(controller, animated: true) { [weak self, weak controller] in
+                guard let self, let controller else { return }
+                self.traceBrowserLifecycle(.presentCompleted, controller: controller)
+            }
+            #else
             present(controller, animated: true)
+            #endif
             controller.presentationController?.delegate = self
         }
 
         func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+            #if DEBUG
+            traceBrowserLifecycle(.delegateDidFinish, controller: controller)
+            #endif
             reportDismissal(of: controller)
             // Safari dismisses itself after this callback. Do not begin a
             // competing dismiss transition when the binding becomes false.
@@ -1214,17 +1239,54 @@ private struct NativeHostedServicePresenter: UIViewControllerRepresentable {
 
         func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
             guard let controller = presentationController.presentedViewController as? SFSafariViewController else { return }
+            #if DEBUG
+            traceBrowserLifecycle(.presentationDidDismiss, controller: controller)
+            #endif
             reportDismissal(of: controller)
         }
 
         private func reportDismissal(of controller: SFSafariViewController) {
+            #if DEBUG
+            traceBrowserLifecycle(.reportDismissalEntered, controller: controller)
+            #endif
             guard browser === controller, !dismissalReported else { return }
             dismissalReported = true
             requestedURL = nil
             onDismiss?()
+            #if DEBUG
+            traceBrowserLifecycle(.reportDismissalApplied, controller: controller)
+            #endif
         }
 
+        #if DEBUG
+        private func traceBrowserLifecycle(_ event: CareerAppEnvironment.BrowserLifecycleEvent,
+                                           controller: SFSafariViewController? = nil) {
+            guard CareerAppEnvironment.isUIAcceptance else { return }
+            let observed = controller ?? browser
+            CareerAppEnvironment.recordBrowserLifecycle(event, flags: [
+                .requestedPresentation: requestedURL != nil,
+                .hasTrackedBrowser: browser != nil,
+                .hasObservedController: observed != nil,
+                .matchesTrackedBrowser: observed != nil && browser === observed,
+                .dismissalReported: dismissalReported,
+                .dismantled: dismantled,
+                .hasDismissCallback: onDismiss != nil,
+                .presenterInWindow: viewIfLoaded?.window != nil,
+                .presenterIsBeingPresented: isBeingPresented,
+                .presenterIsBeingDismissed: isBeingDismissed,
+                .presentedControllerIsObserved: observed != nil && presentedViewController === observed,
+                .observedHasPresenter: observed?.presentingViewController != nil,
+                .observedIsBeingPresented: observed?.isBeingPresented ?? false,
+                .observedIsBeingDismissed: observed?.isBeingDismissed ?? false,
+                .observedViewInWindow: observed?.viewIfLoaded?.window != nil
+            ])
+        }
+        #endif
+
         func dismantle() {
+            #if DEBUG
+            traceBrowserLifecycle(.dismantleEntered)
+            #endif
             dismantled = true
             requestedURL = nil
             onDismiss = nil
@@ -1232,9 +1294,25 @@ private struct NativeHostedServicePresenter: UIViewControllerRepresentable {
             // dismiss a different controller or a parent connection sheet.
             if let current = browser, current.presentingViewController != nil,
                !current.isBeingDismissed {
+                #if DEBUG
+                traceBrowserLifecycle(.teardownDismissRequested, controller: current)
+                current.dismiss(animated: false) { [weak current] in
+                    CareerAppEnvironment.recordBrowserLifecycle(.teardownDismissCompleted, flags: [
+                        .hasObservedController: current != nil,
+                        .observedHasPresenter: current?.presentingViewController != nil,
+                        .observedIsBeingPresented: current?.isBeingPresented ?? false,
+                        .observedIsBeingDismissed: current?.isBeingDismissed ?? false,
+                        .observedViewInWindow: current?.viewIfLoaded?.window != nil
+                    ])
+                }
+                #else
                 current.dismiss(animated: false)
+                #endif
             }
             browser = nil
+            #if DEBUG
+            traceBrowserLifecycle(.dismantleFinished)
+            #endif
         }
     }
 }

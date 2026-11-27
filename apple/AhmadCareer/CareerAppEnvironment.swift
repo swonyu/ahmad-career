@@ -15,6 +15,80 @@ enum CareerAppEnvironment {
         #endif
     }
     static var isUIAcceptance: Bool { acceptanceRoot != nil }
+
+    #if DEBUG
+    enum BrowserLifecycleEvent: String {
+        case bindingUpdate = "binding_update"
+        case presenterDidAppear = "presenter_did_appear"
+        case detachedBrowserObserved = "detached_browser_observed"
+        case presentRequested = "present_requested"
+        case presentCompleted = "present_completed"
+        case delegateDidFinish = "delegate_did_finish"
+        case presentationDidDismiss = "presentation_did_dismiss"
+        case reportDismissalEntered = "report_dismissal_entered"
+        case reportDismissalApplied = "report_dismissal_applied"
+        case bindingAssignedFalse = "binding_assigned_false"
+        case dismantleEntered = "dismantle_entered"
+        case teardownDismissRequested = "teardown_dismiss_requested"
+        case teardownDismissCompleted = "teardown_dismiss_completed"
+        case dismantleFinished = "dismantle_finished"
+        case capacityReached = "capacity_reached"
+    }
+    enum BrowserLifecycleFlag: String {
+        case requestedPresentation, hasTrackedBrowser, hasObservedController, matchesTrackedBrowser
+        case dismissalReported, dismantled, hasDismissCallback, presenterInWindow
+        case presenterIsBeingPresented, presenterIsBeingDismissed, presentedControllerIsObserved
+        case observedHasPresenter, observedIsBeingPresented, observedIsBeingDismissed, observedViewInWindow
+        case bindingPresented, capacityReached
+    }
+    private static var browserLifecycleLoggingStopped = false
+
+    /// The existing UUID-scoped acceptance root is the only destination. The
+    /// payload has fixed event/flag names, uptime and booleans; no user text.
+    /// Failure or capacity exhaustion must never change a presentation action.
+    static func recordBrowserLifecycle(_ event: BrowserLifecycleEvent, flags: [BrowserLifecycleFlag: Bool]) {
+        guard !browserLifecycleLoggingStopped, let root = acceptanceRoot else { return }
+        let observedAt = ProcessInfo.processInfo.systemUptime
+        let maximumBytes: UInt64 = 64 * 1024
+        func encoded(_ event: BrowserLifecycleEvent, _ flags: [BrowserLifecycleFlag: Bool], uptime: TimeInterval) throws -> Data {
+            let state = Dictionary(uniqueKeysWithValues: flags.map { ($0.key.rawValue, $0.value) })
+            var bytes = try JSONSerialization.data(withJSONObject: [
+                "event": event.rawValue, "uptime": uptime, "flags": state
+            ], options: [.sortedKeys])
+            bytes.append(0x0A)
+            return bytes
+        }
+        do {
+            let file = root.appendingPathComponent("browser-lifecycle.jsonl")
+            let manager = FileManager.default
+            try manager.createDirectory(at: root, withIntermediateDirectories: true)
+            if !manager.fileExists(atPath: file.path) {
+                guard manager.createFile(atPath: file.path, contents: Data(), attributes: [.posixPermissions: 0o600]) else {
+                    browserLifecycleLoggingStopped = true; return
+                }
+            }
+            let attributes = try manager.attributesOfItem(atPath: file.path)
+            guard let kind = attributes[.type] as? FileAttributeType, kind == .typeRegular else {
+                browserLifecycleLoggingStopped = true; return
+            }
+            let handle = try FileHandle(forWritingTo: file)
+            defer { try? handle.close() }
+            let size = try handle.seekToEnd()
+            guard size <= maximumBytes else { browserLifecycleLoggingStopped = true; return }
+            let bytes = try encoded(event, flags, uptime: observedAt)
+            // Reserve room for a fixed marker so a capped trace is explicit.
+            if size + UInt64(bytes.count) > maximumBytes - 512 {
+                let marker = try encoded(.capacityReached, [.capacityReached: true], uptime: ProcessInfo.processInfo.systemUptime)
+                if size + UInt64(marker.count) <= maximumBytes { try handle.write(contentsOf: marker) }
+                browserLifecycleLoggingStopped = true
+                return
+            }
+            try handle.write(contentsOf: bytes)
+        } catch {
+            browserLifecycleLoggingStopped = true
+        }
+    }
+    #endif
     static func makeCareerStore() -> NativeCareerStore {
         NativeCareerStore(storageURL: acceptanceRoot?.appendingPathComponent("planning.json"))
     }
