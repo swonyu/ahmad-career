@@ -204,19 +204,28 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
     }
     private func realKeyboard(_ app: XCUIApplication) throws {
         let start = ProcessInfo.processInfo.systemUptime, deadline = start + 5
-        let key = app.descendants(matching: .keyboard).descendants(matching: .key)
-            .matching(NSPredicate(format: "identifier == %@", "delete")).element
+        let label = localized("delete", "حذف")
+        let keys = app.keyboards.keys.matching(NSPredicate(
+            format: "identifier == %@ AND label == %@", "delete", label))
         while ProcessInfo.processInfo.systemUptime < deadline {
             let bounds = app.frame
             guard ProcessInfo.processInfo.systemUptime < deadline else { break }
-            let snapshot = try? key.snapshot()
-            let snapshotEnd = ProcessInfo.processInfo.systemUptime
-            guard snapshotEnd < deadline else { break }
-            if finite(bounds), let snapshot, snapshot.elementType == .key, snapshot.identifier == "delete",
-               finite(snapshot.frame), snapshot.frame.intersects(bounds) {
-                let hit = key.isHittable, finished = ProcessInfo.processInfo.systemUptime
-                print("Native journey real-key observation: snapshot=\(snapshotEnd - start); end=\(finished - start); hit=\(hit); late=\(finished > deadline)")
-                if hit && finished <= deadline { return }
+            // Arabic AX can expose two exact delete-key nodes at the same frame.
+            // Bind each actual accessibility element so a nonhittable duplicate
+            // cannot hide the currently hittable key behind an ambiguous query.
+            let liveKeys = keys.allElementsBoundByAccessibilityElement
+            for (index, key) in liveKeys.enumerated() {
+                guard ProcessInfo.processInfo.systemUptime < deadline else { break }
+                let snapshot = try? key.snapshot()
+                let snapshotEnd = ProcessInfo.processInfo.systemUptime
+                guard snapshotEnd < deadline else { break }
+                if finite(bounds), let snapshot, snapshot.elementType == .key,
+                   snapshot.identifier == "delete", snapshot.label == label,
+                   finite(snapshot.frame), snapshot.frame.intersects(bounds) {
+                    let hit = key.isHittable, finished = ProcessInfo.processInfo.systemUptime
+                    print("Native journey real-key observation: matches=\(liveKeys.count); index=\(index); snapshot=\(snapshotEnd - start); end=\(finished - start); hit=\(hit); late=\(finished > deadline)")
+                    if hit && finished <= deadline { return }
+                }
             }
             let remaining = deadline - ProcessInfo.processInfo.systemUptime
             if remaining > 0 { RunLoop.current.run(until: Date().addingTimeInterval(min(0.1, remaining))) }
