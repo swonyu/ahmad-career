@@ -236,9 +236,17 @@ export async function serveIPhone(args, {signal, preserveSignals} = {}) {
       result.checkpoints = status.checkpointCount;
       if (!completed) result.diagnostic = {controlDirectorySeen:status.controlDirectorySeen,
         requestsObserved:status.requestsObserved, controllerFailureCode:status.lastFailureCode,
-        failureRetention:status.failureRetention};
+        failureRetention:status.failureRetention, failurePhase:status.lastFailurePhase,
+        failureElapsedMs:status.lastFailureElapsedMs};
     }
     if (bridge) {
+      if (!completed) {
+        result.diagnostic ??= {};
+        const status = bridge.status();
+        result.diagnostic.search = status.search;
+        result.diagnostic.loopbackApiRequests = status.apiRequests;
+        result.diagnostic.tlsErrors = status.tlsErrors;
+      }
       try {
         const closed = await bridge.close();
         if (!closed.closed || closed.ownSocketCount !== 0) clean = false;

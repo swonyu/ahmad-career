@@ -3,6 +3,7 @@ import https from 'node:https';
 import {readFile, open} from 'node:fs/promises';
 import {constants} from 'node:fs';
 import {createHash, randomBytes} from 'node:crypto';
+import {performance} from 'node:perf_hooks';
 import path from 'node:path';
 import {fixtureCertificates} from '../../../../website/applications/fixtures/certificates.mjs';
 import {repositoryRoot} from './harness.mjs';
@@ -41,6 +42,8 @@ export async function startNativeJourneyBridge({harness, port, signal}) {
   const events = [], sockets = new Set();
   const stats = {apiRequests: 0, documentRequests: { 'CV-A.pdf': 0, 'CV-B.pdf': 0 },
     deniedRequests: 0, proxyRequests: 0, socketErrors: 0, tlsErrors: 0};
+  const search = {started:0, completed:0, lastDurationMs:null, lastStatusClass:null};
+  const activeSearches = new Set();
   let server, closing, stopped = false, startupSettled = false, inFlight = 0;
   function event(code) {
     // Only fixed event codes: no request URL, credentials, exception or header value.
@@ -52,6 +55,13 @@ export async function startNativeJourneyBridge({harness, port, signal}) {
   }
   async function handle(request, response) {
     inFlight++;
+    let searchRecord;
+    const finishSearch = status => {
+      if (!searchRecord) return;
+      search.completed++;
+      search.lastDurationMs = Math.min(300000, Math.round(performance.now() - searchRecord.startedAt));
+      search.lastStatusClass = Math.floor(status / 100);
+    };
     try {
       if (stopped || signal?.aborted) fail('fixture_bridge_closed', 503);
       if (!['127.0.0.1', '::ffff:127.0.0.1'].includes(request.socket.remoteAddress) ||
@@ -71,6 +81,10 @@ export async function startNativeJourneyBridge({harness, port, signal}) {
       let route;
       try { route = nativeRoute(request.url, request.method); }
       catch (error) { if (error.code === 'fixture_dispatch_denied') harness.recordDispatchRejection(); throw error; }
+      if (route.pathname === '/api/discovery/search') {
+        searchRecord = {startedAt:performance.now()};
+        activeSearches.add(searchRecord); search.started++;
+      }
       const headers = new Headers();
       for (const [name, value] of Object.entries(request.headers)) {
         if (name === 'x-native-journey-bridge') continue;
@@ -108,10 +122,13 @@ export async function startNativeJourneyBridge({harness, port, signal}) {
       const retryAfter = result.headers.get('retry-after');
       if (retryAfter !== null) responseHeaders['Retry-After'] = retryAfter;
       response.writeHead(result.status, responseHeaders); response.end(reply);
+      finishSearch(result.status);
     } catch (error) {
       stats.deniedRequests++;
-      publicFailure(response, error instanceof FixtureError ? error.code : 'fixture_bridge_failure', error instanceof FixtureError ? error.status : 500);
-    } finally { inFlight--; }
+      const status = error instanceof FixtureError ? error.status : 500;
+      finishSearch(status);
+      publicFailure(response, error instanceof FixtureError ? error.code : 'fixture_bridge_failure', status);
+    } finally { if (searchRecord) activeSearches.delete(searchRecord); inFlight--; }
   }
   server = https.createServer({key, cert, minVersion: 'TLSv1.2', maxHeaderSize: 16384}, (req, res) => { void handle(req, res); });
   server.requestTimeout = 30000; server.headersTimeout = 10000; server.maxHeadersCount = 64;
@@ -153,6 +170,12 @@ export async function startNativeJourneyBridge({harness, port, signal}) {
     server.on('error', () => { event('fixture_bridge_server_error'); void close().catch(() => event('fixture_bridge_close_failed')); });
     return {
       close, caPath: tls.caPath, caFingerprint256: tls.caFingerprint256, certificateExpiresAt: tls.expiresAt,
+      status() {
+        const oldest = [...activeSearches].reduce((value, record) => Math.min(value, record.startedAt), Infinity);
+        return {search:{...search, inFlight:activeSearches.size,
+          oldestInFlightMs:Number.isFinite(oldest) ? Math.min(300000, Math.round(performance.now() - oldest)) : null},
+          apiRequests:stats.apiRequests, tlsErrors:stats.tlsErrors};
+      },
       privateConfiguration: {schemaVersion: 1, bridgeToken, port,
         iosOrigin: `https://127.0.0.1:${port}`, androidOrigin: `https://10.0.2.2:${port}`,
         documents: Object.fromEntries(Object.entries(documentPaths).map(([route, name]) => [name, route]))},

@@ -138,7 +138,7 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         guard try FileManager.default.contentsOfDirectory(atPath: controlDirectory.path).isEmpty else {
             throw ObservationFailure.failed
         }
-        XCUIDevice.shared.orientation = .portrait
+        if XCUIDevice.shared.orientation != .portrait { XCUIDevice.shared.orientation = .portrait }
     }
     private func checkpoint(_ name: Checkpoint, app: XCUIApplication) throws -> Facts {
         sequence += 1
@@ -199,6 +199,7 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         try wait("The actual isolated app opens with five tabs", app: app) {
             item("acceptance.offline", app: app).exists && app.tabBars.buttons.count == 5
         }
+        try require(app.frame.height > app.frame.width, "The actual isolated app is portrait", app: app)
         return app
     }
     private func realKeyboard(_ app: XCUIApplication) throws {

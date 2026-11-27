@@ -144,7 +144,7 @@ export async function createFileCheckpointController({harness, bridge, testID, w
     bridgePort:bridge.privateConfiguration.port,caFingerprint256:bridge.caFingerprint256});
   const acceptedFiles = new Map(), pending = new Set(), checkpoints = [];
   let controlIdentity, appIdentity, polling = false, stopped = false, controlAttempted = false, transportCloseReceipt;
-  let requestsObserved = 0, lastFailureCode = null;
+  let requestsObserved = 0, lastFailureCode = null, phase = 'idle', lastFailurePhase = null, lastFailureElapsedMs = null;
   let failureContext = null, failureRetention = 'not_attempted';
   function remember(role, bytes) {
     if (!failureContext) return;
@@ -239,16 +239,19 @@ export async function createFileCheckpointController({harness, bridge, testID, w
     } finally { clearTimeout(timer); }
   }
   async function observe(deadline) {
+    phase = 'ownership';
     await owned(deadline);
     if (failureContext) failureContext.observation++;
     let first, second;
     try {
+      phase = 'bridge_before';
       first = await boundedHarness(()=>bridge.evidence(),deadline,value=>remember('evidence-before',jsonBytes(value)));
       const mutable = async (filename,maximum) => {
         try { return await stableRead(filename,maximum); }
         catch (error) { if (['checkpoint_file_changed','checkpoint_file_missing'].includes(error.code)) return null; throw error; }
       };
       const journalRequired = needsReconciledJournal(state.nextSequence);
+      phase = 'app_files';
       const [phone,seed,bootstrap,operationJournal] = await Promise.all([
         mutable(draftPath,CONTROL_LIMITS.phoneBytes), stableRead(seedPath,4096,{privateMode:true}),
         stableRead(bootstrapPath,65536,{privateMode:true}),
@@ -262,6 +265,7 @@ export async function createFileCheckpointController({harness, bridge, testID, w
       let discovery = null;
       if (state.nextSequence >= 3) discovery = await mutable(discoveryPath,CONTROL_LIMITS.discoveryBytes);
       if (discovery) remember('discovery',discovery.bytes);
+      phase = 'bridge_after';
       second = await boundedHarness(()=>bridge.evidence(),deadline,value=>remember('evidence-after',jsonBytes(value)));
       if (!phone || journalRequired && !operationJournal || state.nextSequence >= 3 && !discovery || canonical(first) !== canonical(second)) return null;
       guard(deadline);
@@ -309,17 +313,21 @@ export async function createFileCheckpointController({harness, bridge, testID, w
     get complete(){return state.complete;},
     status(){return {schemaVersion:1,testID,completed:state.complete,stopped,nextSequence:state.nextSequence,
       checkpointCount:checkpoints.length,unsettledHarnessOperations:pending.size,failureRetention,
-      controlDirectorySeen:!!controlIdentity,requestsObserved,lastFailureCode};},
+      controlDirectorySeen:!!controlIdentity,requestsObserved,lastFailureCode,lastFailurePhase,lastFailureElapsedMs};},
     async poll() {
       if (polling) fail('checkpoint_concurrent_poll'); polling = true;
+      const pollStartedAt = mono();
       failureContext = null;
       try {
+        phase = 'control_directory';
         guard(); if (state.complete) { await owned(stopAt); await inventory(); return false; }
         const root = await exists(controlPath); if (!root) return false;
         controlIdentity ??= await directory(controlPath,null,{privateMode:true});
-        await owned(stopAt); await inventory();
+        phase = 'ownership';
+        await owned(stopAt); phase = 'inventory'; await inventory();
         const prefix = String(state.nextSequence).padStart(3,'0'), requestName = prefix + '-request.json';
         if (!await exists(path.join(controlPath,requestName))) return false;
+        phase = 'request';
         const requestFile = await stableRead(path.join(controlPath,requestName),CONTROL_LIMITS.requestBytes,{privateMode:true});
         requestsObserved++;
         failureContext = {prefix,sequence:state.nextSequence,checkpoint:CHECKPOINTS[state.nextSequence-1],
@@ -330,15 +338,17 @@ export async function createFileCheckpointController({harness, bridge, testID, w
         const deadline = Math.min(stopAt,mono() + CONTROL_LIMITS.requestMilliseconds,mono() + 5000 - Math.max(0,age));
         failureContext.deadline = deadline;
         const request = decodeControlRequest(requestFile.bytes,testID,state.nextSequence);
+        phase = 'source_pins';
         await sourcePins(); guard(deadline);
         const board = request.checkpoint === 'closeSecondary' ? 'closed' : request.checkpoint === 'outage' ? 'unavailable' : null;
         const closeTransport = request.checkpoint === 'networkDisconnected';
         const action = board !== null || closeTransport;
         controlAttempted = false;
         for (let count = 0; count < CONTROL_LIMITS.observations; count++) {
-          guard(deadline); await inventory();
+          guard(deadline); phase = 'inventory'; await inventory();
           const witness = await observe(deadline);
           if (witness) {
+            phase = 'inspection';
             const result = state.inspect(request,witness,{afterControl:!action || controlAttempted});
             if (result.ready && action && !controlAttempted) {
               controlAttempted = true; // Any failure is final; never retry a control.
@@ -357,6 +367,7 @@ export async function createFileCheckpointController({harness, bridge, testID, w
               continue;
             }
             if (result.ready) {
+              phase = 'publication';
               await sourcePins(); await owned(deadline); guard(deadline);
               const response = jsonBytes({schemaVersion:1,testID,sequence:request.sequence,checkpoint:request.checkpoint,ok:true,facts:result.facts});
               if (response.length > CONTROL_LIMITS.responseBytes) fail('checkpoint_response_size');
@@ -370,12 +381,15 @@ export async function createFileCheckpointController({harness, bridge, testID, w
               return true;
             }
           }
+          phase = 'waiting';
           guard(deadline); await new Promise(resolve=>setTimeout(resolve,Math.min(25,Math.max(1,deadline-mono()))));
         }
         fail('checkpoint_observation_limit');
       } catch (error) {
         stopped = true;
         lastFailureCode = FAILURE_CODES.has(error?.code) ? error.code : 'checkpoint_controller_rejected';
+        lastFailurePhase = phase;
+        lastFailureElapsedMs = Math.min(300000, Math.round(mono() - pollStartedAt));
         await retainFailure(error,mono());
         if (error instanceof CheckpointError) throw error;
         fail('checkpoint_controller_rejected');

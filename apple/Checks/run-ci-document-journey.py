@@ -282,8 +282,11 @@ def run(language):
                     host = {}
                 failure = host.get("failure") if isinstance(host.get("failure"), dict) else {}
                 diagnostic = host.get("diagnostic") if isinstance(host.get("diagnostic"), dict) else {}
+                search = diagnostic.get("search") if isinstance(diagnostic.get("search"), dict) else {}
                 def safe_code(value):
                     return value if isinstance(value, str) and re.fullmatch(r"[a-z][a-z0-9_]{0,79}", value) else None
+                def safe_count(value, maximum=512):
+                    return value if type(value) is int and 0 <= value <= maximum else None
                 receipt.write_text(json.dumps({
                     "ok": False, "commit": selection["checkoutSHA"], "language": language,
                     "testID": test_id, "expectedRunnerContainerID": Path(containers[1]).name,
@@ -298,6 +301,19 @@ def run(language):
                         "requestsObserved": diagnostic.get("requestsObserved") if type(diagnostic.get("requestsObserved")) is int else None,
                         "controllerFailureCode": safe_code(diagnostic.get("controllerFailureCode")),
                         "failureRetention": safe_code(diagnostic.get("failureRetention")),
+                        "failurePhase": safe_code(diagnostic.get("failurePhase")),
+                        "failureElapsedMs": safe_count(diagnostic.get("failureElapsedMs"), 300000),
+                        "loopbackApiRequests": safe_count(diagnostic.get("loopbackApiRequests")),
+                        "tlsErrors": safe_count(diagnostic.get("tlsErrors"), 10000),
+                        "search": {
+                            "started": safe_count(search.get("started")),
+                            "completed": safe_count(search.get("completed")),
+                            "inFlight": safe_count(search.get("inFlight")),
+                            "lastDurationMs": safe_count(search.get("lastDurationMs"), 300000),
+                            "lastStatusClass": search.get("lastStatusClass") if type(search.get("lastStatusClass")) is int
+                            and 2 <= search["lastStatusClass"] <= 5 else None,
+                            "oldestInFlightMs": safe_count(search.get("oldestInFlightMs"), 300000),
+                        },
                     },
                 }, indent=2) + "\n")
 

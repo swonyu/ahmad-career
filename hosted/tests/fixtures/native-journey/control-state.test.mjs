@@ -314,6 +314,8 @@ test('a synchronously returned late observation is retained as late and never ac
   assert.ok(late);assert.equal(late.returnedAfterDeadline,true);
   assert.ok(late.observedAtUptimeMs>=failure.deadlineUptimeMs);
   assert.equal(failure.accepted,false);assert.equal(f.controller.status().nextSequence,1);
+  assert.equal(f.controller.status().lastFailurePhase,'bridge_after');
+  assert.ok(f.controller.status().lastFailureElapsedMs>=650);
   assert.equal(failure.responsePublished,false);assert.equal(f.counters().evidenceCalls,2);
   await assert.rejects(readFile(path.join(f.control,'001-response.json')),{code:'ENOENT'});
   await f.controller.settle();
