@@ -319,10 +319,45 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         browse.element.tap()
         attachPickerHierarchy("native-journey-ar-files-browse-probe", app: app)
     }
+    private func waitForEnglishFilesPresentation(_ app: XCUIApplication) throws {
+        guard language == "en" else { return }
+        let rootID = "DOC.browsingRoot Source: com.apple.DocumentManager.RecentDocuments, Title: Recents"
+        let navID = "FullDocumentManagerViewControllerNavigationBar"
+        let start = ProcessInfo.processInfo.systemUptime, deadline = start + 10
+        var presented = false
+        while ProcessInfo.processInfo.systemUptime < deadline {
+            if let snapshot = try? app.snapshot() {
+                var pending: [any XCUIElementSnapshot] = [snapshot]
+                var roots: [any XCUIElementSnapshot] = []
+                while let element = pending.popLast() {
+                    if element.elementType == .other && element.identifier == rootID { roots.append(element) }
+                    pending.append(contentsOf: element.children)
+                }
+                if roots.count == 1 && finite(roots[0].frame) && roots[0].frame.intersects(snapshot.frame) {
+                    pending = roots[0].children
+                    var navigationBars = 0
+                    while let element = pending.popLast() {
+                        if element.elementType == .navigationBar && element.identifier == navID
+                            && finite(element.frame) && element.frame.intersects(snapshot.frame) {
+                            navigationBars += 1
+                        }
+                        pending.append(contentsOf: element.children)
+                    }
+                    if navigationBars == 1 && ProcessInfo.processInfo.systemUptime <= deadline {
+                        presented = true; break
+                    }
+                }
+            }
+            let remaining = deadline - ProcessInfo.processInfo.systemUptime
+            if remaining > 0 { RunLoop.current.run(until: Date().addingTimeInterval(min(0.1, remaining))) }
+        }
+        try require(presented, "The exact English OS Files Recent root and navigation appear inside ten seconds", app: app)
+    }
     private func cancelPicker(_ app: XCUIApplication) throws {
         try openProfile(app)
         try tap(choosePDFButton(app), app: app)
         modalNavigationTitle = nil
+        try waitForEnglishFilesPresentation(app)
         let cancel = app.navigationBars.matching(NSPredicate(format: "identifier == %@", "FullDocumentManagerViewControllerNavigationBar")).buttons.matching(NSPredicate(format: "label == %@", localized("Cancel", "إلغاء"))).element
         let start = ProcessInfo.processInfo.systemUptime, deadline = start + 5
         var cancelReady = false
@@ -432,7 +467,8 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         modalNavigationTitle = nil
         let stem = String(name.dropLast(4))
         let pickerRoots = app.otherElements.matching(NSPredicate(format: "identifier == %@",
-            "DOC.browsingRoot Source: com.apple.DocumentManager.RecentDocuments, Title: Recents"))
+            "DOC.browsingRoot Source: com.apple.DocumentManager.RecentDocuments, Title: "
+                + localized("Recents", "الحديثة")))
         let fileViews = pickerRoots.collectionViews.matching(NSPredicate(format: "identifier == %@", "File View"))
         let documents = fileViews.cells.matching(NSPredicate(format: "identifier == %@", stem + ", pdf"))
         let filenames = documents.staticTexts.matching(NSPredicate(format: "label == %@ OR label == %@", name, stem))
