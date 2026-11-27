@@ -49,16 +49,38 @@ export async function verifySourceInputs(expected) {
   if (!migrations.length || migrations.some(n => !Object.hasOwn(expected, 'hosted/drizzle/' + n))) fail('fixture_migration_pin_missing');
   return migrations;
 }
+async function offlineBuild() {
+  const {build} = await import('esbuild');
+  return build({entryPoints: [fileURLToPath(new URL('./runtime.mjs', import.meta.url))], absWorkingDir: hostedRoot,
+    bundle: true, format: 'esm', platform: 'neutral', mainFields: ['module', 'main'], target: 'es2022',
+    external: ['node:*'], write: false, metafile: true, logLevel: 'silent'});
+}
+
+/** Capture the actual offline bundle closure plus the small reviewed support set. */
+export async function captureNativeJourneySourceInputs() {
+  let result;
+  try { result = await offlineBuild(); } catch { fail('fixture_bundle_failed'); }
+  const names = new Set(required.concat(['hosted/tests/fixtures/native-journey/file-control.mjs',
+    'hosted/tests/fixtures/native-journey/control-state.mjs',
+    'hosted/tests/fixtures/native-journey/serve-iphone.mjs']));
+  for (const input of Object.keys(result.metafile.inputs)) {
+    names.add(path.relative(repositoryRoot, path.resolve(hostedRoot, input)).split(path.sep).join('/'));
+  }
+  for (const name of await readdir(path.join(hostedRoot, 'drizzle'))) if (name.endsWith('.sql')) names.add('hosted/drizzle/' + name);
+  if (names.size > 512) fail('fixture_source_pins_missing');
+  const expectedInputs = {};
+  for (const name of [...names].sort()) {
+    if (!permittedInput(name)) fail('fixture_bundle_input_unpinned');
+    expectedInputs[name] = digest(await readRegular(path.join(repositoryRoot, name)));
+  }
+  await verifySourceInputs(expectedInputs);
+  return {expectedInputs, bundleInputCount:Object.keys(result.metafile.inputs).length};
+}
 /** Offline build preparation only; invoking it still requires the next review grant. */
 export async function bundleNativeJourney(expectedInputs) {
   await verifySourceInputs(expectedInputs);
-  const {build} = await import('esbuild');
   let result;
-  try {
-    result = await build({entryPoints: [fileURLToPath(new URL('./runtime.mjs', import.meta.url))], absWorkingDir: hostedRoot,
-      bundle: true, format: 'esm', platform: 'neutral', mainFields: ['module', 'main'], target: 'es2022',
-      external: ['node:*'], write: false, metafile: true, logLevel: 'silent'});
-  } catch { fail('fixture_bundle_failed'); }
+  try { result = await offlineBuild(); } catch { fail('fixture_bundle_failed'); }
   if (result.outputFiles.length !== 1 || result.outputFiles[0].contents.length > 8 * 1024 * 1024) fail('fixture_bundle_shape_invalid');
   for (const name of Object.keys(result.metafile.inputs)) {
     const relative = path.relative(repositoryRoot, path.resolve(hostedRoot, name)).split(path.sep).join('/');

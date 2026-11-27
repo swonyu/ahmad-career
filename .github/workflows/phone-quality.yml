@@ -23,7 +23,7 @@ on:
   workflow_dispatch:
     inputs:
       acceptance_scope:
-        description: All five gates, Android only, iPhone UI only, or the iPhone connection regression
+        description: Full release checks or one focused Android or iPhone run
         required: true
         default: full
         type: choice
@@ -32,12 +32,14 @@ on:
           - android
           - iphone-connection
           - iphone-ui
+          - iphone-documents-en
+          - iphone-documents-ar
 
 permissions:
   contents: read
 
 concurrency:
-  group: phone-quality-${{ github.workflow }}-${{ github.ref }}
+  group: phone-quality-${{ github.workflow }}-${{ github.ref }}-${{ inputs.acceptance_scope || 'release' }}
   cancel-in-progress: true
 
 jobs:
@@ -259,7 +261,7 @@ jobs:
           retention-days: 7
 
   iphone-ui:
-    name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-connection' && 'PARTIAL iPhone connection regression' || github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-ui' && 'PARTIAL iPhone UI acceptance' || 'iPhone native interface acceptance' }}
+    name: ${{ github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-connection' && 'PARTIAL iPhone connection regression' || github.event_name == 'workflow_dispatch' && inputs.acceptance_scope == 'iphone-ui' && 'PARTIAL iPhone UI acceptance' || startsWith(inputs.acceptance_scope, 'iphone-documents-') && format('PARTIAL iPhone document picker ({0})', inputs.acceptance_scope) || 'iPhone native interface acceptance' }}
     if: ${{ github.event_name != 'workflow_dispatch' || inputs.acceptance_scope != 'android' }}
     runs-on: macos-26
     # Budget 5m readiness, 60m combined build/UI, and 5m for setup and evidence.
@@ -370,7 +372,23 @@ jobs:
             --boot-exit "${boot_results[0]}" --log-exit "${boot_results[1]}" \
             --inventory-exit "$inventory_result" \
             --output "$RUNNER_TEMP/career-iphone-boot-verification.json"
+      - name: Prepare Node for the document-picker fixture
+        if: startsWith(env.CAREER_UI_ACCEPTANCE_SCOPE, 'iphone-documents-')
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install the isolated document-picker fixture dependencies
+        if: startsWith(env.CAREER_UI_ACCEPTANCE_SCOPE, 'iphone-documents-')
+        working-directory: hosted
+        run: npm run install:ci
+      - name: Exercise the actual iPhone document picker and recovery workflow
+        if: startsWith(env.CAREER_UI_ACCEPTANCE_SCOPE, 'iphone-documents-')
+        shell: bash
+        timeout-minutes: 46
+        run: python3 apple/Checks/run-ci-document-journey.py "${CAREER_UI_ACCEPTANCE_SCOPE##*-}"
       - name: Exercise native phone flows with isolated synthetic data
+        if: ${{ !startsWith(env.CAREER_UI_ACCEPTANCE_SCOPE, 'iphone-documents-') }}
         shell: bash
         timeout-minutes: 60
         run: |
@@ -417,7 +435,7 @@ jobs:
         if: always()
         shell: bash
         run: |
-          if [ -d "$RUNNER_TEMP/CareerFinderUI.xcresult" ]; then
+          if [ -d "$RUNNER_TEMP/CareerFinderUI.xcresult" ] && [ ! -f "$RUNNER_TEMP/career-ui-screenshots/manifest.json" ]; then
             xcrun xcresulttool export attachments \
               --path "$RUNNER_TEMP/CareerFinderUI.xcresult" \
               --output-path "$RUNNER_TEMP/career-ui-screenshots"
@@ -426,7 +444,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
-          name: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-connection' && 'PARTIAL-iphone-connection-regression' || 'iphone-ui-acceptance' }}-${{ github.run_id }}
+          name: ${{ env.CAREER_UI_ACCEPTANCE_SCOPE == 'iphone-connection' && 'PARTIAL-iphone-connection-regression' || startsWith(env.CAREER_UI_ACCEPTANCE_SCOPE, 'iphone-documents-') && env.CAREER_UI_ACCEPTANCE_SCOPE || 'iphone-ui-acceptance' }}-${{ github.run_id }}
           path: |
             ${{ runner.temp }}/career-iphone-selection.json
             ${{ runner.temp }}/career-iphone-input-configuration.json
@@ -435,6 +453,7 @@ jobs:
             ${{ runner.temp }}/career-iphone-boot-devices.stderr
             ${{ runner.temp }}/career-iphone-boot-verification.json
             ${{ runner.temp }}/career-iphone-ui.log
+            ${{ runner.temp }}/career-document-journey.json
             ${{ runner.temp }}/career-browser-lifecycle
             ${{ runner.temp }}/CareerFinderUI.xcresult
             ${{ runner.temp }}/career-ui-screenshots
