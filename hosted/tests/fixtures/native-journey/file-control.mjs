@@ -226,7 +226,14 @@ export async function createFileCheckpointController({harness, bridge, testID, w
     let timer;
     try {
       const result = await Promise.race([promise,new Promise((_,reject)=>{
-        timer = setTimeout(()=>{stopped=true;reject(new CheckpointError('checkpoint_harness_deadline'));},Math.max(1,deadline-mono()));
+        const expire = () => {
+          const remaining = deadline-mono();
+          // Timers can round a fractional delay down; reject only after the
+          // monotonic deadline, without admitting a late observation.
+          if (remaining > 0) { timer = setTimeout(expire,Math.max(1,Math.ceil(remaining))); return; }
+          stopped=true; reject(new CheckpointError('checkpoint_harness_deadline'));
+        };
+        timer = setTimeout(expire,Math.max(1,Math.ceil(deadline-mono())));
       })]);
       observed?.(result); guard(deadline); return result;
     } finally { clearTimeout(timer); }
