@@ -76,7 +76,7 @@ function page({ status = 'complete', jobs = [job(9)], sourceStatus = 'fresh', er
 // Only the transport and encrypted-storage ports are synthetic; any unexpected
 // route or attempted network request fails immediately.
 function deferred() { let resolve; const promise = new Promise(done => { resolve = done; }); return { promise, resolve }; }
-function harness({ initialPage, initialHistory, initialNewResult = null, restored = false, searchedFilters = submitted(), savedFilters = draft(), initialFilters = draft(), scope = 'account:synthetic-search-owner:00000000-0000-4000-8000-000000000001' } = {}) {
+function harness({ initialPage, initialHistory, initialNewResult = null, restored = false, searchedFilters = submitted(), savedFilters = draft(), initialFilters = draft(), scope = 'account:synthetic-search-owner:00000000-0000-4000-8000-000000000001', unopened = false } = {}) {
   const snapshot = model.blankSnapshot(scope);
   snapshot.profile.firstName = 'SYNTHETIC_PRIVATE_PROFILE';
   snapshot.jobs = [model.jobSchema.parse(job(0))];
@@ -93,7 +93,8 @@ function harness({ initialPage, initialHistory, initialNewResult = null, restore
     filters: plain(initialFilters), searchedFilters, searchPage: displayedPage,
     restored, busy: '', busyRef: { current: false }, notice: null, epoch: { current: 3 },
     identityUnverified: { current: false }, identityCheckPending: { current: false }, identityCheckRef: { current() {} },
-    snapshotRef: { current: snapshot }, filterDraftRef: { current: plain(initialFilters) }, startupFilterEdits: { current: new Set() }, liveSearchShown: { current: false }, searchAbort: { current: null }, storageProblem: '', locked: false, checkingIdentity: false,
+    account: { id: 'synthetic-search-owner' }, workspaceRef: { current: { workspaceId: '00000000-0000-4000-8000-000000000001' } },
+    snapshotRef: { current: unopened ? null : snapshot }, filterDraftRef: { current: plain(initialFilters) }, startupFilterEdits: { current: new Set() }, liveSearchShown: { current: false }, searchAbort: { current: null }, storageProblem: '', locked: false, checkingIdentity: false,
     discoveryPageSchema: model.discoveryPageSchema, discoveryPath: model.discoveryPath, jobIdentity: model.jobIdentity,
     parseSnapshot: model.parseSnapshot, ...searchHistory, searchNewResult: initialNewResult, showNewOnly: false, showNewOnlyRef: { current: false },
     fetch() { assert.fail('Search workflow tests must never contact a network'); },
@@ -190,6 +191,94 @@ test('pagination uses the displayed search and cursor, merges identities, and le
   assert.equal(h.context.searchPage.jobs[1].title, 'Updated synthetic opportunity');
   assert.deepEqual(h.writes[0].filters, laterDraft());
   assert.deepEqual(h.writes[0].lastSearch.filters, submitted());
+});
+
+test('HTTP 409 on More preserves prior results and drafts, then restarts the submitted search without the rejected cursor', async t => {
+  for (const code of ['discovery_changed', 'invalid_response', 'unfamiliar_conflict']) await t.test(code, async () => {
+    const original = page({ jobs: [job(0)], nextCursor: 'synthetic-rejected-cursor' });
+    const h = harness({ initialPage: original }), priorFilters = h.context.searchedFilters;
+    const newMarkers = { comparedSourceIds: ['lever:synthetic-a'], newIds: ['synthetic-0'] };
+    h.context.searchNewResult = newMarkers; h.context.showNewOnly = true; h.context.showNewOnlyRef.current = true;
+    const pending = h.search('more'), request = await h.admitted();
+    assert.equal(new URL(request.path, 'https://synthetic.local').searchParams.get('cursor'), 'synthetic-rejected-cursor');
+    h.edit(laterDraft()); request.reject(new APIError('Synthetic page conflict.', 409, code)); await pending;
+    assert.equal(h.context.searchPage, original, 'Displayed jobs, timestamp, source and cursor remain the original page');
+    assert.equal(h.context.restored, true, 'The cursor is no longer usable');
+    assert.equal(h.context.searchedFilters, priorFilters);
+    assert.deepEqual(plain(h.context.filters), laterDraft());
+    assert.deepEqual(h.readSaved().filters, laterDraft());
+    assert.equal(h.context.searchNewResult, newMarkers); assert.equal(h.context.showNewOnlyRef.current, true);
+    assert.equal(h.context.notice.text, 'Synthetic page conflict.');
+    await h.search('more'); assert.equal(h.calls.length, 1, 'A rejected cursor must not be sent again');
+    const restarted = h.search('retry'), fresh = await h.admitted(1);
+    assert.equal(new URL(fresh.path, 'https://synthetic.local').searchParams.has('cursor'), false);
+    assert.deepEqual(requestFilters(fresh), submitted(), 'Restart uses the last submitted search, not the edited form draft');
+    fresh.resolve(page({ jobs: [job(9)] })); await restarted;
+    assert.equal(h.context.restored, false);
+    assert.equal(h.context.searchPage.jobs[0].id, 'synthetic-9');
+    assert.deepEqual(plain(h.context.filters), laterDraft());
+  });
+});
+
+test('a non-409 page outage keeps the cursor retryable while account conflict still locks', async t => {
+  const original = page({ jobs: [job(0)], nextCursor: 'synthetic-retryable-cursor' });
+  await t.test('transient 503', async () => {
+    const h = harness({ initialPage: original }), pending = h.search('more'), request = await h.admitted();
+    request.reject(new APIError('Synthetic temporary outage.', 503, 'discovery_unavailable')); await pending;
+    assert.equal(h.context.searchPage, original); assert.equal(h.context.restored, false);
+    assert.equal(h.context.notice.text, 'Synthetic temporary outage.');
+    const retry = h.search('more'), repeated = await h.admitted(1);
+    assert.equal(new URL(repeated.path, 'https://synthetic.local').searchParams.get('cursor'), 'synthetic-retryable-cursor');
+    repeated.resolve(page({ jobs: [job(1)] })); await retry;
+    assert.deepEqual(plain(h.context.searchPage.jobs.map(value => value.id)), ['synthetic-0', 'synthetic-1']);
+  });
+  await t.test('explicit account conflict on 409', async () => {
+    const h = harness({ initialPage: original }), pending = h.search('more'), request = await h.admitted();
+    request.reject(new APIError('Synthetic account changed.', 409, 'account_changed')); await pending;
+    assert.equal(h.context.locked, true); assert.equal(h.context.restored, false);
+    assert.equal(h.context.notice.text, 'Synthetic account changed.');
+    assert.equal(h.calls.length, 1);
+  });
+});
+
+test('an HTTP-looking local draft save failure cannot invalidate a discovery cursor', async () => {
+  const original = page({ jobs: [job(0)], nextCursor: 'synthetic-retryable-cursor' });
+  const h = harness({ initialPage: original, savedFilters: submitted() });
+  h.writeHook.current = async () => { throw new APIError('Synthetic local vault conflict.', 409, 'invalid_response'); };
+  await h.search('more');
+  assert.equal(h.calls.length, 0, 'Storage failed before the network read');
+  assert.equal(h.context.searchPage, original);
+  assert.equal(h.context.restored, false);
+  assert.equal(h.context.notice.text, 'Synthetic local vault conflict.');
+});
+
+test('a rejected page cursor retires even when saving edits after the response fails', async () => {
+  const original = page({ jobs: [job(0)], nextCursor: 'synthetic-rejected-cursor' });
+  const h = harness({ initialPage: original }), pending = h.search('more'), request = await h.admitted();
+  h.edit(laterDraft());
+  h.writeHook.current = async () => { throw Error('Synthetic vault quota after network response'); };
+  request.reject(new APIError('Synthetic discovery changed.', 409, 'discovery_changed')); await pending;
+  assert.equal(h.context.searchPage, original);
+  assert.equal(h.context.restored, true, 'The HTTP response invalidates the cursor before local persistence can fail');
+  assert.equal(h.context.notice.text, 'Synthetic vault quota after network response');
+  await h.search('more'); assert.equal(h.calls.length, 1);
+});
+
+test('a same-generation startup scope adoption still retires a rejected page cursor without crossing owners', async t => {
+  const original = page({ jobs: [job(0)], nextCursor: 'synthetic-rejected-cursor' });
+  await t.test('matching startup scope', async () => {
+    const h = harness({ initialPage: original, unopened: true }), pending = h.search('more'), request = await h.admitted();
+    h.context.snapshotRef.current = h.readSaved();
+    request.reject(new APIError('Synthetic discovery changed.', 409, 'invalid_response')); await pending;
+    assert.equal(h.context.restored, true);
+    await h.search('more'); assert.equal(h.calls.length, 1);
+  });
+  await t.test('different account scope', async () => {
+    const h = harness({ initialPage: original, unopened: true }), pending = h.search('more'), request = await h.admitted();
+    h.context.snapshotRef.current = model.blankSnapshot('account:another-synthetic-owner:00000000-0000-4000-8000-000000000002');
+    request.reject(new APIError('Synthetic discovery changed.', 409, 'invalid_response')); await pending;
+    assert.equal(h.context.restored, false, 'A newly adopted different owner cannot inherit search recovery');
+  });
 });
 
 test('failed and cancelled retries retain results, submitted metadata and visible edits, then release the controller', async t => {
@@ -453,6 +542,35 @@ test('actual retry control stays disabled during work or identity checks and is 
   }
   const missing = renderResults(partial, 'en', { searchedFilters: null });
   assert.equal(findButtons(missing.element, 'Retry this search').length, 0);
+});
+
+test('a restored complete page offers a localized page-one retry instead of stale pagination', () => {
+  const value = page({ jobs: [job(0)], nextCursor: 'synthetic-old-cursor' });
+  for (const language of ['en', 'ar']) {
+    const current = renderResults(value, language);
+    assert.equal(findButtons(current.element, current.t('Load more jobs')).length, 1);
+    const old = renderResults(value, language, { restored: true });
+    assert(old.html.includes(old.t('Previous results')));
+    assert.equal(findButtons(old.element, old.t('Load more jobs')).length, 0);
+    const retry = findButtons(old.element, old.t('Retry this search'));
+    assert.equal(retry.length, 1); assert.equal(retry[0].props.disabled, false);
+    retry[0].props.onClick(); assert.deepEqual(old.calls, ['retry']);
+    if (language === 'ar') assert.notEqual(old.t('Retry this search'), 'Retry this search');
+    const rechecking = renderResults(value, language, { restored: true, checkingIdentity: true });
+    assert.equal(findButtons(rechecking.element, rechecking.t('Retry this search'))[0].props.disabled, true);
+  }
+});
+
+test('a restored empty complete page also offers a localized page-one retry', () => {
+  const value = page({ jobs: [], nextCursor: 'synthetic-old-cursor' });
+  for (const language of ['en', 'ar']) {
+    const old = renderResults(value, language, { restored: true });
+    assert(old.html.includes(old.t('Previous results')));
+    assert.equal(findButtons(old.element, old.t('Load more jobs')).length, 0);
+    const retry = findButtons(old.element, old.t('Retry this search'));
+    assert.equal(retry.length, 1);
+    retry[0].props.onClick(); assert.deepEqual(old.calls, ['retry']);
+  }
 });
 
 test('empty discovery output distinguishes unavailable, incomplete and healthy empty results in both languages', () => {

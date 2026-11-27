@@ -75,6 +75,17 @@ test('phone API keeps authentication, cancellation and verification bounded',asy
     }
     install(()=>Response.json({ok:false,error:{code:'unconfirmed',message:'Not completed.'}}));await assert.rejects(phoneAPI('/api/phone/submit',{method:'POST',body:{expectedWorkspaceId:workspaceId,planId,digest:'a'.repeat(64)}}),error=>error.code==='unconfirmed');assert.equal(requests.length,1);
   });
+  await t.test('malformed and unfamiliar discovery conflicts retain their HTTP 409 status',async()=>{
+    const cases=[
+      ()=>new Response('<html>synthetic private page</html>',{status:409,headers:{'content-type':'text/html'}}),
+      ()=>new Response(null,{status:409,headers:{'content-type':'application/json'}}),
+      ()=>new Response('{',{status:409,headers:{'content-type':'application/json'}}),
+      ()=>Response.json({ok:false,error:{code:'unfamiliar_conflict',message:'Synthetic conflict.'}},{status:409}),
+    ];
+    for(const make of cases){
+      install(make);await assert.rejects(phoneAPI('/api/discovery/search?q=Synthetic&cursor=rejected'),error=>error instanceof APIError&&error.status===409);assert.equal(requests.length,1);
+    }
+  });
   await t.test('unverified content, invalid UTF-8, arrays and empty responses are rejected safely',async()=>{
     for(const make of [()=>new Response('<html>private debug trace</html>'),()=>new Response(new Uint8Array([0xc3,0x28]),{headers:{'content-type':'application/json'}}),()=>Response.json([]),()=>Response.json(null),()=>new Response(null,{headers:{'content-type':'application/json'}})]){
       install(make);await assert.rejects(phoneAPI('/api/phone/workspace'),error=>error.code==='invalid_response'&&!error.message.includes('private debug'));assert.equal(requests.length,1);
