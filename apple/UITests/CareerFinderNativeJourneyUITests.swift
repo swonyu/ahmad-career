@@ -234,14 +234,12 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
             "The actual isolated app is portrait", app: app)
         return app
     }
-    private func realKeyboard(_ app: XCUIApplication) throws {
+    private func realKeyboard(_ app: XCUIApplication, bounds: CGRect) throws {
         let start = ProcessInfo.processInfo.systemUptime, deadline = start + 5
         let label = localized("delete", "حذف")
         let keys = app.keyboards.keys.matching(NSPredicate(
             format: "identifier == %@ AND label == %@", "delete", label))
         while ProcessInfo.processInfo.systemUptime < deadline {
-            let bounds = app.frame
-            guard ProcessInfo.processInfo.systemUptime < deadline else { break }
             var positions = [0, 1]
             if language == "ar" {
                 // A keyboard-only snapshot identifies one or two exact real
@@ -284,8 +282,14 @@ final class CareerFinderNativeJourneyUITests: ApplicationHistoryUITestCase {
         try require(false, "A fresh exact real delete key must be visible and currently hittable inside five seconds", app: app)
     }
     private func enterEmpty(_ field: XCUIElement, text: String, app: XCUIApplication) throws {
+        // The app's portrait frame is stable across focusing a text field.
+        // Capture it before the touch; the later key snapshot and live hit test
+        // still verify the focused OS keyboard inside the original five seconds.
+        let bounds = app.frame
+        try require(finite(bounds) && bounds.height > bounds.width,
+            "The app has a finite portrait frame before keyboard focus", app: app)
         try tap(field, app: app)
-        try realKeyboard(app)
+        try realKeyboard(app, bounds: bounds)
         try require(whole(field, app: app), "The focused field is wholly above the keyboard before typing", app: app)
         let old = field.value as? String ?? ""
         try require(old.isEmpty || old == field.placeholderValue,
