@@ -84,7 +84,7 @@
 
 .phone-application-details{margin-top:.75rem;min-width:0;flex-basis:100%}.phone-application-details .phone-review-data{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;gap:8px 12px;margin:.75rem 0 0}.phone-application-details dt,.phone-application-details dd{margin:0;min-width:0;overflow-wrap:anywhere}.phone-application-details .phone-note{margin-bottom:0}
 
-/* Read-only saved comparison: two aligned columns remain useful on a phone. */
+/* Keep each saved opening's facts and link together at every width. */
 .phone-saved-card-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;margin-bottom:4px}
 .phone-saved-card-head>.phone-company{flex:1 1 145px;min-width:0;margin:0}
 .phone-shell .phone-compare-choice{display:inline-flex;align-items:center;gap:7px;min-height:44px;margin:0!important;padding:3px 10px;border:1px solid var(--line);border-radius:10px;color:var(--muted);font-size:.75rem;font-weight:600}
@@ -93,16 +93,15 @@
 .phone-compare-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 16px;padding:14px 0 18px;margin:-5px 0 18px;border-bottom:1px solid var(--line)}
 .phone-compare-toolbar strong{font-size:.9rem}.phone-compare-toolbar p{font-size:.76rem;color:var(--muted);margin:3px 0 0}
 .phone-compare-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px}.phone-compare-actions>.button{font-size:.8rem;min-height:44px;padding:9px 12px}
-.phone-comparison-head,.phone-comparison-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.phone-comparison-head>section{min-width:0;padding:12px;background:var(--soft);border:1px solid var(--line);border-radius:13px}
+.phone-comparison-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,14rem),1fr));gap:12px}
+.phone-comparison-opening{min-width:0;padding:12px;background:var(--soft);border:1px solid var(--line);border-radius:13px}
 .phone-comparison-location{display:inline-block;font-size:.82rem;font-weight:700;color:var(--accent);line-height:1.5;overflow-wrap:anywhere}
-.phone-comparison-head h3{font-size:.95rem;line-height:1.45;margin:9px 0 6px;letter-spacing:-.02em}
-.phone-comparison-head .phone-company{font-size:.7rem;line-height:1.6;margin:0;color:var(--muted)}
-.phone-comparison-fields{margin:14px 0 0}.phone-comparison-fields>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:12px;row-gap:5px;border-bottom:1px solid var(--line);padding:11px 0}
-.phone-comparison-fields dt{grid-column:1/-1;color:var(--muted);font-size:.72rem;font-weight:600}
-.phone-comparison-fields dd{margin:0;min-width:0;font-size:.85rem;line-height:1.55;overflow-wrap:anywhere;padding-inline:5px}
-.phone-comparison-fields dd+dd{border-inline-start:1px solid var(--line);padding-inline-start:12px}
-.phone-comparison-links{margin-top:8px}.phone-comparison-links a{font-size:.78rem;text-align:start;justify-content:flex-start}
+.phone-comparison-opening h3{font-size:.95rem;line-height:1.45;margin:9px 0 6px;letter-spacing:-.02em}
+.phone-comparison-opening .phone-company{font-size:.7rem;line-height:1.6;margin:0;color:var(--muted)}
+.phone-comparison-fields{margin:14px 0 0}.phone-comparison-fields>div{border-top:1px solid var(--line);padding:8px 0}
+.phone-comparison-fields dt{color:var(--muted);font-size:.72rem;font-weight:600}
+.phone-comparison-fields dd{margin:3px 0 0;min-width:0;font-size:.85rem;line-height:1.55;overflow-wrap:anywhere}
+.phone-comparison-opening>.text-button{display:inline-flex;align-items:center;gap:4px;min-height:44px;font-size:.78rem;text-align:start}
 .phone-comparison>.phone-note{margin:10px 0 0}
 
 /* Keep the common search and CV actions visible before secondary guidance. */

@@ -80,13 +80,21 @@ export function SavedComparison({ jobs, records, disabled, children }: {
   };
   return <>{children({ toolbar, choice })}{pair && <Modal title={t("Compare two openings")} onClose={close}>
     {compared?.length === 2 && compared.every((row): row is SavedComparisonRow => Boolean(row)) ? <div className="phone-comparison">
-      <div className="phone-comparison-head">{compared.map(row => <section key={row.identity}>
-        <span className="phone-comparison-location"><bdi>{displayHistoricalText(row.job.location) || t("Location not specified")}</bdi></span>
-        <h3 dir="auto">{displayHistoricalText(row.job.title)}</h3><p className="phone-company"><bdi>{displayHistoricalText(row.job.company) || t("Not recorded")}</bdi></p>
-        {!row.bookmarked && <p className="phone-note">{t("Application record · bookmark removed")}</p>}
-      </section>)}</div>
-      <dl className="phone-comparison-fields">{fields.map(field => <div key={field.label}><dt>{t(field.label)}</dt>{compared.map(row => <dd key={row.identity}><span className="visually-hidden">{identify(row)}: </span><bdi>{displayHistoricalText(field.value(row))}</bdi></dd>)}</div>)}</dl>
-      <div className="phone-comparison-links">{compared.map(row => <a key={row.identity} className="text-button" href={row.job.url} target="_blank" rel="noopener noreferrer" aria-label={t("Open job: {0} in {1}", [row.job.title, row.job.location || t("Location not specified")])}>{t("Open job ")}<ArrowUpRight size={16} aria-hidden="true" /></a>)}</div>
+      <div className="phone-comparison-list">{compared.map(row => (
+        <section className="phone-comparison-opening" key={row.identity} aria-label={identify(row)}>
+          <span className="phone-comparison-location"><bdi>{displayHistoricalText(row.job.location) || t("Location not specified")}</bdi></span>
+          <h3 dir="auto">{displayHistoricalText(row.job.title)}</h3>
+          <p className="phone-company"><bdi>{displayHistoricalText(row.job.company) || t("Not recorded")}</bdi></p>
+          {!row.bookmarked && <p className="phone-note">{t("Application record · bookmark removed")}</p>}
+          <dl className="phone-comparison-fields">{fields.map(field => (
+            <div key={field.label}><dt>{t(field.label)}</dt><dd><bdi>{displayHistoricalText(field.value(row))}</bdi></dd></div>
+          ))}</dl>
+          <a className="text-button" href={row.job.url} target="_blank" rel="noopener noreferrer"
+            aria-label={t("Open job: {0} in {1}", [row.job.title, row.job.location || t("Location not specified")])}>
+            {t("Open job ")}<ArrowUpRight size={16} aria-hidden="true" />
+          </a>
+        </section>
+      ))}</div>
       <p className="phone-note">{t("Stages and follow-up dates are your own records.")}</p>
     </div> : <p className="phone-note" role="status">{t("A selected opening is no longer in Saved. Choose the two openings again.")}</p>}
     <div className="phone-dialog-actions"><button type="button" className="button primary" onClick={close}>{t("Back to Saved")}</button></div>
