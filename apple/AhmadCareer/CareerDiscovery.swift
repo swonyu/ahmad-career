@@ -57,7 +57,7 @@ struct DiscoveryPage: Codable {
     let status: String
     let jobs: [DiscoveryJob]
     let sources: [DiscoverySourceStatus]
-    let nextCursor: String?
+    var nextCursor: String?
     let totalMatches: Int
     let limited: Bool
     let notice: String
@@ -82,7 +82,7 @@ struct DiscoveryQuery: Codable, Equatable {
 }
 struct DiscoveryFailure: LocalizedError {
     let message: String
-    var code: String? = nil
+    var statusCode: Int? = nil
     var retryAfter: Date? = nil
     var errorDescription: String? { message }
 }
@@ -359,8 +359,9 @@ final class CareerDiscoveryClient: CareerDiscoveryServing {
         self.nativeJourneyTransport = nativeJourneyTransport
     }
     #endif
-    init() {
+    init(protocolClasses: [AnyClass]? = nil) {
         let config = URLSessionConfiguration.ephemeral
+        if let protocolClasses { config.protocolClasses = protocolClasses }
         config.httpCookieStorage = nil; config.httpShouldSetCookies = false; config.urlCredentialStorage = nil
         config.urlCache = nil; config.requestCachePolicy = .reloadIgnoringLocalCacheData
         config.timeoutIntervalForRequest = 25; config.timeoutIntervalForResource = 35
@@ -372,19 +373,18 @@ final class CareerDiscoveryClient: CareerDiscoveryServing {
         let request = try nativeJourneyTransport?.map(request, discovery: true) ?? request
         #endif
         let (data, response) = try await session.data(for: request)
-        guard let http = response as? HTTPURLResponse, data.count <= 4 * 1_024 * 1_024 else {
+        guard let http = response as? HTTPURLResponse else {
             throw DiscoveryFailure(message: "The discovery service returned an unreadable response. Try again later.")
         }
         guard (200...299).contains(http.statusCode) else {
-            let fields = (try? JSONDecoder().decode([String: ApplicationValue].self, from: data)) ?? [:]
-            let error = fields["error"]?.object ?? [:]
-            let code = error["code"]?.string ?? fields["code"]?.string
             let retry = DiscoveryPolicy.retryAfterDeadline(http.value(forHTTPHeaderField: "Retry-After"))
-            let message = http.statusCode == 409 ? "These results changed while you were browsing. Start a new search; the previous results are still here."
-                : http.statusCode == 429 ? "Search is temporarily busy. Wait before trying again."
+            let message = http.statusCode == 429 ? "Search is temporarily busy. Wait before trying again."
                 : http.statusCode == 400 ? "Check your board URLs and search fields. Only supported public employer boards can be searched."
                 : "The discovery service is unavailable. Your saved opportunities are still on this phone."
-            throw DiscoveryFailure(message: message, code: code, retryAfter: retry)
+            throw DiscoveryFailure(message: message, statusCode: http.statusCode, retryAfter: retry)
+        }
+        guard data.count <= 4 * 1_024 * 1_024 else {
+            throw DiscoveryFailure(message: "The discovery service returned an unreadable response. Try again later.")
         }
         do { return try JSONDecoder().decode(T.self, from: data) }
         catch { throw DiscoveryFailure(message: "The discovery response could not be read. Previous results are preserved.") }
@@ -847,11 +847,12 @@ final class CareerDiscoveryStore: ObservableObject {
                 isSearching = false; requestID = nil; requestTask = nil
                 error = "Your search changed. Search again to use the current fields; previous results are kept."; return
             }
-            if !more && result.status == "unavailable" && result.jobs.isEmpty && !jobs.isEmpty {
-                page = result; restoredResults = true; needsNewSearch = true
+            if result.status == "unavailable" && result.jobs.isEmpty && !jobs.isEmpty {
+                restoredResults = true; needsNewSearch = true
+                submittedQuery = captured; submittedSearchFailed = true
                 isSearching = false; requestID = nil; requestTask = nil
                 error = "The selected boards could not be checked. Previous results are kept; start a new search when the service is available."
-                persist(); return
+                return
             }
             var merged = more ? jobs : []
             var ids = Set(merged.map(\.id))
@@ -877,7 +878,13 @@ final class CareerDiscoveryStore: ObservableObject {
             isSearching = false; requestID = nil; requestTask = nil
             if let failure = error as? DiscoveryFailure {
                 self.error = failure.message; retryAfter = failure.retryAfter
-                if failure.code == "discovery_changed" { needsNewSearch = true }
+                if more && cursor != nil && failure.statusCode == 409 {
+                    self.error = "These results changed while you were browsing. Start a new search; the previous results are still here."
+                    page?.nextCursor = nil
+                    restoredResults = page != nil; needsNewSearch = true
+                    submittedQuery = captured; submittedSearchFailed = true
+                    persist()
+                }
             }
             else if error is CancellationError || (error as? URLError)?.code == .cancelled {
                 self.error = "Search stopped. Previous results are kept."

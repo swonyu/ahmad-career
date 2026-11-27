@@ -1,6 +1,42 @@
 import Foundation
 import Darwin
 
+/// Exercises the real discovery transport without opening a connection.
+private final class DiscoveryStatusProtocol: URLProtocol {
+    override class func canInit(with request: URLRequest) -> Bool { true }
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override func startLoading() {
+        guard let url = request.url, request.httpMethod == "GET",
+              let parts = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              url.absoluteString.hasPrefix(MobileApplicationPolicy.hostedServiceOrigin + "/api/discovery/search?"),
+              let query = parts.queryItems?.first(where: { $0.name == "q" })?.value else {
+            client?.urlProtocol(self, didFailWithError: URLError(.unsupportedURL))
+            return
+        }
+        let status: Int, body: Data
+        switch query {
+        case "Conflict empty":
+            status = 409; body = Data()
+        case "Conflict HTML":
+            status = 409; body = Data("<p>Synthetic proxy response</p>".utf8)
+        case "Conflict other code":
+            status = 409; body = Data(#"{"error":{"code":"synthetic_conflict"}}"#.utf8)
+        case "Conflict oversized":
+            status = 409; body = Data(repeating: 32, count: 4 * 1_024 * 1_024 + 1)
+        case "Temporary service failure":
+            status = 503; body = Data(#"{"error":{"code":"discovery_changed"}}"#.utf8)
+        default:
+            client?.urlProtocol(self, didFailWithError: URLError(.unsupportedURL))
+            return
+        }
+        let response = HTTPURLResponse(url: url, statusCode: status, httpVersion: "HTTP/1.1", headerFields: nil)!
+        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        if !body.isEmpty { client?.urlProtocol(self, didLoad: body) }
+        client?.urlProtocolDidFinishLoading(self)
+    }
+    override func stopLoading() {}
+}
+
 @MainActor
 private final class DiscoveryStub: CareerDiscoveryServing {
     let directory: DiscoveryCatalog
@@ -76,6 +112,71 @@ private final class DiscoverySuite {
         DiscoveryPage(ok: true, version: 1, generatedAt: fixture.generatedAt, status: status == "unavailable" ? "unavailable" : status == "stale" || limited || error != nil ? "partial" : "complete",
             jobs: numbers.map { historyJob($0, source: source) }, sources: [historyStatus(matched ?? numbers.count, source: source, status: status, limited: limited, error: error)],
             nextCursor: cursor, totalMatches: matched ?? numbers.count, limited: limited, notice: "Synthetic history coverage")
+    }
+    private func runPagingFailureChecks() async throws {
+        let wire = CareerDiscoveryClient(protocolClasses: [DiscoveryStatusProtocol.self])
+        for words in ["Conflict empty", "Conflict HTML", "Conflict other code", "Conflict oversized"] {
+            let service = DiscoveryStub(fixture); let (model, file) = store(service)
+            model.query = DiscoveryQuery(keywords: words)
+            service.handle = { _, _ in self.page(cursor: "expired-cursor") }
+            await model.search()
+            try check(model.canLoadMore, "The initial cursor is available before a paginated conflict")
+            let history = model.searchHistory
+            service.handle = { query, cursor in try await wire.search(query, cursor: cursor) }
+            await model.search(more: true)
+            try check(model.jobs == fixture.jobs && model.searchHistory == history && model.page?.sources.map(\.id) == fixture.sources.map(\.id),
+                "A paginated HTTP conflict preserves the exact prior jobs, boards, and history")
+            try check(model.page?.nextCursor == nil && !model.canLoadMore && model.needsNewSearch && model.canRetrySubmittedSearch,
+                "Every paginated HTTP 409 invalidates the cursor independent of its body")
+            try check(model.error == "These results changed while you were browsing. Start a new search; the previous results are still here.",
+                "The conflict explains that the previous results were kept and a new search is required")
+            let reopened = CareerDiscoveryStore(file: file, service: service)
+            try check(reopened.jobs == fixture.jobs && reopened.page?.nextCursor == nil && !reopened.canLoadMore,
+                "The invalidated token stays cleared after reopening saved results")
+            let callsAfterConflict = service.calls.count
+            await model.search(more: true)
+            try check(service.calls.count == callsAfterConflict, "More cannot send an expired cursor twice")
+            service.handle = { _, _ in self.page() }
+            await model.retrySubmittedSearch()
+            try check(service.calls.last?.1 == nil && service.calls.count == callsAfterConflict + 1 && !model.needsNewSearch,
+                "Retry starts the submitted search without the expired cursor")
+            scenarios += 1
+        }
+        for (words, more) in [("Temporary service failure", true), ("Conflict empty", false)] {
+            let service = DiscoveryStub(fixture); let (model, _) = store(service)
+            model.query = DiscoveryQuery(keywords: words)
+            service.handle = { _, _ in self.page(cursor: "still-valid-cursor") }
+            await model.search()
+            service.handle = { query, cursor in try await wire.search(query, cursor: cursor) }
+            await model.search(more: more)
+            try check(model.jobs == fixture.jobs && model.page?.nextCursor == "still-valid-cursor" && model.canLoadMore && !model.needsNewSearch,
+                "A 503 body or a first-page 409 cannot invalidate a prior pagination cursor")
+            try check(model.error == "The discovery service is unavailable. Your saved opportunities are still on this phone.",
+                "A first-page conflict or temporary failure does not claim the old cursor changed")
+            scenarios += 1
+        }
+        for more in [false, true] {
+            let service = DiscoveryStub(fixture); let (model, file) = store(service)
+            service.handle = { _, _ in self.historyPage([1, 2]) }; await model.search()
+            service.handle = { _, _ in self.historyPage([2, 3], matched: 3, cursor: "prior-page") }; await model.search()
+            let earlierJobs = model.jobs, earlierHistory = model.searchHistory, earlierResult = model.searchNewResult
+            let earlierTime = model.page?.generatedAt, earlierSources = model.page?.sources.map(\.id)
+            let earlierBytes = try Data(contentsOf: file)
+            model.showNewOnly = true
+            service.handle = { _, _ in self.historyPage([], status: "unavailable") }; await model.search(more: more)
+            try check(model.jobs == earlierJobs && model.searchHistory == earlierHistory && model.searchNewResult == earlierResult && model.showNewOnly,
+                "An all-board outage keeps the earlier results and their New-only comparison")
+            try check(model.page?.generatedAt == earlierTime && model.page?.sources.map(\.id) == earlierSources && model.page?.status == "complete",
+                "An all-board outage cannot replace the provenance attached to retained results")
+            try check(model.restoredResults && !model.canLoadMore && model.canRetrySubmittedSearch,
+                "An outage labels earlier results and offers a fresh retry instead of paging")
+            let saved = try Data(contentsOf: file)
+            try check(saved == earlierBytes, "An all-board outage cannot replace the earlier saved result snapshot")
+            service.handle = { _, _ in self.historyPage([3, 4]) }; await model.retrySubmittedSearch()
+            try check(!model.restoredResults && model.searchNewResult?.newIds == [historyJob(4).id] && service.calls.last?.1 == nil,
+                "Recovery uses a fresh request and compares with the last persisted observation")
+            scenarios += 1
+        }
     }
     private func runHistoryChecks() async throws {
         let query = DiscoveryQuery(keywords: "Designer", location: "Toronto")
@@ -290,11 +391,18 @@ private final class DiscoverySuite {
                       "Failed coverage from another board keeps the successful default-source markers and history")
             let reopened = CareerDiscoveryStore(file: file, service: service)
             try check(reopened.jobs == retainedJobs && reopened.searchHistory == retainedHistory && reopened.searchNewResult == retainedResult && reopened.newJobCount == 1
-                && reopened.query == model.query && reopened.page?.sources.first?.id == "lever:global:other-history" && !reopened.savedSearchRestoreBlocked,
-                      "Restart validates the old default-source key independently of the newer unavailable coverage envelope")
+                && reopened.query == model.query && reopened.page?.sources.first?.id == historySource && !reopened.savedSearchRestoreBlocked,
+                      "Restart retains the earlier employer coverage alongside the newer unsent draft")
             let backup = try reopened.exportSnapshot(), imported = store(service).0
             try imported.importSnapshot(backup)
             try check(imported.searchHistory == retainedHistory && imported.searchNewResult == retainedResult && imported.jobs == retainedJobs, "Workspace export/import retains exact historical markers and their successful source identity")
+            var priorEnvelope = try JSONSerialization.jsonObject(with: backup) as! [String: Any]
+            let unavailable = historyPage([], source: "lever:global:other-history", status: "unavailable")
+            priorEnvelope["page"] = try JSONSerialization.jsonObject(with: JSONEncoder().encode(unavailable))
+            let olderSnapshot = store(service).0
+            try olderSnapshot.importSnapshot(JSONSerialization.data(withJSONObject: priorEnvelope))
+            try check(olderSnapshot.jobs == retainedJobs && olderSnapshot.searchHistory == retainedHistory && olderSnapshot.searchNewResult == retainedResult,
+                      "An older saved search with an unavailable coverage envelope still validates its earlier default-source result")
             var legacy = try JSONSerialization.jsonObject(with: backup) as! [String: Any]
             for key in ["searchHistory", "newResult", "lastSearchSourceIds"] { legacy.removeValue(forKey: key) }
             let old = store(service).0; try old.importSnapshot(JSONSerialization.data(withJSONObject: legacy))
@@ -356,6 +464,7 @@ private final class DiscoverySuite {
     }
     func run() async throws {
         try await runHistoryChecks()
+        try await runPagingFailureChecks()
         do {
             let now = Date(timeIntervalSince1970: 1_795_262_400) // 21 Nov 2026, noon UTC
             for seconds in [0, 60, 3_601, 7_200, 86_400, 20_000_000_000] as [Int64] {
@@ -528,7 +637,7 @@ private final class DiscoverySuite {
             try check(model.jobs.count == 2 && Set(model.jobs.map(\.id)).count == 2, "Pagination deduplicates stable posting IDs")
             try check(service.calls[1].1 == "page-two" && service.calls[1].0 == service.calls[0].0, "Paging preserves the exact search and opaque cursor")
             service.handle = { _, _ in self.page(cursor: "old-cursor") }; await model.search()
-            service.handle = { _, _ in throw DiscoveryFailure(message: "Changed", code: "discovery_changed") }
+            service.handle = { _, _ in throw DiscoveryFailure(message: "Changed", statusCode: 409) }
             await model.search(more: true); let count = service.calls.count; await model.search(more: true)
             try check(model.jobs == fixture.jobs && model.needsNewSearch && !model.canLoadMore && service.calls.count == count, "Changed cursor retains results and blocks repeated paging until explicit new search")
             scenarios += 1
@@ -583,7 +692,7 @@ private final class DiscoverySuite {
                 model.query = submitted
                 let deadline = Date().addingTimeInterval(cooldownPending ? 300 : -1)
                 let originalError = "Synthetic failed search A; previous results are kept."
-                service.handle = { _, _ in throw DiscoveryFailure(message: originalError, code: "discovery_changed", retryAfter: deadline) }
+                service.handle = { _, _ in throw DiscoveryFailure(message: originalError, statusCode: 409, retryAfter: deadline) }
                 await model.search()
                 let newerDraft = DiscoveryQuery(sources: ["greenhouse:draft-board"], keywords: "Unsubmitted query B", location: "Tokyo")
                 model.query = newerDraft
@@ -837,7 +946,7 @@ private final class DiscoverySuite {
             model.query.keywords = "submitted before wait"; await model.search()
             let submitted = model.query, preservedJobs = model.jobs
             let retryDeadline = Date().addingTimeInterval(300)
-            service.handle = { _, _ in throw DiscoveryFailure(message: "Synthetic service wait", code: "rate_limited", retryAfter: retryDeadline) }
+            service.handle = { _, _ in throw DiscoveryFailure(message: "Synthetic service wait", statusCode: 429, retryAfter: retryDeadline) }
             await model.retrySubmittedSearch()
             try check(service.calls.count == 2 && model.retryAfter == retryDeadline, "A submitted retry records the service-requested wait")
             model.query.keywords = "newer draft while waiting"
