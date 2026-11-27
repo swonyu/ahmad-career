@@ -118,7 +118,7 @@ class ApplicationHistoryUITestCase: XCTestCase {
         }
         try require(false, message + " (no accepted observation inside five seconds)", app: app)
     }
-    func scroll(_ distance: CGFloat, app: XCUIApplication) throws {
+    func scroll(_ distance: CGFloat, app: XCUIApplication, precise: Bool = false) throws {
         let bounds = viewport(app), frame = app.frame
         try require([bounds.minX, bounds.minY, bounds.width, bounds.height].allSatisfy(\.isFinite)
             && bounds.height > 120 && bounds.width > 0, "Scrolling needs a fresh finite viewport", app: app)
@@ -126,7 +126,12 @@ class ApplicationHistoryUITestCase: XCTestCase {
         let origin = app.coordinate(withNormalizedOffset: .zero)
         let from = origin.withOffset(CGVector(dx: bounds.midX - frame.minX, dy: bounds.midY - frame.minY + amount / 2))
         let to = origin.withOffset(CGVector(dx: bounds.midX - frame.minX, dy: bounds.midY - frame.minY - amount / 2))
-        from.press(forDuration: 0.05, thenDragTo: to)
+        if precise {
+            // Stop scrolling at the end of the drag so alignment does not overshoot.
+            from.press(forDuration: 0.05, thenDragTo: to, withVelocity: .slow, thenHoldForDuration: 0.2)
+        } else {
+            from.press(forDuration: 0.05, thenDragTo: to)
+        }
     }
     func reveal(_ element: XCUIElement, app: XCUIApplication, forward: Bool = true) throws {
         for _ in 0..<24 {
@@ -161,7 +166,7 @@ class ApplicationHistoryUITestCase: XCTestCase {
             for _ in 0..<12 {
                 let distance = anchor.frame.minY - (viewport(app).minY + 24)
                 if abs(distance) <= 12 && whole(anchor, app: app) { break }
-                try scroll(distance, app: app)
+                try scroll(distance, app: app, precise: true)
             }
             try require(abs(anchor.frame.minY - (viewport(app).minY + 24)) <= 12,
                 "The unchanged title anchor agrees within 12 points", app: app)
