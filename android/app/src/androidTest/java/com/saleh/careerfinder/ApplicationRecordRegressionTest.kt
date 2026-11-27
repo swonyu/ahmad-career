@@ -345,7 +345,10 @@ class ApplicationRecordRegressionTest {
         assertTrue(model.state.value.error.orEmpty().contains("Stop active Auto Apply"))
         assertEquals(before, model.state.value.applicationRecords)
         assertTrue(model.state.value.jobs.any { it.id == localJob.id })
-        main { model.stop("active-record-review") }; await { model.state.value.activePlans.isEmpty() }
+        main { model.stop("active-record-review") }
+        // Stop refresh publishes the empty plan list before it clears pending mutation intents.
+        await { model.state.value.activePlans.isEmpty() && !model.state.value.readReconciliationRequired &&
+            model.state.value.pendingReadAcknowledgments == 0 }
         main { model.syncOpportunity(localJob) }; await { !model.state.value.busy }
         val merged = model.state.value.applicationRecords.getValue(identity(destination))
         assertTrue(merged.appliedElsewhere); assertTrue(merged.needsReview)
